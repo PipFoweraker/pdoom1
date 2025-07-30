@@ -22,6 +22,19 @@ def wrap_text(text, font, max_width):
         lines.append(curr_line)
     return lines
 
+def render_text(text, font, max_width=None, color=(255,255,255)):
+    """Render text with optional word wrapping. Returns [(surface, (x_offset, y_offset)), ...], bounding rect."""
+    lines = [text]
+    if max_width:
+        lines = wrap_text(text, font, max_width)
+    surfaces = [font.render(line, True, color) for line in lines]
+    widths = [surf.get_width() for surf in surfaces]
+    heights = [surf.get_height() for surf in surfaces]
+    total_width = max(widths)
+    total_height = sum(heights)
+    offsets = [(0, sum(heights[:i])) for i in range(len(heights))]
+    return list(zip(surfaces, offsets)), pygame.Rect(0, 0, total_width, total_height)
+    
 def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.045), bold=True)
@@ -154,27 +167,7 @@ def draw_seed_prompt(screen, current_input, weekly_suggestion):
     # Example: rendering an upgrade description with wrapping instead of direct render
     # We'll assume this pattern is repeated for upgrades and actions wherever description text is rendered
 
-    # For upgrades
-    upgrade_rects = game_state._get_upgrade_rects(w, h)
-    for idx, rect in enumerate(upgrade_rects):
-        upg = game_state.upgrades[idx]
-        desc = upg["desc"] + f" (Cost: ${upg['cost']})"
-        # Let's wrap descriptions to button width minus some padding
-        desc_lines = wrap_text(desc, small_font, rect[2] - int(w*0.02))
-        for i, line in enumerate(desc_lines):
-            screen.blit(small_font.render(line, True, (200, 255, 200)), (rect[0] + int(w*0.01), rect[1] + int(h*0.04) + i * small_font.get_height()))
-        # [rest of your drawing code for upgrades here...]
-
-    # For actions (similar logic)
-    action_rects = game_state._get_action_rects(w, h)
-    for idx, rect in enumerate(action_rects):
-        act = game_state.actions[idx]
-        desc = act["desc"] + f" (Cost: ${act['cost']})"
-        desc_lines = wrap_text(desc, font, rect[2] - int(w*0.02))
-        for i, line in enumerate(desc_lines):
-            screen.blit(font.render(line, True, (190, 210, 255)), (rect[0] + int(w*0.01), rect[1] + int(h*0.04) + i * font.get_height()))
-        # [rest of your drawing code for actions here...]
-
+  
     # Additional: wrap message log if desired (could be done similarly).
 
     # --- Balance change display (after buying accounting software) ---
