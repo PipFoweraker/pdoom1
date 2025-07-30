@@ -28,7 +28,7 @@ EVENTS = [
         "desc": "Overworked staff quit.",
         "trigger": lambda gs: gs.staff > 6 and gs.money < gs.staff * gs.staff_maintenance and random.random() < 0.2,
         "effect": lambda gs: gs._add('staff', -random.randint(1, 2))
-    }
+    },
     {
         "name": "Buy Accounting Software",
         "desc": "Purchased accounting software for $500. Balance change details now available.",
