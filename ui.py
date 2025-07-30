@@ -23,7 +23,6 @@ def wrap_text(text, font, max_width):
     return lines
 
 def draw_ui(screen, game_state, w, h):
-def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.045), bold=True)
     big_font = pygame.font.SysFont('Consolas', int(h*0.033))
