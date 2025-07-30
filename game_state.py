@@ -8,6 +8,33 @@ from events import EVENTS
 SCORE_FILE = "local_highscore.json"
 
 class GameState:
+    def _add(self, attr, val):
+    """
+    Adds val to the given attribute, clamping where appropriate.
+    Also records last_balance_change for 'money' for use in UI,
+    if accounting software has been purchased.
+    """
+    if attr == 'money':
+        # Only record balance change if accounting software is bought
+        if hasattr(self, "accounting_software_bought") and self.accounting_software_bought:
+            self.last_balance_change = val
+        self.money = max(self.money + val, 0)
+    elif attr == 'doom':
+        self.doom = min(max(self.doom + val, 0), self.max_doom)
+    elif attr == 'reputation':
+        self.reputation = max(self.reputation + val, 0)
+    elif attr == 'staff':
+        self.staff = max(self.staff + val, 0)
+    return None
+
+# Ensure last_balance_change gets set on any direct subtraction/addition to money:
+# For example, in end_turn, after maintenance:
+# self._add('money', -maintenance_cost)
+# (Replace raw self.money -= maintenance_cost with self._add('money', -maintenance_cost))
+
+# In __init__, initialize:
+self.last_balance_change = 0
+self.accounting_software_bought = False  # So the flag always exists
     def __init__(self, seed):
         # Core resources
         self.money = 300
