@@ -33,9 +33,10 @@ class GameState:
 # (Replace raw self.money -= maintenance_cost with self._add('money', -maintenance_cost))
 
 # In __init__, initialize:
-self.last_balance_change = 0
-self.accounting_software_bought = False  # So the flag always exists
+
     def __init__(self, seed):
+        self.last_balance_change = 0
+        self.accounting_software_bought = False  # So the flag always exists
         # Core resources
         self.money = 300
         self.staff = 2
