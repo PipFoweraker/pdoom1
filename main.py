@@ -152,10 +152,10 @@ def handle_menu_keyboard(key):
             current_state = 'game'
         elif selected_menu_item == 1:  # Launch with Custom Seed
             current_state = 'custom_seed_prompt'
-            elif i == 2:  # Options/Settings
-                overlay_content = create_settings_content()
-                overlay_title = "Settings"
-                current_state = 'overlay'
+        elif selected_menu_item == 2:  # Settings 
+            overlay_content = create_settings_content()
+            overlay_title = "Settings"
+            current_state = 'overlay'
         elif selected_menu_item == 3:  # Player Guide
             overlay_content = load_markdown_file('PLAYERGUIDE.md')
             overlay_title = "Player Guide"
