@@ -132,6 +132,81 @@ Compete for the best streak!
 
 ---
 
+## Testing
+
+If you're interested in contributing to P(Doom) or want to verify the game works correctly on your system, you can run the automated tests.
+
+### Running Tests
+
+1. **Install testing dependencies** (if not already installed):
+   ```
+   pip install pytest
+   ```
+   Or install all dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+2. **Run all tests:**
+   ```
+   pytest
+   ```
+
+3. **Run tests with verbose output:**
+   ```
+   pytest -v
+   ```
+
+### Sample Test Output
+
+**When tests pass:**
+```
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-8.4.1, pluggy-1.6.0
+cachedir: .pytest_cache
+rootdir: /home/runner/work/pdoom1/pdoom1
+collecting ... collected 1 item
+
+tests/test_game_state.py::TestGameStateInitialization::test_game_state_default_values PASSED [100%]
+
+============================== 1 passed in 0.01s ===============================
+```
+
+**When tests fail:**
+```
+=================================== FAILURES ===================================
+_______________________ TestFailure.test_this_will_fail ________________________
+
+    def test_this_will_fail(self):
+        game_state = GameState("test")
+>       self.assertEqual(game_state.money, 999, "Expected 999, got 300")
+E       AssertionError: 300 != 999 : Expected 999, got 300
+
+temp_failing_test.py:12: AssertionError
+=========================== short test summary info ============================
+FAILED temp_failing_test.py::TestFailure::test_this_will_fail - AssertionError: 300 != 999
+============================== 1 failed in 0.02s ===============================
+```
+
+### Troubleshooting
+
+**"No module named pytest"**
+- Install pytest: `pip install pytest` or `pip install -r requirements.txt`
+
+**"Import errors"**
+- Make sure you're running tests from the project root directory
+- Try: `python -m pytest` instead of just `pytest`
+
+**"Permission denied" or file access errors**
+- Check that you have read/write permissions in the project directory
+- On some systems, use `python3` instead of `python`
+
+### For Contributors
+
+See the README.md for detailed information about adding new tests, test structure, and contributor guidelines.
+
+---
+
 ## For More Information
 
 - See the README for modding, expanding content, and technical details.

@@ -76,8 +76,11 @@ When adding new features or modifying existing code:
 2. **Run the full test suite** before submitting contributions: `pytest`
 3. **Ensure all tests pass** - don't break existing functionality
 4. **Write clear, descriptive test names** that explain what is being tested
+5. **Don't commit test artifacts** - the `.gitignore` file excludes `__pycache__/`, `.pytest_cache/`, `*.pyc`, and other test artifacts from version control
 
 Tests help ensure the game remains stable and functional as it evolves!
+
+**Note:** The repository's `.gitignore` file is configured to automatically exclude Python and pytest artifacts, so you don't need to worry about accidentally committing cache files or test artifacts.
 
 ### Main Menu
 
