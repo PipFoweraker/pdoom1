@@ -94,6 +94,20 @@ def draw_ui(screen, game_state, w, h):
             screen.blit(desc, (rect[0] + int(w*0.01), rect[1] + int(h*0.04)))
             screen.blit(status, (rect[0] + int(w*0.24), rect[1] + int(h*0.04)))
 
+    # --- Balance change display (after buying accounting software) ---
+    # If accounting software was bought, show last balance change under Money
+    if hasattr(game_state, "accounting_software_bought") and game_state.accounting_software_bought:
+        # Show the last balance change if available
+        change = getattr(game_state, "last_balance_change", 0)
+        sign = "+" if change > 0 else ""
+        # Render in green if positive, red if negative
+        screen.blit(
+            font.render(f"({sign}{change})", True, (200, 255, 200) if change >= 0 else (255, 180, 180)),
+            (int(w*0.18), int(h*0.135))
+        )
+        # Optionally, always show the "monthly costs" indicator here as well
+
+
     # End Turn button (bottom center)
     endturn_rect = game_state._get_endturn_rect(w, h)
     pygame.draw.rect(screen, (140, 90, 90), endturn_rect, border_radius=12)
@@ -170,15 +184,4 @@ def draw_seed_prompt(screen, current_input, weekly_suggestion):
   
     # Additional: wrap message log if desired (could be done similarly).
 
-    # --- Balance change display (after buying accounting software) ---
-    # If accounting software was bought, show last balance change under Money
-    if hasattr(game_state, "accounting_software_bought") and game_state.accounting_software_bought:
-        # Show the last balance change if available
-        change = getattr(game_state, "last_balance_change", 0)
-        sign = "+" if change > 0 else ""
-        # Render in green if positive, red if negative
-        screen.blit(
-            font.render(f"({sign}{change})", True, (200, 255, 200) if change >= 0 else (255, 180, 180)),
-            (int(w*0.18), int(h*0.135))
-        )
-        # Optionally, always show the "monthly costs" indicator here as well
+    
