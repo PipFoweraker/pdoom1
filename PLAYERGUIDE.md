@@ -55,7 +55,7 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
 ## Controls
 
 | Action             | How to Use          |
-|--------------------|--------------------|
+|--------------------|-------------------|
 | **Main Menu Navigation** | Arrow keys or mouse |
 | **Select Menu Item** | Enter or mouse click |
 | **Exit Menu/Overlay** | Escape key |
@@ -64,6 +64,7 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
 | Buy Upgrade        | Click upgrade button (right) |
 | End Turn           | Click "END TURN" or press `Space` |
 | Tooltips           | Hover mouse over upgrades for more info |
+| **Scroll Event Log** | Up/Down arrows or mouse wheel (when unlocked) |
 | Quit Game          | Press `Esc` (from main menu or game) |
 | Restart (after loss)| Click anywhere on scoreboard |
 
@@ -82,6 +83,12 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
   - Only shows events from the current turn - previous turn events are removed
   - This ensures you see only fresh, relevant information for decision-making
   - Examples of messages: action confirmations, event outcomes, resource changes
+  - **Scrollable Event Log Upgrade:** After turn 5, you may unlock an enhanced event log system:
+    * **Visual Enhancement:** The event log gains a blue border and "Scrollable" indicator
+    * **Full History:** Access to complete activity history from all previous turns
+    * **Navigation:** Use arrow keys (↑↓) or mouse wheel to scroll through past events
+    * **Turn Organization:** History is organized by turn headers (e.g., "=== Turn 3 ===")
+    * **Backward Compatibility:** Current turn events still appear normally for immediate reference
 - **Scoreboard:** Appears when game ends (game over summary, high score).
 
 ---
@@ -128,6 +135,56 @@ Random events may occur after each turn. Pay attention to the log for effects su
 
 At game over, your survived turns are shown and stored per seed.  
 Compete for the best streak!
+
+---
+
+## Advanced Features
+
+### Scrollable Event Log
+
+The **Scrollable Event Log** is an advanced feature that becomes available as your organization grows. This feature enhances your ability to track and review historical activity.
+
+#### How to Unlock
+
+- **Automatic Trigger:** The event log upgrade becomes available after **Turn 5**
+- **Event:** "Event Log System Upgrade" - Your organization upgrades its event tracking system
+- **No Cost:** This upgrade is provided automatically when conditions are met
+
+#### Features
+
+**Enhanced Visual Design:**
+- Blue border around the activity log area
+- "Activity Log (Scrollable)" title with scroll instructions
+- Visual scroll indicators (▲▼) when more content is available
+
+**Complete History Access:**
+- View all events from previous turns, not just current turn
+- Turn headers organize events by turn (e.g., "=== Turn 3 ===")
+- Events include: actions taken, random events, resource changes, upgrade purchases
+
+**Navigation Controls:**
+- **Arrow Keys:** Use ↑ and ↓ to scroll up and down through history
+- **Mouse Wheel:** Scroll up and down through the event log
+- **Smooth Scrolling:** Navigate through multiple turns of activity seamlessly
+
+**Smart Display:**
+- Current turn events remain visible for immediate reference
+- History is preserved indefinitely while the feature is active
+- Turn headers help you quickly locate specific periods of activity
+
+#### Usage Tips
+
+1. **Strategic Review:** Use the history to review what strategies worked in previous turns
+2. **Event Tracking:** Keep track of random events and their timing
+3. **Resource Management:** Review past resource changes to identify spending patterns
+4. **Decision Making:** Reference past actions when planning future strategies
+
+#### Technical Details
+
+- History storage begins when the feature is unlocked (not retroactive to earlier turns)
+- Current turn events function exactly as before - the feature is additive
+- Scroll position resets when starting a new game
+- The feature remains active for the duration of the game once unlocked
 
 ---
 

@@ -209,14 +209,14 @@ class GameState:
         return rx <= x <= rx+rw and ry <= y <= ry+rh
 
     def end_turn(self):
-        # Store current messages in history if scrollable event log is enabled
+        # Clear event log at start of turn to show only current-turn events
+        # But first store previous messages if scrollable log was already enabled
         if self.scrollable_event_log_enabled and self.messages:
-            # Add turn delimiter and store messages
+            # Add turn delimiter and store messages from previous turn
             turn_header = f"=== Turn {self.turn + 1} ==="
             self.event_log_history.append(turn_header)
             self.event_log_history.extend(self.messages)
-        
-        # Clear event log at start of turn to show only current-turn events
+            
         self.messages = []
         
         # Perform all selected actions
@@ -248,6 +248,15 @@ class GameState:
 
         self.trigger_events()
         self.turn += 1
+        
+        # Store current turn messages if scrollable event log is now enabled
+        # (This handles the case where the feature was enabled during this turn)
+        if self.scrollable_event_log_enabled and self.messages:
+            # If we didn't already add a turn header, add one now
+            if not (self.event_log_history and self.event_log_history[-1].startswith(f"=== Turn {self.turn}")):
+                turn_header = f"=== Turn {self.turn} ==="
+                self.event_log_history.append(turn_header)
+            self.event_log_history.extend(self.messages)
 
         # Log turn summary before checking game over conditions
         self.logger.log_turn_summary(self.turn, self.money, self.staff, self.reputation, self.doom)
