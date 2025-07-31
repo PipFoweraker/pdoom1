@@ -16,6 +16,69 @@ pip install pygame
 python main.py
 ```
 
+Or, install all dependencies (including testing tools) from requirements:
+
+```sh
+pip install -r requirements.txt
+python main.py
+```
+
+### Testing
+
+This project uses [pytest](https://pytest.org/) as the testing framework. All tests are located in the `tests/` directory.
+
+#### Installing Testing Dependencies
+
+If you haven't already installed from requirements.txt:
+
+```sh
+pip install pytest
+```
+
+Or install all dependencies including testing tools:
+
+```sh
+pip install -r requirements.txt
+```
+
+#### Running Tests
+
+To run all tests:
+
+```sh
+pytest
+```
+
+To run tests with verbose output:
+
+```sh
+pytest -v
+```
+
+To run a specific test file:
+
+```sh
+pytest tests/test_filename.py
+```
+
+#### Adding New Tests
+
+- All test files should be placed in the `tests/` directory
+- Test files should be named `test_*.py` (e.g., `test_game_state.py`, `test_actions.py`)
+- Test functions should be named `test_*` (e.g., `test_player_can_buy_upgrade()`)
+- Follow existing test patterns and keep tests focused and readable
+
+#### For Contributors
+
+When adding new features or modifying existing code:
+
+1. **Always add or update tests** for your changes
+2. **Run the full test suite** before submitting contributions: `pytest`
+3. **Ensure all tests pass** - don't break existing functionality
+4. **Write clear, descriptive test names** that explain what is being tested
+
+Tests help ensure the game remains stable and functional as it evolves!
+
 ### Main Menu
 
 When you launch the game, you'll see a main menu with the following options:
