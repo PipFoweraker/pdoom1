@@ -44,6 +44,7 @@ bug_report_selected_field = 0
 bug_report_editing_field = False
 bug_report_success_message = ""
 
+
 def get_weekly_seed():
     import datetime
     # Example: YYYYWW (year and ISO week number)
@@ -100,8 +101,10 @@ def handle_menu_click(mouse_pos, w, h):
                 current_state = 'game'
             elif i == 1:  # Launch with Custom Seed
                 current_state = 'custom_seed_prompt'
-            elif i == 2:  # Options (inactive for now)
-                pass  # Future: settings, difficulty, etc.
+            elif i == 2:  # Options/Settings
+                overlay_content = create_settings_content()
+                overlay_title = "Settings"
+                current_state = 'overlay'
             elif i == 3:  # Player Guide
                 overlay_content = load_markdown_file('PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
@@ -143,8 +146,10 @@ def handle_menu_keyboard(key):
             current_state = 'game'
         elif selected_menu_item == 1:  # Launch with Custom Seed
             current_state = 'custom_seed_prompt'
-        elif selected_menu_item == 2:  # Options (inactive for now)
-            pass  # Future: settings menu
+        elif selected_menu_item == 2:  # Settings 
+            overlay_content = create_settings_content()
+            overlay_title = "Settings"
+            current_state = 'overlay'
         elif selected_menu_item == 3:  # Player Guide
             overlay_content = load_markdown_file('PLAYERGUIDE.md')
             overlay_title = "Player Guide"

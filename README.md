@@ -42,10 +42,12 @@ The game will open with a main menu where you can choose game modes, access docu
 pip install pygame
 ```
 
+
 **Performance issues:**
 - Resize the game window (it's resizable)
 - Close other applications to free up memory
 - Ensure graphics drivers are up to date
+
 
 **Black screen or UI not responding:**
 - Try resizing the window
@@ -63,6 +65,7 @@ The game automatically creates detailed logs in the `logs/` directory:
 ### Testing the Installation
 
 Verify your installation works by running the test suite:
+
 
 ```sh
 # Run all tests (should show 32 tests passing)

@@ -20,12 +20,14 @@ That's it! The game will open with a main menu.
 ### Your Goal
 Survive as long as possible while managing your AI safety lab. Avoid catastrophe (p(Doom) = 100%), keep your team, and outlast the reckless competition.
 
+
 ### Basic Game Loop
 1. **Take actions** (left panel) - Click buttons to spend money and affect your lab
 2. **Buy upgrades** (right panel) - One-time purchases that give permanent benefits  
 3. **End your turn** - Click "END TURN" or press `Space` to see results
 4. **Handle events** - Random events will challenge your strategy
 5. **Repeat** - Keep going until game over
+
 
 ### Resources to Manage
 - **💰 Money**: Spend on actions and upgrades, earn through fundraising
@@ -59,6 +61,8 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 - **Weekly Seed**: This week's community challenge (same for everyone)
 - **Custom Seed**: Enter your own seed for repeatable scenarios
 - **Report Bug**: Submit feedback or issues (privacy-focused)
+=======
+
 
 ---
 
@@ -69,6 +73,7 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 **Right Panel:** Available upgrades (becomes icons after purchase)
 **Bottom Center:** "END TURN" button
 **Bottom Left:** Activity log showing recent events
+
 
 ### Activity Log
 - Shows events from the current turn only
@@ -103,7 +108,9 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 
 ---
 
+
 ## Game Events & Tips
+
 
 ### Random Events to Watch For
 - **🔬 Lab Breakthrough** - p(Doom) increases (mitigated by security upgrades)
@@ -128,11 +135,14 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 - Monitor opponent progress and react accordingly
 - Use espionage strategically to plan ahead
 
+
 **Core Principles:**
 - Always keep at least 2 staff (prevents immediate game over)
 - Don't let p(Doom) get above 80% without a plan
 - Reputation makes fundraising much more effective
 - Research is expensive but essential for long-term survival
+
+
 
 ---
 
@@ -145,7 +155,10 @@ You lose if any of these happen:
 
 Your score is how many turns you survived. Try to beat your previous best!
 
+
 ---
+=======
+
 
 ## Seeds & High Scores
 
