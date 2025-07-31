@@ -309,12 +309,81 @@ def draw_ui(screen, game_state, w, h):
     et_text = big_font.render("END TURN (Space)", True, (255, 240, 240))
     screen.blit(et_text, (endturn_rect[0] + int(w*0.01), endturn_rect[1] + int(h*0.015)))
 
-    # Messages log (bottom left)
+    # Messages log (bottom left) - Enhanced with scrollable history
     log_x, log_y = int(w*0.04), int(h*0.74)
-    screen.blit(font.render("Activity Log:", True, (255, 255, 180)), (log_x, log_y))
-    for i, msg in enumerate(game_state.messages[-7:]):
-        msg_text = small_font.render(msg, True, (255, 255, 210))
-        screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
+    
+    if game_state.scrollable_event_log_enabled:
+        # Enhanced scrollable event log with border and visual indicators
+        log_width = int(w * 0.44)
+        log_height = int(h * 0.22)
+        
+        # Draw border around the event log area
+        border_rect = pygame.Rect(log_x - 5, log_y - 5, log_width + 10, log_height + 10)
+        pygame.draw.rect(screen, (80, 100, 120), border_rect, border_radius=8)
+        pygame.draw.rect(screen, (120, 140, 180), border_rect, width=2, border_radius=8)
+        
+        # Event log title with scroll indicator
+        title_text = font.render("Activity Log (Scrollable)", True, (255, 255, 180))
+        screen.blit(title_text, (log_x, log_y))
+        
+        # Scroll indicator
+        if len(game_state.event_log_history) > 0 or len(game_state.messages) > 0:
+            scroll_info = small_font.render("↑↓ or mouse wheel to scroll", True, (200, 200, 255))
+            screen.blit(scroll_info, (log_x + log_width - scroll_info.get_width(), log_y))
+        
+        # Calculate visible area for messages
+        content_y = log_y + int(h * 0.04)
+        content_height = log_height - int(h * 0.05)
+        line_height = int(h * 0.025)
+        max_visible_lines = content_height // line_height
+        
+        # Combine history and current messages for display
+        all_messages = list(game_state.event_log_history) + game_state.messages
+        
+        # Calculate scrolling
+        total_lines = len(all_messages)
+        start_line = max(0, min(game_state.event_log_scroll_offset, total_lines - max_visible_lines))
+        
+        # Draw messages with scrolling
+        for i in range(max_visible_lines):
+            msg_index = start_line + i
+            if msg_index < len(all_messages):
+                msg = all_messages[msg_index]
+                y_pos = content_y + i * line_height
+                
+                # Different colors for turn headers vs regular messages
+                if msg.startswith("=== Turn"):
+                    color = (255, 220, 120)  # Yellow for turn headers
+                    font_to_use = font
+                else:
+                    color = (255, 255, 210)  # White for regular messages
+                    font_to_use = small_font
+                
+                # Truncate long messages to fit width
+                max_chars = log_width // 8  # Rough estimate
+                if len(msg) > max_chars:
+                    msg = msg[:max_chars-3] + "..."
+                
+                msg_text = font_to_use.render(msg, True, color)
+                screen.blit(msg_text, (log_x + int(w*0.01), y_pos))
+        
+        # Draw scroll indicators if needed
+        if start_line > 0:
+            # Up arrow indicator
+            up_arrow = small_font.render("▲", True, (180, 255, 180))
+            screen.blit(up_arrow, (log_x + log_width - 25, content_y))
+        
+        if start_line + max_visible_lines < total_lines:
+            # Down arrow indicator
+            down_arrow = small_font.render("▼", True, (180, 255, 180))
+            screen.blit(down_arrow, (log_x + log_width - 25, content_y + content_height - 20))
+            
+    else:
+        # Original simple event log (for backward compatibility)
+        screen.blit(font.render("Activity Log:", True, (255, 255, 180)), (log_x, log_y))
+        for i, msg in enumerate(game_state.messages[-7:]):
+            msg_text = small_font.render(msg, True, (255, 255, 210))
+            screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
 
 def draw_tooltip(screen, text, mouse_pos, w, h):
     font = pygame.font.SysFont('Consolas', int(h*0.018))

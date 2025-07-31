@@ -59,6 +59,11 @@ class GameState:
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
 
+        # Scrollable event log feature
+        self.scrollable_event_log_enabled = False
+        self.event_log_history = []  # Full history of all messages
+        self.event_log_scroll_offset = 0
+
         # Copy modular content
         self.actions = [dict(a) for a in ACTIONS]
         self.events = [dict(e) for e in EVENTS]
@@ -204,6 +209,13 @@ class GameState:
         return rx <= x <= rx+rw and ry <= y <= ry+rh
 
     def end_turn(self):
+        # Store current messages in history if scrollable event log is enabled
+        if self.scrollable_event_log_enabled and self.messages:
+            # Add turn delimiter and store messages
+            turn_header = f"=== Turn {self.turn + 1} ==="
+            self.event_log_history.append(turn_header)
+            self.event_log_history.extend(self.messages)
+        
         # Clear event log at start of turn to show only current-turn events
         self.messages = []
         

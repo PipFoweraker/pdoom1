@@ -188,5 +188,151 @@ class TestEventLog(unittest.TestCase):
         self.assertEqual(len(turn_messages), 3, "Should have captured 3 turns of messages")
 
 
+class TestScrollableEventLog(unittest.TestCase):
+    """Test scrollable event log functionality."""
+    
+    def test_scrollable_event_log_initially_disabled(self):
+        """Test that the scrollable event log starts disabled."""
+        game_state = GameState("test_seed")
+        
+        # Verify scrollable event log is initially disabled
+        self.assertFalse(game_state.scrollable_event_log_enabled, 
+                        "Scrollable event log should be disabled initially")
+        
+        # Verify event log history starts empty
+        self.assertEqual(len(game_state.event_log_history), 0,
+                        "Event log history should be empty initially")
+        
+        # Verify scroll offset starts at 0
+        self.assertEqual(game_state.event_log_scroll_offset, 0,
+                        "Event log scroll offset should be 0 initially")
+    
+    def test_scrollable_event_log_flag_set_by_event(self):
+        """Test that the scrollable event log flag is set when the event triggers."""
+        game_state = GameState("test_seed")
+        
+        # Verify flag is initially False
+        self.assertFalse(game_state.scrollable_event_log_enabled)
+        
+        # Manually trigger the event (simulating the condition being met)
+        # Find the event log upgrade event
+        event_log_event = None
+        for event in game_state.events:
+            if event["name"] == "Event Log System Upgrade":
+                event_log_event = event
+                break
+        
+        self.assertIsNotNone(event_log_event, "Event Log System Upgrade event should exist")
+        
+        # Execute the event effect
+        event_log_event["effect"](game_state)
+        
+        # Verify the flag is now set
+        self.assertTrue(game_state.scrollable_event_log_enabled,
+                       "Scrollable event log should be enabled after event triggers")
+        
+        # Verify a message was added about the upgrade
+        upgrade_message_found = any("Event Log Upgrade" in msg for msg in game_state.messages)
+        self.assertTrue(upgrade_message_found,
+                       "Should have a message about the event log upgrade")
+    
+    def test_event_history_storage_when_enabled(self):
+        """Test that event history is stored when scrollable log is enabled."""
+        game_state = GameState("test_seed")
+        
+        # Enable the scrollable event log
+        game_state.scrollable_event_log_enabled = True
+        
+        # Add some messages
+        game_state.messages.extend([
+            "Test message 1",
+            "Test message 2",
+            "Action completed"
+        ])
+        
+        # Verify event log history is empty before turn end
+        self.assertEqual(len(game_state.event_log_history), 0,
+                        "Event log history should be empty before turn end")
+        
+        # End the turn
+        game_state.end_turn()
+        
+        # Verify messages were stored in history
+        self.assertGreater(len(game_state.event_log_history), 0,
+                          "Event log history should have entries after turn end")
+        
+        # Verify the turn header was added
+        turn_header_found = any("=== Turn" in entry for entry in game_state.event_log_history)
+        self.assertTrue(turn_header_found,
+                       "Event log history should contain a turn header")
+        
+        # Verify our test messages were stored
+        for test_msg in ["Test message 1", "Test message 2", "Action completed"]:
+            self.assertIn(test_msg, game_state.event_log_history,
+                         f"Message '{test_msg}' should be in event log history")
+    
+    def test_event_history_not_stored_when_disabled(self):
+        """Test that event history is not stored when scrollable log is disabled."""
+        game_state = GameState("test_seed")
+        
+        # Ensure scrollable event log is disabled
+        game_state.scrollable_event_log_enabled = False
+        
+        # Add some messages
+        game_state.messages.extend([
+            "Test message 1",
+            "Test message 2"
+        ])
+        
+        # End the turn
+        game_state.end_turn()
+        
+        # Verify event log history remains empty
+        self.assertEqual(len(game_state.event_log_history), 0,
+                        "Event log history should remain empty when feature is disabled")
+    
+    def test_multiple_turns_history_accumulation(self):
+        """Test that history accumulates across multiple turns when enabled."""
+        game_state = GameState("test_seed")
+        game_state.scrollable_event_log_enabled = True
+        game_state.money = 1000  # Ensure we have enough money for multiple turns
+        
+        # Account for the initial "Game started!" message
+        initial_messages = game_state.messages.copy()
+        
+        # Track expected messages for verification
+        expected_history = []
+        
+        # Run multiple turns
+        for turn in range(3):
+            # Add the turn header and initial messages if this is the first turn
+            if turn == 0:
+                expected_history.append(f"=== Turn 1 ===")
+                expected_history.extend(initial_messages)
+            else:
+                expected_history.append(f"=== Turn {turn + 1} ===")
+            
+            # Add unique messages for this turn
+            turn_messages = [f"Turn {turn + 1} message A", f"Turn {turn + 1} message B"]
+            game_state.messages.extend(turn_messages)
+            expected_history.extend(turn_messages)
+            
+            # End the turn
+            game_state.end_turn()
+        
+        # Verify all expected messages are in history
+        self.assertEqual(len(game_state.event_log_history), len(expected_history),
+                        f"History should contain all {len(expected_history)} messages")
+        
+        # Verify specific messages are present
+        for expected_msg in expected_history:
+            self.assertIn(expected_msg, game_state.event_log_history,
+                         f"Message '{expected_msg}' should be in history")
+        
+        # Verify turn headers are present
+        turn_headers = [entry for entry in game_state.event_log_history if "=== Turn" in entry]
+        self.assertEqual(len(turn_headers), 3, "Should have 3 turn headers")
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -173,6 +173,14 @@ def main():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mx, my = event.pos
                     
+                    # Handle mouse wheel for scrollable event log
+                    if current_state == 'game' and game_state and game_state.scrollable_event_log_enabled:
+                        if event.button == 4:  # Mouse wheel up
+                            game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 3)
+                        elif event.button == 5:  # Mouse wheel down
+                            max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
+                            game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 3)
+                    
                     # Handle mouse clicks based on current state
                     if current_state == 'main_menu':
                         handle_menu_click((mx, my), SCREEN_W, SCREEN_H)
@@ -230,6 +238,14 @@ def main():
                             seed_input += event.unicode
                             
                     elif current_state == 'game':
+                        # Arrow key scrolling for scrollable event log
+                        if game_state and game_state.scrollable_event_log_enabled:
+                            if event.key == pygame.K_UP:
+                                game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 1)
+                            elif event.key == pygame.K_DOWN:
+                                max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
+                                game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 1)
+                        
                         # Existing game keyboard handling
                         if event.key == pygame.K_SPACE and game_state and not game_state.game_over:
                             game_state.end_turn()
