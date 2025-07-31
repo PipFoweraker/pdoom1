@@ -64,7 +64,7 @@ class GameState:
         self.events = [dict(e) for e in EVENTS]
         
         # Initialize game logger
-        self.logger = GameLogger(seed)
+        self.logger = GameLogger(seed, "P(Doom) v3")
 
     def _add(self, attr, val):
         if attr == 'doom':
