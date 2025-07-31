@@ -1,66 +1,52 @@
 # P(Doom): Bureaucracy Strategy Game Prototype
-
 A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *Pandemic*, and clicker games.
 
 ## Getting Started
 
 ### Requirements
-
 - Python 3.8+
 - [pygame](https://www.pygame.org/) (`pip install pygame`)
 
 ### How to Run
-
 ```sh
 pip install pygame
 python main.py
 ```
 
 Or, install all dependencies (including testing tools) from requirements:
-
 ```sh
 pip install -r requirements.txt
 python main.py
 ```
 
 ### Testing
-
 This project uses [pytest](https://pytest.org/) as the testing framework. All tests are located in the `tests/` directory.
 
 #### Installing Testing Dependencies
-
 If you haven't already installed from requirements.txt:
 
 ```sh
 pip install pytest
 ```
-
 Or install all dependencies including testing tools:
 
 ```sh
 pip install -r requirements.txt
 ```
-
 #### Running Tests
 
 To run all tests:
-
 ```sh
 pytest
 ```
-
 To run tests with verbose output:
-
 ```sh
 pytest -v
 ```
-
 To run a specific test file:
-
 ```sh
 pytest tests/test_filename.py
 ```
-
 #### Adding New Tests
 
 - All test files should be placed in the `tests/` directory
