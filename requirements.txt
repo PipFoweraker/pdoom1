@@ -1,0 +1,5 @@
+# Core game dependencies
+pygame
+
+# Testing dependencies
+pytest>=7.0.0
