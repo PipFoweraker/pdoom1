@@ -20,33 +20,46 @@ python main.py
 ```
 
 ### Testing
-This project uses [pytest](https://pytest.org/) as the testing framework. All tests are located in the `tests/` directory.
 
-#### Installing Testing Dependencies
-If you haven't already installed from requirements.txt:
+This project includes comprehensive automated tests to ensure core functionality works correctly. All tests are located in the `tests/` directory.
 
-```sh
-pip install pytest
-```
-Or install all dependencies including testing tools:
-
-```sh
-pip install -r requirements.txt
-```
 #### Running Tests
 
-To run all tests:
+**Standard approach using unittest:**
 ```sh
-pytest
+# Run all tests
+python -m unittest discover tests -v
+
+# Run specific test file
+python -m unittest tests.test_game_state -v
+
+# Run specific test category (e.g., event log tests)
+python -m unittest tests.test_game_state.TestEventLog -v
 ```
-To run tests with verbose output:
+
+**Alternative with pytest (if installed):**
 ```sh
-pytest -v
+pip install pytest
+pytest tests/ -v
 ```
-To run a specific test file:
-```sh
-pytest tests/test_filename.py
-```
+
+#### Key Test Coverage
+
+The test suite validates critical functionality including:
+
+- ✅ **Event Log Management:** Activity log clears at start of each turn and shows only current-turn events
+- ✅ **Game State:** Resource management, turn progression, win/loss conditions
+- ✅ **Upgrade System:** Purchase logic, effect activation, cost validation
+- ✅ **Action System:** Action execution, cost deduction, effect application
+- ✅ **Game Logging:** Comprehensive session logging for debugging and analysis
+
+#### Continuous Integration
+
+The repository includes GitHub Actions workflow (`.github/workflows/test.yml`) that automatically runs tests on:
+- Push to main/develop branches
+- Pull requests
+- Multiple Python versions (3.8, 3.9, 3.10, 3.11)
+
 #### Adding New Tests
 
 - All test files should be placed in the `tests/` directory

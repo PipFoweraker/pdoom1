@@ -41,6 +41,8 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
 - **Select actions** (left panel) by clicking their buttons. Each costs money and has effects (see tooltips).
 - **Buy upgrades** (right panel) by clicking available upgrade buttons. Purchased upgrades shrink to icons at the top right.
 - **End your turn** by clicking the "END TURN" button (bottom center) or pressing `Space`.
+  - **Event Log Reset:** When you end your turn, the activity log is automatically cleared
+  - This ensures you only see events from the current turn, keeping information fresh and relevant
 - **View resource changes** and random events in the activity log (bottom left).
 - **Repeat:** Take actions, buy upgrades, end turn, and react to events.
 - **Game ends** if:
@@ -75,7 +77,11 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
 - **Left Column:** Actions you can take this turn.
 - **Right Column:** Upgrades (buttons if available, icons if purchased).
 - **Bottom Center:** "END TURN" button.
-- **Bottom Left:** Activity log (recent events, outcomes). **Note:** The activity log resets at the start of each turn, showing only events from the current turn.
+- **Bottom Left:** **Activity Log** (recent events, outcomes)
+  - **Important:** The activity log is automatically cleared at the start of each turn
+  - Only shows events from the current turn - previous turn events are removed
+  - This ensures you see only fresh, relevant information for decision-making
+  - Examples of messages: action confirmations, event outcomes, resource changes
 - **Scoreboard:** Appears when game ends (game over summary, high score).
 
 ---
