@@ -63,6 +63,7 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
 | Select Action      | Click action button (left) |
 | Buy Upgrade        | Click upgrade button (right) |
 | End Turn           | Click "END TURN" or press `Space` |
+| Toggle Sound       | Click mute button (♪/🔇) in bottom right |
 | Tooltips           | Hover mouse over upgrades for more info |
 | **Scroll Event Log** | Up/Down arrows or mouse wheel (when unlocked) |
 | Quit Game          | Press `Esc` (from main menu or game) |
@@ -75,9 +76,11 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
 ## UI Layout
 
 - **Top Bar:** Money, Staff, Reputation, p(Doom), Opponent Progress, Turn, Seed.
+- **Second Resource Bar:** Compute, Research Progress, Papers Published.
 - **Left Column:** Actions you can take this turn.
 - **Right Column:** Upgrades (buttons if available, icons if purchased).
 - **Bottom Center:** "END TURN" button.
+- **Bottom Right:** Mute button (♪/🔇) to toggle sound effects.
 - **Bottom Left:** **Activity Log** (recent events, outcomes)
   - **Important:** The activity log is automatically cleared at the start of each turn
   - Only shows events from the current turn - previous turn events are removed
@@ -89,6 +92,11 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
     * **Navigation:** Use arrow keys (↑↓) or mouse wheel to scroll through past events
     * **Turn Organization:** History is organized by turn headers (e.g., "=== Turn 3 ===")
     * **Backward Compatibility:** Current turn events still appear normally for immediate reference
+- **Lower Middle:** **Employee Blobs** - animated visualizations of your staff
+  - Round blobs representing each employee
+  - New hires animate in from the left side
+  - Productive employees (with compute access) display glowing halos
+  - Positioned in a cluster pattern, no overlapping
 - **Scoreboard:** Appears when game ends (game over summary, high score).
 
 ---
@@ -101,7 +109,8 @@ Here are the actions you can take each turn (subject to funds):
 - **Fundraise:** Gain money (scaled by reputation), possible small reputation loss.
 - **Safety Research:** Reduce p(Doom), +Reputation. Costly.
 - **Governance Research:** Reduce p(Doom), +Reputation. Costly.
-- **Hire Staff:** Gain staff, costs money.
+- **Buy Compute:** Purchase compute resources. $100 per 10 flops. Essential for employee productivity.
+- **Hire Staff:** Gain staff, costs money. New employees appear as animated blobs.
 - **Espionage:** Chance to learn opponent progress (risky).
 
 Action details and costs are displayed on each button.
@@ -135,6 +144,35 @@ Random events may occur after each turn. Pay attention to the log for effects su
 
 At game over, your survived turns are shown and stored per seed.  
 Compete for the best streak!
+
+---
+
+## Compute Resources & Employee Productivity
+
+### Compute System
+- **Compute Resource:** Essential for employee productivity, starts at 0
+- **Purchase:** Use "Buy Compute" action - $100 per 10 flops
+- **Weekly Consumption:** Each employee attempts to use 1 compute per turn (week)
+- **Starting Funding:** $100,000 to support expanded compute infrastructure
+
+### Employee Productivity
+- **With Compute:** Employees who get compute show glowing halos and contribute to research
+- **Without Compute:** Employees without compute incur doom penalties for the organization
+- **Research Progress:** Productive employees have a 30% chance each turn to advance research
+- **Research Papers:** When progress reaches 100, a paper is published (+5 reputation per paper)
+
+### Employee Blobs
+- **Visualization:** Each staff member appears as a round blob in the lower middle area
+- **Animation:** New hires animate in from the left side when recruited
+- **Clustering:** Blobs automatically position in a non-overlapping cluster pattern
+- **Halos:** Productive employees (with compute) display a glowing green halo effect
+- **Sound Effects:** New employee blobs make a soft "bloop" sound when hired
+
+### Weekly Cycle
+- Each turn represents one week in the organization
+- During end turn, employees automatically attempt to consume compute
+- Research progress accumulates from productive employees
+- Papers are published automatically when thresholds are reached
 
 ---
 
@@ -185,6 +223,28 @@ The **Scrollable Event Log** is an advanced feature that becomes available as yo
 - Current turn events function exactly as before - the feature is additive
 - Scroll position resets when starting a new game
 - The feature remains active for the duration of the game once unlocked
+
+---
+
+## Sound & Settings
+
+### Sound System
+- **Default State:** Sound effects are enabled by default
+- **Mute Button:** Click the sound icon (♪/🔇) in the bottom-right corner during gameplay
+- **Sound Effects:** Includes "blobby" sound when new employees are hired
+- **Settings Menu:** Access full settings from the main menu
+
+### Settings Menu
+- Available from the main menu by selecting "Settings"
+- Provides information about sound controls and gameplay features
+- Explains all UI elements and game mechanics
+- Press Escape to return to the main menu
+
+### Audio Features
+- **Employee Hiring:** Soft "bloop" sound effect when new staff join
+- **Mute Toggle:** Instantly enables/disables all sound effects
+- **Visual Feedback:** Mute button changes color and icon based on sound state
+- **Graceful Fallback:** Game automatically disables sound if no audio device available
 
 ---
 
@@ -280,6 +340,15 @@ This project maintains automated tests to ensure game stability and functionalit
   - Upgrade effect activation and management
   - Success and failure message generation
   - Upgrade initialization and structure validation
+
+- **Compute & Sound Systems (`tests/test_compute_and_sound.py`)**:
+  - Compute resource initialization and management
+  - Buy Compute action functionality and costs
+  - Employee productivity with and without compute
+  - Research progress and papers published tracking
+  - Sound system functionality and toggle controls
+  - Employee blob system creation and management
+  - Sound effect playback (graceful failure handling)
 
 **Contributors:** Please keep this Test Coverage section current when adding new test files or expanding test coverage. This helps other contributors understand what is already tested and what areas might need additional testing.
 

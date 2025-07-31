@@ -91,6 +91,14 @@ This project maintains automated tests for core game functionality. Current test
   - Action, event, and upgrade logging
   - Game completion and log file generation
 
+- **Compute & Sound Systems (`tests/test_compute_and_sound.py`)**:
+  - Compute resource system and employee productivity logic
+  - Buy Compute action functionality and cost validation
+  - Research progress tracking and paper publication
+  - Sound system controls and audio effect management
+  - Employee blob visualization and animation system
+  - Staff hiring/firing with blob management integration
+
 **Contributors:** Please keep this Test Coverage section current when adding new test files or expanding test coverage. This helps other contributors understand what is already tested and what areas might need additional testing.
 
 #### For Contributors
@@ -114,7 +122,7 @@ When you launch the game, you'll see a main menu with the following options:
 
 - **Launch with Weekly Seed**: Start immediately with the current week's challenge seed
 - **Launch with Custom Seed**: Enter your own seed for repeatable games  
-- **Options**: Placeholder for future settings (currently inactive)
+- **Settings**: Access sound controls and gameplay information
 - **Player Guide**: View the complete player guide with controls and strategies
 - **README**: View this documentation file
 
@@ -123,14 +131,25 @@ When you launch the game, you'll see a main menu with the following options:
 - Press Enter or click to select an option
 - Press Escape to quit from the main menu
 
+### Sound & Settings
+
+- **Sound Effects**: Enabled by default, includes "blobby" sounds for new employee hires
+- **Mute Button**: Click the sound icon (♪/🔇) in bottom-right corner during gameplay
+- **Settings Menu**: Access from main menu for detailed information about controls and features
+- **Auto-Disable**: Sound automatically disables if no audio device is available
+
 ### Gameplay
 
 - The game now starts with a **main menu** where you can choose your game mode.
 - Select "Launch with Weekly Seed" for the current week's challenge, or "Launch with Custom Seed" to enter your own.
 - Enter a seed at startup (or leave blank for weekly challenge seed).
 - Select actions (left column) by clicking buttons. Buy upgrades (right) by clicking. Purchased upgrades shrink to icons at the top right.
+- **Compute Resources**: Purchase compute with "Buy Compute" action ($100 per 10 flops) to keep employees productive.
 - Take as many actions as you want, then click "End Turn" (or press Space) to process choices and see results.
-- Manage Money, Staff, Reputation, and p(Doom) (AI risk). Pay staff each turn.
+- Manage Money, Staff, Reputation, p(Doom) (AI risk), Compute, and Research Progress. Pay staff each turn.
+- **Employee Blobs**: Watch animated employee blobs in the lower middle area. Productive employees glow!
+- **Weekly Cycle**: Each turn is one week. Employees consume compute and contribute to research papers.
+- **Sound Effects**: Enjoy "bloop" sounds when hiring staff. Toggle with mute button (bottom right).
 - Watch out for random events and opponent progress!
 - **Game Over**: p(Doom) reaches 100, all staff leave, or the opponent finishes their AGI.
 - At game end, see your turn survived and local high score (per seed).
@@ -159,6 +178,37 @@ The game features a **Scrollable Event Log** system that provides enhanced activ
 - Scroll arrows (▲▼) to indicate available content above/below current view
 - Responsive sizing that adapts to screen dimensions
 - Maintains current turn visibility while providing historical access
+
+---
+
+## Compute Resources & Employee System
+
+### New Game Features
+
+**Compute Resource System:**
+- New compute resource added to game state, starts at 0
+- "Buy Compute" action: $100 per 10 flops
+- Weekly consumption: employees attempt to use 1 compute each
+- Starting funding increased to $100,000 to support compute infrastructure
+
+**Employee Productivity Cycle:**
+- Each turn represents one week of operations
+- Employees with compute access contribute to research progress (30% chance)
+- Employees without compute incur doom penalties
+- Research papers published when progress reaches 100 (+5 reputation per paper)
+
+**Visual Employee Blobs:**
+- Animated round blobs representing each staff member
+- New hires animate in from the left side
+- Productive employees display glowing green halos
+- Clustered positioning in lower middle area, no overlapping
+- Sound effects: "bloop" sound when new employees are hired
+
+**Sound System:**
+- Integrated SoundManager class with pygame audio
+- Graceful fallback when no audio device available
+- Mute button in bottom-right corner during gameplay
+- Settings menu accessible from main menu
 
 ---
 
