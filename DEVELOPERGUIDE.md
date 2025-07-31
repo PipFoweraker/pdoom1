@@ -32,18 +32,59 @@ Welcome, contributors and modders! This guide explains how to develop, test, and
 
 ### Running Tests
 
-This project uses `pytest`. All tests are in the `tests/` directory.
+This project uses `unittest` for comprehensive testing. All tests are in the `tests/` directory.
 
+**Standard unittest approach:**
+```sh
+# Run all tests
+python -m unittest discover tests -v
+
+# Run specific test file
+python -m unittest tests.test_game_state -v
+
+# Run specific test class
+python -m unittest tests.test_game_state.TestEventLog -v
+```
+
+**Alternative with pytest (if installed):**
 ```sh
 pip install pytest
-pytest
+pytest tests/ -v
 ```
 
-Or run a specific test file:
+### Testing Requirements for Deployment
 
-```sh
-pytest tests/test_game_state.py
-```
+**All deployments should include automated testing.** The test suite covers:
+
+- ✅ **Event Log Behavior:** Ensures activity log clears each turn and shows only current-turn events
+- ✅ **Game State Management:** Validates resource management and state transitions
+- ✅ **Upgrade System:** Tests purchase logic and effect activation  
+- ✅ **Game Logging:** Verifies comprehensive game session logging
+- ✅ **Core Game Mechanics:** Action execution, turn progression, game-over conditions
+
+**Deployment Pipeline Recommendations:**
+
+1. **Pre-deployment:** Always run the full test suite
+   ```sh
+   python -m unittest discover tests -v
+   ```
+
+2. **CI/CD Integration:** Include test runs in your continuous integration
+   ```yaml
+   # Example GitHub Actions step
+   - name: Run Tests
+     run: python -m unittest discover tests -v
+   ```
+
+3. **Test Coverage:** Current coverage includes 24 automated tests covering all major systems
+
+4. **Quality Gate:** Do not deploy if any tests fail - the test suite catches critical bugs
+
+**Key Test Categories:**
+- Event log clearing and message management
+- Resource calculations and constraints  
+- Game state persistence and transitions
+- User interface interactions and validations
 
 ### Adding New Tests
 
