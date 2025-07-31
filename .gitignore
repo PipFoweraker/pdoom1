@@ -59,3 +59,7 @@ logs/
 *.log
 gamelog_*.txt
 emergency_gamelog_*.txt
+
+# Bug reports (user privacy)
+bug_reports/
+bug_report_*.json
