@@ -33,7 +33,7 @@ def main():
     # --- Prompt for seed --- #
     while prompting_seed:
         screen.fill((32, 32, 44))
-        draw_seed_prompt(screen, seed_input, get_weekly_seed(), game_state)
+        draw_seed_prompt(screen, seed_input, get_weekly_seed())
         pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
