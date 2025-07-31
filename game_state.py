@@ -5,6 +5,7 @@ from actions import ACTIONS
 from upgrades import UPGRADES
 from events import EVENTS
 from game_logger import GameLogger
+from sound_manager import SoundManager
 
 SCORE_FILE = "local_highscore.json"
 
@@ -71,7 +72,7 @@ class GameState:
 
         # Employee blob system
         self.employee_blobs = []  # List of employee blob objects with positions and states
-        self.sound_enabled = True  # Sound settings
+        self.sound_manager = SoundManager()  # Sound system
         
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
@@ -131,6 +132,9 @@ class GameState:
                 'animation_progress': 0.0  # Will animate in
             }
             self.employee_blobs.append(blob)
+            
+            # Play blob sound effect for new hire
+            self.sound_manager.play_blob_sound()
             
     def _remove_employee_blobs(self, count):
         """Remove employee blobs when staff leave"""
@@ -275,6 +279,14 @@ class GameState:
             self.end_turn()
             return None
 
+        # Mute button (bottom right)
+        mute_rect = self._get_mute_button_rect(w, h)
+        if self._in_rect(mouse_pos, mute_rect):
+            new_state = self.sound_manager.toggle()
+            status = "enabled" if new_state else "disabled"
+            self.messages.append(f"Sound {status}")
+            return None
+
         return None
 
     def check_hover(self, mouse_pos, w, h):
@@ -330,6 +342,12 @@ class GameState:
 
     def _get_endturn_rect(self, w, h):
         return (int(w*0.39), int(h*0.88), int(w*0.22), int(h*0.07))
+
+    def _get_mute_button_rect(self, w, h):
+        button_size = int(min(w, h) * 0.04)
+        button_x = w - button_size - 20
+        button_y = h - button_size - 20
+        return (button_x, button_y, button_size, button_size)
 
     def _in_rect(self, pt, rect):
         x, y = pt

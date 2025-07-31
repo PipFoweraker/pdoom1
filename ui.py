@@ -93,11 +93,7 @@ def draw_main_menu(screen, w, h, selected_item):
         button_y = start_y + i * spacing
         
         # Determine button colors
-        if i == 2:  # Options - greyed out/inactive
-            bg_color = (80, 80, 80)
-            border_color = (120, 120, 120)
-            text_color = (150, 150, 150)
-        elif i == selected_item:  # Selected item
+        if i == selected_item:  # Selected item
             bg_color = (100, 150, 200)
             border_color = (150, 200, 255)
             text_color = (255, 255, 255)
@@ -391,6 +387,9 @@ def draw_ui(screen, game_state, w, h):
 
     # Draw employee blobs (lower middle area)
     draw_employee_blobs(screen, game_state, w, h)
+    
+    # Draw mute button (bottom right)
+    draw_mute_button(screen, game_state, w, h)
 
 def draw_employee_blobs(screen, game_state, w, h):
     """Draw employee blobs in the lower middle area with animation and halos"""
@@ -441,6 +440,36 @@ def draw_employee_blobs(screen, game_state, w, h):
         # Productivity indicator (small dot)
         if blob['productivity'] > 0:
             pygame.draw.circle(screen, (100, 255, 100), (x, y + 8), 4)
+
+def draw_mute_button(screen, game_state, w, h):
+    """Draw mute/unmute button in bottom right corner"""
+    # Button position (bottom right)
+    button_size = int(min(w, h) * 0.04)
+    button_x = w - button_size - 20
+    button_y = h - button_size - 20
+    
+    # Button colors
+    if game_state.sound_manager.is_enabled():
+        bg_color = (100, 200, 100)  # Green when sound is on
+        icon_color = (255, 255, 255)
+        symbol = "♪"  # Musical note when sound is on
+    else:
+        bg_color = (200, 100, 100)  # Red when sound is off
+        icon_color = (255, 255, 255) 
+        symbol = "🔇"  # Muted symbol when sound is off
+    
+    # Draw button background
+    button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
+    pygame.draw.rect(screen, bg_color, button_rect, border_radius=8)
+    pygame.draw.rect(screen, (255, 255, 255), button_rect, width=2, border_radius=8)
+    
+    # Draw icon
+    font_size = int(button_size * 0.6)
+    font = pygame.font.SysFont('Arial', font_size)
+    icon_surf = font.render(symbol, True, icon_color)
+    icon_x = button_x + (button_size - icon_surf.get_width()) // 2
+    icon_y = button_y + (button_size - icon_surf.get_height()) // 2
+    screen.blit(icon_surf, (icon_x, icon_y))
 
 def draw_tooltip(screen, text, mouse_pos, w, h):
     font = pygame.font.SysFont('Consolas', int(h*0.018))

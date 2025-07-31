@@ -20,12 +20,38 @@ clock = pygame.time.Clock()
 # Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay'
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Options", "Player Guide", "README"]
+menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Settings", "Player Guide", "README"]
 seed = None
 seed_input = ""
 overlay_content = None
 overlay_title = None
 overlay_scroll = 0
+
+def create_settings_content():
+    """Create content for the settings menu"""
+    return """# Settings
+
+## Sound
+Sound effects are enabled by default and can be toggled using the mute button in the bottom-right corner during gameplay.
+
+## Controls
+- **Mute Button**: Click the sound icon in the bottom-right corner to toggle all sound effects
+- **Employee Blobs**: Watch animated employee blobs in the lower middle area
+- **Compute Resources**: Purchase compute using the "Buy Compute" action ($100 per 10 flops)
+- **Research Progress**: Productive employees (with compute) contribute to research papers
+
+## Gameplay Features
+- **Weekly Ticks**: Each turn represents one week
+- **Employee Productivity**: Employees with compute show glowing halos and contribute to research
+- **Research Papers**: Published when research progress reaches 100, boosting reputation
+- **Starting Funding**: $100,000 to support expanded operations
+
+## Visual Indicators
+- **Glowing Halos**: Productive employees with compute access
+- **Blob Animation**: New employees animate in from the side
+- **Resource Display**: Compute, research progress, and papers published shown in top bar
+
+Press Escape to return to the main menu."""
 
 def get_weekly_seed():
     import datetime
@@ -83,8 +109,10 @@ def handle_menu_click(mouse_pos, w, h):
                 current_state = 'game'
             elif i == 1:  # Launch with Custom Seed
                 current_state = 'custom_seed_prompt'
-            elif i == 2:  # Options (inactive for now)
-                pass  # Future: settings, difficulty, etc.
+            elif i == 2:  # Options/Settings
+                overlay_content = create_settings_content()
+                overlay_title = "Settings"
+                current_state = 'overlay'
             elif i == 3:  # Player Guide
                 overlay_content = load_markdown_file('PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
@@ -124,8 +152,10 @@ def handle_menu_keyboard(key):
             current_state = 'game'
         elif selected_menu_item == 1:  # Launch with Custom Seed
             current_state = 'custom_seed_prompt'
-        elif selected_menu_item == 2:  # Options (inactive for now)
-            pass  # Future: settings menu
+            elif i == 2:  # Options/Settings
+                overlay_content = create_settings_content()
+                overlay_title = "Settings"
+                current_state = 'overlay'
         elif selected_menu_item == 3:  # Player Guide
             overlay_content = load_markdown_file('PLAYERGUIDE.md')
             overlay_title = "Player Guide"
