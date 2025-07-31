@@ -4,7 +4,8 @@ import pygame
 import random
 import json
 from game_state import GameState
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success
+from bug_reporter import BugReporter
 
 # --- Adaptive window sizing --- #
 pygame.init()
@@ -17,15 +18,31 @@ pygame.display.set_caption("P(Doom) - Bureaucracy Strategy Prototype v3")
 clock = pygame.time.Clock()
 
 # --- Menu and game state management --- #
-# Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay'
+# Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay', 'bug_report', 'bug_report_success'
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Options", "Player Guide", "README"]
+menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Options", "Player Guide", "README", "Report Bug"]
 seed = None
 seed_input = ""
 overlay_content = None
 overlay_title = None
 overlay_scroll = 0
+
+# Bug report form state
+bug_report_data = {
+    "type_index": 0,
+    "title": "",
+    "description": "",
+    "steps": "",
+    "expected": "",
+    "actual": "",
+    "attribution": False,
+    "name": "",
+    "contact": ""
+}
+bug_report_selected_field = 0
+bug_report_editing_field = False
+bug_report_success_message = ""
 
 def get_weekly_seed():
     import datetime
@@ -93,6 +110,8 @@ def handle_menu_click(mouse_pos, w, h):
                 overlay_content = load_markdown_file('README.md')
                 overlay_title = "README"
                 current_state = 'overlay'
+            elif i == 5:  # Report Bug
+                current_state = 'bug_report'
             break
 
 def handle_menu_keyboard(key):
@@ -134,6 +153,180 @@ def handle_menu_keyboard(key):
             overlay_content = load_markdown_file('README.md')
             overlay_title = "README"
             current_state = 'overlay'
+        elif selected_menu_item == 5:  # Report Bug
+            current_state = 'bug_report'
+
+def handle_bug_report_click(mouse_pos, w, h):
+    """Handle mouse clicks in the bug report form."""
+    global current_state, bug_report_data, bug_report_selected_field, bug_report_success_message
+    
+    # For now, just implement button handling - form field clicking can be added later
+    mx, my = mouse_pos
+    
+    # Button positions (matching the UI layout)
+    button_y = 80 + 9 * 45 + 20  # Based on UI layout calculation
+    button_width = 150
+    button_height = 40
+    button_spacing = 20
+    
+    total_button_width = 3 * button_width + 2 * button_spacing
+    start_x = (w - total_button_width) // 2
+    
+    # Check which button was clicked
+    buttons = [
+        {"text": "Save Locally", "action": "save_local"},
+        {"text": "Submit to GitHub", "action": "submit_github"},
+        {"text": "Cancel", "action": "cancel"}
+    ]
+    
+    for i, button in enumerate(buttons):
+        button_x = start_x + i * (button_width + button_spacing)
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            if button["action"] == "cancel":
+                current_state = 'main_menu'
+            elif button["action"] == "save_local":
+                save_bug_report_locally()
+            elif button["action"] == "submit_github":
+                submit_bug_report_to_github()
+            break
+
+def handle_bug_report_keyboard(key):
+    """Handle keyboard input in the bug report form."""
+    global bug_report_selected_field, bug_report_editing_field, bug_report_data, current_state
+    
+    # Number of fields (excluding name field when attribution is off)
+    total_fields = 8 if bug_report_data.get("attribution", False) else 7
+    
+    if key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
+    elif key == pygame.K_UP:
+        bug_report_selected_field = (bug_report_selected_field - 1) % total_fields
+    elif key == pygame.K_DOWN or key == pygame.K_TAB:
+        bug_report_selected_field = (bug_report_selected_field + 1) % total_fields
+    elif key == pygame.K_RETURN:
+        # Handle field-specific actions
+        if bug_report_selected_field == 0:  # Type dropdown
+            type_options = ["bug", "feature_request", "feedback"]
+            current_index = bug_report_data.get("type_index", 0)
+            bug_report_data["type_index"] = (current_index + 1) % len(type_options)
+        elif bug_report_selected_field == 6:  # Attribution checkbox
+            bug_report_data["attribution"] = not bug_report_data.get("attribution", False)
+            if not bug_report_data["attribution"]:
+                bug_report_data["name"] = ""  # Clear name if attribution disabled
+        else:
+            # Toggle editing mode for text fields
+            bug_report_editing_field = not bug_report_editing_field
+    elif bug_report_editing_field and bug_report_selected_field in [1, 2, 3, 4, 5, 7, 8]:
+        # Handle text input for text fields
+        field_keys = ["", "title", "description", "steps", "expected", "actual", "", "name", "contact"]
+        field_key = field_keys[bug_report_selected_field]
+        
+        if field_key:
+            if key == pygame.K_BACKSPACE:
+                bug_report_data[field_key] = bug_report_data.get(field_key, "")[:-1]
+            elif key == pygame.K_RETURN:
+                bug_report_editing_field = False
+            elif hasattr(pygame.event.Event, 'unicode'):  # Handle text input
+                # This is a simplified approach - in a real implementation,
+                # you'd want to handle unicode input properly
+                if key < 256 and chr(key).isprintable():
+                    bug_report_data[field_key] = bug_report_data.get(field_key, "") + chr(key)
+
+def save_bug_report_locally():
+    """Save the bug report to local storage."""
+    global bug_report_success_message, current_state
+    
+    try:
+        reporter = BugReporter()
+        
+        # Convert form data to bug report
+        type_options = ["bug", "feature_request", "feedback"]
+        report_type = type_options[bug_report_data.get("type_index", 0)]
+        
+        report = reporter.create_bug_report(
+            report_type=report_type,
+            title=bug_report_data.get("title", ""),
+            description=bug_report_data.get("description", ""),
+            steps_to_reproduce=bug_report_data.get("steps", ""),
+            expected_behavior=bug_report_data.get("expected", ""),
+            actual_behavior=bug_report_data.get("actual", ""),
+            include_attribution=bug_report_data.get("attribution", False),
+            attribution_name=bug_report_data.get("name", ""),
+            contact_info=bug_report_data.get("contact", "")
+        )
+        
+        filepath = reporter.save_report_locally(report)
+        bug_report_success_message = f"Bug report saved successfully!\n\nSaved to: {filepath}\n\nThank you for helping improve P(Doom)!"
+        current_state = 'bug_report_success'
+        
+        # Reset form
+        reset_bug_report_form()
+        
+    except Exception as e:
+        bug_report_success_message = f"Error saving bug report:\n{str(e)}\n\nPlease try again or contact the developers directly."
+        current_state = 'bug_report_success'
+
+def submit_bug_report_to_github():
+    """Submit the bug report to GitHub (placeholder for future implementation)."""
+    global bug_report_success_message, current_state
+    
+    # For now, this will just format the report for GitHub and save it locally
+    # In a future implementation, this could integrate with GitHub API
+    
+    try:
+        reporter = BugReporter()
+        
+        # Convert form data to bug report
+        type_options = ["bug", "feature_request", "feedback"]
+        report_type = type_options[bug_report_data.get("type_index", 0)]
+        
+        report = reporter.create_bug_report(
+            report_type=report_type,
+            title=bug_report_data.get("title", ""),
+            description=bug_report_data.get("description", ""),
+            steps_to_reproduce=bug_report_data.get("steps", ""),
+            expected_behavior=bug_report_data.get("expected", ""),
+            actual_behavior=bug_report_data.get("actual", ""),
+            include_attribution=bug_report_data.get("attribution", False),
+            attribution_name=bug_report_data.get("name", ""),
+            contact_info=bug_report_data.get("contact", "")
+        )
+        
+        # Format for GitHub
+        github_format = reporter.format_for_github(report)
+        
+        # Save locally with GitHub formatting
+        filepath = reporter.save_report_locally(report)
+        
+        bug_report_success_message = f"Bug report prepared for GitHub!\n\nTitle: {github_format['title']}\n\nTo submit to GitHub:\n1. Go to the P(Doom) repository issues page\n2. Click 'New Issue'\n3. Copy the content from: {filepath}\n\nThank you for contributing!"
+        current_state = 'bug_report_success'
+        
+        # Reset form
+        reset_bug_report_form()
+        
+    except Exception as e:
+        bug_report_success_message = f"Error preparing GitHub report:\n{str(e)}\n\nPlease try saving locally instead."
+        current_state = 'bug_report_success'
+
+def reset_bug_report_form():
+    """Reset the bug report form to default values."""
+    global bug_report_data, bug_report_selected_field, bug_report_editing_field
+    
+    bug_report_data = {
+        "type_index": 0,
+        "title": "",
+        "description": "",
+        "steps": "",
+        "expected": "",
+        "actual": "",
+        "attribution": False,
+        "name": "",
+        "contact": ""
+    }
+    bug_report_selected_field = 0
+    bug_report_editing_field = False
 
 def main():
     """
@@ -143,12 +336,15 @@ def main():
     - 'main_menu': Shows main menu with navigation options
     - 'custom_seed_prompt': Text input for custom game seed
     - 'overlay': Scrollable display for README/Player Guide
+    - 'bug_report': Bug reporting form interface
+    - 'bug_report_success': Success message after bug report submission
     - 'game': Active gameplay (existing game logic)
     
     The state machine allows smooth transitions between menu, documentation,
-    and gameplay while preserving the original game experience.
+    bug reporting, and gameplay while preserving the original game experience.
     """
     global seed, seed_input, current_state, screen, SCREEN_W, SCREEN_H, selected_menu_item, overlay_scroll
+    global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
     
     # Initialize game state as None - will be created when game starts
     game_state = None
@@ -191,6 +387,12 @@ def main():
                     elif current_state == 'custom_seed_prompt':
                         # Future: could add click-to-focus for text input
                         pass
+                    elif current_state == 'bug_report':
+                        # Handle bug report form clicks
+                        handle_bug_report_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'bug_report_success':
+                        # Click anywhere to return to main menu
+                        current_state = 'main_menu'
                     elif current_state == 'game':
                         # Existing game mouse handling
                         if scoreboard_active:
@@ -221,6 +423,14 @@ def main():
                             overlay_scroll = max(0, overlay_scroll - 20)
                         elif event.key == pygame.K_DOWN:
                             overlay_scroll += 20
+                            
+                    elif current_state == 'bug_report':
+                        # Bug report form keyboard handling
+                        handle_bug_report_keyboard(event.key)
+                        
+                    elif current_state == 'bug_report_success':
+                        # Any key returns to main menu
+                        current_state = 'main_menu'
                             
                     elif current_state == 'custom_seed_prompt':
                         # Text input for custom seed (preserving original logic)
@@ -273,6 +483,14 @@ def main():
                 # Dark background for documentation overlay
                 screen.fill((40, 40, 50))
                 draw_overlay(screen, overlay_title, overlay_content, overlay_scroll, SCREEN_W, SCREEN_H)
+                
+            elif current_state == 'bug_report':
+                # Bug report form
+                buttons = draw_bug_report_form(screen, bug_report_data, bug_report_selected_field, SCREEN_W, SCREEN_H)
+                
+            elif current_state == 'bug_report_success':
+                # Bug report success message
+                draw_bug_report_success(screen, bug_report_success_message, SCREEN_W, SCREEN_H)
                 
             elif current_state == 'game':
                 # Preserve original game appearance and logic
