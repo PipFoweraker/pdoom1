@@ -201,9 +201,33 @@ FAILED temp_failing_test.py::TestFailure::test_this_will_fail - AssertionError: 
 - Check that you have read/write permissions in the project directory
 - On some systems, use `python3` instead of `python`
 
+### Test Coverage
+
+This project maintains automated tests to ensure game stability and functionality. Current test coverage includes:
+
+- **GameState (`tests/test_game_state.py`)**: 
+  - GameState initialization and default values
+  - Core resource setup (money, staff, reputation, doom)
+  - Game state collections and properties
+
+- **Upgrades (`tests/test_upgrades.py`)**:
+  - Upgrade purchasing with sufficient money
+  - Upgrade purchase failure with insufficient money  
+  - Prevention of duplicate purchases
+  - Upgrade effect activation and management
+  - Success and failure message generation
+  - Upgrade initialization and structure validation
+
+**Contributors:** Please keep this Test Coverage section current when adding new test files or expanding test coverage. This helps other contributors understand what is already tested and what areas might need additional testing.
+
 ### For Contributors
 
-See the README.md for detailed information about adding new tests, test structure, and contributor guidelines.
+See the README.md for detailed information about adding new tests, test structure, and contributor guidelines. When contributing:
+
+1. **Always add or update tests** for your changes
+2. **Run the full test suite** before submitting: `pytest`
+3. **Update the Test Coverage section** in both README.md and PLAYERGUIDE.md when adding new tests
+4. **Ensure all tests pass** - don't break existing functionality
 
 ---
 

@@ -68,6 +68,25 @@ pytest tests/test_filename.py
 - Test functions should be named `test_*` (e.g., `test_player_can_buy_upgrade()`)
 - Follow existing test patterns and keep tests focused and readable
 
+#### Test Coverage
+
+This project maintains automated tests for core game functionality. Current test coverage includes:
+
+- **GameState (`tests/test_game_state.py`)**: 
+  - GameState initialization and default values
+  - Core resource setup (money, staff, reputation, doom)
+  - Game state collections and properties
+
+- **Upgrades (`tests/test_upgrades.py`)**:
+  - Upgrade purchasing with sufficient money
+  - Upgrade purchase failure with insufficient money  
+  - Prevention of duplicate purchases
+  - Upgrade effect activation and management
+  - Success and failure message generation
+  - Upgrade initialization and structure validation
+
+**Contributors:** Please keep this Test Coverage section current when adding new test files or expanding test coverage. This helps other contributors understand what is already tested and what areas might need additional testing.
+
 #### For Contributors
 
 When adding new features or modifying existing code:
@@ -76,7 +95,8 @@ When adding new features or modifying existing code:
 2. **Run the full test suite** before submitting contributions: `pytest`
 3. **Ensure all tests pass** - don't break existing functionality
 4. **Write clear, descriptive test names** that explain what is being tested
-5. **Don't commit test artifacts** - the `.gitignore` file excludes `__pycache__/`, `.pytest_cache/`, `*.pyc`, and other test artifacts from version control
+5. **Update the Test Coverage section** in both README.md and PLAYERGUIDE.md when adding new tests
+6. **Don't commit test artifacts** - the `.gitignore` file excludes `__pycache__/`, `.pytest_cache/`, `*.pyc`, and other test artifacts from version control
 
 Tests help ensure the game remains stable and functional as it evolves!
 
@@ -218,6 +238,7 @@ When adding new features or fixing bugs, please add corresponding tests:
 4. Write test methods that start with `test_`
 5. Use assertions to verify expected behavior
 6. Run tests to ensure they pass
+7. **Update the Test Coverage section** in both README.md and PLAYERGUIDE.md to document what your tests cover
 
 This helps keep the game stable and makes it easier for future contributors to understand expected behavior.
 
