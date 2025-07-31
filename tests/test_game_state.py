@@ -37,5 +37,63 @@ class TestGameStateInitialization(unittest.TestCase):
         self.assertGreater(len(game_state.messages), 0, "Should have initial game message")
 
 
+class TestEventLog(unittest.TestCase):
+    """Test event log behavior, specifically that it clears each turn."""
+    
+    def test_event_log_clears_on_end_turn(self):
+        """Test that the event log is cleared at the start of each turn."""
+        # Create a new GameState with sufficient resources
+        game_state = GameState("test_seed")
+        
+        # Verify we start with an initial message
+        initial_message_count = len(game_state.messages)
+        self.assertGreater(initial_message_count, 0, "Should have initial game message")
+        
+        # Add some messages manually to simulate events
+        game_state.messages.append("Test message 1")
+        game_state.messages.append("Test message 2")
+        
+        # Verify messages were added
+        self.assertEqual(len(game_state.messages), initial_message_count + 2, 
+                        "Should have added 2 test messages")
+        
+        # Store the pre-turn messages to verify they're cleared
+        pre_turn_messages = game_state.messages.copy()
+        
+        # End the turn
+        game_state.end_turn()
+        
+        # Verify the old messages are gone by checking none of our test messages remain
+        for old_message in pre_turn_messages:
+            self.assertNotIn(old_message, game_state.messages, 
+                           "Old messages should be cleared from the log")
+    
+    def test_event_log_shows_only_current_turn_events(self):
+        """Test that the event log shows only events from the current turn."""
+        # Create a game state that will have staff unable to be paid (triggers a message)
+        game_state = GameState("test_seed")
+        
+        # Set up a scenario where staff maintenance will cause a message
+        game_state.money = 10  # Not enough for staff maintenance (2 staff * 15 = 30)
+        
+        # Add some old messages
+        game_state.messages.append("Old message 1")
+        game_state.messages.append("Old message 2")
+        old_messages = game_state.messages.copy()
+        
+        # End the turn - this should clear old messages and add new ones about staff leaving
+        game_state.end_turn()
+        
+        # Verify old messages are gone
+        for old_message in old_messages:
+            self.assertNotIn(old_message, game_state.messages,
+                           "Old messages should not be in the current turn log")
+        
+        # Verify we got a message about staff leaving (since we couldn't pay them)
+        staff_message_found = any("staff" in msg.lower() for msg in game_state.messages)
+        self.assertTrue(staff_message_found, 
+                       "Should have a message about staff when unable to pay maintenance")
+
+
 if __name__ == '__main__':
     unittest.main()
