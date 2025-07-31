@@ -53,3 +53,9 @@ ENV/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Game logs
+logs/
+*.log
+gamelog_*.txt
+emergency_gamelog_*.txt

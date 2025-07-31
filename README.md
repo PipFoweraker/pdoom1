@@ -237,6 +237,22 @@ This helps keep the game stable and makes it easier for future contributors to u
 - "Cluttered" UI and tooltips for purchased upgrades are intentional for future expansion (e.g., paperwork, news, etc.).
 - The code is ready for further modularization and scenario/patch expansion!
 
+### Game Logs
+
+P(Doom) automatically generates detailed game logs for debugging and analysis purposes:
+
+- **Location**: Game logs are saved in the `logs/` directory
+- **Purpose**: Logs capture all actions, upgrades, events, and turn summaries for debugging and game balancing
+- **Privacy**: Logs contain only game data and basic OS info - no personal information
+- **Format**: Human-readable text files named `gamelog_<YYYYMMDD_HHMMSS>.txt`
+
+These logs are useful for:
+- **Players**: Reporting bugs with detailed game state information
+- **Developers**: Analyzing game balance and debugging issues
+- **Contributors**: Understanding game mechanics and testing changes
+
+Log files are automatically excluded from version control but the `logs/` directory structure is preserved.
+
 ---
 
 **Not affiliated with any AI org. For fun, education, and satire only.**

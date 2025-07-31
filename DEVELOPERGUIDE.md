@@ -116,6 +116,110 @@ class TestGameState(unittest.TestCase):
 
 ---
 
+## Game Logs
+
+P(Doom) includes a comprehensive logging system that captures all meaningful in-game actions and events for debugging, analysis, and balancing purposes.
+
+### Log File Location and Format
+
+- **Directory**: `logs/` (created automatically)
+- **File naming**: `gamelog_<YYYYMMDD_HHMMSS>.txt` (web-safe format)
+- **Encoding**: UTF-8 text files
+
+### What Gets Logged
+
+The logging system captures:
+
+1. **Game Start Information**:
+   - Timestamp of game start
+   - Game version
+   - Seed used
+   - Basic OS type (Linux/Windows/Darwin only - no personal info)
+
+2. **Player Actions**:
+   - All actions selected and executed
+   - Action costs and turn numbers
+   - Timestamps for each action
+
+3. **Upgrade Purchases**:
+   - Upgrade name and cost
+   - Turn when purchased
+   - Timestamps
+
+4. **Game Events**:
+   - Triggered events with descriptions
+   - Turn numbers and timestamps
+
+5. **Turn Summaries**:
+   - End-of-turn resource states (Money, Staff, Reputation, Doom)
+   - Turn progression tracking
+
+6. **Game End**:
+   - Reason for game ending (victory/defeat/quit/crash)
+   - Final turn number and resource state
+   - Final timestamp
+
+### Privacy and Data Protection
+
+The logging system is designed to be privacy-conscious:
+
+- **No personal information**: No usernames, file paths, or system details beyond OS type
+- **Local only**: Logs are stored locally in the `logs/` directory
+- **Minimal system info**: Only basic OS type for debugging compatibility issues
+- **No network transmission**: Logs never leave the player's machine
+
+### Log Lifecycle Management
+
+- **Creation**: One log file per game session
+- **Retention**: No automatic cleanup - players manage their own log files
+- **Size**: Logs are typically small (< 1KB for normal games)
+- **Git exclusion**: Log files are excluded from version control via `.gitignore`
+
+### Using Logs for Development
+
+Logs are valuable for:
+
+- **Balancing**: Analyzing player behavior patterns and resource progression
+- **Debugging**: Understanding game state when bugs are reported
+- **Testing**: Verifying game mechanics work as expected
+- **Analytics**: Understanding how players engage with different features
+
+### Log File Schema Example
+
+```
+=== GAME START ===
+Timestamp: 2025-07-31 10:10:06
+Game Version: v3
+Seed: weekly_seed_202531
+OS: Linux
+==================
+[10:10:06] Turn 0: Action 'Grow Community' (cost: 25)
+[10:10:06] Turn 0: Upgrade 'Accounting Software' purchased (cost: 50)
+[10:10:06] Turn 0: Event 'Media Leak' - Reputation drops but awareness grows
+[10:10:06] Turn 1 End: Money=225, Staff=3, Reputation=18, Doom=14/100
+
+=== GAME END ===
+Timestamp: 10:10:45
+Reason: Player victory - opponent progress halted
+Final Turn: 15
+Final Money: 150
+Final Staff: 5
+Final Reputation: 45
+Final Doom: 75/100
+================
+```
+
+### Future Log Management
+
+Consider implementing:
+
+- Log rotation or archival for long-term players
+- Optional anonymized analytics export
+- Log parsing tools for developers
+- Integration with telemetry systems (with explicit user consent)
+
+---
+
 ## Documentation Maintenance
 
 - README.md: Project intro, install, quickstart, troubleshooting, links to guides.

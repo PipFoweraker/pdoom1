@@ -4,6 +4,7 @@ import os
 from actions import ACTIONS
 from upgrades import UPGRADES
 from events import EVENTS
+from game_logger import GameLogger
 
 SCORE_FILE = "local_highscore.json"
 
@@ -61,6 +62,9 @@ class GameState:
         # Copy modular content
         self.actions = [dict(a) for a in ACTIONS]
         self.events = [dict(e) for e in EVENTS]
+        
+        # Initialize game logger
+        self.logger = GameLogger(seed, "P(Doom) v3")
 
     def _add(self, attr, val):
         if attr == 'doom':
@@ -124,6 +128,8 @@ class GameState:
                         upg["purchased"] = True
                         self.upgrade_effects.add(upg["effect_key"])
                         self.messages.append(f"Upgrade purchased: {upg['name']}")
+                        # Log upgrade purchase
+                        self.logger.log_upgrade(upg["name"], upg["cost"], self.turn)
                     else:
                         self.messages.append("Not enough money for upgrade.")
                 else:
@@ -205,6 +211,8 @@ class GameState:
         for idx in self.selected_actions:
             action = self.actions[idx]
             self.money -= action["cost"]
+            # Log the action
+            self.logger.log_action(action["name"], action["cost"], self.turn)
             if action.get("upside"): action["upside"](self)
             if action.get("downside"): action["downside"](self)
             if action.get("rules"): action["rules"](self)
@@ -229,20 +237,40 @@ class GameState:
         self.trigger_events()
         self.turn += 1
 
+        # Log turn summary before checking game over conditions
+        self.logger.log_turn_summary(self.turn, self.money, self.staff, self.reputation, self.doom)
+
         # Win/lose conditions
+        game_end_reason = None
         if self.doom >= self.max_doom:
             self.game_over = True
+            game_end_reason = "p(Doom) reached maximum"
             self.messages.append("p(Doom) has reached maximum! The world is lost.")
         elif self.opp_progress >= 100:
             self.game_over = True
+            game_end_reason = "Opponent deployed dangerous AGI"
             self.messages.append("Frontier lab has deployed dangerous AGI. Game over!")
         elif self.staff == 0:
             self.game_over = True
+            game_end_reason = "All staff left"
             self.messages.append("All your staff have left. Game over!")
 
         self.staff = max(0, self.staff)
         self.reputation = max(0, self.reputation)
         self.money = max(self.money, 0)
+
+        # If game ended, log final state and write log file
+        if self.game_over and game_end_reason:
+            final_resources = {
+                'money': self.money,
+                'staff': self.staff,
+                'reputation': self.reputation,
+                'doom': self.doom
+            }
+            self.logger.log_game_end(game_end_reason, self.turn, final_resources)
+            log_path = self.logger.write_log_file()
+            if log_path:
+                self.messages.append(f"Game log saved to: {log_path}")
 
         # Save high score if achieved
         self.save_highscore()
@@ -251,7 +279,10 @@ class GameState:
         for event in self.events:
             if event["trigger"](self):
                 event["effect"](self)
-                self.messages.append(f"Event: {event['name']} - {event['desc']}")
+                event_message = f"Event: {event['name']} - {event['desc']}"
+                self.messages.append(event_message)
+                # Log the event
+                self.logger.log_event(event["name"], event["desc"], self.turn)
 
     # --- High score --- #
     def load_highscore(self):

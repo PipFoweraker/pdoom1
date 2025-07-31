@@ -156,120 +156,152 @@ def main():
     tooltip_text = None
 
     running = True
-    while running:
-        clock.tick(30)  # 30 FPS for smooth menu navigation
-        
-        # --- Event handling based on current state --- #
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-                
-            elif event.type == pygame.VIDEORESIZE:
-                # Update screen size and redraw (responsive design)
-                SCREEN_W, SCREEN_H = event.w, event.h
-                screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
-                
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                mx, my = event.pos
-                
-                # Handle mouse clicks based on current state
-                if current_state == 'main_menu':
-                    handle_menu_click((mx, my), SCREEN_W, SCREEN_H)
-                elif current_state == 'overlay':
-                    # Click anywhere to return to main menu from overlay
-                    current_state = 'main_menu'
-                    overlay_scroll = 0
-                elif current_state == 'custom_seed_prompt':
-                    # Future: could add click-to-focus for text input
-                    pass
-                elif current_state == 'game':
-                    # Existing game mouse handling
-                    if scoreboard_active:
-                        # On scoreboard, click anywhere to restart
-                        main()
-                        return
-                    tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+    try:
+        while running:
+            clock.tick(30)  # 30 FPS for smooth menu navigation
+            
+            # --- Event handling based on current state --- #
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
                     
-            elif event.type == pygame.MOUSEMOTION:
-                # Mouse hover effects only active during gameplay
-                if current_state == 'game' and game_state:
-                    tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
+                elif event.type == pygame.VIDEORESIZE:
+                    # Update screen size and redraw (responsive design)
+                    SCREEN_W, SCREEN_H = event.w, event.h
+                    screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
                     
-            elif event.type == pygame.KEYDOWN:
-                # Keyboard handling varies by state
-                if current_state == 'main_menu':
-                    if event.key == pygame.K_ESCAPE:
-                        running = False
-                    else:
-                        handle_menu_keyboard(event.key)
-                        
-                elif current_state == 'overlay':
-                    # Overlay navigation: scroll with arrows, escape to return
-                    if event.key == pygame.K_ESCAPE:
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    mx, my = event.pos
+                    
+                    # Handle mouse clicks based on current state
+                    if current_state == 'main_menu':
+                        handle_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'overlay':
+                        # Click anywhere to return to main menu from overlay
                         current_state = 'main_menu'
                         overlay_scroll = 0
-                    elif event.key == pygame.K_UP:
-                        overlay_scroll = max(0, overlay_scroll - 20)
-                    elif event.key == pygame.K_DOWN:
-                        overlay_scroll += 20
+                    elif current_state == 'custom_seed_prompt':
+                        # Future: could add click-to-focus for text input
+                        pass
+                    elif current_state == 'game':
+                        # Existing game mouse handling
+                        if scoreboard_active:
+                            # On scoreboard, click anywhere to restart
+                            main()
+                            return
+                        tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                         
-                elif current_state == 'custom_seed_prompt':
-                    # Text input for custom seed (preserving original logic)
-                    if event.key == pygame.K_RETURN:
-                        # Use entered seed or weekly default
-                        seed = seed_input.strip() if seed_input.strip() else get_weekly_seed()
-                        random.seed(seed)
-                        current_state = 'game'
-                    elif event.key == pygame.K_BACKSPACE:
-                        seed_input = seed_input[:-1]
-                    elif event.key == pygame.K_ESCAPE:
-                        current_state = 'main_menu'
-                        seed_input = ""
-                    elif event.unicode.isprintable():
-                        seed_input += event.unicode
+                elif event.type == pygame.MOUSEMOTION:
+                    # Mouse hover effects only active during gameplay
+                    if current_state == 'game' and game_state:
+                        tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
                         
-                elif current_state == 'game':
-                    # Existing game keyboard handling
-                    if event.key == pygame.K_SPACE and game_state and not game_state.game_over:
-                        game_state.end_turn()
-                    elif event.key == pygame.K_ESCAPE:
-                        running = False
+                elif event.type == pygame.KEYDOWN:
+                    # Keyboard handling varies by state
+                    if current_state == 'main_menu':
+                        if event.key == pygame.K_ESCAPE:
+                            running = False
+                        else:
+                            handle_menu_keyboard(event.key)
+                            
+                    elif current_state == 'overlay':
+                        # Overlay navigation: scroll with arrows, escape to return
+                        if event.key == pygame.K_ESCAPE:
+                            current_state = 'main_menu'
+                            overlay_scroll = 0
+                        elif event.key == pygame.K_UP:
+                            overlay_scroll = max(0, overlay_scroll - 20)
+                        elif event.key == pygame.K_DOWN:
+                            overlay_scroll += 20
+                            
+                    elif current_state == 'custom_seed_prompt':
+                        # Text input for custom seed (preserving original logic)
+                        if event.key == pygame.K_RETURN:
+                            # Use entered seed or weekly default
+                            seed = seed_input.strip() if seed_input.strip() else get_weekly_seed()
+                            random.seed(seed)
+                            current_state = 'game'
+                        elif event.key == pygame.K_BACKSPACE:
+                            seed_input = seed_input[:-1]
+                        elif event.key == pygame.K_ESCAPE:
+                            current_state = 'main_menu'
+                            seed_input = ""
+                        elif event.unicode.isprintable():
+                            seed_input += event.unicode
+                            
+                    elif current_state == 'game':
+                        # Existing game keyboard handling
+                        if event.key == pygame.K_SPACE and game_state and not game_state.game_over:
+                            game_state.end_turn()
+                        elif event.key == pygame.K_ESCAPE:
+                            running = False
 
-        # --- Game state initialization --- #
-        # Create game state when entering game for first time
-        if current_state == 'game' and game_state is None:
-            game_state = GameState(seed)
-            scoreboard_active = False
+            # --- Game state initialization --- #
+            # Create game state when entering game for first time
+            if current_state == 'game' and game_state is None:
+                game_state = GameState(seed)
+                scoreboard_active = False
 
-        # --- Rendering based on current state --- #
-        if current_state == 'main_menu':
-            # Grey background as specified in requirements
-            screen.fill((128, 128, 128))
-            draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item)
-            
-        elif current_state == 'custom_seed_prompt':
-            # Preserve original seed prompt appearance
-            screen.fill((32, 32, 44))
-            draw_seed_prompt(screen, seed_input, get_weekly_seed())
-            
-        elif current_state == 'overlay':
-            # Dark background for documentation overlay
-            screen.fill((40, 40, 50))
-            draw_overlay(screen, overlay_title, overlay_content, overlay_scroll, SCREEN_W, SCREEN_H)
-            
-        elif current_state == 'game':
-            # Preserve original game appearance and logic
-            screen.fill((25, 25, 35))
-            if game_state.game_over:
-                draw_scoreboard(screen, game_state, SCREEN_W, SCREEN_H, seed)
-                scoreboard_active = True
-            else:
-                draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
-                if tooltip_text:
-                    draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
-                    
-        pygame.display.flip()
-    pygame.quit()
+            # --- Rendering based on current state --- #
+            if current_state == 'main_menu':
+                # Grey background as specified in requirements
+                screen.fill((128, 128, 128))
+                draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item)
+                
+            elif current_state == 'custom_seed_prompt':
+                # Preserve original seed prompt appearance
+                screen.fill((32, 32, 44))
+                draw_seed_prompt(screen, seed_input, get_weekly_seed())
+                
+            elif current_state == 'overlay':
+                # Dark background for documentation overlay
+                screen.fill((40, 40, 50))
+                draw_overlay(screen, overlay_title, overlay_content, overlay_scroll, SCREEN_W, SCREEN_H)
+                
+            elif current_state == 'game':
+                # Preserve original game appearance and logic
+                screen.fill((25, 25, 35))
+                if game_state.game_over:
+                    draw_scoreboard(screen, game_state, SCREEN_W, SCREEN_H, seed)
+                    scoreboard_active = True
+                else:
+                    draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
+                    if tooltip_text:
+                        draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
+                        
+            pygame.display.flip()
+    except Exception as e:
+        # If an exception occurs during gameplay, try to save the game log
+        if game_state and hasattr(game_state, 'logger') and not game_state.game_over:
+            try:
+                final_resources = {
+                    'money': game_state.money,
+                    'staff': game_state.staff,
+                    'reputation': game_state.reputation,
+                    'doom': game_state.doom
+                }
+                game_state.logger.log_game_end(f"Game crashed: {str(e)}", game_state.turn, final_resources)
+                log_path = game_state.logger.write_log_file()
+                print(f"Game crashed, but log saved to: {log_path}")
+            except Exception:
+                print("Game crashed and could not save log")
+        raise  # Re-raise the exception
+    finally:
+        # Ensure we try to write log on any exit if game was in progress
+        if game_state and hasattr(game_state, 'logger') and not game_state.game_over:
+            try:
+                final_resources = {
+                    'money': game_state.money,
+                    'staff': game_state.staff,
+                    'reputation': game_state.reputation,
+                    'doom': game_state.doom
+                }
+                game_state.logger.log_game_end("Game quit by user", game_state.turn, final_resources)
+                log_path = game_state.logger.write_log_file()
+                print(f"Game log saved to: {log_path}")
+            except Exception:
+                pass
+        pygame.quit()
 
 if __name__ == "__main__":
     main()
