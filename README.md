@@ -166,6 +166,60 @@ When you launch the game, you'll see a main menu with the following options:
 
 ---
 
+## Testing
+
+The game includes automated tests to ensure core functionality works correctly. Tests are located in the `tests/` directory.
+
+### Running Tests
+
+Run all tests using Python's built-in unittest module:
+
+```sh
+python3 -m unittest discover tests -v
+```
+
+Or run a specific test file:
+
+```sh
+python3 -m unittest tests.test_game_state -v
+```
+
+### Sample Test
+
+Here's an example test that verifies GameState initialization:
+
+```python
+import unittest
+from game_state import GameState
+
+class TestGameStateInitialization(unittest.TestCase):
+    def test_game_state_default_values(self):
+        """Test that a new GameState starts with the correct default values."""
+        game_state = GameState("test_seed")
+        
+        # Verify core resource defaults
+        self.assertEqual(game_state.money, 300)
+        self.assertEqual(game_state.staff, 2)
+        self.assertEqual(game_state.reputation, 15)
+        self.assertEqual(game_state.doom, 12)
+        self.assertFalse(game_state.game_over)
+```
+
+### Adding New Tests
+
+When adding new features or fixing bugs, please add corresponding tests:
+
+1. Create a new test file in `tests/` directory (e.g., `test_new_feature.py`)
+2. Import the modules you want to test
+3. Create test classes that inherit from `unittest.TestCase`
+4. Write test methods that start with `test_`
+5. Use assertions to verify expected behavior
+6. Run tests to ensure they pass
+
+This helps keep the game stable and makes it easier for future contributors to understand expected behavior.
+
+---
+
 ## Tips & Modular Structure
 
 - All game content (actions, upgrades, events) is in its own file for easy patching.
