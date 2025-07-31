@@ -25,7 +25,17 @@ class GameState:
         elif attr == 'reputation':
             self.reputation = max(self.reputation + val, 0)
         elif attr == 'staff':
+            old_staff = self.staff
             self.staff = max(self.staff + val, 0)
+            # Update employee blobs when staff changes
+            if val > 0:  # Hiring
+                self._add_employee_blobs(val)
+            elif val < 0:  # Staff leaving
+                self._remove_employee_blobs(old_staff - self.staff)
+        elif attr == 'compute':
+            self.compute = max(self.compute + val, 0)
+        elif attr == 'research_progress':
+            self.research_progress = max(self.research_progress + val, 0)
         return None
 
 # Ensure last_balance_change gets set on any direct subtraction/addition to money:
@@ -39,10 +49,13 @@ class GameState:
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
         # Core resources
-        self.money = 300
+        self.money = 100000  # Increased starting funding as required
         self.staff = 2
         self.reputation = 15
         self.doom = 12  # Out of 100
+        self.compute = 0  # New compute resource, starts at 0
+        self.research_progress = 0  # Track research progress for paper generation
+        self.papers_published = 0  # Count of research papers published
         self.turn = 0
         self.max_doom = 100
         self.selected_actions = []
@@ -56,6 +69,10 @@ class GameState:
         self.opp_progress = random.randint(15, 40)
         self.known_opp_progress = None
 
+        # Employee blob system
+        self.employee_blobs = []  # List of employee blob objects with positions and states
+        self.sound_enabled = True  # Sound settings
+        
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
 
@@ -70,6 +87,107 @@ class GameState:
         
         # Initialize game logger
         self.logger = GameLogger(seed, "P(Doom) v3")
+        
+        # Initialize employee blobs for starting staff
+        self._initialize_employee_blobs()
+
+    def _initialize_employee_blobs(self):
+        """Initialize employee blobs for starting staff"""
+        import math
+        for i in range(self.staff):
+            # Position blobs in lower middle area, clustered
+            base_x = 400 + (i % 3) * 60  # 3 blobs per row
+            base_y = 500 + (i // 3) * 60  # Stack rows
+            
+            blob = {
+                'id': i,
+                'x': base_x,
+                'y': base_y, 
+                'target_x': base_x,
+                'target_y': base_y,
+                'has_compute': False,
+                'productivity': 0.0,
+                'animation_progress': 1.0  # Already positioned
+            }
+            self.employee_blobs.append(blob)
+    
+    def _add_employee_blobs(self, count):
+        """Add new employee blobs with animation from side"""
+        import math
+        for i in range(count):
+            blob_id = len(self.employee_blobs)
+            # Calculate target position in cluster
+            target_x = 400 + (blob_id % 3) * 60
+            target_y = 500 + (blob_id // 3) * 60
+            
+            blob = {
+                'id': blob_id,
+                'x': -50,  # Start off-screen left
+                'y': target_y,
+                'target_x': target_x, 
+                'target_y': target_y,
+                'has_compute': False,
+                'productivity': 0.0,
+                'animation_progress': 0.0  # Will animate in
+            }
+            self.employee_blobs.append(blob)
+            
+    def _remove_employee_blobs(self, count):
+        """Remove employee blobs when staff leave"""
+        for _ in range(min(count, len(self.employee_blobs))):
+            if self.employee_blobs:
+                self.employee_blobs.pop()
+                
+    def _update_employee_productivity(self):
+        """Update employee productivity based on compute availability each week"""
+        productive_employees = 0
+        research_gained = 0
+        
+        # Reset all employees' compute status
+        for blob in self.employee_blobs:
+            blob['has_compute'] = False
+            blob['productivity'] = 0.0
+            
+        # Assign compute to employees (1 compute per employee if available)
+        compute_assigned = 0
+        for blob in self.employee_blobs:
+            if compute_assigned < self.compute:
+                blob['has_compute'] = True
+                blob['productivity'] = 1.0
+                compute_assigned += 1
+                productive_employees += 1
+                
+                # Each productive employee has a chance to contribute to research
+                if random.random() < 0.3:  # 30% chance per productive employee
+                    research_gained += random.randint(1, 3)
+                    
+        # Employees without compute suffer penalty
+        unproductive_count = len(self.employee_blobs) - productive_employees
+        if unproductive_count > 0:
+            # Small doom increase for unproductive employees
+            doom_penalty = unproductive_count * 0.5
+            self._add('doom', int(doom_penalty))
+            self.messages.append(f"{unproductive_count} employees lacked compute resources (doom +{int(doom_penalty)})")
+            
+        # Update research progress
+        if research_gained > 0:
+            self._add('research_progress', research_gained)
+            self.messages.append(f"Research progress: +{research_gained} (total: {self.research_progress})")
+            
+        # Check if research threshold reached for paper publication
+        if self.research_progress >= 100:
+            papers_to_publish = self.research_progress // 100
+            self.papers_published += papers_to_publish
+            self.research_progress = self.research_progress % 100
+            self._add('reputation', papers_to_publish * 5)  # Papers boost reputation
+            self.messages.append(f"Research paper{'s' if papers_to_publish > 1 else ''} published! (+{papers_to_publish}, total: {self.papers_published})")
+            
+        # Update compute consumption
+        self.compute = max(0, self.compute - compute_assigned)
+        if compute_assigned > 0:
+            self.messages.append(f"Compute consumed: {compute_assigned} (remaining: {self.compute})")
+            
+        return productive_employees
 
     def _add(self, attr, val):
         if attr == 'doom':
@@ -79,7 +197,17 @@ class GameState:
         elif attr == 'reputation':
             self.reputation = max(self.reputation + val, 0)
         elif attr == 'staff':
+            old_staff = self.staff
             self.staff = max(self.staff + val, 0)
+            # Update employee blobs when staff changes
+            if val > 0:  # Hiring
+                self._add_employee_blobs(val)
+            elif val < 0:  # Staff leaving
+                self._remove_employee_blobs(old_staff - self.staff)
+        elif attr == 'compute':
+            self.compute = max(self.compute + val, 0)
+        elif attr == 'research_progress':
+            self.research_progress = max(self.research_progress + val, 0)
         return None
 
     def _spy(self):
@@ -241,6 +369,9 @@ class GameState:
                 self.staff = max(0, self.staff - lost)
                 self.messages.append(f"Could not pay staff! {lost} staff left.")
 
+        # Update employee productivity and compute consumption (weekly cycle)
+        self._update_employee_productivity()
+
         # Doom rises over time, faster with more staff
         doom_rise = 2 + self.staff // 5 + (1 if self.doom > 60 else 0)
         self.doom = min(self.max_doom, self.doom + doom_rise)
@@ -252,10 +383,10 @@ class GameState:
         # Store current turn messages if scrollable event log is now enabled
         # (This handles the case where the feature was enabled during this turn)
         if self.scrollable_event_log_enabled and self.messages:
-            # If we didn't already add a turn header, add one now
-            if not (self.event_log_history and self.event_log_history[-1].startswith(f"=== Turn {self.turn}")):
-                turn_header = f"=== Turn {self.turn} ==="
-                self.event_log_history.append(turn_header)
+            # Check if we already added a header for the current turn (before increment)
+            current_turn_header = f"=== Turn {self.turn} ==="
+            if not (self.event_log_history and current_turn_header in self.event_log_history[-5:]):
+                self.event_log_history.append(current_turn_header)
             self.event_log_history.extend(self.messages)
 
         # Log turn summary before checking game over conditions

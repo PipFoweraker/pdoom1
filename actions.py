@@ -36,6 +36,14 @@ ACTIONS = [
         "rules": None
     },
     {
+        "name": "Buy Compute",
+        "desc": "Purchase compute resources. $100 per 10 flops.",
+        "cost": 100,
+        "upside": lambda gs: gs._add('compute', 10),
+        "downside": lambda gs: None,
+        "rules": None
+    },
+    {
         "name": "Hire Staff",
         "desc": "+Staff, costs money.",
         "cost": 60,

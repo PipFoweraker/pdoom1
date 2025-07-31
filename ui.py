@@ -246,6 +246,10 @@ def draw_ui(screen, game_state, w, h):
     screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255)), (int(w*0.35), int(h*0.11)))
     screen.blit(big_font.render(f"p(Doom): {game_state.doom}/{game_state.max_doom}", True, (255, 80, 80)), (int(w*0.52), int(h*0.11)))
     screen.blit(font.render(f"Opponent progress: {game_state.known_opp_progress if game_state.known_opp_progress is not None else '???'}/100", True, (240, 200, 160)), (int(w*0.74), int(h*0.11)))
+    # Second line of resources
+    screen.blit(big_font.render(f"Compute: {game_state.compute}", True, (100, 255, 150)), (int(w*0.04), int(h*0.135)))
+    screen.blit(big_font.render(f"Research: {game_state.research_progress}/100", True, (150, 200, 255)), (int(w*0.21), int(h*0.135)))
+    screen.blit(big_font.render(f"Papers: {game_state.papers_published}", True, (255, 200, 100)), (int(w*0.38), int(h*0.135)))
     screen.blit(small_font.render(f"Turn: {game_state.turn}", True, (220, 220, 220)), (int(w*0.91), int(h*0.03)))
     screen.blit(small_font.render(f"Seed: {game_state.seed}", True, (140, 200, 160)), (int(w*0.77), int(h*0.03)))
 
@@ -384,6 +388,59 @@ def draw_ui(screen, game_state, w, h):
         for i, msg in enumerate(game_state.messages[-7:]):
             msg_text = small_font.render(msg, True, (255, 255, 210))
             screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
+
+    # Draw employee blobs (lower middle area)
+    draw_employee_blobs(screen, game_state, w, h)
+
+def draw_employee_blobs(screen, game_state, w, h):
+    """Draw employee blobs in the lower middle area with animation and halos"""
+    import math
+    
+    # Update blob animations
+    for blob in game_state.employee_blobs:
+        if blob['animation_progress'] < 1.0:
+            blob['animation_progress'] = min(1.0, blob['animation_progress'] + 0.05)
+            # Animate from starting position to target
+            start_x = -50
+            blob['x'] = start_x + (blob['target_x'] - start_x) * blob['animation_progress']
+    
+    # Draw each blob
+    for blob in game_state.employee_blobs:
+        x, y = int(blob['x']), int(blob['y'])
+        
+        # Skip if still animating in and off-screen
+        if x < 0:
+            continue
+            
+        # Draw halo for productive employees (those with compute)
+        if blob['has_compute']:
+            # Glowing halo effect
+            halo_radius = 35
+            for i in range(3):
+                alpha = 80 - i * 20
+                halo_color = (100, 255, 150, alpha)
+                # Create a surface for the halo with alpha
+                halo_surface = pygame.Surface((halo_radius * 2, halo_radius * 2), pygame.SRCALPHA)
+                pygame.draw.circle(halo_surface, halo_color, (halo_radius, halo_radius), halo_radius - i * 3)
+                screen.blit(halo_surface, (x - halo_radius, y - halo_radius))
+        
+        # Draw the main blob (employee)
+        blob_radius = 20
+        blob_color = (150, 200, 255) if blob['has_compute'] else (100, 150, 200)
+        
+        # Main blob body
+        pygame.draw.circle(screen, blob_color, (x, y), blob_radius)
+        pygame.draw.circle(screen, (255, 255, 255), (x, y), blob_radius, 2)
+        
+        # Simple face (eyes)
+        eye_offset = 6
+        eye_radius = 3
+        pygame.draw.circle(screen, (50, 50, 100), (x - eye_offset, y - 4), eye_radius)
+        pygame.draw.circle(screen, (50, 50, 100), (x + eye_offset, y - 4), eye_radius)
+        
+        # Productivity indicator (small dot)
+        if blob['productivity'] > 0:
+            pygame.draw.circle(screen, (100, 255, 100), (x, y + 8), 4)
 
 def draw_tooltip(screen, text, mouse_pos, w, h):
     font = pygame.font.SysFont('Consolas', int(h*0.018))
