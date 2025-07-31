@@ -10,6 +10,15 @@ def buy_accounting_software(gs):
         gs.messages.append("You bought accounting software! Balance change details enabled, monthly costs always visible.")
     else:
         gs.messages.append("Not enough money to buy accounting software.")
+
+def unlock_scrollable_event_log(gs):
+    """
+    Custom event effect function for unlocking the scrollable event log.
+    Sets the scrollable_event_log_enabled flag and provides user feedback.
+    """
+    gs.scrollable_event_log_enabled = True
+    gs.messages.append("Event Log Upgrade unlocked! You can now scroll through your complete activity history with arrow keys or mouse wheel.")
+
 EVENTS = [
     {
         "name": "Lab Breakthrough",
@@ -35,5 +44,12 @@ EVENTS = [
         # Trigger: After turn 3, and only if not already bought
         "trigger": lambda gs: gs.turn >= 3 and not getattr(gs, "accounting_software_bought", False),
         "effect": buy_accounting_software
+    },
+    {
+        "name": "Event Log System Upgrade",
+        "desc": "Your organization upgraded its event tracking system! Full activity history now available.",
+        # Trigger: After turn 5, and only if not already unlocked
+        "trigger": lambda gs: gs.turn >= 5 and not getattr(gs, "scrollable_event_log_enabled", False),
+        "effect": unlock_scrollable_event_log
     },
 ]

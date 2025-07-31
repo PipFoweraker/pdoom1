@@ -75,6 +75,8 @@ This project maintains automated tests for core game functionality. Current test
   - GameState initialization and default values
   - Core resource setup (money, staff, reputation, doom)
   - Game state collections and properties
+  - **Event Log Management:** Activity log clears at start of each turn and shows only current-turn events
+  - **Scrollable Event Log:** Feature flag management, history storage, and turn-based event accumulation
 
 - **Upgrades (`tests/test_upgrades.py`)**:
   - Upgrade purchasing with sufficient money
@@ -83,6 +85,11 @@ This project maintains automated tests for core game functionality. Current test
   - Upgrade effect activation and management
   - Success and failure message generation
   - Upgrade initialization and structure validation
+
+- **Game Logging (`tests/test_game_logging.py`)**:
+  - Session logging for debugging and analysis
+  - Action, event, and upgrade logging
+  - Game completion and log file generation
 
 **Contributors:** Please keep this Test Coverage section current when adding new test files or expanding test coverage. This helps other contributors understand what is already tested and what areas might need additional testing.
 
@@ -136,6 +143,23 @@ When you launch the game, you'll see a main menu with the following options:
 - UI elements adapt to fit; if crowded, elements may overlap (intentional for "bureaucratic clutter" vibe).
 - Upgrades, when purchased, shrink to icons at the top right with tooltips on mouseover.
 
+### Enhanced Activity Log
+
+The game features a **Scrollable Event Log** system that provides enhanced activity tracking:
+
+- **Standard Mode:** Basic activity log showing current turn events only
+- **Enhanced Mode:** Unlocked after Turn 5 through the "Event Log System Upgrade" event
+  - **Visual Enhancements:** Blue border, scrollable indicator, and navigation hints
+  - **Complete History:** Access to all previous turn activities with turn headers
+  - **Navigation Controls:** Arrow keys (↑↓) and mouse wheel scrolling support
+  - **Smart Organization:** Turn-based organization with clear visual separation
+
+**UI Improvements:**
+- Visual border and indicators for enhanced readability
+- Scroll arrows (▲▼) to indicate available content above/below current view
+- Responsive sizing that adapts to screen dimensions
+- Maintains current turn visibility while providing historical access
+
 ---
 
 ## Expanding the Game
@@ -178,6 +202,13 @@ When you launch the game, you'll see a main menu with the following options:
     }
     ```
 - Add new events by adding dicts to `EVENTS` in `events.py`.
+
+**Built-in Events:**
+- **Lab Breakthrough:** Doom spikes based on security upgrades
+- **Funding Crisis:** Financial setbacks when resources are low
+- **Staff Burnout:** Staff leave when overworked and underpaid
+- **Buy Accounting Software:** Enables balance change tracking (Turn 3+)
+- **Event Log System Upgrade:** Unlocks scrollable activity history (Turn 5+)
 
 ### 4. **Seeded Challenges & Weekly Modes**
 
