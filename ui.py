@@ -34,6 +34,200 @@ def render_text(text, font, max_width=None, color=(255,255,255)):
     total_height = sum(heights)
     offsets = [(0, sum(heights[:i])) for i in range(len(heights))]
     return list(zip(surfaces, offsets)), pygame.Rect(0, 0, total_width, total_height)
+
+def draw_main_menu(screen, w, h, selected_item):
+    """
+    Draw the main menu with vertically stacked, center-oriented buttons.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected menu item (for keyboard navigation)
+    
+    Features:
+    - Grey background as specified in requirements
+    - Centered title and subtitle
+    - 5 vertically stacked buttons with distinct visual states:
+      * Normal: dark blue with light border
+      * Selected: bright blue with white border (keyboard navigation)
+      * Inactive: grey (Options button is placeholder)
+    - Responsive sizing based on screen dimensions
+    - Clear usage instructions at bottom
+    """
+    # Fonts for menu - scale based on screen size
+    title_font = pygame.font.SysFont('Consolas', int(h*0.08), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.035))
+    
+    # Title at top
+    title_surf = title_font.render("P(Doom)", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Subtitle
+    subtitle_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    subtitle_surf = subtitle_font.render("Bureaucracy Strategy Prototype", True, (200, 200, 200))
+    subtitle_x = w // 2 - subtitle_surf.get_width() // 2
+    subtitle_y = title_y + title_surf.get_height() + 10
+    screen.blit(subtitle_surf, (subtitle_x, subtitle_y))
+    
+    # Menu items
+    menu_items = [
+        "Launch with Weekly Seed",
+        "Launch with Custom Seed", 
+        "Options",
+        "Player Guide",
+        "README"
+    ]
+    
+    # Button layout
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    for i, item in enumerate(menu_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        
+        # Determine button colors
+        if i == 2:  # Options - greyed out/inactive
+            bg_color = (80, 80, 80)
+            border_color = (120, 120, 120)
+            text_color = (150, 150, 150)
+        elif i == selected_item:  # Selected item
+            bg_color = (100, 150, 200)
+            border_color = (150, 200, 255)
+            text_color = (255, 255, 255)
+        else:  # Normal items
+            bg_color = (60, 60, 120)
+            border_color = (100, 100, 180)
+            text_color = (220, 220, 255)
+        
+        # Draw button
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        pygame.draw.rect(screen, bg_color, button_rect, border_radius=12)
+        pygame.draw.rect(screen, border_color, button_rect, width=3, border_radius=12)
+        
+        # Draw button text
+        text_surf = menu_font.render(item, True, text_color)
+        text_x = button_x + (button_width - text_surf.get_width()) // 2
+        text_y = button_y + (button_height - text_surf.get_height()) // 2
+        screen.blit(text_surf, (text_x, text_y))
+    
+    # Instructions at bottom
+    instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    instructions = [
+        "Use mouse or arrow keys to navigate",
+        "Press Enter or click to select",
+        "Press Escape to quit"
+    ]
+    
+    for i, instruction in enumerate(instructions):
+        inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        inst_y = int(h * 0.85) + i * int(h * 0.03)
+        screen.blit(inst_surf, (inst_x, inst_y))
+
+def draw_overlay(screen, title, content, scroll_offset, w, h):
+    """
+    Draw a scrollable overlay for displaying README or Player Guide content.
+    
+    Args:
+        screen: pygame surface to draw on
+        title: string title to display at top of overlay
+        content: full text content to display (markdown rendered as plain text)
+        scroll_offset: vertical scroll position in pixels
+        w, h: screen width and height for responsive layout
+    
+    Features:
+    - Semi-transparent dark background overlay
+    - Centered content area with border
+    - Scrollable text with line wrapping
+    - Scroll indicators (up/down arrows) when content exceeds view area  
+    - Responsive text sizing based on screen dimensions
+    - Clear navigation instructions
+    
+    The overlay handles long documents by breaking them into lines and showing
+    only the visible portion based on scroll_offset. Users can scroll with
+    arrow keys to view the full document.
+    """
+    # Overlay background - semi-transparent dark background
+    overlay_surface = pygame.Surface((w, h))
+    overlay_surface.set_alpha(240)
+    overlay_surface.fill((20, 20, 30))
+    screen.blit(overlay_surface, (0, 0))
+    
+    # Content area
+    margin = int(w * 0.1)
+    content_x = margin
+    content_y = int(h * 0.1)
+    content_width = w - 2 * margin
+    content_height = int(h * 0.7)
+    
+    # Background for content area
+    content_rect = pygame.Rect(content_x, content_y, content_width, content_height)
+    pygame.draw.rect(screen, (40, 40, 50), content_rect, border_radius=15)
+    pygame.draw.rect(screen, (100, 100, 150), content_rect, width=3, border_radius=15)
+    
+    # Title
+    title_font = pygame.font.SysFont('Consolas', int(h*0.04), bold=True)
+    title_surf = title_font.render(title, True, (255, 255, 255))
+    title_x = content_x + (content_width - title_surf.get_width()) // 2
+    title_y = content_y + int(h * 0.02)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Content text area
+    text_area_y = title_y + title_surf.get_height() + int(h * 0.03)
+    text_area_height = content_height - (text_area_y - content_y) - int(h * 0.05)
+    text_margin = int(w * 0.02)
+    text_width = content_width - 2 * text_margin
+    
+    # Font for content
+    content_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    line_height = content_font.get_height()
+    
+    # Split content into lines and handle scrolling
+    lines = content.split('\n')
+    visible_lines = int(text_area_height // line_height)
+    start_line = scroll_offset // line_height
+    end_line = min(start_line + visible_lines, len(lines))
+    
+    # Draw visible lines
+    for i in range(start_line, end_line):
+        if i < len(lines):
+            line = lines[i]
+            # Simple text wrapping for long lines
+            wrapped_lines = wrap_text(line, content_font, text_width)
+            
+            for j, wrapped_line in enumerate(wrapped_lines):
+                y_pos = text_area_y + (i - start_line + j) * line_height - (scroll_offset % line_height)
+                if y_pos >= text_area_y and y_pos < text_area_y + text_area_height:
+                    line_surf = content_font.render(wrapped_line, True, (220, 220, 220))
+                    screen.blit(line_surf, (content_x + text_margin, y_pos))
+    
+    # Scroll indicators
+    if scroll_offset > 0:
+        # Up arrow
+        arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
+        up_arrow = arrow_font.render("▲", True, (255, 255, 255))
+        screen.blit(up_arrow, (content_x + content_width - 30, text_area_y))
+    
+    if (start_line + visible_lines) < len(lines):
+        # Down arrow
+        arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
+        down_arrow = arrow_font.render("▼", True, (255, 255, 255))
+        screen.blit(down_arrow, (content_x + content_width - 30, text_area_y + text_area_height - 30))
+    
+    # Instructions at bottom
+    instruction_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = "Use arrow keys to scroll • Press Escape or click to return to menu"
+    inst_surf = instruction_font.render(instructions, True, (180, 200, 255))
+    inst_x = w // 2 - inst_surf.get_width() // 2
+    inst_y = content_y + content_height + int(h * 0.03)
+    screen.blit(inst_surf, (inst_x, inst_y))
     
 def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size

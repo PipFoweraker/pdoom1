@@ -21,7 +21,18 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
    ```
    python main.py
    ```
-3. **Enter a seed** when prompted, or leave blank for the weekly challenge seed.
+
+3. **Navigate the main menu:**
+   - Use mouse clicks or arrow keys (Up/Down) to navigate
+   - Press Enter or click to select an option
+   - Choose from:
+     * **Launch with Weekly Seed**: Start with this week's challenge
+     * **Launch with Custom Seed**: Enter your own seed for repeatable games
+     * **Options**: Future settings (currently inactive)
+     * **Player Guide**: View this guide in-game
+     * **README**: View technical documentation
+
+4. **Start playing:** Select a game mode and begin managing your AI safety lab!
 
 ---
 
@@ -43,14 +54,18 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
 
 | Action             | How to Use          |
 |--------------------|--------------------|
+| **Main Menu Navigation** | Arrow keys or mouse |
+| **Select Menu Item** | Enter or mouse click |
+| **Exit Menu/Overlay** | Escape key |
+| **Scroll in Overlays** | Up/Down arrow keys |
 | Select Action      | Click action button (left) |
 | Buy Upgrade        | Click upgrade button (right) |
 | End Turn           | Click "END TURN" or press `Space` |
 | Tooltips           | Hover mouse over upgrades for more info |
-| Quit Game          | Press `Esc`         |
+| Quit Game          | Press `Esc` (from main menu or game) |
 | Restart (after loss)| Click anywhere on scoreboard |
 
-**Note:** There is no direct character movement. All gameplay is via UI clicks and the keyboard shortcuts above.
+**Note:** The main menu provides easy access to documentation and different game modes. During gameplay, there is no direct character movement - all interaction is via UI clicks and keyboard shortcuts.
 
 ---
 

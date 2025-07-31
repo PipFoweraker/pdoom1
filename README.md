@@ -16,8 +16,25 @@ pip install pygame
 python main.py
 ```
 
+### Main Menu
+
+When you launch the game, you'll see a main menu with the following options:
+
+- **Launch with Weekly Seed**: Start immediately with the current week's challenge seed
+- **Launch with Custom Seed**: Enter your own seed for repeatable games  
+- **Options**: Placeholder for future settings (currently inactive)
+- **Player Guide**: View the complete player guide with controls and strategies
+- **README**: View this documentation file
+
+**Navigation:**
+- Use mouse clicks or arrow keys to navigate
+- Press Enter or click to select an option
+- Press Escape to quit from the main menu
+
 ### Gameplay
 
+- The game now starts with a **main menu** where you can choose your game mode.
+- Select "Launch with Weekly Seed" for the current week's challenge, or "Launch with Custom Seed" to enter your own.
 - Enter a seed at startup (or leave blank for weekly challenge seed).
 - Select actions (left column) by clicking buttons. Buy upgrades (right) by clicking. Purchased upgrades shrink to icons at the top right.
 - Take as many actions as you want, then click "End Turn" (or press Space) to process choices and see results.
