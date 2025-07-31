@@ -75,7 +75,7 @@ P(Doom) is a satirical strategy game about managing an AI safety lab. Your goals
 - **Left Column:** Actions you can take this turn.
 - **Right Column:** Upgrades (buttons if available, icons if purchased).
 - **Bottom Center:** "END TURN" button.
-- **Bottom Left:** Activity log (recent events, outcomes).
+- **Bottom Left:** Activity log (recent events, outcomes). **Note:** The activity log resets at the start of each turn, showing only events from the current turn.
 - **Scoreboard:** Appears when game ends (game over summary, high score).
 
 ---

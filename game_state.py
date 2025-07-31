@@ -198,6 +198,9 @@ class GameState:
         return rx <= x <= rx+rw and ry <= y <= ry+rh
 
     def end_turn(self):
+        # Clear event log at start of turn to show only current-turn events
+        self.messages = []
+        
         # Perform all selected actions
         for idx in self.selected_actions:
             action = self.actions[idx]
@@ -240,8 +243,6 @@ class GameState:
         self.staff = max(0, self.staff)
         self.reputation = max(0, self.reputation)
         self.money = max(self.money, 0)
-        if len(self.messages) > 7:
-            self.messages = self.messages[-7:]
 
         # Save high score if achieved
         self.save_highscore()
