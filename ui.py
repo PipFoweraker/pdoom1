@@ -149,7 +149,7 @@ def draw_scoreboard(screen, game_state, w, h, seed):
         screen.blit(font.render(line, True, (240,255,255)), (w//6 + int(w*0.04), h//7 + int(h*0.27) + i*int(h*0.05)))
     screen.blit(small.render("Click anywhere to restart.", True, (255,255,180)), (w//2 - int(w*0.1), h//7 + int(h*0.5)))
 
-def draw_seed_prompt(screen, current_input, weekly_suggestion):
+def draw_seed_prompt(screen, current_input, weekly_suggestion, game_state):
     # Prompt the user for a seed
     font = pygame.font.SysFont('Consolas', 40)
     small = pygame.font.SysFont('Consolas', 24)
