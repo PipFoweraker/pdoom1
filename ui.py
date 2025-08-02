@@ -458,9 +458,14 @@ def draw_employee_blobs(screen, game_state, w, h):
                 pygame.draw.circle(halo_surface, halo_color, (halo_radius, halo_radius), halo_radius - i * 3)
                 screen.blit(halo_surface, (x - halo_radius, y - halo_radius))
         
-        # Draw the main blob (employee)
+        # Draw the main blob (employee or manager)
         blob_radius = 20
-        blob_color = (150, 200, 255) if blob['has_compute'] else (100, 150, 200)
+        
+        # Different colors for managers vs employees
+        if blob.get('type') == 'manager':
+            blob_color = (100, 255, 100) if blob['has_compute'] else (80, 200, 80)  # Green for managers
+        else:
+            blob_color = (150, 200, 255) if blob['has_compute'] else (100, 150, 200)  # Blue for employees
         
         # Main blob body
         pygame.draw.circle(screen, blob_color, (x, y), blob_radius)
@@ -475,6 +480,20 @@ def draw_employee_blobs(screen, game_state, w, h):
         # Productivity indicator (small dot)
         if blob['productivity'] > 0:
             pygame.draw.circle(screen, (100, 255, 100), (x, y + 8), 4)
+            
+        # Red slash overlay for unproductive employees due to management issues
+        if blob.get('unproductive_reason') == 'no_manager':
+            # Draw red diagonal slash across the blob
+            slash_color = (255, 50, 50)
+            slash_width = 4
+            # Diagonal line from top-left to bottom-right
+            start_pos = (x - blob_radius + 5, y - blob_radius + 5)
+            end_pos = (x + blob_radius - 5, y + blob_radius - 5)
+            pygame.draw.line(screen, slash_color, start_pos, end_pos, slash_width)
+            # Second diagonal line from top-right to bottom-left
+            start_pos = (x + blob_radius - 5, y - blob_radius + 5)
+            end_pos = (x - blob_radius + 5, y + blob_radius - 5)
+            pygame.draw.line(screen, slash_color, start_pos, end_pos, slash_width)
 
 def draw_mute_button(screen, game_state, w, h):
     """Draw mute/unmute button in bottom right corner"""

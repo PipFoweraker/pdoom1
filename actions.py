@@ -58,6 +58,15 @@ ACTIONS = [
         "rules": None
     },
     {
+        "name": "Hire Manager",
+        "desc": "Hire manager for large teams (1.5x staff cost). Unlocks at 9+ staff.",
+        "cost": 90,  # 1.5x normal staff cost
+        "ap_cost": 1,  # Action Points cost
+        "upside": lambda gs: gs._hire_manager(),
+        "downside": lambda gs: None,
+        "rules": lambda gs: gs.staff >= 9  # Unlocked when staff reaches 9
+    },
+    {
         "name": "Espionage",
         "desc": "Chance to reveal opponent progress, risky.",
         "cost": 30,
