@@ -26,6 +26,17 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
     
+    - name: Verify version system
+      run: |
+        python -c "
+        from version import get_version, get_display_version, get_version_info
+        print('Version system check:')
+        print(f'  Version: {get_version()}')
+        print(f'  Display: {get_display_version()}')
+        print(f'  Info: {get_version_info()}')
+        print('✓ Version system working correctly')
+        "
+    
     - name: Run unit tests
       run: |
         python -m unittest discover tests -v
@@ -38,8 +49,12 @@ jobs:
       run: |
         python -c "
         from game_state import GameState
+        from version import get_display_version
+        print(f'Testing P(Doom) {get_display_version()}')
         gs = GameState('ci-test')
         print('✓ Game state initializes correctly')
+        assert gs.logger.game_version == get_display_version()
+        print(f'✓ Logger version consistency: {gs.logger.game_version}')
         gs.messages.append('Test message')
         gs.end_turn()
         assert len([m for m in gs.messages if 'Test message' in m]) == 0

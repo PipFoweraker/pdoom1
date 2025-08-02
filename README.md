@@ -1,10 +1,13 @@
-# P(Doom): Bureaucracy Strategy Game Prototype
+# P(Doom): Bureaucracy Strategy Game
 
 A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *Pandemic*, and clicker games.
 
+**Current Version:** See [CHANGELOG.md](CHANGELOG.md) for latest release information and version history.
+
 **📖 Documentation:**
-- **[Player Guide](PLAYERGUIDE.md)** - How to play, controls, and strategies
+- **[Player Guide](PLAYERGUIDE.md)** - How to play, controls, and strategies  
 - **[Developer Guide](DEVELOPERGUIDE.md)** - Contributing, code structure, and testing
+- **[Changelog](CHANGELOG.md)** - Version history and release notes
 
 ## Quick Start
 
@@ -114,6 +117,7 @@ If tests fail, check your Python and pygame installation.
 - **In-game**: Use the "Report Bug" option in the main menu
 - **Documentation**: See [Player Guide](PLAYERGUIDE.md) for gameplay help
 - **Development**: See [Developer Guide](DEVELOPERGUIDE.md) for code issues
+- **Releases**: Check [Changelog](CHANGELOG.md) for version history and known issues
 
 ### Dependencies
 

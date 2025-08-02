@@ -6,6 +6,7 @@ import json
 from game_state import GameState
 from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success
 from bug_reporter import BugReporter
+from version import get_display_version
 
 # --- Adaptive window sizing --- #
 pygame.init()
@@ -14,7 +15,7 @@ SCREEN_W = int(info.current_w * 0.8)
 SCREEN_H = int(info.current_h * 0.8)
 FLAGS = pygame.RESIZABLE
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
-pygame.display.set_caption("P(Doom) - Bureaucracy Strategy Prototype v3")
+pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}")
 clock = pygame.time.Clock()
 
 # --- Menu and game state management --- #
