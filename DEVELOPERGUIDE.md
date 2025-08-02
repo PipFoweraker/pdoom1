@@ -39,12 +39,73 @@ python main.py
 - **actions.py** — Action definitions (as Python dicts)
 - **upgrades.py** — Upgrade definitions
 - **events.py** — Event definitions and special event logic
+- **opponents.py** — Opponent AI and intelligence system
 - **ui.py** — Pygame-based UI code
 - **game_logger.py** — Comprehensive game logging system
 - **tests/** — Automated tests for core logic
 - **README.md** — Installation, troubleshooting, dependencies
 - **PLAYERGUIDE.md** — Player experience and gameplay guide
 - **DEVELOPERGUIDE.md** (this file) — Contributor documentation
+
+---
+
+## Opponents System Architecture
+
+### Overview
+The opponents system simulates competing AI labs with hidden information mechanics and espionage gameplay.
+
+### Core Components
+
+**opponents.py**
+- `Opponent` class: Represents a competing organization with hidden stats
+- `create_default_opponents()`: Generates the standard 3 competitors
+- Hidden information system with discovery mechanics
+- AI behavior for budget spending and research progress
+
+**Integration Points**
+- `GameState.__init__()`: Creates default opponents list
+- `GameState._spy()`: Legacy espionage action (discovers/scouts random stats)
+- `GameState._scout_opponent()`: Focused intelligence gathering action
+- `GameState.end_turn()`: Processes opponent turns and doom contribution
+- `ui.py`: `draw_opponents_panel()` displays discovered intelligence
+
+### Opponent Data Structure
+
+```python
+class Opponent:
+    # Core properties
+    name: str                    # Display name
+    budget: int                  # Available funding
+    capabilities_researchers: int # Research capacity  
+    lobbyists: int              # Policy influence
+    compute: int                # Computing resources
+    progress: int               # AGI development (0-100)
+    
+    # Discovery mechanics
+    discovered: bool            # Whether player knows this opponent exists
+    discovered_stats: dict      # Which stats have been revealed
+    known_stats: dict          # Player's knowledge (may include noise)
+```
+
+### Intelligence System
+
+**Discovery Process:**
+1. Opponents start completely unknown
+2. Espionage/scouting reveals opponent existence
+3. Further operations reveal specific stats (with noise)
+4. Some stats may remain hidden throughout the game
+
+**Action Integration:**
+- Espionage (existing): Random discovery/stat revelation
+- Scout Opponent (new): Focused intelligence gathering, unlocked turn 5+
+- Both actions carry espionage risks (reputation loss, doom increase)
+
+### AI Behavior
+
+Opponents execute simple AI logic each turn:
+- Budget allocation based on priorities (research > hiring > compute > lobbying)
+- Research progress scaled by resources (researchers × compute bonus)
+- Doom contribution proportional to capabilities research
 
 ---
 
@@ -72,13 +133,16 @@ pytest tests/ -v
 
 ### Test Coverage
 
-Current test coverage includes 32 automated tests covering:
+Current test coverage includes 88 automated tests covering:
 
 - ✅ **Event Log Management** - Activity log clears each turn, shows only current events
 - ✅ **Game State Management** - Resource management and state transitions
 - ✅ **Upgrade System** - Purchase logic and effect activation  
 - ✅ **Game Logging** - Comprehensive session logging
 - ✅ **Core Game Mechanics** - Action execution, turn progression, game-over conditions
+- ✅ **Opponents System** - AI behavior, discovery mechanics, intelligence gathering (26 tests)
+- ✅ **Compute & Sound** - Employee productivity and audio systems
+- ✅ **Bug Reporting** - Error reporting and privacy features
 
 ### Adding New Tests
 
@@ -152,6 +216,32 @@ Events are defined in `events.py`:
     "effect": lambda gs: gs._add('doom', 5)
 }
 ```
+
+### Opponents
+
+To add new opponents, modify `create_default_opponents()` in `opponents.py`:
+
+```python
+opponents.append(Opponent(
+    name="New Competitor",
+    budget=random.randint(500, 1000),
+    capabilities_researchers=random.randint(10, 20),
+    lobbyists=random.randint(5, 15),
+    compute=random.randint(30, 80),
+    description="Description of this competitor"
+))
+```
+
+**Customization Options:**
+- Modify AI behavior in `Opponent.take_turn()`
+- Adjust discovery probabilities in `scout_stat()`
+- Change doom contribution in `get_impact_on_doom()`
+- Add specialized stat types or behaviors
+
+**Testing New Opponents:**
+- Add tests to `tests/test_opponents.py`
+- Test discovery mechanics, AI behavior, and victory conditions
+- Verify integration with espionage actions
 
 ---
 

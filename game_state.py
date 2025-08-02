@@ -6,6 +6,7 @@ from upgrades import UPGRADES
 from events import EVENTS
 from game_logger import GameLogger
 from sound_manager import SoundManager
+from opponents import create_default_opponents
 
 SCORE_FILE = "local_highscore.json"
 
@@ -67,8 +68,10 @@ class GameState:
         self.messages = ["Game started! Select actions, then End Turn."]
         self.game_over = False
         self.highscore = self.load_highscore()
-        self.opp_progress = random.randint(15, 40)
-        self.known_opp_progress = None
+        
+        # Initialize opponents system (replaces simple opp_progress)
+        self.opponents = create_default_opponents()
+        self.known_opp_progress = None  # Legacy compatibility for UI
 
         # Employee blob system
         self.employee_blobs = []  # List of employee blob objects with positions and states
@@ -214,12 +217,70 @@ class GameState:
             self.research_progress = max(self.research_progress + val, 0)
         return None
 
-    def _spy(self):
-        if random.random() < 0.7:
-            self.known_opp_progress = self.opp_progress + random.randint(-3, 3)
-            self.messages.append(f"Espionage: You estimate opponent progress at {self.known_opp_progress}/100.")
+    def _scout_opponent(self):
+        """Scout a specific opponent - unlocked after turn 5"""
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        
+        if not discovered_opponents:
+            # Try to discover a new opponent
+            undiscovered = [opp for opp in self.opponents if not opp.discovered]
+            if undiscovered:
+                target = random.choice(undiscovered)
+                target.discover()
+                self.messages.append(f"Scouting: Discovered new competitor '{target.name}'!")
+                self.messages.append(f"'{target.description}'")
+            else:
+                self.messages.append("Scouting: All competitors already discovered.")
+            return None
+            
+        # Choose a discovered opponent to scout
+        target = random.choice(discovered_opponents)
+        
+        # Choose what to scout based on what's still unknown
+        unknown_stats = [stat for stat, discovered in target.discovered_stats.items() if not discovered]
+        
+        if unknown_stats:
+            stat_to_scout = random.choice(unknown_stats)
         else:
-            self.messages.append("Espionage failed! No new info.")
+            # All stats known, scout progress for an update
+            stat_to_scout = 'progress'
+            
+        success, value, message = target.scout_stat(stat_to_scout)
+        self.messages.append(f"Scouting: {message}")
+        
+        # Update legacy known_opp_progress for UI compatibility if scouting progress
+        if stat_to_scout == 'progress' and success:
+            self.known_opp_progress = value
+            
+    def _spy(self):
+        """Legacy espionage method - now scouts random opponents"""
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        
+        if not discovered_opponents:
+            # Try to discover a new opponent
+            undiscovered = [opp for opp in self.opponents if not opp.discovered]
+            if undiscovered:
+                target = random.choice(undiscovered)
+                target.discover()
+                self.messages.append(f"Espionage: Discovered new competitor '{target.name}'!")
+            else:
+                self.messages.append("Espionage: No new competitors to discover.")
+            return None
+            
+        # Scout a random stat from a discovered opponent
+        target = random.choice(discovered_opponents)
+        stats = ['progress', 'budget', 'capabilities_researchers', 'lobbyists', 'compute']
+        stat_to_scout = random.choice(stats)
+        
+        success, value, message = target.scout_stat(stat_to_scout)
+        self.messages.append(f"Espionage: {message}")
+        
+        # Update legacy known_opp_progress for UI compatibility
+        if stat_to_scout == 'progress' and success:
+            self.known_opp_progress = value
+            
+        return None
+            
         return None
 
     def _espionage_risk(self):
@@ -247,6 +308,10 @@ class GameState:
             if self._in_rect(mouse_pos, rect):
                 if not self.game_over:
                     action = self.actions[idx]
+                    # Check if action is available (rules constraint)
+                    if action.get("rules") and not action["rules"](self):
+                        self.messages.append(f"{action['name']} is not available yet.")
+                        return None
                     if self.money >= action["cost"]:
                         self.selected_actions.append(idx)
                         self.messages.append(f"Selected: {action['name']}")
@@ -300,13 +365,13 @@ class GameState:
         return None
 
     def _get_action_rects(self, w, h):
-        # Place actions as tall buttons on left
+        # Place actions as tall buttons on left (moved down to accommodate opponents panel)
         count = len(self.actions)
         base_x = int(w * 0.04)
-        base_y = int(h * 0.16)
+        base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
         width = int(w * 0.32)
-        height = int(h * 0.075)
-        gap = int(h * 0.025)
+        height = int(h * 0.065)  # Made slightly smaller to fit more actions
+        gap = int(h * 0.02)  # Reduced gap slightly
         return [
             (base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
@@ -325,9 +390,9 @@ class GameState:
             (w - icon_w*(len(purchased)-j+1), int(h*0.08), icon_w, icon_h)
             for j, i in enumerate(purchased)
         ]
-        # Not purchased: buttons down right
+        # Not purchased: buttons down right (moved down to accommodate opponents panel)
         base_x = int(w*0.63)
-        base_y = int(h*0.18)
+        base_y = int(h*0.28)  # Moved down from 0.18 to 0.28
         btn_w, btn_h = int(w*0.29), int(h*0.08)
         gap = int(h*0.022)
         not_purchased_rects = [
@@ -392,8 +457,17 @@ class GameState:
 
         # Doom rises over time, faster with more staff
         doom_rise = 2 + self.staff // 5 + (1 if self.doom > 60 else 0)
+        
+        # Opponents take their turns and contribute to doom
+        opponent_doom = 0
+        for opponent in self.opponents:
+            messages = opponent.take_turn()
+            self.messages.extend(messages)
+            opponent_doom += opponent.get_impact_on_doom()
+            
+        # Add opponent doom contribution
+        doom_rise += opponent_doom
         self.doom = min(self.max_doom, self.doom + doom_rise)
-        self.opp_progress += random.randint(2, 5)
 
         self.trigger_events()
         self.turn += 1
@@ -416,11 +490,16 @@ class GameState:
             self.game_over = True
             game_end_reason = "p(Doom) reached maximum"
             self.messages.append("p(Doom) has reached maximum! The world is lost.")
-        elif self.opp_progress >= 100:
-            self.game_over = True
-            game_end_reason = "Opponent deployed dangerous AGI"
-            self.messages.append("Frontier lab has deployed dangerous AGI. Game over!")
-        elif self.staff == 0:
+        else:
+            # Check if any opponent has reached 100% progress
+            for opponent in self.opponents:
+                if opponent.progress >= 100:
+                    self.game_over = True
+                    game_end_reason = f"{opponent.name} deployed dangerous AGI"
+                    self.messages.append(f"{opponent.name} has deployed dangerous AGI. Game over!")
+                    break
+                    
+        if not self.game_over and self.staff == 0:
             self.game_over = True
             game_end_reason = "All staff left"
             self.messages.append("All your staff have left. Game over!")

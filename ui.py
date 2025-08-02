@@ -256,6 +256,9 @@ def draw_ui(screen, game_state, w, h):
     filled = int(doom_bar_width * (game_state.doom / game_state.max_doom))
     pygame.draw.rect(screen, (255, 60, 60), (doom_bar_x, doom_bar_y, filled, doom_bar_height))
 
+    # Opponents information panel (between resources and actions)
+    draw_opponents_panel(screen, game_state, w, h, font, small_font)
+
     # Action buttons (left)
     action_rects = game_state._get_action_rects(w, h)
     for idx, rect in enumerate(action_rects):
@@ -749,5 +752,91 @@ def draw_bug_report_success(screen, message, w, h):
     instruction_text = instruction_font.render("Press any key to return to main menu", True, (200, 200, 200))
     instruction_rect = instruction_text.get_rect(center=(w//2, h - 100))
     screen.blit(instruction_text, instruction_rect)
+
+
+def draw_opponents_panel(screen, game_state, w, h, font, small_font):
+    """
+    Draw the opponents information panel showing discovered competitors.
+    
+    Args:
+        screen: pygame surface to draw on
+        game_state: current game state containing opponents data
+        w, h: screen width and height
+        font: font for opponent names
+        small_font: font for opponent stats
+    """
+    # Panel position and dimensions
+    panel_x = int(w * 0.04)
+    panel_y = int(h * 0.19)  # Below resources, above actions
+    panel_width = int(w * 0.92)
+    panel_height = int(h * 0.08)
+    
+    # Draw panel background
+    panel_rect = pygame.Rect(panel_x, panel_y, panel_width, panel_height)
+    pygame.draw.rect(screen, (30, 30, 50), panel_rect, border_radius=8)
+    pygame.draw.rect(screen, (80, 80, 120), panel_rect, width=2, border_radius=8)
+    
+    # Panel title
+    title_text = font.render("Competitors:", True, (255, 200, 100))
+    screen.blit(title_text, (panel_x + int(w * 0.01), panel_y + int(h * 0.01)))
+    
+    # Get discovered opponents
+    discovered = [opp for opp in game_state.opponents if opp.discovered]
+    
+    if not discovered:
+        # No opponents discovered yet
+        no_info = small_font.render("Use Espionage or Scout Opponent to discover competitors", True, (180, 180, 180))
+        screen.blit(no_info, (panel_x + int(w * 0.15), panel_y + int(h * 0.035)))
+        return
+    
+    # Calculate spacing for discovered opponents
+    opponent_width = panel_width // len(discovered)
+    
+    for i, opponent in enumerate(discovered):
+        opp_x = panel_x + i * opponent_width + int(w * 0.01)
+        opp_y = panel_y + int(h * 0.025)
+        
+        # Opponent name
+        name_text = font.render(opponent.name, True, (255, 255, 200))
+        screen.blit(name_text, (opp_x, opp_y))
+        
+        # Known stats (show with different colors based on discovery status)
+        stats_y = opp_y + int(h * 0.025)
+        
+        # Progress (most important stat)
+        if opponent.discovered_stats['progress']:
+            progress_val = opponent.known_stats['progress']
+            progress_color = (255, 100, 100) if progress_val > 70 else (255, 200, 100) if progress_val > 40 else (100, 255, 100)
+            progress_text = small_font.render(f"Progress: {progress_val}/100", True, progress_color)
+        else:
+            progress_text = small_font.render("Progress: ???", True, (120, 120, 120))
+        screen.blit(progress_text, (opp_x, stats_y))
+        
+        # Other stats (compact display)
+        stats_y += int(h * 0.02)
+        
+        # Budget
+        if opponent.discovered_stats['budget']:
+            budget_text = small_font.render(f"Budget: ${opponent.known_stats['budget']}k", True, (100, 255, 100))
+        else:
+            budget_text = small_font.render("Budget: ???", True, (120, 120, 120))
+        screen.blit(budget_text, (opp_x, stats_y))
+        
+        # Researchers and Compute (on same line if space allows)
+        if opponent_width > 150:  # Only show if enough space
+            researchers_y = stats_y + int(h * 0.015)
+            
+            if opponent.discovered_stats['capabilities_researchers']:
+                researchers_text = small_font.render(f"Researchers: {opponent.known_stats['capabilities_researchers']}", True, (255, 150, 150))
+            else:
+                researchers_text = small_font.render("Researchers: ???", True, (120, 120, 120))
+            screen.blit(researchers_text, (opp_x, researchers_y))
+            
+            compute_y = researchers_y + int(h * 0.015)
+            if opponent.discovered_stats['compute']:
+                compute_text = small_font.render(f"Compute: {opponent.known_stats['compute']}", True, (150, 200, 255))
+            else:
+                compute_text = small_font.render("Compute: ???", True, (120, 120, 120))
+            screen.blit(compute_text, (opp_x, compute_y))
 
     

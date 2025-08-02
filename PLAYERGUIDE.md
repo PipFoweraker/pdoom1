@@ -34,7 +34,9 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 - **👥 Staff**: Your team (costs money each turn, can quit if unpaid)
 - **⭐ Reputation**: Affects fundraising and events
 - **☢️ p(Doom)**: AI catastrophe risk (game over at 100%)
-- **🏁 Opponent Progress**: The competition racing toward dangerous AI
+- **🖥️ Compute**: Powers employee productivity and research
+- **📄 Research**: Progress toward publishing papers (boosts reputation)
+- **🎯 Competitors**: Track discovered opponents and their progress toward AGI
 
 ---
 
@@ -61,7 +63,42 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 - **Weekly Seed**: This week's community challenge (same for everyone)
 - **Custom Seed**: Enter your own seed for repeatable scenarios
 - **Report Bug**: Submit feedback or issues (privacy-focused)
-=======
+
+---
+
+## Competitors & Intelligence
+
+You're not alone in the AI race! Three competing organizations are also racing toward AGI:
+
+### The Competition
+- **🏢 TechCorp Labs**: Massive tech corporation with deep pockets and aggressive timelines
+- **🏛️ National AI Initiative**: Government-backed program with strong regulatory influence
+- **🚀 Frontier Dynamics**: Secretive startup with mysterious funding and rapid development
+
+### Intelligence Gathering
+
+**🕵️ Espionage (Available from start)**
+- Cost: $30k, Risk: Moderate
+- Discovers new competitors or gathers basic intelligence
+- Can reveal progress estimates and general capabilities
+
+**🎯 Scout Opponent (Unlocked after Turn 5)**
+- Cost: $50k, Risk: Moderate
+- Focused intelligence gathering on specific competitors
+- Reveals detailed stats: budget, researchers, lobbyists, compute
+
+### Competitor Intelligence Panel
+The competitors panel (between resources and actions) shows:
+- **Discovered competitors** and their names/descriptions
+- **Progress toward AGI** (0-100%, game over if any reaches 100%)
+- **Hidden stats** revealed through successful intelligence operations
+- **Recent activities** when competitors make major moves
+
+### Strategy Tips
+- **Early scouting** helps prioritize which competitors pose the biggest threat
+- **Budget tracking** reveals which competitors can afford rapid expansion  
+- **Researcher counts** indicate research capacity and progress speed
+- **Progress monitoring** helps predict game-ending scenarios
 
 
 ---
@@ -69,6 +106,7 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 ## Screen Layout
 
 **Top Bar:** Your current resources and game info
+**Competitors Panel:** Intelligence on discovered opponents (between resources and actions)
 **Left Panel:** Available actions you can take this turn  
 **Right Panel:** Available upgrades (becomes icons after purchase)
 **Bottom Center:** "END TURN" button
@@ -89,8 +127,10 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 **👥 Grow Community** - Increase reputation, chance to gain staff
 **🔬 Safety Research** - Reduce p(Doom), gain reputation (expensive)
 **🏛️ Governance Research** - Reduce p(Doom), gain reputation (expensive)  
+**🖥️ Buy Compute** - Purchase compute resources for employee productivity
 **📈 Hire Staff** - Add team members (cost money each turn)
 **🕵️ Espionage** - Learn about competitor progress (risky)
+**🎯 Scout Opponent** - Focused intelligence gathering (unlocked turn 5+, risky)
 
 *Each action shows its cost and effects when you hover over it.*
 

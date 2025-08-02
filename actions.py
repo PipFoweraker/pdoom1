@@ -58,5 +58,13 @@ ACTIONS = [
         "upside": lambda gs: gs._spy(),
         "downside": lambda gs: gs._espionage_risk(),
         "rules": None
+    },
+    {
+        "name": "Scout Opponent",
+        "desc": "Focused intel gathering on competitors (unlocked turn 5+).",
+        "cost": 50,
+        "upside": lambda gs: gs._scout_opponent(),
+        "downside": lambda gs: gs._espionage_risk(),
+        "rules": lambda gs: gs.turn >= 5  # Unlocked after turn 5
     }
 ]
