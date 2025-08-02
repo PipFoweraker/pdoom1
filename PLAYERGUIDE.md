@@ -99,7 +99,7 @@ As your organization grows, you'll encounter special milestone events that chang
 | End turn | Click "END TURN" or press `Space` |
 | View upgrade details | Hover mouse over purchased upgrades (top right) |
 | Quit to menu | Press `Esc` |
-| Restart after game over | Click anywhere on final score screen |
+| End-game options | Click anywhere on final score screen to access end-game menu |
 
 ### Game Modes
 - **Weekly Seed**: This week's community challenge (same for everyone)
@@ -404,6 +404,26 @@ Your score is how many turns you survived. Try to beat your previous best!
 **Weekly Seed**: Everyone gets the same challenge each week - compete with friends!  
 **Custom Seed**: Use any text as a seed for repeatable games
 **High Scores**: Tracked separately for each seed in `local_highscore.json`
+
+---
+
+## End-Game Menu
+
+When your game ends, you'll see your final statistics followed by an **End-Game Menu** with several options:
+
+### Menu Options
+- **🔄 Relaunch Game**: Restart with the same seed for another attempt
+- **🏠 Main Menu**: Return to the main menu to select new game options
+- **⚙️ Settings**: View game settings and configuration information  
+- **💬 Submit Feedback**: Share suggestions and feedback about the game
+- **🐛 Submit Bug Request**: Report bugs or technical issues
+
+### Navigation
+- **Mouse**: Click any option to select it
+- **Keyboard**: Use arrow keys to navigate, Enter to select, Escape for Main Menu
+- **Features**: Same bug reporting system as main menu, preserves game statistics
+
+This replaces the old "click anywhere to restart" behavior, giving you more control over what to do after a game ends.
 
 ---
 

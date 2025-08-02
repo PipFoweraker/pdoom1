@@ -40,6 +40,7 @@ The game will open with a main menu where you can choose game modes, access docu
 - **Research & Development**: Publish papers, buy compute, and advance AI safety
 - **Enhanced Event System**: Navigate unexpected challenges with advanced response options
 - **Milestone-Driven Special Events**: Unlock new mechanics as your organization grows
+- **End-Game Menu**: Comprehensive post-game options for relaunch, feedback, and bug reporting
 
 ### Milestone-Driven Special Events
 The game features a sophisticated milestone system that unlocks new mechanics and challenges as your organization scales:
