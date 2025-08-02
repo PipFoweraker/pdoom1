@@ -106,6 +106,33 @@ As your organization grows, you'll encounter special milestone events that chang
 
 ---
 
+## Visual Feedback & UI Transitions
+
+The game provides rich visual feedback to help you understand how your actions affect the game state:
+
+### Upgrade Transitions
+When you purchase upgrades, they don't just disappear - they smoothly animate from their button location to become icons at the top right:
+
+- **Smooth Animation**: Upgrades follow a curved arc path over 1 second
+- **Visual Trail**: Green trail points create motion blur effect during the transition  
+- **Glow Highlight**: The destination icon location pulses with a green glow
+- **Clear Feedback**: You can see exactly where your purchased upgrade ends up
+
+### Other Visual Feedback
+- **Action Points**: AP counter glows yellow when spent, showing strategic impact
+- **Cash Flow**: Balance changes appear when accounting software is purchased
+- **Employee Animations**: Staff blobs animate in from the side when hired
+- **UI State Changes**: All UI state changes include visual transitions for clarity
+
+### Why Visual Feedback Matters
+These animations aren't just decoration - they serve important gameplay functions:
+- **Clarity**: See where UI elements go when they change state
+- **Feedback**: Immediate confirmation of successful actions
+- **Understanding**: Visual cues help you learn the interface faster
+- **Satisfaction**: Smooth animations make interactions feel responsive
+
+---
+
 ## Action Points Strategy
 
 The Action Points (AP) system adds strategic depth by limiting your actions each turn.
@@ -118,6 +145,8 @@ The Action Points (AP) system adds strategic depth by limiting your actions each
 
 ### Visual Indicators
 - **AP Counter**: Displayed as "AP: 2/3" in the top resource bar
+- **Glow Effect**: AP counter glows yellow when Action Points are spent
+- **Button States**: Action buttons gray out when you lack sufficient AP
 - **Glow Effect**: AP counter glows yellow when you spend points
 - **Button States**: Action buttons gray out when you lack sufficient AP
 - **Cost Display**: Each action shows both money cost and AP cost
