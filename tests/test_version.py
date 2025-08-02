@@ -90,6 +90,40 @@ class TestVersionIntegration(unittest.TestCase):
         self.assertEqual(gs.logger.game_version, expected_version)
 
 
+class TestVersionConsistency(unittest.TestCase):
+    """Test that version is consistent across all files and components."""
+    
+    def test_version_in_main_window_title(self):
+        """Test that main.py uses the correct version in window title."""
+        # Read main.py and check it uses get_display_version()
+        with open('main.py', 'r') as f:
+            main_content = f.read()
+        
+        # Should import and use get_display_version
+        self.assertIn('from version import get_display_version', main_content)
+        self.assertIn('get_display_version()', main_content)
+    
+    def test_changelog_mentions_correct_version(self):
+        """Test that CHANGELOG.md mentions the current version."""
+        current_version = __version__
+        
+        with open('CHANGELOG.md', 'r') as f:
+            changelog_content = f.read()
+        
+        # Should mention current version in changelog
+        self.assertIn(f'[{current_version}]', changelog_content)
+    
+    def test_release_workflow_version_validation(self):
+        """Test that release workflow has version validation."""
+        with open('.github/workflows/release.yml', 'r') as f:
+            workflow_content = f.read()
+        
+        # Should have version validation steps
+        self.assertIn('validate-version', workflow_content)
+        self.assertIn('version consistency', workflow_content.lower())
+        self.assertIn('get_display_version', workflow_content)
+
+
 class TestVersionSemantics(unittest.TestCase):
     """Test that version follows semantic versioning rules."""
     
