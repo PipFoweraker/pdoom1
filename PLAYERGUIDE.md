@@ -35,6 +35,7 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 - **💰 Money**: Spend on actions and upgrades, earn through fundraising
 - **👥 Staff**: Your team (costs money each turn, can quit if unpaid)
 - **⭐ Reputation**: Affects fundraising and events
+- **⚡ Action Points (AP)**: Limit actions per turn (3 AP max, resets each turn)
 - **☢️ p(Doom)**: AI catastrophe risk (game over at 100%)
 - **🖥️ Compute**: Powers employee productivity and research
 - **📄 Research**: Progress toward publishing papers (boosts reputation)
@@ -65,6 +66,36 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 - **Weekly Seed**: This week's community challenge (same for everyone)
 - **Custom Seed**: Enter your own seed for repeatable scenarios
 - **Report Bug**: Submit feedback or issues (privacy-focused)
+
+---
+
+## Action Points Strategy
+
+The Action Points (AP) system adds strategic depth by limiting your actions each turn.
+
+### How Action Points Work
+- **Starting AP**: You begin each turn with 3 Action Points
+- **Action Costs**: Each action costs 1 AP (shown on action buttons)
+- **Strategic Choices**: With limited AP, choose your most important actions first
+- **Turn Reset**: AP automatically resets to 3 at the start of each new turn
+
+### Visual Indicators
+- **AP Counter**: Displayed as "AP: 2/3" in the top resource bar
+- **Glow Effect**: AP counter glows yellow when you spend points
+- **Button States**: Action buttons gray out when you lack sufficient AP
+- **Cost Display**: Each action shows both money cost and AP cost
+
+### Strategic Tips
+🎯 **Prioritize Critical Actions**: Use AP on actions that directly address immediate threats  
+💡 **Plan Ahead**: Consider saving AP for emergency responses to events  
+⚖️ **Balance Resources**: Don't spend all AP early - keep some flexibility  
+🔄 **Turn Efficiency**: Use all 3 AP each turn for maximum impact  
+
+### Action Efficiency Guide
+- **Free Actions**: Fundraise (0 money, 1 AP) - great early game
+- **High Impact**: Safety Research (40 money, 1 AP) - reduces doom effectively  
+- **Long-term**: Hire Staff (60 money, 1 AP) - builds capacity
+- **Intelligence**: Espionage/Scout (30-50 money, 1 AP) - knowledge is power
 
 ---
 

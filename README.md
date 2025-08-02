@@ -35,6 +35,7 @@ The game will open with a main menu where you can choose game modes, access docu
 
 ### Core Gameplay
 - **Resource Management**: Balance money, staff, reputation, and p(Doom) levels
+- **Action Points System**: Strategic action limitation with 3 Action Points per turn
 - **Action System**: Choose from various actions each turn to advance your strategy
 - **Research & Development**: Publish papers, buy compute, and advance AI safety
 - **Enhanced Event System**: Navigate unexpected challenges with advanced response options
@@ -57,6 +58,21 @@ The game features a sophisticated event system that evolves as you play:
 - Enhanced event system unlocks automatically after turn 8
 - Provides popup overlays for critical events and a deferred events zone
 - Allows strategic management of multiple concurrent crises
+
+### Action Points System
+The game features a strategic Action Points (AP) system that limits the number of actions you can take each turn:
+
+**Key Features:**
+- **3 Action Points per turn**: Each turn you start with 3 AP to spend on actions
+- **Action Costs**: Most actions cost 1 AP, creating strategic choices about priorities
+- **Visual Feedback**: AP counter shows current/max AP with glow effects when spent
+- **Turn Reset**: AP automatically resets to maximum at the start of each turn
+
+**Strategic Implications:**
+- **Prioritization**: Choose the most important actions when AP is limited
+- **Future Planning**: Consider which actions to save for future turns
+- **Resource Coordination**: Balance AP spending with money and other resource constraints
+- **Visual Cues**: Action buttons are grayed out when you lack sufficient AP
 
 ### Opponents System
 Race against 3 competing AI labs, each with unique characteristics:
@@ -106,9 +122,11 @@ The game automatically creates detailed logs in the `logs/` directory:
 Verify your installation works by running the test suite:
 
 ```sh
-# Run all tests (should show 32 tests passing)
+# Run all tests (should show 138 tests passing, including Action Points tests)
 python -m unittest discover tests -v
 ```
+
+**Important**: Always run tests before deploying changes. Tests are automatically run in the deployment pipeline to ensure code quality and prevent regressions.
 
 If tests fail, check your Python and pygame installation.
 

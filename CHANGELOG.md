@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- **Action Points System (Phase 1)**: Strategic action limitation system
+  - 3 Action Points per turn limit player actions
+  - All actions cost 1 AP by default
+  - AP validation prevents actions when insufficient points available
+  - Visual AP counter with glow effects when points are spent
+  - Action buttons show AP costs and gray out when unavailable
+  - AP automatically resets to maximum at start of each turn
+  - Comprehensive test coverage for AP functionality
 - Centralized version management system (`version.py`)
 - Comprehensive changelog documentation
 - Semantic versioning policy and release process
