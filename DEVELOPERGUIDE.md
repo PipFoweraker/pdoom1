@@ -327,6 +327,86 @@ The system supports:
 
 ---
 
+## Milestone Events System
+
+### Overview
+The milestone events system triggers special organizational changes at key growth thresholds, introducing new mechanics and UI elements as the player's lab scales.
+
+### Architecture
+
+**Milestone Tracking:**
+```python
+# Key state variables in GameState.__init__()
+self.managers = 0                     # Manager count
+self.board_members = 0               # Board member count  
+self.first_manager_hired = False     # 9th employee milestone flag
+self.board_member_search_unlocked = False  # Spending threshold flag
+self.audit_risk_level = 0           # Hidden compliance risk (0-100)
+self.spend_this_turn = 0            # Per-turn spending tracker
+```
+
+**Employee Subtype System:**
+```python
+# Employee blob structure extended with type and management
+blob = {
+    'type': 'employee|manager|board_member',
+    'managed': False,                # Under manager supervision
+    'unproductive_reason': None      # 'no_manager', 'no_compute', etc.
+}
+```
+
+### Implementation Details
+
+**Manager Milestone (9th Employee):**
+- **Trigger**: `_add('staff', val)` checks for `staff >= 9` and `not first_manager_hired`
+- **Effect**: `_trigger_manager_milestone()` converts latest employee to manager
+- **Management Structure**: `_update_management_structure()` assigns employees to managers
+- **Visual**: Managers show green color with crown icon in UI
+
+**Board Member Compliance (Spending Threshold):**
+- **Trigger**: `_check_board_member_threshold()` detects `spend_this_turn > 10000` without accounting software
+- **Effect**: Unlocks "Search for Board Member" action, starts audit risk accumulation
+- **Audit Risk**: Increases p(Doom) over time until 2 board members found
+- **Visual**: Board members show purple color with briefcase icon in UI
+
+**Spending Tracking:**
+```python
+# In _add() method for money
+if val < 0:  # Track spending (negative values)
+    self.spend_this_turn += abs(val)
+```
+
+### Employee Productivity Rules
+
+**Management Requirements:**
+1. First 9 employees are always productive (no management needed)
+2. Employees 10+ require manager supervision or become unproductive
+3. Each manager can supervise 9 additional employees
+4. Unproductive employees show red slash overlay in UI
+
+**Compute Assignment:**
+- Managers and board members are always productive with compute
+- Regular employees need both compute AND management (if beyond 9)
+- Visual halos indicate compute assignment
+
+### Testing
+New milestone functionality is covered by `tests/test_milestone_events.py`:
+- Manager milestone triggers and promotion logic
+- Employee productivity with/without management
+- Board member spending threshold detection  
+- Audit risk mechanics and board member search
+- Accounting software upgrade functionality
+- Spending tracking and turn reset mechanics
+
+### Extension Points
+The milestone system is designed for easy expansion:
+- Add new employee subtypes in blob `type` field
+- Create new milestone triggers in `_add()` or `end_turn()`
+- Extend management rules in `_update_management_structure()`
+- Add new visual indicators in `draw_employee_blobs()`
+
+---
+
 ## Code Style & Guidelines
 
 ### Contribution Guidelines

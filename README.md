@@ -39,6 +39,28 @@ The game will open with a main menu where you can choose game modes, access docu
 - **Action System**: Choose from various actions each turn to advance your strategy
 - **Research & Development**: Publish papers, buy compute, and advance AI safety
 - **Enhanced Event System**: Navigate unexpected challenges with advanced response options
+- **Milestone Events**: Organizational growth triggers special events and new mechanics
+
+### Milestone-Driven Growth
+The game features milestone events that activate as your organization scales:
+
+**Manager System:**
+- Automatically triggers when hiring 9th employee
+- Promotes latest hire to Manager role (green with crown)
+- Employees beyond 9 require management or become unproductive
+- Visual indicators show management structure and productivity
+
+**Board Member Compliance:**
+- Triggers when spending >$10k without accounting software
+- Introduces audit risk and compliance requirements
+- Unlock "Search for Board Member" action to find oversight
+- Audit risk increases p(Doom) until compliance achieved
+
+**Accounting Software Upgrade:**
+- Available as persistent right-panel upgrade
+- Unlocks detailed cash flow tracking interface
+- Prevents board member compliance events
+- Shows real-time financial monitoring and spending analysis
 
 ### Enhanced Event System
 The game features a sophisticated event system that evolves as you play:

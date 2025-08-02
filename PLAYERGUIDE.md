@@ -43,6 +43,43 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 
 ---
 
+## Milestone Events & Employee Management
+
+As your organization grows, you'll encounter special milestone events that change how your lab operates:
+
+### Manager System (9th Employee Milestone)
+- **Trigger**: Automatically activates when you hire your 9th employee
+- **Effect**: Your latest hire is promoted to Manager (green with crown icon)
+- **Management Rules**:
+  - First 9 employees work productively without management
+  - Employees beyond 9 require management or become unproductive (red slash overlay)
+  - Each Manager can oversee 9 additional employees
+  - Plan ahead: hire a Manager for every ~18 employees total
+
+### Board Member Compliance (Spending Threshold)
+- **Trigger**: Spending more than $10,000 in a single turn without Accounting Software
+- **Effect**: 
+  - Audit risk begins accumulating (increases p(Doom) over time)
+  - "Search for Board Member" action becomes available
+  - Must find 2 Board Members to eliminate audit risk
+- **Board Member Search**: 20% success chance per attempt, costs $75 and 1 AP
+- **Prevention**: Purchase Accounting Software upgrade to prevent this event
+
+### Employee Types
+- **Regular Employees** (blue): Your standard workforce
+- **Managers** (green with crown): Supervise clusters of employees  
+- **Board Members** (purple with briefcase): Ensure regulatory compliance
+
+### Cash Flow UI
+- **Unlocked by**: Purchasing the Accounting Software upgrade
+- **Features**: 
+  - Real-time balance tracking with change indicators
+  - Monthly cost breakdown
+  - Turn spending monitor (warns when approaching $10k threshold)
+  - Historical transaction details
+
+---
+
 ## Controls & Interface
 
 ### Main Menu Navigation
