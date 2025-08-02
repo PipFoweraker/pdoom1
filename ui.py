@@ -240,8 +240,18 @@ def draw_ui(screen, game_state, w, h):
     screen.blit(big_font.render(f"Money: ${game_state.money}", True, (255, 230, 60)), (int(w*0.04), int(h*0.11)))
     screen.blit(big_font.render(f"Staff: {game_state.staff}", True, (255, 210, 180)), (int(w*0.21), int(h*0.11)))
     screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255)), (int(w*0.35), int(h*0.11)))
-    screen.blit(big_font.render(f"p(Doom): {game_state.doom}/{game_state.max_doom}", True, (255, 80, 80)), (int(w*0.52), int(h*0.11)))
-    screen.blit(font.render(f"Opponent progress: {game_state.known_opp_progress if game_state.known_opp_progress is not None else '???'}/100", True, (240, 200, 160)), (int(w*0.74), int(h*0.11)))
+    
+    # Action Points with glow effect
+    ap_color = (255, 255, 100)  # Yellow base color for AP
+    if hasattr(game_state, 'ap_glow_timer') and game_state.ap_glow_timer > 0:
+        # Add glow/pulse effect when AP is spent
+        glow_intensity = int(127 * (game_state.ap_glow_timer / 30))  # Fade over 30 frames
+        ap_color = (min(255, 255 + glow_intensity), min(255, 255 + glow_intensity), min(255, 100 + glow_intensity))
+    
+    screen.blit(big_font.render(f"AP: {game_state.action_points}/{game_state.max_action_points}", True, ap_color), (int(w*0.49), int(h*0.11)))
+    
+    screen.blit(big_font.render(f"p(Doom): {game_state.doom}/{game_state.max_doom}", True, (255, 80, 80)), (int(w*0.62), int(h*0.11)))
+    screen.blit(font.render(f"Opponent progress: {game_state.known_opp_progress if game_state.known_opp_progress is not None else '???'}/100", True, (240, 200, 160)), (int(w*0.84), int(h*0.11)))
     # Second line of resources
     screen.blit(big_font.render(f"Compute: {game_state.compute}", True, (100, 255, 150)), (int(w*0.04), int(h*0.135)))
     screen.blit(big_font.render(f"Research: {game_state.research_progress}/100", True, (150, 200, 255)), (int(w*0.21), int(h*0.135)))
@@ -250,8 +260,8 @@ def draw_ui(screen, game_state, w, h):
     screen.blit(small_font.render(f"Seed: {game_state.seed}", True, (140, 200, 160)), (int(w*0.77), int(h*0.03)))
 
     # Doom bar
-    doom_bar_x, doom_bar_y = int(w*0.52), int(h*0.16)
-    doom_bar_width, doom_bar_height = int(w*0.38), int(h*0.025)
+    doom_bar_x, doom_bar_y = int(w*0.62), int(h*0.16)
+    doom_bar_width, doom_bar_height = int(w*0.28), int(h*0.025)
     pygame.draw.rect(screen, (70, 50, 50), (doom_bar_x, doom_bar_y, doom_bar_width, doom_bar_height))
     filled = int(doom_bar_width * (game_state.doom / game_state.max_doom))
     pygame.draw.rect(screen, (255, 60, 60), (doom_bar_x, doom_bar_y, filled, doom_bar_height))
@@ -262,11 +272,27 @@ def draw_ui(screen, game_state, w, h):
     # Action buttons (left)
     action_rects = game_state._get_action_rects(w, h)
     for idx, rect in enumerate(action_rects):
-        color = (60, 60, 130) if idx not in game_state.selected_actions else (110, 110, 200)
+        action = game_state.actions[idx]
+        ap_cost = action.get("ap_cost", 1)
+        
+        # Change color based on AP availability
+        if game_state.action_points < ap_cost:
+            # Grayed out if insufficient AP
+            color = (40, 40, 80) if idx not in game_state.selected_actions else (70, 70, 120)
+            border_color = (80, 80, 140)
+            text_color = (150, 150, 180)
+        else:
+            # Normal colors
+            color = (60, 60, 130) if idx not in game_state.selected_actions else (110, 110, 200)
+            border_color = (130, 130, 220)
+            text_color = (220, 220, 255)
+        
         pygame.draw.rect(screen, color, rect, border_radius=10)
-        pygame.draw.rect(screen, (130, 130, 220), rect, width=3, border_radius=10)
-        act_text = big_font.render(game_state.actions[idx]["name"], True, (220, 220, 255))
-        desc_text = font.render(game_state.actions[idx]["desc"] + f" (Cost: ${game_state.actions[idx]['cost']})", True, (190, 210, 255))
+        pygame.draw.rect(screen, border_color, rect, width=3, border_radius=10)
+        
+        act_text = big_font.render(action["name"], True, text_color)
+        desc_text = font.render(f"{action['desc']} (Cost: ${action['cost']}, AP: {ap_cost})", True, (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160))
+        
         screen.blit(act_text, (rect[0] + int(w*0.01), rect[1] + int(h*0.01)))
         screen.blit(desc_text, (rect[0] + int(w*0.01), rect[1] + int(h*0.04)))
 

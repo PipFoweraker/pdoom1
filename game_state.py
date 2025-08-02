@@ -59,6 +59,13 @@ class GameState:
         self.compute = 0  # New compute resource, starts at 0
         self.research_progress = 0  # Track research progress for paper generation
         self.papers_published = 0  # Count of research papers published
+        
+        # Action Points system (Phase 1)
+        self.action_points = 3  # Current available action points
+        self.max_action_points = 3  # Maximum action points per turn
+        self.ap_spent_this_turn = False  # Track if AP was spent for UI glow effects
+        self.ap_glow_timer = 0  # Timer for AP glow animation
+        
         self.turn = 0
         self.max_doom = 100
         self.selected_actions = []
@@ -318,6 +325,14 @@ class GameState:
                     if action.get("rules") and not action["rules"](self):
                         self.messages.append(f"{action['name']} is not available yet.")
                         return None
+                    
+                    # Check Action Points availability
+                    ap_cost = action.get("ap_cost", 1)  # Default AP cost is 1
+                    if self.action_points < ap_cost:
+                        self.messages.append(f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points}).")
+                        return None
+                    
+                    # Check money availability
                     if self.money >= action["cost"]:
                         self.selected_actions.append(idx)
                         self.messages.append(f"Selected: {action['name']}")
@@ -439,9 +454,20 @@ class GameState:
         # Perform all selected actions
         for idx in self.selected_actions:
             action = self.actions[idx]
+            ap_cost = action.get("ap_cost", 1)  # Default AP cost is 1
+            
+            # Deduct Action Points
+            self.action_points -= ap_cost
+            self.ap_spent_this_turn = True  # Track for UI glow effects
+            self.ap_glow_timer = 30  # 30 frames of glow effect
+            
+            # Deduct money cost
             self.money -= action["cost"]
+            
             # Log the action
             self.logger.log_action(action["name"], action["cost"], self.turn)
+            
+            # Execute action effects
             if action.get("upside"): action["upside"](self)
             if action.get("downside"): action["downside"](self)
             if action.get("rules"): action["rules"](self)
@@ -482,6 +508,14 @@ class GameState:
             expired_events = self.deferred_events.tick_all_events(self)
         
         self.turn += 1
+        
+        # Reset Action Points for new turn
+        self.action_points = self.max_action_points
+        self.ap_spent_this_turn = False  # Reset glow flag for new turn
+        
+        # Decrease glow timer
+        if self.ap_glow_timer > 0:
+            self.ap_glow_timer -= 1
         
         # Store current turn messages if scrollable event log is now enabled
         # (This handles the case where the feature was enabled during this turn)
