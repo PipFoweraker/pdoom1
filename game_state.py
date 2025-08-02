@@ -43,6 +43,12 @@ class GameState:
             self.compute = max(self.compute + val, 0)
         elif attr == 'research_progress':
             self.research_progress = max(self.research_progress + val, 0)
+        elif attr == 'admin_staff':
+            self.admin_staff = max(self.admin_staff + val, 0)
+        elif attr == 'research_staff':
+            self.research_staff = max(self.research_staff + val, 0)
+        elif attr == 'ops_staff':
+            self.ops_staff = max(self.ops_staff + val, 0)
         return None
 
 # Ensure last_balance_change gets set on any direct subtraction/addition to money:
@@ -64,11 +70,16 @@ class GameState:
         self.research_progress = 0  # Track research progress for paper generation
         self.papers_published = 0  # Count of research papers published
         
-        # Action Points system (Phase 1)
+        # Action Points system (Phase 1 & 2)
         self.action_points = 3  # Current available action points
-        self.max_action_points = 3  # Maximum action points per turn
+        self.max_action_points = 3  # Maximum action points per turn (will be calculated dynamically)
         self.ap_spent_this_turn = False  # Track if AP was spent for UI glow effects
         self.ap_glow_timer = 0  # Timer for AP glow animation
+        
+        # Phase 2: Staff-Based AP Scaling
+        self.admin_staff = 0  # Admin assistants: +1.0 AP each
+        self.research_staff = 0  # Research staff: Enable research action delegation
+        self.ops_staff = 0  # Operations staff: Enable operational action delegation
         
         self.turn = 0
         self.max_doom = 100
@@ -121,6 +132,22 @@ class GameState:
         
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()
+
+    def calculate_max_ap(self):
+        """
+        Calculate maximum Action Points per turn based on staff composition.
+        
+        Base AP: 3 per turn
+        Staff bonus: +0.5 AP per regular staff member
+        Admin bonus: +1.0 AP per admin assistant
+        
+        Returns:
+            int: Maximum action points for the current turn
+        """
+        base = 3
+        staff_bonus = self.staff * 0.5
+        admin_bonus = self.admin_staff * 1.0
+        return int(base + staff_bonus + admin_bonus)
 
     def _initialize_employee_blobs(self):
         """Initialize employee blobs for starting staff"""
@@ -736,7 +763,8 @@ class GameState:
         
         self.turn += 1
         
-        # Reset Action Points for new turn
+        # Reset Action Points for new turn (Phase 2: Staff-Based AP Scaling)
+        self.max_action_points = self.calculate_max_ap()
         self.action_points = self.max_action_points
         self.ap_spent_this_turn = False  # Reset glow flag for new turn
         

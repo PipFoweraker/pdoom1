@@ -167,13 +167,13 @@ class TestActionPointsReset(unittest.TestCase):
         self.game_state.ap_spent_this_turn = True
         self.game_state.ap_glow_timer = 15
         
-        initial_max_ap = self.game_state.max_action_points
-        
         # End turn
         self.game_state.end_turn()
         
-        # Verify AP reset
-        self.assertEqual(self.game_state.action_points, initial_max_ap)
+        # Verify AP reset (should be recalculated based on current staff)
+        expected_max_ap = self.game_state.calculate_max_ap()
+        self.assertEqual(self.game_state.action_points, expected_max_ap)
+        self.assertEqual(self.game_state.max_action_points, expected_max_ap)
         self.assertFalse(self.game_state.ap_spent_this_turn)
     
     def test_glow_timer_decreases(self):
@@ -232,6 +232,114 @@ class TestActionPointsBackwardCompatibility(unittest.TestCase):
         safety_research = next(action for action in self.game_state.actions 
                              if action["name"] == "Safety Research")
         self.assertEqual(safety_research["cost"], 40)
+
+
+class TestActionPointsStaffScaling(unittest.TestCase):
+    """Test Phase 2: Staff-Based AP Scaling functionality."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        self.game_state = GameState("test_seed")
+        self.game_state.money = 100000
+    
+    def test_calculate_max_ap_base(self):
+        """Test base AP calculation without staff bonuses."""
+        # Reset staff to 0 for clean test
+        self.game_state.staff = 0
+        self.game_state.admin_staff = 0
+        
+        expected = 3  # Base AP
+        self.assertEqual(self.game_state.calculate_max_ap(), expected)
+    
+    def test_calculate_max_ap_with_regular_staff(self):
+        """Test AP calculation with regular staff bonus."""
+        self.game_state.staff = 4
+        self.game_state.admin_staff = 0
+        
+        expected = 3 + (4 * 0.5)  # Base + staff bonus
+        self.assertEqual(self.game_state.calculate_max_ap(), int(expected))
+    
+    def test_calculate_max_ap_with_admin_staff(self):
+        """Test AP calculation with admin staff bonus."""
+        self.game_state.staff = 2
+        self.game_state.admin_staff = 2
+        
+        expected = 3 + (2 * 0.5) + (2 * 1.0)  # Base + staff + admin bonus
+        self.assertEqual(self.game_state.calculate_max_ap(), int(expected))
+    
+    def test_calculate_max_ap_complex_composition(self):
+        """Test AP calculation with complex staff composition."""
+        self.game_state.staff = 10
+        self.game_state.admin_staff = 3
+        
+        expected = 3 + (10 * 0.5) + (3 * 1.0)  # 3 + 5 + 3 = 11
+        self.assertEqual(self.game_state.calculate_max_ap(), 11)
+    
+    def test_ap_recalculation_on_turn_end(self):
+        """Test that max AP is recalculated at turn end."""
+        # Start with some staff
+        self.game_state.staff = 6
+        self.game_state.admin_staff = 1
+        
+        # End turn to trigger recalculation
+        self.game_state.end_turn()
+        
+        expected_max = 3 + (6 * 0.5) + (1 * 1.0)  # 3 + 3 + 1 = 7
+        self.assertEqual(self.game_state.max_action_points, 7)
+        self.assertEqual(self.game_state.action_points, 7)
+    
+    def test_specialized_staff_fields_initialization(self):
+        """Test that specialized staff fields are properly initialized."""
+        self.assertEqual(self.game_state.admin_staff, 0)
+        self.assertEqual(self.game_state.research_staff, 0)
+        self.assertEqual(self.game_state.ops_staff, 0)
+    
+    def test_add_specialized_staff(self):
+        """Test adding specialized staff through _add method."""
+        self.game_state._add('admin_staff', 2)
+        self.game_state._add('research_staff', 1)
+        self.game_state._add('ops_staff', 3)
+        
+        self.assertEqual(self.game_state.admin_staff, 2)
+        self.assertEqual(self.game_state.research_staff, 1)
+        self.assertEqual(self.game_state.ops_staff, 3)
+    
+    def test_specialized_staff_cannot_go_negative(self):
+        """Test that specialized staff counts cannot go below zero."""
+        self.game_state._add('admin_staff', -5)
+        self.game_state._add('research_staff', -3)
+        self.game_state._add('ops_staff', -1)
+        
+        self.assertEqual(self.game_state.admin_staff, 0)
+        self.assertEqual(self.game_state.research_staff, 0)
+        self.assertEqual(self.game_state.ops_staff, 0)
+    
+    def test_new_staff_hiring_actions_exist(self):
+        """Test that new specialized staff hiring actions exist."""
+        action_names = [action["name"] for action in self.game_state.actions]
+        
+        self.assertIn("Hire Admin Assistant", action_names)
+        self.assertIn("Hire Research Staff", action_names)
+        self.assertIn("Hire Operations Staff", action_names)
+    
+    def test_specialized_staff_hiring_costs(self):
+        """Test that specialized staff have appropriate costs."""
+        admin_action = next(action for action in self.game_state.actions 
+                           if action["name"] == "Hire Admin Assistant")
+        research_action = next(action for action in self.game_state.actions 
+                              if action["name"] == "Hire Research Staff")
+        ops_action = next(action for action in self.game_state.actions 
+                         if action["name"] == "Hire Operations Staff")
+        
+        # Admin assistants should cost more due to higher AP bonus
+        self.assertEqual(admin_action["cost"], 80)
+        self.assertEqual(admin_action["ap_cost"], 2)
+        
+        # Research and ops staff should cost the same
+        self.assertEqual(research_action["cost"], 70)
+        self.assertEqual(research_action["ap_cost"], 2)
+        self.assertEqual(ops_action["cost"], 70)
+        self.assertEqual(ops_action["ap_cost"], 2)
 
 
 if __name__ == '__main__':
