@@ -28,6 +28,32 @@ python main.py
 
 The game will open with a main menu where you can choose game modes, access documentation, or report bugs.
 
+## Game Features
+
+### Core Gameplay
+- **Resource Management**: Balance money, staff, reputation, and p(Doom) levels
+- **Action System**: Choose from various actions each turn to advance your strategy
+- **Research & Development**: Publish papers, buy compute, and advance AI safety
+- **Random Events**: Navigate unexpected challenges and opportunities
+
+### Opponents System
+Race against 3 competing AI labs, each with unique characteristics:
+- **TechCorp Labs**: Well-funded tech giant with aggressive timelines
+- **National AI Initiative**: Government-backed program with regulatory influence  
+- **Frontier Dynamics**: Secretive startup with mysterious backing
+
+**Intelligence Gathering:**
+- Use **Espionage** to discover competitors and gather basic intelligence
+- Unlock **Scout Opponent** (turn 5+) for focused intelligence operations
+- Reveal hidden stats: budget, researchers, lobbyists, compute resources, and progress
+- Monitor opponent activities and strategic decisions
+
+**Competitive Dynamics:**
+- Opponents spend budget on capabilities research, hiring, and lobbying
+- Track competitor progress toward dangerous AGI deployment (0-100%)
+- Game ends if any opponent reaches 100% progress
+- Opponent research contributes to global p(Doom) levels
+
 ## Troubleshooting
 
 ### Common Issues
