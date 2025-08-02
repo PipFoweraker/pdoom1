@@ -3,12 +3,10 @@ name: Auto Copilot PRs
 on:
   workflow_dispatch:
     inputs:
-        issue_number:
-            Description:"Issue number to work on"
-            required:true
-  schedule:
-    - cron: '0 3 * * *'  # Every day at 3am UTC
-
+      issue_number:
+        description: "Issue number to work on"
+        required: true
+        
 jobs:
   find-issues:
     runs-on: ubuntu-latest
