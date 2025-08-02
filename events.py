@@ -19,6 +19,14 @@ def unlock_scrollable_event_log(gs):
     gs.scrollable_event_log_enabled = True
     gs.messages.append("Event Log Upgrade unlocked! You can now scroll through your complete activity history with arrow keys or mouse wheel.")
 
+def unlock_enhanced_events(gs):
+    """
+    Custom event effect function for unlocking the enhanced event system.
+    Enables popup events, deferred events, and advanced event handling.
+    """
+    gs.enhanced_events_enabled = True
+    gs.messages.append("Enhanced Event System unlocked! Your organization can now handle complex events with advanced response options.")
+
 EVENTS = [
     {
         "name": "Lab Breakthrough",
@@ -51,5 +59,12 @@ EVENTS = [
         # Trigger: After turn 5, and only if not already unlocked
         "trigger": lambda gs: gs.turn >= 5 and not getattr(gs, "scrollable_event_log_enabled", False),
         "effect": unlock_scrollable_event_log
+    },
+    {
+        "name": "Enhanced Event System Upgrade",
+        "desc": "Your organization developed advanced event handling capabilities! Complex crisis management now available.",
+        # Trigger: After turn 8, and only if not already unlocked
+        "trigger": lambda gs: gs.turn >= 8 and not getattr(gs, "enhanced_events_enabled", False),
+        "effect": unlock_enhanced_events
     },
 ]
