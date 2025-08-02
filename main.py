@@ -505,6 +505,10 @@ def main():
                     draw_scoreboard(screen, game_state, SCREEN_W, SCREEN_H, seed)
                     scoreboard_active = True
                 else:
+                    # Update UI transitions every frame for smooth animation
+                    if game_state:
+                        game_state._update_ui_transitions()
+                    
                     draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
                     if tooltip_text:
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)

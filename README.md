@@ -60,6 +60,7 @@ The game features a sophisticated milestone system that unlocks new mechanics an
 - **Accounting Software**: Visible right-panel upgrade ($500) enables cash flow tracking
 - **Compliance Prevention**: Purchasing accounting software blocks board member milestone
 - **Cash Flow UI**: Persistent balance change indicators when accounting software is active
+- **Smooth UI Transitions**: Visual feedback system with animated trails and glow effects
 
 ### Enhanced Event System
 The game features a sophisticated event system that evolves as you play:
@@ -124,6 +125,24 @@ Race against 3 competing AI labs, each with unique characteristics:
 - Track competitor progress toward dangerous AGI deployment (0-100%)
 - Game ends if any opponent reaches 100% progress
 - Opponent research contributes to global p(Doom) levels
+
+## Visual Feedback System
+
+The game features a sophisticated visual feedback system that makes UI state changes clear and engaging:
+
+### Smooth UI Transitions
+- **Upgrade Animations**: When purchasing upgrades, watch them smoothly transition from buttons to icons
+- **Curved Arc Trails**: Visual trails show the path from the original button to its new icon position  
+- **Glow Effects**: Destination locations pulse with a green glow when transitions complete
+- **Extensible Design**: The system supports different UI elements for future enhancements
+
+### Visual Feedback Features
+- **Action Point Glow**: AP counter glows when Action Points are spent
+- **Cash Flow Indicators**: Balance changes display when accounting software is active
+- **Employee Animations**: Staff blob animations when hiring/firing
+- **Trail Effects**: Fading motion blur creates smooth visual continuity
+
+These animations provide immediate visual feedback to help players understand how their actions affect the game state, making UI interactions more intuitive and satisfying.
 
 ## Troubleshooting
 
