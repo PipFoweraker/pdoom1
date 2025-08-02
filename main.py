@@ -379,10 +379,10 @@ def handle_end_game_menu_click(mouse_pos, w, h):
     global current_state, selected_menu_item, seed, overlay_content, overlay_title, end_game_selected_item
     
     # Calculate menu button positions (similar to main menu layout)
-    button_width = int(w * 0.4)
-    button_height = int(h * 0.08)
-    start_y = int(h * 0.35)
-    spacing = int(h * 0.1)
+    button_width = int(w * 0.35)
+    button_height = int(h * 0.06)
+    start_y = int(h * 0.55)
+    spacing = int(h * 0.08)
     center_x = w // 2
     
     mx, my = mouse_pos
@@ -398,56 +398,60 @@ def handle_end_game_menu_click(mouse_pos, w, h):
             
             # Execute menu action based on selection
             if i == 0:  # Relaunch Game
-                # Restart with same seed
-                random.seed(seed)
                 current_state = 'game'
+                # Keep the same seed for relaunch
             elif i == 1:  # Main Menu
                 current_state = 'main_menu'
+                selected_menu_item = 0
             elif i == 2:  # Settings
                 overlay_content = create_settings_content()
                 overlay_title = "Settings"
                 current_state = 'overlay'
             elif i == 3:  # Submit Feedback
-                # Pre-fill bug report form for feedback
+                # Reset and pre-fill feedback form
                 reset_bug_report_form()
-                bug_report_data["type_index"] = 2  # feedback type
+                bug_report_data["type_index"] = 2  # Feedback
                 current_state = 'bug_report'
             elif i == 4:  # Submit Bug Request
-                # Pre-fill bug report form for bug
+                # Reset and pre-fill bug report form
                 reset_bug_report_form()
-                bug_report_data["type_index"] = 0  # bug type
+                bug_report_data["type_index"] = 0  # Bug
                 current_state = 'bug_report'
             break
 
 def handle_end_game_menu_keyboard(key):
-    """Handle keyboard navigation in end-game menu."""
-    global end_game_selected_item, current_state, seed, overlay_content, overlay_title
+    """Handle keyboard navigation for end-game menu."""
+    global end_game_selected_item, current_state, selected_menu_item, overlay_content, overlay_title
     
     if key == pygame.K_UP:
         end_game_selected_item = (end_game_selected_item - 1) % len(end_game_menu_items)
     elif key == pygame.K_DOWN:
         end_game_selected_item = (end_game_selected_item + 1) % len(end_game_menu_items)
-    elif key == pygame.K_RETURN:
-        # Activate selected menu item (same logic as mouse click)
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        # Execute selected menu action
         if end_game_selected_item == 0:  # Relaunch Game
-            random.seed(seed)
             current_state = 'game'
         elif end_game_selected_item == 1:  # Main Menu
             current_state = 'main_menu'
+            selected_menu_item = 0
         elif end_game_selected_item == 2:  # Settings
             overlay_content = create_settings_content()
             overlay_title = "Settings"
             current_state = 'overlay'
         elif end_game_selected_item == 3:  # Submit Feedback
+            # Reset and pre-fill feedback form
             reset_bug_report_form()
-            bug_report_data["type_index"] = 2  # feedback type
+            bug_report_data["type_index"] = 2  # Feedback
             current_state = 'bug_report'
         elif end_game_selected_item == 4:  # Submit Bug Request
+            # Reset and pre-fill bug report form
             reset_bug_report_form()
-            bug_report_data["type_index"] = 0  # bug type
+            bug_report_data["type_index"] = 0  # Bug
             current_state = 'bug_report'
     elif key == pygame.K_ESCAPE:
+        # Return to main menu
         current_state = 'main_menu'
+        selected_menu_item = 0
 
 def main():
     """
@@ -456,10 +460,9 @@ def main():
     States:
     - 'main_menu': Shows main menu with navigation options
     - 'custom_seed_prompt': Text input for custom game seed
-    - 'overlay': Scrollable display for README/Player Guide/Settings
+    - 'overlay': Scrollable display for README/Player Guide
     - 'bug_report': Bug reporting form interface
     - 'bug_report_success': Success message after bug report submission
-    - 'end_game_menu': End-of-game menu with relaunch/feedback options
     - 'game': Active gameplay (existing game logic)
     
     The state machine allows smooth transitions between menu, documentation,
@@ -467,11 +470,9 @@ def main():
     """
     global seed, seed_input, current_state, screen, SCREEN_W, SCREEN_H, selected_menu_item, overlay_scroll
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
-    global end_game_selected_item
     
     # Initialize game state as None - will be created when game starts
     game_state = None
-    scoreboard_active = False
     tooltip_text = None
 
     running = True
@@ -521,12 +522,7 @@ def main():
                         handle_end_game_menu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'game':
                         # Existing game mouse handling
-                        if scoreboard_active:
-                            # On scoreboard, show end-game menu instead of restarting
-                            current_state = 'end_game_menu'
-                            end_game_selected_item = 0  # Reset selection
-                        else:
-                            tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+                        tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                         
                 elif event.type == pygame.MOUSEMOTION:
                     # Mouse hover effects only active during gameplay
@@ -558,9 +554,9 @@ def main():
                     elif current_state == 'bug_report_success':
                         # Any key returns to main menu
                         current_state = 'main_menu'
-                    
+                        
                     elif current_state == 'end_game_menu':
-                        # End-game menu keyboard handling
+                        # Handle end-game menu keyboard navigation
                         handle_end_game_menu_keyboard(event.key)
                             
                     elif current_state == 'custom_seed_prompt':
@@ -594,10 +590,9 @@ def main():
                             running = False
 
             # --- Game state initialization --- #
-            # Create game state when entering game for first time or when relaunching
-            if current_state == 'game' and (game_state is None or game_state.game_over):
+            # Create game state when entering game for first time
+            if current_state == 'game' and game_state is None:
                 game_state = GameState(seed)
-                scoreboard_active = False
 
             # --- Rendering based on current state --- #
             if current_state == 'main_menu':
@@ -624,17 +619,21 @@ def main():
                 draw_bug_report_success(screen, bug_report_success_message, SCREEN_W, SCREEN_H)
                 
             elif current_state == 'end_game_menu':
-                # End-game menu with grey background
-                screen.fill((128, 128, 128))
+                # End-game menu with statistics and options
+                screen.fill((25, 25, 35))  # Same dark background as game
                 draw_end_game_menu(screen, SCREEN_W, SCREEN_H, end_game_selected_item, game_state, seed)
                 
             elif current_state == 'game':
                 # Preserve original game appearance and logic
                 screen.fill((25, 25, 35))
                 if game_state.game_over:
-                    draw_scoreboard(screen, game_state, SCREEN_W, SCREEN_H, seed)
-                    scoreboard_active = True
+                    current_state = 'end_game_menu'
+                    end_game_selected_item = 0  # Reset selection
                 else:
+                    # Update UI transitions every frame for smooth animation
+                    if game_state:
+                        game_state._update_ui_transitions()
+                    
                     draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
                     if tooltip_text:
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
