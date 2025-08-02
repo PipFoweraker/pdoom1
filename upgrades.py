@@ -22,9 +22,10 @@ UPGRADES = [
     },
     {
         "name": "Accounting Software",
-        "desc": "Track financial details and unlock cash flow UI. Prevents audit events.",
+        "desc": "Enables cash flow tracking, prevents board oversight ($500)",
         "cost": 500,
         "purchased": False,
-        "effect_key": "accounting_software"
+        "effect_key": "accounting_software",
+        "custom_effect": "buy_accounting_software"  # Special handling for this upgrade
     }
 ]

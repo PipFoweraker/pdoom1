@@ -218,6 +218,63 @@ The competitors panel (between resources and actions) shows:
 
 ---
 
+## Milestone-Driven Special Events
+
+As your organization grows, you'll unlock new systems and face new challenges through milestone-triggered events:
+
+### Management Milestones (9+ Employees)
+
+**Hire Manager Action:**
+- **Unlock Condition**: Available when you have 9+ employees
+- **Cost**: 1.5x normal hiring cost ($90 vs $60)
+- **Effect**: Adds a manager who can oversee up to 9 employees
+
+**Static Management Effects:**
+- **Team Clusters**: Each manager handles up to 9 employees effectively
+- **Unmanaged Penalty**: Employees beyond 9 without a manager become unproductive
+- **Visual Indicators**: 
+  - Managers appear as **green blobs**
+  - Unmanaged employees show **red slash overlay**
+  - Normal employees remain **blue blobs**
+
+**Strategy Tips:**
+- Plan manager hiring before reaching 10+ employees
+- Multiple managers create separate team clusters
+- Unmanaged employees still consume resources but contribute nothing
+
+### Financial Oversight Milestones (High Spending)
+
+**Board Member Trigger:**
+- **Condition**: Spend >$10,000 in a single turn without accounting software
+- **Effect**: Board installs 2 Board Members for compliance monitoring
+- **Consequences**: Unlocks "Search" action, begins audit risk accumulation
+
+**Board Search Action:**
+- **Unlock**: Available when board members are active
+- **Success Rate**: 20% chance of positive outcomes
+- **Benefits**: Compliance improvements, cost savings, process efficiency
+- **Risk Reduction**: Successful searches reduce audit risk levels
+
+**Audit Risk System:**
+- **Accumulation**: Risk increases each turn while board members are active
+- **Penalties**: Reputation loss (>5 risk), financial fines (>10 risk)
+- **Mitigation**: Successful searches or purchasing accounting software
+
+### Accounting Software Upgrade
+
+**Purchase Effects:**
+- **Cost**: $500 (visible in right-panel upgrades)
+- **Cash Flow UI**: Shows balance changes (+$500, -$200) next to money display
+- **Compliance Protection**: Prevents board member milestone trigger
+- **Strategic Value**: Essential for high-spending strategies
+
+**When to Buy:**
+- Before planning expensive expansion (>$10K spending)
+- Early game if you anticipate scaling quickly
+- As insurance against audit penalties
+
+---
+
 
 ## Game Events & Tips
 

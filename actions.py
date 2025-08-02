@@ -58,6 +58,15 @@ ACTIONS = [
         "rules": None
     },
     {
+        "name": "Hire Manager",
+        "desc": "Hire manager for large teams (1.5x staff cost). Unlocks at 9+ staff.",
+        "cost": 90,  # 1.5x normal staff cost
+        "ap_cost": 1,  # Action Points cost
+        "upside": lambda gs: gs._hire_manager(),
+        "downside": lambda gs: None,
+        "rules": lambda gs: gs.staff >= 9  # Unlocked when staff reaches 9
+    },
+    {
         "name": "Espionage",
         "desc": "Chance to reveal opponent progress, risky.",
         "cost": 30,
@@ -76,12 +85,12 @@ ACTIONS = [
         "rules": lambda gs: gs.turn >= 5  # Unlocked after turn 5
     },
     {
-        "name": "Search for Board Member",
-        "desc": "Find board members for compliance (20% success rate).",
-        "cost": 75,
+        "name": "Search",
+        "desc": "Board-mandated compliance searches (20% success rate). Unlocks with board members.",
+        "cost": 25,
         "ap_cost": 1,  # Action Points cost
-        "upside": lambda gs: gs._search_for_board_member(),
+        "upside": lambda gs: gs._board_search(),
         "downside": lambda gs: None,
-        "rules": lambda gs: getattr(gs, 'board_member_search_unlocked', False)  # Unlocked by spending threshold
+        "rules": lambda gs: gs.board_members > 0  # Unlocked when board members are installed
     }
 ]

@@ -19,8 +19,8 @@ class GameState:
         if accounting software has been purchased.
         """
         if attr == 'money':
-            # Track spending for board member threshold
-            if val < 0:  # Only track spending (negative values)
+            # Track spending for board member trigger (only negative amounts)
+            if val < 0:
                 self.spend_this_turn += abs(val)
             
             # Only record balance change if accounting software is bought
@@ -37,9 +37,6 @@ class GameState:
             # Update employee blobs when staff changes
             if val > 0:  # Hiring
                 self._add_employee_blobs(val)
-                # Check for 9th employee milestone ONLY if not already triggered
-                if not self.first_manager_hired and self.staff >= 9:
-                    self._trigger_manager_milestone()
             elif val < 0:  # Staff leaving
                 self._remove_employee_blobs(old_staff - self.staff)
         elif attr == 'compute':
@@ -67,14 +64,6 @@ class GameState:
         self.research_progress = 0  # Track research progress for paper generation
         self.papers_published = 0  # Count of research papers published
         
-        # Employee subtype tracking for milestone events
-        self.managers = 0  # Number of managers hired
-        self.board_members = 0  # Number of board members found
-        self.first_manager_hired = False  # Flag for 9th employee milestone
-        self.board_member_search_unlocked = False  # Flag for board member search action
-        self.audit_risk_level = 0  # Hidden audit risk (0-100)
-        self.spend_this_turn = 0  # Track spending per turn for board threshold
-        
         # Action Points system (Phase 1)
         self.action_points = 3  # Current available action points
         self.max_action_points = 3  # Maximum action points per turn
@@ -99,6 +88,16 @@ class GameState:
         # Employee blob system
         self.employee_blobs = []  # List of employee blob objects with positions and states
         self.sound_manager = SoundManager()  # Sound system
+        
+        # Manager system for milestone-driven special events
+        self.managers = []  # List of manager blob objects
+        self.manager_milestone_triggered = False  # Track if 9th employee milestone was triggered
+        self.spend_this_turn = 0  # Track spending per turn for board member trigger
+        
+        # Board member system for spend threshold milestone
+        self.board_members = 0  # Number of board members installed
+        self.board_milestone_triggered = False  # Track if board member milestone was triggered
+        self.audit_risk_level = 0  # Audit risk accumulation for compliance penalties
         
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
@@ -140,9 +139,9 @@ class GameState:
                 'has_compute': False,
                 'productivity': 0.0,
                 'animation_progress': 1.0,  # Already positioned
-                'type': 'employee',  # employee, manager, board_member
-                'managed': False,  # True if this employee is under a manager
-                'unproductive_reason': None  # 'no_manager', 'no_compute', etc.
+                'type': 'employee',  # Track blob type
+                'managed_by': None,  # Which manager manages this employee (None if unmanaged)
+                'unproductive_reason': None  # Reason for being unproductive (for overlay display)
             }
             self.employee_blobs.append(blob)
     
@@ -164,14 +163,170 @@ class GameState:
                 'has_compute': False,
                 'productivity': 0.0,
                 'animation_progress': 0.0,  # Will animate in
-                'type': 'employee',  # employee, manager, board_member
-                'managed': False,  # True if this employee is under a manager
-                'unproductive_reason': None  # 'no_manager', 'no_compute', etc.
+                'type': 'employee',  # Track blob type
+                'managed_by': None,  # Which manager manages this employee (None if unmanaged)
+                'unproductive_reason': None  # Reason for being unproductive (for overlay display)
             }
             self.employee_blobs.append(blob)
             
             # Play blob sound effect for new hire
             self.sound_manager.play_blob_sound()
+            
+    def _add_manager_blob(self):
+        """Add a new manager blob with animation from side"""
+        import math
+        blob_id = len(self.employee_blobs)
+        # Position managers slightly offset from regular employees
+        target_x = 350 + (len(self.managers) % 2) * 300  # Alternate sides
+        target_y = 450 + (len(self.managers) // 2) * 120  # Stack down
+        
+        manager_blob = {
+            'id': blob_id,
+            'x': -50,  # Start off-screen left
+            'y': target_y,
+            'target_x': target_x,
+            'target_y': target_y,
+            'has_compute': True,  # Managers always have access
+            'productivity': 1.0,
+            'animation_progress': 0.0,  # Will animate in
+            'type': 'manager',  # Manager type
+            'managed_employees': [],  # List of employee IDs this manager oversees
+            'management_capacity': 9  # Can manage up to 9 employees
+        }
+        
+        # Add to both general blobs and specific managers list
+        self.employee_blobs.append(manager_blob)
+        self.managers.append(manager_blob)
+        
+        # Play special sound effect for manager hire
+        self.sound_manager.play_blob_sound()
+        
+        # Reassign employee management after adding new manager
+        self._reassign_employee_management()
+        
+    def _reassign_employee_management(self):
+        """Reassign employees to managers based on capacity and efficiency"""
+        # Reset all employee assignments
+        employees = [blob for blob in self.employee_blobs if blob['type'] == 'employee']
+        managers = [blob for blob in self.employee_blobs if blob['type'] == 'manager']
+        
+        # Clear previous assignments
+        for employee in employees:
+            employee['managed_by'] = None
+            employee['unproductive_reason'] = None
+        for manager in managers:
+            manager['managed_employees'] = []
+        
+        # Assign employees to managers (max 9 per manager)
+        manager_idx = 0
+        for i, employee in enumerate(employees):
+            if manager_idx < len(managers):
+                manager = managers[manager_idx]
+                if len(manager['managed_employees']) < manager['management_capacity']:
+                    # Assign this employee to current manager
+                    employee['managed_by'] = manager['id']
+                    manager['managed_employees'].append(employee['id'])
+                else:
+                    # Current manager is full, move to next
+                    manager_idx += 1
+                    if manager_idx < len(managers):
+                        manager = managers[manager_idx]
+                        employee['managed_by'] = manager['id']
+                        manager['managed_employees'].append(employee['id'])
+                    else:
+                        # No more managers available - employee becomes unmanaged
+                        employee['unproductive_reason'] = 'no_manager'
+            else:
+                # No managers available for this employee
+                employee['unproductive_reason'] = 'no_manager'
+                
+    def _hire_manager(self):
+        """Hire a new manager to oversee employees"""
+        # Add manager blob to the system
+        self._add_manager_blob()
+        
+        # Increment staff count for the manager
+        self.staff += 1
+        
+        # Add success message
+        self.messages.append(f"Manager hired! Now managing {len(self.managers)} team cluster(s).")
+        
+        # Check if this is the first manager hire (milestone)
+        if len(self.managers) == 1 and not self.manager_milestone_triggered:
+            self.manager_milestone_triggered = True
+            self.messages.append("MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.")
+        
+        return None
+        
+    def _check_board_member_milestone(self):
+        """Check if board member milestone should be triggered"""
+        # Only trigger if not already triggered and no accounting software
+        if (not self.board_milestone_triggered and 
+            not self.accounting_software_bought and 
+            self.spend_this_turn > 10000):
+            
+            # Install 2 board members
+            self.board_members = 2
+            self.board_milestone_triggered = True
+            
+            self.messages.append("MILESTONE: Excessive spending without accounting oversight!")
+            self.messages.append("Board has installed 2 Board Members for compliance monitoring.")
+            self.messages.append("Search action unlocked. Audit risk penalties now active until compliant.")
+            
+            # Start accumulating audit risk
+            self.audit_risk_level = 1
+            
+        # Apply static effects if board members are active
+        if self.board_members > 0 and not self.accounting_software_bought:
+            # Accumulate audit risk
+            self.audit_risk_level += 1
+            
+            # Apply penalties based on audit risk level
+            if self.audit_risk_level > 5:
+                # Reputation penalty for non-compliance
+                rep_penalty = min(3, self.audit_risk_level - 5)
+                self._add('reputation', -rep_penalty)
+                self.messages.append(f"Compliance audit failed! Reputation penalty: -{rep_penalty}")
+                
+            if self.audit_risk_level > 10:
+                # Financial penalty for severe non-compliance
+                fine = min(5000, (self.audit_risk_level - 10) * 1000)
+                self._add('money', -fine)
+                self.messages.append(f"Regulatory fine imposed: ${fine} for non-compliance!")
+                
+        return None
+        
+    def _board_search(self):
+        """Perform board-mandated search action with 20% success rate"""
+        if random.random() < 0.2:  # 20% success rate
+            # Successful search - find something valuable
+            search_results = [
+                ("regulatory compliance", lambda: self._add('reputation', 3)),
+                ("cost savings opportunity", lambda: self._add('money', random.randint(200, 500))),
+                ("process efficiency", lambda: self._add('doom', -2)),
+                ("staff optimization", lambda: None)  # Just a message
+            ]
+            
+            result_name, result_effect = random.choice(search_results)
+            result_effect()
+            self.messages.append(f"Search successful! Discovered {result_name}.")
+            
+            # Reduce audit risk on successful search
+            if self.audit_risk_level > 0:
+                self.audit_risk_level = max(0, self.audit_risk_level - 2)
+                self.messages.append("Successful search reduces audit risk.")
+                
+        else:
+            # Failed search
+            search_failures = [
+                "No significant findings in this search.",
+                "Search yielded minimal actionable intelligence.",
+                "Investigation remains ongoing with no conclusive results.",
+                "Search parameters require refinement for better outcomes."
+            ]
+            self.messages.append(random.choice(search_failures))
+            
+        return None
             
     def _remove_employee_blobs(self, count):
         """Remove employee blobs when staff leave"""
@@ -184,61 +339,70 @@ class GameState:
         productive_employees = 0
         research_gained = 0
         
-        # Reset all employees' productivity status
+        # Reset all employees' compute status
         for blob in self.employee_blobs:
             blob['has_compute'] = False
             blob['productivity'] = 0.0
-            blob['managed'] = False
-            blob['unproductive_reason'] = None
             
-        # First, determine management structure
-        self._update_management_structure()
+        # Apply management assignments and check for unmanaged penalties
+        self._reassign_employee_management()
         
-        # Assign compute to employees (1 compute per employee if available)
+        # Count employees (excluding managers)
+        employees = [blob for blob in self.employee_blobs if blob['type'] == 'employee']
+        managers = [blob for blob in self.employee_blobs if blob['type'] == 'manager']
+        
+        # Apply management static effects (productivity penalties for unmanaged employees beyond 9)
+        unmanaged_penalty_count = 0
+        if len(employees) > 9 and self.manager_milestone_triggered:
+            for employee in employees:
+                if employee['unproductive_reason'] == 'no_manager':
+                    unmanaged_penalty_count += 1
+                    # Unmanaged employees beyond 9 become unproductive
+                    employee['productivity'] = 0.0
+                    
+        # Assign compute to productive employees (1 compute per employee if available)
         compute_assigned = 0
         for blob in self.employee_blobs:
-            if compute_assigned < self.compute:
+            if blob['type'] == 'manager':
+                # Managers always have compute and are productive
                 blob['has_compute'] = True
-                compute_assigned += 1
+                blob['productivity'] = 1.0
+                productive_employees += 1
+            elif blob['type'] == 'employee':
+                # For employees, check if they should be productive
+                should_be_productive = True
                 
-                # Check if employee is productive based on management
-                if blob['type'] == 'manager' or blob['type'] == 'board_member':
-                    # Managers and board members are always productive if they have compute
+                # If we have managers and more than 9 employees, check management status
+                if len(employees) > 9 and self.manager_milestone_triggered:
+                    if blob['unproductive_reason'] == 'no_manager':
+                        should_be_productive = False
+                
+                # Assign compute if employee should be productive and compute is available
+                if should_be_productive and compute_assigned < self.compute:
+                    blob['has_compute'] = True
                     blob['productivity'] = 1.0
-                    productive_employees += 1
-                elif blob['managed'] or len(self.employee_blobs) <= 9:
-                    # Regular employees are productive if managed or if staff <= 9
-                    blob['productivity'] = 1.0
+                    compute_assigned += 1
                     productive_employees += 1
                     
-                    # Each productive employee has a chance to contribute to research
-                    if random.random() < 0.3:  # 30% chance per productive employee
-                        research_gained += random.randint(1, 3)
-                else:
-                    # Unmanaged employee beyond 9 staff
-                    blob['unproductive_reason'] = 'no_manager'
-            else:
-                # No compute available
-                if blob['type'] == 'employee':
-                    blob['unproductive_reason'] = 'no_compute'
+        # Generate research from productive employees
+        for blob in self.employee_blobs:
+            if blob['productivity'] > 0:
+                # Each productive employee has a chance to contribute to research
+                if random.random() < 0.3:  # 30% chance per productive employee
+                    research_gained += random.randint(1, 3)
                     
-        # Count unproductive employees and apply penalties
-        unproductive_count = len([b for b in self.employee_blobs if b['productivity'] == 0.0 and b['type'] == 'employee'])
+        # Apply penalties for unproductive employees
+        unproductive_count = len(self.employee_blobs) - productive_employees
         if unproductive_count > 0:
             # Small doom increase for unproductive employees
             doom_penalty = unproductive_count * 0.5
             self._add('doom', int(doom_penalty))
-            reasons = []
-            no_manager_count = len([b for b in self.employee_blobs if b['unproductive_reason'] == 'no_manager'])
-            no_compute_count = len([b for b in self.employee_blobs if b['unproductive_reason'] == 'no_compute'])
             
-            if no_manager_count > 0:
-                reasons.append(f"{no_manager_count} employees lack management")
-            if no_compute_count > 0:
-                reasons.append(f"{no_compute_count} employees lack compute")
-                
-            if reasons:
-                self.messages.append(f"Unproductive employees: {', '.join(reasons)} (doom +{int(doom_penalty)})")
+            # Different messages based on reason for unproductivity
+            if unmanaged_penalty_count > 0:
+                self.messages.append(f"{unmanaged_penalty_count} employees unproductive due to lack of management (doom +{int(doom_penalty)})")
+            else:
+                self.messages.append(f"{unproductive_count} employees lacked compute resources (doom +{int(doom_penalty)})")
             
         # Update research progress
         if research_gained > 0:
@@ -260,115 +424,7 @@ class GameState:
             
         return productive_employees
 
-    def _update_management_structure(self):
-        """Update which employees are managed based on manager placement"""
-        managers = [b for b in self.employee_blobs if b['type'] == 'manager']
-        employees = [b for b in self.employee_blobs if b['type'] == 'employee']
-        
-        # Reset all employee management status
-        for emp in employees:
-            emp['managed'] = False
-        
-        # If we have <= 9 total employees, they don't need management
-        if len(employees) <= 9:
-            # All employees are productive without needing management
-            for emp in employees:
-                emp['managed'] = True  # Consider them "managed" for productivity purposes
-        else:
-            # For organizations with > 9 employees, need managers
-            # First 9 employees can work without management, beyond that need managers
-            # Mark first 9 employees as "managed" (they don't need management)
-            for i, emp in enumerate(employees[:9]):
-                emp['managed'] = True
-            
-            # Each manager can manage up to 9 additional employees beyond the first 9
-            managed_count = 0
-            unmanaged_employees = employees[9:]  # Employees beyond the first 9
-            
-            for manager in managers:
-                # Find the next 9 unmanaged employees and assign them to this manager
-                available_employees = [e for e in unmanaged_employees if not e['managed']][:9]
-                for emp in available_employees:
-                    emp['managed'] = True
-                    managed_count += 1
 
-    def _hire_manager(self):
-        """Hire a manager (special employee subtype)"""
-        if len(self.employee_blobs) > 0:
-            # Convert the most recent employee to a manager
-            latest_employee = None
-            for blob in reversed(self.employee_blobs):
-                if blob['type'] == 'employee':
-                    latest_employee = blob
-                    break
-                    
-            if latest_employee:
-                latest_employee['type'] = 'manager'
-                self.managers += 1
-                self.messages.append(f"Promoted latest hire to Manager! ({self.managers} managers total)")
-                self.sound_manager.play_blob_sound()
-                return True
-        return False
-
-    def _search_for_board_member(self):
-        """Search for board member with 20% success rate"""
-        if random.random() < 0.2:  # 20% success rate
-            self.board_members += 1
-            # Add a board member blob
-            blob_id = len(self.employee_blobs)
-            target_x = 400 + (blob_id % 3) * 60
-            target_y = 500 + (blob_id // 3) * 60
-            
-            blob = {
-                'id': blob_id,
-                'x': -50,  # Start off-screen left
-                'y': target_y,
-                'target_x': target_x, 
-                'target_y': target_y,
-                'has_compute': False,
-                'productivity': 0.0,
-                'animation_progress': 0.0,  # Will animate in
-                'type': 'board_member',
-                'managed': False,  # Board members don't need management
-                'unproductive_reason': None
-            }
-            self.employee_blobs.append(blob)
-            
-            self.messages.append(f"Found Board Member! ({self.board_members}/2 found)")
-            self.sound_manager.play_blob_sound()
-            
-            # If we have both board members, reduce audit risk
-            if self.board_members >= 2:
-                self.audit_risk_level = 0
-                self.messages.append("Board compliance achieved! Audit risk eliminated.")
-            return True
-        else:
-            self.messages.append("Board member search unsuccessful. Try again next turn.")
-            return False
-
-    def _trigger_manager_milestone(self):
-        """Trigger the manager milestone event when hiring 9th employee"""
-        self.first_manager_hired = True
-        self.messages.append("MILESTONE: Your organization has grown beyond 8 employees!")
-        self.messages.append("You must hire a Manager to maintain productivity.")
-        if self._hire_manager():
-            self.messages.append("Automatically promoted a recent hire to Manager role.")
-        else:
-            self.messages.append("Warning: Employees beyond 9 without a manager will become unproductive!")
-
-    def _check_board_member_threshold(self):
-        """Check if board member event should trigger"""
-        if (not self.accounting_software_bought and 
-            self.spend_this_turn > 10000 and 
-            not self.board_member_search_unlocked):
-            
-            self.board_member_search_unlocked = True
-            self.audit_risk_level = 25  # Start with moderate audit risk
-            self.messages.append("AUDIT ALERT: High spending detected without proper oversight!")
-            self.messages.append("You must find 2 Board Members to ensure compliance.")
-            self.messages.append("'Search for Board Member' action now available.")
-            return True
-        return False
 
     def _scout_opponent(self):
         """Scout a specific opponent - unlocked after turn 5"""
@@ -444,6 +500,24 @@ class GameState:
             self._add('doom', 5)
             self.messages.append("Espionage backfired! Doom increased.")
         return None
+        
+    def _hire_manager(self):
+        """Hire a new manager to oversee employees"""
+        # Add manager blob to the system
+        self._add_manager_blob()
+        
+        # Increment staff count for the manager
+        self.staff += 1
+        
+        # Add success message
+        self.messages.append(f"Manager hired! Now managing {len(self.managers)} team cluster(s).")
+        
+        # Check if this is the first manager hire (milestone)
+        if len(self.managers) == 1 and not self.manager_milestone_triggered:
+            self.manager_milestone_triggered = True
+            self.messages.append("MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.")
+        
+        return None
 
     def _breakthrough_event(self):
         if "secure_cloud" in self.upgrade_effects:
@@ -487,17 +561,17 @@ class GameState:
                 upg = self.upgrades[idx]
                 if not upg.get("purchased", False):
                     if self.money >= upg["cost"]:
-                        self.money -= upg["cost"]
+                        self._add('money', -upg["cost"])  # Use _add to track spending
                         upg["purchased"] = True
                         self.upgrade_effects.add(upg["effect_key"])
                         
                         # Special handling for accounting software
-                        if upg["effect_key"] == "accounting_software":
+                        if upg.get("custom_effect") == "buy_accounting_software":
                             self.accounting_software_bought = True
-                            self.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow UI unlocked!")
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!")
                         else:
                             self.messages.append(f"Upgrade purchased: {upg['name']}")
-                            
+                        
                         # Log upgrade purchase
                         self.logger.log_upgrade(upg["name"], upg["cost"], self.turn)
                     else:
@@ -608,7 +682,7 @@ class GameState:
             self.ap_spent_this_turn = True  # Track for UI glow effects
             self.ap_glow_timer = 30  # 30 frames of glow effect
             
-            # Deduct money cost (this will update spend_this_turn via _add)
+            # Deduct money cost using _add to track spending
             self._add('money', -action["cost"])
             
             # Log the action
@@ -620,48 +694,25 @@ class GameState:
             if action.get("rules"): action["rules"](self)
         self.selected_actions = []
 
-        # Staff maintenance (track spending but allow money to go negative temporarily)
+        # Staff maintenance
         maintenance_cost = self.staff * self.staff_maintenance
-        # Track spending before applying
-        self.spend_this_turn += maintenance_cost
-        # Apply maintenance cost directly to allow negative checking
-        self.money -= maintenance_cost
+        money_before_maintenance = self.money
+        self._add('money', -maintenance_cost)  # Use _add to track spending
         
-        if self.money < 0:
+        # Check if we couldn't afford maintenance (money went negative before clamping)
+        if money_before_maintenance < maintenance_cost:
             if "comfy_chairs" in self.upgrade_effects and random.random() < 0.75:
                 self.messages.append("Comfy chairs helped staff endure unpaid turn.")
             else:
                 lost = random.randint(1, max(1, self.staff // 2))
-                self._add('staff', -lost)  # Use _add to trigger blob updates
+                self.staff = max(0, self.staff - lost)
                 self.messages.append(f"Could not pay staff! {lost} staff left.")
-        
-        # Clamp money to 0 after staff leaving logic
-        self.money = max(self.money, 0)
 
-        # Check for board member threshold event
-        self._check_board_member_threshold()
-        
-        # Apply audit risk penalties if board members not found
-        if self.audit_risk_level > 0 and self.board_members < 2:
-            # Increase audit risk over time
-            self.audit_risk_level = min(100, self.audit_risk_level + 5)
-            if self.audit_risk_level >= 50:
-                penalty = random.randint(5, 15)
-                self._add('reputation', -penalty)
-                self.messages.append(f"Audit concerns damage reputation (-{penalty})")
-                
         # Update employee productivity and compute consumption (weekly cycle)
         self._update_employee_productivity()
 
         # Doom rises over time, faster with more staff
         doom_rise = 2 + self.staff // 5 + (1 if self.doom > 60 else 0)
-        
-        # Add audit risk to doom
-        if self.audit_risk_level > 0:
-            audit_doom = self.audit_risk_level // 20
-            doom_rise += audit_doom
-            if audit_doom > 0:
-                self.messages.append(f"Audit risk increases doom (+{audit_doom})")
         
         # Opponents take their turns and contribute to doom
         opponent_doom = 0
@@ -676,6 +727,9 @@ class GameState:
 
         self.trigger_events()
         
+        # Check for board member milestone trigger (>$10K spend without accounting software)
+        self._check_board_member_milestone()
+        
         # Handle deferred events (tick expiration and auto-execute expired ones)
         if hasattr(self, 'deferred_events'):
             expired_events = self.deferred_events.tick_all_events(self)
@@ -686,7 +740,7 @@ class GameState:
         self.action_points = self.max_action_points
         self.ap_spent_this_turn = False  # Reset glow flag for new turn
         
-        # Reset spending tracker for next turn
+        # Reset spend tracking for new turn
         self.spend_this_turn = 0
         
         # Decrease glow timer

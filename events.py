@@ -1,15 +1,4 @@
 import random
-def buy_accounting_software(gs):
-    """
-    Custom event effect function for buying accounting software.
-    Deducts $500, sets flag, enables balance change display and monthly costs.
-    """
-    if gs.money >= 500:
-        gs.money -= 500
-        gs.accounting_software_bought = True
-        gs.messages.append("You bought accounting software! Balance change details enabled, monthly costs always visible.")
-    else:
-        gs.messages.append("Not enough money to buy accounting software.")
 
 def unlock_scrollable_event_log(gs):
     """

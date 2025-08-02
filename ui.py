@@ -238,6 +238,15 @@ def draw_ui(screen, game_state, w, h):
 
     # Resources (top bar)
     screen.blit(big_font.render(f"Money: ${game_state.money}", True, (255, 230, 60)), (int(w*0.04), int(h*0.11)))
+    
+    # Cash flow indicator if accounting software is purchased
+    if hasattr(game_state, 'accounting_software_bought') and game_state.accounting_software_bought:
+        if hasattr(game_state, 'last_balance_change') and game_state.last_balance_change != 0:
+            change_color = (100, 255, 100) if game_state.last_balance_change > 0 else (255, 100, 100)
+            change_sign = "+" if game_state.last_balance_change > 0 else ""
+            change_text = f"({change_sign}${game_state.last_balance_change})"
+            screen.blit(font.render(change_text, True, change_color), (int(w*0.04), int(h*0.13)))
+    
     screen.blit(big_font.render(f"Staff: {game_state.staff}", True, (255, 210, 180)), (int(w*0.21), int(h*0.11)))
     screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255)), (int(w*0.35), int(h*0.11)))
     
@@ -256,6 +265,14 @@ def draw_ui(screen, game_state, w, h):
     screen.blit(big_font.render(f"Compute: {game_state.compute}", True, (100, 255, 150)), (int(w*0.04), int(h*0.135)))
     screen.blit(big_font.render(f"Research: {game_state.research_progress}/100", True, (150, 200, 255)), (int(w*0.21), int(h*0.135)))
     screen.blit(big_font.render(f"Papers: {game_state.papers_published}", True, (255, 200, 100)), (int(w*0.38), int(h*0.135)))
+    
+    # Board member and audit risk display (if applicable)
+    if hasattr(game_state, 'board_members') and game_state.board_members > 0:
+        screen.blit(font.render(f"Board Members: {game_state.board_members}", True, (255, 150, 150)), (int(w*0.55), int(h*0.135)))
+        if hasattr(game_state, 'audit_risk_level') and game_state.audit_risk_level > 0:
+            risk_color = (255, 200, 100) if game_state.audit_risk_level <= 5 else (255, 100, 100)
+            screen.blit(font.render(f"Audit Risk: {game_state.audit_risk_level}", True, risk_color), (int(w*0.72), int(h*0.135)))
+    
     screen.blit(small_font.render(f"Turn: {game_state.turn}", True, (220, 220, 220)), (int(w*0.91), int(h*0.03)))
     screen.blit(small_font.render(f"Seed: {game_state.seed}", True, (140, 200, 160)), (int(w*0.77), int(h*0.03)))
 
@@ -414,10 +431,6 @@ def draw_ui(screen, game_state, w, h):
             msg_text = small_font.render(msg, True, (255, 255, 210))
             screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
 
-    # Draw cash flow UI if accounting software is purchased
-    if getattr(game_state, 'accounting_software_bought', False):
-        draw_cash_flow_ui(screen, game_state, w, h, small_font)
-    
     # Draw employee blobs (lower middle area)
     draw_employee_blobs(screen, game_state, w, h)
     
@@ -429,51 +442,6 @@ def draw_ui(screen, game_state, w, h):
     
     # Draw popup events (overlay, drawn last to be on top)
     draw_popup_events(screen, game_state, w, h, font, big_font)
-
-def draw_cash_flow_ui(screen, game_state, w, h, font):
-    """Draw cash flow UI area when accounting software is purchased"""
-    # Position on the left side below the actions
-    panel_x = int(w * 0.04)
-    panel_y = int(h * 0.72)
-    panel_width = int(w * 0.32)
-    panel_height = int(h * 0.15)
-    
-    # Background panel
-    panel_rect = pygame.Rect(panel_x, panel_y, panel_width, panel_height)
-    pygame.draw.rect(screen, (30, 40, 60), panel_rect, border_radius=8)
-    pygame.draw.rect(screen, (100, 150, 200), panel_rect, width=2, border_radius=8)
-    
-    # Title
-    title_font = pygame.font.SysFont('Consolas', int(h*0.025), bold=True)
-    title_surf = title_font.render("Cash Flow", True, (180, 220, 255))
-    screen.blit(title_surf, (panel_x + 8, panel_y + 5))
-    
-    # Current balance
-    balance_text = f"Balance: ${game_state.money:,}"
-    balance_surf = font.render(balance_text, True, (255, 255, 255))
-    screen.blit(balance_surf, (panel_x + 8, panel_y + 35))
-    
-    # Last balance change (if tracked)
-    if hasattr(game_state, 'last_balance_change') and game_state.last_balance_change != 0:
-        change = game_state.last_balance_change
-        change_color = (100, 255, 100) if change > 0 else (255, 100, 100)
-        change_prefix = "+" if change > 0 else ""
-        change_text = f"Last: {change_prefix}${change:,}"
-        change_surf = font.render(change_text, True, change_color)
-        screen.blit(change_surf, (panel_x + 8, panel_y + 55))
-    
-    # Monthly costs breakdown
-    maintenance_cost = game_state.staff * game_state.staff_maintenance
-    costs_text = f"Monthly: ${maintenance_cost:,} (Staff)"
-    costs_surf = font.render(costs_text, True, (255, 200, 150))
-    screen.blit(costs_surf, (panel_x + 8, panel_y + 75))
-    
-    # Current turn spending
-    if hasattr(game_state, 'spend_this_turn'):
-        spend_text = f"Turn Spending: ${game_state.spend_this_turn:,}"
-        spend_color = (255, 150, 150) if game_state.spend_this_turn > 5000 else (200, 200, 200)
-        spend_surf = font.render(spend_text, True, spend_color)
-        screen.blit(spend_surf, (panel_x + 8, panel_y + 95))
 
 def draw_employee_blobs(screen, game_state, w, h):
     """Draw employee blobs in the lower middle area with animation and halos"""
@@ -507,36 +475,18 @@ def draw_employee_blobs(screen, game_state, w, h):
                 pygame.draw.circle(halo_surface, halo_color, (halo_radius, halo_radius), halo_radius - i * 3)
                 screen.blit(halo_surface, (x - halo_radius, y - halo_radius))
         
-        # Determine blob appearance based on type
+        # Draw the main blob (employee or manager)
         blob_radius = 20
-        blob_type = blob.get('type', 'employee')
         
-        if blob_type == 'manager':
-            # Managers have green color with a crown-like top
-            blob_color = (100, 255, 150) if blob['has_compute'] else (80, 200, 120)
-            # Draw main blob
-            pygame.draw.circle(screen, blob_color, (x, y), blob_radius)
-            pygame.draw.circle(screen, (255, 255, 255), (x, y), blob_radius, 2)
-            # Crown indicator (small rectangle on top)
-            crown_rect = pygame.Rect(x-8, y-blob_radius-5, 16, 8)
-            pygame.draw.rect(screen, (255, 215, 0), crown_rect)  # Gold crown
-            pygame.draw.rect(screen, (255, 255, 255), crown_rect, 1)
-        elif blob_type == 'board_member':
-            # Board members have purple color with a briefcase
-            blob_color = (200, 150, 255) if blob['has_compute'] else (150, 100, 200)
-            # Draw main blob
-            pygame.draw.circle(screen, blob_color, (x, y), blob_radius)
-            pygame.draw.circle(screen, (255, 255, 255), (x, y), blob_radius, 2)
-            # Briefcase indicator (small rectangle to the side)
-            briefcase_rect = pygame.Rect(x+blob_radius-3, y-5, 8, 10)
-            pygame.draw.rect(screen, (139, 69, 19), briefcase_rect)  # Brown briefcase
-            pygame.draw.rect(screen, (255, 255, 255), briefcase_rect, 1)
+        # Different colors for managers vs employees
+        if blob.get('type') == 'manager':
+            blob_color = (100, 255, 100) if blob['has_compute'] else (80, 200, 80)  # Green for managers
         else:
-            # Regular employees
-            blob_color = (150, 200, 255) if blob['has_compute'] else (100, 150, 200)
-            # Draw main blob
-            pygame.draw.circle(screen, blob_color, (x, y), blob_radius)
-            pygame.draw.circle(screen, (255, 255, 255), (x, y), blob_radius, 2)
+            blob_color = (150, 200, 255) if blob['has_compute'] else (100, 150, 200)  # Blue for employees
+        
+        # Main blob body
+        pygame.draw.circle(screen, blob_color, (x, y), blob_radius)
+        pygame.draw.circle(screen, (255, 255, 255), (x, y), blob_radius, 2)
         
         # Simple face (eyes)
         eye_offset = 6
@@ -548,15 +498,19 @@ def draw_employee_blobs(screen, game_state, w, h):
         if blob['productivity'] > 0:
             pygame.draw.circle(screen, (100, 255, 100), (x, y + 8), 4)
             
-        # Draw red slash overlay for unproductive employees
+        # Red slash overlay for unproductive employees due to management issues
         if blob.get('unproductive_reason') == 'no_manager':
-            # Red diagonal slash to indicate lack of management
-            pygame.draw.line(screen, (255, 50, 50), 
-                           (x - blob_radius + 5, y - blob_radius + 5), 
-                           (x + blob_radius - 5, y + blob_radius - 5), 4)
-            pygame.draw.line(screen, (255, 100, 100), 
-                           (x - blob_radius + 5, y + blob_radius - 5), 
-                           (x + blob_radius - 5, y - blob_radius + 5), 4)
+            # Draw red diagonal slash across the blob
+            slash_color = (255, 50, 50)
+            slash_width = 4
+            # Diagonal line from top-left to bottom-right
+            start_pos = (x - blob_radius + 5, y - blob_radius + 5)
+            end_pos = (x + blob_radius - 5, y + blob_radius - 5)
+            pygame.draw.line(screen, slash_color, start_pos, end_pos, slash_width)
+            # Second diagonal line from top-right to bottom-left
+            start_pos = (x + blob_radius - 5, y - blob_radius + 5)
+            end_pos = (x - blob_radius + 5, y + blob_radius - 5)
+            pygame.draw.line(screen, slash_color, start_pos, end_pos, slash_width)
 
 def draw_mute_button(screen, game_state, w, h):
     """Draw mute/unmute button in bottom right corner"""
