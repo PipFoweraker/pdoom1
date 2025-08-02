@@ -424,26 +424,7 @@ class GameState:
             
         return productive_employees
 
-    def _add(self, attr, val):
-        if attr == 'doom':
-            self.doom = min(max(self.doom + val, 0), self.max_doom)
-        elif attr == 'money':
-            self.money = max(self.money + val, 0)
-        elif attr == 'reputation':
-            self.reputation = max(self.reputation + val, 0)
-        elif attr == 'staff':
-            old_staff = self.staff
-            self.staff = max(self.staff + val, 0)
-            # Update employee blobs when staff changes
-            if val > 0:  # Hiring
-                self._add_employee_blobs(val)
-            elif val < 0:  # Staff leaving
-                self._remove_employee_blobs(old_staff - self.staff)
-        elif attr == 'compute':
-            self.compute = max(self.compute + val, 0)
-        elif attr == 'research_progress':
-            self.research_progress = max(self.research_progress + val, 0)
-        return None
+
 
     def _scout_opponent(self):
         """Scout a specific opponent - unlocked after turn 5"""

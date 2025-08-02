@@ -134,7 +134,7 @@ pytest tests/ -v
 
 ### Test Coverage
 
-Current test coverage includes 115 automated tests covering:
+Current test coverage includes 152 automated tests covering:
 
 - ✅ **Enhanced Event System** - Event class, deferred events, popup handling, expiration logic (27 tests)
 - ✅ **Event Log Management** - Activity log clears each turn, shows only current events
@@ -145,6 +145,7 @@ Current test coverage includes 115 automated tests covering:
 - ✅ **Opponents System** - AI behavior, discovery mechanics, intelligence gathering (26 tests)
 - ✅ **Compute & Sound** - Employee productivity and audio systems
 - ✅ **Bug Reporting** - Error reporting and privacy features
+- ✅ **Milestone-Driven Events** - Manager system, board members, accounting software, static effects (14 tests)
 
 ### Adding New Tests
 
@@ -433,6 +434,124 @@ The release workflow:
 - Creates GitHub release with changelog notes
 - Generates and uploads source distribution archives
 - Includes SHA256 checksums for security verification
+
+---
+
+## Milestone-Driven Special Events & Static Effects System
+
+### Overview
+The milestone system introduces persistent "static effects" that activate based on organizational growth and behavior. Unlike events that trigger once, static effects continuously influence gameplay until conditions change.
+
+### System Architecture
+
+**Core Components:**
+- **Milestone Triggers**: One-time condition checks (e.g., 9th employee hired, >$10K spending)
+- **Static Effects**: Ongoing gameplay modifications (e.g., unmanaged employee penalties)
+- **Visual Feedback**: UI overlays and indicators showing effect states
+- **Management Systems**: Player tools to mitigate or work with static effects
+
+### Manager System Implementation
+
+**Data Structures:**
+```python
+# GameState additions
+self.managers = []                    # List of manager blob objects
+self.manager_milestone_triggered = False  # One-time trigger flag
+
+# Employee blob enhancements
+blob = {
+    'type': 'employee' | 'manager',   # Blob classification
+    'managed_by': manager_id | None,  # Management assignment
+    'unproductive_reason': str | None # Why blob is unproductive
+}
+```
+
+**Static Effect Processing:**
+1. **Trigger Check**: `_hire_manager()` sets milestone flag on first manager
+2. **Assignment Logic**: `_reassign_employee_management()` distributes employees to managers
+3. **Productivity Impact**: `_update_employee_productivity()` applies management penalties
+4. **Visual Feedback**: `draw_employee_blobs()` shows green managers, red slash overlays
+
+### Board Member System Implementation
+
+**Spending Tracking:**
+```python
+# In _add() method for money attribute
+if val < 0:
+    self.spend_this_turn += abs(val)  # Track negative amounts as spending
+
+# In end_turn()
+self._check_board_member_milestone()  # Check trigger condition
+self.spend_this_turn = 0              # Reset for next turn
+```
+
+**Static Effect Escalation:**
+```python
+def _check_board_member_milestone(self):
+    # One-time trigger: install board members
+    if spend_this_turn > 10000 and not accounting_software_bought:
+        self.board_members = 2
+        
+    # Ongoing effects: audit risk accumulation and penalties
+    if board_members > 0 and not accounting_software_bought:
+        self.audit_risk_level += 1
+        # Apply escalating penalties based on risk level
+```
+
+### Order of Operations (Per Turn)
+
+**Turn Start:**
+1. Clear previous messages
+2. Execute selected actions (spending tracked via `_add()`)
+3. Process staff maintenance (spending tracked)
+
+**Turn End:**
+1. Update employee productivity (apply management static effects)
+2. Process opponent actions and doom increases
+3. Trigger random events
+4. **Check milestone triggers** (`_check_board_member_milestone()`)
+5. **Apply ongoing static effects** (audit penalties, management productivity)
+6. Reset action points and spending tracking
+7. Check win/lose conditions
+
+### Testing Strategy
+
+**Static Effect Tests:**
+- **Milestone Triggers**: Verify conditions activate features correctly
+- **Ongoing Effects**: Test continuous application of penalties/bonuses
+- **Edge Cases**: Test boundary conditions (exactly 9 employees, exactly $10K spending)
+- **Integration**: Verify effects interact correctly with existing systems
+
+**Example Test Pattern:**
+```python
+def test_static_effect_integration(self):
+    # Setup condition for static effect
+    self.game_state.staff = 12
+    self.game_state._hire_manager()
+    
+    # Trigger the static effect system
+    self.game_state._update_employee_productivity()
+    
+    # Verify static effect is applied correctly
+    unmanaged = [blob for blob in self.game_state.employee_blobs 
+                if blob.get('unproductive_reason') == 'no_manager']
+    self.assertGreater(len(unmanaged), 0)
+```
+
+### Extension Points
+
+**Adding New Milestones:**
+1. Add trigger condition check to `end_turn()` or relevant method
+2. Create static effect application logic
+3. Add visual feedback to UI system
+4. Include player mitigation mechanisms
+5. Write comprehensive tests
+
+**Design Principles:**
+- **Clear Feedback**: Players should understand why effects are active
+- **Player Agency**: Provide tools to manage or mitigate negative effects
+- **Escalating Complexity**: Effects should scale with organizational growth
+- **Test Coverage**: All static effects need automated testing
 
 ---
 

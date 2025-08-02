@@ -39,6 +39,27 @@ The game will open with a main menu where you can choose game modes, access docu
 - **Action System**: Choose from various actions each turn to advance your strategy
 - **Research & Development**: Publish papers, buy compute, and advance AI safety
 - **Enhanced Event System**: Navigate unexpected challenges with advanced response options
+- **Milestone-Driven Special Events**: Unlock new mechanics as your organization grows
+
+### Milestone-Driven Special Events
+The game features a sophisticated milestone system that unlocks new mechanics and challenges as your organization scales:
+
+**Management Milestones:**
+- **Manager System**: At 9+ employees, hire managers to oversee teams (1.5x hiring cost)
+- **Team Clusters**: Each manager can oversee up to 9 employees effectively
+- **Static Effects**: Unmanaged employees beyond 9 become unproductive (red slash overlay)
+- **Visual Feedback**: Managers appear as green blobs vs blue employee blobs
+
+**Financial Oversight Milestones:**
+- **Board Member Installation**: Spend >$10,000 in a turn without accounting software triggers board oversight
+- **Compliance Monitoring**: Board members install 2 board members with audit powers
+- **Search Actions**: Unlock compliance searches with 20% success rate for various benefits
+- **Audit Risk**: Accumulating penalties for non-compliance (reputation loss, financial fines)
+
+**Upgrade Systems:**
+- **Accounting Software**: Visible right-panel upgrade ($500) enables cash flow tracking
+- **Compliance Prevention**: Purchasing accounting software blocks board member milestone
+- **Cash Flow UI**: Persistent balance change indicators when accounting software is active
 
 ### Enhanced Event System
 The game features a sophisticated event system that evolves as you play:
@@ -122,7 +143,7 @@ The game automatically creates detailed logs in the `logs/` directory:
 Verify your installation works by running the test suite:
 
 ```sh
-# Run all tests (should show 138 tests passing, including Action Points tests)
+# Run all tests (should show 152 tests passing, including milestone and static effects tests)
 python -m unittest discover tests -v
 ```
 
