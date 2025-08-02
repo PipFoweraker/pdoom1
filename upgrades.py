@@ -19,5 +19,12 @@ UPGRADES = [
         "cost": 160,
         "purchased": False,
         "effect_key": "secure_cloud"
+    },
+    {
+        "name": "Accounting Software",
+        "desc": "Track financial details and unlock cash flow UI. Prevents audit events.",
+        "cost": 500,
+        "purchased": False,
+        "effect_key": "accounting_software"
     }
 ]

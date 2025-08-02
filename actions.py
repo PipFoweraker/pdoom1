@@ -74,5 +74,14 @@ ACTIONS = [
         "upside": lambda gs: gs._scout_opponent(),
         "downside": lambda gs: gs._espionage_risk(),
         "rules": lambda gs: gs.turn >= 5  # Unlocked after turn 5
+    },
+    {
+        "name": "Search for Board Member",
+        "desc": "Find board members for compliance (20% success rate).",
+        "cost": 75,
+        "ap_cost": 1,  # Action Points cost
+        "upside": lambda gs: gs._search_for_board_member(),
+        "downside": lambda gs: None,
+        "rules": lambda gs: getattr(gs, 'board_member_search_unlocked', False)  # Unlocked by spending threshold
     }
 ]
