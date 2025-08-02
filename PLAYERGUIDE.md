@@ -50,8 +50,11 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 As your organization grows, you'll encounter special milestone events that change how your lab operates:
 
 ### Manager System (9th Employee Milestone)
-- **Trigger**: Automatically activates when you hire your 9th employee
-- **Effect**: Your latest hire is promoted to Manager (green with crown icon)
+- **Trigger**: Special event triggers when you reach 9 employees for the first time
+- **Effect**: 
+  - Unlocks the "Hire Manager" action (costs $90, 1.5x normal staff cost)
+  - Provides notification about management requirements
+  - Manager milestone achieved when first manager is hired
 - **Management Rules**:
   - First 9 employees work productively without management
   - Employees beyond 9 require management or become unproductive (red slash overlay)
@@ -61,11 +64,11 @@ As your organization grows, you'll encounter special milestone events that chang
 ### Board Member Compliance (Spending Threshold)
 - **Trigger**: Spending more than $10,000 in a single turn without Accounting Software
 - **Effect**: 
-  - Audit risk begins accumulating (increases p(Doom) over time)
-  - "Search for Board Member" action becomes available
-  - Must find 2 Board Members to eliminate audit risk
-- **Board Member Search**: 20% success chance per attempt, costs $75 and 1 AP
-- **Prevention**: Purchase Accounting Software upgrade to prevent this event
+  - Installs 2 Board Members automatically for compliance monitoring
+  - Audit risk begins accumulating with reputation penalties over time
+  - "Search" action becomes available (20% success rate, costs $25 and 1 AP)
+  - Accumulating penalties: reputation loss and financial fines for non-compliance
+- **Prevention**: Purchase Accounting Software upgrade ($500) to prevent this milestone
 
 ### Employee Types
 - **Regular Employees** (blue): Your standard workforce
@@ -73,12 +76,12 @@ As your organization grows, you'll encounter special milestone events that chang
 - **Board Members** (purple with briefcase): Ensure regulatory compliance
 
 ### Cash Flow UI
-- **Unlocked by**: Purchasing the Accounting Software upgrade
+- **Unlocked by**: Purchasing the Accounting Software upgrade ($500)
 - **Features**: 
-  - Real-time balance tracking with change indicators
-  - Monthly cost breakdown
-  - Turn spending monitor (warns when approaching $10k threshold)
-  - Historical transaction details
+  - Real-time balance change indicators (green for income, red for expenses)
+  - Displays the last money change amount next to your current balance
+  - Prevents the board member spending threshold milestone
+  - Essential for avoiding compliance oversight in large organizations
 
 ---
 

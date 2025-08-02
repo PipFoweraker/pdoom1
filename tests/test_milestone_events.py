@@ -102,6 +102,28 @@ class TestManagerMilestone(unittest.TestCase):
         
         self.assertEqual(managed_count, 18)
         self.assertEqual(unmanaged_count, 2)
+        
+    def test_special_event_triggers_at_9_staff(self):
+        """Test that special event triggers when reaching 9 staff for the first time"""
+        # Start with 8 staff
+        self.game_state.staff = 8
+        self.assertFalse(self.game_state.manager_milestone_triggered)
+        
+        # Add one more staff to reach 9
+        old_message_count = len(self.game_state.messages)
+        self.game_state._add('staff', 1)
+        
+        # Trigger events to process the special event
+        self.game_state.trigger_events()
+        
+        # Check that milestone was triggered
+        self.assertTrue(self.game_state.manager_milestone_triggered)
+        
+        # Check that special event messages were added
+        new_messages = self.game_state.messages[old_message_count:]
+        self.assertTrue(any("SPECIAL EVENT" in msg for msg in new_messages))
+        self.assertTrue(any("9 employees" in msg for msg in new_messages))
+        self.assertTrue(any("Manager" in msg for msg in new_messages))
 
 
 class TestBoardMemberMilestone(unittest.TestCase):

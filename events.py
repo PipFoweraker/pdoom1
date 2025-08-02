@@ -16,6 +16,17 @@ def unlock_enhanced_events(gs):
     gs.enhanced_events_enabled = True
     gs.messages.append("Enhanced Event System unlocked! Your organization can now handle complex events with advanced response options.")
 
+def trigger_first_manager_hire(gs):
+    """
+    Special event effect function for triggering the first manager hire.
+    This is called when the organization reaches 9 staff for the first time.
+    """
+    if not gs.manager_milestone_triggered:
+        gs.messages.append("SPECIAL EVENT: Your organization has grown to 9 employees!")
+        gs.messages.append("Management complexity requires hiring your first Manager.")
+        gs.messages.append("The 'Hire Manager' action is now available to organize your growing team.")
+        gs.manager_milestone_triggered = True
+
 EVENTS = [
     {
         "name": "Lab Breakthrough",
@@ -48,5 +59,12 @@ EVENTS = [
         # Trigger: After turn 8, and only if not already unlocked
         "trigger": lambda gs: gs.turn >= 8 and not getattr(gs, "enhanced_events_enabled", False),
         "effect": unlock_enhanced_events
+    },
+    {
+        "name": "First Manager Required",
+        "desc": "Your organization has reached 9 employees! Management structure needs to be established.",
+        # Trigger: When staff reaches 9 and manager milestone hasn't been triggered yet
+        "trigger": lambda gs: gs.staff >= 9 and not gs.manager_milestone_triggered,
+        "effect": trigger_first_manager_hire
     },
 ]

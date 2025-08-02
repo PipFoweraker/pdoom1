@@ -46,14 +46,14 @@ The game will open with a main menu where you can choose game modes, access docu
 The game features a sophisticated milestone system that unlocks new mechanics and challenges as your organization scales:
 
 **Management Milestones:**
-- **Manager System**: At 9+ employees, hire managers to oversee teams (1.5x hiring cost)
+- **Manager System**: Special event triggers at 9 employees, unlocking manager hiring (1.5x hiring cost)
 - **Team Clusters**: Each manager can oversee up to 9 employees effectively
 - **Static Effects**: Unmanaged employees beyond 9 become unproductive (red slash overlay)
 - **Visual Feedback**: Managers appear as green blobs vs blue employee blobs
 
 **Financial Oversight Milestones:**
 - **Board Member Installation**: Spend >$10,000 in a turn without accounting software triggers board oversight
-- **Compliance Monitoring**: Board members install 2 board members with audit powers
+- **Compliance Monitoring**: Automatically installs 2 board members with audit powers
 - **Search Actions**: Unlock compliance searches with 20% success rate for various benefits
 - **Audit Risk**: Accumulating penalties for non-compliance (reputation loss, financial fines)
 
