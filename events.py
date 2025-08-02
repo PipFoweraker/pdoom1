@@ -47,13 +47,6 @@ EVENTS = [
         "effect": lambda gs: gs._add('staff', -random.randint(1, 2))
     },
     {
-        "name": "Buy Accounting Software",
-        "desc": "Purchased accounting software for $500. Balance change details now available.",
-        # Trigger: After turn 3, and only if not already bought
-        "trigger": lambda gs: gs.turn >= 3 and not getattr(gs, "accounting_software_bought", False),
-        "effect": buy_accounting_software
-    },
-    {
         "name": "Event Log System Upgrade",
         "desc": "Your organization upgraded its event tracking system! Full activity history now available.",
         # Trigger: After turn 5, and only if not already unlocked
