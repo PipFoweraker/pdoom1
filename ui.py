@@ -348,6 +348,9 @@ def draw_ui(screen, game_state, w, h):
         # Optionally, always show the "monthly costs" indicator here as well
 
 
+    # Draw UI transitions (on top of everything else)
+    draw_ui_transitions(screen, game_state, w, h, big_font)
+
     # End Turn button (bottom center)
     endturn_rect = game_state._get_endturn_rect(w, h)
     pygame.draw.rect(screen, (140, 90, 90), endturn_rect, border_radius=12)
@@ -1038,5 +1041,116 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
     instruction_text = font.render("This popup requires your immediate attention!", True, (255, 200, 200))
     inst_x = popup_x + (popup_width - instruction_text.get_width()) // 2
     screen.blit(instruction_text, (inst_x, popup_y + popup_height - 20))
+
+
+def draw_ui_transitions(screen, game_state, w, h, big_font):
+    """
+    Draw smooth UI transition animations for upgrades and other elements.
+    
+    This function renders visual feedback for UI state changes:
+    - Upgrade transitions from button to icon with curved arc trails
+    - Glow effects on destination locations
+    - Semi-transparent trail effects that fade over time
+    
+    Args:
+        screen: pygame surface to draw on
+        game_state: current game state containing active transitions
+        w, h: screen width and height
+        big_font: font for rendering transition elements
+    """
+    for transition in game_state.ui_transitions:
+        if transition['type'] == 'upgrade_transition':
+            draw_upgrade_transition(screen, transition, game_state, w, h, big_font)
+
+
+def draw_upgrade_transition(screen, transition, game_state, w, h, big_font):
+    """
+    Draw a single upgrade transition animation with visual effects.
+    
+    Features:
+    - Curved arc trail from button to icon position
+    - Fading trail points that create motion blur effect
+    - Glowing highlight at destination when transition completes
+    - Semi-transparent moving upgrade preview
+    
+    Args:
+        screen: pygame surface to draw on
+        transition: transition data containing animation state
+        game_state: current game state for upgrade info
+        w, h: screen width and height  
+        big_font: font for rendering upgrade text
+    """
+    upgrade_idx = transition['upgrade_idx']
+    upgrade = game_state.upgrades[upgrade_idx]
+    
+    # Draw trail points (visual arc effect)
+    for i, point in enumerate(transition['trail_points']):
+        if point['alpha'] > 0:
+            # Create fading trail effect with varying sizes
+            trail_size = max(2, 8 - i)
+            trail_color = (100, 255, 150, point['alpha'])  # Green with fading alpha
+            
+            # Create surface for alpha blending
+            trail_surface = pygame.Surface((trail_size * 2, trail_size * 2), pygame.SRCALPHA)
+            pygame.draw.circle(trail_surface, trail_color, (trail_size, trail_size), trail_size)
+            screen.blit(trail_surface, (point['pos'][0] - trail_size, point['pos'][1] - trail_size))
+    
+    # Draw moving upgrade preview during transition
+    if not transition['completed']:
+        current_pos = game_state._interpolate_position(
+            transition['start_rect'], 
+            transition['end_rect'], 
+            transition['progress']
+        )
+        
+        # Calculate size interpolation (button size -> icon size)
+        start_size = min(transition['start_rect'][2], transition['start_rect'][3])
+        end_size = min(transition['end_rect'][2], transition['end_rect'][3])
+        current_size = start_size + (end_size - start_size) * transition['progress']
+        
+        # Draw semi-transparent moving upgrade
+        moving_rect = (
+            current_pos[0] - current_size//2,
+            current_pos[1] - current_size//2, 
+            current_size,
+            current_size
+        )
+        
+        # Semi-transparent background
+        moving_surface = pygame.Surface((current_size, current_size), pygame.SRCALPHA)
+        pygame.draw.rect(moving_surface, (90, 170, 90, 180), (0, 0, current_size, current_size), border_radius=6)
+        pygame.draw.rect(moving_surface, (140, 210, 140, 200), (0, 0, current_size, current_size), width=2, border_radius=6)
+        
+        # Add upgrade letter
+        letter_surf = big_font.render(upgrade["name"][0], True, (255, 255, 255))
+        letter_x = (current_size - letter_surf.get_width()) // 2
+        letter_y = (current_size - letter_surf.get_height()) // 2
+        moving_surface.blit(letter_surf, (letter_x, letter_y))
+        
+        screen.blit(moving_surface, (moving_rect[0], moving_rect[1]))
+    
+    # Draw destination glow effect
+    if transition['glow_timer'] > 0:
+        glow_intensity = min(255, transition['glow_timer'] * 4)  # Stronger glow initially
+        end_rect = transition['end_rect']
+        
+        # Create pulsing glow effect
+        pulse = 1.0 + 0.3 * (transition['glow_timer'] % 20) / 20.0  # Gentle pulse
+        glow_size = int(max(end_rect[2], end_rect[3]) * pulse)
+        glow_color = (150, 255, 150, glow_intensity // 3)  # Green glow
+        
+        # Multiple glow layers for smooth effect
+        for layer in range(3):
+            layer_size = glow_size - layer * 4
+            layer_alpha = glow_intensity // (3 + layer * 2)
+            
+            if layer_size > 0 and layer_alpha > 0:
+                glow_surface = pygame.Surface((layer_size * 2, layer_size * 2), pygame.SRCALPHA)
+                pygame.draw.circle(glow_surface, (*glow_color[:3], layer_alpha), 
+                                 (layer_size, layer_size), layer_size)
+                
+                glow_x = end_rect[0] + end_rect[2]//2 - layer_size
+                glow_y = end_rect[1] + end_rect[3]//2 - layer_size
+                screen.blit(glow_surface, (glow_x, glow_y))
 
     

@@ -119,6 +119,10 @@ class GameState:
         # Initialize game logger
         self.logger = GameLogger(seed)
         
+        # UI Transition System for smooth visual feedback
+        self.ui_transitions = []  # List of active UI transition animations
+        self.upgrade_transitions = {}  # Track transitions for individual upgrades
+        
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()
 
@@ -574,6 +578,10 @@ class GameState:
                         
                         # Log upgrade purchase
                         self.logger.log_upgrade(upg["name"], upg["cost"], self.turn)
+                        
+                        # Create smooth transition animation from button to icon
+                        icon_rect = self._get_upgrade_icon_rect(idx, w, h)
+                        self._create_upgrade_transition(idx, rect, icon_rect)
                     else:
                         self.messages.append("Not enough money for upgrade.")
                 else:
@@ -646,6 +654,25 @@ class GameState:
         for j, i in enumerate(purchased): out[i] = purchased_rects[j]
         for k, i in enumerate(not_purchased): out[i] = not_purchased_rects[k]
         return out
+    
+    def _get_upgrade_icon_rect(self, upgrade_idx, w, h):
+        """Get the icon rectangle for a purchased upgrade."""
+        # Calculate where this upgrade will appear as an icon
+        purchased = [i for i, u in enumerate(self.upgrades) if u.get("purchased", False)]
+        
+        # Find position of this upgrade in the purchased list
+        if upgrade_idx in purchased:
+            j = purchased.index(upgrade_idx)
+        else:
+            # Estimate position if it was purchased (for animation target)
+            purchased_count = len(purchased) + 1  # +1 for the upgrade being purchased
+            j = purchased_count - 1
+        
+        icon_w, icon_h = int(w*0.045), int(w*0.045)
+        x = w - icon_w*(j+1) - 10  # Small margin from right edge
+        y = int(h*0.08)
+        
+        return (x, y, icon_w, icon_h)
 
     def _get_endturn_rect(self, w, h):
         return (int(w*0.39), int(h*0.88), int(w*0.22), int(h*0.07))
@@ -798,6 +825,9 @@ class GameState:
 
         # Save high score if achieved
         self.save_highscore()
+        
+        # Update UI transitions - animations advance each frame/turn
+        self._update_ui_transitions()
 
     def trigger_events(self):
         """Trigger events using both the original and enhanced event systems."""
@@ -896,3 +926,97 @@ class GameState:
                 self.highscore = score
         except Exception:
             pass
+    
+    def _create_upgrade_transition(self, upgrade_idx, start_rect, end_rect):
+        """Create a smooth transition animation for an upgrade moving from button to icon."""
+        transition = {
+            'type': 'upgrade_transition',
+            'upgrade_idx': upgrade_idx,
+            'start_rect': start_rect,
+            'end_rect': end_rect,
+            'progress': 0.0,
+            'duration': 30,  # 30 frames for 1 second at 30fps
+            'trail_points': [],  # For visual trail effect
+            'glow_timer': 60,  # Extra glow time after transition completes
+            'completed': False
+        }
+        self.ui_transitions.append(transition)
+        self.upgrade_transitions[upgrade_idx] = transition
+        return transition
+    
+    def _update_ui_transitions(self):
+        """Update all active UI transitions."""
+        transitions_to_remove = []
+        
+        for transition in self.ui_transitions:
+            if transition['type'] == 'upgrade_transition':
+                self._update_upgrade_transition(transition)
+                
+                # Mark completed transitions for removal
+                if transition['completed'] and transition['glow_timer'] <= 0:
+                    transitions_to_remove.append(transition)
+        
+        # Remove completed transitions
+        for transition in transitions_to_remove:
+            self.ui_transitions.remove(transition)
+            if transition['upgrade_idx'] in self.upgrade_transitions:
+                del self.upgrade_transitions[transition['upgrade_idx']]
+    
+    def _update_upgrade_transition(self, transition):
+        """Update a single upgrade transition animation."""
+        if not transition['completed']:
+            # Advance animation progress
+            transition['progress'] = min(1.0, transition['progress'] + (1.0 / transition['duration']))
+            
+            # Add trail point for current position
+            current_pos = self._interpolate_position(
+                transition['start_rect'], 
+                transition['end_rect'], 
+                transition['progress']
+            )
+            transition['trail_points'].append({
+                'pos': current_pos,
+                'alpha': 255,
+                'age': 0
+            })
+            
+            # Limit trail length
+            if len(transition['trail_points']) > 10:
+                transition['trail_points'].pop(0)
+            
+            # Mark as completed when progress reaches 1.0
+            if transition['progress'] >= 1.0:
+                transition['completed'] = True
+        
+        # Update trail points (fade them out)
+        for point in transition['trail_points']:
+            point['age'] += 1
+            point['alpha'] = max(0, 255 - (point['age'] * 25))
+        
+        # Remove fully faded trail points
+        transition['trail_points'] = [p for p in transition['trail_points'] if p['alpha'] > 0]
+        
+        # Update glow timer
+        if transition['glow_timer'] > 0:
+            transition['glow_timer'] -= 1
+    
+    def _interpolate_position(self, start_rect, end_rect, progress):
+        """Interpolate position between start and end rectangles with smooth easing."""
+        # Use easeOutCubic for smooth deceleration
+        eased_progress = 1 - (1 - progress) ** 3
+        
+        start_x = start_rect[0] + start_rect[2] // 2  # Center of start rect
+        start_y = start_rect[1] + start_rect[3] // 2
+        end_x = end_rect[0] + end_rect[2] // 2  # Center of end rect  
+        end_y = end_rect[1] + end_rect[3] // 2
+        
+        # Create curved arc path (slightly upward curve)
+        mid_x = (start_x + end_x) / 2
+        mid_y = min(start_y, end_y) - 50  # Arc 50 pixels above the midpoint
+        
+        # Quadratic Bezier curve interpolation
+        t = eased_progress
+        x = (1-t)**2 * start_x + 2*(1-t)*t * mid_x + t**2 * end_x
+        y = (1-t)**2 * start_y + 2*(1-t)*t * mid_y + t**2 * end_y
+        
+        return (int(x), int(y))
