@@ -43,6 +43,12 @@ class GameState:
             self.compute = max(self.compute + val, 0)
         elif attr == 'research_progress':
             self.research_progress = max(self.research_progress + val, 0)
+        elif attr == 'admin_staff':
+            self.admin_staff = max(self.admin_staff + val, 0)
+        elif attr == 'research_staff':
+            self.research_staff = max(self.research_staff + val, 0)
+        elif attr == 'ops_staff':
+            self.ops_staff = max(self.ops_staff + val, 0)
         return None
 
 # Ensure last_balance_change gets set on any direct subtraction/addition to money:
@@ -64,11 +70,16 @@ class GameState:
         self.research_progress = 0  # Track research progress for paper generation
         self.papers_published = 0  # Count of research papers published
         
-        # Action Points system (Phase 1)
+        # Action Points system (Phase 1 & 2)
         self.action_points = 3  # Current available action points
-        self.max_action_points = 3  # Maximum action points per turn
+        self.max_action_points = 3  # Maximum action points per turn (will be calculated dynamically)
         self.ap_spent_this_turn = False  # Track if AP was spent for UI glow effects
         self.ap_glow_timer = 0  # Timer for AP glow animation
+        
+        # Phase 2: Staff-Based AP Scaling
+        self.admin_staff = 0  # Admin assistants: +1.0 AP each
+        self.research_staff = 0  # Research staff: Enable research action delegation
+        self.ops_staff = 0  # Operations staff: Enable operational action delegation
         
         self.turn = 0
         self.max_doom = 100
@@ -119,8 +130,160 @@ class GameState:
         # Initialize game logger
         self.logger = GameLogger(seed)
         
+        # UI Transition System for smooth visual feedback
+        self.ui_transitions = []  # List of active UI transition animations
+        self.upgrade_transitions = {}  # Track transitions for individual upgrades
+        
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()
+
+    def calculate_max_ap(self):
+        """
+        Calculate maximum Action Points per turn based on staff composition.
+        
+        Base AP: 3 per turn
+        Staff bonus: +0.5 AP per regular staff member
+        Admin bonus: +1.0 AP per admin assistant
+        
+        Returns:
+            int: Maximum action points for the current turn
+        """
+        base = 3
+        staff_bonus = self.staff * 0.5
+        admin_bonus = self.admin_staff * 1.0
+        return int(base + staff_bonus + admin_bonus)
+
+    def can_delegate_action(self, action):
+        """
+        Check if an action can be delegated based on staff requirements.
+        
+        Args:
+            action (dict): The action to check for delegation
+            
+        Returns:
+            bool: True if action can be delegated, False otherwise
+        """
+        if not action.get("delegatable", False):
+            return False
+            
+        delegate_staff_req = action.get("delegate_staff_req", 0)
+        
+        # Check if we have enough specialized staff based on action type
+        # Research actions require research staff
+        if action["name"] in ["Safety Research", "Governance Research"]:
+            return self.research_staff >= delegate_staff_req
+        # Operational actions require operations staff  
+        elif action["name"] in ["Buy Compute"]:
+            return self.ops_staff >= delegate_staff_req
+        
+        return False
+    
+    def execute_action_with_delegation(self, action_idx, delegate=False):
+        """
+        Execute an action with optional delegation.
+        
+        Args:
+            action_idx (int): Index of the action to execute
+            delegate (bool): Whether to delegate the action
+            
+        Returns:
+            bool: True if action was executed, False if not enough resources
+        """
+        action = self.actions[action_idx]
+        
+        # Determine AP cost and effectiveness
+        if delegate and self.can_delegate_action(action):
+            ap_cost = action.get("delegate_ap_cost", action.get("ap_cost", 1))
+            effectiveness = action.get("delegate_effectiveness", 1.0)
+            delegation_info = " (delegated)"
+        else:
+            ap_cost = action.get("ap_cost", 1)
+            effectiveness = 1.0
+            delegation_info = ""
+            delegate = False  # Can't delegate if requirements not met
+        
+        # Check if we have enough AP and money
+        if self.action_points < ap_cost:
+            self.messages.append(f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points}).")
+            return False
+        
+        if self.money < action["cost"]:
+            self.messages.append("Not enough money for that action.")
+            return False
+        
+        # Execute the action
+        self.selected_actions.append(action_idx)
+        self.messages.append(f"Selected: {action['name']}{delegation_info}")
+        
+        # Store delegation info for end_turn processing
+        if not hasattr(self, '_action_delegations'):
+            self._action_delegations = {}
+        self._action_delegations[action_idx] = {
+            'delegated': delegate,
+            'effectiveness': effectiveness,
+            'ap_cost': ap_cost
+        }
+        
+        return True
+
+    def _execute_action_with_effectiveness(self, action, effect_type, effectiveness):
+        """
+        Execute an action effect with reduced effectiveness.
+        
+        Args:
+            action (dict): The action to execute
+            effect_type (str): Either "upside" or "downside"
+            effectiveness (float): Effectiveness multiplier (0.0 to 1.0)
+        """
+        if effect_type not in action:
+            return
+            
+        # Store original values to restore after execution
+        original_doom = self.doom
+        original_reputation = self.reputation
+        original_money = self.money
+        original_staff = self.staff
+        original_compute = self.compute
+        original_research_progress = self.research_progress
+        
+        # Execute the effect
+        action[effect_type](self)
+        
+        # Apply effectiveness reduction to the changes
+        if effectiveness < 1.0:
+            # Calculate the changes that occurred
+            doom_change = self.doom - original_doom
+            rep_change = self.reputation - original_reputation
+            money_change = self.money - original_money
+            staff_change = self.staff - original_staff
+            compute_change = self.compute - original_compute
+            research_change = self.research_progress - original_research_progress
+            
+            # Restore original values
+            self.doom = original_doom
+            self.reputation = original_reputation
+            self.money = original_money
+            self.staff = original_staff
+            self.compute = original_compute
+            self.research_progress = original_research_progress
+            
+            # Apply reduced changes
+            if doom_change != 0:
+                self._add('doom', int(doom_change * effectiveness))
+            if rep_change != 0:
+                self._add('reputation', int(rep_change * effectiveness))
+            if money_change != 0:
+                self._add('money', int(money_change * effectiveness))
+            if staff_change != 0:
+                self._add('staff', int(staff_change * effectiveness))
+            if compute_change != 0:
+                self._add('compute', int(compute_change * effectiveness))
+            if research_change != 0:
+                self._add('research_progress', int(research_change * effectiveness))
+            
+            # Add message about reduced effectiveness
+            if effectiveness < 1.0:
+                self.messages.append(f"Delegated action had {int(effectiveness * 100)}% effectiveness.")
 
     def _initialize_employee_blobs(self):
         """Initialize employee blobs for starting staff"""
@@ -540,18 +703,17 @@ class GameState:
                         self.messages.append(f"{action['name']} is not available yet.")
                         return None
                     
-                    # Check Action Points availability
-                    ap_cost = action.get("ap_cost", 1)  # Default AP cost is 1
-                    if self.action_points < ap_cost:
-                        self.messages.append(f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points}).")
-                        return None
+                    # Check if delegation would be beneficial (lower AP cost)
+                    delegate = False
+                    if (action.get("delegatable", False) and 
+                        self.can_delegate_action(action) and
+                        action.get("delegate_ap_cost", action.get("ap_cost", 1)) < action.get("ap_cost", 1)):
+                        delegate = True
                     
-                    # Check money availability
-                    if self.money >= action["cost"]:
-                        self.selected_actions.append(idx)
-                        self.messages.append(f"Selected: {action['name']}")
-                    else:
-                        self.messages.append("Not enough money for that action.")
+                    # Try to execute the action (with auto-delegation if beneficial)
+                    if self.execute_action_with_delegation(idx, delegate):
+                        pass  # Success message already handled in execute_action_with_delegation
+                    # Error messages also handled in execute_action_with_delegation
                 return None
 
         # Upgrades (right, as icons or buttons)
@@ -574,6 +736,10 @@ class GameState:
                         
                         # Log upgrade purchase
                         self.logger.log_upgrade(upg["name"], upg["cost"], self.turn)
+                        
+                        # Create smooth transition animation from button to icon
+                        icon_rect = self._get_upgrade_icon_rect(idx, w, h)
+                        self._create_upgrade_transition(idx, rect, icon_rect)
                     else:
                         self.messages.append("Not enough money for upgrade.")
                 else:
@@ -646,6 +812,25 @@ class GameState:
         for j, i in enumerate(purchased): out[i] = purchased_rects[j]
         for k, i in enumerate(not_purchased): out[i] = not_purchased_rects[k]
         return out
+    
+    def _get_upgrade_icon_rect(self, upgrade_idx, w, h):
+        """Get the icon rectangle for a purchased upgrade."""
+        # Calculate where this upgrade will appear as an icon
+        purchased = [i for i, u in enumerate(self.upgrades) if u.get("purchased", False)]
+        
+        # Find position of this upgrade in the purchased list
+        if upgrade_idx in purchased:
+            j = purchased.index(upgrade_idx)
+        else:
+            # Estimate position if it was purchased (for animation target)
+            purchased_count = len(purchased) + 1  # +1 for the upgrade being purchased
+            j = purchased_count - 1
+        
+        icon_w, icon_h = int(w*0.045), int(w*0.045)
+        x = w - icon_w*(j+1) - 10  # Small margin from right edge
+        y = int(h*0.08)
+        
+        return (x, y, icon_w, icon_h)
 
     def _get_endturn_rect(self, w, h):
         return (int(w*0.39), int(h*0.88), int(w*0.22), int(h*0.07))
@@ -675,7 +860,16 @@ class GameState:
         # Perform all selected actions
         for idx in self.selected_actions:
             action = self.actions[idx]
-            ap_cost = action.get("ap_cost", 1)  # Default AP cost is 1
+            
+            # Get delegation info if available
+            delegation_info = getattr(self, '_action_delegations', {}).get(idx, {
+                'delegated': False,
+                'effectiveness': 1.0,
+                'ap_cost': action.get("ap_cost", 1)
+            })
+            
+            ap_cost = delegation_info['ap_cost']
+            effectiveness = delegation_info['effectiveness']
             
             # Deduct Action Points
             self.action_points -= ap_cost
@@ -686,12 +880,29 @@ class GameState:
             self._add('money', -action["cost"])
             
             # Log the action
-            self.logger.log_action(action["name"], action["cost"], self.turn)
+            action_name = action["name"]
+            if delegation_info['delegated']:
+                action_name += " (delegated)"
+            self.logger.log_action(action_name, action["cost"], self.turn)
             
-            # Execute action effects
-            if action.get("upside"): action["upside"](self)
-            if action.get("downside"): action["downside"](self)
-            if action.get("rules"): action["rules"](self)
+            # Execute action effects with effectiveness modifier
+            if action.get("upside"):
+                if effectiveness < 1.0:
+                    # For delegated actions, we need to modify the effectiveness
+                    # This is a simplified approach - in practice, you might need
+                    # more sophisticated effectiveness handling per action type
+                    self._execute_action_with_effectiveness(action, "upside", effectiveness)
+                else:
+                    action["upside"](self)
+                    
+            if action.get("downside"): 
+                action["downside"](self)
+            if action.get("rules"): 
+                action["rules"](self)
+        
+        # Clear delegation info for next turn
+        if hasattr(self, '_action_delegations'):
+            self._action_delegations = {}
         self.selected_actions = []
 
         # Staff maintenance
@@ -736,7 +947,8 @@ class GameState:
         
         self.turn += 1
         
-        # Reset Action Points for new turn
+        # Reset Action Points for new turn (Phase 2: Staff-Based AP Scaling)
+        self.max_action_points = self.calculate_max_ap()
         self.action_points = self.max_action_points
         self.ap_spent_this_turn = False  # Reset glow flag for new turn
         
@@ -798,6 +1010,9 @@ class GameState:
 
         # Save high score if achieved
         self.save_highscore()
+        
+        # Update UI transitions - animations advance each frame/turn
+        self._update_ui_transitions()
 
     def trigger_events(self):
         """Trigger events using both the original and enhanced event systems."""
@@ -896,3 +1111,97 @@ class GameState:
                 self.highscore = score
         except Exception:
             pass
+    
+    def _create_upgrade_transition(self, upgrade_idx, start_rect, end_rect):
+        """Create a smooth transition animation for an upgrade moving from button to icon."""
+        transition = {
+            'type': 'upgrade_transition',
+            'upgrade_idx': upgrade_idx,
+            'start_rect': start_rect,
+            'end_rect': end_rect,
+            'progress': 0.0,
+            'duration': 30,  # 30 frames for 1 second at 30fps
+            'trail_points': [],  # For visual trail effect
+            'glow_timer': 60,  # Extra glow time after transition completes
+            'completed': False
+        }
+        self.ui_transitions.append(transition)
+        self.upgrade_transitions[upgrade_idx] = transition
+        return transition
+    
+    def _update_ui_transitions(self):
+        """Update all active UI transitions."""
+        transitions_to_remove = []
+        
+        for transition in self.ui_transitions:
+            if transition['type'] == 'upgrade_transition':
+                self._update_upgrade_transition(transition)
+                
+                # Mark completed transitions for removal
+                if transition['completed'] and transition['glow_timer'] <= 0:
+                    transitions_to_remove.append(transition)
+        
+        # Remove completed transitions
+        for transition in transitions_to_remove:
+            self.ui_transitions.remove(transition)
+            if transition['upgrade_idx'] in self.upgrade_transitions:
+                del self.upgrade_transitions[transition['upgrade_idx']]
+    
+    def _update_upgrade_transition(self, transition):
+        """Update a single upgrade transition animation."""
+        if not transition['completed']:
+            # Advance animation progress
+            transition['progress'] = min(1.0, transition['progress'] + (1.0 / transition['duration']))
+            
+            # Add trail point for current position
+            current_pos = self._interpolate_position(
+                transition['start_rect'], 
+                transition['end_rect'], 
+                transition['progress']
+            )
+            transition['trail_points'].append({
+                'pos': current_pos,
+                'alpha': 255,
+                'age': 0
+            })
+            
+            # Limit trail length
+            if len(transition['trail_points']) > 10:
+                transition['trail_points'].pop(0)
+            
+            # Mark as completed when progress reaches 1.0
+            if transition['progress'] >= 1.0:
+                transition['completed'] = True
+        
+        # Update trail points (fade them out)
+        for point in transition['trail_points']:
+            point['age'] += 1
+            point['alpha'] = max(0, 255 - (point['age'] * 25))
+        
+        # Remove fully faded trail points
+        transition['trail_points'] = [p for p in transition['trail_points'] if p['alpha'] > 0]
+        
+        # Update glow timer
+        if transition['glow_timer'] > 0:
+            transition['glow_timer'] -= 1
+    
+    def _interpolate_position(self, start_rect, end_rect, progress):
+        """Interpolate position between start and end rectangles with smooth easing."""
+        # Use easeOutCubic for smooth deceleration
+        eased_progress = 1 - (1 - progress) ** 3
+        
+        start_x = start_rect[0] + start_rect[2] // 2  # Center of start rect
+        start_y = start_rect[1] + start_rect[3] // 2
+        end_x = end_rect[0] + end_rect[2] // 2  # Center of end rect  
+        end_y = end_rect[1] + end_rect[3] // 2
+        
+        # Create curved arc path (slightly upward curve)
+        mid_x = (start_x + end_x) / 2
+        mid_y = min(start_y, end_y) - 50  # Arc 50 pixels above the midpoint
+        
+        # Quadratic Bezier curve interpolation
+        t = eased_progress
+        x = (1-t)**2 * start_x + 2*(1-t)*t * mid_x + t**2 * end_x
+        y = (1-t)**2 * start_y + 2*(1-t)*t * mid_y + t**2 * end_y
+        
+        return (int(x), int(y))

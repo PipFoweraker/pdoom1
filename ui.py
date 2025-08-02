@@ -1154,6 +1154,7 @@ def draw_upgrade_transition(screen, transition, game_state, w, h, big_font):
                 screen.blit(glow_surface, (glow_x, glow_y))
 
 
+
 def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
     """
     Draw the end-of-game menu with game summary and options.
@@ -1255,5 +1256,6 @@ def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
     instruction_text = small_font.render("Use arrow keys to navigate, Enter to select, Escape for Main Menu", True, (200, 200, 200))
     inst_rect = instruction_text.get_rect(center=(w//2, int(h*0.92)))
     screen.blit(instruction_text, inst_rect)
+
 
     

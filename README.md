@@ -61,6 +61,7 @@ The game features a sophisticated milestone system that unlocks new mechanics an
 - **Accounting Software**: Visible right-panel upgrade ($500) enables cash flow tracking
 - **Compliance Prevention**: Purchasing accounting software blocks board member milestone
 - **Cash Flow UI**: Persistent balance change indicators when accounting software is active
+- **Smooth UI Transitions**: Visual feedback system with animated trails and glow effects
 
 ### Enhanced Event System
 The game features a sophisticated event system that evolves as you play:
@@ -82,19 +83,31 @@ The game features a sophisticated event system that evolves as you play:
 - Allows strategic management of multiple concurrent crises
 
 ### Action Points System
-The game features a strategic Action Points (AP) system that limits the number of actions you can take each turn:
+The game features a sophisticated Action Points (AP) system that creates strategic depth through resource management and staff scaling:
 
-**Key Features:**
-- **3 Action Points per turn**: Each turn you start with 3 AP to spend on actions
-- **Action Costs**: Most actions cost 1 AP, creating strategic choices about priorities
+**Basic Mechanics:**
+- **Base Action Points**: 3 AP per turn
+- **Staff Scaling**: Regular staff provide +0.5 AP each
+- **Admin Assistants**: Specialized staff providing +1.0 AP each
 - **Visual Feedback**: AP counter shows current/max AP with glow effects when spent
-- **Turn Reset**: AP automatically resets to maximum at the start of each turn
+- **Turn Reset**: AP automatically resets to calculated maximum at the start of each turn
+
+**Specialized Staff Types:**
+- **Admin Assistants**: High-cost staff (+1.0 AP bonus each) for maximum action capacity
+- **Research Staff**: Enable delegation of research actions (Safety Research, Governance Research)
+- **Operations Staff**: Enable delegation of operational actions (Buy Compute)
+
+**Delegation System:**
+- **Research Delegation**: Research actions can be delegated to research staff with 80% effectiveness
+- **Operations Delegation**: Operational actions can be delegated to ops staff, often with lower AP costs
+- **Auto-Delegation**: Actions are automatically delegated when beneficial (lower AP cost)
+- **Staff Requirements**: Each delegatable action requires minimum specialized staff
 
 **Strategic Implications:**
-- **Prioritization**: Choose the most important actions when AP is limited
-- **Future Planning**: Consider which actions to save for future turns
-- **Resource Coordination**: Balance AP spending with money and other resource constraints
-- **Visual Cues**: Action buttons are grayed out when you lack sufficient AP
+- **Early Game**: Careful AP budgeting with limited 3-4 AP per turn
+- **Mid Game**: Strategic staff investment decisions between regular, admin, and specialized staff
+- **Late Game**: Complex staff compositions enabling high AP counts and efficient delegation
+- **Prioritization**: High-impact actions require careful AP planning and staff allocation
 
 ### Opponents System
 Race against 3 competing AI labs, each with unique characteristics:
@@ -113,6 +126,24 @@ Race against 3 competing AI labs, each with unique characteristics:
 - Track competitor progress toward dangerous AGI deployment (0-100%)
 - Game ends if any opponent reaches 100% progress
 - Opponent research contributes to global p(Doom) levels
+
+## Visual Feedback System
+
+The game features a sophisticated visual feedback system that makes UI state changes clear and engaging:
+
+### Smooth UI Transitions
+- **Upgrade Animations**: When purchasing upgrades, watch them smoothly transition from buttons to icons
+- **Curved Arc Trails**: Visual trails show the path from the original button to its new icon position  
+- **Glow Effects**: Destination locations pulse with a green glow when transitions complete
+- **Extensible Design**: The system supports different UI elements for future enhancements
+
+### Visual Feedback Features
+- **Action Point Glow**: AP counter glows when Action Points are spent
+- **Cash Flow Indicators**: Balance changes display when accounting software is active
+- **Employee Animations**: Staff blob animations when hiring/firing
+- **Trail Effects**: Fading motion blur creates smooth visual continuity
+
+These animations provide immediate visual feedback to help players understand how their actions affect the game state, making UI interactions more intuitive and satisfying.
 
 ## Troubleshooting
 
@@ -173,6 +204,26 @@ If tests fail, check your Python and pygame installation.
 - Any OS that supports Python and pygame (Windows, macOS, Linux)
 - ~50MB disk space
 - Basic graphics support (no special hardware needed)
+
+## Versioning and Releases
+
+This project follows [Semantic Versioning](https://semver.org/) (SemVer) for all releases:
+
+- **MAJOR** (X.0.0): Incompatible gameplay changes, save file format changes
+- **MINOR** (0.X.0): New features, game modes, backwards-compatible enhancements  
+- **PATCH** (0.0.X): Bug fixes, performance improvements, documentation
+
+### Release Information
+- **Current Target**: v0.1.0 (first official semantic versioned release)
+- **Release Notes**: See [CHANGELOG.md](CHANGELOG.md) for detailed version history
+- **Release Process**: Automated via GitHub Actions on version tags
+- **Minimum Conditions**: All features tested, documented, and stable
+
+### For Developers
+- Version managed centrally in `version.py`
+- Release checklist documented in `RELEASE_CHECKLIST.md`
+- Automated testing and release workflows in `.github/workflows/`
+- All releases include source archives and checksums
 
 ---
 
