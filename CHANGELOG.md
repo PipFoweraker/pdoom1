@@ -1,0 +1,114 @@
+# Changelog
+All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+### Added
+- Centralized version management system (`version.py`)
+- Comprehensive changelog documentation
+- Semantic versioning policy and release process
+- Version display in game window title
+- Automated version integration with game logger
+
+### Changed
+- Game window title now shows semantic version (v0.1.0) instead of hardcoded "v3"
+- GameLogger now defaults to current version if none specified
+
+### Infrastructure
+- Enhanced GitHub Actions workflow for release management
+- Release checklist and minimum conditions documentation
+
+## [0.1.0] - TBD
+*This will be the first official semantic versioned release of P(Doom)*
+
+### Minimum Conditions for v0.1.0 Release
+Before releasing v0.1.0, the following conditions must be met:
+
+#### Core Functionality ✅
+- [x] Game launches successfully with main menu
+- [x] All game modes function correctly (weekly seed, custom seed)
+- [x] Core resource management works (money, staff, reputation, doom)
+- [x] Action system executes properly with costs and effects
+- [x] Event system triggers and resolves correctly
+- [x] Upgrade system allows purchases and effect activation
+- [x] Game end conditions work (win/lose scenarios)
+- [x] Opponents system functions with espionage and AI behavior
+- [x] Enhanced event system (popups, deferred events) works properly
+
+#### Technical Quality ✅
+- [x] Full test suite passes (115/115 tests)
+- [x] No critical bugs in core gameplay
+- [x] Game logging system captures all events correctly
+- [x] Bug reporting system functions properly
+- [x] Cross-platform compatibility (Windows, macOS, Linux)
+
+#### Documentation & User Experience ✅
+- [x] README.md provides clear installation and quick start
+- [x] PLAYERGUIDE.md covers all game features and strategies
+- [x] DEVELOPERGUIDE.md explains architecture and contribution process
+- [x] In-game help and tooltips function correctly
+- [x] Error handling provides useful feedback to users
+
+#### Release Infrastructure
+- [x] Semantic versioning system implemented
+- [x] Changelog documentation established
+- [x] Version management integrated throughout codebase
+- [ ] GitHub releases workflow automated
+- [ ] Release checklist documented and tested
+- [ ] Tagged release process validated
+
+### Features Included in v0.1.0
+All features present in the pre-versioning codebase:
+
+#### Core Gameplay
+- **Resource Management**: Money, staff, reputation, and P(Doom) levels
+- **Action System**: 20+ actions including research, hiring, lobbying, espionage
+- **Turn-Based Strategy**: Strategic decision making with consequences
+- **Multiple Win/Lose Conditions**: Achievement-based and doom-based outcomes
+
+#### Advanced Systems  
+- **Enhanced Event System**: Normal, popup, and deferred events with multiple response options
+- **Opponents System**: 3 AI competitors with hidden information and espionage mechanics
+- **Upgrade System**: 12+ upgrades that modify gameplay and unlock new capabilities
+- **Comprehensive Logging**: Detailed game session logs for debugging and analysis
+
+#### User Experience
+- **Adaptive UI**: Resizable window with responsive layout
+- **Multiple Game Modes**: Weekly seed for consistency, custom seed for experimentation
+- **In-Game Documentation**: Player guide, README, and developer guide accessible from menu
+- **Bug Reporting**: Built-in bug report system with privacy-conscious data collection
+- **Sound System**: Audio feedback for game events (with volume control)
+
+#### Technical Features
+- **Robust Testing**: 115 automated tests covering all major systems
+- **Cross-Platform**: Runs on Windows, macOS, and Linux via Python/pygame
+- **Privacy-Conscious**: No personal data collection, local-only high scores
+- **Modular Architecture**: Easy to extend with new actions, events, and opponents
+
+---
+
+## Pre-Version History
+*Prior to implementing semantic versioning, the game went through several iterations:*
+
+### Historical Versions (Non-Semantic)
+- **v3** (2024): Enhanced event system, opponents, comprehensive documentation
+- **v2** (2024): Upgrade system, improved UI, game logging
+- **v1** (2024): Initial prototype with basic resource management and actions
+
+### Key Development Milestones
+- **Enhanced Event System**: Added popup events, deferred events, and strategic event management
+- **Opponents Intelligence**: Implemented competing AI labs with espionage mechanics  
+- **Comprehensive Testing**: Achieved 115 automated tests with full coverage
+- **Documentation Excellence**: Created player, developer, and user guides
+- **Privacy-First Design**: Built-in bug reporting with no personal data collection
+- **Professional Architecture**: Modular, testable, and extensible codebase
+
+---
+
+## Release Process
+For information about our release process, versioning policy, and contribution guidelines, see:
+- [Developer Guide - Release & Deployment](DEVELOPERGUIDE.md#release--deployment)
+- [Semantic Versioning Policy](DEVELOPERGUIDE.md#version-management)
+- [Contributing Guidelines](DEVELOPERGUIDE.md#contribution-guidelines)

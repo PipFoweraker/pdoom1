@@ -96,7 +96,7 @@ class GameState:
         self.enhanced_events_enabled = False  # Flag to enable new event types
         
         # Initialize game logger
-        self.logger = GameLogger(seed, "P(Doom) v3")
+        self.logger = GameLogger(seed)
         
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()

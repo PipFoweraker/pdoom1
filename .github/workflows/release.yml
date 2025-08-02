@@ -1,0 +1,255 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v1.0.0, v0.1.0-alpha, etc.
+  workflow_dispatch:  # Allow manual triggering
+    inputs:
+      version:
+        description: 'Version to release (e.g., v0.1.0)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write  # Required to create releases and upload assets
+
+jobs:
+  validate-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Extract version information
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          VERSION="${{ github.event.inputs.version }}"
+          echo "Manual release triggered for version: $VERSION"
+        else
+          VERSION="${GITHUB_REF#refs/tags/}"
+          echo "Tag-triggered release for version: $VERSION"
+        fi
+        
+        # Validate version format
+        if [[ ! $VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$ ]]; then
+          echo "Error: Invalid version format: $VERSION"
+          echo "Expected format: vMAJOR.MINOR.PATCH[-prerelease][+build]"
+          exit 1
+        fi
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "tag=$VERSION" >> $GITHUB_OUTPUT
+    
+    - name: Verify version consistency
+      run: |
+        # Check that the version in version.py matches the release version
+        PYTHON_VERSION=$(python -c "from version import get_display_version; print(get_display_version())")
+        RELEASE_VERSION="${{ steps.version.outputs.version }}"
+        
+        echo "Python version.py version: $PYTHON_VERSION"
+        echo "Release version: $RELEASE_VERSION"
+        
+        if [ "$PYTHON_VERSION" != "$RELEASE_VERSION" ]; then
+          echo "Error: Version mismatch!"
+          echo "version.py shows: $PYTHON_VERSION"
+          echo "Release tag shows: $RELEASE_VERSION"
+          echo "Please update version.py to match the release tag"
+          exit 1
+        fi
+        
+        echo "✓ Version consistency check passed"
+
+  test:
+    runs-on: ubuntu-latest
+    needs: validate-version
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, '3.10', 3.11]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Run full test suite
+      run: |
+        python -m unittest discover tests -v
+    
+    - name: Test game initialization
+      run: |
+        python -c "
+        from game_state import GameState
+        from version import get_display_version
+        print(f'Testing P(Doom) {get_display_version()}')
+        gs = GameState('release-test')
+        print('✓ Game initializes correctly')
+        print(f'✓ Version: {gs.logger.game_version}')
+        "
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [validate-version, test]
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch full history for changelog generation
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Generate release artifacts
+      run: |
+        # Create a simple source distribution
+        VERSION="${{ needs.validate-version.outputs.version }}"
+        ARCHIVE_NAME="pdoom-${VERSION#v}-source"
+        
+        # Create release directory
+        mkdir -p release
+        
+        # Copy source files (excluding development files)
+        rsync -av --progress . release/$ARCHIVE_NAME/ \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='logs' \
+          --exclude='__pycache__' \
+          --exclude='*.pyc' \
+          --exclude='.pytest_cache' \
+          --exclude='release'
+        
+        # Create archive
+        cd release
+        tar -czf "${ARCHIVE_NAME}.tar.gz" $ARCHIVE_NAME/
+        zip -r "${ARCHIVE_NAME}.zip" $ARCHIVE_NAME/
+        
+        # Generate checksums
+        sha256sum *.tar.gz *.zip > checksums.txt
+        
+        echo "Generated release artifacts:"
+        ls -la
+    
+    - name: Extract changelog for release
+      id: changelog
+      run: |
+        VERSION="${{ needs.validate-version.outputs.version }}"
+        VERSION_NUM="${VERSION#v}"  # Remove 'v' prefix
+        
+        # Extract changelog section for this version
+        python3 << 'EOF'
+        import re
+        
+        version = "${{ needs.validate-version.outputs.version }}"
+        version_num = version[1:]  # Remove 'v' prefix
+        
+        try:
+            with open('CHANGELOG.md', 'r') as f:
+                content = f.read()
+            
+            # Look for the version section
+            pattern = rf'^## \[{re.escape(version_num)}\].*?(?=^## |\Z)'
+            match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
+            
+            if match:
+                changelog_section = match.group(0).strip()
+                # Remove the version header for release notes
+                lines = changelog_section.split('\n')[1:]  # Skip first line (header)
+                release_notes = '\n'.join(lines).strip()
+            else:
+                # Fallback to unreleased section if version section not found
+                pattern = r'^## \[Unreleased\].*?(?=^## |\Z)'
+                match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
+                if match:
+                    changelog_section = match.group(0).strip()
+                    lines = changelog_section.split('\n')[1:]
+                    release_notes = '\n'.join(lines).strip()
+                    release_notes = f"**Note: Using Unreleased section as release notes**\n\n{release_notes}"
+                else:
+                    release_notes = f"Release {version}\n\nSee CHANGELOG.md for details."
+            
+            # Save to file for GitHub action
+            with open('release_notes.txt', 'w') as f:
+                f.write(release_notes)
+                
+            print("Generated release notes:")
+            print(release_notes[:500] + "..." if len(release_notes) > 500 else release_notes)
+                
+        except Exception as e:
+            print(f"Error extracting changelog: {e}")
+            fallback = f"Release {version}\n\nSee CHANGELOG.md for full details."
+            with open('release_notes.txt', 'w') as f:
+                f.write(fallback)
+        EOF
+    
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ needs.validate-version.outputs.tag }}
+        release_name: "P(Doom) ${{ needs.validate-version.outputs.version }}"
+        body_path: release_notes.txt
+        draft: false
+        prerelease: ${{ github.event.inputs.prerelease || contains(needs.validate-version.outputs.version, '-') }}
+    
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: release/pdoom-${{ needs.validate-version.outputs.version }}-source.tar.gz
+        asset_name: pdoom-${{ needs.validate-version.outputs.version }}-source.tar.gz
+        asset_content_type: application/gzip
+    
+    - name: Upload ZIP Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: release/pdoom-${{ needs.validate-version.outputs.version }}-source.zip
+        asset_name: pdoom-${{ needs.validate-version.outputs.version }}-source.zip
+        asset_content_type: application/zip
+    
+    - name: Upload Checksums
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: release/checksums.txt
+        asset_name: checksums.txt
+        asset_content_type: text/plain

@@ -336,6 +336,8 @@ The system supports:
 - Use clear, descriptive commit messages and pull request descriptions
 - Update relevant documentation when adding features
 - Follow existing code patterns and naming conventions
+- **Reference version and changelog**: Include changelog updates in PRs for user-facing changes
+- **Update version info**: For releases, update `version.py` and `CHANGELOG.md` appropriately
 
 ### Architecture Principles
 
@@ -377,20 +379,60 @@ P(Doom) includes comprehensive logging for debugging and analysis:
 
 ## Release & Deployment
 
-### Pre-Release Checklist
-
-1. **Run full test suite**: `python -m unittest discover tests -v`
-2. **Verify all tests pass**: 115/115 tests should pass
-3. **Test main game flows**: Menu navigation, gameplay, game over
-4. **Test enhanced event system**: Popup events, deferred events, expiration
-5. **Check documentation**: Ensure guides are up to date
-6. **Verify logging**: Ensure logs are created and formatted correctly
-
 ### Version Management
 
-- Update version string in `main.py` window caption
-- Update documentation references to new features
-- Tag releases appropriately in git
+P(Doom) follows [Semantic Versioning](https://semver.org/) (SemVer) for consistent and predictable versioning:
+
+- **MAJOR.MINOR.PATCH** format (e.g., 0.1.0, 1.2.3)
+- **MAJOR**: Incompatible API changes or major gameplay overhauls  
+- **MINOR**: Backwards-compatible functionality additions (new features, events, opponents)
+- **PATCH**: Backwards-compatible bug fixes and minor improvements
+
+#### Centralized Version System
+
+The game uses a centralized version management system in `version.py`:
+
+```python
+from version import get_version, get_display_version, get_version_info
+
+# Get semantic version (e.g., "0.1.0")
+version = get_version()
+
+# Get display version for UI (e.g., "v0.1.0") 
+display = get_display_version()
+
+# Get detailed version information
+info = get_version_info()
+```
+
+**Key Integration Points:**
+- `main.py`: Window title shows current version
+- `game_logger.py`: Logs include version information
+- `version.py`: Single source of truth for all version data
+
+### Release Process
+
+For complete release procedures, see [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md).
+
+#### Quick Release Steps
+
+1. **Update Version**: Edit `version.py` with new version number
+2. **Update Changelog**: Move changes from `[Unreleased]` to new version in `CHANGELOG.md`
+3. **Test**: Run full test suite (`python -m unittest discover tests -v`)
+4. **Tag Release**: Create and push version tag (`git tag v0.1.0`)
+5. **Automated Release**: GitHub Actions automatically creates release with assets
+
+#### GitHub Actions Workflows
+
+- **Tests** (`.github/workflows/test.yml`): Runs on all pushes and PRs
+- **Release** (`.github/workflows/release.yml`): Triggered by version tags or manual dispatch
+
+The release workflow:
+- Validates version format and consistency
+- Runs full test suite on multiple Python versions  
+- Creates GitHub release with changelog notes
+- Generates and uploads source distribution archives
+- Includes SHA256 checksums for security verification
 
 ---
 

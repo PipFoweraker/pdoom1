@@ -9,6 +9,7 @@ import os
 import platform
 import datetime
 from typing import List, Dict, Any, Optional
+from version import get_display_version
 
 
 class GameLogger:
@@ -22,16 +23,16 @@ class GameLogger:
     - Graceful file writing on game end or crash
     """
     
-    def __init__(self, seed: str, game_version: str = "v3"):
+    def __init__(self, seed: str, game_version: str = None):
         """
         Initialize the game logger.
         
         Args:
             seed: The game seed being used
-            game_version: Version of the game (from main.py caption)
+            game_version: Version of the game (defaults to current version)
         """
         self.seed = seed
-        self.game_version = game_version
+        self.game_version = game_version or get_display_version()
         self.start_time = datetime.datetime.now()
         self.log_entries: List[str] = []
         self.logs_dir = "logs"
