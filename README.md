@@ -34,7 +34,26 @@ The game will open with a main menu where you can choose game modes, access docu
 - **Resource Management**: Balance money, staff, reputation, and p(Doom) levels
 - **Action System**: Choose from various actions each turn to advance your strategy
 - **Research & Development**: Publish papers, buy compute, and advance AI safety
-- **Random Events**: Navigate unexpected challenges and opportunities
+- **Enhanced Event System**: Navigate unexpected challenges with advanced response options
+
+### Enhanced Event System
+The game features a sophisticated event system that evolves as you play:
+
+**Event Types:**
+- **Normal Events**: Standard immediate events (existing gameplay)
+- **Popup Events**: Critical situations requiring immediate attention with multiple response options
+- **Deferred Events**: Events you can postpone for strategic timing, but they expire after several turns
+
+**Event Actions:**
+- **Accept**: Handle the event with full impact
+- **Defer**: Postpone the event for later (limited turns)
+- **Reduce**: Handle with reduced impact through quick response
+- **Dismiss**: Ignore the event (may have consequences)
+
+**Unlocking Enhanced Events:**
+- Enhanced event system unlocks automatically after turn 8
+- Provides popup overlays for critical events and a deferred events zone
+- Allows strategic management of multiple concurrent crises
 
 ### Opponents System
 Race against 3 competing AI labs, each with unique characteristics:

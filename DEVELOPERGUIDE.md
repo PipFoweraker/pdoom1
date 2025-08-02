@@ -39,6 +39,7 @@ python main.py
 - **actions.py** — Action definitions (as Python dicts)
 - **upgrades.py** — Upgrade definitions
 - **events.py** — Event definitions and special event logic
+- **event_system.py** — Enhanced event system with deferred events and popups
 - **opponents.py** — Opponent AI and intelligence system
 - **ui.py** — Pygame-based UI code
 - **game_logger.py** — Comprehensive game logging system
@@ -133,8 +134,9 @@ pytest tests/ -v
 
 ### Test Coverage
 
-Current test coverage includes 88 automated tests covering:
+Current test coverage includes 115 automated tests covering:
 
+- ✅ **Enhanced Event System** - Event class, deferred events, popup handling, expiration logic (27 tests)
 - ✅ **Event Log Management** - Activity log clears each turn, shows only current events
 - ✅ **Game State Management** - Resource management and state transitions
 - ✅ **Upgrade System** - Purchase logic and effect activation  
@@ -245,6 +247,86 @@ opponents.append(Opponent(
 
 ---
 
+## Enhanced Event System Architecture
+
+### Overview
+The enhanced event system supports visually dominant popup events, deferred event handling with expiration, and robust trigger/handling logic. It operates alongside the original event system for backward compatibility.
+
+### Core Components
+
+**event_system.py**
+- `Event` class: Enhanced event objects with type, expiration, and multiple actions
+- `EventType` enum: NORMAL, POPUP, DEFERRED event classifications
+- `EventAction` enum: ACCEPT, DEFER, REDUCE, DISMISS action types
+- `DeferredEventQueue`: Manages deferred events with expiration logic
+
+**Integration Points**
+- `GameState.__init__()`: Initializes deferred event queue and popup event lists
+- `GameState.trigger_events()`: Processes both original and enhanced events
+- `GameState.end_turn()`: Ticks deferred events and auto-executes expired ones
+- `ui.py`: `draw_popup_events()` and `draw_deferred_events_zone()` for UI display
+
+### Event System Order of Operations
+
+**Turn Start:**
+1. Clear previous turn messages (preserve scrollable history if enabled)
+2. Execute selected player actions
+3. Process staff maintenance and compute consumption
+
+**Event Processing:**
+4. Trigger original events (immediate execution)
+5. Trigger enhanced events (if enhanced_events_enabled = True)
+   - Popup events → added to pending_popup_events list
+   - Normal events → executed immediately  
+   - Deferred events → auto-deferred to queue
+6. Tick all deferred events, auto-execute expired ones
+
+**Turn End:**
+7. Increment turn counter
+8. Check win/lose conditions
+
+### Event Data Structure
+
+```python
+class Event:
+    name: str                        # Event title
+    desc: str                        # Event description
+    trigger: Callable               # Trigger condition function
+    effect: Callable                # Primary effect function
+    event_type: EventType           # NORMAL, POPUP, or DEFERRED
+    max_deferred_turns: int         # Expiration countdown
+    available_actions: List[EventAction] # Available player responses
+    reduce_effect: Optional[Callable] # Alternative reduced effect
+    
+    # State management
+    is_deferred: bool               # Currently deferred flag
+    turns_deferred: int            # Turns since deferring
+    deferred_at_turn: int          # Turn when deferred
+```
+
+### Extensibility and Future Actions
+
+**Adding New Event Actions:**
+1. Add to `EventAction` enum in `event_system.py`
+2. Handle new action in `Event.execute_effect()`
+3. Update UI button generation in `draw_popup_events()`
+4. Add tests in `tests/test_events.py`
+
+**Creating New Event Types:**
+1. Add to `EventType` enum
+2. Update default action assignment in `Event.__init__()`
+3. Handle new type in `GameState._handle_triggered_event()`
+4. Add UI handling if needed
+
+**Complex Event Flows:**
+The system supports:
+- Event chains (events that trigger other events)
+- Conditional actions based on game state
+- Time-sensitive events with varying effects
+- Multi-turn events that evolve over time
+
+---
+
 ## Code Style & Guidelines
 
 ### Contribution Guidelines
@@ -298,10 +380,11 @@ P(Doom) includes comprehensive logging for debugging and analysis:
 ### Pre-Release Checklist
 
 1. **Run full test suite**: `python -m unittest discover tests -v`
-2. **Verify all tests pass**: 32/32 tests should pass
+2. **Verify all tests pass**: 115/115 tests should pass
 3. **Test main game flows**: Menu navigation, gameplay, game over
-4. **Check documentation**: Ensure guides are up to date
-5. **Verify logging**: Ensure logs are created and formatted correctly
+4. **Test enhanced event system**: Popup events, deferred events, expiration
+5. **Check documentation**: Ensure guides are up to date
+6. **Verify logging**: Ensure logs are created and formatted correctly
 
 ### Version Management
 

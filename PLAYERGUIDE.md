@@ -158,6 +158,27 @@ The competitors panel (between resources and actions) shows:
 - **😔 Staff Burnout** - Staff quit when overworked and underpaid
 - **💻 Software Offers** - Special upgrade opportunities
 
+### Enhanced Event System (Unlocked Turn 8+)
+
+After turn 8, your organization will unlock advanced event handling capabilities:
+
+**🚨 Popup Events** - Critical situations that pause the game and require immediate attention:
+- Overlay appears with detailed information and multiple response options
+- Choose from Accept, Defer, Reduce, or Dismiss actions
+- Each choice has different consequences and resource impacts
+
+**⏳ Deferred Events** - Strategic event management:
+- Defer non-critical events to handle at a better time
+- Deferred events appear in the lower-right "Deferred Events" zone
+- Show countdown timers (events auto-execute when expired)
+- Strategic deferring allows you to manage multiple crises
+
+**Event Actions Explained:**
+- **Accept**: Full event impact (original effect)
+- **Defer**: Postpone for up to 3-4 turns (limited uses)
+- **Reduce**: Quick response with reduced impact (if available)
+- **Dismiss**: Ignore event (may have hidden consequences)
+
 ### Winning Strategies
 
 **Early Game (Turns 1-5):**

@@ -391,8 +391,14 @@ def draw_ui(screen, game_state, w, h):
     # Draw employee blobs (lower middle area)
     draw_employee_blobs(screen, game_state, w, h)
     
+    # Draw deferred events zone (lower right)
+    draw_deferred_events_zone(screen, game_state, w, h, small_font)
+    
     # Draw mute button (bottom right)
     draw_mute_button(screen, game_state, w, h)
+    
+    # Draw popup events (overlay, drawn last to be on top)
+    draw_popup_events(screen, game_state, w, h, font, big_font)
 
 def draw_employee_blobs(screen, game_state, w, h):
     """Draw employee blobs in the lower middle area with animation and halos"""
@@ -838,5 +844,137 @@ def draw_opponents_panel(screen, game_state, w, h, font, small_font):
             else:
                 compute_text = small_font.render("Compute: ???", True, (120, 120, 120))
             screen.blit(compute_text, (opp_x, compute_y))
+
+
+def draw_deferred_events_zone(screen, game_state, w, h, small_font):
+    """
+    Draw the deferred events zone in the lower right corner.
+    
+    Shows deferred events with turn counters in a greyed-out area.
+    This is a UI stub for future enhancement.
+    """
+    # Only draw if deferred events exist
+    if not hasattr(game_state, 'deferred_events') or not game_state.deferred_events.deferred_events:
+        return
+    
+    # Zone position and dimensions
+    zone_width = int(w * 0.25)
+    zone_height = int(h * 0.15)
+    zone_x = w - zone_width - int(w * 0.02)
+    zone_y = h - zone_height - int(h * 0.12)  # Above mute button
+    
+    # Draw zone background
+    zone_rect = pygame.Rect(zone_x, zone_y, zone_width, zone_height)
+    pygame.draw.rect(screen, (60, 60, 60), zone_rect, border_radius=8)
+    pygame.draw.rect(screen, (120, 120, 120), zone_rect, width=2, border_radius=8)
+    
+    # Zone title
+    title_text = small_font.render("Deferred Events", True, (200, 200, 200))
+    screen.blit(title_text, (zone_x + 5, zone_y + 5))
+    
+    # List deferred events
+    deferred_events = game_state.deferred_events.get_deferred_events()
+    for i, event in enumerate(deferred_events[:4]):  # Show max 4 events
+        y_pos = zone_y + 25 + i * 20
+        if y_pos + 15 > zone_y + zone_height:
+            break
+        
+        # Event text with turn counter
+        turns_left = event.max_deferred_turns - event.turns_deferred
+        event_text = f"• {event.name} ({turns_left}T)"
+        text_surface = small_font.render(event_text, True, (180, 180, 180))
+        
+        # Truncate if too long
+        if text_surface.get_width() > zone_width - 10:
+            truncated = f"• {event.name[:15]}... ({turns_left}T)"
+            text_surface = small_font.render(truncated, True, (180, 180, 180))
+        
+        screen.blit(text_surface, (zone_x + 5, y_pos))
+    
+    # Show count if more events exist
+    if len(deferred_events) > 4:
+        more_text = small_font.render(f"...and {len(deferred_events) - 4} more", True, (150, 150, 150))
+        screen.blit(more_text, (zone_x + 5, zone_y + zone_height - 20))
+
+
+def draw_popup_events(screen, game_state, w, h, font, big_font):
+    """
+    Draw popup events that dominate the screen and require immediate attention.
+    
+    This is a UI stub for future enhancement.
+    """
+    # Only draw if popup events exist
+    if not hasattr(game_state, 'pending_popup_events') or not game_state.pending_popup_events:
+        return
+    
+    # Get the first popup event
+    event = game_state.pending_popup_events[0]
+    
+    # Semi-transparent overlay
+    overlay = pygame.Surface((w, h))
+    overlay.set_alpha(200)
+    overlay.fill((0, 0, 0))
+    screen.blit(overlay, (0, 0))
+    
+    # Popup dimensions
+    popup_width = int(w * 0.6)
+    popup_height = int(h * 0.4)
+    popup_x = (w - popup_width) // 2
+    popup_y = (h - popup_height) // 2
+    
+    # Draw popup background
+    popup_rect = pygame.Rect(popup_x, popup_y, popup_width, popup_height)
+    pygame.draw.rect(screen, (40, 40, 60), popup_rect, border_radius=15)
+    pygame.draw.rect(screen, (255, 200, 100), popup_rect, width=4, border_radius=15)
+    
+    # Event title
+    title_text = big_font.render(event.name, True, (255, 255, 100))
+    title_x = popup_x + (popup_width - title_text.get_width()) // 2
+    screen.blit(title_text, (title_x, popup_y + 20))
+    
+    # Event description (with word wrapping)
+    desc_lines = wrap_text(event.desc, font, popup_width - 40)
+    for i, line in enumerate(desc_lines):
+        line_surface = font.render(line, True, (255, 255, 255))
+        screen.blit(line_surface, (popup_x + 20, popup_y + 70 + i * 25))
+    
+    # Action buttons (stubs)
+    button_y = popup_y + popup_height - 80
+    button_width = 120
+    button_height = 40
+    button_spacing = 20
+    
+    # Calculate button positions
+    available_actions = event.available_actions
+    total_width = len(available_actions) * button_width + (len(available_actions) - 1) * button_spacing
+    start_x = popup_x + (popup_width - total_width) // 2
+    
+    for i, action in enumerate(available_actions):
+        button_x = start_x + i * (button_width + button_spacing)
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Button colors based on action type
+        if action.value == "accept":
+            color = (100, 200, 100)
+        elif action.value == "defer":
+            color = (200, 200, 100)
+        elif action.value == "dismiss":
+            color = (200, 100, 100)
+        else:
+            color = (150, 150, 200)
+        
+        pygame.draw.rect(screen, color, button_rect, border_radius=8)
+        pygame.draw.rect(screen, (255, 255, 255), button_rect, width=2, border_radius=8)
+        
+        # Button text
+        button_text = font.render(action.value.title(), True, (0, 0, 0))
+        text_x = button_x + (button_width - button_text.get_width()) // 2
+        text_y = button_y + (button_height - button_text.get_height()) // 2
+        screen.blit(button_text, (text_x, text_y))
+    
+    # Instructions
+    instruction_text = font.render("This popup requires your immediate attention!", True, (255, 200, 200))
+    inst_x = popup_x + (popup_width - instruction_text.get_width()) // 2
+    screen.blit(instruction_text, (inst_x, popup_y + popup_height - 20))
 
     

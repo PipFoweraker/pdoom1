@@ -7,6 +7,7 @@ from events import EVENTS
 from game_logger import GameLogger
 from sound_manager import SoundManager
 from opponents import create_default_opponents
+from event_system import Event, DeferredEventQueue, EventType, EventAction
 
 SCORE_FILE = "local_highscore.json"
 
@@ -88,6 +89,11 @@ class GameState:
         # Copy modular content
         self.actions = [dict(a) for a in ACTIONS]
         self.events = [dict(e) for e in EVENTS]
+        
+        # Enhanced event system
+        self.deferred_events = DeferredEventQueue()
+        self.pending_popup_events = []  # Events waiting for player action
+        self.enhanced_events_enabled = False  # Flag to enable new event types
         
         # Initialize game logger
         self.logger = GameLogger(seed, "P(Doom) v3")
@@ -470,6 +476,11 @@ class GameState:
         self.doom = min(self.max_doom, self.doom + doom_rise)
 
         self.trigger_events()
+        
+        # Handle deferred events (tick expiration and auto-execute expired ones)
+        if hasattr(self, 'deferred_events'):
+            expired_events = self.deferred_events.tick_all_events(self)
+        
         self.turn += 1
         
         # Store current turn messages if scrollable event log is now enabled
@@ -525,13 +536,72 @@ class GameState:
         self.save_highscore()
 
     def trigger_events(self):
-        for event in self.events:
-            if event["trigger"](self):
-                event["effect"](self)
-                event_message = f"Event: {event['name']} - {event['desc']}"
+        """Trigger events using both the original and enhanced event systems."""
+        # Handle original events (backward compatibility)
+        for event_dict in self.events:
+            if event_dict["trigger"](self):
+                event_dict["effect"](self)
+                event_message = f"Event: {event_dict['name']} - {event_dict['desc']}"
                 self.messages.append(event_message)
                 # Log the event
-                self.logger.log_event(event["name"], event["desc"], self.turn)
+                self.logger.log_event(event_dict["name"], event_dict["desc"], self.turn)
+        
+        # Handle enhanced events (if enabled)
+        if self.enhanced_events_enabled:
+            self._trigger_enhanced_events()
+    
+    def _trigger_enhanced_events(self):
+        """Trigger enhanced events with popup/deferred support."""
+        from event_system import create_enhanced_events
+        
+        # Get enhanced events (in a real implementation, these would be stored)
+        enhanced_events = create_enhanced_events()
+        
+        for event in enhanced_events:
+            if event.trigger(self):
+                if event.event_type == EventType.POPUP:
+                    # Add to pending popup events for UI handling
+                    self.pending_popup_events.append(event)
+                else:
+                    # Handle normal/deferred events immediately
+                    self._handle_triggered_event(event)
+    
+    def _handle_triggered_event(self, event):
+        """Handle a triggered event based on its type."""
+        if event.event_type == EventType.NORMAL:
+            # Execute immediately like original events
+            event.execute_effect(self, EventAction.ACCEPT)
+            event_message = f"Event: {event.name} - {event.desc}"
+            self.messages.append(event_message)
+            self.logger.log_event(event.name, event.desc, self.turn)
+        elif event.event_type == EventType.DEFERRED:
+            # For now, auto-defer deferred events (UI will handle choice later)
+            if event.defer(self.turn):
+                self.deferred_events.add_deferred_event(event)
+                self.messages.append(f"Deferred: {event.name} - {event.desc}")
+                self.logger.log_event(f"Deferred: {event.name}", event.desc, self.turn)
+    
+    def handle_popup_event_action(self, event, action: EventAction):
+        """Handle player action on a popup event."""
+        if action == EventAction.DEFER and event.can_be_deferred():
+            if event.defer(self.turn):
+                self.deferred_events.add_deferred_event(event)
+                self.messages.append(f"Deferred: {event.name}")
+        else:
+            event.execute_effect(self, action)
+        
+        # Remove from pending popup events
+        if event in self.pending_popup_events:
+            self.pending_popup_events.remove(event)
+        
+        # Log the action
+        self.logger.log_event(f"Player {action.value}: {event.name}", event.desc, self.turn)
+    
+    def handle_deferred_event_action(self, event, action: EventAction):
+        """Handle player action on a deferred event."""
+        event.execute_effect(self, action)
+        self.deferred_events.remove_event(event)
+        self.logger.log_event(f"Resolved deferred: {event.name}", f"Action: {action.value}", self.turn)
 
     # --- High score --- #
     def load_highscore(self):
