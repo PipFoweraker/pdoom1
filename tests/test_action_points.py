@@ -342,5 +342,142 @@ class TestActionPointsStaffScaling(unittest.TestCase):
         self.assertEqual(ops_action["ap_cost"], 2)
 
 
+class TestActionPointsDelegation(unittest.TestCase):
+    """Test Phase 3: Delegation System functionality."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        self.game_state = GameState("test_seed")
+        self.game_state.money = 100000
+    
+    def test_delegation_fields_exist(self):
+        """Test that delegatable actions have required delegation fields."""
+        safety_research = next(action for action in self.game_state.actions 
+                              if action["name"] == "Safety Research")
+        
+        self.assertTrue(safety_research.get("delegatable", False))
+        self.assertIn("delegate_staff_req", safety_research)
+        self.assertIn("delegate_ap_cost", safety_research)
+        self.assertIn("delegate_effectiveness", safety_research)
+    
+    def test_can_delegate_action_without_staff(self):
+        """Test that delegation is not possible without required staff."""
+        safety_research = next(action for action in self.game_state.actions 
+                              if action["name"] == "Safety Research")
+        
+        # No research staff
+        self.game_state.research_staff = 0
+        self.assertFalse(self.game_state.can_delegate_action(safety_research))
+    
+    def test_can_delegate_action_with_sufficient_staff(self):
+        """Test that delegation is possible with sufficient staff."""
+        safety_research = next(action for action in self.game_state.actions 
+                              if action["name"] == "Safety Research")
+        
+        # Add sufficient research staff
+        self.game_state.research_staff = 2
+        self.assertTrue(self.game_state.can_delegate_action(safety_research))
+    
+    def test_can_delegate_operational_action(self):
+        """Test delegation of operational actions."""
+        buy_compute = next(action for action in self.game_state.actions 
+                          if action["name"] == "Buy Compute")
+        
+        # No ops staff initially
+        self.game_state.ops_staff = 0
+        self.assertFalse(self.game_state.can_delegate_action(buy_compute))
+        
+        # Add ops staff
+        self.game_state.ops_staff = 1
+        self.assertTrue(self.game_state.can_delegate_action(buy_compute))
+    
+    def test_non_delegatable_action(self):
+        """Test that non-delegatable actions cannot be delegated."""
+        fundraise = next(action for action in self.game_state.actions 
+                        if action["name"] == "Fundraise")
+        
+        # Even with staff, non-delegatable actions cannot be delegated
+        self.game_state.research_staff = 5
+        self.game_state.ops_staff = 5
+        self.assertFalse(self.game_state.can_delegate_action(fundraise))
+    
+    def test_execute_action_without_delegation(self):
+        """Test executing action without delegation."""
+        safety_idx = next(i for i, action in enumerate(self.game_state.actions) 
+                         if action["name"] == "Safety Research")
+        
+        initial_ap = self.game_state.action_points
+        result = self.game_state.execute_action_with_delegation(safety_idx, delegate=False)
+        
+        self.assertTrue(result)
+        self.assertEqual(len(self.game_state.selected_actions), 1)
+        self.assertIn(safety_idx, self.game_state.selected_actions)
+    
+    def test_execute_action_with_delegation(self):
+        """Test executing action with delegation."""
+        safety_idx = next(i for i, action in enumerate(self.game_state.actions) 
+                         if action["name"] == "Safety Research")
+        
+        # Add research staff to enable delegation
+        self.game_state.research_staff = 2
+        
+        result = self.game_state.execute_action_with_delegation(safety_idx, delegate=True)
+        
+        self.assertTrue(result)
+        self.assertEqual(len(self.game_state.selected_actions), 1)
+        # Check delegation info is stored
+        self.assertTrue(hasattr(self.game_state, '_action_delegations'))
+        self.assertIn(safety_idx, self.game_state._action_delegations)
+        self.assertTrue(self.game_state._action_delegations[safety_idx]['delegated'])
+    
+    def test_delegation_with_lower_ap_cost(self):
+        """Test that delegation can provide lower AP cost for operational tasks."""
+        buy_compute_idx = next(i for i, action in enumerate(self.game_state.actions) 
+                              if action["name"] == "Buy Compute")
+        
+        # Add ops staff to enable delegation
+        self.game_state.ops_staff = 1
+        
+        result = self.game_state.execute_action_with_delegation(buy_compute_idx, delegate=True)
+        
+        self.assertTrue(result)
+        # Check that delegation info shows lower AP cost
+        delegation_info = self.game_state._action_delegations[buy_compute_idx]
+        self.assertEqual(delegation_info['ap_cost'], 0)  # Delegated Buy Compute costs 0 AP
+    
+    def test_delegation_effectiveness_stored(self):
+        """Test that delegation effectiveness is properly stored."""
+        safety_idx = next(i for i, action in enumerate(self.game_state.actions) 
+                         if action["name"] == "Safety Research")
+        
+        # Add research staff to enable delegation
+        self.game_state.research_staff = 2
+        
+        self.game_state.execute_action_with_delegation(safety_idx, delegate=True)
+        
+        delegation_info = self.game_state._action_delegations[safety_idx]
+        self.assertEqual(delegation_info['effectiveness'], 0.8)  # 80% effectiveness
+    
+    def test_auto_delegation_when_beneficial(self):
+        """Test that actions are auto-delegated when beneficial (lower AP cost)."""
+        buy_compute_idx = next(i for i, action in enumerate(self.game_state.actions) 
+                              if action["name"] == "Buy Compute")
+        
+        # Add ops staff to enable delegation
+        self.game_state.ops_staff = 1
+        
+        # Simulate clicking the action
+        action_rects = self.game_state._get_action_rects(800, 600)
+        if buy_compute_idx < len(action_rects):
+            rect = action_rects[buy_compute_idx]
+            click_pos = (rect[0] + rect[2]//2, rect[1] + rect[3]//2)
+            self.game_state.handle_click(click_pos, 800, 600)
+            
+            # Should be auto-delegated due to lower AP cost
+            if hasattr(self.game_state, '_action_delegations') and buy_compute_idx in self.game_state._action_delegations:
+                delegation_info = self.game_state._action_delegations[buy_compute_idx]
+                self.assertTrue(delegation_info.get('delegated', False))
+
+
 if __name__ == '__main__':
     unittest.main()

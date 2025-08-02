@@ -81,19 +81,31 @@ The game features a sophisticated event system that evolves as you play:
 - Allows strategic management of multiple concurrent crises
 
 ### Action Points System
-The game features a strategic Action Points (AP) system that limits the number of actions you can take each turn:
+The game features a sophisticated Action Points (AP) system that creates strategic depth through resource management and staff scaling:
 
-**Key Features:**
-- **3 Action Points per turn**: Each turn you start with 3 AP to spend on actions
-- **Action Costs**: Most actions cost 1 AP, creating strategic choices about priorities
+**Basic Mechanics:**
+- **Base Action Points**: 3 AP per turn
+- **Staff Scaling**: Regular staff provide +0.5 AP each
+- **Admin Assistants**: Specialized staff providing +1.0 AP each
 - **Visual Feedback**: AP counter shows current/max AP with glow effects when spent
-- **Turn Reset**: AP automatically resets to maximum at the start of each turn
+- **Turn Reset**: AP automatically resets to calculated maximum at the start of each turn
+
+**Specialized Staff Types:**
+- **Admin Assistants**: High-cost staff (+1.0 AP bonus each) for maximum action capacity
+- **Research Staff**: Enable delegation of research actions (Safety Research, Governance Research)
+- **Operations Staff**: Enable delegation of operational actions (Buy Compute)
+
+**Delegation System:**
+- **Research Delegation**: Research actions can be delegated to research staff with 80% effectiveness
+- **Operations Delegation**: Operational actions can be delegated to ops staff, often with lower AP costs
+- **Auto-Delegation**: Actions are automatically delegated when beneficial (lower AP cost)
+- **Staff Requirements**: Each delegatable action requires minimum specialized staff
 
 **Strategic Implications:**
-- **Prioritization**: Choose the most important actions when AP is limited
-- **Future Planning**: Consider which actions to save for future turns
-- **Resource Coordination**: Balance AP spending with money and other resource constraints
-- **Visual Cues**: Action buttons are grayed out when you lack sufficient AP
+- **Early Game**: Careful AP budgeting with limited 3-4 AP per turn
+- **Mid Game**: Strategic staff investment decisions between regular, admin, and specialized staff
+- **Late Game**: Complex staff compositions enabling high AP counts and efficient delegation
+- **Prioritization**: High-impact actions require careful AP planning and staff allocation
 
 ### Opponents System
 Race against 3 competing AI labs, each with unique characteristics:

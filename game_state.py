@@ -149,6 +149,138 @@ class GameState:
         admin_bonus = self.admin_staff * 1.0
         return int(base + staff_bonus + admin_bonus)
 
+    def can_delegate_action(self, action):
+        """
+        Check if an action can be delegated based on staff requirements.
+        
+        Args:
+            action (dict): The action to check for delegation
+            
+        Returns:
+            bool: True if action can be delegated, False otherwise
+        """
+        if not action.get("delegatable", False):
+            return False
+            
+        delegate_staff_req = action.get("delegate_staff_req", 0)
+        
+        # Check if we have enough specialized staff based on action type
+        # Research actions require research staff
+        if action["name"] in ["Safety Research", "Governance Research"]:
+            return self.research_staff >= delegate_staff_req
+        # Operational actions require operations staff  
+        elif action["name"] in ["Buy Compute"]:
+            return self.ops_staff >= delegate_staff_req
+        
+        return False
+    
+    def execute_action_with_delegation(self, action_idx, delegate=False):
+        """
+        Execute an action with optional delegation.
+        
+        Args:
+            action_idx (int): Index of the action to execute
+            delegate (bool): Whether to delegate the action
+            
+        Returns:
+            bool: True if action was executed, False if not enough resources
+        """
+        action = self.actions[action_idx]
+        
+        # Determine AP cost and effectiveness
+        if delegate and self.can_delegate_action(action):
+            ap_cost = action.get("delegate_ap_cost", action.get("ap_cost", 1))
+            effectiveness = action.get("delegate_effectiveness", 1.0)
+            delegation_info = " (delegated)"
+        else:
+            ap_cost = action.get("ap_cost", 1)
+            effectiveness = 1.0
+            delegation_info = ""
+            delegate = False  # Can't delegate if requirements not met
+        
+        # Check if we have enough AP and money
+        if self.action_points < ap_cost:
+            self.messages.append(f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points}).")
+            return False
+        
+        if self.money < action["cost"]:
+            self.messages.append("Not enough money for that action.")
+            return False
+        
+        # Execute the action
+        self.selected_actions.append(action_idx)
+        self.messages.append(f"Selected: {action['name']}{delegation_info}")
+        
+        # Store delegation info for end_turn processing
+        if not hasattr(self, '_action_delegations'):
+            self._action_delegations = {}
+        self._action_delegations[action_idx] = {
+            'delegated': delegate,
+            'effectiveness': effectiveness,
+            'ap_cost': ap_cost
+        }
+        
+        return True
+
+    def _execute_action_with_effectiveness(self, action, effect_type, effectiveness):
+        """
+        Execute an action effect with reduced effectiveness.
+        
+        Args:
+            action (dict): The action to execute
+            effect_type (str): Either "upside" or "downside"
+            effectiveness (float): Effectiveness multiplier (0.0 to 1.0)
+        """
+        if effect_type not in action:
+            return
+            
+        # Store original values to restore after execution
+        original_doom = self.doom
+        original_reputation = self.reputation
+        original_money = self.money
+        original_staff = self.staff
+        original_compute = self.compute
+        original_research_progress = self.research_progress
+        
+        # Execute the effect
+        action[effect_type](self)
+        
+        # Apply effectiveness reduction to the changes
+        if effectiveness < 1.0:
+            # Calculate the changes that occurred
+            doom_change = self.doom - original_doom
+            rep_change = self.reputation - original_reputation
+            money_change = self.money - original_money
+            staff_change = self.staff - original_staff
+            compute_change = self.compute - original_compute
+            research_change = self.research_progress - original_research_progress
+            
+            # Restore original values
+            self.doom = original_doom
+            self.reputation = original_reputation
+            self.money = original_money
+            self.staff = original_staff
+            self.compute = original_compute
+            self.research_progress = original_research_progress
+            
+            # Apply reduced changes
+            if doom_change != 0:
+                self._add('doom', int(doom_change * effectiveness))
+            if rep_change != 0:
+                self._add('reputation', int(rep_change * effectiveness))
+            if money_change != 0:
+                self._add('money', int(money_change * effectiveness))
+            if staff_change != 0:
+                self._add('staff', int(staff_change * effectiveness))
+            if compute_change != 0:
+                self._add('compute', int(compute_change * effectiveness))
+            if research_change != 0:
+                self._add('research_progress', int(research_change * effectiveness))
+            
+            # Add message about reduced effectiveness
+            if effectiveness < 1.0:
+                self.messages.append(f"Delegated action had {int(effectiveness * 100)}% effectiveness.")
+
     def _initialize_employee_blobs(self):
         """Initialize employee blobs for starting staff"""
         import math
@@ -567,18 +699,17 @@ class GameState:
                         self.messages.append(f"{action['name']} is not available yet.")
                         return None
                     
-                    # Check Action Points availability
-                    ap_cost = action.get("ap_cost", 1)  # Default AP cost is 1
-                    if self.action_points < ap_cost:
-                        self.messages.append(f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points}).")
-                        return None
+                    # Check if delegation would be beneficial (lower AP cost)
+                    delegate = False
+                    if (action.get("delegatable", False) and 
+                        self.can_delegate_action(action) and
+                        action.get("delegate_ap_cost", action.get("ap_cost", 1)) < action.get("ap_cost", 1)):
+                        delegate = True
                     
-                    # Check money availability
-                    if self.money >= action["cost"]:
-                        self.selected_actions.append(idx)
-                        self.messages.append(f"Selected: {action['name']}")
-                    else:
-                        self.messages.append("Not enough money for that action.")
+                    # Try to execute the action (with auto-delegation if beneficial)
+                    if self.execute_action_with_delegation(idx, delegate):
+                        pass  # Success message already handled in execute_action_with_delegation
+                    # Error messages also handled in execute_action_with_delegation
                 return None
 
         # Upgrades (right, as icons or buttons)
@@ -702,7 +833,16 @@ class GameState:
         # Perform all selected actions
         for idx in self.selected_actions:
             action = self.actions[idx]
-            ap_cost = action.get("ap_cost", 1)  # Default AP cost is 1
+            
+            # Get delegation info if available
+            delegation_info = getattr(self, '_action_delegations', {}).get(idx, {
+                'delegated': False,
+                'effectiveness': 1.0,
+                'ap_cost': action.get("ap_cost", 1)
+            })
+            
+            ap_cost = delegation_info['ap_cost']
+            effectiveness = delegation_info['effectiveness']
             
             # Deduct Action Points
             self.action_points -= ap_cost
@@ -713,12 +853,29 @@ class GameState:
             self._add('money', -action["cost"])
             
             # Log the action
-            self.logger.log_action(action["name"], action["cost"], self.turn)
+            action_name = action["name"]
+            if delegation_info['delegated']:
+                action_name += " (delegated)"
+            self.logger.log_action(action_name, action["cost"], self.turn)
             
-            # Execute action effects
-            if action.get("upside"): action["upside"](self)
-            if action.get("downside"): action["downside"](self)
-            if action.get("rules"): action["rules"](self)
+            # Execute action effects with effectiveness modifier
+            if action.get("upside"):
+                if effectiveness < 1.0:
+                    # For delegated actions, we need to modify the effectiveness
+                    # This is a simplified approach - in practice, you might need
+                    # more sophisticated effectiveness handling per action type
+                    self._execute_action_with_effectiveness(action, "upside", effectiveness)
+                else:
+                    action["upside"](self)
+                    
+            if action.get("downside"): 
+                action["downside"](self)
+            if action.get("rules"): 
+                action["rules"](self)
+        
+        # Clear delegation info for next turn
+        if hasattr(self, '_action_delegations'):
+            self._action_delegations = {}
         self.selected_actions = []
 
         # Staff maintenance

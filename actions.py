@@ -25,6 +25,10 @@ ACTIONS = [
         "desc": "Reduce doom, +rep. Costly.",
         "cost": 40,
         "ap_cost": 1,  # Action Points cost
+        "delegatable": True,  # Phase 3: Can be delegated
+        "delegate_staff_req": 2,  # Requires 2 research staff to delegate
+        "delegate_ap_cost": 1,  # Same AP cost when delegated (research is complex)
+        "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated
         "upside": lambda gs: (gs._add('doom', -random.randint(2, 6) - (1 if 'better_computers' in gs.upgrade_effects else 0)),
                               gs._add('reputation', 2)),
         "downside": lambda gs: None,
@@ -35,6 +39,10 @@ ACTIONS = [
         "desc": "Reduce doom, +reputation. Costly.",
         "cost": 45,
         "ap_cost": 1,  # Action Points cost
+        "delegatable": True,  # Phase 3: Can be delegated
+        "delegate_staff_req": 2,  # Requires 2 research staff to delegate
+        "delegate_ap_cost": 1,  # Same AP cost when delegated
+        "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated
         "upside": lambda gs: (gs._add('doom', -random.randint(2, 5)), gs._add('reputation', 3)),
         "downside": lambda gs: None,
         "rules": None
@@ -44,6 +52,10 @@ ACTIONS = [
         "desc": "Purchase compute resources. $100 per 10 flops.",
         "cost": 100,
         "ap_cost": 1,  # Action Points cost
+        "delegatable": True,  # Phase 3: Can be delegated (operational task)
+        "delegate_staff_req": 1,  # Requires 1 operations staff to delegate
+        "delegate_ap_cost": 0,  # Lower AP cost when delegated (routine task)
+        "delegate_effectiveness": 1.0,  # Full effectiveness when delegated (routine task)
         "upside": lambda gs: gs._add('compute', 10),
         "downside": lambda gs: None,
         "rules": None

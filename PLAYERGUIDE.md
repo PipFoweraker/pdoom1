@@ -108,31 +108,50 @@ As your organization grows, you'll encounter special milestone events that chang
 
 ## Action Points Strategy
 
-The Action Points (AP) system adds strategic depth by limiting your actions each turn.
+The Action Points (AP) system creates strategic depth through resource management and staff scaling.
 
 ### How Action Points Work
-- **Starting AP**: You begin each turn with 3 Action Points
-- **Action Costs**: Each action costs 1 AP (shown on action buttons)
-- **Strategic Choices**: With limited AP, choose your most important actions first
-- **Turn Reset**: AP automatically resets to 3 at the start of each new turn
+- **Base AP**: You start with 3 Action Points per turn
+- **Staff Scaling**: Regular staff provide +0.5 AP each (hire more for higher capacity)
+- **Admin Assistants**: Specialized staff providing +1.0 AP each (expensive but powerful)
+- **Turn Reset**: AP automatically resets to calculated maximum each turn
+- **Dynamic Scaling**: Your max AP grows as you hire staff (3 + staff*0.5 + admin*1.0)
+
+### Staff Types & AP Bonuses
+- **📋 Admin Assistants**: High-cost specialists (+1.0 AP each) for maximum action capacity
+- **🔬 Research Staff**: Enable delegation of research actions with reduced effectiveness
+- **⚙️ Operations Staff**: Enable delegation of operational tasks, often with lower AP costs
+- **👥 Regular Staff**: Provide base +0.5 AP bonus and general productivity
+
+### Delegation System
+**Research Delegation:**
+- Safety Research and Governance Research can be delegated to research staff
+- Requires 2+ research staff, maintains same AP cost, but 80% effectiveness
+- Good for managing multiple priorities when you have the staff
+
+**Operations Delegation:**
+- Buy Compute can be delegated to operations staff for routine procurement
+- Requires 1+ operations staff, costs 0 AP when delegated, full effectiveness
+- Automatically delegated when beneficial (lower AP cost)
 
 ### Visual Indicators
-- **AP Counter**: Displayed as "AP: 2/3" in the top resource bar
-- **Glow Effect**: AP counter glows yellow when you spend points
-- **Button States**: Action buttons gray out when you lack sufficient AP
-- **Cost Display**: Each action shows both money cost and AP cost
+- **AP Counter**: Shows current/max AP (e.g., "AP: 5/7" with 6 staff + 1 admin)
+- **Glow Effect**: AP counter glows when you spend points
+- **Delegation Messages**: Actions show "(delegated)" when automatically delegated
+- **Staff Requirements**: Tooltips show delegation requirements for applicable actions
 
 ### Strategic Tips
-🎯 **Prioritize Critical Actions**: Use AP on actions that directly address immediate threats  
-💡 **Plan Ahead**: Consider saving AP for emergency responses to events  
-⚖️ **Balance Resources**: Don't spend all AP early - keep some flexibility  
-🔄 **Turn Efficiency**: Use all 3 AP each turn for maximum impact  
+🎯 **Early Game (3-4 AP)**: Focus on essential actions like fundraising and safety research  
+📈 **Growth Phase (5-8 AP)**: Invest in staff hiring to expand action capacity  
+⚡ **Late Game (9+ AP)**: Leverage delegation and specialized staff for complex operations  
+💼 **Admin Investment**: Admin assistants are expensive but provide the highest AP return  
+🔄 **Delegation Planning**: Build research/ops staff for long-term delegation benefits  
 
-### Action Efficiency Guide
-- **Free Actions**: Fundraise (0 money, 1 AP) - great early game
-- **High Impact**: Safety Research (40 money, 1 AP) - reduces doom effectively  
-- **Long-term**: Hire Staff (60 money, 1 AP) - builds capacity
-- **Intelligence**: Espionage/Scout (30-50 money, 1 AP) - knowledge is power
+### Staff Investment Guide
+- **Cost-Effective**: Regular staff (60$ for +0.5 AP = 120$ per AP)
+- **High-Impact**: Admin assistants (80$ for +1.0 AP = 80$ per AP) 
+- **Specialized**: Research/Ops staff (70$ for delegation capabilities)
+- **Balanced Approach**: Mix of regular staff, 1-2 admins, and specialists based on strategy
 
 ---
 
