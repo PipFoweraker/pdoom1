@@ -83,5 +83,14 @@ ACTIONS = [
         "upside": lambda gs: gs._scout_opponent(),
         "downside": lambda gs: gs._espionage_risk(),
         "rules": lambda gs: gs.turn >= 5  # Unlocked after turn 5
+    },
+    {
+        "name": "Search",
+        "desc": "Board-mandated compliance searches (20% success rate). Unlocks with board members.",
+        "cost": 25,
+        "ap_cost": 1,  # Action Points cost
+        "upside": lambda gs: gs._board_search(),
+        "downside": lambda gs: None,
+        "rules": lambda gs: gs.board_members > 0  # Unlocked when board members are installed
     }
 ]

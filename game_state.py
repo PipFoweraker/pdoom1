@@ -257,6 +257,76 @@ class GameState:
             self.messages.append("MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.")
         
         return None
+        
+    def _check_board_member_milestone(self):
+        """Check if board member milestone should be triggered"""
+        # Only trigger if not already triggered and no accounting software
+        if (not self.board_milestone_triggered and 
+            not self.accounting_software_bought and 
+            self.spend_this_turn > 10000):
+            
+            # Install 2 board members
+            self.board_members = 2
+            self.board_milestone_triggered = True
+            
+            self.messages.append("MILESTONE: Excessive spending without accounting oversight!")
+            self.messages.append("Board has installed 2 Board Members for compliance monitoring.")
+            self.messages.append("Search action unlocked. Audit risk penalties now active until compliant.")
+            
+            # Start accumulating audit risk
+            self.audit_risk_level = 1
+            
+        # Apply static effects if board members are active
+        if self.board_members > 0 and not self.accounting_software_bought:
+            # Accumulate audit risk
+            self.audit_risk_level += 1
+            
+            # Apply penalties based on audit risk level
+            if self.audit_risk_level > 5:
+                # Reputation penalty for non-compliance
+                rep_penalty = min(3, self.audit_risk_level - 5)
+                self._add('reputation', -rep_penalty)
+                self.messages.append(f"Compliance audit failed! Reputation penalty: -{rep_penalty}")
+                
+            if self.audit_risk_level > 10:
+                # Financial penalty for severe non-compliance
+                fine = min(5000, (self.audit_risk_level - 10) * 1000)
+                self._add('money', -fine)
+                self.messages.append(f"Regulatory fine imposed: ${fine} for non-compliance!")
+                
+        return None
+        
+    def _board_search(self):
+        """Perform board-mandated search action with 20% success rate"""
+        if random.random() < 0.2:  # 20% success rate
+            # Successful search - find something valuable
+            search_results = [
+                ("regulatory compliance", lambda: self._add('reputation', 3)),
+                ("cost savings opportunity", lambda: self._add('money', random.randint(200, 500))),
+                ("process efficiency", lambda: self._add('doom', -2)),
+                ("staff optimization", lambda: None)  # Just a message
+            ]
+            
+            result_name, result_effect = random.choice(search_results)
+            result_effect()
+            self.messages.append(f"Search successful! Discovered {result_name}.")
+            
+            # Reduce audit risk on successful search
+            if self.audit_risk_level > 0:
+                self.audit_risk_level = max(0, self.audit_risk_level - 2)
+                self.messages.append("Successful search reduces audit risk.")
+                
+        else:
+            # Failed search
+            search_failures = [
+                "No significant findings in this search.",
+                "Search yielded minimal actionable intelligence.",
+                "Investigation remains ongoing with no conclusive results.",
+                "Search parameters require refinement for better outcomes."
+            ]
+            self.messages.append(random.choice(search_failures))
+            
+        return None
             
     def _remove_employee_blobs(self, count):
         """Remove employee blobs when staff leave"""
@@ -510,10 +580,17 @@ class GameState:
                 upg = self.upgrades[idx]
                 if not upg.get("purchased", False):
                     if self.money >= upg["cost"]:
-                        self.money -= upg["cost"]
+                        self._add('money', -upg["cost"])  # Use _add to track spending
                         upg["purchased"] = True
                         self.upgrade_effects.add(upg["effect_key"])
-                        self.messages.append(f"Upgrade purchased: {upg['name']}")
+                        
+                        # Special handling for accounting software
+                        if upg.get("custom_effect") == "buy_accounting_software":
+                            self.accounting_software_bought = True
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!")
+                        else:
+                            self.messages.append(f"Upgrade purchased: {upg['name']}")
+                        
                         # Log upgrade purchase
                         self.logger.log_upgrade(upg["name"], upg["cost"], self.turn)
                     else:
@@ -624,8 +701,8 @@ class GameState:
             self.ap_spent_this_turn = True  # Track for UI glow effects
             self.ap_glow_timer = 30  # 30 frames of glow effect
             
-            # Deduct money cost
-            self.money -= action["cost"]
+            # Deduct money cost using _add to track spending
+            self._add('money', -action["cost"])
             
             # Log the action
             self.logger.log_action(action["name"], action["cost"], self.turn)
@@ -638,8 +715,11 @@ class GameState:
 
         # Staff maintenance
         maintenance_cost = self.staff * self.staff_maintenance
-        self.money -= maintenance_cost
-        if self.money < 0:
+        money_before_maintenance = self.money
+        self._add('money', -maintenance_cost)  # Use _add to track spending
+        
+        # Check if we couldn't afford maintenance (money went negative before clamping)
+        if money_before_maintenance < maintenance_cost:
             if "comfy_chairs" in self.upgrade_effects and random.random() < 0.75:
                 self.messages.append("Comfy chairs helped staff endure unpaid turn.")
             else:
@@ -666,6 +746,9 @@ class GameState:
 
         self.trigger_events()
         
+        # Check for board member milestone trigger (>$10K spend without accounting software)
+        self._check_board_member_milestone()
+        
         # Handle deferred events (tick expiration and auto-execute expired ones)
         if hasattr(self, 'deferred_events'):
             expired_events = self.deferred_events.tick_all_events(self)
@@ -675,6 +758,9 @@ class GameState:
         # Reset Action Points for new turn
         self.action_points = self.max_action_points
         self.ap_spent_this_turn = False  # Reset glow flag for new turn
+        
+        # Reset spend tracking for new turn
+        self.spend_this_turn = 0
         
         # Decrease glow timer
         if self.ap_glow_timer > 0:

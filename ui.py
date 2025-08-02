@@ -238,6 +238,15 @@ def draw_ui(screen, game_state, w, h):
 
     # Resources (top bar)
     screen.blit(big_font.render(f"Money: ${game_state.money}", True, (255, 230, 60)), (int(w*0.04), int(h*0.11)))
+    
+    # Cash flow indicator if accounting software is purchased
+    if hasattr(game_state, 'accounting_software_bought') and game_state.accounting_software_bought:
+        if hasattr(game_state, 'last_balance_change') and game_state.last_balance_change != 0:
+            change_color = (100, 255, 100) if game_state.last_balance_change > 0 else (255, 100, 100)
+            change_sign = "+" if game_state.last_balance_change > 0 else ""
+            change_text = f"({change_sign}${game_state.last_balance_change})"
+            screen.blit(font.render(change_text, True, change_color), (int(w*0.04), int(h*0.13)))
+    
     screen.blit(big_font.render(f"Staff: {game_state.staff}", True, (255, 210, 180)), (int(w*0.21), int(h*0.11)))
     screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255)), (int(w*0.35), int(h*0.11)))
     
@@ -256,6 +265,14 @@ def draw_ui(screen, game_state, w, h):
     screen.blit(big_font.render(f"Compute: {game_state.compute}", True, (100, 255, 150)), (int(w*0.04), int(h*0.135)))
     screen.blit(big_font.render(f"Research: {game_state.research_progress}/100", True, (150, 200, 255)), (int(w*0.21), int(h*0.135)))
     screen.blit(big_font.render(f"Papers: {game_state.papers_published}", True, (255, 200, 100)), (int(w*0.38), int(h*0.135)))
+    
+    # Board member and audit risk display (if applicable)
+    if hasattr(game_state, 'board_members') and game_state.board_members > 0:
+        screen.blit(font.render(f"Board Members: {game_state.board_members}", True, (255, 150, 150)), (int(w*0.55), int(h*0.135)))
+        if hasattr(game_state, 'audit_risk_level') and game_state.audit_risk_level > 0:
+            risk_color = (255, 200, 100) if game_state.audit_risk_level <= 5 else (255, 100, 100)
+            screen.blit(font.render(f"Audit Risk: {game_state.audit_risk_level}", True, risk_color), (int(w*0.72), int(h*0.135)))
+    
     screen.blit(small_font.render(f"Turn: {game_state.turn}", True, (220, 220, 220)), (int(w*0.91), int(h*0.03)))
     screen.blit(small_font.render(f"Seed: {game_state.seed}", True, (140, 200, 160)), (int(w*0.77), int(h*0.03)))
 
