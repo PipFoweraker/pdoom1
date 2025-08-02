@@ -5,6 +5,8 @@ A satirical strategy game about managing an AI safety lab while competing agains
 
 **Version Information**: Check the game window title or see [CHANGELOG.md](CHANGELOG.md) for current version and recent changes.
 
+**Release Status**: This game follows [Semantic Versioning](https://semver.org/). Current development is targeting v0.1.0 as the first official stable release. See the [README](README.md#versioning-and-releases) for detailed versioning policy.
+
 ---
 
 ## Quick Setup

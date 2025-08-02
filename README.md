@@ -173,6 +173,26 @@ If tests fail, check your Python and pygame installation.
 - ~50MB disk space
 - Basic graphics support (no special hardware needed)
 
+## Versioning and Releases
+
+This project follows [Semantic Versioning](https://semver.org/) (SemVer) for all releases:
+
+- **MAJOR** (X.0.0): Incompatible gameplay changes, save file format changes
+- **MINOR** (0.X.0): New features, game modes, backwards-compatible enhancements  
+- **PATCH** (0.0.X): Bug fixes, performance improvements, documentation
+
+### Release Information
+- **Current Target**: v0.1.0 (first official semantic versioned release)
+- **Release Notes**: See [CHANGELOG.md](CHANGELOG.md) for detailed version history
+- **Release Process**: Automated via GitHub Actions on version tags
+- **Minimum Conditions**: All features tested, documented, and stable
+
+### For Developers
+- Version managed centrally in `version.py`
+- Release checklist documented in `RELEASE_CHECKLIST.md`
+- Automated testing and release workflows in `.github/workflows/`
+- All releases include source archives and checksums
+
 ---
 
 **Not affiliated with any AI org. For fun, education, and satire only.**
