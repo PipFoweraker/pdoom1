@@ -501,6 +501,8 @@ def main():
     """
     global seed, seed_input, current_state, screen, SCREEN_W, SCREEN_H, selected_menu_item, overlay_scroll
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
+    # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
+    global first_time_help_content, first_time_help_close_button, current_tutorial_content
     
     # Initialize game state as None - will be created when game starts
     game_state = None
