@@ -4,9 +4,10 @@ import pygame
 import random
 import json
 from game_state import GameState
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help
 from bug_reporter import BugReporter
 from version import get_display_version
+from onboarding import onboarding
 
 # --- Adaptive window sizing --- #
 pygame.init()
@@ -19,7 +20,7 @@ pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_displ
 clock = pygame.time.Clock()
 
 # --- Menu and game state management --- #
-# Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu'
+# Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial'
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
 menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Options", "Player Guide", "README", "Report Bug"]
@@ -30,6 +31,10 @@ seed_input = ""
 overlay_content = None
 overlay_title = None
 overlay_scroll = 0
+
+# Tutorial state
+current_tutorial_content = None
+first_time_help_content = None
 
 # Bug report form state
 bug_report_data = {
@@ -76,20 +81,20 @@ def get_tutorial_settings():
 
 def create_settings_content(game_state=None):
     """Create settings content for the settings overlay"""
-    # Get tutorial settings either from game_state or file
-    if game_state:
-        tutorial_status = "Enabled" if game_state.tutorial_enabled else "Disabled"
-    else:
-        settings = get_tutorial_settings()
-        tutorial_status = "Enabled" if settings["tutorial_enabled"] else "Disabled"
+
+    tutorial_status = "Enabled" if onboarding.tutorial_enabled else "Disabled"
+    tutorial_completed = "Yes" if not onboarding.is_first_time else "No"
     
     return f"""# Settings
 
-## Tutorial & Onboarding
+## Tutorial & Help System
 - **Tutorial System**: {tutorial_status}
-- **First-time Guidance**: Step-by-step overlay for new players
-- **Context-sensitive Prompts**: Explanations when new features unlock
-- **Dismissible**: Can be skipped at any time
+- **Tutorial Completed**: {tutorial_completed}
+- **In-Game Help**: Press 'H' key anytime to access Player Guide
+- **First-Time Tips**: Automatic contextual help for new mechanics
+
+To reset tutorial: Delete `onboarding_progress.json` file and restart game
+
 
 ## Game Settings
 - **Display Mode**: Windowed (resizable)
@@ -546,6 +551,7 @@ def main():
                         # Handle end-game menu clicks
                         handle_end_game_menu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'game':
+
                         # Check if tutorial overlay is active first
                         if game_state and game_state.pending_tutorial_message:
                             # Handle tutorial overlay clicks - need to check if button was clicked
@@ -553,6 +559,27 @@ def main():
                             game_state.dismiss_tutorial_message()
                         else:
                             # Existing game mouse handling
+
+                        # Tutorial button handling (takes precedence)
+                        if onboarding.show_tutorial_overlay and current_tutorial_content:
+                            if current_tutorial_content['next_button'].collidepoint(mx, my):
+                                # Next button clicked
+                                onboarding.advance_tutorial_step(onboarding.current_tutorial_step)
+                            elif current_tutorial_content['skip_button'].collidepoint(mx, my):
+                                # Skip button clicked
+                                onboarding.dismiss_tutorial()
+                            elif current_tutorial_content['help_button'].collidepoint(mx, my):
+                                # Help button clicked
+                                overlay_content = load_markdown_file('PLAYERGUIDE.md')
+                                overlay_title = "Player Guide"
+                                current_state = 'overlay'
+                        # First-time help close button
+                        elif first_time_help_content:
+                            # Close first-time help on any click (simplified)
+                            first_time_help_content = None
+                        else:
+                            # Regular game mouse handling
+
                             tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                         
                 elif event.type == pygame.MOUSEMOTION:
@@ -606,21 +633,41 @@ def main():
                             seed_input += event.unicode
                             
                     elif current_state == 'game':
-                        # Check if tutorial overlay is active first
-                        if game_state and game_state.pending_tutorial_message:
-                            # Handle tutorial overlay keyboard input
-                            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE or event.key == pygame.K_ESCAPE:
-                                game_state.dismiss_tutorial_message()
-                        else:
-                            # Arrow key scrolling for scrollable event log
-                            if game_state and game_state.scrollable_event_log_enabled:
-                                if event.key == pygame.K_UP:
-                                    game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 1)
-                                elif event.key == pygame.K_DOWN:
-                                    max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
-                                    game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 1)
-                            
-                            # Existing game keyboard handling
+
+                        # Tutorial keyboard handling (takes precedence when tutorial is active)
+                        if onboarding.show_tutorial_overlay:
+                            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
+                                # Advance tutorial step
+                                onboarding.advance_tutorial_step(onboarding.current_tutorial_step)
+                            elif event.key == pygame.K_ESCAPE:
+                                # Skip tutorial
+                                onboarding.dismiss_tutorial()
+                            elif event.key == pygame.K_h:
+                                # Show help overlay
+                                overlay_content = load_markdown_file('PLAYERGUIDE.md')
+                                overlay_title = "Player Guide"
+                                current_state = 'overlay'
+                        
+                        # Help key (H) - always available
+                        elif event.key == pygame.K_h:
+                            overlay_content = load_markdown_file('PLAYERGUIDE.md')
+                            overlay_title = "Player Guide"
+                            current_state = 'overlay'
+                        
+                        # Close first-time help
+                        elif event.key == pygame.K_ESCAPE and first_time_help_content:
+                            first_time_help_content = None
+                        
+                        # Arrow key scrolling for scrollable event log
+                        elif game_state and game_state.scrollable_event_log_enabled:
+                            if event.key == pygame.K_UP:
+                                game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 1)
+                            elif event.key == pygame.K_DOWN:
+                                max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
+                                game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 1)
+                        
+                        # Regular game keyboard handling (only if tutorial is not active)
+                        elif not onboarding.show_tutorial_overlay:
                             if event.key == pygame.K_SPACE and game_state and not game_state.game_over:
                                 game_state.end_turn()
                             elif event.key == pygame.K_ESCAPE:
@@ -631,26 +678,25 @@ def main():
             if current_state == 'game' and game_state is None:
                 game_state = GameState(seed)
                 
-                # Show initial tutorial for first-time players
-                if game_state.first_game_launch and game_state.tutorial_enabled:
-                    game_state.show_tutorial_message(
-                        "initial_tutorial",
-                        "Welcome to P(Doom)!",
-                        "Welcome to P(Doom): Bureaucracy Strategy Game!\n\n"
-                        "Your Goal: Manage an AI safety lab while avoiding catastrophe (p(Doom) = 100%)\n\n"
-                        "Basic Game Loop:\n"
-                        "1. Take Actions (left panel) - Spend Action Points and money\n"
-                        "2. Buy Upgrades (right panel) - One-time permanent benefits\n"
-                        "3. End Turn (Space key) - See results and events\n"
-                        "4. Handle Events - Navigate random challenges\n"
-                        "5. Repeat until game over\n\n"
-                        "Key Resources:\n"
-                        "• Money: Spend on actions/upgrades\n"
-                        "• Staff: Your team (3 Action Points + 0.5 per staff)\n"
-                        "• Reputation: Affects fundraising\n"
-                        "• p(Doom): AI catastrophe risk (avoid 100%!)\n\n"
-                        "Good luck! You can disable tutorials in settings."
-                    )
+
+                # Check if tutorial should be shown for new players
+                if onboarding.should_show_tutorial() and not game_state.onboarding_started:
+                    onboarding.start_tutorial()
+                    game_state.onboarding_started = True
+
+            # --- First-time help checking --- #
+            # Check for first-time mechanics and show contextual help (only if tutorial is not active)
+            if (current_state == 'game' and game_state and 
+                not first_time_help_content and 
+                not onboarding.show_tutorial_overlay):
+                # Check for various first-time mechanics
+                for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']:
+                    if onboarding.should_show_mechanic_help(mechanic):
+                        help_content = onboarding.get_mechanic_help(mechanic)
+                        if help_content:
+                            first_time_help_content = help_content
+                            break
+
 
             # --- Rendering based on current state --- #
             if current_state == 'main_menu':
@@ -696,9 +742,19 @@ def main():
                     if tooltip_text:
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
                     
-                    # Draw tutorial overlay if there's a pending tutorial message
-                    if game_state and game_state.pending_tutorial_message:
-                        tutorial_button_rect = draw_tutorial_overlay(screen, game_state.pending_tutorial_message, SCREEN_W, SCREEN_H)
+
+                    # Draw tutorial overlay if active
+                    if onboarding.show_tutorial_overlay and onboarding.current_tutorial_step:
+                        tutorial_content = onboarding.get_tutorial_content(onboarding.current_tutorial_step)
+                        current_tutorial_content = draw_tutorial_overlay(screen, tutorial_content, SCREEN_W, SCREEN_H)
+                    
+                    # Draw first-time help if available
+                    if first_time_help_content:
+                        close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H)
+                        if close_button:
+                            # Store for click detection
+                            pass
+
                         
             pygame.display.flip()
     except Exception as e:

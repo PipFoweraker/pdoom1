@@ -19,27 +19,39 @@ That's it! The game will open with a main menu.
 
 ---
 
-## New Player Tutorial
 
-If this is your first time playing, the game includes a comprehensive tutorial system to help you learn:
+## New Player Tutorial & Help System
 
-### Initial Guidance
-- **Welcome Tutorial**: When you start your first game, you'll see a step-by-step overview of core mechanics
-- **Context-Sensitive Help**: Tutorials automatically appear when you unlock new features for the first time
-- **Non-Intrusive**: All tutorials can be dismissed immediately if you prefer to learn by experimentation
+**🎯 For First-Time Players:**
+P(Doom) includes a comprehensive tutorial system to guide new players through the game mechanics.
 
-### What You'll Learn
-- **Core Game Loop**: Understanding actions, resources, and turn structure
-- **Resource Management**: How to balance money, staff, reputation, and p(Doom)
-- **Action Points**: How the AP system limits and scales your actions
-- **Milestone Events**: What happens when you unlock managers, board oversight, enhanced events, etc.
+### Tutorial Features
+- **Interactive Tutorial**: Step-by-step guidance through core game mechanics on your first playthrough
+- **Context-Sensitive Help**: Automatic tips when you encounter new mechanics for the first time
+- **In-Game Help**: Press `H` at any time to access the Player Guide
+- **Skippable**: Tutorial can be dismissed or skipped if you prefer to learn by playing
 
-### Tutorial Controls
-- **Dismiss**: Click "Got it!" or press Enter/Space/Escape to close any tutorial
-- **Settings**: Toggle tutorials on/off in the main menu Settings or end-game Settings
-- **Persistence**: Your tutorial preferences are remembered between sessions
+### Tutorial Coverage
+The tutorial walks you through:
+1. **Resources**: Understanding money, staff, reputation, Action Points, and p(Doom)
+2. **Actions**: Taking actions to manage your lab and spend Action Points
+3. **Action Points**: Strategic resource management and staff scaling
+4. **Turn Management**: Ending turns and handling events
+5. **Events & Milestones**: Random events and growth milestones
+6. **Upgrades**: Permanent improvements to your lab
 
-**Pro Tip**: Even if you disable tutorials, you can always re-enable them in Settings to review specific mechanics.
+### First-Time Help
+Get automatic guidance when you:
+- Hire your first staff member (learn about Action Point scaling)
+- Purchase your first upgrade (understand permanent benefits)
+- Run out of Action Points (tips for increasing capacity)
+- Reach high p(Doom) levels (warning and safety advice)
+
+### Getting Help
+- **During Tutorial**: Use `Next` to proceed or `Skip` to exit tutorial
+- **Anytime**: Press `H` key to open the Player Guide
+- **Main Menu**: Access Player Guide, README, and settings
+
 
 ---
 

@@ -111,6 +111,135 @@ Opponents execute simple AI logic each turn:
 
 ---
 
+## Onboarding System Architecture
+
+### Overview
+
+The onboarding system provides comprehensive guidance for new players through an interactive tutorial and context-sensitive help. The system is designed to be minimal, non-intrusive, and completely optional.
+
+### Core Components
+
+**`onboarding.py`** - Main onboarding system module:
+- `OnboardingSystem` class: Manages tutorial state and progression
+- Tutorial content: Step-by-step guidance through game mechanics
+- First-time help: Context-sensitive tips for key actions
+- Progress tracking: Persistent storage of tutorial completion and seen mechanics
+
+**Integration Points:**
+- `main.py`: Tutorial overlay rendering and input handling
+- `ui.py`: Tutorial overlay UI components and first-time help popups
+- `game_state.py`: First-time mechanic detection and help triggers
+
+### Tutorial System
+
+The tutorial consists of 7 main steps covering core game mechanics:
+
+1. **Welcome**: Introduction and overview
+2. **Resources**: Money, staff, reputation, AP, p(Doom), compute
+3. **Actions**: Available actions and Action Point costs
+4. **Action Points**: AP system and staff scaling
+5. **Turn Management**: Ending turns and handling events
+6. **Events & Milestones**: Random events and growth milestones
+7. **Upgrades**: Permanent improvements and strategic benefits
+
+**Tutorial Features:**
+- Step-by-step progression with Next/Skip buttons
+- Content overlays with responsive design
+- Persistent progress tracking (survives game restarts)
+- One-time showing (doesn't reappear after completion/dismissal)
+- Help button access to Player Guide during tutorial
+
+### First-Time Help System
+
+Provides automatic contextual help when players encounter key mechanics for the first time:
+
+- **Staff Hiring**: When hiring beyond starting staff (triggers at staff > 2)
+- **Upgrade Purchase**: When buying any upgrade for the first time
+- **Action Points Exhausted**: When attempting actions without sufficient AP
+- **High p(Doom) Warning**: When p(Doom) reaches dangerous levels (≥70%)
+
+**Help Features:**
+- Small popup notifications in top-right corner
+- Dismissible with click or escape key
+- Only shown once per mechanic per player
+- Disabled during active tutorial to avoid interference
+
+### Progress Tracking
+
+The system uses `onboarding_progress.json` to store:
+
+```json
+{
+  "tutorial_enabled": true,
+  "is_first_time": false,
+  "completed_steps": ["welcome", "resources", "actions", ...],
+  "seen_mechanics": ["first_staff_hire", "first_upgrade_purchase", ...],
+  "tutorial_dismissed": false
+}
+```
+
+**Privacy & Data:**
+- All data stored locally only
+- No personal information collected
+- Progress file can be deleted to reset tutorial
+- Tutorial system entirely optional
+
+### Integration with Game Systems
+
+**Tutorial Triggers:**
+- Automatically starts on first game launch for new players
+- Triggered in `main.py` when creating new `GameState`
+- Overlay rendering integrated into game state rendering loop
+
+**First-Time Help Triggers:**
+- `game_state._add()` method triggers help for staff/doom changes
+- `execute_action_with_delegation()` triggers AP exhaustion help
+- Upgrade purchase triggers help for first upgrade
+
+**Keyboard/Mouse Integration:**
+- `H` key opens Player Guide anytime during gameplay
+- Tutorial navigation with Next/Skip buttons
+- Mouse and keyboard input handling for tutorial interactions
+
+### Testing
+
+The onboarding system includes comprehensive testing:
+
+- **8 unit tests** covering all core functionality
+- **Tutorial progression testing**: Step advancement and completion
+- **First-time help testing**: Mechanic detection and help triggers
+- **Progress persistence testing**: Save/load functionality
+- **Integration testing**: File operations and error handling
+
+**Test Coverage:**
+- Tutorial initialization and progression
+- First-time mechanic help system
+- Content retrieval and formatting
+- Tooltip management system
+- Progress persistence and file operations
+
+### Development Guidelines
+
+**Adding New Tutorial Steps:**
+1. Add step content to `get_tutorial_content()` method
+2. Update tutorial sequence in `advance_tutorial_step()`
+3. Add any special handling for the new step
+4. Update tests to include new step
+
+**Adding New First-Time Help:**
+1. Add mechanic to `get_mechanic_help()` method
+2. Add trigger logic in appropriate game system method
+3. Add mechanic to help checking loop in `main.py`
+4. Add test coverage for new mechanic
+
+**Customizing Tutorial Content:**
+- Tutorial content stored as structured dictionaries
+- Easy to modify titles, content, and progression
+- Supports markdown-style formatting in content text
+- Step sequence easily customizable
+
+---
+
 ## Testing Framework
 
 ### Running Tests
@@ -135,8 +264,9 @@ pytest tests/ -v
 
 ### Test Coverage
 
-Current test coverage includes 152 automated tests covering:
+Current test coverage includes 233 automated tests covering:
 
+- ✅ **Onboarding & Tutorial System** - Interactive tutorials, first-time help, progress tracking (8 tests)
 - ✅ **Enhanced Event System** - Event class, deferred events, popup handling, expiration logic (27 tests)
 - ✅ **Event Log Management** - Activity log clears each turn, shows only current events
 - ✅ **Game State Management** - Resource management and state transitions

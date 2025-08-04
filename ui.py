@@ -1398,4 +1398,177 @@ def draw_tutorial_overlay(screen, tutorial_message, w, h):
     return button_rect
 
 
+def draw_tutorial_overlay(screen, tutorial_step, w, h):
+    """
+    Draw the tutorial overlay for onboarding new players.
+    
+    Args:
+        screen: pygame surface to draw on
+        tutorial_step: dict containing tutorial step data (title, content, next_step)
+        w, h: screen width and height
+    
+    Features:
+    - Semi-transparent overlay over the game
+    - Centered tutorial content box
+    - Step navigation buttons (Next, Skip)
+    - Progress indicator
+    """
+    # Semi-transparent overlay
+    overlay_surface = pygame.Surface((w, h))
+    overlay_surface.set_alpha(180)
+    overlay_surface.fill((0, 0, 0))
+    screen.blit(overlay_surface, (0, 0))
+    
+    # Tutorial box dimensions
+    box_width = int(w * 0.6)
+    box_height = int(h * 0.5)
+    box_x = (w - box_width) // 2
+    box_y = (h - box_height) // 2
+    
+    # Tutorial box background
+    box_rect = pygame.Rect(box_x, box_y, box_width, box_height)
+    pygame.draw.rect(screen, (40, 50, 70), box_rect, border_radius=15)
+    pygame.draw.rect(screen, (100, 150, 255), box_rect, width=4, border_radius=15)
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.04), bold=True)
+    content_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    button_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
+    
+    # Tutorial title
+    title_text = title_font.render(tutorial_step.get('title', 'Tutorial'), True, (255, 255, 100))
+    title_rect = title_text.get_rect(center=(w//2, box_y + int(h*0.06)))
+    screen.blit(title_text, title_rect)
+    
+    # Tutorial content with word wrapping
+    content = tutorial_step.get('content', '')
+    content_area_width = box_width - 40
+    content_area_height = box_height - 160  # Space for title and buttons
+    content_y = box_y + int(h*0.1)
+    
+    # Split content into lines and wrap
+    content_lines = content.split('\n')
+    wrapped_lines = []
+    for line in content_lines:
+        if line.strip():
+            wrapped = wrap_text(line, content_font, content_area_width)
+            wrapped_lines.extend(wrapped)
+        else:
+            wrapped_lines.append('')  # Preserve empty lines
+    
+    # Draw content lines
+    line_height = content_font.get_height() + 4
+    max_lines = content_area_height // line_height
+    
+    for i, line in enumerate(wrapped_lines[:max_lines]):
+        if line:  # Skip empty lines for rendering
+            line_surface = content_font.render(line, True, (255, 255, 255))
+            screen.blit(line_surface, (box_x + 20, content_y + i * line_height))
+    
+    # Tutorial navigation buttons
+    button_width = 120
+    button_height = 45
+    button_y = box_y + box_height - 60
+    
+    # Next button
+    next_button_x = box_x + box_width - button_width - 30
+    next_button_rect = pygame.Rect(next_button_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, (100, 200, 100), next_button_rect, border_radius=8)
+    pygame.draw.rect(screen, (255, 255, 255), next_button_rect, width=2, border_radius=8)
+    
+    next_text = button_font.render("Next", True, (255, 255, 255))
+    next_text_rect = next_text.get_rect(center=next_button_rect.center)
+    screen.blit(next_text, next_text_rect)
+    
+    # Skip button
+    skip_button_x = box_x + 30
+    skip_button_rect = pygame.Rect(skip_button_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, (200, 100, 100), skip_button_rect, border_radius=8)
+    pygame.draw.rect(screen, (255, 255, 255), skip_button_rect, width=2, border_radius=8)
+    
+    skip_text = button_font.render("Skip", True, (255, 255, 255))
+    skip_text_rect = skip_text.get_rect(center=skip_button_rect.center)
+    screen.blit(skip_text, skip_text_rect)
+    
+    # Help button (question mark in top right of tutorial box)
+    help_button_size = 30
+    help_button_x = box_x + box_width - help_button_size - 10
+    help_button_y = box_y + 10
+    help_button_rect = pygame.Rect(help_button_x, help_button_y, help_button_size, help_button_size)
+    pygame.draw.rect(screen, (100, 100, 200), help_button_rect, border_radius=15)
+    pygame.draw.rect(screen, (255, 255, 255), help_button_rect, width=2, border_radius=15)
+    
+    help_font = pygame.font.SysFont('Consolas', int(h*0.025), bold=True)
+    help_text = help_font.render("?", True, (255, 255, 255))
+    help_text_rect = help_text.get_rect(center=help_button_rect.center)
+    screen.blit(help_text, help_text_rect)
+    
+    # Progress indicator (if this isn't the first step)
+    progress_text = content_font.render("Press 'H' anytime for help", True, (200, 200, 255))
+    progress_rect = progress_text.get_rect(center=(w//2, box_y + box_height + 30))
+    screen.blit(progress_text, progress_rect)
+    
+    # Return button rectangles for click detection
+    return {
+        'next_button': next_button_rect,
+        'skip_button': skip_button_rect,
+        'help_button': help_button_rect
+    }
+
+
+def draw_first_time_help(screen, help_content, w, h):
+    """
+    Draw a small help popup for first-time mechanics.
+    
+    Args:
+        screen: pygame surface to draw on
+        help_content: dict with title and content for the help popup
+        w, h: screen width and height
+    """
+    if not help_content:
+        return None
+        
+    # Small popup dimensions
+    popup_width = int(w * 0.4)
+    popup_height = int(h * 0.25)
+    popup_x = w - popup_width - 20  # Top right corner
+    popup_y = 20
+    
+    # Popup background
+    popup_rect = pygame.Rect(popup_x, popup_y, popup_width, popup_height)
+    pygame.draw.rect(screen, (60, 80, 100), popup_rect, border_radius=10)
+    pygame.draw.rect(screen, (150, 200, 255), popup_rect, width=3, border_radius=10)
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.025), bold=True)
+    content_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    
+    # Title
+    title_text = title_font.render(help_content.get('title', 'Tip'), True, (255, 255, 100))
+    screen.blit(title_text, (popup_x + 10, popup_y + 10))
+    
+    # Content with word wrapping
+    content = help_content.get('content', '')
+    content_width = popup_width - 20
+    wrapped_content = wrap_text(content, content_font, content_width)
+    
+    for i, line in enumerate(wrapped_content[:6]):  # Max 6 lines
+        line_surface = content_font.render(line, True, (255, 255, 255))
+        screen.blit(line_surface, (popup_x + 10, popup_y + 40 + i * 20))
+    
+    # Close button (X)
+    close_button_size = 20
+    close_button_x = popup_x + popup_width - close_button_size - 5
+    close_button_y = popup_y + 5
+    close_button_rect = pygame.Rect(close_button_x, close_button_y, close_button_size, close_button_size)
+    pygame.draw.rect(screen, (200, 100, 100), close_button_rect, border_radius=3)
+    
+    close_font = pygame.font.SysFont('Consolas', int(h*0.02), bold=True)
+    close_text = close_font.render("×", True, (255, 255, 255))
+    close_text_rect = close_text.get_rect(center=close_button_rect.center)
+    screen.blit(close_text, close_text_rect)
+    
+    return close_button_rect
+
+
     
