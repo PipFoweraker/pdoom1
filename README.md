@@ -61,6 +61,7 @@ The game features a sophisticated milestone system that unlocks new mechanics an
 - **Accounting Software**: Visible right-panel upgrade ($500) enables cash flow tracking
 - **Compliance Prevention**: Purchasing accounting software blocks board member milestone
 - **Cash Flow UI**: Persistent balance change indicators when accounting software is active
+- **Compact Activity Display**: UI enhancement upgrade ($150) enables activity log minimization
 - **Smooth UI Transitions**: Visual feedback system with animated trails and glow effects
 
 ### Enhanced Event System

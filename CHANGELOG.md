@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- **Activity Log Minimization (Issue #69)**: New UI enhancement system
+  - "Compact Activity Display" upgrade ($150) enables activity log minimization
+  - Minimize/expand buttons for activity log when upgrade is purchased
+  - Minimized state shows only title bar to save screen space
+  - Visual feedback with plus/minus icons for expand/minimize actions
+  - Comprehensive test coverage for minimization functionality
+- **Action Rules System (Issue #69)**: Refactored and documented action availability system
+  - New `action_rules.py` module with centralized rule management
+  - 15+ rule types: turn-based, resource-based, milestone-based, upgrade-based
+  - Composite rules with AND/OR logic for complex conditions
+  - Clear documentation and usage examples for future extension
+  - Backward-compatible with existing actions
+  - Comprehensive test coverage (19 new tests)
+- **Milestone System Improvements (Issue #69)**: Enhanced robustness
+  - Manager requirement trigger confirmed working correctly (9th employee)
+  - Activity log clearing behavior documented and tested
+  - Milestone flag robustness verified through comprehensive testing
 - **Action Points System (Phase 1)**: Strategic action limitation system
   - 3 Action Points per turn limit player actions
   - All actions cost 1 AP by default

@@ -37,6 +37,7 @@ python main.py
 - **main.py** — Game entry point and menu system
 - **game_state.py** — Core game logic and state management
 - **actions.py** — Action definitions (as Python dicts)
+- **action_rules.py** — Centralized action availability rule system
 - **upgrades.py** — Upgrade definitions
 - **events.py** — Event definitions and special event logic
 - **event_system.py** — Enhanced event system with deferred events and popups
@@ -188,9 +189,67 @@ Actions are defined in `actions.py` as a list of dictionaries:
     "cost": 50,
     "upside": lambda gs: gs._add('money', 10),
     "downside": lambda gs: gs._add('reputation', -1),
-    "rules": None  # Optional conditions
+    "rules": rule_function  # Optional availability conditions
 }
 ```
+
+### Action Rules System
+
+The action rules system (introduced in Issue #69) provides a structured way to manage when actions become available. Instead of inline lambda functions, use the centralized `action_rules.py` system:
+
+#### Basic Usage
+
+```python
+from action_rules import ActionRules, manager_unlock_rule
+
+# In actions.py
+{
+    "name": "Manager Action",
+    "rules": manager_unlock_rule  # Pre-defined rule function
+}
+
+# Or using the rule system directly
+{
+    "name": "Advanced Action", 
+    "rules": lambda gs: ActionRules.requires_staff_and_turn(gs, min_staff=10, min_turn=5)
+}
+```
+
+#### Available Rule Types
+
+- **Turn-based**: `ActionRules.requires_turn(gs, min_turn=5)`
+- **Resource-based**: `ActionRules.requires_staff(gs, min_staff=9)`
+- **Milestone-based**: `ActionRules.requires_milestone_triggered(gs, 'manager_milestone_triggered')`
+- **Upgrade-based**: `ActionRules.requires_upgrade(gs, 'better_computers')`
+- **Composite**: `ActionRules.requires_staff_and_turn(gs, min_staff=9, min_turn=5)`
+
+#### Creating New Rules
+
+For new game mechanics, add rules to `action_rules.py`:
+
+```python
+@staticmethod
+def requires_new_condition(gs, min_value):
+    """
+    Rule: Action requires new game condition.
+    
+    Args:
+        gs: GameState object
+        min_value: Minimum value required
+        
+    Returns:
+        bool: True if condition is met
+    """
+    return gs.new_attribute >= min_value
+```
+
+#### Design Principles
+
+1. **Single Responsibility**: Each rule checks one specific condition
+2. **Composability**: Use `combine_and`/`combine_or` for complex logic
+3. **Documentation**: Clear docstrings explaining when and why rules are used
+4. **Testing**: Add unit tests for all new rules
+5. **Naming**: Use descriptive names like `requires_*` or `*_unlock_rule`
 
 ### Upgrades
 
