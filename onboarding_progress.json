@@ -2,6 +2,8 @@
   "tutorial_enabled": true,
   "is_first_time": true,
   "completed_steps": [],
-  "seen_mechanics": [],
+  "seen_mechanics": [
+    "first_staff_hire"
+  ],
   "tutorial_dismissed": false
 }
