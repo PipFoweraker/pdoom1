@@ -310,6 +310,16 @@ Good luck, and try to save humanity!""",
     def clear_tooltips(self):
         """Clear all pending tooltips."""
         self.pending_tooltips.clear()
+    
+    def reset_tutorial(self):
+        """Reset tutorial progress for testing or re-doing tutorial."""
+        self.is_first_time = True
+        self.tutorial_dismissed = False
+        self.completed_steps.clear()
+        self.seen_mechanics.clear()
+        self.show_tutorial_overlay = False
+        self.current_tutorial_step = None
+        self._save_progress()
 
 # Global onboarding instance
 onboarding = OnboardingSystem()

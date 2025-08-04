@@ -19,6 +19,40 @@ That's it! The game will open with a main menu.
 
 ---
 
+## New Player Tutorial & Help System
+
+**🎯 For First-Time Players:**
+P(Doom) includes a comprehensive tutorial system to guide new players through the game mechanics.
+
+### Tutorial Features
+- **Interactive Tutorial**: Step-by-step guidance through core game mechanics on your first playthrough
+- **Context-Sensitive Help**: Automatic tips when you encounter new mechanics for the first time
+- **In-Game Help**: Press `H` at any time to access the Player Guide
+- **Skippable**: Tutorial can be dismissed or skipped if you prefer to learn by playing
+
+### Tutorial Coverage
+The tutorial walks you through:
+1. **Resources**: Understanding money, staff, reputation, Action Points, and p(Doom)
+2. **Actions**: Taking actions to manage your lab and spend Action Points
+3. **Action Points**: Strategic resource management and staff scaling
+4. **Turn Management**: Ending turns and handling events
+5. **Events & Milestones**: Random events and growth milestones
+6. **Upgrades**: Permanent improvements to your lab
+
+### First-Time Help
+Get automatic guidance when you:
+- Hire your first staff member (learn about Action Point scaling)
+- Purchase your first upgrade (understand permanent benefits)
+- Run out of Action Points (tips for increasing capacity)
+- Reach high p(Doom) levels (warning and safety advice)
+
+### Getting Help
+- **During Tutorial**: Use `Next` to proceed or `Skip` to exit tutorial
+- **Anytime**: Press `H` key to open the Player Guide
+- **Main Menu**: Access Player Guide, README, and settings
+
+---
+
 ## How to Play
 
 ### Your Goal

@@ -69,7 +69,18 @@ def load_markdown_file(filename):
 
 def create_settings_content():
     """Create settings content for the settings overlay"""
-    return """# Settings
+    tutorial_status = "Enabled" if onboarding.tutorial_enabled else "Disabled"
+    tutorial_completed = "Yes" if not onboarding.is_first_time else "No"
+    
+    return f"""# Settings
+
+## Tutorial & Help System
+- **Tutorial System**: {tutorial_status}
+- **Tutorial Completed**: {tutorial_completed}
+- **In-Game Help**: Press 'H' key anytime to access Player Guide
+- **First-Time Tips**: Automatic contextual help for new mechanics
+
+To reset tutorial: Delete `onboarding_progress.json` file and restart game
 
 ## Game Settings
 - **Display Mode**: Windowed (resizable)
@@ -648,8 +659,10 @@ def main():
                     game_state.onboarding_started = True
 
             # --- First-time help checking --- #
-            # Check for first-time mechanics and show contextual help
-            if current_state == 'game' and game_state and not first_time_help_content:
+            # Check for first-time mechanics and show contextual help (only if tutorial is not active)
+            if (current_state == 'game' and game_state and 
+                not first_time_help_content and 
+                not onboarding.show_tutorial_overlay):
                 # Check for various first-time mechanics
                 for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']:
                     if onboarding.should_show_mechanic_help(mechanic):
