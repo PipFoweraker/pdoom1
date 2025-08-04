@@ -67,8 +67,21 @@ def load_markdown_file(filename):
     except FileNotFoundError:
         return f"Could not load {filename}"
 
-def create_settings_content():
+def get_tutorial_settings():
+    """Get current tutorial settings from file."""
+    try:
+        with open("tutorial_settings.json", "r") as f:
+            data = json.load(f)
+        return {
+            "tutorial_enabled": data.get("tutorial_enabled", True),
+            "first_game_launch": data.get("first_game_launch", True)
+        }
+    except Exception:
+        return {"tutorial_enabled": True, "first_game_launch": True}
+
+def create_settings_content(game_state=None):
     """Create settings content for the settings overlay"""
+
     tutorial_status = "Enabled" if onboarding.tutorial_enabled else "Disabled"
     tutorial_completed = "Yes" if not onboarding.is_first_time else "No"
     
@@ -81,6 +94,7 @@ def create_settings_content():
 - **First-Time Tips**: Automatic contextual help for new mechanics
 
 To reset tutorial: Delete `onboarding_progress.json` file and restart game
+
 
 ## Game Settings
 - **Display Mode**: Windowed (resizable)
@@ -554,6 +568,10 @@ def main():
                         elif first_time_help_content:
                             # Close first-time help on any click (simplified)
                             first_time_help_content = None
+                        # Check if tutorial overlay is active
+                        elif game_state and game_state.pending_tutorial_message:
+                            # Handle tutorial overlay clicks - any click dismisses the tutorial
+                            game_state.dismiss_tutorial_message()
                         else:
                             # Regular game mouse handling
                             tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
@@ -609,6 +627,7 @@ def main():
                             seed_input += event.unicode
                             
                     elif current_state == 'game':
+
                         # Tutorial keyboard handling (takes precedence when tutorial is active)
                         if onboarding.show_tutorial_overlay:
                             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
@@ -653,6 +672,7 @@ def main():
             if current_state == 'game' and game_state is None:
                 game_state = GameState(seed)
                 
+
                 # Check if tutorial should be shown for new players
                 if onboarding.should_show_tutorial() and not game_state.onboarding_started:
                     onboarding.start_tutorial()
@@ -670,6 +690,7 @@ def main():
                         if help_content:
                             first_time_help_content = help_content
                             break
+
 
             # --- Rendering based on current state --- #
             if current_state == 'main_menu':
@@ -715,6 +736,7 @@ def main():
                     if tooltip_text:
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
                     
+
                     # Draw tutorial overlay if active
                     if onboarding.show_tutorial_overlay and onboarding.current_tutorial_step:
                         tutorial_content = onboarding.get_tutorial_content(onboarding.current_tutorial_step)
@@ -726,6 +748,7 @@ def main():
                         if close_button:
                             # Store for click detection
                             pass
+
                         
             pygame.display.flip()
     except Exception as e:

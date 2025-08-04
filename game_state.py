@@ -132,6 +132,12 @@ class GameState:
         # Activity log minimization feature
         self.activity_log_minimized = False  # Whether activity log is currently minimized
 
+        # Tutorial and onboarding system
+        self.tutorial_enabled = True  # Whether tutorial is enabled (default True for new players)
+        self.tutorial_shown_milestones = set()  # Track which milestone tutorials have been shown
+        self.pending_tutorial_message = None  # Current tutorial message waiting to be shown
+        self.first_game_launch = True  # Track if this is the first game launch
+
         # Copy modular content
         self.actions = [dict(a) for a in ACTIONS]
         self.events = [dict(e) for e in EVENTS]
@@ -150,6 +156,9 @@ class GameState:
         
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()
+        
+        # Load tutorial settings (after initialization)
+        self.load_tutorial_settings()
 
     def calculate_max_ap(self):
         """
@@ -435,6 +444,18 @@ class GameState:
         if len(self.managers) == 1 and not self.manager_milestone_triggered:
             self.manager_milestone_triggered = True
             self.messages.append("MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.")
+            
+            # Show tutorial for manager system
+            self.show_tutorial_message(
+                "manager_system",
+                "Manager System Unlocked!",
+                "You've hired your first manager! This unlocks the management system:\n\n"
+                "• Each manager can oversee up to 9 employees\n"
+                "• Unmanaged employees beyond 9 become unproductive (shown with red slash)\n"
+                "• Managers appear as green blobs vs blue employee blobs\n"
+                "• Manager hiring costs 1.5x normal employee cost\n\n"
+                "Plan your team structure carefully as you scale!"
+            )
         
         return None
         
@@ -452,6 +473,19 @@ class GameState:
             self.messages.append("MILESTONE: Excessive spending without accounting oversight!")
             self.messages.append("Board has installed 2 Board Members for compliance monitoring.")
             self.messages.append("Search action unlocked. Audit risk penalties now active until compliant.")
+            
+            # Show tutorial for board member system
+            self.show_tutorial_message(
+                "board_member_system",
+                "Board Member Oversight Activated!",
+                "Your spending exceeded $10,000 without accounting software!\n\n"
+                "Board members have been installed with oversight powers:\n\n"
+                "• 2 board members now monitor your compliance\n"
+                "• Search action unlocked (20% success rate for various benefits)\n"
+                "• Audit risk accumulates until you become compliant\n"
+                "• Purchase accounting software to prevent future oversight\n\n"
+                "Manage your finances carefully to avoid penalties!"
+            )
             
             # Start accumulating audit risk
             self.audit_risk_level = 1
@@ -696,6 +730,18 @@ class GameState:
         if len(self.managers) == 1 and not self.manager_milestone_triggered:
             self.manager_milestone_triggered = True
             self.messages.append("MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.")
+            
+            # Show tutorial for manager system
+            self.show_tutorial_message(
+                "manager_system",
+                "Manager System Unlocked!",
+                "You've hired your first manager! This unlocks the management system:\n\n"
+                "• Each manager can oversee up to 9 employees\n"
+                "• Unmanaged employees beyond 9 become unproductive (shown with red slash)\n"
+                "• Managers appear as green blobs vs blue employee blobs\n"
+                "• Manager hiring costs 1.5x normal employee cost\n\n"
+                "Plan your team structure carefully as you scale!"
+            )
         
         return None
 
@@ -1175,6 +1221,53 @@ class GameState:
                 self.highscore = score
         except Exception:
             pass
+
+    # --- Tutorial settings --- #
+    TUTORIAL_SETTINGS_FILE = "tutorial_settings.json"
+    
+    def load_tutorial_settings(self):
+        """Load tutorial settings from file."""
+        try:
+            with open(self.TUTORIAL_SETTINGS_FILE, "r") as f:
+                data = json.load(f)
+            self.tutorial_enabled = data.get("tutorial_enabled", True)
+            self.tutorial_shown_milestones = set(data.get("tutorial_shown_milestones", []))
+            self.first_game_launch = data.get("first_game_launch", True)
+        except Exception:
+            # Use defaults for first-time players
+            self.tutorial_enabled = True
+            self.tutorial_shown_milestones = set()
+            self.first_game_launch = True
+    
+    def save_tutorial_settings(self):
+        """Save tutorial settings to file."""
+        try:
+            data = {
+                "tutorial_enabled": self.tutorial_enabled,
+                "tutorial_shown_milestones": list(self.tutorial_shown_milestones),
+                "first_game_launch": False  # No longer first launch after this save
+            }
+            with open(self.TUTORIAL_SETTINGS_FILE, "w") as f:
+                json.dump(data, f)
+        except Exception:
+            pass
+    
+    def show_tutorial_message(self, milestone_id, title, content):
+        """Queue a tutorial message to be shown."""
+        if self.tutorial_enabled and milestone_id not in self.tutorial_shown_milestones:
+            self.pending_tutorial_message = {
+                "milestone_id": milestone_id,
+                "title": title,
+                "content": content
+            }
+    
+    def dismiss_tutorial_message(self):
+        """Dismiss the current tutorial message and mark milestone as shown."""
+        if self.pending_tutorial_message:
+            milestone_id = self.pending_tutorial_message["milestone_id"]
+            self.tutorial_shown_milestones.add(milestone_id)
+            self.pending_tutorial_message = None
+            self.save_tutorial_settings()
     
     def _create_upgrade_transition(self, upgrade_idx, start_rect, end_rect):
         """Create a smooth transition animation for an upgrade moving from button to icon."""

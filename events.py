@@ -7,6 +7,19 @@ def unlock_scrollable_event_log(gs):
     """
     gs.scrollable_event_log_enabled = True
     gs.messages.append("Event Log Upgrade unlocked! You can now scroll through your complete activity history with arrow keys or mouse wheel.")
+    
+    # Show tutorial for scrollable event log
+    gs.show_tutorial_message(
+        "scrollable_event_log",
+        "Scrollable Event Log Unlocked!",
+        "Your activity tracking has been upgraded!\n\n"
+        "New features:\n\n"
+        "• Complete activity history preserved\n"
+        "• Scroll with arrow keys or mouse wheel\n"
+        "• Review past decisions and their outcomes\n"
+        "• Better strategic planning with historical context\n\n"
+        "Use this to learn from past events and improve your strategy!"
+    )
 
 def unlock_enhanced_events(gs):
     """
@@ -15,6 +28,19 @@ def unlock_enhanced_events(gs):
     """
     gs.enhanced_events_enabled = True
     gs.messages.append("Enhanced Event System unlocked! Your organization can now handle complex events with advanced response options.")
+    
+    # Show tutorial for enhanced events system
+    gs.show_tutorial_message(
+        "enhanced_events_system",
+        "Enhanced Event System Unlocked!",
+        "Your organization has developed advanced event handling capabilities!\n\n"
+        "New event types are now available:\n\n"
+        "• POPUP Events: Critical situations requiring immediate attention\n"
+        "• DEFERRED Events: Events you can postpone for strategic timing\n"
+        "• Multiple Response Options: Accept, Reduce, Defer, or Dismiss\n"
+        "• Event Queue: Manage multiple concurrent crises\n\n"
+        "Use these tools to handle complex challenges strategically!"
+    )
 
 def trigger_first_manager_hire(gs):
     """

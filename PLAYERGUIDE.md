@@ -19,6 +19,7 @@ That's it! The game will open with a main menu.
 
 ---
 
+
 ## New Player Tutorial & Help System
 
 **🎯 For First-Time Players:**
@@ -50,6 +51,7 @@ Get automatic guidance when you:
 - **During Tutorial**: Use `Next` to proceed or `Skip` to exit tutorial
 - **Anytime**: Press `H` key to open the Player Guide
 - **Main Menu**: Access Player Guide, README, and settings
+
 
 ---
 

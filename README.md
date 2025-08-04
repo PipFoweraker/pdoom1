@@ -47,6 +47,7 @@ The game will open with a main menu where you can choose game modes, access docu
 - **Research & Development**: Publish papers, buy compute, and advance AI safety
 - **Enhanced Event System**: Navigate unexpected challenges with advanced response options
 - **Milestone-Driven Special Events**: Unlock new mechanics as your organization grows
+- **Tutorial & Onboarding System**: Comprehensive guidance for new players with context-sensitive prompts
 - **End-Game Menu**: Comprehensive post-game options for relaunch, feedback, and bug reporting
 
 ### Milestone-Driven Special Events
@@ -152,6 +153,32 @@ The game features a sophisticated visual feedback system that makes UI state cha
 - **Trail Effects**: Fading motion blur creates smooth visual continuity
 
 These animations provide immediate visual feedback to help players understand how their actions affect the game state, making UI interactions more intuitive and satisfying.
+
+## Tutorial & Onboarding System
+
+The game features a comprehensive tutorial and onboarding system designed to help new players learn the mechanics progressively:
+
+### First-Time Player Experience
+- **Initial Tutorial**: Step-by-step overlay explaining core gameplay mechanics when starting your first game
+- **Context-Sensitive Prompts**: Automatic tutorials that trigger when new features are unlocked
+- **Non-Intrusive Design**: All tutorials can be dismissed immediately and won't interrupt experienced players
+
+### Tutorial Features
+- **Manager System Tutorial**: Triggered when hiring your first manager (9+ employees)
+- **Board Member Tutorial**: Explains oversight mechanics when spending exceeds $10,000 without accounting software
+- **Enhanced Events Tutorial**: Introduces advanced event handling capabilities (unlocked after turn 8)
+- **Scrollable Log Tutorial**: Guides players through the enhanced activity tracking system (unlocked after turn 5)
+
+### Tutorial Settings
+- **Toggle On/Off**: Enable or disable tutorials in the Settings menu
+- **Persistent Preferences**: Tutorial settings are remembered between game sessions
+- **Per-Milestone Tracking**: Each tutorial is shown only once, even if tutorials are re-enabled
+- **Accessibility**: All tutorials support both mouse and keyboard interaction (Enter/Space/Escape to dismiss)
+
+### Player Control
+- **Skip Anytime**: Click "Got it!" or press Enter/Space/Escape to dismiss any tutorial
+- **Settings Access**: Tutorial status visible in main menu Settings and end-game Settings
+- **Clean Experience**: Experienced players can disable tutorials and enjoy uninterrupted gameplay
 
 ## Troubleshooting
 

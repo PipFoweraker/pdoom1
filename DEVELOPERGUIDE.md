@@ -277,6 +277,7 @@ Current test coverage includes 233 automated tests covering:
 - ✅ **Compute & Sound** - Employee productivity and audio systems
 - ✅ **Bug Reporting** - Error reporting and privacy features
 - ✅ **Milestone-Driven Events** - Manager system, board members, accounting software, static effects (14 tests)
+- ✅ **Tutorial & Onboarding System** - Context-sensitive tutorials, milestone triggers, preference persistence (8 tests)
 
 ### Adding New Tests
 
@@ -845,6 +846,88 @@ The codebase is designed for:
 - Additional UI overlays (paperwork, news, etc.)
 - Extended content through data file modifications
 - Integration with external systems (analytics, achievements, etc.)
+
+---
+
+## Tutorial & Onboarding System Architecture
+
+The tutorial system provides context-sensitive guidance for new players while remaining unobtrusive for experienced players.
+
+### Core Components
+
+**GameState Integration:**
+- `tutorial_enabled`: Boolean flag to enable/disable tutorial system
+- `tutorial_shown_milestones`: Set tracking which tutorials have been shown
+- `pending_tutorial_message`: Current tutorial awaiting display
+- `first_game_launch`: Flag to detect new players
+
+**Tutorial Settings Persistence:**
+- `tutorial_settings.json`: Local file storing user preferences
+- `load_tutorial_settings()`: Load preferences on game initialization
+- `save_tutorial_settings()`: Save preferences when changed
+
+**Tutorial Display System:**
+- `draw_tutorial_overlay()`: UI rendering for tutorial messages in `ui.py`
+- Semi-transparent background with dismissible dialog
+- Supports both mouse and keyboard interaction
+
+### Tutorial Triggers
+
+**Initial Tutorial:**
+- Triggered on first game launch for new players
+- Explains core gameplay mechanics and resources
+- Shown once per tutorial settings file
+
+**Milestone Tutorials:**
+- **Manager System**: Triggered when first manager is hired (9+ employees)
+- **Board Member System**: Triggered on $10k+ spending without accounting software
+- **Enhanced Events**: Triggered when enhanced event system unlocks (turn 8+)
+- **Scrollable Log**: Triggered when scrollable event log unlocks (turn 5+)
+
+### Implementation Details
+
+**Tutorial Message Structure:**
+```python
+{
+    "milestone_id": "unique_identifier",
+    "title": "Tutorial Title",
+    "content": "Multi-line tutorial content with guidance"
+}
+```
+
+**Key Methods:**
+- `show_tutorial_message(milestone_id, title, content)`: Queue tutorial for display
+- `dismiss_tutorial_message()`: Close tutorial and mark milestone as shown
+- Tutorial integration in `main.py` event loop for display and input handling
+
+**Integration Points:**
+- Manager hiring in `game_state.py` manager system
+- Board member trigger in `game_state.py` spending checks
+- Event system unlocks in `events.py` milestone functions
+
+### Testing
+
+The tutorial system includes comprehensive unit tests:
+- `TestTutorialSystem`: Core functionality tests (8 tests)
+- `TestTutorialMilestones`: Milestone trigger tests
+- Persistence testing across game sessions
+- Tutorial enable/disable functionality
+
+**Test File:** `tests/test_tutorial_system.py`
+**Manual Testing:** `test_tutorial_manual.py` (not in test suite)
+
+### Customization
+
+**Adding New Tutorials:**
+1. Add trigger logic in appropriate game event
+2. Call `show_tutorial_message()` with unique milestone ID
+3. Update tests to verify new tutorial trigger
+4. Document new tutorial in player guide
+
+**Modifying Tutorial Content:**
+- Tutorial content strings are embedded in code for immediate localization support
+- Modify title/content in `show_tutorial_message()` calls
+- Update documentation if tutorial explains changed mechanics
 
 ---
 
