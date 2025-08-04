@@ -9,6 +9,7 @@ from sound_manager import SoundManager
 from opponents import create_default_opponents
 from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
+from overlay_manager import OverlayManager
 
 SCORE_FILE = "local_highscore.json"
 
@@ -148,6 +149,14 @@ class GameState:
         self.enhanced_events_enabled = False  # Flag to enable new event types
         
         # Initialize game logger
+        self.logger = GameLogger(seed)
+        
+        # Initialize UI overlay management system
+        self.overlay_manager = OverlayManager()
+        
+        # Error tracking for easter egg beep system
+        self.error_history = []  # Track recent errors for pattern detection
+        self.last_error_beep_time = 0  # Prevent spam beeping
         self.logger = GameLogger(seed)
         
         # UI Transition System for smooth visual feedback
@@ -1362,3 +1371,120 @@ class GameState:
         y = (1-t)**2 * start_y + 2*(1-t)*t * mid_y + t**2 * end_y
         
         return (int(x), int(y))
+    
+    def track_error(self, error_message: str) -> bool:
+        """
+        Track an error for the easter egg beep system.
+        
+        Args:
+            error_message: The error message that occurred
+            
+        Returns:
+            bool: True if this triggers the easter egg (3 repeated identical errors)
+        """
+        import pygame
+        
+        current_time = pygame.time.get_ticks()
+        
+        # Add error to overlay manager (which handles the logic)
+        should_beep = self.overlay_manager.add_error(error_message, current_time // (1000 // 30))
+        
+        # Play easter egg beep if triggered and enough time has passed
+        if should_beep and (current_time - self.last_error_beep_time) > 2000:  # 2 second cooldown
+            self.sound_manager.play_error_beep()
+            self.last_error_beep_time = current_time
+            self.messages.append("🔊 Error pattern detected! (Easter egg activated)")
+            return True
+            
+        return False
+    
+    def log_ui_interaction(self, interaction_type: str, element_id: str, details: dict = None):
+        """
+        Log UI interactions for accessibility and debugging.
+        
+        Args:
+            interaction_type: Type of interaction (click, hover, keyboard, etc.)
+            element_id: ID of the UI element
+            details: Additional details about the interaction
+        """
+        log_data = {
+            'type': interaction_type,
+            'element': element_id,
+            'turn': self.turn,
+            'timestamp': getattr(pygame.time, 'get_ticks', lambda: 0)()
+        }
+        
+        if details:
+            log_data.update(details)
+            
+        # Could extend this to write to accessibility logs if needed
+        # For now, just track in memory for potential error detection
+        if hasattr(self, 'ui_interaction_log'):
+            self.ui_interaction_log.append(log_data)
+        else:
+            self.ui_interaction_log = [log_data]
+    
+    def handle_insufficient_resources(self, resource_type: str, required: int, available: int) -> bool:
+        """
+        Handle cases where player tries to perform action without sufficient resources.
+        Provides standardized error messages and tracking.
+        
+        Args:
+            resource_type: Type of resource (money, action_points, staff, etc.)
+            required: Amount required
+            available: Amount available
+            
+        Returns:
+            bool: True if error was tracked (for potential easter egg)
+        """
+        error_msg = f"Insufficient {resource_type}: need {required}, have {available}"
+        
+        # Add user-friendly message to game log
+        if resource_type == "money":
+            self.messages.append(f"Need ${required}, but only have ${available}")
+        elif resource_type == "action_points":
+            self.messages.append(f"Need {required} AP, but only have {available} remaining")
+        elif resource_type == "staff":
+            self.messages.append(f"Need {required} staff, but only have {available}")
+        else:
+            self.messages.append(f"Need {required} {resource_type}, but only have {available}")
+        
+        # Track for easter egg detection
+        return self.track_error(error_msg)
+    
+    def validate_action_requirements(self, action_index: int) -> tuple[bool, str]:
+        """
+        Validate if an action can be performed, with detailed error reporting.
+        
+        Args:
+            action_index: Index of action to validate
+            
+        Returns:
+            tuple[bool, str]: (can_perform, error_message)
+        """
+        if action_index >= len(self.actions):
+            return False, "Invalid action"
+            
+        action = self.actions[action_index]
+        
+        # Check money requirement
+        cost = action.get("cost", 0)
+        if cost > self.money:
+            self.handle_insufficient_resources("money", cost, self.money)
+            return False, f"Insufficient money: need ${cost}, have ${self.money}"
+        
+        # Check action points requirement
+        ap_cost = action.get("ap_cost", 1)
+        if ap_cost > self.action_points:
+            self.handle_insufficient_resources("action_points", ap_cost, self.action_points)
+            return False, f"Insufficient action points: need {ap_cost}, have {self.action_points}"
+        
+        # Check if action is available (using action rules system)
+        from action_rules import ActionRules
+        action_rules = ActionRules()
+        if not action_rules.is_action_available(action["name"], self):
+            error_msg = f"Action '{action['name']}' not available"
+            self.track_error(error_msg)
+            return False, error_msg
+        
+        return True, "OK"
