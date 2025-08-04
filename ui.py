@@ -358,10 +358,42 @@ def draw_ui(screen, game_state, w, h):
     et_text = big_font.render("END TURN (Space)", True, (255, 240, 240))
     screen.blit(et_text, (endturn_rect[0] + int(w*0.01), endturn_rect[1] + int(h*0.015)))
 
-    # Messages log (bottom left) - Enhanced with scrollable history
+    # Messages log (bottom left) - Enhanced with scrollable history and minimize option
     log_x, log_y = int(w*0.04), int(h*0.74)
     
-    if game_state.scrollable_event_log_enabled:
+    # Check if activity log is minimized (only available with compact activity display upgrade)
+    if (hasattr(game_state, 'activity_log_minimized') and 
+        game_state.activity_log_minimized and 
+        "compact_activity_display" in game_state.upgrade_effects):
+        # Draw minimized activity log as a small title bar with expand button
+        title_text = font.render("Activity Log", True, (255, 255, 180))
+        title_width = title_text.get_width()
+        
+        # Draw small background bar
+        bar_height = int(h * 0.04)
+        bar_rect = pygame.Rect(log_x - 5, log_y - 5, title_width + 50, bar_height)
+        pygame.draw.rect(screen, (60, 80, 100), bar_rect, border_radius=4)
+        pygame.draw.rect(screen, (120, 140, 180), bar_rect, width=1, border_radius=4)
+        
+        screen.blit(title_text, (log_x, log_y))
+        
+        # Draw expand button (plus icon)
+        expand_button_x = log_x + title_width + 10
+        expand_button_y = log_y
+        expand_button_size = int(h * 0.025)
+        
+        pygame.draw.rect(screen, (100, 120, 150), 
+                        (expand_button_x, expand_button_y, expand_button_size, expand_button_size),
+                        border_radius=2)
+        
+        # Plus icon
+        plus_font = pygame.font.SysFont('Consolas', int(h * 0.02), bold=True)
+        plus_text = plus_font.render("+", True, (255, 255, 255))
+        plus_rect = plus_text.get_rect(center=(expand_button_x + expand_button_size//2, 
+                                               expand_button_y + expand_button_size//2))
+        screen.blit(plus_text, plus_rect)
+        
+    elif game_state.scrollable_event_log_enabled:
         # Enhanced scrollable event log with border and visual indicators
         log_width = int(w * 0.44)
         log_height = int(h * 0.22)
@@ -371,14 +403,34 @@ def draw_ui(screen, game_state, w, h):
         pygame.draw.rect(screen, (80, 100, 120), border_rect, border_radius=8)
         pygame.draw.rect(screen, (120, 140, 180), border_rect, width=2, border_radius=8)
         
-        # Event log title with scroll indicator
+        # Event log title with scroll indicator and minimize button
         title_text = font.render("Activity Log (Scrollable)", True, (255, 255, 180))
         screen.blit(title_text, (log_x, log_y))
+        
+        # Add minimize button if compact display upgrade is available
+        if "compact_activity_display" in game_state.upgrade_effects:
+            minimize_button_x = log_x + log_width - 30
+            minimize_button_y = log_y
+            minimize_button_size = int(h * 0.025)
+            
+            pygame.draw.rect(screen, (100, 120, 150), 
+                            (minimize_button_x, minimize_button_y, minimize_button_size, minimize_button_size),
+                            border_radius=2)
+            
+            # Minus icon
+            minus_font = pygame.font.SysFont('Consolas', int(h * 0.02), bold=True)
+            minus_text = minus_font.render("−", True, (255, 255, 255))
+            minus_rect = minus_text.get_rect(center=(minimize_button_x + minimize_button_size//2, 
+                                                   minimize_button_y + minimize_button_size//2))
+            screen.blit(minus_text, minus_rect)
         
         # Scroll indicator
         if len(game_state.event_log_history) > 0 or len(game_state.messages) > 0:
             scroll_info = small_font.render("↑↓ or mouse wheel to scroll", True, (200, 200, 255))
-            screen.blit(scroll_info, (log_x + log_width - scroll_info.get_width(), log_y))
+            scroll_x = log_x + log_width - scroll_info.get_width()
+            if "compact_activity_display" in game_state.upgrade_effects:
+                scroll_x -= 35  # Make room for minimize button
+            screen.blit(scroll_info, (scroll_x, log_y))
         
         # Calculate visible area for messages
         content_y = log_y + int(h * 0.04)
@@ -426,6 +478,7 @@ def draw_ui(screen, game_state, w, h):
             # Down arrow indicator
             down_arrow = small_font.render("▼", True, (180, 255, 180))
             screen.blit(down_arrow, (log_x + log_width - 25, content_y + content_height - 20))
+            
             
     else:
         # Original simple event log (for backward compatibility)

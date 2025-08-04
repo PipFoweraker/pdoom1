@@ -27,5 +27,13 @@ UPGRADES = [
         "purchased": False,
         "effect_key": "accounting_software",
         "custom_effect": "buy_accounting_software"  # Special handling for this upgrade
+    },
+    {
+        "name": "Compact Activity Display",
+        "desc": "Minimize activity log to save screen space ($150)",
+        "cost": 150,
+        "purchased": False,
+        "effect_key": "compact_activity_display",
+        "custom_effect": "buy_compact_activity_display"  # Special handling for this upgrade
     }
 ]
