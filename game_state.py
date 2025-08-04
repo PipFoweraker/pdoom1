@@ -117,6 +117,9 @@ class GameState:
         self.scrollable_event_log_enabled = False
         self.event_log_history = []  # Full history of all messages
         self.event_log_scroll_offset = 0
+        
+        # Activity log minimization feature
+        self.activity_log_minimized = False  # Whether activity log is currently minimized
 
         # Copy modular content
         self.actions = [dict(a) for a in ACTIONS]
@@ -727,10 +730,13 @@ class GameState:
                         upg["purchased"] = True
                         self.upgrade_effects.add(upg["effect_key"])
                         
-                        # Special handling for accounting software
+                        # Special handling for custom effects
                         if upg.get("custom_effect") == "buy_accounting_software":
                             self.accounting_software_bought = True
                             self.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!")
+                        elif upg.get("custom_effect") == "buy_compact_activity_display":
+                            # Allow toggle functionality for the activity log
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
                         else:
                             self.messages.append(f"Upgrade purchased: {upg['name']}")
                         
@@ -759,6 +765,23 @@ class GameState:
             status = "enabled" if new_state else "disabled"
             self.messages.append(f"Sound {status}")
             return None
+
+        # Activity log minimize/expand button (if compact display upgrade is purchased)
+        if "compact_activity_display" in self.upgrade_effects:
+            if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
+                # Expand button
+                expand_rect = self._get_activity_log_expand_button_rect(w, h)
+                if self._in_rect(mouse_pos, expand_rect):
+                    self.activity_log_minimized = False
+                    self.messages.append("Activity log expanded.")
+                    return None
+            elif self.scrollable_event_log_enabled:
+                # Minimize button
+                minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
+                if self._in_rect(mouse_pos, minimize_rect):
+                    self.activity_log_minimized = True
+                    self.messages.append("Activity log minimized.")
+                    return None
 
         return None
 
@@ -839,6 +862,29 @@ class GameState:
         button_size = int(min(w, h) * 0.04)
         button_x = w - button_size - 20
         button_y = h - button_size - 20
+        return (button_x, button_y, button_size, button_size)
+
+    def _get_activity_log_minimize_button_rect(self, w, h):
+        """Get rectangle for the activity log minimize button (only when scrollable log is enabled)"""
+        log_x = int(w*0.04)
+        log_y = int(h*0.74)
+        log_width = int(w * 0.44)
+        button_size = int(h * 0.025)
+        button_x = log_x + log_width - 30
+        button_y = log_y
+        return (button_x, button_y, button_size, button_size)
+
+    def _get_activity_log_expand_button_rect(self, w, h):
+        """Get rectangle for the activity log expand button (only when log is minimized)"""
+        log_x = int(w*0.04)
+        log_y = int(h*0.74)
+        
+        # Estimate title width based on character count (avoiding pygame dependency in tests)
+        title_width = len("Activity Log") * int(h*0.015)  # Rough character width estimate
+        
+        button_size = int(h * 0.025)
+        button_x = log_x + title_width + 10
+        button_y = log_y
         return (button_x, button_y, button_size, button_size)
 
     def _in_rect(self, pt, rect):

@@ -1,4 +1,5 @@
 import random
+from action_rules import manager_unlock_rule, scout_unlock_rule, search_unlock_rule
 
 ACTIONS = [
     {
@@ -103,7 +104,7 @@ ACTIONS = [
         "ap_cost": 1,  # Action Points cost
         "upside": lambda gs: gs._hire_manager(),
         "downside": lambda gs: None,
-        "rules": lambda gs: gs.staff >= 9  # Unlocked when staff reaches 9
+        "rules": manager_unlock_rule  # Unlocks at 9+ staff (refactored rule)
     },
     {
         "name": "Espionage",
@@ -121,7 +122,7 @@ ACTIONS = [
         "ap_cost": 1,  # Action Points cost
         "upside": lambda gs: gs._scout_opponent(),
         "downside": lambda gs: gs._espionage_risk(),
-        "rules": lambda gs: gs.turn >= 5  # Unlocked after turn 5
+        "rules": scout_unlock_rule  # Unlocks after turn 5 (refactored rule)
     },
     {
         "name": "Search",
@@ -130,6 +131,6 @@ ACTIONS = [
         "ap_cost": 1,  # Action Points cost
         "upside": lambda gs: gs._board_search(),
         "downside": lambda gs: None,
-        "rules": lambda gs: gs.board_members > 0  # Unlocked when board members are installed
+        "rules": search_unlock_rule  # Requires board members (refactored rule)
     }
 ]

@@ -267,6 +267,7 @@ The competitors panel (between resources and actions) shows:
 **☁️ Secure Cloud** - Reduces damage from lab breakthrough events
 **📊 Accounting Software** - Shows resource changes each turn
 **📋 Event Log System** - Unlock scrollable activity history
+**📱 Compact Activity Display** - Minimize activity log to save screen space
 
 *Purchased upgrades appear as icons at the top right - hover for details.*
 
@@ -326,6 +327,20 @@ As your organization grows, you'll unlock new systems and face new challenges th
 - Before planning expensive expansion (>$10K spending)
 - Early game if you anticipate scaling quickly
 - As insurance against audit penalties
+
+### Compact Activity Display Upgrade
+
+**Purchase Effects:**
+- **Cost**: $150 (visible in right-panel upgrades)
+- **Minimize Button**: Adds minimize (-) button to activity log header
+- **Space Saving**: Minimized log shows only title bar with expand (+) button
+- **Visual Enhancement**: Improved screen space utilization for streamlined UI
+
+**When to Buy:**
+- When screen space is limited or cluttered
+- After unlocking scrollable event log (turn 5+)
+- For cleaner, more focused gameplay experience
+- Early-to-mid game for UI optimization
 
 ---
 
