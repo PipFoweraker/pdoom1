@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- **Tutorial & Onboarding System (Issue #67)**: Comprehensive player guidance system
+  - Initial tutorial overlay for first-time players explaining core mechanics
+  - Context-sensitive tutorials triggered on milestone events (manager system, board oversight, enhanced events, scrollable log)
+  - Tutorial settings persistence with `tutorial_settings.json` file
+  - Tutorial enable/disable toggle in main menu and end-game settings
+  - Non-intrusive design - all tutorials dismissible with mouse or keyboard
+  - Per-milestone tracking prevents tutorial repetition
+  - Semi-transparent overlay UI with "Got it!" dismiss button
+  - 8 comprehensive unit tests for tutorial functionality
+  - Tutorial system architecture documented in developer guide
 - **Activity Log Minimization (Issue #69)**: New UI enhancement system
   - "Compact Activity Display" upgrade ($150) enables activity log minimization
   - Minimize/expand buttons for activity log when upgrade is purchased

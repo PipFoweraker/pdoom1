@@ -19,6 +19,30 @@ That's it! The game will open with a main menu.
 
 ---
 
+## New Player Tutorial
+
+If this is your first time playing, the game includes a comprehensive tutorial system to help you learn:
+
+### Initial Guidance
+- **Welcome Tutorial**: When you start your first game, you'll see a step-by-step overview of core mechanics
+- **Context-Sensitive Help**: Tutorials automatically appear when you unlock new features for the first time
+- **Non-Intrusive**: All tutorials can be dismissed immediately if you prefer to learn by experimentation
+
+### What You'll Learn
+- **Core Game Loop**: Understanding actions, resources, and turn structure
+- **Resource Management**: How to balance money, staff, reputation, and p(Doom)
+- **Action Points**: How the AP system limits and scales your actions
+- **Milestone Events**: What happens when you unlock managers, board oversight, enhanced events, etc.
+
+### Tutorial Controls
+- **Dismiss**: Click "Got it!" or press Enter/Space/Escape to close any tutorial
+- **Settings**: Toggle tutorials on/off in the main menu Settings or end-game Settings
+- **Persistence**: Your tutorial preferences are remembered between sessions
+
+**Pro Tip**: Even if you disable tutorials, you can always re-enable them in Settings to review specific mechanics.
+
+---
+
 ## How to Play
 
 ### Your Goal
