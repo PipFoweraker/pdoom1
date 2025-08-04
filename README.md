@@ -33,6 +33,13 @@ The game will open with a main menu where you can choose game modes, access docu
 
 ## Game Features
 
+### Onboarding & Player Guidance
+- **Interactive Tutorial System**: Step-by-step guidance for new players covering all core mechanics
+- **Context-Sensitive Help**: Automatic first-time tips when encountering new game mechanics
+- **In-Game Help**: Press `H` key anytime to access the Player Guide
+- **Smart Onboarding**: Tutorial can be skipped and won't reappear once completed
+- **Progressive Disclosure**: Learn mechanics gradually as you encounter them in gameplay
+
 ### Core Gameplay
 - **Resource Management**: Balance money, staff, reputation, and p(Doom) levels
 - **Action Points System**: Strategic action limitation with 3 Action Points per turn

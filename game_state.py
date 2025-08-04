@@ -8,6 +8,7 @@ from game_logger import GameLogger
 from sound_manager import SoundManager
 from opponents import create_default_opponents
 from event_system import Event, DeferredEventQueue, EventType, EventAction
+from onboarding import onboarding
 
 SCORE_FILE = "local_highscore.json"
 
@@ -28,7 +29,11 @@ class GameState:
                 self.last_balance_change = val
             self.money = max(self.money + val, 0)
         elif attr == 'doom':
+            old_doom = self.doom
             self.doom = min(max(self.doom + val, 0), self.max_doom)
+            # Trigger high doom warning
+            if old_doom < 70 and self.doom >= 70 and onboarding.should_show_mechanic_help('high_doom_warning'):
+                onboarding.mark_mechanic_seen('high_doom_warning')
         elif attr == 'reputation':
             self.reputation = max(self.reputation + val, 0)
         elif attr == 'staff':
@@ -37,6 +42,9 @@ class GameState:
             # Update employee blobs when staff changes
             if val > 0:  # Hiring
                 self._add_employee_blobs(val)
+                # Trigger first-time help for staff hiring
+                if old_staff <= 2 and self.staff > 2:  # First staff hire beyond starting staff
+                    onboarding.mark_mechanic_seen('first_staff_hire')
             elif val < 0:  # Staff leaving
                 self._remove_employee_blobs(old_staff - self.staff)
         elif attr == 'compute':
@@ -109,6 +117,9 @@ class GameState:
         self.board_members = 0  # Number of board members installed
         self.board_milestone_triggered = False  # Track if board member milestone was triggered
         self.audit_risk_level = 0  # Audit risk accumulation for compliance penalties
+        
+        # Onboarding system integration
+        self.onboarding_started = False  # Track if tutorial has been offered
         
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
@@ -208,6 +219,9 @@ class GameState:
         # Check if we have enough AP and money
         if self.action_points < ap_cost:
             self.messages.append(f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points}).")
+            # Trigger first-time help for AP exhaustion
+            if onboarding.should_show_mechanic_help('action_points_exhausted'):
+                onboarding.mark_mechanic_seen('action_points_exhausted')
             return False
         
         if self.money < action["cost"]:
@@ -729,6 +743,10 @@ class GameState:
                         self._add('money', -upg["cost"])  # Use _add to track spending
                         upg["purchased"] = True
                         self.upgrade_effects.add(upg["effect_key"])
+                        
+                        # Trigger first-time help for upgrade purchase
+                        if onboarding.should_show_mechanic_help('first_upgrade_purchase'):
+                            onboarding.mark_mechanic_seen('first_upgrade_purchase')
                         
                         # Special handling for custom effects
                         if upg.get("custom_effect") == "buy_accounting_software":
