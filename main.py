@@ -35,6 +35,7 @@ overlay_scroll = 0
 # Tutorial state
 current_tutorial_content = None
 first_time_help_content = None
+first_time_help_close_button = None
 
 # Bug report form state
 bug_report_data = {
@@ -565,9 +566,14 @@ def main():
                                 overlay_title = "Player Guide"
                                 current_state = 'overlay'
                         # First-time help close button
-                        elif first_time_help_content:
-                            # Close first-time help on any click (simplified)
-                            first_time_help_content = None
+                        elif first_time_help_content and first_time_help_close_button:
+                            # Check if the close button was clicked
+                            if first_time_help_close_button.collidepoint(mx, my):
+                                first_time_help_content = None
+                                first_time_help_close_button = None
+                            else:
+                                # Allow normal game interactions when help is shown
+                                tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                         # Check if tutorial overlay is active
                         elif game_state and game_state.pending_tutorial_message:
                             # Handle tutorial overlay clicks - any click dismisses the tutorial
@@ -651,6 +657,7 @@ def main():
                         # Close first-time help
                         elif event.key == pygame.K_ESCAPE and first_time_help_content:
                             first_time_help_content = None
+                            first_time_help_close_button = None
                         
                         # Arrow key scrolling for scrollable event log
                         elif game_state and game_state.scrollable_event_log_enabled:
@@ -687,7 +694,7 @@ def main():
                 for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']:
                     if onboarding.should_show_mechanic_help(mechanic):
                         help_content = onboarding.get_mechanic_help(mechanic)
-                        if help_content:
+                        if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
                             first_time_help_content = help_content
                             break
 
@@ -743,11 +750,11 @@ def main():
                         current_tutorial_content = draw_tutorial_overlay(screen, tutorial_content, SCREEN_W, SCREEN_H)
                     
                     # Draw first-time help if available
-                    if first_time_help_content:
-                        close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H)
-                        if close_button:
-                            # Store for click detection
-                            pass
+                    if first_time_help_content and isinstance(first_time_help_content, dict):
+                        first_time_help_close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H)
+                        # If drawing failed (returned None), clear the help content to prevent repeated attempts
+                        if first_time_help_close_button is None:
+                            first_time_help_content = None
 
                         
             pygame.display.flip()
