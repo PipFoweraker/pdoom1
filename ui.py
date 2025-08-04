@@ -1525,7 +1525,7 @@ def draw_first_time_help(screen, help_content, w, h):
         help_content: dict with title and content for the help popup
         w, h: screen width and height
     """
-    if not help_content:
+    if not help_content or not isinstance(help_content, dict):
         return None
         
     # Small popup dimensions
