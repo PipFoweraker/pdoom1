@@ -42,12 +42,131 @@ python main.py
 - **events.py** — Event definitions and special event logic
 - **event_system.py** — Enhanced event system with deferred events and popups
 - **opponents.py** — Opponent AI and intelligence system
-- **ui.py** — Pygame-based UI code
+- **ui.py** — Pygame-based UI code with visual feedback integration
+- **overlay_manager.py** — Modular UI overlay and z-order management system
+- **visual_feedback.py** — Standardized visual feedback for clickable elements
+- **sound_manager.py** — Sound effects and audio feedback
 - **game_logger.py** — Comprehensive game logging system
 - **tests/** — Automated tests for core logic
 - **README.md** — Installation, troubleshooting, dependencies
 - **PLAYERGUIDE.md** — Player experience and gameplay guide
 - **DEVELOPERGUIDE.md** (this file) — Contributor documentation
+
+---
+
+## UI Architecture and Overlay Management
+
+### Overview
+P(Doom) features a modular UI overlay system inspired by Papers Please, SimPark, and Starcraft 2, designed for low-bit, low-poly aesthetics with modern accessibility features.
+
+### Core UI Components
+
+#### Overlay Manager (`overlay_manager.py`)
+- **Z-Layer Management**: Hierarchical layering system (Background → Game UI → Tooltips → Dialogs → Modals → Critical)
+- **Element Registration**: Centralized registration and lifecycle management of UI elements
+- **Animation System**: Smooth transitions with easing functions for minimize/expand/move operations
+- **State Management**: UIState enum (Hidden, Minimized, Normal, Expanded, Animating)
+- **Error Tracking**: Easter egg system that plays beep sound after 3 repeated identical errors
+- **Accessibility**: Keyboard navigation support with Tab/Enter/Space/Escape
+
+#### Visual Feedback System (`visual_feedback.py`)
+- **Standardized Button States**: Normal, Hover, Pressed, Disabled, Focused
+- **Button Depression Effects**: 3-pixel depth shift when pressed
+- **Hover Glow Effects**: Subtle highlighting with configurable intensity
+- **Accessibility Support**: High contrast mode, font scaling (0.5x-2.0x), focus rings
+- **Low-Poly Styling**: Consistent rounded corners, gradient backgrounds, retro aesthetics
+- **Tooltip System**: Accessible tooltips with automatic edge detection
+
+#### Integration with Game State
+- **Error Tracking**: `GameState.track_error()` integrates with overlay manager for easter egg detection
+- **Resource Validation**: `GameState.validate_action_requirements()` provides detailed error reporting
+- **Hover State Management**: Enhanced tooltips showing cost, AP requirements, and availability
+- **Visual State Sync**: Button states automatically reflect game state (affordable, selected, etc.)
+
+### UI Element Types
+
+#### Action Buttons
+- Visual state reflects Action Point availability
+- Enhanced tooltips show cost, AP requirements, and availability status
+- Consistent styling with press/hover effects
+- Automatic error tracking for insufficient resources
+
+#### Upgrade Buttons/Icons
+- Transform from buttons to compact icons when purchased
+- Smooth animation transitions using overlay manager
+- State-based styling (available, disabled, purchased)
+- Enhanced tooltips with affordability status
+
+#### Menu Systems
+- Keyboard navigation with visual focus indicators
+- Consistent button styling across all menus
+- Accessibility features (keyboard shortcuts, high contrast)
+- Modal dialogs with proper z-ordering
+
+### Architecture Patterns
+
+#### Z-Order Management
+```python
+# Elements are automatically layered by ZLayer enum
+overlay_manager.register_element(UIElement(
+    id="dialog",
+    layer=ZLayer.DIALOGS,
+    rect=pygame.Rect(x, y, w, h),
+    title="Dialog Title"
+))
+```
+
+#### Visual Feedback Integration
+```python
+# Buttons automatically get proper visual feedback
+visual_feedback.draw_button(
+    surface, rect, "Button Text", 
+    ButtonState.HOVER,  # State determines styling
+    FeedbackStyle.BUTTON
+)
+```
+
+#### Error Tracking and Easter Eggs
+```python
+# Three identical errors trigger beep sound
+if game_state.track_error("Insufficient money"):
+    # Easter egg activated automatically
+    pass
+```
+
+### Accessibility Features
+
+#### Current Implementation
+- **Keyboard Navigation**: Tab navigation between focusable elements
+- **Font Scaling**: Configurable text scaling (0.5x to 2.0x)
+- **Focus Indicators**: Yellow focus rings for keyboard navigation
+- **High Contrast**: Available via `visual_feedback.get_accessible_color()`
+- **Error Feedback**: Audio beep for repeated errors
+- **Tooltip Enhancement**: Detailed information about interactive elements
+
+#### TODO: Future Accessibility Improvements
+- [ ] Screen reader compatibility (text-to-speech integration)
+- [ ] Colorblind-friendly color schemes
+- [ ] Configurable UI scale (not just font scale)
+- [ ] Audio cues for all interactive elements
+- [ ] Voice navigation support
+- [ ] Reduced motion options for animations
+- [ ] Save accessibility settings to persistent config
+- [ ] WCAG 2.1 AA compliance testing
+- [ ] Alternative input method support (eye tracking, switch access)
+- [ ] Subtitle system for any future audio content
+
+### Performance Considerations
+- **Efficient Rendering**: Only visible elements are rendered
+- **Animation Optimization**: Smooth 30fps animations with easing functions
+- **Memory Management**: Elements are properly unregistered to prevent leaks
+- **Event Handling**: Overlay manager handles events before passing to game logic
+
+### Extension Points
+- **Custom Render Functions**: UIElements can have custom rendering logic
+- **New Z-Layers**: Easy to add new layers for different UI types
+- **Animation System**: Extensible for new animation types
+- **Visual Styles**: FeedbackStyle enum can be extended for new UI patterns
 
 ---
 

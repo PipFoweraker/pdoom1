@@ -52,6 +52,23 @@ Get automatic guidance when you:
 - **Anytime**: Press `H` key to open the Player Guide
 - **Main Menu**: Access Player Guide, README, and settings
 
+### User Interface & Accessibility
+P(Doom) features an enhanced UI system designed for accessibility and clear visual feedback:
+
+- **Visual Feedback**: Buttons provide clear visual states (normal, hover, pressed, disabled)
+- **Keyboard Navigation**: Use Tab to navigate menus, Enter/Space to select, Escape to go back
+- **Enhanced Tooltips**: Hover over actions and upgrades for detailed cost and availability information
+- **Error Feedback**: Audio beep plays after three repeated identical errors (easter egg)
+- **Responsive Design**: UI adapts to different screen sizes and window resizing
+- **Low-Poly Aesthetic**: Clean, retro-inspired visual design with modern accessibility features
+
+**Accessibility Features:**
+- Focus indicators for keyboard navigation (yellow rings)
+- Scalable text support for readability
+- High contrast options for better visibility
+- Audio feedback for important events
+- Comprehensive keyboard navigation support
+
 
 ---
 

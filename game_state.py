@@ -124,6 +124,8 @@ class GameState:
         
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
+        self.hovered_action_idx = None
+        self.endturn_hovered = False
 
         # Scrollable event log feature
         self.scrollable_event_log_enabled = False
@@ -236,14 +238,24 @@ class GameState:
         
         # Check if we have enough AP and money
         if self.action_points < ap_cost:
-            self.messages.append(f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points}).")
+            error_msg = f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points})."
+            self.messages.append(error_msg)
+            
+            # Track error for easter egg detection
+            self.track_error(f"Insufficient AP: {action['name']}")
+            
             # Trigger first-time help for AP exhaustion
             if onboarding.should_show_mechanic_help('action_points_exhausted'):
                 onboarding.mark_mechanic_seen('action_points_exhausted')
             return False
         
         if self.money < action["cost"]:
-            self.messages.append("Not enough money for that action.")
+            error_msg = f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money})."
+            self.messages.append(error_msg)
+            
+            # Track error for easter egg detection
+            self.track_error(f"Insufficient money: {action['name']}")
+            
             return False
         
         # Execute the action
@@ -820,9 +832,16 @@ class GameState:
                         icon_rect = self._get_upgrade_icon_rect(idx, w, h)
                         self._create_upgrade_transition(idx, rect, icon_rect)
                     else:
-                        self.messages.append("Not enough money for upgrade.")
+                        error_msg = f"Not enough money for {upg['name']} (need ${upg['cost']}, have ${self.money})."
+                        self.messages.append(error_msg)
+                        
+                        # Track error for easter egg detection
+                        self.track_error(f"Insufficient money: {upg['name']}")
                 else:
-                    self.messages.append("Already purchased.")
+                    self.messages.append(f"{upg['name']} already purchased.")
+                    
+                    # Track error for easter egg detection
+                    self.track_error(f"Already purchased: {upg['name']}")
                 return None
 
         # End Turn button (bottom center)
@@ -859,13 +878,52 @@ class GameState:
         return None
 
     def check_hover(self, mouse_pos, w, h):
-        # Only check upgrades (for tooltip)
+        # Reset all hover states
+        self.hovered_upgrade_idx = None
+        self.hovered_action_idx = None
+        self.endturn_hovered = False
+        
+        # Check action buttons for hover
+        action_rects = self._get_action_rects(w, h)
+        for idx, rect in enumerate(action_rects):
+            if self._in_rect(mouse_pos, rect):
+                self.hovered_action_idx = idx
+                action = self.actions[idx]
+                # Show enhanced tooltip with cost and requirements
+                ap_cost = action.get("ap_cost", 1)
+                cost_str = f"${action['cost']}" if action['cost'] > 0 else "Free"
+                ap_str = f"{ap_cost} AP" if ap_cost > 1 else "1 AP"
+                
+                # Check if action is affordable
+                affordable = action['cost'] <= self.money and ap_cost <= self.action_points
+                status = "✓ Available" if affordable else "✗ Cannot afford"
+                
+                return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
+        
+        # Check upgrade buttons for hover
         u_rects = self._get_upgrade_rects(w, h)
         for idx, rect in enumerate(u_rects):
             if self._in_rect(mouse_pos, rect):
                 self.hovered_upgrade_idx = idx
-                return self.upgrades[idx]["desc"]
-        self.hovered_upgrade_idx = None
+                upgrade = self.upgrades[idx]
+                if not upgrade.get("purchased", False):
+                    # Enhanced tooltip for unpurchased upgrades
+                    affordable = upgrade['cost'] <= self.money
+                    status = "✓ Available" if affordable else "✗ Cannot afford"
+                    return f"{upgrade['name']}: {upgrade['desc']} (Cost: ${upgrade['cost']}) - {status}"
+                else:
+                    return f"{upgrade['name']}: {upgrade['desc']} (Purchased)"
+        
+        # Check end turn button for hover
+        endturn_rect = self._get_endturn_rect(w, h)
+        if self._in_rect(mouse_pos, endturn_rect):
+            self.endturn_hovered = True
+            ap_remaining = self.action_points
+            if ap_remaining > 0:
+                return f"End Turn ({ap_remaining} AP remaining - these will be wasted!)"
+            else:
+                return "End Turn (All AP spent efficiently)"
+        
         return None
 
     def _get_action_rects(self, w, h):
