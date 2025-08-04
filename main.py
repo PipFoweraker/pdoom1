@@ -551,15 +551,6 @@ def main():
                         # Handle end-game menu clicks
                         handle_end_game_menu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'game':
-
-                        # Check if tutorial overlay is active first
-                        if game_state and game_state.pending_tutorial_message:
-                            # Handle tutorial overlay clicks - need to check if button was clicked
-                            # For now, any click dismisses the tutorial
-                            game_state.dismiss_tutorial_message()
-                        else:
-                            # Existing game mouse handling
-
                         # Tutorial button handling (takes precedence)
                         if onboarding.show_tutorial_overlay and current_tutorial_content:
                             if current_tutorial_content['next_button'].collidepoint(mx, my):
@@ -577,9 +568,12 @@ def main():
                         elif first_time_help_content:
                             # Close first-time help on any click (simplified)
                             first_time_help_content = None
+                        # Check if tutorial overlay is active
+                        elif game_state and game_state.pending_tutorial_message:
+                            # Handle tutorial overlay clicks - any click dismisses the tutorial
+                            game_state.dismiss_tutorial_message()
                         else:
                             # Regular game mouse handling
-
                             tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                         
                 elif event.type == pygame.MOUSEMOTION:
