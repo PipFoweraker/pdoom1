@@ -833,6 +833,34 @@ def test_static_effect_integration(self):
 - UI elements scale and may overlap intentionally for "bureaucratic clutter" feel
 - Upgrades shrink to icons after purchase with tooltip support
 
+### UI Overlay Variables Pattern
+
+**Important:** When adding new UI overlay variables that are both read and written within the main() function, they must be declared as global to prevent UnboundLocalError.
+
+**Required Pattern:**
+```python
+# At module level
+my_overlay_content = None
+my_overlay_button = None
+
+def main():
+    # Must declare as global if variable is assigned within function
+    global my_overlay_content, my_overlay_button
+    
+    # Now safe to check before assignment
+    if not my_overlay_content:
+        # Assignment is safe
+        my_overlay_content = create_overlay()
+```
+
+**Examples of Variables Requiring Global Declaration:**
+- `first_time_help_content`, `first_time_help_close_button`
+- `current_tutorial_content`
+- Any UI state variables that are both checked and assigned in main()
+
+**Why This Is Required:**
+Python treats variables as local when they are assigned anywhere in a function scope. Without global declaration, referencing these variables before assignment raises UnboundLocalError even if they exist at module level.
+
 ### State Management
 
 - Game state is centralized in `GameState` class

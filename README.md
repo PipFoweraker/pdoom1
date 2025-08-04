@@ -199,6 +199,11 @@ pip install pygame
 - Restart the game
 - Check terminal for error messages
 
+**UnboundLocalError crashes (Fixed in latest version):**
+- If you encounter crashes related to "first_time_help_content" or similar variables, update to the latest version
+- This issue has been resolved in recent releases
+- See CHANGELOG.md for version history and fixes
+
 ### Error Logs
 The game automatically creates detailed logs in the `logs/` directory:
 - **Location**: `logs/gamelog_<YYYYMMDD_HHMMSS>.txt`

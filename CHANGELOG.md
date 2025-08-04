@@ -50,6 +50,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Game window title now shows semantic version (v0.1.0) instead of hardcoded "v3"
 - GameLogger now defaults to current version if none specified
 
+### Fixed
+- **UnboundLocalError for UI overlay variables (Issue #79)**: Fixed crash when checking first-time help content
+  - Added missing global declarations for `first_time_help_content`, `first_time_help_close_button`, and `current_tutorial_content` in main function
+  - Prevents Python treating these variables as local when they're assigned within the function scope
+  - Added explanatory comment for future maintainers about UI overlay variable initialization requirements
+  - Added comprehensive test coverage to prevent regression
+
 ### Infrastructure
 - Enhanced GitHub Actions workflow for release management
 - Release checklist and minimum conditions documentation
