@@ -534,6 +534,13 @@ def main():
                             max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
                             game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 3)
                     
+                    # Handle overlay manager events first (highest priority)
+                    if current_state == 'game' and game_state:
+                        handled_element = game_state.overlay_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H)
+                        if handled_element:
+                            # Overlay manager handled the event
+                            continue
+                    
                     # Handle mouse clicks based on current state
                     if current_state == 'main_menu':
                         handle_menu_click((mx, my), SCREEN_W, SCREEN_H)
@@ -585,11 +592,25 @@ def main():
                             tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                         
                 elif event.type == pygame.MOUSEMOTION:
+                    # Handle overlay manager hover events first
+                    if current_state == 'game' and game_state:
+                        handled_element = game_state.overlay_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H)
+                        if handled_element:
+                            # Overlay manager handled the event
+                            continue
+                    
                     # Mouse hover effects only active during gameplay
                     if current_state == 'game' and game_state:
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
                         
                 elif event.type == pygame.KEYDOWN:
+                    # Handle overlay manager keyboard events first (for accessibility)
+                    if current_state == 'game' and game_state:
+                        handled = game_state.overlay_manager.handle_keyboard_event(event)
+                        if handled:
+                            # Overlay manager handled the event
+                            continue
+                    
                     # Keyboard handling varies by state
                     if current_state == 'main_menu':
                         if event.key == pygame.K_ESCAPE:
@@ -737,11 +758,17 @@ def main():
                     current_state = 'end_game_menu'
                     end_game_selected_item = 0  # Reset selection
                 else:
-                    # Update UI transitions every frame for smooth animation
+                    # Update systems every frame for smooth animation
                     if game_state:
                         game_state._update_ui_transitions()
+                        game_state.overlay_manager.update_animations()
                     
                     draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
+                    
+                    # Render overlay manager elements
+                    if game_state:
+                        game_state.overlay_manager.render_elements(screen)
+                    
                     if tooltip_text:
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
                     

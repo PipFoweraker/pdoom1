@@ -1,5 +1,6 @@
 import pygame
 import textwrap
+from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
 
 def wrap_text(text, font, max_width):
     """
@@ -91,27 +92,20 @@ def draw_main_menu(screen, w, h, selected_item):
         # Calculate button position
         button_x = center_x - button_width // 2
         button_y = start_y + i * spacing
-        
-        # Determine button colors
-        if i == selected_item:  # Selected item
-            bg_color = (100, 150, 200)
-            border_color = (150, 200, 255)
-            text_color = (255, 255, 255)
-        else:  # Normal items
-            bg_color = (60, 60, 120)
-            border_color = (100, 100, 180)
-            text_color = (220, 220, 255)
-        
-        # Draw button
         button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
-        pygame.draw.rect(screen, bg_color, button_rect, border_radius=12)
-        pygame.draw.rect(screen, border_color, button_rect, width=3, border_radius=12)
         
-        # Draw button text
-        text_surf = menu_font.render(item, True, text_color)
-        text_x = button_x + (button_width - text_surf.get_width()) // 2
-        text_y = button_y + (button_height - text_surf.get_height()) // 2
-        screen.blit(text_surf, (text_x, text_y))
+        # Determine button state for visual feedback
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED  # Use focused state for keyboard navigation
+        elif i == 2:  # Options button (placeholder)
+            button_state = ButtonState.DISABLED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Use visual feedback system for consistent styling
+        visual_feedback.draw_button(
+            screen, button_rect, item, button_state, FeedbackStyle.MENU_ITEM
+        )
     
     # Instructions at bottom
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
@@ -286,53 +280,66 @@ def draw_ui(screen, game_state, w, h):
     # Opponents information panel (between resources and actions)
     draw_opponents_panel(screen, game_state, w, h, font, small_font)
 
-    # Action buttons (left)
+    # Action buttons (left) - Enhanced with visual feedback
     action_rects = game_state._get_action_rects(w, h)
-    for idx, rect in enumerate(action_rects):
+    for idx, rect_tuple in enumerate(action_rects):
         action = game_state.actions[idx]
         ap_cost = action.get("ap_cost", 1)
         
-        # Change color based on AP availability
+        # Convert tuple to pygame.Rect
+        rect = pygame.Rect(rect_tuple)
+        
+        # Determine button state for visual feedback
         if game_state.action_points < ap_cost:
-            # Grayed out if insufficient AP
-            color = (40, 40, 80) if idx not in game_state.selected_actions else (70, 70, 120)
-            border_color = (80, 80, 140)
-            text_color = (150, 150, 180)
+            button_state = ButtonState.DISABLED
+        elif idx in game_state.selected_actions:
+            button_state = ButtonState.PRESSED
+        elif hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx == idx:
+            button_state = ButtonState.HOVER
         else:
-            # Normal colors
-            color = (60, 60, 130) if idx not in game_state.selected_actions else (110, 110, 200)
-            border_color = (130, 130, 220)
-            text_color = (220, 220, 255)
+            button_state = ButtonState.NORMAL
         
-        pygame.draw.rect(screen, color, rect, border_radius=10)
-        pygame.draw.rect(screen, border_color, rect, width=3, border_radius=10)
+        # Use visual feedback system for consistent styling
+        visual_feedback.draw_button(
+            screen, rect, action["name"], button_state, FeedbackStyle.BUTTON
+        )
         
-        act_text = big_font.render(action["name"], True, text_color)
-        desc_text = font.render(f"{action['desc']} (Cost: ${action['cost']}, AP: {ap_cost})", True, (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160))
-        
-        screen.blit(act_text, (rect[0] + int(w*0.01), rect[1] + int(h*0.01)))
-        screen.blit(desc_text, (rect[0] + int(w*0.01), rect[1] + int(h*0.04)))
+        # Draw description text below button
+        desc_color = (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160)
+        desc_text = font.render(f"{action['desc']} (Cost: ${action['cost']}, AP: {ap_cost})", True, desc_color)
+        screen.blit(desc_text, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
 
-    # Upgrades (right: purchased as icons at top right, available as buttons)
+    # Upgrades (right: purchased as icons at top right, available as buttons) - Enhanced with visual feedback
     upgrade_rects = game_state._get_upgrade_rects(w, h)
-    for idx, rect in enumerate(upgrade_rects):
+    for idx, rect_tuple in enumerate(upgrade_rects):
         upg = game_state.upgrades[idx]
+        
+        # Convert tuple to pygame.Rect
+        rect = pygame.Rect(rect_tuple)
+        
         if upg.get("purchased", False):
-            # Draw as small icon
-            pygame.draw.rect(screen, (90, 170, 90), rect, border_radius=6)
-            pygame.draw.rect(screen, (140, 210, 140), rect, width=2, border_radius=6)
-            upg_letter = big_font.render(upg["name"][0], True, (255, 255, 255))
-            screen.blit(upg_letter, (rect[0]+rect[2]//4, rect[1]+rect[3]//6))
+            # Draw as small icon using visual feedback system
+            visual_feedback.draw_icon_button(screen, rect, upg["name"][0], ButtonState.NORMAL)
         else:
-            # Draw as button
-            pygame.draw.rect(screen, (40, 90, 40), rect, border_radius=9)
-            pygame.draw.rect(screen, (100, 190, 100), rect, width=2, border_radius=9)
-            name = big_font.render(upg["name"], True, (220, 255, 180))
-            desc = small_font.render(upg["desc"] + f" (Cost: ${upg['cost']})", True, (200, 255, 200))
-            status = small_font.render("PURCHASED" if upg["purchased"] else "AVAILABLE", True, (190, 255, 190) if not upg["purchased"] else (210, 210, 210))
-            screen.blit(name, (rect[0] + int(w*0.01), rect[1] + int(h*0.01)))
-            screen.blit(desc, (rect[0] + int(w*0.01), rect[1] + int(h*0.04)))
-            screen.blit(status, (rect[0] + int(w*0.24), rect[1] + int(h*0.04)))
+            # Determine button state
+            if upg['cost'] > game_state.money:
+                button_state = ButtonState.DISABLED
+            elif hasattr(game_state, 'hovered_upgrade_idx') and game_state.hovered_upgrade_idx == idx:
+                button_state = ButtonState.HOVER
+            else:
+                button_state = ButtonState.NORMAL
+            
+            # Draw upgrade button with consistent styling
+            visual_feedback.draw_button(
+                screen, rect, upg["name"], button_state, FeedbackStyle.BUTTON
+            )
+            
+            # Draw description and status
+            desc_color = (200, 255, 200) if button_state != ButtonState.DISABLED else (120, 150, 120)
+            desc = small_font.render(upg["desc"] + f" (Cost: ${upg['cost']})", True, desc_color)
+            status = small_font.render("AVAILABLE", True, desc_color)
+            screen.blit(desc, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
+            screen.blit(status, (rect.x + int(w*0.24), rect.y + int(h*0.04)))
 
     # --- Balance change display (after buying accounting software) ---
     # If accounting software was bought, show last balance change under Money
@@ -351,12 +358,34 @@ def draw_ui(screen, game_state, w, h):
     # Draw UI transitions (on top of everything else)
     draw_ui_transitions(screen, game_state, w, h, big_font)
 
-    # End Turn button (bottom center)
-    endturn_rect = game_state._get_endturn_rect(w, h)
-    pygame.draw.rect(screen, (140, 90, 90), endturn_rect, border_radius=12)
-    pygame.draw.rect(screen, (210, 110, 110), endturn_rect, width=4, border_radius=12)
-    et_text = big_font.render("END TURN (Space)", True, (255, 240, 240))
-    screen.blit(et_text, (endturn_rect[0] + int(w*0.01), endturn_rect[1] + int(h*0.015)))
+    # End Turn button (bottom center) - Enhanced with visual feedback
+    endturn_rect_tuple = game_state._get_endturn_rect(w, h)
+    endturn_rect = pygame.Rect(endturn_rect_tuple)
+    
+    # Determine button state
+    endturn_state = ButtonState.HOVER if hasattr(game_state, 'endturn_hovered') and game_state.endturn_hovered else ButtonState.NORMAL
+    
+    # Use visual feedback system with custom colors for end turn button
+    custom_colors = {
+        ButtonState.NORMAL: {
+            'bg': (140, 90, 90),
+            'border': (210, 110, 110),
+            'text': (255, 240, 240),
+            'shadow': (60, 40, 40)
+        },
+        ButtonState.HOVER: {
+            'bg': (160, 110, 110),
+            'border': (230, 130, 130),
+            'text': (255, 255, 255),
+            'shadow': (80, 60, 60),
+            'glow': (255, 200, 200, 40)
+        }
+    }
+    
+    visual_feedback.draw_button(
+        screen, endturn_rect, "END TURN (Space)", endturn_state, 
+        FeedbackStyle.BUTTON, custom_colors.get(endturn_state)
+    )
 
     # Messages log (bottom left) - Enhanced with scrollable history and minimize option
     log_x, log_y = int(w*0.04), int(h*0.74)

@@ -9,6 +9,7 @@ from sound_manager import SoundManager
 from opponents import create_default_opponents
 from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
+from overlay_manager import OverlayManager
 
 SCORE_FILE = "local_highscore.json"
 
@@ -123,6 +124,8 @@ class GameState:
         
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
+        self.hovered_action_idx = None
+        self.endturn_hovered = False
 
         # Scrollable event log feature
         self.scrollable_event_log_enabled = False
@@ -148,6 +151,14 @@ class GameState:
         self.enhanced_events_enabled = False  # Flag to enable new event types
         
         # Initialize game logger
+        self.logger = GameLogger(seed)
+        
+        # Initialize UI overlay management system
+        self.overlay_manager = OverlayManager()
+        
+        # Error tracking for easter egg beep system
+        self.error_history = []  # Track recent errors for pattern detection
+        self.last_error_beep_time = 0  # Prevent spam beeping
         self.logger = GameLogger(seed)
         
         # UI Transition System for smooth visual feedback
@@ -227,14 +238,24 @@ class GameState:
         
         # Check if we have enough AP and money
         if self.action_points < ap_cost:
-            self.messages.append(f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points}).")
+            error_msg = f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points})."
+            self.messages.append(error_msg)
+            
+            # Track error for easter egg detection
+            self.track_error(f"Insufficient AP: {action['name']}")
+            
             # Trigger first-time help for AP exhaustion
             if onboarding.should_show_mechanic_help('action_points_exhausted'):
                 onboarding.mark_mechanic_seen('action_points_exhausted')
             return False
         
         if self.money < action["cost"]:
-            self.messages.append("Not enough money for that action.")
+            error_msg = f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money})."
+            self.messages.append(error_msg)
+            
+            # Track error for easter egg detection
+            self.track_error(f"Insufficient money: {action['name']}")
+            
             return False
         
         # Execute the action
@@ -811,9 +832,16 @@ class GameState:
                         icon_rect = self._get_upgrade_icon_rect(idx, w, h)
                         self._create_upgrade_transition(idx, rect, icon_rect)
                     else:
-                        self.messages.append("Not enough money for upgrade.")
+                        error_msg = f"Not enough money for {upg['name']} (need ${upg['cost']}, have ${self.money})."
+                        self.messages.append(error_msg)
+                        
+                        # Track error for easter egg detection
+                        self.track_error(f"Insufficient money: {upg['name']}")
                 else:
-                    self.messages.append("Already purchased.")
+                    self.messages.append(f"{upg['name']} already purchased.")
+                    
+                    # Track error for easter egg detection
+                    self.track_error(f"Already purchased: {upg['name']}")
                 return None
 
         # End Turn button (bottom center)
@@ -850,13 +878,52 @@ class GameState:
         return None
 
     def check_hover(self, mouse_pos, w, h):
-        # Only check upgrades (for tooltip)
+        # Reset all hover states
+        self.hovered_upgrade_idx = None
+        self.hovered_action_idx = None
+        self.endturn_hovered = False
+        
+        # Check action buttons for hover
+        action_rects = self._get_action_rects(w, h)
+        for idx, rect in enumerate(action_rects):
+            if self._in_rect(mouse_pos, rect):
+                self.hovered_action_idx = idx
+                action = self.actions[idx]
+                # Show enhanced tooltip with cost and requirements
+                ap_cost = action.get("ap_cost", 1)
+                cost_str = f"${action['cost']}" if action['cost'] > 0 else "Free"
+                ap_str = f"{ap_cost} AP" if ap_cost > 1 else "1 AP"
+                
+                # Check if action is affordable
+                affordable = action['cost'] <= self.money and ap_cost <= self.action_points
+                status = "✓ Available" if affordable else "✗ Cannot afford"
+                
+                return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
+        
+        # Check upgrade buttons for hover
         u_rects = self._get_upgrade_rects(w, h)
         for idx, rect in enumerate(u_rects):
             if self._in_rect(mouse_pos, rect):
                 self.hovered_upgrade_idx = idx
-                return self.upgrades[idx]["desc"]
-        self.hovered_upgrade_idx = None
+                upgrade = self.upgrades[idx]
+                if not upgrade.get("purchased", False):
+                    # Enhanced tooltip for unpurchased upgrades
+                    affordable = upgrade['cost'] <= self.money
+                    status = "✓ Available" if affordable else "✗ Cannot afford"
+                    return f"{upgrade['name']}: {upgrade['desc']} (Cost: ${upgrade['cost']}) - {status}"
+                else:
+                    return f"{upgrade['name']}: {upgrade['desc']} (Purchased)"
+        
+        # Check end turn button for hover
+        endturn_rect = self._get_endturn_rect(w, h)
+        if self._in_rect(mouse_pos, endturn_rect):
+            self.endturn_hovered = True
+            ap_remaining = self.action_points
+            if ap_remaining > 0:
+                return f"End Turn ({ap_remaining} AP remaining - these will be wasted!)"
+            else:
+                return "End Turn (All AP spent efficiently)"
+        
         return None
 
     def _get_action_rects(self, w, h):
@@ -1362,3 +1429,120 @@ class GameState:
         y = (1-t)**2 * start_y + 2*(1-t)*t * mid_y + t**2 * end_y
         
         return (int(x), int(y))
+    
+    def track_error(self, error_message: str) -> bool:
+        """
+        Track an error for the easter egg beep system.
+        
+        Args:
+            error_message: The error message that occurred
+            
+        Returns:
+            bool: True if this triggers the easter egg (3 repeated identical errors)
+        """
+        import pygame
+        
+        current_time = pygame.time.get_ticks()
+        
+        # Add error to overlay manager (which handles the logic)
+        should_beep = self.overlay_manager.add_error(error_message, current_time // (1000 // 30))
+        
+        # Play easter egg beep if triggered and enough time has passed
+        if should_beep and (current_time - self.last_error_beep_time) > 2000:  # 2 second cooldown
+            self.sound_manager.play_error_beep()
+            self.last_error_beep_time = current_time
+            self.messages.append("🔊 Error pattern detected! (Easter egg activated)")
+            return True
+            
+        return False
+    
+    def log_ui_interaction(self, interaction_type: str, element_id: str, details: dict = None):
+        """
+        Log UI interactions for accessibility and debugging.
+        
+        Args:
+            interaction_type: Type of interaction (click, hover, keyboard, etc.)
+            element_id: ID of the UI element
+            details: Additional details about the interaction
+        """
+        log_data = {
+            'type': interaction_type,
+            'element': element_id,
+            'turn': self.turn,
+            'timestamp': getattr(pygame.time, 'get_ticks', lambda: 0)()
+        }
+        
+        if details:
+            log_data.update(details)
+            
+        # Could extend this to write to accessibility logs if needed
+        # For now, just track in memory for potential error detection
+        if hasattr(self, 'ui_interaction_log'):
+            self.ui_interaction_log.append(log_data)
+        else:
+            self.ui_interaction_log = [log_data]
+    
+    def handle_insufficient_resources(self, resource_type: str, required: int, available: int) -> bool:
+        """
+        Handle cases where player tries to perform action without sufficient resources.
+        Provides standardized error messages and tracking.
+        
+        Args:
+            resource_type: Type of resource (money, action_points, staff, etc.)
+            required: Amount required
+            available: Amount available
+            
+        Returns:
+            bool: True if error was tracked (for potential easter egg)
+        """
+        error_msg = f"Insufficient {resource_type}: need {required}, have {available}"
+        
+        # Add user-friendly message to game log
+        if resource_type == "money":
+            self.messages.append(f"Need ${required}, but only have ${available}")
+        elif resource_type == "action_points":
+            self.messages.append(f"Need {required} AP, but only have {available} remaining")
+        elif resource_type == "staff":
+            self.messages.append(f"Need {required} staff, but only have {available}")
+        else:
+            self.messages.append(f"Need {required} {resource_type}, but only have {available}")
+        
+        # Track for easter egg detection
+        return self.track_error(error_msg)
+    
+    def validate_action_requirements(self, action_index: int) -> tuple[bool, str]:
+        """
+        Validate if an action can be performed, with detailed error reporting.
+        
+        Args:
+            action_index: Index of action to validate
+            
+        Returns:
+            tuple[bool, str]: (can_perform, error_message)
+        """
+        if action_index >= len(self.actions):
+            return False, "Invalid action"
+            
+        action = self.actions[action_index]
+        
+        # Check money requirement
+        cost = action.get("cost", 0)
+        if cost > self.money:
+            self.handle_insufficient_resources("money", cost, self.money)
+            return False, f"Insufficient money: need ${cost}, have ${self.money}"
+        
+        # Check action points requirement
+        ap_cost = action.get("ap_cost", 1)
+        if ap_cost > self.action_points:
+            self.handle_insufficient_resources("action_points", ap_cost, self.action_points)
+            return False, f"Insufficient action points: need {ap_cost}, have {self.action_points}"
+        
+        # Check if action is available (using action rules system)
+        from action_rules import ActionRules
+        action_rules = ActionRules()
+        if not action_rules.is_action_available(action["name"], self):
+            error_msg = f"Action '{action['name']}' not available"
+            self.track_error(error_msg)
+            return False, error_msg
+        
+        return True, "OK"
