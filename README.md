@@ -14,11 +14,12 @@ A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *P
 ### Requirements
 - Python 3.8+
 - [pygame](https://www.pygame.org/)
+- [numpy](https://numpy.org/) (for sound effects)
 
 ### Installation & Setup
 ```sh
-# Install core dependency
-pip install pygame
+# Install core dependencies
+pip install pygame numpy
 
 # Or install all dependencies (including testing tools)
 pip install -r requirements.txt

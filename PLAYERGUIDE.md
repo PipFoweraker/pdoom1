@@ -12,10 +12,12 @@ A satirical strategy game about managing an AI safety lab while competing agains
 ## Quick Setup
 
 1. **Install Python 3.8+** (if not already installed)
-2. **Install pygame**: `pip install pygame`
+2. **Install pygame and numpy**: `pip install pygame numpy`
 3. **Run the game**: `python main.py`
 
 That's it! The game will open with a main menu.
+
+**Note**: numpy is required for sound effects. If you encounter sound-related warnings, ensure numpy is installed.
 
 ---
 
