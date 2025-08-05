@@ -217,7 +217,8 @@ class EndGameScenariosManager:
         """Select the most appropriate scenario from available options."""
         # For now, use random selection, but this could be enhanced with
         # additional game state analysis (resource levels, specific events, etc.)
-        random.seed(game_state.seed + game_state.turn)  # Deterministic based on game
+        seed_value = hash(str(game_state.seed) + str(game_state.turn))  # Deterministic based on game
+        random.seed(seed_value)
         return random.choice(scenarios)
     
     def _create_fallback_scenario(self, game_state, cause: str, time_period: str) -> EndGameScenario:
