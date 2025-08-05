@@ -1475,6 +1475,139 @@ def draw_tutorial_overlay(screen, tutorial_message, w, h):
     return button_rect
 
 
+def draw_hiring_dialog(screen, hiring_dialog, w, h):
+    """
+    Draw the employee hiring dialog with available employee subtypes for selection.
+    
+    Args:
+        screen: pygame surface to draw on
+        hiring_dialog: dict with hiring dialog state including available_subtypes
+        w, h: screen width and height
+        
+    Returns:
+        List of rects for each employee option and dismiss button for click detection
+    """
+    if not hiring_dialog:
+        return []
+        
+    # Create semi-transparent background overlay
+    overlay = pygame.Surface((w, h))
+    overlay.set_alpha(180)
+    overlay.fill((0, 0, 0))
+    screen.blit(overlay, (0, 0))
+    
+    # Dialog dimensions
+    dialog_width = int(w * 0.8)
+    dialog_height = int(h * 0.85)
+    dialog_x = (w - dialog_width) // 2
+    dialog_y = (h - dialog_height) // 2
+    
+    # Dialog background
+    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+    pygame.draw.rect(screen, (40, 50, 60), dialog_rect, border_radius=10)
+    pygame.draw.rect(screen, (100, 150, 200), dialog_rect, width=3, border_radius=10)
+    
+    # Fonts
+    title_font = pygame.font.Font(None, int(h * 0.04))
+    desc_font = pygame.font.Font(None, int(h * 0.025))
+    employee_font = pygame.font.Font(None, int(h * 0.028))
+    button_font = pygame.font.Font(None, int(h * 0.025))
+    
+    # Title
+    title = hiring_dialog["title"]
+    title_surface = title_font.render(title, True, (255, 255, 255))
+    title_rect = title_surface.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
+    screen.blit(title_surface, title_rect)
+    
+    # Description
+    description = hiring_dialog["description"]
+    desc_surface = desc_font.render(description, True, (200, 200, 200))
+    desc_rect = desc_surface.get_rect(centerx=dialog_rect.centerx, y=title_rect.bottom + 15)
+    screen.blit(desc_surface, desc_rect)
+    
+    # Employee options area
+    options_start_y = desc_rect.bottom + 30
+    option_height = 80
+    option_spacing = 10
+    clickable_rects = []
+    
+    available_subtypes = hiring_dialog["available_subtypes"]
+    
+    for i, subtype_info in enumerate(available_subtypes):
+        subtype_data = subtype_info["data"]
+        affordable = subtype_info["affordable"]
+        
+        # Option background
+        option_y = options_start_y + i * (option_height + option_spacing)
+        option_rect = pygame.Rect(dialog_x + 20, option_y, dialog_width - 40, option_height)
+        
+        # Color based on affordability
+        if affordable:
+            bg_color = (60, 80, 100)
+            border_color = (120, 180, 240)
+            text_color = (255, 255, 255)
+        else:
+            bg_color = (40, 40, 40)
+            border_color = (80, 80, 80)
+            text_color = (150, 150, 150)
+        
+        pygame.draw.rect(screen, bg_color, option_rect, border_radius=5)
+        pygame.draw.rect(screen, border_color, option_rect, width=2, border_radius=5)
+        
+        # Employee name
+        name_surface = employee_font.render(subtype_data["name"], True, text_color)
+        name_rect = name_surface.get_rect(x=option_rect.x + 15, y=option_rect.y + 10)
+        screen.blit(name_surface, name_rect)
+        
+        # Cost and AP info
+        cost_text = f"${subtype_data['cost']} • {subtype_data['ap_cost']} AP"
+        cost_surface = button_font.render(cost_text, True, text_color)
+        cost_rect = cost_surface.get_rect(x=option_rect.right - 15 - cost_surface.get_width(), y=option_rect.y + 10)
+        screen.blit(cost_surface, cost_rect)
+        
+        # Description
+        desc_lines = wrap_text(subtype_data["description"], button_font, dialog_width - 80)
+        for j, line in enumerate(desc_lines[:2]):  # Limit to 2 lines
+            line_surface = button_font.render(line, True, text_color)
+            line_y = name_rect.bottom + 5 + j * (button_font.get_height() + 2)
+            screen.blit(line_surface, (option_rect.x + 15, line_y))
+        
+        # Store clickable rect with subtype ID
+        if affordable:
+            clickable_rects.append({
+                'rect': option_rect,
+                'subtype_id': subtype_info["id"],
+                'type': 'employee_option'
+            })
+    
+    # Cancel/Dismiss button
+    button_width = 120
+    button_height = 40
+    button_x = dialog_rect.centerx - button_width // 2
+    button_y = dialog_rect.bottom - 60
+    cancel_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    pygame.draw.rect(screen, (100, 60, 60), cancel_rect, border_radius=5)
+    pygame.draw.rect(screen, (160, 100, 100), cancel_rect, width=2, border_radius=5)
+    
+    cancel_text = button_font.render("Cancel", True, (255, 255, 255))
+    text_rect = cancel_text.get_rect(center=cancel_rect.center)
+    screen.blit(cancel_text, text_rect)
+    
+    clickable_rects.append({
+        'rect': cancel_rect,
+        'type': 'cancel'
+    })
+    
+    # Instructions
+    instructions = "Click an employee to hire, or Cancel to dismiss"
+    inst_surface = pygame.font.Font(None, int(h * 0.02)).render(instructions, True, (150, 150, 150))
+    inst_rect = inst_surface.get_rect(centerx=dialog_rect.centerx, y=cancel_rect.bottom + 5)
+    screen.blit(inst_surface, inst_rect)
+    
+    return clickable_rects
+
+
 def draw_tutorial_overlay(screen, tutorial_step, w, h):
     """
     Draw the tutorial overlay for onboarding new players.

@@ -144,6 +144,9 @@ class GameState:
         self.tutorial_shown_milestones = set()  # Track which milestone tutorials have been shown
         self.pending_tutorial_message = None  # Current tutorial message waiting to be shown
         self.first_game_launch = True  # Track if this is the first game launch
+        
+        # Employee hiring dialog system
+        self.pending_hiring_dialog = None  # Current hiring dialog waiting for player selection
 
         # Copy modular content
         self.actions = [dict(a) for a in ACTIONS]
@@ -1569,6 +1572,69 @@ class GameState:
             self.tutorial_shown_milestones.add(milestone_id)
             self.pending_tutorial_message = None
             self.save_tutorial_settings()
+    
+    def _trigger_hiring_dialog(self):
+        """Trigger the employee hiring dialog with available employee subtypes."""
+        from employee_subtypes import get_available_subtypes, get_hiring_complexity_level
+        
+        # Get available employee subtypes based on current game state
+        available_subtypes = get_available_subtypes(self)
+        complexity_level = get_hiring_complexity_level(self)
+        
+        if not available_subtypes:
+            self.messages.append("No employees available for hiring at this time.")
+            return
+        
+        # Set up the hiring dialog state
+        self.pending_hiring_dialog = {
+            "available_subtypes": available_subtypes,
+            "complexity_level": complexity_level,
+            "title": f"Hire Employee - {complexity_level['description']}",
+            "description": complexity_level['complexity_note']
+        }
+    
+    def select_employee_subtype(self, subtype_id):
+        """Handle player selection of an employee subtype."""
+        if not self.pending_hiring_dialog:
+            return False, "No hiring dialog active."
+        
+        # Find the selected subtype
+        selected_subtype = None
+        for subtype_info in self.pending_hiring_dialog["available_subtypes"]:
+            if subtype_info["id"] == subtype_id:
+                selected_subtype = subtype_info
+                break
+        
+        if not selected_subtype:
+            return False, f"Invalid employee subtype: {subtype_id}"
+        
+        if not selected_subtype["affordable"]:
+            return False, f"Cannot afford {selected_subtype['data']['name']} - need ${selected_subtype['data']['cost']} and {selected_subtype['data']['ap_cost']} AP"
+        
+        # Deduct costs
+        subtype_data = selected_subtype["data"]
+        self.money -= subtype_data["cost"]
+        self.action_points -= subtype_data["ap_cost"]
+        
+        # Apply employee effects
+        from employee_subtypes import apply_subtype_effects
+        success, message = apply_subtype_effects(self, subtype_id)
+        
+        if success:
+            self.messages.append(message)
+            # Clear the hiring dialog
+            self.pending_hiring_dialog = None
+            return True, message
+        else:
+            # Refund if something went wrong
+            self.money += subtype_data["cost"]
+            self.action_points += subtype_data["ap_cost"]
+            return False, message
+    
+    def dismiss_hiring_dialog(self):
+        """Dismiss the hiring dialog without making a selection."""
+        if self.pending_hiring_dialog:
+            self.pending_hiring_dialog = None
     
     def _create_upgrade_transition(self, upgrade_idx, start_rect, end_rect):
         """Create a smooth transition animation for an upgrade moving from button to icon."""
