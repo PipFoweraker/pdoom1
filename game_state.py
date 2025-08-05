@@ -138,6 +138,11 @@ class GameState:
         
         # Activity log minimization feature
         self.activity_log_minimized = False  # Whether activity log is currently minimized
+        
+        # Activity log drag/move functionality
+        self.activity_log_being_dragged = False  # Whether activity log is being dragged
+        self.activity_log_drag_offset = (0, 0)  # Offset from mouse to log position when dragging starts
+        self.activity_log_position = (0, 0)  # Custom position offset for activity log (default 0,0 means original position)
 
         # Tutorial and onboarding system
         self.tutorial_enabled = True  # Whether tutorial is enabled (default True for new players)
@@ -1037,6 +1042,31 @@ class GameState:
         self._add('doom', spike)
 
     def handle_click(self, mouse_pos, w, h):
+        # Activity log drag functionality (moveable by default) - Handle FIRST to avoid conflicts
+        activity_log_rect = self._get_activity_log_rect(w, h)
+        if self._in_rect(mouse_pos, activity_log_rect):
+            # Don't start drag if clicking on minimize/expand buttons
+            if "compact_activity_display" in self.upgrade_effects:
+                if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
+                    expand_rect = self._get_activity_log_expand_button_rect(w, h)
+                    if self._in_rect(mouse_pos, expand_rect):
+                        self.activity_log_minimized = False
+                        self.messages.append("Activity log expanded.")
+                        return None  # Button click handled
+                elif self.scrollable_event_log_enabled:
+                    minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
+                    if self._in_rect(mouse_pos, minimize_rect):
+                        self.activity_log_minimized = True
+                        self.messages.append("Activity log minimized.")
+                        return None  # Button click handled
+            
+            # Start dragging the activity log
+            log_x, log_y = self._get_activity_log_base_position(w, h)
+            self.activity_log_being_dragged = True
+            self.activity_log_drag_offset = (mouse_pos[0] - (log_x + self.activity_log_position[0]), 
+                                           mouse_pos[1] - (log_y + self.activity_log_position[1]))
+            return None
+
         # Actions (left)
         a_rects = self._get_action_rects(w, h)
         for idx, rect in enumerate(a_rects):
@@ -1109,30 +1139,52 @@ class GameState:
             self.messages.append(f"Sound {status}")
             return None
 
-        # Activity log minimize/expand button (if compact display upgrade is purchased)
-        if "compact_activity_display" in self.upgrade_effects:
-            if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
-                # Expand button
-                expand_rect = self._get_activity_log_expand_button_rect(w, h)
-                if self._in_rect(mouse_pos, expand_rect):
-                    self.activity_log_minimized = False
-                    self.messages.append("Activity log expanded.")
-                    return None
-            elif self.scrollable_event_log_enabled:
-                # Minimize button
-                minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
-                if self._in_rect(mouse_pos, minimize_rect):
-                    self.activity_log_minimized = True
-                    self.messages.append("Activity log minimized.")
-                    return None
-
         return None
+
+    def handle_mouse_motion(self, mouse_pos, w, h):
+        """Handle mouse motion events for dragging functionality"""
+        if self.activity_log_being_dragged:
+            # Update activity log position based on mouse movement
+            new_x = mouse_pos[0] - self.activity_log_drag_offset[0]
+            new_y = mouse_pos[1] - self.activity_log_drag_offset[1]
+            
+            # Get base position to calculate offset
+            base_x, base_y = self._get_activity_log_base_position(w, h)
+            
+            # Constrain position to stay within screen bounds
+            log_width = int(w * 0.44)
+            log_height = int(h * 0.22)
+            
+            # Calculate new position with constraints
+            new_offset_x = max(-base_x, min(w - log_width - base_x, new_x - base_x))
+            new_offset_y = max(-base_y, min(h - log_height - base_y, new_y - base_y))
+            
+            self.activity_log_position = (new_offset_x, new_offset_y)
+
+    def handle_mouse_release(self, mouse_pos, w, h):
+        """Handle mouse release events to stop dragging"""
+        if self.activity_log_being_dragged:
+            self.activity_log_being_dragged = False
+            self.activity_log_drag_offset = (0, 0)
+            return True  # Indicate that a drag operation was completed
+        return False
 
     def check_hover(self, mouse_pos, w, h):
         # Reset all hover states
         self.hovered_upgrade_idx = None
         self.hovered_action_idx = None
         self.endturn_hovered = False
+        
+        # Check activity log area for hover FIRST (highest priority for specific interactions)
+        activity_log_rect = self._get_activity_log_rect(w, h)
+        if self._in_rect(mouse_pos, activity_log_rect):
+            # Show tooltip about minimization upgrade if not purchased
+            if "compact_activity_display" not in self.upgrade_effects:
+                return "You may purchase the ability to minimise this for $150!"
+            elif hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
+                return "Activity Log (minimized) - Click expand button to show full log"
+            else:
+                return "Activity Log - Click minimize button to reduce screen space"
         
         # Check action buttons for hover
         action_rects = self._get_action_rects(w, h)
@@ -1254,8 +1306,7 @@ class GameState:
 
     def _get_activity_log_minimize_button_rect(self, w, h):
         """Get rectangle for the activity log minimize button (only when scrollable log is enabled)"""
-        log_x = int(w*0.04)
-        log_y = int(h*0.74)
+        log_x, log_y = self._get_activity_log_current_position(w, h)
         log_width = int(w * 0.44)
         button_size = int(h * 0.025)
         button_x = log_x + log_width - 30
@@ -1264,8 +1315,7 @@ class GameState:
 
     def _get_activity_log_expand_button_rect(self, w, h):
         """Get rectangle for the activity log expand button (only when log is minimized)"""
-        log_x = int(w*0.04)
-        log_y = int(h*0.74)
+        log_x, log_y = self._get_activity_log_current_position(w, h)
         
         # Estimate title width based on character count (avoiding pygame dependency in tests)
         title_width = len("Activity Log") * int(h*0.015)  # Rough character width estimate
@@ -1274,6 +1324,32 @@ class GameState:
         button_x = log_x + title_width + 10
         button_y = log_y
         return (button_x, button_y, button_size, button_size)
+
+    def _get_activity_log_rect(self, w, h):
+        """Get rectangle for the entire activity log area for hover detection"""
+        log_x, log_y = self._get_activity_log_current_position(w, h)
+        
+        if (hasattr(self, 'activity_log_minimized') and 
+            self.activity_log_minimized and 
+            "compact_activity_display" in self.upgrade_effects):
+            # Minimized log - small title bar area
+            title_width = len("Activity Log") * int(h*0.015)
+            bar_height = int(h * 0.04)
+            return (log_x - 5, log_y - 5, title_width + 50, bar_height)
+        else:
+            # Full log area
+            log_width = int(w * 0.44)
+            log_height = int(h * 0.22)
+            return (log_x - 5, log_y - 5, log_width + 10, log_height + 10)
+
+    def _get_activity_log_base_position(self, w, h):
+        """Get the base position of activity log (before any drag offset)"""
+        return (int(w*0.04), int(h*0.74))
+
+    def _get_activity_log_current_position(self, w, h):
+        """Get the current position of activity log (including drag offset)"""
+        base_x, base_y = self._get_activity_log_base_position(w, h)
+        return (base_x + self.activity_log_position[0], base_y + self.activity_log_position[1])
 
     def _in_rect(self, pt, rect):
         x, y = pt
