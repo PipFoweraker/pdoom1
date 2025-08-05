@@ -153,6 +153,19 @@ class GameState:
         self.pending_popup_events = []  # Events waiting for player action
         self.enhanced_events_enabled = False  # Flag to enable new event types
         
+        # Action delays system - NEW FEATURE
+        self.delayed_actions = []  # List of actions resolving after N turns
+        
+        # Daily news feed system - NEW FEATURE  
+        self.daily_news_enabled = True  # Enable daily news feed
+        self.news_history = []  # Track past news for variety
+        
+        # Spend tracking system - NEW FEATURE
+        self.total_spend_this_turn = 0  # Track total spending per turn
+        self.multiple_spend_turns = 0  # Count turns with multiple spends
+        self.show_spend_box = False  # Whether to show the spend display box
+        self.spend_box_permanent = False  # Whether the spend box should be permanent
+        
         # Initialize game logger
         self.logger = GameLogger(seed)
         
