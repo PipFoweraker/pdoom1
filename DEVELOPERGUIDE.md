@@ -5,6 +5,24 @@ Welcome, contributors and modders! This guide explains how to develop, test, and
 For **players**, see the [Player Guide](PLAYERGUIDE.md).  
 For **installation and troubleshooting**, see the [README](README.md).
 
+## Table of Contents
+- [Development Setup](#development-setup) (Line 28)
+- [Project Structure](#project-structure) (Line 53)
+- [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 75)
+- [Opponents System Architecture](#opponents-system-architecture) (Line 271)
+- [Onboarding System Architecture](#onboarding-system-architecture) (Line 331)
+- [Testing Framework](#testing-framework) (Line 460)
+- [Adding New Content](#adding-new-content) (Line 516)
+- [Enhanced Event System Architecture](#enhanced-event-system-architecture) (Line 647)
+- [Milestone Events System](#milestone-events-system) (Line 727)
+- [Code Style & Guidelines](#code-style--guidelines) (Line 807)
+- [Game Logging System](#game-logging-system) (Line 828)
+- [Release & Deployment](#release--deployment) (Line 857)
+- [Milestone-Driven Special Events & Static Effects System](#milestone-driven-special-events--static-effects-system) (Line 916)
+- [Architecture Notes](#architecture-notes) (Line 1034)
+- [Tutorial & Onboarding System Architecture](#tutorial--onboarding-system-architecture) (Line 1095)
+- [Need Help?](#need-help) (Line 1177)
+
 ---
 
 ## Development Setup
@@ -71,17 +89,11 @@ P(Doom) features a modular UI overlay system inspired by Papers Please, SimPark,
 
 #### Visual Feedback System (`visual_feedback.py`)
 - **Standardized Button States**: Normal, Hover, Pressed, Disabled, Focused
-- **Button Depression Effects**: 3-pixel depth shift when pressed
-- **Hover Glow Effects**: Subtle highlighting with configurable intensity
-- **Accessibility Support**: High contrast mode, font scaling (0.5x-2.0x), focus rings
-- **Low-Poly Styling**: Consistent rounded corners, gradient backgrounds, retro aesthetics
-- **Tooltip System**: Accessible tooltips with automatic edge detection
-
-- **Integration with Game State** - Enhanced with improved blob positioning system
-- **Error Tracking**: `GameState.track_error()` integrates with overlay manager for easter egg detection
-- **Resource Validation**: `GameState.validate_action_requirements()` provides detailed error reporting
-- **Hover State Management**: Enhanced tooltips showing cost, AP requirements, and availability
-- **Visual State Sync**: Button states automatically reflect game state (affordable, selected, etc.)
+- **Button Effects**: 3-pixel depth shift when pressed, hover glow effects
+- **Accessibility**: High contrast mode, font scaling (0.5x-2.0x), focus rings
+- **Low-Poly Styling**: Rounded corners, gradient backgrounds, retro aesthetics
+- **Tooltip System**: Auto-edge detection tooltips
+- **Game State Integration**: Error tracking, resource validation, hover state management
 
 #### Enhanced Employee Blob Positioning System
 
@@ -469,29 +481,18 @@ pytest tests/ -v
 
 ### Test Coverage
 
-Current test coverage includes 233 automated tests covering:
+**233 automated tests** covering all major systems:
 
-- ✅ **Onboarding & Tutorial System** - Interactive tutorials, first-time help, progress tracking (8 tests)
-- ✅ **Enhanced Event System** - Event class, deferred events, popup handling, expiration logic (27 tests)
-- ✅ **Event Log Management** - Activity log clears each turn, shows only current events
-- ✅ **Game State Management** - Resource management and state transitions
-- ✅ **Upgrade System** - Purchase logic and effect activation  
-- ✅ **Game Logging** - Comprehensive session logging
-- ✅ **Core Game Mechanics** - Action execution, turn progression, game-over conditions
-- ✅ **Opponents System** - AI behavior, discovery mechanics, intelligence gathering (26 tests)
-- ✅ **Compute & Sound** - Employee productivity and audio systems
-- ✅ **Bug Reporting** - Error reporting and privacy features
-- ✅ **Milestone-Driven Events** - Manager system, board members, accounting software, static effects (14 tests)
-- ✅ **Tutorial & Onboarding System** - Context-sensitive tutorials, milestone triggers, preference persistence (8 tests)
+- **Core Systems**: Game state, action execution, turn progression, upgrades
+- **UI Systems**: Onboarding (8 tests), visual feedback, overlay management
+- **Event Systems**: Enhanced events (27 tests), milestone events (14 tests), event log
+- **Advanced Features**: Opponents system (26 tests), tutorial system (8 tests)
+- **Infrastructure**: Game logging, bug reporting, version management
 
 ### Adding New Tests
 
-1. Create test files in `tests/` directory named `test_*.py`
-2. Test functions should be named `test_*`
-3. Use existing tests as templates for structure and style
-4. Always add tests for new features or bug fixes
+Create test files in `tests/` directory following existing patterns:
 
-Example test structure:
 ```python
 import unittest
 from game_state import GameState

@@ -1,5 +1,15 @@
 # Contributing Guidelines
 
+## Table of Contents
+- [Copilot and Automation Instructions](#copilot-and-automation-instructions) (Line 13)
+- [UI Enhancement Development Protocols](#ui-enhancement-development-protocols) (Line 21)
+  - [Keyboard Shortcut Implementation](#keyboard-shortcut-implementation) (Line 25)
+  - [Action Point (AP) Feedback System](#action-point-ap-feedback-system) (Line 32)
+  - [Employee Blob Positioning](#employee-blob-positioning) (Line 38)
+  - [Testing Requirements](#testing-requirements) (Line 44)
+  - [Sound Integration](#sound-integration) (Line 50)
+  - [Documentation Updates](#documentation-updates) (Line 56)
+
 ## Copilot and Automation Instructions
 
 - Always install dependencies (`pip install -r requirements.txt`) before running code or tests.

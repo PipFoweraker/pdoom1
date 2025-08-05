@@ -7,6 +7,25 @@ A satirical strategy game about managing an AI safety lab while competing agains
 
 **Release Status**: This game follows [Semantic Versioning](https://semver.org/). Current development is targeting v0.1.0 as the first official stable release. See the [README](README.md#versioning-and-releases) for detailed versioning policy.
 
+## Table of Contents
+- [Quick Setup](#quick-setup) (Line 31)
+- [New Player Tutorial & Help System](#new-player-tutorial--help-system) (Line 42)
+- [How to Play](#how-to-play) (Line 94)
+- [Milestone Events & Employee Management](#milestone-events--employee-management) (Line 120)
+- [Controls & Interface](#controls--interface) (Line 151)
+- [Visual Feedback & UI Transitions](#visual-feedback--ui-transitions) (Line 184)
+- [Action Points Strategy](#action-points-strategy) (Line 211)
+- [Competitors & Intelligence](#competitors--intelligence) (Line 261)
+- [Screen Layout](#screen-layout) (Line 298)
+- [Actions You Can Take](#actions-you-can-take) (Line 316)
+- [Upgrade Strategy](#upgrade-strategy) (Line 330)
+- [Milestone-Driven Special Events](#milestone-driven-special-events) (Line 343)
+- [Game Events & Tips](#game-events--tips) (Line 421)
+- [Game Over Conditions](#game-over-conditions) (Line 479)
+- [Seeds & High Scores](#seeds--high-scores) (Line 489)
+- [End-Game Menu](#end-game-menu) (Line 496)
+- [Need Help?](#need-help) (Line 513)
+
 ---
 
 ## Quick Setup
@@ -100,28 +119,19 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 
 ## Milestone Events & Employee Management
 
-As your organization grows, you'll encounter special milestone events that change how your lab operates:
+As your organization grows, you'll encounter special milestone events:
 
-### Manager System (9th Employee Milestone)
-- **Trigger**: Special event triggers when you reach 9 employees for the first time
-- **Effect**: 
-  - Unlocks the "Hire Manager" action (costs $90, 1.5x normal staff cost)
-  - Provides notification about management requirements
-  - Manager milestone achieved when first manager is hired
-- **Management Rules**:
-  - First 9 employees work productively without management
-  - Employees beyond 9 require management or become unproductive (red slash overlay)
-  - Each Manager can oversee 9 additional employees
-  - Plan ahead: hire a Manager for every ~18 employees total
+### Manager System (9+ Employees)
+- **Trigger**: Unlocks at 9 employees, hire managers for $90 (1.5x normal cost)
+- **Rules**: Employees beyond 9 need management or become unproductive
+- **Visual**: Managers = green blobs, unmanaged = red slash overlay
 
-### Board Member Compliance (Spending Threshold)
-- **Trigger**: Spending more than $10,000 in a single turn without Accounting Software
-- **Effect**: 
-  - Installs 2 Board Members automatically for compliance monitoring
-  - Audit risk begins accumulating with reputation penalties over time
-  - "Search" action becomes available (20% success rate, costs $25 and 1 AP)
-  - Accumulating penalties: reputation loss and financial fines for non-compliance
-- **Prevention**: Purchase Accounting Software upgrade ($500) to prevent this milestone
+### Board Compliance (>$10K Spending)  
+- **Trigger**: Spend >$10K without Accounting Software
+- **Effect**: Installs board members, audit risk, "Search" action unlocked
+- **Prevention**: Purchase Accounting Software ($500) beforehand
+
+*For detailed milestone mechanics, see [Milestone-Driven Special Events](#milestone-driven-special-events) below.*
 
 ### Employee Types
 - **Regular Employees** (blue): Your standard workforce
@@ -229,8 +239,6 @@ The Action Points (AP) system creates strategic depth through resource managemen
 ### Visual Indicators
 - **AP Counter**: Displayed as "AP: 2/3" in the top resource bar
 - **Glow Effect**: AP counter glows yellow when Action Points are spent
-- **Button States**: Action buttons gray out when you lack sufficient AP
-- **Glow Effect**: AP counter glows yellow when you spend points
 - **Button States**: Action buttons gray out when you lack sufficient AP
 - **Cost Display**: Each action shows both money cost and AP cost
 

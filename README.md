@@ -9,6 +9,22 @@ A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *P
 - **[Developer Guide](DEVELOPERGUIDE.md)** - Contributing, code structure, and testing
 - **[Changelog](CHANGELOG.md)** - Version history and release notes
 
+## Table of Contents
+- [Quick Start](#quick-start) (Line 29)
+  - [Requirements](#requirements) (Line 31)
+  - [Installation & Setup](#installation--setup) (Line 35)
+  - [Run the Game](#run-the-game) (Line 44)
+- [Game Features](#game-features) (Line 51)
+- [Visual Feedback System](#visual-feedback-system) (Line 65)
+- [Tutorial & Onboarding System](#tutorial--onboarding-system) (Line 76)
+- [Troubleshooting](#troubleshooting) (Line 87)
+  - [Common Issues](#common-issues) (Line 89)
+  - [Error Logs](#error-logs) (Line 111)
+  - [Testing the Installation](#testing-the-installation) (Line 118)
+  - [Getting Help](#getting-help) (Line 130)
+  - [Dependencies](#dependencies) (Line 137)
+- [Versioning and Releases](#versioning-and-releases) (Line 152)
+
 ## Quick Start
 
 ### Requirements
@@ -33,152 +49,39 @@ The game will open with a main menu where you can choose game modes, access docu
 
 ## Game Features
 
-### Onboarding & Player Guidance
-- **Interactive Tutorial System**: Step-by-step guidance for new players covering all core mechanics
-- **Context-Sensitive Help**: Automatic first-time tips when encountering new game mechanics
-- **In-Game Help**: Press `H` key anytime to access the Player Guide
-- **Smart Onboarding**: Tutorial can be skipped and won't reappear once completed
-- **Progressive Disclosure**: Learn mechanics gradually as you encounter them in gameplay
+P(Doom) offers a rich strategy experience with sophisticated systems that evolve as you play:
 
-### Core Gameplay
-- **Resource Management**: Balance money, staff, reputation, and p(Doom) levels
-- **Action Points System**: Strategic action limitation with 3 Action Points per turn
-- **Action System**: Choose from various actions each turn to advance your strategy
-- **Research & Development**: Publish papers, buy compute, and advance AI safety
-- **Enhanced Event System**: Navigate unexpected challenges with advanced response options
-- **Milestone-Driven Special Events**: Unlock new mechanics as your organization grows
-- **Tutorial & Onboarding System**: Comprehensive guidance for new players with context-sensitive prompts
-- **End-Game Menu**: Comprehensive post-game options for relaunch, feedback, and bug reporting
+- **📚 Complete Tutorial System**: Interactive guidance for new players with context-sensitive help
+- **⚡ Strategic Action Points**: Resource management system that scales with your organization  
+- **🏢 Milestone Events**: Unlock new mechanics as your lab grows (managers, board oversight, etc.)
+- **🤖 AI Opponents**: Compete against 3 unique labs with hidden information and espionage
+- **📊 Enhanced Events**: Advanced crisis management with deferral and response options
+- **🎨 Visual Feedback**: Smooth UI transitions and clear state indicators
+- **♿ Accessibility**: Keyboard navigation, scalable text, and comprehensive help system
 
-### Milestone-Driven Special Events
-The game features a sophisticated milestone system that unlocks new mechanics and challenges as your organization scales:
-
-**Management Milestones:**
-- **Manager System**: Special event triggers at 9 employees, unlocking manager hiring (1.5x hiring cost)
-- **Team Clusters**: Each manager can oversee up to 9 employees effectively
-- **Static Effects**: Unmanaged employees beyond 9 become unproductive (red slash overlay)
-- **Visual Feedback**: Managers appear as green blobs vs blue employee blobs
-
-**Financial Oversight Milestones:**
-- **Board Member Installation**: Spend >$10,000 in a turn without accounting software triggers board oversight
-- **Compliance Monitoring**: Automatically installs 2 board members with audit powers
-- **Search Actions**: Unlock compliance searches with 20% success rate for various benefits
-- **Audit Risk**: Accumulating penalties for non-compliance (reputation loss, financial fines)
-
-**Upgrade Systems:**
-- **Accounting Software**: Visible right-panel upgrade ($500) enables cash flow tracking
-- **Compliance Prevention**: Purchasing accounting software blocks board member milestone
-- **Cash Flow UI**: Persistent balance change indicators when accounting software is active
-- **Compact Activity Display**: UI enhancement upgrade ($150) enables activity log minimization
-- **Smooth UI Transitions**: Visual feedback system with animated trails and glow effects
-
-### Enhanced Event System
-The game features a sophisticated event system that evolves as you play:
-
-**Event Types:**
-- **Normal Events**: Standard immediate events (existing gameplay)
-- **Popup Events**: Critical situations requiring immediate attention with multiple response options
-- **Deferred Events**: Events you can postpone for strategic timing, but they expire after several turns
-
-**Event Actions:**
-- **Accept**: Handle the event with full impact
-- **Defer**: Postpone the event for later (limited turns)
-- **Reduce**: Handle with reduced impact through quick response
-- **Dismiss**: Ignore the event (may have consequences)
-
-**Unlocking Enhanced Events:**
-- Enhanced event system unlocks automatically after turn 8
-- Provides popup overlays for critical events and a deferred events zone
-- Allows strategic management of multiple concurrent crises
-
-### Action Points System
-The game features a sophisticated Action Points (AP) system that creates strategic depth through resource management and staff scaling:
-
-**Basic Mechanics:**
-- **Base Action Points**: 3 AP per turn
-- **Staff Scaling**: Regular staff provide +0.5 AP each
-- **Admin Assistants**: Specialized staff providing +1.0 AP each
-- **Visual Feedback**: AP counter shows current/max AP with glow effects when spent
-- **Turn Reset**: AP automatically resets to calculated maximum at the start of each turn
-
-**Specialized Staff Types:**
-- **Admin Assistants**: High-cost staff (+1.0 AP bonus each) for maximum action capacity
-- **Research Staff**: Enable delegation of research actions (Safety Research, Governance Research)
-- **Operations Staff**: Enable delegation of operational actions (Buy Compute)
-
-**Delegation System:**
-- **Research Delegation**: Research actions can be delegated to research staff with 80% effectiveness
-- **Operations Delegation**: Operational actions can be delegated to ops staff, often with lower AP costs
-- **Auto-Delegation**: Actions are automatically delegated when beneficial (lower AP cost)
-- **Staff Requirements**: Each delegatable action requires minimum specialized staff
-
-**Strategic Implications:**
-- **Early Game**: Careful AP budgeting with limited 3-4 AP per turn
-- **Mid Game**: Strategic staff investment decisions between regular, admin, and specialized staff
-- **Late Game**: Complex staff compositions enabling high AP counts and efficient delegation
-- **Prioritization**: High-impact actions require careful AP planning and staff allocation
-
-### Opponents System
-Race against 3 competing AI labs, each with unique characteristics:
-- **TechCorp Labs**: Well-funded tech giant with aggressive timelines
-- **National AI Initiative**: Government-backed program with regulatory influence  
-- **Frontier Dynamics**: Secretive startup with mysterious backing
-
-**Intelligence Gathering:**
-- Use **Espionage** to discover competitors and gather basic intelligence
-- Unlock **Scout Opponent** (turn 5+) for focused intelligence operations
-- Reveal hidden stats: budget, researchers, lobbyists, compute resources, and progress
-- Monitor opponent activities and strategic decisions
-
-**Competitive Dynamics:**
-- Opponents spend budget on capabilities research, hiring, and lobbying
-- Track competitor progress toward dangerous AGI deployment (0-100%)
-- Game ends if any opponent reaches 100% progress
-- Opponent research contributes to global p(Doom) levels
+For complete gameplay details, see the **[Player Guide](PLAYERGUIDE.md)**.
 
 ## Visual Feedback System
 
-The game features a sophisticated visual feedback system that makes UI state changes clear and engaging:
+P(Doom) features smooth visual transitions and clear feedback:
 
-### Smooth UI Transitions
-- **Upgrade Animations**: When purchasing upgrades, watch them smoothly transition from buttons to icons
-- **Curved Arc Trails**: Visual trails show the path from the original button to its new icon position  
-- **Glow Effects**: Destination locations pulse with a green glow when transitions complete
-- **Extensible Design**: The system supports different UI elements for future enhancements
+- **Upgrade Animations**: Watch purchased upgrades smoothly transition to icons
+- **Action Point Glow**: Visual feedback when AP is spent
+- **UI State Changes**: Clear indicators for all interactions
+- **Accessibility**: High contrast, keyboard navigation, and scalable text
 
-### Visual Feedback Features
-- **Action Point Glow**: AP counter glows when Action Points are spent
-- **Cash Flow Indicators**: Balance changes display when accounting software is active
-- **Employee Animations**: Staff blob animations when hiring/firing
-- **Trail Effects**: Fading motion blur creates smooth visual continuity
-
-These animations provide immediate visual feedback to help players understand how their actions affect the game state, making UI interactions more intuitive and satisfying.
+For detailed UI guide, see the **[Player Guide](PLAYERGUIDE.md#visual-feedback--ui-transitions)**.
 
 ## Tutorial & Onboarding System
 
-The game features a comprehensive tutorial and onboarding system designed to help new players learn the mechanics progressively:
+P(Doom) includes comprehensive guidance for new players:
 
-### First-Time Player Experience
-- **Initial Tutorial**: Step-by-step overlay explaining core gameplay mechanics when starting your first game
-- **Context-Sensitive Prompts**: Automatic tutorials that trigger when new features are unlocked
-- **Non-Intrusive Design**: All tutorials can be dismissed immediately and won't interrupt experienced players
+- **Interactive Tutorial**: Step-by-step guidance on first playthrough
+- **Context-Sensitive Help**: Automatic tips for new mechanics
+- **In-Game Help**: Press `H` for instant access to the Player Guide
+- **Fully Optional**: Skip or disable if you prefer to learn by playing
 
-### Tutorial Features
-- **Manager System Tutorial**: Triggered when hiring your first manager (9+ employees)
-- **Board Member Tutorial**: Explains oversight mechanics when spending exceeds $10,000 without accounting software
-- **Enhanced Events Tutorial**: Introduces advanced event handling capabilities (unlocked after turn 8)
-- **Scrollable Log Tutorial**: Guides players through the enhanced activity tracking system (unlocked after turn 5)
-
-### Tutorial Settings
-- **Toggle On/Off**: Enable or disable tutorials in the Settings menu
-- **Persistent Preferences**: Tutorial settings are remembered between game sessions
-- **Per-Milestone Tracking**: Each tutorial is shown only once, even if tutorials are re-enabled
-- **Accessibility**: All tutorials support both mouse and keyboard interaction (Enter/Space/Escape to dismiss)
-
-### Player Control
-- **Skip Anytime**: Click "Got it!" or press Enter/Space/Escape to dismiss any tutorial
-- **Settings Access**: Tutorial status visible in main menu Settings and end-game Settings
-- **Clean Experience**: Experienced players can disable tutorials and enjoy uninterrupted gameplay
+For complete tutorial details, see the **[Player Guide](PLAYERGUIDE.md#new-player-tutorial--help-system)**.
 
 ## Troubleshooting
 
