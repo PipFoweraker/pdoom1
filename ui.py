@@ -127,8 +127,8 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
     
     Args:
         screen: pygame surface to draw on
-        title: string title to display at top of overlay
-        content: full text content to display (markdown rendered as plain text)
+        title: string title to display at top of overlay (can be None)
+        content: full text content to display (can be None)
         scroll_offset: vertical scroll position in pixels
         w, h: screen width and height for responsive layout
     
@@ -139,11 +139,17 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
     - Scroll indicators (up/down arrows) when content exceeds view area  
     - Responsive text sizing based on screen dimensions
     - Clear navigation instructions
+    - Defensive handling of None title/content values
     
     The overlay handles long documents by breaking them into lines and showing
     only the visible portion based on scroll_offset. Users can scroll with
     arrow keys to view the full document.
     """
+    # Defensive handling for None values
+    if title is None:
+        title = "Error: No Title"
+    if content is None:
+        content = "Error: No content available.\n\nThis appears to be a bug where overlay content was not properly initialized.\nPlease report this issue."
     # Overlay background - semi-transparent dark background
     overlay_surface = pygame.Surface((w, h))
     overlay_surface.set_alpha(240)
