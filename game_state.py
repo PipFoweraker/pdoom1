@@ -26,6 +26,8 @@ class GameState:
             # Track spending for board member trigger (only negative amounts)
             if val < 0:
                 self.spend_this_turn += abs(val)
+                # Play money spend sound for happy feedback
+                self.sound_manager.play_money_spend_sound()
             
             # Only record balance change if accounting software is bought
             if hasattr(self, "accounting_software_bought") and self.accounting_software_bought:
