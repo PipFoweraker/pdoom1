@@ -583,14 +583,20 @@ def main():
                                 first_time_help_close_button = None
                             else:
                                 # Allow normal game interactions when help is shown
-                                tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+                                result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+                                if result == 'play_sound':
+                                    game_state.sound_manager.play_ap_spend_sound()
+                                tooltip_text = result
                         # Check if tutorial overlay is active
                         elif game_state and game_state.pending_tutorial_message:
                             # Handle tutorial overlay clicks - any click dismisses the tutorial
                             game_state.dismiss_tutorial_message()
                         else:
                             # Regular game mouse handling
-                            tooltip_text = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+                            result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+                            if result == 'play_sound':
+                                game_state.sound_manager.play_ap_spend_sound()
+                            tooltip_text = result
                         
                 elif event.type == pygame.MOUSEMOTION:
                     # Handle overlay manager hover events first
@@ -702,10 +708,13 @@ def main():
                             elif event.key >= pygame.K_1 and event.key <= pygame.K_9 and game_state and not game_state.game_over:
                                 action_index = event.key - pygame.K_1  # Convert K_1 to 0, K_2 to 1, etc.
                                 if action_index < len(game_state.actions):
+                                    # Check if this would be an undo operation before calling
+                                    was_undo = action_index in game_state.selected_actions
+                                    
                                     # Try to execute the action using keyboard shortcut
                                     success = game_state.execute_action_by_keyboard(action_index)
-                                    if success:
-                                        # Play AP spend sound for successful action
+                                    if success and not was_undo:
+                                        # Play AP spend sound for successful new selections (not undos)
                                         game_state.sound_manager.play_ap_spend_sound()
                             
                             # 'H' key for help (Player Guide)
