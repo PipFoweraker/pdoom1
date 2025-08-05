@@ -331,9 +331,11 @@ class GameState:
         """Handle selecting (clicking) an action."""
         # Check if action is available (rules constraint)
         if action.get("rules") and not action["rules"](self):
+            error_msg = f"{action['name']} is not available yet."
+            self.messages.append(error_msg)
             return {
                 'success': False, 
-                'message': f"{action['name']} is not available yet.",
+                'message': error_msg,
                 'play_sound': False
             }
         
@@ -368,9 +370,11 @@ class GameState:
         
         # Check money availability
         if self.money < action["cost"]:
+            error_msg = f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money})."
+            self.messages.append(error_msg)
             return {
                 'success': False,
-                'message': f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money}).",
+                'message': error_msg,
                 'play_sound': False
             }
         
