@@ -422,7 +422,11 @@ def draw_ui(screen, game_state, w, h):
     )
 
     # Messages log (bottom left) - Enhanced with scrollable history and minimize option
-    log_x, log_y = int(w*0.04), int(h*0.74)
+    # Use current position (including any drag offset)
+    if hasattr(game_state, '_get_activity_log_current_position'):
+        log_x, log_y = game_state._get_activity_log_current_position(w, h)
+    else:
+        log_x, log_y = int(w*0.04), int(h*0.74)  # Fallback to original position
     
     # Check if activity log is minimized (only available with compact activity display upgrade)
     if (hasattr(game_state, 'activity_log_minimized') and 
