@@ -1648,4 +1648,195 @@ def draw_first_time_help(screen, help_content, w, h):
     return close_button_rect
 
 
+def draw_high_score_screen(screen, w, h, game_state, seed, submit_to_leaderboard):
+    """
+    Draw the high score screen with famous AI safety researchers and player score.
     
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height
+        game_state: GameState object with player's final stats
+        seed: Game seed used for this session
+        submit_to_leaderboard: boolean flag for leaderboard submission
+    
+    Features:
+    - Lists of famous (bowdlerised) AI safety researchers with high scores
+    - Player's current score prominently displayed
+    - New high score indication if applicable
+    - Leaderboard submission toggle (placeholder)
+    - Keyboard shortcuts instructions
+    """
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    subtitle_font = pygame.font.SysFont('Consolas', int(h*0.035))
+    score_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    player_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
+    instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    
+    # Colors
+    title_color = (255, 215, 0)  # Gold
+    subtitle_color = (200, 200, 255)
+    score_color = (220, 220, 220)
+    player_color = (100, 255, 100)  # Bright green for player
+    new_record_color = (255, 100, 100)  # Red for new record
+    instruction_color = (180, 180, 180)
+    
+    # Title
+    title_text = title_font.render("HIGH SCORES", True, title_color)
+    title_rect = title_text.get_rect(center=(w//2, int(h*0.08)))
+    screen.blit(title_text, title_rect)
+    
+    # Subtitle
+    subtitle_text = subtitle_font.render("Hall of Fame: AI Safety Research Leaders", True, subtitle_color)
+    subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
+    screen.blit(subtitle_text, subtitle_rect)
+    
+    # Famous AI Safety Researchers (bowdlerised names) with realistic turn counts
+    ai_researchers = [
+        ("Stuie Roswell", 47, "Author of 'Human Compatible'"),
+        ("Elliot Yudkowski", 43, "Founder of LessWrong"),
+        ("Nick Bolstrom", 41, "Oxford Future of Humanity Institute"),
+        ("Toby Ord-ish", 38, "Author of 'The Precipice'"),
+        ("Robin Hansson", 36, "George Mason University"),
+        ("Pauly Christano", 34, "AI Alignment Researcher"),
+        ("Dan Hendrickx", 32, "Anthropic AI Safety"),
+        ("Catherine Oliviera", 31, "DeepMind Safety Team"),
+        ("Geoffrey Hintonberg", 29, "Godfather of Deep Learning"),
+        ("Yoshy Bengiov", 28, "Montreal Institute for Learning")
+    ]
+    
+    # Player's score
+    player_turns = game_state.turn if game_state else 0
+    is_new_high_score = game_state and player_turns > game_state.highscore
+    
+    # Create combined score list with player
+    all_scores = []
+    for name, turns, desc in ai_researchers:
+        all_scores.append((name, turns, desc, False))
+    
+    # Add player score
+    player_name = f"YOU (Seed: {seed})"
+    player_desc = f"Final Resources: ${game_state.money if game_state else 0}, {game_state.staff if game_state else 0} staff, {game_state.reputation if game_state else 0} rep"
+    all_scores.append((player_name, player_turns, player_desc, True))
+    
+    # Sort by score (turns survived) descending
+    all_scores.sort(key=lambda x: x[1], reverse=True)
+    
+    # Display scores
+    start_y = int(h * 0.22)
+    line_height = int(h * 0.05)
+    
+    # Table headers
+    header_y = start_y
+    rank_header = score_font.render("RANK", True, subtitle_color)
+    name_header = score_font.render("RESEARCHER", True, subtitle_color)
+    turns_header = score_font.render("TURNS", True, subtitle_color)
+    
+    screen.blit(rank_header, (int(w*0.1), header_y))
+    screen.blit(name_header, (int(w*0.2), header_y))
+    screen.blit(turns_header, (int(w*0.5), header_y))
+    
+    # Underline for headers
+    pygame.draw.line(screen, subtitle_color, 
+                     (int(w*0.1), header_y + 30), 
+                     (int(w*0.9), header_y + 30), 2)
+    
+    # Display top 10 scores
+    display_count = min(10, len(all_scores))
+    for i in range(display_count):
+        name, turns, desc, is_player = all_scores[i]
+        y_pos = start_y + line_height + i * (line_height - 5)
+        
+        # Choose colors
+        if is_player:
+            if is_new_high_score and i == 0:
+                text_color = new_record_color
+                special_text = " ★ NEW RECORD! ★"
+            else:
+                text_color = player_color
+                special_text = ""
+        else:
+            text_color = score_color
+            special_text = ""
+        
+        # Rank
+        rank_text = score_font.render(f"{i+1}.", True, text_color)
+        screen.blit(rank_text, (int(w*0.1), y_pos))
+        
+        # Name (truncate if too long)
+        display_name = name if len(name) <= 25 else name[:22] + "..."
+        name_text = (player_font if is_player else score_font).render(display_name + special_text, True, text_color)
+        screen.blit(name_text, (int(w*0.2), y_pos))
+        
+        # Turns
+        turns_text = (player_font if is_player else score_font).render(str(turns), True, text_color)
+        screen.blit(turns_text, (int(w*0.5), y_pos))
+        
+        # Description (smaller font, to the right)
+        if desc and not is_player:
+            desc_text = instruction_font.render(desc, True, (160, 160, 160))
+            screen.blit(desc_text, (int(w*0.58), y_pos + 5))
+        elif is_player:
+            desc_text = instruction_font.render(desc, True, text_color)
+            screen.blit(desc_text, (int(w*0.58), y_pos + 5))
+    
+    # Leaderboard submission section
+    leaderboard_y = int(h * 0.75)
+    
+    # Checkbox for leaderboard submission
+    checkbox_size = int(h * 0.03)
+    checkbox_x = int(w * 0.1)
+    checkbox_y = leaderboard_y
+    checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
+    
+    # Draw checkbox
+    pygame.draw.rect(screen, (200, 200, 200), checkbox_rect, border_radius=3)
+    pygame.draw.rect(screen, (100, 100, 100), checkbox_rect, width=2, border_radius=3)
+    
+    if submit_to_leaderboard:
+        # Draw checkmark
+        pygame.draw.line(screen, (100, 255, 100), 
+                        (checkbox_x + 5, checkbox_y + checkbox_size//2),
+                        (checkbox_x + checkbox_size//3, checkbox_y + checkbox_size - 8), 3)
+        pygame.draw.line(screen, (100, 255, 100),
+                        (checkbox_x + checkbox_size//3, checkbox_y + checkbox_size - 8),
+                        (checkbox_x + checkbox_size - 5, checkbox_y + 5), 3)
+    
+    # Checkbox label
+    checkbox_label = score_font.render("Submit to Global Leaderboard", True, score_color)
+    screen.blit(checkbox_label, (checkbox_x + checkbox_size + 10, checkbox_y))
+    
+    # Placeholder notice
+    placeholder_text = instruction_font.render("(Feature coming soon - data stays local for now)", True, (140, 140, 140))
+    screen.blit(placeholder_text, (checkbox_x + checkbox_size + 10, checkbox_y + 25))
+    
+    # Continue button
+    button_width = int(w * 0.3)
+    button_height = int(h * 0.06)
+    button_x = w // 2 - button_width // 2
+    button_y = int(h * 0.85)
+    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    # Button styling
+    button_color = (70, 130, 180)
+    button_hover_color = (100, 160, 210)
+    
+    pygame.draw.rect(screen, button_color, button_rect, border_radius=8)
+    pygame.draw.rect(screen, (255, 255, 255), button_rect, width=2, border_radius=8)
+    
+    # Button text
+    button_text = score_font.render("Continue to Main Menu", True, (255, 255, 255))
+    text_rect = button_text.get_rect(center=button_rect.center)
+    screen.blit(button_text, text_rect)
+    
+    # Instructions at bottom
+    instructions = [
+        "Press SPACE or click Continue to return to main menu",
+        "Press L to toggle leaderboard submission • ESC for quick exit"
+    ]
+    
+    instruction_y = int(h * 0.93)
+    for i, instruction in enumerate(instructions):
+        inst_text = instruction_font.render(instruction, True, instruction_color)
+        inst_rect = inst_text.get_rect(center=(w//2, instruction_y + i * 20))
+        screen.blit(inst_text, inst_rect)
