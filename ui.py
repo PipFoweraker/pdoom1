@@ -1648,4 +1648,251 @@ def draw_first_time_help(screen, help_content, w, h):
     return close_button_rect
 
 
+def draw_pre_game_settings(screen, w, h, settings, selected_item):
+    """
+    Draw the pre-game settings screen with configurable options.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        settings: dictionary of current settings values
+        selected_item: index of currently selected setting (for keyboard navigation)
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    
+    # Title
+    title_surf = title_font.render("Game Settings", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Settings items
+    settings_items = [
+        ("Difficulty", settings["difficulty"]),
+        ("Music Volume", str(settings["music_volume"])),
+        ("Sound Volume", str(settings["sound_volume"])),
+        ("Graphics Quality", settings["graphics_quality"]),
+        ("Continue")
+    ]
+    
+    # Button layout
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    for i, item in enumerate(settings_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button
+        draw_low_poly_button(screen, button_rect, button_state)
+        
+        # Draw text
+        if i < len(settings_items) - 1:  # Setting items with values
+            setting_name, setting_value = item
+            text = f"{setting_name}: {setting_value}"
+        else:  # Continue button
+            text = item
+        
+        text_surf = menu_font.render(text, True, (255, 255, 255))
+        text_x = button_rect.centerx - text_surf.get_width() // 2
+        text_y = button_rect.centery - text_surf.get_height() // 2
+        screen.blit(text_surf, (text_x, text_y))
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = [
+        "Use arrow keys to navigate, Enter to select",
+        "Adjust settings or continue to seed selection"
+    ]
+    
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
+
+
+def draw_seed_selection(screen, w, h, selected_item, seed_input=""):
+    """
+    Draw the seed selection screen.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected item (0=Weekly, 1=Custom)
+        seed_input: current custom seed input text
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    
+    # Title
+    title_surf = title_font.render("Select Seed", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Seed options
+    seed_items = ["Use Weekly Seed", "Use Custom Seed"]
+    
+    # Button layout
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    for i, item in enumerate(seed_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button
+        draw_low_poly_button(screen, button_rect, button_state)
+        
+        # Draw text
+        text_surf = menu_font.render(item, True, (255, 255, 255))
+        text_x = button_rect.centerx - text_surf.get_width() // 2
+        text_y = button_rect.centery - text_surf.get_height() // 2
+        screen.blit(text_surf, (text_x, text_y))
+    
+    # If custom seed is selected, show input field
+    if selected_item == 1:
+        input_y = start_y + 2 * spacing
+        input_width = int(w * 0.5)
+        input_height = int(h * 0.06)
+        input_x = center_x - input_width // 2
+        input_rect = pygame.Rect(input_x, input_y, input_width, input_height)
+        
+        # Draw input background
+        pygame.draw.rect(screen, (80, 80, 80), input_rect)
+        pygame.draw.rect(screen, (120, 120, 120), input_rect, 2)
+        
+        # Draw input text
+        input_font = pygame.font.SysFont('Consolas', int(h*0.03))
+        display_text = seed_input if seed_input else "Enter custom seed..."
+        text_color = (255, 255, 255) if seed_input else (150, 150, 150)
+        input_text_surf = input_font.render(display_text, True, text_color)
+        text_x = input_rect.x + 10
+        text_y = input_rect.centery - input_text_surf.get_height() // 2
+        screen.blit(input_text_surf, (text_x, text_y))
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = [
+        "Use arrow keys to navigate, Enter to continue",
+        "Custom seed: type your seed and press Enter"
+    ]
+    
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
+
+
+def draw_tutorial_choice(screen, w, h, selected_item):
+    """
+    Draw the tutorial choice screen.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected item (0=Yes, 1=No)
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    
+    # Title
+    title_surf = title_font.render("Tutorial Mode?", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Description
+    desc_text = "Would you like to play with tutorial guidance?"
+    desc_surf = desc_font.render(desc_text, True, (200, 200, 200))
+    desc_x = w // 2 - desc_surf.get_width() // 2
+    desc_y = title_y + title_surf.get_height() + 20
+    screen.blit(desc_surf, (desc_x, desc_y))
+    
+    # Tutorial options
+    tutorial_items = ["Yes - Enable Tutorial", "No - Regular Mode"]
+    
+    # Button layout
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.4)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    for i, item in enumerate(tutorial_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button
+        draw_low_poly_button(screen, button_rect, button_state)
+        
+        # Draw text
+        text_surf = menu_font.render(item, True, (255, 255, 255))
+        text_x = button_rect.centerx - text_surf.get_width() // 2
+        text_y = button_rect.centery - text_surf.get_height() // 2
+        screen.blit(text_surf, (text_x, text_y))
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = [
+        "Use arrow keys to navigate, Enter to start game",
+        "Tutorial mode provides helpful guidance for new players"
+    ]
+    
+    inst_y = int(h * 0.8)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
+
+
     
