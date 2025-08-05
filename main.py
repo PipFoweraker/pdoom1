@@ -58,7 +58,7 @@ bug_report_success_message = ""
 def get_weekly_seed():
     import datetime
     # Example: YYYYWW (year and ISO week number)
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(datetime.UTC)
     return f"{now.year}{now.isocalendar()[1]}"
 
 def load_markdown_file(filename):
@@ -687,9 +687,18 @@ def main():
                             # Overlay manager handled the event
                             continue
                     
+                    # Handle activity log dragging
+                    if current_state == 'game' and game_state:
+                        game_state.handle_mouse_motion(event.pos, SCREEN_W, SCREEN_H)
+                    
                     # Mouse hover effects only active during gameplay
                     if current_state == 'game' and game_state:
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
+                
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    # Handle mouse button release (for ending drag operations)
+                    if current_state == 'game' and game_state:
+                        game_state.handle_mouse_release(event.pos, SCREEN_W, SCREEN_H)
                         
                 elif event.type == pygame.KEYDOWN:
                     # Handle overlay manager keyboard events first (for accessibility)

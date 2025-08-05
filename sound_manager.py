@@ -32,6 +32,9 @@ class SoundManager:
             return
             
         try:
+            # Check if numpy is available for sndarray
+            import pygame.sndarray
+            
             # Create a simple "bloop" sound using basic math
             sample_rate = 22050
             duration = 0.3  # 300ms
@@ -70,6 +73,7 @@ class SoundManager:
             # Create money spend sound for purchase feedback
             self._create_money_spend_sound()
             
+
         except (pygame.error, AttributeError, Exception):
             # If sound creation fails, just disable sounds
             self.enabled = False
@@ -123,7 +127,7 @@ class SoundManager:
             # Create pygame sound from array
             self.sounds['error_beep'] = pygame.sndarray.make_sound(wave_array)
             
-        except (pygame.error, AttributeError, Exception):
+        except (pygame.error, AttributeError, ImportError, Exception):
             # If error beep creation fails, continue without it
             pass
     
@@ -161,7 +165,7 @@ class SoundManager:
             # Create pygame sound from array
             self.sounds['ap_spend'] = pygame.sndarray.make_sound(wave_array)
             
-        except (pygame.error, AttributeError, Exception):
+        except (pygame.error, AttributeError, ImportError, Exception):
             # If AP sound creation fails, continue without it
             pass
     
