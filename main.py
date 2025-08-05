@@ -20,12 +20,13 @@ pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_displ
 clock = pygame.time.Clock()
 
 # --- Menu and game state management --- #
-# Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial'
+# Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial', 'sounds_menu'
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
 menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Options", "Player Guide", "README", "Report Bug"]
 end_game_menu_items = ["Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
+sounds_menu_selected_item = 0  # For sounds menu navigation
 seed = None
 seed_input = ""
 overlay_content = None
