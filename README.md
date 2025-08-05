@@ -10,21 +10,20 @@ A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *P
 - **[Changelog](CHANGELOG.md)** - Version history and release notes
 
 ## Table of Contents
-- [Quick Start](#quick-start) (Line 15)
-  - [Requirements](#requirements) (Line 16)
-  - [Installation & Setup](#installation--setup) (Line 19)
-  - [Run the Game](#run-the-game) (Line 26)
-- [Game Features](#game-features) (Line 31)
-  - [Onboarding & Player Guidance](#onboarding--player-guidance) (Line 33)
-  - [Core Gameplay](#core-gameplay) (Line 40)
-  - [Milestone-Driven Special Events](#milestone-driven-special-events) (Line 50)
-  - [Enhanced Event System](#enhanced-event-system) (Line 72)
-  - [Action Points System](#action-points-system) (Line 91)
-  - [Opponents System](#opponents-system) (Line 118)
-- [Visual Feedback System](#visual-feedback-system) (Line 136)
-- [Tutorial & Onboarding System](#tutorial--onboarding-system) (Line 154)
-- [Troubleshooting](#troubleshooting) (Line 179)
-- [Versioning and Releases](#versioning-and-releases) (Line 246)
+- [Quick Start](#quick-start) (Line 29)
+  - [Requirements](#requirements) (Line 31)
+  - [Installation & Setup](#installation--setup) (Line 35)
+  - [Run the Game](#run-the-game) (Line 44)
+- [Game Features](#game-features) (Line 51)
+- [Visual Feedback System](#visual-feedback-system) (Line 65)
+- [Tutorial & Onboarding System](#tutorial--onboarding-system) (Line 76)
+- [Troubleshooting](#troubleshooting) (Line 87)
+  - [Common Issues](#common-issues) (Line 89)
+  - [Error Logs](#error-logs) (Line 111)
+  - [Testing the Installation](#testing-the-installation) (Line 118)
+  - [Getting Help](#getting-help) (Line 130)
+  - [Dependencies](#dependencies) (Line 137)
+- [Versioning and Releases](#versioning-and-releases) (Line 152)
 
 ## Quick Start
 

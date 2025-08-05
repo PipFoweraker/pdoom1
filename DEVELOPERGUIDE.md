@@ -6,22 +6,22 @@ For **players**, see the [Player Guide](PLAYERGUIDE.md).
 For **installation and troubleshooting**, see the [README](README.md).
 
 ## Table of Contents
-- [Development Setup](#development-setup) (Line 13)
-- [Project Structure](#project-structure) (Line 38)
-- [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 61)
-- [Opponents System Architecture](#opponents-system-architecture) (Line 263)
-- [Onboarding System Architecture](#onboarding-system-architecture) (Line 323)
-- [Testing Framework](#testing-framework) (Line 451)
-- [Adding New Content](#adding-new-content) (Line 518)
-- [Enhanced Event System Architecture](#enhanced-event-system-architecture) (Line 651)
-- [Milestone Events System](#milestone-events-system) (Line 730)
-- [Code Style & Guidelines](#code-style--guidelines) (Line 811)
-- [Game Logging System](#game-logging-system) (Line 831)
-- [Release & Deployment](#release--deployment) (Line 861)
-- [Milestone-Driven Special Events & Static Effects System](#milestone-driven-special-events--static-effects-system) (Line 920)
-- [Architecture Notes](#architecture-notes) (Line 1037)
-- [Tutorial & Onboarding System Architecture](#tutorial--onboarding-system-architecture) (Line 1098)
-- [Need Help?](#need-help) (Line 1180)
+- [Development Setup](#development-setup) (Line 28)
+- [Project Structure](#project-structure) (Line 53)
+- [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 75)
+- [Opponents System Architecture](#opponents-system-architecture) (Line 271)
+- [Onboarding System Architecture](#onboarding-system-architecture) (Line 331)
+- [Testing Framework](#testing-framework) (Line 460)
+- [Adding New Content](#adding-new-content) (Line 516)
+- [Enhanced Event System Architecture](#enhanced-event-system-architecture) (Line 647)
+- [Milestone Events System](#milestone-events-system) (Line 727)
+- [Code Style & Guidelines](#code-style--guidelines) (Line 807)
+- [Game Logging System](#game-logging-system) (Line 828)
+- [Release & Deployment](#release--deployment) (Line 857)
+- [Milestone-Driven Special Events & Static Effects System](#milestone-driven-special-events--static-effects-system) (Line 916)
+- [Architecture Notes](#architecture-notes) (Line 1034)
+- [Tutorial & Onboarding System Architecture](#tutorial--onboarding-system-architecture) (Line 1095)
+- [Need Help?](#need-help) (Line 1177)
 
 ---
 
