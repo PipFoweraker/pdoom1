@@ -1,6 +1,7 @@
 import pygame
 import textwrap
 from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
+from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 def wrap_text(text, font, max_width):
     """
@@ -120,6 +121,35 @@ def draw_main_menu(screen, w, h, selected_item):
         inst_x = w // 2 - inst_surf.get_width() // 2
         inst_y = int(h * 0.85) + i * int(h * 0.03)
         screen.blit(inst_surf, (inst_x, inst_y))
+    
+    # Draw keyboard shortcuts on the sides
+    shortcut_font = pygame.font.SysFont('Consolas', int(h*0.018))
+    
+    # Left side - Main Menu shortcuts
+    left_shortcuts = get_main_menu_shortcuts()
+    left_formatted = format_shortcut_list(left_shortcuts)
+    
+    left_title_surf = shortcut_font.render("Menu Controls:", True, (160, 160, 160))
+    left_x = int(w * 0.05)
+    left_y = int(h * 0.25)
+    screen.blit(left_title_surf, (left_x, left_y))
+    
+    for i, shortcut_text in enumerate(left_formatted):
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        screen.blit(shortcut_surf, (left_x, left_y + 30 + i * 25))
+    
+    # Right side - In-Game shortcuts preview
+    right_shortcuts = get_in_game_shortcuts()[:4]  # Show first 4 to fit space
+    right_formatted = format_shortcut_list(right_shortcuts)
+    
+    right_title_surf = shortcut_font.render("In-Game Controls:", True, (160, 160, 160))
+    right_x = int(w * 0.75)
+    right_y = int(h * 0.25)
+    screen.blit(right_title_surf, (right_x, right_y))
+    
+    for i, shortcut_text in enumerate(right_formatted):
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        screen.blit(shortcut_surf, (right_x, right_y + 30 + i * 25))
 
 def draw_overlay(screen, title, content, scroll_offset, w, h):
     """
@@ -421,12 +451,15 @@ def draw_ui(screen, game_state, w, h):
         FeedbackStyle.BUTTON, custom_colors.get(endturn_state)
     )
 
+
     # Messages log (bottom left) - Enhanced with scrollable history and minimize option
     # Use current position (including any drag offset)
     if hasattr(game_state, '_get_activity_log_current_position'):
         log_x, log_y = game_state._get_activity_log_current_position(w, h)
     else:
         log_x, log_y = int(w*0.04), int(h*0.74)  # Fallback to original position
+
+
     
     # Check if activity log is minimized (only available with compact activity display upgrade)
     if (hasattr(game_state, 'activity_log_minimized') and 
@@ -462,7 +495,7 @@ def draw_ui(screen, game_state, w, h):
         
     elif game_state.scrollable_event_log_enabled:
         # Enhanced scrollable event log with border and visual indicators
-        log_width = int(w * 0.44)
+        log_width = int(w * 0.22)  # Reduced from 0.44 to 0.22 to avoid upgrade button overlap
         log_height = int(h * 0.22)
         
         # Draw border around the event log area
@@ -508,8 +541,16 @@ def draw_ui(screen, game_state, w, h):
         # Combine history and current messages for display
         all_messages = list(game_state.event_log_history) + game_state.messages
         
-        # Calculate scrolling
+        # Calculate scrolling - Auto-scroll to bottom by default for new content
         total_lines = len(all_messages)
+        
+        # Check if we should auto-scroll to bottom (when there are more lines than visible)
+        if total_lines > max_visible_lines:
+            # If scroll offset is 0 or close to max (user at bottom), keep at bottom
+            max_scroll_offset = total_lines - max_visible_lines
+            if game_state.event_log_scroll_offset <= 1 or game_state.event_log_scroll_offset >= max_scroll_offset - 1:
+                game_state.event_log_scroll_offset = max_scroll_offset
+        
         start_line = max(0, min(game_state.event_log_scroll_offset, total_lines - max_visible_lines))
         
         # Draw messages with scrolling

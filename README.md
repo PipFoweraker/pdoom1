@@ -36,6 +36,9 @@ A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *P
 # Install core dependency
 pip install pygame
 
+# For sound effects (optional but recommended)
+pip install numpy
+
 # Or install all dependencies (including testing tools)
 pip install -r requirements.txt
 ```
@@ -141,7 +144,10 @@ If tests fail, check your Python and pygame installation.
 
 **Optional/Development:**
 - pytest (for testing)
+- numpy (for sound effects - install with `pip install numpy`)
 - Standard library modules: os, sys, json, random, datetime
+
+**Note:** Sound effects require numpy. If numpy is not installed, the game will run without sound. Install numpy for full audio experience: `pip install numpy`
 
 **System Requirements:**
 - Any OS that supports Python and pygame (Windows, macOS, Linux)
