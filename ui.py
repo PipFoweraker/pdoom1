@@ -504,8 +504,16 @@ def draw_ui(screen, game_state, w, h):
         # Combine history and current messages for display
         all_messages = list(game_state.event_log_history) + game_state.messages
         
-        # Calculate scrolling
+        # Calculate scrolling - Auto-scroll to bottom by default for new content
         total_lines = len(all_messages)
+        
+        # Check if we should auto-scroll to bottom (when there are more lines than visible)
+        if total_lines > max_visible_lines:
+            # If scroll offset is 0 or close to max (user at bottom), keep at bottom
+            max_scroll_offset = total_lines - max_visible_lines
+            if game_state.event_log_scroll_offset <= 1 or game_state.event_log_scroll_offset >= max_scroll_offset - 1:
+                game_state.event_log_scroll_offset = max_scroll_offset
+        
         start_line = max(0, min(game_state.event_log_scroll_offset, total_lines - max_visible_lines))
         
         # Draw messages with scrolling

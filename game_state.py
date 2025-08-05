@@ -96,6 +96,7 @@ class GameState:
         self.max_doom = 100
         self.selected_actions = []
         self.selected_action_instances = []  # Track individual action instances for undo
+        self.action_clicks_this_turn = {}  # Track clicks per action per turn
         self.staff_maintenance = 15
         self.seed = seed
         self.upgrades = [dict(u) for u in UPGRADES]
@@ -329,6 +330,19 @@ class GameState:
     
     def _handle_action_selection(self, action_idx, action):
         """Handle selecting (clicking) an action."""
+        # Check max clicks per action per turn (default 1, can be overridden)
+        max_clicks = action.get('max_clicks_per_turn', 1)
+        current_clicks = self.action_clicks_this_turn.get(action_idx, 0)
+        
+        if current_clicks >= max_clicks:
+            error_msg = f"{action['name']} already used maximum times this turn ({max_clicks})."
+            self.messages.append(error_msg)
+            return {
+                'success': False,
+                'message': error_msg,
+                'play_sound': False
+            }
+        
         # Check if action is available (rules constraint)
         if action.get("rules") and not action["rules"](self):
             error_msg = f"{action['name']} is not available yet."
@@ -390,6 +404,9 @@ class GameState:
         # Add to selected actions (immediate deduction)
         self.selected_actions.append(action_idx)
         self.selected_action_instances.append(action_instance)
+        
+        # Track clicks per action per turn
+        self.action_clicks_this_turn[action_idx] = self.action_clicks_this_turn.get(action_idx, 0) + 1
         
         # Immediate AP deduction
         self.action_points -= ap_cost
@@ -1314,6 +1331,7 @@ class GameState:
             self._action_delegations = {}
         self.selected_actions = []
         self.selected_action_instances = []  # Clear action instances for next turn
+        self.action_clicks_this_turn = {}  # Reset click tracking for new turn
 
         # Staff maintenance
         maintenance_cost = self.staff * self.staff_maintenance
