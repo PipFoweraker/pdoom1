@@ -1,0 +1,330 @@
+{
+  "analysis_date": "2025-08-05T10:07:10.304964",
+  "total_issues": 30,
+  "existing_prs": [
+    88,
+    86,
+    87
+  ],
+  "branches": [
+    {
+      "name": "feature/ui-ux-fixes",
+      "description": "UI/UX improvements, bug fixes, and interface polish",
+      "theme": "User Interface & Experience",
+      "issue_count": 15,
+      "total_complexity": 21,
+      "issues": [
+        {
+          "number": 85,
+          "title": "Add a list of keyboard shortcutes to the main and loading screens",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 4,
+          "assignee": null
+        },
+        {
+          "number": 82,
+          "title": "Bug causes crash when options menu is selected from the main menu",
+          "labels": [
+            "bug"
+          ],
+          "complexity_score": 1,
+          "assignee": "PipFoweraker"
+        },
+        {
+          "number": 74,
+          "title": "Fix startup errors: UnboundLocalError in main(), datetime deprecation warning, and numpy sound dependency; update documentation and tests accordingly.",
+          "labels": [
+            "bug",
+            "documentation",
+            "enhancement",
+            "question"
+          ],
+          "complexity_score": 2,
+          "assignee": "PipFoweraker"
+        },
+        {
+          "number": 58,
+          "title": "Action points buggy",
+          "labels": [
+            "bug"
+          ],
+          "complexity_score": 0,
+          "assignee": null
+        },
+        {
+          "number": 54,
+          "title": "Can't unclick a click made in error",
+          "labels": [
+            "bug"
+          ],
+          "complexity_score": 0,
+          "assignee": null
+        },
+        {
+          "number": 53,
+          "title": "Move employees to middle of the screen, make it so they don't stop moving until they are not on top of any other UI elements, make them rearrange",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 1,
+          "assignee": null
+        },
+        {
+          "number": 52,
+          "title": "Accounting software bug",
+          "labels": [
+            "bug"
+          ],
+          "complexity_score": 0,
+          "assignee": null
+        },
+        {
+          "number": 50,
+          "title": "No clickable buttons on event popup",
+          "labels": [
+            "bug"
+          ],
+          "complexity_score": 0,
+          "assignee": null
+        },
+        {
+          "number": 45,
+          "title": "Elegantly handle converting buttons into icons",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 1,
+          "assignee": null
+        },
+        {
+          "number": 38,
+          "title": "End of Game and Settings Menu Overhaul",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 4,
+          "assignee": null
+        },
+        {
+          "number": 36,
+          "title": "Batch UI Bugfixes and Logic Polish: Button Clicks, Log Scroll, UI Boundaries, and Employee Costs",
+          "labels": [
+            "bug"
+          ],
+          "complexity_score": 0,
+          "assignee": null
+        },
+        {
+          "number": 18,
+          "title": "Windowing and tiling design inspired by Gwern's JavaScript behaviors",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 3,
+          "assignee": null
+        },
+        {
+          "number": 16,
+          "title": "Implement loading screen",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 3,
+          "assignee": null
+        },
+        {
+          "number": 11,
+          "title": "Event to unlock scrollable event log and small UI improvements",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 2,
+          "assignee": null
+        },
+        {
+          "number": 7,
+          "title": "UI still has text wrapping problems",
+          "labels": [
+            "bug"
+          ],
+          "complexity_score": 0,
+          "assignee": null
+        }
+      ]
+    },
+    {
+      "name": "feature/core-game-systems",
+      "description": "Core gameplay mechanics, action points, events, and game systems",
+      "theme": "Core Game Mechanics",
+      "issue_count": 9,
+      "total_complexity": 30,
+      "issues": [
+        {
+          "number": 56,
+          "title": "# Enhancement: Action Points System with Staff Delegation",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 5,
+          "assignee": null
+        },
+        {
+          "number": 42,
+          "title": "Event System Overhaul: Popups, Deferred Events, and Trigger Logic",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 4,
+          "assignee": null
+        },
+        {
+          "number": 40,
+          "title": "Design: Game Config File System (Generated Defaults, Multiple Configs, Local Storage)",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 4,
+          "assignee": null
+        },
+        {
+          "number": 37,
+          "title": "Game Flow Improvements: Action Delays, News Feed, Turn Impact, and Spend Display",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 2,
+          "assignee": null
+        },
+        {
+          "number": 15,
+          "title": "Add multiple opponent labs as events with stats tracking",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 3,
+          "assignee": null
+        },
+        {
+          "number": 14,
+          "title": "Add compute as a game resource tied to technical research",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 3,
+          "assignee": null
+        },
+        {
+          "number": 13,
+          "title": "Add expense requests for employee needs",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 3,
+          "assignee": null
+        },
+        {
+          "number": 12,
+          "title": "Add productive employee actions",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 3,
+          "assignee": null
+        },
+        {
+          "number": 3,
+          "title": "Internal logic function design for extensibility and progression trees",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 3,
+          "assignee": null
+        }
+      ]
+    },
+    {
+      "name": "feature/audio-endgame-experience",
+      "description": "Audio feedback, sound effects, end game improvements, and player experience",
+      "theme": "Audio & End Game Experience",
+      "issue_count": 3,
+      "total_complexity": 4,
+      "issues": [
+        {
+          "number": 66,
+          "title": "Fun Feedback for Achievements: 'Bazinga!' Sound on Paper Completion",
+          "labels": [
+            "documentation",
+            "enhancement"
+          ],
+          "complexity_score": 2,
+          "assignee": "PipFoweraker"
+        },
+        {
+          "number": 55,
+          "title": "Graceful end of game modes",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 1,
+          "assignee": null
+        },
+        {
+          "number": 51,
+          "title": "Little happy sound every time money is spent",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 1,
+          "assignee": null
+        }
+      ]
+    },
+    {
+      "name": "feature/release-infrastructure",
+      "description": "Release preparation, versioning, documentation, and infrastructure",
+      "theme": "Release & Infrastructure",
+      "issue_count": 2,
+      "total_complexity": 2,
+      "issues": [
+        {
+          "number": 46,
+          "title": "0.1.0 Release Readiness Checklist",
+          "labels": [
+            "documentation"
+          ],
+          "complexity_score": 1,
+          "assignee": null
+        },
+        {
+          "number": 44,
+          "title": "No public facing versioning",
+          "labels": [
+            "documentation"
+          ],
+          "complexity_score": 1,
+          "assignee": null
+        }
+      ]
+    },
+    {
+      "name": "feature/employee-advanced-systems",
+      "description": "Employee management, staff systems, and advanced gameplay features",
+      "theme": "Employee & Advanced Systems",
+      "issue_count": 1,
+      "total_complexity": 1,
+      "issues": [
+        {
+          "number": 41,
+          "title": "Employee Subtypes: Player Agency and Complexity When Hiring",
+          "labels": [
+            "enhancement"
+          ],
+          "complexity_score": 1,
+          "assignee": null
+        }
+      ]
+    }
+  ]
+}
