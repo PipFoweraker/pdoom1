@@ -31,6 +31,7 @@ For **installation and troubleshooting**, see the [README](README.md).
 - Python 3.8+
 - pygame (`pip install pygame`)
 - pytest for testing (`pip install pytest` or `pip install -r requirements.txt`)
+- numpy for sound effects (`pip install numpy` - optional but recommended)
 
 ### Getting Started
 ```sh

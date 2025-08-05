@@ -20,6 +20,7 @@ pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_displ
 clock = pygame.time.Clock()
 
 # --- Menu and game state management --- #
+
 # Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'high_score', 'tutorial'
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
@@ -59,7 +60,7 @@ bug_report_success_message = ""
 def get_weekly_seed():
     import datetime
     # Example: YYYYWW (year and ISO week number)
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now(datetime.UTC)
     return f"{now.year}{now.isocalendar()[1]}"
 
 def load_markdown_file(filename):
@@ -176,9 +177,8 @@ def handle_menu_click(mouse_pos, w, h):
             elif i == 1:  # Launch with Custom Seed
                 current_state = 'custom_seed_prompt'
             elif i == 2:  # Options/Settings
-                overlay_content = create_settings_content()
-                overlay_title = "Settings"
-                current_state = 'overlay'
+                current_state = 'sounds_menu'
+                sounds_menu_selected_item = 0
             elif i == 3:  # Player Guide
                 overlay_content = load_markdown_file('PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
@@ -648,9 +648,11 @@ def main():
                     elif current_state == 'end_game_menu':
                         # Handle end-game menu clicks
                         handle_end_game_menu_click((mx, my), SCREEN_W, SCREEN_H)
+
                     elif current_state == 'high_score':
                         # Handle high score screen clicks
                         handle_high_score_click((mx, my), SCREEN_W, SCREEN_H)
+
                     elif current_state == 'game':
                         # Tutorial button handling (takes precedence)
                         if onboarding.show_tutorial_overlay and current_tutorial_content:
@@ -696,9 +698,18 @@ def main():
                             # Overlay manager handled the event
                             continue
                     
+                    # Handle activity log dragging
+                    if current_state == 'game' and game_state:
+                        game_state.handle_mouse_motion(event.pos, SCREEN_W, SCREEN_H)
+                    
                     # Mouse hover effects only active during gameplay
                     if current_state == 'game' and game_state:
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
+                
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    # Handle mouse button release (for ending drag operations)
+                    if current_state == 'game' and game_state:
+                        game_state.handle_mouse_release(event.pos, SCREEN_W, SCREEN_H)
                         
                 elif event.type == pygame.KEYDOWN:
                     # Handle overlay manager keyboard events first (for accessibility)
@@ -740,6 +751,7 @@ def main():
                     elif current_state == 'high_score':
                         # Handle high score screen keyboard navigation
                         handle_high_score_keyboard(event.key)
+
                             
                     elif current_state == 'custom_seed_prompt':
                         # Text input for custom seed (preserving original logic)
@@ -876,6 +888,7 @@ def main():
                 # High score screen with AI safety researchers and player score
                 screen.fill((20, 30, 40))  # Dark blue background for high scores
                 draw_high_score_screen(screen, SCREEN_W, SCREEN_H, game_state, seed, high_score_submit_to_leaderboard)
+
                 
             elif current_state == 'game':
                 # Preserve original game appearance and logic

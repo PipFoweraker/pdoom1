@@ -47,6 +47,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Automated version integration with game logger
 
 ### Fixed
+- **Datetime deprecation warning (Issue #74)**: Replaced deprecated `datetime.datetime.utcnow()` with `datetime.datetime.now(datetime.UTC)`
+  - Future-proofs code for Python 3.12+ compatibility
+  - Eliminates deprecation warning during startup
+- **Enhanced numpy dependency handling for sound (Issue #74)**: Improved error handling and documentation for sound effects
+  - Added clear error message when numpy is missing: "Install numpy for sound: pip install numpy"
+  - Updated README.md and DEVELOPERGUIDE.md to document numpy as optional dependency for sound
+  - Enhanced sound manager error handling with specific ImportError detection
+  - Game runs without sound if numpy is not available (graceful degradation)
 - **Options Menu UnboundLocalError**: Fixed crash when selecting Options from main menu
   - Added missing global declarations for `overlay_content` and `overlay_title` in main() function
   - Enhanced `draw_overlay` function with defensive logic for None values
