@@ -132,5 +132,14 @@ ACTIONS = [
         "upside": lambda gs: gs._board_search(),
         "downside": lambda gs: None,
         "rules": search_unlock_rule  # Requires board members (refactored rule)
+    },
+    {
+        "name": "Research Grant Application",
+        "desc": "Apply for research grant (+money after 3 turns, costs reputation).",
+        "cost": 15,
+        "ap_cost": 1,  # Action Points cost
+        "upside": lambda gs: gs._apply_for_grant(),
+        "downside": lambda gs: gs._add('reputation', -1),  # Small reputation cost upfront
+        "rules": None
     }
 ]

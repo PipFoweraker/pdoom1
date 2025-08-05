@@ -15,6 +15,26 @@ from error_tracker import ErrorTracker
 
 SCORE_FILE = "local_highscore.json"
 
+class DelayedAction:
+    """Represents an action that will execute after a delay."""
+    def __init__(self, action_name, turns_remaining, effect_func, description=""):
+        self.action_name = action_name
+        self.turns_remaining = turns_remaining
+        self.effect_func = effect_func
+        self.description = description
+        
+    def tick(self):
+        """Decrease remaining turns by 1."""
+        self.turns_remaining -= 1
+        
+    def is_ready(self):
+        """Check if action is ready to execute."""
+        return self.turns_remaining <= 0
+        
+    def execute(self, game_state):
+        """Execute the delayed action effect."""
+        return self.effect_func(game_state)
+
 class GameState:
     def _add(self, attr, val):
         """
@@ -26,6 +46,8 @@ class GameState:
             # Track spending for board member trigger (only negative amounts)
             if val < 0:
                 self.spend_this_turn += abs(val)
+                # Track spending for new spend display system (NEW FEATURE)
+                self.track_spending(abs(val))
             
             # Only record balance change if accounting software is bought
             if hasattr(self, "accounting_software_bought") and self.accounting_software_bought:
@@ -1029,6 +1051,22 @@ class GameState:
             spike = random.randint(6, 13)
             self.messages.append("Lab breakthrough! Doom spikes!")
         self._add('doom', spike)
+    
+    def _apply_for_grant(self):
+        """Apply for a research grant - delayed action that pays out after 3 turns."""
+        def grant_payout(gs):
+            """The delayed effect that executes after 3 turns."""
+            amount = random.randint(80, 120)
+            gs._add('money', amount)
+            return f"Research grant approved! Received ${amount}."
+        
+        # Add the delayed action
+        self.add_delayed_action(
+            "Research Grant",
+            3,  # 3 turns delay
+            grant_payout,
+            f"Research grant approved! Received funding."
+        )
 
     def handle_click(self, mouse_pos, w, h):
         # Actions (left)
@@ -1368,7 +1406,13 @@ class GameState:
         if hasattr(self, 'deferred_events'):
             expired_events = self.deferred_events.tick_all_events(self)
         
+        # Process delayed actions (NEW FEATURE)
+        self.process_delayed_actions()
+        
         self.turn += 1
+        
+        # Generate daily news at start of new turn (NEW FEATURE)  
+        self.generate_daily_news()
         
         # Reset Action Points for new turn (Phase 2: Staff-Based AP Scaling)
         self.max_action_points = self.calculate_max_ap()
@@ -1377,6 +1421,8 @@ class GameState:
         
         # Reset spend tracking for new turn
         self.spend_this_turn = 0
+        # Reset spend tracking for new turn (NEW FEATURE)
+        self.reset_turn_spending()
         
         # Decrease glow timer
         if self.ap_glow_timer > 0:
@@ -1778,3 +1824,131 @@ class GameState:
             return False, error_msg
         
         return True, "OK"
+    
+    # --- Delayed Actions System --- #
+    def add_delayed_action(self, action_name, turns_delay, effect_func, description=""):
+        """Add a delayed action that will execute after N turns."""
+        delayed_action = DelayedAction(action_name, turns_delay, effect_func, description)
+        self.delayed_actions.append(delayed_action)
+        self.messages.append(f"{action_name} will complete in {turns_delay} turn{'s' if turns_delay != 1 else ''}.")
+    
+    def process_delayed_actions(self):
+        """Process all delayed actions, executing ready ones and ticking others."""
+        ready_actions = []
+        remaining_actions = []
+        
+        for action in self.delayed_actions:
+            action.tick()
+            if action.is_ready():
+                ready_actions.append(action)
+            else:
+                remaining_actions.append(action)
+        
+        # Execute ready actions
+        for action in ready_actions:
+            try:
+                action.execute(self)
+                self.messages.append(f"{action.action_name} completed! {action.description}")
+            except Exception as e:
+                self.messages.append(f"{action.action_name} failed to complete.")
+        
+        # Keep only actions that aren't ready yet
+        self.delayed_actions = remaining_actions
+    
+    # --- News Feed System --- #
+    def generate_daily_news(self):
+        """Generate daily news based on current game state."""
+        if not self.daily_news_enabled:
+            return
+            
+        # Don't show news on first turn
+        if self.turn <= 1:
+            return
+            
+        news_items = []
+        
+        # News based on doom level
+        if self.doom > 80:
+            news_items.extend([
+                "BREAKING: AI safety experts warn of 'critical threshold' being approached",
+                "URGENT: Global AI development accelerating beyond safety protocols",
+                "ALERT: Multiple AI systems showing concerning emergent behaviors"
+            ])
+        elif self.doom > 60:
+            news_items.extend([
+                "Tech leaders call for increased AI safety measures",
+                "New study shows rapid advancement in AI capabilities",
+                "Regulators struggle to keep pace with AI development"
+            ])
+        elif self.doom > 40:
+            news_items.extend([
+                "AI startup funding reaches new record high",
+                "Major breakthrough in artificial general intelligence research",
+                "Companies race to deploy next-generation AI systems"
+            ])
+        else:
+            news_items.extend([
+                "AI research community publishes new safety guidelines",
+                "International cooperation on AI safety increases",
+                "Steady progress in AI alignment research"
+            ])
+        
+        # News based on reputation
+        if self.reputation > 20:
+            news_items.extend([
+                f"Your organization recognized as leader in AI safety",
+                f"Experts praise your organization's responsible AI approach"
+            ])
+        elif self.reputation < 5:
+            news_items.extend([
+                f"Critics question your organization's effectiveness",
+                f"Funding questions raised about AI safety initiatives"
+            ])
+        
+        # News based on opponents
+        for opponent in self.opponents:
+            if opponent.progress > 80:
+                news_items.append(f"URGENT: {opponent.name} claims major AI breakthrough imminent")
+            elif opponent.progress > 60:
+                news_items.append(f"{opponent.name} accelerates AI development timeline")
+        
+        # Select a news item (avoid recent repeats)
+        available_news = [item for item in news_items if item not in self.news_history[-5:]]
+        if not available_news:
+            available_news = news_items  # Reset if all recent
+            
+        if available_news:
+            selected_news = random.choice(available_news)
+            self.news_history.append(selected_news)
+            
+            # Keep history reasonable size
+            if len(self.news_history) > 20:
+                self.news_history = self.news_history[-15:]
+            
+            self.messages.append(f"📰 NEWS: {selected_news}")
+    
+    # --- Spend Tracking System --- #
+    def track_spending(self, amount):
+        """Track spending for the spend display system."""
+        if amount > 0:
+            self.total_spend_this_turn += amount
+            
+            # Check if this creates multiple spending instances this turn
+            spend_count = len([action_idx for action_idx in self.selected_actions 
+                              if self.actions[action_idx]["cost"] > 0])
+            
+            if spend_count > 1 and not self.show_spend_box:
+                self.show_spend_box = True
+                self.multiple_spend_turns += 1
+                self.messages.append("💰 Tracking multiple expenditures this turn...")
+                
+                # Make permanent after second occurrence
+                if self.multiple_spend_turns >= 2:
+                    self.spend_box_permanent = True
+                    self.messages.append("💰 Spend tracking now permanently enabled!")
+    
+    def reset_turn_spending(self):
+        """Reset spending tracking for new turn."""
+        if not self.spend_box_permanent:
+            self.show_spend_box = False
+        self.total_spend_this_turn = 0
