@@ -11,6 +11,7 @@ from opponents import create_default_opponents
 from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
 from overlay_manager import OverlayManager
+from error_tracker import ErrorTracker
 
 SCORE_FILE = "local_highscore.json"
 
@@ -157,9 +158,11 @@ class GameState:
         # Initialize UI overlay management system
         self.overlay_manager = OverlayManager()
         
-        # Error tracking for easter egg beep system
-        self.error_history = []  # Track recent errors for pattern detection
-        self.last_error_beep_time = 0  # Prevent spam beeping
+        # Initialize error tracking system (replaces duplicate error tracking logic)
+        self.error_tracker = ErrorTracker(
+            sound_manager=self.sound_manager,
+            message_callback=lambda msg: self.messages.append(msg)
+        )
         self.logger = GameLogger(seed)
         
         # UI Transition System for smooth visual feedback
@@ -1569,21 +1572,7 @@ class GameState:
         Returns:
             bool: True if this triggers the easter egg (3 repeated identical errors)
         """
-        import pygame
-        
-        current_time = pygame.time.get_ticks()
-        
-        # Add error to overlay manager (which handles the logic)
-        should_beep = self.overlay_manager.add_error(error_message, current_time // (1000 // 30))
-        
-        # Play easter egg beep if triggered and enough time has passed
-        if should_beep and (current_time - self.last_error_beep_time) > 2000:  # 2 second cooldown
-            self.sound_manager.play_error_beep()
-            self.last_error_beep_time = current_time
-            self.messages.append("🔊 Error pattern detected! (Easter egg activated)")
-            return True
-            
-        return False
+        return self.error_tracker.track_error(error_message)
     
     def log_ui_interaction(self, interaction_type: str, element_id: str, details: dict = None):
         """
