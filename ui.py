@@ -97,8 +97,6 @@ def draw_main_menu(screen, w, h, selected_item):
         # Determine button state for visual feedback
         if i == selected_item:
             button_state = ButtonState.FOCUSED  # Use focused state for keyboard navigation
-        elif i == 2:  # Options button (placeholder)
-            button_state = ButtonState.DISABLED
         else:
             button_state = ButtonState.NORMAL
         
@@ -119,6 +117,86 @@ def draw_main_menu(screen, w, h, selected_item):
         inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
         inst_x = w // 2 - inst_surf.get_width() // 2
         inst_y = int(h * 0.85) + i * int(h * 0.03)
+        screen.blit(inst_surf, (inst_x, inst_y))
+
+def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
+    """
+    Draw the sounds options menu with toggles for individual sound effects.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected menu item (for keyboard navigation)
+        game_state: game state object to access sound manager (can be None for standalone testing)
+    
+    Features:
+    - Master sound on/off toggle
+    - Individual sound effect toggles (money spend, AP spend, blob, error beep)
+    - Back button to return to main menu
+    - Responsive sizing and keyboard navigation
+    """
+    # Fonts for menu - scale based on screen size
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    
+    # Title at top
+    title_surf = title_font.render("Sound Options", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Get sound manager if available
+    sound_manager = None
+    if game_state and hasattr(game_state, 'sound_manager'):
+        sound_manager = game_state.sound_manager
+    
+    # Menu items with their current states
+    master_enabled = sound_manager.is_enabled() if sound_manager else True
+    
+    menu_items = [
+        f"Master Sound: {'ON' if master_enabled else 'OFF'}",
+        f"Money Spend Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('money_spend')) else 'OFF'}",
+        f"Action Points Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('ap_spend')) else 'OFF'}",
+        f"Employee Hire Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('blob')) else 'OFF'}",
+        f"Error Beep Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('error_beep')) else 'OFF'}",
+        "Back to Main Menu"
+    ]
+    
+    # Button layout
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.06)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.08)
+    center_x = w // 2
+    
+    for i, item in enumerate(menu_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state for visual feedback
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED  # Use focused state for keyboard navigation
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Use visual feedback system for consistent styling
+        visual_feedback.draw_button(
+            screen, button_rect, item, button_state, FeedbackStyle.MENU_ITEM
+        )
+    
+    # Instructions at bottom
+    instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    instructions = [
+        "Use arrow keys to navigate, Enter to toggle",
+        "Press Escape or select Back to return to Main Menu"
+    ]
+    
+    for i, instruction in enumerate(instructions):
+        inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        inst_y = int(h * 0.85) + i * 25
         screen.blit(inst_surf, (inst_x, inst_y))
 
 def draw_overlay(screen, title, content, scroll_offset, w, h):

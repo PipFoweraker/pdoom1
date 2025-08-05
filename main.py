@@ -4,7 +4,7 @@ import pygame
 import random
 import json
 from game_state import GameState
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_sounds_menu
 from bug_reporter import BugReporter
 from version import get_display_version
 from onboarding import onboarding
@@ -175,9 +175,8 @@ def handle_menu_click(mouse_pos, w, h):
             elif i == 1:  # Launch with Custom Seed
                 current_state = 'custom_seed_prompt'
             elif i == 2:  # Options/Settings
-                overlay_content = create_settings_content()
-                overlay_title = "Settings"
-                current_state = 'overlay'
+                current_state = 'sounds_menu'
+                sounds_menu_selected_item = 0
             elif i == 3:  # Player Guide
                 overlay_content = load_markdown_file('PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
@@ -485,6 +484,84 @@ def handle_end_game_menu_keyboard(key):
         current_state = 'main_menu'
         selected_menu_item = 0
 
+def handle_sounds_menu_keyboard(key):
+    """Handle keyboard navigation for sounds menu."""
+    global sounds_menu_selected_item, current_state, selected_menu_item, game_state
+    
+    # Total number of menu items (5 sound options + 1 back button)
+    total_items = 6
+    
+    if key == pygame.K_UP:
+        sounds_menu_selected_item = (sounds_menu_selected_item - 1) % total_items
+    elif key == pygame.K_DOWN:
+        sounds_menu_selected_item = (sounds_menu_selected_item + 1) % total_items
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        # Execute selected menu action
+        if sounds_menu_selected_item == 0:  # Master Sound toggle
+            if game_state and hasattr(game_state, 'sound_manager'):
+                game_state.sound_manager.toggle()
+        elif sounds_menu_selected_item == 1:  # Money Spend Sound
+            if game_state and hasattr(game_state, 'sound_manager'):
+                game_state.sound_manager.toggle_sound('money_spend')
+        elif sounds_menu_selected_item == 2:  # Action Points Sound
+            if game_state and hasattr(game_state, 'sound_manager'):
+                game_state.sound_manager.toggle_sound('ap_spend')
+        elif sounds_menu_selected_item == 3:  # Employee Hire Sound
+            if game_state and hasattr(game_state, 'sound_manager'):
+                game_state.sound_manager.toggle_sound('blob')
+        elif sounds_menu_selected_item == 4:  # Error Beep Sound
+            if game_state and hasattr(game_state, 'sound_manager'):
+                game_state.sound_manager.toggle_sound('error_beep')
+        elif sounds_menu_selected_item == 5:  # Back to Main Menu
+            current_state = 'main_menu'
+            selected_menu_item = 0
+    elif key == pygame.K_ESCAPE:
+        # Return to main menu
+        current_state = 'main_menu'
+        selected_menu_item = 0
+
+def handle_sounds_menu_click(mouse_pos, w, h):
+    """Handle mouse clicks for sounds menu."""
+    global sounds_menu_selected_item, current_state, selected_menu_item, game_state
+    
+    # Calculate menu button positions (must match draw_sounds_menu layout)
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.06)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.08)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    # Check each menu button for collision
+    for i in range(6):  # 5 sound options + 1 back button
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            sounds_menu_selected_item = i
+            # Execute the action (same logic as keyboard handler)
+            if i == 0:  # Master Sound toggle
+                if game_state and hasattr(game_state, 'sound_manager'):
+                    game_state.sound_manager.toggle()
+            elif i == 1:  # Money Spend Sound
+                if game_state and hasattr(game_state, 'sound_manager'):
+                    game_state.sound_manager.toggle_sound('money_spend')
+            elif i == 2:  # Action Points Sound
+                if game_state and hasattr(game_state, 'sound_manager'):
+                    game_state.sound_manager.toggle_sound('ap_spend')
+            elif i == 3:  # Employee Hire Sound
+                if game_state and hasattr(game_state, 'sound_manager'):
+                    game_state.sound_manager.toggle_sound('blob')
+            elif i == 4:  # Error Beep Sound
+                if game_state and hasattr(game_state, 'sound_manager'):
+                    game_state.sound_manager.toggle_sound('error_beep')
+            elif i == 5:  # Back to Main Menu
+                current_state = 'main_menu'
+                selected_menu_item = 0
+            break
+
 def main():
     """
     Main game loop with state management for menu system.
@@ -562,6 +639,9 @@ def main():
                     elif current_state == 'end_game_menu':
                         # Handle end-game menu clicks
                         handle_end_game_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'sounds_menu':
+                        # Handle sounds menu clicks
+                        handle_sounds_menu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'game':
                         # Tutorial button handling (takes precedence)
                         if onboarding.show_tutorial_overlay and current_tutorial_content:
@@ -647,6 +727,10 @@ def main():
                     elif current_state == 'end_game_menu':
                         # Handle end-game menu keyboard navigation
                         handle_end_game_menu_keyboard(event.key)
+                        
+                    elif current_state == 'sounds_menu':
+                        # Handle sounds menu keyboard navigation
+                        handle_sounds_menu_keyboard(event.key)
                             
                     elif current_state == 'custom_seed_prompt':
                         # Text input for custom seed (preserving original logic)
@@ -778,6 +862,11 @@ def main():
                 # End-game menu with statistics and options
                 screen.fill((25, 25, 35))  # Same dark background as game
                 draw_end_game_menu(screen, SCREEN_W, SCREEN_H, end_game_selected_item, game_state, seed)
+                
+            elif current_state == 'sounds_menu':
+                # Sounds options menu
+                screen.fill((128, 128, 128))  # Same grey background as main menu
+                draw_sounds_menu(screen, SCREEN_W, SCREEN_H, sounds_menu_selected_item, game_state)
                 
             elif current_state == 'game':
                 # Preserve original game appearance and logic
