@@ -330,18 +330,19 @@ class GameState:
     
     def _handle_action_selection(self, action_idx, action):
         """Handle selecting (clicking) an action."""
-        # Check max clicks per action per turn (default 1, can be overridden)
-        max_clicks = action.get('max_clicks_per_turn', 1)
-        current_clicks = self.action_clicks_this_turn.get(action_idx, 0)
-        
-        if current_clicks >= max_clicks:
-            error_msg = f"{action['name']} already used maximum times this turn ({max_clicks})."
-            self.messages.append(error_msg)
-            return {
-                'success': False,
-                'message': error_msg,
-                'play_sound': False
-            }
+        # Check max clicks per action per turn (only if specified in action)
+        if 'max_clicks_per_turn' in action:
+            max_clicks = action['max_clicks_per_turn']
+            current_clicks = self.action_clicks_this_turn.get(action_idx, 0)
+            
+            if current_clicks >= max_clicks:
+                error_msg = f"{action['name']} already used maximum times this turn ({max_clicks})."
+                self.messages.append(error_msg)
+                return {
+                    'success': False,
+                    'message': error_msg,
+                    'play_sound': False
+                }
         
         # Check if action is available (rules constraint)
         if action.get("rules") and not action["rules"](self):
@@ -405,8 +406,9 @@ class GameState:
         self.selected_actions.append(action_idx)
         self.selected_action_instances.append(action_instance)
         
-        # Track clicks per action per turn
-        self.action_clicks_this_turn[action_idx] = self.action_clicks_this_turn.get(action_idx, 0) + 1
+        # Track clicks per action per turn (only if action has limits)
+        if 'max_clicks_per_turn' in action:
+            self.action_clicks_this_turn[action_idx] = self.action_clicks_this_turn.get(action_idx, 0) + 1
         
         # Immediate AP deduction
         self.action_points -= ap_cost
@@ -1196,11 +1198,17 @@ class GameState:
         not_purchased = [i for i, u in enumerate(self.upgrades) if not u.get("purchased", False)]
 
         icon_w, icon_h = int(w*0.045), int(w*0.045)
-        # Purchased: row at top right
-        purchased_rects = [
-            (w - icon_w*(len(purchased)-j+1), int(h*0.08), icon_w, icon_h)
-            for j, i in enumerate(purchased)
-        ]
+        # Purchased: row at top right, but respect UI boundaries
+        # Info panel extends to about w*0.84, so ensure icons don't overlap
+        max_icons_per_row = max(1, int((w - w*0.84) / icon_w))  # Available space for icons
+        
+        purchased_rects = []
+        for j, i in enumerate(purchased):
+            row = j // max_icons_per_row
+            col = j % max_icons_per_row
+            x = w - icon_w*(col+1)
+            y = int(h*0.08) + row * (icon_h + 5)  # Stack vertically if needed
+            purchased_rects.append((x, y, icon_w, icon_h))
         # Not purchased: buttons down right (moved down to accommodate opponents panel)
         base_x = int(w*0.63)
         base_y = int(h*0.28)  # Moved down from 0.18 to 0.28
@@ -1333,8 +1341,17 @@ class GameState:
         self.selected_action_instances = []  # Clear action instances for next turn
         self.action_clicks_this_turn = {}  # Reset click tracking for new turn
 
-        # Staff maintenance
-        maintenance_cost = self.staff * self.staff_maintenance
+        # Staff maintenance - scale up costs and add overheads after first employee
+        if self.staff == 0:
+            maintenance_cost = 0
+        elif self.staff == 1:
+            # First employee, just base cost (scaled up from 15 to 25)
+            maintenance_cost = 25
+        else:
+            # Multiple employees - base cost plus overhead per additional employee
+            base_cost = 25  # Scaled up from 15
+            overhead_per_additional = 10  # Overhead cost for each employee after the first
+            maintenance_cost = base_cost + (self.staff - 1) * (base_cost + overhead_per_additional)
         money_before_maintenance = self.money
         self._add('money', -maintenance_cost)  # Use _add to track spending
         
