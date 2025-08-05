@@ -11,6 +11,7 @@ from opponents import create_default_opponents
 from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
 from overlay_manager import OverlayManager
+from error_tracker import ErrorTracker
 
 SCORE_FILE = "local_highscore.json"
 
@@ -157,9 +158,11 @@ class GameState:
         # Initialize UI overlay management system
         self.overlay_manager = OverlayManager()
         
-        # Error tracking for easter egg beep system
-        self.error_history = []  # Track recent errors for pattern detection
-        self.last_error_beep_time = 0  # Prevent spam beeping
+        # Initialize error tracking system (replaces duplicate error tracking logic)
+        self.error_tracker = ErrorTracker(
+            sound_manager=self.sound_manager,
+            message_callback=lambda msg: self.messages.append(msg)
+        )
         self.logger = GameLogger(seed)
         
         # UI Transition System for smooth visual feedback
@@ -274,6 +277,79 @@ class GameState:
         
         return True
 
+    def execute_action_by_keyboard(self, action_idx):
+        """
+        Execute an action via keyboard shortcut (1-9 keys).
+        Includes enhanced feedback: AP spending sound, glow effect, and error handling.
+        
+        Args:
+            action_idx (int): Index of the action to execute (0-8 for keys 1-9)
+            
+        Returns:
+            bool: True if action was executed successfully, False otherwise
+        """
+        if action_idx >= len(self.actions):
+            return False
+            
+        action = self.actions[action_idx]
+        ap_cost = action.get("ap_cost", 1)
+        
+        # Check AP availability
+        if self.action_points < ap_cost:
+            error_msg = f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points})"
+            self.messages.append(error_msg)
+            
+            # Track error for easter egg (3 identical errors trigger beep)
+            if self.track_error(error_msg):
+                # Easter egg triggered! Play error beep
+                self.sound_manager.play_error_beep()
+            
+            return False
+        
+        # Check money availability
+        if self.money < action["cost"]:
+            error_msg = f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money})"
+            self.messages.append(error_msg)
+            
+            # Track error for easter egg
+            if self.track_error(error_msg):
+                self.sound_manager.play_error_beep()
+            
+            return False
+        
+        # Check action rules/availability
+        if action.get("rules") and not action["rules"](self):
+            error_msg = f"{action['name']} is not available yet"
+            self.messages.append(error_msg)
+            
+            # Track error for easter egg
+            if self.track_error(error_msg):
+                self.sound_manager.play_error_beep()
+            
+            return False
+        
+        # Action can be executed
+        # Check for auto-delegation (if beneficial)
+        delegate = False
+        if (action.get("delegatable", False) and 
+            self.can_delegate_action(action) and
+            action.get("delegate_ap_cost", action.get("ap_cost", 1)) < action.get("ap_cost", 1)):
+            delegate = True
+        
+        # Execute the action with delegation support
+        success = self.execute_action_with_delegation(action_idx, delegate)
+        
+        if success:
+            # Enhanced AP feedback
+            self.action_points -= ap_cost
+            self.ap_spent_this_turn = True
+            self.ap_glow_timer = 30  # 30 frames of glow effect
+            
+            # Visual feedback will be handled by the UI system
+            # Sound feedback will be played by the caller (main.py)
+            
+        return success
+
     def _execute_action_with_effectiveness(self, action, effect_type, effectiveness):
         """
         Execute an action effect with reduced effectiveness.
@@ -334,19 +410,18 @@ class GameState:
                 self.messages.append(f"Delegated action had {int(effectiveness * 100)}% effectiveness.")
 
     def _initialize_employee_blobs(self):
-        """Initialize employee blobs for starting staff"""
+        """Initialize employee blobs for starting staff with improved positioning"""
         import math
         for i in range(self.staff):
-            # Position blobs in lower middle area, clustered
-            base_x = 400 + (i % 3) * 60  # 3 blobs per row
-            base_y = 500 + (i // 3) * 60  # Stack rows
+            # Use improved positioning that avoids UI overlap
+            target_x, target_y = self._calculate_blob_position(i)
             
             blob = {
                 'id': i,
-                'x': base_x,
-                'y': base_y, 
-                'target_x': base_x,
-                'target_y': base_y,
+                'x': target_x,
+                'y': target_y, 
+                'target_x': target_x,
+                'target_y': target_y,
                 'has_compute': False,
                 'productivity': 0.0,
                 'animation_progress': 1.0,  # Already positioned
@@ -357,13 +432,12 @@ class GameState:
             self.employee_blobs.append(blob)
     
     def _add_employee_blobs(self, count):
-        """Add new employee blobs with animation from side"""
+        """Add new employee blobs with animation from side and improved positioning"""
         import math
         for i in range(count):
             blob_id = len(self.employee_blobs)
-            # Calculate target position in cluster
-            target_x = 400 + (blob_id % 3) * 60
-            target_y = 500 + (blob_id // 3) * 60
+            # Use improved positioning that avoids UI overlap
+            target_x, target_y = self._calculate_blob_position(blob_id)
             
             blob = {
                 'id': blob_id,
@@ -380,8 +454,65 @@ class GameState:
             }
             self.employee_blobs.append(blob)
             
-            # Play blob sound effect for new hire
+            # Play sound for new employee
             self.sound_manager.play_blob_sound()
+    
+    def _calculate_blob_position(self, blob_index, screen_w=1200, screen_h=800):
+        """
+        Calculate blob position that avoids UI overlap.
+        
+        Args:
+            blob_index (int): Index of the blob (for positioning in grid)
+            screen_w (int): Screen width (default 1200 for backward compatibility) 
+            screen_h (int): Screen height (default 800 for backward compatibility)
+            
+        Returns:
+            tuple: (x, y) position for the blob
+        """
+        # Define safe zone for blobs (avoiding UI elements)
+        # Action buttons are on the left (~0 to w*0.45)
+        # Upgrade buttons are on the right (~w*0.55 to w*1.0)
+        # Top area has resources (~0 to h*0.2)
+        # Bottom area has messages and end turn button (~h*0.7 to h*1.0)
+        
+        # Safe zone: middle area between action and upgrade panels
+        safe_zone_left = int(screen_w * 0.46)
+        safe_zone_right = int(screen_w * 0.54)
+        safe_zone_top = int(screen_h * 0.25)  # Below opponents panel
+        safe_zone_bottom = int(screen_h * 0.65)  # Above message log
+        
+        safe_width = safe_zone_right - safe_zone_left
+        safe_height = safe_zone_bottom - safe_zone_top
+        
+        # If safe zone is too narrow, expand it
+        if safe_width < 200:
+            safe_zone_left = int(screen_w * 0.42)
+            safe_zone_right = int(screen_w * 0.58)
+            safe_width = safe_zone_right - safe_zone_left
+        
+        # Calculate grid layout within safe zone
+        blob_spacing = 50  # Space between blobs
+        blob_radius = 25   # Account for blob size
+        
+        # Calculate how many blobs fit per row
+        blobs_per_row = max(1, (safe_width - 2 * blob_radius) // blob_spacing)
+        
+        # Calculate position in grid
+        row = blob_index // blobs_per_row
+        col = blob_index % blobs_per_row
+        
+        # Calculate actual position
+        x = safe_zone_left + blob_radius + col * blob_spacing
+        y = safe_zone_top + blob_radius + row * blob_spacing
+        
+        # Ensure we don't exceed the safe zone
+        if y > safe_zone_bottom - blob_radius:
+            # If we run out of vertical space, start a new column to the right
+            extra_cols = (blob_index - (safe_zone_bottom - safe_zone_top) // blob_spacing * blobs_per_row) // ((safe_zone_bottom - safe_zone_top) // blob_spacing)
+            x = safe_zone_right + 20 + extra_cols * blob_spacing
+            y = safe_zone_top + blob_radius + (blob_index % ((safe_zone_bottom - safe_zone_top) // blob_spacing)) * blob_spacing
+        
+        return x, y
             
     def _add_manager_blob(self):
         """Add a new manager blob with animation from side"""
@@ -1441,21 +1572,7 @@ class GameState:
         Returns:
             bool: True if this triggers the easter egg (3 repeated identical errors)
         """
-        import pygame
-        
-        current_time = pygame.time.get_ticks()
-        
-        # Add error to overlay manager (which handles the logic)
-        should_beep = self.overlay_manager.add_error(error_message, current_time // (1000 // 30))
-        
-        # Play easter egg beep if triggered and enough time has passed
-        if should_beep and (current_time - self.last_error_beep_time) > 2000:  # 2 second cooldown
-            self.sound_manager.play_error_beep()
-            self.last_error_beep_time = current_time
-            self.messages.append("🔊 Error pattern detected! (Easter egg activated)")
-            return True
-            
-        return False
+        return self.error_tracker.track_error(error_message)
     
     def log_ui_interaction(self, interaction_type: str, element_id: str, details: dict = None):
         """

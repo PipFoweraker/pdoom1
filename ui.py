@@ -306,8 +306,14 @@ def draw_ui(screen, game_state, w, h):
             button_state = ButtonState.NORMAL
         
         # Use visual feedback system for consistent styling
+        # Include keyboard shortcut in button text for first 9 actions
+        button_text = action["name"]
+        if idx < 9:  # Only first 9 actions get keyboard shortcuts (1-9 keys)
+            shortcut_key = str(idx + 1)
+            button_text = f"[{shortcut_key}] {action['name']}"
+        
         visual_feedback.draw_button(
-            screen, rect, action["name"], button_state, FeedbackStyle.BUTTON
+            screen, rect, button_text, button_state, FeedbackStyle.BUTTON
         )
         
         # Draw description text below button
@@ -535,8 +541,22 @@ def draw_ui(screen, game_state, w, h):
     draw_popup_events(screen, game_state, w, h, font, big_font)
 
 def draw_employee_blobs(screen, game_state, w, h):
-    """Draw employee blobs in the lower middle area with animation and halos"""
+    """Draw employee blobs with improved positioning that avoids UI overlap"""
     import math
+    
+    # Update blob positions based on current screen size (if needed)
+    # This handles cases where screen was resized or blobs were initialized with default dimensions
+    for i, blob in enumerate(game_state.employee_blobs):
+        # Only update if blob seems to be using old hardcoded positioning
+        if blob.get('needs_position_update', False) or (blob['target_x'] < 600 and blob['target_y'] > 450):
+            new_x, new_y = game_state._calculate_blob_position(i, w, h)
+            blob['target_x'] = new_x
+            blob['target_y'] = new_y
+            # If blob is already animated in, update current position too
+            if blob['animation_progress'] >= 1.0:
+                blob['x'] = new_x
+                blob['y'] = new_y
+            blob['needs_position_update'] = False
     
     # Update blob animations
     for blob in game_state.employee_blobs:

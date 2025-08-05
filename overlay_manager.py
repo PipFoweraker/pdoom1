@@ -11,6 +11,7 @@ import pygame
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Callable, Any
 from dataclasses import dataclass, field
+from error_tracker import ErrorTracker
 
 
 class ZLayer(Enum):
@@ -88,10 +89,8 @@ class OverlayManager:
         self.hover_glow_intensity = 20
         self.animation_easing = 0.15
         
-        # Error tracking for easter egg
-        self.recent_errors: List[Tuple[str, int]] = []  # (error_msg, timestamp)
-        self.error_repeat_threshold = 3
-        self.error_time_window = 180  # frames (6 seconds at 30fps)
+        # Error tracking system (centralized)
+        self.error_tracker = ErrorTracker()
         
     def register_element(self, element: UIElement) -> bool:
         """
@@ -312,6 +311,8 @@ class OverlayManager:
         """
         Track an error for the easter egg beep system.
         
+        This method is kept for backward compatibility but now delegates to ErrorTracker.
+        
         Args:
             error_message: Error message to track
             timestamp: Time of error (current frame if None)
@@ -319,20 +320,11 @@ class OverlayManager:
         Returns:
             bool: True if this triggers the easter egg (3 repeated errors)
         """
-        if timestamp is None:
-            timestamp = pygame.time.get_ticks() // (1000 // 30)  # Convert to frame count
-            
-        # Clean old errors outside time window
-        cutoff_time = timestamp - self.error_time_window
-        self.recent_errors = [(msg, t) for msg, t in self.recent_errors if t > cutoff_time]
-        
-        # Add new error
-        self.recent_errors.append((error_message, timestamp))
-        
-        # Check for repeated identical errors
-        identical_count = sum(1 for msg, _ in self.recent_errors if msg == error_message)
-        
-        return identical_count >= self.error_repeat_threshold
+        # For backward compatibility, this just delegates to the error tracker
+        # but only returns whether the threshold was reached (doesn't play sounds)
+        current_count = self.error_tracker.get_error_count(error_message) + 1
+        self.error_tracker.track_error(error_message, timestamp)
+        return current_count >= self.error_tracker.error_repeat_threshold
     
     def get_elements_by_layer(self, layer: ZLayer) -> List[UIElement]:
         """Get all elements in a specific layer."""

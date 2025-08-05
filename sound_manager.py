@@ -57,6 +57,9 @@ class SoundManager:
             # Create error beep sound for easter egg
             self._create_error_beep()
             
+            # Create AP spend sound for enhanced feedback
+            self._create_ap_spend_sound()
+            
         except (pygame.error, AttributeError, Exception):
             # If sound creation fails, just disable sounds
             self.enabled = False
@@ -114,6 +117,44 @@ class SoundManager:
             # If error beep creation fails, continue without it
             pass
     
+    def _create_ap_spend_sound(self):
+        """Create a sound effect for when Action Points are spent"""
+        if not self.enabled:
+            return
+            
+        try:
+            sample_rate = 22050
+            duration = 0.2  # 200ms - short and crisp
+            samples = int(sample_rate * duration)
+            
+            # Create sound wave array for AP spend
+            wave_array = array.array('h')
+            
+            for i in range(samples):
+                t = i / sample_rate
+                
+                # Create a satisfying "click" or "ding" sound
+                # Rising pitch with quick decay
+                frequency = 800 + (t * 400)  # Pitch rises from 800Hz to 1200Hz
+                amplitude = 4000 * math.exp(-t * 8)  # Quick exponential decay
+                
+                # Add some harmonic richness
+                sample = int(amplitude * (
+                    math.sin(2 * math.pi * frequency * t) +
+                    0.3 * math.sin(2 * math.pi * frequency * 2 * t)  # Second harmonic
+                ))
+                
+                # Add to stereo array
+                wave_array.append(sample)
+                wave_array.append(sample)
+            
+            # Create pygame sound from array
+            self.sounds['ap_spend'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, Exception):
+            # If AP sound creation fails, continue without it
+            pass
+    
     def play_blob_sound(self):
         """Play the blob sound effect when a new employee is hired"""
         if self.enabled and 'blob' in self.sounds:
@@ -128,6 +169,15 @@ class SoundManager:
         if self.enabled and 'error_beep' in self.sounds:
             try:
                 self.sounds['error_beep'].play()
+            except pygame.error:
+                # Sound playback failed, but don't crash
+                pass
+    
+    def play_ap_spend_sound(self):
+        """Play the AP spend sound effect when Action Points are spent"""
+        if self.enabled and 'ap_spend' in self.sounds:
+            try:
+                self.sounds['ap_spend'].play()
             except pygame.error:
                 # Sound playback failed, but don't crash
                 pass

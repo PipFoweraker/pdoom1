@@ -150,12 +150,19 @@ As your organization grows, you'll encounter special milestone events that chang
 ### In-Game Controls
 | Action | How To |
 |--------|--------|
-| Take action | Click action button (left panel) |
+| Take action | Click action button (left panel) **OR** press number keys 1-9 |
 | Buy upgrade | Click upgrade button (right panel) |
 | End turn | Click "END TURN" or press `Space` |
 | View upgrade details | Hover mouse over purchased upgrades (top right) |
+| Open Player Guide | Press `H` key anytime |
 | Quit to menu | Press `Esc` |
 | End-game options | Click anywhere on final score screen to access end-game menu |
+
+**🎹 Keyboard Shortcuts for Actions:**
+- **1-9 keys**: Execute actions 1-9 directly (displayed as [1], [2], etc. on action buttons)
+- **Audio feedback**: Hear a satisfying sound when spending Action Points
+- **Visual feedback**: Watch the AP counter glow when Action Points are spent
+- **Error handling**: Audio beep after 3 repeated identical errors (easter egg)
 
 ### Game Modes
 - **Weekly Seed**: This week's community challenge (same for everyone)

@@ -77,11 +77,47 @@ P(Doom) features a modular UI overlay system inspired by Papers Please, SimPark,
 - **Low-Poly Styling**: Consistent rounded corners, gradient backgrounds, retro aesthetics
 - **Tooltip System**: Accessible tooltips with automatic edge detection
 
-#### Integration with Game State
+- **Integration with Game State** - Enhanced with improved blob positioning system
 - **Error Tracking**: `GameState.track_error()` integrates with overlay manager for easter egg detection
 - **Resource Validation**: `GameState.validate_action_requirements()` provides detailed error reporting
 - **Hover State Management**: Enhanced tooltips showing cost, AP requirements, and availability
 - **Visual State Sync**: Button states automatically reflect game state (affordable, selected, etc.)
+
+#### Enhanced Employee Blob Positioning System
+
+**Overview:**
+The employee blob positioning system has been enhanced to prevent UI overlap and provide responsive layout based on screen size.
+
+**Safe Zone Calculation:**
+```python
+def _calculate_blob_position(self, blob_index, screen_w=1200, screen_h=800):
+    # Safe zone avoids UI elements:
+    # - Action buttons (left ~0-45% of screen)
+    # - Upgrade buttons (right ~55-100% of screen)  
+    # - Resources area (top ~0-20% of screen)
+    # - Message log (bottom ~70-100% of screen)
+    
+    safe_zone_left = int(screen_w * 0.46)
+    safe_zone_right = int(screen_w * 0.54)
+    safe_zone_top = int(screen_h * 0.25)
+    safe_zone_bottom = int(screen_h * 0.65)
+```
+
+**Dynamic Positioning Features:**
+- **Screen Size Responsive**: Positions scale with window size
+- **Grid Layout**: Automatic grid arrangement within safe zones
+- **Overflow Handling**: Graceful handling when many employees exceed safe zone
+- **Animation Integration**: Smooth transitions from off-screen to calculated positions
+
+**UI Integration:**
+- `draw_employee_blobs()` detects and updates positions for existing blobs
+- Position updates triggered when screen dimensions change
+- Backward compatibility with existing blob data structures
+
+**Testing Coverage:**
+- Safe zone validation ensures blobs avoid UI elements
+- Multiple blob positioning with unique positions
+- Screen size scaling verification
 
 ### UI Element Types
 
@@ -143,6 +179,56 @@ if game_state.track_error("Insufficient money"):
 - **High Contrast**: Available via `visual_feedback.get_accessible_color()`
 - **Error Feedback**: Audio beep for repeated errors
 - **Tooltip Enhancement**: Detailed information about interactive elements
+- **Action Keyboard Shortcuts**: Direct action execution via 1-9 keys
+
+#### Enhanced Action Point Feedback System
+
+The Action Points (AP) system includes sophisticated visual and audio feedback:
+
+**Visual Feedback:**
+- **AP Counter Glow**: Yellow glow effect on AP counter when Action Points are spent
+- **Glow Timer**: 30-frame animation timer (`ap_glow_timer`) for smooth visual feedback
+- **Button State Sync**: Action buttons automatically gray out when AP is insufficient
+- **Visual State Indicators**: ButtonState enum reflects AP availability in real-time
+
+**Audio Feedback:**
+- **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
+- **Error Easter Egg**: Audio beep after 3 repeated identical errors
+- **Sound Integration**: Integrated with `SoundManager` for consistent audio experience
+
+**Implementation Details:**
+```python
+# Enhanced AP feedback in execute_action_by_keyboard()
+if success:
+    self.action_points -= ap_cost
+    self.ap_spent_this_turn = True
+    self.ap_glow_timer = 30  # 30 frames of glow effect
+    # Sound feedback played by caller (main.py)
+```
+
+#### Keyboard Shortcut System
+
+**Architecture:**
+- **Action Shortcuts**: Keys 1-9 map to first 9 actions in the action list
+- **Visual Integration**: Action buttons display shortcuts as "[1] Action Name"
+- **Error Handling**: Comprehensive validation with user-friendly error messages
+- **Auto-Delegation**: Keyboard shortcuts automatically use delegation when beneficial
+
+**Implementation:**
+```python
+# In main.py keyboard handling
+elif event.key >= pygame.K_1 and event.key <= pygame.K_9:
+    action_index = event.key - pygame.K_1  
+    success = game_state.execute_action_by_keyboard(action_index)
+    if success:
+        game_state.sound_manager.play_ap_spend_sound()
+```
+
+**Integration Points:**
+- `main.py`: Keyboard event handling and sound feedback
+- `game_state.py`: `execute_action_by_keyboard()` method with full validation
+- `ui.py`: Button label enhancement with shortcut display
+- `sound_manager.py`: AP spend sound generation and playback
 
 #### TODO: Future Accessibility Improvements
 - [ ] Screen reader compatibility (text-to-speech integration)

@@ -479,5 +479,214 @@ class TestActionPointsDelegation(unittest.TestCase):
                 self.assertTrue(delegation_info.get('delegated', False))
 
 
+class TestKeyboardShortcuts(unittest.TestCase):
+    """Test keyboard shortcut functionality for actions."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        self.game_state = GameState("test_seed")
+        self.game_state.money = 100000  # High money to avoid constraints
+    
+    def test_execute_action_by_keyboard_success(self):
+        """Test that keyboard shortcuts execute actions successfully."""
+        initial_ap = self.game_state.action_points
+        
+        # Execute first action (Grow Community) via keyboard
+        success = self.game_state.execute_action_by_keyboard(0)
+        
+        self.assertTrue(success)
+        self.assertEqual(len(self.game_state.selected_actions), 1)
+        self.assertIn(0, self.game_state.selected_actions)
+        
+        # Check AP feedback was triggered
+        self.assertTrue(self.game_state.ap_spent_this_turn)
+        self.assertEqual(self.game_state.ap_glow_timer, 30)
+    
+    def test_execute_action_by_keyboard_insufficient_ap(self):
+        """Test keyboard shortcuts handle insufficient AP correctly."""
+        # Reduce AP to 0
+        self.game_state.action_points = 0
+        
+        success = self.game_state.execute_action_by_keyboard(0)
+        
+        self.assertFalse(success)
+        self.assertEqual(len(self.game_state.selected_actions), 0)
+        # Should have error message
+        self.assertTrue(any("Not enough Action Points" in msg for msg in self.game_state.messages))
+    
+    def test_execute_action_by_keyboard_insufficient_money(self):
+        """Test keyboard shortcuts handle insufficient money correctly."""
+        # Set money to very low amount
+        self.game_state.money = 1
+        
+        # Try expensive action (Safety Research costs 40)
+        safety_idx = next(i for i, action in enumerate(self.game_state.actions) 
+                         if action["name"] == "Safety Research")
+        
+        success = self.game_state.execute_action_by_keyboard(safety_idx)
+        
+        self.assertFalse(success)
+        self.assertEqual(len(self.game_state.selected_actions), 0)
+        # Should have error message
+        self.assertTrue(any("Not enough money" in msg for msg in self.game_state.messages))
+    
+    def test_execute_action_by_keyboard_action_not_available(self):
+        """Test keyboard shortcuts handle unavailable actions correctly."""
+        # Try an action that has rules (Scout Opponent requires turn 5+)
+        scout_idx = next(i for i, action in enumerate(self.game_state.actions) 
+                        if action["name"] == "Scout Opponent")
+        
+        # Should fail on turn 0
+        success = self.game_state.execute_action_by_keyboard(scout_idx)
+        
+        self.assertFalse(success)
+        self.assertEqual(len(self.game_state.selected_actions), 0)
+        # Should have error message
+        self.assertTrue(any("not available yet" in msg for msg in self.game_state.messages))
+    
+    def test_execute_action_by_keyboard_invalid_index(self):
+        """Test keyboard shortcuts handle invalid action indices."""
+        # Try index beyond available actions
+        invalid_idx = len(self.game_state.actions) + 5
+        
+        success = self.game_state.execute_action_by_keyboard(invalid_idx)
+        
+        self.assertFalse(success)
+        self.assertEqual(len(self.game_state.selected_actions), 0)
+    
+    def test_keyboard_shortcut_auto_delegation(self):
+        """Test that keyboard shortcuts use auto-delegation when beneficial."""
+        # Add ops staff to enable delegation for Buy Compute
+        self.game_state.ops_staff = 1
+        
+        buy_compute_idx = next(i for i, action in enumerate(self.game_state.actions) 
+                              if action["name"] == "Buy Compute")
+        
+        success = self.game_state.execute_action_by_keyboard(buy_compute_idx)
+        
+        self.assertTrue(success)
+        # Should have delegation info
+        self.assertTrue(hasattr(self.game_state, '_action_delegations'))
+        self.assertIn(buy_compute_idx, self.game_state._action_delegations)
+        
+        delegation_info = self.game_state._action_delegations[buy_compute_idx]
+        self.assertTrue(delegation_info['delegated'])
+        self.assertEqual(delegation_info['ap_cost'], 0)  # Delegated Buy Compute costs 0 AP
+
+
+class TestEnhancedAPFeedback(unittest.TestCase):
+    """Test enhanced Action Points feedback system."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        self.game_state = GameState("test_seed")
+        self.game_state.money = 100000
+    
+    def test_ap_glow_timer_initialization(self):
+        """Test that AP glow timer is properly initialized."""
+        self.assertEqual(self.game_state.ap_glow_timer, 0)
+        self.assertFalse(self.game_state.ap_spent_this_turn)
+    
+    def test_ap_glow_effect_on_action_execution(self):
+        """Test that AP glow effect is triggered when executing actions."""
+        # Execute action via keyboard
+        success = self.game_state.execute_action_by_keyboard(0)
+        
+        self.assertTrue(success)
+        self.assertTrue(self.game_state.ap_spent_this_turn)
+        self.assertEqual(self.game_state.ap_glow_timer, 30)
+    
+    def test_error_tracking_for_easter_egg(self):
+        """Test that repeated errors are tracked for easter egg."""
+        # Set AP to 0 to trigger errors
+        self.game_state.action_points = 0
+        
+        # First error
+        success1 = self.game_state.execute_action_by_keyboard(0)
+        self.assertFalse(success1)
+        
+        # Second error (same action)
+        success2 = self.game_state.execute_action_by_keyboard(0)
+        self.assertFalse(success2)
+        
+        # Third error should trigger easter egg
+        # Note: The actual beep sound can't be tested easily, but we can verify the error tracking
+        success3 = self.game_state.execute_action_by_keyboard(0)
+        self.assertFalse(success3)
+        
+        # Should have multiple error messages
+        error_messages = [msg for msg in self.game_state.messages if "Not enough Action Points" in msg]
+        self.assertEqual(len(error_messages), 3)
+    
+    def test_ap_deduction_on_keyboard_action(self):
+        """Test that AP is properly deducted when using keyboard shortcuts."""
+        initial_ap = self.game_state.action_points
+        
+        success = self.game_state.execute_action_by_keyboard(0)
+        
+        self.assertTrue(success)
+        # AP should be deducted (action costs 1 AP by default)
+        expected_ap = initial_ap - 1
+        self.assertEqual(self.game_state.action_points, expected_ap)
+
+
+class TestBlobPositioning(unittest.TestCase):
+    """Test improved blob positioning system."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        self.game_state = GameState("test_seed")
+    
+    def test_calculate_blob_position_basic(self):
+        """Test basic blob position calculation."""
+        # Test with default screen size
+        x, y = self.game_state._calculate_blob_position(0)
+        
+        # Should be within reasonable bounds
+        self.assertGreater(x, 0)
+        self.assertGreater(y, 0)
+        self.assertLess(x, 1200)  # Default screen width
+        self.assertLess(y, 800)   # Default screen height
+    
+    def test_calculate_blob_position_multiple_blobs(self):
+        """Test that multiple blobs get different positions."""
+        positions = []
+        for i in range(5):
+            x, y = self.game_state._calculate_blob_position(i)
+            positions.append((x, y))
+        
+        # All positions should be unique
+        self.assertEqual(len(positions), len(set(positions)))
+    
+    def test_calculate_blob_position_safe_zone(self):
+        """Test that blobs are positioned in safe zones avoiding UI."""
+        screen_w, screen_h = 1200, 800
+        
+        for i in range(10):
+            x, y = self.game_state._calculate_blob_position(i, screen_w, screen_h)
+            
+            # Should avoid action buttons area (left side)
+            self.assertGreater(x, screen_w * 0.4)
+            
+            # Should avoid top resource area  
+            self.assertGreater(y, screen_h * 0.2)
+            
+            # Should avoid bottom message area
+            self.assertLess(y, screen_h * 0.7)
+    
+    def test_blob_position_updates_with_screen_size(self):
+        """Test that blob positions update when screen size changes."""
+        # This would be tested in integration with the UI system
+        # For now, just verify the method exists and works
+        self.assertTrue(hasattr(self.game_state, '_calculate_blob_position'))
+        
+        # Test with different screen sizes
+        x1, y1 = self.game_state._calculate_blob_position(0, 800, 600)
+        x2, y2 = self.game_state._calculate_blob_position(0, 1600, 1200)
+        
+        # Positions should scale with screen size
+        self.assertNotEqual((x1, y1), (x2, y2))
+
+
 if __name__ == '__main__':
     unittest.main()
