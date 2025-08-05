@@ -1023,6 +1023,31 @@ class GameState:
         self._add('doom', spike)
 
     def handle_click(self, mouse_pos, w, h):
+        # Activity log drag functionality (moveable by default) - Handle FIRST to avoid conflicts
+        activity_log_rect = self._get_activity_log_rect(w, h)
+        if self._in_rect(mouse_pos, activity_log_rect):
+            # Don't start drag if clicking on minimize/expand buttons
+            if "compact_activity_display" in self.upgrade_effects:
+                if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
+                    expand_rect = self._get_activity_log_expand_button_rect(w, h)
+                    if self._in_rect(mouse_pos, expand_rect):
+                        self.activity_log_minimized = False
+                        self.messages.append("Activity log expanded.")
+                        return None  # Button click handled
+                elif self.scrollable_event_log_enabled:
+                    minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
+                    if self._in_rect(mouse_pos, minimize_rect):
+                        self.activity_log_minimized = True
+                        self.messages.append("Activity log minimized.")
+                        return None  # Button click handled
+            
+            # Start dragging the activity log
+            log_x, log_y = self._get_activity_log_base_position(w, h)
+            self.activity_log_being_dragged = True
+            self.activity_log_drag_offset = (mouse_pos[0] - (log_x + self.activity_log_position[0]), 
+                                           mouse_pos[1] - (log_y + self.activity_log_position[1]))
+            return None
+
         # Actions (left)
         a_rects = self._get_action_rects(w, h)
         for idx, rect in enumerate(a_rects):
@@ -1093,44 +1118,6 @@ class GameState:
             new_state = self.sound_manager.toggle()
             status = "enabled" if new_state else "disabled"
             self.messages.append(f"Sound {status}")
-            return None
-
-        # Activity log minimize/expand button (if compact display upgrade is purchased)
-        if "compact_activity_display" in self.upgrade_effects:
-            if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
-                # Expand button
-                expand_rect = self._get_activity_log_expand_button_rect(w, h)
-                if self._in_rect(mouse_pos, expand_rect):
-                    self.activity_log_minimized = False
-                    self.messages.append("Activity log expanded.")
-                    return None
-            elif self.scrollable_event_log_enabled:
-                # Minimize button
-                minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
-                if self._in_rect(mouse_pos, minimize_rect):
-                    self.activity_log_minimized = True
-                    self.messages.append("Activity log minimized.")
-                    return None
-
-        # Activity log drag functionality (moveable by default)
-        activity_log_rect = self._get_activity_log_rect(w, h)
-        if self._in_rect(mouse_pos, activity_log_rect):
-            # Don't start drag if clicking on minimize/expand buttons
-            if "compact_activity_display" in self.upgrade_effects:
-                if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
-                    expand_rect = self._get_activity_log_expand_button_rect(w, h)
-                    if self._in_rect(mouse_pos, expand_rect):
-                        return None  # Button click handled above
-                elif self.scrollable_event_log_enabled:
-                    minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
-                    if self._in_rect(mouse_pos, minimize_rect):
-                        return None  # Button click handled above
-            
-            # Start dragging the activity log
-            log_x, log_y = self._get_activity_log_base_position(w, h)
-            self.activity_log_being_dragged = True
-            self.activity_log_drag_offset = (mouse_pos[0] - (log_x + self.activity_log_position[0]), 
-                                           mouse_pos[1] - (log_y + self.activity_log_position[1]))
             return None
 
         return None
