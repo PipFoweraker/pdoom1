@@ -421,8 +421,8 @@ def draw_ui(screen, game_state, w, h):
         FeedbackStyle.BUTTON, custom_colors.get(endturn_state)
     )
 
-    # Messages log (bottom left) - Enhanced with scrollable history and minimize option
-    log_x, log_y = int(w*0.04), int(h*0.74)
+    # Messages log (bottom right) - Enhanced with scrollable history and minimize option
+    log_x, log_y = int(w*0.40), int(h*0.74)
     
     # Check if activity log is minimized (only available with compact activity display upgrade)
     if (hasattr(game_state, 'activity_log_minimized') and 
@@ -458,7 +458,7 @@ def draw_ui(screen, game_state, w, h):
         
     elif game_state.scrollable_event_log_enabled:
         # Enhanced scrollable event log with border and visual indicators
-        log_width = int(w * 0.44)
+        log_width = int(w * 0.22)  # Reduced from 0.44 to 0.22 to avoid upgrade button overlap
         log_height = int(h * 0.22)
         
         # Draw border around the event log area
