@@ -12,6 +12,7 @@ from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
 from overlay_manager import OverlayManager
 from error_tracker import ErrorTracker
+from employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
 
 SCORE_FILE = "local_highscore.json"
 

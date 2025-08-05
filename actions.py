@@ -62,49 +62,14 @@ ACTIONS = [
         "rules": None
     },
     {
-        "name": "Hire Staff",
-        "desc": "+Staff, costs money.",
-        "cost": 60,
-        "ap_cost": 1,  # Action Points cost
-        "upside": lambda gs: gs._add('staff', 1),
+        "name": "Hire Employee",
+        "desc": "Choose from available employee types based on your organization's needs.",
+        "cost": 60,  # Base cost, actual cost depends on selection
+        "ap_cost": 1,  # Base AP cost, actual cost depends on selection
+        "upside": lambda gs: gs._trigger_hiring_dialog(),
         "downside": lambda gs: None,
-        "rules": None
-    },
-    {
-        "name": "Hire Admin Assistant",
-        "desc": "Hire admin assistant (+1.0 Action Points per turn). Costly but high AP boost.",
-        "cost": 80,
-        "ap_cost": 2,  # Higher AP cost due to specialized nature
-        "upside": lambda gs: (gs._add('admin_staff', 1), gs._add('staff', 1)),
-        "downside": lambda gs: None,
-        "rules": None
-    },
-    {
-        "name": "Hire Research Staff",
-        "desc": "Hire research specialist (enables research action delegation).",
-        "cost": 70,
-        "ap_cost": 2,  # Higher AP cost due to specialized nature
-        "upside": lambda gs: (gs._add('research_staff', 1), gs._add('staff', 1)),
-        "downside": lambda gs: None,
-        "rules": None
-    },
-    {
-        "name": "Hire Operations Staff",
-        "desc": "Hire operations specialist (enables operational action delegation).",
-        "cost": 70,
-        "ap_cost": 2,  # Higher AP cost due to specialized nature
-        "upside": lambda gs: (gs._add('ops_staff', 1), gs._add('staff', 1)),
-        "downside": lambda gs: None,
-        "rules": None
-    },
-    {
-        "name": "Hire Manager",
-        "desc": "Hire manager for large teams (1.5x staff cost). Unlocks at 9+ staff.",
-        "cost": 90,  # 1.5x normal staff cost
-        "ap_cost": 1,  # Action Points cost
-        "upside": lambda gs: gs._hire_manager(),
-        "downside": lambda gs: None,
-        "rules": manager_unlock_rule  # Unlocks at 9+ staff (refactored rule)
+        "rules": None,
+        "special": "hiring_dialog"  # Flag to indicate this triggers a dialog
     },
     {
         "name": "Espionage",
