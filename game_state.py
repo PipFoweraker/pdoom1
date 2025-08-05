@@ -12,6 +12,7 @@ from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
 from overlay_manager import OverlayManager
 from error_tracker import ErrorTracker
+from end_game_scenarios import end_game_scenarios
 
 SCORE_FILE = "local_highscore.json"
 
@@ -102,6 +103,7 @@ class GameState:
         self.upgrade_effects = set()
         self.messages = ["Game started! Select actions, then End Turn."]
         self.game_over = False
+        self.end_game_scenario = None  # Will hold the EndGameScenario when game ends
         self.highscore = self.load_highscore()
         
         # Initialize opponents system (replaces simple opp_progress)
@@ -1405,8 +1407,15 @@ class GameState:
         self.reputation = max(0, self.reputation)
         self.money = max(self.money, 0)
 
-        # If game ended, log final state and write log file
+        # If game ended, get detailed scenario and log final state
         if self.game_over and game_end_reason:
+            # Get detailed end game scenario
+            self.end_game_scenario = end_game_scenarios.get_scenario(self)
+            
+            # Update the message with the scenario title
+            if self.end_game_scenario:
+                self.messages.append(f"GAME OVER: {self.end_game_scenario.title}")
+            
             final_resources = {
                 'money': self.money,
                 'staff': self.staff,
