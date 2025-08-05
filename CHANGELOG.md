@@ -46,6 +46,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Version display in game window title
 - Automated version integration with game logger
 
+### Fixed
+- **Options Menu UnboundLocalError**: Fixed crash when selecting Options from main menu
+  - Added missing global declarations for `overlay_content` and `overlay_title` in main() function
+  - Enhanced `draw_overlay` function with defensive logic for None values
+  - Prevents "UnboundLocalError: cannot access local variable 'overlay_title'" crashes
+  - Added comprehensive test coverage for Options menu selection via keyboard and mouse
+  - Updated DEVELOPERGUIDE.md with overlay variable pattern requirements and warnings
+
 ### Changed
 - Game window title now shows semantic version (v0.1.0) instead of hardcoded "v3"
 - GameLogger now defaults to current version if none specified

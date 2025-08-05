@@ -975,10 +975,19 @@ def main():
 **Examples of Variables Requiring Global Declaration:**
 - `first_time_help_content`, `first_time_help_close_button`
 - `current_tutorial_content`
+- `overlay_content`, `overlay_title` (for main menu overlays like Settings, Player Guide, README)
 - Any UI state variables that are both checked and assigned in main()
 
 **Why This Is Required:**
 Python treats variables as local when they are assigned anywhere in a function scope. Without global declaration, referencing these variables before assignment raises UnboundLocalError even if they exist at module level.
+
+**⚠️ WARNING: Common Bug Pattern**
+The most common manifestation of this bug is when menu handlers (like `handle_menu_click` or `handle_menu_keyboard`) assign overlay variables, but the main() function lacks proper global declarations. This causes crashes when selecting menu items like "Options" or "Player Guide".
+
+**Always verify that:**
+1. Overlay variables are declared at module level
+2. All overlay variables assigned in functions called from main() are declared as global in main()
+3. The `draw_overlay` function has defensive logic for None values
 
 ### State Management
 

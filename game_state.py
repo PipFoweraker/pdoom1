@@ -1,6 +1,7 @@
 import random
 import json
 import os
+from typing import Tuple
 from actions import ACTIONS
 from upgrades import UPGRADES
 from events import EVENTS
@@ -1510,7 +1511,7 @@ class GameState:
         # Track for easter egg detection
         return self.track_error(error_msg)
     
-    def validate_action_requirements(self, action_index: int) -> tuple[bool, str]:
+    def validate_action_requirements(self, action_index: int) -> Tuple[bool, str]:
         """
         Validate if an action can be performed, with detailed error reporting.
         
@@ -1518,7 +1519,7 @@ class GameState:
             action_index: Index of action to validate
             
         Returns:
-            tuple[bool, str]: (can_perform, error_message)
+            Tuple[bool, str]: (can_perform, error_message)
         """
         if action_index >= len(self.actions):
             return False, "Invalid action"
