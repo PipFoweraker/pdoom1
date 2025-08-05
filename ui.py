@@ -316,6 +316,28 @@ def draw_ui(screen, game_state, w, h):
             screen, rect, button_text, button_state, FeedbackStyle.BUTTON
         )
         
+        # Draw action usage indicators (circles for repeatables)
+        if hasattr(game_state, 'selected_action_instances'):
+            action_count = sum(1 for inst in game_state.selected_action_instances if inst['action_idx'] == idx)
+            if action_count > 0:
+                # Draw usage indicators as small circles
+                indicator_size = int(min(w, h) * 0.008)  # Small circles
+                indicator_color = (100, 255, 100) if button_state != ButtonState.DISABLED else (60, 120, 60)
+                
+                # Position indicators in top-right of button
+                start_x = rect.right - (action_count * indicator_size * 2) - 5
+                start_y = rect.top + 5
+                
+                for i in range(min(action_count, 5)):  # Max 5 indicators to avoid clutter
+                    circle_x = start_x + (i * indicator_size * 2)
+                    circle_y = start_y + indicator_size
+                    pygame.draw.circle(screen, indicator_color, (circle_x, circle_y), indicator_size)
+                    
+                # If more than 5, show "+N" text
+                if action_count > 5:
+                    more_text = font.render(f"+{action_count-5}", True, indicator_color)
+                    screen.blit(more_text, (start_x + 5 * indicator_size * 2 + 2, start_y))
+        
         # Draw description text below button
         desc_color = (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160)
         desc_text = font.render(f"{action['desc']} (Cost: ${action['cost']}, AP: {ap_cost})", True, desc_color)

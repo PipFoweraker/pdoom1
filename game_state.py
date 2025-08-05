@@ -95,6 +95,7 @@ class GameState:
         self.turn = 0
         self.max_doom = 100
         self.selected_actions = []
+        self.selected_action_instances = []  # Track individual action instances for undo
         self.staff_maintenance = 15
         self.seed = seed
         self.upgrades = [dict(u) for u in UPGRADES]
@@ -280,7 +281,7 @@ class GameState:
     def execute_action_by_keyboard(self, action_idx):
         """
         Execute an action via keyboard shortcut (1-9 keys).
-        Includes enhanced feedback: AP spending sound, glow effect, and error handling.
+        Now routes through unified action handler.
         
         Args:
             action_idx (int): Index of the action to execute (0-8 for keys 1-9)
@@ -288,67 +289,172 @@ class GameState:
         Returns:
             bool: True if action was executed successfully, False otherwise
         """
-        if action_idx >= len(self.actions):
+        if self.game_over:
             return False
+            
+        # Check for undo (if action is already selected, try to undo it)
+        is_undo = action_idx in self.selected_actions
+        
+        result = self.attempt_action_selection(action_idx, is_undo)
+        
+        if result['message']:
+            # Message is already added by attempt_action_selection, but we need to handle error tracking
+            if not result['success'] and "Not enough Action Points" in result['message']:
+                # Error tracking for easter egg
+                if self.track_error(result['message']):
+                    self.sound_manager.play_error_beep()
+        
+        return result['success']
+
+    def attempt_action_selection(self, action_idx, is_undo=False):
+        """
+        Unified handler for all action selection attempts (both keyboard and mouse).
+        
+        Args:
+            action_idx (int): Index of the action to select/unselect
+            is_undo (bool): True if this is an undo operation
+            
+        Returns:
+            dict: Result with 'success', 'message', 'play_sound' keys
+        """
+        if action_idx >= len(self.actions) or action_idx < 0:
+            return {'success': False, 'message': None, 'play_sound': False}
             
         action = self.actions[action_idx]
-        ap_cost = action.get("ap_cost", 1)
         
-        # Check AP availability
-        if self.action_points < ap_cost:
-            error_msg = f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points})"
-            self.messages.append(error_msg)
-            
-            # Track error for easter egg (3 identical errors trigger beep)
-            if self.track_error(error_msg):
-                # Easter egg triggered! Play error beep
-                self.sound_manager.play_error_beep()
-            
-            return False
-        
-        # Check money availability
-        if self.money < action["cost"]:
-            error_msg = f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money})"
-            self.messages.append(error_msg)
-            
-            # Track error for easter egg
-            if self.track_error(error_msg):
-                self.sound_manager.play_error_beep()
-            
-            return False
-        
-        # Check action rules/availability
+        if is_undo:
+            return self._handle_action_undo(action_idx, action)
+        else:
+            return self._handle_action_selection(action_idx, action)
+    
+    def _handle_action_selection(self, action_idx, action):
+        """Handle selecting (clicking) an action."""
+        # Check if action is available (rules constraint)
         if action.get("rules") and not action["rules"](self):
-            error_msg = f"{action['name']} is not available yet"
-            self.messages.append(error_msg)
-            
-            # Track error for easter egg
-            if self.track_error(error_msg):
-                self.sound_manager.play_error_beep()
-            
-            return False
+            return {
+                'success': False, 
+                'message': f"{action['name']} is not available yet.",
+                'play_sound': False
+            }
         
-        # Action can be executed
-        # Check for auto-delegation (if beneficial)
+        # Check if delegation would be beneficial (lower AP cost)
         delegate = False
         if (action.get("delegatable", False) and 
             self.can_delegate_action(action) and
             action.get("delegate_ap_cost", action.get("ap_cost", 1)) < action.get("ap_cost", 1)):
             delegate = True
         
-        # Execute the action with delegation support
-        success = self.execute_action_with_delegation(action_idx, delegate)
+        # Determine AP cost and effectiveness
+        if delegate:
+            ap_cost = action.get("delegate_ap_cost", action.get("ap_cost", 1))
+            effectiveness = action.get("delegate_effectiveness", 1.0)
+            delegation_info = " (delegated)"
+        else:
+            ap_cost = action.get("ap_cost", 1)
+            effectiveness = 1.0
+            delegation_info = ""
         
-        if success:
-            # Enhanced AP feedback
-            self.action_points -= ap_cost
-            self.ap_spent_this_turn = True
-            self.ap_glow_timer = 30  # 30 frames of glow effect
-            
-            # Visual feedback will be handled by the UI system
-            # Sound feedback will be played by the caller (main.py)
-            
-        return success
+        # Check AP availability
+        if self.action_points < ap_cost:
+            error_msg = f"Not enough Action Points for {action['name']} (need {ap_cost}, have {self.action_points})."
+            self.messages.append(error_msg)
+            # Track error for easter egg detection
+            self.track_error(f"Insufficient AP: {action['name']}")
+            return {
+                'success': False,
+                'message': error_msg,
+                'play_sound': False
+            }
+        
+        # Check money availability
+        if self.money < action["cost"]:
+            return {
+                'success': False,
+                'message': f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money}).",
+                'play_sound': False
+            }
+        
+        # Create action instance for tracking
+        action_instance = {
+            'action_idx': action_idx,
+            'delegated': delegate,
+            'ap_cost': ap_cost,
+            'effectiveness': effectiveness,
+            'instance_id': len(self.selected_action_instances)  # Unique identifier
+        }
+        
+        # Add to selected actions (immediate deduction)
+        self.selected_actions.append(action_idx)
+        self.selected_action_instances.append(action_instance)
+        
+        # Immediate AP deduction
+        self.action_points -= ap_cost
+        self.ap_spent_this_turn = True
+        self.ap_glow_timer = 30
+        
+        # Store delegation info for end_turn processing
+        if not hasattr(self, '_action_delegations'):
+            self._action_delegations = {}
+        self._action_delegations[action_idx] = {
+            'delegated': delegate,
+            'effectiveness': effectiveness,
+            'ap_cost': ap_cost
+        }
+        
+        success_msg = f"Selected: {action['name']}{delegation_info}"
+        self.messages.append(success_msg)
+        
+        return {
+            'success': True,
+            'message': success_msg,
+            'play_sound': True
+        }
+    
+    def _handle_action_undo(self, action_idx, action):
+        """Handle unselecting (undoing) an action."""
+        # Find the most recent instance of this action
+        action_instance = None
+        instance_index = None
+        
+        for i in range(len(self.selected_action_instances) - 1, -1, -1):
+            if self.selected_action_instances[i]['action_idx'] == action_idx:
+                action_instance = self.selected_action_instances[i]
+                instance_index = i
+                break
+        
+        if action_instance is None:
+            return {
+                'success': False,
+                'message': f"No selected instance of {action['name']} to undo.",
+                'play_sound': False
+            }
+        
+        # Remove the action instance
+        self.selected_action_instances.pop(instance_index)
+        
+        # Remove from selected_actions (remove last occurrence)
+        for i in range(len(self.selected_actions) - 1, -1, -1):
+            if self.selected_actions[i] == action_idx:
+                self.selected_actions.pop(i)
+                break
+        
+        # Refund AP
+        self.action_points += action_instance['ap_cost']
+        
+        # Clean up delegation info if no more instances of this action
+        if action_idx not in [inst['action_idx'] for inst in self.selected_action_instances]:
+            if hasattr(self, '_action_delegations') and action_idx in self._action_delegations:
+                del self._action_delegations[action_idx]
+        
+        delegation_suffix = " (delegated)" if action_instance['delegated'] else ""
+        undo_msg = f"Undid: {action['name']}{delegation_suffix} (refunded {action_instance['ap_cost']} AP)"
+        self.messages.append(undo_msg)
+        
+        return {
+            'success': True,
+            'message': undo_msg,
+            'play_sound': False  # No sound on undo as required
+        }
 
     def _execute_action_with_effectiveness(self, action, effect_type, effectiveness):
         """
@@ -913,23 +1019,13 @@ class GameState:
         for idx, rect in enumerate(a_rects):
             if self._in_rect(mouse_pos, rect):
                 if not self.game_over:
-                    action = self.actions[idx]
-                    # Check if action is available (rules constraint)
-                    if action.get("rules") and not action["rules"](self):
-                        self.messages.append(f"{action['name']} is not available yet.")
-                        return None
+                    # Check for undo (if action is already selected, try to undo it)
+                    is_undo = idx in self.selected_actions
                     
-                    # Check if delegation would be beneficial (lower AP cost)
-                    delegate = False
-                    if (action.get("delegatable", False) and 
-                        self.can_delegate_action(action) and
-                        action.get("delegate_ap_cost", action.get("ap_cost", 1)) < action.get("ap_cost", 1)):
-                        delegate = True
+                    result = self.attempt_action_selection(idx, is_undo)
                     
-                    # Try to execute the action (with auto-delegation if beneficial)
-                    if self.execute_action_with_delegation(idx, delegate):
-                        pass  # Success message already handled in execute_action_with_delegation
-                    # Error messages also handled in execute_action_with_delegation
+                    # Return play_sound flag for main.py to handle sound
+                    return 'play_sound' if result['play_sound'] else None
                 return None
 
         # Upgrades (right, as icons or buttons)
@@ -1213,6 +1309,7 @@ class GameState:
         if hasattr(self, '_action_delegations'):
             self._action_delegations = {}
         self.selected_actions = []
+        self.selected_action_instances = []  # Clear action instances for next turn
 
         # Staff maintenance
         maintenance_cost = self.staff * self.staff_maintenance
