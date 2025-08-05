@@ -1,6 +1,7 @@
 import pygame
 import textwrap
 from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
+from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 def wrap_text(text, font, max_width):
     """
@@ -120,6 +121,35 @@ def draw_main_menu(screen, w, h, selected_item):
         inst_x = w // 2 - inst_surf.get_width() // 2
         inst_y = int(h * 0.85) + i * int(h * 0.03)
         screen.blit(inst_surf, (inst_x, inst_y))
+    
+    # Draw keyboard shortcuts on the sides
+    shortcut_font = pygame.font.SysFont('Consolas', int(h*0.018))
+    
+    # Left side - Main Menu shortcuts
+    left_shortcuts = get_main_menu_shortcuts()
+    left_formatted = format_shortcut_list(left_shortcuts)
+    
+    left_title_surf = shortcut_font.render("Menu Controls:", True, (160, 160, 160))
+    left_x = int(w * 0.05)
+    left_y = int(h * 0.25)
+    screen.blit(left_title_surf, (left_x, left_y))
+    
+    for i, shortcut_text in enumerate(left_formatted):
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        screen.blit(shortcut_surf, (left_x, left_y + 30 + i * 25))
+    
+    # Right side - In-Game shortcuts preview
+    right_shortcuts = get_in_game_shortcuts()[:4]  # Show first 4 to fit space
+    right_formatted = format_shortcut_list(right_shortcuts)
+    
+    right_title_surf = shortcut_font.render("In-Game Controls:", True, (160, 160, 160))
+    right_x = int(w * 0.75)
+    right_y = int(h * 0.25)
+    screen.blit(right_title_surf, (right_x, right_y))
+    
+    for i, shortcut_text in enumerate(right_formatted):
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        screen.blit(shortcut_surf, (right_x, right_y + 30 + i * 25))
 
 def draw_overlay(screen, title, content, scroll_offset, w, h):
     """
