@@ -157,6 +157,8 @@ As your organization grows, you'll encounter special milestone events:
 | Select option | Enter or mouse click |
 | Exit | Escape key |
 
+**💡 Tip**: Keyboard shortcuts are displayed on the left and right sides of the main menu for quick reference.
+
 ### In-Game Controls
 | Action | How To |
 |--------|--------|
