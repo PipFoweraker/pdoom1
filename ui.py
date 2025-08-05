@@ -563,14 +563,17 @@ def draw_ui(screen, game_state, w, h):
     draw_popup_events(screen, game_state, w, h, font, big_font)
 
 def draw_employee_blobs(screen, game_state, w, h):
-    """Draw employee blobs with improved positioning that avoids UI overlap"""
+    """Draw employee blobs with dynamic positioning that avoids UI overlap"""
     import math
     
-    # Update blob positions based on current screen size (if needed)
-    # This handles cases where screen was resized or blobs were initialized with default dimensions
+    # Update blob positions dynamically to avoid UI elements
+    # This is called every frame to ensure continuous repositioning
+    game_state._update_blob_positions_dynamically(w, h)
+    
+    # Handle initial positioning for new blobs that haven't been positioned yet
     for i, blob in enumerate(game_state.employee_blobs):
-        # Only update if blob seems to be using old hardcoded positioning
-        if blob.get('needs_position_update', False) or (blob['target_x'] < 600 and blob['target_y'] > 450):
+        # Initialize position for new blobs or those that need repositioning
+        if blob.get('needs_position_update', False):
             new_x, new_y = game_state._calculate_blob_position(i, w, h)
             blob['target_x'] = new_x
             blob['target_y'] = new_y
@@ -580,7 +583,7 @@ def draw_employee_blobs(screen, game_state, w, h):
                 blob['y'] = new_y
             blob['needs_position_update'] = False
     
-    # Update blob animations
+    # Update blob animations for new employees sliding in from left side
     for blob in game_state.employee_blobs:
         if blob['animation_progress'] < 1.0:
             blob['animation_progress'] = min(1.0, blob['animation_progress'] + 0.05)

@@ -569,60 +569,214 @@ class GameState:
     
     def _calculate_blob_position(self, blob_index, screen_w=1200, screen_h=800):
         """
-        Calculate blob position that avoids UI overlap.
+        Calculate initial blob position in the center of screen.
+        Blobs will then dynamically move away from UI elements through collision detection.
         
         Args:
-            blob_index (int): Index of the blob (for positioning in grid)
+            blob_index (int): Index of the blob (for initial positioning variation)
             screen_w (int): Screen width (default 1200 for backward compatibility) 
             screen_h (int): Screen height (default 800 for backward compatibility)
             
         Returns:
-            tuple: (x, y) position for the blob
+            tuple: (x, y) initial position for the blob (centered with small variation)
         """
-        # Define safe zone for blobs (avoiding UI elements)
-        # Action buttons are on the left (~0 to w*0.45)
-        # Upgrade buttons are on the right (~w*0.55 to w*1.0)
-        # Top area has resources (~0 to h*0.2)
-        # Bottom area has messages and end turn button (~h*0.7 to h*1.0)
+        import math
         
-        # Safe zone: middle area between action and upgrade panels
-        safe_zone_left = int(screen_w * 0.46)
-        safe_zone_right = int(screen_w * 0.54)
-        safe_zone_top = int(screen_h * 0.25)  # Below opponents panel
-        safe_zone_bottom = int(screen_h * 0.65)  # Above message log
+        # Start all blobs in the center of the screen
+        center_x = screen_w // 2
+        center_y = screen_h // 2
         
-        safe_width = safe_zone_right - safe_zone_left
-        safe_height = safe_zone_bottom - safe_zone_top
+        # Add small initial variation to prevent all blobs from being exactly on top of each other
+        # Use a spiral pattern for initial positioning
+        if blob_index == 0:
+            return center_x, center_y
         
-        # If safe zone is too narrow, expand it
-        if safe_width < 200:
-            safe_zone_left = int(screen_w * 0.42)
-            safe_zone_right = int(screen_w * 0.58)
-            safe_width = safe_zone_right - safe_zone_left
+        # Create a spiral outward from center for initial positioning
+        angle = blob_index * 2.4  # Golden angle for nice spiral distribution
+        radius = blob_index * 15   # Increase radius for each blob
         
-        # Calculate grid layout within safe zone
-        blob_spacing = 50  # Space between blobs
-        blob_radius = 25   # Account for blob size
+        x = center_x + int(radius * math.cos(angle)) 
+        y = center_y + int(radius * math.sin(angle))
         
-        # Calculate how many blobs fit per row
-        blobs_per_row = max(1, (safe_width - 2 * blob_radius) // blob_spacing)
-        
-        # Calculate position in grid
-        row = blob_index // blobs_per_row
-        col = blob_index % blobs_per_row
-        
-        # Calculate actual position
-        x = safe_zone_left + blob_radius + col * blob_spacing
-        y = safe_zone_top + blob_radius + row * blob_spacing
-        
-        # Ensure we don't exceed the safe zone
-        if y > safe_zone_bottom - blob_radius:
-            # If we run out of vertical space, start a new column to the right
-            extra_cols = (blob_index - (safe_zone_bottom - safe_zone_top) // blob_spacing * blobs_per_row) // ((safe_zone_bottom - safe_zone_top) // blob_spacing)
-            x = safe_zone_right + 20 + extra_cols * blob_spacing
-            y = safe_zone_top + blob_radius + (blob_index % ((safe_zone_bottom - safe_zone_top) // blob_spacing)) * blob_spacing
+        # Ensure positions stay within screen bounds
+        blob_radius = 25
+        x = max(blob_radius, min(screen_w - blob_radius, x))
+        y = max(blob_radius, min(screen_h - blob_radius, y))
         
         return x, y
+    
+    def _get_ui_element_rects(self, screen_w=1200, screen_h=800):
+        """
+        Get rectangles of all UI elements that employee blobs should avoid.
+        
+        Args:
+            screen_w (int): Screen width
+            screen_h (int): Screen height
+            
+        Returns:
+            list: List of (x, y, width, height) rectangles representing UI elements
+        """
+        ui_rects = []
+        
+        # Action buttons (left side)
+        action_rects = self._get_action_rects(screen_w, screen_h)
+        ui_rects.extend(action_rects)
+        
+        # Upgrade buttons and icons (right side)
+        upgrade_rects = self._get_upgrade_rects(screen_w, screen_h)
+        for rect in upgrade_rects:
+            if rect is not None:  # Some upgrades might not have rects if purchased
+                ui_rects.append(rect)
+        
+        # End turn button (bottom center)
+        endturn_rect = self._get_endturn_rect(screen_w, screen_h)
+        ui_rects.append(endturn_rect)
+        
+        # Resource display area (top)
+        resource_rect = (0, 0, screen_w, int(screen_h * 0.25))
+        ui_rects.append(resource_rect)
+        
+        # Message log area (bottom left)
+        log_rect = (int(screen_w*0.04), int(screen_h*0.74), int(screen_w * 0.44), int(screen_h * 0.22))
+        ui_rects.append(log_rect)
+        
+        # Opponents panel (between resources and actions)
+        opponents_rect = (int(screen_w * 0.04), int(screen_h * 0.19), int(screen_w * 0.92), int(screen_h * 0.08))
+        ui_rects.append(opponents_rect)
+        
+        # Mute button (bottom right)
+        mute_rect = self._get_mute_button_rect(screen_w, screen_h)
+        ui_rects.append(mute_rect)
+        
+        return ui_rects
+    
+    def _check_blob_ui_collision(self, blob_x, blob_y, blob_radius, ui_rects):
+        """
+        Check if a blob collides with any UI element.
+        
+        Args:
+            blob_x (float): Blob center x position
+            blob_y (float): Blob center y position
+            blob_radius (float): Blob radius
+            ui_rects (list): List of UI element rectangles
+            
+        Returns:
+            tuple: (collides, repulsion_force_x, repulsion_force_y)
+        """
+        total_repulsion_x = 0
+        total_repulsion_y = 0
+        collides = False
+        
+        for rect in ui_rects:
+            rx, ry, rw, rh = rect
+            
+            # Find closest point on rectangle to blob center
+            closest_x = max(rx, min(blob_x, rx + rw))
+            closest_y = max(ry, min(blob_y, ry + rh))
+            
+            # Calculate distance from blob center to closest point
+            dx = blob_x - closest_x
+            dy = blob_y - closest_y
+            distance = (dx * dx + dy * dy) ** 0.5
+            
+            # If distance is less than blob radius, there's a collision
+            if distance < blob_radius + 10:  # Add 10px buffer zone
+                collides = True
+                
+                # Calculate repulsion force
+                if distance > 0:
+                    # Normalize direction and apply repulsion strength
+                    repulsion_strength = (blob_radius + 20 - distance) * 0.1
+                    repulsion_x = (dx / distance) * repulsion_strength
+                    repulsion_y = (dy / distance) * repulsion_strength
+                else:
+                    # If blob is exactly on the edge, push away from rectangle center
+                    rect_center_x = rx + rw / 2
+                    rect_center_y = ry + rh / 2
+                    repulsion_x = (blob_x - rect_center_x) * 0.1
+                    repulsion_y = (blob_y - rect_center_y) * 0.1
+                
+                total_repulsion_x += repulsion_x
+                total_repulsion_y += repulsion_y
+        
+        return collides, total_repulsion_x, total_repulsion_y
+    
+    def _update_blob_positions_dynamically(self, screen_w=1200, screen_h=800):
+        """
+        Update blob positions dynamically to avoid UI elements.
+        This method should be called every frame to ensure continuous movement.
+        
+        Args:
+            screen_w (int): Screen width
+            screen_h (int): Screen height
+        """
+        if not self.employee_blobs:
+            return
+        
+        ui_rects = self._get_ui_element_rects(screen_w, screen_h)
+        blob_radius = 25
+        
+        # Update each blob's position
+        for i, blob in enumerate(self.employee_blobs):
+            # Skip if blob is still animating in from the side
+            if blob['animation_progress'] < 1.0:
+                continue
+            
+            current_x = blob['x']
+            current_y = blob['y']
+            
+            # Check for UI collisions
+            collides, repulsion_x, repulsion_y = self._check_blob_ui_collision(
+                current_x, current_y, blob_radius, ui_rects
+            )
+            
+            # Apply blob-to-blob repulsion to prevent clustering
+            for j, other_blob in enumerate(self.employee_blobs):
+                if i != j and other_blob['animation_progress'] >= 1.0:
+                    other_x = other_blob['x']
+                    other_y = other_blob['y']
+                    
+                    dx = current_x - other_x
+                    dy = current_y - other_y
+                    distance = (dx * dx + dy * dy) ** 0.5
+                    
+                    min_distance = blob_radius * 2 + 5  # Minimum distance between blobs
+                    if distance < min_distance and distance > 0:
+                        # Apply repulsion between blobs
+                        repulsion_strength = (min_distance - distance) * 0.05
+                        repulsion_x += (dx / distance) * repulsion_strength
+                        repulsion_y += (dy / distance) * repulsion_strength
+            
+            # Apply slight attraction to screen center to prevent blobs from drifting too far
+            center_x = screen_w / 2
+            center_y = screen_h / 2
+            center_attraction = 0.002
+            repulsion_x += (center_x - current_x) * center_attraction
+            repulsion_y += (center_y - current_y) * center_attraction
+            
+            # Apply movement with damping
+            if abs(repulsion_x) > 0.1 or abs(repulsion_y) > 0.1:
+                # Cap maximum movement speed
+                max_speed = 2.0
+                speed = (repulsion_x * repulsion_x + repulsion_y * repulsion_y) ** 0.5
+                if speed > max_speed:
+                    repulsion_x = (repulsion_x / speed) * max_speed
+                    repulsion_y = (repulsion_y / speed) * max_speed
+                
+                # Update blob position
+                new_x = current_x + repulsion_x
+                new_y = current_y + repulsion_y
+                
+                # Keep blobs within screen bounds
+                new_x = max(blob_radius, min(screen_w - blob_radius, new_x))
+                new_y = max(blob_radius, min(screen_h - blob_radius, new_y))
+                
+                blob['x'] = new_x
+                blob['y'] = new_y
+                
+                # Update target position to current position for smooth animation
+                blob['target_x'] = new_x
+                blob['target_y'] = new_y
             
     def _add_manager_blob(self):
         """Add a new manager blob with animation from side"""
