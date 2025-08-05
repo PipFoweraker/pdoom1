@@ -60,6 +60,9 @@ class SoundManager:
             # Create AP spend sound for enhanced feedback
             self._create_ap_spend_sound()
             
+            # Create Bazinga sound for research paper completion
+            self._create_bazinga_sound()
+            
         except (pygame.error, AttributeError, Exception):
             # If sound creation fails, just disable sounds
             self.enabled = False
@@ -155,6 +158,58 @@ class SoundManager:
             # If AP sound creation fails, continue without it
             pass
     
+    def _create_bazinga_sound(self):
+        """Create a celebratory 'Bazinga!' sound effect for research paper completion"""
+        if not self.enabled:
+            return
+            
+        try:
+            sample_rate = 22050
+            duration = 1.0  # 1 second - celebratory sound should be noticeable
+            samples = int(sample_rate * duration)
+            
+            # Create sound wave array for Bazinga sound
+            wave_array = array.array('h')
+            
+            for i in range(samples):
+                t = i / sample_rate
+                
+                # Create a fun, celebratory sound with multiple tones
+                # Rising and falling melody to sound like "Ba-zin-ga!"
+                amplitude = 3000
+                
+                if t < 0.25:  # "Ba" - lower tone
+                    frequency = 440  # A4
+                    envelope = math.sin(math.pi * t / 0.25)  # Smooth attack and decay
+                elif t < 0.5:  # "zin" - higher tone
+                    frequency = 554  # C#5
+                    envelope = math.sin(math.pi * (t - 0.25) / 0.25)
+                elif t < 0.75:  # "ga" - middle tone with vibrato
+                    frequency = 494 + 20 * math.sin(2 * math.pi * 8 * t)  # B4 with vibrato
+                    envelope = math.sin(math.pi * (t - 0.5) / 0.25)
+                else:  # Final flourish - quick ascending notes
+                    base_freq = 440 * (1 + 2 * (t - 0.75))  # Rising pitch
+                    frequency = base_freq
+                    envelope = math.exp(-8 * (t - 0.75))  # Quick decay
+                
+                # Generate the sample with harmonic richness
+                sample = int(amplitude * envelope * (
+                    math.sin(2 * math.pi * frequency * t) +
+                    0.3 * math.sin(2 * math.pi * frequency * 2 * t) +  # Second harmonic
+                    0.15 * math.sin(2 * math.pi * frequency * 3 * t)   # Third harmonic
+                ))
+                
+                # Add to stereo array
+                wave_array.append(sample)
+                wave_array.append(sample)
+            
+            # Create pygame sound from array
+            self.sounds['bazinga'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, Exception):
+            # If Bazinga sound creation fails, continue without it
+            pass
+    
     def play_blob_sound(self):
         """Play the blob sound effect when a new employee is hired"""
         if self.enabled and 'blob' in self.sounds:
@@ -178,6 +233,15 @@ class SoundManager:
         if self.enabled and 'ap_spend' in self.sounds:
             try:
                 self.sounds['ap_spend'].play()
+            except pygame.error:
+                # Sound playback failed, but don't crash
+                pass
+    
+    def play_bazinga_sound(self):
+        """Play the Bazinga sound effect when research papers are completed"""
+        if self.enabled and 'bazinga' in self.sounds:
+            try:
+                self.sounds['bazinga'].play()
             except pygame.error:
                 # Sound playback failed, but don't crash
                 pass
