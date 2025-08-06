@@ -73,7 +73,7 @@ bug_report_success_message = ""
 def get_weekly_seed():
     import datetime
     # Example: YYYYWW (year and ISO week number)
-    now = datetime.datetime.now(datetime.UTC)
+    now = datetime.datetime.now(datetime.timezone.utc)
     return f"{now.year}{now.isocalendar()[1]}"
 
 def load_markdown_file(filename):
