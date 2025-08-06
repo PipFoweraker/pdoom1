@@ -207,6 +207,9 @@ The Action Points (AP) system includes sophisticated visual and audio feedback:
 - **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
 - **Error Easter Egg**: Audio beep after 3 repeated identical errors
 - **Sound Integration**: Integrated with `SoundManager` for consistent audio experience
+- **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
+- **Achievement Sound**: Celebratory 'Zabinga!' sound when research papers are completed
+- **Error Easter Egg**: Audio beep after 3 repeated identical errors
 
 **Implementation Details:**
 ```python

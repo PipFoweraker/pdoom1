@@ -77,6 +77,7 @@ P(Doom) features an enhanced UI system designed for accessibility and clear visu
 - **Visual Feedback**: Buttons provide clear visual states (normal, hover, pressed, disabled)
 - **Keyboard Navigation**: Use Tab to navigate menus, Enter/Space to select, Escape to go back
 - **Enhanced Tooltips**: Hover over actions and upgrades for detailed cost and availability information
+- **Achievement Sound Effects**: Celebratory 'Zabinga!' sound when research papers are completed
 - **Error Feedback**: Audio beep plays after three repeated identical errors (easter egg)
 - **Responsive Design**: UI adapts to different screen sizes and window resizing
 - **Low-Poly Aesthetic**: Clean, retro-inspired visual design with modern accessibility features
@@ -112,7 +113,7 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 - **⚡ Action Points (AP)**: Limit actions per turn (3 AP max, resets each turn)
 - **☢️ p(Doom)**: AI catastrophe risk (game over at 100%)
 - **🖥️ Compute**: Powers employee productivity and research
-- **📄 Research**: Progress toward publishing papers (boosts reputation)
+- **📄 Research**: Progress toward publishing papers (boosts reputation, plays celebratory sound)
 - **🎯 Competitors**: Track discovered opponents and their progress toward AGI
 
 ---
@@ -171,7 +172,8 @@ As your organization grows, you'll encounter special milestone events:
 **🎹 Keyboard Shortcuts for Actions:**
 - **1-9 keys**: Execute actions 1-9 directly (displayed as [1], [2], etc. on action buttons)
 - **Audio feedback**: Hear a satisfying sound when spending Action Points
-- **Visual feedback**: Watch the AP counter glow when Action Points are spent
+- **Visual feedback**: Watch the AP counter glow when Action Points are spent  
+- **Achievement feedback**: Celebratory 'Zabinga!' sound when research papers are completed
 - **Error handling**: Audio beep after 3 repeated identical errors (easter egg)
 
 ### Game Modes
