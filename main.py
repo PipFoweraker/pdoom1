@@ -4,7 +4,8 @@ import pygame
 import random
 import json
 from game_state import GameState
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_high_score_screen
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice
+
 from bug_reporter import BugReporter
 from version import get_display_version
 from onboarding import onboarding
@@ -21,7 +22,8 @@ clock = pygame.time.Clock()
 
 # --- Menu and game state management --- #
 
-# Menu states: 'main_menu', 'custom_seed_prompt', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'high_score', 'tutorial'
+# Menu states: 'main_menu', 'custom_seed_prompt', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial'
+
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
 menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Options", "Player Guide", "README", "Report Bug"]
@@ -34,6 +36,17 @@ seed_input = ""
 overlay_content = None
 overlay_title = None
 overlay_scroll = 0
+
+# Pre-game settings state
+pre_game_settings = {
+    "difficulty": "DUMMY",
+    "music_volume": 123,
+    "sound_volume": 123,
+    "graphics_quality": "DUMMY"
+}
+selected_settings_item = 0
+seed_choice = "weekly"  # "weekly" or "custom"
+tutorial_enabled = True
 
 # Tutorial state
 current_tutorial_content = None
@@ -60,7 +73,7 @@ bug_report_success_message = ""
 def get_weekly_seed():
     import datetime
     # Example: YYYYWW (year and ISO week number)
-    now = datetime.datetime.now(datetime.UTC)
+    now = datetime.datetime.now(datetime.timezone.utc)
     return f"{now.year}{now.isocalendar()[1]}"
 
 def load_markdown_file(filename):
@@ -171,11 +184,9 @@ def handle_menu_click(mouse_pos, w, h):
             
             # Execute menu action based on selection
             if i == 0:  # Launch with Weekly Seed
-                seed = get_weekly_seed()
-                random.seed(seed)
-                current_state = 'game'
+                current_state = 'pre_game_settings'
             elif i == 1:  # Launch with Custom Seed
-                current_state = 'custom_seed_prompt'
+                current_state = 'pre_game_settings'
             elif i == 2:  # Options/Settings
                 current_state = 'sounds_menu'
                 sounds_menu_selected_item = 0
@@ -215,11 +226,9 @@ def handle_menu_keyboard(key):
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
         if selected_menu_item == 0:  # Launch with Weekly Seed
-            seed = get_weekly_seed()
-            random.seed(seed)
-            current_state = 'game'
+            current_state = 'pre_game_settings'
         elif selected_menu_item == 1:  # Launch with Custom Seed
-            current_state = 'custom_seed_prompt'
+            current_state = 'pre_game_settings'
         elif selected_menu_item == 2:  # Settings 
             overlay_content = create_settings_content()
             overlay_title = "Settings"
@@ -234,6 +243,144 @@ def handle_menu_keyboard(key):
             current_state = 'overlay'
         elif selected_menu_item == 5:  # Report Bug
             current_state = 'bug_report'
+
+
+def handle_pre_game_settings_click(mouse_pos, w, h):
+    """Handle mouse clicks on pre-game settings screen."""
+    global current_state, selected_settings_item, pre_game_settings
+    
+    # Calculate button positions (must match draw_pre_game_settings layout)
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    # Settings items (4 settings + 1 continue button)
+    num_items = 5
+    
+    for i in range(num_items):
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            selected_settings_item = i
+            
+            if i == 4:  # Continue button
+                current_state = 'seed_selection'
+            # For now, other settings don't do anything when clicked
+            # In a full implementation, they would cycle through values
+            break
+
+
+def handle_pre_game_settings_keyboard(key):
+    """Handle keyboard navigation for pre-game settings screen."""
+    global selected_settings_item, current_state
+    
+    if key == pygame.K_UP:
+        selected_settings_item = (selected_settings_item - 1) % 5
+    elif key == pygame.K_DOWN:
+        selected_settings_item = (selected_settings_item + 1) % 5
+    elif key == pygame.K_RETURN:
+        if selected_settings_item == 4:  # Continue button
+            current_state = 'seed_selection'
+    elif key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
+
+
+def handle_seed_selection_click(mouse_pos, w, h):
+    """Handle mouse clicks on seed selection screen."""
+    global current_state, seed_choice, seed
+    
+    # Calculate button positions (must match draw_seed_selection layout)
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    for i in range(2):  # Weekly seed, Custom seed
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            if i == 0:  # Weekly seed
+                seed_choice = "weekly"
+                seed = get_weekly_seed()
+                current_state = 'tutorial_choice'
+            elif i == 1:  # Custom seed
+                seed_choice = "custom"
+                current_state = 'custom_seed_prompt'
+            break
+
+
+def handle_seed_selection_keyboard(key):
+    """Handle keyboard navigation for seed selection screen."""
+    global current_state, seed_choice, seed
+    
+    if key == pygame.K_UP or key == pygame.K_DOWN:
+        # Toggle between weekly and custom
+        pass  # Visual selection can be added later
+    elif key == pygame.K_RETURN:
+        # Default to weekly seed for now
+        seed_choice = "weekly"
+        seed = get_weekly_seed()
+        current_state = 'tutorial_choice'
+    elif key == pygame.K_ESCAPE:
+        current_state = 'pre_game_settings'
+
+
+def handle_tutorial_choice_click(mouse_pos, w, h):
+    """Handle mouse clicks on tutorial choice screen."""
+    global current_state, tutorial_enabled
+    
+    # Calculate button positions (must match draw_tutorial_choice layout)
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.4)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    for i in range(2):  # Yes tutorial, No tutorial
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            if i == 0:  # Yes - Enable Tutorial
+                tutorial_enabled = True
+            elif i == 1:  # No - Regular Mode
+                tutorial_enabled = False
+            
+            # Set the seed and start the game
+            random.seed(seed)
+            current_state = 'game'
+            break
+
+
+def handle_tutorial_choice_keyboard(key):
+    """Handle keyboard navigation for tutorial choice screen."""
+    global current_state, tutorial_enabled
+    
+    if key == pygame.K_UP or key == pygame.K_DOWN:
+        # Toggle between yes and no
+        pass  # Visual selection can be added later
+    elif key == pygame.K_RETURN:
+        # Default to tutorial enabled
+        tutorial_enabled = True
+        random.seed(seed)
+        current_state = 'game'
+    elif key == pygame.K_ESCAPE:
+        current_state = 'seed_selection'
+
 
 def handle_bug_report_click(mouse_pos, w, h):
     """Handle mouse clicks in the bug report form."""
@@ -632,6 +779,12 @@ def main():
                     # Handle mouse clicks based on current state
                     if current_state == 'main_menu':
                         handle_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'pre_game_settings':
+                        handle_pre_game_settings_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'seed_selection':
+                        handle_seed_selection_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'tutorial_choice':
+                        handle_tutorial_choice_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'overlay':
                         # Click anywhere to return to main menu from overlay
                         current_state = 'main_menu'
@@ -725,7 +878,12 @@ def main():
                             running = False
                         else:
                             handle_menu_keyboard(event.key)
-                            
+                    elif current_state == 'pre_game_settings':
+                        handle_pre_game_settings_keyboard(event.key)
+                    elif current_state == 'seed_selection':
+                        handle_seed_selection_keyboard(event.key)
+                    elif current_state == 'tutorial_choice':
+                        handle_tutorial_choice_keyboard(event.key)
                     elif current_state == 'overlay':
                         # Overlay navigation: scroll with arrows, escape to return
                         if event.key == pygame.K_ESCAPE:
@@ -758,12 +916,11 @@ def main():
                         if event.key == pygame.K_RETURN:
                             # Use entered seed or weekly default
                             seed = seed_input.strip() if seed_input.strip() else get_weekly_seed()
-                            random.seed(seed)
-                            current_state = 'game'
+                            current_state = 'tutorial_choice'
                         elif event.key == pygame.K_BACKSPACE:
                             seed_input = seed_input[:-1]
                         elif event.key == pygame.K_ESCAPE:
-                            current_state = 'main_menu'
+                            current_state = 'seed_selection'
                             seed_input = ""
                         elif event.unicode.isprintable():
                             seed_input += event.unicode
@@ -860,6 +1017,21 @@ def main():
                 # Grey background as specified in requirements
                 screen.fill((128, 128, 128))
                 draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item)
+            
+            elif current_state == 'pre_game_settings':
+                # Pre-game settings screen
+                screen.fill((50, 50, 50))
+                draw_pre_game_settings(screen, SCREEN_W, SCREEN_H, pre_game_settings, selected_settings_item)
+            
+            elif current_state == 'seed_selection':
+                # Seed selection screen
+                screen.fill((50, 50, 50))
+                draw_seed_selection(screen, SCREEN_W, SCREEN_H, 0, seed_input)  # Selected item handling can be improved
+            
+            elif current_state == 'tutorial_choice':
+                # Tutorial choice screen
+                screen.fill((50, 50, 50))
+                draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, 0)  # Selected item handling can be improved
                 
             elif current_state == 'custom_seed_prompt':
                 # Preserve original seed prompt appearance

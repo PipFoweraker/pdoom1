@@ -1909,196 +1909,231 @@ def draw_first_time_help(screen, help_content, w, h):
     
     return close_button_rect
 
-
-def draw_high_score_screen(screen, w, h, game_state, seed, submit_to_leaderboard):
+def draw_pre_game_settings(screen, w, h, settings, selected_item):
     """
-    Draw the high score screen with famous AI safety researchers and player score.
+    Draw the pre-game settings screen with configurable options.
     
     Args:
         screen: pygame surface to draw on
-        w, h: screen width and height
-        game_state: GameState object with player's final stats
-        seed: Game seed used for this session
-        submit_to_leaderboard: boolean flag for leaderboard submission
-    
-    Features:
-    - Lists of famous (bowdlerised) AI safety researchers with high scores
-    - Player's current score prominently displayed
-    - New high score indication if applicable
-    - Leaderboard submission toggle (placeholder)
-    - Keyboard shortcuts instructions
+        w, h: screen width and height for responsive layout
+        settings: dictionary of current settings values
+        selected_item: index of currently selected setting (for keyboard navigation)
     """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
     # Fonts
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    subtitle_font = pygame.font.SysFont('Consolas', int(h*0.035))
-    score_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    player_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-    instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
-    
-    # Colors
-    title_color = (255, 215, 0)  # Gold
-    subtitle_color = (200, 200, 255)
-    score_color = (220, 220, 220)
-    player_color = (100, 255, 100)  # Bright green for player
-    new_record_color = (255, 100, 100)  # Red for new record
-    instruction_color = (180, 180, 180)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
     
     # Title
-    title_text = title_font.render("HIGH SCORES", True, title_color)
-    title_rect = title_text.get_rect(center=(w//2, int(h*0.08)))
-    screen.blit(title_text, title_rect)
+    title_surf = title_font.render("Game Settings", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
     
-    # Subtitle
-    subtitle_text = subtitle_font.render("Hall of Fame: AI Safety Research Leaders", True, subtitle_color)
-    subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
-    screen.blit(subtitle_text, subtitle_rect)
-    
-    # Famous AI Safety Researchers (bowdlerised names) with realistic turn counts
-    ai_researchers = [
-        ("Stuie Roswell", 47, "Author of 'Human Compatible'"),
-        ("Elliot Yudkowski", 43, "Founder of LessWrong"),
-        ("Nick Bolstrom", 41, "Oxford Future of Humanity Institute"),
-        ("Toby Ord-ish", 38, "Author of 'The Precipice'"),
-        ("Robin Hansson", 36, "George Mason University"),
-        ("Pauly Christano", 34, "AI Alignment Researcher"),
-        ("Dan Hendrickx", 32, "Anthropic AI Safety"),
-        ("Catherine Oliviera", 31, "DeepMind Safety Team"),
-        ("Geoffrey Hintonberg", 29, "Godfather of Deep Learning"),
-        ("Yoshy Bengiov", 28, "Montreal Institute for Learning")
+    # Settings items
+    settings_items = [
+        ("Difficulty", settings["difficulty"]),
+        ("Music Volume", str(settings["music_volume"])),
+        ("Sound Volume", str(settings["sound_volume"])),
+        ("Graphics Quality", settings["graphics_quality"]),
+        ("Continue")
     ]
     
-    # Player's score
-    player_turns = game_state.turn if game_state else 0
-    is_new_high_score = game_state and player_turns > game_state.highscore
+    # Button layout
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.1)
+    center_x = w // 2
     
-    # Create combined score list with player
-    all_scores = []
-    for name, turns, desc in ai_researchers:
-        all_scores.append((name, turns, desc, False))
-    
-    # Add player score
-    player_name = f"YOU (Seed: {seed})"
-    player_desc = f"Final Resources: ${game_state.money if game_state else 0}, {game_state.staff if game_state else 0} staff, {game_state.reputation if game_state else 0} rep"
-    all_scores.append((player_name, player_turns, player_desc, True))
-    
-    # Sort by score (turns survived) descending
-    all_scores.sort(key=lambda x: x[1], reverse=True)
-    
-    # Display scores
-    start_y = int(h * 0.22)
-    line_height = int(h * 0.05)
-    
-    # Table headers
-    header_y = start_y
-    rank_header = score_font.render("RANK", True, subtitle_color)
-    name_header = score_font.render("RESEARCHER", True, subtitle_color)
-    turns_header = score_font.render("TURNS", True, subtitle_color)
-    
-    screen.blit(rank_header, (int(w*0.1), header_y))
-    screen.blit(name_header, (int(w*0.2), header_y))
-    screen.blit(turns_header, (int(w*0.5), header_y))
-    
-    # Underline for headers
-    pygame.draw.line(screen, subtitle_color, 
-                     (int(w*0.1), header_y + 30), 
-                     (int(w*0.9), header_y + 30), 2)
-    
-    # Display top 10 scores
-    display_count = min(10, len(all_scores))
-    for i in range(display_count):
-        name, turns, desc, is_player = all_scores[i]
-        y_pos = start_y + line_height + i * (line_height - 5)
+    for i, item in enumerate(settings_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
         
-        # Choose colors
-        if is_player:
-            if is_new_high_score and i == 0:
-                text_color = new_record_color
-                special_text = " ★ NEW RECORD! ★"
-            else:
-                text_color = player_color
-                special_text = ""
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
         else:
-            text_color = score_color
-            special_text = ""
+            button_state = ButtonState.NORMAL
         
-        # Rank
-        rank_text = score_font.render(f"{i+1}.", True, text_color)
-        screen.blit(rank_text, (int(w*0.1), y_pos))
+        # Calculate text first
+        if i < len(settings_items) - 1:  # Setting items with values
+            setting_name, setting_value = item
+            text = f"{setting_name}: {setting_value}"
+        else:  # Continue button
+            text = item
         
-        # Name (truncate if too long)
-        display_name = name if len(name) <= 25 else name[:22] + "..."
-        name_text = (player_font if is_player else score_font).render(display_name + special_text, True, text_color)
-        screen.blit(name_text, (int(w*0.2), y_pos))
-        
-        # Turns
-        turns_text = (player_font if is_player else score_font).render(str(turns), True, text_color)
-        screen.blit(turns_text, (int(w*0.5), y_pos))
-        
-        # Description (smaller font, to the right)
-        if desc and not is_player:
-            desc_text = instruction_font.render(desc, True, (160, 160, 160))
-            screen.blit(desc_text, (int(w*0.58), y_pos + 5))
-        elif is_player:
-            desc_text = instruction_font.render(desc, True, text_color)
-            screen.blit(desc_text, (int(w*0.58), y_pos + 5))
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, text, button_state)
     
-    # Leaderboard submission section
-    leaderboard_y = int(h * 0.75)
-    
-    # Checkbox for leaderboard submission
-    checkbox_size = int(h * 0.03)
-    checkbox_x = int(w * 0.1)
-    checkbox_y = leaderboard_y
-    checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
-    
-    # Draw checkbox
-    pygame.draw.rect(screen, (200, 200, 200), checkbox_rect, border_radius=3)
-    pygame.draw.rect(screen, (100, 100, 100), checkbox_rect, width=2, border_radius=3)
-    
-    if submit_to_leaderboard:
-        # Draw checkmark
-        pygame.draw.line(screen, (100, 255, 100), 
-                        (checkbox_x + 5, checkbox_y + checkbox_size//2),
-                        (checkbox_x + checkbox_size//3, checkbox_y + checkbox_size - 8), 3)
-        pygame.draw.line(screen, (100, 255, 100),
-                        (checkbox_x + checkbox_size//3, checkbox_y + checkbox_size - 8),
-                        (checkbox_x + checkbox_size - 5, checkbox_y + 5), 3)
-    
-    # Checkbox label
-    checkbox_label = score_font.render("Submit to Global Leaderboard", True, score_color)
-    screen.blit(checkbox_label, (checkbox_x + checkbox_size + 10, checkbox_y))
-    
-    # Placeholder notice
-    placeholder_text = instruction_font.render("(Feature coming soon - data stays local for now)", True, (140, 140, 140))
-    screen.blit(placeholder_text, (checkbox_x + checkbox_size + 10, checkbox_y + 25))
-    
-    # Continue button
-    button_width = int(w * 0.3)
-    button_height = int(h * 0.06)
-    button_x = w // 2 - button_width // 2
-    button_y = int(h * 0.85)
-    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
-    
-    # Button styling
-    button_color = (70, 130, 180)
-    button_hover_color = (100, 160, 210)
-    
-    pygame.draw.rect(screen, button_color, button_rect, border_radius=8)
-    pygame.draw.rect(screen, (255, 255, 255), button_rect, width=2, border_radius=8)
-    
-    # Button text
-    button_text = score_font.render("Continue to Main Menu", True, (255, 255, 255))
-    text_rect = button_text.get_rect(center=button_rect.center)
-    screen.blit(button_text, text_rect)
-    
-    # Instructions at bottom
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
     instructions = [
-        "Press SPACE or click Continue to return to main menu",
-        "Press L to toggle leaderboard submission • ESC for quick exit"
+        "Use arrow keys to navigate, Enter to select",
+        "Adjust settings or continue to seed selection"
     ]
     
-    instruction_y = int(h * 0.93)
-    for i, instruction in enumerate(instructions):
-        inst_text = instruction_font.render(instruction, True, instruction_color)
-        inst_rect = inst_text.get_rect(center=(w//2, instruction_y + i * 20))
-        screen.blit(inst_text, inst_rect)
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
+
+
+def draw_seed_selection(screen, w, h, selected_item, seed_input=""):
+    """
+    Draw the seed selection screen.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected item (0=Weekly, 1=Custom)
+        seed_input: current custom seed input text
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    
+    # Title
+    title_surf = title_font.render("Select Seed", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Seed options
+    seed_items = ["Use Weekly Seed", "Use Custom Seed"]
+    
+    # Button layout
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    for i, item in enumerate(seed_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, item, button_state)
+    
+    # If custom seed is selected, show input field
+    if selected_item == 1:
+        input_y = start_y + 2 * spacing
+        input_width = int(w * 0.5)
+        input_height = int(h * 0.06)
+        input_x = center_x - input_width // 2
+        input_rect = pygame.Rect(input_x, input_y, input_width, input_height)
+        
+        # Draw input background
+        pygame.draw.rect(screen, (80, 80, 80), input_rect)
+        pygame.draw.rect(screen, (120, 120, 120), input_rect, 2)
+        
+        # Draw input text
+        input_font = pygame.font.SysFont('Consolas', int(h*0.03))
+        display_text = seed_input if seed_input else "Enter custom seed..."
+        text_color = (255, 255, 255) if seed_input else (150, 150, 150)
+        input_text_surf = input_font.render(display_text, True, text_color)
+        text_x = input_rect.x + 10
+        text_y = input_rect.centery - input_text_surf.get_height() // 2
+        screen.blit(input_text_surf, (text_x, text_y))
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = [
+        "Use arrow keys to navigate, Enter to continue",
+        "Custom seed: type your seed and press Enter"
+    ]
+    
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
+
+
+def draw_tutorial_choice(screen, w, h, selected_item):
+    """
+    Draw the tutorial choice screen.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected item (0=Yes, 1=No)
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    
+    # Title
+    title_surf = title_font.render("Tutorial Mode?", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Description
+    desc_text = "Would you like to play with tutorial guidance?"
+    desc_surf = desc_font.render(desc_text, True, (200, 200, 200))
+    desc_x = w // 2 - desc_surf.get_width() // 2
+    desc_y = title_y + title_surf.get_height() + 20
+    screen.blit(desc_surf, (desc_x, desc_y))
+    
+    # Tutorial options
+    tutorial_items = ["Yes - Enable Tutorial", "No - Regular Mode"]
+    
+    # Button layout
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.4)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    for i, item in enumerate(tutorial_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, item, button_state)
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = [
+        "Use arrow keys to navigate, Enter to start game",
+        "Tutorial mode provides helpful guidance for new players"
+    ]
+    
+    inst_y = int(h * 0.8)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
