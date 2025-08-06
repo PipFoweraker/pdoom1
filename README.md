@@ -58,8 +58,9 @@ P(Doom) offers a rich strategy experience with sophisticated systems that evolve
 - **⚡ Strategic Action Points**: Resource management system that scales with your organization  
 - **🏢 Milestone Events**: Unlock new mechanics as your lab grows (managers, board oversight, etc.)
 - **🤖 AI Opponents**: Compete against 3 unique labs with hidden information and espionage
-- **📊 Enhanced Events**: Advanced crisis management with deferral and response options
+- **Enhanced Events**: Advanced crisis management with deferral and response options
 - **🎨 Visual Feedback**: Smooth UI transitions and clear state indicators
+- **🔊 Audio Feedback**: Sound effects for achievements and important actions
 - **♿ Accessibility**: Keyboard navigation, scalable text, and comprehensive help system
 
 For complete gameplay details, see the **[Player Guide](PLAYERGUIDE.md)**.

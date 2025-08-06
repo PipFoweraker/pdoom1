@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- **Fun Feedback for Achievements: 'Zabinga!' Sound (Issue #66)**: Celebratory audio feedback system
+  - Generated 'Zabinga!' sound effect for research paper completion milestones
+  - Integrated with research paper publication logic in game_state.py
+  - Harmonically rich celebratory sound with musical progression (Za-bin-ga!)
+  - Comprehensive test coverage for paper completion sound triggering
+  - Trademark-safe replacement for previous 'bazinga' references
 - **Onboarding and Tutorial System (Issue #67)**: Comprehensive guidance for new players
   - Interactive step-by-step tutorial covering all core game mechanics
   - Context-sensitive first-time help for key actions (staff hiring, upgrades, AP exhaustion, high p(Doom))

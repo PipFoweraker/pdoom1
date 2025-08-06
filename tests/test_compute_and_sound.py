@@ -122,6 +122,73 @@ class TestSoundSystem(unittest.TestCase):
             success = False
             
         self.assertTrue(success, "Playing blob sound should not crash")
+    
+    def test_zabinga_sound_doesnt_crash(self):
+        """Test that playing Zabinga sound doesn't crash (even if no audio)"""
+        try:
+            self.game_state.sound_manager.play_zabinga_sound()
+            success = True
+        except Exception:
+            success = False
+            
+        self.assertTrue(success, "Playing Zabinga sound should not crash")
+    
+    def test_zabinga_sound_on_paper_completion(self):
+        """Test that Zabinga sound is triggered when research papers are completed"""
+        # Set up research progress just below threshold
+        self.game_state.research_progress = 99
+        
+        # Mock the sound manager to track calls
+        zabinga_called = []
+        original_play_zabinga = self.game_state.sound_manager.play_zabinga_sound
+        
+        def mock_play_zabinga():
+            zabinga_called.append(True)
+            original_play_zabinga()
+        
+        self.game_state.sound_manager.play_zabinga_sound = mock_play_zabinga
+        
+        # Add just enough research progress to complete a paper
+        self.game_state._add('research_progress', 1)
+        
+        # Trigger end turn to process research
+        self.game_state.end_turn()
+        
+        # Check that Zabinga sound was called
+        self.assertTrue(len(zabinga_called) > 0, 
+                       "Zabinga sound should be triggered when research paper is completed")
+        
+        # Check that paper was actually published
+        self.assertEqual(self.game_state.papers_published, 1,
+                        "One research paper should be published")
+    
+    def test_zabinga_sound_multiple_papers(self):
+        """Test that Zabinga sound is triggered when multiple papers are completed at once"""
+        # Set up research progress for multiple papers
+        self.game_state.research_progress = 250  # Should complete 2 papers
+        
+        # Mock the sound manager to track calls
+        zabinga_called = []
+        original_play_zabinga = self.game_state.sound_manager.play_zabinga_sound
+        
+        def mock_play_zabinga():
+            zabinga_called.append(True)
+            original_play_zabinga()
+        
+        self.game_state.sound_manager.play_zabinga_sound = mock_play_zabinga
+        
+        # Trigger end turn to process research
+        self.game_state.end_turn()
+        
+        # Check that Zabinga sound was called
+        self.assertTrue(len(zabinga_called) > 0, 
+                       "Zabinga sound should be triggered when multiple research papers are completed")
+        
+        # Check that papers were actually published
+        self.assertEqual(self.game_state.papers_published, 2,
+                        "Two research papers should be published")
+        self.assertEqual(self.game_state.research_progress, 50,
+                        "Research progress should be remainder after publishing papers")
 
 class TestEmployeeBlobSystem(unittest.TestCase):
     """Test the employee blob visualization system"""

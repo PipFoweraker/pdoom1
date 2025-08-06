@@ -1,12 +1,19 @@
-import pygame
 import math
 import array
+
+# Try to import pygame, but gracefully handle if it's not available
+try:
+    import pygame
+    PYGAME_AVAILABLE = True
+except ImportError:
+    PYGAME_AVAILABLE = False
+    pygame = None
 
 class SoundManager:
     """Manages sound effects and music for the game"""
     
     def __init__(self):
-        self.enabled = True
+        self.enabled = True and PYGAME_AVAILABLE
         self.sounds = {}
         # Individual sound toggles for granular control
         self.sound_toggles = {
@@ -15,20 +22,28 @@ class SoundManager:
             'blob': True,
             'error_beep': True
         }
-        self._initialize_pygame_mixer()
-        self._create_blob_sound()
+        if PYGAME_AVAILABLE:
+            self._initialize_pygame_mixer()
+            self._create_blob_sound()
     
     def _initialize_pygame_mixer(self):
         """Initialize pygame mixer for sound playback"""
+        if not PYGAME_AVAILABLE:
+            self.enabled = False
+            return
+            
         try:
             pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
         except pygame.error:
             # If mixer initialization fails (e.g., no audio device), disable sounds
             self.enabled = False
+        except Exception:
+            # Handle any other initialization errors
+            self.enabled = False
     
     def _create_blob_sound(self):
         """Create a simple blob sound effect programmatically"""
-        if not self.enabled:
+        if not self.enabled or not PYGAME_AVAILABLE:
             return
             
         try:
@@ -70,8 +85,9 @@ class SoundManager:
             # Create AP spend sound for enhanced feedback
             self._create_ap_spend_sound()
             
-            # Create money spend sound for purchase feedback
-            self._create_money_spend_sound()
+
+            # Create Zabinga sound for research paper completion
+            self._create_zabinga_sound()
             
 
         except (pygame.error, AttributeError, Exception):
@@ -80,7 +96,7 @@ class SoundManager:
     
     def _create_error_beep(self):
         """Create an error beep sound for the easter egg (3 repeated errors)"""
-        if not self.enabled:
+        if not self.enabled or not PYGAME_AVAILABLE:
             return
             
         try:
@@ -133,7 +149,7 @@ class SoundManager:
     
     def _create_ap_spend_sound(self):
         """Create a sound effect for when Action Points are spent"""
-        if not self.enabled:
+        if not self.enabled or not PYGAME_AVAILABLE:
             return
             
         try:
@@ -169,39 +185,51 @@ class SoundManager:
             # If AP sound creation fails, continue without it
             pass
     
-    def _create_money_spend_sound(self):
-        """Create a happy sound effect for when money is spent"""
-        if not self.enabled:
+
+    def _create_zabinga_sound(self):
+        """Create a celebratory 'Zabinga!' sound effect for research paper completion"""
+
+        if not self.enabled or not PYGAME_AVAILABLE:
             return
             
         try:
             sample_rate = 22050
-            duration = 0.4  # 400ms - slightly longer for happiness
+
+            duration = 1.0  # 1 second - celebratory sound should be noticeable
             samples = int(sample_rate * duration)
             
-            # Create sound wave array for money spend - a happy "cha-ching" sound
+            # Create sound wave array for Zabinga sound
+
             wave_array = array.array('h')
             
             for i in range(samples):
                 t = i / sample_rate
                 
-                # Create a pleasant, uplifting sound with multiple tones
-                # Rising then falling melody to sound like coins
-                if t < 0.2:
-                    # First part: rising tone (like coin drop)
-                    frequency = 523 + (t * 261)  # C5 to C6 (523Hz to 784Hz)
-                    amplitude = 3000 * (1 - t * 2)  # Fade slightly
-                else:
-                    # Second part: gentle bell-like harmonics
-                    t_rel = t - 0.2
-                    frequency = 659  # E5 - pleasant harmony
-                    amplitude = 2500 * math.exp(-t_rel * 3)  # Gentle decay
+
+                # Create a fun, celebratory sound with multiple tones
+                # Rising and falling melody to sound like "Za-bin-ga!"
+                amplitude = 3000
                 
-                # Add pleasant harmonics for richness
-                sample = int(amplitude * (
+                if t < 0.25:  # "Za" - lower tone
+                    frequency = 440  # A4
+                    envelope = math.sin(math.pi * t / 0.25)  # Smooth attack and decay
+                elif t < 0.5:  # "bin" - higher tone
+                    frequency = 554  # C#5
+                    envelope = math.sin(math.pi * (t - 0.25) / 0.25)
+                elif t < 0.75:  # "ga" - middle tone with vibrato
+                    frequency = 494 + 20 * math.sin(2 * math.pi * 8 * t)  # B4 with vibrato
+                    envelope = math.sin(math.pi * (t - 0.5) / 0.25)
+                else:  # Final flourish - quick ascending notes
+                    base_freq = 440 * (1 + 2 * (t - 0.75))  # Rising pitch
+                    frequency = base_freq
+                    envelope = math.exp(-8 * (t - 0.75))  # Quick decay
+                
+                # Generate the sample with harmonic richness
+                sample = int(amplitude * envelope * (
                     math.sin(2 * math.pi * frequency * t) +
-                    0.4 * math.sin(2 * math.pi * frequency * 1.5 * t) +  # Minor third
-                    0.2 * math.sin(2 * math.pi * frequency * 2 * t)     # Octave
+                    0.3 * math.sin(2 * math.pi * frequency * 2 * t) +  # Second harmonic
+                    0.15 * math.sin(2 * math.pi * frequency * 3 * t)   # Third harmonic
+
                 ))
                 
                 # Add to stereo array
@@ -209,15 +237,16 @@ class SoundManager:
                 wave_array.append(sample)
             
             # Create pygame sound from array
-            self.sounds['money_spend'] = pygame.sndarray.make_sound(wave_array)
+            self.sounds['zabinga'] = pygame.sndarray.make_sound(wave_array)
             
         except (pygame.error, AttributeError, Exception):
-            # If money sound creation fails, continue without it
+            # If Zabinga sound creation fails, continue without it
+
             pass
     
     def play_blob_sound(self):
         """Play the blob sound effect when a new employee is hired"""
-        if self.enabled and self.sound_toggles.get('blob', True) and 'blob' in self.sounds:
+        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('blob', True) and 'blob' in self.sounds:
             try:
                 self.sounds['blob'].play()
             except pygame.error:
@@ -226,7 +255,7 @@ class SoundManager:
     
     def play_error_beep(self):
         """Play the error beep sound for the easter egg (3 repeated identical errors)"""
-        if self.enabled and self.sound_toggles.get('error_beep', True) and 'error_beep' in self.sounds:
+        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('error_beep', True) and 'error_beep' in self.sounds:
             try:
                 self.sounds['error_beep'].play()
             except pygame.error:
@@ -235,7 +264,7 @@ class SoundManager:
     
     def play_ap_spend_sound(self):
         """Play the AP spend sound effect when Action Points are spent"""
-        if self.enabled and self.sound_toggles.get('ap_spend', True) and 'ap_spend' in self.sounds:
+        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('ap_spend', True) and 'ap_spend' in self.sounds:
             try:
                 self.sounds['ap_spend'].play()
             except pygame.error:
@@ -243,10 +272,20 @@ class SoundManager:
                 pass
     
     def play_money_spend_sound(self):
-        """Play the money spend sound effect when money is spent"""
-        if self.enabled and self.sound_toggles.get('money_spend', True) and 'money_spend' in self.sounds:
+        """Play a sound effect when money is spent (reuse AP spend sound for consistency)"""
+        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('money_spend', True) and 'ap_spend' in self.sounds:
             try:
-                self.sounds['money_spend'].play()
+                self.sounds['ap_spend'].play()
+            except pygame.error:
+                # Sound playback failed, but don't crash
+                pass
+    
+    def play_zabinga_sound(self):
+        """Play the Zabinga sound effect when research papers are completed"""
+        if self.enabled and PYGAME_AVAILABLE and 'zabinga' in self.sounds:
+            try:
+                self.sounds['zabinga'].play()
+
             except pygame.error:
                 # Sound playback failed, but don't crash
                 pass

@@ -921,6 +921,8 @@ class GameState:
             self.research_progress = self.research_progress % 100
             self._add('reputation', papers_to_publish * 5)  # Papers boost reputation
             self.messages.append(f"Research paper{'s' if papers_to_publish > 1 else ''} published! (+{papers_to_publish}, total: {self.papers_published})")
+            # Play Zabinga sound for paper completion
+            self.sound_manager.play_zabinga_sound()
             
         # Update compute consumption
         self.compute = max(0, self.compute - compute_assigned)
