@@ -480,6 +480,8 @@ You lose if any of these happen:
 - **👥 All staff quit** - No one left to run the lab
 - **🏁 Opponent wins** - Competition reaches 100% progress first
 
+Instead of generic "GAME OVER" messages, you'll receive detailed end game scenarios that explain what led to your defeat and analyze your organization's performance based on how long you survived and what caused the end.
+
 Your score is how many turns you survived. Try to beat your previous best!
 
 

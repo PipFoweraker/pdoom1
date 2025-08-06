@@ -1442,18 +1442,32 @@ def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
     button_bg_inactive = (60, 60, 100)
     
     # Title
-    title_text = title_font.render("GAME OVER", True, title_color)
+    if game_state.end_game_scenario:
+        title_text = title_font.render(game_state.end_game_scenario.title, True, title_color)
+    else:
+        title_text = title_font.render("GAME OVER", True, title_color)
     title_rect = title_text.get_rect(center=(w//2, int(h*0.08)))
     screen.blit(title_text, title_rect)
     
-    # Game end message
-    end_message = game_state.messages[-1] if game_state.messages else "Game ended"
-    subtitle_text = subtitle_font.render(end_message, True, subtitle_color)
-    subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
-    screen.blit(subtitle_text, subtitle_rect)
+    # Game end scenario description
+    if game_state.end_game_scenario:
+        # Wrap the description text
+        description_lines = wrap_text(game_state.end_game_scenario.description, subtitle_font, w*2//3)
+        start_y = int(h*0.13)
+        for i, line in enumerate(description_lines[:4]):  # Limit to 4 lines to fit layout
+            desc_text = subtitle_font.render(line, True, subtitle_color)
+            desc_rect = desc_text.get_rect(center=(w//2, start_y + i * int(h*0.025)))
+            screen.blit(desc_text, desc_rect)
+    else:
+        # Fallback to last message
+        end_message = game_state.messages[-1] if game_state.messages else "Game ended"
+        subtitle_text = subtitle_font.render(end_message, True, subtitle_color)
+        subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
+        screen.blit(subtitle_text, subtitle_rect)
     
-    # Game statistics in a box
-    stats_box = pygame.Rect(w//6, int(h*0.22), w*2//3, int(h*0.25))
+    # Game statistics in a box - adjust position to make room for scenario details
+    stats_box_y = int(h*0.25) if game_state.end_game_scenario else int(h*0.22)
+    stats_box = pygame.Rect(w//6, stats_box_y, w*2//3, int(h*0.22))
     pygame.draw.rect(screen, (40, 40, 70), stats_box, border_radius=12)
     pygame.draw.rect(screen, (130, 190, 255), stats_box, width=3, border_radius=12)
     
@@ -1468,12 +1482,47 @@ def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
         f"High Score (turns): {game_state.highscore}"
     ]
     
-    stats_start_y = stats_box.y + 20
-    line_height = int(h*0.03)
+    stats_start_y = stats_box.y + 15
+    line_height = int(h*0.025)
     
     for i, line in enumerate(stats_lines):
         stats_text = stats_font.render(line, True, stats_color)
         screen.blit(stats_text, (stats_box.x + 20, stats_start_y + i * line_height))
+    
+    # Cause Analysis section (if scenario available)
+    if game_state.end_game_scenario and game_state.end_game_scenario.cause_analysis:
+        analysis_y = stats_box.y + stats_box.height + 15
+        analysis_box = pygame.Rect(w//6, analysis_y, w*2//3, int(h*0.12))
+        pygame.draw.rect(screen, (50, 30, 30), analysis_box, border_radius=8)
+        pygame.draw.rect(screen, (200, 100, 100), analysis_box, width=2, border_radius=8)
+        
+        # Analysis title
+        analysis_title = small_font.render("What Went Wrong:", True, (255, 200, 200))
+        screen.blit(analysis_title, (analysis_box.x + 15, analysis_box.y + 8))
+        
+        # Analysis text (wrapped)
+        analysis_lines = wrap_text(game_state.end_game_scenario.cause_analysis, small_font, analysis_box.width - 30)
+        for i, line in enumerate(analysis_lines[:3]):  # Limit to 3 lines
+            analysis_text = small_font.render(line, True, (255, 220, 220))
+            screen.blit(analysis_text, (analysis_box.x + 15, analysis_box.y + 25 + i * 16))
+    
+    # Legacy Note section (if scenario available)
+    if game_state.end_game_scenario and game_state.end_game_scenario.legacy_note:
+        legacy_y_offset = int(h*0.12) + 20 if game_state.end_game_scenario.cause_analysis else 15
+        legacy_y = stats_box.y + stats_box.height + legacy_y_offset
+        legacy_box = pygame.Rect(w//6, legacy_y, w*2//3, int(h*0.08))
+        pygame.draw.rect(screen, (30, 50, 30), legacy_box, border_radius=8)
+        pygame.draw.rect(screen, (100, 200, 100), legacy_box, width=2, border_radius=8)
+        
+        # Legacy title
+        legacy_title = small_font.render("Your Legacy:", True, (200, 255, 200))
+        screen.blit(legacy_title, (legacy_box.x + 15, legacy_box.y + 8))
+        
+        # Legacy text (wrapped)
+        legacy_lines = wrap_text(game_state.end_game_scenario.legacy_note, small_font, legacy_box.width - 30)
+        for i, line in enumerate(legacy_lines[:2]):  # Limit to 2 lines
+            legacy_text = small_font.render(line, True, (220, 255, 220))
+            screen.blit(legacy_text, (legacy_box.x + 15, legacy_box.y + 25 + i * 16))
     
     # Menu options
     menu_items = ["Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
