@@ -1321,13 +1321,14 @@ def draw_ui_transitions(screen, game_state, w, h, big_font):
 
 def draw_upgrade_transition(screen, transition, game_state, w, h, big_font):
     """
-    Draw a single upgrade transition animation with visual effects.
+    Draw a single upgrade transition animation with enhanced visual effects.
     
     Features:
-    - Curved arc trail from button to icon position
-    - Fading trail points that create motion blur effect
-    - Glowing highlight at destination when transition completes
-    - Semi-transparent moving upgrade preview
+    - Enhanced curved arc trail with particle effects
+    - Multi-layered glow effects with smooth pulsing
+    - Dynamic trail with size and color variations
+    - Particle system for more organic visual feedback
+    - Smooth size and opacity interpolation
     
     Args:
         screen: pygame surface to draw on
@@ -1339,74 +1340,160 @@ def draw_upgrade_transition(screen, transition, game_state, w, h, big_font):
     upgrade_idx = transition['upgrade_idx']
     upgrade = game_state.upgrades[upgrade_idx]
     
-    # Draw trail points (visual arc effect)
+    # Draw enhanced particle trail first (background layer)
+    for particle in transition.get('particle_trail', []):
+        if particle['alpha'] > 0:
+            # Dynamic particle colors with variation
+            base_color = (100, 255, 150)
+            color_shift = particle.get('color_shift', 0)
+            particle_color = (
+                max(0, min(255, base_color[0] + color_shift)),
+                max(0, min(255, base_color[1] + color_shift//2)),
+                max(0, min(255, base_color[2] + color_shift)),
+                particle['alpha']
+            )
+            
+            # Create particle surface with gradient effect
+            particle_size = particle['size']
+            particle_surface = pygame.Surface((particle_size * 2, particle_size * 2), pygame.SRCALPHA)
+            
+            # Multi-layer particle for depth
+            for layer in range(2):
+                layer_alpha = particle['alpha'] // (1 + layer)
+                layer_size = max(1, particle_size - layer)
+                layer_color = (*particle_color[:3], layer_alpha)
+                
+                pygame.draw.circle(particle_surface, layer_color, 
+                                 (particle_size, particle_size), layer_size)
+            
+            screen.blit(particle_surface, (int(particle['pos'][0]) - particle_size, 
+                                         int(particle['pos'][1]) - particle_size))
+    
+    # Draw enhanced trail points (main trail effect)
     for i, point in enumerate(transition['trail_points']):
         if point['alpha'] > 0:
-            # Create fading trail effect with varying sizes
-            trail_size = max(2, 8 - i)
-            trail_color = (100, 255, 150, point['alpha'])  # Green with fading alpha
+            # Enhanced trail with size and color variations
+            trail_size = max(2, int(point['size']))
             
-            # Create surface for alpha blending
-            trail_surface = pygame.Surface((trail_size * 2, trail_size * 2), pygame.SRCALPHA)
-            pygame.draw.circle(trail_surface, trail_color, (trail_size, trail_size), trail_size)
-            screen.blit(trail_surface, (point['pos'][0] - trail_size, point['pos'][1] - trail_size))
+            # Dynamic trail colors with organic variation
+            base_green = 150 + point.get('color_variation', 0)
+            trail_color = (100, max(100, min(255, base_green)), 150, point['alpha'])
+            
+            # Create trail surface with soft edges
+            trail_surface = pygame.Surface((trail_size * 3, trail_size * 3), pygame.SRCALPHA)
+            
+            # Multi-layer trail for smooth gradients
+            for layer in range(3):
+                layer_alpha = point['alpha'] // (1 + layer * 2)
+                layer_size = max(1, trail_size - layer)
+                layer_color = (*trail_color[:3], layer_alpha)
+                
+                if layer_alpha > 0:
+                    pygame.draw.circle(trail_surface, layer_color,
+                                     (trail_size * 3 // 2, trail_size * 3 // 2), layer_size)
+            
+            screen.blit(trail_surface, (point['pos'][0] - trail_size * 3 // 2, 
+                                      point['pos'][1] - trail_size * 3 // 2))
     
-    # Draw moving upgrade preview during transition
+    # Draw moving upgrade preview during transition with enhanced effects
     if not transition['completed']:
         current_pos = game_state._interpolate_position(
             transition['start_rect'], 
             transition['end_rect'], 
-            transition['progress']
+            transition['progress'],
+            transition.get('arc_height', 80)
         )
         
-        # Calculate size interpolation (button size -> icon size)
+        # Enhanced size interpolation with slight overshoot for bounce effect
         start_size = min(transition['start_rect'][2], transition['start_rect'][3])
         end_size = min(transition['end_rect'][2], transition['end_rect'][3])
-        current_size = start_size + (end_size - start_size) * transition['progress']
         
-        # Draw semi-transparent moving upgrade
+        # Add slight bounce/overshoot near the end
+        progress = transition['progress']
+        if progress > 0.8:
+            bounce_factor = 1.0 + 0.1 * (1.0 - progress) * 5  # Slight overshoot
+            current_size = (start_size + (end_size - start_size) * progress) * bounce_factor
+        else:
+            current_size = start_size + (end_size - start_size) * progress
+        
+        current_size = int(max(end_size * 0.5, current_size))  # Minimum size
+        
+        # Draw enhanced moving upgrade with glow
         moving_rect = (
             current_pos[0] - current_size//2,
-            current_pos[1] - current_size//2, 
+            current_pos[1] - current_size//2,
             current_size,
             current_size
         )
         
-        # Semi-transparent background
-        moving_surface = pygame.Surface((current_size, current_size), pygame.SRCALPHA)
-        pygame.draw.rect(moving_surface, (90, 170, 90, 180), (0, 0, current_size, current_size), border_radius=6)
-        pygame.draw.rect(moving_surface, (140, 210, 140, 200), (0, 0, current_size, current_size), width=2, border_radius=6)
+        # Add glow around moving element
+        glow_size = current_size + 8
+        glow_surface = pygame.Surface((glow_size, glow_size), pygame.SRCALPHA)
+        glow_color = (100, 255, 150, 60)
+        pygame.draw.circle(glow_surface, glow_color, (glow_size//2, glow_size//2), glow_size//2)
+        screen.blit(glow_surface, (current_pos[0] - glow_size//2, current_pos[1] - glow_size//2))
         
-        # Add upgrade letter
-        letter_surf = big_font.render(upgrade["name"][0], True, (255, 255, 255))
+        # Enhanced moving element background
+        moving_surface = pygame.Surface((current_size, current_size), pygame.SRCALPHA)
+        
+        # Multi-layer background for depth
+        bg_color = (90, 170, 90, 200)
+        border_color = (140, 210, 140, 230)
+        
+        pygame.draw.rect(moving_surface, bg_color, (0, 0, current_size, current_size), border_radius=8)
+        pygame.draw.rect(moving_surface, border_color, (0, 0, current_size, current_size), width=2, border_radius=8)
+        
+        # Add inner highlight for 3D effect
+        highlight_color = (180, 240, 180, 100)
+        pygame.draw.rect(moving_surface, highlight_color, (2, 2, current_size-4, current_size//3), border_radius=4)
+        
+        # Scaled upgrade letter
+        font_size = max(12, int(current_size * 0.4))
+        scaled_font = pygame.font.SysFont('Consolas', font_size, bold=True)
+        letter_surf = scaled_font.render(upgrade["name"][0], True, (255, 255, 255))
         letter_x = (current_size - letter_surf.get_width()) // 2
         letter_y = (current_size - letter_surf.get_height()) // 2
         moving_surface.blit(letter_surf, (letter_x, letter_y))
         
         screen.blit(moving_surface, (moving_rect[0], moving_rect[1]))
     
-    # Draw destination glow effect
-    if transition['glow_timer'] > 0:
-        glow_intensity = min(255, transition['glow_timer'] * 4)  # Stronger glow initially
+    # Draw enhanced destination glow effect
+    glow_intensity = transition.get('glow_intensity', 0)
+    if glow_intensity > 0:
         end_rect = transition['end_rect']
         
-        # Create pulsing glow effect
-        pulse = 1.0 + 0.3 * (transition['glow_timer'] % 20) / 20.0  # Gentle pulse
-        glow_size = int(max(end_rect[2], end_rect[3]) * pulse)
-        glow_color = (150, 255, 150, glow_intensity // 3)  # Green glow
+        # Enhanced pulsing with multiple frequencies
+        import math
+        time_factor = (90 - transition.get('glow_timer', 0)) / 90.0
+        pulse1 = 1.0 + 0.3 * math.sin(time_factor * 8 * math.pi) * (glow_intensity / 255.0)
+        pulse2 = 1.0 + 0.15 * math.sin(time_factor * 12 * math.pi) * (glow_intensity / 255.0)
         
-        # Multiple glow layers for smooth effect
-        for layer in range(3):
-            layer_size = glow_size - layer * 4
-            layer_alpha = glow_intensity // (3 + layer * 2)
-            
-            if layer_size > 0 and layer_alpha > 0:
+        base_glow_size = max(end_rect[2], end_rect[3])
+        
+        # Multiple glow layers with different pulsing patterns
+        glow_layers = [
+            {'size': base_glow_size * pulse1 * 1.5, 'alpha': glow_intensity // 4, 'color': (150, 255, 150)},
+            {'size': base_glow_size * pulse2 * 1.2, 'alpha': glow_intensity // 3, 'color': (120, 220, 120)},
+            {'size': base_glow_size * 1.0, 'alpha': glow_intensity // 2, 'color': (100, 200, 100)},
+        ]
+        
+        center_x = end_rect[0] + end_rect[2] // 2
+        center_y = end_rect[1] + end_rect[3] // 2
+        
+        for layer in glow_layers:
+            if layer['alpha'] > 0:
+                layer_size = int(layer['size'])
                 glow_surface = pygame.Surface((layer_size * 2, layer_size * 2), pygame.SRCALPHA)
-                pygame.draw.circle(glow_surface, (*glow_color[:3], layer_alpha), 
-                                 (layer_size, layer_size), layer_size)
                 
-                glow_x = end_rect[0] + end_rect[2]//2 - layer_size
-                glow_y = end_rect[1] + end_rect[3]//2 - layer_size
+                # Gradient glow effect
+                for ring in range(layer_size, 0, -2):
+                    ring_alpha = max(0, int(layer['alpha'] * (layer_size - ring) / layer_size))
+                    ring_color = (*layer['color'], ring_alpha)
+                    if ring_alpha > 0:
+                        pygame.draw.circle(glow_surface, ring_color, (layer_size, layer_size), ring)
+                
+                glow_x = center_x - layer_size
+                glow_y = center_y - layer_size
                 screen.blit(glow_surface, (glow_x, glow_y))
 
 
