@@ -45,9 +45,9 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
     
     def test_end_game_menu_items_defined(self):
         """Test that end-game menu items are properly defined."""
-        expected_items = ["Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
+        expected_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
         self.assertEqual(end_game_menu_items, expected_items)
-        self.assertEqual(len(end_game_menu_items), 5)
+        self.assertEqual(len(end_game_menu_items), 6)
     
     def test_settings_content_creation(self):
         """Test that settings content is created successfully."""
@@ -68,7 +68,7 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
         self.assertEqual(self.main_module.end_game_selected_item, 1)
         
         # Test wrapping at bottom
-        self.main_module.end_game_selected_item = 4
+        self.main_module.end_game_selected_item = 5
         handle_end_game_menu_keyboard(pygame.K_DOWN)
         self.assertEqual(self.main_module.end_game_selected_item, 0)
         
@@ -80,23 +80,29 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
         # Test wrapping at top
         self.main_module.end_game_selected_item = 0
         handle_end_game_menu_keyboard(pygame.K_UP)
-        self.assertEqual(self.main_module.end_game_selected_item, 4)
+        self.assertEqual(self.main_module.end_game_selected_item, 5)
+    
+    def test_view_high_scores_action(self):
+        """Test view high scores functionality."""
+        self.main_module.end_game_selected_item = 0
+        handle_end_game_menu_keyboard(pygame.K_RETURN)
+        self.assertEqual(self.main_module.current_state, 'high_score')
     
     def test_relaunch_game_action(self):
         """Test relaunch game functionality."""
-        self.main_module.end_game_selected_item = 0
+        self.main_module.end_game_selected_item = 1
         handle_end_game_menu_keyboard(pygame.K_RETURN)
         self.assertEqual(self.main_module.current_state, 'game')
     
     def test_main_menu_action(self):
         """Test return to main menu functionality."""
-        self.main_module.end_game_selected_item = 1
+        self.main_module.end_game_selected_item = 2
         handle_end_game_menu_keyboard(pygame.K_RETURN)
         self.assertEqual(self.main_module.current_state, 'main_menu')
     
     def test_settings_action(self):
         """Test settings menu access."""
-        self.main_module.end_game_selected_item = 2
+        self.main_module.end_game_selected_item = 3
         handle_end_game_menu_keyboard(pygame.K_RETURN)
         self.assertEqual(self.main_module.current_state, 'overlay')
         self.assertEqual(self.main_module.overlay_title, "Settings")
@@ -105,7 +111,7 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
     
     def test_submit_feedback_action(self):
         """Test submit feedback functionality."""
-        self.main_module.end_game_selected_item = 3
+        self.main_module.end_game_selected_item = 4
         handle_end_game_menu_keyboard(pygame.K_RETURN)
         self.assertEqual(self.main_module.current_state, 'bug_report')
         # Should pre-select feedback type (index 2)
@@ -113,7 +119,7 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
     
     def test_submit_bug_action(self):
         """Test submit bug functionality."""
-        self.main_module.end_game_selected_item = 4
+        self.main_module.end_game_selected_item = 5
         handle_end_game_menu_keyboard(pygame.K_RETURN)
         self.assertEqual(self.main_module.current_state, 'bug_report')
         # Should pre-select bug type (index 0)
@@ -179,7 +185,7 @@ class TestEndGameMenuIntegration(unittest.TestCase):
         }
         
         # Trigger feedback action
-        main.end_game_selected_item = 3
+        main.end_game_selected_item = 4
         handle_end_game_menu_keyboard(pygame.K_RETURN)
         
         # Check that form was reset except for type

@@ -158,6 +158,8 @@ As your organization grows, you'll encounter special milestone events:
 | Select option | Enter or mouse click |
 | Exit | Escape key |
 
+**💡 Tip**: Keyboard shortcuts are displayed on the left and right sides of the main menu for quick reference.
+
 ### In-Game Controls
 | Action | How To |
 |--------|--------|
@@ -479,6 +481,8 @@ You lose if any of these happen:
 - **☢️ p(Doom) reaches 100%** - Catastrophic AI development
 - **👥 All staff quit** - No one left to run the lab
 - **🏁 Opponent wins** - Competition reaches 100% progress first
+
+Instead of generic "GAME OVER" messages, you'll receive detailed end game scenarios that explain what led to your defeat and analyze your organization's performance based on how long you survived and what caused the end.
 
 Your score is how many turns you survived. Try to beat your previous best!
 
