@@ -1,6 +1,7 @@
 import pygame
 import textwrap
 from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
+from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 def wrap_text(text, font, max_width):
     """
@@ -97,8 +98,6 @@ def draw_main_menu(screen, w, h, selected_item):
         # Determine button state for visual feedback
         if i == selected_item:
             button_state = ButtonState.FOCUSED  # Use focused state for keyboard navigation
-        elif i == 2:  # Options button (placeholder)
-            button_state = ButtonState.DISABLED
         else:
             button_state = ButtonState.NORMAL
         
@@ -119,6 +118,115 @@ def draw_main_menu(screen, w, h, selected_item):
         inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
         inst_x = w // 2 - inst_surf.get_width() // 2
         inst_y = int(h * 0.85) + i * int(h * 0.03)
+        screen.blit(inst_surf, (inst_x, inst_y))
+    
+    # Draw keyboard shortcuts on the sides
+    shortcut_font = pygame.font.SysFont('Consolas', int(h*0.018))
+    
+    # Left side - Main Menu shortcuts
+    left_shortcuts = get_main_menu_shortcuts()
+    left_formatted = format_shortcut_list(left_shortcuts)
+    
+    left_title_surf = shortcut_font.render("Menu Controls:", True, (160, 160, 160))
+    left_x = int(w * 0.05)
+    left_y = int(h * 0.25)
+    screen.blit(left_title_surf, (left_x, left_y))
+    
+    for i, shortcut_text in enumerate(left_formatted):
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        screen.blit(shortcut_surf, (left_x, left_y + 30 + i * 25))
+    
+    # Right side - In-Game shortcuts preview
+    right_shortcuts = get_in_game_shortcuts()[:4]  # Show first 4 to fit space
+    right_formatted = format_shortcut_list(right_shortcuts)
+    
+    right_title_surf = shortcut_font.render("In-Game Controls:", True, (160, 160, 160))
+    right_x = int(w * 0.75)
+    right_y = int(h * 0.25)
+    screen.blit(right_title_surf, (right_x, right_y))
+    
+    for i, shortcut_text in enumerate(right_formatted):
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        screen.blit(shortcut_surf, (right_x, right_y + 30 + i * 25))
+
+def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
+    """
+    Draw the sounds options menu with toggles for individual sound effects.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected menu item (for keyboard navigation)
+        game_state: game state object to access sound manager (can be None for standalone testing)
+    
+    Features:
+    - Master sound on/off toggle
+    - Individual sound effect toggles (money spend, AP spend, blob, error beep)
+    - Back button to return to main menu
+    - Responsive sizing and keyboard navigation
+    """
+    # Fonts for menu - scale based on screen size
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    
+    # Title at top
+    title_surf = title_font.render("Sound Options", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Get sound manager if available
+    sound_manager = None
+    if game_state and hasattr(game_state, 'sound_manager'):
+        sound_manager = game_state.sound_manager
+    
+    # Menu items with their current states
+    master_enabled = sound_manager.is_enabled() if sound_manager else True
+    
+    menu_items = [
+        f"Master Sound: {'ON' if master_enabled else 'OFF'}",
+        f"Money Spend Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('money_spend')) else 'OFF'}",
+        f"Action Points Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('ap_spend')) else 'OFF'}",
+        f"Employee Hire Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('blob')) else 'OFF'}",
+        f"Error Beep Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('error_beep')) else 'OFF'}",
+        "Back to Main Menu"
+    ]
+    
+    # Button layout
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.06)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.08)
+    center_x = w // 2
+    
+    for i, item in enumerate(menu_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state for visual feedback
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED  # Use focused state for keyboard navigation
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Use visual feedback system for consistent styling
+        visual_feedback.draw_button(
+            screen, button_rect, item, button_state, FeedbackStyle.MENU_ITEM
+        )
+    
+    # Instructions at bottom
+    instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    instructions = [
+        "Use arrow keys to navigate, Enter to toggle",
+        "Press Escape or select Back to return to Main Menu"
+    ]
+    
+    for i, instruction in enumerate(instructions):
+        inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        inst_y = int(h * 0.85) + i * 25
         screen.blit(inst_surf, (inst_x, inst_y))
 
 def draw_overlay(screen, title, content, scroll_offset, w, h):
@@ -421,8 +529,15 @@ def draw_ui(screen, game_state, w, h):
         FeedbackStyle.BUTTON, custom_colors.get(endturn_state)
     )
 
+
     # Messages log (bottom left) - Enhanced with scrollable history and minimize option
-    log_x, log_y = int(w*0.04), int(h*0.74)
+    # Use current position (including any drag offset)
+    if hasattr(game_state, '_get_activity_log_current_position'):
+        log_x, log_y = game_state._get_activity_log_current_position(w, h)
+    else:
+        log_x, log_y = int(w*0.04), int(h*0.74)  # Fallback to original position
+
+
     
     # Check if activity log is minimized (only available with compact activity display upgrade)
     if (hasattr(game_state, 'activity_log_minimized') and 
@@ -458,7 +573,7 @@ def draw_ui(screen, game_state, w, h):
         
     elif game_state.scrollable_event_log_enabled:
         # Enhanced scrollable event log with border and visual indicators
-        log_width = int(w * 0.44)
+        log_width = int(w * 0.22)  # Reduced from 0.44 to 0.22 to avoid upgrade button overlap
         log_height = int(h * 0.22)
         
         # Draw border around the event log area
@@ -504,8 +619,16 @@ def draw_ui(screen, game_state, w, h):
         # Combine history and current messages for display
         all_messages = list(game_state.event_log_history) + game_state.messages
         
-        # Calculate scrolling
+        # Calculate scrolling - Auto-scroll to bottom by default for new content
         total_lines = len(all_messages)
+        
+        # Check if we should auto-scroll to bottom (when there are more lines than visible)
+        if total_lines > max_visible_lines:
+            # If scroll offset is 0 or close to max (user at bottom), keep at bottom
+            max_scroll_offset = total_lines - max_visible_lines
+            if game_state.event_log_scroll_offset <= 1 or game_state.event_log_scroll_offset >= max_scroll_offset - 1:
+                game_state.event_log_scroll_offset = max_scroll_offset
+        
         start_line = max(0, min(game_state.event_log_scroll_offset, total_lines - max_visible_lines))
         
         # Draw messages with scrolling
@@ -1319,18 +1442,32 @@ def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
     button_bg_inactive = (60, 60, 100)
     
     # Title
-    title_text = title_font.render("GAME OVER", True, title_color)
+    if game_state.end_game_scenario:
+        title_text = title_font.render(game_state.end_game_scenario.title, True, title_color)
+    else:
+        title_text = title_font.render("GAME OVER", True, title_color)
     title_rect = title_text.get_rect(center=(w//2, int(h*0.08)))
     screen.blit(title_text, title_rect)
     
-    # Game end message
-    end_message = game_state.messages[-1] if game_state.messages else "Game ended"
-    subtitle_text = subtitle_font.render(end_message, True, subtitle_color)
-    subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
-    screen.blit(subtitle_text, subtitle_rect)
+    # Game end scenario description
+    if game_state.end_game_scenario:
+        # Wrap the description text
+        description_lines = wrap_text(game_state.end_game_scenario.description, subtitle_font, w*2//3)
+        start_y = int(h*0.13)
+        for i, line in enumerate(description_lines[:4]):  # Limit to 4 lines to fit layout
+            desc_text = subtitle_font.render(line, True, subtitle_color)
+            desc_rect = desc_text.get_rect(center=(w//2, start_y + i * int(h*0.025)))
+            screen.blit(desc_text, desc_rect)
+    else:
+        # Fallback to last message
+        end_message = game_state.messages[-1] if game_state.messages else "Game ended"
+        subtitle_text = subtitle_font.render(end_message, True, subtitle_color)
+        subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
+        screen.blit(subtitle_text, subtitle_rect)
     
-    # Game statistics in a box
-    stats_box = pygame.Rect(w//6, int(h*0.22), w*2//3, int(h*0.25))
+    # Game statistics in a box - adjust position to make room for scenario details
+    stats_box_y = int(h*0.25) if game_state.end_game_scenario else int(h*0.22)
+    stats_box = pygame.Rect(w//6, stats_box_y, w*2//3, int(h*0.22))
     pygame.draw.rect(screen, (40, 40, 70), stats_box, border_radius=12)
     pygame.draw.rect(screen, (130, 190, 255), stats_box, width=3, border_radius=12)
     
@@ -1345,12 +1482,47 @@ def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
         f"High Score (turns): {game_state.highscore}"
     ]
     
-    stats_start_y = stats_box.y + 20
-    line_height = int(h*0.03)
+    stats_start_y = stats_box.y + 15
+    line_height = int(h*0.025)
     
     for i, line in enumerate(stats_lines):
         stats_text = stats_font.render(line, True, stats_color)
         screen.blit(stats_text, (stats_box.x + 20, stats_start_y + i * line_height))
+    
+    # Cause Analysis section (if scenario available)
+    if game_state.end_game_scenario and game_state.end_game_scenario.cause_analysis:
+        analysis_y = stats_box.y + stats_box.height + 15
+        analysis_box = pygame.Rect(w//6, analysis_y, w*2//3, int(h*0.12))
+        pygame.draw.rect(screen, (50, 30, 30), analysis_box, border_radius=8)
+        pygame.draw.rect(screen, (200, 100, 100), analysis_box, width=2, border_radius=8)
+        
+        # Analysis title
+        analysis_title = small_font.render("What Went Wrong:", True, (255, 200, 200))
+        screen.blit(analysis_title, (analysis_box.x + 15, analysis_box.y + 8))
+        
+        # Analysis text (wrapped)
+        analysis_lines = wrap_text(game_state.end_game_scenario.cause_analysis, small_font, analysis_box.width - 30)
+        for i, line in enumerate(analysis_lines[:3]):  # Limit to 3 lines
+            analysis_text = small_font.render(line, True, (255, 220, 220))
+            screen.blit(analysis_text, (analysis_box.x + 15, analysis_box.y + 25 + i * 16))
+    
+    # Legacy Note section (if scenario available)
+    if game_state.end_game_scenario and game_state.end_game_scenario.legacy_note:
+        legacy_y_offset = int(h*0.12) + 20 if game_state.end_game_scenario.cause_analysis else 15
+        legacy_y = stats_box.y + stats_box.height + legacy_y_offset
+        legacy_box = pygame.Rect(w//6, legacy_y, w*2//3, int(h*0.08))
+        pygame.draw.rect(screen, (30, 50, 30), legacy_box, border_radius=8)
+        pygame.draw.rect(screen, (100, 200, 100), legacy_box, width=2, border_radius=8)
+        
+        # Legacy title
+        legacy_title = small_font.render("Your Legacy:", True, (200, 255, 200))
+        screen.blit(legacy_title, (legacy_box.x + 15, legacy_box.y + 8))
+        
+        # Legacy text (wrapped)
+        legacy_lines = wrap_text(game_state.end_game_scenario.legacy_note, small_font, legacy_box.width - 30)
+        for i, line in enumerate(legacy_lines[:2]):  # Limit to 2 lines
+            legacy_text = small_font.render(line, True, (220, 255, 220))
+            screen.blit(legacy_text, (legacy_box.x + 15, legacy_box.y + 25 + i * 16))
     
     # Menu options
     menu_items = ["Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
@@ -1647,7 +1819,6 @@ def draw_first_time_help(screen, help_content, w, h):
     
     return close_button_rect
 
-
 def draw_pre_game_settings(screen, w, h, settings, selected_item):
     """
     Draw the pre-game settings screen with configurable options.
@@ -1878,4 +2049,164 @@ def draw_tutorial_choice(screen, w, h, selected_item):
         inst_y += inst_surf.get_height() + 5
 
 
+
     
+    # Title
+    title_text = title_font.render("HIGH SCORES", True, title_color)
+    title_rect = title_text.get_rect(center=(w//2, int(h*0.08)))
+    screen.blit(title_text, title_rect)
+    
+    # Subtitle
+    subtitle_text = subtitle_font.render("Hall of Fame: AI Safety Research Leaders", True, subtitle_color)
+    subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
+    screen.blit(subtitle_text, subtitle_rect)
+    
+    # Famous AI Safety Researchers (bowdlerised names) with realistic turn counts
+    ai_researchers = [
+        ("Stuie Roswell", 47, "Author of 'Human Compatible'"),
+        ("Elliot Yudkowski", 43, "Founder of LessWrong"),
+        ("Nick Bolstrom", 41, "Oxford Future of Humanity Institute"),
+        ("Toby Ord-ish", 38, "Author of 'The Precipice'"),
+        ("Robin Hansson", 36, "George Mason University"),
+        ("Pauly Christano", 34, "AI Alignment Researcher"),
+        ("Dan Hendrickx", 32, "Anthropic AI Safety"),
+        ("Catherine Oliviera", 31, "DeepMind Safety Team"),
+        ("Geoffrey Hintonberg", 29, "Godfather of Deep Learning"),
+        ("Yoshy Bengiov", 28, "Montreal Institute for Learning")
+    ]
+    
+    # Player's score
+    player_turns = game_state.turn if game_state else 0
+    is_new_high_score = game_state and player_turns > game_state.highscore
+    
+    # Create combined score list with player
+    all_scores = []
+    for name, turns, desc in ai_researchers:
+        all_scores.append((name, turns, desc, False))
+    
+    # Add player score
+    player_name = f"YOU (Seed: {seed})"
+    player_desc = f"Final Resources: ${game_state.money if game_state else 0}, {game_state.staff if game_state else 0} staff, {game_state.reputation if game_state else 0} rep"
+    all_scores.append((player_name, player_turns, player_desc, True))
+    
+    # Sort by score (turns survived) descending
+    all_scores.sort(key=lambda x: x[1], reverse=True)
+    
+    # Display scores
+    start_y = int(h * 0.22)
+    line_height = int(h * 0.05)
+    
+    # Table headers
+    header_y = start_y
+    rank_header = score_font.render("RANK", True, subtitle_color)
+    name_header = score_font.render("RESEARCHER", True, subtitle_color)
+    turns_header = score_font.render("TURNS", True, subtitle_color)
+    
+    screen.blit(rank_header, (int(w*0.1), header_y))
+    screen.blit(name_header, (int(w*0.2), header_y))
+    screen.blit(turns_header, (int(w*0.5), header_y))
+    
+    # Underline for headers
+    pygame.draw.line(screen, subtitle_color, 
+                     (int(w*0.1), header_y + 30), 
+                     (int(w*0.9), header_y + 30), 2)
+    
+    # Display top 10 scores
+    display_count = min(10, len(all_scores))
+    for i in range(display_count):
+        name, turns, desc, is_player = all_scores[i]
+        y_pos = start_y + line_height + i * (line_height - 5)
+        
+        # Choose colors
+        if is_player:
+            if is_new_high_score and i == 0:
+                text_color = new_record_color
+                special_text = " ★ NEW RECORD! ★"
+            else:
+                text_color = player_color
+                special_text = ""
+        else:
+            text_color = score_color
+            special_text = ""
+        
+        # Rank
+        rank_text = score_font.render(f"{i+1}.", True, text_color)
+        screen.blit(rank_text, (int(w*0.1), y_pos))
+        
+        # Name (truncate if too long)
+        display_name = name if len(name) <= 25 else name[:22] + "..."
+        name_text = (player_font if is_player else score_font).render(display_name + special_text, True, text_color)
+        screen.blit(name_text, (int(w*0.2), y_pos))
+        
+        # Turns
+        turns_text = (player_font if is_player else score_font).render(str(turns), True, text_color)
+        screen.blit(turns_text, (int(w*0.5), y_pos))
+        
+        # Description (smaller font, to the right)
+        if desc and not is_player:
+            desc_text = instruction_font.render(desc, True, (160, 160, 160))
+            screen.blit(desc_text, (int(w*0.58), y_pos + 5))
+        elif is_player:
+            desc_text = instruction_font.render(desc, True, text_color)
+            screen.blit(desc_text, (int(w*0.58), y_pos + 5))
+    
+    # Leaderboard submission section
+    leaderboard_y = int(h * 0.75)
+    
+    # Checkbox for leaderboard submission
+    checkbox_size = int(h * 0.03)
+    checkbox_x = int(w * 0.1)
+    checkbox_y = leaderboard_y
+    checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
+    
+    # Draw checkbox
+    pygame.draw.rect(screen, (200, 200, 200), checkbox_rect, border_radius=3)
+    pygame.draw.rect(screen, (100, 100, 100), checkbox_rect, width=2, border_radius=3)
+    
+    if submit_to_leaderboard:
+        # Draw checkmark
+        pygame.draw.line(screen, (100, 255, 100), 
+                        (checkbox_x + 5, checkbox_y + checkbox_size//2),
+                        (checkbox_x + checkbox_size//3, checkbox_y + checkbox_size - 8), 3)
+        pygame.draw.line(screen, (100, 255, 100),
+                        (checkbox_x + checkbox_size//3, checkbox_y + checkbox_size - 8),
+                        (checkbox_x + checkbox_size - 5, checkbox_y + 5), 3)
+    
+    # Checkbox label
+    checkbox_label = score_font.render("Submit to Global Leaderboard", True, score_color)
+    screen.blit(checkbox_label, (checkbox_x + checkbox_size + 10, checkbox_y))
+    
+    # Placeholder notice
+    placeholder_text = instruction_font.render("(Feature coming soon - data stays local for now)", True, (140, 140, 140))
+    screen.blit(placeholder_text, (checkbox_x + checkbox_size + 10, checkbox_y + 25))
+    
+    # Continue button
+    button_width = int(w * 0.3)
+    button_height = int(h * 0.06)
+    button_x = w // 2 - button_width // 2
+    button_y = int(h * 0.85)
+    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    # Button styling
+    button_color = (70, 130, 180)
+    button_hover_color = (100, 160, 210)
+    
+    pygame.draw.rect(screen, button_color, button_rect, border_radius=8)
+    pygame.draw.rect(screen, (255, 255, 255), button_rect, width=2, border_radius=8)
+    
+    # Button text
+    button_text = score_font.render("Continue to Main Menu", True, (255, 255, 255))
+    text_rect = button_text.get_rect(center=button_rect.center)
+    screen.blit(button_text, text_rect)
+    
+    # Instructions at bottom
+    instructions = [
+        "Press SPACE or click Continue to return to main menu",
+        "Press L to toggle leaderboard submission • ESC for quick exit"
+    ]
+    
+    instruction_y = int(h * 0.93)
+    for i, instruction in enumerate(instructions):
+        inst_text = instruction_font.render(instruction, True, instruction_color)
+        inst_rect = inst_text.get_rect(center=(w//2, instruction_y + i * 20))
+        screen.blit(inst_text, inst_rect)

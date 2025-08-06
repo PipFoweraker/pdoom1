@@ -12,6 +12,7 @@ from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
 from overlay_manager import OverlayManager
 from error_tracker import ErrorTracker
+from end_game_scenarios import end_game_scenarios
 
 SCORE_FILE = "local_highscore.json"
 
@@ -26,6 +27,8 @@ class GameState:
             # Track spending for board member trigger (only negative amounts)
             if val < 0:
                 self.spend_this_turn += abs(val)
+                # Play money spend sound for happy feedback
+                self.sound_manager.play_money_spend_sound()
             
             # Only record balance change if accounting software is bought
             if hasattr(self, "accounting_software_bought") and self.accounting_software_bought:
@@ -96,12 +99,14 @@ class GameState:
         self.max_doom = 100
         self.selected_actions = []
         self.selected_action_instances = []  # Track individual action instances for undo
+        self.action_clicks_this_turn = {}  # Track clicks per action per turn
         self.staff_maintenance = 15
         self.seed = seed
         self.upgrades = [dict(u) for u in UPGRADES]
         self.upgrade_effects = set()
         self.messages = ["Game started! Select actions, then End Turn."]
         self.game_over = False
+        self.end_game_scenario = None  # Will hold the EndGameScenario when game ends
         self.highscore = self.load_highscore()
         
         # Initialize opponents system (replaces simple opp_progress)
@@ -137,6 +142,11 @@ class GameState:
         
         # Activity log minimization feature
         self.activity_log_minimized = False  # Whether activity log is currently minimized
+        
+        # Activity log drag/move functionality
+        self.activity_log_being_dragged = False  # Whether activity log is being dragged
+        self.activity_log_drag_offset = (0, 0)  # Offset from mouse to log position when dragging starts
+        self.activity_log_position = (0, 0)  # Custom position offset for activity log (default 0,0 means original position)
 
         # Tutorial and onboarding system
         self.tutorial_enabled = True  # Whether tutorial is enabled (default True for new players)
@@ -329,6 +339,20 @@ class GameState:
     
     def _handle_action_selection(self, action_idx, action):
         """Handle selecting (clicking) an action."""
+        # Check max clicks per action per turn (only if specified in action)
+        if 'max_clicks_per_turn' in action:
+            max_clicks = action['max_clicks_per_turn']
+            current_clicks = self.action_clicks_this_turn.get(action_idx, 0)
+            
+            if current_clicks >= max_clicks:
+                error_msg = f"{action['name']} already used maximum times this turn ({max_clicks})."
+                self.messages.append(error_msg)
+                return {
+                    'success': False,
+                    'message': error_msg,
+                    'play_sound': False
+                }
+        
         # Check if action is available (rules constraint)
         if action.get("rules") and not action["rules"](self):
             error_msg = f"{action['name']} is not available yet."
@@ -390,6 +414,10 @@ class GameState:
         # Add to selected actions (immediate deduction)
         self.selected_actions.append(action_idx)
         self.selected_action_instances.append(action_instance)
+        
+        # Track clicks per action per turn (only if action has limits)
+        if 'max_clicks_per_turn' in action:
+            self.action_clicks_this_turn[action_idx] = self.action_clicks_this_turn.get(action_idx, 0) + 1
         
         # Immediate AP deduction
         self.action_points -= ap_cost
@@ -1018,6 +1046,31 @@ class GameState:
         self._add('doom', spike)
 
     def handle_click(self, mouse_pos, w, h):
+        # Activity log drag functionality (moveable by default) - Handle FIRST to avoid conflicts
+        activity_log_rect = self._get_activity_log_rect(w, h)
+        if self._in_rect(mouse_pos, activity_log_rect):
+            # Don't start drag if clicking on minimize/expand buttons
+            if "compact_activity_display" in self.upgrade_effects:
+                if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
+                    expand_rect = self._get_activity_log_expand_button_rect(w, h)
+                    if self._in_rect(mouse_pos, expand_rect):
+                        self.activity_log_minimized = False
+                        self.messages.append("Activity log expanded.")
+                        return None  # Button click handled
+                elif self.scrollable_event_log_enabled:
+                    minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
+                    if self._in_rect(mouse_pos, minimize_rect):
+                        self.activity_log_minimized = True
+                        self.messages.append("Activity log minimized.")
+                        return None  # Button click handled
+            
+            # Start dragging the activity log
+            log_x, log_y = self._get_activity_log_base_position(w, h)
+            self.activity_log_being_dragged = True
+            self.activity_log_drag_offset = (mouse_pos[0] - (log_x + self.activity_log_position[0]), 
+                                           mouse_pos[1] - (log_y + self.activity_log_position[1]))
+            return None
+
         # Actions (left)
         a_rects = self._get_action_rects(w, h)
         for idx, rect in enumerate(a_rects):
@@ -1090,30 +1143,52 @@ class GameState:
             self.messages.append(f"Sound {status}")
             return None
 
-        # Activity log minimize/expand button (if compact display upgrade is purchased)
-        if "compact_activity_display" in self.upgrade_effects:
-            if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
-                # Expand button
-                expand_rect = self._get_activity_log_expand_button_rect(w, h)
-                if self._in_rect(mouse_pos, expand_rect):
-                    self.activity_log_minimized = False
-                    self.messages.append("Activity log expanded.")
-                    return None
-            elif self.scrollable_event_log_enabled:
-                # Minimize button
-                minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
-                if self._in_rect(mouse_pos, minimize_rect):
-                    self.activity_log_minimized = True
-                    self.messages.append("Activity log minimized.")
-                    return None
-
         return None
+
+    def handle_mouse_motion(self, mouse_pos, w, h):
+        """Handle mouse motion events for dragging functionality"""
+        if self.activity_log_being_dragged:
+            # Update activity log position based on mouse movement
+            new_x = mouse_pos[0] - self.activity_log_drag_offset[0]
+            new_y = mouse_pos[1] - self.activity_log_drag_offset[1]
+            
+            # Get base position to calculate offset
+            base_x, base_y = self._get_activity_log_base_position(w, h)
+            
+            # Constrain position to stay within screen bounds
+            log_width = int(w * 0.44)
+            log_height = int(h * 0.22)
+            
+            # Calculate new position with constraints
+            new_offset_x = max(-base_x, min(w - log_width - base_x, new_x - base_x))
+            new_offset_y = max(-base_y, min(h - log_height - base_y, new_y - base_y))
+            
+            self.activity_log_position = (new_offset_x, new_offset_y)
+
+    def handle_mouse_release(self, mouse_pos, w, h):
+        """Handle mouse release events to stop dragging"""
+        if self.activity_log_being_dragged:
+            self.activity_log_being_dragged = False
+            self.activity_log_drag_offset = (0, 0)
+            return True  # Indicate that a drag operation was completed
+        return False
 
     def check_hover(self, mouse_pos, w, h):
         # Reset all hover states
         self.hovered_upgrade_idx = None
         self.hovered_action_idx = None
         self.endturn_hovered = False
+        
+        # Check activity log area for hover FIRST (highest priority for specific interactions)
+        activity_log_rect = self._get_activity_log_rect(w, h)
+        if self._in_rect(mouse_pos, activity_log_rect):
+            # Show tooltip about minimization upgrade if not purchased
+            if "compact_activity_display" not in self.upgrade_effects:
+                return "You may purchase the ability to minimise this for $150!"
+            elif hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
+                return "Activity Log (minimized) - Click expand button to show full log"
+            else:
+                return "Activity Log - Click minimize button to reduce screen space"
         
         # Check action buttons for hover
         action_rects = self._get_action_rects(w, h)
@@ -1179,11 +1254,17 @@ class GameState:
         not_purchased = [i for i, u in enumerate(self.upgrades) if not u.get("purchased", False)]
 
         icon_w, icon_h = int(w*0.045), int(w*0.045)
-        # Purchased: row at top right
-        purchased_rects = [
-            (w - icon_w*(len(purchased)-j+1), int(h*0.08), icon_w, icon_h)
-            for j, i in enumerate(purchased)
-        ]
+        # Purchased: row at top right, but respect UI boundaries
+        # Info panel extends to about w*0.84, so ensure icons don't overlap
+        max_icons_per_row = max(1, int((w - w*0.84) / icon_w))  # Available space for icons
+        
+        purchased_rects = []
+        for j, i in enumerate(purchased):
+            row = j // max_icons_per_row
+            col = j % max_icons_per_row
+            x = w - icon_w*(col+1)
+            y = int(h*0.08) + row * (icon_h + 5)  # Stack vertically if needed
+            purchased_rects.append((x, y, icon_w, icon_h))
         # Not purchased: buttons down right (moved down to accommodate opponents panel)
         base_x = int(w*0.63)
         base_y = int(h*0.28)  # Moved down from 0.18 to 0.28
@@ -1229,8 +1310,7 @@ class GameState:
 
     def _get_activity_log_minimize_button_rect(self, w, h):
         """Get rectangle for the activity log minimize button (only when scrollable log is enabled)"""
-        log_x = int(w*0.04)
-        log_y = int(h*0.74)
+        log_x, log_y = self._get_activity_log_current_position(w, h)
         log_width = int(w * 0.44)
         button_size = int(h * 0.025)
         button_x = log_x + log_width - 30
@@ -1239,8 +1319,7 @@ class GameState:
 
     def _get_activity_log_expand_button_rect(self, w, h):
         """Get rectangle for the activity log expand button (only when log is minimized)"""
-        log_x = int(w*0.04)
-        log_y = int(h*0.74)
+        log_x, log_y = self._get_activity_log_current_position(w, h)
         
         # Estimate title width based on character count (avoiding pygame dependency in tests)
         title_width = len("Activity Log") * int(h*0.015)  # Rough character width estimate
@@ -1249,6 +1328,32 @@ class GameState:
         button_x = log_x + title_width + 10
         button_y = log_y
         return (button_x, button_y, button_size, button_size)
+
+    def _get_activity_log_rect(self, w, h):
+        """Get rectangle for the entire activity log area for hover detection"""
+        log_x, log_y = self._get_activity_log_current_position(w, h)
+        
+        if (hasattr(self, 'activity_log_minimized') and 
+            self.activity_log_minimized and 
+            "compact_activity_display" in self.upgrade_effects):
+            # Minimized log - small title bar area
+            title_width = len("Activity Log") * int(h*0.015)
+            bar_height = int(h * 0.04)
+            return (log_x - 5, log_y - 5, title_width + 50, bar_height)
+        else:
+            # Full log area
+            log_width = int(w * 0.44)
+            log_height = int(h * 0.22)
+            return (log_x - 5, log_y - 5, log_width + 10, log_height + 10)
+
+    def _get_activity_log_base_position(self, w, h):
+        """Get the base position of activity log (before any drag offset)"""
+        return (int(w*0.04), int(h*0.74))
+
+    def _get_activity_log_current_position(self, w, h):
+        """Get the current position of activity log (including drag offset)"""
+        base_x, base_y = self._get_activity_log_base_position(w, h)
+        return (base_x + self.activity_log_position[0], base_y + self.activity_log_position[1])
 
     def _in_rect(self, pt, rect):
         x, y = pt
@@ -1314,9 +1419,19 @@ class GameState:
             self._action_delegations = {}
         self.selected_actions = []
         self.selected_action_instances = []  # Clear action instances for next turn
+        self.action_clicks_this_turn = {}  # Reset click tracking for new turn
 
-        # Staff maintenance
-        maintenance_cost = self.staff * self.staff_maintenance
+        # Staff maintenance - scale up costs and add overheads after first employee
+        if self.staff == 0:
+            maintenance_cost = 0
+        elif self.staff == 1:
+            # First employee, just base cost (scaled up from 15 to 25)
+            maintenance_cost = 25
+        else:
+            # Multiple employees - base cost plus overhead per additional employee
+            base_cost = 25  # Scaled up from 15
+            overhead_per_additional = 10  # Overhead cost for each employee after the first
+            maintenance_cost = base_cost + (self.staff - 1) * (base_cost + overhead_per_additional)
         money_before_maintenance = self.money
         self._add('money', -maintenance_cost)  # Use _add to track spending
         
@@ -1405,8 +1520,15 @@ class GameState:
         self.reputation = max(0, self.reputation)
         self.money = max(self.money, 0)
 
-        # If game ended, log final state and write log file
+        # If game ended, get detailed scenario and log final state
         if self.game_over and game_end_reason:
+            # Get detailed end game scenario
+            self.end_game_scenario = end_game_scenarios.get_scenario(self)
+            
+            # Update the message with the scenario title
+            if self.end_game_scenario:
+                self.messages.append(f"GAME OVER: {self.end_game_scenario.title}")
+            
             final_resources = {
                 'money': self.money,
                 'staff': self.staff,
