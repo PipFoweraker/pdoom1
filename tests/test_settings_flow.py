@@ -45,7 +45,9 @@ class TestSettingsFlow(unittest.TestCase):
         """Test that pre-game settings state is properly defined."""
         import main
         # Test that the new states are in the comment
-        self.assertIn('pre_game_settings', main.__dict__.get('__file__', ''))
+        with open(main.__file__, 'r') as f:
+            content = f.read()
+            self.assertIn('pre_game_settings', content)
         
         # Test settings dictionary exists
         self.assertIn('difficulty', main.pre_game_settings)

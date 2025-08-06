@@ -1699,20 +1699,15 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item):
         else:
             button_state = ButtonState.NORMAL
         
-        # Draw button
-        draw_low_poly_button(screen, button_rect, button_state)
-        
-        # Draw text
+        # Calculate text first
         if i < len(settings_items) - 1:  # Setting items with values
             setting_name, setting_value = item
             text = f"{setting_name}: {setting_value}"
         else:  # Continue button
             text = item
         
-        text_surf = menu_font.render(text, True, (255, 255, 255))
-        text_x = button_rect.centerx - text_surf.get_width() // 2
-        text_y = button_rect.centery - text_surf.get_height() // 2
-        screen.blit(text_surf, (text_x, text_y))
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, text, button_state)
     
     # Instructions
     inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
@@ -1774,14 +1769,8 @@ def draw_seed_selection(screen, w, h, selected_item, seed_input=""):
         else:
             button_state = ButtonState.NORMAL
         
-        # Draw button
-        draw_low_poly_button(screen, button_rect, button_state)
-        
-        # Draw text
-        text_surf = menu_font.render(item, True, (255, 255, 255))
-        text_x = button_rect.centerx - text_surf.get_width() // 2
-        text_y = button_rect.centery - text_surf.get_height() // 2
-        screen.blit(text_surf, (text_x, text_y))
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, item, button_state)
     
     # If custom seed is selected, show input field
     if selected_item == 1:
@@ -1871,14 +1860,8 @@ def draw_tutorial_choice(screen, w, h, selected_item):
         else:
             button_state = ButtonState.NORMAL
         
-        # Draw button
-        draw_low_poly_button(screen, button_rect, button_state)
-        
-        # Draw text
-        text_surf = menu_font.render(item, True, (255, 255, 255))
-        text_x = button_rect.centerx - text_surf.get_width() // 2
-        text_y = button_rect.centery - text_surf.get_height() // 2
-        screen.blit(text_surf, (text_x, text_y))
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, item, button_state)
     
     # Instructions
     inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
