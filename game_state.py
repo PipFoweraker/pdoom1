@@ -12,6 +12,7 @@ from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
 from overlay_manager import OverlayManager
 from error_tracker import ErrorTracker
+from config_manager import get_current_config
 from employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
 from end_game_scenarios import end_game_scenarios
 
@@ -74,20 +75,28 @@ class GameState:
 # In __init__, initialize:
 
     def __init__(self, seed):
+        # Get current configuration
+        config = get_current_config()
+        starting_resources = config['starting_resources']
+        ap_config = config['action_points']
+        limits_config = config['resource_limits']
+        milestones_config = config['milestones']
+        
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
-        # Core resources
-        self.money = 100000  # Increased starting funding as required
-        self.staff = 2
-        self.reputation = 15
-        self.doom = 12  # Out of 100
-        self.compute = 0  # New compute resource, starts at 0
+        
+        # Core resources (from config)
+        self.money = starting_resources['money']
+        self.staff = starting_resources['staff']
+        self.reputation = starting_resources['reputation']
+        self.doom = starting_resources['doom']
+        self.compute = starting_resources.get('compute', 0)
         self.research_progress = 0  # Track research progress for paper generation
         self.papers_published = 0  # Count of research papers published
         
-        # Action Points system (Phase 1 & 2)
-        self.action_points = 3  # Current available action points
-        self.max_action_points = 3  # Maximum action points per turn (will be calculated dynamically)
+        # Action Points system (from config)
+        self.action_points = starting_resources['action_points']
+        self.max_action_points = ap_config['base_ap_per_turn']
         self.ap_spent_this_turn = False  # Track if AP was spent for UI glow effects
         self.ap_glow_timer = 0  # Timer for AP glow animation
         
@@ -97,7 +106,7 @@ class GameState:
         self.ops_staff = 0  # Operations staff: Enable operational action delegation
         
         self.turn = 0
-        self.max_doom = 100
+        self.max_doom = limits_config['max_doom']
         self.selected_actions = []
         self.selected_action_instances = []  # Track individual action instances for undo
         self.action_clicks_this_turn = {}  # Track clicks per action per turn
@@ -194,17 +203,26 @@ class GameState:
         """
         Calculate maximum Action Points per turn based on staff composition.
         
-        Base AP: 3 per turn
-        Staff bonus: +0.5 AP per regular staff member
-        Admin bonus: +1.0 AP per admin assistant
+        Uses configuration values for:
+        - Base AP per turn
+        - Staff AP bonus per regular staff member  
+        - Admin AP bonus per admin assistant
+        - Maximum AP cap to prevent excessive accumulation
         
         Returns:
             int: Maximum action points for the current turn
         """
-        base = 3
-        staff_bonus = self.staff * 0.5
-        admin_bonus = self.admin_staff * 1.0
-        return int(base + staff_bonus + admin_bonus)
+        config = get_current_config()
+        ap_config = config['action_points']
+        
+        base = ap_config['base_ap_per_turn']
+        staff_bonus = self.staff * ap_config['staff_ap_bonus']
+        admin_bonus = self.admin_staff * ap_config['admin_ap_bonus']
+        calculated_ap = base + staff_bonus + admin_bonus
+        
+        # Apply maximum cap
+        max_cap = ap_config['max_ap_per_turn']
+        return int(min(calculated_ap, max_cap))
 
     def can_delegate_action(self, action):
         """

@@ -7,6 +7,7 @@ A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *P
 **📖 Documentation:**
 - **[Player Guide](PLAYERGUIDE.md)** - How to play, controls, and strategies  
 - **[Developer Guide](DEVELOPERGUIDE.md)** - Contributing, code structure, and testing
+- **[Configuration System](CONFIG_SYSTEM.md)** - Game customization and settings
 - **[Changelog](CHANGELOG.md)** - Version history and release notes
 
 ## Table of Contents

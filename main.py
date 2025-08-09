@@ -11,25 +11,30 @@ from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_ma
 from bug_reporter import BugReporter
 from version import get_display_version
 from onboarding import onboarding
+from config_manager import initialize_config_system, get_current_config, config_manager
 from event_system import EventAction
+
+# Initialize config system on startup
+initialize_config_system()
+current_config = get_current_config()
 
 # --- Adaptive window sizing --- #
 pygame.init()
 info = pygame.display.Info()
-SCREEN_W = int(info.current_w * 0.8)
-SCREEN_H = int(info.current_h * 0.8)
+window_scale = current_config['ui']['window_scale']
+SCREEN_W = int(info.current_w * window_scale)
+SCREEN_H = int(info.current_h * window_scale)
 FLAGS = pygame.RESIZABLE
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
 pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}")
 clock = pygame.time.Clock()
 
 # --- Menu and game state management --- #
-
-# Menu states: 'main_menu', 'custom_seed_prompt', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial'
+# Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial'
 
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Options", "Player Guide", "README", "Report Bug"]
+menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Configuration", "Options", "Player Guide", "README", "Report Bug"]
 end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
@@ -39,6 +44,10 @@ seed_input = ""
 overlay_content = None
 overlay_title = None
 overlay_scroll = 0
+
+# Config selection state
+config_selected_item = 0
+available_configs = []
 
 # Pre-game settings state
 pre_game_settings = {
@@ -218,7 +227,7 @@ def handle_menu_keyboard(key):
     
     Same functionality as handle_menu_click but for keyboard users.
     """
-    global selected_menu_item, current_state, seed, overlay_content, overlay_title
+    global selected_menu_item, current_state, seed, overlay_content, overlay_title, available_configs, config_selected_item
     
     if key == pygame.K_UP:
         # Move selection up, wrapping to bottom
@@ -232,20 +241,51 @@ def handle_menu_keyboard(key):
             current_state = 'pre_game_settings'
         elif selected_menu_item == 1:  # Launch with Custom Seed
             current_state = 'pre_game_settings'
-        elif selected_menu_item == 2:  # Settings 
+        elif selected_menu_item == 2:  # Configuration
+            available_configs = config_manager.list_available_configs()
+            config_selected_item = 0
+            current_state = 'config_select'
+        elif selected_menu_item == 3:  # Options
             overlay_content = create_settings_content()
             overlay_title = "Settings"
             current_state = 'overlay'
-        elif selected_menu_item == 3:  # Player Guide
+        elif selected_menu_item == 4:  # Player Guide
             overlay_content = load_markdown_file('PLAYERGUIDE.md')
             overlay_title = "Player Guide"
             current_state = 'overlay'
-        elif selected_menu_item == 4:  # README
+        elif selected_menu_item == 5:  # README
             overlay_content = load_markdown_file('README.md')
             overlay_title = "README"
             current_state = 'overlay'
-        elif selected_menu_item == 5:  # Report Bug
+        elif selected_menu_item == 6:  # Report Bug
             current_state = 'bug_report'
+
+def handle_config_keyboard(key):
+    """
+    Handle keyboard navigation in config selection menu.
+    
+    Args:
+        key: pygame key constant from keydown event
+    """
+    global config_selected_item, current_state, current_config
+    
+    all_items = available_configs + ["← Back to Main Menu"]
+    
+    if key == pygame.K_UP:
+        config_selected_item = (config_selected_item - 1) % len(all_items)
+    elif key == pygame.K_DOWN:
+        config_selected_item = (config_selected_item + 1) % len(all_items)
+    elif key == pygame.K_RETURN:
+        if config_selected_item < len(available_configs):
+            # Switch to selected config
+            selected_config = available_configs[config_selected_item]
+            if config_manager.switch_config(selected_config):
+                current_config = get_current_config()  # Reload config
+                print(f"Switched to configuration: {selected_config}")
+        # Return to main menu (both for config selection and back button)
+        current_state = 'main_menu'
+    elif key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
 
 
 def handle_pre_game_settings_click(mouse_pos, w, h):
@@ -921,6 +961,10 @@ def main():
                             running = False
                         else:
                             handle_menu_keyboard(event.key)
+                    
+                    elif current_state == 'config_select':
+                        handle_config_keyboard(event.key)
+                            
                     elif current_state == 'pre_game_settings':
                         handle_pre_game_settings_keyboard(event.key)
                     elif current_state == 'seed_selection':
@@ -1060,6 +1104,13 @@ def main():
                 # Grey background as specified in requirements
                 screen.fill((128, 128, 128))
                 draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item)
+            
+            elif current_state == 'config_select':
+                # Config selection menu
+                screen.fill((64, 64, 64))
+                from ui import draw_config_menu
+                draw_config_menu(screen, SCREEN_W, SCREEN_H, config_selected_item, 
+                               available_configs, config_manager.get_current_config_name())
             
             elif current_state == 'pre_game_settings':
                 # Pre-game settings screen
