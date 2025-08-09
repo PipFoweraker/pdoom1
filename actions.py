@@ -62,14 +62,49 @@ ACTIONS = [
         "rules": None
     },
     {
-        "name": "Hire Employee",
-        "desc": "Choose from available employee types based on your organization's needs.",
-        "cost": 60,  # Base cost, actual cost depends on selection
-        "ap_cost": 1,  # Base AP cost, actual cost depends on selection
-        "upside": lambda gs: gs._trigger_hiring_dialog(),
+        "name": "Hire Staff",
+        "desc": "Basic employee; provides +1 staff.",
+        "cost": 60,
+        "ap_cost": 1,
+        "upside": lambda gs: gs._hire_employee_subtype("generalist"),
         "downside": lambda gs: None,
-        "rules": None,
-        "special": "hiring_dialog"  # Flag to indicate this triggers a dialog
+        "rules": None
+    },
+    {
+        "name": "Hire Admin Assistant",
+        "desc": "Executive assistant; provides +1 staff and +1 admin staff.",
+        "cost": 80,
+        "ap_cost": 2,
+        "upside": lambda gs: gs._hire_employee_subtype("administrator"),
+        "downside": lambda gs: None,
+        "rules": None
+    },
+    {
+        "name": "Hire Research Staff",
+        "desc": "Research specialist; provides +1 staff, +1 research staff, and research progress.",
+        "cost": 70,
+        "ap_cost": 2,
+        "upside": lambda gs: gs._hire_employee_subtype("researcher"),
+        "downside": lambda gs: None,
+        "rules": None
+    },
+    {
+        "name": "Hire Operations Staff",
+        "desc": "Technical specialist; provides +1 staff, +1 ops staff, and compute boost.",
+        "cost": 70,
+        "ap_cost": 2,
+        "upside": lambda gs: gs._hire_employee_subtype("engineer"),
+        "downside": lambda gs: None,
+        "rules": None
+    },
+    {
+        "name": "Hire Manager",
+        "desc": "Team leader; required for organizations with 9+ employees.",
+        "cost": 90,
+        "ap_cost": 1,
+        "upside": lambda gs: gs._hire_employee_subtype("manager"),
+        "downside": lambda gs: None,
+        "rules": manager_unlock_rule
     },
     {
         "name": "Espionage",

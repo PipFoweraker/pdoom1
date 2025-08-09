@@ -1573,6 +1573,29 @@ class GameState:
             self.pending_tutorial_message = None
             self.save_tutorial_settings()
     
+    def _hire_employee_subtype(self, subtype_id):
+        """Hire an employee of a specific subtype using the employee subtypes system."""
+        from employee_subtypes import EMPLOYEE_SUBTYPES, apply_subtype_effects
+        
+        if subtype_id not in EMPLOYEE_SUBTYPES:
+            self.messages.append(f"Unknown employee subtype: {subtype_id}")
+            return
+        
+        subtype = EMPLOYEE_SUBTYPES[subtype_id]
+        
+        # Check unlock condition if it exists
+        if subtype.get("unlock_condition") and not subtype["unlock_condition"](self):
+            self.messages.append(f"{subtype['name']} is not available yet.")
+            return
+        
+        # Apply the subtype effects using the employee subtypes system
+        success, message = apply_subtype_effects(self, subtype_id)
+        
+        if success:
+            self.messages.append(message)
+        else:
+            self.messages.append(f"Failed to hire {subtype['name']}: {message}")
+    
     def _trigger_hiring_dialog(self):
         """Trigger the employee hiring dialog with available employee subtypes."""
         from employee_subtypes import get_available_subtypes, get_hiring_complexity_level
