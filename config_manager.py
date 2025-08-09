@@ -39,8 +39,20 @@ class ConfigManager:
     
     def _ensure_config_directory(self):
         """Create the configs directory if it doesn't exist."""
-        if not os.path.exists(self.CONFIG_DIR):
-            os.makedirs(self.CONFIG_DIR)
+        try:
+            if not os.path.exists(self.CONFIG_DIR):
+                os.makedirs(self.CONFIG_DIR)
+        except OSError as e:
+            print(f"Warning: Could not create config directory '{self.CONFIG_DIR}': {e}")
+            # Create a fallback temporary directory if possible
+            import tempfile
+            try:
+                self.CONFIG_DIR = tempfile.mkdtemp(prefix="pdoom_configs_")
+                print(f"Using temporary config directory: {self.CONFIG_DIR}")
+            except Exception as temp_e:
+                print(f"Error: Could not create temporary config directory: {temp_e}")
+                # Use current directory as last resort
+                self.CONFIG_DIR = "."
     
     def _get_config_path(self, config_name: str) -> str:
         """Get the full path for a config file."""
@@ -52,8 +64,8 @@ class ConfigManager:
             with open(self.CURRENT_CONFIG_FILE, 'r') as f:
                 data = json.load(f)
                 self.current_config_name = data.get('current_config', self.DEFAULT_CONFIG_NAME)
-        except (FileNotFoundError, json.JSONDecodeError):
-            # Use default if file doesn't exist or is corrupted
+        except (FileNotFoundError, json.JSONDecodeError, OSError, IOError):
+            # Use default if file doesn't exist, is corrupted, or cannot be read
             self.current_config_name = self.DEFAULT_CONFIG_NAME
     
     def _save_current_config_selection(self):
@@ -222,11 +234,19 @@ class ConfigManager:
         """
         config_path = self._get_config_path(config_name)
         try:
+            # Ensure parent directory exists
+            parent_dir = os.path.dirname(config_path)
+            if not os.path.exists(parent_dir):
+                os.makedirs(parent_dir)
+            
             with open(config_path, 'w') as f:
                 json.dump(config_data, f, indent=2)
             return True
-        except Exception as e:
+        except (OSError, IOError, PermissionError) as e:
             print(f"Error: Could not save config '{config_name}': {e}")
+            return False
+        except Exception as e:
+            print(f"Error: Unexpected error saving config '{config_name}': {e}")
             return False
     
     def get_current_config(self) -> Dict[str, Any]:
@@ -240,8 +260,13 @@ class ConfigManager:
             self.current_config = self.load_config(self.current_config_name)
             if not self.current_config:
                 # Fallback to default if current config is missing
+                print(f"Warning: Current config '{self.current_config_name}' not found, falling back to default")
                 self.create_default_config_if_needed()
-                self.current_config = self.get_default_config()
+                self.current_config = self.load_config(self.DEFAULT_CONFIG_NAME)
+                if not self.current_config:
+                    # Ultimate fallback - use in-memory default
+                    print(f"Warning: Could not load default config file, using in-memory defaults")
+                    self.current_config = self.get_default_config()
                 self.current_config_name = self.DEFAULT_CONFIG_NAME
         
         return self.current_config

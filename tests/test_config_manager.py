@@ -249,14 +249,20 @@ class TestConfigSystemIntegration(unittest.TestCase):
     def test_initialize_config_system(self):
         """Test the initialization function."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            with patch.object(ConfigManager, 'CONFIG_DIR', os.path.join(temp_dir, 'configs')):
-                # First call should create default config
-                created = initialize_config_system()
-                self.assertTrue(created)
-                
-                # Second call should not create (already exists)
-                created = initialize_config_system()
-                self.assertFalse(created)
+            config_dir = os.path.join(temp_dir, 'configs')
+            with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
+                # Create a new manager instance for testing
+                with patch('config_manager.config_manager') as mock_global_manager:
+                    test_manager = ConfigManager()
+                    mock_global_manager.create_default_config_if_needed = test_manager.create_default_config_if_needed
+                    
+                    # First call should create default config
+                    created = initialize_config_system()
+                    self.assertTrue(created)
+                    
+                    # Second call should not create (already exists)
+                    created = initialize_config_system()
+                    self.assertFalse(created)
     
     def test_get_current_config_function(self):
         """Test the convenience function for getting current config."""
@@ -268,6 +274,180 @@ class TestConfigSystemIntegration(unittest.TestCase):
             result = get_current_config()
             self.assertEqual(result, mock_config)
             mock_manager.get_current_config.assert_called_once()
+
+
+class TestConfigErrorHandling(unittest.TestCase):
+    """Test error handling and edge cases in the config system."""
+    
+    def test_config_directory_creation_failure(self):
+        """Test handling when config directory cannot be created."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create a file where we want the directory to be
+            fake_dir_path = os.path.join(temp_dir, 'configs')
+            with open(fake_dir_path, 'w') as f:
+                f.write("blocking file")
+            
+            # Try to create config manager with blocked directory
+            with patch.object(ConfigManager, 'CONFIG_DIR', fake_dir_path):
+                manager = ConfigManager()
+                # Should not crash, should use fallback
+                self.assertIsInstance(manager, ConfigManager)
+    
+    def test_config_save_permission_denied(self):
+        """Test handling when config files cannot be saved due to permissions."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_dir = os.path.join(temp_dir, 'configs')
+            os.makedirs(config_dir)
+            
+            with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
+                manager = ConfigManager()
+                
+                # Mock open to raise PermissionError
+                with patch('builtins.open', side_effect=PermissionError("Access denied")):
+                    result = manager.save_config('test', {'test': 'data'})
+                    self.assertFalse(result)
+    
+    def test_config_load_corrupted_file(self):
+        """Test handling when config files are corrupted."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_dir = os.path.join(temp_dir, 'configs')
+            os.makedirs(config_dir)
+            
+            # Create corrupted config file
+            corrupted_path = os.path.join(config_dir, 'corrupted.json')
+            with open(corrupted_path, 'w') as f:
+                f.write('{"incomplete": json}')
+            
+            with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
+                manager = ConfigManager()
+                result = manager.load_config('corrupted')
+                self.assertIsNone(result)
+    
+    def test_config_load_empty_file(self):
+        """Test handling when config files are empty."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_dir = os.path.join(temp_dir, 'configs')
+            os.makedirs(config_dir)
+            
+            # Create empty config file
+            empty_path = os.path.join(config_dir, 'empty.json')
+            with open(empty_path, 'w') as f:
+                pass  # Empty file
+            
+            with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
+                manager = ConfigManager()
+                result = manager.load_config('empty')
+                self.assertIsNone(result)
+    
+    def test_config_load_binary_file(self):
+        """Test handling when config files contain binary data."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_dir = os.path.join(temp_dir, 'configs')
+            os.makedirs(config_dir)
+            
+            # Create binary file
+            binary_path = os.path.join(config_dir, 'binary.json')
+            with open(binary_path, 'wb') as f:
+                f.write(b'\x00\x01\x02\x03\x04\x05')
+            
+            with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
+                manager = ConfigManager()
+                result = manager.load_config('binary')
+                self.assertIsNone(result)
+    
+    def test_graceful_fallback_when_all_fails(self):
+        """Test that system gracefully falls back to in-memory defaults when everything fails."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_dir = os.path.join(temp_dir, 'configs')
+            current_config_path = os.path.join(temp_dir, 'current_config.json')
+            
+            with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
+                with patch.object(ConfigManager, 'CURRENT_CONFIG_FILE', current_config_path):
+                    # Mock file operations to fail, but not the tempfile creation
+                    def mock_open_side_effect(*args, **kwargs):
+                        # Allow tempfile operations but block config file operations
+                        if 'pdoom_configs' in str(args[0]):
+                            return unittest.mock.mock_open()(*args, **kwargs)
+                        raise OSError("No filesystem access")
+                    
+                    with patch('builtins.open', side_effect=mock_open_side_effect):
+                        with patch('os.makedirs', side_effect=OSError("Cannot create directories")):
+                            manager = ConfigManager()
+                            # Should still be able to get a config (in-memory default)
+                            config = manager.get_current_config()
+                            self.assertIsInstance(config, dict)
+                            self.assertIn('starting_resources', config)
+    
+    def test_config_switching_to_nonexistent(self):
+        """Test switching to a config that doesn't exist."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_dir = os.path.join(temp_dir, 'configs')
+            os.makedirs(config_dir)
+            current_config_path = os.path.join(temp_dir, 'current_config.json')
+            
+            with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
+                with patch.object(ConfigManager, 'CURRENT_CONFIG_FILE', current_config_path):
+                    manager = ConfigManager()
+                    # Ensure we start with default
+                    self.assertEqual(manager.get_current_config_name(), 'default')
+                    
+                    # Should return False when switching to nonexistent config
+                    result = manager.switch_config('nonexistent_config')
+                    self.assertFalse(result)
+                    # Should maintain current config
+                    self.assertEqual(manager.get_current_config_name(), 'default')
+    
+    def test_current_config_file_corruption(self):
+        """Test handling when current_config.json is corrupted."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Create corrupted current_config.json
+            current_config_path = os.path.join(temp_dir, 'current_config.json')
+            with open(current_config_path, 'w') as f:
+                f.write('invalid json{')
+            
+            with patch.object(ConfigManager, 'CONFIG_DIR', os.path.join(temp_dir, 'configs')):
+                with patch.object(ConfigManager, 'CURRENT_CONFIG_FILE', current_config_path):
+                    # Should not crash, should fall back to default
+                    manager = ConfigManager()
+                    self.assertEqual(manager.get_current_config_name(), 'default')
+    
+    def test_config_system_resilience(self):
+        """Test that the config system remains functional even with multiple failures."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_dir = os.path.join(temp_dir, 'configs')
+            current_config_path = os.path.join(temp_dir, 'current_config.json')
+            
+            with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
+                with patch.object(ConfigManager, 'CURRENT_CONFIG_FILE', current_config_path):
+                    manager = ConfigManager()
+                    
+                    # Create some valid configs first
+                    manager.save_config('good1', {'name': 'Good Config 1'})
+                    manager.save_config('good2', {'name': 'Good Config 2'})
+                    
+                    # Create some corrupted configs
+                    os.makedirs(config_dir, exist_ok=True)
+                    with open(os.path.join(config_dir, 'bad1.json'), 'w') as f:
+                        f.write('invalid json')
+                    with open(os.path.join(config_dir, 'bad2.json'), 'w') as f:
+                        f.write('')
+                    
+                    # List configs should only return valid ones
+                    configs = manager.list_available_configs()
+                    # Should have at least default, good1, good2
+                    self.assertIn('default', configs)
+                    self.assertIn('good1', configs)
+                    self.assertIn('good2', configs)
+                    # bad1 and bad2 might be listed but won't load
+                    
+                    # Switching to good configs should work
+                    self.assertTrue(manager.switch_config('good1'))
+                    self.assertEqual(manager.get_current_config_name(), 'good1')
+                    
+                    # Switching to bad configs should fail gracefully
+                    self.assertFalse(manager.switch_config('bad1'))
+                    # Should maintain previous good config
+                    self.assertEqual(manager.get_current_config_name(), 'good1')
 
 
 class TestConfigGameBalanceValidation(unittest.TestCase):
