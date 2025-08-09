@@ -1222,11 +1222,11 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
     """
     Draw popup events that dominate the screen and require immediate attention.
     
-    This is a UI stub for future enhancement.
+    Returns a list of (button_rect, action, event) tuples for click detection.
     """
     # Only draw if popup events exist
     if not hasattr(game_state, 'pending_popup_events') or not game_state.pending_popup_events:
-        return
+        return []
     
     # Get the first popup event
     event = game_state.pending_popup_events[0]
@@ -1259,7 +1259,7 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
         line_surface = font.render(line, True, (255, 255, 255))
         screen.blit(line_surface, (popup_x + 20, popup_y + 70 + i * 25))
     
-    # Action buttons (stubs)
+    # Action buttons
     button_y = popup_y + popup_height - 80
     button_width = 120
     button_height = 40
@@ -1270,9 +1270,15 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
     total_width = len(available_actions) * button_width + (len(available_actions) - 1) * button_spacing
     start_x = popup_x + (popup_width - total_width) // 2
     
+    # Store clickable button rectangles
+    button_rects = []
+    
     for i, action in enumerate(available_actions):
         button_x = start_x + i * (button_width + button_spacing)
         button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Store button info for click detection
+        button_rects.append((button_rect, action, event))
         
         # Button colors based on action type
         if action.value == "accept":
@@ -1294,9 +1300,11 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
         screen.blit(button_text, (text_x, text_y))
     
     # Instructions
-    instruction_text = font.render("This popup requires your immediate attention!", True, (255, 200, 200))
+    instruction_text = font.render("Click a button to proceed!", True, (255, 200, 200))
     inst_x = popup_x + (popup_width - instruction_text.get_width()) // 2
     screen.blit(instruction_text, (inst_x, popup_y + popup_height - 20))
+    
+    return button_rects
 
 
 def draw_ui_transitions(screen, game_state, w, h, big_font):
