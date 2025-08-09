@@ -425,7 +425,6 @@ def handle_tutorial_choice_keyboard(key):
         current_state = 'seed_selection'
 
 
->>>>>>> 97fa02a53e483fa193b9137cda590d1ca50b361e
 def handle_bug_report_click(mouse_pos, w, h):
     """Handle mouse clicks in the bug report form."""
     global current_state, bug_report_data, bug_report_selected_field, bug_report_success_message
@@ -1127,7 +1126,6 @@ def main():
                 # Tutorial choice screen
                 screen.fill((50, 50, 50))
                 draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, 0)  # Selected item handling can be improved
->>>>>>> 97fa02a53e483fa193b9137cda590d1ca50b361e
                 
             elif current_state == 'custom_seed_prompt':
                 # Preserve original seed prompt appearance
