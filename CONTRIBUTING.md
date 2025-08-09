@@ -17,6 +17,7 @@
 - Always include `import pygame` at the start of any Python file that uses pygame.
 - Only update documentation files (README.md, PLAYERGUIDE.md) if there are user-facing changes.
 - When updating DEVELOPERGUIDE.md, it's okay to be verbose and include a table of contents.
+- The game includes enhanced user experience systems like contextual end game scenarios that provide rich feedback instead of generic messages.
 
 ## UI Enhancement Development Protocols
 

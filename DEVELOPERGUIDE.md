@@ -33,6 +33,7 @@ For **installation and troubleshooting**, see the [README](README.md).
 - Python 3.8+
 - pygame (`pip install pygame`)
 - pytest for testing (`pip install pytest` or `pip install -r requirements.txt`)
+- numpy for sound effects (`pip install numpy` - optional but recommended)
 
 ### Getting Started
 ```sh
@@ -209,6 +210,9 @@ The Action Points (AP) system includes sophisticated visual and audio feedback:
 - **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
 - **Error Easter Egg**: Audio beep after 3 repeated identical errors
 - **Sound Integration**: Integrated with `SoundManager` for consistent audio experience
+- **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
+- **Achievement Sound**: Celebratory 'Zabinga!' sound when research papers are completed
+- **Error Easter Egg**: Audio beep after 3 repeated identical errors
 
 **Implementation Details:**
 ```python
@@ -723,6 +727,38 @@ The system supports:
 - Conditional actions based on game state
 - Time-sensitive events with varying effects
 - Multi-turn events that evolve over time
+
+---
+
+## End Game Scenarios System
+
+### Overview
+The end game scenarios system replaces generic "GAME OVER" messages with rich, contextual narratives that provide detailed explanations of what led to defeat and how the player's organization performed.
+
+### Core Components
+
+**end_game_scenarios.py**
+- `EndGameScenario` class: Represents a specific scenario with title, description, cause analysis, and legacy note
+- `EndGameScenariosManager` class: Manages scenario selection and contains the scenario dictionary
+- Comprehensive scenario library with 18+ unique endings organized by defeat cause and survival time
+
+**Integration Points**
+- `ui.py`: Replaces generic game over display with detailed scenario rendering
+- `game_state.py`: Provides game state information for scenario selection
+- Deterministic selection based on game seed and turn count for reproducible experiences
+
+### Scenario Selection Logic
+
+Scenarios are categorized by:
+- **Defeat Cause**: Max Doom Reached, Opponent Victory, Staff Loss
+- **Time Period**: Early Game (1-10 turns), Mid Game (11-25 turns), Late Game (26+ turns)
+- **Deterministic Selection**: Uses hash of game seed + turn count for consistent results
+
+### Extension Points
+- Add new defeat causes by extending `_determine_defeat_cause()`  
+- Add new time periods by modifying `_determine_time_period()`
+- Create new scenarios by adding to the scenarios dictionary
+- Enhance selection logic with additional game state analysis
 
 ---
 

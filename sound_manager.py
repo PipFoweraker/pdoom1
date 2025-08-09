@@ -1,30 +1,55 @@
-import pygame
 import math
 import array
+
+# Try to import pygame, but gracefully handle if it's not available
+try:
+    import pygame
+    PYGAME_AVAILABLE = True
+except ImportError:
+    PYGAME_AVAILABLE = False
+    pygame = None
 
 class SoundManager:
     """Manages sound effects and music for the game"""
     
     def __init__(self):
-        self.enabled = True
+        self.enabled = True and PYGAME_AVAILABLE
         self.sounds = {}
-        self._initialize_pygame_mixer()
-        self._create_blob_sound()
+        # Individual sound toggles for granular control
+        self.sound_toggles = {
+            'money_spend': True,
+            'ap_spend': True,
+            'blob': True,
+            'error_beep': True
+        }
+        if PYGAME_AVAILABLE:
+            self._initialize_pygame_mixer()
+            self._create_blob_sound()
     
     def _initialize_pygame_mixer(self):
         """Initialize pygame mixer for sound playback"""
+        if not PYGAME_AVAILABLE:
+            self.enabled = False
+            return
+            
         try:
             pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
         except pygame.error:
             # If mixer initialization fails (e.g., no audio device), disable sounds
             self.enabled = False
+        except Exception:
+            # Handle any other initialization errors
+            self.enabled = False
     
     def _create_blob_sound(self):
         """Create a simple blob sound effect programmatically"""
-        if not self.enabled:
+        if not self.enabled or not PYGAME_AVAILABLE:
             return
             
         try:
+            # Check if numpy is available for sndarray
+            import pygame.sndarray
+            
             # Create a simple "bloop" sound using basic math
             sample_rate = 22050
             duration = 0.3  # 300ms
@@ -60,13 +85,18 @@ class SoundManager:
             # Create AP spend sound for enhanced feedback
             self._create_ap_spend_sound()
             
+
+            # Create Zabinga sound for research paper completion
+            self._create_zabinga_sound()
+            
+
         except (pygame.error, AttributeError, Exception):
             # If sound creation fails, just disable sounds
             self.enabled = False
     
     def _create_error_beep(self):
         """Create an error beep sound for the easter egg (3 repeated errors)"""
-        if not self.enabled:
+        if not self.enabled or not PYGAME_AVAILABLE:
             return
             
         try:
@@ -113,13 +143,13 @@ class SoundManager:
             # Create pygame sound from array
             self.sounds['error_beep'] = pygame.sndarray.make_sound(wave_array)
             
-        except (pygame.error, AttributeError, Exception):
+        except (pygame.error, AttributeError, ImportError, Exception):
             # If error beep creation fails, continue without it
             pass
     
     def _create_ap_spend_sound(self):
         """Create a sound effect for when Action Points are spent"""
-        if not self.enabled:
+        if not self.enabled or not PYGAME_AVAILABLE:
             return
             
         try:
@@ -151,13 +181,72 @@ class SoundManager:
             # Create pygame sound from array
             self.sounds['ap_spend'] = pygame.sndarray.make_sound(wave_array)
             
-        except (pygame.error, AttributeError, Exception):
+        except (pygame.error, AttributeError, ImportError, Exception):
             # If AP sound creation fails, continue without it
+            pass
+    
+
+    def _create_zabinga_sound(self):
+        """Create a celebratory 'Zabinga!' sound effect for research paper completion"""
+
+        if not self.enabled or not PYGAME_AVAILABLE:
+            return
+            
+        try:
+            sample_rate = 22050
+
+            duration = 1.0  # 1 second - celebratory sound should be noticeable
+            samples = int(sample_rate * duration)
+            
+            # Create sound wave array for Zabinga sound
+
+            wave_array = array.array('h')
+            
+            for i in range(samples):
+                t = i / sample_rate
+                
+
+                # Create a fun, celebratory sound with multiple tones
+                # Rising and falling melody to sound like "Za-bin-ga!"
+                amplitude = 3000
+                
+                if t < 0.25:  # "Za" - lower tone
+                    frequency = 440  # A4
+                    envelope = math.sin(math.pi * t / 0.25)  # Smooth attack and decay
+                elif t < 0.5:  # "bin" - higher tone
+                    frequency = 554  # C#5
+                    envelope = math.sin(math.pi * (t - 0.25) / 0.25)
+                elif t < 0.75:  # "ga" - middle tone with vibrato
+                    frequency = 494 + 20 * math.sin(2 * math.pi * 8 * t)  # B4 with vibrato
+                    envelope = math.sin(math.pi * (t - 0.5) / 0.25)
+                else:  # Final flourish - quick ascending notes
+                    base_freq = 440 * (1 + 2 * (t - 0.75))  # Rising pitch
+                    frequency = base_freq
+                    envelope = math.exp(-8 * (t - 0.75))  # Quick decay
+                
+                # Generate the sample with harmonic richness
+                sample = int(amplitude * envelope * (
+                    math.sin(2 * math.pi * frequency * t) +
+                    0.3 * math.sin(2 * math.pi * frequency * 2 * t) +  # Second harmonic
+                    0.15 * math.sin(2 * math.pi * frequency * 3 * t)   # Third harmonic
+
+                ))
+                
+                # Add to stereo array
+                wave_array.append(sample)
+                wave_array.append(sample)
+            
+            # Create pygame sound from array
+            self.sounds['zabinga'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, Exception):
+            # If Zabinga sound creation fails, continue without it
+
             pass
     
     def play_blob_sound(self):
         """Play the blob sound effect when a new employee is hired"""
-        if self.enabled and 'blob' in self.sounds:
+        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('blob', True) and 'blob' in self.sounds:
             try:
                 self.sounds['blob'].play()
             except pygame.error:
@@ -166,7 +255,7 @@ class SoundManager:
     
     def play_error_beep(self):
         """Play the error beep sound for the easter egg (3 repeated identical errors)"""
-        if self.enabled and 'error_beep' in self.sounds:
+        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('error_beep', True) and 'error_beep' in self.sounds:
             try:
                 self.sounds['error_beep'].play()
             except pygame.error:
@@ -175,9 +264,28 @@ class SoundManager:
     
     def play_ap_spend_sound(self):
         """Play the AP spend sound effect when Action Points are spent"""
-        if self.enabled and 'ap_spend' in self.sounds:
+        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('ap_spend', True) and 'ap_spend' in self.sounds:
             try:
                 self.sounds['ap_spend'].play()
+            except pygame.error:
+                # Sound playback failed, but don't crash
+                pass
+    
+    def play_money_spend_sound(self):
+        """Play a sound effect when money is spent (reuse AP spend sound for consistency)"""
+        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('money_spend', True) and 'ap_spend' in self.sounds:
+            try:
+                self.sounds['ap_spend'].play()
+            except pygame.error:
+                # Sound playback failed, but don't crash
+                pass
+    
+    def play_zabinga_sound(self):
+        """Play the Zabinga sound effect when research papers are completed"""
+        if self.enabled and PYGAME_AVAILABLE and 'zabinga' in self.sounds:
+            try:
+                self.sounds['zabinga'].play()
+
             except pygame.error:
                 # Sound playback failed, but don't crash
                 pass
@@ -194,3 +302,28 @@ class SoundManager:
         """Toggle sound on/off and return new state"""
         self.enabled = not self.enabled
         return self.enabled
+    
+    def set_sound_enabled(self, sound_name, enabled):
+        """Enable or disable a specific sound effect"""
+        if sound_name in self.sound_toggles:
+            self.sound_toggles[sound_name] = enabled
+    
+    def is_sound_enabled(self, sound_name):
+        """Check if a specific sound is enabled"""
+        return self.sound_toggles.get(sound_name, True)
+    
+    def toggle_sound(self, sound_name):
+        """Toggle a specific sound on/off and return new state"""
+        if sound_name in self.sound_toggles:
+            self.sound_toggles[sound_name] = not self.sound_toggles[sound_name]
+            return self.sound_toggles[sound_name]
+        return True
+    
+    def set_all_sounds_enabled(self, enabled):
+        """Enable or disable all individual sounds (but keep master enabled state)"""
+        for sound_name in self.sound_toggles:
+            self.sound_toggles[sound_name] = enabled
+    
+    def get_sound_names(self):
+        """Get list of all available sound names for UI"""
+        return list(self.sound_toggles.keys())

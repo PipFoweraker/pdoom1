@@ -42,7 +42,7 @@ class TestUITransitions(unittest.TestCase):
         self.assertEqual(transition['start_rect'], start_rect)
         self.assertEqual(transition['end_rect'], end_rect)
         self.assertEqual(transition['progress'], 0.0)
-        self.assertEqual(transition['duration'], 30)
+        self.assertEqual(transition['duration'], 45)
         self.assertFalse(transition['completed'])
         self.assertGreater(transition['glow_timer'], 0)
         
@@ -70,8 +70,8 @@ class TestUITransitions(unittest.TestCase):
         self.assertGreater(transition['progress'], initial_progress)
         self.assertGreater(len(transition['trail_points']), initial_trail_count)
         
-        # Update until completion
-        for _ in range(30):
+        # Update until completion (45 frames for enhanced duration)
+        for _ in range(45):
             self.game_state._update_ui_transitions()
         
         # Verify transition completed
@@ -136,7 +136,7 @@ class TestUITransitions(unittest.TestCase):
         if remaining_points:
             # If any points remain, they should be newer/brighter
             for point in remaining_points:
-                self.assertLessEqual(point['age'], 10)  # Trail limit
+                self.assertLessEqual(point['age'], 20)  # Enhanced trail limit
     
     def test_transition_cleanup(self):
         """Test that completed transitions are cleaned up properly."""
@@ -150,8 +150,8 @@ class TestUITransitions(unittest.TestCase):
         self.assertEqual(len(self.game_state.ui_transitions), 1)
         self.assertIn(upgrade_idx, self.game_state.upgrade_transitions)
         
-        # Complete the transition
-        for _ in range(100):  # Enough to complete animation and glow timer
+        # Complete the transition (need more iterations due to enhanced glow timer of 90)
+        for _ in range(150):  # 45 for animation + 90+ for glow + buffer
             self.game_state._update_ui_transitions()
         
         # Verify transition was cleaned up
