@@ -26,6 +26,8 @@ A satirical strategy game about managing an AI safety lab while competing agains
 - [End-Game Menu](#end-game-menu) (Line 496)
 - [Need Help?](#need-help) (Line 513)
 
+**Configuration**: For game customization and settings, see [CONFIG_SYSTEM.md](CONFIG_SYSTEM.md).
+
 ---
 
 ## Quick Setup

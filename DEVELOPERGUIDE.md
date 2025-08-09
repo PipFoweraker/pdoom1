@@ -23,6 +23,8 @@ For **installation and troubleshooting**, see the [README](README.md).
 - [Tutorial & Onboarding System Architecture](#tutorial--onboarding-system-architecture) (Line 1095)
 - [Need Help?](#need-help) (Line 1177)
 
+**Configuration System**: For config management and modding support, see [CONFIG_SYSTEM.md](CONFIG_SYSTEM.md).
+
 ---
 
 ## Development Setup
