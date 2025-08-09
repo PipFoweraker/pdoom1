@@ -1,6 +1,7 @@
 import pygame
 import textwrap
 from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
+from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 def wrap_text(text, font, max_width):
     """
@@ -97,8 +98,6 @@ def draw_main_menu(screen, w, h, selected_item):
         # Determine button state for visual feedback
         if i == selected_item:
             button_state = ButtonState.FOCUSED  # Use focused state for keyboard navigation
-        elif i == 2:  # Options button (placeholder)
-            button_state = ButtonState.DISABLED
         else:
             button_state = ButtonState.NORMAL
         
@@ -119,6 +118,115 @@ def draw_main_menu(screen, w, h, selected_item):
         inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
         inst_x = w // 2 - inst_surf.get_width() // 2
         inst_y = int(h * 0.85) + i * int(h * 0.03)
+        screen.blit(inst_surf, (inst_x, inst_y))
+    
+    # Draw keyboard shortcuts on the sides
+    shortcut_font = pygame.font.SysFont('Consolas', int(h*0.018))
+    
+    # Left side - Main Menu shortcuts
+    left_shortcuts = get_main_menu_shortcuts()
+    left_formatted = format_shortcut_list(left_shortcuts)
+    
+    left_title_surf = shortcut_font.render("Menu Controls:", True, (160, 160, 160))
+    left_x = int(w * 0.05)
+    left_y = int(h * 0.25)
+    screen.blit(left_title_surf, (left_x, left_y))
+    
+    for i, shortcut_text in enumerate(left_formatted):
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        screen.blit(shortcut_surf, (left_x, left_y + 30 + i * 25))
+    
+    # Right side - In-Game shortcuts preview
+    right_shortcuts = get_in_game_shortcuts()[:4]  # Show first 4 to fit space
+    right_formatted = format_shortcut_list(right_shortcuts)
+    
+    right_title_surf = shortcut_font.render("In-Game Controls:", True, (160, 160, 160))
+    right_x = int(w * 0.75)
+    right_y = int(h * 0.25)
+    screen.blit(right_title_surf, (right_x, right_y))
+    
+    for i, shortcut_text in enumerate(right_formatted):
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        screen.blit(shortcut_surf, (right_x, right_y + 30 + i * 25))
+
+def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
+    """
+    Draw the sounds options menu with toggles for individual sound effects.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected menu item (for keyboard navigation)
+        game_state: game state object to access sound manager (can be None for standalone testing)
+    
+    Features:
+    - Master sound on/off toggle
+    - Individual sound effect toggles (money spend, AP spend, blob, error beep)
+    - Back button to return to main menu
+    - Responsive sizing and keyboard navigation
+    """
+    # Fonts for menu - scale based on screen size
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    
+    # Title at top
+    title_surf = title_font.render("Sound Options", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Get sound manager if available
+    sound_manager = None
+    if game_state and hasattr(game_state, 'sound_manager'):
+        sound_manager = game_state.sound_manager
+    
+    # Menu items with their current states
+    master_enabled = sound_manager.is_enabled() if sound_manager else True
+    
+    menu_items = [
+        f"Master Sound: {'ON' if master_enabled else 'OFF'}",
+        f"Money Spend Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('money_spend')) else 'OFF'}",
+        f"Action Points Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('ap_spend')) else 'OFF'}",
+        f"Employee Hire Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('blob')) else 'OFF'}",
+        f"Error Beep Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('error_beep')) else 'OFF'}",
+        "Back to Main Menu"
+    ]
+    
+    # Button layout
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.06)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.08)
+    center_x = w // 2
+    
+    for i, item in enumerate(menu_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state for visual feedback
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED  # Use focused state for keyboard navigation
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Use visual feedback system for consistent styling
+        visual_feedback.draw_button(
+            screen, button_rect, item, button_state, FeedbackStyle.MENU_ITEM
+        )
+    
+    # Instructions at bottom
+    instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    instructions = [
+        "Use arrow keys to navigate, Enter to toggle",
+        "Press Escape or select Back to return to Main Menu"
+    ]
+    
+    for i, instruction in enumerate(instructions):
+        inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        inst_y = int(h * 0.85) + i * 25
         screen.blit(inst_surf, (inst_x, inst_y))
 
 def draw_overlay(screen, title, content, scroll_offset, w, h):
@@ -421,8 +529,15 @@ def draw_ui(screen, game_state, w, h):
         FeedbackStyle.BUTTON, custom_colors.get(endturn_state)
     )
 
+
     # Messages log (bottom left) - Enhanced with scrollable history and minimize option
-    log_x, log_y = int(w*0.04), int(h*0.74)
+    # Use current position (including any drag offset)
+    if hasattr(game_state, '_get_activity_log_current_position'):
+        log_x, log_y = game_state._get_activity_log_current_position(w, h)
+    else:
+        log_x, log_y = int(w*0.04), int(h*0.74)  # Fallback to original position
+
+
     
     # Check if activity log is minimized (only available with compact activity display upgrade)
     if (hasattr(game_state, 'activity_log_minimized') and 
@@ -458,7 +573,7 @@ def draw_ui(screen, game_state, w, h):
         
     elif game_state.scrollable_event_log_enabled:
         # Enhanced scrollable event log with border and visual indicators
-        log_width = int(w * 0.44)
+        log_width = int(w * 0.22)  # Reduced from 0.44 to 0.22 to avoid upgrade button overlap
         log_height = int(h * 0.22)
         
         # Draw border around the event log area
@@ -504,8 +619,16 @@ def draw_ui(screen, game_state, w, h):
         # Combine history and current messages for display
         all_messages = list(game_state.event_log_history) + game_state.messages
         
-        # Calculate scrolling
+        # Calculate scrolling - Auto-scroll to bottom by default for new content
         total_lines = len(all_messages)
+        
+        # Check if we should auto-scroll to bottom (when there are more lines than visible)
+        if total_lines > max_visible_lines:
+            # If scroll offset is 0 or close to max (user at bottom), keep at bottom
+            max_scroll_offset = total_lines - max_visible_lines
+            if game_state.event_log_scroll_offset <= 1 or game_state.event_log_scroll_offset >= max_scroll_offset - 1:
+                game_state.event_log_scroll_offset = max_scroll_offset
+        
         start_line = max(0, min(game_state.event_log_scroll_offset, total_lines - max_visible_lines))
         
         # Draw messages with scrolling
@@ -563,14 +686,17 @@ def draw_ui(screen, game_state, w, h):
     draw_popup_events(screen, game_state, w, h, font, big_font)
 
 def draw_employee_blobs(screen, game_state, w, h):
-    """Draw employee blobs with improved positioning that avoids UI overlap"""
+    """Draw employee blobs with dynamic positioning that avoids UI overlap"""
     import math
     
-    # Update blob positions based on current screen size (if needed)
-    # This handles cases where screen was resized or blobs were initialized with default dimensions
+    # Update blob positions dynamically to avoid UI elements
+    # This is called every frame to ensure continuous repositioning
+    game_state._update_blob_positions_dynamically(w, h)
+    
+    # Handle initial positioning for new blobs that haven't been positioned yet
     for i, blob in enumerate(game_state.employee_blobs):
-        # Only update if blob seems to be using old hardcoded positioning
-        if blob.get('needs_position_update', False) or (blob['target_x'] < 600 and blob['target_y'] > 450):
+        # Initialize position for new blobs or those that need repositioning
+        if blob.get('needs_position_update', False):
             new_x, new_y = game_state._calculate_blob_position(i, w, h)
             blob['target_x'] = new_x
             blob['target_y'] = new_y
@@ -580,7 +706,7 @@ def draw_employee_blobs(screen, game_state, w, h):
                 blob['y'] = new_y
             blob['needs_position_update'] = False
     
-    # Update blob animations
+    # Update blob animations for new employees sliding in from left side
     for blob in game_state.employee_blobs:
         if blob['animation_progress'] < 1.0:
             blob['animation_progress'] = min(1.0, blob['animation_progress'] + 0.05)
@@ -1096,11 +1222,11 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
     """
     Draw popup events that dominate the screen and require immediate attention.
     
-    This is a UI stub for future enhancement.
+    Returns a list of (button_rect, action, event) tuples for click detection.
     """
     # Only draw if popup events exist
     if not hasattr(game_state, 'pending_popup_events') or not game_state.pending_popup_events:
-        return
+        return []
     
     # Get the first popup event
     event = game_state.pending_popup_events[0]
@@ -1133,7 +1259,7 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
         line_surface = font.render(line, True, (255, 255, 255))
         screen.blit(line_surface, (popup_x + 20, popup_y + 70 + i * 25))
     
-    # Action buttons (stubs)
+    # Action buttons
     button_y = popup_y + popup_height - 80
     button_width = 120
     button_height = 40
@@ -1144,9 +1270,15 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
     total_width = len(available_actions) * button_width + (len(available_actions) - 1) * button_spacing
     start_x = popup_x + (popup_width - total_width) // 2
     
+    # Store clickable button rectangles
+    button_rects = []
+    
     for i, action in enumerate(available_actions):
         button_x = start_x + i * (button_width + button_spacing)
         button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Store button info for click detection
+        button_rects.append((button_rect, action, event))
         
         # Button colors based on action type
         if action.value == "accept":
@@ -1168,9 +1300,11 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
         screen.blit(button_text, (text_x, text_y))
     
     # Instructions
-    instruction_text = font.render("This popup requires your immediate attention!", True, (255, 200, 200))
+    instruction_text = font.render("Click a button to proceed!", True, (255, 200, 200))
     inst_x = popup_x + (popup_width - instruction_text.get_width()) // 2
     screen.blit(instruction_text, (inst_x, popup_y + popup_height - 20))
+    
+    return button_rects
 
 
 def draw_ui_transitions(screen, game_state, w, h, big_font):
@@ -1195,13 +1329,14 @@ def draw_ui_transitions(screen, game_state, w, h, big_font):
 
 def draw_upgrade_transition(screen, transition, game_state, w, h, big_font):
     """
-    Draw a single upgrade transition animation with visual effects.
+    Draw a single upgrade transition animation with enhanced visual effects.
     
     Features:
-    - Curved arc trail from button to icon position
-    - Fading trail points that create motion blur effect
-    - Glowing highlight at destination when transition completes
-    - Semi-transparent moving upgrade preview
+    - Enhanced curved arc trail with particle effects
+    - Multi-layered glow effects with smooth pulsing
+    - Dynamic trail with size and color variations
+    - Particle system for more organic visual feedback
+    - Smooth size and opacity interpolation
     
     Args:
         screen: pygame surface to draw on
@@ -1213,74 +1348,160 @@ def draw_upgrade_transition(screen, transition, game_state, w, h, big_font):
     upgrade_idx = transition['upgrade_idx']
     upgrade = game_state.upgrades[upgrade_idx]
     
-    # Draw trail points (visual arc effect)
+    # Draw enhanced particle trail first (background layer)
+    for particle in transition.get('particle_trail', []):
+        if particle['alpha'] > 0:
+            # Dynamic particle colors with variation
+            base_color = (100, 255, 150)
+            color_shift = particle.get('color_shift', 0)
+            particle_color = (
+                max(0, min(255, base_color[0] + color_shift)),
+                max(0, min(255, base_color[1] + color_shift//2)),
+                max(0, min(255, base_color[2] + color_shift)),
+                particle['alpha']
+            )
+            
+            # Create particle surface with gradient effect
+            particle_size = particle['size']
+            particle_surface = pygame.Surface((particle_size * 2, particle_size * 2), pygame.SRCALPHA)
+            
+            # Multi-layer particle for depth
+            for layer in range(2):
+                layer_alpha = particle['alpha'] // (1 + layer)
+                layer_size = max(1, particle_size - layer)
+                layer_color = (*particle_color[:3], layer_alpha)
+                
+                pygame.draw.circle(particle_surface, layer_color, 
+                                 (particle_size, particle_size), layer_size)
+            
+            screen.blit(particle_surface, (int(particle['pos'][0]) - particle_size, 
+                                         int(particle['pos'][1]) - particle_size))
+    
+    # Draw enhanced trail points (main trail effect)
     for i, point in enumerate(transition['trail_points']):
         if point['alpha'] > 0:
-            # Create fading trail effect with varying sizes
-            trail_size = max(2, 8 - i)
-            trail_color = (100, 255, 150, point['alpha'])  # Green with fading alpha
+            # Enhanced trail with size and color variations
+            trail_size = max(2, int(point['size']))
             
-            # Create surface for alpha blending
-            trail_surface = pygame.Surface((trail_size * 2, trail_size * 2), pygame.SRCALPHA)
-            pygame.draw.circle(trail_surface, trail_color, (trail_size, trail_size), trail_size)
-            screen.blit(trail_surface, (point['pos'][0] - trail_size, point['pos'][1] - trail_size))
+            # Dynamic trail colors with organic variation
+            base_green = 150 + point.get('color_variation', 0)
+            trail_color = (100, max(100, min(255, base_green)), 150, point['alpha'])
+            
+            # Create trail surface with soft edges
+            trail_surface = pygame.Surface((trail_size * 3, trail_size * 3), pygame.SRCALPHA)
+            
+            # Multi-layer trail for smooth gradients
+            for layer in range(3):
+                layer_alpha = point['alpha'] // (1 + layer * 2)
+                layer_size = max(1, trail_size - layer)
+                layer_color = (*trail_color[:3], layer_alpha)
+                
+                if layer_alpha > 0:
+                    pygame.draw.circle(trail_surface, layer_color,
+                                     (trail_size * 3 // 2, trail_size * 3 // 2), layer_size)
+            
+            screen.blit(trail_surface, (point['pos'][0] - trail_size * 3 // 2, 
+                                      point['pos'][1] - trail_size * 3 // 2))
     
-    # Draw moving upgrade preview during transition
+    # Draw moving upgrade preview during transition with enhanced effects
     if not transition['completed']:
         current_pos = game_state._interpolate_position(
             transition['start_rect'], 
             transition['end_rect'], 
-            transition['progress']
+            transition['progress'],
+            transition.get('arc_height', 80)
         )
         
-        # Calculate size interpolation (button size -> icon size)
+        # Enhanced size interpolation with slight overshoot for bounce effect
         start_size = min(transition['start_rect'][2], transition['start_rect'][3])
         end_size = min(transition['end_rect'][2], transition['end_rect'][3])
-        current_size = start_size + (end_size - start_size) * transition['progress']
         
-        # Draw semi-transparent moving upgrade
+        # Add slight bounce/overshoot near the end
+        progress = transition['progress']
+        if progress > 0.8:
+            bounce_factor = 1.0 + 0.1 * (1.0 - progress) * 5  # Slight overshoot
+            current_size = (start_size + (end_size - start_size) * progress) * bounce_factor
+        else:
+            current_size = start_size + (end_size - start_size) * progress
+        
+        current_size = int(max(end_size * 0.5, current_size))  # Minimum size
+        
+        # Draw enhanced moving upgrade with glow
         moving_rect = (
             current_pos[0] - current_size//2,
-            current_pos[1] - current_size//2, 
+            current_pos[1] - current_size//2,
             current_size,
             current_size
         )
         
-        # Semi-transparent background
-        moving_surface = pygame.Surface((current_size, current_size), pygame.SRCALPHA)
-        pygame.draw.rect(moving_surface, (90, 170, 90, 180), (0, 0, current_size, current_size), border_radius=6)
-        pygame.draw.rect(moving_surface, (140, 210, 140, 200), (0, 0, current_size, current_size), width=2, border_radius=6)
+        # Add glow around moving element
+        glow_size = current_size + 8
+        glow_surface = pygame.Surface((glow_size, glow_size), pygame.SRCALPHA)
+        glow_color = (100, 255, 150, 60)
+        pygame.draw.circle(glow_surface, glow_color, (glow_size//2, glow_size//2), glow_size//2)
+        screen.blit(glow_surface, (current_pos[0] - glow_size//2, current_pos[1] - glow_size//2))
         
-        # Add upgrade letter
-        letter_surf = big_font.render(upgrade["name"][0], True, (255, 255, 255))
+        # Enhanced moving element background
+        moving_surface = pygame.Surface((current_size, current_size), pygame.SRCALPHA)
+        
+        # Multi-layer background for depth
+        bg_color = (90, 170, 90, 200)
+        border_color = (140, 210, 140, 230)
+        
+        pygame.draw.rect(moving_surface, bg_color, (0, 0, current_size, current_size), border_radius=8)
+        pygame.draw.rect(moving_surface, border_color, (0, 0, current_size, current_size), width=2, border_radius=8)
+        
+        # Add inner highlight for 3D effect
+        highlight_color = (180, 240, 180, 100)
+        pygame.draw.rect(moving_surface, highlight_color, (2, 2, current_size-4, current_size//3), border_radius=4)
+        
+        # Scaled upgrade letter
+        font_size = max(12, int(current_size * 0.4))
+        scaled_font = pygame.font.SysFont('Consolas', font_size, bold=True)
+        letter_surf = scaled_font.render(upgrade["name"][0], True, (255, 255, 255))
         letter_x = (current_size - letter_surf.get_width()) // 2
         letter_y = (current_size - letter_surf.get_height()) // 2
         moving_surface.blit(letter_surf, (letter_x, letter_y))
         
         screen.blit(moving_surface, (moving_rect[0], moving_rect[1]))
     
-    # Draw destination glow effect
-    if transition['glow_timer'] > 0:
-        glow_intensity = min(255, transition['glow_timer'] * 4)  # Stronger glow initially
+    # Draw enhanced destination glow effect
+    glow_intensity = transition.get('glow_intensity', 0)
+    if glow_intensity > 0:
         end_rect = transition['end_rect']
         
-        # Create pulsing glow effect
-        pulse = 1.0 + 0.3 * (transition['glow_timer'] % 20) / 20.0  # Gentle pulse
-        glow_size = int(max(end_rect[2], end_rect[3]) * pulse)
-        glow_color = (150, 255, 150, glow_intensity // 3)  # Green glow
+        # Enhanced pulsing with multiple frequencies
+        import math
+        time_factor = (90 - transition.get('glow_timer', 0)) / 90.0
+        pulse1 = 1.0 + 0.3 * math.sin(time_factor * 8 * math.pi) * (glow_intensity / 255.0)
+        pulse2 = 1.0 + 0.15 * math.sin(time_factor * 12 * math.pi) * (glow_intensity / 255.0)
         
-        # Multiple glow layers for smooth effect
-        for layer in range(3):
-            layer_size = glow_size - layer * 4
-            layer_alpha = glow_intensity // (3 + layer * 2)
-            
-            if layer_size > 0 and layer_alpha > 0:
+        base_glow_size = max(end_rect[2], end_rect[3])
+        
+        # Multiple glow layers with different pulsing patterns
+        glow_layers = [
+            {'size': base_glow_size * pulse1 * 1.5, 'alpha': glow_intensity // 4, 'color': (150, 255, 150)},
+            {'size': base_glow_size * pulse2 * 1.2, 'alpha': glow_intensity // 3, 'color': (120, 220, 120)},
+            {'size': base_glow_size * 1.0, 'alpha': glow_intensity // 2, 'color': (100, 200, 100)},
+        ]
+        
+        center_x = end_rect[0] + end_rect[2] // 2
+        center_y = end_rect[1] + end_rect[3] // 2
+        
+        for layer in glow_layers:
+            if layer['alpha'] > 0:
+                layer_size = int(layer['size'])
                 glow_surface = pygame.Surface((layer_size * 2, layer_size * 2), pygame.SRCALPHA)
-                pygame.draw.circle(glow_surface, (*glow_color[:3], layer_alpha), 
-                                 (layer_size, layer_size), layer_size)
                 
-                glow_x = end_rect[0] + end_rect[2]//2 - layer_size
-                glow_y = end_rect[1] + end_rect[3]//2 - layer_size
+                # Gradient glow effect
+                for ring in range(layer_size, 0, -2):
+                    ring_alpha = max(0, int(layer['alpha'] * (layer_size - ring) / layer_size))
+                    ring_color = (*layer['color'], ring_alpha)
+                    if ring_alpha > 0:
+                        pygame.draw.circle(glow_surface, ring_color, (layer_size, layer_size), ring)
+                
+                glow_x = center_x - layer_size
+                glow_y = center_y - layer_size
                 screen.blit(glow_surface, (glow_x, glow_y))
 
 
@@ -1319,18 +1540,32 @@ def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
     button_bg_inactive = (60, 60, 100)
     
     # Title
-    title_text = title_font.render("GAME OVER", True, title_color)
+    if game_state.end_game_scenario:
+        title_text = title_font.render(game_state.end_game_scenario.title, True, title_color)
+    else:
+        title_text = title_font.render("GAME OVER", True, title_color)
     title_rect = title_text.get_rect(center=(w//2, int(h*0.08)))
     screen.blit(title_text, title_rect)
     
-    # Game end message
-    end_message = game_state.messages[-1] if game_state.messages else "Game ended"
-    subtitle_text = subtitle_font.render(end_message, True, subtitle_color)
-    subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
-    screen.blit(subtitle_text, subtitle_rect)
+    # Game end scenario description
+    if game_state.end_game_scenario:
+        # Wrap the description text
+        description_lines = wrap_text(game_state.end_game_scenario.description, subtitle_font, w*2//3)
+        start_y = int(h*0.13)
+        for i, line in enumerate(description_lines[:4]):  # Limit to 4 lines to fit layout
+            desc_text = subtitle_font.render(line, True, subtitle_color)
+            desc_rect = desc_text.get_rect(center=(w//2, start_y + i * int(h*0.025)))
+            screen.blit(desc_text, desc_rect)
+    else:
+        # Fallback to last message
+        end_message = game_state.messages[-1] if game_state.messages else "Game ended"
+        subtitle_text = subtitle_font.render(end_message, True, subtitle_color)
+        subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
+        screen.blit(subtitle_text, subtitle_rect)
     
-    # Game statistics in a box
-    stats_box = pygame.Rect(w//6, int(h*0.22), w*2//3, int(h*0.25))
+    # Game statistics in a box - adjust position to make room for scenario details
+    stats_box_y = int(h*0.25) if game_state.end_game_scenario else int(h*0.22)
+    stats_box = pygame.Rect(w//6, stats_box_y, w*2//3, int(h*0.22))
     pygame.draw.rect(screen, (40, 40, 70), stats_box, border_radius=12)
     pygame.draw.rect(screen, (130, 190, 255), stats_box, width=3, border_radius=12)
     
@@ -1345,12 +1580,47 @@ def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
         f"High Score (turns): {game_state.highscore}"
     ]
     
-    stats_start_y = stats_box.y + 20
-    line_height = int(h*0.03)
+    stats_start_y = stats_box.y + 15
+    line_height = int(h*0.025)
     
     for i, line in enumerate(stats_lines):
         stats_text = stats_font.render(line, True, stats_color)
         screen.blit(stats_text, (stats_box.x + 20, stats_start_y + i * line_height))
+    
+    # Cause Analysis section (if scenario available)
+    if game_state.end_game_scenario and game_state.end_game_scenario.cause_analysis:
+        analysis_y = stats_box.y + stats_box.height + 15
+        analysis_box = pygame.Rect(w//6, analysis_y, w*2//3, int(h*0.12))
+        pygame.draw.rect(screen, (50, 30, 30), analysis_box, border_radius=8)
+        pygame.draw.rect(screen, (200, 100, 100), analysis_box, width=2, border_radius=8)
+        
+        # Analysis title
+        analysis_title = small_font.render("What Went Wrong:", True, (255, 200, 200))
+        screen.blit(analysis_title, (analysis_box.x + 15, analysis_box.y + 8))
+        
+        # Analysis text (wrapped)
+        analysis_lines = wrap_text(game_state.end_game_scenario.cause_analysis, small_font, analysis_box.width - 30)
+        for i, line in enumerate(analysis_lines[:3]):  # Limit to 3 lines
+            analysis_text = small_font.render(line, True, (255, 220, 220))
+            screen.blit(analysis_text, (analysis_box.x + 15, analysis_box.y + 25 + i * 16))
+    
+    # Legacy Note section (if scenario available)
+    if game_state.end_game_scenario and game_state.end_game_scenario.legacy_note:
+        legacy_y_offset = int(h*0.12) + 20 if game_state.end_game_scenario.cause_analysis else 15
+        legacy_y = stats_box.y + stats_box.height + legacy_y_offset
+        legacy_box = pygame.Rect(w//6, legacy_y, w*2//3, int(h*0.08))
+        pygame.draw.rect(screen, (30, 50, 30), legacy_box, border_radius=8)
+        pygame.draw.rect(screen, (100, 200, 100), legacy_box, width=2, border_radius=8)
+        
+        # Legacy title
+        legacy_title = small_font.render("Your Legacy:", True, (200, 255, 200))
+        screen.blit(legacy_title, (legacy_box.x + 15, legacy_box.y + 8))
+        
+        # Legacy text (wrapped)
+        legacy_lines = wrap_text(game_state.end_game_scenario.legacy_note, small_font, legacy_box.width - 30)
+        for i, line in enumerate(legacy_lines[:2]):  # Limit to 2 lines
+            legacy_text = small_font.render(line, True, (220, 255, 220))
+            screen.blit(legacy_text, (legacy_box.x + 15, legacy_box.y + 25 + i * 16))
     
     # Menu options
     menu_items = ["Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
@@ -1780,5 +2050,231 @@ def draw_first_time_help(screen, help_content, w, h):
     
     return close_button_rect
 
-
+def draw_pre_game_settings(screen, w, h, settings, selected_item):
+    """
+    Draw the pre-game settings screen with configurable options.
     
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        settings: dictionary of current settings values
+        selected_item: index of currently selected setting (for keyboard navigation)
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    
+    # Title
+    title_surf = title_font.render("Game Settings", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Settings items
+    settings_items = [
+        ("Difficulty", settings["difficulty"]),
+        ("Music Volume", str(settings["music_volume"])),
+        ("Sound Volume", str(settings["sound_volume"])),
+        ("Graphics Quality", settings["graphics_quality"]),
+        ("Continue")
+    ]
+    
+    # Button layout
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    for i, item in enumerate(settings_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Calculate text first
+        if i < len(settings_items) - 1:  # Setting items with values
+            setting_name, setting_value = item
+            text = f"{setting_name}: {setting_value}"
+        else:  # Continue button
+            text = item
+        
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, text, button_state)
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = [
+        "Use arrow keys to navigate, Enter to select",
+        "Adjust settings or continue to seed selection"
+    ]
+    
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
+
+
+def draw_seed_selection(screen, w, h, selected_item, seed_input=""):
+    """
+    Draw the seed selection screen.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected item (0=Weekly, 1=Custom)
+        seed_input: current custom seed input text
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    
+    # Title
+    title_surf = title_font.render("Select Seed", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Seed options
+    seed_items = ["Use Weekly Seed", "Use Custom Seed"]
+    
+    # Button layout
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    for i, item in enumerate(seed_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, item, button_state)
+    
+    # If custom seed is selected, show input field
+    if selected_item == 1:
+        input_y = start_y + 2 * spacing
+        input_width = int(w * 0.5)
+        input_height = int(h * 0.06)
+        input_x = center_x - input_width // 2
+        input_rect = pygame.Rect(input_x, input_y, input_width, input_height)
+        
+        # Draw input background
+        pygame.draw.rect(screen, (80, 80, 80), input_rect)
+        pygame.draw.rect(screen, (120, 120, 120), input_rect, 2)
+        
+        # Draw input text
+        input_font = pygame.font.SysFont('Consolas', int(h*0.03))
+        display_text = seed_input if seed_input else "Enter custom seed..."
+        text_color = (255, 255, 255) if seed_input else (150, 150, 150)
+        input_text_surf = input_font.render(display_text, True, text_color)
+        text_x = input_rect.x + 10
+        text_y = input_rect.centery - input_text_surf.get_height() // 2
+        screen.blit(input_text_surf, (text_x, text_y))
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = [
+        "Use arrow keys to navigate, Enter to continue",
+        "Custom seed: type your seed and press Enter"
+    ]
+    
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
+
+
+def draw_tutorial_choice(screen, w, h, selected_item):
+    """
+    Draw the tutorial choice screen.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected item (0=Yes, 1=No)
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    
+    # Title
+    title_surf = title_font.render("Tutorial Mode?", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Description
+    desc_text = "Would you like to play with tutorial guidance?"
+    desc_surf = desc_font.render(desc_text, True, (200, 200, 200))
+    desc_x = w // 2 - desc_surf.get_width() // 2
+    desc_y = title_y + title_surf.get_height() + 20
+    screen.blit(desc_surf, (desc_x, desc_y))
+    
+    # Tutorial options
+    tutorial_items = ["Yes - Enable Tutorial", "No - Regular Mode"]
+    
+    # Button layout
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.4)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    for i, item in enumerate(tutorial_items):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, item, button_state)
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    instructions = [
+        "Use arrow keys to navigate, Enter to start game",
+        "Tutorial mode provides helpful guidance for new players"
+    ]
+    
+    inst_y = int(h * 0.8)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5

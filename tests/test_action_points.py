@@ -658,21 +658,37 @@ class TestBlobPositioning(unittest.TestCase):
         # All positions should be unique
         self.assertEqual(len(positions), len(set(positions)))
     
-    def test_calculate_blob_position_safe_zone(self):
-        """Test that blobs are positioned in safe zones avoiding UI."""
+    def test_calculate_blob_position_center_spiral(self):
+        """Test that blobs are positioned in center-based spiral pattern."""
         screen_w, screen_h = 1200, 800
+        center_x, center_y = screen_w // 2, screen_h // 2
         
-        for i in range(10):
+        # First blob should be at center
+        x0, y0 = self.game_state._calculate_blob_position(0, screen_w, screen_h)
+        self.assertEqual(x0, center_x)
+        self.assertEqual(y0, center_y)
+        
+        # Other blobs should be arranged in a spiral around center
+        positions = []
+        for i in range(1, 10):
             x, y = self.game_state._calculate_blob_position(i, screen_w, screen_h)
             
-            # Should avoid action buttons area (left side)
-            self.assertGreater(x, screen_w * 0.4)
+            # Should be within screen bounds (accounting for blob radius)
+            blob_radius = 25
+            self.assertGreaterEqual(x, blob_radius)
+            self.assertLessEqual(x, screen_w - blob_radius)
+            self.assertGreaterEqual(y, blob_radius) 
+            self.assertLessEqual(y, screen_h - blob_radius)
             
-            # Should avoid top resource area  
-            self.assertGreater(y, screen_h * 0.2)
+            # Should be reasonably near center for initial positioning
+            # (dynamic collision detection handles UI avoidance)
+            distance_from_center = ((x - center_x)**2 + (y - center_y)**2)**0.5
+            self.assertLess(distance_from_center, min(screen_w, screen_h) * 0.4)
             
-            # Should avoid bottom message area
-            self.assertLess(y, screen_h * 0.7)
+            positions.append((x, y))
+        
+        # Positions should be unique (no two blobs at exactly same position)
+        self.assertEqual(len(positions), len(set(positions)))
     
     def test_blob_position_updates_with_screen_size(self):
         """Test that blob positions update when screen size changes."""
