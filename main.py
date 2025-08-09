@@ -4,10 +4,11 @@ import pygame
 import random
 import json
 from game_state import GameState
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_popup_events
 from bug_reporter import BugReporter
 from version import get_display_version
 from onboarding import onboarding
+from event_system import EventAction
 
 # --- Adaptive window sizing --- #
 pygame.init()
@@ -484,6 +485,35 @@ def handle_end_game_menu_keyboard(key):
         current_state = 'main_menu'
         selected_menu_item = 0
 
+def handle_popup_button_click(mouse_pos, game_state, screen_w, screen_h):
+    """
+    Handle mouse clicks on popup event buttons.
+    
+    Returns True if a popup button was clicked, False otherwise.
+    """
+    if not hasattr(game_state, 'pending_popup_events') or not game_state.pending_popup_events:
+        return False
+    
+    # Get button rectangles from draw_popup_events
+    # We need fonts for this, so let's create them temporarily
+    font = pygame.font.SysFont('Consolas', 16)
+    big_font = pygame.font.SysFont('Consolas', 20, bold=True)
+    
+    # Create a temporary surface to get button rectangles
+    temp_surface = pygame.Surface((screen_w, screen_h))
+    button_rects = draw_popup_events(temp_surface, game_state, screen_w, screen_h, font, big_font)
+    
+    mx, my = mouse_pos
+    
+    # Check each button for collision
+    for button_rect, action, event in button_rects:
+        if button_rect.collidepoint(mx, my):
+            # Handle the action
+            game_state.handle_popup_event_action(event, action)
+            return True
+    
+    return False
+
 def main():
     """
     Main game loop with state management for menu system.
@@ -582,21 +612,31 @@ def main():
                                 first_time_help_content = None
                                 first_time_help_close_button = None
                             else:
-                                # Allow normal game interactions when help is shown
-                                result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
-                                if result == 'play_sound':
-                                    game_state.sound_manager.play_ap_spend_sound()
-                                tooltip_text = result
+                                # Check for popup button clicks first when help is shown
+                                if handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
+                                    # Popup button was clicked, no need for further processing
+                                    pass
+                                else:
+                                    # Allow normal game interactions when help is shown
+                                    result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+                                    if result == 'play_sound':
+                                        game_state.sound_manager.play_ap_spend_sound()
+                                    tooltip_text = result
                         # Check if tutorial overlay is active
                         elif game_state and game_state.pending_tutorial_message:
                             # Handle tutorial overlay clicks - any click dismisses the tutorial
                             game_state.dismiss_tutorial_message()
                         else:
-                            # Regular game mouse handling
-                            result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
-                            if result == 'play_sound':
-                                game_state.sound_manager.play_ap_spend_sound()
-                            tooltip_text = result
+                            # Check for popup button clicks first
+                            if handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
+                                # Popup button was clicked, no need for further processing
+                                pass
+                            else:
+                                # Regular game mouse handling
+                                result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+                                if result == 'play_sound':
+                                    game_state.sound_manager.play_ap_spend_sound()
+                                tooltip_text = result
                         
                 elif event.type == pygame.MOUSEMOTION:
                     # Handle overlay manager hover events first

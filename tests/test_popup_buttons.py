@@ -142,13 +142,58 @@ class TestPopupButtonDetection(unittest.TestCase):
         """Set up test environment."""
         pygame.init()
         self.screen = pygame.display.set_mode((800, 600), pygame.NOFRAME)
+        self.game_state = GameState("test_seed")
+        
+        # Create a test popup event
+        def test_effect(gs):
+            gs.messages.append("Test event executed")
+        
+        def test_reduce_effect(gs):
+            gs.messages.append("Test event reduced")
+            
+        def test_trigger(gs):
+            return True
+            
+        self.test_event = Event(
+            name="Test Popup Event",
+            desc="This is a test popup event with clickable buttons.",
+            trigger=test_trigger,
+            effect=test_effect,
+            event_type=EventType.POPUP,
+            available_actions=[EventAction.ACCEPT, EventAction.DEFER, EventAction.REDUCE, EventAction.DISMISS],
+            reduce_effect=test_reduce_effect
+        )
+        
+        # Add event to game state pending popup events
+        self.game_state.pending_popup_events = [self.test_event]
         
     def tearDown(self):
         """Clean up after tests."""
         pygame.quit()
     
+    def test_draw_popup_events_returns_button_rects(self):
+        """Test that draw_popup_events returns button rectangles."""
+        font = pygame.font.SysFont('Consolas', 16)
+        big_font = pygame.font.SysFont('Consolas', 20, bold=True)
+        
+        button_rects = draw_popup_events(self.screen, self.game_state, 800, 600, font, big_font)
+        
+        # Should return button rectangles for each action
+        self.assertEqual(len(button_rects), 4)  # Accept, Defer, Reduce, Dismiss
+        
+        # Each button should be a tuple of (rect, action, event)
+        for button_rect, action, event in button_rects:
+            self.assertIsInstance(button_rect, pygame.Rect)
+            self.assertIn(action, [EventAction.ACCEPT, EventAction.DEFER, EventAction.REDUCE, EventAction.DISMISS])
+            self.assertEqual(event, self.test_event)
+            
     def test_popup_button_coordinates_calculation(self):
         """Test that popup button coordinates are calculated correctly."""
+        font = pygame.font.SysFont('Consolas', 16)
+        big_font = pygame.font.SysFont('Consolas', 20, bold=True)
+        
+        button_rects = draw_popup_events(self.screen, self.game_state, 800, 600, font, big_font)
+        
         # Standard popup dimensions based on ui.py
         w, h = 800, 600
         popup_width = int(w * 0.6)  # 480
@@ -160,25 +205,17 @@ class TestPopupButtonDetection(unittest.TestCase):
         button_y = popup_y + popup_height - 80  # 340
         button_width = 120
         button_height = 40
-        button_spacing = 20
         
-        # Test with 4 actions (Accept, Defer, Reduce, Dismiss)
-        num_actions = 4
-        total_width = num_actions * button_width + (num_actions - 1) * button_spacing
-        start_x = popup_x + (popup_width - total_width) // 2
-        
-        # Calculate expected button positions
-        expected_buttons = []
-        for i in range(num_actions):
-            button_x = start_x + i * (button_width + button_spacing)
-            expected_buttons.append(pygame.Rect(button_x, button_y, button_width, button_height))
-        
-        # Verify calculations are reasonable
-        self.assertEqual(len(expected_buttons), 4)
-        self.assertGreater(expected_buttons[0].x, popup_x)  # First button is within popup
-        self.assertLess(expected_buttons[-1].right, popup_x + popup_width)  # Last button is within popup
-        self.assertEqual(all(btn.y == button_y for btn in expected_buttons), True)  # All same y
-        self.assertEqual(all(btn.width == button_width for btn in expected_buttons), True)  # All same width
+        # Verify buttons are positioned correctly
+        for button_rect, action, event in button_rects:
+            # All buttons should have correct dimensions
+            self.assertEqual(button_rect.width, button_width)
+            self.assertEqual(button_rect.height, button_height)
+            self.assertEqual(button_rect.y, button_y)
+            
+            # Buttons should be reasonably positioned within the screen area
+            self.assertGreater(button_rect.x, 0)  # Button is on screen
+            self.assertLess(button_rect.right, w)  # Button doesn't extend past screen
 
 
 if __name__ == '__main__':
