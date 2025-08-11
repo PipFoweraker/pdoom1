@@ -842,6 +842,28 @@ def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font
         percent_y = status_y + status_surf.get_height() + 10
         screen.blit(percent_text, (percent_x, percent_y))
     
+def should_show_ui_element(game_state, element_id):
+    """
+    Check if a UI element should be visible based on tutorial progress.
+    
+    Args:
+        game_state: The current game state
+        element_id: String identifier for the UI element
+        
+    Returns:
+        bool: True if the element should be visible
+    """
+    # Import onboarding here to avoid circular imports
+    from onboarding import onboarding
+    
+    # If tutorial is not active, show all elements
+    if not onboarding.show_tutorial_overlay:
+        return True
+    
+    # Check if element should be visible based on tutorial progress
+    return onboarding.should_show_ui_element(element_id)
+
+
 def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.045), bold=True)
@@ -853,19 +875,23 @@ def draw_ui(screen, game_state, w, h):
     title = title_font.render("P(Doom): Bureaucracy Strategy", True, (205, 255, 220))
     screen.blit(title, (int(w*0.04), int(h*0.03)))
 
-    # Resources (top bar)
-    screen.blit(big_font.render(f"Money: ${game_state.money}", True, (255, 230, 60)), (int(w*0.04), int(h*0.11)))
+    # Resources (top bar) - controlled by tutorial visibility
+    if should_show_ui_element(game_state, 'money_display'):
+        screen.blit(big_font.render(f"Money: ${game_state.money}", True, (255, 230, 60)), (int(w*0.04), int(h*0.11)))
+        
+        # Cash flow indicator if accounting software is purchased
+        if hasattr(game_state, 'accounting_software_bought') and game_state.accounting_software_bought:
+            if hasattr(game_state, 'last_balance_change') and game_state.last_balance_change != 0:
+                change_color = (100, 255, 100) if game_state.last_balance_change > 0 else (255, 100, 100)
+                change_sign = "+" if game_state.last_balance_change > 0 else ""
+                change_text = f"({change_sign}${game_state.last_balance_change})"
+                screen.blit(font.render(change_text, True, change_color), (int(w*0.04), int(h*0.13)))
     
-    # Cash flow indicator if accounting software is purchased
-    if hasattr(game_state, 'accounting_software_bought') and game_state.accounting_software_bought:
-        if hasattr(game_state, 'last_balance_change') and game_state.last_balance_change != 0:
-            change_color = (100, 255, 100) if game_state.last_balance_change > 0 else (255, 100, 100)
-            change_sign = "+" if game_state.last_balance_change > 0 else ""
-            change_text = f"({change_sign}${game_state.last_balance_change})"
-            screen.blit(font.render(change_text, True, change_color), (int(w*0.04), int(h*0.13)))
+    if should_show_ui_element(game_state, 'staff_display'):
+        screen.blit(big_font.render(f"Staff: {game_state.staff}", True, (255, 210, 180)), (int(w*0.21), int(h*0.11)))
     
-    screen.blit(big_font.render(f"Staff: {game_state.staff}", True, (255, 210, 180)), (int(w*0.21), int(h*0.11)))
-    screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255)), (int(w*0.35), int(h*0.11)))
+    if should_show_ui_element(game_state, 'reputation_display'):
+        screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255)), (int(w*0.35), int(h*0.11)))
     
     # Action Points with glow effect
     ap_color = (255, 255, 100)  # Yellow base color for AP
@@ -2438,21 +2464,21 @@ def draw_hiring_dialog(screen, hiring_dialog, w, h):
     return clickable_rects
 
 
-def draw_tutorial_overlay(screen, tutorial_step, w, h):
+def draw_stepwise_tutorial_overlay(screen, tutorial_data, w, h):
     """
-    Draw the tutorial overlay for onboarding new players.
+    Draw the stepwise tutorial overlay for onboarding new players.
     
     Args:
         screen: pygame surface to draw on
-        tutorial_step: dict containing tutorial step data (title, content, next_step)
+        tutorial_data: dict containing tutorial step data with navigation info
         w, h: screen width and height
     
-    Features:
-    - Semi-transparent overlay over the game
-    - Centered tutorial content box
-    - Step navigation buttons (Next, Skip)
-    - Progress indicator
+    Returns:
+        dict with button rectangles for click detection
     """
+    if not tutorial_data:
+        return {}
+    
     # Semi-transparent overlay
     overlay_surface = pygame.Surface((w, h))
     overlay_surface.set_alpha(180)
@@ -2474,14 +2500,24 @@ def draw_tutorial_overlay(screen, tutorial_step, w, h):
     title_font = pygame.font.SysFont('Consolas', int(h*0.04), bold=True)
     content_font = pygame.font.SysFont('Consolas', int(h*0.025))
     button_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
+    progress_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    
+    # Progress indicator
+    step_number = tutorial_data.get('step_number', 1)
+    total_steps = tutorial_data.get('total_steps', 1)
+    progress_text = f"Step {step_number} of {total_steps}"
+    progress_surface = progress_font.render(progress_text, True, (200, 200, 200))
+    progress_rect = progress_surface.get_rect(topright=(box_x + box_width - 20, box_y + 15))
+    screen.blit(progress_surface, progress_rect)
     
     # Tutorial title
-    title_text = title_font.render(tutorial_step.get('title', 'Tutorial'), True, (255, 255, 100))
+    title = tutorial_data.get('title', 'Tutorial')
+    title_text = title_font.render(title, True, (255, 255, 100))
     title_rect = title_text.get_rect(center=(w//2, box_y + int(h*0.06)))
     screen.blit(title_text, title_rect)
     
     # Tutorial content with word wrapping
-    content = tutorial_step.get('content', '')
+    content = tutorial_data.get('content', '')
     content_area_width = box_width - 40
     content_area_height = box_height - 160  # Space for title and buttons
     content_y = box_y + int(h*0.1)
@@ -2505,56 +2541,60 @@ def draw_tutorial_overlay(screen, tutorial_step, w, h):
             line_surface = content_font.render(line, True, (255, 255, 255))
             screen.blit(line_surface, (box_x + 20, content_y + i * line_height))
     
-    # Tutorial navigation buttons - standardized layout and labels
-    button_min_width = 120  # Consistent min-width for visual stability
+    # Tutorial navigation buttons
+    button_min_width = 120
     button_height = 45
     button_y = box_y + box_height - 60
-    button_spacing = 20
     
-    # Determine if this is the final step (check if tutorial_step has next_step)
-    is_final_step = not tutorial_step.get('next_step', True) if isinstance(tutorial_step, dict) else False
+    buttons = {}
     
-    # Back button (left side)
-    back_button_x = box_x + 30
-    back_button_rect = pygame.Rect(back_button_x, button_y, button_min_width, button_height)
-    pygame.draw.rect(screen, (150, 150, 150), back_button_rect, border_radius=8)  # Secondary style
-    pygame.draw.rect(screen, (255, 255, 255), back_button_rect, width=2, border_radius=8)
+    # Back button (if can go back)
+    can_go_back = tutorial_data.get('can_go_back', False)
+    if can_go_back:
+        back_button_x = box_x + 30
+        back_button_rect = pygame.Rect(back_button_x, button_y, button_min_width, button_height)
+        pygame.draw.rect(screen, (150, 150, 150), back_button_rect, border_radius=8)
+        pygame.draw.rect(screen, (255, 255, 255), back_button_rect, width=2, border_radius=8)
+        
+        back_text = button_font.render("Back", True, (255, 255, 255))
+        back_text_rect = back_text.get_rect(center=back_button_rect.center)
+        screen.blit(back_text, back_text_rect)
+        buttons['back'] = back_button_rect
     
-    back_text = button_font.render("Back", True, (255, 255, 255))
-    back_text_rect = back_text.get_rect(center=back_button_rect.center)
-    screen.blit(back_text, back_text_rect)
+    # Skip button (always available)
+    skip_button_x = box_x + box_width // 2 - button_min_width // 2
+    skip_button_rect = pygame.Rect(skip_button_x, button_y, button_min_width, button_height)
+    pygame.draw.rect(screen, (180, 100, 100), skip_button_rect, border_radius=8)
+    pygame.draw.rect(screen, (255, 255, 255), skip_button_rect, width=2, border_radius=8)
     
-    # Next/Finish button (right side)
+    skip_text = button_font.render("Skip", True, (255, 255, 255))
+    skip_text_rect = skip_text.get_rect(center=skip_button_rect.center)
+    screen.blit(skip_text, skip_text_rect)
+    buttons['skip'] = skip_button_rect
+    
+    # Next/Finish button
+    can_go_forward = tutorial_data.get('can_go_forward', True)
+    is_final_step = step_number >= total_steps
+    
     next_button_x = box_x + box_width - button_min_width - 30
     next_button_rect = pygame.Rect(next_button_x, button_y, button_min_width, button_height)
-    pygame.draw.rect(screen, (100, 200, 100), next_button_rect, border_radius=8)  # Primary style
+    pygame.draw.rect(screen, (100, 200, 100), next_button_rect, border_radius=8)
     pygame.draw.rect(screen, (255, 255, 255), next_button_rect, width=2, border_radius=8)
     
-    # Use "Finish" for final step, "Next" otherwise
     next_label = "Finish" if is_final_step else "Next"
     next_text = button_font.render(next_label, True, (255, 255, 255))
     next_text_rect = next_text.get_rect(center=next_button_rect.center)
     screen.blit(next_text, next_text_rect)
+    buttons['next'] = next_button_rect
     
-    # Help button (question mark in top right of tutorial box)
-    help_button_size = 30
-    help_button_x = box_x + box_width - help_button_size - 10
-    help_button_y = box_y + 10
-    help_button_rect = pygame.Rect(help_button_x, help_button_y, help_button_size, help_button_size)
-    pygame.draw.rect(screen, (100, 100, 200), help_button_rect, border_radius=15)
-    pygame.draw.rect(screen, (255, 255, 255), help_button_rect, width=2, border_radius=15)
+    # Focus area highlight (if specified)
+    focus_area = tutorial_data.get('focus_area')
+    if focus_area:
+        # Add a subtle highlight around the focus area
+        # This could be expanded to highlight specific UI elements
+        pass
     
-    help_font = pygame.font.SysFont('Consolas', int(h*0.025), bold=True)
-    help_text = help_font.render("?", True, (255, 255, 255))
-    help_text_rect = help_text.get_rect(center=help_button_rect.center)
-    screen.blit(help_text, help_text_rect)
-    
-    # Return button rectangles for click detection
-    return {
-        'next_button': next_button_rect,
-        'back_button': back_button_rect,  # Changed from skip_button to back_button
-        'help_button': help_button_rect
-    }
+    return buttons
 
 
 def draw_first_time_help(screen, help_content, w, h):
