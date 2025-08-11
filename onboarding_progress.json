@@ -3,8 +3,8 @@
   "is_first_time": false,
   "completed_steps": [],
   "seen_mechanics": [
-    "high_doom_warning",
-    "first_staff_hire"
+    "first_staff_hire",
+    "high_doom_warning"
   ],
   "tutorial_dismissed": false
 }

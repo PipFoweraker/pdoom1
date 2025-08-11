@@ -277,12 +277,12 @@ def manager_unlock_rule(gs):
 
 def scout_unlock_rule(gs):
     """
-    Convenience function: Scout Opponent becomes available after intelligence capabilities are unlocked.
+    Convenience function: Scout Opponent becomes available after turn 5.
     
     Represents the game progression where intelligence operations become
     available after the player develops the necessary infrastructure and reputation.
     """
-    return getattr(gs, "scouting_unlocked", False)
+    return ActionRules.requires_turn(gs, min_turn=5)
 
 
 def search_unlock_rule(gs):

@@ -97,6 +97,11 @@ For complete tutorial details, see the **[Player Guide](PLAYERGUIDE.md#new-playe
 - Install pygame: `pip install pygame`
 - Check that all files are in the same directory
 
+**AttributeError crashes on startup (Fixed):**
+- If you encounter `AttributeError: 'OnboardingSystem' object has no attribute 'get_mechanic_help'`, update to the latest version
+- This critical launch crash has been fixed by implementing the missing method
+- The fix includes comprehensive help content for core game mechanics
+
 **Missing pygame module:**
 ```sh
 pip install pygame
