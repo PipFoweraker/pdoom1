@@ -186,7 +186,7 @@ You start with 3 AP per turn, but can gain more by hiring staff!""",
 • Admin assistants give +1.0 AP each
 • Specialized staff can delegate certain actions
 
-Plan your actions carefully - you can't take more actions than you have AP!""",
+You can't spend more AP than you have in a turn.""",
                 'next_step': 'end_turn'
             },
             'end_turn': {
