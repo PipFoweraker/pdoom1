@@ -1,6 +1,9 @@
 # Core game dependencies
-pygame
-numpy
+pygame>=2.0.0
+numpy>=1.20.0
 
-# Testing dependencies
+# Data and configuration
+jsonschema>=4.0.0
+
+# Testing dependencies (also in requirements-dev.txt)
 pytest>=7.0.0
