@@ -1138,6 +1138,9 @@ def main():
                         elif first_time_help_content and first_time_help_close_button:
                             # Check if the close button was clicked
                             if first_time_help_close_button.collidepoint(mx, my):
+                                # Play popup close sound
+                                if game_state and hasattr(game_state, 'sound_manager'):
+                                    game_state.sound_manager.play_sound('popup_close')
                                 first_time_help_content = None
                                 first_time_help_close_button = None
                             else:
@@ -1294,6 +1297,15 @@ def main():
                         
                         # Close first-time help
                         elif event.key == pygame.K_ESCAPE and first_time_help_content:
+                            # Play popup close sound
+                            if game_state and hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_close')
+                            first_time_help_content = None
+                            first_time_help_close_button = None
+                        elif event.key == pygame.K_RETURN and first_time_help_content:
+                            # Play popup accept sound
+                            if game_state and hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_accept')
                             first_time_help_content = None
                             first_time_help_close_button = None
                         
@@ -1374,12 +1386,26 @@ def main():
                 not first_time_help_content and 
                 not onboarding.show_tutorial_overlay):
                 # Check for various first-time mechanics
-                for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']:
+                for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'high_doom_warning']:
                     if onboarding.should_show_mechanic_help(mechanic):
                         help_content = onboarding.get_mechanic_help(mechanic)
                         if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
                             first_time_help_content = help_content
+                            # Play popup open sound
+                            if game_state and hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_open')
                             break
+                
+                # Special case: action_points_exhausted should only show when actually exhausted
+                if (not first_time_help_content and 
+                    onboarding.should_show_mechanic_help('action_points_exhausted') and 
+                    game_state.action_points == 0):
+                    help_content = onboarding.get_mechanic_help('action_points_exhausted')
+                    if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
+                        first_time_help_content = help_content
+                        # Play popup open sound
+                        if game_state and hasattr(game_state, 'sound_manager'):
+                            game_state.sound_manager.play_sound('popup_open')
 
 
             # --- Rendering based on current state --- #
@@ -1484,7 +1510,8 @@ def main():
                     
                     # Draw first-time help if available
                     if first_time_help_content and isinstance(first_time_help_content, dict):
-                        first_time_help_close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H)
+                        mouse_pos = pygame.mouse.get_pos()
+                        first_time_help_close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H, mouse_pos)
                         # If drawing failed (returned None), clear the help content to prevent repeated attempts
                         if first_time_help_close_button is None:
                             first_time_help_content = None

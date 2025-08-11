@@ -2597,7 +2597,7 @@ def draw_stepwise_tutorial_overlay(screen, tutorial_data, w, h):
     return buttons
 
 
-def draw_first_time_help(screen, help_content, w, h):
+def draw_first_time_help(screen, help_content, w, h, mouse_pos=None):
     """
     Draw a small help popup for first-time mechanics.
     
@@ -2605,6 +2605,7 @@ def draw_first_time_help(screen, help_content, w, h):
         screen: pygame surface to draw on
         help_content: dict with title and content for the help popup
         w, h: screen width and height
+        mouse_pos: current mouse position for hover effects (optional)
     """
     if not help_content or not isinstance(help_content, dict):
         return None
@@ -2637,17 +2638,32 @@ def draw_first_time_help(screen, help_content, w, h):
         line_surface = content_font.render(line, True, (255, 255, 255))
         screen.blit(line_surface, (popup_x + 10, popup_y + 40 + i * 20))
     
-    # Close button (X)
+    # Close button (X) with hover effect
     close_button_size = 20
     close_button_x = popup_x + popup_width - close_button_size - 5
     close_button_y = popup_y + 5
     close_button_rect = pygame.Rect(close_button_x, close_button_y, close_button_size, close_button_size)
-    pygame.draw.rect(screen, (200, 100, 100), close_button_rect, border_radius=3)
+    
+    # Check for hover effect
+    close_button_color = (200, 100, 100)  # Default red
+    close_text_color = (255, 255, 255)    # Default white
+    
+    if mouse_pos and close_button_rect.collidepoint(mouse_pos):
+        close_button_color = (255, 120, 120)  # Brighter red on hover
+        close_text_color = (255, 255, 100)    # Yellow text on hover
+    
+    pygame.draw.rect(screen, close_button_color, close_button_rect, border_radius=3)
     
     close_font = pygame.font.SysFont('Consolas', int(h*0.02), bold=True)
-    close_text = close_font.render("×", True, (255, 255, 255))
+    close_text = close_font.render("×", True, close_text_color)
     close_text_rect = close_text.get_rect(center=close_button_rect.center)
     screen.blit(close_text, close_text_rect)
+    
+    # Add dismiss instructions at bottom of popup
+    dismiss_font = pygame.font.SysFont('Consolas', int(h*0.015))
+    dismiss_text = dismiss_font.render("Press Esc to dismiss, Enter to accept", True, (180, 180, 180))
+    dismiss_y = popup_y + popup_height - 25
+    screen.blit(dismiss_text, (popup_x + 10, dismiss_y))
     
     return close_button_rect
 
