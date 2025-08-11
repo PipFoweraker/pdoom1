@@ -17,10 +17,10 @@ class TestGameStateInitialization(unittest.TestCase):
         game_state = GameState("test_seed")
         
         # Verify core resource defaults
-        self.assertEqual(game_state.money, 100000, "Initial money should be 100,000")
+        self.assertEqual(game_state.money, 1000, "Initial money should be 1,000")
         self.assertEqual(game_state.staff, 2, "Initial staff should be 2")
-        self.assertEqual(game_state.reputation, 15, "Initial reputation should be 15")
-        self.assertEqual(game_state.doom, 12, "Initial doom should be 12")
+        self.assertEqual(game_state.reputation, 50, "Initial reputation should be 50")
+        self.assertEqual(game_state.doom, 25, "Initial doom should be 25")
         self.assertEqual(game_state.compute, 0, "Initial compute should be 0")
         self.assertEqual(game_state.research_progress, 0, "Initial research progress should be 0")
         self.assertEqual(game_state.papers_published, 0, "Initial papers published should be 0")

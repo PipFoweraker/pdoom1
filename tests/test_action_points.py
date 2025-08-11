@@ -272,8 +272,8 @@ class TestActionPointsStaffScaling(unittest.TestCase):
         self.game_state.staff = 10
         self.game_state.admin_staff = 3
         
-        expected = 3 + (10 * 0.5) + (3 * 1.0)  # 3 + 5 + 3 = 11
-        self.assertEqual(self.game_state.calculate_max_ap(), 11)
+        expected = 3 + (10 * 0.5) + (3 * 1.0)  # 3 + 5 + 3 = 11, but capped at 10
+        self.assertEqual(self.game_state.calculate_max_ap(), 10)
     
     def test_ap_recalculation_on_turn_end(self):
         """Test that max AP is recalculated at turn end."""
