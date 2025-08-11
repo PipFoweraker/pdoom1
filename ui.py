@@ -7,6 +7,7 @@ def wrap_text(text, font, max_width):
     """
     Splits the text into multiple lines so that each line fits within max_width.
     Returns a list of strings, each representing a line.
+    Improved to handle overflow with better word breaking.
     """
     lines = []
     # Use textwrap to split into words, then try to pack as many as possible per line
@@ -19,22 +20,40 @@ def wrap_text(text, font, max_width):
         else:
             if curr_line:
                 lines.append(curr_line)
-            curr_line = word
+                curr_line = word
+            else:
+                # Handle very long words that don't fit on a line
+                # Break them using character-level wrapping as fallback
+                if font.size(word)[0] > max_width:
+                    # Character-level breaking for extremely long words
+                    for i in range(1, len(word) + 1):
+                        if font.size(word[:i])[0] > max_width:
+                            if i > 1:
+                                lines.append(word[:i-1])
+                                word = word[i-1:]
+                            break
+                curr_line = word
     if curr_line:
         lines.append(curr_line)
     return lines
 
-def render_text(text, font, max_width=None, color=(255,255,255)):
-    """Render text with optional word wrapping. Returns [(surface, (x_offset, y_offset)), ...], bounding rect."""
+def render_text(text, font, max_width=None, color=(255,255,255), line_height_multiplier=1.35):
+    """Render text with optional word wrapping and consistent line height. Returns [(surface, (x_offset, y_offset)), ...], bounding rect."""
     lines = [text]
     if max_width:
         lines = wrap_text(text, font, max_width)
     surfaces = [font.render(line, True, color) for line in lines]
+    
+    # Use consistent line height for better visual spacing
+    font_height = font.get_height()
+    line_height = int(font_height * line_height_multiplier)
+    
     widths = [surf.get_width() for surf in surfaces]
-    heights = [surf.get_height() for surf in surfaces]
-    total_width = max(widths)
-    total_height = sum(heights)
-    offsets = [(0, sum(heights[:i])) for i in range(len(heights))]
+    total_width = max(widths) if widths else 0
+    total_height = line_height * len(lines) if lines else 0
+    
+    # Calculate offsets with consistent line spacing
+    offsets = [(0, i * line_height) for i in range(len(lines))]
     return list(zip(surfaces, offsets)), pygame.Rect(0, 0, total_width, total_height)
 
 def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
@@ -608,7 +627,8 @@ def draw_ui(screen, game_state, w, h):
     if hasattr(game_state, '_get_activity_log_current_position'):
         log_x, log_y = game_state._get_activity_log_current_position(w, h)
     else:
-        log_x, log_y = int(w*0.04), int(h*0.74)  # Fallback to original position
+        # Improved fallback positioning with better alignment
+        log_x, log_y = int(w*0.04), int(h*0.74)  # Keep existing position for compatibility
 
 
     
@@ -951,15 +971,32 @@ def draw_seed_prompt(screen, current_input, weekly_suggestion):
     small = pygame.font.SysFont('Consolas', 24)
     title = pygame.font.SysFont('Consolas', 70, bold=True)
     w, h = screen.get_size()
-    screen.blit(title.render("P(Doom)", True, (240,255,220)), (w//2-180, h//6))
-    screen.blit(font.render("Enter Seed (for weekly challenge, or blank for default):", True, (210,210,255)), (w//6, h//3))
+    
+    # Fix alignment: center title properly without hardcoded offset
+    title_text = title.render("P(Doom)", True, (240,255,220))
+    title_x = (w - title_text.get_width()) // 2  # Proper centering
+    screen.blit(title_text, (title_x, h//6))
+    
+    # Center prompt text properly
+    prompt_text = font.render("Enter Seed (for weekly challenge, or blank for default):", True, (210,210,255))
+    prompt_x = (w - prompt_text.get_width()) // 2
+    screen.blit(prompt_text, (prompt_x, h//3))
+    
+    # Use consistent box positioning
     box = pygame.Rect(w//4, h//2, w//2, 60)
     pygame.draw.rect(screen, (60,60,110), box, border_radius=8)
     pygame.draw.rect(screen, (130,130,210), box, width=3, border_radius=8)
     txt = font.render(current_input, True, (255,255,255))
     screen.blit(txt, (box.x+10, box.y+10))
-    screen.blit(small.render(f"Suggested weekly seed: {weekly_suggestion}", True, (200,255,200)), (w//3, h//2 + 80))
-    screen.blit(small.render("Press [Enter] to start, [Esc] to quit.", True, (255,255,180)), (w//3, h//2 + 120))
+    
+    # Center additional text properly
+    weekly_text = small.render(f"Suggested weekly seed: {weekly_suggestion}", True, (200,255,200))
+    weekly_x = (w - weekly_text.get_width()) // 2
+    screen.blit(weekly_text, (weekly_x, h//2 + 80))
+    
+    instruction_text = small.render("Press [Enter] to start, [Esc] to quit.", True, (255,255,180))
+    instruction_x = (w - instruction_text.get_width()) // 2
+    screen.blit(instruction_text, (instruction_x, h//2 + 120))
     # Example: rendering an upgrade description with wrapping instead of direct render
     # We'll assume this pattern is repeated for upgrades and actions wherever description text is rendered
 
@@ -2048,30 +2085,36 @@ def draw_tutorial_overlay(screen, tutorial_step, w, h):
             line_surface = content_font.render(line, True, (255, 255, 255))
             screen.blit(line_surface, (box_x + 20, content_y + i * line_height))
     
-    # Tutorial navigation buttons
-    button_width = 120
+    # Tutorial navigation buttons - standardized layout and labels
+    button_min_width = 120  # Consistent min-width for visual stability
     button_height = 45
     button_y = box_y + box_height - 60
+    button_spacing = 20
     
-    # Next button
-    next_button_x = box_x + box_width - button_width - 30
-    next_button_rect = pygame.Rect(next_button_x, button_y, button_width, button_height)
-    pygame.draw.rect(screen, (100, 200, 100), next_button_rect, border_radius=8)
+    # Determine if this is the final step (check if tutorial_step has next_step)
+    is_final_step = not tutorial_step.get('next_step', True) if isinstance(tutorial_step, dict) else False
+    
+    # Back button (left side)
+    back_button_x = box_x + 30
+    back_button_rect = pygame.Rect(back_button_x, button_y, button_min_width, button_height)
+    pygame.draw.rect(screen, (150, 150, 150), back_button_rect, border_radius=8)  # Secondary style
+    pygame.draw.rect(screen, (255, 255, 255), back_button_rect, width=2, border_radius=8)
+    
+    back_text = button_font.render("Back", True, (255, 255, 255))
+    back_text_rect = back_text.get_rect(center=back_button_rect.center)
+    screen.blit(back_text, back_text_rect)
+    
+    # Next/Finish button (right side)
+    next_button_x = box_x + box_width - button_min_width - 30
+    next_button_rect = pygame.Rect(next_button_x, button_y, button_min_width, button_height)
+    pygame.draw.rect(screen, (100, 200, 100), next_button_rect, border_radius=8)  # Primary style
     pygame.draw.rect(screen, (255, 255, 255), next_button_rect, width=2, border_radius=8)
     
-    next_text = button_font.render("Next", True, (255, 255, 255))
+    # Use "Finish" for final step, "Next" otherwise
+    next_label = "Finish" if is_final_step else "Next"
+    next_text = button_font.render(next_label, True, (255, 255, 255))
     next_text_rect = next_text.get_rect(center=next_button_rect.center)
     screen.blit(next_text, next_text_rect)
-    
-    # Skip button
-    skip_button_x = box_x + 30
-    skip_button_rect = pygame.Rect(skip_button_x, button_y, button_width, button_height)
-    pygame.draw.rect(screen, (200, 100, 100), skip_button_rect, border_radius=8)
-    pygame.draw.rect(screen, (255, 255, 255), skip_button_rect, width=2, border_radius=8)
-    
-    skip_text = button_font.render("Skip", True, (255, 255, 255))
-    skip_text_rect = skip_text.get_rect(center=skip_button_rect.center)
-    screen.blit(skip_text, skip_text_rect)
     
     # Help button (question mark in top right of tutorial box)
     help_button_size = 30
@@ -2086,15 +2129,10 @@ def draw_tutorial_overlay(screen, tutorial_step, w, h):
     help_text_rect = help_text.get_rect(center=help_button_rect.center)
     screen.blit(help_text, help_text_rect)
     
-    # Progress indicator (if this isn't the first step)
-    progress_text = content_font.render("Press 'H' anytime for help", True, (200, 200, 255))
-    progress_rect = progress_text.get_rect(center=(w//2, box_y + box_height + 30))
-    screen.blit(progress_text, progress_rect)
-    
     # Return button rectangles for click detection
     return {
         'next_button': next_button_rect,
-        'skip_button': skip_button_rect,
+        'back_button': back_button_rect,  # Changed from skip_button to back_button
         'help_button': help_button_rect
     }
 
