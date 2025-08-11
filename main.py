@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay
 
 
 from overlay_manager import OverlayManager
@@ -1320,7 +1320,10 @@ def main():
                         # Regular game keyboard handling (only if tutorial is not active)
                         elif not onboarding.show_tutorial_overlay:
                             if event.key == pygame.K_SPACE and game_state and not game_state.game_over:
-                                game_state.end_turn()
+                                # Try to end turn, play error sound if rejected
+                                if not game_state.end_turn():
+                                    # Turn was rejected (already processing)
+                                    pass  # Error sound already played in end_turn method
                             elif event.key == pygame.K_ESCAPE:
                                 running = False
                             
@@ -1477,6 +1480,7 @@ def main():
                     # Update systems every frame for smooth animation
                     if game_state:
                         game_state._update_ui_transitions()
+                        game_state.update_turn_processing()  # Handle turn transition timing
                         game_state.overlay_manager.update_animations()
                     
                     draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
@@ -1515,6 +1519,10 @@ def main():
                         # If drawing failed (returned None), clear the help content to prevent repeated attempts
                         if first_time_help_close_button is None:
                             first_time_help_content = None
+                    
+                    # Draw turn transition overlay if processing
+                    if game_state and game_state.turn_processing:
+                        draw_turn_transition_overlay(screen, SCREEN_W, SCREEN_H, game_state.turn_processing_timer, game_state.turn_processing_duration)
 
                         
             pygame.display.flip()
