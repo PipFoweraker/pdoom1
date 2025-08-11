@@ -5,9 +5,10 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen
 
 
+from overlay_manager import OverlayManager
 from bug_reporter import BugReporter
 from version import get_display_version
 from onboarding import onboarding
@@ -34,8 +35,10 @@ if current_config.get('audio', {}).get('sound_enabled', True):
 else:
     global_sound_manager.set_enabled(False)
 
-# --- Adaptive window sizing --- #
+# --- Adaptive window sizing with loading screen --- #
 pygame.init()
+
+# Set up initial screen for loading
 info = pygame.display.Info()
 window_scale = current_config['ui']['window_scale']
 SCREEN_W = int(info.current_w * window_scale)
@@ -45,9 +48,32 @@ screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
 pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}")
 clock = pygame.time.Clock()
 
+# Show loading screen during initialization
+
+# Phase 1: Basic setup
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.2, "Initializing systems...")
+pygame.display.flip()
+
+# Phase 2: Config and sound
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.4, "Loading configuration...")
+pygame.display.flip()
+
+# Phase 3: Sound and audio setup
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.6, "Setting up audio...")
+pygame.display.flip()
+
+# Initialize window manager for UI panels
+window_manager = OverlayManager()
+
+# Phase 4: UI components
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.8, "Loading UI components...")
+pygame.display.flip()
+
 # --- Menu and game state management --- #
 # Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial'
 
+# Panel stack tracking for navigation depth
+navigation_stack = []
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
 menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Configuration", "Options", "Player Guide", "README", "Report Bug"]
@@ -98,6 +124,16 @@ bug_report_selected_field = 0
 bug_report_editing_field = False
 bug_report_success_message = ""
 
+# Phase 5: Complete initialization
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 1.0, "Ready!")
+pygame.display.flip()
+
+# Brief pause to show completion (fast-load optimization: skip if under 100ms total)
+import time
+loading_start = time.time()
+if time.time() - loading_start > 0.1:  # Only pause if loading took time
+    pygame.time.wait(500)  # Brief pause to show "Ready!" message
+
 
 def get_weekly_seed():
     import datetime
@@ -112,6 +148,24 @@ def load_markdown_file(filename):
             return f.read()
     except FileNotFoundError:
         return f"Could not load {filename}"
+
+def push_navigation_state(new_state):
+    """Push current state to navigation stack and transition to new state."""
+    global navigation_stack, current_state
+    navigation_stack.append(current_state)
+    current_state = new_state
+
+def pop_navigation_state():
+    """Pop from navigation stack and return to previous state."""
+    global navigation_stack, current_state
+    if navigation_stack:
+        current_state = navigation_stack.pop()
+        return True
+    return False
+
+def get_navigation_depth():
+    """Get current navigation depth (number of states in stack)."""
+    return len(navigation_stack)
 
 def get_tutorial_settings():
     """Get current tutorial settings from file."""
@@ -269,27 +323,27 @@ def handle_menu_keyboard(key):
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
         if selected_menu_item == 0:  # Launch with Weekly Seed
-            current_state = 'pre_game_settings'
+            push_navigation_state('pre_game_settings')
         elif selected_menu_item == 1:  # Launch with Custom Seed
-            current_state = 'pre_game_settings'
+            push_navigation_state('pre_game_settings')
         elif selected_menu_item == 2:  # Configuration
             available_configs = config_manager.list_available_configs()
             config_selected_item = 0
-            current_state = 'config_select'
+            push_navigation_state('config_select')
         elif selected_menu_item == 3:  # Options
             overlay_content = create_settings_content()
             overlay_title = "Settings"
-            current_state = 'overlay'
+            push_navigation_state('overlay')
         elif selected_menu_item == 4:  # Player Guide
             overlay_content = load_markdown_file('PLAYERGUIDE.md')
             overlay_title = "Player Guide"
-            current_state = 'overlay'
+            push_navigation_state('overlay')
         elif selected_menu_item == 5:  # README
             overlay_content = load_markdown_file('README.md')
             overlay_title = "README"
-            current_state = 'overlay'
+            push_navigation_state('overlay')
         elif selected_menu_item == 6:  # Report Bug
-            current_state = 'bug_report'
+            push_navigation_state('bug_report')
 
 def handle_config_keyboard(key):
     """
@@ -316,7 +370,8 @@ def handle_config_keyboard(key):
         # Return to main menu (both for config selection and back button)
         current_state = 'main_menu'
     elif key == pygame.K_ESCAPE:
-        current_state = 'main_menu'
+        if not pop_navigation_state():
+            current_state = 'main_menu'
 
 
 def handle_pre_game_settings_click(mouse_pos, w, h):
@@ -388,7 +443,8 @@ def handle_pre_game_settings_keyboard(key):
         if selected_settings_item < 4:
             cycle_setting_value(selected_settings_item)
     elif key == pygame.K_ESCAPE:
-        current_state = 'main_menu'
+        if not pop_navigation_state():
+            current_state = 'main_menu'
 
 
 def cycle_setting_value(setting_index, reverse=False):
@@ -966,9 +1022,16 @@ def main():
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'overlay':
-                        # Click anywhere to return to main menu from overlay
-                        current_state = 'main_menu'
-                        overlay_scroll = 0
+                        # Check for Back button click first
+                        if back_button_rect and back_button_rect.collidepoint(mx, my):
+                            if not pop_navigation_state():
+                                current_state = 'main_menu'
+                            overlay_scroll = 0
+                        else:
+                            # Click anywhere else to return via navigation stack
+                            if not pop_navigation_state():
+                                current_state = 'main_menu'
+                            overlay_scroll = 0
                     elif current_state == 'custom_seed_prompt':
                         # Future: could add click-to-focus for text input
                         pass
@@ -1000,6 +1063,25 @@ def main():
                                 overlay_content = load_markdown_file('PLAYERGUIDE.md')
                                 overlay_title = "Player Guide"
                                 current_state = 'overlay'
+                        
+                        # Window manager handling (for draggable windows)
+                        elif window_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H):
+                            # Check for minimize button clicks
+                            from ui import draw_window_with_header
+                            for element_id in window_manager.elements:
+                                element = window_manager.elements[element_id]
+                                if element.visible:
+                                    # Get minimize button rect
+                                    header_rect, minimize_rect = draw_window_with_header(
+                                        pygame.Surface((1, 1)), element.rect, element.title, 
+                                        element.content, element.state.value == 'minimized'
+                                    )
+                                    if minimize_rect.collidepoint(mx, my):
+                                        window_manager.toggle_minimize(element_id)
+                                        break
+                            # Window manager handled the event, skip other processing
+                            pass
+                        
                         # First-time help close button
                         elif first_time_help_content and first_time_help_close_button:
                             # Check if the close button was clicked
@@ -1034,7 +1116,12 @@ def main():
                                 tooltip_text = result
                         
                 elif event.type == pygame.MOUSEMOTION:
-                    # Handle overlay manager hover events first
+                    # Handle window manager motion events first (for dragging)
+                    if current_state == 'game' and window_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H):
+                        # Window manager handled the event (dragging), skip other processing
+                        continue
+                    
+                    # Handle overlay manager hover events
                     if current_state == 'game' and game_state:
                         handled_element = game_state.overlay_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H)
                         if handled_element:
@@ -1050,6 +1137,10 @@ def main():
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
                 
                 elif event.type == pygame.MOUSEBUTTONUP:
+                    # Handle window manager button release (for ending drag operations)
+                    if current_state == 'game':
+                        window_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H)
+                    
                     # Handle mouse button release (for ending drag operations)
                     if current_state == 'game' and game_state:
                         game_state.handle_mouse_release(event.pos, SCREEN_W, SCREEN_H)
@@ -1081,7 +1172,8 @@ def main():
                     elif current_state == 'overlay':
                         # Overlay navigation: scroll with arrows, escape to return
                         if event.key == pygame.K_ESCAPE:
-                            current_state = 'main_menu'
+                            if not pop_navigation_state():
+                                current_state = 'main_menu'
                             overlay_scroll = 0
                         elif event.key == pygame.K_UP:
                             overlay_scroll = max(0, overlay_scroll - 20)
@@ -1180,6 +1272,29 @@ def main():
                                 overlay_title = "Player Guide"
                                 overlay_scroll = 0
                                 current_state = 'overlay'
+                            
+                            # 'W' key for window management demo
+                            elif event.key == pygame.K_w:
+                                from overlay_manager import UIElement, ZLayer
+                                
+                                # Create a demo window if it doesn't exist
+                                demo_window_id = "demo_window"
+                                if demo_window_id not in window_manager.elements:
+                                    demo_rect = pygame.Rect(200, 150, 300, 200)
+                                    demo_element = UIElement(
+                                        id=demo_window_id,
+                                        layer=ZLayer.DIALOGS,
+                                        rect=demo_rect,
+                                        title="Demo Window",
+                                        content="This is a draggable window!\n\nYou can:\n- Click and drag the header\n- Click minimize button\n- Press W again to close",
+                                        draggable=True
+                                    )
+                                    # Set header area for dragging (top 30 pixels)
+                                    demo_element.header_rect = pygame.Rect(demo_rect.x, demo_rect.y, demo_rect.width, 30)
+                                    window_manager.register_element(demo_element)
+                                else:
+                                    # Remove existing window
+                                    window_manager.unregister_element(demo_window_id)
 
             # --- Game state initialization --- #
             # Create game state when entering game for first time
@@ -1209,6 +1324,8 @@ def main():
 
 
             # --- Rendering based on current state --- #
+            back_button_rect = None  # Initialize for click handling
+            
             if current_state == 'main_menu':
                 # Grey background as specified in requirements
                 screen.fill((128, 128, 128))
@@ -1244,7 +1361,7 @@ def main():
             elif current_state == 'overlay':
                 # Dark background for documentation overlay
                 screen.fill((40, 40, 50))
-                draw_overlay(screen, overlay_title, overlay_content, overlay_scroll, SCREEN_W, SCREEN_H)
+                back_button_rect = draw_overlay(screen, overlay_title, overlay_content, overlay_scroll, SCREEN_W, SCREEN_H, get_navigation_depth())
                 
             elif current_state == 'bug_report':
                 # Bug report form
@@ -1282,6 +1399,19 @@ def main():
                     # Render overlay manager elements
                     if game_state:
                         game_state.overlay_manager.render_elements(screen)
+                    
+                    # Render window manager elements
+                    for layer in window_manager.z_order:
+                        for element_id in window_manager.z_order[layer]:
+                            element = window_manager.elements[element_id]
+                            if element.visible:
+                                from ui import draw_window_with_header
+                                header_rect, minimize_rect = draw_window_with_header(
+                                    screen, element.rect, element.title, element.content, 
+                                    element.state.value == 'minimized'
+                                )
+                                # Update header rect for dragging
+                                element.header_rect = header_rect
                     
                     if tooltip_text:
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)

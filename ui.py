@@ -3,6 +3,47 @@ import textwrap
 from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
 from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
+def draw_back_button(screen, w, h, navigation_depth, font=None):
+    """
+    Draw a Back button when navigation depth > 1.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for positioning
+        navigation_depth: current navigation depth from navigation stack
+        font: optional font for the button text
+    
+    Returns:
+        pygame.Rect: The button rectangle for click detection, or None if not rendered
+    """
+    if navigation_depth <= 1:
+        return None
+    
+    if font is None:
+        font = pygame.font.SysFont('Consolas', max(16, int(h * 0.025)))
+    
+    # Position button in top-left corner with margin
+    margin = int(h * 0.02)
+    button_text = "← Back"
+    text_surf = font.render(button_text, True, (255, 255, 255))
+    
+    # Button styling
+    padding = int(h * 0.01)
+    button_width = text_surf.get_width() + padding * 2
+    button_height = text_surf.get_height() + padding * 2
+    button_rect = pygame.Rect(margin, margin, button_width, button_height)
+    
+    # Draw button background with subtle styling
+    pygame.draw.rect(screen, (60, 60, 80), button_rect)
+    pygame.draw.rect(screen, (120, 120, 140), button_rect, 2)
+    
+    # Center text in button
+    text_x = button_rect.x + (button_rect.width - text_surf.get_width()) // 2
+    text_y = button_rect.y + (button_rect.height - text_surf.get_height()) // 2
+    screen.blit(text_surf, (text_x, text_y))
+    
+    return button_rect
+
 def wrap_text(text, font, max_width):
     """
     Splits the text into multiple lines so that each line fits within max_width.
@@ -173,6 +214,9 @@ def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     # Draw sound toggle button if sound manager is available (Issue #89)
     if sound_manager:
         draw_mute_button_standalone(screen, sound_manager, w, h)
+    
+    # Draw version in bottom right corner
+    draw_version_footer(screen, w, h)
 
 def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
     """
@@ -321,7 +365,7 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
         inst_y = int(h * 0.8) + i * int(h * 0.04)
         screen.blit(inst_surf, (inst_x, inst_y))
 
-def draw_overlay(screen, title, content, scroll_offset, w, h):
+def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0):
     """
     Draw a scrollable overlay for displaying README or Player Guide content.
     
@@ -331,6 +375,10 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
         content: full text content to display (can be None)
         scroll_offset: vertical scroll position in pixels
         w, h: screen width and height for responsive layout
+        navigation_depth: current navigation depth for Back button display
+    
+    Returns:
+        back_button_rect: Rectangle for Back button click detection (or None)
     
     Features:
     - Semi-transparent dark background overlay
@@ -340,6 +388,7 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
     - Responsive text sizing based on screen dimensions
     - Clear navigation instructions
     - Defensive handling of None title/content values
+    - Back button when navigation depth > 1
     
     The overlay handles long documents by breaking them into lines and showing
     only the visible portion based on scroll_offset. Users can scroll with
@@ -355,6 +404,9 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
     overlay_surface.set_alpha(240)
     overlay_surface.fill((20, 20, 30))
     screen.blit(overlay_surface, (0, 0))
+    
+    # Draw Back button if needed
+    back_button_rect = draw_back_button(screen, w, h, navigation_depth)
     
     # Content area
     margin = int(w * 0.1)
@@ -424,6 +476,222 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
     inst_x = w // 2 - inst_surf.get_width() // 2
     inst_y = content_y + content_height + int(h * 0.03)
     screen.blit(inst_surf, (inst_x, inst_y))
+    
+    return back_button_rect
+
+def draw_window_with_header(screen, rect, title, content=None, minimized=False, font=None):
+    """
+    Draw a window with a draggable header and minimize button.
+    
+    Args:
+        screen: pygame surface to draw on
+        rect: pygame.Rect defining window position and size
+        title: window title text
+        content: optional content to draw in window body
+        minimized: whether window is in minimized state
+        font: optional font for title text
+        
+    Returns:
+        tuple: (header_rect, minimize_button_rect) for interaction handling
+    """
+    if font is None:
+        font = pygame.font.SysFont('Consolas', 16)
+    
+    # Window colors
+    header_color = (60, 60, 80)
+    header_border = (120, 120, 140)
+    body_color = (40, 40, 55)
+    body_border = (100, 100, 120)
+    
+    # Header dimensions
+    header_height = 30
+    header_rect = pygame.Rect(rect.x, rect.y, rect.width, header_height)
+    
+    # Draw header
+    pygame.draw.rect(screen, header_color, header_rect)
+    pygame.draw.rect(screen, header_border, header_rect, 2)
+    
+    # Draw title text
+    title_surf = font.render(title, True, (255, 255, 255))
+    title_x = header_rect.x + 8
+    title_y = header_rect.y + (header_height - title_surf.get_height()) // 2
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Draw minimize button (□ or ─ based on state)
+    button_size = 20
+    button_margin = 5
+    minimize_button_rect = pygame.Rect(
+        header_rect.right - button_size - button_margin,
+        header_rect.y + (header_height - button_size) // 2,
+        button_size, button_size
+    )
+    
+    # Button background
+    button_color = (80, 80, 100)
+    pygame.draw.rect(screen, button_color, minimize_button_rect)
+    pygame.draw.rect(screen, header_border, minimize_button_rect, 1)
+    
+    # Button icon
+    icon_color = (255, 255, 255)
+    if minimized:
+        # Restore icon (□)
+        icon_rect = pygame.Rect(
+            minimize_button_rect.x + 4, minimize_button_rect.y + 4,
+            minimize_button_rect.width - 8, minimize_button_rect.height - 8
+        )
+        pygame.draw.rect(screen, icon_color, icon_rect, 2)
+    else:
+        # Minimize icon (─)
+        line_y = minimize_button_rect.centery
+        line_start = minimize_button_rect.x + 4
+        line_end = minimize_button_rect.right - 4
+        pygame.draw.line(screen, icon_color, (line_start, line_y), (line_end, line_y), 2)
+    
+    # Draw body if not minimized
+    if not minimized:
+        body_rect = pygame.Rect(rect.x, rect.y + header_height, rect.width, rect.height - header_height)
+        pygame.draw.rect(screen, body_color, body_rect)
+        pygame.draw.rect(screen, body_border, body_rect, 2)
+        
+        # Draw content if provided
+        if content:
+            content_rect = pygame.Rect(
+                body_rect.x + 8, body_rect.y + 8,
+                body_rect.width - 16, body_rect.height - 16
+            )
+            if isinstance(content, str):
+                # Simple text content
+                lines = content.split('\n')
+                line_height = font.get_height() + 2
+                for i, line in enumerate(lines):
+                    if i * line_height < content_rect.height:
+                        text_surf = font.render(line, True, (255, 255, 255))
+                        screen.blit(text_surf, (content_rect.x, content_rect.y + i * line_height))
+    
+    return header_rect, minimize_button_rect
+
+def draw_version_footer(screen, w, h, font=None):
+    """
+    Draw version information in the footer area.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for positioning
+        font: optional font for version text
+    """
+    try:
+        from version import get_display_version
+        version_text = get_display_version()
+    except ImportError:
+        version_text = "dev"
+    
+    if font is None:
+        font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
+    
+    # Position in bottom right corner with margin
+    margin = int(h * 0.02)
+    version_surf = font.render(version_text, True, (120, 120, 120))
+    
+    version_x = w - version_surf.get_width() - margin
+    version_y = h - version_surf.get_height() - margin
+    
+    screen.blit(version_surf, (version_x, version_y))
+
+def draw_version_header(screen, w, h, font=None):
+    """
+    Draw version information in the header area (alternative placement).
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for positioning
+        font: optional font for version text
+    """
+    try:
+        from version import get_display_version
+        version_text = get_display_version()
+    except ImportError:
+        version_text = "dev"
+    
+    if font is None:
+        font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
+    
+    # Position in top right corner with margin
+    margin = int(h * 0.02)
+    version_surf = font.render(version_text, True, (120, 120, 120))
+    
+    version_x = w - version_surf.get_width() - margin
+    version_y = margin
+    
+    screen.blit(version_surf, (version_x, version_y))
+
+def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font=None):
+    """
+    Draw a loading screen with progress indicator and accessibility support.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height
+        progress: loading progress (0.0 to 1.0)
+        status_text: text to display for screen readers and status
+        font: optional font for status text
+        
+    Returns:
+        None
+    
+    Accessibility:
+    - role="status" equivalent through clear status text
+    - High contrast colors for visibility
+    - Clear progress indication
+    """
+    if font is None:
+        font = pygame.font.SysFont('Consolas', max(16, int(h * 0.03)))
+    
+    # Dark background
+    screen.fill((20, 20, 30))
+    
+    # Title
+    title_font = pygame.font.SysFont('Consolas', int(h * 0.06), bold=True)
+    title_text = title_font.render("P(Doom)", True, (255, 255, 255))
+    title_x = w // 2 - title_text.get_width() // 2
+    title_y = int(h * 0.3)
+    screen.blit(title_text, (title_x, title_y))
+    
+    # Subtitle
+    subtitle_font = pygame.font.SysFont('Consolas', int(h * 0.025))
+    subtitle_text = subtitle_font.render("Bureaucracy Strategy Prototype", True, (180, 180, 180))
+    subtitle_x = w // 2 - subtitle_text.get_width() // 2
+    subtitle_y = title_y + title_text.get_height() + 10
+    screen.blit(subtitle_text, (subtitle_x, subtitle_y))
+    
+    # Progress bar
+    bar_width = int(w * 0.4)
+    bar_height = int(h * 0.02)
+    bar_x = w // 2 - bar_width // 2
+    bar_y = int(h * 0.5)
+    
+    # Progress bar background
+    pygame.draw.rect(screen, (60, 60, 80), (bar_x, bar_y, bar_width, bar_height))
+    
+    # Progress bar fill
+    fill_width = int(bar_width * max(0, min(1, progress)))
+    if fill_width > 0:
+        pygame.draw.rect(screen, (100, 150, 255), (bar_x, bar_y, fill_width, bar_height))
+    
+    # Progress bar border
+    pygame.draw.rect(screen, (120, 120, 140), (bar_x, bar_y, bar_width, bar_height), 2)
+    
+    # Status text
+    status_surf = font.render(status_text, True, (200, 200, 200))
+    status_x = w // 2 - status_surf.get_width() // 2
+    status_y = bar_y + bar_height + 20
+    screen.blit(status_surf, (status_x, status_y))
+    
+    # Progress percentage
+    if progress > 0:
+        percent_text = subtitle_font.render(f"{int(progress * 100)}%", True, (150, 150, 150))
+        percent_x = w // 2 - percent_text.get_width() // 2
+        percent_y = status_y + status_surf.get_height() + 10
+        screen.blit(percent_text, (percent_x, percent_y))
     
 def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size
@@ -774,6 +1042,9 @@ def draw_ui(screen, game_state, w, h):
     
     # Draw mute button (bottom right)
     draw_mute_button(screen, game_state, w, h)
+    
+    # Draw version in bottom right corner (unobtrusive)
+    draw_version_footer(screen, w, h)
     
     # Draw popup events (overlay, drawn last to be on top)
     draw_popup_events(screen, game_state, w, h, font, big_font)
