@@ -1,6 +1,6 @@
 {
   "tutorial_enabled": true,
-  "is_first_time": true,
+  "is_first_time": false,
   "completed_steps": [],
   "seen_mechanics": [
     "high_doom_warning",

@@ -127,6 +127,7 @@ class ConfigManager:
             # UI Settings
             "ui": {
                 "window_scale": 0.8,           # Percentage of screen size
+                "fullscreen": True,            # Default to fullscreen for better onboarding
                 "font_scale": 1.0,             # Font size multiplier
                 "animation_speed": 1.0,        # Animation speed multiplier
                 "tooltip_delay": 500,          # Milliseconds before tooltip appears

@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen
 
 
 from overlay_manager import OverlayManager
@@ -41,9 +41,17 @@ pygame.init()
 # Set up initial screen for loading
 info = pygame.display.Info()
 window_scale = current_config['ui']['window_scale']
-SCREEN_W = int(info.current_w * window_scale)
-SCREEN_H = int(info.current_h * window_scale)
-FLAGS = pygame.RESIZABLE
+fullscreen_enabled = current_config['ui'].get('fullscreen', False)
+
+if fullscreen_enabled:
+    SCREEN_W = info.current_w
+    SCREEN_H = info.current_h
+    FLAGS = pygame.FULLSCREEN
+else:
+    SCREEN_W = int(info.current_w * window_scale)
+    SCREEN_H = int(info.current_h * window_scale)
+    FLAGS = pygame.RESIZABLE
+
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
 pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}")
 clock = pygame.time.Clock()
@@ -563,8 +571,10 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
         if button_rect.collidepoint(mx, my):
             if i == 0:  # Yes - Enable Tutorial
                 tutorial_enabled = True
+                onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
             elif i == 1:  # No - Regular Mode
                 tutorial_enabled = False
+                onboarding.dismiss_tutorial()
             
             # Set the seed and start the game
             random.seed(seed)
@@ -582,6 +592,7 @@ def handle_tutorial_choice_keyboard(key):
     elif key == pygame.K_RETURN:
         # Default to tutorial enabled
         tutorial_enabled = True
+        onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
         random.seed(seed)
         current_state = 'game'
     elif key == pygame.K_ESCAPE:
@@ -1050,19 +1061,22 @@ def main():
                         handle_high_score_click((mx, my), SCREEN_W, SCREEN_H)
 
                     elif current_state == 'game':
-                        # Tutorial button handling (takes precedence)
-                        if onboarding.show_tutorial_overlay and current_tutorial_content:
-                            if current_tutorial_content['next_button'].collidepoint(mx, my):
-                                # Next button clicked
-                                onboarding.advance_tutorial_step(onboarding.current_tutorial_step)
-                            elif current_tutorial_content['skip_button'].collidepoint(mx, my):
-                                # Skip button clicked
-                                onboarding.dismiss_tutorial()
-                            elif current_tutorial_content['help_button'].collidepoint(mx, my):
-                                # Help button clicked
-                                overlay_content = load_markdown_file('PLAYERGUIDE.md')
-                                overlay_title = "Player Guide"
-                                current_state = 'overlay'
+                        # Stepwise tutorial button handling (takes precedence)
+                        if onboarding.show_tutorial_overlay:
+                            tutorial_data = onboarding.get_current_stepwise_tutorial_data()
+                            if tutorial_data:
+                                tutorial_buttons = draw_stepwise_tutorial_overlay(screen, tutorial_data, SCREEN_W, SCREEN_H)
+                                
+                                # Check button clicks
+                                if 'next' in tutorial_buttons and tutorial_buttons['next'].collidepoint(mx, my):
+                                    # Next button clicked
+                                    onboarding.advance_stepwise_tutorial()
+                                elif 'back' in tutorial_buttons and tutorial_buttons['back'].collidepoint(mx, my):
+                                    # Back button clicked
+                                    onboarding.go_back_stepwise_tutorial()
+                                elif 'skip' in tutorial_buttons and tutorial_buttons['skip'].collidepoint(mx, my):
+                                    # Skip button clicked
+                                    onboarding.dismiss_tutorial()
                         
                         # Window manager handling (for draggable windows)
                         elif window_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H):
@@ -1213,11 +1227,14 @@ def main():
                             
                     elif current_state == 'game':
 
-                        # Tutorial keyboard handling (takes precedence when tutorial is active)
+                        # Stepwise tutorial keyboard handling (takes precedence when tutorial is active)
                         if onboarding.show_tutorial_overlay:
                             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                                 # Advance tutorial step
-                                onboarding.advance_tutorial_step(onboarding.current_tutorial_step)
+                                onboarding.advance_stepwise_tutorial()
+                            elif event.key == pygame.K_BACKSPACE:
+                                # Go back in tutorial
+                                onboarding.go_back_stepwise_tutorial()
                             elif event.key == pygame.K_ESCAPE:
                                 # Skip tutorial
                                 onboarding.dismiss_tutorial()
@@ -1417,10 +1434,11 @@ def main():
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
                     
 
-                    # Draw tutorial overlay if active
-                    if onboarding.show_tutorial_overlay and onboarding.current_tutorial_step:
-                        tutorial_content = onboarding.get_tutorial_content(onboarding.current_tutorial_step)
-                        current_tutorial_content = draw_tutorial_overlay(screen, tutorial_content, SCREEN_W, SCREEN_H)
+                    # Draw stepwise tutorial overlay if active
+                    if onboarding.show_tutorial_overlay:
+                        tutorial_data = onboarding.get_current_stepwise_tutorial_data()
+                        if tutorial_data:
+                            tutorial_button_rects = draw_stepwise_tutorial_overlay(screen, tutorial_data, SCREEN_W, SCREEN_H)
                     
                     # Draw first-time help if available
                     if first_time_help_content and isinstance(first_time_help_content, dict):
