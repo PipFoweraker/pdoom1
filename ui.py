@@ -2292,7 +2292,14 @@ def get_graphics_display(quality):
 
 def get_safety_display(safety_level):
     """Safety protocol levels for the bureaucratic theme."""
-    return "INSTITUTIONAL"  # Default for now, can be expanded
+    mapping = {
+        "MINIMAL": "MINIMAL",
+        "STANDARD": "STANDARD", 
+        "ENHANCED": "ENHANCED",
+        "MAXIMUM": "MAXIMUM",
+        "DUMMY": "STANDARD"
+    }
+    return mapping.get(safety_level, "STANDARD")
 
 
 def draw_enhanced_continue_button(screen, rect, text, button_state):
