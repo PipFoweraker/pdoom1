@@ -3007,7 +3007,7 @@ def draw_tutorial_choice(screen, w, h, selected_item):
     # Instructions
     inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
     instructions = [
-        "Use arrow keys to navigate, Enter to start game",
+        "Use arrow keys or mouse to navigate, Enter/Space to confirm",
         "Tutorial mode provides helpful guidance for new players"
     ]
     

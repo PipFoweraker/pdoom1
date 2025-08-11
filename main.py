@@ -99,6 +99,9 @@ overlay_scroll = 0
 config_selected_item = 0
 available_configs = []
 
+# Tutorial choice state
+tutorial_choice_selected_item = 0  # For tutorial choice navigation (0=Yes, 1=No)
+
 # Pre-game settings state
 pre_game_settings = {
     "difficulty": "STANDARD",
@@ -552,7 +555,7 @@ def handle_seed_selection_keyboard(key):
 
 def handle_tutorial_choice_click(mouse_pos, w, h):
     """Handle mouse clicks on tutorial choice screen."""
-    global current_state, tutorial_enabled
+    global current_state, tutorial_enabled, tutorial_choice_selected_item
     
     # Calculate button positions (must match draw_tutorial_choice layout)
     button_width = int(w * 0.4)
@@ -569,6 +572,7 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
         button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
         
         if button_rect.collidepoint(mx, my):
+            tutorial_choice_selected_item = i  # Update selection for visual feedback
             if i == 0:  # Yes - Enable Tutorial
                 tutorial_enabled = True
                 onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
@@ -582,17 +586,51 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
             break
 
 
+def handle_tutorial_choice_hover(mouse_pos, w, h):
+    """Handle mouse hover for tutorial choice screen to update selection."""
+    global tutorial_choice_selected_item
+    
+    # Calculate button positions (must match draw_tutorial_choice layout)
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.4)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    for i in range(2):  # Yes tutorial, No tutorial
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            tutorial_choice_selected_item = i
+            break
+
+
 def handle_tutorial_choice_keyboard(key):
     """Handle keyboard navigation for tutorial choice screen."""
-    global current_state, tutorial_enabled
+    global current_state, tutorial_enabled, tutorial_choice_selected_item
     
-    if key == pygame.K_UP or key == pygame.K_DOWN:
-        # Toggle between yes and no
-        pass  # Visual selection can be added later
-    elif key == pygame.K_RETURN:
-        # Default to tutorial enabled
-        tutorial_enabled = True
-        onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
+    if key == pygame.K_UP:
+        tutorial_choice_selected_item = (tutorial_choice_selected_item - 1) % 2
+    elif key == pygame.K_DOWN:
+        tutorial_choice_selected_item = (tutorial_choice_selected_item + 1) % 2
+    elif key == pygame.K_LEFT:
+        tutorial_choice_selected_item = (tutorial_choice_selected_item - 1) % 2
+    elif key == pygame.K_RIGHT:
+        tutorial_choice_selected_item = (tutorial_choice_selected_item + 1) % 2
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        # Use currently selected item
+        if tutorial_choice_selected_item == 0:  # Yes - Enable Tutorial
+            tutorial_enabled = True
+            onboarding.start_stepwise_tutorial()
+        else:  # No - Regular Mode
+            tutorial_enabled = False
+            onboarding.dismiss_tutorial()
+        
+        # Set the seed and start the game
         random.seed(seed)
         current_state = 'game'
     elif key == pygame.K_ESCAPE:
@@ -1146,6 +1184,10 @@ def main():
                     if current_state == 'game' and game_state:
                         game_state.handle_mouse_motion(event.pos, SCREEN_W, SCREEN_H)
                     
+                    # Mouse hover effects for tutorial choice screen
+                    elif current_state == 'tutorial_choice':
+                        handle_tutorial_choice_hover(event.pos, SCREEN_W, SCREEN_H)
+                    
                     # Mouse hover effects only active during gameplay
                     if current_state == 'game' and game_state:
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
@@ -1368,7 +1410,7 @@ def main():
             elif current_state == 'tutorial_choice':
                 # Tutorial choice screen
                 screen.fill((50, 50, 50))
-                draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, 0)  # Selected item handling can be improved
+                draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, tutorial_choice_selected_item)
                 
             elif current_state == 'custom_seed_prompt':
                 # Preserve original seed prompt appearance
