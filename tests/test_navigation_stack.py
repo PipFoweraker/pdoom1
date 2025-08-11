@@ -13,7 +13,7 @@ import pygame
 import unittest
 from unittest.mock import patch
 import main
-from ui import draw_back_button
+from ui import draw_back_button, should_show_back_button
 
 
 class TestNavigationStack(unittest.TestCase):
@@ -81,6 +81,43 @@ class TestNavigationStack(unittest.TestCase):
             self.assertEqual(main.current_state, expected_state)
 
 
+class TestBackButtonHelper(unittest.TestCase):
+    """Test the should_show_back_button helper function."""
+
+    def test_should_show_back_button(self):
+        """Test should_show_back_button logic."""
+        # Should not show at depth 0
+        self.assertFalse(should_show_back_button(0))
+        
+        # Should show at depth >= 1
+        self.assertTrue(should_show_back_button(1))
+        self.assertTrue(should_show_back_button(2))
+        self.assertTrue(should_show_back_button(5))
+
+
+class TestBackButtonClick(unittest.TestCase):
+    """Test Back button click handling."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        # Reset navigation stack before each test
+        main.navigation_stack = []
+        main.current_state = 'main_menu'
+
+    def test_back_button_triggers_pop_navigation(self):
+        """Test that clicking back button at depth 1 triggers pop_navigation_state."""
+        # Set up navigation at depth 1
+        main.push_navigation_state('overlay')
+        self.assertEqual(main.get_navigation_depth(), 1)
+        self.assertEqual(main.current_state, 'overlay')
+        
+        # Simulate back button click (should trigger pop_navigation_state)
+        result = main.pop_navigation_state()
+        self.assertTrue(result)
+        self.assertEqual(main.get_navigation_depth(), 0)
+        self.assertEqual(main.current_state, 'main_menu')
+
+
 class TestBackButton(unittest.TestCase):
     """Test Back button component."""
 
@@ -95,14 +132,15 @@ class TestBackButton(unittest.TestCase):
 
     def test_back_button_visibility(self):
         """Test Back button visibility based on navigation depth."""
-        # Should not show at depth 0 or 1
+        # Should not show at depth 0
         rect = draw_back_button(self.screen, 800, 600, 0)
         self.assertIsNone(rect)
         
+        # Should show at depth >= 1
         rect = draw_back_button(self.screen, 800, 600, 1)
-        self.assertIsNone(rect)
+        self.assertIsNotNone(rect)
+        self.assertIsInstance(rect, pygame.Rect)
         
-        # Should show at depth > 1
         rect = draw_back_button(self.screen, 800, 600, 2)
         self.assertIsNotNone(rect)
         self.assertIsInstance(rect, pygame.Rect)
