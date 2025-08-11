@@ -3,6 +3,7 @@
   "is_first_time": true,
   "completed_steps": [],
   "seen_mechanics": [
+    "high_doom_warning",
     "first_staff_hire"
   ],
   "tutorial_dismissed": false

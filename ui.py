@@ -37,7 +37,7 @@ def render_text(text, font, max_width=None, color=(255,255,255)):
     offsets = [(0, sum(heights[:i])) for i in range(len(heights))]
     return list(zip(surfaces, offsets)), pygame.Rect(0, 0, total_width, total_height)
 
-def draw_main_menu(screen, w, h, selected_item):
+def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     """
     Draw the main menu with vertically stacked, center-oriented buttons.
     
@@ -45,6 +45,7 @@ def draw_main_menu(screen, w, h, selected_item):
         screen: pygame surface to draw on
         w, h: screen width and height for responsive layout
         selected_item: index of currently selected menu item (for keyboard navigation)
+        sound_manager: optional SoundManager instance for sound toggle button
     
     Features:
     - Grey background as specified in requirements
@@ -55,6 +56,7 @@ def draw_main_menu(screen, w, h, selected_item):
       * Inactive: grey (Options button is placeholder)
     - Responsive sizing based on screen dimensions
     - Clear usage instructions at bottom
+    - Sound toggle button in bottom right (if sound_manager provided)
     """
     # Fonts for menu - scale based on screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.08), bold=True)
@@ -148,6 +150,10 @@ def draw_main_menu(screen, w, h, selected_item):
     for i, shortcut_text in enumerate(right_formatted):
         shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
         screen.blit(shortcut_surf, (right_x, right_y + 30 + i * 25))
+    
+    # Draw sound toggle button if sound manager is available (Issue #89)
+    if sound_manager:
+        draw_mute_button_standalone(screen, sound_manager, w, h)
 
 def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
     """
@@ -840,13 +846,43 @@ def draw_employee_blobs(screen, game_state, w, h):
 
 def draw_mute_button(screen, game_state, w, h):
     """Draw mute/unmute button in bottom right corner"""
-    # Button position (bottom right)
-    button_size = int(min(w, h) * 0.04)
+    # Button position (bottom right) - made larger per issue #89
+    button_size = int(min(w, h) * 0.06)  # Increased from 0.04 to 0.06 for better visibility
     button_x = w - button_size - 20
     button_y = h - button_size - 20
     
     # Button colors
     if game_state.sound_manager.is_enabled():
+        bg_color = (100, 200, 100)  # Green when sound is on
+        icon_color = (255, 255, 255)
+        symbol = "♪"  # Musical note when sound is on
+    else:
+        bg_color = (200, 100, 100)  # Red when sound is off
+        icon_color = (255, 255, 255) 
+        symbol = "🔇"  # Muted symbol when sound is off
+    
+    # Draw button background
+    button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
+    pygame.draw.rect(screen, bg_color, button_rect, border_radius=8)
+    pygame.draw.rect(screen, (255, 255, 255), button_rect, width=2, border_radius=8)
+    
+    # Draw icon
+    font_size = int(button_size * 0.6)
+    font = pygame.font.SysFont('Arial', font_size)
+    icon_surf = font.render(symbol, True, icon_color)
+    icon_x = button_x + (button_size - icon_surf.get_width()) // 2
+    icon_y = button_y + (button_size - icon_surf.get_height()) // 2
+    screen.blit(icon_surf, (icon_x, icon_y))
+
+def draw_mute_button_standalone(screen, sound_manager, w, h):
+    """Draw mute/unmute button in bottom right corner (standalone version for menus)"""
+    # Button position (bottom right) - made larger per issue #89
+    button_size = int(min(w, h) * 0.06)  # Same size as main game mute button
+    button_x = w - button_size - 20
+    button_y = h - button_size - 20
+    
+    # Button colors
+    if sound_manager.is_enabled():
         bg_color = (100, 200, 100)  # Green when sound is on
         icon_color = (255, 255, 255)
         symbol = "♪"  # Musical note when sound is on
@@ -2117,7 +2153,7 @@ def draw_first_time_help(screen, help_content, w, h):
     
     return close_button_rect
 
-def draw_pre_game_settings(screen, w, h, settings, selected_item):
+def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=None):
     """
     Draw the pre-game settings screen with configurable options.
     
@@ -2126,6 +2162,7 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item):
         w, h: screen width and height for responsive layout
         settings: dictionary of current settings values
         selected_item: index of currently selected setting (for keyboard navigation)
+        sound_manager: optional SoundManager instance for sound toggle button
     """
     # Clear background
     screen.fill((50, 50, 50))
@@ -2191,9 +2228,13 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item):
         inst_x = w // 2 - inst_surf.get_width() // 2
         screen.blit(inst_surf, (inst_x, inst_y))
         inst_y += inst_surf.get_height() + 5
+    
+    # Draw sound toggle button if sound manager is available (Issue #89)
+    if sound_manager:
+        draw_mute_button_standalone(screen, sound_manager, w, h)
 
 
-def draw_seed_selection(screen, w, h, selected_item, seed_input=""):
+def draw_seed_selection(screen, w, h, selected_item, seed_input="", sound_manager=None):
     """
     Draw the seed selection screen.
     
@@ -2275,6 +2316,10 @@ def draw_seed_selection(screen, w, h, selected_item, seed_input=""):
         inst_x = w // 2 - inst_surf.get_width() // 2
         screen.blit(inst_surf, (inst_x, inst_y))
         inst_y += inst_surf.get_height() + 5
+    
+    # Draw sound toggle button if sound manager is available (Issue #89)
+    if sound_manager:
+        draw_mute_button_standalone(screen, sound_manager, w, h)
 
 
 def draw_tutorial_choice(screen, w, h, selected_item):

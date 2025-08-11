@@ -13,10 +13,26 @@ from version import get_display_version
 from onboarding import onboarding
 from config_manager import initialize_config_system, get_current_config, config_manager
 from event_system import EventAction
+from sound_manager import SoundManager
 
 # Initialize config system on startup
 initialize_config_system()
 current_config = get_current_config()
+
+# Initialize global sound manager for menu use
+global_sound_manager = SoundManager()
+
+# Initialize with config setting if available
+# Ensure audio section exists in config
+if 'audio' not in current_config:
+    current_config['audio'] = {}
+if 'sound_enabled' not in current_config['audio']:
+    current_config['audio']['sound_enabled'] = True
+    
+if current_config.get('audio', {}).get('sound_enabled', True):
+    global_sound_manager.set_enabled(True)
+else:
+    global_sound_manager.set_enabled(False)
 
 # --- Adaptive window sizing --- #
 pygame.init()
@@ -213,6 +229,20 @@ def handle_menu_click(mouse_pos, w, h):
             elif i == 5:  # Report Bug
                 current_state = 'bug_report'
             break
+    
+    # Check for sound button click (bottom right corner)
+    button_size = int(min(w, h) * 0.06)
+    button_x = w - button_size - 20
+    button_y = h - button_size - 20
+    sound_button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
+    
+    if sound_button_rect.collidepoint(mx, my):
+        global_sound_manager.toggle()
+        # Update config to persist the sound setting
+        if 'audio' not in current_config:
+            current_config['audio'] = {}
+        current_config['audio']['sound_enabled'] = global_sound_manager.is_enabled()
+        config_manager.save_config(config_manager.get_current_config_name(), current_config)
 
 def handle_menu_keyboard(key):
     """
@@ -317,6 +347,20 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
             # For now, other settings don't do anything when clicked
             # In a full implementation, they would cycle through values
             break
+    
+    # Check for sound button click (bottom right corner)
+    button_size = int(min(w, h) * 0.06)
+    button_x = w - button_size - 20
+    button_y = h - button_size - 20
+    sound_button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
+    
+    if sound_button_rect.collidepoint(mx, my):
+        global_sound_manager.toggle()
+        # Update config to persist the sound setting
+        if 'audio' not in current_config:
+            current_config['audio'] = {}
+        current_config['audio']['sound_enabled'] = global_sound_manager.is_enabled()
+        config_manager.save_config(config_manager.get_current_config_name(), current_config)
 
 
 def handle_pre_game_settings_keyboard(key):
@@ -361,6 +405,20 @@ def handle_seed_selection_click(mouse_pos, w, h):
                 seed_choice = "custom"
                 current_state = 'custom_seed_prompt'
             break
+    
+    # Check for sound button click (bottom right corner)
+    button_size = int(min(w, h) * 0.06)
+    button_x = w - button_size - 20
+    button_y = h - button_size - 20
+    sound_button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
+    
+    if sound_button_rect.collidepoint(mx, my):
+        global_sound_manager.toggle()
+        # Update config to persist the sound setting
+        if 'audio' not in current_config:
+            current_config['audio'] = {}
+        current_config['audio']['sound_enabled'] = global_sound_manager.is_enabled()
+        config_manager.save_config(config_manager.get_current_config_name(), current_config)
 
 
 def handle_seed_selection_keyboard(key):
@@ -1079,7 +1137,9 @@ def main():
             if current_state == 'game' and game_state is None:
                 game_state = GameState(seed)
                 
-
+                # Sync sound state from global sound manager to game state
+                game_state.sound_manager.set_enabled(global_sound_manager.is_enabled())
+                
                 # Check if tutorial should be shown for new players
                 if onboarding.should_show_tutorial() and not game_state.onboarding_started:
                     onboarding.start_tutorial()
@@ -1103,7 +1163,7 @@ def main():
             if current_state == 'main_menu':
                 # Grey background as specified in requirements
                 screen.fill((128, 128, 128))
-                draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item)
+                draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item, global_sound_manager)
             
             elif current_state == 'config_select':
                 # Config selection menu
@@ -1115,12 +1175,12 @@ def main():
             elif current_state == 'pre_game_settings':
                 # Pre-game settings screen
                 screen.fill((50, 50, 50))
-                draw_pre_game_settings(screen, SCREEN_W, SCREEN_H, pre_game_settings, selected_settings_item)
+                draw_pre_game_settings(screen, SCREEN_W, SCREEN_H, pre_game_settings, selected_settings_item, global_sound_manager)
             
             elif current_state == 'seed_selection':
                 # Seed selection screen
                 screen.fill((50, 50, 50))
-                draw_seed_selection(screen, SCREEN_W, SCREEN_H, 0, seed_input)  # Selected item handling can be improved
+                draw_seed_selection(screen, SCREEN_W, SCREEN_H, 0, seed_input, global_sound_manager)  # Selected item handling can be improved
             
             elif current_state == 'tutorial_choice':
                 # Tutorial choice screen
