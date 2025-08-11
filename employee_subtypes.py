@@ -164,6 +164,9 @@ def apply_subtype_effects(game_state, subtype_id):
     # Special handling for manager
     if subtype_id == "manager":
         game_state._hire_manager()
+        # Set subtype for manager blob
+        if game_state.employee_blobs and game_state.employee_blobs[-1]['type'] == 'manager':
+            game_state.employee_blobs[-1]['subtype'] = subtype_id
         return True, f"Manager hired! Specialized in {subtype['specialization']}."
     
     # Apply standard effects
@@ -174,6 +177,20 @@ def apply_subtype_effects(game_state, subtype_id):
             messages.append(f"+{value} {attribute}")
         else:
             messages.append(f"{value} {attribute}")
+    
+    # Set subtype for the most recently added employee blob
+    if game_state.employee_blobs:
+        for blob in reversed(game_state.employee_blobs):
+            if blob['type'] == 'employee' and blob['subtype'] == 'generalist':
+                blob['subtype'] = subtype_id
+                # Get productive action category and set default action
+                from productive_actions import get_employee_category, get_default_action_index
+                category = get_employee_category(subtype_id)
+                if category:
+                    default_action_index = get_default_action_index(category)
+                    if default_action_index is not None:
+                        blob['productive_action_index'] = default_action_index
+                break
     
     effect_summary = ", ".join(messages)
     success_msg = f"{subtype['name']} hired! Effects: {effect_summary}"

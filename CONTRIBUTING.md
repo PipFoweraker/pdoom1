@@ -59,4 +59,31 @@ When implementing UI and visual feedback enhancements, follow these protocols:
 - **PLAYERGUIDE.md**: Update controls section with keyboard shortcuts
 - **Test Coverage**: Document all new test cases and their purposes
 
+### Productive Actions System
+When adding or editing employee productive actions, follow these guidelines:
+
+**Action Design Principles:**
+- **Balanced Bonuses**: Keep effectiveness bonuses between 1.06 (6%) and 1.18 (18%)
+- **Clear Requirements**: Use specific, measurable requirements (compute, reputation, staff counts)
+- **Logical Progression**: Higher bonuses should require more substantial organizational development
+- **Thematic Consistency**: Actions should match employee specialization and organizational stage
+
+**Implementation Requirements:**
+- **Clear Logging**: Always provide descriptive failure reasons for unmet requirements
+- **Graceful Degradation**: Apply 10% penalty (0.9 multiplier) when requirements aren't met
+- **Requirement Validation**: Test all requirement types with edge cases (zero values, high values)
+- **Category Mapping**: Ensure all employee subtypes map to appropriate action categories
+
+**Testing Standards:**
+- **Requirement Testing**: Test all combinations of met/unmet requirements  
+- **Bonus Calculation**: Verify productivity bonuses apply correctly to research generation
+- **Integration Testing**: Test with various game state scenarios (early/mid/late game)
+- **Message Validation**: Ensure logging output is clear and not spammy
+
+**Code Quality:**
+- **Descriptive Names**: Use clear action names that immediately convey purpose
+- **Comprehensive Descriptions**: Write detailed descriptions explaining the action's impact
+- **Consistent Structure**: Follow the established pattern in `PRODUCTIVE_ACTIONS` 
+- **Documentation**: Update DEVELOPERGUIDE.md extension points when adding new requirement types
+
 Cheers!

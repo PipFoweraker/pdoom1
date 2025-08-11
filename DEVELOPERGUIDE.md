@@ -840,6 +840,83 @@ The milestone system is designed for easy expansion:
 - Extend management rules in `_update_management_structure()`
 - Add new visual indicators in `draw_employee_blobs()`
 
+### Productive Actions System
+
+**Overview:**
+The productive actions system provides ongoing, automated bonuses for employees when organizational requirements are met. Each employee category has three specialized actions they can perform.
+
+**Architecture:**
+```python
+# Module: productive_actions.py
+PRODUCTIVE_ACTIONS = {
+    'junior_researcher': [
+        {
+            'name': 'Literature Review',
+            'description': '...',
+            'effectiveness_bonus': 1.08,  # +8% productivity bonus
+            'requirements': {
+                'compute_per_employee': 0.5,
+                'min_reputation': 0
+            }
+        },
+        # ... 2 more actions per category
+    ],
+    # ... 6 total categories
+}
+```
+
+**Employee Categories:**
+- **junior_researcher** (maps to 'researcher', 'generalist' subtypes)
+- **senior_researcher** (maps to 'data_scientist' subtype)  
+- **security_engineer** (maps to 'security_specialist' subtype)
+- **operations_specialist** (maps to 'engineer' subtype)
+- **administrative_staff** (maps to 'administrator' subtype)
+- **manager** (maps to 'manager' subtype)
+
+**Integration Points:**
+```python
+# Employee blob structure (game_state.py)
+blob = {
+    'subtype': 'researcher',              # Employee specialization
+    'productive_action_index': 0,         # Selected action (0-2)
+    'productive_action_bonus': 1.0,       # Current effectiveness multiplier
+    'productive_action_active': False     # Whether requirements are met
+}
+
+# Productivity calculation (_update_employee_productivity)
+requirements_met, failure_reason = check_action_requirements(action, self, compute_per_employee)
+if requirements_met:
+    blob['productive_action_bonus'] = action['effectiveness_bonus']
+    blob['productive_action_active'] = True
+else:
+    blob['productive_action_bonus'] = 0.9  # 10% penalty
+    blob['productive_action_active'] = False
+```
+
+**Requirement Types:**
+- `compute_per_employee`: Available compute resources per employee
+- `min_reputation`: Minimum organization reputation
+- `min_staff`: Minimum total staff count
+- `min_research_staff`: Minimum specialized research staff
+- `min_research_progress`: Minimum accumulated research progress
+- `min_money`: Minimum available funding
+- `min_compute`: Minimum total compute infrastructure
+- `min_board_members`: Minimum board oversight
+- `min_admin_staff`: Minimum administrative support
+
+**Extension Guide:**
+1. **Adding New Actions**: Edit `PRODUCTIVE_ACTIONS` in `productive_actions.py`
+2. **New Requirements**: Add checks in `check_action_requirements()`
+3. **New Employee Categories**: Update `EMPLOYEE_SUBTYPE_TO_CATEGORY` mapping
+4. **Custom Bonuses**: Modify bonus application in `_update_employee_productivity()`
+
+**Testing:**
+Covered by `tests/test_productive_actions.py`:
+- Action definitions and structure validation
+- Requirement checking with mock game states
+- Integration with employee blob system
+- Productivity update mechanics
+
 ---
 
 ## Code Style & Guidelines

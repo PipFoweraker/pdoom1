@@ -141,6 +141,22 @@ As your organization grows, you'll encounter special milestone events:
 - **Managers** (green with crown): Supervise clusters of employees  
 - **Board Members** (purple with briefcase): Ensure regulatory compliance
 
+### Employee Productive Actions
+Each employee performs specialized productive actions when requirements are met, providing passive bonuses appropriate to their role:
+
+- **Research Staff**: Focus on literature review, data collection, and advanced algorithm development
+- **Security Engineers**: Conduct security auditing, threat modeling, and incident response
+- **Operations Staff**: Optimize infrastructure, monitor systems, and maintain documentation  
+- **Administrative Staff**: Streamline processes, manage stakeholder relations, and ensure compliance
+- **Managers**: Handle strategic planning, team coordination, and resource allocation
+
+**Key Mechanics:**
+- Employees automatically perform their selected productive action each game tick (no cost)
+- Actions require sufficient compute, reputation, or organizational resources to activate
+- Active actions provide multiplicative effectiveness bonuses (typically +6% to +18%)
+- Failed requirements result in reduced effectiveness until conditions improve
+- Actions can be changed at any time (future UI feature planned)
+
 ### Cash Flow UI
 - **Unlocked by**: Purchasing the Accounting Software upgrade ($500)
 - **Features**: 
