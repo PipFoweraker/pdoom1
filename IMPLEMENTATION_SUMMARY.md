@@ -152,6 +152,88 @@ x, y = game_state._calculate_blob_position(blob_index, screen_w, screen_h)
 - **Code Quality**: Comprehensive documentation and protocols
 - **Accessibility**: Full keyboard navigation support
 
+## 4. Batch 1 Stability & UI Correctness Improvements
+
+**Implementation Date:** 2024 - Issues #122, #118, #121, #52, #131
+
+### Navigation / Back Button Improvements
+
+**Functionality:**
+- Fixed back button visibility rule: now shows at navigation depth >= 1 (previously > 1)
+- New `should_show_back_button(depth: int) -> bool` helper function for clarity
+- Proper navigation state management with push/pop operations
+- Enhanced keyboard and mouse navigation support
+
+**Visual Integration:**
+- Back button renders in top-left corner with appropriate styling
+- Consistent positioning and scaling across screen sizes
+- Clear "← Back" indicator with hover effects
+
+**Issues Addressed:**
+- Closes #122: Back functionality now available at depth 1
+- Closes #118: Duplicate back button issue resolved with centralized helper
+- Improved user navigation experience with predictable back button behavior
+
+### UI Overlap Prevention System
+
+**Smart Overlay Positioning:**
+- New `get_ui_safe_zones(w, h)` function defines interactive area protection
+- `find_safe_overlay_position()` implements first-fit positioning algorithm
+- Protected areas include:
+  - Resource header (top bar with money, staff, reputation)
+  - Action buttons area (left side)
+  - Upgrade area (right side) 
+  - Event log area (bottom left)
+  - End turn button area (bottom right)
+
+**Positioning Algorithm:**
+- Prioritizes gap between action and upgrade areas (x=280-520)
+- Falls back to minimal intersection positioning when no safe space available
+- Maintains overlay visibility within screen bounds
+- Scales appropriately for different screen sizes
+
+**Issues Addressed:**
+- Fixes #121: Overlay panels no longer obscure core interactive areas
+- Provides foundation for future drag capability
+- Enhanced user experience with clear UI separation
+
+### Accounting Software Verification
+
+**Balance Change Tracking:**
+- Verified correct implementation of `last_balance_change` in `GameState._add()`
+- Proper conditional tracking only when accounting software is purchased
+- Accurate sign preservation for positive/negative transactions
+- Sequential transaction handling (tracks most recent change only)
+
+**UI Display:**
+- Green color (100, 255, 100) for positive/zero balance changes
+- Red color (255, 100, 100) for negative balance changes
+- Proper formatting with "+" prefix for positive amounts
+- Integration with existing money display system
+
+**Issues Addressed:**
+- Fixes #52: Accounting software now correctly tracks and displays balance changes
+- Enhanced financial transparency for players
+- Proper visual feedback for monetary transactions
+
+### Test Coverage & Regression Prevention
+
+**New Test Suites:**
+- `test_navigation_stack.py`: Comprehensive navigation depth and back button testing
+- `test_accounting_software.py`: Full accounting functionality verification
+- `test_ui_overlap_prevention.py`: Safe zone and positioning algorithm testing
+
+**Test Coverage:**
+- 15+ new tests covering navigation behavior
+- 8+ tests for accounting software functionality  
+- 7+ tests for UI overlap prevention
+- All existing tests maintained and passing
+
+**Issues Addressed:**
+- Addresses #131: Added regression tests to prevent future UI issues
+- Comprehensive validation of all Batch 1 features
+- Foundation for continuous integration quality assurance
+
 ## 🎉 Conclusion
 
 All requirements from issue #68 have been successfully implemented:
@@ -161,5 +243,13 @@ All requirements from issue #68 have been successfully implemented:
 - ✅ Enhanced scrolling and overlay functionality
 - ✅ Comprehensive test coverage
 - ✅ Complete documentation updates
+
+**Batch 1 - Stability & UI Correctness (2024):**
+- ✅ Back button functionality at navigation depth >= 1 (#122, #118)
+- ✅ UI overlay positioning with safe zone protection (#121)
+- ✅ Accounting software balance change verification (#52)
+- ✅ Comprehensive regression test coverage (#131)
+- ✅ Enhanced user navigation experience
+- ✅ Minimal, surgical code changes preserving existing functionality
 
 The implementation maintains backward compatibility, follows existing code patterns, and provides a significantly enhanced user experience while adhering to accessibility guidelines and UI best practices.

@@ -8,6 +8,9 @@ def get_ui_safe_zones(w, h):
     """
     Define safe zones where overlays should not be positioned to avoid obscuring interactive areas.
     
+    This function implements the solution for Issue #121 (UI overlap / lack of draggability)
+    by defining reserved areas that overlay panels should avoid to maintain UI usability.
+    
     Args:
         w, h: screen width and height
         
@@ -42,6 +45,9 @@ def get_ui_safe_zones(w, h):
 def find_safe_overlay_position(overlay_rect, screen_w, screen_h, safe_zones):
     """
     Find a position for an overlay that doesn't intersect with safe zones.
+    
+    This implements the first-fit positioning algorithm for Issue #121 (UI overlap prevention)
+    to ensure overlay panels don't obscure core interactive areas.
     
     Args:
         overlay_rect: pygame.Rect for the overlay to position
@@ -139,6 +145,10 @@ def should_show_back_button(depth: int) -> bool:
         
     Returns:
         bool: True if back button should be shown (depth >= 1), False otherwise
+    
+    Note: 
+        Changed from depth > 1 to depth >= 1 to fix Issue #122/#118 
+        (No back functionality / duplicate back button issue)
     """
     return depth >= 1
 
