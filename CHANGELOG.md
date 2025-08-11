@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- **Batch 1 - Stability & UI Correctness Improvements**: Critical bug fixes and UI enhancements
+  - **Navigation Back Button Fix (Issues #122, #118)**: Back button now shows at navigation depth >= 1 (previously > 1)
+    - Added `should_show_back_button(depth)` helper function for clarity and future maintenance
+    - Improved navigation consistency across menu systems
+    - Enhanced user experience with predictable back button behavior
+  - **UI Overlay Safe Zone System (Issue #121)**: Prevents overlay panels from obscuring interactive areas
+    - Implemented `get_ui_safe_zones()` to define protected UI areas (action buttons, upgrades, resources, event log)
+    - Added `find_safe_overlay_position()` with first-fit positioning algorithm
+    - Smart positioning prioritizes gap between action and upgrade areas
+    - Foundation for future drag-and-drop overlay functionality
+  - **Accounting Software Verification (Issue #52)**: Confirmed correct balance change tracking and display
+    - Verified proper `last_balance_change` implementation in `GameState._add()`
+    - Color-coded display: green for positive/zero, red for negative changes
+    - Only tracks when accounting software upgrade is purchased
+  - **Regression Test Coverage (Issue #131)**: Added comprehensive test suites for quality assurance
+    - 15+ navigation and back button tests in `test_navigation_stack.py`
+    - 8+ accounting software tests in `test_accounting_software.py`
+    - 7+ UI overlap prevention tests in `test_ui_overlap_prevention.py`
+    - All existing tests maintained and passing
 - **Fun Feedback for Achievements: 'Zabinga!' Sound (Issue #66)**: Celebratory audio feedback system
   - Generated 'Zabinga!' sound effect for research paper completion milestones
   - Integrated with research paper publication logic in game_state.py
