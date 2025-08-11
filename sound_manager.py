@@ -21,11 +21,16 @@ class SoundManager:
             'money_spend': True,
             'ap_spend': True,
             'blob': True,
-            'error_beep': True
+            'error_beep': True,
+            'popup_open': True,
+            'popup_close': True,
+            'popup_accept': True
         }
         if PYGAME_AVAILABLE:
             self._initialize_pygame_mixer()
             self._create_blob_sound()
+            # Always try to create popup sounds, even if blob sound creation failed
+            self._create_popup_sounds()
     
     def _initialize_pygame_mixer(self):
         """Initialize pygame mixer for sound playback"""
@@ -92,6 +97,8 @@ class SoundManager:
             # Create Zabinga sound for research paper completion
             self._create_zabinga_sound()
             
+            # Create popup sounds for UI feedback
+            self._create_popup_sounds()
 
         except (pygame.error, AttributeError, Exception):
             # If sound creation fails, note that audio is unavailable
@@ -246,6 +253,79 @@ class SoundManager:
             # If Zabinga sound creation fails, continue without it
 
             pass
+    
+    def _create_popup_sounds(self):
+        """Create distinct popup sounds for UI feedback."""
+        if not self.audio_available:
+            return
+            
+        try:
+            # Check if numpy is available for sndarray
+            import pygame.sndarray
+            
+            sample_rate = 22050
+            
+            # Popup open sound - ascending beep
+            duration = 0.15
+            samples = int(sample_rate * duration)
+            wave_array = array.array('h')
+            
+            for i in range(samples):
+                t = i / sample_rate
+                frequency = 550 + (t * 200)  # Ascending from 550Hz to 750Hz
+                amplitude = 4000 * (1 - t * 2)  # Quick fade
+                if amplitude < 0:
+                    amplitude = 0
+                sample = int(amplitude * math.sin(2 * math.pi * frequency * t))
+                wave_array.append(sample)
+                wave_array.append(sample)
+            
+            self.sounds['popup_open'] = pygame.sndarray.make_sound(wave_array)
+            
+            # Popup close sound - descending beep  
+            wave_array = array.array('h')
+            
+            for i in range(samples):
+                t = i / sample_rate
+                frequency = 750 - (t * 200)  # Descending from 750Hz to 550Hz
+                amplitude = 4000 * (1 - t * 2)  # Quick fade
+                if amplitude < 0:
+                    amplitude = 0
+                sample = int(amplitude * math.sin(2 * math.pi * frequency * t))
+                wave_array.append(sample)
+                wave_array.append(sample)
+            
+            self.sounds['popup_close'] = pygame.sndarray.make_sound(wave_array)
+            
+            # Popup accept sound - pleasant confirmation beep
+            duration = 0.2
+            samples = int(sample_rate * duration)
+            wave_array = array.array('h')
+            
+            for i in range(samples):
+                t = i / sample_rate
+                frequency = 660  # E5 - pleasant frequency
+                amplitude = 5000 * math.exp(-t * 3)  # Exponential decay
+                sample = int(amplitude * math.sin(2 * math.pi * frequency * t))
+                wave_array.append(sample)
+                wave_array.append(sample)
+            
+            self.sounds['popup_accept'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, ImportError, Exception):
+            # If popup sound creation fails, continue without them
+            pass
+    
+    def play_sound(self, sound_name):
+        """Generic method to play any sound by name."""
+        if (self.enabled and self.audio_available and 
+            self.sound_toggles.get(sound_name, True) and 
+            sound_name in self.sounds):
+            try:
+                self.sounds[sound_name].play()
+            except pygame.error:
+                # Sound playback failed, but don't crash
+                pass
     
     def play_blob_sound(self):
         """Play the blob sound effect when a new employee is hired"""

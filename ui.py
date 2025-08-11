@@ -2597,7 +2597,7 @@ def draw_stepwise_tutorial_overlay(screen, tutorial_data, w, h):
     return buttons
 
 
-def draw_first_time_help(screen, help_content, w, h):
+def draw_first_time_help(screen, help_content, w, h, mouse_pos=None):
     """
     Draw a small help popup for first-time mechanics.
     
@@ -2605,6 +2605,7 @@ def draw_first_time_help(screen, help_content, w, h):
         screen: pygame surface to draw on
         help_content: dict with title and content for the help popup
         w, h: screen width and height
+        mouse_pos: current mouse position for hover effects (optional)
     """
     if not help_content or not isinstance(help_content, dict):
         return None
@@ -2637,17 +2638,32 @@ def draw_first_time_help(screen, help_content, w, h):
         line_surface = content_font.render(line, True, (255, 255, 255))
         screen.blit(line_surface, (popup_x + 10, popup_y + 40 + i * 20))
     
-    # Close button (X)
+    # Close button (X) with hover effect
     close_button_size = 20
     close_button_x = popup_x + popup_width - close_button_size - 5
     close_button_y = popup_y + 5
     close_button_rect = pygame.Rect(close_button_x, close_button_y, close_button_size, close_button_size)
-    pygame.draw.rect(screen, (200, 100, 100), close_button_rect, border_radius=3)
+    
+    # Check for hover effect
+    close_button_color = (200, 100, 100)  # Default red
+    close_text_color = (255, 255, 255)    # Default white
+    
+    if mouse_pos and close_button_rect.collidepoint(mouse_pos):
+        close_button_color = (255, 120, 120)  # Brighter red on hover
+        close_text_color = (255, 255, 100)    # Yellow text on hover
+    
+    pygame.draw.rect(screen, close_button_color, close_button_rect, border_radius=3)
     
     close_font = pygame.font.SysFont('Consolas', int(h*0.02), bold=True)
-    close_text = close_font.render("×", True, (255, 255, 255))
+    close_text = close_font.render("×", True, close_text_color)
     close_text_rect = close_text.get_rect(center=close_button_rect.center)
     screen.blit(close_text, close_text_rect)
+    
+    # Add dismiss instructions at bottom of popup
+    dismiss_font = pygame.font.SysFont('Consolas', int(h*0.015))
+    dismiss_text = dismiss_font.render("Press Esc to dismiss, Enter to accept", True, (180, 180, 180))
+    dismiss_y = popup_y + popup_height - 25
+    screen.blit(dismiss_text, (popup_x + 10, dismiss_y))
     
     return close_button_rect
 
@@ -3007,7 +3023,7 @@ def draw_tutorial_choice(screen, w, h, selected_item):
     # Instructions
     inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
     instructions = [
-        "Use arrow keys to navigate, Enter to start game",
+        "Use arrow keys or mouse to navigate, Enter/Space to confirm",
         "Tutorial mode provides helpful guidance for new players"
     ]
     
@@ -3017,3 +3033,142 @@ def draw_tutorial_choice(screen, w, h, selected_item):
         inst_x = w // 2 - inst_surf.get_width() // 2
         screen.blit(inst_surf, (inst_x, inst_y))
         inst_y += inst_surf.get_height() + 5
+
+
+def draw_turn_transition_overlay(screen, w, h, timer, duration):
+    """
+    Draw a turn transition overlay with darkening/lightening effect.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height
+        timer: current timer value (counts down from duration to 0)
+        duration: total duration of the transition
+    """
+    if timer <= 0 or duration <= 0:
+        return
+    
+    # Calculate transition progress (0.0 to 1.0)
+    progress = 1.0 - (timer / duration)
+    
+    # Create overlay surface
+    overlay = pygame.Surface((w, h))
+    overlay.set_alpha(128)  # Semi-transparent
+    
+    # Calculate overlay color based on progress
+    # Start dark, then lighten, then back to normal
+    if progress < 0.5:
+        # First half: darken
+        darkness = int(100 * (progress * 2))  # 0 to 100
+        overlay.fill((darkness, darkness, darkness))
+    else:
+        # Second half: lighten back to normal
+        lightness = int(100 * (2 - progress * 2))  # 100 to 0
+        overlay.fill((lightness, lightness, lightness))
+    
+    # Draw overlay
+    screen.blit(overlay, (0, 0))
+    
+    # Add "Processing Turn..." text in center
+    font = pygame.font.SysFont('Consolas', int(h * 0.04), bold=True)
+    text_color = (255, 255, 255) if progress < 0.5 else (50, 50, 50)  # White on dark, dark on light
+    text_surf = font.render("Processing Turn...", True, text_color)
+    text_x = w // 2 - text_surf.get_width() // 2
+    text_y = h // 2 - text_surf.get_height() // 2
+    screen.blit(text_surf, (text_x, text_y))
+    
+    # Add progress indicator
+    progress_width = int(w * 0.3)
+    progress_height = 8
+    progress_x = w // 2 - progress_width // 2
+    progress_y = text_y + text_surf.get_height() + 20
+    
+    # Background bar
+    progress_bg = pygame.Rect(progress_x, progress_y, progress_width, progress_height)
+    pygame.draw.rect(screen, (100, 100, 100), progress_bg)
+    
+    # Progress bar
+    progress_fill_width = int(progress_width * progress)
+    progress_fill = pygame.Rect(progress_x, progress_y, progress_fill_width, progress_height)
+    progress_color = (100, 200, 100)  # Green progress bar
+    pygame.draw.rect(screen, progress_color, progress_fill)
+
+
+def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
+    """
+    Draw the audio settings menu.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height
+        selected_item: index of currently selected menu item
+        audio_settings: dictionary of current audio settings
+        sound_manager: SoundManager instance for current state
+    """
+    # Background
+    screen.fill((40, 45, 55))
+    
+    # Title
+    title_font = pygame.font.SysFont('Consolas', int(h*0.055), bold=True)
+    title_surf = title_font.render("Audio Settings", True, (220, 240, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.12)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Menu items
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    button_width = int(w * 0.6)
+    button_height = int(h * 0.06)
+    start_y = int(h * 0.25)
+    spacing = int(h * 0.08)
+    center_x = w // 2
+    
+    # Audio menu items with current values
+    master_status = "Enabled" if audio_settings.get('master_enabled', True) else "Disabled"
+    sfx_volume = audio_settings.get('sfx_volume', 80)
+    
+    menu_items = [
+        f"Master Sound: {master_status}",
+        f"SFX Volume: {sfx_volume}%",
+        "Sound Effects Settings",
+        "Test Sound",
+        "← Back to Main Menu"
+    ]
+    
+    for i, item in enumerate(menu_items):
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button with text
+        draw_low_poly_button(screen, button_rect, item, button_state)
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    instructions = [
+        "Use arrow keys to navigate, Enter/Space to select",
+        "Left/Right arrows adjust volume settings",
+        "Escape to return to main menu"
+    ]
+    
+    inst_y = int(h * 0.75)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 3
+    
+    # Additional info about sound effects
+    if selected_item == 2:
+        info_font = pygame.font.SysFont('Consolas', int(h*0.018))
+        info_text = "Individual sound toggles: Click to cycle through sound effects"
+        info_surf = info_font.render(info_text, True, (150, 200, 150))
+        info_x = w // 2 - info_surf.get_width() // 2
+        info_y = int(h * 0.85)
+        screen.blit(info_surf, (info_x, info_y))

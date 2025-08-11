@@ -195,6 +195,11 @@ class GameState:
         self.ui_transitions = []  # List of active UI transition animations
         self.upgrade_transitions = {}  # Track transitions for individual upgrades
         
+        # Turn Processing State for reliable input handling
+        self.turn_processing = False  # True during turn transition
+        self.turn_processing_timer = 0  # Timer for turn transition duration
+        self.turn_processing_duration = 30  # Frames for turn transition (1 second at 30 FPS)
+        
         # Game Flow Improvements
         self.delayed_actions = []  # Actions that resolve after N turns
         self.daily_news = []  # News feed for turn feedback
@@ -1413,7 +1418,14 @@ class GameState:
         self._add('doom', spike)
 
     def handle_click(self, mouse_pos, w, h):
-        # Activity log drag functionality (moveable by default) - Handle FIRST to avoid conflicts
+        # Check End Turn button FIRST for reliability (Issue #3 requirement)
+        btn_rect = self._get_endturn_rect(w, h)
+        if self._in_rect(mouse_pos, btn_rect) and not self.game_over:
+            # Try to end turn, sound feedback handled in end_turn method
+            self.end_turn()
+            return None
+        
+        # Activity log drag functionality - Handle after end turn check
         activity_log_rect = self._get_activity_log_rect(w, h)
         if self._in_rect(mouse_pos, activity_log_rect):
             # Don't start drag if clicking on minimize/expand buttons
@@ -1500,12 +1512,6 @@ class GameState:
                     # Track error for easter egg detection
                     self.track_error(f"Already purchased: {upg['name']}")
                 return None
-
-        # End Turn button (bottom center)
-        btn_rect = self._get_endturn_rect(w, h)
-        if self._in_rect(mouse_pos, btn_rect) and not self.game_over:
-            self.end_turn()
-            return None
 
         # Mute button (bottom right)
         mute_rect = self._get_mute_button_rect(w, h)
@@ -1733,6 +1739,20 @@ class GameState:
         return rx <= x <= rx+rw and ry <= y <= ry+rh
 
     def end_turn(self):
+        # Prevent multiple end turn calls during processing
+        if self.turn_processing:
+            # Play error sound for rejected input
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_sound('error_beep')
+            return False
+            
+        # Start turn processing
+        self.turn_processing = True
+        self.turn_processing_timer = self.turn_processing_duration
+        
+        # Play accepted sound
+        if hasattr(self, 'sound_manager'):
+            self.sound_manager.play_sound('popup_accept')  # Reuse accept sound for turn confirmation
         # Clear event log at start of turn to show only current-turn events
         # But first store previous messages if scrollable log was already enabled
         if self.scrollable_event_log_enabled and self.messages:
@@ -1930,6 +1950,18 @@ class GameState:
         
         # Update UI transitions - animations advance each frame/turn
         self._update_ui_transitions()
+        
+        # Reset turn processing state (processing will be handled by timer in main loop)
+        # The timer will count down and reset turn_processing to False
+        return True  # Indicate successful turn end
+    
+    def update_turn_processing(self):
+        """Update turn processing timer and handle transition effects."""
+        if self.turn_processing:
+            self.turn_processing_timer -= 1
+            if self.turn_processing_timer <= 0:
+                self.turn_processing = False
+                self.turn_processing_timer = 0
 
     def trigger_events(self):
         """Trigger events using both the original and enhanced event systems."""

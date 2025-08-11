@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu
 
 
 from overlay_manager import OverlayManager
@@ -99,6 +99,9 @@ overlay_scroll = 0
 config_selected_item = 0
 available_configs = []
 
+# Tutorial choice state
+tutorial_choice_selected_item = 0  # For tutorial choice navigation (0=Yes, 1=No)
+
 # Pre-game settings state
 pre_game_settings = {
     "difficulty": "STANDARD",
@@ -115,6 +118,22 @@ tutorial_enabled = True
 current_tutorial_content = None
 first_time_help_content = None
 first_time_help_close_button = None
+
+# Audio menu state
+sounds_menu_selected_item = 0
+audio_settings = {
+    'master_enabled': True,
+    'sfx_volume': 80,  # 0-100
+    'individual_sounds': {
+        'popup_open': True,
+        'popup_close': True, 
+        'popup_accept': True,
+        'error_beep': True,
+        'blob': True,
+        'ap_spend': True,
+        'money_spend': True
+    }
+}
 
 # Bug report form state
 bug_report_data = {
@@ -552,7 +571,7 @@ def handle_seed_selection_keyboard(key):
 
 def handle_tutorial_choice_click(mouse_pos, w, h):
     """Handle mouse clicks on tutorial choice screen."""
-    global current_state, tutorial_enabled
+    global current_state, tutorial_enabled, tutorial_choice_selected_item
     
     # Calculate button positions (must match draw_tutorial_choice layout)
     button_width = int(w * 0.4)
@@ -569,6 +588,7 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
         button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
         
         if button_rect.collidepoint(mx, my):
+            tutorial_choice_selected_item = i  # Update selection for visual feedback
             if i == 0:  # Yes - Enable Tutorial
                 tutorial_enabled = True
                 onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
@@ -582,21 +602,163 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
             break
 
 
+def handle_tutorial_choice_hover(mouse_pos, w, h):
+    """Handle mouse hover for tutorial choice screen to update selection."""
+    global tutorial_choice_selected_item
+    
+    # Calculate button positions (must match draw_tutorial_choice layout)
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.4)
+    spacing = int(h * 0.12)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    for i in range(2):  # Yes tutorial, No tutorial
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            tutorial_choice_selected_item = i
+            break
+
+
 def handle_tutorial_choice_keyboard(key):
     """Handle keyboard navigation for tutorial choice screen."""
-    global current_state, tutorial_enabled
+    global current_state, tutorial_enabled, tutorial_choice_selected_item
     
-    if key == pygame.K_UP or key == pygame.K_DOWN:
-        # Toggle between yes and no
-        pass  # Visual selection can be added later
-    elif key == pygame.K_RETURN:
-        # Default to tutorial enabled
-        tutorial_enabled = True
-        onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
+    if key == pygame.K_UP:
+        tutorial_choice_selected_item = (tutorial_choice_selected_item - 1) % 2
+    elif key == pygame.K_DOWN:
+        tutorial_choice_selected_item = (tutorial_choice_selected_item + 1) % 2
+    elif key == pygame.K_LEFT:
+        tutorial_choice_selected_item = (tutorial_choice_selected_item - 1) % 2
+    elif key == pygame.K_RIGHT:
+        tutorial_choice_selected_item = (tutorial_choice_selected_item + 1) % 2
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        # Use currently selected item
+        if tutorial_choice_selected_item == 0:  # Yes - Enable Tutorial
+            tutorial_enabled = True
+            onboarding.start_stepwise_tutorial()
+        else:  # No - Regular Mode
+            tutorial_enabled = False
+            onboarding.dismiss_tutorial()
+        
+        # Set the seed and start the game
         random.seed(seed)
         current_state = 'game'
     elif key == pygame.K_ESCAPE:
         current_state = 'seed_selection'
+
+
+def handle_audio_menu_click(mouse_pos, w, h):
+    """Handle mouse clicks on audio settings menu."""
+    global current_state, sounds_menu_selected_item, audio_settings, global_sound_manager
+    
+    # Menu item layout (matching draw_audio_menu)
+    button_width = int(w * 0.6)
+    button_height = int(h * 0.06)
+    start_y = int(h * 0.25)
+    spacing = int(h * 0.08)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    # Audio menu items
+    menu_items = [
+        "Master Sound Toggle",
+        "SFX Volume",
+        "Sound Effects Settings", 
+        "Test Sound",
+        "← Back to Main Menu"
+    ]
+    
+    for i in range(len(menu_items)):
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            sounds_menu_selected_item = i
+            
+            if i == 0:  # Master Sound Toggle
+                audio_settings['master_enabled'] = not audio_settings['master_enabled']
+                global_sound_manager.set_enabled(audio_settings['master_enabled'])
+                # Update config persistence
+                current_config['audio']['sound_enabled'] = audio_settings['master_enabled']
+                config_manager.save_config(config_manager.get_current_config_name(), current_config)
+            elif i == 1:  # SFX Volume
+                # Cycle through volume levels
+                volumes = [0, 25, 50, 75, 100]
+                current_idx = volumes.index(audio_settings['sfx_volume']) if audio_settings['sfx_volume'] in volumes else 3
+                audio_settings['sfx_volume'] = volumes[(current_idx + 1) % len(volumes)]
+            elif i == 2:  # Sound Effects Settings
+                # Toggle to sound effects submenu (for now just cycle individual sounds)
+                sound_keys = list(audio_settings['individual_sounds'].keys())
+                # Simple toggle of first sound for demonstration
+                if sound_keys:
+                    first_sound = sound_keys[0]
+                    audio_settings['individual_sounds'][first_sound] = not audio_settings['individual_sounds'][first_sound]
+                    global_sound_manager.sound_toggles[first_sound] = audio_settings['individual_sounds'][first_sound]
+            elif i == 3:  # Test Sound
+                if global_sound_manager and audio_settings['master_enabled']:
+                    global_sound_manager.play_sound('popup_accept')
+            elif i == 4:  # Back to Main Menu
+                current_state = 'main_menu'
+            break
+
+
+def handle_audio_menu_keyboard(key):
+    """Handle keyboard navigation for audio settings menu."""
+    global current_state, sounds_menu_selected_item, audio_settings, global_sound_manager
+    
+    menu_items_count = 5  # Number of menu items
+    
+    if key == pygame.K_UP:
+        sounds_menu_selected_item = (sounds_menu_selected_item - 1) % menu_items_count
+    elif key == pygame.K_DOWN:
+        sounds_menu_selected_item = (sounds_menu_selected_item + 1) % menu_items_count
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        # Execute selected menu action
+        if sounds_menu_selected_item == 0:  # Master Sound Toggle
+            audio_settings['master_enabled'] = not audio_settings['master_enabled']
+            global_sound_manager.set_enabled(audio_settings['master_enabled'])
+            # Update config persistence
+            current_config['audio']['sound_enabled'] = audio_settings['master_enabled']
+            config_manager.save_config(config_manager.get_current_config_name(), current_config)
+        elif sounds_menu_selected_item == 1:  # SFX Volume
+            # Cycle through volume levels
+            volumes = [0, 25, 50, 75, 100]
+            current_idx = volumes.index(audio_settings['sfx_volume']) if audio_settings['sfx_volume'] in volumes else 3
+            audio_settings['sfx_volume'] = volumes[(current_idx + 1) % len(volumes)]
+        elif sounds_menu_selected_item == 2:  # Sound Effects Settings
+            # Toggle individual sound settings
+            sound_keys = list(audio_settings['individual_sounds'].keys())
+            if sound_keys:
+                first_sound = sound_keys[0]
+                audio_settings['individual_sounds'][first_sound] = not audio_settings['individual_sounds'][first_sound]
+                global_sound_manager.sound_toggles[first_sound] = audio_settings['individual_sounds'][first_sound]
+        elif sounds_menu_selected_item == 3:  # Test Sound
+            if global_sound_manager and audio_settings['master_enabled']:
+                global_sound_manager.play_sound('popup_accept')
+        elif sounds_menu_selected_item == 4:  # Back to Main Menu
+            current_state = 'main_menu'
+    elif key == pygame.K_LEFT:
+        # Allow left arrow for settings adjustment
+        if sounds_menu_selected_item == 1:  # SFX Volume
+            volumes = [0, 25, 50, 75, 100]
+            current_idx = volumes.index(audio_settings['sfx_volume']) if audio_settings['sfx_volume'] in volumes else 3
+            audio_settings['sfx_volume'] = volumes[(current_idx - 1) % len(volumes)]
+    elif key == pygame.K_RIGHT:
+        # Allow right arrow for settings adjustment
+        if sounds_menu_selected_item == 1:  # SFX Volume
+            volumes = [0, 25, 50, 75, 100]
+            current_idx = volumes.index(audio_settings['sfx_volume']) if audio_settings['sfx_volume'] in volumes else 3
+            audio_settings['sfx_volume'] = volumes[(current_idx + 1) % len(volumes)]
+    elif key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
 
 
 def handle_bug_report_click(mouse_pos, w, h):
@@ -1032,6 +1194,8 @@ def main():
                         handle_seed_selection_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'sounds_menu':
+                        handle_audio_menu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'overlay':
                         # Check for Back button click first
                         if back_button_rect and back_button_rect.collidepoint(mx, my):
@@ -1100,6 +1264,9 @@ def main():
                         elif first_time_help_content and first_time_help_close_button:
                             # Check if the close button was clicked
                             if first_time_help_close_button.collidepoint(mx, my):
+                                # Play popup close sound
+                                if game_state and hasattr(game_state, 'sound_manager'):
+                                    game_state.sound_manager.play_sound('popup_close')
                                 first_time_help_content = None
                                 first_time_help_close_button = None
                             else:
@@ -1146,6 +1313,10 @@ def main():
                     if current_state == 'game' and game_state:
                         game_state.handle_mouse_motion(event.pos, SCREEN_W, SCREEN_H)
                     
+                    # Mouse hover effects for tutorial choice screen
+                    elif current_state == 'tutorial_choice':
+                        handle_tutorial_choice_hover(event.pos, SCREEN_W, SCREEN_H)
+                    
                     # Mouse hover effects only active during gameplay
                     if current_state == 'game' and game_state:
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
@@ -1183,6 +1354,8 @@ def main():
                         handle_seed_selection_keyboard(event.key)
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_keyboard(event.key)
+                    elif current_state == 'sounds_menu':
+                        handle_audio_menu_keyboard(event.key)
                     elif current_state == 'overlay':
                         # Overlay navigation: scroll with arrows, escape to return
                         if event.key == pygame.K_ESCAPE:
@@ -1252,6 +1425,15 @@ def main():
                         
                         # Close first-time help
                         elif event.key == pygame.K_ESCAPE and first_time_help_content:
+                            # Play popup close sound
+                            if game_state and hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_close')
+                            first_time_help_content = None
+                            first_time_help_close_button = None
+                        elif event.key == pygame.K_RETURN and first_time_help_content:
+                            # Play popup accept sound
+                            if game_state and hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_accept')
                             first_time_help_content = None
                             first_time_help_close_button = None
                         
@@ -1266,7 +1448,10 @@ def main():
                         # Regular game keyboard handling (only if tutorial is not active)
                         elif not onboarding.show_tutorial_overlay:
                             if event.key == pygame.K_SPACE and game_state and not game_state.game_over:
-                                game_state.end_turn()
+                                # Try to end turn, play error sound if rejected
+                                if not game_state.end_turn():
+                                    # Turn was rejected (already processing)
+                                    pass  # Error sound already played in end_turn method
                             elif event.key == pygame.K_ESCAPE:
                                 running = False
                             
@@ -1332,12 +1517,26 @@ def main():
                 not first_time_help_content and 
                 not onboarding.show_tutorial_overlay):
                 # Check for various first-time mechanics
-                for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']:
+                for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'high_doom_warning']:
                     if onboarding.should_show_mechanic_help(mechanic):
                         help_content = onboarding.get_mechanic_help(mechanic)
                         if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
                             first_time_help_content = help_content
+                            # Play popup open sound
+                            if game_state and hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_open')
                             break
+                
+                # Special case: action_points_exhausted should only show when actually exhausted
+                if (not first_time_help_content and 
+                    onboarding.should_show_mechanic_help('action_points_exhausted') and 
+                    game_state.action_points == 0):
+                    help_content = onboarding.get_mechanic_help('action_points_exhausted')
+                    if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
+                        first_time_help_content = help_content
+                        # Play popup open sound
+                        if game_state and hasattr(game_state, 'sound_manager'):
+                            game_state.sound_manager.play_sound('popup_open')
 
 
             # --- Rendering based on current state --- #
@@ -1368,7 +1567,12 @@ def main():
             elif current_state == 'tutorial_choice':
                 # Tutorial choice screen
                 screen.fill((50, 50, 50))
-                draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, 0)  # Selected item handling can be improved
+                draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, tutorial_choice_selected_item)
+            
+            elif current_state == 'sounds_menu':
+                # Audio settings menu
+                screen.fill((40, 45, 55))
+                draw_audio_menu(screen, SCREEN_W, SCREEN_H, sounds_menu_selected_item, audio_settings, global_sound_manager)
                 
             elif current_state == 'custom_seed_prompt':
                 # Preserve original seed prompt appearance
@@ -1409,6 +1613,7 @@ def main():
                     # Update systems every frame for smooth animation
                     if game_state:
                         game_state._update_ui_transitions()
+                        game_state.update_turn_processing()  # Handle turn transition timing
                         game_state.overlay_manager.update_animations()
                     
                     draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
@@ -1442,10 +1647,15 @@ def main():
                     
                     # Draw first-time help if available
                     if first_time_help_content and isinstance(first_time_help_content, dict):
-                        first_time_help_close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H)
+                        mouse_pos = pygame.mouse.get_pos()
+                        first_time_help_close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H, mouse_pos)
                         # If drawing failed (returned None), clear the help content to prevent repeated attempts
                         if first_time_help_close_button is None:
                             first_time_help_content = None
+                    
+                    # Draw turn transition overlay if processing
+                    if game_state and game_state.turn_processing:
+                        draw_turn_transition_overlay(screen, SCREEN_W, SCREEN_H, game_state.turn_processing_timer, game_state.turn_processing_duration)
 
                         
             pygame.display.flip()

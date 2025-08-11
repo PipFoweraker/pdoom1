@@ -210,39 +210,48 @@ class OnboardingSystem:
         Returns:
             Dict with 'title' and 'content' keys for valid mechanics, None for invalid ones
             
-        Note: This is currently a stub implementation. Consider adding more comprehensive
-        help content and removing the warning when fully implemented.
+        Note: This implementation is defensive to prevent any crashes that could prevent game launch.
         """
-        import logging
-        
-        # Log warning as requested for stub implementation
-        logging.warning(f"get_mechanic_help called for mechanic: {mechanic}. This is a stub implementation.")
-        
-        # Handle invalid inputs gracefully
-        if not isinstance(mechanic, str) or not mechanic:
-            return None
-        
-        # Define help content for core mechanics
-        mechanic_help = {
-            'first_staff_hire': {
-                'title': 'Hiring Your First Staff Member',
-                'content': 'Great choice! Hiring staff increases your action points per turn, allowing you to take more actions. Each staff member you hire gives you one additional action point. More staff means faster progress, but it also costs money each turn for salaries.'
-            },
-            'first_upgrade_purchase': {
-                'title': 'Your First Laboratory Upgrade',
-                'content': 'Excellent! Lab upgrades improve your research efficiency and capabilities. Some upgrades reduce research costs, others unlock new research options, and some provide safety improvements. Choose upgrades that align with your strategy.'
-            },
-            'action_points_exhausted': {
-                'title': 'No Action Points Remaining',
-                'content': 'You\'ve used all your action points for this turn. Click "End Turn" to proceed to the next turn, where your action points will be refreshed. Consider hiring more staff to get additional action points per turn.'
-            },
-            'high_doom_warning': {
-                'title': 'Warning: High P(Doom)',
-                'content': 'Your probability of doom is getting dangerously high! Focus on safety research and avoid risky projects. If P(Doom) reaches 100%, the game ends. Consider taking safety measures or upgrading your containment protocols.'
+        try:
+            import logging
+            
+            # Log warning as requested for stub implementation
+            logging.warning(f"get_mechanic_help called for mechanic: {mechanic}. This is a stub implementation.")
+            
+            # Handle invalid inputs gracefully
+            if not isinstance(mechanic, str) or not mechanic:
+                return None
+            
+            # Define help content for core mechanics
+            mechanic_help = {
+                'first_staff_hire': {
+                    'title': 'Hiring Your First Staff Member',
+                    'content': 'Great choice! Hiring staff increases your action points per turn, allowing you to take more actions. Each staff member you hire gives you one additional action point. More staff means faster progress, but it also costs money each turn for salaries.'
+                },
+                'first_upgrade_purchase': {
+                    'title': 'Your First Laboratory Upgrade',
+                    'content': 'Excellent! Lab upgrades improve your research efficiency and capabilities. Some upgrades reduce research costs, others unlock new research options, and some provide safety improvements. Choose upgrades that align with your strategy.'
+                },
+                'action_points_exhausted': {
+                    'title': 'No Action Points Remaining',
+                    'content': 'You\'ve used all your action points for this turn. Click "End Turn" to proceed to the next turn, where your action points will be refreshed. Consider hiring more staff to get additional action points per turn.'
+                },
+                'high_doom_warning': {
+                    'title': 'Warning: High P(Doom)',
+                    'content': 'Your probability of doom is getting dangerously high! Focus on safety research and avoid risky projects. If P(Doom) reaches 100%, the game ends. Consider taking safety measures or upgrading your containment protocols.'
+                }
             }
-        }
-        
-        return mechanic_help.get(mechanic)
+            
+            return mechanic_help.get(mechanic)
+            
+        except Exception as e:
+            # Defensive coding: never let onboarding system crash the game
+            try:
+                import logging
+                logging.error(f"Error in get_mechanic_help for mechanic '{mechanic}': {e}")
+            except:
+                pass  # Even logging errors shouldn't crash
+            return None  # Return None to gracefully handle any errors
     
     def add_tooltip(self, message: str, priority: int = 1):
         """
