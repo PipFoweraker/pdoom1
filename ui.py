@@ -3,6 +3,47 @@ import textwrap
 from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
 from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
+def draw_back_button(screen, w, h, navigation_depth, font=None):
+    """
+    Draw a Back button when navigation depth > 1.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for positioning
+        navigation_depth: current navigation depth from navigation stack
+        font: optional font for the button text
+    
+    Returns:
+        pygame.Rect: The button rectangle for click detection, or None if not rendered
+    """
+    if navigation_depth <= 1:
+        return None
+    
+    if font is None:
+        font = pygame.font.SysFont('Consolas', max(16, int(h * 0.025)))
+    
+    # Position button in top-left corner with margin
+    margin = int(h * 0.02)
+    button_text = "← Back"
+    text_surf = font.render(button_text, True, (255, 255, 255))
+    
+    # Button styling
+    padding = int(h * 0.01)
+    button_width = text_surf.get_width() + padding * 2
+    button_height = text_surf.get_height() + padding * 2
+    button_rect = pygame.Rect(margin, margin, button_width, button_height)
+    
+    # Draw button background with subtle styling
+    pygame.draw.rect(screen, (60, 60, 80), button_rect)
+    pygame.draw.rect(screen, (120, 120, 140), button_rect, 2)
+    
+    # Center text in button
+    text_x = button_rect.x + (button_rect.width - text_surf.get_width()) // 2
+    text_y = button_rect.y + (button_rect.height - text_surf.get_height()) // 2
+    screen.blit(text_surf, (text_x, text_y))
+    
+    return button_rect
+
 def wrap_text(text, font, max_width):
     """
     Splits the text into multiple lines so that each line fits within max_width.
@@ -321,7 +362,7 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
         inst_y = int(h * 0.8) + i * int(h * 0.04)
         screen.blit(inst_surf, (inst_x, inst_y))
 
-def draw_overlay(screen, title, content, scroll_offset, w, h):
+def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0):
     """
     Draw a scrollable overlay for displaying README or Player Guide content.
     
@@ -331,6 +372,10 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
         content: full text content to display (can be None)
         scroll_offset: vertical scroll position in pixels
         w, h: screen width and height for responsive layout
+        navigation_depth: current navigation depth for Back button display
+    
+    Returns:
+        back_button_rect: Rectangle for Back button click detection (or None)
     
     Features:
     - Semi-transparent dark background overlay
@@ -340,6 +385,7 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
     - Responsive text sizing based on screen dimensions
     - Clear navigation instructions
     - Defensive handling of None title/content values
+    - Back button when navigation depth > 1
     
     The overlay handles long documents by breaking them into lines and showing
     only the visible portion based on scroll_offset. Users can scroll with
@@ -355,6 +401,9 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
     overlay_surface.set_alpha(240)
     overlay_surface.fill((20, 20, 30))
     screen.blit(overlay_surface, (0, 0))
+    
+    # Draw Back button if needed
+    back_button_rect = draw_back_button(screen, w, h, navigation_depth)
     
     # Content area
     margin = int(w * 0.1)
@@ -424,6 +473,8 @@ def draw_overlay(screen, title, content, scroll_offset, w, h):
     inst_x = w // 2 - inst_surf.get_width() // 2
     inst_y = content_y + content_height + int(h * 0.03)
     screen.blit(inst_surf, (inst_x, inst_y))
+    
+    return back_button_rect
     
 def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size
