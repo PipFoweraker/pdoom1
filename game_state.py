@@ -195,6 +195,12 @@ class GameState:
         self.ui_transitions = []  # List of active UI transition animations
         self.upgrade_transitions = {}  # Track transitions for individual upgrades
         
+        # Game Flow Improvements
+        self.delayed_actions = []  # Actions that resolve after N turns
+        self.daily_news = []  # News feed for turn feedback
+        self.spend_this_turn_display_shown = False  # Track if spend display has been shown
+        self.spend_display_permanent = False  # Whether spend display is permanently visible
+        
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()
         
@@ -225,6 +231,92 @@ class GameState:
         # Apply maximum cap
         max_cap = ap_config['max_ap_per_turn']
         return int(min(calculated_ap, max_cap))
+    
+    def add_delayed_action(self, action_name: str, delay_turns: int, effects: dict):
+        """
+        Add an action that will resolve after a specified delay.
+        
+        Args:
+            action_name: Name of the delayed action
+            delay_turns: Number of turns to wait before resolving
+            effects: Dictionary of effects to apply when resolved
+        """
+        delayed_action = {
+            'action_name': action_name,
+            'resolve_turn': self.turn + delay_turns,
+            'effects': effects,
+            'added_turn': self.turn
+        }
+        self.delayed_actions.append(delayed_action)
+        
+        # Add feedback message
+        self.messages.append(f"{action_name} will complete in {delay_turns} turn{'s' if delay_turns != 1 else ''}.")
+    
+    def process_delayed_actions(self):
+        """Process and resolve any delayed actions that are ready."""
+        resolved_actions = []
+        
+        for action in self.delayed_actions[:]:  # Use slice copy to avoid modification during iteration
+            if action['resolve_turn'] <= self.turn:
+                # Apply the delayed effects
+                effects = action['effects']
+                
+                for resource, value in effects.items():
+                    if hasattr(self, resource):
+                        if resource in ['money', 'doom', 'reputation', 'staff', 'admin_staff']:
+                            self._add(resource, value)
+                        else:
+                            setattr(self, resource, getattr(self, resource) + value)
+                
+                # Add completion message
+                self.messages.append(f"✓ {action['action_name']} completed!")
+                
+                resolved_actions.append(action)
+                self.delayed_actions.remove(action)
+        
+        return resolved_actions
+    
+    def get_daily_news(self) -> str:
+        """Generate daily news feed content for the current turn."""
+        news_items = [
+            "AI Research Quarterly reports steady progress across the industry.",
+            "New safety protocols under consideration by regulatory bodies.",
+            "Tech giants announce increased AI safety investments.",
+            "Academic conference highlights latest alignment research.",
+            "Public opinion polls show growing AI awareness.",
+            "Government panel reviews AI development guidelines.",
+            "Industry leaders call for responsible AI development.",
+            "Research community debates next-generation safety measures.",
+            "International cooperation on AI safety standards discussed.",
+            "Breakthrough in interpretability research announced.",
+            "New funding opportunities for safety research unveiled.",
+            "Ethics review board examines AI deployment policies."
+        ]
+        
+        # Use turn number to ensure consistent news per turn
+        random.seed(f"news_{self.seed}_{self.turn}")
+        selected_news = random.choice(news_items)
+        random.seed()  # Reset to normal randomness
+        
+        return f"📰 Day {self.turn + 1}: {selected_news}"
+    
+    def update_spend_tracking(self):
+        """Update spend tracking display logic."""
+        if self.spend_this_turn > 0:
+            if not self.spend_this_turn_display_shown:
+                # First time spending multiple actions in a turn
+                spend_actions_count = len([a for a in self.selected_actions if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
+                
+                if spend_actions_count > 1:
+                    self.spend_this_turn_display_shown = True
+                    self.messages.append(f"💰 Total spend this turn: ${self.spend_this_turn}")
+                    
+                    # If this happens again, make display permanent
+                    if hasattr(self, '_previous_multi_spend'):
+                        self.spend_display_permanent = True
+                        self.messages.append("💰 Spend tracking enabled permanently.")
+                    else:
+                        self._previous_multi_spend = True
 
     def can_delegate_action(self, action):
         """
@@ -1817,6 +1909,19 @@ class GameState:
 
         # Save high score if achieved
         self.save_highscore()
+        
+        # Process delayed actions
+        resolved_actions = self.process_delayed_actions()
+        
+        # Add daily news feed for turn impact feedback
+        daily_news = self.get_daily_news()
+        self.messages.append(daily_news)
+        
+        # Update spend tracking display
+        self.update_spend_tracking()
+        
+        # Reset spend tracking for next turn
+        self.spend_this_turn = 0
         
         # Update UI transitions - animations advance each frame/turn
         self._update_ui_transitions()

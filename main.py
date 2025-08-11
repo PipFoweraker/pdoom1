@@ -41,9 +41,17 @@ pygame.init()
 # Set up initial screen for loading
 info = pygame.display.Info()
 window_scale = current_config['ui']['window_scale']
-SCREEN_W = int(info.current_w * window_scale)
-SCREEN_H = int(info.current_h * window_scale)
-FLAGS = pygame.RESIZABLE
+fullscreen_enabled = current_config['ui'].get('fullscreen', False)
+
+if fullscreen_enabled:
+    SCREEN_W = info.current_w
+    SCREEN_H = info.current_h
+    FLAGS = pygame.FULLSCREEN
+else:
+    SCREEN_W = int(info.current_w * window_scale)
+    SCREEN_H = int(info.current_h * window_scale)
+    FLAGS = pygame.RESIZABLE
+
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
 pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}")
 clock = pygame.time.Clock()

@@ -30,6 +30,7 @@
   },
   "ui": {
     "window_scale": 0.8,
+    "fullscreen": true,
     "font_scale": 1.0,
     "animation_speed": 1.0,
     "tooltip_delay": 500,
