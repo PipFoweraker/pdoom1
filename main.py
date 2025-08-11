@@ -23,6 +23,12 @@ current_config = get_current_config()
 global_sound_manager = SoundManager()
 
 # Initialize with config setting if available
+# Ensure audio section exists in config
+if 'audio' not in current_config:
+    current_config['audio'] = {}
+if 'sound_enabled' not in current_config['audio']:
+    current_config['audio']['sound_enabled'] = True
+    
 if current_config.get('audio', {}).get('sound_enabled', True):
     global_sound_manager.set_enabled(True)
 else:
@@ -233,7 +239,10 @@ def handle_menu_click(mouse_pos, w, h):
     if sound_button_rect.collidepoint(mx, my):
         global_sound_manager.toggle()
         # Update config to persist the sound setting
+        if 'audio' not in current_config:
+            current_config['audio'] = {}
         current_config['audio']['sound_enabled'] = global_sound_manager.is_enabled()
+        config_manager.save_config(config_manager.get_current_config_name(), current_config)
 
 def handle_menu_keyboard(key):
     """
@@ -348,7 +357,10 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
     if sound_button_rect.collidepoint(mx, my):
         global_sound_manager.toggle()
         # Update config to persist the sound setting
+        if 'audio' not in current_config:
+            current_config['audio'] = {}
         current_config['audio']['sound_enabled'] = global_sound_manager.is_enabled()
+        config_manager.save_config(config_manager.get_current_config_name(), current_config)
 
 
 def handle_pre_game_settings_keyboard(key):
@@ -403,7 +415,10 @@ def handle_seed_selection_click(mouse_pos, w, h):
     if sound_button_rect.collidepoint(mx, my):
         global_sound_manager.toggle()
         # Update config to persist the sound setting
+        if 'audio' not in current_config:
+            current_config['audio'] = {}
         current_config['audio']['sound_enabled'] = global_sound_manager.is_enabled()
+        config_manager.save_config(config_manager.get_current_config_name(), current_config)
 
 
 def handle_seed_selection_keyboard(key):
