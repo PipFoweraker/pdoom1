@@ -1318,7 +1318,7 @@ def draw_mute_button(screen, game_state, w, h):
     button_y = h - button_size - 20
     
     # Button colors
-    if game_state.sound_manager.is_enabled():
+    if hasattr(game_state, 'sound_manager') and game_state.sound_manager and game_state.sound_manager.is_enabled():
         bg_color = (100, 200, 100)  # Green when sound is on
         icon_color = (255, 255, 255)
         symbol = "♪"  # Musical note when sound is on
@@ -1348,7 +1348,7 @@ def draw_mute_button_standalone(screen, sound_manager, w, h):
     button_y = h - button_size - 20
     
     # Button colors
-    if sound_manager.is_enabled():
+    if sound_manager and sound_manager.is_enabled():
         bg_color = (100, 200, 100)  # Green when sound is on
         icon_color = (255, 255, 255)
         symbol = "♪"  # Musical note when sound is on

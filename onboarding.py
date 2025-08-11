@@ -244,6 +244,121 @@ class OnboardingSystem:
         
         return mechanic_help.get(mechanic)
     
+    def add_tooltip(self, message: str, priority: int = 1):
+        """
+        Add a tooltip to the pending tooltip queue.
+        
+        Args:
+            message: The tooltip message to display
+            priority: Priority level (higher number = higher priority)
+        """
+        import logging
+        logging.warning(f"add_tooltip called with message: {message}, priority: {priority}. This is a stub implementation.")
+        
+        self.pending_tooltips.append({
+            'message': message,
+            'priority': priority
+        })
+        # Sort by priority (highest first)
+        self.pending_tooltips.sort(key=lambda x: x['priority'], reverse=True)
+    
+    def get_next_tooltip(self) -> Optional[str]:
+        """
+        Get the next tooltip message from the queue.
+        
+        Returns:
+            The next tooltip message or None if queue is empty
+        """
+        if self.pending_tooltips:
+            return self.pending_tooltips.pop(0)['message']
+        return None
+    
+    def clear_tooltips(self):
+        """Clear all pending tooltips."""
+        self.pending_tooltips.clear()
+    
+    def get_tutorial_content(self, step_id: str) -> Optional[Dict]:
+        """
+        Get tutorial content for a specific step.
+        
+        Args:
+            step_id: The tutorial step identifier
+            
+        Returns:
+            Dict with tutorial content or None if step not found
+        """
+        import logging
+        logging.warning(f"get_tutorial_content called for step: {step_id}. This is a stub implementation.")
+        
+        tutorial_content = {
+            'welcome': {
+                'title': 'Welcome to P(Doom)!',
+                'content': 'Welcome to P(Doom), where you manage an AI safety laboratory. Your goal is to advance AI capabilities while keeping the probability of doom low.',
+                'next_step': 'resources'
+            },
+            'resources': {
+                'title': 'Understanding Resources',
+                'content': 'Monitor your money, staff, reputation, and doom probability. These resources determine what actions you can take.',
+                'next_step': 'actions'
+            },
+            'actions': {
+                'title': 'Taking Actions',
+                'content': 'Use the action panel to hire staff, conduct research, implement safety measures, and purchase upgrades.',
+                'next_step': 'action_points'
+            },
+            'action_points': {
+                'title': 'Action Points',
+                'content': 'Action points limit how many actions you can take per turn. Hire more staff to get more action points.',
+                'next_step': 'end_turn'
+            },
+            'end_turn': {
+                'title': 'Ending Your Turn',
+                'content': 'Click "End Turn" when you\'re done taking actions. This advances time and triggers events.',
+                'next_step': 'events'
+            },
+            'events': {
+                'title': 'Events and Consequences',
+                'content': 'Your actions have consequences. Watch the activity log to see what happens as a result of your decisions.',
+                'next_step': 'upgrades'
+            },
+            'upgrades': {
+                'title': 'Laboratory Upgrades',
+                'content': 'Purchase upgrades to improve your lab\'s capabilities and unlock new strategies.',
+                'next_step': 'complete'
+            },
+            'complete': {
+                'title': 'Tutorial Complete!',
+                'content': 'You\'re ready to manage your AI safety lab. Remember: balance progress with caution, and keep P(Doom) low!',
+                'next_step': None
+            }
+        }
+        
+        return tutorial_content.get(step_id)
+    
+    def advance_tutorial_step(self, current_step: str):
+        """
+        Advance to the next tutorial step.
+        
+        Args:
+            current_step: The current step being completed
+        """
+        import logging
+        logging.warning(f"advance_tutorial_step called for step: {current_step}. This is a stub implementation.")
+        
+        # Mark current step as completed
+        self.completed_steps.add(current_step)
+        
+        # Get the next step
+        content = self.get_tutorial_content(current_step)
+        if content and content.get('next_step'):
+            self.current_tutorial_step = content['next_step']
+        else:
+            # Tutorial is complete
+            self.current_tutorial_step = None
+            self.complete_tutorial()
+        
+        self._save_progress()
+    
     def get_stepwise_tutorial_sequence(self):
         """Get the complete stepwise tutorial sequence with UI element visibility control."""
         return [
