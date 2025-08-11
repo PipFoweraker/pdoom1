@@ -1474,6 +1474,11 @@ class GameState:
                         elif upg.get("custom_effect") == "buy_compact_activity_display":
                             # Allow toggle functionality for the activity log
                             self.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
+                        elif upg.get("effect_key") == "hpc_cluster":
+                            self._add('compute', 20)
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.")
+                        elif upg.get("effect_key") == "research_automation":
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Research actions now benefit from available compute resources.")
                         else:
                             self.messages.append(f"Upgrade purchased: {upg['name']}")
                         
@@ -2215,6 +2220,173 @@ class GameState:
             self.messages.append(message)
         else:
             self.messages.append(f"Failed to hire {subtype['name']}: {message}")
+    
+    def _scout_opponents(self):
+        """Scout competing labs to gather intelligence on their capabilities."""
+        messages = []
+        discoveries = 0
+        
+        # First, check if any opponents can be discovered
+        undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
+        
+        if undiscovered_opponents and random.random() < 0.6:  # 60% chance to discover a new lab
+            # Discover a new opponent
+            new_opponent = random.choice(undiscovered_opponents)
+            new_opponent.discover()
+            discoveries += 1
+            messages.append(f"Intelligence breakthrough! Discovered new competing lab: {new_opponent.name}")
+            messages.append(f"→ {new_opponent.description}")
+        
+        # Scout stats from known opponents
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        
+        if discovered_opponents:
+            target_opponent = random.choice(discovered_opponents)
+            
+            # Try to scout a random stat
+            stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
+            stat_to_scout = random.choice(stats_to_scout)
+            
+            success, value, message = target_opponent.scout_stat(stat_to_scout)
+            messages.append(message)
+            
+            if success:
+                discoveries += 1
+        
+        # Add intelligence gained message
+        if discoveries > 0:
+            messages.append(f"Intelligence gathering successful! ({discoveries} new insights)")
+            # Small reputation gain for successful intelligence work
+            self._add('reputation', 1)
+        else:
+            messages.append("Intelligence gathering yielded limited results this time.")
+        
+        # Add all messages to game state
+        for msg in messages:
+            self.messages.append(msg)
+    
+    def _trigger_competitor_discovery(self):
+        """Trigger discovery of a new competitor through intelligence."""
+        undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
+        
+        if undiscovered_opponents:
+            new_opponent = random.choice(undiscovered_opponents)
+            new_opponent.discover()
+            self.messages.append(f"INTELLIGENCE ALERT: New competitor detected - {new_opponent.name}")
+            self.messages.append(f"→ {new_opponent.description}")
+            self.messages.append("Use 'Scout Opponents' action to gather more intelligence on their capabilities.")
+        else:
+            self.messages.append("Intelligence reports suggest all major competitors are now known.")
+    
+    def _provide_competitor_update(self):
+        """Provide an intelligence update on known competitors."""
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        
+        if discovered_opponents:
+            target = random.choice(discovered_opponents)
+            
+            # Generate a random intelligence snippet
+            snippets = [
+                f"{target.name} has been recruiting aggressively this quarter.",
+                f"Sources report {target.name} secured additional funding recently.", 
+                f"{target.name} was spotted at a major AI conference last week.",
+                f"Technical staff departures reported at {target.name}.",
+                f"{target.name} has increased their compute infrastructure.",
+                f"Regulatory filings suggest {target.name} is preparing for new announcements."
+            ]
+            
+            selected_snippet = random.choice(snippets)
+            self.messages.append(f"INTELLIGENCE UPDATE: {selected_snippet}")
+            self.messages.append("Consider using 'Scout Opponents' for detailed intelligence gathering.")
+    
+    def _trigger_expense_request(self):
+        """Trigger an employee expense request event that requires player decision."""
+        from event_system import Event, EventType, EventAction
+        
+        # Define different types of expense requests
+        expense_types = [
+            {
+                "type": "training",
+                "employee": "Research Staff",
+                "item": "AI Safety Conference Registration", 
+                "cost": 75,
+                "approve_effect": lambda gs: (gs._add('money', -75), gs._add('reputation', 2), gs._add('research_staff', 1)),
+                "deny_effect": lambda gs: (gs.messages.append("Employee morale slightly affected by denied training request."),),
+                "description": "Professional development opportunity to enhance research capabilities"
+            },
+            {
+                "type": "equipment",
+                "employee": "Operations Specialist",
+                "item": "Upgraded Development Workstation",
+                "cost": 120,
+                "approve_effect": lambda gs: (gs._add('money', -120), gs._add('compute', 5)),
+                "deny_effect": lambda gs: (gs.messages.append("Operations efficiency may be impacted by outdated equipment."),),
+                "description": "Hardware upgrade to improve operational efficiency and compute resources"
+            },
+            {
+                "type": "research_materials",
+                "employee": "Data Scientist", 
+                "item": "Research Dataset License",
+                "cost": 90,
+                "approve_effect": lambda gs: (gs._add('money', -90), gs._add('research_progress', 5)),
+                "deny_effect": lambda gs: (gs.messages.append("Research progress may slow without access to key datasets."),),
+                "description": "Access to proprietary datasets for advanced research projects"
+            },
+            {
+                "type": "collaboration",
+                "employee": "Manager",
+                "item": "Industry Networking Event",
+                "cost": 60,
+                "approve_effect": lambda gs: (gs._add('money', -60), gs._add('reputation', 3)),
+                "deny_effect": lambda gs: (gs.messages.append("Missed networking opportunities may limit future collaborations."),),
+                "description": "Professional networking to build industry relationships"
+            }
+        ]
+        
+        # Select a random expense request
+        expense = random.choice(expense_types)
+        
+        # Create the popup event
+        event_name = f"Expense Request: {expense['item']}"
+        event_desc = (f"{expense['employee']} requests approval for: {expense['item']} (${expense['cost']})\n\n"
+                     f"Purpose: {expense['description']}\n\n"
+                     f"Approve the expense or deny the request?")
+        
+        def approve_expense(gs):
+            if gs.money >= expense['cost']:
+                expense['approve_effect'](gs)
+                gs.messages.append(f"Approved: {expense['item']} (${expense['cost']})")
+                return f"Expense approved. {expense['employee']} appreciates the investment."
+            else:
+                gs.messages.append(f"Insufficient funds to approve {expense['item']} (need ${expense['cost']}, have ${gs.money})")
+                return "Insufficient funds for approval."
+        
+        def deny_expense(gs):
+            expense['deny_effect'](gs)
+            gs.messages.append(f"Denied: {expense['item']}")
+            return f"Expense request denied. {expense['employee']} understands the budget constraints."
+        
+        # Create event with approve/deny options
+        popup_event = Event(
+            name=event_name,
+            desc=event_desc,
+            trigger=lambda gs: True,  # Already triggered
+            effect=approve_expense,   # Default effect is approval
+            event_type=EventType.POPUP,
+            available_actions=[EventAction.ACCEPT, EventAction.DISMISS],
+            reduce_effect=deny_expense
+        )
+        
+        # Add to popup event queue if enhanced events are enabled
+        if getattr(self, 'enhanced_events_enabled', False):
+            if not hasattr(self, 'pending_popup_events'):
+                self.pending_popup_events = []
+            self.pending_popup_events.append(popup_event)
+        else:
+            # Fallback to simple message-based system
+            self.messages.append(f"EXPENSE REQUEST: {expense['employee']} requests {expense['item']} (${expense['cost']})")
+            self.messages.append(f"Purpose: {expense['description']}")
+            self.messages.append("Enhanced event system required for interactive expense approval.")
     
     def _trigger_hiring_dialog(self):
         """Trigger the employee hiring dialog with available employee subtypes."""

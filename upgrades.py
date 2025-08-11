@@ -35,5 +35,19 @@ UPGRADES = [
         "purchased": False,
         "effect_key": "compact_activity_display",
         "custom_effect": "buy_compact_activity_display"  # Special handling for this upgrade
+    },
+    {
+        "name": "High-Performance Computing Cluster",
+        "desc": "Advanced compute infrastructure (+20 compute, research effectiveness +25%)",
+        "cost": 800,
+        "purchased": False,
+        "effect_key": "hpc_cluster"
+    },
+    {
+        "name": "Research Automation Suite",
+        "desc": "AI-assisted research tools (research actions more effective with compute)",
+        "cost": 600,
+        "purchased": False,
+        "effect_key": "research_automation"
     }
 ]

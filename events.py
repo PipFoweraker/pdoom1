@@ -93,4 +93,38 @@ EVENTS = [
         "trigger": lambda gs: gs.staff >= 9 and not gs.manager_milestone_triggered,
         "effect": trigger_first_manager_hire
     },
+    {
+        "name": "Intelligence Network Established",
+        "desc": "Your organization has developed intelligence gathering capabilities! Competitor scouting now available.",
+        # Trigger: After turn 6 and reputation >= 10, unlocks Scout Opponents action
+        "trigger": lambda gs: gs.turn >= 6 and gs.reputation >= 10 and not getattr(gs, "scouting_unlocked", False),
+        "effect": lambda gs: (
+            setattr(gs, "scouting_unlocked", True),
+            gs.messages.append("Intelligence gathering capabilities unlocked! 'Scout Opponents' action is now available."),
+            gs.messages.append("Use this to discover and monitor competing AI laboratories.")
+        )
+    },
+    {
+        "name": "Competitor Spotted",
+        "desc": "Your contacts report increased activity in the AI capabilities space.",
+        # Trigger: Random chance after turn 3, more likely as doom increases
+        "trigger": lambda gs: gs.turn >= 3 and random.random() < (0.05 + gs.doom / 1000),
+        "effect": lambda gs: gs._trigger_competitor_discovery()
+    },
+    {
+        "name": "Industry Intelligence Update",
+        "desc": "Your intelligence network provides updates on competitor activities.",
+        # Trigger: Random chance if any opponents are discovered and scouting is unlocked
+        "trigger": lambda gs: (getattr(gs, "scouting_unlocked", False) and 
+                              any(opp.discovered for opp in gs.opponents) and 
+                              random.random() < 0.15),
+        "effect": lambda gs: gs._provide_competitor_update()
+    },
+    {
+        "name": "Employee Expense Request",
+        "desc": "An employee has submitted an expense request for approval.",
+        # Trigger: Regular chance based on staff count, more likely with more staff
+        "trigger": lambda gs: gs.staff >= 2 and random.random() < (0.1 + gs.staff * 0.01),
+        "effect": lambda gs: gs._trigger_expense_request()
+    },
 ]
