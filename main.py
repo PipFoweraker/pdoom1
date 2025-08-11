@@ -67,10 +67,11 @@ available_configs = []
 
 # Pre-game settings state
 pre_game_settings = {
-    "difficulty": "DUMMY",
-    "music_volume": 123,
-    "sound_volume": 123,
-    "graphics_quality": "DUMMY"
+    "difficulty": "STANDARD",
+    "music_volume": 70,
+    "sound_volume": 80,
+    "graphics_quality": "STANDARD",
+    "safety_level": "STANDARD"
 }
 selected_settings_item = 0
 seed_choice = "weekly"  # "weekly" or "custom"
@@ -323,10 +324,10 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
     global current_state, selected_settings_item, pre_game_settings
     
     # Calculate button positions (must match draw_pre_game_settings layout)
-    button_width = int(w * 0.5)
-    button_height = int(h * 0.08)
-    start_y = int(h * 0.35)
-    spacing = int(h * 0.1)
+    button_width = int(w * 0.55)
+    button_height = int(h * 0.07)
+    start_y = int(h * 0.32)
+    spacing = int(h * 0.085)
     center_x = w // 2
     
     mx, my = mouse_pos
@@ -344,8 +345,9 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
             
             if i == 4:  # Continue button
                 current_state = 'seed_selection'
-            # For now, other settings don't do anything when clicked
-            # In a full implementation, they would cycle through values
+            else:
+                # Cycle through setting values when clicked
+                cycle_setting_value(i)
             break
     
     # Check for sound button click (bottom right corner)
@@ -365,7 +367,7 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
 
 def handle_pre_game_settings_keyboard(key):
     """Handle keyboard navigation for pre-game settings screen."""
-    global selected_settings_item, current_state
+    global selected_settings_item, current_state, pre_game_settings
     
     if key == pygame.K_UP:
         selected_settings_item = (selected_settings_item - 1) % 5
@@ -374,8 +376,55 @@ def handle_pre_game_settings_keyboard(key):
     elif key == pygame.K_RETURN:
         if selected_settings_item == 4:  # Continue button
             current_state = 'seed_selection'
+        else:
+            # Cycle through setting values
+            cycle_setting_value(selected_settings_item)
+    elif key == pygame.K_LEFT:
+        # Allow left arrow to also cycle settings
+        if selected_settings_item < 4:
+            cycle_setting_value(selected_settings_item, reverse=True)
+    elif key == pygame.K_RIGHT:
+        # Allow right arrow to cycle settings forward
+        if selected_settings_item < 4:
+            cycle_setting_value(selected_settings_item)
     elif key == pygame.K_ESCAPE:
         current_state = 'main_menu'
+
+
+def cycle_setting_value(setting_index, reverse=False):
+    """Cycle through available values for a setting."""
+    global pre_game_settings
+    
+    if setting_index == 0:  # Research Intensity (Difficulty)
+        options = ["EASY", "STANDARD", "HARD"]
+        current = pre_game_settings["difficulty"]
+        current_idx = options.index(current) if current in options else 1
+        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
+        pre_game_settings["difficulty"] = options[new_idx]
+        
+    elif setting_index == 1:  # Audio Alerts Volume (Sound Volume)
+        options = [30, 50, 70, 80, 90, 100]
+        current = pre_game_settings["sound_volume"]
+        try:
+            current_idx = options.index(current)
+        except ValueError:
+            current_idx = 3  # Default to 80
+        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
+        pre_game_settings["sound_volume"] = options[new_idx]
+        
+    elif setting_index == 2:  # Visual Enhancement (Graphics Quality)
+        options = ["LOW", "STANDARD", "HIGH"]
+        current = pre_game_settings["graphics_quality"]
+        current_idx = options.index(current) if current in options else 1
+        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
+        pre_game_settings["graphics_quality"] = options[new_idx]
+        
+    elif setting_index == 3:  # Safety Protocol Level
+        options = ["MINIMAL", "STANDARD", "ENHANCED", "MAXIMUM"]
+        current = pre_game_settings["safety_level"]
+        current_idx = options.index(current) if current in options else 1
+        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
+        pre_game_settings["safety_level"] = options[new_idx]
 
 
 def handle_seed_selection_click(mouse_pos, w, h):

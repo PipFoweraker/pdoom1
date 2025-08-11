@@ -2155,7 +2155,7 @@ def draw_first_time_help(screen, help_content, w, h):
 
 def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=None):
     """
-    Draw the pre-game settings screen with configurable options.
+    Draw the Laboratory Configuration screen with P(Doom) bureaucracy theme.
     
     Args:
         screen: pygame surface to draw on
@@ -2164,74 +2164,203 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
         selected_item: index of currently selected setting (for keyboard navigation)
         sound_manager: optional SoundManager instance for sound toggle button
     """
-    # Clear background
-    screen.fill((50, 50, 50))
+    # Enhanced background with subtle gradient effect
+    screen.fill((25, 35, 45))
     
-    # Fonts
-    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    # Add subtle background pattern for bureaucratic feel
+    pattern_color = (35, 45, 55)
+    for i in range(0, w, 40):
+        pygame.draw.line(screen, pattern_color, (i, 0), (i, h), 1)
+    for i in range(0, h, 40):
+        pygame.draw.line(screen, pattern_color, (0, i), (w, i), 1)
     
-    # Title
-    title_surf = title_font.render("Game Settings", True, (255, 255, 255))
+    # Fonts with better hierarchy
+    title_font = pygame.font.SysFont('Consolas', int(h*0.055), bold=True)
+    subtitle_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.028))
+    
+    # Laboratory Configuration Header
+    title_surf = title_font.render("LABORATORY CONFIGURATION", True, (220, 240, 255))
     title_x = w // 2 - title_surf.get_width() // 2
-    title_y = int(h * 0.15)
+    title_y = int(h * 0.12)
     screen.blit(title_surf, (title_x, title_y))
     
-    # Settings items
-    settings_items = [
-        ("Difficulty", settings["difficulty"]),
-        ("Music Volume", str(settings["music_volume"])),
-        ("Sound Volume", str(settings["sound_volume"])),
-        ("Graphics Quality", settings["graphics_quality"]),
-        ("Continue")
+    # Subtitle with bureaucratic flair
+    subtitle_surf = subtitle_font.render("Initialize Research Parameters & Operating Procedures", True, (180, 200, 220))
+    subtitle_x = w // 2 - subtitle_surf.get_width() // 2
+    subtitle_y = title_y + title_surf.get_height() + 5
+    screen.blit(subtitle_surf, (subtitle_x, subtitle_y))
+    
+    # Enhanced settings with realistic options
+    settings_options = [
+        ("Research Intensity", get_research_intensity_display(settings.get("difficulty", "STANDARD"))),
+        ("Audio Alerts Volume", get_volume_display(settings.get("sound_volume", 80))),
+        ("Visual Enhancement", get_graphics_display(settings.get("graphics_quality", "STANDARD"))),
+        ("Safety Protocol Level", get_safety_display(settings.get("safety_level", "STANDARD"))),
+        ("Continue", "▶ INITIALIZE LABORATORY")
     ]
     
-    # Button layout
-    button_width = int(w * 0.5)
-    button_height = int(h * 0.08)
-    start_y = int(h * 0.35)
-    spacing = int(h * 0.1)
+    # Improved button layout with more space
+    button_width = int(w * 0.55)
+    button_height = int(h * 0.07)
+    start_y = int(h * 0.32)
+    spacing = int(h * 0.085)
     center_x = w // 2
     
-    for i, item in enumerate(settings_items):
+    for i, (setting_name, setting_value) in enumerate(settings_options):
         # Calculate button position
         button_x = center_x - button_width // 2
         button_y = start_y + i * spacing
         button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
         
-        # Determine button state
+        # Determine button state with enhanced colors
         if i == selected_item:
             button_state = ButtonState.FOCUSED
         else:
             button_state = ButtonState.NORMAL
         
-        # Calculate text first
-        if i < len(settings_items) - 1:  # Setting items with values
-            setting_name, setting_value = item
+        # Format text for display
+        if i < len(settings_options) - 1:  # Setting items with values
             text = f"{setting_name}: {setting_value}"
-        else:  # Continue button
-            text = item
+        else:  # Continue button with special styling
+            text = setting_value
         
-        # Draw button with text
-        draw_low_poly_button(screen, button_rect, text, button_state)
+        # Draw enhanced button
+        if i == len(settings_options) - 1:  # Continue button gets special treatment
+            draw_enhanced_continue_button(screen, button_rect, text, button_state)
+        else:
+            draw_bureaucratic_setting_button(screen, button_rect, text, button_state, setting_name)
     
-    # Instructions
-    inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    # Enhanced instructions with bureaucratic theme
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.022))
     instructions = [
-        "Use arrow keys to navigate, Enter to select",
-        "Adjust settings or continue to seed selection"
+        "📋 Use ↑↓ arrow keys to navigate configuration options",
+        "🔧 Press ENTER to modify settings or initialize laboratory",
+        "⚠️  Ensure all parameters meet institutional safety standards"
     ]
     
-    inst_y = int(h * 0.85)
-    for instruction in instructions:
-        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+    inst_y = int(h * 0.82)
+    for i, instruction in enumerate(instructions):
+        color = (200, 220, 240) if i < 2 else (255, 200, 150)  # Warning color for safety note
+        inst_surf = inst_font.render(instruction, True, color)
         inst_x = w // 2 - inst_surf.get_width() // 2
         screen.blit(inst_surf, (inst_x, inst_y))
-        inst_y += inst_surf.get_height() + 5
+        inst_y += inst_surf.get_height() + 3
     
     # Draw sound toggle button if sound manager is available (Issue #89)
     if sound_manager:
         draw_mute_button_standalone(screen, sound_manager, w, h)
+
+
+def get_research_intensity_display(difficulty):
+    """Convert difficulty setting to bureaucratic terminology."""
+    mapping = {
+        "EASY": "CONSERVATIVE",
+        "STANDARD": "REGULATORY",
+        "HARD": "AGGRESSIVE",
+        "DUMMY": "REGULATORY"
+    }
+    return mapping.get(difficulty, "REGULATORY")
+
+
+def get_volume_display(volume):
+    """Convert volume to descriptive levels."""
+    if isinstance(volume, str) or volume == 123:  # Handle dummy value
+        volume = 80
+    if volume >= 90:
+        return "MAXIMUM"
+    elif volume >= 70:
+        return "HIGH"
+    elif volume >= 50:
+        return "MODERATE"
+    elif volume >= 30:
+        return "LOW"
+    else:
+        return "MINIMAL"
+
+
+def get_graphics_display(quality):
+    """Convert graphics quality to bureaucratic terms."""
+    mapping = {
+        "LOW": "EFFICIENT", 
+        "STANDARD": "COMPLIANT",
+        "HIGH": "ENHANCED",
+        "DUMMY": "COMPLIANT"
+    }
+    return mapping.get(quality, "COMPLIANT")
+
+
+def get_safety_display(safety_level):
+    """Safety protocol levels for the bureaucratic theme."""
+    mapping = {
+        "MINIMAL": "MINIMAL",
+        "STANDARD": "STANDARD", 
+        "ENHANCED": "ENHANCED",
+        "MAXIMUM": "MAXIMUM",
+        "DUMMY": "STANDARD"
+    }
+    return mapping.get(safety_level, "STANDARD")
+
+
+def draw_enhanced_continue_button(screen, rect, text, button_state):
+    """Draw the continue button with special highlighting."""
+    # Enhanced colors for the continue button
+    if button_state == ButtonState.FOCUSED:
+        bg_color = (60, 120, 80)
+        border_color = (100, 200, 120)
+        text_color = (255, 255, 255)
+    else:
+        bg_color = (40, 80, 60)
+        border_color = (80, 160, 100)
+        text_color = (220, 255, 220)
+    
+    # Draw button background with rounded corners
+    pygame.draw.rect(screen, bg_color, rect, border_radius=8)
+    pygame.draw.rect(screen, border_color, rect, width=3, border_radius=8)
+    
+    # Draw text centered
+    font = pygame.font.SysFont('Consolas', int(rect.height * 0.35), bold=True)
+    text_surf = font.render(text, True, text_color)
+    text_rect = text_surf.get_rect(center=rect.center)
+    screen.blit(text_surf, text_rect)
+
+
+def draw_bureaucratic_setting_button(screen, rect, text, button_state, setting_name):
+    """Draw setting buttons with bureaucratic styling."""
+    # Color scheme based on button state
+    if button_state == ButtonState.FOCUSED:
+        bg_color = (50, 70, 90)
+        border_color = (120, 160, 200)
+        text_color = (255, 255, 255)
+        accent_color = (200, 220, 255)
+    else:
+        bg_color = (35, 50, 65)
+        border_color = (80, 100, 120)
+        text_color = (200, 220, 240)
+        accent_color = (150, 170, 190)
+    
+    # Draw button background
+    pygame.draw.rect(screen, bg_color, rect, border_radius=6)
+    pygame.draw.rect(screen, border_color, rect, width=2, border_radius=6)
+    
+    # Add small icon/indicator for the setting type
+    icon_x = rect.x + 15
+    icon_y = rect.centery
+    if "Research" in setting_name:
+        pygame.draw.circle(screen, accent_color, (icon_x, icon_y), 4)
+    elif "Audio" in setting_name:
+        pygame.draw.polygon(screen, accent_color, [(icon_x-3, icon_y-3), (icon_x+3, icon_y), (icon_x-3, icon_y+3)])
+    elif "Visual" in setting_name:
+        pygame.draw.rect(screen, accent_color, (icon_x-3, icon_y-3, 6, 6))
+    elif "Safety" in setting_name:
+        pygame.draw.polygon(screen, accent_color, [(icon_x, icon_y-4), (icon_x-3, icon_y+2), (icon_x+3, icon_y+2)])
+    
+    # Draw text with proper spacing
+    font = pygame.font.SysFont('Consolas', int(rect.height * 0.32))
+    text_surf = font.render(text, True, text_color)
+    text_x = rect.x + 35  # Account for icon space
+    text_y = rect.centery - text_surf.get_height() // 2
+    screen.blit(text_surf, (text_x, text_y))
 
 
 def draw_seed_selection(screen, w, h, selected_item, seed_input="", sound_manager=None):
