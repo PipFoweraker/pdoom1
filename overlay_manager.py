@@ -62,6 +62,12 @@ class UIElement:
     minimized_rect: Optional[pygame.Rect] = None
     expanded_rect: Optional[pygame.Rect] = None
     
+    # Drag support
+    draggable: bool = True
+    being_dragged: bool = False
+    drag_offset: Tuple[int, int] = (0, 0)
+    header_rect: Optional[pygame.Rect] = None  # Area that can be dragged
+    
     # Metadata
     metadata: Dict[str, Any] = field(default_factory=dict)
 
@@ -83,6 +89,10 @@ class OverlayManager:
         self.z_order: Dict[ZLayer, List[str]] = {layer: [] for layer in ZLayer}
         self.active_element: Optional[str] = None
         self.hover_element: Optional[str] = None
+        
+        # Drag state management
+        self.dragging_element: Optional[str] = None
+        self.last_mouse_pos: Tuple[int, int] = (0, 0)
         
         # Visual feedback settings
         self.button_press_depth = 3
@@ -199,7 +209,7 @@ class OverlayManager:
     
     def handle_mouse_event(self, event: pygame.event.Event, screen_w: int, screen_h: int) -> Optional[str]:
         """
-        Handle mouse events for all managed elements.
+        Handle mouse events for all managed elements with drag support.
         
         Args:
             event: pygame mouse event
@@ -209,6 +219,22 @@ class OverlayManager:
             Optional[str]: ID of element that handled the event, if any
         """
         mouse_pos = pygame.mouse.get_pos()
+        
+        # Handle mouse button release - stop any dragging
+        if event.type == pygame.MOUSEBUTTONUP:
+            if self.dragging_element:
+                element = self.elements[self.dragging_element]
+                element.being_dragged = False
+                self.dragging_element = None
+                return self.dragging_element
+        
+        # Handle mouse motion - update drag if active
+        if event.type == pygame.MOUSEMOTION:
+            if self.dragging_element:
+                return self._handle_drag_motion(mouse_pos)
+            
+            # Update last mouse position for drag calculations
+            self.last_mouse_pos = mouse_pos
         
         # Check elements from top layer to bottom
         for layer in reversed(ZLayer):
@@ -223,11 +249,11 @@ class OverlayManager:
                 if current_rect.collidepoint(mouse_pos):
                     if event.type == pygame.MOUSEBUTTONDOWN:
                         return self._handle_element_click(element_id, mouse_pos)
-                    elif event.type == pygame.MOUSEMOTION:
+                    elif event.type == pygame.MOUSEMOTION and not self.dragging_element:
                         return self._handle_element_hover(element_id, mouse_pos)
                         
         # Clear hover if no element is under mouse
-        if event.type == pygame.MOUSEMOTION:
+        if event.type == pygame.MOUSEMOTION and not self.dragging_element:
             self._clear_hover()
             
         return None
@@ -346,12 +372,18 @@ class OverlayManager:
         return element.rect
     
     def _handle_element_click(self, element_id: str, mouse_pos: Tuple[int, int]) -> str:
-        """Handle click on an element."""
+        """Handle click on an element with drag support."""
         element = self.elements[element_id]
         element.pressed_state = True
         element.last_interaction = pygame.time.get_ticks()
         
+        # Bring to front when clicked
         self.bring_to_front(element_id)
+        
+        # Start drag if element is draggable and click is in drag area
+        if element.draggable:
+            self._start_drag(element_id, mouse_pos)
+        
         return element_id
     
     def _handle_element_hover(self, element_id: str, mouse_pos: Tuple[int, int]) -> str:
@@ -473,6 +505,75 @@ class OverlayManager:
                 title_x = render_rect.x + (render_rect.width - title_surface.get_width()) // 2
                 title_y = render_rect.y + 10
                 screen.blit(title_surface, (title_x, title_y))
+    
+    def _handle_drag_motion(self, mouse_pos: Tuple[int, int]) -> str:
+        """Handle mouse motion during drag operation."""
+        if not self.dragging_element:
+            return None
+            
+        element = self.elements[self.dragging_element]
+        
+        # Calculate drag delta from last position
+        dx = mouse_pos[0] - self.last_mouse_pos[0]
+        dy = mouse_pos[1] - self.last_mouse_pos[1]
+        
+        # Update element position
+        element.rect.x += dx
+        element.rect.y += dy
+        
+        # Update last mouse position
+        self.last_mouse_pos = mouse_pos
+        
+        return self.dragging_element
+    
+    def _start_drag(self, element_id: str, mouse_pos: Tuple[int, int]) -> bool:
+        """Start dragging an element."""
+        if element_id not in self.elements:
+            return False
+            
+        element = self.elements[element_id]
+        
+        if not element.draggable:
+            return False
+            
+        # Check if click is in header area (if defined) or entire element
+        drag_area = element.header_rect if element.header_rect else element.rect
+        
+        if not drag_area.collidepoint(mouse_pos):
+            return False
+            
+        # Calculate offset from element's top-left to mouse position
+        element.drag_offset = (mouse_pos[0] - element.rect.x, mouse_pos[1] - element.rect.y)
+        element.being_dragged = True
+        self.dragging_element = element_id
+        self.last_mouse_pos = mouse_pos
+        
+        # Bring to front when starting drag
+        self.bring_to_front(element_id)
+        
+        return True
+    
+    def toggle_minimize(self, element_id: str) -> bool:
+        """Toggle minimize state of an element."""
+        if element_id not in self.elements:
+            return False
+            
+        element = self.elements[element_id]
+        
+        if element.state == UIState.MINIMIZED:
+            # Restore from minimized
+            self.set_element_state(element_id, UIState.NORMAL)
+        else:
+            # Minimize
+            if not element.minimized_rect:
+                # Calculate default minimized size (title bar only)
+                element.minimized_rect = pygame.Rect(
+                    element.rect.x, element.rect.y,
+                    element.rect.width, 30  # Title bar height
+                )
+            self.set_element_state(element_id, UIState.MINIMIZED)
+            
+        return True
 
 
 # Utility functions for creating common UI element types

@@ -475,6 +475,97 @@ def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0
     screen.blit(inst_surf, (inst_x, inst_y))
     
     return back_button_rect
+
+def draw_window_with_header(screen, rect, title, content=None, minimized=False, font=None):
+    """
+    Draw a window with a draggable header and minimize button.
+    
+    Args:
+        screen: pygame surface to draw on
+        rect: pygame.Rect defining window position and size
+        title: window title text
+        content: optional content to draw in window body
+        minimized: whether window is in minimized state
+        font: optional font for title text
+        
+    Returns:
+        tuple: (header_rect, minimize_button_rect) for interaction handling
+    """
+    if font is None:
+        font = pygame.font.SysFont('Consolas', 16)
+    
+    # Window colors
+    header_color = (60, 60, 80)
+    header_border = (120, 120, 140)
+    body_color = (40, 40, 55)
+    body_border = (100, 100, 120)
+    
+    # Header dimensions
+    header_height = 30
+    header_rect = pygame.Rect(rect.x, rect.y, rect.width, header_height)
+    
+    # Draw header
+    pygame.draw.rect(screen, header_color, header_rect)
+    pygame.draw.rect(screen, header_border, header_rect, 2)
+    
+    # Draw title text
+    title_surf = font.render(title, True, (255, 255, 255))
+    title_x = header_rect.x + 8
+    title_y = header_rect.y + (header_height - title_surf.get_height()) // 2
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Draw minimize button (□ or ─ based on state)
+    button_size = 20
+    button_margin = 5
+    minimize_button_rect = pygame.Rect(
+        header_rect.right - button_size - button_margin,
+        header_rect.y + (header_height - button_size) // 2,
+        button_size, button_size
+    )
+    
+    # Button background
+    button_color = (80, 80, 100)
+    pygame.draw.rect(screen, button_color, minimize_button_rect)
+    pygame.draw.rect(screen, header_border, minimize_button_rect, 1)
+    
+    # Button icon
+    icon_color = (255, 255, 255)
+    if minimized:
+        # Restore icon (□)
+        icon_rect = pygame.Rect(
+            minimize_button_rect.x + 4, minimize_button_rect.y + 4,
+            minimize_button_rect.width - 8, minimize_button_rect.height - 8
+        )
+        pygame.draw.rect(screen, icon_color, icon_rect, 2)
+    else:
+        # Minimize icon (─)
+        line_y = minimize_button_rect.centery
+        line_start = minimize_button_rect.x + 4
+        line_end = minimize_button_rect.right - 4
+        pygame.draw.line(screen, icon_color, (line_start, line_y), (line_end, line_y), 2)
+    
+    # Draw body if not minimized
+    if not minimized:
+        body_rect = pygame.Rect(rect.x, rect.y + header_height, rect.width, rect.height - header_height)
+        pygame.draw.rect(screen, body_color, body_rect)
+        pygame.draw.rect(screen, body_border, body_rect, 2)
+        
+        # Draw content if provided
+        if content:
+            content_rect = pygame.Rect(
+                body_rect.x + 8, body_rect.y + 8,
+                body_rect.width - 16, body_rect.height - 16
+            )
+            if isinstance(content, str):
+                # Simple text content
+                lines = content.split('\n')
+                line_height = font.get_height() + 2
+                for i, line in enumerate(lines):
+                    if i * line_height < content_rect.height:
+                        text_surf = font.render(line, True, (255, 255, 255))
+                        screen.blit(text_surf, (content_rect.x, content_rect.y + i * line_height))
+    
+    return header_rect, minimize_button_rect
     
 def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size

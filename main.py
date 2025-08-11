@@ -8,12 +8,16 @@ from game_state import GameState
 from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events
 
 
+from overlay_manager import OverlayManager
 from bug_reporter import BugReporter
 from version import get_display_version
 from onboarding import onboarding
 from config_manager import initialize_config_system, get_current_config, config_manager
 from event_system import EventAction
 from sound_manager import SoundManager
+
+# Initialize window manager for UI panels
+window_manager = OverlayManager()
 
 # Initialize config system on startup
 initialize_config_system()
@@ -1029,6 +1033,25 @@ def main():
                                 overlay_content = load_markdown_file('PLAYERGUIDE.md')
                                 overlay_title = "Player Guide"
                                 current_state = 'overlay'
+                        
+                        # Window manager handling (for draggable windows)
+                        elif window_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H):
+                            # Check for minimize button clicks
+                            from ui import draw_window_with_header
+                            for element_id in window_manager.elements:
+                                element = window_manager.elements[element_id]
+                                if element.visible:
+                                    # Get minimize button rect
+                                    header_rect, minimize_rect = draw_window_with_header(
+                                        pygame.Surface((1, 1)), element.rect, element.title, 
+                                        element.content, element.state.value == 'minimized'
+                                    )
+                                    if minimize_rect.collidepoint(mx, my):
+                                        window_manager.toggle_minimize(element_id)
+                                        break
+                            # Window manager handled the event, skip other processing
+                            pass
+                        
                         # First-time help close button
                         elif first_time_help_content and first_time_help_close_button:
                             # Check if the close button was clicked
@@ -1063,7 +1086,12 @@ def main():
                                 tooltip_text = result
                         
                 elif event.type == pygame.MOUSEMOTION:
-                    # Handle overlay manager hover events first
+                    # Handle window manager motion events first (for dragging)
+                    if current_state == 'game' and window_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H):
+                        # Window manager handled the event (dragging), skip other processing
+                        continue
+                    
+                    # Handle overlay manager hover events
                     if current_state == 'game' and game_state:
                         handled_element = game_state.overlay_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H)
                         if handled_element:
@@ -1079,6 +1107,10 @@ def main():
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
                 
                 elif event.type == pygame.MOUSEBUTTONUP:
+                    # Handle window manager button release (for ending drag operations)
+                    if current_state == 'game':
+                        window_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H)
+                    
                     # Handle mouse button release (for ending drag operations)
                     if current_state == 'game' and game_state:
                         game_state.handle_mouse_release(event.pos, SCREEN_W, SCREEN_H)
@@ -1210,6 +1242,29 @@ def main():
                                 overlay_title = "Player Guide"
                                 overlay_scroll = 0
                                 current_state = 'overlay'
+                            
+                            # 'W' key for window management demo
+                            elif event.key == pygame.K_w:
+                                from overlay_manager import UIElement, ZLayer
+                                
+                                # Create a demo window if it doesn't exist
+                                demo_window_id = "demo_window"
+                                if demo_window_id not in window_manager.elements:
+                                    demo_rect = pygame.Rect(200, 150, 300, 200)
+                                    demo_element = UIElement(
+                                        id=demo_window_id,
+                                        layer=ZLayer.DIALOGS,
+                                        rect=demo_rect,
+                                        title="Demo Window",
+                                        content="This is a draggable window!\n\nYou can:\n- Click and drag the header\n- Click minimize button\n- Press W again to close",
+                                        draggable=True
+                                    )
+                                    # Set header area for dragging (top 30 pixels)
+                                    demo_element.header_rect = pygame.Rect(demo_rect.x, demo_rect.y, demo_rect.width, 30)
+                                    window_manager.register_element(demo_element)
+                                else:
+                                    # Remove existing window
+                                    window_manager.unregister_element(demo_window_id)
 
             # --- Game state initialization --- #
             # Create game state when entering game for first time
@@ -1314,6 +1369,19 @@ def main():
                     # Render overlay manager elements
                     if game_state:
                         game_state.overlay_manager.render_elements(screen)
+                    
+                    # Render window manager elements
+                    for layer in window_manager.z_order:
+                        for element_id in window_manager.z_order[layer]:
+                            element = window_manager.elements[element_id]
+                            if element.visible:
+                                from ui import draw_window_with_header
+                                header_rect, minimize_rect = draw_window_with_header(
+                                    screen, element.rect, element.title, element.content, 
+                                    element.state.value == 'minimized'
+                                )
+                                # Update header rect for dragging
+                                element.header_rect = header_rect
                     
                     if tooltip_text:
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
