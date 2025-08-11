@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen
 
 
 from overlay_manager import OverlayManager
@@ -15,9 +15,6 @@ from onboarding import onboarding
 from config_manager import initialize_config_system, get_current_config, config_manager
 from event_system import EventAction
 from sound_manager import SoundManager
-
-# Initialize window manager for UI panels
-window_manager = OverlayManager()
 
 # Initialize config system on startup
 initialize_config_system()
@@ -38,8 +35,10 @@ if current_config.get('audio', {}).get('sound_enabled', True):
 else:
     global_sound_manager.set_enabled(False)
 
-# --- Adaptive window sizing --- #
+# --- Adaptive window sizing with loading screen --- #
 pygame.init()
+
+# Set up initial screen for loading
 info = pygame.display.Info()
 window_scale = current_config['ui']['window_scale']
 SCREEN_W = int(info.current_w * window_scale)
@@ -48,6 +47,27 @@ FLAGS = pygame.RESIZABLE
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
 pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}")
 clock = pygame.time.Clock()
+
+# Show loading screen during initialization
+
+# Phase 1: Basic setup
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.2, "Initializing systems...")
+pygame.display.flip()
+
+# Phase 2: Config and sound
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.4, "Loading configuration...")
+pygame.display.flip()
+
+# Phase 3: Sound and audio setup
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.6, "Setting up audio...")
+pygame.display.flip()
+
+# Initialize window manager for UI panels
+window_manager = OverlayManager()
+
+# Phase 4: UI components
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.8, "Loading UI components...")
+pygame.display.flip()
 
 # --- Menu and game state management --- #
 # Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial'
@@ -103,6 +123,16 @@ bug_report_data = {
 bug_report_selected_field = 0
 bug_report_editing_field = False
 bug_report_success_message = ""
+
+# Phase 5: Complete initialization
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 1.0, "Ready!")
+pygame.display.flip()
+
+# Brief pause to show completion (fast-load optimization: skip if under 100ms total)
+import time
+loading_start = time.time()
+if time.time() - loading_start > 0.1:  # Only pause if loading took time
+    pygame.time.wait(500)  # Brief pause to show "Ready!" message
 
 
 def get_weekly_seed():
