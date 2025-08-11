@@ -38,8 +38,10 @@ jobs:
         "
     
     - name: Run unit tests
+      env:
+        PYTHONWARNINGS: ignore::DeprecationWarning
       run: |
-        python -m unittest discover tests -v
+        python -m pytest tests/ -v
     
     - name: Verify event log behavior specifically
       run: |
