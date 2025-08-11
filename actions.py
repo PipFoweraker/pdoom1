@@ -7,6 +7,10 @@ ACTIONS = [
         "desc": "+Reputation, possible staff; costs money.",
         "cost": 25,
         "ap_cost": 1,  # Action Points cost
+        "delegatable": True,  # Can be delegated to admin staff
+        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
+        "delegate_ap_cost": 0,  # Lower AP cost when delegated (routine task)
+        "delegate_effectiveness": 1.0,  # Full effectiveness when delegated
         "upside": lambda gs: (gs._add('reputation', random.randint(2, 5)),
                               gs._add('staff', random.choice([0, 1]))),
         "downside": lambda gs: None,
@@ -17,6 +21,10 @@ ACTIONS = [
         "desc": "+Money (scaled by rep), small rep risk.",
         "cost": 0,
         "ap_cost": 1,  # Action Points cost
+        "delegatable": True,  # Can be delegated to admin staff
+        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate  
+        "delegate_ap_cost": 1,  # Same AP cost when delegated (requires personal touch)
+        "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
         "upside": lambda gs: gs._add('money', random.randint(40, 70) + gs.reputation * 2),
         "downside": lambda gs: gs._add('reputation', -1 if random.random() < 0.25 else 0),
         "rules": None
@@ -30,7 +38,10 @@ ACTIONS = [
         "delegate_staff_req": 2,  # Requires 2 research staff to delegate
         "delegate_ap_cost": 1,  # Same AP cost when delegated (research is complex)
         "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated
-        "upside": lambda gs: (gs._add('doom', -random.randint(2, 6) - (1 if 'better_computers' in gs.upgrade_effects else 0)),
+        "upside": lambda gs: (gs._add('doom', -random.randint(2, 6) - 
+                                    (1 if 'better_computers' in gs.upgrade_effects else 0) -
+                                    (2 if 'hpc_cluster' in gs.upgrade_effects else 0) -
+                                    (1 if 'research_automation' in gs.upgrade_effects and gs.compute >= 10 else 0)),
                               gs._add('reputation', 2)),
         "downside": lambda gs: None,
         "rules": None
@@ -44,7 +55,11 @@ ACTIONS = [
         "delegate_staff_req": 2,  # Requires 2 research staff to delegate
         "delegate_ap_cost": 1,  # Same AP cost when delegated
         "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated
-        "upside": lambda gs: (gs._add('doom', -random.randint(2, 5)), gs._add('reputation', 3)),
+        "upside": lambda gs: (gs._add('doom', -random.randint(2, 5) - 
+                                    (1 if 'better_computers' in gs.upgrade_effects else 0) -
+                                    (2 if 'hpc_cluster' in gs.upgrade_effects else 0) -
+                                    (1 if 'research_automation' in gs.upgrade_effects and gs.compute >= 10 else 0)), 
+                              gs._add('reputation', 3)),
         "downside": lambda gs: None,
         "rules": None
     },
@@ -60,6 +75,19 @@ ACTIONS = [
         "upside": lambda gs: gs._add('compute', 10),
         "downside": lambda gs: None,
         "rules": None
+    },
+    {
+        "name": "Scout Opponents",
+        "desc": "Gather intelligence on competing labs; reveals their capabilities.",
+        "cost": 75,
+        "ap_cost": 1,  # Action Points cost
+        "delegatable": True,  # Can be delegated to admin staff
+        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
+        "delegate_ap_cost": 1,  # Same AP cost when delegated
+        "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
+        "upside": lambda gs: gs._scout_opponents(),
+        "downside": lambda gs: None,
+        "rules": scout_unlock_rule
     },
     {
         "name": "Hire Staff",
