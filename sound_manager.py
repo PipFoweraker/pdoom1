@@ -13,7 +13,8 @@ class SoundManager:
     """Manages sound effects and music for the game"""
     
     def __init__(self):
-        self.enabled = True and PYGAME_AVAILABLE
+        self.enabled = True  # User preference - start enabled
+        self.audio_available = PYGAME_AVAILABLE  # Hardware capability
         self.sounds = {}
         # Individual sound toggles for granular control
         self.sound_toggles = {
@@ -29,21 +30,23 @@ class SoundManager:
     def _initialize_pygame_mixer(self):
         """Initialize pygame mixer for sound playback"""
         if not PYGAME_AVAILABLE:
-            self.enabled = False
+            self.audio_available = False
             return
             
         try:
             pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
+            self.audio_available = True
         except pygame.error:
-            # If mixer initialization fails (e.g., no audio device), disable sounds
-            self.enabled = False
+            # If mixer initialization fails (e.g., no audio device), note that audio is unavailable
+            # but don't disable user preference
+            self.audio_available = False
         except Exception:
             # Handle any other initialization errors
-            self.enabled = False
+            self.audio_available = False
     
     def _create_blob_sound(self):
         """Create a simple blob sound effect programmatically"""
-        if not self.enabled or not PYGAME_AVAILABLE:
+        if not self.audio_available:
             return
             
         try:
@@ -91,12 +94,12 @@ class SoundManager:
             
 
         except (pygame.error, AttributeError, Exception):
-            # If sound creation fails, just disable sounds
-            self.enabled = False
+            # If sound creation fails, note that audio is unavailable
+            self.audio_available = False
     
     def _create_error_beep(self):
         """Create an error beep sound for the easter egg (3 repeated errors)"""
-        if not self.enabled or not PYGAME_AVAILABLE:
+        if not self.audio_available:
             return
             
         try:
@@ -149,7 +152,7 @@ class SoundManager:
     
     def _create_ap_spend_sound(self):
         """Create a sound effect for when Action Points are spent"""
-        if not self.enabled or not PYGAME_AVAILABLE:
+        if not self.audio_available:
             return
             
         try:
@@ -189,7 +192,7 @@ class SoundManager:
     def _create_zabinga_sound(self):
         """Create a celebratory 'Zabinga!' sound effect for research paper completion"""
 
-        if not self.enabled or not PYGAME_AVAILABLE:
+        if not self.audio_available:
             return
             
         try:
@@ -246,7 +249,7 @@ class SoundManager:
     
     def play_blob_sound(self):
         """Play the blob sound effect when a new employee is hired"""
-        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('blob', True) and 'blob' in self.sounds:
+        if self.enabled and self.audio_available and self.sound_toggles.get('blob', True) and 'blob' in self.sounds:
             try:
                 self.sounds['blob'].play()
             except pygame.error:
@@ -255,7 +258,7 @@ class SoundManager:
     
     def play_error_beep(self):
         """Play the error beep sound for the easter egg (3 repeated identical errors)"""
-        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('error_beep', True) and 'error_beep' in self.sounds:
+        if self.enabled and self.audio_available and self.sound_toggles.get('error_beep', True) and 'error_beep' in self.sounds:
             try:
                 self.sounds['error_beep'].play()
             except pygame.error:
@@ -264,7 +267,7 @@ class SoundManager:
     
     def play_ap_spend_sound(self):
         """Play the AP spend sound effect when Action Points are spent"""
-        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('ap_spend', True) and 'ap_spend' in self.sounds:
+        if self.enabled and self.audio_available and self.sound_toggles.get('ap_spend', True) and 'ap_spend' in self.sounds:
             try:
                 self.sounds['ap_spend'].play()
             except pygame.error:
@@ -273,7 +276,7 @@ class SoundManager:
     
     def play_money_spend_sound(self):
         """Play a sound effect when money is spent (reuse AP spend sound for consistency)"""
-        if self.enabled and PYGAME_AVAILABLE and self.sound_toggles.get('money_spend', True) and 'ap_spend' in self.sounds:
+        if self.enabled and self.audio_available and self.sound_toggles.get('money_spend', True) and 'ap_spend' in self.sounds:
             try:
                 self.sounds['ap_spend'].play()
             except pygame.error:
@@ -282,7 +285,7 @@ class SoundManager:
     
     def play_zabinga_sound(self):
         """Play the Zabinga sound effect when research papers are completed"""
-        if self.enabled and PYGAME_AVAILABLE and 'zabinga' in self.sounds:
+        if self.enabled and self.audio_available and 'zabinga' in self.sounds:
             try:
                 self.sounds['zabinga'].play()
 
