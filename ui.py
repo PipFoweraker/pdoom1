@@ -214,6 +214,9 @@ def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     # Draw sound toggle button if sound manager is available (Issue #89)
     if sound_manager:
         draw_mute_button_standalone(screen, sound_manager, w, h)
+    
+    # Draw version in bottom right corner
+    draw_version_footer(screen, w, h)
 
 def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
     """
@@ -566,6 +569,60 @@ def draw_window_with_header(screen, rect, title, content=None, minimized=False, 
                         screen.blit(text_surf, (content_rect.x, content_rect.y + i * line_height))
     
     return header_rect, minimize_button_rect
+
+def draw_version_footer(screen, w, h, font=None):
+    """
+    Draw version information in the footer area.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for positioning
+        font: optional font for version text
+    """
+    try:
+        from version import get_display_version
+        version_text = get_display_version()
+    except ImportError:
+        version_text = "dev"
+    
+    if font is None:
+        font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
+    
+    # Position in bottom right corner with margin
+    margin = int(h * 0.02)
+    version_surf = font.render(version_text, True, (120, 120, 120))
+    
+    version_x = w - version_surf.get_width() - margin
+    version_y = h - version_surf.get_height() - margin
+    
+    screen.blit(version_surf, (version_x, version_y))
+
+def draw_version_header(screen, w, h, font=None):
+    """
+    Draw version information in the header area (alternative placement).
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for positioning
+        font: optional font for version text
+    """
+    try:
+        from version import get_display_version
+        version_text = get_display_version()
+    except ImportError:
+        version_text = "dev"
+    
+    if font is None:
+        font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
+    
+    # Position in top right corner with margin
+    margin = int(h * 0.02)
+    version_surf = font.render(version_text, True, (120, 120, 120))
+    
+    version_x = w - version_surf.get_width() - margin
+    version_y = margin
+    
+    screen.blit(version_surf, (version_x, version_y))
     
 def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size
@@ -916,6 +973,9 @@ def draw_ui(screen, game_state, w, h):
     
     # Draw mute button (bottom right)
     draw_mute_button(screen, game_state, w, h)
+    
+    # Draw version in bottom right corner (unobtrusive)
+    draw_version_footer(screen, w, h)
     
     # Draw popup events (overlay, drawn last to be on top)
     draw_popup_events(screen, game_state, w, h, font, big_font)

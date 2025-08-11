@@ -172,6 +172,11 @@ This project follows [Semantic Versioning](https://semver.org/) (SemVer) for all
 
 ### For Developers
 - Version managed centrally in `version.py`
+- Version automatically displayed in:
+  - Window title bar
+  - Bottom right corner of main menu and game UI
+  - Accessible via `get_display_version()` function
+  - Falls back to "dev" when running unbuilt/development versions
 - Release checklist documented in `RELEASE_CHECKLIST.md`
 - Automated testing and release workflows in `.github/workflows/`
 - All releases include source archives and checksums
