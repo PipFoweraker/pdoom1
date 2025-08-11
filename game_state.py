@@ -14,6 +14,8 @@ from overlay_manager import OverlayManager
 from error_tracker import ErrorTracker
 from config_manager import get_current_config
 from employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
+from productive_actions import (get_employee_category, get_available_actions, 
+                               check_action_requirements, get_default_action_index)
 from end_game_scenarios import end_game_scenarios
 
 SCORE_FILE = "local_highscore.json"
@@ -587,7 +589,11 @@ class GameState:
                 'animation_progress': 1.0,  # Already positioned
                 'type': 'employee',  # Track blob type
                 'managed_by': None,  # Which manager manages this employee (None if unmanaged)
-                'unproductive_reason': None  # Reason for being unproductive (for overlay display)
+                'unproductive_reason': None,  # Reason for being unproductive (for overlay display)
+                'subtype': 'generalist',  # Default employee subtype
+                'productive_action_index': 0,  # Default to first action
+                'productive_action_bonus': 1.0,  # Current productivity bonus
+                'productive_action_active': False  # Whether productive action is active
             }
             self.employee_blobs.append(blob)
     
@@ -610,7 +616,11 @@ class GameState:
                 'animation_progress': 0.0,  # Will animate in
                 'type': 'employee',  # Track blob type
                 'managed_by': None,  # Which manager manages this employee (None if unmanaged)
-                'unproductive_reason': None  # Reason for being unproductive (for overlay display)
+                'unproductive_reason': None,  # Reason for being unproductive (for overlay display)
+                'subtype': 'generalist',  # Default employee subtype
+                'productive_action_index': 0,  # Default to first action
+                'productive_action_bonus': 1.0,  # Current productivity bonus
+                'productive_action_active': False  # Whether productive action is active
             }
             self.employee_blobs.append(blob)
             
@@ -847,7 +857,11 @@ class GameState:
             'animation_progress': 0.0,  # Will animate in
             'type': 'manager',  # Manager type
             'managed_employees': [],  # List of employee IDs this manager oversees
-            'management_capacity': 9  # Can manage up to 9 employees
+            'management_capacity': 9,  # Can manage up to 9 employees
+            'subtype': 'manager',  # Manager subtype
+            'productive_action_index': 0,  # Default to first action
+            'productive_action_bonus': 1.0,  # Current productivity bonus
+            'productive_action_active': False  # Whether productive action is active
         }
         
         # Add to both general blobs and specific managers list
@@ -1016,7 +1030,7 @@ class GameState:
                 self.employee_blobs.pop()
                 
     def _update_employee_productivity(self):
-        """Update employee productivity based on compute availability and management each week"""
+        """Update employee productivity based on compute availability, management, and productive actions each week"""
         productive_employees = 0
         research_gained = 0
         
@@ -1024,6 +1038,8 @@ class GameState:
         for blob in self.employee_blobs:
             blob['has_compute'] = False
             blob['productivity'] = 0.0
+            blob['productive_action_active'] = False
+            blob['productive_action_bonus'] = 1.0
             
         # Apply management assignments and check for unmanaged penalties
         self._reassign_employee_management()
@@ -1041,14 +1057,43 @@ class GameState:
                     # Unmanaged employees beyond 9 become unproductive
                     employee['productivity'] = 0.0
                     
-        # Assign compute to productive employees (1 compute per employee if available)
+        # Calculate available compute per employee
+        total_employees = len(employees) + len(managers)
+        compute_per_employee = self.compute / max(total_employees, 1) if total_employees > 0 else 0
+        
+        # Assign compute to productive employees and apply productive actions
         compute_assigned = 0
+        productive_action_messages = []
+        
         for blob in self.employee_blobs:
             if blob['type'] == 'manager':
                 # Managers always have compute and are productive
                 blob['has_compute'] = True
                 blob['productivity'] = 1.0
+                
+                # Apply manager productive actions
+                category = get_employee_category(blob['subtype'])
+                if category:
+                    actions = get_available_actions(category)
+                    if actions and blob['productive_action_index'] < len(actions):
+                        action = actions[blob['productive_action_index']]
+                        requirements_met, failure_reason = check_action_requirements(action, self, compute_per_employee)
+                        
+                        if requirements_met:
+                            blob['productive_action_active'] = True
+                            blob['productive_action_bonus'] = action['effectiveness_bonus']
+                            productive_action_messages.append(
+                                f"Manager performing {action['name']} (+{int((action['effectiveness_bonus'] - 1) * 100)}% effectiveness)"
+                            )
+                        else:
+                            blob['productive_action_active'] = False
+                            blob['productive_action_bonus'] = 0.9  # 10% penalty for unmet requirements
+                            productive_action_messages.append(
+                                f"Manager unable to perform {action['name']}: {failure_reason} (-10% effectiveness)"
+                            )
+                
                 productive_employees += 1
+                
             elif blob['type'] == 'employee':
                 # For employees, check if they should be productive
                 should_be_productive = True
@@ -1063,14 +1108,46 @@ class GameState:
                     blob['has_compute'] = True
                     blob['productivity'] = 1.0
                     compute_assigned += 1
+                    
+                    # Apply employee productive actions
+                    category = get_employee_category(blob['subtype'])
+                    if category:
+                        actions = get_available_actions(category)
+                        if actions and blob['productive_action_index'] < len(actions):
+                            action = actions[blob['productive_action_index']]
+                            requirements_met, failure_reason = check_action_requirements(action, self, compute_per_employee)
+                            
+                            if requirements_met:
+                                blob['productive_action_active'] = True
+                                blob['productive_action_bonus'] = action['effectiveness_bonus']
+                                productive_action_messages.append(
+                                    f"{blob['subtype'].title()} performing {action['name']} (+{int((action['effectiveness_bonus'] - 1) * 100)}% effectiveness)"
+                                )
+                            else:
+                                blob['productive_action_active'] = False
+                                blob['productive_action_bonus'] = 0.9  # 10% penalty for unmet requirements
+                                productive_action_messages.append(
+                                    f"{blob['subtype'].title()} unable to perform {action['name']}: {failure_reason} (-10% effectiveness)"
+                                )
+                    
                     productive_employees += 1
                     
-        # Generate research from productive employees
+        # Generate research from productive employees with productive action bonuses
+        total_research_bonus = 1.0
+        active_bonuses = 0
         for blob in self.employee_blobs:
             if blob['productivity'] > 0:
                 # Each productive employee has a chance to contribute to research
                 if random.random() < 0.3:  # 30% chance per productive employee
-                    research_gained += random.randint(1, 3)
+                    base_research = random.randint(1, 3)
+                    # Apply productive action bonus
+                    bonus_research = int(base_research * blob['productive_action_bonus'])
+                    research_gained += bonus_research
+                
+                # Track active bonuses for messaging
+                if blob['productive_action_active']:
+                    total_research_bonus *= blob['productive_action_bonus']
+                    active_bonuses += 1
                     
         # Apply penalties for unproductive employees
         unproductive_count = len(self.employee_blobs) - productive_employees
@@ -1088,7 +1165,27 @@ class GameState:
         # Update research progress
         if research_gained > 0:
             self._add('research_progress', research_gained)
-            self.messages.append(f"Research progress: +{research_gained} (total: {self.research_progress})")
+            research_message = f"Research progress: +{research_gained} (total: {self.research_progress})"
+            if active_bonuses > 0:
+                research_message += f" [+{int((total_research_bonus - 1) * 100)}% from {active_bonuses} productive actions]"
+            self.messages.append(research_message)
+            
+        # Display productive action status messages (limited to avoid spam)
+        if productive_action_messages:
+            # Group similar messages and show summary
+            action_summary = {}
+            for msg in productive_action_messages:
+                # Extract action type for grouping
+                if "performing" in msg:
+                    action_type = "active"
+                else:
+                    action_type = "failed"
+                action_summary[action_type] = action_summary.get(action_type, 0) + 1
+            
+            if action_summary.get("active", 0) > 0:
+                self.messages.append(f"Productive Actions: {action_summary['active']} employees performing specialized tasks")
+            if action_summary.get("failed", 0) > 0:
+                self.messages.append(f"Productivity Issues: {action_summary['failed']} employees unable to perform specialized tasks")
             
         # Check if research threshold reached for paper publication
         if self.research_progress >= 100:
@@ -1861,6 +1958,128 @@ class GameState:
                 "content": content
             }
     
+    def get_employee_productive_actions(self, employee_id):
+        """
+        Get available productive actions for a specific employee.
+        
+        Args:
+            employee_id (int): The ID of the employee blob
+            
+        Returns:
+            dict: Information about the employee's productive actions, or None if not found
+        """
+        # Find the employee blob
+        employee_blob = None
+        for blob in self.employee_blobs:
+            if blob['id'] == employee_id:
+                employee_blob = blob
+                break
+        
+        if not employee_blob:
+            return None
+        
+        category = get_employee_category(employee_blob['subtype'])
+        if not category:
+            return None
+        
+        actions = get_available_actions(category)
+        if not actions:
+            return None
+        
+        # Check requirements for each action
+        total_employees = len([b for b in self.employee_blobs if b['type'] in ['employee', 'manager']])
+        compute_per_employee = self.compute / max(total_employees, 1) if total_employees > 0 else 0
+        
+        action_info = []
+        for i, action in enumerate(actions):
+            requirements_met, failure_reason = check_action_requirements(action, self, compute_per_employee)
+            action_info.append({
+                'index': i,
+                'name': action['name'],
+                'description': action['description'],
+                'effectiveness_bonus': action['effectiveness_bonus'],
+                'requirements_met': requirements_met,
+                'failure_reason': failure_reason,
+                'is_selected': i == employee_blob['productive_action_index']
+            })
+        
+        return {
+            'employee_id': employee_id,
+            'employee_subtype': employee_blob['subtype'],
+            'category': category,
+            'current_action_index': employee_blob['productive_action_index'],
+            'current_action_active': employee_blob.get('productive_action_active', False),
+            'current_action_bonus': employee_blob.get('productive_action_bonus', 1.0),
+            'available_actions': action_info
+        }
+    
+    def set_employee_productive_action(self, employee_id, action_index):
+        """
+        Set the productive action for a specific employee.
+        
+        Args:
+            employee_id (int): The ID of the employee blob
+            action_index (int): The index of the action to set
+            
+        Returns:
+            tuple: (success (bool), message (str))
+        """
+        # Find the employee blob
+        employee_blob = None
+        for blob in self.employee_blobs:
+            if blob['id'] == employee_id:
+                employee_blob = blob
+                break
+        
+        if not employee_blob:
+            return False, f"Employee {employee_id} not found"
+        
+        category = get_employee_category(employee_blob['subtype'])
+        if not category:
+            return False, f"No productive actions available for {employee_blob['subtype']}"
+        
+        actions = get_available_actions(category)
+        if not actions or action_index < 0 or action_index >= len(actions):
+            return False, f"Invalid action index {action_index}"
+        
+        # Set the new action
+        employee_blob['productive_action_index'] = action_index
+        action_name = actions[action_index]['name']
+        
+        self.messages.append(f"{employee_blob['subtype'].title()} (ID:{employee_id}) assigned to: {action_name}")
+        
+        return True, f"Action set to {action_name}"
+    
+    def get_all_employee_productive_actions_summary(self):
+        """
+        Get a summary of all employees' productive actions for debugging/logging.
+        
+        Returns:
+            list: List of employee productive action summaries
+        """
+        summary = []
+        
+        for blob in self.employee_blobs:
+            if blob['type'] in ['employee', 'manager']:
+                category = get_employee_category(blob['subtype'])
+                if category:
+                    actions = get_available_actions(category)
+                    if actions and blob['productive_action_index'] < len(actions):
+                        current_action = actions[blob['productive_action_index']]
+                        summary.append({
+                            'id': blob['id'],
+                            'type': blob['type'],
+                            'subtype': blob['subtype'],
+                            'category': category,
+                            'current_action': current_action['name'],
+                            'action_index': blob['productive_action_index'],
+                            'is_active': blob.get('productive_action_active', False),
+                            'bonus': blob.get('productive_action_bonus', 1.0),
+                            'productivity': blob.get('productivity', 0.0)
+                        })
+        
+        return summary
+
     def dismiss_tutorial_message(self):
         """Dismiss the current tutorial message and mark milestone as shown."""
         if self.pending_tutorial_message:
