@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- **Critical Game Launch Crash Fix**: Fixed `AttributeError: 'OnboardingSystem' object has no attribute 'get_mechanic_help'` that prevented game startup
+  - Implemented missing `get_mechanic_help()` method in `OnboardingSystem` class
+  - Added comprehensive help content for core mechanics: staff hiring, upgrades, action points, and doom warnings
+  - Graceful error handling for invalid mechanic names
+  - Warning logging for stub implementation as placeholder for future enhancements
+  - All first-time help content tests now pass (7/7 passing)
+
 ### Added
 - **Batch 1 - Stability & UI Correctness Improvements**: Critical bug fixes and UI enhancements
   - **Navigation Back Button Fix (Issues #122, #118)**: Back button now shows at navigation depth >= 1 (previously > 1)

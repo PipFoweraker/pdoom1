@@ -387,6 +387,42 @@ Provides automatic contextual help when players encounter key mechanics for the 
 - Only shown once per mechanic per player
 - Disabled during active tutorial to avoid interference
 
+### Mechanic Help Content System
+
+The `get_mechanic_help()` method provides structured help content for specific game mechanics:
+
+**Supported Mechanics:**
+- `first_staff_hire`: Guidance on hiring staff and action point benefits
+- `first_upgrade_purchase`: Explanation of laboratory upgrades and efficiency
+- `action_points_exhausted`: Instructions when no action points remain
+- `high_doom_warning`: Critical safety warnings for high p(Doom) levels
+
+**Method Signature:**
+```python
+def get_mechanic_help(self, mechanic: str) -> Optional[Dict]:
+    """
+    Get help content for a specific game mechanic.
+    
+    Returns:
+        Dict with 'title' and 'content' keys for valid mechanics, None for invalid ones
+        
+    Note: Currently a stub implementation with warning logging.
+    """
+```
+
+**Return Format:**
+```python
+{
+    'title': 'Help Title',
+    'content': 'Detailed help content explaining the mechanic...'
+}
+```
+
+**Error Handling:**
+- Returns `None` for invalid, empty, or non-string mechanic names
+- Logs warnings for all calls (indicating stub implementation)
+- Gracefully handles edge cases (None, empty string, numeric inputs)
+
 ### Progress Tracking
 
 The system uses `onboarding_progress.json` to store:
