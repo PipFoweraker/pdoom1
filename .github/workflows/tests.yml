@@ -1,0 +1,127 @@
+name: Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y python3-dev libsdl2-dev libsdl2-mixer-dev
+        
+    - name: Set up SDL for headless testing
+      run: |
+        export SDL_AUDIODRIVER=dummy
+        export SDL_VIDEODRIVER=dummy
+        echo "SDL_AUDIODRIVER=dummy" >> $GITHUB_ENV
+        echo "SDL_VIDEODRIVER=dummy" >> $GITHUB_ENV
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -r requirements-dev.txt
+
+    - name: Lint with flake8
+      run: |
+        # Stop the build if there are Python syntax errors or undefined names
+        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        # Exit-zero treats all errors as warnings
+        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=88 --statistics
+
+    - name: Format check with black
+      run: |
+        black --check --diff .
+
+    - name: Import sort check with isort
+      run: |
+        isort --check-only --diff .
+
+    - name: Type check with mypy
+      run: |
+        mypy pdoom1/ --ignore-missing-imports
+
+    - name: Test with pytest
+      run: |
+        pytest tests/ -v --cov=pdoom1 --cov-report=xml --cov-report=term-missing
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+  test-windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Set up SDL for headless testing
+      run: |
+        echo "SDL_AUDIODRIVER=dummy" >> $env:GITHUB_ENV
+        echo "SDL_VIDEODRIVER=dummy" >> $env:GITHUB_ENV
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: Test core functionality
+      run: |
+        pytest tests/ -v -k "not integration"
+
+  test-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install system dependencies
+      run: |
+        brew install sdl2 sdl2_mixer
+
+    - name: Set up SDL for headless testing
+      run: |
+        export SDL_AUDIODRIVER=dummy
+        export SDL_VIDEODRIVER=dummy
+        echo "SDL_AUDIODRIVER=dummy" >> $GITHUB_ENV
+        echo "SDL_VIDEODRIVER=dummy" >> $GITHUB_ENV
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: Test core functionality
+      run: |
+        pytest tests/ -v -k "not integration"
