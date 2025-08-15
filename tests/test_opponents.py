@@ -330,11 +330,11 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
         self.assertIsNotNone(scout_action)
         
         # Before scouting is unlocked, it should not be available
-        self.game_state.turn = 5
+        self.game_state.turn = 4
         self.assertFalse(scout_action['rules'](self.game_state))
         
         # After scouting is unlocked, it should be available
-        self.game_state.scouting_unlocked = True
+        self.game_state.turn = 5
         self.assertTrue(scout_action['rules'](self.game_state))
         
     def test_opponents_affect_doom(self):
