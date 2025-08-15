@@ -174,6 +174,10 @@ class TestEventLog(unittest.TestCase):
             # End turn
             game_state.end_turn()
             
+            # Wait for turn processing to complete
+            while game_state.turn_processing:
+                game_state.update_turn_processing()
+            
             # Store messages from this turn
             turn_messages[turn_num] = game_state.messages.copy()
             
@@ -312,6 +316,10 @@ class TestScrollableEventLog(unittest.TestCase):
             
             # End the turn
             game_state.end_turn()
+            
+            # Wait for turn processing to complete
+            while game_state.turn_processing:
+                game_state.update_turn_processing()
         
         # Verify that history contains turn headers and our unique messages
         history_str = " ".join(game_state.event_log_history)
