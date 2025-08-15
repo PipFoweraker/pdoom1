@@ -38,7 +38,7 @@
     "show_keyboard_shortcuts": true
   },
   "audio": {
-    "sound_enabled": true,
+    "sound_enabled": false,
     "master_volume": 1.0,
     "ui_sounds": true,
     "feedback_sounds": true
