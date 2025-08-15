@@ -3,7 +3,6 @@
   "is_first_time": false,
   "completed_steps": [],
   "seen_mechanics": [
-    "action_points_exhausted",
     "first_staff_hire"
   ],
   "tutorial_dismissed": true

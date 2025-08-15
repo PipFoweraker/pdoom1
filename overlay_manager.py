@@ -276,7 +276,15 @@ class OverlayManager:
             # Enter/Space to activate focused element
             elif event.key in [pygame.K_RETURN, pygame.K_SPACE]:
                 if self.active_element:
-                    return self._activate_element(self.active_element)
+                    # Only intercept space bar if we have a clickable active element
+                    # This prevents interference with main game space bar (end turn)
+                    element = self.elements.get(self.active_element)
+                    if element and element.clickable:
+                        return self._activate_element(self.active_element)
+                    # For non-clickable elements, let space bar pass through to main game
+                    elif event.key == pygame.K_RETURN:
+                        # But still handle Enter for non-clickable elements
+                        return self._activate_element(self.active_element)
             
             # Escape to close top-level modal
             elif event.key == pygame.K_ESCAPE:
