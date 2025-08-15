@@ -1415,13 +1415,13 @@ def main():
                                 # Show help overlay
                                 overlay_content = load_markdown_file('PLAYERGUIDE.md')
                                 overlay_title = "Player Guide"
-                                current_state = 'overlay'
+                                push_navigation_state('overlay')
                         
                         # Help key (H) - always available
                         elif event.key == pygame.K_h:
                             overlay_content = load_markdown_file('PLAYERGUIDE.md')
                             overlay_title = "Player Guide"
-                            current_state = 'overlay'
+                            push_navigation_state('overlay')
                         
                         # Close first-time help
                         elif event.key == pygame.K_ESCAPE and first_time_help_content:
@@ -1473,7 +1473,7 @@ def main():
                                 overlay_content = load_markdown_file('PLAYERGUIDE.md')
                                 overlay_title = "Player Guide"
                                 overlay_scroll = 0
-                                current_state = 'overlay'
+                                push_navigation_state('overlay')
                             
                             # 'W' key for window management demo
                             elif event.key == pygame.K_w:
