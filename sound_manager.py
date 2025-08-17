@@ -1,5 +1,6 @@
 import math
 import array
+from pathlib import Path
 
 # Try to import pygame, but gracefully handle if it's not available
 try:
@@ -31,6 +32,8 @@ class SoundManager:
             self._create_blob_sound()
             # Always try to create popup sounds, even if blob sound creation failed
             self._create_popup_sounds()
+            # Load custom sound overrides from sounds/ folder
+            self._load_sounds_from_folder(Path("sounds"))
     
     def _initialize_pygame_mixer(self):
         """Initialize pygame mixer for sound playback"""
@@ -314,6 +317,46 @@ class SoundManager:
             
         except (pygame.error, AttributeError, ImportError, Exception):
             # If popup sound creation fails, continue without them
+            pass
+    
+    def _load_sounds_from_folder(self, folder: Path) -> None:
+        """Load custom sounds from a folder, overriding built-in sounds where keys match.
+        
+        Args:
+            folder: Path to the folder containing sound files
+        """
+        # Return immediately if audio is unavailable or folder does not exist
+        if not self.audio_available or not folder.exists() or not folder.is_dir():
+            return
+            
+        try:
+            # Recursively find all .wav and .ogg files
+            for sound_file in folder.rglob("*.wav"):
+                self._load_sound_file(sound_file)
+            for sound_file in folder.rglob("*.ogg"):
+                self._load_sound_file(sound_file)
+        except Exception:
+            # Never crash on folder loading errors
+            pass
+    
+    def _load_sound_file(self, sound_file: Path) -> None:
+        """Load a single sound file.
+        
+        Args:
+            sound_file: Path to the sound file to load
+        """
+        try:
+            # Create key from filename (stem, lowercase)
+            key = sound_file.stem.lower()
+            
+            # Load the sound using pygame
+            sound = pygame.mixer.Sound(str(sound_file))
+            
+            # Store in sounds dict, overriding existing entries
+            self.sounds[key] = sound
+            
+        except (pygame.error, Exception):
+            # If sound loading fails, continue without this file
             pass
     
     def play_sound(self, sound_name):
