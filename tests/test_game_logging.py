@@ -243,6 +243,10 @@ class TestGameSessionSimulation(unittest.TestCase):
                 old_doom = game_state.doom
                 game_state.end_turn()
                 
+                # Wait for turn processing to complete
+                while game_state.turn_processing:
+                    game_state.update_turn_processing()
+                
                 # If game ended naturally, break
                 if game_state.game_over:
                     break
@@ -255,6 +259,10 @@ class TestGameSessionSimulation(unittest.TestCase):
             if not game_state.game_over:
                 game_state.doom = game_state.max_doom
                 game_state.end_turn()
+                
+                # Wait for turn processing to complete
+                while game_state.turn_processing:
+                    game_state.update_turn_processing()
             
             # Verify a log file was created
             log_files = [f for f in os.listdir(temp_dir) if f.startswith("gamelog_")]
