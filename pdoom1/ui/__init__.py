@@ -20,6 +20,7 @@ from .facade import UIFacade
 from .screens.main_menu import draw_main_menu
 from .screens.loading import draw_loading_screen  
 from .screens.audio_menu import draw_audio_menu
+from .screens.seed_selection import draw_seed_selection
 
 __all__ = [
     'OverlayManager',
@@ -33,5 +34,6 @@ __all__ = [
     # Backwards compatibility exports - TODO: Remove after migration
     'draw_main_menu',
     'draw_loading_screen',
-    'draw_audio_menu'
+    'draw_audio_menu',
+    'draw_seed_selection'
 ]

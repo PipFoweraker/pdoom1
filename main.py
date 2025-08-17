@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_turn_transition_overlay
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_tutorial_choice, draw_popup_events, draw_turn_transition_overlay
 
 
 from overlay_manager import OverlayManager
@@ -1572,7 +1572,7 @@ def main():
             elif current_state == 'seed_selection':
                 # Seed selection screen
                 screen.fill((50, 50, 50))
-                draw_seed_selection(screen, SCREEN_W, SCREEN_H, 0, seed_input, global_sound_manager)  # Selected item handling can be improved
+                ui_facade.render_seed_selection(screen, SCREEN_W, SCREEN_H, 0, seed_input, global_sound_manager)  # Selected item handling can be improved
             
             elif current_state == 'tutorial_choice':
                 # Tutorial choice screen
