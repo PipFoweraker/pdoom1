@@ -9,6 +9,7 @@ from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_ma
 
 
 from overlay_manager import OverlayManager
+from pdoom1.ui.facade import UIFacade
 from bug_reporter import BugReporter
 from version import get_display_version
 from onboarding import onboarding
@@ -1150,6 +1151,7 @@ def main():
     
     # Initialize game state as None - will be created when game starts
     game_state = None
+    ui_facade = None
     tooltip_text = None
 
     running = True
@@ -1503,6 +1505,9 @@ def main():
             if current_state == 'game' and game_state is None:
                 game_state = GameState(seed)
                 
+                # Initialize UI facade with the game state's overlay manager
+                ui_facade = UIFacade(game_state.overlay_manager)
+                
                 # Sync sound state from global sound manager to game state
                 game_state.sound_manager.set_enabled(global_sound_manager.is_enabled())
                 
@@ -1616,11 +1621,9 @@ def main():
                         game_state.update_turn_processing()  # Handle turn transition timing
                         game_state.overlay_manager.update_animations()
                     
-                    draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
-                    
-                    # Render overlay manager elements
-                    if game_state:
-                        game_state.overlay_manager.render_elements(screen)
+                    # Render game HUD and overlays using UI facade
+                    if ui_facade:
+                        ui_facade.render_game(screen, game_state, SCREEN_W, SCREEN_H)
                     
                     # Render window manager elements
                     for layer in window_manager.z_order:
