@@ -1153,7 +1153,7 @@ def main():
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
     # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
     global first_time_help_content, first_time_help_close_button, current_tutorial_content
-    global overlay_content, overlay_title
+    global overlay_content, overlay_title, ui_facade
     
     # Initialize game state as None - will be created when game starts
     game_state = None
