@@ -224,6 +224,195 @@ class UIFacade:
         from .screens.seed_selection import draw_seed_selection
         draw_seed_selection(screen, w, h, selected_item, seed_input, sound_manager)
     
+    def render_config_menu(self, screen, w, h, selected_item, available_configs, current_config_name) -> None:
+        """
+        Render the configuration menu screen.
+        
+        Delegates to the config menu screen implementation while maintaining
+        identical behaviour to the original ui.draw_config_menu function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            selected_item: index of currently selected config item
+            available_configs: list of available config names
+            current_config_name: name of currently active config
+        """
+        from .screens.config_menu import draw_config_menu
+        draw_config_menu(screen, w, h, selected_item, available_configs, current_config_name)
+    
+    def render_pre_game_settings(self, screen, w, h, settings, selected_item, sound_manager=None) -> None:
+        """
+        Render the pre-game settings screen.
+        
+        Delegates to the pre-game settings screen implementation while maintaining
+        identical behaviour to the original ui.draw_pre_game_settings function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            settings: dictionary of current settings values
+            selected_item: index of currently selected setting
+            sound_manager: optional SoundManager instance for sound toggle button
+        """
+        from .screens.pre_game_settings import draw_pre_game_settings
+        draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager)
+    
+    def render_tutorial_choice(self, screen, w, h, selected_item) -> None:
+        """
+        Render the tutorial choice screen.
+        
+        Delegates to the tutorial choice screen implementation while maintaining
+        identical behaviour to the original ui.draw_tutorial_choice function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            selected_item: index of currently selected item (0=Yes, 1=No)
+        """
+        from .screens.tutorial_choice import draw_tutorial_choice
+        draw_tutorial_choice(screen, w, h, selected_item)
+    
+    def render_seed_prompt(self, screen, seed_input, weekly_seed) -> None:
+        """
+        Render the seed prompt screen.
+        
+        Delegates to the seed prompt screen implementation while maintaining
+        identical behaviour to the original ui.draw_seed_prompt function.
+        
+        Args:
+            screen: pygame surface to render to
+            seed_input: current seed input text
+            weekly_seed: weekly challenge seed suggestion
+        """
+        from .screens.seed_prompt import draw_seed_prompt
+        draw_seed_prompt(screen, seed_input, weekly_seed)
+    
+    def render_overlay(self, screen, title, content, scroll, w, h, nav_depth) -> None:
+        """
+        Render the overlay screen.
+        
+        Delegates to the overlay screen implementation while maintaining
+        identical behaviour to the original ui.draw_overlay function.
+        
+        Args:
+            screen: pygame surface to render to
+            title: string title to display at top of overlay
+            content: full text content to display
+            scroll: vertical scroll position in pixels
+            w: Screen width
+            h: Screen height
+            nav_depth: current navigation depth for Back button display
+        """
+        from .screens.overlay import draw_overlay
+        return draw_overlay(screen, title, content, scroll, w, h, nav_depth)
+    
+    def render_bug_report_form(self, screen, data, selected_field, w, h) -> None:
+        """
+        Render the bug report form screen.
+        
+        Delegates to the bug report screen implementation while maintaining
+        identical behaviour to the original ui.draw_bug_report_form function.
+        
+        Args:
+            screen: pygame surface to render to
+            data: dict containing form field values
+            selected_field: index of currently selected field
+            w: Screen width
+            h: Screen height
+        """
+        from .screens.bug_report import draw_bug_report_form
+        return draw_bug_report_form(screen, data, selected_field, w, h)
+    
+    def render_bug_report_success(self, screen, message, w, h) -> None:
+        """
+        Render the bug report success screen.
+        
+        Delegates to the bug report screen implementation while maintaining
+        identical behaviour to the original ui.draw_bug_report_success function.
+        
+        Args:
+            screen: pygame surface to render to
+            message: success message to display
+            w: Screen width
+            h: Screen height
+        """
+        from .screens.bug_report import draw_bug_report_success
+        draw_bug_report_success(screen, message, w, h)
+    
+    def render_end_game_menu(self, screen, w, h, selected_item, game_state, seed) -> None:
+        """
+        Render the end game menu screen.
+        
+        Delegates to the end game menu screen implementation while maintaining
+        identical behaviour to the original ui.draw_end_game_menu function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            selected_item: index of currently selected menu item
+            game_state: GameState object for displaying final stats
+            seed: Game seed used for this session
+        """
+        from .screens.end_game_menu import draw_end_game_menu
+        draw_end_game_menu(screen, w, h, selected_item, game_state, seed)
+    
+    def render_high_score_screen(self, screen, w, h, game_state, seed, submit_cb=None) -> None:
+        """
+        Render the high score screen.
+        
+        Delegates to the high score screen implementation while maintaining
+        identical behaviour to the original ui.draw_high_score_screen function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            game_state: current game state with final scores
+            seed: game seed used for this run
+            submit_cb: optional callback for leaderboard submission
+        """
+        from .screens.high_score import draw_high_score_screen
+        draw_high_score_screen(screen, w, h, game_state, seed, submit_cb)
+    
+    def render_turn_transition_overlay(self, screen, w, h, timer, duration) -> None:
+        """
+        Render the turn transition overlay.
+        
+        Delegates to the turn transition screen implementation while maintaining
+        identical behaviour to the original ui.draw_turn_transition_overlay function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            timer: current timer value (counts down from duration to 0)
+            duration: total duration of the transition
+        """
+        from .screens.turn_transition import draw_turn_transition_overlay
+        draw_turn_transition_overlay(screen, w, h, timer, duration)
+    
+    def render_first_time_help(self, screen, help_content, w, h, mouse_pos=None) -> None:
+        """
+        Render the first time help popup.
+        
+        Delegates to the first time help screen implementation while maintaining
+        identical behaviour to the original ui.draw_first_time_help function.
+        
+        Args:
+            screen: pygame surface to render to
+            help_content: dict with title and content for the help popup
+            w: Screen width
+            h: Screen height
+            mouse_pos: current mouse position for hover effects (optional)
+        """
+        from .screens.first_time_help import draw_first_time_help
+        return draw_first_time_help(screen, help_content, w, h, mouse_pos)
+    
     # Additional access methods for advanced usage
     
     @property
