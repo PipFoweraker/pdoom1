@@ -63,3 +63,31 @@ emergency_gamelog_*.txt
 # Bug reports (user privacy)
 bug_reports/
 bug_report_*.json
+
+# pdoom1 runtime and tooling (added by PR 2)
+
+# Runtime artefacts (store under OS app dirs; not in VCS)
+local_highscore.json
+onboarding_progress.json
+saves/
+savegames/
+cache/
+.tmp/
+.temp/
+*.log
+
+# Python cache and test artefacts
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Editor/OS noise
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
