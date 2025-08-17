@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_tutorial_choice, draw_popup_events, draw_turn_transition_overlay
+from ui import draw_ui, draw_scoreboard, draw_tooltip, draw_stepwise_tutorial_overlay, draw_popup_events
 
 
 from overlay_manager import OverlayManager
@@ -1560,14 +1560,13 @@ def main():
             elif current_state == 'config_select':
                 # Config selection menu
                 screen.fill((64, 64, 64))
-                from ui import draw_config_menu
-                draw_config_menu(screen, SCREEN_W, SCREEN_H, config_selected_item, 
+                ui_facade.render_config_menu(screen, SCREEN_W, SCREEN_H, config_selected_item, 
                                available_configs, config_manager.get_current_config_name())
             
             elif current_state == 'pre_game_settings':
                 # Pre-game settings screen
                 screen.fill((50, 50, 50))
-                draw_pre_game_settings(screen, SCREEN_W, SCREEN_H, pre_game_settings, selected_settings_item, global_sound_manager)
+                ui_facade.render_pre_game_settings(screen, SCREEN_W, SCREEN_H, pre_game_settings, selected_settings_item, global_sound_manager)
             
             elif current_state == 'seed_selection':
                 # Seed selection screen
@@ -1577,7 +1576,7 @@ def main():
             elif current_state == 'tutorial_choice':
                 # Tutorial choice screen
                 screen.fill((50, 50, 50))
-                draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, tutorial_choice_selected_item)
+                ui_facade.render_tutorial_choice(screen, SCREEN_W, SCREEN_H, tutorial_choice_selected_item)
             
             elif current_state == 'sounds_menu':
                 # Audio settings menu
@@ -1587,30 +1586,30 @@ def main():
             elif current_state == 'custom_seed_prompt':
                 # Preserve original seed prompt appearance
                 screen.fill((32, 32, 44))
-                draw_seed_prompt(screen, seed_input, get_weekly_seed())
+                ui_facade.render_seed_prompt(screen, seed_input, get_weekly_seed())
                 
             elif current_state == 'overlay':
                 # Dark background for documentation overlay
                 screen.fill((40, 40, 50))
-                back_button_rect = draw_overlay(screen, overlay_title, overlay_content, overlay_scroll, SCREEN_W, SCREEN_H, get_navigation_depth())
+                back_button_rect = ui_facade.render_overlay(screen, overlay_title, overlay_content, overlay_scroll, SCREEN_W, SCREEN_H, get_navigation_depth())
                 
             elif current_state == 'bug_report':
                 # Bug report form
-                buttons = draw_bug_report_form(screen, bug_report_data, bug_report_selected_field, SCREEN_W, SCREEN_H)
+                buttons = ui_facade.render_bug_report_form(screen, bug_report_data, bug_report_selected_field, SCREEN_W, SCREEN_H)
                 
             elif current_state == 'bug_report_success':
                 # Bug report success message
-                draw_bug_report_success(screen, bug_report_success_message, SCREEN_W, SCREEN_H)
+                ui_facade.render_bug_report_success(screen, bug_report_success_message, SCREEN_W, SCREEN_H)
                 
             elif current_state == 'end_game_menu':
                 # End-game menu with statistics and options
                 screen.fill((25, 25, 35))  # Same dark background as game
-                draw_end_game_menu(screen, SCREEN_W, SCREEN_H, end_game_selected_item, game_state, seed)
+                ui_facade.render_end_game_menu(screen, SCREEN_W, SCREEN_H, end_game_selected_item, game_state, seed)
                 
             elif current_state == 'high_score':
                 # High score screen with AI safety researchers and player score
                 screen.fill((20, 30, 40))  # Dark blue background for high scores
-                draw_high_score_screen(screen, SCREEN_W, SCREEN_H, game_state, seed, high_score_submit_to_leaderboard)
+                ui_facade.render_high_score_screen(screen, SCREEN_W, SCREEN_H, game_state, seed, high_score_submit_to_leaderboard)
 
                 
             elif current_state == 'game':
@@ -1656,14 +1655,14 @@ def main():
                     # Draw first-time help if available
                     if first_time_help_content and isinstance(first_time_help_content, dict):
                         mouse_pos = pygame.mouse.get_pos()
-                        first_time_help_close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H, mouse_pos)
+                        first_time_help_close_button = ui_facade.render_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H, mouse_pos)
                         # If drawing failed (returned None), clear the help content to prevent repeated attempts
                         if first_time_help_close_button is None:
                             first_time_help_content = None
                     
                     # Draw turn transition overlay if processing
                     if game_state and game_state.turn_processing:
-                        draw_turn_transition_overlay(screen, SCREEN_W, SCREEN_H, game_state.turn_processing_timer, game_state.turn_processing_duration)
+                        ui_facade.render_turn_transition_overlay(screen, SCREEN_W, SCREEN_H, game_state.turn_processing_timer, game_state.turn_processing_duration)
 
                         
             pygame.display.flip()

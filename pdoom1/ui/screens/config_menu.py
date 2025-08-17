@@ -53,15 +53,15 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
         
         # Determine button state
         if i == selected_item:
-            button_state = ButtonState.SELECTED
+            button_state = ButtonState.FOCUSED
         elif item == current_config_name:
-            button_state = ButtonState.ACTIVE  # Different color for current config
+            button_state = ButtonState.HOVER  # Different color for current config
         else:
             button_state = ButtonState.NORMAL
         
         # Draw button
-        draw_low_poly_button(screen, x, y, button_width, button_height, 
-                           item, menu_font, button_state)
+        button_rect = pygame.Rect(x, y, button_width, button_height)
+        draw_low_poly_button(screen, button_rect, item, button_state)
     
     # Instructions at bottom
     instructions = [
