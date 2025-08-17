@@ -7,21 +7,22 @@ For **installation and troubleshooting**, see the [README](README.md).
 
 ## Table of Contents
 - [Development Setup](#development-setup) (Line 28)
-- [Project Structure](#project-structure) (Line 53)
-- [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 75)
-- [Opponents System Architecture](#opponents-system-architecture) (Line 271)
-- [Onboarding System Architecture](#onboarding-system-architecture) (Line 331)
-- [Testing Framework](#testing-framework) (Line 460)
-- [Adding New Content](#adding-new-content) (Line 516)
-- [Enhanced Event System Architecture](#enhanced-event-system-architecture) (Line 647)
-- [Milestone Events System](#milestone-events-system) (Line 727)
-- [Code Style & Guidelines](#code-style--guidelines) (Line 807)
-- [Game Logging System](#game-logging-system) (Line 828)
-- [Release & Deployment](#release--deployment) (Line 857)
-- [Milestone-Driven Special Events & Static Effects System](#milestone-driven-special-events--static-effects-system) (Line 916)
-- [Architecture Notes](#architecture-notes) (Line 1034)
-- [Tutorial & Onboarding System Architecture](#tutorial--onboarding-system-architecture) (Line 1095)
-- [Need Help?](#need-help) (Line 1177)
+- [Custom Sound Overrides (sounds/)](#custom-sound-overrides-sounds) (Line 54)
+- [Project Structure](#project-structure) (Line 100)
+- [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 122)
+- [Opponents System Architecture](#opponents-system-architecture) (Line 318)
+- [Onboarding System Architecture](#onboarding-system-architecture) (Line 378)
+- [Testing Framework](#testing-framework) (Line 507)
+- [Adding New Content](#adding-new-content) (Line 563)
+- [Enhanced Event System Architecture](#enhanced-event-system-architecture) (Line 694)
+- [Milestone Events System](#milestone-events-system) (Line 774)
+- [Code Style & Guidelines](#code-style--guidelines) (Line 854)
+- [Game Logging System](#game-logging-system) (Line 875)
+- [Release & Deployment](#release--deployment) (Line 904)
+- [Milestone-Driven Special Events & Static Effects System](#milestone-driven-special-events--static-effects-system) (Line 963)
+- [Architecture Notes](#architecture-notes) (Line 1081)
+- [Tutorial & Onboarding System Architecture](#tutorial--onboarding-system-architecture) (Line 1142)
+- [Need Help?](#need-help) (Line 1224)
 
 **Configuration System**: For config management and modding support, see [CONFIG_SYSTEM.md](CONFIG_SYSTEM.md).
 
@@ -50,6 +51,65 @@ python -m unittest discover tests -v
 # Run the game
 python main.py
 ```
+
+---
+
+## Custom Sound Overrides (sounds/)
+
+P(Doom) supports custom sound effects through a simple file-based override system. This allows developers and modders to easily replace built-in sound effects with custom audio files.
+
+### How It Works
+
+1. **Create the sounds/ directory** in the project root (same level as main.py)
+2. **Place .wav or .ogg files** in the sounds/ directory (subdirectories are supported)
+3. **Name files to match event keys** - the filename (without extension) becomes the sound key
+4. **Custom sounds automatically override built-in sounds** when keys match
+
+### File Naming and Event Keys
+
+Files are mapped to sound events by their filename (case-insensitive). For example:
+- `ap_spend.wav` - overrides the 'ap_spend' sound effect
+- `POPUP_OPEN.ogg` - overrides the 'popup_open' sound effect  
+- `Error_Beep.WAV` - overrides the 'error_beep' sound effect
+
+**Available event keys that map to existing game events:**
+- `ap_spend` - Played when Action Points are spent
+- `popup_open` - Played when popup dialogs open
+- `popup_close` - Played when popup dialogs close  
+- `popup_accept` - Played when popup dialogs are accepted
+- `error_beep` - Played for error feedback (easter egg)
+- `blob` - Played when new employees are hired
+- `zabinga` - Played when research papers are completed
+
+### Example Usage
+
+```bash
+# Create the sounds directory
+mkdir sounds
+
+# Add custom sound files
+cp my_custom_click.wav sounds/ap_spend.wav
+cp my_popup_sound.ogg sounds/popup_open.ogg
+cp celebration.wav sounds/zabinga.wav
+
+# Run the game - your custom sounds will play automatically
+python main.py
+```
+
+### Technical Details
+
+- **Supported formats**: .wav and .ogg files
+- **Recursive loading**: Files in subdirectories are loaded (e.g., `sounds/ui/popup_open.wav`)
+- **Override behavior**: Custom files replace built-in sounds when keys match
+- **Graceful fallback**: Missing sounds/ folder or invalid files won't crash the game
+- **Audio hardware**: Works only when audio hardware is available (headless/CI environments skip loading)
+
+### For Modders and Contributors
+
+- The system loads sounds during `SoundManager` initialization
+- Custom loading happens after built-in sound generation, ensuring overrides work
+- Failed loads are handled gracefully - invalid files won't break the game
+- Sound loading respects the audio availability flag
 
 ---
 
@@ -83,7 +143,7 @@ P(Doom) features a modular UI overlay system inspired by Papers Please, SimPark,
 ### Core UI Components
 
 #### Overlay Manager (`overlay_manager.py`)
-- **Z-Layer Management**: Hierarchical layering system (Background → Game UI → Tooltips → Dialogs → Modals → Critical)
+- **Z-Layer Management**: Hierarchical layering system (Background -> Game UI -> Tooltips -> Dialogs -> Modals -> Critical)
 - **Element Registration**: Centralized registration and lifecycle management of UI elements
 - **Animation System**: Smooth transitions with easing functions for minimize/expand/move operations
 - **State Management**: UIState enum (Hidden, Minimized, Normal, Expanded, Animating)
@@ -715,9 +775,9 @@ The enhanced event system supports visually dominant popup events, deferred even
 **Event Processing:**
 4. Trigger original events (immediate execution)
 5. Trigger enhanced events (if enhanced_events_enabled = True)
-   - Popup events → added to pending_popup_events list
-   - Normal events → executed immediately  
-   - Deferred events → auto-deferred to queue
+   - Popup events - added to pending_popup_events list
+   - Normal events - executed immediately  
+   - Deferred events - auto-deferred to queue
 6. Tick all deferred events, auto-execute expired ones
 
 **Turn End:**
