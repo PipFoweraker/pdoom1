@@ -152,12 +152,14 @@ The UI architecture is currently under incremental modularisation, with key scre
   - `render_main_menu()`: Main menu with navigation options (migrated from ui.py)
   - `render_loading()`: Loading progress with status text (migrated from ui.py)
   - `render_audio_menu()`: Audio settings interface (migrated from ui.py)
+  - `render_seed_selection()`: Seed selection screen with weekly/custom options (migrated from ui.py)
   - `render_game()`: In-game HUD and overlay coordination
 
 #### Modular Screens (`pdoom1/ui/screens/`)
 - **main_menu.py**: Main menu screen implementation with keyboard navigation
 - **loading.py**: Loading screen with progress bars and accessibility support
 - **audio_menu.py**: Audio settings menu with volume controls
+- **seed_selection.py**: Seed selection screen for weekly and custom seeds
 - **game_hud.py**: In-game HUD components and layout
 
 Current status: Individual screen functions migrated with identical behaviour preserved. Future work will introduce Screen classes with state management.

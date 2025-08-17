@@ -206,6 +206,24 @@ class UIFacade:
         from .screens.audio_menu import draw_audio_menu
         draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager)
     
+    def render_seed_selection(self, screen, w, h, selected_item, seed_input="", sound_manager=None) -> None:
+        """
+        Render the seed selection screen.
+        
+        Delegates to the seed selection screen implementation while maintaining
+        identical behaviour to the original ui.draw_seed_selection function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            selected_item: index of currently selected item (0=Weekly, 1=Custom)
+            seed_input: current custom seed input text
+            sound_manager: optional SoundManager instance for sound toggle button
+        """
+        from .screens.seed_selection import draw_seed_selection
+        draw_seed_selection(screen, w, h, selected_item, seed_input, sound_manager)
+    
     # Additional access methods for advanced usage
     
     @property
