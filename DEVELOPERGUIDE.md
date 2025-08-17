@@ -68,9 +68,9 @@ P(Doom) supports custom sound effects through a simple file-based override syste
 ### File Naming and Event Keys
 
 Files are mapped to sound events by their filename (case-insensitive). For example:
-- `ap_spend.wav` → overrides the 'ap_spend' sound effect
-- `POPUP_OPEN.ogg` → overrides the 'popup_open' sound effect
-- `Error_Beep.WAV` → overrides the 'error_beep' sound effect
+- `ap_spend.wav` - overrides the 'ap_spend' sound effect
+- `POPUP_OPEN.ogg` - overrides the 'popup_open' sound effect  
+- `Error_Beep.WAV` - overrides the 'error_beep' sound effect
 
 **Available event keys that map to existing game events:**
 - `ap_spend` - Played when Action Points are spent
@@ -143,7 +143,7 @@ P(Doom) features a modular UI overlay system inspired by Papers Please, SimPark,
 ### Core UI Components
 
 #### Overlay Manager (`overlay_manager.py`)
-- **Z-Layer Management**: Hierarchical layering system (Background → Game UI → Tooltips → Dialogs → Modals → Critical)
+- **Z-Layer Management**: Hierarchical layering system (Background -> Game UI -> Tooltips -> Dialogs -> Modals -> Critical)
 - **Element Registration**: Centralized registration and lifecycle management of UI elements
 - **Animation System**: Smooth transitions with easing functions for minimize/expand/move operations
 - **State Management**: UIState enum (Hidden, Minimized, Normal, Expanded, Animating)
@@ -775,9 +775,9 @@ The enhanced event system supports visually dominant popup events, deferred even
 **Event Processing:**
 4. Trigger original events (immediate execution)
 5. Trigger enhanced events (if enhanced_events_enabled = True)
-   - Popup events → added to pending_popup_events list
-   - Normal events → executed immediately  
-   - Deferred events → auto-deferred to queue
+   - Popup events - added to pending_popup_events list
+   - Normal events - executed immediately  
+   - Deferred events - auto-deferred to queue
 6. Tick all deferred events, auto-execute expired ones
 
 **Turn End:**

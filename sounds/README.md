@@ -45,14 +45,14 @@ You can organize sounds in subdirectories - they will be loaded recursively:
 
 ```
 sounds/
-├── ui/
-│   ├── popup_open.wav
-│   └── popup_close.wav
-├── gameplay/
-│   ├── ap_spend.wav
-│   └── blob.wav
-└── celebration/
-    └── zabinga.wav
+|-- ui/
+|   |-- popup_open.wav
+|   `-- popup_close.wav
+|-- gameplay/
+|   |-- ap_spend.wav
+|   `-- blob.wav
+`-- celebration/
+    `-- zabinga.wav
 ```
 
 ## Technical Notes
