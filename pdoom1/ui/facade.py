@@ -33,9 +33,15 @@ class UIFacade:
     - Window management (bring to front, minimization)
     """
     
-    def __init__(self):
-        """Initialise the UI facade with an internal overlay manager."""
-        self._overlay_manager = OverlayManager()
+    def __init__(self, overlay_manager=None):
+        """
+        Initialise the UI facade with an overlay manager.
+        
+        Args:
+            overlay_manager: Existing OverlayManager instance to use.
+                           If None, creates a new internal instance.
+        """
+        self._overlay_manager = overlay_manager if overlay_manager is not None else OverlayManager()
     
     def register_element(self, element) -> bool:
         """
@@ -122,6 +128,30 @@ class UIFacade:
             bool: True if successful, False if element not found
         """
         return self._overlay_manager.toggle_minimize(element_id)
+    
+    def render_game(self, screen, game_state, w, h) -> None:
+        """
+        Render the game HUD and overlay elements.
+        
+        This method coordinates rendering of the main game interface by calling
+        the existing ui.draw_ui function and then delegating overlay rendering
+        to the OverlayManager. This maintains identical behaviour to the original
+        rendering code with no logic changes.
+        
+        Args:
+            screen: pygame surface to render to
+            game_state: GameState instance with current game data
+            w: Screen width
+            h: Screen height
+        """
+        # Import here to avoid circular dependencies
+        from ui import draw_ui
+        
+        # Draw the main game UI using existing function
+        draw_ui(screen, game_state, w, h)
+        
+        # Render overlay elements through the overlay manager
+        self._overlay_manager.render_elements(screen)
     
     # Additional access methods for advanced usage
     

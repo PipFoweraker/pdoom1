@@ -179,6 +179,37 @@ ui.register_element(my_element)
 ui.render_elements(screen)
 ```
 
+**Game HUD Rendering**: The facade now provides `render_game()` method that coordinates rendering of the main game HUD via the existing `ui.draw_ui` function and overlay elements through the OverlayManager. This maintains identical behaviour to the original rendering with no changes to game logic:
+
+```python
+# In main game loop (main.py)
+ui_facade = UIFacade(game_state.overlay_manager)
+ui_facade.render_game(screen, game_state, SCREEN_W, SCREEN_H)
+```
+
+#### UI Screens Scaffolding (`pdoom1/ui/screens/`)
+A scaffolding system for organizing different UI screens with consistent interfaces:
+
+- **Base Protocol**: `Screen` abstract base class defining render contract for all UI screens
+- **GameHudScreen**: Implemented screen that wraps existing `ui.draw_ui` + OverlayManager coordination
+- **Screen Stubs**: MainMenuScreen, LoadingScreen, AudioMenuScreen (TODOs for future implementation)
+- **Consistent Interface**: All screens implement `render()`, `update()`, and `handle_event()` methods
+
+**Current Implementation**:
+```python
+from pdoom1.ui.screens import GameHudScreen
+
+# GameHudScreen acts as thin wrapper over existing rendering
+hud_screen = GameHudScreen(overlay_manager)
+hud_screen.render(screen, game_state=gs, w=800, h=600)
+```
+
+**Design Principles**:
+- Screens are lightweight with minimal logic
+- Delegation to existing systems (ui.py, OverlayManager) 
+- No behavioural changes during refactoring
+- Future-ready for main menu/loading screen migration
+
 #### Visual Feedback System (`visual_feedback.py`)
 - **Standardized Button States**: Normal, Hover, Pressed, Disabled, Focused
 - **Button Effects**: 3-pixel depth shift when pressed, hover glow effects
