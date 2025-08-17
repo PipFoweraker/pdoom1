@@ -153,6 +153,59 @@ class UIFacade:
         # Render overlay elements through the overlay manager
         self._overlay_manager.render_elements(screen)
     
+    def render_main_menu(self, screen, w, h, selected_item, sound_manager=None) -> None:
+        """
+        Render the main menu screen.
+        
+        Delegates to the main menu screen implementation while maintaining
+        identical behaviour to the original ui.draw_main_menu function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            selected_item: index of currently selected menu item
+            sound_manager: optional SoundManager instance for sound toggle button
+        """
+        from .screens.main_menu import draw_main_menu
+        draw_main_menu(screen, w, h, selected_item, sound_manager)
+    
+    def render_loading(self, screen, w, h, progress=0, status_text="Loading...", font=None) -> None:
+        """
+        Render the loading screen with progress indicator.
+        
+        Delegates to the loading screen implementation while maintaining
+        identical behaviour to the original ui.draw_loading_screen function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            progress: loading progress (0.0 to 1.0)
+            status_text: text to display for loading status
+            font: optional font for status text
+        """
+        from .screens.loading import draw_loading_screen
+        draw_loading_screen(screen, w, h, progress, status_text, font)
+    
+    def render_audio_menu(self, screen, w, h, selected_item, audio_settings, sound_manager) -> None:
+        """
+        Render the audio settings menu.
+        
+        Delegates to the audio menu screen implementation while maintaining
+        identical behaviour to the original ui.draw_audio_menu function.
+        
+        Args:
+            screen: pygame surface to render to
+            w: Screen width
+            h: Screen height
+            selected_item: index of currently selected menu item
+            audio_settings: dictionary of current audio settings
+            sound_manager: SoundManager instance for current state
+        """
+        from .screens.audio_menu import draw_audio_menu
+        draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager)
+    
     # Additional access methods for advanced usage
     
     @property
