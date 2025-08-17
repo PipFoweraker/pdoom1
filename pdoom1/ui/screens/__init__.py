@@ -7,9 +7,7 @@ maintaining consistent contracts through the base Screen protocol.
 
 Current implementations:
 - GameHudScreen: Main game HUD (resources, actions, upgrades, overlays)
-- MainMenuScreen: Main menu interface (TODO: stub for future implementation)
-- LoadingScreen: Progress and loading display (TODO: stub for future implementation)  
-- AudioMenuScreen: Audio settings menu (TODO: stub for future implementation)
+- Function-based screens: main_menu, loading, audio_menu (migrated from ui.py)
 
 Screen responsibilities:
 - Render specific UI state to pygame surface
@@ -26,14 +24,17 @@ Design principles:
 
 from .base import Screen
 from .game_hud import GameHudScreen
-from .main_menu import MainMenuScreen
-from .loading import LoadingScreen
-from .audio_menu import AudioMenuScreen
+
+# Function-based screen implementations (migrated from ui.py)
+from .main_menu import draw_main_menu
+from .loading import draw_loading_screen
+from .audio_menu import draw_audio_menu
 
 __all__ = [
     'Screen',
-    'GameHudScreen', 
-    'MainMenuScreen',
-    'LoadingScreen',
-    'AudioMenuScreen'
+    'GameHudScreen',
+    # Function exports for backwards compatibility
+    'draw_main_menu',
+    'draw_loading_screen',
+    'draw_audio_menu'
 ]

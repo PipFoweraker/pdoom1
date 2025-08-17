@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu
+from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_turn_transition_overlay
 
 
 from overlay_manager import OverlayManager
@@ -57,25 +57,31 @@ screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
 pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}")
 clock = pygame.time.Clock()
 
+# Initialize UI facade early for loading screens
+ui_facade = UIFacade()
+
 # Show loading screen during initialization
 
 # Phase 1: Basic setup
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.2, "Initializing systems...")
+ui_facade.render_loading(screen, SCREEN_W, SCREEN_H, 0.2, "Initializing systems...")
 pygame.display.flip()
 
 # Phase 2: Config and sound
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.4, "Loading configuration...")
+ui_facade.render_loading(screen, SCREEN_W, SCREEN_H, 0.4, "Loading configuration...")
 pygame.display.flip()
 
 # Phase 3: Sound and audio setup
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.6, "Setting up audio...")
+ui_facade.render_loading(screen, SCREEN_W, SCREEN_H, 0.6, "Setting up audio...")
 pygame.display.flip()
 
 # Initialize window manager for UI panels
 window_manager = OverlayManager()
 
+# Initialize UI facade for rendering
+ui_facade = UIFacade(window_manager)
+
 # Phase 4: UI components
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.8, "Loading UI components...")
+ui_facade.render_loading(screen, SCREEN_W, SCREEN_H, 0.8, "Loading UI components...")
 pygame.display.flip()
 
 # --- Menu and game state management --- #
@@ -153,7 +159,7 @@ bug_report_editing_field = False
 bug_report_success_message = ""
 
 # Phase 5: Complete initialization
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 1.0, "Ready!")
+ui_facade.render_loading(screen, SCREEN_W, SCREEN_H, 1.0, "Ready!")
 pygame.display.flip()
 
 # Brief pause to show completion (fast-load optimization: skip if under 100ms total)
@@ -1147,11 +1153,10 @@ def main():
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
     # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
     global first_time_help_content, first_time_help_close_button, current_tutorial_content
-    global overlay_content, overlay_title
+    global overlay_content, overlay_title, ui_facade
     
     # Initialize game state as None - will be created when game starts
     game_state = None
-    ui_facade = None
     tooltip_text = None
 
     running = True
@@ -1550,7 +1555,7 @@ def main():
             if current_state == 'main_menu':
                 # Grey background as specified in requirements
                 screen.fill((128, 128, 128))
-                draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item, global_sound_manager)
+                ui_facade.render_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item, global_sound_manager)
             
             elif current_state == 'config_select':
                 # Config selection menu
@@ -1577,7 +1582,7 @@ def main():
             elif current_state == 'sounds_menu':
                 # Audio settings menu
                 screen.fill((40, 45, 55))
-                draw_audio_menu(screen, SCREEN_W, SCREEN_H, sounds_menu_selected_item, audio_settings, global_sound_manager)
+                ui_facade.render_audio_menu(screen, SCREEN_W, SCREEN_H, sounds_menu_selected_item, audio_settings, global_sound_manager)
                 
             elif current_state == 'custom_seed_prompt':
                 # Preserve original seed prompt appearance

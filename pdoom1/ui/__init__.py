@@ -15,6 +15,12 @@ from .overlay_manager import OverlayManager, UIElement, ZLayer, UIState
 from .overlay_manager import create_dialog, create_tooltip, create_modal
 from .facade import UIFacade
 
+# Backwards compatibility: re-export screen functions during migration
+# TODO: Remove these after internal migration to UIFacade is complete
+from .screens.main_menu import draw_main_menu
+from .screens.loading import draw_loading_screen  
+from .screens.audio_menu import draw_audio_menu
+
 __all__ = [
     'OverlayManager',
     'UIElement', 
@@ -23,5 +29,9 @@ __all__ = [
     'create_dialog',
     'create_tooltip', 
     'create_modal',
-    'UIFacade'
+    'UIFacade',
+    # Backwards compatibility exports - TODO: Remove after migration
+    'draw_main_menu',
+    'draw_loading_screen',
+    'draw_audio_menu'
 ]

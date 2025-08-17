@@ -140,7 +140,27 @@ python main.py
 ### Overview
 P(Doom) features a modular UI overlay system inspired by Papers Please, SimPark, and Starcraft 2, designed for low-bit, low-poly aesthetics with modern accessibility features.
 
+The UI architecture is currently under incremental modularisation, with key screens migrated to `pdoom1/ui/screens/` and rendered through the UIFacade for stable interface management.
+
 ### Core UI Components
+
+#### UIFacade (`pdoom1/ui/facade.py`)
+- **Stable Interface**: Thin facade providing stable API for UI operations during refactoring
+- **Screen Routing**: Routes rendering calls to appropriate screen modules
+- **Overlay Integration**: Coordinates with OverlayManager for layered UI elements
+- **Screen Methods**: 
+  - `render_main_menu()`: Main menu with navigation options (migrated from ui.py)
+  - `render_loading()`: Loading progress with status text (migrated from ui.py)
+  - `render_audio_menu()`: Audio settings interface (migrated from ui.py)
+  - `render_game()`: In-game HUD and overlay coordination
+
+#### Modular Screens (`pdoom1/ui/screens/`)
+- **main_menu.py**: Main menu screen implementation with keyboard navigation
+- **loading.py**: Loading screen with progress bars and accessibility support
+- **audio_menu.py**: Audio settings menu with volume controls
+- **game_hud.py**: In-game HUD components and layout
+
+Current status: Individual screen functions migrated with identical behaviour preserved. Future work will introduce Screen classes with state management.
 
 #### Overlay Manager (`pdoom1/ui/overlay_manager.py`)
 The overlay manager has been moved to the `pdoom1/ui/` package as part of the UI modularisation effort. It continues to provide:
