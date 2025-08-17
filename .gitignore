@@ -90,4 +90,4 @@ Thumbs.db
 *.swp
 *.swo
 .idea/
-.vscode/
+.vscode/overlay_manager_backup.py

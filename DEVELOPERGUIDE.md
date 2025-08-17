@@ -142,13 +142,42 @@ P(Doom) features a modular UI overlay system inspired by Papers Please, SimPark,
 
 ### Core UI Components
 
-#### Overlay Manager (`overlay_manager.py`)
+#### Overlay Manager (`pdoom1/ui/overlay_manager.py`)
+The overlay manager has been moved to the `pdoom1/ui/` package as part of the UI modularisation effort. It continues to provide:
+
 - **Z-Layer Management**: Hierarchical layering system (Background -> Game UI -> Tooltips -> Dialogs -> Modals -> Critical)
-- **Element Registration**: Centralized registration and lifecycle management of UI elements
-- **Animation System**: Smooth transitions with easing functions for minimize/expand/move operations
-- **State Management**: UIState enum (Hidden, Minimized, Normal, Expanded, Animating)
+- **Element Registration**: Centralised registration and lifecycle management of UI elements
+- **Animation System**: Smooth transitions with easing functions for minimise/expand/move operations
+- **State Management**: UIState enum (Hidden, Minimised, Normal, Expanded, Animating)
 - **Error Tracking**: Easter egg system that plays beep sound after 3 repeated identical errors
 - **Accessibility**: Keyboard navigation support with Tab/Enter/Space/Escape
+
+**Import Compatibility**: The overlay manager is still accessible via the top-level import for backward compatibility:
+```python
+# Legacy import (shows deprecation warning)
+from overlay_manager import OverlayManager
+
+# New preferred imports
+from pdoom1.ui import OverlayManager
+from pdoom1.ui.overlay_manager import OverlayManager, UIElement, ZLayer, UIState
+```
+
+#### UI Facade (`pdoom1/ui/facade.py`)
+A thin facade providing a stable interface to the UI subsystem:
+
+- **Stable Interface**: Wraps internal OverlayManager with consistent API
+- **Future-Proof**: Enables UI refactoring without breaking external callers
+- **Proxy Methods**: Routes common operations (register_element, render_elements, etc.)
+- **Advanced Access**: Provides `overlay_manager` property for direct access when needed
+
+**Usage Example**:
+```python
+from pdoom1.ui.facade import UIFacade
+
+ui = UIFacade()
+ui.register_element(my_element)
+ui.render_elements(screen)
+```
 
 #### Visual Feedback System (`visual_feedback.py`)
 - **Standardized Button States**: Normal, Hover, Pressed, Disabled, Focused
