@@ -12,7 +12,7 @@ import pygame
 import unittest
 from unittest.mock import patch, MagicMock
 from overlay_manager import OverlayManager, UIElement, ZLayer, UIState
-from ui import draw_window_with_header
+from ui_new.components.windows import draw_window_with_header
 
 
 class TestWindowManagement(unittest.TestCase):

@@ -1,0 +1,205 @@
+"""
+Smoke tests for UIFacade and modular UI components.
+
+These tests ensure that the UI migration doesn't break core functionality
+and that all screens can be rendered without errors in headless mode.
+"""
+
+import unittest
+import pygame
+import sys
+import os
+
+# Ensure we can import from the project root
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from ui_new.facade import ui_facade, UIFacade
+from ui_new.components.colours import MONEY_COLOUR, TITLE_COLOUR, DOOM_COLOUR
+from ui_new.components.typography import font_manager, FontManager
+from ui_new.components.buttons import ButtonState, ButtonStyle, draw_button
+from ui_new.components.windows import draw_window_with_header, draw_panel
+from game_state import GameState
+
+
+class TestUIFacadeSmoke(unittest.TestCase):
+    """Smoke tests for UIFacade functionality."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        pygame.init()
+        pygame.display.set_mode((100, 100), pygame.NOFRAME)
+        self.screen = pygame.Surface((800, 600))
+        self.game_state = GameState('test-seed')
+        self.facade = UIFacade()
+    
+    def test_ui_facade_initialization(self):
+        """Test that UIFacade initializes correctly."""
+        facade = UIFacade()
+        self.assertIsNotNone(facade)
+        self.assertIsNone(facade.current_screen)
+        
+    def test_render_game_screen_no_crash(self):
+        """Test that game screen rendering doesn't crash."""
+        try:
+            ui_facade.render_game(self.screen, self.game_state, 800, 600)
+        except Exception as e:
+            self.fail(f"Game screen rendering crashed: {e}")
+    
+    def test_render_game_screen_with_different_sizes(self):
+        """Test game screen rendering with different screen sizes."""
+        test_sizes = [(640, 480), (1024, 768), (1920, 1080)]
+        
+        for w, h in test_sizes:
+            with self.subTest(width=w, height=h):
+                test_screen = pygame.Surface((w, h))
+                try:
+                    ui_facade.render_game(test_screen, self.game_state, w, h)
+                except Exception as e:
+                    self.fail(f"Game screen rendering failed at {w}x{h}: {e}")
+    
+    def test_facade_screen_management(self):
+        """Test screen management functionality."""
+        self.facade.set_current_screen('game')
+        self.assertEqual(self.facade.get_current_screen(), 'game')
+        
+        self.facade.set_current_screen('menu')
+        self.assertEqual(self.facade.get_current_screen(), 'menu')
+    
+    def test_facade_legacy_fallbacks(self):
+        """Test that legacy screen rendering fallbacks work."""
+        # These should not crash even if they fall back to legacy functions
+        try:
+            self.facade.render_main_menu(self.screen, 800, 600)
+        except Exception as e:
+            # It's OK if this fails due to missing parameters - we just want no import errors
+            if "import" in str(e).lower():
+                self.fail(f"Import error in legacy fallback: {e}")
+
+
+class TestUIComponentsSmoke(unittest.TestCase):
+    """Smoke tests for UI components."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        pygame.init()
+        pygame.display.set_mode((100, 100), pygame.NOFRAME)
+        self.screen = pygame.Surface((800, 600))
+    
+    def test_colour_constants_defined(self):
+        """Test that colour constants are properly defined."""
+        # Test a few key colours
+        self.assertIsInstance(MONEY_COLOUR, tuple)
+        self.assertEqual(len(MONEY_COLOUR), 3)
+        self.assertIsInstance(TITLE_COLOUR, tuple)
+        self.assertEqual(len(TITLE_COLOUR), 3)
+        self.assertIsInstance(DOOM_COLOUR, tuple)
+        self.assertEqual(len(DOOM_COLOUR), 3)
+    
+    def test_font_manager_functionality(self):
+        """Test that font manager works correctly."""
+        # Test font manager initialization
+        fm = FontManager()
+        self.assertIsNotNone(fm)
+        
+        # Test font retrieval
+        font = fm.get_font(20)
+        self.assertIsNotNone(font)
+        self.assertIsInstance(font, pygame.font.Font)
+        
+        # Test scaled font methods
+        title_font = fm.get_title_font(600)
+        big_font = fm.get_big_font(600)
+        normal_font = fm.get_normal_font(600)
+        small_font = fm.get_small_font(600)
+        
+        # Verify sizes are different and reasonable
+        title_size = title_font.get_height()
+        big_size = big_font.get_height()
+        normal_size = normal_font.get_height()
+        small_size = small_font.get_height()
+        
+        self.assertGreater(title_size, big_size)
+        self.assertGreater(big_size, normal_size)
+        self.assertGreater(normal_size, small_size)
+    
+    def test_button_rendering_no_crash(self):
+        """Test that button rendering doesn't crash."""
+        rect = pygame.Rect(100, 100, 200, 50)
+        
+        # Test different button states
+        for state in ButtonState:
+            with self.subTest(state=state):
+                try:
+                    draw_button(self.screen, rect, "Test Button", state)
+                except Exception as e:
+                    self.fail(f"Button rendering crashed with state {state}: {e}")
+    
+    def test_window_rendering_no_crash(self):
+        """Test that window rendering doesn't crash."""
+        try:
+            header_rect, minimize_rect = draw_window_with_header(
+                self.screen, 50, 50, 300, 200, "Test Window"
+            )
+            self.assertIsInstance(header_rect, pygame.Rect)
+            self.assertIsInstance(minimize_rect, pygame.Rect)
+        except Exception as e:
+            self.fail(f"Window rendering crashed: {e}")
+    
+    def test_panel_rendering_no_crash(self):
+        """Test that panel rendering doesn't crash."""
+        try:
+            panel_rect = draw_panel(self.screen, 100, 100, 200, 150)
+            self.assertIsInstance(panel_rect, pygame.Rect)
+        except Exception as e:
+            self.fail(f"Panel rendering crashed: {e}")
+
+
+class TestUIIntegrationSmoke(unittest.TestCase):
+    """Integration smoke tests between components and facade."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        pygame.init()
+        pygame.display.set_mode((100, 100), pygame.NOFRAME)
+        self.screen = pygame.Surface((800, 600))
+        self.game_state = GameState('test-seed')
+    
+    def test_game_state_compatibility(self):
+        """Test that GameState works with new UI system."""
+        # Verify GameState has expected attributes for UI rendering
+        required_attrs = ['money', 'staff', 'reputation', 'action_points', 
+                         'max_action_points', 'doom', 'max_doom', 'compute',
+                         'research_progress', 'papers_published', 'turn', 'seed']
+        
+        for attr in required_attrs:
+            with self.subTest(attribute=attr):
+                self.assertTrue(hasattr(self.game_state, attr), 
+                               f"GameState missing required attribute: {attr}")
+    
+    def test_ui_facade_with_modified_game_state(self):
+        """Test UIFacade with various game state modifications."""
+        # Test with modified game state values
+        self.game_state.money = 50000
+        self.game_state.staff = 25
+        self.game_state.doom = 50
+        
+        try:
+            ui_facade.render_game(self.screen, self.game_state, 800, 600)
+        except Exception as e:
+            self.fail(f"UI rendering failed with modified game state: {e}")
+    
+    def test_ui_facade_global_instance(self):
+        """Test that global ui_facade instance works correctly."""
+        # Test that we can use the global instance
+        self.assertIsInstance(ui_facade, UIFacade)
+        
+        try:
+            ui_facade.render_game(self.screen, self.game_state, 800, 600)
+        except Exception as e:
+            self.fail(f"Global ui_facade instance failed: {e}")
+
+
+if __name__ == '__main__':
+    unittest.main()
