@@ -1,0 +1,447 @@
+"""
+Game screen rendering for P(Doom).
+
+Contains the main in-game UI rendering functionality migrated from the legacy ui.py.
+Maintains exact behavioural compatibility while using the new modular architecture.
+"""
+
+import pygame
+import sys
+import os
+from typing import Any
+
+# Import visual feedback system (existing)
+from visual_feedback import visual_feedback, ButtonState, FeedbackStyle
+
+# Import new components
+from ..components.colours import (
+    TITLE_COLOUR, MONEY_COLOUR, STAFF_COLOUR, REPUTATION_COLOUR,
+    ACTION_POINTS_COLOUR, DOOM_COLOUR, COMPUTE_COLOUR, RESEARCH_COLOUR,
+    PAPERS_COLOUR, TEXT_COLOUR, BALANCE_POSITIVE_COLOUR, BALANCE_NEGATIVE_COLOUR
+)
+from ..components.typography import font_manager
+
+
+def should_show_ui_element(game_state: Any, element_id: str) -> bool:
+    """
+    Determine if a UI element should be shown based on game state and tutorial progress.
+    
+    Args:
+        game_state: Current game state
+        element_id: ID of the UI element to check
+        
+    Returns:
+        bool: True if the element should be shown
+    """
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import should_show_ui_element as legacy_should_show
+    return legacy_should_show(game_state, element_id)
+
+
+def draw_opponents_panel(screen: pygame.Surface, game_state: Any, w: int, h: int, 
+                        font: pygame.font.Font, small_font: pygame.font.Font) -> None:
+    """Draw the opponents information panel."""
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import draw_opponents_panel as legacy_draw_opponents
+    legacy_draw_opponents(screen, game_state, w, h, font, small_font)
+
+
+def draw_employee_blobs(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
+    """Draw employee blobs with dynamic positioning."""
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import draw_employee_blobs as legacy_draw_blobs
+    legacy_draw_blobs(screen, game_state, w, h)
+
+
+def draw_deferred_events_zone(screen: pygame.Surface, game_state: Any, w: int, h: int,
+                             small_font: pygame.font.Font) -> None:
+    """Draw the deferred events zone."""
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import draw_deferred_events_zone as legacy_draw_deferred
+    legacy_draw_deferred(screen, game_state, w, h, small_font)
+
+
+def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
+    """Draw the mute button."""
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import draw_mute_button as legacy_draw_mute
+    legacy_draw_mute(screen, game_state, w, h)
+
+
+def draw_version_footer(screen: pygame.Surface, w: int, h: int) -> None:
+    """Draw the version footer."""
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import draw_version_footer as legacy_draw_version
+    legacy_draw_version(screen, w, h)
+
+
+def draw_ui_transitions(screen: pygame.Surface, game_state: Any, w: int, h: int,
+                       big_font: pygame.font.Font) -> None:
+    """Draw UI transition animations."""
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import draw_ui_transitions as legacy_draw_transitions
+    legacy_draw_transitions(screen, game_state, w, h, big_font)
+
+
+def draw_popup_events(screen: pygame.Surface, game_state: Any, w: int, h: int,
+                     font: pygame.font.Font, big_font: pygame.font.Font) -> None:
+    """Draw popup events overlay."""
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import draw_popup_events as legacy_draw_popup
+    legacy_draw_popup(screen, game_state, w, h, font, big_font)
+
+
+def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
+    """
+    Render the main in-game screen.
+    
+    This is the migrated version of the draw_ui function, maintaining exact
+    behavioural compatibility while using the new component architecture.
+    
+    Args:
+        screen: The pygame surface to render on
+        game_state: Current game state object
+        w: Screen width
+        h: Screen height
+    """
+    # Fonts, scaled by screen size using new typography system
+    title_font = font_manager.get_title_font(h)
+    big_font = font_manager.get_big_font(h)
+    font = font_manager.get_normal_font(h)
+    small_font = font_manager.get_small_font(h)
+
+    # Title
+    title = title_font.render("P(Doom): Bureaucracy Strategy", True, TITLE_COLOUR)
+    screen.blit(title, (int(w*0.04), int(h*0.03)))
+
+    # Resources (top bar) - controlled by tutorial visibility
+    if should_show_ui_element(game_state, 'money_display'):
+        screen.blit(big_font.render(f"Money: ${game_state.money}", True, MONEY_COLOUR), (int(w*0.04), int(h*0.11)))
+        
+        # Cash flow indicator if accounting software is purchased
+        if hasattr(game_state, 'accounting_software_bought') and game_state.accounting_software_bought:
+            if hasattr(game_state, 'last_balance_change') and game_state.last_balance_change != 0:
+                change_color = BALANCE_POSITIVE_COLOUR if game_state.last_balance_change > 0 else BALANCE_NEGATIVE_COLOUR
+                change_sign = "+" if game_state.last_balance_change > 0 else ""
+                change_text = f"({change_sign}${game_state.last_balance_change})"
+                screen.blit(font.render(change_text, True, change_color), (int(w*0.04), int(h*0.13)))
+    
+    if should_show_ui_element(game_state, 'staff_display'):
+        screen.blit(big_font.render(f"Staff: {game_state.staff}", True, STAFF_COLOUR), (int(w*0.21), int(h*0.11)))
+    
+    if should_show_ui_element(game_state, 'reputation_display'):
+        screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, REPUTATION_COLOUR), (int(w*0.35), int(h*0.11)))
+    
+    # Action Points with glow effect
+    ap_color = ACTION_POINTS_COLOUR  # Yellow base colour for AP
+    if hasattr(game_state, 'ap_glow_timer') and game_state.ap_glow_timer > 0:
+        # Add glow/pulse effect when AP is spent
+        glow_intensity = int(127 * (game_state.ap_glow_timer / 30))  # Fade over 30 frames
+        ap_color = (min(255, 255 + glow_intensity), min(255, 255 + glow_intensity), min(255, 100 + glow_intensity))
+    
+    screen.blit(big_font.render(f"AP: {game_state.action_points}/{game_state.max_action_points}", True, ap_color), (int(w*0.49), int(h*0.11)))
+    
+    screen.blit(big_font.render(f"p(Doom): {game_state.doom}/{game_state.max_doom}", True, DOOM_COLOUR), (int(w*0.62), int(h*0.11)))
+    screen.blit(font.render(f"Opponent progress: {game_state.known_opp_progress if game_state.known_opp_progress is not None else '???'}/100", True, (240, 200, 160)), (int(w*0.84), int(h*0.11)))
+    # Second line of resources
+    screen.blit(big_font.render(f"Compute: {game_state.compute}", True, COMPUTE_COLOUR), (int(w*0.04), int(h*0.135)))
+    screen.blit(big_font.render(f"Research: {game_state.research_progress}/100", True, RESEARCH_COLOUR), (int(w*0.21), int(h*0.135)))
+    screen.blit(big_font.render(f"Papers: {game_state.papers_published}", True, PAPERS_COLOUR), (int(w*0.38), int(h*0.135)))
+    
+    # Board member and audit risk display (if applicable)
+    if hasattr(game_state, 'board_members') and game_state.board_members > 0:
+        screen.blit(font.render(f"Board Members: {game_state.board_members}", True, (255, 150, 150)), (int(w*0.55), int(h*0.135)))
+        if hasattr(game_state, 'audit_risk_level') and game_state.audit_risk_level > 0:
+            risk_color = (255, 200, 100) if game_state.audit_risk_level <= 5 else (255, 100, 100)
+            screen.blit(font.render(f"Audit Risk: {game_state.audit_risk_level}", True, risk_color), (int(w*0.72), int(h*0.135)))
+    
+    screen.blit(small_font.render(f"Turn: {game_state.turn}", True, TEXT_COLOUR), (int(w*0.91), int(h*0.03)))
+    screen.blit(small_font.render(f"Seed: {game_state.seed}", True, (140, 200, 160)), (int(w*0.77), int(h*0.03)))
+
+    # Doom bar
+    doom_bar_x, doom_bar_y = int(w*0.62), int(h*0.16)
+    doom_bar_width, doom_bar_height = int(w*0.28), int(h*0.025)
+    pygame.draw.rect(screen, (70, 50, 50), (doom_bar_x, doom_bar_y, doom_bar_width, doom_bar_height))
+    filled = int(doom_bar_width * (game_state.doom / game_state.max_doom))
+    pygame.draw.rect(screen, (255, 60, 60), (doom_bar_x, doom_bar_y, filled, doom_bar_height))
+
+    # Opponents information panel (between resources and actions)
+    draw_opponents_panel(screen, game_state, w, h, font, small_font)
+
+    # Action buttons (left) - Enhanced with visual feedback
+    action_rects = game_state._get_action_rects(w, h)
+    for idx, rect_tuple in enumerate(action_rects):
+        action = game_state.actions[idx]
+        ap_cost = action.get("ap_cost", 1)
+        
+        # Convert tuple to pygame.Rect
+        rect = pygame.Rect(rect_tuple)
+        
+        # Determine button state for visual feedback
+        if game_state.action_points < ap_cost:
+            button_state = ButtonState.DISABLED
+        elif idx in game_state.selected_actions:
+            button_state = ButtonState.PRESSED
+        elif hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx == idx:
+            button_state = ButtonState.HOVER
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Use visual feedback system for consistent styling
+        # Include keyboard shortcut in button text for first 9 actions
+        button_text = action["name"]
+        if idx < 9:  # Only first 9 actions get keyboard shortcuts (1-9 keys)
+            shortcut_key = str(idx + 1)
+            button_text = f"[{shortcut_key}] {action['name']}"
+        
+        visual_feedback.draw_button(
+            screen, rect, button_text, button_state, FeedbackStyle.BUTTON
+        )
+        
+        # Draw action usage indicators (circles for repeatables)
+        if hasattr(game_state, 'selected_action_instances'):
+            action_count = sum(1 for inst in game_state.selected_action_instances if inst['action_idx'] == idx)
+            if action_count > 0:
+                # Draw usage indicators as small circles
+                indicator_size = int(min(w, h) * 0.008)  # Small circles
+                indicator_color = (100, 255, 100) if button_state != ButtonState.DISABLED else (60, 120, 60)
+                
+                # Position indicators in top-right of button
+                start_x = rect.right - (action_count * indicator_size * 2) - 5
+                start_y = rect.top + 5
+                
+                for i in range(min(action_count, 5)):  # Max 5 indicators to avoid clutter
+                    circle_x = start_x + (i * indicator_size * 2)
+                    circle_y = start_y + indicator_size
+                    pygame.draw.circle(screen, indicator_color, (circle_x, circle_y), indicator_size)
+                    
+                # If more than 5, show "+N" text
+                if action_count > 5:
+                    more_text = font.render(f"+{action_count-5}", True, indicator_color)
+                    screen.blit(more_text, (start_x + 5 * indicator_size * 2 + 2, start_y))
+        
+        # Draw description text below button
+        desc_color = (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160)
+        desc_text = font.render(f"{action['desc']} (Cost: ${action['cost']}, AP: {ap_cost})", True, desc_color)
+        screen.blit(desc_text, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
+
+    # Upgrades (right: purchased as icons at top right, available as buttons) - Enhanced with visual feedback
+    upgrade_rects = game_state._get_upgrade_rects(w, h)
+    for idx, rect_tuple in enumerate(upgrade_rects):
+        upg = game_state.upgrades[idx]
+        
+        # Convert tuple to pygame.Rect
+        rect = pygame.Rect(rect_tuple)
+        
+        if upg.get("purchased", False):
+            # Draw as small icon using visual feedback system
+            visual_feedback.draw_icon_button(screen, rect, upg["name"][0], ButtonState.NORMAL)
+        else:
+            # Determine button state
+            if upg['cost'] > game_state.money:
+                button_state = ButtonState.DISABLED
+            elif hasattr(game_state, 'hovered_upgrade_idx') and game_state.hovered_upgrade_idx == idx:
+                button_state = ButtonState.HOVER
+            else:
+                button_state = ButtonState.NORMAL
+            
+            # Draw upgrade button with consistent styling
+            visual_feedback.draw_button(
+                screen, rect, upg["name"], button_state, FeedbackStyle.BUTTON
+            )
+            
+            # Draw description and status
+            desc_color = (200, 255, 200) if button_state != ButtonState.DISABLED else (120, 150, 120)
+            desc = small_font.render(upg["desc"] + f" (Cost: ${upg['cost']})", True, desc_color)
+            status = small_font.render("AVAILABLE", True, desc_color)
+            screen.blit(desc, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
+            screen.blit(status, (rect.x + int(w*0.24), rect.y + int(h*0.04)))
+
+    # --- Balance change display (after buying accounting software) ---
+    # If accounting software was bought, show last balance change under Money
+    if hasattr(game_state, "accounting_software_bought") and game_state.accounting_software_bought:
+        # Show the last balance change if available
+        change = getattr(game_state, "last_balance_change", 0)
+        sign = "+" if change > 0 else ""
+        # Render in green if positive, red if negative
+        screen.blit(
+            font.render(f"({sign}{change})", True, BALANCE_POSITIVE_COLOUR if change >= 0 else BALANCE_NEGATIVE_COLOUR),
+            (int(w*0.18), int(h*0.135))
+        )
+        # Optionally, always show the "monthly costs" indicator here as well
+
+
+    # Draw UI transitions (on top of everything else)
+    draw_ui_transitions(screen, game_state, w, h, big_font)
+
+    # End Turn button (bottom center) - Enhanced with visual feedback
+    endturn_rect_tuple = game_state._get_endturn_rect(w, h)
+    endturn_rect = pygame.Rect(endturn_rect_tuple)
+    
+    # Determine button state
+    endturn_state = ButtonState.HOVER if hasattr(game_state, 'endturn_hovered') and game_state.endturn_hovered else ButtonState.NORMAL
+    
+    # Use visual feedback system with custom colours for end turn button
+    if endturn_state == ButtonState.HOVER:
+        custom_colors = {
+            'bg': (180, 120, 120),
+            'border': (210, 110, 110),
+            'text': (255, 240, 240),
+            'shadow': (100, 60, 60),
+            'glow': (255, 200, 200, 40)
+        }
+    else:
+        custom_colors = {
+            'bg': (140, 90, 90),
+            'border': (210, 110, 110),
+            'text': (255, 240, 240),
+            'shadow': (100, 60, 60)
+        }
+    
+    visual_feedback.draw_button(
+        screen, endturn_rect, "END TURN (Space)", endturn_state, 
+        FeedbackStyle.BUTTON, custom_colors
+    )
+
+
+    # Messages log (bottom left) - Enhanced with scrollable history and minimize option
+    # Use current position (including any drag offset)
+    if hasattr(game_state, '_get_activity_log_current_position'):
+        log_x, log_y = game_state._get_activity_log_current_position(w, h)
+    else:
+        # Improved fallback positioning with better alignment
+        log_x, log_y = int(w*0.04), int(h*0.74)  # Keep existing position for compatibility
+
+    
+    # Check if activity log is minimized (only available with compact activity display upgrade)
+    if (hasattr(game_state, 'activity_log_minimized') and 
+        game_state.activity_log_minimized and 
+        "compact_activity_display" in game_state.upgrade_effects):
+        
+        # Show minimize header bar only
+        header_height = int(h * 0.03)
+        log_width = int(w * 0.44)
+        
+        # Header background
+        pygame.draw.rect(screen, (50, 50, 60), (log_x, log_y, log_width, header_height))
+        pygame.draw.rect(screen, (120, 120, 140), (log_x, log_y, log_width, header_height), 1)
+        
+        # Title and expand button
+        header_text = small_font.render("Activity Log (Click to expand)", True, (180, 180, 200))
+        screen.blit(header_text, (log_x + 8, log_y + 5))
+        
+        # Expand button (+ symbol)
+        expand_x = log_x + log_width - 20
+        expand_y = log_y + header_height // 2
+        pygame.draw.line(screen, (180, 255, 180), (expand_x - 5, expand_y), (expand_x + 5, expand_y), 2)
+        pygame.draw.line(screen, (180, 255, 180), (expand_x, expand_y - 5), (expand_x, expand_y + 5), 2)
+        
+    elif "compact_activity_display" in game_state.upgrade_effects:
+        # Enhanced activity log with scrolling and additional features
+        log_width = int(w * 0.44)
+        header_height = int(h * 0.03)
+        content_height = int(h * 0.19)  # Slightly taller for better readability
+        total_height = header_height + content_height
+        
+        # Background for entire log area
+        pygame.draw.rect(screen, (40, 40, 50), (log_x, log_y, log_width, total_height))
+        pygame.draw.rect(screen, (120, 120, 140), (log_x, log_y, log_width, total_height), 2)
+        
+        # Header with title and minimize button
+        pygame.draw.rect(screen, (50, 50, 60), (log_x, log_y, log_width, header_height))
+        pygame.draw.rect(screen, (120, 120, 140), (log_x, log_y, log_width, header_height), 1)
+        
+        header_text = small_font.render("Activity Log", True, (200, 200, 220))
+        screen.blit(header_text, (log_x + 8, log_y + 5))
+        
+        # Minimize button (- symbol)
+        minimize_x = log_x + log_width - 20
+        minimize_y = log_y + header_height // 2
+        pygame.draw.line(screen, (255, 180, 180), (minimize_x - 5, minimize_y), (minimize_x + 5, minimize_y), 2)
+        
+        # Content area
+        content_y = log_y + header_height
+        
+        # Get messages with scroll offset
+        scroll_offset = getattr(game_state, 'activity_log_scroll', 0)
+        max_visible_lines = 6  # Number of lines that fit in content area
+        start_idx = max(0, len(game_state.messages) - max_visible_lines - scroll_offset)
+        end_idx = start_idx + max_visible_lines
+        visible_messages = game_state.messages[start_idx:end_idx]
+        
+        # Draw messages
+        for i, msg in enumerate(visible_messages):
+            # Truncate long messages
+            if len(msg) > 50:
+                msg = msg[:47] + "..."
+            
+            msg_color = (220, 220, 240) if i % 2 == 0 else (200, 200, 220)  # Alternate colours
+            msg_text = small_font.render(msg, True, msg_color)
+            msg_y = content_y + 5 + i * int(h * 0.025)
+            screen.blit(msg_text, (log_x + 8, msg_y))
+        
+        # Scroll indicators
+        if scroll_offset > 0:
+            # Up arrow indicator
+            up_arrow = small_font.render("▲", True, (180, 255, 180))
+            screen.blit(up_arrow, (log_x + log_width - 25, content_y + 5))
+        
+        if len(game_state.messages) > max_visible_lines + scroll_offset:
+            # Down arrow indicator
+            down_arrow = small_font.render("▼", True, (180, 255, 180))
+            screen.blit(down_arrow, (log_x + log_width - 25, content_y + content_height - 20))
+            
+            
+    else:
+        # Original simple event log (for backward compatibility)
+        screen.blit(font.render("Activity Log:", True, (255, 255, 180)), (log_x, log_y))
+        for i, msg in enumerate(game_state.messages[-7:]):
+            msg_text = small_font.render(msg, True, (255, 255, 210))
+            screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
+
+    # Draw employee blobs (lower middle area)
+    draw_employee_blobs(screen, game_state, w, h)
+    
+    # Draw deferred events zone (lower right)
+    draw_deferred_events_zone(screen, game_state, w, h, small_font)
+    
+    # Draw mute button (bottom right)
+    draw_mute_button(screen, game_state, w, h)
+    
+    # Draw version in bottom right corner (unobtrusive)
+    draw_version_footer(screen, w, h)
+    
+    # Draw popup events (overlay, drawn last to be on top)
+    draw_popup_events(screen, game_state, w, h, font, big_font)

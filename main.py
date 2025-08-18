@@ -5,7 +5,8 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_ui, draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu
+from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu
+from ui_new.facade import ui_facade
 
 
 from overlay_manager import OverlayManager
@@ -1616,7 +1617,7 @@ def main():
                         game_state.update_turn_processing()  # Handle turn transition timing
                         game_state.overlay_manager.update_animations()
                     
-                    draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
+                    ui_facade.render_game(screen, game_state, SCREEN_W, SCREEN_H)
                     
                     # Render overlay manager elements
                     if game_state:
