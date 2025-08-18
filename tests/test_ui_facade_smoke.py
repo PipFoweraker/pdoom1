@@ -139,8 +139,9 @@ class TestUIComponentsSmoke(unittest.TestCase):
     def test_window_rendering_no_crash(self):
         """Test that window rendering doesn't crash."""
         try:
+            rect = pygame.Rect(50, 50, 300, 200)
             header_rect, minimize_rect = draw_window_with_header(
-                self.screen, 50, 50, 300, 200, "Test Window"
+                self.screen, rect, "Test Window"
             )
             self.assertIsInstance(header_rect, pygame.Rect)
             self.assertIsInstance(minimize_rect, pygame.Rect)
