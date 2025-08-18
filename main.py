@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu
+from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_hiring_dialog
 from ui_new.facade import ui_facade
 
 
@@ -1286,8 +1286,32 @@ def main():
                             # Handle tutorial overlay clicks - any click dismisses the tutorial
                             game_state.dismiss_tutorial_message()
                         else:
+                            # Check for hiring dialog clicks first
+                            if game_state and game_state.pending_hiring_dialog and 'hiring_dialog_rects' in locals():
+                                hiring_handled = False
+                                for rect_info in hiring_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'employee_option':
+                                            # Player selected an employee subtype
+                                            game_state.select_employee_subtype(rect_info['subtype_id'])
+                                            hiring_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the hiring dialog
+                                            game_state.dismiss_hiring_dialog()
+                                            hiring_handled = True
+                                            break
+                                
+                                if hiring_handled:
+                                    pass  # Hiring dialog handled the click
+                                else:
+                                    # Regular game mouse handling
+                                    result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
+                                    if result == 'play_sound':
+                                        game_state.sound_manager.play_ap_spend_sound()
+                                    tooltip_text = result
                             # Check for popup button clicks first
-                            if handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
+                            elif handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
                                 # Popup button was clicked, no need for further processing
                                 pass
                             else:
@@ -1476,8 +1500,8 @@ def main():
                                 overlay_scroll = 0
                                 push_navigation_state('overlay')
                             
-                            # 'W' key for window management demo
-                            elif event.key == pygame.K_w:
+                            # 'W' key for window management demo (debug feature)
+                            elif event.key == pygame.K_w and current_config.get('advanced', {}).get('enable_demo_window', False):
                                 from overlay_manager import UIElement, ZLayer
                                 
                                 # Create a demo window if it doesn't exist
@@ -1638,6 +1662,10 @@ def main():
                     
                     if tooltip_text:
                         draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
+                    
+                    # Draw hiring dialog if active
+                    if game_state and game_state.pending_hiring_dialog:
+                        hiring_dialog_rects = draw_hiring_dialog(screen, game_state.pending_hiring_dialog, SCREEN_W, SCREEN_H)
                     
 
                     # Draw stepwise tutorial overlay if active

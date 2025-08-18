@@ -91,10 +91,10 @@ ACTIONS = [
     },
     {
         "name": "Hire Staff",
-        "desc": "Basic employee; provides +1 staff.",
-        "cost": 60,
+        "desc": "Open hiring dialog to select from available employee types.",
+        "cost": 0,  # No immediate cost - cost depends on selection
         "ap_cost": 1,
-        "upside": lambda gs: gs._hire_employee_subtype("generalist"),
+        "upside": lambda gs: gs._trigger_hiring_dialog(),
         "downside": lambda gs: None,
         "rules": None
     },

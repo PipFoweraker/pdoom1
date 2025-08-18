@@ -156,7 +156,8 @@ class ConfigManager:
                 "auto_delegation": True,       # Use delegation when beneficial
                 "show_opponent_intel": True,   # Show discovered opponent information
                 "event_frequency": 1.0,        # Event probability multiplier
-                "difficulty_modifier": 1.0    # General difficulty adjustment
+                "difficulty_modifier": 1.0,   # General difficulty adjustment
+                "enhanced_events_enabled": True  # Enable popup/deferred event system
             },
             
             # Advanced Settings (for modding)
@@ -164,6 +165,7 @@ class ConfigManager:
                 "debug_mode": False,
                 "log_level": "INFO",
                 "enable_experimental_features": False,
+                "enable_demo_window": False,  # W key demo window
                 "custom_event_weights": {},    # Custom event probability overrides
                 "custom_action_costs": {},     # Custom action cost overrides
                 "custom_upgrade_costs": {}     # Custom upgrade cost overrides
