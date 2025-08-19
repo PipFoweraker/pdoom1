@@ -8,7 +8,7 @@ import json
 import os
 from pathlib import Path
 
-from pdoom1.services.settings import Settings
+from src.services.settings import Settings
 
 
 class TestSettings:
