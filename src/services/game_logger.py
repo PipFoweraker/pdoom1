@@ -9,7 +9,7 @@ import os
 import platform
 import datetime
 from typing import List, Dict, Any, Optional
-from version import get_display_version
+from src.services.version import get_display_version
 
 
 class GameLogger:

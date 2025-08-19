@@ -3,19 +3,19 @@ import sys
 import pygame
 import random
 import json
-from game_state import GameState
+from src.core.game_state import GameState
 
 from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
 from ui_new.facade import ui_facade
 
 
-from overlay_manager import OverlayManager
-from bug_reporter import BugReporter
-from version import get_display_version
-from onboarding import onboarding
-from config_manager import initialize_config_system, get_current_config, config_manager
-from event_system import EventAction
-from sound_manager import SoundManager
+from src.ui.overlay_manager import OverlayManager
+from src.services.bug_reporter import BugReporter
+from src.services.version import get_display_version
+from src.features.onboarding import onboarding
+from src.services.config_manager import initialize_config_system, get_current_config, config_manager
+from src.features.event_system import EventAction
+from src.services.sound_manager import SoundManager
 
 # Initialize config system on startup
 initialize_config_system()
@@ -1507,7 +1507,7 @@ def main():
                             
                             # 'W' key for window management demo (debug feature)
                             elif event.key == pygame.K_w and current_config.get('advanced', {}).get('enable_demo_window', False):
-                                from overlay_manager import UIElement, ZLayer
+                                from src.ui.overlay_manager import UIElement, ZLayer
                                 
                                 # Create a demo window if it doesn't exist
                                 demo_window_id = "demo_window"

@@ -1,7 +1,7 @@
 import pygame
 import textwrap
-from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
-from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
+from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
+from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 
 def get_ui_safe_zones(w, h):
@@ -729,7 +729,7 @@ def draw_version_footer(screen, w, h, font=None):
         font: optional font for version text
     """
     try:
-        from version import get_display_version
+        from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
         version_text = "dev"
@@ -756,7 +756,7 @@ def draw_version_header(screen, w, h, font=None):
         font: optional font for version text
     """
     try:
-        from version import get_display_version
+        from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
         version_text = "dev"
@@ -854,7 +854,7 @@ def should_show_ui_element(game_state, element_id):
         bool: True if the element should be visible
     """
     # Import onboarding here to avoid circular imports
-    from onboarding import onboarding
+    from src.features.onboarding import onboarding
     
     # If tutorial is not active, show all elements
     if not onboarding.show_tutorial_overlay:

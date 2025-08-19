@@ -15,28 +15,42 @@ class FontManager:
         self.font_cache = {}
         self.base_font = 'Consolas'
         
+    def clear_cache(self):
+        """Clear the font cache. Call when pygame is reinitialized."""
+        self.font_cache.clear()
+        
     def get_font(self, size: int, bold: bool = False) -> pygame.font.Font:
         """Get a font with the specified size and weight."""
+        # Check if pygame.font is available (pygame has been initialized)
+        if not pygame.get_init() or not pygame.font.get_init():
+            # Clear cache if pygame has been reinitialized
+            self.clear_cache()
+            return None
+            
         key = (self.base_font, size, bold)
         if key not in self.font_cache:
-            self.font_cache[key] = pygame.font.SysFont(self.base_font, size, bold=bold)
+            try:
+                self.font_cache[key] = pygame.font.SysFont(self.base_font, size, bold=bold)
+            except pygame.error:
+                # Fallback to default font if system font not available
+                self.font_cache[key] = pygame.font.Font(None, size)
         return self.font_cache[key]
     
     def get_title_font(self, screen_h: int) -> pygame.font.Font:
         """Get the title font sized appropriately for screen height."""
-        return self.get_font(int(screen_h * 0.045), bold=True)
+        return self.get_font(int(screen_h * 0.045), bold=True) or pygame.font.Font(None, int(screen_h * 0.045))
     
     def get_big_font(self, screen_h: int) -> pygame.font.Font:
         """Get the big font sized appropriately for screen height."""
-        return self.get_font(int(screen_h * 0.033))
+        return self.get_font(int(screen_h * 0.033)) or pygame.font.Font(None, int(screen_h * 0.033))
     
     def get_normal_font(self, screen_h: int) -> pygame.font.Font:
         """Get the normal font sized appropriately for screen height."""
-        return self.get_font(int(screen_h * 0.025))
+        return self.get_font(int(screen_h * 0.025)) or pygame.font.Font(None, int(screen_h * 0.025))
     
     def get_small_font(self, screen_h: int) -> pygame.font.Font:
         """Get the small font sized appropriately for screen height."""
-        return self.get_font(int(screen_h * 0.018))
+        return self.get_font(int(screen_h * 0.018)) or pygame.font.Font(None, int(screen_h * 0.018))
 
 
 # Global font manager instance

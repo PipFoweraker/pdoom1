@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 import unittest
 from unittest.mock import patch, MagicMock
-from overlay_manager import OverlayManager, UIElement, ZLayer, UIState
+from src.ui.overlay_manager import OverlayManager, UIElement, ZLayer, UIState
 from ui_new.components.windows import draw_window_with_header
 
 
@@ -27,6 +27,9 @@ class TestWindowManagement(unittest.TestCase):
     def tearDown(self):
         """Clean up pygame."""
         pygame.quit()
+        # Clear font cache to prevent segfaults from cached invalid fonts
+        from ui_new.components.typography import font_manager
+        font_manager.clear_cache()
 
     def test_window_manager_initialization(self):
         """Test window manager initializes correctly."""
@@ -172,6 +175,9 @@ class TestWindowDrawing(unittest.TestCase):
     def tearDown(self):
         """Clean up pygame."""
         pygame.quit()
+        # Clear font cache to prevent segfaults from cached invalid fonts
+        from ui_new.components.typography import font_manager
+        font_manager.clear_cache()
 
     def test_window_header_drawing(self):
         """Test drawing window with header."""

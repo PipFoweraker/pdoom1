@@ -8,8 +8,8 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from pdoom1.scores.local_store import ScoreEntry, LocalLeaderboard
-from pdoom1.scores.remote_store_stub import RemoteLeaderboard, RemoteStoreManager
+from src.scores.local_store import ScoreEntry, LocalLeaderboard
+from src.scores.remote_store_stub import RemoteLeaderboard, RemoteStoreManager
 
 
 class TestScoreEntry:

@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pygame
 import unittest
-from ui import draw_loading_screen
+from src.ui.screens import draw_loading_screen
 
 
 class TestLoadingScreen(unittest.TestCase):

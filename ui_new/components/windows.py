@@ -41,6 +41,16 @@ def draw_window_with_header(screen: pygame.Surface,
     
     if font is None:
         font = font_manager.get_normal_font(screen.get_height())
+        
+    # Safety check: if font is still None (pygame not initialized), create a default font
+    if font is None:
+        try:
+            font = pygame.font.Font(None, int(screen.get_height() * 0.025))
+        except pygame.error:
+            # If even default font fails, return early with dummy rects
+            header_rect = pygame.Rect(x, y, width, header_height)
+            minimize_rect = pygame.Rect(x + width - header_height + 4, y + 2, header_height - 4, header_height - 4)
+            return header_rect, minimize_rect
     
     # Use fixed header height for compatibility
     header_height = 30
@@ -129,6 +139,24 @@ def draw_window_with_header_positioned(screen: pygame.Surface,
     
     # Draw title text
     font = font_manager.get_normal_font(screen.get_height())
+    if font is None:
+        try:
+            font = pygame.font.Font(None, int(screen.get_height() * 0.025))
+        except pygame.error:
+            # If font creation fails, skip text rendering
+            minimize_rect = None
+            if minimizable:
+                button_size = header_height - 4
+                minimize_rect = pygame.Rect(x + width - button_size - 2, y + 2, button_size, button_size)
+                pygame.draw.rect(screen, BUTTON_HOVER_BG, minimize_rect)
+                pygame.draw.rect(screen, BUTTON_HOVER_BORDER, minimize_rect, 1)
+                # Draw minimize icon (horizontal line)
+                line_y = minimize_rect.centery
+                line_start = minimize_rect.left + 4
+                line_end = minimize_rect.right - 4
+                pygame.draw.line(screen, BUTTON_TEXT_COLOUR, 
+                                (line_start, line_y), (line_end, line_y), 2)
+            return header_rect, minimize_rect
     title_surface = font.render(title, True, BUTTON_TEXT_COLOUR)
     title_x = x + 8
     title_y = y + (header_height - title_surface.get_height()) // 2

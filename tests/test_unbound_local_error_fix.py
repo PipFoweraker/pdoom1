@@ -150,7 +150,7 @@ class TestUnboundLocalErrorFix(unittest.TestCase):
         """Test that draw_overlay handles None values gracefully."""
         try:
             import pygame
-            from ui import draw_overlay
+            from src.ui.screens import draw_overlay
             
             # Initialize pygame minimally
             pygame.init()

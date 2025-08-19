@@ -12,7 +12,7 @@ import unittest
 from unittest.mock import Mock, MagicMock, patch
 import pygame
 
-from error_tracker import ErrorTracker
+from src.services.error_tracker import ErrorTracker
 
 
 class TestErrorTracker(unittest.TestCase):

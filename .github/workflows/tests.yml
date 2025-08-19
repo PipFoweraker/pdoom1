@@ -56,11 +56,11 @@ jobs:
 
     - name: Type check with mypy
       run: |
-        mypy pdoom1/ --ignore-missing-imports
+        mypy src/ --ignore-missing-imports
 
     - name: Test with pytest
       run: |
-        pytest tests/ -v --cov=pdoom1 --cov-report=xml --cov-report=term-missing
+        pytest tests/ -v --cov=src --cov-report=xml --cov-report=term-missing
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3

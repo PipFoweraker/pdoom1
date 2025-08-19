@@ -20,7 +20,7 @@ from unittest.mock import patch
 # Add the parent directory to the path so we can import game modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sound_manager import SoundManager
+from src.services.sound_manager import SoundManager
 
 
 class TestCustomSoundOverrides(unittest.TestCase):

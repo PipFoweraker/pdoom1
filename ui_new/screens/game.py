@@ -11,7 +11,7 @@ import os
 from typing import Any
 
 # Import visual feedback system (existing)
-from visual_feedback import visual_feedback, ButtonState, FeedbackStyle
+from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle
 
 # Import new components
 from ..components.colours import (

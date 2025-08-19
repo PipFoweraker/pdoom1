@@ -9,8 +9,8 @@ from datetime import datetime
 # Add the parent directory to the path so we can import game modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from game_state import GameState
-from game_logger import GameLogger
+from src.core.game_state import GameState
+from src.services.game_logger import GameLogger
 
 
 class TestGameLogger(unittest.TestCase):

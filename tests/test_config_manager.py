@@ -17,7 +17,7 @@ import json
 from unittest.mock import patch, mock_open
 
 # Import the config manager
-from config_manager import ConfigManager, get_current_config, initialize_config_system
+from src.services.config_manager import ConfigManager, get_current_config, initialize_config_system
 
 
 class TestConfigManager(unittest.TestCase):

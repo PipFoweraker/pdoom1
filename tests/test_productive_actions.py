@@ -7,7 +7,7 @@ import os
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from productive_actions import (
+from src.core.productive_actions import (
     PRODUCTIVE_ACTIONS, EMPLOYEE_SUBTYPE_TO_CATEGORY,
     get_employee_category, get_available_actions, 
     check_action_requirements, get_default_action_index
@@ -126,7 +126,7 @@ class TestGameStateIntegration(unittest.TestCase):
     def setUp(self):
         """Set up test game state."""
         try:
-            from game_state import GameState
+            from src.core.game_state import GameState
             self.game_state = GameState(seed=12345)
         except ImportError as e:
             self.skipTest(f"Could not import GameState: {e}")

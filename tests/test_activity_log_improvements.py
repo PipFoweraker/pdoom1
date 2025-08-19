@@ -1,6 +1,6 @@
 import unittest
 import random
-from game_state import GameState
+from src.core.game_state import GameState
 
 
 class TestActivityLogTooltip(unittest.TestCase):
