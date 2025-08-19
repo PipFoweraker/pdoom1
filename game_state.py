@@ -1,6 +1,7 @@
 import random
 import json
 import os
+import pygame
 from typing import Tuple
 from actions import ACTIONS
 from upgrades import UPGRADES
@@ -173,10 +174,11 @@ class GameState:
         self.actions = [dict(a) for a in ACTIONS]
         self.events = [dict(e) for e in EVENTS]
         
-        # Enhanced event system
+        # Enhanced event system (from config)
+        gameplay_config = config.get('gameplay', {})
         self.deferred_events = DeferredEventQueue()
         self.pending_popup_events = []  # Events waiting for player action
-        self.enhanced_events_enabled = False  # Flag to enable new event types
+        self.enhanced_events_enabled = gameplay_config.get('enhanced_events_enabled', False)  # Flag to enable new event types
         
         # Initialize game logger
         self.logger = GameLogger(seed)

@@ -53,12 +53,14 @@
     "auto_delegation": true,
     "show_opponent_intel": true,
     "event_frequency": 1.0,
-    "difficulty_modifier": 1.0
+    "difficulty_modifier": 1.0,
+    "enhanced_events_enabled": true
   },
   "advanced": {
     "debug_mode": false,
     "log_level": "INFO",
     "enable_experimental_features": false,
+    "enable_demo_window": false,
     "custom_event_weights": {},
     "custom_action_costs": {},
     "custom_upgrade_costs": {}
