@@ -7,7 +7,7 @@ import tempfile
 import os
 import json
 from unittest.mock import patch
-from onboarding import OnboardingSystem, ONBOARDING_FILE
+from src.features.onboarding import OnboardingSystem, ONBOARDING_FILE
 
 
 class TestOnboardingSystem(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestOnboardingSystem(unittest.TestCase):
     def test_onboarding_initialization(self):
         """Test that onboarding system initializes correctly."""
         # Create a fresh instance for testing
-        with patch('onboarding.ONBOARDING_FILE', self.temp_file.name):
+        with patch('src.features.onboarding.ONBOARDING_FILE', self.temp_file.name):
             onboarding = OnboardingSystem()
             
             # New player should need tutorial
@@ -44,7 +44,7 @@ class TestOnboardingSystem(unittest.TestCase):
     
     def test_should_show_tutorial(self):
         """Test tutorial showing logic."""
-        with patch('onboarding.ONBOARDING_FILE', self.temp_file.name):
+        with patch('src.features.onboarding.ONBOARDING_FILE', self.temp_file.name):
             onboarding = OnboardingSystem()
             
             # New player should see tutorial
@@ -61,7 +61,7 @@ class TestOnboardingSystem(unittest.TestCase):
     
     def test_tutorial_progression(self):
         """Test tutorial step progression."""
-        with patch('onboarding.ONBOARDING_FILE', self.temp_file.name):
+        with patch('src.features.onboarding.ONBOARDING_FILE', self.temp_file.name):
             onboarding = OnboardingSystem()
             onboarding.start_tutorial()
             
@@ -89,7 +89,7 @@ class TestOnboardingSystem(unittest.TestCase):
     
     def test_mechanic_help(self):
         """Test first-time mechanic help system."""
-        with patch('onboarding.ONBOARDING_FILE', self.temp_file.name):
+        with patch('src.features.onboarding.ONBOARDING_FILE', self.temp_file.name):
             onboarding = OnboardingSystem()
             
             # Should show help for unseen mechanics

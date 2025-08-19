@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import main
 from game_state import GameState
-from onboarding import onboarding
+from src.features.onboarding import onboarding
 from sound_manager import SoundManager
 
 

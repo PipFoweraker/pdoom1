@@ -854,7 +854,7 @@ def should_show_ui_element(game_state, element_id):
         bool: True if the element should be visible
     """
     # Import onboarding here to avoid circular imports
-    from onboarding import onboarding
+    from src.features.onboarding import onboarding
     
     # If tutorial is not active, show all elements
     if not onboarding.show_tutorial_overlay:

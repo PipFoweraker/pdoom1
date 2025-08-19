@@ -22,7 +22,7 @@ class TestFirstTimeHelpContent(unittest.TestCase):
     
     def test_onboarding_system_initialization(self):
         """Test that the onboarding system initializes correctly."""
-        from onboarding import onboarding
+        from src.features.onboarding import onboarding
         
         # Check that onboarding system exists and has required methods
         self.assertTrue(hasattr(onboarding, 'should_show_mechanic_help'))
@@ -31,7 +31,7 @@ class TestFirstTimeHelpContent(unittest.TestCase):
     
     def test_mechanic_help_content_structure(self):
         """Test that mechanic help content has the correct structure."""
-        from onboarding import onboarding
+        from src.features.onboarding import onboarding
         
         mechanics = ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']
         
@@ -52,7 +52,7 @@ class TestFirstTimeHelpContent(unittest.TestCase):
     
     def test_invalid_mechanic_handling(self):
         """Test that invalid mechanics are handled gracefully."""
-        from onboarding import onboarding
+        from src.features.onboarding import onboarding
         
         invalid_mechanics = ['invalid_mechanic', '', None, 123]
         
@@ -105,7 +105,7 @@ class TestFirstTimeHelpContent(unittest.TestCase):
     
     def test_help_content_validation_logic(self):
         """Test the validation logic used in main.py."""
-        from onboarding import onboarding
+        from src.features.onboarding import onboarding
         
         # This tests the same validation logic used in the fixed main.py
         for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']:

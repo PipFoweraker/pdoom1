@@ -12,7 +12,7 @@ from ui_new.facade import ui_facade
 from src.ui.overlay_manager import OverlayManager
 from bug_reporter import BugReporter
 from src.services.version import get_display_version
-from onboarding import onboarding
+from src.features.onboarding import onboarding
 from config_manager import initialize_config_system, get_current_config, config_manager
 from event_system import EventAction
 from sound_manager import SoundManager

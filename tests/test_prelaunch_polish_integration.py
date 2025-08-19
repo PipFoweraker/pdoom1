@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import main
 from game_state import GameState
-from onboarding import onboarding
+from src.features.onboarding import onboarding
 from sound_manager import SoundManager
 from ui import draw_audio_menu
 
@@ -238,7 +238,7 @@ class TestGameLaunchStability:
     
     def test_onboarding_stability(self):
         """Test onboarding system is stable and defensive."""
-        from onboarding import onboarding
+        from src.features.onboarding import onboarding
         
         # Should handle all edge cases gracefully
         test_cases = [

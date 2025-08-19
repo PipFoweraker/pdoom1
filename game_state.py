@@ -4,13 +4,13 @@ import os
 import pygame
 from typing import Tuple
 from actions import ACTIONS
-from upgrades import UPGRADES
+from src.core.upgrades import UPGRADES
 from events import EVENTS
 from game_logger import GameLogger
 from sound_manager import SoundManager
 from opponents import create_default_opponents
 from event_system import Event, DeferredEventQueue, EventType, EventAction
-from onboarding import onboarding
+from src.features.onboarding import onboarding
 from src.ui.overlay_manager import OverlayManager
 from error_tracker import ErrorTracker
 from config_manager import get_current_config
