@@ -14,7 +14,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from event_system import Event, EventType, EventAction
-from game_state import GameState
+from src.core.game_state import GameState
 from ui import draw_popup_events
 
 

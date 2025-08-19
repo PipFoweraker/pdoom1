@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
 import pygame
-from game_state import GameState
+from src.core.game_state import GameState
 from ui import draw_ui
 
 

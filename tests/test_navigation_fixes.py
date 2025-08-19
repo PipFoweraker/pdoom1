@@ -16,7 +16,7 @@ import pygame
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.ui.overlay_manager import OverlayManager, UIElement, ZLayer
-from game_state import GameState
+from src.core.game_state import GameState
 
 
 class TestNavigationFixes(unittest.TestCase):

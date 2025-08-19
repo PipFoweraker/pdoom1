@@ -20,7 +20,7 @@ from ui_new.components.colours import MONEY_COLOUR, TITLE_COLOUR, DOOM_COLOUR
 from ui_new.components.typography import font_manager, FontManager
 from ui_new.components.buttons import ButtonState, ButtonStyle, draw_button
 from ui_new.components.windows import draw_window_with_header, draw_panel
-from game_state import GameState
+from src.core.game_state import GameState
 
 
 class TestUIFacadeSmoke(unittest.TestCase):

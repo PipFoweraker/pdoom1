@@ -1,6 +1,6 @@
 import unittest
-from game_state import GameState
-from actions import ACTIONS
+from src.core.game_state import GameState
+from src.core.actions import ACTIONS
 
 class TestComputeSystem(unittest.TestCase):
     """Test the compute resource system and employee productivity"""

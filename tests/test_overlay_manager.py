@@ -6,7 +6,7 @@ import unittest
 import pygame
 from src.ui.overlay_manager import OverlayManager, UIElement, ZLayer, UIState, create_dialog, create_tooltip, create_modal
 from src.features.visual_feedback import VisualFeedback, ButtonState, FeedbackStyle
-from game_state import GameState
+from src.core.game_state import GameState
 
 
 class TestOverlayManager(unittest.TestCase):

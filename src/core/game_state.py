@@ -3,21 +3,21 @@ import json
 import os
 import pygame
 from typing import Tuple
-from actions import ACTIONS
+from .actions import ACTIONS
 from src.core.upgrades import UPGRADES
-from events import EVENTS
-from game_logger import GameLogger
-from sound_manager import SoundManager
-from opponents import create_default_opponents
-from event_system import Event, DeferredEventQueue, EventType, EventAction
+from .events import EVENTS
+from src.services.game_logger import GameLogger
+from src.services.sound_manager import SoundManager
+from .opponents import create_default_opponents
+from src.features.event_system import Event, DeferredEventQueue, EventType, EventAction
 from src.features.onboarding import onboarding
 from src.ui.overlay_manager import OverlayManager
-from error_tracker import ErrorTracker
-from config_manager import get_current_config
-from employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
-from productive_actions import (get_employee_category, get_available_actions, 
+from src.services.error_tracker import ErrorTracker
+from src.services.config_manager import get_current_config
+from .employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
+from .productive_actions import (get_employee_category, get_available_actions, 
                                check_action_requirements, get_default_action_index)
-from end_game_scenarios import end_game_scenarios
+from src.features.end_game_scenarios import end_game_scenarios
 
 SCORE_FILE = "local_highscore.json"
 

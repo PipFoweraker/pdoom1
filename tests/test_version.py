@@ -16,7 +16,7 @@ from src.services.version import (
     VERSION_PATCH
 )
 from game_logger import GameLogger
-from game_state import GameState
+from src.core.game_state import GameState
 
 
 class TestVersionSystem(unittest.TestCase):

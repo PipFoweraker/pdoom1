@@ -8,7 +8,7 @@ import os
 import json
 import tempfile
 from unittest.mock import patch
-from game_state import GameState
+from src.core.game_state import GameState
 
 
 class TestTutorialSystem(unittest.TestCase):

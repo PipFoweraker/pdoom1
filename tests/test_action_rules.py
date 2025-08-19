@@ -1,7 +1,7 @@
 import unittest
 import random
-from game_state import GameState
-from action_rules import ActionRules, manager_unlock_rule, scout_unlock_rule, search_unlock_rule
+from src.core.game_state import GameState
+from src.core.action_rules import ActionRules, manager_unlock_rule, scout_unlock_rule, search_unlock_rule
 
 
 class TestActionRulesSystem(unittest.TestCase):

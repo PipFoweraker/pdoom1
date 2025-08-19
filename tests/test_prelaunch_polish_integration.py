@@ -18,9 +18,9 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import main
-from game_state import GameState
+from src.core.game_state import GameState
 from src.features.onboarding import onboarding
-from sound_manager import SoundManager
+from src.services.sound_manager import SoundManager
 from ui import draw_audio_menu
 
 
@@ -165,7 +165,7 @@ class TestPreLaunchPolishIntegration:
     
     def test_config_persistence_integration(self):
         """Test that audio settings can be persisted."""
-        from config_manager import get_current_config
+        from src.services.config_manager import get_current_config
         
         config = get_current_config()
         
