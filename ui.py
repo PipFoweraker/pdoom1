@@ -729,7 +729,7 @@ def draw_version_footer(screen, w, h, font=None):
         font: optional font for version text
     """
     try:
-        from version import get_display_version
+        from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
         version_text = "dev"
@@ -756,7 +756,7 @@ def draw_version_header(screen, w, h, font=None):
         font: optional font for version text
     """
     try:
-        from version import get_display_version
+        from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
         version_text = "dev"
