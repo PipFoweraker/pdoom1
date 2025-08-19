@@ -5,9 +5,9 @@ A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *P
 **Current Version:** See [CHANGELOG.md](CHANGELOG.md) for latest release information and version history.
 
 **📖 Documentation:**
-- **[Player Guide](PLAYERGUIDE.md)** - How to play, controls, and strategies  
-- **[Developer Guide](DEVELOPERGUIDE.md)** - Contributing, code structure, and testing
-- **[Configuration System](CONFIG_SYSTEM.md)** - Game customization and settings
+- **[Player Guide](docs/PLAYERGUIDE.md)** - How to play, controls, and strategies  
+- **[Developer Guide](docs/DEVELOPERGUIDE.md)** - Contributing, code structure, and testing
+- **[Configuration System](docs/CONFIG_SYSTEM.md)** - Game customization and settings
 - **[Changelog](CHANGELOG.md)** - Version history and release notes
 
 ## Table of Contents
@@ -64,7 +64,7 @@ P(Doom) offers a rich strategy experience with sophisticated systems that evolve
 - **🔊 Audio Feedback**: Sound effects for achievements and important actions
 - **♿ Accessibility**: Keyboard navigation, scalable text, and comprehensive help system
 
-For complete gameplay details, see the **[Player Guide](PLAYERGUIDE.md)**.
+For complete gameplay details, see the **[Player Guide](docs/PLAYERGUIDE.md)**.
 
 ## Visual Feedback System
 
@@ -75,7 +75,7 @@ P(Doom) features smooth visual transitions and clear feedback:
 - **UI State Changes**: Clear indicators for all interactions
 - **Accessibility**: High contrast, keyboard navigation, and scalable text
 
-For detailed UI guide, see the **[Player Guide](PLAYERGUIDE.md#visual-feedback--ui-transitions)**.
+For detailed UI guide, see the **[Player Guide](docs/PLAYERGUIDE.md#visual-feedback--ui-transitions)**.
 
 ## Tutorial & Onboarding System
 
@@ -86,7 +86,7 @@ P(Doom) includes comprehensive guidance for new players:
 - **In-Game Help**: Press `H` for instant access to the Player Guide
 - **Fully Optional**: Skip or disable if you prefer to learn by playing
 
-For complete tutorial details, see the **[Player Guide](PLAYERGUIDE.md#new-player-tutorial--help-system)**.
+For complete tutorial details, see the **[Player Guide](docs/PLAYERGUIDE.md#new-player-tutorial--help-system)**.
 
 ## Troubleshooting
 
@@ -139,8 +139,8 @@ If tests fail, check your Python and pygame installation.
 ### Getting Help
 
 - **In-game**: Use the "Report Bug" option in the main menu
-- **Documentation**: See [Player Guide](PLAYERGUIDE.md) for gameplay help
-- **Development**: See [Developer Guide](DEVELOPERGUIDE.md) for code issues
+- **Documentation**: See [Player Guide](docs/PLAYERGUIDE.md) for gameplay help
+- **Development**: See [Developer Guide](docs/DEVELOPERGUIDE.md) for code issues
 - **Releases**: Check [Changelog](CHANGELOG.md) for version history and known issues
 
 ### Dependencies
@@ -182,7 +182,7 @@ This project follows [Semantic Versioning](https://semver.org/) (SemVer) for all
   - Bottom right corner of main menu and game UI
   - Accessible via `get_display_version()` function
   - Falls back to "dev" when running unbuilt/development versions
-- Release checklist documented in `RELEASE_CHECKLIST.md`
+- Release checklist documented in `docs/RELEASE_CHECKLIST.md`
 - Automated testing and release workflows in `.github/workflows/`
 - All releases include source archives and checksums
 

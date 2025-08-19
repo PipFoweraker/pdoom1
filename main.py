@@ -270,7 +270,7 @@ def handle_menu_click(mouse_pos, w, h):
     - Weekly Seed: Immediately starts game with current weekly seed
     - Custom Seed: Transitions to seed input prompt
     - Options: Currently inactive (greyed out)
-    - Player Guide: Shows PLAYERGUIDE.md in scrollable overlay
+    - Player Guide: Shows docs/PLAYERGUIDE.md in scrollable overlay
     - README: Shows README.md in scrollable overlay
     """
     global current_state, selected_menu_item, overlay_content, overlay_title
@@ -302,7 +302,7 @@ def handle_menu_click(mouse_pos, w, h):
                 current_state = 'sounds_menu'
                 sounds_menu_selected_item = 0
             elif i == 3:  # Player Guide
-                overlay_content = load_markdown_file('PLAYERGUIDE.md')
+                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
                 current_state = 'overlay'
             elif i == 4:  # README
@@ -363,7 +363,7 @@ def handle_menu_keyboard(key):
             overlay_title = "Settings"
             push_navigation_state('overlay')
         elif selected_menu_item == 4:  # Player Guide
-            overlay_content = load_markdown_file('PLAYERGUIDE.md')
+            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
             overlay_title = "Player Guide"
             push_navigation_state('overlay')
         elif selected_menu_item == 5:  # README
@@ -1443,13 +1443,13 @@ def main():
                                 onboarding.dismiss_tutorial()
                             elif event.key == pygame.K_h:
                                 # Show help overlay
-                                overlay_content = load_markdown_file('PLAYERGUIDE.md')
+                                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                                 overlay_title = "Player Guide"
                                 push_navigation_state('overlay')
                         
                         # Help key (H) - always available
                         elif event.key == pygame.K_h:
-                            overlay_content = load_markdown_file('PLAYERGUIDE.md')
+                            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                             overlay_title = "Player Guide"
                             push_navigation_state('overlay')
                         
@@ -1500,7 +1500,7 @@ def main():
                             
                             # 'H' key for help (Player Guide)
                             elif event.key == pygame.K_h:
-                                overlay_content = load_markdown_file('PLAYERGUIDE.md')
+                                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                                 overlay_title = "Player Guide"
                                 overlay_scroll = 0
                                 push_navigation_state('overlay')
