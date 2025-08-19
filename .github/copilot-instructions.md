@@ -78,10 +78,10 @@ print('✓ Game state initializes correctly')
 
 ### Documentation Files
 - **README.md**: Installation and quick start guide
-- **DEVELOPERGUIDE.md**: Comprehensive development documentation
-- **CONTRIBUTING.md**: Development guidelines and protocols
-- **PLAYERGUIDE.md**: Gameplay instructions and controls
-- **CONFIG_SYSTEM.md**: Configuration and customization guide
+- **docs/DEVELOPERGUIDE.md**: Comprehensive development documentation
+- **docs/CONTRIBUTING.md**: Development guidelines and protocols
+- **docs/PLAYERGUIDE.md**: Gameplay instructions and controls
+- **docs/CONFIG_SYSTEM.md**: Configuration and customization guide
 
 ## Common Development Tasks
 

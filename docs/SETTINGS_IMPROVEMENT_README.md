@@ -4,8 +4,8 @@ This directory contains screenshots demonstrating the improvement to the "generi
 
 ## Files
 
-- `original_pre_game_settings.png` - The original generic settings screen with dummy values
-- `improved_pre_game_settings.png` - The enhanced Laboratory Configuration screen with P(Doom) theme
+- `assets/original_pre_game_settings.png` - The original generic settings screen with dummy values
+- `assets/improved_pre_game_settings.png` - The enhanced Laboratory Configuration screen with P(Doom) theme
 
 ## Improvements Made
 

@@ -199,6 +199,6 @@ All features present in the pre-versioning codebase:
 
 ## Release Process
 For information about our release process, versioning policy, and contribution guidelines, see:
-- [Developer Guide - Release & Deployment](DEVELOPERGUIDE.md#release--deployment)
-- [Semantic Versioning Policy](DEVELOPERGUIDE.md#version-management)
-- [Contributing Guidelines](DEVELOPERGUIDE.md#contribution-guidelines)
+- [Developer Guide - Release & Deployment](docs/DEVELOPERGUIDE.md#release--deployment)
+- [Semantic Versioning Policy](docs/DEVELOPERGUIDE.md#version-management)
+- [Contributing Guidelines](docs/DEVELOPERGUIDE.md#contribution-guidelines)
