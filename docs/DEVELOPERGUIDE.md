@@ -3,7 +3,7 @@
 Welcome, contributors and modders! This guide explains how to develop, test, and extend P(Doom): Bureaucracy Strategy.
 
 For **players**, see the [Player Guide](PLAYERGUIDE.md).  
-For **installation and troubleshooting**, see the [README](README.md).
+For **installation and troubleshooting**, see the [README](../README.md).
 
 ## Table of Contents
 - [Development Setup](#development-setup) (Line 28)

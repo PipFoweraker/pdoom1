@@ -3,7 +3,7 @@
 Welcome to **P(Doom): Bureaucracy Strategy Game**!  
 A satirical strategy game about managing an AI safety lab while competing against reckless frontier labs.
 
-**Version Information**: Check the game window title or see [CHANGELOG.md](CHANGELOG.md) for current version and recent changes.
+**Version Information**: Check the game window title or see [CHANGELOG.md](../CHANGELOG.md) for current version and recent changes.
 
 **Release Status**: This game follows [Semantic Versioning](https://semver.org/). Current development is targeting v0.1.0 as the first official stable release. See the [README](README.md#versioning-and-releases) for detailed versioning policy.
 
@@ -540,9 +540,9 @@ This replaces the old "click anywhere to restart" behavior, giving you more cont
 ## Need Help?
 
 - **Stuck?** Try the in-game "Report Bug" feature to get help
-- **Technical issues?** See the [README](README.md) for troubleshooting  
+- **Technical issues?** See the [README](../README.md) for troubleshooting  
 - **Want to contribute?** Check the [Developer Guide](DEVELOPERGUIDE.md)
-- **Version questions?** See [CHANGELOG.md](CHANGELOG.md) for release history and known issues
+- **Version questions?** See [CHANGELOG.md](../CHANGELOG.md) for release history and known issues
 
 ---
 
