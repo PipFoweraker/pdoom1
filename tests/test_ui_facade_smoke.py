@@ -34,6 +34,13 @@ class TestUIFacadeSmoke(unittest.TestCase):
         self.game_state = GameState('test-seed')
         self.facade = UIFacade()
     
+    def tearDown(self):
+        """Clean up pygame."""
+        pygame.quit()
+        # Clear font cache to prevent segfaults from cached invalid fonts
+        from ui_new.components.typography import font_manager
+        font_manager.clear_cache()
+    
     def test_ui_facade_initialization(self):
         """Test that UIFacade initializes correctly."""
         facade = UIFacade()

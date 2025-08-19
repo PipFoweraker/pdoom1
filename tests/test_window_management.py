@@ -27,6 +27,9 @@ class TestWindowManagement(unittest.TestCase):
     def tearDown(self):
         """Clean up pygame."""
         pygame.quit()
+        # Clear font cache to prevent segfaults from cached invalid fonts
+        from ui_new.components.typography import font_manager
+        font_manager.clear_cache()
 
     def test_window_manager_initialization(self):
         """Test window manager initializes correctly."""
@@ -172,6 +175,9 @@ class TestWindowDrawing(unittest.TestCase):
     def tearDown(self):
         """Clean up pygame."""
         pygame.quit()
+        # Clear font cache to prevent segfaults from cached invalid fonts
+        from ui_new.components.typography import font_manager
+        font_manager.clear_cache()
 
     def test_window_header_drawing(self):
         """Test drawing window with header."""
