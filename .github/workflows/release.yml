@@ -62,7 +62,7 @@ jobs:
     - name: Verify version consistency
       run: |
         # Check that the version in version.py matches the release version
-        PYTHON_VERSION=$(python -c "from version import get_display_version; print(get_display_version())")
+        PYTHON_VERSION=$(python -c "from src.services.version import get_display_version; print(get_display_version())")
         RELEASE_VERSION="${{ steps.version.outputs.version }}"
         
         echo "Python version.py version: $PYTHON_VERSION"
@@ -105,8 +105,8 @@ jobs:
     - name: Test game initialization
       run: |
         python -c "
-        from game_state import GameState
-        from version import get_display_version
+        from src.core.game_state import GameState
+        from src.services.version import get_display_version
         print(f'Testing P(Doom) {get_display_version()}')
         gs = GameState('release-test')
         print('✓ Game initializes correctly')

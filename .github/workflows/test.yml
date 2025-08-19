@@ -29,7 +29,7 @@ jobs:
     - name: Verify version system
       run: |
         python -c "
-        from version import get_version, get_display_version, get_version_info
+        from src.services.version import get_version, get_display_version, get_version_info
         print('Version system check:')
         print(f'  Version: {get_version()}')
         print(f'  Display: {get_display_version()}')
@@ -50,8 +50,8 @@ jobs:
     - name: Test basic game functionality
       run: |
         python -c "
-        from game_state import GameState
-        from version import get_display_version
+        from src.core.game_state import GameState
+        from src.services.version import get_display_version
         print(f'Testing P(Doom) {get_display_version()}')
         gs = GameState('ci-test')
         print('✓ Game state initializes correctly')
