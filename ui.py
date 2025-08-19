@@ -1,6 +1,6 @@
 import pygame
 import textwrap
-from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
+from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
 from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 
