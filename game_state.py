@@ -11,7 +11,7 @@ from sound_manager import SoundManager
 from opponents import create_default_opponents
 from event_system import Event, DeferredEventQueue, EventType, EventAction
 from onboarding import onboarding
-from overlay_manager import OverlayManager
+from src.ui.overlay_manager import OverlayManager
 from error_tracker import ErrorTracker
 from config_manager import get_current_config
 from employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level

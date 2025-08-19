@@ -4,7 +4,7 @@ Tests for the overlay manager and visual feedback systems.
 
 import unittest
 import pygame
-from overlay_manager import OverlayManager, UIElement, ZLayer, UIState, create_dialog, create_tooltip, create_modal
+from src.ui.overlay_manager import OverlayManager, UIElement, ZLayer, UIState, create_dialog, create_tooltip, create_modal
 from visual_feedback import VisualFeedback, ButtonState, FeedbackStyle
 from game_state import GameState
 

@@ -9,7 +9,7 @@ from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, 
 from ui_new.facade import ui_facade
 
 
-from overlay_manager import OverlayManager
+from src.ui.overlay_manager import OverlayManager
 from bug_reporter import BugReporter
 from src.services.version import get_display_version
 from onboarding import onboarding
@@ -1507,7 +1507,7 @@ def main():
                             
                             # 'W' key for window management demo (debug feature)
                             elif event.key == pygame.K_w and current_config.get('advanced', {}).get('enable_demo_window', False):
-                                from overlay_manager import UIElement, ZLayer
+                                from src.ui.overlay_manager import UIElement, ZLayer
                                 
                                 # Create a demo window if it doesn't exist
                                 demo_window_id = "demo_window"

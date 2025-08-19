@@ -11,7 +11,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ui import draw_main_menu
-from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts
+from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts
 
 
 class TestKeyboardShortcutsUI(unittest.TestCase):

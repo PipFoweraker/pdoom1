@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 import unittest
 from unittest.mock import patch, MagicMock
-from overlay_manager import OverlayManager, UIElement, ZLayer, UIState
+from src.ui.overlay_manager import OverlayManager, UIElement, ZLayer, UIState
 from ui_new.components.windows import draw_window_with_header
 
 
