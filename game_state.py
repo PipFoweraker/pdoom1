@@ -1,6 +1,7 @@
 import random
 import json
 import os
+import pygame
 from typing import Tuple
 from actions import ACTIONS
 from upgrades import UPGRADES

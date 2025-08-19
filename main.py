@@ -5,7 +5,7 @@ import random
 import json
 from game_state import GameState
 
-from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu
+from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
 from ui_new.facade import ui_facade
 
 
@@ -273,7 +273,7 @@ def handle_menu_click(mouse_pos, w, h):
     - Player Guide: Shows PLAYERGUIDE.md in scrollable overlay
     - README: Shows README.md in scrollable overlay
     """
-    global current_state, selected_menu_item, seed, overlay_content, overlay_title
+    global current_state, selected_menu_item, overlay_content, overlay_title
     
     # Calculate menu button positions (must match draw_main_menu layout)
     button_width = int(w * 0.4)
@@ -340,7 +340,7 @@ def handle_menu_keyboard(key):
     
     Same functionality as handle_menu_click but for keyboard users.
     """
-    global selected_menu_item, current_state, seed, overlay_content, overlay_title, available_configs, config_selected_item
+    global selected_menu_item, current_state, overlay_content, overlay_title, available_configs, config_selected_item
     
     if key == pygame.K_UP:
         # Move selection up, wrapping to bottom
@@ -1145,6 +1145,7 @@ def main():
     """
     global seed, seed_input, current_state, screen, SCREEN_W, SCREEN_H, selected_menu_item, overlay_scroll
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
+    global end_game_selected_item, high_score_submit_to_leaderboard
     # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
     global first_time_help_content, first_time_help_close_button, current_tutorial_content
     global overlay_content, overlay_title
@@ -1157,6 +1158,10 @@ def main():
     try:
         while running:
             clock.tick(30)  # 30 FPS for smooth menu navigation
+            
+            # Initialize variables used in event handling
+            back_button_rect = None
+            hiring_dialog_rects = None
             
             # --- Event handling based on current state --- #
             for event in pygame.event.get():
@@ -1287,7 +1292,7 @@ def main():
                             game_state.dismiss_tutorial_message()
                         else:
                             # Check for hiring dialog clicks first
-                            if game_state and game_state.pending_hiring_dialog and 'hiring_dialog_rects' in locals():
+                            if game_state and game_state.pending_hiring_dialog and hiring_dialog_rects is not None:
                                 hiring_handled = False
                                 for rect_info in hiring_dialog_rects:
                                     if rect_info['rect'].collidepoint(mx, my):
