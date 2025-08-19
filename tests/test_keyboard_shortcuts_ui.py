@@ -10,7 +10,7 @@ import os
 # Add the project root to Python path to import modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from ui import draw_main_menu
+from src.ui.menus import draw_main_menu
 from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts
 
 

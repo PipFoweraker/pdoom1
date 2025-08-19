@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 import unittest
 from unittest.mock import patch, MagicMock
-from ui import draw_version_footer, draw_version_header
+from src.ui.screens import draw_version_footer, draw_version_header
 
 
 class TestVersionDisplay(unittest.TestCase):

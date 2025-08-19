@@ -207,7 +207,8 @@ class TestUIFunctions(unittest.TestCase):
     
     def test_ui_functions_importable(self):
         """Test that new UI functions can be imported."""
-        from ui import draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice
+        from src.ui.menus import draw_pre_game_settings
+        from ui import draw_seed_selection, draw_tutorial_choice
         
         # Test that they are callable
         self.assertTrue(callable(draw_pre_game_settings))
@@ -216,7 +217,7 @@ class TestUIFunctions(unittest.TestCase):
     
     def test_draw_pre_game_settings_no_crash(self):
         """Test that draw_pre_game_settings doesn't crash."""
-        from ui import draw_pre_game_settings
+        from src.ui.menus import draw_pre_game_settings
         
         settings = {
             "difficulty": "DUMMY",

@@ -10,7 +10,7 @@ from datetime import datetime
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.game_state import GameState
-from game_logger import GameLogger
+from src.services.game_logger import GameLogger
 
 
 class TestGameLogger(unittest.TestCase):

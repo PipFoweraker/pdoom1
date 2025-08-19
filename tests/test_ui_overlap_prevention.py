@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
 import pygame
-from ui import get_ui_safe_zones, find_safe_overlay_position
+from src.ui.layout import get_ui_safe_zones, find_safe_overlay_position
 
 
 class TestUIOverlapPrevention(unittest.TestCase):

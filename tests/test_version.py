@@ -15,7 +15,7 @@ from src.services.version import (
     VERSION_MINOR, 
     VERSION_PATCH
 )
-from game_logger import GameLogger
+from src.services.game_logger import GameLogger
 from src.core.game_state import GameState
 
 

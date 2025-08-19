@@ -184,7 +184,7 @@ def apply_subtype_effects(game_state, subtype_id):
             if blob['type'] == 'employee' and blob['subtype'] == 'generalist':
                 blob['subtype'] = subtype_id
                 # Get productive action category and set default action
-                from productive_actions import get_employee_category, get_default_action_index
+                from src.core.productive_actions import get_employee_category, get_default_action_index
                 category = get_employee_category(subtype_id)
                 if category:
                     default_action_index = get_default_action_index(category)

@@ -21,7 +21,7 @@ import main
 from src.core.game_state import GameState
 from src.features.onboarding import onboarding
 from src.services.sound_manager import SoundManager
-from ui import draw_audio_menu
+from src.ui.menus import draw_audio_menu
 
 
 class TestPreLaunchPolishIntegration:
@@ -179,7 +179,8 @@ class TestPreLaunchPolishIntegration:
     def test_no_import_errors(self):
         """Test that all new imports work correctly."""
         # Test UI imports
-        from ui import draw_turn_transition_overlay, draw_audio_menu
+        from ui import draw_turn_transition_overlay
+        from src.ui.menus import draw_audio_menu
         
         # Test that functions are callable
         assert callable(draw_turn_transition_overlay)
@@ -229,7 +230,8 @@ class TestGameLaunchStability:
     def test_ui_module_enhancements(self):
         """Test UI module has all new functions."""
         from ui import (draw_tutorial_choice, draw_turn_transition_overlay, 
-                        draw_audio_menu, draw_first_time_help)
+                        draw_first_time_help)
+        from src.ui.menus import draw_audio_menu
         
         # All functions should be callable
         for func in [draw_tutorial_choice, draw_turn_transition_overlay, 
