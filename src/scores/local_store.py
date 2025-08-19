@@ -11,7 +11,7 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
-from ..services.data_paths import get_leaderboard_file
+from src.services.data_paths import get_leaderboard_file
 
 
 class ScoreEntry:

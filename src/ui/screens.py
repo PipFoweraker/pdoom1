@@ -6,7 +6,7 @@ version information, and loading screens.
 """
 
 import pygame
-from .text import wrap_text, draw_back_button
+from src.ui.text import wrap_text, draw_back_button
 
 
 def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0):

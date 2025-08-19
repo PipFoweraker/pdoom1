@@ -3,19 +3,19 @@ import json
 import os
 import pygame
 from typing import Tuple
-from .actions import ACTIONS
+from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
-from .events import EVENTS
+from src.core.events import EVENTS
 from src.services.game_logger import GameLogger
 from src.services.sound_manager import SoundManager
-from .opponents import create_default_opponents
+from src.core.opponents import create_default_opponents
 from src.features.event_system import Event, DeferredEventQueue, EventType, EventAction
 from src.features.onboarding import onboarding
 from src.ui.overlay_manager import OverlayManager
 from src.services.error_tracker import ErrorTracker
 from src.services.config_manager import get_current_config
-from .employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
-from .productive_actions import (get_employee_category, get_available_actions, 
+from src.core.employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
+from src.core.productive_actions import (get_employee_category, get_available_actions, 
                                check_action_requirements, get_default_action_index)
 from src.features.end_game_scenarios import end_game_scenarios
 

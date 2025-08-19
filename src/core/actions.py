@@ -1,5 +1,5 @@
 import random
-from .action_rules import manager_unlock_rule, scout_unlock_rule, search_unlock_rule
+from src.core.action_rules import manager_unlock_rule, scout_unlock_rule, search_unlock_rule
 
 ACTIONS = [
     {

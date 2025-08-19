@@ -11,8 +11,8 @@ import time
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, Any, List, Optional
-from .data_paths import get_logs_dir
-from .settings import Settings
+from src.services.data_paths import get_logs_dir
+from src.services.settings import Settings
 
 
 class TelemetryLogger:

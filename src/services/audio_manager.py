@@ -9,7 +9,7 @@ import pygame
 import os
 from pathlib import Path
 from typing import Optional, Dict, Any
-from .settings import Settings
+from src.services.settings import Settings
 
 
 class AudioManager:
