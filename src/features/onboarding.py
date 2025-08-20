@@ -213,11 +213,6 @@ class OnboardingSystem:
         Note: This implementation is defensive to prevent any crashes that could prevent game launch.
         """
         try:
-            import logging
-            
-            # Log warning as requested for stub implementation
-            logging.warning(f"get_mechanic_help called for mechanic: {mechanic}. This is a stub implementation.")
-            
             # Handle invalid inputs gracefully
             if not isinstance(mechanic, str) or not mechanic:
                 return None
