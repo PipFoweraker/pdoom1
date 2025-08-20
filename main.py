@@ -1318,11 +1318,19 @@ def main():
                                 if hiring_handled:
                                     pass  # Hiring dialog handled the click
                                 else:
-                                    # Regular game mouse handling
-                                    result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
-                                    if result == 'play_sound':
-                                        game_state.sound_manager.play_ap_spend_sound()
-                                    tooltip_text = result
+                                    # When hiring dialog is open, check if click is inside dialog area
+                                    # Calculate dialog rect (same as in ui.py draw_hiring_dialog)
+                                    dialog_width = int(SCREEN_W * 0.8)
+                                    dialog_height = int(SCREEN_H * 0.85)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    # Click is outside dialog area - block it (modal behavior)
+                                    # Don't pass to regular game handling to prevent clicking through dialog
                             # Check for popup button clicks first
                             elif handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
                                 # Popup button was clicked, no need for further processing
