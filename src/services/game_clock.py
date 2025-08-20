@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 import json
 from pathlib import Path
-from .data_paths import get_data_dir
+from src.services.data_paths import get_data_dir
 
 
 class GameClock:

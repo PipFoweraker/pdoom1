@@ -12,7 +12,7 @@ import copy
 import tempfile
 from pathlib import Path
 from typing import Dict, Any, Optional
-from .data_paths import get_settings_file
+from src.services.data_paths import get_settings_file
 
 
 class Settings:
