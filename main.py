@@ -1150,10 +1150,14 @@ def main():
     # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
     global first_time_help_content, first_time_help_close_button, current_tutorial_content, current_help_mechanic
     global overlay_content, overlay_title
+    # Hiring dialog rects need to persist between frames for click detection
+    global cached_hiring_dialog_rects
     
     # Initialize game state as None - will be created when game starts
     game_state = None
     tooltip_text = None
+    # Initialize cached hiring dialog rects
+    cached_hiring_dialog_rects = None
 
     running = True
     try:
@@ -1162,7 +1166,6 @@ def main():
             
             # Initialize variables used in event handling
             back_button_rect = None
-            hiring_dialog_rects = None
             
             # --- Event handling based on current state --- #
             for event in pygame.event.get():
@@ -1297,9 +1300,9 @@ def main():
                             game_state.dismiss_tutorial_message()
                         else:
                             # Check for hiring dialog clicks first
-                            if game_state and game_state.pending_hiring_dialog and hiring_dialog_rects is not None:
+                            if game_state and game_state.pending_hiring_dialog and cached_hiring_dialog_rects is not None:
                                 hiring_handled = False
-                                for rect_info in hiring_dialog_rects:
+                                for rect_info in cached_hiring_dialog_rects:
                                     if rect_info['rect'].collidepoint(mx, my):
                                         if rect_info['type'] == 'employee_option':
                                             # Player selected an employee subtype
@@ -1469,6 +1472,13 @@ def main():
                             first_time_help_content = None
                             first_time_help_close_button = None
                             current_help_mechanic = None
+                        
+                        # Close hiring dialog with ESC
+                        elif event.key == pygame.K_ESCAPE and game_state and game_state.pending_hiring_dialog:
+                            game_state.dismiss_hiring_dialog()
+                            # Play popup close sound
+                            if hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_close')
                         elif event.key == pygame.K_RETURN and first_time_help_content:
                             # Mark mechanic as seen so it won't reappear
                             if current_help_mechanic:
@@ -1700,7 +1710,10 @@ def main():
                     # Draw hiring dialog if active
                     if game_state and game_state.pending_hiring_dialog:
                         from ui import draw_hiring_dialog
-                        hiring_dialog_rects = draw_hiring_dialog(screen, game_state.pending_hiring_dialog, SCREEN_W, SCREEN_H)
+                        cached_hiring_dialog_rects = draw_hiring_dialog(screen, game_state.pending_hiring_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_hiring_dialog_rects = None
                     
 
                     # Draw stepwise tutorial overlay if active
