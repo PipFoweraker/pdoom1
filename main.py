@@ -119,6 +119,7 @@ tutorial_enabled = True
 current_tutorial_content = None
 first_time_help_content = None
 first_time_help_close_button = None
+current_help_mechanic = None  # Track which mechanic is currently showing
 
 # Audio menu state
 sounds_menu_selected_item = 0
@@ -1147,7 +1148,7 @@ def main():
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
     global end_game_selected_item, high_score_submit_to_leaderboard
     # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
-    global first_time_help_content, first_time_help_close_button, current_tutorial_content
+    global first_time_help_content, first_time_help_close_button, current_tutorial_content, current_help_mechanic
     global overlay_content, overlay_title
     
     # Initialize game state as None - will be created when game starts
@@ -1270,11 +1271,15 @@ def main():
                         elif first_time_help_content and first_time_help_close_button:
                             # Check if the close button was clicked
                             if first_time_help_close_button.collidepoint(mx, my):
+                                # Mark mechanic as seen so it won't reappear
+                                if current_help_mechanic:
+                                    onboarding.mark_mechanic_seen(current_help_mechanic)
                                 # Play popup close sound
                                 if game_state and hasattr(game_state, 'sound_manager'):
                                     game_state.sound_manager.play_sound('popup_close')
                                 first_time_help_content = None
                                 first_time_help_close_button = None
+                                current_help_mechanic = None
                             else:
                                 # Check for popup button clicks first when help is shown
                                 if handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
@@ -1455,17 +1460,25 @@ def main():
                         
                         # Close first-time help
                         elif event.key == pygame.K_ESCAPE and first_time_help_content:
+                            # Mark mechanic as seen so it won't reappear
+                            if current_help_mechanic:
+                                onboarding.mark_mechanic_seen(current_help_mechanic)
                             # Play popup close sound
                             if game_state and hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('popup_close')
                             first_time_help_content = None
                             first_time_help_close_button = None
+                            current_help_mechanic = None
                         elif event.key == pygame.K_RETURN and first_time_help_content:
+                            # Mark mechanic as seen so it won't reappear
+                            if current_help_mechanic:
+                                onboarding.mark_mechanic_seen(current_help_mechanic)
                             # Play popup accept sound
                             if game_state and hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('popup_accept')
                             first_time_help_content = None
                             first_time_help_close_button = None
+                            current_help_mechanic = None
                         
                         # Arrow key scrolling for scrollable event log
                         elif game_state and game_state.scrollable_event_log_enabled:
@@ -1542,16 +1555,31 @@ def main():
                     game_state.onboarding_started = True
 
             # --- First-time help checking --- #
+            # Check for pending first-time help triggered by specific actions
+            if (current_state == 'game' and game_state and 
+                not first_time_help_content and 
+                not onboarding.show_tutorial_overlay and
+                game_state._pending_first_time_help):
+                help_content = onboarding.get_mechanic_help(game_state._pending_first_time_help)
+                if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
+                    first_time_help_content = help_content
+                    current_help_mechanic = game_state._pending_first_time_help
+                    game_state._pending_first_time_help = None  # Clear the pending help
+                    # Play popup open sound
+                    if game_state and hasattr(game_state, 'sound_manager'):
+                        game_state.sound_manager.play_sound('popup_open')
+            
             # Check for first-time mechanics and show contextual help (only if tutorial is not active)
             if (current_state == 'game' and game_state and 
                 not first_time_help_content and 
                 not onboarding.show_tutorial_overlay):
-                # Check for various first-time mechanics
-                for mechanic in ['first_staff_hire', 'first_upgrade_purchase', 'high_doom_warning']:
+                # Check for various first-time mechanics (but not first_staff_hire - that's context-sensitive)
+                for mechanic in ['first_upgrade_purchase', 'high_doom_warning']:
                     if onboarding.should_show_mechanic_help(mechanic):
                         help_content = onboarding.get_mechanic_help(mechanic)
                         if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
                             first_time_help_content = help_content
+                            current_help_mechanic = mechanic  # Track which mechanic is showing
                             # Play popup open sound
                             if game_state and hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('popup_open')
@@ -1564,6 +1592,7 @@ def main():
                     help_content = onboarding.get_mechanic_help('action_points_exhausted')
                     if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
                         first_time_help_content = help_content
+                        current_help_mechanic = 'action_points_exhausted'  # Track which mechanic is showing
                         # Play popup open sound
                         if game_state and hasattr(game_state, 'sound_manager'):
                             game_state.sound_manager.play_sound('popup_open')
@@ -1680,8 +1709,9 @@ def main():
                         if tutorial_data:
                             tutorial_button_rects = draw_stepwise_tutorial_overlay(screen, tutorial_data, SCREEN_W, SCREEN_H)
                     
-                    # Draw first-time help if available
-                    if first_time_help_content and isinstance(first_time_help_content, dict):
+                    # Draw first-time help if available (but not when other dialogs are active)
+                    if (first_time_help_content and isinstance(first_time_help_content, dict) and
+                        not (game_state and game_state.pending_hiring_dialog)):
                         mouse_pos = pygame.mouse.get_pos()
                         first_time_help_close_button = draw_first_time_help(screen, first_time_help_content, SCREEN_W, SCREEN_H, mouse_pos)
                         # If drawing failed (returned None), clear the help content to prevent repeated attempts

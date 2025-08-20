@@ -63,10 +63,12 @@ The tutorial walks you through:
 
 ### First-Time Help
 Get automatic guidance when you:
-- Hire your first staff member (learn about Action Point scaling)
+- Hire your first staff member (learn about Action Point scaling) - *appears when hiring action is selected*
 - Purchase your first upgrade (understand permanent benefits)
 - Run out of Action Points (tips for increasing capacity)
 - Reach high p(Doom) levels (warning and safety advice)
+
+**Dismissing Help**: Click the × button, press Escape, or press Enter to dismiss help popups.
 
 ### Getting Help
 - **During Tutorial**: Use `Next` to proceed or `Skip` to exit tutorial

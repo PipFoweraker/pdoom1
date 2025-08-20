@@ -169,6 +169,7 @@ class GameState:
         
         # Employee hiring dialog system
         self.pending_hiring_dialog = None  # Current hiring dialog waiting for player selection
+        self._pending_first_time_help = None  # Track pending first-time help to show
 
         # Copy modular content
         self.actions = [dict(a) for a in ACTIONS]
@@ -2425,6 +2426,12 @@ class GameState:
     def _trigger_hiring_dialog(self):
         """Trigger the employee hiring dialog with available employee subtypes."""
         from src.core.employee_subtypes import get_available_subtypes, get_hiring_complexity_level
+        from src.features.onboarding import onboarding
+        
+        # Check if this is the first time attempting to hire staff
+        if onboarding.should_show_mechanic_help('first_staff_hire'):
+            # Store the mechanic to show help later in main loop 
+            self._pending_first_time_help = 'first_staff_hire'
         
         # Get available employee subtypes based on current game state
         available_subtypes = get_available_subtypes(self)
