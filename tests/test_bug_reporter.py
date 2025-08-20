@@ -10,7 +10,7 @@ import os
 import json
 import tempfile
 import shutil
-from bug_reporter import BugReporter
+from src.services.bug_reporter import BugReporter
 
 
 class TestBugReporter(unittest.TestCase):

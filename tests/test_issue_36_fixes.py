@@ -10,7 +10,7 @@ This test file covers:
 
 import unittest
 from unittest.mock import patch, MagicMock
-from game_state import GameState
+from src.core.game_state import GameState
 
 
 class TestButtonClickLimits(unittest.TestCase):

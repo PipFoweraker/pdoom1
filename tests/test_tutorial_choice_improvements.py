@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import main
 from ui import draw_tutorial_choice
-from visual_feedback import ButtonState
+from src.features.visual_feedback import ButtonState
 
 
 class TestTutorialChoiceNavigation:

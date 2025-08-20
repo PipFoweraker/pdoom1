@@ -10,8 +10,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
 from unittest.mock import MagicMock, patch
-from game_state import GameState
-from events import EVENTS, unlock_scrollable_event_log
+from src.core.game_state import GameState
+from src.core.events import EVENTS, unlock_scrollable_event_log
 
 
 class TestEventLogUnlock(unittest.TestCase):

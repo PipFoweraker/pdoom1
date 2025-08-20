@@ -15,8 +15,8 @@ import os
 # Add the parent directory to the path so we can import game modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from sound_manager import SoundManager
-from game_state import GameState
+from src.services.sound_manager import SoundManager
+from src.core.game_state import GameState
 
 class TestSoundIssue89(unittest.TestCase):
     """Test sound system fixes for issue #89"""

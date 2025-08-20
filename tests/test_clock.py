@@ -8,7 +8,7 @@ import json
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from pdoom1.services.game_clock import GameClock
+from src.services.game_clock import GameClock
 
 
 class TestGameClock:

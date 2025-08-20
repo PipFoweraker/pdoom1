@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import pygame
 import unittest
 from unittest.mock import patch, MagicMock
-from ui import draw_version_footer, draw_version_header
+from src.ui.screens import draw_version_footer, draw_version_header
 
 
 class TestVersionDisplay(unittest.TestCase):
@@ -36,7 +36,7 @@ class TestVersionDisplay(unittest.TestCase):
         # Should complete without error
         draw_version_header(self.screen, 800, 600)
 
-    @patch('version.get_display_version')
+    @patch('src.services.version.get_display_version')
     def test_version_footer_with_mock_version(self, mock_get_version):
         """Test version footer with mocked version."""
         mock_get_version.return_value = "v1.2.3"
@@ -47,7 +47,7 @@ class TestVersionDisplay(unittest.TestCase):
         # Version function should be called
         mock_get_version.assert_called_once()
 
-    @patch('version.get_display_version')
+    @patch('src.services.version.get_display_version')
     def test_version_header_with_mock_version(self, mock_get_version):
         """Test version header with mocked version."""
         mock_get_version.return_value = "v1.2.3"
@@ -58,7 +58,7 @@ class TestVersionDisplay(unittest.TestCase):
         # Version function should be called
         mock_get_version.assert_called_once()
 
-    @patch('version.get_display_version', side_effect=ImportError)
+    @patch('src.services.version.get_display_version', side_effect=ImportError)
     def test_version_fallback_on_import_error(self, mock_get_version):
         """Test fallback to 'dev' when version import fails."""
         # Should complete without error and fallback to 'dev'
@@ -136,7 +136,7 @@ class TestVersionIntegration(unittest.TestCase):
         # in the test environment, we'll test that the version module can be imported
         # and used in a game UI context without errors
         try:
-            import version
+            import src.services.version as version
             from unittest.mock import MagicMock
             
             # Mock game state with board_members attribute 

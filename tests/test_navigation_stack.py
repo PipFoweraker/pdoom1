@@ -13,7 +13,8 @@ import pygame
 import unittest
 from unittest.mock import patch
 import main
-from ui import draw_back_button, should_show_back_button
+from src.ui.text import draw_back_button
+from ui import should_show_back_button
 
 
 class TestNavigationStack(unittest.TestCase):

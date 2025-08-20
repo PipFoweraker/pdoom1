@@ -1,7 +1,7 @@
 import pygame
 import textwrap
-from visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
-from keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
+from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
+from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 
 def get_ui_safe_zones(w, h):
@@ -729,7 +729,7 @@ def draw_version_footer(screen, w, h, font=None):
         font: optional font for version text
     """
     try:
-        from version import get_display_version
+        from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
         version_text = "dev"
@@ -756,7 +756,7 @@ def draw_version_header(screen, w, h, font=None):
         font: optional font for version text
     """
     try:
-        from version import get_display_version
+        from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
         version_text = "dev"
@@ -854,7 +854,7 @@ def should_show_ui_element(game_state, element_id):
         bool: True if the element should be visible
     """
     # Import onboarding here to avoid circular imports
-    from onboarding import onboarding
+    from src.features.onboarding import onboarding
     
     # If tutorial is not active, show all elements
     if not onboarding.show_tutorial_overlay:
@@ -3172,3 +3172,55 @@ def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
         info_x = w // 2 - info_surf.get_width() // 2
         info_y = int(h * 0.85)
         screen.blit(info_surf, (info_x, info_y))
+
+
+def draw_high_score_screen(screen, w, h, game_state, seed, submit_to_leaderboard):
+    """
+    Draw the high score screen with game statistics and leaderboard options.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        game_state: GameState object for displaying final stats
+        seed: Game seed used for this session
+        submit_to_leaderboard: Whether to submit score to leaderboard
+    """
+    # For now, this is a placeholder that shows basic game info
+    font_large = pygame.font.SysFont('Consolas', int(h * 0.04))
+    font_medium = pygame.font.SysFont('Consolas', int(h * 0.025))
+    font_small = pygame.font.SysFont('Consolas', int(h * 0.02))
+    
+    # Title
+    title_surf = font_large.render("High Scores", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.1)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Game stats if available
+    if game_state:
+        stats_y = int(h * 0.25)
+        stats = [
+            f"Final Turn: {game_state.turn}",
+            f"Final Score: {getattr(game_state, 'final_score', 'N/A')}",
+            f"Seed: {seed if seed else 'Unknown'}"
+        ]
+        
+        for stat in stats:
+            stat_surf = font_medium.render(stat, True, (200, 200, 200))
+            stat_x = w // 2 - stat_surf.get_width() // 2
+            screen.blit(stat_surf, (stat_x, stats_y))
+            stats_y += stat_surf.get_height() + 10
+    
+    # Placeholder for future leaderboard functionality
+    placeholder_y = int(h * 0.5)
+    placeholder_text = "Leaderboard functionality coming soon!"
+    placeholder_surf = font_small.render(placeholder_text, True, (150, 150, 150))
+    placeholder_x = w // 2 - placeholder_surf.get_width() // 2
+    screen.blit(placeholder_surf, (placeholder_x, placeholder_y))
+    
+    # Return instruction
+    return_y = int(h * 0.8)
+    return_text = "Press ESC to return to main menu"
+    return_surf = font_small.render(return_text, True, (180, 180, 180))
+    return_x = w // 2 - return_surf.get_width() // 2
+    screen.blit(return_surf, (return_x, return_y))

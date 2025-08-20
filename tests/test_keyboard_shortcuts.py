@@ -2,7 +2,7 @@
 Tests for keyboard shortcuts functionality.
 """
 import unittest
-from keyboard_shortcuts import (
+from src.services.keyboard_shortcuts import (
     get_main_menu_shortcuts, 
     get_in_game_shortcuts,
     get_all_shortcuts,

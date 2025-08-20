@@ -1,22 +1,23 @@
 import random
 import json
 import os
+import pygame
 from typing import Tuple
-from actions import ACTIONS
-from upgrades import UPGRADES
-from events import EVENTS
-from game_logger import GameLogger
-from sound_manager import SoundManager
-from opponents import create_default_opponents
-from event_system import Event, DeferredEventQueue, EventType, EventAction
-from onboarding import onboarding
-from overlay_manager import OverlayManager
-from error_tracker import ErrorTracker
-from config_manager import get_current_config
-from employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
-from productive_actions import (get_employee_category, get_available_actions, 
+from .actions import ACTIONS
+from src.core.upgrades import UPGRADES
+from .events import EVENTS
+from src.services.game_logger import GameLogger
+from src.services.sound_manager import SoundManager
+from .opponents import create_default_opponents
+from src.features.event_system import Event, DeferredEventQueue, EventType, EventAction
+from src.features.onboarding import onboarding
+from src.ui.overlay_manager import OverlayManager
+from src.services.error_tracker import ErrorTracker
+from src.services.config_manager import get_current_config
+from .employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
+from .productive_actions import (get_employee_category, get_available_actions, 
                                check_action_requirements, get_default_action_index)
-from end_game_scenarios import end_game_scenarios
+from src.features.end_game_scenarios import end_game_scenarios
 
 SCORE_FILE = "local_highscore.json"
 
@@ -173,10 +174,11 @@ class GameState:
         self.actions = [dict(a) for a in ACTIONS]
         self.events = [dict(e) for e in EVENTS]
         
-        # Enhanced event system
+        # Enhanced event system (from config)
+        gameplay_config = config.get('gameplay', {})
         self.deferred_events = DeferredEventQueue()
         self.pending_popup_events = []  # Events waiting for player action
-        self.enhanced_events_enabled = False  # Flag to enable new event types
+        self.enhanced_events_enabled = gameplay_config.get('enhanced_events_enabled', False)  # Flag to enable new event types
         
         # Initialize game logger
         self.logger = GameLogger(seed)
@@ -1980,7 +1982,7 @@ class GameState:
     
     def _trigger_enhanced_events(self):
         """Trigger enhanced events with popup/deferred support."""
-        from event_system import create_enhanced_events
+        from src.features.event_system import create_enhanced_events
         
         # Get enhanced events (in a real implementation, these would be stored)
         enhanced_events = create_enhanced_events()
@@ -2232,7 +2234,7 @@ class GameState:
     
     def _hire_employee_subtype(self, subtype_id):
         """Hire an employee of a specific subtype using the employee subtypes system."""
-        from employee_subtypes import EMPLOYEE_SUBTYPES, apply_subtype_effects
+        from src.core.employee_subtypes import EMPLOYEE_SUBTYPES, apply_subtype_effects
         
         if subtype_id not in EMPLOYEE_SUBTYPES:
             self.messages.append(f"Unknown employee subtype: {subtype_id}")
@@ -2333,7 +2335,7 @@ class GameState:
     
     def _trigger_expense_request(self):
         """Trigger an employee expense request event that requires player decision."""
-        from event_system import Event, EventType, EventAction
+        from src.features.event_system import Event, EventType, EventAction
         
         # Define different types of expense requests
         expense_types = [
@@ -2422,7 +2424,7 @@ class GameState:
     
     def _trigger_hiring_dialog(self):
         """Trigger the employee hiring dialog with available employee subtypes."""
-        from employee_subtypes import get_available_subtypes, get_hiring_complexity_level
+        from src.core.employee_subtypes import get_available_subtypes, get_hiring_complexity_level
         
         # Get available employee subtypes based on current game state
         available_subtypes = get_available_subtypes(self)
@@ -2464,7 +2466,7 @@ class GameState:
         self.action_points -= subtype_data["ap_cost"]
         
         # Apply employee effects
-        from employee_subtypes import apply_subtype_effects
+        from src.core.employee_subtypes import apply_subtype_effects
         success, message = apply_subtype_effects(self, subtype_id)
         
         if success:
@@ -2762,7 +2764,7 @@ class GameState:
             return False, f"Insufficient action points: need {ap_cost}, have {self.action_points}"
         
         # Check if action is available (using action rules system)
-        from action_rules import ActionRules
+        from src.core.action_rules import ActionRules
         action_rules = ActionRules()
         if not action_rules.is_action_available(action["name"], self):
             error_msg = f"Action '{action['name']}' not available"

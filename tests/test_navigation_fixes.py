@@ -15,8 +15,8 @@ import pygame
 # Add the parent directory to the path so we can import game modules
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from overlay_manager import OverlayManager, UIElement, ZLayer
-from game_state import GameState
+from src.ui.overlay_manager import OverlayManager, UIElement, ZLayer
+from src.core.game_state import GameState
 
 
 class TestNavigationFixes(unittest.TestCase):

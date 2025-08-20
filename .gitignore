@@ -63,3 +63,8 @@ emergency_gamelog_*.txt
 # Bug reports (user privacy)
 bug_reports/
 bug_report_*.json
+
+# Runtime data files (should be generated during gameplay)
+local_highscore.json
+onboarding_progress.json
+leaderboard.json

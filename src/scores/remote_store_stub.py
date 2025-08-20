@@ -6,9 +6,12 @@ Provides interface for when online leaderboards are implemented.
 """
 
 import json
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, TYPE_CHECKING
 from datetime import datetime
 from .local_store import ScoreEntry
+
+if TYPE_CHECKING:
+    from .local_store import LocalLeaderboard
 
 
 class RemoteLeaderboard:

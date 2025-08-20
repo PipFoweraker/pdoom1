@@ -6,7 +6,7 @@ functionality of the centralized version system.
 """
 
 import unittest
-from version import (
+from src.services.version import (
     __version__, 
     get_version, 
     get_display_version, 
@@ -15,8 +15,8 @@ from version import (
     VERSION_MINOR, 
     VERSION_PATCH
 )
-from game_logger import GameLogger
-from game_state import GameState
+from src.services.game_logger import GameLogger
+from src.core.game_state import GameState
 
 
 class TestVersionSystem(unittest.TestCase):
@@ -100,7 +100,7 @@ class TestVersionConsistency(unittest.TestCase):
             main_content = f.read()
         
         # Should import and use get_display_version
-        self.assertIn('from version import get_display_version', main_content)
+        self.assertIn('from src.services.version import get_display_version', main_content)
         self.assertIn('get_display_version()', main_content)
     
     def test_changelog_mentions_correct_version(self):

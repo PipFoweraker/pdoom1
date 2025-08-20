@@ -18,10 +18,10 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import main
-from game_state import GameState
-from onboarding import onboarding
-from sound_manager import SoundManager
-from ui import draw_audio_menu
+from src.core.game_state import GameState
+from src.features.onboarding import onboarding
+from src.services.sound_manager import SoundManager
+from src.ui.menus import draw_audio_menu
 
 
 class TestPreLaunchPolishIntegration:
@@ -165,7 +165,7 @@ class TestPreLaunchPolishIntegration:
     
     def test_config_persistence_integration(self):
         """Test that audio settings can be persisted."""
-        from config_manager import get_current_config
+        from src.services.config_manager import get_current_config
         
         config = get_current_config()
         
@@ -179,7 +179,8 @@ class TestPreLaunchPolishIntegration:
     def test_no_import_errors(self):
         """Test that all new imports work correctly."""
         # Test UI imports
-        from ui import draw_turn_transition_overlay, draw_audio_menu
+        from ui import draw_turn_transition_overlay
+        from src.ui.menus import draw_audio_menu
         
         # Test that functions are callable
         assert callable(draw_turn_transition_overlay)
@@ -229,7 +230,8 @@ class TestGameLaunchStability:
     def test_ui_module_enhancements(self):
         """Test UI module has all new functions."""
         from ui import (draw_tutorial_choice, draw_turn_transition_overlay, 
-                        draw_audio_menu, draw_first_time_help)
+                        draw_first_time_help)
+        from src.ui.menus import draw_audio_menu
         
         # All functions should be callable
         for func in [draw_tutorial_choice, draw_turn_transition_overlay, 
@@ -238,7 +240,7 @@ class TestGameLaunchStability:
     
     def test_onboarding_stability(self):
         """Test onboarding system is stable and defensive."""
-        from onboarding import onboarding
+        from src.features.onboarding import onboarding
         
         # Should handle all edge cases gracefully
         test_cases = [

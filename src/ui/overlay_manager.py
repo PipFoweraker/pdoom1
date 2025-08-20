@@ -11,7 +11,7 @@ import pygame
 from enum import Enum
 from typing import Dict, List, Optional, Tuple, Callable, Any
 from dataclasses import dataclass, field
-from error_tracker import ErrorTracker
+from src.services.error_tracker import ErrorTracker
 
 
 class ZLayer(Enum):

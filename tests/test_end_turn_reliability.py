@@ -17,8 +17,8 @@ import os
 # Add the parent directory to Python path for imports
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from game_state import GameState
-from sound_manager import SoundManager
+from src.core.game_state import GameState
+from src.services.sound_manager import SoundManager
 from ui import draw_turn_transition_overlay
 
 

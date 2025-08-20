@@ -3,7 +3,7 @@
 Welcome, contributors and modders! This guide explains how to develop, test, and extend P(Doom): Bureaucracy Strategy.
 
 For **players**, see the [Player Guide](PLAYERGUIDE.md).  
-For **installation and troubleshooting**, see the [README](README.md).
+For **installation and troubleshooting**, see the [README](../README.md).
 
 ## Table of Contents
 - [Development Setup](#development-setup) (Line 28)
@@ -138,20 +138,74 @@ python main.py
 ## UI Architecture and Overlay Management
 
 ### Overview
-P(Doom) features a modular UI overlay system inspired by Papers Please, SimPark, and Starcraft 2, designed for low-bit, low-poly aesthetics with modern accessibility features.
+P(Doom) features a modular UI system with screens and components routed via UIFacade. The architecture is designed for low-bit, low-poly aesthetics with modern accessibility features, inspired by Papers Please, SimPark, and Starcraft 2.
 
-### Core UI Components
+**New Modular Architecture (Post-Migration):**
+- **UIFacade**: Central routing system for all screen rendering (`ui_new/facade.py`)
+- **Screens**: Individual screen modules located in `ui_new/screens/` (game.py, menu.py, etc.)
+- **Components**: Reusable UI components in `ui_new/components/` (buttons.py, windows.py, colours.py, typography.py)
+- **Legacy Support**: Temporary compatibility layer for smooth migration
+
+### Screen Management via UIFacade
+
+#### UIFacade (`ui_new/facade.py`)
+- **Centralised Routing**: All screen rendering goes through `ui_facade.render_*()` methods
+- **Screen Coordination**: Manages current screen state and transitions
+- **Legacy Compatibility**: Graceful fallback to legacy functions during migration
+- **Future Extension**: Designed for easy addition of new screens and features
+
+**Usage Example:**
+```python
+from ui_new.facade import ui_facade
+
+# Render main game screen
+ui_facade.render_game(screen, game_state, width, height)
+
+# Manage screen state
+ui_facade.set_current_screen('game')
+current = ui_facade.get_current_screen()
+```
+
+### Modular UI Components
+
+#### Button Components (`ui_new/components/buttons.py`)
+- **Standardised States**: Normal, Hover, Pressed, Disabled, Focused via ButtonState enum
+- **Style Variants**: Default, EndTurn, Action, Upgrade, Icon via ButtonStyle enum
+- **Consistent Rendering**: `draw_button()`, `draw_icon_button()`, `draw_toggle_button()`
+- **Integration**: Works with existing visual_feedback system for enhanced effects
+- **Colour Management**: Centralised colour schemes with custom override support
+
+#### Window Components (`ui_new/components/windows.py`)
+- **Window Headers**: `draw_window_with_header()` replaces dynamic import pattern
+- **Panel Systems**: `draw_panel()` for consistent panel styling
+- **Dialog Support**: `draw_dialog_background()` for modal overlays
+- **Legacy Compatibility**: Maintains exact function signatures for existing code
+
+#### Typography System (`ui_new/components/typography.py`)
+- **Font Management**: Centralised FontManager with caching and scaling
+- **Responsive Sizing**: Screen-height based font scaling (title, big, normal, small)
+- **Text Utilities**: Multiline rendering, text wrapping, size calculation
+- **Consistent Styling**: Unified approach to text rendering across all screens
+
+#### Colour Constants (`ui_new/components/colours.py`)
+- **Centralised Palette**: All UI colours defined in one location
+- **Resource Colours**: Money, staff, reputation, action points, doom, compute, etc.
+- **UI State Colours**: Success, error, warning, info, disabled states
+- **Button Themes**: Normal, hover, pressed, disabled colour schemes
+- **Accessibility**: High contrast and focus indicator colours
+
+### Core UI Components (Legacy System)
 
 #### Overlay Manager (`overlay_manager.py`)
 - **Z-Layer Management**: Hierarchical layering system (Background -> Game UI -> Tooltips -> Dialogs -> Modals -> Critical)
-- **Element Registration**: Centralized registration and lifecycle management of UI elements
+- **Element Registration**: Centralised registration and lifecycle management of UI elements
 - **Animation System**: Smooth transitions with easing functions for minimize/expand/move operations
 - **State Management**: UIState enum (Hidden, Minimized, Normal, Expanded, Animating)
 - **Error Tracking**: Easter egg system that plays beep sound after 3 repeated identical errors
 - **Accessibility**: Keyboard navigation support with Tab/Enter/Space/Escape
 
 #### Visual Feedback System (`visual_feedback.py`)
-- **Standardized Button States**: Normal, Hover, Pressed, Disabled, Focused
+- **Standardised Button States**: Normal, Hover, Pressed, Disabled, Focused
 - **Button Effects**: 3-pixel depth shift when pressed, hover glow effects
 - **Accessibility**: High contrast mode, font scaling (0.5x-2.0x), focus rings
 - **Low-Poly Styling**: Rounded corners, gradient backgrounds, retro aesthetics
@@ -1244,11 +1298,29 @@ def test_static_effect_integration(self):
 
 ## Architecture Notes
 
+### UI Architecture Modernisation
+
+**New Modular Architecture (2024):**
+P(Doom) has transitioned to a modular UI architecture with clear separation of concerns:
+
+- **UIFacade Routing**: All screen rendering routes through `ui_facade.render_*()` methods
+- **Screen Modules**: Individual screens in `ui_new/screens/` (game.py, menu.py, settings.py)
+- **Reusable Components**: Shared components in `ui_new/components/` (buttons, windows, typography, colours)
+- **Legacy Compatibility**: Gradual migration approach maintains existing behaviour exactly
+- **No Behavioural Changes**: Incremental modularisation preserves all existing functionality
+
+**Development Benefits:**
+- **Easier Maintenance**: Components can be updated independently
+- **Consistent Styling**: Centralised colour and typography management
+- **Better Testing**: Individual components can be unit tested
+- **Future Extension**: New screens and components can be added cleanly
+
 ### UI Adaptability
 
 - Window is resizable and adaptive (80% of screen by default)
 - UI elements scale and may overlap intentionally for "bureaucratic clutter" feel
 - Upgrades shrink to icons after purchase with tooltip support
+- **New**: All screens rendered via UIFacade maintain consistent scaling behaviour
 
 ### UI Overlay Variables Pattern
 
