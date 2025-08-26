@@ -129,6 +129,29 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
         """Test that escape key returns to main menu."""
         handle_end_game_menu_keyboard(pygame.K_ESCAPE)
         self.assertEqual(self.main_module.current_state, 'main_menu')
+    
+    def test_settings_navigation_returns_to_end_game_menu(self):
+        """Test that exiting settings returns to end game menu, not main menu."""
+        # Start from end game menu
+        self.main_module.current_state = 'end_game_menu'
+        self.main_module.navigation_stack = []  # Ensure clean stack
+        
+        # Navigate to settings
+        self.main_module.end_game_selected_item = 3  # Settings option
+        handle_end_game_menu_keyboard(pygame.K_RETURN)
+        
+        # Should be in overlay state with settings content
+        self.assertEqual(self.main_module.current_state, 'overlay')
+        self.assertEqual(self.main_module.overlay_title, "Settings")
+        
+        # Simulate pressing escape in overlay (simulate overlay keyboard handling)
+        from main import pop_navigation_state
+        result = pop_navigation_state()
+        
+        # Should return True (successful pop) and be back in end_game_menu
+        self.assertTrue(result, "Should successfully pop from navigation stack")
+        self.assertEqual(self.main_module.current_state, 'end_game_menu', 
+                        "Should return to end_game_menu, not main_menu")
 
 
 class TestEndGameMenuClicks(unittest.TestCase):
