@@ -314,32 +314,48 @@ class TestActionPointsStaffScaling(unittest.TestCase):
         self.assertEqual(self.game_state.research_staff, 0)
         self.assertEqual(self.game_state.ops_staff, 0)
     
-    def test_new_staff_hiring_actions_exist(self):
-        """Test that new specialized staff hiring actions exist."""
+    def test_hiring_dialog_action_exists(self):
+        """Test that general hiring dialog action exists (replaces removed direct hire actions)."""
         action_names = [action["name"] for action in self.game_state.actions]
         
-        self.assertIn("Hire Admin Assistant", action_names)
-        self.assertIn("Hire Research Staff", action_names)
-        self.assertIn("Hire Operations Staff", action_names)
+        # The general hiring action should exist
+        self.assertIn("Hire Staff", action_names)
+        
+        # Direct hire actions should be removed (consolidated into hiring dialog)
+        self.assertNotIn("Hire Admin Assistant", action_names)
+        self.assertNotIn("Hire Research Staff", action_names)
+        self.assertNotIn("Hire Operations Staff", action_names)
     
-    def test_specialized_staff_hiring_costs(self):
-        """Test that specialized staff have appropriate costs."""
-        admin_action = next(action for action in self.game_state.actions 
-                           if action["name"] == "Hire Admin Assistant")
-        research_action = next(action for action in self.game_state.actions 
-                              if action["name"] == "Hire Research Staff")
-        ops_action = next(action for action in self.game_state.actions 
-                         if action["name"] == "Hire Operations Staff")
+    def test_specialized_staff_hiring_via_dialog(self):
+        """Test that specialized staff can be hired through the hiring dialog."""
+        # Set up sufficient resources
+        self.game_state.money = 1000
+        self.game_state.action_points = 10
         
-        # Admin assistants should cost more due to higher AP bonus
-        self.assertEqual(admin_action["cost"], 80)
-        self.assertEqual(admin_action["ap_cost"], 2)
+        # Trigger hiring dialog
+        self.game_state._trigger_hiring_dialog()
+        self.assertIsNotNone(self.game_state.pending_hiring_dialog)
         
-        # Research and ops staff should cost the same
-        self.assertEqual(research_action["cost"], 70)
-        self.assertEqual(research_action["ap_cost"], 2)
-        self.assertEqual(ops_action["cost"], 70)
-        self.assertEqual(ops_action["ap_cost"], 2)
+        # Check that specialized staff are available
+        available_types = self.game_state.pending_hiring_dialog["available_subtypes"]
+        type_names = [t["data"]["name"] for t in available_types]
+        
+        self.assertIn("Administrator", type_names)  # Equivalent to "Hire Admin Assistant"
+        self.assertIn("Researcher", type_names)     # Equivalent to "Hire Research Staff"
+        self.assertIn("Engineer", type_names)       # Equivalent to "Hire Operations Staff"
+        
+        # Verify costs through dialog (these are the definitive costs now)
+        admin_type = next(t for t in available_types if t["data"]["name"] == "Administrator")
+        research_type = next(t for t in available_types if t["data"]["name"] == "Researcher")
+        engineer_type = next(t for t in available_types if t["data"]["name"] == "Engineer")
+        
+        # These are the correct costs from employee_subtypes.py
+        self.assertEqual(admin_type["data"]["cost"], 85)
+        self.assertEqual(admin_type["data"]["ap_cost"], 2)
+        self.assertEqual(research_type["data"]["cost"], 75)
+        self.assertEqual(research_type["data"]["ap_cost"], 2)
+        self.assertEqual(engineer_type["data"]["cost"], 80)
+        self.assertEqual(engineer_type["data"]["ap_cost"], 2)
 
 
 class TestActionPointsDelegation(unittest.TestCase):

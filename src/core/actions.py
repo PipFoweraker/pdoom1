@@ -99,33 +99,6 @@ ACTIONS = [
         "rules": None
     },
     {
-        "name": "Hire Admin Assistant",
-        "desc": "Executive assistant; provides +1 staff and +1 admin staff.",
-        "cost": 80,
-        "ap_cost": 2,
-        "upside": lambda gs: gs._hire_employee_subtype("administrator"),
-        "downside": lambda gs: None,
-        "rules": None
-    },
-    {
-        "name": "Hire Research Staff",
-        "desc": "Research specialist; provides +1 staff, +1 research staff, and research progress.",
-        "cost": 70,
-        "ap_cost": 2,
-        "upside": lambda gs: gs._hire_employee_subtype("researcher"),
-        "downside": lambda gs: None,
-        "rules": None
-    },
-    {
-        "name": "Hire Operations Staff",
-        "desc": "Technical specialist; provides +1 staff, +1 ops staff, and compute boost.",
-        "cost": 70,
-        "ap_cost": 2,
-        "upside": lambda gs: gs._hire_employee_subtype("engineer"),
-        "downside": lambda gs: None,
-        "rules": None
-    },
-    {
         "name": "Hire Manager",
         "desc": "Team leader; required for organizations with 9+ employees.",
         "cost": 90,
