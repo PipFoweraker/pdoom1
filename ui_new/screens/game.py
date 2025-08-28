@@ -260,6 +260,10 @@ def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) 
     # Upgrades (right: purchased as icons at top right, available as buttons) - Enhanced with visual feedback
     upgrade_rects = game_state._get_upgrade_rects(w, h)
     for idx, rect_tuple in enumerate(upgrade_rects):
+        # Skip None rects (unavailable upgrades)
+        if rect_tuple is None:
+            continue
+            
         upg = game_state.upgrades[idx]
         
         # Convert tuple to pygame.Rect

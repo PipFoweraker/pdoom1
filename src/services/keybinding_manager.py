@@ -7,9 +7,49 @@ Supports remapping of game actions and menu navigation while maintaining compati
 
 import json
 import os
-import pygame
 from typing import Dict, List, Optional, Tuple
 from pathlib import Path
+
+# Try to import pygame, fallback to dummy values for CI/testing environments
+try:
+    import pygame
+    PYGAME_AVAILABLE = True
+except ImportError:
+    PYGAME_AVAILABLE = False
+    # Define dummy pygame constants for testing environments
+    class DummyPygame:
+        K_1 = 49
+        K_2 = 50
+        K_3 = 51
+        K_4 = 52
+        K_5 = 53
+        K_6 = 54
+        K_7 = 55
+        K_8 = 56
+        K_9 = 57
+        K_0 = 48
+        K_SPACE = 32
+        K_ESCAPE = 27
+        K_RETURN = 13
+        K_UP = 273
+        K_DOWN = 274
+        K_LEFT = 276
+        K_RIGHT = 275
+        K_h = 104
+        K_F5 = 292
+        K_F9 = 296
+        K_F10 = 297
+        K_F11 = 298
+        K_F12 = 299
+        K_a = 97
+        K_z = 122
+        K_TAB = 9
+        K_LALT = 308
+        K_RALT = 307
+        K_LCTRL = 306
+        K_RCTRL = 305
+    
+    pygame = DummyPygame()
 
 class KeybindingManager:
     """
