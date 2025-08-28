@@ -916,6 +916,52 @@ def draw_ui(screen, game_state, w, h):
             risk_color = (255, 200, 100) if game_state.audit_risk_level <= 5 else (255, 100, 100)
             screen.blit(font.render(f"Audit Risk: {game_state.audit_risk_level}", True, risk_color), (int(w*0.72), int(h*0.135)))
     
+    # Research Quality System - Technical Debt Display (if unlocked)
+    if hasattr(game_state, 'research_quality_unlocked') and game_state.research_quality_unlocked:
+        # Third line for research quality info
+        y_pos = int(h * 0.16)
+        
+        # Current research quality
+        quality_text = f"Research: {game_state.current_research_quality.value.title()}"
+        quality_color = {
+            'rushed': (255, 180, 100),    # Orange for rushed
+            'standard': (200, 200, 200),  # Gray for standard  
+            'thorough': (100, 255, 180)   # Green for thorough
+        }.get(game_state.current_research_quality.value, (200, 200, 200))
+        screen.blit(font.render(quality_text, True, quality_color), (int(w*0.04), y_pos))
+        
+        # Technical debt with warning colors
+        debt_total = game_state.technical_debt.accumulated_debt
+        debt_color = (200, 200, 200)  # Default gray
+        if debt_total >= 20:
+            debt_color = (255, 100, 100)  # Red for critical debt
+        elif debt_total >= 11:
+            debt_color = (255, 180, 100)  # Orange for high debt
+        elif debt_total >= 6:
+            debt_color = (255, 255, 100)  # Yellow for medium debt
+        
+        debt_text = f"Tech Debt: {debt_total}"
+        screen.blit(font.render(debt_text, True, debt_color), (int(w*0.21), y_pos))
+        
+        # Research effectiveness penalty (if any)
+        effectiveness = game_state.get_research_effectiveness_modifier()
+        if effectiveness < 1.0:
+            penalty_percent = int((1.0 - effectiveness) * 100)
+            penalty_text = f"Research -{penalty_percent}%"
+            screen.blit(font.render(penalty_text, True, (255, 150, 150)), (int(w*0.35), y_pos))
+        
+        # Debt consequences indicators
+        if debt_total >= 11:  # Show accident chance
+            accident_chance = int(game_state.technical_debt.get_accident_chance() * 100)
+            if accident_chance > 0:
+                accident_text = f"Accident Risk: {accident_chance}%"
+                screen.blit(small_font.render(accident_text, True, (255, 200, 100)), (int(w*0.50), y_pos))
+        
+        # System failure warning for very high debt
+        if game_state.technical_debt.can_trigger_system_failure():
+            failure_text = "⚠️ SYSTEM FAILURE RISK"
+            screen.blit(small_font.render(failure_text, True, (255, 100, 100)), (int(w*0.70), y_pos))
+    
     screen.blit(small_font.render(f"Turn: {game_state.turn}", True, (220, 220, 220)), (int(w*0.91), int(h*0.03)))
     screen.blit(small_font.render(f"Seed: {game_state.seed}", True, (140, 200, 160)), (int(w*0.77), int(h*0.03)))
 
@@ -978,7 +1024,18 @@ def draw_ui(screen, game_state, w, h):
             
             # Draw description text below button (only in traditional mode)
             desc_color = (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160)
-            desc_text = font.render(f"{action['desc']} (Cost: ${action['cost']}, AP: {ap_cost})", True, desc_color)
+            
+            # Enhanced description for research actions showing current quality
+            base_desc = action['desc']
+            cost_info = f"(Cost: ${action['cost']}, AP: {ap_cost})"
+            
+            # Add research quality info for research actions
+            if hasattr(game_state, 'research_quality_unlocked') and game_state.research_quality_unlocked:
+                if 'Research' in action['name'] and action['name'] not in ['Set Research Quality: Rushed', 'Set Research Quality: Standard', 'Set Research Quality: Thorough']:
+                    quality_suffix = f" [{game_state.current_research_quality.value.title()}]"
+                    base_desc += quality_suffix
+            
+            desc_text = font.render(f"{base_desc} {cost_info}", True, desc_color)
             screen.blit(desc_text, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
         
         # Draw action usage indicators (circles for repeatables) - works for both modes

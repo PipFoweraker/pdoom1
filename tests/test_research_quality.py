@@ -354,5 +354,108 @@ class TestResearchActions(unittest.TestCase):
         self.assertGreater(rep_change, 2)  # Thorough has reputation bonus
 
 
+class TestOpponentIntegration(unittest.TestCase):
+    """Test integration of research quality system with opponent AI."""
+    
+    def setUp(self):
+        """Set up test environment."""
+        from src.core.opponents import create_default_opponents
+        self.opponents = create_default_opponents()
+    
+    def test_opponent_risk_tolerances(self):
+        """Test that opponents have different risk tolerances."""
+        risk_tolerances = [opp.risk_tolerance for opp in self.opponents]
+        
+        # Should have variety of risk tolerances
+        self.assertIn("aggressive", risk_tolerances)
+        self.assertIn("conservative", risk_tolerances)
+        self.assertIn("moderate", risk_tolerances)
+    
+    def test_opponent_initial_debt_levels(self):
+        """Test that opponents start with different debt levels."""
+        # Find specific opponents
+        techcorp = next(opp for opp in self.opponents if "TechCorp" in opp.name)
+        gov_lab = next(opp for opp in self.opponents if "National" in opp.name)
+        
+        # TechCorp should have higher debt than Government Lab
+        self.assertGreater(techcorp.technical_debt, gov_lab.technical_debt)
+        self.assertEqual(techcorp.risk_tolerance, "aggressive")
+        self.assertEqual(gov_lab.risk_tolerance, "conservative")
+    
+    def test_opponent_research_approaches(self):
+        """Test that opponents use different research approaches."""
+        approaches = [opp.research_quality_preference for opp in self.opponents]
+        
+        # Should have variety of approaches
+        self.assertIn("rushed", approaches)
+        self.assertIn("thorough", approaches)
+    
+    def test_aggressive_opponent_behavior(self):
+        """Test aggressive opponent accumulates debt."""
+        aggressive_opp = next(opp for opp in self.opponents if opp.risk_tolerance == "aggressive")
+        aggressive_opp.discovered = True
+        
+        initial_debt = aggressive_opp.technical_debt
+        
+        # Run multiple turns
+        for _ in range(5):
+            aggressive_opp.take_turn()
+        
+        # Should likely have accumulated more debt (probabilistic)
+        # We'll check that debt didn't decrease significantly
+        self.assertGreaterEqual(aggressive_opp.technical_debt, initial_debt - 1)
+    
+    def test_conservative_opponent_behavior(self):
+        """Test conservative opponent manages debt well."""
+        conservative_opp = next(opp for opp in self.opponents if opp.risk_tolerance == "conservative")
+        conservative_opp.discovered = True
+        conservative_opp.technical_debt = 5  # Give some debt to manage
+        
+        initial_debt = conservative_opp.technical_debt
+        
+        # Run multiple turns
+        for _ in range(10):  # More turns to see debt reduction
+            conservative_opp.take_turn()
+        
+        # Should have reduced debt over time (probabilistic)
+        self.assertLessEqual(conservative_opp.technical_debt, initial_debt)
+    
+    def test_opponent_doom_impact_with_debt(self):
+        """Test that opponent technical debt affects doom contribution."""
+        opp = self.opponents[0]
+        opp.discovered = True
+        opp.capabilities_researchers = 10
+        opp.progress = 50
+        
+        # Test with no debt
+        opp.technical_debt = 0
+        base_doom = opp.get_impact_on_doom()
+        
+        # Test with high debt
+        opp.technical_debt = 20
+        debt_doom = opp.get_impact_on_doom()
+        
+        # High debt should increase doom impact
+        self.assertGreater(debt_doom, base_doom)
+    
+    def test_research_quality_modifier(self):
+        """Test that opponents' research quality affects their progress."""
+        opp = self.opponents[0]
+        
+        # Test different quality modifiers
+        opp.research_quality_preference = "rushed"
+        rushed_modifier = opp._get_research_quality_modifier()
+        
+        opp.research_quality_preference = "standard"
+        standard_modifier = opp._get_research_quality_modifier()
+        
+        opp.research_quality_preference = "thorough"
+        thorough_modifier = opp._get_research_quality_modifier()
+        
+        # Rushed should be faster, thorough should be slower
+        self.assertGreater(rushed_modifier, standard_modifier)
+        self.assertGreater(standard_modifier, thorough_modifier)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -49,6 +49,12 @@ class Opponent:
         # Whether this opponent has been discovered at all
         self.discovered = False
         
+        # Research Quality System - Risk tolerance profile
+        # Each opponent has different approaches to the speed vs safety trade-off
+        self.risk_tolerance = "moderate"  # Default, will be overridden per opponent
+        self.technical_debt = 0  # Track opponent's accumulated shortcuts
+        self.research_quality_preference = "standard"  # Default research approach
+        
     def scout_stat(self, stat_name):
         """
         Attempt to scout a specific stat of this opponent.
@@ -125,23 +131,91 @@ class Opponent:
                 self.lobbyists += new_lobbyists
                 messages.append(f"{self.name} hired {new_lobbyists} lobbyists")
                 
-        # Research progress based on resources
+        # Research Quality System - Opponent research approach decisions
+        # Each opponent makes quality vs speed trade-offs based on their risk tolerance
+        self._choose_research_approach(messages)
+        
+        # Research progress based on resources and research quality approach
         base_progress = self.capabilities_researchers * 0.5
         compute_bonus = min(self.compute * 0.1, 5)  # Cap compute bonus
-        total_progress = base_progress + compute_bonus
         
-        if total_progress > 0:
-            actual_gain = random.randint(int(total_progress * 0.5), int(total_progress * 1.5))
+        # Apply research quality modifiers based on opponent's approach
+        quality_modifier = self._get_research_quality_modifier()
+        effective_progress = (base_progress + compute_bonus) * quality_modifier
+        
+        # Apply technical debt penalties (opponents also suffer from shortcuts)
+        debt_penalty = max(0.8, 1.0 - (self.technical_debt * 0.02))  # 2% penalty per debt point
+        final_progress = effective_progress * debt_penalty
+        
+        if final_progress > 0:
+            actual_gain = random.randint(int(final_progress * 0.5), int(final_progress * 1.5))
             self.progress = min(100, self.progress + actual_gain)
             if actual_gain > 0:
-                messages.append(f"{self.name} made research progress (+{actual_gain}, total: {self.progress}/100)")
+                quality_suffix = f" [{self.research_quality_preference}]" if self.research_quality_preference != "standard" else ""
+                messages.append(f"{self.name} made research progress (+{actual_gain}, total: {self.progress}/100){quality_suffix}")
                 
         return messages
+    
+    def _choose_research_approach(self, messages):
+        """
+        Choose research approach based on risk tolerance and current situation.
+        Updates research_quality_preference and may accumulate technical debt.
+        """
+        # Decision factors
+        time_pressure = self.progress < 50  # Behind in the race
+        budget_pressure = self.budget < 200  # Low on funds
+        
+        if self.risk_tolerance == "aggressive":
+            # TechCorp: Always rushes, accumulates debt quickly
+            if random.random() < 0.8:  # 80% chance to rush
+                if self.research_quality_preference != "rushed":
+                    self.research_quality_preference = "rushed"
+                    messages.append(f"{self.name} adopts aggressive research approach")
+                
+                # Accumulate technical debt from rushing
+                if random.random() < 0.6:  # 60% chance per turn
+                    self.technical_debt += random.randint(1, 3)
+                    
+        elif self.risk_tolerance == "conservative":
+            # Government Lab: Prefers thorough, builds sustainable foundation
+            if random.random() < 0.7:  # 70% chance to be thorough
+                if self.research_quality_preference != "thorough":
+                    self.research_quality_preference = "thorough"
+                    messages.append(f"{self.name} emphasizes research quality and safety")
+                
+                # Reduce technical debt with thorough approach
+                if self.technical_debt > 0 and random.random() < 0.4:  # 40% chance
+                    self.technical_debt = max(0, self.technical_debt - random.randint(1, 2))
+                    
+        else:  # moderate risk tolerance
+            # Frontier Dynamics: Adapts based on situation
+            if time_pressure or budget_pressure:
+                if self.research_quality_preference != "rushed":
+                    self.research_quality_preference = "rushed"
+                    messages.append(f"{self.name} accelerates research due to competitive pressure")
+                    
+                # Moderate debt accumulation
+                if random.random() < 0.3:  # 30% chance
+                    self.technical_debt += random.randint(1, 2)
+            else:
+                if self.research_quality_preference != "standard":
+                    self.research_quality_preference = "standard"
+                    messages.append(f"{self.name} maintains balanced research approach")
+    
+    def _get_research_quality_modifier(self):
+        """Get research speed modifier based on current research approach."""
+        modifiers = {
+            "rushed": 1.3,      # 30% faster but accumulates debt
+            "standard": 1.0,    # Baseline speed
+            "thorough": 0.8     # 20% slower but reduces debt
+        }
+        return modifiers.get(self.research_quality_preference, 1.0)
         
     def get_impact_on_doom(self):
         """
         Calculate how much this opponent's capabilities research increases global doom.
         Called during turn processing to add doom pressure.
+        Factors in technical debt from rushed research approaches.
         """
         if not self.discovered:
             # Undiscovered opponents still contribute to doom, but less visibly
@@ -150,7 +224,11 @@ class Opponent:
         # Discovered opponents' doom impact is based on their capabilities research
         base_doom = self.capabilities_researchers * 0.2
         progress_multiplier = 1 + (self.progress / 100)  # More dangerous as they get closer
-        return int(base_doom * progress_multiplier)
+        
+        # Technical debt increases doom risk (shortcuts lead to unsafe AGI)
+        debt_multiplier = 1 + (self.technical_debt * 0.05)  # 5% more doom per debt point
+        
+        return int(base_doom * progress_multiplier * debt_multiplier)
 
 
 def create_default_opponents():
@@ -160,44 +238,60 @@ def create_default_opponents():
     """
     opponents = []
     
-    # Opponent 1: Well-funded tech giant
-    opponents.append(Opponent(
+    # Opponent 1: TechCorp - High technical debt, fast progress (aggressive)
+    techcorp = Opponent(
         name="TechCorp Labs",
         budget=random.randint(800, 1200),
         capabilities_researchers=random.randint(15, 25),
         lobbyists=random.randint(8, 12),
         compute=random.randint(60, 100),
         description="A massive tech corporation with deep pockets and aggressive timelines"
-    ))
+    )
+    techcorp.risk_tolerance = "aggressive"
+    techcorp.research_quality_preference = "rushed"
+    techcorp.technical_debt = random.randint(5, 15)  # Start with existing debt
+    opponents.append(techcorp)
     
-    # Opponent 2: Government-backed research institute
-    opponents.append(Opponent(
+    # Opponent 2: Government Lab - Low technical debt, slow but steady (conservative)
+    gov_lab = Opponent(
         name="National AI Initiative",
         budget=random.randint(600, 900),
         capabilities_researchers=random.randint(12, 20),
         lobbyists=random.randint(15, 20),
         compute=random.randint(40, 80),
         description="Government-funded program with strong regulatory influence"
-    ))
+    )
+    gov_lab.risk_tolerance = "conservative"
+    gov_lab.research_quality_preference = "thorough"
+    gov_lab.technical_debt = random.randint(0, 3)  # Very low debt
+    opponents.append(gov_lab)
     
-    # Opponent 3: Stealth startup with unknown backing
-    opponents.append(Opponent(
+    # Opponent 3: Frontier Dynamics - Moderate debt, unpredictable (moderate)
+    frontier = Opponent(
         name="Frontier Dynamics",
         budget=random.randint(400, 800),
         capabilities_researchers=random.randint(8, 15),
         lobbyists=random.randint(2, 6),
         compute=random.randint(20, 60),
         description="Secretive startup with mysterious funding and rapid development"
-    ))
+    )
+    frontier.risk_tolerance = "moderate"
+    frontier.research_quality_preference = "standard"
+    frontier.technical_debt = random.randint(2, 8)  # Moderate debt
+    opponents.append(frontier)
     
-    # Opponent 4: Palandir - Advanced surveillance and intelligence corporation
-    opponents.append(Opponent(
+    # Opponent 4: Palandir - Advanced surveillance corporation (aggressive but well-funded)
+    palandir = Opponent(
         name="Palandir",
         budget=random.randint(1000, 1500),
         capabilities_researchers=random.randint(20, 30),
         lobbyists=random.randint(12, 18),
         compute=random.randint(80, 120),
         description="Advanced surveillance technology corporation with global data monitoring capabilities"
-    ))
+    )
+    palandir.risk_tolerance = "aggressive"
+    palandir.research_quality_preference = "rushed"
+    palandir.technical_debt = random.randint(8, 20)  # High debt from aggressive approach
+    opponents.append(palandir)
     
     return opponents
