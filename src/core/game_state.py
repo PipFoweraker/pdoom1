@@ -3093,3 +3093,189 @@ class GameState:
             return conduct_performance_review(researcher)
         
         return {"success": False, "message": "Unknown management action."}
+    
+    # Enhanced Personnel System Event Handlers
+    
+    def _researcher_breakthrough(self):
+        """Handle researcher breakthrough event."""
+        if not self.researchers:
+            return
+        
+        # Select a random researcher for the breakthrough
+        researcher = random.choice(self.researchers)
+        
+        # Breakthrough effects based on specialization
+        if researcher.specialization == "safety":
+            doom_reduction = random.randint(3, 6)
+            rep_gain = random.randint(2, 4)
+            self._add('doom', -doom_reduction)
+            self._add('reputation', rep_gain)
+            self.messages.append(f"🔬 {researcher.name} achieved a major safety breakthrough! -{doom_reduction} doom, +{rep_gain} reputation")
+        elif researcher.specialization == "capabilities":
+            research_boost = random.randint(8, 12)
+            doom_risk = random.randint(1, 3)
+            self._add('research_progress', research_boost)
+            self._add('doom', doom_risk)
+            self.messages.append(f"⚡ {researcher.name} developed advanced AI capabilities! +{research_boost} research, +{doom_risk} doom risk")
+        elif researcher.specialization == "interpretability":
+            rep_gain = random.randint(3, 5)
+            self._add('reputation', rep_gain)
+            # Reveal competitor information
+            self._provide_competitor_update()
+            self.messages.append(f"🔍 {researcher.name} created breakthrough interpretability tools! +{rep_gain} reputation, competitor insights gained")
+        elif researcher.specialization == "alignment":
+            rep_gain = random.randint(2, 4)
+            self._add('reputation', rep_gain)
+            # Reduce negative event chance temporarily (handled by existing alignment effect)
+            self.messages.append(f"🎯 {researcher.name} solved a critical alignment problem! +{rep_gain} reputation, improved stability")
+        
+        # Boost researcher's loyalty and reduce burnout
+        researcher.loyalty = min(researcher.loyalty + 15, 100)
+        researcher.burnout = max(researcher.burnout - 10, 0)
+    
+    def _researcher_burnout_crisis(self):
+        """Handle researcher burnout crisis event."""
+        burnt_out_researchers = [r for r in self.researchers if r.burnout > 60]
+        if not burnt_out_researchers:
+            return
+        
+        # Apply crisis effects
+        for researcher in burnt_out_researchers:
+            researcher.burnout = min(researcher.burnout + 10, 100)
+            researcher.loyalty = max(researcher.loyalty - 10, 0)
+        
+        self.messages.append(f"⚠️ Burnout crisis affects {len(burnt_out_researchers)} researchers! Productivity decreased.")
+        self.messages.append("Consider team building or reducing workload to address burnout.")
+    
+    def _researcher_poaching_attempt(self):
+        """Handle competitor poaching attempt."""
+        if not self.researchers:
+            return
+        
+        # Target researcher with lowest loyalty
+        target = min(self.researchers, key=lambda r: r.loyalty)
+        competitor_names = ["TechCorp AI", "Future Systems", "Meta Labs", "DeepMind Rivals"]
+        competitor = random.choice(competitor_names)
+        
+        # Calculate poaching success chance based on loyalty
+        success_chance = max(0.1, (100 - target.loyalty) / 100 * 0.7)
+        
+        if random.random() < success_chance:
+            # Poaching successful
+            self.researchers.remove(target)
+            self._add('staff', -1)
+            self._add('research_staff', -1)
+            self.messages.append(f"💼 {competitor} successfully poached {target.name}! Lost key researcher.")
+            
+            # Remove corresponding employee blob
+            if self.employee_blobs:
+                for blob in self.employee_blobs:
+                    if blob.get('subtype') == 'specialist_researcher':
+                        self.employee_blobs.remove(blob)
+                        break
+        else:
+            # Poaching failed, but loyalty is affected
+            target.loyalty = max(target.loyalty - 5, 0)
+            self.messages.append(f"🛡️ {competitor} attempted to poach {target.name}, but they remained loyal!")
+            self.messages.append("Consider salary adjustments to improve researcher loyalty.")
+    
+    def _research_ethics_concern(self):
+        """Handle research ethics concern event."""
+        capabilities_researchers = [r for r in self.researchers if r.specialization == 'capabilities']
+        if not capabilities_researchers:
+            return
+        
+        researcher = random.choice(capabilities_researchers)
+        
+        # Ethical researcher may quit or reduce productivity
+        if random.random() < 0.3:  # 30% chance they quit
+            self.researchers.remove(researcher)
+            self._add('staff', -1) 
+            self._add('research_staff', -1)
+            self.messages.append(f"⚖️ {researcher.name} quit due to ethical concerns about capabilities research!")
+            self.messages.append("Consider focusing more on safety research to prevent future departures.")
+        else:
+            researcher.productivity *= 0.8  # 20% productivity reduction
+            researcher.loyalty = max(researcher.loyalty - 15, 0)
+            self.messages.append(f"⚖️ {researcher.name} raised ethical concerns. Their productivity and loyalty declined.")
+            self.messages.append("Address these concerns to maintain team cohesion.")
+    
+    def _researcher_conference_invitation(self):
+        """Handle researcher conference invitation."""
+        media_savvy_researchers = [r for r in self.researchers if 'media_savvy' in r.traits]
+        if not media_savvy_researchers:
+            # Fallback to any researcher
+            if not self.researchers:
+                return
+            researcher = random.choice(self.researchers)
+        else:
+            researcher = random.choice(media_savvy_researchers)
+        
+        # Conference provides reputation boost
+        rep_gain = random.randint(3, 6)
+        self._add('reputation', rep_gain)
+        
+        # Small chance for networking opportunities (money)
+        if random.random() < 0.4:
+            money_gain = random.randint(50, 100)
+            self._add('money', money_gain)
+            self.messages.append(f"🎤 {researcher.name} presented at a major conference! +{rep_gain} reputation, +${money_gain} from networking")
+        else:
+            self.messages.append(f"🎤 {researcher.name} presented at a major conference! +{rep_gain} reputation")
+        
+        researcher.loyalty = min(researcher.loyalty + 10, 100)
+    
+    def _collaborative_research_opportunity(self):
+        """Handle collaborative research opportunity."""
+        if len(self.researchers) < 2:
+            return
+        
+        # Requires investment but provides significant benefits
+        cost = random.randint(100, 200)
+        
+        if self.money >= cost:
+            research_gain = random.randint(15, 25)
+            rep_gain = random.randint(4, 7)
+            
+            self._add('money', -cost)
+            self._add('research_progress', research_gain)
+            self._add('reputation', rep_gain)
+            
+            self.messages.append(f"🤝 Collaborative research project launched! Cost: ${cost}")
+            self.messages.append(f"Benefits: +{research_gain} research progress, +{rep_gain} reputation")
+            
+            # Boost loyalty of participating researchers
+            for researcher in random.sample(self.researchers, min(2, len(self.researchers))):
+                researcher.loyalty = min(researcher.loyalty + 8, 100)
+        else:
+            self.messages.append(f"🤝 Collaborative research opportunity available, but need ${cost} to participate")
+    
+    def _researcher_loyalty_crisis(self):
+        """Handle researcher loyalty crisis."""
+        low_loyalty_researchers = [r for r in self.researchers if r.loyalty < 30]
+        if len(low_loyalty_researchers) < 2:
+            return
+        
+        # Crisis affects all low-loyalty researchers
+        departures = 0
+        for researcher in low_loyalty_researchers:
+            if random.random() < 0.4:  # 40% chance each leaves
+                self.researchers.remove(researcher)
+                self._add('staff', -1)
+                self._add('research_staff', -1)
+                departures += 1
+            else:
+                researcher.loyalty = max(researcher.loyalty - 10, 0)
+        
+        if departures > 0:
+            self.messages.append(f"😞 Loyalty crisis! {departures} researchers left the organization.")
+            # Remove corresponding employee blobs
+            for _ in range(departures):
+                for blob in self.employee_blobs:
+                    if blob.get('subtype') == 'specialist_researcher':
+                        self.employee_blobs.remove(blob)
+                        break
+        else:
+            self.messages.append("😞 Loyalty crisis among researchers! Morale significantly decreased.")
+        
+        self.messages.append("Consider salary increases and team building to restore loyalty.")

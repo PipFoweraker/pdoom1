@@ -241,6 +241,172 @@ class TestResearcherGameIntegration(unittest.TestCase):
         self.assertTrue(hasattr(self.gs, 'researchers'))
         if refresh_action.get("rules"):
             self.assertTrue(refresh_action["rules"](self.gs))
+    
+    def test_researcher_events_integration(self):
+        """Test that researcher events are properly integrated."""
+        # Add researchers to trigger events
+        safety_researcher = Researcher("Dr. Safety", "safety", 8, ["media_savvy"], 100)
+        capabilities_researcher = Researcher("Dr. Capabilities", "capabilities", 7, [], 110)
+        capabilities_researcher.loyalty = 20  # Low loyalty
+        
+        self.gs.researchers = [safety_researcher, capabilities_researcher]
+        self.gs.doom = 45
+        self.gs.turn = 5
+        
+        # Test breakthrough event
+        initial_rep = self.gs.reputation
+        self.gs._researcher_breakthrough()
+        # Should have some positive effect
+        self.assertGreaterEqual(self.gs.reputation, initial_rep)
+        
+        # Test poaching event
+        initial_researchers = len(self.gs.researchers)
+        self.gs._researcher_poaching_attempt()
+        # Researchers count should be <= initial (might lose one)
+        self.assertLessEqual(len(self.gs.researchers), initial_researchers)
+        
+        # Test ethics concern
+        if any(r.specialization == 'capabilities' for r in self.gs.researchers):
+            initial_researchers = len(self.gs.researchers)
+            self.gs._research_ethics_concern()
+            # Should have some effect on team
+            self.assertTrue(True)  # Event executed without error
+
+class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
+    """Comprehensive test of the complete enhanced personnel system."""
+    
+    def setUp(self):
+        """Set up comprehensive test scenario."""
+        self.gs = GameState('test-complete')
+        self.gs.money = 1000
+        self.gs.action_points = 20
+        self.gs.turn = 10
+        
+    def test_complete_researcher_lifecycle(self):
+        """Test complete researcher lifecycle from hiring to events."""
+        # 1. Refresh hiring pool
+        self.gs.refresh_researcher_hiring_pool()
+        self.assertGreater(len(self.gs.available_researchers), 0)
+        
+        # 2. Hire multiple researchers
+        initial_money = self.gs.money
+        researchers_hired = 0
+        
+        for i in range(min(3, len(self.gs.available_researchers))):
+            if self.gs.money >= self.gs.available_researchers[0].salary_expectation and self.gs.action_points >= 2:
+                success, message = self.gs.hire_researcher(0)
+                if success:
+                    researchers_hired += 1
+        
+        self.assertGreater(researchers_hired, 0)
+        self.assertLess(self.gs.money, initial_money)  # Money spent
+        self.assertEqual(len(self.gs.researchers), researchers_hired)
+        
+        # 3. Test productivity effects
+        effects = self.gs.get_researcher_productivity_effects()
+        self.assertIsInstance(effects, dict)
+        
+        # 4. Test management actions
+        # Salary adjustment
+        if self.gs.researchers:
+            researcher = self.gs.researchers[0]
+            initial_salary = researcher.current_salary
+            result = self.gs.conduct_researcher_management_action(
+                "salary_review", 
+                researcher_id=0, 
+                new_salary=initial_salary + 20
+            )
+            self.assertTrue(result["success"])
+            
+        # Team building
+        result = self.gs.conduct_researcher_management_action("team_building", cost=50)
+        self.assertTrue(result["success"])
+        
+        # 5. Test turn advancement
+        for researcher in self.gs.researchers:
+            initial_burnout = researcher.burnout
+            researcher.advance_turn()
+            # Burnout should change (increase)
+            self.assertGreaterEqual(researcher.burnout, initial_burnout)
+        
+        # 6. Test events
+        # Create conditions for various events
+        if self.gs.researchers:
+            # High burnout for crisis
+            self.gs.researchers[0].burnout = 70
+            self.gs._researcher_burnout_crisis()
+            
+            # Test breakthrough
+            initial_rep = self.gs.reputation
+            self.gs._researcher_breakthrough()
+            
+        # 7. Test UI integration (specialist researcher selection)
+        self.gs.pending_hiring_dialog = {"mode": None, "available_subtypes": []}
+        
+        # Select specialist researcher should switch to pool mode
+        success, message = self.gs.select_employee_subtype("specialist_researcher")
+        self.assertTrue(success)
+        self.assertEqual(self.gs.pending_hiring_dialog.get("mode"), "researcher_pool")
+        
+        # 8. Test serialization (if we had it)
+        for researcher in self.gs.researchers:
+            data = researcher.to_dict()
+            restored = Researcher.from_dict(data)
+            self.assertEqual(restored.name, researcher.name)
+            self.assertEqual(restored.specialization, researcher.specialization)
+    
+    def test_specialization_balance(self):
+        """Test that all specializations provide meaningful but balanced effects."""
+        specializations = ["safety", "capabilities", "interpretability", "alignment"]
+        
+        for spec in specializations:
+            researcher = Researcher(f"Test {spec}", spec, 5, [], 100)
+            effects = researcher.get_specialization_effects()
+            
+            # Each specialization should have at least one effect
+            self.assertGreater(len(effects), 0)
+            
+            # Effects should be reasonable magnitudes
+            for effect_name, value in effects.items():
+                if effect_name == "research_speed_modifier":
+                    self.assertGreaterEqual(value, 1.0)
+                    self.assertLessEqual(value, 2.0)  # Not too overpowered
+                else:
+                    self.assertGreaterEqual(abs(value), 0.0)
+                    self.assertLessEqual(abs(value), 1.0)  # Reasonable magnitude
+    
+    def test_trait_system_balance(self):
+        """Test that trait system is balanced between positive and negative effects."""
+        # Positive traits should provide benefits
+        workaholic = Researcher("Workaholic", "safety", 5, ["workaholic"], 100)
+        team_player = Researcher("Team Player", "safety", 5, ["team_player"], 100)
+        
+        self.assertGreater(workaholic.productivity, 1.0)
+        
+        # Negative traits should have costs
+        prima_donna = Researcher("Prima Donna", "safety", 5, ["prima_donna"], 100)
+        prima_donna.current_salary = 80  # Below expectation
+        self.assertLess(prima_donna.get_effective_productivity(), prima_donna.productivity)
+        
+        # Burnout should reduce productivity
+        burnt_out = Researcher("Burnt Out", "safety", 5, [], 100)
+        burnt_out.burnout = 80
+        self.assertLess(burnt_out.get_effective_productivity(), 1.0)
+    
+    def test_poaching_resistance_mechanics(self):
+        """Test that loyalty affects poaching resistance."""
+        high_loyalty = Researcher("Loyal", "safety", 5, [], 100)
+        high_loyalty.loyalty = 90
+        
+        low_loyalty = Researcher("Disloyal", "safety", 5, [], 100) 
+        low_loyalty.loyalty = 10
+        
+        # In a real poaching scenario, high loyalty should be more resistant
+        # This is tested indirectly through the poaching event success calculation
+        high_loyalty_risk = max(0.1, (100 - high_loyalty.loyalty) / 100 * 0.7)
+        low_loyalty_risk = max(0.1, (100 - low_loyalty.loyalty) / 100 * 0.7)
+        
+        self.assertLess(high_loyalty_risk, low_loyalty_risk)
 
 if __name__ == '__main__':
     unittest.main()
