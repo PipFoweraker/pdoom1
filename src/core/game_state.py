@@ -87,6 +87,7 @@ class GameState:
         
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
+        self.magical_orb_active = False  # Track if magical orb of seeing is purchased
         
         # Core resources (from config)
         self.money = starting_resources['money']
@@ -1489,6 +1490,12 @@ class GameState:
                         elif upg.get("custom_effect") == "buy_compact_activity_display":
                             # Allow toggle functionality for the activity log
                             self.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
+                        elif upg.get("custom_effect") == "buy_magical_orb_seeing":
+                            # Enable enhanced intelligence gathering capabilities
+                            self.magical_orb_active = True
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Enhanced global surveillance capabilities now active!")
+                            self.messages.append("The orb reveals detailed intelligence on all competitors and their activities...")
+                            self.messages.append("Intelligence gathering actions now provide comprehensive insights!")
                         elif upg.get("effect_key") == "hpc_cluster":
                             self._add('compute', 20)
                             self.messages.append(f"Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.")
@@ -1627,12 +1634,30 @@ class GameState:
             for i in range(count)
         ]
 
+    def _is_upgrade_available(self, upgrade):
+        """Check if an upgrade should be visible based on its unlock conditions."""
+        unlock_condition = upgrade.get("unlock_condition")
+        if not unlock_condition:
+            return True  # No condition means always available
+        
+        if unlock_condition == "palandir_discovered":
+            # Check if Palandir opponent has been discovered
+            for opponent in self.opponents:
+                if opponent.name == "Palandir" and opponent.discovered:
+                    return True
+            return False
+        
+        return True  # Default to available for unknown conditions
+
     def _get_upgrade_rects(self, w, h):
+        # Filter upgrades based on availability conditions
+        available_upgrades = [(i, u) for i, u in enumerate(self.upgrades) if self._is_upgrade_available(u)]
+        
         # Display upgrades as icons/buttons on right
-        n = len(self.upgrades)
+        n = len(available_upgrades)
         # Purchased upgrades shrink to small icon row at top right
-        purchased = [i for i, u in enumerate(self.upgrades) if u.get("purchased", False)]
-        not_purchased = [i for i, u in enumerate(self.upgrades) if not u.get("purchased", False)]
+        purchased = [(i, u) for i, u in available_upgrades if u.get("purchased", False)]
+        not_purchased = [(i, u) for i, u in available_upgrades if not u.get("purchased", False)]
 
         icon_w, icon_h = int(w*0.045), int(w*0.045)
         # Purchased: row at top right, but respect UI boundaries
@@ -1640,7 +1665,7 @@ class GameState:
         max_icons_per_row = max(1, int((w - w*0.84) / icon_w))  # Available space for icons
         
         purchased_rects = []
-        for j, i in enumerate(purchased):
+        for j, (original_idx, upgrade) in enumerate(purchased):
             row = j // max_icons_per_row
             col = j % max_icons_per_row
             x = w - icon_w*(col+1)
@@ -1655,10 +1680,12 @@ class GameState:
             (base_x, base_y + k*(btn_h+gap), btn_w, btn_h)
             for k in range(len(not_purchased))
         ]
-        # Merge and return in upgrade order
-        out = [None]*n
-        for j, i in enumerate(purchased): out[i] = purchased_rects[j]
-        for k, i in enumerate(not_purchased): out[i] = not_purchased_rects[k]
+        # Merge and return in upgrade order (for ALL upgrades, with None for unavailable ones)
+        out = [None] * len(self.upgrades)
+        for j, (original_idx, upgrade) in enumerate(purchased): 
+            out[original_idx] = purchased_rects[j]
+        for k, (original_idx, upgrade) in enumerate(not_purchased): 
+            out[original_idx] = not_purchased_rects[k]
         return out
     
     def _get_upgrade_icon_rect(self, upgrade_idx, w, h):
@@ -2261,40 +2288,86 @@ class GameState:
         messages = []
         discoveries = 0
         
+        # Enhanced capabilities with magical orb
+        if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
+            messages.append("🔮 MAGICAL ORB OF SEEING ACTIVATED")
+            messages.append("Penetrating digital infrastructure across the globe...")
+            
         # First, check if any opponents can be discovered
         undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
         
-        if undiscovered_opponents and random.random() < 0.6:  # 60% chance to discover a new lab
+        # Enhanced discovery rate with magical orb
+        discovery_chance = 0.9 if (hasattr(self, 'magical_orb_active') and self.magical_orb_active) else 0.6
+        
+        if undiscovered_opponents and random.random() < discovery_chance:
             # Discover a new opponent
             new_opponent = random.choice(undiscovered_opponents)
             new_opponent.discover()
             discoveries += 1
-            messages.append(f"Intelligence breakthrough! Discovered new competing lab: {new_opponent.name}")
-            messages.append(f"→ {new_opponent.description}")
+            if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
+                messages.append(f"🌐 SURVEILLANCE BREAKTHROUGH: Orbital data streams reveal {new_opponent.name}")
+                messages.append(f"→ Access granted to laptop and mobile communications...")
+                messages.append(f"→ {new_opponent.description}")
+            else:
+                messages.append(f"Intelligence breakthrough! Discovered new competing lab: {new_opponent.name}")
+                messages.append(f"→ {new_opponent.description}")
         
         # Scout stats from known opponents
         discovered_opponents = [opp for opp in self.opponents if opp.discovered]
         
         if discovered_opponents:
-            target_opponent = random.choice(discovered_opponents)
-            
-            # Try to scout a random stat
-            stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
-            stat_to_scout = random.choice(stats_to_scout)
-            
-            success, value, message = target_opponent.scout_stat(stat_to_scout)
-            messages.append(message)
-            
-            if success:
-                discoveries += 1
+            # With magical orb, scout multiple opponents and stats
+            if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
+                # Scout all discovered opponents with enhanced success
+                for target_opponent in discovered_opponents:
+                    stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
+                    # Scout 2-3 stats per opponent with high success rate
+                    num_stats = random.randint(2, 3)
+                    for _ in range(num_stats):
+                        stat_to_scout = random.choice(stats_to_scout)
+                        # Force success with magical orb and remove stat from list to avoid duplicates
+                        if stat_to_scout in stats_to_scout:
+                            stats_to_scout.remove(stat_to_scout)
+                            success, value, message = target_opponent.scout_stat(stat_to_scout)
+                            if not target_opponent.discovered_stats[stat_to_scout]:
+                                # Force discovery with magical orb
+                                target_opponent.discovered_stats[stat_to_scout] = True
+                                actual_value = getattr(target_opponent, stat_to_scout)
+                                target_opponent.known_stats[stat_to_scout] = actual_value
+                                discoveries += 1
+                                messages.append(f"📱 Digital intercept: {target_opponent.name}'s {stat_to_scout}: {actual_value}")
+                            else:
+                                messages.append(f"📊 Confirming {target_opponent.name}'s {stat_to_scout}: {value}")
+            else:
+                # Standard scouting
+                target_opponent = random.choice(discovered_opponents)
+                
+                # Try to scout a random stat
+                stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
+                stat_to_scout = random.choice(stats_to_scout)
+                
+                success, value, message = target_opponent.scout_stat(stat_to_scout)
+                messages.append(message)
+                
+                if success:
+                    discoveries += 1
         
         # Add intelligence gained message
         if discoveries > 0:
-            messages.append(f"Intelligence gathering successful! ({discoveries} new insights)")
-            # Small reputation gain for successful intelligence work
-            self._add('reputation', 1)
+            if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
+                messages.append(f"🔮 SURVEILLANCE MATRIX ANALYSIS COMPLETE: {discoveries} intelligence targets processed")
+                messages.append("Global data streams flowing through the orb... No device is hidden from its gaze.")
+                # Enhanced reputation gain with magical orb
+                self._add('reputation', min(3, discoveries))
+            else:
+                messages.append(f"Intelligence gathering successful! ({discoveries} new insights)")
+                # Small reputation gain for successful intelligence work
+                self._add('reputation', 1)
         else:
-            messages.append("Intelligence gathering yielded limited results this time.")
+            if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
+                messages.append("🔮 Orb scanning global networks... All targets already under surveillance.")
+            else:
+                messages.append("Intelligence gathering yielded limited results this time.")
         
         # Add all messages to game state
         for msg in messages:

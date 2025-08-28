@@ -190,4 +190,14 @@ def create_default_opponents():
         description="Secretive startup with mysterious funding and rapid development"
     ))
     
+    # Opponent 4: Palandir - Advanced surveillance and intelligence corporation
+    opponents.append(Opponent(
+        name="Palandir",
+        budget=random.randint(1000, 1500),
+        capabilities_researchers=random.randint(20, 30),
+        lobbyists=random.randint(12, 18),
+        compute=random.randint(80, 120),
+        description="Advanced surveillance technology corporation with global data monitoring capabilities"
+    ))
+    
     return opponents
