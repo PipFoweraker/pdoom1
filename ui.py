@@ -930,13 +930,25 @@ def draw_ui(screen, game_state, w, h):
     draw_opponents_panel(screen, game_state, w, h, font, small_font)
 
     # Action buttons (left) - Enhanced with visual feedback
-    action_rects = game_state._get_action_rects(w, h)
-    for idx, rect_tuple in enumerate(action_rects):
+    # Check if we should use compact UI mode
+    use_compact_ui = not getattr(game_state, 'tutorial_enabled', True)
+    
+    if use_compact_ui:
+        # Import compact UI functions
+        from src.ui.compact_ui import get_compact_action_rects, draw_compact_action_button
+        
+        # Use compact layout
+        action_rects = get_compact_action_rects(w, h, len(game_state.actions))
+    else:
+        # Use traditional layout
+        action_rects = [pygame.Rect(rect_tuple) for rect_tuple in game_state._get_action_rects(w, h)]
+    
+    for idx, rect in enumerate(action_rects):
+        if idx >= len(game_state.actions):
+            break
+            
         action = game_state.actions[idx]
         ap_cost = action.get("ap_cost", 1)
-        
-        # Convert tuple to pygame.Rect
-        rect = pygame.Rect(rect_tuple)
         
         # Determine button state for visual feedback
         if game_state.action_points < ap_cost:
@@ -948,18 +960,28 @@ def draw_ui(screen, game_state, w, h):
         else:
             button_state = ButtonState.NORMAL
         
-        # Use visual feedback system for consistent styling
-        # Include keyboard shortcut in button text for first 9 actions
-        button_text = action["name"]
-        if idx < 9:  # Only first 9 actions get keyboard shortcuts (1-9 keys)
-            shortcut_key = str(idx + 1)
-            button_text = f"[{shortcut_key}] {action['name']}"
+        if use_compact_ui:
+            # Draw compact button with icon and shortcut key
+            draw_compact_action_button(screen, rect, action, idx, button_state)
+        else:
+            # Traditional button with full text
+            from src.services.keybinding_manager import keybinding_manager
+            
+            button_text = action["name"]
+            if idx < 9:  # Only first 9 actions get keyboard shortcuts
+                shortcut_key = keybinding_manager.get_action_display_key(f"action_{idx + 1}")
+                button_text = f"[{shortcut_key}] {action['name']}"
+            
+            visual_feedback.draw_button(
+                screen, rect, button_text, button_state, FeedbackStyle.BUTTON
+            )
+            
+            # Draw description text below button (only in traditional mode)
+            desc_color = (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160)
+            desc_text = font.render(f"{action['desc']} (Cost: ${action['cost']}, AP: {ap_cost})", True, desc_color)
+            screen.blit(desc_text, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
         
-        visual_feedback.draw_button(
-            screen, rect, button_text, button_state, FeedbackStyle.BUTTON
-        )
-        
-        # Draw action usage indicators (circles for repeatables)
+        # Draw action usage indicators (circles for repeatables) - works for both modes
         if hasattr(game_state, 'selected_action_instances'):
             action_count = sum(1 for inst in game_state.selected_action_instances if inst['action_idx'] == idx)
             if action_count > 0:
@@ -967,9 +989,13 @@ def draw_ui(screen, game_state, w, h):
                 indicator_size = int(min(w, h) * 0.008)  # Small circles
                 indicator_color = (100, 255, 100) if button_state != ButtonState.DISABLED else (60, 120, 60)
                 
-                # Position indicators in top-right of button
-                start_x = rect.right - (action_count * indicator_size * 2) - 5
-                start_y = rect.top + 5
+                # Position indicators in top-left of button for compact mode, top-right for traditional
+                if use_compact_ui:
+                    start_x = rect.left + 5
+                    start_y = rect.top + 5
+                else:
+                    start_x = rect.right - (action_count * indicator_size * 2) - 5
+                    start_y = rect.top + 5
                 
                 for i in range(min(action_count, 5)):  # Max 5 indicators to avoid clutter
                     circle_x = start_x + (i * indicator_size * 2)
@@ -978,45 +1004,66 @@ def draw_ui(screen, game_state, w, h):
                     
                 # If more than 5, show "+N" text
                 if action_count > 5:
-                    more_text = font.render(f"+{action_count-5}", True, indicator_color)
+                    more_text = small_font.render(f"+{action_count-5}", True, indicator_color)
                     screen.blit(more_text, (start_x + 5 * indicator_size * 2 + 2, start_y))
-        
-        # Draw description text below button
-        desc_color = (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160)
-        desc_text = font.render(f"{action['desc']} (Cost: ${action['cost']}, AP: {ap_cost})", True, desc_color)
-        screen.blit(desc_text, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
 
     # Upgrades (right: purchased as icons at top right, available as buttons) - Enhanced with visual feedback
-    upgrade_rects = game_state._get_upgrade_rects(w, h)
-    for idx, rect_tuple in enumerate(upgrade_rects):
+    if use_compact_ui:
+        # Import compact UI functions
+        from src.ui.compact_ui import get_compact_upgrade_rects, draw_compact_upgrade_button
+        
+        # Count purchased upgrades
+        num_purchased = sum(1 for upg in game_state.upgrades if upg.get("purchased", False))
+        
+        # Use compact layout
+        upgrade_rects = get_compact_upgrade_rects(w, h, len(game_state.upgrades), num_purchased)
+    else:
+        # Use traditional layout
+        upgrade_rects = [pygame.Rect(rect_tuple) for rect_tuple in game_state._get_upgrade_rects(w, h)]
+    
+    for idx, rect in enumerate(upgrade_rects):
+        if idx >= len(game_state.upgrades):
+            break
+            
         upg = game_state.upgrades[idx]
+        is_purchased = upg.get("purchased", False)
         
-        # Convert tuple to pygame.Rect
-        rect = pygame.Rect(rect_tuple)
-        
-        if upg.get("purchased", False):
-            # Draw as small icon using visual feedback system
-            visual_feedback.draw_icon_button(screen, rect, upg["name"][0], ButtonState.NORMAL)
-        else:
-            # Determine button state
-            if upg['cost'] > game_state.money:
+        if use_compact_ui:
+            # Determine button state for compact mode
+            if not is_purchased and upg['cost'] > game_state.money:
                 button_state = ButtonState.DISABLED
             elif hasattr(game_state, 'hovered_upgrade_idx') and game_state.hovered_upgrade_idx == idx:
                 button_state = ButtonState.HOVER
             else:
                 button_state = ButtonState.NORMAL
             
-            # Draw upgrade button with consistent styling
-            visual_feedback.draw_button(
-                screen, rect, upg["name"], button_state, FeedbackStyle.BUTTON
-            )
-            
-            # Draw description and status
-            desc_color = (200, 255, 200) if button_state != ButtonState.DISABLED else (120, 150, 120)
-            desc = small_font.render(upg["desc"] + f" (Cost: ${upg['cost']})", True, desc_color)
-            status = small_font.render("AVAILABLE", True, desc_color)
-            screen.blit(desc, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
-            screen.blit(status, (rect.x + int(w*0.24), rect.y + int(h*0.04)))
+            # Draw compact upgrade button
+            draw_compact_upgrade_button(screen, rect, upg, idx, button_state, is_purchased)
+        else:
+            # Traditional upgrade display
+            if is_purchased:
+                # Draw as small icon using visual feedback system
+                visual_feedback.draw_icon_button(screen, rect, upg["name"][0], ButtonState.NORMAL)
+            else:
+                # Determine button state
+                if upg['cost'] > game_state.money:
+                    button_state = ButtonState.DISABLED
+                elif hasattr(game_state, 'hovered_upgrade_idx') and game_state.hovered_upgrade_idx == idx:
+                    button_state = ButtonState.HOVER
+                else:
+                    button_state = ButtonState.NORMAL
+                
+                # Draw upgrade button with consistent styling
+                visual_feedback.draw_button(
+                    screen, rect, upg["name"], button_state, FeedbackStyle.BUTTON
+                )
+                
+                # Draw description and status (only in traditional mode)
+                desc_color = (200, 255, 200) if button_state != ButtonState.DISABLED else (120, 150, 120)
+                desc = small_font.render(upg["desc"] + f" (Cost: ${upg['cost']})", True, desc_color)
+                status = small_font.render("AVAILABLE", True, desc_color)
+                screen.blit(desc, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
+                screen.blit(status, (rect.x + int(w*0.24), rect.y + int(h*0.04)))
 
     # --- Balance change display (after buying accounting software) ---
     # If accounting software was bought, show last balance change under Money
@@ -1036,33 +1083,43 @@ def draw_ui(screen, game_state, w, h):
     draw_ui_transitions(screen, game_state, w, h, big_font)
 
     # End Turn button (bottom center) - Enhanced with visual feedback
-    endturn_rect_tuple = game_state._get_endturn_rect(w, h)
-    endturn_rect = pygame.Rect(endturn_rect_tuple)
-    
-    # Determine button state
-    endturn_state = ButtonState.HOVER if hasattr(game_state, 'endturn_hovered') and game_state.endturn_hovered else ButtonState.NORMAL
-    
-    # Use visual feedback system with custom colors for end turn button
-    custom_colors = {
-        ButtonState.NORMAL: {
-            'bg': (140, 90, 90),
-            'border': (210, 110, 110),
-            'text': (255, 240, 240),
-            'shadow': (60, 40, 40)
-        },
-        ButtonState.HOVER: {
-            'bg': (160, 110, 110),
-            'border': (230, 130, 130),
-            'text': (255, 255, 255),
-            'shadow': (80, 60, 60),
-            'glow': (255, 200, 200, 40)
+    if use_compact_ui:
+        # Use compact end turn button
+        from src.ui.compact_ui import draw_compact_end_turn_button
+        endturn_rect = draw_compact_end_turn_button(screen, w, h, endturn_state)
+    else:
+        # Traditional end turn button
+        endturn_rect_tuple = game_state._get_endturn_rect(w, h)
+        endturn_rect = pygame.Rect(endturn_rect_tuple)
+        
+        # Determine button state
+        endturn_state = ButtonState.HOVER if hasattr(game_state, 'endturn_hovered') and game_state.endturn_hovered else ButtonState.NORMAL
+        
+        # Use visual feedback system with custom colors for end turn button
+        custom_colors = {
+            ButtonState.NORMAL: {
+                'bg': (140, 90, 90),
+                'border': (210, 110, 110),
+                'text': (255, 240, 240),
+                'shadow': (60, 40, 40)
+            },
+            ButtonState.HOVER: {
+                'bg': (160, 110, 110),
+                'border': (230, 130, 130),
+                'text': (255, 255, 255),
+                'shadow': (80, 60, 60),
+                'glow': (255, 200, 200, 40)
+            }
         }
-    }
-    
-    visual_feedback.draw_button(
-        screen, endturn_rect, "END TURN (Space)", endturn_state, 
-        FeedbackStyle.BUTTON, custom_colors.get(endturn_state)
-    )
+        
+        # Get shortcut key for traditional mode
+        from src.services.keybinding_manager import keybinding_manager
+        shortcut_display = keybinding_manager.get_action_display_key("end_turn")
+        
+        visual_feedback.draw_button(
+            screen, endturn_rect, f"END TURN ({shortcut_display})", endturn_state, 
+            FeedbackStyle.BUTTON, custom_colors.get(endturn_state)
+        )
 
 
     # Messages log (bottom left) - Enhanced with scrollable history and minimize option

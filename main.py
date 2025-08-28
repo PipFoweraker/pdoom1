@@ -7,6 +7,7 @@ from src.core.game_state import GameState
 
 from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
 from ui_new.facade import ui_facade
+from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
 
 
 from src.ui.overlay_manager import OverlayManager
@@ -79,7 +80,7 @@ draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.8, "Loading UI components...")
 pygame.display.flip()
 
 # --- Menu and game state management --- #
-# Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial'
+# Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial', 'sounds_menu', 'keybinding_menu', 'keybinding_change'
 
 # Panel stack tracking for navigation depth
 navigation_stack = []
@@ -136,6 +137,12 @@ audio_settings = {
         'money_spend': True
     }
 }
+
+# Keybinding menu state
+keybinding_menu_selected_item = 0
+keybinding_change_action = None  # Action being rebound
+keybinding_change_display = None  # Display name for action being rebound
+keybinding_all_bindings = []  # List of all keybinding items
 
 # Bug report form state
 bug_report_data = {
@@ -673,6 +680,7 @@ def handle_audio_menu_click(mouse_pos, w, h):
         "Master Sound Toggle",
         "SFX Volume",
         "Sound Effects Settings", 
+        "Keybinding Configuration",
         "Test Sound",
         "← Back to Main Menu"
     ]
@@ -704,10 +712,13 @@ def handle_audio_menu_click(mouse_pos, w, h):
                     first_sound = sound_keys[0]
                     audio_settings['individual_sounds'][first_sound] = not audio_settings['individual_sounds'][first_sound]
                     global_sound_manager.sound_toggles[first_sound] = audio_settings['individual_sounds'][first_sound]
-            elif i == 3:  # Test Sound
+            elif i == 3:  # Keybinding Configuration
+                current_state = 'keybinding_menu'
+                keybinding_menu_selected_item = 0
+            elif i == 4:  # Test Sound
                 if global_sound_manager and audio_settings['master_enabled']:
                     global_sound_manager.play_sound('popup_accept')
-            elif i == 4:  # Back to Main Menu
+            elif i == 5:  # Back to Main Menu
                 current_state = 'main_menu'
             break
 
@@ -716,7 +727,7 @@ def handle_audio_menu_keyboard(key):
     """Handle keyboard navigation for audio settings menu."""
     global current_state, sounds_menu_selected_item, audio_settings, global_sound_manager
     
-    menu_items_count = 5  # Number of menu items
+    menu_items_count = 6  # Number of menu items (updated for keybinding option)
     
     if key == pygame.K_UP:
         sounds_menu_selected_item = (sounds_menu_selected_item - 1) % menu_items_count
@@ -742,10 +753,13 @@ def handle_audio_menu_keyboard(key):
                 first_sound = sound_keys[0]
                 audio_settings['individual_sounds'][first_sound] = not audio_settings['individual_sounds'][first_sound]
                 global_sound_manager.sound_toggles[first_sound] = audio_settings['individual_sounds'][first_sound]
-        elif sounds_menu_selected_item == 3:  # Test Sound
+        elif sounds_menu_selected_item == 3:  # Keybinding Configuration
+            current_state = 'keybinding_menu'
+            keybinding_menu_selected_item = 0
+        elif sounds_menu_selected_item == 4:  # Test Sound
             if global_sound_manager and audio_settings['master_enabled']:
                 global_sound_manager.play_sound('popup_accept')
-        elif sounds_menu_selected_item == 4:  # Back to Main Menu
+        elif sounds_menu_selected_item == 5:  # Back to Main Menu
             current_state = 'main_menu'
     elif key == pygame.K_LEFT:
         # Allow left arrow for settings adjustment
@@ -761,6 +775,77 @@ def handle_audio_menu_keyboard(key):
             audio_settings['sfx_volume'] = volumes[(current_idx + 1) % len(volumes)]
     elif key == pygame.K_ESCAPE:
         current_state = 'main_menu'
+
+
+def handle_keybinding_menu_keyboard(key):
+    """Handle keyboard navigation in the keybinding configuration menu."""
+    global keybinding_menu_selected_item, current_state
+    
+    total_items = 18  # 9 actions + 3 game controls + 4 nav controls + 2 special items
+    
+    if key == pygame.K_UP:
+        keybinding_menu_selected_item = (keybinding_menu_selected_item - 1) % total_items
+    elif key == pygame.K_DOWN:
+        keybinding_menu_selected_item = (keybinding_menu_selected_item + 1) % total_items
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        handle_keybinding_menu_select()
+    elif key == pygame.K_ESCAPE:
+        current_state = 'sounds_menu'  # Go back to audio menu
+
+
+def handle_keybinding_menu_select():
+    """Handle selection of a keybinding menu item."""
+    global current_state, keybinding_change_action, keybinding_change_display
+    from src.services.keybinding_manager import keybinding_manager
+    
+    # Map selected item to action
+    if keybinding_menu_selected_item < 9:
+        # Action keybindings (0-8)
+        action_num = keybinding_menu_selected_item + 1
+        keybinding_change_action = f"action_{action_num}"
+        keybinding_change_display = f"Action {action_num}"
+        current_state = 'keybinding_change'
+    elif keybinding_menu_selected_item < 12:
+        # Game control keybindings (9-11)
+        game_actions = ["end_turn", "help_guide", "quit_to_menu"]
+        game_displays = ["End Turn", "Help Guide", "Quit to Menu"]
+        idx = keybinding_menu_selected_item - 9
+        keybinding_change_action = game_actions[idx]
+        keybinding_change_display = game_displays[idx]
+        current_state = 'keybinding_change'
+    elif keybinding_menu_selected_item < 16:
+        # Navigation keybindings (12-15)
+        nav_actions = ["menu_up", "menu_down", "menu_select", "menu_back"]
+        nav_displays = ["Menu Up", "Menu Down", "Menu Select", "Menu Back"]
+        idx = keybinding_menu_selected_item - 12
+        keybinding_change_action = nav_actions[idx]
+        keybinding_change_display = nav_displays[idx]
+        current_state = 'keybinding_change'
+    elif keybinding_menu_selected_item == 16:
+        # Reset to defaults
+        keybinding_manager.reset_to_defaults()
+        keybinding_manager.save_keybindings()
+    elif keybinding_menu_selected_item == 17:
+        # Back to menu
+        current_state = 'sounds_menu'
+
+
+def handle_keybinding_change_keyboard(key):
+    """Handle keyboard input when changing a keybinding."""
+    global current_state, keybinding_change_action
+    from src.services.keybinding_manager import keybinding_manager
+    
+    if key == pygame.K_ESCAPE:
+        # Cancel keybinding change
+        current_state = 'keybinding_menu'
+        keybinding_change_action = None
+    else:
+        # Try to set the new keybinding
+        if keybinding_manager.set_keybinding(keybinding_change_action, key):
+            # Save the new keybinding and return to menu
+            keybinding_manager.save_keybindings()
+            current_state = 'keybinding_menu'
+            keybinding_change_action = None
 
 
 def handle_bug_report_click(mouse_pos, w, h):
@@ -1206,6 +1291,13 @@ def main():
                         handle_tutorial_choice_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'sounds_menu':
                         handle_audio_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'keybinding_menu':
+                        # Handle keybinding menu clicks
+                        clicked_item = get_keybinding_menu_click_item((mx, my), SCREEN_W, SCREEN_H, len(keybinding_all_bindings))
+                        if clicked_item >= 0:
+                            keybinding_menu_selected_item = clicked_item
+                            # Trigger action for this item
+                            handle_keybinding_menu_select()
                     elif current_state == 'overlay':
                         # Check for Back button click first
                         if back_button_rect and back_button_rect.collidepoint(mx, my):
@@ -1402,6 +1494,10 @@ def main():
                         handle_tutorial_choice_keyboard(event.key)
                     elif current_state == 'sounds_menu':
                         handle_audio_menu_keyboard(event.key)
+                    elif current_state == 'keybinding_menu':
+                        handle_keybinding_menu_keyboard(event.key)
+                    elif current_state == 'keybinding_change':
+                        handle_keybinding_change_keyboard(event.key)
                     elif current_state == 'overlay':
                         # Overlay navigation: scroll with arrows, escape to return
                         if event.key == pygame.K_ESCAPE:
@@ -1508,7 +1604,12 @@ def main():
                         
                         # Regular game keyboard handling (only if tutorial is not active)
                         elif not onboarding.show_tutorial_overlay:
-                            if event.key == pygame.K_SPACE and game_state and not game_state.game_over:
+                            # Import keybinding manager for customizable controls
+                            from src.services.keybinding_manager import keybinding_manager
+                            
+                            # Check for end turn key
+                            end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+                            if event.key == end_turn_key and game_state and not game_state.game_over:
                                 # Try to end turn, play error sound if rejected
                                 if not game_state.end_turn():
                                     # Turn was rejected (already processing)
@@ -1516,18 +1617,21 @@ def main():
                             elif event.key == pygame.K_ESCAPE:
                                 running = False
                             
-                            # Action shortcuts (1-9 keys for available actions)
-                            elif event.key >= pygame.K_1 and event.key <= pygame.K_9 and game_state and not game_state.game_over:
-                                action_index = event.key - pygame.K_1  # Convert K_1 to 0, K_2 to 1, etc.
-                                if action_index < len(game_state.actions):
-                                    # Check if this would be an undo operation before calling
-                                    was_undo = action_index in game_state.selected_actions
-                                    
-                                    # Try to execute the action using keyboard shortcut
-                                    success = game_state.execute_action_by_keyboard(action_index)
-                                    if success and not was_undo:
-                                        # Play AP spend sound for successful new selections (not undos)
-                                        game_state.sound_manager.play_ap_spend_sound()
+                            # Action shortcuts using customizable keybindings
+                            elif game_state and not game_state.game_over:
+                                # Check if this key is bound to an action
+                                for action_index in range(min(9, len(game_state.actions))):
+                                    action_key = keybinding_manager.get_action_number_key(action_index)
+                                    if action_key and event.key == action_key:
+                                        # Check if this would be an undo operation before calling
+                                        was_undo = action_index in game_state.selected_actions
+                                        
+                                        # Try to execute the action using keyboard shortcut
+                                        success = game_state.execute_action_by_keyboard(action_index)
+                                        if success and not was_undo:
+                                            # Play AP spend sound for successful new selections (not undos)
+                                            game_state.sound_manager.play_ap_spend_sound()
+                                        break
                             
                             # 'H' key for help (Player Guide)
                             elif event.key == pygame.K_h:
@@ -1650,6 +1754,17 @@ def main():
                 # Audio settings menu
                 screen.fill((40, 45, 55))
                 draw_audio_menu(screen, SCREEN_W, SCREEN_H, sounds_menu_selected_item, audio_settings, global_sound_manager)
+                
+            elif current_state == 'keybinding_menu':
+                # Keybinding configuration menu
+                screen.fill((20, 25, 35))
+                keybinding_all_bindings = draw_keybinding_menu(screen, SCREEN_W, SCREEN_H, keybinding_menu_selected_item)
+                
+            elif current_state == 'keybinding_change':
+                # Keybinding change prompt
+                screen.fill((20, 25, 35))
+                keybinding_all_bindings = draw_keybinding_menu(screen, SCREEN_W, SCREEN_H, keybinding_menu_selected_item)
+                draw_keybinding_change_prompt(screen, SCREEN_W, SCREEN_H, keybinding_change_display, keybinding_change_action)
                 
             elif current_state == 'custom_seed_prompt':
                 # Preserve original seed prompt appearance
