@@ -2577,6 +2577,18 @@ class GameState:
         if not self.pending_hiring_dialog:
             return False, "No hiring dialog active."
         
+        # Special case: specialist researcher opens researcher pool
+        if subtype_id == "specialist_researcher":
+            # Ensure researcher pool is available
+            if not hasattr(self, 'available_researchers') or not self.available_researchers:
+                # Auto-refresh if empty
+                self.refresh_researcher_hiring_pool()
+            
+            # Switch to researcher hiring mode
+            self.pending_hiring_dialog["mode"] = "researcher_pool"
+            self.pending_hiring_dialog["selected_subtype"] = subtype_id
+            return True, "Showing available specialist researchers."
+        
         # Find the selected subtype
         selected_subtype = None
         for subtype_info in self.pending_hiring_dialog["available_subtypes"]:
@@ -2608,6 +2620,21 @@ class GameState:
             # Refund if something went wrong
             self.money += subtype_data["cost"]
             self.action_points += subtype_data["ap_cost"]
+            return False, message
+    
+    def select_researcher_from_pool(self, researcher_index: int):
+        """Handle player selection of a researcher from the hiring pool."""
+        if not self.pending_hiring_dialog or self.pending_hiring_dialog.get("mode") != "researcher_pool":
+            return False, "No researcher pool dialog active."
+        
+        # Hire the selected researcher
+        success, message = self.hire_researcher(researcher_index)
+        
+        if success:
+            # Clear the hiring dialog
+            self.pending_hiring_dialog = None
+            return True, message
+        else:
             return False, message
     
     def dismiss_hiring_dialog(self):
