@@ -1401,6 +1401,16 @@ def main():
                                             game_state.select_employee_subtype(rect_info['subtype_id'])
                                             hiring_handled = True
                                             break
+                                        elif rect_info['type'] == 'researcher_option':
+                                            # Player selected a researcher from the pool
+                                            game_state.select_researcher_from_pool(rect_info['researcher_index'])
+                                            hiring_handled = True
+                                            break
+                                        elif rect_info['type'] == 'back_to_subtypes':
+                                            # Player wants to go back to employee subtype selection
+                                            game_state.pending_hiring_dialog["mode"] = None
+                                            hiring_handled = True
+                                            break
                                         elif rect_info['type'] == 'cancel':
                                             # Player cancelled the hiring dialog
                                             game_state.dismiss_hiring_dialog()

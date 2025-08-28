@@ -99,6 +99,21 @@ EMPLOYEE_SUBTYPES = {
         },
         "specialization": "management",
         "unlock_condition": lambda gs: gs.staff >= 9  # Existing manager unlock condition
+    },
+    
+    # Enhanced Personnel System - Specialist Researcher
+    "specialist_researcher": {
+        "name": "Specialist Researcher",
+        "description": "Individual researcher with unique specialization, traits, and management needs.",
+        "cost": 80,  # Base cost, actual cost determined by researcher
+        "ap_cost": 2,
+        "effects": {
+            "staff": 1,
+            "research_staff": 1,
+            # Effects handled by researcher specialization system
+        },
+        "specialization": "specialist",
+        "unlock_condition": lambda gs: hasattr(gs, 'researchers')  # Always available if system enabled
     }
 }
 

@@ -127,4 +127,56 @@ EVENTS = [
         "trigger": lambda gs: gs.staff >= 2 and random.random() < (0.1 + gs.staff * 0.01),
         "effect": lambda gs: gs._trigger_expense_request()
     },
+    # Enhanced Personnel System Events
+    {
+        "name": "Researcher Breakthrough",
+        "desc": "One of your researchers makes a significant breakthrough!",
+        "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
+                              random.random() < len(gs.researchers) * 0.03),
+        "effect": lambda gs: gs._researcher_breakthrough()
+    },
+    {
+        "name": "Researcher Burnout Crisis",
+        "desc": "High burnout levels are affecting your research team.",
+        "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
+                              any(r.burnout > 60 for r in gs.researchers) and random.random() < 0.15),
+        "effect": lambda gs: gs._researcher_burnout_crisis()
+    },
+    {
+        "name": "Researcher Poaching Attempt",
+        "desc": "A competitor is trying to poach one of your researchers!",
+        "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
+                              gs.turn > 3 and random.random() < len(gs.researchers) * 0.02),
+        "effect": lambda gs: gs._researcher_poaching_attempt()
+    },
+    {
+        "name": "Research Ethics Concern",
+        "desc": "One of your researchers raises concerns about the ethical implications of your research.",
+        "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
+                              any(r.specialization == 'capabilities' for r in gs.researchers) and
+                              gs.doom > 40 and random.random() < 0.1),
+        "effect": lambda gs: gs._research_ethics_concern()
+    },
+    {
+        "name": "Researcher Conference Invitation",
+        "desc": "One of your researchers has been invited to present at a prestigious conference.",
+        "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
+                              any(r.traits and 'media_savvy' in r.traits for r in gs.researchers) and
+                              gs.reputation > 15 and random.random() < 0.08),
+        "effect": lambda gs: gs._researcher_conference_invitation()
+    },
+    {
+        "name": "Collaborative Research Opportunity",
+        "desc": "An opportunity for collaborative research with another organization has emerged.",
+        "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) >= 2 and 
+                              gs.reputation > 20 and random.random() < 0.06),
+        "effect": lambda gs: gs._collaborative_research_opportunity()
+    },
+    {
+        "name": "Researcher Loyalty Crisis",
+        "desc": "Several researchers are showing signs of low loyalty and may leave.",
+        "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 1 and 
+                              sum(1 for r in gs.researchers if r.loyalty < 30) >= 2 and random.random() < 0.12),
+        "effect": lambda gs: gs._researcher_loyalty_crisis()
+    }
 ]
