@@ -5,7 +5,7 @@ A satirical meta-strategy game about AI Safety, inspired by *Papers, Please*, *P
 **Current Version:** See [CHANGELOG.md](CHANGELOG.md) for latest release information and version history.
 
 WARNING
-This is Buggy As Shit.  If you are not using exactly whatever kludge windows pythong default install I am using, this might not even work. Expect bugs, expect failure. If you are here and reading this, you got in early, cool beans.
+This is Buggy As Shit.  If you are not using exactly whatever kludge windows python bash default install I am using, this might not even work or will be unexpectedly ugly. Expect bugs, expect failure. If you are here and reading this, you got in early, cool beans. Stable build coming after unstable 0.1.1 release for early alpha and to maybe point hapless game  playing agents at.
 
 **📖 Documentation:**
 - **[Player Guide](docs/PLAYERGUIDE.md)** - How to play, controls, and strategies  
