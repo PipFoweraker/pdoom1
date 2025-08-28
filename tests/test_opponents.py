@@ -186,11 +186,11 @@ class TestOpponentAI(unittest.TestCase):
 class TestCreateDefaultOpponents(unittest.TestCase):
     """Test the default opponents creation function."""
     
-    def test_creates_three_opponents(self):
-        """Test that create_default_opponents returns exactly 3 opponents."""
+    def test_creates_four_opponents(self):
+        """Test that create_default_opponents returns exactly 4 opponents."""
         opponents = create_default_opponents()
         
-        self.assertEqual(len(opponents), 3)
+        self.assertEqual(len(opponents), 4)
         self.assertIsInstance(opponents, list)
         
         for opponent in opponents:
@@ -289,7 +289,7 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
     def test_gamestate_has_opponents(self):
         """Test that GameState initializes with opponents."""
         self.assertIsInstance(self.game_state.opponents, list)
-        self.assertEqual(len(self.game_state.opponents), 3)
+        self.assertEqual(len(self.game_state.opponents), 4)
         
         for opponent in self.game_state.opponents:
             self.assertIsInstance(opponent, Opponent)
