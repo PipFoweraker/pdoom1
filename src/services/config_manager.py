@@ -137,7 +137,7 @@ class ConfigManager:
             
             # Audio Settings
             "audio": {
-                "sound_enabled": True,
+                "sound_enabled": False,
                 "master_volume": 1.0,
                 "ui_sounds": True,
                 "feedback_sounds": True

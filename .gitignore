@@ -72,3 +72,6 @@ leaderboard.json
 # User keybinding customizations (local preferences)
 keybindings.json
 tutorial_settings.json
+
+# User configuration files (modified during gameplay)
+configs/default.json
