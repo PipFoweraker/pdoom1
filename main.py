@@ -1055,7 +1055,7 @@ def handle_end_game_menu_click(mouse_pos, w, h):
             elif i == 3:  # Settings
                 overlay_content = create_settings_content()
                 overlay_title = "Settings"
-                current_state = 'overlay'
+                push_navigation_state('overlay')
             elif i == 4:  # Submit Feedback
                 # Reset and pre-fill feedback form
                 reset_bug_report_form()
