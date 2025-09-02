@@ -2445,6 +2445,170 @@ def draw_tutorial_overlay(screen, tutorial_message, w, h):
     return button_rect
 
 
+def draw_researcher_pool_dialog(screen, hiring_dialog, w, h):
+    """
+    Draw the researcher pool hiring dialog showing available specialist researchers.
+    """
+    # Get game state from wherever it's accessible in UI (need to modify this)
+    # For now, get researchers from hiring_dialog context
+    from src.core.game_state import GameState
+    import main
+    
+    # Access the game state - this is a simplified approach
+    # In practice, you'd pass game_state as a parameter
+    game_state = getattr(main, 'game_state', None)
+    if not game_state or not hasattr(game_state, 'available_researchers'):
+        return []
+    
+    available_researchers = game_state.available_researchers
+    
+    # Create semi-transparent background overlay
+    overlay = pygame.Surface((w, h))
+    overlay.set_alpha(180)
+    overlay.fill((0, 0, 0))
+    screen.blit(overlay, (0, 0))
+    
+    # Dialog dimensions
+    dialog_width = int(w * 0.9)
+    dialog_height = int(h * 0.9)
+    dialog_x = (w - dialog_width) // 2
+    dialog_y = (h - dialog_height) // 2
+    
+    # Dialog background
+    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+    pygame.draw.rect(screen, (40, 50, 60), dialog_rect, border_radius=10)
+    pygame.draw.rect(screen, (100, 150, 200), dialog_rect, width=3, border_radius=10)
+    
+    # Fonts
+    title_font = pygame.font.Font(None, int(h * 0.04))
+    desc_font = pygame.font.Font(None, int(h * 0.025))
+    researcher_font = pygame.font.Font(None, int(h * 0.026))
+    detail_font = pygame.font.Font(None, int(h * 0.022))
+    
+    # Title
+    title_surface = title_font.render("Available Specialist Researchers", True, (255, 255, 255))
+    title_rect = title_surface.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
+    screen.blit(title_surface, title_rect)
+    
+    # Description
+    desc_text = "Select a researcher to hire for your team. Each has unique specializations and traits."
+    desc_surface = desc_font.render(desc_text, True, (200, 200, 200))
+    desc_rect = desc_surface.get_rect(centerx=dialog_rect.centerx, y=title_rect.bottom + 15)
+    screen.blit(desc_surface, desc_rect)
+    
+    clickable_rects = []
+    
+    # Researcher list
+    researcher_area_y = desc_rect.bottom + 30
+    researcher_item_height = 120
+    researcher_padding = 10
+    
+    for i, researcher in enumerate(available_researchers):
+        # Check if affordable
+        affordable = game_state.money >= researcher.salary_expectation and game_state.action_points >= 2
+        
+        # Researcher item background
+        item_y = researcher_area_y + i * (researcher_item_height + researcher_padding)
+        item_rect = pygame.Rect(dialog_x + 20, item_y, dialog_width - 40, researcher_item_height)
+        
+        # Color based on affordability
+        if affordable:
+            bg_color = (60, 80, 100)
+            border_color = (120, 180, 240)
+            text_color = (255, 255, 255)
+        else:
+            bg_color = (40, 40, 40)
+            border_color = (80, 80, 80)
+            text_color = (150, 150, 150)
+        
+        pygame.draw.rect(screen, bg_color, item_rect, border_radius=5)
+        pygame.draw.rect(screen, border_color, item_rect, width=2, border_radius=5)
+        
+        # Researcher name and specialization
+        name_text = f"{researcher.name}"
+        specialization_text = f"Specialization: {researcher.specialization.replace('_', ' ').title()}"
+        
+        name_surface = researcher_font.render(name_text, True, text_color)
+        spec_surface = detail_font.render(specialization_text, True, text_color)
+        
+        name_rect = name_surface.get_rect(x=item_rect.x + 15, y=item_rect.y + 10)
+        spec_rect = spec_surface.get_rect(x=item_rect.x + 15, y=name_rect.bottom + 5)
+        
+        screen.blit(name_surface, name_rect)
+        screen.blit(spec_surface, spec_rect)
+        
+        # Skill level and salary
+        skill_text = f"Skill Level: {researcher.skill_level}/10"
+        salary_text = f"Salary: ${researcher.salary_expectation} • 2 AP"
+        
+        skill_surface = detail_font.render(skill_text, True, text_color)
+        salary_surface = detail_font.render(salary_text, True, text_color)
+        
+        skill_rect = skill_surface.get_rect(x=item_rect.x + 15, y=spec_rect.bottom + 5)
+        salary_rect = salary_surface.get_rect(x=item_rect.right - 15 - salary_surface.get_width(), y=item_rect.y + 10)
+        
+        screen.blit(skill_surface, skill_rect)
+        screen.blit(salary_surface, salary_rect)
+        
+        # Traits
+        if researcher.traits:
+            traits_text = f"Traits: {', '.join(trait.replace('_', ' ').title() for trait in researcher.traits)}"
+        else:
+            traits_text = "Traits: None"
+        
+        # Limit traits text length
+        if len(traits_text) > 60:
+            traits_text = traits_text[:57] + "..."
+        
+        traits_surface = detail_font.render(traits_text, True, text_color)
+        traits_rect = traits_surface.get_rect(x=item_rect.x + 15, y=skill_rect.bottom + 5)
+        screen.blit(traits_surface, traits_rect)
+        
+        # Store clickable rect
+        if affordable:
+            clickable_rects.append({
+                'rect': item_rect,
+                'researcher_index': i,
+                'type': 'researcher_option'
+            })
+    
+    # Back and Cancel buttons
+    button_width = 120
+    button_height = 40
+    button_y = dialog_rect.bottom - 60
+    
+    # Back button (return to employee selection)
+    back_x = dialog_rect.centerx - button_width - 10
+    back_rect = pygame.Rect(back_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, (80, 120, 160), back_rect, border_radius=5)
+    pygame.draw.rect(screen, (120, 160, 200), back_rect, width=2, border_radius=5)
+    
+    back_text = detail_font.render("Back", True, (255, 255, 255))
+    back_text_rect = back_text.get_rect(center=back_rect.center)
+    screen.blit(back_text, back_text_rect)
+    
+    clickable_rects.append({
+        'rect': back_rect,
+        'type': 'back_to_subtypes'
+    })
+    
+    # Cancel button
+    cancel_x = dialog_rect.centerx + 10
+    cancel_rect = pygame.Rect(cancel_x, button_y, button_width, button_height)
+    pygame.draw.rect(screen, (100, 60, 60), cancel_rect, border_radius=5)
+    pygame.draw.rect(screen, (160, 100, 100), cancel_rect, width=2, border_radius=5)
+    
+    cancel_text = detail_font.render("Cancel", True, (255, 255, 255))
+    cancel_text_rect = cancel_text.get_rect(center=cancel_rect.center)
+    screen.blit(cancel_text, cancel_text_rect)
+    
+    clickable_rects.append({
+        'rect': cancel_rect,
+        'type': 'cancel'
+    })
+    
+    return clickable_rects
+
 def draw_hiring_dialog(screen, hiring_dialog, w, h):
     """
     Draw the employee hiring dialog with available employee subtypes for selection.
@@ -2459,6 +2623,10 @@ def draw_hiring_dialog(screen, hiring_dialog, w, h):
     """
     if not hiring_dialog:
         return []
+    
+    # Check if we're in researcher pool mode
+    if hiring_dialog.get("mode") == "researcher_pool":
+        return draw_researcher_pool_dialog(screen, hiring_dialog, w, h)
         
     # Create semi-transparent background overlay
     overlay = pygame.Surface((w, h))

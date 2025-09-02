@@ -189,6 +189,24 @@ ACTIONS = [
         "rules": search_unlock_rule  # Requires board members (refactored rule)
     },
     {
+
+        "name": "Refresh Researchers",
+        "desc": "Get new specialist researcher applications for hiring.",
+        "cost": 10,
+        "ap_cost": 1,
+        "upside": lambda gs: gs.refresh_researcher_hiring_pool(),
+        "downside": lambda gs: None,
+        "rules": lambda gs: hasattr(gs, 'researchers')  # Only available if researcher system is enabled
+    },
+    {
+        "name": "Team Building",
+        "desc": "Reduce researcher burnout and improve team cohesion ($50).",
+        "cost": 50,
+        "ap_cost": 1,
+        "upside": lambda gs: gs.conduct_researcher_management_action("team_building", cost=50),
+        "downside": lambda gs: None,
+        "rules": lambda gs: hasattr(gs, 'researchers') and len(gs.researchers) > 0
+
         "name": "Set Research Quality: Rushed",
         "desc": "Fast research: -40% time, -20% cost, +15% doom, +2 debt, -10% success",
         "cost": 0,

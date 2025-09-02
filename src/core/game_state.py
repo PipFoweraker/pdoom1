@@ -2,7 +2,9 @@ import random
 import json
 import os
 import pygame
-from typing import Tuple, Dict
+
+from typing import Tuple, Dict, Any, List
+
 from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
 from src.core.events import EVENTS
@@ -151,6 +153,11 @@ class GameState:
         
         # Onboarding system integration
         self.onboarding_started = False  # Track if tutorial has been offered
+        
+        # Enhanced Personnel System
+        self.researchers = []  # List of individual Researcher objects
+        self.available_researchers = []  # Researchers available for hiring this turn
+        self.researcher_hiring_pool_refreshed = False  # Track if hiring pool was refreshed
         
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
@@ -662,19 +669,43 @@ class GameState:
             self.compute = original_compute
             self.research_progress = original_research_progress
             
-            # Apply reduced changes
+            # Apply effectiveness reduction to the changes
             if doom_change != 0:
-                self._add('doom', int(doom_change * effectiveness))
+                # Apply researcher doom effects for research actions
+                if hasattr(self, 'researchers') and self.researchers and doom_change < 0:  # Doom reduction
+                    researcher_effects = self.get_researcher_productivity_effects()
+                    doom_bonus = researcher_effects.get('doom_reduction_bonus', 0)
+                    doom_change = int(doom_change * effectiveness * (1 + doom_bonus))
+                else:
+                    doom_change = int(doom_change * effectiveness)
+                self._add('doom', doom_change)
+                
             if rep_change != 0:
-                self._add('reputation', int(rep_change * effectiveness))
+                # Apply researcher reputation bonuses
+                if hasattr(self, 'researchers') and self.researchers:
+                    researcher_effects = self.get_researcher_productivity_effects()
+                    rep_bonus = researcher_effects.get('reputation_bonus', 0)
+                    rep_change = int(rep_change * effectiveness) + rep_bonus
+                else:
+                    rep_change = int(rep_change * effectiveness)
+                self._add('reputation', rep_change)
+                
             if money_change != 0:
                 self._add('money', int(money_change * effectiveness))
             if staff_change != 0:
                 self._add('staff', int(staff_change * effectiveness))
             if compute_change != 0:
                 self._add('compute', int(compute_change * effectiveness))
+                
             if research_change != 0:
-                self._add('research_progress', int(research_change * effectiveness))
+                # Apply researcher research speed bonuses
+                if hasattr(self, 'researchers') and self.researchers:
+                    researcher_effects = self.get_researcher_productivity_effects()
+                    speed_modifier = researcher_effects.get('research_speed_modifier', 1.0)
+                    research_change = int(research_change * effectiveness * speed_modifier)
+                else:
+                    research_change = int(research_change * effectiveness)
+                self._add('research_progress', research_change)
             
             # Add message about reduced effectiveness
             if effectiveness < 1.0:
@@ -1880,6 +1911,23 @@ class GameState:
         # Doom rises over time, faster with more staff
         doom_rise = 2 + self.staff // 5 + (1 if self.doom > 60 else 0)
         
+        # Apply researcher effects to doom calculation
+        if hasattr(self, 'researchers') and self.researchers:
+            researcher_effects = self.get_researcher_productivity_effects()
+            
+            # Apply doom reduction from safety specialists
+            if researcher_effects.get('doom_reduction_bonus', 0) > 0:
+                doom_reduction = doom_rise * researcher_effects['doom_reduction_bonus']
+                doom_rise = max(0, doom_rise - doom_reduction)
+                self.messages.append(f"Safety researchers reduced doom increase by {doom_reduction:.1f}")
+            
+            # Apply doom increase from capabilities research
+            if researcher_effects.get('doom_per_research', 0) > 0 and self.research_progress > 0:
+                capabilities_doom = self.research_progress * researcher_effects['doom_per_research']
+                doom_rise += capabilities_doom
+                if capabilities_doom > 0.5:  # Only show message if significant
+                    self.messages.append(f"Capabilities research increased doom risk by {capabilities_doom:.1f}")
+        
         # Opponents take their turns and contribute to doom
         opponent_doom = 0
         for opponent in self.opponents:
@@ -1890,6 +1938,10 @@ class GameState:
         # Add opponent doom contribution
         doom_rise += opponent_doom
         self.doom = min(self.max_doom, self.doom + doom_rise)
+
+        # Advance researchers (handle burnout, loyalty, traits)
+        if hasattr(self, 'researchers') and self.researchers:
+            self.advance_researchers()
 
         self.trigger_events()
         
@@ -2750,6 +2802,18 @@ class GameState:
         if not self.pending_hiring_dialog:
             return False, "No hiring dialog active."
         
+        # Special case: specialist researcher opens researcher pool
+        if subtype_id == "specialist_researcher":
+            # Ensure researcher pool is available
+            if not hasattr(self, 'available_researchers') or not self.available_researchers:
+                # Auto-refresh if empty
+                self.refresh_researcher_hiring_pool()
+            
+            # Switch to researcher hiring mode
+            self.pending_hiring_dialog["mode"] = "researcher_pool"
+            self.pending_hiring_dialog["selected_subtype"] = subtype_id
+            return True, "Showing available specialist researchers."
+        
         # Find the selected subtype
         selected_subtype = None
         for subtype_info in self.pending_hiring_dialog["available_subtypes"]:
@@ -2781,6 +2845,21 @@ class GameState:
             # Refund if something went wrong
             self.money += subtype_data["cost"]
             self.action_points += subtype_data["ap_cost"]
+            return False, message
+    
+    def select_researcher_from_pool(self, researcher_index: int):
+        """Handle player selection of a researcher from the hiring pool."""
+        if not self.pending_hiring_dialog or self.pending_hiring_dialog.get("mode") != "researcher_pool":
+            return False, "No researcher pool dialog active."
+        
+        # Hire the selected researcher
+        success, message = self.hire_researcher(researcher_index)
+        
+        if success:
+            # Clear the hiring dialog
+            self.pending_hiring_dialog = None
+            return True, message
+        else:
             return False, message
     
     def dismiss_hiring_dialog(self):
@@ -3075,3 +3154,349 @@ class GameState:
             return False, error_msg
         
         return True, "OK"
+    
+    # Enhanced Personnel System Methods
+    
+    def refresh_researcher_hiring_pool(self):
+        """Refresh the pool of available researchers for hiring."""
+        from src.core.researchers import generate_researcher, SPECIALIZATIONS
+        
+        # Clear current pool
+        self.available_researchers = []
+        
+        # Generate 3-5 new researchers with varied specializations
+        num_researchers = random.randint(3, 5)
+        specializations = list(SPECIALIZATIONS.keys())
+        
+        for _ in range(num_researchers):
+            # Ensure variety in specializations
+            specialization = random.choice(specializations)
+            researcher = generate_researcher(specialization)
+            self.available_researchers.append(researcher)
+        
+        self.researcher_hiring_pool_refreshed = True
+        self.messages.append(f"New researcher applications received: {num_researchers} candidates available for hiring.")
+    
+    def hire_researcher(self, researcher_index: int) -> Tuple[bool, str]:
+        """Hire a researcher from the available pool."""
+        if researcher_index >= len(self.available_researchers):
+            return False, "Invalid researcher selection."
+        
+        researcher = self.available_researchers[researcher_index]
+        cost = researcher.salary_expectation
+        
+        # Check if can afford
+        if self.money < cost:
+            return False, f"Cannot afford {researcher.name}'s salary of ${cost}. Have ${self.money}."
+        
+        if self.action_points < 2:  # Hiring costs 2 AP
+            return False, "Need 2 action points to hire researcher."
+        
+        # Hire the researcher
+        self._add('money', -cost)
+        self.action_points -= 2  # Direct action point deduction
+        self._add('staff', 1)
+        self._add('research_staff', 1)
+        
+        # Add to researchers list
+        self.researchers.append(researcher)
+        
+        # Remove from available pool
+        self.available_researchers.pop(researcher_index)
+        
+        # Configure the employee blob created by _add('staff', 1) above
+        if self.employee_blobs:
+            # Set the newest blob as specialist researcher
+            newest_blob = self.employee_blobs[-1]
+            newest_blob['subtype'] = 'specialist_researcher'
+            newest_blob['researcher_id'] = len(self.researchers) - 1  # Index of researcher
+            newest_blob['productive_action_index'] = 0  # Default action
+        
+        specialization_name = researcher.specialization.replace('_', ' ').title()
+        traits_str = ', '.join(researcher.traits) if researcher.traits else 'None'
+        
+        message = (f"Hired {researcher.name}! Specialization: {specialization_name}, "
+                  f"Skill: {researcher.skill_level}/10, Traits: {traits_str}")
+        
+        return True, message
+    
+    def get_researcher_productivity_effects(self) -> Dict[str, float]:
+        """Calculate total productivity effects from all researchers."""
+        effects = {
+            'research_speed_modifier': 1.0,
+            'doom_reduction_bonus': 0.0,
+            'doom_per_research': 0.0,
+            'negative_event_reduction': 0.0,
+            'team_productivity_bonus': 0.0,
+            'reputation_bonus': 0
+        }
+        
+        # Check for team player bonus
+        has_team_player = any('team_player' in r.traits for r in self.researchers)
+        
+        for researcher in self.researchers:
+            researcher_effects = researcher.get_specialization_effects()
+            productivity = researcher.get_effective_productivity()
+            
+            # Apply specialization effects scaled by productivity
+            for effect_type, value in researcher_effects.items():
+                if effect_type == 'research_speed_modifier':
+                    # Multiplicative bonus
+                    speed_bonus = (value - 1.0) * productivity
+                    effects[effect_type] *= (1.0 + speed_bonus)
+                else:
+                    # Additive bonuses
+                    if effect_type in effects:
+                        effects[effect_type] += value * productivity
+            
+            # Apply trait effects
+            for trait in researcher.traits:
+                if trait == 'team_player' and has_team_player:
+                    effects['team_productivity_bonus'] += 0.10
+                elif trait == 'media_savvy':
+                    effects['reputation_bonus'] += 1
+                elif trait == 'safety_conscious':
+                    effects['doom_reduction_bonus'] += 0.10 * productivity
+        
+        return effects
+    
+    def advance_researchers(self):
+        """Advance all researchers by one turn (called during end_turn)."""
+        for researcher in self.researchers:
+            researcher.advance_turn()
+        
+        # Check for leak events
+        for researcher in self.researchers:
+            if 'leak_prone' in researcher.traits:
+                if random.random() < 0.05:  # 5% chance
+                    self.messages.append(f"⚠️ {researcher.name} accidentally leaked research to competitors!")
+                    # Give small advantage to random opponent
+                    discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+                    if discovered_opponents:
+                        target = random.choice(discovered_opponents)
+                        target.progress = min(target.progress + 2, 100)
+                        self.messages.append(f"Competitor {target.name} gained research advantage.")
+    
+    def conduct_researcher_management_action(self, action_type: str, **kwargs) -> Dict[str, Any]:
+        """Conduct management actions for researchers."""
+        from src.core.researchers import adjust_researcher_salary, conduct_team_building, conduct_performance_review
+        
+        if action_type == "salary_review":
+            researcher_id = kwargs.get('researcher_id')
+            new_salary = kwargs.get('new_salary')
+            
+            if researcher_id >= len(self.researchers):
+                return {"success": False, "message": "Invalid researcher."}
+            
+            researcher = self.researchers[researcher_id]
+            cost_difference = new_salary - researcher.current_salary
+            
+            if cost_difference > 0 and self.money < cost_difference:
+                return {"success": False, "message": f"Cannot afford salary increase. Need ${cost_difference}."}
+            
+            result = adjust_researcher_salary(researcher, new_salary)
+            if result["success"] and cost_difference != 0:
+                self._add('money', -cost_difference)
+            
+            return result
+        
+        elif action_type == "team_building":
+            cost = kwargs.get('cost', 50)
+            # Note: Cost is already deducted by the action system, so we don't deduct it again here
+            return conduct_team_building(self.researchers, cost)
+        
+        elif action_type == "performance_review":
+            researcher_id = kwargs.get('researcher_id')
+            if researcher_id >= len(self.researchers):
+                return {"success": False, "message": "Invalid researcher."}
+            
+            researcher = self.researchers[researcher_id]
+            return conduct_performance_review(researcher)
+        
+        return {"success": False, "message": "Unknown management action."}
+    
+    # Enhanced Personnel System Event Handlers
+    
+    def _researcher_breakthrough(self):
+        """Handle researcher breakthrough event."""
+        if not self.researchers:
+            return
+        
+        # Select a random researcher for the breakthrough
+        researcher = random.choice(self.researchers)
+        
+        # Breakthrough effects based on specialization
+        if researcher.specialization == "safety":
+            doom_reduction = random.randint(3, 6)
+            rep_gain = random.randint(2, 4)
+            self._add('doom', -doom_reduction)
+            self._add('reputation', rep_gain)
+            self.messages.append(f"🔬 {researcher.name} achieved a major safety breakthrough! -{doom_reduction} doom, +{rep_gain} reputation")
+        elif researcher.specialization == "capabilities":
+            research_boost = random.randint(8, 12)
+            doom_risk = random.randint(1, 3)
+            self._add('research_progress', research_boost)
+            self._add('doom', doom_risk)
+            self.messages.append(f"⚡ {researcher.name} developed advanced AI capabilities! +{research_boost} research, +{doom_risk} doom risk")
+        elif researcher.specialization == "interpretability":
+            rep_gain = random.randint(3, 5)
+            self._add('reputation', rep_gain)
+            # Reveal competitor information
+            self._provide_competitor_update()
+            self.messages.append(f"🔍 {researcher.name} created breakthrough interpretability tools! +{rep_gain} reputation, competitor insights gained")
+        elif researcher.specialization == "alignment":
+            rep_gain = random.randint(2, 4)
+            self._add('reputation', rep_gain)
+            # Reduce negative event chance temporarily (handled by existing alignment effect)
+            self.messages.append(f"🎯 {researcher.name} solved a critical alignment problem! +{rep_gain} reputation, improved stability")
+        
+        # Boost researcher's loyalty and reduce burnout
+        researcher.loyalty = min(researcher.loyalty + 15, 100)
+        researcher.burnout = max(researcher.burnout - 10, 0)
+    
+    def _researcher_burnout_crisis(self):
+        """Handle researcher burnout crisis event."""
+        burnt_out_researchers = [r for r in self.researchers if r.burnout > 60]
+        if not burnt_out_researchers:
+            return
+        
+        # Apply crisis effects
+        for researcher in burnt_out_researchers:
+            researcher.burnout = min(researcher.burnout + 10, 100)
+            researcher.loyalty = max(researcher.loyalty - 10, 0)
+        
+        self.messages.append(f"⚠️ Burnout crisis affects {len(burnt_out_researchers)} researchers! Productivity decreased.")
+        self.messages.append("Consider team building or reducing workload to address burnout.")
+    
+    def _researcher_poaching_attempt(self):
+        """Handle competitor poaching attempt."""
+        if not self.researchers:
+            return
+        
+        # Target researcher with lowest loyalty
+        target = min(self.researchers, key=lambda r: r.loyalty)
+        competitor_names = ["TechCorp AI", "Future Systems", "Meta Labs", "DeepMind Rivals"]
+        competitor = random.choice(competitor_names)
+        
+        # Calculate poaching success chance based on loyalty
+        success_chance = max(0.1, (100 - target.loyalty) / 100 * 0.7)
+        
+        if random.random() < success_chance:
+            # Poaching successful
+            self.researchers.remove(target)
+            self._add('staff', -1)
+            self._add('research_staff', -1)
+            self.messages.append(f"💼 {competitor} successfully poached {target.name}! Lost key researcher.")
+            
+            # Remove corresponding employee blob
+            if self.employee_blobs:
+                for blob in self.employee_blobs:
+                    if blob.get('subtype') == 'specialist_researcher':
+                        self.employee_blobs.remove(blob)
+                        break
+        else:
+            # Poaching failed, but loyalty is affected
+            target.loyalty = max(target.loyalty - 5, 0)
+            self.messages.append(f"🛡️ {competitor} attempted to poach {target.name}, but they remained loyal!")
+            self.messages.append("Consider salary adjustments to improve researcher loyalty.")
+    
+    def _research_ethics_concern(self):
+        """Handle research ethics concern event."""
+        capabilities_researchers = [r for r in self.researchers if r.specialization == 'capabilities']
+        if not capabilities_researchers:
+            return
+        
+        researcher = random.choice(capabilities_researchers)
+        
+        # Ethical researcher may quit or reduce productivity
+        if random.random() < 0.3:  # 30% chance they quit
+            self.researchers.remove(researcher)
+            self._add('staff', -1) 
+            self._add('research_staff', -1)
+            self.messages.append(f"⚖️ {researcher.name} quit due to ethical concerns about capabilities research!")
+            self.messages.append("Consider focusing more on safety research to prevent future departures.")
+        else:
+            researcher.productivity *= 0.8  # 20% productivity reduction
+            researcher.loyalty = max(researcher.loyalty - 15, 0)
+            self.messages.append(f"⚖️ {researcher.name} raised ethical concerns. Their productivity and loyalty declined.")
+            self.messages.append("Address these concerns to maintain team cohesion.")
+    
+    def _researcher_conference_invitation(self):
+        """Handle researcher conference invitation."""
+        media_savvy_researchers = [r for r in self.researchers if 'media_savvy' in r.traits]
+        if not media_savvy_researchers:
+            # Fallback to any researcher
+            if not self.researchers:
+                return
+            researcher = random.choice(self.researchers)
+        else:
+            researcher = random.choice(media_savvy_researchers)
+        
+        # Conference provides reputation boost
+        rep_gain = random.randint(3, 6)
+        self._add('reputation', rep_gain)
+        
+        # Small chance for networking opportunities (money)
+        if random.random() < 0.4:
+            money_gain = random.randint(50, 100)
+            self._add('money', money_gain)
+            self.messages.append(f"🎤 {researcher.name} presented at a major conference! +{rep_gain} reputation, +${money_gain} from networking")
+        else:
+            self.messages.append(f"🎤 {researcher.name} presented at a major conference! +{rep_gain} reputation")
+        
+        researcher.loyalty = min(researcher.loyalty + 10, 100)
+    
+    def _collaborative_research_opportunity(self):
+        """Handle collaborative research opportunity."""
+        if len(self.researchers) < 2:
+            return
+        
+        # Requires investment but provides significant benefits
+        cost = random.randint(100, 200)
+        
+        if self.money >= cost:
+            research_gain = random.randint(15, 25)
+            rep_gain = random.randint(4, 7)
+            
+            self._add('money', -cost)
+            self._add('research_progress', research_gain)
+            self._add('reputation', rep_gain)
+            
+            self.messages.append(f"🤝 Collaborative research project launched! Cost: ${cost}")
+            self.messages.append(f"Benefits: +{research_gain} research progress, +{rep_gain} reputation")
+            
+            # Boost loyalty of participating researchers
+            for researcher in random.sample(self.researchers, min(2, len(self.researchers))):
+                researcher.loyalty = min(researcher.loyalty + 8, 100)
+        else:
+            self.messages.append(f"🤝 Collaborative research opportunity available, but need ${cost} to participate")
+    
+    def _researcher_loyalty_crisis(self):
+        """Handle researcher loyalty crisis."""
+        low_loyalty_researchers = [r for r in self.researchers if r.loyalty < 30]
+        if len(low_loyalty_researchers) < 2:
+            return
+        
+        # Crisis affects all low-loyalty researchers
+        departures = 0
+        for researcher in low_loyalty_researchers:
+            if random.random() < 0.4:  # 40% chance each leaves
+                self.researchers.remove(researcher)
+                self._add('staff', -1)
+                self._add('research_staff', -1)
+                departures += 1
+            else:
+                researcher.loyalty = max(researcher.loyalty - 10, 0)
+        
+        if departures > 0:
+            self.messages.append(f"😞 Loyalty crisis! {departures} researchers left the organization.")
+            # Remove corresponding employee blobs
+            for _ in range(departures):
+                for blob in self.employee_blobs:
+                    if blob.get('subtype') == 'specialist_researcher':
+                        self.employee_blobs.remove(blob)
+                        break
+        else:
+            self.messages.append("😞 Loyalty crisis among researchers! Morale significantly decreased.")
+        
+        self.messages.append("Consider salary increases and team building to restore loyalty.")
