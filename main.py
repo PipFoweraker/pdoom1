@@ -1089,7 +1089,7 @@ def handle_end_game_menu_keyboard(key):
         elif end_game_selected_item == 3:  # Settings
             overlay_content = create_settings_content()
             overlay_title = "Settings"
-            current_state = 'overlay'
+            push_navigation_state('overlay')
         elif end_game_selected_item == 4:  # Submit Feedback
             # Reset and pre-fill feedback form
             reset_bug_report_form()
