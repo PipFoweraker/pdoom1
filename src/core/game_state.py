@@ -1523,6 +1523,9 @@ class GameState:
         # Upgrades (right, as icons or buttons)
         u_rects = self._get_upgrade_rects(w, h)
         for idx, rect in enumerate(u_rects):
+            # Skip None rectangles (unavailable/hidden upgrades)
+            if rect is None:
+                continue
             if self._in_rect(mouse_pos, rect):
                 upg = self.upgrades[idx]
                 if not upg.get("purchased", False):
@@ -1614,64 +1617,76 @@ class GameState:
         return False
 
     def check_hover(self, mouse_pos, w, h):
-        # Reset all hover states
-        self.hovered_upgrade_idx = None
-        self.hovered_action_idx = None
-        self.endturn_hovered = False
-        
-        # Check activity log area for hover FIRST (highest priority for specific interactions)
-        activity_log_rect = self._get_activity_log_rect(w, h)
-        if self._in_rect(mouse_pos, activity_log_rect):
-            # Show tooltip about minimization upgrade if not purchased
-            if "compact_activity_display" not in self.upgrade_effects:
-                return "You may purchase the ability to minimise this for $150!"
-            elif hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
-                return "Activity Log (minimized) - Click expand button to show full log"
-            else:
-                return "Activity Log - Click minimize button to reduce screen space"
-        
-        # Check action buttons for hover
-        action_rects = self._get_action_rects(w, h)
-        for idx, rect in enumerate(action_rects):
-            if self._in_rect(mouse_pos, rect):
-                self.hovered_action_idx = idx
-                action = self.actions[idx]
-                # Show enhanced tooltip with cost and requirements
-                ap_cost = action.get("ap_cost", 1)
-                cost_str = f"${action['cost']}" if action['cost'] > 0 else "Free"
-                ap_str = f"{ap_cost} AP" if ap_cost > 1 else "1 AP"
-                
-                # Check if action is affordable
-                affordable = action['cost'] <= self.money and ap_cost <= self.action_points
-                status = "✓ Available" if affordable else "✗ Cannot afford"
-                
-                return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
-        
-        # Check upgrade buttons for hover
-        u_rects = self._get_upgrade_rects(w, h)
-        for idx, rect in enumerate(u_rects):
-            if self._in_rect(mouse_pos, rect):
-                self.hovered_upgrade_idx = idx
-                upgrade = self.upgrades[idx]
-                if not upgrade.get("purchased", False):
-                    # Enhanced tooltip for unpurchased upgrades
-                    affordable = upgrade['cost'] <= self.money
-                    status = "✓ Available" if affordable else "✗ Cannot afford"
-                    return f"{upgrade['name']}: {upgrade['desc']} (Cost: ${upgrade['cost']}) - {status}"
+        """Check for UI element hover with robust error handling."""
+        try:
+            # Reset all hover states
+            self.hovered_upgrade_idx = None
+            self.hovered_action_idx = None
+            self.endturn_hovered = False
+            
+            # Check activity log area for hover FIRST (highest priority for specific interactions)
+            activity_log_rect = self._get_activity_log_rect(w, h)
+            if self._in_rect(mouse_pos, activity_log_rect):
+                # Show tooltip about minimization upgrade if not purchased
+                if "compact_activity_display" not in self.upgrade_effects:
+                    return "You may purchase the ability to minimise this for $150!"
+                elif hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
+                    return "Activity Log (minimized) - Click expand button to show full log"
                 else:
-                    return f"{upgrade['name']}: {upgrade['desc']} (Purchased)"
-        
-        # Check end turn button for hover
-        endturn_rect = self._get_endturn_rect(w, h)
-        if self._in_rect(mouse_pos, endturn_rect):
-            self.endturn_hovered = True
-            ap_remaining = self.action_points
-            if ap_remaining > 0:
-                return f"End Turn ({ap_remaining} AP remaining - these will be wasted!)"
-            else:
-                return "End Turn (All AP spent efficiently)"
-        
-        return None
+                    return "Activity Log - Click minimize button to reduce screen space"
+            
+            # Check action buttons for hover
+            action_rects = self._get_action_rects(w, h)
+            for idx, rect in enumerate(action_rects):
+                if self._in_rect(mouse_pos, rect):
+                    self.hovered_action_idx = idx
+                    action = self.actions[idx]
+                    # Show enhanced tooltip with cost and requirements
+                    ap_cost = action.get("ap_cost", 1)
+                    cost_str = f"${action['cost']}" if action['cost'] > 0 else "Free"
+                    ap_str = f"{ap_cost} AP" if ap_cost > 1 else "1 AP"
+                    
+                    # Check if action is affordable
+                    affordable = action['cost'] <= self.money and ap_cost <= self.action_points
+                    status = "✓ Available" if affordable else "✗ Cannot afford"
+                    
+                    return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
+            
+            # Check upgrade buttons for hover
+            u_rects = self._get_upgrade_rects(w, h)
+            for idx, rect in enumerate(u_rects):
+                # Skip None rectangles (unavailable/hidden upgrades)
+                if rect is None:
+                    continue
+                if self._in_rect(mouse_pos, rect):
+                    self.hovered_upgrade_idx = idx
+                    upgrade = self.upgrades[idx]
+                    if not upgrade.get("purchased", False):
+                        # Enhanced tooltip for unpurchased upgrades
+                        affordable = upgrade['cost'] <= self.money
+                        status = "✓ Available" if affordable else "✗ Cannot afford"
+                        return f"{upgrade['name']}: {upgrade['desc']} (Cost: ${upgrade['cost']}) - {status}"
+                    else:
+                        return f"{upgrade['name']}: {upgrade['desc']} (Purchased)"
+            
+            # Check end turn button for hover
+            endturn_rect = self._get_endturn_rect(w, h)
+            if self._in_rect(mouse_pos, endturn_rect):
+                self.endturn_hovered = True
+                ap_remaining = self.action_points
+                if ap_remaining > 0:
+                    return f"End Turn ({ap_remaining} AP remaining - these will be wasted!)"
+                else:
+                    return "End Turn (All AP spent efficiently)"
+            
+            return None
+            
+        except Exception as e:
+            # Log the error with context for debugging
+            if hasattr(self, 'game_logger'):
+                self.game_logger.log(f"Error in check_hover: mouse_pos={mouse_pos}, w={w}, h={h}, error={e}")
+            # Return None gracefully so game continues to work
+            return None
 
     def _get_action_rects(self, w, h):
         # Place actions as tall buttons on left (moved down to accommodate opponents panel)
@@ -1735,9 +1750,17 @@ class GameState:
         # Merge and return in upgrade order (for ALL upgrades, with None for unavailable ones)
         out = [None] * len(self.upgrades)
         for j, (original_idx, upgrade) in enumerate(purchased): 
-            out[original_idx] = purchased_rects[j]
+            rect = purchased_rects[j]
+            if self._validate_rect(rect, f"purchased upgrade {original_idx}"):
+                out[original_idx] = rect
+            else:
+                out[original_idx] = None
         for k, (original_idx, upgrade) in enumerate(not_purchased): 
-            out[original_idx] = not_purchased_rects[k]
+            rect = not_purchased_rects[k]
+            if self._validate_rect(rect, f"unpurchased upgrade {original_idx}"):
+                out[original_idx] = rect
+            else:
+                out[original_idx] = None
         return out
     
     def _get_upgrade_icon_rect(self, upgrade_idx, w, h):
@@ -1815,10 +1838,58 @@ class GameState:
         base_x, base_y = self._get_activity_log_base_position(w, h)
         return (base_x + self.activity_log_position[0], base_y + self.activity_log_position[1])
 
+    def _safe_ui_operation(self, operation_name, operation_func, *args, **kwargs):
+        """Safely execute a UI operation with error handling and logging."""
+        try:
+            return operation_func(*args, **kwargs)
+        except Exception as e:
+            if hasattr(self, 'game_logger'):
+                self.game_logger.log(f"Error in {operation_name}: {e}, args={args}")
+            # Return a safe default value depending on the operation
+            if 'hover' in operation_name.lower():
+                return None  # For hover operations, return None (no tooltip)
+            elif 'click' in operation_name.lower():
+                return None  # For click operations, return None (no action taken)
+            else:
+                return False  # For other operations, return False
+    
+    def _validate_rect(self, rect, context=""):
+        """Validate that a rectangle is properly formatted."""
+        if rect is None:
+            return False
+        
+        try:
+            if len(rect) != 4:
+                if hasattr(self, 'game_logger'):
+                    self.game_logger.log(f"Invalid rectangle length in {context}: {rect}")
+                return False
+            
+            x, y, w, h = rect
+            if not all(isinstance(val, (int, float)) for val in rect):
+                if hasattr(self, 'game_logger'):
+                    self.game_logger.log(f"Invalid rectangle values in {context}: {rect}")
+                return False
+                
+            return True
+        except Exception as e:
+            if hasattr(self, 'game_logger'):
+                self.game_logger.log(f"Error validating rectangle in {context}: {rect}, error={e}")
+            return False
+
     def _in_rect(self, pt, rect):
-        x, y = pt
-        rx, ry, rw, rh = rect
-        return rx <= x <= rx+rw and ry <= y <= ry+rh
+        """Check if point is within rectangle, with graceful error handling."""
+        if not self._validate_rect(rect, "_in_rect"):
+            return False
+        
+        try:
+            x, y = pt
+            rx, ry, rw, rh = rect
+            return rx <= x <= rx+rw and ry <= y <= ry+rh
+        except (TypeError, ValueError) as e:
+            # Log the error for debugging
+            if hasattr(self, 'game_logger'):
+                self.game_logger.log(f"_in_rect error: pt={pt}, rect={rect}, error={e}")
+            return False
 
     def end_turn(self):
         # Prevent multiple end turn calls during processing
