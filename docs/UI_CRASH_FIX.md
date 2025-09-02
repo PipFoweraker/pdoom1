@@ -10,6 +10,14 @@
 - File: `src/core/game_state.py`, line 1820, in `_in_rect`
 - Called from: `check_hover` method when processing mouse hover events
 
+## Additional Navigation Fix
+
+**Issue**: End game menu "Settings" button was returning to main game launch window instead of proper settings menu.
+
+**Root Cause**: The `handle_end_game_menu_click()` function was directly setting `current_state = 'overlay'` instead of using the navigation stack system with `push_navigation_state('overlay')`.
+
+**Fix**: Changed to use proper navigation stack so settings overlay correctly returns to end game menu.
+
 ## Solution Implemented
 
 ### 1. Enhanced `_in_rect` Method
