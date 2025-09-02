@@ -2979,8 +2979,7 @@ class GameState:
         # Remove from available pool
         self.available_researchers.pop(researcher_index)
         
-        # Add employee blob
-        self._add_employee_blobs(1)
+        # Configure the employee blob created by _add('staff', 1) above
         if self.employee_blobs:
             # Set the newest blob as specialist researcher
             newest_blob = self.employee_blobs[-1]
@@ -3078,10 +3077,7 @@ class GameState:
         
         elif action_type == "team_building":
             cost = kwargs.get('cost', 50)
-            if self.money < cost:
-                return {"success": False, "message": f"Cannot afford team building cost of ${cost}."}
-            
-            self._add('money', -cost)
+            # Note: Cost is already deducted by the action system, so we don't deduct it again here
             return conduct_team_building(self.researchers, cost)
         
         elif action_type == "performance_review":
