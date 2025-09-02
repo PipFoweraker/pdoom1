@@ -2,7 +2,9 @@ import random
 import json
 import os
 import pygame
+
 from typing import Tuple, Dict, Any, List
+
 from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
 from src.core.events import EVENTS
@@ -18,6 +20,7 @@ from src.core.employee_subtypes import get_available_subtypes, apply_subtype_eff
 from src.core.productive_actions import (get_employee_category, get_available_actions, 
                                check_action_requirements, get_default_action_index)
 from src.features.end_game_scenarios import end_game_scenarios
+from src.core.research_quality import TechnicalDebt, ResearchQuality, ResearchProject
 
 SCORE_FILE = "local_highscore.json"
 
@@ -88,6 +91,13 @@ class GameState:
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
         self.magical_orb_active = False  # Track if magical orb of seeing is purchased
+        
+        # Research Quality System - Technical Debt vs. Speed Trade-offs
+        self.technical_debt = TechnicalDebt()  # Track accumulated technical debt
+        self.current_research_quality = ResearchQuality.STANDARD  # Default research approach
+        self.active_research_projects = []  # List of ongoing research projects
+        self.completed_research_projects = []  # History of completed projects
+        self.research_quality_unlocked = False  # Unlocks after first research action
         
         # Core resources (from config)
         self.money = starting_resources['money']
@@ -2025,6 +2035,9 @@ class GameState:
         # Update spend tracking display
         self.update_spend_tracking()
         
+        # Check technical debt consequences (accidents, reputation risks, system failures)
+        self.check_debt_consequences()
+        
         # Reset spend tracking for next turn
         self.spend_this_turn = 0
         
@@ -2140,6 +2153,218 @@ class GameState:
                 self.highscore = score
         except Exception:
             pass
+    
+    # --- Research Quality System --- #
+    
+    def set_research_quality(self, quality: ResearchQuality) -> None:
+        """
+        Set the current research quality approach for future research actions.
+        
+        Args:
+            quality: The research quality level to use (rushed, standard, thorough)
+        """
+        self.current_research_quality = quality
+        self.messages.append(f"Research approach set to: {quality.value.title()}")
+        
+        # Unlock the research quality system on first use
+        if not self.research_quality_unlocked:
+            self.research_quality_unlocked = True
+            self.messages.append("🔬 Research Quality System unlocked! Choose your approach wisely.")
+    
+    def create_research_project(self, name: str, base_cost: int, base_duration: int) -> ResearchProject:
+        """
+        Create a new research project with the current quality settings.
+        
+        Args:
+            name: Project name/identifier
+            base_cost: Base monetary cost
+            base_duration: Base time cost in action points
+            
+        Returns:
+            Configured ResearchProject instance
+        """
+        project = ResearchProject(name, base_cost, base_duration)
+        project.set_quality_level(self.current_research_quality)
+        self.active_research_projects.append(project)
+        return project
+    
+    def complete_research_project(self, project: ResearchProject) -> None:
+        """
+        Mark a research project as completed and apply debt changes.
+        
+        Args:
+            project: The research project to complete
+        """
+        if project in self.active_research_projects:
+            self.active_research_projects.remove(project)
+        
+        project.completed = True
+        self.completed_research_projects.append(project)
+        
+        # Apply technical debt changes
+        modifiers = project.get_quality_modifiers()
+        if modifiers.debt_change != 0:
+            if modifiers.debt_change > 0:
+                self.technical_debt.add_debt(modifiers.debt_change)
+                self.messages.append(f"⚠️ Technical debt increased by {modifiers.debt_change} points")
+            else:
+                reduced = self.technical_debt.reduce_debt(abs(modifiers.debt_change))
+                if reduced > 0:
+                    self.messages.append(f"✅ Technical debt reduced by {reduced} points")
+    
+    def execute_debt_reduction_action(self, action_name: str) -> bool:
+        """
+        Execute a technical debt reduction action.
+        
+        Args:
+            action_name: Name of the debt reduction action to execute
+            
+        Returns:
+            True if action was successfully executed, False otherwise
+        """
+        from src.core.research_quality import get_debt_reduction_actions
+        
+        debt_actions = get_debt_reduction_actions()
+        action = next((a for a in debt_actions if a["name"] == action_name), None)
+        
+        if not action:
+            return False
+        
+        # Check cost requirements
+        if action.get("cost", 0) > self.money:
+            self.messages.append(f"❌ Insufficient funds for {action_name}")
+            return False
+        
+        # Check staff requirements
+        if action.get("requires_staff", False):
+            staff_type = action.get("staff_type", "research_staff")
+            min_staff = action.get("min_staff", 1)
+            available_staff = getattr(self, staff_type, 0)
+            
+            if available_staff < min_staff:
+                self.messages.append(f"❌ Need {min_staff} {staff_type.replace('_', ' ')} for {action_name}")
+                return False
+        
+        # Check action points
+        ap_cost = action.get("ap_cost", 1)
+        if self.action_points < ap_cost:
+            self.messages.append(f"❌ Need {ap_cost} Action Points for {action_name}")
+            return False
+        
+        # Execute the action
+        self.action_points -= ap_cost
+        
+        if action_name == "Refactoring Sprint":
+            cost = action["cost"]
+            self._add('money', -cost)
+            debt_reduction = random.randint(*action["debt_reduction"])
+            reduced = self.technical_debt.reduce_debt(debt_reduction)
+            self.messages.append(f"🔧 Refactoring sprint completed! Reduced technical debt by {reduced} points")
+            
+        elif action_name == "Safety Audit":
+            cost = action["cost"]
+            self._add('money', -cost)
+            reduced = self.technical_debt.reduce_debt(action["debt_reduction"][0])
+            rep_bonus = action.get("reputation_bonus", 0)
+            if rep_bonus > 0:
+                self._add('reputation', rep_bonus)
+            self.messages.append(f"🛡️ Safety audit completed! Reduced debt by {reduced} points, gained reputation")
+            
+        elif action_name == "Code Review":
+            available_researchers = getattr(self, "research_staff", 0)
+            cost_per = action["cost_per_researcher"]
+            total_cost = cost_per * available_researchers
+            
+            if self.money < total_cost:
+                self.messages.append(f"❌ Need ${total_cost}k for full code review")
+                return False
+                
+            self._add('money', -total_cost)
+            debt_reduction_per = action["debt_reduction_per_researcher"]
+            total_reduction = debt_reduction_per * available_researchers
+            reduced = self.technical_debt.reduce_debt(total_reduction)
+            self.messages.append(f"👥 Code review with {available_researchers} researchers completed! Reduced debt by {reduced} points")
+        
+        return True
+    
+    def get_research_effectiveness_modifier(self) -> float:
+        """
+        Get the current research effectiveness modifier based on technical debt.
+        
+        Returns:
+            Multiplier for research effectiveness (0.85 = 15% penalty)
+        """
+        return self.technical_debt.get_research_speed_penalty()
+    
+    def check_debt_consequences(self) -> None:
+        """
+        Check and apply consequences of accumulated technical debt.
+        Called during end_turn processing.
+        """
+        debt_level = self.technical_debt.accumulated_debt
+        
+        # Check for accident events
+        accident_chance = self.technical_debt.get_accident_chance()
+        if accident_chance > 0 and random.random() < accident_chance:
+            self._trigger_debt_accident()
+        
+        # Check for reputation risks
+        if self.technical_debt.has_reputation_risk() and random.random() < 0.1:
+            rep_loss = random.randint(1, 3)
+            self._add('reputation', -rep_loss)
+            self.messages.append(f"📰 Technical debt issues exposed in media! Lost {rep_loss} reputation")
+        
+        # Check for system failure events
+        if self.technical_debt.can_trigger_system_failure() and random.random() < 0.05:
+            self._trigger_system_failure()
+    
+    def _trigger_debt_accident(self) -> None:
+        """Trigger a technical debt-related accident."""
+        accident_types = [
+            ("Research setback due to buggy code", lambda: self._add('research_progress', -random.randint(5, 15))),
+            ("Security breach from poor validation", lambda: self._add('reputation', -random.randint(2, 4))),
+            ("Compute system crash from technical debt", lambda: self._add('compute', -random.randint(5, 10))),
+        ]
+        
+        accident_name, accident_effect = random.choice(accident_types)
+        accident_effect()
+        self.messages.append(f"💥 ACCIDENT: {accident_name}")
+    
+    def _trigger_system_failure(self) -> None:
+        """Trigger a major system failure due to excessive technical debt."""
+        failure_types = [
+            ("Critical system failure! Major research setback", 
+             lambda: (self._add('research_progress', -random.randint(20, 40)),
+                     self._add('reputation', -random.randint(3, 6)))),
+            ("Catastrophic infrastructure collapse! Financial and reputation damage",
+             lambda: (self._add('money', -random.randint(50, 100)),
+                     self._add('reputation', -random.randint(4, 8)))),
+            ("Major safety incident due to accumulated shortcuts!",
+             lambda: (self._add('doom', random.randint(10, 20)),
+                     self._add('reputation', -random.randint(5, 10)))),
+        ]
+        
+        failure_name, failure_effect = random.choice(failure_types)
+        failure_effect()
+        self.messages.append(f"🚨 SYSTEM FAILURE: {failure_name}")
+        
+        # Reduce some technical debt after a major failure (lessons learned)
+        reduced = self.technical_debt.reduce_debt(random.randint(3, 7))
+        self.messages.append(f"Lessons learned from failure. Technical debt reduced by {reduced} points.")
+    
+    def get_debt_summary_for_ui(self) -> Dict[str, int]:
+        """
+        Get technical debt summary for UI display.
+        
+        Returns:
+            Dictionary with debt information for UI rendering
+        """
+        summary = self.technical_debt.get_debt_summary()
+        summary["research_penalty"] = int((1.0 - self.get_research_effectiveness_modifier()) * 100)
+        summary["accident_chance"] = int(self.technical_debt.get_accident_chance() * 100)
+        summary["has_reputation_risk"] = self.technical_debt.has_reputation_risk()
+        summary["can_system_failure"] = self.technical_debt.can_trigger_system_failure()
+        return summary
 
     # --- Tutorial settings --- #
     TUTORIAL_SETTINGS_FILE = "tutorial_settings.json"
