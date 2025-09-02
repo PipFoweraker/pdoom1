@@ -103,7 +103,7 @@ class SoundManager:
             # Create popup sounds for UI feedback
             self._create_popup_sounds()
 
-        except (pygame.error, AttributeError, Exception):
+        except Exception:
             # If sound creation fails, note that audio is unavailable
             self.audio_available = False
     
