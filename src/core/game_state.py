@@ -197,6 +197,19 @@ class GameState:
         self.pending_popup_events = []  # Events waiting for player action
         self.enhanced_events_enabled = gameplay_config.get('enhanced_events_enabled', False)  # Flag to enable new event types
         
+        # Public Opinion & Media System
+        from src.features.public_opinion import PublicOpinion
+        from src.features.media_system import MediaSystem
+        self.company_name = "Your Lab"  # Default player organization name
+        self.public_opinion = PublicOpinion()
+        self.media_system = MediaSystem(self.public_opinion)
+        
+        # Initialize public opinion based on starting reputation
+        if self.reputation > 60:
+            self.public_opinion.trust_in_player = 60.0
+        elif self.reputation < 30:
+            self.public_opinion.trust_in_player = 40.0
+        
         # Initialize game logger
         self.logger = GameLogger(seed)
         
@@ -2040,6 +2053,15 @@ class GameState:
         
         # Reset spend tracking for next turn
         self.spend_this_turn = 0
+        
+        # Update Public Opinion & Media System
+        self.public_opinion.update_turn(self.turn + 1)  # Use next turn for media stories
+        new_stories = self.media_system.update_turn(self)
+        
+        # Report new media stories
+        if new_stories:
+            for story in new_stories:
+                self.messages.append(f"📰 {story.headline}")
         
         # Update UI transitions - animations advance each frame/turn
         self._update_ui_transitions()

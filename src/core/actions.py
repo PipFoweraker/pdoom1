@@ -13,6 +13,7 @@ def execute_research_action(gs, action_name: str, base_doom_reduction: int, base
         base_reputation_gain: Base reputation gain before modifiers
     """
     from src.core.research_quality import calculate_research_outcome
+    from src.features.public_opinion import create_media_story_from_action
     
     # Create a research project for this action
     project = gs.create_research_project(action_name, 0, 1)  # Cost and duration handled by action itself
@@ -36,6 +37,26 @@ def execute_research_action(gs, action_name: str, base_doom_reduction: int, base
     if not gs.research_quality_unlocked:
         gs.research_quality_unlocked = True
         gs.messages.append("🔬 Research Quality System unlocked! Choose your approach wisely.")
+    
+    # Generate media story if research has significant impact
+    if hasattr(gs, 'media_system') and reputation_change >= 2:
+        # Map action names to media-friendly types
+        action_mapping = {
+            "Safety Research": "safety_research",
+            "Governance Research": "safety_research", 
+            "Interpretability Research": "safety_research",
+            "AI Alignment Research": "safety_research"
+        }
+        
+        media_action_name = action_mapping.get(action_name, "safety_research")
+        company_name = getattr(gs, 'company_name', 'Your Lab')
+        
+        media_story = create_media_story_from_action(
+            media_action_name, company_name, gs.turn, reputation_change
+        )
+        
+        if media_story:
+            gs.media_system.public_opinion.add_media_story(media_story)
 
 def get_quality_modified_cost(base_cost: int, gs) -> int:
     """Get cost modified by current research quality."""
@@ -206,7 +227,8 @@ ACTIONS = [
         "upside": lambda gs: gs.conduct_researcher_management_action("team_building", cost=50),
         "downside": lambda gs: None,
         "rules": lambda gs: hasattr(gs, 'researchers') and len(gs.researchers) > 0
-
+    },
+    {
         "name": "Set Research Quality: Rushed",
         "desc": "Fast research: -40% time, -20% cost, +15% doom, +2 debt, -10% success",
         "cost": 0,
@@ -259,5 +281,52 @@ ACTIONS = [
         "upside": lambda gs: gs.execute_debt_reduction_action("Code Review"),
         "downside": lambda gs: None,
         "rules": lambda gs: gs.research_staff >= 1 and gs.technical_debt.accumulated_debt >= 1
+    },
+    # Media & Public Opinion Actions
+    {
+        "name": "Press Release",
+        "desc": "Issue press release to control narrative. Costs $50k, improves public trust.",
+        "cost": 50000,
+        "ap_cost": 1,
+        "upside": lambda gs: gs.media_system.execute_media_action('press_release', gs) if hasattr(gs, 'media_system') else None,
+        "downside": lambda gs: None,
+        "rules": lambda gs: hasattr(gs, 'media_system')
+    },
+    {
+        "name": "Exclusive Interview",
+        "desc": "High-impact interview with major outlet. Costs reputation and time.",
+        "cost": 0,
+        "ap_cost": 1,
+        "upside": lambda gs: gs.media_system.execute_media_action('exclusive_interview', gs) if hasattr(gs, 'media_system') else None,
+        "downside": lambda gs: None,
+        "rules": lambda gs: hasattr(gs, 'media_system') and gs.reputation >= 10
+    },
+    {
+        "name": "Damage Control",
+        "desc": "Reduce negative media coverage impact by 50%. Costs $200k.",
+        "cost": 200000,
+        "ap_cost": 1,
+        "upside": lambda gs: gs.media_system.execute_media_action('damage_control', gs) if hasattr(gs, 'media_system') else None,
+        "downside": lambda gs: None,
+        "rules": lambda gs: (hasattr(gs, 'media_system') and 
+                           any(story.story_type.value == 'scandal' for story in gs.public_opinion.active_stories))
+    },
+    {
+        "name": "Social Media Campaign", 
+        "desc": "Targeted social media push to improve public sentiment. Costs $75k.",
+        "cost": 75000,
+        "ap_cost": 1,
+        "upside": lambda gs: gs.media_system.execute_media_action('social_media_campaign', gs) if hasattr(gs, 'media_system') else None,
+        "downside": lambda gs: None,
+        "rules": lambda gs: hasattr(gs, 'media_system')
+    },
+    {
+        "name": "Public Statement",
+        "desc": "Issue statement on current events. Low cost, moderate impact. $10k.",
+        "cost": 10000,
+        "ap_cost": 1,
+        "upside": lambda gs: gs.media_system.execute_media_action('public_statement', gs) if hasattr(gs, 'media_system') else None,
+        "downside": lambda gs: None,
+        "rules": lambda gs: hasattr(gs, 'media_system')
     }
 ]
