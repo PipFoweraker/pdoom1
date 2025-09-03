@@ -232,6 +232,21 @@ Each employee performs specialized productive actions when requirements are met,
 - **Achievement feedback**: Celebratory 'Zabinga!' sound when research papers are completed
 - **Error handling**: Audio beep after 3 repeated identical errors (easter egg)
 
+### Context Window System
+**💡 Enhanced Help & Information:**
+- **Hover Information**: Move mouse over any UI element to see detailed context information
+- **Context Window**: Appears at bottom of screen with comprehensive details about hovered elements
+- **Minimize/Maximize**: Click the (-/+) button to toggle context window size
+- **Smart Content**: Shows costs, requirements, effects, and availability status
+- **Covers All Elements**: Resources, actions, upgrades, buttons all have rich context information
+- **Progressive Disclosure**: Information appears when needed, stays out of the way otherwise
+
+**What You'll See:**
+- **Action Details**: Full descriptions, AP/money costs, delegation options, requirements
+- **Resource Information**: Current values, explanations, and how they're used
+- **Upgrade Information**: Effects, costs, unlock requirements, and benefits
+- **Button Context**: Detailed explanations of what each button does
+
 ### Game Modes
 - **Weekly Seed**: This week's community challenge (same for everyone)
 - **Custom Seed**: Enter your own seed for repeatable scenarios

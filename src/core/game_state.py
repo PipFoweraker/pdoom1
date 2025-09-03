@@ -159,6 +159,10 @@ class GameState:
         self.available_researchers = []  # Researchers available for hiring this turn
         self.researcher_hiring_pool_refreshed = False  # Track if hiring pool was refreshed
         
+        # Context window tracking
+        self.context_window_minimized = False
+        self.current_context_info = None
+        
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
         self.hovered_action_idx = None
@@ -1474,6 +1478,13 @@ class GameState:
         self._add('doom', spike)
 
     def handle_click(self, mouse_pos, w, h):
+        # Check context window minimize/maximize button FIRST
+        if (hasattr(self, 'context_window_button_rect') and 
+            self.context_window_button_rect and 
+            self._in_rect(mouse_pos, self.context_window_button_rect)):
+            self.context_window_minimized = not getattr(self, 'context_window_minimized', False)
+            return None
+        
         # Check End Turn button FIRST for reliability (Issue #3 requirement)
         btn_rect = self._get_endturn_rect(w, h)
         if self._in_rect(mouse_pos, btn_rect) and not self.game_over:
@@ -1617,22 +1628,41 @@ class GameState:
         return False
 
     def check_hover(self, mouse_pos, w, h):
-        """Check for UI element hover with robust error handling."""
+        """Check for UI element hover with robust error handling and provide context information."""
         try:
             # Reset all hover states
             self.hovered_upgrade_idx = None
             self.hovered_action_idx = None
             self.endturn_hovered = False
+            self.current_context_info = None  # Reset context info
             
             # Check activity log area for hover FIRST (highest priority for specific interactions)
             activity_log_rect = self._get_activity_log_rect(w, h)
             if self._in_rect(mouse_pos, activity_log_rect):
-                # Show tooltip about minimization upgrade if not purchased
+                # Show context about activity log
                 if "compact_activity_display" not in self.upgrade_effects:
+                    self.current_context_info = {
+                        'title': 'Activity Log',
+                        'description': 'Shows recent events and actions. Shows events from the current turn only and clears automatically when you end your turn.',
+                        'details': [
+                            'Upgrade available: Compact Activity Display ($150)',
+                            'Upgrade adds minimize button for better screen space management'
+                        ]
+                    }
                     return "You may purchase the ability to minimise this for $150!"
                 elif hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
+                    self.current_context_info = {
+                        'title': 'Activity Log (Minimized)',
+                        'description': 'Activity log is currently minimized to save screen space.',
+                        'details': ['Click expand button to show full log', 'Shows current turn events when expanded']
+                    }
                     return "Activity Log (minimized) - Click expand button to show full log"
                 else:
+                    self.current_context_info = {
+                        'title': 'Activity Log',
+                        'description': 'Shows recent events and actions from the current turn. Clears automatically when you end your turn.',
+                        'details': ['Click minimize button to reduce screen space', 'Enhanced mode available later for full history']
+                    }
                     return "Activity Log - Click minimize button to reduce screen space"
             
             # Check action buttons for hover
@@ -1641,15 +1671,50 @@ class GameState:
                 if self._in_rect(mouse_pos, rect):
                     self.hovered_action_idx = idx
                     action = self.actions[idx]
-                    # Show enhanced tooltip with cost and requirements
+                    
+                    # Determine delegation status
+                    delegate_info = ""
+                    if action.get("delegatable", False) and self.can_delegate_action(action):
+                        delegate_ap = action.get("delegate_ap_cost", action.get("ap_cost", 1))
+                        delegate_eff = action.get("delegate_effectiveness", 1.0)
+                        if delegate_ap < action.get("ap_cost", 1):
+                            delegate_info = f"Can delegate: {delegate_ap} AP, {int(delegate_eff*100)}% effectiveness"
+                        else:
+                            delegate_info = f"Can delegate: {int(delegate_eff*100)}% effectiveness"
+                    
+                    # Get action requirements
+                    requirements = []
+                    if action.get("rules") and not action["rules"](self):
+                        requirements.append("Requirements not met")
+                    
                     ap_cost = action.get("ap_cost", 1)
+                    if action['cost'] > self.money:
+                        requirements.append(f"Need ${action['cost']} (have ${self.money})")
+                    if ap_cost > self.action_points:
+                        requirements.append(f"Need {ap_cost} AP (have {self.action_points})")
+                    
+                    # Build context info
+                    details = []
                     cost_str = f"${action['cost']}" if action['cost'] > 0 else "Free"
                     ap_str = f"{ap_cost} AP" if ap_cost > 1 else "1 AP"
+                    details.append(f"Cost: {cost_str}, {ap_str}")
                     
-                    # Check if action is affordable
+                    if delegate_info:
+                        details.append(delegate_info)
+                    if requirements:
+                        details.extend(requirements)
+                    else:
+                        details.append("✓ Available to execute")
+                    
+                    self.current_context_info = {
+                        'title': action['name'],
+                        'description': action['desc'],
+                        'details': details
+                    }
+                    
+                    # Return legacy tooltip for compatibility
                     affordable = action['cost'] <= self.money and ap_cost <= self.action_points
                     status = "✓ Available" if affordable else "✗ Cannot afford"
-                    
                     return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
             
             # Check upgrade buttons for hover
@@ -1661,8 +1726,35 @@ class GameState:
                 if self._in_rect(mouse_pos, rect):
                     self.hovered_upgrade_idx = idx
                     upgrade = self.upgrades[idx]
+                    
+                    # Build upgrade context
+                    details = []
                     if not upgrade.get("purchased", False):
-                        # Enhanced tooltip for unpurchased upgrades
+                        details.append(f"Cost: ${upgrade['cost']}")
+                        if upgrade['cost'] <= self.money:
+                            details.append("✓ Can afford")
+                        else:
+                            details.append(f"✗ Need ${upgrade['cost'] - self.money} more")
+                        
+                        # Add unlock requirements if any
+                        if upgrade.get("turn_req") and self.turn < upgrade["turn_req"]:
+                            details.append(f"Unlocks turn {upgrade['turn_req']}")
+                        if upgrade.get("staff_req") and self.staff < upgrade["staff_req"]:
+                            details.append(f"Requires {upgrade['staff_req']} staff")
+                    else:
+                        details.append("✓ Purchased and active")
+                        # Show effect details for purchased upgrades
+                        if "effect" in upgrade:
+                            details.append("Providing passive benefits")
+                    
+                    self.current_context_info = {
+                        'title': upgrade['name'],
+                        'description': upgrade['desc'],
+                        'details': details
+                    }
+                    
+                    # Return legacy tooltip
+                    if not upgrade.get("purchased", False):
                         affordable = upgrade['cost'] <= self.money
                         status = "✓ Available" if affordable else "✗ Cannot afford"
                         return f"{upgrade['name']}: {upgrade['desc']} (Cost: ${upgrade['cost']}) - {status}"
@@ -1674,10 +1766,105 @@ class GameState:
             if self._in_rect(mouse_pos, endturn_rect):
                 self.endturn_hovered = True
                 ap_remaining = self.action_points
+                
+                details = []
+                if ap_remaining > 0:
+                    details.append(f"Warning: {ap_remaining} AP will be wasted")
+                    details.append("Consider taking more actions this turn")
+                else:
+                    details.append("All AP spent efficiently")
+                
+                details.append("Advances to next turn")
+                details.append("Processes selected actions and events")
+                
+                self.current_context_info = {
+                    'title': 'End Turn',
+                    'description': 'Complete the current turn and advance to the next. All selected actions will be executed.',
+                    'details': details
+                }
+                
                 if ap_remaining > 0:
                     return f"End Turn ({ap_remaining} AP remaining - these will be wasted!)"
                 else:
                     return "End Turn (All AP spent efficiently)"
+            
+            # Check resource area for hover
+            # Money area
+            money_rect = pygame.Rect(int(w*0.04), int(h*0.11), int(w*0.15), int(h*0.03))
+            if self._in_rect(mouse_pos, money_rect):
+                details = [f"Current: ${self.money}"]
+                if hasattr(self, 'accounting_software_bought') and self.accounting_software_bought:
+                    change = getattr(self, 'last_balance_change', 0)
+                    if change != 0:
+                        sign = "+" if change > 0 else ""
+                        details.append(f"Last change: {sign}${change}")
+                
+                self.current_context_info = {
+                    'title': 'Money',
+                    'description': 'Your available funding for actions and upgrades. Generated by research progress and certain actions.',
+                    'details': details
+                }
+            
+            # Staff area
+            staff_rect = pygame.Rect(int(w*0.21), int(h*0.11), int(w*0.12), int(h*0.03))
+            if self._in_rect(mouse_pos, staff_rect):
+                details = [f"Total Staff: {self.staff}"]
+                if hasattr(self, 'admin_staff'):
+                    details.append(f"Admin: {self.admin_staff}")
+                if hasattr(self, 'research_staff'):
+                    details.append(f"Research: {self.research_staff}")
+                if hasattr(self, 'ops_staff'):
+                    details.append(f"Operations: {self.ops_staff}")
+                    
+                self.current_context_info = {
+                    'title': 'Staff',
+                    'description': 'Your team members. Each staff member provides +0.5 AP per turn. Specialized staff enable action delegation.',
+                    'details': details
+                }
+            
+            # Reputation area
+            rep_rect = pygame.Rect(int(w*0.35), int(h*0.11), int(w*0.13), int(h*0.03))
+            if self._in_rect(mouse_pos, rep_rect):
+                self.current_context_info = {
+                    'title': 'Reputation',
+                    'description': 'Your standing in the AI safety community. Gained through research and good decisions.',
+                    'details': [f"Current: {self.reputation}", "Higher reputation unlocks opportunities", "Can be lost through poor choices"]
+                }
+            
+            # Action Points area
+            ap_rect = pygame.Rect(int(w*0.49), int(h*0.11), int(w*0.12), int(h*0.03))
+            if self._in_rect(mouse_pos, ap_rect):
+                max_ap = self.max_action_points
+                details = [
+                    f"Current: {self.action_points}/{max_ap}",
+                    f"Base: 3 + Staff bonus: {max_ap - 3}",
+                    "Resets to maximum each turn"
+                ]
+                
+                self.current_context_info = {
+                    'title': 'Action Points (AP)',
+                    'description': 'Limits how many actions you can take per turn. Most actions cost 1 AP.',
+                    'details': details
+                }
+                
+            # P(Doom) area
+            doom_rect = pygame.Rect(int(w*0.62), int(h*0.11), int(w*0.18), int(h*0.03))
+            if self._in_rect(mouse_pos, doom_rect):
+                self.current_context_info = {
+                    'title': 'P(Doom)',
+                    'description': 'Probability of AI causing existential catastrophe. Your goal is to keep this low while competitors race ahead.',
+                    'details': [
+                        f"Current: {self.doom}/{self.max_doom}",
+                        "Reduced by safety research",
+                        "Game ends if it reaches maximum"
+                    ]
+                }
+            
+            return None  # No tooltip text for areas with context info only
+            
+        except Exception as e:
+            # Graceful fallback on any errors
+            return None
             
             return None
             

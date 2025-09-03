@@ -875,9 +875,14 @@ def draw_ui(screen, game_state, w, h):
     title = title_font.render("P(Doom): Bureaucracy Strategy", True, (205, 255, 220))
     screen.blit(title, (int(w*0.04), int(h*0.03)))
 
-    # Resources (top bar) - controlled by tutorial visibility
+    # Resources (top bar) - controlled by tutorial visibility with improved spacing
+    current_x = int(w*0.04)  # Starting position
+    y_pos = int(h*0.11)
+    
     if should_show_ui_element(game_state, 'money_display'):
-        screen.blit(big_font.render(f"Money: ${game_state.money}", True, (255, 230, 60)), (int(w*0.04), int(h*0.11)))
+        money_text = big_font.render(f"Money: ${game_state.money}", True, (255, 230, 60))
+        screen.blit(money_text, (current_x, y_pos))
+        current_x += money_text.get_width() + int(w*0.02)  # Add spacing
         
         # Cash flow indicator if accounting software is purchased
         if hasattr(game_state, 'accounting_software_bought') and game_state.accounting_software_bought:
@@ -888,10 +893,14 @@ def draw_ui(screen, game_state, w, h):
                 screen.blit(font.render(change_text, True, change_color), (int(w*0.04), int(h*0.13)))
     
     if should_show_ui_element(game_state, 'staff_display'):
-        screen.blit(big_font.render(f"Staff: {game_state.staff}", True, (255, 210, 180)), (int(w*0.21), int(h*0.11)))
+        staff_text = big_font.render(f"Staff: {game_state.staff}", True, (255, 210, 180))
+        screen.blit(staff_text, (current_x, y_pos))
+        current_x += staff_text.get_width() + int(w*0.02)  # Add spacing
     
     if should_show_ui_element(game_state, 'reputation_display'):
-        screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255)), (int(w*0.35), int(h*0.11)))
+        reputation_text = big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255))
+        screen.blit(reputation_text, (current_x, y_pos))
+        current_x += reputation_text.get_width() + int(w*0.025)  # Add slightly more spacing
     
     # Action Points with glow effect
     ap_color = (255, 255, 100)  # Yellow base color for AP
@@ -900,14 +909,33 @@ def draw_ui(screen, game_state, w, h):
         glow_intensity = int(127 * (game_state.ap_glow_timer / 30))  # Fade over 30 frames
         ap_color = (min(255, 255 + glow_intensity), min(255, 255 + glow_intensity), min(255, 100 + glow_intensity))
     
-    screen.blit(big_font.render(f"AP: {game_state.action_points}/{game_state.max_action_points}", True, ap_color), (int(w*0.49), int(h*0.11)))
+    ap_text = big_font.render(f"AP: {game_state.action_points}/{game_state.max_action_points}", True, ap_color)
+    screen.blit(ap_text, (current_x, y_pos))
+    current_x += ap_text.get_width() + int(w*0.025)  # Add spacing
     
-    screen.blit(big_font.render(f"p(Doom): {game_state.doom}/{game_state.max_doom}", True, (255, 80, 80)), (int(w*0.62), int(h*0.11)))
-    screen.blit(font.render(f"Opponent progress: {game_state.known_opp_progress if game_state.known_opp_progress is not None else '???'}/100", True, (240, 200, 160)), (int(w*0.84), int(h*0.11)))
-    # Second line of resources
-    screen.blit(big_font.render(f"Compute: {game_state.compute}", True, (100, 255, 150)), (int(w*0.04), int(h*0.135)))
-    screen.blit(big_font.render(f"Research: {game_state.research_progress}/100", True, (150, 200, 255)), (int(w*0.21), int(h*0.135)))
-    screen.blit(big_font.render(f"Papers: {game_state.papers_published}", True, (255, 200, 100)), (int(w*0.38), int(h*0.135)))
+    doom_text = big_font.render(f"p(Doom): {game_state.doom}/{game_state.max_doom}", True, (255, 80, 80))
+    screen.blit(doom_text, (current_x, y_pos))
+    current_x += doom_text.get_width() + int(w*0.02)  # Add spacing
+    
+    # Opponent progress (smaller font, positioned at the end)
+    if current_x + 200 < w:  # Only show if there's enough space
+        screen.blit(font.render(f"Opponent progress: {game_state.known_opp_progress if game_state.known_opp_progress is not None else '???'}/100", True, (240, 200, 160)), (current_x, y_pos + 5))
+    
+    # Second line of resources with improved spacing
+    current_x = int(w*0.04)  # Reset to starting position
+    y_pos_2 = int(h*0.135)
+    
+    compute_text = big_font.render(f"Compute: {game_state.compute}", True, (100, 255, 150))
+    screen.blit(compute_text, (current_x, y_pos_2))
+    current_x += compute_text.get_width() + int(w*0.02)  # Add spacing
+    
+    research_text = big_font.render(f"Research: {game_state.research_progress}/100", True, (150, 200, 255))
+    screen.blit(research_text, (current_x, y_pos_2))
+    current_x += research_text.get_width() + int(w*0.02)  # Add spacing
+    
+    papers_text = big_font.render(f"Papers: {game_state.papers_published}", True, (255, 200, 100))
+    screen.blit(papers_text, (current_x, y_pos_2))
+    current_x += papers_text.get_width() + int(w*0.02)  # Add spacing
     
     # Board member and audit risk display (if applicable)
     if hasattr(game_state, 'board_members') and game_state.board_members > 0:
@@ -1076,11 +1104,17 @@ def draw_ui(screen, game_state, w, h):
         upgrade_rects = get_compact_upgrade_rects(w, h, len(game_state.upgrades), num_purchased)
     else:
         # Use traditional layout
-        upgrade_rects = [pygame.Rect(rect_tuple) for rect_tuple in game_state._get_upgrade_rects(w, h)]
+        upgrade_rect_tuples = game_state._get_upgrade_rects(w, h)
+        upgrade_rects = []
+        for rect_tuple in upgrade_rect_tuples:
+            if rect_tuple is not None:
+                upgrade_rects.append(pygame.Rect(rect_tuple))
+            else:
+                upgrade_rects.append(None)  # Keep None for unavailable upgrades
     
     for idx, rect in enumerate(upgrade_rects):
-        if idx >= len(game_state.upgrades):
-            break
+        if idx >= len(game_state.upgrades) or rect is None:
+            continue  # Skip unavailable upgrades
             
         upg = game_state.upgrades[idx]
         is_purchased = upg.get("purchased", False)
@@ -1335,6 +1369,21 @@ def draw_ui(screen, game_state, w, h):
     # Draw version in bottom right corner (unobtrusive)
     draw_version_footer(screen, w, h)
     
+    # Draw context window (if context info is available)
+    if hasattr(game_state, 'current_context_info') and game_state.current_context_info:
+        context_minimized = getattr(game_state, 'context_window_minimized', False)
+        context_rect, context_button_rect = draw_context_window(
+            screen, game_state.current_context_info, w, h, context_minimized
+        )
+        
+        # Store context window rects for click handling
+        game_state.context_window_rect = context_rect
+        game_state.context_window_button_rect = context_button_rect
+    else:
+        # Clear rects when no context
+        game_state.context_window_rect = None
+        game_state.context_window_button_rect = None
+    
     # Draw popup events (overlay, drawn last to be on top)
     draw_popup_events(screen, game_state, w, h, font, big_font)
 
@@ -1494,6 +1543,110 @@ def draw_tooltip(screen, text, mouse_pos, w, h):
     if py+th > h: py = h-th-10
     pygame.draw.rect(screen, (40, 40, 80), (px, py, tw+12, th+12), border_radius=6)
     screen.blit(surf, (px+6, py+6))
+
+def draw_context_window(screen, context_info, w, h, minimized=False):
+    """
+    Draw a context window at the bottom of the screen showing detailed information.
+    
+    Args:
+        screen: pygame screen surface
+        context_info: dict with 'title', 'description', 'details' keys
+        w, h: screen dimensions
+        minimized: whether the context window is minimized
+    """
+    if not context_info:
+        return None, None  # No context to show
+    
+    # Context window dimensions
+    window_height = int(h * 0.08) if minimized else int(h * 0.2)
+    window_width = int(w * 0.98)
+    window_x = int(w * 0.01)
+    window_y = h - window_height - 10
+    
+    # Background
+    context_rect = pygame.Rect(window_x, window_y, window_width, window_height)
+    pygame.draw.rect(screen, (25, 35, 45), context_rect, border_radius=8)
+    pygame.draw.rect(screen, (80, 120, 160), context_rect, width=2, border_radius=8)
+    
+    # Header with title and minimize button
+    header_height = 25
+    header_rect = pygame.Rect(window_x, window_y, window_width, header_height)
+    pygame.draw.rect(screen, (35, 45, 55), header_rect, border_radius=8)  # Simplified border radius
+    
+    # Title
+    title_font = pygame.font.SysFont('Consolas', max(12, int(h*0.018)), bold=True)
+    title_color = (200, 220, 255)
+    title_text = title_font.render(str(context_info.get('title', 'Context')), True, title_color)
+    screen.blit(title_text, (window_x + 10, window_y + 5))
+    
+    # Minimize/Maximize button
+    button_size = 18
+    button_x = window_x + window_width - button_size - 5
+    button_y = window_y + 3
+    button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
+    
+    # Button background
+    pygame.draw.rect(screen, (60, 80, 100), button_rect, border_radius=3)
+    pygame.draw.rect(screen, (120, 140, 160), button_rect, width=1, border_radius=3)
+    
+    # Button symbol
+    symbol_font = pygame.font.SysFont('Arial', 12, bold=True)
+    symbol = '−' if not minimized else '+'
+    symbol_text = symbol_font.render(symbol, True, (200, 220, 255))
+    symbol_rect = symbol_text.get_rect(center=button_rect.center)
+    screen.blit(symbol_text, symbol_rect)
+    
+    if not minimized:
+        # Content area
+        content_y = window_y + header_height + 5
+        content_height = window_height - header_height - 10
+        lines = []  # Initialize lines
+        line_height = 16  # Default line height
+        
+        # Description
+        desc_font = pygame.font.SysFont('Consolas', max(10, int(h*0.016)))
+        description = str(context_info.get('description', ''))
+        if description:
+            # Simple word wrap description
+            words = description.split(' ')
+            current_line = ''
+            max_chars_per_line = max(20, (window_width - 20) // 8)  # Rough character estimate
+            
+            for word in words:
+                test_line = current_line + (' ' if current_line else '') + word
+                if len(test_line) <= max_chars_per_line:
+                    current_line = test_line
+                else:
+                    if current_line:
+                        lines.append(current_line)
+                    current_line = word
+            if current_line:
+                lines.append(current_line)
+            
+            # Render description lines
+            line_height = desc_font.get_height() + 2
+            current_y = content_y
+            for line in lines[:3]:  # Show up to 3 lines
+                if current_y + line_height > window_y + window_height - 5:
+                    break
+                line_text = desc_font.render(line, True, (180, 200, 220))
+                screen.blit(line_text, (window_x + 10, current_y))
+                current_y += line_height
+        
+        # Additional details
+        details = context_info.get('details', [])
+        if details and content_y + len(lines) * line_height + 10 < window_y + window_height:
+            detail_font = pygame.font.SysFont('Consolas', max(8, int(h*0.014)))
+            current_y = content_y + len(lines) * line_height + 10
+            
+            for detail in details[:2]:  # Show up to 2 detail lines
+                if current_y + detail_font.get_height() > window_y + window_height - 5:
+                    break
+                detail_text = detail_font.render(str(detail), True, (150, 170, 190))
+                screen.blit(detail_text, (window_x + 10, current_y))
+                current_y += detail_font.get_height() + 1
+    
+    return context_rect, button_rect
 
 def draw_scoreboard(screen, game_state, w, h, seed):
     # Scoreboard after game over

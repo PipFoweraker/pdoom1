@@ -96,6 +96,8 @@ P(Doom) offers a rich strategy experience with sophisticated systems that evolve
 - **🎨 Visual Feedback**: Smooth UI transitions and clear state indicators
 - **🔊 Audio Feedback**: Sound effects for achievements and important actions
 - **♿ Accessibility**: Keyboard navigation, scalable text, and comprehensive help system
+- **💡 Context Window System**: Comprehensive contextual help with detailed information on hover
+- **📐 Improved UI Layout**: Fixed kerning and dynamic spacing for better readability
 
 For complete gameplay details, see the **[Player Guide](docs/PLAYERGUIDE.md)**.
 

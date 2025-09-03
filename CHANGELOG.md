@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Service Layer Architecture**: `src/services/seed_manager.py` and `src/services/game_config_manager.py`
   - **Integration Layer**: `src/ui/settings_integration.py` for gradual adoption and compatibility
   - **Demo and Testing Tools**: `demo_settings.py` for interactive testing, `test_fixes.py` for validation
+- **🎨 UI/UX Improvements**: Major improvements to interface quality and information accessibility
+  - **Fixed Resource Bar Kerning**: Replaced fixed positioning with dynamic spacing for better readability
+  - **Context Window System**: Comprehensive contextual help system with detailed information on hover
+    - Minimizable context window at bottom of screen (20% height expanded, 8% minimized)
+    - Rich context information for all UI elements (resources, actions, upgrades, buttons)
+    - Professional dark theme styling with responsive design
+    - Progressive disclosure: detailed info when needed, hidden otherwise
+    - Click to minimize/maximize for user preference
+  - **Enhanced Hover Detection**: Extended existing hover system with rich context data
+  - **Improved Resource Display**: Dynamic spacing calculation adapts to text length and screen size
+  - **Better Information Density**: Contextual help reduces UI clutter while improving accessibility
 
 ### Fixed
 - **Critical Menu Alignment Bug**: Fixed crash when selecting "Launch with Custom Seed" from main menu
@@ -27,6 +38,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Graceful error handling for invalid mechanic names
   - Warning logging for stub implementation as placeholder for future enhancements
   - All first-time help content tests now pass (7/7 passing)
+- **UI Rendering Issues**: Fixed upgrade rectangle handling and context window compatibility
+  - Fixed None value handling in upgrade rectangle creation
+  - Added proper error handling for context window drawing
+  - Improved font size calculations with minimum size constraints
 
 ### Added
 - **Menu Structure Optimization**: Streamlined main menu and tutorial flow for improved user experience
