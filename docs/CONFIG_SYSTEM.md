@@ -1,5 +1,15 @@
 # Configuration System Documentation
 
+P(Doom) features multiple configuration systems:
+
+**🎯 Enhanced Settings System (Recommended)**: Modern settings UI with categorical organization, seed management, and community features. See [DEVELOPERGUIDE.md - Enhanced Settings System Architecture](DEVELOPERGUIDE.md#enhanced-settings-system-architecture) for full details.
+
+**⚙️ Legacy Configuration System (Below)**: Original JSON-based config system for advanced modding and custom game rules.
+
+---
+
+## Legacy Configuration System
+
 P(Doom) features a flexible configuration system that allows players and modders to customize game balance, UI settings, and advanced parameters. This system supports multiple named configurations stored locally.
 
 ## Table of Contents

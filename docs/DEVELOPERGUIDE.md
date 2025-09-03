@@ -7,22 +7,23 @@ For **installation and troubleshooting**, see the [README](../README.md).
 
 ## Table of Contents
 - [Development Setup](#development-setup) (Line 28)
-- [Custom Sound Overrides (sounds/)](#custom-sound-overrides-sounds) (Line 54)
-- [Project Structure](#project-structure) (Line 100)
-- [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 122)
-- [Opponents System Architecture](#opponents-system-architecture) (Line 318)
-- [Onboarding System Architecture](#onboarding-system-architecture) (Line 378)
-- [Testing Framework](#testing-framework) (Line 507)
-- [Adding New Content](#adding-new-content) (Line 563)
-- [Enhanced Event System Architecture](#enhanced-event-system-architecture) (Line 694)
-- [Milestone Events System](#milestone-events-system) (Line 774)
-- [Code Style & Guidelines](#code-style--guidelines) (Line 854)
-- [Game Logging System](#game-logging-system) (Line 875)
-- [Release & Deployment](#release--deployment) (Line 904)
-- [Milestone-Driven Special Events & Static Effects System](#milestone-driven-special-events--static-effects-system) (Line 963)
-- [Architecture Notes](#architecture-notes) (Line 1081)
-- [Tutorial & Onboarding System Architecture](#tutorial--onboarding-system-architecture) (Line 1142)
-- [Need Help?](#need-help) (Line 1224)
+- [Enhanced Settings System Architecture](#enhanced-settings-system-architecture) (Line 54)
+- [Custom Sound Overrides (sounds/)](#custom-sound-overrides-sounds) (Line 100)
+- [Project Structure](#project-structure) (Line 146)
+- [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 168)
+- [Opponents System Architecture](#opponents-system-architecture) (Line 364)
+- [Onboarding System Architecture](#onboarding-system-architecture) (Line 424)
+- [Testing Framework](#testing-framework) (Line 553)
+- [Adding New Content](#adding-new-content) (Line 609)
+- [Enhanced Event System Architecture](#enhanced-event-system-architecture) (Line 740)
+- [Milestone Events System](#milestone-events-system) (Line 820)
+- [Code Style & Guidelines](#code-style--guidelines) (Line 900)
+- [Game Logging System](#game-logging-system) (Line 921)
+- [Release & Deployment](#release--deployment) (Line 950)
+- [Milestone-Driven Special Events & Static Effects System](#milestone-driven-special-events--static-effects-system) (Line 1009)
+- [Architecture Notes](#architecture-notes) (Line 1127)
+- [Tutorial & Onboarding System Architecture](#tutorial--onboarding-system-architecture) (Line 1188)
+- [Need Help?](#need-help) (Line 1270)
 
 **Configuration System**: For config management and modding support, see [CONFIG_SYSTEM.md](CONFIG_SYSTEM.md).
 
@@ -51,6 +52,99 @@ python -m unittest discover tests -v
 # Run the game
 python main.py
 ```
+
+---
+
+## Enhanced Settings System Architecture
+
+P(Doom) features a comprehensive settings and configuration system designed for accessibility, customization, and community engagement.
+
+### System Architecture
+
+**Core Components:**
+- **src/services/seed_manager.py** — Centralized seed generation, validation, and management
+- **src/services/game_config_manager.py** — Custom game configuration creation and sharing
+- **src/ui/enhanced_settings.py** — Modern settings UI with categorical organization
+- **src/ui/settings_integration.py** — Integration layer for gradual adoption
+
+### Settings Categories
+
+**1. Audio Settings**
+- Master volume control
+- Sound effects on/off
+- Music volume (if implemented)
+- Audio accessibility options
+
+**2. Gameplay Settings** 
+- Game difficulty adjustments
+- Turn time limits
+- Auto-save frequency
+- Gameplay assists
+
+**3. Accessibility Settings**
+- Font scaling (0.5x to 2.0x)
+- High contrast mode
+- Screen reader support
+- Keyboard navigation enhancements
+
+**4. Game Configuration Mode**
+- Custom game rule modifications
+- Starting resource adjustments
+- Event frequency tuning
+- Victory condition customization
+
+### Seed Management System
+
+**Features:**
+- **Weekly Seeds**: Automatic generation of community seeds
+- **Custom Seeds**: User-provided seed validation and normalization
+- **Seed History**: Track and replay previous games
+- **Community Sharing**: Export/import seed configurations
+
+**Implementation:**
+```python
+from src.services.seed_manager import SeedManager
+
+# Get this week's community seed
+weekly_seed = SeedManager.get_weekly_seed()
+
+# Validate custom seed input
+if SeedManager.validate_custom_seed(user_input):
+    normalized_seed = SeedManager.normalize_seed(user_input)
+```
+
+### Game Configuration System
+
+**Purpose**: Enable community content creation and scenario sharing
+
+**Features:**
+- **Template System**: Pre-defined configuration templates
+- **CRUD Operations**: Create, read, update, delete custom configs
+- **Export/Import**: Share configurations as JSON files
+- **Validation**: Schema validation for configuration integrity
+
+**Usage:**
+```python
+from src.services.game_config_manager import GameConfigManager
+
+config_manager = GameConfigManager()
+
+# Create new configuration
+config_id = config_manager.create_config("My Custom Game", {
+    "starting_money": 500,
+    "doom_threshold": 75,
+    "event_frequency": 0.8
+})
+
+# Export for sharing
+config_manager.export_config(config_id, "my_game.json")
+```
+
+### Testing and Validation
+
+**Demo Script**: `demo_settings.py` - Interactive demonstration of all settings features
+**Test Suite**: `test_fixes.py` - Validates core functionality and integration
+**Manual Testing**: Use Settings menu → Enhanced Settings to test UI components
 
 ---
 
@@ -115,6 +209,7 @@ python main.py
 
 ## Project Structure
 
+### Core Game Files
 - **main.py** — Game entry point and menu system
 - **game_state.py** — Core game logic and state management
 - **actions.py** — Action definitions (as Python dicts)
@@ -123,12 +218,28 @@ python main.py
 - **events.py** — Event definitions and special event logic
 - **event_system.py** — Enhanced event system with deferred events and popups
 - **opponents.py** — Opponent AI and intelligence system
+
+### UI and Interface
 - **ui.py** — Pygame-based UI code with visual feedback integration
 - **overlay_manager.py** — Modular UI overlay and z-order management system
 - **visual_feedback.py** — Standardized visual feedback for clickable elements
+
+### Enhanced Settings System
+- **src/services/seed_manager.py** — Centralized seed generation, validation, and management
+- **src/services/game_config_manager.py** — Custom game configuration creation and sharing
+- **src/ui/enhanced_settings.py** — Modern settings UI with categorical organization
+- **src/ui/settings_integration.py** — Integration layer for gradual adoption
+
+### Audio and Feedback
 - **sound_manager.py** — Sound effects and audio feedback
 - **game_logger.py** — Comprehensive game logging system
+
+### Development and Testing
 - **tests/** — Automated tests for core logic
+- **demo_settings.py** — Interactive demonstration of enhanced settings features
+- **test_fixes.py** — Validation script for core functionality and integration
+
+### Documentation
 - **README.md** — Installation, troubleshooting, dependencies
 - **PLAYERGUIDE.md** — Player experience and gameplay guide
 - **DEVELOPERGUIDE.md** (this file) — Contributor documentation

@@ -5,7 +5,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- **🎯 Enhanced Settings System**: Comprehensive settings and configuration architecture
+  - **Custom Seed Management**: Fixed critical "Launch with Custom Seed" crash, added seed validation and normalization
+  - **Categorical Settings Organization**: Audio, Gameplay, Accessibility, and Game Configuration modes
+  - **Seed Management System**: Weekly community seeds, custom seed validation, seed history tracking
+  - **Game Configuration System**: Custom game rule modifications, scenario sharing, template system
+  - **Modern Settings UI**: `src/ui/enhanced_settings.py` with improved accessibility and user experience
+  - **Service Layer Architecture**: `src/services/seed_manager.py` and `src/services/game_config_manager.py`
+  - **Integration Layer**: `src/ui/settings_integration.py` for gradual adoption and compatibility
+  - **Demo and Testing Tools**: `demo_settings.py` for interactive testing, `test_fixes.py` for validation
+
 ### Fixed
+- **Critical Menu Alignment Bug**: Fixed crash when selecting "Launch with Custom Seed" from main menu
+  - Synchronized menu_items arrays across main.py, ui.py, and src/ui/menus.py
+  - Corrected menu handling logic in handle_menu_click() and handle_menu_keyboard()
+  - Restored full functionality of custom seed system with proper validation
 - **Critical Game Launch Crash Fix**: Fixed `AttributeError: 'OnboardingSystem' object has no attribute 'get_mechanic_help'` that prevented game startup
   - Implemented missing `get_mechanic_help()` method in `OnboardingSystem` class
   - Added comprehensive help content for core mechanics: staff hiring, upgrades, action points, and doom warnings

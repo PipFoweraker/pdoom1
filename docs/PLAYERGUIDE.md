@@ -73,7 +73,41 @@ Get automatic guidance when you:
 ### Getting Help
 - **During Tutorial**: Use `Next` to proceed or `Skip` to exit tutorial
 - **Anytime**: Press `H` key to open the Player Guide
-- **Main Menu**: Access Player Guide, README, and settings
+- **Main Menu**: Access Player Guide and enhanced settings system
+
+### Enhanced Settings & Configuration System
+P(Doom) features a comprehensive settings system organized into logical categories:
+
+**🔊 Audio Settings:**
+- Master sound control and volume adjustment
+- Individual sound effect toggles
+- Audio feedback preferences
+
+**⚙️ Game Configuration:**
+- Create custom game configurations with different starting resources
+- Set custom seeds for reproducible gameplay experiences
+- Export/import config + seed packages for community sharing
+- Templates: Standard, Hardcore, Sandbox, and Speedrun modes
+
+**🎮 Gameplay Settings:**
+- Auto-delegation preferences
+- Difficulty modifiers
+- Event frequency controls
+- Opponent intel display options
+
+**♿ Accessibility:**
+- Visual aid preferences
+- Keyboard navigation options
+- Text scaling and contrast settings
+
+**⌨️ Keybindings:**
+- Customize keyboard shortcuts
+- Review all available hotkeys
+
+**Community Features:**
+- Share config + seed combinations for challenges
+- Import community-created configurations
+- Export your setup for others to try
 
 ### User Interface & Accessibility
 P(Doom) features an enhanced UI system designed for accessibility and clear visual feedback:

@@ -11,6 +11,8 @@ This is Buggy As Shit.  If you are not using exactly whatever kludge windows pyt
 - **[Player Guide](docs/PLAYERGUIDE.md)** - How to play, controls, and strategies  
 - **[Developer Guide](docs/DEVELOPERGUIDE.md)** - Contributing, code structure, and testing
 - **[Configuration System](docs/CONFIG_SYSTEM.md)** - Game customization and settings
+- **[Integration Guide](INTEGRATION_GUIDE.md)** - Enhanced settings system integration
+- **[Settings System Summary](SETTINGS_SYSTEM_SUMMARY.md)** - Overview of new features
 - **[Changelog](CHANGELOG.md)** - Version history and release notes
 
 ## Table of Contents
@@ -52,7 +54,31 @@ pip install -r requirements.txt
 python main.py
 ```
 
-The game will open with a main menu where you can launch the game, adjust settings, or configure gameplay options.
+The game opens with an enhanced main menu featuring:
+- **Launch Lab**: Start with weekly challenge seed
+- **Launch with Custom Seed**: Enter custom seed for reproducible gameplay
+- **Settings**: Organized settings (Audio, Gameplay, Accessibility, Keybindings)  
+- **Player Guide**: In-game documentation and help
+
+### Game Configuration & Community Features
+
+P(Doom) now includes a comprehensive configuration system for community engagement:
+
+```sh
+# Try the enhanced settings demo
+python demo_settings.py
+
+# Test the new functionality
+python test_fixes.py
+```
+
+**Community Features:**
+- Create custom game configurations with different starting resources and difficulty
+- Share config + seed combinations for community challenges
+- Export/import configuration packages
+- Templates for Standard, Hardcore, Sandbox, and Speedrun modes
+
+For complete configuration details, see **[Configuration System](docs/CONFIG_SYSTEM.md)**.
 
 ## Game Features
 
@@ -62,6 +88,10 @@ P(Doom) offers a rich strategy experience with sophisticated systems that evolve
 - **⚡ Strategic Action Points**: Resource management system that scales with your organization  
 - **🏢 Milestone Events**: Unlock new mechanics as your lab grows (managers, board oversight, etc.)
 - **🤖 AI Opponents**: Compete against 3 unique labs with hidden information and espionage
+- **🎯 Enhanced Settings System**: Organized settings (Audio, Gameplay, Accessibility, Keybindings)
+- **⚙️ Game Configuration**: Create and share custom game configurations and seeds
+- **🌱 Seed Management**: Weekly challenge seeds, custom seeds, and community sharing
+- **🏆 Community Features**: Export/import config + seed packages for challenges
 - **Enhanced Events**: Advanced crisis management with deferral and response options
 - **🎨 Visual Feedback**: Smooth UI transitions and clear state indicators
 - **🔊 Audio Feedback**: Sound effects for achievements and important actions
@@ -100,6 +130,16 @@ For complete tutorial details, see the **[Player Guide](docs/PLAYERGUIDE.md#new-
 - Install pygame: `pip install pygame`
 - Check that all files are in the same directory
 
+**"Launch with Custom Seed" not working (Fixed):**
+- This issue has been resolved in the latest version
+- Menu items are now properly aligned between UI and click handlers
+- Custom seed functionality works correctly
+
+**Menu navigation issues (Fixed):**
+- Menu items now properly match between display and functionality
+- Keyboard and mouse navigation work consistently
+- Settings menu is now organized into logical categories
+
 **AttributeError crashes on startup (Fixed):**
 - If you encounter `AttributeError: 'OnboardingSystem' object has no attribute 'get_mechanic_help'`, update to the latest version
 - This critical launch crash has been fixed by implementing the missing method
@@ -128,10 +168,22 @@ The game automatically creates detailed logs in the `logs/` directory:
 - **Use**: Helpful for reporting bugs and debugging issues
 
 ### Testing the Installation
-Verify your installation works by running the test suite:
 
+**Quick functionality test:**
 ```sh
-# Run all tests (should show 152 tests passing, including milestone and static effects tests)
+python test_fixes.py
+```
+This validates that all systems are working properly, including the enhanced settings and configuration features.
+
+**Enhanced settings demonstration:**
+```sh
+python demo_settings.py
+```
+Interactive demo of the new settings menu system and game configuration features.
+
+**Full test suite (recommended for developers):**
+```sh
+# Run all tests (should show ~507 tests passing, takes about 38 seconds)
 python -m unittest discover tests -v
 ```
 
