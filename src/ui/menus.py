@@ -242,11 +242,11 @@ def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     
     # Menu items
     menu_items = [
-        "Launch with Weekly Seed",
+        "Launch Lab",
         "Launch with Custom Seed", 
-        "Options",
+        "Settings",
         "Player Guide",
-        "README"
+        "Exit"
     ]
     
     # Button layout

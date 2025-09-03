@@ -86,7 +86,7 @@ pygame.display.flip()
 navigation_stack = []
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Launch Lab", "Game Config", "Settings", "Exit"]
+menu_items = ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
 end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
@@ -275,13 +275,13 @@ def handle_menu_click(mouse_pos, w, h):
         w, h: Screen width and height for button positioning
     
     Updates global state based on which menu item was clicked:
-    - Weekly Seed: Immediately starts game with current weekly seed
-    - Custom Seed: Transitions to seed input prompt
-    - Options: Currently inactive (greyed out)
+    - Launch Lab: Start game with current weekly seed
+    - Launch with Custom Seed: Transitions to seed input prompt
+    - Options: Settings menu (audio, keybindings, etc.)
     - Player Guide: Shows docs/PLAYERGUIDE.md in scrollable overlay
     - README: Shows README.md in scrollable overlay
     """
-    global current_state, selected_menu_item, overlay_content, overlay_title
+    global current_state, selected_menu_item, overlay_content, overlay_title, seed
     
     # Calculate menu button positions (must match draw_main_menu layout)
     button_width = int(w * 0.4)
@@ -303,16 +303,19 @@ def handle_menu_click(mouse_pos, w, h):
             
             # Execute menu action based on selection
             if i == 0:  # Launch Lab (weekly seed)
-                seed_choice = "weekly"
+                seed = get_weekly_seed()
                 current_state = 'pre_game_settings'
-            elif i == 1:  # Game Config (affects gameplay)
-                available_configs = config_manager.list_available_configs()
-                config_selected_item = 0
-                current_state = 'config_select'
-            elif i == 2:  # Settings (audio, keybinds, accessibility)
+            elif i == 1:  # Launch with Custom Seed
+                current_state = 'custom_seed_prompt'
+                seed_input = ""  # Clear any previous input
+            elif i == 2:  # Settings
                 current_state = 'sounds_menu'
                 sounds_menu_selected_item = 0
-            elif i == 3:  # Exit
+            elif i == 3:  # Player Guide
+                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
+                overlay_title = "Player Guide"
+                push_navigation_state('overlay')
+            elif i == 4:  # Exit
                 pygame.quit()
                 sys.exit()
             break
@@ -344,7 +347,7 @@ def handle_menu_keyboard(key):
     
     Same functionality as handle_menu_click but for keyboard users.
     """
-    global selected_menu_item, current_state, overlay_content, overlay_title, available_configs, config_selected_item
+    global selected_menu_item, current_state, overlay_content, overlay_title, seed, seed_input
     
     if key == pygame.K_UP:
         # Move selection up, wrapping to bottom
@@ -355,16 +358,19 @@ def handle_menu_keyboard(key):
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
         if selected_menu_item == 0:  # Launch Lab (weekly seed)
-            seed_choice = "weekly"
-            push_navigation_state('pre_game_settings')
-        elif selected_menu_item == 1:  # Game Config
-            available_configs = config_manager.list_available_configs()
-            config_selected_item = 0
-            push_navigation_state('config_select')
-        elif selected_menu_item == 2:  # Settings (audio, keybinds, accessibility)
-            push_navigation_state('sounds_menu')
+            seed = get_weekly_seed()
+            current_state = 'pre_game_settings'
+        elif selected_menu_item == 1:  # Launch with Custom Seed
+            current_state = 'custom_seed_prompt'
+            seed_input = ""  # Clear any previous input
+        elif selected_menu_item == 2:  # Settings
+            current_state = 'sounds_menu'
             sounds_menu_selected_item = 0
-        elif selected_menu_item == 3:  # Exit
+        elif selected_menu_item == 3:  # Player Guide
+            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
+            overlay_title = "Player Guide"
+            push_navigation_state('overlay')
+        elif selected_menu_item == 4:  # Exit
             pygame.quit()
             sys.exit()
 
