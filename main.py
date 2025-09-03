@@ -102,7 +102,7 @@ config_selected_item = 0
 available_configs = []
 
 # Tutorial choice state
-tutorial_choice_selected_item = 1  # For tutorial choice navigation (0=No, 1=Yes) - Default to No
+tutorial_choice_selected_item = 0  # For tutorial choice navigation (0=No, 1=Yes) - Default to No
 
 # Pre-game settings state
 pre_game_settings = {
@@ -421,7 +421,7 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
         if button_rect.collidepoint(mx, my):
             selected_settings_item = i
             
-            if i == 4:  # Continue button
+            if i == 0:  # Continue button (now first)
                 current_state = 'seed_selection'
             else:
                 # Cycle through setting values when clicked
@@ -452,18 +452,18 @@ def handle_pre_game_settings_keyboard(key):
     elif key == pygame.K_DOWN:
         selected_settings_item = (selected_settings_item + 1) % 5
     elif key == pygame.K_RETURN:
-        if selected_settings_item == 4:  # Continue button
+        if selected_settings_item == 0:  # Continue button (now first)
             current_state = 'seed_selection'
         else:
             # Cycle through setting values
             cycle_setting_value(selected_settings_item)
     elif key == pygame.K_LEFT:
         # Allow left arrow to also cycle settings
-        if selected_settings_item < 4:
+        if selected_settings_item > 0:  # Not the Continue button
             cycle_setting_value(selected_settings_item, reverse=True)
     elif key == pygame.K_RIGHT:
         # Allow right arrow to cycle settings forward
-        if selected_settings_item < 4:
+        if selected_settings_item > 0:  # Not the Continue button
             cycle_setting_value(selected_settings_item)
     elif key == pygame.K_ESCAPE:
         if not pop_navigation_state():
@@ -474,14 +474,14 @@ def cycle_setting_value(setting_index, reverse=False):
     """Cycle through available values for a setting."""
     global pre_game_settings
     
-    if setting_index == 0:  # Research Intensity (Difficulty)
+    if setting_index == 1:  # Research Intensity (Difficulty) - now at index 1
         options = ["EASY", "STANDARD", "HARD"]
         current = pre_game_settings["difficulty"]
         current_idx = options.index(current) if current in options else 1
         new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
         pre_game_settings["difficulty"] = options[new_idx]
         
-    elif setting_index == 1:  # Audio Alerts Volume (Sound Volume)
+    elif setting_index == 2:  # Audio Alerts Volume (Sound Volume) - now at index 2
         options = [30, 50, 70, 80, 90, 100]
         current = pre_game_settings["sound_volume"]
         try:
@@ -491,14 +491,14 @@ def cycle_setting_value(setting_index, reverse=False):
         new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
         pre_game_settings["sound_volume"] = options[new_idx]
         
-    elif setting_index == 2:  # Visual Enhancement (Graphics Quality)
+    elif setting_index == 3:  # Visual Enhancement (Graphics Quality) - now at index 3
         options = ["LOW", "STANDARD", "HIGH"]
         current = pre_game_settings["graphics_quality"]
         current_idx = options.index(current) if current in options else 1
         new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
         pre_game_settings["graphics_quality"] = options[new_idx]
         
-    elif setting_index == 3:  # Safety Protocol Level
+    elif setting_index == 4:  # Safety Protocol Level - now at index 4
         options = ["MINIMAL", "STANDARD", "ENHANCED", "MAXIMUM"]
         current = pre_game_settings["safety_level"]
         current_idx = options.index(current) if current in options else 1

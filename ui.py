@@ -2989,11 +2989,11 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
     
     # Enhanced settings with realistic options
     settings_options = [
+        ("Continue", "▶ INITIALIZE LABORATORY"),
         ("Research Intensity", get_research_intensity_display(settings.get("difficulty", "STANDARD"))),
         ("Audio Alerts Volume", get_volume_display(settings.get("sound_volume", 80))),
         ("Visual Enhancement", get_graphics_display(settings.get("graphics_quality", "STANDARD"))),
-        ("Safety Protocol Level", get_safety_display(settings.get("safety_level", "STANDARD"))),
-        ("Continue", "▶ INITIALIZE LABORATORY")
+        ("Safety Protocol Level", get_safety_display(settings.get("safety_level", "STANDARD")))
     ]
     
     # Improved button layout with more space
@@ -3016,13 +3016,13 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
             button_state = ButtonState.NORMAL
         
         # Format text for display
-        if i < len(settings_options) - 1:  # Setting items with values
-            text = f"{setting_name}: {setting_value}"
-        else:  # Continue button with special styling
+        if i == 0:  # Continue button (now first)
             text = setting_value
+        else:  # Setting items with values
+            text = f"{setting_name}: {setting_value}"
         
         # Draw enhanced button
-        if i == len(settings_options) - 1:  # Continue button gets special treatment
+        if i == 0:  # Continue button gets special treatment (now first)
             draw_enhanced_continue_button(screen, button_rect, text, button_state)
         else:
             draw_bureaucratic_setting_button(screen, button_rect, text, button_state, setting_name)
