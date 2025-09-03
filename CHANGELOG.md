@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - All first-time help content tests now pass (7/7 passing)
 
 ### Added
+- **Menu Structure Optimization**: Streamlined main menu and tutorial flow for improved user experience
+  - Simplified main menu from 7 to 4 core options: Launch Lab, Game Config, Settings, Exit
+  - Reordered tutorial choice to default to "No - Regular Mode" for faster game access
+  - Removed less essential options from main screen (Player Guide, README, Report Bug, Custom Seed)
+  - Maintained all functionality while reducing choice overload and cognitive load
 - **Batch 1 - Stability & UI Correctness Improvements**: Critical bug fixes and UI enhancements
   - **Navigation Back Button Fix (Issues #122, #118)**: Back button now shows at navigation depth >= 1 (previously > 1)
     - Added `should_show_back_button(depth)` helper function for clarity and future maintenance

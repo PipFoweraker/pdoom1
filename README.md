@@ -52,7 +52,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-The game will open with a main menu where you can choose game modes, access documentation, or report bugs.
+The game will open with a main menu where you can launch the game, adjust settings, or configure gameplay options.
 
 ## Game Features
 
@@ -141,7 +141,7 @@ If tests fail, check your Python and pygame installation.
 
 ### Getting Help
 
-- **In-game**: Use the "Report Bug" option in the main menu
+- **In-game**: Use the bug reporting system (accessible through end-game menu)
 - **Documentation**: See [Player Guide](docs/PLAYERGUIDE.md) for gameplay help
 - **Development**: See [Developer Guide](docs/DEVELOPERGUIDE.md) for code issues
 - **Releases**: Check [Changelog](CHANGELOG.md) for version history and known issues
