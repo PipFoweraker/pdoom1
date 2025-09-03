@@ -132,7 +132,15 @@ class ConfigManager:
                 "animation_speed": 1.0,        # Animation speed multiplier
                 "tooltip_delay": 500,          # Milliseconds before tooltip appears
                 "show_balance_changes": True,  # Show resource change indicators
-                "show_keyboard_shortcuts": True  # Show keyboard shortcuts on buttons
+                "show_keyboard_shortcuts": True,  # Show keyboard shortcuts on buttons
+                "context_window": {
+                    "enabled": True,           # Enable persistent context window
+                    "always_visible": True,    # Show context window even when nothing is hovered
+                    "minimized": False,        # Start minimized
+                    "height_percent": 0.13,    # Height as percentage of screen height (when expanded)
+                    "minimized_height_percent": 0.06,  # Height when minimized
+                    "position": "bottom"       # Position on screen (bottom only for now)
+                }
             },
             
             # Audio Settings

@@ -1970,7 +1970,7 @@ class GameState:
         return (x, y, icon_w, icon_h)
 
     def _get_endturn_rect(self, w, h):
-        return (int(w*0.39), int(h*0.88), int(w*0.22), int(h*0.07))
+        return (int(w*0.39), int(h*0.74), int(w*0.22), int(h*0.07))  # Moved up to account for context window
 
     def _get_mute_button_rect(self, w, h):
         button_size = int(min(w, h) * 0.04)

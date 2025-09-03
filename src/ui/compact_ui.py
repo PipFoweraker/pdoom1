@@ -400,11 +400,11 @@ def draw_compact_end_turn_button(screen, w, h, button_state):
     Returns:
         tuple: (x, y, width, height) rect for click detection
     """
-    # Position in bottom center, but smaller
+    # Position in bottom center, but above the context window
     button_width = int(w * 0.12)
     button_height = int(h * 0.04)
     button_x = w // 2 - button_width // 2
-    button_y = h - button_height - int(h * 0.02)
+    button_y = h - button_height - int(h * 0.15)  # Moved up to account for context window
     
     if PYGAME_AVAILABLE:
         rect = pygame.Rect(button_x, button_y, button_width, button_height)
