@@ -1097,7 +1097,8 @@ def draw_ui(screen, game_state, w, h):
     # Check if we should use compact UI mode
     use_compact_ui = not getattr(game_state, 'tutorial_enabled', True)
     
-    # Filter actions to only show available ones (hide locked actions)
+    # Always filter actions to only show available ones (hide locked actions)
+    # This should work regardless of tutorial mode for cleaner interface
     available_actions = []
     available_action_indices = []
     for idx, action in enumerate(game_state.actions):
@@ -1156,40 +1157,18 @@ def draw_ui(screen, game_state, w, h):
             # Traditional button with text (shorter in non-tutorial mode)
             from src.services.keybinding_manager import keybinding_manager
             
-            # Use shorter text when not in tutorial mode  
-            if getattr(game_state, 'tutorial_enabled', True):
-                # Full text for tutorial mode
-                button_text = action["name"]
-                if original_idx < 9:  # Only first 9 actions get keyboard shortcuts
-                    shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
-                    button_text = f"[{shortcut_key}] {action['name']}"
-            else:
-                # Shorter text for non-tutorial mode (descriptions will be in context window)
-                button_text = action["name"]
-                if original_idx < 9:
-                    shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
-                    button_text = f"[{shortcut_key}] {action['name']}"
+            # Use shorter text for cleaner interface - context window provides details
+            button_text = action["name"]
+            if original_idx < 9:  # Only first 9 actions get keyboard shortcuts
+                shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
+                button_text = f"[{shortcut_key}] {action['name']}"
             
             visual_feedback.draw_button(
                 screen, rect, button_text, button_state, FeedbackStyle.BUTTON
             )
             
-            # Only draw description text below button in tutorial mode
-            if getattr(game_state, 'tutorial_enabled', True):
-                desc_color = (190, 210, 255) if game_state.action_points >= ap_cost else (140, 150, 160)
-                
-                # Enhanced description for research actions showing current quality
-                base_desc = action['desc']
-                cost_info = f"(Cost: ${action['cost']}, AP: {ap_cost})"
-                
-                # Add research quality info for research actions
-                if hasattr(game_state, 'research_quality_unlocked') and game_state.research_quality_unlocked:
-                    if 'Research' in action['name'] and action['name'] not in ['Set Research Quality: Rushed', 'Set Research Quality: Standard', 'Set Research Quality: Thorough']:
-                        quality_suffix = f" [{game_state.current_research_quality.value.title()}]"
-                        base_desc += quality_suffix
-                
-                desc_text = font.render(f"{base_desc} {cost_info}", True, desc_color)
-                screen.blit(desc_text, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
+            # Description text is now shown in context window instead of cluttering buttons
+            # This eliminates text overflow issues
         
         # Draw action usage indicators (circles for repeatables) - works for both modes
         if hasattr(game_state, 'selected_action_instances'):
@@ -1496,12 +1475,13 @@ def draw_ui(screen, game_state, w, h):
     draw_version_footer(screen, w, h)
     
     # Always show context window (persistent at bottom)
-    # Use hover info if available, otherwise show default info
+    # Context window should always be visible to show action details
+    # This replaces the old text overflow on action buttons
     use_compact_ui = not getattr(game_state, 'tutorial_enabled', True)
     context_info = None
     
     # Check if context window should be shown based on configuration
-    show_context_window = True  # Default to true
+    show_context_window = True  # Always show context window for better UX
     if hasattr(game_state, 'config') and game_state.config:
         ctx_config = game_state.config.get('ui', {}).get('context_window', {})
         show_context_window = ctx_config.get('enabled', True)
@@ -1509,8 +1489,9 @@ def draw_ui(screen, game_state, w, h):
     else:
         always_visible = True
     
-    if show_context_window and (use_compact_ui or always_visible):
-        # In compact mode or when always_visible is true, generate context info based on hover state
+    # Always show context window (regardless of tutorial mode) for action details
+    if show_context_window:
+        # Generate context info based on hover state or provide default
         if hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx is not None:
             # Show action context
             if game_state.hovered_action_idx < len(game_state.actions):
