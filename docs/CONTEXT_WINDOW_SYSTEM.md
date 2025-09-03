@@ -2,26 +2,49 @@
 
 ## Overview
 
-The Context Window is a new UI feature that addresses text overflow on action and upgrade buttons by moving detailed information to a dedicated panel at the bottom of the screen. This system provides a cleaner interface while maintaining access to important game information.
+The Context Window is a retro-styled UI feature that addresses text overflow on action and upgrade buttons by moving detailed information to a dedicated DOS-style panel at the bottom of the screen. This system provides a cleaner interface while maintaining access to important game information with a distinctive 80's terminal aesthetic.
 
 ## Features
 
-### 1. Persistent Information Display
-- **Bottom Panel**: Always visible at the bottom of the screen in non-tutorial mode
-- **Dynamic Content**: Shows detailed information about hovered actions, upgrades, or default game state
-- **Configurable**: Height and behavior can be customized through configuration files
+### 1. Retro Terminal Design
+- **80's Aesthetic**: Distinctive techno-green color scheme reminiscent of old computer terminals
+- **DOS Typography**: All text rendered in ALL CAPS using Courier font for authentic retro feel
+- **Bottom Panel**: Takes up 8-10% of screen height, always visible in non-tutorial mode
+- **Terminal Colors**: Light readable green background with bright green text
 
-### 2. Improved Button Design
+### 2. Smart Action Filtering
+- **Hide Locked Actions**: Only shows actions that are currently available/unlocked
+- **Dynamic Layout**: Button layout adjusts based on number of available actions
+- **Clean Interface**: Reduces visual clutter by hiding unavailable options
+
+### 3. Improved Button Design
 - **Cleaner Text**: Action and upgrade buttons show only essential text (name + shortcut key)
 - **No Overflow**: Detailed descriptions moved to context window
+- **Hover Integration**: Full information appears in context window on mouse hover
 - **Compact Mode**: Utilizes existing compact UI system for icon-based buttons
 
-### 3. Interactive Features
+### 4. Interactive Features
 - **Hover Detection**: Automatically updates when hovering over UI elements
 - **Minimize/Maximize**: Toggle button to collapse/expand the context window
 - **Responsive Layout**: Adjusts to different screen sizes
+- **Smart Mapping**: Proper click and hover handling for filtered actions
 
 ## Implementation Details
+
+### Action Filtering System
+```python
+# Filter actions to only show available ones (hide locked actions)
+available_actions = []
+available_action_indices = []
+for idx, action in enumerate(game_state.actions):
+    # Check if action is unlocked (no rules or rules return True)
+    if not action.get("rules") or action["rules"](game_state):
+        available_actions.append(action)
+        available_action_indices.append(idx)
+
+# Store mapping for click handling
+game_state.display_to_action_index_map = available_action_indices
+```
 
 ### Core Functions
 
@@ -30,23 +53,44 @@ The Context Window is a new UI feature that addresses text overflow on action an
 def create_action_context_info(action, game_state, action_idx):
     """Create context info for an action to display in the context window."""
     # Returns dict with 'title', 'description', 'details'
+    # Enhanced with delegation info and availability status
 
 def create_upgrade_context_info(upgrade, game_state, upgrade_idx):
     """Create context info for an upgrade to display in the context window."""
     # Returns dict with 'title', 'description', 'details'
+    # Shows purchase status and availability
 
 def get_default_context_info(game_state):
     """Get default context info when nothing is hovered."""
     # Returns dict with general game state information
+    # Shows turn, money, AP, and p(Doom) in DOS style
 ```
 
 #### UI Integration
 ```python
 def draw_context_window(screen, context_info, w, h, minimized=False, config=None):
-    """Draw the context window at the bottom of the screen."""
-    # Configurable height and positioning
+    """Draw the retro-styled context window at the bottom of the screen."""
+    # 80's techno-green color scheme
+    # DOS-style Courier font with ALL CAPS text
+    # Configurable height (8-10% of screen)
     # Returns context_rect and button_rect for click handling
 ```
+
+## Styling Details
+
+### Color Scheme
+- **Background**: `(40, 80, 40)` - Dark techno green
+- **Border**: `(100, 200, 100)` - Bright green outline
+- **Header**: `(60, 120, 60)` - Medium green for title bar
+- **Text Colors**:
+  - Title: `(200, 255, 200)` - Bright green
+  - Description: `(180, 255, 180)` - Medium bright green
+  - Details: `(150, 220, 150)` - Medium green
+
+### Typography
+- **Font**: Courier (monospace for DOS feel)
+- **Style**: ALL CAPS for authentic terminal aesthetic
+- **Sizes**: Responsive based on screen height
 
 ### Configuration System
 

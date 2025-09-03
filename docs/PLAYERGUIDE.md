@@ -232,20 +232,27 @@ Each employee performs specialized productive actions when requirements are met,
 - **Achievement feedback**: Celebratory 'Zabinga!' sound when research papers are completed
 - **Error handling**: Audio beep after 3 repeated identical errors (easter egg)
 
-### Context Window System
-**💡 Enhanced Help & Information:**
+### Context Window System (80's Terminal Style)
+**💡 Enhanced Help & Information with Retro Flair:**
 - **Hover Information**: Move mouse over any UI element to see detailed context information
-- **Context Window**: Appears at bottom of screen with comprehensive details about hovered elements
+- **DOS-Style Window**: Appears at bottom of screen (8-10% height) with distinctive 80's techno-green aesthetic
+- **ALL CAPS Display**: Information shown in terminal-style ALL CAPS text using Courier font
 - **Minimize/Maximize**: Click the (-/+) button to toggle context window size
 - **Smart Content**: Shows costs, requirements, effects, and availability status
-- **Covers All Elements**: Resources, actions, upgrades, buttons all have rich context information
+- **Clean Interface**: Only unlocked actions are shown, reducing visual clutter
 - **Progressive Disclosure**: Information appears when needed, stays out of the way otherwise
 
+**Retro Styling:**
+- **Colors**: Bright techno-green text on dark green background for authentic 80's terminal feel
+- **Typography**: Monospace Courier font in ALL CAPS for DOS authenticity
+- **Layout**: Horizontal information layout optimized for the thin terminal window
+
 **What You'll See:**
-- **Action Details**: Full descriptions, AP/money costs, delegation options, requirements
+- **Action Details**: Full descriptions, AP/money costs, delegation options, requirements (in ALL CAPS)
 - **Resource Information**: Current values, explanations, and how they're used
 - **Upgrade Information**: Effects, costs, unlock requirements, and benefits
-- **Button Context**: Detailed explanations of what each button does
+- **Filtered Actions**: Only available/unlocked actions appear in the interface
+- **Smart Mapping**: Proper click handling for filtered action lists
 
 ### Game Modes
 - **Weekly Seed**: This week's community challenge (same for everyone)
@@ -372,17 +379,28 @@ The competitors panel (between resources and actions) shows:
 
 **Top Bar:** Your current resources and game info
 **Competitors Panel:** Intelligence on discovered opponents (between resources and actions)
-**Left Panel:** Available actions you can take this turn  
+**Left Panel:** Available unlocked actions (filtered to show only what you can currently access)
 **Right Panel:** Available upgrades (becomes icons after purchase)
+**Bottom Context Window:** Retro 80's-style terminal showing detailed information (8-10% of screen height)
 **Bottom Center:** "END TURN" button
 **Bottom Left:** Activity log showing recent events
 
+### Context Window (Bottom Terminal)
+- **Retro Design**: 80's techno-green styling with DOS-style ALL CAPS text
+- **Smart Information**: Shows detailed info about hovered actions, upgrades, or resources
+- **Minimizable**: Click (-/+) button to collapse/expand
+- **Always Visible**: Persistent information display in non-tutorial mode
 
 ### Activity Log
 - Shows events from the current turn only
 - Clears automatically when you end your turn  
 - Displays action results, random events, and resource changes
 - **Enhanced mode** unlocked later: scroll through complete game history
+
+### Action Filtering
+- **Clean Interface**: Only shows actions that are currently unlocked/available
+- **Dynamic Layout**: Action buttons adjust based on number of available options
+- **No Clutter**: Locked actions are hidden until requirements are met
 
 ---
 
@@ -393,11 +411,18 @@ The competitors panel (between resources and actions) shows:
 **🔬 Safety Research** - Reduce p(Doom), gain reputation (expensive)
 **🏛️ Governance Research** - Reduce p(Doom), gain reputation (expensive)  
 **🖥️ Buy Compute** - Purchase compute resources for employee productivity
-**📈 Hire Staff** - Add team members (cost money each turn)
+**📈 Hire Staff** - Interactive hiring dialog to select specific employee types (prioritized in UI)
 **🕵️ Espionage** - Learn about competitor progress (risky)
 **🎯 Scout Opponent** - Focused intelligence gathering (unlocked turn 5+, risky)
 
-*Each action shows its cost and effects when you hover over it.*
+### Hiring System
+The **Hire Staff** action opens an interactive dialog where you can:
+- **Select Employee Type**: Choose from available specialist roles
+- **See Costs**: View exact hiring costs for each type
+- **Strategic Planning**: Pick the right staff for your current needs
+- **One Action Point**: Complete hiring process commits one AP
+
+*Each action shows its cost and effects in the context window when you hover over it.*
 
 ---
 

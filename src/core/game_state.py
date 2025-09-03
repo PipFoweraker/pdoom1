@@ -1517,19 +1517,36 @@ class GameState:
                                            mouse_pos[1] - (log_y + self.activity_log_position[1]))
             return None
 
-        # Actions (left)
-        a_rects = self._get_action_rects(w, h)
-        for idx, rect in enumerate(a_rects):
-            if self._in_rect(mouse_pos, rect):
-                if not self.game_over:
-                    # Check for undo (if action is already selected, try to undo it)
-                    is_undo = idx in self.selected_actions
-                    
-                    result = self.attempt_action_selection(idx, is_undo)
-                    
-                    # Return play_sound flag for main.py to handle sound
-                    return 'play_sound' if result['play_sound'] else None
-                return None
+        # Actions (left) - Handle filtered actions with display mapping
+        if hasattr(self, 'filtered_action_rects') and hasattr(self, 'display_to_action_index_map'):
+            # Use filtered action rects if available (when UI shows only unlocked actions)
+            action_rects = self.filtered_action_rects
+            for display_idx, rect in enumerate(action_rects):
+                if self._in_rect(mouse_pos, rect):
+                    if not self.game_over and display_idx < len(self.display_to_action_index_map):
+                        original_idx = self.display_to_action_index_map[display_idx]
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = original_idx in self.selected_actions
+                        
+                        result = self.attempt_action_selection(original_idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
+        else:
+            # Fallback to original action handling (show all actions)
+            a_rects = self._get_action_rects(w, h)
+            for idx, rect in enumerate(a_rects):
+                if self._in_rect(mouse_pos, rect):
+                    if not self.game_over:
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = idx in self.selected_actions
+                        
+                        result = self.attempt_action_selection(idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
 
         # Upgrades (right, as icons or buttons)
         u_rects = self._get_upgrade_rects(w, h)
@@ -1665,57 +1682,75 @@ class GameState:
                     }
                     return "Activity Log - Click minimize button to reduce screen space"
             
-            # Check action buttons for hover
-            action_rects = self._get_action_rects(w, h)
-            for idx, rect in enumerate(action_rects):
-                if self._in_rect(mouse_pos, rect):
-                    self.hovered_action_idx = idx
-                    action = self.actions[idx]
-                    
-                    # Determine delegation status
-                    delegate_info = ""
-                    if action.get("delegatable", False) and self.can_delegate_action(action):
-                        delegate_ap = action.get("delegate_ap_cost", action.get("ap_cost", 1))
-                        delegate_eff = action.get("delegate_effectiveness", 1.0)
-                        if delegate_ap < action.get("ap_cost", 1):
-                            delegate_info = f"Can delegate: {delegate_ap} AP, {int(delegate_eff*100)}% effectiveness"
-                        else:
-                            delegate_info = f"Can delegate: {int(delegate_eff*100)}% effectiveness"
-                    
-                    # Get action requirements
-                    requirements = []
-                    if action.get("rules") and not action["rules"](self):
-                        requirements.append("Requirements not met")
-                    
-                    ap_cost = action.get("ap_cost", 1)
-                    if action['cost'] > self.money:
-                        requirements.append(f"Need ${action['cost']} (have ${self.money})")
-                    if ap_cost > self.action_points:
-                        requirements.append(f"Need {ap_cost} AP (have {self.action_points})")
-                    
-                    # Build context info
-                    details = []
-                    cost_str = f"${action['cost']}" if action['cost'] > 0 else "Free"
-                    ap_str = f"{ap_cost} AP" if ap_cost > 1 else "1 AP"
-                    details.append(f"Cost: {cost_str}, {ap_str}")
-                    
-                    if delegate_info:
-                        details.append(delegate_info)
-                    if requirements:
-                        details.extend(requirements)
+            # Check action buttons for hover - Handle filtered actions
+            hovered_action = None
+            if hasattr(self, 'filtered_action_rects') and hasattr(self, 'display_to_action_index_map'):
+                # Use filtered action rects if available (when UI shows only unlocked actions)
+                action_rects = self.filtered_action_rects
+                for display_idx, rect in enumerate(action_rects):
+                    if self._in_rect(mouse_pos, rect):
+                        if display_idx < len(self.display_to_action_index_map):
+                            original_idx = self.display_to_action_index_map[display_idx]
+                            self.hovered_action_idx = original_idx
+                            hovered_action = self.actions[original_idx]
+                        break
+            else:
+                # Fallback to original action handling (show all actions)
+                action_rects = self._get_action_rects(w, h)
+                for idx, rect in enumerate(action_rects):
+                    if self._in_rect(mouse_pos, rect):
+                        self.hovered_action_idx = idx
+                        hovered_action = self.actions[idx]
+                        break
+            
+            # Build context info for hovered action
+            if hovered_action:
+                action = hovered_action
+                
+                # Determine delegation status
+                delegate_info = ""
+                if action.get("delegatable", False) and self.can_delegate_action(action):
+                    delegate_ap = action.get("delegate_ap_cost", action.get("ap_cost", 1))
+                    delegate_eff = action.get("delegate_effectiveness", 1.0)
+                    if delegate_ap < action.get("ap_cost", 1):
+                        delegate_info = f"Can delegate: {delegate_ap} AP, {int(delegate_eff*100)}% effectiveness"
                     else:
-                        details.append("✓ Available to execute")
-                    
-                    self.current_context_info = {
-                        'title': action['name'],
-                        'description': action['desc'],
-                        'details': details
-                    }
-                    
-                    # Return legacy tooltip for compatibility
-                    affordable = action['cost'] <= self.money and ap_cost <= self.action_points
-                    status = "✓ Available" if affordable else "✗ Cannot afford"
-                    return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
+                        delegate_info = f"Can delegate: {int(delegate_eff*100)}% effectiveness"
+                        
+                # Get action requirements
+                requirements = []
+                if action.get("rules") and not action["rules"](self):
+                    requirements.append("Requirements not met")
+                
+                ap_cost = action.get("ap_cost", 1)
+                if action['cost'] > self.money:
+                    requirements.append(f"Need ${action['cost']} (have ${self.money})")
+                if ap_cost > self.action_points:
+                    requirements.append(f"Need {ap_cost} AP (have {self.action_points})")
+                
+                # Build context info
+                details = []
+                cost_str = f"${action['cost']}" if action['cost'] > 0 else "Free"
+                ap_str = f"{ap_cost} AP" if ap_cost > 1 else "1 AP"
+                details.append(f"Cost: {cost_str}, {ap_str}")
+                
+                if delegate_info:
+                    details.append(delegate_info)
+                if requirements:
+                    details.extend(requirements)
+                else:
+                    details.append("✓ Available to execute")
+                
+                self.current_context_info = {
+                    'title': action['name'],
+                    'description': action['desc'],
+                    'details': details
+                }
+                
+                # Return legacy tooltip for compatibility
+                affordable = action['cost'] <= self.money and ap_cost <= self.action_points
+                status = "✓ Available" if affordable else "✗ Cannot afford"
+                return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
             
             # Check upgrade buttons for hover
             u_rects = self._get_upgrade_rects(w, h)

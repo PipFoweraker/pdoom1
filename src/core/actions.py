@@ -152,6 +152,15 @@ ACTIONS = [
         "rules": None
     },
     {
+        "name": "Hire Staff",
+        "desc": "Open hiring dialog to select from available employee types.",
+        "cost": 0,  # No immediate cost - cost depends on selection
+        "ap_cost": 1,
+        "upside": lambda gs: gs._trigger_hiring_dialog(),
+        "downside": lambda gs: None,
+        "rules": None
+    },
+    {
         "name": "Scout Opponents",
         "desc": "Gather intelligence on competing labs; reveals their capabilities.",
         "cost": 75,
@@ -163,15 +172,6 @@ ACTIONS = [
         "upside": lambda gs: gs._scout_opponents(),
         "downside": lambda gs: None,
         "rules": scout_unlock_rule
-    },
-    {
-        "name": "Hire Staff",
-        "desc": "Open hiring dialog to select from available employee types.",
-        "cost": 0,  # No immediate cost - cost depends on selection
-        "ap_cost": 1,
-        "upside": lambda gs: gs._trigger_hiring_dialog(),
-        "downside": lambda gs: None,
-        "rules": None
     },
     {
         "name": "Hire Manager",

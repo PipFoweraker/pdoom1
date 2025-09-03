@@ -1097,36 +1097,61 @@ def draw_ui(screen, game_state, w, h):
     # Check if we should use compact UI mode
     use_compact_ui = not getattr(game_state, 'tutorial_enabled', True)
     
+    # Filter actions to only show available ones (hide locked actions)
+    available_actions = []
+    available_action_indices = []
+    for idx, action in enumerate(game_state.actions):
+        # Check if action is unlocked (no rules or rules return True)
+        if not action.get("rules") or action["rules"](game_state):
+            available_actions.append(action)
+            available_action_indices.append(idx)
+    
+    # Store the mapping for click handling
+    game_state.display_to_action_index_map = available_action_indices
+    
     if use_compact_ui:
         # Import compact UI functions
         from src.ui.compact_ui import get_compact_action_rects, draw_compact_action_button
         
-        # Use compact layout
-        action_rects = get_compact_action_rects(w, h, len(game_state.actions))
+        # Use compact layout with filtered actions
+        action_rects = get_compact_action_rects(w, h, len(available_actions))
     else:
-        # Use traditional layout
-        action_rects = [pygame.Rect(rect_tuple) for rect_tuple in game_state._get_action_rects(w, h)]
+        # Use traditional layout with filtered actions - calculate rects manually
+        count = len(available_actions)
+        base_x = int(w * 0.04)
+        base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
+        width = int(w * 0.32)
+        height = int(h * 0.065)  # Made slightly smaller to fit more actions
+        gap = int(h * 0.02)  # Reduced gap slightly
+        action_rects = [
+            pygame.Rect(base_x, base_y + i * (height + gap), width, height)
+            for i in range(count)
+        ]
     
-    for idx, rect in enumerate(action_rects):
-        if idx >= len(game_state.actions):
+    # Store the action rects for click handling (with display indices)
+    game_state.filtered_action_rects = action_rects
+    
+    for display_idx, rect in enumerate(action_rects):
+        if display_idx >= len(available_actions):
             break
             
-        action = game_state.actions[idx]
+        action = available_actions[display_idx]
+        original_idx = available_action_indices[display_idx]  # Original index in game_state.actions
         ap_cost = action.get("ap_cost", 1)
         
         # Determine button state for visual feedback
         if game_state.action_points < ap_cost:
             button_state = ButtonState.DISABLED
-        elif idx in game_state.selected_actions:
+        elif original_idx in game_state.selected_actions:  # Use original index for selection check
             button_state = ButtonState.PRESSED
-        elif hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx == idx:
+        elif hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx == original_idx:
             button_state = ButtonState.HOVER
         else:
             button_state = ButtonState.NORMAL
         
         if use_compact_ui:
             # Draw compact button with icon and shortcut key
-            draw_compact_action_button(screen, rect, action, idx, button_state)
+            draw_compact_action_button(screen, rect, action, original_idx, button_state)
         else:
             # Traditional button with text (shorter in non-tutorial mode)
             from src.services.keybinding_manager import keybinding_manager
@@ -1135,14 +1160,14 @@ def draw_ui(screen, game_state, w, h):
             if getattr(game_state, 'tutorial_enabled', True):
                 # Full text for tutorial mode
                 button_text = action["name"]
-                if idx < 9:  # Only first 9 actions get keyboard shortcuts
-                    shortcut_key = keybinding_manager.get_action_display_key(f"action_{idx + 1}")
+                if original_idx < 9:  # Only first 9 actions get keyboard shortcuts
+                    shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
                     button_text = f"[{shortcut_key}] {action['name']}"
             else:
                 # Shorter text for non-tutorial mode (descriptions will be in context window)
                 button_text = action["name"]
-                if idx < 9:
-                    shortcut_key = keybinding_manager.get_action_display_key(f"action_{idx + 1}")
+                if original_idx < 9:
+                    shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
                     button_text = f"[{shortcut_key}] {action['name']}"
             
             visual_feedback.draw_button(
@@ -1168,7 +1193,7 @@ def draw_ui(screen, game_state, w, h):
         
         # Draw action usage indicators (circles for repeatables) - works for both modes
         if hasattr(game_state, 'selected_action_instances'):
-            action_count = sum(1 for inst in game_state.selected_action_instances if inst['action_idx'] == idx)
+            action_count = sum(1 for inst in game_state.selected_action_instances if inst['action_idx'] == original_idx)
             if action_count > 0:
                 # Draw usage indicators as small circles
                 indicator_size = int(min(w, h) * 0.008)  # Small circles
@@ -1694,15 +1719,15 @@ def draw_context_window(screen, context_info, w, h, minimized=False, config=None
     if not context_info:
         return None, None  # No context to show
     
-    # Get configuration settings
+    # Get configuration settings - increased height to 8-10% of screen
     if config and 'ui' in config and 'context_window' in config['ui']:
         ctx_config = config['ui']['context_window']
-        expanded_height_percent = ctx_config.get('height_percent', 0.13)
-        minimized_height_percent = ctx_config.get('minimized_height_percent', 0.06)
+        expanded_height_percent = ctx_config.get('height_percent', 0.10)  # Increased from 0.13
+        minimized_height_percent = ctx_config.get('minimized_height_percent', 0.05)
     else:
-        # Default values if no config
-        expanded_height_percent = 0.13
-        minimized_height_percent = 0.06
+        # Default values if no config - bottom 8-10% of screen
+        expanded_height_percent = 0.10
+        minimized_height_percent = 0.05
     
     # Context window dimensions - positioned at bottom with configurable height
     window_height = int(h * minimized_height_percent) if minimized else int(h * expanded_height_percent)
@@ -1710,36 +1735,37 @@ def draw_context_window(screen, context_info, w, h, minimized=False, config=None
     window_x = int(w * 0.01)
     window_y = h - window_height - 5  # 5px margin from bottom
     
-    # Background with rounded corners
+    # Background with rounded corners - 80's techno green theme
     context_rect = pygame.Rect(window_x, window_y, window_width, window_height)
-    pygame.draw.rect(screen, (30, 40, 50), context_rect, border_radius=8)
-    pygame.draw.rect(screen, (90, 130, 170), context_rect, width=2, border_radius=8)
+    # Light readable techno green background
+    pygame.draw.rect(screen, (40, 80, 40), context_rect, border_radius=8)  # Dark green base
+    pygame.draw.rect(screen, (100, 200, 100), context_rect, width=2, border_radius=8)  # Bright green border
     
-    # Header with title and minimize button
+    # Header with title and minimize button - retro DOS style
     header_height = 22
     header_rect = pygame.Rect(window_x, window_y, window_width, header_height)
-    pygame.draw.rect(screen, (40, 50, 60), header_rect, border_radius=8)
+    pygame.draw.rect(screen, (60, 120, 60), header_rect, border_radius=8)  # Darker green header
     
-    # Title
-    title_font = pygame.font.SysFont('Consolas', max(12, int(h*0.016)), bold=True)
-    title_color = (220, 240, 255)
-    title_text = title_font.render(str(context_info.get('title', 'Context')), True, title_color)
+    # Title - ALL CAPS DOS style
+    title_font = pygame.font.SysFont('Courier', max(12, int(h*0.018)), bold=True)  # Courier for DOS feel
+    title_color = (200, 255, 200)  # Bright green text
+    title_text = title_font.render(str(context_info.get('title', 'CONTEXT')).upper(), True, title_color)
     screen.blit(title_text, (window_x + 8, window_y + 3))
     
-    # Minimize/Maximize button
+    # Minimize/Maximize button - green theme
     button_size = 16
     button_x = window_x + window_width - button_size - 4
     button_y = window_y + 3
     button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
     
     # Button background
-    pygame.draw.rect(screen, (70, 90, 110), button_rect, border_radius=3)
-    pygame.draw.rect(screen, (130, 150, 170), button_rect, width=1, border_radius=3)
+    pygame.draw.rect(screen, (80, 150, 80), button_rect, border_radius=3)  # Green button
+    pygame.draw.rect(screen, (150, 255, 150), button_rect, width=1, border_radius=3)  # Bright green border
     
     # Button symbol
-    symbol_font = pygame.font.SysFont('Arial', 10, bold=True)
+    symbol_font = pygame.font.SysFont('Courier', 10, bold=True)  # DOS font
     symbol = '−' if not minimized else '+'
-    symbol_text = symbol_font.render(symbol, True, (220, 240, 255))
+    symbol_text = symbol_font.render(symbol, True, (200, 255, 200))  # Bright green text
     symbol_rect = symbol_text.get_rect(center=button_rect.center)
     screen.blit(symbol_text, symbol_rect)
     
@@ -1749,16 +1775,19 @@ def draw_context_window(screen, context_info, w, h, minimized=False, config=None
         content_height = window_height - header_height - 6
         content_x = window_x + 8
         
-        # Description
-        desc_font = pygame.font.SysFont('Consolas', max(10, int(h*0.014)))
+        # Description - DOS style ALL CAPS
+        desc_font = pygame.font.SysFont('Courier', max(10, int(h*0.016)))  # Courier for DOS, slightly larger
         description = str(context_info.get('description', ''))
         
         if description:
+            # Convert to ALL CAPS for DOS terminal feel
+            description = description.upper()
+            
             # Simple word wrap for description
             words = description.split(' ')
             current_line = ''
             lines = []
-            max_chars_per_line = max(30, (window_width - 16) // 7)  # Estimate based on font size
+            max_chars_per_line = max(25, (window_width - 16) // 8)  # Adjusted for Courier font
             
             for word in words:
                 test_line = current_line + (' ' if current_line else '') + word
@@ -1778,7 +1807,7 @@ def draw_context_window(screen, context_info, w, h, minimized=False, config=None
             for line in lines[:2]:  # Show up to 2 lines of description
                 if current_y + line_height > window_y + window_height - 3:
                     break
-                line_text = desc_font.render(line, True, (200, 220, 240))
+                line_text = desc_font.render(line, True, (180, 255, 180))  # Bright green text
                 screen.blit(line_text, (content_x, current_y))
                 current_y += line_height
             
@@ -1787,17 +1816,19 @@ def draw_context_window(screen, context_info, w, h, minimized=False, config=None
         else:
             current_y = content_y
         
-        # Details section
+        # Details section - DOS style
         details = context_info.get('details', [])
         if details and current_y < window_y + window_height - 15:
-            detail_font = pygame.font.SysFont('Consolas', max(9, int(h*0.012)))
+            detail_font = pygame.font.SysFont('Courier', max(9, int(h*0.014)))  # Courier for DOS
             
             # Horizontal layout for details to save space
             detail_x = content_x
             detail_y = current_y
             
             for i, detail in enumerate(details[:4]):  # Show up to 4 details
-                detail_text = detail_font.render(str(detail), True, (170, 190, 210))
+                # Convert details to ALL CAPS
+                detail_str = str(detail).upper()
+                detail_text = detail_font.render(detail_str, True, (150, 220, 150))  # Medium green text
                 
                 # Check if detail fits on current line
                 if detail_x + detail_text.get_width() + 20 > window_x + window_width - 10:
