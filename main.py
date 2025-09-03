@@ -1586,6 +1586,24 @@ def main():
                             # Play popup close sound
                             if hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('popup_close')
+                        
+                        # Screenshot functionality with [ key
+                        elif event.key == pygame.K_LEFTBRACKET:
+                            import datetime
+                            import os
+                            # Create screenshots directory if it doesn't exist
+                            screenshots_dir = os.path.join(os.getcwd(), 'screenshots')
+                            os.makedirs(screenshots_dir, exist_ok=True)
+                            # Generate timestamp for filename
+                            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+                            screenshot_path = os.path.join(screenshots_dir, f'pdoom_screenshot_{timestamp}.png')
+                            # Save the current screen
+                            pygame.image.save(screen, screenshot_path)
+                            print(f"Screenshot saved: {screenshot_path}")
+                            # Play UI sound if available
+                            if game_state and hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('ui_accept')
+                        
                         elif event.key == pygame.K_RETURN and first_time_help_content:
                             # Mark mechanic as seen so it won't reappear
                             if current_help_mechanic:
