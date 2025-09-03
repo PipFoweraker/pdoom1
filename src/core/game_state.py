@@ -1906,6 +1906,21 @@ class GameState:
         # Play accepted sound
         if hasattr(self, 'sound_manager'):
             self.sound_manager.play_sound('popup_accept')  # Reuse accept sound for turn confirmation
+        
+        # CRITICAL FIX: Process events BEFORE executing actions
+        # This ensures players see events before committing to actions
+        self.trigger_events()
+        
+        # Check if there are pending popup events that need resolution
+        if (hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled and
+            hasattr(self, 'deferred_events') and hasattr(self.deferred_events, 'pending_popup_events') and
+            self.deferred_events.pending_popup_events):
+            # Events need to be resolved before turn can complete
+            # Reset turn processing state and let events be handled
+            self.turn_processing = False
+            self.turn_processing_timer = 0
+            return False
+            
         # Clear event log at start of turn to show only current-turn events
         # But first store previous messages if scrollable log was already enabled
         if self.scrollable_event_log_enabled and self.messages:
@@ -2027,7 +2042,8 @@ class GameState:
         if hasattr(self, 'researchers') and self.researchers:
             self.advance_researchers()
 
-        self.trigger_events()
+        # NOTE: trigger_events() moved to beginning of end_turn() for proper sequencing
+        # Events now happen BEFORE action execution so players can respond appropriately
         
         # Check for board member milestone trigger (>$10K spend without accounting software)
         self._check_board_member_milestone()

@@ -86,7 +86,7 @@ pygame.display.flip()
 navigation_stack = []
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Launch with Weekly Seed", "Launch with Custom Seed", "Configuration", "Options", "Player Guide", "README", "Report Bug"]
+menu_items = ["Launch Lab", "Game Config", "Settings", "Exit"]
 end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
@@ -102,7 +102,7 @@ config_selected_item = 0
 available_configs = []
 
 # Tutorial choice state
-tutorial_choice_selected_item = 0  # For tutorial choice navigation (0=Yes, 1=No)
+tutorial_choice_selected_item = 1  # For tutorial choice navigation (0=No, 1=Yes) - Default to No
 
 # Pre-game settings state
 pre_game_settings = {
@@ -114,7 +114,7 @@ pre_game_settings = {
 }
 selected_settings_item = 0
 seed_choice = "weekly"  # "weekly" or "custom"
-tutorial_enabled = True
+tutorial_enabled = False  # Default to no tutorial
 
 # Tutorial state
 current_tutorial_content = None
@@ -302,23 +302,19 @@ def handle_menu_click(mouse_pos, w, h):
             selected_menu_item = i
             
             # Execute menu action based on selection
-            if i == 0:  # Launch with Weekly Seed
+            if i == 0:  # Launch Lab (weekly seed)
+                seed_choice = "weekly"
                 current_state = 'pre_game_settings'
-            elif i == 1:  # Launch with Custom Seed
-                current_state = 'pre_game_settings'
-            elif i == 2:  # Options/Settings
+            elif i == 1:  # Game Config (affects gameplay)
+                available_configs = config_manager.list_available_configs()
+                config_selected_item = 0
+                current_state = 'config_select'
+            elif i == 2:  # Settings (audio, keybinds, accessibility)
                 current_state = 'sounds_menu'
                 sounds_menu_selected_item = 0
-            elif i == 3:  # Player Guide
-                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                overlay_title = "Player Guide"
-                current_state = 'overlay'
-            elif i == 4:  # README
-                overlay_content = load_markdown_file('README.md')
-                overlay_title = "README"
-                current_state = 'overlay'
-            elif i == 5:  # Report Bug
-                current_state = 'bug_report'
+            elif i == 3:  # Exit
+                pygame.quit()
+                sys.exit()
             break
     
     # Check for sound button click (bottom right corner)
@@ -358,28 +354,19 @@ def handle_menu_keyboard(key):
         selected_menu_item = (selected_menu_item + 1) % len(menu_items)
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
-        if selected_menu_item == 0:  # Launch with Weekly Seed
+        if selected_menu_item == 0:  # Launch Lab (weekly seed)
+            seed_choice = "weekly"
             push_navigation_state('pre_game_settings')
-        elif selected_menu_item == 1:  # Launch with Custom Seed
-            push_navigation_state('pre_game_settings')
-        elif selected_menu_item == 2:  # Configuration
+        elif selected_menu_item == 1:  # Game Config
             available_configs = config_manager.list_available_configs()
             config_selected_item = 0
             push_navigation_state('config_select')
-        elif selected_menu_item == 3:  # Options
-            overlay_content = create_settings_content()
-            overlay_title = "Settings"
-            push_navigation_state('overlay')
-        elif selected_menu_item == 4:  # Player Guide
-            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-            overlay_title = "Player Guide"
-            push_navigation_state('overlay')
-        elif selected_menu_item == 5:  # README
-            overlay_content = load_markdown_file('README.md')
-            overlay_title = "README"
-            push_navigation_state('overlay')
-        elif selected_menu_item == 6:  # Report Bug
-            push_navigation_state('bug_report')
+        elif selected_menu_item == 2:  # Settings (audio, keybinds, accessibility)
+            push_navigation_state('sounds_menu')
+            sounds_menu_selected_item = 0
+        elif selected_menu_item == 3:  # Exit
+            pygame.quit()
+            sys.exit()
 
 def handle_config_keyboard(key):
     """
@@ -591,19 +578,19 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
     
     mx, my = mouse_pos
     
-    for i in range(2):  # Yes tutorial, No tutorial
+    for i in range(2):  # No tutorial, Yes tutorial (reordered)
         button_x = center_x - button_width // 2
         button_y = start_y + i * spacing
         button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
         
         if button_rect.collidepoint(mx, my):
             tutorial_choice_selected_item = i  # Update selection for visual feedback
-            if i == 0:  # Yes - Enable Tutorial
-                tutorial_enabled = True
-                onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
-            elif i == 1:  # No - Regular Mode
+            if i == 0:  # No - Regular Mode (now first)
                 tutorial_enabled = False
                 onboarding.dismiss_tutorial()
+            elif i == 1:  # Yes - Enable Tutorial (now second)
+                tutorial_enabled = True
+                onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
             
             # Set the seed and start the game
             random.seed(seed)
@@ -648,12 +635,12 @@ def handle_tutorial_choice_keyboard(key):
         tutorial_choice_selected_item = (tutorial_choice_selected_item + 1) % 2
     elif key == pygame.K_RETURN or key == pygame.K_SPACE:
         # Use currently selected item
-        if tutorial_choice_selected_item == 0:  # Yes - Enable Tutorial
-            tutorial_enabled = True
-            onboarding.start_stepwise_tutorial()
-        else:  # No - Regular Mode
+        if tutorial_choice_selected_item == 0:  # No - Regular Mode (now first)
             tutorial_enabled = False
             onboarding.dismiss_tutorial()
+        else:  # Yes - Enable Tutorial (now second)
+            tutorial_enabled = True
+            onboarding.start_stepwise_tutorial()
         
         # Set the seed and start the game
         random.seed(seed)

@@ -3277,8 +3277,8 @@ def draw_tutorial_choice(screen, w, h, selected_item):
     desc_y = title_y + title_surf.get_height() + 20
     screen.blit(desc_surf, (desc_x, desc_y))
     
-    # Tutorial options
-    tutorial_items = ["Yes - Enable Tutorial", "No - Regular Mode"]
+    # Tutorial options - No tutorial first (default), Yes tutorial second
+    tutorial_items = ["No - Regular Mode", "Yes - Enable Tutorial"]
     
     # Button layout
     button_width = int(w * 0.4)
