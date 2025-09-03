@@ -931,7 +931,62 @@ def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font
         percent_x = w // 2 - percent_text.get_width() // 2
         percent_y = status_y + status_surf.get_height() + 10
         screen.blit(percent_text, (percent_x, percent_y))
+
+
+def draw_resource_icon(screen, icon_type, x, y, size=16):
+    """
+    Draw 8-bit style resource icons.
     
+    Args:
+        screen: pygame surface to draw on
+        icon_type: 'money', 'research', 'papers', 'compute'
+        x, y: position to draw at
+        size: icon size in pixels
+    """
+    if icon_type == 'money':
+        # Stylized $ sign in 8-bit style
+        # Vertical line
+        pygame.draw.rect(screen, (255, 230, 60), (x + size//2 - 1, y, 2, size))
+        # Top horizontal
+        pygame.draw.rect(screen, (255, 230, 60), (x + 2, y + 2, size - 4, 2))
+        # Middle horizontal (shorter)
+        pygame.draw.rect(screen, (255, 230, 60), (x + 3, y + size//2 - 1, size - 6, 2))
+        # Bottom horizontal
+        pygame.draw.rect(screen, (255, 230, 60), (x + 2, y + size - 4, size - 4, 2))
+        
+    elif icon_type == 'research':
+        # Light bulb icon
+        # Bulb top (round)
+        pygame.draw.circle(screen, (150, 200, 255), (x + size//2, y + size//3), size//3)
+        # Bulb base (rectangle)
+        pygame.draw.rect(screen, (150, 200, 255), (x + size//2 - 2, y + size//2, 4, size//3))
+        # Filament lines
+        pygame.draw.line(screen, (100, 150, 200), (x + size//2 - 2, y + size//3), (x + size//2 + 2, y + size//3))
+        pygame.draw.line(screen, (100, 150, 200), (x + size//2 - 1, y + size//3 + 2), (x + size//2 + 1, y + size//3 + 2))
+        
+    elif icon_type == 'papers':
+        # Paper/document icon
+        # Main rectangle
+        pygame.draw.rect(screen, (255, 200, 100), (x + 2, y + 2, size - 6, size - 4))
+        # Border
+        pygame.draw.rect(screen, (200, 150, 50), (x + 2, y + 2, size - 6, size - 4), 1)
+        # Text lines
+        for i in range(3):
+            line_y = y + 5 + i * 3
+            pygame.draw.line(screen, (200, 150, 50), (x + 4, line_y), (x + size - 6, line_y))
+            
+    elif icon_type == 'compute':
+        # Exponential/power symbol (like e^x or 2^n)
+        # Draw "2" 
+        pygame.draw.rect(screen, (100, 255, 150), (x + 2, y + 2, 4, 2))
+        pygame.draw.rect(screen, (100, 255, 150), (x + 6, y + 4, 2, 3))
+        pygame.draw.rect(screen, (100, 255, 150), (x + 2, y + 7, 6, 2))
+        # Draw superscript "n"
+        pygame.draw.rect(screen, (100, 255, 150), (x + 10, y + 2, 2, 4))
+        pygame.draw.rect(screen, (100, 255, 150), (x + 12, y + 3, 1, 1))
+        pygame.draw.rect(screen, (100, 255, 150), (x + 13, y + 4, 2, 2))
+
+
 def should_show_ui_element(game_state, element_id):
     """
     Check if a UI element should be visible based on tutorial progress.
@@ -965,67 +1020,99 @@ def draw_ui(screen, game_state, w, h):
     title = title_font.render("P(Doom): Bureaucracy Strategy", True, (205, 255, 220))
     screen.blit(title, (int(w*0.04), int(h*0.03)))
 
-    # Resources (top bar) - controlled by tutorial visibility with improved spacing
+    # Resources (top bar) - with 8-bit style icons and better alignment
+    # Always show resource display regardless of tutorial state for better UX
     current_x = int(w*0.04)  # Starting position
     y_pos = int(h*0.11)
+    icon_size = 16
+    text_offset_x = icon_size + 8  # Space between icon and text
     
-    if should_show_ui_element(game_state, 'money_display'):
-        money_text = big_font.render(f"Money: ${game_state.money}", True, (255, 230, 60))
-        screen.blit(money_text, (current_x, y_pos))
-        current_x += money_text.get_width() + int(w*0.02)  # Add spacing
-        
-        # Cash flow indicator if accounting software is purchased
-        if hasattr(game_state, 'accounting_software_bought') and game_state.accounting_software_bought:
-            if hasattr(game_state, 'last_balance_change') and game_state.last_balance_change != 0:
-                change_color = (100, 255, 100) if game_state.last_balance_change > 0 else (255, 100, 100)
-                change_sign = "+" if game_state.last_balance_change > 0 else ""
-                change_text = f"({change_sign}${game_state.last_balance_change})"
-                screen.blit(font.render(change_text, True, change_color), (int(w*0.04), int(h*0.13)))
+    # Money icon + value (always show)
+    draw_resource_icon(screen, 'money', current_x, y_pos + 4, icon_size)
+    money_text = big_font.render(f"${game_state.money}", True, (255, 230, 60))
+    screen.blit(money_text, (current_x + text_offset_x, y_pos))
+    current_x += text_offset_x + money_text.get_width() + int(w*0.03)  # Add spacing
     
-    if should_show_ui_element(game_state, 'staff_display'):
-        staff_text = big_font.render(f"Staff: {game_state.staff}", True, (255, 210, 180))
-        screen.blit(staff_text, (current_x, y_pos))
-        current_x += staff_text.get_width() + int(w*0.02)  # Add spacing
+    # Cash flow indicator if accounting software is purchased
+    if hasattr(game_state, 'accounting_software_bought') and game_state.accounting_software_bought:
+        if hasattr(game_state, 'last_balance_change') and game_state.last_balance_change != 0:
+            change_color = (100, 255, 100) if game_state.last_balance_change > 0 else (255, 100, 100)
+            change_sign = "+" if game_state.last_balance_change > 0 else ""
+            change_text = f"({change_sign}${game_state.last_balance_change})"
+            screen.blit(font.render(change_text, True, change_color), (int(w*0.04), int(h*0.13)))
     
-    if should_show_ui_element(game_state, 'reputation_display'):
-        reputation_text = big_font.render(f"Reputation: {game_state.reputation}", True, (180, 210, 255))
-        screen.blit(reputation_text, (current_x, y_pos))
-        current_x += reputation_text.get_width() + int(w*0.025)  # Add slightly more spacing
+    # Staff icon (person symbol) + value (always show)
+    pygame.draw.circle(screen, (255, 210, 180), (current_x + 8, y_pos + 6), 4)  # Head
+    pygame.draw.rect(screen, (255, 210, 180), (current_x + 6, y_pos + 10, 4, 8))  # Body
+    staff_text = big_font.render(f"{game_state.staff}", True, (255, 210, 180))
+    screen.blit(staff_text, (current_x + text_offset_x, y_pos))
+    current_x += text_offset_x + staff_text.get_width() + int(w*0.03)  # Add spacing
     
-    # Action Points with glow effect
+    # Reputation icon (star) + value (always show)
+    star_points = [(current_x + 8, y_pos + 4), (current_x + 10, y_pos + 10), 
+                  (current_x + 16, y_pos + 10), (current_x + 12, y_pos + 14),
+                  (current_x + 14, y_pos + 20), (current_x + 8, y_pos + 16),
+                  (current_x + 2, y_pos + 20), (current_x + 4, y_pos + 14),
+                  (current_x, y_pos + 10), (current_x + 6, y_pos + 10)]
+    pygame.draw.polygon(screen, (180, 210, 255), star_points)
+    reputation_text = big_font.render(f"{game_state.reputation}", True, (180, 210, 255))
+    screen.blit(reputation_text, (current_x + text_offset_x, y_pos))
+    current_x += text_offset_x + reputation_text.get_width() + int(w*0.035)  # Add slightly more spacing
+    
+    # Action Points with glow effect and energy icon (always show)
     ap_color = (255, 255, 100)  # Yellow base color for AP
     if hasattr(game_state, 'ap_glow_timer') and game_state.ap_glow_timer > 0:
         # Add glow/pulse effect when AP is spent
         glow_intensity = int(127 * (game_state.ap_glow_timer / 30))  # Fade over 30 frames
         ap_color = (min(255, 255 + glow_intensity), min(255, 255 + glow_intensity), min(255, 100 + glow_intensity))
     
-    ap_text = big_font.render(f"AP: {game_state.action_points}/{game_state.max_action_points}", True, ap_color)
-    screen.blit(ap_text, (current_x, y_pos))
-    current_x += ap_text.get_width() + int(w*0.025)  # Add spacing
+    # Energy/lightning bolt icon for AP
+    lightning_points = [(current_x + 6, y_pos + 4), (current_x + 10, y_pos + 4), 
+                       (current_x + 8, y_pos + 10), (current_x + 12, y_pos + 10),
+                       (current_x + 6, y_pos + 18), (current_x + 10, y_pos + 12), 
+                       (current_x + 8, y_pos + 12)]
+    pygame.draw.polygon(screen, ap_color, lightning_points)
     
-    doom_text = big_font.render(f"p(Doom): {game_state.doom}/{game_state.max_doom}", True, (255, 80, 80))
-    screen.blit(doom_text, (current_x, y_pos))
-    current_x += doom_text.get_width() + int(w*0.02)  # Add spacing
+    ap_text = big_font.render(f"{game_state.action_points}/{game_state.max_action_points}", True, ap_color)
+    screen.blit(ap_text, (current_x + text_offset_x, y_pos))
+    current_x += text_offset_x + ap_text.get_width() + int(w*0.035)  # Add spacing
+    
+    # Doom with skull icon (always show)
+    skull_color = (255, 80, 80)
+    pygame.draw.circle(screen, skull_color, (current_x + 8, y_pos + 8), 6)  # Skull
+    pygame.draw.rect(screen, skull_color, (current_x + 5, y_pos + 6, 2, 2))  # Eye 1
+    pygame.draw.rect(screen, skull_color, (current_x + 9, y_pos + 6, 2, 2))  # Eye 2
+    pygame.draw.rect(screen, skull_color, (current_x + 6, y_pos + 10, 4, 1))  # Mouth
+    
+    doom_text = big_font.render(f"{game_state.doom}/{game_state.max_doom}", True, skull_color)
+    screen.blit(doom_text, (current_x + text_offset_x, y_pos))
+    current_x += text_offset_x + doom_text.get_width() + int(w*0.03)  # Add spacing
     
     # Opponent progress (smaller font, positioned at the end)
     if current_x + 200 < w:  # Only show if there's enough space
         screen.blit(font.render(f"Opponent progress: {game_state.known_opp_progress if game_state.known_opp_progress is not None else '???'}/100", True, (240, 200, 160)), (current_x, y_pos + 5))
     
-    # Second line of resources with improved spacing
+    # Second line of resources with improved spacing and icons
     current_x = int(w*0.04)  # Reset to starting position
     y_pos_2 = int(h*0.135)
     
-    compute_text = big_font.render(f"Compute: {game_state.compute}", True, (100, 255, 150))
-    screen.blit(compute_text, (current_x, y_pos_2))
-    current_x += compute_text.get_width() + int(w*0.02)  # Add spacing
+    # Compute with exponential icon
+    draw_resource_icon(screen, 'compute', current_x, y_pos_2 + 4, icon_size)
+    compute_text = big_font.render(f"{game_state.compute}", True, (100, 255, 150))
+    screen.blit(compute_text, (current_x + text_offset_x, y_pos_2))
+    current_x += text_offset_x + compute_text.get_width() + int(w*0.03)  # Add spacing
     
-    research_text = big_font.render(f"Research: {game_state.research_progress}/100", True, (150, 200, 255))
-    screen.blit(research_text, (current_x, y_pos_2))
-    current_x += research_text.get_width() + int(w*0.02)  # Add spacing
+    # Research with light bulb icon
+    draw_resource_icon(screen, 'research', current_x, y_pos_2 + 4, icon_size)
+    research_text = big_font.render(f"{game_state.research_progress}/100", True, (150, 200, 255))
+    screen.blit(research_text, (current_x + text_offset_x, y_pos_2))
+    current_x += text_offset_x + research_text.get_width() + int(w*0.03)  # Add spacing
     
-    papers_text = big_font.render(f"Papers: {game_state.papers_published}", True, (255, 200, 100))
-    screen.blit(papers_text, (current_x, y_pos_2))
-    current_x += papers_text.get_width() + int(w*0.02)  # Add spacing
+    # Papers with document icon
+    draw_resource_icon(screen, 'papers', current_x, y_pos_2 + 4, icon_size)
+    papers_text = big_font.render(f"{game_state.papers_published}", True, (255, 200, 100))
+    screen.blit(papers_text, (current_x + text_offset_x, y_pos_2))
+    current_x += text_offset_x + papers_text.get_width() + int(w*0.03)  # Add spacing
     
     # Board member and audit risk display (if applicable)
     if hasattr(game_state, 'board_members') and game_state.board_members > 0:
