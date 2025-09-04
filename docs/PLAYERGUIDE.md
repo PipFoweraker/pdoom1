@@ -32,7 +32,7 @@ A satirical strategy game about managing an AI safety lab while competing agains
 
 ## Quick Setup
 
-1. **Install Python 3.8+** (if not already installed)
+1. **Install Python 3.9+** (if not already installed)
 2. **Install pygame**: `pip install pygame`
 3. **Run the game**: `python main.py`
 

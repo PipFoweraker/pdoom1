@@ -34,7 +34,7 @@ This is Buggy As Shit.  If you are not using exactly whatever kludge windows pyt
 ## Quick Start
 
 ### Requirements
-- Python 3.8+
+- Python 3.9+
 - [pygame](https://www.pygame.org/)
 
 ### Installation & Setup
@@ -130,7 +130,7 @@ For complete tutorial details, see the **[Player Guide](docs/PLAYERGUIDE.md#new-
 ### Common Issues
 
 **Game won't start:**
-- Ensure Python 3.8+ is installed: `python --version`
+- Ensure Python 3.9+ is installed: `python --version`
 - Install pygame: `pip install pygame`
 - Check that all files are in the same directory
 
@@ -205,7 +205,7 @@ If tests fail, check your Python and pygame installation.
 ### Dependencies
 
 **Core Requirements:**
-- Python 3.8+
+- Python 3.9+
 - pygame (graphics and input handling)
 
 **Optional/Development:**

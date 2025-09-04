@@ -32,7 +32,7 @@ For **installation and troubleshooting**, see the [README](../README.md).
 ## Development Setup
 
 ### Prerequisites
-- Python 3.8+
+- Python 3.9+
 - pygame (`pip install pygame`)
 - pytest for testing (`pip install pytest` or `pip install -r requirements.txt`)
 - numpy for sound effects (`pip install numpy` - optional but recommended)
@@ -776,7 +776,7 @@ class TestNewFeature(unittest.TestCase):
 Tests run automatically on GitHub Actions for:
 - Push to main/develop branches
 - Pull requests
-- Multiple Python versions (3.8, 3.9, 3.10, 3.11)
+- Multiple Python versions (3.9, 3.10, 3.11, 3.12)
 
 ---
 

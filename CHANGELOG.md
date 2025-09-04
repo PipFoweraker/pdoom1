@@ -4,54 +4,15 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
-## [0.2.0] - 2025-09-04
-### Added
-- **🎨 Retro 80s Context Window System**: Complete overhaul of information display
-  - **80s Techno-Green Styling**: ALL CAPS DOS-style context window with retro color scheme
-  - **Dynamic Context Display**: Hover over actions/upgrades for detailed information
-  - **Green Matrix Theme**: Background (40,80,40), Text (200,255,200) for authentic retro feel
-  - **Smart Information Architecture**: Moved descriptions from cramped buttons to spacious context area
-- **🎯 8-bit Style Resource Icons**: Complete visual redesign of resource display
-  - **Money Icon**: Pixelated $ symbol in gold (255,230,60)
-  - **Staff Icon**: Simple person silhouette (head + body)
-  - **Reputation Icon**: Star polygon in blue (180,210,255)
-  - **Action Points Icon**: Lightning bolt with glow effects
-  - **Doom Icon**: Skull symbol in red (255,80,80)
-  - **Compute Icon**: "2^n" exponential notation for computing power
-  - **Research Icon**: Light bulb for research progress
-  - **Papers Icon**: Document with text lines for publications
-- **🔧 Developer Tools & Quality of Life**
-  - **Screenshot Hotkey**: Press `[` key to capture game screenshots
-  - **Screenshot Management**: Auto-saves to `screenshots/` folder with timestamps
-  - **Window Mode Default**: Disabled fullscreen for better Alt+Tab and screen capture compatibility
-- **🎮 Action Filtering & UI Polish**
-  - **Smart Action Display**: Only show unlocked actions (12/24 visible initially)
-  - **Button Reorganization**: Moved "Hire Staff" to logical position 5
-  - **Starting Resources**: Set default staff to 0 for better game balance
-  - **Tutorial Independence**: Resource display works regardless of tutorial state
-
-### Fixed
-- **Resource Display Alignment**: Fixed kerning issues between Reputation, Research, and AP
-- **Text Overflow**: Eliminated cramped button text by moving descriptions to context window
-- **UI Visibility**: Removed tutorial dependencies that hid UI improvements
-- **Spacing & Layout**: Consistent margins and alignment across all resource displays
-- **Screenshot Functionality**: Alt+Tab and screen capture tools now work properly
-
+## [0.2.1] - 2025-09-05
 ### Changed
-- **Resource Labels**: Removed "Money:", "Research:", "Papers:" prefixes for cleaner look
-- **Visual Hierarchy**: Icons positioned above values for better readability
-- **Default Configuration**: Window mode enabled, fullscreen disabled by default
-- **Action Availability**: Hidden locked actions for cleaner interface
+- **🐍 Python Version Requirements**: Dropped Python 3.8 support, now requires Python 3.9+
+  - Updated GitHub Actions workflows to test Python 3.9, 3.10, 3.11, 3.12
+  - Updated all documentation and requirements to reflect Python 3.9+ minimum
+  - Enables use of modern Python features like built-in generics (`list[str]` vs `List[str]`)
+  - Updated MyPy configuration target from Python 3.8 to 3.9
 
-### Technical
-- **Icon System**: Added `draw_resource_icon()` function with 8-bit style rendering
-- **Context Window**: Implemented retro-styled information display system
-- **Screenshot API**: Integrated pygame.image.save() with timestamp naming
-- **UI Architecture**: Bypassed tutorial restrictions for core UI elements
-
-## [0.1.0] - Previous Release
+## [Unreleased]
 ### Added
 - **🎯 Enhanced Settings System**: Comprehensive settings and configuration architecture
   - **Custom Seed Management**: Fixed critical "Launch with Custom Seed" crash, added seed validation and normalization
