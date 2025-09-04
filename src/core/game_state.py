@@ -10,6 +10,9 @@ from src.core.upgrades import UPGRADES
 from src.core.events import EVENTS
 from src.services.game_logger import GameLogger
 from src.services.sound_manager import SoundManager
+from src.services.deterministic_rng import init_deterministic_rng, get_rng
+from src.services.verbose_logging import init_verbose_logging, get_logger, LogLevel
+from src.services.leaderboard import init_leaderboard_system, get_leaderboard_manager
 from src.core.opponents import create_default_opponents
 from src.features.event_system import Event, DeferredEventQueue, EventType, EventAction
 from src.features.onboarding import onboarding
@@ -31,6 +34,9 @@ class GameState:
         Also records last_balance_change for 'money' for use in UI,
         if accounting software has been purchased.
         """
+        # Log resource change for debugging and verification
+        old_value = getattr(self, attr, 0)
+        
         if attr == 'money':
             # Track spending for board member trigger (only negative amounts)
             if val < 0:
@@ -71,6 +77,20 @@ class GameState:
             self.research_staff = max(self.research_staff + val, 0)
         elif attr == 'ops_staff':
             self.ops_staff = max(self.ops_staff + val, 0)
+        
+        # Log the change for debugging and verification
+        new_value = getattr(self, attr, 0)
+        if hasattr(self, 'turn'):
+            try:
+                from src.services.verbose_logging import get_logger, is_logging_enabled
+                if is_logging_enabled():
+                    logger = get_logger()
+                    logger.log_resource_change(
+                        self.turn, attr, old_value, new_value, f"_add({attr}, {val})"
+                    )
+            except Exception:
+                pass  # Don't break game if logging fails
+        
         return None
 
 # Ensure last_balance_change gets set on any direct subtraction/addition to money:
@@ -87,6 +107,21 @@ class GameState:
         ap_config = config['action_points']
         limits_config = config['resource_limits']
         milestones_config = config['milestones']
+        
+        # Initialize deterministic systems first
+        init_deterministic_rng(seed)
+        
+        # Initialize verbose logging if enabled in config
+        log_level = LogLevel.STANDARD  # Default
+        if config.get('advanced', {}).get('debug_mode', False):
+            log_level = LogLevel.DEBUG
+        elif config.get('advanced', {}).get('verbose_logging', False):
+            log_level = LogLevel.VERBOSE
+            
+        init_verbose_logging(seed, log_level)
+        
+        # Initialize leaderboard system
+        init_leaderboard_system()
         
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
@@ -1478,6 +1513,65 @@ class GameState:
         self._add('doom', spike)
 
     def handle_click(self, mouse_pos, w, h):
+        # Check if using 3-column layout
+        use_three_column = False
+        if hasattr(self, 'config') and self.config:
+            ui_config = self.config.get('ui', {})
+            use_three_column = ui_config.get('enable_three_column_layout', False)
+        
+        if use_three_column:
+            return self._handle_three_column_click(mouse_pos, w, h)
+        else:
+            return self._handle_legacy_click(mouse_pos, w, h)
+    
+    def _handle_three_column_click(self, mouse_pos, w, h):
+        """Handle clicks for the new 3-column layout."""
+        # Check context window minimize/maximize button FIRST
+        if (hasattr(self, 'context_window_button_rect') and 
+            self.context_window_button_rect and 
+            self._in_rect(mouse_pos, self.context_window_button_rect)):
+            self.context_window_minimized = not getattr(self, 'context_window_minimized', False)
+            return None
+        
+        # Check End Turn button
+        if hasattr(self, 'endturn_rect') and self.endturn_rect and self._in_rect(mouse_pos, self.endturn_rect):
+            if not self.game_over:
+                self.end_turn()
+                return None
+        
+        # Check 3-column action buttons
+        if hasattr(self, 'three_column_button_rects'):
+            for button_rect, original_idx in self.three_column_button_rects:
+                if self._in_rect(mouse_pos, button_rect):
+                    if not self.game_over and original_idx < len(self.actions):
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = original_idx in self.selected_actions
+                        
+                        result = self.attempt_action_selection(original_idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
+        
+        # Handle popup events if active
+        if hasattr(self, 'popup_button_rects'):
+            for button_rect, action, event in self.popup_button_rects:
+                if self._in_rect(mouse_pos, button_rect):
+                    self._handle_popup_action(action, event)
+                    return None
+        
+        # Handle tutorial dismiss if active
+        if hasattr(self, 'tutorial_dismiss_rect') and self.tutorial_dismiss_rect:
+            if self._in_rect(mouse_pos, self.tutorial_dismiss_rect):
+                self.dismiss_tutorial_message()
+                return None
+        
+        return None
+    
+    def _handle_legacy_click(self, mouse_pos, w, h):
+        """Handle clicks for the legacy UI layout."""
+    def _handle_legacy_click(self, mouse_pos, w, h):
+        """Handle clicks for the legacy UI layout."""
         # Check context window minimize/maximize button FIRST
         if (hasattr(self, 'context_window_button_rect') and 
             self.context_window_button_rect and 

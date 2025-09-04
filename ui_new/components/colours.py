@@ -58,3 +58,19 @@ AP_GLOW_COLOUR = (255, 255, 100)
 FOCUS_RING_COLOUR = (255, 255, 0)  # Yellow focus indicators
 HIGH_CONTRAST_TEXT = (255, 255, 255)
 HIGH_CONTRAST_BG = (0, 0, 0)
+
+# Retro neon theme colors for 3-column layout
+NEON_GREEN = (100, 255, 150)
+DARK_GREEN = (40, 80, 40)
+TECHNO_GREEN = (0, 255, 128)
+MATRIX_GREEN = (0, 200, 0)
+
+# Column-specific colors
+LEFT_COLUMN_ACCENT = (100, 255, 150)   # Bright green for repeating actions
+MIDDLE_COLUMN_ACCENT = (150, 200, 255) # Blue for staff/team
+RIGHT_COLUMN_ACCENT = (255, 150, 100)  # Orange for strategic actions
+
+# Background colors for retro feel
+DARK_BG = (20, 20, 30)
+PANEL_BG = (40, 40, 50)
+BORDER_COLOR = (100, 200, 100)

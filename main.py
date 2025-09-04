@@ -118,6 +118,12 @@ tutorial_enabled = False  # Default to no tutorial
 
 # Tutorial state
 current_tutorial_content = None
+
+# Escape menu system for safe quit
+escape_count = 0
+escape_timer = 0  # Track time since last escape press
+ESCAPE_TIMEOUT = 2000  # 2 seconds in milliseconds
+ESCAPE_THRESHOLD = 3  # Number of escapes needed to show quit confirmation
 first_time_help_content = None
 first_time_help_close_button = None
 current_help_mechanic = None  # Track which mechanic is currently showing
@@ -1099,6 +1105,118 @@ def handle_end_game_menu_keyboard(key):
         selected_menu_item = 0
 
 
+# Escape menu state
+escape_menu_selected_item = 0
+escape_menu_items = ["Resume Game", "Main Menu", "Quit Game"]
+
+def handle_escape_menu_click(mouse_pos, w, h):
+    """Handle mouse clicks on escape menu."""
+    global escape_menu_selected_item, current_state, selected_menu_item, running
+    
+    mx, my = mouse_pos
+    
+    # Calculate menu dimensions
+    menu_width = 400
+    menu_height = 300
+    menu_x = (w - menu_width) // 2
+    menu_y = (h - menu_height) // 2
+    
+    # Button dimensions
+    button_height = 50
+    button_spacing = 20
+    start_y = menu_y + 100
+    
+    for i, item in enumerate(escape_menu_items):
+        button_y = start_y + i * (button_height + button_spacing)
+        button_rect = pygame.Rect(menu_x + 50, button_y, menu_width - 100, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            escape_menu_selected_item = i
+            handle_escape_menu_select()
+            break
+
+def handle_escape_menu_keyboard(key):
+    """Handle keyboard navigation for escape menu."""
+    global escape_menu_selected_item, current_state, selected_menu_item, running
+    
+    if key == pygame.K_UP:
+        escape_menu_selected_item = (escape_menu_selected_item - 1) % len(escape_menu_items)
+    elif key == pygame.K_DOWN:
+        escape_menu_selected_item = (escape_menu_selected_item + 1) % len(escape_menu_items)
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        handle_escape_menu_select()
+    elif key == pygame.K_ESCAPE:
+        # Go back to game
+        current_state = 'game'
+
+def handle_escape_menu_select():
+    """Handle escape menu selection."""
+    global current_state, selected_menu_item, running, escape_count
+    
+    if escape_menu_selected_item == 0:  # Resume Game
+        current_state = 'game'
+        escape_count = 0  # Reset escape counter
+    elif escape_menu_selected_item == 1:  # Main Menu
+        current_state = 'main_menu'
+        selected_menu_item = 0
+        escape_count = 0
+    elif escape_menu_selected_item == 2:  # Quit Game
+        running = False
+
+
+def draw_escape_menu(screen, w, h):
+    """Draw the escape menu overlay."""
+    # Menu dimensions
+    menu_width = 400
+    menu_height = 300
+    menu_x = (w - menu_width) // 2
+    menu_y = (h - menu_height) // 2
+    
+    # Draw menu background
+    menu_rect = pygame.Rect(menu_x, menu_y, menu_width, menu_height)
+    pygame.draw.rect(screen, (40, 40, 50), menu_rect)
+    pygame.draw.rect(screen, (80, 80, 90), menu_rect, 3)
+    
+    # Draw title
+    font = pygame.font.SysFont('Consolas', 24, bold=True)
+    title_text = font.render("ESCAPE MENU", True, (255, 255, 255))
+    title_rect = title_text.get_rect(centerx=menu_x + menu_width // 2, y=menu_y + 20)
+    screen.blit(title_text, title_rect)
+    
+    # Draw subtitle
+    subtitle_font = pygame.font.SysFont('Consolas', 14)
+    subtitle_text = subtitle_font.render("Use UP/DOWN arrows and ENTER to select", True, (180, 180, 180))
+    subtitle_rect = subtitle_text.get_rect(centerx=menu_x + menu_width // 2, y=menu_y + 50)
+    screen.blit(subtitle_text, subtitle_rect)
+    
+    # Draw menu items
+    button_font = pygame.font.SysFont('Consolas', 18, bold=True)
+    button_height = 50
+    button_spacing = 20
+    start_y = menu_y + 100
+    
+    for i, item in enumerate(escape_menu_items):
+        button_y = start_y + i * (button_height + button_spacing)
+        button_rect = pygame.Rect(menu_x + 50, button_y, menu_width - 100, button_height)
+        
+        # Button color based on selection
+        if i == escape_menu_selected_item:
+            button_color = (70, 130, 180)  # Steel blue for selected
+            text_color = (255, 255, 255)
+        else:
+            button_color = (60, 60, 70)
+            text_color = (200, 200, 200)
+        
+        # Draw button
+        pygame.draw.rect(screen, button_color, button_rect)
+        pygame.draw.rect(screen, (120, 120, 130), button_rect, 2)
+        
+        # Draw button text
+        text = button_font.render(item, True, text_color)
+        text_rect = text.get_rect(center=button_rect.center)
+        screen.blit(text, text_rect)
+
+
 def handle_popup_button_click(mouse_pos, game_state, screen_w, screen_h):
     """
     Handle mouse clicks on popup event buttons.
@@ -1258,13 +1376,16 @@ def main():
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mx, my = event.pos
                     
-                    # Handle mouse wheel for scrollable event log
-                    if current_state == 'game' and game_state and game_state.scrollable_event_log_enabled:
+                    # Handle mouse wheel for scrollable event log ONLY when explicitly enabled
+                    if (current_state == 'game' and game_state and 
+                        game_state.scrollable_event_log_enabled and
+                        event.button in [4, 5]):  # Only handle mouse wheel events
                         if event.button == 4:  # Mouse wheel up
                             game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 3)
                         elif event.button == 5:  # Mouse wheel down
                             max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
                             game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 3)
+                        continue  # Skip other mouse handling for wheel events
                     
                     # Handle overlay manager events first (highest priority)
                     if current_state == 'game' and game_state:
@@ -1318,6 +1439,10 @@ def main():
                     elif current_state == 'high_score':
                         # Handle high score screen clicks
                         handle_high_score_click((mx, my), SCREEN_W, SCREEN_H)
+
+                    elif current_state == 'escape_menu':
+                        # Handle escape menu clicks
+                        handle_escape_menu_click((mx, my), SCREEN_W, SCREEN_H)
 
                     elif current_state == 'game':
                         # Stepwise tutorial button handling (takes precedence)
@@ -1528,6 +1653,10 @@ def main():
                         # Handle high score screen keyboard navigation
                         handle_high_score_keyboard(event.key)
 
+                    elif current_state == 'escape_menu':
+                        # Handle escape menu keyboard navigation
+                        handle_escape_menu_keyboard(event.key)
+
                             
                     elif current_state == 'custom_seed_prompt':
                         # Text input for custom seed (preserving original logic)
@@ -1623,23 +1752,79 @@ def main():
                                 max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
                                 game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 1)
                         
+                        # Safe escape handling - ALWAYS ACTIVE (not blocked by tutorial)
+                        elif event.key == pygame.K_ESCAPE:
+                            # Safe escape menu system
+                            global escape_count, escape_timer
+                            current_time = pygame.time.get_ticks()
+                            
+                            # Reset escape count if too much time has passed
+                            if current_time - escape_timer > ESCAPE_TIMEOUT:
+                                escape_count = 0
+                            
+                            escape_count += 1
+                            escape_timer = current_time
+                            
+                            if escape_count >= ESCAPE_THRESHOLD:
+                                # Show quit confirmation after multiple escapes
+                                current_state = 'escape_menu'
+                                escape_count = 0  # Reset counter
+                            else:
+                                # First few escapes - show pause/menu hint
+                                if hasattr(game_state, 'messages'):
+                                    remaining = ESCAPE_THRESHOLD - escape_count
+                                    if remaining == 1:
+                                        game_state.add_message(f"Press ESCAPE {remaining} more time to access quit menu, or press ENTER to confirm quit")
+                                    else:
+                                        game_state.add_message(f"Press ESCAPE {remaining} more times to access quit menu")
+                                
+                                # Play UI sound
+                                if game_state and hasattr(game_state, 'sound_manager'):
+                                    game_state.sound_manager.play_sound('ui_click')
+                        
+                        # Handle ENTER to confirm quit when multiple escapes were pressed
+                        elif event.key == pygame.K_RETURN and escape_count >= ESCAPE_THRESHOLD - 1:
+                            running = False
+                        
                         # Regular game keyboard handling (only if tutorial is not active)
                         elif not onboarding.show_tutorial_overlay:
                             # Import keybinding manager for customizable controls
                             from src.services.keybinding_manager import keybinding_manager
                             
-                            # Check for end turn key
+                            # Check for end turn key (including Enter/Return as space equivalent)
                             end_turn_key = keybinding_manager.get_key_for_action("end_turn")
-                            if event.key == end_turn_key and game_state and not game_state.game_over:
+                            if (event.key == end_turn_key or 
+                                (end_turn_key == pygame.K_SPACE and event.key == pygame.K_RETURN)) and game_state and not game_state.game_over:
                                 # Try to end turn, play error sound if rejected
                                 if not game_state.end_turn():
                                     # Turn was rejected (already processing)
                                     pass  # Error sound already played in end_turn method
-                            elif event.key == pygame.K_ESCAPE:
-                                running = False
                             
-                            # Action shortcuts using customizable keybindings
+                            # New 3-column layout keybindings
                             elif game_state and not game_state.game_over:
+                                # Check if using 3-column layout
+                                from configs.config_manager import get_config
+                                config = get_config()
+                                if config.get('enable_three_column_layout', False):
+                                    # Import 3-column layout manager
+                                    from ui_new.screens.game import three_column_layout
+                                    
+                                    # Convert pygame key to string
+                                    key_name = pygame.key.name(event.key)
+                                    
+                                    # Handle keypress through layout system
+                                    bound_action = three_column_layout.handle_keypress(key_name)
+                                    if bound_action:
+                                        action_idx = bound_action['original_index']
+                                        # Check if this would be an undo operation before calling
+                                        was_undo = action_idx in game_state.selected_actions
+                                        
+                                        # Try to select/deselect the action
+                                        game_state.select_action(action_idx, was_undo=was_undo)
+                                        continue  # Skip original keybinding system
+                            
+                            # Action shortcuts using customizable keybindings (fallback)
+                            if game_state and not game_state.game_over:
                                 # Check if this key is bound to an action
                                 for action_index in range(min(9, len(game_state.actions))):
                                     action_key = keybinding_manager.get_action_number_key(action_index)
@@ -1814,6 +1999,21 @@ def main():
                 # High score screen with AI safety researchers and player score
                 screen.fill((20, 30, 40))  # Dark blue background for high scores
                 draw_high_score_screen(screen, SCREEN_W, SCREEN_H, game_state, seed, high_score_submit_to_leaderboard)
+
+            elif current_state == 'escape_menu':
+                # Draw the game in background (dimmed)
+                screen.fill((25, 25, 35))
+                if game_state:
+                    ui_facade.render_game(screen, game_state, SCREEN_W, SCREEN_H)
+                    
+                # Draw dark overlay
+                overlay = pygame.Surface((SCREEN_W, SCREEN_H))
+                overlay.fill((0, 0, 0))
+                overlay.set_alpha(128)
+                screen.blit(overlay, (0, 0))
+                
+                # Draw escape menu
+                draw_escape_menu(screen, SCREEN_W, SCREEN_H)
 
                 
             elif current_state == 'game':

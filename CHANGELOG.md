@@ -4,13 +4,135 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.1] - 2025-09-05
+## [0.2.3] - 2025-09-05
 ### Changed
 - **🐍 Python Version Requirements**: Dropped Python 3.8 support, now requires Python 3.9+
   - Updated GitHub Actions workflows to test Python 3.9, 3.10, 3.11, 3.12
   - Updated all documentation and requirements to reflect Python 3.9+ minimum
   - Enables use of modern Python features like built-in generics (`list[str]` vs `List[str]`)
   - Updated MyPy configuration target from Python 3.8 to 3.9
+
+## [Unreleased]
+
+## [0.2.2] - 2025-09-04 - "Technical Debt Resolution & Privacy-First Systems"
+### 🛠️ Technical Debt Resolution
+- **Fixed all critical test failures**: 137/137 tests now passing (previously 4 categories failing)
+- **Action Points System**: Fixed validation logic for meta-actions (0 AP cost properly supported)
+- **Sound Configuration**: Aligned config manager defaults with actual config files  
+- **Bug Reporter**: Cross-platform path handling for Windows/Unix compatibility
+- **File Handle Management**: Proper cleanup of logging resources on Windows
+
+### 🔒 Privacy-First Infrastructure
+- **Complete Privacy Policy**: Comprehensive privacy documentation and implementation
+- **Local-First Design**: All data stored locally by default, no cloud transmission without opt-in
+- **Pseudonymous Competition**: Leaderboard system using chosen display names, no personal data
+- **Granular Privacy Controls**: User controls exactly what data to share and when
+- **Open-Source Privacy**: All privacy-related code auditable and transparent
+
+### 🎯 Deterministic Gameplay System
+- **Reproducible Games**: Seed-based deterministic random number generation
+- **Competitive Verification**: Prove achievements through mathematical reproducibility
+- **Context-Aware RNG**: All random events tracked with context for debugging/analysis
+- **Global RNG Management**: Consistent random state across entire game session
+- **Audit Trail**: Complete tracking of RNG calls for competitive integrity
+
+### 📊 Verbose Logging Infrastructure (Opt-In Only)
+- **Multi-Level Logging**: MINIMAL/STANDARD/VERBOSE/DEBUG detail levels
+- **Comprehensive Tracking**: Actions, resource changes, and RNG events logged
+- **JSON Export**: Machine-readable logs for analysis tools and strategy improvement
+- **Privacy Controls**: Completely opt-in, disabled by default, user-controlled cleanup
+- **Performance Optimized**: Minimal overhead with efficient file management
+
+### 🏆 Privacy-Respecting Leaderboards
+- **Pseudonymous Participation**: User-chosen display names only, no real identities
+- **Local-First Storage**: Scores stored locally with optional cloud synchronization
+- **Verification Without Surveillance**: Cryptographic verification without personal data
+- **User Control**: Enable/disable participation anytime without penalty
+- **Competitive Integrity**: Deterministic gameplay enables fair competition
+
+### 🧪 Comprehensive Test Coverage
+- **New Test Suites**: 49 new unit tests for privacy, deterministic, and logging systems
+- **100% Test Success**: All 137 tests passing across all platforms
+- **Edge Case Coverage**: Extensive testing of boundary conditions and error scenarios
+- **Cross-Platform Verification**: Windows, macOS, and Linux compatibility tested
+
+### 📚 Enhanced Documentation
+- **Privacy Policy** (docs/PRIVACY.md): Complete privacy practices and user rights
+- **Technical Debt Resolution** (docs/TECHNICAL_DEBT_RESOLUTION.md): Detailed implementation notes
+- **Updated README**: Privacy-first messaging and new feature documentation
+- **API Documentation**: Comprehensive inline documentation for all new systems
+
+### 🔧 Architecture Improvements
+- **Modular Services**: Clean separation of concerns with `src/services/` directory
+- **GameState Integration**: Seamless integration with existing game architecture
+- **Backward Compatibility**: All existing saves and configurations work unchanged
+- **Error Handling**: Graceful degradation and comprehensive error recovery
+
+## [0.2.1] - 2025-09-04 - "Three Column" Hotfix Candidate
+### Added
+- **🎛️ 3-Column Layout System**: Complete UI architecture overhaul for better organization
+  - **Left Column**: Repeating actions (hire, research, etc.) with visual action counters
+  - **Right Column**: Strategic one-off actions (upgrades, board meetings, etc.)
+  - **Middle Column**: Staff animations and context displays
+  - **Smart Action Categorization**: Automatic sorting of actions by type and frequency
+- **⌨️ Comprehensive Keystroke Support**: Fast-paced gameplay with keyboard shortcuts
+  - **Auto-Generated Keybindings**: Every visible action gets a unique keyboard shortcut
+  - **Visual Key Display**: All buttons show their assigned keys (e.g., "[1] Hire Staff")
+  - **Enter Key Support**: Enter/Return now works same as Space for turn processing
+  - **Conflict Resolution**: Intelligent key assignment prevents duplicate bindings
+- **🎨 Enhanced Visual Differentiation**: Color-coded action categories for quick recognition
+  - **Research Actions**: Blue accent coloring for safety/interpretability research
+  - **Economic Actions**: Green accent coloring for hiring/compute purchases
+  - **Strategic Actions**: Distinct styling for board meetings, lobbying, etc.
+  - **Button Size Optimization**: Reduced button heights (42px left, 35px right) for better fit
+- **🔧 Layout Improvements**: Better spacing and visibility management
+  - **Context Window Buffer**: 2% vertical buffer prevents buttons hiding under context display
+  - **Text Overflow Protection**: Strategic action names truncated cleanly for right column
+  - **Early Game Filtering**: UI starts minimal and grows as actions unlock
+  - **Configuration Support**: JSON-based layout switching with `enable_three_column_layout`
+
+### Changed
+- **Employee Animation System**: Temporarily simplified during UI transition for cleaner testing
+- **Button Text Display**: Shortened action names for better readability in narrow columns
+- **Resource Header**: Optimized for 3-column layout proportions
+
+### Fixed
+- **Button Visibility**: All visible buttons now guaranteed to be clickable (no hidden buttons)
+- **Text Overflow**: Right column text no longer overflows or clips
+- **Layout Responsiveness**: Better handling of varying numbers of available actions
+
+## [0.2.0] - 2025-09-04
+### Added
+- **🎨 Retro 80s Context Window System**: Complete overhaul of information display
+  - **80s Techno-Green Styling**: ALL CAPS DOS-style context window with retro color scheme
+  - **Dynamic Context Display**: Hover over actions/upgrades for detailed information
+  - **Green Matrix Theme**: Background (40,80,40), Text (200,255,200) for authentic retro feel
+  - **Smart Information Architecture**: Moved descriptions from cramped buttons to spacious context area
+- **🎯 8-bit Style Resource Icons**: Complete visual redesign of resource display
+  - **Money Icon**: Pixelated $ symbol in gold (255,230,60)
+  - **Staff Icon**: Simple person silhouette (head + body)
+  - **Reputation Icon**: Star polygon in blue (180,210,255)
+  - **Action Points Icon**: Lightning bolt with glow effects
+  - **Doom Icon**: Skull symbol in red (255,80,80)
+  - **Compute Icon**: "2^n" exponential notation for computing power
+  - **Research Icon**: Light bulb for research progress
+  - **Papers Icon**: Document with text lines for publications
+- **🔧 Developer Tools & Quality of Life**
+  - **Screenshot Hotkey**: Press `[` key to capture game screenshots
+  - **Screenshot Management**: Auto-saves to `screenshots/` folder with timestamps
+  - **Window Mode Default**: Disabled fullscreen for better Alt+Tab and screen capture compatibility
+- **🎮 Action Filtering & UI Polish**
+  - **Smart Action Display**: Only show unlocked actions (12/24 visible initially)
+  - **Button Reorganization**: Moved "Hire Staff" to logical position 5
+  - **Starting Resources**: Set default staff to 0 for better game balance
+  - **Tutorial Independence**: Resource display works regardless of tutorial state
+
+### Fixed
+- **Resource Display Alignment**: Fixed kerning issues between Reputation, Research, and AP
+- **Text Overflow**: Eliminated cramped button text by moving descriptions to context window
+- **UI Visibility**: Removed tutorial dependencies that hid UI improvements
+- **Spacing & Layout**: Consistent margins and alignment across all resource displays
+- **Screenshot Functionality**: Alt+Tab and screen capture tools now work properly
 
 ## [Unreleased]
 ### Added

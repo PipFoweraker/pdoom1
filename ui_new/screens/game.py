@@ -1,26 +1,25 @@
 """
 Game screen rendering for P(Doom).
 
-Contains the main in-game UI rendering functionality migrated from the legacy ui.py.
-Maintains exact behavioural compatibility while using the new modular architecture.
+Contains the main in-game UI rendering functionality with new 3-column layout.
+Implements the requested design: repeating actions left, staff middle, strategic actions right.
 """
 
 import pygame
 import sys
 import os
-from typing import Any
+from typing import Any, Dict, List, Tuple
 
 # Import visual feedback system (existing)
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle
 
 # Import new components
-from ..components.colours import (
-    TITLE_COLOUR, MONEY_COLOUR, STAFF_COLOUR, REPUTATION_COLOUR,
-    ACTION_POINTS_COLOUR, DOOM_COLOUR, COMPUTE_COLOUR, RESEARCH_COLOUR,
-    PAPERS_COLOUR, TEXT_COLOUR, BALANCE_POSITIVE_COLOUR, BALANCE_NEGATIVE_COLOUR
-)
+from ..components.colours import *
 from ..components.typography import font_manager
+from ..layouts.three_column import ThreeColumnLayout
 
+# Global layout manager
+three_column_layout = ThreeColumnLayout()
 
 def should_show_ui_element(game_state: Any, element_id: str) -> bool:
     """
@@ -42,12 +41,402 @@ def should_show_ui_element(game_state: Any, element_id: str) -> bool:
     return legacy_should_show(game_state, element_id)
 
 
-def draw_opponents_panel(screen: pygame.Surface, game_state: Any, w: int, h: int, 
-                        font: pygame.font.Font, small_font: pygame.font.Font) -> None:
-    """Draw the opponents information panel."""
-    # Import legacy function for now to maintain compatibility
+def draw_resource_header(screen: pygame.Surface, game_state: Any, w: int, h: int,
+                        fonts: Dict[str, pygame.font.Font]) -> None:
+    """Draw the resource header at the top of the screen."""
+    # Get fonts
+    title_font = fonts['title']
+    big_font = fonts['big']
+    font = fonts['font']
+    small_font = fonts['small']
+    
+    # Title - retro neon style
+    title = title_font.render("P(DOOM): BUREAUCRACY STRATEGY", True, TITLE_COLOUR)
+    screen.blit(title, (int(w*0.04), int(h*0.03)))
+    
+    # Resources (top bar) - with retro styling and improved layout
+    current_x = int(w*0.04)
+    y_pos = int(h*0.11)
+    spacing = int(w*0.12)  # Fixed spacing for better alignment
+    
+    # Money (always show)
+    money_text = big_font.render(f"${game_state.money}", True, MONEY_COLOUR)
+    screen.blit(money_text, (current_x, y_pos))
+    current_x += spacing
+    
+    # Staff (always show)
+    staff_text = big_font.render(f"Staff: {game_state.staff}", True, STAFF_COLOUR)
+    screen.blit(staff_text, (current_x, y_pos))
+    current_x += spacing
+    
+    # Reputation (always show)
+    reputation_text = big_font.render(f"Rep: {game_state.reputation}", True, REPUTATION_COLOUR)
+    screen.blit(reputation_text, (current_x, y_pos))
+    current_x += spacing
+    
+    # Action Points with glow effect
+    ap_color = ACTION_POINTS_COLOUR
+    if hasattr(game_state, 'ap_glow_timer') and game_state.ap_glow_timer > 0:
+        glow_intensity = int(127 * (game_state.ap_glow_timer / 30))
+        ap_color = (min(255, 255 + glow_intensity), min(255, 255 + glow_intensity), min(255, 100 + glow_intensity))
+    
+    ap_text = big_font.render(f"AP: {game_state.action_points}/{game_state.max_action_points}", True, ap_color)
+    screen.blit(ap_text, (current_x, y_pos))
+    current_x += spacing
+    
+    # Doom
+    doom_text = big_font.render(f"p(Doom): {game_state.doom}%", True, DOOM_COLOUR)
+    screen.blit(doom_text, (current_x, y_pos))
+    
+    # Second line of resources
+    current_x = int(w*0.04)
+    y_pos_2 = int(h*0.135)
+    
+    compute_text = big_font.render(f"Compute: {game_state.compute}", True, COMPUTE_COLOUR)
+    screen.blit(compute_text, (current_x, y_pos_2))
+    current_x += spacing
+    
+    research_text = big_font.render(f"Research: {game_state.research_progress}/100", True, RESEARCH_COLOUR)
+    screen.blit(research_text, (current_x, y_pos_2))
+    current_x += spacing
+    
+    papers_text = big_font.render(f"Papers: {game_state.papers_published}", True, PAPERS_COLOUR)
+    screen.blit(papers_text, (current_x, y_pos_2))
+    
+    # Turn and seed info (top right)
+    screen.blit(small_font.render(f"Turn: {game_state.turn}", True, TEXT_COLOUR), (int(w*0.88), int(h*0.03)))
+    screen.blit(small_font.render(f"Seed: {game_state.seed}", True, (140, 200, 160)), (int(w*0.75), int(h*0.03)))
+    
+    # Doom bar (under resources)
+    doom_bar_x, doom_bar_y = int(w*0.04), int(h*0.17)
+    doom_bar_width, doom_bar_height = int(w*0.6), int(h*0.015)
+    pygame.draw.rect(screen, (70, 50, 50), (doom_bar_x, doom_bar_y, doom_bar_width, doom_bar_height))
+    filled = int(doom_bar_width * (game_state.doom / game_state.max_doom))
+    pygame.draw.rect(screen, DOOM_COLOUR, (doom_bar_x, doom_bar_y, filled, doom_bar_height))
+
+
+def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
+    """
+    Render the main game screen using the new 3-column layout.
+    
+    Args:
+        screen: The pygame surface to render on
+        game_state: Current game state object
+        w: Screen width
+        h: Screen height
+    """
+    # Clear background with retro dark theme
+    screen.fill(DARK_BG)
+    
+    # Get fonts from font manager
+    fonts = {
+        'title': font_manager.get_font('title', h),
+        'big': font_manager.get_font('big', h),
+        'font': font_manager.get_font('normal', h),
+        'small': font_manager.get_font('small', h)
+    }
+    
+    # Calculate 3-column layout
+    layout_rects = three_column_layout.calculate_layout(w, h)
+    
+    # Draw resource header
+    draw_resource_header(screen, game_state, w, h, fonts)
+    
+    # Draw column borders and headers
+    three_column_layout.draw_column_borders(screen, layout_rects)
+    three_column_layout.draw_column_headers(screen, layout_rects, fonts['font'])
+    
+    # Filter and categorize actions
+    categorized_actions = three_column_layout.filter_actions_by_column(game_state.actions, game_state)
+    
+    # Draw left column (repeating actions)
+    left_button_rects = three_column_layout.draw_repeating_actions(
+        screen, categorized_actions['repeating'], layout_rects['left_column'], 
+        game_state, fonts
+    )
+    
+    # Draw middle column (staff/employees)
+    three_column_layout.draw_middle_column(
+        screen, layout_rects['middle_column'], game_state, fonts
+    )
+    
+    # Draw right column (strategic actions)
+    right_button_rects = three_column_layout.draw_strategic_actions(
+        screen, categorized_actions['oneoff'], layout_rects['right_column'],
+        game_state, fonts
+    )
+    
+    # Combine button rects for click handling
+    all_button_rects = left_button_rects + right_button_rects
+    
+    # Store button rects in game state for click handling
+    game_state.three_column_button_rects = all_button_rects
+    game_state.three_column_layout_rects = layout_rects
+    
+    # Draw context window at bottom
+    draw_context_window_3column(screen, game_state, layout_rects['context_window'], fonts)
+    
+    # Draw end turn button (bottom right of context area)
+    draw_end_turn_button_3column(screen, game_state, layout_rects['context_window'], fonts)
+    
+    # Draw activity log (bottom left of context area) 
+    draw_activity_log_3column(screen, game_state, layout_rects['context_window'], fonts)
+    
+    # Draw version footer
+    draw_version_footer_3column(screen, w, h, fonts['small'])
+
+
+def draw_context_window_3column(screen: pygame.Surface, game_state: Any, 
+                               context_rect: pygame.Rect, fonts: Dict[str, pygame.font.Font]) -> None:
+    """Draw the context window for the 3-column layout."""
+    # Import context functions from legacy UI for now
     parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
     if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    try:
+        from ui import draw_context_window, create_action_context_info, create_upgrade_context_info, get_default_context_info
+    except ImportError:
+        # Fallback to simple context display if import fails
+        draw_simple_context_window(screen, game_state, context_rect, fonts)
+        return
+    
+    # Generate context info based on hover state
+    context_info = None
+    if hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx is not None:
+        if game_state.hovered_action_idx < len(game_state.actions):
+            action = game_state.actions[game_state.hovered_action_idx]
+            context_info = create_action_context_info(action, game_state, game_state.hovered_action_idx)
+    elif hasattr(game_state, 'current_context_info') and game_state.current_context_info:
+        context_info = game_state.current_context_info
+    else:
+        context_info = get_default_context_info(game_state)
+    
+    # Draw context window if we have info
+    if context_info:
+        context_minimized = getattr(game_state, 'context_window_minimized', False)
+        config = getattr(game_state, 'config', None)
+        
+        # Adjust context window to fit in our allocated space
+        w = context_rect.width
+        h = context_rect.height + context_rect.y  # Full screen height for legacy function
+        
+        context_window_rect, button_rect = draw_context_window(
+            screen, context_info, w, h, context_minimized, config
+        )
+        
+        # Store for click handling
+        game_state.context_window_rect = context_window_rect
+        game_state.context_window_button_rect = button_rect
+
+
+def draw_simple_context_window(screen: pygame.Surface, game_state: Any,
+                              context_rect: pygame.Rect, fonts: Dict[str, pygame.font.Font]) -> None:
+    """Draw a simple fallback context window."""
+    # Draw background
+    pygame.draw.rect(screen, PANEL_BG, context_rect, border_radius=5)
+    pygame.draw.rect(screen, BORDER_COLOR, context_rect, width=1, border_radius=5)
+    
+    # Default context text
+    context_text = fonts['small'].render("CONTEXT: Hover over actions for details", True, NEON_GREEN)
+    text_x = context_rect.x + 10
+    text_y = context_rect.y + 5
+    screen.blit(context_text, (text_x, text_y))
+
+
+def draw_end_turn_button_3column(screen: pygame.Surface, game_state: Any,
+                                context_rect: pygame.Rect, fonts: Dict[str, pygame.font.Font]) -> None:
+    """Draw the end turn button in the 3-column layout."""
+    from src.services.keybinding_manager import keybinding_manager
+    
+    # Position in bottom right of context area
+    button_width = 150
+    button_height = 35
+    button_x = context_rect.right - button_width - 10
+    button_y = context_rect.y + 5
+    
+    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    # Determine button state
+    endturn_state = ButtonState.HOVER if (hasattr(game_state, 'endturn_hovered') and 
+                                         game_state.endturn_hovered) else ButtonState.NORMAL
+    
+    # Get shortcut key
+    shortcut_display = keybinding_manager.get_action_display_key("end_turn")
+    
+    # Custom colors for end turn button
+    custom_colors = {
+        ButtonState.NORMAL: {
+            'bg': END_TURN_NORMAL_BG,
+            'border': END_TURN_BORDER,
+            'text': END_TURN_TEXT_COLOUR,
+            'shadow': (60, 40, 40)
+        },
+        ButtonState.HOVER: {
+            'bg': END_TURN_HOVER_BG,
+            'border': END_TURN_BORDER,
+            'text': (255, 255, 255),
+            'shadow': (80, 60, 60),
+            'glow': (255, 200, 200, 40)
+        }
+    }
+    
+    visual_feedback.draw_button(
+        screen, button_rect, f"END TURN ({shortcut_display})", endturn_state,
+        FeedbackStyle.BUTTON, custom_colors.get(endturn_state)
+    )
+    
+    # Store rect for click handling
+    game_state.endturn_rect = button_rect
+
+
+def draw_activity_log_3column(screen: pygame.Surface, game_state: Any,
+                             context_rect: pygame.Rect, fonts: Dict[str, pygame.font.Font]) -> None:
+    """Draw a compact activity log in the 3-column layout."""
+    # Position in bottom left of context area
+    log_width = 300
+    log_height = context_rect.height - 10
+    log_x = context_rect.x + 10
+    log_y = context_rect.y + 5
+    
+    # Draw compact log background
+    log_rect = pygame.Rect(log_x, log_y, log_width, log_height)
+    pygame.draw.rect(screen, PANEL_BG, log_rect, border_radius=5)
+    pygame.draw.rect(screen, BORDER_COLOR, log_rect, width=1, border_radius=5)
+    
+    # Log title
+    log_title = fonts['small'].render("ACTIVITY LOG", True, NEON_GREEN)
+    screen.blit(log_title, (log_x + 5, log_y + 2))
+    
+    # Show last few messages
+    messages = getattr(game_state, 'messages', [])
+    if messages:
+        line_height = 12
+        max_lines = (log_height - 20) // line_height
+        start_idx = max(0, len(messages) - max_lines)
+        
+        for i, msg in enumerate(messages[start_idx:start_idx + max_lines]):
+            if len(msg) > 35:  # Truncate long messages
+                msg = msg[:32] + "..."
+            
+            msg_text = fonts['small'].render(msg, True, TEXT_COLOUR)
+            screen.blit(msg_text, (log_x + 5, log_y + 15 + i * line_height))
+
+
+def draw_version_footer_3column(screen: pygame.Surface, w: int, h: int, 
+                               font: pygame.font.Font) -> None:
+    """Draw version information in the bottom right corner."""
+    try:
+        from src.services.version import get_display_version
+        version_text = get_display_version()
+    except ImportError:
+        version_text = "dev"
+    
+    # Position in bottom right corner
+    margin = 10
+    version_surf = font.render(version_text, True, (120, 120, 120))
+    
+    version_x = w - version_surf.get_width() - margin
+    version_y = h - version_surf.get_height() - margin
+    
+    screen.blit(version_surf, (version_x, version_y))
+
+def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
+    """
+    Render the main game screen using the new 3-column layout.
+    
+    This is the main entry point for the new UI system. It replaces the legacy
+    draw_ui function with a cleaner 3-column approach as requested.
+    
+    Args:
+        screen: The pygame surface to render on
+        game_state: Current game state object
+        w: Screen width
+        h: Screen height
+    """
+    # Clear background with retro dark theme
+    screen.fill(DARK_BG)
+    
+    # Get fonts from font manager
+    fonts = {
+        'title': font_manager.get_font('title', h),
+        'big': font_manager.get_font('big', h),
+        'font': font_manager.get_font('normal', h),
+        'small': font_manager.get_font('small', h)
+    }
+    
+    # Calculate 3-column layout
+    layout_rects = three_column_layout.calculate_layout(w, h)
+    
+    # Draw resource header
+    draw_resource_header(screen, game_state, w, h, fonts)
+    
+    # Draw column borders and headers
+    three_column_layout.draw_column_borders(screen, layout_rects)
+    three_column_layout.draw_column_headers(screen, layout_rects, fonts['font'])
+    
+    # Filter and categorize actions
+    categorized_actions = three_column_layout.filter_actions_by_column(game_state.actions, game_state)
+    
+    # Draw left column (repeating actions)
+    left_button_rects = three_column_layout.draw_repeating_actions(
+        screen, categorized_actions['repeating'], layout_rects['left_column'], 
+        game_state, fonts
+    )
+    
+    # Draw middle column (staff/employees)
+    three_column_layout.draw_middle_column(
+        screen, layout_rects['middle_column'], game_state, fonts
+    )
+    
+    # Draw right column (strategic actions)
+    right_button_rects = three_column_layout.draw_strategic_actions(
+        screen, categorized_actions['oneoff'], layout_rects['right_column'],
+        game_state, fonts
+    )
+    
+    # Combine button rects for click handling
+    all_button_rects = left_button_rects + right_button_rects
+    
+    # Store button rects in game state for click handling
+    game_state.three_column_button_rects = all_button_rects
+    game_state.three_column_layout_rects = layout_rects
+    
+    # Draw context window at bottom
+    draw_context_window_3column(screen, game_state, layout_rects['context_window'], fonts)
+    
+    # Draw end turn button (bottom right of context area)
+    draw_end_turn_button_3column(screen, game_state, layout_rects['context_window'], fonts)
+    
+    # Draw activity log (bottom left of context area) 
+    draw_activity_log_3column(screen, game_state, layout_rects['context_window'], fonts)
+    
+    # Draw version footer
+    draw_version_footer_3column(screen, w, h, fonts['small'])
+    
+    # Draw popup events and overlays (on top of everything)
+    draw_overlays_3column(screen, game_state, w, h, fonts)
+
+
+def draw_overlays_3column(screen: pygame.Surface, game_state: Any, w: int, h: int,
+                         fonts: Dict[str, pygame.font.Font]) -> None:
+    """Draw overlays like popup events, tutorials, etc."""
+    # Import legacy overlay functions for now
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    
+    from ui import draw_popup_events, draw_tutorial_overlay
+    
+    # Draw popup events if any
+    if hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events:
+        popup_button_rects = draw_popup_events(screen, game_state, w, h, fonts['font'], fonts['big'])
+        game_state.popup_button_rects = popup_button_rects
+    
+    # Draw tutorial overlay if active
+    if hasattr(game_state, 'tutorial_message') and game_state.tutorial_message:
+        tutorial_dismiss_rect = draw_tutorial_overlay(screen, game_state.tutorial_message, w, h)
+        game_state.tutorial_dismiss_rect = tutorial_dismiss_rect
         sys.path.insert(0, parent_dir)
     
     from ui import draw_opponents_panel as legacy_draw_opponents
