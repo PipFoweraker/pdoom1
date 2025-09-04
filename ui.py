@@ -1371,6 +1371,23 @@ def draw_ui(screen, game_state, w, h):
         cat_x, cat_y = getattr(game_state, 'office_cat_position', (w - 150, h - 120))
         doom_stage = game_state.get_cat_doom_stage()
         
+        # Dramatic end-game effects when doom is very high
+        if doom_stage >= 4 and game_state.doom >= 85:
+            # Screen flash effect
+            flash_intensity = int(50 * (1 + math.sin(game_state.turn * 0.8)))
+            flash_surface = pygame.Surface((w, h))
+            flash_surface.fill((255, 50, 50))
+            flash_surface.set_alpha(flash_intensity)
+            screen.blit(flash_surface, (0, 0))
+            
+            # Ominous screen darkening around edges
+            vignette = pygame.Surface((w, h), pygame.SRCALPHA)
+            for radius in range(min(w, h) // 4):
+                alpha = min(255, radius * 2)
+                pygame.draw.rect(vignette, (0, 0, 0, alpha), 
+                               (radius, radius, w - 2*radius, h - 2*radius), 3)
+            screen.blit(vignette, (0, 0))
+        
         # Load and draw cat image based on doom stage
         try:
             cat_image = pygame.image.load('assets/images/office_cat_base.png')
@@ -1385,16 +1402,25 @@ def draw_ui(screen, game_state, w, h):
                 cat_image.blit(dark_surface, (0, 0), special_flags=pygame.BLEND_MULT)
             
             if doom_stage >= 3:
-                # Add glowing red eyes
-                pygame.draw.circle(cat_image, (255, 50, 50), (13, 12), 2)  # Left eye glow
-                pygame.draw.circle(cat_image, (255, 50, 50), (19, 12), 2)  # Right eye glow
+                # Add glowing red eyes with pulsing effect
+                import math
+                glow_intensity = int(127 + 128 * math.sin(game_state.turn * 0.5))
+                pygame.draw.circle(cat_image, (255, glow_intensity, glow_intensity), (13, 12), 2)  # Left eye glow
+                pygame.draw.circle(cat_image, (255, glow_intensity, glow_intensity), (19, 12), 2)  # Right eye glow
             
             if doom_stage >= 4:
-                # Add laser beams from eyes
-                pygame.draw.line(screen, (255, 0, 0), 
-                               (cat_x + 13, cat_y + 12), (cat_x - 20, cat_y + 12), 3)  # Left laser
-                pygame.draw.line(screen, (255, 0, 0), 
-                               (cat_x + 19, cat_y + 12), (cat_x + 48 + 20, cat_y + 12), 3)  # Right laser
+                # Add laser beams from eyes with flickering
+                import math
+                laser_alpha = int(200 + 55 * math.sin(game_state.turn * 1.2))
+                laser_width = 2 + int(2 * math.sin(game_state.turn * 0.8))
+                
+                # Create laser surface with alpha
+                laser_surface = pygame.Surface((w, h), pygame.SRCALPHA)
+                pygame.draw.line(laser_surface, (255, 0, 0, laser_alpha), 
+                               (cat_x + 13, cat_y + 12), (cat_x - 80, cat_y + 12), laser_width)  # Left laser
+                pygame.draw.line(laser_surface, (255, 0, 0, laser_alpha), 
+                               (cat_x + 19, cat_y + 12), (cat_x + 48 + 80, cat_y + 12), laser_width)  # Right laser
+                screen.blit(laser_surface, (0, 0))
             
             # Draw the cat
             screen.blit(cat_image, (int(cat_x), int(cat_y)))
@@ -1999,8 +2025,24 @@ def draw_scoreboard(screen, game_state, w, h, seed):
         f"Seed: {seed}",
         f"High Score (turns): {game_state.highscore}"
     ]
+    
+    # Add cat statistics if cat was adopted
+    if getattr(game_state, 'office_cat_adopted', False):
+        lines.extend([
+            "",  # Empty line for spacing
+            "🐱 Office Cat Statistics:",
+            f"  Total Food Cost: ${getattr(game_state, 'office_cat_total_food_cost', 0)}",
+            f"  Times Petted: {getattr(game_state, 'office_cat_total_pets', 0)}",
+            f"  Final Doom Stage: {game_state.get_cat_doom_stage()}/4"
+        ])
+    
     for i, line in enumerate(lines):
-        screen.blit(font.render(line, True, (240,255,255)), (w//6 + int(w*0.04), h//7 + int(h*0.27) + i*int(h*0.05)))
+        if line == "":  # Skip empty lines
+            continue
+        color = (240,255,255)
+        if "🐱" in line:
+            color = (255, 200, 255)  # Pink for cat statistics
+        screen.blit(font.render(line, True, color), (w//6 + int(w*0.04), h//7 + int(h*0.27) + i*int(h*0.04)))
     screen.blit(small.render("Click anywhere to restart.", True, (255,255,180)), (w//2 - int(w*0.1), h//7 + int(h*0.5)))
 
 def draw_seed_prompt(screen, current_input, weekly_suggestion):
