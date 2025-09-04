@@ -6,9 +6,9 @@
 
 Current Version: v0.2.1 "Three Column" - See CHANGELOG.md for full release notes
 
-================================================================================
+=========================================
 QUICK START
-================================================================================
+=========================================
 
 PREREQUISITES:
 - Python 3.8 or higher (3.12+ recommended)
@@ -70,9 +70,9 @@ ALTERNATIVE: DOWNLOAD ZIP
 4. Run: pip install -r requirements.txt
 5. Play: python main.py
 
-================================================================================
+================
 GAME FEATURES (v0.2.1)
-================================================================================
+================
 
 NEW 3-COLUMN UI LAYOUT:
 - Left Column: Repeating actions (Hire, Research, Build)
@@ -91,9 +91,9 @@ ENHANCED VISUAL DESIGN:
 - Color-coded actions - blue for research, green for economic
 - 8-bit style resource icons with authentic pixelated look
 
-================================================================================
+================
 HOW TO PLAY
-================================================================================
+================
 
 1. Start the game with "python main.py"
 2. Use your mouse to click actions or keyboard shortcuts shown on buttons
@@ -108,9 +108,9 @@ CONTROLS:
 - [ key: Take screenshot
 - Escape: Quit game
 
-================================================================================
+================
 TROUBLESHOOTING
-================================================================================
+================
 
 QUICK FIXES:
     # Game won't start?
@@ -131,12 +131,12 @@ COMMON ISSUES:
 
 WINDOWS USERS:
 - Use Git Bash or PowerShell for best compatibility
-- Python from Microsoft Store works great
+- Python from Microsoft Store works great, this was built using python downloaded fresh. Weird path issues with Microsoft, boo.
 - Antivirus blocking? Add folder to exclusions
 
-================================================================================
+================
 DOCUMENTATION & SUPPORT
-================================================================================
+================
 
 PLAYER RESOURCES:
 - Player Guide (docs/PLAYERGUIDE.md) - How to play, controls, and strategies  
@@ -152,9 +152,9 @@ GETTING HELP:
 - GitHub Issues: Report bugs or request features
 - GitHub Discussions: General questions and feedback
 
-================================================================================
+================
 ADVANCED FEATURES
-================================================================================
+================
 
 GAME MODES:
 - Standard: Balanced gameplay experience
@@ -170,9 +170,9 @@ CONFIGURATION:
 
 For complete customization options, see Configuration Guide (docs/CONFIG_SYSTEM.md).
 
-================================================================================
+================
 DEVELOPMENT & CONTRIBUTING
-================================================================================
+================
 
 RUNNING TESTS:
     # Quick validation
@@ -186,9 +186,9 @@ DOCUMENTATION:
 - Player Guide (docs/PLAYERGUIDE.md) - Complete gameplay reference
 - Hotfix Workflow (docs/HOTFIX_WORKFLOW.md) - Version management
 
-================================================================================
+================
 VERSION STATUS
-================================================================================
+================
 
 Current: v0.2.1 "Three Column" - Hotfix Candidate
 
