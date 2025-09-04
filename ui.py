@@ -1362,6 +1362,66 @@ def draw_ui(screen, game_state, w, h):
         # Optionally, always show the "monthly costs" indicator here as well
 
 
+    # Office Cat rendering (if adopted)
+    if getattr(game_state, 'office_cat_adopted', False):
+        # Update cat position
+        game_state.update_cat_position(w, h)
+        
+        # Get cat position and doom stage
+        cat_x, cat_y = getattr(game_state, 'office_cat_position', (w - 150, h - 120))
+        doom_stage = game_state.get_cat_doom_stage()
+        
+        # Load and draw cat image based on doom stage
+        try:
+            cat_image = pygame.image.load('assets/images/office_cat_base.png')
+            cat_image = pygame.transform.scale(cat_image, (48, 48))  # Scale to appropriate size
+            
+            # Apply doom effects to the cat
+            if doom_stage >= 1:
+                # Tint the cat darker as doom increases
+                tint_factor = min(doom_stage * 0.2, 0.8)  # Max 80% darkening
+                dark_surface = pygame.Surface(cat_image.get_size())
+                dark_surface.fill((255 - int(255 * tint_factor), 100, 100))  # Red tint
+                cat_image.blit(dark_surface, (0, 0), special_flags=pygame.BLEND_MULT)
+            
+            if doom_stage >= 3:
+                # Add glowing red eyes
+                pygame.draw.circle(cat_image, (255, 50, 50), (13, 12), 2)  # Left eye glow
+                pygame.draw.circle(cat_image, (255, 50, 50), (19, 12), 2)  # Right eye glow
+            
+            if doom_stage >= 4:
+                # Add laser beams from eyes
+                pygame.draw.line(screen, (255, 0, 0), 
+                               (cat_x + 13, cat_y + 12), (cat_x - 20, cat_y + 12), 3)  # Left laser
+                pygame.draw.line(screen, (255, 0, 0), 
+                               (cat_x + 19, cat_y + 12), (cat_x + 48 + 20, cat_y + 12), 3)  # Right laser
+            
+            # Draw the cat
+            screen.blit(cat_image, (int(cat_x), int(cat_y)))
+            
+            # Draw love emoji if cat was recently petted
+            if getattr(game_state, 'office_cat_love_emoji_timer', 0) > 0:
+                emoji_x, emoji_y = getattr(game_state, 'office_cat_love_emoji_pos', (cat_x + 16, cat_y - 20))
+                
+                # Floating heart animation
+                heart_alpha = min(255, game_state.office_cat_love_emoji_timer * 4)
+                heart_surface = pygame.Surface((24, 24), pygame.SRCALPHA)
+                
+                # Draw heart shape
+                pygame.draw.circle(heart_surface, (255, 100, 150, heart_alpha), (8, 10), 6)
+                pygame.draw.circle(heart_surface, (255, 100, 150, heart_alpha), (16, 10), 6)
+                pygame.draw.polygon(heart_surface, (255, 100, 150, heart_alpha), 
+                                  [(2, 14), (12, 22), (22, 14)])
+                
+                # Float upward over time
+                float_offset = (60 - game_state.office_cat_love_emoji_timer) * 0.5
+                screen.blit(heart_surface, (int(emoji_x), int(emoji_y - float_offset)))
+        
+        except (pygame.error, FileNotFoundError):
+            # Fallback: draw a simple cat emoji if image loading fails
+            cat_text = big_font.render("🐱", True, (255, 255, 255))
+            screen.blit(cat_text, (int(cat_x), int(cat_y)))
+
     # Draw UI transitions (on top of everything else)
     draw_ui_transitions(screen, game_state, w, h, big_font)
 

@@ -53,6 +53,38 @@ def trigger_first_manager_hire(gs):
         gs.messages.append("The 'Hire Manager' action is now available to organize your growing team.")
         gs.manager_milestone_triggered = True
 
+def trigger_office_cat_adoption(gs):
+    """
+    Special event effect function for office cat adoption.
+    Called when conditions are met for the cat to appear.
+    """
+    if not gs.office_cat_adoption_offered:
+        gs.office_cat_adoption_offered = True
+        gs.messages.append("🐱 SPECIAL EVENT: A mysterious feline visitor has arrived!")
+        gs.messages.append("A small, dark cat has wandered into your office and seems quite at home.")
+        gs.messages.append("Your staff suggest adopting the office cat for morale benefits.")
+        
+        # Create adoption options with different cost levels
+        full_package_cost = 666  # Health insurance, deworming, premium setup
+        basic_package_cost = 89   # Basic immunizations only
+        
+        if gs.money >= full_package_cost:
+            gs.messages.append(f"💰 Full Care Package: ${full_package_cost} (health insurance, deworming, premium setup)")
+        if gs.money >= basic_package_cost:
+            gs.messages.append(f"💰 Basic Care Package: ${basic_package_cost} (immunizations only)")
+        
+        # For now, auto-adopt with basic package if affordable
+        # (This could be made into a player choice dialog later)
+        if gs.money >= basic_package_cost:
+            gs._add('money', -basic_package_cost)
+            gs.office_cat_adopted = True
+            gs.office_cat_position = (350, 450)  # Start position
+            gs.office_cat_target_position = (400, 500)  # Comfortable spot
+            gs.messages.append("🏠 You've adopted the office cat! Welcome to the team, little one.")
+            gs.messages.append("Weekly upkeep: ~$14 (food and supplies). Net morale benefit expected.")
+        else:
+            gs.messages.append("💔 Not enough funds for adoption. The cat wanders away...")
+
 EVENTS = [
     {
         "name": "Lab Breakthrough",
@@ -126,6 +158,19 @@ EVENTS = [
         # Trigger: Regular chance based on staff count, more likely with more staff
         "trigger": lambda gs: gs.staff >= 2 and random.random() < (0.1 + gs.staff * 0.01),
         "effect": lambda gs: gs._trigger_expense_request()
+    },
+    {
+        "name": "Mysterious Office Visitor",
+        "desc": "A feline visitor has arrived at your office, seeking employment benefits.",
+        # Trigger: 5+ employees for 5+ consecutive turns, enough money, not already offered
+        "trigger": lambda gs: (
+            gs.staff >= 5 and 
+            getattr(gs, 'office_cat_turns_with_5_staff', 0) >= 5 and
+            gs.money >= 89 and  # Minimum adoption cost
+            not getattr(gs, 'office_cat_adoption_offered', False) and
+            not getattr(gs, 'office_cat_adopted', False)
+        ),
+        "effect": trigger_office_cat_adoption
     },
     # Enhanced Personnel System Events
     {
