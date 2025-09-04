@@ -1478,6 +1478,65 @@ class GameState:
         self._add('doom', spike)
 
     def handle_click(self, mouse_pos, w, h):
+        # Check if using 3-column layout
+        use_three_column = False
+        if hasattr(self, 'config') and self.config:
+            ui_config = self.config.get('ui', {})
+            use_three_column = ui_config.get('enable_three_column_layout', False)
+        
+        if use_three_column:
+            return self._handle_three_column_click(mouse_pos, w, h)
+        else:
+            return self._handle_legacy_click(mouse_pos, w, h)
+    
+    def _handle_three_column_click(self, mouse_pos, w, h):
+        """Handle clicks for the new 3-column layout."""
+        # Check context window minimize/maximize button FIRST
+        if (hasattr(self, 'context_window_button_rect') and 
+            self.context_window_button_rect and 
+            self._in_rect(mouse_pos, self.context_window_button_rect)):
+            self.context_window_minimized = not getattr(self, 'context_window_minimized', False)
+            return None
+        
+        # Check End Turn button
+        if hasattr(self, 'endturn_rect') and self.endturn_rect and self._in_rect(mouse_pos, self.endturn_rect):
+            if not self.game_over:
+                self.end_turn()
+                return None
+        
+        # Check 3-column action buttons
+        if hasattr(self, 'three_column_button_rects'):
+            for button_rect, original_idx in self.three_column_button_rects:
+                if self._in_rect(mouse_pos, button_rect):
+                    if not self.game_over and original_idx < len(self.actions):
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = original_idx in self.selected_actions
+                        
+                        result = self.attempt_action_selection(original_idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
+        
+        # Handle popup events if active
+        if hasattr(self, 'popup_button_rects'):
+            for button_rect, action, event in self.popup_button_rects:
+                if self._in_rect(mouse_pos, button_rect):
+                    self._handle_popup_action(action, event)
+                    return None
+        
+        # Handle tutorial dismiss if active
+        if hasattr(self, 'tutorial_dismiss_rect') and self.tutorial_dismiss_rect:
+            if self._in_rect(mouse_pos, self.tutorial_dismiss_rect):
+                self.dismiss_tutorial_message()
+                return None
+        
+        return None
+    
+    def _handle_legacy_click(self, mouse_pos, w, h):
+        """Handle clicks for the legacy UI layout."""
+    def _handle_legacy_click(self, mouse_pos, w, h):
+        """Handle clicks for the legacy UI layout."""
         # Check context window minimize/maximize button FIRST
         if (hasattr(self, 'context_window_button_rect') and 
             self.context_window_button_rect and 

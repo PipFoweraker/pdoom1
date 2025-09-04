@@ -6,6 +6,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2025-09-04 - "Three Column" Hotfix Candidate
+### Added
+- **🎛️ 3-Column Layout System**: Complete UI architecture overhaul for better organization
+  - **Left Column**: Repeating actions (hire, research, etc.) with visual action counters
+  - **Right Column**: Strategic one-off actions (upgrades, board meetings, etc.)
+  - **Middle Column**: Staff animations and context displays
+  - **Smart Action Categorization**: Automatic sorting of actions by type and frequency
+- **⌨️ Comprehensive Keystroke Support**: Fast-paced gameplay with keyboard shortcuts
+  - **Auto-Generated Keybindings**: Every visible action gets a unique keyboard shortcut
+  - **Visual Key Display**: All buttons show their assigned keys (e.g., "[1] Hire Staff")
+  - **Enter Key Support**: Enter/Return now works same as Space for turn processing
+  - **Conflict Resolution**: Intelligent key assignment prevents duplicate bindings
+- **🎨 Enhanced Visual Differentiation**: Color-coded action categories for quick recognition
+  - **Research Actions**: Blue accent coloring for safety/interpretability research
+  - **Economic Actions**: Green accent coloring for hiring/compute purchases
+  - **Strategic Actions**: Distinct styling for board meetings, lobbying, etc.
+  - **Button Size Optimization**: Reduced button heights (42px left, 35px right) for better fit
+- **🔧 Layout Improvements**: Better spacing and visibility management
+  - **Context Window Buffer**: 2% vertical buffer prevents buttons hiding under context display
+  - **Text Overflow Protection**: Strategic action names truncated cleanly for right column
+  - **Early Game Filtering**: UI starts minimal and grows as actions unlock
+  - **Configuration Support**: JSON-based layout switching with `enable_three_column_layout`
+
+### Changed
+- **Employee Animation System**: Temporarily simplified during UI transition for cleaner testing
+- **Button Text Display**: Shortened action names for better readability in narrow columns
+- **Resource Header**: Optimized for 3-column layout proportions
+
+### Fixed
+- **Button Visibility**: All visible buttons now guaranteed to be clickable (no hidden buttons)
+- **Text Overflow**: Right column text no longer overflows or clips
+- **Layout Responsiveness**: Better handling of varying numbers of available actions
+
 ## [0.2.0] - 2025-09-04
 ### Added
 - **🎨 Retro 80s Context Window System**: Complete overhaul of information display

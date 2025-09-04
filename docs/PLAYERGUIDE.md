@@ -1,11 +1,13 @@
-# P(Doom) Player Guide
+# P(DOOM) PLAYER GUIDE
 
-Welcome to **P(Doom): Bureaucracy Strategy Game**!  
+Welcome to P(DOOM): BUREAUCRACY STRATEGY GAME!  
 A satirical strategy game about managing an AI safety lab while competing against reckless frontier labs.
 
-**Version Information**: Check the game window title or see [CHANGELOG.md](../CHANGELOG.md) for current version and recent changes.
+NEW IN v0.2.1: 3-COLUMN UI LAYOUT with full keyboard support! Actions are now organized into left (repeating), middle (staff), and right (strategic) columns. Every button shows its hotkey - just press the letter/number to activate!
 
-**Release Status**: This game follows [Semantic Versioning](https://semver.org/). Current development is targeting v0.1.0 as the first official stable release. See the [README](README.md#versioning-and-releases) for detailed versioning policy.
+Version Information: Check the game window title or see CHANGELOG.md for current version and recent changes.
+
+Release Status: Currently v0.2.1 "Three Column" in hotfix development targeting stable v0.3.0. See the README.md for current development status.
 
 ## Table of Contents
 - [Quick Setup](#quick-setup) (Line 31)
