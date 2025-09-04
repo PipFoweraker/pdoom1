@@ -10,6 +10,9 @@ from src.core.upgrades import UPGRADES
 from src.core.events import EVENTS
 from src.services.game_logger import GameLogger
 from src.services.sound_manager import SoundManager
+from src.services.deterministic_rng import init_deterministic_rng, get_rng
+from src.services.verbose_logging import init_verbose_logging, get_logger, LogLevel
+from src.services.leaderboard import init_leaderboard_system, get_leaderboard_manager
 from src.core.opponents import create_default_opponents
 from src.features.event_system import Event, DeferredEventQueue, EventType, EventAction
 from src.features.onboarding import onboarding
@@ -31,6 +34,9 @@ class GameState:
         Also records last_balance_change for 'money' for use in UI,
         if accounting software has been purchased.
         """
+        # Log resource change for debugging and verification
+        old_value = getattr(self, attr, 0)
+        
         if attr == 'money':
             # Track spending for board member trigger (only negative amounts)
             if val < 0:
@@ -71,6 +77,20 @@ class GameState:
             self.research_staff = max(self.research_staff + val, 0)
         elif attr == 'ops_staff':
             self.ops_staff = max(self.ops_staff + val, 0)
+        
+        # Log the change for debugging and verification
+        new_value = getattr(self, attr, 0)
+        if hasattr(self, 'turn'):
+            try:
+                from src.services.verbose_logging import get_logger, is_logging_enabled
+                if is_logging_enabled():
+                    logger = get_logger()
+                    logger.log_resource_change(
+                        self.turn, attr, old_value, new_value, f"_add({attr}, {val})"
+                    )
+            except Exception:
+                pass  # Don't break game if logging fails
+        
         return None
 
 # Ensure last_balance_change gets set on any direct subtraction/addition to money:
@@ -87,6 +107,21 @@ class GameState:
         ap_config = config['action_points']
         limits_config = config['resource_limits']
         milestones_config = config['milestones']
+        
+        # Initialize deterministic systems first
+        init_deterministic_rng(seed)
+        
+        # Initialize verbose logging if enabled in config
+        log_level = LogLevel.STANDARD  # Default
+        if config.get('advanced', {}).get('debug_mode', False):
+            log_level = LogLevel.DEBUG
+        elif config.get('advanced', {}).get('verbose_logging', False):
+            log_level = LogLevel.VERBOSE
+            
+        init_verbose_logging(seed, log_level)
+        
+        # Initialize leaderboard system
+        init_leaderboard_system()
         
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists

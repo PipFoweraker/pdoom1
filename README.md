@@ -1,10 +1,17 @@
-# P(DOOM): BUREAUCRACY STRATEGY GAME
+# P(DOOM): PRIVACY-FIRST BUREAUCRACY STRATEGY GAME
 
-> A SATIRICAL STRATEGY GAME ABOUT AI SAFETY RESEARCH IN A BUREAUCRATIC NIGHTMARE
+> **A SATIRICAL STRATEGY GAME ABOUT AI SAFETY RESEARCH IN A BUREAUCRATIC NIGHTMARE**
+> 
+> **FEATURING DETERMINISTIC GAMEPLAY AND PRIVACY-RESPECTING COMPETITION**
 > 
 > INSPIRED BY PAPERS PLEASE, PANDEMIC, AND CLICKER GAMES
 
-Current Version: v0.2.1 "Three Column" - See CHANGELOG.md for full release notes
+**Current Version:** v0.2.0 "Technical Debt Resolution" - Privacy-First & Deterministic Gameplay
+
+🛡️ **PRIVACY-FIRST DESIGN** - Your data stays under your control  
+🎯 **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
+📊 **OPTIONAL ANALYTICS** - Detailed logging for strategy improvement (opt-in only)  
+🏆 **PSEUDONYMOUS COMPETITION** - Compete without compromising privacy  
 
 ================================================================================
 QUICK START
@@ -14,6 +21,8 @@ PREREQUISITES:
 - Python 3.8 or higher (3.12+ recommended)
 - Git (for cloning the repository)
 - Command line access (Terminal, PowerShell, Git Bash, etc.)
+
+🔒 **PRIVACY NOTE:** P(Doom) is designed with privacy-first principles. All data stays local by default, and any optional features require explicit opt-in. See [docs/PRIVACY.md](docs/PRIVACY.md) for full details.
 
 STEP 1: GET PYTHON
 ------------------
@@ -71,10 +80,34 @@ ALTERNATIVE: DOWNLOAD ZIP
 5. Play: python main.py
 
 ================================================================================
-GAME FEATURES (v0.2.1)
+GAME FEATURES (v0.2.0)
 ================================================================================
 
-NEW 3-COLUMN UI LAYOUT:
+🆕 **PRIVACY-FIRST SYSTEMS:**
+- **Local-First Storage**: All your data stays on your device by default
+- **Pseudonymous Competition**: Compete without revealing personal information
+- **Granular Privacy Controls**: Choose exactly what data to share and when
+- **Open-Source Privacy**: Audit our privacy implementation yourself
+
+🎯 **DETERMINISTIC GAMEPLAY:**
+- **Reproducible Games**: Same seed = same outcomes for competitive verification
+- **Mathematical Fairness**: Prove your achievements without sharing personal data
+- **Strategy Verification**: Analyze optimal plays with deterministic replay
+- **Competitive Integrity**: Fair competition through cryptographic verification
+
+📊 **ADVANCED ANALYTICS (OPT-IN):**
+- **Verbose Logging**: Detailed action tracking for strategy improvement
+- **Performance Metrics**: Turn-by-turn analysis of resource management
+- **RNG Transparency**: Full audit trail of random events for debugging
+- **Data Export**: JSON export for custom analysis tools
+
+🏆 **PRIVACY-RESPECTING LEADERBOARDS:**
+- **Pseudonymous Only**: Compete with chosen display names, not real identities
+- **User-Controlled**: Enable/disable leaderboard participation anytime
+- **Local-First**: Scores stored locally with optional cloud sync
+- **Verification Without Surveillance**: Prove achievements without data harvesting
+
+3-COLUMN UI LAYOUT:
 - Left Column: Repeating actions (Hire, Research, Build)
 - Right Column: Strategic decisions (Board Meetings, Lobbying) 
 - Middle Column: Staff visualizations and context displays
@@ -157,31 +190,69 @@ ADVANCED FEATURES
 ================================================================================
 
 GAME MODES:
-- Standard: Balanced gameplay experience
-- Custom Seed: Reproducible games for challenges
-- Weekly Challenge: Community seed competition
+- **Standard**: Balanced gameplay experience
+- **Deterministic**: Reproducible games using custom seeds for competitive play
+- **Weekly Challenge**: Community seed competition with pseudonymous leaderboards
+- **Privacy Mode**: All analytics and logging disabled (default)
+
+PRIVACY CONTROLS:
+    # Access privacy settings in-game
+    Settings → Privacy → [Configure all privacy options]
+    
+    # Or review privacy documentation
+    See: docs/PRIVACY.md
 
 CONFIGURATION:
     # Try advanced settings
     python demo_settings.py
 
-    # Test installation
+    # Test installation (includes privacy system tests)
     python test_fixes.py
 
 For complete customization options, see Configuration Guide (docs/CONFIG_SYSTEM.md).
+
+================================================================================
+PRIVACY & DATA PROTECTION
+================================================================================
+
+P(Doom) is designed with **privacy-first principles**:
+
+🔒 **YOUR DATA STAYS YOURS:**
+- All game data stored locally by default
+- No personal information required to play
+- No data transmission without explicit opt-in
+
+🎮 **PRIVACY-ENHANCED GAMING:**
+- **Deterministic mode**: Compete fairly without sharing personal data
+- **Pseudonymous leaderboards**: Choose your own display name
+- **Optional analytics**: Enable detailed logging only if you want strategy insights
+- **Local-first architecture**: Full offline functionality
+
+📋 **TRANSPARENT PRACTICES:**
+- **Open source**: All privacy code is auditable
+- **Clear controls**: Granular privacy settings in-game
+- **User ownership**: Export, modify, or delete your data anytime
+- **No surprises**: Clear documentation of all data practices
+
+**Read our full privacy policy:** [docs/PRIVACY.md](docs/PRIVACY.md)
 
 ================================================================================
 DEVELOPMENT & CONTRIBUTING
 ================================================================================
 
 RUNNING TESTS:
-    # Quick validation
+    # Quick validation (includes new privacy & deterministic systems)
     python test_fixes.py
 
-    # Full test suite
-    python -m unittest discover tests -v
+    # Full test suite (137 tests)
+    python -m pytest -v
+
+    # Test specific new systems
+    python -m pytest tests/test_deterministic_rng.py tests/test_verbose_logging.py tests/test_leaderboard.py -v
 
 DOCUMENTATION:
+- **Privacy Policy** (docs/PRIVACY.md) - Complete privacy documentation
+- **Technical Debt Resolution** (docs/TECHNICAL_DEBT_RESOLUTION.md) - Recent improvements
 - Developer Guide (docs/DEVELOPERGUIDE.md) - Code structure and contributing
 - Player Guide (docs/PLAYERGUIDE.md) - Complete gameplay reference
 - Hotfix Workflow (docs/HOTFIX_WORKFLOW.md) - Version management

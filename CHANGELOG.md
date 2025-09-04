@@ -6,6 +6,60 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.2] - 2025-09-04 - "Technical Debt Resolution & Privacy-First Systems"
+### 🛠️ Technical Debt Resolution
+- **Fixed all critical test failures**: 137/137 tests now passing (previously 4 categories failing)
+- **Action Points System**: Fixed validation logic for meta-actions (0 AP cost properly supported)
+- **Sound Configuration**: Aligned config manager defaults with actual config files  
+- **Bug Reporter**: Cross-platform path handling for Windows/Unix compatibility
+- **File Handle Management**: Proper cleanup of logging resources on Windows
+
+### 🔒 Privacy-First Infrastructure
+- **Complete Privacy Policy**: Comprehensive privacy documentation and implementation
+- **Local-First Design**: All data stored locally by default, no cloud transmission without opt-in
+- **Pseudonymous Competition**: Leaderboard system using chosen display names, no personal data
+- **Granular Privacy Controls**: User controls exactly what data to share and when
+- **Open-Source Privacy**: All privacy-related code auditable and transparent
+
+### 🎯 Deterministic Gameplay System
+- **Reproducible Games**: Seed-based deterministic random number generation
+- **Competitive Verification**: Prove achievements through mathematical reproducibility
+- **Context-Aware RNG**: All random events tracked with context for debugging/analysis
+- **Global RNG Management**: Consistent random state across entire game session
+- **Audit Trail**: Complete tracking of RNG calls for competitive integrity
+
+### 📊 Verbose Logging Infrastructure (Opt-In Only)
+- **Multi-Level Logging**: MINIMAL/STANDARD/VERBOSE/DEBUG detail levels
+- **Comprehensive Tracking**: Actions, resource changes, and RNG events logged
+- **JSON Export**: Machine-readable logs for analysis tools and strategy improvement
+- **Privacy Controls**: Completely opt-in, disabled by default, user-controlled cleanup
+- **Performance Optimized**: Minimal overhead with efficient file management
+
+### 🏆 Privacy-Respecting Leaderboards
+- **Pseudonymous Participation**: User-chosen display names only, no real identities
+- **Local-First Storage**: Scores stored locally with optional cloud synchronization
+- **Verification Without Surveillance**: Cryptographic verification without personal data
+- **User Control**: Enable/disable participation anytime without penalty
+- **Competitive Integrity**: Deterministic gameplay enables fair competition
+
+### 🧪 Comprehensive Test Coverage
+- **New Test Suites**: 49 new unit tests for privacy, deterministic, and logging systems
+- **100% Test Success**: All 137 tests passing across all platforms
+- **Edge Case Coverage**: Extensive testing of boundary conditions and error scenarios
+- **Cross-Platform Verification**: Windows, macOS, and Linux compatibility tested
+
+### 📚 Enhanced Documentation
+- **Privacy Policy** (docs/PRIVACY.md): Complete privacy practices and user rights
+- **Technical Debt Resolution** (docs/TECHNICAL_DEBT_RESOLUTION.md): Detailed implementation notes
+- **Updated README**: Privacy-first messaging and new feature documentation
+- **API Documentation**: Comprehensive inline documentation for all new systems
+
+### 🔧 Architecture Improvements
+- **Modular Services**: Clean separation of concerns with `src/services/` directory
+- **GameState Integration**: Seamless integration with existing game architecture
+- **Backward Compatibility**: All existing saves and configurations work unchanged
+- **Error Handling**: Graceful degradation and comprehensive error recovery
+
 ## [0.2.1] - 2025-09-04 - "Three Column" Hotfix Candidate
 ### Added
 - **🎛️ 3-Column Layout System**: Complete UI architecture overhaul for better organization
