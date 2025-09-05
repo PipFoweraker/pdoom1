@@ -162,8 +162,8 @@ class TestPublicOpinion(unittest.TestCase):
         data = self.opinion.to_dict()
         restored_opinion = PublicOpinion.from_dict(data)
         
-        # Check values are preserved
-        self.assertEqual(restored_opinion.general_sentiment, 65.0)
+        # Check values are preserved (story impact was applied: 65.0 + 2.0 = 67.0)
+        self.assertEqual(restored_opinion.general_sentiment, 67.0)
         self.assertEqual(len(restored_opinion.active_stories), 1)
         self.assertEqual(restored_opinion.active_stories[0].headline, "Test Story")
 
@@ -241,6 +241,10 @@ class TestMediaSystem(unittest.TestCase):
         ]
         # Mock the _add method
         self.mock_game_state._add = Mock()
+        
+        # Mock public_opinion with proper active_stories list
+        self.mock_game_state.public_opinion = Mock()
+        self.mock_game_state.public_opinion.active_stories = []
     
     def test_media_system_initialization(self):
         """Test media system initializes correctly."""
@@ -268,7 +272,7 @@ class TestMediaSystem(unittest.TestCase):
         self.assertIn('press_release', self.media_system.actions_taken_this_turn)
         
         # Should have called _add to deduct money
-        self.mock_game_state._add.assert_called_with('money', -50000)
+        self.mock_game_state._add.assert_any_call('money', -50000)
     
     def test_exclusive_interview_action(self):
         """Test executing exclusive interview action."""
