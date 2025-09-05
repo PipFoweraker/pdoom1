@@ -106,8 +106,9 @@ class TestSettingsFlow(unittest.TestCase):
         """Test tutorial choice screen functionality."""
         import main
         
-        # Test default tutorial enabled
+        # Test tutorial enabled (select Yes option at index 1)
         main.current_state = 'tutorial_choice'
+        main.tutorial_choice_selected_item = 1  # Select "Yes - Enable Tutorial"
         main.seed = "test_seed"
         handle_tutorial_choice_keyboard(pygame.K_RETURN)
         self.assertEqual(main.current_state, 'game')
@@ -168,27 +169,27 @@ class TestSettingsFlow(unittest.TestCase):
         # Mock screen dimensions
         w, h = 800, 600
         
-        # Test clicking tutorial enable button (approximate position)
+        # Test clicking tutorial enable button (second button position)
         button_width = int(w * 0.4)
         button_height = int(h * 0.08)
         start_y = int(h * 0.4)
+        spacing = int(h * 0.12)
         center_x = w // 2
         
-        # Click on first button (enable tutorial)
+        # Click on second button (enable tutorial)
         button_x = center_x - button_width // 2 + 10  # Click inside button
-        button_y = start_y + 10  # Click inside button
+        button_y = start_y + spacing + 10  # Second button position
         
         main.seed = "test_seed"
         handle_tutorial_choice_click((button_x, button_y), w, h)
         self.assertEqual(main.current_state, 'game')
         self.assertTrue(main.tutorial_enabled)
         
-        # Click on second button (disable tutorial)
+        # Click on first button (disable tutorial)
         main.current_state = 'tutorial_choice'
-        spacing = int(h * 0.12)
-        button_y_second = start_y + spacing + 10
+        button_y_first = start_y + 10  # First button position
         
-        handle_tutorial_choice_click((button_x, button_y_second), w, h)
+        handle_tutorial_choice_click((button_x, button_y_first), w, h)
         self.assertEqual(main.current_state, 'game')
         self.assertFalse(main.tutorial_enabled)
 
