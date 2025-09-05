@@ -280,6 +280,18 @@ class GameState:
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()
         
+        # Office Cat System
+        self.office_cat_adopted = False  # Whether the cat has been adopted
+        self.office_cat_position = (0, 0)  # Current cat position on screen
+        self.office_cat_target_position = (400, 300)  # Where cat should be
+        self.office_cat_last_petted = 0  # Turn when cat was last petted
+        self.office_cat_love_emoji_timer = 0  # Timer for love emoji display
+        self.office_cat_love_emoji_pos = (0, 0)  # Position for love emoji
+        self.office_cat_total_food_cost = 0  # Total spent on cat food (for stats)
+        self.office_cat_total_pets = 0  # Total times cat was petted (for stats)
+        self.office_cat_turns_with_5_staff = 0  # Track consecutive turns with 5+ staff
+        self.office_cat_adoption_offered = False  # Track if adoption event was already shown
+        
         # Load tutorial settings (after initialization)
         self.load_tutorial_settings()
 
@@ -1707,6 +1719,11 @@ class GameState:
             status = "enabled" if new_state else "disabled"
             self.messages.append(f"Sound {status}")
             return None
+        
+        # Office cat petting interaction
+        if getattr(self, 'office_cat_adopted', False):
+            if self.pet_office_cat(mouse_pos):
+                return None  # Cat was petted, interaction handled
 
         return None
 
@@ -2227,6 +2244,13 @@ class GameState:
         # This ensures players see events before committing to actions
         self.trigger_events()
         
+        # Office Cat System: Track consecutive turns with 5+ staff (check at start of turn)
+        if hasattr(self, 'office_cat_turns_with_5_staff'):
+            if self.staff >= 5:
+                self.office_cat_turns_with_5_staff += 1
+            else:
+                self.office_cat_turns_with_5_staff = 0  # Reset streak if below 5 staff
+        
         # Check if there are pending popup events that need resolution
         if (hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled and
             hasattr(self, 'deferred_events') and hasattr(self.deferred_events, 'pending_popup_events') and
@@ -2367,6 +2391,23 @@ class GameState:
         # Handle deferred events (tick expiration and auto-execute expired ones)
         if hasattr(self, 'deferred_events'):
             expired_events = self.deferred_events.tick_all_events(self)
+        
+        # Office Cat upkeep costs (if adopted)
+        if getattr(self, 'office_cat_adopted', False):
+            # Weekly cat food costs: $1.25 (wet) + $0.80 (dry) = $2.05/day * 7 = $14.35/week
+            cat_food_cost = 14  # Rounded down for game balance
+            self._add('money', -cat_food_cost)
+            self.office_cat_total_food_cost = getattr(self, 'office_cat_total_food_cost', 0) + cat_food_cost
+            self.messages.append(f"🐱 Cat upkeep: ${cat_food_cost} (total: ${self.office_cat_total_food_cost})")
+            
+            # Small morale benefit (reduce doom slightly)
+            if random.random() < 0.3:  # 30% chance per turn
+                self._add('doom', -1)
+                self.messages.append("🐾 Office cat provides small morale boost!")
+            
+            # Update cat love emoji timer
+            if hasattr(self, 'office_cat_love_emoji_timer') and self.office_cat_love_emoji_timer > 0:
+                self.office_cat_love_emoji_timer -= 1
         
         self.turn += 1
         
@@ -3925,3 +3966,72 @@ class GameState:
             self.messages.append("😞 Loyalty crisis among researchers! Morale significantly decreased.")
         
         self.messages.append("Consider salary increases and team building to restore loyalty.")
+    
+    def pet_office_cat(self, mouse_pos):
+        """Handle office cat petting interaction."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return False
+        
+        # Check if click is near the cat
+        cat_x, cat_y = getattr(self, 'office_cat_position', (400, 300))
+        mx, my = mouse_pos
+        
+        # Cat is clickable in a 64x64 area
+        if abs(mx - cat_x) <= 32 and abs(my - cat_y) <= 32:
+            # Pet the cat!
+            self.office_cat_total_pets = getattr(self, 'office_cat_total_pets', 0) + 1
+            self.office_cat_last_petted = self.turn
+            
+            # Show love emoji for 60 frames (2 seconds at 30 FPS)
+            self.office_cat_love_emoji_timer = 60
+            self.office_cat_love_emoji_pos = (cat_x + 16, cat_y - 20)
+            
+            # Small temporary morale boost
+            if random.random() < 0.2:  # 20% chance for immediate doom reduction
+                self._add('doom', -1)
+                self.messages.append("💖 Petting the cat provides immediate stress relief!")
+            
+            # Play cat sound if available
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_sound('blob')  # Reuse existing sound
+            
+            return True
+        
+        return False
+    
+    def get_cat_doom_stage(self):
+        """Get the current doom stage of the office cat for visual representation."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return 0
+        
+        # Cat gets more ominous as doom increases
+        doom_percentage = self.doom / self.max_doom
+        
+        if doom_percentage < 0.2:
+            return 0  # Happy, normal cat
+        elif doom_percentage < 0.4:
+            return 1  # Slightly concerned cat
+        elif doom_percentage < 0.6:
+            return 2  # Alert cat with glowing eyes
+        elif doom_percentage < 0.8:
+            return 3  # Ominous cat with red eyes
+        else:
+            return 4  # Terrifying doom cat with laser eyes
+    
+    def update_cat_position(self, screen_w, screen_h):
+        """Update office cat position and animation."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return
+        
+        # Cat likes to stay in the bottom-right area, avoiding UI elements
+        target_x = screen_w - 150  # Stay away from right edge UI
+        target_y = screen_h - 120  # Stay away from bottom UI
+        
+        # Slowly move towards target position (smooth movement)
+        current_x, current_y = getattr(self, 'office_cat_position', (target_x, target_y))
+        
+        # Move 10% of the way to target each frame
+        new_x = current_x + (target_x - current_x) * 0.1
+        new_y = current_y + (target_y - current_y) * 0.1
+        
+        self.office_cat_position = (int(new_x), int(new_y))
