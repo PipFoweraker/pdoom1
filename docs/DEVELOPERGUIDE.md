@@ -911,6 +911,173 @@ opponents.append(Opponent(
 
 ---
 
+## Research Quality & Technical Debt System (Issue #190)
+
+### Overview
+The Research Quality System implements strategic trade-offs between research speed and safety, with long-term consequences through technical debt accumulation. This system provides depth to research decisions while maintaining strategic tension between short-term progress and long-term stability.
+
+### Core Components
+
+**Research Quality Levels:**
+- **RUSHED**: -40% time, -20% cost, +15% doom, +2 debt points, -10% success rate
+- **STANDARD**: Baseline metrics (default behavior) 
+- **THOROUGH**: +60% time, +40% cost, -20% doom, -1 debt point, +15% success rate, +reputation
+
+**Technical Debt System:**
+- Accumulates from shortcuts taken during research
+- Progressive penalties affecting research speed and accident chance
+- Swiss cheese model: multiple failure modes with escalating consequences
+- Categories: Safety testing, code quality, documentation, validation
+
+### Researcher Assignment System
+
+**Individual Researcher Management:**
+```python
+# Assign specific researchers to specific tasks
+gs.assign_researcher_to_task(researcher_id, task_name, quality_override)
+
+# Set researcher default quality preferences
+gs.set_researcher_default_quality(researcher_id, ResearchQuality.THOROUGH)
+
+# Get effective quality for task (hierarchy: task override -> researcher default -> org default)
+quality = gs.get_task_quality_setting(task_name, researcher_id)
+```
+
+**Assignment Tracking:**
+- Researchers have unique IDs for reliable tracking
+- Task-specific quality overrides
+- Per-researcher default quality settings
+- Assignment summary for UI display
+
+### Technical Debt Management
+
+**Debt Accumulation:**
+- RUSHED research: +2 debt points per project
+- THOROUGH research: -1 debt point per project
+- Debt categories track different types of shortcuts
+
+**Consequences by Debt Level:**
+- 0-5: No penalties
+- 6-10: -5% research speed
+- 11-15: -10% research speed, +5% accident chance
+- 16-20: -15% research speed, +10% accident chance, reputation risk
+- 20+: Major system failure events possible
+
+**Debt Reduction Actions:**
+- **Refactoring Sprint**: Costs time + money, reduces 3-5 debt points
+- **Safety Audit**: Costs money, reduces 2 debt points, gains reputation
+- **Code Review**: Per-researcher cost, reduces 1 debt point per researcher
+
+### Technical Debt Audit System
+
+**Administrator Requirement:**
+- Requires admin_staff >= 1
+- Costs 2 Action Points
+- Reveals exact debt numbers and category breakdown
+
+**Audit Results:**
+```python
+audit_result = gs.execute_technical_debt_audit()
+# Returns: risk_level, total_debt, speed_penalty_percent, 
+#          accident_chance_percent, recommendations, category_breakdown
+```
+
+**Risk Indicators:**
+- **Low Risk**: 0-5 debt points (green)
+- **Medium Risk**: 6-15 debt points (yellow) 
+- **High Risk**: 16+ debt points (red)
+
+### Research Quality Events
+
+**Event Types:**
+1. **Safety Shortcut Temptation**: Researcher suggests cutting corners
+2. **Technical Debt Warning**: Lead researcher warns about debt accumulation
+3. **Quality vs Speed Dilemma**: Critical deadline forces quality choices
+4. **Competitor Shortcut Discovery**: Intelligence reveals competitor shortcuts
+
+**Event Integration:**
+- Uses existing event system framework
+- Multiple response options affecting debt and reputation
+- Triggers based on debt levels and research activity
+
+### Integration Points
+
+**Turn Structure Integration:**
+- Debt consequences checked during end_turn()
+- Assignment tracking persists across turns
+- Quality settings affect research action outcomes
+
+**UI Integration Points:**
+- Assignment interface for researcher-task pairing
+- Quality setting controls with default hierarchy
+- Risk level indicators (Low/Medium/High)
+- Audit results display with detailed breakdown
+
+**Action System Integration:**
+```python
+# Research actions automatically use quality system
+execute_research_action(gs, action_name, base_doom_reduction, base_reputation_gain)
+# Applies quality modifiers and technical debt penalties
+```
+
+### Extension Points
+
+**Adding New Quality Levels:**
+1. Add to ResearchQuality enum
+2. Define modifiers in QUALITY_MODIFIERS
+3. Update UI quality selection
+4. Add tests for new quality level
+
+**Adding New Debt Categories:**
+1. Add to DebtCategory enum
+2. Update debt distribution logic
+3. Add category-specific consequences
+4. Update audit breakdown display
+
+**Adding New Research Events:**
+1. Add event definition to events.py
+2. Implement event handler in GameState
+3. Define trigger conditions
+4. Add multiple response options
+
+### Testing Strategy
+
+**Unit Tests:**
+- Quality modifier calculations
+- Debt accumulation and reduction
+- Assignment tracking functionality
+- Audit result generation
+
+**Integration Tests:**
+- Research action quality integration
+- Event system integration
+- Turn progression with debt consequences
+- UI data flow validation
+
+**Performance Considerations:**
+- Assignment lookups optimized for UI responsiveness
+- Debt calculations cached where appropriate
+- Event triggers evaluated efficiently
+
+### Future Roadmap
+
+**Manager Integration (v3.1):**
+- Managers can assign multiple researchers
+- Bulk quality setting changes
+- Team coordination bonuses
+
+**Advanced Debt Mechanics (v3.2):**
+- Debt compound interest
+- Failure cascade events
+- Recovery time after major failures
+
+**Competitor Technical Debt (v3.3):**
+- Visible competitor debt levels (with intelligence)
+- Competitor failure events affecting global doom
+- Strategic intelligence actions
+
+---
+
 ## Enhanced Event System Architecture
 
 ### Overview

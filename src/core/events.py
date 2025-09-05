@@ -178,5 +178,38 @@ EVENTS = [
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 1 and 
                               sum(1 for r in gs.researchers if r.loyalty < 30) >= 2 and random.random() < 0.12),
         "effect": lambda gs: gs._researcher_loyalty_crisis()
+    },
+    # Research Quality Events for Issue #190
+    {
+        "name": "Safety Shortcut Temptation",
+        "desc": "A researcher suggests cutting corners on safety validation to speed up progress.",
+        "trigger": lambda gs: (gs.research_quality_unlocked and 
+                              len(gs.researcher_assignments) > 0 and 
+                              random.random() < 0.15),
+        "effect": lambda gs: gs._trigger_safety_shortcut_event()
+    },
+    {
+        "name": "Technical Debt Warning",
+        "desc": "Your lead researcher warns that accumulated shortcuts are creating risks.",
+        "trigger": lambda gs: (gs.technical_debt.accumulated_debt >= 8 and 
+                              not gs.technical_debt.has_reputation_risk() and 
+                              random.random() < 0.20),
+        "effect": lambda gs: gs._trigger_technical_debt_warning()
+    },
+    {
+        "name": "Quality vs Speed Dilemma",
+        "desc": "A critical deadline approaches. Do you maintain quality or rush to completion?",
+        "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) >= 2 and 
+                              gs.turn >= 8 and random.random() < 0.10),
+        "effect": lambda gs: gs._trigger_quality_speed_dilemma()
+    },
+    {
+        "name": "Competitor Shortcut Discovery",
+        "desc": "Intelligence suggests a competitor is taking dangerous shortcuts in their research.",
+        "trigger": lambda gs: (gs.turn >= 10 and 
+                              any(hasattr(opp, 'technical_debt') and opp.technical_debt > 5 
+                                  for opp in getattr(gs, 'opponents', [])) and 
+                              random.random() < 0.12),
+        "effect": lambda gs: gs._trigger_competitor_shortcut_discovery()
     }
 ]

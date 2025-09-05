@@ -3,7 +3,7 @@ import json
 import os
 import pygame
 
-from typing import Tuple, Dict, Any, List
+from typing import Tuple, Dict, Any, List, Optional
 
 from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
@@ -193,6 +193,11 @@ class GameState:
         self.researchers = []  # List of individual Researcher objects
         self.available_researchers = []  # Researchers available for hiring this turn
         self.researcher_hiring_pool_refreshed = False  # Track if hiring pool was refreshed
+        
+        # Researcher Assignment System for Issue #190
+        self.researcher_assignments = {}  # Maps researcher_id -> assigned_task_name
+        self.task_quality_overrides = {}  # Maps task_name -> ResearchQuality override
+        self.researcher_default_quality = {}  # Maps researcher_id -> default ResearchQuality
         
         # Context window tracking
         self.context_window_minimized = False
@@ -2712,6 +2717,116 @@ class GameState:
         
         return True
     
+    def execute_technical_debt_audit(self) -> Dict[str, Any]:
+        """
+        Execute a technical debt audit requiring Administrator staff.
+        Reveals exact debt numbers and provides detailed breakdown.
+        
+        Returns:
+            Dict with audit results, or empty dict if audit cannot be performed
+        """
+        # Check if administrator is available
+        if self.admin_staff < 1:
+            self.messages.append("❌ Technical debt audit requires at least 1 Administrator")
+            return {}
+        
+        # Check action points cost
+        audit_ap_cost = 2
+        if self.action_points < audit_ap_cost:
+            self.messages.append(f"❌ Technical debt audit requires {audit_ap_cost} Action Points")
+            return {}
+        
+        # Perform the audit
+        self.action_points -= audit_ap_cost
+        
+        # Get detailed debt breakdown
+        debt_summary = self.technical_debt.get_debt_summary()
+        
+        # Calculate risk assessment
+        speed_penalty = self.technical_debt.get_research_speed_penalty()
+        accident_chance = self.technical_debt.get_accident_chance()
+        reputation_risk = self.technical_debt.has_reputation_risk()
+        system_failure_risk = self.technical_debt.can_trigger_system_failure()
+        
+        # Determine risk level for UI display
+        total_debt = debt_summary["total"]
+        if total_debt <= 5:
+            risk_level = "Low Risk"
+            risk_color = "green"
+        elif total_debt <= 15:
+            risk_level = "Medium Risk" 
+            risk_color = "yellow"
+        else:
+            risk_level = "High Risk"
+            risk_color = "red"
+        
+        # Generate audit report
+        audit_results = {
+            "total_debt": total_debt,
+            "debt_breakdown": debt_summary,
+            "risk_level": risk_level,
+            "risk_color": risk_color,
+            "speed_penalty_percent": int((1.0 - speed_penalty) * 100),
+            "accident_chance_percent": int(accident_chance * 100),
+            "reputation_risk": reputation_risk,
+            "system_failure_risk": system_failure_risk,
+            "recommendations": []
+        }
+        
+        # Add specific recommendations
+        if total_debt > 20:
+            audit_results["recommendations"].append("CRITICAL: Execute emergency refactoring sprint immediately")
+            audit_results["recommendations"].append("Consider halting new development until debt is reduced")
+        elif total_debt > 15:
+            audit_results["recommendations"].append("HIGH PRIORITY: Schedule comprehensive safety audit")
+            audit_results["recommendations"].append("Reduce research pace and focus on quality")
+        elif total_debt > 10:
+            audit_results["recommendations"].append("MODERATE: Plan refactoring sprint within 3 turns")
+            audit_results["recommendations"].append("Monitor for system failures")
+        elif total_debt > 5:
+            audit_results["recommendations"].append("LOW: Consider code review sessions")
+            audit_results["recommendations"].append("Maintain current quality standards")
+        else:
+            audit_results["recommendations"].append("EXCELLENT: Technical debt well-managed")
+            audit_results["recommendations"].append("Current practices are sustainable")
+        
+        # Add per-category analysis
+        category_analysis = []
+        for category, debt in debt_summary.items():
+            if category != "total" and debt > 0:
+                category_analysis.append(f"{category.replace('_', ' ').title()}: {debt} points")
+        
+        if category_analysis:
+            audit_results["category_breakdown"] = category_analysis
+        
+        # Log the audit
+        self.messages.append(f"📊 Technical Debt Audit completed by Administrator")
+        self.messages.append(f"🎯 Risk Assessment: {risk_level} ({total_debt} total debt points)")
+        
+        if audit_results["recommendations"]:
+            self.messages.append(f"📋 Top Recommendation: {audit_results['recommendations'][0]}")
+        
+        # Store audit results for UI display
+        if not hasattr(self, 'last_audit_results'):
+            self.last_audit_results = {}
+        self.last_audit_results = audit_results
+        
+        return audit_results
+    
+    def get_debt_risk_indicator(self) -> str:
+        """
+        Get simplified debt risk indicator for UI without requiring audit.
+        Returns 'Low Risk', 'Medium Risk', or 'High Risk'.
+        """
+        total_debt = self.technical_debt.accumulated_debt
+        
+        if total_debt <= 5:
+            return "Low Risk"
+        elif total_debt <= 15:
+            return "Medium Risk"
+        else:
+            return "High Risk"
+    
     def get_research_effectiveness_modifier(self) -> float:
         """
         Get the current research effectiveness modifier based on technical debt.
@@ -2742,6 +2857,158 @@ class GameState:
         # Check for system failure events
         if self.technical_debt.can_trigger_system_failure() and random.random() < 0.05:
             self._trigger_system_failure()
+    
+    # Researcher Assignment System for Issue #190
+    def assign_researcher_to_task(self, researcher_id: str, task_name: str, 
+                                  quality_override: Optional[ResearchQuality] = None) -> bool:
+        """
+        Assign a specific researcher to a specific task.
+        
+        Args:
+            researcher_id: Unique identifier for the researcher
+            task_name: Name of the research task/action
+            quality_override: Optional quality level override for this task
+            
+        Returns:
+            True if assignment was successful, False otherwise
+        """
+        # Find the researcher
+        researcher = self.get_researcher_by_id(researcher_id)
+        if not researcher:
+            self.messages.append(f"❌ Researcher {researcher_id} not found")
+            return False
+        
+        # Check if researcher is already assigned
+        if researcher_id in self.researcher_assignments:
+            old_task = self.researcher_assignments[researcher_id]
+            self.messages.append(f"📋 {researcher.name} reassigned from {old_task} to {task_name}")
+        
+        # Make the assignment
+        self.researcher_assignments[researcher_id] = task_name
+        
+        # Set quality override if provided
+        if quality_override:
+            self.task_quality_overrides[task_name] = quality_override
+        
+        self.messages.append(f"✅ {researcher.name} assigned to {task_name}")
+        return True
+    
+    def unassign_researcher(self, researcher_id: str) -> bool:
+        """
+        Remove assignment for a specific researcher.
+        
+        Args:
+            researcher_id: Unique identifier for the researcher
+            
+        Returns:
+            True if unassignment was successful, False otherwise
+        """
+        researcher = self.get_researcher_by_id(researcher_id)
+        if not researcher:
+            return False
+        
+        if researcher_id in self.researcher_assignments:
+            task_name = self.researcher_assignments[researcher_id]
+            del self.researcher_assignments[researcher_id]
+            self.messages.append(f"📋 {researcher.name} unassigned from {task_name}")
+            return True
+        
+        return False
+    
+    def set_researcher_default_quality(self, researcher_id: str, quality: ResearchQuality) -> bool:
+        """
+        Set the default research quality preference for a researcher.
+        
+        Args:
+            researcher_id: Unique identifier for the researcher
+            quality: Default quality level for this researcher
+            
+        Returns:
+            True if setting was successful, False otherwise
+        """
+        researcher = self.get_researcher_by_id(researcher_id)
+        if not researcher:
+            return False
+        
+        self.researcher_default_quality[researcher_id] = quality
+        quality_name = quality.value.title()
+        self.messages.append(f"⚙️ {researcher.name}'s default quality set to {quality_name}")
+        return True
+    
+    def get_researcher_by_id(self, researcher_id: str):
+        """
+        Get a researcher by their unique identifier.
+        
+        Args:
+            researcher_id: Unique identifier for the researcher
+            
+        Returns:
+            Researcher object if found, None otherwise
+        """
+        for researcher in self.researchers:
+            if getattr(researcher, 'id', researcher.name) == researcher_id:
+                return researcher
+        return None
+    
+    def get_task_quality_setting(self, task_name: str, assigned_researcher_id: str = None) -> ResearchQuality:
+        """
+        Get the effective quality setting for a task.
+        
+        Args:
+            task_name: Name of the research task
+            assigned_researcher_id: ID of researcher assigned to this task
+            
+        Returns:
+            Effective ResearchQuality level for the task
+        """
+        # Check task-specific override first
+        if task_name in self.task_quality_overrides:
+            return self.task_quality_overrides[task_name]
+        
+        # Check researcher default if researcher is assigned
+        if assigned_researcher_id and assigned_researcher_id in self.researcher_default_quality:
+            return self.researcher_default_quality[assigned_researcher_id]
+        
+        # Fall back to organization default
+        return self.current_research_quality
+    
+    def get_researcher_assignments_summary(self) -> Dict[str, Any]:
+        """
+        Get a summary of current researcher assignments for UI display.
+        
+        Returns:
+            Dictionary with assignment information
+        """
+        summary = {
+            "assigned": {},
+            "unassigned": [],
+            "task_qualities": {}
+        }
+        
+        # Track assigned researchers
+        for researcher_id, task_name in self.researcher_assignments.items():
+            researcher = self.get_researcher_by_id(researcher_id)
+            if researcher:
+                summary["assigned"][researcher_id] = {
+                    "name": researcher.name,
+                    "task": task_name,
+                    "specialization": researcher.specialization,
+                    "quality_setting": self.get_task_quality_setting(task_name, researcher_id).value
+                }
+        
+        # Track unassigned researchers
+        assigned_ids = set(self.researcher_assignments.keys())
+        for researcher in self.researchers:
+            researcher_id = getattr(researcher, 'id', researcher.name)
+            if researcher_id not in assigned_ids:
+                summary["unassigned"].append({
+                    "id": researcher_id,
+                    "name": researcher.name,
+                    "specialization": researcher.specialization,
+                    "default_quality": self.researcher_default_quality.get(researcher_id, self.current_research_quality).value
+                })
+        
+        return summary
     
     def _trigger_debt_accident(self) -> None:
         """Trigger a technical debt-related accident."""
@@ -3925,3 +4192,161 @@ class GameState:
             self.messages.append("😞 Loyalty crisis among researchers! Morale significantly decreased.")
         
         self.messages.append("Consider salary increases and team building to restore loyalty.")
+
+    # Research Quality Event Handlers for Issue #190
+    def _trigger_safety_shortcut_event(self):
+        """
+        Event where a researcher suggests cutting corners on safety validation.
+        Player can choose response affecting technical debt and research speed.
+        """
+        from src.features.event_system import Event, EventType, EventAction
+        
+        # Find an assigned researcher for the story
+        if not self.researcher_assignments:
+            return
+        
+        researcher_id = random.choice(list(self.researcher_assignments.keys()))
+        researcher = self.get_researcher_by_id(researcher_id)
+        task_name = self.researcher_assignments[researcher_id]
+        
+        if not researcher:
+            return
+        
+        # Create an enhanced event with multiple options
+        event_desc = (f"{researcher.name} suggests: \"We could skip some safety validation steps "
+                     f"for {task_name} and finish 40% faster. The risk is probably minimal...\"")
+        
+        def handle_maintain_standards(gs):
+            gs.messages.append(f"✅ {researcher.name}: \"You're right, safety first. I'll maintain full validation.\"")
+            gs._add('reputation', 1)  # Reputation for safety-conscious approach
+            
+        def handle_calculated_risk(gs):
+            gs.messages.append(f"⚠️ {researcher.name}: \"Understood. I'll reduce some checks but keep the critical ones.\"")
+            gs.technical_debt.add_debt(1)  # Small debt increase
+            # Speed up current research slightly (placeholder - would need research tracking)
+            
+        def handle_rush_it(gs):
+            gs.messages.append(f"🚨 {researcher.name}: \"Alright, cutting corners to hit the deadline. Hope nothing goes wrong...\"")
+            gs.technical_debt.add_debt(3)  # Significant debt increase
+            gs._add('doom', 1)  # Small doom increase for risky approach
+            
+        # Use enhanced events if available, otherwise simple choice
+        if hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled:
+            enhanced_event = Event(
+                name="Safety Shortcut Temptation",
+                desc=event_desc,
+                trigger=lambda gs: True,
+                effect=handle_maintain_standards,  # Default action
+                event_type=EventType.POPUP,
+                available_actions=[EventAction.ACCEPT, EventAction.DEFER, EventAction.DISMISS]
+            )
+            
+            # Add custom action handlers
+            enhanced_event.action_handlers = {
+                "maintain_standards": handle_maintain_standards,
+                "calculated_risk": handle_calculated_risk,
+                "rush_it": handle_rush_it
+            }
+            
+            if hasattr(self, 'pending_popup_events'):
+                self.pending_popup_events.append(enhanced_event)
+            else:
+                handle_maintain_standards(self)  # Fallback
+        else:
+            # Simple implementation - randomly choose response for now
+            responses = [handle_maintain_standards, handle_calculated_risk, handle_rush_it]
+            choice = random.choice(responses)
+            choice(self)
+    
+    def _trigger_technical_debt_warning(self):
+        """
+        Event warning player about accumulated technical debt consequences.
+        """
+        debt_level = self.technical_debt.accumulated_debt
+        
+        if debt_level < 10:
+            self.messages.append("⚠️ Lead Researcher: \"We're accumulating some technical shortcuts. Should keep an eye on that.\"")
+        elif debt_level < 15:
+            self.messages.append("🔶 Lead Researcher: \"Our technical debt is getting concerning. We should schedule refactoring soon.\"")
+        else:
+            self.messages.append("🚨 Lead Researcher: \"Critical warning: Our technical debt could trigger system failures!\"")
+            
+        # Offer debt reduction suggestion
+        self.messages.append("Consider using 'Refactoring Sprint' or 'Safety Audit' actions to reduce technical debt.")
+    
+    def _trigger_quality_speed_dilemma(self):
+        """
+        Event presenting a critical deadline where player must choose quality vs speed.
+        """
+        scenarios = [
+            "Conference deadline approaches",
+            "Investor presentation next turn", 
+            "Regulatory review incoming",
+            "Competitor announcement imminent"
+        ]
+        
+        scenario = random.choice(scenarios)
+        
+        # Offer quality choice for all active research
+        self.messages.append(f"🕐 Critical: {scenario}! How should researchers adjust their approach?")
+        
+        def set_all_rushed():
+            for researcher_id in self.researcher_assignments:
+                self.researcher_default_quality[researcher_id] = ResearchQuality.RUSHED
+            self.messages.append("📈 All researchers switched to RUSHED mode for speed!")
+            self.technical_debt.add_debt(len(self.researcher_assignments))
+            
+        def set_all_thorough():
+            for researcher_id in self.researcher_assignments:
+                self.researcher_default_quality[researcher_id] = ResearchQuality.THOROUGH
+            self.messages.append("🔬 All researchers switched to THOROUGH mode for quality!")
+            self._add('reputation', 1)
+            
+        def maintain_current():
+            self.messages.append("⚖️ Maintaining current research quality approaches.")
+            
+        # Simple random choice for now - in full implementation would be player choice
+        choices = [set_all_rushed, set_all_thorough, maintain_current]
+        weights = [0.3, 0.3, 0.4]  # Slight preference for maintaining current
+        choice = random.choices(choices, weights=weights)[0]
+        choice()
+    
+    def _trigger_competitor_shortcut_discovery(self):
+        """
+        Event revealing that competitors are taking dangerous shortcuts.
+        """
+        if not hasattr(self, 'opponents') or not self.opponents:
+            return
+            
+        # Find competitor with high technical debt (simulated)
+        competitor_names = ["NeuralDyne", "QuantumLogic", "CyberBrain Corp"]
+        competitor = random.choice(competitor_names)
+        
+        discovery_types = [
+            "Intelligence gathering reveals",
+            "Whistleblower reports",
+            "Academic paper analysis shows",
+            "Industry rumors suggest"
+        ]
+        
+        discovery = random.choice(discovery_types)
+        
+        consequences = [
+            "skipping safety validations entirely",
+            "using untested architectures in production",
+            "ignoring alignment research protocols",
+            "rushing capability development without safeguards"
+        ]
+        
+        consequence = random.choice(consequences)
+        
+        self.messages.append(f"🕵️ {discovery} {competitor} is {consequence}!")
+        self.messages.append(f"This could give them a speed advantage but increases global risk.")
+        
+        # Player organization gains reputation for being more careful
+        if self.technical_debt.accumulated_debt < 5:
+            self._add('reputation', 1)
+            self.messages.append("📈 Your careful approach gains recognition in contrast!")
+        
+        # Increase global doom slightly due to competitor shortcuts
+        self._add('doom', random.randint(1, 3))
