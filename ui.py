@@ -3672,7 +3672,7 @@ def draw_tutorial_choice(screen, w, h, selected_item):
     Args:
         screen: pygame surface to draw on
         w, h: screen width and height for responsive layout
-        selected_item: index of currently selected item (0=Yes, 1=No)
+        selected_item: index of currently selected item (0=No, 1=Yes)
     """
     # Clear background
     screen.fill((50, 50, 50))

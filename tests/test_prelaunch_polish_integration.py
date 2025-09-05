@@ -277,12 +277,12 @@ class TestFullFeatureIntegration:
         main.tutorial_enabled = False
         
         # Test keyboard navigation
-        main.handle_tutorial_choice_keyboard(pygame.K_DOWN)  # Select "No"
+        main.handle_tutorial_choice_keyboard(pygame.K_DOWN)  # Select "Yes"
         assert main.tutorial_choice_selected_item == 1
         
         # Test selection via Enter
         main.handle_tutorial_choice_keyboard(pygame.K_RETURN)
-        assert main.tutorial_enabled == False
+        assert main.tutorial_enabled == True
         assert main.current_state == 'game'
     
     def test_complete_audio_menu_flow(self):
