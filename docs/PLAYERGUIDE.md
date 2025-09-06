@@ -34,7 +34,7 @@ Release Status: Currently v0.2.1 "Three Column" in hotfix development targeting 
 
 ## Quick Setup
 
-1. **Install Python 3.8+** (if not already installed)
+1. **Install Python 3.9+** (if not already installed)
 2. **Install pygame**: `pip install pygame`
 3. **Run the game**: `python main.py`
 

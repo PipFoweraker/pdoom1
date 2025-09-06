@@ -7,7 +7,7 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 ## Working Effectively
 
 ### Bootstrap and Setup
-- **Python Version**: Requires Python 3.8+. Tested and verified on Python 3.12.3.
+- **Python Version**: Requires Python 3.9+. Tested and verified on Python 3.12.3.
 - Install dependencies: `pip install -r requirements.txt`
   - Core dependencies: pygame>=2.0.0, numpy>=1.20.0, jsonschema>=4.0.0, pytest>=7.0.0
   - Installation takes ~10-30 seconds typically
@@ -48,7 +48,7 @@ print('✓ Game state initializes correctly')
 
 ### CI/CD Validation
 - **Before committing**: Always run `python -m unittest discover tests -v`
-- **GitHub Actions**: Tests run on Python 3.8, 3.9, 3.10, 3.11
+- **GitHub Actions**: Tests run on Python 3.9, 3.10, 3.11, 3.12
 - **Version consistency**: Version managed in `version.py` using semantic versioning
 
 ## Repository Navigation

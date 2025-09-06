@@ -4,7 +4,41 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.3] - 2025-09-05
+### Changed
+- **🐍 Python Version Requirements**: Dropped Python 3.8 support, now requires Python 3.9+
+  - Updated GitHub Actions workflows to test Python 3.9, 3.10, 3.11, 3.12
+  - Updated all documentation and requirements to reflect Python 3.9+ minimum
+  - Enables use of modern Python features like built-in generics (`list[str]` vs `List[str]`)
+  - Updated MyPy configuration target from Python 3.8 to 3.9
+
 ## [Unreleased]
+### Added
+- **🏦 Economic Cycles & Funding Volatility (Issue #192)**: Complete historical AI funding timeline (2017-2025)
+  - Realistic economic phases: Boom, Stable, Correction, Recession, Recovery
+  - 5 funding sources with different cycle sensitivities (Seed, Venture, Corporate, Government, Revenue)
+  - Enhanced fundraising system with 4 advanced funding actions (Series A, Government grants, etc.)
+  - 7 economic-specific events triggered by market conditions
+  - Historical anchors based on real AI funding patterns and market cycles
+- **🎮 New Player Experience Enhancement**: Improved onboarding with tutorial/intro selection
+  - Replaced "Launch Lab" with "New Player Experience" in main menu
+  - Checkbox-based interface for tutorial and intro scenario selection
+  - Contextual intro text explaining game premise and starting conditions
+  - Responsive UI design with keyboard and mouse navigation support
+
+### Changed
+- **🔤 ASCII Compatibility**: Converted all Unicode symbols to ASCII equivalents
+  - Replaced arrows, emojis, and Unicode symbols with ASCII alternatives
+  - Fixed encoding issues causing 'charmap' codec errors on some systems
+  - Maintained visual consistency while ensuring cross-platform compatibility
+  - Improved terminal output compatibility across different environments
+
+### Technical
+- **📊 Enhanced Test Coverage**: Added 17 new unit tests for economic cycles and new player experience
+- **🏗️ Modular Architecture**: Economic cycles system designed for extensibility
+  - Clean separation between game logic, UI, and economic mechanics
+  - Deterministic RNG integration for reproducible economic cycles
+  - Backward compatibility maintained for existing save files
 
 ## [0.2.2] - 2025-09-04 - "Technical Debt Resolution & Privacy-First Systems"
 ### 🛠️ Technical Debt Resolution
@@ -126,19 +160,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Spacing & Layout**: Consistent margins and alignment across all resource displays
 - **Screenshot Functionality**: Alt+Tab and screen capture tools now work properly
 
-### Changed
-- **Resource Labels**: Removed "Money:", "Research:", "Papers:" prefixes for cleaner look
-- **Visual Hierarchy**: Icons positioned above values for better readability
-- **Default Configuration**: Window mode enabled, fullscreen disabled by default
-- **Action Availability**: Hidden locked actions for cleaner interface
-
-### Technical
-- **Icon System**: Added `draw_resource_icon()` function with 8-bit style rendering
-- **Context Window**: Implemented retro-styled information display system
-- **Screenshot API**: Integrated pygame.image.save() with timestamp naming
-- **UI Architecture**: Bypassed tutorial restrictions for core UI elements
-
-## [0.1.0] - Previous Release
+## [Unreleased]
 ### Added
 - **🎯 Enhanced Settings System**: Comprehensive settings and configuration architecture
   - **Custom Seed Management**: Fixed critical "Launch with Custom Seed" crash, added seed validation and normalization
