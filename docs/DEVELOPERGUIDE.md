@@ -210,7 +210,7 @@ python main.py
 ## Project Structure
 
 ### Core Game Files
-- **main.py** — Game entry point and menu system
+- **main.py** — Game entry point and menu system with new player experience
 - **game_state.py** — Core game logic and state management
 - **actions.py** — Action definitions (as Python dicts)
 - **action_rules.py** — Centralized action availability rule system
@@ -218,6 +218,13 @@ python main.py
 - **events.py** — Event definitions and special event logic
 - **event_system.py** — Enhanced event system with deferred events and popups
 - **opponents.py** — Opponent AI and intelligence system
+
+### Economic Systems
+- **src/features/economic_cycles.py** — Economic cycles and funding volatility system
+  - Historical AI funding timeline (2017-2025) with realistic market phases
+  - 5 funding sources with different economic sensitivities
+  - Enhanced fundraising actions and advanced funding mechanisms
+  - Economic events triggered by market conditions
 
 ### UI and Interface
 - **ui.py** — Pygame-based UI code with visual feedback integration

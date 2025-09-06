@@ -199,6 +199,12 @@ class GameState:
         self.task_quality_overrides = {}  # Maps task_name -> ResearchQuality override
         self.researcher_default_quality = {}  # Maps researcher_id -> default ResearchQuality
         
+        # Economic Cycles & Funding Volatility System for Issue #192
+        from src.features.economic_cycles import EconomicCycles
+        self.economic_cycles = EconomicCycles(self)
+        self.funding_round_cooldown = 0  # Prevent excessive fundraising
+        self.emergency_measures_available = True  # Track if emergency options are still available
+        
         # Context window tracking
         self.context_window_minimized = False
         self.current_context_info = None
@@ -2232,6 +2238,12 @@ class GameState:
         # This ensures players see events before committing to actions
         self.trigger_events()
         
+        # Update economic cycles and display news if phase changed
+        if hasattr(self, 'economic_cycles'):
+            economic_news = self.economic_cycles.update_for_turn(self.turn + 1)  # Next turn
+            if economic_news:
+                self.messages.append(f"📰 ECONOMIC NEWS: {economic_news}")
+        
         # Check if there are pending popup events that need resolution
         if (hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled and
             hasattr(self, 'deferred_events') and hasattr(self.deferred_events, 'pending_popup_events') and
@@ -2461,6 +2473,10 @@ class GameState:
         
         # Reset spend tracking for next turn
         self.spend_this_turn = 0
+        
+        # Update funding cooldowns
+        if hasattr(self, 'funding_round_cooldown') and self.funding_round_cooldown > 0:
+            self.funding_round_cooldown -= 1
         
         # Update Public Opinion & Media System
         self.public_opinion.update_turn(self.turn + 1)  # Use next turn for media stories
@@ -4350,3 +4366,110 @@ class GameState:
         
         # Increase global doom slightly due to competitor shortcuts
         self._add('doom', random.randint(1, 3))
+    
+    # Economic Cycles & Funding Volatility Event Handlers for Issue #192
+    
+    def _trigger_funding_drought_event(self):
+        """Handle venture capital drought during economic downturns."""
+        if not hasattr(self, 'economic_cycles'):
+            return
+            
+        self.messages.append("💰 Venture capital funding has become extremely scarce!")
+        self.messages.append("💡 Consider government grants or corporate partnerships instead.")
+        
+        # Extend funding cooldown during drought
+        if hasattr(self, 'funding_round_cooldown'):
+            self.funding_round_cooldown = max(self.funding_round_cooldown, 2)
+        
+        # Small reputation boost for surviving the drought
+        self._add('reputation', 1)
+    
+    def _trigger_bubble_warning_event(self):
+        """Handle AI bubble burst warnings."""
+        self.messages.append("⚠️ Market analysts warn AI valuations are unsustainable!")
+        self.messages.append("💭 Consider securing funding now before conditions worsen.")
+        
+        # Temporary funding bonus for those who act quickly
+        if not hasattr(self, 'bubble_warning_bonus'):
+            self.bubble_warning_bonus = 3  # 3 turns to act
+    
+    def _trigger_government_funding_event(self):
+        """Handle government AI initiative announcements."""
+        self.messages.append("🏛️ Government announces major AI research funding initiative!")
+        
+        if self.reputation >= 10:
+            grant_amount = random.randint(80, 150)
+            self._add('money', grant_amount)
+            self.messages.append(f"Your organization qualifies for ${grant_amount}k government grant!")
+        else:
+            self.messages.append("Build more reputation to qualify for government funding programs.")
+    
+    def _trigger_corporate_partnership_event(self):
+        """Handle corporate partnership opportunities during downturns."""
+        corp_names = ["TechGiant Inc", "DataCorp Systems", "Innovation Dynamics"]
+        corp = random.choice(corp_names)
+        
+        self.messages.append(f"🤝 {corp} seeks AI partnerships during the economic downturn!")
+        
+        partnership_amount = random.randint(60, 120)
+        self._add('money', partnership_amount)
+        self.messages.append(f"Secured ${partnership_amount}k corporate partnership!")
+        
+        # Corporate partnerships provide stability but may limit reputation growth
+        self._add('reputation', random.randint(0, 2))
+    
+    def _trigger_emergency_measures_event(self):
+        """Handle emergency cost-cutting measures during severe economic stress."""
+        if not hasattr(self, 'emergency_measures_available') or not self.emergency_measures_available:
+            return
+            
+        self.messages.append("🚨 Economic conditions require immediate cost reduction!")
+        
+        # Emergency measures: reduce staff costs temporarily
+        if self.staff > 1:
+            staff_reduction = min(2, self.staff // 3)
+            self._add('staff', -staff_reduction)
+            savings = staff_reduction * 30
+            self._add('money', savings)
+            self.messages.append(f"Emergency layoffs: -{staff_reduction} staff, +${savings}k cash flow relief")
+        
+        # Mark emergency measures as used
+        self.emergency_measures_available = False
+        self._add('reputation', -2)  # Reputation hit for layoffs
+    
+    def _trigger_competitor_funding_event(self):
+        """Handle competitor funding announcements during boom periods."""
+        if not hasattr(self, 'opponents') or not self.opponents:
+            return
+            
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        if not discovered_opponents:
+            return
+            
+        competitor = random.choice(discovered_opponents)
+        funding_amounts = ["$50M", "$100M", "$200M", "$500M"]
+        amount = random.choice(funding_amounts)
+        
+        self.messages.append(f"📰 {competitor.name} announces {amount} funding round!")
+        self.messages.append("Competitive pressure increases - consider accelerating your own fundraising.")
+        
+        # Increase doom slightly due to competitor advancement
+        self._add('doom', random.randint(1, 3))
+        
+        # Create urgency for player fundraising
+        if hasattr(self, 'funding_round_cooldown'):
+            self.funding_round_cooldown = max(0, self.funding_round_cooldown - 1)
+    
+    def _trigger_ai_winter_warning_event(self):
+        """Handle AI winter warnings when doom is high."""
+        self.messages.append("❄️ Industry veterans warn of potential 'AI Winter' if promises don't materialize!")
+        self.messages.append("🎯 Focus on demonstrable safety progress to maintain investor confidence.")
+        
+        # If safety research progress is low, more severe consequences
+        if self.reputation < 15:
+            funding_impact = random.randint(20, 40)
+            self._add('money', -funding_impact)
+            self.messages.append(f"Investor confidence drops: -${funding_impact}k funding withdrawn")
+        else:
+            self.messages.append("Your strong safety reputation provides some protection from market fears.")
+            self._add('reputation', 2)

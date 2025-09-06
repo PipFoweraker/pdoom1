@@ -2,6 +2,195 @@ import random
 from src.core.action_rules import manager_unlock_rule, scout_unlock_rule, search_unlock_rule
 from src.core.research_quality import ResearchQuality
 
+def execute_fundraising_action(gs):
+    """
+    Execute enhanced fundraising action using economic cycles system.
+    
+    Args:
+        gs: GameState instance
+    """
+    from src.features.economic_cycles import FundingSource
+    
+    # Check if economic cycles system is available
+    if not hasattr(gs, 'economic_cycles'):
+        # Fallback to original fundraising logic
+        amount = random.randint(40, 70) + gs.reputation * 2
+        gs._add('money', amount)
+        gs.messages.append(f"Raised ${amount}k in funding")
+        return
+    
+    # Get available funding sources
+    funding_info = gs.economic_cycles.get_funding_round_info()
+    available_sources = funding_info['available_sources']
+    
+    if not available_sources:
+        gs.messages.append("No funding sources available given current reputation and market conditions")
+        return
+    
+    # Choose funding source (prefer venture during boom, government during recession)
+    phase = funding_info['phase']
+    
+    # Smart source selection based on market conditions
+    if phase.name == 'BOOM' and any(s['source'] == FundingSource.VENTURE for s in available_sources):
+        chosen_source = next(s for s in available_sources if s['source'] == FundingSource.VENTURE)
+    elif phase.name in ['RECESSION', 'CORRECTION'] and any(s['source'] == FundingSource.GOVERNMENT for s in available_sources):
+        chosen_source = next(s for s in available_sources if s['source'] == FundingSource.GOVERNMENT)
+    else:
+        # Choose best available multiplier
+        chosen_source = max(available_sources, key=lambda s: s['multiplier'])
+    
+    # Calculate funding amount
+    base_amount = random.randint(40, 70) + gs.reputation * 2
+    multiplier = chosen_source['multiplier']
+    final_amount = int(base_amount * multiplier)
+    
+    # Apply funding
+    gs._add('money', final_amount)
+    
+    # Record funding round
+    gs.economic_cycles.record_funding_round(final_amount, chosen_source['source'], gs.turn)
+    
+    # Set cooldown to prevent excessive fundraising
+    gs.funding_round_cooldown = 3  # 3 turn cooldown
+    
+    # Generate appropriate message
+    source_name = chosen_source['source'].value.title()
+    phase_context = f"during {phase.name.lower()} market conditions" if multiplier != 1.0 else ""
+    gs.messages.append(f"Secured ${final_amount}k from {source_name} {phase_context}")
+    
+    # Unlock advanced funding actions after first major round
+    if final_amount >= 100 and not hasattr(gs, 'advanced_funding_unlocked'):
+        gs.advanced_funding_unlocked = True
+        gs.messages.append("Advanced funding strategies now available!")
+
+def execute_series_a_funding(gs):
+    """Execute Series A venture capital funding round."""
+    from src.features.economic_cycles import FundingSource
+    
+    if not hasattr(gs, 'economic_cycles'):
+        # Fallback for missing economic system
+        amount = random.randint(150, 300) + gs.reputation * 5
+        gs._add('money', amount)
+        gs.messages.append(f"Secured ${amount}k in Series A funding")
+        return
+    
+    # Series A is heavily dependent on venture capital markets
+    multiplier = gs.economic_cycles.get_funding_multiplier(FundingSource.VENTURE)
+    
+    if multiplier < 0.6:  # Difficult VC environment
+        gs.messages.append("Series A funding extremely difficult in current market conditions")
+        gs.messages.append("Consider alternative funding sources or wait for market recovery")
+        return
+    
+    # Calculate substantial funding amount
+    base_amount = random.randint(150, 300) + gs.reputation * 5
+    final_amount = int(base_amount * multiplier)
+    
+    gs._add('money', final_amount)
+    gs.economic_cycles.record_funding_round(final_amount, FundingSource.VENTURE, gs.turn)
+    
+    # Longer cooldown for major rounds
+    gs.funding_round_cooldown = 5
+    
+    phase = gs.economic_cycles.current_state.phase.name
+    gs.messages.append(f"Series A completed: ${final_amount}k from institutional VCs")
+    gs.messages.append(f"Market conditions: {phase.lower()}")
+
+def execute_government_grant_application(gs):
+    """Execute government grant application."""
+    from src.features.economic_cycles import FundingSource
+    
+    if not hasattr(gs, 'economic_cycles'):
+        # Fallback
+        amount = random.randint(50, 120)
+        gs._add('money', amount)
+        gs.messages.append(f"Government grant awarded: ${amount}k")
+        return
+    
+    # Government funding is counter-cyclical (better during downturns)
+    multiplier = gs.economic_cycles.get_funding_multiplier(FundingSource.GOVERNMENT)
+    
+    # Base amount depends on reputation and safety focus
+    safety_bonus = 20 if gs.reputation >= 15 else 0
+    base_amount = random.randint(50, 100) + safety_bonus
+    final_amount = int(base_amount * multiplier)
+    
+    gs._add('money', final_amount)
+    gs.economic_cycles.record_funding_round(final_amount, FundingSource.GOVERNMENT, gs.turn)
+    
+    # Government grants have different requirements
+    if multiplier > 1.2:
+        gs.messages.append(f"Emergency government funding secured: ${final_amount}k")
+    else:
+        gs.messages.append(f"Government research grant awarded: ${final_amount}k")
+    
+    # Small reputation boost for government validation
+    gs._add('reputation', 1)
+
+def execute_corporate_partnership(gs):
+    """Execute corporate strategic partnership."""
+    from src.features.economic_cycles import FundingSource
+    
+    corp_names = ["TechGiant", "DataCorp", "CloudSystems", "AutomationInc"]
+    partner = random.choice(corp_names)
+    
+    if not hasattr(gs, 'economic_cycles'):
+        # Fallback
+        amount = random.randint(80, 200)
+        gs._add('money', amount)
+        gs.messages.append(f"Partnership with {partner}: ${amount}k investment")
+        return
+    
+    # Corporate partnerships are less volatile than VC
+    multiplier = gs.economic_cycles.get_funding_multiplier(FundingSource.CORPORATE)
+    
+    # Amount based on reputation and staff size
+    base_amount = random.randint(80, 150) + gs.reputation * 3 + gs.staff * 5
+    final_amount = int(base_amount * multiplier)
+    
+    gs._add('money', final_amount)
+    gs.economic_cycles.record_funding_round(final_amount, FundingSource.CORPORATE, gs.turn)
+    
+    gs.messages.append(f"Strategic partnership with {partner}: ${final_amount}k")
+    
+    # Corporate partnerships provide some stability but limit growth
+    if random.random() < 0.7:
+        gs._add('reputation', random.randint(1, 3))
+    else:
+        gs.messages.append("Partnership comes with operational constraints")
+
+def execute_revenue_diversification(gs):
+    """Execute revenue diversification strategy."""
+    from src.features.economic_cycles import FundingSource
+    
+    if not hasattr(gs, 'economic_cycles'):
+        # Fallback
+        amount = random.randint(30, 80)
+        gs._add('money', amount)
+        gs.messages.append(f"Customer revenue generated: ${amount}k")
+        return
+    
+    # Revenue depends on market conditions and reputation
+    multiplier = gs.economic_cycles.get_funding_multiplier(FundingSource.REVENUE)
+    
+    # Revenue scales with reputation and staff capability
+    base_amount = gs.reputation * 2 + gs.staff * 3 + random.randint(20, 50)
+    final_amount = int(base_amount * multiplier)
+    
+    gs._add('money', final_amount)
+    gs.economic_cycles.record_funding_round(final_amount, FundingSource.REVENUE, gs.turn)
+    
+    gs.messages.append(f"Customer revenue diversification: +${final_amount}k recurring income")
+    
+    # Revenue diversification reduces funding dependency
+    if not hasattr(gs, 'revenue_streams'):
+        gs.revenue_streams = 0
+    gs.revenue_streams += 1
+    
+    if gs.revenue_streams >= 3:
+        gs.messages.append("Significant revenue diversification achieved - reduced funding dependence!")
+        gs._add('reputation', 2)
+
 def execute_research_action(gs, action_name: str, base_doom_reduction: int, base_reputation_gain: int):
     """
     Execute a research action using the research quality system.
@@ -91,16 +280,16 @@ ACTIONS = [
     },
     {
         "name": "Fundraise",
-        "desc": "+Money (scaled by rep), small rep risk.",
+        "desc": "Raise capital (amount varies by market conditions and reputation)",
         "cost": 0,
         "ap_cost": 1,  # Action Points cost
         "delegatable": True,  # Can be delegated to admin staff
         "delegate_staff_req": 1,  # Requires 1 admin staff to delegate  
         "delegate_ap_cost": 1,  # Same AP cost when delegated (requires personal touch)
         "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
-        "upside": lambda gs: gs._add('money', random.randint(40, 70) + gs.reputation * 2),
+        "upside": lambda gs: execute_fundraising_action(gs),
         "downside": lambda gs: gs._add('reputation', -1 if random.random() < 0.25 else 0),
-        "rules": None
+        "rules": lambda gs: getattr(gs, 'funding_round_cooldown', 0) <= 0
     },
     {
         "name": "Safety Research",
@@ -328,5 +517,47 @@ ACTIONS = [
         "upside": lambda gs: gs.media_system.execute_media_action('public_statement', gs) if hasattr(gs, 'media_system') else None,
         "downside": lambda gs: None,
         "rules": lambda gs: hasattr(gs, 'media_system')
+    },
+    # Advanced Economic & Funding Actions for Issue #192
+    {
+        "name": "Series A Funding",
+        "desc": "Pursue institutional venture capital funding (requires proven traction)",
+        "cost": 0,
+        "ap_cost": 2,  # More complex than basic fundraising
+        "upside": lambda gs: execute_series_a_funding(gs),
+        "downside": lambda gs: gs._add('reputation', -1 if random.random() < 0.4 else 0),
+        "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
+                           gs.reputation >= 15 and 
+                           getattr(gs, 'funding_round_cooldown', 0) <= 0)
+    },
+    {
+        "name": "Government Grant Application",
+        "desc": "Apply for government AI safety research grants (counter-cyclical funding)",
+        "cost": 10,  # Application costs
+        "ap_cost": 1,
+        "upside": lambda gs: execute_government_grant_application(gs),
+        "downside": lambda gs: None,
+        "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
+                           gs.reputation >= 8)
+    },
+    {
+        "name": "Corporate Partnership",
+        "desc": "Negotiate strategic partnership with established technology company",
+        "cost": 0,
+        "ap_cost": 2,
+        "upside": lambda gs: execute_corporate_partnership(gs),
+        "downside": lambda gs: gs._add('reputation', -2 if random.random() < 0.3 else 0),
+        "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
+                           gs.reputation >= 12)
+    },
+    {
+        "name": "Revenue Diversification",
+        "desc": "Develop customer revenue streams to reduce funding dependence",
+        "cost": 50,
+        "ap_cost": 2,
+        "upside": lambda gs: execute_revenue_diversification(gs),
+        "downside": lambda gs: None,
+        "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
+                           gs.reputation >= 10 and gs.staff >= 5)
     }
 ]

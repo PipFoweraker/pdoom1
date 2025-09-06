@@ -101,6 +101,17 @@ GAME FEATURES (v0.2.2)
 - **RNG Transparency**: Full audit trail of random events for debugging
 - **Data Export**: JSON export for custom analysis tools
 
+🏦 **ECONOMIC CYCLES & FUNDING VOLATILITY:**
+- **Historical Timeline**: Realistic AI funding cycles based on 2017-2025 market data
+- **Dynamic Funding**: 5 funding sources with different economic sensitivities
+- **Strategic Timing**: Market phases affect fundraising success and amounts
+- **Advanced Funding**: Series A, government grants, corporate partnerships
+
+🎮 **ENHANCED NEW PLAYER EXPERIENCE:**
+- **Tutorial Selection**: Choose between guided tutorial or direct play
+- **Intro Scenario**: Optional contextual introduction to the game world
+- **Responsive Onboarding**: Adaptive UI for different experience levels
+
 🏆 **PRIVACY-RESPECTING LEADERBOARDS:**
 - **Pseudonymous Only**: Compete with chosen display names, not real identities
 - **User-Controlled**: Enable/disable leaderboard participation anytime

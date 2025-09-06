@@ -5,7 +5,7 @@ import random
 import json
 from src.core.game_state import GameState
 
-from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
+from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
 from ui_new.facade import ui_facade
 from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
 
@@ -86,7 +86,7 @@ pygame.display.flip()
 navigation_stack = []
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
+menu_items = ["New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
 end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
@@ -103,6 +103,11 @@ available_configs = []
 
 # Tutorial choice state
 tutorial_choice_selected_item = 0  # For tutorial choice navigation (0=No, 1=Yes) - Default to No
+
+# New Player Experience state
+npe_tutorial_enabled = False    # Tutorial checkbox state
+npe_intro_enabled = False       # Intro scenario checkbox state
+npe_selected_item = 0           # Currently selected item (0=Tutorial checkbox, 1=Intro checkbox, 2=Start button)
 
 # Pre-game settings state
 pre_game_settings = {
@@ -281,11 +286,11 @@ def handle_menu_click(mouse_pos, w, h):
         w, h: Screen width and height for button positioning
     
     Updates global state based on which menu item was clicked:
-    - Launch Lab: Start game with current weekly seed
+    - New Player Experience: Tutorial and intro selection screen
     - Launch with Custom Seed: Transitions to seed input prompt
-    - Options: Settings menu (audio, keybindings, etc.)
+    - Settings: Settings menu (audio, keybindings, etc.)
     - Player Guide: Shows docs/PLAYERGUIDE.md in scrollable overlay
-    - README: Shows README.md in scrollable overlay
+    - Exit: Closes the game
     """
     global current_state, selected_menu_item, overlay_content, overlay_title, seed
     
@@ -308,9 +313,9 @@ def handle_menu_click(mouse_pos, w, h):
             selected_menu_item = i
             
             # Execute menu action based on selection
-            if i == 0:  # Launch Lab (weekly seed)
+            if i == 0:  # New Player Experience
                 seed = get_weekly_seed()
-                current_state = 'pre_game_settings'
+                current_state = 'new_player_experience'
             elif i == 1:  # Launch with Custom Seed
                 current_state = 'custom_seed_prompt'
                 seed_input = ""  # Clear any previous input
@@ -363,9 +368,9 @@ def handle_menu_keyboard(key):
         selected_menu_item = (selected_menu_item + 1) % len(menu_items)
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
-        if selected_menu_item == 0:  # Launch Lab (weekly seed)
+        if selected_menu_item == 0:  # New Player Experience
             seed = get_weekly_seed()
-            current_state = 'pre_game_settings'
+            current_state = 'new_player_experience'
         elif selected_menu_item == 1:  # Launch with Custom Seed
             current_state = 'custom_seed_prompt'
             seed_input = ""  # Clear any previous input
@@ -389,7 +394,7 @@ def handle_config_keyboard(key):
     """
     global config_selected_item, current_state, current_config
     
-    all_items = available_configs + ["← Back to Main Menu"]
+    all_items = available_configs + ["< Back to Main Menu"]
     
     if key == pygame.K_UP:
         config_selected_item = (config_selected_item - 1) % len(all_items)
@@ -661,6 +666,124 @@ def handle_tutorial_choice_keyboard(key):
         current_state = 'seed_selection'
 
 
+def handle_new_player_experience_click(mouse_pos, w, h):
+    """Handle mouse clicks on new player experience screen."""
+    global current_state, tutorial_enabled, npe_tutorial_enabled, npe_intro_enabled, npe_selected_item
+    
+    # Layout constants (must match draw_new_player_experience)
+    center_x = w // 2
+    checkbox_size = int(h * 0.04)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.08)
+    button_width = int(w * 0.3)
+    button_height = int(h * 0.06)
+    button_y = int(h * 0.65)
+    
+    mx, my = mouse_pos
+    
+    # Check checkbox clicks
+    for i in range(2):  # Tutorial checkbox, Intro checkbox
+        checkbox_x = center_x - checkbox_size // 2 - int(w * 0.15)
+        checkbox_y = start_y + i * spacing
+        checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
+        
+        if checkbox_rect.collidepoint(mx, my):
+            npe_selected_item = i
+            if i == 0:  # Tutorial checkbox
+                npe_tutorial_enabled = not npe_tutorial_enabled
+            elif i == 1:  # Intro checkbox
+                npe_intro_enabled = not npe_intro_enabled
+            return
+    
+    # Check start button click
+    button_x = center_x - button_width // 2
+    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    if button_rect.collidepoint(mx, my):
+        npe_selected_item = 2
+        # Apply settings and start game
+        tutorial_enabled = npe_tutorial_enabled
+        if tutorial_enabled:
+            onboarding.start_stepwise_tutorial()
+        else:
+            onboarding.dismiss_tutorial()
+        
+        # Set up intro scenario if enabled
+        if npe_intro_enabled:
+            # This will be handled in game initialization
+            pass
+        
+        # Set the seed and start the game
+        random.seed(seed)
+        current_state = 'game'
+
+
+def handle_new_player_experience_hover(mouse_pos, w, h):
+    """Handle mouse hover for new player experience screen."""
+    global npe_selected_item
+    
+    # Layout constants (must match draw_new_player_experience)
+    center_x = w // 2
+    checkbox_size = int(h * 0.04)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.08)
+    button_width = int(w * 0.3)
+    button_height = int(h * 0.06)
+    button_y = int(h * 0.65)
+    
+    mx, my = mouse_pos
+    
+    # Check checkbox hover
+    for i in range(2):  # Tutorial checkbox, Intro checkbox
+        checkbox_x = center_x - checkbox_size // 2 - int(w * 0.15)
+        checkbox_y = start_y + i * spacing
+        checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
+        
+        if checkbox_rect.collidepoint(mx, my):
+            npe_selected_item = i
+            return
+    
+    # Check start button hover
+    button_x = center_x - button_width // 2
+    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    if button_rect.collidepoint(mx, my):
+        npe_selected_item = 2
+
+
+def handle_new_player_experience_keyboard(key):
+    """Handle keyboard navigation for new player experience screen."""
+    global current_state, tutorial_enabled, npe_tutorial_enabled, npe_intro_enabled, npe_selected_item
+    
+    if key == pygame.K_UP:
+        npe_selected_item = (npe_selected_item - 1) % 3
+    elif key == pygame.K_DOWN:
+        npe_selected_item = (npe_selected_item + 1) % 3
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        if npe_selected_item == 0:  # Tutorial checkbox
+            npe_tutorial_enabled = not npe_tutorial_enabled
+        elif npe_selected_item == 1:  # Intro checkbox
+            npe_intro_enabled = not npe_intro_enabled
+        elif npe_selected_item == 2:  # Start button
+            # Apply settings and start game
+            tutorial_enabled = npe_tutorial_enabled
+            if tutorial_enabled:
+                onboarding.start_stepwise_tutorial()
+            else:
+                onboarding.dismiss_tutorial()
+            
+            # Set up intro scenario if enabled
+            if npe_intro_enabled:
+                # This will be handled in game initialization
+                pass
+            
+            # Set the seed and start the game
+            random.seed(seed)
+            current_state = 'game'
+    elif key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
+
+
 def handle_audio_menu_click(mouse_pos, w, h):
     """Handle mouse clicks on audio settings menu."""
     global current_state, sounds_menu_selected_item, audio_settings, global_sound_manager
@@ -681,7 +804,7 @@ def handle_audio_menu_click(mouse_pos, w, h):
         "Sound Effects Settings", 
         "Keybinding Configuration",
         "Test Sound",
-        "← Back to Main Menu"
+        "< Back to Main Menu"
     ]
     
     for i in range(len(menu_items)):
@@ -1403,6 +1526,8 @@ def main():
                         handle_seed_selection_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'new_player_experience':
+                        handle_new_player_experience_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'sounds_menu':
                         handle_audio_menu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'keybinding_menu':
@@ -1583,6 +1708,10 @@ def main():
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_hover(event.pos, SCREEN_W, SCREEN_H)
                     
+                    # Mouse hover effects for new player experience screen
+                    elif current_state == 'new_player_experience':
+                        handle_new_player_experience_hover(event.pos, SCREEN_W, SCREEN_H)
+                    
                     # Mouse hover effects only active during gameplay
                     if current_state == 'game' and game_state:
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
@@ -1620,6 +1749,8 @@ def main():
                         handle_seed_selection_keyboard(event.key)
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_keyboard(event.key)
+                    elif current_state == 'new_player_experience':
+                        handle_new_player_experience_keyboard(event.key)
                     elif current_state == 'sounds_menu':
                         handle_audio_menu_keyboard(event.key)
                     elif current_state == 'keybinding_menu':
@@ -1877,6 +2008,12 @@ def main():
                 # Sync sound state from global sound manager to game state
                 game_state.sound_manager.set_enabled(global_sound_manager.is_enabled())
                 
+                # Add intro scenario message if enabled
+                if npe_intro_enabled:
+                    startup_money = game_state.money  # Get the actual starting money from config
+                    intro_message = f"Doom is coming. You convinced a funder to give you ${startup_money:,}. Your job is to save the world. Good luck!"
+                    game_state.messages.append(intro_message)
+                
                 # Check if tutorial should be shown for new players
                 if onboarding.should_show_tutorial() and not game_state.onboarding_started:
                     onboarding.start_tutorial()
@@ -1955,6 +2092,11 @@ def main():
                 # Tutorial choice screen
                 screen.fill((50, 50, 50))
                 draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, tutorial_choice_selected_item)
+            
+            elif current_state == 'new_player_experience':
+                # New player experience screen
+                screen.fill((50, 50, 50))
+                draw_new_player_experience(screen, SCREEN_W, SCREEN_H, npe_selected_item, npe_tutorial_enabled, npe_intro_enabled)
             
             elif current_state == 'sounds_menu':
                 # Audio settings menu

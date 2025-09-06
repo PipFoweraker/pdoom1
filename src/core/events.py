@@ -211,5 +211,63 @@ EVENTS = [
                                   for opp in getattr(gs, 'opponents', [])) and 
                               random.random() < 0.12),
         "effect": lambda gs: gs._trigger_competitor_shortcut_discovery()
+    },
+    # Economic Cycles & Funding Volatility Events for Issue #192
+    {
+        "name": "Venture Capital Drought",
+        "desc": "Rising interest rates have spooked venture capitalists. Funding is much harder to secure.",
+        "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
+                              gs.economic_cycles.current_state.phase.name in ['RECESSION', 'CORRECTION'] and
+                              gs.turn % 15 == 0 and random.random() < 0.3),
+        "effect": lambda gs: gs._trigger_funding_drought_event()
+    },
+    {
+        "name": "AI Bubble Burst Warning",
+        "desc": "Industry analysts warn that AI valuations are unsustainable. Market correction incoming.",
+        "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
+                              gs.economic_cycles.current_state.phase.name == 'BOOM' and
+                              gs.turn > 50 and random.random() < 0.15),
+        "effect": lambda gs: gs._trigger_bubble_warning_event()
+    },
+    {
+        "name": "Government AI Initiative Announced",
+        "desc": "Government announces massive AI research funding initiative.",
+        "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
+                              gs.turn > 20 and gs.reputation >= 8 and 
+                              random.random() < 0.08),
+        "effect": lambda gs: gs._trigger_government_funding_event()
+    },
+    {
+        "name": "Corporate Partnership Opportunity",
+        "desc": "A major corporation is looking for AI partnerships during the economic downturn.",
+        "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
+                              gs.economic_cycles.current_state.phase.name in ['RECESSION', 'CORRECTION'] and
+                              gs.reputation >= 12 and random.random() < 0.12),
+        "effect": lambda gs: gs._trigger_corporate_partnership_event()
+    },
+    {
+        "name": "Emergency Cost Cutting Required",
+        "desc": "Economic conditions force you to consider emergency cost reduction measures.",
+        "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
+                              gs.economic_cycles.current_state.phase.name == 'RECESSION' and
+                              gs.money < gs.staff * 50 and random.random() < 0.25),
+        "effect": lambda gs: gs._trigger_emergency_measures_event()
+    },
+    {
+        "name": "Competitor Funding Announcement",
+        "desc": "A major competitor secures massive funding round, increasing competitive pressure.",
+        "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
+                              gs.economic_cycles.current_state.phase.name == 'BOOM' and
+                              any(opp.discovered for opp in getattr(gs, 'opponents', [])) and
+                              random.random() < 0.1),
+        "effect": lambda gs: gs._trigger_competitor_funding_event()
+    },
+    {
+        "name": "AI Winter Warning",
+        "desc": "Industry veterans warn of potential 'AI Winter' if current promises don't materialize.",
+        "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
+                              gs.doom > 60 and gs.turn > 100 and 
+                              random.random() < 0.08),
+        "effect": lambda gs: gs._trigger_ai_winter_warning_event()
     }
 ]
