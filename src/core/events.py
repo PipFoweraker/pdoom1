@@ -269,5 +269,38 @@ EVENTS = [
                               gs.doom > 60 and gs.turn > 100 and 
                               random.random() < 0.08),
         "effect": lambda gs: gs._trigger_ai_winter_warning_event()
+    },
+    # Technical Failure Cascade Events for Issue #193
+    {
+        "name": "Near-Miss Crisis Averted",
+        "desc": "Quick thinking prevents a potential technical failure from becoming a crisis.",
+        "trigger": lambda gs: (hasattr(gs, 'technical_failures') and 
+                              gs.technical_failures.monitoring_systems >= 2 and 
+                              random.random() < 0.12),
+        "effect": lambda gs: gs._trigger_near_miss_averted_event()
+    },
+    {
+        "name": "Cover-Up Exposed",
+        "desc": "Past incident cover-ups come to light, damaging organizational credibility.",
+        "trigger": lambda gs: (hasattr(gs, 'technical_failures') and 
+                              gs.technical_failures.cover_up_debt >= 8 and 
+                              random.random() < gs.technical_failures.cover_up_debt * 0.02),
+        "effect": lambda gs: gs._trigger_cover_up_exposed_event()
+    },
+    {
+        "name": "Transparency Dividend",
+        "desc": "Your organization's transparent failure handling is recognized as industry best practice.",
+        "trigger": lambda gs: (hasattr(gs, 'technical_failures') and 
+                              gs.technical_failures.transparency_reputation >= 3.0 and 
+                              random.random() < 0.15),
+        "effect": lambda gs: gs._trigger_transparency_dividend_event()
+    },
+    {
+        "name": "Cascade Prevention Success",
+        "desc": "Advanced incident response capabilities prevent a potential failure cascade.",
+        "trigger": lambda gs: (hasattr(gs, 'technical_failures') and 
+                              gs.technical_failures.incident_response_level >= 3 and 
+                              random.random() < 0.1),
+        "effect": lambda gs: gs._trigger_cascade_prevention_event()
     }
 ]

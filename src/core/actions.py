@@ -263,6 +263,81 @@ def get_quality_description_suffix(gs) -> str:
         return ""
     return f" [{quality} approach]"
 
+# Technical Failure Cascade Prevention Actions for Issue #193
+
+def execute_incident_response_upgrade(gs):
+    """Execute incident response capability upgrade."""
+    if not hasattr(gs, 'technical_failures'):
+        gs.messages.append("Incident response training conducted for all staff")
+        gs._add('reputation', 1)
+        return
+        
+    upgrade_cost = (gs.technical_failures.incident_response_level + 1) * 30
+    if gs.technical_failures.upgrade_incident_response(upgrade_cost):
+        gs.messages.append("Teams trained in advanced incident response protocols")
+        gs._add('reputation', 1)
+    else:
+        gs.messages.append("Insufficient funds for incident response upgrade")
+
+def execute_monitoring_systems_upgrade(gs):
+    """Execute monitoring systems upgrade."""
+    if not hasattr(gs, 'technical_failures'):
+        gs.messages.append("Monitoring systems enhanced for better oversight")
+        gs._add('compute', 5)
+        return
+        
+    upgrade_cost = (gs.technical_failures.monitoring_systems + 1) * 40
+    if gs.technical_failures.upgrade_monitoring_systems(upgrade_cost):
+        gs.messages.append("Advanced monitoring and early warning systems deployed")
+        gs._add('compute', 2)  # Monitoring requires some compute
+    else:
+        gs.messages.append("Insufficient funds for monitoring system upgrade")
+
+def execute_communication_protocols_upgrade(gs):
+    """Execute communication protocols upgrade."""
+    if not hasattr(gs, 'technical_failures'):
+        gs.messages.append("Communication protocols standardized across organization")
+        gs._add('reputation', 1)
+        return
+        
+    upgrade_cost = (gs.technical_failures.communication_protocols + 1) * 25
+    if gs.technical_failures.upgrade_communication_protocols(upgrade_cost):
+        gs.messages.append("Cross-team coordination and crisis communication improved")
+        gs._add('reputation', 1)
+    else:
+        gs.messages.append("Insufficient funds for communication protocol upgrade")
+
+def execute_safety_audit(gs):
+    """Execute comprehensive safety audit to reduce technical debt and prevent failures."""
+    audit_cost = 60
+    
+    if gs.money < audit_cost:
+        gs.messages.append("Insufficient funds for comprehensive safety audit")
+        return
+        
+    gs._add('money', -audit_cost)
+    
+    # Reduce technical debt significantly
+    if hasattr(gs, 'technical_debt'):
+        debt_reduced = random.randint(3, 6)
+        gs.technical_debt.reduce_debt(debt_reduced)
+        gs.messages.append(f"Safety audit identifies and resolves {debt_reduced} technical debt issues")
+    
+    # Improve failure prevention temporarily
+    if hasattr(gs, 'technical_failures'):
+        # Temporary improvement to all prevention systems
+        gs.messages.append("Audit recommendations strengthen all incident response capabilities")
+        gs._add('reputation', 2)
+    else:
+        gs.messages.append("Comprehensive safety audit improves organizational practices")
+        gs._add('reputation', 2)
+        
+    # Small chance to discover near-miss that could have been a failure
+    if random.random() < 0.3:
+        gs.messages.append("⚠️ Audit discovers potential failure that was narrowly avoided!")
+        if hasattr(gs, 'technical_failures'):
+            gs.technical_failures.near_miss_count += 1
+
 ACTIONS = [
     {
         "name": "Grow Community",
@@ -559,5 +634,45 @@ ACTIONS = [
         "downside": lambda gs: None,
         "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
                            gs.reputation >= 10 and gs.staff >= 5)
+    },
+    # Technical Failure Cascade Prevention Actions for Issue #193
+    {
+        "name": "Incident Response Training",
+        "desc": "Upgrade incident response capabilities to prevent failure cascades",
+        "cost": lambda gs: (getattr(gs.technical_failures, 'incident_response_level', 0) + 1) * 30 if hasattr(gs, 'technical_failures') else 30,
+        "ap_cost": 1,
+        "upside": lambda gs: execute_incident_response_upgrade(gs),
+        "downside": lambda gs: None,
+        "rules": lambda gs: (hasattr(gs, 'technical_failures') and 
+                           gs.technical_failures.incident_response_level < 5) or not hasattr(gs, 'technical_failures')
+    },
+    {
+        "name": "Monitoring Systems",
+        "desc": "Deploy advanced monitoring for early failure detection",
+        "cost": lambda gs: (getattr(gs.technical_failures, 'monitoring_systems', 0) + 1) * 40 if hasattr(gs, 'technical_failures') else 40,
+        "ap_cost": 1,
+        "upside": lambda gs: execute_monitoring_systems_upgrade(gs),
+        "downside": lambda gs: None,
+        "rules": lambda gs: (hasattr(gs, 'technical_failures') and 
+                           gs.technical_failures.monitoring_systems < 5) or not hasattr(gs, 'technical_failures')
+    },
+    {
+        "name": "Communication Protocols",
+        "desc": "Standardize crisis communication and coordination procedures",
+        "cost": lambda gs: (getattr(gs.technical_failures, 'communication_protocols', 0) + 1) * 25 if hasattr(gs, 'technical_failures') else 25,
+        "ap_cost": 1,
+        "upside": lambda gs: execute_communication_protocols_upgrade(gs),
+        "downside": lambda gs: None,
+        "rules": lambda gs: (hasattr(gs, 'technical_failures') and 
+                           gs.technical_failures.communication_protocols < 5) or not hasattr(gs, 'technical_failures')
+    },
+    {
+        "name": "Safety Audit",
+        "desc": "Comprehensive audit to identify and fix potential failure points",
+        "cost": 60,
+        "ap_cost": 2,
+        "upside": lambda gs: execute_safety_audit(gs),
+        "downside": lambda gs: None,
+        "rules": lambda gs: gs.staff >= 3  # Need sufficient staff for meaningful audit
     }
 ]

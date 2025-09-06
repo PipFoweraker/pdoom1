@@ -205,6 +205,10 @@ class GameState:
         self.funding_round_cooldown = 0  # Prevent excessive fundraising
         self.emergency_measures_available = True  # Track if emergency options are still available
         
+        # Technical Failure Cascades System for Issue #193
+        from src.features.technical_failures import TechnicalFailureCascades
+        self.technical_failures = TechnicalFailureCascades(self)
+        
         # Context window tracking
         self.context_window_minimized = False
         self.current_context_info = None
@@ -2243,6 +2247,10 @@ class GameState:
             economic_news = self.economic_cycles.update_for_turn(self.turn + 1)  # Next turn
             if economic_news:
                 self.messages.append(f"📰 ECONOMIC NEWS: {economic_news}")
+        
+        # Check for technical failure cascades
+        if hasattr(self, 'technical_failures'):
+            self.technical_failures.check_for_cascades()
         
         # Check if there are pending popup events that need resolution
         if (hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled and
@@ -4470,6 +4478,138 @@ class GameState:
             funding_impact = random.randint(20, 40)
             self._add('money', -funding_impact)
             self.messages.append(f"Investor confidence drops: -${funding_impact}k funding withdrawn")
+    
+    # Technical Failure Cascade Event Handlers for Issue #193
+    
+    def _trigger_near_miss_averted_event(self):
+        """Handle near-miss events that were successfully averted."""
+        if hasattr(self, 'technical_failures'):
+            self.technical_failures.near_miss_count += 1
+            
+        near_miss_types = [
+            "Advanced monitoring detected system anomaly before critical failure",
+            "Cross-team communication prevented potential coordination breakdown",
+            "Early warning systems identified security vulnerability before breach",
+            "Incident response protocols contained developing infrastructure issue"
+        ]
+        
+        near_miss = random.choice(near_miss_types)
+        self.messages.append(f"⚠️ NEAR MISS AVERTED: {near_miss}")
+        self.messages.append("🎓 Team conducts post-incident review to strengthen prevention capabilities")
+        
+        # Reward for good prevention systems
+        self._add('reputation', 1)
+        
+        # Improve prevention systems slightly from lessons learned
+        if hasattr(self, 'technical_failures') and random.random() < 0.5:
+            improvement_types = ['incident_response_level', 'monitoring_systems', 'communication_protocols']
+            improvement = random.choice(improvement_types)
+            current_level = getattr(self.technical_failures, improvement, 0)
+            if current_level < 5:
+                setattr(self.technical_failures, improvement, current_level + 1)
+                self.messages.append(f"📈 {improvement.replace('_', ' ').title()} improved from lessons learned!")
+    
+    def _trigger_cover_up_exposed_event(self):
+        """Handle the exposure of past cover-ups."""
+        if not hasattr(self, 'technical_failures'):
+            return
+            
+        cover_up_severity = min(10, self.technical_failures.cover_up_debt)
+        
+        exposure_scenarios = [
+            "Whistleblower reveals pattern of unreported incidents",
+            "Regulatory audit uncovers hidden technical failures",
+            "Former employee testimonies expose safety shortcuts",
+            "Data leak reveals internal incident suppression policies"
+        ]
+        
+        scenario = random.choice(exposure_scenarios)
+        self.messages.append(f"🚨 COVER-UP EXPOSED: {scenario}")
+        
+        # Severe reputation damage based on cover-up debt
+        reputation_loss = random.randint(cover_up_severity // 2, cover_up_severity)
+        self._add('reputation', -reputation_loss)
+        self.messages.append(f"📉 Reputation severely damaged: -{reputation_loss} points")
+        
+        # Financial penalties for regulatory violations
+        financial_penalty = random.randint(50, 100) + (cover_up_severity * 10)
+        self._add('money', -financial_penalty)
+        self.messages.append(f"💰 Regulatory fines and legal costs: -${financial_penalty}k")
+        
+        # Reduce cover-up debt (consequences have been paid)
+        self.technical_failures.cover_up_debt = max(0, self.technical_failures.cover_up_debt - cover_up_severity)
+        
+        # Force improved transparency going forward
+        self.messages.append("📋 Organization forced to adopt mandatory transparency policies")
+        if hasattr(self, 'technical_debt'):
+            self.technical_debt.add_debt(3)  # Increased oversight creates some operational debt
+    
+    def _trigger_transparency_dividend_event(self):
+        """Handle recognition for transparent failure handling."""
+        if not hasattr(self, 'technical_failures'):
+            return
+            
+        recognition_types = [
+            "Industry safety consortium recognizes transparent incident reporting",
+            "Academic researchers cite organization as model for failure learning",
+            "Regulatory agencies praise proactive safety communication",
+            "Peer organizations request best practice sharing sessions"
+        ]
+        
+        recognition = random.choice(recognition_types)
+        self.messages.append(f"🏆 TRANSPARENCY RECOGNIZED: {recognition}")
+        
+        # Reputation boost
+        reputation_gain = random.randint(2, 4)
+        self._add('reputation', reputation_gain)
+        self.messages.append(f"📈 Industry respect grows: +{reputation_gain} reputation")
+        
+        # Funding opportunities from transparency
+        if random.random() < 0.6:
+            funding_opportunity = random.randint(30, 60)
+            self._add('money', funding_opportunity)
+            self.messages.append(f"💰 Safety-focused funding secured: +${funding_opportunity}k")
+        
+        # Improve staff morale (represented as temporary benefit)
+        self.messages.append("😊 Staff morale improves from working at an ethical organization")
+        
+        # Reset transparency reputation to prevent repeated triggers
+        self.technical_failures.transparency_reputation = max(0, 
+                                                            self.technical_failures.transparency_reputation - 2.0)
+    
+    def _trigger_cascade_prevention_event(self):
+        """Handle successful prevention of failure cascades."""
+        if not hasattr(self, 'technical_failures'):
+            return
+            
+        prevention_scenarios = [
+            "Rapid incident response prevents system failure from spreading",
+            "Cross-team coordination contains potential research setback cascade",
+            "Advanced monitoring isolates infrastructure issue before propagation",
+            "Communication protocols prevent crisis from escalating across departments"
+        ]
+        
+        scenario = random.choice(prevention_scenarios)
+        self.messages.append(f"🛡️ CASCADE PREVENTED: {scenario}")
+        
+        # Calculate what the cascade would have cost
+        estimated_damage = random.randint(40, 80)
+        self.messages.append(f"💡 Estimated damage prevented: ${estimated_damage}k and significant reputation loss")
+        
+        # Reward effective prevention
+        reputation_gain = random.randint(2, 3)
+        self._add('reputation', reputation_gain)
+        self.messages.append(f"📈 Stakeholder confidence in crisis management: +{reputation_gain} reputation")
+        
+        # Staff learning from successful prevention
+        if hasattr(self, 'technical_debt') and random.random() < 0.4:
+            debt_reduction = random.randint(1, 3)
+            self.technical_debt.reduce_debt(debt_reduction)
+            self.messages.append(f"🎓 Prevention success improves practices: -{debt_reduction} technical debt")
+        
+        # Industry recognition
+        if self.technical_failures.incident_response_level >= 4:
+            self.messages.append("🏅 Industry peers request consultation on incident response best practices")
         else:
             self.messages.append("Your strong safety reputation provides some protection from market fears.")
             self._add('reputation', 2)
