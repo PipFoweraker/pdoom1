@@ -12,6 +12,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enables use of modern Python features like built-in generics (`list[str]` vs `List[str]`)
   - Updated MyPy configuration target from Python 3.8 to 3.9
 
+## [0.2.5] - 2025-09-08
+### Added
+- **🔧 UI Interaction Fixes & Hint System Overhaul**: Major improvements to game usability and professional polish
+  - Fixed spacebar (end turn) being blocked by tutorial overlays - now works even during tutorials
+  - Fixed unprofessional staff hire popup showing automatically at game start
+  - Implemented Factorio-style hint system: hints show once, auto-dismiss, can be reset
+  - Added debug tools: Ctrl+D (UI state debug), Ctrl+E (emergency popup clear), Ctrl+R (reset hints)
+  - Separated hints from tutorials with independent configuration
+  - Automatic cleanup for stuck UI states (turn processing, overlay conflicts, orphaned popups)
+  - Improved button click consistency and modal dialog behavior
+  - Enhanced settings menu with hint status display and controls
+
+### Fixed
+- **Configuration Consistency**: Fixed starting staff count mismatch between JSON config and config manager
+- **Event Handling Priority**: Resolved conflicts between tutorial overlays and core game controls
+- **Modal Dialog Behavior**: Improved popup and dialog interaction handling
+
 ## [Unreleased]
 ### Added
 - **🏆 Achievements & Enhanced Endgame System (Issue #195)**: Comprehensive achievement tracking and victory conditions beyond binary win/lose

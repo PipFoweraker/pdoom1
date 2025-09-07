@@ -3,11 +3,11 @@
 Welcome to P(DOOM): BUREAUCRACY STRATEGY GAME!  
 A satirical strategy game about managing an AI safety lab while competing against reckless frontier labs.
 
-NEW IN v0.2.1: 3-COLUMN UI LAYOUT with full keyboard support! Actions are now organized into left (repeating), middle (staff), and right (strategic) columns. Every button shows its hotkey - just press the letter/number to activate!
+NEW IN v0.2.5: UI INTERACTION FIXES & FACTORIO-STYLE HINTS! Fixed spacebar blocking, unprofessional popups, and added professional hint system. Debug tools: Ctrl+D (diagnostics), Ctrl+E (emergency clear), Ctrl+R (reset hints).
 
 Version Information: Check the game window title or see CHANGELOG.md for current version and recent changes.
 
-Release Status: Currently v0.2.1 "Three Column" in hotfix development targeting stable v0.3.0. See the README.md for current development status.
+Release Status: Currently v0.2.5 "UI Interaction Fixes & Hint System" with professional polish improvements targeting stable v0.3.0. See the README.md for current development status.
 
 ## Table of Contents
 - [Quick Setup](#quick-setup) (Line 31)
@@ -46,7 +46,11 @@ That's it! The game will open with a main menu.
 ## New Player Tutorial & Help System
 
 **🎯 For First-Time Players:**
-P(Doom) includes a comprehensive tutorial system to guide new players through the game mechanics.
+P(Doom) includes a comprehensive tutorial system and Factorio-style hint system to guide new players through the game mechanics.
+
+### Tutorial vs Hints
+- **Tutorial**: Interactive step-by-step walkthrough (can be enabled/disabled in New Player Experience)
+- **Hints**: Context-sensitive help popups that appear once when you first encounter mechanics (can be toggled in Settings)
 
 ### Tutorial Features
 - **Interactive Tutorial**: Step-by-step guidance through core game mechanics on your first playthrough
@@ -65,7 +69,7 @@ The tutorial walks you through:
 
 ### First-Time Help
 Get automatic guidance when you:
-- Hire your first staff member (learn about Action Point scaling) - *appears when hiring action is selected*
+- Hire your first staff member (learn about Action Point scaling) - *appears when first attempting to hire beyond starting staff*
 - Purchase your first upgrade (understand permanent benefits)
 - Run out of Action Points (tips for increasing capacity)
 - Reach high p(Doom) levels (warning and safety advice)
@@ -76,6 +80,8 @@ Get automatic guidance when you:
 - **During Tutorial**: Use `Next` to proceed or `Skip` to exit tutorial
 - **Anytime**: Press `H` key to open the Player Guide
 - **Main Menu**: Access Player Guide and enhanced settings system
+- **Debug Mode**: Press Ctrl+D during gameplay to check UI state (for troubleshooting)
+- **Reset Hints**: Press Ctrl+R during gameplay to reset all hints for new players
 
 ### Enhanced Settings & Configuration System
 P(Doom) features a comprehensive settings system organized into logical categories:
@@ -142,6 +148,20 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 1. **Take actions** (left panel) - Click buttons to spend money and affect your lab
 2. **Buy upgrades** (right panel) - One-time purchases that give permanent benefits  
 3. **End your turn** - Click "END TURN" or press `Space` to see results
+
+### Keyboard Controls & Debug Features
+- **Space**: End turn (always available, even during tutorials)
+- **H**: Open Player Guide overlay
+- **Number keys (1-9)**: Execute actions by keyboard shortcut
+- **Tab/Arrows**: Navigate menus
+- **Enter/Space**: Confirm selections
+- **Escape**: Go back/cancel (multiple presses access quit menu)
+
+#### Debug & Recovery Controls
+- **Ctrl+D**: Display UI state debug information
+- **Ctrl+E**: Emergency clear stuck popup events
+- **Ctrl+R**: Reset all hints for new players
+- **[**: Take screenshot (saved to screenshots/ folder)
 4. **Handle events** - Random events will challenge your strategy
 5. **Repeat** - Keep going until game over
 

@@ -231,14 +231,29 @@ def create_settings_content(game_state=None):
 
     tutorial_status = "Enabled" if onboarding.tutorial_enabled else "Disabled"
     tutorial_completed = "Yes" if not onboarding.is_first_time else "No"
+    hints_enabled = "Enabled" if onboarding.are_hints_enabled() else "Disabled"
+    
+    # Get hint status
+    hint_status = onboarding.get_hint_status()
+    seen_hints = [name for name, seen in hint_status.items() if seen]
+    unseen_hints = [name for name, seen in hint_status.items() if not seen]
     
     return f"""# Settings
 
 ## Tutorial & Help System
 - **Tutorial System**: {tutorial_status}
 - **Tutorial Completed**: {tutorial_completed}
+- **In-Game Hints**: {hints_enabled}
 - **In-Game Help**: Press 'H' key anytime to access Player Guide
-- **First-Time Tips**: Automatic contextual help for new mechanics
+
+### Hint Status (Factorio-style)
+**Seen Hints ({len(seen_hints)}):** {', '.join(seen_hints) if seen_hints else 'None'}
+**Available Hints ({len(unseen_hints)}):** {', '.join(unseen_hints) if unseen_hints else 'All seen'}
+
+**Hint Controls:**
+- Press **Ctrl+R** during gameplay to reset all hints
+- Hints show once per new action, then auto-dismiss
+- Configurable in config files (first_time_help setting)
 
 To reset tutorial: Delete `onboarding_progress.json` file and restart game
 
@@ -274,6 +289,9 @@ To reset tutorial: Delete `onboarding_progress.json` file and restart game
 - **Arrow Keys**: Navigate menus, scroll event log
 - **Enter**: Confirm selection
 - **Escape**: Return to previous menu or quit
+- **Ctrl+D**: Debug UI state (shows blocking conditions)
+- **Ctrl+E**: Clear stuck popup events (emergency)
+- **Ctrl+R**: Reset all hints to show again
 
 *Note: Settings are currently informational. Configuration options will be added in future updates.*"""
 
@@ -1805,8 +1823,14 @@ def main():
                             
                     elif current_state == 'game':
 
+                        # Help key (H) - always available regardless of overlay state
+                        if event.key == pygame.K_h:
+                            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
+                            overlay_title = "Player Guide"
+                            push_navigation_state('overlay')
+                        
                         # Stepwise tutorial keyboard handling (takes precedence when tutorial is active)
-                        if onboarding.show_tutorial_overlay:
+                        elif onboarding.show_tutorial_overlay:
                             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                                 # Advance tutorial step
                                 onboarding.advance_stepwise_tutorial()
@@ -1816,17 +1840,8 @@ def main():
                             elif event.key == pygame.K_ESCAPE:
                                 # Skip tutorial
                                 onboarding.dismiss_tutorial()
-                            elif event.key == pygame.K_h:
-                                # Show help overlay
-                                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                                overlay_title = "Player Guide"
-                                push_navigation_state('overlay')
                         
-                        # Help key (H) - always available
-                        elif event.key == pygame.K_h:
-                            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                            overlay_title = "Player Guide"
-                            push_navigation_state('overlay')
+                        # Help key (H) - redundant check removed since it's handled above
                         
                         # Close first-time help
                         elif event.key == pygame.K_ESCAPE and first_time_help_content:
@@ -1917,8 +1932,39 @@ def main():
                         elif event.key == pygame.K_RETURN and escape_count >= ESCAPE_THRESHOLD - 1:
                             running = False
                         
-                        # Regular game keyboard handling (only if tutorial is not active)
-                        elif not onboarding.show_tutorial_overlay:
+                        # Safe escape handling - ALWAYS ACTIVE (not blocked by tutorial)
+                        elif event.key == pygame.K_ESCAPE:
+                            # Safe escape menu system
+                            global escape_count, escape_timer
+                            current_time = pygame.time.get_ticks()
+                            
+                            # Reset escape count if too much time has passed
+                            if current_time - escape_timer > ESCAPE_TIMEOUT:
+                                escape_count = 0
+                            
+                            escape_count += 1
+                            escape_timer = current_time
+                            
+                            if escape_count >= ESCAPE_THRESHOLD:
+                                # Show quit confirmation after multiple escapes
+                                current_state = 'escape_menu'
+                                escape_count = 0  # Reset counter
+                            else:
+                                # First few escapes - show pause/menu hint
+                                if hasattr(game_state, 'messages'):
+                                    remaining = ESCAPE_THRESHOLD - escape_count
+                                    if remaining == 1:
+                                        game_state.add_message(f"Press ESCAPE {remaining} more time to access quit menu, or press ENTER to confirm quit")
+                                    else:
+                                        game_state.add_message(f"Press ESCAPE {remaining} more times to access quit menu")
+                                
+                                # Play UI sound
+                                if game_state and hasattr(game_state, 'sound_manager'):
+                                    game_state.sound_manager.play_sound('ui_click')
+                        
+                        # CRITICAL FIX: End turn handling - ALWAYS AVAILABLE when not blocked by modals
+                        # This must come before other keyboard handling to prevent tutorial/overlay blocking
+                        elif not first_time_help_content and not (game_state and game_state.pending_hiring_dialog):
                             # Import keybinding manager for customizable controls
                             from src.services.keybinding_manager import keybinding_manager
                             
@@ -1926,16 +1972,27 @@ def main():
                             end_turn_key = keybinding_manager.get_key_for_action("end_turn")
                             if (event.key == end_turn_key or 
                                 (end_turn_key == pygame.K_SPACE and event.key == pygame.K_RETURN)) and game_state and not game_state.game_over:
-                                # Try to end turn, play error sound if rejected
-                                if not game_state.end_turn():
-                                    # Turn was rejected (already processing)
-                                    pass  # Error sound already played in end_turn method
+                                # Check if popup events are blocking - if so, give feedback but don't block input
+                                if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
+                                    game_state.add_message("Please resolve the pending events before ending turn")
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('error_beep')
+                                else:
+                                    # Try to end turn, play error sound if rejected
+                                    if not game_state.end_turn():
+                                        # Turn was rejected (already processing)
+                                        pass  # Error sound already played in end_turn method
+                        
+                        # Regular game keyboard handling (only if tutorial is not active)
+                        elif not onboarding.show_tutorial_overlay:
+                            # Import keybinding manager for customizable controls
+                            from src.services.keybinding_manager import keybinding_manager
                             
                             # New 3-column layout keybindings
-                            elif game_state and not game_state.game_over:
+                            if game_state and not game_state.game_over:
                                 # Check if using 3-column layout
-                                from configs.config_manager import get_config
-                                config = get_config()
+                                from src.services.config_manager import get_current_config
+                                config = get_current_config()
                                 if config.get('enable_three_column_layout', False):
                                     # Import 3-column layout manager
                                     from ui_new.screens.game import three_column_layout
@@ -2019,6 +2076,58 @@ def main():
                     onboarding.start_tutorial()
                     game_state.onboarding_started = True
 
+            # --- UI State Cleanup and Debugging --- #
+            # CRITICAL FIX: Automatic cleanup for stuck UI states
+            if current_state == 'game' and game_state:
+                # Debug key (D) - check for blocking conditions when pressed
+                current_keys = pygame.key.get_pressed()
+                if current_keys[pygame.K_d] and current_keys[pygame.K_LCTRL]:  # Ctrl+D for debug
+                    from ui_interaction_fixes import check_blocking_conditions, test_spacebar
+                    blocking = check_blocking_conditions(game_state, onboarding, first_time_help_content, current_state)
+                    spacebar_works, reason = test_spacebar(game_state, onboarding, first_time_help_content, current_state)
+                    debug_msg = f"DEBUG: Spacebar {'WORKS' if spacebar_works else 'BLOCKED'} - {reason}"
+                    if blocking:
+                        debug_msg += f" | Blocking: {', '.join(blocking)}"
+                    game_state.add_message(debug_msg)
+                
+                # Automatic cleanup for turn processing that's been stuck too long
+                if (hasattr(game_state, 'turn_processing') and game_state.turn_processing and 
+                    hasattr(game_state, 'turn_processing_timer') and game_state.turn_processing_timer <= -30):  # 1 second at 30fps
+                    game_state.turn_processing = False
+                    game_state.turn_processing_timer = 0
+                    game_state.add_message("System: Reset stuck turn processing")
+                
+                # Automatic cleanup for tutorial overlay that's been active too long without interaction
+                if (onboarding.show_tutorial_overlay and 
+                    game_state.turn > 10):  # If we're past turn 10, tutorial should definitely be dismissible
+                    onboarding.show_tutorial_overlay = False
+                    game_state.add_message("System: Auto-dismissed stuck tutorial overlay")
+                
+                # Automatic cleanup for stuck popup events (if they've been pending for too long)
+                if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events and
+                    game_state.turn > 3):  # If we're past turn 3 and still have popup events, they might be stuck
+                    # Allow players to dismiss stuck popup events with Ctrl+E
+                    current_keys = pygame.key.get_pressed()
+                    if current_keys[pygame.K_e] and current_keys[pygame.K_LCTRL]:  # Ctrl+E to clear stuck popups
+                        game_state.pending_popup_events.clear()
+                        game_state.add_message("System: Cleared stuck popup events (Ctrl+E)")
+                
+                # Add recovery for deferred events system too
+                if (hasattr(game_state, 'deferred_events') and 
+                    hasattr(game_state.deferred_events, 'pending_popup_events') and
+                    game_state.deferred_events.pending_popup_events and
+                    game_state.turn > 3):
+                    current_keys = pygame.key.get_pressed()
+                    if current_keys[pygame.K_e] and current_keys[pygame.K_LCTRL]:  # Ctrl+E to clear stuck popups
+                        game_state.deferred_events.pending_popup_events.clear()
+                        game_state.add_message("System: Cleared stuck deferred popup events (Ctrl+E)")
+                
+                # Factorio-style hint reset with Ctrl+R
+                current_keys = pygame.key.get_pressed()
+                if current_keys[pygame.K_r] and current_keys[pygame.K_LCTRL]:  # Ctrl+R to reset hints
+                    onboarding.reset_all_hints()
+                    game_state.add_message("System: All hints reset! They will show again for new actions (Ctrl+R)")
+
             # --- First-time help checking --- #
             # Check for pending first-time help triggered by specific actions
             if (current_state == 'game' and game_state and 
@@ -2040,7 +2149,7 @@ def main():
                 not onboarding.show_tutorial_overlay):
                 # Check for various first-time mechanics (but not first_staff_hire - that's context-sensitive)
                 for mechanic in ['first_upgrade_purchase', 'high_doom_warning']:
-                    if onboarding.should_show_mechanic_help(mechanic):
+                    if onboarding.should_show_hint(mechanic):
                         help_content = onboarding.get_mechanic_help(mechanic)
                         if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
                             first_time_help_content = help_content
@@ -2052,7 +2161,7 @@ def main():
                 
                 # Special case: action_points_exhausted should only show when actually exhausted
                 if (not first_time_help_content and 
-                    onboarding.should_show_mechanic_help('action_points_exhausted') and 
+                    onboarding.should_show_hint('action_points_exhausted') and 
                     game_state.action_points == 0):
                     help_content = onboarding.get_mechanic_help('action_points_exhausted')
                     if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:

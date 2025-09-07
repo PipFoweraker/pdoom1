@@ -77,8 +77,12 @@ class GameState:
             # Update employee blobs when staff changes
             if val > 0:  # Hiring
                 self._add_employee_blobs(val)
-                # Trigger first-time help for staff hiring
-                if old_staff <= 2 and self.staff > 2:  # First staff hire beyond starting staff
+                # FIXED: Only mark first staff hire as seen when we actually hire BEYOND starting staff
+                # Check if this is first manual hire (from starting count)
+                from src.services.config_manager import get_current_config
+                starting_staff = get_current_config().get('starting_resources', {}).get('staff', 2)
+                if old_staff == starting_staff and val > 0:
+                    # This is the first manual hire - mark as seen so hint won't show again
                     onboarding.mark_mechanic_seen('first_staff_hire')
             elif val < 0:  # Staff leaving
                 self._remove_employee_blobs(old_staff - self.staff)
@@ -3516,9 +3520,17 @@ class GameState:
         """Trigger the employee hiring dialog with available employee subtypes."""
         from src.core.employee_subtypes import get_available_subtypes, get_hiring_complexity_level
         from src.features.onboarding import onboarding
+        from src.services.config_manager import get_current_config
         
-        # Check if this is the first time attempting to hire staff
-        if onboarding.should_show_mechanic_help('first_staff_hire'):
+        # Check if this is the first time attempting to hire staff and hints are enabled
+        config = get_current_config()
+        starting_staff = config.get('starting_resources', {}).get('staff', 2)
+        
+        # Only show hint if:
+        # 1. This is the first manual hire attempt (still at starting staff count)
+        # 2. Hints haven't been seen before (Factorio-style)
+        if (self.staff == starting_staff and 
+            onboarding.should_show_hint('first_staff_hire')):
             # Store the mechanic to show help later in main loop 
             self._pending_first_time_help = 'first_staff_hire'
         
