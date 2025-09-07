@@ -16,6 +16,7 @@ from src.services.leaderboard import init_leaderboard_system, get_leaderboard_ma
 from src.core.opponents import create_default_opponents
 from src.features.event_system import Event, DeferredEventQueue, EventType, EventAction
 from src.features.onboarding import onboarding
+from src.features.achievements_endgame import achievements_endgame_system
 from src.ui.overlay_manager import OverlayManager
 from src.services.error_tracker import ErrorTracker
 from src.services.config_manager import get_current_config
@@ -48,14 +49,28 @@ class GameState:
             if hasattr(self, "accounting_software_bought") and self.accounting_software_bought:
                 self.last_balance_change = val
             self.money = max(self.money + val, 0)
+            
+            # Track minimum money for strategic analysis
+            if self.money < self.min_money_reached:
+                self.min_money_reached = self.money
         elif attr == 'doom':
             old_doom = self.doom
             self.doom = min(max(self.doom + val, 0), self.max_doom)
-            # Trigger high doom warning
+            
+            # Track peak doom for strategic analysis
+            if self.doom > self.max_doom_reached:
+                self.max_doom_reached = self.doom
+            
+            # Trigger high doom warning (existing system)
             if old_doom < 70 and self.doom >= 70 and onboarding.should_show_mechanic_help('high_doom_warning'):
                 onboarding.mark_mechanic_seen('high_doom_warning')
+                
         elif attr == 'reputation':
             self.reputation = max(self.reputation + val, 0)
+            
+            # Track peak reputation for strategic analysis
+            if self.reputation > self.peak_reputation:
+                self.peak_reputation = self.reputation
         elif attr == 'staff':
             old_staff = self.staff
             self.staff = max(self.staff + val, 0)
@@ -188,6 +203,13 @@ class GameState:
         
         # Onboarding system integration
         self.onboarding_started = False  # Track if tutorial has been offered
+        
+        # Achievements & Endgame System (Issue #195)
+        self.unlocked_achievements = set()  # Achievement IDs that have been unlocked
+        self.achievement_notifications = []  # Queue of achievement notifications to display
+        self.peak_reputation = self.reputation  # Track highest reputation achieved
+        self.min_money_reached = self.money    # Track lowest money reached (for crisis analysis)
+        self.max_doom_reached = self.doom      # Track highest doom reached (for analysis)
         
         # Enhanced Personnel System
         self.researchers = []  # List of individual Researcher objects
@@ -2395,6 +2417,9 @@ class GameState:
         
         self.turn += 1
         
+        # Issue #195: Check for achievements and critical warnings at start of new turn
+        self._process_achievements_and_warnings()
+        
         # Reset Action Points for new turn (Phase 2: Staff-Based AP Scaling)
         self.max_action_points = self.calculate_max_ap()
         self.action_points = self.max_action_points
@@ -4480,6 +4505,90 @@ class GameState:
             self.messages.append(f"Investor confidence drops: -${funding_impact}k funding withdrawn")
     
     # Technical Failure Cascade Event Handlers for Issue #193
+    
+    def _process_achievements_and_warnings(self):
+        """
+        Process achievements and critical warnings at the start of each turn.
+        
+        This method implements Issue #195 enhancements:
+        - Check for newly unlocked achievements
+        - Display critical warnings for dangerous game states
+        - Track strategic analysis data for endgame scenarios
+        
+        Called at the beginning of each turn to provide timely feedback.
+        """
+        try:
+            # Update achievements system with current turn for warning tracking
+            achievements_endgame_system._current_turn = self.turn
+            
+            # Check for newly unlocked achievements
+            new_achievements = achievements_endgame_system.check_new_achievements(self)
+            
+            # Display achievement notifications
+            for achievement in new_achievements:
+                # Add achievement to player's unlocked set
+                self.unlocked_achievements.add(achievement.id)
+                
+                # Display achievement notification with rarity styling
+                rarity_indicators = {
+                    "common": "🎯",
+                    "uncommon": "⭐", 
+                    "rare": "🏆",
+                    "legendary": "👑"
+                }
+                indicator = rarity_indicators.get(achievement.rarity, "🎯")
+                
+                self.messages.append(f"{indicator} ACHIEVEMENT UNLOCKED: {achievement.name}")
+                self.messages.append(f"📖 {achievement.description}")
+                
+                # Play achievement sound based on rarity
+                if hasattr(self, 'sound_manager'):
+                    if achievement.rarity in ["legendary", "rare"]:
+                        self.sound_manager.play_sound('zabinga')  # Special celebratory sound
+                    else:
+                        self.sound_manager.play_sound('popup_accept')  # Regular achievement sound
+            
+            # Check for critical warnings that need immediate attention
+            warnings = achievements_endgame_system.check_critical_warnings(self)
+            
+            # Display critical warnings at start of turn
+            for warning in warnings:
+                severity_indicators = {
+                    "WARNING": "⚠️",
+                    "CRITICAL": "🚨", 
+                    "SEVERE": "💀",
+                    "EXTREME": "☢️",
+                    "EMERGENCY": "🔥",
+                    "IMMINENT": "💥"
+                }
+                indicator = severity_indicators.get(warning['severity'], "⚠️")
+                
+                self.messages.append(f"{indicator} {warning['title']}")
+                self.messages.append(f"📋 {warning['message']}")
+                
+                # Play warning sound for critical situations
+                if hasattr(self, 'sound_manager') and warning['severity'] in ["CRITICAL", "SEVERE", "EXTREME", "EMERGENCY", "IMMINENT"]:
+                    self.sound_manager.play_sound('error_beep')
+            
+            # Check for victory conditions (Issue #195 primary goal)
+            if self.doom <= 0 and not self.game_over:
+                # Ultimate victory achieved!
+                self.game_over = True
+                self.messages.append("🎉 ULTIMATE VICTORY: P(Doom) eliminated! AI alignment problem solved!")
+                
+                # Play victory sound
+                if hasattr(self, 'sound_manager'):
+                    self.sound_manager.play_sound('zabinga')
+                
+                # Achievement system will handle the victory scenario in get_scenario()
+                
+        except Exception as e:
+            # Defensive programming - achievements system should never crash the game
+            try:
+                import logging
+                logging.error(f"Error in achievements and warnings processing: {e}")
+            except:
+                pass  # Even logging errors shouldn't crash the game
     
     def _trigger_near_miss_averted_event(self):
         """Handle near-miss events that were successfully averted."""
