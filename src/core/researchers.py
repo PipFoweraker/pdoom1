@@ -90,6 +90,9 @@ class Researcher:
     
     def __init__(self, name: str, specialization: str, skill_level: int = None, 
                  traits: List[str] = None, salary_expectation: int = None):
+        # Generate unique ID based on name and random suffix for tracking
+        import uuid
+        self.id = f"{name.replace(' ', '_').lower()}_{str(uuid.uuid4())[:8]}"
         self.name = name
         self.specialization = specialization
         self.skill_level = skill_level if skill_level is not None else random.randint(3, 8)
@@ -182,6 +185,7 @@ class Researcher:
     def to_dict(self) -> Dict[str, Any]:
         """Convert researcher to dictionary for serialization."""
         return {
+            "id": self.id,
             "name": self.name,
             "specialization": self.specialization,
             "skill_level": self.skill_level,
@@ -204,6 +208,9 @@ class Researcher:
             data["traits"],
             data["salary_expectation"]
         )
+        # Override the generated ID with saved ID for consistency
+        if "id" in data:
+            researcher.id = data["id"]
         researcher.current_salary = data.get("current_salary", researcher.salary_expectation)
         researcher.productivity = data.get("productivity", 1.0)
         researcher.loyalty = data.get("loyalty", 50)

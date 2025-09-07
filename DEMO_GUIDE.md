@@ -1,6 +1,6 @@
 # Quick Demo Guide for Your Friend
 
-## 🎯 What You've Built - P(Doom) v0.2.0
+## 🎯 What You've Built - P(Doom) v0.2.5
 
 ### The Game
 A bureaucracy strategy game about AI Safety with retro 80s aesthetics.
@@ -28,7 +28,7 @@ python main.py
 - **Clean UI**: Notice how only 12/24 actions show (unlocked ones only)
 
 ### 3. Technical Highlights
-- **Proper Versioning**: Show `git tag -l` (displays v0.2.0)
+- **Proper Versioning**: Show `git tag -l` (displays v0.2.5)
 - **Good Documentation**: Show `CHANGELOG.md` and `RELEASE_NOTES_v0.2.0.md`
 - **Modern Practices**: Semantic versioning, git tags, comprehensive docs
 
@@ -40,7 +40,7 @@ python main.py
 ```python
 # Show how version is managed centrally
 from src.services.version import get_display_version
-print(get_display_version())  # "P(Doom) v0.2.0"
+print(get_display_version())  # "P(Doom) v0.2.5"
 ```
 
 ### Icon System Architecture  
@@ -71,8 +71,8 @@ git status
 ### Assets Created
 - ✅ `RELEASE_NOTES_v0.2.0.md` - Public-facing release notes
 - ✅ `CHANGELOG.md` - Developer changelog following standards
-- ✅ Version bumped to 0.2.0 with semantic versioning
-- ✅ Git tag `v0.2.0` for proper release management
+- ✅ Version bumped to 0.2.5 with semantic versioning
+- ✅ Git tag `v0.2.5` for proper release management
 - ✅ All code pushed to main branch
 
 ### Website Content Ready

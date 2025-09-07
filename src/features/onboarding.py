@@ -490,5 +490,56 @@ class OnboardingSystem:
         self.current_tutorial_step = None
         self._save_progress()
 
+    def are_hints_enabled(self) -> bool:
+        """Check if hints are enabled in the current configuration."""
+        from src.services.config_manager import get_current_config
+        config = get_current_config()
+        return config.get('tutorial', {}).get('first_time_help', True)
+
+    def are_tutorials_enabled(self) -> bool:
+        """Check if tutorials are enabled in the current configuration."""
+        from src.services.config_manager import get_current_config
+        config = get_current_config()
+        return config.get('tutorial', {}).get('tutorial_enabled', True)
+
+    def reset_all_hints(self):
+        """Reset all hints so they will show again (Factorio-style reset)."""
+        # Clear all seen mechanics so hints will show again
+        self.seen_mechanics.clear()
+        self._save_progress()
+        
+        # Add log message for confirmation
+        import logging
+        logging.info("All hints reset - they will show again for new actions")
+
+    def reset_specific_hint(self, mechanic: str):
+        """Reset a specific hint so it will show again."""
+        if mechanic in self.seen_mechanics:
+            self.seen_mechanics.remove(mechanic)
+            self._save_progress()
+            
+            # Add log message for confirmation
+            import logging
+            logging.info(f"Hint '{mechanic}' reset - will show again")
+
+    def get_hint_status(self) -> Dict[str, bool]:
+        """Get the status of all available hints."""
+        available_mechanics = ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']
+        return {
+            mechanic: mechanic in self.seen_mechanics
+            for mechanic in available_mechanics
+        }
+
+    def should_show_hint(self, mechanic: str) -> bool:
+        """
+        Check if a hint should be shown (Factorio-style behavior).
+        
+        Returns True if:
+        1. Hints are enabled in config
+        2. This specific hint hasn't been seen before
+        """
+        return (self.are_hints_enabled() and 
+                self.should_show_mechanic_help(mechanic))
+
 # Global onboarding instance
 onboarding = OnboardingSystem()

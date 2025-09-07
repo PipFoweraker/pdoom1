@@ -3,7 +3,7 @@ import json
 import os
 import pygame
 
-from typing import Tuple, Dict, Any, List
+from typing import Tuple, Dict, Any, List, Optional
 
 from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
@@ -16,6 +16,7 @@ from src.services.leaderboard import init_leaderboard_system, get_leaderboard_ma
 from src.core.opponents import create_default_opponents
 from src.features.event_system import Event, DeferredEventQueue, EventType, EventAction
 from src.features.onboarding import onboarding
+from src.features.achievements_endgame import achievements_endgame_system
 from src.ui.overlay_manager import OverlayManager
 from src.services.error_tracker import ErrorTracker
 from src.services.config_manager import get_current_config
@@ -48,22 +49,40 @@ class GameState:
             if hasattr(self, "accounting_software_bought") and self.accounting_software_bought:
                 self.last_balance_change = val
             self.money = max(self.money + val, 0)
+            
+            # Track minimum money for strategic analysis
+            if self.money < self.min_money_reached:
+                self.min_money_reached = self.money
         elif attr == 'doom':
             old_doom = self.doom
             self.doom = min(max(self.doom + val, 0), self.max_doom)
-            # Trigger high doom warning
+            
+            # Track peak doom for strategic analysis
+            if self.doom > self.max_doom_reached:
+                self.max_doom_reached = self.doom
+            
+            # Trigger high doom warning (existing system)
             if old_doom < 70 and self.doom >= 70 and onboarding.should_show_mechanic_help('high_doom_warning'):
                 onboarding.mark_mechanic_seen('high_doom_warning')
+                
         elif attr == 'reputation':
             self.reputation = max(self.reputation + val, 0)
+            
+            # Track peak reputation for strategic analysis
+            if self.reputation > self.peak_reputation:
+                self.peak_reputation = self.reputation
         elif attr == 'staff':
             old_staff = self.staff
             self.staff = max(self.staff + val, 0)
             # Update employee blobs when staff changes
             if val > 0:  # Hiring
                 self._add_employee_blobs(val)
-                # Trigger first-time help for staff hiring
-                if old_staff <= 2 and self.staff > 2:  # First staff hire beyond starting staff
+                # FIXED: Only mark first staff hire as seen when we actually hire BEYOND starting staff
+                # Check if this is first manual hire (from starting count)
+                from src.services.config_manager import get_current_config
+                starting_staff = get_current_config().get('starting_resources', {}).get('staff', 2)
+                if old_staff == starting_staff and val > 0:
+                    # This is the first manual hire - mark as seen so hint won't show again
                     onboarding.mark_mechanic_seen('first_staff_hire')
             elif val < 0:  # Staff leaving
                 self._remove_employee_blobs(old_staff - self.staff)
@@ -189,10 +208,32 @@ class GameState:
         # Onboarding system integration
         self.onboarding_started = False  # Track if tutorial has been offered
         
+        # Achievements & Endgame System (Issue #195)
+        self.unlocked_achievements = set()  # Achievement IDs that have been unlocked
+        self.achievement_notifications = []  # Queue of achievement notifications to display
+        self.peak_reputation = self.reputation  # Track highest reputation achieved
+        self.min_money_reached = self.money    # Track lowest money reached (for crisis analysis)
+        self.max_doom_reached = self.doom      # Track highest doom reached (for analysis)
+        
         # Enhanced Personnel System
         self.researchers = []  # List of individual Researcher objects
         self.available_researchers = []  # Researchers available for hiring this turn
         self.researcher_hiring_pool_refreshed = False  # Track if hiring pool was refreshed
+        
+        # Researcher Assignment System for Issue #190
+        self.researcher_assignments = {}  # Maps researcher_id -> assigned_task_name
+        self.task_quality_overrides = {}  # Maps task_name -> ResearchQuality override
+        self.researcher_default_quality = {}  # Maps researcher_id -> default ResearchQuality
+        
+        # Economic Cycles & Funding Volatility System for Issue #192
+        from src.features.economic_cycles import EconomicCycles
+        self.economic_cycles = EconomicCycles(self)
+        self.funding_round_cooldown = 0  # Prevent excessive fundraising
+        self.emergency_measures_available = True  # Track if emergency options are still available
+        
+        # Technical Failure Cascades System for Issue #193
+        from src.features.technical_failures import TechnicalFailureCascades
+        self.technical_failures = TechnicalFailureCascades(self)
         
         # Context window tracking
         self.context_window_minimized = False
@@ -2227,6 +2268,16 @@ class GameState:
         # This ensures players see events before committing to actions
         self.trigger_events()
         
+        # Update economic cycles and display news if phase changed
+        if hasattr(self, 'economic_cycles'):
+            economic_news = self.economic_cycles.update_for_turn(self.turn + 1)  # Next turn
+            if economic_news:
+                self.messages.append(f"📰 ECONOMIC NEWS: {economic_news}")
+        
+        # Check for technical failure cascades
+        if hasattr(self, 'technical_failures'):
+            self.technical_failures.check_for_cascades()
+        
         # Check if there are pending popup events that need resolution
         if (hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled and
             hasattr(self, 'deferred_events') and hasattr(self.deferred_events, 'pending_popup_events') and
@@ -2370,6 +2421,9 @@ class GameState:
         
         self.turn += 1
         
+        # Issue #195: Check for achievements and critical warnings at start of new turn
+        self._process_achievements_and_warnings()
+        
         # Reset Action Points for new turn (Phase 2: Staff-Based AP Scaling)
         self.max_action_points = self.calculate_max_ap()
         self.action_points = self.max_action_points
@@ -2456,6 +2510,10 @@ class GameState:
         
         # Reset spend tracking for next turn
         self.spend_this_turn = 0
+        
+        # Update funding cooldowns
+        if hasattr(self, 'funding_round_cooldown') and self.funding_round_cooldown > 0:
+            self.funding_round_cooldown -= 1
         
         # Update Public Opinion & Media System
         self.public_opinion.update_turn(self.turn + 1)  # Use next turn for media stories
@@ -2712,6 +2770,116 @@ class GameState:
         
         return True
     
+    def execute_technical_debt_audit(self) -> Dict[str, Any]:
+        """
+        Execute a technical debt audit requiring Administrator staff.
+        Reveals exact debt numbers and provides detailed breakdown.
+        
+        Returns:
+            Dict with audit results, or empty dict if audit cannot be performed
+        """
+        # Check if administrator is available
+        if self.admin_staff < 1:
+            self.messages.append("❌ Technical debt audit requires at least 1 Administrator")
+            return {}
+        
+        # Check action points cost
+        audit_ap_cost = 2
+        if self.action_points < audit_ap_cost:
+            self.messages.append(f"❌ Technical debt audit requires {audit_ap_cost} Action Points")
+            return {}
+        
+        # Perform the audit
+        self.action_points -= audit_ap_cost
+        
+        # Get detailed debt breakdown
+        debt_summary = self.technical_debt.get_debt_summary()
+        
+        # Calculate risk assessment
+        speed_penalty = self.technical_debt.get_research_speed_penalty()
+        accident_chance = self.technical_debt.get_accident_chance()
+        reputation_risk = self.technical_debt.has_reputation_risk()
+        system_failure_risk = self.technical_debt.can_trigger_system_failure()
+        
+        # Determine risk level for UI display
+        total_debt = debt_summary["total"]
+        if total_debt <= 5:
+            risk_level = "Low Risk"
+            risk_color = "green"
+        elif total_debt <= 15:
+            risk_level = "Medium Risk" 
+            risk_color = "yellow"
+        else:
+            risk_level = "High Risk"
+            risk_color = "red"
+        
+        # Generate audit report
+        audit_results = {
+            "total_debt": total_debt,
+            "debt_breakdown": debt_summary,
+            "risk_level": risk_level,
+            "risk_color": risk_color,
+            "speed_penalty_percent": int((1.0 - speed_penalty) * 100),
+            "accident_chance_percent": int(accident_chance * 100),
+            "reputation_risk": reputation_risk,
+            "system_failure_risk": system_failure_risk,
+            "recommendations": []
+        }
+        
+        # Add specific recommendations
+        if total_debt > 20:
+            audit_results["recommendations"].append("CRITICAL: Execute emergency refactoring sprint immediately")
+            audit_results["recommendations"].append("Consider halting new development until debt is reduced")
+        elif total_debt > 15:
+            audit_results["recommendations"].append("HIGH PRIORITY: Schedule comprehensive safety audit")
+            audit_results["recommendations"].append("Reduce research pace and focus on quality")
+        elif total_debt > 10:
+            audit_results["recommendations"].append("MODERATE: Plan refactoring sprint within 3 turns")
+            audit_results["recommendations"].append("Monitor for system failures")
+        elif total_debt > 5:
+            audit_results["recommendations"].append("LOW: Consider code review sessions")
+            audit_results["recommendations"].append("Maintain current quality standards")
+        else:
+            audit_results["recommendations"].append("EXCELLENT: Technical debt well-managed")
+            audit_results["recommendations"].append("Current practices are sustainable")
+        
+        # Add per-category analysis
+        category_analysis = []
+        for category, debt in debt_summary.items():
+            if category != "total" and debt > 0:
+                category_analysis.append(f"{category.replace('_', ' ').title()}: {debt} points")
+        
+        if category_analysis:
+            audit_results["category_breakdown"] = category_analysis
+        
+        # Log the audit
+        self.messages.append(f"📊 Technical Debt Audit completed by Administrator")
+        self.messages.append(f"🎯 Risk Assessment: {risk_level} ({total_debt} total debt points)")
+        
+        if audit_results["recommendations"]:
+            self.messages.append(f"📋 Top Recommendation: {audit_results['recommendations'][0]}")
+        
+        # Store audit results for UI display
+        if not hasattr(self, 'last_audit_results'):
+            self.last_audit_results = {}
+        self.last_audit_results = audit_results
+        
+        return audit_results
+    
+    def get_debt_risk_indicator(self) -> str:
+        """
+        Get simplified debt risk indicator for UI without requiring audit.
+        Returns 'Low Risk', 'Medium Risk', or 'High Risk'.
+        """
+        total_debt = self.technical_debt.accumulated_debt
+        
+        if total_debt <= 5:
+            return "Low Risk"
+        elif total_debt <= 15:
+            return "Medium Risk"
+        else:
+            return "High Risk"
+    
     def get_research_effectiveness_modifier(self) -> float:
         """
         Get the current research effectiveness modifier based on technical debt.
@@ -2742,6 +2910,158 @@ class GameState:
         # Check for system failure events
         if self.technical_debt.can_trigger_system_failure() and random.random() < 0.05:
             self._trigger_system_failure()
+    
+    # Researcher Assignment System for Issue #190
+    def assign_researcher_to_task(self, researcher_id: str, task_name: str, 
+                                  quality_override: Optional[ResearchQuality] = None) -> bool:
+        """
+        Assign a specific researcher to a specific task.
+        
+        Args:
+            researcher_id: Unique identifier for the researcher
+            task_name: Name of the research task/action
+            quality_override: Optional quality level override for this task
+            
+        Returns:
+            True if assignment was successful, False otherwise
+        """
+        # Find the researcher
+        researcher = self.get_researcher_by_id(researcher_id)
+        if not researcher:
+            self.messages.append(f"❌ Researcher {researcher_id} not found")
+            return False
+        
+        # Check if researcher is already assigned
+        if researcher_id in self.researcher_assignments:
+            old_task = self.researcher_assignments[researcher_id]
+            self.messages.append(f"📋 {researcher.name} reassigned from {old_task} to {task_name}")
+        
+        # Make the assignment
+        self.researcher_assignments[researcher_id] = task_name
+        
+        # Set quality override if provided
+        if quality_override:
+            self.task_quality_overrides[task_name] = quality_override
+        
+        self.messages.append(f"✅ {researcher.name} assigned to {task_name}")
+        return True
+    
+    def unassign_researcher(self, researcher_id: str) -> bool:
+        """
+        Remove assignment for a specific researcher.
+        
+        Args:
+            researcher_id: Unique identifier for the researcher
+            
+        Returns:
+            True if unassignment was successful, False otherwise
+        """
+        researcher = self.get_researcher_by_id(researcher_id)
+        if not researcher:
+            return False
+        
+        if researcher_id in self.researcher_assignments:
+            task_name = self.researcher_assignments[researcher_id]
+            del self.researcher_assignments[researcher_id]
+            self.messages.append(f"📋 {researcher.name} unassigned from {task_name}")
+            return True
+        
+        return False
+    
+    def set_researcher_default_quality(self, researcher_id: str, quality: ResearchQuality) -> bool:
+        """
+        Set the default research quality preference for a researcher.
+        
+        Args:
+            researcher_id: Unique identifier for the researcher
+            quality: Default quality level for this researcher
+            
+        Returns:
+            True if setting was successful, False otherwise
+        """
+        researcher = self.get_researcher_by_id(researcher_id)
+        if not researcher:
+            return False
+        
+        self.researcher_default_quality[researcher_id] = quality
+        quality_name = quality.value.title()
+        self.messages.append(f"⚙️ {researcher.name}'s default quality set to {quality_name}")
+        return True
+    
+    def get_researcher_by_id(self, researcher_id: str):
+        """
+        Get a researcher by their unique identifier.
+        
+        Args:
+            researcher_id: Unique identifier for the researcher
+            
+        Returns:
+            Researcher object if found, None otherwise
+        """
+        for researcher in self.researchers:
+            if getattr(researcher, 'id', researcher.name) == researcher_id:
+                return researcher
+        return None
+    
+    def get_task_quality_setting(self, task_name: str, assigned_researcher_id: str = None) -> ResearchQuality:
+        """
+        Get the effective quality setting for a task.
+        
+        Args:
+            task_name: Name of the research task
+            assigned_researcher_id: ID of researcher assigned to this task
+            
+        Returns:
+            Effective ResearchQuality level for the task
+        """
+        # Check task-specific override first
+        if task_name in self.task_quality_overrides:
+            return self.task_quality_overrides[task_name]
+        
+        # Check researcher default if researcher is assigned
+        if assigned_researcher_id and assigned_researcher_id in self.researcher_default_quality:
+            return self.researcher_default_quality[assigned_researcher_id]
+        
+        # Fall back to organization default
+        return self.current_research_quality
+    
+    def get_researcher_assignments_summary(self) -> Dict[str, Any]:
+        """
+        Get a summary of current researcher assignments for UI display.
+        
+        Returns:
+            Dictionary with assignment information
+        """
+        summary = {
+            "assigned": {},
+            "unassigned": [],
+            "task_qualities": {}
+        }
+        
+        # Track assigned researchers
+        for researcher_id, task_name in self.researcher_assignments.items():
+            researcher = self.get_researcher_by_id(researcher_id)
+            if researcher:
+                summary["assigned"][researcher_id] = {
+                    "name": researcher.name,
+                    "task": task_name,
+                    "specialization": researcher.specialization,
+                    "quality_setting": self.get_task_quality_setting(task_name, researcher_id).value
+                }
+        
+        # Track unassigned researchers
+        assigned_ids = set(self.researcher_assignments.keys())
+        for researcher in self.researchers:
+            researcher_id = getattr(researcher, 'id', researcher.name)
+            if researcher_id not in assigned_ids:
+                summary["unassigned"].append({
+                    "id": researcher_id,
+                    "name": researcher.name,
+                    "specialization": researcher.specialization,
+                    "default_quality": self.researcher_default_quality.get(researcher_id, self.current_research_quality).value
+                })
+        
+        return summary
     
     def _trigger_debt_accident(self) -> None:
         """Trigger a technical debt-related accident."""
@@ -3200,9 +3520,17 @@ class GameState:
         """Trigger the employee hiring dialog with available employee subtypes."""
         from src.core.employee_subtypes import get_available_subtypes, get_hiring_complexity_level
         from src.features.onboarding import onboarding
+        from src.services.config_manager import get_current_config
         
-        # Check if this is the first time attempting to hire staff
-        if onboarding.should_show_mechanic_help('first_staff_hire'):
+        # Check if this is the first time attempting to hire staff and hints are enabled
+        config = get_current_config()
+        starting_staff = config.get('starting_resources', {}).get('staff', 2)
+        
+        # Only show hint if:
+        # 1. This is the first manual hire attempt (still at starting staff count)
+        # 2. Hints haven't been seen before (Factorio-style)
+        if (self.staff == starting_staff and 
+            onboarding.should_show_hint('first_staff_hire')):
             # Store the mechanic to show help later in main loop 
             self._pending_first_time_help = 'first_staff_hire'
         
@@ -3925,3 +4253,484 @@ class GameState:
             self.messages.append("😞 Loyalty crisis among researchers! Morale significantly decreased.")
         
         self.messages.append("Consider salary increases and team building to restore loyalty.")
+
+    # Research Quality Event Handlers for Issue #190
+    def _trigger_safety_shortcut_event(self):
+        """
+        Event where a researcher suggests cutting corners on safety validation.
+        Player can choose response affecting technical debt and research speed.
+        """
+        from src.features.event_system import Event, EventType, EventAction
+        
+        # Find an assigned researcher for the story
+        if not self.researcher_assignments:
+            return
+        
+        researcher_id = random.choice(list(self.researcher_assignments.keys()))
+        researcher = self.get_researcher_by_id(researcher_id)
+        task_name = self.researcher_assignments[researcher_id]
+        
+        if not researcher:
+            return
+        
+        # Create an enhanced event with multiple options
+        event_desc = (f"{researcher.name} suggests: \"We could skip some safety validation steps "
+                     f"for {task_name} and finish 40% faster. The risk is probably minimal...\"")
+        
+        def handle_maintain_standards(gs):
+            gs.messages.append(f"✅ {researcher.name}: \"You're right, safety first. I'll maintain full validation.\"")
+            gs._add('reputation', 1)  # Reputation for safety-conscious approach
+            
+        def handle_calculated_risk(gs):
+            gs.messages.append(f"⚠️ {researcher.name}: \"Understood. I'll reduce some checks but keep the critical ones.\"")
+            gs.technical_debt.add_debt(1)  # Small debt increase
+            # Speed up current research slightly (placeholder - would need research tracking)
+            
+        def handle_rush_it(gs):
+            gs.messages.append(f"🚨 {researcher.name}: \"Alright, cutting corners to hit the deadline. Hope nothing goes wrong...\"")
+            gs.technical_debt.add_debt(3)  # Significant debt increase
+            gs._add('doom', 1)  # Small doom increase for risky approach
+            
+        # Use enhanced events if available, otherwise simple choice
+        if hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled:
+            enhanced_event = Event(
+                name="Safety Shortcut Temptation",
+                desc=event_desc,
+                trigger=lambda gs: True,
+                effect=handle_maintain_standards,  # Default action
+                event_type=EventType.POPUP,
+                available_actions=[EventAction.ACCEPT, EventAction.DEFER, EventAction.DISMISS]
+            )
+            
+            # Add custom action handlers
+            enhanced_event.action_handlers = {
+                "maintain_standards": handle_maintain_standards,
+                "calculated_risk": handle_calculated_risk,
+                "rush_it": handle_rush_it
+            }
+            
+            if hasattr(self, 'pending_popup_events'):
+                self.pending_popup_events.append(enhanced_event)
+            else:
+                handle_maintain_standards(self)  # Fallback
+        else:
+            # Simple implementation - randomly choose response for now
+            responses = [handle_maintain_standards, handle_calculated_risk, handle_rush_it]
+            choice = random.choice(responses)
+            choice(self)
+    
+    def _trigger_technical_debt_warning(self):
+        """
+        Event warning player about accumulated technical debt consequences.
+        """
+        debt_level = self.technical_debt.accumulated_debt
+        
+        if debt_level < 10:
+            self.messages.append("⚠️ Lead Researcher: \"We're accumulating some technical shortcuts. Should keep an eye on that.\"")
+        elif debt_level < 15:
+            self.messages.append("🔶 Lead Researcher: \"Our technical debt is getting concerning. We should schedule refactoring soon.\"")
+        else:
+            self.messages.append("🚨 Lead Researcher: \"Critical warning: Our technical debt could trigger system failures!\"")
+            
+        # Offer debt reduction suggestion
+        self.messages.append("Consider using 'Refactoring Sprint' or 'Safety Audit' actions to reduce technical debt.")
+    
+    def _trigger_quality_speed_dilemma(self):
+        """
+        Event presenting a critical deadline where player must choose quality vs speed.
+        """
+        scenarios = [
+            "Conference deadline approaches",
+            "Investor presentation next turn", 
+            "Regulatory review incoming",
+            "Competitor announcement imminent"
+        ]
+        
+        scenario = random.choice(scenarios)
+        
+        # Offer quality choice for all active research
+        self.messages.append(f"🕐 Critical: {scenario}! How should researchers adjust their approach?")
+        
+        def set_all_rushed():
+            for researcher_id in self.researcher_assignments:
+                self.researcher_default_quality[researcher_id] = ResearchQuality.RUSHED
+            self.messages.append("📈 All researchers switched to RUSHED mode for speed!")
+            self.technical_debt.add_debt(len(self.researcher_assignments))
+            
+        def set_all_thorough():
+            for researcher_id in self.researcher_assignments:
+                self.researcher_default_quality[researcher_id] = ResearchQuality.THOROUGH
+            self.messages.append("🔬 All researchers switched to THOROUGH mode for quality!")
+            self._add('reputation', 1)
+            
+        def maintain_current():
+            self.messages.append("⚖️ Maintaining current research quality approaches.")
+            
+        # Simple random choice for now - in full implementation would be player choice
+        choices = [set_all_rushed, set_all_thorough, maintain_current]
+        weights = [0.3, 0.3, 0.4]  # Slight preference for maintaining current
+        choice = random.choices(choices, weights=weights)[0]
+        choice()
+    
+    def _trigger_competitor_shortcut_discovery(self):
+        """
+        Event revealing that competitors are taking dangerous shortcuts.
+        """
+        if not hasattr(self, 'opponents') or not self.opponents:
+            return
+            
+        # Find competitor with high technical debt (simulated)
+        competitor_names = ["NeuralDyne", "QuantumLogic", "CyberBrain Corp"]
+        competitor = random.choice(competitor_names)
+        
+        discovery_types = [
+            "Intelligence gathering reveals",
+            "Whistleblower reports",
+            "Academic paper analysis shows",
+            "Industry rumors suggest"
+        ]
+        
+        discovery = random.choice(discovery_types)
+        
+        consequences = [
+            "skipping safety validations entirely",
+            "using untested architectures in production",
+            "ignoring alignment research protocols",
+            "rushing capability development without safeguards"
+        ]
+        
+        consequence = random.choice(consequences)
+        
+        self.messages.append(f"🕵️ {discovery} {competitor} is {consequence}!")
+        self.messages.append(f"This could give them a speed advantage but increases global risk.")
+        
+        # Player organization gains reputation for being more careful
+        if self.technical_debt.accumulated_debt < 5:
+            self._add('reputation', 1)
+            self.messages.append("📈 Your careful approach gains recognition in contrast!")
+        
+        # Increase global doom slightly due to competitor shortcuts
+        self._add('doom', random.randint(1, 3))
+    
+    # Economic Cycles & Funding Volatility Event Handlers for Issue #192
+    
+    def _trigger_funding_drought_event(self):
+        """Handle venture capital drought during economic downturns."""
+        if not hasattr(self, 'economic_cycles'):
+            return
+            
+        self.messages.append("💰 Venture capital funding has become extremely scarce!")
+        self.messages.append("💡 Consider government grants or corporate partnerships instead.")
+        
+        # Extend funding cooldown during drought
+        if hasattr(self, 'funding_round_cooldown'):
+            self.funding_round_cooldown = max(self.funding_round_cooldown, 2)
+        
+        # Small reputation boost for surviving the drought
+        self._add('reputation', 1)
+    
+    def _trigger_bubble_warning_event(self):
+        """Handle AI bubble burst warnings."""
+        self.messages.append("⚠️ Market analysts warn AI valuations are unsustainable!")
+        self.messages.append("💭 Consider securing funding now before conditions worsen.")
+        
+        # Temporary funding bonus for those who act quickly
+        if not hasattr(self, 'bubble_warning_bonus'):
+            self.bubble_warning_bonus = 3  # 3 turns to act
+    
+    def _trigger_government_funding_event(self):
+        """Handle government AI initiative announcements."""
+        self.messages.append("🏛️ Government announces major AI research funding initiative!")
+        
+        if self.reputation >= 10:
+            grant_amount = random.randint(80, 150)
+            self._add('money', grant_amount)
+            self.messages.append(f"Your organization qualifies for ${grant_amount}k government grant!")
+        else:
+            self.messages.append("Build more reputation to qualify for government funding programs.")
+    
+    def _trigger_corporate_partnership_event(self):
+        """Handle corporate partnership opportunities during downturns."""
+        corp_names = ["TechGiant Inc", "DataCorp Systems", "Innovation Dynamics"]
+        corp = random.choice(corp_names)
+        
+        self.messages.append(f"🤝 {corp} seeks AI partnerships during the economic downturn!")
+        
+        partnership_amount = random.randint(60, 120)
+        self._add('money', partnership_amount)
+        self.messages.append(f"Secured ${partnership_amount}k corporate partnership!")
+        
+        # Corporate partnerships provide stability but may limit reputation growth
+        self._add('reputation', random.randint(0, 2))
+    
+    def _trigger_emergency_measures_event(self):
+        """Handle emergency cost-cutting measures during severe economic stress."""
+        if not hasattr(self, 'emergency_measures_available') or not self.emergency_measures_available:
+            return
+            
+        self.messages.append("🚨 Economic conditions require immediate cost reduction!")
+        
+        # Emergency measures: reduce staff costs temporarily
+        if self.staff > 1:
+            staff_reduction = min(2, self.staff // 3)
+            self._add('staff', -staff_reduction)
+            savings = staff_reduction * 30
+            self._add('money', savings)
+            self.messages.append(f"Emergency layoffs: -{staff_reduction} staff, +${savings}k cash flow relief")
+        
+        # Mark emergency measures as used
+        self.emergency_measures_available = False
+        self._add('reputation', -2)  # Reputation hit for layoffs
+    
+    def _trigger_competitor_funding_event(self):
+        """Handle competitor funding announcements during boom periods."""
+        if not hasattr(self, 'opponents') or not self.opponents:
+            return
+            
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        if not discovered_opponents:
+            return
+            
+        competitor = random.choice(discovered_opponents)
+        funding_amounts = ["$50M", "$100M", "$200M", "$500M"]
+        amount = random.choice(funding_amounts)
+        
+        self.messages.append(f"📰 {competitor.name} announces {amount} funding round!")
+        self.messages.append("Competitive pressure increases - consider accelerating your own fundraising.")
+        
+        # Increase doom slightly due to competitor advancement
+        self._add('doom', random.randint(1, 3))
+        
+        # Create urgency for player fundraising
+        if hasattr(self, 'funding_round_cooldown'):
+            self.funding_round_cooldown = max(0, self.funding_round_cooldown - 1)
+    
+    def _trigger_ai_winter_warning_event(self):
+        """Handle AI winter warnings when doom is high."""
+        self.messages.append("❄️ Industry veterans warn of potential 'AI Winter' if promises don't materialize!")
+        self.messages.append("🎯 Focus on demonstrable safety progress to maintain investor confidence.")
+        
+        # If safety research progress is low, more severe consequences
+        if self.reputation < 15:
+            funding_impact = random.randint(20, 40)
+            self._add('money', -funding_impact)
+            self.messages.append(f"Investor confidence drops: -${funding_impact}k funding withdrawn")
+    
+    # Technical Failure Cascade Event Handlers for Issue #193
+    
+    def _process_achievements_and_warnings(self):
+        """
+        Process achievements and critical warnings at the start of each turn.
+        
+        This method implements Issue #195 enhancements:
+        - Check for newly unlocked achievements
+        - Display critical warnings for dangerous game states
+        - Track strategic analysis data for endgame scenarios
+        
+        Called at the beginning of each turn to provide timely feedback.
+        """
+        try:
+            # Update achievements system with current turn for warning tracking
+            achievements_endgame_system._current_turn = self.turn
+            
+            # Check for newly unlocked achievements
+            new_achievements = achievements_endgame_system.check_new_achievements(self)
+            
+            # Display achievement notifications
+            for achievement in new_achievements:
+                # Add achievement to player's unlocked set
+                self.unlocked_achievements.add(achievement.id)
+                
+                # Display achievement notification with rarity styling
+                rarity_indicators = {
+                    "common": "🎯",
+                    "uncommon": "⭐", 
+                    "rare": "🏆",
+                    "legendary": "👑"
+                }
+                indicator = rarity_indicators.get(achievement.rarity, "🎯")
+                
+                self.messages.append(f"{indicator} ACHIEVEMENT UNLOCKED: {achievement.name}")
+                self.messages.append(f"📖 {achievement.description}")
+                
+                # Play achievement sound based on rarity
+                if hasattr(self, 'sound_manager'):
+                    if achievement.rarity in ["legendary", "rare"]:
+                        self.sound_manager.play_sound('zabinga')  # Special celebratory sound
+                    else:
+                        self.sound_manager.play_sound('popup_accept')  # Regular achievement sound
+            
+            # Check for critical warnings that need immediate attention
+            warnings = achievements_endgame_system.check_critical_warnings(self)
+            
+            # Display critical warnings at start of turn
+            for warning in warnings:
+                severity_indicators = {
+                    "WARNING": "⚠️",
+                    "CRITICAL": "🚨", 
+                    "SEVERE": "💀",
+                    "EXTREME": "☢️",
+                    "EMERGENCY": "🔥",
+                    "IMMINENT": "💥"
+                }
+                indicator = severity_indicators.get(warning['severity'], "⚠️")
+                
+                self.messages.append(f"{indicator} {warning['title']}")
+                self.messages.append(f"📋 {warning['message']}")
+                
+                # Play warning sound for critical situations
+                if hasattr(self, 'sound_manager') and warning['severity'] in ["CRITICAL", "SEVERE", "EXTREME", "EMERGENCY", "IMMINENT"]:
+                    self.sound_manager.play_sound('error_beep')
+            
+            # Check for victory conditions (Issue #195 primary goal)
+            if self.doom <= 0 and not self.game_over:
+                # Ultimate victory achieved!
+                self.game_over = True
+                self.messages.append("🎉 ULTIMATE VICTORY: P(Doom) eliminated! AI alignment problem solved!")
+                
+                # Play victory sound
+                if hasattr(self, 'sound_manager'):
+                    self.sound_manager.play_sound('zabinga')
+                
+                # Achievement system will handle the victory scenario in get_scenario()
+                
+        except Exception as e:
+            # Defensive programming - achievements system should never crash the game
+            try:
+                import logging
+                logging.error(f"Error in achievements and warnings processing: {e}")
+            except:
+                pass  # Even logging errors shouldn't crash the game
+    
+    def _trigger_near_miss_averted_event(self):
+        """Handle near-miss events that were successfully averted."""
+        if hasattr(self, 'technical_failures'):
+            self.technical_failures.near_miss_count += 1
+            
+        near_miss_types = [
+            "Advanced monitoring detected system anomaly before critical failure",
+            "Cross-team communication prevented potential coordination breakdown",
+            "Early warning systems identified security vulnerability before breach",
+            "Incident response protocols contained developing infrastructure issue"
+        ]
+        
+        near_miss = random.choice(near_miss_types)
+        self.messages.append(f"⚠️ NEAR MISS AVERTED: {near_miss}")
+        self.messages.append("🎓 Team conducts post-incident review to strengthen prevention capabilities")
+        
+        # Reward for good prevention systems
+        self._add('reputation', 1)
+        
+        # Improve prevention systems slightly from lessons learned
+        if hasattr(self, 'technical_failures') and random.random() < 0.5:
+            improvement_types = ['incident_response_level', 'monitoring_systems', 'communication_protocols']
+            improvement = random.choice(improvement_types)
+            current_level = getattr(self.technical_failures, improvement, 0)
+            if current_level < 5:
+                setattr(self.technical_failures, improvement, current_level + 1)
+                self.messages.append(f"📈 {improvement.replace('_', ' ').title()} improved from lessons learned!")
+    
+    def _trigger_cover_up_exposed_event(self):
+        """Handle the exposure of past cover-ups."""
+        if not hasattr(self, 'technical_failures'):
+            return
+            
+        cover_up_severity = min(10, self.technical_failures.cover_up_debt)
+        
+        exposure_scenarios = [
+            "Whistleblower reveals pattern of unreported incidents",
+            "Regulatory audit uncovers hidden technical failures",
+            "Former employee testimonies expose safety shortcuts",
+            "Data leak reveals internal incident suppression policies"
+        ]
+        
+        scenario = random.choice(exposure_scenarios)
+        self.messages.append(f"🚨 COVER-UP EXPOSED: {scenario}")
+        
+        # Severe reputation damage based on cover-up debt
+        reputation_loss = random.randint(cover_up_severity // 2, cover_up_severity)
+        self._add('reputation', -reputation_loss)
+        self.messages.append(f"📉 Reputation severely damaged: -{reputation_loss} points")
+        
+        # Financial penalties for regulatory violations
+        financial_penalty = random.randint(50, 100) + (cover_up_severity * 10)
+        self._add('money', -financial_penalty)
+        self.messages.append(f"💰 Regulatory fines and legal costs: -${financial_penalty}k")
+        
+        # Reduce cover-up debt (consequences have been paid)
+        self.technical_failures.cover_up_debt = max(0, self.technical_failures.cover_up_debt - cover_up_severity)
+        
+        # Force improved transparency going forward
+        self.messages.append("📋 Organization forced to adopt mandatory transparency policies")
+        if hasattr(self, 'technical_debt'):
+            self.technical_debt.add_debt(3)  # Increased oversight creates some operational debt
+    
+    def _trigger_transparency_dividend_event(self):
+        """Handle recognition for transparent failure handling."""
+        if not hasattr(self, 'technical_failures'):
+            return
+            
+        recognition_types = [
+            "Industry safety consortium recognizes transparent incident reporting",
+            "Academic researchers cite organization as model for failure learning",
+            "Regulatory agencies praise proactive safety communication",
+            "Peer organizations request best practice sharing sessions"
+        ]
+        
+        recognition = random.choice(recognition_types)
+        self.messages.append(f"🏆 TRANSPARENCY RECOGNIZED: {recognition}")
+        
+        # Reputation boost
+        reputation_gain = random.randint(2, 4)
+        self._add('reputation', reputation_gain)
+        self.messages.append(f"📈 Industry respect grows: +{reputation_gain} reputation")
+        
+        # Funding opportunities from transparency
+        if random.random() < 0.6:
+            funding_opportunity = random.randint(30, 60)
+            self._add('money', funding_opportunity)
+            self.messages.append(f"💰 Safety-focused funding secured: +${funding_opportunity}k")
+        
+        # Improve staff morale (represented as temporary benefit)
+        self.messages.append("😊 Staff morale improves from working at an ethical organization")
+        
+        # Reset transparency reputation to prevent repeated triggers
+        self.technical_failures.transparency_reputation = max(0, 
+                                                            self.technical_failures.transparency_reputation - 2.0)
+    
+    def _trigger_cascade_prevention_event(self):
+        """Handle successful prevention of failure cascades."""
+        if not hasattr(self, 'technical_failures'):
+            return
+            
+        prevention_scenarios = [
+            "Rapid incident response prevents system failure from spreading",
+            "Cross-team coordination contains potential research setback cascade",
+            "Advanced monitoring isolates infrastructure issue before propagation",
+            "Communication protocols prevent crisis from escalating across departments"
+        ]
+        
+        scenario = random.choice(prevention_scenarios)
+        self.messages.append(f"🛡️ CASCADE PREVENTED: {scenario}")
+        
+        # Calculate what the cascade would have cost
+        estimated_damage = random.randint(40, 80)
+        self.messages.append(f"💡 Estimated damage prevented: ${estimated_damage}k and significant reputation loss")
+        
+        # Reward effective prevention
+        reputation_gain = random.randint(2, 3)
+        self._add('reputation', reputation_gain)
+        self.messages.append(f"📈 Stakeholder confidence in crisis management: +{reputation_gain} reputation")
+        
+        # Staff learning from successful prevention
+        if hasattr(self, 'technical_debt') and random.random() < 0.4:
+            debt_reduction = random.randint(1, 3)
+            self.technical_debt.reduce_debt(debt_reduction)
+            self.messages.append(f"🎓 Prevention success improves practices: -{debt_reduction} technical debt")
+        
+        # Industry recognition
+        if self.technical_failures.incident_response_level >= 4:
+            self.messages.append("🏅 Industry peers request consultation on incident response best practices")
+        else:
+            self.messages.append("Your strong safety reputation provides some protection from market fears.")
+            self._add('reputation', 2)

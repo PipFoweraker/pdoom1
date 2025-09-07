@@ -4,6 +4,9 @@ End Game Scenarios System
 This module provides varied and contextual end game scenarios based on different conditions
 such as survival time, cause of defeat, resource levels, and game progression.
 Each scenario provides detailed explanations of what led to the defeat and how long the player lasted.
+
+Enhanced in Issue #195 to support victory scenarios, pyrrhic victories, and strategic successes
+beyond binary win/lose outcomes.
 """
 
 import random
@@ -13,11 +16,14 @@ from typing import Dict, Any, Optional
 class EndGameScenario:
     """Represents a specific end game scenario with detailed narrative."""
     
-    def __init__(self, title: str, description: str, cause_analysis: str, legacy_note: str = ""):
+    def __init__(self, title: str, description: str, cause_analysis: str, legacy_note: str = "", 
+                 scenario_type: str = "defeat", achievements_unlocked: list = None):
         self.title = title
         self.description = description
         self.cause_analysis = cause_analysis
         self.legacy_note = legacy_note
+        self.scenario_type = scenario_type  # "defeat", "victory", "pyrrhic", "strategic"
+        self.achievements_unlocked = achievements_unlocked or []
 
 
 class EndGameScenariosManager:
@@ -167,12 +173,30 @@ class EndGameScenariosManager:
         """
         Determine and return the appropriate end game scenario based on game state.
         
+        Enhanced for Issue #195 to support victory scenarios, pyrrhic victories, and strategic successes.
+        
         Args:
             game_state: GameState object containing all game information
             
         Returns:
             EndGameScenario object with detailed narrative for this specific game end
         """
+        # First check for victory conditions (Issue #195)
+        victory_scenario = self._check_victory_scenarios(game_state)
+        if victory_scenario:
+            return victory_scenario
+        
+        # Check for pyrrhic victory conditions (victory at severe cost)
+        pyrrhic_scenario = self._check_pyrrhic_victory_scenarios(game_state)
+        if pyrrhic_scenario:
+            return pyrrhic_scenario
+        
+        # Check for strategic success scenarios (major progress without completion)
+        strategic_scenario = self._check_strategic_success_scenarios(game_state)
+        if strategic_scenario:
+            return strategic_scenario
+        
+        # Default to traditional defeat scenarios
         # Determine the primary cause of defeat
         cause = self._determine_defeat_cause(game_state)
         
@@ -220,6 +244,141 @@ class EndGameScenariosManager:
         seed_value = hash(str(game_state.seed) + str(game_state.turn))  # Deterministic based on game
         random.seed(seed_value)
         return random.choice(scenarios)
+    
+    def _check_victory_scenarios(self, game_state) -> Optional[EndGameScenario]:
+        """
+        Check for ultimate victory conditions (Issue #195).
+        
+        Primary victory condition: p(Doom) reaches 0 (AI alignment problem solved).
+        """
+        if game_state.doom <= 0:
+            # Ultimate victory - AI alignment problem solved
+            time_period = self._determine_time_period(game_state.turn)
+            
+            if time_period == "early":
+                return EndGameScenario(
+                    "Miraculous Early Solution",
+                    f"In an unprecedented breakthrough, your organization solved the AI alignment problem in just {game_state.turn} turns. This rapid success suggests either exceptional insight, extraordinary luck, or revolutionary approach to AI safety that fundamentally changed the field.",
+                    "Early solution to AI alignment represents either breakthrough methodology or fortunate circumstances. The speed suggests novel approaches that bypassed traditional research timelines.",
+                    "Your organization achieved the impossible in record time, becoming a legend in AI safety history.",
+                    scenario_type="victory",
+                    achievements_unlocked=["doom_defeater", "legendary_achievement"]
+                )
+            elif time_period == "mid":
+                return EndGameScenario(
+                    "The Great Breakthrough",
+                    f"After {game_state.turn} turns of dedicated research and careful development, your organization achieved the ultimate goal: reducing existential risk to zero. Your systematic approach to AI safety research has resulted in a fundamental solution to the alignment problem.",
+                    "Mid-term victory suggests balanced strategy combining safety research, resource management, and systematic progress. The timeline indicates thorough but efficient development.",
+                    "Your organization's methodical approach succeeded where others failed, solving humanity's greatest challenge.",
+                    scenario_type="victory",
+                    achievements_unlocked=["doom_defeater", "safety_champion"]
+                )
+            else:  # late
+                return EndGameScenario(
+                    "The Long Victory",
+                    f"Through {game_state.turn} turns of persistent effort, careful resource management, and unwavering dedication to safety, your organization finally achieved the impossible: complete elimination of existential risk from AI. Your long-term vision and sustained effort have paid off.",
+                    "Late-game victory demonstrates exceptional persistence and long-term thinking. Success came through sustained effort rather than breakthrough moments.",
+                    "Your organization's persistence through the long road to safety serves as a model for sustained effort in the face of existential challenges.",
+                    scenario_type="victory",
+                    achievements_unlocked=["doom_defeater", "campaign_completion", "thought_leader"]
+                )
+        
+        return None
+    
+    def _check_pyrrhic_victory_scenarios(self, game_state) -> Optional[EndGameScenario]:
+        """
+        Check for pyrrhic victory conditions - victory achieved at devastating cost.
+        
+        Based on achievements_endgame.py analysis of costs vs benefits.
+        """
+        # Import here to avoid circular imports
+        try:
+            from src.features.achievements_endgame import achievements_endgame_system
+            pyrrhic_analysis = achievements_endgame_system.analyze_pyrrhic_victory_conditions(game_state)
+            
+            if pyrrhic_analysis:
+                severity = pyrrhic_analysis['severity']
+                costs = pyrrhic_analysis['costs']
+                achievement = pyrrhic_analysis['achievement']
+                
+                if severity >= 6:  # Severe pyrrhic victory
+                    return EndGameScenario(
+                        "Victory at Devastating Cost",
+                        f"Your organization achieved {achievement} after {game_state.turn} turns, but the price was catastrophic. {pyrrhic_analysis['analysis']} The victory feels hollow when measured against the destruction left in its wake.",
+                        f"Pyrrhic victory achieved through extreme sacrifices: {', '.join(costs)}. The cost-benefit analysis raises questions about whether this path was truly optimal.",
+                        "History will debate whether your organization's methods were justified by the results.",
+                        scenario_type="pyrrhic",
+                        achievements_unlocked=["pyrrhic_victor"]
+                    )
+                elif severity >= 4:  # Moderate pyrrhic victory
+                    return EndGameScenario(
+                        "Costly Success",
+                        f"After {game_state.turn} turns, your organization succeeded in {achievement}, but success came at significant cost. {pyrrhic_analysis['analysis']} The achievement is real, but the price paid raises important questions about the path taken.",
+                        f"Success achieved with notable sacrifices: {', '.join(costs)}. Alternative approaches might have achieved similar results with lower costs.",
+                        "Your organization's achievement demonstrates both the possibility of success and the importance of considering all costs.",
+                        scenario_type="pyrrhic",
+                        achievements_unlocked=["difficult_choices"]
+                    )
+        except ImportError:
+            pass  # Gracefully handle if achievements system isn't available
+        
+        return None
+    
+    def _check_strategic_success_scenarios(self, game_state) -> Optional[EndGameScenario]:
+        """
+        Check for strategic success scenarios - major progress without ultimate victory.
+        
+        These scenarios recognize significant achievements that fall short of ultimate goals
+        but represent meaningful progress in the AI safety mission.
+        """
+        # Check for major survival achievements
+        if game_state.turn >= 450:  # Campaign completion without victory
+            return EndGameScenario(
+                "The Long Campaign",
+                f"Your organization operated successfully throughout the entire 2017-2025 period, surviving {game_state.turn} turns of rapid AI development. While the ultimate goal of eliminating existential risk remains unachieved, your sustained presence provided crucial stability and safety research during a critical period in AI history.",
+                "Campaign completion without ultimate victory demonstrates organizational resilience and long-term thinking. Sustained operations during critical period provided valuable contributions to AI safety field.",
+                "Your organization's endurance through the crucial early AI period established foundations for future safety efforts.",
+                scenario_type="strategic",
+                achievements_unlocked=["campaign_completion", "strategic_success"]
+            )
+        
+        # Check for major safety progress
+        if game_state.doom <= 10 and game_state.turn >= 100:
+            return EndGameScenario(
+                "Safety Pioneer",
+                f"After {game_state.turn} turns of dedicated effort, your organization achieved remarkable safety progress, reducing existential risk to {game_state.doom}%. While complete elimination of risk remains elusive, your work represents unprecedented progress in AI safety and provides a clear path forward for future efforts.",
+                "Major safety progress demonstrates effective research methodology and risk management. Achievement provides foundation for future breakthrough efforts.",
+                "Your organization blazed the trail for AI safety, proving that dramatic risk reduction is possible with proper methodology.",
+                scenario_type="strategic",
+                achievements_unlocked=["safety_champion", "strategic_success"]
+            )
+        
+        # Check for major research achievements
+        if game_state.papers_published >= 15 and game_state.reputation >= 150:
+            return EndGameScenario(
+                "Research Powerhouse",
+                f"Your organization became a dominant force in AI safety research, publishing {game_state.papers_published} papers and achieving {game_state.reputation} reputation over {game_state.turn} turns. While the ultimate safety goal remains unachieved, your research contributions fundamentally advanced the field and influenced the global approach to AI safety.",
+                "Major research impact demonstrates successful academic strategy and knowledge production. Intellectual contributions provide foundation for field advancement.",
+                "Your organization's research legacy will influence AI safety efforts for generations to come.",
+                scenario_type="strategic",
+                achievements_unlocked=["thought_leader", "research_powerhouse", "strategic_success"]
+            )
+        
+        # Check for major workforce achievements
+        if game_state.staff >= 50 and hasattr(game_state, 'employee_blobs'):
+            productive_count = sum(1 for blob in game_state.employee_blobs 
+                                 if blob.get('unproductive_reason') is None)
+            if productive_count >= 25:
+                return EndGameScenario(
+                    "Organizational Excellence",
+                    f"Your organization grew to employ {game_state.staff} staff members with {productive_count} productive employees, becoming the largest AI safety employer in the world. Over {game_state.turn} turns, you built an institutional powerhouse that advanced the field through sheer scale and organizational excellence.",
+                    "Major workforce achievement demonstrates exceptional organizational and management capabilities. Scale provides platform for sustained impact.",
+                    "Your organization proved that AI safety can be pursued at scale with proper management and vision.",
+                    scenario_type="strategic",
+                    achievements_unlocked=["industry_leader", "organizational_excellence", "strategic_success"]
+                )
+        
+        return None
     
     def _create_fallback_scenario(self, game_state, cause: str, time_period: str) -> EndGameScenario:
         """Create a generic fallback scenario when specific ones aren't available."""
