@@ -662,6 +662,30 @@ class GameState:
         self.ap_spent_this_turn = True
         self.ap_glow_timer = 30
         
+        # Handle immediate actions that should execute right away (like hiring dialog)
+        if action['name'] == 'Hire Staff':
+            # Execute immediately instead of deferring to end_turn
+            try:
+                action['upside'](self)
+                # Don't add to selected_actions since it's executed immediately
+                success_msg = f"Executed: {action['name']}{delegation_info}"
+                self.messages.append(success_msg)
+                return {
+                    'success': True,
+                    'message': success_msg,
+                    'play_sound': True
+                }
+            except Exception as e:
+                # If immediate execution fails, restore AP and show error
+                self.action_points += ap_cost
+                error_msg = f"Failed to execute {action['name']}: {str(e)}"
+                self.messages.append(error_msg)
+                return {
+                    'success': False,
+                    'message': error_msg,
+                    'play_sound': False
+                }
+        
         # Store delegation info for end_turn processing
         if not hasattr(self, '_action_delegations'):
             self._action_delegations = {}

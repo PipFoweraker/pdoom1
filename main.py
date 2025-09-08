@@ -5,7 +5,7 @@ import random
 import json
 from src.core.game_state import GameState
 
-from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
+from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_start_game_submenu
 from ui_new.facade import ui_facade
 from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
 
@@ -87,6 +87,8 @@ navigation_stack = []
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
 menu_items = ["Start Game", "New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
+start_game_submenu_items = ["Basic New Game (Default Global Seed)", "Configure Game / Custom Seed", "Config Settings", "Game Options"]
+start_game_submenu_selected_item = 0  # For start game submenu navigation
 end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
@@ -332,8 +334,8 @@ def handle_menu_click(mouse_pos, w, h):
             
             # Execute menu action based on selection
             if i == 0:  # Start Game
-                seed = get_weekly_seed()
-                current_state = 'game'
+                current_state = 'start_game_submenu'
+                start_game_selected_item = 0
             elif i == 1:  # New Player Experience
                 seed = get_weekly_seed()
                 current_state = 'new_player_experience'
@@ -390,8 +392,8 @@ def handle_menu_keyboard(key):
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
         if selected_menu_item == 0:  # Start Game
-            seed = get_weekly_seed()
-            current_state = 'game'
+            current_state = 'start_game_submenu'
+            start_game_selected_item = 0
         elif selected_menu_item == 1:  # New Player Experience
             seed = get_weekly_seed()
             current_state = 'new_player_experience'
@@ -408,6 +410,66 @@ def handle_menu_keyboard(key):
         elif selected_menu_item == 5:  # Exit
             pygame.quit()
             sys.exit()
+
+def handle_start_game_submenu_click(mouse_pos, w, h):
+    """Handle mouse clicks on start game submenu."""
+    global current_state, start_game_submenu_selected_item, seed, seed_input, config_selected_item, sounds_menu_selected_item
+    
+    # Calculate button positions (match the standard menu layout)
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    # Check each submenu button
+    for i, item in enumerate(start_game_submenu_items):
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            start_game_submenu_selected_item = i
+            
+            if i == 0:  # Basic New Game (Default Global Seed)
+                seed = get_weekly_seed()
+                current_state = 'game'
+            elif i == 1:  # Configure Game / Custom Seed
+                current_state = 'seed_selection'
+                seed_input = ""
+            elif i == 2:  # Config Settings
+                current_state = 'config_select'
+                config_selected_item = 0
+            elif i == 3:  # Game Options
+                current_state = 'sounds_menu'
+                sounds_menu_selected_item = 0
+            break
+
+def handle_start_game_submenu_keyboard(key):
+    """Handle keyboard navigation in start game submenu."""
+    global start_game_submenu_selected_item, current_state, seed, seed_input, config_selected_item, sounds_menu_selected_item
+    
+    if key == pygame.K_UP:
+        start_game_submenu_selected_item = (start_game_submenu_selected_item - 1) % len(start_game_submenu_items)
+    elif key == pygame.K_DOWN:
+        start_game_submenu_selected_item = (start_game_submenu_selected_item + 1) % len(start_game_submenu_items)
+    elif key == pygame.K_RETURN:
+        if start_game_submenu_selected_item == 0:  # Basic New Game
+            seed = get_weekly_seed()
+            current_state = 'game'
+        elif start_game_submenu_selected_item == 1:  # Configure Game / Custom Seed
+            current_state = 'seed_selection'
+            seed_input = ""
+        elif start_game_submenu_selected_item == 2:  # Config Settings
+            current_state = 'config_select'
+            config_selected_item = 0
+        elif start_game_submenu_selected_item == 3:  # Game Options
+            current_state = 'sounds_menu'
+            sounds_menu_selected_item = 0
+    elif key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
 
 def handle_config_keyboard(key):
     """
@@ -1546,6 +1608,8 @@ def main():
                     # Handle mouse clicks based on current state
                     if current_state == 'main_menu':
                         handle_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'start_game_submenu':
+                        handle_start_game_submenu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'pre_game_settings':
                         handle_pre_game_settings_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'seed_selection':
@@ -1766,6 +1830,9 @@ def main():
                         else:
                             handle_menu_keyboard(event.key)
                     
+                    elif current_state == 'start_game_submenu':
+                        handle_start_game_submenu_keyboard(event.key)
+                    
                     elif current_state == 'config_select':
                         handle_config_keyboard(event.key)
                             
@@ -1863,12 +1930,19 @@ def main():
                             first_time_help_close_button = None
                             current_help_mechanic = None
                         
-                        # Close hiring dialog with ESC
-                        elif event.key == pygame.K_ESCAPE and game_state and game_state.pending_hiring_dialog:
+                        # Close hiring dialog with multiple keys (Left Arrow, Backspace, or ESC)
+                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
+                              game_state and game_state.pending_hiring_dialog):
                             game_state.dismiss_hiring_dialog()
                             # Play popup close sound
                             if hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('popup_close')
+                        
+                        # Dedicated menu key - 'M' to access main menu/pause
+                        elif event.key == pygame.K_m and current_state == 'game' and game_state:
+                            # Toggle escape menu (pause/main menu access)
+                            current_state = 'escape_menu'
+                            escape_menu_selected_item = 0
                         
                         # Screenshot functionality with [ key
                         elif event.key == pygame.K_LEFTBRACKET:
@@ -2156,6 +2230,10 @@ def main():
                 # Grey background as specified in requirements
                 screen.fill((128, 128, 128))
                 draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item, global_sound_manager)
+            
+            elif current_state == 'start_game_submenu':
+                # Start game submenu
+                draw_start_game_submenu(screen, SCREEN_W, SCREEN_H, start_game_submenu_selected_item)
             
             elif current_state == 'config_select':
                 # Config selection menu
