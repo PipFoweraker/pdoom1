@@ -3836,6 +3836,7 @@ def draw_new_player_experience(screen, w, h, selected_item, tutorial_enabled, in
         intro_font = pygame.font.SysFont('Consolas', int(h*0.022))
         intro_lines = [
             "Doom is coming. You convinced a funder to give you $1,000.",
+            "You'll be assigned a lab name for pseudonymous competition.",
             "Your job is to save the world. Good luck!"
         ]
         

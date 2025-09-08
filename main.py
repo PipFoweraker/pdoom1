@@ -86,7 +86,7 @@ pygame.display.flip()
 navigation_stack = []
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
+menu_items = ["Start Game", "New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
 end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
@@ -331,20 +331,23 @@ def handle_menu_click(mouse_pos, w, h):
             selected_menu_item = i
             
             # Execute menu action based on selection
-            if i == 0:  # New Player Experience
+            if i == 0:  # Start Game
+                seed = get_weekly_seed()
+                current_state = 'game'
+            elif i == 1:  # New Player Experience
                 seed = get_weekly_seed()
                 current_state = 'new_player_experience'
-            elif i == 1:  # Launch with Custom Seed
+            elif i == 2:  # Launch with Custom Seed
                 current_state = 'custom_seed_prompt'
                 seed_input = ""  # Clear any previous input
-            elif i == 2:  # Settings
+            elif i == 3:  # Settings
                 current_state = 'sounds_menu'
                 sounds_menu_selected_item = 0
-            elif i == 3:  # Player Guide
+            elif i == 4:  # Player Guide
                 overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
                 push_navigation_state('overlay')
-            elif i == 4:  # Exit
+            elif i == 5:  # Exit
                 pygame.quit()
                 sys.exit()
             break
@@ -386,20 +389,23 @@ def handle_menu_keyboard(key):
         selected_menu_item = (selected_menu_item + 1) % len(menu_items)
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
-        if selected_menu_item == 0:  # New Player Experience
+        if selected_menu_item == 0:  # Start Game
+            seed = get_weekly_seed()
+            current_state = 'game'
+        elif selected_menu_item == 1:  # New Player Experience
             seed = get_weekly_seed()
             current_state = 'new_player_experience'
-        elif selected_menu_item == 1:  # Launch with Custom Seed
+        elif selected_menu_item == 2:  # Launch with Custom Seed
             current_state = 'custom_seed_prompt'
             seed_input = ""  # Clear any previous input
-        elif selected_menu_item == 2:  # Settings
+        elif selected_menu_item == 3:  # Settings
             current_state = 'sounds_menu'
             sounds_menu_selected_item = 0
-        elif selected_menu_item == 3:  # Player Guide
+        elif selected_menu_item == 4:  # Player Guide
             overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
             overlay_title = "Player Guide"
             push_navigation_state('overlay')
-        elif selected_menu_item == 4:  # Exit
+        elif selected_menu_item == 5:  # Exit
             pygame.quit()
             sys.exit()
 
