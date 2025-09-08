@@ -1845,8 +1845,8 @@ def main():
                             elif event.key == pygame.K_BACKSPACE:
                                 # Go back in tutorial
                                 onboarding.go_back_stepwise_tutorial()
-                            elif event.key == pygame.K_ESCAPE:
-                                # Skip tutorial
+                            elif event.key == pygame.K_ESCAPE or event.key == pygame.K_s:
+                                # Skip tutorial (ESC or S key)
                                 onboarding.dismiss_tutorial()
                         
                         # Help key (H) - redundant check removed since it's handled above

@@ -3268,7 +3268,7 @@ def draw_stepwise_tutorial_overlay(screen, tutorial_data, w, h):
     pygame.draw.rect(screen, (180, 100, 100), skip_button_rect, border_radius=8)
     pygame.draw.rect(screen, (255, 255, 255), skip_button_rect, width=2, border_radius=8)
     
-    skip_text = button_font.render("Skip", True, (255, 255, 255))
+    skip_text = button_font.render("Skip (S)", True, (255, 255, 255))
     skip_text_rect = skip_text.get_rect(center=skip_button_rect.center)
     screen.blit(skip_text, skip_text_rect)
     buttons['skip'] = skip_button_rect
