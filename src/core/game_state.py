@@ -142,6 +142,11 @@ class GameState:
         # Initialize leaderboard system
         init_leaderboard_system()
         
+        # Lab identity for pseudonymous gameplay
+        from src.services.lab_name_manager import get_lab_name_manager
+        lab_name_manager = get_lab_name_manager()
+        self.lab_name = lab_name_manager.get_random_lab_name(seed)
+        
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
         self.magical_orb_active = False  # Track if magical orb of seeing is purchased
@@ -2613,8 +2618,19 @@ class GameState:
             with open(SCORE_FILE, "r") as f:
                 data = json.load(f)
             if self.seed in data:
-                return data[self.seed]
-            return max(data.values(), default=0)
+                # Handle both new format (dict) and legacy format (number)
+                if isinstance(data[self.seed], dict):
+                    return data[self.seed].get('score', 0)
+                else:
+                    return data[self.seed]
+            # Return the highest score from all records
+            max_score = 0
+            for value in data.values():
+                if isinstance(value, dict):
+                    max_score = max(max_score, value.get('score', 0))
+                else:
+                    max_score = max(max_score, value)
+            return max_score
         except Exception:
             return 0
 
@@ -2628,9 +2644,21 @@ class GameState:
                     data = json.load(f)
             else:
                 data = {}
-            prev = data.get(self.seed, 0)
-            if score > prev:
-                data[self.seed] = score
+            prev_score = 0
+            if self.seed in data:
+                if isinstance(data[self.seed], dict):
+                    prev_score = data[self.seed].get('score', 0)
+                else:
+                    # Legacy format - just a number
+                    prev_score = data[self.seed]
+            
+            if score > prev_score:
+                # Save both score and lab name for pseudonymous leaderboard
+                data[self.seed] = {
+                    'score': score,
+                    'lab_name': getattr(self, 'lab_name', 'Unknown Labs'),
+                    'timestamp': pygame.time.get_ticks()  # For sorting by recency if needed
+                }
                 with open(SCORE_FILE, "w") as f:
                     json.dump(data, f)
                 self.highscore = score

@@ -79,8 +79,9 @@ def create_upgrade_context_info(upgrade, game_state, upgrade_idx):
 
 def get_default_context_info(game_state):
     """Get default context info when nothing is hovered."""
+    lab_name = getattr(game_state, 'lab_name', 'Unknown Labs')
     return {
-        'title': 'P(Doom) Context Panel',
+        'title': f'{lab_name}',
         'description': 'Hover over actions or upgrades to see detailed information here.',
         'details': [
             f'Turn {game_state.turn}',

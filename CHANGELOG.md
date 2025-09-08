@@ -4,6 +4,17 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.6] - 2025-09-08
+### Added
+- **🏢 Lab Name System**: Implemented pseudonymous lab naming for enhanced immersion and leaderboard integration
+  - Added 104 unique AI lab names across 87 different themes (e.g., "Axiom Labs", "Beacon AI", "Cerberus Systems")
+  - Lab names are deterministically assigned based on game seed for consistency
+  - Lab name displays in UI context panel replacing generic "P(Doom) Context Panel"
+  - Leaderboard integration saves lab names alongside scores for pseudonymous gameplay
+  - CSV asset system (`assets/lab_names.csv`) for easy lab name management
+  - Comprehensive lab name manager service with theme-based organization
+  - Backward compatibility with existing save files and leaderboard data
+
 ## [0.2.3] - 2025-09-05
 ### Changed
 - **🐍 Python Version Requirements**: Dropped Python 3.8 support, now requires Python 3.9+
