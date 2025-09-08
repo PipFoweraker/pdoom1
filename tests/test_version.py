@@ -107,7 +107,7 @@ class TestVersionConsistency(unittest.TestCase):
         """Test that CHANGELOG.md mentions the current version."""
         current_version = __version__
         
-        with open('CHANGELOG.md', 'r') as f:
+        with open('CHANGELOG.md', 'r', encoding='utf-8') as f:
             changelog_content = f.read()
         
         # Should mention current version in changelog

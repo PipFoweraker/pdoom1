@@ -4,6 +4,13 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.4] - 2025-09-06
+### Added
+- **🏦 Economic Cycles & Funding Volatility (Issue #192)**: Complete historical AI funding timeline (2017-2025)
+- **🎮 New Player Experience Enhancement**: Improved onboarding with tutorial/intro selection
+- **🏆 Achievements & Enhanced Endgame System (Issue #195)**: Comprehensive achievement tracking and victory conditions
+- **⛓️ Technical Failure Cascades (Issue #193)**: Comprehensive failure cascade system modeling realistic organizational crisis management
+
 ## [0.2.3] - 2025-09-05
 ### Changed
 - **🐍 Python Version Requirements**: Dropped Python 3.8 support, now requires Python 3.9+

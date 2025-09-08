@@ -42,6 +42,9 @@ def draw_window_with_header(screen: pygame.Surface,
     if font is None:
         font = font_manager.get_normal_font(screen.get_height())
         
+    # Use fixed header height for compatibility
+    header_height = 30
+    
     # Safety check: if font is still None (pygame not initialized), create a default font
     if font is None:
         try:
@@ -51,9 +54,6 @@ def draw_window_with_header(screen: pygame.Surface,
             header_rect = pygame.Rect(x, y, width, header_height)
             minimize_rect = pygame.Rect(x + width - header_height + 4, y + 2, header_height - 4, header_height - 4)
             return header_rect, minimize_rect
-    
-    # Use fixed header height for compatibility
-    header_height = 30
     
     if minimized:
         # Only draw header when minimized
