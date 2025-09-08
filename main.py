@@ -5,7 +5,7 @@ import random
 import json
 from src.core.game_state import GameState
 
-from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
+from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_start_game_submenu
 from ui_new.facade import ui_facade
 from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
 
@@ -86,7 +86,9 @@ pygame.display.flip()
 navigation_stack = []
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
+menu_items = ["Start Game", "New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
+start_game_submenu_items = ["Basic New Game (Default Global Seed)", "Configure Game / Custom Seed", "Config Settings", "Game Options"]
+start_game_submenu_selected_item = 0  # For start game submenu navigation
 end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
@@ -231,14 +233,29 @@ def create_settings_content(game_state=None):
 
     tutorial_status = "Enabled" if onboarding.tutorial_enabled else "Disabled"
     tutorial_completed = "Yes" if not onboarding.is_first_time else "No"
+    hints_enabled = "Enabled" if onboarding.are_hints_enabled() else "Disabled"
+    
+    # Get hint status
+    hint_status = onboarding.get_hint_status()
+    seen_hints = [name for name, seen in hint_status.items() if seen]
+    unseen_hints = [name for name, seen in hint_status.items() if not seen]
     
     return f"""# Settings
 
 ## Tutorial & Help System
 - **Tutorial System**: {tutorial_status}
 - **Tutorial Completed**: {tutorial_completed}
+- **In-Game Hints**: {hints_enabled}
 - **In-Game Help**: Press 'H' key anytime to access Player Guide
-- **First-Time Tips**: Automatic contextual help for new mechanics
+
+### Hint Status (Factorio-style)
+**Seen Hints ({len(seen_hints)}):** {', '.join(seen_hints) if seen_hints else 'None'}
+**Available Hints ({len(unseen_hints)}):** {', '.join(unseen_hints) if unseen_hints else 'All seen'}
+
+**Hint Controls:**
+- Press **Ctrl+R** during gameplay to reset all hints
+- Hints show once per new action, then auto-dismiss
+- Configurable in config files (first_time_help setting)
 
 To reset tutorial: Delete `onboarding_progress.json` file and restart game
 
@@ -274,6 +291,9 @@ To reset tutorial: Delete `onboarding_progress.json` file and restart game
 - **Arrow Keys**: Navigate menus, scroll event log
 - **Enter**: Confirm selection
 - **Escape**: Return to previous menu or quit
+- **Ctrl+D**: Debug UI state (shows blocking conditions)
+- **Ctrl+E**: Clear stuck popup events (emergency)
+- **Ctrl+R**: Reset all hints to show again
 
 *Note: Settings are currently informational. Configuration options will be added in future updates.*"""
 
@@ -313,20 +333,23 @@ def handle_menu_click(mouse_pos, w, h):
             selected_menu_item = i
             
             # Execute menu action based on selection
-            if i == 0:  # New Player Experience
+            if i == 0:  # Start Game
+                current_state = 'start_game_submenu'
+                start_game_selected_item = 0
+            elif i == 1:  # New Player Experience
                 seed = get_weekly_seed()
                 current_state = 'new_player_experience'
-            elif i == 1:  # Launch with Custom Seed
+            elif i == 2:  # Launch with Custom Seed
                 current_state = 'custom_seed_prompt'
                 seed_input = ""  # Clear any previous input
-            elif i == 2:  # Settings
+            elif i == 3:  # Settings
                 current_state = 'sounds_menu'
                 sounds_menu_selected_item = 0
-            elif i == 3:  # Player Guide
+            elif i == 4:  # Player Guide
                 overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
                 push_navigation_state('overlay')
-            elif i == 4:  # Exit
+            elif i == 5:  # Exit
                 pygame.quit()
                 sys.exit()
             break
@@ -368,22 +391,85 @@ def handle_menu_keyboard(key):
         selected_menu_item = (selected_menu_item + 1) % len(menu_items)
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
-        if selected_menu_item == 0:  # New Player Experience
+        if selected_menu_item == 0:  # Start Game
+            current_state = 'start_game_submenu'
+            start_game_selected_item = 0
+        elif selected_menu_item == 1:  # New Player Experience
             seed = get_weekly_seed()
             current_state = 'new_player_experience'
-        elif selected_menu_item == 1:  # Launch with Custom Seed
+        elif selected_menu_item == 2:  # Launch with Custom Seed
             current_state = 'custom_seed_prompt'
             seed_input = ""  # Clear any previous input
-        elif selected_menu_item == 2:  # Settings
+        elif selected_menu_item == 3:  # Settings
             current_state = 'sounds_menu'
             sounds_menu_selected_item = 0
-        elif selected_menu_item == 3:  # Player Guide
+        elif selected_menu_item == 4:  # Player Guide
             overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
             overlay_title = "Player Guide"
             push_navigation_state('overlay')
-        elif selected_menu_item == 4:  # Exit
+        elif selected_menu_item == 5:  # Exit
             pygame.quit()
             sys.exit()
+
+def handle_start_game_submenu_click(mouse_pos, w, h):
+    """Handle mouse clicks on start game submenu."""
+    global current_state, start_game_submenu_selected_item, seed, seed_input, config_selected_item, sounds_menu_selected_item
+    
+    # Calculate button positions (match the standard menu layout)
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    # Check each submenu button
+    for i, item in enumerate(start_game_submenu_items):
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            start_game_submenu_selected_item = i
+            
+            if i == 0:  # Basic New Game (Default Global Seed)
+                seed = get_weekly_seed()
+                current_state = 'game'
+            elif i == 1:  # Configure Game / Custom Seed
+                current_state = 'seed_selection'
+                seed_input = ""
+            elif i == 2:  # Config Settings
+                current_state = 'config_select'
+                config_selected_item = 0
+            elif i == 3:  # Game Options
+                current_state = 'sounds_menu'
+                sounds_menu_selected_item = 0
+            break
+
+def handle_start_game_submenu_keyboard(key):
+    """Handle keyboard navigation in start game submenu."""
+    global start_game_submenu_selected_item, current_state, seed, seed_input, config_selected_item, sounds_menu_selected_item
+    
+    if key == pygame.K_UP:
+        start_game_submenu_selected_item = (start_game_submenu_selected_item - 1) % len(start_game_submenu_items)
+    elif key == pygame.K_DOWN:
+        start_game_submenu_selected_item = (start_game_submenu_selected_item + 1) % len(start_game_submenu_items)
+    elif key == pygame.K_RETURN:
+        if start_game_submenu_selected_item == 0:  # Basic New Game
+            seed = get_weekly_seed()
+            current_state = 'game'
+        elif start_game_submenu_selected_item == 1:  # Configure Game / Custom Seed
+            current_state = 'seed_selection'
+            seed_input = ""
+        elif start_game_submenu_selected_item == 2:  # Config Settings
+            current_state = 'config_select'
+            config_selected_item = 0
+        elif start_game_submenu_selected_item == 3:  # Game Options
+            current_state = 'sounds_menu'
+            sounds_menu_selected_item = 0
+    elif key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
 
 def handle_config_keyboard(key):
     """
@@ -1471,8 +1557,13 @@ def main():
     global overlay_content, overlay_title
     # Hiring dialog rects need to persist between frames for click detection
     global cached_hiring_dialog_rects
+<<<<<<< HEAD
     # Keybinding menu variables
     global keybinding_all_bindings
+=======
+    # Escape handling variables
+    global escape_count, escape_timer
+>>>>>>> origin/main
     
     # Initialize game state as None - will be created when game starts
     game_state = None
@@ -1522,6 +1613,8 @@ def main():
                     # Handle mouse clicks based on current state
                     if current_state == 'main_menu':
                         handle_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'start_game_submenu':
+                        handle_start_game_submenu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'pre_game_settings':
                         handle_pre_game_settings_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'seed_selection':
@@ -1742,6 +1835,9 @@ def main():
                         else:
                             handle_menu_keyboard(event.key)
                     
+                    elif current_state == 'start_game_submenu':
+                        handle_start_game_submenu_keyboard(event.key)
+                    
                     elif current_state == 'config_select':
                         handle_config_keyboard(event.key)
                             
@@ -1807,28 +1903,25 @@ def main():
                             
                     elif current_state == 'game':
 
+                        # Help key (H) - always available regardless of overlay state
+                        if event.key == pygame.K_h:
+                            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
+                            overlay_title = "Player Guide"
+                            push_navigation_state('overlay')
+                        
                         # Stepwise tutorial keyboard handling (takes precedence when tutorial is active)
-                        if onboarding.show_tutorial_overlay:
+                        elif onboarding.show_tutorial_overlay:
                             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                                 # Advance tutorial step
                                 onboarding.advance_stepwise_tutorial()
                             elif event.key == pygame.K_BACKSPACE:
                                 # Go back in tutorial
                                 onboarding.go_back_stepwise_tutorial()
-                            elif event.key == pygame.K_ESCAPE:
-                                # Skip tutorial
+                            elif event.key == pygame.K_ESCAPE or event.key == pygame.K_s:
+                                # Skip tutorial (ESC or S key)
                                 onboarding.dismiss_tutorial()
-                            elif event.key == pygame.K_h:
-                                # Show help overlay
-                                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                                overlay_title = "Player Guide"
-                                push_navigation_state('overlay')
                         
-                        # Help key (H) - always available
-                        elif event.key == pygame.K_h:
-                            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                            overlay_title = "Player Guide"
-                            push_navigation_state('overlay')
+                        # Help key (H) - redundant check removed since it's handled above
                         
                         # Close first-time help
                         elif event.key == pygame.K_ESCAPE and first_time_help_content:
@@ -1842,12 +1935,19 @@ def main():
                             first_time_help_close_button = None
                             current_help_mechanic = None
                         
-                        # Close hiring dialog with ESC
-                        elif event.key == pygame.K_ESCAPE and game_state and game_state.pending_hiring_dialog:
+                        # Close hiring dialog with multiple keys (Left Arrow, Backspace, or ESC)
+                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
+                              game_state and game_state.pending_hiring_dialog):
                             game_state.dismiss_hiring_dialog()
                             # Play popup close sound
                             if hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('popup_close')
+                        
+                        # Dedicated menu key - 'M' to access main menu/pause
+                        elif event.key == pygame.K_m and current_state == 'game' and game_state:
+                            # Toggle escape menu (pause/main menu access)
+                            current_state = 'escape_menu'
+                            escape_menu_selected_item = 0
                         
                         # Screenshot functionality with [ key
                         elif event.key == pygame.K_LEFTBRACKET:
@@ -1888,7 +1988,6 @@ def main():
                         # Safe escape handling - ALWAYS ACTIVE (not blocked by tutorial)
                         elif event.key == pygame.K_ESCAPE:
                             # Safe escape menu system
-                            global escape_count, escape_timer
                             current_time = pygame.time.get_ticks()
                             
                             # Reset escape count if too much time has passed
@@ -1919,8 +2018,9 @@ def main():
                         elif event.key == pygame.K_RETURN and escape_count >= ESCAPE_THRESHOLD - 1:
                             running = False
                         
-                        # Regular game keyboard handling (only if tutorial is not active)
-                        elif not onboarding.show_tutorial_overlay:
+                        # CRITICAL FIX: End turn handling - ALWAYS AVAILABLE when not blocked by modals
+                        # This must come before other keyboard handling to prevent tutorial/overlay blocking
+                        elif not first_time_help_content and not (game_state and game_state.pending_hiring_dialog):
                             # Import keybinding manager for customizable controls
                             from src.services.keybinding_manager import keybinding_manager
                             
@@ -1928,16 +2028,27 @@ def main():
                             end_turn_key = keybinding_manager.get_key_for_action("end_turn")
                             if (event.key == end_turn_key or 
                                 (end_turn_key == pygame.K_SPACE and event.key == pygame.K_RETURN)) and game_state and not game_state.game_over:
-                                # Try to end turn, play error sound if rejected
-                                if not game_state.end_turn():
-                                    # Turn was rejected (already processing)
-                                    pass  # Error sound already played in end_turn method
+                                # Check if popup events are blocking - if so, give feedback but don't block input
+                                if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
+                                    game_state.add_message("Please resolve the pending events before ending turn")
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('error_beep')
+                                else:
+                                    # Try to end turn, play error sound if rejected
+                                    if not game_state.end_turn():
+                                        # Turn was rejected (already processing)
+                                        pass  # Error sound already played in end_turn method
+                        
+                        # Regular game keyboard handling (only if tutorial is not active)
+                        elif not onboarding.show_tutorial_overlay:
+                            # Import keybinding manager for customizable controls
+                            from src.services.keybinding_manager import keybinding_manager
                             
                             # New 3-column layout keybindings
-                            elif game_state and not game_state.game_over:
+                            if game_state and not game_state.game_over:
                                 # Check if using 3-column layout
-                                from configs.config_manager import get_config
-                                config = get_config()
+                                from src.services.config_manager import get_current_config
+                                config = get_current_config()
                                 if config.get('enable_three_column_layout', False):
                                     # Import 3-column layout manager
                                     from ui_new.screens.game import three_column_layout
@@ -2021,6 +2132,58 @@ def main():
                     onboarding.start_tutorial()
                     game_state.onboarding_started = True
 
+            # --- UI State Cleanup and Debugging --- #
+            # CRITICAL FIX: Automatic cleanup for stuck UI states
+            if current_state == 'game' and game_state:
+                # Debug key (D) - check for blocking conditions when pressed
+                current_keys = pygame.key.get_pressed()
+                if current_keys[pygame.K_d] and current_keys[pygame.K_LCTRL]:  # Ctrl+D for debug
+                    from ui_interaction_fixes import check_blocking_conditions, test_spacebar
+                    blocking = check_blocking_conditions(game_state, onboarding, first_time_help_content, current_state)
+                    spacebar_works, reason = test_spacebar(game_state, onboarding, first_time_help_content, current_state)
+                    debug_msg = f"DEBUG: Spacebar {'WORKS' if spacebar_works else 'BLOCKED'} - {reason}"
+                    if blocking:
+                        debug_msg += f" | Blocking: {', '.join(blocking)}"
+                    game_state.add_message(debug_msg)
+                
+                # Automatic cleanup for turn processing that's been stuck too long
+                if (hasattr(game_state, 'turn_processing') and game_state.turn_processing and 
+                    hasattr(game_state, 'turn_processing_timer') and game_state.turn_processing_timer <= -30):  # 1 second at 30fps
+                    game_state.turn_processing = False
+                    game_state.turn_processing_timer = 0
+                    game_state.add_message("System: Reset stuck turn processing")
+                
+                # Automatic cleanup for tutorial overlay that's been active too long without interaction
+                if (onboarding.show_tutorial_overlay and 
+                    game_state.turn > 10):  # If we're past turn 10, tutorial should definitely be dismissible
+                    onboarding.show_tutorial_overlay = False
+                    game_state.add_message("System: Auto-dismissed stuck tutorial overlay")
+                
+                # Automatic cleanup for stuck popup events (if they've been pending for too long)
+                if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events and
+                    game_state.turn > 3):  # If we're past turn 3 and still have popup events, they might be stuck
+                    # Allow players to dismiss stuck popup events with Ctrl+E
+                    current_keys = pygame.key.get_pressed()
+                    if current_keys[pygame.K_e] and current_keys[pygame.K_LCTRL]:  # Ctrl+E to clear stuck popups
+                        game_state.pending_popup_events.clear()
+                        game_state.add_message("System: Cleared stuck popup events (Ctrl+E)")
+                
+                # Add recovery for deferred events system too
+                if (hasattr(game_state, 'deferred_events') and 
+                    hasattr(game_state.deferred_events, 'pending_popup_events') and
+                    game_state.deferred_events.pending_popup_events and
+                    game_state.turn > 3):
+                    current_keys = pygame.key.get_pressed()
+                    if current_keys[pygame.K_e] and current_keys[pygame.K_LCTRL]:  # Ctrl+E to clear stuck popups
+                        game_state.deferred_events.pending_popup_events.clear()
+                        game_state.add_message("System: Cleared stuck deferred popup events (Ctrl+E)")
+                
+                # Factorio-style hint reset with Ctrl+R
+                current_keys = pygame.key.get_pressed()
+                if current_keys[pygame.K_r] and current_keys[pygame.K_LCTRL]:  # Ctrl+R to reset hints
+                    onboarding.reset_all_hints()
+                    game_state.add_message("System: All hints reset! They will show again for new actions (Ctrl+R)")
+
             # --- First-time help checking --- #
             # Check for pending first-time help triggered by specific actions
             if (current_state == 'game' and game_state and 
@@ -2042,7 +2205,7 @@ def main():
                 not onboarding.show_tutorial_overlay):
                 # Check for various first-time mechanics (but not first_staff_hire - that's context-sensitive)
                 for mechanic in ['first_upgrade_purchase', 'high_doom_warning']:
-                    if onboarding.should_show_mechanic_help(mechanic):
+                    if onboarding.should_show_hint(mechanic):
                         help_content = onboarding.get_mechanic_help(mechanic)
                         if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
                             first_time_help_content = help_content
@@ -2054,7 +2217,7 @@ def main():
                 
                 # Special case: action_points_exhausted should only show when actually exhausted
                 if (not first_time_help_content and 
-                    onboarding.should_show_mechanic_help('action_points_exhausted') and 
+                    onboarding.should_show_hint('action_points_exhausted') and 
                     game_state.action_points == 0):
                     help_content = onboarding.get_mechanic_help('action_points_exhausted')
                     if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
@@ -2072,6 +2235,10 @@ def main():
                 # Grey background as specified in requirements
                 screen.fill((128, 128, 128))
                 draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item, global_sound_manager)
+            
+            elif current_state == 'start_game_submenu':
+                # Start game submenu
+                draw_start_game_submenu(screen, SCREEN_W, SCREEN_H, start_game_submenu_selected_item)
             
             elif current_state == 'config_select':
                 # Config selection menu

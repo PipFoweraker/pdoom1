@@ -9,12 +9,12 @@ following Semantic Versioning (SemVer) specification.
 # MAJOR: Incompatible API changes (gameplay mechanics overhauls)
 # MINOR: Backwards-compatible functionality additions (new features, events, opponents)
 # PATCH: Backwards-compatible bug fixes
-__version__ = "0.2.4"
+__version__ = "0.2.7"
 
 # Version components for programmatic access
 VERSION_MAJOR = 0
 VERSION_MINOR = 2
-VERSION_PATCH = 4
+VERSION_PATCH = 7
 
 # Pre-release identifier (e.g., "alpha", "beta", "rc1", or "" for stable)
 VERSION_PRERELEASE = ""
@@ -91,7 +91,7 @@ Quick Reference for Version Bumps:
 - 0.2.1 → 0.2.2: Button layout fixes, text overflow patches
 - 0.2.2 → 0.2.3: Color system refinements, visibility improvements  
 - 0.2.3 → 0.2.4: Keystroke binding fixes, input handling
-- 0.2.4 → 0.2.5: Performance optimizations, stability improvements
+- 0.2.4 → 0.2.5: UI interaction fixes, Factorio-style hint system
 - 0.2.5 → 0.3.0: Major milestone - stable UI release
 
 Increment Trigger Events:

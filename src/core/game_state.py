@@ -77,8 +77,12 @@ class GameState:
             # Update employee blobs when staff changes
             if val > 0:  # Hiring
                 self._add_employee_blobs(val)
-                # Trigger first-time help for staff hiring
-                if old_staff <= 2 and self.staff > 2:  # First staff hire beyond starting staff
+                # FIXED: Only mark first staff hire as seen when we actually hire BEYOND starting staff
+                # Check if this is first manual hire (from starting count)
+                from src.services.config_manager import get_current_config
+                starting_staff = get_current_config().get('starting_resources', {}).get('staff', 2)
+                if old_staff == starting_staff and val > 0:
+                    # This is the first manual hire - mark as seen so hint won't show again
                     onboarding.mark_mechanic_seen('first_staff_hire')
             elif val < 0:  # Staff leaving
                 self._remove_employee_blobs(old_staff - self.staff)
@@ -137,6 +141,11 @@ class GameState:
         
         # Initialize leaderboard system
         init_leaderboard_system()
+        
+        # Lab identity for pseudonymous gameplay
+        from src.services.lab_name_manager import get_lab_name_manager
+        lab_name_manager = get_lab_name_manager()
+        self.lab_name = lab_name_manager.get_random_lab_name(seed)
         
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
@@ -652,6 +661,30 @@ class GameState:
         self.action_points -= ap_cost
         self.ap_spent_this_turn = True
         self.ap_glow_timer = 30
+        
+        # Handle immediate actions that should execute right away (like hiring dialog)
+        if action['name'] == 'Hire Staff':
+            # Execute immediately instead of deferring to end_turn
+            try:
+                action['upside'](self)
+                # Don't add to selected_actions since it's executed immediately
+                success_msg = f"Executed: {action['name']}{delegation_info}"
+                self.messages.append(success_msg)
+                return {
+                    'success': True,
+                    'message': success_msg,
+                    'play_sound': True
+                }
+            except Exception as e:
+                # If immediate execution fails, restore AP and show error
+                self.action_points += ap_cost
+                error_msg = f"Failed to execute {action['name']}: {str(e)}"
+                self.messages.append(error_msg)
+                return {
+                    'success': False,
+                    'message': error_msg,
+                    'play_sound': False
+                }
         
         # Store delegation info for end_turn processing
         if not hasattr(self, '_action_delegations'):
@@ -2609,8 +2642,19 @@ class GameState:
             with open(SCORE_FILE, "r") as f:
                 data = json.load(f)
             if self.seed in data:
-                return data[self.seed]
-            return max(data.values(), default=0)
+                # Handle both new format (dict) and legacy format (number)
+                if isinstance(data[self.seed], dict):
+                    return data[self.seed].get('score', 0)
+                else:
+                    return data[self.seed]
+            # Return the highest score from all records
+            max_score = 0
+            for value in data.values():
+                if isinstance(value, dict):
+                    max_score = max(max_score, value.get('score', 0))
+                else:
+                    max_score = max(max_score, value)
+            return max_score
         except Exception:
             return 0
 
@@ -2624,9 +2668,21 @@ class GameState:
                     data = json.load(f)
             else:
                 data = {}
-            prev = data.get(self.seed, 0)
-            if score > prev:
-                data[self.seed] = score
+            prev_score = 0
+            if self.seed in data:
+                if isinstance(data[self.seed], dict):
+                    prev_score = data[self.seed].get('score', 0)
+                else:
+                    # Legacy format - just a number
+                    prev_score = data[self.seed]
+            
+            if score > prev_score:
+                # Save both score and lab name for pseudonymous leaderboard
+                data[self.seed] = {
+                    'score': score,
+                    'lab_name': getattr(self, 'lab_name', 'Unknown Labs'),
+                    'timestamp': pygame.time.get_ticks()  # For sorting by recency if needed
+                }
                 with open(SCORE_FILE, "w") as f:
                     json.dump(data, f)
                 self.highscore = score
@@ -3516,9 +3572,17 @@ class GameState:
         """Trigger the employee hiring dialog with available employee subtypes."""
         from src.core.employee_subtypes import get_available_subtypes, get_hiring_complexity_level
         from src.features.onboarding import onboarding
+        from src.services.config_manager import get_current_config
         
-        # Check if this is the first time attempting to hire staff
-        if onboarding.should_show_mechanic_help('first_staff_hire'):
+        # Check if this is the first time attempting to hire staff and hints are enabled
+        config = get_current_config()
+        starting_staff = config.get('starting_resources', {}).get('staff', 2)
+        
+        # Only show hint if:
+        # 1. This is the first manual hire attempt (still at starting staff count)
+        # 2. Hints haven't been seen before (Factorio-style)
+        if (self.staff == starting_staff and 
+            onboarding.should_show_hint('first_staff_hire')):
             # Store the mechanic to show help later in main loop 
             self._pending_first_time_help = 'first_staff_hire'
         

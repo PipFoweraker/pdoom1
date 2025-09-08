@@ -616,8 +616,49 @@ Provides automatic contextual help when players encounter key mechanics for the 
 **Help Features:**
 - Small popup notifications in top-right corner
 - Dismissible with click or escape key
-- Only shown once per mechanic per player
+- Only shown once per mechanic per player (Factorio-style)
 - Disabled during active tutorial to avoid interference
+- Can be reset with Ctrl+R for new players
+
+### Hint System vs Tutorial System
+
+P(Doom) now has two separate help systems:
+
+**Tutorial System** (`tutorial_enabled` config):
+- Interactive step-by-step walkthrough for new players
+- Can be enabled/disabled in New Player Experience
+- Uses `show_tutorial_overlay` state variable
+
+**Hint System** (`first_time_help` config):
+- Factorio-style context-sensitive hints
+- Shows once per mechanic, then auto-dismisses
+- Can be reset with Ctrl+R for new players
+- Uses `should_show_hint()` method that checks both config and seen status
+
+### Mechanic Help Content System
+
+The `get_mechanic_help()` method provides structured help content for specific game mechanics:
+
+**Supported Mechanics:**
+- `first_staff_hire`: Guidance on hiring staff and action point benefits (triggered on first manual hire attempt)
+- `first_upgrade_purchase`: Explanation of laboratory upgrades and efficiency
+- `action_points_exhausted`: Instructions when no action points remain
+- `high_doom_warning`: Critical safety warnings for high p(Doom) levels
+
+**New Methods in OnboardingSystem:**
+```python
+def should_show_hint(self, mechanic: str) -> bool:
+    """Check if hint should be shown (considers both config and seen status)"""
+
+def are_hints_enabled(self) -> bool:
+    """Check if hints are enabled in config"""
+
+def reset_all_hints(self) -> None:
+    """Reset all hints for new players (Ctrl+R functionality)"""
+
+def get_hint_status(self) -> Dict:
+    """Get status of all hints for settings display"""
+```
 
 ### Mechanic Help Content System
 

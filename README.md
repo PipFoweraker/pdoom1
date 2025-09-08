@@ -1,12 +1,13 @@
-# P(DOOM): PRIVACY-FIRST BUREAUCRACY STRATEGY GAME
+> p(Doom)1: an AI bureaucracy strategy game
+v0.2.0 "Technical Debt Resolution" 
 
-> **A SATIRICAL STRATEGY GAME ABOUT AI SAFETY RESEARCH IN A BUREAUCRATIC NIGHTMARE**
-> 
-> **FEATURING DETERMINISTIC GAMEPLAY AND PRIVACY-RESPECTING COMPETITION**
-> 
-> INSPIRED BY PAPERS PLEASE, PANDEMIC, AND CLICKER GAMES
+**Unregulated AI poses an existential threat to humanity.**
+ 
+ In this game, you are a manager of a newly funded NGO, racing against opponents with superior resources to solve the alignment problem before everyone dies.
 
-**Current Version:** v0.2.0 "Technical Debt Resolution" - Privacy-First & Deterministic Gameplay
+The game is designed to reflect historical events and then project future ones according to the best data the developers have to hand. Future versions of the game will include timed leagues where players can compete to solve scenarios and configurations via a global leaderboard.
+ 
+**Current Version:** v0.2.6 "Lab Name System" - Professional AI lab identity and pseudonymous gameplay
 
 🛡️ **PRIVACY-FIRST DESIGN** - Your data stays under your control  
 🎯 **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
@@ -63,7 +64,7 @@ STEP 3: INSTALL THE GAME
     git clone https://github.com/PipFoweraker/pdoom1.git
 
     # Navigate to game directory
-    cd pdoom1/pdoom1
+    cd pdoom1
 
     # Install dependencies
     pip install -r requirements.txt
@@ -75,12 +76,12 @@ ALTERNATIVE: DOWNLOAD ZIP
 -------------------------
 1. Download: Latest Release ZIP from GitHub
 2. Extract to your desired folder
-3. Open command line in the pdoom1/pdoom1 folder
+3. Open command line in the pdoom1 folder
 4. Run: pip install -r requirements.txt
 5. Play: python main.py
 
 ================================================================================
-GAME FEATURES (v0.2.2)
+GAME FEATURES (v0.2.5)
 ================================================================================
 
 🆕 **PRIVACY-FIRST SYSTEMS:**
@@ -108,9 +109,10 @@ GAME FEATURES (v0.2.2)
 - **Advanced Funding**: Series A, government grants, corporate partnerships
 
 🎮 **ENHANCED NEW PLAYER EXPERIENCE:**
-- **Tutorial Selection**: Choose between guided tutorial or direct play
-- **Intro Scenario**: Optional contextual introduction to the game world
-- **Responsive Onboarding**: Adaptive UI for different experience levels
+- **Tutorial System**: Interactive step-by-step guided walkthrough for new players
+- **Factorio-Style Hints**: Context-sensitive help that appears once and can be reset
+- **Professional Polish**: Fixed UI interaction issues for smooth gameplay experience
+- **Debug Tools**: Ctrl+D for UI diagnostics, Ctrl+E for emergency recovery, Ctrl+R to reset hints
 
 🏆 **PRIVACY-RESPECTING LEADERBOARDS:**
 - **Pseudonymous Only**: Compete with chosen display names, not real identities
@@ -273,10 +275,11 @@ DOCUMENTATION:
 VERSION STATUS
 ================
 
-Current: v0.2.1 "Three Column" - Hotfix Candidate
+Current: v0.2.5 "UI Interaction Fixes & Hint System" - Professional Polish Release
 
-This version is in ACTIVE DEVELOPMENT with rapid updates for UI stability. 
-Expect frequent patches (0.2.2, 0.2.3, etc.) as we polish the experience.
+This version focuses on user experience improvements with comprehensive UI interaction fixes,
+a professional Factorio-style hint system, and enhanced stability. All major reported
+interaction issues have been resolved.
 
 Stability Target: v0.3.0 for wider distribution
 

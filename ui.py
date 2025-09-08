@@ -79,8 +79,9 @@ def create_upgrade_context_info(upgrade, game_state, upgrade_idx):
 
 def get_default_context_info(game_state):
     """Get default context info when nothing is hovered."""
+    lab_name = getattr(game_state, 'lab_name', 'Unknown Labs')
     return {
-        'title': 'P(Doom) Context Panel',
+        'title': f'{lab_name}',
         'description': 'Hover over actions or upgrades to see detailed information here.',
         'details': [
             f'Turn {game_state.turn}',
@@ -456,6 +457,79 @@ def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     
     # Draw version in bottom right corner
     draw_version_footer(screen, w, h)
+
+def draw_start_game_submenu(screen, w, h, selected_item):
+    """Draw the start game submenu with different game launch options."""
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    desc_font = pygame.font.SysFont('Consolas', int(h*0.022))
+    
+    # Title
+    title_surf = title_font.render("Start Game", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Subtitle
+    subtitle_text = "Choose your starting configuration:"
+    subtitle_surf = desc_font.render(subtitle_text, True, (200, 200, 200))
+    subtitle_x = w // 2 - subtitle_surf.get_width() // 2
+    subtitle_y = title_y + title_surf.get_height() + 10
+    screen.blit(subtitle_surf, (subtitle_x, subtitle_y))
+    
+    # Menu items with descriptions
+    items_with_desc = [
+        ("Basic New Game (Default Global Seed)", "Quick start with weekly seed - zero configuration"),
+        ("Configure Game / Custom Seed", "Choose your own seed for reproducible games"), 
+        ("Config Settings", "Modify game difficulty and starting resources"),
+        ("Game Options", "Audio, display, and accessibility settings")
+    ]
+    
+    # Button layout
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    for i, (item, description) in enumerate(items_with_desc):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button
+        draw_low_poly_button(screen, button_rect, item, button_state)
+        
+        # Draw description below button
+        desc_surf = desc_font.render(description, True, (150, 150, 150))
+        desc_x = center_x - desc_surf.get_width() // 2
+        desc_y = button_y + button_height + 5
+        screen.blit(desc_surf, (desc_x, desc_y))
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    instructions = [
+        "Use arrow keys or mouse to navigate",
+        "Press Enter or click to select • Press Escape to go back"
+    ]
+    
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
 
 def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
     """
@@ -3136,30 +3210,54 @@ def draw_hiring_dialog(screen, hiring_dialog, w, h):
                 'type': 'employee_option'
             })
     
-    # Cancel/Dismiss button
-    button_width = 120
-    button_height = 40
+    # Cancel/Dismiss button (more prominent)
+    button_width = 140
+    button_height = 45
     button_x = dialog_rect.centerx - button_width // 2
-    button_y = dialog_rect.bottom - 60
+    button_y = dialog_rect.bottom - 80
     cancel_rect = pygame.Rect(button_x, button_y, button_width, button_height)
     
-    pygame.draw.rect(screen, (100, 60, 60), cancel_rect, border_radius=5)
-    pygame.draw.rect(screen, (160, 100, 100), cancel_rect, width=2, border_radius=5)
+    # More prominent cancel button styling
+    pygame.draw.rect(screen, (120, 70, 70), cancel_rect, border_radius=8)
+    pygame.draw.rect(screen, (200, 120, 120), cancel_rect, width=3, border_radius=8)
     
+    # Cancel button text with keyboard shortcut
     cancel_text = button_font.render("Cancel", True, (255, 255, 255))
-    text_rect = cancel_text.get_rect(center=cancel_rect.center)
+    text_rect = cancel_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery - 8))
     screen.blit(cancel_text, text_rect)
+    
+    # Keyboard shortcut hint on button  
+    shortcut_font = pygame.font.Font(None, int(h * 0.018))
+    shortcut_text = shortcut_font.render("(← or Backspace)", True, (200, 200, 200))
+    shortcut_rect = shortcut_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery + 10))
+    screen.blit(shortcut_text, shortcut_rect)
     
     clickable_rects.append({
         'rect': cancel_rect,
         'type': 'cancel'
     })
     
-    # Instructions
-    instructions = "Click an employee to hire, or Cancel to dismiss"
-    inst_surface = pygame.font.Font(None, int(h * 0.02)).render(instructions, True, (150, 150, 150))
-    inst_rect = inst_surface.get_rect(centerx=dialog_rect.centerx, y=cancel_rect.bottom + 5)
-    screen.blit(inst_surface, inst_rect)
+    # Enhanced instructions with clear keyboard mapping
+    instructions = [
+        "Click an employee type to hire them",
+        "← (Left Arrow) or Backspace to cancel • Escape for emergency exit",
+        "One function per key - simple navigation"
+    ]
+    
+    inst_font = pygame.font.Font(None, int(h * 0.022))
+    inst_y = cancel_rect.bottom + 15
+    
+    for i, instruction in enumerate(instructions):
+        if i == 0:
+            # Main instruction - white
+            inst_surface = inst_font.render(instruction, True, (255, 255, 255))
+        else:
+            # Secondary instructions - lighter gray
+            inst_surface = inst_font.render(instruction, True, (180, 180, 180))
+        
+        inst_rect = inst_surface.get_rect(centerx=dialog_rect.centerx, y=inst_y)
+        screen.blit(inst_surface, inst_rect)
+        inst_y += inst_surface.get_height() + 3
     
     return clickable_rects
 
@@ -3267,7 +3365,7 @@ def draw_stepwise_tutorial_overlay(screen, tutorial_data, w, h):
     pygame.draw.rect(screen, (180, 100, 100), skip_button_rect, border_radius=8)
     pygame.draw.rect(screen, (255, 255, 255), skip_button_rect, width=2, border_radius=8)
     
-    skip_text = button_font.render("Skip", True, (255, 255, 255))
+    skip_text = button_font.render("Skip (S)", True, (255, 255, 255))
     skip_text_rect = skip_text.get_rect(center=skip_button_rect.center)
     screen.blit(skip_text, skip_text_rect)
     buttons['skip'] = skip_button_rect
@@ -3672,7 +3770,7 @@ def draw_tutorial_choice(screen, w, h, selected_item):
     Args:
         screen: pygame surface to draw on
         w, h: screen width and height for responsive layout
-        selected_item: index of currently selected item (0=Yes, 1=No)
+        selected_item: index of currently selected item (0=No, 1=Yes)
     """
     # Clear background
     screen.fill((50, 50, 50))
@@ -3835,6 +3933,7 @@ def draw_new_player_experience(screen, w, h, selected_item, tutorial_enabled, in
         intro_font = pygame.font.SysFont('Consolas', int(h*0.022))
         intro_lines = [
             "Doom is coming. You convinced a funder to give you $1,000.",
+            "You'll be assigned a lab name for pseudonymous competition.",
             "Your job is to save the world. Good luck!"
         ]
         

@@ -96,7 +96,7 @@ class TestVersionConsistency(unittest.TestCase):
     def test_version_in_main_window_title(self):
         """Test that main.py uses the correct version in window title."""
         # Read main.py and check it uses get_display_version()
-        with open('main.py', 'r') as f:
+        with open('main.py', 'r', encoding='utf-8') as f:
             main_content = f.read()
         
         # Should import and use get_display_version
@@ -115,7 +115,7 @@ class TestVersionConsistency(unittest.TestCase):
     
     def test_release_workflow_version_validation(self):
         """Test that release workflow has version validation."""
-        with open('.github/workflows/release.yml', 'r') as f:
+        with open('.github/workflows/release.yml', 'r', encoding='utf-8') as f:
             workflow_content = f.read()
         
         # Should have version validation steps

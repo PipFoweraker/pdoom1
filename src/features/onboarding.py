@@ -367,121 +367,37 @@ class OnboardingSystem:
         """Get the complete stepwise tutorial sequence with UI element visibility control."""
         return [
             {
-                'id': 'welcome',
+                'id': 'welcome_overview',
                 'title': 'Welcome to P(Doom)!',
-                'content': 'Welcome to P(Doom), a strategy game about managing an AI safety lab! This tutorial will introduce each part of the interface step by step.',
-                'reveal_elements': [],  # No UI elements revealed yet
+                'content': 'Welcome to P(Doom), a strategy game about managing an AI safety lab!\n\nYour goal: Advance AI capabilities while keeping the probability of doom low. You compete against reckless frontier labs who prioritize speed over safety.\n\nThis tutorial will introduce the interface progressively. Press S to skip at any time.',
+                'reveal_elements': [],  # Start with black screen
                 'focus_area': None
             },
             {
-                'id': 'money_display',
-                'title': 'Your Money',
-                'content': 'This shows your current funds. You start with $1,000. You\'ll need money to hire staff and purchase upgrades.',
-                'reveal_elements': ['money_display'],
+                'id': 'resources_overview',
+                'title': 'Your Resources',
+                'content': 'MONEY: $1,000 starting funds for hiring and upgrades\nSTAFF: 2 team members (more staff = more action points)\nREPUTATION: 50 public trust (affects funding opportunities)\nACTION POINTS: 3 per turn (your main constraint)\nP(DOOM): 25% probability of catastrophic failure (KEEP LOW!)\n\nManage these carefully - they determine your success.',
+                'reveal_elements': ['money_display', 'staff_display', 'reputation_display', 'action_points_display', 'doom_display'],
                 'focus_area': 'top_panel'
             },
             {
-                'id': 'staff_display',
-                'title': 'Your Staff',
-                'content': 'This shows your current team size. You start with 2 staff members. More staff = more action points!',
-                'reveal_elements': ['staff_display'],
-                'focus_area': 'top_panel'
+                'id': 'actions_and_strategy',
+                'title': 'Actions & Strategy',
+                'content': 'ACTIONS PANEL (Left): Take actions to manage your lab\n• Hire Staff: More team = more action points per turn\n• Conduct Research: Advance capabilities (may increase doom)\n• Safety Measures: Reduce p(Doom) and improve reputation\n• Public Relations: Boost reputation and unlock funding\n\nUPGRADES PANEL (Right): Purchase permanent improvements\n• Lab Equipment: Boost research efficiency\n• Security Systems: Reduce risks\n• Better Facilities: More staff capacity\n\nBalance progress with caution!',
+                'reveal_elements': ['actions_panel', 'hire_staff_action', 'research_action', 'safety_action', 'upgrades_panel', 'first_upgrade'],
+                'focus_area': 'left_right_panels'
             },
             {
-                'id': 'doom_display',
-                'title': 'P(Doom) Meter',
-                'content': 'This critical meter shows the probability of doom. Keep this low! High doom leads to game over.',
-                'reveal_elements': ['doom_display'],
-                'focus_area': 'top_panel'
+                'id': 'game_flow_and_competition',
+                'title': 'Game Flow & Competition',
+                'content': 'ACTIVITY LOG: Shows your actions and random events\nEND TURN: Advance time and trigger events when ready\nCOMPETITOR LABS: Monitor rival labs\' progress\n\nEach turn:\n1. Spend action points on actions\n2. Check activity log for results\n3. End turn when ready\n4. Random events occur\n5. Competitors advance\n\nWatch p(Doom) carefully - if it hits 100%, you lose!\nPress SPACEBAR to end turns quickly.',
+                'reveal_elements': ['activity_log', 'end_turn_button', 'opponents_info'],
+                'focus_area': 'bottom_center'
             },
             {
-                'id': 'reputation_display',
-                'title': 'Your Reputation',
-                'content': 'Reputation affects funding opportunities and public trust. Balance reputation with progress.',
-                'reveal_elements': ['reputation_display'],
-                'focus_area': 'top_panel'
-            },
-            {
-                'id': 'action_points_display',
-                'title': 'Action Points',
-                'content': 'Action Points (AP) limit how many actions you can take per turn. You start with 3 AP per turn.',
-                'reveal_elements': ['action_points_display'],
-                'focus_area': 'top_panel'
-            },
-            {
-                'id': 'actions_panel',
-                'title': 'Actions Panel',
-                'content': 'Here you\'ll take actions like hiring staff, conducting research, and improving safety.',
-                'reveal_elements': ['actions_panel'],
-                'focus_area': 'left_panel'
-            },
-            {
-                'id': 'hire_staff_action',
-                'title': 'Hire Staff Action',
-                'content': 'This action lets you hire new team members. More staff means more action points per turn!',
-                'reveal_elements': ['hire_staff_action'],
-                'focus_area': 'left_panel'
-            },
-            {
-                'id': 'research_action',
-                'title': 'Conduct Research',
-                'content': 'Research advances your capabilities but may increase p(Doom). Choose research carefully.',
-                'reveal_elements': ['research_action'],
-                'focus_area': 'left_panel'
-            },
-            {
-                'id': 'safety_action',
-                'title': 'Safety Measures',
-                'content': 'Safety actions help reduce p(Doom). Balance progress with caution.',
-                'reveal_elements': ['safety_action'],
-                'focus_area': 'left_panel'
-            },
-            {
-                'id': 'upgrades_panel',
-                'title': 'Upgrades Panel',
-                'content': 'Purchase upgrades to improve your lab\'s capabilities and efficiency.',
-                'reveal_elements': ['upgrades_panel'],
-                'focus_area': 'right_panel'
-            },
-            {
-                'id': 'first_upgrade',
-                'title': 'Lab Equipment',
-                'content': 'Your first upgrade! Lab equipment improves research efficiency.',
-                'reveal_elements': ['first_upgrade'],
-                'focus_area': 'right_panel'
-            },
-            {
-                'id': 'activity_log',
-                'title': 'Activity Log',
-                'content': 'This log shows what happens each turn. Keep an eye on events and results here.',
-                'reveal_elements': ['activity_log'],
-                'focus_area': 'center_panel'
-            },
-            {
-                'id': 'end_turn_button',
-                'title': 'End Turn Button',
-                'content': 'Click here when you\'re done taking actions. This advances time and triggers events.',
-                'reveal_elements': ['end_turn_button'],
-                'focus_area': 'bottom_panel'
-            },
-            {
-                'id': 'opponents_info',
-                'title': 'Competitor Labs',
-                'content': 'Other labs are also working on AI. Monitor their progress and try to stay ahead!',
-                'reveal_elements': ['opponents_info'],
-                'focus_area': 'bottom_panel'
-            },
-            {
-                'id': 'full_interface',
-                'title': 'Complete Interface',
-                'content': 'Now you can see the full interface! Take some actions, then end your turn to see what happens.',
-                'reveal_elements': ['all_elements'],
-                'focus_area': None
-            },
-            {
-                'id': 'tutorial_complete',
-                'title': 'Tutorial Complete!',
-                'content': 'You\'re ready to manage your AI safety lab! Remember: balance progress with caution, and keep p(Doom) low. Good luck!',
+                'id': 'ready_to_play',
+                'title': 'Ready to Play!',
+                'content': 'You now see the complete interface!\n\nKEY CONTROLS:\n• Numbers 1-9: Quick action selection\n• SPACEBAR: End turn\n• H: Help guide\n• ESC: Pause menu\n\nREMEMBER:\n• Balance speed vs. safety\n• More staff = more action points\n• Keep p(Doom) below 80% (warning thresholds)\n• Watch competitors but don\'t panic\n\nGood luck saving the world!',
                 'reveal_elements': ['all_elements'],
                 'focus_area': None
             }
@@ -489,6 +405,57 @@ class OnboardingSystem:
         self.show_tutorial_overlay = False
         self.current_tutorial_step = None
         self._save_progress()
+
+    def are_hints_enabled(self) -> bool:
+        """Check if hints are enabled in the current configuration."""
+        from src.services.config_manager import get_current_config
+        config = get_current_config()
+        return config.get('tutorial', {}).get('first_time_help', True)
+
+    def are_tutorials_enabled(self) -> bool:
+        """Check if tutorials are enabled in the current configuration."""
+        from src.services.config_manager import get_current_config
+        config = get_current_config()
+        return config.get('tutorial', {}).get('tutorial_enabled', True)
+
+    def reset_all_hints(self):
+        """Reset all hints so they will show again (Factorio-style reset)."""
+        # Clear all seen mechanics so hints will show again
+        self.seen_mechanics.clear()
+        self._save_progress()
+        
+        # Add log message for confirmation
+        import logging
+        logging.info("All hints reset - they will show again for new actions")
+
+    def reset_specific_hint(self, mechanic: str):
+        """Reset a specific hint so it will show again."""
+        if mechanic in self.seen_mechanics:
+            self.seen_mechanics.remove(mechanic)
+            self._save_progress()
+            
+            # Add log message for confirmation
+            import logging
+            logging.info(f"Hint '{mechanic}' reset - will show again")
+
+    def get_hint_status(self) -> Dict[str, bool]:
+        """Get the status of all available hints."""
+        available_mechanics = ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']
+        return {
+            mechanic: mechanic in self.seen_mechanics
+            for mechanic in available_mechanics
+        }
+
+    def should_show_hint(self, mechanic: str) -> bool:
+        """
+        Check if a hint should be shown (Factorio-style behavior).
+        
+        Returns True if:
+        1. Hints are enabled in config
+        2. This specific hint hasn't been seen before
+        """
+        return (self.are_hints_enabled() and 
+                self.should_show_mechanic_help(mechanic))
 
 # Global onboarding instance
 onboarding = OnboardingSystem()
