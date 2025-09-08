@@ -206,7 +206,11 @@ class TestActionPointsBackwardCompatibility(unittest.TestCase):
             # Should have ap_cost field or default to 1
             ap_cost = action.get("ap_cost", 1)
             self.assertIsInstance(ap_cost, int)
-            self.assertGreater(ap_cost, 0)
+            # Allow 0 AP cost for configuration actions (like research quality settings)
+            if "Set Research Quality" in action.get("name", ""):
+                self.assertGreaterEqual(ap_cost, 0)
+            else:
+                self.assertGreater(ap_cost, 0)
     
     def test_default_ap_cost_is_one(self):
         """Test that default AP cost is 1 for backward compatibility."""
