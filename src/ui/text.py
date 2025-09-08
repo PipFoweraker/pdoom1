@@ -40,9 +40,10 @@ def draw_back_button(screen, w, h, navigation_depth, font=None):
     if font is None:
         font = pygame.font.Font(None, 36)
     
-    # Position back button in top-left corner
+    # Position back button in top-left corner with margin based on screen height
+    margin = int(h * 0.02)  # 2% of height for consistent positioning
     back_text = font.render("← Back", True, (255, 255, 255))
-    back_rect = pygame.Rect(20, 20, back_text.get_width() + 20, back_text.get_height() + 10)
+    back_rect = pygame.Rect(margin, margin, back_text.get_width() + 20, back_text.get_height() + 10)
     
     # Draw button background
     pygame.draw.rect(screen, (50, 50, 50), back_rect)

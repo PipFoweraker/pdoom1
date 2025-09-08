@@ -105,7 +105,9 @@ class TestBugReporter(unittest.TestCase):
         
         # Check file was created
         self.assertTrue(os.path.exists(filepath))
-        self.assertTrue(filepath.startswith("bug_reports/bug_report_"))
+        # Normalize path separators for cross-platform compatibility
+        normalized_filepath = filepath.replace(os.path.sep, "/")
+        self.assertTrue(normalized_filepath.startswith("bug_reports/bug_report_"))
         self.assertTrue(filepath.endswith(".json"))
         
         # Check file content

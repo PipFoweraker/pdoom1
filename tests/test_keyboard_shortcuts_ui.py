@@ -26,8 +26,8 @@ class TestKeyboardShortcutsUI(unittest.TestCase):
         """Clean up after tests."""
         pygame.quit()
     
-    @patch('ui.get_main_menu_shortcuts')
-    @patch('ui.get_in_game_shortcuts')  
+    @patch('src.ui.menus.get_main_menu_shortcuts')
+    @patch('src.ui.menus.get_in_game_shortcuts')  
     def test_draw_main_menu_calls_shortcut_functions(self, mock_in_game, mock_main_menu):
         """Test that draw_main_menu calls the keyboard shortcut functions."""
         # Set up mocks
