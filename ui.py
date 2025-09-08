@@ -40,9 +40,9 @@ def create_action_context_info(action, game_state, action_idx):
     
     # Add availability status
     if game_state.action_points < ap_cost:
-        details.append("⚠ Not enough Action Points")
+        details.append("! Not enough Action Points")
     if game_state.money < action['cost']:
-        details.append("⚠ Not enough Money")
+        details.append("! Not enough Money")
     
     return {
         'title': title,
@@ -65,11 +65,11 @@ def create_upgrade_context_info(upgrade, game_state, upgrade_idx):
     # Add availability status
     if not is_purchased:
         if game_state.money < upgrade['cost']:
-            details.append("⚠ Not enough Money")
+            details.append("! Not enough Money")
         else:
-            details.append("✓ Available for purchase")
+            details.append("+ Available for purchase")
     else:
-        details.append("✓ Effect is active")
+        details.append("+ Effect is active")
     
     return {
         'title': title,
@@ -79,8 +79,9 @@ def create_upgrade_context_info(upgrade, game_state, upgrade_idx):
 
 def get_default_context_info(game_state):
     """Get default context info when nothing is hovered."""
+    lab_name = getattr(game_state, 'lab_name', 'Unknown Labs')
     return {
-        'title': 'P(Doom) Context Panel',
+        'title': f'{lab_name}',
         'description': 'Hover over actions or upgrades to see detailed information here.',
         'details': [
             f'Turn {game_state.turn}',
@@ -263,7 +264,7 @@ def draw_back_button(screen, w, h, navigation_depth, font=None):
     
     # Position button in top-left corner with margin
     margin = int(h * 0.02)
-    button_text = "← Back"
+    button_text = "< Back"
     text_surf = font.render(button_text, True, (255, 255, 255))
     
     # Button styling
@@ -569,7 +570,7 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
     screen.blit(current_surf, (current_x, current_y))
     
     # Menu items (configs + back button)
-    all_items = configs + ["← Back to Main Menu"]
+    all_items = configs + ["< Back to Main Menu"]
     
     button_width = int(w * 0.4)
     button_height = int(h * 0.06)
@@ -593,7 +594,7 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
     
     # Instructions at bottom
     instructions = [
-        "↑/↓ or mouse to navigate",
+        "Up/Down or mouse to navigate",
         "Enter or click to select configuration",
         "Escape to go back"
     ]
@@ -699,18 +700,18 @@ def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0
     if scroll_offset > 0:
         # Up arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        up_arrow = arrow_font.render("▲", True, (255, 255, 255))
+        up_arrow = arrow_font.render("^", True, (255, 255, 255))
         screen.blit(up_arrow, (content_x + content_width - 30, text_area_y))
     
     if (start_line + visible_lines) < len(lines):
         # Down arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        down_arrow = arrow_font.render("▼", True, (255, 255, 255))
+        down_arrow = arrow_font.render("v", True, (255, 255, 255))
         screen.blit(down_arrow, (content_x + content_width - 30, text_area_y + text_area_height - 30))
     
     # Instructions at bottom
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    instructions = "Use arrow keys to scroll • Press Escape or click to return to menu"
+    instructions = "Use arrow keys to scroll - Press Escape or click to return to menu"
     inst_surf = instruction_font.render(instructions, True, (180, 200, 255))
     inst_x = w // 2 - inst_surf.get_width() // 2
     inst_y = content_y + content_height + int(h * 0.03)
@@ -756,7 +757,7 @@ def draw_window_with_header(screen, rect, title, content=None, minimized=False, 
     title_y = header_rect.y + (header_height - title_surf.get_height()) // 2
     screen.blit(title_surf, (title_x, title_y))
     
-    # Draw minimize button (□ or ─ based on state)
+    # Draw minimize button ([] or - based on state)
     button_size = 20
     button_margin = 5
     minimize_button_rect = pygame.Rect(
@@ -773,14 +774,14 @@ def draw_window_with_header(screen, rect, title, content=None, minimized=False, 
     # Button icon
     icon_color = (255, 255, 255)
     if minimized:
-        # Restore icon (□)
+        # Restore icon ([])
         icon_rect = pygame.Rect(
             minimize_button_rect.x + 4, minimize_button_rect.y + 4,
             minimize_button_rect.width - 8, minimize_button_rect.height - 8
         )
         pygame.draw.rect(screen, icon_color, icon_rect, 2)
     else:
-        # Minimize icon (─)
+        # Minimize icon (-)
         line_y = minimize_button_rect.centery
         line_start = minimize_button_rect.x + 4
         line_end = minimize_button_rect.right - 4
@@ -1164,7 +1165,7 @@ def draw_ui(screen, game_state, w, h):
         
         # System failure warning for very high debt
         if game_state.technical_debt.can_trigger_system_failure():
-            failure_text = "⚠️ SYSTEM FAILURE RISK"
+            failure_text = "!! SYSTEM FAILURE RISK"
             screen.blit(small_font.render(failure_text, True, (255, 100, 100)), (int(w*0.70), y_pos))
     
     screen.blit(small_font.render(f"Turn: {game_state.turn}", True, (220, 220, 220)), (int(w*0.91), int(h*0.03)))
@@ -1473,14 +1474,14 @@ def draw_ui(screen, game_state, w, h):
             
             # Minus icon
             minus_font = pygame.font.SysFont('Consolas', int(h * 0.02), bold=True)
-            minus_text = minus_font.render("−", True, (255, 255, 255))
+            minus_text = minus_font.render("-", True, (255, 255, 255))
             minus_rect = minus_text.get_rect(center=(minimize_button_x + minimize_button_size//2, 
                                                    minimize_button_y + minimize_button_size//2))
             screen.blit(minus_text, minus_rect)
         
         # Scroll indicator
         if len(game_state.event_log_history) > 0 or len(game_state.messages) > 0:
-            scroll_info = small_font.render("↑↓ or mouse wheel to scroll", True, (200, 200, 255))
+            scroll_info = small_font.render("Up/Down or mouse wheel to scroll", True, (200, 200, 255))
             scroll_x = log_x + log_width - scroll_info.get_width()
             if "compact_activity_display" in game_state.upgrade_effects:
                 scroll_x -= 35  # Make room for minimize button
@@ -1533,12 +1534,12 @@ def draw_ui(screen, game_state, w, h):
         # Draw scroll indicators if needed
         if start_line > 0:
             # Up arrow indicator
-            up_arrow = small_font.render("▲", True, (180, 255, 180))
+            up_arrow = small_font.render("^", True, (180, 255, 180))
             screen.blit(up_arrow, (log_x + log_width - 25, content_y))
         
         if start_line + max_visible_lines < total_lines:
             # Down arrow indicator
-            down_arrow = small_font.render("▼", True, (180, 255, 180))
+            down_arrow = small_font.render("v", True, (180, 255, 180))
             screen.blit(down_arrow, (log_x + log_width - 25, content_y + content_height - 20))
             
             
@@ -1713,11 +1714,11 @@ def draw_mute_button(screen, game_state, w, h):
     if hasattr(game_state, 'sound_manager') and game_state.sound_manager and game_state.sound_manager.is_enabled():
         bg_color = (100, 200, 100)  # Green when sound is on
         icon_color = (255, 255, 255)
-        symbol = "♪"  # Musical note when sound is on
+        symbol = "~"  # Musical note when sound is on
     else:
         bg_color = (200, 100, 100)  # Red when sound is off
         icon_color = (255, 255, 255) 
-        symbol = "🔇"  # Muted symbol when sound is off
+        symbol = "X"  # Muted symbol when sound is off
     
     # Draw button background
     button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
@@ -1743,11 +1744,11 @@ def draw_mute_button_standalone(screen, sound_manager, w, h):
     if sound_manager and sound_manager.is_enabled():
         bg_color = (100, 200, 100)  # Green when sound is on
         icon_color = (255, 255, 255)
-        symbol = "♪"  # Musical note when sound is on
+        symbol = "~"  # Musical note when sound is on
     else:
         bg_color = (200, 100, 100)  # Red when sound is off
         icon_color = (255, 255, 255) 
-        symbol = "🔇"  # Muted symbol when sound is off
+        symbol = "X"  # Muted symbol when sound is off
     
     # Draw button background
     button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
@@ -1832,7 +1833,7 @@ def draw_context_window(screen, context_info, w, h, minimized=False, config=None
     
     # Button symbol
     symbol_font = pygame.font.SysFont('Courier', 10, bold=True)  # DOS font
-    symbol = '−' if not minimized else '+'
+    symbol = '-' if not minimized else '+'
     symbol_text = symbol_font.render(symbol, True, (200, 255, 200))  # Bright green text
     symbol_rect = symbol_text.get_rect(center=button_rect.center)
     screen.blit(symbol_text, symbol_rect)
@@ -2070,7 +2071,7 @@ def draw_bug_report_form(screen, form_data, selected_field, w, h):
             screen.blit(text_surface, (field_rect.x + 10, field_rect.y + 8))
             
             # Dropdown arrow
-            arrow_text = field_font.render("▼", True, text_color)
+            arrow_text = field_font.render("v", True, text_color)
             screen.blit(arrow_text, (field_rect.right - 30, field_rect.y + 8))
             
         elif field["type"] == "checkbox":
@@ -2320,12 +2321,12 @@ def draw_deferred_events_zone(screen, game_state, w, h, small_font):
         
         # Event text with turn counter
         turns_left = event.max_deferred_turns - event.turns_deferred
-        event_text = f"• {event.name} ({turns_left}T)"
+        event_text = f"- {event.name} ({turns_left}T)"
         text_surface = small_font.render(event_text, True, (180, 180, 180))
         
         # Truncate if too long
         if text_surface.get_width() > zone_width - 10:
-            truncated = f"• {event.name[:15]}... ({turns_left}T)"
+            truncated = f"- {event.name[:15]}... ({turns_left}T)"
             text_surface = small_font.render(truncated, True, (180, 180, 180))
         
         screen.blit(text_surface, (zone_x + 5, y_pos))
@@ -2957,7 +2958,7 @@ def draw_researcher_pool_dialog(screen, hiring_dialog, w, h):
         
         # Skill level and salary
         skill_text = f"Skill Level: {researcher.skill_level}/10"
-        salary_text = f"Salary: ${researcher.salary_expectation} • 2 AP"
+        salary_text = f"Salary: ${researcher.salary_expectation} - 2 AP"
         
         skill_surface = detail_font.render(skill_text, True, text_color)
         salary_surface = detail_font.render(salary_text, True, text_color)
@@ -3116,7 +3117,7 @@ def draw_hiring_dialog(screen, hiring_dialog, w, h):
         screen.blit(name_surface, name_rect)
         
         # Cost and AP info
-        cost_text = f"${subtype_data['cost']} • {subtype_data['ap_cost']} AP"
+        cost_text = f"${subtype_data['cost']} - {subtype_data['ap_cost']} AP"
         cost_surface = button_font.render(cost_text, True, text_color)
         cost_rect = cost_surface.get_rect(x=option_rect.right - 15 - cost_surface.get_width(), y=option_rect.y + 10)
         screen.blit(cost_surface, cost_rect)
@@ -3355,7 +3356,7 @@ def draw_first_time_help(screen, help_content, w, h, mouse_pos=None):
     pygame.draw.rect(screen, close_button_color, close_button_rect, border_radius=3)
     
     close_font = pygame.font.SysFont('Consolas', int(h*0.02), bold=True)
-    close_text = close_font.render("×", True, close_text_color)
+    close_text = close_font.render("X", True, close_text_color)
     close_text_rect = close_text.get_rect(center=close_button_rect.center)
     screen.blit(close_text, close_text_rect)
     
@@ -3407,7 +3408,7 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
     
     # Enhanced settings with realistic options
     settings_options = [
-        ("Continue", "▶ INITIALIZE LABORATORY"),
+        ("Continue", "> INITIALIZE LABORATORY"),
         ("Research Intensity", get_research_intensity_display(settings.get("difficulty", "STANDARD"))),
         ("Audio Alerts Volume", get_volume_display(settings.get("sound_volume", 80))),
         ("Visual Enhancement", get_graphics_display(settings.get("graphics_quality", "STANDARD"))),
@@ -3448,9 +3449,9 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
     # Enhanced instructions with bureaucratic theme
     inst_font = pygame.font.SysFont('Consolas', int(h*0.022))
     instructions = [
-        "📋 Use ↑↓ arrow keys to navigate configuration options",
-        "🔧 Press ENTER to modify settings or initialize laboratory",
-        "⚠️  Ensure all parameters meet institutional safety standards"
+        "- Use Up/Down arrow keys to navigate configuration options",
+        "- Press ENTER to modify settings or initialize laboratory",
+        "! Ensure all parameters meet institutional safety standards"
     ]
     
     inst_y = int(h * 0.82)
@@ -3735,6 +3736,131 @@ def draw_tutorial_choice(screen, w, h, selected_item):
         inst_y += inst_surf.get_height() + 5
 
 
+def draw_new_player_experience(screen, w, h, selected_item, tutorial_enabled, intro_enabled):
+    """
+    Draw the new player experience screen with tutorial and intro checkboxes.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for responsive layout
+        selected_item: index of currently selected item (0=Tutorial, 1=Intro, 2=Start button)
+        tutorial_enabled: whether tutorial checkbox is checked
+        intro_enabled: whether intro checkbox is checked
+    """
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    option_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    
+    # Title
+    title_surf = title_font.render("New Player Experience", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.12)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Description
+    desc_text = "Choose your starting options:"
+    desc_surf = desc_font.render(desc_text, True, (200, 200, 200))
+    desc_x = w // 2 - desc_surf.get_width() // 2
+    desc_y = title_y + title_surf.get_height() + 20
+    screen.blit(desc_surf, (desc_x, desc_y))
+    
+    # Layout constants
+    center_x = w // 2
+    checkbox_size = int(h * 0.04)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.08)
+    
+    # Options with checkboxes
+    options = [
+        ("Tutorial", "Get helpful guidance for new players", tutorial_enabled),
+        ("Intro", "Read an introduction to the scenario", intro_enabled)
+    ]
+    
+    for i, (option_name, option_desc, checked) in enumerate(options):
+        y_pos = start_y + i * spacing
+        
+        # Checkbox
+        checkbox_x = center_x - checkbox_size // 2 - int(w * 0.15)
+        checkbox_y = y_pos
+        checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
+        
+        # Checkbox background and border
+        checkbox_color = (100, 100, 100) if i == selected_item else (70, 70, 70)
+        pygame.draw.rect(screen, checkbox_color, checkbox_rect)
+        pygame.draw.rect(screen, (200, 200, 200), checkbox_rect, 2)
+        
+        # Checkmark if enabled
+        if checked:
+            # Draw a simple checkmark
+            checkmark_color = (100, 255, 100)
+            pygame.draw.line(screen, checkmark_color, 
+                           (checkbox_x + 5, checkbox_y + checkbox_size // 2),
+                           (checkbox_x + checkbox_size // 2, checkbox_y + checkbox_size - 5), 3)
+            pygame.draw.line(screen, checkmark_color,
+                           (checkbox_x + checkbox_size // 2, checkbox_y + checkbox_size - 5),
+                           (checkbox_x + checkbox_size - 5, checkbox_y + 5), 3)
+        
+        # Option text
+        text_x = checkbox_x + checkbox_size + 20
+        text_color = (255, 255, 255) if i == selected_item else (200, 200, 200)
+        option_surf = option_font.render(option_name, True, text_color)
+        screen.blit(option_surf, (text_x, checkbox_y))
+        
+        # Description text
+        desc_surf = desc_font.render(option_desc, True, (180, 180, 180))
+        screen.blit(desc_surf, (text_x, checkbox_y + option_surf.get_height() + 5))
+    
+    # Start button
+    button_width = int(w * 0.3)
+    button_height = int(h * 0.06)
+    button_x = center_x - button_width // 2
+    button_y = int(h * 0.65)
+    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    # Determine button state
+    if selected_item == 2:
+        button_state = ButtonState.FOCUSED
+    else:
+        button_state = ButtonState.NORMAL
+    
+    # Draw start button
+    draw_low_poly_button(screen, button_rect, "Start Game", button_state)
+    
+    # Intro text preview if intro is enabled
+    if intro_enabled:
+        intro_y = button_y + button_height + 30
+        intro_font = pygame.font.SysFont('Consolas', int(h*0.022))
+        intro_lines = [
+            "Doom is coming. You convinced a funder to give you $1,000.",
+            "Your job is to save the world. Good luck!"
+        ]
+        
+        for line in intro_lines:
+            intro_surf = intro_font.render(line, True, (255, 200, 100))
+            intro_x = w // 2 - intro_surf.get_width() // 2
+            screen.blit(intro_surf, (intro_x, intro_y))
+            intro_y += intro_surf.get_height() + 5
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    instructions = [
+        "Use arrow keys or mouse to navigate",
+        "Space/Enter to toggle checkboxes or start game",
+        "Escape to return to main menu"
+    ]
+    
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (150, 150, 150))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 3
+
+
 def draw_turn_transition_overlay(screen, w, h, timer, duration):
     """
     Draw a turn transition overlay with darkening/lightening effect.
@@ -3832,7 +3958,7 @@ def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
         f"SFX Volume: {sfx_volume}%",
         "Sound Effects Settings",
         "Test Sound",
-        "← Back to Main Menu"
+        "< Back to Main Menu"
     ]
     
     for i, item in enumerate(menu_items):

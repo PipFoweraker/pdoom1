@@ -4,7 +4,91 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.6] - 2025-09-08
+### Added
+- **🏢 Lab Name System**: Implemented pseudonymous lab naming for enhanced immersion and leaderboard integration
+  - Added 104 unique AI lab names across 87 different themes (e.g., "Axiom Labs", "Beacon AI", "Cerberus Systems")
+  - Lab names are deterministically assigned based on game seed for consistency
+  - Lab name displays in UI context panel replacing generic "P(Doom) Context Panel"
+  - Leaderboard integration saves lab names alongside scores for pseudonymous gameplay
+  - CSV asset system (`assets/lab_names.csv`) for easy lab name management
+  - Comprehensive lab name manager service with theme-based organization
+  - Backward compatibility with existing save files and leaderboard data
+
+## [0.2.3] - 2025-09-05
+### Changed
+- **🐍 Python Version Requirements**: Dropped Python 3.8 support, now requires Python 3.9+
+  - Updated GitHub Actions workflows to test Python 3.9, 3.10, 3.11, 3.12
+  - Updated all documentation and requirements to reflect Python 3.9+ minimum
+  - Enables use of modern Python features like built-in generics (`list[str]` vs `List[str]`)
+  - Updated MyPy configuration target from Python 3.8 to 3.9
+
+## [0.2.5] - 2025-09-08
+### Added
+- **🔧 UI Interaction Fixes & Hint System Overhaul**: Major improvements to game usability and professional polish
+  - Fixed spacebar (end turn) being blocked by tutorial overlays - now works even during tutorials
+  - Fixed unprofessional staff hire popup showing automatically at game start
+  - Implemented Factorio-style hint system: hints show once, auto-dismiss, can be reset
+  - Added debug tools: Ctrl+D (UI state debug), Ctrl+E (emergency popup clear), Ctrl+R (reset hints)
+  - Separated hints from tutorials with independent configuration
+  - Automatic cleanup for stuck UI states (turn processing, overlay conflicts, orphaned popups)
+  - Improved button click consistency and modal dialog behavior
+  - Enhanced settings menu with hint status display and controls
+
+### Fixed
+- **Configuration Consistency**: Fixed starting staff count mismatch between JSON config and config manager
+- **Event Handling Priority**: Resolved conflicts between tutorial overlays and core game controls
+- **Modal Dialog Behavior**: Improved popup and dialog interaction handling
+
 ## [Unreleased]
+### Added
+- **🏆 Achievements & Enhanced Endgame System (Issue #195)**: Comprehensive achievement tracking and victory conditions beyond binary win/lose
+  - 24 achievements across 8 categories: Survival, Workforce, Research, Financial, Safety, Reputation, Competitive, Rare
+  - 4-tier rarity system: Common, Uncommon, Rare, Legendary achievements
+  - Ultimate victory condition: Reach p(Doom) = 0 (complete AI safety solution)
+  - Enhanced warning system with 6 threat levels (80%, 85%, 90%, 95%, 98%, 99% doom thresholds)
+  - Pyrrhic victory analysis: Win conditions evaluated against costs (financial, reputational, safety)
+  - Strategic success scenarios: Major progress recognition without requiring perfect victory
+  - Deep integration: Achievement progress tracking with all existing systems (technical debt, opponents, economic cycles)
+  - Turn-based achievement checking with defensive programming (system errors never crash game)
+  - Semi-programmatic endgame text generation based on player strategy analysis and resource management patterns
+- **⛓️ Technical Failure Cascades (Issue #193)**: Comprehensive failure cascade system modeling realistic organizational crisis management
+  - 7 types of technical failures with cascading effects (Research setbacks, Security breaches, System crashes, etc.)
+  - Near-miss system providing learning opportunities without immediate consequences
+  - Player choice between transparency/learning vs cover-up/reputation protection
+  - 3-tier cascade prevention system: Incident Response, Monitoring Systems, Communication Protocols
+  - Long-term consequences: Transparency builds trust, cover-ups increase future risks
+  - 4 new actions: Incident Response Training, Monitoring Systems, Communication Protocols, Safety Audit
+  - 4 cascade-specific events: Near-Miss Averted, Cover-Up Exposed, Transparency Dividend, Cascade Prevention Success
+- **🏦 Economic Cycles & Funding Volatility (Issue #192)**: Complete historical AI funding timeline (2017-2025)
+  - Realistic economic phases: Boom, Stable, Correction, Recession, Recovery
+  - 5 funding sources with different cycle sensitivities (Seed, Venture, Corporate, Government, Revenue)
+  - Enhanced fundraising system with 4 advanced funding actions (Series A, Government grants, etc.)
+  - 7 economic-specific events triggered by market conditions
+  - Historical anchors based on real AI funding patterns and market cycles
+- **🎮 New Player Experience Enhancement**: Improved onboarding with tutorial/intro selection
+  - Replaced "Launch Lab" with "New Player Experience" in main menu
+  - Checkbox-based interface for tutorial and intro scenario selection
+  - Contextual intro text explaining game premise and starting conditions
+  - Responsive UI design with keyboard and mouse navigation support
+
+### Changed
+- **🔤 ASCII Compatibility**: Converted all Unicode symbols to ASCII equivalents
+  - Replaced arrows, emojis, and Unicode symbols with ASCII alternatives
+  - Fixed encoding issues causing 'charmap' codec errors on some systems
+  - Maintained visual consistency while ensuring cross-platform compatibility
+  - Improved terminal output compatibility across different environments
+
+### Technical
+- **📊 Enhanced Test Coverage**: Added 29 new unit tests for technical failure cascades, plus 17 tests for economic cycles and new player experience
+- **🏗️ Modular Architecture**: Technical failure cascades system designed for extensibility
+  - Clean separation between cascade logic, game state integration, and UI
+  - Deterministic RNG integration for reproducible failure scenarios
+  - Comprehensive event system integration with enhanced events support
+  - Integration with existing technical debt and research quality systems
+- **🔧 System Integration**: Economic cycles and technical failures systems designed for interoperability
+  - Clean separation between game logic, UI, and specialized mechanics
+  - Backward compatibility maintained for existing save files
 
 ## [0.2.2] - 2025-09-04 - "Technical Debt Resolution & Privacy-First Systems"
 ### 🛠️ Technical Debt Resolution
@@ -126,19 +210,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Spacing & Layout**: Consistent margins and alignment across all resource displays
 - **Screenshot Functionality**: Alt+Tab and screen capture tools now work properly
 
-### Changed
-- **Resource Labels**: Removed "Money:", "Research:", "Papers:" prefixes for cleaner look
-- **Visual Hierarchy**: Icons positioned above values for better readability
-- **Default Configuration**: Window mode enabled, fullscreen disabled by default
-- **Action Availability**: Hidden locked actions for cleaner interface
-
-### Technical
-- **Icon System**: Added `draw_resource_icon()` function with 8-bit style rendering
-- **Context Window**: Implemented retro-styled information display system
-- **Screenshot API**: Integrated pygame.image.save() with timestamp naming
-- **UI Architecture**: Bypassed tutorial restrictions for core UI elements
-
-## [0.1.0] - Previous Release
+## [Unreleased]
 ### Added
 - **🎯 Enhanced Settings System**: Comprehensive settings and configuration architecture
   - **Custom Seed Management**: Fixed critical "Launch with Custom Seed" crash, added seed validation and normalization

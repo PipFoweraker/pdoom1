@@ -1,0 +1,12 @@
+# Global code ownership - PipFoweraker owns everything by default
+* @PipFoweraker
+
+# Specific ownership patterns (examples for the future)
+# /docs/ @PipFoweraker @documentation-team
+# /tests/ @PipFoweraker @qa-team
+# *.py @PipFoweraker
+
+# Critical files that always require your review
+/.github/ @PipFoweraker
+/src/services/version.py @PipFoweraker
+/CHANGELOG.md @PipFoweraker

@@ -163,12 +163,13 @@ The config system is designed to integrate with:
 ### Tutorial and Help
 ```json
 "tutorial": {
-  "tutorial_enabled": true,      // Tutorial system
-  "first_time_help": true,       // First-time player help
-  "show_tips": true,             // Gameplay tips
+  "tutorial_enabled": true,      // Interactive tutorial system (step-by-step guidance)
+  "first_time_help": true,       // Context-sensitive hints (Factorio-style, show once)
+  "show_tips": true,             // General gameplay tips
   "auto_help_on_errors": true    // Error help system
 }
 ```
+**Note**: `tutorial_enabled` controls the interactive tutorial, while `first_time_help` controls context-sensitive hints that appear once when encountering new mechanics.
 
 ### Gameplay Settings
 ```json

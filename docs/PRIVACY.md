@@ -200,7 +200,7 @@ Settings → Privacy → Verbose Logging
 
 ## Implementation Timeline
 
-### Current Status (v0.2.0)
+### Current Status (v0.2.5)
 ✅ **Local-first data storage**
 ✅ **Pseudonymous leaderboard system**
 ✅ **Opt-in verbose logging**
