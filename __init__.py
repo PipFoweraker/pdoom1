@@ -15,6 +15,11 @@ Main modules:
 __version__ = "1.0.0"  # Will be managed by version.py eventually
 
 # Package-level imports for convenience
-from src.core.game_state import GameState
-
-__all__ = ["GameState"]
+# Make import conditional to avoid issues during test collection in CI
+try:
+    from src.core.game_state import GameState
+    __all__ = ["GameState"]
+except ImportError:
+    # If src module not available (e.g., during test collection in CI),
+    # skip the convenience import
+    __all__ = []
