@@ -1,12 +1,13 @@
-# P(DOOM): PRIVACY-FIRST BUREAUCRACY STRATEGY GAME
+> p(Doom)1: an AI bureaucracy strategy game
+v0.2.0 "Technical Debt Resolution" 
 
-> **A SATIRICAL STRATEGY GAME ABOUT AI SAFETY RESEARCH IN A BUREAUCRATIC NIGHTMARE**
-> 
-> **FEATURING DETERMINISTIC GAMEPLAY AND PRIVACY-RESPECTING COMPETITION**
-> 
-> INSPIRED BY PAPERS PLEASE, PANDEMIC, AND CLICKER GAMES
+**Unregulated AI poses an existential threat to humanity.**
+ 
+ In this game, you are a manager of a newly funded NGO, racing against opponents with superior resources to solve the alignment problem before everyone dies.
 
-**Current Version:** v0.2.5 "UI Interaction Fixes & Hint System" - Professional Polish & User Experience
+The game is designed to reflect historical events and then project future ones according to the best data the developers have to hand. Future versions of the game will include timed leagues where players can compete to solve scenarios and configurations via a global leaderboard.
+ 
+**Current Version:** v0.2.6 "Lab Name System" - Professional AI lab identity and pseudonymous gameplay
 
 🛡️ **PRIVACY-FIRST DESIGN** - Your data stays under your control  
 🎯 **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  

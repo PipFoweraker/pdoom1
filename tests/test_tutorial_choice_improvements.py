@@ -76,10 +76,10 @@ class TestTutorialChoiceNavigation:
     @pytest.mark.skip(reason="Tutorial state management bug - See issue #tutorial-state-bug")
     def test_keyboard_enter_selection(self):
         """Test Enter key selection."""
-        # Test selecting Yes (tutorial enabled)
+        # Test selecting No (tutorial disabled) - Index 0 is "No"
         main.tutorial_choice_selected_item = 0
         main.handle_tutorial_choice_keyboard(pygame.K_RETURN)
-        assert main.tutorial_enabled == True
+        assert main.tutorial_enabled == False
         assert main.current_state == 'game'
     
     @pytest.mark.skip(reason="Tutorial state management bug - See issue #tutorial-state-bug")
@@ -89,10 +89,10 @@ class TestTutorialChoiceNavigation:
         main.current_state = 'tutorial_choice'
         main.tutorial_enabled = False
         
-        # Test selecting No (tutorial disabled)
+        # Test selecting Yes (tutorial enabled) - Index 1 is "Yes"
         main.tutorial_choice_selected_item = 1
         main.handle_tutorial_choice_keyboard(pygame.K_SPACE)
-        assert main.tutorial_enabled == False
+        assert main.tutorial_enabled == True
         assert main.current_state == 'game'
     
     def test_keyboard_escape_navigation(self):
@@ -111,7 +111,7 @@ class TestTutorialChoiceNavigation:
         spacing = int(h * 0.12)
         center_x = w // 2
         
-        # Test hovering over first button (Yes)
+        # Test hovering over first button (No)
         button_x = center_x - button_width // 2
         button_y = start_y
         mouse_pos = (button_x + 10, button_y + 10)  # Inside first button
@@ -119,7 +119,7 @@ class TestTutorialChoiceNavigation:
         main.handle_tutorial_choice_hover(mouse_pos, w, h)
         assert main.tutorial_choice_selected_item == 0
         
-        # Test hovering over second button (No)
+        # Test hovering over second button (Yes)
         button_y = start_y + spacing
         mouse_pos = (button_x + 10, button_y + 10)  # Inside second button
         
@@ -139,26 +139,26 @@ class TestTutorialChoiceNavigation:
         center_x = w // 2
         button_x = center_x - button_width // 2
         
-        # Test clicking Yes button
+        # Test clicking No button (first button, index 0)
         button_y = start_y
         mouse_pos = (button_x + 10, button_y + 10)
         
         main.handle_tutorial_choice_click(mouse_pos, w, h)
         assert main.tutorial_choice_selected_item == 0
-        assert main.tutorial_enabled == True
+        assert main.tutorial_enabled == False
         assert main.current_state == 'game'
         
-        # Reset for No button test
+        # Reset for Yes button test
         main.current_state = 'tutorial_choice'
         main.tutorial_enabled = False
         
-        # Test clicking No button
+        # Test clicking Yes button (second button, index 1)
         button_y = start_y + spacing
         mouse_pos = (button_x + 10, button_y + 10)
         
         main.handle_tutorial_choice_click(mouse_pos, w, h)
         assert main.tutorial_choice_selected_item == 1
-        assert main.tutorial_enabled == False
+        assert main.tutorial_enabled == True
         assert main.current_state == 'game'
     
     def test_draw_function_respects_selection(self):
