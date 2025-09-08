@@ -1489,6 +1489,8 @@ def main():
     global overlay_content, overlay_title
     # Hiring dialog rects need to persist between frames for click detection
     global cached_hiring_dialog_rects
+    # Escape handling variables
+    global escape_count, escape_timer
     
     # Initialize game state as None - will be created when game starts
     game_state = None
@@ -1901,7 +1903,6 @@ def main():
                         # Safe escape handling - ALWAYS ACTIVE (not blocked by tutorial)
                         elif event.key == pygame.K_ESCAPE:
                             # Safe escape menu system
-                            global escape_count, escape_timer
                             current_time = pygame.time.get_ticks()
                             
                             # Reset escape count if too much time has passed
@@ -1931,36 +1932,6 @@ def main():
                         # Handle ENTER to confirm quit when multiple escapes were pressed
                         elif event.key == pygame.K_RETURN and escape_count >= ESCAPE_THRESHOLD - 1:
                             running = False
-                        
-                        # Safe escape handling - ALWAYS ACTIVE (not blocked by tutorial)
-                        elif event.key == pygame.K_ESCAPE:
-                            # Safe escape menu system
-                            global escape_count, escape_timer
-                            current_time = pygame.time.get_ticks()
-                            
-                            # Reset escape count if too much time has passed
-                            if current_time - escape_timer > ESCAPE_TIMEOUT:
-                                escape_count = 0
-                            
-                            escape_count += 1
-                            escape_timer = current_time
-                            
-                            if escape_count >= ESCAPE_THRESHOLD:
-                                # Show quit confirmation after multiple escapes
-                                current_state = 'escape_menu'
-                                escape_count = 0  # Reset counter
-                            else:
-                                # First few escapes - show pause/menu hint
-                                if hasattr(game_state, 'messages'):
-                                    remaining = ESCAPE_THRESHOLD - escape_count
-                                    if remaining == 1:
-                                        game_state.add_message(f"Press ESCAPE {remaining} more time to access quit menu, or press ENTER to confirm quit")
-                                    else:
-                                        game_state.add_message(f"Press ESCAPE {remaining} more times to access quit menu")
-                                
-                                # Play UI sound
-                                if game_state and hasattr(game_state, 'sound_manager'):
-                                    game_state.sound_manager.play_sound('ui_click')
                         
                         # CRITICAL FIX: End turn handling - ALWAYS AVAILABLE when not blocked by modals
                         # This must come before other keyboard handling to prevent tutorial/overlay blocking
