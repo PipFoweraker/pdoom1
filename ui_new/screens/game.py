@@ -15,7 +15,7 @@ from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackS
 
 # Import new components
 from ..components.colours import *
-from ..components.typography import font_manager
+from ..components.typography import get_font_manager
 from ..layouts.three_column import ThreeColumnLayout
 
 # Global layout manager
@@ -127,6 +127,9 @@ def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) 
     """
     # Clear background with retro dark theme
     screen.fill(DARK_BG)
+    
+    # Initialize font manager
+    font_manager = get_font_manager()
     
     # Get fonts from font manager
     fonts = {
@@ -357,6 +360,9 @@ def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) 
     # Clear background with retro dark theme
     screen.fill(DARK_BG)
     
+    # Initialize font manager
+    font_manager = get_font_manager()
+    
     # Get fonts from font manager
     fonts = {
         'title': font_manager.get_font('title', h),
@@ -440,7 +446,7 @@ def draw_overlays_3column(screen: pygame.Surface, game_state: Any, w: int, h: in
         sys.path.insert(0, parent_dir)
     
     from ui import draw_opponents_panel as legacy_draw_opponents
-    legacy_draw_opponents(screen, game_state, w, h, font, small_font)
+    legacy_draw_opponents(screen, game_state, w, h, fonts['font'], fonts['small'])
 
 
 def draw_employee_blobs(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
@@ -525,6 +531,9 @@ def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) 
         w: Screen width
         h: Screen height
     """
+    # Initialize font manager
+    font_manager = get_font_manager()
+    
     # Fonts, scaled by screen size using new typography system
     title_font = font_manager.get_title_font(h)
     big_font = font_manager.get_big_font(h)
@@ -587,6 +596,11 @@ def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) 
     pygame.draw.rect(screen, (255, 60, 60), (doom_bar_x, doom_bar_y, filled, doom_bar_height))
 
     # Opponents information panel (between resources and actions)
+    # Import legacy function for now to maintain compatibility
+    parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    from ui import draw_opponents_panel
     draw_opponents_panel(screen, game_state, w, h, font, small_font)
 
     # Action buttons (left) - Enhanced with visual feedback

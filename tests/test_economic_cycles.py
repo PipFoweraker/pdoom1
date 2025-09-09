@@ -3,10 +3,65 @@
 Test script for Economic Cycles & Funding Volatility system (Issue #192)
 """
 
+import unittest
 from src.core.game_state import GameState
 
+
+class TestEconomicCycles(unittest.TestCase):
+    """Test cases for economic cycles functionality."""
+    
+    def test_economic_system_initialization(self):
+        """Test that economic system initializes correctly."""
+        gs = GameState('test-economic-cycles')
+        
+        # Assert basic components exist
+        self.assertTrue(hasattr(gs, 'economic_cycles'), "Economic cycles system should exist")
+        self.assertIsNotNone(gs.economic_cycles.current_state, "Economic state should be initialized")
+        self.assertIsNotNone(gs.economic_cycles.current_state.phase, "Economic phase should be set")
+        
+        # Assert funding multiplier is reasonable
+        multiplier = gs.economic_cycles.current_state.funding_multiplier
+        self.assertGreaterEqual(multiplier, 0.5, "Funding multiplier should not be below 0.5")
+        self.assertLessEqual(multiplier, 2.0, "Funding multiplier should not exceed 2.0")
+    
+    def test_economic_timeline_progression(self):
+        """Test economic phase transitions over time."""
+        gs = GameState('test-economic-cycles')
+        
+        # Test specific timeline points
+        timeline_tests = [
+            (0, "STABLE"),     # Starting phase
+            (25, "BOOM"),      # Should transition to boom  
+            (50, "BOOM"),      # Should remain in boom
+            (105, "CORRECTION"), # Should transition to correction
+            (160, "RECESSION"),  # Should be in recession
+        ]
+        
+        for turn, expected_phase in timeline_tests:
+            gs.economic_cycles.update_for_turn(turn)
+            actual_phase = gs.economic_cycles.current_state.phase.name
+            self.assertEqual(actual_phase, expected_phase, 
+                           f"Turn {turn}: Expected {expected_phase}, got {actual_phase}")
+    
+    def test_fundraising_multiplier_effects(self):
+        """Test that economic phases affect fundraising."""
+        gs = GameState('test-fundraising')
+        
+        # Get initial funding multiplier
+        initial_multiplier = gs.economic_cycles.current_state.funding_multiplier
+        self.assertIsInstance(initial_multiplier, (int, float), "Multiplier should be numeric")
+        
+        # Test that multiplier affects different economic phases
+        for turn in [0, 50, 150]:  # Different economic phases
+            gs.economic_cycles.update_for_turn(turn)
+            multiplier = gs.economic_cycles.current_state.funding_multiplier
+            self.assertGreaterEqual(multiplier, 0.3, "Multiplier should not be too low")
+            self.assertLessEqual(multiplier, 3.0, "Multiplier should not be too high")
+
+
 def test_economic_cycles():
-    """Test economic cycles functionality."""
+    """Legacy function for backward compatibility."""
+    # Keep the original print-based test as a demonstration function
     print("=== Testing Economic Cycles & Funding Volatility (Issue #192) ===")
     
     # Test 1: Basic initialization

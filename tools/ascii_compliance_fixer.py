@@ -20,7 +20,7 @@ class ASCIIComplianceFixer:
         # Common Unicode quotes
         '"': '"',  # Left double quotation mark  
         '"': '"',  # Right double quotation mark
-        ''''''': "'",  # Right single quotation mark
+        "\u2019": "'",  # Right single quotation mark
         
         # Common Unicode dashes
         '-': '-',  # En dash
