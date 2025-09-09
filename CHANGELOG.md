@@ -4,15 +4,23 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<<<<<<< HEAD
-## [0.2.4] - 2025-09-06
-### Added
-- **🏦 Economic Cycles & Funding Volatility (Issue #192)**: Complete historical AI funding timeline (2017-2025)
-- **🎮 New Player Experience Enhancement**: Improved onboarding with tutorial/intro selection
-- **🏆 Achievements & Enhanced Endgame System (Issue #195)**: Comprehensive achievement tracking and victory conditions
-- **⛓️ Technical Failure Cascades (Issue #193)**: Comprehensive failure cascade system modeling realistic organizational crisis management
-=======
-## [0.2.6] - 2025-09-08
+## [0.2.8] - 2025-09-09
+### Fixed
+- **🔧 Technical Debt Resolution**: Comprehensive cleanup of test infrastructure and CI pipeline
+  - Fixed keyboard shortcut test patch targets for proper UI component mocking (Issue #225)
+  - Improved responsive UI positioning calculations removing hardcoded values (Issue #228)
+  - Enhanced UI boundary checking with proper None value handling (Issue #230)
+  - Resolved 67 CI import errors with conditional imports for test environment compatibility
+  - Fixed critical linting errors (F821 undefined names, F823 scoping issues) for green CI status
+  - Cross-platform path handling improvements for Windows/Linux compatibility
+
+### Changed
+- **🐍 Python Version Requirements**: Completed Python 3.8 support removal
+  - Updated GitHub Actions workflows to test Python 3.9, 3.10, 3.11, 3.12 only
+  - Cleaned up all Python 3.8 references from CI pipeline and documentation
+  - Enhanced test stability with 645+ tests passing (improved from 15 failures)
+
+## [0.2.7] - 2025-09-08
 ### Added
 - **🏢 Lab Name System**: Implemented pseudonymous lab naming for enhanced immersion and leaderboard integration
   - Added 104 unique AI lab names across 87 different themes (e.g., "Axiom Labs", "Beacon AI", "Cerberus Systems")
@@ -22,7 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - CSV asset system (`assets/lab_names.csv`) for easy lab name management
   - Comprehensive lab name manager service with theme-based organization
   - Backward compatibility with existing save files and leaderboard data
->>>>>>> origin/main
 
 ## [0.2.3] - 2025-09-05
 ### Changed
