@@ -157,6 +157,6 @@ def create_spacebar_test_function():
 test_spacebar = create_spacebar_test_function()
 
 if __name__ == "__main__":
-    print("UI Interaction Fixes Module")
-    print("This module provides diagnostic and fix functions for UI interaction issues.")
-    print("Import and use the functions in main.py for debugging and fixing issues.")
+    # print("UI Interaction Fixes Module")
+    # print("This module provides diagnostic and fix functions for UI interaction issues.")
+    # print("Import and use the functions in main.py for debugging and fixing issues.")

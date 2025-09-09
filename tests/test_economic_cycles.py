@@ -31,8 +31,9 @@ class TestEconomicCycles(unittest.TestCase):
         # Test specific timeline points
         timeline_tests = [
             (0, "STABLE"),     # Starting phase
-            (25, "BOOM"),      # Should transition to boom  
-            (50, "BOOM"),      # Should remain in boom
+            (25, "STABLE"),   # Last turn of STABLE phase
+            (26, "BOOM"),     # First turn of BOOM phase
+            (50, "BOOM"),     # Should remain in boom
             (105, "CORRECTION"), # Should transition to correction
             (160, "RECESSION"),  # Should be in recession
         ]
