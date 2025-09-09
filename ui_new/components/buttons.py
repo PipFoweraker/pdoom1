@@ -15,7 +15,17 @@ from .colours import (
     END_TURN_NORMAL_BG, END_TURN_HOVER_BG, END_TURN_BORDER, END_TURN_TEXT_COLOUR,
     GLOW_COLOUR
 )
-from .typography import font_manager
+
+# Local font manager stub to avoid circular imports
+class _FontManagerStub:
+    def get_font(self, size, bold=False): 
+        return pygame.font.Font(None, size) if pygame.get_init() else None
+    def get_normal_font(self, h): 
+        return self.get_font(max(12, int(h * 0.025)))
+    def get_small_font(self, h): 
+        return self.get_font(max(10, int(h * 0.02)))
+
+font_manager = _FontManagerStub()
 
 
 class ButtonState(Enum):

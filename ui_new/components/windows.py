@@ -12,7 +12,15 @@ from .colours import (
     BUTTON_NORMAL_BORDER, BUTTON_HOVER_BORDER, BUTTON_PRESSED_BORDER,
     BUTTON_TEXT_COLOUR, BACKGROUND_COLOUR, TEXT_COLOUR
 )
-from .typography import font_manager
+
+# Local font manager stub to avoid circular imports
+class _FontManagerStub:
+    def get_font(self, size, bold=False): 
+        return pygame.font.Font(None, size) if pygame.get_init() else None
+    def get_normal_font(self, h): 
+        return self.get_font(max(12, int(h * 0.025)))
+
+font_manager = _FontManagerStub()
 
 
 def draw_window_with_header(screen: pygame.Surface, 

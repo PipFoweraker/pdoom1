@@ -36,7 +36,8 @@ class TestSettingsFlow(unittest.TestCase):
             "difficulty": "DUMMY",
             "music_volume": 123,
             "sound_volume": 123,
-            "graphics_quality": "DUMMY"
+            "graphics_quality": "DUMMY",
+            "safety_level": "STANDARD"
         }
     
     def tearDown(self):

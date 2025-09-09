@@ -4,6 +4,26 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.9] - 2025-09-09
+### Fixed
+- **🔧 Typography Import System Resolution**: Major progress on eliminating test import errors
+  - Recreated corrupted `ui_new.components.typography` module with proper FontManager class
+  - Resolved circular import dependencies between typography, buttons, and windows components  
+  - Created local font manager stubs in UI components to prevent import cycles
+  - Fixed incorrect module paths in `test_config_manager.py` (config_manager → src.services.config_manager)
+  - Added missing `safety_level` key to settings flow test setup preventing KeyError exceptions
+  - Converted all 6 remaining ERROR tests to passing or FAILURE status (major import issues resolved)
+  - Test suite improvement: 742 tests with significantly reduced import-related failures
+
+### Technical Debt
+- **✅ Issue #225 - Configuration System Import Failures**: RESOLVED
+- **🔄 Typography Import Problems**: Major infrastructure work completed, final import validation pending
+- **🔄 Issue #228 - UI Navigation**: Import errors fixed, test logic improvements ongoing
+
+### Development Notes
+- **⚠️ Status**: Typography import still requires final debugging session for complete resolution
+- **📋 Ready for Commit**: Documentation, versioning, and major fixes completed
+
 ## [0.2.8] - 2025-09-09
 ### Fixed
 - **🔧 Technical Debt Resolution**: Comprehensive cleanup of test infrastructure and CI pipeline

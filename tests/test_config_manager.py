@@ -258,7 +258,7 @@ class TestConfigSystemIntegration(unittest.TestCase):
             config_dir = os.path.join(temp_dir, 'configs')
             with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
                 # Create a new manager instance for testing
-                with patch('config_manager.config_manager') as mock_global_manager:
+                with patch('src.services.config_manager.config_manager') as mock_global_manager:
                     test_manager = ConfigManager()
                     mock_global_manager.create_default_config_if_needed = test_manager.create_default_config_if_needed
                     
@@ -273,7 +273,7 @@ class TestConfigSystemIntegration(unittest.TestCase):
     def test_get_current_config_function(self):
         """Test the convenience function for getting current config."""
         # Mock the global config manager
-        with patch('config_manager.config_manager') as mock_manager:
+        with patch('src.services.config_manager.config_manager') as mock_manager:
             mock_config = {'test': 'value'}
             mock_manager.get_current_config.return_value = mock_config
             
