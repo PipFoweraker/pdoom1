@@ -16,9 +16,29 @@
         "summary": "Completed comprehensive type annotations for ui.py and 60% of game_state.py, resolving 1,100-1,600 pylance issues",
         "commit": "867127d"
       },
-      "word_count": 620,
-      "file_size": 5288,
-      "modified_at": "2025-09-10T08:09:49.324360"
+      "word_count": 606,
+      "file_size": 5162,
+      "modified_at": "2025-09-10T08:13:40.713782"
+    },
+    {
+      "filename": "2025-09-10-type-annotation-sprint.md",
+      "slug": "2025-09-10-type-annotation-sprint",
+      "path": "entries/2025-09-10-type-annotation-sprint.md",
+      "frontmatter": {
+        "title": "Type Annotation Sprint: game_state.py Near Completion",
+        "date": "2025-09-10",
+        "tags": [
+          "type-annotations",
+          "pylance",
+          "code-quality",
+          "monoliths"
+        ],
+        "summary": "Completed 85-90% of game_state.py type annotations with 25+ methods annotated across core systems",
+        "commit": "08180d1"
+      },
+      "word_count": 517,
+      "file_size": 4598,
+      "modified_at": "2025-09-10T09:02:34.247933"
     }
   ],
   "config": {
@@ -62,9 +82,9 @@
   },
   "errors": [],
   "stats": {
-    "total_entries": 1,
+    "total_entries": 2,
     "total_errors": 0,
     "latest_entry": "2025-09-10"
   },
-  "generated_at": "2025-09-10T08:11:31.207886"
+  "generated_at": "2025-09-10T09:03:03.051272"
 }
