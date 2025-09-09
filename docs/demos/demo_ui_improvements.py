@@ -29,7 +29,7 @@ def main():
         {
             'title': 'Safety Research',
             'description': 'Conduct research into AI safety measures to reduce existential risk. This is the core activity of your lab.',
-            'details': ['Cost: $100, 1 AP', '✓ Available to execute', 'Reduces P(Doom) by 3-5 points']
+            'details': ['Cost: $100, 1 AP', '[OK] Available to execute', 'Reduces P(Doom) by 3-5 points']
         },
         {
             'title': 'Money',

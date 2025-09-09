@@ -521,7 +521,7 @@ def draw_start_game_submenu(screen, w, h, selected_item):
     inst_font = pygame.font.SysFont('Consolas', int(h*0.02))
     instructions = [
         "Use arrow keys or mouse to navigate",
-        "Press Enter or click to select • Press Escape to go back"
+        "Press Enter or click to select ? Press Escape to go back"
     ]
     
     inst_y = int(h * 0.85)
@@ -3228,7 +3228,7 @@ def draw_hiring_dialog(screen, hiring_dialog, w, h):
     
     # Keyboard shortcut hint on button  
     shortcut_font = pygame.font.Font(None, int(h * 0.018))
-    shortcut_text = shortcut_font.render("(← or Backspace)", True, (200, 200, 200))
+    shortcut_text = shortcut_font.render("(? or Backspace)", True, (200, 200, 200))
     shortcut_rect = shortcut_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery + 10))
     screen.blit(shortcut_text, shortcut_rect)
     
@@ -3240,7 +3240,7 @@ def draw_hiring_dialog(screen, hiring_dialog, w, h):
     # Enhanced instructions with clear keyboard mapping
     instructions = [
         "Click an employee type to hire them",
-        "← (Left Arrow) or Backspace to cancel • Escape for emergency exit",
+        "? (Left Arrow) or Backspace to cancel ? Escape for emergency exit",
         "One function per key - simple navigation"
     ]
     

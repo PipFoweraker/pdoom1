@@ -39,7 +39,7 @@ def test_hint_system_fixes():
         
         # At game start, staff hire hint should NOT be pending
         assert game_state._pending_first_time_help is None, "No hints should be pending at game start"
-        print("   ✅ No staff hire hint at game start")
+        print("   ? No staff hire hint at game start")
         
         # Test 2: First hiring action should show hint (if enabled)
         print("\n2. Testing first hiring action...")
@@ -50,10 +50,10 @@ def test_hint_system_fixes():
         # Now hint should be pending (since we're at starting staff count and haven't hired yet)
         if onboarding.are_hints_enabled():
             assert game_state._pending_first_time_help == 'first_staff_hire', "Staff hire hint should be pending after hiring dialog"
-            print("   ✅ Staff hire hint triggered on first hiring attempt")
+            print("   ? Staff hire hint triggered on first hiring attempt")
         else:
             assert game_state._pending_first_time_help is None, "No hint should be pending when hints disabled"
-            print("   ✅ No hint when hints disabled")
+            print("   ? No hint when hints disabled")
         
         # Test 3: After actual hiring, hint should not show again
         print("\n3. Testing hint behavior after actual hiring...")
@@ -68,7 +68,7 @@ def test_hint_system_fixes():
         # Try hiring dialog again - hint should NOT show this time
         game_state._trigger_hiring_dialog()
         assert game_state._pending_first_time_help is None, "Hint should not show after first hire"
-        print("   ✅ Hint does not repeat after first hire")
+        print("   ? Hint does not repeat after first hire")
         
         # Test 4: Test hint reset functionality
         print("\n4. Testing hint reset functionality...")
@@ -83,7 +83,7 @@ def test_hint_system_fixes():
         game_state._trigger_hiring_dialog()
         if onboarding.are_hints_enabled():
             assert game_state._pending_first_time_help == 'first_staff_hire', "Hint should show again after reset"
-            print("   ✅ Hint shows again after reset (Factorio-style)")
+            print("   ? Hint shows again after reset (Factorio-style)")
         
         # Test 5: Test hint status reporting
         print("\n5. Testing hint status reporting...")
@@ -92,7 +92,7 @@ def test_hint_system_fixes():
         assert isinstance(hint_status, dict), "Hint status should be a dictionary"
         assert 'first_staff_hire' in hint_status, "Staff hire hint should be in status"
         print(f"   Hint status: {hint_status}")
-        print("   ✅ Hint status reporting works")
+        print("   ? Hint status reporting works")
         
         # Test 6: Test configuration-based hint enabling/disabling
         print("\n6. Testing configuration-based hint control...")
@@ -103,13 +103,13 @@ def test_hint_system_fixes():
         print(f"   Tutorials enabled: {tutorials_enabled}")
         assert isinstance(hints_enabled, bool), "Hints enabled should be boolean"
         assert isinstance(tutorials_enabled, bool), "Tutorials enabled should be boolean"
-        print("   ✅ Configuration-based control works")
+        print("   ? Configuration-based control works")
         
-        print("\n🎉 All hint system tests passed!")
+        print("\n[CELEBRATION] All hint system tests passed!")
         return True
         
     except Exception as e:
-        print(f"\n❌ Test failed with error: {e}")
+        print(f"\n? Test failed with error: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -145,11 +145,11 @@ def test_config_consistency():
         assert 'first_time_help' in hint_settings, "first_time_help setting should exist"
         assert 'tutorial_enabled' in hint_settings, "tutorial_enabled setting should exist"
         
-        print("   ✅ Config consistency tests passed")
+        print("   ? Config consistency tests passed")
         return True
         
     except Exception as e:
-        print(f"   ❌ Config consistency test failed: {e}")
+        print(f"   ? Config consistency test failed: {e}")
         return False
 
 if __name__ == "__main__":
@@ -163,22 +163,22 @@ if __name__ == "__main__":
         success &= test_hint_system_fixes()
         
         if success:
-            print(f"\n🎉 All tests passed! Hint system fixes are working correctly.")
+            print(f"\n[CELEBRATION] All tests passed! Hint system fixes are working correctly.")
             print("\nFixes implemented:")
-            print("- ✅ Fixed staff hire popup showing at game start")
-            print("- ✅ Proper hints vs tutorial separation") 
-            print("- ✅ Factorio-style hint behavior (show once, then dismiss)")
-            print("- ✅ Hints controlled by first_time_help config setting")
-            print("- ✅ Ctrl+R to reset all hints")
-            print("- ✅ Improved settings screen with hint status")
-            print("- ✅ Config file consistency fixed")
+            print("- ? Fixed staff hire popup showing at game start")
+            print("- ? Proper hints vs tutorial separation") 
+            print("- ? Factorio-style hint behavior (show once, then dismiss)")
+            print("- ? Hints controlled by first_time_help config setting")
+            print("- ? Ctrl+R to reset all hints")
+            print("- ? Improved settings screen with hint status")
+            print("- ? Config file consistency fixed")
             sys.exit(0)
         else:
-            print(f"\n💥 Some tests failed. Please check the implementation.")
+            print(f"\n[EXPLOSION] Some tests failed. Please check the implementation.")
             sys.exit(1)
             
     except ImportError as e:
-        print(f"\n⚠️  Could not import game modules: {e}")
+        print(f"\n[WARNING]?  Could not import game modules: {e}")
         print("This is expected if running outside the game environment.")
         print("The fixes have been implemented and should work in the actual game.")
         sys.exit(0)

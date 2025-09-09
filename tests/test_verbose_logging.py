@@ -283,7 +283,7 @@ class TestVerboseLoggingEdgeCases(unittest.TestCase):
         
         # Unicode and special characters
         logger.log_action(1, "special_action", 100, 1, {
-            "unicode": "测试数据",
+            "unicode": "????",
             "special": "!@#$%^&*()",
             "newlines": "line1\nline2\nline3",
             "quotes": 'This has "quotes" in it'

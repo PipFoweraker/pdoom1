@@ -104,18 +104,18 @@ def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0
     if scroll_offset > 0:
         # Up arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        up_arrow = arrow_font.render("▲", True, (255, 255, 255))
+        up_arrow = arrow_font.render("?", True, (255, 255, 255))
         screen.blit(up_arrow, (content_x + content_width - 30, text_area_y))
     
     if (start_line + visible_lines) < len(lines):
         # Down arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        down_arrow = arrow_font.render("▼", True, (255, 255, 255))
+        down_arrow = arrow_font.render("?", True, (255, 255, 255))
         screen.blit(down_arrow, (content_x + content_width - 30, text_area_y + text_area_height - 30))
     
     # Instructions at bottom
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    instructions = "Use arrow keys to scroll • Press Escape or click to return to menu"
+    instructions = "Use arrow keys to scroll ? Press Escape or click to return to menu"
     inst_surf = instruction_font.render(instructions, True, (180, 200, 255))
     inst_x = w // 2 - inst_surf.get_width() // 2
     inst_y = content_y + content_height + int(h * 0.03)
@@ -162,7 +162,7 @@ def draw_window_with_header(screen, rect, title, content=None, minimized=False, 
     title_y = header_rect.y + (header_height - title_surf.get_height()) // 2
     screen.blit(title_surf, (title_x, title_y))
     
-    # Draw minimize button (□ or ─ based on state)
+    # Draw minimize button (? or ? based on state)
     button_size = 20
     button_margin = 5
     minimize_button_rect = pygame.Rect(
@@ -179,14 +179,14 @@ def draw_window_with_header(screen, rect, title, content=None, minimized=False, 
     # Button icon
     icon_color = (255, 255, 255)
     if minimized:
-        # Restore icon (□)
+        # Restore icon (?)
         icon_rect = pygame.Rect(
             minimize_button_rect.x + 4, minimize_button_rect.y + 4,
             minimize_button_rect.width - 8, minimize_button_rect.height - 8
         )
         pygame.draw.rect(screen, icon_color, icon_rect, 2)
     else:
-        # Minimize icon (─)
+        # Minimize icon (?)
         line_y = minimize_button_rect.centery
         line_start = minimize_button_rect.x + 4
         line_end = minimize_button_rect.right - 4

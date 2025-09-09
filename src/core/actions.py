@@ -225,7 +225,7 @@ def execute_research_action(gs, action_name: str, base_doom_reduction: int, base
     # Unlock research quality system on first use
     if not gs.research_quality_unlocked:
         gs.research_quality_unlocked = True
-        gs.messages.append("🔬 Research Quality System unlocked! Choose your approach wisely.")
+        gs.messages.append("? Research Quality System unlocked! Choose your approach wisely.")
     
     # Generate media story if research has significant impact
     if hasattr(gs, 'media_system') and reputation_change >= 2:
@@ -334,7 +334,7 @@ def execute_safety_audit(gs):
         
     # Small chance to discover near-miss that could have been a failure
     if random.random() < 0.3:
-        gs.messages.append("⚠️ Audit discovers potential failure that was narrowly avoided!")
+        gs.messages.append("[WARNING]? Audit discovers potential failure that was narrowly avoided!")
         if hasattr(gs, 'technical_failures'):
             gs.technical_failures.near_miss_count += 1
 

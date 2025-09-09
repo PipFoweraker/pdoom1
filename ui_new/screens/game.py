@@ -808,12 +808,12 @@ def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) 
         # Scroll indicators
         if scroll_offset > 0:
             # Up arrow indicator
-            up_arrow = small_font.render("▲", True, (180, 255, 180))
+            up_arrow = small_font.render("?", True, (180, 255, 180))
             screen.blit(up_arrow, (log_x + log_width - 25, content_y + 5))
         
         if len(game_state.messages) > max_visible_lines + scroll_offset:
             # Down arrow indicator
-            down_arrow = small_font.render("▼", True, (180, 255, 180))
+            down_arrow = small_font.render("?", True, (180, 255, 180))
             screen.blit(down_arrow, (log_x + log_width - 25, content_y + content_height - 20))
             
             

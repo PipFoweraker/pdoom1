@@ -93,7 +93,7 @@ class ErrorTracker:
             
             # Add UI feedback message if callback is available
             if self.message_callback:
-                self.message_callback("🔊 Error pattern detected! (Easter egg activated)")
+                self.message_callback("? Error pattern detected! (Easter egg activated)")
             
             # Update cooldown timer
             self.last_error_beep_time = current_time_ms

@@ -286,12 +286,12 @@ class TechnicalFailureCascades:
         
         # Create near-miss message
         self.game_state.messages.append(
-            f"⚠️ NEAR MISS: {failure.description} - incident avoided by quick response!"
+            f"[WARNING]? NEAR MISS: {failure.description} - incident avoided by quick response!"
         )
         
         # Near-misses provide learning opportunities with no immediate penalties
         self.game_state.messages.append(
-            "🎓 Teams conduct post-incident review to prevent future occurrences."
+            "? Teams conduct post-incident review to prevent future occurrences."
         )
         
         # Add to lessons learned
@@ -302,7 +302,7 @@ class TechnicalFailureCascades:
         # Small reputation bonus for good incident response
         if self.incident_response_level > 2:
             self.game_state._add('reputation', 1)
-            self.game_state.messages.append("📈 Strong incident response protocols earn recognition.")
+            self.game_state.messages.append("? Strong incident response protocols earn recognition.")
             
     def _trigger_actual_failure(self, failure: FailureEvent) -> None:
         """Handle an actual failure event."""
@@ -316,7 +316,7 @@ class TechnicalFailureCascades:
         # Create failure message
         severity_text = ["Minor", "Moderate", "Serious", "Major", "Critical"][min(4, failure.severity // 2)]
         self.game_state.messages.append(
-            f"🚨 {severity_text.upper()} FAILURE: {failure.description}"
+            f"[ALERT] {severity_text.upper()} FAILURE: {failure.description}"
         )
         
         # Check if this triggers a cascade
@@ -337,10 +337,10 @@ class TechnicalFailureCascades:
         self.active_cascades.append(cascade)
         
         self.game_state.messages.append(
-            "⚠️ CASCADE ALERT: Initial failure may trigger additional failures!"
+            "[WARNING]? CASCADE ALERT: Initial failure may trigger additional failures!"
         )
         self.game_state.messages.append(
-            "🔧 Incident response teams mobilizing to contain the situation."
+            "? Incident response teams mobilizing to contain the situation."
         )
         
         # Immediate cascade response choice
@@ -358,7 +358,7 @@ class TechnicalFailureCascades:
         
         def handle_transparency(gs):
             """Full transparency - learn from failure but take reputation hit."""
-            gs.messages.append("📢 TRANSPARENCY: Full incident report published publicly.")
+            gs.messages.append("? TRANSPARENCY: Full incident report published publicly.")
             gs._add('reputation', -failure.severity // 2)  # Immediate reputation cost
             
             # Long-term benefits
@@ -367,11 +367,11 @@ class TechnicalFailureCascades:
                 self.lessons_learned[failure.failure_type] = 0
             self.lessons_learned[failure.failure_type] += 2  # Double learning
             
-            gs.messages.append("🎓 Transparent handling builds long-term trust and learning.")
+            gs.messages.append("? Transparent handling builds long-term trust and learning.")
             
         def handle_investigation(gs):
             """Thorough investigation - balanced approach."""
-            gs.messages.append("🔍 INVESTIGATION: Internal review conducted, limited public disclosure.")
+            gs.messages.append("? INVESTIGATION: Internal review conducted, limited public disclosure.")
             gs._add('reputation', -max(1, failure.severity // 3))  # Reduced reputation cost
             gs._add('money', -random.randint(10, 25))  # Investigation costs
             
@@ -382,7 +382,7 @@ class TechnicalFailureCascades:
             
         def handle_cover_up(gs):
             """Cover up - preserve reputation but increase future risks."""
-            gs.messages.append("🤐 COVER-UP: Incident classified, minimal public disclosure.")
+            gs.messages.append("? COVER-UP: Incident classified, minimal public disclosure.")
             
             # No immediate reputation loss but accumulate cover-up debt
             self.cover_up_debt += failure.severity
@@ -392,7 +392,7 @@ class TechnicalFailureCascades:
             if hasattr(gs, 'technical_debt'):
                 gs.technical_debt.add_debt(failure.severity // 2)
                 
-            gs.messages.append("⚠️ Cover-up successful but may increase future risks.")
+            gs.messages.append("[WARNING]? Cover-up successful but may increase future risks.")
             
         # Use enhanced events if available
         if hasattr(self.game_state, 'enhanced_events_enabled') and self.game_state.enhanced_events_enabled:
@@ -429,42 +429,42 @@ class TechnicalFailureCascades:
         
         def handle_all_hands(gs):
             """All-hands emergency response."""
-            gs.messages.append("🚨 ALL HANDS: Emergency response mobilized across all teams.")
+            gs.messages.append("[ALERT] ALL HANDS: Emergency response mobilized across all teams.")
             cascade.is_contained = True
             cascade.transparency_level = 0.8  # High visibility response
             
             # High cost but effective containment
             gs._add('money', -random.randint(50, 100))
             gs._add('staff', -random.randint(1, 2))  # Some staff burnout
-            gs.messages.append("💪 Aggressive response contains cascade but exhausts resources.")
+            gs.messages.append("? Aggressive response contains cascade but exhausts resources.")
             
         def handle_systematic(gs):
             """Systematic containment approach."""
-            gs.messages.append("📋 SYSTEMATIC: Following established incident response protocols.")
+            gs.messages.append("[LIST] SYSTEMATIC: Following established incident response protocols.")
             
             # Moderate effectiveness based on incident response level
             containment_chance = 0.5 + (self.incident_response_level * 0.1)
             if random.random() < containment_chance:
                 cascade.is_contained = True
-                gs.messages.append("✅ Systematic approach successfully contains cascade.")
+                gs.messages.append("? Systematic approach successfully contains cascade.")
             else:
-                gs.messages.append("⚠️ Protocols help but cascade continues to develop.")
+                gs.messages.append("[WARNING]? Protocols help but cascade continues to develop.")
                 
             cascade.transparency_level = 0.6
             gs._add('money', -random.randint(20, 40))
             
         def handle_minimize(gs):
             """Minimize response - try to contain quietly."""
-            gs.messages.append("🤫 MINIMIZE: Quiet containment attempt to limit visibility.")
+            gs.messages.append("? MINIMIZE: Quiet containment attempt to limit visibility.")
             cascade.transparency_level = 0.2  # Low visibility
             
             # Lower effectiveness but less cost
             containment_chance = 0.3 + (self.incident_response_level * 0.05)
             if random.random() < containment_chance:
                 cascade.is_contained = True
-                gs.messages.append("🤞 Minimal response surprisingly effective.")
+                gs.messages.append("? Minimal response surprisingly effective.")
             else:
-                gs.messages.append("❌ Insufficient response allows cascade to worsen.")
+                gs.messages.append("? Insufficient response allows cascade to worsen.")
                 # Add extra subsequent failure
                 self._add_cascade_failure(cascade)
                 
@@ -488,7 +488,7 @@ class TechnicalFailureCascades:
             
         # Auto-resolve after 3 turns
         if cascade.total_turns >= 3:
-            self.game_state.messages.append("🔧 Cascade eventually contained through persistent efforts.")
+            self.game_state.messages.append("? Cascade eventually contained through persistent efforts.")
             self._resolve_cascade(cascade)
             
     def _add_cascade_failure(self, cascade: CascadeState) -> None:
@@ -511,7 +511,7 @@ class TechnicalFailureCascades:
                 self.game_state._add(resource, amount)
                 
         self.game_state.messages.append(
-            f"⛓️ CASCADE: {subsequent_failure.description}"
+            f"?? CASCADE: {subsequent_failure.description}"
         )
         
     def _resolve_cascade(self, cascade: CascadeState) -> None:
@@ -519,18 +519,18 @@ class TechnicalFailureCascades:
         total_failures = 1 + len(cascade.subsequent_failures)
         
         self.game_state.messages.append(
-            f"🏁 CASCADE RESOLVED: {total_failures} failures over {cascade.total_turns} turns."
+            f"? CASCADE RESOLVED: {total_failures} failures over {cascade.total_turns} turns."
         )
         
         # Apply long-term consequences based on response
         if cascade.transparency_level > 0.7:
             # High transparency builds trust
             self.transparency_reputation += 1.0
-            self.game_state.messages.append("📈 Transparent cascade handling builds stakeholder trust.")
+            self.game_state.messages.append("? Transparent cascade handling builds stakeholder trust.")
         elif cascade.transparency_level < 0.3:
             # Low transparency increases cover-up debt
             self.cover_up_debt += total_failures * 2
-            self.game_state.messages.append("⚠️ Quiet handling increases institutional risk.")
+            self.game_state.messages.append("[WARNING]? Quiet handling increases institutional risk.")
             
         # Learning from cascades
         for failure in [cascade.initiating_failure] + cascade.subsequent_failures:
@@ -568,7 +568,7 @@ class TechnicalFailureCascades:
             self.game_state._add('money', -cost)
             self.incident_response_level += 1
             self.game_state.messages.append(
-                f"📋 Incident Response upgraded to level {self.incident_response_level}"
+                f"[LIST] Incident Response upgraded to level {self.incident_response_level}"
             )
             return True
         return False
@@ -579,7 +579,7 @@ class TechnicalFailureCascades:
             self.game_state._add('money', -cost)
             self.monitoring_systems += 1
             self.game_state.messages.append(
-                f"📡 Monitoring Systems upgraded to level {self.monitoring_systems}"
+                f"? Monitoring Systems upgraded to level {self.monitoring_systems}"
             )
             return True
         return False
@@ -590,7 +590,7 @@ class TechnicalFailureCascades:
             self.game_state._add('money', -cost)
             self.communication_protocols += 1
             self.game_state.messages.append(
-                f"📞 Communication Protocols upgraded to level {self.communication_protocols}"
+                f"? Communication Protocols upgraded to level {self.communication_protocols}"
             )
             return True
         return False

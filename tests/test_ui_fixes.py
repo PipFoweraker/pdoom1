@@ -87,11 +87,11 @@ def test_ui_fixes():
         print(f"   Blocking conditions: {blocking}")
         assert 'Popup events are pending' in blocking
         
-        print("\n✅ All UI interaction tests passed!")
+        print("\n? All UI interaction tests passed!")
         return True
         
     except Exception as e:
-        print(f"\n❌ Test failed with error: {e}")
+        print(f"\n? Test failed with error: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -125,11 +125,11 @@ def test_spacebar_priority():
         # With our fix, tutorial overlay should be in blocking but end turn should still be available
         # through the dedicated end turn handler
         
-        print("✅ Spacebar priority test passed!")
+        print("? Spacebar priority test passed!")
         return True
         
     except Exception as e:
-        print(f"❌ Spacebar priority test failed: {e}")
+        print(f"? Spacebar priority test failed: {e}")
         return False
 
 if __name__ == "__main__":
@@ -143,7 +143,7 @@ if __name__ == "__main__":
         success &= test_spacebar_priority()
         
         if success:
-            print(f"\n🎉 All tests passed! UI interaction fixes are working correctly.")
+            print(f"\n[CELEBRATION] All tests passed! UI interaction fixes are working correctly.")
             print("\nFixes implemented:")
             print("- Spacebar end turn available even during tutorial")
             print("- Automatic cleanup for stuck tutorial overlays") 
@@ -153,11 +153,11 @@ if __name__ == "__main__":
             print("- Better feedback when spacebar is blocked")
             sys.exit(0)
         else:
-            print(f"\n💥 Some tests failed. Please check the implementation.")
+            print(f"\n[EXPLOSION] Some tests failed. Please check the implementation.")
             sys.exit(1)
             
     except ImportError as e:
-        print(f"\n⚠️  Could not import game modules: {e}")
+        print(f"\n[WARNING]?  Could not import game modules: {e}")
         print("This is expected if running outside the game environment.")
         print("The fixes have been implemented and should work in the actual game.")
         sys.exit(0)

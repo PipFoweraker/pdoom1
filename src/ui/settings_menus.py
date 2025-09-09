@@ -64,11 +64,11 @@ def draw_settings_main_menu(screen: pygame.Surface, w: int, h: int, selected_ite
     
     # Menu items with descriptions
     settings_options = [
-        ("🔊 Audio Settings", "Configure sound effects and volume levels"),
-        ("🎮 Gameplay Settings", "Adjust difficulty and game mechanics"),
-        ("♿ Accessibility", "Visual and interaction accessibility options"),
-        ("⌨️ Keybindings", "Customize keyboard shortcuts and controls"),
-        ("← Back to Main Menu", "Return to the main menu")
+        ("? Audio Settings", "Configure sound effects and volume levels"),
+        ("[GAME] Gameplay Settings", "Adjust difficulty and game mechanics"),
+        ("? Accessibility", "Visual and interaction accessibility options"),
+        ("?? Keybindings", "Customize keyboard shortcuts and controls"),
+        ("? Back to Main Menu", "Return to the main menu")
     ]
     
     # Button layout
@@ -177,7 +177,7 @@ def _draw_config_selection(screen: pygame.Surface, w: int, h: int,
     center_x = w // 2
     
     # Show available configs + option to create new + option to set seed
-    options = available_configs + ["Create New Configuration", "Set Custom Seed", "← Back"]
+    options = available_configs + ["Create New Configuration", "Set Custom Seed", "? Back"]
     
     for i, option in enumerate(options):
         button_x = center_x - button_width // 2
@@ -194,7 +194,7 @@ def _draw_config_selection(screen: pygame.Surface, w: int, h: int,
         display_text = option
         if i < len(available_configs):
             if option == current_config_name:
-                display_text = f"● {option} (ACTIVE)"
+                display_text = f"? {option} (ACTIVE)"
                 
         visual_feedback.draw_button(
             screen, button_rect, display_text, button_state,
@@ -300,7 +300,7 @@ def handle_game_config_click(mouse_pos: Tuple[int, int], w: int, h: int,
         
         mx, my = mouse_pos
         
-        options = available_configs + ["Create New Configuration", "Set Custom Seed", "← Back"]
+        options = available_configs + ["Create New Configuration", "Set Custom Seed", "? Back"]
         
         for i, option in enumerate(options):
             button_x = center_x - button_width // 2
@@ -314,7 +314,7 @@ def handle_game_config_click(mouse_pos: Tuple[int, int], w: int, h: int,
                     return ("create_config", None)
                 elif option == "Set Custom Seed":
                     return ("set_seed", None)
-                elif option == "← Back":
+                elif option == "? Back":
                     return ("back", None)
                 break
     

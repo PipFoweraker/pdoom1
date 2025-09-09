@@ -89,7 +89,7 @@ class TestDailyNews(unittest.TestCase):
         """Test that daily news is generated."""
         news = self.game_state.get_daily_news()
         self.assertIsInstance(news, str)
-        self.assertTrue(news.startswith("📰 Day"))
+        self.assertTrue(news.startswith("[NEWS] Day"))
         self.assertTrue(len(news) > 20)  # Should be a meaningful message
     
     def test_daily_news_consistency(self):
@@ -163,7 +163,7 @@ class TestGameFlowIntegration(unittest.TestCase):
         self.game_state.end_turn()
         
         # Check that news was added
-        has_news = any("📰" in msg for msg in self.game_state.messages)
+        has_news = any("[NEWS]" in msg for msg in self.game_state.messages)
         self.assertTrue(has_news, "Daily news should be added to messages")
         
         # Check that delayed action was processed

@@ -142,7 +142,7 @@ def draw_keybinding_menu(screen, w, h, selected_item):
     # Add special menu items
     all_bindings.extend([
         ("reset_defaults", "Reset to Defaults", ""),
-        ("back_to_menu", "← Back to Main Menu", "")
+        ("back_to_menu", "? Back to Main Menu", "")
     ])
     
     # Draw keybinding options
@@ -179,7 +179,7 @@ def draw_keybinding_menu(screen, w, h, selected_item):
     special_y = int(h * 0.85)
     for i, (action_key, display_name, key_display) in enumerate([
         ("reset_defaults", "Reset to Defaults", ""),
-        ("back_to_menu", "← Back to Main Menu", "")
+        ("back_to_menu", "? Back to Main Menu", "")
     ]):
         y_pos = special_y + i * spacing
         draw_keybinding_item(screen, w, y_pos, button_width, button_height,
@@ -190,7 +190,7 @@ def draw_keybinding_menu(screen, w, h, selected_item):
     # Instructions
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.018))
     instructions = [
-        "Use ↑↓ arrows to navigate, ENTER to change keybinding",
+        "Use ?? arrows to navigate, ENTER to change keybinding",
         "ESC to go back to main menu",
         "Click on any button to change its keybinding"
     ]

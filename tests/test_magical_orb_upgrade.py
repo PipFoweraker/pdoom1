@@ -130,7 +130,7 @@ class TestMagicalOrbUpgrade(unittest.TestCase):
         
         # Check for enhanced messaging
         message_text = " ".join(self.game_state.messages)
-        self.assertIn("🔮", message_text, "Should have magical orb indicators")
+        self.assertIn("[ORB]", message_text, "Should have magical orb indicators")
         self.assertIn("MAGICAL ORB", message_text, "Should mention magical orb")
         
     def test_opponent_stats_enhanced_discovery(self):

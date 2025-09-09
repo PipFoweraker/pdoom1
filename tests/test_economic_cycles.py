@@ -12,9 +12,9 @@ def test_economic_cycles():
     # Test 1: Basic initialization
     print("\n1. Testing basic initialization...")
     gs = GameState('test-economic-cycles')
-    print(f"✓ Economic system loaded: {hasattr(gs, 'economic_cycles')}")
-    print(f"✓ Current phase: {gs.economic_cycles.current_state.phase.name}")
-    print(f"✓ Funding multiplier: {gs.economic_cycles.current_state.funding_multiplier:.2f}")
+    print(f"[OK] Economic system loaded: {hasattr(gs, 'economic_cycles')}")
+    print(f"[OK] Current phase: {gs.economic_cycles.current_state.phase.name}")
+    print(f"[OK] Funding multiplier: {gs.economic_cycles.current_state.funding_multiplier:.2f}")
     
     # Test 2: Economic timeline progression
     print("\n2. Testing economic timeline progression...")
@@ -36,7 +36,7 @@ def test_economic_cycles():
         multiplier = gs.economic_cycles.current_state.funding_multiplier
         print(f"Turn {turn:3d} ({description}): {phase:10s} - Year {year} - Multiplier {multiplier:.2f}")
         if news:
-            print(f"    📰 NEWS: {news}")
+            print(f"    [NEWS] NEWS: {news}")
     
     # Test 3: Fundraising mechanics
     print("\n3. Testing enhanced fundraising mechanics...")
@@ -99,10 +99,10 @@ def test_economic_cycles():
     print(f"Generated {new_messages} new event messages")
     
     for message in gs.messages[-5:]:  # Show last 5 messages
-        print(f"  📝 {message}")
+        print(f"  ? {message}")
     
-    print("\n✅ All Economic Cycles & Funding Volatility tests completed successfully!")
-    print("🎯 Issue #192 implementation verified")
+    print("\n? All Economic Cycles & Funding Volatility tests completed successfully!")
+    print("[TARGET] Issue #192 implementation verified")
 
 if __name__ == "__main__":
     test_economic_cycles()

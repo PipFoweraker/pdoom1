@@ -25,11 +25,11 @@ def get_opinion_color(value: float) -> Tuple[int, int, int]:
 def get_trend_symbol(trend: str) -> str:
     """Get symbol for opinion trend."""
     if trend == "rising":
-        return "↗"
+        return "?"
     elif trend == "falling":
-        return "↘"
+        return "?"
     else:
-        return "→"
+        return "?"
 
 
 def draw_public_opinion_panel(screen: pygame.Surface, public_opinion: PublicOpinion, 
@@ -129,14 +129,14 @@ def draw_media_stories_panel(screen: pygame.Surface, public_opinion: PublicOpini
             
             # Story type icon
             type_icons = {
-                "breakthrough": "🚀",
-                "scandal": "⚠️",
-                "human_interest": "👥",
-                "policy": "🏛️",
-                "safety_concern": "🛡️",
-                "industry_news": "📈"
+                "breakthrough": "[ROCKET]",
+                "scandal": "[WARNING]?",
+                "human_interest": "?",
+                "policy": "??",
+                "safety_concern": "[SHIELD]?",
+                "industry_news": "?"
             }
-            icon = type_icons.get(story.story_type.value, "📰")
+            icon = type_icons.get(story.story_type.value, "[NEWS]")
             
             # Story headline (truncated if too long)
             max_headline_length = 45
@@ -247,25 +247,25 @@ def get_opinion_effects_on_gameplay(public_opinion: PublicOpinion) -> List[str]:
     
     # High trust effects
     if public_opinion.trust_in_player >= 70:
-        effects.append("📈 +20% funding from high public trust")
-        effects.append("📉 -10% regulatory pressure")
-        effects.append("👥 Easier researcher recruitment")
+        effects.append("? +20% funding from high public trust")
+        effects.append("? -10% regulatory pressure")
+        effects.append("? Easier researcher recruitment")
     
     # Low trust effects  
     elif public_opinion.trust_in_player <= 30:
-        effects.append("📉 -30% funding availability")
-        effects.append("📈 +20% regulatory pressure")
-        effects.append("⚠️ Competitors can use public concern against you")
+        effects.append("? -30% funding availability")
+        effects.append("? +20% regulatory pressure")
+        effects.append("[WARNING]? Competitors can use public concern against you")
     
     # High safety awareness effects
     if public_opinion.ai_safety_awareness >= 70:
-        effects.append("🛡️ Safety research generates more reputation")
-        effects.append("⚠️ Capabilities research generates suspicion")
-        effects.append("💰 Unlock 'Public Safety Advocate' funding")
+        effects.append("[SHIELD]? Safety research generates more reputation")
+        effects.append("[WARNING]? Capabilities research generates suspicion")
+        effects.append("? Unlock 'Public Safety Advocate' funding")
     
     # High media attention effects
     if public_opinion.media_attention >= 50:
-        effects.append("📺 Your actions have amplified public impact")
-        effects.append("🔍 Increased scrutiny of your lab's activities")
+        effects.append("? Your actions have amplified public impact")
+        effects.append("? Increased scrutiny of your lab's activities")
     
     return effects

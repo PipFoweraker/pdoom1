@@ -391,7 +391,7 @@ class GameState:
                             setattr(self, resource, getattr(self, resource) + value)
                 
                 # Add completion message
-                self.messages.append(f"✓ {action['action_name']} completed!")
+                self.messages.append(f"[OK] {action['action_name']} completed!")
                 
                 resolved_actions.append(action)
                 self.delayed_actions.remove(action)
@@ -420,7 +420,7 @@ class GameState:
         selected_news = random.choice(news_items)
         random.seed()  # Reset to normal randomness
         
-        return f"📰 Day {self.turn + 1}: {selected_news}"
+        return f"[NEWS] Day {self.turn + 1}: {selected_news}"
     
     def update_spend_tracking(self):
         """Update spend tracking display logic."""
@@ -431,12 +431,12 @@ class GameState:
                 
                 if spend_actions_count > 1:
                     self.spend_this_turn_display_shown = True
-                    self.messages.append(f"💰 Total spend this turn: ${self.spend_this_turn}")
+                    self.messages.append(f"? Total spend this turn: ${self.spend_this_turn}")
                     
                     # If this happens again, make display permanent
                     if hasattr(self, '_previous_multi_spend'):
                         self.spend_display_permanent = True
-                        self.messages.append("💰 Spend tracking enabled permanently.")
+                        self.messages.append("? Spend tracking enabled permanently.")
                     else:
                         self._previous_multi_spend = True
 
@@ -1193,10 +1193,10 @@ class GameState:
                 "manager_system",
                 "Manager System Unlocked!",
                 "You've hired your first manager! This unlocks the management system:\n\n"
-                "• Each manager can oversee up to 9 employees\n"
-                "• Unmanaged employees beyond 9 become unproductive (shown with red slash)\n"
-                "• Managers appear as green blobs vs blue employee blobs\n"
-                "• Manager hiring costs 1.5x normal employee cost\n\n"
+                "? Each manager can oversee up to 9 employees\n"
+                "? Unmanaged employees beyond 9 become unproductive (shown with red slash)\n"
+                "? Managers appear as green blobs vs blue employee blobs\n"
+                "? Manager hiring costs 1.5x normal employee cost\n\n"
                 "Plan your team structure carefully as you scale!"
             )
         
@@ -1223,10 +1223,10 @@ class GameState:
                 "Board Member Oversight Activated!",
                 "Your spending exceeded $10,000 without accounting software!\n\n"
                 "Board members have been installed with oversight powers:\n\n"
-                "• 2 board members now monitor your compliance\n"
-                "• Search action unlocked (20% success rate for various benefits)\n"
-                "• Audit risk accumulates until you become compliant\n"
-                "• Purchase accounting software to prevent future oversight\n\n"
+                "? 2 board members now monitor your compliance\n"
+                "? Search action unlocked (20% success rate for various benefits)\n"
+                "? Audit risk accumulates until you become compliant\n"
+                "? Purchase accounting software to prevent future oversight\n\n"
                 "Manage your finances carefully to avoid penalties!"
             )
             
@@ -1564,10 +1564,10 @@ class GameState:
                 "manager_system",
                 "Manager System Unlocked!",
                 "You've hired your first manager! This unlocks the management system:\n\n"
-                "• Each manager can oversee up to 9 employees\n"
-                "• Unmanaged employees beyond 9 become unproductive (shown with red slash)\n"
-                "• Managers appear as green blobs vs blue employee blobs\n"
-                "• Manager hiring costs 1.5x normal employee cost\n\n"
+                "? Each manager can oversee up to 9 employees\n"
+                "? Unmanaged employees beyond 9 become unproductive (shown with red slash)\n"
+                "? Managers appear as green blobs vs blue employee blobs\n"
+                "? Manager hiring costs 1.5x normal employee cost\n\n"
                 "Plan your team structure carefully as you scale!"
             )
         
@@ -1903,7 +1903,7 @@ class GameState:
                 if requirements:
                     details.extend(requirements)
                 else:
-                    details.append("✓ Available to execute")
+                    details.append("[OK] Available to execute")
                 
                 self.current_context_info = {
                     'title': action['name'],
@@ -1913,7 +1913,7 @@ class GameState:
                 
                 # Return legacy tooltip for compatibility
                 affordable = action['cost'] <= self.money and ap_cost <= self.action_points
-                status = "✓ Available" if affordable else "✗ Cannot afford"
+                status = "[OK] Available" if affordable else "[FAIL] Cannot afford"
                 return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
             
             # Check upgrade buttons for hover
@@ -1931,9 +1931,9 @@ class GameState:
                     if not upgrade.get("purchased", False):
                         details.append(f"Cost: ${upgrade['cost']}")
                         if upgrade['cost'] <= self.money:
-                            details.append("✓ Can afford")
+                            details.append("[OK] Can afford")
                         else:
-                            details.append(f"✗ Need ${upgrade['cost'] - self.money} more")
+                            details.append(f"[FAIL] Need ${upgrade['cost'] - self.money} more")
                         
                         # Add unlock requirements if any
                         if upgrade.get("turn_req") and self.turn < upgrade["turn_req"]:
@@ -1941,7 +1941,7 @@ class GameState:
                         if upgrade.get("staff_req") and self.staff < upgrade["staff_req"]:
                             details.append(f"Requires {upgrade['staff_req']} staff")
                     else:
-                        details.append("✓ Purchased and active")
+                        details.append("[OK] Purchased and active")
                         # Show effect details for purchased upgrades
                         if "effect" in upgrade:
                             details.append("Providing passive benefits")
@@ -1955,7 +1955,7 @@ class GameState:
                     # Return legacy tooltip
                     if not upgrade.get("purchased", False):
                         affordable = upgrade['cost'] <= self.money
-                        status = "✓ Available" if affordable else "✗ Cannot afford"
+                        status = "[OK] Available" if affordable else "[FAIL] Cannot afford"
                         return f"{upgrade['name']}: {upgrade['desc']} (Cost: ${upgrade['cost']}) - {status}"
                     else:
                         return f"{upgrade['name']}: {upgrade['desc']} (Purchased)"
@@ -2301,7 +2301,7 @@ class GameState:
         if hasattr(self, 'economic_cycles'):
             economic_news = self.economic_cycles.update_for_turn(self.turn + 1)  # Next turn
             if economic_news:
-                self.messages.append(f"📰 ECONOMIC NEWS: {economic_news}")
+                self.messages.append(f"[NEWS] ECONOMIC NEWS: {economic_news}")
         
         # Check for technical failure cascades
         if hasattr(self, 'technical_failures'):
@@ -2551,7 +2551,7 @@ class GameState:
         # Report new media stories
         if new_stories:
             for story in new_stories:
-                self.messages.append(f"📰 {story.headline}")
+                self.messages.append(f"[NEWS] {story.headline}")
         
         # Update UI transitions - animations advance each frame/turn
         self._update_ui_transitions()
@@ -2704,7 +2704,7 @@ class GameState:
         # Unlock the research quality system on first use
         if not self.research_quality_unlocked:
             self.research_quality_unlocked = True
-            self.messages.append("🔬 Research Quality System unlocked! Choose your approach wisely.")
+            self.messages.append("? Research Quality System unlocked! Choose your approach wisely.")
     
     def create_research_project(self, name: str, base_cost: int, base_duration: int) -> ResearchProject:
         """
@@ -2741,11 +2741,11 @@ class GameState:
         if modifiers.debt_change != 0:
             if modifiers.debt_change > 0:
                 self.technical_debt.add_debt(modifiers.debt_change)
-                self.messages.append(f"⚠️ Technical debt increased by {modifiers.debt_change} points")
+                self.messages.append(f"[WARNING]? Technical debt increased by {modifiers.debt_change} points")
             else:
                 reduced = self.technical_debt.reduce_debt(abs(modifiers.debt_change))
                 if reduced > 0:
-                    self.messages.append(f"✅ Technical debt reduced by {reduced} points")
+                    self.messages.append(f"? Technical debt reduced by {reduced} points")
     
     def execute_debt_reduction_action(self, action_name: str) -> bool:
         """
@@ -2767,7 +2767,7 @@ class GameState:
         
         # Check cost requirements
         if action.get("cost", 0) > self.money:
-            self.messages.append(f"❌ Insufficient funds for {action_name}")
+            self.messages.append(f"? Insufficient funds for {action_name}")
             return False
         
         # Check staff requirements
@@ -2777,13 +2777,13 @@ class GameState:
             available_staff = getattr(self, staff_type, 0)
             
             if available_staff < min_staff:
-                self.messages.append(f"❌ Need {min_staff} {staff_type.replace('_', ' ')} for {action_name}")
+                self.messages.append(f"? Need {min_staff} {staff_type.replace('_', ' ')} for {action_name}")
                 return False
         
         # Check action points
         ap_cost = action.get("ap_cost", 1)
         if self.action_points < ap_cost:
-            self.messages.append(f"❌ Need {ap_cost} Action Points for {action_name}")
+            self.messages.append(f"? Need {ap_cost} Action Points for {action_name}")
             return False
         
         # Execute the action
@@ -2794,7 +2794,7 @@ class GameState:
             self._add('money', -cost)
             debt_reduction = random.randint(*action["debt_reduction"])
             reduced = self.technical_debt.reduce_debt(debt_reduction)
-            self.messages.append(f"🔧 Refactoring sprint completed! Reduced technical debt by {reduced} points")
+            self.messages.append(f"? Refactoring sprint completed! Reduced technical debt by {reduced} points")
             
         elif action_name == "Safety Audit":
             cost = action["cost"]
@@ -2803,7 +2803,7 @@ class GameState:
             rep_bonus = action.get("reputation_bonus", 0)
             if rep_bonus > 0:
                 self._add('reputation', rep_bonus)
-            self.messages.append(f"🛡️ Safety audit completed! Reduced debt by {reduced} points, gained reputation")
+            self.messages.append(f"[SHIELD]? Safety audit completed! Reduced debt by {reduced} points, gained reputation")
             
         elif action_name == "Code Review":
             available_researchers = getattr(self, "research_staff", 0)
@@ -2811,14 +2811,14 @@ class GameState:
             total_cost = cost_per * available_researchers
             
             if self.money < total_cost:
-                self.messages.append(f"❌ Need ${total_cost}k for full code review")
+                self.messages.append(f"? Need ${total_cost}k for full code review")
                 return False
                 
             self._add('money', -total_cost)
             debt_reduction_per = action["debt_reduction_per_researcher"]
             total_reduction = debt_reduction_per * available_researchers
             reduced = self.technical_debt.reduce_debt(total_reduction)
-            self.messages.append(f"👥 Code review with {available_researchers} researchers completed! Reduced debt by {reduced} points")
+            self.messages.append(f"? Code review with {available_researchers} researchers completed! Reduced debt by {reduced} points")
         
         return True
     
@@ -2832,13 +2832,13 @@ class GameState:
         """
         # Check if administrator is available
         if self.admin_staff < 1:
-            self.messages.append("❌ Technical debt audit requires at least 1 Administrator")
+            self.messages.append("? Technical debt audit requires at least 1 Administrator")
             return {}
         
         # Check action points cost
         audit_ap_cost = 2
         if self.action_points < audit_ap_cost:
-            self.messages.append(f"❌ Technical debt audit requires {audit_ap_cost} Action Points")
+            self.messages.append(f"? Technical debt audit requires {audit_ap_cost} Action Points")
             return {}
         
         # Perform the audit
@@ -2905,11 +2905,11 @@ class GameState:
             audit_results["category_breakdown"] = category_analysis
         
         # Log the audit
-        self.messages.append(f"📊 Technical Debt Audit completed by Administrator")
-        self.messages.append(f"🎯 Risk Assessment: {risk_level} ({total_debt} total debt points)")
+        self.messages.append(f"[CHART] Technical Debt Audit completed by Administrator")
+        self.messages.append(f"[TARGET] Risk Assessment: {risk_level} ({total_debt} total debt points)")
         
         if audit_results["recommendations"]:
-            self.messages.append(f"📋 Top Recommendation: {audit_results['recommendations'][0]}")
+            self.messages.append(f"[LIST] Top Recommendation: {audit_results['recommendations'][0]}")
         
         # Store audit results for UI display
         if not hasattr(self, 'last_audit_results'):
@@ -2957,7 +2957,7 @@ class GameState:
         if self.technical_debt.has_reputation_risk() and random.random() < 0.1:
             rep_loss = random.randint(1, 3)
             self._add('reputation', -rep_loss)
-            self.messages.append(f"📰 Technical debt issues exposed in media! Lost {rep_loss} reputation")
+            self.messages.append(f"[NEWS] Technical debt issues exposed in media! Lost {rep_loss} reputation")
         
         # Check for system failure events
         if self.technical_debt.can_trigger_system_failure() and random.random() < 0.05:
@@ -2980,13 +2980,13 @@ class GameState:
         # Find the researcher
         researcher = self.get_researcher_by_id(researcher_id)
         if not researcher:
-            self.messages.append(f"❌ Researcher {researcher_id} not found")
+            self.messages.append(f"? Researcher {researcher_id} not found")
             return False
         
         # Check if researcher is already assigned
         if researcher_id in self.researcher_assignments:
             old_task = self.researcher_assignments[researcher_id]
-            self.messages.append(f"📋 {researcher.name} reassigned from {old_task} to {task_name}")
+            self.messages.append(f"[LIST] {researcher.name} reassigned from {old_task} to {task_name}")
         
         # Make the assignment
         self.researcher_assignments[researcher_id] = task_name
@@ -2995,7 +2995,7 @@ class GameState:
         if quality_override:
             self.task_quality_overrides[task_name] = quality_override
         
-        self.messages.append(f"✅ {researcher.name} assigned to {task_name}")
+        self.messages.append(f"? {researcher.name} assigned to {task_name}")
         return True
     
     def unassign_researcher(self, researcher_id: str) -> bool:
@@ -3015,7 +3015,7 @@ class GameState:
         if researcher_id in self.researcher_assignments:
             task_name = self.researcher_assignments[researcher_id]
             del self.researcher_assignments[researcher_id]
-            self.messages.append(f"📋 {researcher.name} unassigned from {task_name}")
+            self.messages.append(f"[LIST] {researcher.name} unassigned from {task_name}")
             return True
         
         return False
@@ -3037,7 +3037,7 @@ class GameState:
         
         self.researcher_default_quality[researcher_id] = quality
         quality_name = quality.value.title()
-        self.messages.append(f"⚙️ {researcher.name}'s default quality set to {quality_name}")
+        self.messages.append(f"?? {researcher.name}'s default quality set to {quality_name}")
         return True
     
     def get_researcher_by_id(self, researcher_id: str):
@@ -3125,7 +3125,7 @@ class GameState:
         
         accident_name, accident_effect = random.choice(accident_types)
         accident_effect()
-        self.messages.append(f"💥 ACCIDENT: {accident_name}")
+        self.messages.append(f"[EXPLOSION] ACCIDENT: {accident_name}")
     
     def _trigger_system_failure(self) -> None:
         """Trigger a major system failure due to excessive technical debt."""
@@ -3143,7 +3143,7 @@ class GameState:
         
         failure_name, failure_effect = random.choice(failure_types)
         failure_effect()
-        self.messages.append(f"🚨 SYSTEM FAILURE: {failure_name}")
+        self.messages.append(f"[ALERT] SYSTEM FAILURE: {failure_name}")
         
         # Reduce some technical debt after a major failure (lessons learned)
         reduced = self.technical_debt.reduce_debt(random.randint(3, 7))
@@ -3362,7 +3362,7 @@ class GameState:
         
         # Enhanced capabilities with magical orb
         if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
-            messages.append("🔮 MAGICAL ORB OF SEEING ACTIVATED")
+            messages.append("[ORB] MAGICAL ORB OF SEEING ACTIVATED")
             messages.append("Penetrating digital infrastructure across the globe...")
             
         # First, check if any opponents can be discovered
@@ -3377,12 +3377,12 @@ class GameState:
             new_opponent.discover()
             discoveries += 1
             if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
-                messages.append(f"🌐 SURVEILLANCE BREAKTHROUGH: Orbital data streams reveal {new_opponent.name}")
-                messages.append(f"→ Access granted to laptop and mobile communications...")
-                messages.append(f"→ {new_opponent.description}")
+                messages.append(f"? SURVEILLANCE BREAKTHROUGH: Orbital data streams reveal {new_opponent.name}")
+                messages.append(f"? Access granted to laptop and mobile communications...")
+                messages.append(f"? {new_opponent.description}")
             else:
                 messages.append(f"Intelligence breakthrough! Discovered new competing lab: {new_opponent.name}")
-                messages.append(f"→ {new_opponent.description}")
+                messages.append(f"? {new_opponent.description}")
         
         # Scout stats from known opponents
         discovered_opponents = [opp for opp in self.opponents if opp.discovered]
@@ -3407,9 +3407,9 @@ class GameState:
                                 actual_value = getattr(target_opponent, stat_to_scout)
                                 target_opponent.known_stats[stat_to_scout] = actual_value
                                 discoveries += 1
-                                messages.append(f"📱 Digital intercept: {target_opponent.name}'s {stat_to_scout}: {actual_value}")
+                                messages.append(f"? Digital intercept: {target_opponent.name}'s {stat_to_scout}: {actual_value}")
                             else:
-                                messages.append(f"📊 Confirming {target_opponent.name}'s {stat_to_scout}: {value}")
+                                messages.append(f"[CHART] Confirming {target_opponent.name}'s {stat_to_scout}: {value}")
             else:
                 # Standard scouting
                 target_opponent = random.choice(discovered_opponents)
@@ -3427,7 +3427,7 @@ class GameState:
         # Add intelligence gained message
         if discoveries > 0:
             if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
-                messages.append(f"🔮 SURVEILLANCE MATRIX ANALYSIS COMPLETE: {discoveries} intelligence targets processed")
+                messages.append(f"[ORB] SURVEILLANCE MATRIX ANALYSIS COMPLETE: {discoveries} intelligence targets processed")
                 messages.append("Global data streams flowing through the orb... No device is hidden from its gaze.")
                 # Enhanced reputation gain with magical orb
                 self._add('reputation', min(3, discoveries))
@@ -3437,7 +3437,7 @@ class GameState:
                 self._add('reputation', 1)
         else:
             if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
-                messages.append("🔮 Orb scanning global networks... All targets already under surveillance.")
+                messages.append("[ORB] Orb scanning global networks... All targets already under surveillance.")
             else:
                 messages.append("Intelligence gathering yielded limited results this time.")
         
@@ -3453,7 +3453,7 @@ class GameState:
             new_opponent = random.choice(undiscovered_opponents)
             new_opponent.discover()
             self.messages.append(f"INTELLIGENCE ALERT: New competitor detected - {new_opponent.name}")
-            self.messages.append(f"→ {new_opponent.description}")
+            self.messages.append(f"? {new_opponent.description}")
             self.messages.append("Use 'Scout Opponents' action to gather more intelligence on their capabilities.")
         else:
             self.messages.append("Intelligence reports suggest all major competitors are now known.")
@@ -4074,7 +4074,7 @@ class GameState:
         for researcher in self.researchers:
             if 'leak_prone' in researcher.traits:
                 if random.random() < 0.05:  # 5% chance
-                    self.messages.append(f"⚠️ {researcher.name} accidentally leaked research to competitors!")
+                    self.messages.append(f"[WARNING]? {researcher.name} accidentally leaked research to competitors!")
                     # Give small advantage to random opponent
                     discovered_opponents = [opp for opp in self.opponents if opp.discovered]
                     if discovered_opponents:
@@ -4136,24 +4136,24 @@ class GameState:
             rep_gain = random.randint(2, 4)
             self._add('doom', -doom_reduction)
             self._add('reputation', rep_gain)
-            self.messages.append(f"🔬 {researcher.name} achieved a major safety breakthrough! -{doom_reduction} doom, +{rep_gain} reputation")
+            self.messages.append(f"? {researcher.name} achieved a major safety breakthrough! -{doom_reduction} doom, +{rep_gain} reputation")
         elif researcher.specialization == "capabilities":
             research_boost = random.randint(8, 12)
             doom_risk = random.randint(1, 3)
             self._add('research_progress', research_boost)
             self._add('doom', doom_risk)
-            self.messages.append(f"⚡ {researcher.name} developed advanced AI capabilities! +{research_boost} research, +{doom_risk} doom risk")
+            self.messages.append(f"[LIGHTNING] {researcher.name} developed advanced AI capabilities! +{research_boost} research, +{doom_risk} doom risk")
         elif researcher.specialization == "interpretability":
             rep_gain = random.randint(3, 5)
             self._add('reputation', rep_gain)
             # Reveal competitor information
             self._provide_competitor_update()
-            self.messages.append(f"🔍 {researcher.name} created breakthrough interpretability tools! +{rep_gain} reputation, competitor insights gained")
+            self.messages.append(f"? {researcher.name} created breakthrough interpretability tools! +{rep_gain} reputation, competitor insights gained")
         elif researcher.specialization == "alignment":
             rep_gain = random.randint(2, 4)
             self._add('reputation', rep_gain)
             # Reduce negative event chance temporarily (handled by existing alignment effect)
-            self.messages.append(f"🎯 {researcher.name} solved a critical alignment problem! +{rep_gain} reputation, improved stability")
+            self.messages.append(f"[TARGET] {researcher.name} solved a critical alignment problem! +{rep_gain} reputation, improved stability")
         
         # Boost researcher's loyalty and reduce burnout
         researcher.loyalty = min(researcher.loyalty + 15, 100)
@@ -4170,7 +4170,7 @@ class GameState:
             researcher.burnout = min(researcher.burnout + 10, 100)
             researcher.loyalty = max(researcher.loyalty - 10, 0)
         
-        self.messages.append(f"⚠️ Burnout crisis affects {len(burnt_out_researchers)} researchers! Productivity decreased.")
+        self.messages.append(f"[WARNING]? Burnout crisis affects {len(burnt_out_researchers)} researchers! Productivity decreased.")
         self.messages.append("Consider team building or reducing workload to address burnout.")
     
     def _researcher_poaching_attempt(self):
@@ -4191,7 +4191,7 @@ class GameState:
             self.researchers.remove(target)
             self._add('staff', -1)
             self._add('research_staff', -1)
-            self.messages.append(f"💼 {competitor} successfully poached {target.name}! Lost key researcher.")
+            self.messages.append(f"? {competitor} successfully poached {target.name}! Lost key researcher.")
             
             # Remove corresponding employee blob
             if self.employee_blobs:
@@ -4202,7 +4202,7 @@ class GameState:
         else:
             # Poaching failed, but loyalty is affected
             target.loyalty = max(target.loyalty - 5, 0)
-            self.messages.append(f"🛡️ {competitor} attempted to poach {target.name}, but they remained loyal!")
+            self.messages.append(f"[SHIELD]? {competitor} attempted to poach {target.name}, but they remained loyal!")
             self.messages.append("Consider salary adjustments to improve researcher loyalty.")
     
     def _research_ethics_concern(self):
@@ -4218,12 +4218,12 @@ class GameState:
             self.researchers.remove(researcher)
             self._add('staff', -1) 
             self._add('research_staff', -1)
-            self.messages.append(f"⚖️ {researcher.name} quit due to ethical concerns about capabilities research!")
+            self.messages.append(f"?? {researcher.name} quit due to ethical concerns about capabilities research!")
             self.messages.append("Consider focusing more on safety research to prevent future departures.")
         else:
             researcher.productivity *= 0.8  # 20% productivity reduction
             researcher.loyalty = max(researcher.loyalty - 15, 0)
-            self.messages.append(f"⚖️ {researcher.name} raised ethical concerns. Their productivity and loyalty declined.")
+            self.messages.append(f"?? {researcher.name} raised ethical concerns. Their productivity and loyalty declined.")
             self.messages.append("Address these concerns to maintain team cohesion.")
     
     def _researcher_conference_invitation(self):
@@ -4245,9 +4245,9 @@ class GameState:
         if random.random() < 0.4:
             money_gain = random.randint(50, 100)
             self._add('money', money_gain)
-            self.messages.append(f"🎤 {researcher.name} presented at a major conference! +{rep_gain} reputation, +${money_gain} from networking")
+            self.messages.append(f"? {researcher.name} presented at a major conference! +{rep_gain} reputation, +${money_gain} from networking")
         else:
-            self.messages.append(f"🎤 {researcher.name} presented at a major conference! +{rep_gain} reputation")
+            self.messages.append(f"? {researcher.name} presented at a major conference! +{rep_gain} reputation")
         
         researcher.loyalty = min(researcher.loyalty + 10, 100)
     
@@ -4267,14 +4267,14 @@ class GameState:
             self._add('research_progress', research_gain)
             self._add('reputation', rep_gain)
             
-            self.messages.append(f"🤝 Collaborative research project launched! Cost: ${cost}")
+            self.messages.append(f"? Collaborative research project launched! Cost: ${cost}")
             self.messages.append(f"Benefits: +{research_gain} research progress, +{rep_gain} reputation")
             
             # Boost loyalty of participating researchers
             for researcher in random.sample(self.researchers, min(2, len(self.researchers))):
                 researcher.loyalty = min(researcher.loyalty + 8, 100)
         else:
-            self.messages.append(f"🤝 Collaborative research opportunity available, but need ${cost} to participate")
+            self.messages.append(f"? Collaborative research opportunity available, but need ${cost} to participate")
     
     def _researcher_loyalty_crisis(self):
         """Handle researcher loyalty crisis."""
@@ -4294,7 +4294,7 @@ class GameState:
                 researcher.loyalty = max(researcher.loyalty - 10, 0)
         
         if departures > 0:
-            self.messages.append(f"😞 Loyalty crisis! {departures} researchers left the organization.")
+            self.messages.append(f"? Loyalty crisis! {departures} researchers left the organization.")
             # Remove corresponding employee blobs
             for _ in range(departures):
                 for blob in self.employee_blobs:
@@ -4302,7 +4302,7 @@ class GameState:
                         self.employee_blobs.remove(blob)
                         break
         else:
-            self.messages.append("😞 Loyalty crisis among researchers! Morale significantly decreased.")
+            self.messages.append("? Loyalty crisis among researchers! Morale significantly decreased.")
         
         self.messages.append("Consider salary increases and team building to restore loyalty.")
 
@@ -4330,16 +4330,16 @@ class GameState:
                      f"for {task_name} and finish 40% faster. The risk is probably minimal...\"")
         
         def handle_maintain_standards(gs):
-            gs.messages.append(f"✅ {researcher.name}: \"You're right, safety first. I'll maintain full validation.\"")
+            gs.messages.append(f"? {researcher.name}: \"You're right, safety first. I'll maintain full validation.\"")
             gs._add('reputation', 1)  # Reputation for safety-conscious approach
             
         def handle_calculated_risk(gs):
-            gs.messages.append(f"⚠️ {researcher.name}: \"Understood. I'll reduce some checks but keep the critical ones.\"")
+            gs.messages.append(f"[WARNING]? {researcher.name}: \"Understood. I'll reduce some checks but keep the critical ones.\"")
             gs.technical_debt.add_debt(1)  # Small debt increase
             # Speed up current research slightly (placeholder - would need research tracking)
             
         def handle_rush_it(gs):
-            gs.messages.append(f"🚨 {researcher.name}: \"Alright, cutting corners to hit the deadline. Hope nothing goes wrong...\"")
+            gs.messages.append(f"[ALERT] {researcher.name}: \"Alright, cutting corners to hit the deadline. Hope nothing goes wrong...\"")
             gs.technical_debt.add_debt(3)  # Significant debt increase
             gs._add('doom', 1)  # Small doom increase for risky approach
             
@@ -4378,11 +4378,11 @@ class GameState:
         debt_level = self.technical_debt.accumulated_debt
         
         if debt_level < 10:
-            self.messages.append("⚠️ Lead Researcher: \"We're accumulating some technical shortcuts. Should keep an eye on that.\"")
+            self.messages.append("[WARNING]? Lead Researcher: \"We're accumulating some technical shortcuts. Should keep an eye on that.\"")
         elif debt_level < 15:
-            self.messages.append("🔶 Lead Researcher: \"Our technical debt is getting concerning. We should schedule refactoring soon.\"")
+            self.messages.append("? Lead Researcher: \"Our technical debt is getting concerning. We should schedule refactoring soon.\"")
         else:
-            self.messages.append("🚨 Lead Researcher: \"Critical warning: Our technical debt could trigger system failures!\"")
+            self.messages.append("[ALERT] Lead Researcher: \"Critical warning: Our technical debt could trigger system failures!\"")
             
         # Offer debt reduction suggestion
         self.messages.append("Consider using 'Refactoring Sprint' or 'Safety Audit' actions to reduce technical debt.")
@@ -4401,22 +4401,22 @@ class GameState:
         scenario = random.choice(scenarios)
         
         # Offer quality choice for all active research
-        self.messages.append(f"🕐 Critical: {scenario}! How should researchers adjust their approach?")
+        self.messages.append(f"? Critical: {scenario}! How should researchers adjust their approach?")
         
         def set_all_rushed():
             for researcher_id in self.researcher_assignments:
                 self.researcher_default_quality[researcher_id] = ResearchQuality.RUSHED
-            self.messages.append("📈 All researchers switched to RUSHED mode for speed!")
+            self.messages.append("? All researchers switched to RUSHED mode for speed!")
             self.technical_debt.add_debt(len(self.researcher_assignments))
             
         def set_all_thorough():
             for researcher_id in self.researcher_assignments:
                 self.researcher_default_quality[researcher_id] = ResearchQuality.THOROUGH
-            self.messages.append("🔬 All researchers switched to THOROUGH mode for quality!")
+            self.messages.append("? All researchers switched to THOROUGH mode for quality!")
             self._add('reputation', 1)
             
         def maintain_current():
-            self.messages.append("⚖️ Maintaining current research quality approaches.")
+            self.messages.append("?? Maintaining current research quality approaches.")
             
         # Simple random choice for now - in full implementation would be player choice
         choices = [set_all_rushed, set_all_thorough, maintain_current]
@@ -4453,13 +4453,13 @@ class GameState:
         
         consequence = random.choice(consequences)
         
-        self.messages.append(f"🕵️ {discovery} {competitor} is {consequence}!")
+        self.messages.append(f"?? {discovery} {competitor} is {consequence}!")
         self.messages.append(f"This could give them a speed advantage but increases global risk.")
         
         # Player organization gains reputation for being more careful
         if self.technical_debt.accumulated_debt < 5:
             self._add('reputation', 1)
-            self.messages.append("📈 Your careful approach gains recognition in contrast!")
+            self.messages.append("? Your careful approach gains recognition in contrast!")
         
         # Increase global doom slightly due to competitor shortcuts
         self._add('doom', random.randint(1, 3))
@@ -4471,8 +4471,8 @@ class GameState:
         if not hasattr(self, 'economic_cycles'):
             return
             
-        self.messages.append("💰 Venture capital funding has become extremely scarce!")
-        self.messages.append("💡 Consider government grants or corporate partnerships instead.")
+        self.messages.append("? Venture capital funding has become extremely scarce!")
+        self.messages.append("[IDEA] Consider government grants or corporate partnerships instead.")
         
         # Extend funding cooldown during drought
         if hasattr(self, 'funding_round_cooldown'):
@@ -4483,8 +4483,8 @@ class GameState:
     
     def _trigger_bubble_warning_event(self):
         """Handle AI bubble burst warnings."""
-        self.messages.append("⚠️ Market analysts warn AI valuations are unsustainable!")
-        self.messages.append("💭 Consider securing funding now before conditions worsen.")
+        self.messages.append("[WARNING]? Market analysts warn AI valuations are unsustainable!")
+        self.messages.append("? Consider securing funding now before conditions worsen.")
         
         # Temporary funding bonus for those who act quickly
         if not hasattr(self, 'bubble_warning_bonus'):
@@ -4492,7 +4492,7 @@ class GameState:
     
     def _trigger_government_funding_event(self):
         """Handle government AI initiative announcements."""
-        self.messages.append("🏛️ Government announces major AI research funding initiative!")
+        self.messages.append("?? Government announces major AI research funding initiative!")
         
         if self.reputation >= 10:
             grant_amount = random.randint(80, 150)
@@ -4506,7 +4506,7 @@ class GameState:
         corp_names = ["TechGiant Inc", "DataCorp Systems", "Innovation Dynamics"]
         corp = random.choice(corp_names)
         
-        self.messages.append(f"🤝 {corp} seeks AI partnerships during the economic downturn!")
+        self.messages.append(f"? {corp} seeks AI partnerships during the economic downturn!")
         
         partnership_amount = random.randint(60, 120)
         self._add('money', partnership_amount)
@@ -4520,7 +4520,7 @@ class GameState:
         if not hasattr(self, 'emergency_measures_available') or not self.emergency_measures_available:
             return
             
-        self.messages.append("🚨 Economic conditions require immediate cost reduction!")
+        self.messages.append("[ALERT] Economic conditions require immediate cost reduction!")
         
         # Emergency measures: reduce staff costs temporarily
         if self.staff > 1:
@@ -4547,7 +4547,7 @@ class GameState:
         funding_amounts = ["$50M", "$100M", "$200M", "$500M"]
         amount = random.choice(funding_amounts)
         
-        self.messages.append(f"📰 {competitor.name} announces {amount} funding round!")
+        self.messages.append(f"[NEWS] {competitor.name} announces {amount} funding round!")
         self.messages.append("Competitive pressure increases - consider accelerating your own fundraising.")
         
         # Increase doom slightly due to competitor advancement
@@ -4559,8 +4559,8 @@ class GameState:
     
     def _trigger_ai_winter_warning_event(self):
         """Handle AI winter warnings when doom is high."""
-        self.messages.append("❄️ Industry veterans warn of potential 'AI Winter' if promises don't materialize!")
-        self.messages.append("🎯 Focus on demonstrable safety progress to maintain investor confidence.")
+        self.messages.append("?? Industry veterans warn of potential 'AI Winter' if promises don't materialize!")
+        self.messages.append("[TARGET] Focus on demonstrable safety progress to maintain investor confidence.")
         
         # If safety research progress is low, more severe consequences
         if self.reputation < 15:
@@ -4595,15 +4595,15 @@ class GameState:
                 
                 # Display achievement notification with rarity styling
                 rarity_indicators = {
-                    "common": "🎯",
-                    "uncommon": "⭐", 
-                    "rare": "🏆",
-                    "legendary": "👑"
+                    "common": "[TARGET]",
+                    "uncommon": "[STAR]", 
+                    "rare": "[TROPHY]",
+                    "legendary": "?"
                 }
-                indicator = rarity_indicators.get(achievement.rarity, "🎯")
+                indicator = rarity_indicators.get(achievement.rarity, "[TARGET]")
                 
                 self.messages.append(f"{indicator} ACHIEVEMENT UNLOCKED: {achievement.name}")
-                self.messages.append(f"📖 {achievement.description}")
+                self.messages.append(f"? {achievement.description}")
                 
                 # Play achievement sound based on rarity
                 if hasattr(self, 'sound_manager'):
@@ -4618,17 +4618,17 @@ class GameState:
             # Display critical warnings at start of turn
             for warning in warnings:
                 severity_indicators = {
-                    "WARNING": "⚠️",
-                    "CRITICAL": "🚨", 
-                    "SEVERE": "💀",
-                    "EXTREME": "☢️",
-                    "EMERGENCY": "🔥",
-                    "IMMINENT": "💥"
+                    "WARNING": "[WARNING]?",
+                    "CRITICAL": "[ALERT]", 
+                    "SEVERE": "[SKULL]",
+                    "EXTREME": "[RADIATION]?",
+                    "EMERGENCY": "[FIRE]",
+                    "IMMINENT": "[EXPLOSION]"
                 }
-                indicator = severity_indicators.get(warning['severity'], "⚠️")
+                indicator = severity_indicators.get(warning['severity'], "[WARNING]?")
                 
                 self.messages.append(f"{indicator} {warning['title']}")
-                self.messages.append(f"📋 {warning['message']}")
+                self.messages.append(f"[LIST] {warning['message']}")
                 
                 # Play warning sound for critical situations
                 if hasattr(self, 'sound_manager') and warning['severity'] in ["CRITICAL", "SEVERE", "EXTREME", "EMERGENCY", "IMMINENT"]:
@@ -4638,7 +4638,7 @@ class GameState:
             if self.doom <= 0 and not self.game_over:
                 # Ultimate victory achieved!
                 self.game_over = True
-                self.messages.append("🎉 ULTIMATE VICTORY: P(Doom) eliminated! AI alignment problem solved!")
+                self.messages.append("[CELEBRATION] ULTIMATE VICTORY: P(Doom) eliminated! AI alignment problem solved!")
                 
                 # Play victory sound
                 if hasattr(self, 'sound_manager'):
@@ -4667,8 +4667,8 @@ class GameState:
         ]
         
         near_miss = random.choice(near_miss_types)
-        self.messages.append(f"⚠️ NEAR MISS AVERTED: {near_miss}")
-        self.messages.append("🎓 Team conducts post-incident review to strengthen prevention capabilities")
+        self.messages.append(f"[WARNING]? NEAR MISS AVERTED: {near_miss}")
+        self.messages.append("? Team conducts post-incident review to strengthen prevention capabilities")
         
         # Reward for good prevention systems
         self._add('reputation', 1)
@@ -4680,7 +4680,7 @@ class GameState:
             current_level = getattr(self.technical_failures, improvement, 0)
             if current_level < 5:
                 setattr(self.technical_failures, improvement, current_level + 1)
-                self.messages.append(f"📈 {improvement.replace('_', ' ').title()} improved from lessons learned!")
+                self.messages.append(f"? {improvement.replace('_', ' ').title()} improved from lessons learned!")
     
     def _trigger_cover_up_exposed_event(self):
         """Handle the exposure of past cover-ups."""
@@ -4697,23 +4697,23 @@ class GameState:
         ]
         
         scenario = random.choice(exposure_scenarios)
-        self.messages.append(f"🚨 COVER-UP EXPOSED: {scenario}")
+        self.messages.append(f"[ALERT] COVER-UP EXPOSED: {scenario}")
         
         # Severe reputation damage based on cover-up debt
         reputation_loss = random.randint(cover_up_severity // 2, cover_up_severity)
         self._add('reputation', -reputation_loss)
-        self.messages.append(f"📉 Reputation severely damaged: -{reputation_loss} points")
+        self.messages.append(f"? Reputation severely damaged: -{reputation_loss} points")
         
         # Financial penalties for regulatory violations
         financial_penalty = random.randint(50, 100) + (cover_up_severity * 10)
         self._add('money', -financial_penalty)
-        self.messages.append(f"💰 Regulatory fines and legal costs: -${financial_penalty}k")
+        self.messages.append(f"? Regulatory fines and legal costs: -${financial_penalty}k")
         
         # Reduce cover-up debt (consequences have been paid)
         self.technical_failures.cover_up_debt = max(0, self.technical_failures.cover_up_debt - cover_up_severity)
         
         # Force improved transparency going forward
-        self.messages.append("📋 Organization forced to adopt mandatory transparency policies")
+        self.messages.append("[LIST] Organization forced to adopt mandatory transparency policies")
         if hasattr(self, 'technical_debt'):
             self.technical_debt.add_debt(3)  # Increased oversight creates some operational debt
     
@@ -4730,21 +4730,21 @@ class GameState:
         ]
         
         recognition = random.choice(recognition_types)
-        self.messages.append(f"🏆 TRANSPARENCY RECOGNIZED: {recognition}")
+        self.messages.append(f"[TROPHY] TRANSPARENCY RECOGNIZED: {recognition}")
         
         # Reputation boost
         reputation_gain = random.randint(2, 4)
         self._add('reputation', reputation_gain)
-        self.messages.append(f"📈 Industry respect grows: +{reputation_gain} reputation")
+        self.messages.append(f"? Industry respect grows: +{reputation_gain} reputation")
         
         # Funding opportunities from transparency
         if random.random() < 0.6:
             funding_opportunity = random.randint(30, 60)
             self._add('money', funding_opportunity)
-            self.messages.append(f"💰 Safety-focused funding secured: +${funding_opportunity}k")
+            self.messages.append(f"? Safety-focused funding secured: +${funding_opportunity}k")
         
         # Improve staff morale (represented as temporary benefit)
-        self.messages.append("😊 Staff morale improves from working at an ethical organization")
+        self.messages.append("? Staff morale improves from working at an ethical organization")
         
         # Reset transparency reputation to prevent repeated triggers
         self.technical_failures.transparency_reputation = max(0, 
@@ -4763,26 +4763,26 @@ class GameState:
         ]
         
         scenario = random.choice(prevention_scenarios)
-        self.messages.append(f"🛡️ CASCADE PREVENTED: {scenario}")
+        self.messages.append(f"[SHIELD]? CASCADE PREVENTED: {scenario}")
         
         # Calculate what the cascade would have cost
         estimated_damage = random.randint(40, 80)
-        self.messages.append(f"💡 Estimated damage prevented: ${estimated_damage}k and significant reputation loss")
+        self.messages.append(f"[IDEA] Estimated damage prevented: ${estimated_damage}k and significant reputation loss")
         
         # Reward effective prevention
         reputation_gain = random.randint(2, 3)
         self._add('reputation', reputation_gain)
-        self.messages.append(f"📈 Stakeholder confidence in crisis management: +{reputation_gain} reputation")
+        self.messages.append(f"? Stakeholder confidence in crisis management: +{reputation_gain} reputation")
         
         # Staff learning from successful prevention
         if hasattr(self, 'technical_debt') and random.random() < 0.4:
             debt_reduction = random.randint(1, 3)
             self.technical_debt.reduce_debt(debt_reduction)
-            self.messages.append(f"🎓 Prevention success improves practices: -{debt_reduction} technical debt")
+            self.messages.append(f"? Prevention success improves practices: -{debt_reduction} technical debt")
         
         # Industry recognition
         if self.technical_failures.incident_response_level >= 4:
-            self.messages.append("🏅 Industry peers request consultation on incident response best practices")
+            self.messages.append("? Industry peers request consultation on incident response best practices")
         else:
             self.messages.append("Your strong safety reputation provides some protection from market fears.")
             self._add('reputation', 2)
