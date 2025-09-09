@@ -6,27 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.9] - 2025-09-09
 ### Fixed
-- **🔧 Typography Import System Resolution**: Major progress on eliminating test import errors
+- **[FIX] Typography Import System Resolution**: Major progress on eliminating test import errors
   - Recreated corrupted `ui_new.components.typography` module with proper FontManager class
   - Resolved circular import dependencies between typography, buttons, and windows components  
   - Created local font manager stubs in UI components to prevent import cycles
-  - Fixed incorrect module paths in `test_config_manager.py` (config_manager → src.services.config_manager)
+  - Fixed incorrect module paths in `test_config_manager.py` (config_manager -> src.services.config_manager)
   - Added missing `safety_level` key to settings flow test setup preventing KeyError exceptions
   - Converted all 6 remaining ERROR tests to passing or FAILURE status (major import issues resolved)
   - Test suite improvement: 742 tests with significantly reduced import-related failures
 
 ### Technical Debt
-- **✅ Issue #225 - Configuration System Import Failures**: RESOLVED
-- **🔄 Typography Import Problems**: Major infrastructure work completed, final import validation pending
-- **🔄 Issue #228 - UI Navigation**: Import errors fixed, test logic improvements ongoing
+- **[DONE] Issue #225 - Configuration System Import Failures**: RESOLVED
+- **[WIP] Typography Import Problems**: Major infrastructure work completed, final import validation pending
+- **[WIP] Issue #228 - UI Navigation**: Import errors fixed, test logic improvements ongoing
 
 ### Development Notes
-- **⚠️ Status**: Typography import still requires final debugging session for complete resolution
-- **📋 Ready for Commit**: Documentation, versioning, and major fixes completed
+- **[WARNING] Status**: Typography import still requires final debugging session for complete resolution
+- **[READY] Ready for Commit**: Documentation, versioning, and major fixes completed
 
 ## [0.2.8] - 2025-09-09
 ### Fixed
-- **🔧 Technical Debt Resolution**: Comprehensive cleanup of test infrastructure and CI pipeline
+- **[FIX] Technical Debt Resolution**: Comprehensive cleanup of test infrastructure and CI pipeline
   - Fixed keyboard shortcut test patch targets for proper UI component mocking (Issue #225)
   - Improved responsive UI positioning calculations removing hardcoded values (Issue #228)
   - Enhanced UI boundary checking with proper None value handling (Issue #230)
@@ -35,14 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Cross-platform path handling improvements for Windows/Linux compatibility
 
 ### Changed
-- **🐍 Python Version Requirements**: Completed Python 3.8 support removal
+- **[PYTHON] Python Version Requirements**: Completed Python 3.8 support removal
   - Updated GitHub Actions workflows to test Python 3.9, 3.10, 3.11, 3.12 only
   - Cleaned up all Python 3.8 references from CI pipeline and documentation
   - Enhanced test stability with 645+ tests passing (improved from 15 failures)
 
 ## [0.2.7] - 2025-09-08
 ### Added
-- **🏢 Lab Name System**: Implemented pseudonymous lab naming for enhanced immersion and leaderboard integration
+- **[LABS] Lab Name System**: Implemented pseudonymous lab naming for enhanced immersion and leaderboard integration
   - Added 104 unique AI lab names across 87 different themes (e.g., "Axiom Labs", "Beacon AI", "Cerberus Systems")
   - Lab names are deterministically assigned based on game seed for consistency
   - Lab name displays in UI context panel replacing generic "P(Doom) Context Panel"
@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.3] - 2025-09-05
 ### Changed
-- **🐍 Python Version Requirements**: Dropped Python 3.8 support, now requires Python 3.9+
+- **[PYTHON] Python Version Requirements**: Dropped Python 3.8 support, now requires Python 3.9+
   - Updated GitHub Actions workflows to test Python 3.9, 3.10, 3.11, 3.12
   - Updated all documentation and requirements to reflect Python 3.9+ minimum
   - Enables use of modern Python features like built-in generics (`list[str]` vs `List[str]`)
@@ -61,7 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.5] - 2025-09-08
 ### Added
-- **🔧 UI Interaction Fixes & Hint System Overhaul**: Major improvements to game usability and professional polish
+- **[FIX] UI Interaction Fixes & Hint System Overhaul**: Major improvements to game usability and professional polish
   - Fixed spacebar (end turn) being blocked by tutorial overlays - now works even during tutorials
   - Fixed unprofessional staff hire popup showing automatically at game start
   - Implemented Factorio-style hint system: hints show once, auto-dismiss, can be reset
@@ -78,7 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- **🏆 Achievements & Enhanced Endgame System (Issue #195)**: Comprehensive achievement tracking and victory conditions beyond binary win/lose
+- **[ACHIEVE] Achievements & Enhanced Endgame System (Issue #195)**: Comprehensive achievement tracking and victory conditions beyond binary win/lose
   - 24 achievements across 8 categories: Survival, Workforce, Research, Financial, Safety, Reputation, Competitive, Rare
   - 4-tier rarity system: Common, Uncommon, Rare, Legendary achievements
   - Ultimate victory condition: Reach p(Doom) = 0 (complete AI safety solution)
@@ -88,7 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Deep integration: Achievement progress tracking with all existing systems (technical debt, opponents, economic cycles)
   - Turn-based achievement checking with defensive programming (system errors never crash game)
   - Semi-programmatic endgame text generation based on player strategy analysis and resource management patterns
-- **⛓️ Technical Failure Cascades (Issue #193)**: Comprehensive failure cascade system modeling realistic organizational crisis management
+- **[CASCADE] Technical Failure Cascades (Issue #193)**: Comprehensive failure cascade system modeling realistic organizational crisis management
   - 7 types of technical failures with cascading effects (Research setbacks, Security breaches, System crashes, etc.)
   - Near-miss system providing learning opportunities without immediate consequences
   - Player choice between transparency/learning vs cover-up/reputation protection
@@ -96,85 +96,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Long-term consequences: Transparency builds trust, cover-ups increase future risks
   - 4 new actions: Incident Response Training, Monitoring Systems, Communication Protocols, Safety Audit
   - 4 cascade-specific events: Near-Miss Averted, Cover-Up Exposed, Transparency Dividend, Cascade Prevention Success
-- **🏦 Economic Cycles & Funding Volatility (Issue #192)**: Complete historical AI funding timeline (2017-2025)
+- **[ECONOMIC] Economic Cycles & Funding Volatility (Issue #192)**: Complete historical AI funding timeline (2017-2025)
   - Realistic economic phases: Boom, Stable, Correction, Recession, Recovery
   - 5 funding sources with different cycle sensitivities (Seed, Venture, Corporate, Government, Revenue)
   - Enhanced fundraising system with 4 advanced funding actions (Series A, Government grants, etc.)
   - 7 economic-specific events triggered by market conditions
   - Historical anchors based on real AI funding patterns and market cycles
-- **🎮 New Player Experience Enhancement**: Improved onboarding with tutorial/intro selection
+- **[PLAYER] New Player Experience Enhancement**: Improved onboarding with tutorial/intro selection
   - Replaced "Launch Lab" with "New Player Experience" in main menu
   - Checkbox-based interface for tutorial and intro scenario selection
   - Contextual intro text explaining game premise and starting conditions
   - Responsive UI design with keyboard and mouse navigation support
 
 ### Changed
-- **🔤 ASCII Compatibility**: Converted all Unicode symbols to ASCII equivalents
+- **[ASCII] ASCII Compatibility**: Converted all Unicode symbols to ASCII equivalents
   - Replaced arrows, emojis, and Unicode symbols with ASCII alternatives
   - Fixed encoding issues causing 'charmap' codec errors on some systems
   - Maintained visual consistency while ensuring cross-platform compatibility
   - Improved terminal output compatibility across different environments
 
 ### Technical
-- **📊 Enhanced Test Coverage**: Added 29 new unit tests for technical failure cascades, plus 17 tests for economic cycles and new player experience
-- **🏗️ Modular Architecture**: Technical failure cascades system designed for extensibility
+- **[TESTS] Enhanced Test Coverage**: Added 29 new unit tests for technical failure cascades, plus 17 tests for economic cycles and new player experience
+- **[ARCH] Modular Architecture**: Technical failure cascades system designed for extensibility
   - Clean separation between cascade logic, game state integration, and UI
   - Deterministic RNG integration for reproducible failure scenarios
   - Comprehensive event system integration with enhanced events support
   - Integration with existing technical debt and research quality systems
-- **🔧 System Integration**: Economic cycles and technical failures systems designed for interoperability
+- **[SYSTEM] System Integration**: Economic cycles and technical failures systems designed for interoperability
   - Clean separation between game logic, UI, and specialized mechanics
   - Backward compatibility maintained for existing save files
 
 ## [0.2.2] - 2025-09-04 - "Technical Debt Resolution & Privacy-First Systems"
-### 🛠️ Technical Debt Resolution
+### [TECH] Technical Debt Resolution
 - **Fixed all critical test failures**: 137/137 tests now passing (previously 4 categories failing)
 - **Action Points System**: Fixed validation logic for meta-actions (0 AP cost properly supported)
 - **Sound Configuration**: Aligned config manager defaults with actual config files  
 - **Bug Reporter**: Cross-platform path handling for Windows/Unix compatibility
 - **File Handle Management**: Proper cleanup of logging resources on Windows
 
-### 🔒 Privacy-First Infrastructure
+### [PRIVACY] Privacy-First Infrastructure
 - **Complete Privacy Policy**: Comprehensive privacy documentation and implementation
 - **Local-First Design**: All data stored locally by default, no cloud transmission without opt-in
 - **Pseudonymous Competition**: Leaderboard system using chosen display names, no personal data
 - **Granular Privacy Controls**: User controls exactly what data to share and when
 - **Open-Source Privacy**: All privacy-related code auditable and transparent
 
-### 🎯 Deterministic Gameplay System
+### [DETERMIN] Deterministic Gameplay System
 - **Reproducible Games**: Seed-based deterministic random number generation
 - **Competitive Verification**: Prove achievements through mathematical reproducibility
 - **Context-Aware RNG**: All random events tracked with context for debugging/analysis
 - **Global RNG Management**: Consistent random state across entire game session
 - **Audit Trail**: Complete tracking of RNG calls for competitive integrity
 
-### 📊 Verbose Logging Infrastructure (Opt-In Only)
+### [LOGGING] Verbose Logging Infrastructure (Opt-In Only)
 - **Multi-Level Logging**: MINIMAL/STANDARD/VERBOSE/DEBUG detail levels
 - **Comprehensive Tracking**: Actions, resource changes, and RNG events logged
 - **JSON Export**: Machine-readable logs for analysis tools and strategy improvement
 - **Privacy Controls**: Completely opt-in, disabled by default, user-controlled cleanup
 - **Performance Optimized**: Minimal overhead with efficient file management
 
-### 🏆 Privacy-Respecting Leaderboards
+### [LEADERBOARD] Privacy-Respecting Leaderboards
 - **Pseudonymous Participation**: User-chosen display names only, no real identities
 - **Local-First Storage**: Scores stored locally with optional cloud synchronization
 - **Verification Without Surveillance**: Cryptographic verification without personal data
 - **User Control**: Enable/disable participation anytime without penalty
 - **Competitive Integrity**: Deterministic gameplay enables fair competition
 
-### 🧪 Comprehensive Test Coverage
+### [TEST] Comprehensive Test Coverage
 - **New Test Suites**: 49 new unit tests for privacy, deterministic, and logging systems
 - **100% Test Success**: All 137 tests passing across all platforms
 - **Edge Case Coverage**: Extensive testing of boundary conditions and error scenarios
 - **Cross-Platform Verification**: Windows, macOS, and Linux compatibility tested
 
-### 📚 Enhanced Documentation
+### [DOCS] Enhanced Documentation
 - **Privacy Policy** (docs/PRIVACY.md): Complete privacy practices and user rights
 - **Technical Debt Resolution** (docs/TECHNICAL_DEBT_RESOLUTION.md): Detailed implementation notes
 - **Updated README**: Privacy-first messaging and new feature documentation
 - **API Documentation**: Comprehensive inline documentation for all new systems
 
-### 🔧 Architecture Improvements
+### [ARCH] Architecture Improvements
 - **Modular Services**: Clean separation of concerns with `src/services/` directory
 - **GameState Integration**: Seamless integration with existing game architecture
 - **Backward Compatibility**: All existing saves and configurations work unchanged
@@ -182,22 +182,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.1] - 2025-09-04 - "Three Column" Hotfix Candidate
 ### Added
-- **🎛️ 3-Column Layout System**: Complete UI architecture overhaul for better organization
+- **[LAYOUT] 3-Column Layout System**: Complete UI architecture overhaul for better organization
   - **Left Column**: Repeating actions (hire, research, etc.) with visual action counters
   - **Right Column**: Strategic one-off actions (upgrades, board meetings, etc.)
   - **Middle Column**: Staff animations and context displays
   - **Smart Action Categorization**: Automatic sorting of actions by type and frequency
-- **⌨️ Comprehensive Keystroke Support**: Fast-paced gameplay with keyboard shortcuts
+- **[KEYBOARD] Comprehensive Keystroke Support**: Fast-paced gameplay with keyboard shortcuts
   - **Auto-Generated Keybindings**: Every visible action gets a unique keyboard shortcut
   - **Visual Key Display**: All buttons show their assigned keys (e.g., "[1] Hire Staff")
   - **Enter Key Support**: Enter/Return now works same as Space for turn processing
   - **Conflict Resolution**: Intelligent key assignment prevents duplicate bindings
-- **🎨 Enhanced Visual Differentiation**: Color-coded action categories for quick recognition
+- **[VISUAL] Enhanced Visual Differentiation**: Color-coded action categories for quick recognition
   - **Research Actions**: Blue accent coloring for safety/interpretability research
   - **Economic Actions**: Green accent coloring for hiring/compute purchases
   - **Strategic Actions**: Distinct styling for board meetings, lobbying, etc.
   - **Button Size Optimization**: Reduced button heights (42px left, 35px right) for better fit
-- **🔧 Layout Improvements**: Better spacing and visibility management
+- **[LAYOUT] Layout Improvements**: Better spacing and visibility management
   - **Context Window Buffer**: 2% vertical buffer prevents buttons hiding under context display
   - **Text Overflow Protection**: Strategic action names truncated cleanly for right column
   - **Early Game Filtering**: UI starts minimal and grows as actions unlock
@@ -215,12 +215,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2025-09-04
 ### Added
-- **🎨 Retro 80s Context Window System**: Complete overhaul of information display
+- **[RETRO] Retro 80s Context Window System**: Complete overhaul of information display
   - **80s Techno-Green Styling**: ALL CAPS DOS-style context window with retro color scheme
   - **Dynamic Context Display**: Hover over actions/upgrades for detailed information
   - **Green Matrix Theme**: Background (40,80,40), Text (200,255,200) for authentic retro feel
   - **Smart Information Architecture**: Moved descriptions from cramped buttons to spacious context area
-- **🎯 8-bit Style Resource Icons**: Complete visual redesign of resource display
+- **[VISUAL] 8-bit Style Resource Icons**: Complete visual redesign of resource display
   - **Money Icon**: Pixelated $ symbol in gold (255,230,60)
   - **Staff Icon**: Simple person silhouette (head + body)
   - **Reputation Icon**: Star polygon in blue (180,210,255)
@@ -229,11 +229,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Compute Icon**: "2^n" exponential notation for computing power
   - **Research Icon**: Light bulb for research progress
   - **Papers Icon**: Document with text lines for publications
-- **🔧 Developer Tools & Quality of Life**
+- **[DEV] Developer Tools & Quality of Life**
   - **Screenshot Hotkey**: Press `[` key to capture game screenshots
   - **Screenshot Management**: Auto-saves to `screenshots/` folder with timestamps
   - **Window Mode Default**: Disabled fullscreen for better Alt+Tab and screen capture compatibility
-- **🎮 Action Filtering & UI Polish**
+- **[UI] Action Filtering & UI Polish**
   - **Smart Action Display**: Only show unlocked actions (12/24 visible initially)
   - **Button Reorganization**: Moved "Hire Staff" to logical position 5
   - **Starting Resources**: Set default staff to 0 for better game balance
@@ -248,7 +248,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- **🎯 Enhanced Settings System**: Comprehensive settings and configuration architecture
+- **[SETTINGS] Enhanced Settings System**: Comprehensive settings and configuration architecture
   - **Custom Seed Management**: Fixed critical "Launch with Custom Seed" crash, added seed validation and normalization
   - **Categorical Settings Organization**: Audio, Gameplay, Accessibility, and Game Configuration modes
   - **Seed Management System**: Weekly community seeds, custom seed validation, seed history tracking
@@ -257,7 +257,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Service Layer Architecture**: `src/services/seed_manager.py` and `src/services/game_config_manager.py`
   - **Integration Layer**: `src/ui/settings_integration.py` for gradual adoption and compatibility
   - **Demo and Testing Tools**: `demo_settings.py` for interactive testing, `test_fixes.py` for validation
-- **🎨 UI/UX Improvements**: Major improvements to interface quality and information accessibility
+- **[UI/UX] UI/UX Improvements**: Major improvements to interface quality and information accessibility
   - **Fixed Resource Bar Kerning**: Replaced fixed positioning with dynamic spacing for better readability
   - **Context Window System**: Comprehensive contextual help system with detailed information on hover
     - Minimizable context window at bottom of screen (20% height expanded, 8% minimized)
@@ -393,7 +393,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Minimum Conditions for v0.1.0 Release
 Before releasing v0.1.0, the following conditions must be met:
 
-#### Core Functionality ✅
+#### Core Functionality [COMPLETE]
 - [x] Game launches successfully with main menu
 - [x] All game modes function correctly (weekly seed, custom seed)
 - [x] Core resource management works (money, staff, reputation, doom)
@@ -404,14 +404,14 @@ Before releasing v0.1.0, the following conditions must be met:
 - [x] Opponents system functions with espionage and AI behavior
 - [x] Enhanced event system (popups, deferred events) works properly
 
-#### Technical Quality ✅
+#### Technical Quality [COMPLETE]
 - [x] Full test suite passes (115/115 tests)
 - [x] No critical bugs in core gameplay
 - [x] Game logging system captures all events correctly
 - [x] Bug reporting system functions properly
 - [x] Cross-platform compatibility (Windows, macOS, Linux)
 
-#### Documentation & User Experience ✅
+#### Documentation & User Experience [COMPLETE]
 - [x] README.md provides clear installation and quick start
 - [x] PLAYERGUIDE.md covers all game features and strategies
 - [x] DEVELOPERGUIDE.md explains architecture and contribution process

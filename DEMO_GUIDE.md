@@ -1,6 +1,6 @@
 # Quick Demo Guide for Your Friend
 
-## 🎯 What You've Built - P(Doom) v0.2.5
+## [DEMO] What You've Built - P(Doom) v0.2.5
 
 ### The Game
 A bureaucracy strategy game about AI Safety with retro 80s aesthetics.
@@ -13,7 +13,7 @@ A bureaucracy strategy game about AI Safety with retro 80s aesthetics.
 
 ---
 
-## 🚀 How to Run & Demo
+## [RUN] How to Run & Demo
 
 ### 1. Quick Start
 ```bash
@@ -22,7 +22,7 @@ python main.py
 ```
 
 ### 2. Show These Features
-- **Resource Icons**: Point out the clean $ 💰, person 👤, star ⭐, lightning ⚡, skull 💀 icons
+- **Resource Icons**: Point out the clean $ [MONEY], person [STAFF], star [REPUTATION], lightning [COMPUTE], skull [DOOM] icons
 - **Context Window**: Hover over any action to see the green retro information panel
 - **Screenshots**: Press `[` key and show the `screenshots/` folder with timestamped images
 - **Clean UI**: Notice how only 12/24 actions show (unlocked ones only)
@@ -34,7 +34,7 @@ python main.py
 
 ---
 
-## 💻 Python Development Teaching Points
+## [DEV] Python Development Teaching Points
 
 ### Version Management
 ```python
@@ -66,14 +66,14 @@ git status
 
 ---
 
-## 📋 Ready for Your Website
+## [READY] Ready for Your Website
 
 ### Assets Created
-- ✅ `RELEASE_NOTES_v0.2.0.md` - Public-facing release notes
-- ✅ `CHANGELOG.md` - Developer changelog following standards
-- ✅ Version bumped to 0.2.5 with semantic versioning
-- ✅ Git tag `v0.2.5` for proper release management
-- ✅ All code pushed to main branch
+- [DONE] `RELEASE_NOTES_v0.2.0.md` - Public-facing release notes
+- [DONE] `CHANGELOG.md` - Developer changelog following standards
+- [DONE] Version bumped to 0.2.5 with semantic versioning
+- [DONE] Git tag `v0.2.5` for proper release management
+- [DONE] All code pushed to main branch
 
 ### Website Content Ready
 - Professional release notes with technical details
@@ -83,7 +83,7 @@ git status
 
 ---
 
-## 🎮 Demo Script (2 minutes)
+## [DEMO] Demo Script (2 minutes)
 
 1. **"This is P(Doom), a strategy game I built in Python"**
 2. **Show UI**: "Notice the retro 8-bit icons instead of cluttered text"
@@ -92,4 +92,4 @@ git status
 5. **Show code**: "Everything follows modern development practices - semantic versioning, git tags, comprehensive docs"
 6. **Git log**: "Clean commit history shows the development process"
 
-**Perfect for showing how to build polished Python applications! 🚀**
+**Perfect for showing how to build polished Python applications! [AWESOME]**

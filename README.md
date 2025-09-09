@@ -9,10 +9,10 @@ The game is designed to reflect historical events and then project future ones a
  
 **Current Version:** v0.2.6 "Lab Name System" - Professional AI lab identity and pseudonymous gameplay
 
-🛡️ **PRIVACY-FIRST DESIGN** - Your data stays under your control  
-🎯 **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
-📊 **OPTIONAL ANALYTICS** - Detailed logging for strategy improvement (opt-in only)  
-🏆 **PSEUDONYMOUS COMPETITION** - Compete without compromising privacy  
+[PRIVACY] **PRIVACY-FIRST DESIGN** - Your data stays under your control  
+[COMPETITIVE] **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
+[ANALYTICS] **OPTIONAL ANALYTICS** - Detailed logging for strategy improvement (opt-in only)  
+[LEADERBOARDS] **PSEUDONYMOUS COMPETITION** - Compete without compromising privacy  
 
 =========================================
 QUICK START
@@ -23,7 +23,7 @@ PREREQUISITES:
 - Git (for cloning the repository)
 - Command line access (Terminal, PowerShell, Git Bash, etc.)
 
-🔒 **PRIVACY NOTE:** P(Doom) is designed with privacy-first principles. All data stays local by default, and any optional features require explicit opt-in. See [docs/PRIVACY.md](docs/PRIVACY.md) for full details.
+[PRIVACY] **PRIVACY NOTE:** P(Doom) is designed with privacy-first principles. All data stays local by default, and any optional features require explicit opt-in. See [docs/PRIVACY.md](docs/PRIVACY.md) for full details.
 
 STEP 1: GET PYTHON (3.9+)
 ------------------
