@@ -1279,12 +1279,13 @@ def draw_ui(screen, game_state, w, h):
         action_rects = get_compact_action_rects(w, h, len(available_actions))
     else:
         # Use traditional layout with filtered actions - calculate rects manually
-        count = len(available_actions)
-        base_x = int(w * 0.04)
-        base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
-        width = int(w * 0.32)
-        height = int(h * 0.065)  # Made slightly smaller to fit more actions
-        gap = int(h * 0.02)  # Reduced gap slightly
+    count = len(available_actions)
+    base_x = int(w * 0.04)
+    base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
+    # Shrink legacy action buttons a bit to reduce excess margins
+    width = int(w * 0.30)
+    height = int(h * 0.055)
+    gap = int(h * 0.015)
         action_rects = [
             pygame.Rect(base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
@@ -1369,7 +1370,7 @@ def draw_ui(screen, game_state, w, h):
         upgrade_rects = get_compact_upgrade_rects(w, h, len(game_state.upgrades), num_purchased)
     else:
         # Use traditional layout
-        upgrade_rect_tuples = game_state._get_upgrade_rects(w, h)
+    upgrade_rect_tuples = game_state._get_upgrade_rects(w, h)
         upgrade_rects = []
         for rect_tuple in upgrade_rect_tuples:
             if rect_tuple is not None:

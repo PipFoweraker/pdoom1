@@ -313,7 +313,7 @@ def get_compact_action_rects(w, h, num_actions=9):
         List of (x, y, width, height) tuples for action button positions
     """
     # Make buttons smaller and arrange in a grid
-    button_size = int(min(w, h) * 0.06)  # Smaller than original buttons
+    button_size = int(min(w, h) * 0.055)  # Slightly smaller than before
     start_x = int(w * 0.02)
     start_y = int(h * 0.2)
     
@@ -348,7 +348,7 @@ def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
     
     # Purchased upgrades as small icons in top right
     if num_purchased > 0:
-        icon_size = int(min(w, h) * 0.03)
+        icon_size = int(min(w, h) * 0.028)
         start_x = w - int(w * 0.02) - icon_size
         start_y = int(h * 0.03)
         
@@ -362,7 +362,7 @@ def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
     
     # Available upgrades as buttons on right side
     if num_upgrades > num_purchased:
-        button_size = int(min(w, h) * 0.05)
+        button_size = int(min(w, h) * 0.045)
         start_x = w - int(w * 0.08)
         start_y = int(h * 0.2)
         

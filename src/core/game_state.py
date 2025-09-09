@@ -2079,9 +2079,10 @@ class GameState:
         count = len(self.actions)
         base_x = int(w * 0.04)
         base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
-        width = int(w * 0.32)
-        height = int(h * 0.065)  # Made slightly smaller to fit more actions
-        gap = int(h * 0.02)  # Reduced gap slightly
+    # Shrink width/height and reduce gaps to fit more buttons comfortably
+    width = int(w * 0.30)
+    height = int(h * 0.055)
+    gap = int(h * 0.015)
         return [
             (base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
@@ -2112,7 +2113,8 @@ class GameState:
         purchased = [(i, u) for i, u in available_upgrades if u.get("purchased", False)]
         not_purchased = [(i, u) for i, u in available_upgrades if not u.get("purchased", False)]
 
-        icon_w, icon_h = int(w*0.045), int(w*0.045)
+    # Slightly smaller purchased icons to free up vertical space
+    icon_w, icon_h = int(w*0.04), int(w*0.04)
         # Purchased: row at top right, but respect UI boundaries
         # Info panel extends to about w*0.84, so ensure icons don't overlap
         max_icons_per_row = max(1, int((w - w*0.84) / icon_w))  # Available space for icons
@@ -2125,10 +2127,11 @@ class GameState:
             y = int(h*0.08) + row * (icon_h + 5)  # Stack vertically if needed
             purchased_rects.append((x, y, icon_w, icon_h))
         # Not purchased: buttons down right (moved down to accommodate opponents panel)
-        base_x = int(w*0.63)
-        base_y = int(h*0.28)  # Moved down from 0.18 to 0.28
-        btn_w, btn_h = int(w*0.29), int(h*0.08)
-        gap = int(h*0.022)
+    base_x = int(w*0.63)
+    base_y = int(h*0.28)  # Moved down from 0.18 to 0.28
+    # Shrink upgrade buttons a bit to create more breathing room
+    btn_w, btn_h = int(w*0.27), int(h*0.07)
+    gap = int(h*0.018)
         not_purchased_rects = [
             (base_x, base_y + k*(btn_h+gap), btn_w, btn_h)
             for k in range(len(not_purchased))
