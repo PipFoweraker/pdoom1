@@ -92,7 +92,7 @@ class ConfigManager:
             
             # Game Balance - Starting Resources
             "starting_resources": {
-                "money": 1000,
+                "money": 2000,
                 "staff": 2,
                 "reputation": 50,
                 "action_points": 3,
@@ -171,6 +171,7 @@ class ConfigManager:
             # Advanced Settings (for modding)
             "advanced": {
                 "debug_mode": False,
+                "verbose_logging": True,       # Enable detailed activity logging by default
                 "log_level": "INFO",
                 "enable_experimental_features": False,
                 "enable_demo_window": False,  # W key demo window
