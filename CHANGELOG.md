@@ -4,6 +4,27 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.11] - 2025-09-10
+### Added
+- **[FEATURE] Enhanced Default Logging**: Verbose logging now enabled by default for better player feedback
+- **[FEATURE] P(Doom) Change Attribution**: All doom fluctuations now include clear reasons in activity log
+- **[FEATURE] GameClock Date Display**: Weekly date progression starting April 4, 2016 shown in activity log
+- **[FEATURE] Resource Icon Hover Tooltips**: All 6 top bar resources now have informative hover context
+- **[FEATURE] Expense Accept/Deny Labels**: Standardized terminology from "Approve/Dismiss" to "Accept/Deny"
+
+### Changed
+- **[BALANCE] Starting Money**: Doubled from $1,000 to $2,000 for improved new player experience
+- **[UI] Button Layout**: Hard clamp prevents action buttons from overlapping context window
+
+### Fixed
+- **[FIX] UI Overlap Issues**: Action buttons now properly constrained to prevent layout conflicts
+- **[FIX] Event System**: Added EventAction.DENY support for consistent expense handling
+
+### Development Notes
+- **[ENHANCEMENT]**: Comprehensive UI/UX improvement package
+- **[TESTING]**: All features validated with real gameplay scenarios
+- **[COMPATIBILITY]**: Zero breaking changes, full backward compatibility maintained
+
 ## [0.2.10] - 2025-09-09
 ### Fixed
 - **[FIX] Typography Import System and Merge Conflicts**: Resolved all merge conflict markers and import errors in main.py and UI modules
