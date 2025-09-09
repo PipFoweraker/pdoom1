@@ -20,7 +20,7 @@ VERSION_PATCH = 8
 VERSION_PRERELEASE = ""
 
 # Build metadata (optional, e.g., commit hash for development builds)
-VERSION_BUILD = ""
+VERSION_BUILD = "polish1"
 
 def get_version():
     """
