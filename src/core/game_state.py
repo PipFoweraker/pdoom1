@@ -2645,7 +2645,7 @@ class GameState:
         if self.enhanced_events_enabled:
             self._trigger_enhanced_events()
     
-    def _trigger_enhanced_events(self):
+    def _trigger_enhanced_events(self) -> None:
         """Trigger enhanced events with popup/deferred support."""
         from src.features.event_system import create_enhanced_events
         
@@ -2661,7 +2661,7 @@ class GameState:
                     # Handle normal/deferred events immediately
                     self._handle_triggered_event(event)
     
-    def _handle_triggered_event(self, event):
+    def _handle_triggered_event(self, event: Any) -> None:
         """Handle a triggered event based on its type."""
         if event.event_type == EventType.NORMAL:
             # Execute immediately like original events
@@ -2692,7 +2692,7 @@ class GameState:
         # Log the action
         self.logger.log_event(f"Player {action.value}: {event.name}", event.desc, self.turn)
     
-    def clear_stuck_popup_events(self):
+    def clear_stuck_popup_events(self) -> bool:
         """
         Safety method to clear popup events that may have become stuck.
         Called when UI interaction issues are detected.
@@ -3288,7 +3288,7 @@ class GameState:
                 "content": content
             }
     
-    def get_employee_productive_actions(self, employee_id):
+    def get_employee_productive_actions(self, employee_id: int) -> Optional[Dict[str, Any]]:
         """
         Get available productive actions for a specific employee.
         
@@ -3343,7 +3343,7 @@ class GameState:
             'available_actions': action_info
         }
     
-    def set_employee_productive_action(self, employee_id, action_index):
+    def set_employee_productive_action(self, employee_id: int, action_index: int) -> Tuple[bool, str]:
         """
         Set the productive action for a specific employee.
         
@@ -3753,7 +3753,7 @@ class GameState:
         else:
             return False, message
     
-    def dismiss_hiring_dialog(self):
+    def dismiss_hiring_dialog(self) -> None:
         """Dismiss the hiring dialog without making a selection."""
         if self.pending_hiring_dialog:
             self.pending_hiring_dialog = None
@@ -3779,7 +3779,7 @@ class GameState:
         self.upgrade_transitions[upgrade_idx] = transition
         return transition
     
-    def _update_ui_transitions(self):
+    def _update_ui_transitions(self) -> None:
         """Update all active UI transitions."""
         transitions_to_remove = []
         
@@ -3910,7 +3910,7 @@ class GameState:
         
         return (int(x), int(y))
     
-    def _apply_easing(self, t, ease_type='cubic_out'):
+    def _apply_easing(self, t: float, ease_type: str = 'cubic_out') -> float:
         """Apply easing function for smoother animations."""
         if ease_type == 'cubic_out':
             return 1 - (1 - t) ** 3
@@ -4048,7 +4048,7 @@ class GameState:
     
     # Enhanced Personnel System Methods
     
-    def refresh_researcher_hiring_pool(self):
+    def refresh_researcher_hiring_pool(self) -> None:
         """Refresh the pool of available researchers for hiring."""
         from src.core.researchers import generate_researcher, SPECIALIZATIONS
         
@@ -4151,7 +4151,7 @@ class GameState:
         
         return effects
     
-    def advance_researchers(self):
+    def advance_researchers(self) -> None:
         """Advance all researchers by one turn (called during end_turn)."""
         for researcher in self.researchers:
             researcher.advance_turn()
