@@ -236,13 +236,13 @@ def create_enhanced_events():
     
     def popup_crisis_effect(gs):
         """Major crisis that requires immediate attention."""
-        gs._add('doom', 15)
+        gs._add('doom', 15, "major AI lab incident crisis")
         gs._add('money', -5000)
         gs.messages.append("Major AI lab incident! Immediate action required!")
     
     def popup_crisis_reduce(gs):
         """Reduced effect for the crisis."""
-        gs._add('doom', 8)
+        gs._add('doom', 8, "contained crisis response")
         gs._add('money', -2000)
         gs.messages.append("Crisis contained through quick response.")
     

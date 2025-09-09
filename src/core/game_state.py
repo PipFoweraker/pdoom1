@@ -29,7 +29,7 @@ from src.core.research_quality import TechnicalDebt, ResearchQuality, ResearchPr
 SCORE_FILE = "local_highscore.json"
 
 class GameState:
-    def _add(self, attr, val):
+    def _add(self, attr, val, reason=""):
         """
         Adds val to the given attribute, clamping where appropriate.
         Also records last_balance_change for 'money' for use in UI,
@@ -60,6 +60,12 @@ class GameState:
             # Track peak doom for strategic analysis
             if self.doom > self.max_doom_reached:
                 self.max_doom_reached = self.doom
+            
+            # Add doom change to activity log with attribution
+            if val != 0:
+                change_str = f"+{val}" if val > 0 else str(val)
+                reason_text = reason or "unspecified cause"
+                self.messages.append(f"p(Doom) {change_str}: {reason_text}")
             
             # Trigger high doom warning (existing system)
             if old_doom < 70 and self.doom >= 70 and onboarding.should_show_mechanic_help('high_doom_warning'):
@@ -104,8 +110,9 @@ class GameState:
                 from src.services.verbose_logging import get_logger, is_logging_enabled
                 if is_logging_enabled():
                     logger = get_logger()
+                    reason_for_log = reason or f"_add({attr}, {val})"
                     logger.log_resource_change(
-                        self.turn, attr, old_value, new_value, f"_add({attr}, {val})"
+                        self.turn, attr, old_value, new_value, reason_for_log
                     )
             except Exception:
                 pass  # Don't break game if logging fails
@@ -800,7 +807,7 @@ class GameState:
                     doom_change = int(doom_change * effectiveness * (1 + doom_bonus))
                 else:
                     doom_change = int(doom_change * effectiveness)
-                self._add('doom', doom_change)
+                self._add('doom', doom_change, "action effectiveness adjustment")
                 
             if rep_change != 0:
                 # Apply researcher reputation bonuses
@@ -1260,7 +1267,7 @@ class GameState:
             search_results = [
                 ("regulatory compliance", lambda: self._add('reputation', 3)),
                 ("cost savings opportunity", lambda: self._add('money', random.randint(200, 500))),
-                ("process efficiency", lambda: self._add('doom', -2)),
+                ("process efficiency", lambda: self._add('doom', -2, "board search found process improvement")),
                 ("staff optimization", lambda: None)  # Just a message
             ]
             
@@ -1416,7 +1423,7 @@ class GameState:
         if unproductive_count > 0:
             # Small doom increase for unproductive employees
             doom_penalty = unproductive_count * 0.5
-            self._add('doom', int(doom_penalty))
+            self._add('doom', int(doom_penalty), f"{unproductive_count} unproductive employees")
             
             # Different messages based on reason for unproductivity
             if unmanaged_penalty_count > 0:
@@ -1539,7 +1546,7 @@ class GameState:
             self._add('reputation', -2)
             self.messages.append("Espionage scandal! Reputation dropped.")
         elif random.random() < 0.15:
-            self._add('doom', 5)
+            self._add('doom', 5, "espionage operation backfired")
             self.messages.append("Espionage backfired! Doom increased.")
         return None
         
@@ -1580,7 +1587,7 @@ class GameState:
         else:
             spike = random.randint(6, 13)
             self.messages.append("Lab breakthrough! Doom spikes!")
-        self._add('doom', spike)
+        self._add('doom', spike, "AI lab breakthrough event")
 
     def handle_click(self, mouse_pos, w, h):
         # Check if using 3-column layout
@@ -3170,7 +3177,7 @@ class GameState:
              lambda: (self._add('money', -random.randint(50, 100)),
                      self._add('reputation', -random.randint(4, 8)))),
             ("Major safety incident due to accumulated shortcuts!",
-             lambda: (self._add('doom', random.randint(10, 20)),
+             lambda: (self._add('doom', random.randint(10, 20), "technical debt cascade failure"),
                      self._add('reputation', -random.randint(5, 10)))),
         ]
         
@@ -4167,14 +4174,14 @@ class GameState:
         if researcher.specialization == "safety":
             doom_reduction = random.randint(3, 6)
             rep_gain = random.randint(2, 4)
-            self._add('doom', -doom_reduction)
+            self._add('doom', -doom_reduction, f"{researcher.name} safety breakthrough")
             self._add('reputation', rep_gain)
             self.messages.append(f"? {researcher.name} achieved a major safety breakthrough! -{doom_reduction} doom, +{rep_gain} reputation")
         elif researcher.specialization == "capabilities":
             research_boost = random.randint(8, 12)
             doom_risk = random.randint(1, 3)
             self._add('research_progress', research_boost)
-            self._add('doom', doom_risk)
+            self._add('doom', doom_risk, f"{researcher.name} capabilities breakthrough")
             self.messages.append(f"[LIGHTNING] {researcher.name} developed advanced AI capabilities! +{research_boost} research, +{doom_risk} doom risk")
         elif researcher.specialization == "interpretability":
             rep_gain = random.randint(3, 5)
@@ -4374,7 +4381,7 @@ class GameState:
         def handle_rush_it(gs):
             gs.messages.append(f"[ALERT] {researcher.name}: \"Alright, cutting corners to hit the deadline. Hope nothing goes wrong...\"")
             gs.technical_debt.add_debt(3)  # Significant debt increase
-            gs._add('doom', 1)  # Small doom increase for risky approach
+            gs._add('doom', 1, f"{researcher.name} cut safety corners")  # Small doom increase for risky approach
             
         # Use enhanced events if available, otherwise simple choice
         if hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled:
@@ -4495,7 +4502,7 @@ class GameState:
             self.messages.append("? Your careful approach gains recognition in contrast!")
         
         # Increase global doom slightly due to competitor shortcuts
-        self._add('doom', random.randint(1, 3))
+        self._add('doom', random.randint(1, 3), f"competitor {competitor} taking dangerous shortcuts")
     
     # Economic Cycles & Funding Volatility Event Handlers for Issue #192
     
@@ -4584,7 +4591,7 @@ class GameState:
         self.messages.append("Competitive pressure increases - consider accelerating your own fundraising.")
         
         # Increase doom slightly due to competitor advancement
-        self._add('doom', random.randint(1, 3))
+        self._add('doom', random.randint(1, 3), f"competitor {competitor.name} funding acceleration")
         
         # Create urgency for player fundraising
         if hasattr(self, 'funding_round_cooldown'):
