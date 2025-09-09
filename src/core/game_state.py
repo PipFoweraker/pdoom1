@@ -3,7 +3,7 @@ import json
 import os
 import pygame
 
-from typing import Tuple, Dict, Any, Optional, List, Set, Union
+from typing import Tuple, Dict, Any, Optional, List, Set, Union, Callable
 
 from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
@@ -2228,13 +2228,13 @@ class GameState:
     def _get_endturn_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         return (int(w*0.39), int(h*0.74), int(w*0.22), int(h*0.07))  # Moved up to account for context window
 
-    def _get_mute_button_rect(self, w, h):
+    def _get_mute_button_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         button_size = int(min(w, h) * 0.04)
         button_x = w - button_size - 20
         button_y = h - button_size - 20
         return (button_x, button_y, button_size, button_size)
 
-    def _get_activity_log_minimize_button_rect(self, w, h):
+    def _get_activity_log_minimize_button_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         """Get rectangle for the activity log minimize button (only when scrollable log is enabled)"""
         log_x, log_y = self._get_activity_log_current_position(w, h)
         log_width = int(w * 0.44)
@@ -2243,7 +2243,7 @@ class GameState:
         button_y = log_y
         return (button_x, button_y, button_size, button_size)
 
-    def _get_activity_log_expand_button_rect(self, w, h):
+    def _get_activity_log_expand_button_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         """Get rectangle for the activity log expand button (only when log is minimized)"""
         log_x, log_y = self._get_activity_log_current_position(w, h)
         
@@ -2255,7 +2255,7 @@ class GameState:
         button_y = log_y
         return (button_x, button_y, button_size, button_size)
 
-    def _get_activity_log_rect(self, w, h):
+    def _get_activity_log_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         """Get rectangle for the entire activity log area for hover detection"""
         log_x, log_y = self._get_activity_log_current_position(w, h)
         
@@ -2272,16 +2272,16 @@ class GameState:
             log_height = int(h * 0.22)
             return (log_x - 5, log_y - 5, log_width + 10, log_height + 10)
 
-    def _get_activity_log_base_position(self, w, h):
+    def _get_activity_log_base_position(self, w: int, h: int) -> Tuple[int, int]:
         """Get the base position of activity log (before any drag offset)"""
         return (int(w*0.04), int(h*0.74))
 
-    def _get_activity_log_current_position(self, w, h):
+    def _get_activity_log_current_position(self, w: int, h: int) -> Tuple[int, int]:
         """Get the current position of activity log (including drag offset)"""
         base_x, base_y = self._get_activity_log_base_position(w, h)
         return (base_x + self.activity_log_position[0], base_y + self.activity_log_position[1])
 
-    def _safe_ui_operation(self, operation_name, operation_func, *args, **kwargs):
+    def _safe_ui_operation(self, operation_name: str, operation_func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
         """Safely execute a UI operation with error handling and logging."""
         try:
             return operation_func(*args, **kwargs)
@@ -2296,7 +2296,7 @@ class GameState:
             else:
                 return False  # For other operations, return False
     
-    def _validate_rect(self, rect, context=""):
+    def _validate_rect(self, rect: Any, context: str = "") -> bool:
         """Validate that a rectangle is properly formatted."""
         if rect is None:
             return False
@@ -2319,7 +2319,7 @@ class GameState:
                 self.game_logger.log(f"Error validating rectangle in {context}: {rect}, error={e}")
             return False
 
-    def _in_rect(self, pt, rect):
+    def _in_rect(self, pt: Tuple[int, int], rect: Union[Tuple[int, int, int, int], pygame.Rect]) -> bool:
         """Check if point is within rectangle, with graceful error handling."""
         if not self._validate_rect(rect, "_in_rect"):
             return False
@@ -2334,7 +2334,7 @@ class GameState:
                 self.game_logger.log(f"_in_rect error: pt={pt}, rect={rect}, error={e}")
             return False
 
-    def end_turn(self):
+    def end_turn(self) -> bool:
         # Prevent multiple end turn calls during processing
         if self.turn_processing:
             # Play error sound for rejected input
@@ -2622,7 +2622,7 @@ class GameState:
         # The timer will count down and reset turn_processing to False
         return True  # Indicate successful turn end
     
-    def update_turn_processing(self):
+    def update_turn_processing(self) -> None:
         """Update turn processing timer and handle transition effects."""
         if self.turn_processing:
             self.turn_processing_timer -= 1
@@ -2630,7 +2630,7 @@ class GameState:
                 self.turn_processing = False
                 self.turn_processing_timer = 0
 
-    def trigger_events(self):
+    def trigger_events(self) -> None:
         """Trigger events using both the original and enhanced event systems."""
         # Handle original events (backward compatibility)
         for event_dict in self.events:
@@ -2723,7 +2723,7 @@ class GameState:
         self.logger.log_event(f"Resolved deferred: {event.name}", f"Action: {action.value}", self.turn)
 
     # --- High score --- #
-    def load_highscore(self):
+    def load_highscore(self) -> int:
         try:
             with open(SCORE_FILE, "r") as f:
                 data = json.load(f)
@@ -2744,7 +2744,7 @@ class GameState:
         except Exception:
             return 0
 
-    def save_highscore(self):
+    def save_highscore(self) -> None:
         try:
             if not self.game_over:
                 return
@@ -3126,7 +3126,7 @@ class GameState:
         self.messages.append(f"?? {researcher.name}'s default quality set to {quality_name}")
         return True
     
-    def get_researcher_by_id(self, researcher_id: str):
+    def get_researcher_by_id(self, researcher_id: str) -> Optional[Any]:
         """
         Get a researcher by their unique identifier.
         
@@ -3252,7 +3252,7 @@ class GameState:
     # --- Tutorial settings --- #
     TUTORIAL_SETTINGS_FILE = "tutorial_settings.json"
     
-    def load_tutorial_settings(self):
+    def load_tutorial_settings(self) -> None:
         """Load tutorial settings from file."""
         try:
             with open(self.TUTORIAL_SETTINGS_FILE, "r") as f:
@@ -3265,8 +3265,8 @@ class GameState:
             self.tutorial_enabled = True
             self.tutorial_shown_milestones = set()
             self.first_game_launch = True
-    
-    def save_tutorial_settings(self):
+
+    def save_tutorial_settings(self) -> None:
         """Save tutorial settings to file."""
         try:
             data = {
@@ -3279,7 +3279,7 @@ class GameState:
         except Exception:
             pass
     
-    def show_tutorial_message(self, milestone_id, title, content):
+    def show_tutorial_message(self, milestone_id: str, title: str, content: str) -> None:
         """Queue a tutorial message to be shown."""
         if self.tutorial_enabled and milestone_id not in self.tutorial_shown_milestones:
             self.pending_tutorial_message = {
@@ -3410,7 +3410,7 @@ class GameState:
         
         return summary
 
-    def dismiss_tutorial_message(self):
+    def dismiss_tutorial_message(self) -> None:
         """Dismiss the current tutorial message and mark milestone as shown."""
         if self.pending_tutorial_message:
             milestone_id = self.pending_tutorial_message["milestone_id"]
