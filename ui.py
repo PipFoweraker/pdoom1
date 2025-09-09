@@ -2516,6 +2516,8 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
             color = (200, 200, 100)
         elif action.value == "dismiss":
             color = (200, 100, 100)
+        elif action.value == "deny":
+            color = (200, 100, 100)  # Same as dismiss - red for negative action
         else:
             color = (150, 150, 200)
         

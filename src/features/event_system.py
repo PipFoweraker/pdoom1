@@ -23,6 +23,7 @@ class EventAction(Enum):
     DEFER = "defer"         # Defer the event for later
     REDUCE = "reduce"       # Reduce the event's impact
     DISMISS = "dismiss"     # Dismiss the event without effect
+    DENY = "deny"           # Deny the event (specific variant of dismiss/reduce)
 
 
 class Event:
@@ -153,9 +154,15 @@ class Event:
             self.effect(game_state)
         elif action == EventAction.REDUCE and self.reduce_effect:
             self.reduce_effect(game_state)
+        elif action == EventAction.DENY and self.reduce_effect:
+            # DENY uses the same logic as REDUCE for most cases
+            self.reduce_effect(game_state)
         elif action == EventAction.DISMISS:
             # Just add a dismissal message
             game_state.messages.append(f"Dismissed: {self.name}")
+        elif action == EventAction.DENY:
+            # Fallback for DENY without reduce_effect
+            game_state.messages.append(f"Denied: {self.name}")
         
         # Reset deferred state after execution
         self.is_deferred = False

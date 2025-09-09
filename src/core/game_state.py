@@ -3596,30 +3596,30 @@ class GameState:
         event_name = f"Expense Request: {expense['item']}"
         event_desc = (f"{expense['employee']} requests approval for: {expense['item']} (${expense['cost']})\n\n"
                      f"Purpose: {expense['description']}\n\n"
-                     f"Approve the expense or deny the request?")
+                     f"Accept the expense or deny the request?")
         
         def approve_expense(gs):
             if gs.money >= expense['cost']:
                 expense['approve_effect'](gs)
-                gs.messages.append(f"Approved: {expense['item']} (${expense['cost']})")
-                return f"Expense approved. {expense['employee']} appreciates the investment."
+                gs.messages.append(f"Accepted: {expense['item']} (${expense['cost']})")
+                return f"Expense accepted. {expense['employee']} appreciates the investment."
             else:
-                gs.messages.append(f"Insufficient funds to approve {expense['item']} (need ${expense['cost']}, have ${gs.money})")
-                return "Insufficient funds for approval."
+                gs.messages.append(f"Insufficient funds to accept {expense['item']} (need ${expense['cost']}, have ${gs.money})")
+                return "Insufficient funds for acceptance."
         
         def deny_expense(gs):
             expense['deny_effect'](gs)
             gs.messages.append(f"Denied: {expense['item']}")
             return f"Expense request denied. {expense['employee']} understands the budget constraints."
         
-        # Create event with approve/deny options
+        # Create event with accept/deny options
         popup_event = Event(
             name=event_name,
             desc=event_desc,
             trigger=lambda gs: True,  # Already triggered
             effect=approve_expense,   # Default effect is approval
             event_type=EventType.POPUP,
-            available_actions=[EventAction.ACCEPT, EventAction.DISMISS],
+            available_actions=[EventAction.ACCEPT, EventAction.DENY],
             reduce_effect=deny_expense
         )
         
