@@ -344,14 +344,14 @@ def calculate_research_outcome(
     
     # Add quality-specific messages
     if quality == ResearchQuality.RUSHED:
-        messages.append("⚡ Rushed research completed quickly but with shortcuts")
+        messages.append("[LIGHTNING] Rushed research completed quickly but with shortcuts")
     elif quality == ResearchQuality.THOROUGH:
-        messages.append("🔬 Thorough research completed with extra safety verification")
+        messages.append("? Thorough research completed with extra safety verification")
     
     # Add debt penalty messages if applicable
     if debt_penalty < 1.0:
         penalty_percent = int((1.0 - debt_penalty) * 100)
-        messages.append(f"⚠️ Technical debt reduced research effectiveness by {penalty_percent}%")
+        messages.append(f"[WARNING]? Technical debt reduced research effectiveness by {penalty_percent}%")
     
     return actual_doom_reduction, actual_reputation_gain, debt_change, messages
 

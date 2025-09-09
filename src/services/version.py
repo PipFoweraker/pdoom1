@@ -20,7 +20,7 @@ VERSION_PATCH = 8
 VERSION_PRERELEASE = ""
 
 # Build metadata (optional, e.g., commit hash for development builds)
-VERSION_BUILD = ""
+VERSION_BUILD = "polish1"
 
 def get_version():
     """
@@ -88,18 +88,18 @@ HOTFIX_GUIDELINES = """
 HOTFIX VERSION STRATEGY (v0.2.x series):
 
 Quick Reference for Version Bumps:
-- 0.2.1 → 0.2.2: Button layout fixes, text overflow patches
-- 0.2.2 → 0.2.3: Color system refinements, visibility improvements  
-- 0.2.3 → 0.2.4: Keystroke binding fixes, input handling
-- 0.2.4 → 0.2.5: UI interaction fixes, Factorio-style hint system
-- 0.2.5 → 0.3.0: Major milestone - stable UI release
+- 0.2.1 ? 0.2.2: Button layout fixes, text overflow patches
+- 0.2.2 ? 0.2.3: Color system refinements, visibility improvements  
+- 0.2.3 ? 0.2.4: Keystroke binding fixes, input handling
+- 0.2.4 ? 0.2.5: UI interaction fixes, Factorio-style hint system
+- 0.2.5 ? 0.3.0: Major milestone - stable UI release
 
 Increment Trigger Events:
-- Any UI crash or freeze → immediate patch
-- Button accessibility issues → same-day patch
-- Keystroke conflicts → priority patch
-- Installation/dependency issues → emergency patch
-- Performance degradation → planned patch
+- Any UI crash or freeze ? immediate patch
+- Button accessibility issues ? same-day patch
+- Keystroke conflicts ? priority patch
+- Installation/dependency issues ? emergency patch
+- Performance degradation ? planned patch
 
 Version Update Process:
 1. Update VERSION_PATCH number

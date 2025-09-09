@@ -309,11 +309,11 @@ class EconomicCycles:
     def _get_funding_source_description(self, source: FundingSource, multiplier: float) -> str:
         """Get human-readable description of funding source conditions."""
         descriptions = {
-            FundingSource.SEED: f"Angel/seed funding (×{multiplier:.1f})",
-            FundingSource.VENTURE: f"Venture capital (×{multiplier:.1f})",
-            FundingSource.CORPORATE: f"Strategic investment (×{multiplier:.1f})",
-            FundingSource.GOVERNMENT: f"Government grants (×{multiplier:.1f})",
-            FundingSource.REVENUE: f"Customer revenue (×{multiplier:.1f})"
+            FundingSource.SEED: f"Angel/seed funding (x{multiplier:.1f})",
+            FundingSource.VENTURE: f"Venture capital (x{multiplier:.1f})",
+            FundingSource.CORPORATE: f"Strategic investment (x{multiplier:.1f})",
+            FundingSource.GOVERNMENT: f"Government grants (x{multiplier:.1f})",
+            FundingSource.REVENUE: f"Customer revenue (x{multiplier:.1f})"
         }
         return descriptions[source]
     

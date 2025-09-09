@@ -219,7 +219,7 @@ class AchievementsEndgameSystem:
         
         achievements["safety_champion"] = Achievement(
             "safety_champion", "Safety Champion", 
-            "Achieved remarkably low p(Doom) levels (≤10%) - demonstrating exceptional safety practices.",
+            "Achieved remarkably low p(Doom) levels (<=10%) - demonstrating exceptional safety practices.",
             AchievementType.SAFETY,
             lambda gs: gs.doom <= 10,
             "rare"
@@ -328,7 +328,7 @@ class AchievementsEndgameSystem:
         """
         warnings = []
         
-        # Doom Critical Warnings (expanded from existing ≥70% system)
+        # Doom Critical Warnings (expanded from existing >=70% system)
         doom_warnings = [
             (80, "CRITICAL", "P(Doom) Warning: 80% Risk Level", 
              "Your probability of doom has reached 80%. Immediate safety measures recommended."),
@@ -384,7 +384,7 @@ class AchievementsEndgameSystem:
         if peak_reputation > 50:  # Only warn if they had significant reputation to lose
             reputation_warnings = [
                 (0.50, "WARNING", "Reputation Decline",
-                 f"Reputation has declined 50% from peak ({peak_reputation} → {game_state.reputation}). Public trust is eroding."),
+                 f"Reputation has declined 50% from peak ({peak_reputation} ? {game_state.reputation}). Public trust is eroding."),
                 (0.25, "CRITICAL", "Reputation Crisis", 
                  f"Reputation has collapsed 75% from peak. Severe damage to public standing and funding prospects."),
                 (0.10, "EMERGENCY", "Reputation Emergency",
@@ -582,7 +582,7 @@ class AchievementsEndgameSystem:
         # Reputation recovery
         peak_reputation = getattr(game_state, 'peak_reputation', game_state.reputation)
         if peak_reputation > game_state.reputation * 2:
-            critical_moments.append(f"Recovered from major reputation damage ({peak_reputation} peak → {game_state.reputation} current)")
+            critical_moments.append(f"Recovered from major reputation damage ({peak_reputation} peak ? {game_state.reputation} current)")
             
         analysis['critical_moments'] = critical_moments
         

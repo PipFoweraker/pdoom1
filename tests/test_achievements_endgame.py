@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def test_achievements_system_imports():
     """Test that all achievement system components can be imported."""
-    print("🧪 Testing Achievement System Imports")
+    print("[TEST] Testing Achievement System Imports")
     print("=" * 50)
     
     try:
@@ -28,15 +28,15 @@ def test_achievements_system_imports():
             Achievement, AchievementType, EndGameType, WarningType,
             AchievementsEndgameSystem, achievements_endgame_system
         )
-        print("✅ Achievement system imports successfully")
+        print("? Achievement system imports successfully")
         return True
     except ImportError as e:
-        print(f"❌ Achievement system import failed: {e}")
+        print(f"? Achievement system import failed: {e}")
         return False
 
 def test_achievement_creation():
     """Test Achievement class creation and properties."""
-    print("\n🧪 Testing Achievement Creation")
+    print("\n[TEST] Testing Achievement Creation")
     print("=" * 50)
     
     try:
@@ -57,15 +57,15 @@ def test_achievement_creation():
         assert achievement.type == AchievementType.SURVIVAL, "Achievement type incorrect"
         assert achievement.rarity == "common", "Achievement rarity incorrect"
         
-        print("✅ Achievement creation works correctly")
+        print("? Achievement creation works correctly")
         return True
     except Exception as e:
-        print(f"❌ Achievement creation failed: {e}")
+        print(f"? Achievement creation failed: {e}")
         return False
 
 def test_achievements_endgame_system_initialization():
     """Test AchievementsEndgameSystem initialization."""
-    print("\n🧪 Testing Achievements System Initialization")
+    print("\n[TEST] Testing Achievements System Initialization")
     print("=" * 50)
     
     try:
@@ -83,15 +83,15 @@ def test_achievements_endgame_system_initialization():
             found = any(ach_type.name == req_type for ach_type in achievement_types)
             assert found, f"Missing required achievement type: {req_type}"
         
-        print(f"✅ Achievements system initialized with {len(achievements)} achievements")
+        print(f"? Achievements system initialized with {len(achievements)} achievements")
         return True
     except Exception as e:
-        print(f"❌ Achievements system initialization failed: {e}")
+        print(f"? Achievements system initialization failed: {e}")
         return False
 
 def test_game_state_integration():
     """Test integration with game state system."""
-    print("\n🧪 Testing Game State Integration")
+    print("\n[TEST] Testing Game State Integration")
     print("=" * 50)
     
     try:
@@ -109,15 +109,15 @@ def test_game_state_integration():
         # Check that achievements processing method exists
         assert hasattr(game_state, '_process_achievements_and_warnings'), "Missing achievements processing method"
         
-        print("✅ Game state integration successful")
+        print("? Game state integration successful")
         return True
     except Exception as e:
-        print(f"❌ Game state integration failed: {e}")
+        print(f"? Game state integration failed: {e}")
         return False
 
 def test_achievement_checking():
     """Test achievement checking logic."""
-    print("\n🧪 Testing Achievement Checking Logic")
+    print("\n[TEST] Testing Achievement Checking Logic")
     print("=" * 50)
     
     try:
@@ -137,15 +137,15 @@ def test_achievement_checking():
         # We'll just check that the system can check achievements without crashing
         assert isinstance(new_achievements, list), "Achievement checking should return a list"
         
-        print("✅ Achievement checking logic works")
+        print("? Achievement checking logic works")
         return True
     except Exception as e:
-        print(f"❌ Achievement checking failed: {e}")
+        print(f"? Achievement checking failed: {e}")
         return False
 
 def test_warning_system():
     """Test critical warning system."""
-    print("\n🧪 Testing Warning System")
+    print("\n[TEST] Testing Warning System")
     print("=" * 50)
     
     try:
@@ -167,15 +167,15 @@ def test_warning_system():
         extreme_warnings = achievements_endgame_system.check_critical_warnings(game_state)
         assert len(extreme_warnings) > len(warnings), "Should have more warnings at 98% doom"
         
-        print(f"✅ Warning system works (85% doom: {len(warnings)}, 98% doom: {len(extreme_warnings)})")
+        print(f"? Warning system works (85% doom: {len(warnings)}, 98% doom: {len(extreme_warnings)})")
         return True
     except Exception as e:
-        print(f"❌ Warning system failed: {e}")
+        print(f"? Warning system failed: {e}")
         return False
 
 def test_victory_conditions():
     """Test victory condition detection."""
-    print("\n🧪 Testing Victory Conditions")
+    print("\n[TEST] Testing Victory Conditions")
     print("=" * 50)
     
     try:
@@ -193,15 +193,15 @@ def test_victory_conditions():
         # Should trigger game over due to victory
         assert game_state.game_over == True, "Victory not detected at doom = 0"
         
-        print("✅ Victory condition detection works")
+        print("? Victory condition detection works")
         return True
     except Exception as e:
-        print(f"❌ Victory condition test failed: {e}")
+        print(f"? Victory condition test failed: {e}")
         return False
 
 def test_endgame_scenarios_integration():
     """Test integration with enhanced endgame scenarios."""
-    print("\n🧪 Testing Endgame Scenarios Integration")
+    print("\n[TEST] Testing Endgame Scenarios Integration")
     print("=" * 50)
     
     try:
@@ -222,15 +222,15 @@ def test_endgame_scenarios_integration():
         
         assert scenario is not None, "No scenario returned for victory condition"
         
-        print("✅ Endgame scenarios integration works")
+        print("? Endgame scenarios integration works")
         return True
     except Exception as e:
-        print(f"❌ Endgame scenarios integration failed: {e}")
+        print(f"? Endgame scenarios integration failed: {e}")
         return False
 
 def test_resource_tracking():
     """Test resource tracking for achievements."""
-    print("\n🧪 Testing Resource Tracking")
+    print("\n[TEST] Testing Resource Tracking")
     print("=" * 50)
     
     try:
@@ -249,15 +249,15 @@ def test_resource_tracking():
         game_state._add('reputation', 10)
         assert game_state.peak_reputation >= initial_reputation + 10, "Peak reputation not tracked correctly"
         
-        print("✅ Resource tracking works correctly")
+        print("? Resource tracking works correctly")
         return True
     except Exception as e:
-        print(f"❌ Resource tracking failed: {e}")
+        print(f"? Resource tracking failed: {e}")
         return False
 
 def test_achievement_rarity_system():
     """Test achievement rarity classification."""
-    print("\n🧪 Testing Achievement Rarity System")
+    print("\n[TEST] Testing Achievement Rarity System")
     print("=" * 50)
     
     try:
@@ -277,15 +277,15 @@ def test_achievement_rarity_system():
         legendary_count = rarity_counts.get("legendary", 0)
         assert common_count > legendary_count, "Should have more common than legendary achievements"
         
-        print(f"✅ Achievement rarity system works: {rarity_counts}")
+        print(f"? Achievement rarity system works: {rarity_counts}")
         return True
     except Exception as e:
-        print(f"❌ Achievement rarity system failed: {e}")
+        print(f"? Achievement rarity system failed: {e}")
         return False
 
 def test_defensive_programming():
     """Test that achievement system handles errors gracefully."""
-    print("\n🧪 Testing Defensive Programming")
+    print("\n[TEST] Testing Defensive Programming")
     print("=" * 50)
     
     try:
@@ -301,15 +301,15 @@ def test_defensive_programming():
         # This should not crash the game
         game_state._process_achievements_and_warnings()
         
-        print("✅ Defensive programming works - no crashes with unusual values")
+        print("? Defensive programming works - no crashes with unusual values")
         return True
     except Exception as e:
-        print(f"❌ Defensive programming failed: {e}")
+        print(f"? Defensive programming failed: {e}")
         return False
 
 def run_all_tests():
     """Run all achievement system tests."""
-    print("🚀 Running Achievement & Endgame System Tests")
+    print("[ROCKET] Running Achievement & Endgame System Tests")
     print("=" * 60)
     print("Testing Issue #195 Implementation: Endgame scenarios beyond binary win/lose")
     print()
@@ -338,21 +338,21 @@ def run_all_tests():
             else:
                 failed += 1
         except Exception as e:
-            print(f"❌ Test {test.__name__} crashed: {e}")
+            print(f"? Test {test.__name__} crashed: {e}")
             failed += 1
     
     print("\n" + "=" * 60)
-    print(f"📊 Test Results: {passed} passed, {failed} failed")
+    print(f"[CHART] Test Results: {passed} passed, {failed} failed")
     
     if failed == 0:
-        print("🎉 ALL TESTS PASSED! Achievement system is ready for Issue #195")
-        print("\n🎮 To test in game:")
+        print("[CELEBRATION] ALL TESTS PASSED! Achievement system is ready for Issue #195")
+        print("\n[GAME] To test in game:")
         print("1. Run: python main.py")
         print("2. Start a game and play through several turns")
         print("3. Watch for achievement notifications and warnings")
         print("4. Try to reach p(Doom) = 0 for ultimate victory!")
     else:
-        print(f"⚠️  {failed} test(s) failed. Please review implementation.")
+        print(f"[WARNING]?  {failed} test(s) failed. Please review implementation.")
     
     return failed == 0
 

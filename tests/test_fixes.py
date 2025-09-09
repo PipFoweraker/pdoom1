@@ -13,33 +13,33 @@ def test_custom_seed_fix():
     # Test 1: Import main module
     try:
         import main
-        print("✅ Main module imports successfully")
+        print("? Main module imports successfully")
     except ImportError as e:
-        print(f"❌ Failed to import main module: {e}")
+        print(f"? Failed to import main module: {e}")
         return False
     
     # Test 2: Check menu items alignment
     expected_items = ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
     if hasattr(main, 'menu_items') and main.menu_items == expected_items:
-        print("✅ Menu items are properly aligned")
+        print("? Menu items are properly aligned")
     else:
-        print(f"❌ Menu items mismatch. Expected: {expected_items}, Got: {getattr(main, 'menu_items', 'Not found')}")
+        print(f"? Menu items mismatch. Expected: {expected_items}, Got: {getattr(main, 'menu_items', 'Not found')}")
         return False
     
     # Test 3: Check weekly seed function
     try:
         weekly_seed = main.get_weekly_seed()
-        print(f"✅ Weekly seed generation works: {weekly_seed}")
+        print(f"? Weekly seed generation works: {weekly_seed}")
     except Exception as e:
-        print(f"❌ Weekly seed generation failed: {e}")
+        print(f"? Weekly seed generation failed: {e}")
         return False
     
     # Test 4: Check UI import
     try:
         from ui import draw_seed_prompt
-        print("✅ draw_seed_prompt function is available")
+        print("? draw_seed_prompt function is available")
     except ImportError as e:
-        print(f"❌ Failed to import draw_seed_prompt: {e}")
+        print(f"? Failed to import draw_seed_prompt: {e}")
         return False
     
     # Test 5: Check config system
@@ -47,12 +47,12 @@ def test_custom_seed_fix():
         from src.services.config_manager import initialize_config_system, get_current_config
         initialize_config_system()
         config = get_current_config()
-        print("✅ Config system initializes properly")
+        print("? Config system initializes properly")
     except Exception as e:
-        print(f"❌ Config system failed: {e}")
+        print(f"? Config system failed: {e}")
         return False
     
-    print("\n🎉 All tests passed! Custom seed functionality should work.")
+    print("\n[CELEBRATION] All tests passed! Custom seed functionality should work.")
     print("\nTo test in game:")
     print("1. Run: python main.py")
     print("2. Click 'Launch with Custom Seed'")
@@ -70,18 +70,18 @@ def test_enhanced_system():
     # Test enhanced settings import
     try:
         from src.ui.settings_integration import settings_state
-        print("✅ Enhanced settings system imports successfully")
+        print("? Enhanced settings system imports successfully")
     except ImportError as e:
-        print(f"❌ Enhanced settings import failed: {e}")
+        print(f"? Enhanced settings import failed: {e}")
         return False
     
     # Test game config manager
     try:
         from src.services.game_config_manager import game_config_manager
         configs = game_config_manager.get_available_configs()
-        print(f"✅ Game config manager works. Found {len(configs)} configs")
+        print(f"? Game config manager works. Found {len(configs)} configs")
     except Exception as e:
-        print(f"❌ Game config manager failed: {e}")
+        print(f"? Game config manager failed: {e}")
         return False
     
     # Test seed manager
@@ -89,12 +89,12 @@ def test_enhanced_system():
         from src.services.seed_manager import get_weekly_seed, validate_custom_seed
         weekly = get_weekly_seed()
         valid_test = validate_custom_seed("test123")
-        print(f"✅ Seed manager works. Weekly: {weekly}, Validation test: {valid_test}")
+        print(f"? Seed manager works. Weekly: {weekly}, Validation test: {valid_test}")
     except Exception as e:
-        print(f"❌ Seed manager failed: {e}")
+        print(f"? Seed manager failed: {e}")
         return False
     
-    print("\n🚀 Enhanced system is ready!")
+    print("\n[ROCKET] Enhanced system is ready!")
     print("\nTo test enhanced system:")
     print("1. Run: python demo_settings.py")
     print("2. Explore the new settings menu structure")
@@ -114,11 +114,11 @@ if __name__ == "__main__":
     
     print("\n" + "=" * 50)
     if core_success and enhanced_success:
-        print("🎉 ALL TESTS PASSED!")
+        print("[CELEBRATION] ALL TESTS PASSED!")
         print("\nThe custom seed issue is FIXED and the enhanced system is ready for integration.")
     elif core_success:
-        print("✅ Core fix is working, enhanced system has issues")
+        print("? Core fix is working, enhanced system has issues")
         print("\nThe main issue is resolved. Enhanced features can be debugged separately.")
     else:
-        print("❌ Core fix has issues")
+        print("? Core fix has issues")
         print("\nPlease check the integration guide for troubleshooting steps.")

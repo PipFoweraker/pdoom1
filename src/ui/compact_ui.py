@@ -93,41 +93,41 @@ def get_action_icon(action_name: str, action_index: int) -> str:
     # Map common action names to icon characters
     icon_mapping = {
         # Research actions
-        "hire_researcher": "👨‍🔬",
-        "conduct_research": "📊", 
-        "publish_paper": "📄",
-        "research": "🔬",
+        "hire_researcher": "???",
+        "conduct_research": "[CHART]", 
+        "publish_paper": "?",
+        "research": "?",
         
         # Business actions
-        "hire_staff": "👥",
-        "marketing": "📢",
-        "fundraising": "💰",
-        "hire": "➕",
-        "marketing_campaign": "📈",
+        "hire_staff": "?",
+        "marketing": "?",
+        "fundraising": "?",
+        "hire": "?",
+        "marketing_campaign": "?",
         
         # Infrastructure
-        "buy_computer": "💻",
-        "upgrade_equipment": "⚡",
-        "rent_office": "🏢",
-        "infrastructure": "🏗️",
+        "buy_computer": "?",
+        "upgrade_equipment": "[LIGHTNING]",
+        "rent_office": "?",
+        "infrastructure": "[CONSTRUCTION]?",
         
         # Intelligence/Security
-        "espionage": "🕵️",
-        "scout": "👁️",
-        "security": "🛡️",
-        "counter_intelligence": "🔒",
+        "espionage": "??",
+        "scout": "??",
+        "security": "[SHIELD]?",
+        "counter_intelligence": "[LOCK]",
         
         # Training/Development
-        "training": "📚",
-        "workshop": "🔧",
-        "seminar": "🎓",
-        "development": "📈",
+        "training": "?",
+        "workshop": "?",
+        "seminar": "?",
+        "development": "?",
         
         # Special actions
-        "lobby": "🏛️",
-        "pr_campaign": "📺",
-        "patent": "📜",
-        "acquisition": "🤝",
+        "lobby": "??",
+        "pr_campaign": "?",
+        "patent": "?",
+        "acquisition": "?",
     }
     
     # Try to find icon by name (case insensitive partial matching)
@@ -156,22 +156,22 @@ def get_upgrade_icon(upgrade_name: str, upgrade_index: int) -> str:
     """
     # Map upgrades to icons
     icon_mapping = {
-        "accounting": "📊",
-        "software": "💾",
-        "hardware": "🖥️",
-        "networking": "🌐",
-        "security": "🔒",
-        "automation": "🤖",
-        "ai": "🧠",
-        "quantum": "⚛️",
-        "cloud": "☁️",
-        "database": "💿",
-        "office": "🏢",
-        "equipment": "⚡",
-        "laboratory": "🔬",
-        "supercomputer": "🖥️",
-        "scanner": "📡",
-        "server": "🗄️",
+        "accounting": "[CHART]",
+        "software": "?",
+        "hardware": "??",
+        "networking": "?",
+        "security": "[LOCK]",
+        "automation": "?",
+        "ai": "?",
+        "quantum": "??",
+        "cloud": "??",
+        "database": "?",
+        "office": "?",
+        "equipment": "[LIGHTNING]",
+        "laboratory": "?",
+        "supercomputer": "??",
+        "scanner": "?",
+        "server": "??",
     }
     
     upgrade_lower = upgrade_name.lower()
@@ -180,7 +180,7 @@ def get_upgrade_icon(upgrade_name: str, upgrade_index: int) -> str:
             return icon
     
     # Fallback to first letter
-    return upgrade_name[0].upper() if upgrade_name else "⚙️"
+    return upgrade_name[0].upper() if upgrade_name else "??"
 
 
 def draw_compact_action_button(screen, rect_tuple, action, action_index, button_state, shortcut_key=None):

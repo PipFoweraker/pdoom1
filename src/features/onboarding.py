@@ -383,7 +383,7 @@ class OnboardingSystem:
             {
                 'id': 'actions_and_strategy',
                 'title': 'Actions & Strategy',
-                'content': 'ACTIONS PANEL (Left): Take actions to manage your lab\n• Hire Staff: More team = more action points per turn\n• Conduct Research: Advance capabilities (may increase doom)\n• Safety Measures: Reduce p(Doom) and improve reputation\n• Public Relations: Boost reputation and unlock funding\n\nUPGRADES PANEL (Right): Purchase permanent improvements\n• Lab Equipment: Boost research efficiency\n• Security Systems: Reduce risks\n• Better Facilities: More staff capacity\n\nBalance progress with caution!',
+                'content': 'ACTIONS PANEL (Left): Take actions to manage your lab\n? Hire Staff: More team = more action points per turn\n? Conduct Research: Advance capabilities (may increase doom)\n? Safety Measures: Reduce p(Doom) and improve reputation\n? Public Relations: Boost reputation and unlock funding\n\nUPGRADES PANEL (Right): Purchase permanent improvements\n? Lab Equipment: Boost research efficiency\n? Security Systems: Reduce risks\n? Better Facilities: More staff capacity\n\nBalance progress with caution!',
                 'reveal_elements': ['actions_panel', 'hire_staff_action', 'research_action', 'safety_action', 'upgrades_panel', 'first_upgrade'],
                 'focus_area': 'left_right_panels'
             },
@@ -397,7 +397,7 @@ class OnboardingSystem:
             {
                 'id': 'ready_to_play',
                 'title': 'Ready to Play!',
-                'content': 'You now see the complete interface!\n\nKEY CONTROLS:\n• Numbers 1-9: Quick action selection\n• SPACEBAR: End turn\n• H: Help guide\n• ESC: Pause menu\n\nREMEMBER:\n• Balance speed vs. safety\n• More staff = more action points\n• Keep p(Doom) below 80% (warning thresholds)\n• Watch competitors but don\'t panic\n\nGood luck saving the world!',
+                'content': 'You now see the complete interface!\n\nKEY CONTROLS:\n? Numbers 1-9: Quick action selection\n? SPACEBAR: End turn\n? H: Help guide\n? ESC: Pause menu\n\nREMEMBER:\n? Balance speed vs. safety\n? More staff = more action points\n? Keep p(Doom) below 80% (warning thresholds)\n? Watch competitors but don\'t panic\n\nGood luck saving the world!',
                 'reveal_elements': ['all_elements'],
                 'focus_area': None
             }

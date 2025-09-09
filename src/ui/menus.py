@@ -437,7 +437,7 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
     screen.blit(current_surf, (current_x, current_y))
     
     # Menu items (configs + back button)
-    all_items = configs + ["← Back to Main Menu"]
+    all_items = configs + ["? Back to Main Menu"]
     
     button_width = int(w * 0.4)
     button_height = int(h * 0.06)
@@ -461,7 +461,7 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
     
     # Instructions at bottom
     instructions = [
-        "↑/↓ or mouse to navigate",
+        "?/? or mouse to navigate",
         "Enter or click to select configuration",
         "Escape to go back"
     ]
@@ -517,7 +517,7 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
         ("Audio Alerts Volume", get_volume_display(settings.get("sound_volume", 80))),
         ("Visual Enhancement", get_graphics_display(settings.get("graphics_quality", "STANDARD"))),
         ("Safety Protocol Level", get_safety_display(settings.get("safety_level", "STANDARD"))),
-        ("Continue", "▶ INITIALIZE LABORATORY")
+        ("Continue", "? INITIALIZE LABORATORY")
     ]
     
     # Improved button layout with more space
@@ -554,9 +554,9 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
     # Enhanced instructions with bureaucratic theme
     inst_font = pygame.font.SysFont('Consolas', int(h*0.022))
     instructions = [
-        "📋 Use ↑↓ arrow keys to navigate configuration options",
-        "🔧 Press ENTER to modify settings or initialize laboratory",
-        "⚠️  Ensure all parameters meet institutional safety standards"
+        "[LIST] Use ?? arrow keys to navigate configuration options",
+        "? Press ENTER to modify settings or initialize laboratory",
+        "[WARNING]?  Ensure all parameters meet institutional safety standards"
     ]
     
     inst_y = int(h * 0.82)
@@ -610,7 +610,7 @@ def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
         f"SFX Volume: {sfx_volume}%",
         "Sound Effects Settings",
         "Test Sound",
-        "← Back to Main Menu"
+        "? Back to Main Menu"
     ]
     
     for i, item in enumerate(menu_items):

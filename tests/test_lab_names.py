@@ -11,7 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def test_lab_name_system():
     """Test all components of the lab name system"""
-    print("🧪 Testing Lab Name System...")
+    print("[TEST] Testing Lab Name System...")
     
     # Test 1: Lab Name Manager
     print("\n1. Testing Lab Name Manager...")
@@ -27,7 +27,7 @@ def test_lab_name_system():
     
     assert name1 == name3, "Same seed should give same name"
     assert isinstance(name1, str), "Should return string"
-    print(f"   ✅ Deterministic naming: '{name1}' == '{name3}'")
+    print(f"   ? Deterministic naming: '{name1}' == '{name3}'")
     
     # Test 2: Game State Integration
     print("\n2. Testing Game State Integration...")
@@ -37,7 +37,7 @@ def test_lab_name_system():
     assert hasattr(gs, 'lab_name'), "Game state should have lab_name attribute"
     assert isinstance(gs.lab_name, str), "Lab name should be string"
     assert len(gs.lab_name) > 0, "Lab name should not be empty"
-    print(f"   ✅ Game state lab name: '{gs.lab_name}'")
+    print(f"   ? Game state lab name: '{gs.lab_name}'")
     
     # Test 3: UI Integration
     print("\n3. Testing UI Integration...")
@@ -45,7 +45,7 @@ def test_lab_name_system():
     
     context_info = get_default_context_info(gs)
     assert context_info['title'] == gs.lab_name, "UI title should show lab name"
-    print(f"   ✅ UI displays lab name: '{context_info['title']}'")
+    print(f"   ? UI displays lab name: '{context_info['title']}'")
     
     # Test 4: Leaderboard Integration
     print("\n4. Testing Leaderboard Integration...")
@@ -64,15 +64,15 @@ def test_lab_name_system():
     record = data['leaderboard-test-unique']
     assert record['lab_name'] == gs_finished.lab_name, "Leaderboard should save lab name"
     assert record['score'] == 10, "Leaderboard should save score"
-    print(f"   ✅ Leaderboard entry: {record['lab_name']} - {record['score']} turns")
+    print(f"   ? Leaderboard entry: {record['lab_name']} - {record['score']} turns")
     
-    print("\n🎉 All tests passed! Lab name system is working correctly.")
-    print(f"\n📋 Summary:")
-    print(f"   • Lab names loaded: {len(manager._lab_names)}")
-    print(f"   • Themes available: {len(manager.get_all_themes())}")
-    print(f"   • Deterministic naming: ✅")
-    print(f"   • UI integration: ✅") 
-    print(f"   • Leaderboard integration: ✅")
+    print("\n[CELEBRATION] All tests passed! Lab name system is working correctly.")
+    print(f"\n[LIST] Summary:")
+    print(f"   ? Lab names loaded: {len(manager._lab_names)}")
+    print(f"   ? Themes available: {len(manager.get_all_themes())}")
+    print(f"   ? Deterministic naming: ?")
+    print(f"   ? UI integration: ?") 
+    print(f"   ? Leaderboard integration: ?")
 
 if __name__ == "__main__":
     test_lab_name_system()

@@ -41,7 +41,7 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
     if not can_afford:
         context_info['details'].extend(afford_details)
     elif can_afford:
-        context_info['details'].append("✓ Can afford this action")
+        context_info['details'].append("[OK] Can afford this action")
     
     # Add delegation info if available
     if action.get('delegatable', False):
@@ -63,11 +63,11 @@ def create_upgrade_context_info(upgrade: Dict[str, Any], game_state: Any, upgrad
     if upgrade['cost'] > game_state.money:
         context_info['details'].append(f"Need ${upgrade['cost'] - game_state.money} more money")
     else:
-        context_info['details'].append("✓ Can afford this upgrade")
+        context_info['details'].append("[OK] Can afford this upgrade")
     
     # Check if already purchased
     if upgrade.get('purchased', False):
-        context_info['details'].append("✓ Already purchased")
+        context_info['details'].append("[OK] Already purchased")
     
     return context_info
 
@@ -79,34 +79,34 @@ def get_default_context_info(game_state: Any) -> Dict[str, Any]:
     
     # Money situation
     if game_state.money < 50:
-        details.append("⚠ Low on funds - consider Fundraising")
+        details.append("[WARNING] Low on funds - consider Fundraising")
     elif game_state.money > 500:
-        details.append("💰 Good financial situation")
+        details.append("? Good financial situation")
     
     # Action points
     if game_state.action_points == 0:
-        details.append("⚠ No Action Points - End Turn to refresh")
+        details.append("[WARNING] No Action Points - End Turn to refresh")
     elif game_state.action_points == game_state.max_action_points:
-        details.append("⚡ Full Action Points available")
+        details.append("[LIGHTNING] Full Action Points available")
     
     # Doom level
     doom_percent = (game_state.doom / game_state.max_doom) * 100
     if doom_percent > 80:
-        details.append("🔥 CRITICAL: Very high p(Doom)!")
+        details.append("[FIRE] CRITICAL: Very high p(Doom)!")
     elif doom_percent > 60:
-        details.append("⚠ High p(Doom) - focus on safety research")
+        details.append("[WARNING] High p(Doom) - focus on safety research")
     elif doom_percent < 30:
-        details.append("✓ p(Doom) under control")
+        details.append("[OK] p(Doom) under control")
     
     # Research progress
     if hasattr(game_state, 'research_progress'):
         if game_state.research_progress > 80:
-            details.append("🔬 Close to research breakthrough!")
+            details.append("? Close to research breakthrough!")
         elif game_state.research_progress < 20:
-            details.append("🔬 Early research phase")
+            details.append("? Early research phase")
     
     return {
         'title': 'GAME STATUS',
-        'description': f'Turn {game_state.turn} • Hover over actions for details',
+        'description': f'Turn {game_state.turn} ? Hover over actions for details',
         'details': details if details else ['All systems operational']
     }

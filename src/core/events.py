@@ -14,10 +14,10 @@ def unlock_scrollable_event_log(gs):
         "Scrollable Event Log Unlocked!",
         "Your activity tracking has been upgraded!\n\n"
         "New features:\n\n"
-        "• Complete activity history preserved\n"
-        "• Scroll with arrow keys or mouse wheel\n"
-        "• Review past decisions and their outcomes\n"
-        "• Better strategic planning with historical context\n\n"
+        "? Complete activity history preserved\n"
+        "? Scroll with arrow keys or mouse wheel\n"
+        "? Review past decisions and their outcomes\n"
+        "? Better strategic planning with historical context\n\n"
         "Use this to learn from past events and improve your strategy!"
     )
 
@@ -35,10 +35,10 @@ def unlock_enhanced_events(gs):
         "Enhanced Event System Unlocked!",
         "Your organization has developed advanced event handling capabilities!\n\n"
         "New event types are now available:\n\n"
-        "• POPUP Events: Critical situations requiring immediate attention\n"
-        "• DEFERRED Events: Events you can postpone for strategic timing\n"
-        "• Multiple Response Options: Accept, Reduce, Defer, or Dismiss\n"
-        "• Event Queue: Manage multiple concurrent crises\n\n"
+        "? POPUP Events: Critical situations requiring immediate attention\n"
+        "? DEFERRED Events: Events you can postpone for strategic timing\n"
+        "? Multiple Response Options: Accept, Reduce, Defer, or Dismiss\n"
+        "? Event Queue: Manage multiple concurrent crises\n\n"
         "Use these tools to handle complex challenges strategically!"
     )
 

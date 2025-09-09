@@ -5,7 +5,7 @@ This module provides consistent keyboard shortcut information across the UI.
 
 # Main Menu Keyboard Shortcuts
 MAIN_MENU_SHORTCUTS = [
-    ("↑↓", "Navigate menu"),
+    ("??", "Navigate menu"),
     ("Enter", "Select option"),
     ("Esc", "Exit game"),
     ("Mouse", "Click to select"),
@@ -17,7 +17,7 @@ IN_GAME_SHORTCUTS = [
     ("Space", "End turn"),
     ("H", "Help guide"),
     ("Esc", "Quit to menu"),
-    ("↑↓", "Scroll event log"),
+    ("??", "Scroll event log"),
 ]
 
 # Additional shortcuts for context

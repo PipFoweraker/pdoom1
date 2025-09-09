@@ -250,7 +250,7 @@ class VisualFeedback:
                 )
                 
                 # Draw minimize button
-                self.draw_icon_button(surface, min_button_rect, "−", ButtonState.NORMAL)
+                self.draw_icon_button(surface, min_button_rect, "?", ButtonState.NORMAL)
                 interactive_rects['minimize'] = min_button_rect
         
         return interactive_rects

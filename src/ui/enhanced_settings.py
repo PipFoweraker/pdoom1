@@ -43,12 +43,12 @@ def draw_settings_main_menu(screen: pygame.Surface, w: int, h: int, selected_ite
     
     # Settings categories with descriptions
     settings_categories = [
-        ("🔊 Audio Settings", "Sound effects, volume, and audio preferences"),
-        ("⚙️ Game Configuration", "Custom game setups, seeds, and sharing"),
-        ("🎮 Gameplay Settings", "Difficulty, automation, and display options"),
-        ("♿ Accessibility", "Visual aids and interaction accommodations"),
-        ("⌨️ Keybindings", "Customize keyboard shortcuts and controls"),
-        ("← Back to Main Menu", "Return to the main menu")
+        ("? Audio Settings", "Sound effects, volume, and audio preferences"),
+        ("?? Game Configuration", "Custom game setups, seeds, and sharing"),
+        ("[GAME] Gameplay Settings", "Difficulty, automation, and display options"),
+        ("? Accessibility", "Visual aids and interaction accommodations"),
+        ("?? Keybindings", "Customize keyboard shortcuts and controls"),
+        ("? Back to Main Menu", "Return to the main menu")
     ]
     
     # Button layout
@@ -140,11 +140,11 @@ def _draw_config_selection_section(screen: pygame.Surface, w: int, h: int, selec
         options.append(display_name)
     
     options.extend([
-        "📋 Create New Configuration",
-        "🎲 Set Custom Seed",
-        "📤 Export Current Config",
-        "📥 Import Shared Config",
-        "← Back to Settings"
+        "[LIST] Create New Configuration",
+        "? Set Custom Seed",
+        "? Export Current Config",
+        "? Import Shared Config",
+        "? Back to Settings"
     ])
     
     for i, option in enumerate(options):
@@ -193,11 +193,11 @@ def _draw_seed_input_section(screen: pygame.Surface, w: int, h: int, custom_seed
     
     # Instructions
     instructions = [
-        "💡 Leave blank to use weekly challenge seed",
-        "🔄 Seeds allow exact reproduction of game scenarios",
-        "📤 Share config + seed combinations for community challenges",
+        "[IDEA] Leave blank to use weekly challenge seed",
+        "[CYCLE] Seeds allow exact reproduction of game scenarios",
+        "? Share config + seed combinations for community challenges",
         "",
-        "Press [ENTER] to confirm • [ESC] to cancel"
+        "Press [ENTER] to confirm ? [ESC] to cancel"
     ]
     
     inst_small_font = pygame.font.SysFont('Consolas', int(h * 0.02))
@@ -243,7 +243,7 @@ def draw_gameplay_settings_menu(screen: pygame.Surface, w: int, h: int, selected
         f"Difficulty Modifier: {difficulty:.1f}x",
         f"Event Frequency: {event_freq:.1f}x",
         "Reset to Defaults",
-        "← Back to Settings"
+        "? Back to Settings"
     ]
     
     for i, option in enumerate(settings_options):

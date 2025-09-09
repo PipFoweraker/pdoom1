@@ -236,7 +236,7 @@ class TestVisualFeedback(unittest.TestCase):
         rect = pygame.Rect(10, 10, 40, 40)
         
         drawn_rect = self.visual_feedback.draw_icon_button(
-            self.screen, rect, "★", ButtonState.NORMAL
+            self.screen, rect, "?", ButtonState.NORMAL
         )
         self.assertIsInstance(drawn_rect, pygame.Rect)
     
