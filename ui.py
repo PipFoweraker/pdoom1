@@ -1083,6 +1083,48 @@ def should_show_ui_element(game_state, element_id):
     return onboarding.should_show_ui_element(element_id)
 
 
+def draw_top_bar_info(screen, game_state, w, h, small_font, font):
+    """
+    Draw enhanced top bar with game date, version, and debug hotkeys.
+    
+    Args:
+        screen: pygame screen surface
+        game_state: current game state
+        w, h: screen dimensions
+        small_font, font: pygame font objects
+    """
+    from src.services.version import get_display_version
+    from src.services.config_manager import get_current_config
+    
+    top_y = int(h * 0.01)  # Very top of screen
+    
+    # 1. GAME DATE (Top Left)
+    if hasattr(game_state, 'game_clock') and game_state.game_clock:
+        date_text = f"Week of {game_state.game_clock.get_formatted_date()}"
+        date_color = (180, 220, 255)  # Light blue
+        date_surface = small_font.render(date_text, True, date_color)
+        screen.blit(date_surface, (int(w * 0.02), top_y))
+    
+    # 2. VERSION NUMBER (Top Right)
+    version_text = f"v{get_display_version()}"
+    version_color = (200, 200, 200)  # Light gray
+    version_surface = small_font.render(version_text, True, version_color)
+    version_x = w - version_surface.get_width() - int(w * 0.02)
+    screen.blit(version_surface, (version_x, top_y))
+    
+    # 3. DEBUG HOTKEYS (Top Center) - Configurable based on debug mode
+    config = get_current_config()
+    debug_mode = config.get('advanced', {}).get('debug_mode', True)  # Default to True for beta
+    
+    if debug_mode:
+        # Debug hotkey hints in center
+        hotkeys_text = "[H] Help  [C] Clear UI  [[] Screenshot  [M] Menu"
+        hotkeys_color = (160, 160, 160)  # Dim gray so not distracting
+        hotkeys_surface = small_font.render(hotkeys_text, True, hotkeys_color)
+        hotkeys_x = (w - hotkeys_surface.get_width()) // 2
+        screen.blit(hotkeys_surface, (hotkeys_x, top_y))
+
+
 def draw_ui(screen, game_state, w, h):
     # Fonts, scaled by screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.045), bold=True)
@@ -1093,6 +1135,9 @@ def draw_ui(screen, game_state, w, h):
     # Title
     title = title_font.render("P(Doom): Bureaucracy Strategy", True, (205, 255, 220))
     screen.blit(title, (int(w*0.04), int(h*0.03)))
+    
+    # TOP BAR ENHANCEMENTS: Date, Version, Debug Hotkeys
+    draw_top_bar_info(screen, game_state, w, h, small_font, font)
 
     # Resources (top bar) - with 8-bit style icons and better alignment
     # Always show resource display regardless of tutorial state for better UX

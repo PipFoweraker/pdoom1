@@ -20,8 +20,8 @@ class TestGameClock:
             state_file = Path(temp_dir) / "test_clock.json"
             clock = GameClock(state_file=str(state_file))
             
-            # Should start at July 1, 2014
-            assert clock.get_current_date() == datetime(2014, 7, 1)
+            # Should start at April 4, 2016 (updated default date)
+            assert clock.get_current_date() == datetime(2016, 4, 4)
             assert clock.get_tick_count() == 0
             assert clock.advance_weeks == 1
     
@@ -31,8 +31,8 @@ class TestGameClock:
             state_file = Path(temp_dir) / "test_clock.json"
             clock = GameClock(state_file=str(state_file))
             
-            # Initial date should be 01/Jul/14
-            assert clock.get_formatted_date() == "01/Jul/14"
+            # Initial date should be 04/Apr/16 (updated default)
+            assert clock.get_formatted_date() == "04/Apr/16"
             
             # Test with different date
             clock.set_date(datetime(2014, 12, 25))
@@ -57,14 +57,14 @@ class TestGameClock:
             expected_date = initial_date + timedelta(weeks=1)
             assert clock.get_current_date() == expected_date
             assert clock.get_tick_count() == 1
-            assert clock.get_formatted_date() == "08/Jul/14"
+            assert clock.get_formatted_date() == "11/Apr/16"
             
             # Second tick
             clock.tick()
             expected_date = initial_date + timedelta(weeks=2)
             assert clock.get_current_date() == expected_date
             assert clock.get_tick_count() == 2
-            assert clock.get_formatted_date() == "15/Jul/14"
+            assert clock.get_formatted_date() == "18/Apr/16"
     
     def test_custom_advancement_rate(self):
         """Test clock with custom advancement rate."""
@@ -78,7 +78,7 @@ class TestGameClock:
             clock.tick()
             expected_date = initial_date + timedelta(weeks=2)
             assert clock.get_current_date() == expected_date
-            assert clock.get_formatted_date() == "15/Jul/14"
+            assert clock.get_formatted_date() == "18/Apr/16"
     
     def test_persistence(self):
         """Test clock state persistence across instances."""
@@ -96,7 +96,7 @@ class TestGameClock:
             clock2 = GameClock(state_file=str(state_file))
             assert clock2.get_current_date() == date_after_ticks
             assert clock2.get_tick_count() == tick_count
-            assert clock2.get_formatted_date() == "15/Jul/14"
+            assert clock2.get_formatted_date() == "18/Apr/16"
     
     def test_manual_date_setting(self):
         """Test manual date setting and tick count calculation."""
@@ -105,12 +105,12 @@ class TestGameClock:
             clock = GameClock(state_file=str(state_file))
             
             # Set date to 4 weeks after start
-            future_date = datetime(2014, 7, 29)  # 4 weeks after July 1
+            future_date = datetime(2016, 5, 2)  # 4 weeks after April 4, 2016
             clock.set_date(future_date)
             
             assert clock.get_current_date() == future_date
             assert clock.get_tick_count() == 4  # Should calculate correct tick count
-            assert clock.get_formatted_date() == "29/Jul/14"
+            assert clock.get_formatted_date() == "02/May/16"
     
     def test_advance_by_days(self):
         """Test advancing by specific number of days."""
@@ -126,7 +126,7 @@ class TestGameClock:
             
             assert result_date == expected_date
             assert clock.get_current_date() == expected_date
-            assert clock.get_formatted_date() == "11/Jul/14"
+            assert clock.get_formatted_date() == "14/Apr/16"
     
     def test_time_calculations(self):
         """Test time calculation methods."""
@@ -160,9 +160,9 @@ class TestGameClock:
             
             # Reset should go back to start
             clock.reset()
-            assert clock.get_current_date() == datetime(2014, 7, 1)
+            assert clock.get_current_date() == datetime(2016, 4, 4)
             assert clock.get_tick_count() == 0
-            assert clock.get_formatted_date() == "01/Jul/14"
+            assert clock.get_formatted_date() == "04/Apr/16"
     
     def test_date_parsing(self):
         """Test parsing DD/Mon/YY formatted dates."""
@@ -215,7 +215,7 @@ class TestGameClock:
             
             # Clock should handle corruption gracefully and reset
             clock = GameClock(state_file=str(state_file))
-            assert clock.get_current_date() == datetime(2014, 7, 1)
+            assert clock.get_current_date() == datetime(2016, 4, 4)
             assert clock.get_tick_count() == 0
     
     def test_string_representations(self):
@@ -226,7 +226,7 @@ class TestGameClock:
             
             # Test __str__ method
             str_repr = str(clock)
-            assert "01/Jul/14" in str_repr
+            assert "04/Apr/16" in str_repr
             assert "tick=0" in str_repr
             
             # Test __repr__ method

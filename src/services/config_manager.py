@@ -170,7 +170,7 @@ class ConfigManager:
             
             # Advanced Settings (for modding)
             "advanced": {
-                "debug_mode": False,
+                "debug_mode": True,           # Enable debug hotkeys during beta
                 "verbose_logging": True,       # Enable detailed activity logging by default
                 "log_level": "INFO",
                 "enable_experimental_features": False,
