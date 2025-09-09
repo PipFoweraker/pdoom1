@@ -1768,8 +1768,11 @@ def main():
                                     if dialog_rect.collidepoint(mx, my):
                                         # Click is inside dialog area but not on a button - do nothing (modal behavior)
                                         pass
-                                    # Click is outside dialog area - block it (modal behavior)
-                                    # Don't pass to regular game handling to prevent clicking through dialog
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_hiring_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
                             # Check for popup button clicks first
                             elif handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
                                 # Popup button was clicked, no need for further processing
@@ -2018,26 +2021,79 @@ def main():
                         elif event.key == pygame.K_RETURN and escape_count >= ESCAPE_THRESHOLD - 1:
                             running = False
                         
-                        # CRITICAL FIX: End turn handling - ALWAYS AVAILABLE when not blocked by modals
-                        # This must come before other keyboard handling to prevent tutorial/overlay blocking
-                        elif not first_time_help_content and not (game_state and game_state.pending_hiring_dialog):
+                        # CRITICAL FIX: End turn handling - HIGHEST PRIORITY for game flow
+                        # Check for end turn first to prevent overlay/modal interference
+                        elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
                             # Import keybinding manager for customizable controls
                             from src.services.keybinding_manager import keybinding_manager
                             
-                            # Check for end turn key (including Enter/Return as space equivalent)
+                            # Get configured end turn key
                             end_turn_key = keybinding_manager.get_key_for_action("end_turn")
-                            if (event.key == end_turn_key or 
-                                (end_turn_key == pygame.K_SPACE and event.key == pygame.K_RETURN)) and game_state and not game_state.game_over:
-                                # Check if popup events are blocking - if so, give feedback but don't block input
-                                if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
+                            
+                            # Check if this is the end turn key (space bar is default)
+                            if event.key == end_turn_key:
+                                # Only block end turn for true modal states
+                                blocking_conditions = [
+                                    first_time_help_content,  # Help overlay is blocking
+                                    game_state.pending_hiring_dialog,  # Hiring dialog is modal
+                                    onboarding.show_tutorial_overlay  # Tutorial is active
+                                ]
+                                
+                                if any(blocking_conditions):
+                                    # Provide clear feedback about why end turn is blocked
+                                    if first_time_help_content:
+                                        game_state.add_message("Close the help popup first (ESC or click X)")
+                                    elif game_state.pending_hiring_dialog:
+                                        game_state.add_message("Close the hiring dialog first (ESC or click outside)")
+                                    elif onboarding.show_tutorial_overlay:
+                                        game_state.add_message("Complete or skip the tutorial step first")
+                                    
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('error_beep')
+                                
+                                # Check for popup events - allow end turn but give feedback
+                                elif (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
                                     game_state.add_message("Please resolve the pending events before ending turn")
                                     if hasattr(game_state, 'sound_manager'):
                                         game_state.sound_manager.play_sound('error_beep')
                                 else:
-                                    # Try to end turn, play error sound if rejected
+                                    # Try to end turn - this should work now
                                     if not game_state.end_turn():
-                                        # Turn was rejected (already processing)
-                                        pass  # Error sound already played in end_turn method
+                                        # Turn was rejected (already processing or other reason)
+                                        pass  # Error feedback already provided by end_turn method
+                        
+                        # Handle ENTER as alternative end turn key when space is configured
+                        elif event.key == pygame.K_RETURN and game_state and not game_state.game_over:
+                            from src.services.keybinding_manager import keybinding_manager
+                            end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+                            
+                            # Allow Enter as alternative to space bar for end turn
+                            if end_turn_key == pygame.K_SPACE:
+                                # Same logic as space bar handling above
+                                blocking_conditions = [
+                                    first_time_help_content,
+                                    game_state.pending_hiring_dialog,
+                                    onboarding.show_tutorial_overlay
+                                ]
+                                
+                                if any(blocking_conditions):
+                                    if first_time_help_content:
+                                        game_state.add_message("Close the help popup first (ESC or click X)")
+                                    elif game_state.pending_hiring_dialog:
+                                        game_state.add_message("Close the hiring dialog first (ESC or click outside)")
+                                    elif onboarding.show_tutorial_overlay:
+                                        game_state.add_message("Complete or skip the tutorial step first")
+                                    
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('error_beep')
+                                
+                                elif (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
+                                    game_state.add_message("Please resolve the pending events before ending turn")
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('error_beep')
+                                else:
+                                    if not game_state.end_turn():
+                                        pass
                         
                         # Regular game keyboard handling (only if tutorial is not active)
                         elif not onboarding.show_tutorial_overlay:
@@ -2089,6 +2145,13 @@ def main():
                                 overlay_title = "Player Guide"
                                 overlay_scroll = 0
                                 push_navigation_state('overlay')
+                            
+                            # 'C' key for clearing stuck popup events (UI interaction fix)
+                            elif event.key == pygame.K_c and game_state:
+                                if game_state.clear_stuck_popup_events():
+                                    game_state.add_message("Emergency UI cleanup: Stuck events cleared")
+                                else:
+                                    game_state.add_message("No stuck popup events found")
                             
                             # 'W' key for window management demo (debug feature)
                             elif event.key == pygame.K_w and current_config.get('advanced', {}).get('enable_demo_window', False):

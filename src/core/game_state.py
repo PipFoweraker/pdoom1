@@ -2696,6 +2696,30 @@ class GameState:
         # Log the action
         self.logger.log_event(f"Player {action.value}: {event.name}", event.desc, self.turn)
     
+    def clear_stuck_popup_events(self):
+        """
+        Safety method to clear popup events that may have become stuck.
+        Called when UI interaction issues are detected.
+        """
+        if hasattr(self, 'pending_popup_events') and self.pending_popup_events:
+            # Log that we're clearing stuck events
+            num_cleared = len(self.pending_popup_events)
+            self.add_message(f"Cleared {num_cleared} stuck popup event(s)")
+            self.pending_popup_events.clear()
+            
+            # Also clear deferred events popup queue if it exists
+            if (hasattr(self, 'deferred_events') and 
+                hasattr(self.deferred_events, 'pending_popup_events') and
+                self.deferred_events.pending_popup_events):
+                self.deferred_events.pending_popup_events.clear()
+                
+            # Play notification sound
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_sound('ui_accept')
+                
+            return True
+        return False
+    
     def handle_deferred_event_action(self, event, action: EventAction):
         """Handle player action on a deferred event."""
         event.execute_effect(self, action)
