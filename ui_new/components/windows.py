@@ -8,9 +8,9 @@ Replaces dynamic imports of draw_window_with_header function.
 import pygame
 from typing import Tuple, Optional
 from .colours import (
-    BUTTON_NORMAL_BG, BUTTON_HOVER_BG, BUTTON_PRESSED_BG,
-    BUTTON_NORMAL_BORDER, BUTTON_HOVER_BORDER, BUTTON_PRESSED_BORDER,
-    BUTTON_TEXT_COLOUR, BACKGROUND_COLOUR, TEXT_COLOUR
+    BUTTON_NORMAL_BG, BUTTON_HOVER_BG, BUTTON_NORMAL_BORDER,
+    BUTTON_HOVER_BORDER, BUTTON_TEXT_COLOUR, BACKGROUND_COLOUR,
+    TEXT_COLOUR
 )
 
 # Local font manager stub to avoid circular imports

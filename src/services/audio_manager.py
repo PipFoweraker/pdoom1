@@ -8,7 +8,7 @@ Handles SFX and music playback with graceful fallbacks for headless environments
 import pygame
 import os
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict
 from src.services.settings import Settings
 
 
@@ -74,7 +74,7 @@ class AudioManager:
             return
             
         # Apply master volume to pygame mixer
-        master_volume = self.settings.get_volume("master")
+        self.settings.get_volume("master")
         pygame.mixer.set_num_channels(8)  # Default number of channels
         
         # Note: pygame.mixer doesn't have global volume control

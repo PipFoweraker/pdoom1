@@ -16,7 +16,6 @@ Design Notes:
   * Crisis opportunity mechanics
 """
 
-import random
 from enum import Enum
 from typing import Dict, List, Tuple, Optional
 from dataclasses import dataclass

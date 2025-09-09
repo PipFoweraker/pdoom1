@@ -121,7 +121,6 @@ class TestOverlayDragConstraints(unittest.TestCase):
         """Test basic drag constraint functionality."""
         # For now, this is a placeholder for future drag constraint tests
         # The drag functionality will be implemented as part of overlay panels
-        pass
 
 
 if __name__ == '__main__':

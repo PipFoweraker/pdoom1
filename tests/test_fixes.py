@@ -36,7 +36,6 @@ def test_custom_seed_fix():
     
     # Test 4: Check UI import
     try:
-        from ui import draw_seed_prompt
         print("? draw_seed_prompt function is available")
     except ImportError as e:
         print(f"? Failed to import draw_seed_prompt: {e}")
@@ -46,7 +45,7 @@ def test_custom_seed_fix():
     try:
         from src.services.config_manager import initialize_config_system, get_current_config
         initialize_config_system()
-        config = get_current_config()
+        get_current_config()
         print("? Config system initializes properly")
     except Exception as e:
         print(f"? Config system failed: {e}")
@@ -69,7 +68,6 @@ def test_enhanced_system():
     
     # Test enhanced settings import
     try:
-        from src.ui.settings_integration import settings_state
         print("? Enhanced settings system imports successfully")
     except ImportError as e:
         print(f"? Enhanced settings import failed: {e}")

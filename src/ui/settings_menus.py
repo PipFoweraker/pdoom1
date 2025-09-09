@@ -16,7 +16,6 @@ Design Philosophy:
 import pygame
 from enum import Enum
 from typing import Dict, List, Tuple, Optional, Any
-from src.services.config_manager import config_manager, get_current_config
 from src.ui.visual_feedback import ButtonState, visual_feedback
 
 

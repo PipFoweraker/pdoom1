@@ -7,7 +7,7 @@ All game randomness should flow through this system to ensure reproducibility.
 
 import random
 import hashlib
-from typing import List, Any, Union
+from typing import List, Any
 
 
 class DeterministicRNG:

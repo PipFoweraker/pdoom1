@@ -5,9 +5,6 @@ Provides icon-based compact buttons with shortcut key indicators to maximize
 screen real estate when tutorial mode is disabled.
 """
 
-import os
-from typing import Dict, List, Optional, Tuple
-from pathlib import Path
 
 # Try to import pygame, fallback to dummy values for CI/testing environments
 try:

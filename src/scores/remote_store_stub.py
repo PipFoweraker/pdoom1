@@ -5,8 +5,7 @@ Placeholder implementation for future HTTPS JSON score uploads.
 Provides interface for when online leaderboards are implemented.
 """
 
-import json
-from typing import Dict, Any, List, Optional, TYPE_CHECKING
+from typing import Dict, Any, Optional, TYPE_CHECKING
 from datetime import datetime
 from src.scores.local_store import ScoreEntry
 

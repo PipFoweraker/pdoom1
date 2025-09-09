@@ -5,16 +5,14 @@ This module provides media-related actions that players can take to influence
 public opinion, manage their reputation, and respond to media coverage.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Dict, List, Optional, Callable, Any
 from enum import Enum
 import random
-import logging
 
 from src.features.public_opinion import (
     PublicOpinion, MediaStory, MediaStoryType, OpinionCategory, OpinionModifier
 )
-from src.services.game_logger import GameLogger
 
 
 class MediaActionType(Enum):

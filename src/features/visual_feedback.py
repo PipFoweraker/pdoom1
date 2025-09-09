@@ -8,7 +8,7 @@ Inspired by low-bit, low-poly UI design with modern accessibility features.
 """
 
 import pygame
-from typing import Tuple, Optional, Dict, Any
+from typing import Tuple, Optional, Dict
 from enum import Enum
 
 

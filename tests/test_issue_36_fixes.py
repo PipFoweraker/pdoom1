@@ -9,7 +9,7 @@ This test file covers:
 """
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from src.core.game_state import GameState
 
 
@@ -104,7 +104,7 @@ class TestEmployeeCostScaling(unittest.TestCase):
     def test_no_cost_for_zero_employees(self):
         """Test that no maintenance cost applies with zero employees."""
         self.game_state.staff = 0
-        initial_money = self.game_state.money
+        self.game_state.money
         
         # Mock the end_turn process to focus on maintenance calculation
         self.game_state.end_turn()

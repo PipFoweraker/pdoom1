@@ -11,7 +11,7 @@ This replaces the broken menu handling in main.py with a robust, extensible syst
 """
 
 import pygame
-from typing import Dict, List, Optional, Tuple, Any
+from typing import List, Optional, Tuple, Any
 from enum import Enum
 
 from src.ui.settings_menus import (
@@ -20,7 +20,7 @@ from src.ui.settings_menus import (
     handle_settings_main_menu_click, handle_game_config_click
 )
 from src.services.game_config_manager import game_config_manager
-from src.services.config_manager import config_manager, get_current_config
+from src.services.config_manager import config_manager
 
 
 class MenuState(Enum):

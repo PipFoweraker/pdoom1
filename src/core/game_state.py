@@ -3,7 +3,7 @@ import json
 import os
 import pygame
 
-from typing import Tuple, Dict, Any, List, Optional
+from typing import Tuple, Dict, Any, Optional, List, Set, Union, Callable
 
 from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
@@ -11,26 +11,25 @@ from src.core.events import EVENTS
 from src.services.game_logger import GameLogger
 from src.services.sound_manager import SoundManager
 from src.services.game_clock import GameClock
-from src.services.deterministic_rng import init_deterministic_rng, get_rng
-from src.services.verbose_logging import init_verbose_logging, get_logger, LogLevel
-from src.services.leaderboard import init_leaderboard_system, get_leaderboard_manager
+from src.services.deterministic_rng import init_deterministic_rng
+from src.services.verbose_logging import init_verbose_logging, LogLevel
+from src.services.leaderboard import init_leaderboard_system
 from src.core.opponents import create_default_opponents
-from src.features.event_system import Event, DeferredEventQueue, EventType, EventAction
+from src.features.event_system import DeferredEventQueue, EventType, EventAction
 from src.features.onboarding import onboarding
 from src.features.achievements_endgame import achievements_endgame_system
 from src.ui.overlay_manager import OverlayManager
 from src.services.error_tracker import ErrorTracker
 from src.services.config_manager import get_current_config
-from src.core.employee_subtypes import get_available_subtypes, apply_subtype_effects, get_hiring_complexity_level
 from src.core.productive_actions import (get_employee_category, get_available_actions, 
-                               check_action_requirements, get_default_action_index)
+                               check_action_requirements)
 from src.features.end_game_scenarios import end_game_scenarios
 from src.core.research_quality import TechnicalDebt, ResearchQuality, ResearchProject
 
 SCORE_FILE = "local_highscore.json"
 
 class GameState:
-    def _add(self, attr, val, reason=""):
+    def _add(self, attr: str, val: float, reason: str = "") -> None:
         """
         Adds val to the given attribute, clamping where appropriate.
         Also records last_balance_change for 'money' for use in UI,
@@ -127,13 +126,13 @@ class GameState:
 
 # In __init__, initialize:
 
-    def __init__(self, seed):
+    def __init__(self, seed: str) -> None:
         # Get current configuration
         config = get_current_config()
         starting_resources = config['starting_resources']
         ap_config = config['action_points']
         limits_config = config['resource_limits']
-        milestones_config = config['milestones']
+        config['milestones']
         
         # Initialize deterministic systems first
         init_deterministic_rng(seed)
@@ -340,7 +339,7 @@ class GameState:
         # Load tutorial settings (after initialization)
         self.load_tutorial_settings()
 
-    def calculate_max_ap(self):
+    def calculate_max_ap(self) -> int:
         """
         Calculate maximum Action Points per turn based on staff composition.
         
@@ -365,7 +364,7 @@ class GameState:
         max_cap = ap_config['max_ap_per_turn']
         return int(min(calculated_ap, max_cap))
     
-    def add_delayed_action(self, action_name: str, delay_turns: int, effects: dict):
+    def add_delayed_action(self, action_name: str, delay_turns: int, effects: Dict[str, Any]) -> None:
         """
         Add an action that will resolve after a specified delay.
         
@@ -385,7 +384,7 @@ class GameState:
         # Add feedback message
         self.messages.append(f"{action_name} will complete in {delay_turns} turn{'s' if delay_turns != 1 else ''}.")
     
-    def process_delayed_actions(self):
+    def process_delayed_actions(self) -> List[Dict[str, Any]]:
         """Process and resolve any delayed actions that are ready."""
         resolved_actions = []
         
@@ -433,7 +432,7 @@ class GameState:
         
         return f"[NEWS] Day {self.turn + 1}: {selected_news}"
     
-    def update_spend_tracking(self):
+    def update_spend_tracking(self) -> None:
         """Update spend tracking display logic."""
         if self.spend_this_turn > 0:
             if not self.spend_this_turn_display_shown:
@@ -451,7 +450,7 @@ class GameState:
                     else:
                         self._previous_multi_spend = True
 
-    def can_delegate_action(self, action):
+    def can_delegate_action(self, action: Dict[str, Any]) -> bool:
         """
         Check if an action can be delegated based on staff requirements.
         
@@ -476,7 +475,7 @@ class GameState:
         
         return False
     
-    def execute_action_with_delegation(self, action_idx, delegate=False):
+    def execute_action_with_delegation(self, action_idx: int, delegate: bool = False) -> bool:
         """
         Execute an action with optional delegation.
         
@@ -537,7 +536,7 @@ class GameState:
         
         return True
 
-    def execute_action_by_keyboard(self, action_idx):
+    def execute_action_by_keyboard(self, action_idx: int) -> bool:
         """
         Execute an action via keyboard shortcut (1-9 keys).
         Now routes through unified action handler.
@@ -565,7 +564,7 @@ class GameState:
         
         return result['success']
 
-    def attempt_action_selection(self, action_idx, is_undo=False):
+    def attempt_action_selection(self, action_idx: int, is_undo: bool = False) -> Dict[str, Any]:
         """
         Unified handler for all action selection attempts (both keyboard and mouse).
         
@@ -586,7 +585,7 @@ class GameState:
         else:
             return self._handle_action_selection(action_idx, action)
     
-    def _handle_action_selection(self, action_idx, action):
+    def _handle_action_selection(self, action_idx: int, action: Dict[str, Any]) -> Dict[str, Any]:
         """Handle selecting (clicking) an action."""
         # Check max clicks per action per turn (only if specified in action)
         if 'max_clicks_per_turn' in action:
@@ -715,7 +714,7 @@ class GameState:
             'play_sound': True
         }
     
-    def _handle_action_undo(self, action_idx, action):
+    def _handle_action_undo(self, action_idx: int, action: Dict[str, Any]) -> Dict[str, Any]:
         """Handle unselecting (undoing) an action."""
         # Find the most recent instance of this action
         action_instance = None
@@ -761,7 +760,7 @@ class GameState:
             'play_sound': False  # No sound on undo as required
         }
 
-    def _execute_action_with_effectiveness(self, action, effect_type, effectiveness):
+    def _execute_action_with_effectiveness(self, action: Dict[str, Any], effect_type: str, effectiveness: float) -> None:
         """
         Execute an action effect with reduced effectiveness.
         
@@ -844,9 +843,8 @@ class GameState:
             if effectiveness < 1.0:
                 self.messages.append(f"Delegated action had {int(effectiveness * 100)}% effectiveness.")
 
-    def _initialize_employee_blobs(self):
+    def _initialize_employee_blobs(self) -> None:
         """Initialize employee blobs for starting staff with improved positioning"""
-        import math
         for i in range(self.staff):
             # Use improved positioning that avoids UI overlap
             target_x, target_y = self._calculate_blob_position(i)
@@ -870,9 +868,8 @@ class GameState:
             }
             self.employee_blobs.append(blob)
     
-    def _add_employee_blobs(self, count):
+    def _add_employee_blobs(self, count: int) -> None:
         """Add new employee blobs with animation from side and improved positioning"""
-        import math
         for i in range(count):
             blob_id = len(self.employee_blobs)
             # Use improved positioning that avoids UI overlap
@@ -900,7 +897,7 @@ class GameState:
             # Play sound for new employee
             self.sound_manager.play_blob_sound()
     
-    def _calculate_blob_position(self, blob_index, screen_w=1200, screen_h=800):
+    def _calculate_blob_position(self, blob_index: int, screen_w: int = 1200, screen_h: int = 800) -> Tuple[int, int]:
         """
         Calculate initial blob position in the center of screen.
         Blobs will then dynamically move away from UI elements through collision detection.
@@ -938,7 +935,7 @@ class GameState:
         
         return x, y
     
-    def _get_ui_element_rects(self, screen_w=1200, screen_h=800):
+    def _get_ui_element_rects(self, screen_w: int = 1200, screen_h: int = 800) -> List[Tuple[int, int, int, int]]:
         """
         Get rectangles of all UI elements that employee blobs should avoid.
         
@@ -983,7 +980,7 @@ class GameState:
         
         return ui_rects
     
-    def _check_blob_ui_collision(self, blob_x, blob_y, blob_radius, ui_rects):
+    def _check_blob_ui_collision(self, blob_x: int, blob_y: int, blob_radius: int, ui_rects: List[Tuple[int, int, int, int]]) -> Tuple[bool, float, float]:
         """
         Check if a blob collides with any UI element.
         
@@ -1034,7 +1031,7 @@ class GameState:
         
         return collides, total_repulsion_x, total_repulsion_y
     
-    def _update_blob_positions_dynamically(self, screen_w=1200, screen_h=800):
+    def _update_blob_positions_dynamically(self, screen_w: int = 1200, screen_h: int = 800) -> None:
         """
         Update blob positions dynamically to avoid UI elements.
         This method should be called every frame to ensure continuous movement.
@@ -1111,9 +1108,8 @@ class GameState:
                 blob['target_x'] = new_x
                 blob['target_y'] = new_y
             
-    def _add_manager_blob(self):
+    def _add_manager_blob(self) -> None:
         """Add a new manager blob with animation from side"""
-        import math
         blob_id = len(self.employee_blobs)
         # Position managers slightly offset from regular employees
         target_x = 350 + (len(self.managers) % 2) * 300  # Alternate sides
@@ -1147,7 +1143,7 @@ class GameState:
         # Reassign employee management after adding new manager
         self._reassign_employee_management()
         
-    def _reassign_employee_management(self):
+    def _reassign_employee_management(self) -> None:
         """Reassign employees to managers based on capacity and efficiency"""
         # Reset all employee assignments
         employees = [blob for blob in self.employee_blobs if blob['type'] == 'employee']
@@ -1183,7 +1179,7 @@ class GameState:
                 # No managers available for this employee
                 employee['unproductive_reason'] = 'no_manager'
                 
-    def _hire_manager(self):
+    def _hire_manager(self) -> None:
         """Hire a new manager to oversee employees"""
         # Add manager blob to the system
         self._add_manager_blob()
@@ -1213,7 +1209,7 @@ class GameState:
         
         return None
         
-    def _check_board_member_milestone(self):
+    def _check_board_member_milestone(self) -> None:
         """Check if board member milestone should be triggered"""
         # Only trigger if not already triggered and no accounting software
         if (not self.board_milestone_triggered and 
@@ -1264,7 +1260,7 @@ class GameState:
                 
         return None
         
-    def _board_search(self):
+    def _board_search(self) -> None:
         """Perform board-mandated search action with 20% success rate"""
         if random.random() < 0.2:  # 20% success rate
             # Successful search - find something valuable
@@ -1296,13 +1292,13 @@ class GameState:
             
         return None
             
-    def _remove_employee_blobs(self, count):
+    def _remove_employee_blobs(self, count: int) -> None:
         """Remove employee blobs when staff leave"""
         for _ in range(min(count, len(self.employee_blobs))):
             if self.employee_blobs:
                 self.employee_blobs.pop()
                 
-    def _update_employee_productivity(self):
+    def _update_employee_productivity(self) -> None:
         """Update employee productivity based on compute availability, management, and productive actions each week"""
         productive_employees = 0
         research_gained = 0
@@ -1479,7 +1475,7 @@ class GameState:
 
 
 
-    def _scout_opponent(self):
+    def _scout_opponent(self) -> None:
         """Scout a specific opponent - unlocked after turn 5"""
         discovered_opponents = [opp for opp in self.opponents if opp.discovered]
         
@@ -1514,7 +1510,7 @@ class GameState:
         if stat_to_scout == 'progress' and success:
             self.known_opp_progress = value
             
-    def _spy(self):
+    def _spy(self) -> None:
         """Legacy espionage method - now scouts random opponents"""
         discovered_opponents = [opp for opp in self.opponents if opp.discovered]
         
@@ -1545,7 +1541,7 @@ class GameState:
             
         return None
 
-    def _espionage_risk(self):
+    def _espionage_risk(self) -> Optional[str]:
         if random.random() < 0.25:
             self._add('reputation', -2)
             self.messages.append("Espionage scandal! Reputation dropped.")
@@ -1584,7 +1580,7 @@ class GameState:
         
         return None
 
-    def _breakthrough_event(self):
+    def _breakthrough_event(self) -> None:
         if "secure_cloud" in self.upgrade_effects:
             spike = random.randint(2, 5)
             self.messages.append("Lab breakthrough! Secure cloud softened doom spike.")
@@ -1593,7 +1589,7 @@ class GameState:
             self.messages.append("Lab breakthrough! Doom spikes!")
         self._add('doom', spike, "AI lab breakthrough event")
 
-    def handle_click(self, mouse_pos, w, h):
+    def handle_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
         # Check if using 3-column layout
         use_three_column = False
         if hasattr(self, 'config') and self.config:
@@ -1605,7 +1601,7 @@ class GameState:
         else:
             return self._handle_legacy_click(mouse_pos, w, h)
     
-    def _handle_three_column_click(self, mouse_pos, w, h):
+    def _handle_three_column_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
         """Handle clicks for the new 3-column layout."""
         # Check context window minimize/maximize button FIRST
         if (hasattr(self, 'context_window_button_rect') and 
@@ -1791,7 +1787,7 @@ class GameState:
 
         return None
 
-    def handle_mouse_motion(self, mouse_pos, w, h):
+    def handle_mouse_motion(self, mouse_pos: Tuple[int, int], w: int, h: int) -> None:
         """Handle mouse motion events for dragging functionality"""
         if self.activity_log_being_dragged:
             # Update activity log position based on mouse movement
@@ -1811,7 +1807,7 @@ class GameState:
             
             self.activity_log_position = (new_offset_x, new_offset_y)
 
-    def handle_mouse_release(self, mouse_pos, w, h):
+    def handle_mouse_release(self, mouse_pos: Tuple[int, int], w: int, h: int) -> bool:
         """Handle mouse release events to stop dragging"""
         if self.activity_log_being_dragged:
             self.activity_log_being_dragged = False
@@ -1819,7 +1815,7 @@ class GameState:
             return True  # Indicate that a drag operation was completed
         return False
 
-    def check_hover(self, mouse_pos, w, h):
+    def check_hover(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
         """Check for UI element hover with robust error handling and provide context information."""
         try:
             # Reset all hover states
@@ -2102,7 +2098,7 @@ class GameState:
             # Return None gracefully so game continues to work
             return None
 
-    def _get_action_rects(self, w, h):
+    def _get_action_rects(self, w: int, h: int) -> List[pygame.Rect]:
         # Place actions as tall buttons on left (moved down to accommodate opponents panel)
         count = len(self.actions)
         base_x = int(w * 0.04)
@@ -2124,7 +2120,7 @@ class GameState:
             clamped.append((x, y, w0, clamped_h))
         return clamped
 
-    def _is_upgrade_available(self, upgrade):
+    def _is_upgrade_available(self, upgrade: Dict[str, Any]) -> bool:
         """Check if an upgrade should be visible based on its unlock conditions."""
         unlock_condition = upgrade.get("unlock_condition")
         if not unlock_condition:
@@ -2139,12 +2135,12 @@ class GameState:
         
         return True  # Default to available for unknown conditions
 
-    def _get_upgrade_rects(self, w, h):
+    def _get_upgrade_rects(self, w: int, h: int) -> List[Optional[pygame.Rect]]:
         # Filter upgrades based on availability conditions
         available_upgrades = [(i, u) for i, u in enumerate(self.upgrades) if self._is_upgrade_available(u)]
         
         # Display upgrades as icons/buttons on right
-        n = len(available_upgrades)
+        len(available_upgrades)
         # Purchased upgrades shrink to small icon row at top right
         purchased = [(i, u) for i, u in available_upgrades if u.get("purchased", False)]
         not_purchased = [(i, u) for i, u in available_upgrades if not u.get("purchased", False)]
@@ -2210,7 +2206,7 @@ class GameState:
             # Safe fallback: assume 10% context window
             return int(h * 0.90) - 5
     
-    def _get_upgrade_icon_rect(self, upgrade_idx, w, h):
+    def _get_upgrade_icon_rect(self, upgrade_idx: int, w: int, h: int) -> Optional[Tuple[int, int, int, int]]:
         """Get the icon rectangle for a purchased upgrade."""
         # Calculate where this upgrade will appear as an icon
         purchased = [i for i, u in enumerate(self.upgrades) if u.get("purchased", False)]
@@ -2229,16 +2225,16 @@ class GameState:
         
         return (x, y, icon_w, icon_h)
 
-    def _get_endturn_rect(self, w, h):
+    def _get_endturn_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         return (int(w*0.39), int(h*0.74), int(w*0.22), int(h*0.07))  # Moved up to account for context window
 
-    def _get_mute_button_rect(self, w, h):
+    def _get_mute_button_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         button_size = int(min(w, h) * 0.04)
         button_x = w - button_size - 20
         button_y = h - button_size - 20
         return (button_x, button_y, button_size, button_size)
 
-    def _get_activity_log_minimize_button_rect(self, w, h):
+    def _get_activity_log_minimize_button_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         """Get rectangle for the activity log minimize button (only when scrollable log is enabled)"""
         log_x, log_y = self._get_activity_log_current_position(w, h)
         log_width = int(w * 0.44)
@@ -2247,7 +2243,7 @@ class GameState:
         button_y = log_y
         return (button_x, button_y, button_size, button_size)
 
-    def _get_activity_log_expand_button_rect(self, w, h):
+    def _get_activity_log_expand_button_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         """Get rectangle for the activity log expand button (only when log is minimized)"""
         log_x, log_y = self._get_activity_log_current_position(w, h)
         
@@ -2259,7 +2255,7 @@ class GameState:
         button_y = log_y
         return (button_x, button_y, button_size, button_size)
 
-    def _get_activity_log_rect(self, w, h):
+    def _get_activity_log_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         """Get rectangle for the entire activity log area for hover detection"""
         log_x, log_y = self._get_activity_log_current_position(w, h)
         
@@ -2276,16 +2272,16 @@ class GameState:
             log_height = int(h * 0.22)
             return (log_x - 5, log_y - 5, log_width + 10, log_height + 10)
 
-    def _get_activity_log_base_position(self, w, h):
+    def _get_activity_log_base_position(self, w: int, h: int) -> Tuple[int, int]:
         """Get the base position of activity log (before any drag offset)"""
         return (int(w*0.04), int(h*0.74))
 
-    def _get_activity_log_current_position(self, w, h):
+    def _get_activity_log_current_position(self, w: int, h: int) -> Tuple[int, int]:
         """Get the current position of activity log (including drag offset)"""
         base_x, base_y = self._get_activity_log_base_position(w, h)
         return (base_x + self.activity_log_position[0], base_y + self.activity_log_position[1])
 
-    def _safe_ui_operation(self, operation_name, operation_func, *args, **kwargs):
+    def _safe_ui_operation(self, operation_name: str, operation_func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
         """Safely execute a UI operation with error handling and logging."""
         try:
             return operation_func(*args, **kwargs)
@@ -2300,7 +2296,7 @@ class GameState:
             else:
                 return False  # For other operations, return False
     
-    def _validate_rect(self, rect, context=""):
+    def _validate_rect(self, rect: Any, context: str = "") -> bool:
         """Validate that a rectangle is properly formatted."""
         if rect is None:
             return False
@@ -2323,7 +2319,7 @@ class GameState:
                 self.game_logger.log(f"Error validating rectangle in {context}: {rect}, error={e}")
             return False
 
-    def _in_rect(self, pt, rect):
+    def _in_rect(self, pt: Tuple[int, int], rect: Union[Tuple[int, int, int, int], pygame.Rect]) -> bool:
         """Check if point is within rectangle, with graceful error handling."""
         if not self._validate_rect(rect, "_in_rect"):
             return False
@@ -2338,7 +2334,7 @@ class GameState:
                 self.game_logger.log(f"_in_rect error: pt={pt}, rect={rect}, error={e}")
             return False
 
-    def end_turn(self):
+    def end_turn(self) -> bool:
         # Prevent multiple end turn calls during processing
         if self.turn_processing:
             # Play error sound for rejected input
@@ -2507,7 +2503,7 @@ class GameState:
         
         # Handle deferred events (tick expiration and auto-execute expired ones)
         if hasattr(self, 'deferred_events'):
-            expired_events = self.deferred_events.tick_all_events(self)
+            self.deferred_events.tick_all_events(self)
         
         self.turn += 1
         
@@ -2591,7 +2587,7 @@ class GameState:
         self.save_highscore()
         
         # Process delayed actions
-        resolved_actions = self.process_delayed_actions()
+        self.process_delayed_actions()
         
         # Add daily news feed for turn impact feedback
         daily_news = self.get_daily_news()
@@ -2626,7 +2622,7 @@ class GameState:
         # The timer will count down and reset turn_processing to False
         return True  # Indicate successful turn end
     
-    def update_turn_processing(self):
+    def update_turn_processing(self) -> None:
         """Update turn processing timer and handle transition effects."""
         if self.turn_processing:
             self.turn_processing_timer -= 1
@@ -2634,7 +2630,7 @@ class GameState:
                 self.turn_processing = False
                 self.turn_processing_timer = 0
 
-    def trigger_events(self):
+    def trigger_events(self) -> None:
         """Trigger events using both the original and enhanced event systems."""
         # Handle original events (backward compatibility)
         for event_dict in self.events:
@@ -2649,7 +2645,7 @@ class GameState:
         if self.enhanced_events_enabled:
             self._trigger_enhanced_events()
     
-    def _trigger_enhanced_events(self):
+    def _trigger_enhanced_events(self) -> None:
         """Trigger enhanced events with popup/deferred support."""
         from src.features.event_system import create_enhanced_events
         
@@ -2665,7 +2661,7 @@ class GameState:
                     # Handle normal/deferred events immediately
                     self._handle_triggered_event(event)
     
-    def _handle_triggered_event(self, event):
+    def _handle_triggered_event(self, event: Any) -> None:
         """Handle a triggered event based on its type."""
         if event.event_type == EventType.NORMAL:
             # Execute immediately like original events
@@ -2696,6 +2692,30 @@ class GameState:
         # Log the action
         self.logger.log_event(f"Player {action.value}: {event.name}", event.desc, self.turn)
     
+    def clear_stuck_popup_events(self) -> bool:
+        """
+        Safety method to clear popup events that may have become stuck.
+        Called when UI interaction issues are detected.
+        """
+        if hasattr(self, 'pending_popup_events') and self.pending_popup_events:
+            # Log that we're clearing stuck events
+            num_cleared = len(self.pending_popup_events)
+            self.add_message(f"Cleared {num_cleared} stuck popup event(s)")
+            self.pending_popup_events.clear()
+            
+            # Also clear deferred events popup queue if it exists
+            if (hasattr(self, 'deferred_events') and 
+                hasattr(self.deferred_events, 'pending_popup_events') and
+                self.deferred_events.pending_popup_events):
+                self.deferred_events.pending_popup_events.clear()
+                
+            # Play notification sound
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_sound('ui_accept')
+                
+            return True
+        return False
+    
     def handle_deferred_event_action(self, event, action: EventAction):
         """Handle player action on a deferred event."""
         event.execute_effect(self, action)
@@ -2703,7 +2723,7 @@ class GameState:
         self.logger.log_event(f"Resolved deferred: {event.name}", f"Action: {action.value}", self.turn)
 
     # --- High score --- #
-    def load_highscore(self):
+    def load_highscore(self) -> int:
         try:
             with open(SCORE_FILE, "r") as f:
                 data = json.load(f)
@@ -2724,7 +2744,7 @@ class GameState:
         except Exception:
             return 0
 
-    def save_highscore(self):
+    def save_highscore(self) -> None:
         try:
             if not self.game_over:
                 return
@@ -3012,7 +3032,7 @@ class GameState:
         Check and apply consequences of accumulated technical debt.
         Called during end_turn processing.
         """
-        debt_level = self.technical_debt.accumulated_debt
+        self.technical_debt.accumulated_debt
         
         # Check for accident events
         accident_chance = self.technical_debt.get_accident_chance()
@@ -3106,7 +3126,7 @@ class GameState:
         self.messages.append(f"?? {researcher.name}'s default quality set to {quality_name}")
         return True
     
-    def get_researcher_by_id(self, researcher_id: str):
+    def get_researcher_by_id(self, researcher_id: str) -> Optional[Any]:
         """
         Get a researcher by their unique identifier.
         
@@ -3232,7 +3252,7 @@ class GameState:
     # --- Tutorial settings --- #
     TUTORIAL_SETTINGS_FILE = "tutorial_settings.json"
     
-    def load_tutorial_settings(self):
+    def load_tutorial_settings(self) -> None:
         """Load tutorial settings from file."""
         try:
             with open(self.TUTORIAL_SETTINGS_FILE, "r") as f:
@@ -3245,8 +3265,8 @@ class GameState:
             self.tutorial_enabled = True
             self.tutorial_shown_milestones = set()
             self.first_game_launch = True
-    
-    def save_tutorial_settings(self):
+
+    def save_tutorial_settings(self) -> None:
         """Save tutorial settings to file."""
         try:
             data = {
@@ -3259,7 +3279,7 @@ class GameState:
         except Exception:
             pass
     
-    def show_tutorial_message(self, milestone_id, title, content):
+    def show_tutorial_message(self, milestone_id: str, title: str, content: str) -> None:
         """Queue a tutorial message to be shown."""
         if self.tutorial_enabled and milestone_id not in self.tutorial_shown_milestones:
             self.pending_tutorial_message = {
@@ -3268,7 +3288,7 @@ class GameState:
                 "content": content
             }
     
-    def get_employee_productive_actions(self, employee_id):
+    def get_employee_productive_actions(self, employee_id: int) -> Optional[Dict[str, Any]]:
         """
         Get available productive actions for a specific employee.
         
@@ -3323,7 +3343,7 @@ class GameState:
             'available_actions': action_info
         }
     
-    def set_employee_productive_action(self, employee_id, action_index):
+    def set_employee_productive_action(self, employee_id: int, action_index: int) -> Tuple[bool, str]:
         """
         Set the productive action for a specific employee.
         
@@ -3390,7 +3410,7 @@ class GameState:
         
         return summary
 
-    def dismiss_tutorial_message(self):
+    def dismiss_tutorial_message(self) -> None:
         """Dismiss the current tutorial message and mark milestone as shown."""
         if self.pending_tutorial_message:
             milestone_id = self.pending_tutorial_message["milestone_id"]
@@ -3733,7 +3753,7 @@ class GameState:
         else:
             return False, message
     
-    def dismiss_hiring_dialog(self):
+    def dismiss_hiring_dialog(self) -> None:
         """Dismiss the hiring dialog without making a selection."""
         if self.pending_hiring_dialog:
             self.pending_hiring_dialog = None
@@ -3759,7 +3779,7 @@ class GameState:
         self.upgrade_transitions[upgrade_idx] = transition
         return transition
     
-    def _update_ui_transitions(self):
+    def _update_ui_transitions(self) -> None:
         """Update all active UI transitions."""
         transitions_to_remove = []
         
@@ -3867,7 +3887,7 @@ class GameState:
         # Dynamic arc height based on distance and direction
         distance = ((end_x - start_x) ** 2 + (end_y - start_y) ** 2) ** 0.5
         dynamic_arc_height = min(arc_height, distance * 0.3)  # Scale with distance
-        mid_y = min(start_y, end_y) - dynamic_arc_height
+        min(start_y, end_y) - dynamic_arc_height
         
         # Enhanced Bezier curve with control points for more elegant motion
         t = eased_progress
@@ -3890,7 +3910,7 @@ class GameState:
         
         return (int(x), int(y))
     
-    def _apply_easing(self, t, ease_type='cubic_out'):
+    def _apply_easing(self, t: float, ease_type: str = 'cubic_out') -> float:
         """Apply easing function for smoother animations."""
         if ease_type == 'cubic_out':
             return 1 - (1 - t) ** 3
@@ -4028,7 +4048,7 @@ class GameState:
     
     # Enhanced Personnel System Methods
     
-    def refresh_researcher_hiring_pool(self):
+    def refresh_researcher_hiring_pool(self) -> None:
         """Refresh the pool of available researchers for hiring."""
         from src.core.researchers import generate_researcher, SPECIALIZATIONS
         
@@ -4131,7 +4151,7 @@ class GameState:
         
         return effects
     
-    def advance_researchers(self):
+    def advance_researchers(self) -> None:
         """Advance all researchers by one turn (called during end_turn)."""
         for researcher in self.researchers:
             researcher.advance_turn()

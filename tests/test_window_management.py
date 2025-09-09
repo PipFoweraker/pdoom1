@@ -9,7 +9,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock
 
 # Try to import pygame safely for CI environments
 try:

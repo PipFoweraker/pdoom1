@@ -9,7 +9,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from src.core.game_state import GameState
 from src.core.events import EVENTS, unlock_scrollable_event_log
 
@@ -96,7 +96,7 @@ class TestEventLogUnlock(unittest.TestCase):
         
         # Add messages and end turn
         self.game_state.messages = ["Turn 1 message"]
-        initial_turn = self.game_state.turn
+        self.game_state.turn
         
         # Mock some required methods for end_turn
         self.game_state.logger = MagicMock()
@@ -149,7 +149,7 @@ class TestEventLogScrolling(unittest.TestCase):
         game_state.messages = ["Current message"]
         
         # Simulate up arrow key
-        original_offset = game_state.event_log_scroll_offset
+        game_state.event_log_scroll_offset
         # Verify that the scroll offset can be modified
         game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 1)
         self.assertEqual(game_state.event_log_scroll_offset, 0)  # Should stay at 0 when already at top

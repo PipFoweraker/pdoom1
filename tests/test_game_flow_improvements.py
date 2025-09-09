@@ -157,7 +157,7 @@ class TestGameFlowIntegration(unittest.TestCase):
         self.game_state.add_delayed_action("Test Action", 1, {'money': 100})
         
         # Record initial state
-        initial_messages = len(self.game_state.messages)
+        len(self.game_state.messages)
         
         # End turn
         self.game_state.end_turn()

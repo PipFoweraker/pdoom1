@@ -11,7 +11,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import pygame
 import unittest
-from unittest.mock import patch
 import main
 from src.ui.text import draw_back_button
 from ui import should_show_back_button

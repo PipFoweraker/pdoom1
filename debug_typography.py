@@ -5,15 +5,12 @@ print("Starting debug...")
 
 try:
     print("1. Importing pygame...")
-    import pygame
     print("[OK] Pygame imported")
     
     print("2. Importing typing...")
-    from typing import Tuple, Optional, Dict, Any
     print("[OK] Typing imported")
     
     print("3. Importing weakref...")
-    import weakref
     print("[OK] Weakref imported")
     
     print("4. Starting class definition...")

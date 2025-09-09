@@ -10,7 +10,6 @@ This module provides functionality for:
 
 import csv
 import os
-import random
 from typing import List, Tuple, Optional
 from src.services.deterministic_rng import get_rng
 

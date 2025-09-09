@@ -5,9 +5,6 @@ Tests for the tutorial and onboarding system.
 
 import unittest
 import os
-import json
-import tempfile
-from unittest.mock import patch
 from src.core.game_state import GameState
 
 

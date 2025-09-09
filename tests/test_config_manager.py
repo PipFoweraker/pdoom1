@@ -17,8 +17,7 @@ import tempfile
 import shutil
 import os
 import pytest
-import json
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 # Import the config manager
 from src.services.config_manager import ConfigManager, get_current_config, initialize_config_system

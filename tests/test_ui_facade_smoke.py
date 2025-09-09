@@ -32,7 +32,7 @@ class MockFontManager:
 font_manager = MockFontManager()
 FontManager = MockFontManager
 
-from ui_new.components.buttons import ButtonState, ButtonStyle, draw_button
+from ui_new.components.buttons import ButtonState, draw_button
 from ui_new.components.windows import draw_window_with_header, draw_panel
 from src.core.game_state import GameState
 

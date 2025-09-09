@@ -6,7 +6,7 @@ implementations while maintaining backward compatibility with legacy
 serialisation and existing code.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Dict, Any, Optional, Callable, Union
 from enum import Enum
 

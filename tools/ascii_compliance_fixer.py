@@ -8,7 +8,6 @@ Part of internal polish phase to improve code quality and compliance.
 """
 
 import os
-import re
 from typing import Dict, List, Tuple
 
 

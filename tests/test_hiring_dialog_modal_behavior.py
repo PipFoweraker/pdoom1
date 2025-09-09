@@ -116,7 +116,7 @@ class TestHiringDialogModalBehavior(unittest.TestCase):
         game_state = GameState('test-click-blocking')
         game_state.money = 1000
         game_state.action_points = 10
-        initial_turn = game_state.turn
+        game_state.turn
         
         # Trigger hiring dialog
         game_state._trigger_hiring_dialog()

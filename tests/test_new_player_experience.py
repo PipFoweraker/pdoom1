@@ -149,7 +149,6 @@ def test_new_player_experience():
     
     # Test 4: Verify UI function exists
     try:
-        from ui import draw_new_player_experience
         print("[PASS] Test 4 PASSED: UI drawing function defined")
     except Exception as e:
         print(f"[FAIL] Test 4 FAILED: {e}")

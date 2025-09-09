@@ -5,9 +5,9 @@ This module provides UI components for showing public opinion data in the game i
 """
 
 import pygame
-from typing import Tuple, List, Optional
+from typing import Tuple, List
 
-from src.features.public_opinion import PublicOpinion, MediaStory, OpinionCategory
+from src.features.public_opinion import PublicOpinion, OpinionCategory
 
 
 def get_opinion_color(value: float) -> Tuple[int, int, int]:
@@ -221,8 +221,8 @@ def draw_compact_opinion_display(screen: pygame.Surface, public_opinion: PublicO
     trust = public_opinion.trust_in_player
     
     # Create compact display
-    sentiment_color = get_opinion_color(sentiment)
-    trust_color = get_opinion_color(trust)
+    get_opinion_color(sentiment)
+    get_opinion_color(trust)
     
     # Format: "Opinion: 65% | Trust: 72%"
     text = f"Opinion: {sentiment:.0f}% | Trust: {trust:.0f}%"

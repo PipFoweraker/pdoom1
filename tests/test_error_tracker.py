@@ -9,7 +9,7 @@ Tests cover:
 """
 
 import unittest
-from unittest.mock import Mock, MagicMock, patch
+from unittest.mock import Mock, patch
 import pygame
 
 from src.services.error_tracker import ErrorTracker

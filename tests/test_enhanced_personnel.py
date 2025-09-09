@@ -1,9 +1,7 @@
 import unittest
-import random
 from src.core.game_state import GameState
 from src.core.researchers import (
-    Researcher, SPECIALIZATIONS, POSITIVE_TRAITS, NEGATIVE_TRAITS,
-    generate_researcher, generate_researcher_name, generate_random_traits,
+    Researcher, generate_researcher, generate_researcher_name, generate_random_traits,
     adjust_researcher_salary, conduct_team_building, conduct_performance_review
 )
 
@@ -213,7 +211,7 @@ class TestResearcherGameIntegration(unittest.TestCase):
         safety_researcher = Researcher("Safety Expert", "safety", 8, [], 100)
         self.gs.researchers = [safety_researcher]
         
-        initial_doom = self.gs.doom
+        self.gs.doom
         
         # Manually trigger doom calculation (simplified)
         researcher_effects = self.gs.get_researcher_productivity_effects()
@@ -337,7 +335,7 @@ class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
             self.gs._researcher_burnout_crisis()
             
             # Test breakthrough
-            initial_rep = self.gs.reputation
+            self.gs.reputation
             self.gs._researcher_breakthrough()
             
         # 7. Test UI integration (specialist researcher selection)
@@ -379,7 +377,7 @@ class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
         """Test that trait system is balanced between positive and negative effects."""
         # Positive traits should provide benefits
         workaholic = Researcher("Workaholic", "safety", 5, ["workaholic"], 100)
-        team_player = Researcher("Team Player", "safety", 5, ["team_player"], 100)
+        Researcher("Team Player", "safety", 5, ["team_player"], 100)
         
         self.assertGreater(workaholic.productivity, 1.0)
         

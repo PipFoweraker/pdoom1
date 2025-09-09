@@ -12,11 +12,10 @@ Tests cover:
 
 import unittest
 import random
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from src.core.game_state import GameState
 from src.features.technical_failures import (
-    TechnicalFailureCascades, FailureType, ResponseType, 
-    FailureEvent, CascadeState
+    TechnicalFailureCascades, FailureType, CascadeState
 )
 
 
@@ -310,7 +309,7 @@ class TestTechnicalFailureCascades(unittest.TestCase):
         
         # Mock random to trigger cascade check
         with patch('random.random', return_value=0.05):  # Within accident chance
-            initial_messages = len(self.game_state.messages)
+            len(self.game_state.messages)
             self.cascade_system.check_for_cascades()
             
             # Should potentially add failure-related messages
@@ -501,7 +500,7 @@ class TestTechnicalFailureCascadeIntegration(unittest.TestCase):
         self.game_state.technical_debt.accumulated_debt = 15
         self.game_state.turn = 20
         
-        initial_messages = len(self.game_state.messages)
+        len(self.game_state.messages)
         
         # Process turn end
         self.game_state.end_turn()

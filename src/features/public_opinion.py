@@ -7,13 +7,10 @@ system while providing more nuanced public sentiment mechanics.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Dict, List, Optional, Any
 from enum import Enum
 import random
-import json
-import logging
 
-from src.services.game_logger import GameLogger
 
 
 class OpinionCategory(Enum):

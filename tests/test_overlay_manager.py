@@ -6,7 +6,7 @@ import unittest
 import pytest
 import pygame
 from src.ui.overlay_manager import OverlayManager, UIElement, ZLayer, UIState, create_dialog, create_tooltip, create_modal
-from src.features.visual_feedback import VisualFeedback, ButtonState, FeedbackStyle
+from src.features.visual_feedback import VisualFeedback, ButtonState
 from src.core.game_state import GameState
 
 
@@ -218,7 +218,7 @@ class TestVisualFeedback(unittest.TestCase):
     
     def test_font_scaling(self):
         """Test font scaling for accessibility."""
-        original_scale = self.visual_feedback.font_scale_factor
+        self.visual_feedback.font_scale_factor
         
         # Test valid scaling
         self.visual_feedback.set_font_scale(1.5)

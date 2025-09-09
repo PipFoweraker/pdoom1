@@ -1,11 +1,10 @@
-import os
 import sys
 import pygame
 import random
 import json
 from src.core.game_state import GameState
 
-from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_start_game_submenu
+from ui import draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_start_game_submenu
 from ui_new.facade import ui_facade
 from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
 
@@ -15,7 +14,6 @@ from src.services.bug_reporter import BugReporter
 from src.services.version import get_display_version
 from src.features.onboarding import onboarding
 from src.services.config_manager import initialize_config_system, get_current_config, config_manager
-from src.features.event_system import EventAction
 from src.services.sound_manager import SoundManager
 
 # Initialize config system on startup
@@ -335,7 +333,6 @@ def handle_menu_click(mouse_pos, w, h):
             # Execute menu action based on selection
             if i == 0:  # Start Game
                 current_state = 'start_game_submenu'
-                start_game_selected_item = 0
             elif i == 1:  # New Player Experience
                 seed = get_weekly_seed()
                 current_state = 'new_player_experience'
@@ -344,7 +341,6 @@ def handle_menu_click(mouse_pos, w, h):
                 seed_input = ""  # Clear any previous input
             elif i == 3:  # Settings
                 current_state = 'sounds_menu'
-                sounds_menu_selected_item = 0
             elif i == 4:  # Player Guide
                 overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
@@ -393,7 +389,6 @@ def handle_menu_keyboard(key):
         # Activate selected menu item (same logic as mouse click)
         if selected_menu_item == 0:  # Start Game
             current_state = 'start_game_submenu'
-            start_game_selected_item = 0
         elif selected_menu_item == 1:  # New Player Experience
             seed = get_weekly_seed()
             current_state = 'new_player_experience'
@@ -402,7 +397,6 @@ def handle_menu_keyboard(key):
             seed_input = ""  # Clear any previous input
         elif selected_menu_item == 3:  # Settings
             current_state = 'sounds_menu'
-            sounds_menu_selected_item = 0
         elif selected_menu_item == 4:  # Player Guide
             overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
             overlay_title = "Player Guide"
@@ -922,7 +916,6 @@ def handle_audio_menu_click(mouse_pos, w, h):
                     global_sound_manager.sound_toggles[first_sound] = audio_settings['individual_sounds'][first_sound]
             elif i == 3:  # Keybinding Configuration
                 current_state = 'keybinding_menu'
-                keybinding_menu_selected_item = 0
             elif i == 4:  # Test Sound
                 if global_sound_manager and audio_settings['master_enabled']:
                     global_sound_manager.play_sound('popup_accept')
@@ -963,7 +956,6 @@ def handle_audio_menu_keyboard(key):
                 global_sound_manager.sound_toggles[first_sound] = audio_settings['individual_sounds'][first_sound]
         elif sounds_menu_selected_item == 3:  # Keybinding Configuration
             current_state = 'keybinding_menu'
-            keybinding_menu_selected_item = 0
         elif sounds_menu_selected_item == 4:  # Test Sound
             if global_sound_manager and audio_settings['master_enabled']:
                 global_sound_manager.play_sound('popup_accept')
@@ -1288,7 +1280,6 @@ def handle_end_game_menu_keyboard(key):
         # Execute selected menu action
         if end_game_selected_item == 0:  # View High Scores
             current_state = 'high_score'
-            high_score_selected_item = 0
         elif end_game_selected_item == 1:  # Relaunch Game
             current_state = 'game'
         elif end_game_selected_item == 2:  # Main Menu
@@ -1697,7 +1688,6 @@ def main():
                                         window_manager.toggle_minimize(element_id)
                                         break
                             # Window manager handled the event, skip other processing
-                            pass
                         
                         # First-time help close button
                         elif first_time_help_content and first_time_help_close_button:
@@ -1768,8 +1758,11 @@ def main():
                                     if dialog_rect.collidepoint(mx, my):
                                         # Click is inside dialog area but not on a button - do nothing (modal behavior)
                                         pass
-                                    # Click is outside dialog area - block it (modal behavior)
-                                    # Don't pass to regular game handling to prevent clicking through dialog
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_hiring_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
                             # Check for popup button clicks first
                             elif handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
                                 # Popup button was clicked, no need for further processing
@@ -1946,7 +1939,6 @@ def main():
                         elif event.key == pygame.K_m and current_state == 'game' and game_state:
                             # Toggle escape menu (pause/main menu access)
                             current_state = 'escape_menu'
-                            escape_menu_selected_item = 0
                         
                         # Screenshot functionality with [ key
                         elif event.key == pygame.K_LEFTBRACKET:
@@ -1961,7 +1953,6 @@ def main():
                             # Save the current screen
                             pygame.image.save(screen, screenshot_path)
                             # print(f"Screenshot saved: {screenshot_path}")
-                            pass
                             # Play UI sound if available
                             if game_state and hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('ui_accept')
@@ -2018,26 +2009,79 @@ def main():
                         elif event.key == pygame.K_RETURN and escape_count >= ESCAPE_THRESHOLD - 1:
                             running = False
                         
-                        # CRITICAL FIX: End turn handling - ALWAYS AVAILABLE when not blocked by modals
-                        # This must come before other keyboard handling to prevent tutorial/overlay blocking
-                        elif not first_time_help_content and not (game_state and game_state.pending_hiring_dialog):
+                        # CRITICAL FIX: End turn handling - HIGHEST PRIORITY for game flow
+                        # Check for end turn first to prevent overlay/modal interference
+                        elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
                             # Import keybinding manager for customizable controls
                             from src.services.keybinding_manager import keybinding_manager
                             
-                            # Check for end turn key (including Enter/Return as space equivalent)
+                            # Get configured end turn key
                             end_turn_key = keybinding_manager.get_key_for_action("end_turn")
-                            if (event.key == end_turn_key or 
-                                (end_turn_key == pygame.K_SPACE and event.key == pygame.K_RETURN)) and game_state and not game_state.game_over:
-                                # Check if popup events are blocking - if so, give feedback but don't block input
-                                if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
+                            
+                            # Check if this is the end turn key (space bar is default)
+                            if event.key == end_turn_key:
+                                # Only block end turn for true modal states
+                                blocking_conditions = [
+                                    first_time_help_content,  # Help overlay is blocking
+                                    game_state.pending_hiring_dialog,  # Hiring dialog is modal
+                                    onboarding.show_tutorial_overlay  # Tutorial is active
+                                ]
+                                
+                                if any(blocking_conditions):
+                                    # Provide clear feedback about why end turn is blocked
+                                    if first_time_help_content:
+                                        game_state.add_message("Close the help popup first (ESC or click X)")
+                                    elif game_state.pending_hiring_dialog:
+                                        game_state.add_message("Close the hiring dialog first (ESC or click outside)")
+                                    elif onboarding.show_tutorial_overlay:
+                                        game_state.add_message("Complete or skip the tutorial step first")
+                                    
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('error_beep')
+                                
+                                # Check for popup events - allow end turn but give feedback
+                                elif (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
                                     game_state.add_message("Please resolve the pending events before ending turn")
                                     if hasattr(game_state, 'sound_manager'):
                                         game_state.sound_manager.play_sound('error_beep')
                                 else:
-                                    # Try to end turn, play error sound if rejected
+                                    # Try to end turn - this should work now
                                     if not game_state.end_turn():
-                                        # Turn was rejected (already processing)
-                                        pass  # Error sound already played in end_turn method
+                                        # Turn was rejected (already processing or other reason)
+                                        pass  # Error feedback already provided by end_turn method
+                        
+                        # Handle ENTER as alternative end turn key when space is configured
+                        elif event.key == pygame.K_RETURN and game_state and not game_state.game_over:
+                            from src.services.keybinding_manager import keybinding_manager
+                            end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+                            
+                            # Allow Enter as alternative to space bar for end turn
+                            if end_turn_key == pygame.K_SPACE:
+                                # Same logic as space bar handling above
+                                blocking_conditions = [
+                                    first_time_help_content,
+                                    game_state.pending_hiring_dialog,
+                                    onboarding.show_tutorial_overlay
+                                ]
+                                
+                                if any(blocking_conditions):
+                                    if first_time_help_content:
+                                        game_state.add_message("Close the help popup first (ESC or click X)")
+                                    elif game_state.pending_hiring_dialog:
+                                        game_state.add_message("Close the hiring dialog first (ESC or click outside)")
+                                    elif onboarding.show_tutorial_overlay:
+                                        game_state.add_message("Complete or skip the tutorial step first")
+                                    
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('error_beep')
+                                
+                                elif (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
+                                    game_state.add_message("Please resolve the pending events before ending turn")
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('error_beep')
+                                else:
+                                    if not game_state.end_turn():
+                                        pass
                         
                         # Regular game keyboard handling (only if tutorial is not active)
                         elif not onboarding.show_tutorial_overlay:
@@ -2089,6 +2133,13 @@ def main():
                                 overlay_title = "Player Guide"
                                 overlay_scroll = 0
                                 push_navigation_state('overlay')
+                            
+                            # 'C' key for clearing stuck popup events (UI interaction fix)
+                            elif event.key == pygame.K_c and game_state:
+                                if game_state.clear_stuck_popup_events():
+                                    game_state.add_message("Emergency UI cleanup: Stuck events cleared")
+                                else:
+                                    game_state.add_message("No stuck popup events found")
                             
                             # 'W' key for window management demo (debug feature)
                             elif event.key == pygame.K_w and current_config.get('advanced', {}).get('enable_demo_window', False):
@@ -2295,7 +2346,7 @@ def main():
                 
             elif current_state == 'bug_report':
                 # Bug report form
-                buttons = draw_bug_report_form(screen, bug_report_data, bug_report_selected_field, SCREEN_W, SCREEN_H)
+                draw_bug_report_form(screen, bug_report_data, bug_report_selected_field, SCREEN_W, SCREEN_H)
                 
             elif current_state == 'bug_report_success':
                 # Bug report success message
@@ -2375,7 +2426,7 @@ def main():
                     if onboarding.show_tutorial_overlay:
                         tutorial_data = onboarding.get_current_stepwise_tutorial_data()
                         if tutorial_data:
-                            tutorial_button_rects = draw_stepwise_tutorial_overlay(screen, tutorial_data, SCREEN_W, SCREEN_H)
+                            draw_stepwise_tutorial_overlay(screen, tutorial_data, SCREEN_W, SCREEN_H)
                     
                     # Draw first-time help if available (but not when other dialogs are active)
                     if (first_time_help_content and isinstance(first_time_help_content, dict) and
@@ -2403,9 +2454,8 @@ def main():
                     'doom': game_state.doom
                 }
                 game_state.logger.log_game_end(f"Game crashed: {str(e)}", game_state.turn, final_resources)
-                log_path = game_state.logger.write_log_file()
+                game_state.logger.write_log_file()
                 # print(f"Game crashed, but log saved to: {log_path}")
-                pass
             except Exception:
                 # print("Game crashed and could not save log")
                 pass
@@ -2421,9 +2471,8 @@ def main():
                     'doom': game_state.doom
                 }
                 game_state.logger.log_game_end("Game quit by user", game_state.turn, final_resources)
-                log_path = game_state.logger.write_log_file()
+                game_state.logger.write_log_file()
                 # print(f"Game log saved to: {log_path}")
-                pass
             except Exception:
                 pass
         pygame.quit()

@@ -15,8 +15,7 @@ Key Features:
 Architecture follows established patterns from technical_failures.py and economic_cycles.py.
 """
 
-import random
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Any
 from enum import Enum
 
 

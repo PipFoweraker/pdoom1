@@ -127,7 +127,7 @@ class TestUITransitions(unittest.TestCase):
             self.assertLessEqual(point['alpha'], 255)
         
         # Continue updating and verify older points fade
-        initial_alpha = trail_points[0]['alpha'] if trail_points else 255
+        trail_points[0]['alpha'] if trail_points else 255
         for _ in range(20):
             self.game_state._update_ui_transitions()
         
@@ -144,7 +144,7 @@ class TestUITransitions(unittest.TestCase):
         start_rect = (100, 200, 150, 50)
         end_rect = (650, 50, 45, 45)
         upgrade_idx = 0
-        transition = self.game_state._create_upgrade_transition(upgrade_idx, start_rect, end_rect)
+        self.game_state._create_upgrade_transition(upgrade_idx, start_rect, end_rect)
         
         # Verify transition exists
         self.assertEqual(len(self.game_state.ui_transitions), 1)
