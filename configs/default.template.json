@@ -3,7 +3,7 @@
   "description": "Balanced settings for standard gameplay",
   "version": "1.0.0",
   "starting_resources": {
-    "money": 1000,
+    "money": 2000,
     "staff": 2,
     "reputation": 50,
     "action_points": 3,
@@ -58,6 +58,7 @@
   },
   "advanced": {
     "debug_mode": false,
+    "verbose_logging": true,
     "log_level": "INFO",
     "enable_experimental_features": false,
     "enable_demo_window": false,

@@ -1282,9 +1282,10 @@ def draw_ui(screen, game_state, w, h):
         count = len(available_actions)
         base_x = int(w * 0.04)
         base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
-        width = int(w * 0.32)
-        height = int(h * 0.065)  # Made slightly smaller to fit more actions
-        gap = int(h * 0.02)  # Reduced gap slightly
+        # Shrink legacy action buttons a bit to reduce excess margins
+        width = int(w * 0.30)
+        height = int(h * 0.055)
+        gap = int(h * 0.015)
         action_rects = [
             pygame.Rect(base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
@@ -1293,6 +1294,12 @@ def draw_ui(screen, game_state, w, h):
     # Store the action rects for click handling (with display indices)
     game_state.filtered_action_rects = action_rects
     
+    # Hard clamp: ensure buttons don't extend below context window top
+    try:
+        context_top = game_state._get_context_window_top(h)
+    except Exception:
+        context_top = int(h * 0.90) - 5
+
     for display_idx, rect in enumerate(action_rects):
         if display_idx >= len(available_actions):
             break
@@ -1312,9 +1319,20 @@ def draw_ui(screen, game_state, w, h):
             button_state = ButtonState.NORMAL
         
         if use_compact_ui:
+            # Clamp for compact mode where rect is a tuple
+            rx, ry, rw0, rh0 = rect
+            if ry + rh0 > context_top:
+                rh0 = max(0, context_top - ry - 2)
+            if rh0 <= 0:
+                continue
             # Draw compact button with icon and shortcut key
-            draw_compact_action_button(screen, rect, action, original_idx, button_state)
+            draw_compact_action_button(screen, (rx, ry, rw0, rh0), action, original_idx, button_state)
         else:
+            # Clamp rect height if it would overlap the context window (pygame.Rect)
+            if rect.bottom > context_top:
+                rect.height = max(0, context_top - rect.top - 2)
+            if rect.height <= 0:
+                continue
             # Traditional button with text (shorter in non-tutorial mode)
             from src.services.keybinding_manager import keybinding_manager
             
@@ -1385,6 +1403,16 @@ def draw_ui(screen, game_state, w, h):
         is_purchased = upg.get("purchased", False)
         
         if use_compact_ui:
+            # Clamp for compact mode where rect is a tuple
+            rx, ry, rw0, rh0 = rect
+            try:
+                context_top = game_state._get_context_window_top(h)
+            except Exception:
+                context_top = int(h * 0.90) - 5
+            if ry + rh0 > context_top:
+                rh0 = max(0, context_top - ry - 2)
+            if rh0 <= 0:
+                continue
             # Determine button state for compact mode
             if not is_purchased and upg['cost'] > game_state.money:
                 button_state = ButtonState.DISABLED
@@ -1394,8 +1422,17 @@ def draw_ui(screen, game_state, w, h):
                 button_state = ButtonState.NORMAL
             
             # Draw compact upgrade button
-            draw_compact_upgrade_button(screen, rect, upg, idx, button_state, is_purchased)
+            draw_compact_upgrade_button(screen, (rx, ry, rw0, rh0), upg, idx, button_state, is_purchased)
         else:
+            # Clamp rect height for traditional mode (pygame.Rect)
+            try:
+                context_top = game_state._get_context_window_top(h)
+            except Exception:
+                context_top = int(h * 0.90) - 5
+            if rect.bottom > context_top:
+                rect.height = max(0, context_top - rect.top - 2)
+            if rect.height <= 0:
+                continue
             # Traditional upgrade display
             if is_purchased:
                 # Draw as small icon using visual feedback system
@@ -2479,6 +2516,8 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
             color = (200, 200, 100)
         elif action.value == "dismiss":
             color = (200, 100, 100)
+        elif action.value == "deny":
+            color = (200, 100, 100)  # Same as dismiss - red for negative action
         else:
             color = (150, 150, 200)
         

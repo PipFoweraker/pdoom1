@@ -1,11 +1,5 @@
 """
-Versi# PATCH: Backwards-compatible bug fixes
-__version__ = "0.2.10"
-
-# Version components for programmatic access
-VERSION_MAJOR = 0
-VERSION_MINOR = 2
-VERSION_PATCH = 10gement for P(Doom): Bureaucracy Strategy Game
+Version management for P(Doom): Bureaucracy Strategy Game
 
 This module provides centralized version information for the game,
 following Semantic Versioning (SemVer) specification.
@@ -15,12 +9,12 @@ following Semantic Versioning (SemVer) specification.
 # MAJOR: Incompatible API changes (gameplay mechanics overhauls)
 # MINOR: Backwards-compatible functionality additions (new features, events, opponents)
 # PATCH: Backwards-compatible bug fixes
-__version__ = "0.2.10"
+__version__ = "0.2.11"
 
 # Version components for programmatic access
 VERSION_MAJOR = 0
 VERSION_MINOR = 2
-VERSION_PATCH = 10
+VERSION_PATCH = 11
 
 # Pre-release identifier (e.g., "alpha", "beta", "rc1", or "" for stable)
 VERSION_PRERELEASE = ""

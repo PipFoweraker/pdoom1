@@ -213,7 +213,7 @@ def execute_research_action(gs, action_name: str, base_doom_reduction: int, base
     )
     
     # Apply the calculated effects
-    gs._add('doom', -doom_change)  # Negative because we're reducing doom
+    gs._add('doom', -doom_change, f"research action: {action_name}")  # Negative because we're reducing doom
     gs._add('reputation', reputation_change)
     
     # Add research quality messages
