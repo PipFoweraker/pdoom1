@@ -1,0 +1,70 @@
+{
+  "entries": [
+    {
+      "filename": "2025-09-10-major-type-annotation-milestone.md",
+      "slug": "2025-09-10-major-type-annotation-milestone",
+      "path": "entries/2025-09-10-major-type-annotation-milestone.md",
+      "frontmatter": {
+        "title": "Major Type Annotation Milestone: UI and GameState Complete",
+        "date": "2025-09-10",
+        "tags": [
+          "milestone",
+          "type-annotations",
+          "infrastructure",
+          "code-quality"
+        ],
+        "summary": "Completed comprehensive type annotations for ui.py and 60% of game_state.py, resolving 1,100-1,600 pylance issues",
+        "commit": "867127d"
+      },
+      "word_count": 620,
+      "file_size": 5288,
+      "modified_at": "2025-09-10T08:09:49.324360"
+    }
+  ],
+  "config": {
+    "blog": {
+      "title": "P(Doom) Development Blog",
+      "description": "Development progress updates for the P(Doom) pygame strategy game",
+      "base_url": "/dev-blog",
+      "author": "P(Doom) Development Team",
+      "language": "en"
+    },
+    "build": {
+      "auto_generate_index": true,
+      "sort_by": "date",
+      "sort_order": "desc",
+      "entries_per_page": 10
+    },
+    "content_policy": {
+      "ascii_only": true,
+      "max_title_length": 60,
+      "required_frontmatter": [
+        "title",
+        "date",
+        "tags",
+        "summary"
+      ]
+    },
+    "tags": {
+      "allowed": [
+        "infrastructure",
+        "type-annotations",
+        "refactoring",
+        "ui-improvements",
+        "testing",
+        "performance",
+        "bugfixes",
+        "milestone",
+        "automation",
+        "code-quality"
+      ]
+    }
+  },
+  "errors": [],
+  "stats": {
+    "total_entries": 1,
+    "total_errors": 0,
+    "latest_entry": "2025-09-10"
+  },
+  "generated_at": "2025-09-10T08:11:31.207886"
+}
