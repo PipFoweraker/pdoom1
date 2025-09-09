@@ -2079,14 +2079,22 @@ class GameState:
         count = len(self.actions)
         base_x = int(w * 0.04)
         base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
-    # Shrink width/height and reduce gaps to fit more buttons comfortably
-    width = int(w * 0.30)
-    height = int(h * 0.055)
-    gap = int(h * 0.015)
-        return [
+        # Shrink width/height and reduce gaps to fit more buttons comfortably
+        width = int(w * 0.30)
+        height = int(h * 0.055)
+        gap = int(h * 0.015)
+        rects = [
             (base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
         ]
+        # Hard clamp: ensure buttons don't extend below context window top
+        context_top = self._get_context_window_top(h)
+        clamped = []
+        for (x, y, w0, h0) in rects:
+            max_h = max(0, context_top - y - 2)  # 2px safety
+            clamped_h = min(h0, max_h)
+            clamped.append((x, y, w0, clamped_h))
+        return clamped
 
     def _is_upgrade_available(self, upgrade):
         """Check if an upgrade should be visible based on its unlock conditions."""
@@ -2112,9 +2120,8 @@ class GameState:
         # Purchased upgrades shrink to small icon row at top right
         purchased = [(i, u) for i, u in available_upgrades if u.get("purchased", False)]
         not_purchased = [(i, u) for i, u in available_upgrades if not u.get("purchased", False)]
-
-    # Slightly smaller purchased icons to free up vertical space
-    icon_w, icon_h = int(w*0.04), int(w*0.04)
+        # Slightly smaller purchased icons to free up vertical space
+        icon_w, icon_h = int(w*0.04), int(w*0.04)
         # Purchased: row at top right, but respect UI boundaries
         # Info panel extends to about w*0.84, so ensure icons don't overlap
         max_icons_per_row = max(1, int((w - w*0.84) / icon_w))  # Available space for icons
@@ -2127,15 +2134,18 @@ class GameState:
             y = int(h*0.08) + row * (icon_h + 5)  # Stack vertically if needed
             purchased_rects.append((x, y, icon_w, icon_h))
         # Not purchased: buttons down right (moved down to accommodate opponents panel)
-    base_x = int(w*0.63)
-    base_y = int(h*0.28)  # Moved down from 0.18 to 0.28
-    # Shrink upgrade buttons a bit to create more breathing room
-    btn_w, btn_h = int(w*0.27), int(h*0.07)
-    gap = int(h*0.018)
-        not_purchased_rects = [
-            (base_x, base_y + k*(btn_h+gap), btn_w, btn_h)
-            for k in range(len(not_purchased))
-        ]
+        base_x = int(w*0.63)
+        base_y = int(h*0.28)  # Moved down from 0.18 to 0.28
+        # Shrink upgrade buttons a bit to create more breathing room
+        btn_w, btn_h = int(w*0.27), int(h*0.07)
+        gap = int(h*0.018)
+        # Clamp upgrade buttons to avoid overlapping the context window
+        context_top = self._get_context_window_top(h)
+        not_purchased_rects = []
+        for k in range(len(not_purchased)):
+            y = base_y + k * (btn_h + gap)
+            max_h = max(0, context_top - y - 2)
+            not_purchased_rects.append((base_x, y, btn_w, min(btn_h, max_h)))
         # Merge and return in upgrade order (for ALL upgrades, with None for unavailable ones)
         out = [None] * len(self.upgrades)
         for j, (original_idx, upgrade) in enumerate(purchased): 
@@ -2151,6 +2161,26 @@ class GameState:
             else:
                 out[original_idx] = None
         return out
+
+    def _get_context_window_top(self, h: int) -> int:
+        """Compute the y-coordinate of the top of the bottom context window.
+
+        Uses config percentages and minimized state to determine the visible
+        context window height and returns the top boundary to clamp UI elements.
+        """
+        try:
+            ctx_cfg = {}
+            if hasattr(self, 'config') and self.config:
+                ctx_cfg = self.config.get('ui', {}).get('context_window', {})
+            expanded = ctx_cfg.get('height_percent', 0.10)
+            minimized_p = ctx_cfg.get('minimized_height_percent', 0.05)
+            minimized = getattr(self, 'context_window_minimized', False)
+            window_h = int(h * (minimized_p if minimized else expanded))
+            # draw_context_window uses a 5px bottom margin
+            return h - window_h - 5
+        except Exception:
+            # Safe fallback: assume 10% context window
+            return int(h * 0.90) - 5
     
     def _get_upgrade_icon_rect(self, upgrade_idx, w, h):
         """Get the icon rectangle for a purchased upgrade."""
