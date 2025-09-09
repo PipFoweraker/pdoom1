@@ -17,15 +17,15 @@ class GameClock:
     Game time management with configurable start date and advancement rate.
     
     Features:
-    - Starts at July 1, 2014 (01/Jul/14)
+    - Starts at April 4, 2016 (04/Apr/16) - First Monday in April 2016
     - Advances by 1 week per tick by default
-    - Formats dates as DD/Mon/YY (e.g., "01/Jul/14")
+    - Formats dates as DD/Mon/YY (e.g., "04/Apr/16")
     - Persistent state across game sessions
     - Configurable advancement rate
     """
     
-    # Default start date: July 1, 2014
-    DEFAULT_START_DATE = datetime(2014, 7, 1)
+    # Default start date: April 4, 2016 (First Monday in April 2016)
+    DEFAULT_START_DATE = datetime(2016, 4, 4)
     
     # Month abbreviations for DD/Mon/YY format
     MONTH_ABBREVS = [
@@ -41,7 +41,7 @@ class GameClock:
         Initialize game clock.
         
         Args:
-            start_date: Starting date for the game clock (defaults to July 1, 2014)
+            start_date: Starting date for the game clock (defaults to April 4, 2016)
             advance_weeks: Number of weeks to advance per tick (default: 1)
             state_file: Custom state file path or filename (defaults to clock_state.json in data dir)
         """

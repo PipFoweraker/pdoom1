@@ -10,6 +10,7 @@ from src.core.upgrades import UPGRADES
 from src.core.events import EVENTS
 from src.services.game_logger import GameLogger
 from src.services.sound_manager import SoundManager
+from src.services.game_clock import GameClock
 from src.services.deterministic_rng import init_deterministic_rng, get_rng
 from src.services.verbose_logging import init_verbose_logging, get_logger, LogLevel
 from src.services.leaderboard import init_leaderboard_system, get_leaderboard_manager
@@ -206,6 +207,9 @@ class GameState:
         # Employee blob system
         self.employee_blobs = []  # List of employee blob objects with positions and states
         self.sound_manager = SoundManager()  # Sound system
+        
+        # Game clock system - tracks game time and advances weekly
+        self.game_clock = GameClock()  # Initialize game clock starting at first Monday in April 2016
         
         # Manager system for milestone-driven special events
         self.managers = []  # List of manager blob objects
@@ -2489,6 +2493,11 @@ class GameState:
             expired_events = self.deferred_events.tick_all_events(self)
         
         self.turn += 1
+        
+        # Advance game clock by one week and display new date
+        self.game_clock.tick()
+        formatted_date = self.game_clock.get_formatted_date()
+        self.messages.append(f"Week of {formatted_date} (Mon)")
         
         # Issue #195: Check for achievements and critical warnings at start of new turn
         self._process_achievements_and_warnings()
