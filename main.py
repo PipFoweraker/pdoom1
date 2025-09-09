@@ -86,7 +86,7 @@ pygame.display.flip()
 navigation_stack = []
 current_state = 'main_menu'
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Start Game", "New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
+menu_items = ["New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
 start_game_submenu_items = ["Basic New Game (Default Global Seed)", "Configure Game / Custom Seed", "Config Settings", "Game Options"]
 start_game_submenu_selected_item = 0  # For start game submenu navigation
 end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
@@ -492,7 +492,7 @@ def handle_config_keyboard(key):
             selected_config = available_configs[config_selected_item]
             if config_manager.switch_config(selected_config):
                 current_config = get_current_config()  # Reload config
-                print(f"Switched to configuration: {selected_config}")
+                # print(f"Switched to configuration: {selected_config}")
         # Return to main menu (both for config selection and back button)
         current_state = 'main_menu'
     elif key == pygame.K_ESCAPE:
@@ -1522,10 +1522,12 @@ def _flush_game_state():
                 game_state.logger.log_game_end("Player returned to main menu", game_state.turn, final_resources)
                 log_path = game_state.logger.write_log_file()
                 if log_path:
-                    print(f"Game log flushed to: {log_path}")
+                    # print(f"Game log flushed to: {log_path}")
+                    pass
                 game_state._final_logged = True
             except Exception as e:
-                print(f"Error during game state flush: {e}")
+                # print(f"Error during game state flush: {e}")
+                pass
         
         # Reset game state for next game
         game_state = None
@@ -1958,7 +1960,8 @@ def main():
                             screenshot_path = os.path.join(screenshots_dir, f'pdoom_screenshot_{timestamp}.png')
                             # Save the current screen
                             pygame.image.save(screen, screenshot_path)
-                            print(f"Screenshot saved: {screenshot_path}")
+                            # print(f"Screenshot saved: {screenshot_path}")
+                            pass
                             # Play UI sound if available
                             if game_state and hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('ui_accept')
@@ -2401,9 +2404,11 @@ def main():
                 }
                 game_state.logger.log_game_end(f"Game crashed: {str(e)}", game_state.turn, final_resources)
                 log_path = game_state.logger.write_log_file()
-                print(f"Game crashed, but log saved to: {log_path}")
+                # print(f"Game crashed, but log saved to: {log_path}")
+                pass
             except Exception:
-                print("Game crashed and could not save log")
+                # print("Game crashed and could not save log")
+                pass
         raise  # Re-raise the exception
     finally:
         # Ensure we try to write log on any exit if game was in progress
@@ -2417,7 +2422,8 @@ def main():
                 }
                 game_state.logger.log_game_end("Game quit by user", game_state.turn, final_resources)
                 log_path = game_state.logger.write_log_file()
-                print(f"Game log saved to: {log_path}")
+                # print(f"Game log saved to: {log_path}")
+                pass
             except Exception:
                 pass
         pygame.quit()

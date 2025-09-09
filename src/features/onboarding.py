@@ -367,7 +367,7 @@ class OnboardingSystem:
         """Get the complete stepwise tutorial sequence with UI element visibility control."""
         return [
             {
-                'id': 'welcome_overview',
+                'id': 'welcome',
                 'title': 'Welcome to P(Doom)!',
                 'content': 'Welcome to P(Doom), a strategy game about managing an AI safety lab!\n\nYour goal: Advance AI capabilities while keeping the probability of doom low. You compete against reckless frontier labs who prioritize speed over safety.\n\nThis tutorial will introduce the interface progressively. Press S to skip at any time.',
                 'reveal_elements': [],  # Start with black screen

@@ -4,6 +4,22 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.10] - 2025-09-09
+### Fixed
+- **[FIX] Typography Import System and Merge Conflicts**: Resolved all merge conflict markers and import errors in main.py and UI modules
+- **[FIX] Sound Configuration**: Default config and global sound manager now enabled by default
+- **[FIX] Menu Items**: Main menu structure updated to match new onboarding flow
+- **[FIX] Tutorial System**: Stepwise tutorial now uses denser, fewer steps; tests updated for new structure
+- **[FIX] Test Suite**: All import and infrastructure errors resolved; only functional test failures remain
+
+### Changed
+- **[ARCH] Internal Polish**: Merged main branch improvements, completed typography and UI import refactor
+- **[TESTS] Test Coverage**: Updated tests for onboarding, sound, and menu systems to match new architecture
+
+### Development Notes
+- **[CI/CD]**: All core tests now pass except for known functional issues (economic cycles, lab names, public opinion)
+- **[RELEASE]**: Ready for v0.2.10 release after final functional test fixes
+
 ## [0.2.9] - 2025-09-09
 ### Fixed
 - **[FIX] Typography Import System Resolution**: Major progress on eliminating test import errors

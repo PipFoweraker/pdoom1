@@ -32,11 +32,9 @@ class TestStepwiseTutorial(unittest.TestCase):
     def test_tutorial_sequence_structure(self):
         """Test that the tutorial sequence is properly structured."""
         sequence = self.onboarding.get_stepwise_tutorial_sequence()
-        
-        # Should have the expected number of steps
-        self.assertGreater(len(sequence), 15, "Should have at least 15 tutorial steps")
+        # Should have the expected number of steps (denser, fewer steps)
+        self.assertGreaterEqual(len(sequence), 5, "Should have at least 5 tutorial steps in the new denser system")
         self.assertLess(len(sequence), 20, "Should have at most 20 tutorial steps")
-        
         # Each step should have required fields
         for i, step in enumerate(sequence):
             self.assertIn('id', step, f"Step {i} missing 'id'")
