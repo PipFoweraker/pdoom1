@@ -1557,13 +1557,10 @@ def main():
     global overlay_content, overlay_title
     # Hiring dialog rects need to persist between frames for click detection
     global cached_hiring_dialog_rects
-<<<<<<< HEAD
     # Keybinding menu variables
     global keybinding_all_bindings
-=======
     # Escape handling variables
     global escape_count, escape_timer
->>>>>>> origin/main
     
     # Initialize game state as None - will be created when game starts
     game_state = None
