@@ -3,7 +3,7 @@ Tests for keyboard shortcuts UI integration.
 """
 import unittest
 import pygame
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import sys
 import os
 

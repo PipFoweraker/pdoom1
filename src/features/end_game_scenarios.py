@@ -10,7 +10,7 @@ beyond binary win/lose outcomes.
 """
 
 import random
-from typing import Dict, Any, Optional
+from typing import Dict, Optional
 
 
 class EndGameScenario:

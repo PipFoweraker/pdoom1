@@ -4,7 +4,6 @@ Tests for GameClock functionality.
 
 import pytest
 import tempfile
-import json
 from datetime import datetime, timedelta
 from pathlib import Path
 

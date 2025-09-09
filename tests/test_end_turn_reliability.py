@@ -19,7 +19,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.game_state import GameState
 from src.services.sound_manager import SoundManager
-from ui import draw_turn_transition_overlay
 
 
 class TestEndTurnReliability:
@@ -315,7 +314,7 @@ class TestEndTurnIntegration:
         
         # Should trigger end turn
         initial_turn = self.game_state.turn
-        result = self.game_state.handle_click(click_pos, w, h)
+        self.game_state.handle_click(click_pos, w, h)
         
         # Processing should be active (turn advancement happens in end_turn)
         assert self.game_state.turn_processing == True

@@ -89,7 +89,7 @@ class ThreeColumnLayout:
     def categorize_action(self, action: Dict[str, Any]) -> str:
         """Categorize an action as 'repeating', 'oneoff', or 'middle'."""
         action_name = action.get('name', '').lower()
-        action_id = action.get('id', '').lower()
+        action.get('id', '').lower()
         
         # Specific categorization for cleaner layout
         
@@ -441,7 +441,6 @@ class ThreeColumnLayout:
     def _draw_simplified_employee_blobs(self, screen: pygame.Surface, blob_area: pygame.Rect,
                                        game_state: Any) -> None:
         """Draw simplified employee blobs for the 3-column layout."""
-        import math
         
         # Calculate grid layout for blobs
         blob_size = 25

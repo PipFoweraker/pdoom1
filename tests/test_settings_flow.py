@@ -9,10 +9,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Import the functions we want to test
 from main import (
-    handle_pre_game_settings_click, handle_pre_game_settings_keyboard,
-    handle_seed_selection_click, handle_seed_selection_keyboard,
-    handle_tutorial_choice_click, handle_tutorial_choice_keyboard,
-    get_weekly_seed
+    handle_pre_game_settings_keyboard, handle_seed_selection_click,
+    handle_seed_selection_keyboard, handle_tutorial_choice_click,
+    handle_tutorial_choice_keyboard
 )
 
 @pytest.mark.skip(reason="Settings flow bugs - See issue #settings-flow-bug")
@@ -69,7 +68,7 @@ class TestSettingsFlow(unittest.TestCase):
     def test_settings_keyboard_navigation(self):
         """Test keyboard navigation in settings screen."""
         import main
-        original_state = main.current_state
+        main.current_state
         
         # Test up/down navigation
         main.selected_settings_item = 0
@@ -153,7 +152,7 @@ class TestSettingsFlow(unittest.TestCase):
         
         # Test clicking weekly seed button (approximate position)
         button_width = int(w * 0.4)
-        button_height = int(h * 0.08)
+        int(h * 0.08)
         start_y = int(h * 0.35)
         center_x = w // 2
         
@@ -174,7 +173,7 @@ class TestSettingsFlow(unittest.TestCase):
         
         # Test clicking tutorial enable button (second button position)
         button_width = int(w * 0.4)
-        button_height = int(h * 0.08)
+        int(h * 0.08)
         start_y = int(h * 0.4)
         spacing = int(h * 0.12)
         center_x = w // 2

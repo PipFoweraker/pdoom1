@@ -5,7 +5,6 @@ This module provides text wrapping, rendering, and navigation button functionali
 """
 
 import pygame
-import textwrap
 
 
 def should_show_back_button(depth: int) -> bool:

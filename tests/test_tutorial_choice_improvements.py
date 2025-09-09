@@ -21,7 +21,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import main
 from ui import draw_tutorial_choice
-from src.features.visual_feedback import ButtonState
 
 
 class TestTutorialChoiceNavigation:
@@ -106,7 +105,7 @@ class TestTutorialChoiceNavigation:
         
         # Calculate button positions (matching main layout)
         button_width = int(w * 0.4)
-        button_height = int(h * 0.08)
+        int(h * 0.08)
         start_y = int(h * 0.4)
         spacing = int(h * 0.12)
         center_x = w // 2
@@ -133,7 +132,7 @@ class TestTutorialChoiceNavigation:
         
         # Calculate button positions
         button_width = int(w * 0.4)
-        button_height = int(h * 0.08)
+        int(h * 0.08)
         start_y = int(h * 0.4)
         spacing = int(h * 0.12)
         center_x = w // 2

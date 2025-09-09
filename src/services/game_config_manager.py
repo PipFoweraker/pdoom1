@@ -16,7 +16,7 @@ import json
 import os
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime
-from src.services.config_manager import config_manager, get_current_config
+from src.services.config_manager import config_manager
 from src.services.version import get_display_version
 
 

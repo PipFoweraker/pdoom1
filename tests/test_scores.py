@@ -2,10 +2,8 @@
 Tests for scoring functionality.
 """
 
-import pytest
 import tempfile
-import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 from src.scores.local_store import ScoreEntry, LocalLeaderboard

@@ -12,31 +12,26 @@ __author__ = "PDoom1 Contributors"
 __all__ = []
 
 try:
-    from src.services.audio_manager import AudioManager
     __all__.append("AudioManager")
 except ImportError:
     pass
 
 try:
-    from src.services.game_clock import GameClock
     __all__.append("GameClock")
 except ImportError:
     pass
 
 try:
-    from src.services.settings import Settings
     __all__.append("Settings")
 except ImportError:
     pass
 
 try:
-    from src.services.data_paths import get_data_dir
     __all__.append("get_data_dir")
 except ImportError:
     pass
 
 try:
-    from src.scores.local_store import LocalLeaderboard
     __all__.append("LocalLeaderboard")
 except ImportError:
     pass

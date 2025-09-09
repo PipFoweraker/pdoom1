@@ -4,8 +4,6 @@ Tests seed-based reproducibility, context tracking, and global RNG management.
 """
 
 import unittest
-import tempfile
-import os
 from src.services.deterministic_rng import (
     DeterministicRNG, 
     init_deterministic_rng, 

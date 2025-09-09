@@ -169,7 +169,7 @@ class TestEventLog(unittest.TestCase):
             game_state.messages.append(unique_msg)
             
             # Store current messages
-            pre_turn = game_state.messages.copy()
+            game_state.messages.copy()
             
             # End turn
             game_state.end_turn()

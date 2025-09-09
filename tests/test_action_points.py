@@ -434,7 +434,7 @@ class TestActionPointsDelegation(unittest.TestCase):
         safety_idx = next(i for i, action in enumerate(self.game_state.actions) 
                          if action["name"] == "Safety Research")
         
-        initial_ap = self.game_state.action_points
+        self.game_state.action_points
         result = self.game_state.execute_action_with_delegation(safety_idx, delegate=False)
         
         self.assertTrue(result)
@@ -518,7 +518,7 @@ class TestKeyboardShortcuts(unittest.TestCase):
     
     def test_execute_action_by_keyboard_success(self):
         """Test that keyboard shortcuts execute actions successfully."""
-        initial_ap = self.game_state.action_points
+        self.game_state.action_points
         
         # Execute first action (Grow Community) via keyboard
         success = self.game_state.execute_action_by_keyboard(0)

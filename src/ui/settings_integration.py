@@ -7,7 +7,7 @@ without breaking existing functionality.
 """
 
 import pygame
-from typing import Dict, Any, Optional, Tuple
+from typing import Optional, Tuple
 from src.ui.enhanced_settings import (
     draw_settings_main_menu, draw_game_config_menu, draw_gameplay_settings_menu,
     handle_settings_main_click, handle_game_config_click

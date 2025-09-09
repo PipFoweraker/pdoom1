@@ -24,10 +24,6 @@ def test_achievements_system_imports():
     print("=" * 50)
     
     try:
-        from src.features.achievements_endgame import (
-            Achievement, AchievementType, EndGameType, WarningType,
-            AchievementsEndgameSystem, achievements_endgame_system
-        )
         print("? Achievement system imports successfully")
         return True
     except ImportError as e:
@@ -187,7 +183,7 @@ def test_victory_conditions():
         game_state.turn = 100  # Some progress made
         
         # Process achievements and warnings (should detect victory)
-        initial_game_over = game_state.game_over
+        game_state.game_over
         game_state._process_achievements_and_warnings()
         
         # Should trigger game over due to victory
@@ -240,7 +236,7 @@ def test_resource_tracking():
         game_state = GameState(seed="test_seed")
         
         # Simulate resource changes that should be tracked
-        initial_money = game_state.money
+        game_state.money
         game_state._add('money', 100)
         # Money doesn't have peak tracking in current implementation
         

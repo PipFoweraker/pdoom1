@@ -8,7 +8,6 @@ Covers:
 - Visual feedback improvements (hover effects)
 """
 
-import pytest
 import pygame
 import sys
 import os

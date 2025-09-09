@@ -8,7 +8,6 @@ This script demonstrates the improved UI features without requiring full gamepla
 """
 
 import pygame
-import sys
 from src.core.game_state import GameState
 from ui import draw_ui, draw_context_window
 

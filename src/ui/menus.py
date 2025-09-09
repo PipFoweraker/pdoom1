@@ -225,7 +225,7 @@ def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     """
     # Fonts for menu - scale based on screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.08), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.035))
+    pygame.font.SysFont('Consolas', int(h*0.035))
     
     # Title at top
     title_surf = title_font.render("P(Doom)", True, (255, 255, 255))
@@ -342,7 +342,7 @@ def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
     """
     # Fonts for menu - scale based on screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    pygame.font.SysFont('Consolas', int(h*0.03))
     
     # Title at top
     title_surf = title_font.render("Sound Options", True, (255, 255, 255))
@@ -497,7 +497,7 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
     # Fonts with better hierarchy
     title_font = pygame.font.SysFont('Consolas', int(h*0.055), bold=True)
     subtitle_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.028))
+    pygame.font.SysFont('Consolas', int(h*0.028))
     
     # Laboratory Configuration Header
     title_surf = title_font.render("LABORATORY CONFIGURATION", True, (220, 240, 255))
@@ -594,7 +594,7 @@ def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
     screen.blit(title_surf, (title_x, title_y))
     
     # Menu items
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    pygame.font.SysFont('Consolas', int(h*0.03))
     button_width = int(w * 0.6)
     button_height = int(h * 0.06)
     start_y = int(h * 0.25)

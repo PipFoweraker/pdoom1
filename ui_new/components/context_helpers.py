@@ -4,7 +4,7 @@ Context creation helpers for the 3-column UI layout.
 Provides context information for actions and UI elements in the new layout.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 
 def create_action_context_info(action: Dict[str, Any], game_state: Any, action_idx: int) -> Dict[str, Any]:

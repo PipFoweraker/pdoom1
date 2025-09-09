@@ -6,12 +6,10 @@ Tests privacy management, score submission, and leaderboard functionality.
 import unittest
 import tempfile
 import os
-import json
 from src.services.leaderboard import (
     PrivacyManager,
     LeaderboardManager,
-    LeaderboardEntry,
-    WeeklyChallenge
+    LeaderboardEntry
 )
 
 

@@ -6,33 +6,18 @@ Part of the internal polish phase to improve code organization.
 """
 
 # Standard library imports
-import os
-import sys
-import json
-import time
 
 # Third-party imports
 import pygame
-import random
 
 # Core game imports
 from src.core.game_state import GameState
 
 # UI system imports
 from ui import (
-    draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, 
-    draw_overlay, draw_bug_report_form, draw_bug_report_success, 
-    draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, 
-    draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, 
-    draw_new_player_experience, draw_popup_events, draw_loading_screen, 
-    draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, 
-    draw_start_game_submenu
+    draw_scoreboard, draw_main_menu, draw_overlay
 )
 from ui_new.facade import ui_facade
-from src.ui.keybinding_menu import (
-    draw_keybinding_menu, draw_keybinding_change_prompt, 
-    get_keybinding_menu_click_item
-)
 from src.ui.overlay_manager import OverlayManager
 
 # Service imports
@@ -50,8 +35,7 @@ from src.features.event_system import EventAction
 # Menu system imports
 from src.ui.menu_handlers.menu_system import (
     NavigationManager, MenuClickHandler, MenuKeyboardHandler,
-    get_weekly_seed, load_markdown_file, get_tutorial_settings,
-    create_settings_content
+    get_weekly_seed, load_markdown_file
 )
 
 

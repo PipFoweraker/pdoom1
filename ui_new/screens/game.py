@@ -8,7 +8,7 @@ Implements the requested design: repeating actions left, staff middle, strategic
 import pygame
 import sys
 import os
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 
 # Import visual feedback system (existing)
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle
@@ -64,7 +64,7 @@ def draw_resource_header(screen: pygame.Surface, game_state: Any, w: int, h: int
     # Get fonts
     title_font = fonts['title']
     big_font = fonts['big']
-    font = fonts['font']
+    fonts['font']
     small_font = fonts['small']
     
     # Title - retro neon style
@@ -215,7 +215,7 @@ def draw_context_window_3column(screen: pygame.Surface, game_state: Any,
         sys.path.insert(0, parent_dir)
     
     try:
-        from ui import draw_context_window, create_action_context_info, create_upgrade_context_info, get_default_context_info
+        from ui import draw_context_window, create_action_context_info, get_default_context_info
     except ImportError:
         # Fallback to simple context display if import fails
         draw_simple_context_window(screen, game_state, context_rect, fonts)

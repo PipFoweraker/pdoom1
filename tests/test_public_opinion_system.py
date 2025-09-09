@@ -6,7 +6,6 @@ and their integration with the game state.
 """
 
 import unittest
-import random
 from unittest.mock import Mock, patch
 
 from src.core.game_state import GameState
@@ -14,7 +13,7 @@ from src.features.public_opinion import (
     PublicOpinion, MediaStory, MediaStoryType, OpinionCategory, 
     OpinionModifier, create_media_story_from_action
 )
-from src.features.media_system import MediaSystem, MediaActionType
+from src.features.media_system import MediaSystem
 
 
 class TestPublicOpinion(unittest.TestCase):
@@ -416,7 +415,7 @@ class TestGameStateIntegration(unittest.TestCase):
         self.assertGreater(len(research_actions), 0)
         
         # Select and execute a research action that should generate media coverage
-        initial_stories = len(self.game_state.public_opinion.active_stories)
+        len(self.game_state.public_opinion.active_stories)
         
         # Set up game state for action execution
         self.game_state.money = 100000

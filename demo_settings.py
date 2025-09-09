@@ -6,7 +6,6 @@ Run this to see the improved menu structure and functionality.
 """
 
 import pygame
-import sys
 from src.ui.settings_integration import settings_state
 from src.services.config_manager import initialize_config_system
 

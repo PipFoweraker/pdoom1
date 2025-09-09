@@ -22,7 +22,7 @@ def test_lab_name_system():
     
     # Test random name generation
     name1 = manager.get_random_lab_name("test1")
-    name2 = manager.get_random_lab_name("test2")
+    manager.get_random_lab_name("test2")
     name3 = manager.get_random_lab_name("test1")  # Same seed
     
     assert name1 == name3, "Same seed should give same name"

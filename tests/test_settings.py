@@ -2,7 +2,6 @@
 Tests for Settings functionality.
 """
 
-import pytest
 import tempfile
 import json
 import os
@@ -241,7 +240,7 @@ class TestSettings:
         """Test settings file is created with appropriate permissions."""
         with tempfile.TemporaryDirectory() as temp_dir:
             settings_file = Path(temp_dir) / "test_settings.json"
-            settings = Settings(settings_file)
+            Settings(settings_file)
             
             # File should exist
             assert settings_file.exists()

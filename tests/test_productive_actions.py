@@ -8,9 +8,9 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.productive_actions import (
-    PRODUCTIVE_ACTIONS, EMPLOYEE_SUBTYPE_TO_CATEGORY,
-    get_employee_category, get_available_actions, 
-    check_action_requirements, get_default_action_index
+    PRODUCTIVE_ACTIONS, get_employee_category,
+    get_available_actions, check_action_requirements, 
+    get_default_action_index
 )
 
 
@@ -175,7 +175,7 @@ class TestGameStateIntegration(unittest.TestCase):
         self.game_state._add('reputation', 15)
         
         # Run productivity update
-        productive_count = self.game_state._update_employee_productivity()
+        self.game_state._update_employee_productivity()
         
         # Check that employees have productive action bonuses applied
         for blob in self.game_state.employee_blobs:

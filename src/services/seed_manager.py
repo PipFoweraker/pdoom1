@@ -8,7 +8,6 @@ It supports weekly challenge seeds, custom seeds, and seed validation.
 import datetime
 import hashlib
 import re
-from typing import Optional
 
 
 def get_weekly_seed() -> str:

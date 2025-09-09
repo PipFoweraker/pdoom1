@@ -25,7 +25,6 @@ class TestSoundIssue89(unittest.TestCase):
 
     def setUp(self):
         """Set up test fixtures"""
-        pass
 
     def test_sound_manager_enabled_by_default(self):
         """Test that SoundManager is enabled by default (Issue #89)"""

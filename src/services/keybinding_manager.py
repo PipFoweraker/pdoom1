@@ -7,8 +7,7 @@ Supports remapping of game actions and menu navigation while maintaining compati
 
 import json
 import os
-from typing import Dict, List, Optional, Tuple
-from pathlib import Path
+from typing import Dict, List, Optional
 
 # Try to import pygame, fallback to dummy values for CI/testing environments
 try:

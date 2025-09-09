@@ -96,7 +96,7 @@ class TestFirstTimeHelpContent(unittest.TestCase):
         for invalid_content in invalid_contents:
             # Should not raise an exception
             try:
-                result = draw_first_time_help(self.screen, invalid_content, 800, 600)
+                draw_first_time_help(self.screen, invalid_content, 800, 600)
                 # Most invalid content should return None, but function has its own validation
                 # so we just check it doesn't crash
                 self.assertTrue(True, "Function should not crash with invalid content")

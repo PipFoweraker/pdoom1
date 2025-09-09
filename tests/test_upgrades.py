@@ -24,7 +24,7 @@ class TestUpgradePurchasing(unittest.TestCase):
         # Get the first upgrade (should be "Upgrade Computer System" with cost 200)
         upgrade_idx = 0
         upgrade = self.game_state.upgrades[upgrade_idx]
-        initial_purchased_status = upgrade.get("purchased", False)
+        upgrade.get("purchased", False)
         
         # Simulate clicking on the upgrade by directly calling the purchase logic
         if not upgrade.get("purchased", False):
@@ -52,7 +52,7 @@ class TestUpgradePurchasing(unittest.TestCase):
         # Try to purchase the first upgrade
         upgrade_idx = 0
         upgrade = self.game_state.upgrades[upgrade_idx]
-        initial_purchased_status = upgrade.get("purchased", False)
+        upgrade.get("purchased", False)
         
         # Simulate clicking on the upgrade
         if not upgrade.get("purchased", False):

@@ -8,7 +8,7 @@ Part of internal polish phase to reduce code duplication.
 """
 
 import pygame
-from typing import Tuple, List, Dict, Any
+from typing import Tuple, List
 from dataclasses import dataclass
 
 

@@ -240,7 +240,7 @@ class TestGameSessionSimulation(unittest.TestCase):
                         break
                 
                 # End turn (but prevent actual game over for this test)
-                old_doom = game_state.doom
+                game_state.doom
                 game_state.end_turn()
                 
                 # Wait for turn processing to complete

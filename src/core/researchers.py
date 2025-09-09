@@ -2,7 +2,7 @@
 # Implements individual researchers with specializations, traits, and management mechanics
 
 import random
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 
 # Specialization definitions
 SPECIALIZATIONS = {
@@ -119,7 +119,6 @@ class Researcher:
             elif trait_name in NEGATIVE_TRAITS:
                 trait = NEGATIVE_TRAITS[trait_name]
                 # Negative traits are applied dynamically during gameplay
-                pass
     
     def get_effective_productivity(self) -> float:
         """Calculate current productivity considering burnout and other factors."""

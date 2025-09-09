@@ -85,7 +85,7 @@ class TestCustomSoundOverrides(unittest.TestCase):
         mock_sound_class.return_value = mock_sound
         
         sound_manager = SoundManager()
-        initial_sounds = len(sound_manager.sounds)
+        len(sound_manager.sounds)
         
         # Load sounds
         sound_manager._load_sounds_from_folder(self.sounds_dir)
@@ -127,7 +127,7 @@ class TestCustomSoundOverrides(unittest.TestCase):
 
     def test_filename_to_key_mapping(self):
         """Test that filenames are correctly mapped to keys"""
-        sound_manager = SoundManager()
+        SoundManager()
         
         # Test with various filenames
         test_cases = [
@@ -154,7 +154,7 @@ class TestCustomSoundOverrides(unittest.TestCase):
         mock_sound_class.return_value = mock_custom_sound
         
         sound_manager = SoundManager()
-        original_blob_sound = sound_manager.sounds.get('blob')
+        sound_manager.sounds.get('blob')
         
         # Load custom sounds
         sound_manager._load_sounds_from_folder(self.sounds_dir)

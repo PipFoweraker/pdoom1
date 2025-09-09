@@ -14,7 +14,6 @@ from src.core.data_models import (
     Action, Upgrade, Event, EmployeeSubtype, ActionType,
     actions_to_dicts, dicts_to_actions,
     upgrades_to_dicts, dicts_to_upgrades,
-    events_to_dicts, dicts_to_events,
     employee_subtypes_to_dict, dict_to_employee_subtypes
 )
 

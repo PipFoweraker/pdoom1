@@ -106,7 +106,7 @@ class TestOpponent(unittest.TestCase):
     def test_take_turn_discovered(self):
         """Test that discovered opponents take actions."""
         self.opponent.discover()
-        initial_budget = self.opponent.budget
+        self.opponent.budget
         
         messages = self.opponent.take_turn()
         
@@ -370,7 +370,7 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
         for opp in self.game_state.opponents:
             opp.discover()
             
-        initial_messages = len(self.game_state.messages)
+        len(self.game_state.messages)
         
         # End turn - opponents should act
         self.game_state.end_turn()

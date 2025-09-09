@@ -1,10 +1,10 @@
 import pygame
-import textwrap
+from typing import Dict, Any, Union, Optional, List, Tuple
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
 from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 
-def create_action_context_info(action, game_state, action_idx):
+def create_action_context_info(action: Dict[str, Any], game_state: Any, action_idx: int) -> Dict[str, Any]:
     """Create context info for an action to display in the context window."""
     ap_cost = action.get("ap_cost", 1)
     
@@ -50,7 +50,7 @@ def create_action_context_info(action, game_state, action_idx):
         'details': details
     }
 
-def create_upgrade_context_info(upgrade, game_state, upgrade_idx):
+def create_upgrade_context_info(upgrade: Dict[str, Any], game_state: Any, upgrade_idx: int) -> Dict[str, Any]:
     """Create context info for an upgrade to display in the context window."""
     is_purchased = upgrade.get("purchased", False)
     
@@ -77,7 +77,7 @@ def create_upgrade_context_info(upgrade, game_state, upgrade_idx):
         'details': details
     }
 
-def get_default_context_info(game_state):
+def get_default_context_info(game_state: Any) -> Dict[str, Any]:
     """Get default context info when nothing is hovered."""
     lab_name = getattr(game_state, 'lab_name', 'Unknown Labs')
     return {
@@ -91,7 +91,7 @@ def get_default_context_info(game_state):
         ]
     }
 
-def get_ui_safe_zones(w, h):
+def get_ui_safe_zones(w: int, h: int) -> List[pygame.Rect]:
     """
     Define safe zones where overlays should not be positioned to avoid obscuring interactive areas.
     
@@ -133,7 +133,7 @@ def get_ui_safe_zones(w, h):
     return safe_zones
 
 
-def find_safe_overlay_position(overlay_rect, screen_w, screen_h, safe_zones):
+def find_safe_overlay_position(overlay_rect: pygame.Rect, screen_w: int, screen_h: int, safe_zones: List[pygame.Rect]) -> pygame.Rect:
     """
     Find a position for an overlay that doesn't intersect with safe zones.
     
@@ -243,7 +243,7 @@ def should_show_back_button(depth: int) -> bool:
     """
     return depth >= 1
 
-def draw_back_button(screen, w, h, navigation_depth, font=None):
+def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: int, font: Optional[pygame.font.Font] = None) -> Optional[pygame.Rect]:
     """
     Draw a Back button when navigation depth >= 1.
     
@@ -284,7 +284,7 @@ def draw_back_button(screen, w, h, navigation_depth, font=None):
     
     return button_rect
 
-def wrap_text(text, font, max_width):
+def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
     """
     Splits the text into multiple lines so that each line fits within max_width.
     Returns a list of strings, each representing a line.
@@ -318,7 +318,7 @@ def wrap_text(text, font, max_width):
         lines.append(curr_line)
     return lines
 
-def render_text(text, font, max_width=None, color=(255,255,255), line_height_multiplier=1.35):
+def render_text(text: str, font: pygame.font.Font, max_width: Optional[int] = None, color: Tuple[int, int, int] = (255,255,255), line_height_multiplier: float = 1.35) -> Tuple[List[Tuple[pygame.Surface, Tuple[int, int]]], pygame.Rect]:
     """Render text with optional word wrapping and consistent line height. Returns [(surface, (x_offset, y_offset)), ...], bounding rect."""
     lines = [text]
     if max_width:
@@ -337,7 +337,7 @@ def render_text(text, font, max_width=None, color=(255,255,255), line_height_mul
     offsets = [(0, i * line_height) for i in range(len(lines))]
     return list(zip(surfaces, offsets)), pygame.Rect(0, 0, total_width, total_height)
 
-def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
+def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, sound_manager: Optional[Any] = None) -> None:
     """
     Draw the main menu with vertically stacked, center-oriented buttons.
     
@@ -360,7 +360,7 @@ def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     """
     # Fonts for menu - scale based on screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.08), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.035))
+    pygame.font.SysFont('Consolas', int(h*0.035))
     
     # Title at top
     title_surf = title_font.render("P(Doom)", True, (255, 255, 255))
@@ -458,14 +458,14 @@ def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     # Draw version in bottom right corner
     draw_version_footer(screen, w, h)
 
-def draw_start_game_submenu(screen, w, h, selected_item):
+def draw_start_game_submenu(screen: pygame.Surface, w: int, h: int, selected_item: int) -> None:
     """Draw the start game submenu with different game launch options."""
     # Clear background
     screen.fill((50, 50, 50))
     
     # Fonts
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    pygame.font.SysFont('Consolas', int(h*0.03))
     desc_font = pygame.font.SysFont('Consolas', int(h*0.022))
     
     # Title
@@ -531,7 +531,7 @@ def draw_start_game_submenu(screen, w, h, selected_item):
         screen.blit(inst_surf, (inst_x, inst_y))
         inst_y += inst_surf.get_height() + 5
 
-def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
+def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, game_state: Optional[Any] = None) -> None:
     """
     Draw the sounds options menu with toggles for individual sound effects.
     
@@ -549,7 +549,7 @@ def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
     """
     # Fonts for menu - scale based on screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    pygame.font.SysFont('Consolas', int(h*0.03))
     
     # Title at top
     title_surf = title_font.render("Sound Options", True, (255, 255, 255))
@@ -611,7 +611,7 @@ def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
         inst_y = int(h * 0.85) + i * 25
         screen.blit(inst_surf, (inst_x, inst_y))
 
-def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
+def draw_config_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, configs: List[str], current_config_name: str) -> None:
     """
     Draw the configuration selection menu.
     
@@ -678,7 +678,7 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
         inst_y = int(h * 0.8) + i * int(h * 0.04)
         screen.blit(inst_surf, (inst_x, inst_y))
 
-def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0):
+def draw_overlay(screen: pygame.Surface, title: Optional[str], content: Optional[str], scroll_offset: int, w: int, h: int, navigation_depth: int = 0) -> Optional[pygame.Rect]:
     """
     Draw a scrollable overlay for displaying README or Player Guide content.
     
@@ -792,7 +792,7 @@ def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0
     
     return back_button_rect
 
-def draw_window_with_header(screen, rect, title, content=None, minimized=False, font=None):
+def draw_window_with_header(screen: pygame.Surface, rect: pygame.Rect, title: str, content: Optional[str] = None, minimized: bool = False, font: Optional[pygame.font.Font] = None) -> Tuple[pygame.Rect, pygame.Rect]:
     """
     Draw a window with a draggable header and minimize button.
     
@@ -883,7 +883,7 @@ def draw_window_with_header(screen, rect, title, content=None, minimized=False, 
     
     return header_rect, minimize_button_rect
 
-def draw_version_footer(screen, w, h, font=None):
+def draw_version_footer(screen: pygame.Surface, w: int, h: int, font: Optional[pygame.font.Font] = None) -> None:
     """
     Draw version information in the footer area.
     
@@ -910,7 +910,7 @@ def draw_version_footer(screen, w, h, font=None):
     
     screen.blit(version_surf, (version_x, version_y))
 
-def draw_version_header(screen, w, h, font=None):
+def draw_version_header(screen: pygame.Surface, w: int, h: int, font: Optional[pygame.font.Font] = None) -> None:
     """
     Draw version information in the header area (alternative placement).
     
@@ -937,7 +937,7 @@ def draw_version_header(screen, w, h, font=None):
     
     screen.blit(version_surf, (version_x, version_y))
 
-def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font=None):
+def draw_loading_screen(screen: pygame.Surface, w: int, h: int, progress: float = 0, status_text: str = "Loading...", font: Optional[pygame.font.Font] = None) -> None:
     """
     Draw a loading screen with progress indicator and accessibility support.
     
@@ -1007,7 +1007,7 @@ def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font
         screen.blit(percent_text, (percent_x, percent_y))
 
 
-def draw_resource_icon(screen, icon_type, x, y, size=16):
+def draw_resource_icon(screen: pygame.Surface, icon_type: str, x: int, y: int, size: int = 16) -> None:
     """
     Draw 8-bit style resource icons.
     
@@ -1061,7 +1061,7 @@ def draw_resource_icon(screen, icon_type, x, y, size=16):
         pygame.draw.rect(screen, (100, 255, 150), (x + 13, y + 4, 2, 2))
 
 
-def should_show_ui_element(game_state, element_id):
+def should_show_ui_element(game_state, element_id: str) -> bool:
     """
     Check if a UI element should be visible based on tutorial progress.
     
@@ -1083,7 +1083,7 @@ def should_show_ui_element(game_state, element_id):
     return onboarding.should_show_ui_element(element_id)
 
 
-def draw_top_bar_info(screen, game_state, w, h, small_font, font):
+def draw_top_bar_info(screen: pygame.Surface, game_state: Any, w: int, h: int, small_font: pygame.font.Font, font: pygame.font.Font) -> None:
     """
     Draw enhanced top bar with game date, version, and debug hotkeys.
     
@@ -1125,7 +1125,7 @@ def draw_top_bar_info(screen, game_state, w, h, small_font, font):
         screen.blit(hotkeys_surface, (hotkeys_x, top_y))
 
 
-def draw_ui(screen, game_state, w, h):
+def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     # Fonts, scaled by screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.045), bold=True)
     big_font = pygame.font.SysFont('Consolas', int(h*0.033))
@@ -1772,9 +1772,8 @@ def draw_ui(screen, game_state, w, h):
     # Draw popup events (overlay, drawn last to be on top)
     draw_popup_events(screen, game_state, w, h, font, big_font)
 
-def draw_employee_blobs(screen, game_state, w, h):
+def draw_employee_blobs(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     """Draw employee blobs with dynamic positioning that avoids UI overlap"""
-    import math
     
     # Update blob positions dynamically to avoid UI elements
     # This is called every frame to ensure continuous repositioning
@@ -1858,7 +1857,7 @@ def draw_employee_blobs(screen, game_state, w, h):
             end_pos = (x - blob_radius + 5, y + blob_radius - 5)
             pygame.draw.line(screen, slash_color, start_pos, end_pos, slash_width)
 
-def draw_mute_button(screen, game_state, w, h):
+def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     """Draw mute/unmute button in bottom right corner"""
     # Button position (bottom right) - made larger per issue #89
     button_size = int(min(w, h) * 0.06)  # Increased from 0.04 to 0.06 for better visibility
@@ -1888,7 +1887,7 @@ def draw_mute_button(screen, game_state, w, h):
     icon_y = button_y + (button_size - icon_surf.get_height()) // 2
     screen.blit(icon_surf, (icon_x, icon_y))
 
-def draw_mute_button_standalone(screen, sound_manager, w, h):
+def draw_mute_button_standalone(screen: pygame.Surface, sound_manager, w: int, h: int) -> None:
     """Draw mute/unmute button in bottom right corner (standalone version for menus)"""
     # Button position (bottom right) - made larger per issue #89
     button_size = int(min(w, h) * 0.06)  # Same size as main game mute button
@@ -1918,7 +1917,7 @@ def draw_mute_button_standalone(screen, sound_manager, w, h):
     icon_y = button_y + (button_size - icon_surf.get_height()) // 2
     screen.blit(icon_surf, (icon_x, icon_y))
 
-def draw_tooltip(screen, text, mouse_pos, w, h):
+def draw_tooltip(screen: pygame.Surface, text: str, mouse_pos: Tuple[int, int], w: int, h: int) -> None:
     font = pygame.font.SysFont('Consolas', int(h*0.018))
     surf = font.render(text, True, (230,255,200))
     tw, th = surf.get_size()
@@ -1929,7 +1928,7 @@ def draw_tooltip(screen, text, mouse_pos, w, h):
     pygame.draw.rect(screen, (40, 40, 80), (px, py, tw+12, th+12), border_radius=6)
     screen.blit(surf, (px+6, py+6))
 
-def draw_context_window(screen, context_info, w, h, minimized=False, config=None):
+def draw_context_window(screen: pygame.Surface, context_info: Dict[str, Any], w: int, h: int, minimized: bool = False, config: Optional[Dict[str, Any]] = None) -> None:
     """
     Draw a context window at the bottom of the screen showing detailed information.
     
@@ -1996,7 +1995,7 @@ def draw_context_window(screen, context_info, w, h, minimized=False, config=None
     if not minimized:
         # Content area
         content_y = window_y + header_height + 3
-        content_height = window_height - header_height - 6
+        window_height - header_height - 6
         content_x = window_x + 8
         
         # Description - DOS style ALL CAPS
@@ -2069,7 +2068,7 @@ def draw_context_window(screen, context_info, w, h, minimized=False, config=None
     
     return context_rect, button_rect
 
-def draw_scoreboard(screen, game_state, w, h, seed):
+def draw_scoreboard(screen: pygame.Surface, game_state, w: int, h: int, seed: str) -> None:
     # Scoreboard after game over
     font = pygame.font.SysFont('Consolas', int(h*0.035))
     title = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
@@ -2099,7 +2098,7 @@ def draw_scoreboard(screen, game_state, w, h, seed):
         screen.blit(font.render(line, True, (240,255,255)), (w//6 + int(w*0.04), h//7 + int(h*0.27) + i*int(h*0.05)))
     screen.blit(small.render("Click anywhere to restart.", True, (255,255,180)), (w//2 - int(w*0.1), h//7 + int(h*0.5)))
 
-def draw_seed_prompt(screen, current_input, weekly_suggestion):
+def draw_seed_prompt(screen: pygame.Surface, current_input: str, weekly_suggestion: str) -> None:
     # Prompt the user for a seed
     font = pygame.font.SysFont('Consolas', 40)
     small = pygame.font.SysFont('Consolas', 24)
@@ -2138,7 +2137,7 @@ def draw_seed_prompt(screen, current_input, weekly_suggestion):
     # Additional: wrap message log if desired (could be done similarly).
 
 
-def draw_bug_report_form(screen, form_data, selected_field, w, h):
+def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], selected_field: int, w: int, h: int) -> None:
     """
     Draw the bug reporting form interface.
     
@@ -2155,7 +2154,6 @@ def draw_bug_report_form(screen, form_data, selected_field, w, h):
     text_color = (255, 255, 255)
     label_color = (200, 200, 255)
     button_color = (70, 130, 180)
-    button_hover_color = (100, 160, 210)
     
     # Fonts
     title_font = pygame.font.SysFont('Consolas', 32, bold=True)
@@ -2311,7 +2309,7 @@ def draw_bug_report_form(screen, form_data, selected_field, w, h):
     return buttons  # Return button data for click handling
 
 
-def draw_bug_report_success(screen, message, w, h):
+def draw_bug_report_success(screen: pygame.Surface, message: str, w: int, h: int) -> None:
     """
     Draw success message after bug report submission.
     
@@ -2355,7 +2353,7 @@ def draw_bug_report_success(screen, message, w, h):
     screen.blit(instruction_text, instruction_rect)
 
 
-def draw_opponents_panel(screen, game_state, w, h, font, small_font):
+def draw_opponents_panel(screen: pygame.Surface, game_state, w: int, h: int, font: pygame.font.Font, small_font: pygame.font.Font) -> None:
     """
     Draw the opponents information panel showing discovered competitors.
     
@@ -2441,7 +2439,7 @@ def draw_opponents_panel(screen, game_state, w, h, font, small_font):
             screen.blit(compute_text, (opp_x, compute_y))
 
 
-def draw_deferred_events_zone(screen, game_state, w, h, small_font):
+def draw_deferred_events_zone(screen: pygame.Surface, game_state, w: int, h: int, small_font: pygame.font.Font) -> None:
     """
     Draw the deferred events zone in the lower right corner.
     
@@ -2492,7 +2490,7 @@ def draw_deferred_events_zone(screen, game_state, w, h, small_font):
         screen.blit(more_text, (zone_x + 5, zone_y + zone_height - 20))
 
 
-def draw_popup_events(screen, game_state, w, h, font, big_font):
+def draw_popup_events(screen: pygame.Surface, game_state, w: int, h: int, font: pygame.font.Font, big_font: pygame.font.Font) -> List[Tuple[pygame.Rect, str, Any]]:
     """
     Draw popup events that dominate the screen and require immediate attention.
     
@@ -2583,7 +2581,7 @@ def draw_popup_events(screen, game_state, w, h, font, big_font):
     return button_rects
 
 
-def draw_ui_transitions(screen, game_state, w, h, big_font):
+def draw_ui_transitions(screen: pygame.Surface, game_state, w: int, h: int, big_font: pygame.font.Font) -> None:
     """
     Draw smooth UI transition animations for upgrades and other elements.
     
@@ -2603,7 +2601,7 @@ def draw_ui_transitions(screen, game_state, w, h, big_font):
             draw_upgrade_transition(screen, transition, game_state, w, h, big_font)
 
 
-def draw_upgrade_transition(screen, transition, game_state, w, h, big_font):
+def draw_upgrade_transition(screen: pygame.Surface, transition, game_state, w: int, h: int, big_font: pygame.font.Font) -> None:
     """
     Draw a single upgrade transition animation with enhanced visual effects.
     
@@ -2782,7 +2780,7 @@ def draw_upgrade_transition(screen, transition, game_state, w, h, big_font):
 
 
 
-def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
+def draw_end_game_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, game_state, seed: str) -> None:
     """
     Draw the end-of-game menu with game summary and options.
     
@@ -2933,7 +2931,7 @@ def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
     inst_rect = instruction_text.get_rect(center=(w//2, int(h*0.92)))
     screen.blit(instruction_text, inst_rect)
 
-def draw_tutorial_overlay(screen, tutorial_message, w, h):
+def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, str], w: int, h: int) -> None:
     """
     Draw a tutorial overlay with message content and dismiss button.
     
@@ -3021,13 +3019,12 @@ def draw_tutorial_overlay(screen, tutorial_message, w, h):
     return button_rect
 
 
-def draw_researcher_pool_dialog(screen, hiring_dialog, w, h):
+def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> None:
     """
     Draw the researcher pool hiring dialog showing available specialist researchers.
     """
     # Get game state from wherever it's accessible in UI (need to modify this)
     # For now, get researchers from hiring_dialog context
-    from src.core.game_state import GameState
     import main
     
     # Access the game state - this is a simplified approach
@@ -3185,7 +3182,7 @@ def draw_researcher_pool_dialog(screen, hiring_dialog, w, h):
     
     return clickable_rects
 
-def draw_hiring_dialog(screen, hiring_dialog, w, h):
+def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> None:
     """
     Draw the employee hiring dialog with available employee subtypes for selection.
     
@@ -3346,7 +3343,7 @@ def draw_hiring_dialog(screen, hiring_dialog, w, h):
     return clickable_rects
 
 
-def draw_stepwise_tutorial_overlay(screen, tutorial_data, w, h):
+def draw_stepwise_tutorial_overlay(screen: pygame.Surface, tutorial_data: Dict[str, Any], w: int, h: int) -> None:
     """
     Draw the stepwise tutorial overlay for onboarding new players.
     
@@ -3455,7 +3452,7 @@ def draw_stepwise_tutorial_overlay(screen, tutorial_data, w, h):
     buttons['skip'] = skip_button_rect
     
     # Next/Finish button
-    can_go_forward = tutorial_data.get('can_go_forward', True)
+    tutorial_data.get('can_go_forward', True)
     is_final_step = step_number >= total_steps
     
     next_button_x = box_x + box_width - button_min_width - 30
@@ -3479,7 +3476,7 @@ def draw_stepwise_tutorial_overlay(screen, tutorial_data, w, h):
     return buttons
 
 
-def draw_first_time_help(screen, help_content, w, h, mouse_pos=None):
+def draw_first_time_help(screen: pygame.Surface, help_content: Dict[str, Any], w: int, h: int, mouse_pos: Optional[Tuple[int, int]] = None) -> None:
     """
     Draw a small help popup for first-time mechanics.
     
@@ -3549,7 +3546,7 @@ def draw_first_time_help(screen, help_content, w, h, mouse_pos=None):
     
     return close_button_rect
 
-def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=None):
+def draw_pre_game_settings(screen: pygame.Surface, w: int, h: int, settings: Dict[str, Any], selected_item: int, sound_manager=None) -> None:
     """
     Draw the Laboratory Configuration screen with P(Doom) bureaucracy theme.
     
@@ -3573,7 +3570,7 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
     # Fonts with better hierarchy
     title_font = pygame.font.SysFont('Consolas', int(h*0.055), bold=True)
     subtitle_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.028))
+    pygame.font.SysFont('Consolas', int(h*0.028))
     
     # Laboratory Configuration Header
     title_surf = title_font.render("LABORATORY CONFIGURATION", True, (220, 240, 255))
@@ -3648,7 +3645,7 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
         draw_mute_button_standalone(screen, sound_manager, w, h)
 
 
-def get_research_intensity_display(difficulty):
+def get_research_intensity_display(difficulty: float) -> str:
     """Convert difficulty setting to bureaucratic terminology."""
     mapping = {
         "EASY": "CONSERVATIVE",
@@ -3659,7 +3656,7 @@ def get_research_intensity_display(difficulty):
     return mapping.get(difficulty, "REGULATORY")
 
 
-def get_volume_display(volume):
+def get_volume_display(volume: float) -> str:
     """Convert volume to descriptive levels."""
     if isinstance(volume, str) or volume == 123:  # Handle dummy value
         volume = 80
@@ -3675,7 +3672,7 @@ def get_volume_display(volume):
         return "MINIMAL"
 
 
-def get_graphics_display(quality):
+def get_graphics_display(quality: str) -> str:
     """Convert graphics quality to bureaucratic terms."""
     mapping = {
         "LOW": "EFFICIENT", 
@@ -3686,7 +3683,7 @@ def get_graphics_display(quality):
     return mapping.get(quality, "COMPLIANT")
 
 
-def get_safety_display(safety_level):
+def get_safety_display(safety_level: str) -> str:
     """Safety protocol levels for the bureaucratic theme."""
     mapping = {
         "MINIMAL": "MINIMAL",
@@ -3698,7 +3695,7 @@ def get_safety_display(safety_level):
     return mapping.get(safety_level, "STANDARD")
 
 
-def draw_enhanced_continue_button(screen, rect, text, button_state):
+def draw_enhanced_continue_button(screen: pygame.Surface, rect: pygame.Rect, text: str, button_state: str) -> None:
     """Draw the continue button with special highlighting."""
     # Enhanced colors for the continue button
     if button_state == ButtonState.FOCUSED:
@@ -3721,7 +3718,7 @@ def draw_enhanced_continue_button(screen, rect, text, button_state):
     screen.blit(text_surf, text_rect)
 
 
-def draw_bureaucratic_setting_button(screen, rect, text, button_state, setting_name):
+def draw_bureaucratic_setting_button(screen: pygame.Surface, rect: pygame.Rect, text: str, button_state: str, setting_name: str) -> None:
     """Draw setting buttons with bureaucratic styling."""
     # Color scheme based on button state
     if button_state == ButtonState.FOCUSED:
@@ -3759,7 +3756,7 @@ def draw_bureaucratic_setting_button(screen, rect, text, button_state, setting_n
     screen.blit(text_surf, (text_x, text_y))
 
 
-def draw_seed_selection(screen, w, h, selected_item, seed_input="", sound_manager=None):
+def draw_seed_selection(screen: pygame.Surface, w: int, h: int, selected_item: int, seed_input: str = "", sound_manager=None) -> None:
     """
     Draw the seed selection screen.
     
@@ -3774,7 +3771,7 @@ def draw_seed_selection(screen, w, h, selected_item, seed_input="", sound_manage
     
     # Fonts
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    pygame.font.SysFont('Consolas', int(h*0.03))
     
     # Title
     title_surf = title_font.render("Select Seed", True, (255, 255, 255))
@@ -3847,7 +3844,7 @@ def draw_seed_selection(screen, w, h, selected_item, seed_input="", sound_manage
         draw_mute_button_standalone(screen, sound_manager, w, h)
 
 
-def draw_tutorial_choice(screen, w, h, selected_item):
+def draw_tutorial_choice(screen: pygame.Surface, w: int, h: int, selected_item: int) -> None:
     """
     Draw the tutorial choice screen.
     
@@ -3861,7 +3858,7 @@ def draw_tutorial_choice(screen, w, h, selected_item):
     
     # Fonts
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    pygame.font.SysFont('Consolas', int(h*0.03))
     desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
     
     # Title
@@ -3917,7 +3914,7 @@ def draw_tutorial_choice(screen, w, h, selected_item):
         inst_y += inst_surf.get_height() + 5
 
 
-def draw_new_player_experience(screen, w, h, selected_item, tutorial_enabled, intro_enabled):
+def draw_new_player_experience(screen: pygame.Surface, w: int, h: int, selected_item: int, tutorial_enabled: bool, intro_enabled: bool) -> None:
     """
     Draw the new player experience screen with tutorial and intro checkboxes.
     
@@ -4043,7 +4040,7 @@ def draw_new_player_experience(screen, w, h, selected_item, tutorial_enabled, in
         inst_y += inst_surf.get_height() + 3
 
 
-def draw_turn_transition_overlay(screen, w, h, timer, duration):
+def draw_turn_transition_overlay(screen: pygame.Surface, w: int, h: int, timer: float, duration: float) -> None:
     """
     Draw a turn transition overlay with darkening/lightening effect.
     
@@ -4102,7 +4099,7 @@ def draw_turn_transition_overlay(screen, w, h, timer, duration):
     pygame.draw.rect(screen, progress_color, progress_fill)
 
 
-def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
+def draw_audio_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, audio_settings: Dict[str, Any], sound_manager) -> None:
     """
     Draw the audio settings menu.
     
@@ -4124,7 +4121,7 @@ def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
     screen.blit(title_surf, (title_x, title_y))
     
     # Menu items
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03))
+    pygame.font.SysFont('Consolas', int(h*0.03))
     button_width = int(w * 0.6)
     button_height = int(h * 0.06)
     start_y = int(h * 0.25)
@@ -4182,7 +4179,7 @@ def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
         screen.blit(info_surf, (info_x, info_y))
 
 
-def draw_high_score_screen(screen, w, h, game_state, seed, submit_to_leaderboard):
+def draw_high_score_screen(screen: pygame.Surface, w: int, h: int, game_state, seed: str, submit_to_leaderboard: bool) -> None:
     """
     Draw the high score screen with game statistics and leaderboard options.
     

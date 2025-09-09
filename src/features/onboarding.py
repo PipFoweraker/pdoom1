@@ -10,7 +10,7 @@ This module handles:
 
 import json
 import os
-from typing import Dict, List, Optional, Set
+from typing import Dict, Optional
 
 ONBOARDING_FILE = "onboarding_progress.json"
 
