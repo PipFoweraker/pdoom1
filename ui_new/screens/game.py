@@ -15,7 +15,24 @@ from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackS
 
 # Import new components
 from ..components.colours import *
-from ..components.typography import get_font_manager
+from ..layouts import three_column_layout
+# from ..components.typography import get_font_manager  # Temporarily disabled
+
+# Temporary fallback font manager
+class TempFontManager:
+    def get_font(self, size, bold=False):
+        try:
+            import pygame
+            return pygame.font.Font(None, size)
+        except:
+            return None
+    def get_title_font(self, h): return self.get_font(int(h * 0.045))
+    def get_big_font(self, h): return self.get_font(int(h * 0.033)) 
+    def get_normal_font(self, h): return self.get_font(int(h * 0.025))
+    def get_small_font(self, h): return self.get_font(int(h * 0.02))
+
+def get_font_manager():
+    return TempFontManager()
 from ..layouts.three_column import ThreeColumnLayout
 
 # Global layout manager
