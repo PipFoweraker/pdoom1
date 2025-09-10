@@ -1,5 +1,5 @@
 > p(Doom)1: an AI bureaucracy strategy game
-v0.2.0 "Technical Debt Resolution" 
+v0.2.12 "Development Infrastructure Enhancement" 
 
 **Unregulated AI poses an existential threat to humanity.**
  
@@ -7,7 +7,7 @@ v0.2.0 "Technical Debt Resolution"
 
 The game is designed to reflect historical events and then project future ones according to the best data the developers have to hand. Future versions of the game will include timed leagues where players can compete to solve scenarios and configurations via a global leaderboard.
  
-**Current Version:** v0.2.6 "Lab Name System" - Professional AI lab identity and pseudonymous gameplay
+**Current Version:** v0.2.12 "Development Infrastructure Enhancement" - Comprehensive type annotations and development tooling
 
 [PRIVACY] **PRIVACY-FIRST DESIGN** - Your data stays under your control  
 [COMPETITIVE] **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
