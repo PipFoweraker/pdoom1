@@ -2,7 +2,30 @@
 
 P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI application with comprehensive testing and documentation.
 
+**Current Version**: v0.2.12 "Development Infrastructure Enhancement"
+
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
+
+## Development Infrastructure Status
+
+### Type Annotation Progress (MAJOR MILESTONE ACHIEVED)
+- **ui.py**: ✅ **100% COMPLETE** (4,235 lines, 35+ functions fully annotated)
+- **game_state.py**: ✅ **85-90% COMPLETE** (55+ of ~65 methods annotated)
+- **Estimated pylance reduction**: 60-70% of original 5,093+ strict mode issues resolved
+- **Established patterns**: pygame.Surface, Optional[Dict], Tuple[bool, str], Union types
+- **Next targets**: Complete remaining ~10 game_state.py methods, then select next monolith
+
+### Dev Blog System (NEW INFRASTRUCTURE)
+- **Automated documentation**: `python dev-blog/create_entry.py [template] [slug]`
+- **Index generation**: `python dev-blog/generate_index.py`
+- **Templates available**: development-session, milestone
+- **ASCII-only enforcement**: All content must use ASCII characters only
+- **Website integration**: Ready for automated content pickup
+
+### Quality Assurance Tools
+- **autoflake cleanup**: Use `.venv\\Scripts\\python.exe -m autoflake --remove-all-unused-imports --remove-unused-variables --check --recursive .`
+- **Type checking**: pylance strict mode with comprehensive coverage
+- **Import validation**: Regular `from src.core.game_state import GameState` checks
 
 ## Working Effectively
 
@@ -29,13 +52,21 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 ### Development Validation
 - **Always validate programmatically** after making changes:
 ```python
-from game_state import GameState
-from version import get_display_version
+from src.core.game_state import GameState
+from src.services.version import get_display_version
 print(f'Testing P(Doom) {get_display_version()}')
 gs = GameState('test-seed')
 print('✓ Game state initializes correctly')
 # Test your specific changes here
 ```
+
+### Type Annotation Workflow (ESTABLISHED PATTERNS)
+- **UI functions**: Use `pygame.Surface` for all rendering parameters
+- **Rect methods**: Return `Tuple[int, int, int, int]` for coordinate tuples
+- **Complex returns**: `Optional[Dict[str, Any]]` for optional data, `Tuple[bool, str]` for success/message
+- **Union types**: `Union[pygame.Rect, Tuple[int, int, int, int]]` for flexible input
+- **Method signatures**: Always include parameter and return type annotations
+- **Import validation**: Test `from src.core.game_state import GameState` after changes
 
 ## Validation
 

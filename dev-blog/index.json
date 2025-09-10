@@ -18,7 +18,7 @@
       },
       "word_count": 606,
       "file_size": 5162,
-      "modified_at": "2025-09-10T08:13:40.713782"
+      "modified_at": "2025-09-10T09:19:00.614088"
     },
     {
       "filename": "2025-09-10-type-annotation-sprint.md",
@@ -38,7 +38,7 @@
       },
       "word_count": 517,
       "file_size": 4598,
-      "modified_at": "2025-09-10T09:02:34.247933"
+      "modified_at": "2025-09-10T10:30:19.717317"
     }
   ],
   "config": {
@@ -80,11 +80,13 @@
       ]
     }
   },
-  "errors": [],
+  "errors": [
+    "2025-09-10-version-0-2-12-release.md: Title exceeds 60 character limit"
+  ],
   "stats": {
     "total_entries": 2,
-    "total_errors": 0,
+    "total_errors": 1,
     "latest_entry": "2025-09-10"
   },
-  "generated_at": "2025-09-10T09:03:03.051272"
+  "generated_at": "2025-09-10T10:35:50.796579"
 }
