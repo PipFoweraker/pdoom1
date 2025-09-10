@@ -1518,6 +1518,92 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         # Optionally, always show the "monthly costs" indicator here as well
 
 
+    # Office Cat rendering (if adopted)
+    if getattr(game_state, 'office_cat_adopted', False):
+        # Update cat position
+        game_state.update_cat_position(w, h)
+        
+        # Get cat position and doom stage
+        cat_x, cat_y = getattr(game_state, 'office_cat_position', (w - 150, h - 120))
+        doom_stage = game_state.get_cat_doom_stage()
+        
+        # Dramatic end-game effects when doom is very high
+        if doom_stage >= 4 and game_state.doom >= 85:
+            # Screen flash effect
+            flash_intensity = int(50 * (1 + math.sin(game_state.turn * 0.8)))
+            flash_surface = pygame.Surface((w, h))
+            flash_surface.fill((255, 50, 50))
+            flash_surface.set_alpha(flash_intensity)
+            screen.blit(flash_surface, (0, 0))
+            
+            # Ominous screen darkening around edges
+            vignette = pygame.Surface((w, h), pygame.SRCALPHA)
+            for radius in range(min(w, h) // 4):
+                alpha = min(255, radius * 2)
+                pygame.draw.rect(vignette, (0, 0, 0, alpha), 
+                               (radius, radius, w - 2*radius, h - 2*radius), 3)
+            screen.blit(vignette, (0, 0))
+        
+        # Load and draw cat image based on doom stage
+        try:
+            cat_image = pygame.image.load('assets/images/office_cat_base.png')
+            cat_image = pygame.transform.scale(cat_image, (48, 48))  # Scale to appropriate size
+            
+            # Apply doom effects to the cat
+            if doom_stage >= 1:
+                # Tint the cat darker as doom increases
+                tint_factor = min(doom_stage * 0.2, 0.8)  # Max 80% darkening
+                dark_surface = pygame.Surface(cat_image.get_size())
+                dark_surface.fill((255 - int(255 * tint_factor), 100, 100))  # Red tint
+                cat_image.blit(dark_surface, (0, 0), special_flags=pygame.BLEND_MULT)
+            
+            if doom_stage >= 3:
+                # Add glowing red eyes with pulsing effect
+                import math
+                glow_intensity = int(127 + 128 * math.sin(game_state.turn * 0.5))
+                pygame.draw.circle(cat_image, (255, glow_intensity, glow_intensity), (13, 12), 2)  # Left eye glow
+                pygame.draw.circle(cat_image, (255, glow_intensity, glow_intensity), (19, 12), 2)  # Right eye glow
+            
+            if doom_stage >= 4:
+                # Add laser beams from eyes with flickering
+                import math
+                laser_alpha = int(200 + 55 * math.sin(game_state.turn * 1.2))
+                laser_width = 2 + int(2 * math.sin(game_state.turn * 0.8))
+                
+                # Create laser surface with alpha
+                laser_surface = pygame.Surface((w, h), pygame.SRCALPHA)
+                pygame.draw.line(laser_surface, (255, 0, 0, laser_alpha), 
+                               (cat_x + 13, cat_y + 12), (cat_x - 80, cat_y + 12), laser_width)  # Left laser
+                pygame.draw.line(laser_surface, (255, 0, 0, laser_alpha), 
+                               (cat_x + 19, cat_y + 12), (cat_x + 48 + 80, cat_y + 12), laser_width)  # Right laser
+                screen.blit(laser_surface, (0, 0))
+            
+            # Draw the cat
+            screen.blit(cat_image, (int(cat_x), int(cat_y)))
+            
+            # Draw love emoji if cat was recently petted
+            if getattr(game_state, 'office_cat_love_emoji_timer', 0) > 0:
+                emoji_x, emoji_y = getattr(game_state, 'office_cat_love_emoji_pos', (cat_x + 16, cat_y - 20))
+                
+                # Floating heart animation
+                heart_alpha = min(255, game_state.office_cat_love_emoji_timer * 4)
+                heart_surface = pygame.Surface((24, 24), pygame.SRCALPHA)
+                
+                # Draw heart shape
+                pygame.draw.circle(heart_surface, (255, 100, 150, heart_alpha), (8, 10), 6)
+                pygame.draw.circle(heart_surface, (255, 100, 150, heart_alpha), (16, 10), 6)
+                pygame.draw.polygon(heart_surface, (255, 100, 150, heart_alpha), 
+                                  [(2, 14), (12, 22), (22, 14)])
+                
+                # Float upward over time
+                float_offset = (60 - game_state.office_cat_love_emoji_timer) * 0.5
+                screen.blit(heart_surface, (int(emoji_x), int(emoji_y - float_offset)))
+        
+        except (pygame.error, FileNotFoundError):
+            # Fallback: draw a simple cat emoji if image loading fails
+            cat_text = big_font.render("🐱", True, (255, 255, 255))
+            screen.blit(cat_text, (int(cat_x), int(cat_y)))
+
     # Draw UI transitions (on top of everything else)
     draw_ui_transitions(screen, game_state, w, h, big_font)
 
@@ -2094,8 +2180,24 @@ def draw_scoreboard(screen: pygame.Surface, game_state, w: int, h: int, seed: st
         f"Seed: {seed}",
         f"High Score (turns): {game_state.highscore}"
     ]
+    
+    # Add cat statistics if cat was adopted
+    if getattr(game_state, 'office_cat_adopted', False):
+        lines.extend([
+            "",  # Empty line for spacing
+            "🐱 Office Cat Statistics:",
+            f"  Total Food Cost: ${getattr(game_state, 'office_cat_total_food_cost', 0)}",
+            f"  Times Petted: {getattr(game_state, 'office_cat_total_pets', 0)}",
+            f"  Final Doom Stage: {game_state.get_cat_doom_stage()}/4"
+        ])
+    
     for i, line in enumerate(lines):
-        screen.blit(font.render(line, True, (240,255,255)), (w//6 + int(w*0.04), h//7 + int(h*0.27) + i*int(h*0.05)))
+        if line == "":  # Skip empty lines
+            continue
+        color = (240,255,255)
+        if "🐱" in line:
+            color = (255, 200, 255)  # Pink for cat statistics
+        screen.blit(font.render(line, True, color), (w//6 + int(w*0.04), h//7 + int(h*0.27) + i*int(h*0.04)))
     screen.blit(small.render("Click anywhere to restart.", True, (255,255,180)), (w//2 - int(w*0.1), h//7 + int(h*0.5)))
 
 def draw_seed_prompt(screen: pygame.Surface, current_input: str, weekly_suggestion: str) -> None:
