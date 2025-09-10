@@ -26,6 +26,18 @@ This document outlines the Git branching strategy for P(Doom) to enable graceful
 - **Activities**: Bug fixes, documentation updates, version bumps
 - **Merging**: Merges to both `main` and `develop` when ready
 
+#### `stable-alpha` (NEW)
+- **Purpose**: Alpha testing candidates from develop
+- **Usage**: Created from `develop` for early testing
+- **Audience**: Internal testing, developers
+- **Updates**: Receives selected merges from `develop`
+
+#### `stable-beta` (NEW)
+- **Purpose**: Beta testing candidates, more stable than alpha
+- **Usage**: Promoted from `stable-alpha` when ready
+- **Audience**: Beta testers, broader audience
+- **Updates**: Receives merges from `stable-alpha`
+
 ### Supporting Branches
 
 #### `hotfix/*` (e.g., `hotfix/ui-button-shrink`)
@@ -47,6 +59,13 @@ This document outlines the Git branching strategy for P(Doom) to enable graceful
 - **Usage**: Testing major architectural changes
 - **Safety**: Never merges directly to main branches
 - **Flow**: Cherry-pick successful experiments to feature branches
+
+#### `experimental/*` (NEW)
+- **Purpose**: Experimental features and side quests
+- **Examples**: `experimental/longtermist-dates` - 5-digit year format
+- **Usage**: Isolated feature experiments
+- **Safety**: No impact on main development workflow
+- **Flow**: Merge to `develop` when ready, or abandon safely
 
 ## Workflow Examples
 
