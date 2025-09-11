@@ -38,7 +38,7 @@
     "show_keyboard_shortcuts": true
   },
   "audio": {
-    "sound_enabled": false,
+    "sound_enabled": true,
     "master_volume": 1.0,
     "ui_sounds": true,
     "feedback_sounds": true
@@ -57,6 +57,7 @@
     "enhanced_events_enabled": true
   },
   "advanced": {
+    "safety_level": "STANDARD",
     "debug_mode": false,
     "verbose_logging": true,
     "log_level": "INFO",
