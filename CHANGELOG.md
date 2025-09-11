@@ -4,6 +4,10 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2025-09-11
+### Added
+- **Debug Console**: Real-time game state monitoring with backtick toggle
+
 ## [0.3.0] - 2025-09-11
 ### Added
 - **[FEATURE] Longtermist Date Format**: Revolutionary 5-digit year date display system

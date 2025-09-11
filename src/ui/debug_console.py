@@ -208,8 +208,8 @@ class DebugConsole:
         pygame.draw.rect(screen, button_color, self.toggle_button_rect)
         pygame.draw.rect(screen, (200, 200, 200), self.toggle_button_rect, 2)
         
-        # Button text
-        button_text = "D" if not self.visible else ("−" if not self.collapsed else "+")
+        # Button text - ASCII-only characters for compliance
+        button_text = "D" if not self.visible else ("-" if not self.collapsed else "+")
         text_surface = self.font.render(button_text, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=self.toggle_button_rect.center)
         screen.blit(text_surface, text_rect)
@@ -296,7 +296,7 @@ class DebugConsole:
             if isinstance(value, float):
                 display_value = f"{value:.1f}"
             elif isinstance(value, bool):
-                display_value = "✓" if value else "✗"
+                display_value = "Y" if value else "N"  # ASCII-only compliance
             else:
                 display_value = str(value)
             
