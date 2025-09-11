@@ -5,6 +5,7 @@ Provides a collapsible debug overlay showing game state variables and calculatio
 
 import pygame
 from typing import Any, Dict, List, Tuple, Optional
+from src.services.config_manager import get_current_config
 
 
 class DebugConsole:
@@ -31,8 +32,9 @@ class DebugConsole:
         
     def initialize_fonts(self, screen_height: int) -> None:
         """Initialize fonts based on screen size."""
-        self.font = pygame.font.Font(None, max(16, int(screen_height * 0.02)))
-        self.small_font = pygame.font.Font(None, max(12, int(screen_height * 0.015)))
+        # Increased font sizes by 25% for better readability
+        self.font = pygame.font.Font(None, max(20, int(screen_height * 0.025)))
+        self.small_font = pygame.font.Font(None, max(16, int(screen_height * 0.019)))
     
     def get_debug_data(self, game_state: Any) -> Dict[str, Any]:
         """
@@ -44,9 +46,13 @@ class DebugConsole:
         Returns:
             Dictionary containing organized debug information
         """
-        # Action Points calculation breakdown
+        # Get starting values from config for comparison
+        config = get_current_config()
+        starting_resources = config['starting_resources']
+        
+        # Action Points calculation breakdown with starting comparison
         ap_breakdown = {
-            'current': game_state.action_points,
+            'current': f"{game_state.action_points} (start: {starting_resources['action_points']})",
             'max': game_state.max_action_points,
             'base': 3,  # From config
             'staff_bonus': game_state.staff * 0.5,
@@ -56,9 +62,9 @@ class DebugConsole:
             'glow_timer': getattr(game_state, 'ap_glow_timer', 0)
         }
         
-        # Staff composition
+        # Staff composition with starting comparison
         staff_info = {
-            'total_staff': game_state.staff,
+            'total_staff': f"{game_state.staff} (start: {starting_resources['staff']})",
             'admin_staff': game_state.admin_staff,
             'research_staff': getattr(game_state, 'research_staff', 0),
             'ops_staff': getattr(game_state, 'ops_staff', 0),
@@ -67,12 +73,12 @@ class DebugConsole:
             'unmanaged': len([b for b in getattr(game_state, 'employee_blobs', []) if b.get('unproductive_reason') == 'no_manager'])
         }
         
-        # Economic state
+        # Economic state with starting vs current comparison
         economic_info = {
-            'money': game_state.money,
-            'reputation': game_state.reputation,
-            'doom': game_state.doom,
-            'compute': game_state.compute,
+            'money': f"{game_state.money} (start: {starting_resources['money']})",
+            'reputation': f"{game_state.reputation} (start: {starting_resources['reputation']})",
+            'doom': f"{game_state.doom}% (start: {starting_resources['doom']}%)",
+            'compute': f"{game_state.compute} (start: {starting_resources.get('compute', 0)})",
             'research_progress': getattr(game_state, 'research_progress', 0),
             'papers_published': getattr(game_state, 'papers_published', 0),
             'spending_this_turn': getattr(game_state, 'spending_this_turn', 0),
@@ -214,13 +220,13 @@ class DebugConsole:
     
     def _draw_console_panel(self, screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         """Draw the main console panel with debug information."""
-        # Calculate console dimensions
+        # Calculate console dimensions - 40% larger for better visibility
         if self.collapsed:
-            console_width = 300
-            console_height = 40
+            console_width = 420  # Increased from 300 (40% larger)
+            console_height = 56   # Increased from 40 (40% larger)
         else:
-            console_width = min(500, w - 60)
-            console_height = min(400, h - 100)
+            console_width = min(700, w - 60)  # Increased from 500 (40% larger)
+            console_height = min(560, h - 100)  # Increased from 400 (40% larger)
         
         console_x = 50
         console_y = h - console_height - 50
@@ -253,24 +259,24 @@ class DebugConsole:
         header_text = self.font.render(f"Debug Console ({key_name} to collapse)", True, (255, 255, 255))
         screen.blit(header_text, (x + 10, y + 5))
         
-        # Content area
+        # Content area - optimized spacing for better real estate usage
         content_y = y + 25
-        line_height = 16
+        line_height = 18  # Increased from 16 for better readability with larger fonts
         col_width = width // 3
         
-        # Column 1: Action Points & Staff
+        # Column 1: Action Points & Staff - optimized spacing for larger console
         self._draw_section(screen, "ACTION POINTS", debug_data['action_points'], 
                           x + 10, content_y, col_width)
         
         self._draw_section(screen, "STAFF", debug_data['staff'], 
-                          x + 10, content_y + 120, col_width)
+                          x + 10, content_y + 140, col_width)  # Increased from 120 to use more space
         
         # Column 2: Economy & Turn
         self._draw_section(screen, "ECONOMY", debug_data['economy'], 
                           x + col_width + 10, content_y, col_width)
         
         self._draw_section(screen, "TURN INFO", debug_data['turn'], 
-                          x + col_width + 10, content_y + 120, col_width)
+                          x + col_width + 10, content_y + 140, col_width)  # Increased from 120
         
         # Column 3: Milestones
         self._draw_section(screen, "MILESTONES", debug_data['milestones'], 
@@ -304,14 +310,14 @@ class DebugConsole:
             else:
                 color = (200, 200, 200)  # Gray for normal values
             
-            # Draw the key-value pair
+            # Draw the key-value pair with optimized spacing
             text = f"{key}: {display_value}"
             text_surface = self.small_font.render(text, True, color)
             screen.blit(text_surface, (x, data_y))
-            data_y += 14
+            data_y += 16  # Increased from 14 for better readability with larger fonts
             
-            # Don't overflow the section
-            if data_y > y + 100:
+            # Expanded overflow limit for larger console
+            if data_y > y + 120:  # Increased from 100 to use more vertical space
                 break
 
 
