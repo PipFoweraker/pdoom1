@@ -1986,7 +1986,7 @@ def main():
                                 game_state.sound_manager.play_sound('ui_accept')
                         
                         # Debug console toggle
-                        elif self._handle_debug_console_keypress(event.key, game_state):
+                        elif _handle_debug_console_keypress(event.key, game_state):
                             pass  # Debug console manager handled it
                         
                         elif event.key == pygame.K_RETURN and first_time_help_content:
