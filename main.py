@@ -1602,20 +1602,22 @@ def main():
                     # Update screen size and redraw (responsive design)
                     SCREEN_W, SCREEN_H = event.w, event.h
                     screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
+                
+                elif event.type == pygame.MOUSEWHEEL:
+                    # Modern pygame mouse wheel handling (prevents crashes)
+                    if (current_state == 'game' and game_state and 
+                        game_state.scrollable_event_log_enabled):
+                        # Handle mouse wheel scrolling for event log
+                        if event.y > 0:  # Mouse wheel up
+                            game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 3)
+                        elif event.y < 0:  # Mouse wheel down
+                            max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
+                            game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 3)
+                    # Always continue - don't let unhandled wheel events cause issues
+                    continue
                     
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     mx, my = event.pos
-                    
-                    # Handle mouse wheel for scrollable event log ONLY when explicitly enabled
-                    if (current_state == 'game' and game_state and 
-                        game_state.scrollable_event_log_enabled and
-                        event.button in [4, 5]):  # Only handle mouse wheel events
-                        if event.button == 4:  # Mouse wheel up
-                            game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 3)
-                        elif event.button == 5:  # Mouse wheel down
-                            max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
-                            game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 3)
-                        continue  # Skip other mouse handling for wheel events
                     
                     # Handle overlay manager events first (highest priority)
                     if current_state == 'game' and game_state:
