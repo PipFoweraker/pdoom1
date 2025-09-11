@@ -1719,6 +1719,13 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     # Draw mute button (bottom right)
     draw_mute_button(screen, game_state, w, h)
     
+    # Draw debug console (bottom left) - using manager
+    try:
+        from src.ui.debug_console_manager import debug_console_manager
+        debug_console_manager.draw(screen, game_state, w, h)
+    except ImportError:
+        pass  # Debug console not available
+    
     # Draw version in bottom right corner (unobtrusive)
     draw_version_footer(screen, w, h)
     
@@ -1847,20 +1854,6 @@ def draw_employee_blobs(screen: pygame.Surface, game_state: Any, w: int, h: int)
         # Productivity indicator (small dot)
         if blob['productivity'] > 0:
             pygame.draw.circle(screen, (100, 255, 100), (x, y + 8), 4)
-            
-        # Red slash overlay for unproductive employees due to management issues
-        if blob.get('unproductive_reason') == 'no_manager':
-            # Draw red diagonal slash across the blob
-            slash_color = (255, 50, 50)
-            slash_width = 4
-            # Diagonal line from top-left to bottom-right
-            start_pos = (x - blob_radius + 5, y - blob_radius + 5)
-            end_pos = (x + blob_radius - 5, y + blob_radius - 5)
-            pygame.draw.line(screen, slash_color, start_pos, end_pos, slash_width)
-            # Second diagonal line from top-right to bottom-left
-            start_pos = (x + blob_radius - 5, y - blob_radius + 5)
-            end_pos = (x - blob_radius + 5, y + blob_radius - 5)
-            pygame.draw.line(screen, slash_color, start_pos, end_pos, slash_width)
 
 def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     """Draw mute/unmute button in bottom right corner"""

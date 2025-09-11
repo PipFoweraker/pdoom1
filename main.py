@@ -188,6 +188,30 @@ def get_weekly_seed():
     now = datetime.datetime.now(datetime.timezone.utc)
     return f"{now.year}{now.isocalendar()[1]}"
 
+def _handle_debug_console_keypress(key, game_state):
+    """Handle debug console keypress using the debug console manager."""
+    try:
+        from src.ui.debug_console_manager import debug_console_manager
+        return debug_console_manager.handle_keypress(key, game_state)
+    except ImportError:
+        return False
+
+def _handle_debug_console_click(pos, screen_w, screen_h):
+    """Handle debug console click using the debug console manager."""
+    try:
+        from src.ui.debug_console_manager import debug_console_manager
+        return debug_console_manager.handle_click(pos, screen_w, screen_h)
+    except ImportError:
+        return False
+
+def _draw_debug_console(screen, game_state, screen_w, screen_h):
+    """Draw debug console using the debug console manager."""
+    try:
+        from src.ui.debug_console_manager import debug_console_manager
+        debug_console_manager.draw(screen, game_state, screen_w, screen_h)
+    except ImportError:
+        pass
+
 def load_markdown_file(filename):
     """Load and return the contents of a markdown file"""
     try:
@@ -1767,6 +1791,10 @@ def main():
                             elif handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
                                 # Popup button was clicked, no need for further processing
                                 pass
+                            # Check for debug console clicks
+                            elif _handle_debug_console_click((mx, my), SCREEN_W, SCREEN_H):
+                                # Debug console handled the click
+                                pass
                             else:
                                 # Regular game mouse handling
                                 result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
@@ -1956,6 +1984,10 @@ def main():
                             # Play UI sound if available
                             if game_state and hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('ui_accept')
+                        
+                        # Debug console toggle
+                        elif self._handle_debug_console_keypress(event.key, game_state):
+                            pass  # Debug console manager handled it
                         
                         elif event.key == pygame.K_RETURN and first_time_help_content:
                             # Mark mechanic as seen so it won't reappear

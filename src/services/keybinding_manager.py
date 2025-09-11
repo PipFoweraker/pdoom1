@@ -47,6 +47,7 @@ except ImportError:
         K_RALT = 307
         K_LCTRL = 306
         K_RCTRL = 305
+        K_BACKQUOTE = 96  # Backtick key
     
     pygame = DummyPygame()
 
@@ -105,6 +106,9 @@ class KeybindingManager:
             "toggle_sound": pygame.K_F10,
             "fullscreen": pygame.K_F11,
             "screenshot": pygame.K_F12,
+            
+            # Debug and developer tools
+            "debug_console": pygame.K_BACKQUOTE,  # Backtick key - easily accessible
         }
     
     def _load_user_keybindings(self) -> None:
