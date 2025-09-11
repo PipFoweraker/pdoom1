@@ -1,8 +1,8 @@
 """
 Game clock for PDoom1.
 
-Provides configurable game time that starts at 01/Jul/14 and advances +1 week per tick.
-Formats dates as DD/Mon/YY and persists current time state.
+Provides configurable game time that starts at 04/Apr/02016 and advances +1 week per tick.
+Formats dates as DD/Mon/YYYYY (longtermist 5-digit years) and persists current time state.
 """
 
 from datetime import datetime, timedelta
@@ -17,9 +17,9 @@ class GameClock:
     Game time management with configurable start date and advancement rate.
     
     Features:
-    - Starts at April 4, 2016 (04/Apr/16) - First Monday in April 2016
+    - Starts at April 4, 2016 (04/Apr/02016) - First Monday in April 2016
     - Advances by 1 week per tick by default
-    - Formats dates as DD/Mon/YY (e.g., "04/Apr/16")
+    - Formats dates as DD/Mon/YYYYY (e.g., "04/Apr/02016") - Longtermist 5-digit years
     - Persistent state across game sessions
     - Configurable advancement rate
     """
@@ -121,16 +121,16 @@ class GameClock:
     
     def get_formatted_date(self) -> str:
         """
-        Get the current date formatted as DD/Mon/YY.
+        Get the current date formatted as DD/Mon/YYYYY.
         
         Returns:
-            Formatted date string (e.g., "01/Jul/14")
+            Formatted date string (e.g., "01/Jul/02014")
         """
         day = self.current_date.day
         month_abbrev = self.MONTH_ABBREVS[self.current_date.month - 1]
-        year = self.current_date.year % 100  # Last 2 digits
+        year = self.current_date.year  # Full 5-digit year with leading zeros
         
-        return f"{day:02d}/{month_abbrev}/{year:02d}"
+        return f"{day:02d}/{month_abbrev}/{year:05d}"
     
     def get_tick_count(self) -> int:
         """Get the number of ticks since game start."""
@@ -184,7 +184,7 @@ class GameClock:
     
     def format_date(self, date: datetime) -> str:
         """
-        Format any datetime as DD/Mon/YY.
+        Format any datetime as DD/Mon/YYYYY.
         
         Args:
             date: Date to format
@@ -194,9 +194,9 @@ class GameClock:
         """
         day = date.day
         month_abbrev = self.MONTH_ABBREVS[date.month - 1]
-        year = date.year % 100
+        year = date.year  # Full 5-digit year with leading zeros
         
-        return f"{day:02d}/{month_abbrev}/{year:02d}"
+        return f"{day:02d}/{month_abbrev}/{year:05d}"
     
     def parse_formatted_date(self, date_str: str) -> datetime:
         """
@@ -220,11 +220,14 @@ class GameClock:
             month_abbrev = parts[1]
             year = int(parts[2])
             
-            # Convert 2-digit year to 4-digit (assume 2000s)
-            if year < 50:
-                year += 2000
-            else:
-                year += 1900
+            # Handle both 2-digit and 5-digit years
+            if year < 100:
+                # 2-digit year - convert to 4-digit (assume 2000s for compatibility)
+                if year < 50:
+                    year += 2000
+                else:
+                    year += 1900
+            # 5-digit years (02016, 02025, etc.) are used as-is
             
             # Find month number
             try:

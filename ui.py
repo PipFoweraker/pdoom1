@@ -84,7 +84,7 @@ def get_default_context_info(game_state: Any) -> Dict[str, Any]:
         'title': f'{lab_name}',
         'description': 'Hover over actions or upgrades to see detailed information here.',
         'details': [
-            f'Turn {game_state.turn}',
+            f'Turn {game_state.turn} - {game_state.game_clock.get_formatted_date()}',
             f'Money: ${game_state.money}',
             f'Action Points: {game_state.action_points}',
             f'p(Doom): {game_state.doom}'
@@ -1286,7 +1286,12 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             failure_text = "!! SYSTEM FAILURE RISK"
             screen.blit(small_font.render(failure_text, True, (255, 100, 100)), (int(w*0.70), y_pos))
     
-    screen.blit(small_font.render(f"Turn: {game_state.turn}", True, (220, 220, 220)), (int(w*0.91), int(h*0.03)))
+    # Turn and Date display (top right)
+    turn_text = f"Turn: {game_state.turn}"
+    date_text = f"Date: {game_state.game_clock.get_formatted_date()}"
+    
+    screen.blit(small_font.render(turn_text, True, (220, 220, 220)), (int(w*0.91), int(h*0.03)))
+    screen.blit(small_font.render(date_text, True, (200, 200, 220)), (int(w*0.91), int(h*0.055)))  # Slightly below turn
     screen.blit(small_font.render(f"Seed: {game_state.seed}", True, (140, 200, 160)), (int(w*0.77), int(h*0.03)))
 
     # Doom bar
