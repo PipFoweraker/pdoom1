@@ -29,6 +29,12 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **ASCII-only enforcement**: All content must use ASCII characters only
 - **Website integration**: Ready for automated content pickup
 
+### ASCII Compliance Requirements
+- **CRITICAL**: All commit messages must use ASCII characters only
+- **Documentation**: No Unicode characters (emojis, special symbols) in any text
+- **Code comments**: ASCII-only for cross-platform compatibility
+- **File content**: All project files must be ASCII-compliant
+
 ### Quality Assurance Tools
 - **autoflake cleanup**: Use `.venv\\Scripts\\python.exe -m autoflake --remove-all-unused-imports --remove-unused-variables --check --recursive .`
 - **Type checking**: pylance strict mode with comprehensive coverage
