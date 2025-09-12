@@ -38,6 +38,9 @@ else:
 # --- Adaptive window sizing with loading screen --- #
 pygame.init()
 
+# Display version information on startup
+print(f"Starting P(Doom): Bureaucracy Strategy Game {get_display_version()}")
+
 # Set up initial screen for loading
 info = pygame.display.Info()
 window_scale = current_config['ui']['window_scale']

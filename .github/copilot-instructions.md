@@ -2,9 +2,16 @@
 
 P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI application with comprehensive testing and documentation.
 
-**Current Version**: v0.2.12 "Development Infrastructure Enhancement"
+**Current Version**: v0.3.4+hotfix1 "Menu Navigation Fixes"
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
+
+## Version Management Protocol
+- **CRITICAL**: Always verify version display matches current development state
+- **In-game version**: Check UI footer displays correct version from `src/services/version.py`
+- **Branch versioning**: Hotfix branches increment patch version beyond main branch
+- **Version synchronization**: If version appears outdated, check `src/services/version.py` and update accordingly
+- **Format**: `vMAJOR.MINOR.PATCH+BUILD` (e.g., "v0.3.4+hotfix1")
 
 ## Development Infrastructure Status
 
@@ -21,6 +28,12 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Templates available**: development-session, milestone
 - **ASCII-only enforcement**: All content must use ASCII characters only
 - **Website integration**: Ready for automated content pickup
+
+### ASCII Compliance Requirements
+- **CRITICAL**: All commit messages must use ASCII characters only
+- **Documentation**: No Unicode characters (emojis, special symbols) in any text
+- **Code comments**: ASCII-only for cross-platform compatibility
+- **File content**: All project files must be ASCII-compliant
 
 ### Quality Assurance Tools
 - **autoflake cleanup**: Use `.venv\\Scripts\\python.exe -m autoflake --remove-all-unused-imports --remove-unused-variables --check --recursive .`

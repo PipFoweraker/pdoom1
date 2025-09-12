@@ -4,6 +4,32 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.4] - 2025-09-12
+### Fixed
+- **[HOTFIX] Version Display Synchronization**: Updated version from v0.2.12 to v0.3.4+hotfix1
+  - Synchronized hotfix branch version with main branch progression
+  - Ensured in-game version display matches current development state
+  - Added hotfix branch version management to development workflow
+- **[CRITICAL] Debug Console Compatibility**: Fixed crash on new game start
+  - Restored src/ui/debug_console.py from main branch to fix crash
+  - Fixed 'takes 2 positional arguments but 4 were given' error
+  - Ensures compatibility when users pull from main branch
+
+### Added
+- **[ENHANCEMENT] Startup Version Display**: Added version info on game startup
+  - Shows 'Starting P(Doom): Bureaucracy Strategy Game v0.3.4+hotfix1' in terminal
+  - Eliminates confusion about which version is running
+
+### Infrastructure
+- **[PROCESS] Version Management**: Established proper hotfix versioning protocol
+  - Hotfix branches now properly increment patch version beyond main branch
+  - Clear version display in-game reflects current branch and development state
+  - Documentation updated to include version synchronization requirements
+- **[PROCESS] ASCII Compliance**: Added ASCII-only requirements to development workflow
+  - All commit messages must use ASCII characters only
+  - Documentation and code comments must be ASCII-compliant
+  - Ensures cross-platform compatibility and consistency
+
 ## [0.3.3] - 2025-09-11
 ### Fixed
 - **Critical**: Mouse wheel crash bug - replaced deprecated pygame mouse wheel handling
