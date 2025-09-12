@@ -50,9 +50,6 @@ def execute_fundraising_action(gs):
     # Record funding round
     gs.economic_cycles.record_funding_round(final_amount, chosen_source['source'], gs.turn)
     
-    # Set cooldown to prevent excessive fundraising
-    gs.funding_round_cooldown = 3  # 3 turn cooldown
-    
     # Generate appropriate message
     source_name = chosen_source['source'].value.title()
     phase_context = f"during {phase.name.lower()} market conditions" if multiplier != 1.0 else ""
@@ -88,9 +85,6 @@ def execute_series_a_funding(gs):
     
     gs._add('money', final_amount)
     gs.economic_cycles.record_funding_round(final_amount, FundingSource.VENTURE, gs.turn)
-    
-    # Longer cooldown for major rounds
-    gs.funding_round_cooldown = 5
     
     phase = gs.economic_cycles.current_state.phase.name
     gs.messages.append(f"Series A completed: ${final_amount}k from institutional VCs")
@@ -364,7 +358,7 @@ ACTIONS = [
         "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
         "upside": lambda gs: execute_fundraising_action(gs),
         "downside": lambda gs: gs._add('reputation', -1 if random.random() < 0.25 else 0),
-        "rules": lambda gs: getattr(gs, 'funding_round_cooldown', 0) <= 0
+        "rules": None  # Always available - balance through other mechanics
     },
     {
         "name": "Safety Research",
@@ -602,8 +596,7 @@ ACTIONS = [
         "upside": lambda gs: execute_series_a_funding(gs),
         "downside": lambda gs: gs._add('reputation', -1 if random.random() < 0.4 else 0),
         "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
-                           gs.reputation >= 15 and 
-                           getattr(gs, 'funding_round_cooldown', 0) <= 0)
+                           gs.reputation >= 15)
     },
     {
         "name": "Government Grant Application",

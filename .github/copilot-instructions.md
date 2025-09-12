@@ -13,6 +13,13 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Version synchronization**: If version appears outdated, check `src/services/version.py` and update accordingly
 - **Format**: `vMAJOR.MINOR.PATCH+BUILD` (e.g., "v0.3.4+hotfix1")
 
+## Critical Debug Console Information
+- **CRITICAL BUG FIXED**: Debug console signature mismatch resolved (v0.3.4+hotfix1)
+- **Location**: `src/ui/debug_console_manager.py` line 96 `handle_click(pos)` method
+- **Issue**: Was calling `handle_click(pos, screen_w, screen_h)` but method only takes `(pos)`
+- **Symptom**: "takes 2 positional arguments but 4 were given" error on new game click
+- **Resolution**: Always call `debug_console.handle_click(pos)` with only position argument
+
 ## Development Infrastructure Status
 
 ### Type Annotation Progress (MAJOR MILESTONE ACHIEVED)
@@ -28,6 +35,13 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Templates available**: development-session, milestone
 - **ASCII-only enforcement**: All content must use ASCII characters only
 - **Website integration**: Ready for automated content pickup
+
+### Strategic Planning System (NEW INFRASTRUCTURE)
+- **Alpha/Beta Roadmap**: Complete 8-week strategic release plan in `assets/ALPHA_BETA_ROADMAP.md`
+- **Issue Tracking**: 6 strategic issues created for systematic implementation
+- **HIGH Priority**: Starting cash ($2K→$10K), leaderboard activation, logging system
+- **MEDIUM Priority**: Multi-turn delegation, dev tools enhancement, deterministic RNG
+- **Ready for Implementation**: Week 1-2 targets quick wins, Week 3-8 for advanced features
 
 ### ASCII Compliance Requirements
 - **CRITICAL**: All commit messages must use ASCII characters only
