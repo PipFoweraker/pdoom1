@@ -2,9 +2,16 @@
 
 P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI application with comprehensive testing and documentation.
 
-**Current Version**: v0.2.12 "Development Infrastructure Enhancement"
+**Current Version**: v0.3.4+hotfix1 "Menu Navigation Fixes"
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
+
+## Version Management Protocol
+- **CRITICAL**: Always verify version display matches current development state
+- **In-game version**: Check UI footer displays correct version from `src/services/version.py`
+- **Branch versioning**: Hotfix branches increment patch version beyond main branch
+- **Version synchronization**: If version appears outdated, check `src/services/version.py` and update accordingly
+- **Format**: `vMAJOR.MINOR.PATCH+BUILD` (e.g., "v0.3.4+hotfix1")
 
 ## Development Infrastructure Status
 

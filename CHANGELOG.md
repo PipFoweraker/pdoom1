@@ -4,6 +4,19 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.4] - 2025-09-12
+### Fixed
+- **[HOTFIX] Version Display Synchronization**: Updated version from v0.2.12 to v0.3.4+hotfix1
+  - Synchronized hotfix branch version with main branch progression
+  - Ensured in-game version display matches current development state
+  - Added hotfix branch version management to development workflow
+
+### Infrastructure
+- **[PROCESS] Version Management**: Established proper hotfix versioning protocol
+  - Hotfix branches now properly increment patch version beyond main branch
+  - Clear version display in-game reflects current branch and development state
+  - Documentation updated to include version synchronization requirements
+
 ## [0.2.12] - 2025-09-10
 ### Added
 - **[INFRASTRUCTURE] Comprehensive Type Annotation System**: Major codebase quality improvement initiative
