@@ -348,53 +348,30 @@ ACTIONS = [
         "rules": None
     },
     {
-        "name": "Fundraise",
-        "desc": "Raise capital (amount varies by market conditions and reputation)",
+        "name": "Fundraising Options",
+        "desc": "Open fundraising menu with multiple strategic options",
         "cost": 0,
         "ap_cost": 1,  # Action Points cost
         "delegatable": True,  # Can be delegated to admin staff
         "delegate_staff_req": 1,  # Requires 1 admin staff to delegate  
         "delegate_ap_cost": 1,  # Same AP cost when delegated (requires personal touch)
         "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
-        "upside": lambda gs: execute_fundraising_action(gs),
-        "downside": lambda gs: gs._add('reputation', -1 if random.random() < 0.25 else 0),
+        "upside": lambda gs: gs._trigger_fundraising_dialog(),
+        "downside": lambda gs: None,  # No downside for opening menu
         "rules": None  # Always available - balance through other mechanics
     },
     {
-        "name": "Safety Research",
-        "desc": "Reduce doom, +rep. Costly. Quality affects effectiveness and debt.",
-        "cost": 40,
-        "ap_cost": 1,  # Action Points cost
-        "delegatable": True,  # Phase 3: Can be delegated
-        "delegate_staff_req": 2,  # Requires 2 research staff to delegate
-        "delegate_ap_cost": 1,  # Same AP cost when delegated (research is complex)
-        "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated
-        "upside": lambda gs: execute_research_action(gs, "Safety Research", 
-                                                   random.randint(2, 6) + 
-                                                   (1 if 'better_computers' in gs.upgrade_effects else 0) +
-                                                   (2 if 'hpc_cluster' in gs.upgrade_effects else 0) +
-                                                   (1 if 'research_automation' in gs.upgrade_effects and gs.compute >= 10 else 0),
-                                                   2),
-        "downside": lambda gs: None,
-        "rules": None
-    },
-    {
-        "name": "Governance Research",
-        "desc": "Reduce doom, +reputation. Costly. Quality affects effectiveness and debt.",
-        "cost": 45,
-        "ap_cost": 1,  # Action Points cost
-        "delegatable": True,  # Phase 3: Can be delegated
+        "name": "Research Options",
+        "desc": "Open research menu with strategic focus and quality options",
+        "cost": 0,  # No immediate cost - cost depends on selection
+        "ap_cost": 1,
+        "delegatable": True,  # Can be delegated to research staff
         "delegate_staff_req": 2,  # Requires 2 research staff to delegate
         "delegate_ap_cost": 1,  # Same AP cost when delegated
-        "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated
-        "upside": lambda gs: execute_research_action(gs, "Governance Research",
-                                                   random.randint(2, 5) + 
-                                                   (1 if 'better_computers' in gs.upgrade_effects else 0) +
-                                                   (2 if 'hpc_cluster' in gs.upgrade_effects else 0) +
-                                                   (1 if 'research_automation' in gs.upgrade_effects and gs.compute >= 10 else 0),
-                                                   3),
-        "downside": lambda gs: None,
-        "rules": None
+        "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated (research planning)
+        "upside": lambda gs: gs._trigger_research_dialog(),
+        "downside": lambda gs: None,  # No downside for opening menu
+        "rules": None  # Always available - balance through other mechanics
     },
     {
         "name": "Buy Compute",

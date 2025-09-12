@@ -1577,6 +1577,10 @@ def main():
     global overlay_content, overlay_title
     # Hiring dialog rects need to persist between frames for click detection
     global cached_hiring_dialog_rects
+    # Fundraising dialog rects need to persist between frames for click detection 
+    global cached_fundraising_dialog_rects
+    # Research dialog rects need to persist between frames for click detection
+    global cached_research_dialog_rects  
     # Keybinding menu variables
     global keybinding_all_bindings
     # Escape handling variables
@@ -1587,6 +1591,10 @@ def main():
     tooltip_text = None
     # Initialize cached hiring dialog rects
     cached_hiring_dialog_rects = None
+    # Initialize cached fundraising dialog rects
+    cached_fundraising_dialog_rects = None
+    # Initialize cached research dialog rects
+    cached_research_dialog_rects = None
 
     running = True
     try:
@@ -1792,6 +1800,76 @@ def main():
                                         game_state.dismiss_hiring_dialog()
                                         if hasattr(game_state, 'sound_manager'):
                                             game_state.sound_manager.play_sound('popup_close')
+                            # Check for fundraising dialog clicks
+                            elif game_state and game_state.pending_fundraising_dialog and cached_fundraising_dialog_rects is not None:
+                                fundraising_handled = False
+                                for rect_info in cached_fundraising_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'funding_option':
+                                            # Player selected a funding option
+                                            game_state.select_fundraising_option(rect_info['option_id'])
+                                            fundraising_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the fundraising dialog
+                                            game_state.dismiss_fundraising_dialog()
+                                            fundraising_handled = True
+                                            break
+                                
+                                if fundraising_handled:
+                                    pass  # Fundraising dialog handled the click
+                                else:
+                                    # When fundraising dialog is open, check if click is inside dialog area
+                                    # Calculate dialog rect (same as in ui.py draw_fundraising_dialog)
+                                    dialog_width = int(SCREEN_W * 0.85)
+                                    dialog_height = int(SCREEN_H * 0.9)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_fundraising_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for research dialog clicks
+                            elif game_state and game_state.pending_research_dialog and cached_research_dialog_rects is not None:
+                                research_handled = False
+                                for rect_info in cached_research_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'research_option':
+                                            # Player selected a research option
+                                            game_state.select_research_option(rect_info['option_id'])
+                                            research_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the research dialog
+                                            game_state.dismiss_research_dialog()
+                                            research_handled = True
+                                            break
+                                
+                                if research_handled:
+                                    pass  # Research dialog handled the click
+                                else:
+                                    # When research dialog is open, check if click is inside dialog area
+                                    # Calculate dialog rect (same as in ui.py draw_research_dialog)
+                                    dialog_width = int(SCREEN_W * 0.85)
+                                    dialog_height = int(SCREEN_H * 0.9)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_research_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
                             # Check for popup button clicks first
                             elif handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
                                 # Popup button was clicked, no need for further processing
@@ -1968,6 +2046,22 @@ def main():
                             if hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('popup_close')
                         
+                        # Close fundraising dialog with multiple keys (Left Arrow, Backspace, or ESC)
+                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
+                              game_state and game_state.pending_fundraising_dialog):
+                            game_state.dismiss_fundraising_dialog()
+                            # Play popup close sound
+                            if hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_close')
+                        
+                        # Close research dialog with multiple keys (Left Arrow, Backspace, or ESC)
+                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
+                              game_state and game_state.pending_research_dialog):
+                            game_state.dismiss_research_dialog()
+                            # Play popup close sound
+                            if hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_close')
+                        
                         # Dedicated menu key - 'M' to access main menu/pause
                         elif event.key == pygame.K_m and current_state == 'game' and game_state:
                             # Toggle escape menu (pause/main menu access)
@@ -2061,6 +2155,8 @@ def main():
                                 blocking_conditions = [
                                     first_time_help_content,  # Help overlay is blocking
                                     game_state.pending_hiring_dialog,  # Hiring dialog is modal
+                                    game_state.pending_fundraising_dialog,  # Fundraising dialog is modal
+                                    game_state.pending_research_dialog,  # Research dialog is modal
                                     onboarding.show_tutorial_overlay  # Tutorial is active
                                 ]
                                 
@@ -2070,6 +2166,10 @@ def main():
                                         game_state.add_message("Close the help popup first (ESC or click X)")
                                     elif game_state.pending_hiring_dialog:
                                         game_state.add_message("Close the hiring dialog first (ESC or click outside)")
+                                    elif game_state.pending_fundraising_dialog:
+                                        game_state.add_message("Close the funding dialog first (ESC or click outside)")
+                                    elif game_state.pending_research_dialog:
+                                        game_state.add_message("Close the research dialog first (ESC or click outside)")
                                     elif onboarding.show_tutorial_overlay:
                                         game_state.add_message("Complete or skip the tutorial step first")
                                     
@@ -2098,6 +2198,8 @@ def main():
                                 blocking_conditions = [
                                     first_time_help_content,
                                     game_state.pending_hiring_dialog,
+                                    game_state.pending_fundraising_dialog,
+                                    game_state.pending_research_dialog,
                                     onboarding.show_tutorial_overlay
                                 ]
                                 
@@ -2106,6 +2208,10 @@ def main():
                                         game_state.add_message("Close the help popup first (ESC or click X)")
                                     elif game_state.pending_hiring_dialog:
                                         game_state.add_message("Close the hiring dialog first (ESC or click outside)")
+                                    elif game_state.pending_fundraising_dialog:
+                                        game_state.add_message("Close the funding dialog first (ESC or click outside)")
+                                    elif game_state.pending_research_dialog:
+                                        game_state.add_message("Close the research dialog first (ESC or click outside)")
                                     elif onboarding.show_tutorial_overlay:
                                         game_state.add_message("Complete or skip the tutorial step first")
                                     
@@ -2457,6 +2563,22 @@ def main():
                     else:
                         # Clear cached rects when dialog is not active
                         cached_hiring_dialog_rects = None
+                    
+                    # Draw fundraising dialog if active
+                    if game_state and game_state.pending_fundraising_dialog:
+                        from ui import draw_fundraising_dialog
+                        cached_fundraising_dialog_rects = draw_fundraising_dialog(screen, game_state.pending_fundraising_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_fundraising_dialog_rects = None
+                    
+                    # Draw research dialog if active
+                    if game_state and game_state.pending_research_dialog:
+                        from ui import draw_research_dialog
+                        cached_research_dialog_rects = draw_research_dialog(screen, game_state.pending_research_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_research_dialog_rects = None
                     
 
                     # Draw stepwise tutorial overlay if active

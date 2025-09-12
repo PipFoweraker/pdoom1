@@ -53,6 +53,10 @@ class GameState:
             # Track minimum money for strategic analysis
             if self.money < self.min_money_reached:
                 self.min_money_reached = self.money
+            
+            # Add verbose activity log message for money changes
+            if val != 0:
+                self._add_verbose_money_message(val, reason)
         elif attr == 'doom':
             old_doom = self.doom
             self.doom = min(max(self.doom + val, 0), self.max_doom)
@@ -77,6 +81,10 @@ class GameState:
             # Track peak reputation for strategic analysis
             if self.reputation > self.peak_reputation:
                 self.peak_reputation = self.reputation
+            
+            # Add verbose activity log message for reputation changes
+            if val != 0:
+                self._add_verbose_reputation_message(val, reason)
         elif attr == 'staff':
             old_staff = self.staff
             self.staff = max(self.staff + val, 0)
@@ -92,8 +100,16 @@ class GameState:
                     onboarding.mark_mechanic_seen('first_staff_hire')
             elif val < 0:  # Staff leaving
                 self._remove_employee_blobs(old_staff - self.staff)
+            
+            # Add verbose activity log message for staff changes
+            if val != 0:
+                self._add_verbose_staff_message(val, reason)
         elif attr == 'compute':
             self.compute = max(self.compute + val, 0)
+            
+            # Add verbose activity log message for compute changes
+            if val != 0:
+                self._add_verbose_compute_message(val, reason)
         elif attr == 'research_progress':
             self.research_progress = max(self.research_progress + val, 0)
         elif attr == 'admin_staff':
@@ -280,6 +296,10 @@ class GameState:
         
         # Employee hiring dialog system
         self.pending_hiring_dialog = None  # Current hiring dialog waiting for player selection
+        # Fundraising dialog system
+        self.pending_fundraising_dialog = None  # Current fundraising dialog waiting for player selection
+        # Research dialog system
+        self.pending_research_dialog = None  # Current research dialog waiting for player selection
         self._pending_first_time_help = None  # Track pending first-time help to show
 
         # Copy modular content
@@ -672,12 +692,15 @@ class GameState:
         self.ap_spent_this_turn = True
         self.ap_glow_timer = 30
         
-        # Handle immediate actions that should execute right away (like hiring dialog)
-        if action['name'] == 'Hire Staff':
+        # Handle immediate actions that should execute right away (like dialogs)
+        if action['name'] in ['Hire Staff', 'Fundraising Options', 'Research Options']:
             # Execute immediately instead of deferring to end_turn
             try:
+                # Remove from selected actions since it's executed immediately
+                self.selected_actions.pop()  # Remove the action we just added
+                self.selected_action_instances.pop()  # Remove the instance we just added
+                
                 action['upside'](self)
-                # Don't add to selected_actions since it's executed immediately
                 success_msg = f"Executed: {action['name']}{delegation_info}"
                 self.messages.append(success_msg)
                 return {
@@ -688,6 +711,11 @@ class GameState:
             except Exception as e:
                 # If immediate execution fails, restore AP and show error
                 self.action_points += ap_cost
+                # Also remove from selected actions list
+                if self.selected_actions and self.selected_actions[-1] == action_idx:
+                    self.selected_actions.pop()
+                if self.selected_action_instances:
+                    self.selected_action_instances.pop()
                 error_msg = f"Failed to execute {action['name']}: {str(e)}"
                 self.messages.append(error_msg)
                 return {
@@ -4872,3 +4900,598 @@ class GameState:
         else:
             self.messages.append("Your strong safety reputation provides some protection from market fears.")
             self._add('reputation', 2)
+    
+    # ======= VERBOSE ACTIVITY LOGGING METHODS =======
+    # For "old school turn by turn RPG details" style logging
+    
+    def _add_verbose_money_message(self, val: float, reason: str = "") -> None:
+        """Add detailed, flavorful messages for money changes like an RPG combat log."""
+        amount = abs(val)
+        
+        # Create verbose, flavor-rich messages based on amount and context
+        if val > 0:  # Gaining money
+            if amount >= 1000:
+                if "funding" in reason.lower() or "fundrais" in reason.lower():
+                    self.messages.append(f"? MAJOR CAPITAL INJECTION: +${amount:.0f}k secured through strategic funding!")
+                elif "revenue" in reason.lower() or "customer" in reason.lower():
+                    self.messages.append(f"? REVENUE WINDFALL: +${amount:.0f}k earned from satisfied customers!")
+                elif "grant" in reason.lower() or "government" in reason.lower():
+                    self.messages.append(f"? GOVERNMENT BACKING: +${amount:.0f}k awarded through official channels!")
+                else:
+                    self.messages.append(f"? FINANCIAL SUCCESS: +${amount:.0f}k added to your war chest!")
+            elif amount >= 100:
+                self.messages.append(f"? Solid gains: +${amount:.0f}k helps strengthen your position")
+            else:
+                self.messages.append(f"? Minor income: +${amount:.0f}k trickles into your accounts")
+                
+        else:  # Spending money
+            if amount >= 1000:
+                if "staff" in reason.lower() or "hir" in reason.lower():
+                    self.messages.append(f"?? MAJOR EXPANSION: -${amount:.0f}k invested in growing your team!")
+                elif "research" in reason.lower():
+                    self.messages.append(f"?? RESEARCH INVESTMENT: -${amount:.0f}k allocated to cutting-edge work!")
+                elif "upgrade" in reason.lower() or "equipment" in reason.lower():
+                    self.messages.append(f"?? INFRASTRUCTURE UPGRADE: -${amount:.0f}k spent on essential systems!")
+                else:
+                    self.messages.append(f"?? STRATEGIC SPENDING: -${amount:.0f}k deployed for organizational needs")
+            elif amount >= 100:
+                self.messages.append(f"? Measured spending: -${amount:.0f}k allocated to operations")
+            else:
+                self.messages.append(f"? Minor expense: -${amount:.0f}k spent on day-to-day needs")
+        
+        # Add flavor text based on remaining balance
+        if hasattr(self, 'money'):
+            if self.money < 100:
+                self.messages.append("?? [CASH FLOW ALERT] Reserves running critically low!")
+            elif self.money > 10000:
+                self.messages.append("? [FINANCIAL STRENGTH] Substantial reserves provide strategic flexibility")
+    
+    def _add_verbose_staff_message(self, val: float, reason: str = "") -> None:
+        """Add detailed, flavorful messages for staff changes like an RPG party management log."""
+        count = abs(int(val))
+        
+        if val > 0:  # Hiring staff
+            if count >= 5:
+                self.messages.append(f"? HIRING SPREE: +{count} new team members join your growing organization!")
+                self.messages.append("? The lab buzzes with fresh energy and ambitious conversations")
+            elif count >= 2:
+                self.messages.append(f"? TEAM EXPANSION: +{count} talented individuals strengthen your capabilities")
+            else:
+                # Single hire with personality
+                personality_traits = [
+                    "eager and ambitious", "highly skilled", "experienced veteran", 
+                    "innovative thinker", "reliable workhorse", "creative problem-solver"
+                ]
+                import random
+                trait = random.choice(personality_traits)
+                self.messages.append(f"? NEW RECRUIT: A {trait} joins your team (+{count} staff)")
+                
+            # Add context based on team size
+            if hasattr(self, 'staff'):
+                if self.staff >= 20:
+                    self.messages.append("? [MAJOR ORGANIZATION] Your lab now rivals established institutions")
+                elif self.staff >= 10:
+                    self.messages.append("? [GROWING TEAM] Coordination becomes more complex but capabilities expand")
+                elif self.staff >= 5:
+                    self.messages.append("? [SOLID FOUNDATION] Your team gains critical mass for serious work")
+                    
+        else:  # Staff leaving
+            if count >= 5:
+                self.messages.append(f"?? MASS EXODUS: -{count} team members abandon ship!")
+                self.messages.append("?? Morale plummets as remaining staff question the organization's future")
+            elif count >= 2:
+                self.messages.append(f"?? DEPARTURES: -{count} valuable team members seek opportunities elsewhere")
+                self.messages.append("? The remaining staff work harder to fill the gaps")
+            else:
+                # Single departure with context
+                departure_reasons = [
+                    "citing burnout and overwork", "seeking better opportunities", 
+                    "expressing concerns about direction", "following a lucrative offer",
+                    "needing work-life balance", "pursuing academic opportunities"
+                ]
+                import random
+                reason_text = random.choice(departure_reasons)
+                self.messages.append(f"?? DEPARTURE: A team member leaves, {reason_text} (-{count} staff)")
+            
+            # Add warnings based on remaining team size
+            if hasattr(self, 'staff'):
+                if self.staff <= 1:
+                    self.messages.append("?? [CRITICAL SHORTAGE] Operating with skeleton crew - productivity severely limited!")
+                elif self.staff <= 3:
+                    self.messages.append("?? [UNDERSTAFFED] Limited team may struggle with complex projects")
+    
+    def _add_verbose_reputation_message(self, val: float, reason: str = "") -> None:
+        """Add detailed, flavorful messages for reputation changes."""
+        amount = abs(val)
+        
+        if val > 0:  # Gaining reputation
+            if amount >= 10:
+                if "research" in reason.lower():
+                    self.messages.append(f"? SCIENTIFIC BREAKTHROUGH: +{amount:.0f} reputation from groundbreaking research!")
+                    self.messages.append("? The academic community takes notice of your innovative work")
+                elif "safety" in reason.lower():
+                    self.messages.append(f"? SAFETY LEADERSHIP: +{amount:.0f} reputation for prioritizing responsible development!")
+                    self.messages.append("? Industry peers respect your commitment to safety protocols")
+                else:
+                    self.messages.append(f"? MAJOR RECOGNITION: +{amount:.0f} reputation boost from outstanding achievements!")
+            elif amount >= 5:
+                self.messages.append(f"? Strong recognition: +{amount:.0f} reputation from solid professional work")
+            else:
+                positive_phrases = [
+                    "earns modest recognition", "builds credibility", "gains industry respect",
+                    "demonstrates competence", "shows promise", "establishes credibility"
+                ]
+                import random
+                phrase = random.choice(positive_phrases)
+                self.messages.append(f"? Your work {phrase} (+{amount:.0f} reputation)")
+                
+        else:  # Losing reputation
+            if amount >= 10:
+                self.messages.append(f"?? REPUTATION CRISIS: -{amount:.0f} reputation lost from major controversy!")
+                self.messages.append("?? Industry confidence shaken - recovery will require significant effort")
+            elif amount >= 5:
+                self.messages.append(f"?? Significant damage: -{amount:.0f} reputation lost from poor decisions")
+                self.messages.append("? Professional standing diminished in key circles")
+            else:
+                negative_phrases = [
+                    "raises eyebrows", "creates minor controversy", "draws criticism",
+                    "disappoints stakeholders", "causes concern", "generates skepticism"
+                ]
+                import random
+                phrase = random.choice(negative_phrases)
+                self.messages.append(f"? Your actions {phrase} (-{amount:.0f} reputation)")
+        
+        # Add context based on current reputation level
+        if hasattr(self, 'reputation'):
+            if self.reputation >= 100:
+                self.messages.append("? [INDUSTRY LEADER] Your reputation opens doors others cannot access")
+            elif self.reputation >= 50:
+                self.messages.append("? [RESPECTED PROFESSIONAL] Your voice carries weight in important discussions")
+            elif self.reputation <= 10:
+                self.messages.append("?? [DAMAGED CREDIBILITY] Public trust severely compromised")
+    
+    def _add_verbose_compute_message(self, val: float, reason: str = "") -> None:
+        """Add detailed, flavorful messages for compute resource changes."""
+        amount = abs(val)
+        
+        if val > 0:  # Gaining compute
+            if amount >= 1000:
+                self.messages.append(f"? SUPERCOMPUTING POWER: +{amount:.0f} compute units from massive infrastructure!")
+                self.messages.append("? Your computational capabilities now rival major institutions")
+            elif amount >= 100:
+                self.messages.append(f"? Major upgrade: +{amount:.0f} compute units significantly boost processing power")
+            else:
+                tech_descriptions = [
+                    "high-performance GPUs", "parallel processing arrays", "cloud computing resources",
+                    "optimized algorithms", "distributed computing nodes", "specialized hardware"
+                ]
+                import random
+                tech = random.choice(tech_descriptions)
+                self.messages.append(f"? Enhanced computing: {tech} provide +{amount:.0f} compute units")
+                
+        else:  # Losing compute (maintenance, failures, etc.)
+            if amount >= 1000:
+                self.messages.append(f"?? SYSTEM FAILURE: -{amount:.0f} compute units lost to catastrophic hardware problems!")
+                self.messages.append("?? Critical systems offline - emergency repairs needed")
+            elif amount >= 100:
+                self.messages.append(f"?? Hardware issues: -{amount:.0f} compute units offline due to technical problems")
+            else:
+                maintenance_reasons = [
+                    "routine maintenance", "cooling system limits", "power constraints",
+                    "software optimization", "hardware refresh cycles", "capacity reallocation"
+                ]
+                import random
+                reason_text = random.choice(maintenance_reasons)
+                self.messages.append(f"? Reduced capacity: {reason_text} removes -{amount:.0f} compute units")
+        
+        # Add context based on current compute level
+        if hasattr(self, 'compute'):
+            if self.compute >= 5000:
+                self.messages.append("? [COMPUTATIONAL GIANT] Your processing power enables cutting-edge research")
+            elif self.compute >= 1000:
+                self.messages.append("? [SERIOUS INFRASTRUCTURE] Substantial computational resources available")
+            elif self.compute <= 50:
+                self.messages.append("?? [LIMITED PROCESSING] Computational constraints may hinder complex projects")
+    
+    # ======= FUNDRAISING DIALOG SYSTEM =======
+    # Similar to hiring dialog but for fundraising options
+    
+    def _trigger_fundraising_dialog(self):
+        """Trigger the fundraising options dialog with multiple strategic choices."""
+        # Get available fundraising options based on current game state
+        available_options = self._get_available_fundraising_options()
+        
+        if not available_options:
+            self.messages.append("No fundraising options available at this time.")
+            return
+        
+        # Set up the fundraising dialog state
+        self.pending_fundraising_dialog = {
+            "available_options": available_options,
+            "title": "Fundraising Strategy Selection",
+            "description": "Choose your approach to raising capital. Each option has different risk/reward profiles."
+        }
+    
+    def _get_available_fundraising_options(self):
+        """Get available fundraising options based on current game state."""
+        options = []
+        
+        # Option 1: Conservative Small Fundraising (always available)
+        options.append({
+            "id": "fundraise_small",
+            "name": "Fundraise Small",
+            "description": "Conservative funding approach - $30-60k range, minimal reputation risk",
+            "min_amount": 30,
+            "max_amount": 60,
+            "reputation_risk": 0.1,  # 10% chance of -1 reputation
+            "requirements": "Always available",
+            "cost": 0,
+            "ap_cost": 1,
+            "affordable": True,  # Always affordable since no cost
+            "available": True
+        })
+        
+        # Option 2: Aggressive Big Fundraising (requires some reputation)
+        big_available = self.reputation >= 10
+        options.append({
+            "id": "fundraise_big", 
+            "name": "Fundraise Big",
+            "description": "Aggressive funding round - $80-150k range, higher stakes and reputation requirements",
+            "min_amount": 80,
+            "max_amount": 150,
+            "reputation_risk": 0.3,  # 30% chance of -2 reputation
+            "requirements": "Requires 10+ reputation",
+            "cost": 0,
+            "ap_cost": 1,
+            "affordable": True,
+            "available": big_available
+        })
+        
+        # Option 3: Borrow Money (requires reputation for credit)
+        borrow_available = self.reputation >= 5
+        options.append({
+            "id": "borrow_money",
+            "name": "Borrow Money", 
+            "description": "Immediate $50-80k via debt - creates future payment obligations",
+            "min_amount": 50,
+            "max_amount": 80,
+            "reputation_risk": 0.0,  # No reputation risk, but creates debt
+            "requirements": "Requires 5+ reputation for creditworthiness",
+            "cost": 0,
+            "ap_cost": 1,
+            "affordable": True,
+            "available": borrow_available,
+            "creates_debt": True
+        })
+        
+        # Option 4: Alternative Funding (unlocked after first major milestone)
+        alt_available = hasattr(self, 'advanced_funding_unlocked') and self.advanced_funding_unlocked
+        options.append({
+            "id": "alternative_funding",
+            "name": "Alternative Funding",
+            "description": "Grants, partnerships, revenue - $40-100k from non-traditional sources",
+            "min_amount": 40,
+            "max_amount": 100, 
+            "reputation_risk": 0.05,  # Very low risk
+            "requirements": "Unlocked after first major funding round",
+            "cost": 0,
+            "ap_cost": 1,
+            "affordable": True,
+            "available": alt_available
+        })
+        
+        return options
+    
+    def dismiss_fundraising_dialog(self):
+        """Dismiss the fundraising dialog without making a selection."""
+        self.pending_fundraising_dialog = None
+    
+    def select_fundraising_option(self, option_id: str):
+        """Execute a selected fundraising option and dismiss the dialog."""
+        if not self.pending_fundraising_dialog:
+            return False, "No fundraising dialog active"
+        
+        # Find the selected option
+        selected_option = None
+        for option in self.pending_fundraising_dialog["available_options"]:
+            if option["id"] == option_id:
+                selected_option = option
+                break
+        
+        if not selected_option:
+            return False, f"Unknown fundraising option: {option_id}"
+        
+        if not selected_option["available"]:
+            return False, f"{selected_option['name']} is not available yet"
+        
+        # Execute the fundraising option
+        result = self._execute_fundraising_option(selected_option)
+        
+        # Dismiss the dialog
+        self.dismiss_fundraising_dialog()
+        
+        return True, f"Successfully executed: {selected_option['name']}"
+    
+    def _execute_fundraising_option(self, option):
+        """Execute a specific fundraising option with detailed verbose logging."""
+        option_id = option["id"]
+        
+        if option_id == "fundraise_small":
+            return self._execute_small_fundraising(option)
+        elif option_id == "fundraise_big": 
+            return self._execute_big_fundraising(option)
+        elif option_id == "borrow_money":
+            return self._execute_borrowing(option)
+        elif option_id == "alternative_funding":
+            return self._execute_alternative_funding(option)
+        else:
+            self.messages.append(f"Unknown fundraising option: {option_id}")
+            return False
+    
+    def _execute_small_fundraising(self, option):
+        """Execute conservative small fundraising."""
+        amount = random.randint(option["min_amount"], option["max_amount"])
+        # Reputation bonus helps
+        amount += min(self.reputation // 2, 15)  # Max +15k from reputation
+        
+        self._add('money', amount, f"small fundraising round")
+        
+        # Minimal reputation risk
+        if random.random() < option["reputation_risk"]:
+            self._add('reputation', -1, "fundraising complications")
+        
+        return True
+    
+    def _execute_big_fundraising(self, option):
+        """Execute aggressive big fundraising."""
+        base_amount = random.randint(option["min_amount"], option["max_amount"])
+        # Reputation significantly affects big rounds
+        reputation_multiplier = 1.0 + (self.reputation / 50.0)  # Up to +40% at 20 rep
+        amount = int(base_amount * reputation_multiplier)
+        
+        self._add('money', amount, f"major fundraising round")
+        
+        # Higher reputation risk
+        if random.random() < option["reputation_risk"]:
+            self._add('reputation', -2, "aggressive fundraising backlash")
+        else:
+            # Success can boost reputation
+            if amount > 120:
+                self._add('reputation', 1, "successful major fundraising")
+        
+        return True
+    
+    def _execute_borrowing(self, option):
+        """Execute debt-based funding."""
+        amount = random.randint(option["min_amount"], option["max_amount"])
+        
+        self._add('money', amount, f"debt financing")
+        
+        # Create future debt obligation (simplified - could be enhanced later)
+        if not hasattr(self, 'debt_obligations'):
+            self.debt_obligations = []
+        
+        # Debt payment due in 3-5 turns
+        payment_due = self.turn + random.randint(3, 5)
+        payment_amount = int(amount * 1.2)  # 20% interest
+        
+        self.debt_obligations.append({
+            'amount': payment_amount,
+            'due_turn': payment_due,
+            'description': f"Debt repayment from Turn {self.turn}"
+        })
+        
+        self.messages.append(f"? Debt obligation: ${payment_amount}k due by Turn {payment_due}")
+        
+        return True
+    
+    def _execute_alternative_funding(self, option):
+        """Execute alternative funding sources.""" 
+        sources = ["government grants", "strategic partnerships", "customer revenue", "research grants"]
+        source = random.choice(sources)
+        
+        amount = random.randint(option["min_amount"], option["max_amount"])
+        
+        # Alternative funding often comes with constraints or benefits
+        if source == "government grants":
+            amount += 20  # Government grants are larger but...
+            self.messages.append("? Government oversight increases - expect compliance requirements")
+        elif source == "strategic partnerships":
+            self._add('reputation', 1, "partnership credibility boost")
+        elif source == "customer revenue":
+            self._add('reputation', 2, "market validation from paying customers")
+        
+        self._add('money', amount, f"alternative funding: {source}")
+        
+        # Very low reputation risk
+        if random.random() < option["reputation_risk"]:
+            self._add('reputation', -1, "alternative funding complications")
+        
+        return True
+
+    # =================== RESEARCH DIALOG SYSTEM ===================
+    
+    def _trigger_research_dialog(self):
+        """Trigger the research strategy selection dialog."""
+        self.pending_research_dialog = {
+            "title": "Research Strategy Selection",
+            "description": "Choose your research approach and quality level",
+            "available_options": self._get_available_research_options()
+        }
+    
+    def _get_available_research_options(self):
+        """Get available research options based on current game state."""
+        options = []
+        
+        # Safety Research - Traditional AI Safety
+        safety_cost = 40
+        safety_affordable = self.money >= safety_cost
+        options.append({
+            "id": "safety_research", 
+            "name": "Safety Research",
+            "description": "Traditional AI safety research - interpretability, alignment, robustness",
+            "min_doom_reduction": 2,
+            "max_doom_reduction": 6,
+            "reputation_gain": 2,
+            "cost": safety_cost,
+            "ap_cost": 1,
+            "available": True,
+            "affordable": safety_affordable,
+            "requirements": f"Cost: ${safety_cost}k" if safety_affordable else f"Need ${safety_cost}k (have ${self.money}k)",
+            "technical_debt_risk": "Low"
+        })
+        
+        # Governance Research - Policy and Coordination
+        governance_cost = 45
+        governance_affordable = self.money >= governance_cost
+        options.append({
+            "id": "governance_research",
+            "name": "Governance Research", 
+            "description": "Policy research, international coordination, regulatory frameworks",
+            "min_doom_reduction": 2,
+            "max_doom_reduction": 5,
+            "reputation_gain": 3,
+            "cost": governance_cost,
+            "ap_cost": 1,
+            "available": True,
+            "affordable": governance_affordable,
+            "requirements": f"Cost: ${governance_cost}k" if governance_affordable else f"Need ${governance_cost}k (have ${self.money}k)",
+            "technical_debt_risk": "Very Low"
+        })
+        
+        # Rush Research - Fast but risky
+        rush_cost = 30
+        rush_affordable = self.money >= rush_cost
+        options.append({
+            "id": "rush_research",
+            "name": "Rush Research",
+            "description": "Fast research cycle - publish quickly but accumulate technical debt",
+            "min_doom_reduction": 1,
+            "max_doom_reduction": 4,
+            "reputation_gain": 1,
+            "cost": rush_cost,
+            "ap_cost": 1,
+            "available": True,
+            "affordable": rush_affordable,
+            "requirements": f"Cost: ${rush_cost}k" if rush_affordable else f"Need ${rush_cost}k (have ${self.money}k)",
+            "technical_debt_risk": "High"
+        })
+        
+        # Quality Research - Slow but thorough (unlocked after first research)
+        quality_cost = 60
+        quality_affordable = self.money >= quality_cost
+        quality_unlocked = hasattr(self, 'research_quality_unlocked') and self.research_quality_unlocked
+        options.append({
+            "id": "quality_research",
+            "name": "Quality Research",
+            "description": "Thorough, methodical research - slower but builds on solid foundations",
+            "min_doom_reduction": 4,
+            "max_doom_reduction": 8,
+            "reputation_gain": 4,
+            "cost": quality_cost,
+            "ap_cost": 2,  # More AP but better results
+            "available": quality_unlocked,
+            "affordable": quality_affordable if quality_unlocked else False,
+            "requirements": "Locked: Complete any research first" if not quality_unlocked else (f"Cost: ${quality_cost}k, 2 AP" if quality_affordable else f"Need ${quality_cost}k (have ${self.money}k)"),
+            "technical_debt_risk": "None"
+        })
+        
+        return options
+    
+    def dismiss_research_dialog(self):
+        """Dismiss the research dialog."""
+        self.pending_research_dialog = None
+    
+    def select_research_option(self, option_id: str):
+        """Execute the selected research option."""
+        if not self.pending_research_dialog:
+            return False, "No research dialog active"
+        
+        # Find the selected option
+        selected_option = None
+        for option in self.pending_research_dialog["available_options"]:
+            if option["id"] == option_id:
+                selected_option = option
+                break
+        
+        if not selected_option:
+            return False, "Invalid research option"
+            
+        if not selected_option["available"]:
+            return False, f"Research option not available: {selected_option['requirements']}"
+            
+        if not selected_option["affordable"]:
+            return False, f"Cannot afford research: {selected_option['requirements']}"
+        
+        # Execute the research
+        success = self._execute_research_option(selected_option)
+        if success:
+            self.dismiss_research_dialog()
+            return True, f"Successfully executed: {selected_option['name']}"
+        else:
+            return False, "Research execution failed"
+    
+    def _execute_research_option(self, option):
+        """Execute a research option with appropriate effects."""
+        # Deduct cost
+        self._add('money', -option["cost"])
+        
+        # Calculate doom reduction with upgrades
+        base_reduction = random.randint(option["min_doom_reduction"], option["max_doom_reduction"])
+        
+        # Apply upgrade bonuses
+        upgrade_bonus = 0
+        if 'better_computers' in self.upgrade_effects:
+            upgrade_bonus += 1
+        if 'hpc_cluster' in self.upgrade_effects:
+            upgrade_bonus += 2
+        if 'research_automation' in self.upgrade_effects and self.compute >= 10:
+            upgrade_bonus += 1
+            
+        final_reduction = base_reduction + upgrade_bonus
+        
+        # Apply doom reduction
+        self._add('doom', -final_reduction)
+        
+        # Apply reputation gain
+        self._add('reputation', option["reputation_gain"])
+        
+        # Handle technical debt based on research type
+        if option["id"] == "rush_research":
+            if hasattr(self, 'technical_debt'):
+                # Add technical debt for rush research
+                debt_increase = random.randint(1, 3)
+                self.technical_debt.add_debt("research", debt_increase, f"Rush research shortcuts")
+                self.messages.append(f"? Technical debt increased: {debt_increase} points from rushed methodology")
+        elif option["id"] == "quality_research":
+            if hasattr(self, 'technical_debt'):
+                # Quality research reduces technical debt
+                debt_reduction = random.randint(1, 2)
+                self.technical_debt.reduce_debt("research", debt_reduction)
+                self.messages.append(f"? Technical debt reduced: {debt_reduction} points from thorough methodology")
+        
+        # Unlock quality research after first research action
+        if not hasattr(self, 'research_quality_unlocked'):
+            self.research_quality_unlocked = True
+        elif not self.research_quality_unlocked:
+            self.research_quality_unlocked = True
+            self.messages.append("? Quality Research unlocked - thorough methodology now available")
+        
+        # Add verbose logging message
+        research_type = option["name"].replace(" Research", "").lower()
+        self._add_verbose_research_message(option["name"], final_reduction, option["reputation_gain"])
+        
+        return True
+    
+    def _add_verbose_research_message(self, research_type: str, doom_reduction: int, rep_gain: int):
+        """Add detailed research progress message."""
+        research_messages = [
+            f"? Research breakthrough: {research_type} advances reduce P(Doom) by {doom_reduction}%",
+            f"? Publication success: {research_type} findings boost reputation (+{rep_gain})",
+            f"? Laboratory progress: {research_type} methodology shows {doom_reduction}% safety improvement",
+            f"? Academic recognition: {research_type} work gains {rep_gain} reputation in safety community",
+            f"? Research milestone: {research_type} delivers {doom_reduction}% risk reduction, +{rep_gain} standing"
+        ]
+        
+        selected_message = random.choice(research_messages)
+        self.messages.append(selected_message)
