@@ -1,13 +1,18 @@
 # P(DOOM) PLAYER GUIDE
 
-Welcome to P(DOOM): BUREAUCRACY STRATEGY GAME!  
-A satirical strategy game about managing an AI safety lab while competing against reckless frontier labs.
+Welcome to P(DOOM): AI SAFETY STRATEGY GAME!  
+A bootstrap strategy game about managing a scrappy AI safety lab with realistic funding constraints.
 
-NEW IN v0.2.5: UI INTERACTION FIXES & FACTORIO-STYLE HINTS! Fixed spacebar blocking, unprofessional popups, and added professional hint system. Debug tools: Ctrl+D (diagnostics), Ctrl+E (emergency clear), Ctrl+R (reset hints).
+**NEW IN v0.4.0: STRATEGIC MENU REVOLUTION!** 
+- **Bootstrap Economic Model**: Weekly staff costs based on realistic AI safety researcher salaries
+- **Strategic Fundraising**: Choose from 4 funding approaches with different risk/reward profiles  
+- **Menu Consolidation**: Research and funding streamlined into strategic decision dialogs
+- **Verbose Activity Logging**: Detailed RPG-style feedback on all actions and outcomes
+- **$100k Starting Capital**: Sufficient runway to experiment with different growth strategies
 
-Version Information: Check the game window title or see CHANGELOG.md for current version and recent changes.
+**Current Version**: v0.4.0+hotfix1 "Strategic Menu Revolution" - Major economic rebalancing and menu overhaul
 
-Release Status: Currently v0.2.5 "UI Interaction Fixes & Hint System" with professional polish improvements targeting stable v0.3.0. See the README.md for current development status.
+**Bootstrap Challenge**: Experience the real constraints of running an AI safety nonprofit - manage weekly cash flow, make strategic funding decisions, and scale your team efficiently while keeping doom levels low.
 
 ## Table of Contents
 - [Quick Setup](#quick-setup) (Line 31)
@@ -175,6 +180,37 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 - **🖥️ Compute**: Powers employee productivity and research
 - **📄 Research**: Progress toward publishing papers (boosts reputation, plays celebratory sound)
 - **🎯 Competitors**: Track discovered opponents and their progress toward AGI
+
+---
+
+## Bootstrap Economics & Cash Flow Management
+
+**P(Doom) v0.4.0+ features a realistic bootstrap AI safety lab economic model:**
+
+### Weekly Staff Costs
+- **First Employee**: $600/week (~$31k annually) - Junior research assistant level
+- **Additional Staff**: $800/week each (~$42k annually) - Growing overhead costs
+- **5-Person Team**: ~$4,000/week total maintenance costs
+- **Strategic Pressure**: Creates real 2-3 week funding planning cycles
+
+### Fundraising Strategy (NEW!)
+Access **Fundraising Options** action to choose from 4 strategic approaches:
+- **Fundraise Small**: $5-10k (covers 2-3 weeks, low risk)
+- **Fundraise Big**: $15-25k (provides 4-6 weeks runway, higher risk)  
+- **Borrow Money**: Immediate cash with future debt obligations
+- **Alternative Funding**: Grants/partnerships (unlocked with milestones)
+
+### Zero-Cost Operations
+Bootstrap approach means many actions are now free:
+- **Hiring**: No signing bonuses for nonprofit (staff costs come from weekly maintenance)
+- **Scout Opponents**: Free internet research and public information gathering
+- **Media/PR**: Self-funded social media and blog outreach  
+- **Research**: Reduced from $40k to $3k per week (still significant for small labs)
+
+### Moore's Law Advantage
+- **Compute Costs**: Decrease 2% each week (realistic technology improvement)
+- **Strategic Planning**: Early compute purchases become cheaper over time
+- **Scaling Benefits**: Late-game projects benefit from accumulated cost reductions
 
 ---
 
@@ -428,21 +464,30 @@ The competitors panel (between resources and actions) shows:
 
 ## Actions You Can Take
 
-**💰 Fundraise** - Gain money (more effective with higher reputation)
-**👥 Grow Community** - Increase reputation, chance to gain staff
-**🔬 Safety Research** - Reduce p(Doom), gain reputation (expensive)
-**🏛️ Governance Research** - Reduce p(Doom), gain reputation (expensive)  
-**🖥️ Buy Compute** - Purchase compute resources for employee productivity
-**📈 Hire Staff** - Interactive hiring dialog to select specific employee types (prioritized in UI)
-**🕵️ Espionage** - Learn about competitor progress (risky)
-**🎯 Scout Opponent** - Focused intelligence gathering (unlocked turn 5+, risky)
+### Strategic Menu Actions (NEW!)
+**💰 Fundraising Options** - Strategic funding dialog with 4 approaches and risk profiles
+**� Research Options** - Unified research menu with Safety, Governance, Rush, and Quality approaches
 
-### Hiring System
-The **Hire Staff** action opens an interactive dialog where you can:
-- **Select Employee Type**: Choose from available specialist roles
-- **See Costs**: View exact hiring costs for each type
-- **Strategic Planning**: Pick the right staff for your current needs
-- **One Action Point**: Complete hiring process commits one AP
+### Core Actions
+**👥 Grow Community** - Increase reputation, chance to gain staff
+**🖥️ Buy Compute** - Purchase compute resources (cost decreases over time via Moore's Law)
+**📈 Hire Staff** - Interactive hiring dialog to select specific employee types (no upfront costs!)
+**🕵️ Espionage** - Learn about competitor progress (minimal $500 operational cost)
+**🎯 Scout Opponents** - Focused intelligence gathering (free internet research)
+
+### Strategic Dialogs (v0.4.0+)
+Both **Fundraising Options** and **Research Options** now open strategic choice menus:
+- **Multiple Approaches**: Each with different risk/reward trade-offs
+- **Strategic Planning**: Choose based on current game state and needs
+- **Immediate Execution**: Select an option to execute it immediately
+- **Progressive Unlocks**: More options become available as you grow
+
+### Bootstrap Operations
+Many actions are now **zero-cost** reflecting the bootstrap nonprofit model:
+- **Press Releases**: Self-funded social media and blog outreach
+- **Social Media Campaigns**: Organic reach and community engagement  
+- **Public Statements**: Blog posts and community communications
+- **Hiring**: No signing bonuses (weekly maintenance covers all staff costs)
 
 *Each action shows its cost and effects in the context window when you hover over it.*
 

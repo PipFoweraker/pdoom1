@@ -1,13 +1,18 @@
-> p(Doom)1: an AI bureaucracy strategy game
-v0.2.12 "Development Infrastructure Enhancement" 
+# P(Doom): AI Safety Strategy Game
+**v0.4.0+hotfix1 "Strategic Menu Revolution"**
 
 **Unregulated AI poses an existential threat to humanity.**
  
- In this game, you are a manager of a newly funded NGO, racing against opponents with superior resources to solve the alignment problem before everyone dies.
+In this game, you manage a bootstrap AI safety lab with realistic funding constraints, racing against well-funded opponents to solve the alignment problem before everyone dies.
 
-The game is designed to reflect historical events and then project future ones according to the best data the developers have to hand. Future versions of the game will include timed leagues where players can compete to solve scenarios and configurations via a global leaderboard.
- 
-**Current Version:** v0.2.12 "Development Infrastructure Enhancement" - Comprehensive type annotations and development tooling
+Experience the challenge of running a scrappy nonprofit in the AI safety space - manage weekly cash flow, make strategic funding decisions, and scale your team while keeping doom levels low.
+
+**Latest Version:** v0.4.0+hotfix1 "Strategic Menu Revolution"
+- **Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
+- **Strategic Fundraising**: 4 funding approaches with risk/reward trade-offs  
+- **Menu Consolidation**: Research and funding options streamlined into strategic dialogs
+- **Verbose Activity Logging**: RPG-style detailed feedback on all actions
+- **$100k Starting Funds**: Sufficient runway to experiment with different strategies
 
 [PRIVACY] **PRIVACY-FIRST DESIGN** - Your data stays under your control  
 [COMPETITIVE] **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  

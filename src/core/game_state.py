@@ -25,6 +25,7 @@ from src.core.productive_actions import (get_employee_category, get_available_ac
                                check_action_requirements)
 from src.features.end_game_scenarios import end_game_scenarios
 from src.core.research_quality import TechnicalDebt, ResearchQuality, ResearchProject
+from src.core.economic_config import EconomicConfig
 
 SCORE_FILE = "local_highscore.json"
 
@@ -169,6 +170,9 @@ class GameState:
         from src.services.lab_name_manager import get_lab_name_manager
         lab_name_manager = get_lab_name_manager()
         self.lab_name = lab_name_manager.get_random_lab_name(seed)
+        
+        # Initialize economic configuration system
+        self.economic_config = EconomicConfig()
         
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
@@ -2462,17 +2466,8 @@ class GameState:
         self.selected_action_instances = []  # Clear action instances for next turn
         self.action_clicks_this_turn = {}  # Reset click tracking for new turn
 
-        # Staff maintenance - scale up costs and add overheads after first employee
-        if self.staff == 0:
-            maintenance_cost = 0
-        elif self.staff == 1:
-            # First employee, just base cost (scaled up from 15 to 25)
-            maintenance_cost = 25
-        else:
-            # Multiple employees - base cost plus overhead per additional employee
-            base_cost = 25  # Scaled up from 15
-            overhead_per_additional = 10  # Overhead cost for each employee after the first
-            maintenance_cost = base_cost + (self.staff - 1) * (base_cost + overhead_per_additional)
+        # Staff maintenance - bootstrap AI safety lab economic model
+        maintenance_cost = self.economic_config.get_staff_maintenance_cost(self.staff)
         money_before_maintenance = self.money
         self._add('money', -maintenance_cost)  # Use _add to track spending
         
@@ -2534,6 +2529,9 @@ class GameState:
             self.deferred_events.tick_all_events(self)
         
         self.turn += 1
+        
+        # Advance economic systems (Moore's Law compute cost reduction)
+        self.economic_config.advance_compute_cost_reduction()
         
         # Advance game clock by one week and display new date
         self.game_clock.tick()
@@ -5117,12 +5115,13 @@ class GameState:
         options = []
         
         # Option 1: Conservative Small Fundraising (always available)
+        small_range = self.economic_config.get_fundraising_amount_range("small")
         options.append({
             "id": "fundraise_small",
             "name": "Fundraise Small",
-            "description": "Conservative funding approach - $30-60k range, minimal reputation risk",
-            "min_amount": 30,
-            "max_amount": 60,
+            "description": f"Conservative funding approach - ${small_range[0]//1000}-{small_range[1]//1000}k range, minimal reputation risk",
+            "min_amount": small_range[0] // 1000,
+            "max_amount": small_range[1] // 1000,
             "reputation_risk": 0.1,  # 10% chance of -1 reputation
             "requirements": "Always available",
             "cost": 0,
@@ -5133,12 +5132,13 @@ class GameState:
         
         # Option 2: Aggressive Big Fundraising (requires some reputation)
         big_available = self.reputation >= 10
+        big_range = self.economic_config.get_fundraising_amount_range("big")
         options.append({
             "id": "fundraise_big", 
             "name": "Fundraise Big",
-            "description": "Aggressive funding round - $80-150k range, higher stakes and reputation requirements",
-            "min_amount": 80,
-            "max_amount": 150,
+            "description": f"Aggressive funding round - ${big_range[0]//1000}-{big_range[1]//1000}k range, higher stakes and reputation requirements",
+            "min_amount": big_range[0] // 1000,
+            "max_amount": big_range[1] // 1000,
             "reputation_risk": 0.3,  # 30% chance of -2 reputation
             "requirements": "Requires 10+ reputation",
             "cost": 0,

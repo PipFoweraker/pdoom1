@@ -6,8 +6,8 @@ EMPLOYEE_SUBTYPES = {
     # Basic generalist (existing "Hire Staff" equivalent)
     "generalist": {
         "name": "Generalist",
-        "description": "Versatile employee who can handle various tasks. No special bonuses but cheapest option.",
-        "cost": 60,
+        "description": "Versatile employee who can handle various tasks. No advertising costs for basic roles.",
+        "cost": 0,
         "ap_cost": 1,
         "effects": {
             "staff": 1
@@ -20,7 +20,7 @@ EMPLOYEE_SUBTYPES = {
     "researcher": {
         "name": "Researcher", 
         "description": "Research specialist with PhD background. Increases research progress and enables advanced projects.",
-        "cost": 75,
+        "cost": 0,
         "ap_cost": 2,
         "effects": {
             "staff": 1,
@@ -34,7 +34,7 @@ EMPLOYEE_SUBTYPES = {
     "engineer": {
         "name": "Engineer",
         "description": "Technical specialist who improves compute efficiency and system reliability.", 
-        "cost": 80,
+        "cost": 0,
         "ap_cost": 2,
         "effects": {
             "staff": 1,
@@ -48,7 +48,7 @@ EMPLOYEE_SUBTYPES = {
     "administrator": {
         "name": "Administrator",
         "description": "Executive assistant who provides significant action point boost for complex operations.",
-        "cost": 85,
+        "cost": 0,
         "ap_cost": 2,
         "effects": {
             "staff": 1,
@@ -62,7 +62,7 @@ EMPLOYEE_SUBTYPES = {
     "security_specialist": {
         "name": "Security Specialist",
         "description": "AI safety expert who reduces doom risk and provides security against espionage.",
-        "cost": 90,
+        "cost": 0,
         "ap_cost": 2,
         "effects": {
             "staff": 1,
@@ -76,7 +76,7 @@ EMPLOYEE_SUBTYPES = {
     "data_scientist": {
         "name": "Data Scientist", 
         "description": "Advanced analytics specialist who accelerates research and provides insights.",
-        "cost": 95,
+        "cost": 0,
         "ap_cost": 2,
         "effects": {
             "staff": 1,
@@ -91,7 +91,7 @@ EMPLOYEE_SUBTYPES = {
     "manager": {
         "name": "Manager",
         "description": "Team leader for large organizations. Required to maintain productivity beyond 9 employees.",
-        "cost": 90,
+        "cost": 0,
         "ap_cost": 1,
         "effects": {
             "staff": 1,
@@ -105,7 +105,7 @@ EMPLOYEE_SUBTYPES = {
     "specialist_researcher": {
         "name": "Specialist Researcher",
         "description": "Individual researcher with unique specialization, traits, and management needs.",
-        "cost": 80,  # Base cost, actual cost determined by researcher
+        "cost": 0,  # No upfront hiring costs for bootstrap nonprofit
         "ap_cost": 2,
         "effects": {
             "staff": 1,

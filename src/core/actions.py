@@ -375,8 +375,8 @@ ACTIONS = [
     },
     {
         "name": "Buy Compute",
-        "desc": "Purchase compute resources. $100 per 10 flops.",
-        "cost": 100,
+        "desc": "Purchase compute resources. Cost decreases over time (Moore's Law).",
+        "cost": lambda gs: gs.economic_config.get_compute_cost(10),
         "ap_cost": 1,  # Action Points cost
         "delegatable": True,  # Phase 3: Can be delegated (operational task)
         "delegate_staff_req": 1,  # Requires 1 operations staff to delegate
@@ -397,8 +397,8 @@ ACTIONS = [
     },
     {
         "name": "Scout Opponents",
-        "desc": "Gather intelligence on competing labs; reveals their capabilities.",
-        "cost": 75,
+        "desc": "Gather intelligence on competing labs via internet research. Free action.",
+        "cost": 0,
         "ap_cost": 1,  # Action Points cost
         "delegatable": True,  # Can be delegated to admin staff
         "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
@@ -419,8 +419,8 @@ ACTIONS = [
     },
     {
         "name": "Espionage",
-        "desc": "Chance to reveal opponent progress, risky.",
-        "cost": 30,
+        "desc": "Chance to reveal opponent progress, risky. Minimal operational costs.",
+        "cost": lambda gs: gs.economic_config.get_intelligence_cost('espionage'),
         "ap_cost": 1,  # Action Points cost
         "upside": lambda gs: gs._spy(),
         "downside": lambda gs: gs._espionage_risk(),
@@ -492,8 +492,8 @@ ACTIONS = [
     },
     {
         "name": "Refactoring Sprint",
-        "desc": "Major code cleanup. Costs $100k + 2 AP, reduces debt by 3-5 points",
-        "cost": 100,
+        "desc": "Major code cleanup. Focus team effort, reduces debt by 3-5 points",
+        "cost": lambda gs: gs.economic_config.get_technical_debt_cost('refactoring_sprint'),
         "ap_cost": 2,
         "upside": lambda gs: gs.execute_debt_reduction_action("Refactoring Sprint"),
         "downside": lambda gs: None,
@@ -501,8 +501,8 @@ ACTIONS = [
     },
     {
         "name": "Safety Audit",
-        "desc": "Comprehensive safety review. Costs $200k, reduces debt by 2, +reputation",
-        "cost": 200,
+        "desc": "External safety audit. Professional review, reduces debt by 2, +reputation",
+        "cost": lambda gs: gs.economic_config.get_technical_debt_cost('safety_audit_external'),
         "ap_cost": 1,
         "upside": lambda gs: gs.execute_debt_reduction_action("Safety Audit"),
         "downside": lambda gs: None,
@@ -520,8 +520,8 @@ ACTIONS = [
     # Media & Public Opinion Actions
     {
         "name": "Press Release",
-        "desc": "Issue press release to control narrative. Costs $50k, improves public trust.",
-        "cost": 50000,
+        "desc": "Issue press release via social media/blog. Self-funded organic outreach.",
+        "cost": 0,
         "ap_cost": 1,
         "upside": lambda gs: gs.media_system.execute_media_action('press_release', gs) if hasattr(gs, 'media_system') else None,
         "downside": lambda gs: None,
@@ -548,8 +548,8 @@ ACTIONS = [
     },
     {
         "name": "Social Media Campaign", 
-        "desc": "Targeted social media push to improve public sentiment. Costs $75k.",
-        "cost": 75000,
+        "desc": "Organic social media outreach to improve public sentiment. Self-funded.",
+        "cost": 0,
         "ap_cost": 1,
         "upside": lambda gs: gs.media_system.execute_media_action('social_media_campaign', gs) if hasattr(gs, 'media_system') else None,
         "downside": lambda gs: None,
@@ -557,8 +557,8 @@ ACTIONS = [
     },
     {
         "name": "Public Statement",
-        "desc": "Issue statement on current events. Low cost, moderate impact. $10k.",
-        "cost": 10000,
+        "desc": "Issue statement on current events via blog/social media. Self-funded.",
+        "cost": 0,
         "ap_cost": 1,
         "upside": lambda gs: gs.media_system.execute_media_action('public_statement', gs) if hasattr(gs, 'media_system') else None,
         "downside": lambda gs: None,
