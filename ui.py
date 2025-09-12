@@ -25,9 +25,13 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
             quality_suffix = f" [{game_state.current_research_quality.value.title()}]"
             base_desc += quality_suffix
     
-    # Build details list
+    # Build details list - handle dynamic costs
+    action_cost = action['cost']
+    if callable(action_cost):
+        action_cost = action_cost(game_state)
+    
     details = [
-        f"Cost: ${action['cost']}",
+        f"Cost: ${action_cost}",
         f"Action Points: {ap_cost}",
     ]
     

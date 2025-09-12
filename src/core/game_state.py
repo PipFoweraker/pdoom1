@@ -30,6 +30,15 @@ from src.core.economic_config import EconomicConfig
 SCORE_FILE = "local_highscore.json"
 
 class GameState:
+    def _get_action_cost(self, action: Dict[str, Any]) -> int:
+        """
+        Helper method to evaluate action cost, handling both static costs and callable costs.
+        """
+        cost = action["cost"]
+        if callable(cost):
+            return cost(self)
+        return cost
+    
     def _add(self, attr: str, val: float, reason: str = "") -> None:
         """
         Adds val to the given attribute, clamping where appropriate.
@@ -536,8 +545,9 @@ class GameState:
                 onboarding.mark_mechanic_seen('action_points_exhausted')
             return False
         
-        if self.money < action["cost"]:
-            error_msg = f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money})."
+        action_cost = self._get_action_cost(action)
+        if self.money < action_cost:
+            error_msg = f"Not enough money for {action['name']} (need ${action_cost}, have ${self.money})."
             self.messages.append(error_msg)
             
             # Track error for easter egg detection
@@ -665,8 +675,9 @@ class GameState:
             }
         
         # Check money availability
-        if self.money < action["cost"]:
-            error_msg = f"Not enough money for {action['name']} (need ${action['cost']}, have ${self.money})."
+        action_cost = self._get_action_cost(action)
+        if self.money < action_cost:
+            error_msg = f"Not enough money for {action['name']} (need ${action_cost}, have ${self.money})."
             self.messages.append(error_msg)
             return {
                 'success': False,
@@ -2436,13 +2447,14 @@ class GameState:
             self.ap_glow_timer = 30  # 30 frames of glow effect
             
             # Deduct money cost using _add to track spending
-            self._add('money', -action["cost"])
+            action_cost = self._get_action_cost(action)
+            self._add('money', -action_cost)
             
             # Log the action
             action_name = action["name"]
             if delegation_info['delegated']:
                 action_name += " (delegated)"
-            self.logger.log_action(action_name, action["cost"], self.turn)
+            self.logger.log_action(action_name, action_cost, self.turn)
             
             # Execute action effects with effectiveness modifier
             if action.get("upside"):
@@ -2902,14 +2914,14 @@ class GameState:
         self.action_points -= ap_cost
         
         if action_name == "Refactoring Sprint":
-            cost = action["cost"]
+            cost = self._get_action_cost(action)
             self._add('money', -cost)
             debt_reduction = random.randint(*action["debt_reduction"])
             reduced = self.technical_debt.reduce_debt(debt_reduction)
             self.messages.append(f"? Refactoring sprint completed! Reduced technical debt by {reduced} points")
             
         elif action_name == "Safety Audit":
-            cost = action["cost"]
+            cost = self._get_action_cost(action)
             self._add('money', -cost)
             reduced = self.technical_debt.reduce_debt(action["debt_reduction"][0])
             rep_bonus = action.get("reputation_bonus", 0)
