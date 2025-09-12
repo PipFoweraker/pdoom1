@@ -38,8 +38,20 @@ else:
 # --- Adaptive window sizing with loading screen --- #
 pygame.init()
 
-# Display version information on startup
+# Display startup information
 print(f"Starting P(Doom): Bureaucracy Strategy Game {get_display_version()}")
+print("=" * 60)
+print("STARTUP CONFIGURATION:")
+print(f"  Economic Model: Bootstrap AI Safety Nonprofit")
+print(f"  Starting Funds: $100k")
+print(f"  Staff Maintenance: $600 first, $800 additional/week") 
+print(f"  Research Costs: $3k/week (reduced from $40k)")
+print(f"  Hiring Costs: $0 (no signing bonuses)")
+print(f"  Moore's Law: 2% compute cost reduction/week")
+print(f"  Audio: {'Enabled' if current_config['audio']['sound_enabled'] else 'Disabled'}")
+print(f"  Window Scale: {current_config['ui']['window_scale']:.1f}x")
+print(f"  Fullscreen: {'Yes' if current_config['ui'].get('fullscreen', False) else 'No'}")
+print("=" * 60)
 
 # Set up initial screen for loading
 info = pygame.display.Info()

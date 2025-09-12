@@ -41,7 +41,13 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
     # Add availability status
     if game_state.action_points < ap_cost:
         details.append("! Not enough Action Points")
-    if game_state.money < action['cost']:
+    
+    # Handle dynamic cost evaluation (for economic config system)
+    action_cost = action['cost']
+    if callable(action_cost):
+        action_cost = action_cost(game_state)
+    
+    if game_state.money < action_cost:
         details.append("! Not enough Money")
     
     return {
