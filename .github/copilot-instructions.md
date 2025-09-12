@@ -2,7 +2,7 @@
 
 P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI application with comprehensive testing and documentation.
 
-**Current Version**: v0.3.4+hotfix1 "Menu Navigation Fixes"
+**Current Version**: v0.4.1 "Bootstrap Economic Calibration"
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
@@ -13,12 +13,13 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Version synchronization**: If version appears outdated, check `src/services/version.py` and update accordingly
 - **Format**: `vMAJOR.MINOR.PATCH+BUILD` (e.g., "v0.3.4+hotfix1")
 
-## Critical Debug Console Information
-- **CRITICAL BUG FIXED**: Debug console signature mismatch resolved (v0.3.4+hotfix1)
-- **Location**: `src/ui/debug_console_manager.py` line 96 `handle_click(pos)` method
-- **Issue**: Was calling `handle_click(pos, screen_w, screen_h)` but method only takes `(pos)`
-- **Symptom**: "takes 2 positional arguments but 4 were given" error on new game click
-- **Resolution**: Always call `debug_console.handle_click(pos)` with only position argument
+## Critical System Information (v0.4.1)
+- **BOOTSTRAP ECONOMIC SYSTEM**: Complete economic calibration implemented
+- **Dynamic Cost Evaluation**: All action costs now support callable functions for Moore's Law integration
+- **Location**: `src/core/economic_config.py` - comprehensive economic configuration system
+- **Key Fix**: `_get_action_cost()` helper method handles both static and dynamic costs
+- **UI Integration**: Cost display and validation works with economic config lambdas
+- **Starting Funds**: $100k realistic nonprofit bootstrap model
 
 ## Development Infrastructure Status
 
