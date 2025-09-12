@@ -93,7 +93,7 @@ class DebugConsoleManager:
         if not self._debug_console:
             return False
             
-        return self._debug_console.handle_click(pos, screen_w, screen_h)
+        return self._debug_console.handle_click(pos)
     
     def draw(self, screen: pygame.Surface, game_state, screen_w: int, screen_h: int):
         """
