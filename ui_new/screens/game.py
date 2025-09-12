@@ -269,11 +269,12 @@ def draw_end_turn_button_3column(screen: pygame.Surface, game_state: Any,
     """Draw the end turn button in the 3-column layout."""
     from src.services.keybinding_manager import keybinding_manager
     
-    # Position in bottom right of context area
-    button_width = 150
-    button_height = 35
-    button_x = context_rect.right - button_width - 10
-    button_y = context_rect.y + 5
+    # Position in bottom right of context area with proportional sizing
+    button_width = int(context_rect.width * 0.2)  # 20% of context width
+    button_height = int(context_rect.height * 0.4)  # 40% of context height
+    margin = int(context_rect.width * 0.01)  # 1% margin
+    button_x = context_rect.right - button_width - margin
+    button_y = context_rect.y + margin
     
     button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
     
@@ -313,34 +314,41 @@ def draw_end_turn_button_3column(screen: pygame.Surface, game_state: Any,
 def draw_activity_log_3column(screen: pygame.Surface, game_state: Any,
                              context_rect: pygame.Rect, fonts: Dict[str, pygame.font.Font]) -> None:
     """Draw a compact activity log in the 3-column layout."""
-    # Position in bottom left of context area
-    log_width = 300
-    log_height = context_rect.height - 10
-    log_x = context_rect.x + 10
-    log_y = context_rect.y + 5
+    # Position on right side of context area for better visibility
+    log_width = int(context_rect.width * 0.4)  # 40% of context area width
+    log_height = int(context_rect.height * 0.95)  # 95% of context area height
+    margin = int(context_rect.width * 0.01)  # 1% margin
+    log_x = context_rect.right - log_width - margin  # Right-aligned with proportional margin
+    log_y = context_rect.y + margin
     
     # Draw compact log background
     log_rect = pygame.Rect(log_x, log_y, log_width, log_height)
     pygame.draw.rect(screen, PANEL_BG, log_rect, border_radius=5)
     pygame.draw.rect(screen, BORDER_COLOR, log_rect, width=1, border_radius=5)
     
-    # Log title
+    # Log title with proportional positioning
+    title_margin = int(log_width * 0.02)  # 2% of log width
+    title_y_offset = int(log_height * 0.03)  # 3% of log height
     log_title = fonts['small'].render("ACTIVITY LOG", True, NEON_GREEN)
-    screen.blit(log_title, (log_x + 5, log_y + 2))
+    screen.blit(log_title, (log_x + title_margin, log_y + title_y_offset))
     
-    # Show last few messages
+    # Show last few messages with proportional spacing
     messages = getattr(game_state, 'messages', [])
     if messages:
-        line_height = 12
-        max_lines = (log_height - 20) // line_height
+        line_height = int(log_height * 0.04)  # 4% of log height per line
+        header_space = int(log_height * 0.08)  # 8% for header space
+        max_lines = (log_height - header_space) // line_height
         start_idx = max(0, len(messages) - max_lines)
         
+        # Calculate character limit based on log width
+        char_limit = int(log_width * 0.12)  # Approximately 0.12 characters per pixel width
+        
         for i, msg in enumerate(messages[start_idx:start_idx + max_lines]):
-            if len(msg) > 35:  # Truncate long messages
-                msg = msg[:32] + "..."
+            if len(msg) > char_limit:
+                msg = msg[:char_limit-3] + "..."
             
             msg_text = fonts['small'].render(msg, True, TEXT_COLOUR)
-            screen.blit(msg_text, (log_x + 5, log_y + 15 + i * line_height))
+            screen.blit(msg_text, (log_x + title_margin, log_y + header_space + i * line_height))
 
 
 def draw_version_footer_3column(screen: pygame.Surface, w: int, h: int, 

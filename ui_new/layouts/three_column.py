@@ -200,9 +200,9 @@ class ThreeColumnLayout:
             screen.blit(empty_text, (text_x, text_y))
             return button_rects
 
-        # Calculate button layout - smaller, tighter buttons
-        button_height = 42  # Reduced from 50
-        button_spacing = 4   # Reduced from 6
+        # Calculate button layout - proportional to layout area
+        button_height = int(layout_rect.height * 0.08)  # 8% of column height per button
+        button_spacing = int(layout_rect.height * 0.01)   # 1% of column height for spacing
         start_y = layout_rect.y + 10
         
         for i, action in enumerate(actions):
@@ -251,8 +251,8 @@ class ThreeColumnLayout:
             # Create button text with keybinding
             button_text = f"[{keybind}] {display_name}"
             
-            # Truncate if still too long
-            max_chars = 20  # Adjust based on column width
+            # Truncate based on column width (approximately 0.1 characters per pixel)
+            max_chars = int(layout_rect.width * 0.08)  # Dynamic based on column width
             if len(button_text) > max_chars:
                 button_text = button_text[:max_chars-3] + "..."
             
@@ -301,9 +301,9 @@ class ThreeColumnLayout:
             screen.blit(empty_text2, (text_x2, text_y + 20))
             return button_rects
         
-        # Calculate button layout - compact buttons for strategic actions
-        button_height = 35  # Smaller than repeating actions
-        button_spacing = 3   # Tighter spacing
+        # Calculate button layout - proportional for strategic actions
+        button_height = int(layout_rect.height * 0.06)  # 6% of column height per strategic button 
+        button_spacing = int(layout_rect.height * 0.008)  # 0.8% spacing for strategic actions
         start_y = layout_rect.y + 10
         
         for i, action in enumerate(actions):
@@ -347,8 +347,8 @@ class ThreeColumnLayout:
             
             display_name = strategic_shortcuts.get(action_name, action_name)
             
-            # Ensure text fits in right column width
-            max_chars = 12  # Conservative for right column
+            # Ensure text fits in right column width (proportional to column size)
+            max_chars = int(layout_rect.width * 0.06)  # Conservative for strategic actions
             if len(display_name) > max_chars:
                 display_name = display_name[:max_chars-1] + "."
             
@@ -442,10 +442,11 @@ class ThreeColumnLayout:
                                        game_state: Any) -> None:
         """Draw simplified employee blobs for the 3-column layout."""
         
-        # Calculate grid layout for blobs
-        blob_size = 25
-        cols = blob_area.width // (blob_size + 10)
-        rows = blob_area.height // (blob_size + 10)
+        # Calculate grid layout for blobs with responsive sizing
+        blob_size = int(min(blob_area.width, blob_area.height) * 0.08)  # 8% of smaller dimension
+        spacing = int(blob_size * 0.4)  # 40% of blob size for spacing
+        cols = blob_area.width // (blob_size + spacing)
+        rows = blob_area.height // (blob_size + spacing)
         
         blob_count = min(len(game_state.employee_blobs), cols * rows)
         
@@ -456,8 +457,8 @@ class ThreeColumnLayout:
             col = i % cols
             row = i // cols
             
-            x = blob_area.x + col * (blob_size + 10) + blob_size // 2
-            y = blob_area.y + row * (blob_size + 10) + blob_size // 2
+            x = blob_area.x + col * (blob_size + spacing) + blob_size // 2
+            y = blob_area.y + row * (blob_size + spacing) + blob_size // 2
             
             # Draw blob with simplified styling
             blob_color = (150, 200, 255) if blob.get('has_compute') else (100, 150, 200)
