@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-13T17:27:12.712153",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Janus Technologies",
+      "date": "2025-09-13T17:27:12.711389",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.00548,
+      "entry_uuid": "b25e017b-a7aa-47e4-b5d5-230e70f007b9"
+    }
+  ]
+}

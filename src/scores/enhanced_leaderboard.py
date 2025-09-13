@@ -33,6 +33,7 @@ class GameSession:
     end_time: datetime
     duration_minutes: float
     player_name: str
+    lab_name: str
     
     # Game state at end
     final_money: float
@@ -117,7 +118,8 @@ class EnhancedLeaderboardManager:
             start_time=self.session_start_time,
             end_time=self.session_start_time,  # Will be updated on end
             duration_minutes=0.0,
-            player_name=getattr(game_state, 'lab_name', 'Anonymous Labs'),
+            player_name=getattr(game_state, 'player_name', 'Anonymous'),
+            lab_name=getattr(game_state, 'lab_name', 'Anonymous Labs'),
             
             final_money=game_state.money,
             final_staff=game_state.staff,
@@ -183,10 +185,10 @@ class EnhancedLeaderboardManager:
         # Get appropriate leaderboard
         leaderboard = self._get_leaderboard_for_session(self.current_session)
         
-        # Create score entry
+        # Create score entry (using lab_name for leaderboard display)
         score_entry = ScoreEntry(
             score=self.current_session.final_score,
-            player_name=self.current_session.player_name,
+            player_name=self.current_session.lab_name,  # Display lab name in leaderboard
             date=end_time,
             level_reached=self.current_session.final_turn,
             game_mode=self.current_session.economic_model,
@@ -247,6 +249,7 @@ class EnhancedLeaderboardManager:
             seed=seed,
             economic_model=economic_model,
             game_version=get_display_version(),
+            lab_name="",  # Required field for hash calculation
             # Fill required fields with defaults
             final_turn=0, final_score=0, start_time=datetime.now(), end_time=datetime.now(),
             duration_minutes=0, player_name="", final_money=0, final_staff=0,
@@ -314,6 +317,7 @@ class EnhancedLeaderboardManager:
                         final_score=score,
                         game_version="pre-v0.4.1",
                         economic_model="Legacy",
+                        lab_name="Legacy Lab",
                         
                         start_time=datetime.now(),
                         end_time=datetime.now(),

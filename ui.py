@@ -391,6 +391,7 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
         "Launch with Custom Seed", 
         "Settings",
         "Player Guide",
+        "View Leaderboard",
         "Exit"
     ]
     
@@ -665,15 +666,15 @@ def draw_config_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
         
         # Determine button state
         if i == selected_item:
-            button_state = ButtonState.SELECTED
+            button_state = ButtonState.FOCUSED  # Use FOCUSED instead of SELECTED
         elif item == current_config_name:
-            button_state = ButtonState.ACTIVE  # Different color for current config
+            button_state = ButtonState.HOVER  # Use HOVER instead of ACTIVE
         else:
             button_state = ButtonState.NORMAL
         
-        # Draw button
-        draw_low_poly_button(screen, x, y, button_width, button_height, 
-                           item, menu_font, button_state)
+        # Draw button using correct parameters
+        button_rect = pygame.Rect(x, y, button_width, button_height)
+        draw_low_poly_button(screen, button_rect, item, button_state)
     
     # Instructions at bottom
     instructions = [
@@ -2845,22 +2846,69 @@ def draw_end_game_menu(screen: pygame.Surface, w: int, h: int, selected_item: in
         subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
         screen.blit(subtitle_text, subtitle_rect)
     
-    # Game statistics in a box - adjust position to make room for scenario details
-    stats_box_y = int(h*0.25) if game_state.end_game_scenario else int(h*0.22)
-    stats_box = pygame.Rect(w//6, stats_box_y, w*2//3, int(h*0.22))
-    pygame.draw.rect(screen, (40, 40, 70), stats_box, border_radius=12)
-    pygame.draw.rect(screen, (130, 190, 255), stats_box, width=3, border_radius=12)
+    # ENHANCED: Get leaderboard data for celebration
+    try:
+        from src.scores.enhanced_leaderboard import EnhancedLeaderboardManager
+        leaderboard_manager = EnhancedLeaderboardManager()
+        leaderboard = leaderboard_manager.get_leaderboard_for_seed(game_state.seed)
+        
+        # Check if this is a new record
+        is_new_record = False
+        current_rank = None
+        if leaderboard.entries:
+            for i, entry in enumerate(leaderboard.entries):
+                if entry.player_name == game_state.lab_name and entry.score == game_state.turn:
+                    current_rank = i + 1
+                    is_new_record = (i == 0)  # New #1 position
+                    break
+        
+        # Celebration title if new record!
+        if is_new_record and current_rank == 1:
+            celebration_font = pygame.font.SysFont('Consolas', int(h*0.04), bold=True)
+            celebration_text = celebration_font.render("NEW HIGH SCORE!", True, (255, 255, 100))
+            celebration_rect = celebration_text.get_rect(center=(w//2, int(h*0.18)))
+            # Add glow effect
+            glow_text = celebration_font.render("NEW HIGH SCORE!", True, (255, 200, 0))
+            screen.blit(glow_text, (celebration_rect.x + 2, celebration_rect.y + 2))
+            screen.blit(celebration_text, celebration_rect)
+    except:
+        current_rank = None
+        is_new_record = False
     
-    # Statistics content
+    # Game statistics in a box - adjust position to make room for scenario details
+    stats_box_y = int(h*0.27) if game_state.end_game_scenario else int(h*0.24)
+    stats_box = pygame.Rect(w//6, stats_box_y, w*2//3, int(h*0.24))
+    
+    # Enhanced box styling for celebration
+    box_color = (60, 80, 40) if is_new_record else (40, 40, 70)
+    border_color = (150, 255, 100) if is_new_record else (130, 190, 255)
+    pygame.draw.rect(screen, box_color, stats_box, border_radius=12)
+    pygame.draw.rect(screen, border_color, stats_box, width=3, border_radius=12)
+    
+    # Enhanced Statistics content
     stats_lines = [
-        f"Survived until Turn: {game_state.turn}",
-        f"Final Staff: {game_state.staff}",
-        f"Final Money: ${game_state.money}",
+        f"Lab: {game_state.lab_name}",
+        f"Survived {game_state.turn} turns",
+        f"Final Staff: {game_state.staff} researchers",
+        f"Final Money: ${game_state.money:,}",
         f"Final Reputation: {game_state.reputation}",
-        f"Final p(Doom): {game_state.doom}%",
-        f"Seed: {seed}",
-        f"High Score (turns): {game_state.highscore}"
+        f"Final p(Doom): {game_state.doom}%"
     ]
+    
+    # Add rank information if available
+    if current_rank:
+        rank_suffix = {1: "st", 2: "nd", 3: "rd"}.get(current_rank, "th")
+        rank_line = f"Leaderboard Rank: #{current_rank}{rank_suffix} for seed '{game_state.seed}'"
+        stats_lines.append(rank_line)
+    else:
+        stats_lines.append(f"Seed: '{game_state.seed}'")
+    
+    # Add high score comparison
+    if hasattr(game_state, 'highscore') and game_state.highscore > 0:
+        if game_state.turn > game_state.highscore:
+            stats_lines.append(f"Previous Best: {game_state.highscore} turns (BEATEN!)")
+        else:
+            stats_lines.append(f"Personal Best: {game_state.highscore} turns")
     
     stats_start_y = stats_box.y + 15
     line_height = int(h*0.025)
@@ -2904,13 +2952,86 @@ def draw_end_game_menu(screen: pygame.Surface, w: int, h: int, selected_item: in
             legacy_text = small_font.render(line, True, (220, 255, 220))
             screen.blit(legacy_text, (legacy_box.x + 15, legacy_box.y + 25 + i * 16))
     
-    # Menu options
-    menu_items = ["Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
+    # SPECTACULAR: Mini Leaderboard Preview!
+    try:
+        if current_rank and leaderboard.entries:
+            leaderboard_y = int(h * 0.52)
+            leaderboard_box = pygame.Rect(w//4, leaderboard_y, w//2, int(h * 0.15))
+            
+            # Celebration styling for leaderboard
+            board_bg = (30, 60, 30) if is_new_record else (30, 30, 60)
+            board_border = (100, 255, 100) if is_new_record else (100, 150, 255)
+            pygame.draw.rect(screen, board_bg, leaderboard_box, border_radius=10)
+            pygame.draw.rect(screen, board_border, leaderboard_box, width=2, border_radius=10)
+            
+            # Leaderboard title
+            board_title_font = pygame.font.SysFont('Consolas', int(h*0.025), bold=True)
+            board_title_color = (150, 255, 150) if is_new_record else (150, 200, 255)
+            title_text = f"Leaderboard for '{game_state.seed}'"
+            board_title = board_title_font.render(title_text, True, board_title_color)
+            title_rect = board_title.get_rect(center=(leaderboard_box.centerx, leaderboard_box.y + 15))
+            screen.blit(board_title, title_rect)
+            
+            # Show top 3 entries with current player highlighted
+            entry_font = pygame.font.SysFont('Consolas', int(h*0.02))
+            entry_y = leaderboard_box.y + 35
+            shown_entries = 0
+            
+            for i, entry in enumerate(leaderboard.entries[:5]):  # Show top 5
+                if shown_entries >= 3:
+                    break
+                    
+                rank_num = i + 1
+                is_current_player = (entry.player_name == game_state.lab_name and entry.score == game_state.turn)
+                
+                # Highlight current player's entry
+                if is_current_player:
+                    highlight_color = (255, 255, 100) if is_new_record else (100, 255, 255)
+                    entry_text = f"#{rank_num}. {entry.player_name}: {entry.score} turns ← YOU!"
+                    text_color = (0, 0, 0) if is_new_record else (255, 255, 255)
+                    # Draw highlight background
+                    text_surface = entry_font.render(entry_text, True, text_color)
+                    highlight_rect = pygame.Rect(leaderboard_box.x + 10, entry_y - 2, text_surface.get_width() + 10, text_surface.get_height() + 4)
+                    pygame.draw.rect(screen, highlight_color, highlight_rect, border_radius=4)
+                else:
+                    entry_text = f"#{rank_num}. {entry.player_name}: {entry.score} turns"
+                    text_color = (200, 255, 200) if is_new_record else (200, 200, 255)
+                
+                entry_surface = entry_font.render(entry_text, True, text_color)
+                screen.blit(entry_surface, (leaderboard_box.x + 15, entry_y))
+                entry_y += 22
+                shown_entries += 1
+                
+            # Show total entries count
+            total_font = pygame.font.SysFont('Consolas', int(h*0.018))
+            total_text = f"({len(leaderboard.entries)} total entries for this seed)"
+            total_color = (150, 200, 150) if is_new_record else (150, 150, 200)
+            total_surface = total_font.render(total_text, True, total_color)
+            total_rect = total_surface.get_rect(center=(leaderboard_box.centerx, leaderboard_box.bottom - 15))
+            screen.blit(total_surface, total_rect)
+            
+            # Encouraging hint for leaderboard viewing
+            if current_rank:
+                hint_font = pygame.font.SysFont('Consolas', int(h*0.016))
+                if is_new_record:
+                    hint_text = "Press ENTER to view full leaderboard and celebrate your achievement!"
+                    hint_color = (255, 255, 150)
+                else:
+                    hint_text = "Press ENTER to view full leaderboard and see all competitors"
+                    hint_color = (200, 200, 255)
+                hint_surface = hint_font.render(hint_text, True, hint_color)
+                hint_rect = hint_surface.get_rect(center=(w//2, int(h * 0.68)))
+                screen.blit(hint_surface, hint_rect)
+    except:
+        pass  # Graceful fallback if leaderboard fails
+
+    # Menu options with "View Leaderboard" as TOP priority for natural flow
+    menu_items = ["View Full Leaderboard", "Play Again", "Main Menu", "Settings", "Submit Feedback"]
     
-    button_width = int(w * 0.35)
-    button_height = int(h * 0.06)
-    start_y = int(h * 0.55)
-    spacing = int(h * 0.08)
+    button_width = int(w * 0.35) 
+    button_height = int(h * 0.055)  # Slightly smaller to fit
+    start_y = int(h * 0.69)  # Moved down for leaderboard space
+    spacing = int(h * 0.07)   # Tighter spacing
     center_x = w // 2
     
     for i, item in enumerate(menu_items):
@@ -4523,9 +4644,9 @@ def draw_audio_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, 
         screen.blit(info_surf, (info_x, info_y))
 
 
-def draw_high_score_screen(screen: pygame.Surface, w: int, h: int, game_state, seed: str, submit_to_leaderboard: bool) -> None:
+def draw_high_score_screen(screen: pygame.Surface, w: int, h: int, game_state, seed: str, submit_to_leaderboard: bool, selected_item: int = 0, from_main_menu: bool = False) -> None:
     """
-    Draw the enhanced high score screen with seed-specific leaderboards and game statistics.
+    Draw the enhanced high score screen with seed-specific leaderboards and interactive menu.
     
     Args:
         screen: pygame surface to draw on
@@ -4533,6 +4654,149 @@ def draw_high_score_screen(screen: pygame.Surface, w: int, h: int, game_state, s
         game_state: GameState object for displaying final stats
         seed: Game seed used for this session
         submit_to_leaderboard: Whether to submit score to leaderboard
+        selected_item: Currently selected menu item (0=Play Again/Launch New Game as default)
+        from_main_menu: True if accessed from main menu, False if from completed game
+    """
+    # Clear screen with grey background (matching config menu)
+    screen.fill((64, 64, 64))
+    
+    # Fonts for consistent styling with config menu
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    menu_font = pygame.font.SysFont('Consolas', int(h*0.035))
+    desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
+    stats_font = pygame.font.SysFont('Consolas', int(h*0.022))
+    
+    # Colors matching lab config menu theme
+    white = (255, 255, 255)
+    light_gray = (200, 200, 200) 
+    gray = (150, 150, 150)
+    gold = (255, 215, 0)
+    silver = (192, 192, 192)
+    bronze = (205, 127, 50)
+    
+    # Title at top
+    title_surf = title_font.render("High Scores & Leaderboard", True, white)
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.05)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Seed and configuration info
+    config_y = int(h * 0.1)
+    seed_info = f"Seed: '{seed}' | Economic Model: Bootstrap v0.4.1"
+    seed_surf = desc_font.render(seed_info, True, light_gray)
+    seed_x = w // 2 - seed_surf.get_width() // 2
+    screen.blit(seed_surf, (seed_x, config_y))
+    
+    # Current game stats if available (compact display)
+    if game_state:
+        stats_y = int(h * 0.13)
+        stats_text = f"Your Score: {game_state.turn} turns | Money: ${game_state.money}k | Staff: {game_state.staff} | Doom: {game_state.doom:.1f}%"
+        stats_surf = stats_font.render(stats_text, True, white)
+        stats_x = w // 2 - stats_surf.get_width() // 2
+        screen.blit(stats_surf, (stats_x, stats_y))
+    
+    # Leaderboard display (more compact)
+    leaderboard_y = int(h * 0.17)
+    try:
+        from src.scores.enhanced_leaderboard import leaderboard_manager
+        
+        # Handle case where seed is None (accessed from main menu)
+        if seed is None or seed == 'None':
+            # Show a general message when no specific seed is selected
+            no_seed_text = "Select a seed to view its leaderboard"
+            no_seed_surf = desc_font.render(no_seed_text, True, gray)
+            no_seed_x = w // 2 - no_seed_surf.get_width() // 2
+            screen.blit(no_seed_surf, (no_seed_x, leaderboard_y + 30))
+            
+            hint_text = "Play a game or use 'Launch with Custom Seed' to see scores"
+            hint_surf = pygame.font.SysFont('Consolas', int(h*0.018)).render(hint_text, True, light_gray)
+            hint_x = w // 2 - hint_surf.get_width() // 2
+            screen.blit(hint_surf, (hint_x, leaderboard_y + 60))
+        else:
+            leaderboard = leaderboard_manager.get_leaderboard_for_seed(seed)
+            entries = leaderboard.get_top_scores(10)  # Top 10 for more compact display
+            
+            if entries:
+                header_surf = desc_font.render("Top Scores:", True, white)
+                header_x = w // 2 - header_surf.get_width() // 2
+                screen.blit(header_surf, (header_x, leaderboard_y))
+                
+                # Compact leaderboard entries
+                entry_y = leaderboard_y + 30
+                for i, entry in enumerate(entries[:8]):  # Limit to 8 entries for space
+                    if entry_y > h * 0.45:  # Stop if approaching menu area
+                        break
+                        
+                    rank = i + 1
+                    
+                    # Rank color based on position
+                    if rank == 1:
+                        rank_color = gold
+                    elif rank == 2:
+                        rank_color = silver
+                    elif rank == 3:
+                        rank_color = bronze
+                    else:
+                        rank_color = light_gray
+                    
+                    # Compact entry format
+                    entry_text = f"#{rank}: {entry.score} turns - {entry.player_name[:15]} ({entry.date.strftime('%m/%d')})"
+                    entry_surf = pygame.font.SysFont('Consolas', int(h*0.018)).render(entry_text, True, rank_color)
+                    entry_x = w // 2 - entry_surf.get_width() // 2
+                    screen.blit(entry_surf, (entry_x, entry_y))
+                    entry_y += 20
+            
+            else:
+                no_scores_text = "No scores recorded yet for this seed."
+                no_scores_surf = desc_font.render(no_scores_text, True, gray)
+                no_scores_x = w // 2 - no_scores_surf.get_width() // 2
+                screen.blit(no_scores_surf, (no_scores_x, leaderboard_y + 30))
+    
+    except Exception as e:
+        error_text = f"Leaderboard error: {str(e)[:50]}..."
+        error_surf = desc_font.render(error_text, True, (255, 100, 100))
+        error_x = w // 2 - error_surf.get_width() // 2
+        screen.blit(error_surf, (error_x, leaderboard_y + 30))
+    
+    # Interactive menu buttons (matching config menu style)
+    # Dynamically choose first menu item based on context
+    first_button = "Launch New Game" if from_main_menu else "Play Again"
+    menu_items = [first_button, "Main Menu", "Settings", "Submit Feedback", "View Full Leaderboard"]
+    
+    button_width = int(w * 0.4)
+    button_height = int(h * 0.06)
+    start_y = int(h * 0.52)
+    
+    for i, item in enumerate(menu_items):
+        y = start_y + i * int(button_height + h * 0.02)
+        x = w // 2 - button_width // 2
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED  # Use FOCUSED instead of SELECTED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Create rect and draw button using correct parameters
+        button_rect = pygame.Rect(x, y, button_width, button_height)
+        draw_low_poly_button(screen, button_rect, item, button_state)
+    
+    # Instructions at bottom (matching config menu)
+    instructions = [
+        "Up/Down or mouse to navigate",
+        "Enter or click to select",
+        "Escape to return to main menu"
+    ]
+    
+    for i, inst in enumerate(instructions):
+        inst_surf = pygame.font.SysFont('Consolas', int(h*0.02)).render(inst, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        inst_y = int(h * 0.87) + i * int(h * 0.025)
+        screen.blit(inst_surf, (inst_x, inst_y))
+
+def draw_high_score_screen_legacy(screen: pygame.Surface, w: int, h: int, game_state, seed: str, submit_to_leaderboard: bool) -> None:
+    """
+    Legacy high score screen without interactive menu (for backward compatibility).
     """
     font_large = pygame.font.SysFont('Consolas', int(h * 0.035))
     font_medium = pygame.font.SysFont('Consolas', int(h * 0.02))

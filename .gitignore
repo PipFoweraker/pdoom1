@@ -75,3 +75,8 @@ tutorial_settings.json
 
 # User configuration files (modified during gameplay)
 configs/default.json
+
+# Development tools artifacts
+tools/temp/
+tools/test_output/
+tools/*.log

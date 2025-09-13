@@ -1,5 +1,5 @@
 # P(Doom): AI Safety Strategy Game
-**v0.4.0+hotfix1 "Strategic Menu Revolution"**
+**v0.4.1 "Bootstrap Economic Calibration" - Party Demo Ready**
 
 **Unregulated AI poses an existential threat to humanity.**
  
@@ -7,11 +7,12 @@ In this game, you manage a bootstrap AI safety lab with realistic funding constr
 
 Experience the challenge of running a scrappy nonprofit in the AI safety space - manage weekly cash flow, make strategic funding decisions, and scale your team while keeping doom levels low.
 
-**Latest Version:** v0.4.0+hotfix1 "Strategic Menu Revolution"
+**Latest Version:** v0.4.1 "Bootstrap Economic Calibration"
+- **Enhanced Leaderboard System**: Seed-specific competition with dual identity support
+- **Spectacular Game Over Screen**: Visual celebration for achievements with rank display
 - **Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
 - **Strategic Fundraising**: 4 funding approaches with risk/reward trade-offs  
-- **Menu Consolidation**: Research and funding options streamlined into strategic dialogs
-- **Verbose Activity Logging**: RPG-style detailed feedback on all actions
+- **Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
 - **$100k Starting Funds**: Sufficient runway to experiment with different strategies
 
 [PRIVACY] **PRIVACY-FIRST DESIGN** - Your data stays under your control  
@@ -86,8 +87,19 @@ ALTERNATIVE: DOWNLOAD ZIP
 5. Play: python main.py
 
 ================================================================================
-GAME FEATURES (v0.2.5)
+GAME FEATURES (v0.4.1) - PARTY DEMO READY
 ================================================================================
+
+🎉 **ENHANCED LEADERBOARD SYSTEM:**
+- **Seed-Specific Competition**: Each game seed has its own isolated leaderboard
+- **Dual Identity Support**: Separate player names and lab names for flexibility
+- **Visual Celebration**: Spectacular high score achievements with rank display
+- **Persistent Progress**: Track your improvement across multiple games
+
+🔊 **PARTY-READY AUDIO:**
+- **Sound Effects Enabled**: Audio feedback enabled by default for engaging demos
+- **Interactive Feedback**: Action point spending, hiring, and UI interaction sounds
+- **Professional Polish**: Popup dialogs with distinct open/close/accept sounds
 
 🆕 **PRIVACY-FIRST SYSTEMS:**
 - **Local-First Storage**: All your data stays on your device by default
@@ -268,6 +280,17 @@ RUNNING TESTS:
 
     # Test specific new systems
     python -m pytest tests/test_deterministic_rng.py tests/test_verbose_logging.py tests/test_leaderboard.py -v
+
+DEVELOPMENT TOOLS:
+    # Interactive development tool (convenient launcher)
+    python dev.py
+    
+    # Direct access to tools
+    python tools/dev_tool.py --test dual       # Test dual identity system
+    python tools/dev_tool.py --test leaderboard # Test leaderboard functionality
+    python tools/dev_tool.py --list            # List all available tests
+    
+    # See tools/README.md for complete development tool documentation
 
 DOCUMENTATION:
 - **Privacy Policy** (docs/PRIVACY.md) - Complete privacy documentation

@@ -180,6 +180,9 @@ class GameState:
         lab_name_manager = get_lab_name_manager()
         self.lab_name = lab_name_manager.get_random_lab_name(seed)
         
+        # Player identity (separate from lab branding)
+        self.player_name = "Anonymous"  # Can be customized by player
+        
         # Initialize economic configuration system
         self.economic_config = EconomicConfig()
         

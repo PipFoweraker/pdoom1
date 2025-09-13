@@ -3,16 +3,16 @@
 Welcome to P(DOOM): AI SAFETY STRATEGY GAME!  
 A bootstrap strategy game about managing a scrappy AI safety lab with realistic funding constraints.
 
-**NEW IN v0.4.0: STRATEGIC MENU REVOLUTION!** 
-- **Bootstrap Economic Model**: Weekly staff costs based on realistic AI safety researcher salaries
-- **Strategic Fundraising**: Choose from 4 funding approaches with different risk/reward profiles  
-- **Menu Consolidation**: Research and funding streamlined into strategic decision dialogs
-- **Verbose Activity Logging**: Detailed RPG-style feedback on all actions and outcomes
-- **$100k Starting Capital**: Sufficient runway to experiment with different growth strategies
+**NEW IN v0.4.1: PARTY-READY DEMO!** 
+- **Enhanced Leaderboards**: Seed-specific competition with spectacular achievement celebrations
+- **Dual Identity System**: Separate player names and lab names for flexible competition
+- **Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
+- **Spectacular Game Over**: Visual celebration screen with rank display and natural flow
+- **Context-Aware UX**: Smart button text that adapts to how you accessed screens
 
-**Current Version**: v0.4.0+hotfix1 "Strategic Menu Revolution" - Major economic rebalancing and menu overhaul
+**Current Version**: v0.4.1 "Bootstrap Economic Calibration" - Enhanced leaderboards and party-ready polish
 
-**Bootstrap Challenge**: Experience the real constraints of running an AI safety nonprofit - manage weekly cash flow, make strategic funding decisions, and scale your team efficiently while keeping doom levels low.
+**Bootstrap Challenge**: Experience the real constraints of running an AI safety nonprofit - manage weekly cash flow, make strategic funding decisions, and scale your team efficiently while keeping doom levels low. Now with competitive features to track your progress!
 
 ## Table of Contents
 - [Quick Setup](#quick-setup) (Line 31)

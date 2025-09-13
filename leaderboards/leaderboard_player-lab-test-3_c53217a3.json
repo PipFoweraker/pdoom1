@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-13T12:44:21.170230",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 36,
+      "player_name": "Synergy Labs",
+      "date": "2025-09-13T12:44:21.167449",
+      "level_reached": 36,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.007091,
+      "entry_uuid": "934e8649-27d9-4827-8617-7dce2d2f4d5b"
+    }
+  ]
+}
