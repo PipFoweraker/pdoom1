@@ -477,7 +477,7 @@ def handle_start_game_submenu_click(mouse_pos, w, h):
             
             if i == 0:  # Basic New Game (Default Global Seed)
                 seed = get_weekly_seed()
-                current_state = 'game'
+                current_state = 'pre_game_settings'  # Go to lab config screen first
             elif i == 1:  # Configure Game / Custom Seed
                 current_state = 'seed_selection'
                 seed_input = ""
@@ -500,7 +500,7 @@ def handle_start_game_submenu_keyboard(key):
     elif key == pygame.K_RETURN:
         if start_game_submenu_selected_item == 0:  # Basic New Game
             seed = get_weekly_seed()
-            current_state = 'game'
+            current_state = 'pre_game_settings'  # Go to lab config screen first
         elif start_game_submenu_selected_item == 1:  # Configure Game / Custom Seed
             current_state = 'seed_selection'
             seed_input = ""
@@ -567,7 +567,11 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
             selected_settings_item = i
             
             if i == 0:  # Continue button (now first)
-                current_state = 'seed_selection'
+                # If seed is already set (from Basic New Game), skip seed selection
+                if seed is not None:
+                    current_state = 'tutorial_choice'
+                else:
+                    current_state = 'seed_selection'
             else:
                 # Cycle through setting values when clicked
                 cycle_setting_value(i)
@@ -598,7 +602,11 @@ def handle_pre_game_settings_keyboard(key):
         selected_settings_item = (selected_settings_item + 1) % 5
     elif key == pygame.K_RETURN:
         if selected_settings_item == 0:  # Continue button (now first)
-            current_state = 'seed_selection'
+            # If seed is already set (from Basic New Game), skip seed selection
+            if seed is not None:
+                current_state = 'tutorial_choice'
+            else:
+                current_state = 'seed_selection'
         else:
             # Cycle through setting values
             cycle_setting_value(selected_settings_item)
