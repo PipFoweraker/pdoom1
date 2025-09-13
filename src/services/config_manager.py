@@ -92,7 +92,7 @@ class ConfigManager:
             
             # Game Balance - Starting Resources
             "starting_resources": {
-                "money": 2000,
+                "money": 100000,  # Bootstrap v0.4.1: $100k starting funds for party demo
                 "staff": 2,
                 "reputation": 50,
                 "action_points": 3,
