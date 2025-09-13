@@ -1,0 +1,319 @@
+name: Development Blog Automation
+
+on:
+  push:
+    branches: [ main ]
+    # Also trigger on feature branches to prepare entries
+    branches-ignore: []
+  
+  pull_request:
+    types: [closed]
+    branches: [ main ]
+
+  workflow_dispatch:
+    inputs:
+      entry_type:
+        description: 'Type of blog entry'
+        required: true
+        type: choice
+        options:
+          - 'milestone'
+          - 'development-session'
+          - 'feature-release'
+          - 'hotfix'
+        default: 'development-session'
+      title:
+        description: 'Blog entry title'
+        required: false
+        type: string
+      force_create:
+        description: 'Force create entry even if no significant changes'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  analyze-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_create_entry: ${{ steps.analysis.outputs.should_create_entry }}
+      entry_type: ${{ steps.analysis.outputs.entry_type }}
+      title: ${{ steps.analysis.outputs.title }}
+      summary: ${{ steps.analysis.outputs.summary }}
+      tags: ${{ steps.analysis.outputs.tags }}
+      
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 100  # Get enough history to analyze changes
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install gitpython pyyaml
+        
+    - name: Analyze changes and determine if blog entry needed
+      id: analysis
+      run: |
+        python << 'EOF'
+        import git
+        import json
+        import os
+        from datetime import datetime
+        import re
+        
+        repo = git.Repo('.')
+        
+        # Get recent commits (last 24 hours for push, or PR commits)
+        if "${{ github.event_name }}" == "pull_request":
+            # Analyze PR commits
+            base_sha = "${{ github.event.pull_request.base.sha }}"
+            head_sha = "${{ github.event.pull_request.head.sha }}"
+            commits = list(repo.iter_commits(f"{base_sha}..{head_sha}"))
+        else:
+            # Analyze recent commits on main
+            commits = list(repo.iter_commits('main', max_count=10))
+        
+        # Analyze commit messages for significance
+        significant_keywords = [
+            'feat:', 'feature:', 'fix:', 'refactor:', 'BREAKING:',
+            'milestone', 'release', 'complete', 'implement', 'add',
+            'enhance', 'improve', 'create', 'build', 'system'
+        ]
+        
+        # Analyze file changes
+        changed_files = []
+        lines_changed = 0
+        for commit in commits:
+            if commit.parents:  # Skip initial commit
+                diff = commit.parents[0].diff(commit)
+                for item in diff:
+                    if item.a_path:
+                        changed_files.append(item.a_path)
+                    lines_changed += (item.deleted_file and 100) or len(str(item.diff).split('\n'))
+        
+        # Determine significance
+        should_create = False
+        entry_type = "development-session"
+        title = ""
+        summary = ""
+        tags = ["development"]
+        
+        # Check for significant changes
+        significant_files = any(f.startswith(('src/', 'main.py', 'ui.py')) for f in changed_files)
+        significant_commits = any(any(kw in commit.message.lower() for kw in significant_keywords) 
+                                 for commit in commits)
+        major_changes = lines_changed > 500
+        
+        # Manual trigger override
+        if "${{ github.event_name }}" == "workflow_dispatch":
+            should_create = True
+            entry_type = "${{ github.event.inputs.entry_type }}"
+            title = "${{ github.event.inputs.title }}" or "Development Update"
+            
+        elif "${{ github.event_name }}" == "pull_request" and "${{ github.event.action }}" == "closed":
+            if "${{ github.event.pull_request.merged }}" == "true":
+                should_create = True
+                entry_type = "feature-release"
+                title = f"Feature Complete: ${{ github.event.pull_request.title }}"
+                summary = "${{ github.event.pull_request.body }}"[:200]
+                tags = ["feature", "merge", "pr"]
+                
+        elif significant_files and (significant_commits or major_changes):
+            should_create = True
+            title = f"Development Update: {datetime.now().strftime('%B %d, %Y')}"
+            
+            # Categorize by changes
+            if any('leaderboard' in f for f in changed_files):
+                tags.append("leaderboard")
+            if any('economic' in f for f in changed_files):
+                tags.append("economics")
+            if any('ui' in f.lower() for f in changed_files):
+                tags.append("ui")
+            if any('test' in f for f in changed_files):
+                tags.append("testing")
+                
+        # Override for force create
+        if "${{ github.event.inputs.force_create }}" == "true":
+            should_create = True
+            
+        print(f"::set-output name=should_create_entry::{str(should_create).lower()}")
+        print(f"::set-output name=entry_type::{entry_type}")
+        print(f"::set-output name=title::{title}")
+        print(f"::set-output name=summary::{summary}")
+        print(f"::set-output name=tags::{json.dumps(tags)}")
+        
+        print(f"Analysis: {len(commits)} commits, {len(set(changed_files))} files, {lines_changed} lines")
+        print(f"Significant files: {significant_files}, Significant commits: {significant_commits}")
+        print(f"Should create entry: {should_create}")
+        EOF
+
+  create-dev-blog-entry:
+    needs: analyze-changes
+    runs-on: ubuntu-latest
+    if: needs.analyze-changes.outputs.should_create_entry == 'true'
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 100
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Create development blog entry
+      run: |
+        python << 'EOF'
+        import os
+        import json
+        from datetime import datetime
+        import git
+        
+        # Get data from previous job
+        entry_type = "${{ needs.analyze-changes.outputs.entry_type }}"
+        title = "${{ needs.analyze-changes.outputs.title }}"
+        summary = "${{ needs.analyze-changes.outputs.summary }}"
+        tags = json.loads('${{ needs.analyze-changes.outputs.tags }}')
+        
+        # Generate content based on recent commits
+        repo = git.Repo('.')
+        recent_commits = list(repo.iter_commits('main', max_count=5))
+        
+        # Create filename
+        date_str = datetime.now().strftime('%Y-%m-%d')
+        slug = title.lower().replace(' ', '-').replace(':', '').replace(',', '')[:50]
+        filename = f"dev-blog/entries/{date_str}-{slug}.md"
+        
+        # Create content
+        commit_hash = recent_commits[0].hexsha[:7] if recent_commits else "unknown"
+        
+        frontmatter = f'''---
+title: "{title}"
+date: "{date_str}"
+tags: {json.dumps(tags)}
+summary: "{summary or 'Automated development blog entry based on recent code changes'}"
+commit: "{commit_hash}"
+automated: true
+---
+
+# {title}
+
+## Changes Overview
+
+This entry was automatically generated based on recent development activity.
+
+### Recent Commits
+'''
+        
+        content = frontmatter
+        
+        for commit in recent_commits[:5]:
+            content += f"- **{commit.hexsha[:7]}**: {commit.message.split(chr(10))[0]}\n"
+            
+        content += f"""
+### Files Modified
+
+Recent development has touched the following areas:
+"""
+        
+        # Get changed files from recent commits
+        changed_files = set()
+        for commit in recent_commits:
+            if commit.parents:
+                diff = commit.parents[0].diff(commit)
+                for item in diff:
+                    if item.a_path:
+                        changed_files.add(item.a_path)
+        
+        for file in sorted(list(changed_files)[:10]):  # Top 10 files
+            content += f"- `{file}`\n"
+            
+        content += f"""
+
+## Development Context
+
+- **Branch**: ${{ github.ref_name }}
+- **Event**: ${{ github.event_name }}
+- **Generated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}
+
+## Next Steps
+
+This automated entry captures the current development state. Manual entries may follow with more detailed analysis and screenshots.
+
+---
+
+*This entry was automatically generated by the P(Doom) development pipeline.*
+"""
+        
+        # Ensure directory exists
+        os.makedirs('dev-blog/entries', exist_ok=True)
+        
+        # Write file
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(content)
+            
+        print(f"Created blog entry: {filename}")
+        
+        # Update index
+        os.system('cd dev-blog && python generate_index.py')
+        
+        EOF
+        
+    - name: Commit and push blog entry
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add dev-blog/
+        
+        if ! git diff --cached --quiet; then
+          git commit -m "docs: Automated dev blog entry for ${{ needs.analyze-changes.outputs.title }} [skip ci]"
+          git push
+          echo "Blog entry created and pushed"
+        else
+          echo "No blog changes to commit"
+        fi
+
+  update-blog-index:
+    runs-on: ubuntu-latest
+    needs: create-dev-blog-entry
+    if: always() && needs.create-dev-blog-entry.result == 'success'
+    
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: main  # Make sure we get the latest changes
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Regenerate blog index
+      run: |
+        cd dev-blog
+        python generate_index.py
+        
+    - name: Update index if changed
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        if ! git diff --quiet dev-blog/index.json; then
+          git add dev-blog/index.json
+          git commit -m "docs: Update dev blog index [skip ci]"
+          git push
+          echo "Blog index updated"
+        else
+          echo "Blog index unchanged"
+        fi

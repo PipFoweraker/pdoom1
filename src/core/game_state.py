@@ -279,6 +279,11 @@ class GameState:
         from src.features.technical_failures import TechnicalFailureCascades
         self.technical_failures = TechnicalFailureCascades(self)
         
+        # Enhanced Leaderboard System for v0.4.1
+        from src.scores.enhanced_leaderboard import leaderboard_manager
+        self.leaderboard_manager = leaderboard_manager
+        self.leaderboard_manager.start_game_session(self)
+        
         # Context window tracking
         self.context_window_minimized = False
         self.current_context_info = None
@@ -358,7 +363,7 @@ class GameState:
         # Turn Processing State for reliable input handling
         self.turn_processing = False  # True during turn transition
         self.turn_processing_timer = 0  # Timer for turn transition duration
-        self.turn_processing_duration = 30  # Frames for turn transition (1 second at 30 FPS)
+        self.turn_processing_duration = 3  # Frames for turn transition (minimal delay, extensible)
         
         # Game Flow Improvements
         self.delayed_actions = []  # Actions that resolve after N turns
@@ -2621,8 +2626,19 @@ class GameState:
             if log_path:
                 self.messages.append(f"Game log saved to: {log_path}")
 
-        # Save high score if achieved
+        # Save high score if achieved (legacy system)
         self.save_highscore()
+        
+        # Save to enhanced leaderboard system
+        if hasattr(self, 'leaderboard_manager') and self.leaderboard_manager.current_session:
+            try:
+                is_high_score, rank, session_data = self.leaderboard_manager.end_game_session(self)
+                if is_high_score:
+                    self.messages.append(f"New high score! Ranked #{rank} for seed '{self.seed}'")
+                else:
+                    self.messages.append(f"Game complete! Ranked #{rank} for seed '{self.seed}'")
+            except Exception as e:
+                self.messages.append(f"Warning: Could not save to leaderboard: {e}")
         
         # Process delayed actions
         self.process_delayed_actions()

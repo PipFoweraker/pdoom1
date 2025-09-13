@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-13T11:21:36.376080",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Anonymous",
+      "date": "2025-09-13T11:17:18.048610",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 3.666186,
+      "entry_uuid": "631a91a2-353c-47eb-8785-e6fd43c2c364"
+    },
+    {
+      "score": 1,
+      "player_name": "Anonymous",
+      "date": "2025-09-13T11:21:36.359208",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 12.198839,
+      "entry_uuid": "77a13f0d-c5fa-480d-b765-fb45a625909d"
+    }
+  ]
+}

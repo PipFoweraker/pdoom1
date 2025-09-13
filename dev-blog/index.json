@@ -1,6 +1,46 @@
 {
   "entries": [
     {
+      "filename": "2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
+      "slug": "2025-09-13-enhanced-leaderboard-system-v0-4-1",
+      "path": "entries/2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
+      "frontmatter": {
+        "title": "Enhanced Leaderboard System v0.4.1: Seed Competition",
+        "date": "2025-09-13",
+        "tags": [
+          "milestone",
+          "leaderboard",
+          "bootstrap-economics",
+          "ui",
+          "competition"
+        ],
+        "summary": "Major competitive gaming milestone: seed-specific leaderboards, lab name integration, bootstrap economic model, and comprehensive session tracking",
+        "commit": "2dd48ac"
+      },
+      "word_count": 317,
+      "file_size": 2812,
+      "modified_at": "2025-09-13T12:26:56.982730"
+    },
+    {
+      "filename": "2025-09-11-debug-console-system.md",
+      "slug": "2025-09-11-debug-console-system",
+      "path": "entries/2025-09-11-debug-console-system.md",
+      "frontmatter": {
+        "title": "Debug Console System",
+        "date": "2025-09-11",
+        "tags": [
+          "debug",
+          "ui",
+          "development"
+        ],
+        "summary": "Added real-time debug console with backtick toggle for game state monitoring",
+        "commit": "7aa2673"
+      },
+      "word_count": 181,
+      "file_size": 1528,
+      "modified_at": "2025-09-12T21:45:50.665884"
+    },
+    {
       "filename": "2025-09-10-major-type-annotation-milestone.md",
       "slug": "2025-09-10-major-type-annotation-milestone",
       "path": "entries/2025-09-10-major-type-annotation-milestone.md",
@@ -18,7 +58,7 @@
       },
       "word_count": 606,
       "file_size": 5162,
-      "modified_at": "2025-09-10T09:19:00.614088"
+      "modified_at": "2025-09-10T12:21:12.687333"
     },
     {
       "filename": "2025-09-10-type-annotation-sprint.md",
@@ -38,7 +78,7 @@
       },
       "word_count": 517,
       "file_size": 4598,
-      "modified_at": "2025-09-10T10:30:19.717317"
+      "modified_at": "2025-09-10T12:21:12.689361"
     }
   ],
   "config": {
@@ -81,12 +121,13 @@
     }
   },
   "errors": [
-    "2025-09-10-version-0-2-12-release.md: Title exceeds 60 character limit"
+    "2025-09-10-version-0-2-12-release.md: Title exceeds 60 character limit",
+    "2025-09-11-v0-3-0-consolidated-release.md: Title exceeds 60 character limit"
   ],
   "stats": {
-    "total_entries": 2,
-    "total_errors": 1,
-    "latest_entry": "2025-09-10"
+    "total_entries": 4,
+    "total_errors": 2,
+    "latest_entry": "2025-09-13"
   },
-  "generated_at": "2025-09-10T10:35:50.796579"
+  "generated_at": "2025-09-13T12:27:41.830006"
 }
