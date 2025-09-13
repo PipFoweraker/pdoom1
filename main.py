@@ -98,6 +98,7 @@ pygame.display.flip()
 # Panel stack tracking for navigation depth
 navigation_stack = []
 current_state = 'main_menu'
+game_state = None  # Global game state variable
 selected_menu_item = 0  # For keyboard navigation
 menu_items = ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
 start_game_submenu_items = ["Basic New Game (Default Global Seed)", "Configure Game / Custom Seed", "Config Settings", "Game Options"]
@@ -1610,7 +1611,7 @@ def main():
     """
     global seed, seed_input, current_state, screen, SCREEN_W, SCREEN_H, selected_menu_item, overlay_scroll
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
-    global end_game_selected_item, high_score_submit_to_leaderboard
+    global end_game_selected_item, high_score_submit_to_leaderboard, game_state
     # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
     global first_time_help_content, first_time_help_close_button, current_tutorial_content, current_help_mechanic
     global overlay_content, overlay_title
@@ -1625,8 +1626,7 @@ def main():
     # Escape handling variables
     global escape_count, escape_timer
     
-    # Initialize game state as None - will be created when game starts
-    game_state = None
+    # Game state is initialized globally
     tooltip_text = None
     # Initialize cached hiring dialog rects
     cached_hiring_dialog_rects = None
