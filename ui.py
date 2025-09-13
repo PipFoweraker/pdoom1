@@ -4049,9 +4049,11 @@ def draw_pre_game_settings(screen: pygame.Surface, w: int, h: int, settings: Dic
     subtitle_y = title_y + title_surf.get_height() + 5
     screen.blit(subtitle_surf, (subtitle_x, subtitle_y))
     
-    # Enhanced settings with realistic options
+    # Enhanced settings with realistic options including identity fields
     settings_options = [
         ("Continue", "> INITIALIZE LABORATORY"),
+        ("Player Name", settings.get("player_name", "Anonymous")),
+        ("Laboratory Name", settings.get("lab_name", "") or "[Auto-Generated]"),
         ("Research Intensity", get_research_intensity_display(settings.get("difficulty", "STANDARD"))),
         ("Audio Alerts Volume", get_volume_display(settings.get("sound_volume", 80))),
         ("Visual Enhancement", get_graphics_display(settings.get("graphics_quality", "STANDARD"))),
@@ -4081,7 +4083,20 @@ def draw_pre_game_settings(screen: pygame.Surface, w: int, h: int, settings: Dic
         if i == 0:  # Continue button (now first)
             text = setting_value
         else:  # Setting items with values
-            text = f"{setting_name}: {setting_value}"
+            # Special handling for name fields to show input mode
+            if (i == 1 or i == 2) and setting_name in ["Player Name", "Laboratory Name"]:
+                # Check if this field is in text input mode (avoid circular import)
+                try:
+                    import main
+                    is_editing = (main.text_input_active and 
+                                main.text_input_field == ("player_name" if i == 1 else "lab_name"))
+                except:
+                    is_editing = False
+                cursor = " |" if is_editing else ""
+                display_value = setting_value if setting_value else "[Click to enter]"
+                text = f"{setting_name}: {display_value}{cursor}"
+            else:
+                text = f"{setting_name}: {setting_value}"
         
         # Draw enhanced button
         if i == 0:  # Continue button gets special treatment (now first)

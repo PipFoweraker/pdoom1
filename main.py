@@ -131,11 +131,17 @@ pre_game_settings = {
     "music_volume": 70,
     "sound_volume": 80,
     "graphics_quality": "STANDARD",
-    "safety_level": "STANDARD"
+    "safety_level": "STANDARD",
+    "player_name": "Anonymous",
+    "lab_name": ""  # Will be auto-generated if left empty
 }
 selected_settings_item = 0
 seed_choice = "weekly"  # "weekly" or "custom"
 tutorial_enabled = False  # Default to no tutorial
+
+# Text input for name fields
+text_input_active = False
+text_input_field = ""  # "player_name" or "lab_name"
 
 # Tutorial state
 current_tutorial_content = None
@@ -555,8 +561,8 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
     
     mx, my = mouse_pos
     
-    # Settings items (4 settings + 1 continue button)
-    num_items = 5
+    # Settings items (6 settings + 1 continue button = 7 total)
+    num_items = 7
     
     for i in range(num_items):
         button_x = center_x - button_width // 2
@@ -594,12 +600,30 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
 
 def handle_pre_game_settings_keyboard(key):
     """Handle keyboard navigation for pre-game settings screen."""
-    global selected_settings_item, current_state, pre_game_settings
+    global selected_settings_item, current_state, pre_game_settings, text_input_active, text_input_field
     
+    # Handle text input mode first
+    if text_input_active:
+        if key == pygame.K_RETURN:
+            # Exit text input mode
+            text_input_active = False
+            text_input_field = ""
+        elif key == pygame.K_ESCAPE:
+            # Cancel text input, revert changes
+            text_input_active = False
+            text_input_field = ""
+        elif key == pygame.K_BACKSPACE:
+            # Remove last character
+            if text_input_field and pre_game_settings[text_input_field]:
+                pre_game_settings[text_input_field] = pre_game_settings[text_input_field][:-1]
+        # Other text input will be handled by TEXTINPUT event
+        return
+    
+    # Normal navigation mode
     if key == pygame.K_UP:
-        selected_settings_item = (selected_settings_item - 1) % 5
+        selected_settings_item = (selected_settings_item - 1) % 7  # Updated for 2 new name fields
     elif key == pygame.K_DOWN:
-        selected_settings_item = (selected_settings_item + 1) % 5
+        selected_settings_item = (selected_settings_item + 1) % 7  # Updated for 2 new name fields
     elif key == pygame.K_RETURN:
         if selected_settings_item == 0:  # Continue button (now first)
             # If seed is already set (from Basic New Game), skip seed selection
@@ -625,16 +649,24 @@ def handle_pre_game_settings_keyboard(key):
 
 def cycle_setting_value(setting_index, reverse=False):
     """Cycle through available values for a setting."""
-    global pre_game_settings
+    global pre_game_settings, text_input_active, text_input_field
     
-    if setting_index == 1:  # Research Intensity (Difficulty) - now at index 1
+    if setting_index == 1:  # Player Name - activate text input mode
+        text_input_active = True
+        text_input_field = "player_name"
+        
+    elif setting_index == 2:  # Lab Name - activate text input mode
+        text_input_active = True
+        text_input_field = "lab_name"
+        
+    elif setting_index == 3:  # Research Intensity (Difficulty) - now at index 3
         options = ["EASY", "STANDARD", "HARD"]
         current = pre_game_settings["difficulty"]
         current_idx = options.index(current) if current in options else 1
         new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
         pre_game_settings["difficulty"] = options[new_idx]
         
-    elif setting_index == 2:  # Audio Alerts Volume (Sound Volume) - now at index 2
+    elif setting_index == 4:  # Audio Alerts Volume (Sound Volume) - now at index 4
         options = [30, 50, 70, 80, 90, 100]
         current = pre_game_settings["sound_volume"]
         try:
@@ -644,14 +676,14 @@ def cycle_setting_value(setting_index, reverse=False):
         new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
         pre_game_settings["sound_volume"] = options[new_idx]
         
-    elif setting_index == 3:  # Visual Enhancement (Graphics Quality) - now at index 3
+    elif setting_index == 5:  # Visual Enhancement (Graphics Quality) - now at index 5
         options = ["LOW", "STANDARD", "HIGH"]
         current = pre_game_settings["graphics_quality"]
         current_idx = options.index(current) if current in options else 1
         new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
         pre_game_settings["graphics_quality"] = options[new_idx]
         
-    elif setting_index == 4:  # Safety Protocol Level - now at index 4
+    elif setting_index == 6:  # Safety Protocol Level - now at index 6
         options = ["MINIMAL", "STANDARD", "ENHANCED", "MAXIMUM"]
         current = pre_game_settings["safety_level"]
         current_idx = options.index(current) if current in options else 1
@@ -1932,6 +1964,13 @@ def main():
                                     game_state.sound_manager.play_ap_spend_sound()
                                 tooltip_text = result
                         
+                elif event.type == pygame.TEXTINPUT:
+                    # Handle text input for name fields in pre_game_settings
+                    if current_state == 'pre_game_settings' and text_input_active and text_input_field:
+                        # Add character to the current field (with length limit)
+                        if len(pre_game_settings[text_input_field]) < 30:  # Max 30 characters
+                            pre_game_settings[text_input_field] += event.text
+                        
                 elif event.type == pygame.MOUSEMOTION:
                     # Handle window manager motion events first (for dragging)
                     if current_state == 'game' and window_manager.handle_mouse_event(event, SCREEN_W, SCREEN_H):
@@ -2358,6 +2397,13 @@ def main():
             # Create game state when entering game for first time
             if current_state == 'game' and game_state is None:
                 game_state = GameState(seed)
+                
+                # Apply custom names from pre_game_settings
+                if pre_game_settings.get("player_name") and pre_game_settings["player_name"] != "Anonymous":
+                    game_state.player_name = pre_game_settings["player_name"]
+                
+                if pre_game_settings.get("lab_name") and pre_game_settings["lab_name"]:
+                    game_state.lab_name = pre_game_settings["lab_name"]
                 
                 # Sync sound state from global sound manager to game state
                 game_state.sound_manager.set_enabled(global_sound_manager.is_enabled())
