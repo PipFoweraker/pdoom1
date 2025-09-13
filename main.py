@@ -2217,7 +2217,7 @@ def main():
                                 
                                 # Check for popup events - allow end turn but give feedback
                                 elif (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
-                                    game_state.add_message("Please resolve the pending events before ending turn")
+                                    game_state.messages.append("Please resolve the pending events before ending turn")
                                     if hasattr(game_state, 'sound_manager'):
                                         game_state.sound_manager.play_sound('error_beep')
                                 else:

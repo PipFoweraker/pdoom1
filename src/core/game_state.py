@@ -491,6 +491,15 @@ class GameState:
                     else:
                         self._previous_multi_spend = True
 
+    def add_message(self, message: str) -> None:
+        """
+        Add a message to the game's message log.
+        
+        Args:
+            message (str): The message to add
+        """
+        self.messages.append(message)
+
     def can_delegate_action(self, action: Dict[str, Any]) -> bool:
         """
         Check if an action can be delegated based on staff requirements.
