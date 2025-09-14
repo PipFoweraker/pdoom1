@@ -1,0 +1,71 @@
+name: Deploy to DreamHost
+
+on:
+  push:
+    branches: [ pdoom1-website ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Validate secrets
+      run: |
+        if [ -z "${{ secrets.DH_HOST }}" ]; then
+          echo "Error: DH_HOST secret not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.DH_USER }}" ]; then
+          echo "Error: DH_USER secret not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.DH_PATH }}" ]; then
+          echo "Error: DH_PATH secret not set"
+          exit 1
+        fi
+        if [ -z "${{ secrets.DH_SSH_KEY }}" ]; then
+          echo "Error: DH_SSH_KEY secret not set"
+          exit 1
+        fi
+        echo "All required secrets are configured"
+    
+    - name: Setup SSH key
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.DH_SSH_KEY }}" > ~/.ssh/dreamhost_key
+        chmod 600 ~/.ssh/dreamhost_key
+        ssh-keyscan -p ${{ secrets.DH_PORT || '22' }} ${{ secrets.DH_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Test SSH connection
+      run: |
+        ssh -i ~/.ssh/dreamhost_key -p ${{ secrets.DH_PORT || '22' }} -o StrictHostKeyChecking=no ${{ secrets.DH_USER }}@${{ secrets.DH_HOST }} "echo 'SSH connection successful'"
+        
+    - name: Create remote directory
+      run: |
+        ssh -i ~/.ssh/dreamhost_key -p ${{ secrets.DH_PORT || '22' }} -o StrictHostKeyChecking=no ${{ secrets.DH_USER }}@${{ secrets.DH_HOST }} "mkdir -p ${{ secrets.DH_PATH }}"
+        
+    - name: Deploy files (dry run)
+      run: |
+        rsync -avz --dry-run --delete \
+          -e "ssh -i ~/.ssh/dreamhost_key -p ${{ secrets.DH_PORT || '22' }} -o StrictHostKeyChecking=no" \
+          --exclude='.git*' \
+          --exclude='node_modules' \
+          --exclude='*.log' \
+          ./ ${{ secrets.DH_USER }}@${{ secrets.DH_HOST }}:${{ secrets.DH_PATH }}/
+        
+    - name: Deploy files (actual)
+      run: |
+        rsync -avz --delete \
+          -e "ssh -i ~/.ssh/dreamhost_key -p ${{ secrets.DH_PORT || '22' }} -o StrictHostKeyChecking=no" \
+          --exclude='.git*' \
+          --exclude='node_modules' \
+          --exclude='*.log' \
+          ./ ${{ secrets.DH_USER }}@${{ secrets.DH_HOST }}:${{ secrets.DH_PATH }}/
+        
+    - name: Verify deployment
+      run: |
+        ssh -i ~/.ssh/dreamhost_key -p ${{ secrets.DH_PORT || '22' }} -o StrictHostKeyChecking=no ${{ secrets.DH_USER }}@${{ secrets.DH_HOST }} "ls -la ${{ secrets.DH_PATH }}/ | head -10"
