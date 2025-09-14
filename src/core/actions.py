@@ -1,8 +1,13 @@
 import random
+from typing import TYPE_CHECKING
+
 from src.core.action_rules import manager_unlock_rule, scout_unlock_rule, search_unlock_rule
 from src.core.research_quality import ResearchQuality
 
-def execute_fundraising_action(gs):
+if TYPE_CHECKING:
+    from src.core.game_state import GameState
+
+def execute_fundraising_action(gs: 'GameState') -> None:
     """
     Execute enhanced fundraising action using economic cycles system.
     
@@ -60,7 +65,7 @@ def execute_fundraising_action(gs):
         gs.advanced_funding_unlocked = True
         gs.messages.append("Advanced funding strategies now available!")
 
-def execute_series_a_funding(gs):
+def execute_series_a_funding(gs: 'GameState') -> None:
     """Execute Series A venture capital funding round."""
     from src.features.economic_cycles import FundingSource
     
@@ -90,7 +95,7 @@ def execute_series_a_funding(gs):
     gs.messages.append(f"Series A completed: ${final_amount}k from institutional VCs")
     gs.messages.append(f"Market conditions: {phase.lower()}")
 
-def execute_government_grant_application(gs):
+def execute_government_grant_application(gs: 'GameState') -> None:
     """Execute government grant application."""
     from src.features.economic_cycles import FundingSource
     
@@ -121,7 +126,7 @@ def execute_government_grant_application(gs):
     # Small reputation boost for government validation
     gs._add('reputation', 1)
 
-def execute_corporate_partnership(gs):
+def execute_corporate_partnership(gs: 'GameState') -> None:
     """Execute corporate strategic partnership."""
     from src.features.economic_cycles import FundingSource
     
@@ -153,7 +158,7 @@ def execute_corporate_partnership(gs):
     else:
         gs.messages.append("Partnership comes with operational constraints")
 
-def execute_revenue_diversification(gs):
+def execute_revenue_diversification(gs: 'GameState') -> None:
     """Execute revenue diversification strategy."""
     from src.features.economic_cycles import FundingSource
     
@@ -185,7 +190,7 @@ def execute_revenue_diversification(gs):
         gs.messages.append("Significant revenue diversification achieved - reduced funding dependence!")
         gs._add('reputation', 2)
 
-def execute_research_action(gs, action_name: str, base_doom_reduction: int, base_reputation_gain: int):
+def execute_research_action(gs: 'GameState', action_name: str, base_doom_reduction: int, base_reputation_gain: int) -> None:
     """
     Execute a research action using the research quality system.
     
@@ -259,7 +264,7 @@ def get_quality_description_suffix(gs) -> str:
 
 # Technical Failure Cascade Prevention Actions for Issue #193
 
-def execute_incident_response_upgrade(gs):
+def execute_incident_response_upgrade(gs: 'GameState') -> None:
     """Execute incident response capability upgrade."""
     if not hasattr(gs, 'technical_failures'):
         gs.messages.append("Incident response training conducted for all staff")
@@ -273,7 +278,7 @@ def execute_incident_response_upgrade(gs):
     else:
         gs.messages.append("Insufficient funds for incident response upgrade")
 
-def execute_monitoring_systems_upgrade(gs):
+def execute_monitoring_systems_upgrade(gs: 'GameState') -> None:
     """Execute monitoring systems upgrade."""
     if not hasattr(gs, 'technical_failures'):
         gs.messages.append("Monitoring systems enhanced for better oversight")
@@ -287,7 +292,7 @@ def execute_monitoring_systems_upgrade(gs):
     else:
         gs.messages.append("Insufficient funds for monitoring system upgrade")
 
-def execute_communication_protocols_upgrade(gs):
+def execute_communication_protocols_upgrade(gs: 'GameState') -> None:
     """Execute communication protocols upgrade."""
     if not hasattr(gs, 'technical_failures'):
         gs.messages.append("Communication protocols standardized across organization")
@@ -301,7 +306,7 @@ def execute_communication_protocols_upgrade(gs):
     else:
         gs.messages.append("Insufficient funds for communication protocol upgrade")
 
-def execute_safety_audit(gs):
+def execute_safety_audit(gs: 'GameState') -> None:
     """Execute comprehensive safety audit to reduce technical debt and prevent failures."""
     audit_cost = 60
     
