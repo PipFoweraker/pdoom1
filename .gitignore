@@ -25,7 +25,12 @@ MANIFEST
 
 # PyInstaller
 *.manifest
-*.spec
+# Keep .spec files for build configuration
+# *.spec
+
+# PyInstaller build directories
+build/
+dist/
 
 # Unit test / coverage
 htmlcov/

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2025-09-13T16:01:32.052171",
+  "created": "2025-09-14T02:22:07.354981",
   "max_entries": 50,
   "entries": [
     {
@@ -29,6 +29,15 @@
       "game_mode": "Bootstrap_v0.4.1",
       "duration_seconds": 1.1e-05,
       "entry_uuid": "4652a781-6f85-4128-9960-5dac250b25e3"
+    },
+    {
+      "score": 1,
+      "player_name": "Pulsar AI",
+      "date": "2025-09-14T02:22:07.341927",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.057518,
+      "entry_uuid": "6f5ca8b6-ebd3-4f28-821f-fecaece08048"
     }
   ]
 }
