@@ -92,7 +92,7 @@ class ConfigManager:
             
             # Game Balance - Starting Resources
             "starting_resources": {
-                "money": 2000,
+                "money": 100000,
                 "staff": 2,
                 "reputation": 50,
                 "action_points": 3,
