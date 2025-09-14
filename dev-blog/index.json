@@ -1,24 +1,25 @@
 {
   "entries": [
     {
-      "filename": "2025-09-14-dead-code-analysis-complete.md",
-      "slug": "2025-09-14-dead-code-analysis-complete",
-      "path": "entries/2025-09-14-dead-code-analysis-complete.md",
+      "filename": "2025-09-14-pyinstaller-implementation.md",
+      "slug": "2025-09-14-pyinstaller-implementation",
+      "path": "entries/2025-09-14-pyinstaller-implementation.md",
       "frontmatter": {
-        "title": "Dead Code Analysis and Refactoring Planning Complete",
+        "title": "PyInstaller Windows Distribution Implementation",
         "date": "2025-09-14",
         "tags": [
-          "analysis",
-          "refactoring",
-          "technical-debt",
-          "planning"
+          "distribution",
+          "pyinstaller",
+          "windows",
+          "packaging",
+          "alpha-beta"
         ],
-        "summary": "Comprehensive analysis of legacy code patterns and creation of prioritized refactoring plan for monolith breakdown preparation",
-        "commit": "TBD"
+        "summary": "Implemented complete PyInstaller Windows .exe distribution system with asset bundling, resource management, and build automation for alpha/beta testing",
+        "commit": "ccc6e7a"
       },
-      "word_count": 349,
-      "file_size": 3041,
-      "modified_at": "2025-09-14T14:17:16.994110"
+      "word_count": 717,
+      "file_size": 6190,
+      "modified_at": "2025-09-14T14:57:21.522435"
     },
     {
       "filename": "2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
@@ -149,5 +150,5 @@
     "total_errors": 2,
     "latest_entry": "2025-09-14"
   },
-  "generated_at": "2025-09-14T14:19:14.959261"
+  "generated_at": "2025-09-14T15:01:16.517000"
 }

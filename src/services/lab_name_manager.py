@@ -9,9 +9,9 @@ This module provides functionality for:
 """
 
 import csv
-import os
 from typing import List, Tuple, Optional
 from src.services.deterministic_rng import get_rng
+from src.services.resource_manager import get_asset_path
 
 class LabNameManager:
     """Manages lab names for the player's organization"""
@@ -22,7 +22,7 @@ class LabNameManager:
     
     def _load_lab_names(self) -> None:
         """Load lab names from CSV file"""
-        csv_path = os.path.join("assets", "lab_names.csv")
+        csv_path = get_asset_path("lab_names.csv")
         
         try:
             with open(csv_path, 'r', encoding='utf-8') as file:
