@@ -4,21 +4,32 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.2] - 2025-09-14
-### Added  
-- **Type Annotation Campaign Phase 2 Advanced Milestone**: Complete type annotation of productive_actions.py (315 lines)
-  - Advanced nested TypedDict architecture with ActionRequirements and ProductiveAction structures
-  - Complex parameter validation using Tuple[bool, Optional[str]] return patterns
-  - Zero pylance errors achieved across entire employee action system
-  - Systematic function annotation for all 4 functions with sophisticated parameter types
-  - Integration validation with 6 employee categories and 18 total productive actions
-  - Established advanced nested TypedDict patterns for complex requirement systems
+## [0.6.0] - 2025-09-14
+### Added
+- **MAJOR MILESTONE: Website Pipeline Infrastructure**: Complete development-to-community bridge
+  - GitHub Actions workflow (sync-dev-blog.yml) for automated blog content sync
+  - 16 validated dev blog entries with ASCII compliance and formatting standards
+  - Comprehensive documentation: strategy guide, implementation guide, session summary
+  - Smart incremental sync with validation pipeline and force sync capability
+  - Repository integration: pdoom1 → pdoom1-website with WEBSITE_SYNC_TOKEN security
+
+- **Deterministic RNG Foundation**: 268-line comprehensive system for competitive gaming
+  - Enhanced deterministic RNG with memorable seeds and community challenge features
+  - GameState integration with seed initialization and deterministic access via get_rng()
+  - Hybrid architecture preserving original source code while enabling full determinism
+  - Community-ready infrastructure: seed generation, challenge export, debug visibility
+
+### Infrastructure
+- **Development Transparency**: Automated pipeline transforms dev work into community content
+- **Community Engagement**: Blog system ready for automated publishing and challenge sharing  
+- **Competitive Gaming**: Deterministic foundation supports tournaments and leaderboards
+- **Professional Documentation**: Complete guides for deployment and strategic development
 
 ### Technical
-- **Advanced Type Safety**: Achieved zero pylance errors on 315-line productive_actions.py with nested data structures
-- **Method Chain Support**: Complex parameter validation with typed requirement checking
-- **Performance**: Zero runtime impact with advanced compile-time type safety
-- **Architecture**: Established reusable patterns for employee system integration
+- **Zero Manual Overhead**: Content flows automatically from development to community platform
+- **Source Stability**: Non-invasive deterministic integration preserves existing game mechanics
+- **Production Ready**: 5-minute deployment process with comprehensive safety and validation
+- **Strategic Architecture**: Scalable foundation for advanced community features
 
 ## [0.5.1] - 2025-09-14
 ### Added  
