@@ -1,5 +1,6 @@
 import random
 from typing import Dict, List, Optional, Tuple, Union, Any
+from src.services.deterministic_rng import get_rng
 
 class Opponent:
     """

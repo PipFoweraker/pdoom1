@@ -11,7 +11,7 @@ from src.core.events import EVENTS
 from src.services.game_logger import GameLogger
 from src.services.sound_manager import SoundManager
 from src.services.game_clock import GameClock
-from src.services.deterministic_rng import init_deterministic_rng
+from src.services.deterministic_rng import init_deterministic_rng, get_rng
 from src.services.verbose_logging import init_verbose_logging, LogLevel
 from src.services.leaderboard import init_leaderboard_system
 from src.core.opponents import create_default_opponents
@@ -466,10 +466,8 @@ class GameState:
             "Ethics review board examines AI deployment policies."
         ]
         
-        # Use turn number to ensure consistent news per turn
-        random.seed(f"news_{self.seed}_{self.turn}")
-        selected_news = random.choice(news_items)
-        random.seed()  # Reset to normal randomness
+        # Use deterministic RNG for consistent news per turn
+        selected_news = get_rng().choice(news_items, f"news_generation_turn_{self.turn}")
         
         return f"[NEWS] Day {self.turn + 1}: {selected_news}"
     
@@ -1322,16 +1320,16 @@ class GameState:
         
     def _board_search(self) -> None:
         """Perform board-mandated search action with 20% success rate"""
-        if random.random() < 0.2:  # 20% success rate
+        if get_rng().random(f"board_search_success_turn_{self.turn}") < 0.2:  # 20% success rate
             # Successful search - find something valuable
             search_results = [
                 ("regulatory compliance", lambda: self._add('reputation', 3)),
-                ("cost savings opportunity", lambda: self._add('money', random.randint(200, 500))),
+                ("cost savings opportunity", lambda: self._add('money', get_rng().randint(200, 500, f"board_search_money_turn_{self.turn}"))),
                 ("process efficiency", lambda: self._add('doom', -2, "board search found process improvement")),
                 ("staff optimization", lambda: None)  # Just a message
             ]
             
-            result_name, result_effect = random.choice(search_results)
+            result_name, result_effect = get_rng().choice(search_results, f"board_search_result_turn_{self.turn}")
             result_effect()
             self.messages.append(f"Search successful! Discovered {result_name}.")
             
@@ -1348,7 +1346,7 @@ class GameState:
                 "Investigation remains ongoing with no conclusive results.",
                 "Search parameters require refinement for better outcomes."
             ]
-            self.messages.append(random.choice(search_failures))
+            self.messages.append(get_rng().choice(search_failures, f"board_search_failure_turn_{self.turn}"))
             
         return None
             
@@ -1467,8 +1465,9 @@ class GameState:
         for blob in self.employee_blobs:
             if blob['productivity'] > 0:
                 # Each productive employee has a chance to contribute to research
-                if random.random() < 0.3:  # 30% chance per productive employee
-                    base_research = random.randint(1, 3)
+                blob_id = blob.get('id', len(self.employee_blobs))  # Use blob ID for deterministic context
+                if get_rng().random(f"employee_research_chance_turn_{self.turn}_blob_{blob_id}") < 0.3:  # 30% chance per productive employee
+                    base_research = get_rng().randint(1, 3, f"employee_research_amount_turn_{self.turn}_blob_{blob_id}")
                     # Apply productive action bonus
                     bonus_research = int(base_research * blob['productive_action_bonus'])
                     research_gained += bonus_research
@@ -1543,7 +1542,7 @@ class GameState:
             # Try to discover a new opponent
             undiscovered = [opp for opp in self.opponents if not opp.discovered]
             if undiscovered:
-                target = random.choice(undiscovered)
+                target = get_rng().choice(undiscovered, f"scout_discover_opponent_turn_{self.turn}")
                 target.discover()
                 self.messages.append(f"Scouting: Discovered new competitor '{target.name}'!")
                 self.messages.append(f"'{target.description}'")
@@ -1552,13 +1551,13 @@ class GameState:
             return None
             
         # Choose a discovered opponent to scout
-        target = random.choice(discovered_opponents)
+        target = get_rng().choice(discovered_opponents, f"scout_target_selection_turn_{self.turn}")
         
         # Choose what to scout based on what's still unknown
         unknown_stats = [stat for stat, discovered in target.discovered_stats.items() if not discovered]
         
         if unknown_stats:
-            stat_to_scout = random.choice(unknown_stats)
+            stat_to_scout = get_rng().choice(unknown_stats, f"scout_stat_selection_turn_{self.turn}")
         else:
             # All stats known, scout progress for an update
             stat_to_scout = 'progress'
@@ -1578,7 +1577,7 @@ class GameState:
             # Try to discover a new opponent
             undiscovered = [opp for opp in self.opponents if not opp.discovered]
             if undiscovered:
-                target = random.choice(undiscovered)
+                target = get_rng().choice(undiscovered, f"espionage_discover_opponent_turn_{self.turn}")
                 target.discover()
                 self.messages.append(f"Espionage: Discovered new competitor '{target.name}'!")
             else:
@@ -1586,9 +1585,9 @@ class GameState:
             return None
             
         # Scout a random stat from a discovered opponent
-        target = random.choice(discovered_opponents)
+        target = get_rng().choice(discovered_opponents, f"espionage_target_selection_turn_{self.turn}")
         stats = ['progress', 'budget', 'capabilities_researchers', 'lobbyists', 'compute']
-        stat_to_scout = random.choice(stats)
+        stat_to_scout = get_rng().choice(stats, f"espionage_stat_selection_turn_{self.turn}")
         
         success, value, message = target.scout_stat(stat_to_scout)
         self.messages.append(f"Espionage: {message}")
@@ -1602,12 +1601,15 @@ class GameState:
         return None
 
     def _espionage_risk(self) -> Optional[str]:
-        if random.random() < 0.25:
+        first_risk = get_rng().random(f"espionage_risk_1_turn_{self.turn}")
+        if first_risk < 0.25:
             self._add('reputation', -2)
             self.messages.append("Espionage scandal! Reputation dropped.")
-        elif random.random() < 0.15:
-            self._add('doom', 5, "espionage operation backfired")
-            self.messages.append("Espionage backfired! Doom increased.")
+        else:
+            second_risk = get_rng().random(f"espionage_risk_2_turn_{self.turn}")
+            if second_risk < 0.15:
+                self._add('doom', 5, "espionage operation backfired")
+                self.messages.append("Espionage backfired! Doom increased.")
         return None
         
     def _hire_manager(self) -> None:
@@ -1642,10 +1644,10 @@ class GameState:
 
     def _breakthrough_event(self) -> None:
         if "secure_cloud" in self.upgrade_effects:
-            spike = random.randint(2, 5)
+            spike = get_rng().randint(2, 5, f"breakthrough_spike_secure_turn_{self.turn}")
             self.messages.append("Lab breakthrough! Secure cloud softened doom spike.")
         else:
-            spike = random.randint(6, 13)
+            spike = get_rng().randint(6, 13, f"breakthrough_spike_normal_turn_{self.turn}")
             self.messages.append("Lab breakthrough! Doom spikes!")
         self._add('doom', spike, "AI lab breakthrough event")
 
@@ -2500,10 +2502,10 @@ class GameState:
         
         # Check if we couldn't afford maintenance (money went negative before clamping)
         if money_before_maintenance < maintenance_cost:
-            if "comfy_chairs" in self.upgrade_effects and random.random() < 0.75:
+            if "comfy_chairs" in self.upgrade_effects and get_rng().random(f"comfy_chairs_help_turn_{self.turn}") < 0.75:
                 self.messages.append("Comfy chairs helped staff endure unpaid turn.")
             else:
-                lost = random.randint(1, max(1, self.staff // 2))
+                lost = get_rng().randint(1, max(1, self.staff // 2), f"staff_leaving_turn_{self.turn}")
                 self.staff = max(0, self.staff - lost)
                 self.messages.append(f"Could not pay staff! {lost} staff left.")
 
@@ -2556,6 +2558,9 @@ class GameState:
             self.deferred_events.tick_all_events(self)
         
         self.turn += 1
+        
+        # Update deterministic RNG with current turn for context-aware seeding
+        get_rng().set_turn(self.turn)
         
         # Advance economic systems (Moore's Law compute cost reduction)
         self.economic_config.advance_compute_cost_reduction()
