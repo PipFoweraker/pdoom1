@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-14T21:11:53.456699",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Apex Intelligence",
+      "date": "2025-09-14T21:11:53.454140",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.005125,
+      "entry_uuid": "7218a9fa-a982-46c1-8b61-f26200e1dc5e"
+    }
+  ]
+}

@@ -429,7 +429,7 @@ class TestEventActions(unittest.TestCase):
                 self.doom = 50
                 self.money = 10000
             
-            def _add(self, attr, val):
+            def _add(self, attr, val, reason=None):
                 setattr(self, attr, getattr(self, attr) + val)
         
         self.gs = MockGameState()

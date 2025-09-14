@@ -8,6 +8,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.core.opponents import Opponent, create_default_opponents
 from src.core.game_state import GameState
+from src.services.deterministic_rng import init_deterministic_rng
 
 
 class TestOpponent(unittest.TestCase):
@@ -185,6 +186,10 @@ class TestOpponentAI(unittest.TestCase):
 
 class TestCreateDefaultOpponents(unittest.TestCase):
     """Test the default opponents creation function."""
+    
+    def setUp(self):
+        """Initialize deterministic RNG for opponent creation tests."""
+        init_deterministic_rng('test-opponents-seed')
     
     def test_creates_four_opponents(self):
         """Test that create_default_opponents returns exactly 4 opponents."""
