@@ -1,4 +1,18 @@
-UPGRADES = [
+from typing import List, Optional, TypedDict
+
+
+class UpgradeDict(TypedDict, total=False):
+    """Type definition for upgrade dictionary structure."""
+    name: str
+    desc: str
+    cost: int
+    purchased: bool
+    effect_key: str
+    custom_effect: Optional[str]  # Not all upgrades have custom effects
+    unlock_condition: Optional[str]  # Only some upgrades have unlock conditions
+
+
+UPGRADES: List[UpgradeDict] = [
     {
         "name": "Upgrade Computer System",
         "desc": "Boosts research effectiveness (+1 research per action)",
