@@ -1,0 +1,65 @@
+name: Sync Local Issues to GitHub
+
+on:
+  push:
+    paths:
+      - 'issues/*.md'
+    branches:
+      - main
+      - develop
+      - 'feature/**'
+      - 'type-annotation-**'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no actual issue creation)'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  sync-issues:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      issues: write
+      contents: read
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install gh
+          
+      - name: Authenticate GitHub CLI
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+          
+      - name: Run Issue Sync (Dry Run)
+        if: github.event_name == 'push' || github.event.inputs.dry_run == 'true'
+        run: |
+          cd tools
+          python github-issue-sync.py --dry-run
+          
+      - name: Run Issue Sync (Create Issues)
+        if: github.event.inputs.dry_run == 'false'
+        run: |
+          cd tools
+          python github-issue-sync.py --create
+          
+      - name: Comment on Push (if issues found)
+        if: github.event_name == 'push'
+        run: |
+          # Add a comment or create a summary issue if missing issues are detected
+          echo "Issue sync completed. Check logs for details."
