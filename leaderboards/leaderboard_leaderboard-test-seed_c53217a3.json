@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-13T09:57:18.105343",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 36,
+      "player_name": "Anonymous",
+      "date": "2025-09-13T09:57:18.101340",
+      "level_reached": 36,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.53614,
+      "entry_uuid": "c9c978e3-6b9e-48d0-92fc-e3d9e3b06331"
+    }
+  ]
+}

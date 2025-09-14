@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-13T14:01:11.671280",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Desert Dynamics",
+      "date": "2025-09-13T13:53:00.595415",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.07892,
+      "entry_uuid": "7469bbe9-19d1-46d0-9549-1a63a531a3a7"
+    },
+    {
+      "score": 1,
+      "player_name": "Desert Dynamics",
+      "date": "2025-09-13T14:01:11.657688",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.099533,
+      "entry_uuid": "ab9979e0-50bf-430f-bcf7-eebd6038377d"
+    }
+  ]
+}

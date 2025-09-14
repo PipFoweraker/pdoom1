@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-14T01:56:12.817970",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 15,
+      "player_name": "Alignment Solutions LLC",
+      "date": "2025-09-14T01:56:12.814680",
+      "level_reached": 15,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.00023600000000000002,
+      "entry_uuid": "3b3b2156-8399-42f6-963b-7408590d2b83"
+    }
+  ]
+}

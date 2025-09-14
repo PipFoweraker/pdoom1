@@ -1,0 +1,25 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-13T14:22:17.482713",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 10,
+      "player_name": "Virtual Worlds",
+      "date": "2025-09-13T14:22:17.482598",
+      "level_reached": 10,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 2.8999999999999997e-05,
+      "entry_uuid": "0948a2a9-bf45-4be8-9fb6-495cde905a33"
+    },
+    {
+      "score": 0,
+      "player_name": "Virtual Worlds",
+      "date": "2025-09-13T13:50:20.569368",
+      "level_reached": 0,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 3.8e-05,
+      "entry_uuid": "1a43de79-f126-411e-90f3-a0edcde8ab74"
+    }
+  ]
+}

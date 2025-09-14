@@ -376,7 +376,7 @@ class OnboardingSystem:
             {
                 'id': 'resources_overview',
                 'title': 'Your Resources',
-                'content': 'MONEY: $1,000 starting funds for hiring and upgrades\nSTAFF: 2 team members (more staff = more action points)\nREPUTATION: 50 public trust (affects funding opportunities)\nACTION POINTS: 3 per turn (your main constraint)\nP(DOOM): 25% probability of catastrophic failure (KEEP LOW!)\n\nManage these carefully - they determine your success.',
+                'content': 'MONEY: $100,000 bootstrap funding for scaling your lab\nSTAFF: 2 team members (more staff = more action points)\nREPUTATION: 50 public trust (affects funding opportunities)\nACTION POINTS: 3 per turn (your main constraint)\nP(DOOM): 25% probability of catastrophic failure (KEEP LOW!)\n\nManage these carefully - they determine your success.',
                 'reveal_elements': ['money_display', 'staff_display', 'reputation_display', 'action_points_display', 'doom_display'],
                 'focus_area': 'top_panel'
             },
