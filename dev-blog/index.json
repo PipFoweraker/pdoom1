@@ -1,6 +1,26 @@
 {
   "entries": [
     {
+      "filename": "2025-09-14-pyinstaller-and-type-annotation-completion.md",
+      "slug": "2025-09-14-pyinstaller-and-type-annotation-completion",
+      "path": "entries/2025-09-14-pyinstaller-and-type-annotation-completion.md",
+      "frontmatter": {
+        "title": "PyInstaller Distribution & Major Type Annotation Milestone",
+        "date": "2025-09-14",
+        "tags": [
+          "distribution",
+          "type-annotations",
+          "pyinstaller",
+          "infrastructure"
+        ],
+        "summary": "Successfully merged PyInstaller v0.5.0 distribution system and completed systematic type annotations for game_state.py and actions.py",
+        "commit": "8eccc76"
+      },
+      "word_count": 421,
+      "file_size": 3698,
+      "modified_at": "2025-09-14T16:11:15.774639"
+    },
+    {
       "filename": "2025-09-14-pyinstaller-implementation.md",
       "slug": "2025-09-14-pyinstaller-implementation",
       "path": "entries/2025-09-14-pyinstaller-implementation.md",
@@ -19,7 +39,7 @@
       },
       "word_count": 717,
       "file_size": 6190,
-      "modified_at": "2025-09-14T14:57:21.522435"
+      "modified_at": "2025-09-14T15:33:18.302845"
     },
     {
       "filename": "2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
@@ -146,9 +166,9 @@
     "2025-09-11-v0-3-0-consolidated-release.md: Title exceeds 60 character limit"
   ],
   "stats": {
-    "total_entries": 5,
+    "total_entries": 6,
     "total_errors": 2,
     "latest_entry": "2025-09-14"
   },
-  "generated_at": "2025-09-14T15:01:16.517000"
+  "generated_at": "2025-09-14T16:11:37.992897"
 }
