@@ -20,7 +20,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.core.game_state import GameState
 
 
-@pytest.mark.skip(reason="Action Points initialization bugs - See issue #action-points-init-bug")
 class TestActionPointsInitialization(unittest.TestCase):
     """Test that Action Points are properly initialized."""
     
@@ -42,7 +41,6 @@ class TestActionPointsInitialization(unittest.TestCase):
         self.assertTrue(hasattr(self.game_state, 'ap_glow_timer'))
 
 
-@pytest.mark.skip(reason="Action Points validation bugs - See issue #action-points-validation-bug")
 class TestActionPointsValidation(unittest.TestCase):
     """Test AP validation when selecting actions."""
     
@@ -56,9 +54,9 @@ class TestActionPointsValidation(unittest.TestCase):
         initial_ap = self.game_state.action_points
         self.assertGreater(initial_ap, 0)
         
-        # Try to select an action (Fundraise has 0 cost and 1 AP cost)
+        # Try to select an action (Fundraising Options has 0 cost and 1 AP cost)
         fundraise_idx = next(i for i, action in enumerate(self.game_state.actions) 
-                           if action["name"] == "Fundraise")
+                           if action["name"] == "Fundraising Options")
         
         # Simulate clicking on the action
         # We can't easily test the click handler, so we'll test the logic directly
@@ -193,7 +191,6 @@ class TestActionPointsReset(unittest.TestCase):
         self.assertGreaterEqual(self.game_state.ap_glow_timer, 0)
 
 
-@pytest.mark.skip(reason="Action Points backward compatibility bugs - See issue #action-points-compat-bug")
 class TestActionPointsBackwardCompatibility(unittest.TestCase):
     """Test backward compatibility with existing actions."""
     
