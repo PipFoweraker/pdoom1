@@ -1,4 +1,5 @@
 import random
+from typing import Dict, List, Optional, Tuple, Union, Any
 
 class Opponent:
     """
@@ -6,7 +7,7 @@ class Opponent:
     Each opponent has hidden stats that can be discovered through espionage.
     """
     
-    def __init__(self, name, budget, capabilities_researchers, lobbyists, compute, description=""):
+    def __init__(self, name: str, budget: int, capabilities_researchers: int, lobbyists: int, compute: int, description: str = "") -> None:
         """
         Initialize an opponent with hidden stats.
         
@@ -18,18 +19,18 @@ class Opponent:
             compute (int): Available compute resources
             description (str): Optional description of the opponent
         """
-        self.name = name
-        self.budget = budget
-        self.capabilities_researchers = capabilities_researchers
-        self.lobbyists = lobbyists
-        self.compute = compute
-        self.description = description
+        self.name: str = name
+        self.budget: int = budget
+        self.capabilities_researchers: int = capabilities_researchers
+        self.lobbyists: int = lobbyists
+        self.compute: int = compute
+        self.description: str = description
         
         # Progress toward deploying dangerous AGI (0-100)
-        self.progress = random.randint(15, 40)
+        self.progress: int = random.randint(15, 40)
         
         # Track what stats have been discovered by the player
-        self.discovered_stats = {
+        self.discovered_stats: Dict[str, bool] = {
             'budget': False,
             'capabilities_researchers': False,
             'lobbyists': False,
@@ -38,7 +39,7 @@ class Opponent:
         }
         
         # Track known values (what the player thinks they are)
-        self.known_stats = {
+        self.known_stats: Dict[str, Optional[int]] = {
             'budget': None,
             'capabilities_researchers': None,
             'lobbyists': None,
@@ -47,15 +48,15 @@ class Opponent:
         }
         
         # Whether this opponent has been discovered at all
-        self.discovered = False
+        self.discovered: bool = False
         
         # Research Quality System - Risk tolerance profile
         # Each opponent has different approaches to the speed vs safety trade-off
-        self.risk_tolerance = "moderate"  # Default, will be overridden per opponent
-        self.technical_debt = 0  # Track opponent's accumulated shortcuts
-        self.research_quality_preference = "standard"  # Default research approach
+        self.risk_tolerance: str = "moderate"  # Default, will be overridden per opponent
+        self.technical_debt: int = 0  # Track opponent's accumulated shortcuts
+        self.research_quality_preference: str = "standard"  # Default research approach
         
-    def scout_stat(self, stat_name):
+    def scout_stat(self, stat_name: str) -> Tuple[bool, Optional[int], str]:
         """
         Attempt to scout a specific stat of this opponent.
         Returns tuple (success, revealed_value, message)
@@ -85,11 +86,11 @@ class Opponent:
         else:
             return False, None, f"Failed to scout {self.name}'s {stat_name}"
             
-    def discover(self):
+    def discover(self) -> None:
         """Mark this opponent as discovered by the player."""
         self.discovered = True
         
-    def take_turn(self):
+    def take_turn(self) -> List[str]:
         """
         Execute the opponent's AI behavior for one turn.
         Returns a list of messages describing what the opponent did.
@@ -156,7 +157,7 @@ class Opponent:
                 
         return messages
     
-    def _choose_research_approach(self, messages):
+    def _choose_research_approach(self, messages: List[str]) -> None:
         """
         Choose research approach based on risk tolerance and current situation.
         Updates research_quality_preference and may accumulate technical debt.
@@ -202,7 +203,7 @@ class Opponent:
                     self.research_quality_preference = "standard"
                     messages.append(f"{self.name} maintains balanced research approach")
     
-    def _get_research_quality_modifier(self):
+    def _get_research_quality_modifier(self) -> float:
         """Get research speed modifier based on current research approach."""
         modifiers = {
             "rushed": 1.3,      # 30% faster but accumulates debt
@@ -211,7 +212,7 @@ class Opponent:
         }
         return modifiers.get(self.research_quality_preference, 1.0)
         
-    def get_impact_on_doom(self):
+    def get_impact_on_doom(self) -> int:
         """
         Calculate how much this opponent's capabilities research increases global doom.
         Called during turn processing to add doom pressure.
@@ -231,7 +232,7 @@ class Opponent:
         return int(base_doom * progress_multiplier * debt_multiplier)
 
 
-def create_default_opponents():
+def create_default_opponents() -> List[Opponent]:
     """
     Create the default set of 3 opponents for the game.
     Returns a list of Opponent objects with varied stats and personalities.
