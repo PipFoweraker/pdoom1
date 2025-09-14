@@ -3,7 +3,7 @@ title: "MILESTONE: Complete Type Annotation for src/core/upgrades.py (Data Struc
 date: "2025-09-14"
 tags: ["type-annotation", "milestone", "core", "upgrades", "data-structure", "typeddict"]
 summary: "Successfully added comprehensive TypedDict type annotations to UPGRADES data structure with zero errors - demonstrates advanced typing patterns for game data"
-commit: "TBD"
+commit: "1b4ee92"
 ---
 
 # MILESTONE: Complete Type Annotation for src/core/upgrades.py (Data Structure)
