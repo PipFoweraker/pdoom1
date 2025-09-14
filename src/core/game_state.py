@@ -3936,7 +3936,7 @@ class GameState:
             # Building up glow as transition progresses
             transition['glow_intensity'] = int(100 * transition['progress'])
     
-    def _interpolate_position(self, start_rect, end_rect, progress, arc_height=80):
+    def _interpolate_position(self, start_rect: Tuple[int, int, int, int], end_rect: Tuple[int, int, int, int], progress: float, arc_height: int = 80) -> Tuple[int, int]:
         """Interpolate position between start and end rectangles with enhanced curved motion."""
         # Use easeOutCubic for smooth deceleration
         eased_progress = 1 - (1 - progress) ** 3
@@ -3990,7 +3990,7 @@ class GameState:
         else:
             return t  # Linear fallback
     
-    def _add_particle_to_trail(self, transition, position):
+    def _add_particle_to_trail(self, transition: Dict[str, Any], position: Tuple[int, int]) -> None:
         """Add particle effects to transition trail."""
         if 'particle_trail' not in transition:
             transition['particle_trail'] = []
@@ -4019,7 +4019,7 @@ class GameState:
         """
         return self.error_tracker.track_error(error_message)
     
-    def log_ui_interaction(self, interaction_type: str, element_id: str, details: dict = None):
+    def log_ui_interaction(self, interaction_type: str, element_id: str, details: Optional[Dict[str, Any]] = None) -> None:
         """
         Log UI interactions for accessibility and debugging.
         
@@ -4272,7 +4272,7 @@ class GameState:
     
     # Enhanced Personnel System Event Handlers
     
-    def _researcher_breakthrough(self):
+    def _researcher_breakthrough(self) -> None:
         """Handle researcher breakthrough event."""
         if not self.researchers:
             return
@@ -4309,7 +4309,7 @@ class GameState:
         researcher.loyalty = min(researcher.loyalty + 15, 100)
         researcher.burnout = max(researcher.burnout - 10, 0)
     
-    def _researcher_burnout_crisis(self):
+    def _researcher_burnout_crisis(self) -> None:
         """Handle researcher burnout crisis event."""
         burnt_out_researchers = [r for r in self.researchers if r.burnout > 60]
         if not burnt_out_researchers:
@@ -4323,7 +4323,7 @@ class GameState:
         self.messages.append(f"[WARNING]? Burnout crisis affects {len(burnt_out_researchers)} researchers! Productivity decreased.")
         self.messages.append("Consider team building or reducing workload to address burnout.")
     
-    def _researcher_poaching_attempt(self):
+    def _researcher_poaching_attempt(self) -> None:
         """Handle competitor poaching attempt."""
         if not self.researchers:
             return
@@ -4355,7 +4355,7 @@ class GameState:
             self.messages.append(f"[SHIELD]? {competitor} attempted to poach {target.name}, but they remained loyal!")
             self.messages.append("Consider salary adjustments to improve researcher loyalty.")
     
-    def _research_ethics_concern(self):
+    def _research_ethics_concern(self) -> None:
         """Handle research ethics concern event."""
         capabilities_researchers = [r for r in self.researchers if r.specialization == 'capabilities']
         if not capabilities_researchers:
@@ -4376,7 +4376,7 @@ class GameState:
             self.messages.append(f"?? {researcher.name} raised ethical concerns. Their productivity and loyalty declined.")
             self.messages.append("Address these concerns to maintain team cohesion.")
     
-    def _researcher_conference_invitation(self):
+    def _researcher_conference_invitation(self) -> None:
         """Handle researcher conference invitation."""
         media_savvy_researchers = [r for r in self.researchers if 'media_savvy' in r.traits]
         if not media_savvy_researchers:
@@ -4401,7 +4401,7 @@ class GameState:
         
         researcher.loyalty = min(researcher.loyalty + 10, 100)
     
-    def _collaborative_research_opportunity(self):
+    def _collaborative_research_opportunity(self) -> None:
         """Handle collaborative research opportunity."""
         if len(self.researchers) < 2:
             return
@@ -4426,7 +4426,7 @@ class GameState:
         else:
             self.messages.append(f"? Collaborative research opportunity available, but need ${cost} to participate")
     
-    def _researcher_loyalty_crisis(self):
+    def _researcher_loyalty_crisis(self) -> None:
         """Handle researcher loyalty crisis."""
         low_loyalty_researchers = [r for r in self.researchers if r.loyalty < 30]
         if len(low_loyalty_researchers) < 2:
@@ -4457,7 +4457,7 @@ class GameState:
         self.messages.append("Consider salary increases and team building to restore loyalty.")
 
     # Research Quality Event Handlers for Issue #190
-    def _trigger_safety_shortcut_event(self):
+    def _trigger_safety_shortcut_event(self) -> None:
         """
         Event where a researcher suggests cutting corners on safety validation.
         Player can choose response affecting technical debt and research speed.
@@ -4521,7 +4521,7 @@ class GameState:
             choice = random.choice(responses)
             choice(self)
     
-    def _trigger_technical_debt_warning(self):
+    def _trigger_technical_debt_warning(self) -> None:
         """
         Event warning player about accumulated technical debt consequences.
         """
@@ -4537,7 +4537,7 @@ class GameState:
         # Offer debt reduction suggestion
         self.messages.append("Consider using 'Refactoring Sprint' or 'Safety Audit' actions to reduce technical debt.")
     
-    def _trigger_quality_speed_dilemma(self):
+    def _trigger_quality_speed_dilemma(self) -> None:
         """
         Event presenting a critical deadline where player must choose quality vs speed.
         """
@@ -4574,7 +4574,7 @@ class GameState:
         choice = random.choices(choices, weights=weights)[0]
         choice()
     
-    def _trigger_competitor_shortcut_discovery(self):
+    def _trigger_competitor_shortcut_discovery(self) -> None:
         """
         Event revealing that competitors are taking dangerous shortcuts.
         """
@@ -4616,7 +4616,7 @@ class GameState:
     
     # Economic Cycles & Funding Volatility Event Handlers for Issue #192
     
-    def _trigger_funding_drought_event(self):
+    def _trigger_funding_drought_event(self) -> None:
         """Handle venture capital drought during economic downturns."""
         if not hasattr(self, 'economic_cycles'):
             return
@@ -4631,7 +4631,7 @@ class GameState:
         # Small reputation boost for surviving the drought
         self._add('reputation', 1)
     
-    def _trigger_bubble_warning_event(self):
+    def _trigger_bubble_warning_event(self) -> None:
         """Handle AI bubble burst warnings."""
         self.messages.append("[WARNING]? Market analysts warn AI valuations are unsustainable!")
         self.messages.append("? Consider securing funding now before conditions worsen.")
@@ -4640,7 +4640,7 @@ class GameState:
         if not hasattr(self, 'bubble_warning_bonus'):
             self.bubble_warning_bonus = 3  # 3 turns to act
     
-    def _trigger_government_funding_event(self):
+    def _trigger_government_funding_event(self) -> None:
         """Handle government AI initiative announcements."""
         self.messages.append("?? Government announces major AI research funding initiative!")
         
@@ -5132,7 +5132,7 @@ class GameState:
     # ======= FUNDRAISING DIALOG SYSTEM =======
     # Similar to hiring dialog but for fundraising options
     
-    def _trigger_fundraising_dialog(self):
+    def _trigger_fundraising_dialog(self) -> None:
         """Trigger the fundraising options dialog with multiple strategic choices."""
         # Get available fundraising options based on current game state
         available_options = self._get_available_fundraising_options()
@@ -5148,7 +5148,7 @@ class GameState:
             "description": "Choose your approach to raising capital. Each option has different risk/reward profiles."
         }
     
-    def _get_available_fundraising_options(self):
+    def _get_available_fundraising_options(self) -> List[Dict[str, Any]]:
         """Get available fundraising options based on current game state."""
         options = []
         
@@ -5220,11 +5220,11 @@ class GameState:
         
         return options
     
-    def dismiss_fundraising_dialog(self):
+    def dismiss_fundraising_dialog(self) -> None:
         """Dismiss the fundraising dialog without making a selection."""
         self.pending_fundraising_dialog = None
     
-    def select_fundraising_option(self, option_id: str):
+    def select_fundraising_option(self, option_id: str) -> Tuple[bool, str]:
         """Execute a selected fundraising option and dismiss the dialog."""
         if not self.pending_fundraising_dialog:
             return False, "No fundraising dialog active"
@@ -5250,7 +5250,7 @@ class GameState:
         
         return True, f"Successfully executed: {selected_option['name']}"
     
-    def _execute_fundraising_option(self, option):
+    def _execute_fundraising_option(self, option: Dict[str, Any]) -> bool:
         """Execute a specific fundraising option with detailed verbose logging."""
         option_id = option["id"]
         
@@ -5266,7 +5266,7 @@ class GameState:
             self.messages.append(f"Unknown fundraising option: {option_id}")
             return False
     
-    def _execute_small_fundraising(self, option):
+    def _execute_small_fundraising(self, option: Dict[str, Any]) -> bool:
         """Execute conservative small fundraising."""
         amount = random.randint(option["min_amount"], option["max_amount"])
         # Reputation bonus helps
@@ -5280,7 +5280,7 @@ class GameState:
         
         return True
     
-    def _execute_big_fundraising(self, option):
+    def _execute_big_fundraising(self, option: Dict[str, Any]) -> bool:
         """Execute aggressive big fundraising."""
         base_amount = random.randint(option["min_amount"], option["max_amount"])
         # Reputation significantly affects big rounds
@@ -5349,7 +5349,7 @@ class GameState:
 
     # =================== RESEARCH DIALOG SYSTEM ===================
     
-    def _trigger_research_dialog(self):
+    def _trigger_research_dialog(self) -> None:
         """Trigger the research strategy selection dialog."""
         self.pending_research_dialog = {
             "title": "Research Strategy Selection",
@@ -5357,7 +5357,7 @@ class GameState:
             "available_options": self._get_available_research_options()
         }
     
-    def _get_available_research_options(self):
+    def _get_available_research_options(self) -> List[Dict[str, Any]]:
         """Get available research options based on current game state."""
         options = []
         
@@ -5436,11 +5436,11 @@ class GameState:
         
         return options
     
-    def dismiss_research_dialog(self):
+    def dismiss_research_dialog(self) -> None:
         """Dismiss the research dialog."""
         self.pending_research_dialog = None
     
-    def select_research_option(self, option_id: str):
+    def select_research_option(self, option_id: str) -> Tuple[bool, str]:
         """Execute the selected research option."""
         if not self.pending_research_dialog:
             return False, "No research dialog active"
@@ -5469,7 +5469,7 @@ class GameState:
         else:
             return False, "Research execution failed"
     
-    def _execute_research_option(self, option):
+    def _execute_research_option(self, option: Dict[str, Any]) -> bool:
         """Execute a research option with appropriate effects."""
         # Deduct cost
         self._add('money', -option["cost"])
@@ -5521,7 +5521,7 @@ class GameState:
         
         return True
     
-    def _add_verbose_research_message(self, research_type: str, doom_reduction: int, rep_gain: int):
+    def _add_verbose_research_message(self, research_type: str, doom_reduction: int, rep_gain: int) -> None:
         """Add detailed research progress message."""
         research_messages = [
             f"? Research breakthrough: {research_type} advances reduce P(Doom) by {doom_reduction}%",
