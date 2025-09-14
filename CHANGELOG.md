@@ -4,6 +4,22 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2025-09-14
+### Added  
+- **Type Annotation Campaign Phase 2 Milestone**: Complete type annotation of events.py (307 lines)
+  - Advanced TypedDict implementation for event data structures (`EventDefinition`)
+  - Comprehensive Callable annotations for trigger and effect functions
+  - Zero pylance errors achieved across entire events system
+  - Systematic function annotation for all 3 standalone event functions
+  - Import optimization and type safety validation with GameState integration
+  - Established TypedDict patterns for complex data structures with function parameters
+
+### Technical
+- **Type Safety**: Achieved zero pylance errors on 307-line events.py file
+- **Integration**: Full GameState compatibility maintained with comprehensive type annotations
+- **Performance**: Zero runtime impact from type annotations (compile-time only)
+- **Documentation**: Complete dev blog entry documenting TypedDict patterns and implementation approach
+
 ## [0.5.0] - 2025-09-14
 ### Added
 - **PyInstaller Windows Distribution System**: Complete single-file .exe distribution for alpha/beta testing

@@ -1,6 +1,19 @@
 import random
+from typing import Any, Callable, List, TypedDict
 
-def unlock_scrollable_event_log(gs):
+
+class EventDefinition(TypedDict):
+    """Type definition for event dictionary structure.
+    
+    Each event contains metadata and callables for game state evaluation.
+    """
+    name: str
+    desc: str
+    trigger: Callable[[Any], bool]  # Function that evaluates if event should fire
+    effect: Callable[[Any], Any]    # Function that applies event effects to game state
+
+
+def unlock_scrollable_event_log(gs: Any) -> None:
     """
     Custom event effect function for unlocking the scrollable event log.
     Sets the scrollable_event_log_enabled flag and provides user feedback.
@@ -21,10 +34,13 @@ def unlock_scrollable_event_log(gs):
         "Use this to learn from past events and improve your strategy!"
     )
 
-def unlock_enhanced_events(gs):
+def unlock_enhanced_events(gs: Any) -> None:
     """
     Custom event effect function for unlocking the enhanced event system.
     Enables popup events, deferred events, and advanced event handling.
+    
+    Args:
+        gs (Any): Game state object to modify
     """
     gs.enhanced_events_enabled = True
     gs.messages.append("Enhanced Event System unlocked! Your organization can now handle complex events with advanced response options.")
@@ -42,10 +58,13 @@ def unlock_enhanced_events(gs):
         "Use these tools to handle complex challenges strategically!"
     )
 
-def trigger_first_manager_hire(gs):
+def trigger_first_manager_hire(gs: Any) -> None:
     """
     Special event effect function for triggering the first manager hire.
     This is called when the organization reaches 9 staff for the first time.
+    
+    Args:
+        gs (Any): Game state object to modify
     """
     if not gs.manager_milestone_triggered:
         gs.messages.append("SPECIAL EVENT: Your organization has grown to 9 employees!")
@@ -53,7 +72,8 @@ def trigger_first_manager_hire(gs):
         gs.messages.append("The 'Hire Manager' action is now available to organize your growing team.")
         gs.manager_milestone_triggered = True
 
-EVENTS = [
+
+EVENTS: List[EventDefinition] = [
     {
         "name": "Lab Breakthrough",
         "desc": "A frontier lab makes a major breakthrough, doom spikes!",
