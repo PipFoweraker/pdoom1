@@ -1,6 +1,70 @@
 {
   "entries": [
     {
+      "filename": "2025-09-14-action-rules-type-annotation.md",
+      "slug": "2025-09-14-action-rules-type-annotation",
+      "path": "entries/2025-09-14-action-rules-type-annotation.md",
+      "frontmatter": {
+        "title": "Type Annotation: action_rules.py Complete",
+        "date": "2025-09-14",
+        "tags": [
+          "type-annotation",
+          "milestone",
+          "core",
+          "action-rules",
+          "game-logic"
+        ],
+        "summary": "Successfully completed comprehensive type annotation for ActionRules class (14 static methods) and 3 standalone functions in 355-line core game logic module",
+        "commit": "4638ba5"
+      },
+      "word_count": 749,
+      "file_size": 6360,
+      "modified_at": "2025-09-14T21:25:56.403522"
+    },
+    {
+      "filename": "2025-09-14-deterministic-rng-complete.md",
+      "slug": "2025-09-14-deterministic-rng-complete",
+      "path": "entries/2025-09-14-deterministic-rng-complete.md",
+      "frontmatter": {
+        "title": "Complete Deterministic RNG System v0.6.0",
+        "date": "2025-09-14",
+        "tags": [
+          "milestone",
+          "deterministic",
+          "competitive",
+          "rng",
+          "v0.6.0"
+        ],
+        "summary": "MAJOR MILESTONE: Transform P(Doom) into fully deterministic competitive gaming platform with perfect reproducibility",
+        "commit": "9956d94"
+      },
+      "word_count": 553,
+      "file_size": 4818,
+      "modified_at": "2025-09-14T21:25:30.537500"
+    },
+    {
+      "filename": "2025-09-14-events-typeddict-milestone.md",
+      "slug": "2025-09-14-events-typeddict-milestone",
+      "path": "entries/2025-09-14-events-typeddict-milestone.md",
+      "frontmatter": {
+        "title": "Type Annotation: Events.py TypedDict Complete",
+        "date": "2025-09-14",
+        "tags": [
+          "type-annotations",
+          "typescript",
+          "events",
+          "typeddict",
+          "pylance",
+          "phase-2"
+        ],
+        "summary": "Achieved zero pylance errors on 307-line events.py using comprehensive TypedDict patterns and systematic function annotation",
+        "commit": "TBD"
+      },
+      "word_count": 758,
+      "file_size": 6348,
+      "modified_at": "2025-09-14T21:26:01.655705"
+    },
+    {
       "filename": "2025-09-14-opponents-type-annotations.md",
       "slug": "2025-09-14-opponents-type-annotations",
       "path": "entries/2025-09-14-opponents-type-annotations.md",
@@ -19,6 +83,28 @@
       "word_count": 443,
       "file_size": 3858,
       "modified_at": "2025-09-14T18:24:36.418566"
+    },
+    {
+      "filename": "2025-09-14-productive-actions-typeddict-milestone.md",
+      "slug": "2025-09-14-productive-actions-typeddict-milestone",
+      "path": "entries/2025-09-14-productive-actions-typeddict-milestone.md",
+      "frontmatter": {
+        "title": "Type Annotation: Productive Actions TypedDict",
+        "date": "2025-09-14",
+        "tags": [
+          "type-annotations",
+          "typeddict",
+          "employee-actions",
+          "method-chains",
+          "pylance",
+          "phase-2-milestone"
+        ],
+        "summary": "Achieved zero pylance errors on 315-line productive_actions.py using nested TypedDict patterns and advanced parameter validation",
+        "commit": "TBD"
+      },
+      "word_count": 795,
+      "file_size": 6964,
+      "modified_at": "2025-09-14T21:26:07.118708"
     },
     {
       "filename": "2025-09-14-pyinstaller-and-type-annotation-completion.md",
@@ -103,6 +189,28 @@
       "modified_at": "2025-09-14T18:00:27.527057"
     },
     {
+      "filename": "2025-09-14-upgrades-type-annotation.md",
+      "slug": "2025-09-14-upgrades-type-annotation",
+      "path": "entries/2025-09-14-upgrades-type-annotation.md",
+      "frontmatter": {
+        "title": "Type Annotation: upgrades.py Data Structure",
+        "date": "2025-09-14",
+        "tags": [
+          "type-annotation",
+          "milestone",
+          "core",
+          "upgrades",
+          "data-structure",
+          "typeddict"
+        ],
+        "summary": "Successfully added comprehensive TypedDict type annotations to UPGRADES data structure with zero errors - demonstrates advanced typing patterns for game data",
+        "commit": "1b4ee92"
+      },
+      "word_count": 551,
+      "file_size": 4579,
+      "modified_at": "2025-09-14T21:26:12.555187"
+    },
+    {
       "filename": "2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
       "slug": "2025-09-13-enhanced-leaderboard-system-v0-4-1",
       "path": "entries/2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
@@ -143,6 +251,28 @@
       "modified_at": "2025-09-12T21:45:50.665884"
     },
     {
+      "filename": "2025-09-11-v0-3-0-consolidated-release.md",
+      "slug": "2025-09-11-v0-3-0-consolidated-release",
+      "path": "entries/2025-09-11-v0-3-0-consolidated-release.md",
+      "frontmatter": {
+        "title": "P(Doom) v0.3.0: Consolidated Feature Release",
+        "date": "2025-09-11",
+        "tags": [
+          "milestone",
+          "release",
+          "longtermist",
+          "accessibility",
+          "alpha",
+          "consolidation"
+        ],
+        "summary": "Major consolidated release featuring longtermist 5-digit year dates, accessibility framework, comprehensive bug sweep plan, and systematic branch merge for alpha readiness",
+        "commit": "76de59c"
+      },
+      "word_count": 596,
+      "file_size": 5363,
+      "modified_at": "2025-09-14T21:25:45.900928"
+    },
+    {
       "filename": "2025-09-10-major-type-annotation-milestone.md",
       "slug": "2025-09-10-major-type-annotation-milestone",
       "path": "entries/2025-09-10-major-type-annotation-milestone.md",
@@ -181,6 +311,27 @@
       "word_count": 517,
       "file_size": 4598,
       "modified_at": "2025-09-10T12:21:12.689361"
+    },
+    {
+      "filename": "2025-09-10-version-0-2-12-release.md",
+      "slug": "2025-09-10-version-0-2-12-release",
+      "path": "entries/2025-09-10-version-0-2-12-release.md",
+      "frontmatter": {
+        "title": "P(Doom) v0.2.12: Development Infrastructure",
+        "date": "2025-09-10",
+        "tags": [
+          "release",
+          "milestone",
+          "type-annotations",
+          "infrastructure",
+          "quality"
+        ],
+        "summary": "Major version release featuring comprehensive type annotations and development tooling infrastructure",
+        "commit": "fedc543"
+      },
+      "word_count": 428,
+      "file_size": 3875,
+      "modified_at": "2025-09-14T21:25:40.186790"
     }
   ],
   "config": {
@@ -222,17 +373,11 @@
       ]
     }
   },
-  "errors": [
-    "2025-09-10-version-0-2-12-release.md: Title exceeds 60 character limit",
-    "2025-09-11-v0-3-0-consolidated-release.md: Title exceeds 60 character limit",
-    "2025-09-14-action-rules-type-annotation.md: Title exceeds 60 character limit",
-    "2025-09-14-events-typeddict-milestone.md: Title exceeds 60 character limit",
-    "2025-09-14-upgrades-type-annotation.md: Title exceeds 60 character limit"
-  ],
+  "errors": [],
   "stats": {
-    "total_entries": 9,
-    "total_errors": 5,
+    "total_entries": 16,
+    "total_errors": 0,
     "latest_entry": "2025-09-14"
   },
-  "generated_at": "2025-09-14T19:50:58.153023"
+  "generated_at": "2025-09-14T21:26:19.892729"
 }

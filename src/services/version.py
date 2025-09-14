@@ -13,8 +13,8 @@ __version__ = "0.6.0"
 
 # Version components for programmatic access
 VERSION_MAJOR = 0
-VERSION_MINOR = 5
-VERSION_PATCH = 3
+VERSION_MINOR = 6
+VERSION_PATCH = 0
 
 # Pre-release identifier (e.g., "alpha", "beta", "rc1", or "" for stable)
 VERSION_PRERELEASE = ""

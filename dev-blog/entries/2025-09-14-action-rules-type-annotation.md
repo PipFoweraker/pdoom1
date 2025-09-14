@@ -1,5 +1,5 @@
 ---
-title: "MILESTONE: Complete Type Annotation for src/core/action_rules.py"
+title: "Type Annotation: action_rules.py Complete"
 date: "2025-09-14"
 tags: ["type-annotation", "milestone", "core", "action-rules", "game-logic"]
 summary: "Successfully completed comprehensive type annotation for ActionRules class (14 static methods) and 3 standalone functions in 355-line core game logic module"

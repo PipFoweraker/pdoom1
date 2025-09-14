@@ -1,0 +1,134 @@
+name: Sync Dev Blog to Website
+
+on:
+  push:
+    paths:
+      - 'dev-blog/entries/**'
+      - 'dev-blog/index.json'
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      force_sync:
+        description: 'Force sync all entries'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  sync-dev-blog:
+    runs-on: ubuntu-latest
+    if: github.repository == 'PipFoweraker/pdoom1'
+    
+    steps:
+      - name: Checkout pdoom1 repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need previous commit for diff
+          
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+          
+      - name: Validate blog entries
+        run: |
+          echo "Validating blog entries before sync..."
+          python dev-blog/generate_index.py
+          if [ $? -ne 0 ]; then
+            echo "❌ Blog validation failed. Fix errors before syncing."
+            exit 1
+          fi
+          echo "✅ Blog entries validated successfully"
+          
+      - name: Checkout website repository
+        uses: actions/checkout@v4
+        with:
+          repository: PipFoweraker/pdoom1-website
+          token: ${{ secrets.WEBSITE_SYNC_TOKEN }}
+          path: website
+          ref: main
+          
+      - name: Determine changed files
+        id: changes
+        run: |
+          if [ "${{ inputs.force_sync }}" == "true" ]; then
+            echo "🔄 Force sync requested - syncing all entries"
+            echo "changed_files=$(find dev-blog/entries -name '*.md' | tr '\n' ' ')" >> $GITHUB_OUTPUT
+          else
+            echo "🔍 Detecting changed blog entries..."
+            changed_files=$(git diff --name-only HEAD~1 HEAD | grep '^dev-blog/entries/.*\.md$' | tr '\n' ' ')
+            echo "changed_files=$changed_files" >> $GITHUB_OUTPUT
+            if [ -z "$changed_files" ]; then
+              echo "ℹ️ No blog entry changes detected"
+            else
+              echo "📝 Changed entries: $changed_files"
+            fi
+          fi
+          
+      - name: Sync blog entries to website
+        if: steps.changes.outputs.changed_files != ''
+        run: |
+          echo "🚀 Syncing blog entries to website..."
+          
+          # Ensure blog directory exists
+          mkdir -p website/public/blog
+          mkdir -p website/public/dev-notes
+          
+          # Copy changed entries
+          for file in ${{ steps.changes.outputs.changed_files }}; do
+            if [ -f "$file" ]; then
+              filename=$(basename "$file")
+              echo "📄 Copying $filename to website"
+              cp "$file" "website/public/blog/"
+            fi
+          done
+          
+          # Always update the index for navigation
+          echo "📋 Updating blog index"
+          cp dev-blog/index.json website/public/blog/
+          
+          # Generate website-specific navigation (if needed)
+          echo "🧭 Generating website navigation"
+          # Future: Create website-specific navigation from index.json
+          
+      - name: Commit and push to website
+        if: steps.changes.outputs.changed_files != ''
+        working-directory: website
+        run: |
+          git config user.name "Dev Blog Sync Bot"
+          git config user.email "dev+blog-sync@pdoom.net"
+          
+          # Add all blog changes
+          git add public/blog/
+          
+          # Check if there are changes to commit
+          if git diff --staged --quiet; then
+            echo "ℹ️ No changes to commit"
+          else
+            # Create meaningful commit message
+            commit_msg="Auto-sync: Dev blog update from pdoom1"
+            if [ "${{ inputs.force_sync }}" == "true" ]; then
+              commit_msg="$commit_msg (force sync)"
+            fi
+            
+            echo "💾 Committing changes: $commit_msg"
+            git commit -m "$commit_msg"
+            
+            echo "🚀 Pushing to website repository"
+            git push
+            
+            echo "✅ Blog sync completed successfully"
+          fi
+          
+      - name: Notification
+        if: steps.changes.outputs.changed_files != ''
+        run: |
+          echo "🎉 Dev blog sync completed!"
+          echo "📊 Synced entries: ${{ steps.changes.outputs.changed_files }}"
+          echo "🌐 Changes will be live on the website shortly"
+          
+      - name: No changes notification
+        if: steps.changes.outputs.changed_files == ''
+        run: |
+          echo "ℹ️ No blog entry changes detected - nothing to sync"
