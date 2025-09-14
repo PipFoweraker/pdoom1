@@ -9,12 +9,12 @@ following Semantic Versioning (SemVer) specification.
 # MAJOR: Incompatible API changes (gameplay mechanics overhauls)
 # MINOR: Backwards-compatible functionality additions (new features, events, opponents)
 # PATCH: Backwards-compatible bug fixes
-__version__ = "0.5.1"
+__version__ = "0.5.2"
 
 # Version components for programmatic access
 VERSION_MAJOR = 0
 VERSION_MINOR = 5
-VERSION_PATCH = 1
+VERSION_PATCH = 2
 
 # Pre-release identifier (e.g., "alpha", "beta", "rc1", or "" for stable)
 VERSION_PRERELEASE = ""

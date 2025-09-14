@@ -62,6 +62,26 @@
       "modified_at": "2025-09-14T15:33:18.302845"
     },
     {
+      "filename": "2025-09-14-type-annotation-session-wrap.md",
+      "slug": "2025-09-14-type-annotation-session-wrap",
+      "path": "entries/2025-09-14-type-annotation-session-wrap.md",
+      "frontmatter": {
+        "title": "Type Annotation Session Complete: Phase 1 Wrapped",
+        "date": "2025-09-14",
+        "tags": [
+          "type-annotation",
+          "session-wrap",
+          "milestone",
+          "pylance"
+        ],
+        "summary": "Completed opponents.py milestone, pushed branch, updated docs, created Phase 2 roadmap",
+        "commit": "2235aa1"
+      },
+      "word_count": 393,
+      "file_size": 3522,
+      "modified_at": "2025-09-14T18:27:28.027398"
+    },
+    {
       "filename": "2025-09-14-ui-menus-type-annotation.md",
       "slug": "2025-09-14-ui-menus-type-annotation",
       "path": "entries/2025-09-14-ui-menus-type-annotation.md",
@@ -206,12 +226,13 @@
     "2025-09-10-version-0-2-12-release.md: Title exceeds 60 character limit",
     "2025-09-11-v0-3-0-consolidated-release.md: Title exceeds 60 character limit",
     "2025-09-14-action-rules-type-annotation.md: Title exceeds 60 character limit",
+    "2025-09-14-events-typeddict-milestone.md: Title exceeds 60 character limit",
     "2025-09-14-upgrades-type-annotation.md: Title exceeds 60 character limit"
   ],
   "stats": {
-    "total_entries": 8,
-    "total_errors": 4,
+    "total_entries": 9,
+    "total_errors": 5,
     "latest_entry": "2025-09-14"
   },
-  "generated_at": "2025-09-14T18:26:27.979158"
+  "generated_at": "2025-09-14T19:50:58.153023"
 }

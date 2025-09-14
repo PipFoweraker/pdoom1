@@ -1,9 +1,40 @@
-# Productive Actions System
-# Defines ongoing productive actions that employees perform when requirements are met
-# Each action provides a multiplicative effectiveness bonus
+"""
+Productive Actions System
+Defines ongoing productive actions that employees perform when requirements are met.
+Each action provides a multiplicative effectiveness bonus.
+"""
+
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
+
+
+class ActionRequirements(TypedDict, total=False):
+    """Type definition for action requirement structure.
+    
+    All fields are optional since different actions have different requirements.
+    """
+    compute_per_employee: float
+    min_reputation: int
+    min_staff: int
+    min_research_staff: int
+    min_research_progress: int
+    min_money: int
+    min_compute: int
+    min_board_members: int
+    min_admin_staff: int
+
+
+class ProductiveAction(TypedDict):
+    """Type definition for productive action structure.
+    
+    Each action contains metadata, effectiveness bonus, and requirements.
+    """
+    name: str
+    description: str
+    effectiveness_bonus: float
+    requirements: ActionRequirements
 
 # Productive actions for each employee category
-PRODUCTIVE_ACTIONS = {
+PRODUCTIVE_ACTIONS: Dict[str, List[ProductiveAction]] = {
     # Junior Researcher actions (maps to "researcher" subtype)
     "junior_researcher": [
         {
@@ -214,7 +245,7 @@ EMPLOYEE_SUBTYPE_TO_CATEGORY = {
     "generalist": "junior_researcher"  # Generalists use junior researcher actions
 }
 
-def get_employee_category(employee_subtype):
+def get_employee_category(employee_subtype: str) -> Optional[str]:
     """
     Get the productive action category for an employee subtype.
     
@@ -222,11 +253,11 @@ def get_employee_category(employee_subtype):
         employee_subtype (str): The employee subtype from employee_subtypes.py
         
     Returns:
-        str: The productive action category, or None if not found
+        Optional[str]: The productive action category, or None if not found
     """
     return EMPLOYEE_SUBTYPE_TO_CATEGORY.get(employee_subtype)
 
-def get_available_actions(category):
+def get_available_actions(category: str) -> List[ProductiveAction]:
     """
     Get the available productive actions for an employee category.
     
@@ -234,22 +265,21 @@ def get_available_actions(category):
         category (str): The employee category
         
     Returns:
-        list: List of productive action dictionaries, or empty list if category not found
+        List[ProductiveAction]: List of productive action dictionaries, or empty list if category not found
     """
     return PRODUCTIVE_ACTIONS.get(category, [])
 
-def check_action_requirements(action, game_state, compute_per_employee):
+def check_action_requirements(action: ProductiveAction, game_state: Any, compute_per_employee: float) -> Tuple[bool, Optional[str]]:
     """
     Check if the requirements for a productive action are met.
     
     Args:
-        action (dict): The productive action definition
-        requirements_dict
-        game_state: The current game state
+        action (ProductiveAction): The productive action definition
+        game_state (Any): The current game state
         compute_per_employee (float): Available compute per employee
         
     Returns:
-        tuple: (requirements_met (bool), failure_reason (str or None))
+        Tuple[bool, Optional[str]]: (requirements_met, failure_reason or None)
     """
     requirements = action.get("requirements", {})
     
@@ -300,7 +330,7 @@ def check_action_requirements(action, game_state, compute_per_employee):
     
     return True, None
 
-def get_default_action_index(category):
+def get_default_action_index(category: str) -> Optional[int]:
     """
     Get the index of the default action for an employee category.
     
@@ -308,7 +338,7 @@ def get_default_action_index(category):
         category (str): The employee category
         
     Returns:
-        int: Index of the default action (always 0 if category exists)
+        Optional[int]: Index of the default action (always 0 if category exists), or None
     """
     if category in PRODUCTIVE_ACTIONS:
         return 0
