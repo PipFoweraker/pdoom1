@@ -3682,7 +3682,7 @@ class GameState:
                      f"Purpose: {expense['description']}\n\n"
                      f"Accept the expense or deny the request?")
         
-        def approve_expense(gs):
+        def approve_expense(gs: 'GameState') -> str:
             if gs.money >= expense['cost']:
                 expense['approve_effect'](gs)
                 gs.messages.append(f"Accepted: {expense['item']} (${expense['cost']})")
@@ -3691,7 +3691,7 @@ class GameState:
                 gs.messages.append(f"Insufficient funds to accept {expense['item']} (need ${expense['cost']}, have ${gs.money})")
                 return "Insufficient funds for acceptance."
         
-        def deny_expense(gs):
+        def deny_expense(gs: 'GameState') -> str:
             expense['deny_effect'](gs)
             gs.messages.append(f"Denied: {expense['item']}")
             return f"Expense request denied. {expense['employee']} understands the budget constraints."
@@ -4479,16 +4479,16 @@ class GameState:
         event_desc = (f"{researcher.name} suggests: \"We could skip some safety validation steps "
                      f"for {task_name} and finish 40% faster. The risk is probably minimal...\"")
         
-        def handle_maintain_standards(gs):
+        def handle_maintain_standards(gs: 'GameState') -> None:
             gs.messages.append(f"? {researcher.name}: \"You're right, safety first. I'll maintain full validation.\"")
             gs._add('reputation', 1)  # Reputation for safety-conscious approach
             
-        def handle_calculated_risk(gs):
+        def handle_calculated_risk(gs: 'GameState') -> None:
             gs.messages.append(f"[WARNING]? {researcher.name}: \"Understood. I'll reduce some checks but keep the critical ones.\"")
             gs.technical_debt.add_debt(1)  # Small debt increase
             # Speed up current research slightly (placeholder - would need research tracking)
             
-        def handle_rush_it(gs):
+        def handle_rush_it(gs: 'GameState') -> None:
             gs.messages.append(f"[ALERT] {researcher.name}: \"Alright, cutting corners to hit the deadline. Hope nothing goes wrong...\"")
             gs.technical_debt.add_debt(3)  # Significant debt increase
             gs._add('doom', 1, f"{researcher.name} cut safety corners")  # Small doom increase for risky approach
@@ -4553,19 +4553,19 @@ class GameState:
         # Offer quality choice for all active research
         self.messages.append(f"? Critical: {scenario}! How should researchers adjust their approach?")
         
-        def set_all_rushed():
+        def set_all_rushed() -> None:
             for researcher_id in self.researcher_assignments:
                 self.researcher_default_quality[researcher_id] = ResearchQuality.RUSHED
             self.messages.append("? All researchers switched to RUSHED mode for speed!")
             self.technical_debt.add_debt(len(self.researcher_assignments))
             
-        def set_all_thorough():
+        def set_all_thorough() -> None:
             for researcher_id in self.researcher_assignments:
                 self.researcher_default_quality[researcher_id] = ResearchQuality.THOROUGH
             self.messages.append("? All researchers switched to THOROUGH mode for quality!")
             self._add('reputation', 1)
             
-        def maintain_current():
+        def maintain_current() -> None:
             self.messages.append("?? Maintaining current research quality approaches.")
             
         # Simple random choice for now - in full implementation would be player choice
@@ -4651,7 +4651,7 @@ class GameState:
         else:
             self.messages.append("Build more reputation to qualify for government funding programs.")
     
-    def _trigger_corporate_partnership_event(self):
+    def _trigger_corporate_partnership_event(self) -> None:
         """Handle corporate partnership opportunities during downturns."""
         corp_names = ["TechGiant Inc", "DataCorp Systems", "Innovation Dynamics"]
         corp = random.choice(corp_names)
@@ -4665,7 +4665,7 @@ class GameState:
         # Corporate partnerships provide stability but may limit reputation growth
         self._add('reputation', random.randint(0, 2))
     
-    def _trigger_emergency_measures_event(self):
+    def _trigger_emergency_measures_event(self) -> None:
         """Handle emergency cost-cutting measures during severe economic stress."""
         if not hasattr(self, 'emergency_measures_available') or not self.emergency_measures_available:
             return
@@ -4684,7 +4684,7 @@ class GameState:
         self.emergency_measures_available = False
         self._add('reputation', -2)  # Reputation hit for layoffs
     
-    def _trigger_competitor_funding_event(self):
+    def _trigger_competitor_funding_event(self) -> None:
         """Handle competitor funding announcements during boom periods."""
         if not hasattr(self, 'opponents') or not self.opponents:
             return
@@ -4707,7 +4707,7 @@ class GameState:
         if hasattr(self, 'funding_round_cooldown'):
             self.funding_round_cooldown = max(0, self.funding_round_cooldown - 1)
     
-    def _trigger_ai_winter_warning_event(self):
+    def _trigger_ai_winter_warning_event(self) -> None:
         """Handle AI winter warnings when doom is high."""
         self.messages.append("?? Industry veterans warn of potential 'AI Winter' if promises don't materialize!")
         self.messages.append("[TARGET] Focus on demonstrable safety progress to maintain investor confidence.")
@@ -4720,7 +4720,7 @@ class GameState:
     
     # Technical Failure Cascade Event Handlers for Issue #193
     
-    def _process_achievements_and_warnings(self):
+    def _process_achievements_and_warnings(self) -> None:
         """
         Process achievements and critical warnings at the start of each turn.
         
@@ -4804,7 +4804,7 @@ class GameState:
             except:
                 pass  # Even logging errors shouldn't crash the game
     
-    def _trigger_near_miss_averted_event(self):
+    def _trigger_near_miss_averted_event(self) -> None:
         """Handle near-miss events that were successfully averted."""
         if hasattr(self, 'technical_failures'):
             self.technical_failures.near_miss_count += 1
@@ -4832,7 +4832,7 @@ class GameState:
                 setattr(self.technical_failures, improvement, current_level + 1)
                 self.messages.append(f"? {improvement.replace('_', ' ').title()} improved from lessons learned!")
     
-    def _trigger_cover_up_exposed_event(self):
+    def _trigger_cover_up_exposed_event(self) -> None:
         """Handle the exposure of past cover-ups."""
         if not hasattr(self, 'technical_failures'):
             return
@@ -4867,7 +4867,7 @@ class GameState:
         if hasattr(self, 'technical_debt'):
             self.technical_debt.add_debt(3)  # Increased oversight creates some operational debt
     
-    def _trigger_transparency_dividend_event(self):
+    def _trigger_transparency_dividend_event(self) -> None:
         """Handle recognition for transparent failure handling."""
         if not hasattr(self, 'technical_failures'):
             return
@@ -4900,7 +4900,7 @@ class GameState:
         self.technical_failures.transparency_reputation = max(0, 
                                                             self.technical_failures.transparency_reputation - 2.0)
     
-    def _trigger_cascade_prevention_event(self):
+    def _trigger_cascade_prevention_event(self) -> None:
         """Handle successful prevention of failure cascades."""
         if not hasattr(self, 'technical_failures'):
             return
@@ -5299,7 +5299,7 @@ class GameState:
         
         return True
     
-    def _execute_borrowing(self, option):
+    def _execute_borrowing(self, option: Dict[str, Any]) -> bool:
         """Execute debt-based funding."""
         amount = random.randint(option["min_amount"], option["max_amount"])
         
@@ -5323,7 +5323,7 @@ class GameState:
         
         return True
     
-    def _execute_alternative_funding(self, option):
+    def _execute_alternative_funding(self, option: Dict[str, Any]) -> bool:
         """Execute alternative funding sources.""" 
         sources = ["government grants", "strategic partnerships", "customer revenue", "research grants"]
         source = random.choice(sources)
