@@ -1,6 +1,26 @@
 {
   "entries": [
     {
+      "filename": "2025-09-14-opponents-type-annotations.md",
+      "slug": "2025-09-14-opponents-type-annotations",
+      "path": "entries/2025-09-14-opponents-type-annotations.md",
+      "frontmatter": {
+        "title": "Type Annotation Milestone: opponents.py Complete",
+        "date": "2025-09-14",
+        "tags": [
+          "type-annotation",
+          "opponents",
+          "milestone",
+          "pylance"
+        ],
+        "summary": "Completed comprehensive type annotation of opponents.py (296 lines, 9 methods) with advanced typing patterns and full integration testing",
+        "commit": "TBD"
+      },
+      "word_count": 443,
+      "file_size": 3858,
+      "modified_at": "2025-09-14T18:24:36.418566"
+    },
+    {
       "filename": "2025-09-14-pyinstaller-and-type-annotation-completion.md",
       "slug": "2025-09-14-pyinstaller-and-type-annotation-completion",
       "path": "entries/2025-09-14-pyinstaller-and-type-annotation-completion.md",
@@ -18,7 +38,7 @@
       },
       "word_count": 421,
       "file_size": 3698,
-      "modified_at": "2025-09-14T16:11:15.774639"
+      "modified_at": "2025-09-14T17:12:32.052502"
     },
     {
       "filename": "2025-09-14-pyinstaller-implementation.md",
@@ -40,6 +60,27 @@
       "word_count": 717,
       "file_size": 6190,
       "modified_at": "2025-09-14T15:33:18.302845"
+    },
+    {
+      "filename": "2025-09-14-ui-menus-type-annotation.md",
+      "slug": "2025-09-14-ui-menus-type-annotation",
+      "path": "entries/2025-09-14-ui-menus-type-annotation.md",
+      "frontmatter": {
+        "title": "MILESTONE: Complete Type Annotation for src/ui/menus.py",
+        "date": "2025-09-14",
+        "tags": [
+          "type-annotation",
+          "milestone",
+          "ui",
+          "menus",
+          "systematic-improvement"
+        ],
+        "summary": "Successfully completed comprehensive type annotation for all 13 functions in src/ui/menus.py (654 lines) following established patterns",
+        "commit": "a410316"
+      },
+      "word_count": 615,
+      "file_size": 5254,
+      "modified_at": "2025-09-14T18:00:27.527057"
     },
     {
       "filename": "2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
@@ -163,12 +204,14 @@
   },
   "errors": [
     "2025-09-10-version-0-2-12-release.md: Title exceeds 60 character limit",
-    "2025-09-11-v0-3-0-consolidated-release.md: Title exceeds 60 character limit"
+    "2025-09-11-v0-3-0-consolidated-release.md: Title exceeds 60 character limit",
+    "2025-09-14-action-rules-type-annotation.md: Title exceeds 60 character limit",
+    "2025-09-14-upgrades-type-annotation.md: Title exceeds 60 character limit"
   ],
   "stats": {
-    "total_entries": 6,
-    "total_errors": 2,
+    "total_entries": 8,
+    "total_errors": 4,
     "latest_entry": "2025-09-14"
   },
-  "generated_at": "2025-09-14T16:11:37.992897"
+  "generated_at": "2025-09-14T18:26:27.979158"
 }

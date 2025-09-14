@@ -100,7 +100,7 @@ ALTERNATIVE: DOWNLOAD ZIP
 5. Play: python main.py
 
 ================================================================================
-GAME FEATURES (v0.4.1) - PARTY DEMO READY
+GAME FEATURES (v0.5.0) - PARTY DEMO READY
 ================================================================================
 
 🎉 **ENHANCED LEADERBOARD SYSTEM:**
@@ -316,13 +316,13 @@ DOCUMENTATION:
 VERSION STATUS
 ================
 
-Current: v0.2.5 "UI Interaction Fixes & Hint System" - Professional Polish Release
+Current: v0.5.0 "Windows Distribution Ready" - Alpha/Beta Testing with Type Safety Improvements
 
 This version focuses on user experience improvements with comprehensive UI interaction fixes,
 a professional Factorio-style hint system, and enhanced stability. All major reported
 interaction issues have been resolved.
 
-Stability Target: v0.3.0 for wider distribution
+Stability Target: v0.6.0 for production-ready distribution with complete type annotations
 
 ================================================================================
 LICENSE & ATTRIBUTION
