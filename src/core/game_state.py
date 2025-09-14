@@ -3,7 +3,7 @@ import json
 import os
 import pygame
 
-from typing import Tuple, Dict, Any, Optional, List, Set, Union, Callable
+from typing import Tuple, Dict, Any, Optional, List, Union, Callable
 
 from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
@@ -15,7 +15,7 @@ from src.services.deterministic_rng import init_deterministic_rng
 from src.services.verbose_logging import init_verbose_logging, LogLevel
 from src.services.leaderboard import init_leaderboard_system
 from src.core.opponents import create_default_opponents
-from src.features.event_system import DeferredEventQueue, EventType, EventAction
+from src.features.event_system import DeferredEventQueue, EventType, EventAction, Event
 from src.features.onboarding import onboarding
 from src.features.achievements_endgame import achievements_endgame_system
 from src.ui.overlay_manager import OverlayManager
@@ -1610,7 +1610,7 @@ class GameState:
             self.messages.append("Espionage backfired! Doom increased.")
         return None
         
-    def _hire_manager(self):
+    def _hire_manager(self) -> None:
         """Hire a new manager to oversee employees"""
         # Add manager blob to the system
         self._add_manager_blob()
@@ -1705,9 +1705,7 @@ class GameState:
         
         return None
     
-    def _handle_legacy_click(self, mouse_pos, w, h):
-        """Handle clicks for the legacy UI layout."""
-    def _handle_legacy_click(self, mouse_pos, w, h):
+    def _handle_legacy_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> None:
         """Handle clicks for the legacy UI layout."""
         # Check context window minimize/maximize button FIRST
         if (hasattr(self, 'context_window_button_rect') and 
@@ -2742,7 +2740,7 @@ class GameState:
                 self.messages.append(f"Deferred: {event.name} - {event.desc}")
                 self.logger.log_event(f"Deferred: {event.name}", event.desc, self.turn)
     
-    def handle_popup_event_action(self, event, action: EventAction):
+    def handle_popup_event_action(self, event: Event, action: EventAction) -> None:
         """Handle player action on a popup event."""
         if action == EventAction.DEFER and event.can_be_deferred():
             if event.defer(self.turn):
@@ -2782,7 +2780,7 @@ class GameState:
             return True
         return False
     
-    def handle_deferred_event_action(self, event, action: EventAction):
+    def handle_deferred_event_action(self, event: Event, action: EventAction) -> None:
         """Handle player action on a deferred event."""
         event.execute_effect(self, action)
         self.deferred_events.remove_event(event)
@@ -3446,7 +3444,7 @@ class GameState:
         
         return True, f"Action set to {action_name}"
     
-    def get_all_employee_productive_actions_summary(self):
+    def get_all_employee_productive_actions_summary(self) -> List[Dict[str, Any]]:
         """
         Get a summary of all employees' productive actions for debugging/logging.
         
@@ -3484,7 +3482,7 @@ class GameState:
             self.pending_tutorial_message = None
             self.save_tutorial_settings()
     
-    def _hire_employee_subtype(self, subtype_id):
+    def _hire_employee_subtype(self, subtype_id: str) -> None:
         """Hire an employee of a specific subtype using the employee subtypes system."""
         from src.core.employee_subtypes import EMPLOYEE_SUBTYPES, apply_subtype_effects
         
@@ -3507,7 +3505,7 @@ class GameState:
         else:
             self.messages.append(f"Failed to hire {subtype['name']}: {message}")
     
-    def _scout_opponents(self):
+    def _scout_opponents(self) -> None:
         """Scout competing labs to gather intelligence on their capabilities."""
         messages = []
         discoveries = 0
@@ -3597,7 +3595,7 @@ class GameState:
         for msg in messages:
             self.messages.append(msg)
     
-    def _trigger_competitor_discovery(self):
+    def _trigger_competitor_discovery(self) -> None:
         """Trigger discovery of a new competitor through intelligence."""
         undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
         
@@ -3610,7 +3608,7 @@ class GameState:
         else:
             self.messages.append("Intelligence reports suggest all major competitors are now known.")
     
-    def _provide_competitor_update(self):
+    def _provide_competitor_update(self) -> None:
         """Provide an intelligence update on known competitors."""
         discovered_opponents = [opp for opp in self.opponents if opp.discovered]
         
@@ -3631,7 +3629,7 @@ class GameState:
             self.messages.append(f"INTELLIGENCE UPDATE: {selected_snippet}")
             self.messages.append("Consider using 'Scout Opponents' for detailed intelligence gathering.")
     
-    def _trigger_expense_request(self):
+    def _trigger_expense_request(self) -> None:
         """Trigger an employee expense request event that requires player decision."""
         from src.features.event_system import Event, EventType, EventAction
         
@@ -3720,7 +3718,7 @@ class GameState:
             self.messages.append(f"Purpose: {expense['description']}")
             self.messages.append("Enhanced event system required for interactive expense approval.")
     
-    def _trigger_hiring_dialog(self):
+    def _trigger_hiring_dialog(self) -> None:
         """Trigger the employee hiring dialog with available employee subtypes."""
         from src.core.employee_subtypes import get_available_subtypes, get_hiring_complexity_level
         from src.features.onboarding import onboarding
@@ -3754,7 +3752,7 @@ class GameState:
             "description": complexity_level['complexity_note']
         }
     
-    def select_employee_subtype(self, subtype_id):
+    def select_employee_subtype(self, subtype_id: str) -> Tuple[bool, str]:
         """Handle player selection of an employee subtype."""
         if not self.pending_hiring_dialog:
             return False, "No hiring dialog active."
@@ -3804,7 +3802,7 @@ class GameState:
             self.action_points += subtype_data["ap_cost"]
             return False, message
     
-    def select_researcher_from_pool(self, researcher_index: int):
+    def select_researcher_from_pool(self, researcher_index: int) -> Tuple[bool, str]:
         """Handle player selection of a researcher from the hiring pool."""
         if not self.pending_hiring_dialog or self.pending_hiring_dialog.get("mode") != "researcher_pool":
             return False, "No researcher pool dialog active."
@@ -3824,7 +3822,7 @@ class GameState:
         if self.pending_hiring_dialog:
             self.pending_hiring_dialog = None
     
-    def _create_upgrade_transition(self, upgrade_idx, start_rect, end_rect):
+    def _create_upgrade_transition(self, upgrade_idx: int, start_rect: pygame.Rect, end_rect: pygame.Rect) -> None:
         """Create a smooth transition animation for an upgrade moving from button to icon."""
         transition = {
             'type': 'upgrade_transition',
@@ -3863,7 +3861,7 @@ class GameState:
             if transition['upgrade_idx'] in self.upgrade_transitions:
                 del self.upgrade_transitions[transition['upgrade_idx']]
     
-    def _update_upgrade_transition(self, transition):
+    def _update_upgrade_transition(self, transition: Dict[str, Any]) -> None:
         """Update a single upgrade transition animation with enhanced effects."""
         if not transition['completed']:
             # Advance animation progress with configurable easing
@@ -5245,7 +5243,7 @@ class GameState:
             return False, f"{selected_option['name']} is not available yet"
         
         # Execute the fundraising option
-        result = self._execute_fundraising_option(selected_option)
+        self._execute_fundraising_option(selected_option)
         
         # Dismiss the dialog
         self.dismiss_fundraising_dialog()
@@ -5518,7 +5516,7 @@ class GameState:
             self.messages.append("? Quality Research unlocked - thorough methodology now available")
         
         # Add verbose logging message
-        research_type = option["name"].replace(" Research", "").lower()
+        option["name"].replace(" Research", "").lower()
         self._add_verbose_research_message(option["name"], final_reduction, option["reputation_gain"])
         
         return True
