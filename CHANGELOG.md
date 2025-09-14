@@ -4,6 +4,29 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-09-14
+### Added
+- **PyInstaller Windows Distribution System**: Complete single-file .exe distribution for alpha/beta testing
+  - Single-file Windows executable (19MB) with embedded Python runtime and all dependencies
+  - Resource management system for bundled vs development environments (`src/services/resource_manager.py`)
+  - Cross-platform build automation (`build.bat`, `build.sh`) with error handling and validation
+  - Comprehensive distribution documentation (`docs/DISTRIBUTION.md`) with Windows Defender workarounds
+  - Asset bundling system with proper path resolution for PyInstaller environments
+  - User data management in `%APPDATA%/PDoom/` for Windows compliance
+  - Build configuration (`pdoom.spec`) with module optimization and UPX compression
+  - Development workflow integration with automated build validation
+
+### Changed
+- **Lab Name Manager**: Updated to use new resource manager for cross-environment compatibility
+- **GitIgnore**: Updated to properly handle PyInstaller build artifacts while preserving .spec files
+- **Development Dependencies**: Added PyInstaller>=5.0.0 to requirements-dev.txt
+
+### Technical
+- **Build Process**: ~30-60 second build time producing 19MB executable
+- **Performance**: 2-5 second startup time with PyInstaller extraction overhead
+- **Compatibility**: Works identically in development and bundled environments
+- **User Experience**: Zero-installation download-and-run for Windows users
+
 ## [0.3.4] - 2025-09-12
 ### Fixed
 - **[HOTFIX] Version Display Synchronization**: Updated version from v0.2.12 to v0.3.4+hotfix1

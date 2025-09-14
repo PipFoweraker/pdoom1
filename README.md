@@ -1,5 +1,5 @@
 # P(Doom): AI Safety Strategy Game
-**v0.4.1 "Bootstrap Economic Calibration" - Party Demo Ready**
+**v0.5.0 "Windows Distribution Ready" - Alpha/Beta Testing**
 
 **Unregulated AI poses an existential threat to humanity.**
  
@@ -7,7 +7,8 @@ In this game, you manage a bootstrap AI safety lab with realistic funding constr
 
 Experience the challenge of running a scrappy nonprofit in the AI safety space - manage weekly cash flow, make strategic funding decisions, and scale your team while keeping doom levels low.
 
-**Latest Version:** v0.4.1 "Bootstrap Economic Calibration"
+**Latest Version:** v0.5.0 "Windows Distribution Ready"
+- **Windows Distribution**: Single-file .exe for download-and-run experience (no Python required)
 - **Enhanced Leaderboard System**: Seed-specific competition with dual identity support
 - **Spectacular Game Over Screen**: Visual celebration for achievements with rank display
 - **Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
@@ -24,8 +25,20 @@ Experience the challenge of running a scrappy nonprofit in the AI safety space -
 QUICK START
 =========================================
 
+## Windows Users: Download and Run (No Installation Required)
+
+**For Windows 10/11 users who want the simplest experience:**
+
+1. **Download** the single executable: `PDoom-v0.5.0-alpha.exe` (19MB)
+2. **Run** by double-clicking (Windows Defender may show a warning - click "More info" → "Run anyway")
+3. **Play** immediately - no Python installation or setup required!
+
+See [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md) for detailed Windows distribution instructions.
+
+## Advanced Users: Python Installation
+
 PREREQUISITES:
-- Python 3.8 or higher (3.12+ recommended)
+- Python 3.9 or higher (3.12+ recommended)
 - Git (for cloning the repository)
 - Command line access (Terminal, PowerShell, Git Bash, etc.)
 

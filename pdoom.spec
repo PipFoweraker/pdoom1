@@ -50,7 +50,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='PDoom-v0.4.1-alpha',
+    name='PDoom-v0.5.0-alpha',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
