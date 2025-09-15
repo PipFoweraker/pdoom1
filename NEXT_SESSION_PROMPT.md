@@ -1,27 +1,48 @@
-🚀 P(Doom) UI Refactoring - Phase 2: Fix Imports & Continue Extraction
+🚀 P(Doom) UI Refactoring - Phase 3: Continue Modular Extraction
 
-**IMMEDIATE STATUS**: Major dialog extraction SUCCESS! Ready for Phase 2.
+**IMMEDIATE STATUS**: Major menu system extraction SUCCESS! Ready for Phase 3.
 
 **Current State**:
-✅ 800+ lines extracted from ui.py (3,257 lines remaining, down from ~4,000+)
-✅ Created src/ui/dialog_system.py (713 lines) + src/ui/bug_report.py (276 lines)  
-⚠️ Circular import issue blocks activation (5-minute fix)
-📍 Branch: refactor/monolith-breakdown (commit 096e7c3)
+✅ 1,150+ lines extracted from ui.py (2,930 lines remaining, down from ~4,000+ original)
+✅ Created src/ui/dialog_system.py (713 lines) + src/ui/bug_report.py (276 lines)
+✅ Created src/ui/menu_system.py (394 lines) with 4 core menu functions
+✅ Achieved 30% monolith reduction with clean modular architecture
+✅ All imports working, no circular dependencies
+📍 Branch: refactor/monolith-breakdown (commit 2f889ae)
 
-**Phase 2 Mission**:
-1. **CRITICAL (5 min)**: Fix circular import in src/ui/dialog_system.py line ~396
-   - Remove `import main` statement  
-   - Replace with parameter-based approach
-2. **ACTIVATE (2 min)**: Re-enable imports in ui.py lines 6-8
-3. **CONTINUE (30+ min)**: Extract menu system functions (~300-400 lines)
+**Phase 3 Mission - Continue UI Extraction**:
+1. **TARGET (30+ min)**: Extract overlay and window system functions (~300-400 lines)
+   - draw_overlay, draw_window_with_header functions
+   - draw_loading_screen, draw_version_footer, draw_dev_mode_indicator
+2. **TARGET (20+ min)**: Extract drawing utility functions (~200-300 lines) 
+   - draw_resource_icon, draw_mute_button functions
+   - Text rendering and wrapping utilities
+3. **TARGET (40+ min)**: Extract game state rendering functions (~400-500 lines)
+   - draw_ui, draw_employee_blobs, draw_top_bar_info functions
 
-**Validation Command**: 
+**Validation Commands**: 
 ```bash
-python -c "from src.ui.dialog_system import draw_fundraising_dialog; print('✓ Ready!')"
+# Test current state
+python -c "from src.ui.menu_system import draw_main_menu; from src.ui.dialog_system import draw_fundraising_dialog; print('✓ All systems ready!')"
+
+# Check current line count  
+wc -l ui.py
 ```
 
-**Next Targets**: draw_main_menu, draw_settings_menu, draw_pause_menu functions (~300-400 lines total)
+**Established Patterns**:
+- Extract function groups into logical modules (e.g., src/ui/overlay_system.py)
+- Remove functions from ui.py, replace with comment placeholders
+- Add imports to ui.py for extracted functions
+- Test imports work before proceeding
+- Commit each major extraction separately
 
-**Architecture**: Proven modular extraction pattern established. Ready for massive continued reduction!
+**Next Targets**: 
+- Overlay system: draw_overlay, draw_window_with_header (~150-200 lines)
+- Utility functions: draw_resource_icon, draw_loading_screen (~150-200 lines)  
+- Game rendering: draw_ui, draw_employee_blobs (~300-400 lines)
 
-🎯 **Goal**: Additional 300-400+ line reduction from ui.py using successful dialog extraction patterns.
+**Architecture Goal**: Continue proven modular extraction to achieve 50%+ reduction from ui.py monolith.
+
+🎯 **Goal**: Additional 600-800+ line reduction from ui.py using successful extraction patterns, targeting final size under 2,000 lines.
+
+**Success Metrics**: Clean modular structure, no circular imports, all functionality preserved, significant line count reduction.
