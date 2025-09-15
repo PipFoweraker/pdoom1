@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2025-09-15T18:03:11.600997",
+  "created": "2025-09-15T20:21:14.139152",
   "max_entries": 50,
   "entries": [
     {
@@ -56,6 +56,15 @@
       "game_mode": "Bootstrap_v0.4.1",
       "duration_seconds": 0.074181,
       "entry_uuid": "5ec8301a-38c4-4162-8a55-2967dbcbb66b"
+    },
+    {
+      "score": 1,
+      "player_name": "Janus Technologies",
+      "date": "2025-09-15T20:21:14.138307",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.007672,
+      "entry_uuid": "4292e853-44f4-46ce-ad60-a40ae1bae087"
     }
   ]
 }
