@@ -54,6 +54,11 @@ class SettingsState:
         self.current_menu = "gameplay"
         self.selected_item = 0
     
+    def enter_accessibility_settings(self):
+        """Enter accessibility settings menu."""
+        self.current_menu = "accessibility"
+        self.selected_item = 0
+    
     def enter_seed_input(self):
         """Enter custom seed input mode."""
         self.show_seed_input = True
@@ -77,7 +82,7 @@ class SettingsState:
             self.enter_gameplay_settings()
             return "gameplay_settings_menu"
         elif action == "accessibility":
-            # TODO: Implement accessibility settings
+            self.enter_accessibility_settings()
             return "accessibility_menu"
         elif action == "keybindings":
             return "keybinding_menu"  # Use existing keybinding system
