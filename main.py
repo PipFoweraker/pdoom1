@@ -4,7 +4,8 @@ import random
 import json
 from src.core.game_state import GameState
 
-from ui import draw_seed_prompt, draw_main_menu, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
+from ui import draw_seed_prompt, draw_main_menu, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
+from src.ui.tutorials import draw_stepwise_tutorial_overlay
 from src.ui.menus import draw_start_game_submenu
 from src.ui.layout import draw_overlay
 from src.ui.components import draw_tooltip, draw_loading_screen
