@@ -2967,7 +2967,7 @@ def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, st
     return button_rect
 
 
-def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> None:
+def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> List[Dict[str, Any]]:
     """
     Draw the researcher pool hiring dialog showing available specialist researchers.
     """
@@ -2979,9 +2979,10 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
     # In practice, you'd pass game_state as a parameter
     game_state = getattr(main, 'game_state', None)
     if not game_state or not hasattr(game_state, 'available_researchers'):
-        return []
-    
-    available_researchers = game_state.available_researchers
+        # Show empty dialog with message instead of returning early
+        available_researchers = []
+    else:
+        available_researchers = game_state.available_researchers
     
     # Create semi-transparent background overlay
     overlay = pygame.Surface((w, h))
@@ -3024,9 +3025,19 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
     researcher_item_height = 120
     researcher_padding = 10
     
+    # If no researchers available, show empty message
+    if not available_researchers:
+        empty_text = "No researchers available. Refresh hiring pool first."
+        empty_surface = desc_font.render(empty_text, True, (200, 200, 200))
+        empty_rect = empty_surface.get_rect(centerx=dialog_rect.centerx, y=desc_rect.bottom + 100)
+        screen.blit(empty_surface, empty_rect)
+    
     for i, researcher in enumerate(available_researchers):
-        # Check if affordable
-        affordable = game_state.money >= researcher.salary_expectation and game_state.action_points >= 2
+        # Check if affordable (handle None game_state)
+        if game_state:
+            affordable = game_state.money >= researcher.salary_expectation and game_state.action_points >= 2
+        else:
+            affordable = False
         
         # Researcher item background
         item_y = researcher_area_y + i * (researcher_item_height + researcher_padding)
@@ -3466,7 +3477,7 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
     return clickable_rects
 
 
-def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> None:
+def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> List[Dict[str, Any]]:
     """
     Draw the employee hiring dialog with available employee subtypes for selection.
     

@@ -1,7 +1,7 @@
 import random
 from typing import TYPE_CHECKING
 
-from src.core.action_rules import manager_unlock_rule, scout_unlock_rule, search_unlock_rule
+from src.core.action_rules import manager_unlock_rule, search_unlock_rule
 from src.core.research_quality import ResearchQuality
 
 if TYPE_CHECKING:
@@ -402,7 +402,7 @@ ACTIONS = [
     },
     {
         "name": "Scout Opponents",
-        "desc": "Gather intelligence on competing labs via internet research. Free action.",
+        "desc": "Gather intelligence on competing labs via internet research. Free and safe action.",
         "cost": 0,
         "ap_cost": 1,  # Action Points cost
         "delegatable": True,  # Can be delegated to admin staff
@@ -411,7 +411,7 @@ ACTIONS = [
         "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
         "upside": lambda gs: gs._scout_opponents(),
         "downside": lambda gs: None,
-        "rules": scout_unlock_rule
+        "rules": None  # No longer locked behind turn requirement
     },
     {
         "name": "Hire Manager",
@@ -433,12 +433,38 @@ ACTIONS = [
     },
     {
         "name": "Scout Opponent",
-        "desc": "Focused intel gathering on competitors (unlocked turn 5+).",
+        "desc": "Focused intel gathering on competitors - costs $50 but has risk of exposure.",
         "cost": 50,
         "ap_cost": 1,  # Action Points cost
         "upside": lambda gs: gs._scout_opponent(),
         "downside": lambda gs: gs._espionage_risk(),
-        "rules": scout_unlock_rule  # Unlocks after turn 5 (refactored rule)
+        "rules": None  # No longer locked behind turn requirement
+    },
+    {
+        "name": "General News Reading",
+        "desc": "PLACEHOLDER: Read industry news for market intelligence and trends.",
+        "cost": 10,  # PLACEHOLDER cost
+        "ap_cost": 1,  # Action Points cost
+        "delegatable": True,  # Can be delegated to admin staff
+        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
+        "delegate_ap_cost": 0,  # Lower AP cost when delegated (routine task)
+        "delegate_effectiveness": 1.0,  # Full effectiveness when delegated
+        "upside": lambda gs: gs._general_news_reading(),
+        "downside": lambda gs: None,
+        "rules": None
+    },
+    {
+        "name": "General Networking",
+        "desc": "PLACEHOLDER: Attend conferences and build industry connections.",
+        "cost": 25,  # PLACEHOLDER cost
+        "ap_cost": 1,  # Action Points cost
+        "delegatable": True,  # Can be delegated to admin staff
+        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
+        "delegate_ap_cost": 1,  # Same AP cost when delegated (needs personal touch)
+        "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated
+        "upside": lambda gs: gs._general_networking(),
+        "downside": lambda gs: None,
+        "rules": None
     },
     {
         "name": "Search",

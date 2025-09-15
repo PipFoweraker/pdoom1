@@ -15,6 +15,7 @@ class ActionCategory(Enum):
     RESEARCH = "research"         # Research actions, publications
     INFRASTRUCTURE = "infrastructure"  # Compute, upgrades, facilities
     SECURITY = "security"         # Safety measures, security actions
+    INTELLIGENCE = "intelligence" # Espionage, scouting, surveillance
     MANAGEMENT = "management"     # Strategic, administrative actions
 
 
@@ -65,6 +66,13 @@ ACTION_COLORS = {
         'text': (255, 220, 220),
         'hover_bg': (140, 60, 60),
         'pressed_bg': (100, 20, 20)
+    },
+    ActionCategory.INTELLIGENCE: {
+        'bg': (60, 40, 100),        # Dark purple tones - espionage/stealth
+        'border': (120, 80, 180),
+        'text': (220, 200, 255),
+        'hover_bg': (80, 60, 120),
+        'pressed_bg': (40, 20, 80)
     },
     ActionCategory.MANAGEMENT: {
         'bg': (80, 80, 80),         # Gray tones - administrative
@@ -157,6 +165,15 @@ ACTION_CATEGORY_MAPPING = {
     'ai_safety_research': ActionCategory.SECURITY,
     'safety_measures': ActionCategory.SECURITY,
     'risk_assessment': ActionCategory.SECURITY,
+    
+    # Intelligence actions
+    'espionage': ActionCategory.INTELLIGENCE,
+    'scout_opponent': ActionCategory.INTELLIGENCE,
+    'scout_opponents': ActionCategory.INTELLIGENCE,
+    'general_news_reading': ActionCategory.INTELLIGENCE,
+    'general_networking': ActionCategory.INTELLIGENCE,
+    'surveillance': ActionCategory.INTELLIGENCE,
+    'intelligence_gathering': ActionCategory.INTELLIGENCE,
     
     # Management actions
     'strategic_planning': ActionCategory.MANAGEMENT,
