@@ -650,3 +650,77 @@ def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
         info_x = w // 2 - info_surf.get_width() // 2
         info_y = int(h * 0.85)
         screen.blit(info_surf, (info_x, info_y))
+
+
+def draw_start_game_submenu(screen, w, h, selected_item):
+    """Draw the start game submenu with different game launch options."""
+    # Clear background
+    screen.fill((50, 50, 50))
+    
+    # Fonts
+    title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
+    pygame.font.SysFont('Consolas', int(h*0.03))
+    desc_font = pygame.font.SysFont('Consolas', int(h*0.022))
+    
+    # Title
+    title_surf = title_font.render("Start Game", True, (255, 255, 255))
+    title_x = w // 2 - title_surf.get_width() // 2
+    title_y = int(h * 0.15)
+    screen.blit(title_surf, (title_x, title_y))
+    
+    # Subtitle
+    subtitle_text = "Choose your starting configuration:"
+    subtitle_surf = desc_font.render(subtitle_text, True, (200, 200, 200))
+    subtitle_x = w // 2 - subtitle_surf.get_width() // 2
+    subtitle_y = title_y + title_surf.get_height() + 10
+    screen.blit(subtitle_surf, (subtitle_x, subtitle_y))
+    
+    # Menu items with descriptions
+    items_with_desc = [
+        ("Basic New Game (Default Global Seed)", "Quick start with weekly seed - zero configuration"),
+        ("Configure Game / Custom Seed", "Choose your own seed for reproducible games"), 
+        ("Config Settings", "Modify game difficulty and starting resources"),
+        ("Game Options", "Audio, display, and accessibility settings")
+    ]
+    
+    # Button layout
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    for i, (item, description) in enumerate(items_with_desc):
+        # Calculate button position
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        # Determine button state
+        if i == selected_item:
+            button_state = ButtonState.FOCUSED
+        else:
+            button_state = ButtonState.NORMAL
+        
+        # Draw button
+        draw_low_poly_button(screen, button_rect, item, button_state)
+        
+        # Draw description below button
+        desc_surf = desc_font.render(description, True, (150, 150, 150))
+        desc_x = center_x - desc_surf.get_width() // 2
+        desc_y = button_y + button_height + 5
+        screen.blit(desc_surf, (desc_x, desc_y))
+    
+    # Instructions
+    inst_font = pygame.font.SysFont('Consolas', int(h*0.02))
+    instructions = [
+        "Use arrow keys or mouse to navigate",
+        "Press Enter or click to select ? Press Escape to go back"
+    ]
+    
+    inst_y = int(h * 0.85)
+    for instruction in instructions:
+        inst_surf = inst_font.render(instruction, True, (180, 180, 180))
+        inst_x = w // 2 - inst_surf.get_width() // 2
+        screen.blit(inst_surf, (inst_x, inst_y))
+        inst_y += inst_surf.get_height() + 5
