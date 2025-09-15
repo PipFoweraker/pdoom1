@@ -1,6 +1,27 @@
 {
   "entries": [
     {
+      "filename": "2025-09-16-ui-hotfixes-session.md",
+      "slug": "2025-09-16-ui-hotfixes-session",
+      "path": "entries/2025-09-16-ui-hotfixes-session.md",
+      "frontmatter": {
+        "title": "UI Hotfixes - Systematic Resolution Session",
+        "date": "2025-09-16",
+        "tags": [
+          "ui",
+          "hotfixes",
+          "bugfixes",
+          "intelligence",
+          "overlap-prevention"
+        ],
+        "summary": "Systematic resolution of 6 major UI issues including researcher pool display, scroll wheel navigation, scout actions, and overlap prevention",
+        "commit": "cff6dea"
+      },
+      "word_count": 509,
+      "file_size": 4305,
+      "modified_at": "2025-09-16T00:43:11.122014"
+    },
+    {
       "filename": "2025-09-15-action-button-layout-optimization.md",
       "slug": "2025-09-15-action-button-layout-optimization",
       "path": "entries/2025-09-15-action-button-layout-optimization.md",
@@ -18,7 +39,7 @@
       },
       "word_count": 393,
       "file_size": 3069,
-      "modified_at": "2025-09-15T18:33:58.734056"
+      "modified_at": "2025-09-15T22:06:53.586092"
     },
     {
       "filename": "2025-09-15-hotfix-batch-deployment.md",
@@ -43,6 +64,27 @@
       "modified_at": "2025-09-15T17:41:17.393241"
     },
     {
+      "filename": "2025-09-15-monolith-breakdown-tutorial-extraction.md",
+      "slug": "2025-09-15-monolith-breakdown-tutorial-extraction",
+      "path": "entries/2025-09-15-monolith-breakdown-tutorial-extraction.md",
+      "frontmatter": {
+        "title": "Monolith Breakdown: Tutorial Extraction & Legacy Cleanup",
+        "date": "2025-09-15",
+        "tags": [
+          "refactoring",
+          "monolith-breakdown",
+          "ui",
+          "cleanup",
+          "modular-architecture"
+        ],
+        "summary": "Extracted 486 lines of tutorial functions, removed 151 lines of legacy code, and fixed critical hover tooltips bug",
+        "commit": "139ef35"
+      },
+      "word_count": 308,
+      "file_size": 2792,
+      "modified_at": "2025-09-15T22:28:39.687642"
+    },
+    {
       "filename": "2025-09-15-multi-repository-integration-complete.md",
       "slug": "2025-09-15-multi-repository-integration-complete",
       "path": "entries/2025-09-15-multi-repository-integration-complete.md",
@@ -64,6 +106,27 @@
       "word_count": 713,
       "file_size": 6799,
       "modified_at": "2025-09-15T15:11:14.236792"
+    },
+    {
+      "filename": "2025-09-15-ui-monolith-breakdown-complete.md",
+      "slug": "2025-09-15-ui-monolith-breakdown-complete",
+      "path": "entries/2025-09-15-ui-monolith-breakdown-complete.md",
+      "frontmatter": {
+        "title": "UI Monolith Breakdown Complete - Architecture Transformation",
+        "date": "2025-09-15",
+        "tags": [
+          "milestone",
+          "architecture",
+          "ui",
+          "refactoring",
+          "v0.7.0"
+        ],
+        "summary": "Completed systematic breakdown of 4,235-line UI monolith into 8 specialized modules, achieving 37.1% reduction with zero functionality regression",
+        "commit": "4c615f3"
+      },
+      "word_count": 343,
+      "file_size": 3053,
+      "modified_at": "2025-09-15T22:28:39.687642"
     },
     {
       "filename": "2025-09-14-action-rules-type-annotation.md",
@@ -438,11 +501,13 @@
       ]
     }
   },
-  "errors": [],
+  "errors": [
+    "2025-09-15-modular-ui-architecture-hotfix.md: Title exceeds 60 character limit"
+  ],
   "stats": {
-    "total_entries": 19,
-    "total_errors": 0,
-    "latest_entry": "2025-09-15"
+    "total_entries": 22,
+    "total_errors": 1,
+    "latest_entry": "2025-09-16"
   },
-  "generated_at": "2025-09-15T18:34:12.373955"
+  "generated_at": "2025-09-16T00:43:36.695786"
 }

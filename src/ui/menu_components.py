@@ -108,6 +108,7 @@ class MenuLayoutManager:
         # If buttons don't fit, make them even smaller
         if total_width > self.config.content_width:
             button_width = int((self.config.content_width - (button_count - 1) * self.config.spacing) / button_count)
+            total_width = button_count * button_width + (button_count - 1) * self.config.spacing
         
         start_x = (self.config.screen_width - total_width) // 2
         button_y = self.reserve_space(button_height)
