@@ -103,6 +103,39 @@ class EnhancedLeaderboardManager:
         self.current_session: Optional[GameSession] = None
         self.session_start_time: Optional[datetime] = None
     
+    def _safe_get_technical_debt_total(self, game_state) -> int:
+        """
+        Safely extract technical debt total from game state.
+        
+        Uses verbose method name to clarify we're getting the total accumulated debt value,
+        not the TechnicalDebt object itself.
+        """
+        try:
+            if hasattr(game_state, 'technical_debt') and game_state.technical_debt:
+                technical_debt_manager = game_state.technical_debt
+                if hasattr(technical_debt_manager, 'accumulated_debt'):
+                    return int(technical_debt_manager.accumulated_debt)
+        except (AttributeError, TypeError, ValueError, Exception):
+            pass
+        return 0
+    
+    def _safe_get_research_papers_count(self, game_state) -> int:
+        """
+        Safely extract research papers published count from game state.
+        
+        Uses explicit method name to clarify this tracks published paper count,
+        handling cases where this metric might not exist.
+        """
+        try:
+            # Check if research papers tracking exists
+            if hasattr(game_state, 'research_papers_published'):
+                return int(game_state.research_papers_published)
+            # Fallback: try to derive from research actions or other metrics
+            # For now, default to 0 until this feature is implemented
+        except (AttributeError, TypeError, ValueError, Exception):
+            pass
+        return 0
+    
     def start_game_session(self, game_state) -> None:
         """Start tracking a new game session."""
         self.session_start_time = datetime.now()
@@ -134,8 +167,8 @@ class EnhancedLeaderboardManager:
             
             actions_taken=0,
             average_ap_per_turn=3.0,
-            research_papers_published=getattr(game_state, 'research_papers_published', 0),
-            technical_debt_accumulated=getattr(game_state, 'technical_debt', 0)
+            research_papers_published=self._safe_get_research_papers_count(game_state),
+            technical_debt_accumulated=self._safe_get_technical_debt_total(game_state)
         )
     
     def end_game_session(self, game_state) -> Tuple[bool, int, GameSession]:
@@ -168,19 +201,8 @@ class EnhancedLeaderboardManager:
             weeks_played = max(1, game_state.turn / 7)  # Approximate weeks
             self.current_session.total_staff_maintenance_paid = weeks_played * game_state.economic_config.get_staff_maintenance_cost(game_state.staff)
         
-        # Handle technical debt safely (might be object or number)
-        technical_debt_value = 0
-        try:
-            if hasattr(game_state, 'technical_debt'):
-                td = getattr(game_state, 'technical_debt', 0)
-                if hasattr(td, 'total_debt'):
-                    technical_debt_value = int(td.total_debt)
-                elif isinstance(td, (int, float)):
-                    technical_debt_value = int(td)
-        except (AttributeError, TypeError, ValueError):
-            technical_debt_value = 0
-        
-        self.current_session.technical_debt_accumulated = technical_debt_value
+        # Update technical debt using safe accessor with verbose naming
+        self.current_session.technical_debt_accumulated = self._safe_get_technical_debt_total(game_state)
         
         # Get appropriate leaderboard
         leaderboard = self._get_leaderboard_for_session(self.current_session)
