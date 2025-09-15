@@ -127,7 +127,9 @@ class GameClock:
             Formatted date string (e.g., "01/Jul/02014")
         """
         day = self.current_date.day
-        month_abbrev = self.MONTH_ABBREVS[self.current_date.month - 1]
+        # Bounds checking to prevent IndexError: ensure month is 1-12
+        month_index = max(0, min(11, self.current_date.month - 1))
+        month_abbrev = self.MONTH_ABBREVS[month_index]
         year = self.current_date.year  # Full 5-digit year with leading zeros
         
         return f"{day:02d}/{month_abbrev}/{year:05d}"
@@ -193,7 +195,9 @@ class GameClock:
             Formatted date string
         """
         day = date.day
-        month_abbrev = self.MONTH_ABBREVS[date.month - 1]
+        # Bounds checking to prevent IndexError: ensure month is 1-12
+        month_index = max(0, min(11, date.month - 1))
+        month_abbrev = self.MONTH_ABBREVS[month_index]
         year = date.year  # Full 5-digit year with leading zeros
         
         return f"{day:02d}/{month_abbrev}/{year:05d}"
