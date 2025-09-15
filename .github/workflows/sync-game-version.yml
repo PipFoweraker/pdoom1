@@ -1,0 +1,384 @@
+name: Sync Game Versions to Website
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+    inputs:
+      target_version:
+        description: 'Game version to sync (e.g., v0.6.0)'
+        required: true
+        type: string
+      force_sync:
+        description: 'Force sync even if version already exists'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  WEBSITE_REPO: 'PipFoweraker/pdoom1-website'
+  DATA_REPO: 'PipFoweraker/pdoom-data'
+
+jobs:
+  sync-version-to-website:
+    runs-on: ubuntu-latest
+    name: Sync Game Version to Website
+    
+    steps:
+    - name: Checkout Game Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Need full history for changelog
+        
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Extract Version Information
+      id: version_info
+      run: |
+        # Extract version from release or input
+        if [ "${{ github.event_name }}" = "release" ]; then
+          VERSION="${{ github.event.release.tag_name }}"
+          VERSION_CLEAN="${VERSION#v}"
+          RELEASE_NAME="${{ github.event.release.name }}"
+          RELEASE_BODY="${{ github.event.release.body }}"
+          RELEASE_URL="${{ github.event.release.html_url }}"
+          IS_PRERELEASE="${{ github.event.release.prerelease }}"
+        else
+          VERSION="${{ github.event.inputs.target_version }}"
+          VERSION_CLEAN="${VERSION#v}"
+          RELEASE_NAME="Manual Sync: $VERSION"
+          RELEASE_BODY="Manually triggered version sync"
+          RELEASE_URL="https://github.com/PipFoweraker/pdoom1/releases/tag/$VERSION"
+          IS_PRERELEASE="false"
+        fi
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "version_clean=$VERSION_CLEAN" >> $GITHUB_OUTPUT
+        echo "release_name=$RELEASE_NAME" >> $GITHUB_OUTPUT
+        echo "release_url=$RELEASE_URL" >> $GITHUB_OUTPUT
+        echo "is_prerelease=$IS_PRERELEASE" >> $GITHUB_OUTPUT
+        
+        # Extract release date
+        RELEASE_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        echo "release_date=$RELEASE_DATE" >> $GITHUB_OUTPUT
+        
+        echo "=== Version Information ==="
+        echo "Version: $VERSION"
+        echo "Clean Version: $VERSION_CLEAN"
+        echo "Release Name: $RELEASE_NAME"
+        echo "Release Date: $RELEASE_DATE"
+        echo "Is Prerelease: $IS_PRERELEASE"
+        
+    - name: Extract Game Version Details
+      id: game_details
+      run: |
+        # Read version information from game source
+        if [ -f "src/services/version.py" ]; then
+          GAME_VERSION=$(python -c "
+        import sys; sys.path.append('src/services')
+        try:
+            from version import __version__, get_version_info
+            info = get_version_info()
+            print(info['version'])
+        except:
+            print('${{ steps.version_info.outputs.version_clean }}')
+        ")
+        else
+          GAME_VERSION="${{ steps.version_info.outputs.version_clean }}"
+        fi
+        
+        echo "game_version=$GAME_VERSION" >> $GITHUB_OUTPUT
+        
+        # Extract changelog section for this version
+        if [ -f "CHANGELOG.md" ]; then
+          python3 << 'EOF'
+        import re
+        import sys
+        
+        version = "${{ steps.version_info.outputs.version_clean }}"
+        
+        try:
+            with open('CHANGELOG.md', 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            # Find the section for this version
+            pattern = rf'## \[{re.escape(version)}\].*?\n(.*?)(?=\n## \[|\Z)'
+            match = re.search(pattern, content, re.DOTALL)
+            
+            if match:
+                changelog_section = match.group(1).strip()
+                # Write to file for GitHub Actions
+                with open('changelog_section.txt', 'w', encoding='utf-8') as f:
+                    f.write(changelog_section)
+                print(f"Extracted changelog for version {version}")
+            else:
+                with open('changelog_section.txt', 'w', encoding='utf-8') as f:
+                    f.write(f"Release notes for version {version}")
+                print(f"No specific changelog found for version {version}")
+        except Exception as e:
+            print(f"Error extracting changelog: {e}")
+            with open('changelog_section.txt', 'w', encoding='utf-8') as f:
+                f.write(f"Release notes for version {version}")
+        EOF
+        fi
+        
+        echo "game_version=$GAME_VERSION" >> $GITHUB_OUTPUT
+        
+    - name: Create Website Version Data
+      id: website_data
+      run: |
+        # Create version data file for website
+        cat > website_version_update.json << EOF
+        {
+          "game_version": "${{ steps.game_details.outputs.game_version }}",
+          "display_version": "v${{ steps.game_details.outputs.game_version }}",
+          "release_name": "${{ steps.version_info.outputs.release_name }}",
+          "release_date": "${{ steps.version_info.outputs.release_date }}",
+          "release_url": "${{ steps.version_info.outputs.release_url }}",
+          "is_prerelease": ${{ steps.version_info.outputs.is_prerelease }},
+          "changelog_section": $(cat changelog_section.txt | jq -Rs .),
+          "sync_timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+          "sync_source": "pdoom1-game-release",
+          "assets": {
+            "download_url": "${{ steps.version_info.outputs.release_url }}",
+            "source_zip": "https://github.com/PipFoweraker/pdoom1/archive/refs/tags/${{ steps.version_info.outputs.version }}.zip",
+            "changelog_url": "https://github.com/PipFoweraker/pdoom1/blob/main/CHANGELOG.md"
+          },
+          "requirements": {
+            "python": "3.9+",
+            "os": ["Windows 10+", "Linux", "macOS"],
+            "memory": "512MB",
+            "storage": "100MB"
+          },
+          "compatibility": {
+            "website_features": "full",
+            "data_integration": "ready",
+            "api_version": "1.0.0"
+          }
+        }
+        EOF
+        
+        echo "Created website version data:"
+        cat website_version_update.json | jq .
+        
+    - name: Update Website Repository
+      env:
+        GITHUB_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+      run: |
+        # Clone website repository
+        git clone https://x-access-token:${GITHUB_TOKEN}@github.com/${WEBSITE_REPO}.git website-repo
+        cd website-repo
+        
+        # Configure git
+        git config user.name "Game Version Sync Bot"
+        git config user.email "actions@github.com"
+        
+        # Create version content directory if it doesn't exist
+        mkdir -p content/game-versions/v${{ steps.game_details.outputs.game_version }}
+        mkdir -p data/versions
+        
+        # Copy version data
+        cp ../website_version_update.json data/versions/v${{ steps.game_details.outputs.game_version }}.json
+        
+        # Create release notes content
+        cat > content/game-versions/v${{ steps.game_details.outputs.game_version }}/release-notes.md << 'EOF'
+        ---
+        title: "${{ steps.version_info.outputs.release_name }}"
+        version: "${{ steps.game_details.outputs.game_version }}"
+        release_date: "${{ steps.version_info.outputs.release_date }}"
+        type: "game-release"
+        status: "${{ steps.version_info.outputs.is_prerelease == 'true' && 'prerelease' || 'stable' }}"
+        download_url: "${{ steps.version_info.outputs.release_url }}"
+        ---
+        
+        # ${{ steps.version_info.outputs.release_name }}
+        
+        **Version:** v${{ steps.game_details.outputs.game_version }}  
+        **Release Date:** ${{ steps.version_info.outputs.release_date }}  
+        **Status:** ${{ steps.version_info.outputs.is_prerelease == 'true' && 'Pre-release' || 'Stable Release' }}
+        
+        ## Download
+        
+        - [Download Game](${{ steps.version_info.outputs.release_url }})
+        - [View Source Code](https://github.com/PipFoweraker/pdoom1/tree/${{ steps.version_info.outputs.version }})
+        - [Full Changelog](https://github.com/PipFoweraker/pdoom1/blob/main/CHANGELOG.md)
+        
+        ## Release Notes
+        
+        EOF
+        
+        # Append changelog content
+        cat ../changelog_section.txt >> content/game-versions/v${{ steps.game_details.outputs.game_version }}/release-notes.md
+        
+        # Update current version tracking
+        cat > data/current-game-version.json << EOF
+        {
+          "current_version": "${{ steps.game_details.outputs.game_version }}",
+          "display_version": "v${{ steps.game_details.outputs.game_version }}",
+          "release_date": "${{ steps.version_info.outputs.release_date }}",
+          "release_name": "${{ steps.version_info.outputs.release_name }}",
+          "status": "${{ steps.version_info.outputs.is_prerelease == 'true' && 'prerelease' || 'stable' }}",
+          "last_updated": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+        }
+        EOF
+        
+        # Commit and push changes
+        git add .
+        
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "feat: sync game version v${{ steps.game_details.outputs.game_version }}
+        
+        - Add release notes for v${{ steps.game_details.outputs.game_version }}
+        - Update current version tracking
+        - Sync from pdoom1 repository release
+        
+        Automated sync from: ${{ github.repository }}@${{ github.sha }}"
+          
+          git push origin main
+          echo "✅ Successfully updated website with game version v${{ steps.game_details.outputs.game_version }}"
+        fi
+        
+    - name: Update Version History
+      env:
+        GITHUB_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+      run: |
+        cd website-repo
+        
+        # Update version history JSON
+        python3 << 'EOF'
+        import json
+        import os
+        from datetime import datetime
+        
+        version = "${{ steps.game_details.outputs.game_version }}"
+        release_date = "${{ steps.version_info.outputs.release_date }}"
+        release_name = "${{ steps.version_info.outputs.release_name }}"
+        is_prerelease = "${{ steps.version_info.outputs.is_prerelease }}" == "true"
+        
+        # Load existing version history
+        history_file = "data/version-history.json"
+        if os.path.exists(history_file):
+            with open(history_file, 'r') as f:
+                history = json.load(f)
+        else:
+            history = {"versions": [], "last_updated": None}
+        
+        # Check if version already exists
+        existing_version = next((v for v in history["versions"] if v["version"] == version), None)
+        
+        if existing_version and not "${{ github.event.inputs.force_sync }}" == "true":
+            print(f"Version {version} already exists in history")
+        else:
+            # Add or update version entry
+            version_entry = {
+                "version": version,
+                "display_version": f"v{version}",
+                "release_date": release_date,
+                "release_name": release_name,
+                "status": "prerelease" if is_prerelease else "stable",
+                "type": "minor" if ".0" in version else "patch",
+                "download_url": "${{ steps.version_info.outputs.release_url }}",
+                "changelog_url": f"/game/releases/v{version}"
+            }
+            
+            if existing_version:
+                # Update existing entry
+                index = history["versions"].index(existing_version)
+                history["versions"][index] = version_entry
+                print(f"Updated existing version {version}")
+            else:
+                # Add new entry at the beginning (most recent first)
+                history["versions"].insert(0, version_entry)
+                print(f"Added new version {version}")
+            
+            # Update timestamp
+            history["last_updated"] = datetime.utcnow().isoformat() + "Z"
+            
+            # Save updated history
+            with open(history_file, 'w') as f:
+                json.dump(history, f, indent=2)
+            
+            print(f"Version history updated with {len(history['versions'])} total versions")
+        EOF
+        
+        # Commit version history update
+        if ! git diff --quiet data/version-history.json; then
+          git add data/version-history.json
+          git commit -m "update: version history with v${{ steps.game_details.outputs.game_version }}"
+          git push origin main
+          echo "✅ Updated version history"
+        fi
+        
+    - name: Trigger Website Rebuild
+      env:
+        GITHUB_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+      run: |
+        # Trigger website rebuild via repository dispatch
+        curl -X POST \
+          -H "Authorization: token ${GITHUB_TOKEN}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${WEBSITE_REPO}/dispatches \
+          -d '{
+            "event_type": "game_version_sync",
+            "client_payload": {
+              "game_version": "${{ steps.game_details.outputs.game_version }}",
+              "sync_source": "pdoom1-release",
+              "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+            }
+          }'
+        
+        echo "✅ Triggered website rebuild"
+        
+    - name: Notify Data Repository (Future)
+      env:
+        GITHUB_TOKEN: ${{ secrets.CROSS_REPO_TOKEN }}
+      run: |
+        # Placeholder for future data repository notification
+        echo "=== Data Repository Notification (Future) ==="
+        echo "Game Version: v${{ steps.game_details.outputs.game_version }}"
+        echo "Release Date: ${{ steps.version_info.outputs.release_date }}"
+        echo "Status: Ready for data batch compatibility validation"
+        
+        # Future implementation will:
+        # 1. Notify pdoom-data of new game version
+        # 2. Trigger compatibility validation
+        # 3. Update data batch schemas if needed
+        # 4. Validate existing data batches against new version
+        
+        # curl -X POST \
+        #   -H "Authorization: token ${GITHUB_TOKEN}" \
+        #   -H "Accept: application/vnd.github.v3+json" \
+        #   https://api.github.com/repos/${DATA_REPO}/dispatches \
+        #   -d '{
+        #     "event_type": "game_version_update",
+        #     "client_payload": {
+        #       "game_version": "${{ steps.game_details.outputs.game_version }}",
+        #       "compatibility_check": true,
+        #       "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'"
+        #     }
+        #   }'
+        
+    - name: Summary
+      run: |
+        echo "=== Game Version Sync Complete ==="
+        echo "✅ Game Version: v${{ steps.game_details.outputs.game_version }}"
+        echo "✅ Website Repository: Updated with release content"
+        echo "✅ Version History: Updated with new release"
+        echo "✅ Website Rebuild: Triggered"
+        echo "🔄 Data Integration: Placeholder ready for future implementation"
+        echo ""
+        echo "Website will be updated with:"
+        echo "- Release notes at /game/releases/v${{ steps.game_details.outputs.game_version }}"
+        echo "- Updated version badge and current version display"
+        echo "- Version history page with new release"
+        echo "- Download links and compatibility information"
+        echo ""
+        echo "Next steps:"
+        echo "- Monitor website deployment"
+        echo "- Verify version display is correct"
+        echo "- Test download links and content"
