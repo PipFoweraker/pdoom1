@@ -1,6 +1,28 @@
 {
   "entries": [
     {
+      "filename": "2025-09-15-hotfix-batch-deployment.md",
+      "slug": "2025-09-15-hotfix-batch-deployment",
+      "path": "entries/2025-09-15-hotfix-batch-deployment.md",
+      "frontmatter": {
+        "title": "Hotfix Batch: Mac TypeError + GameClock Bounds + Dialog UX",
+        "date": "2025-09-15",
+        "tags": [
+          "hotfix",
+          "mac-bug",
+          "type-safety",
+          "gameclock",
+          "batch-deployment",
+          "critical-fixes"
+        ],
+        "summary": "Systematic batch deployment of three critical bug fixes including Mac TypeError resolution, GameClock bounds protection, and hiring dialog UX validation",
+        "commit": "f806f80"
+      },
+      "word_count": 627,
+      "file_size": 5525,
+      "modified_at": "2025-09-15T15:32:01.674426"
+    },
+    {
       "filename": "2025-09-15-multi-repository-integration-complete.md",
       "slug": "2025-09-15-multi-repository-integration-complete",
       "path": "entries/2025-09-15-multi-repository-integration-complete.md",
@@ -20,8 +42,8 @@
         "summary": "Completed comprehensive multi-repository integration system establishing professional automation and documentation management across pdoom1, pdoom1-website, and pdoom-data repositories with zero-manual-overhead release process."
       },
       "word_count": 713,
-      "file_size": 6664,
-      "modified_at": "2025-09-15T14:01:46.849052"
+      "file_size": 6799,
+      "modified_at": "2025-09-15T15:11:14.236792"
     },
     {
       "filename": "2025-09-14-action-rules-type-annotation.md",
@@ -42,7 +64,7 @@
       },
       "word_count": 749,
       "file_size": 6360,
-      "modified_at": "2025-09-15T00:01:22.930559"
+      "modified_at": "2025-09-14T21:57:54.589623"
     },
     {
       "filename": "2025-09-14-deterministic-rng-complete.md",
@@ -63,7 +85,7 @@
       },
       "word_count": 566,
       "file_size": 5164,
-      "modified_at": "2025-09-15T00:01:22.931565"
+      "modified_at": "2025-09-14T21:57:54.589623"
     },
     {
       "filename": "2025-09-14-events-typeddict-milestone.md",
@@ -85,7 +107,7 @@
       },
       "word_count": 758,
       "file_size": 6348,
-      "modified_at": "2025-09-15T00:01:22.932570"
+      "modified_at": "2025-09-14T21:57:54.589623"
     },
     {
       "filename": "2025-09-14-opponents-type-annotations.md",
@@ -105,7 +127,7 @@
       },
       "word_count": 443,
       "file_size": 3858,
-      "modified_at": "2025-09-15T00:01:22.933575"
+      "modified_at": "2025-09-14T21:47:25.388979"
     },
     {
       "filename": "2025-09-14-productive-actions-typeddict-milestone.md",
@@ -127,7 +149,7 @@
       },
       "word_count": 795,
       "file_size": 6964,
-      "modified_at": "2025-09-15T00:01:22.934579"
+      "modified_at": "2025-09-14T21:57:54.589623"
     },
     {
       "filename": "2025-09-14-pyinstaller-and-type-annotation-completion.md",
@@ -147,7 +169,7 @@
       },
       "word_count": 421,
       "file_size": 3698,
-      "modified_at": "2025-09-15T00:01:22.934579"
+      "modified_at": "2025-09-14T17:12:32.052502"
     },
     {
       "filename": "2025-09-14-pyinstaller-implementation.md",
@@ -168,7 +190,7 @@
       },
       "word_count": 717,
       "file_size": 6190,
-      "modified_at": "2025-09-15T00:01:22.935583"
+      "modified_at": "2025-09-14T15:33:18.302845"
     },
     {
       "filename": "2025-09-14-type-annotation-session-wrap.md",
@@ -188,7 +210,7 @@
       },
       "word_count": 393,
       "file_size": 3522,
-      "modified_at": "2025-09-15T00:01:22.936610"
+      "modified_at": "2025-09-14T21:47:25.389979"
     },
     {
       "filename": "2025-09-14-ui-menus-type-annotation.md",
@@ -209,7 +231,7 @@
       },
       "word_count": 615,
       "file_size": 5254,
-      "modified_at": "2025-09-15T00:01:22.939126"
+      "modified_at": "2025-09-14T21:47:25.390982"
     },
     {
       "filename": "2025-09-14-upgrades-type-annotation.md",
@@ -231,7 +253,7 @@
       },
       "word_count": 551,
       "file_size": 4579,
-      "modified_at": "2025-09-15T00:01:22.940130"
+      "modified_at": "2025-09-14T21:57:54.589623"
     },
     {
       "filename": "2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
@@ -252,7 +274,7 @@
       },
       "word_count": 317,
       "file_size": 2812,
-      "modified_at": "2025-09-14T12:45:48.374505"
+      "modified_at": "2025-09-13T18:09:43.110438"
     },
     {
       "filename": "2025-09-11-debug-console-system.md",
@@ -271,7 +293,7 @@
       },
       "word_count": 181,
       "file_size": 1528,
-      "modified_at": "2025-09-12T09:58:38.406024"
+      "modified_at": "2025-09-12T21:45:50.665884"
     },
     {
       "filename": "2025-09-11-v0-3-0-consolidated-release.md",
@@ -293,7 +315,7 @@
       },
       "word_count": 596,
       "file_size": 5363,
-      "modified_at": "2025-09-15T00:01:22.929420"
+      "modified_at": "2025-09-14T21:47:25.385984"
     },
     {
       "filename": "2025-09-10-major-type-annotation-milestone.md",
@@ -313,7 +335,7 @@
       },
       "word_count": 606,
       "file_size": 5162,
-      "modified_at": "2025-09-11T12:05:28.061248"
+      "modified_at": "2025-09-10T12:21:12.687333"
     },
     {
       "filename": "2025-09-10-type-annotation-sprint.md",
@@ -333,7 +355,7 @@
       },
       "word_count": 517,
       "file_size": 4598,
-      "modified_at": "2025-09-11T12:05:28.062757"
+      "modified_at": "2025-09-10T12:21:12.689361"
     },
     {
       "filename": "2025-09-10-version-0-2-12-release.md",
@@ -354,7 +376,7 @@
       },
       "word_count": 428,
       "file_size": 3875,
-      "modified_at": "2025-09-15T00:01:22.928415"
+      "modified_at": "2025-09-14T21:47:25.384981"
     }
   ],
   "config": {
@@ -398,9 +420,9 @@
   },
   "errors": [],
   "stats": {
-    "total_entries": 17,
+    "total_entries": 18,
     "total_errors": 0,
     "latest_entry": "2025-09-15"
   },
-  "generated_at": "2025-09-15T14:04:30.334454"
+  "generated_at": "2025-09-15T15:32:07.969170"
 }

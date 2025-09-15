@@ -1,9 +1,9 @@
 ---
-title: "Comprehensive Hotfix Batch: Mac TypeError + Critical Stability Fixes"
+title: "Hotfix Batch: Mac TypeError + GameClock Bounds + Dialog UX"
 date: "2025-09-15"
 tags: ["hotfix", "mac-bug", "type-safety", "gameclock", "batch-deployment", "critical-fixes"]
 summary: "Systematic batch deployment of three critical bug fixes including Mac TypeError resolution, GameClock bounds protection, and hiring dialog UX validation"
-commit: "TBD"
+commit: "f806f80"
 ---
 
 # Comprehensive Hotfix Batch: Mac TypeError + Critical Stability Fixes
