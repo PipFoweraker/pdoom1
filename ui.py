@@ -2,6 +2,7 @@ import pygame
 from typing import Dict, Any, Union, Optional, List, Tuple
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
 from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
+from src.ui.modular_end_game_menu import draw_end_game_menu_modular
 
 
 def create_action_context_info(action: Dict[str, Any], game_state: Any, action_idx: int) -> Dict[str, Any]:
@@ -2863,7 +2864,10 @@ def draw_upgrade_transition(screen: pygame.Surface, transition, game_state, w: i
 
 def draw_end_game_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, game_state, seed: str) -> None:
     """
-    Draw the end-of-game menu with game summary and options.
+    Draw the end-of-game menu with modular components and dynamic layout.
+    
+    This function now uses the modular menu system for better maintainability
+    and dynamic positioning that scales with different screen sizes and game states.
     
     Args:
         screen: pygame surface to draw on
@@ -2871,266 +2875,9 @@ def draw_end_game_menu(screen: pygame.Surface, w: int, h: int, selected_item: in
         selected_item: index of currently selected menu item (for keyboard navigation)
         game_state: GameState object for displaying final stats
         seed: Game seed used for this session
-    
-    Features:
-    - Displays final game statistics
-    - Menu options: Relaunch, Main Menu, Settings, Submit Feedback, Submit Bug
-    - Keyboard navigation support
-    - Consistent styling with main menu
     """
-    # Fonts
-    title_font = pygame.font.SysFont('Consolas', int(h*0.05), bold=True)
-    subtitle_font = pygame.font.SysFont('Consolas', int(h*0.035))
-    stats_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-    small_font = pygame.font.SysFont('Consolas', int(h*0.02))
-    
-    # Colors
-    title_color = (255, 100, 100)  # Red for "GAME OVER"
-    subtitle_color = (255, 220, 220)
-    stats_color = (240, 255, 255)
-    menu_active_color = (100, 200, 255)
-    menu_inactive_color = (180, 180, 180)
-    button_bg_active = (70, 130, 180)
-    button_bg_inactive = (60, 60, 100)
-    
-    # Title
-    if game_state.end_game_scenario:
-        title_text = title_font.render(game_state.end_game_scenario.title, True, title_color)
-    else:
-        title_text = title_font.render("GAME OVER", True, title_color)
-    title_rect = title_text.get_rect(center=(w//2, int(h*0.08)))
-    screen.blit(title_text, title_rect)
-    
-    # Game end scenario description
-    if game_state.end_game_scenario:
-        # Wrap the description text
-        description_lines = wrap_text(game_state.end_game_scenario.description, subtitle_font, w*2//3)
-        start_y = int(h*0.13)
-        for i, line in enumerate(description_lines[:4]):  # Limit to 4 lines to fit layout
-            desc_text = subtitle_font.render(line, True, subtitle_color)
-            desc_rect = desc_text.get_rect(center=(w//2, start_y + i * int(h*0.025)))
-            screen.blit(desc_text, desc_rect)
-    else:
-        # Fallback to last message
-        end_message = game_state.messages[-1] if game_state.messages else "Game ended"
-        subtitle_text = subtitle_font.render(end_message, True, subtitle_color)
-        subtitle_rect = subtitle_text.get_rect(center=(w//2, int(h*0.15)))
-        screen.blit(subtitle_text, subtitle_rect)
-    
-    # ENHANCED: Get leaderboard data for celebration
-    try:
-        from src.scores.enhanced_leaderboard import EnhancedLeaderboardManager
-        leaderboard_manager = EnhancedLeaderboardManager()
-        leaderboard = leaderboard_manager.get_leaderboard_for_seed(game_state.seed)
-        
-        # Check if this is a new record
-        is_new_record = False
-        current_rank = None
-        if leaderboard.entries:
-            for i, entry in enumerate(leaderboard.entries):
-                if entry.player_name == game_state.lab_name and entry.score == game_state.turn:
-                    current_rank = i + 1
-                    is_new_record = (i == 0)  # New #1 position
-                    break
-        
-        # Celebration title if new record!
-        if is_new_record and current_rank == 1:
-            celebration_font = pygame.font.SysFont('Consolas', int(h*0.04), bold=True)
-            celebration_text = celebration_font.render("NEW HIGH SCORE!", True, (255, 255, 100))
-            celebration_rect = celebration_text.get_rect(center=(w//2, int(h*0.18)))
-            # Add glow effect
-            glow_text = celebration_font.render("NEW HIGH SCORE!", True, (255, 200, 0))
-            screen.blit(glow_text, (celebration_rect.x + 2, celebration_rect.y + 2))
-            screen.blit(celebration_text, celebration_rect)
-    except:
-        current_rank = None
-        is_new_record = False
-    
-    # Game statistics in a box - adjust position to make room for scenario details
-    stats_box_y = int(h*0.27) if game_state.end_game_scenario else int(h*0.24)
-    stats_box = pygame.Rect(w//6, stats_box_y, w*2//3, int(h*0.24))
-    
-    # Enhanced box styling for celebration
-    box_color = (60, 80, 40) if is_new_record else (40, 40, 70)
-    border_color = (150, 255, 100) if is_new_record else (130, 190, 255)
-    pygame.draw.rect(screen, box_color, stats_box, border_radius=12)
-    pygame.draw.rect(screen, border_color, stats_box, width=3, border_radius=12)
-    
-    # Enhanced Statistics content
-    stats_lines = [
-        f"Lab: {game_state.lab_name}",
-        f"Survived {game_state.turn} turns",
-        f"Final Staff: {game_state.staff} researchers",
-        f"Final Money: ${game_state.money:,}",
-        f"Final Reputation: {game_state.reputation}",
-        f"Final p(Doom): {game_state.doom}%"
-    ]
-    
-    # Add rank information if available
-    if current_rank:
-        rank_suffix = {1: "st", 2: "nd", 3: "rd"}.get(current_rank, "th")
-        rank_line = f"Leaderboard Rank: #{current_rank}{rank_suffix} for seed '{game_state.seed}'"
-        stats_lines.append(rank_line)
-    else:
-        stats_lines.append(f"Seed: '{game_state.seed}'")
-    
-    # Add high score comparison
-    if hasattr(game_state, 'highscore') and game_state.highscore > 0:
-        if game_state.turn > game_state.highscore:
-            stats_lines.append(f"Previous Best: {game_state.highscore} turns (BEATEN!)")
-        else:
-            stats_lines.append(f"Personal Best: {game_state.highscore} turns")
-    
-    stats_start_y = stats_box.y + 15
-    line_height = int(h*0.025)
-    
-    for i, line in enumerate(stats_lines):
-        stats_text = stats_font.render(line, True, stats_color)
-        screen.blit(stats_text, (stats_box.x + 20, stats_start_y + i * line_height))
-    
-    # Cause Analysis section (if scenario available)
-    if game_state.end_game_scenario and game_state.end_game_scenario.cause_analysis:
-        analysis_y = stats_box.y + stats_box.height + 15
-        analysis_box = pygame.Rect(w//6, analysis_y, w*2//3, int(h*0.12))
-        pygame.draw.rect(screen, (50, 30, 30), analysis_box, border_radius=8)
-        pygame.draw.rect(screen, (200, 100, 100), analysis_box, width=2, border_radius=8)
-        
-        # Analysis title
-        analysis_title = small_font.render("What Went Wrong:", True, (255, 200, 200))
-        screen.blit(analysis_title, (analysis_box.x + 15, analysis_box.y + 8))
-        
-        # Analysis text (wrapped)
-        analysis_lines = wrap_text(game_state.end_game_scenario.cause_analysis, small_font, analysis_box.width - 30)
-        for i, line in enumerate(analysis_lines[:3]):  # Limit to 3 lines
-            analysis_text = small_font.render(line, True, (255, 220, 220))
-            screen.blit(analysis_text, (analysis_box.x + 15, analysis_box.y + 25 + i * 16))
-    
-    # Legacy Note section (if scenario available)
-    if game_state.end_game_scenario and game_state.end_game_scenario.legacy_note:
-        legacy_y_offset = int(h*0.12) + 20 if game_state.end_game_scenario.cause_analysis else 15
-        legacy_y = stats_box.y + stats_box.height + legacy_y_offset
-        legacy_box = pygame.Rect(w//6, legacy_y, w*2//3, int(h*0.08))
-        pygame.draw.rect(screen, (30, 50, 30), legacy_box, border_radius=8)
-        pygame.draw.rect(screen, (100, 200, 100), legacy_box, width=2, border_radius=8)
-        
-        # Legacy title
-        legacy_title = small_font.render("Your Legacy:", True, (200, 255, 200))
-        screen.blit(legacy_title, (legacy_box.x + 15, legacy_box.y + 8))
-        
-        # Legacy text (wrapped)
-        legacy_lines = wrap_text(game_state.end_game_scenario.legacy_note, small_font, legacy_box.width - 30)
-        for i, line in enumerate(legacy_lines[:2]):  # Limit to 2 lines
-            legacy_text = small_font.render(line, True, (220, 255, 220))
-            screen.blit(legacy_text, (legacy_box.x + 15, legacy_box.y + 25 + i * 16))
-    
-    # SPECTACULAR: Mini Leaderboard Preview!
-    try:
-        if current_rank and leaderboard.entries:
-            leaderboard_y = int(h * 0.52)
-            leaderboard_box = pygame.Rect(w//4, leaderboard_y, w//2, int(h * 0.15))
-            
-            # Celebration styling for leaderboard
-            board_bg = (30, 60, 30) if is_new_record else (30, 30, 60)
-            board_border = (100, 255, 100) if is_new_record else (100, 150, 255)
-            pygame.draw.rect(screen, board_bg, leaderboard_box, border_radius=10)
-            pygame.draw.rect(screen, board_border, leaderboard_box, width=2, border_radius=10)
-            
-            # Leaderboard title
-            board_title_font = pygame.font.SysFont('Consolas', int(h*0.025), bold=True)
-            board_title_color = (150, 255, 150) if is_new_record else (150, 200, 255)
-            title_text = f"Leaderboard for '{game_state.seed}'"
-            board_title = board_title_font.render(title_text, True, board_title_color)
-            title_rect = board_title.get_rect(center=(leaderboard_box.centerx, leaderboard_box.y + 15))
-            screen.blit(board_title, title_rect)
-            
-            # Show top 3 entries with current player highlighted
-            entry_font = pygame.font.SysFont('Consolas', int(h*0.02))
-            entry_y = leaderboard_box.y + 35
-            shown_entries = 0
-            
-            for i, entry in enumerate(leaderboard.entries[:5]):  # Show top 5
-                if shown_entries >= 3:
-                    break
-                    
-                rank_num = i + 1
-                is_current_player = (entry.player_name == game_state.lab_name and entry.score == game_state.turn)
-                
-                # Highlight current player's entry
-                if is_current_player:
-                    highlight_color = (255, 255, 100) if is_new_record else (100, 255, 255)
-                    entry_text = f"#{rank_num}. {entry.player_name}: {entry.score} turns <- YOU!"
-                    text_color = (0, 0, 0) if is_new_record else (255, 255, 255)
-                    # Draw highlight background
-                    text_surface = entry_font.render(entry_text, True, text_color)
-                    highlight_rect = pygame.Rect(leaderboard_box.x + 10, entry_y - 2, text_surface.get_width() + 10, text_surface.get_height() + 4)
-                    pygame.draw.rect(screen, highlight_color, highlight_rect, border_radius=4)
-                else:
-                    entry_text = f"#{rank_num}. {entry.player_name}: {entry.score} turns"
-                    text_color = (200, 255, 200) if is_new_record else (200, 200, 255)
-                
-                entry_surface = entry_font.render(entry_text, True, text_color)
-                screen.blit(entry_surface, (leaderboard_box.x + 15, entry_y))
-                entry_y += 22
-                shown_entries += 1
-                
-            # Show total entries count
-            total_font = pygame.font.SysFont('Consolas', int(h*0.018))
-            total_text = f"({len(leaderboard.entries)} total entries for this seed)"
-            total_color = (150, 200, 150) if is_new_record else (150, 150, 200)
-            total_surface = total_font.render(total_text, True, total_color)
-            total_rect = total_surface.get_rect(center=(leaderboard_box.centerx, leaderboard_box.bottom - 15))
-            screen.blit(total_surface, total_rect)
-            
-            # Encouraging hint for leaderboard viewing
-            if current_rank:
-                hint_font = pygame.font.SysFont('Consolas', int(h*0.016))
-                if is_new_record:
-                    hint_text = "Press ENTER to view full leaderboard and celebrate your achievement!"
-                    hint_color = (255, 255, 150)
-                else:
-                    hint_text = "Press ENTER to view full leaderboard and see all competitors"
-                    hint_color = (200, 200, 255)
-                hint_surface = hint_font.render(hint_text, True, hint_color)
-                hint_rect = hint_surface.get_rect(center=(w//2, int(h * 0.68)))
-                screen.blit(hint_surface, hint_rect)
-    except:
-        pass  # Graceful fallback if leaderboard fails
-
-    # Menu options with "View Leaderboard" as TOP priority for natural flow
-    menu_items = ["View Full Leaderboard", "Play Again", "Main Menu", "Settings", "Submit Feedback"]
-    
-    button_width = int(w * 0.35) 
-    button_height = int(h * 0.055)  # Slightly smaller to fit
-    start_y = int(h * 0.69)  # Moved down for leaderboard space
-    spacing = int(h * 0.07)   # Tighter spacing
-    center_x = w // 2
-    
-    for i, item in enumerate(menu_items):
-        # Button rectangle
-        button_x = center_x - button_width // 2
-        button_y = start_y + i * spacing
-        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
-        
-        # Button styling based on selection
-        if i == selected_item:
-            pygame.draw.rect(screen, button_bg_active, button_rect, border_radius=8)
-            pygame.draw.rect(screen, menu_active_color, button_rect, width=3, border_radius=8)
-            text_color = (255, 255, 255)
-        else:
-            pygame.draw.rect(screen, button_bg_inactive, button_rect, border_radius=8)
-            pygame.draw.rect(screen, menu_inactive_color, button_rect, width=2, border_radius=8)
-            text_color = menu_inactive_color
-        
-        # Button text
-        button_text = menu_font.render(item, True, text_color)
-        text_rect = button_text.get_rect(center=button_rect.center)
-        screen.blit(button_text, text_rect)
-    
-    # Instructions
-    instruction_text = small_font.render("Use arrow keys to navigate, Enter to select, Escape for Main Menu", True, (200, 200, 200))
-    inst_rect = instruction_text.get_rect(center=(w//2, int(h*0.92)))
-    screen.blit(instruction_text, inst_rect)
+    # Use the modular version for better architecture and dynamic positioning
+    draw_end_game_menu_modular(screen, w, h, selected_item, game_state, seed)
 
 def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, str], w: int, h: int) -> None:
     """

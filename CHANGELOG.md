@@ -4,6 +4,34 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.2] - 2025-09-15 - "Modular UI Architecture Hotfix"
+### Fixed
+- **CRITICAL Menu System Refactor**: Eliminated hardcoded positioning issues in end-game menus
+  - Replaced monolithic 300+ line `draw_end_game_menu` function with modular component system
+  - Dynamic positioning replaces hardcoded coordinates, fixes layout breaks across screen sizes
+  - New `MenuLayoutManager` class provides responsive layout calculations
+  - `EndGameMenuRenderer` with sectioned rendering: title, stats, scenario analysis, buttons
+  - Full backward compatibility maintained through wrapper pattern
+
+### Added
+- **Modular Menu Components**: `src/ui/menu_components.py` - Reusable UI architecture
+  - `LayoutConfig` dataclass for dynamic screen-based calculations
+  - `MenuButton` component with state-based styling
+  - `MenuLayoutManager` for consistent positioning and spacing
+  - `EndGameMenuRenderer` with color palette and font management
+- **Menu Diagnostic Testing**: `tests/test_menu_diagnostics.py` - Comprehensive layout validation
+  - Cross-resolution testing (640x480 to 2560x1440) for hardcoded position detection
+  - End-game scenario layout validation with different content lengths
+  - Edge case testing for overflow conditions and boundary handling
+  - 8 test scenarios covering menu consistency and responsive behavior
+
+### Infrastructure
+- **Anti-Monolith Pattern**: Established modular approach for large UI functions
+  - Component-based architecture prevents future hardcoded positioning issues
+  - Dynamic layout system scales automatically with content and screen size
+  - Reusable components reduce code duplication across menu systems
+  - Clear separation of concerns: layout, rendering, state management
+
 ## [0.6.1] - 2025-09-15 - "Hotfix Batch: Mac TypeError + Critical Stability"
 ### Fixed
 - **CRITICAL Mac TypeError Fix**: Resolved research_quality.py type conversion crash on Mac systems (closes #299)
