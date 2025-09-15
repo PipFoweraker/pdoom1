@@ -1,14 +1,41 @@
 # Contributing Guidelines
 
+## Multi-Repository Integration Guidelines
+
+### Cross-Repository Documentation Standards
+- **Shared Documentation**: All documentation intended for multiple repositories must be placed in `docs/shared/`
+- **ASCII-Only Content**: All documentation must use ASCII characters only for maximum compatibility
+- **Sync Markers**: Include sync test markers in shared documents to validate automation
+- **Hub-and-Spoke Architecture**: pdoom1 repository is the source of truth for all shared documentation
+
+### Version Management Requirements  
+- **Semantic Versioning**: All releases must follow semantic versioning (MAJOR.MINOR.PATCH)
+- **GitHub Releases**: Use GitHub releases with proper tags for automatic website sync
+- **Version Consistency**: Ensure version alignment across all repositories in the ecosystem
+- **Changelog Integration**: All version changes must be documented in CHANGELOG.md
+
+### Automation Workflow Standards
+- **Token Authentication**: All cross-repository automation must use secure token authentication
+- **Workflow Testing**: Test all GitHub Actions workflows before production deployment
+- **Error Handling**: Include comprehensive error handling and retry logic in automation
+- **Status Monitoring**: Maintain status dashboards and health checks for all automated processes
+
+### Quality Assurance Rules
+- **Documentation Sync**: Verify documentation synchronization after all shared content changes
+- **Version Compatibility**: Validate version compatibility matrices for all ecosystem integrations
+- **Schema Validation**: Use schema validation for all data batch integrations
+- **Rollback Procedures**: Maintain documented rollback procedures for all automated systems
+
 ## Table of Contents
-- [Copilot and Automation Instructions](#copilot-and-automation-instructions) (Line 13)
-- [UI Enhancement Development Protocols](#ui-enhancement-development-protocols) (Line 21)
-  - [Keyboard Shortcut Implementation](#keyboard-shortcut-implementation) (Line 25)
-  - [Action Point (AP) Feedback System](#action-point-ap-feedback-system) (Line 32)
-  - [Employee Blob Positioning](#employee-blob-positioning) (Line 38)
-  - [Testing Requirements](#testing-requirements) (Line 44)
-  - [Sound Integration](#sound-integration) (Line 50)
-  - [Documentation Updates](#documentation-updates) (Line 56)
+- [Multi-Repository Integration Guidelines](#multi-repository-integration-guidelines) (Line 13)  
+- [Copilot and Automation Instructions](#copilot-and-automation-instructions) (Line 25)
+- [UI Enhancement Development Protocols](#ui-enhancement-development-protocols) (Line 33)
+  - [Keyboard Shortcut Implementation](#keyboard-shortcut-implementation) (Line 37)
+  - [Action Point (AP) Feedback System](#action-point-ap-feedback-system) (Line 44)
+  - [Employee Blob Positioning](#employee-blob-positioning) (Line 50)
+  - [Testing Requirements](#testing-requirements) (Line 56)
+  - [Sound Integration](#sound-integration) (Line 62)
+  - [Documentation Updates](#documentation-updates) (Line 68)
 
 ## Copilot and Automation Instructions
 
