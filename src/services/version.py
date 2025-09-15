@@ -9,18 +9,18 @@ following Semantic Versioning (SemVer) specification.
 # MAJOR: Incompatible API changes (gameplay mechanics overhauls)
 # MINOR: Backwards-compatible functionality additions (new features, events, opponents)
 # PATCH: Backwards-compatible bug fixes
-__version__ = "0.6.1"
+__version__ = "0.7.0"
 
 # Version components for programmatic access
 VERSION_MAJOR = 0
-VERSION_MINOR = 6
-VERSION_PATCH = 1
+VERSION_MINOR = 7
+VERSION_PATCH = 0
 
 # Pre-release identifier (e.g., "alpha", "beta", "rc1", or "" for stable)
 VERSION_PRERELEASE = ""
 
 # Build metadata (optional, e.g., commit hash for development builds)
-VERSION_BUILD = "hotfix-batch-mac-gameclock"
+VERSION_BUILD = "modular-ui-architecture"
 
 def get_version():
     """

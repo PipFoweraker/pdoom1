@@ -1,5 +1,5 @@
 # P(Doom): AI Safety Strategy Game
-**v0.5.0 "Windows Distribution Ready" - Alpha/Beta Testing**
+**v0.7.0 "Modular UI Architecture" - Major Technical Milestone**
 
 **Unregulated AI poses an existential threat to humanity.**
  
@@ -7,19 +7,20 @@ In this game, you manage a bootstrap AI safety lab with realistic funding constr
 
 Experience the challenge of running a scrappy nonprofit in the AI safety space - manage weekly cash flow, make strategic funding decisions, and scale your team while keeping doom levels low.
 
-**Latest Version:** v0.5.0 "Windows Distribution Ready"
-- **Windows Distribution**: Single-file .exe for download-and-run experience (no Python required)
-- **Enhanced Leaderboard System**: Seed-specific competition with dual identity support
-- **Spectacular Game Over Screen**: Visual celebration for achievements with rank display
-- **Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
-- **Strategic Fundraising**: 4 funding approaches with risk/reward trade-offs  
-- **Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
-- **$100k Starting Funds**: Sufficient runway to experiment with different strategies
+**Latest Version:** v0.7.0 "Modular UI Architecture"
+- **🏗️ Modular Architecture**: Complete UI system rebuild - 4,235-line monolith broken into 8 specialized modules
+- **🚀 Enhanced Performance**: Cleaner codebase architecture for better maintainability and development speed
+- **🔧 Developer Experience**: Modular UI components make feature development and bug fixes dramatically easier
+- **📱 Windows Distribution**: Single-file .exe for download-and-run experience (no Python required)
+- **🏆 Enhanced Leaderboard System**: Seed-specific competition with dual identity support
+- **💰 Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
+- **🎵 Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
+- **💵 $100k Starting Funds**: Sufficient runway to experiment with different strategies
 
-[PRIVACY] **PRIVACY-FIRST DESIGN** - Your data stays under your control  
-[COMPETITIVE] **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
-[ANALYTICS] **OPTIONAL ANALYTICS** - Detailed logging for strategy improvement (opt-in only)  
-[LEADERBOARDS] **PSEUDONYMOUS COMPETITION** - Compete without compromising privacy  
+🔒 **PRIVACY-FIRST DESIGN** - Your data stays under your control  
+🎯 **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
+📊 **OPTIONAL ANALYTICS** - Detailed logging for strategy improvement (opt-in only)  
+🏆 **PSEUDONYMOUS COMPETITION** - Compete without compromising privacy  
 
 =========================================
 QUICK START
