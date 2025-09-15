@@ -599,9 +599,44 @@ def create_dialog(overlay_manager: OverlayManager,
                  content: str,
                  x: int, y: int, 
                  width: int, height: int,
-                 render_func: Optional[Callable] = None) -> UIElement:
-    """Create a dialog overlay element."""
-    rect = pygame.Rect(x, y, width, height)
+                 render_func: Optional[Callable] = None,
+                 use_safe_positioning: bool = True) -> UIElement:
+    """
+    Create a dialog overlay element with optional safe positioning.
+    
+    Args:
+        use_safe_positioning: If True, use safe zone system to avoid UI overlap
+    """
+    # Constrain overlay size to prevent excessive overlap with permanent UI
+    max_width = min(width, 300)  # Max width to keep overlays compact
+    max_height = min(height, 200)  # Max height to prevent covering too much UI
+    
+    initial_rect = pygame.Rect(x, y, max_width, max_height)
+    
+    # Apply safe positioning if requested
+    if use_safe_positioning:
+        try:
+            # Import here to avoid circular imports
+            from ui import get_ui_safe_zones, find_safe_overlay_position
+            
+            # Get current screen dimensions (use reasonable defaults if not available)
+            screen_w, screen_h = 1024, 768  # Default dimensions
+            # If pygame is available, try to get current display size
+            try:
+                display_info = pygame.display.get_surface()
+                if display_info:
+                    screen_w, screen_h = display_info.get_size()
+            except:
+                pass  # Use default dimensions if pygame not available
+            
+            safe_zones = get_ui_safe_zones(screen_w, screen_h)
+            positioned_rect = find_safe_overlay_position(initial_rect, screen_w, screen_h, safe_zones)
+            rect = positioned_rect
+        except ImportError:
+            # Fallback to original positioning if safe zone system not available
+            rect = initial_rect
+    else:
+        rect = initial_rect
     
     element = UIElement(
         id=id,
@@ -610,8 +645,8 @@ def create_dialog(overlay_manager: OverlayManager,
         title=title,
         content=content,
         render_func=render_func,
-        minimized_rect=pygame.Rect(x, y, width // 4, 30),  # Small title bar when minimized
-        expanded_rect=pygame.Rect(x - 50, y - 50, width + 100, height + 100)  # Larger when expanded
+        minimized_rect=pygame.Rect(rect.x, rect.y, width // 4, 30),  # Small title bar when minimized
+        expanded_rect=pygame.Rect(rect.x - 50, rect.y - 50, width + 100, height + 100)  # Larger when expanded
     )
     
     overlay_manager.register_element(element)

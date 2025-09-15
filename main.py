@@ -4,7 +4,8 @@ import random
 import json
 from src.core.game_state import GameState
 
-from ui import draw_seed_prompt, draw_main_menu, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_ui
+from ui import draw_seed_prompt, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_ui
+from src.ui.menus import draw_main_menu
 from src.ui.tutorials import draw_stepwise_tutorial_overlay
 from src.ui.menus import draw_start_game_submenu
 from src.ui.layout import draw_overlay
@@ -1668,6 +1669,12 @@ def main():
                         elif event.y < 0:  # Mouse wheel down
                             max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
                             game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 3)
+                    elif current_state == 'main_menu':
+                        # Handle mouse wheel scrolling for main menu navigation
+                        if event.y > 0:  # Mouse wheel up - move selection up
+                            selected_menu_item = (selected_menu_item - 1) % len(menu_items)
+                        elif event.y < 0:  # Mouse wheel down - move selection down
+                            selected_menu_item = (selected_menu_item + 1) % len(menu_items)
                     # Always continue - don't let unhandled wheel events cause issues
                     continue
                     

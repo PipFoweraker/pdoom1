@@ -1612,6 +1612,24 @@ class GameState:
             
         return None
 
+    def _general_news_reading(self) -> None:
+        """PLACEHOLDER: General news reading for market intelligence"""
+        self.messages.append("PLACEHOLDER: Reading industry news and market reports...")
+        # TODO: Implement news reading mechanics
+        # - Gain market intelligence
+        # - Learn about competitor moves
+        # - Discover emerging trends
+        # - Small reputation boost from staying informed
+        
+    def _general_networking(self) -> None:
+        """PLACEHOLDER: General networking for business connections"""
+        self.messages.append("PLACEHOLDER: Attending conferences and networking events...")
+        # TODO: Implement networking mechanics
+        # - Build industry connections
+        # - Potential staff recruitment leads
+        # - Reputation boost from visibility
+        # - Chance to learn competitor information
+
     def _espionage_risk(self) -> Optional[str]:
         first_risk = get_rng().random(f"espionage_risk_1_turn_{self.turn}")
         if first_risk < 0.25:

@@ -4,7 +4,40 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.6.2] - 2025-09-15 - "Modular UI Architecture Hotfix"
+## [0.7.2] - 2025-09-16 - "UI Hotfixes - Systematic Resolution"
+### Fixed
+- **Researcher Pool Display**: Fixed empty dialog showing blank screen instead of helpful message
+  - Early return [] in `draw_researcher_pool_dialog` now shows "No researchers available" message
+  - Improved user experience when no researchers are in hiring pool (ui.py line 2982)
+- **One-offs UI Overlap**: Enhanced upgrade button positioning to prevent screen overflow
+  - Dynamic button sizing in `get_compact_upgrade_rects` with 78% screen height cutoff
+  - Buttons automatically scale down when many upgrades present to fit available space
+  - Prevents overlap with context window at bottom of screen (src/ui/compact_ui.py)
+- **End Game Menu Positioning**: Verified and documented existing overflow protection
+  - `EndGameMenuRenderer` automatically switches to horizontal layout when vertical would overflow
+  - Prevents menu buttons from extending beyond screen boundaries
+
+### Added
+- **Intelligence Action System**: New strategic action category with consistent theming
+  - Added `ActionCategory.INTELLIGENCE` with dark purple color scheme (60, 40, 100)
+  - Two new placeholder actions: "General News Reading" ($10) and "General Networking" ($25)
+  - Both actions support delegation mechanics and proper cost evaluation
+- **Scroll Wheel Menu Navigation**: Enhanced main menu accessibility
+  - Mouse wheel up/down navigation for main menu items
+  - Wheel up moves selection up, wheel down moves selection down (main.py lines 1661-1678)
+- **Action Button Color Coding**: Visual distinction between action types
+  - Intelligence actions now display with consistent dark purple theme
+  - Improved UI clarity and user experience through category-based coloring
+
+### Infrastructure
+- **Modular UI System Migration**: Switched main menu imports to modular architecture
+  - Updated main.py to use `from src.ui.menus import draw_main_menu`
+  - Identified major refactoring opportunities (draw_version_footer duplicated in 7 places)
+- **GitHub Issue Management**: Created comprehensive Issue #309 documenting all fixes
+  - Systematic tracking and resolution of UI hotfixes with proper labeling
+  - Development blog entry created for session documentation
+
+## [0.7.1] - 2025-09-15 - "Modular UI Architecture Hotfix"
 ### Fixed
 - **CRITICAL Menu System Refactor**: Eliminated hardcoded positioning issues in end-game menus
   - Replaced monolithic 300+ line `draw_end_game_menu` function with modular component system

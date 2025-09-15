@@ -89,12 +89,33 @@ class MenuLayoutManager:
         return pygame.Rect(x, y, width, height)
         
     def get_button_layout(self, button_count: int, button_height: int) -> List[pygame.Rect]:
-        """Calculate layout for a series of buttons"""
+        """Calculate layout for a series of buttons (vertical)"""
         button_width = int(self.config.screen_width * 0.35)
         buttons = []
         
         for i in range(button_count):
             rect = self.center_rect(button_width, button_height)
+            buttons.append(rect)
+            
+        return buttons
+    
+    def get_horizontal_button_layout(self, button_count: int, button_height: int) -> List[pygame.Rect]:
+        """Calculate horizontal layout for buttons to prevent overflow"""
+        # Use smaller buttons that fit horizontally
+        button_width = min(int(self.config.screen_width * 0.18), 200)  # Smaller buttons
+        total_width = button_count * button_width + (button_count - 1) * self.config.spacing
+        
+        # If buttons don't fit, make them even smaller
+        if total_width > self.config.content_width:
+            button_width = int((self.config.content_width - (button_count - 1) * self.config.spacing) / button_count)
+        
+        start_x = (self.config.screen_width - total_width) // 2
+        button_y = self.reserve_space(button_height)
+        
+        buttons = []
+        for i in range(button_count):
+            button_x = start_x + i * (button_width + self.config.spacing)
+            rect = pygame.Rect(button_x, button_y, button_width, button_height)
             buttons.append(rect)
             
         return buttons
@@ -295,9 +316,19 @@ class EndGameMenuRenderer:
                 surface.blit(line_surface, (legacy_rect.x + 15, legacy_rect.y + 25 + i * 16))
     
     def render_menu_buttons(self, surface: pygame.Surface, buttons: List[MenuButton]) -> None:
-        """Render menu buttons with dynamic layout"""
+        """Render menu buttons with dynamic layout to prevent overflow"""
         button_height = int(self.config.screen_height * 0.055)
-        button_rects = self.layout.get_button_layout(len(buttons), button_height)
+        
+        # Check if vertical layout would overflow
+        vertical_space_needed = len(buttons) * (button_height + self.config.spacing)
+        available_vertical_space = self.config.screen_height - self.layout.current_y - self.config.margin - 40  # Reserve space for instructions
+        
+        if vertical_space_needed > available_vertical_space:
+            # Use horizontal layout to prevent overflow
+            button_rects = self.layout.get_horizontal_button_layout(len(buttons), button_height)
+        else:
+            # Use vertical layout (original behavior)
+            button_rects = self.layout.get_button_layout(len(buttons), button_height)
         
         for i, button in enumerate(buttons):
             if i < len(button_rects):

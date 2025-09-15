@@ -388,13 +388,36 @@ def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
     
     # Available upgrades as buttons on right side
     if num_upgrades > num_purchased:
-        button_size = int(min(w, h) * 0.045)
+        available_upgrades = num_upgrades - num_purchased
+        
+        # Calculate safe area for upgrades (avoid overlapping context window)
+        cutoff_height = int(h * 0.78)  # Stop before context window at bottom
+        available_height = cutoff_height - int(h * 0.2)  # Space from start_y to cutoff
+        
+        # Dynamically size buttons to fit available space
+        spacing = 4
+        max_button_size = int(min(w, h) * 0.045)
+        min_button_size = int(min(w, h) * 0.025)
+        
+        # Calculate required space and adjust button size if needed
+        required_space = available_upgrades * (max_button_size + spacing)
+        if required_space > available_height:
+            # Scale down button size to fit
+            button_size = max(min_button_size, (available_height - available_upgrades * spacing) // available_upgrades)
+        else:
+            button_size = max_button_size
+            
         start_x = w - int(w * 0.08)
         start_y = int(h * 0.2)
         
-        for i in range(num_purchased, num_upgrades):
+        for i in range(num_purchased, min(num_upgrades, num_purchased + available_upgrades)):
             idx = i - num_purchased
-            y = start_y + idx * (button_size + 4)
+            y = start_y + idx * (button_size + spacing)
+            
+            # Double-check we don't exceed cutoff height
+            if y + button_size > cutoff_height:
+                break
+                
             rects.append((start_x, y, button_size, button_size))
     
     return rects
