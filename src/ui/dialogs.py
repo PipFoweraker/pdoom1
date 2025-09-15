@@ -7,7 +7,6 @@ hiring dialogs, fundraising dialogs, research dialogs, and forms.
 
 import pygame
 from typing import Dict, Any, List
-import main
 from src.ui.rendering import wrap_text
 
 
@@ -18,13 +17,15 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
     # Get game state from wherever it's accessible in UI (need to modify this)
     # For now, get researchers from hiring_dialog context
     
+    # TODO: Fix circular import - this function needs game_state passed as parameter
     # Access the game state - this is a simplified approach
     # In practice, you'd pass game_state as a parameter
-    game_state = getattr(main, 'game_state', None)
-    if not game_state or not hasattr(game_state, 'available_researchers'):
-        return []
+    # game_state = getattr(main, 'game_state', None)
+    # if not game_state or not hasattr(game_state, 'available_researchers'):
+    #     return []
     
-    available_researchers = game_state.available_researchers
+    # available_researchers = game_state.available_researchers
+    available_researchers = []  # Temporary fix to prevent circular import
     
     # Create semi-transparent background overlay
     overlay = pygame.Surface((w, h))
