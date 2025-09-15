@@ -109,9 +109,13 @@ print(f"  Window Scale: {current_config['ui']['window_scale']:.1f}x")
 print(f"  Fullscreen: {'Yes' if current_config['ui'].get('fullscreen', False) else 'No'}")
 
 if verbose_logging:
-    print(f"  Config File: {config_manager.config_file_path}")
-    print(f"  Available Configs: {list(config_manager.available_configs.keys())}")
+    print(f"  Config Directory: {config_manager.CONFIG_DIR}")
     print(f"  Current Config: {config_manager.current_config_name}")
+    try:
+        available_configs = config_manager.list_available_configs()
+        print(f"  Available Configs: {', '.join(available_configs)}")
+    except Exception:
+        print(f"  Available Configs: [Error loading config list]")
 
 print("=" * 80)
 
