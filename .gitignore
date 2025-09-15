@@ -75,3 +75,16 @@ tutorial_settings.json
 
 # User configuration files (modified during gameplay)
 configs/default.json
+
+# Runtime game data (generated during gameplay)
+leaderboards/
+logs/
+sounds/generated_*
+
+# Session and analytics data
+leaderboard_*.json
+session_*.json
+
+# Cache and temporary files
+*.tmp
+.cache/
