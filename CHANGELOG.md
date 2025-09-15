@@ -4,6 +4,33 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.1] - 2025-09-15 - "Hotfix Batch: Mac TypeError + Critical Stability"
+### Fixed
+- **CRITICAL Mac TypeError Fix**: Resolved research_quality.py type conversion crash on Mac systems (closes #299)
+  - Added verbose naming pattern with `_safe_get_technical_debt_total()` and `_safe_get_research_papers_count()`
+  - Comprehensive error handling with fallback defaults for type confusion scenarios
+  - 15 regression prevention tests covering Mac-specific type conversion edge cases
+- **CRITICAL GameClock Bounds Protection**: Prevented IndexError crashes from invalid datetime values (closes #264)
+  - Added array bounds checking with `max(0, min(11, month-1))` pattern in `format_date()` and `get_formatted_date()`
+  - Graceful handling of corrupted datetime objects (months: 0, negative, >12)
+  - 9 edge case tests for bounds validation
+- **Hiring Dialog UX Validation**: Confirmed and documented existing ESC/cancel functionality (closes #267)
+  - Verified multiple escape mechanisms: ESC, Backspace, Left Arrow, Cancel button
+  - Proper insufficient funds handling with informative dialog display
+  - Sound feedback and state cleanup working correctly
+
+### Infrastructure
+- **Comprehensive Type Safety Testing**: 24 new test scenarios preventing regressions
+  - `test_leaderboard_type_safety.py`: 15 tests for Mac bug prevention
+  - `test_hotfix_batch.py`: 9 integration tests ensuring fixes work together
+- **Verbose Naming Convention**: Established type-safe accessor patterns
+  - `_safe_get_[specific_value]_[type]()` naming prevents object/value confusion
+  - Self-documenting code reduces cognitive load and type safety issues
+- **Hotfix Batch Deployment Methodology**: Systematic bug sweep and deployment process
+  - GitHub issue priority analysis with automated closure via commit messages
+  - Comprehensive documentation in dev blog with implementation details
+  - Zero performance impact, enhanced Mac compatibility and game stability
+
 ## [0.6.0] - 2025-09-14
 ### Added
 - **MAJOR MILESTONE: Website Pipeline Infrastructure**: Complete development-to-community bridge
