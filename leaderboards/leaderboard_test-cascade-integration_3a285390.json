@@ -1,16 +1,16 @@
 {
   "version": "1.0.0",
-  "created": "2025-09-14T21:12:08.931275",
+  "created": "2025-09-15T17:37:37.803147",
   "max_entries": 50,
   "entries": [
     {
       "score": 21,
       "player_name": "Axiom Labs",
-      "date": "2025-09-14T21:12:08.929143",
+      "date": "2025-09-15T17:37:37.800085",
       "level_reached": 21,
       "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.004502,
-      "entry_uuid": "00f4faa4-2f70-47a0-b0ec-c4a6cd32d276"
+      "duration_seconds": 0.004044,
+      "entry_uuid": "4edfa0e8-55ea-404c-ae91-b501ae52c54a"
     }
   ]
 }
