@@ -2146,10 +2146,6 @@ class GameState:
             return None  # No tooltip text for areas with context info only
             
         except Exception as e:
-            # Graceful fallback on any errors
-            return None
-            
-        except Exception as e:
             # Log the error with context for debugging
             if hasattr(self, 'game_logger'):
                 self.game_logger.log(f"Error in check_hover: mouse_pos={mouse_pos}, w={w}, h={h}, error={e}")
