@@ -40,13 +40,64 @@ if current_config.get('audio', {}).get('sound_enabled', True):
 else:
     global_sound_manager.set_enabled(False)
 
+# Check for dev mode
+def is_dev_mode_enabled():
+    """Check if dev mode is enabled from dev_mode.json"""
+    try:
+        with open('dev_mode.json', 'r') as f:
+            dev_config = json.load(f)
+            return dev_config.get('dev_mode_enabled', False)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return False
+
+def is_verbose_logging_enabled():
+    """Check if verbose logging is enabled from dev_mode.json"""
+    try:
+        with open('dev_mode.json', 'r') as f:
+            dev_config = json.load(f)
+            return dev_config.get('verbose_logging_enabled', False)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return False
+
+def log_shutdown(reason="User exit"):
+    """Log shutdown information when dev mode is enabled"""
+    if is_verbose_logging_enabled():
+        print("=" * 80)
+        print(f"[SHUTDOWN] P(Doom) {get_display_version()} shutting down")
+        print(f"[SHUTDOWN] Reason: {reason}")
+        print(f"[SHUTDOWN] Pygame version: {pygame.version.ver}")
+        print(f"[SHUTDOWN] Thank you for playing!")
+        print("=" * 80)
+    elif is_dev_mode_enabled():
+        print(f"[DEV] P(Doom) {get_display_version()} shutting down - {reason}")
+    else:
+        print(f"P(Doom) {get_display_version()} - Thanks for playing!")
+
 # --- Adaptive window sizing with loading screen --- #
 pygame.init()
 
-# Display startup information
+# Enhanced startup information with dev mode support
+dev_mode = is_dev_mode_enabled()
+verbose_logging = is_verbose_logging_enabled()
+
 print(f"Starting P(Doom): Bureaucracy Strategy Game {get_display_version()}")
-print("=" * 60)
+print("=" * 80)
+
+if dev_mode:
+    print("[DEV MODE] Development mode enabled")
+    if verbose_logging:
+        print("[VERBOSE] Verbose logging enabled")
+
 print("STARTUP CONFIGURATION:")
+print(f"  Version: {get_display_version()}")
+
+if verbose_logging:
+    from src.services.version import get_version_info
+    version_info = get_version_info() 
+    print(f"  Full Version Info: {version_info}")
+    print(f"  Python Version: {sys.version}")
+    print(f"  Pygame Version: {pygame.version.ver}")
+
 print(f"  Economic Model: Bootstrap AI Safety Nonprofit")
 print(f"  Starting Funds: $100k")
 print(f"  Staff Maintenance: $600 first, $800 additional/week") 
@@ -56,7 +107,13 @@ print(f"  Moore's Law: 2% compute cost reduction/week")
 print(f"  Audio: {'Enabled' if current_config['audio']['sound_enabled'] else 'Disabled'}")
 print(f"  Window Scale: {current_config['ui']['window_scale']:.1f}x")
 print(f"  Fullscreen: {'Yes' if current_config['ui'].get('fullscreen', False) else 'No'}")
-print("=" * 60)
+
+if verbose_logging:
+    print(f"  Config File: {config_manager.config_file_path}")
+    print(f"  Available Configs: {list(config_manager.available_configs.keys())}")
+    print(f"  Current Config: {config_manager.current_config_name}")
+
+print("=" * 80)
 
 # Set up initial screen for loading
 info = pygame.display.Info()
@@ -399,6 +456,7 @@ def handle_menu_click(mouse_pos, w, h):
                 if seed is None:
                     seed = get_weekly_seed()  # Use the default weekly seed
             elif i == 5:  # Exit
+                log_shutdown("Main menu exit")
                 pygame.quit()
                 sys.exit()
             break
@@ -459,6 +517,7 @@ def handle_menu_keyboard(key):
             if seed is None:
                 seed = get_weekly_seed()  # Use the default weekly seed
         elif selected_menu_item == 5:  # Exit
+            log_shutdown("Menu keyboard exit")
             pygame.quit()
             sys.exit()
 
@@ -2751,6 +2810,9 @@ def main():
                 # print(f"Game log saved to: {log_path}")
             except Exception:
                 pass
+        
+        # Final shutdown logging
+        log_shutdown()
         pygame.quit()
 
 if __name__ == "__main__":
