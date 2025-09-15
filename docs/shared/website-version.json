@@ -1,0 +1,165 @@
+{
+  "website": {
+    "version": "1.0.0",
+    "name": "P(Doom) Community Hub",
+    "release_date": "2025-09-15T00:00:00Z",
+    "description": "Official website for P(Doom): Bureaucracy Strategy Game",
+    "changelog_url": "/changelog",
+    "repository": "https://github.com/PipFoweraker/pdoom1-website",
+    "build_info": {
+      "commit": "initial",
+      "build_date": "2025-09-15T12:00:00Z",
+      "environment": "development",
+      "node_version": "18.x",
+      "framework": "Next.js"
+    }
+  },
+  "game_tracking": {
+    "current_version": "0.6.0",
+    "display_version": "v0.6.0",
+    "release_date": "2025-09-14T00:00:00Z",
+    "status": "stable",
+    "latest_release": {
+      "version": "0.6.0",
+      "tag": "v0.6.0",
+      "name": "Development Transparency & Community Infrastructure",
+      "release_date": "2025-09-14T00:00:00Z",
+      "changelog_url": "/game/releases/v0.6.0",
+      "download_url": "https://github.com/PipFoweraker/pdoom1/releases/tag/v0.6.0",
+      "assets": {
+        "windows_exe": "pdoom-v0.6.0-windows.exe",
+        "source_zip": "pdoom-v0.6.0-source.zip",
+        "changelog": "CHANGELOG-v0.6.0.md"
+      },
+      "size_mb": 19,
+      "requirements": {
+        "os": ["Windows 10+", "Linux", "macOS"],
+        "python": "3.9+",
+        "memory": "512MB",
+        "storage": "100MB"
+      }
+    },
+    "supported_versions": [
+      {
+        "version": "0.6.0",
+        "status": "current",
+        "support_level": "full",
+        "end_of_life": null
+      },
+      {
+        "version": "0.5.0", 
+        "status": "supported",
+        "support_level": "security_only",
+        "end_of_life": "2025-12-15"
+      },
+      {
+        "version": "0.4.1",
+        "status": "deprecated", 
+        "support_level": "none",
+        "end_of_life": "2025-10-15"
+      }
+    ],
+    "version_history": [
+      {
+        "version": "0.6.0",
+        "release_date": "2025-09-14",
+        "type": "minor",
+        "highlights": ["Development transparency", "Automated blog pipeline", "Community engagement"]
+      },
+      {
+        "version": "0.5.0",
+        "release_date": "2025-09-14", 
+        "type": "minor",
+        "highlights": ["PyInstaller Windows distribution", "Single-file executable", "Resource management"]
+      },
+      {
+        "version": "0.4.1",
+        "release_date": "2025-09-13",
+        "type": "patch", 
+        "highlights": ["Enhanced leaderboard system", "Performance improvements", "Bug fixes"]
+      }
+    ],
+    "next_version": {
+      "planned_version": "0.7.0",
+      "estimated_date": "2025-10-15",
+      "planned_features": ["Multi-player support", "Enhanced UI", "Cloud saves"],
+      "development_status": "planning"
+    }
+  },
+  "data_integration": {
+    "enabled": false,
+    "status": "placeholder",
+    "current_batch": null,
+    "data_version": null,
+    "last_sync": null,
+    "endpoints": {
+      "leaderboards": "/api/data/leaderboards",
+      "analytics": "/api/data/analytics", 
+      "challenges": "/api/data/challenges",
+      "sync": "/api/data/sync"
+    },
+    "compatibility": {
+      "min_game_version": "0.6.0",
+      "supported_schemas": ["1.0.0"],
+      "data_retention_days": 90
+    },
+    "placeholders": {
+      "leaderboards": {
+        "version": "0.0.0",
+        "batch_date": null,
+        "records_count": 0,
+        "schema_version": "1.0.0",
+        "compatible_game_versions": ["0.6.0+"]
+      },
+      "analytics": {
+        "version": "0.0.0",
+        "batch_date": null,
+        "metrics_count": 0,
+        "schema_version": "1.0.0",
+        "retention_days": 90
+      },
+      "challenges": {
+        "version": "0.0.0", 
+        "batch_date": null,
+        "active_challenges": 0,
+        "schema_version": "1.0.0",
+        "seasonal_event": null
+      }
+    },
+    "future_integration": {
+      "target_date": "2025-11-01",
+      "requirements": ["pdoom-data API ready", "Authentication system", "Privacy compliance"],
+      "features": ["Real-time leaderboards", "Player analytics", "Challenge tracking"]
+    }
+  },
+  "api": {
+    "version": "1.0.0",
+    "base_url": "/api/v1",
+    "endpoints": {
+      "versions": {
+        "website": "/versions/website",
+        "game_current": "/versions/game/current", 
+        "game_history": "/versions/game/history",
+        "data_current": "/versions/data/current",
+        "compatibility": "/versions/compatibility"
+      },
+      "content": {
+        "releases": "/content/releases",
+        "changelog": "/content/changelog",
+        "download": "/content/download"
+      }
+    },
+    "rate_limits": {
+      "default": "1000/hour",
+      "sync_webhook": "100/hour"
+    }
+  },
+  "metadata": {
+    "last_updated": "2025-09-15T12:00:00Z",
+    "schema_version": "1.0.0",
+    "generated_by": "pdoom1-website-versioning-system",
+    "sync_source": "https://github.com/PipFoweraker/pdoom1",
+    "auto_update": true,
+    "update_frequency": "on_release"
+  }
+}
