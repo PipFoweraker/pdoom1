@@ -2149,8 +2149,6 @@ class GameState:
             # Graceful fallback on any errors
             return None
             
-            return None
-            
         except Exception as e:
             # Log the error with context for debugging
             if hasattr(self, 'game_logger'):
@@ -3893,11 +3891,10 @@ class GameState:
                     stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
                     # Scout 2-3 stats per opponent with high success rate
                     num_stats = random.randint(2, 3)
-                    for _ in range(num_stats):
-                        stat_to_scout = random.choice(stats_to_scout)
-                        # Force success with magical orb and remove stat from list to avoid duplicates
-                        if stat_to_scout in stats_to_scout:
-                            stats_to_scout.remove(stat_to_scout)
+                    # Use safe sampling to avoid list modification during iteration
+                    stats_to_sample = random.sample(stats_to_scout, min(num_stats, len(stats_to_scout)))
+                    for stat_to_scout in stats_to_sample:
+                        # Force success with magical orb (no need to remove from list anymore)
                             success, value, message = target_opponent.scout_stat(stat_to_scout)
                             if not target_opponent.discovered_stats[stat_to_scout]:
                                 # Force discovery with magical orb
@@ -5847,13 +5844,17 @@ class GameState:
             if hasattr(self, 'technical_debt'):
                 # Add technical debt for rush research
                 debt_increase = random.randint(1, 3)
-                self.technical_debt.add_debt("research", debt_increase, f"Rush research shortcuts")
+                # Fixed: correct argument order (amount, category) and use proper DebtCategory enum
+                from src.core.research_quality import DebtCategory
+                self.technical_debt.add_debt(debt_increase, DebtCategory.VALIDATION)
                 self.messages.append(f"? Technical debt increased: {debt_increase} points from rushed methodology")
         elif option["id"] == "quality_research":
             if hasattr(self, 'technical_debt'):
                 # Quality research reduces technical debt
                 debt_reduction = random.randint(1, 2)
-                self.technical_debt.reduce_debt("research", debt_reduction)
+                # Fixed: correct argument order (amount, category) and use proper DebtCategory enum
+                from src.core.research_quality import DebtCategory
+                self.technical_debt.reduce_debt(debt_reduction, DebtCategory.VALIDATION)
                 self.messages.append(f"? Technical debt reduced: {debt_reduction} points from thorough methodology")
         
         # Unlock quality research after first research action
