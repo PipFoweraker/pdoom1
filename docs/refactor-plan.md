@@ -52,8 +52,8 @@ pdoom1/
 
 ### Phase 1: Foundation (PRs 1-3)
 - [x] **PR 1**: Documentation and process setup
-- [ ] **PR 2**: Update .gitignore, establish coverage baseline
-- [ ] **PR 3**: Runtime data directory with migration support
+- [x] **PR 2**: Update .gitignore, establish coverage baseline
+- [x] **PR 3**: Runtime data directory with migration support
 
 ### Phase 2: UI Extraction (PRs 4-5)
 - [ ] **PR 4**: Extract overlay_manager to pdoom1/ui, add ui/components/
