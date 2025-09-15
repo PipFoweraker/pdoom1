@@ -10,22 +10,22 @@ from typing import Dict, Any, List
 from src.ui.rendering import wrap_text
 
 
-def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> None:
+def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int, game_state: Any = None) -> List[Dict[str, Any]]:
     """
     Draw the researcher pool hiring dialog showing available specialist researchers.
+    
+    Args:
+        screen: pygame surface to draw on
+        hiring_dialog: hiring dialog configuration
+        w, h: screen dimensions
+        game_state: game state object containing available_researchers (optional for backward compatibility)
     """
-    # Get game state from wherever it's accessible in UI (need to modify this)
-    # For now, get researchers from hiring_dialog context
-    
-    # TODO: Fix circular import - this function needs game_state passed as parameter
-    # Access the game state - this is a simplified approach
-    # In practice, you'd pass game_state as a parameter
-    # game_state = getattr(main, 'game_state', None)
-    # if not game_state or not hasattr(game_state, 'available_researchers'):
-    #     return []
-    
-    # available_researchers = game_state.available_researchers
-    available_researchers = []  # Temporary fix to prevent circular import
+    # Get available researchers from game_state if provided, otherwise use empty list
+    if game_state and hasattr(game_state, 'available_researchers'):
+        available_researchers = game_state.available_researchers
+    else:
+        # Fallback for backward compatibility or when game_state unavailable
+        available_researchers = []
     
     # Create semi-transparent background overlay
     overlay = pygame.Surface((w, h))
@@ -495,7 +495,7 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
     return clickable_rects
 
 
-def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> List[Dict[str, Any]]:
+def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int, game_state: Any = None) -> List[Dict[str, Any]]:
     """
     Draw the employee hiring dialog with available employee subtypes for selection.
     
@@ -512,7 +512,7 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
     
     # Check if we're in researcher pool mode
     if hiring_dialog.get("mode") == "researcher_pool":
-        return draw_researcher_pool_dialog(screen, hiring_dialog, w, h)
+        return draw_researcher_pool_dialog(screen, hiring_dialog, w, h, game_state)
         
     # Create semi-transparent background overlay
     overlay = pygame.Surface((w, h))
