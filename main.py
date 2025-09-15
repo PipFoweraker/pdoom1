@@ -4,7 +4,10 @@ import random
 import json
 from src.core.game_state import GameState
 
-from ui import draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_start_game_submenu
+from ui import draw_seed_prompt, draw_main_menu, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
+from src.ui.menus import draw_start_game_submenu
+from src.ui.layout import draw_overlay
+from src.ui.components import draw_tooltip, draw_loading_screen
 from ui_new.facade import ui_facade
 from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
 
@@ -15,6 +18,7 @@ from src.services.version import get_display_version
 from src.features.onboarding import onboarding
 from src.services.config_manager import initialize_config_system, get_current_config, config_manager
 from src.services.sound_manager import SoundManager
+from src.ui.pre_game_settings import pre_game_settings_manager
 
 # Initialize config system on startup
 initialize_config_system()
@@ -139,9 +143,7 @@ selected_settings_item = 0
 seed_choice = "weekly"  # "weekly" or "custom"
 tutorial_enabled = False  # Default to no tutorial
 
-# Text input for name fields
-text_input_active = False
-text_input_field = ""  # "player_name" or "lab_name"
+# Text input for name fields - managed by pre_game_settings_manager
 
 # Tutorial state
 current_tutorial_content = None
@@ -552,6 +554,10 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
     """Handle mouse clicks on pre-game settings screen."""
     global current_state, selected_settings_item, pre_game_settings
     
+    # Check for random lab name button first
+    if pre_game_settings_manager.handle_random_lab_name_click(mouse_pos, w, h, pre_game_settings):
+        return  # Handled by the manager
+    
     # Calculate button positions (must match draw_pre_game_settings layout)
     button_width = int(w * 0.55)
     button_height = int(h * 0.07)
@@ -600,22 +606,19 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
 
 def handle_pre_game_settings_keyboard(key):
     """Handle keyboard navigation for pre-game settings screen."""
-    global selected_settings_item, current_state, pre_game_settings, text_input_active, text_input_field
+    global selected_settings_item, current_state, pre_game_settings
     
     # Handle text input mode first
-    if text_input_active:
+    if pre_game_settings_manager.is_text_input_active():
         if key == pygame.K_RETURN:
             # Exit text input mode
-            text_input_active = False
-            text_input_field = ""
+            pre_game_settings_manager.deactivate_text_input()
         elif key == pygame.K_ESCAPE:
             # Cancel text input, revert changes
-            text_input_active = False
-            text_input_field = ""
+            pre_game_settings_manager.deactivate_text_input()
         elif key == pygame.K_BACKSPACE:
-            # Remove last character
-            if text_input_field and pre_game_settings[text_input_field]:
-                pre_game_settings[text_input_field] = pre_game_settings[text_input_field][:-1]
+            # Handle backspace (clear selected text or remove character)
+            pre_game_settings_manager.handle_backspace(pre_game_settings)
         # Other text input will be handled by TEXTINPUT event
         return
     
@@ -649,46 +652,8 @@ def handle_pre_game_settings_keyboard(key):
 
 def cycle_setting_value(setting_index, reverse=False):
     """Cycle through available values for a setting."""
-    global pre_game_settings, text_input_active, text_input_field
-    
-    if setting_index == 1:  # Player Name - activate text input mode
-        text_input_active = True
-        text_input_field = "player_name"
-        
-    elif setting_index == 2:  # Lab Name - activate text input mode
-        text_input_active = True
-        text_input_field = "lab_name"
-        
-    elif setting_index == 3:  # Research Intensity (Difficulty) - now at index 3
-        options = ["EASY", "STANDARD", "HARD"]
-        current = pre_game_settings["difficulty"]
-        current_idx = options.index(current) if current in options else 1
-        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
-        pre_game_settings["difficulty"] = options[new_idx]
-        
-    elif setting_index == 4:  # Audio Alerts Volume (Sound Volume) - now at index 4
-        options = [30, 50, 70, 80, 90, 100]
-        current = pre_game_settings["sound_volume"]
-        try:
-            current_idx = options.index(current)
-        except ValueError:
-            current_idx = 3  # Default to 80
-        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
-        pre_game_settings["sound_volume"] = options[new_idx]
-        
-    elif setting_index == 5:  # Visual Enhancement (Graphics Quality) - now at index 5
-        options = ["LOW", "STANDARD", "HIGH"]
-        current = pre_game_settings["graphics_quality"]
-        current_idx = options.index(current) if current in options else 1
-        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
-        pre_game_settings["graphics_quality"] = options[new_idx]
-        
-    elif setting_index == 6:  # Safety Protocol Level - now at index 6
-        options = ["MINIMAL", "STANDARD", "ENHANCED", "MAXIMUM"]
-        current = pre_game_settings["safety_level"]
-        current_idx = options.index(current) if current in options else 1
-        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
-        pre_game_settings["safety_level"] = options[new_idx]
+    global pre_game_settings
+    pre_game_settings_manager.cycle_setting_value(setting_index, pre_game_settings, reverse)
 
 
 def handle_seed_selection_click(mouse_pos, w, h):
@@ -1966,10 +1931,8 @@ def main():
                         
                 elif event.type == pygame.TEXTINPUT:
                     # Handle text input for name fields in pre_game_settings
-                    if current_state == 'pre_game_settings' and text_input_active and text_input_field:
-                        # Add character to the current field (with length limit)
-                        if len(pre_game_settings[text_input_field]) < 30:  # Max 30 characters
-                            pre_game_settings[text_input_field] += event.text
+                    if current_state == 'pre_game_settings' and pre_game_settings_manager.is_text_input_active():
+                        pre_game_settings_manager.handle_text_input(event.text, pre_game_settings)
                         
                 elif event.type == pygame.MOUSEMOTION:
                     # Handle window manager motion events first (for dragging)
@@ -2017,8 +1980,23 @@ def main():
                             # Overlay manager handled the event
                             continue
                     
+                    # Global DEV MODE toggle (F10) - available in all states
+                    if event.key == pygame.K_F10:
+                        try:
+                            from src.services.dev_mode import toggle_dev_mode
+                            new_state = toggle_dev_mode()
+                            status_msg = "DEV MODE ON" if new_state else "DEV MODE OFF"
+                            
+                            # If we're in game, show message there. Otherwise, we'll just toggle silently.
+                            if current_state == 'game' and game_state:
+                                game_state.add_message(f"System: {status_msg} (F10)")
+                                if hasattr(game_state, 'sound_manager'):
+                                    game_state.sound_manager.play_sound('ui_accept')
+                        except ImportError:
+                            pass  # Silently fail if dev_mode module not available
+                    
                     # Keyboard handling varies by state
-                    if current_state == 'main_menu':
+                    elif current_state == 'main_menu':
                         if event.key == pygame.K_ESCAPE:
                             running = False
                         else:
@@ -2173,6 +2151,41 @@ def main():
                         # Debug console toggle
                         elif _handle_debug_console_keypress(event.key, game_state):
                             pass  # Debug console manager handled it
+                        
+                        # DEV MODE toggle (F10)
+                        elif event.key == pygame.K_F10:
+                            try:
+                                from src.services.dev_mode import toggle_dev_mode, get_dev_mode_manager
+                                new_state = toggle_dev_mode()
+                                status_msg = "DEV MODE ON" if new_state else "DEV MODE OFF"
+                                
+                                # Initialize verbose logging if DEV MODE was enabled
+                                if new_state and game_state:
+                                    dev_manager = get_dev_mode_manager()
+                                    dev_manager.initialize_verbose_logging(game_state.seed)
+                                    if dev_manager.is_verbose_logging_enabled():
+                                        status_msg += " | VERBOSE LOGGING ON"
+                                
+                                if game_state:
+                                    game_state.add_message(f"System: {status_msg} (F10)")
+                                    # Play UI sound
+                                    if hasattr(game_state, 'sound_manager'):
+                                        game_state.sound_manager.play_sound('ui_accept')
+                            except ImportError:
+                                pass  # Silently fail if dev_mode module not available
+                        
+                        # Dev tools menu (F11) - only available in DEV MODE
+                        elif event.key == pygame.K_F11:
+                            try:
+                                from src.services.dev_mode import is_dev_mode_enabled
+                                if is_dev_mode_enabled():
+                                    # Future: Open dev tools menu
+                                    if game_state:
+                                        game_state.add_message("System: Dev tools menu not yet implemented (F11)")
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('error_beep')
+                            except ImportError:
+                                pass
                         
                         elif event.key == pygame.K_RETURN and first_time_help_content:
                             # Mark mechanic as seen so it won't reappear
@@ -2653,7 +2666,7 @@ def main():
                     
                     # Draw hiring dialog if active
                     if game_state and game_state.pending_hiring_dialog:
-                        from ui import draw_hiring_dialog
+                        from src.ui.dialogs import draw_hiring_dialog
                         cached_hiring_dialog_rects = draw_hiring_dialog(screen, game_state.pending_hiring_dialog, SCREEN_W, SCREEN_H)
                     else:
                         # Clear cached rects when dialog is not active
@@ -2661,7 +2674,7 @@ def main():
                     
                     # Draw fundraising dialog if active
                     if game_state and game_state.pending_fundraising_dialog:
-                        from ui import draw_fundraising_dialog
+                        from src.ui.dialogs import draw_fundraising_dialog
                         cached_fundraising_dialog_rects = draw_fundraising_dialog(screen, game_state.pending_fundraising_dialog, SCREEN_W, SCREEN_H)
                     else:
                         # Clear cached rects when dialog is not active
@@ -2669,7 +2682,7 @@ def main():
                     
                     # Draw research dialog if active
                     if game_state and game_state.pending_research_dialog:
-                        from ui import draw_research_dialog
+                        from src.ui.dialogs import draw_research_dialog
                         cached_research_dialog_rects = draw_research_dialog(screen, game_state.pending_research_dialog, SCREEN_W, SCREEN_H)
                     else:
                         # Clear cached rects when dialog is not active
