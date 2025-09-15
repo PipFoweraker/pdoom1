@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-15T23:10:47.274246",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Neural Networks",
+      "date": "2025-09-15T23:10:47.272668",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.002678,
+      "entry_uuid": "033084f5-669a-44d9-adc1-5a380dfcca1a"
+    }
+  ]
+}

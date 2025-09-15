@@ -204,9 +204,38 @@ def draw_compact_action_button(screen, rect_tuple, action, action_index, button_
     elif shortcut_key is None:
         shortcut_key = str(action_index + 1)
     
-    # Draw base button using visual feedback system
+    # Get category-based colors for this action
+    try:
+        from src.ui.visual_themes import get_action_colors
+        action_name = action.get("name", f"action_{action_index}")
+        theme_colors = get_action_colors(action_name)
+        
+        # Create custom color scheme based on button state
+        custom_colors = {}
+        if button_state == ButtonState.NORMAL:
+            custom_colors = {
+                'bg': theme_colors['bg'],
+                'border': theme_colors['border'], 
+                'text': theme_colors['text']
+            }
+        elif button_state == ButtonState.HOVER:
+            custom_colors = {
+                'bg': theme_colors['hover_bg'],
+                'border': theme_colors['border'],
+                'text': theme_colors['text']
+            }
+        elif button_state == ButtonState.PRESSED:
+            custom_colors = {
+                'bg': theme_colors['pressed_bg'],
+                'border': theme_colors['border'],
+                'text': theme_colors['text'] 
+            }
+    except ImportError:
+        custom_colors = None
+    
+    # Draw base button using visual feedback system with custom colors
     if VISUAL_FEEDBACK_AVAILABLE:
-        visual_feedback.draw_button(screen, rect, "", button_state, FeedbackStyle.BUTTON)
+        visual_feedback.draw_button(screen, rect, "", button_state, FeedbackStyle.BUTTON, custom_colors)
     
     # Get action icon
     action_name = action.get("name", f"Action {action_index + 1}")

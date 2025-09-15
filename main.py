@@ -4,12 +4,11 @@ import random
 import json
 from src.core.game_state import GameState
 
-from ui import draw_seed_prompt, draw_main_menu, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
+from ui import draw_seed_prompt, draw_main_menu, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_ui
 from src.ui.tutorials import draw_stepwise_tutorial_overlay
 from src.ui.menus import draw_start_game_submenu
 from src.ui.layout import draw_overlay
 from src.ui.components import draw_tooltip, draw_loading_screen
-from ui_new.facade import ui_facade
 from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
 
 
@@ -2331,28 +2330,14 @@ def main():
                             # Import keybinding manager for customizable controls
                             from src.services.keybinding_manager import keybinding_manager
                             
-                            # New 3-column layout keybindings
-                            if game_state and not game_state.game_over:
-                                # Check if using 3-column layout
-                                from src.services.config_manager import get_current_config
-                                config = get_current_config()
-                                if config.get('enable_three_column_layout', False):
-                                    # Import 3-column layout manager
-                                    from ui_new.screens.game import three_column_layout
-                                    
-                                    # Convert pygame key to string
-                                    key_name = pygame.key.name(event.key)
-                                    
-                                    # Handle keypress through layout system
-                                    bound_action = three_column_layout.handle_keypress(key_name)
-                                    if bound_action:
-                                        action_idx = bound_action['original_index']
-                                        # Check if this would be an undo operation before calling
-                                        was_undo = action_idx in game_state.selected_actions
-                                        
-                                        # Try to select/deselect the action
-                                        game_state.select_action(action_idx, was_undo=was_undo)
-                                        continue  # Skip original keybinding system
+                            # 3-column layout keybindings (temporarily disabled - ui_new module not available)
+                            # TODO: Re-enable when ui_new module is restored
+                            # if game_state and not game_state.game_over:
+                            #     from src.services.config_manager import get_current_config
+                            #     config = get_current_config()
+                            #     if config.get('enable_three_column_layout', False):
+                            #         # Handle 3-column layout keybindings here
+                            #         pass
                             
                             # Action shortcuts using customizable keybindings (fallback)
                             if game_state and not game_state.game_over:
@@ -2436,13 +2421,26 @@ def main():
             # --- UI State Cleanup and Debugging --- #
             # CRITICAL FIX: Automatic cleanup for stuck UI states
             if current_state == 'game' and game_state:
-                # Debug key (D) - check for blocking conditions when pressed
+                # Debug key (D) - check for blocking conditions when pressed (simplified version)
                 current_keys = pygame.key.get_pressed()
                 if current_keys[pygame.K_d] and current_keys[pygame.K_LCTRL]:  # Ctrl+D for debug
-                    from ui_interaction_fixes import check_blocking_conditions, test_spacebar
-                    blocking = check_blocking_conditions(game_state, onboarding, first_time_help_content, current_state)
-                    spacebar_works, reason = test_spacebar(game_state, onboarding, first_time_help_content, current_state)
-                    debug_msg = f"DEBUG: Spacebar {'WORKS' if spacebar_works else 'BLOCKED'} - {reason}"
+                    # Simplified debug info (ui_interaction_fixes module not available)
+                    blocking_conditions = [
+                        first_time_help_content,
+                        game_state.pending_hiring_dialog,
+                        game_state.pending_fundraising_dialog,
+                        game_state.pending_research_dialog,
+                        onboarding.show_tutorial_overlay
+                    ]
+                    blocking = [name for name, condition in [
+                        ("help", first_time_help_content),
+                        ("hiring", game_state.pending_hiring_dialog),
+                        ("funding", game_state.pending_fundraising_dialog),
+                        ("research", game_state.pending_research_dialog),
+                        ("tutorial", onboarding.show_tutorial_overlay)
+                    ] if condition]
+                    spacebar_works = not any(blocking_conditions)
+                    debug_msg = f"DEBUG: Spacebar {'WORKS' if spacebar_works else 'BLOCKED'}"
                     if blocking:
                         debug_msg += f" | Blocking: {', '.join(blocking)}"
                     game_state.add_message(debug_msg)
@@ -2618,7 +2616,7 @@ def main():
                 # Draw the game in background (dimmed)
                 screen.fill((25, 25, 35))
                 if game_state:
-                    ui_facade.render_game(screen, game_state, SCREEN_W, SCREEN_H)
+                    draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
                     
                 # Draw dark overlay
                 overlay = pygame.Surface((SCREEN_W, SCREEN_H))
@@ -2643,7 +2641,7 @@ def main():
                         game_state.update_turn_processing()  # Handle turn transition timing
                         game_state.overlay_manager.update_animations()
                     
-                    ui_facade.render_game(screen, game_state, SCREEN_W, SCREEN_H)
+                    draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
                     
                     # Render overlay manager elements
                     if game_state:
@@ -2662,8 +2660,11 @@ def main():
                                 # Update header rect for dragging
                                 element.header_rect = header_rect
                     
+                    # Only show tooltips if enabled in configuration (default: off for cleaner UI)
                     if tooltip_text:
-                        draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
+                        from src.services.ui_config import should_show_tooltips
+                        if should_show_tooltips(game_state):
+                            draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
                     
                     # Draw hiring dialog if active
                     if game_state and game_state.pending_hiring_dialog:

@@ -128,9 +128,19 @@ def get_ui_safe_zones(w: int, h: int) -> List[pygame.Rect]:
     upgrade_area = pygame.Rect(int(w * 0.65), int(h * 0.18), int(w * 0.35), int(h * 0.45))
     safe_zones.append(upgrade_area)
     
-    # Event log area (bottom left) - smaller area, adjusted for context window
-    event_log_area = pygame.Rect(0, int(h * 0.73), int(w * 0.45), int(h * 0.14))  # Reduced height for context window
+    # Event log area (middle column top) - cleaner layout for playtesters
+    log_width = int(w * 0.33)  # One-third screen width for nice UI interaction
+    log_height = int(h * 0.25)  # Quarter screen height
+    log_x = int(w * 0.33)  # Center horizontally (left edge of middle third)
+    log_y = int(h * 0.05)  # Near top of screen
+    event_log_area = pygame.Rect(log_x, log_y, log_width, log_height)
     safe_zones.append(event_log_area)
+    
+    # Employee pen area (below action log) - dedicated space for employee blobs
+    pen_height = int(h * 0.35)  # Space between log and context window
+    pen_y = log_y + log_height + int(h * 0.02)  # Small gap below log
+    employee_pen_area = pygame.Rect(log_x, pen_y, log_width, pen_height)
+    safe_zones.append(employee_pen_area)
     
     # Context window area (bottom bar) - persistent area for context information
     context_area = pygame.Rect(0, int(h * 0.87), w, int(h * 0.13))  # Bottom 13% of screen
@@ -1554,13 +1564,8 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
                     screen, rect, upg["name"], button_state, FeedbackStyle.BUTTON
                 )
                 
-                # Only draw description and status in tutorial mode
-                if getattr(game_state, 'tutorial_enabled', True):
-                    desc_color = (200, 255, 200) if button_state != ButtonState.DISABLED else (120, 150, 120)
-                    desc = small_font.render(upg["desc"] + f" (Cost: ${upg['cost']})", True, desc_color)
-                    status = small_font.render("AVAILABLE", True, desc_color)
-                    screen.blit(desc, (rect.x + int(w*0.01), rect.y + int(h*0.04)))
-                    screen.blit(status, (rect.x + int(w*0.24), rect.y + int(h*0.04)))
+                # Description text is now shown in context window instead of cluttering buttons
+                # This eliminates text overflow issues and provides cleaner UI
 
     # --- Balance change display (after buying accounting software) ---
     # If accounting software was bought, show last balance change under Money
@@ -1885,18 +1890,43 @@ def draw_employee_blobs(screen: pygame.Surface, game_state: Any, w: int, h: int)
                 pygame.draw.circle(halo_surface, halo_color, (halo_radius, halo_radius), halo_radius - i * 3)
                 screen.blit(halo_surface, (x - halo_radius, y - halo_radius))
         
-        # Draw the main blob (employee or manager)
+        # Draw the main blob (employee or manager) with subtype-based colors
         blob_radius = 20
         
-        # Different colors for managers vs employees
-        if blob.get('type') == 'manager':
-            blob_color = (100, 255, 100) if blob['has_compute'] else (80, 200, 80)  # Green for managers
-        else:
-            blob_color = (150, 200, 255) if blob['has_compute'] else (100, 150, 200)  # Blue for employees
+        # Get visual properties based on employee subtype
+        try:
+            from src.ui.visual_themes import get_employee_visuals
+            subtype = blob.get('subtype', 'generalist')
+            visual_props = get_employee_visuals(subtype)
+            
+            # Use productive color if employee has compute, regular color otherwise
+            if blob['has_compute']:
+                blob_color = visual_props['body_color_productive']
+            else:
+                blob_color = visual_props['body_color']
+                
+        except ImportError:
+            # Fallback to original color scheme if visual themes not available
+            if blob.get('type') == 'manager':
+                blob_color = (100, 255, 100) if blob['has_compute'] else (80, 200, 80)  # Green for managers
+            else:
+                blob_color = (150, 200, 255) if blob['has_compute'] else (100, 150, 200)  # Blue for employees
         
         # Main blob body
         pygame.draw.circle(screen, blob_color, (x, y), blob_radius)
         pygame.draw.circle(screen, (255, 255, 255), (x, y), blob_radius, 2)
+        
+        # Draw hat if employee has one
+        try:
+            from src.ui.visual_themes import draw_employee_hat
+            subtype = blob.get('subtype', 'generalist')
+            visual_props = get_employee_visuals(subtype)
+            
+            if visual_props['hat_shape'] != 'none' and visual_props['hat_color'] is not None:
+                draw_employee_hat(screen, x, y, visual_props['hat_shape'], 
+                                visual_props['hat_color'], blob_radius)
+        except ImportError:
+            pass  # Skip hat drawing if visual themes not available
         
         # Simple face (eyes)
         eye_offset = 6

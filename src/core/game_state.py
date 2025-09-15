@@ -957,8 +957,8 @@ class GameState:
     
     def _calculate_blob_position(self, blob_index: int, screen_w: int = 1200, screen_h: int = 800) -> Tuple[int, int]:
         """
-        Calculate initial blob position in the center of screen.
-        Blobs will then dynamically move away from UI elements through collision detection.
+        Calculate initial blob position in the employee pen area.
+        Uses the employee pen area defined below the action log in the middle column.
         
         Args:
             blob_index (int): Index of the blob (for initial positioning variation)
@@ -966,30 +966,36 @@ class GameState:
             screen_h (int): Screen height (default 800 for backward compatibility)
             
         Returns:
-            tuple: (x, y) initial position for the blob (centered with small variation)
+            tuple: (x, y) initial position for the blob in employee pen area
         """
         import math
         
-        # Start all blobs in the center of the screen
-        center_x = screen_w // 2
-        center_y = screen_h // 2
+        # Employee pen area - below action log in middle column
+        # Match coordinates from ui.py employee pen area
+        pen_x = int(screen_w * 0.33)  # Start of middle column
+        pen_y = int(screen_h * 0.32)  # Below action log (action log uses 0.05 + 0.25 height)
+        pen_width = int(screen_w * 0.33)  # One-third screen width
+        pen_height = int(screen_h * 0.20)  # Generous roaming space
         
-        # Add small initial variation to prevent all blobs from being exactly on top of each other
-        # Use a spiral pattern for initial positioning
+        # Center of employee pen for base positioning
+        pen_center_x = pen_x + pen_width // 2
+        pen_center_y = pen_y + pen_height // 2
+        
+        # First blob goes to center of pen
         if blob_index == 0:
-            return center_x, center_y
+            return pen_center_x, pen_center_y
         
-        # Create a spiral outward from center for initial positioning
+        # Create a spiral pattern within the employee pen area
         angle = blob_index * 2.4  # Golden angle for nice spiral distribution
-        radius = blob_index * 15   # Increase radius for each blob
+        radius = min(blob_index * 12, min(pen_width, pen_height) // 3)  # Constrain to pen size
         
-        x = center_x + int(radius * math.cos(angle)) 
-        y = center_y + int(radius * math.sin(angle))
+        x = pen_center_x + int(radius * math.cos(angle)) 
+        y = pen_center_y + int(radius * math.sin(angle))
         
-        # Ensure positions stay within screen bounds
+        # Ensure positions stay within employee pen bounds
         blob_radius = 25
-        x = max(blob_radius, min(screen_w - blob_radius, x))
-        y = max(blob_radius, min(screen_h - blob_radius, y))
+        x = max(pen_x + blob_radius, min(pen_x + pen_width - blob_radius, x))
+        y = max(pen_y + blob_radius, min(pen_y + pen_height - blob_radius, y))
         
         return x, y
     
@@ -1135,12 +1141,18 @@ class GameState:
                         repulsion_x += (dx / distance) * repulsion_strength
                         repulsion_y += (dy / distance) * repulsion_strength
             
-            # Apply slight attraction to screen center to prevent blobs from drifting too far
-            center_x = screen_w / 2
-            center_y = screen_h / 2
+            # Apply slight attraction to employee pen center to keep blobs contained
+            # Employee pen area - match coordinates from _calculate_blob_position
+            pen_x = int(screen_w * 0.33)
+            pen_y = int(screen_h * 0.32)
+            pen_width = int(screen_w * 0.33)
+            pen_height = int(screen_h * 0.20)
+            pen_center_x = pen_x + pen_width / 2
+            pen_center_y = pen_y + pen_height / 2
+            
             center_attraction = 0.002
-            repulsion_x += (center_x - current_x) * center_attraction
-            repulsion_y += (center_y - current_y) * center_attraction
+            repulsion_x += (pen_center_x - current_x) * center_attraction
+            repulsion_y += (pen_center_y - current_y) * center_attraction
             
             # Apply movement with damping
             if abs(repulsion_x) > 0.1 or abs(repulsion_y) > 0.1:
@@ -1155,9 +1167,9 @@ class GameState:
                 new_x = current_x + repulsion_x
                 new_y = current_y + repulsion_y
                 
-                # Keep blobs within screen bounds
-                new_x = max(blob_radius, min(screen_w - blob_radius, new_x))
-                new_y = max(blob_radius, min(screen_h - blob_radius, new_y))
+                # Keep blobs within employee pen bounds
+                new_x = max(pen_x + blob_radius, min(pen_x + pen_width - blob_radius, new_x))
+                new_y = max(pen_y + blob_radius, min(pen_y + pen_height - blob_radius, new_y))
                 
                 blob['x'] = new_x
                 blob['y'] = new_y
@@ -2321,14 +2333,14 @@ class GameState:
             bar_height = int(h * 0.04)
             return (log_x - 5, log_y - 5, title_width + 50, bar_height)
         else:
-            # Full log area
-            log_width = int(w * 0.44)
-            log_height = int(h * 0.22)
+            # Full log area - one-third screen width for clean UI
+            log_width = int(w * 0.33)
+            log_height = int(h * 0.25)
             return (log_x - 5, log_y - 5, log_width + 10, log_height + 10)
 
     def _get_activity_log_base_position(self, w: int, h: int) -> Tuple[int, int]:
-        """Get the base position of activity log (before any drag offset)"""
-        return (int(w*0.04), int(h*0.74))
+        """Get the base position of activity log (middle column top for cleaner UI)"""
+        return (int(w * 0.33), int(h * 0.05))
 
     def _get_activity_log_current_position(self, w: int, h: int) -> Tuple[int, int]:
         """Get the current position of activity log (including drag offset)"""
