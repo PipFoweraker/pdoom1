@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-15T00:03:11.465042",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Pulsar AI",
+      "date": "2025-09-15T00:03:11.463003",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 75.617155,
+      "entry_uuid": "146a73e4-165e-4c31-ab29-69da6ddd1745"
+    }
+  ]
+}
