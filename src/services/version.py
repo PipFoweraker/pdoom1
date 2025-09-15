@@ -9,7 +9,7 @@ following Semantic Versioning (SemVer) specification.
 # MAJOR: Incompatible API changes (gameplay mechanics overhauls)
 # MINOR: Backwards-compatible functionality additions (new features, events, opponents)
 # PATCH: Backwards-compatible bug fixes
-__version__ = "0.7.2"
+__version__ = "0.7.3"
 
 # Version components for programmatic access
 VERSION_MAJOR = 0

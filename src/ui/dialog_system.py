@@ -379,7 +379,7 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
     return clickable_rects
 
 
-def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> List[Dict[str, Any]]:
+def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int, game_state=None) -> List[Dict[str, Any]]:
     """
     Draw the researcher pool hiring dialog showing available specialist researchers.
     
@@ -387,14 +387,16 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
         screen: pygame surface to draw on
         hiring_dialog: dict with hiring dialog state
         w, h: screen width and height
+        game_state: optional game state for accessing researcher data
         
     Returns:
         List of clickable rects for interaction
     """
-    # TODO: Fix this to pass game_state as parameter instead of accessing globally
-    # For now, return empty list to avoid circular imports
-    # This will need to be fixed when integrating with the actual UI calls
-    available_researchers = []
+    # Get available researchers from game_state if provided
+    if game_state and hasattr(game_state, 'available_researchers'):
+        available_researchers = game_state.available_researchers
+    else:
+        available_researchers = []
     
     # Create semi-transparent background overlay
     overlay = pygame.Surface((w, h))
@@ -438,8 +440,11 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
     researcher_padding = 10
     
     for i, researcher in enumerate(available_researchers):
-        # TODO: Check affordability when game_state is passed as parameter
-        affordable = True  # Placeholder - needs game_state parameter
+        # Check affordability using game_state if available
+        if game_state and hasattr(researcher, 'cost') and hasattr(game_state, 'money'):
+            affordable = game_state.money >= researcher.cost
+        else:
+            affordable = True  # Default to affordable if we can't check
         
         # Researcher item background
         item_y = researcher_area_y + i * (researcher_item_height + researcher_padding)
@@ -544,7 +549,7 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
     return clickable_rects
 
 
-def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int) -> List[Dict[str, Any]]:
+def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int, game_state=None) -> List[Dict[str, Any]]:
     """
     Draw the employee hiring dialog with available employee subtypes for selection.
     
@@ -561,7 +566,7 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
     
     # Check if we're in researcher pool mode
     if hiring_dialog.get("mode") == "researcher_pool":
-        return draw_researcher_pool_dialog(screen, hiring_dialog, w, h)
+        return draw_researcher_pool_dialog(screen, hiring_dialog, w, h, game_state)
         
     # Create semi-transparent background overlay
     overlay = pygame.Surface((w, h))
