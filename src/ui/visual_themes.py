@@ -80,8 +80,8 @@ EMPLOYEE_VISUALS = {
     EmployeeType.GENERALIST: {
         'body_color': (100, 150, 200),      # Light blue
         'body_color_productive': (150, 200, 255),  # Brighter when productive
-        'hat_shape': 'none',                 # No hat
-        'hat_color': None
+        'hat_shape': 'baseball_cap',         # Casual baseball cap for generalists
+        'hat_color': (60, 100, 140)         # Dark blue cap
     },
     EmployeeType.RESEARCHER: {
         'body_color': (80, 180, 80),         # Green - research/growth
@@ -286,3 +286,21 @@ def draw_employee_hat(surface, x: int, y: int, hat_shape: str, hat_color: Tuple[
         # Hat band
         band_rect = pygame.Rect(x - hat_width//3, hat_y, hat_width//1.5, 3)
         pygame.draw.rect(surface, (40, 40, 40), band_rect)
+        
+    elif hat_shape == 'baseball_cap':
+        # Casual baseball cap - dome with forward visor
+        hat_width = int(size * 0.9)
+        hat_height = int(size * 0.6)
+        # Main cap dome
+        cap_rect = pygame.Rect(x - hat_width//2, hat_y - hat_height//2, hat_width, hat_height)
+        pygame.draw.ellipse(surface, hat_color, cap_rect)
+        pygame.draw.ellipse(surface, (120, 120, 120), cap_rect, 2)
+        # Forward visor
+        visor_points = [
+            (x - hat_width//4, hat_y + hat_height//3),
+            (x + hat_width//4, hat_y + hat_height//3),
+            (x + hat_width//3, hat_y + hat_height//2 + 8),
+            (x - hat_width//3, hat_y + hat_height//2 + 8)
+        ]
+        pygame.draw.polygon(surface, hat_color, visor_points)
+        pygame.draw.polygon(surface, (120, 120, 120), visor_points, 2)
