@@ -1674,7 +1674,7 @@ def draw_end_game_menu(screen: pygame.Surface, w: int, h: int, selected_item: in
                 # Highlight current player's entry
                 if is_current_player:
                     highlight_color = (255, 255, 100) if is_new_record else (100, 255, 255)
-                    entry_text = f"#{rank_num}. {entry.player_name}: {entry.score} turns ← YOU!"
+                    entry_text = f"#{rank_num}. {entry.player_name}: {entry.score} turns <- YOU!"
                     text_color = (0, 0, 0) if is_new_record else (255, 255, 255)
                     # Draw highlight background
                     text_surface = entry_font.render(entry_text, True, text_color)
