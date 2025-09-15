@@ -419,13 +419,21 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
             screen, button_rect, item, button_state, FeedbackStyle.MENU_ITEM
         )
     
-    # Instructions at bottom
+    # Instructions at bottom  
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
     instructions = [
         "Use mouse or arrow keys to navigate",
-        "Press Enter or click to select",
+        "Press Enter or click to select", 
         "Press Escape to quit"
     ]
+    
+    # Add DEV MODE specific instructions if enabled
+    try:
+        from src.services.dev_mode import is_dev_mode_enabled
+        if is_dev_mode_enabled():
+            instructions.append("F10 to toggle DEV MODE")
+    except ImportError:
+        pass
     
     for i, instruction in enumerate(instructions):
         inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
@@ -466,7 +474,8 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     if sound_manager:
         draw_mute_button_standalone(screen, sound_manager, w, h)
     
-    # Draw version in bottom right corner
+    # Draw DEV MODE indicator (top-left) and version (bottom-right)
+    draw_dev_mode_indicator(screen, w, h)
     draw_version_footer(screen, w, h)
 
 def draw_start_game_submenu(screen: pygame.Surface, w: int, h: int, selected_item: int) -> None:
@@ -894,6 +903,36 @@ def draw_window_with_header(screen: pygame.Surface, rect: pygame.Rect, title: st
     
     return header_rect, minimize_button_rect
 
+def draw_dev_mode_indicator(screen: pygame.Surface, w: int, h: int, font: Optional[pygame.font.Font] = None) -> None:
+    """
+    Draw developer mode indicator in top-left corner if DEV MODE is enabled.
+    
+    Args:
+        screen: pygame surface to draw on
+        w, h: screen width and height for positioning
+        font: optional font for dev mode text
+    """
+    try:
+        from src.services.dev_mode import get_dev_status_text
+        dev_text = get_dev_status_text()
+        
+        if not dev_text:
+            return  # DEV MODE not enabled
+        
+        if font is None:
+            font = pygame.font.SysFont('Consolas', max(14, int(h * 0.022)), bold=True)
+        
+        # Create text with bright orange/yellow color for visibility
+        dev_surf = font.render(f"[{dev_text}]", True, (255, 165, 0))
+        
+        # Position in top-left corner with margin
+        margin = int(h * 0.015)
+        screen.blit(dev_surf, (margin, margin))
+        
+    except ImportError:
+        pass  # Silently fail if dev_mode module not available
+
+
 def draw_version_footer(screen: pygame.Surface, w: int, h: int, font: Optional[pygame.font.Font] = None) -> None:
     """
     Draw version information in the footer area.
@@ -1147,6 +1186,9 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     title = title_font.render("P(Doom): Bureaucracy Strategy", True, (205, 255, 220))
     screen.blit(title, (int(w*0.04), int(h*0.03)))
     
+    # DEV MODE indicator (top-left corner, above title)
+    draw_dev_mode_indicator(screen, w, h)
+    
     # TOP BAR ENHANCEMENTS: Date, Version, Debug Hotkeys
     draw_top_bar_info(screen, game_state, w, h, small_font, font)
 
@@ -1343,10 +1385,10 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         count = len(available_actions)
         base_x = int(w * 0.04)
         base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
-        # Shrink legacy action buttons a bit to reduce excess margins
-        width = int(w * 0.30)
-        height = int(h * 0.055)
-        gap = int(h * 0.015)
+        # Compact action buttons - reduced size for cleaner layout
+        width = int(w * 0.25)  # Reduced from 0.30 to 0.25 (25%)
+        height = int(h * 0.045)  # Reduced from 0.055 to 0.045 (4.5%)
+        gap = int(h * 0.008)  # Reduced from 0.015 to 0.008 (0.8%)
         action_rects = [
             pygame.Rect(base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
@@ -1951,15 +1993,15 @@ def draw_context_window(screen: pygame.Surface, context_info: Dict[str, Any], w:
     if not context_info:
         return None, None  # No context to show
     
-    # Get configuration settings - increased height to 8-10% of screen
+    # Get configuration settings - reduced height to save screen space
     if config and 'ui' in config and 'context_window' in config['ui']:
         ctx_config = config['ui']['context_window']
-        expanded_height_percent = ctx_config.get('height_percent', 0.10)  # Increased from 0.13
-        minimized_height_percent = ctx_config.get('minimized_height_percent', 0.05)
+        expanded_height_percent = ctx_config.get('height_percent', 0.07)  # Reduced from 0.10 to 0.07
+        minimized_height_percent = ctx_config.get('minimized_height_percent', 0.04)  # Reduced from 0.05 to 0.04
     else:
-        # Default values if no config - bottom 8-10% of screen
-        expanded_height_percent = 0.10
-        minimized_height_percent = 0.05
+        # Default values if no config - bottom 6-7% of screen (much more compact)
+        expanded_height_percent = 0.07
+        minimized_height_percent = 0.04
     
     # Context window dimensions - positioned at bottom with configurable height
     window_height = int(h * minimized_height_percent) if minimized else int(h * expanded_height_percent)
@@ -4085,11 +4127,11 @@ def draw_pre_game_settings(screen: pygame.Surface, w: int, h: int, settings: Dic
         else:  # Setting items with values
             # Special handling for name fields to show input mode
             if (i == 1 or i == 2) and setting_name in ["Player Name", "Laboratory Name"]:
-                # Check if this field is in text input mode (avoid circular import)
+                # Check if this field is in text input mode using the manager
                 try:
-                    import main
-                    is_editing = (main.text_input_active and 
-                                main.text_input_field == ("player_name" if i == 1 else "lab_name"))
+                    from src.ui.pre_game_settings import pre_game_settings_manager
+                    is_editing = (pre_game_settings_manager.is_text_input_active() and 
+                                pre_game_settings_manager.get_text_input_field() == ("player_name" if i == 1 else "lab_name"))
                 except:
                     is_editing = False
                 cursor = " |" if is_editing else ""
@@ -4103,6 +4145,32 @@ def draw_pre_game_settings(screen: pygame.Surface, w: int, h: int, settings: Dic
             draw_enhanced_continue_button(screen, button_rect, text, button_state)
         else:
             draw_bureaucratic_setting_button(screen, button_rect, text, button_state, setting_name)
+            
+            # Add random lab name button next to Laboratory Name field
+            if i == 2 and setting_name == "Laboratory Name":
+                random_button_size = int(button_height * 0.8)
+                random_button_x = center_x + button_width // 2 + 10
+                random_button_y = button_y + (button_height - random_button_size) // 2
+                random_button_rect = pygame.Rect(random_button_x, random_button_y, random_button_size, random_button_size)
+                
+                # Draw random button with dice icon style
+                button_color = (70, 90, 120) if button_state == ButtonState.NORMAL else (90, 110, 140)
+                border_color = (120, 140, 180)
+                pygame.draw.rect(screen, button_color, random_button_rect, border_radius=4)
+                pygame.draw.rect(screen, border_color, random_button_rect, width=2, border_radius=4)
+                
+                # Draw dice dots (simple 3x3 grid with some dots filled)
+                dot_size = 2
+                dot_spacing = random_button_size // 4
+                start_x = random_button_x + dot_spacing
+                start_y = random_button_y + dot_spacing
+                
+                # Draw dice pattern (like showing "5" on a die)
+                dice_dots = [(0, 0), (2, 0), (1, 1), (0, 2), (2, 2)]  # Positions for dots
+                for dot_x, dot_y in dice_dots:
+                    pygame.draw.circle(screen, (220, 240, 255), 
+                                     (start_x + dot_x * dot_spacing, start_y + dot_y * dot_spacing), 
+                                     dot_size)
     
     # Enhanced instructions with bureaucratic theme
     inst_font = pygame.font.SysFont('Consolas', int(h*0.022))
