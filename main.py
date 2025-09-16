@@ -169,9 +169,10 @@ selected_menu_item = 0  # For keyboard navigation
 menu_items = ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
 start_game_submenu_items = ["Basic New Game (Default Global Seed)", "Configure Game / Custom Seed", "Config Settings", "Game Options"]
 start_game_submenu_selected_item = 0  # For start game submenu navigation
-end_game_menu_items = ["View Full Leaderboard", "Play Again", "Main Menu", "Settings", "Submit Feedback"]
+end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
+seed_selected_item = 0  # For seed selection navigation (0=Weekly, 1=Custom)
 high_score_submit_to_leaderboard = False  # Leaderboard submission toggle
 seed = None
 seed_input = ""
@@ -552,6 +553,7 @@ def handle_start_game_submenu_click(mouse_pos, w, h):
                 current_state = 'pre_game_settings'  # Go to lab config screen first
             elif i == 1:  # Configure Game / Custom Seed
                 current_state = 'seed_selection'
+                seed_selected_item = 0  # Reset selection
                 seed_input = ""
             elif i == 2:  # Config Settings
                 current_state = 'config_select'
@@ -575,6 +577,7 @@ def handle_start_game_submenu_keyboard(key):
             current_state = 'pre_game_settings'  # Go to lab config screen first
         elif start_game_submenu_selected_item == 1:  # Configure Game / Custom Seed
             current_state = 'seed_selection'
+            seed_selected_item = 0  # Reset selection
             seed_input = ""
         elif start_game_submenu_selected_item == 2:  # Config Settings
             current_state = 'config_select'
@@ -765,15 +768,19 @@ def handle_seed_selection_click(mouse_pos, w, h):
 
 def handle_seed_selection_keyboard(key):
     """Handle keyboard navigation for seed selection screen."""
-    global current_state, seed_choice, seed
+    global current_state, seed_choice, seed, seed_selected_item
     
-    if key == pygame.K_UP or key == pygame.K_DOWN:
-        # Toggle between weekly and custom
-        pass  # Visual selection can be added later
+    if key == pygame.K_UP:
+        seed_selected_item = max(0, seed_selected_item - 1)
+    elif key == pygame.K_DOWN:
+        seed_selected_item = min(1, seed_selected_item + 1)  # 2 items: Weekly(0), Custom(1)
     elif key == pygame.K_RETURN:
-        # Default to weekly seed for now
-        seed_choice = "weekly"
-        seed = get_weekly_seed()
+        if seed_selected_item == 0:  # Weekly seed
+            seed_choice = "weekly"
+            seed = get_weekly_seed()
+        else:  # Custom seed - for now use weekly, but could add custom input logic
+            seed_choice = "custom"
+            seed = seed_input if seed_input else get_weekly_seed()
         current_state = 'tutorial_choice'
     elif key == pygame.K_ESCAPE:
         current_state = 'pre_game_settings'
@@ -1360,10 +1367,10 @@ def handle_end_game_menu_click(mouse_pos, w, h):
             end_game_selected_item = i
             
             # Execute menu action based on selection
-            if i == 0:  # View Full Leaderboard - TOP PRIORITY for natural flow
+            if i == 0:  # View High Scores
                 current_state = 'high_score'
                 high_score_selected_item = 0  # Reset high score selection
-            elif i == 1:  # Play Again (renamed from Relaunch Game)
+            elif i == 1:  # Relaunch Game
                 current_state = 'game'
                 # Keep the same seed for relaunch
             elif i == 2:  # Main Menu
@@ -1373,10 +1380,13 @@ def handle_end_game_menu_click(mouse_pos, w, h):
                 overlay_content = create_settings_content()
                 overlay_title = "Settings"
                 push_navigation_state('overlay')
-            elif i == 4:  # Submit Feedback (simplified menu)
-                # Reset and pre-fill feedback form
+            elif i == 4:  # Submit Feedback
                 reset_bug_report_form()
                 bug_report_data["type_index"] = 2  # Feedback
+                current_state = 'bug_report'
+            elif i == 5:  # Submit Bug Request
+                reset_bug_report_form()
+                bug_report_data["type_index"] = 0  # Bug
                 current_state = 'bug_report'
             break
 
@@ -1390,9 +1400,9 @@ def handle_end_game_menu_keyboard(key):
         end_game_selected_item = (end_game_selected_item + 1) % len(end_game_menu_items)
     elif key == pygame.K_RETURN or key == pygame.K_SPACE:
         # Execute selected menu action
-        if end_game_selected_item == 0:  # View Full Leaderboard - TOP PRIORITY
+        if end_game_selected_item == 0:  # View High Scores
             current_state = 'high_score'
-        elif end_game_selected_item == 1:  # Play Again (renamed from Relaunch Game)
+        elif end_game_selected_item == 1:  # Relaunch Game
             current_state = 'game'
         elif end_game_selected_item == 2:  # Main Menu
             current_state = 'main_menu'
@@ -1405,13 +1415,7 @@ def handle_end_game_menu_keyboard(key):
             reset_bug_report_form()
             bug_report_data["type_index"] = 2  # Feedback
             current_state = 'bug_report'
-        elif end_game_selected_item == 4:  # Submit Feedback
-            # Reset and pre-fill feedback form
-            reset_bug_report_form()
-            bug_report_data["type_index"] = 2  # Feedback
-            current_state = 'bug_report'
         elif end_game_selected_item == 5:  # Submit Bug Request
-            # Reset and pre-fill bug report form
             reset_bug_report_form()
             bug_report_data["type_index"] = 0  # Bug
             current_state = 'bug_report'
@@ -2624,7 +2628,7 @@ def main():
             elif current_state == 'seed_selection':
                 # Seed selection screen
                 screen.fill((50, 50, 50))
-                draw_seed_selection(screen, SCREEN_W, SCREEN_H, 0, seed_input, global_sound_manager)  # Selected item handling can be improved
+                draw_seed_selection(screen, SCREEN_W, SCREEN_H, seed_selected_item, seed_input, global_sound_manager)
             
             elif current_state == 'tutorial_choice':
                 # Tutorial choice screen
