@@ -40,8 +40,8 @@ class TestGameStateInitialization(unittest.TestCase):
         self.assertEqual(game_state.seed, "test_seed", "Seed should be set correctly")
         
         # Verify collections are initialized
-        self.assertIsInstance(game_state.selected_actions, list, "Selected actions should be a list")
-        self.assertEqual(len(game_state.selected_actions), 0, "Selected actions should be empty initially")
+        self.assertIsInstance(game_state.selected_gameplay_actions, list, "Selected actions should be a list")
+        self.assertEqual(len(game_state.selected_gameplay_actions), 0, "Selected actions should be empty initially")
         self.assertIsInstance(game_state.messages, list, "Messages should be a list")
         self.assertGreater(len(game_state.messages), 0, "Should have initial game message")
 
@@ -140,7 +140,7 @@ class TestEventLog(unittest.TestCase):
         
         # Select an action that will generate a message when executed
         if game_state.money >= game_state.actions[0]["cost"]:
-            game_state.selected_actions.append(0)  # Select first action
+            game_state.selected_gameplay_actions.append(0)  # Select first action
             game_state.messages.append(f"Selected: {game_state.actions[0]['name']}")
         
         pre_turn_messages = game_state.messages.copy()

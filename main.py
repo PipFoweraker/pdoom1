@@ -2643,7 +2643,7 @@ def main():
                                     action_key = keybinding_manager.get_action_number_key(action_index)
                                     if action_key and event.key == action_key:
                                         # Check if this would be an undo operation before calling
-                                        was_undo = action_index in game_state.selected_actions
+                                        was_undo = action_index in game_state.selected_gameplay_actions
                                         
                                         # Try to execute the action using keyboard shortcut
                                         success = game_state.execute_action_by_keyboard(action_index)

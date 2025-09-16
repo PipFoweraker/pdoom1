@@ -88,7 +88,7 @@ class DebugConsole:
         # Turn information
         turn_info = {
             'current_turn': game_state.turn,
-            'selected_actions': len(game_state.selected_actions),
+            'selected_actions': len(game_state.selected_gameplay_actions),
             'available_actions': len([a for a in game_state.actions if not a.get('rules') or a['rules'](game_state)]),
             'game_over': game_state.game_over,
             'end_game_scenario': getattr(game_state, 'end_game_scenario', None)
