@@ -2,7 +2,7 @@
 
 P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI application with comprehensive testing and documentation.
 
-**Current Version**: v0.4.1 "Bootstrap Economic Calibration"
+**Current Version**: v0.7.3 "Advanced UI Systems & Dialog Integration"
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
@@ -13,13 +13,13 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Version synchronization**: If version appears outdated, check `src/services/version.py` and update accordingly
 - **Format**: `vMAJOR.MINOR.PATCH+BUILD` (e.g., "v0.3.4+hotfix1")
 
-## Critical System Information (v0.4.1)
-- **BOOTSTRAP ECONOMIC SYSTEM**: Complete economic calibration implemented
-- **Dynamic Cost Evaluation**: All action costs now support callable functions for Moore's Law integration
-- **Location**: `src/core/economic_config.py` - comprehensive economic configuration system
-- **Key Fix**: `_get_action_cost()` helper method handles both static and dynamic costs
-- **UI Integration**: Cost display and validation works with economic config lambdas
-- **Starting Funds**: $100k realistic nonprofit bootstrap model
+## Critical System Information (v0.7.3)
+- **ADVANCED UI SYSTEMS**: Comprehensive dialog system with global state management
+- **MODULAR ARCHITECTURE**: Overlay system and UI facade for clean separation of concerns
+- **ACCESSIBILITY FEATURES**: Navigation system improvements with enhanced keyboard support
+- **TYPE SAFETY**: Significant progress on type annotations across core systems
+- **DIALOG INTEGRATION**: Fixed circular import issues and error handling in dialog system
+- **UI HOTFIXES**: Systematic resolution of layout overflow and menu positioning issues
 
 ## Development Infrastructure Status
 
