@@ -1505,6 +1505,7 @@ def handle_end_game_menu_click(mouse_pos, w, h):
                 overlay_title = "Settings"
                 push_navigation_state('overlay')
             elif i == 4:  # Main Menu
+                _flush_game_state()  # Clear game state to prevent end game loop
                 current_state = 'main_menu'
                 selected_menu_item = 0
             break
@@ -1534,10 +1535,12 @@ def handle_end_game_menu_keyboard(key):
             overlay_title = "Settings"
             push_navigation_state('overlay')
         elif end_game_selected_item == 4:  # Main Menu
+            _flush_game_state()  # Clear game state to prevent end game loop
             current_state = 'main_menu'
             selected_menu_item = 0
     elif key == pygame.K_ESCAPE:
         # Return to main menu
+        _flush_game_state()  # Clear game state to prevent end game loop
         current_state = 'main_menu'
         selected_menu_item = 0
 

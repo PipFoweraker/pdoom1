@@ -1783,9 +1783,22 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             
             
     else:
-        # Original simple event log (for backward compatibility)
+        # Original simple event log (for backward compatibility) with background
+        log_width = int(w * 0.22)
+        log_height = int(h * 0.25)  # Height for 7 messages plus title
+        
+        # Draw background border like the scrollable version
+        border_rect = pygame.Rect(log_x - 5, log_y - 5, log_width + 10, log_height + 10)
+        pygame.draw.rect(screen, (80, 100, 120), border_rect, border_radius=8)
+        pygame.draw.rect(screen, (120, 140, 180), border_rect, width=2, border_radius=8)
+        
         screen.blit(font.render("Activity Log:", True, (255, 255, 180)), (log_x, log_y))
         for i, msg in enumerate(game_state.messages[-7:]):
+            # Truncate long messages to fit within the background area
+            max_chars = (log_width - int(w*0.02)) // 8  # Account for padding and rough character width
+            if len(msg) > max_chars:
+                msg = msg[:max_chars-3] + "..."
+            
             msg_text = small_font.render(msg, True, (255, 255, 210))
             screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
 
@@ -2589,21 +2602,21 @@ def draw_opponents_panel(screen: pygame.Surface, game_state, w: int, h: int, fon
     panel_width = int(w * 0.92)
     panel_height = int(h * 0.08)
     
-    # Draw panel background
+    # Draw panel background with improved contrast
     panel_rect = pygame.Rect(panel_x, panel_y, panel_width, panel_height)
-    pygame.draw.rect(screen, (30, 30, 50), panel_rect, border_radius=8)
-    pygame.draw.rect(screen, (80, 80, 120), panel_rect, width=2, border_radius=8)
+    pygame.draw.rect(screen, (45, 55, 75), panel_rect, border_radius=8)  # Lighter background
+    pygame.draw.rect(screen, (150, 170, 200), panel_rect, width=3, border_radius=8)  # Brighter border
     
-    # Panel title
-    title_text = font.render("Competitors:", True, (255, 200, 100))
+    # Panel title with better visibility
+    title_text = font.render("Competitors:", True, (255, 220, 100))  # Brighter yellow
     screen.blit(title_text, (panel_x + int(w * 0.01), panel_y + int(h * 0.01)))
     
     # Get discovered opponents
     discovered = [opp for opp in game_state.opponents if opp.discovered]
     
     if not discovered:
-        # No opponents discovered yet
-        no_info = small_font.render("Use Espionage or Scout Opponent to discover competitors", True, (180, 180, 180))
+        # No opponents discovered yet - brighter text
+        no_info = small_font.render("Use Espionage or Scout Opponent to discover competitors", True, (220, 220, 220))
         screen.blit(no_info, (panel_x + int(w * 0.15), panel_y + int(h * 0.035)))
         return
     
@@ -2614,8 +2627,8 @@ def draw_opponents_panel(screen: pygame.Surface, game_state, w: int, h: int, fon
         opp_x = panel_x + i * opponent_width + int(w * 0.01)
         opp_y = panel_y + int(h * 0.025)
         
-        # Opponent name
-        name_text = font.render(opponent.name, True, (255, 255, 200))
+        # Opponent name with better contrast
+        name_text = font.render(opponent.name, True, (255, 255, 255))  # Pure white for names
         screen.blit(name_text, (opp_x, opp_y))
         
         # Known stats (show with different colors based on discovery status)
@@ -2627,7 +2640,7 @@ def draw_opponents_panel(screen: pygame.Surface, game_state, w: int, h: int, fon
             progress_color = (255, 100, 100) if progress_val > 70 else (255, 200, 100) if progress_val > 40 else (100, 255, 100)
             progress_text = small_font.render(f"Progress: {progress_val}/100", True, progress_color)
         else:
-            progress_text = small_font.render("Progress: ???", True, (120, 120, 120))
+            progress_text = small_font.render("Progress: ???", True, (180, 180, 180))  # Brighter unknown stats
         screen.blit(progress_text, (opp_x, stats_y))
         
         # Other stats (compact display)
@@ -2637,7 +2650,7 @@ def draw_opponents_panel(screen: pygame.Surface, game_state, w: int, h: int, fon
         if opponent.discovered_stats['budget']:
             budget_text = small_font.render(f"Budget: ${opponent.known_stats['budget']}k", True, (100, 255, 100))
         else:
-            budget_text = small_font.render("Budget: ???", True, (120, 120, 120))
+            budget_text = small_font.render("Budget: ???", True, (180, 180, 180))  # Brighter unknown stats
         screen.blit(budget_text, (opp_x, stats_y))
         
         # Researchers and Compute (on same line if space allows)

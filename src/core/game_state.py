@@ -5864,6 +5864,10 @@ class GameState:
         """Trigger research quality dashboard (Research Quality Selection Submenu Bug fix)."""
         # Research quality selection is now handled by the persistent dashboard
         # Just ensure research quality system is unlocked and visible
+        
+        # Clear any stale dialog state to prevent UI freezing
+        self.pending_research_dialog = None
+        
         if not self.research_quality_unlocked:
             self.research_quality_unlocked = True
             self.add_message("? Research Quality Dashboard unlocked! Use the panel below End Turn to change research approach.")
