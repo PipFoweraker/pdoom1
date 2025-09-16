@@ -167,10 +167,13 @@ navigation_stack = []
 current_state = 'main_menu'
 game_state = None  # Global game state variable
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
+# Main menu: Primary actions first, then secondary, exit last
+menu_items = ["Launch Lab", "Launch with Custom Seed", "Player Guide", "View Leaderboard", "Settings", "Exit"]
+# Start game submenu: Quick start first, then configuration options
 start_game_submenu_items = ["Basic New Game (Default Global Seed)", "Configure Game / Custom Seed", "Config Settings", "Game Options"]
 start_game_submenu_selected_item = 0  # For start game submenu navigation
-end_game_menu_items = ["View Full Leaderboard", "Play Again", "Main Menu", "Settings", "Submit Feedback"]
+# End game menu: Primary actions first (continue playing), then meta actions
+end_game_menu_items = ["Play Again", "View Full Leaderboard", "Submit Feedback", "Settings", "Main Menu"]
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
 high_score_submit_to_leaderboard = False  # Leaderboard submission toggle
@@ -427,48 +430,37 @@ def handle_menu_click(mouse_pos, w, h):
     """
     global current_state, selected_menu_item, overlay_content, overlay_title, seed
     
-    # Calculate menu button positions (must match draw_main_menu layout)
-    button_width = int(w * 0.4)
-    button_height = int(h * 0.08)
-    start_y = int(h * 0.35)
-    spacing = int(h * 0.1)
-    center_x = w // 2
+    # Use unified menu helper for collision detection
+    from src.ui.menu_helpers import get_menu_button_collision
+    clicked_item = get_menu_button_collision(mouse_pos, menu_items, w, h)
     
-    mx, my = mouse_pos
-    
-    # Check each menu button for collision
-    for i, item in enumerate(menu_items):
-        button_x = center_x - button_width // 2
-        button_y = start_y + i * spacing
-        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    if clicked_item is not None:
+        i = clicked_item
+        selected_menu_item = i
         
-        if button_rect.collidepoint(mx, my):
-            selected_menu_item = i
-            
-            # Execute menu action based on selection
-            if i == 0:  # Launch Lab
-                current_state = 'start_game_submenu'
-            elif i == 1:  # Launch with Custom Seed
-                current_state = 'custom_seed_prompt'
-                seed_input = ""  # Clear any previous input
-            elif i == 2:  # Settings
-                current_state = 'settings_menu'
-            elif i == 3:  # Player Guide
-                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                overlay_title = "Player Guide"
-                push_navigation_state('overlay')
-            elif i == 4:  # View Leaderboard
-                # Go directly to leaderboard screen with default seed
-                current_state = 'high_score'
-                high_score_selected_item = 0  # Reset selection
-                # Set a default seed for leaderboard viewing if none exists
-                if seed is None:
-                    seed = get_weekly_seed()  # Use the default weekly seed
-            elif i == 5:  # Exit
-                log_shutdown("Main menu exit")
-                pygame.quit()
-                sys.exit()
-            break
+        # Execute menu action based on selection (updated for new order)
+        if i == 0:  # Launch Lab
+            current_state = 'start_game_submenu'
+        elif i == 1:  # Launch with Custom Seed
+            current_state = 'custom_seed_prompt'
+            seed_input = ""  # Clear any previous input
+        elif i == 2:  # Player Guide
+            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
+            overlay_title = "Player Guide"
+            push_navigation_state('overlay')
+        elif i == 3:  # View Leaderboard
+            # Go directly to leaderboard screen with default seed
+            current_state = 'high_score'
+            high_score_selected_item = 0  # Reset selection
+            # Set a default seed for leaderboard viewing if none exists
+            if seed is None:
+                seed = get_weekly_seed()  # Use the default weekly seed
+        elif i == 4:  # Settings
+            current_state = 'settings_menu'
+        elif i == 5:  # Exit
+            log_shutdown("Main menu exit")
+            pygame.quit()
+            sys.exit()
     
     # Check for sound button click (bottom right corner)
     button_size = int(min(w, h) * 0.06)
@@ -1490,25 +1482,25 @@ def handle_end_game_menu_click(mouse_pos, w, h):
         if button_rect.collidepoint(mx, my):
             end_game_selected_item = i
             
-            # Execute menu action based on selection
-            if i == 0:  # View Full Leaderboard - TOP PRIORITY for natural flow
-                current_state = 'high_score'
-                high_score_selected_item = 0  # Reset high score selection
-            elif i == 1:  # Play Again (renamed from Relaunch Game)
+            # Execute menu action based on selection (updated for new order)
+            if i == 0:  # Play Again - PRIMARY ACTION for continuing play
                 current_state = 'game'
                 # Keep the same seed for relaunch
-            elif i == 2:  # Main Menu
-                current_state = 'main_menu'
-                selected_menu_item = 0
-            elif i == 3:  # Settings
-                overlay_content = create_settings_content()
-                overlay_title = "Settings"
-                push_navigation_state('overlay')
-            elif i == 4:  # Submit Feedback (simplified menu)
+            elif i == 1:  # View Full Leaderboard
+                current_state = 'high_score'
+                high_score_selected_item = 0  # Reset high score selection
+            elif i == 2:  # Submit Feedback (simplified menu)
                 # Reset and pre-fill feedback form
                 reset_bug_report_form()
                 bug_report_data["type_index"] = 2  # Feedback
                 current_state = 'bug_report'
+            elif i == 3:  # Settings
+                overlay_content = create_settings_content()
+                overlay_title = "Settings"
+                push_navigation_state('overlay')
+            elif i == 4:  # Main Menu
+                current_state = 'main_menu'
+                selected_menu_item = 0
             break
 
 def handle_end_game_menu_keyboard(key):
@@ -1522,22 +1514,22 @@ def handle_end_game_menu_keyboard(key):
     elif key == pygame.K_DOWN or key == pygame.K_RIGHT:
         end_game_selected_item = (end_game_selected_item + 1) % len(end_game_menu_items)
     elif key == pygame.K_RETURN or key == pygame.K_SPACE:
-        # Execute selected menu action
-        if end_game_selected_item == 0:  # View Full Leaderboard - TOP PRIORITY
-            current_state = 'high_score'
-        elif end_game_selected_item == 1:  # Play Again (renamed from Relaunch Game)
+        # Execute selected menu action (updated for new order)
+        if end_game_selected_item == 0:  # Play Again - PRIMARY ACTION
             current_state = 'game'
-        elif end_game_selected_item == 2:  # Main Menu
-            current_state = 'main_menu'
-            selected_menu_item = 0
+        elif end_game_selected_item == 1:  # View Full Leaderboard
+            current_state = 'high_score'
+        elif end_game_selected_item == 2:  # Submit Feedback
+            reset_bug_report_form()
+            bug_report_data["type_index"] = 2  # Feedback
+            current_state = 'bug_report'
         elif end_game_selected_item == 3:  # Settings
             overlay_content = create_settings_content()
             overlay_title = "Settings"
             push_navigation_state('overlay')
-        elif end_game_selected_item == 4:  # Submit Feedback
-            reset_bug_report_form()
-            bug_report_data["type_index"] = 2  # Feedback
-            current_state = 'bug_report'
+        elif end_game_selected_item == 4:  # Main Menu
+            current_state = 'main_menu'
+            selected_menu_item = 0
     elif key == pygame.K_ESCAPE:
         # Return to main menu
         current_state = 'main_menu'
@@ -1855,12 +1847,36 @@ def main():
                         elif event.y < 0:  # Mouse wheel down
                             max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
                             game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 3)
-                    elif current_state == 'main_menu':
-                        # Handle mouse wheel scrolling for main menu navigation
+                    elif current_state == 'overlay':
+                        # Handle mouse wheel scrolling for overlay content
+                        if event.y > 0:  # Mouse wheel up - scroll up
+                            overlay_scroll = max(0, overlay_scroll - 30)
+                        elif event.y < 0:  # Mouse wheel down - scroll down
+                            overlay_scroll += 30
+                    elif current_state in ['main_menu', 'start_game_submenu', 'end_game_menu', 'sounds_menu', 'settings_menu']:
+                        # Unified mouse wheel menu navigation
                         if event.y > 0:  # Mouse wheel up - move selection up
-                            selected_menu_item = (selected_menu_item - 1) % len(menu_items)
+                            if current_state == 'main_menu':
+                                selected_menu_item = (selected_menu_item - 1) % len(menu_items)
+                            elif current_state == 'start_game_submenu':
+                                selected_menu_item = (selected_menu_item - 1) % len(start_game_submenu_items)
+                            elif current_state == 'end_game_menu':
+                                selected_menu_item = (selected_menu_item - 1) % len(end_game_menu_items)
+                            elif current_state == 'sounds_menu':
+                                selected_menu_item = (selected_menu_item - 1) % 6  # Audio menu has 6 items
+                            elif current_state == 'settings_menu':
+                                selected_menu_item = (selected_menu_item - 1) % 7  # Settings menu has 7 items
                         elif event.y < 0:  # Mouse wheel down - move selection down
-                            selected_menu_item = (selected_menu_item + 1) % len(menu_items)
+                            if current_state == 'main_menu':
+                                selected_menu_item = (selected_menu_item + 1) % len(menu_items)
+                            elif current_state == 'start_game_submenu':
+                                selected_menu_item = (selected_menu_item + 1) % len(start_game_submenu_items)
+                            elif current_state == 'end_game_menu':
+                                selected_menu_item = (selected_menu_item + 1) % len(end_game_menu_items)
+                            elif current_state == 'sounds_menu':
+                                selected_menu_item = (selected_menu_item + 1) % 6  # Audio menu has 6 items
+                            elif current_state == 'settings_menu':
+                                selected_menu_item = (selected_menu_item + 1) % 7  # Settings menu has 7 items
                     # Always continue - don't let unhandled wheel events cause issues
                     continue
                     
