@@ -221,7 +221,7 @@ class ThreeColumnLayout:
             
             if game_state.action_points < ap_cost:
                 button_state = ButtonState.DISABLED
-            elif original_idx in getattr(game_state, 'selected_actions', []):
+            elif original_idx in getattr(game_state, 'selected_gameplay_actions', []):
                 button_state = ButtonState.PRESSED
             elif (hasattr(game_state, 'hovered_action_idx') and 
                   game_state.hovered_action_idx == original_idx):
@@ -322,7 +322,7 @@ class ThreeColumnLayout:
             
             if game_state.action_points < ap_cost:
                 button_state = ButtonState.DISABLED
-            elif original_idx in getattr(game_state, 'selected_actions', []):
+            elif original_idx in getattr(game_state, 'selected_gameplay_actions', []):
                 button_state = ButtonState.PRESSED
             elif (hasattr(game_state, 'hovered_action_idx') and 
                   game_state.hovered_action_idx == original_idx):

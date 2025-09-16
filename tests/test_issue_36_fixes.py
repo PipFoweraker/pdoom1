@@ -28,7 +28,7 @@ class TestButtonClickLimits(unittest.TestCase):
             self.assertTrue(result['success'])
         
         # Should have selected 3 instances
-        self.assertEqual(len(self.game_state.selected_actions), 3)
+        self.assertEqual(len(self.game_state.selected_gameplay_actions), 3)
         self.assertEqual(self.game_state.action_points, initial_ap - 3)
     
     def test_click_limit_enforcement(self):
@@ -52,7 +52,7 @@ class TestButtonClickLimits(unittest.TestCase):
             self.assertIn("already used maximum times", result3['message'])
             
             # Should only have 2 instances selected
-            action_count = sum(1 for idx in self.game_state.selected_actions if idx == action_idx)
+            action_count = sum(1 for idx in self.game_state.selected_gameplay_actions if idx == action_idx)
             self.assertEqual(action_count, 2)
         
         finally:

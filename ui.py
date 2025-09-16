@@ -1445,7 +1445,7 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         # Use Action Availability Manager for consistent button state (Action Point Display Bug fix)
         if not action_info.is_selectable:
             button_state = ButtonState.DISABLED
-        elif original_idx in game_state.selected_actions:  # Use original index for selection check
+        elif original_idx in game_state.selected_gameplay_actions:  # Use original index for selection check
             button_state = ButtonState.PRESSED
         elif hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx == original_idx:
             button_state = ButtonState.HOVER

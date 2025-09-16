@@ -274,7 +274,7 @@ def draw_action_buttons(screen: pygame.Surface, game_state: Any, w: int, h: int,
         # Determine button state for visual feedback
         if game_state.action_points < ap_cost:
             button_state = ButtonState.DISABLED
-        elif original_idx in game_state.selected_actions:  # Use original index for selection check
+        elif original_idx in game_state.selected_gameplay_actions:  # Use original index for selection check
             button_state = ButtonState.PRESSED
         elif hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx == original_idx:
             button_state = ButtonState.HOVER

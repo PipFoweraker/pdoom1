@@ -185,7 +185,7 @@ class TestGameStateLogging(unittest.TestCase):
         
         # Select an action if available
         if game_state.actions:
-            game_state.selected_actions = [0]  # Select first action
+            game_state.selected_gameplay_actions = [0]  # Select first action
             game_state.money = 1000  # Ensure we have enough money
         
         # End the turn
@@ -228,7 +228,7 @@ class TestGameSessionSimulation(unittest.TestCase):
             for turn in range(3):
                 # Select an action if we have money
                 if game_state.actions and game_state.money >= game_state.actions[0]["cost"]:
-                    game_state.selected_actions = [0]
+                    game_state.selected_gameplay_actions = [0]
                 
                 # Try to buy an upgrade if we have money
                 for upgrade in game_state.upgrades:
