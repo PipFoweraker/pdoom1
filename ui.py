@@ -1789,6 +1789,23 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             msg_text = small_font.render(msg, True, (255, 255, 210))
             screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
 
+    # Dashboard elements (research quality selector, etc.) - Research Quality Selection Submenu Bug fix
+    from src.services.dashboard_manager import get_dashboard_manager, DashboardElementType
+    dashboard_manager = get_dashboard_manager()
+    
+    # Update research quality visibility when unlocked
+    if hasattr(game_state, 'research_quality_unlocked') and game_state.research_quality_unlocked:
+        dashboard_manager.update_element_visibility(DashboardElementType.RESEARCH_QUALITY, True)
+    
+    # Draw all dashboard elements and store clickable rects for main game loop
+    dashboard_clickable_rects = dashboard_manager.draw_dashboard_elements(screen, game_state, w, h)
+    
+    # Store dashboard rects in game state for click handling in main.py
+    if dashboard_clickable_rects:
+        game_state._dashboard_clickable_rects = dashboard_clickable_rects
+    else:
+        game_state._dashboard_clickable_rects = []
+
     # Draw employee blobs (lower middle area)
     draw_employee_blobs(screen, game_state, w, h)
     

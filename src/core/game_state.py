@@ -5834,12 +5834,14 @@ class GameState:
     # =================== RESEARCH DIALOG SYSTEM ===================
     
     def _trigger_research_dialog(self) -> None:
-        """Trigger the research strategy selection dialog."""
-        self.pending_research_dialog = {
-            "title": "Research Strategy Selection",
-            "description": "Choose your research approach and quality level",
-            "available_options": self._get_available_research_options()
-        }
+        """Trigger research quality dashboard (Research Quality Selection Submenu Bug fix)."""
+        # Research quality selection is now handled by the persistent dashboard
+        # Just ensure research quality system is unlocked and visible
+        if not self.research_quality_unlocked:
+            self.research_quality_unlocked = True
+            self.add_message("? Research Quality Dashboard unlocked! Use the panel below End Turn to change research approach.")
+        else:
+            self.add_message("? Use the Research Quality panel below End Turn to change your research approach.")
     
     def _get_available_research_options(self) -> List[Dict[str, Any]]:
         """Get available research options based on current game state."""

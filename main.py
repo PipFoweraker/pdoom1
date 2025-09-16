@@ -2173,6 +2173,27 @@ def main():
                                         game_state.dismiss_research_dialog()
                                         if hasattr(game_state, 'sound_manager'):
                                             game_state.sound_manager.play_sound('popup_close')
+                            # Check for dashboard element clicks - Research Quality Selection Submenu Bug fix
+                            elif (game_state and hasattr(game_state, '_dashboard_clickable_rects') and 
+                                  game_state._dashboard_clickable_rects):
+                                dashboard_handled = False
+                                for rect_info in game_state._dashboard_clickable_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'research_quality_select':
+                                            # Player selected a research quality option
+                                            from src.services.dashboard_manager import get_dashboard_manager
+                                            dashboard_manager = get_dashboard_manager()
+                                            success = dashboard_manager.handle_research_quality_selection(
+                                                rect_info['quality'], game_state
+                                            )
+                                            if success and hasattr(game_state, 'sound_manager'):
+                                                game_state.sound_manager.play_sound('button_click')
+                                            dashboard_handled = True
+                                            break
+                                
+                                if not dashboard_handled:
+                                    # Dashboard elements didn't handle the click, continue with other handlers
+                                    pass
                             # Check for popup button clicks first
                             elif handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
                                 # Popup button was clicked, no need for further processing
@@ -2221,6 +2242,11 @@ def main():
                     # Mouse hover effects only active during gameplay
                     if current_state == 'game' and game_state:
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
+                        
+                        # Handle dashboard hover effects - Research Quality Selection Submenu Bug fix
+                        from src.services.dashboard_manager import get_dashboard_manager
+                        dashboard_manager = get_dashboard_manager()
+                        dashboard_manager.handle_mouse_hover(event.pos, game_state, SCREEN_W, SCREEN_H)
                 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     # Handle window manager button release (for ending drag operations)
