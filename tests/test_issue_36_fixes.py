@@ -92,8 +92,8 @@ class TestButtonClickLimits(unittest.TestCase):
         for _ in range(3):
             self.game_state.attempt_action_selection(0, is_undo=False)
         
-        # action_clicks_this_turn should be empty or not contain this action
-        self.assertEqual(self.game_state.action_clicks_this_turn.get(0, 0), 0)
+        # gameplay_action_clicks_this_turn should be empty or not contain this action
+        self.assertEqual(self.game_state.gameplay_action_clicks_this_turn.get(0, 0), 0)
 
 
 class TestEmployeeCostScaling(unittest.TestCase):

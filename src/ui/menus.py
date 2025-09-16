@@ -511,13 +511,15 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
     subtitle_y = title_y + title_surf.get_height() + 5
     screen.blit(subtitle_surf, (subtitle_x, subtitle_y))
     
-    # Enhanced settings with realistic options
+    # Enhanced settings with realistic options (must match click handling expectations)
     settings_options = [
-        ("Research Intensity", get_research_intensity_display(settings.get("difficulty", "STANDARD"))),
-        ("Audio Alerts Volume", get_volume_display(settings.get("sound_volume", 80))),
-        ("Visual Enhancement", get_graphics_display(settings.get("graphics_quality", "STANDARD"))),
-        ("Safety Protocol Level", get_safety_display(settings.get("safety_level", "STANDARD"))),
-        ("Continue", "? INITIALIZE LABORATORY")
+        ("Continue", "? INITIALIZE LABORATORY"),  # Index 0 - Continue button
+        ("Player Name", settings.get("player_name", "Researcher")),  # Index 1 - Player Name
+        ("Lab Name", settings.get("lab_name", "AI Safety Lab")),  # Index 2 - Lab Name
+        ("Research Intensity", get_research_intensity_display(settings.get("difficulty", "STANDARD"))),  # Index 3
+        ("Audio Alerts Volume", get_volume_display(settings.get("sound_volume", 80))),  # Index 4
+        ("Visual Enhancement", get_graphics_display(settings.get("graphics_quality", "STANDARD"))),  # Index 5
+        ("Safety Protocol Level", get_safety_display(settings.get("safety_level", "STANDARD")))  # Index 6
     ]
     
     # Improved button layout with more space
@@ -540,13 +542,13 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
             button_state = ButtonState.NORMAL
         
         # Format text for display
-        if i < len(settings_options) - 1:  # Setting items with values
-            text = f"{setting_name}: {setting_value}"
-        else:  # Continue button with special styling
+        if i == 0:  # Continue button with special styling
             text = setting_value
+        else:  # Setting items with values
+            text = f"{setting_name}: {setting_value}"
         
         # Draw enhanced button
-        if i == len(settings_options) - 1:  # Continue button gets special treatment
+        if i == 0:  # Continue button gets special treatment
             draw_enhanced_continue_button(screen, button_rect, text, button_state)
         else:
             draw_bureaucratic_setting_button(screen, button_rect, text, button_state, setting_name)

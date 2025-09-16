@@ -39,7 +39,7 @@ class TestUnifiedActionHandler(unittest.TestCase):
         self.assertIn("Selected:", result['message'])
         self.assertEqual(self.game_state.action_points, initial_ap - 1)
         self.assertIn(0, self.game_state.selected_gameplay_actions)
-        self.assertEqual(len(self.game_state.selected_action_instances), 1)
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 1)
     
     def test_action_selection_insufficient_ap(self):
         """Test action selection when AP is insufficient."""
@@ -51,7 +51,7 @@ class TestUnifiedActionHandler(unittest.TestCase):
         self.assertFalse(result['play_sound'])
         self.assertIn("Not enough Action Points", result['message'])
         self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
-        self.assertEqual(len(self.game_state.selected_action_instances), 0)
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 0)
     
     def test_action_selection_insufficient_money(self):
         """Test action selection when money is insufficient."""
@@ -80,7 +80,7 @@ class TestUnifiedActionHandler(unittest.TestCase):
         self.assertIn("refunded", result['message'])
         self.assertEqual(self.game_state.action_points, initial_ap + 1)
         self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
-        self.assertEqual(len(self.game_state.selected_action_instances), 0)
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 0)
     
     def test_action_undo_no_instance(self):
         """Test undo when no instance of action exists."""
@@ -98,7 +98,7 @@ class TestUnifiedActionHandler(unittest.TestCase):
             self.assertTrue(result['success'])
         
         self.assertEqual(len(self.game_state.selected_gameplay_actions), 3)
-        self.assertEqual(len(self.game_state.selected_action_instances), 3)
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 3)
         self.assertEqual(self.game_state.action_points, 0)  # Started with 3 AP
         
         # Undo one instance
@@ -106,14 +106,14 @@ class TestUnifiedActionHandler(unittest.TestCase):
         self.assertTrue(result['success'])
         
         self.assertEqual(len(self.game_state.selected_gameplay_actions), 2)
-        self.assertEqual(len(self.game_state.selected_action_instances), 2)
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 2)
         self.assertEqual(self.game_state.action_points, 1)
     
     def test_keyboard_shortcut_integration(self):
         """Test keyboard shortcuts use unified handler."""
         initial_ap = self.game_state.action_points
         
-        success = self.game_state.execute_action_by_keyboard(0)
+        success = self.game_state.execute_gameplay_action_by_keyboard(0)
         
         self.assertTrue(success)
         self.assertEqual(self.game_state.action_points, initial_ap - 1)
@@ -122,11 +122,11 @@ class TestUnifiedActionHandler(unittest.TestCase):
     def test_keyboard_shortcut_undo(self):
         """Test keyboard shortcut undo functionality."""
         # Select action first
-        self.game_state.execute_action_by_keyboard(0)
+        self.game_state.execute_gameplay_action_by_keyboard(0)
         initial_ap = self.game_state.action_points
         
         # Undo via keyboard (same key when action is selected)
-        success = self.game_state.execute_action_by_keyboard(0)
+        success = self.game_state.execute_gameplay_action_by_keyboard(0)
         
         self.assertTrue(success)
         self.assertEqual(self.game_state.action_points, initial_ap + 1)
@@ -148,13 +148,13 @@ class TestUnifiedActionHandler(unittest.TestCase):
         self.game_state.attempt_action_selection(0, is_undo=False)
         self.game_state.attempt_action_selection(1, is_undo=False)
         
-        self.assertGreater(len(self.game_state.selected_action_instances), 0)
+        self.assertGreater(len(self.game_state.selected_gameplay_action_instances), 0)
         
         # End turn
         self.game_state.end_turn()
         
         self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
-        self.assertEqual(len(self.game_state.selected_action_instances), 0)
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 0)
         self.assertEqual(self.game_state.action_points, self.game_state.max_action_points)
     
     def test_delegation_in_unified_handler(self):
@@ -180,10 +180,10 @@ class TestUIButtonStates(unittest.TestCase):
         self.game_state = GameState("test_seed")
         self.game_state.money = 100000
     
-    def test_selected_action_instances_attribute(self):
-        """Test that selected_action_instances attribute exists and is initialized."""
-        self.assertTrue(hasattr(self.game_state, 'selected_action_instances'))
-        self.assertEqual(len(self.game_state.selected_action_instances), 0)
+    def test_selected_gameplay_action_instances_attribute(self):
+        """Test that selected_gameplay_action_instances attribute exists and is initialized."""
+        self.assertTrue(hasattr(self.game_state, 'selected_gameplay_action_instances'))
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 0)
     
     def test_action_instance_tracking(self):
         """Test that action instances are tracked correctly for UI."""
@@ -192,7 +192,7 @@ class TestUIButtonStates(unittest.TestCase):
             self.game_state.attempt_action_selection(0, is_undo=False)
         
         # Count instances of action 0
-        action_0_count = sum(1 for inst in self.game_state.selected_action_instances 
+        action_0_count = sum(1 for inst in self.game_state.selected_gameplay_action_instances 
                             if inst['action_idx'] == 0)
         self.assertEqual(action_0_count, 2)
         
@@ -200,7 +200,7 @@ class TestUIButtonStates(unittest.TestCase):
         result = self.game_state.attempt_action_selection(1, is_undo=False)
         self.assertTrue(result['success'])  # Should succeed with 1 AP remaining
         
-        action_1_count = sum(1 for inst in self.game_state.selected_action_instances 
+        action_1_count = sum(1 for inst in self.game_state.selected_gameplay_action_instances 
                             if inst['action_idx'] == 1)
         self.assertEqual(action_1_count, 1)
 
@@ -259,18 +259,18 @@ class TestEdgeCases(unittest.TestCase):
         
         self.assertTrue(result['success'])
         # Should still have 1 instance of action 0 (instance_id: 0)
-        action_0_count = sum(1 for inst in self.game_state.selected_action_instances 
+        action_0_count = sum(1 for inst in self.game_state.selected_gameplay_action_instances 
                             if inst['action_idx'] == 0)
         self.assertEqual(action_0_count, 1)
         
         # Total instances should be 2 (1 action 0 + 1 action 1)
-        self.assertEqual(len(self.game_state.selected_action_instances), 2)
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 2)
     
     def test_game_over_state(self):
         """Test that actions cannot be executed when game is over."""
         self.game_state.game_over = True
         
-        success = self.game_state.execute_action_by_keyboard(0)
+        success = self.game_state.execute_gameplay_action_by_keyboard(0)
         self.assertFalse(success)
     
     def test_rapid_toggling(self):
@@ -290,7 +290,7 @@ class TestEdgeCases(unittest.TestCase):
         # Should be back to initial state
         self.assertEqual(self.game_state.action_points, initial_ap)
         self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
-        self.assertEqual(len(self.game_state.selected_action_instances), 0)
+        self.assertEqual(len(self.game_state.selected_gameplay_action_instances), 0)
     
     def test_undoing_last_ap(self):
         """Test undoing when it's the last available action point."""

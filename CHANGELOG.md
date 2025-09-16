@@ -4,6 +4,12 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.6] - 2025-09-16 - "Hot Hotfix Zone"
+### Added
+### Changed
+### Fixed
+### Technical Implementation
+
 ## [0.7.5] - 2025-09-16 - "Extended Gameplay & Architecture Overhaul"
 ### Added
 - **MAJOR: TurnManager Architecture**: Extracted turn processing from monolithic GameState into dedicated TurnManager class

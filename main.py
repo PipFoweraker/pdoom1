@@ -632,7 +632,7 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
     
     mx, my = mouse_pos
     
-    # Settings items (6 settings + 1 continue button = 7 total)
+    # Settings items (1 continue button + 2 name fields + 4 settings = 7 total)
     num_items = 7
     
     for i in range(num_items):
@@ -1505,6 +1505,7 @@ def handle_end_game_menu_click(mouse_pos, w, h):
                 overlay_title = "Settings"
                 push_navigation_state('overlay')
             elif i == 4:  # Main Menu
+                _flush_game_state()  # Clear game state to prevent end game loop
                 current_state = 'main_menu'
                 selected_menu_item = 0
             break
@@ -1534,10 +1535,12 @@ def handle_end_game_menu_keyboard(key):
             overlay_title = "Settings"
             push_navigation_state('overlay')
         elif end_game_selected_item == 4:  # Main Menu
+            _flush_game_state()  # Clear game state to prevent end game loop
             current_state = 'main_menu'
             selected_menu_item = 0
     elif key == pygame.K_ESCAPE:
         # Return to main menu
+        _flush_game_state()  # Clear game state to prevent end game loop
         current_state = 'main_menu'
         selected_menu_item = 0
 
@@ -2646,7 +2649,7 @@ def main():
                                         was_undo = action_index in game_state.selected_gameplay_actions
                                         
                                         # Try to execute the action using keyboard shortcut
-                                        success = game_state.execute_action_by_keyboard(action_index)
+                                        success = game_state.execute_gameplay_action_by_keyboard(action_index)
                                         if success and not was_undo:
                                             # Play AP spend sound for successful new selections (not undos)
                                             game_state.sound_manager.play_ap_spend_sound()
