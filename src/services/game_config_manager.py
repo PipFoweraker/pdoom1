@@ -261,7 +261,7 @@ class GameConfigManager:
                 "description": "Balanced gameplay for normal difficulty",
                 "modifications": {
                     "starting_resources.money": 1000,
-                    "starting_resources.staff": 2,
+                    "starting_resources.staff": 0,  # Start with zero staff for better onboarding
                     "starting_resources.doom": 25
                 }
             },

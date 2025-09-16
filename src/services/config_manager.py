@@ -93,7 +93,7 @@ class ConfigManager:
             # Game Balance - Starting Resources
             "starting_resources": {
                 "money": 100000,  # Bootstrap v0.4.1: $100k starting funds for party demo
-                "staff": 2,
+                "staff": 0,  # Start with zero staff for better onboarding experience
                 "reputation": 50,
                 "action_points": 3,
                 "doom": 25,  # Starting p(Doom) percentage

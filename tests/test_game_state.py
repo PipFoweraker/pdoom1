@@ -17,8 +17,8 @@ class TestGameStateInitialization(unittest.TestCase):
         game_state = GameState("test_seed")
         
         # Verify core resource defaults
-        self.assertEqual(game_state.money, 2000, "Initial money should be 2,000 (updated default)")
-        self.assertEqual(game_state.staff, 2, "Initial staff should be 2")
+        self.assertEqual(game_state.money, 100000, "Initial money should be 100,000 (bootstrap funding)")
+        self.assertEqual(game_state.staff, 0, "Initial staff should be 0 (new onboarding design)")
         self.assertEqual(game_state.reputation, 50, "Initial reputation should be 50")
         self.assertEqual(game_state.doom, 25, "Initial doom should be 25")
         self.assertEqual(game_state.compute, 0, "Initial compute should be 0")

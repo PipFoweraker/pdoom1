@@ -61,7 +61,7 @@ class TestConfigManager(unittest.TestCase):
         
         # Check specific game balance values
         self.assertEqual(default_config['starting_resources']['money'], 1000)
-        self.assertEqual(default_config['starting_resources']['staff'], 2)
+        self.assertEqual(default_config['starting_resources']['staff'], 0)  # Updated for new onboarding design
         self.assertEqual(default_config['action_points']['base_ap_per_turn'], 3)
         self.assertEqual(default_config['milestones']['manager_threshold'], 9)
         

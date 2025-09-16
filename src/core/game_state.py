@@ -104,7 +104,7 @@ class GameState:
                 # FIXED: Only mark first staff hire as seen when we actually hire BEYOND starting staff
                 # Check if this is first manual hire (from starting count)
                 from src.services.config_manager import get_current_config
-                starting_staff = get_current_config().get('starting_resources', {}).get('staff', 2)
+                starting_staff = get_current_config().get('starting_resources', {}).get('staff', 0)
                 if old_staff == starting_staff and val > 0:
                     # This is the first manual hire - mark as seen so hint won't show again
                     onboarding.mark_mechanic_seen('first_staff_hire')
@@ -4097,7 +4097,7 @@ class GameState:
         
         # Check if this is the first time attempting to hire staff and hints are enabled
         config = get_current_config()
-        starting_staff = config.get('starting_resources', {}).get('staff', 2)
+        starting_staff = config.get('starting_resources', {}).get('staff', 0)
         
         # Only show hint if:
         # 1. This is the first manual hire attempt (still at starting staff count)
