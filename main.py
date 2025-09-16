@@ -2646,7 +2646,7 @@ def main():
                                         was_undo = action_index in game_state.selected_gameplay_actions
                                         
                                         # Try to execute the action using keyboard shortcut
-                                        success = game_state.execute_action_by_keyboard(action_index)
+                                        success = game_state.execute_gameplay_action_by_keyboard(action_index)
                                         if success and not was_undo:
                                             # Play AP spend sound for successful new selections (not undos)
                                             game_state.sound_manager.play_ap_spend_sound()
