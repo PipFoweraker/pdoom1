@@ -401,17 +401,13 @@ ACTIONS = [
         "rules": None
     },
     {
-        "name": "Scout Opponents",
-        "desc": "Gather intelligence on competing labs via internet research. Free and safe action.",
-        "cost": 0,
-        "ap_cost": 1,  # Action Points cost
-        "delegatable": True,  # Can be delegated to admin staff
-        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
-        "delegate_ap_cost": 1,  # Same AP cost when delegated
-        "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
-        "upside": lambda gs: gs._scout_opponents(),
+        "name": "Intelligence",
+        "desc": "Open intelligence dialog to select from scouting and information gathering options.",
+        "cost": 0,  # No immediate cost - cost depends on selection
+        "ap_cost": 1,
+        "upside": lambda gs: gs._trigger_intelligence_dialog(),
         "downside": lambda gs: None,
-        "rules": None  # No longer locked behind turn requirement
+        "rules": None
     },
     {
         "name": "Hire Manager",
@@ -495,8 +491,8 @@ ACTIONS = [
         "rules": lambda gs: hasattr(gs, 'researchers') and len(gs.researchers) > 0
     },
     {
-        "name": "Set Research Quality: Rushed",
-        "desc": "Fast research: -40% time, -20% cost, +15% doom, +2 debt, -10% success",
+        "name": "Research Speed: Fast & Risky (Rushed)",
+        "desc": "Move fast and break things - quicker results but higher doom risk and technical debt",
         "cost": 0,
         "ap_cost": 0,  # Free action to change approach
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.RUSHED),
@@ -504,8 +500,8 @@ ACTIONS = [
         "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
     },
     {
-        "name": "Set Research Quality: Standard",
-        "desc": "Balanced research: baseline time, cost, doom, and success rates",
+        "name": "Research Speed: Balanced (Standard)",
+        "desc": "Steady progress with balanced trade-offs - the default research approach",
         "cost": 0,
         "ap_cost": 0,  # Free action to change approach
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.STANDARD),
@@ -513,8 +509,8 @@ ACTIONS = [
         "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
     },
     {
-        "name": "Set Research Quality: Thorough", 
-        "desc": "Careful research: +60% time, +40% cost, -20% doom, -1 debt, +15% success",
+        "name": "Research Speed: Careful & Safe (Thorough)", 
+        "desc": "Take time to do it right - slower but safer with less doom risk and better quality",
         "cost": 0,
         "ap_cost": 0,  # Free action to change approach
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.THOROUGH),
@@ -568,14 +564,15 @@ ACTIONS = [
         "rules": lambda gs: hasattr(gs, 'media_system') and gs.reputation >= 10
     },
     {
-        "name": "Damage Control",
-        "desc": "Reduce negative media coverage impact by 50%. Costs $200k.",
+        "name": "Damage Control (Crisis Response)",
+        "desc": "Reduce negative media coverage impact by 50%. Costs $200k. Only available during active scandals or negative press coverage.",
         "cost": 200000,
         "ap_cost": 1,
         "upside": lambda gs: gs.media_system.execute_media_action('damage_control', gs) if hasattr(gs, 'media_system') else None,
         "downside": lambda gs: None,
         "rules": lambda gs: (hasattr(gs, 'media_system') and 
-                           any(story.story_type.value == 'scandal' for story in gs.public_opinion.active_stories))
+                           any(story.story_type.value == 'scandal' for story in gs.public_opinion.active_stories)),
+        "unavailable_reason": "No active scandals or negative press to respond to"
     },
     {
         "name": "Social Media Campaign", 

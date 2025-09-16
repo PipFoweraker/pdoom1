@@ -4,6 +4,7 @@ requires = ["setuptools", "wheel"]
 [tool.pytest.ini_options]
 filterwarnings = [
     "ignore::DeprecationWarning",
+    "ignore:pkg_resources is deprecated:UserWarning:pygame.pkgdata",
 ]
 
 [project]

@@ -22,7 +22,7 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
     # Enhanced description for research actions showing current quality
     base_desc = action['desc']
     if hasattr(game_state, 'research_quality_unlocked') and game_state.research_quality_unlocked:
-        if 'Research' in action['name'] and action['name'] not in ['Set Research Quality: Rushed', 'Set Research Quality: Standard', 'Set Research Quality: Thorough']:
+        if 'Research' in action['name'] and action['name'] not in ['Research Speed: Fast & Risky (Rushed)', 'Research Speed: Balanced (Standard)', 'Research Speed: Careful & Safe (Thorough)']:
             quality_suffix = f" [{game_state.current_research_quality.value.title()}]"
             base_desc += quality_suffix
     
@@ -1394,15 +1394,13 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     # Check if we should use compact UI mode
     use_compact_ui = not getattr(game_state, 'tutorial_enabled', True)
     
-    # Always filter actions to only show available ones (hide locked actions)
-    # This should work regardless of tutorial mode for cleaner interface
-    available_actions = []
-    available_action_indices = []
-    for idx, action in enumerate(game_state.actions):
-        # Check if action is unlocked (no rules or rules return True)
-        if not action.get("rules") or action["rules"](game_state):
-            available_actions.append(action)
-            available_action_indices.append(idx)
+    # Use Action Availability Manager for consistent state tracking (Action Point Display Bug fix)
+    from src.services.action_availability_manager import get_action_availability_manager
+    availability_manager = get_action_availability_manager()
+    
+    # Get visible actions with proper availability states
+    visible_action_infos, available_action_indices = availability_manager.get_visible_actions_with_display_mapping(game_state)
+    available_actions = [info.action_data for info in visible_action_infos]
     
     # Store the mapping for click handling
     game_state.display_to_action_index_map = available_action_indices
@@ -1441,11 +1439,11 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             break
             
         action = available_actions[display_idx]
+        action_info = visible_action_infos[display_idx]  # Get availability info
         original_idx = available_action_indices[display_idx]  # Original index in game_state.actions
-        ap_cost = action.get("ap_cost", 1)
         
-        # Determine button state for visual feedback
-        if game_state.action_points < ap_cost:
+        # Use Action Availability Manager for consistent button state (Action Point Display Bug fix)
+        if not action_info.is_selectable:
             button_state = ButtonState.DISABLED
         elif original_idx in game_state.selected_actions:  # Use original index for selection check
             button_state = ButtonState.PRESSED
@@ -1790,6 +1788,23 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         for i, msg in enumerate(game_state.messages[-7:]):
             msg_text = small_font.render(msg, True, (255, 255, 210))
             screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
+
+    # Dashboard elements (research quality selector, etc.) - Research Quality Selection Submenu Bug fix
+    from src.services.dashboard_manager import get_dashboard_manager, DashboardElementType
+    dashboard_manager = get_dashboard_manager()
+    
+    # Update research quality visibility when unlocked
+    if hasattr(game_state, 'research_quality_unlocked') and game_state.research_quality_unlocked:
+        dashboard_manager.update_element_visibility(DashboardElementType.RESEARCH_QUALITY, True)
+    
+    # Draw all dashboard elements and store clickable rects for main game loop
+    dashboard_clickable_rects = dashboard_manager.draw_dashboard_elements(screen, game_state, w, h)
+    
+    # Store dashboard rects in game state for click handling in main.py
+    if dashboard_clickable_rects:
+        game_state._dashboard_clickable_rects = dashboard_clickable_rects
+    else:
+        game_state._dashboard_clickable_rects = []
 
     # Draw employee blobs (lower middle area)
     draw_employee_blobs(screen, game_state, w, h)

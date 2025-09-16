@@ -219,9 +219,9 @@ class GameState:
         
         self.turn = 0
         self.max_doom = limits_config['max_doom']
-        self.selected_actions = []
-        self.selected_action_instances = []  # Track individual action instances for undo
-        self.action_clicks_this_turn = {}  # Track clicks per action per turn
+        self.selected_gameplay_actions = []
+        self.selected_gameplay_action_instances = []  # Track individual action instances for undo
+        self.gameplay_action_clicks_this_turn = {}  # Track clicks per action per turn
         self.staff_maintenance = 15
         self.seed = seed
         self.upgrades = [dict(u) for u in UPGRADES]
@@ -293,7 +293,7 @@ class GameState:
         
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
-        self.hovered_action_idx = None
+        self.hovered_gameplay_action_idx = None
         self.endturn_hovered = False
 
         # Scrollable event log feature
@@ -321,11 +321,13 @@ class GameState:
         self.pending_fundraising_dialog = None  # Current fundraising dialog waiting for player selection
         # Research dialog system
         self.pending_research_dialog = None  # Current research dialog waiting for player selection
+        # Intelligence dialog system
+        self.pending_intelligence_dialog = None  # Current intelligence dialog waiting for player selection
         self._pending_first_time_help = None  # Track pending first-time help to show
 
         # Copy modular content
-        self.actions = [dict(a) for a in ACTIONS]
-        self.events = [dict(e) for e in EVENTS]
+        self.gameplay_actions = [dict(a) for a in ACTIONS]
+        self.game_events = [dict(e) for e in EVENTS]
         
         # Enhanced event system (from config)
         gameplay_config = config.get('gameplay', {})
@@ -476,7 +478,7 @@ class GameState:
         if self.spend_this_turn > 0:
             if not self.spend_this_turn_display_shown:
                 # First time spending multiple actions in a turn
-                spend_actions_count = len([a for a in self.selected_actions if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
+                spend_actions_count = len([a for a in self.selected_gameplay_actions if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
                 
                 if spend_actions_count > 1:
                     self.spend_this_turn_display_shown = True
@@ -491,12 +493,20 @@ class GameState:
 
     def add_message(self, message: str) -> None:
         """
-        Add a message to the game's message log.
+        Add a message to the game's message log with overflow protection.
         
         Args:
             message (str): The message to add
         """
         self.messages.append(message)
+        
+        # Too Many Messages Bug Fix: Implement message cap to prevent UI overflow
+        max_messages_per_turn = 50  # Reasonable limit for readability
+        if len(self.messages) > max_messages_per_turn:
+            # Keep most recent messages and add overflow indicator
+            overflow_count = len(self.messages) - max_messages_per_turn + 1
+            self.messages = self.messages[-max_messages_per_turn + 1:]
+            self.messages.insert(0, f"... {overflow_count} older messages hidden to prevent overflow ...")
 
     def can_delegate_action(self, action: Dict[str, Any]) -> bool:
         """
@@ -523,18 +533,18 @@ class GameState:
         
         return False
     
-    def execute_action_with_delegation(self, action_idx: int, delegate: bool = False) -> bool:
+    def execute_gameplay_action_with_delegation(self, action_idx: int, delegate: bool = False) -> bool:
         """
-        Execute an action with optional delegation.
+        Execute a gameplay action with optional delegation.
         
         Args:
-            action_idx (int): Index of the action to execute
+            action_idx (int): Index of the gameplay action to execute
             delegate (bool): Whether to delegate the action
             
         Returns:
             bool: True if action was executed, False if not enough resources
         """
-        action = self.actions[action_idx]
+        action = self.gameplay_actions[action_idx]
         
         # Determine AP cost and effectiveness
         if delegate and self.can_delegate_action(action):
@@ -571,7 +581,7 @@ class GameState:
             return False
         
         # Execute the action
-        self.selected_actions.append(action_idx)
+        self.selected_gameplay_actions.append(action_idx)
         self.messages.append(f"Selected: {action['name']}{delegation_info}")
         
         # Store delegation info for end_turn processing
@@ -585,13 +595,13 @@ class GameState:
         
         return True
 
-    def execute_action_by_keyboard(self, action_idx: int) -> bool:
+    def execute_gameplay_action_by_keyboard(self, action_idx: int) -> bool:
         """
-        Execute an action via keyboard shortcut (1-9 keys).
+        Execute a gameplay action via keyboard shortcut (1-9 keys).
         Now routes through unified action handler.
         
         Args:
-            action_idx (int): Index of the action to execute (0-8 for keys 1-9)
+            action_idx (int): Index of the gameplay action to execute (0-8 for keys 1-9)
             
         Returns:
             bool: True if action was executed successfully, False otherwise
@@ -600,7 +610,7 @@ class GameState:
             return False
             
         # Check for undo (if action is already selected, try to undo it)
-        is_undo = action_idx in self.selected_actions
+        is_undo = action_idx in self.selected_gameplay_actions
         
         result = self.attempt_action_selection(action_idx, is_undo)
         
@@ -624,10 +634,10 @@ class GameState:
         Returns:
             dict: Result with 'success', 'message', 'play_sound' keys
         """
-        if action_idx >= len(self.actions) or action_idx < 0:
+        if action_idx >= len(self.gameplay_actions) or action_idx < 0:
             return {'success': False, 'message': None, 'play_sound': False}
             
-        action = self.actions[action_idx]
+        action = self.gameplay_actions[action_idx]
         
         if is_undo:
             return self._handle_action_undo(action_idx, action)
@@ -706,12 +716,12 @@ class GameState:
             'delegated': delegate,
             'ap_cost': ap_cost,
             'effectiveness': effectiveness,
-            'instance_id': len(self.selected_action_instances)  # Unique identifier
+            'instance_id': len(self.selected_gameplay_action_instances)  # Unique identifier
         }
         
         # Add to selected actions (immediate deduction)
-        self.selected_actions.append(action_idx)
-        self.selected_action_instances.append(action_instance)
+        self.selected_gameplay_actions.append(action_idx)
+        self.selected_gameplay_action_instances.append(action_instance)
         
         # Track clicks per action per turn (only if action has limits)
         if 'max_clicks_per_turn' in action:
@@ -722,13 +732,17 @@ class GameState:
         self.ap_spent_this_turn = True
         self.ap_glow_timer = 30
         
+        # Invalidate action availability cache after AP change (Action Point Display Bug fix)
+        from src.services.action_availability_manager import get_action_availability_manager
+        get_action_availability_manager().invalidate_cache()
+        
         # Handle immediate actions that should execute right away (like dialogs)
         if action['name'] in ['Hire Staff', 'Fundraising Options', 'Research Options']:
             # Execute immediately instead of deferring to end_turn
             try:
                 # Remove from selected actions since it's executed immediately
-                self.selected_actions.pop()  # Remove the action we just added
-                self.selected_action_instances.pop()  # Remove the instance we just added
+                self.selected_gameplay_actions.pop()  # Remove the action we just added
+                self.selected_gameplay_action_instances.pop()  # Remove the instance we just added
                 
                 action['upside'](self)
                 success_msg = f"Executed: {action['name']}{delegation_info}"
@@ -742,10 +756,10 @@ class GameState:
                 # If immediate execution fails, restore AP and show error
                 self.action_points += ap_cost
                 # Also remove from selected actions list
-                if self.selected_actions and self.selected_actions[-1] == action_idx:
-                    self.selected_actions.pop()
-                if self.selected_action_instances:
-                    self.selected_action_instances.pop()
+                if self.selected_gameplay_actions and self.selected_gameplay_actions[-1] == action_idx:
+                    self.selected_gameplay_actions.pop()
+                if self.selected_gameplay_action_instances:
+                    self.selected_gameplay_action_instances.pop()
                 error_msg = f"Failed to execute {action['name']}: {str(e)}"
                 self.messages.append(error_msg)
                 return {
@@ -778,9 +792,9 @@ class GameState:
         action_instance = None
         instance_index = None
         
-        for i in range(len(self.selected_action_instances) - 1, -1, -1):
-            if self.selected_action_instances[i]['action_idx'] == action_idx:
-                action_instance = self.selected_action_instances[i]
+        for i in range(len(self.selected_gameplay_action_instances) - 1, -1, -1):
+            if self.selected_gameplay_action_instances[i]['action_idx'] == action_idx:
+                action_instance = self.selected_gameplay_action_instances[i]
                 instance_index = i
                 break
         
@@ -792,19 +806,19 @@ class GameState:
             }
         
         # Remove the action instance
-        self.selected_action_instances.pop(instance_index)
+        self.selected_gameplay_action_instances.pop(instance_index)
         
-        # Remove from selected_actions (remove last occurrence)
-        for i in range(len(self.selected_actions) - 1, -1, -1):
-            if self.selected_actions[i] == action_idx:
-                self.selected_actions.pop(i)
+        # Remove from selected_gameplay_actions (remove last occurrence)
+        for i in range(len(self.selected_gameplay_actions) - 1, -1, -1):
+            if self.selected_gameplay_actions[i] == action_idx:
+                self.selected_gameplay_actions.pop(i)
                 break
         
         # Refund AP
         self.action_points += action_instance['ap_cost']
         
         # Clean up delegation info if no more instances of this action
-        if action_idx not in [inst['action_idx'] for inst in self.selected_action_instances]:
+        if action_idx not in [inst['action_idx'] for inst in self.selected_gameplay_action_instances]:
             if hasattr(self, '_action_delegations') and action_idx in self._action_delegations:
                 del self._action_delegations[action_idx]
         
@@ -1712,9 +1726,9 @@ class GameState:
         if hasattr(self, 'three_column_button_rects'):
             for button_rect, original_idx in self.three_column_button_rects:
                 if self._in_rect(mouse_pos, button_rect):
-                    if not self.game_over and original_idx < len(self.actions):
+                    if not self.game_over and original_idx < len(self.gameplay_actions):
                         # Check for undo (if action is already selected, try to undo it)
-                        is_undo = original_idx in self.selected_actions
+                        is_undo = original_idx in self.selected_gameplay_actions
                         
                         result = self.attempt_action_selection(original_idx, is_undo)
                         
@@ -1787,7 +1801,7 @@ class GameState:
                     if not self.game_over and display_idx < len(self.display_to_action_index_map):
                         original_idx = self.display_to_action_index_map[display_idx]
                         # Check for undo (if action is already selected, try to undo it)
-                        is_undo = original_idx in self.selected_actions
+                        is_undo = original_idx in self.selected_gameplay_actions
                         
                         result = self.attempt_action_selection(original_idx, is_undo)
                         
@@ -1801,7 +1815,7 @@ class GameState:
                 if self._in_rect(mouse_pos, rect):
                     if not self.game_over:
                         # Check for undo (if action is already selected, try to undo it)
-                        is_undo = idx in self.selected_actions
+                        is_undo = idx in self.selected_gameplay_actions
                         
                         result = self.attempt_action_selection(idx, is_undo)
                         
@@ -1953,7 +1967,7 @@ class GameState:
                         if display_idx < len(self.display_to_action_index_map):
                             original_idx = self.display_to_action_index_map[display_idx]
                             self.hovered_action_idx = original_idx
-                            hovered_action = self.actions[original_idx]
+                            hovered_action = self.gameplay_actions[original_idx]
                         break
             else:
                 # Fallback to original action handling (show all actions)
@@ -1961,7 +1975,7 @@ class GameState:
                 for idx, rect in enumerate(action_rects):
                     if self._in_rect(mouse_pos, rect):
                         self.hovered_action_idx = idx
-                        hovered_action = self.actions[idx]
+                        hovered_action = self.gameplay_actions[idx]
                         break
             
             # Build context info for hovered action
@@ -2184,7 +2198,7 @@ class GameState:
 
     def _get_action_rects(self, w: int, h: int) -> List[pygame.Rect]:
         # Place actions as tall buttons on left (moved down to accommodate opponents panel)
-        count = len(self.actions)
+        count = len(self.gameplay_actions)
         base_x = int(w * 0.04)
         base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
         # Shrink width/height and reduce gaps to fit more buttons comfortably
@@ -2458,19 +2472,21 @@ class GameState:
             self.turn_processing_timer = 0
             return False
             
-        # Clear event log at start of turn to show only current-turn events
-        # But first store previous messages if scrollable log was already enabled
+        # Fix Too Many Messages Bug: Clear messages from previous turn to prevent accumulation
+        # Store previous messages in history if scrollable log is enabled
         if self.scrollable_event_log_enabled and self.messages:
             # Add turn delimiter and store messages from previous turn
-            turn_header = f"=== Turn {self.turn + 1} ==="
+            turn_header = f"=== Turn {self.turn} ==="  # Current turn finishing
             self.event_log_history.append(turn_header)
             self.event_log_history.extend(self.messages)
-            
+        
+        # Always clear messages at start of each turn to prevent accumulation
+        # This ensures each turn starts with a clean message slate
         self.messages = []
         
         # Perform all selected actions
-        for idx in self.selected_actions:
-            action = self.actions[idx]
+        for idx in self.selected_gameplay_actions:
+            action = self.gameplay_actions[idx]
             
             # Get delegation info if available
             delegation_info = getattr(self, '_action_delegations', {}).get(idx, {
@@ -2486,6 +2502,10 @@ class GameState:
             self.action_points -= ap_cost
             self.ap_spent_this_turn = True  # Track for UI glow effects
             self.ap_glow_timer = 30  # 30 frames of glow effect
+            
+            # Invalidate action availability cache after AP change (Action Point Display Bug fix)
+            from src.services.action_availability_manager import get_action_availability_manager
+            get_action_availability_manager().invalidate_cache()
             
             # Deduct money cost using _add to track spending
             action_cost = self._get_action_cost(action)
@@ -2515,8 +2535,8 @@ class GameState:
         # Clear delegation info for next turn
         if hasattr(self, '_action_delegations'):
             self._action_delegations = {}
-        self.selected_actions = []
-        self.selected_action_instances = []  # Clear action instances for next turn
+        self.selected_gameplay_actions = []
+        self.selected_gameplay_action_instances = []  # Clear action instances for next turn
         self.action_clicks_this_turn = {}  # Reset click tracking for new turn
 
         # Staff maintenance - bootstrap AI safety lab economic model
@@ -3056,7 +3076,7 @@ class GameState:
         }
         
         # Process events with deterministic replacements where available
-        for event_dict in self.events:
+        for event_dict in self.game_events:
             event_name = event_dict["name"]
             
             # Use deterministic version if available, otherwise fall back to original
@@ -3966,6 +3986,74 @@ class GameState:
         for msg in messages:
             self.messages.append(msg)
     
+    def _trigger_intelligence_dialog(self) -> None:
+        """Trigger the intelligence dialog with available intelligence gathering options."""
+        # Check if any opponents can be scouted
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
+        
+        intelligence_options = []
+        
+        # Always available: Scout Opponents (existing functionality)
+        intelligence_options.append({
+            "id": "scout_opponents",
+            "name": "Scout Opponents",
+            "description": "Gather intelligence on competing labs via internet research.",
+            "cost": 0,
+            "ap_cost": 1,
+            "available": True,
+            "details": f"Known labs: {len(discovered_opponents)}, Unknown labs: {len(undiscovered_opponents)}"
+        })
+        
+        # Future intelligence options can be added here
+        # For now, just Scout Opponents to consolidate the functionality
+        
+        self.pending_intelligence_dialog = {
+            "options": intelligence_options,
+            "title": "Intelligence Operations",
+            "description": "Select an intelligence gathering operation to execute."
+        }
+    
+    def select_intelligence_option(self, option_id: str) -> Tuple[bool, str]:
+        """Handle player selection of an intelligence option."""
+        if not self.pending_intelligence_dialog:
+            return False, "No intelligence dialog active."
+        
+        # Find the selected option
+        selected_option = None
+        for option in self.pending_intelligence_dialog["options"]:
+            if option["id"] == option_id:
+                selected_option = option
+                break
+        
+        if not selected_option:
+            return False, f"Invalid intelligence option: {option_id}"
+        
+        if not selected_option["available"]:
+            return False, f"Option not available: {selected_option['name']}"
+        
+        # Check costs
+        if selected_option["cost"] > self.money:
+            return False, f"Cannot afford {selected_option['name']} - need ${selected_option['cost']}"
+        
+        if selected_option["ap_cost"] > self.action_points:
+            return False, f"Cannot execute {selected_option['name']} - need {selected_option['ap_cost']} AP"
+        
+        # Execute the selected intelligence operation
+        if option_id == "scout_opponents":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute scout opponents functionality
+            self._scout_opponents()
+            
+            # Clear the intelligence dialog
+            self.pending_intelligence_dialog = None
+            return True, "Intelligence gathering complete."
+        
+        return False, f"Unknown intelligence option: {option_id}"
+    
     def _trigger_competitor_discovery(self) -> None:
         """Trigger discovery of a new competitor through intelligence."""
         undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
@@ -3975,7 +4063,7 @@ class GameState:
             new_opponent.discover()
             self.messages.append(f"INTELLIGENCE ALERT: New competitor detected - {new_opponent.name}")
             self.messages.append(f"? {new_opponent.description}")
-            self.messages.append("Use 'Scout Opponents' action to gather more intelligence on their capabilities.")
+            self.messages.append("Use 'Intelligence' action to gather more intelligence on their capabilities.")
         else:
             self.messages.append("Intelligence reports suggest all major competitors are now known.")
     
@@ -4212,6 +4300,11 @@ class GameState:
         """Dismiss the hiring dialog without making a selection."""
         if self.pending_hiring_dialog:
             self.pending_hiring_dialog = None
+    
+    def dismiss_intelligence_dialog(self) -> None:
+        """Dismiss the intelligence dialog without making a selection."""
+        if self.pending_intelligence_dialog:
+            self.pending_intelligence_dialog = None
     
     def _create_upgrade_transition(self, upgrade_idx: int, start_rect: pygame.Rect, end_rect: pygame.Rect) -> None:
         """Create a smooth transition animation for an upgrade moving from button to icon."""
@@ -4474,10 +4567,10 @@ class GameState:
         Returns:
             Tuple[bool, str]: (can_perform, error_message)
         """
-        if action_index >= len(self.actions):
+        if action_index >= len(self.gameplay_actions):
             return False, "Invalid action"
             
-        action = self.actions[action_index]
+        action = self.gameplay_actions[action_index]
         
         # Check money requirement
         cost = action.get("cost", 0)
@@ -5741,12 +5834,14 @@ class GameState:
     # =================== RESEARCH DIALOG SYSTEM ===================
     
     def _trigger_research_dialog(self) -> None:
-        """Trigger the research strategy selection dialog."""
-        self.pending_research_dialog = {
-            "title": "Research Strategy Selection",
-            "description": "Choose your research approach and quality level",
-            "available_options": self._get_available_research_options()
-        }
+        """Trigger research quality dashboard (Research Quality Selection Submenu Bug fix)."""
+        # Research quality selection is now handled by the persistent dashboard
+        # Just ensure research quality system is unlocked and visible
+        if not self.research_quality_unlocked:
+            self.research_quality_unlocked = True
+            self.add_message("? Research Quality Dashboard unlocked! Use the panel below End Turn to change research approach.")
+        else:
+            self.add_message("? Use the Research Quality panel below End Turn to change your research approach.")
     
     def _get_available_research_options(self) -> List[Dict[str, Any]]:
         """Get available research options based on current game state."""

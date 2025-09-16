@@ -1,0 +1,61 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-16T21:04:16.149609",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Janus Technologies",
+      "date": "2025-09-16T20:52:27.078684",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.066791,
+      "entry_uuid": "9f908d2a-a661-4485-a60b-5484ed3438ee"
+    },
+    {
+      "score": 1,
+      "player_name": "Janus Technologies",
+      "date": "2025-09-16T20:53:06.142421",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.062403999999999994,
+      "entry_uuid": "c26bb4af-ea32-4f43-bfe5-3fde32b21bf7"
+    },
+    {
+      "score": 1,
+      "player_name": "Janus Technologies",
+      "date": "2025-09-16T20:54:46.749909",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.009919,
+      "entry_uuid": "2a52cbe6-bde4-4aa9-8ce1-b4977e90e743"
+    },
+    {
+      "score": 1,
+      "player_name": "Janus Technologies",
+      "date": "2025-09-16T21:01:39.844310",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.087936,
+      "entry_uuid": "933ab588-88a6-4236-ba0c-6e7b65ada92c"
+    },
+    {
+      "score": 1,
+      "player_name": "Janus Technologies",
+      "date": "2025-09-16T21:02:13.875889",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.058543,
+      "entry_uuid": "a6623a5b-c7b5-4533-adfd-697579d041f8"
+    },
+    {
+      "score": 1,
+      "player_name": "Janus Technologies",
+      "date": "2025-09-16T21:04:16.135536",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.071519,
+      "entry_uuid": "cd3b2413-6c73-44e2-bbea-f7c2d2424a9b"
+    }
+  ]
+}
