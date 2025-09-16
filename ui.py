@@ -1416,10 +1416,10 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         count = len(available_actions)
         base_x = int(w * 0.04)
         base_y = int(h * 0.20)  # Button displacement fix: moved up from 0.22 to 0.20 for maximum fit
-        # Ultra-compact action buttons to ensure all actions are clickable
+        # Ultra-compact action buttons to ensure ALL actions are clickable (final clipping fix)
         width = int(w * 0.23)  # Further reduced from 0.24 to 0.23
-        height = int(h * 0.034)  # Further reduced from 0.038 to 0.034 
-        gap = int(h * 0.005)  # Further reduced from 0.006 to 0.005 for maximum density
+        height = int(h * 0.031)  # Final reduction from 0.034 to 0.031 to eliminate all clipping
+        gap = int(h * 0.003)  # Final reduction from 0.005 to 0.003 for maximum density
         action_rects = [
             pygame.Rect(base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
