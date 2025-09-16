@@ -451,7 +451,7 @@ def draw_upgrade_transition(screen: pygame.Surface, transition: Dict[str, Any], 
 
 def draw_scoreboard(screen: pygame.Surface, game_state: Any, w: int, h: int, seed: str) -> None:
     """
-    Draw the scoreboard after game over.
+    Draw the enhanced scoreboard after game over with richer metrics.
     
     Args:
         screen: pygame surface to draw on
@@ -459,34 +459,9 @@ def draw_scoreboard(screen: pygame.Surface, game_state: Any, w: int, h: int, see
         w, h: screen width and height
         seed: game seed for display
     """
-    # Scoreboard after game over
-    font = pygame.font.SysFont('Consolas', int(h*0.035))
-    title = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    big = pygame.font.SysFont('Consolas', int(h*0.05))
-    small = pygame.font.SysFont('Consolas', int(h*0.02))
-
-    # Box
-    pygame.draw.rect(screen, (40,40,70), (w//6, h//7, w*2//3, h*3//5), border_radius=24)
-    pygame.draw.rect(screen, (130, 190, 255), (w//6, h//7, w*2//3, h*3//5), width=5, border_radius=24)
-
-    # Headline
-    screen.blit(title.render("GAME OVER", True, (255,0,0)), (w//2 - int(w*0.09), h//7 + int(h*0.05)))
-    msg = game_state.messages[-1] if game_state.messages else ""
-    screen.blit(big.render(msg, True, (255,220,220)), (w//6 + int(w*0.04), h//7 + int(h*0.16)))
-
-    # Score details
-    lines = [
-        f"Survived until Turn: {game_state.turn}",
-        f"Final Staff: {game_state.staff}",
-        f"Final Money: ${game_state.money}",
-        f"Final Reputation: {game_state.reputation}",
-        f"Final p(Doom): {game_state.doom}",
-        f"Seed: {seed}",
-        f"High Score (turns): {game_state.highscore}"
-    ]
-    for i, line in enumerate(lines):
-        screen.blit(font.render(line, True, (240,255,255)), (w//6 + int(w*0.04), h//7 + int(h*0.27) + i*int(h*0.05)))
-    screen.blit(small.render("Click anywhere to restart.", True, (255,255,180)), (w//2 - int(w*0.1), h//7 + int(h*0.5)))
+    # Enhanced version - defer to main ui.py implementation for consistency
+    from ui import draw_scoreboard as main_draw_scoreboard
+    main_draw_scoreboard(screen, game_state, w, h, seed)
 
 
 def draw_first_time_help(screen: pygame.Surface, help_content: Dict[str, Any], w: int, h: int, mouse_pos: Optional[Tuple[int, int]] = None) -> Optional[pygame.Rect]:

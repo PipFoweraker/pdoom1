@@ -2173,34 +2173,134 @@ def draw_context_window(screen: pygame.Surface, context_info: Dict[str, Any], w:
     return context_rect, button_rect
 
 def draw_scoreboard(screen: pygame.Surface, game_state, w: int, h: int, seed: str) -> None:
-    # Scoreboard after game over
+    # Enhanced scoreboard after game over with richer metrics and visual improvements
     font = pygame.font.SysFont('Consolas', int(h*0.035))
     title = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
     big = pygame.font.SysFont('Consolas', int(h*0.05))
     small = pygame.font.SysFont('Consolas', int(h*0.02))
+    tiny = pygame.font.SysFont('Consolas', int(h*0.018))
 
-    # Box
-    pygame.draw.rect(screen, (40,40,70), (w//6, h//7, w*2//3, h*3//5), border_radius=24)
-    pygame.draw.rect(screen, (130, 190, 255), (w//6, h//7, w*2//3, h*3//5), width=5, border_radius=24)
+    # Enhanced box with gradient-style background
+    box_rect = pygame.Rect(w//6, h//7, w*2//3, h*3//5)
+    pygame.draw.rect(screen, (40,40,70), box_rect, border_radius=24)
+    pygame.draw.rect(screen, (130, 190, 255), box_rect, width=5, border_radius=24)
+    
+    # Add subtle inner highlight for depth
+    inner_rect = pygame.Rect(w//6 + 10, h//7 + 10, w*2//3 - 20, h*3//5 - 20)
+    pygame.draw.rect(screen, (60, 80, 120), inner_rect, width=2, border_radius=18)
 
-    # Headline
+    # Headline with lab name if available
     screen.blit(title.render("GAME OVER", True, (255,0,0)), (w//2 - int(w*0.09), h//7 + int(h*0.05)))
+    
+    # Lab name display
+    if hasattr(game_state, 'lab_name'):
+        lab_text = f"{game_state.lab_name} Final Report"
+        screen.blit(big.render(lab_text, True, (200, 255, 200)), (w//6 + int(w*0.04), h//7 + int(h*0.12)))
+    
+    # Game ending message
     msg = game_state.messages[-1] if game_state.messages else ""
-    screen.blit(big.render(msg, True, (255,220,220)), (w//6 + int(w*0.04), h//7 + int(h*0.16)))
+    if msg:
+        screen.blit(font.render(msg[:50], True, (255,220,220)), (w//6 + int(w*0.04), h//7 + int(h*0.18)))
 
-    # Score details
-    lines = [
-        f"Survived until Turn: {game_state.turn}",
-        f"Final Staff: {game_state.staff}",
-        f"Final Money: ${game_state.money}",
-        f"Final Reputation: {game_state.reputation}",
-        f"Final p(Doom): {game_state.doom}",
-        f"Seed: {seed}",
-        f"High Score (turns): {game_state.highscore}"
+    # Enhanced score details with color coding and categories
+    base_y = h//7 + int(h*0.25)
+    line_height = int(h*0.04)
+    
+    # Core Survival Metrics (Left Column)
+    survival_lines = [
+        ("Survival Score:", f"{game_state.turn} turns", (255, 255, 100)),  # Yellow for primary score
+        ("Lab Size:", f"{game_state.staff} employees", (150, 255, 150)),   # Green for growth
+        ("Final Funding:", f"${game_state.money}k", (100, 255, 255)),      # Cyan for money
+        ("Reputation:", f"{game_state.reputation}/100", (255, 200, 150))   # Orange for reputation
     ]
-    for i, line in enumerate(lines):
-        screen.blit(font.render(line, True, (240,255,255)), (w//6 + int(w*0.04), h//7 + int(h*0.27) + i*int(h*0.05)))
-    screen.blit(small.render("Click anywhere to restart.", True, (255,255,180)), (w//2 - int(w*0.1), h//7 + int(h*0.5)))
+    
+    for i, (label, value, color) in enumerate(survival_lines):
+        y_pos = base_y + i * line_height
+        screen.blit(font.render(label, True, (200, 200, 255)), (w//6 + int(w*0.04), y_pos))
+        screen.blit(font.render(value, True, color), (w//6 + int(w*0.20), y_pos))
+    
+    # Research & Safety Metrics (Right Column)
+    research_lines = []
+    
+    # Papers published (if available)
+    if hasattr(game_state, 'papers_published'):
+        papers_color = (100, 255, 100) if game_state.papers_published > 5 else (255, 255, 255)
+        research_lines.append(("Research Papers:", f"{game_state.papers_published} published", papers_color))
+    
+    # Doom level with color coding
+    doom_color = (100, 255, 100) if game_state.doom < 25 else (255, 200, 100) if game_state.doom < 50 else (255, 100, 100)
+    research_lines.append(("Safety Risk:", f"{game_state.doom:.1f}% doom", doom_color))
+    
+    # Compute resources (if available)
+    if hasattr(game_state, 'compute'):
+        compute_color = (150, 200, 255) if game_state.compute > 0 else (150, 150, 150)
+        research_lines.append(("Compute Left:", f"{game_state.compute} units", compute_color))
+    
+    # Technical debt (if available)
+    if hasattr(game_state, 'technical_debt') and hasattr(game_state.technical_debt, 'accumulated_debt'):
+        debt = game_state.technical_debt.accumulated_debt
+        debt_color = (100, 255, 100) if debt < 5 else (255, 200, 100) if debt < 15 else (255, 100, 100)
+        research_lines.append(("Tech Debt:", f"{debt} accumulated", debt_color))
+    
+    for i, (label, value, color) in enumerate(research_lines):
+        y_pos = base_y + i * line_height
+        screen.blit(font.render(label, True, (200, 200, 255)), (w//6 + int(w*0.50), y_pos))
+        screen.blit(font.render(value, True, color), (w//6 + int(w*0.66), y_pos))
+    
+    # Strategic Analysis Summary (if achievements system is available)
+    try:
+        from src.features.achievements_endgame import AchievementsEndgameSystem
+        achievements_system = AchievementsEndgameSystem()
+        analysis = achievements_system.generate_strategic_analysis(game_state)
+        
+        strategy_y = base_y + max(len(survival_lines), len(research_lines)) * line_height + int(h*0.02)
+        
+        # Display dominant strategy
+        if 'dominant_strategy' in analysis:
+            strategy_text = f"Strategy: {analysis['dominant_strategy'].replace('_', ' ').title()}"
+            screen.blit(small.render(strategy_text, True, (255, 255, 150)), (w//6 + int(w*0.04), strategy_y))
+        
+        # Display performance assessment
+        if 'overall_assessment' in analysis:
+            assessment = analysis['overall_assessment'].title()
+            assessment_color = {
+                'Exceptional': (100, 255, 100),
+                'Excellent': (150, 255, 150), 
+                'Good': (200, 255, 200),
+                'Adequate': (255, 255, 200),
+                'Struggling': (255, 150, 150)
+            }.get(assessment, (255, 255, 255))
+            
+            performance_text = f"Performance: {assessment}"
+            screen.blit(small.render(performance_text, True, assessment_color), (w//6 + int(w*0.50), strategy_y))
+        
+        # Show critical moments (if any)
+        if 'critical_moments' in analysis and analysis['critical_moments']:
+            moments_y = strategy_y + int(h*0.025)
+            moment_text = f"Key Event: {analysis['critical_moments'][0][:40]}..."
+            screen.blit(tiny.render(moment_text, True, (200, 200, 255)), (w//6 + int(w*0.04), moments_y))
+            
+    except ImportError:
+        # Fall back to basic strategic info if achievements system not available
+        strategy_y = base_y + max(len(survival_lines), len(research_lines)) * line_height + int(h*0.02)
+        
+        # Basic efficiency calculation
+        efficiency = game_state.turn * game_state.staff if game_state.staff > 0 else game_state.turn
+        efficiency_text = f"Lab Efficiency: {efficiency} person-turns"
+        screen.blit(small.render(efficiency_text, True, (200, 200, 255)), (w//6 + int(w*0.04), strategy_y))
+    
+    # Enhanced footer with seed and high score
+    footer_y = h//7 + int(h*0.52)
+    screen.blit(small.render(f"Seed: {seed}", True, (180, 180, 180)), (w//6 + int(w*0.04), footer_y))
+    
+    if hasattr(game_state, 'highscore'):
+        highscore_text = f"Personal Best: {game_state.highscore} turns"
+        highscore_color = (255, 255, 100) if game_state.turn >= game_state.highscore else (200, 200, 200)
+        screen.blit(small.render(highscore_text, True, highscore_color), (w//6 + int(w*0.50), footer_y))
+    
+    # Interactive instruction
+    instruction_y = footer_y + int(h*0.035)
+    screen.blit(small.render("Click anywhere to continue...", True, (255,255,180)), (w//2 - int(w*0.08), instruction_y))
 
 def draw_seed_prompt(screen: pygame.Surface, current_input: str, weekly_suggestion: str) -> None:
     # Prompt the user for a seed
