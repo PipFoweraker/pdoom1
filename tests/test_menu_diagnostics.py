@@ -73,7 +73,7 @@ class MenuSystemDiagnosticTests(unittest.TestCase):
                     for selected_item in range(5):
                         try:
                             ui.draw_end_game_menu(surface, w, h, selected_item, game_state, "test-seed")
-                            print(f"✓ End game menu renders at {w}x{h}, state: {state_name}, item: {selected_item}")
+                            print(f"[OK] End game menu renders at {w}x{h}, state: {state_name}, item: {selected_item}")
                         except Exception as e:
                             self.fail(f"End game menu failed at {w}x{h}, state: {state_name}, item: {selected_item}: {e}")
     

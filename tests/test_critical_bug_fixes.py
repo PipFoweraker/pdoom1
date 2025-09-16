@@ -144,7 +144,9 @@ class TestCriticalBugFixes(unittest.TestCase):
         for iteration in range(5):
             messages = []
             try:
-                action['execute'](self.game_state, messages)
+                # Actions use 'upside' key, not 'execute'
+                if 'upside' in action and callable(action['upside']):
+                    action['upside'](self.game_state)
                 # If we get here without exception, the fix is working
             except Exception as e:
                 self.fail(f"Iteration {iteration} failed with list modification error: {e}")

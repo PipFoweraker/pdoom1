@@ -14,7 +14,7 @@ __version__ = "0.7.3"
 # Version components for programmatic access
 VERSION_MAJOR = 0
 VERSION_MINOR = 7
-VERSION_PATCH = 2
+VERSION_PATCH = 3
 
 # Pre-release identifier (e.g., "alpha", "beta", "rc1", or "" for stable)
 VERSION_PRERELEASE = ""

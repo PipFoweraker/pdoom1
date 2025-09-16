@@ -22,7 +22,13 @@ class TestComputeSystem(unittest.TestCase):
                 break
         
         self.assertIsNotNone(buy_compute_action, "Buy Compute action should exist")
-        self.assertEqual(buy_compute_action["cost"], 100, "Buy Compute should cost $100")
+        
+        # Test dynamic cost function
+        if callable(buy_compute_action["cost"]):
+            actual_cost = buy_compute_action["cost"](self.game_state)
+            self.assertGreater(actual_cost, 0, "Buy Compute cost should be positive")
+        else:
+            self.assertEqual(buy_compute_action["cost"], 100, "Buy Compute should cost $100")
         
     def test_buy_compute_action_functionality(self):
         """Test that Buy Compute action actually adds compute"""
@@ -32,13 +38,19 @@ class TestComputeSystem(unittest.TestCase):
         # Find and execute Buy Compute action
         for idx, action in enumerate(self.game_state.actions):
             if action["name"] == "Buy Compute":
+                # Get dynamic cost
+                if callable(action["cost"]):
+                    cost = action["cost"](self.game_state)
+                else:
+                    cost = action["cost"]
+                
                 # Simulate buying compute
-                self.game_state.money -= action["cost"]
+                self.game_state.money -= cost
                 action["upside"](self.game_state)
                 break
         
         self.assertEqual(self.game_state.compute, initial_compute + 10, "Should gain 10 compute")
-        self.assertEqual(self.game_state.money, initial_money - 100, "Should spend $100")
+        self.assertEqual(self.game_state.money, initial_money - cost, f"Should spend ${cost}")
         
     def test_research_progress_initial_value(self):
         """Test that research progress starts at 0"""
@@ -217,6 +229,10 @@ class TestEmployeeBlobSystem(unittest.TestCase):
         
     def test_firing_removes_blobs(self):
         """Test that losing staff removes employee blobs"""
+        # First ensure we have at least one staff member
+        if self.game_state.staff == 0:
+            self.game_state._add('staff', 1)
+        
         initial_blob_count = len(self.game_state.employee_blobs)
         initial_staff = self.game_state.staff
         

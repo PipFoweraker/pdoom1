@@ -2,7 +2,7 @@
 
 P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI application with comprehensive testing and documentation.
 
-**Current Version**: v0.4.1 "Bootstrap Economic Calibration"
+**Current Version**: v0.7.3 "Critical Hotfix Release"
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
@@ -13,13 +13,14 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Version synchronization**: If version appears outdated, check `src/services/version.py` and update accordingly
 - **Format**: `vMAJOR.MINOR.PATCH+BUILD` (e.g., "v0.3.4+hotfix1")
 
-## Critical System Information (v0.4.1)
+## Critical System Information (v0.7.3)
 - **BOOTSTRAP ECONOMIC SYSTEM**: Complete economic calibration implemented
 - **Dynamic Cost Evaluation**: All action costs now support callable functions for Moore's Law integration
 - **Location**: `src/core/economic_config.py` - comprehensive economic configuration system
 - **Key Fix**: `_get_action_cost()` helper method handles both static and dynamic costs
 - **UI Integration**: Cost display and validation works with economic config lambdas
 - **Starting Funds**: $100k realistic nonprofit bootstrap model
+- **RECENT CRITICAL FIXES**: Version consistency, ASCII compliance, sound defaults, menu integration, action system fixes
 
 ## Development Infrastructure Status
 
@@ -40,7 +41,7 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 ### Strategic Planning System (NEW INFRASTRUCTURE)
 - **Alpha/Beta Roadmap**: Complete 8-week strategic release plan in `assets/ALPHA_BETA_ROADMAP.md`
 - **Issue Tracking**: 6 strategic issues created for systematic implementation
-- **HIGH Priority**: Starting cash ($2K→$10K), leaderboard activation, logging system
+- **HIGH Priority**: Starting cash ($2K→$100K COMPLETED), leaderboard activation, logging system
 - **MEDIUM Priority**: Multi-turn delegation, dev tools enhancement, deterministic RNG
 - **Ready for Implementation**: Week 1-2 targets quick wins, Week 3-8 for advanced features
 
