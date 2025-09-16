@@ -375,13 +375,16 @@ def draw_overlay(screen: pygame.Surface, title: Optional[str], content: Optional
         down_arrow = arrow_font.render("v", True, (255, 255, 255))
         screen.blit(down_arrow, (content_x + content_width - 30, text_area_y + text_area_height - 30))
     
-    # Instructions at bottom
+    # Instructions at bottom with better visibility
+    from src.ui.asset_manager import draw_text_with_background
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.025))
     instructions = "Use arrow keys to scroll - Press Escape or click to return to menu"
-    inst_surf = instruction_font.render(instructions, True, (180, 200, 255))
-    inst_x = w // 2 - inst_surf.get_width() // 2
+    inst_x = w // 2 - instruction_font.size(instructions)[0] // 2
     inst_y = content_y + content_height + int(h * 0.03)
-    screen.blit(inst_surf, (inst_x, inst_y))
+    draw_text_with_background(
+        screen, instructions, instruction_font, (inst_x, inst_y),
+        text_color=(255, 255, 255), bg_color=(20, 30, 40, 180), padding=8
+    )
     
     return back_button_rect
 
