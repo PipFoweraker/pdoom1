@@ -1,33 +1,33 @@
 # UI Navigation and Keyboard Shortcuts Issues
 
+## ✅ RESOLVED (v0.7.3) - 2025-09-16
+
 ## Description
-Multiple UI navigation and keyboard shortcut systems are not functioning correctly.
+~~Multiple UI navigation and keyboard shortcut systems are not functioning correctly.~~
 
-## Affected Tests
-- `test_keyboard_shortcuts_ui.py::TestKeyboardShortcutsUI::test_draw_main_menu_calls_shortcut_functions`
-- `test_navigation_stack.py::TestBackButton::test_back_button_positioning`
-- `test_issue_36_fixes.py::TestUIBoundaryChecking::test_multiple_upgrade_rows_when_needed`
+**RESOLUTION**: All mentioned test failures have been resolved. The primary issue was a menu item count mismatch in the end game menu system.
 
-## Error Details
-```
-AssertionError: Expected 'get_main_menu_shortcuts' to have been called once. Called 0 times.
-AssertionError: 20 != 12
-TypeError: cannot unpack non-iterable NoneType object
-```
+## Root Cause Analysis
+1. ~~Keyboard shortcut functions not being called when drawing menus~~ ✅ **RESOLVED**: Tests are now passing
+2. ~~Back button positioning calculations incorrect~~ ✅ **RESOLVED**: Tests are now passing  
+3. ~~UI boundary checking returning None when tuple expected~~ ✅ **RESOLVED**: Tests are now passing
+4. **PRIMARY ISSUE FOUND**: End game menu keyboard navigation had menu item count mismatch:
+   - Tests expected 6 menu items but code only had 5
+   - Missing "Submit Bug Request" menu item caused wrapping logic failure
+   - Fixed by adding missing menu item and updating handlers
 
-## Root Cause
-1. Keyboard shortcut functions not being called when drawing menus
-2. Back button positioning calculations incorrect
-3. UI boundary checking returning None when tuple expected
+## Resolution Details
+- **Fixed**: `end_game_menu_items` array updated from 5 to 6 items
+- **Fixed**: Menu item names synchronized between tests and implementation
+- **Fixed**: Both keyboard and mouse handlers updated to handle all 6 menu items
+- **Fixed**: Removed duplicate code in keyboard handler
+- **Verified**: All 45 keyboard/navigation tests now pass
 
-## Expected Behavior
-- Main menu should call keyboard shortcut functions during drawing
-- Back button should be positioned correctly (expected 12, got 20)
-- UI boundary checking should return valid tuple, not None
-
-## Investigation Areas
-1. Main menu drawing logic and shortcut integration
-2. Back button positioning calculations
+## Test Status: ✅ ALL PASSING
+- `test_keyboard_shortcuts_ui.py::TestKeyboardShortcutsUI::test_draw_main_menu_calls_shortcut_functions` ✅
+- `test_navigation_stack.py::TestBackButton::test_back_button_positioning` ✅
+- `test_issue_36_fixes.py::TestUIBoundaryChecking::test_multiple_upgrade_rows_when_needed` ✅
+- `test_end_game_menu.py::TestEndGameMenuFunctionality::test_keyboard_navigation_up_down` ✅
 3. UI boundary checking function return values
 4. Upgrade row layout when multiple rows needed
 
