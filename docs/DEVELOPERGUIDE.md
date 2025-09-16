@@ -27,6 +27,8 @@ For **installation and troubleshooting**, see the [README](../README.md).
 
 **Configuration System**: For config management and modding support, see [CONFIG_SYSTEM.md](CONFIG_SYSTEM.md).
 
+**NEW IN v0.7.5**: TurnManager architecture extraction from monolithic GameState.end_turn() method provides better state management and debugging capabilities.
+
 ---
 
 ## Development Setup
@@ -1623,6 +1625,23 @@ def test_static_effect_integration(self):
 ---
 
 ## Architecture Notes
+
+### TurnManager Architecture (v0.7.5)
+
+**Monolith Breakdown Achievement:**
+P(Doom) v0.7.5 successfully extracted turn processing from the monolithic `GameState.end_turn()` method:
+
+- **TurnManager Class**: Dedicated turn processing with proper state management (`src/core/turn_manager.py`)
+- **TurnProcessingState Enum**: Explicit states (READY, PROCESSING, STUCK, COMPLETED) for debugging
+- **Phase-Based Processing**: Clear separation of turn phases with error handling
+- **Enhanced Debugging**: Comprehensive logging for doom tracking and opponent progress
+- **State Validation**: Stuck detection with automatic recovery mechanisms
+
+**Development Benefits:**
+- **Improved Maintainability**: Turn logic isolated from game state management
+- **Better Debugging**: Clear state transitions and comprehensive logging
+- **Easier Testing**: Turn processing can be unit tested independently
+- **Future Extension**: New turn phases can be added cleanly
 
 ### UI Architecture Modernisation
 

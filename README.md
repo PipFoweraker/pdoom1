@@ -1,5 +1,5 @@
 # P(Doom): AI Safety Strategy Game
-**v0.7.0 "Modular UI Architecture" - Major Technical Milestone**
+**v0.7.5 "Extended Gameplay & Architecture Overhaul" - Major Balance & Technical Update**
 
 **Unregulated AI poses an existential threat to humanity.**
  
@@ -7,15 +7,17 @@ In this game, you manage a bootstrap AI safety lab with realistic funding constr
 
 Experience the challenge of running a scrappy nonprofit in the AI safety space - manage weekly cash flow, make strategic funding decisions, and scale your team while keeping doom levels low.
 
-**Latest Version:** v0.7.0 "Modular UI Architecture"
-- **[EMOJI][EMOJI] Modular Architecture**: Complete UI system rebuild - 4,235-line monolith broken into 8 specialized modules
-- **[ROCKET] Enhanced Performance**: Cleaner codebase architecture for better maintainability and development speed
-- **[EMOJI] Developer Experience**: Modular UI components make feature development and bug fixes dramatically easier
+**Latest Version:** v0.7.5 "Extended Gameplay & Architecture Overhaul"
+- **[CLOCK] Extended Strategic Gameplay**: Games now last 12-13 turns (vs 7-8), giving time for meaningful strategy
+- **[WRENCH] TurnManager Architecture**: Extracted turn processing from monolithic code for better stability
+- **[SHIELD] Rebalanced Doom Mechanics**: Reduced doom progression (80% base reduction) for strategic depth
+- **[PEOPLE] Enhanced Staff Value**: Safety researchers 40% more effective at reducing existential risk
+- **[CHART] Advanced Debugging**: Comprehensive doom tracking and opponent progress monitoring
 - **[PHONE] Windows Distribution**: Single-file .exe for download-and-run experience (no Python required)
 - **[TROPHY] Enhanced Leaderboard System**: Seed-specific competition with dual identity support
-- **[EMOJI] Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
-- **[EMOJI] Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
-- **[EMOJI] $100k Starting Funds**: Sufficient runway to experiment with different strategies
+- **[DOLLAR] Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
+- **[SPEAKER] Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
+- **[MONEY] $100k Starting Funds**: Sufficient runway to experiment with different strategies
 
 [LOCK] **PRIVACY-FIRST DESIGN** - Your data stays under your control  
 [TARGET] **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  

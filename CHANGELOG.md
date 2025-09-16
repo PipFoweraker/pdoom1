@@ -4,7 +4,57 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.5] - 2025-09-16 - "Privacy Controls UI Integration Complete - Issue #314 Resolved"
+## [0.7.5] - 2025-09-16 - "Extended Gameplay & Architecture Overhaul"
+### Added
+- **MAJOR: TurnManager Architecture**: Extracted turn processing from monolithic GameState into dedicated TurnManager class
+  - Proper state management with TurnProcessingState enum (IDLE, PROCESSING, COMPLETE, ERROR)
+  - Phase-based turn processing following documented monolith breakdown patterns
+  - Enhanced debugging with turn processing state tracking and stuck detection
+  - **Architecture Benefits**: Improved maintainability, better error handling, cleaner separation of concerns
+- **Enhanced Debugging System**: Comprehensive logging for game balance and debugging
+  - Opponent progress tracking with doom contribution display: `[Doom+4]` 
+  - Compact doom change summaries: `[DOOM] Turn doom change: Base+1 Opponents+4 = +5`
+  - Turn progression testing tools with detailed state tracking
+  - **Developer Experience**: Faster balance iteration and easier bug identification
+
+### Changed
+- **MAJOR: Doom Mechanics Rebalancing**: Dramatically extended gameplay length for better strategic depth
+  - **Base doom rate**: 5 → 1 points/turn (80% reduction)
+  - **Event doom spikes**: 6-13 → 2-4 points (70% reduction for breakthrough events)
+  - **Opponent doom impact**: 50% reduction in capabilities research doom contribution
+  - **Opponent research speed**: 40% reduction for more realistic progression
+  - **Safety research effectiveness**: 40% boost (2.5x → 3.5x doom reduction multiplier)
+  - **Game length**: Extended from ~7-8 turns to ~12-13 turns (85% increase)
+- **Enhanced Main Loop**: Updated to use TurnManager with proper fallback compatibility
+  - Automatic cleanup for stuck turn processing with `is_processing_stuck()` detection
+  - TurnManager timer updates replace legacy `update_turn_processing()` calls
+  - Turn transition overlay uses TurnManager state management
+
+### Fixed
+- **Critical: Staff Loss Game Over Bug**: Fixed immediate game over on turn 1 with 0 starting staff
+  - Added configurable staff loss condition via `enable_staff_loss_condition` setting
+  - Proper staff loss mechanics that only trigger when condition is enabled
+  - **Impact**: Eliminated frustrating immediate failures for new players
+- **Critical: Turn Processing Stuck Bug**: Fixed turn processing getting permanently stuck after ~10 turns
+  - TurnManager properly resets processing state after turn completion
+  - Main loop automatic cleanup prevents indefinite stuck states
+  - **Impact**: Eliminated game-breaking processing deadlocks
+- Actions property compatibility alias for legacy code accessing `actions` attribute
+
+### Technical Implementation
+- **New Module**: `src/core/turn_manager.py` (400+ lines) with comprehensive turn state management
+- **Updated Integration**: Main.py, GameState, and UI systems updated for TurnManager compatibility
+- **Enhanced Documentation**: Created `docs/DOOM_MECHANICS_ANALYSIS.md` and `docs/DOOM_TUNING_HOTFIX_v0.7.4.md`
+- **Testing**: Validated with dev tools and extended gameplay sessions
+
+### Player Experience Impact
+- **Strategic Depth**: Players can now execute 2-3 research projects per game
+- **Staff Viability**: Time to hire and train effective safety research teams  
+- **Recovery Potential**: Lower event spikes allow bouncing back from setbacks
+- **Learning Curve**: New players have more time to understand core mechanics
+- **Maintained Tension**: Extended gameplay while preserving strategic pressure
+
+## [0.7.4] - 2025-09-16 - "Privacy Controls UI Integration Complete - Issue #314 Resolved"
 ### Added
 - **MAJOR: Privacy Controls User Interface**: Complete frontend implementation for Game Run Logger privacy controls
   - Comprehensive settings menu accessible from main game settings with dedicated privacy controls screen

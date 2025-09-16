@@ -3,16 +3,17 @@
 Welcome to P(DOOM): AI SAFETY STRATEGY GAME!  
 A bootstrap strategy game about managing a scrappy AI safety lab with realistic funding constraints.
 
-**NEW IN v0.4.1: PARTY-READY DEMO!** 
-- **Enhanced Leaderboards**: Seed-specific competition with spectacular achievement celebrations
-- **Dual Identity System**: Separate player names and lab names for flexible competition
-- **Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
-- **Spectacular Game Over**: Visual celebration screen with rank display and natural flow
-- **Context-Aware UX**: Smart button text that adapts to how you accessed screens
+**NEW IN v0.7.5: EXTENDED STRATEGIC GAMEPLAY!** 
+- **Extended Game Length**: Games now last 12-13 turns (previously 7-8), giving time for deep strategy
+- **Rebalanced Doom Mechanics**: 80% reduction in base doom progression for strategic depth
+- **Enhanced Staff Value**: Safety researchers 40% more effective at preventing existential risk
+- **Advanced Debugging**: Comprehensive doom tracking shows exactly why doom increases each turn
+- **TurnManager Architecture**: More stable turn processing with better error handling
+- **Multiple Research Projects**: Time to execute 2-3 research projects per game
 
-**Current Version**: v0.4.1 "Bootstrap Economic Calibration" - Enhanced leaderboards and party-ready polish
+**Current Version**: v0.7.5 "Extended Gameplay & Architecture Overhaul" - Major balance and technical improvements
 
-**Bootstrap Challenge**: Experience the real constraints of running an AI safety nonprofit - manage weekly cash flow, make strategic funding decisions, and scale your team efficiently while keeping doom levels low. Now with competitive features to track your progress!
+**Strategic Challenge**: Experience the real constraints of running an AI safety nonprofit - manage weekly cash flow, make strategic funding decisions, and scale your team efficiently while keeping doom levels low. With extended gameplay, you now have time to build meaningful strategies and recover from setbacks!
 
 ## Table of Contents
 - [Quick Setup](#quick-setup) (Line 31)
@@ -610,27 +611,27 @@ After turn 8, your organization will unlock advanced event handling capabilities
 
 ### Winning Strategies
 
-**Early Game (Turns 1-5):**
+**Early Game (Turns 1-4):**
 - Focus on fundraising to build a money buffer
-- Hire a couple staff members for stability  
+- Hire your first safety researcher to start doom mitigation
 - Buy accounting software if available for better tracking
 
-**Mid Game (Turns 6-15):**
-- Invest in research to keep p(Doom) under control
-- Build reputation for better fundraising
-- Get key upgrades like computer systems and comfy chairs
+**Mid Game (Turns 5-9):**
+- Invest in safety research projects to build reputation
+- Expand team to 3-4 staff for more action capacity
+- Get key upgrades like computer systems for productivity bonuses
 
-**Late Game (15+ turns):**
-- Balance aggressive research with resource management
-- Monitor opponent progress and react accordingly
-- Use espionage strategically to plan ahead
+**Late Game (Turns 10-13):**
+- Execute multiple research projects for maximum reputation
+- Enhanced safety researchers give better doom control
+- Monitor opponent progress and react strategically
 
 
 **Core Principles:**
-- Always keep at least 2 staff (prevents immediate game over)
-- Don't let p(Doom) get above 80% without a plan
-- Reputation makes fundraising much more effective
-- Research is expensive but essential for long-term survival
+- Staff loss now configurable - check settings for your challenge level
+- With 80% reduced doom progression, you have time for strategic planning
+- Safety researchers are 40% more effective - invest in your team
+- Extended gameplay allows 2-3 research projects per game for higher scores
 
 
 

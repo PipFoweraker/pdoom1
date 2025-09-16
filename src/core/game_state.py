@@ -26,6 +26,7 @@ from src.core.productive_actions import (get_employee_category, get_available_ac
 from src.features.end_game_scenarios import end_game_scenarios
 from src.core.research_quality import TechnicalDebt, ResearchQuality, ResearchProject
 from src.core.economic_config import EconomicConfig
+from src.core.turn_manager import TurnManager
 
 SCORE_FILE = "local_highscore.json"
 
@@ -375,6 +376,9 @@ class GameState:
         self.daily_news = []  # News feed for turn feedback
         self.spend_this_turn_display_shown = False  # Track if spend display has been shown
         self.spend_display_permanent = False  # Whether spend display is permanently visible
+        
+        # Turn Processing Manager (extracted from monolithic end_turn method)
+        self.turn_manager = TurnManager(self)
         
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()
@@ -1693,10 +1697,10 @@ class GameState:
 
     def _breakthrough_event(self) -> None:
         if "secure_cloud" in self.upgrade_effects:
-            spike = get_rng().randint(2, 5, f"breakthrough_spike_secure_turn_{self.turn}")
+            spike = get_rng().randint(1, 2, f"breakthrough_spike_secure_turn_{self.turn}")
             self.messages.append("Lab breakthrough! Secure cloud softened doom spike.")
         else:
-            spike = get_rng().randint(6, 13, f"breakthrough_spike_normal_turn_{self.turn}")
+            spike = get_rng().randint(2, 4, f"breakthrough_spike_normal_turn_{self.turn}")  # Reduced from 6-13 for longer gameplay
             self.messages.append("Lab breakthrough! Doom spikes!")
         self._add('doom', spike, "AI lab breakthrough event")
 
@@ -2438,6 +2442,12 @@ class GameState:
             return False
 
     def end_turn(self) -> bool:
+        """Process end of turn using TurnManager for proper state management."""
+        # Use TurnManager if available, otherwise fall back to legacy processing
+        if hasattr(self, 'turn_manager'):
+            return self.turn_manager.process_turn()
+        
+        # Legacy turn processing (fallback)
         # Prevent multiple end turn calls during processing
         if self.turn_processing:
             # Play error sound for rejected input

@@ -140,7 +140,7 @@ class Opponent:
         self._choose_research_approach(messages, turn)
         
         # Research progress based on resources and research quality approach
-        base_progress = self.capabilities_researchers * 0.5
+        base_progress = self.capabilities_researchers * 0.3  # Reduced from 0.5 for longer gameplay
         compute_bonus = min(self.compute * 0.1, 5)  # Cap compute bonus
         
         # Apply research quality modifiers based on opponent's approach
@@ -156,7 +156,9 @@ class Opponent:
             self.progress = min(100, self.progress + actual_gain)
             if actual_gain > 0:
                 quality_suffix = f" [{self.research_quality_preference}]" if self.research_quality_preference != "standard" else ""
-                messages.append(f"{self.name} made research progress (+{actual_gain}, total: {self.progress}/100){quality_suffix}")
+                # Calculate doom contribution for verbose logging
+                doom_contribution = self.get_impact_on_doom()
+                messages.append(f"{self.name} made research progress (+{actual_gain}, total: {self.progress}/100){quality_suffix} [Doom+{doom_contribution}]")
                 
         return messages
     
@@ -230,7 +232,7 @@ class Opponent:
             return get_rng().randint(0, 2, f"opponent_doom_impact_{self.name}")
             
         # Discovered opponents' doom impact is based on their capabilities research
-        base_doom = self.capabilities_researchers * 0.2
+        base_doom = self.capabilities_researchers * 0.1  # Reduced from 0.2 for longer gameplay
         progress_multiplier = 1 + (self.progress / 100)  # More dangerous as they get closer
         
         # Technical debt increases doom risk (shortcuts lead to unsafe AGI)

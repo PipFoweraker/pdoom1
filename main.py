@@ -2745,10 +2745,8 @@ def main():
                     game_state.add_message(debug_msg)
                 
                 # Automatic cleanup for turn processing that's been stuck too long
-                if (hasattr(game_state, 'turn_processing') and game_state.turn_processing and 
-                    hasattr(game_state, 'turn_processing_timer') and game_state.turn_processing_timer <= -30):  # 1 second at 30fps
-                    game_state.turn_processing = False
-                    game_state.turn_processing_timer = 0
+                if hasattr(game_state, 'turn_manager') and game_state.turn_manager.is_processing_stuck():
+                    game_state.turn_manager.reset_processing()
                     game_state.add_message("System: Reset stuck turn processing")
                 
                 # Automatic cleanup for tutorial overlay that's been active too long without interaction
@@ -2947,7 +2945,10 @@ def main():
                     # Update systems every frame for smooth animation
                     if game_state:
                         game_state._update_ui_transitions()
-                        game_state.update_turn_processing()  # Handle turn transition timing
+                        if hasattr(game_state, 'turn_manager'):
+                            game_state.turn_manager.update_processing_timer()  # Handle turn transition timing
+                        else:
+                            game_state.update_turn_processing()  # Fallback to old method
                         game_state.overlay_manager.update_animations()
                     
                     draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
@@ -3024,7 +3025,9 @@ def main():
                             first_time_help_content = None
                     
                     # Draw turn transition overlay if processing
-                    if game_state and game_state.turn_processing:
+                    if game_state and hasattr(game_state, 'turn_manager') and game_state.turn_manager.is_processing():
+                        draw_turn_transition_overlay(screen, SCREEN_W, SCREEN_H, game_state.turn_manager.processing_timer, game_state.turn_manager.processing_duration)
+                    elif game_state and game_state.turn_processing:  # Fallback to old system
                         draw_turn_transition_overlay(screen, SCREEN_W, SCREEN_H, game_state.turn_processing_timer, game_state.turn_processing_duration)
 
                         
