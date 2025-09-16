@@ -4,6 +4,43 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.3] - 2025-09-16 - "Critical Issue Resolution - Phase W Hotfixes"
+### Fixed
+- **CRITICAL ASCII Compliance**: Resolved all Unicode character violations across codebase
+  - Replaced Unicode bullet points (•) with ASCII dashes (-) in UI error messages
+  - Fixed checkmark symbols (✓) in test output with ASCII equivalents ([OK])
+  - Ensures cross-platform compatibility and prevents encoding errors
+  - Files fixed: src/ui/layout.py, src/ui/overlay_system.py, src/ui/screens.py, tests/test_menu_diagnostics.py
+- **CRITICAL Version Consistency**: Fixed version component mismatch in version.py
+  - Updated VERSION_PATCH from 2 to 3 to match __version__ = "0.7.3"
+  - Prevents version display inconsistencies and test failures
+- **CRITICAL Economic Configuration**: Aligned test expectations with bootstrap economic model
+  - Updated config validation tests to handle $100K starting funds (vs previous $2K expectation)
+  - Fixed milestone progression tests for new economic balance
+  - Updated game_state tests to dynamically import config values instead of hardcoding
+- **CRITICAL Action Cost System**: Fixed dynamic cost lambda function handling in tests
+  - Updated Buy Compute action tests to handle callable cost functions (Moore's Law integration)
+  - Test now properly evaluates lambda-based costs: `gs.economic_config.get_compute_cost(10)`
+  - Maintains backward compatibility with static cost actions
+- **CRITICAL Sound System**: Fixed default audio configuration mismatch
+  - Updated configs/default.json to have sound_enabled: true (was false)
+  - Aligns with config manager defaults and test expectations
+  - Ensures consistent audio experience out of the box
+- **CRITICAL Menu System Integration**: Updated menu structure tests to match current implementation
+  - Fixed end-game menu items: ["View Full Leaderboard", "Play Again", "Main Menu", "Settings", "Submit Feedback"]
+  - Fixed main menu items: ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
+  - Updated keyboard navigation bounds checking (5 items vs previous 6)
+- **CRITICAL Action System**: Fixed action execution and naming inconsistencies
+  - Fixed magical orb scouting test to use 'upside' key instead of missing 'execute' key
+  - Updated research action tests to expect "Research Options" instead of deprecated "Safety Research"/"Governance Research"
+  - Aligns tests with current modular action dialog system
+
+### Infrastructure
+- **Test Suite Stability**: Resolved 15+ critical test failures blocking development
+- **ASCII Standards Enforcement**: Complete codebase compliance with ASCII-only requirements
+- **Dynamic Cost Integration**: Full support for economic calibration lambda functions
+- **Menu System Modernization**: Tests now reflect current UI implementation patterns
+
 ## [0.7.2] - 2025-09-16 - "UI Hotfixes - Systematic Resolution"
 ### Fixed
 - **Researcher Pool Display**: Fixed empty dialog showing blank screen instead of helpful message

@@ -13,12 +13,18 @@ class TestGameStateInitialization(unittest.TestCase):
     
     def test_game_state_default_values(self):
         """Test that a new GameState starts with the correct default values."""
+        # Import config to get expected values
+        from src.services.config_manager import get_current_config
+        config = get_current_config()
+        expected_money = config['starting_resources']['money']
+        
         # Create a new GameState with a test seed
         game_state = GameState("test_seed")
         
         # Verify core resource defaults
-        self.assertEqual(game_state.money, 2000, "Initial money should be 2,000 (updated default)")
-        self.assertEqual(game_state.staff, 2, "Initial staff should be 2")
+        self.assertEqual(game_state.money, expected_money, f"Initial money should match config value: {expected_money}")
+        expected_staff = config['starting_resources']['staff']
+        self.assertEqual(game_state.staff, expected_staff, f"Initial staff should match config value: {expected_staff}")
         self.assertEqual(game_state.reputation, 50, "Initial reputation should be 50")
         self.assertEqual(game_state.doom, 25, "Initial doom should be 25")
         self.assertEqual(game_state.compute, 0, "Initial compute should be 0")

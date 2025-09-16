@@ -42,7 +42,7 @@ def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0
     if title is None:
         title = "Information Unavailable"
     if content is None:
-        content = "Content Not Available\n\nThe requested information could not be loaded at this time.\n\nPossible solutions:\n• Press Escape or Back to return to the previous screen\n• Try accessing this information again from the main menu\n• Check the Player Guide (F1) for general help\n\nIf this problem persists, it may indicate a technical issue."
+        content = "Content Not Available\n\nThe requested information could not be loaded at this time.\n\nPossible solutions:\n- Press Escape or Back to return to the previous screen\n- Try accessing this information again from the main menu\n- Check the Player Guide (F1) for general help\n\nIf this problem persists, it may indicate a technical issue."
     # Overlay background - semi-transparent dark background
     overlay_surface = pygame.Surface((w, h))
     overlay_surface.set_alpha(240)

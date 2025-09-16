@@ -309,8 +309,7 @@ class TestResearchActions(unittest.TestCase):
         """Test that research actions are in the actions list."""
         action_names = [action["name"] for action in ACTIONS]
         
-        self.assertIn("Safety Research", action_names)
-        self.assertIn("Governance Research", action_names)
+        self.assertIn("Research Options", action_names)
         self.assertIn("Set Research Quality: Rushed", action_names)
         self.assertIn("Set Research Quality: Standard", action_names)
         self.assertIn("Set Research Quality: Thorough", action_names)

@@ -14,9 +14,9 @@ class TestNewPlayerExperience(unittest.TestCase):
     """Test cases for new player experience functionality."""
     
     def test_menu_items_updated(self):
-        """Test that menu items include new player experience option."""
+        """Test that menu items match current implementation."""
         import main
-        expected_menu_items = ["New Player Experience", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
+        expected_menu_items = ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
         actual_menu_items = main.menu_items
         self.assertEqual(actual_menu_items, expected_menu_items, 
                         f"Expected {expected_menu_items}, got {actual_menu_items}")
