@@ -147,6 +147,13 @@ EVENTS: List[EventDefinition] = [
         "trigger": lambda gs: gs.staff >= 2 and random.random() < (0.1 + gs.staff * 0.01),
         "effect": lambda gs: gs._trigger_expense_request()
     },
+    {
+        "name": "Stray Cat Adoption",
+        "desc": "Someone left a box of kittens outside your office. Your staff wants to adopt them as office cats.",
+        # Trigger: Simple turn-based trigger, only happens once
+        "trigger": lambda gs: gs.turn == 8 and not getattr(gs, "office_cats_adopted", False),
+        "effect": lambda gs: gs._trigger_stray_cat_adoption()
+    },
     # Enhanced Personnel System Events
     {
         "name": "Researcher Breakthrough",

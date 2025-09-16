@@ -4089,6 +4089,26 @@ class GameState:
             self.messages.append(f"Purpose: {expense['description']}")
             self.messages.append("Enhanced event system required for interactive expense approval.")
     
+    def _trigger_stray_cat_adoption(self) -> None:
+        """Handle the stray cat adoption event - a positive morale boost for the team."""
+        # Mark that the event has occurred so it doesn't repeat
+        self.office_cats_adopted = True
+        
+        # Responsible pet ownership costs
+        flea_treatment_cost = 50
+        self._add('money', -flea_treatment_cost)
+        
+        # Positive effects: small morale boost through reputation gain
+        reputation_boost = 2
+        self._add('reputation', reputation_boost)
+        
+        # Fun message for the player
+        self.messages.append("🐱 SPECIAL EVENT: A box of adorable kittens was left outside your office!")
+        self.messages.append("Your staff has unanimously decided to adopt them as official office cats.")
+        self.messages.append(f"Responsible pet ownership: Flea treatment purchased for ${flea_treatment_cost}")
+        self.messages.append(f"The office atmosphere has improved significantly! +{reputation_boost} reputation")
+        self.messages.append("The cats seem particularly interested in the server room...")
+    
     def _trigger_hiring_dialog(self) -> None:
         """Trigger the employee hiring dialog with available employee subtypes."""
         from src.core.employee_subtypes import get_available_subtypes, get_hiring_complexity_level
