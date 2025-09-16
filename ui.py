@@ -7,7 +7,7 @@ from src.ui.modular_end_game_menu import draw_end_game_menu_modular
 
 def create_action_context_info(action: Dict[str, Any], game_state: Any, action_idx: int) -> Dict[str, Any]:
     """Create context info for an action to display in the context window."""
-    ap_cost = action.get("ap_cost", 1)
+    ap_cost = game_state._get_action_ap_cost(action)
     
     # Build title with shortcut key if available
     title = action["name"]

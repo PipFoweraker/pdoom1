@@ -14,8 +14,7 @@ def execute_fundraising_action(gs: 'GameState') -> None:
     Args:
         gs: GameState instance
     """
-    from src.features.economic_cycles import FundingSource
-    
+    from src.features.economic_cycles import FundingSource 
     # Check if economic cycles system is available
     if not hasattr(gs, 'economic_cycles'):
         # Fallback to original fundraising logic
@@ -357,6 +356,7 @@ ACTIONS = [
         "desc": "Open fundraising menu with multiple strategic options",
         "cost": 0,
         "ap_cost": 1,  # Action Points cost
+        "action_type": "submenu",  # Opens dialog menu
         "delegatable": True,  # Can be delegated to admin staff
         "delegate_staff_req": 1,  # Requires 1 admin staff to delegate  
         "delegate_ap_cost": 1,  # Same AP cost when delegated (requires personal touch)
@@ -370,6 +370,7 @@ ACTIONS = [
         "desc": "Open research menu with strategic focus and quality options",
         "cost": 0,  # No immediate cost - cost depends on selection
         "ap_cost": 1,
+        "action_type": "submenu",  # Opens dialog menu
         "delegatable": True,  # Can be delegated to research staff
         "delegate_staff_req": 2,  # Requires 2 research staff to delegate
         "delegate_ap_cost": 1,  # Same AP cost when delegated
@@ -494,7 +495,7 @@ ACTIONS = [
         "name": "Research Speed: Fast & Risky (Rushed)",
         "desc": "Move fast and break things - quicker results but higher doom risk and technical debt",
         "cost": 0,
-        "ap_cost": 0,  # Free action to change approach
+        "action_type": "setting",  # Setting change - no AP cost
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.RUSHED),
         "downside": lambda gs: None,
         "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
@@ -503,7 +504,7 @@ ACTIONS = [
         "name": "Research Speed: Balanced (Standard)",
         "desc": "Steady progress with balanced trade-offs - the default research approach",
         "cost": 0,
-        "ap_cost": 0,  # Free action to change approach
+        "action_type": "setting",  # Setting change - no AP cost
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.STANDARD),
         "downside": lambda gs: None,
         "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
@@ -512,7 +513,7 @@ ACTIONS = [
         "name": "Research Speed: Careful & Safe (Thorough)", 
         "desc": "Take time to do it right - slower but safer with less doom risk and better quality",
         "cost": 0,
-        "ap_cost": 0,  # Free action to change approach
+        "action_type": "setting",  # Setting change - no AP cost
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.THOROUGH),
         "downside": lambda gs: None,
         "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research

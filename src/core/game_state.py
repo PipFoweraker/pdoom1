@@ -23,7 +23,7 @@ from src.services.error_tracker import ErrorTracker
 from src.services.config_manager import get_current_config
 from src.core.productive_actions import (get_employee_category, get_available_actions, 
                                check_action_requirements)
-from src.features.end_game_scenarios import end_game_scenarios
+# End game scenarios now handled by TurnManager - import removed to avoid conflicts
 from src.core.research_quality import TechnicalDebt, ResearchQuality, ResearchProject
 from src.core.economic_config import EconomicConfig
 from src.core.turn_manager import TurnManager
@@ -39,6 +39,16 @@ class GameState:
         if callable(cost):
             return cost(self)
         return cost
+    
+    def _get_action_ap_cost(self, action: Dict[str, Any]) -> int:
+        """
+        Helper method to calculate AP cost based on action type.
+        Setting actions (research speed) cost 0 AP, others use ap_cost field.
+        """
+        action_type = action.get("action_type", "action")
+        if action_type == "setting":
+            return 0
+        return action.get("ap_cost", 1)
     
     def _add(self, attr: str, val: float, reason: str = "") -> None:
         """
@@ -557,11 +567,11 @@ class GameState:
         
         # Determine AP cost and effectiveness
         if delegate and self.can_delegate_action(action):
-            ap_cost = action.get("delegate_ap_cost", action.get("ap_cost", 1))
+            ap_cost = action.get("delegate_ap_cost", self._get_action_ap_cost(action))
             effectiveness = action.get("delegate_effectiveness", 1.0)
             delegation_info = " (delegated)"
         else:
-            ap_cost = action.get("ap_cost", 1)
+            ap_cost = self._get_action_ap_cost(action)
             effectiveness = 1.0
             delegation_info = ""
             delegate = False  # Can't delegate if requirements not met
@@ -658,7 +668,7 @@ class GameState:
         # Check max clicks per action per turn (only if specified in action)
         if 'max_clicks_per_turn' in action:
             max_clicks = action['max_clicks_per_turn']
-            current_clicks = self.action_clicks_this_turn.get(action_idx, 0)
+            current_clicks = self.gameplay_action_clicks_this_turn.get(action_idx, 0)
             
             if current_clicks >= max_clicks:
                 error_msg = f"{action['name']} already used maximum times this turn ({max_clicks})."
@@ -683,16 +693,16 @@ class GameState:
         delegate = False
         if (action.get("delegatable", False) and 
             self.can_delegate_action(action) and
-            action.get("delegate_ap_cost", action.get("ap_cost", 1)) < action.get("ap_cost", 1)):
+            action.get("delegate_ap_cost", self._get_action_ap_cost(action)) < self._get_action_ap_cost(action)):
             delegate = True
         
         # Determine AP cost and effectiveness
         if delegate:
-            ap_cost = action.get("delegate_ap_cost", action.get("ap_cost", 1))
+            ap_cost = action.get("delegate_ap_cost", self._get_action_ap_cost(action))
             effectiveness = action.get("delegate_effectiveness", 1.0)
             delegation_info = " (delegated)"
         else:
-            ap_cost = action.get("ap_cost", 1)
+            ap_cost = self._get_action_ap_cost(action)
             effectiveness = 1.0
             delegation_info = ""
         
@@ -734,7 +744,7 @@ class GameState:
         
         # Track clicks per action per turn (only if action has limits)
         if 'max_clicks_per_turn' in action:
-            self.action_clicks_this_turn[action_idx] = self.action_clicks_this_turn.get(action_idx, 0) + 1
+            self.gameplay_action_clicks_this_turn[action_idx] = self.gameplay_action_clicks_this_turn.get(action_idx, 0) + 1
         
         # Immediate AP deduction
         self.action_points -= ap_cost
@@ -2552,7 +2562,7 @@ class GameState:
             self._action_delegations = {}
         self.selected_gameplay_actions = []
         self.selected_gameplay_action_instances = []  # Clear action instances for next turn
-        self.action_clicks_this_turn = {}  # Reset click tracking for new turn
+        self.gameplay_action_clicks_this_turn = {}  # Reset click tracking for new turn
 
         # Staff maintenance - bootstrap AI safety lab economic model
         maintenance_cost = self.economic_config.get_staff_maintenance_cost(self.staff)
@@ -2685,15 +2695,9 @@ class GameState:
         self.reputation = max(0, self.reputation)
         self.money = max(self.money, 0)
 
-        # If game ended, get detailed scenario and log final state
+        # End game scenarios now handled by TurnManager during turn processing
+        # Game logging still handled here for legacy compatibility
         if self.game_over and game_end_reason:
-            # Get detailed end game scenario
-            self.end_game_scenario = end_game_scenarios.get_scenario(self)
-            
-            # Update the message with the scenario title
-            if self.end_game_scenario:
-                self.messages.append(f"GAME OVER: {self.end_game_scenario.title}")
-            
             final_resources = {
                 'money': self.money,
                 'staff': self.staff,
