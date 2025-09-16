@@ -2656,10 +2656,15 @@ class GameState:
                     self.messages.append(f"{opponent.name} has deployed dangerous AGI. Game over!")
                     break
                     
+        # Check staff loss condition only if enabled in config
         if not self.game_over and self.staff == 0:
-            self.game_over = True
-            game_end_reason = "All staff left"
-            self.messages.append("All your staff have left. Game over!")
+            config = get_current_config()
+            staff_loss_enabled = config.get('resource_limits', {}).get('enable_staff_loss_condition', False)
+            
+            if staff_loss_enabled:
+                self.game_over = True
+                game_end_reason = "All staff left"
+                self.messages.append("All your staff have left. Game over!")
 
         self.staff = max(0, self.staff)
         self.reputation = max(0, self.reputation)
