@@ -383,10 +383,31 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     title_font = pygame.font.SysFont('Consolas', int(h*0.08), bold=True)
     pygame.font.SysFont('Consolas', int(h*0.035))
     
-    # Title at top
-    title_surf = title_font.render("P(Doom)", True, (255, 255, 255))
+    # Attribution above title  
+    attribution_font = pygame.font.SysFont('Consolas', int(h*0.018))
+    attribution_surf = attribution_font.render("Pip Foweraker's", True, (180, 180, 180))
+    attribution_x = w // 2 - attribution_surf.get_width() // 2
+    attribution_y = int(h * 0.12)
+    
+    # Semi-transparent backdrop for better text visibility against colorful background
+    backdrop_width = max(attribution_surf.get_width(), 400) + 40  # Accommodate title width
+    backdrop_height = int(h * 0.12)  # Height for both attribution and title
+    backdrop_x = w // 2 - backdrop_width // 2
+    backdrop_y = attribution_y - 10
+    backdrop_rect = pygame.Rect(backdrop_x, backdrop_y, backdrop_width, backdrop_height)
+    
+    # Draw backdrop surface with transparency
+    backdrop_surface = pygame.Surface((backdrop_width, backdrop_height), pygame.SRCALPHA)
+    pygame.draw.rect(backdrop_surface, (20, 30, 40, 180), backdrop_rect.inflate(-backdrop_x, -backdrop_y), border_radius=12)
+    screen.blit(backdrop_surface, (backdrop_x, backdrop_y))
+    
+    # Draw attribution text
+    screen.blit(attribution_surf, (attribution_x, attribution_y))
+    
+    # Updated title
+    title_surf = title_font.render("P(Doom)1", True, (255, 255, 255))
     title_x = w // 2 - title_surf.get_width() // 2
-    title_y = int(h * 0.15)
+    title_y = attribution_y + attribution_surf.get_height() + 5
     screen.blit(title_surf, (title_x, title_y))
     
     # Subtitle
