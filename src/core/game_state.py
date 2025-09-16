@@ -2741,8 +2741,11 @@ class GameState:
         # Update UI transitions - animations advance each frame/turn
         self._update_ui_transitions()
         
-        # Reset turn processing state (processing will be handled by timer in main loop)
-        # The timer will count down and reset turn_processing to False
+        # Reset turn processing state immediately to prevent stuck turns
+        # This ensures turn processing doesn't get stuck if update_turn_processing() isn't called
+        self.turn_processing = False
+        self.turn_processing_timer = 0
+        
         return True  # Indicate successful turn end
     
     def update_turn_processing(self) -> None:

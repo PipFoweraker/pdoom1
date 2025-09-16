@@ -38,6 +38,7 @@ class DevTool:
             'game': self.test_game_state,
             'session': self.test_complete_session,
             'seeds': self.test_seed_variations,
+            'turns': self.test_turn_progression,
         }
     
     def test_dual_identity(self):
@@ -151,6 +152,52 @@ class DevTool:
             print(f"Seed '{seed}': Lab Name = '{gs.lab_name}'")
         
         print("[OK] Seed variation system working correctly")
+    
+    def test_turn_progression(self):
+        """Test game progression over multiple turns to identify issues."""
+        print(f"[TEST] Testing Turn Progression - P(Doom) {get_display_version()}")
+        print("=" * 60)
+        
+        seed = input("Enter seed (or press Enter for 'debug-turns'): ").strip()
+        if not seed:
+            seed = 'debug-turns'
+            
+        max_turns_input = input("Enter max turns to test (or press Enter for 15): ").strip()
+        try:
+            max_turns = int(max_turns_input) if max_turns_input else 15
+        except ValueError:
+            max_turns = 15
+        
+        print(f"Testing seed '{seed}' for up to {max_turns} turns...")
+        print("-" * 60)
+        
+        gs = GameState(seed)
+        
+        for turn_num in range(max_turns):
+            doom_val = int(gs.doom) if hasattr(gs, 'doom') else 0
+            processing_flag = getattr(gs, 'turn_processing', False)
+            print(f"Turn {gs.turn:2d}: Staff={gs.staff:2d} Money=${gs.money:7,} Doom={doom_val:3d} Rep={gs.reputation:3d} Processing={processing_flag} GameOver={gs.game_over}")
+            
+            if gs.game_over:
+                print(f"\n*** GAME OVER at turn {gs.turn} ***")
+                print("Recent messages:")
+                for i, msg in enumerate(gs.messages[-8:], 1):
+                    print(f"  {i}: {msg}")
+                break
+            
+            print(f"    -> Before end_turn: turn={gs.turn}, processing={getattr(gs, 'turn_processing', False)}")
+            result = gs.end_turn()
+            print(f"    -> After end_turn: turn={gs.turn}, processing={getattr(gs, 'turn_processing', False)}, result={result}")
+            
+            # Check if turn processing is stuck
+            if getattr(gs, 'turn_processing', False):
+                print(f"    -> WARNING: Turn processing stuck! Resetting...")
+                gs.turn_processing = False
+                gs.turn_processing_timer = 0
+        else:
+            print(f"\n[OK] Game survived {max_turns} turns without ending")
+        
+        print("[DONE] Turn progression test completed")
     
     def list_tests(self):
         """List all available tests."""
