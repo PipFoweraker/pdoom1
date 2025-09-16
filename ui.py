@@ -1762,13 +1762,18 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
                     color = (255, 255, 210)  # White for regular messages
                     font_to_use = small_font
                 
-                # Truncate long messages to fit width
-                max_chars = log_width // 8  # Rough estimate
-                if len(msg) > max_chars:
-                    msg = msg[:max_chars-3] + "..."
+                # Use word wrapping instead of truncation
+                max_width = log_width - int(w*0.02)  # Account for padding
+                wrapped_surfaces, text_rect = render_text(msg, font_to_use, max_width, color, 1.1)
                 
-                msg_text = font_to_use.render(msg, True, color)
-                screen.blit(msg_text, (log_x + int(w*0.01), y_pos))
+                # Draw each wrapped line, but clip to maintain scrolling behavior
+                for surf, (x_offset, y_offset) in wrapped_surfaces:
+                    line_y = y_pos + y_offset
+                    if content_y <= line_y < content_y + content_height:  # Only draw if within visible area
+                        screen.blit(surf, (log_x + int(w*0.01) + x_offset, line_y))
+                
+                # For scrolling purposes, treat each message as one line regardless of wrapping
+                # This maintains the existing scrolling logic while adding word wrap
         
         # Draw scroll indicators if needed
         if start_line > 0:
@@ -1793,14 +1798,20 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         pygame.draw.rect(screen, (120, 140, 180), border_rect, width=2, border_radius=8)
         
         screen.blit(font.render("Activity Log:", True, (255, 255, 180)), (log_x, log_y))
+        current_y = log_y + int(h*0.035)
+        
         for i, msg in enumerate(game_state.messages[-7:]):
-            # Truncate long messages to fit within the background area
-            max_chars = (log_width - int(w*0.02)) // 8  # Account for padding and rough character width
-            if len(msg) > max_chars:
-                msg = msg[:max_chars-3] + "..."
+            # Use word wrapping instead of truncation
+            max_width = log_width - int(w*0.02)  # Account for padding
+            wrapped_surfaces, text_rect = render_text(msg, small_font, max_width, (255, 255, 210), 1.1)
             
-            msg_text = small_font.render(msg, True, (255, 255, 210))
-            screen.blit(msg_text, (log_x + int(w*0.01), log_y + int(h*0.035) + i * int(h*0.03)))
+            # Draw each wrapped line
+            for surf, (x_offset, y_offset) in wrapped_surfaces:
+                if current_y + y_offset < log_y + log_height:  # Only draw if within log area
+                    screen.blit(surf, (log_x + int(w*0.01) + x_offset, current_y + y_offset))
+            
+            # Move to next message position
+            current_y += min(text_rect.height, int(h*0.03))  # Use smaller of wrapped height or standard spacing
 
     # Dashboard elements (research quality selector, etc.) - Research Quality Selection Submenu Bug fix
     from src.services.dashboard_manager import get_dashboard_manager, DashboardElementType

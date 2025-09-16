@@ -632,7 +632,7 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
     
     mx, my = mouse_pos
     
-    # Settings items (6 settings + 1 continue button = 7 total)
+    # Settings items (1 continue button + 2 name fields + 4 settings = 7 total)
     num_items = 7
     
     for i in range(num_items):
