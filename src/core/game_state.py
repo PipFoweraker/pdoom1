@@ -493,12 +493,20 @@ class GameState:
 
     def add_message(self, message: str) -> None:
         """
-        Add a message to the game's message log.
+        Add a message to the game's message log with overflow protection.
         
         Args:
             message (str): The message to add
         """
         self.messages.append(message)
+        
+        # Too Many Messages Bug Fix: Implement message cap to prevent UI overflow
+        max_messages_per_turn = 50  # Reasonable limit for readability
+        if len(self.messages) > max_messages_per_turn:
+            # Keep most recent messages and add overflow indicator
+            overflow_count = len(self.messages) - max_messages_per_turn + 1
+            self.messages = self.messages[-max_messages_per_turn + 1:]
+            self.messages.insert(0, f"... {overflow_count} older messages hidden to prevent overflow ...")
 
     def can_delegate_action(self, action: Dict[str, Any]) -> bool:
         """
@@ -2460,14 +2468,16 @@ class GameState:
             self.turn_processing_timer = 0
             return False
             
-        # Clear event log at start of turn to show only current-turn events
-        # But first store previous messages if scrollable log was already enabled
+        # Fix Too Many Messages Bug: Clear messages from previous turn to prevent accumulation
+        # Store previous messages in history if scrollable log is enabled
         if self.scrollable_event_log_enabled and self.messages:
             # Add turn delimiter and store messages from previous turn
-            turn_header = f"=== Turn {self.turn + 1} ==="
+            turn_header = f"=== Turn {self.turn} ==="  # Current turn finishing
             self.event_log_history.append(turn_header)
             self.event_log_history.extend(self.messages)
-            
+        
+        # Always clear messages at start of each turn to prevent accumulation
+        # This ensures each turn starts with a clean message slate
         self.messages = []
         
         # Perform all selected actions

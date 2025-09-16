@@ -1,6 +1,16 @@
 {
   "version": "1.0.0",
-  "created": "2025-09-16T20:54:36.101728",
+  "created": "2025-09-16T21:02:13.950776",
   "max_entries": 50,
-  "entries": []
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Distributed Systems",
+      "date": "2025-09-16T21:02:13.950097",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.013213,
+      "entry_uuid": "63cff665-4d4a-47b5-926d-c35b3bff8b53"
+    }
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-16T21:06:16.878321",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Enigma Institute",
+      "date": "2025-09-16T21:06:16.874845",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.068214,
+      "entry_uuid": "514a8670-e45d-4832-9d6f-39dc1d6a08b3"
+    }
+  ]
+}
