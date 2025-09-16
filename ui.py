@@ -22,7 +22,7 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
     # Enhanced description for research actions showing current quality
     base_desc = action['desc']
     if hasattr(game_state, 'research_quality_unlocked') and game_state.research_quality_unlocked:
-        if 'Research' in action['name'] and action['name'] not in ['Set Research Quality: Rushed', 'Set Research Quality: Standard', 'Set Research Quality: Thorough']:
+        if 'Research' in action['name'] and action['name'] not in ['Research Speed: Fast & Risky (Rushed)', 'Research Speed: Balanced (Standard)', 'Research Speed: Careful & Safe (Thorough)']:
             quality_suffix = f" [{game_state.current_research_quality.value.title()}]"
             base_desc += quality_suffix
     

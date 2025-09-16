@@ -219,9 +219,9 @@ class GameState:
         
         self.turn = 0
         self.max_doom = limits_config['max_doom']
-        self.selected_actions = []
-        self.selected_action_instances = []  # Track individual action instances for undo
-        self.action_clicks_this_turn = {}  # Track clicks per action per turn
+        self.selected_gameplay_actions = []
+        self.selected_gameplay_action_instances = []  # Track individual action instances for undo
+        self.gameplay_action_clicks_this_turn = {}  # Track clicks per action per turn
         self.staff_maintenance = 15
         self.seed = seed
         self.upgrades = [dict(u) for u in UPGRADES]
@@ -293,7 +293,7 @@ class GameState:
         
         # For hover/tooltip (which upgrade is hovered)
         self.hovered_upgrade_idx = None
-        self.hovered_action_idx = None
+        self.hovered_gameplay_action_idx = None
         self.endturn_hovered = False
 
         # Scrollable event log feature
@@ -326,8 +326,8 @@ class GameState:
         self._pending_first_time_help = None  # Track pending first-time help to show
 
         # Copy modular content
-        self.actions = [dict(a) for a in ACTIONS]
-        self.events = [dict(e) for e in EVENTS]
+        self.gameplay_actions = [dict(a) for a in ACTIONS]
+        self.game_events = [dict(e) for e in EVENTS]
         
         # Enhanced event system (from config)
         gameplay_config = config.get('gameplay', {})
@@ -478,7 +478,7 @@ class GameState:
         if self.spend_this_turn > 0:
             if not self.spend_this_turn_display_shown:
                 # First time spending multiple actions in a turn
-                spend_actions_count = len([a for a in self.selected_actions if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
+                spend_actions_count = len([a for a in self.selected_gameplay_actions if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
                 
                 if spend_actions_count > 1:
                     self.spend_this_turn_display_shown = True
@@ -525,18 +525,18 @@ class GameState:
         
         return False
     
-    def execute_action_with_delegation(self, action_idx: int, delegate: bool = False) -> bool:
+    def execute_gameplay_action_with_delegation(self, action_idx: int, delegate: bool = False) -> bool:
         """
-        Execute an action with optional delegation.
+        Execute a gameplay action with optional delegation.
         
         Args:
-            action_idx (int): Index of the action to execute
+            action_idx (int): Index of the gameplay action to execute
             delegate (bool): Whether to delegate the action
             
         Returns:
             bool: True if action was executed, False if not enough resources
         """
-        action = self.actions[action_idx]
+        action = self.gameplay_actions[action_idx]
         
         # Determine AP cost and effectiveness
         if delegate and self.can_delegate_action(action):
@@ -573,7 +573,7 @@ class GameState:
             return False
         
         # Execute the action
-        self.selected_actions.append(action_idx)
+        self.selected_gameplay_actions.append(action_idx)
         self.messages.append(f"Selected: {action['name']}{delegation_info}")
         
         # Store delegation info for end_turn processing
@@ -587,13 +587,13 @@ class GameState:
         
         return True
 
-    def execute_action_by_keyboard(self, action_idx: int) -> bool:
+    def execute_gameplay_action_by_keyboard(self, action_idx: int) -> bool:
         """
-        Execute an action via keyboard shortcut (1-9 keys).
+        Execute a gameplay action via keyboard shortcut (1-9 keys).
         Now routes through unified action handler.
         
         Args:
-            action_idx (int): Index of the action to execute (0-8 for keys 1-9)
+            action_idx (int): Index of the gameplay action to execute (0-8 for keys 1-9)
             
         Returns:
             bool: True if action was executed successfully, False otherwise
@@ -602,7 +602,7 @@ class GameState:
             return False
             
         # Check for undo (if action is already selected, try to undo it)
-        is_undo = action_idx in self.selected_actions
+        is_undo = action_idx in self.selected_gameplay_actions
         
         result = self.attempt_action_selection(action_idx, is_undo)
         
@@ -626,10 +626,10 @@ class GameState:
         Returns:
             dict: Result with 'success', 'message', 'play_sound' keys
         """
-        if action_idx >= len(self.actions) or action_idx < 0:
+        if action_idx >= len(self.gameplay_actions) or action_idx < 0:
             return {'success': False, 'message': None, 'play_sound': False}
             
-        action = self.actions[action_idx]
+        action = self.gameplay_actions[action_idx]
         
         if is_undo:
             return self._handle_action_undo(action_idx, action)
@@ -708,12 +708,12 @@ class GameState:
             'delegated': delegate,
             'ap_cost': ap_cost,
             'effectiveness': effectiveness,
-            'instance_id': len(self.selected_action_instances)  # Unique identifier
+            'instance_id': len(self.selected_gameplay_action_instances)  # Unique identifier
         }
         
         # Add to selected actions (immediate deduction)
-        self.selected_actions.append(action_idx)
-        self.selected_action_instances.append(action_instance)
+        self.selected_gameplay_actions.append(action_idx)
+        self.selected_gameplay_action_instances.append(action_instance)
         
         # Track clicks per action per turn (only if action has limits)
         if 'max_clicks_per_turn' in action:
@@ -729,8 +729,8 @@ class GameState:
             # Execute immediately instead of deferring to end_turn
             try:
                 # Remove from selected actions since it's executed immediately
-                self.selected_actions.pop()  # Remove the action we just added
-                self.selected_action_instances.pop()  # Remove the instance we just added
+                self.selected_gameplay_actions.pop()  # Remove the action we just added
+                self.selected_gameplay_action_instances.pop()  # Remove the instance we just added
                 
                 action['upside'](self)
                 success_msg = f"Executed: {action['name']}{delegation_info}"
@@ -744,10 +744,10 @@ class GameState:
                 # If immediate execution fails, restore AP and show error
                 self.action_points += ap_cost
                 # Also remove from selected actions list
-                if self.selected_actions and self.selected_actions[-1] == action_idx:
-                    self.selected_actions.pop()
-                if self.selected_action_instances:
-                    self.selected_action_instances.pop()
+                if self.selected_gameplay_actions and self.selected_gameplay_actions[-1] == action_idx:
+                    self.selected_gameplay_actions.pop()
+                if self.selected_gameplay_action_instances:
+                    self.selected_gameplay_action_instances.pop()
                 error_msg = f"Failed to execute {action['name']}: {str(e)}"
                 self.messages.append(error_msg)
                 return {
@@ -780,9 +780,9 @@ class GameState:
         action_instance = None
         instance_index = None
         
-        for i in range(len(self.selected_action_instances) - 1, -1, -1):
-            if self.selected_action_instances[i]['action_idx'] == action_idx:
-                action_instance = self.selected_action_instances[i]
+        for i in range(len(self.selected_gameplay_action_instances) - 1, -1, -1):
+            if self.selected_gameplay_action_instances[i]['action_idx'] == action_idx:
+                action_instance = self.selected_gameplay_action_instances[i]
                 instance_index = i
                 break
         
@@ -794,19 +794,19 @@ class GameState:
             }
         
         # Remove the action instance
-        self.selected_action_instances.pop(instance_index)
+        self.selected_gameplay_action_instances.pop(instance_index)
         
-        # Remove from selected_actions (remove last occurrence)
-        for i in range(len(self.selected_actions) - 1, -1, -1):
-            if self.selected_actions[i] == action_idx:
-                self.selected_actions.pop(i)
+        # Remove from selected_gameplay_actions (remove last occurrence)
+        for i in range(len(self.selected_gameplay_actions) - 1, -1, -1):
+            if self.selected_gameplay_actions[i] == action_idx:
+                self.selected_gameplay_actions.pop(i)
                 break
         
         # Refund AP
         self.action_points += action_instance['ap_cost']
         
         # Clean up delegation info if no more instances of this action
-        if action_idx not in [inst['action_idx'] for inst in self.selected_action_instances]:
+        if action_idx not in [inst['action_idx'] for inst in self.selected_gameplay_action_instances]:
             if hasattr(self, '_action_delegations') and action_idx in self._action_delegations:
                 del self._action_delegations[action_idx]
         
@@ -1714,9 +1714,9 @@ class GameState:
         if hasattr(self, 'three_column_button_rects'):
             for button_rect, original_idx in self.three_column_button_rects:
                 if self._in_rect(mouse_pos, button_rect):
-                    if not self.game_over and original_idx < len(self.actions):
+                    if not self.game_over and original_idx < len(self.gameplay_actions):
                         # Check for undo (if action is already selected, try to undo it)
-                        is_undo = original_idx in self.selected_actions
+                        is_undo = original_idx in self.selected_gameplay_actions
                         
                         result = self.attempt_action_selection(original_idx, is_undo)
                         
@@ -1789,7 +1789,7 @@ class GameState:
                     if not self.game_over and display_idx < len(self.display_to_action_index_map):
                         original_idx = self.display_to_action_index_map[display_idx]
                         # Check for undo (if action is already selected, try to undo it)
-                        is_undo = original_idx in self.selected_actions
+                        is_undo = original_idx in self.selected_gameplay_actions
                         
                         result = self.attempt_action_selection(original_idx, is_undo)
                         
@@ -1803,7 +1803,7 @@ class GameState:
                 if self._in_rect(mouse_pos, rect):
                     if not self.game_over:
                         # Check for undo (if action is already selected, try to undo it)
-                        is_undo = idx in self.selected_actions
+                        is_undo = idx in self.selected_gameplay_actions
                         
                         result = self.attempt_action_selection(idx, is_undo)
                         
@@ -1955,7 +1955,7 @@ class GameState:
                         if display_idx < len(self.display_to_action_index_map):
                             original_idx = self.display_to_action_index_map[display_idx]
                             self.hovered_action_idx = original_idx
-                            hovered_action = self.actions[original_idx]
+                            hovered_action = self.gameplay_actions[original_idx]
                         break
             else:
                 # Fallback to original action handling (show all actions)
@@ -1963,7 +1963,7 @@ class GameState:
                 for idx, rect in enumerate(action_rects):
                     if self._in_rect(mouse_pos, rect):
                         self.hovered_action_idx = idx
-                        hovered_action = self.actions[idx]
+                        hovered_action = self.gameplay_actions[idx]
                         break
             
             # Build context info for hovered action
@@ -2186,7 +2186,7 @@ class GameState:
 
     def _get_action_rects(self, w: int, h: int) -> List[pygame.Rect]:
         # Place actions as tall buttons on left (moved down to accommodate opponents panel)
-        count = len(self.actions)
+        count = len(self.gameplay_actions)
         base_x = int(w * 0.04)
         base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
         # Shrink width/height and reduce gaps to fit more buttons comfortably
@@ -2471,8 +2471,8 @@ class GameState:
         self.messages = []
         
         # Perform all selected actions
-        for idx in self.selected_actions:
-            action = self.actions[idx]
+        for idx in self.selected_gameplay_actions:
+            action = self.gameplay_actions[idx]
             
             # Get delegation info if available
             delegation_info = getattr(self, '_action_delegations', {}).get(idx, {
@@ -2517,8 +2517,8 @@ class GameState:
         # Clear delegation info for next turn
         if hasattr(self, '_action_delegations'):
             self._action_delegations = {}
-        self.selected_actions = []
-        self.selected_action_instances = []  # Clear action instances for next turn
+        self.selected_gameplay_actions = []
+        self.selected_gameplay_action_instances = []  # Clear action instances for next turn
         self.action_clicks_this_turn = {}  # Reset click tracking for new turn
 
         # Staff maintenance - bootstrap AI safety lab economic model
@@ -3058,7 +3058,7 @@ class GameState:
         }
         
         # Process events with deterministic replacements where available
-        for event_dict in self.events:
+        for event_dict in self.game_events:
             event_name = event_dict["name"]
             
             # Use deterministic version if available, otherwise fall back to original
@@ -4549,10 +4549,10 @@ class GameState:
         Returns:
             Tuple[bool, str]: (can_perform, error_message)
         """
-        if action_index >= len(self.actions):
+        if action_index >= len(self.gameplay_actions):
             return False, "Invalid action"
             
-        action = self.actions[action_index]
+        action = self.gameplay_actions[action_index]
         
         # Check money requirement
         cost = action.get("cost", 0)

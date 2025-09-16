@@ -491,8 +491,8 @@ ACTIONS = [
         "rules": lambda gs: hasattr(gs, 'researchers') and len(gs.researchers) > 0
     },
     {
-        "name": "Set Research Quality: Rushed",
-        "desc": "Fast research: -40% time, -20% cost, +15% doom, +2 debt, -10% success",
+        "name": "Research Speed: Fast & Risky (Rushed)",
+        "desc": "Move fast and break things - quicker results but higher doom risk and technical debt",
         "cost": 0,
         "ap_cost": 0,  # Free action to change approach
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.RUSHED),
@@ -500,8 +500,8 @@ ACTIONS = [
         "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
     },
     {
-        "name": "Set Research Quality: Standard",
-        "desc": "Balanced research: baseline time, cost, doom, and success rates",
+        "name": "Research Speed: Balanced (Standard)",
+        "desc": "Steady progress with balanced trade-offs - the default research approach",
         "cost": 0,
         "ap_cost": 0,  # Free action to change approach
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.STANDARD),
@@ -509,8 +509,8 @@ ACTIONS = [
         "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
     },
     {
-        "name": "Set Research Quality: Thorough", 
-        "desc": "Careful research: +60% time, +40% cost, -20% doom, -1 debt, +15% success",
+        "name": "Research Speed: Careful & Safe (Thorough)", 
+        "desc": "Take time to do it right - slower but safer with less doom risk and better quality",
         "cost": 0,
         "ap_cost": 0,  # Free action to change approach
         "upside": lambda gs: gs.set_research_quality(ResearchQuality.THOROUGH),
