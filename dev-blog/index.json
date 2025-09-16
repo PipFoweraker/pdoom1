@@ -1,6 +1,69 @@
 {
   "entries": [
     {
+      "filename": "2025-09-16-ascii-compliance-sweep.md",
+      "slug": "2025-09-16-ascii-compliance-sweep",
+      "path": "entries/2025-09-16-ascii-compliance-sweep.md",
+      "frontmatter": {
+        "title": "ASCII Compliance Sweep: Professional Documentation Standards",
+        "date": "2025-09-16",
+        "tags": [
+          "documentation",
+          "standards",
+          "ascii",
+          "quality",
+          "automation"
+        ],
+        "summary": "Eliminated 6,255 Unicode violations across 85 files, reducing test failures by 84% and achieving 100% ASCII compliance",
+        "commit": "TBD"
+      },
+      "word_count": 210,
+      "file_size": 1908,
+      "modified_at": "2025-09-16T18:39:25.874956"
+    },
+    {
+      "filename": "2025-09-16-hotfix-ui-enhancements-v0.7.3.md",
+      "slug": "2025-09-16-hotfix-ui-enhancements-v0.7.3",
+      "path": "entries/2025-09-16-hotfix-ui-enhancements-v0.7.3.md",
+      "frontmatter": {
+        "title": "Hotfix UI Enhancements v0.7.3: Quick Wins & Enhanced Scoring",
+        "date": "2025-09-16",
+        "tags": [
+          "hotfix",
+          "ui-enhancements",
+          "quick-wins",
+          "scoring-system",
+          "user-experience"
+        ],
+        "summary": "Comprehensive UI improvements including stray cat adoption event, overlay text visibility fixes, and enhanced end-game scoring display with strategic analysis integration",
+        "commit": "fd7b4d5"
+      },
+      "word_count": 530,
+      "file_size": 4728,
+      "modified_at": "2025-09-16T19:50:39.478114"
+    },
+    {
+      "filename": "2025-09-16-ui-hotfix-session-3-completion.md",
+      "slug": "2025-09-16-ui-hotfix-session-3-completion",
+      "path": "entries/2025-09-16-ui-hotfix-session-3-completion.md",
+      "frontmatter": {
+        "title": "UI Hotfix Session 3: Complete Accessibility & Error Handling",
+        "date": "2025-09-16",
+        "tags": [
+          "ui",
+          "hotfix",
+          "accessibility",
+          "error-handling",
+          "user-experience"
+        ],
+        "summary": "Completed systematic UI improvement session resolving 3 critical UX issues across overlay, dialog, and settings systems",
+        "commit": "012a569"
+      },
+      "word_count": 247,
+      "file_size": 2302,
+      "modified_at": "2025-09-16T08:32:25.920983"
+    },
+    {
       "filename": "2025-09-16-ui-hotfixes-session.md",
       "slug": "2025-09-16-ui-hotfixes-session",
       "path": "entries/2025-09-16-ui-hotfixes-session.md",
@@ -19,7 +82,7 @@
       },
       "word_count": 509,
       "file_size": 4305,
-      "modified_at": "2025-09-16T00:43:11.122014"
+      "modified_at": "2025-09-16T00:51:21.533939"
     },
     {
       "filename": "2025-09-15-action-button-layout-optimization.md",
@@ -505,9 +568,9 @@
     "2025-09-15-modular-ui-architecture-hotfix.md: Title exceeds 60 character limit"
   ],
   "stats": {
-    "total_entries": 22,
+    "total_entries": 25,
     "total_errors": 1,
     "latest_entry": "2025-09-16"
   },
-  "generated_at": "2025-09-16T00:43:36.695786"
+  "generated_at": "2025-09-16T19:51:40.392089"
 }
