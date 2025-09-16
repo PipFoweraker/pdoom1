@@ -15,8 +15,8 @@ project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
-from ui_new.facade import ui_facade, UIFacade
-from ui_new.components.colours import MONEY_COLOUR, TITLE_COLOUR, DOOM_COLOUR
+from tools.ui_new.facade import ui_facade, UIFacade
+from tools.ui_new.components.colours import MONEY_COLOUR, TITLE_COLOUR, DOOM_COLOUR
 
 # Create local stub for typography to avoid import issues
 class MockFontManager:
@@ -32,8 +32,8 @@ class MockFontManager:
 font_manager = MockFontManager()
 FontManager = MockFontManager
 
-from ui_new.components.buttons import ButtonState, draw_button
-from ui_new.components.windows import draw_window_with_header, draw_panel
+from tools.ui_new.components.buttons import ButtonState, draw_button
+from tools.ui_new.components.windows import draw_window_with_header, draw_panel
 from src.core.game_state import GameState
 
 

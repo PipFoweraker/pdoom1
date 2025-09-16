@@ -35,7 +35,7 @@ except ImportError:
     pygame = DummyPygame()
 
 from src.ui.overlay_manager import OverlayManager, UIElement, ZLayer, UIState
-from ui_new.components.windows import draw_window_with_header
+from tools.ui_new.components.windows import draw_window_with_header
 
 
 class TestWindowManagement(unittest.TestCase):
@@ -65,7 +65,7 @@ class TestWindowManagement(unittest.TestCase):
                 pygame.quit()
                 # Clear font cache to prevent segfaults from cached invalid fonts
                 try:
-                    from ui_new.components.typography import font_manager
+                    from tools.ui_new.components.typography import font_manager
                     font_manager.clear_cache()
                 except:
                     pass
@@ -231,7 +231,7 @@ class TestWindowDrawing(unittest.TestCase):
                 pygame.quit()
                 # Clear font cache to prevent segfaults from cached invalid fonts
                 try:
-                    from ui_new.components.typography import font_manager
+                    from tools.ui_new.components.typography import font_manager
                     font_manager.clear_cache()
                 except:
                     pass
