@@ -40,13 +40,12 @@ def draw_employee_blobs(screen: pygame.Surface, game_state: Any, w: int, h: int)
                 blob['y'] = new_y
             blob['needs_position_update'] = False
     
-    # Update blob animations for new employees sliding in from left side
+    # Update blob animations for new employees - now appearing directly instead of sliding in
     for blob in game_state.employee_blobs:
         if blob['animation_progress'] < 1.0:
-            blob['animation_progress'] = min(1.0, blob['animation_progress'] + 0.05)
-            # Animate from starting position to target
-            start_x = -50
-            blob['x'] = start_x + (blob['target_x'] - start_x) * blob['animation_progress']
+            blob['animation_progress'] = min(1.0, blob['animation_progress'] + 0.2)  # Faster fade-in
+            # Fade in at target position instead of sliding from edge
+            blob['x'] = blob['target_x']  # Appear directly at target position
     
     # Draw each blob
     for blob in game_state.employee_blobs:

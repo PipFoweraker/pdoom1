@@ -15,7 +15,7 @@ class LayoutConfig:
     screen_width: int
     screen_height: int
     margin_factor: float = 0.05  # Percentage of screen for margins
-    spacing_factor: float = 0.02  # Percentage of screen for spacing between elements
+    spacing_factor: float = 0.035  # Percentage of screen for spacing between elements (increased for better UX)
     
     @property
     def margin(self) -> int:

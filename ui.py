@@ -1193,9 +1193,7 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     font = pygame.font.SysFont('Consolas', int(h*0.025))
     small_font = pygame.font.SysFont('Consolas', int(h*0.018))
 
-    # Title
-    title = title_font.render("P(Doom): Bureaucracy Strategy", True, (205, 255, 220))
-    screen.blit(title, (int(w*0.04), int(h*0.03)))
+    # Title removed - was causing unwanted large green text across main game UI
     
     # DEV MODE indicator (top-left corner, above title)
     draw_dev_mode_indicator(screen, w, h)
@@ -3865,7 +3863,7 @@ def draw_pre_game_settings(screen: pygame.Surface, w: int, h: int, settings: Dic
     # Fonts with better hierarchy
     title_font = pygame.font.SysFont('Consolas', int(h*0.055), bold=True)
     subtitle_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    pygame.font.SysFont('Consolas', int(h*0.028))
+    button_font = pygame.font.SysFont('Consolas', int(h*0.028))
     
     # Laboratory Configuration Header
     title_surf = title_font.render("LABORATORY CONFIGURATION", True, (220, 240, 255))

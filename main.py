@@ -1512,12 +1512,14 @@ def handle_end_game_menu_click(mouse_pos, w, h):
             break
 
 def handle_end_game_menu_keyboard(key):
-    """Handle keyboard navigation for end-game menu."""
+    """Handle keyboard navigation for end-game menu with both horizontal and vertical support."""
     global end_game_selected_item, current_state, selected_menu_item, overlay_content, overlay_title
     
-    if key == pygame.K_UP:
+    # Support both vertical (UP/DOWN) and horizontal (LEFT/RIGHT) navigation
+    # This handles both horizontal and vertical button layouts
+    if key == pygame.K_UP or key == pygame.K_LEFT:
         end_game_selected_item = (end_game_selected_item - 1) % len(end_game_menu_items)
-    elif key == pygame.K_DOWN:
+    elif key == pygame.K_DOWN or key == pygame.K_RIGHT:
         end_game_selected_item = (end_game_selected_item + 1) % len(end_game_menu_items)
     elif key == pygame.K_RETURN or key == pygame.K_SPACE:
         # Execute selected menu action
@@ -1535,16 +1537,6 @@ def handle_end_game_menu_keyboard(key):
         elif end_game_selected_item == 4:  # Submit Feedback
             reset_bug_report_form()
             bug_report_data["type_index"] = 2  # Feedback
-            current_state = 'bug_report'
-        elif end_game_selected_item == 4:  # Submit Feedback
-            # Reset and pre-fill feedback form
-            reset_bug_report_form()
-            bug_report_data["type_index"] = 2  # Feedback
-            current_state = 'bug_report'
-        elif end_game_selected_item == 5:  # Submit Bug Request
-            # Reset and pre-fill bug report form
-            reset_bug_report_form()
-            bug_report_data["type_index"] = 0  # Bug
             current_state = 'bug_report'
     elif key == pygame.K_ESCAPE:
         # Return to main menu
