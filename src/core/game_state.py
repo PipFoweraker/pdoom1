@@ -382,6 +382,11 @@ class GameState:
         # Load tutorial settings (after initialization)
         self.load_tutorial_settings()
 
+    @property
+    def actions(self) -> List[Dict[str, Any]]:
+        """Alias for gameplay_actions for UI compatibility."""
+        return self.gameplay_actions
+
     def calculate_max_ap(self) -> int:
         """
         Calculate maximum Action Points per turn based on staff composition.
