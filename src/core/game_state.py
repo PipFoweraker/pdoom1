@@ -732,6 +732,10 @@ class GameState:
         self.ap_spent_this_turn = True
         self.ap_glow_timer = 30
         
+        # Invalidate action availability cache after AP change (Action Point Display Bug fix)
+        from src.services.action_availability_manager import get_action_availability_manager
+        get_action_availability_manager().invalidate_cache()
+        
         # Handle immediate actions that should execute right away (like dialogs)
         if action['name'] in ['Hire Staff', 'Fundraising Options', 'Research Options']:
             # Execute immediately instead of deferring to end_turn
@@ -2498,6 +2502,10 @@ class GameState:
             self.action_points -= ap_cost
             self.ap_spent_this_turn = True  # Track for UI glow effects
             self.ap_glow_timer = 30  # 30 frames of glow effect
+            
+            # Invalidate action availability cache after AP change (Action Point Display Bug fix)
+            from src.services.action_availability_manager import get_action_availability_manager
+            get_action_availability_manager().invalidate_cache()
             
             # Deduct money cost using _add to track spending
             action_cost = self._get_action_cost(action)

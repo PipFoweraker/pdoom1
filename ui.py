@@ -1394,15 +1394,13 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     # Check if we should use compact UI mode
     use_compact_ui = not getattr(game_state, 'tutorial_enabled', True)
     
-    # Always filter actions to only show available ones (hide locked actions)
-    # This should work regardless of tutorial mode for cleaner interface
-    available_actions = []
-    available_action_indices = []
-    for idx, action in enumerate(game_state.actions):
-        # Check if action is unlocked (no rules or rules return True)
-        if not action.get("rules") or action["rules"](game_state):
-            available_actions.append(action)
-            available_action_indices.append(idx)
+    # Use Action Availability Manager for consistent state tracking (Action Point Display Bug fix)
+    from src.services.action_availability_manager import get_action_availability_manager
+    availability_manager = get_action_availability_manager()
+    
+    # Get visible actions with proper availability states
+    visible_action_infos, available_action_indices = availability_manager.get_visible_actions_with_display_mapping(game_state)
+    available_actions = [info.action_data for info in visible_action_infos]
     
     # Store the mapping for click handling
     game_state.display_to_action_index_map = available_action_indices
@@ -1441,11 +1439,11 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             break
             
         action = available_actions[display_idx]
+        action_info = visible_action_infos[display_idx]  # Get availability info
         original_idx = available_action_indices[display_idx]  # Original index in game_state.actions
-        ap_cost = action.get("ap_cost", 1)
         
-        # Determine button state for visual feedback
-        if game_state.action_points < ap_cost:
+        # Use Action Availability Manager for consistent button state (Action Point Display Bug fix)
+        if not action_info.is_selectable:
             button_state = ButtonState.DISABLED
         elif original_idx in game_state.selected_actions:  # Use original index for selection check
             button_state = ButtonState.PRESSED
