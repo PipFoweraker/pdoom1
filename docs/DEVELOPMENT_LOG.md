@@ -3,14 +3,14 @@
 ## 2025-09-04: 3-Column Layout Implementation
 
 ### Completed Features:
-- ✅ Implemented 3-column layout system with retro neon styling
-- ✅ Left column: Core repeating actions (Community, Fundraise, Research, etc.)
-- ✅ Middle column: Research team display (simplified for playtesting)
-- ✅ Right column: Strategic actions (Lobby, Board, etc.)
-- ✅ Reduced initial UI clutter - only essential actions shown in early game
-- ✅ Improved action text management with shortcuts and truncation
-- ✅ Context window integration with action details
-- ✅ Configuration system to enable/disable 3-column layout
+- [EMOJI] Implemented 3-column layout system with retro neon styling
+- [EMOJI] Left column: Core repeating actions (Community, Fundraise, Research, etc.)
+- [EMOJI] Middle column: Research team display (simplified for playtesting)
+- [EMOJI] Right column: Strategic actions (Lobby, Board, etc.)
+- [EMOJI] Reduced initial UI clutter - only essential actions shown in early game
+- [EMOJI] Improved action text management with shortcuts and truncation
+- [EMOJI] Context window integration with action details
+- [EMOJI] Configuration system to enable/disable 3-column layout
 
 ### UI Improvements Made:
 - Shortened button text with smart abbreviations
@@ -20,7 +20,7 @@
 - Early game filtering - only shows 4 essential actions initially
 
 ### Temporarily Disabled (for cleaner playtest):
-- ❌ Employee blob animations (will re-enable in future build)
+- [EMOJI] Employee blob animations (will re-enable in future build)
   - Reason: Needed cleaner middle column for 4-hour playtest deadline
   - Location: ui_new/layouts/three_column.py, _draw_employee_section()
   - Future: Re-implement with improved positioning and animations
@@ -50,10 +50,10 @@
 5. Add delegation interface to middle column when unlocked
 
 ### Playtest Focus Areas:
-- UI clarity and reduced clutter ✅
-- Action discoverability ✅  
-- Context window usefulness ✅
-- Column organization logic ✅
-- Performance and responsiveness ✅
+- UI clarity and reduced clutter [EMOJI]
+- Action discoverability [EMOJI]  
+- Context window usefulness [EMOJI]
+- Column organization logic [EMOJI]
+- Performance and responsiveness [EMOJI]
 
 **Ready for 4-hour playtest session!**

@@ -85,9 +85,9 @@ Our deterministic RNG system enhances privacy by:
 ### Privacy-Respecting Leaderboards
 **Pseudonymous Design:**
 ```
-Real Identity → [Local Only] 
-Pseudonym → Leaderboard Entry
-Game Data → Verification Hash
+Real Identity -> [Local Only] 
+Pseudonym -> Leaderboard Entry
+Game Data -> Verification Hash
 ```
 
 **Technical Safeguards:**
@@ -124,30 +124,30 @@ Game Data → Verification Hash
 
 ### Essential Privacy Controls
 ```
-Settings → Privacy → Data Collection
-├── Local Logging: [Enabled/Disabled]
-├── Verbose Logging: [Disabled/Standard/Full]
-├── Leaderboard Participation: [Disabled/Enabled]
-└── Anonymous Analytics: [Disabled/Enabled]
+Settings -> Privacy -> Data Collection
+[EMOJI][EMOJI][EMOJI] Local Logging: [Enabled/Disabled]
+[EMOJI][EMOJI][EMOJI] Verbose Logging: [Disabled/Standard/Full]
+[EMOJI][EMOJI][EMOJI] Leaderboard Participation: [Disabled/Enabled]
+[EMOJI][EMOJI][EMOJI] Anonymous Analytics: [Disabled/Enabled]
 ```
 
 ### Leaderboard Privacy Setup
 ```
-Settings → Privacy → Leaderboards
-├── Participation: [Opt-in Required]
-├── Pseudonym: [User-chosen display name]
-├── Data Sharing: [Scores only/Include verification data]
-└── Visibility: [Public/Friends only/Private]
+Settings -> Privacy -> Leaderboards
+[EMOJI][EMOJI][EMOJI] Participation: [Opt-in Required]
+[EMOJI][EMOJI][EMOJI] Pseudonym: [User-chosen display name]
+[EMOJI][EMOJI][EMOJI] Data Sharing: [Scores only/Include verification data]
+[EMOJI][EMOJI][EMOJI] Visibility: [Public/Friends only/Private]
 ```
 
 ### Logging Controls
 ```
-Settings → Privacy → Verbose Logging
-├── Enable Logging: [Yes/No]
-├── Log Level: [Minimal/Standard/Verbose/Debug]
-├── Include RNG Data: [Yes/No]
-├── Local Storage Only: [Yes/No]
-└── Auto-cleanup: [Keep for X days]
+Settings -> Privacy -> Verbose Logging
+[EMOJI][EMOJI][EMOJI] Enable Logging: [Yes/No]
+[EMOJI][EMOJI][EMOJI] Log Level: [Minimal/Standard/Verbose/Debug]
+[EMOJI][EMOJI][EMOJI] Include RNG Data: [Yes/No]
+[EMOJI][EMOJI][EMOJI] Local Storage Only: [Yes/No]
+[EMOJI][EMOJI][EMOJI] Auto-cleanup: [Keep for X days]
 ```
 
 ## Data Security
@@ -201,17 +201,17 @@ Settings → Privacy → Verbose Logging
 ## Implementation Timeline
 
 ### Current Status (v0.2.5)
-✅ **Local-first data storage**
-✅ **Pseudonymous leaderboard system**
-✅ **Opt-in verbose logging**
-✅ **Deterministic gameplay for verification**
-✅ **Privacy controls in settings**
+[EMOJI] **Local-first data storage**
+[EMOJI] **Pseudonymous leaderboard system**
+[EMOJI] **Opt-in verbose logging**
+[EMOJI] **Deterministic gameplay for verification**
+[EMOJI] **Privacy controls in settings**
 
 ### Planned Enhancements
-🔄 **Enhanced encryption for local data**
-🔄 **Additional leaderboard privacy options**
-🔄 **Automated data cleanup tools**
-🔄 **Privacy dashboard for data overview**
+[EMOJI] **Enhanced encryption for local data**
+[EMOJI] **Additional leaderboard privacy options**
+[EMOJI] **Automated data cleanup tools**
+[EMOJI] **Privacy dashboard for data overview**
 
 ---
 

@@ -50,7 +50,7 @@ That's it! The game will open with a main menu.
 
 ## New Player Tutorial & Help System
 
-**🎯 For First-Time Players:**
+**[TARGET] For First-Time Players:**
 P(Doom) includes a comprehensive tutorial system and Factorio-style hint system to guide new players through the game mechanics.
 
 ### Tutorial vs Hints
@@ -79,7 +79,7 @@ Get automatic guidance when you:
 - Run out of Action Points (tips for increasing capacity)
 - Reach high p(Doom) levels (warning and safety advice)
 
-**Dismissing Help**: Click the × button, press Escape, or press Enter to dismiss help popups.
+**Dismissing Help**: Click the x button, press Escape, or press Enter to dismiss help popups.
 
 ### Getting Help
 - **During Tutorial**: Use `Next` to proceed or `Skip` to exit tutorial
@@ -91,29 +91,29 @@ Get automatic guidance when you:
 ### Enhanced Settings & Configuration System
 P(Doom) features a comprehensive settings system organized into logical categories:
 
-**🔊 Audio Settings:**
+**[EMOJI] Audio Settings:**
 - Master sound control and volume adjustment
 - Individual sound effect toggles
 - Audio feedback preferences
 
-**⚙️ Game Configuration:**
+**[GEAR][EMOJI] Game Configuration:**
 - Create custom game configurations with different starting resources
 - Set custom seeds for reproducible gameplay experiences
 - Export/import config + seed packages for community sharing
 - Templates: Standard, Hardcore, Sandbox, and Speedrun modes
 
-**🎮 Gameplay Settings:**
+**[EMOJI] Gameplay Settings:**
 - Auto-delegation preferences
 - Difficulty modifiers
 - Event frequency controls
 - Opponent intel display options
 
-**♿ Accessibility:**
+**[EMOJI] Accessibility:**
 - Visual aid preferences
 - Keyboard navigation options
 - Text scaling and contrast settings
 
-**⌨️ Keybindings:**
+**[KEYBOARD][EMOJI] Keybindings:**
 - Customize keyboard shortcuts
 - Review all available hotkeys
 
@@ -172,14 +172,14 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 
 
 ### Resources to Manage
-- **💰 Money**: Spend on actions and upgrades, earn through fundraising
-- **👥 Staff**: Your team (costs money each turn, can quit if unpaid)
-- **⭐ Reputation**: Affects fundraising and events
-- **⚡ Action Points (AP)**: Limit actions per turn (3 AP max, resets each turn)
-- **☢️ p(Doom)**: AI catastrophe risk (game over at 100%)
-- **🖥️ Compute**: Powers employee productivity and research
-- **📄 Research**: Progress toward publishing papers (boosts reputation, plays celebratory sound)
-- **🎯 Competitors**: Track discovered opponents and their progress toward AGI
+- **[EMOJI] Money**: Spend on actions and upgrades, earn through fundraising
+- **[EMOJI] Staff**: Your team (costs money each turn, can quit if unpaid)
+- **[EMOJI] Reputation**: Affects fundraising and events
+- **[LIGHTNING] Action Points (AP)**: Limit actions per turn (3 AP max, resets each turn)
+- **[EMOJI][EMOJI] p(Doom)**: AI catastrophe risk (game over at 100%)
+- **[DESKTOP][EMOJI] Compute**: Powers employee productivity and research
+- **[EMOJI] Research**: Progress toward publishing papers (boosts reputation, plays celebratory sound)
+- **[TARGET] Competitors**: Track discovered opponents and their progress toward AGI
 
 ---
 
@@ -266,11 +266,11 @@ Each employee performs specialized productive actions when requirements are met,
 ### Main Menu Navigation
 | Action | How To |
 |--------|--------|
-| Navigate options | Arrow keys ↑↓ or mouse |
+| Navigate options | Arrow keys ^v or mouse |
 | Select option | Enter or mouse click |
 | Exit | Escape key |
 
-**💡 Tip**: Keyboard shortcuts are displayed on the left and right sides of the main menu for quick reference.
+**[IDEA] Tip**: Keyboard shortcuts are displayed on the left and right sides of the main menu for quick reference.
 
 ### In-Game Controls
 | Action | How To |
@@ -283,7 +283,7 @@ Each employee performs specialized productive actions when requirements are met,
 | Quit to menu | Press `Esc` |
 | End-game options | Click anywhere on final score screen to access end-game menu |
 
-**🎹 Keyboard Shortcuts for Actions:**
+**[EMOJI] Keyboard Shortcuts for Actions:**
 - **1-9 keys**: Execute actions 1-9 directly (displayed as [1], [2], etc. on action buttons)
 - **Audio feedback**: Hear a satisfying sound when spending Action Points
 - **Visual feedback**: Watch the AP counter glow when Action Points are spent  
@@ -291,7 +291,7 @@ Each employee performs specialized productive actions when requirements are met,
 - **Error handling**: Audio beep after 3 repeated identical errors (easter egg)
 
 ### Context Window System (80's Terminal Style)
-**💡 Enhanced Help & Information with Retro Flair:**
+**[IDEA] Enhanced Help & Information with Retro Flair:**
 - **Hover Information**: Move mouse over any UI element to see detailed context information
 - **DOS-Style Window**: Appears at bottom of screen (8-10% height) with distinctive 80's techno-green aesthetic
 - **ALL CAPS Display**: Information shown in terminal-style ALL CAPS text using Courier font
@@ -358,10 +358,10 @@ The Action Points (AP) system creates strategic depth through resource managemen
 - **Dynamic Scaling**: Your max AP grows as you hire staff (3 + staff*0.5 + admin*1.0)
 
 ### Staff Types & AP Bonuses
-- **📋 Admin Assistants**: High-cost specialists (+1.0 AP each) for maximum action capacity
-- **🔬 Research Staff**: Enable delegation of research actions with reduced effectiveness
-- **⚙️ Operations Staff**: Enable delegation of operational tasks, often with lower AP costs
-- **👥 Regular Staff**: Provide base +0.5 AP bonus and general productivity
+- **[CHECKLIST] Admin Assistants**: High-cost specialists (+1.0 AP each) for maximum action capacity
+- **[EMOJI] Research Staff**: Enable delegation of research actions with reduced effectiveness
+- **[GEAR][EMOJI] Operations Staff**: Enable delegation of operational tasks, often with lower AP costs
+- **[EMOJI] Regular Staff**: Provide base +0.5 AP bonus and general productivity
 
 ### Delegation System
 **Research Delegation:**
@@ -382,11 +382,11 @@ The Action Points (AP) system creates strategic depth through resource managemen
 
 
 ### Strategic Tips
-🎯 **Early Game (3-4 AP)**: Focus on essential actions like fundraising and safety research  
-📈 **Growth Phase (5-8 AP)**: Invest in staff hiring to expand action capacity  
-⚡ **Late Game (9+ AP)**: Leverage delegation and specialized staff for complex operations  
-💼 **Admin Investment**: Admin assistants are expensive but provide the highest AP return  
-🔄 **Delegation Planning**: Build research/ops staff for long-term delegation benefits  
+[TARGET] **Early Game (3-4 AP)**: Focus on essential actions like fundraising and safety research  
+[GRAPH] **Growth Phase (5-8 AP)**: Invest in staff hiring to expand action capacity  
+[LIGHTNING] **Late Game (9+ AP)**: Leverage delegation and specialized staff for complex operations  
+[EMOJI] **Admin Investment**: Admin assistants are expensive but provide the highest AP return  
+[EMOJI] **Delegation Planning**: Build research/ops staff for long-term delegation benefits  
 
 ### Staff Investment Guide
 - **Cost-Effective**: Regular staff (60$ for +0.5 AP = 120$ per AP)
@@ -401,18 +401,18 @@ The Action Points (AP) system creates strategic depth through resource managemen
 You're not alone in the AI race! Three competing organizations are also racing toward AGI:
 
 ### The Competition
-- **🏢 TechCorp Labs**: Massive tech corporation with deep pockets and aggressive timelines
-- **🏛️ National AI Initiative**: Government-backed program with strong regulatory influence
-- **🚀 Frontier Dynamics**: Secretive startup with mysterious funding and rapid development
+- **[EMOJI] TechCorp Labs**: Massive tech corporation with deep pockets and aggressive timelines
+- **[EMOJI][EMOJI] National AI Initiative**: Government-backed program with strong regulatory influence
+- **[ROCKET] Frontier Dynamics**: Secretive startup with mysterious funding and rapid development
 
 ### Intelligence Gathering
 
-**🕵️ Espionage (Available from start)**
+**[EMOJI][EMOJI] Espionage (Available from start)**
 - Cost: $30k, Risk: Moderate
 - Discovers new competitors or gathers basic intelligence
 - Can reveal progress estimates and general capabilities
 
-**🎯 Scout Opponent (Unlocked after Turn 5)**
+**[TARGET] Scout Opponent (Unlocked after Turn 5)**
 - Cost: $50k, Risk: Moderate
 - Focused intelligence gathering on specific competitors
 - Reveals detailed stats: budget, researchers, lobbyists, compute
@@ -465,15 +465,15 @@ The competitors panel (between resources and actions) shows:
 ## Actions You Can Take
 
 ### Strategic Menu Actions (NEW!)
-**💰 Fundraising Options** - Strategic funding dialog with 4 approaches and risk profiles
-**� Research Options** - Unified research menu with Safety, Governance, Rush, and Quality approaches
+**[EMOJI] Fundraising Options** - Strategic funding dialog with 4 approaches and risk profiles
+**[EMOJI] Research Options** - Unified research menu with Safety, Governance, Rush, and Quality approaches
 
 ### Core Actions
-**👥 Grow Community** - Increase reputation, chance to gain staff
-**🖥️ Buy Compute** - Purchase compute resources (cost decreases over time via Moore's Law)
-**📈 Hire Staff** - Interactive hiring dialog to select specific employee types (no upfront costs!)
-**🕵️ Espionage** - Learn about competitor progress (minimal $500 operational cost)
-**🎯 Scout Opponents** - Focused intelligence gathering (free internet research)
+**[EMOJI] Grow Community** - Increase reputation, chance to gain staff
+**[DESKTOP][EMOJI] Buy Compute** - Purchase compute resources (cost decreases over time via Moore's Law)
+**[GRAPH] Hire Staff** - Interactive hiring dialog to select specific employee types (no upfront costs!)
+**[EMOJI][EMOJI] Espionage** - Learn about competitor progress (minimal $500 operational cost)
+**[TARGET] Scout Opponents** - Focused intelligence gathering (free internet research)
 
 ### Strategic Dialogs (v0.4.0+)
 Both **Fundraising Options** and **Research Options** now open strategic choice menus:
@@ -495,12 +495,12 @@ Many actions are now **zero-cost** reflecting the bootstrap nonprofit model:
 
 ## Upgrade Strategy
 
-**🖥️ Computer System** - Makes research more effective
-**🪑 Comfy Chairs** - Staff less likely to quit when unpaid
-**☁️ Secure Cloud** - Reduces damage from lab breakthrough events
-**📊 Accounting Software** - Shows resource changes each turn
-**📋 Event Log System** - Unlock scrollable activity history
-**📱 Compact Activity Display** - Minimize activity log to save screen space
+**[DESKTOP][EMOJI] Computer System** - Makes research more effective
+**[CHAIR] Comfy Chairs** - Staff less likely to quit when unpaid
+**[CLOUD][EMOJI] Secure Cloud** - Reduces damage from lab breakthrough events
+**[CHART] Accounting Software** - Shows resource changes each turn
+**[CHECKLIST] Event Log System** - Unlock scrollable activity history
+**[PHONE] Compact Activity Display** - Minimize activity log to save screen space
 
 *Purchased upgrades appear as icons at the top right - hover for details.*
 
@@ -582,21 +582,21 @@ As your organization grows, you'll unlock new systems and face new challenges th
 
 
 ### Random Events to Watch For
-- **🔬 Lab Breakthrough** - p(Doom) increases (mitigated by security upgrades)
-- **💸 Funding Crisis** - Lose money when resources are tight
-- **😔 Staff Burnout** - Staff quit when overworked and underpaid
-- **💻 Software Offers** - Special upgrade opportunities
+- **[EMOJI] Lab Breakthrough** - p(Doom) increases (mitigated by security upgrades)
+- **[EMOJI] Funding Crisis** - Lose money when resources are tight
+- **[EMOJI] Staff Burnout** - Staff quit when overworked and underpaid
+- **[LAPTOP] Software Offers** - Special upgrade opportunities
 
 ### Enhanced Event System (Unlocked Turn 8+)
 
 After turn 8, your organization will unlock advanced event handling capabilities:
 
-**🚨 Popup Events** - Critical situations that pause the game and require immediate attention:
+**[EMOJI] Popup Events** - Critical situations that pause the game and require immediate attention:
 - Overlay appears with detailed information and multiple response options
 - Choose from Accept, Defer, Reduce, or Dismiss actions
 - Each choice has different consequences and resource impacts
 
-**⏳ Deferred Events** - Strategic event management:
+**[U+23F3] Deferred Events** - Strategic event management:
 - Defer non-critical events to handle at a better time
 - Deferred events appear in the lower-right "Deferred Events" zone
 - Show countdown timers (events auto-execute when expired)
@@ -639,9 +639,9 @@ After turn 8, your organization will unlock advanced event handling capabilities
 ## Game Over Conditions
 
 You lose if any of these happen:
-- **☢️ p(Doom) reaches 100%** - Catastrophic AI development
-- **👥 All staff quit** - No one left to run the lab
-- **🏁 Opponent wins** - Competition reaches 100% progress first
+- **[EMOJI][EMOJI] p(Doom) reaches 100%** - Catastrophic AI development
+- **[EMOJI] All staff quit** - No one left to run the lab
+- **[EMOJI] Opponent wins** - Competition reaches 100% progress first
 
 Instead of generic "GAME OVER" messages, you'll receive detailed end game scenarios that explain what led to your defeat and analyze your organization's performance based on how long you survived and what caused the end.
 
@@ -665,11 +665,11 @@ Your score is how many turns you survived. Try to beat your previous best!
 When your game ends, you'll see your final statistics followed by an **End-Game Menu** with several options:
 
 ### Menu Options
-- **🔄 Relaunch Game**: Restart with the same seed for another attempt
-- **🏠 Main Menu**: Return to the main menu to select new game options
-- **⚙️ Settings**: View game settings and configuration information  
-- **💬 Submit Feedback**: Share suggestions and feedback about the game
-- **🐛 Submit Bug Request**: Report bugs or technical issues
+- **[EMOJI] Relaunch Game**: Restart with the same seed for another attempt
+- **[EMOJI] Main Menu**: Return to the main menu to select new game options
+- **[GEAR][EMOJI] Settings**: View game settings and configuration information  
+- **[SPEECH] Submit Feedback**: Share suggestions and feedback about the game
+- **[EMOJI] Submit Bug Request**: Report bugs or technical issues
 
 ### Navigation
 - **Mouse**: Click any option to select it
@@ -689,4 +689,4 @@ This replaces the old "click anywhere to restart" behavior, giving you more cont
 
 ---
 
-**Remember: It's supposed to be hard! You're fighting an uphill battle against reckless AI development. Every turn you survive is a victory. 🎯**
+**Remember: It's supposed to be hard! You're fighting an uphill battle against reckless AI development. Every turn you survive is a victory. [TARGET]**

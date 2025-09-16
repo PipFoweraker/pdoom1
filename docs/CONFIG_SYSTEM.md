@@ -2,9 +2,9 @@
 
 P(Doom) features multiple configuration systems:
 
-**🎯 Enhanced Settings System (Recommended)**: Modern settings UI with categorical organization, seed management, and community features. See [DEVELOPERGUIDE.md - Enhanced Settings System Architecture](DEVELOPERGUIDE.md#enhanced-settings-system-architecture) for full details.
+**[TARGET] Enhanced Settings System (Recommended)**: Modern settings UI with categorical organization, seed management, and community features. See [DEVELOPERGUIDE.md - Enhanced Settings System Architecture](DEVELOPERGUIDE.md#enhanced-settings-system-architecture) for full details.
 
-**⚙️ Legacy Configuration System (Below)**: Original JSON-based config system for advanced modding and custom game rules.
+**[GEAR][EMOJI] Legacy Configuration System (Below)**: Original JSON-based config system for advanced modding and custom game rules.
 
 ---
 
@@ -199,9 +199,9 @@ Configuration files are stored as JSON in the `configs/` directory:
 
 ```
 configs/
-├── default.json          # Default balanced config
-├── hardcore.json         # Example custom config
-└── experimental.json     # Example modded config
+[EMOJI][EMOJI][EMOJI] default.json          # Default balanced config
+[EMOJI][EMOJI][EMOJI] hardcore.json         # Example custom config
+[EMOJI][EMOJI][EMOJI] experimental.json     # Example modded config
 
 current_config.json       # Tracks selected config
 ```

@@ -8,19 +8,19 @@ In this game, you manage a bootstrap AI safety lab with realistic funding constr
 Experience the challenge of running a scrappy nonprofit in the AI safety space - manage weekly cash flow, make strategic funding decisions, and scale your team while keeping doom levels low.
 
 **Latest Version:** v0.7.0 "Modular UI Architecture"
-- **🏗️ Modular Architecture**: Complete UI system rebuild - 4,235-line monolith broken into 8 specialized modules
-- **🚀 Enhanced Performance**: Cleaner codebase architecture for better maintainability and development speed
-- **🔧 Developer Experience**: Modular UI components make feature development and bug fixes dramatically easier
-- **📱 Windows Distribution**: Single-file .exe for download-and-run experience (no Python required)
-- **🏆 Enhanced Leaderboard System**: Seed-specific competition with dual identity support
-- **💰 Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
-- **🎵 Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
-- **💵 $100k Starting Funds**: Sufficient runway to experiment with different strategies
+- **[EMOJI][EMOJI] Modular Architecture**: Complete UI system rebuild - 4,235-line monolith broken into 8 specialized modules
+- **[ROCKET] Enhanced Performance**: Cleaner codebase architecture for better maintainability and development speed
+- **[EMOJI] Developer Experience**: Modular UI components make feature development and bug fixes dramatically easier
+- **[PHONE] Windows Distribution**: Single-file .exe for download-and-run experience (no Python required)
+- **[TROPHY] Enhanced Leaderboard System**: Seed-specific competition with dual identity support
+- **[EMOJI] Bootstrap Economic Model**: Realistic weekly expenses based on junior researcher salaries
+- **[EMOJI] Party-Ready Audio**: Sound effects enabled by default for engaging demonstrations
+- **[EMOJI] $100k Starting Funds**: Sufficient runway to experiment with different strategies
 
-🔒 **PRIVACY-FIRST DESIGN** - Your data stays under your control  
-🎯 **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
-📊 **OPTIONAL ANALYTICS** - Detailed logging for strategy improvement (opt-in only)  
-🏆 **PSEUDONYMOUS COMPETITION** - Compete without compromising privacy  
+[LOCK] **PRIVACY-FIRST DESIGN** - Your data stays under your control  
+[TARGET] **DETERMINISTIC GAMEPLAY** - Reproducible games for competitive verification  
+[CHART] **OPTIONAL ANALYTICS** - Detailed logging for strategy improvement (opt-in only)  
+[TROPHY] **PSEUDONYMOUS COMPETITION** - Compete without compromising privacy  
 
 =========================================
 QUICK START
@@ -31,7 +31,7 @@ QUICK START
 **For Windows 10/11 users who want the simplest experience:**
 
 1. **Download** the single executable: `PDoom-v0.5.0-alpha.exe` (19MB)
-2. **Run** by double-clicking (Windows Defender may show a warning - click "More info" → "Run anyway")
+2. **Run** by double-clicking (Windows Defender may show a warning - click "More info" -> "Run anyway")
 3. **Play** immediately - no Python installation or setup required!
 
 See [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md) for detailed Windows distribution instructions.
@@ -104,48 +104,48 @@ ALTERNATIVE: DOWNLOAD ZIP
 GAME FEATURES (v0.5.0) - PARTY DEMO READY
 ================================================================================
 
-🎉 **ENHANCED LEADERBOARD SYSTEM:**
+[PARTY] **ENHANCED LEADERBOARD SYSTEM:**
 - **Seed-Specific Competition**: Each game seed has its own isolated leaderboard
 - **Dual Identity Support**: Separate player names and lab names for flexibility
 - **Visual Celebration**: Spectacular high score achievements with rank display
 - **Persistent Progress**: Track your improvement across multiple games
 
-🔊 **PARTY-READY AUDIO:**
+[EMOJI] **PARTY-READY AUDIO:**
 - **Sound Effects Enabled**: Audio feedback enabled by default for engaging demos
 - **Interactive Feedback**: Action point spending, hiring, and UI interaction sounds
 - **Professional Polish**: Popup dialogs with distinct open/close/accept sounds
 
-🆕 **PRIVACY-FIRST SYSTEMS:**
+[EMOJI] **PRIVACY-FIRST SYSTEMS:**
 - **Local-First Storage**: All your data stays on your device by default
 - **Pseudonymous Competition**: Compete without revealing personal information
 - **Granular Privacy Controls**: Choose exactly what data to share and when
 - **Open-Source Privacy**: Audit our privacy implementation yourself
 
-🎯 **DETERMINISTIC GAMEPLAY:**
+[TARGET] **DETERMINISTIC GAMEPLAY:**
 - **Reproducible Games**: Same seed = same outcomes for competitive verification
 - **Mathematical Fairness**: Prove your achievements without sharing personal data
 - **Strategy Verification**: Analyze optimal plays with deterministic replay
 - **Competitive Integrity**: Fair competition through cryptographic verification
 
-📊 **ADVANCED ANALYTICS (OPT-IN):**
+[CHART] **ADVANCED ANALYTICS (OPT-IN):**
 - **Verbose Logging**: Detailed action tracking for strategy improvement
 - **Performance Metrics**: Turn-by-turn analysis of resource management
 - **RNG Transparency**: Full audit trail of random events for debugging
 - **Data Export**: JSON export for custom analysis tools
 
-🏦 **ECONOMIC CYCLES & FUNDING VOLATILITY:**
+[EMOJI] **ECONOMIC CYCLES & FUNDING VOLATILITY:**
 - **Historical Timeline**: Realistic AI funding cycles based on 2017-2025 market data
 - **Dynamic Funding**: 5 funding sources with different economic sensitivities
 - **Strategic Timing**: Market phases affect fundraising success and amounts
 - **Advanced Funding**: Series A, government grants, corporate partnerships
 
-🎮 **ENHANCED NEW PLAYER EXPERIENCE:**
+[EMOJI] **ENHANCED NEW PLAYER EXPERIENCE:**
 - **Tutorial System**: Interactive step-by-step guided walkthrough for new players
 - **Factorio-Style Hints**: Context-sensitive help that appears once and can be reset
 - **Professional Polish**: Fixed UI interaction issues for smooth gameplay experience
 - **Debug Tools**: Ctrl+D for UI diagnostics, Ctrl+E for emergency recovery, Ctrl+R to reset hints
 
-🏆 **PRIVACY-RESPECTING LEADERBOARDS:**
+[TROPHY] **PRIVACY-RESPECTING LEADERBOARDS:**
 - **Pseudonymous Only**: Compete with chosen display names, not real identities
 - **User-Controlled**: Enable/disable leaderboard participation anytime
 - **Local-First**: Scores stored locally with optional cloud sync
@@ -241,7 +241,7 @@ GAME MODES:
 
 PRIVACY CONTROLS:
     # Access privacy settings in-game
-    Settings → Privacy → [Configure all privacy options]
+    Settings -> Privacy -> [Configure all privacy options]
     
     # Or review privacy documentation
     See: docs/PRIVACY.md
@@ -261,19 +261,19 @@ PRIVACY & DATA PROTECTION
 
 P(Doom) is designed with **privacy-first principles**:
 
-🔒 **YOUR DATA STAYS YOURS:**
+[LOCK] **YOUR DATA STAYS YOURS:**
 - All game data stored locally by default
 - No personal information required to play
 - No data transmission without explicit opt-in
 - **Core Requirements**: Python 3.9+, pygame (graphics and input handling)
 
-🎮 **PRIVACY-ENHANCED GAMING:**
+[EMOJI] **PRIVACY-ENHANCED GAMING:**
 - **Deterministic mode**: Compete fairly without sharing personal data
 - **Pseudonymous leaderboards**: Choose your own display name
 - **Optional analytics**: Enable detailed logging only if you want strategy insights
 - **Local-first architecture**: Full offline functionality
 
-📋 **TRANSPARENT PRACTICES:**
+[CHECKLIST] **TRANSPARENT PRACTICES:**
 - **Open source**: All privacy code is auditable
 - **Clear controls**: Granular privacy settings in-game
 - **User ownership**: Export, modify, or delete your data anytime

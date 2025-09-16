@@ -103,13 +103,13 @@ The executable uses `src/services/resource_manager.py` to handle assets:
 
 ```
 build/               # Temporary build files (can be deleted)
-├── pdoom/
-│   ├── Analysis-00.toc
-│   ├── PYZ-00.pyz
-│   └── ...
+[EMOJI][EMOJI][EMOJI] pdoom/
+[EMOJI]   [EMOJI][EMOJI][EMOJI] Analysis-00.toc
+[EMOJI]   [EMOJI][EMOJI][EMOJI] PYZ-00.pyz
+[EMOJI]   [EMOJI][EMOJI][EMOJI] ...
 
 dist/                # Distribution output
-└── PDoom-v0.4.1-alpha.exe    # Final executable
+[EMOJI][EMOJI][EMOJI] PDoom-v0.4.1-alpha.exe    # Final executable
 ```
 
 #### Performance Considerations

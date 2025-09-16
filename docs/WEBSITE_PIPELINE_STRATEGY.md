@@ -11,26 +11,26 @@ This document outlines the comprehensive strategy for creating automated pipelin
 #### pdoom1-website Repository Structure
 ```
 pdoom1-website/
-├── public/
-│   ├── blog/                    # EMPTY - Ready for dev content
-│   ├── dev-notes/              # EMPTY - Ready for technical notes
-│   ├── index.html              # Static homepage
-│   └── assets/                 # CSS, JS, images
-├── .github/workflows/
-│   ├── sync-pdoom1-docs.yml    # Existing docs sync
-│   ├── bug-report.yml          # Bug report processing
-│   └── deploy.yml              # Netlify deployment
-└── netlify.toml                # Deployment configuration
+[EMOJI][EMOJI][EMOJI] public/
+[EMOJI]   [EMOJI][EMOJI][EMOJI] blog/                    # EMPTY - Ready for dev content
+[EMOJI]   [EMOJI][EMOJI][EMOJI] dev-notes/              # EMPTY - Ready for technical notes
+[EMOJI]   [EMOJI][EMOJI][EMOJI] index.html              # Static homepage
+[EMOJI]   [EMOJI][EMOJI][EMOJI] assets/                 # CSS, JS, images
+[EMOJI][EMOJI][EMOJI] .github/workflows/
+[EMOJI]   [EMOJI][EMOJI][EMOJI] sync-pdoom1-docs.yml    # Existing docs sync
+[EMOJI]   [EMOJI][EMOJI][EMOJI] bug-report.yml          # Bug report processing
+[EMOJI]   [EMOJI][EMOJI][EMOJI] deploy.yml              # Netlify deployment
+[EMOJI][EMOJI][EMOJI] netlify.toml                # Deployment configuration
 ```
 
 #### Game Repository Dev Blog System
 ```
 pdoom1/dev-blog/
-├── entries/                    # 16 entries ready for sync
-├── templates/                  # Standardized templates
-├── create_entry.py            # Entry generation tool
-├── generate_index.py          # Index generation tool
-└── index.json                 # Generated metadata index
+[EMOJI][EMOJI][EMOJI] entries/                    # 16 entries ready for sync
+[EMOJI][EMOJI][EMOJI] templates/                  # Standardized templates
+[EMOJI][EMOJI][EMOJI] create_entry.py            # Entry generation tool
+[EMOJI][EMOJI][EMOJI] generate_index.py          # Index generation tool
+[EMOJI][EMOJI][EMOJI] index.json                 # Generated metadata index
 ```
 
 ### Pipeline Architecture Design

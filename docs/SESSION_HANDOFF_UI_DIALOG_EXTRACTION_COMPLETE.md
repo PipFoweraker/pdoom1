@@ -4,7 +4,7 @@
 **Branch**: `refactor/monolith-breakdown`  
 **Commit**: f079953 - "UI Monolith Breakdown: Extract dialog and bug report systems"
 
-## ✅ MAJOR ACCOMPLISHMENTS
+## [EMOJI] MAJOR ACCOMPLISHMENTS
 
 ### Dialog System Extraction (800+ Lines Reduced)
 - **Extracted 4 major dialog functions** from ui.py monolith:
@@ -18,11 +18,11 @@
   - `src/ui/bug_report.py` (276 lines) - Bug report form functionality
 
 ### Line Count Impact
-- **ui.py reduced**: ~4,000+ lines → 3,254 lines (**~800+ line reduction**)
+- **ui.py reduced**: ~4,000+ lines -> 3,254 lines (**~800+ line reduction**)
 - **Successful extraction pattern established** for continued breakdown
 - **Zero breaking changes** to game functionality (functions preserved exactly)
 
-## ⚠️ CURRENT STATE: Temporary Import Issue
+## [WARNING][EMOJI] CURRENT STATE: Temporary Import Issue
 
 ### Problem
 - **Circular import detected**: `dialog_system.py` had `import main` causing dependency loop
@@ -42,7 +42,7 @@ from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game
 # from src.ui.bug_report import draw_bug_report_form, draw_bug_report_success
 ```
 
-## 🎯 NEXT SESSION PRIORITIES
+## [TARGET] NEXT SESSION PRIORITIES
 
 ### 1. CRITICAL: Fix Circular Import Architecture
 **File**: `src/ui/dialog_system.py` line ~396
@@ -68,7 +68,7 @@ from src.ui.bug_report import draw_bug_report_form, draw_bug_report_success
 
 **Goal**: Additional 650-950 line reduction from ui.py
 
-## 🔧 TECHNICAL DETAILS
+## [EMOJI] TECHNICAL DETAILS
 
 ### Files Created
 - `src/ui/dialog_system.py` - Complete dialog rendering system
@@ -87,19 +87,19 @@ from src.ui.bug_report import draw_bug_report_form, draw_bug_report_success
 ### Validation Commands
 ```bash
 # Test basic ui.py import (should work)
-python -c "import sys; sys.path.append('.'); import ui; print('✓ UI imports successfully!')"
+python -c "import sys; sys.path.append('.'); import ui; print('v UI imports successfully!')"
 
 # Test extracted modules (should work once circular import fixed)
-python -c "from src.ui.dialog_system import draw_fundraising_dialog; print('✓ Dialog system working!')"
+python -c "from src.ui.dialog_system import draw_fundraising_dialog; print('v Dialog system working!')"
 ```
 
-## 📊 PROGRESS TRACKING
+## [CHART] PROGRESS TRACKING
 
-### Issue #303 Status: ✅ COMPLETED
+### Issue #303 Status: [EMOJI] COMPLETED
 - Original target: Extract draw_ui function (662 lines)
 - **EXCEEDED TARGET**: Extracted dialog system (800+ lines)
 
-### Issue #304 Status: 🚀 READY
+### Issue #304 Status: [ROCKET] READY
 - Target: Extract menu system functions (~300-400 lines)
 - **Pattern established**, ready for implementation
 
@@ -109,14 +109,14 @@ python -c "from src.ui.dialog_system import draw_fundraising_dialog; print('✓ 
 - **Phase 3 Planned**: Additional UI components (400+ lines)
 - **Total Target**: 1,500+ line reduction from ui.py monolith
 
-## 🚀 SUCCESS CRITERIA FOR NEXT SESSION
+## [ROCKET] SUCCESS CRITERIA FOR NEXT SESSION
 
-1. **✅ Fix circular import**: Remove `import main` from dialog_system.py
-2. **✅ Re-enable imports**: Uncomment imports in ui.py 
-3. **✅ Validate functionality**: Confirm extracted functions work correctly
-4. **🎯 Continue extraction**: Target menu system functions for next 300-400 line reduction
+1. **[EMOJI] Fix circular import**: Remove `import main` from dialog_system.py
+2. **[EMOJI] Re-enable imports**: Uncomment imports in ui.py 
+3. **[EMOJI] Validate functionality**: Confirm extracted functions work correctly
+4. **[TARGET] Continue extraction**: Target menu system functions for next 300-400 line reduction
 
-## 📝 QUICK START FOR NEXT SESSION
+## [NOTE] QUICK START FOR NEXT SESSION
 
 ```bash
 # 1. Checkout the branch
@@ -139,4 +139,4 @@ python -c "from src.ui.dialog_system import draw_fundraising_dialog; print('Succ
 **Architecture**: Proven modular extraction pattern in place
 
 ---
-*Session completed successfully - Major dialog extraction milestone achieved!* 🎉
+*Session completed successfully - Major dialog extraction milestone achieved!* [PARTY]

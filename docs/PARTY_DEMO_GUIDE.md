@@ -32,7 +32,7 @@ python main.py
 1. **Game Over Scenario**: Let doom reach 100% or run out of money
 2. **Spectacular Screen**: Visual celebration if high score achieved
 3. **Leaderboard Integration**: Show ranking against other players
-4. **Natural Flow**: "View Full Leaderboard" → "Launch New Game"
+4. **Natural Flow**: "View Full Leaderboard" -> "Launch New Game"
 
 ### Competitive Hook (1-2 minutes)
 1. **Seed-Specific Competition**: "Try the same seed to compare strategies"
@@ -63,7 +63,7 @@ python main.py
 
 ### Audio Issues
 - **No Sound**: Audio requires pygame and numpy - check console for warnings
-- **Silent Mode**: Settings → Audio → Enable Sound (though default is enabled)
+- **Silent Mode**: Settings -> Audio -> Enable Sound (though default is enabled)
 
 ### Performance
 - **Slow Start**: First launch initializes config files (normal)

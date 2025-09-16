@@ -20,7 +20,7 @@ Events were triggering AFTER actions were executed, causing:
 ```
 end_turn() - NEW SEQUENCE:
 1. Start turn processing
-2. trigger_events() ← EVENTS NOW HAPPEN FIRST!
+2. trigger_events() <- EVENTS NOW HAPPEN FIRST!
 3. Check for pending popups (blocks turn if needed)
 4. Clear messages and prepare turn
 5. Execute selected actions  
@@ -32,10 +32,10 @@ end_turn() - NEW SEQUENCE:
 ```
 
 ## Benefits:
-✅ **Events appear before action commitment** - Players see all information before deciding  
-✅ **Proper game flow** - Events guide player decisions rather than interrupting them  
-✅ **Better player agency** - Can respond to events with full action point availability  
-✅ **Backward compatible** - Doesn't break existing functionality  
+[EMOJI] **Events appear before action commitment** - Players see all information before deciding  
+[EMOJI] **Proper game flow** - Events guide player decisions rather than interrupting them  
+[EMOJI] **Better player agency** - Can respond to events with full action point availability  
+[EMOJI] **Backward compatible** - Doesn't break existing functionality  
 
 ## Testing Needed:
 - Test that events appear at proper time during turn cycle

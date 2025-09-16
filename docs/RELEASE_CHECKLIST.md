@@ -122,7 +122,7 @@ If a critical bug is discovered after release:
    - [ ] Create hotfix branch from release tag
    - [ ] Implement minimal fix
    - [ ] Test fix thoroughly
-   - [ ] Update version to patch increment (e.g., 0.1.0 → 0.1.1)
+   - [ ] Update version to patch increment (e.g., 0.1.0 -> 0.1.1)
 
 3. **Hotfix Release**
    - [ ] Follow abbreviated release process

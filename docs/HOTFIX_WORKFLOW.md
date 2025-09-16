@@ -2,7 +2,7 @@
 
 ## Current Status: v0.2.5 "UI Interaction Fixes & Hint System" - Professional Polish Release
 
-✅ **MAJOR UI ISSUES RESOLVED**: This release addresses critical user experience issues including:
+[EMOJI] **MAJOR UI ISSUES RESOLVED**: This release addresses critical user experience issues including:
 - Fixed spacebar blocking during tutorial overlays
 - Fixed unprofessional staff hire popup at game start
 - Implemented Factorio-style hint system
@@ -14,7 +14,7 @@
 
 1. **For any UI fix/improvement:**
    ```
-   Current: 0.2.X → Next: 0.2.Y
+   Current: 0.2.X -> Next: 0.2.Y
    ```
 
 2. **Update the version:**
@@ -44,10 +44,10 @@ VERSION MANAGEMENT:
 - Target: stable v0.3.0 for distribution
 
 RESOLVED ISSUES:
-- Spacebar blocking during tutorial overlays ✅
-- Unprofessional staff hire popup at game start ✅
-- Button click consistency problems ✅
-- Modal dialog interference ✅
+- Spacebar blocking during tutorial overlays [EMOJI]
+- Unprofessional staff hire popup at game start [EMOJI]
+- Button click consistency problems [EMOJI]
+- Modal dialog interference [EMOJI]
 - Installation/dependency issues
 - Performance problems
 
@@ -62,12 +62,12 @@ When making changes, always:
 
 ## Expected Hotfix Series
 
-- **v0.2.1** ✓ 3-column layout with keystroke support
-- **v0.2.2** ✓ Button sizing and text overflow fixes  
-- **v0.2.3** ✓ Color differentiation and visibility improvements
-- **v0.2.4** ✓ Keystroke binding refinements and input handling
-- **v0.2.5** ✓ UI interaction fixes and Factorio-style hint system
-- **v0.3.0** → **MILESTONE: Stable UI release**
+- **v0.2.1** v 3-column layout with keystroke support
+- **v0.2.2** v Button sizing and text overflow fixes  
+- **v0.2.3** v Color differentiation and visibility improvements
+- **v0.2.4** v Keystroke binding refinements and input handling
+- **v0.2.5** v UI interaction fixes and Factorio-style hint system
+- **v0.3.0** -> **MILESTONE: Stable UI release**
 
 ---
 

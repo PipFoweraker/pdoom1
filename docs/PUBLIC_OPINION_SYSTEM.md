@@ -114,8 +114,8 @@ Players can actively manage their public image through media actions:
 
 ### Research Actions
 Research with significant reputation gain (2+) can generate media stories:
-- Safety research → positive breakthrough stories
-- Capabilities research → mixed coverage with safety concerns
+- Safety research -> positive breakthrough stories
+- Capabilities research -> mixed coverage with safety concerns
 
 ### Event System
 - Random media events occur each turn

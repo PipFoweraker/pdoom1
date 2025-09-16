@@ -4,9 +4,9 @@
 The codebase contains extensive Unicode characters (emojis, special symbols) in documentation and some code files that may cause encoding issues in certain environments.
 
 ## Affected Areas
-- **README.md**: Extensive emoji usage (🛡️, 🎯, etc.)
-- **CHANGELOG.md**: Emoji section headers (🏢, 🐍, 🔧, etc.) 
-- **Python files**: Some decorative Unicode in comments/strings (✓, 📰, 💰)
+- **README.md**: Extensive emoji usage ([EMOJI][EMOJI], [TARGET], etc.)
+- **CHANGELOG.md**: Emoji section headers ([EMOJI], [EMOJI], [EMOJI], etc.) 
+- **Python files**: Some decorative Unicode in comments/strings (v, [EMOJI], [EMOJI])
 
 ## Symptoms
 - Terminal encoding errors in some Windows environments

@@ -4,12 +4,12 @@
 
 Based on the existing GitHub Actions workflows, your P(Doom) ecosystem appears to have:
 
-### ✅ **Confirmed Existing Repositories**
+### [EMOJI] **Confirmed Existing Repositories**
 - **`PipFoweraker/pdoom1`** - Main game repository (current workspace)
 - **`PipFoweraker/pdoom1-website`** - Website repository (referenced in sync workflows)
 - **`PipFoweraker/pdoom1-data`** - Data repository (status unknown - needs verification)
 
-### 🔍 **Repository Verification Commands**
+### [SEARCH] **Repository Verification Commands**
 
 Run these commands to verify which repositories exist and their access status:
 
@@ -82,12 +82,12 @@ Organize your local development with this structure:
 
 ```
 pdoom1-ecosystem/
-├── pdoom1/                    # Main game (current location)
-├── pdoom1-website/           # Website repository  
-├── pdoom1-data/              # Data/API repository
-├── docs/                     # Shared documentation
-├── scripts/                  # Cross-repo scripts
-└── pdoom1-ecosystem.code-workspace
+[EMOJI][EMOJI][EMOJI] pdoom1/                    # Main game (current location)
+[EMOJI][EMOJI][EMOJI] pdoom1-website/           # Website repository  
+[EMOJI][EMOJI][EMOJI] pdoom1-data/              # Data/API repository
+[EMOJI][EMOJI][EMOJI] docs/                     # Shared documentation
+[EMOJI][EMOJI][EMOJI] scripts/                  # Cross-repo scripts
+[EMOJI][EMOJI][EMOJI] pdoom1-ecosystem.code-workspace
 ```
 
 ### Setup Commands
@@ -133,10 +133,10 @@ Create a central documentation hub that references all repositories:
 
 ## Integration Points
 
-- **Game → Website**: Dev blog sync, release announcements
-- **Game → Data**: Score submission, leaderboards
-- **Data → Website**: Dynamic content, leaderboards
-- **Website → Data**: User registration, community features
+- **Game -> Website**: Dev blog sync, release announcements
+- **Game -> Data**: Score submission, leaderboards
+- **Data -> Website**: Dynamic content, leaderboards
+- **Website -> Data**: User registration, community features
 
 ## Quick Links
 
@@ -163,7 +163,7 @@ def sync_documentation():
     
     # Documentation sync map
     sync_map = {
-        # Source → Destinations
+        # Source -> Destinations
         "pdoom1/docs/MULTI_REPOSITORY_INTEGRATION_PLAN.md": [
             "pdoom1-website/docs/",
             "pdoom1-data/docs/"
@@ -184,12 +184,12 @@ def sync_documentation():
                 dest_path = base_dir / dest_dir
                 if dest_path.exists():
                     dest_file = dest_path / source_path.name
-                    print(f"Syncing {source} → {dest_file}")
+                    print(f"Syncing {source} -> {dest_file}")
                     shutil.copy2(source_path, dest_file)
                 else:
-                    print(f"⚠️  Destination not found: {dest_path}")
+                    print(f"[WARNING][EMOJI]  Destination not found: {dest_path}")
         else:
-            print(f"⚠️  Source not found: {source_path}")
+            print(f"[WARNING][EMOJI]  Source not found: {source_path}")
 
 if __name__ == "__main__":
     sync_documentation()
@@ -227,7 +227,7 @@ repos=("pdoom1" "pdoom1-website" "pdoom1-data")
 
 for repo in "${repos[@]}"; do
     if [ -d "$repo" ]; then
-        echo "📁 $repo:"
+        echo "[EMOJI] $repo:"
         cd "$repo"
         
         # Git status
@@ -238,7 +238,7 @@ for repo in "${repos[@]}"; do
         cd ..
         echo
     else
-        echo "❌ $repo: Not found"
+        echo "[EMOJI] $repo: Not found"
         echo
     fi
 done
@@ -253,7 +253,7 @@ repos=("pdoom1" "pdoom1-website" "pdoom1-data")
 
 for repo in "${repos[@]}"; do
     if [ -d "$repo" ]; then
-        echo "🔄 Updating $repo..."
+        echo "[EMOJI] Updating $repo..."
         cd "$repo"
         git pull origin $(git branch --show-current)
         cd ..
@@ -341,21 +341,21 @@ def main():
         "Data": base_dir / "pdoom1-data"
     }
     
-    print("🎮 P(Doom) Ecosystem Status")
+    print("[EMOJI] P(Doom) Ecosystem Status")
     print("=" * 50)
     
     for name, path in repos.items():
         info = get_repo_info(path)
-        print(f"\n📁 {name}:")
+        print(f"\n[EMOJI] {name}:")
         
         if info["status"] == "missing":
-            print("   ❌ Repository not found")
+            print("   [EMOJI] Repository not found")
         elif info["status"] == "error":
-            print("   ⚠️  Git error")
+            print("   [WARNING][EMOJI]  Git error")
         else:
-            print(f"   ✅ Branch: {info['branch']}")
-            print(f"   📝 Changes: {info['uncommitted_changes']}")
-            print(f"   💫 Last: {info['last_commit']}")
+            print(f"   [EMOJI] Branch: {info['branch']}")
+            print(f"   [NOTE] Changes: {info['uncommitted_changes']}")
+            print(f"   [DIZZY] Last: {info['last_commit']}")
 
 if __name__ == "__main__":
     main()

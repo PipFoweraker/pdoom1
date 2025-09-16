@@ -11,7 +11,7 @@
 - **Compute**: Research infrastructure for advanced projects
 
 ### Turn-Based Gameplay
-- **Turn Structure**: Select actions → End turn → Process events → Repeat
+- **Turn Structure**: Select actions -> End turn -> Process events -> Repeat
 - **Action System**: Each action costs action points and/or money
 - **Event System**: Random events each turn affect resources and strategy
 - **Opponent AI**: 3 competing labs with hidden progress and strategies

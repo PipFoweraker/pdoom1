@@ -1,10 +1,10 @@
 # P(Doom) v0.4.0 Release Notes
 
 **Release Date**: September 13, 2025  
-**Branch**: hotfix/live-session-enhancements → main  
+**Branch**: hotfix/live-session-enhancements -> main  
 **Codename**: "Strategic Menu Revolution"
 
-## 🎯 Major Enhancements
+## [TARGET] Major Enhancements
 
 ### **1. Fundraising System Overhaul**
 - **Replaced single "Fundraise" action** with comprehensive "Fundraising Options" submenu
@@ -40,11 +40,11 @@
 - **Visual Theming** - Color-coded dialogs (green for funding, blue for research)
 
 ### **5. Economic Balance Changes**
-- **Starting Funds Increased** - $5,000 → $100,000 for improved early-game experience
+- **Starting Funds Increased** - $5,000 -> $100,000 for improved early-game experience
 - **Enhanced Player Agency** - More strategic choices available from game start
 - **Reduced Early-Game Constraints** - Players can experiment with different strategies
 
-## 🔧 Technical Improvements
+## [EMOJI] Technical Improvements
 
 ### **Dialog System Architecture**
 - **Modular Dialog Framework** - Reusable system for future menu consolidations
@@ -58,7 +58,7 @@
 - **ASCII Compliance** - All code and documentation maintains ASCII-only formatting
 - **Error Handling** - Robust error recovery for dialog interactions
 
-## 🎮 Gameplay Impact
+## [EMOJI] Gameplay Impact
 
 ### **Strategic Depth**
 - **Meaningful Choices** - Players must choose between different approaches rather than just clicking available actions
@@ -70,7 +70,7 @@
 - **Better Information** - Verbose logging provides clear feedback on all game events
 - **Improved Pacing** - Higher starting funds allow focus on strategic decisions
 
-## 📋 Development Notes
+## [CHECKLIST] Development Notes
 
 ### **Session Methodology**
 - **Live Collaborative Development** - Real-time implementation with user feedback
@@ -82,7 +82,7 @@
 - **Backward Compatibility** - All changes maintain existing save game compatibility
 - **Performance Conscious** - Efficient rendering and interaction handling
 
-## 🔮 Future Roadmap
+## [EMOJI] Future Roadmap
 
 ### **Immediate Next Steps (Create Issues)**
 1. **Additional Menu Consolidations** - Apply dialog pattern to other action groups
@@ -95,7 +95,7 @@
 - **Performance Profiling** - Ensure new dialogs don't impact game performance
 - **Accessibility Review** - Keyboard navigation and screen reader compatibility
 
-## 📊 Statistics
+## [CHART] Statistics
 - **Files Modified**: 7 (game_state.py, actions.py, ui.py, main.py, default.json, version.py)
 - **New Functions Added**: 15+ (dialog system, research options, verbose logging)
 - **Lines of Code**: ~800+ lines of new functionality

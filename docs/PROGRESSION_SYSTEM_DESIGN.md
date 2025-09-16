@@ -243,7 +243,7 @@ PROGRESSION_TREES = {
 ## Implementation Strategy
 
 ### Short Term (Current PR)
-1. **Create design documentation** ✓
+1. **Create design documentation** v
 2. **Add progression tree infrastructure** (basic classes)
 3. **Migrate opponent discovery to progression system**
 4. **Create example progression tree for intelligence operations**

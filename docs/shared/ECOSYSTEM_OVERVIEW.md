@@ -9,33 +9,33 @@ The P(Doom) ecosystem is a multi-repository architecture designed to support the
 ```
 P(Doom) Ecosystem (September 2025)
 
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│     pdoom1      │    │  pdoom1-website │    │   pdoom-data    │
-│   (Game Core)   │    │ (Community Hub) │    │ (Data Service)  │
-├─────────────────┤    ├─────────────────┤    ├─────────────────┤
-│ • Game Logic    │───▶│ • Static Site   │    │ • PostgreSQL    │
-│ • Local Storage │    │ • Blog System   │    │ • REST API      │
-│ • Leaderboards  │    │ • Documentation │◀───│ • Authentication│
-│ • Dev Tools     │    │ • Community     │    │ • Analytics     │
-│ • CI/CD         │    │   Features      │    │ • Monitoring    │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-         │                        │                        │
-         └────────────────────────┼────────────────────────┘
-                                  │
-                    ┌─────────────────────────┐
-                    │   Cross-Repository      │
-                    │   Documentation Sync    │
-                    │   (GitHub Actions)      │
-                    └─────────────────────────┘
+[EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]
+[EMOJI]     pdoom1      [EMOJI]    [EMOJI]  pdoom1-website [EMOJI]    [EMOJI]   pdoom-data    [EMOJI]
+[EMOJI]   (Game Core)   [EMOJI]    [EMOJI] (Community Hub) [EMOJI]    [EMOJI] (Data Service)  [EMOJI]
+[EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]
+[EMOJI] * Game Logic    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] * Static Site   [EMOJI]    [EMOJI] * PostgreSQL    [EMOJI]
+[EMOJI] * Local Storage [EMOJI]    [EMOJI] * Blog System   [EMOJI]    [EMOJI] * REST API      [EMOJI]
+[EMOJI] * Leaderboards  [EMOJI]    [EMOJI] * Documentation [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] * Authentication[EMOJI]
+[EMOJI] * Dev Tools     [EMOJI]    [EMOJI] * Community     [EMOJI]    [EMOJI] * Analytics     [EMOJI]
+[EMOJI] * CI/CD         [EMOJI]    [EMOJI]   Features      [EMOJI]    [EMOJI] * Monitoring    [EMOJI]
+[EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]
+         [EMOJI]                        [EMOJI]                        [EMOJI]
+         [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]
+                                  [EMOJI]
+                    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]
+                    [EMOJI]   Cross-Repository      [EMOJI]
+                    [EMOJI]   Documentation Sync    [EMOJI]
+                    [EMOJI]   (GitHub Actions)      [EMOJI]
+                    [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI]
 ```
 
 ## Repository Details
 
-### 🎮 pdoom1 (Game Repository)
+### [EMOJI] pdoom1 (Game Repository)
 - **URL**: https://github.com/PipFoweraker/pdoom1
 - **Primary Language**: Python
 - **Purpose**: Core game logic, local data management, development tools
-- **Status**: ✅ Active (76 open issues)
+- **Status**: [EMOJI] Active (76 open issues)
 - **Key Features**:
   - Turn-based strategy gameplay
   - Local leaderboard system
@@ -44,11 +44,11 @@ P(Doom) Ecosystem (September 2025)
   - Development blog system
   - Configuration management
 
-### 🌐 pdoom1-website (Community Platform)
+### [EMOJI] pdoom1-website (Community Platform)
 - **URL**: https://github.com/PipFoweraker/pdoom1-website
 - **Primary Language**: HTML/JavaScript
 - **Purpose**: Community engagement, content distribution, public documentation
-- **Status**: ✅ Active (20 open issues)
+- **Status**: [EMOJI] Active (20 open issues)
 - **Key Features**:
   - Static site hosting
   - Automated blog content sync
@@ -56,11 +56,11 @@ P(Doom) Ecosystem (September 2025)
   - Release announcements
   - Game downloads and information
 
-### 🗄️ pdoom-data (Data Service)
+### [EMOJI][EMOJI] pdoom-data (Data Service)
 - **URL**: https://github.com/PipFoweraker/pdoom-data
 - **Primary Language**: Python/SQL
 - **Purpose**: Centralized data storage, API services, cross-game data management
-- **Status**: ✅ Active (Multi-game architecture)
+- **Status**: [EMOJI] Active (Multi-game architecture)
 - **Planned Features**:
   - PostgreSQL database
   - RESTful API endpoints
@@ -73,40 +73,40 @@ P(Doom) Ecosystem (September 2025)
 
 ### Current State (v0.4.1)
 ```
-Player ────▶ pdoom1 (Local Game) ────▶ Local Files
-                │
-                ▼
-         Dev Blog Entries ────▶ pdoom1-website (Static Site)
+Player [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] pdoom1 (Local Game) [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] Local Files
+                [EMOJI]
+                [EMOJI]
+         Dev Blog Entries [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] pdoom1-website (Static Site)
 ```
 
 ### Target State (Multi-Repository Integration)
 ```
-Player ────▶ pdoom1 (Game Client)
-                │
-                ├─────▶ pdoom-data (API) ────▶ PostgreSQL Database
-                │              │
-                │              ▼
-                │         Analytics & Leaderboards
-                │              │
-                │              ▼
-                └─────▶ pdoom1-website ────▶ Dynamic Content
+Player [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] pdoom1 (Game Client)
+                [EMOJI]
+                [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] pdoom-data (API) [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] PostgreSQL Database
+                [EMOJI]              [EMOJI]
+                [EMOJI]              [EMOJI]
+                [EMOJI]         Analytics & Leaderboards
+                [EMOJI]              [EMOJI]
+                [EMOJI]              [EMOJI]
+                [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] pdoom1-website [EMOJI][EMOJI][EMOJI][EMOJI][EMOJI] Dynamic Content
 ```
 
 ## Integration Points
 
-### 1. Game → Data Service
+### 1. Game -> Data Service
 - **Score Submission**: Real-time leaderboard updates
 - **User Registration**: Anonymous/pseudonymous accounts
 - **Analytics**: Privacy-respecting gameplay metrics
 - **Challenges**: Weekly/monthly competition data
 
-### 2. Data Service → Website
+### 2. Data Service -> Website
 - **Leaderboards**: Dynamic leaderboard displays
 - **Statistics**: Aggregate gameplay statistics
 - **Content**: Blog posts and announcements
 - **User Profiles**: Achievement and progress displays
 
-### 3. Game → Website
+### 3. Game -> Website
 - **Content Sync**: Development blog automation
 - **Release Notes**: Version release coordination
 - **Documentation**: Cross-repository doc sync
@@ -130,7 +130,7 @@ Player ────▶ pdoom1 (Game Client)
 ### Website Repository (pdoom1-website)
 - **Hosting**: Static Site (Netlify/GitHub Pages)
 - **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Content**: Markdown → HTML generation
+- **Content**: Markdown -> HTML generation
 - **Deployment**: Automated via GitHub Actions
 
 ### Data Service Repository (pdoom-data)

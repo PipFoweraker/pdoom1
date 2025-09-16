@@ -62,10 +62,10 @@ P(Doom) features a comprehensive settings and configuration system designed for 
 ### System Architecture
 
 **Core Components:**
-- **src/services/seed_manager.py** — Centralized seed generation, validation, and management
-- **src/services/game_config_manager.py** — Custom game configuration creation and sharing
-- **src/ui/enhanced_settings.py** — Modern settings UI with categorical organization
-- **src/ui/settings_integration.py** — Integration layer for gradual adoption
+- **src/services/seed_manager.py** -- Centralized seed generation, validation, and management
+- **src/services/game_config_manager.py** -- Custom game configuration creation and sharing
+- **src/ui/enhanced_settings.py** -- Modern settings UI with categorical organization
+- **src/ui/settings_integration.py** -- Integration layer for gradual adoption
 
 ### Settings Categories
 
@@ -144,7 +144,7 @@ config_manager.export_config(config_id, "my_game.json")
 
 **Demo Script**: `demo_settings.py` - Interactive demonstration of all settings features
 **Test Suite**: `test_fixes.py` - Validates core functionality and integration
-**Manual Testing**: Use Settings menu → Enhanced Settings to test UI components
+**Manual Testing**: Use Settings menu -> Enhanced Settings to test UI components
 
 ---
 
@@ -210,46 +210,46 @@ python main.py
 ## Project Structure
 
 ### Core Game Files
-- **main.py** — Game entry point and menu system with new player experience
-- **game_state.py** — Core game logic and state management
-- **actions.py** — Action definitions (as Python dicts)
-- **action_rules.py** — Centralized action availability rule system
-- **upgrades.py** — Upgrade definitions
-- **events.py** — Event definitions and special event logic
-- **event_system.py** — Enhanced event system with deferred events and popups
-- **opponents.py** — Opponent AI and intelligence system
+- **main.py** -- Game entry point and menu system with new player experience
+- **game_state.py** -- Core game logic and state management
+- **actions.py** -- Action definitions (as Python dicts)
+- **action_rules.py** -- Centralized action availability rule system
+- **upgrades.py** -- Upgrade definitions
+- **events.py** -- Event definitions and special event logic
+- **event_system.py** -- Enhanced event system with deferred events and popups
+- **opponents.py** -- Opponent AI and intelligence system
 
 ### Economic Systems
-- **src/features/economic_cycles.py** — Economic cycles and funding volatility system
+- **src/features/economic_cycles.py** -- Economic cycles and funding volatility system
   - Historical AI funding timeline (2017-2025) with realistic market phases
   - 5 funding sources with different economic sensitivities
   - Enhanced fundraising actions and advanced funding mechanisms
   - Economic events triggered by market conditions
 
 ### UI and Interface
-- **ui.py** — Pygame-based UI code with visual feedback integration
-- **overlay_manager.py** — Modular UI overlay and z-order management system
-- **visual_feedback.py** — Standardized visual feedback for clickable elements
+- **ui.py** -- Pygame-based UI code with visual feedback integration
+- **overlay_manager.py** -- Modular UI overlay and z-order management system
+- **visual_feedback.py** -- Standardized visual feedback for clickable elements
 
 ### Enhanced Settings System
-- **src/services/seed_manager.py** — Centralized seed generation, validation, and management
-- **src/services/game_config_manager.py** — Custom game configuration creation and sharing
-- **src/ui/enhanced_settings.py** — Modern settings UI with categorical organization
-- **src/ui/settings_integration.py** — Integration layer for gradual adoption
+- **src/services/seed_manager.py** -- Centralized seed generation, validation, and management
+- **src/services/game_config_manager.py** -- Custom game configuration creation and sharing
+- **src/ui/enhanced_settings.py** -- Modern settings UI with categorical organization
+- **src/ui/settings_integration.py** -- Integration layer for gradual adoption
 
 ### Audio and Feedback
-- **sound_manager.py** — Sound effects and audio feedback
-- **game_logger.py** — Comprehensive game logging system
+- **sound_manager.py** -- Sound effects and audio feedback
+- **game_logger.py** -- Comprehensive game logging system
 
 ### Development and Testing
-- **tests/** — Automated tests for core logic
-- **demo_settings.py** — Interactive demonstration of enhanced settings features
-- **test_fixes.py** — Validation script for core functionality and integration
+- **tests/** -- Automated tests for core logic
+- **demo_settings.py** -- Interactive demonstration of enhanced settings features
+- **test_fixes.py** -- Validation script for core functionality and integration
 
 ### Documentation
-- **README.md** — Installation, troubleshooting, dependencies
-- **PLAYERGUIDE.md** — Player experience and gameplay guide
-- **DEVELOPERGUIDE.md** (this file) — Contributor documentation
+- **README.md** -- Installation, troubleshooting, dependencies
+- **PLAYERGUIDE.md** -- Player experience and gameplay guide
+- **DEVELOPERGUIDE.md** (this file) -- Contributor documentation
 
 ---
 
@@ -561,7 +561,7 @@ class Opponent:
 
 Opponents execute simple AI logic each turn:
 - Budget allocation based on priorities (research > hiring > compute > lobbying)
-- Research progress scaled by resources (researchers × compute bonus)
+- Research progress scaled by resources (researchers x compute bonus)
 - Doom contribution proportional to capabilities research
 
 ---
@@ -611,7 +611,7 @@ Provides automatic contextual help when players encounter key mechanics for the 
 - **Staff Hiring**: When hiring beyond starting staff (triggers at staff > 2)
 - **Upgrade Purchase**: When buying any upgrade for the first time
 - **Action Points Exhausted**: When attempting actions without sufficient AP
-- **High p(Doom) Warning**: When p(Doom) reaches dangerous levels (≥70%)
+- **High p(Doom) Warning**: When p(Doom) reaches dangerous levels (>=70%)
 
 **Help Features:**
 - Small popup notifications in top-right corner
@@ -1677,7 +1677,7 @@ def main():
 **Why This Is Required:**
 Python treats variables as local when they are assigned anywhere in a function scope. Without global declaration, referencing these variables before assignment raises UnboundLocalError even if they exist at module level.
 
-**⚠️ WARNING: Common Bug Pattern**
+**[WARNING][EMOJI] WARNING: Common Bug Pattern**
 The most common manifestation of this bug is when menu handlers (like `handle_menu_click` or `handle_menu_keyboard`) assign overlay variables, but the main() function lacks proper global declarations. This causes crashes when selecting menu items like "Options" or "Player Guide".
 
 **Always verify that:**

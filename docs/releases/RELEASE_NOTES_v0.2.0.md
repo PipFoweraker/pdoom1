@@ -1,6 +1,6 @@
 # P(Doom) v0.2.0 Release Notes
 
-## 🚀 Major UI Overhaul - "Retro Command Interface"
+## [ROCKET] Major UI Overhaul - "Retro Command Interface"
 
 **Release Date**: September 4, 2025  
 **Version**: 0.2.0  
@@ -8,7 +8,7 @@
 
 ---
 
-## 🎨 Visual Transformation
+## [EMOJI] Visual Transformation
 
 ### 80s Techno-Green Context System
 - **ALL CAPS DOS-style interface** with authentic retro color scheme
@@ -18,18 +18,18 @@
 
 ### 8-bit Resource Icons
 Complete replacement of text-heavy resource display:
-- 💰 **Money**: Pixelated gold $ symbol
-- 👤 **Staff**: Simple person silhouette  
-- ⭐ **Reputation**: Blue star polygon
-- ⚡ **Action Points**: Lightning bolt with glow effects
-- 💀 **Doom**: Red skull icon
-- 💻 **Compute**: "2^n" exponential notation
-- 💡 **Research**: Light bulb icon
-- 📄 **Papers**: Document with text lines
+- [EMOJI] **Money**: Pixelated gold $ symbol
+- [EMOJI] **Staff**: Simple person silhouette  
+- [EMOJI] **Reputation**: Blue star polygon
+- [LIGHTNING] **Action Points**: Lightning bolt with glow effects
+- [EMOJI] **Doom**: Red skull icon
+- [LAPTOP] **Compute**: "2^n" exponential notation
+- [IDEA] **Research**: Light bulb icon
+- [EMOJI] **Papers**: Document with text lines
 
 ---
 
-## 🛠️ Developer Experience
+## [EMOJI][EMOJI] Developer Experience
 
 ### Screenshot & Debugging Tools
 - **Press `[` key** to capture screenshots instantly
@@ -50,7 +50,7 @@ def draw_resource_icon(screen, icon_type, x, y, size=16):
 
 ---
 
-## 🎮 Gameplay Improvements
+## [EMOJI] Gameplay Improvements
 
 ### Smart Interface Design
 - **Action filtering**: Only show unlocked actions (12/24 initially visible)
@@ -66,7 +66,7 @@ def draw_resource_icon(screen, icon_type, x, y, size=16):
 
 ---
 
-## 📚 How to Upgrade (For Your Friend)
+## [EMOJI] How to Upgrade (For Your Friend)
 
 ### 1. Pull Latest Changes
 ```bash
@@ -109,7 +109,7 @@ New defaults in `configs/default.json`:
 
 ---
 
-## 🔧 Technical Architecture
+## [EMOJI] Technical Architecture
 
 ### New Components
 - **Icon Rendering System**: `draw_resource_icon()` with 8-bit styling
@@ -126,7 +126,7 @@ New defaults in `configs/default.json`:
 
 ---
 
-## 🎯 Perfect for Demo
+## [TARGET] Perfect for Demo
 
 This release is specifically designed for showcasing:
 - **Visual appeal**: Retro aesthetic that's immediately engaging
@@ -138,4 +138,4 @@ The 80s retro theme combined with modern development practices makes this an exc
 
 ---
 
-**Ready to show your girlfriend! 🎮✨**
+**Ready to show your girlfriend! [EMOJI][EMOJI]**

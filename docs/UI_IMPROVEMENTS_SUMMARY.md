@@ -60,7 +60,7 @@ Extended the existing hover system to provide rich context information:
 {
     'title': 'Safety Research',
     'description': 'Conduct research into AI safety measures to reduce existential risk.',
-    'details': ['Cost: $100, 1 AP', '✓ Available to execute', 'Reduces P(Doom) by 3-5 points']
+    'details': ['Cost: $100, 1 AP', 'v Available to execute', 'Reduces P(Doom) by 3-5 points']
 }
 ```
 
@@ -121,7 +121,7 @@ context_info = {
     'details': [
         'Cost: $100, 1 AP',
         'Can delegate: 0 AP, 80% effectiveness',
-        '✓ Available to execute',
+        'v Available to execute',
         'Reduces P(Doom) by 3-5 points'
     ]
 }
@@ -136,10 +136,10 @@ Created `demo_ui_improvements.py` to showcase both improvements:
 - Interactive controls for testing features
 
 ### Compatibility
-- ✅ Maintains backward compatibility with existing save files
-- ✅ Works with all existing UI modes (compact, traditional)
-- ✅ Compatible with existing overlay and window systems
-- ✅ Integrates with sound and visual feedback systems
+- [EMOJI] Maintains backward compatibility with existing save files
+- [EMOJI] Works with all existing UI modes (compact, traditional)
+- [EMOJI] Compatible with existing overlay and window systems
+- [EMOJI] Integrates with sound and visual feedback systems
 
 ### Performance
 - **Minimal overhead**: Context detection only on mouse movement

@@ -69,16 +69,16 @@ Examples:
 ### Content Structure
 ```
 /content/
-├── game-versions/
-│   ├── v0.6.0/
-│   │   ├── release-notes.md
-│   │   ├── changelog.md
-│   │   ├── features.json
-│   │   └── screenshots/
-│   ├── v0.5.0/
-│   └── v0.4.1/
-├── version-history.json
-└── current-version.json
+[EMOJI][EMOJI][EMOJI] game-versions/
+[EMOJI]   [EMOJI][EMOJI][EMOJI] v0.6.0/
+[EMOJI]   [EMOJI]   [EMOJI][EMOJI][EMOJI] release-notes.md
+[EMOJI]   [EMOJI]   [EMOJI][EMOJI][EMOJI] changelog.md
+[EMOJI]   [EMOJI]   [EMOJI][EMOJI][EMOJI] features.json
+[EMOJI]   [EMOJI]   [EMOJI][EMOJI][EMOJI] screenshots/
+[EMOJI]   [EMOJI][EMOJI][EMOJI] v0.5.0/
+[EMOJI]   [EMOJI][EMOJI][EMOJI] v0.4.1/
+[EMOJI][EMOJI][EMOJI] version-history.json
+[EMOJI][EMOJI][EMOJI] current-version.json
 ```
 
 ## Data Batch Integration (Future)

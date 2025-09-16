@@ -2,7 +2,7 @@
 
 ## Branch Categories and Recommendations
 
-### ✅ SAFE TO DELETE (Already Merged)
+### [EMOJI] SAFE TO DELETE (Already Merged)
 These branches have been successfully merged into main and can be safely deleted:
 
 #### Copilot Fix Branches (34 branches)
@@ -29,7 +29,7 @@ These branches have been successfully merged into main and can be safely deleted
 - `origin/lab-name-system-merge` - merged
 - **Action**: Delete - work is complete
 
-### 🔍 NEEDS REVIEW (Unmerged)
+### [SEARCH] NEEDS REVIEW (Unmerged)
 These branches contain work that hasn't been merged and need individual assessment:
 
 #### `origin/copilot/fix-224` 
@@ -52,14 +52,14 @@ These branches contain work that hasn't been merged and need individual assessme
 - **Status**: Shows no commits ahead (may be empty or already incorporated)
 - **Recommendation**: Delete if empty, merge if contains cat image assets
 
-### 🏠 REORGANIZE UNDER NEW STRATEGY
+### [EMOJI] REORGANIZE UNDER NEW STRATEGY
 Current local branches to align with new strategy:
 
 #### `hotfix/ui-button-shrink`
 - **Status**: Proper hotfix branch, keep as-is
 - **Action**: Complete the hotfix workflow when ready
 
-### 🆕 NEW BRANCHES (Keep)
+### [EMOJI] NEW BRANCHES (Keep)
 - `develop` - Main development branch
 - `release/staging` - Release preparation  
 - `experimental/playground` - Safe experimentation space
@@ -112,11 +112,11 @@ git push origin --delete PipFoweraker-patch-1-cat-images  # If empty
 ## Post-Cleanup Branch Structure
 ```
 main (production)
-├── develop (daily development)
-├── release/staging (pre-release)
-├── experimental/playground (experiments)
-├── hotfix/ui-button-shrink (active hotfix)
-└── [future feature/hotfix branches as needed]
+[EMOJI][EMOJI][EMOJI] develop (daily development)
+[EMOJI][EMOJI][EMOJI] release/staging (pre-release)
+[EMOJI][EMOJI][EMOJI] experimental/playground (experiments)
+[EMOJI][EMOJI][EMOJI] hotfix/ui-button-shrink (active hotfix)
+[EMOJI][EMOJI][EMOJI] [future feature/hotfix branches as needed]
 ```
 
 This cleanup will provide a much cleaner repository structure aligned with the new branching strategy.

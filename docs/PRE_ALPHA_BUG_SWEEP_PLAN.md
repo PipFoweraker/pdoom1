@@ -8,13 +8,13 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
 
 ## Priority Classification System
 
-### 🔴 CRITICAL (Game Breaking) - Must Fix for Alpha
+### [EMOJI] CRITICAL (Game Breaking) - Must Fix for Alpha
 - **Issue #261**: Mouse wheel scrolling crash - **BLOCKS ALPHA RELEASE**
 - **Issue #245**: Post-rebase test failures - **STABILITY RISK**
 - **NEW BUG**: Duplicate return statements in `check_hover()` (Lines 2091-2097 in game_state.py) - **LOGIC ERROR**
 - **NEW BUG**: Potential array bounds errors in GameClock MONTH_ABBREVS access (Lines 130, 196) - **INDEX CRASH RISK**
 
-### 🟠 HIGH IMPACT (User Experience Blockers) - Should Fix for Alpha  
+### [U+1F7E0] HIGH IMPACT (User Experience Blockers) - Should Fix for Alpha  
 - **Issue #258**: Premature laboratory upgrade popup
 - **Issue #257**: Action list text display issues  
 - **Issue #256**: Tutorial skip missing lab configuration
@@ -22,14 +22,14 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
 - **NEW BUG**: List modification during iteration in `delayed_actions` processing - **RACE CONDITION**
 - **NEW BUG**: Magical orb stats removal from list during iteration - **POTENTIAL CRASH**
 
-### 🟡 MEDIUM IMPACT (Polish Items) - Nice to Fix for Alpha
+### [U+1F7E1] MEDIUM IMPACT (Polish Items) - Nice to Fix for Alpha
 - **Issue #227**: Action points system validation
 - **Issue #226**: Sound system default configuration
 - **Issue #213**: Sound settings improvements
 - **Issue #211**: Unexpected user input crashes
 - **NEW BUG**: Missing error handling in configuration dictionary access - **DEFENSIVE CODING**
 
-### 🟢 ENHANCEMENT (Post-Alpha) - Future Development
+### [U+1F7E2] ENHANCEMENT (Post-Alpha) - Future Development
 - **Issue #262**: Universal keyboard navigation (accessibility)
 - **NEW BUG**: Inconsistent attribute existence checks with `hasattr()` - **ROBUST CODING**
 
@@ -38,19 +38,19 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
 ### Day 1: Critical Stability & Core Fixes (8 hours)
 
 #### Morning Session (4 hours)
-**🔴 CRITICAL: Fix Mouse Wheel Crash (Issue #261) - 2 hours**
+**[EMOJI] CRITICAL: Fix Mouse Wheel Crash (Issue #261) - 2 hours**
 - **Root Cause**: Pygame MOUSEWHEEL event handling causing IndexError
 - **Fix Location**: `ui.py` event handling loop
 - **Solution**: Add proper event validation and bounds checking
 - **Testing**: Comprehensive mouse wheel testing across all game states
 
-**🔴 CRITICAL: Resolve Test Failures (Issue #245) - 2 hours**  
+**[EMOJI] CRITICAL: Resolve Test Failures (Issue #245) - 2 hours**  
 - **Root Cause**: Post-rebase state inconsistencies in 5 test files
 - **Fix Approach**: Update test expectations to match current game logic
 - **Target**: Achieve 100% test pass rate for alpha stability
 
 #### Afternoon Session (4 hours)
-**🟠 HIGH: Tutorial & UI Flow Fixes - 4 hours**
+**[U+1F7E0] HIGH: Tutorial & UI Flow Fixes - 4 hours**
 - **Issue #258**: Laboratory upgrade popup timing (1 hour)
 - **Issue #256**: Tutorial skip configuration bug (1 hour)  
 - **Issue #257**: Action list text display (1 hour)
@@ -61,16 +61,16 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
 ### Day 2: Polish & Enhancement (8 hours)
 
 #### Morning Session (4 hours)
-**🟡 MEDIUM: System Stability Improvements - 4 hours**
+**[U+1F7E1] MEDIUM: System Stability Improvements - 4 hours**
 - **Issue #227**: Action points validation logic (2 hours)
 - **Issue #226**: Sound system configuration (1 hour)
 - **Issue #213**: Sound settings UI improvements (1 hour)
 
 #### Afternoon Session (4 hours)  
-**🟡 MEDIUM: Input Handling & Edge Cases - 2 hours**
+**[U+1F7E1] MEDIUM: Input Handling & Edge Cases - 2 hours**
 - **Issue #211**: Unexpected input crash protection
 
-**🟢 ENHANCEMENT: Accessibility Foundation - 2 hours**
+**[U+1F7E2] ENHANCEMENT: Accessibility Foundation - 2 hours**
 - **Issue #262**: Begin universal keyboard navigation framework
 - Focus on critical UI areas: main menu, action selection, pause menu
 
@@ -104,7 +104,7 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
    - Extensive error handling already in place
    - Need validation of edge cases in test failures
 
-4. **🔴 NEW CRITICAL: Duplicate Return Statements (game_state.py:2091-2097)**
+4. **[EMOJI] NEW CRITICAL: Duplicate Return Statements (game_state.py:2091-2097)**
    ```python
    # PROBLEM: Unreachable code and logic errors
    return None
@@ -116,7 +116,7 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
    # SOLUTION: Remove duplicate return statements
    ```
 
-5. **🔴 NEW CRITICAL: Array Bounds in GameClock (game_clock.py:130,196)**
+5. **[EMOJI] NEW CRITICAL: Array Bounds in GameClock (game_clock.py:130,196)**
    ```python
    # PROBLEM: Direct array access without bounds checking
    month_abbrev = self.MONTH_ABBREVS[self.current_date.month - 1]  # Can crash if month invalid
@@ -126,7 +126,7 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
    month_abbrev = self.MONTH_ABBREVS[month_index]
    ```
 
-6. **🟠 NEW HIGH: List Modification During Iteration**
+6. **[U+1F7E0] NEW HIGH: List Modification During Iteration**
    ```python
    # PROBLEM: Modifying list while iterating (race condition)
    for action in self.delayed_actions[:]:  # Good - uses slice copy
@@ -142,11 +142,11 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
 ### Testing Strategy
 
 **Validation Requirements for Alpha Release:**
-- ✅ 100% test pass rate (currently 4 failing tests)
-- ✅ No crashes on basic game interaction (15-minute manual test)
-- ✅ Tutorial system works end-to-end
-- ✅ Save/load functionality works correctly
-- ✅ Sound system works without crashes
+- [EMOJI] 100% test pass rate (currently 4 failing tests)
+- [EMOJI] No crashes on basic game interaction (15-minute manual test)
+- [EMOJI] Tutorial system works end-to-end
+- [EMOJI] Save/load functionality works correctly
+- [EMOJI] Sound system works without crashes
 
 **Automated Testing Approach:**
 ```bash
@@ -177,7 +177,7 @@ python main.py  # 5-minute smoke test
 
 ### Objective Criteria (Must Achieve)
 1. **Stability**: Zero crashes in 30-minute play session
-2. **Functionality**: All core game loops work (tutorial → game → save → load)
+2. **Functionality**: All core game loops work (tutorial -> game -> save -> load)
 3. **Testing**: 100% test suite pass rate
 4. **Performance**: Game launches in <5 seconds, maintains 30+ FPS
 5. **Accessibility**: Basic keyboard navigation works for critical functions
@@ -209,7 +209,7 @@ python main.py  # 5-minute smoke test
 
 ### Development Time
 - **Estimated Total**: 16 hours (2 x 8-hour days)
-- **Critical Path**: Mouse wheel fix → Test fixes → UI polish
+- **Critical Path**: Mouse wheel fix -> Test fixes -> UI polish
 - **Buffer Time**: 20% additional for unexpected issues
 
 ### Testing Requirements

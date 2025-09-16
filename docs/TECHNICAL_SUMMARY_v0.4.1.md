@@ -60,15 +60,15 @@ sound_manager = SoundManager()
 ### Code Organization
 ```
 pdoom1/
-├── src/
-│   ├── core/           # Game logic
-│   ├── services/       # System services
-│   ├── scores/         # Leaderboard management
-│   └── ui/             # User interface components
-├── configs/            # Game configuration files
-├── tests/              # Comprehensive test suite
-├── tools/              # Development utilities
-└── docs/               # Documentation
+[EMOJI][EMOJI][EMOJI] src/
+[EMOJI]   [EMOJI][EMOJI][EMOJI] core/           # Game logic
+[EMOJI]   [EMOJI][EMOJI][EMOJI] services/       # System services
+[EMOJI]   [EMOJI][EMOJI][EMOJI] scores/         # Leaderboard management
+[EMOJI]   [EMOJI][EMOJI][EMOJI] ui/             # User interface components
+[EMOJI][EMOJI][EMOJI] configs/            # Game configuration files
+[EMOJI][EMOJI][EMOJI] tests/              # Comprehensive test suite
+[EMOJI][EMOJI][EMOJI] tools/              # Development utilities
+[EMOJI][EMOJI][EMOJI] docs/               # Documentation
 ```
 
 ### Configuration System

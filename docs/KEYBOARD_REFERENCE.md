@@ -10,7 +10,7 @@ P(Doom) follows a "one function per key" design principle for clarity and simpli
 |-----|----------|---------|-------|
 | **M** | Menu | In-game | Access pause/main menu from game |
 | **ESC** | Emergency Exit | Universal | Always exits/cancels - highest priority |
-| **←** (Left Arrow) | Back/Cancel | Dialogs | Primary navigation back button |
+| **<-** (Left Arrow) | Back/Cancel | Dialogs | Primary navigation back button |
 | **Backspace** | Alternate Cancel | Dialogs | Alternative to Left Arrow |
 
 ## Action Selection
@@ -33,7 +33,7 @@ P(Doom) follows a "one function per key" design principle for clarity and simpli
 
 1. **ESC** - Universal emergency exit (highest priority)
 2. **M** - Menu access from game
-3. **← / Backspace** - Context-specific back/cancel
+3. **<- / Backspace** - Context-specific back/cancel
 4. **1-9** - Direct action selection
 5. **Dev keys** - Development helpers
 
@@ -51,7 +51,7 @@ P(Doom) follows a "one function per key" design principle for clarity and simpli
 
 ### Hiring Dialog
 - Click: Select employee type
-- ← or Backspace: Cancel hiring
+- <- or Backspace: Cancel hiring
 - ESC: Emergency exit
 
 ### Tutorial Overlay

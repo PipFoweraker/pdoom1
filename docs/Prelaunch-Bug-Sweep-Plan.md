@@ -2,7 +2,7 @@
 
 This document outlines the comprehensive scaffolding implementation for PDoom1's prelaunch bug sweep, focusing on foundational modules that will support future gameplay fixes.
 
-## 🎯 Objectives
+## [TARGET] Objectives
 
 1. **Establish foundational services** for audio, settings, timing, and data persistence
 2. **Create local scoring system** with JSON persistence and atomic writes
@@ -10,23 +10,23 @@ This document outlines the comprehensive scaffolding implementation for PDoom1's
 4. **Provide cross-platform data storage** using platform-appropriate directories
 5. **Add comprehensive testing** with CI/CD pipeline for headless environments
 
-## 🏗️ Architecture Overview
+## [EMOJI][EMOJI] Architecture Overview
 
 ```
 pdoom1/
-├── services/           # Core game services
-│   ├── audio_manager.py    # pygame.mixer wrapper with persistent settings
-│   ├── game_clock.py       # Game time (starts 01/Jul/14, +1 week/tick)
-│   ├── settings.py         # Versioned JSON settings with atomic writes
-│   ├── data_paths.py       # Cross-platform data directories
-│   └── telemetry.py        # JSONL logging with 10MB cap
-├── scores/             # Scoring and leaderboards
-│   ├── local_store.py      # Local JSON leaderboard
-│   └── remote_store_stub.py # Placeholder for online scores
-└── __init__.py         # Package interface
+[EMOJI][EMOJI][EMOJI] services/           # Core game services
+[EMOJI]   [EMOJI][EMOJI][EMOJI] audio_manager.py    # pygame.mixer wrapper with persistent settings
+[EMOJI]   [EMOJI][EMOJI][EMOJI] game_clock.py       # Game time (starts 01/Jul/14, +1 week/tick)
+[EMOJI]   [EMOJI][EMOJI][EMOJI] settings.py         # Versioned JSON settings with atomic writes
+[EMOJI]   [EMOJI][EMOJI][EMOJI] data_paths.py       # Cross-platform data directories
+[EMOJI]   [EMOJI][EMOJI][EMOJI] telemetry.py        # JSONL logging with 10MB cap
+[EMOJI][EMOJI][EMOJI] scores/             # Scoring and leaderboards
+[EMOJI]   [EMOJI][EMOJI][EMOJI] local_store.py      # Local JSON leaderboard
+[EMOJI]   [EMOJI][EMOJI][EMOJI] remote_store_stub.py # Placeholder for online scores
+[EMOJI][EMOJI][EMOJI] __init__.py         # Package interface
 ```
 
-## 📋 Implementation Checklist
+## [CHECKLIST] Implementation Checklist
 
 ### Core Package Structure
 - [x] Create `pdoom1/` package with proper `__init__.py`
@@ -95,7 +95,7 @@ pdoom1/
 - [x] **requirements.txt** - Updated with new dependencies
 - [x] **requirements-dev.txt** - Development and testing dependencies
 
-## 🔧 Technical Specifications
+## [EMOJI] Technical Specifications
 
 ### Audio Management
 - **Persistent Settings**: Volume levels saved to `settings.json`
@@ -131,7 +131,7 @@ pdoom1/
 - **UUID**: Unique identifier per entry
 - **Persistence**: Atomic JSON writes
 
-## 🧪 Testing Strategy
+## [U+1F9EA] Testing Strategy
 
 ### Unit Tests
 1. **Clock Tests** - Date formatting, advancement, persistence
@@ -148,7 +148,7 @@ pdoom1/
 - **Deterministic**: Fixed timestamps and UUIDs for reproducible results
 - **Edge Cases**: Corruption, missing files, invalid JSON
 
-## 🔒 Privacy & Security
+## [LOCK] Privacy & Security
 
 ### Data Collection
 - **Opt-in Telemetry**: Users can disable entirely
@@ -162,7 +162,7 @@ pdoom1/
 - **Validation**: JSON schema validation for data integrity
 - **Cleanup**: Automatic removal of oversized logs
 
-## 🚀 Future Extensions
+## [ROCKET] Future Extensions
 
 This scaffolding enables future implementations:
 
@@ -172,7 +172,7 @@ This scaffolding enables future implementations:
 4. **Settings Sync** - Cloud backup of user preferences
 5. **Achievement System** - Track progress in telemetry events
 
-## 🎮 Integration Points
+## [EMOJI] Integration Points
 
 ### Existing Game Code
 - **Non-breaking**: All new modules are additive
@@ -202,7 +202,7 @@ telemetry.log_game_start("normal", "normal")
 telemetry.log_level_complete(level=1, time_seconds=45.2, score=250)
 ```
 
-## ✅ Success Criteria
+## [EMOJI] Success Criteria
 
 1. **All tests pass** in CI environment with headless pygame
 2. **All modules import** correctly under `pdoom1` package

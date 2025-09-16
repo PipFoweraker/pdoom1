@@ -26,14 +26,14 @@ from ui import draw_seed_prompt, draw_main_menu, draw_bug_report_form,
    - Pick the best implementation, redirect others
    
 2. **Utility Function Migration**
-   - Move `wrap_text()`, `render_text()` → `src/ui/text.py` (already exists!)
-   - Move `draw_resource_icon()` → `src/ui/drawing_utils.py`
-   - Move overlay functions → `src/ui/overlay_system.py`
+   - Move `wrap_text()`, `render_text()` -> `src/ui/text.py` (already exists!)
+   - Move `draw_resource_icon()` -> `src/ui/drawing_utils.py`
+   - Move overlay functions -> `src/ui/overlay_system.py`
 
 3. **Common Component Extraction**
-   - `draw_version_footer/header()` → `src/ui/components.py`
-   - `draw_loading_screen()` → `src/ui/screens.py`
-   - `draw_back_button()` → `src/ui/ui_elements.py`
+   - `draw_version_footer/header()` -> `src/ui/components.py`
+   - `draw_loading_screen()` -> `src/ui/screens.py`
+   - `draw_back_button()` -> `src/ui/ui_elements.py`
 
 ### Phase 2: Menu System Consolidation
 1. **Standardize Menu Imports**
@@ -45,19 +45,19 @@ from ui import draw_seed_prompt, draw_main_menu, draw_bug_report_form,
    - Add deprecation warnings to old implementations
 
 ### Phase 3: Dialog System Cleanup
-1. **Researcher Pool Fix** ✅ (Already addressed)
+1. **Researcher Pool Fix** [EMOJI] (Already addressed)
 2. **Dialog System Unification**
    - `src/ui/dialogs.py` vs `src/ui/dialog_system.py` - consolidate
    - Standardize dialog creation patterns
 
 ### Phase 4: Monolith Decomposition
 1. **Game UI Extraction**
-   - Move `draw_ui()` (main game interface) → `src/ui/game_ui.py` (already exists!)
+   - Move `draw_ui()` (main game interface) -> `src/ui/game_ui.py` (already exists!)
    - Update import in `main.py`
 
 2. **Screen Rendering Consolidation**
-   - All `draw_*_menu()` functions → appropriate `src/ui/` modules
-   - All `draw_*_screen()` functions → `src/ui/screens.py`
+   - All `draw_*_menu()` functions -> appropriate `src/ui/` modules
+   - All `draw_*_screen()` functions -> `src/ui/screens.py`
 
 ## Easy Win Implementation Plan
 

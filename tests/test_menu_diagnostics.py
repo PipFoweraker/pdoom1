@@ -52,7 +52,7 @@ class MenuSystemDiagnosticTests(unittest.TestCase):
                 for selected_item in range(5):  # Test multiple selections
                     try:
                         ui.draw_main_menu(surface, w, h, selected_item)
-                        print(f"✓ Main menu renders at {w}x{h}, item {selected_item}")
+                        print(f"v Main menu renders at {w}x{h}, item {selected_item}")
                     except Exception as e:
                         self.fail(f"Main menu failed at {w}x{h}, item {selected_item}: {e}")
     
@@ -96,7 +96,7 @@ class MenuSystemDiagnosticTests(unittest.TestCase):
                 # More sophisticated bounds checking would require refactoring ui.py
                 self.assertGreater(w, 0)
                 self.assertGreater(h, 0)
-                print(f"✓ Main menu bounds OK at {w}x{h}")
+                print(f"v Main menu bounds OK at {w}x{h}")
                 
             except Exception as e:
                 self.fail(f"Main menu bounds test failed at {w}x{h}: {e}")
@@ -117,7 +117,7 @@ class MenuSystemDiagnosticTests(unittest.TestCase):
                 ui.draw_end_game_menu(surface, w, h, 0, game_state, "test-seed")
                 ui.draw_sounds_menu(surface, w, h, 0)
                 
-                print(f"✓ Text scaling works at {w}x{h}")
+                print(f"v Text scaling works at {w}x{h}")
                 
             except Exception as e:
                 self.fail(f"Text scaling failed at {w}x{h}: {e}")
@@ -165,7 +165,7 @@ class MenuSystemDiagnosticTests(unittest.TestCase):
                     try:
                         ui.draw_end_game_menu(surface, w, h, 0, game_state, "test-seed")
                         scenario_name = scenario.title if scenario else "No Scenario"
-                        print(f"✓ Scenario '{scenario_name}' renders at {w}x{h}")
+                        print(f"v Scenario '{scenario_name}' renders at {w}x{h}")
                     except Exception as e:
                         scenario_name = scenario.title if scenario else "No Scenario"
                         self.fail(f"Scenario '{scenario_name}' failed at {w}x{h}: {e}")
@@ -192,7 +192,7 @@ class MenuSystemDiagnosticTests(unittest.TestCase):
             
             try:
                 ui.draw_end_game_menu(surface, w, h, 0, game_state, "very-long-seed-name-that-might-cause-issues")
-                print(f"✓ Overflow test passed at {w}x{h}")
+                print(f"v Overflow test passed at {w}x{h}")
             except Exception as e:
                 self.fail(f"Overflow test failed at {w}x{h}: {e}")
     
@@ -220,7 +220,7 @@ class MenuSystemDiagnosticTests(unittest.TestCase):
                     
                     try:
                         ui.draw_end_game_menu(surface, w, h, 0, game_state, "edge-test")
-                        print(f"✓ Edge case '{case_name}' OK at {w}x{h}")
+                        print(f"v Edge case '{case_name}' OK at {w}x{h}")
                     except Exception as e:
                         self.fail(f"Edge case '{case_name}' failed at {w}x{h}: {e}")
     
@@ -239,7 +239,7 @@ class MenuSystemDiagnosticTests(unittest.TestCase):
         try:
             ui.draw_end_game_menu(small_surface, 640, 480, 0, game_state, "test")
             ui.draw_end_game_menu(large_surface, 1920, 1080, 0, game_state, "test") 
-            print("✓ No exceptions on different screen sizes - basic hardcoding test passed")
+            print("v No exceptions on different screen sizes - basic hardcoding test passed")
         except Exception as e:
             self.fail(f"Hardcoded positioning test failed: {e}")
     

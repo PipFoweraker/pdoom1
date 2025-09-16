@@ -9,31 +9,31 @@ To enable automated documentation synchronization across your P(Doom) repositori
 
 1. **Navigate to GitHub Settings**:
    - Go to https://github.com/settings/tokens
-   - Or: GitHub → Profile → Settings → Developer settings → Personal access tokens → Tokens (classic)
+   - Or: GitHub -> Profile -> Settings -> Developer settings -> Personal access tokens -> Tokens (classic)
 
 2. **Generate New Token**:
-   - Click "Generate new token" → "Generate new token (classic)"
+   - Click "Generate new token" -> "Generate new token (classic)"
    - **Token name**: `P(Doom) Cross-Repository Documentation Sync`
    - **Expiration**: Choose appropriate duration (recommend 1 year)
 
 3. **Select Required Scopes**:
    ```
-   ✅ repo (Full control of private repositories)
-     ✅ repo:status (Access commit status)
-     ✅ repo_deployment (Access deployment status)
-     ✅ public_repo (Access public repositories)
-     ✅ repo:invite (Access repository invitations)
-     ✅ security_events (Read and write security events)
+   [EMOJI] repo (Full control of private repositories)
+     [EMOJI] repo:status (Access commit status)
+     [EMOJI] repo_deployment (Access deployment status)
+     [EMOJI] public_repo (Access public repositories)
+     [EMOJI] repo:invite (Access repository invitations)
+     [EMOJI] security_events (Read and write security events)
    
-   ✅ workflow (Update GitHub Action workflows)
+   [EMOJI] workflow (Update GitHub Action workflows)
    
-   ✅ write:packages (Upload packages to GitHub Package Registry)
-   ✅ read:packages (Download packages from GitHub Package Registry)
+   [EMOJI] write:packages (Upload packages to GitHub Package Registry)
+   [EMOJI] read:packages (Download packages from GitHub Package Registry)
    ```
 
 4. **Generate Token**:
    - Click "Generate token"
-   - **⚠️ IMPORTANT**: Copy the token immediately - you won't see it again!
+   - **[WARNING][EMOJI] IMPORTANT**: Copy the token immediately - you won't see it again!
 
 ## Step 2: Add Token as Repository Secret
 
@@ -41,7 +41,7 @@ To enable automated documentation synchronization across your P(Doom) repositori
 
 1. **Navigate to Repository Settings**:
    - Go to https://github.com/PipFoweraker/pdoom1/settings/secrets/actions
-   - Or: pdoom1 repository → Settings → Secrets and variables → Actions
+   - Or: pdoom1 repository -> Settings -> Secrets and variables -> Actions
 
 2. **Create New Secret**:
    - Click "New repository secret"
@@ -74,7 +74,7 @@ curl -H "Authorization: token YOUR_TOKEN" https://api.github.com/repos/PipFowera
 1. **Manual Trigger** (recommended for first test):
    - Go to https://github.com/PipFoweraker/pdoom1/actions
    - Find "Sync Documentation Across Repositories" workflow
-   - Click "Run workflow" → Select "main branch" → "Run workflow"
+   - Click "Run workflow" -> Select "main branch" -> "Run workflow"
 
 2. **Automatic Trigger** (make a documentation change):
    ```bash
@@ -127,7 +127,7 @@ gh secret list --repo PipFoweraker/pdoom1
 - **Use minimal required permissions**
 
 ### Monitoring:
-- **Monitor token usage** in GitHub Settings → Personal access tokens
+- **Monitor token usage** in GitHub Settings -> Personal access tokens
 - **Set up notifications** for unusual repository activity
 - **Regular security audits** of repository access
 
@@ -180,4 +180,4 @@ Once the token is configured:
 3. **Set up local multi-repository workspace** using the provided workspace file
 4. **Begin documenting your integration architecture** knowing it will automatically sync
 
-The cross-repository documentation system will then be fully operational! 🚀
+The cross-repository documentation system will then be fully operational! [ROCKET]

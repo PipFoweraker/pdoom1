@@ -36,7 +36,7 @@ python dev_tool.py --list
 Run `python dev_tool.py` to see:
 
 ```
-🛠️  P(Doom) Development Tool - v0.4.1
+[EMOJI][EMOJI]  P(Doom) Development Tool - v0.4.1
 ============================================================
 Select a test to run:
 
@@ -58,9 +58,9 @@ The dev tool is designed for easy extension. To add a new test:
 ```python
 def test_my_feature(self):
     """Test my new feature."""
-    print("🔧 Testing My Feature")
+    print("[EMOJI] Testing My Feature")
     # Your test code here
-    print("✅ My feature working correctly")
+    print("[EMOJI] My feature working correctly")
 ```
 
 2. Register it in `__init__`:
@@ -75,16 +75,16 @@ That's it! The test will automatically appear in the interactive menu and be ava
 ```bash
 $ python dev_tool.py --test dual
 
-🧪 Testing Dual Identity System - P(Doom) v0.4.1
+[U+1F9EA] Testing Dual Identity System - P(Doom) v0.4.1
 ============================================================
 Default Player Name: Anonymous
 Generated Lab Name: Cosmos Computing
 Customized Player Name: DevTester
 Lab Name (unchanged): Cosmos Computing
 Different seed lab name: Pulsar AI
-✅ Dual identity system working correctly
+[EMOJI] Dual identity system working correctly
 
-✅ Test completed successfully!
+[EMOJI] Test completed successfully!
 ```
 
 ## Growth Potential

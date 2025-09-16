@@ -165,7 +165,7 @@ Title: Upgrade Computer System
 Description: Boosts research effectiveness (+1 research per action)
 Details:
 - Cost: $200
-- ✓ Available for purchase
+- v Available for purchase
 ```
 
 ## Technical Implementation

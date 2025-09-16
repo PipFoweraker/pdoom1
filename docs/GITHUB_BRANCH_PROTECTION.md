@@ -10,23 +10,23 @@ This guide provides step-by-step instructions for setting up branch protection r
 **Purpose**: Ensure production branch stability and enforce code review process.
 
 **Settings to Enable:**
-- ✅ **Require a pull request before merging**
+- [EMOJI] **Require a pull request before merging**
   - Require approvals: 1 (can be yourself for solo development)
   - Dismiss stale reviews when new commits are pushed
   - Require review from code owners (optional)
 
-- ✅ **Require status checks to pass before merging**
+- [EMOJI] **Require status checks to pass before merging**
   - Require branches to be up to date before merging
   - Required status checks:
     - `build` (if you have GitHub Actions)
     - `test` (if you have automated testing)
 
-- ✅ **Require conversation resolution before merging**
+- [EMOJI] **Require conversation resolution before merging**
 
-- ✅ **Restrict pushes that create files larger than 100MB**
+- [EMOJI] **Restrict pushes that create files larger than 100MB**
 
-- ✅ **Allow force pushes**: ❌ (Disabled)
-- ✅ **Allow deletions**: ❌ (Disabled)
+- [EMOJI] **Allow force pushes**: [EMOJI] (Disabled)
+- [EMOJI] **Allow deletions**: [EMOJI] (Disabled)
 
 **GitHub Settings Path:**
 ```
@@ -39,13 +39,13 @@ Branch name pattern: main
 **Purpose**: Maintain development branch stability while allowing flexibility.
 
 **Settings to Enable:**
-- ✅ **Require status checks to pass before merging**
+- [EMOJI] **Require status checks to pass before merging**
   - Required status checks:
     - `test` (ensure tests pass)
   - Do NOT require "up to date" (allows faster merging)
 
-- ✅ **Allow force pushes**: ✅ (Enabled for rebasing)
-- ✅ **Allow deletions**: ❌ (Disabled)
+- [EMOJI] **Allow force pushes**: [EMOJI] (Enabled for rebasing)
+- [EMOJI] **Allow deletions**: [EMOJI] (Disabled)
 
 **GitHub Settings Path:**
 ```
@@ -58,10 +58,10 @@ Branch name pattern: develop
 **Purpose**: Ensure release candidates are properly tested.
 
 **Settings to Enable:**
-- ✅ **Require a pull request before merging**
+- [EMOJI] **Require a pull request before merging**
   - Require approvals: 1
 
-- ✅ **Require status checks to pass before merging**
+- [EMOJI] **Require status checks to pass before merging**
   - Require branches to be up to date before merging
 
 **GitHub Settings Path:**
@@ -75,12 +75,12 @@ Branch name pattern: release/*
 **Purpose**: Keep repository clean by automatically deleting merged branches.
 
 **Settings to Enable:**
-- ✅ **Automatically delete head branches** (in repository settings)
+- [EMOJI] **Automatically delete head branches** (in repository settings)
 
 **GitHub Settings Path:**
 ```
 Settings > General > Pull Requests
-☑ Automatically delete head branches
+[EMOJI] Automatically delete head branches
 ```
 
 ## GitHub Actions Integration
