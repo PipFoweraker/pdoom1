@@ -48,7 +48,7 @@ class GitHubIssueSync:
                 '--state', 'all', 
                 '--limit', '500',
                 '--json', 'number,title,body,labels,state'
-            ], capture_output=True, text=True, cwd=self.repo_path)
+            ], capture_output=True, text=True, encoding='utf-8', cwd=self.repo_path)
             
             if result.returncode == 0:
                 return json.loads(result.stdout)

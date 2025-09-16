@@ -4,6 +4,39 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.5] - 2025-09-16 - "Privacy Controls UI Integration Complete - Issue #314 Resolved"
+### Added
+- **MAJOR: Privacy Controls User Interface**: Complete frontend implementation for Game Run Logger privacy controls
+  - Comprehensive settings menu accessible from main game settings with dedicated privacy controls screen
+  - Five logging levels (Disabled, Minimal, Standard, Verbose, Debug) with clear descriptions and privacy implications
+  - Real-time data summary display showing collected information and storage details
+  - One-click data deletion with confirmation dialog for complete user control
+  - First-time access flow with privacy education and opt-in defaults ensuring user consent
+  - **Full Test Coverage**: 26 comprehensive integration tests covering UI functionality, persistence, and edge cases
+- **Enhanced Settings Architecture**: Upgraded settings menu system with modular privacy integration
+  - Updated main.py navigation flow to support dedicated privacy controls state
+  - Seamless integration with existing visual feedback system for consistent UI experience
+  - Settings persistence via existing PrivacyManager system ensuring cross-session reliability
+  - **Navigation Flow**: Settings Menu → Privacy Controls → [All 5 logging levels + data management]
+- **Privacy-First User Experience**: Comprehensive user education and transparent data practices
+  - Welcome dialog for first-time users explaining privacy controls and their importance
+  - Clear descriptions for each logging level helping users make informed privacy decisions
+  - Data summary showing exactly what information is collected at current privacy level
+  - Immediate deletion capability with confirmation dialog protecting against accidental data loss
+
+### Fixed
+- Settings menu navigation now properly returns to settings menu instead of main menu for sounds and keybinding options
+- Visual feedback system import paths corrected for proper UI component integration
+- Privacy controls properly dismiss first-time information dialog after user makes logging level selection
+
+### Technical Implementation
+- **New Component**: `src/ui/privacy_controls.py` (500+ lines) with complete privacy controls interface
+- **Enhanced Integration**: Updated main.py with privacy controls state management and event handling
+- **Test Suite**: `tests/test_privacy_controls_ui.py` with 26 tests covering UI, persistence, navigation, and edge cases
+- **Architecture**: Follows established P(Doom) UI patterns with proper state management and visual feedback integration
+
+## [0.7.4] - 2025-09-16 - "Privacy-Respecting Game Run Logger - Alpha Blocker Complete"
+
 ## [0.7.3+] - 2025-09-16 - "ASCII Compliance Sweep - Documentation Standards"
 ### Added
 - **ASCII Compliance Automation**: Created comprehensive Unicode detection and replacement tool

@@ -11,7 +11,8 @@ from src.ui.menus import draw_start_game_submenu
 from src.ui.layout import draw_overlay
 from src.ui.components import draw_tooltip, draw_loading_screen
 from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
-
+from src.ui.enhanced_settings import draw_settings_main_menu
+from src.ui.privacy_controls import privacy_controls
 
 from src.ui.overlay_manager import OverlayManager
 from src.services.bug_reporter import BugReporter
@@ -159,7 +160,7 @@ draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.8, "Loading UI components...")
 pygame.display.flip()
 
 # --- Menu and game state management --- #
-# Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial', 'sounds_menu', 'keybinding_menu', 'keybinding_change', 'leaderboard'
+# Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial', 'sounds_menu', 'keybinding_menu', 'keybinding_change', 'leaderboard', 'settings_menu', 'privacy_controls'
 
 # Panel stack tracking for navigation depth
 navigation_stack = []
@@ -234,6 +235,10 @@ audio_settings = {
         'money_spend': True
     }
 }
+
+# Settings menu state
+settings_menu_selected_item = 0
+privacy_controls_selected_item = 0
 
 # Keybinding menu state
 keybinding_menu_selected_item = 0
@@ -447,7 +452,7 @@ def handle_menu_click(mouse_pos, w, h):
                 current_state = 'custom_seed_prompt'
                 seed_input = ""  # Clear any previous input
             elif i == 2:  # Settings
-                current_state = 'sounds_menu'
+                current_state = 'settings_menu'
             elif i == 3:  # Player Guide
                 overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                 overlay_title = "Player Guide"
@@ -1036,8 +1041,8 @@ def handle_audio_menu_click(mouse_pos, w, h):
             elif i == 4:  # Test Sound
                 if global_sound_manager and audio_settings['master_enabled']:
                     global_sound_manager.play_sound('popup_accept')
-            elif i == 5:  # Back to Main Menu
-                current_state = 'main_menu'
+            elif i == 5:  # Back to Settings Menu
+                current_state = 'settings_menu'
             break
 
 
@@ -1076,8 +1081,8 @@ def handle_audio_menu_keyboard(key):
         elif sounds_menu_selected_item == 4:  # Test Sound
             if global_sound_manager and audio_settings['master_enabled']:
                 global_sound_manager.play_sound('popup_accept')
-        elif sounds_menu_selected_item == 5:  # Back to Main Menu
-            current_state = 'main_menu'
+        elif sounds_menu_selected_item == 5:  # Back to Settings Menu
+            current_state = 'settings_menu'
     elif key == pygame.K_LEFT:
         # Allow left arrow for settings adjustment
         if sounds_menu_selected_item == 1:  # SFX Volume
@@ -1091,7 +1096,133 @@ def handle_audio_menu_keyboard(key):
             current_idx = volumes.index(audio_settings['sfx_volume']) if audio_settings['sfx_volume'] in volumes else 3
             audio_settings['sfx_volume'] = volumes[(current_idx + 1) % len(volumes)]
     elif key == pygame.K_ESCAPE:
+        current_state = 'settings_menu'
+
+
+def handle_settings_menu_click(mouse_pos, w, h):
+    """Handle mouse clicks on main settings menu."""
+    global current_state, settings_menu_selected_item
+    
+    # Menu item layout (matching draw_settings_main_menu)
+    button_width = int(w * 0.65)
+    button_height = int(h * 0.07)
+    start_y = int(h * 0.25)
+    spacing = int(h * 0.08)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    # Settings menu items (matching enhanced_settings.py)
+    settings_categories = [
+        "Audio Settings",
+        "Game Configuration", 
+        "Gameplay Settings",
+        "Accessibility",
+        "Keybindings",
+        "Privacy Controls",  # Our new option
+        "Back to Main Menu"
+    ]
+    
+    for i, _ in enumerate(settings_categories):
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            settings_menu_selected_item = i
+            
+            # Execute selected menu action
+            if i == 0:  # Audio Settings
+                current_state = 'sounds_menu'
+                sounds_menu_selected_item = 0
+            elif i == 1:  # Game Configuration
+                # TODO: Implement game config menu
+                pass
+            elif i == 2:  # Gameplay Settings
+                # TODO: Implement gameplay settings
+                pass
+            elif i == 3:  # Accessibility
+                # TODO: Implement accessibility settings
+                pass
+            elif i == 4:  # Keybindings
+                current_state = 'keybinding_menu'
+                keybinding_menu_selected_item = 0
+            elif i == 5:  # Privacy Controls
+                current_state = 'privacy_controls'
+                privacy_controls.reset()
+            elif i == 6:  # Back to Main Menu
+                current_state = 'main_menu'
+            break
+
+
+def handle_settings_menu_keyboard(key):
+    """Handle keyboard navigation for main settings menu."""
+    global current_state, settings_menu_selected_item
+    
+    menu_items_count = 7  # Number of menu items
+    
+    if key == pygame.K_UP:
+        settings_menu_selected_item = (settings_menu_selected_item - 1) % menu_items_count
+    elif key == pygame.K_DOWN:
+        settings_menu_selected_item = (settings_menu_selected_item + 1) % menu_items_count
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        # Execute selected menu action
+        if settings_menu_selected_item == 0:  # Audio Settings
+            current_state = 'sounds_menu'
+            sounds_menu_selected_item = 0
+        elif settings_menu_selected_item == 1:  # Game Configuration
+            # TODO: Implement game config menu
+            pass
+        elif settings_menu_selected_item == 2:  # Gameplay Settings
+            # TODO: Implement gameplay settings
+            pass
+        elif settings_menu_selected_item == 3:  # Accessibility
+            # TODO: Implement accessibility settings
+            pass
+        elif settings_menu_selected_item == 4:  # Keybindings
+            current_state = 'keybinding_menu'
+            keybinding_menu_selected_item = 0
+        elif settings_menu_selected_item == 5:  # Privacy Controls
+            current_state = 'privacy_controls'
+            privacy_controls.reset()
+        elif settings_menu_selected_item == 6:  # Back to Main Menu
+            current_state = 'main_menu'
+    elif key == pygame.K_ESCAPE:
         current_state = 'main_menu'
+
+
+def handle_privacy_controls_click(mouse_pos, w, h):
+    """Handle mouse clicks on privacy controls menu."""
+    global current_state
+    
+    # Delegate to privacy controls component
+    action = privacy_controls.handle_mouse_click(mouse_pos, w, h)
+    
+    if action == "back":
+        current_state = 'settings_menu'
+    elif action == "level_changed":
+        # Optionally show a confirmation message
+        pass
+    elif action == "data_deleted":
+        # Optionally show a success message
+        pass
+
+
+def handle_privacy_controls_keyboard(key):
+    """Handle keyboard navigation for privacy controls menu."""
+    global current_state
+    
+    # Delegate to privacy controls component
+    action = privacy_controls.handle_key_press(key)
+    
+    if action == "back":
+        current_state = 'settings_menu'
+    elif action == "level_changed":
+        # Optionally show a confirmation message
+        pass
+    elif action == "data_deleted":
+        # Optionally show a success message
+        pass
 
 
 def handle_keybinding_menu_keyboard(key):
@@ -1107,7 +1238,7 @@ def handle_keybinding_menu_keyboard(key):
     elif key == pygame.K_RETURN or key == pygame.K_SPACE:
         handle_keybinding_menu_select()
     elif key == pygame.K_ESCAPE:
-        current_state = 'sounds_menu'  # Go back to audio menu
+        current_state = 'settings_menu'  # Go back to settings menu
 
 
 def handle_keybinding_menu_select():
@@ -1766,6 +1897,10 @@ def main():
                         handle_new_player_experience_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'sounds_menu':
                         handle_audio_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'settings_menu':
+                        handle_settings_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'privacy_controls':
+                        handle_privacy_controls_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'keybinding_menu':
                         # Handle keybinding menu clicks
                         clicked_item = get_keybinding_menu_click_item((mx, my), SCREEN_W, SCREEN_H, len(keybinding_all_bindings))
@@ -2088,6 +2223,10 @@ def main():
                         handle_new_player_experience_keyboard(event.key)
                     elif current_state == 'sounds_menu':
                         handle_audio_menu_keyboard(event.key)
+                    elif current_state == 'settings_menu':
+                        handle_settings_menu_keyboard(event.key)
+                    elif current_state == 'privacy_controls':
+                        handle_privacy_controls_keyboard(event.key)
                     elif current_state == 'keybinding_menu':
                         handle_keybinding_menu_keyboard(event.key)
                     elif current_state == 'keybinding_change':
@@ -2640,6 +2779,16 @@ def main():
                 # Audio settings menu
                 screen.fill((40, 45, 55))
                 draw_audio_menu(screen, SCREEN_W, SCREEN_H, sounds_menu_selected_item, audio_settings, global_sound_manager)
+                
+            elif current_state == 'settings_menu':
+                # Main settings menu
+                screen.fill((40, 45, 55))
+                draw_settings_main_menu(screen, SCREEN_W, SCREEN_H, settings_menu_selected_item)
+                
+            elif current_state == 'privacy_controls':
+                # Privacy controls menu
+                screen.fill((40, 45, 55))
+                privacy_controls.draw(screen, SCREEN_W, SCREEN_H)
                 
             elif current_state == 'keybinding_menu':
                 # Keybinding configuration menu
