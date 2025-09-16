@@ -564,14 +564,15 @@ ACTIONS = [
         "rules": lambda gs: hasattr(gs, 'media_system') and gs.reputation >= 10
     },
     {
-        "name": "Damage Control",
-        "desc": "Reduce negative media coverage impact by 50%. Costs $200k.",
+        "name": "Damage Control (Crisis Response)",
+        "desc": "Reduce negative media coverage impact by 50%. Costs $200k. Only available during active scandals or negative press coverage.",
         "cost": 200000,
         "ap_cost": 1,
         "upside": lambda gs: gs.media_system.execute_media_action('damage_control', gs) if hasattr(gs, 'media_system') else None,
         "downside": lambda gs: None,
         "rules": lambda gs: (hasattr(gs, 'media_system') and 
-                           any(story.story_type.value == 'scandal' for story in gs.public_opinion.active_stories))
+                           any(story.story_type.value == 'scandal' for story in gs.public_opinion.active_stories)),
+        "unavailable_reason": "No active scandals or negative press to respond to"
     },
     {
         "name": "Social Media Campaign", 

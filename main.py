@@ -3,6 +3,7 @@ import pygame
 import random
 import json
 from src.core.game_state import GameState
+from src.services.game_state_manager import get_game_state_manager
 
 from ui import draw_seed_prompt, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_ui
 from src.ui.menus import draw_main_menu
@@ -1487,8 +1488,10 @@ def handle_end_game_menu_click(mouse_pos, w, h):
             
             # Execute menu action based on selection (updated for new order)
             if i == 0:  # Play Again - PRIMARY ACTION for continuing play
+                # Use Game State Manager for clean restart (End Game State Reset Bug fix)
+                game_state_manager = get_game_state_manager()
+                game_state = game_state_manager.restart_game_with_same_seed()
                 current_state = 'game'
-                # Keep the same seed for relaunch
             elif i == 1:  # View Full Leaderboard
                 current_state = 'high_score'
                 high_score_selected_item = 0  # Reset high score selection
@@ -2663,7 +2666,9 @@ def main():
             # --- Game state initialization --- #
             # Create game state when entering game for first time
             if current_state == 'game' and game_state is None:
-                game_state = GameState(seed)
+                # Use Game State Manager for clean game initialization
+                game_state_manager = get_game_state_manager()
+                game_state = game_state_manager.create_fresh_game_state(seed)
                 
                 # Apply custom names from pre_game_settings
                 if pre_game_settings.get("player_name") and pre_game_settings["player_name"] != "Anonymous":
