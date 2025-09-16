@@ -1415,11 +1415,11 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         # Use traditional layout with filtered actions - calculate rects manually
         count = len(available_actions)
         base_x = int(w * 0.04)
-        base_y = int(h * 0.28)  # Moved down from 0.16 to 0.28
-        # Compact action buttons - reduced size for cleaner layout
-        width = int(w * 0.25)  # Reduced from 0.30 to 0.25 (25%)
-        height = int(h * 0.045)  # Reduced from 0.055 to 0.045 (4.5%)
-        gap = int(h * 0.008)  # Reduced from 0.015 to 0.008 (0.8%)
+        base_y = int(h * 0.20)  # Button displacement fix: moved up from 0.22 to 0.20 for maximum fit
+        # Ultra-compact action buttons to ensure all actions are clickable
+        width = int(w * 0.23)  # Further reduced from 0.24 to 0.23
+        height = int(h * 0.034)  # Further reduced from 0.038 to 0.034 
+        gap = int(h * 0.005)  # Further reduced from 0.006 to 0.005 for maximum density
         action_rects = [
             pygame.Rect(base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
