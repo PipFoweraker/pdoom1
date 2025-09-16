@@ -131,7 +131,7 @@ class TestSpendTracking(unittest.TestCase):
     def test_spend_tracking_multiple_actions(self):
         """Test spend tracking triggers for multiple spending actions."""
         # Simulate multiple spending actions
-        self.game_state.selected_actions = [
+        self.game_state.selected_gameplay_actions = [
             {'money_cost': 100, 'name': 'Action 1'},
             {'money_cost': 200, 'name': 'Action 2'}
         ]

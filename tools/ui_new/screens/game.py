@@ -640,7 +640,7 @@ def render_game_screen(screen: pygame.Surface, game_state: Any, w: int, h: int) 
         # Determine button state for visual feedback
         if game_state.action_points < ap_cost:
             button_state = ButtonState.DISABLED
-        elif idx in game_state.selected_actions:
+        elif idx in game_state.selected_gameplay_actions:
             button_state = ButtonState.PRESSED
         elif hasattr(game_state, 'hovered_action_idx') and game_state.hovered_action_idx == idx:
             button_state = ButtonState.HOVER

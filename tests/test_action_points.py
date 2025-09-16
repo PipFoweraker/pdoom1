@@ -109,7 +109,7 @@ class TestActionPointsDeduction(unittest.TestCase):
         fundraise_idx = next(i for i, action in enumerate(self.game_state.actions) 
                            if action["name"] == "Fundraise")
         
-        self.game_state.selected_actions.append(fundraise_idx)
+        self.game_state.selected_gameplay_actions.append(fundraise_idx)
         
         # Execute turn
         self.game_state.end_turn()
@@ -122,7 +122,7 @@ class TestActionPointsDeduction(unittest.TestCase):
     def test_ap_glow_effect_triggered(self):
         """Test that glow effect is triggered when AP is spent."""
         # Select an action
-        self.game_state.selected_actions.append(0)  # First action
+        self.game_state.selected_gameplay_actions.append(0)  # First action
         
         # Execute the action part manually to test glow effect
         action = self.game_state.actions[0]
@@ -147,7 +147,7 @@ class TestActionPointsDeduction(unittest.TestCase):
             if i < len(self.game_state.actions):
                 action = self.game_state.actions[i]
                 if action.get("ap_cost", 1) <= self.game_state.action_points:
-                    self.game_state.selected_actions.append(i)
+                    self.game_state.selected_gameplay_actions.append(i)
                     # Simulate AP deduction
                     self.game_state.action_points -= action.get("ap_cost", 1)
         
@@ -439,8 +439,8 @@ class TestActionPointsDelegation(unittest.TestCase):
         result = self.game_state.execute_action_with_delegation(safety_idx, delegate=False)
         
         self.assertTrue(result)
-        self.assertEqual(len(self.game_state.selected_actions), 1)
-        self.assertIn(safety_idx, self.game_state.selected_actions)
+        self.assertEqual(len(self.game_state.selected_gameplay_actions), 1)
+        self.assertIn(safety_idx, self.game_state.selected_gameplay_actions)
     
     def test_execute_action_with_delegation(self):
         """Test executing action with delegation."""
@@ -453,7 +453,7 @@ class TestActionPointsDelegation(unittest.TestCase):
         result = self.game_state.execute_action_with_delegation(safety_idx, delegate=True)
         
         self.assertTrue(result)
-        self.assertEqual(len(self.game_state.selected_actions), 1)
+        self.assertEqual(len(self.game_state.selected_gameplay_actions), 1)
         # Check delegation info is stored
         self.assertTrue(hasattr(self.game_state, '_action_delegations'))
         self.assertIn(safety_idx, self.game_state._action_delegations)
@@ -525,8 +525,8 @@ class TestKeyboardShortcuts(unittest.TestCase):
         success = self.game_state.execute_action_by_keyboard(0)
         
         self.assertTrue(success)
-        self.assertEqual(len(self.game_state.selected_actions), 1)
-        self.assertIn(0, self.game_state.selected_actions)
+        self.assertEqual(len(self.game_state.selected_gameplay_actions), 1)
+        self.assertIn(0, self.game_state.selected_gameplay_actions)
         
         # Check AP feedback was triggered
         self.assertTrue(self.game_state.ap_spent_this_turn)
@@ -540,7 +540,7 @@ class TestKeyboardShortcuts(unittest.TestCase):
         success = self.game_state.execute_action_by_keyboard(0)
         
         self.assertFalse(success)
-        self.assertEqual(len(self.game_state.selected_actions), 0)
+        self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
         # Should have error message
         self.assertTrue(any("Not enough Action Points" in msg for msg in self.game_state.messages))
     
@@ -556,7 +556,7 @@ class TestKeyboardShortcuts(unittest.TestCase):
         success = self.game_state.execute_action_by_keyboard(safety_idx)
         
         self.assertFalse(success)
-        self.assertEqual(len(self.game_state.selected_actions), 0)
+        self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
         # Should have error message
         self.assertTrue(any("Not enough money" in msg for msg in self.game_state.messages))
     
@@ -570,7 +570,7 @@ class TestKeyboardShortcuts(unittest.TestCase):
         success = self.game_state.execute_action_by_keyboard(scout_idx)
         
         self.assertFalse(success)
-        self.assertEqual(len(self.game_state.selected_actions), 0)
+        self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
         # Should have error message
         self.assertTrue(any("not available yet" in msg for msg in self.game_state.messages))
     
@@ -582,7 +582,7 @@ class TestKeyboardShortcuts(unittest.TestCase):
         success = self.game_state.execute_action_by_keyboard(invalid_idx)
         
         self.assertFalse(success)
-        self.assertEqual(len(self.game_state.selected_actions), 0)
+        self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
     
     def test_keyboard_shortcut_auto_delegation(self):
         """Test that keyboard shortcuts use auto-delegation when beneficial."""

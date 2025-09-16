@@ -430,7 +430,7 @@ class TestGameStateIntegration(unittest.TestCase):
                 break
         
         if safety_action_idx is not None:
-            self.game_state.selected_actions = [safety_action_idx]
+            self.game_state.selected_gameplay_actions = [safety_action_idx]
             self.game_state.end_turn()
             
             # Should have potential for media coverage (may or may not generate depending on reputation gain)
