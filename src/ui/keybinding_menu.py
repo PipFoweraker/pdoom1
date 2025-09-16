@@ -187,19 +187,7 @@ def draw_keybinding_menu(screen, w, h, selected_item):
                             is_special=True)
         current_item += 1
     
-    # Instructions
-    instruction_font = pygame.font.SysFont('Consolas', int(h*0.018))
-    instructions = [
-        "Use ?? arrows to navigate, ENTER to change keybinding",
-        "ESC to go back to main menu",
-        "Click on any button to change its keybinding"
-    ]
-    
-    for i, instruction in enumerate(instructions):
-        inst_surface = instruction_font.render(instruction, True, (150, 170, 190))
-        inst_x = w // 2 - inst_surface.get_width() // 2
-        inst_y = int(h * 0.95) + i * 20
-        screen.blit(inst_surface, (inst_x, inst_y))
+    # Instructions removed - users can intuit these actions from the UI design
     
     return all_bindings
 

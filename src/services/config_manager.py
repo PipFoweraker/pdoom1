@@ -154,7 +154,7 @@ class ConfigManager:
             # Tutorial and Help
             "tutorial": {
                 "tutorial_enabled": True,
-                "first_time_help": True,
+                "first_time_help": False,  # Disabled by default for experienced players
                 "show_tips": True,
                 "auto_help_on_errors": True
             },
