@@ -430,6 +430,9 @@ def handle_menu_click(mouse_pos, w, h):
     """
     global current_state, selected_menu_item, overlay_content, overlay_title, seed
     
+    # Extract mouse coordinates for sound button handler
+    mx, my = mouse_pos
+    
     # Use unified menu helper for collision detection
     from src.ui.menu_helpers import get_menu_button_collision
     clicked_item = get_menu_button_collision(mouse_pos, menu_items, w, h)
@@ -504,19 +507,19 @@ def handle_menu_keyboard(key):
         elif selected_menu_item == 1:  # Launch with Custom Seed
             current_state = 'custom_seed_prompt'
             seed_input = ""  # Clear any previous input
-        elif selected_menu_item == 2:  # Settings
-            current_state = 'sounds_menu'
-        elif selected_menu_item == 3:  # Player Guide
+        elif selected_menu_item == 2:  # Player Guide
             overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
             overlay_title = "Player Guide"
             push_navigation_state('overlay')
-        elif selected_menu_item == 4:  # View Leaderboard
+        elif selected_menu_item == 3:  # View Leaderboard
             # Go directly to leaderboard screen with default seed
             current_state = 'high_score'
             high_score_selected_item = 0  # Reset selection
             # Set a default seed for leaderboard viewing if none exists
             if seed is None:
                 seed = get_weekly_seed()  # Use the default weekly seed
+        elif selected_menu_item == 4:  # Settings
+            current_state = 'settings_menu'
         elif selected_menu_item == 5:  # Exit
             log_shutdown("Menu keyboard exit")
             pygame.quit()
@@ -1818,6 +1821,8 @@ def main():
     cached_fundraising_dialog_rects = None
     # Initialize cached research dialog rects
     cached_research_dialog_rects = None
+    # Initialize cached intelligence dialog rects
+    cached_intelligence_dialog_rects = None
 
     running = True
     try:
@@ -1881,6 +1886,10 @@ def main():
                     continue
                     
                 elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # Skip mouse wheel button events (buttons 4 and 5) to prevent wheel clicks
+                    if event.button in [4, 5]:  # Mouse wheel up/down as button events
+                        continue
+                    
                     mx, my = event.pos
                     
                     # Handle overlay manager events first (highest priority)
@@ -2055,6 +2064,40 @@ def main():
                                     else:
                                         # Click is outside dialog area - dismiss the dialog
                                         game_state.dismiss_hiring_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for intelligence dialog clicks
+                            elif game_state and game_state.pending_intelligence_dialog and cached_intelligence_dialog_rects is not None:
+                                intelligence_handled = False
+                                for rect_info in cached_intelligence_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'intelligence_option':
+                                            # Player selected an intelligence option
+                                            game_state.select_intelligence_option(rect_info['option_id'])
+                                            intelligence_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the intelligence dialog
+                                            game_state.dismiss_intelligence_dialog()
+                                            intelligence_handled = True
+                                            break
+                                
+                                if intelligence_handled:
+                                    pass  # Intelligence dialog handled the click
+                                else:
+                                    # When intelligence dialog is open, check if click is inside dialog area
+                                    dialog_width = int(SCREEN_W * 0.7)
+                                    dialog_height = int(SCREEN_H * 0.6)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_intelligence_dialog()
                                         if hasattr(game_state, 'sound_manager'):
                                             game_state.sound_manager.play_sound('popup_close')
                             # Check for fundraising dialog clicks
@@ -2323,6 +2366,14 @@ def main():
                         elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
                               game_state and game_state.pending_hiring_dialog):
                             game_state.dismiss_hiring_dialog()
+                            # Play popup close sound
+                            if hasattr(game_state, 'sound_manager'):
+                                game_state.sound_manager.play_sound('popup_close')
+                        
+                        # Close intelligence dialog with multiple keys (Left Arrow, Backspace, or ESC)
+                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
+                              game_state and game_state.pending_intelligence_dialog):
+                            game_state.dismiss_intelligence_dialog()
                             # Play popup close sound
                             if hasattr(game_state, 'sound_manager'):
                                 game_state.sound_manager.play_sound('popup_close')
@@ -2900,6 +2951,14 @@ def main():
                     else:
                         # Clear cached rects when dialog is not active
                         cached_hiring_dialog_rects = None
+                    
+                    # Draw intelligence dialog if active
+                    if game_state and game_state.pending_intelligence_dialog:
+                        from src.ui.dialogs import draw_intelligence_dialog
+                        cached_intelligence_dialog_rects = draw_intelligence_dialog(screen, game_state.pending_intelligence_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_intelligence_dialog_rects = None
                     
                     # Draw fundraising dialog if active
                     if game_state and game_state.pending_fundraising_dialog:

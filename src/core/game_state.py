@@ -321,6 +321,8 @@ class GameState:
         self.pending_fundraising_dialog = None  # Current fundraising dialog waiting for player selection
         # Research dialog system
         self.pending_research_dialog = None  # Current research dialog waiting for player selection
+        # Intelligence dialog system
+        self.pending_intelligence_dialog = None  # Current intelligence dialog waiting for player selection
         self._pending_first_time_help = None  # Track pending first-time help to show
 
         # Copy modular content
@@ -3966,6 +3968,74 @@ class GameState:
         for msg in messages:
             self.messages.append(msg)
     
+    def _trigger_intelligence_dialog(self) -> None:
+        """Trigger the intelligence dialog with available intelligence gathering options."""
+        # Check if any opponents can be scouted
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
+        
+        intelligence_options = []
+        
+        # Always available: Scout Opponents (existing functionality)
+        intelligence_options.append({
+            "id": "scout_opponents",
+            "name": "Scout Opponents",
+            "description": "Gather intelligence on competing labs via internet research.",
+            "cost": 0,
+            "ap_cost": 1,
+            "available": True,
+            "details": f"Known labs: {len(discovered_opponents)}, Unknown labs: {len(undiscovered_opponents)}"
+        })
+        
+        # Future intelligence options can be added here
+        # For now, just Scout Opponents to consolidate the functionality
+        
+        self.pending_intelligence_dialog = {
+            "options": intelligence_options,
+            "title": "Intelligence Operations",
+            "description": "Select an intelligence gathering operation to execute."
+        }
+    
+    def select_intelligence_option(self, option_id: str) -> Tuple[bool, str]:
+        """Handle player selection of an intelligence option."""
+        if not self.pending_intelligence_dialog:
+            return False, "No intelligence dialog active."
+        
+        # Find the selected option
+        selected_option = None
+        for option in self.pending_intelligence_dialog["options"]:
+            if option["id"] == option_id:
+                selected_option = option
+                break
+        
+        if not selected_option:
+            return False, f"Invalid intelligence option: {option_id}"
+        
+        if not selected_option["available"]:
+            return False, f"Option not available: {selected_option['name']}"
+        
+        # Check costs
+        if selected_option["cost"] > self.money:
+            return False, f"Cannot afford {selected_option['name']} - need ${selected_option['cost']}"
+        
+        if selected_option["ap_cost"] > self.action_points:
+            return False, f"Cannot execute {selected_option['name']} - need {selected_option['ap_cost']} AP"
+        
+        # Execute the selected intelligence operation
+        if option_id == "scout_opponents":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute scout opponents functionality
+            self._scout_opponents()
+            
+            # Clear the intelligence dialog
+            self.pending_intelligence_dialog = None
+            return True, "Intelligence gathering complete."
+        
+        return False, f"Unknown intelligence option: {option_id}"
+    
     def _trigger_competitor_discovery(self) -> None:
         """Trigger discovery of a new competitor through intelligence."""
         undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
@@ -3975,7 +4045,7 @@ class GameState:
             new_opponent.discover()
             self.messages.append(f"INTELLIGENCE ALERT: New competitor detected - {new_opponent.name}")
             self.messages.append(f"? {new_opponent.description}")
-            self.messages.append("Use 'Scout Opponents' action to gather more intelligence on their capabilities.")
+            self.messages.append("Use 'Intelligence' action to gather more intelligence on their capabilities.")
         else:
             self.messages.append("Intelligence reports suggest all major competitors are now known.")
     
@@ -4212,6 +4282,11 @@ class GameState:
         """Dismiss the hiring dialog without making a selection."""
         if self.pending_hiring_dialog:
             self.pending_hiring_dialog = None
+    
+    def dismiss_intelligence_dialog(self) -> None:
+        """Dismiss the intelligence dialog without making a selection."""
+        if self.pending_intelligence_dialog:
+            self.pending_intelligence_dialog = None
     
     def _create_upgrade_transition(self, upgrade_idx: int, start_rect: pygame.Rect, end_rect: pygame.Rect) -> None:
         """Create a smooth transition animation for an upgrade moving from button to icon."""

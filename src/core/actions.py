@@ -401,17 +401,13 @@ ACTIONS = [
         "rules": None
     },
     {
-        "name": "Scout Opponents",
-        "desc": "Gather intelligence on competing labs via internet research. Free and safe action.",
-        "cost": 0,
-        "ap_cost": 1,  # Action Points cost
-        "delegatable": True,  # Can be delegated to admin staff
-        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
-        "delegate_ap_cost": 1,  # Same AP cost when delegated
-        "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
-        "upside": lambda gs: gs._scout_opponents(),
+        "name": "Intelligence",
+        "desc": "Open intelligence dialog to select from scouting and information gathering options.",
+        "cost": 0,  # No immediate cost - cost depends on selection
+        "ap_cost": 1,
+        "upside": lambda gs: gs._trigger_intelligence_dialog(),
         "downside": lambda gs: None,
-        "rules": None  # No longer locked behind turn requirement
+        "rules": None
     },
     {
         "name": "Hire Manager",
