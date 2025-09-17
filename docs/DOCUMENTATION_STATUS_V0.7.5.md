@@ -2,20 +2,20 @@
 
 ## Release Readiness Checklist
 
-### ✅ Completed Documentation Updates
+### [EMOJI] Completed Documentation Updates
 - [x] **README.md**: Updated to v0.7.5 with extended gameplay features
 - [x] **CHANGELOG.md**: Comprehensive v0.7.5 release notes with technical details
 - [x] **PLAYERGUIDE.md**: Updated version header and strategy sections for 12-13 turn games
 - [x] **DEVELOPERGUIDE.md**: Added TurnManager architecture documentation
 - [x] **RELEASE_NOTES_V0.7.5.md**: Complete technical release documentation
 
-### 🔄 Pending Documentation Updates
+### [EMOJI] Pending Documentation Updates
 - [ ] **Screenshot Updates**: Need new gameplay screenshots showing v0.7.5 features
 - [ ] **PLAYERGUIDE.md**: Remove emoji placeholders and fix ASCII compliance
 - [ ] **DEVELOPERGUIDE.md**: Remove emoji placeholders and fix ASCII compliance
 - [ ] **Archive Management**: Move old session docs to archive directory
 
-### 📋 Documentation Organization
+### [CHECKLIST] Documentation Organization
 
 #### Core User Documentation
 - **README.md** (v0.7.5 ready) - Installation, quick start, feature overview
@@ -40,10 +40,10 @@
 3. Various historical docs with emoji placeholders
 
 ### Recommended ASCII Replacements
-- `[EMOJI]` → Remove or replace with descriptive text
-- `[TARGET]` → `[AIM]` or remove
-- `[LIGHTNING]` → `[POWER]` or remove
-- `[WARNING]` → `[WARN]` or `**WARNING**`
+- `[EMOJI]` -> Remove or replace with descriptive text
+- `[TARGET]` -> `[AIM]` or remove
+- `[LIGHTNING]` -> `[POWER]` or remove
+- `[WARNING]` -> `[WARN]` or `**WARNING**`
 
 ## Documentation Archive Strategy
 
@@ -101,21 +101,21 @@
 
 ## File Status Summary
 
-### Ready for Release ✅
+### Ready for Release [EMOJI]
 - README.md
 - CHANGELOG.md  
 - docs/RELEASE_NOTES_V0.7.5.md
 - docs/DEVELOPERGUIDE.md (architecture content)
 
-### Needs Minor Fixes 🔧
+### Needs Minor Fixes [EMOJI]
 - docs/PLAYERGUIDE.md (ASCII compliance)
 - docs/DEVELOPERGUIDE.md (ASCII compliance)
 
-### Needs Updates 📝
+### Needs Updates [NOTE]
 - Screenshots and visual documentation
 - Archive organization
 
-### Archive Ready 📦
+### Archive Ready [EMOJI]
 - Historical deployment and hotfix docs
 - Completed development session docs
 - Old version documentation

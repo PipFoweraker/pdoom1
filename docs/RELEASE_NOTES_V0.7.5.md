@@ -64,7 +64,7 @@ P(Doom) v0.7.5 represents a significant milestone in the game's development, del
 ## Game Balance Changes
 
 ### Doom Mechanics
-- **Base doom per turn**: 5 → 1 point (80% reduction)
+- **Base doom per turn**: 5 -> 1 point (80% reduction)
 - **Breakthrough event doom**: Reduced by 70%
 - **Opponent doom contributions**: Halved across all labs
 - **Safety research effectiveness**: +40% doom reduction per researcher
@@ -76,8 +76,8 @@ P(Doom) v0.7.5 represents a significant milestone in the game's development, del
 - **Staff loss conditions**: Now configurable in settings
 
 ### Opponent Behavior
-- **Research speed**: Reduced by 40% (base_progress: 0.5 → 0.3)
-- **Doom contributions**: Halved (base_doom: 0.2 → 0.1)
+- **Research speed**: Reduced by 40% (base_progress: 0.5 -> 0.3)
+- **Doom contributions**: Halved (base_doom: 0.2 -> 0.1)
 - **Progress scaling**: More gradual progression curves
 - **Discovery timing**: Adjusted for extended gameplay
 

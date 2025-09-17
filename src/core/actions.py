@@ -429,13 +429,22 @@ ACTIONS = [
         "rules": None
     },
     {
-        "name": "Scout Opponent",
-        "desc": "Focused intel gathering on competitors - costs $50 but has risk of exposure.",
+        "name": "Scout Opponents",
+        "desc": "Intelligence gathering to discover and reveal opponent capabilities - costs $50 with exposure risk.",
         "cost": 50,
         "ap_cost": 1,  # Action Points cost
         "upside": lambda gs: gs._scout_opponent(),
         "downside": lambda gs: gs._espionage_risk(),
-        "rules": None  # No longer locked behind turn requirement
+        "rules": None  # Always available for intelligence gathering
+    },
+    {
+        "name": "Investigate Opponent",
+        "desc": "Deep investigation of a specific revealed opponent - analyze their strategies and progress.",
+        "cost": 75,
+        "ap_cost": 1,  # Action Points cost
+        "upside": lambda gs: gs._investigate_specific_opponent(),
+        "downside": lambda gs: gs._espionage_risk(),
+        "rules": lambda gs: gs._has_revealed_opponents()  # Requires at least one revealed opponent
     },
     {
         "name": "General News Reading",
@@ -492,6 +501,19 @@ ACTIONS = [
         "rules": lambda gs: hasattr(gs, 'researchers') and len(gs.researchers) > 0
     },
     {
+        "name": "Safety Research",
+        "desc": "Traditional AI safety research - interpretability, alignment, robustness (costs $40k)",
+        "cost": 40,
+        "ap_cost": 1,
+        "delegatable": True,  # Can be delegated to research staff
+        "delegate_staff_req": 2,  # Requires 2 research staff to delegate
+        "delegate_ap_cost": 1,  # Same AP cost when delegated (complex task)
+        "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
+        "upside": lambda gs: gs._execute_standalone_safety_research(),
+        "downside": lambda gs: None,
+        "rules": None  # Always available
+    },
+    {
         "name": "Research Speed: Fast & Risky (Rushed)",
         "desc": "Move fast and break things - quicker results but higher doom risk and technical debt",
         "cost": 0,
@@ -528,8 +550,8 @@ ACTIONS = [
         "rules": lambda gs: gs.technical_debt.accumulated_debt >= 5  # Need significant debt to justify
     },
     {
-        "name": "Safety Audit",
-        "desc": "External safety audit. Professional review, reduces debt by 2, +reputation",
+        "name": "Technical Debt Audit",
+        "desc": "External code quality audit. Professional review, reduces technical debt by 2, +reputation",
         "cost": lambda gs: gs.economic_config.get_technical_debt_cost('safety_audit_external'),
         "ap_cost": 1,
         "upside": lambda gs: gs.execute_debt_reduction_action("Safety Audit"),

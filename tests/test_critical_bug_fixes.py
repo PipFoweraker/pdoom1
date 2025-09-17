@@ -109,7 +109,9 @@ class TestCriticalBugFixes(unittest.TestCase):
             
             # This should not crash due to list modification during iteration
             try:
-                action['execute'](self.game_state, messages)
+                # Use the correct action execution method
+                if 'upside' in action and callable(action['upside']):
+                    action['upside'](self.game_state)
                 test_passed = True
             except (ValueError, IndexError, RuntimeError) as e:
                 # These would be the typical errors from list modification during iteration

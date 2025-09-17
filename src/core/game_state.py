@@ -4218,7 +4218,7 @@ class GameState:
         self._add('reputation', reputation_boost)
         
         # Fun message for the player
-        self.messages.append("🐱 SPECIAL EVENT: A box of adorable kittens was left outside your office!")
+        self.messages.append("[EMOJI] SPECIAL EVENT: A box of adorable kittens was left outside your office!")
         self.messages.append("Your staff has unanimously decided to adopt them as official office cats.")
         self.messages.append(f"Responsible pet ownership: Flea treatment purchased for ${flea_treatment_cost}")
         self.messages.append(f"The office atmosphere has improved significantly! +{reputation_boost} reputation")
@@ -6063,3 +6063,83 @@ class GameState:
         
         selected_message = random.choice(research_messages)
         self.messages.append(selected_message)
+
+    def _execute_standalone_safety_research(self) -> None:
+        """Execute standalone Safety Research action (for backward compatibility with tests)."""
+        # Create a safety research option using the same logic as the research dialog
+        safety_option = {
+            "id": "safety_research",
+            "name": "Safety Research",
+            "min_doom_reduction": 2,
+            "max_doom_reduction": 6,
+            "reputation_gain": 2,
+            "cost": 40
+        }
+        
+        # Use the existing research execution method
+        success = self._execute_research_option(safety_option)
+        
+        if success:
+            # Add specific safety research message for standalone execution
+            self.messages.append("Research team focuses on AI safety fundamentals - interpretability and alignment techniques")
+
+    def _has_revealed_opponents(self) -> bool:
+        """Check if any opponents have been discovered and can be investigated."""
+        return any(opp.discovered for opp in self.opponents)
+
+    def _investigate_specific_opponent(self) -> None:
+        """Deep investigation of a specific revealed opponent - more detailed than scouting."""
+        discovered_opponents = [opp for opp in self.opponents if opp.discovered]
+        
+        if not discovered_opponents:
+            self.messages.append("Investigation failed: No opponents have been revealed yet. Try scouting first.")
+            return
+            
+        # Choose a discovered opponent to investigate deeply
+        target = get_rng().choice(discovered_opponents, f"investigate_target_selection_turn_{self.turn}")
+        
+        # Detailed investigation reveals more information than basic scouting
+        self.messages.append(f"INVESTIGATION: Deep analysis of {target.name}")
+        
+        # Enhanced information gathering with magical orb
+        enhanced = hasattr(self, 'magical_orb_active') and self.magical_orb_active
+        if enhanced:
+            self.messages.append("[ORB] MAGICAL ORB REVEALS DEEPER SECRETS...")
+        
+        # Reveal detailed stats (more than basic scouting)
+        all_stats = ['budget', 'compute', 'progress', 'reputation', 'staff_count', 'strategy_focus']
+        num_stats = 4 if enhanced else 3
+        stats_revealed = random.sample(all_stats, min(num_stats, len(all_stats)))
+        
+        for stat in stats_revealed:
+            if stat == 'budget':
+                range_desc = "massive" if target.budget > 800 else "substantial" if target.budget > 400 else "limited"
+                self.messages.append(f"? Financial analysis: {target.name} operates with {range_desc} funding reserves")
+            elif stat == 'compute':
+                range_desc = "cutting-edge" if target.compute > 80 else "advanced" if target.compute > 40 else "basic"
+                self.messages.append(f"? Infrastructure scan: {target.name} uses {range_desc} compute resources")
+            elif stat == 'progress':
+                range_desc = "alarming" if target.progress > 70 else "significant" if target.progress > 40 else "early-stage"
+                self.messages.append(f"? Research assessment: {target.name} shows {range_desc} development progress")
+            elif stat == 'reputation':
+                range_desc = "renowned" if target.reputation > 80 else "respected" if target.reputation > 40 else "emerging"
+                self.messages.append(f"? Public standing: {target.name} maintains {range_desc} industry reputation")
+            elif stat == 'staff_count':
+                range_desc = "large" if target.staff_count > 30 else "medium" if target.staff_count > 15 else "small"
+                self.messages.append(f"? Team analysis: {target.name} employs a {range_desc} research team")
+            elif stat == 'strategy_focus':
+                self.messages.append(f"? Strategic focus: {target.name} prioritizes {target.strategy} development approaches")
+        
+        # Chance to reveal current action or priority
+        if get_rng().random(f"investigate_action_reveal_turn_{self.turn}") < 0.4:
+            action_insights = [
+                f"? Current priority: {target.name} is heavily investing in compute infrastructure",
+                f"? Strategic shift: {target.name} recently pivoted to focus on {target.strategy}",
+                f"? Intelligence leak: {target.name} planning major announcement within 2-3 turns",
+                f"? Internal memo: {target.name} concerned about recent safety research developments",
+                f"? Hiring spree: {target.name} aggressively recruiting top AI researchers"
+            ]
+            self.messages.append(get_rng().choice(action_insights, f"investigate_insight_turn_{self.turn}"))
+            
+        if enhanced:
+            self.messages.append("[ORB] DEEP SCAN COMPLETE - All major capabilities assessed")

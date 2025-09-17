@@ -25,11 +25,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **MAJOR: Doom Mechanics Rebalancing**: Dramatically extended gameplay length for better strategic depth
-  - **Base doom rate**: 5 → 1 points/turn (80% reduction)
-  - **Event doom spikes**: 6-13 → 2-4 points (70% reduction for breakthrough events)
+  - **Base doom rate**: 5 -> 1 points/turn (80% reduction)
+  - **Event doom spikes**: 6-13 -> 2-4 points (70% reduction for breakthrough events)
   - **Opponent doom impact**: 50% reduction in capabilities research doom contribution
   - **Opponent research speed**: 40% reduction for more realistic progression
-  - **Safety research effectiveness**: 40% boost (2.5x → 3.5x doom reduction multiplier)
+  - **Safety research effectiveness**: 40% boost (2.5x -> 3.5x doom reduction multiplier)
   - **Game length**: Extended from ~7-8 turns to ~12-13 turns (85% increase)
 - **Enhanced Main Loop**: Updated to use TurnManager with proper fallback compatibility
   - Automatic cleanup for stuck turn processing with `is_processing_stuck()` detection
@@ -73,7 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated main.py navigation flow to support dedicated privacy controls state
   - Seamless integration with existing visual feedback system for consistent UI experience
   - Settings persistence via existing PrivacyManager system ensuring cross-session reliability
-  - **Navigation Flow**: Settings Menu → Privacy Controls → [All 5 logging levels + data management]
+  - **Navigation Flow**: Settings Menu -> Privacy Controls -> [All 5 logging levels + data management]
 - **Privacy-First User Experience**: Comprehensive user education and transparent data practices
   - Welcome dialog for first-time users explaining privacy controls and their importance
   - Clear descriptions for each logging level helping users make informed privacy decisions

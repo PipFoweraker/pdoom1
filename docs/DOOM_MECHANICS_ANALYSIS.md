@@ -19,7 +19,7 @@ doom_rise = 5  # Base doom increase
 Location: `src/core/opponents.py:222-237`
 - **Undiscovered opponents**: 0-2 points each (random)
 - **Discovered opponents**: `capabilities_researchers * 0.2 * progress_multiplier * debt_multiplier`
-- **3 opponents total** → typical 2-6 points combined
+- **3 opponents total** -> typical 2-6 points combined
 - **Scales with opponent progress and technical debt**
 
 #### 3. Capabilities Research: **3 points per researcher**
@@ -50,7 +50,7 @@ Location: `src/core/actions.py:215`
 - **Turn 4**: 49 + 8 + event_spike = **~64 doom** (+15 with event)
 - **Turn 5**: 64 + 8 + scaling = **~76 doom** (+12)
 - **Turn 6**: 76 + 8 + scaling = **~89 doom** (+13)
-- **Turn 7**: 89 + 8 + scaling = **~100 doom** (+11) → **GAME OVER**
+- **Turn 7**: 89 + 8 + scaling = **~100 doom** (+11) -> **GAME OVER**
 
 ### Key Issues
 1. **Too Fast**: Game ends around turn 7-8 consistently
@@ -63,13 +63,13 @@ Location: `src/core/actions.py:215`
 ### Option 1: Conservative Adjustment (Extend to ~12-15 turns)
 ```python
 # In turn_manager.py:
-doom_rise = 3  # Reduced from 5 → slower base progression
+doom_rise = 3  # Reduced from 5 -> slower base progression
 
 # In opponents.py:
 base_doom = self.capabilities_researchers * 0.15  # Reduced from 0.2
 
 # In turn_manager.py:
-doom_reduction = gs.research_staff * 3.0  # Increased from 2.5 → better payoff
+doom_reduction = gs.research_staff * 3.0  # Increased from 2.5 -> better payoff
 ```
 
 ### Option 2: Moderate Adjustment (Extend to ~10-12 turns)
@@ -97,23 +97,23 @@ doom_reduction = gs.research_staff * 4.0  # Increased from 2.5
 ## Impact Analysis
 
 ### Current (7-8 turns):
-- **Base**: 5 × 7 = 35 doom
-- **Opponents**: ~3 × 7 = 21 doom  
+- **Base**: 5 x 7 = 35 doom
+- **Opponents**: ~3 x 7 = 21 doom  
 - **Events**: ~15 doom
 - **Total**: ~71 doom + 25 starting = **96 doom** at turn 7
 
 ### Option 1 (12-15 turns):
-- **Base**: 3 × 12 = 36 doom
-- **Opponents**: ~2.5 × 12 = 30 doom
+- **Base**: 3 x 12 = 36 doom
+- **Opponents**: ~2.5 x 12 = 30 doom
 - **Events**: ~20 doom
-- **Safety Research**: -3 × 6 turns × average 2 staff = -36 doom
+- **Safety Research**: -3 x 6 turns x average 2 staff = -36 doom
 - **Net**: 50 doom + 25 starting = **75 doom** at turn 12
 
 ### Option 2 (10-12 turns):
-- **Base**: 4 × 10 = 40 doom
-- **Opponents**: ~3 × 10 = 30 doom  
+- **Base**: 4 x 10 = 40 doom
+- **Opponents**: ~3 x 10 = 30 doom  
 - **Events**: ~18 doom
-- **Safety Research**: -3.5 × 5 turns × average 2 staff = -35 doom
+- **Safety Research**: -3.5 x 5 turns x average 2 staff = -35 doom
 - **Net**: 53 doom + 25 starting = **78 doom** at turn 10
 
 ## Implementation Priority

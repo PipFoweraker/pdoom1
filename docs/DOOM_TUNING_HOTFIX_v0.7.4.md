@@ -71,11 +71,11 @@ base_progress = self.capabilities_researchers * 0.3  # Reduced from 0.5 (40% red
 5. **Learning Curve**: New players have more turns to understand mechanics
 
 ## Validation
-- ✅ Game length increased from ~7 to ~13 turns
-- ✅ Doom progression is now more predictable
-- ✅ Staff hiring becomes viable by turn 2-3
-- ✅ Multiple research projects are feasible
-- ✅ Enhanced logging aids debugging and balance
+- [EMOJI] Game length increased from ~7 to ~13 turns
+- [EMOJI] Doom progression is now more predictable
+- [EMOJI] Staff hiring becomes viable by turn 2-3
+- [EMOJI] Multiple research projects are feasible
+- [EMOJI] Enhanced logging aids debugging and balance
 
 ## Deployment Status
 - **Ready for hotfix deployment**
