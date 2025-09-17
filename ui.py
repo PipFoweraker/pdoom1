@@ -2627,7 +2627,7 @@ def draw_opponents_panel(screen: pygame.Surface, game_state, w: int, h: int, fon
     
     if not discovered:
         # No opponents discovered yet - brighter text
-        no_info = small_font.render("Use Espionage or Scout Opponent to discover competitors", True, (220, 220, 220))
+        no_info = small_font.render("Use Espionage or Scout Opponents to discover competitors", True, (220, 220, 220))
         screen.blit(no_info, (panel_x + int(w * 0.15), panel_y + int(h * 0.035)))
         return
     

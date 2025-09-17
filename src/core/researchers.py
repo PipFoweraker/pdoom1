@@ -95,9 +95,9 @@ class Researcher:
         self.id = f"{name.replace(' ', '_').lower()}_{str(uuid.uuid4())[:8]}"
         self.name = name
         self.specialization = specialization
-        self.skill_level = skill_level if skill_level is not None else get_rng().randint(3, 8)
+        self.skill_level = skill_level if skill_level is not None else get_rng().randint(3, 8, "randint_context")
         self.traits = traits if traits is not None else []
-        self.salary_expectation = salary_expectation if salary_expectation is not None else get_rng().randint(70, 120)
+        self.salary_expectation = salary_expectation if salary_expectation is not None else get_rng().randint(70, 120, "randint_context")
         
         # Management attributes
         self.current_salary = self.salary_expectation
@@ -234,28 +234,28 @@ def generate_researcher_name() -> str:
         "Kim", "Singh", "Martinez", "Clark", "Lopez", "Gonzalez", "Young", "King"
     ]
     
-    return f"{get_rng().choice(first_names)} {get_rng().choice(last_names)}"
+    return f"{get_rng().choice(first_names, "choice_context")} {get_rng().choice(last_names, "choice_context")}"
 
 def generate_random_traits(num_traits: int = None) -> List[str]:
     """Generate random traits for a researcher."""
     if num_traits is None:
-        num_traits = get_rng().choices([0, 1, 2], weights=[40, 45, 15])[0]  # Mostly 0-1 traits
+        num_traits = get_rng().choices([0, 1, 2], weights=[40, 45, 15], k=1, context="trait_count")[0]  # Mostly 0-1 traits
     
     if num_traits == 0:
         return []
     
     all_traits = list(POSITIVE_TRAITS.keys()) + list(NEGATIVE_TRAITS.keys())
-    return get_rng().sample(all_traits, min(num_traits, len(all_traits)))
+    return get_rng().sample(all_traits, min(num_traits, len(all_traits)), "trait_selection")
 
 def generate_researcher(specialization: str = None) -> Researcher:
     """Generate a random researcher with given or random specialization."""
     if specialization is None:
-        specialization = get_rng().choice(list(SPECIALIZATIONS.keys()))
+        specialization = get_rng().choice(list(SPECIALIZATIONS.keys()), "choice_context")
     
     name = generate_researcher_name()
-    skill_level = get_rng().randint(3, 8)
+    skill_level = get_rng().randint(3, 8, "randint_context")
     traits = generate_random_traits()
-    salary_expectation = get_rng().randint(70, 120)
+    salary_expectation = get_rng().randint(70, 120, "randint_context")
     
     return Researcher(name, specialization, skill_level, traits, salary_expectation)
 

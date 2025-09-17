@@ -68,7 +68,7 @@ class LabNameManager:
                 return temp_rng.choice(self._lab_names)[0]
         
         # Fallback to system random
-        return get_rng().choice(self._lab_names)[0]
+        return get_rng().choice(self._lab_names, "choice_context")[0]
     
     def get_lab_names_by_theme(self, theme: str) -> List[str]:
         """Get all lab names matching a specific theme"""

@@ -146,7 +146,7 @@ class EconomicConfig:
         reputation_modifier = success_config.get("reputation_modifier", 0.02)
         
         # Add some variation but keep it deterministic
-        variation = (get_rng().random() - 0.5) * 0.2  # +/- 10% variation
+        variation = (get_rng().random("random_context") - 0.5) * 0.2  # +/- 10% variation
         
         final_probability = base_rate + (reputation * reputation_modifier) + variation
         return max(0.1, min(0.95, final_probability))

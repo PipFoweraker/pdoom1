@@ -265,13 +265,13 @@ class TurnManager:
         cat_food_cost = 14  # Rounded down for game balance
         gs._add('money', -cat_food_cost)
         gs.office_cat_total_food_cost = getattr(gs, 'office_cat_total_food_cost', 0) + cat_food_cost
-        gs.messages.append(f"🐱 Cat upkeep: ${cat_food_cost} (total: ${gs.office_cat_total_food_cost})")
+        gs.messages.append(f"[CAT] Cat upkeep: ${cat_food_cost} (total: ${gs.office_cat_total_food_cost})")
         
         # Small morale benefit (reduce doom slightly) - dev engagement reward
         from src.services.deterministic_rng import get_rng
         if get_rng().random(f"cat_morale_turn_{gs.turn}") < 0.3:  # 30% chance per turn
             gs._add('doom', -1)
-            gs.messages.append("🐾 Office cat provides small morale boost!")
+            gs.messages.append("[PAWS] Office cat provides small morale boost!")
         
         # Update cat love emoji timer
         if hasattr(gs, 'office_cat_love_emoji_timer') and gs.office_cat_love_emoji_timer > 0:

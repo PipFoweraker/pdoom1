@@ -3379,7 +3379,7 @@ class GameState:
         if action_name == "Refactoring Sprint":
             cost = self._get_action_cost(action)
             self._add('money', -cost)
-            debt_reduction = get_rng().randint(*action["debt_reduction"])
+            debt_reduction = get_rng().randint(*action["debt_reduction"], "randint_context")
             reduced = self.technical_debt.reduce_debt(debt_reduction)
             self.messages.append(f"? Refactoring sprint completed! Reduced technical debt by {reduced} points")
             
@@ -3537,17 +3537,17 @@ class GameState:
         
         # Check for accident events
         accident_chance = self.technical_debt.get_accident_chance()
-        if accident_chance > 0 and get_rng().random() < accident_chance:
+        if accident_chance > 0 and get_rng().random("random_context") < accident_chance:
             self._trigger_debt_accident()
         
         # Check for reputation risks
-        if self.technical_debt.has_reputation_risk() and get_rng().random() < 0.1:
-            rep_loss = get_rng().randint(1, 3)
+        if self.technical_debt.has_reputation_risk() and get_rng().random("random_context") < 0.1:
+            rep_loss = get_rng().randint(1, 3, "randint_context")
             self._add('reputation', -rep_loss)
             self.messages.append(f"[NEWS] Technical debt issues exposed in media! Lost {rep_loss} reputation")
         
         # Check for system failure events
-        if self.technical_debt.can_trigger_system_failure() and get_rng().random() < 0.05:
+        if self.technical_debt.can_trigger_system_failure() and get_rng().random("random_context") < 0.05:
             self._trigger_system_failure()
     
     # Researcher Assignment System for Issue #190
@@ -3705,12 +3705,12 @@ class GameState:
     def _trigger_debt_accident(self) -> None:
         """Trigger a technical debt-related accident."""
         accident_types = [
-            ("Research setback due to buggy code", lambda: self._add('research_progress', -get_rng().randint(5, 15))),
-            ("Security breach from poor validation", lambda: self._add('reputation', -get_rng().randint(2, 4))),
-            ("Compute system crash from technical debt", lambda: self._add('compute', -get_rng().randint(5, 10))),
+            ("Research setback due to buggy code", lambda: self._add('research_progress', -get_rng().randint(5, 15, "randint_context"))),
+            ("Security breach from poor validation", lambda: self._add('reputation', -get_rng().randint(2, 4, "randint_context"))),
+            ("Compute system crash from technical debt", lambda: self._add('compute', -get_rng().randint(5, 10, "randint_context"))),
         ]
         
-        accident_name, accident_effect = get_rng().choice(accident_types)
+        accident_name, accident_effect = get_rng().choice(accident_types, "choice_context")
         accident_effect()
         self.messages.append(f"[EXPLOSION] ACCIDENT: {accident_name}")
     
@@ -3718,22 +3718,22 @@ class GameState:
         """Trigger a major system failure due to excessive technical debt."""
         failure_types = [
             ("Critical system failure! Major research setback", 
-             lambda: (self._add('research_progress', -get_rng().randint(20, 40)),
-                     self._add('reputation', -get_rng().randint(3, 6)))),
+             lambda: (self._add('research_progress', -get_rng().randint(20, 40, "randint_context")),
+                     self._add('reputation', -get_rng().randint(3, 6, "randint_context")))),
             ("Catastrophic infrastructure collapse! Financial and reputation damage",
-             lambda: (self._add('money', -get_rng().randint(50, 100)),
-                     self._add('reputation', -get_rng().randint(4, 8)))),
+             lambda: (self._add('money', -get_rng().randint(50, 100, "randint_context")),
+                     self._add('reputation', -get_rng().randint(4, 8, "randint_context")))),
             ("Major safety incident due to accumulated shortcuts!",
-             lambda: (self._add('doom', get_rng().randint(10, 20), "technical debt cascade failure"),
-                     self._add('reputation', -get_rng().randint(5, 10)))),
+             lambda: (self._add('doom', get_rng().randint(10, 20, "randint_context"), "technical debt cascade failure"),
+                     self._add('reputation', -get_rng().randint(5, 10, "randint_context")))),
         ]
         
-        failure_name, failure_effect = get_rng().choice(failure_types)
+        failure_name, failure_effect = get_rng().choice(failure_types, "choice_context")
         failure_effect()
         self.messages.append(f"[ALERT] SYSTEM FAILURE: {failure_name}")
         
         # Reduce some technical debt after a major failure (lessons learned)
-        reduced = self.technical_debt.reduce_debt(get_rng().randint(3, 7))
+        reduced = self.technical_debt.reduce_debt(get_rng().randint(3, 7, "randint_context"))
         self.messages.append(f"Lessons learned from failure. Technical debt reduced by {reduced} points.")
     
     def get_debt_summary_for_ui(self) -> Dict[str, int]:
@@ -3958,9 +3958,9 @@ class GameState:
         # Enhanced discovery rate with magical orb
         discovery_chance = 0.9 if (hasattr(self, 'magical_orb_active') and self.magical_orb_active) else 0.6
         
-        if undiscovered_opponents and get_rng().random() < discovery_chance:
+        if undiscovered_opponents and get_rng().random("random_context") < discovery_chance:
             # Discover a new opponent
-            new_opponent = get_rng().choice(undiscovered_opponents)
+            new_opponent = get_rng().choice(undiscovered_opponents, "choice_context")
             new_opponent.discover()
             discoveries += 1
             if hasattr(self, 'magical_orb_active') and self.magical_orb_active:
@@ -3981,9 +3981,9 @@ class GameState:
                 for target_opponent in discovered_opponents:
                     stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
                     # Scout 2-3 stats per opponent with high success rate
-                    num_stats = get_rng().randint(2, 3)
+                    num_stats = get_rng().randint(2, 3, "randint_context")
                     # Use safe sampling to avoid list modification during iteration
-                    stats_to_sample = get_rng().sample(stats_to_scout, min(num_stats, len(stats_to_scout)))
+                    stats_to_sample = get_rng().sample(stats_to_scout, min(num_stats, len(stats_to_scout)), "scout_stats_sampling")
                     for stat_to_scout in stats_to_sample:
                         # Force success with magical orb (no need to remove from list anymore)
                             success, value, message = target_opponent.scout_stat(stat_to_scout)
@@ -3998,11 +3998,11 @@ class GameState:
                                 messages.append(f"[CHART] Confirming {target_opponent.name}'s {stat_to_scout}: {value}")
             else:
                 # Standard scouting
-                target_opponent = get_rng().choice(discovered_opponents)
+                target_opponent = get_rng().choice(discovered_opponents, "choice_context")
                 
                 # Try to scout a random stat
                 stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
-                stat_to_scout = get_rng().choice(stats_to_scout)
+                stat_to_scout = get_rng().choice(stats_to_scout, "choice_context")
                 
                 success, value, message = target_opponent.scout_stat(stat_to_scout)
                 messages.append(message)
@@ -4104,7 +4104,7 @@ class GameState:
         undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
         
         if undiscovered_opponents:
-            new_opponent = get_rng().choice(undiscovered_opponents)
+            new_opponent = get_rng().choice(undiscovered_opponents, "choice_context")
             new_opponent.discover()
             self.messages.append(f"INTELLIGENCE ALERT: New competitor detected - {new_opponent.name}")
             self.messages.append(f"? {new_opponent.description}")
@@ -4129,7 +4129,7 @@ class GameState:
                 f"Regulatory filings suggest {target.name} is preparing for new announcements."
             ]
             
-            selected_snippet = get_rng().choice(snippets)
+            selected_snippet = get_rng().choice(snippets, "choice_context")
             self.messages.append(f"INTELLIGENCE UPDATE: {selected_snippet}")
             self.messages.append("Consider using 'Scout Opponents' for detailed intelligence gathering.")
     
@@ -4178,7 +4178,7 @@ class GameState:
         ]
         
         # Select a random expense request
-        expense = get_rng().choice(expense_types)
+        expense = get_rng().choice(expense_types, "choice_context")
         
         # Create the popup event
         event_name = f"Expense Request: {expense['item']}"
@@ -4242,11 +4242,11 @@ class GameState:
         self.reputation += reputation_boost  # Direct assignment to avoid verbose messaging for cat adoption
         
         # Fun message for the player with interaction hints
-        self.messages.append("🐱 SPECIAL EVENT: A box of adorable kittens was left outside your office!")
+        self.messages.append("[CAT] SPECIAL EVENT: A box of adorable kittens was left outside your office!")
         self.messages.append("Your staff has unanimously decided to adopt them as official office cats.")
         self.messages.append(f"Responsible pet ownership: Flea treatment purchased for ${flea_treatment_cost}")
         self.messages.append(f"The office atmosphere has improved significantly! +{reputation_boost} reputation")
-        self.messages.append("💡 TIP: Click on the office cat to pet them for morale boosts!")
+        self.messages.append("[IDEA] TIP: Click on the office cat to pet them for morale boosts!")
         self.messages.append("The cats seem particularly interested in the server room...")
     
     def _trigger_hiring_dialog(self) -> None:
@@ -4420,7 +4420,7 @@ class GameState:
                 'alpha': 255,
                 'age': 0,
                 'size': 12,  # Larger initial size
-                'color_variation': get_rng().randint(-20, 20)  # Color variation for organic feel
+                'color_variation': get_rng().randint(-20, 20, "randint_context")  # Color variation for organic feel
             })
             
             # Add particle effects for more dramatic visual impact
@@ -4534,12 +4534,12 @@ class GameState:
         # Create multiple particles for richer effect
         for _ in range(2):
             particle = {
-                'pos': [position[0] + get_rng().randint(-5, 5), position[1] + get_rng().randint(-5, 5)],
-                'velocity': [get_rng().uniform(-1, 1), get_rng().uniform(-2, 0)],
+                'pos': [position[0] + get_rng().randint(-5, 5, "randint_context"), position[1] + get_rng().randint(-5, 5, "randint_context")],
+                'velocity': [get_rng().uniform(-1, 1, "particle_velocity_x"), get_rng().uniform(-2, 0, "particle_velocity_y")],
                 'alpha': 180,
                 'age': 0,
-                'size': get_rng().randint(3, 8),
-                'color_shift': get_rng().randint(-30, 30)
+                'size': get_rng().randint(3, 8, "randint_context"),
+                'color_shift': get_rng().randint(-30, 30, "randint_context")
             }
             transition['particle_trail'].append(particle)
     
@@ -4656,12 +4656,12 @@ class GameState:
         self.available_researchers = []
         
         # Generate 3-5 new researchers with varied specializations
-        num_researchers = get_rng().randint(3, 5)
+        num_researchers = get_rng().randint(3, 5, "randint_context")
         specializations = list(SPECIALIZATIONS.keys())
         
         for _ in range(num_researchers):
             # Ensure variety in specializations
-            specialization = get_rng().choice(specializations)
+            specialization = get_rng().choice(specializations, "choice_context")
             researcher = generate_researcher(specialization)
             self.available_researchers.append(researcher)
         
@@ -4759,12 +4759,12 @@ class GameState:
         # Check for leak events
         for researcher in self.researchers:
             if 'leak_prone' in researcher.traits:
-                if get_rng().random() < 0.05:  # 5% chance
+                if get_rng().random("random_context") < 0.05:  # 5% chance
                     self.messages.append(f"[WARNING]? {researcher.name} accidentally leaked research to competitors!")
                     # Give small advantage to random opponent
                     discovered_opponents = [opp for opp in self.opponents if opp.discovered]
                     if discovered_opponents:
-                        target = get_rng().choice(discovered_opponents)
+                        target = get_rng().choice(discovered_opponents, "choice_context")
                         target.progress = min(target.progress + 2, 100)
                         self.messages.append(f"Competitor {target.name} gained research advantage.")
     
@@ -4814,29 +4814,29 @@ class GameState:
             return
         
         # Select a random researcher for the breakthrough
-        researcher = get_rng().choice(self.researchers)
+        researcher = get_rng().choice(self.researchers, "choice_context")
         
         # Breakthrough effects based on specialization
         if researcher.specialization == "safety":
-            doom_reduction = get_rng().randint(3, 6)
-            rep_gain = get_rng().randint(2, 4)
+            doom_reduction = get_rng().randint(3, 6, "randint_context")
+            rep_gain = get_rng().randint(2, 4, "randint_context")
             self._add('doom', -doom_reduction, f"{researcher.name} safety breakthrough")
             self._add('reputation', rep_gain)
             self.messages.append(f"? {researcher.name} achieved a major safety breakthrough! -{doom_reduction} doom, +{rep_gain} reputation")
         elif researcher.specialization == "capabilities":
-            research_boost = get_rng().randint(8, 12)
-            doom_risk = get_rng().randint(1, 3)
+            research_boost = get_rng().randint(8, 12, "randint_context")
+            doom_risk = get_rng().randint(1, 3, "randint_context")
             self._add('research_progress', research_boost)
             self._add('doom', doom_risk, f"{researcher.name} capabilities breakthrough")
             self.messages.append(f"[LIGHTNING] {researcher.name} developed advanced AI capabilities! +{research_boost} research, +{doom_risk} doom risk")
         elif researcher.specialization == "interpretability":
-            rep_gain = get_rng().randint(3, 5)
+            rep_gain = get_rng().randint(3, 5, "randint_context")
             self._add('reputation', rep_gain)
             # Reveal competitor information
             self._provide_competitor_update()
             self.messages.append(f"? {researcher.name} created breakthrough interpretability tools! +{rep_gain} reputation, competitor insights gained")
         elif researcher.specialization == "alignment":
-            rep_gain = get_rng().randint(2, 4)
+            rep_gain = get_rng().randint(2, 4, "randint_context")
             self._add('reputation', rep_gain)
             # Reduce negative event chance temporarily (handled by existing alignment effect)
             self.messages.append(f"[TARGET] {researcher.name} solved a critical alignment problem! +{rep_gain} reputation, improved stability")
@@ -4867,12 +4867,12 @@ class GameState:
         # Target researcher with lowest loyalty
         target = min(self.researchers, key=lambda r: r.loyalty)
         competitor_names = ["TechCorp AI", "Future Systems", "Meta Labs", "DeepMind Rivals"]
-        competitor = get_rng().choice(competitor_names)
+        competitor = get_rng().choice(competitor_names, "choice_context")
         
         # Calculate poaching success chance based on loyalty
         success_chance = max(0.1, (100 - target.loyalty) / 100 * 0.7)
         
-        if get_rng().random() < success_chance:
+        if get_rng().random("random_context") < success_chance:
             # Poaching successful
             self.researchers.remove(target)
             self._add('staff', -1)
@@ -4897,10 +4897,10 @@ class GameState:
         if not capabilities_researchers:
             return
         
-        researcher = get_rng().choice(capabilities_researchers)
+        researcher = get_rng().choice(capabilities_researchers, "choice_context")
         
         # Ethical researcher may quit or reduce productivity
-        if get_rng().random() < 0.3:  # 30% chance they quit
+        if get_rng().random("random_context") < 0.3:  # 30% chance they quit
             self.researchers.remove(researcher)
             self._add('staff', -1) 
             self._add('research_staff', -1)
@@ -4919,17 +4919,17 @@ class GameState:
             # Fallback to any researcher
             if not self.researchers:
                 return
-            researcher = get_rng().choice(self.researchers)
+            researcher = get_rng().choice(self.researchers, "choice_context")
         else:
             researcher = get_rng().choice(media_savvy_researchers)
         
         # Conference provides reputation boost
-        rep_gain = get_rng().randint(3, 6)
+        rep_gain = get_rng().randint(3, 6, "randint_context")
         self._add('reputation', rep_gain)
         
         # Small chance for networking opportunities (money)
-        if get_rng().random() < 0.4:
-            money_gain = get_rng().randint(50, 100)
+        if get_rng().random("random_context") < 0.4:
+            money_gain = get_rng().randint(50, 100, "randint_context")
             self._add('money', money_gain)
             self.messages.append(f"? {researcher.name} presented at a major conference! +{rep_gain} reputation, +${money_gain} from networking")
         else:
@@ -4943,11 +4943,11 @@ class GameState:
             return
         
         # Requires investment but provides significant benefits
-        cost = get_rng().randint(100, 200)
+        cost = get_rng().randint(100, 200, "randint_context")
         
         if self.money >= cost:
-            research_gain = get_rng().randint(15, 25)
-            rep_gain = get_rng().randint(4, 7)
+            research_gain = get_rng().randint(15, 25, "randint_context")
+            rep_gain = get_rng().randint(4, 7, "randint_context")
             
             self._add('money', -cost)
             self._add('research_progress', research_gain)
@@ -4971,7 +4971,7 @@ class GameState:
         # Crisis affects all low-loyalty researchers
         departures = 0
         for researcher in low_loyalty_researchers:
-            if get_rng().random() < 0.4:  # 40% chance each leaves
+            if get_rng().random("random_context") < 0.4:  # 40% chance each leaves
                 self.researchers.remove(researcher)
                 self._add('staff', -1)
                 self._add('research_staff', -1)
@@ -5004,7 +5004,7 @@ class GameState:
         if not self.researcher_assignments:
             return
         
-        researcher_id = get_rng().choice(list(self.researcher_assignments.keys()))
+        researcher_id = get_rng().choice(list(self.researcher_assignments.keys()), "choice_context")
         researcher = self.get_researcher_by_id(researcher_id)
         task_name = self.researcher_assignments[researcher_id]
         
@@ -5054,7 +5054,7 @@ class GameState:
         else:
             # Simple implementation - randomly choose response for now
             responses = [handle_maintain_standards, handle_calculated_risk, handle_rush_it]
-            choice = get_rng().choice(responses)
+            choice = get_rng().choice(responses, "choice_context")
             choice(self)
     
     def _trigger_technical_debt_warning(self) -> None:
@@ -5084,7 +5084,7 @@ class GameState:
             "Competitor announcement imminent"
         ]
         
-        scenario = get_rng().choice(scenarios)
+        scenario = get_rng().choice(scenarios, "choice_context")
         
         # Offer quality choice for all active research
         self.messages.append(f"? Critical: {scenario}! How should researchers adjust their approach?")
@@ -5119,7 +5119,7 @@ class GameState:
             
         # Find competitor with high technical debt (simulated)
         competitor_names = ["NeuralDyne", "QuantumLogic", "CyberBrain Corp"]
-        competitor = get_rng().choice(competitor_names)
+        competitor = get_rng().choice(competitor_names, "choice_context")
         
         discovery_types = [
             "Intelligence gathering reveals",
@@ -5128,7 +5128,7 @@ class GameState:
             "Industry rumors suggest"
         ]
         
-        discovery = get_rng().choice(discovery_types)
+        discovery = get_rng().choice(discovery_types, "choice_context")
         
         consequences = [
             "skipping safety validations entirely",
@@ -5137,7 +5137,7 @@ class GameState:
             "rushing capability development without safeguards"
         ]
         
-        consequence = get_rng().choice(consequences)
+        consequence = get_rng().choice(consequences, "choice_context")
         
         self.messages.append(f"?? {discovery} {competitor} is {consequence}!")
         self.messages.append(f"This could give them a speed advantage but increases global risk.")
@@ -5148,7 +5148,7 @@ class GameState:
             self.messages.append("? Your careful approach gains recognition in contrast!")
         
         # Increase global doom slightly due to competitor shortcuts
-        self._add('doom', get_rng().randint(1, 3), f"competitor {competitor} taking dangerous shortcuts")
+        self._add('doom', get_rng().randint(1, 3, "randint_context"), f"competitor {competitor} taking dangerous shortcuts")
     
     # Economic Cycles & Funding Volatility Event Handlers for Issue #192
     
@@ -5181,7 +5181,7 @@ class GameState:
         self.messages.append("?? Government announces major AI research funding initiative!")
         
         if self.reputation >= 10:
-            grant_amount = get_rng().randint(80, 150)
+            grant_amount = get_rng().randint(80, 150, "randint_context")
             self._add('money', grant_amount)
             self.messages.append(f"Your organization qualifies for ${grant_amount}k government grant!")
         else:
@@ -5190,16 +5190,16 @@ class GameState:
     def _trigger_corporate_partnership_event(self) -> None:
         """Handle corporate partnership opportunities during downturns."""
         corp_names = ["TechGiant Inc", "DataCorp Systems", "Innovation Dynamics"]
-        corp = get_rng().choice(corp_names)
+        corp = get_rng().choice(corp_names, "choice_context")
         
         self.messages.append(f"? {corp} seeks AI partnerships during the economic downturn!")
         
-        partnership_amount = get_rng().randint(60, 120)
+        partnership_amount = get_rng().randint(60, 120, "randint_context")
         self._add('money', partnership_amount)
         self.messages.append(f"Secured ${partnership_amount}k corporate partnership!")
         
         # Corporate partnerships provide stability but may limit reputation growth
-        self._add('reputation', get_rng().randint(0, 2))
+        self._add('reputation', get_rng().randint(0, 2, "randint_context"))
     
     def _trigger_emergency_measures_event(self) -> None:
         """Handle emergency cost-cutting measures during severe economic stress."""
@@ -5229,15 +5229,15 @@ class GameState:
         if not discovered_opponents:
             return
             
-        competitor = get_rng().choice(discovered_opponents)
+        competitor = get_rng().choice(discovered_opponents, "choice_context")
         funding_amounts = ["$50M", "$100M", "$200M", "$500M"]
-        amount = get_rng().choice(funding_amounts)
+        amount = get_rng().choice(funding_amounts, "choice_context")
         
         self.messages.append(f"[NEWS] {competitor.name} announces {amount} funding round!")
         self.messages.append("Competitive pressure increases - consider accelerating your own fundraising.")
         
         # Increase doom slightly due to competitor advancement
-        self._add('doom', get_rng().randint(1, 3), f"competitor {competitor.name} funding acceleration")
+        self._add('doom', get_rng().randint(1, 3, "randint_context"), f"competitor {competitor.name} funding acceleration")
         
         # Create urgency for player fundraising
         if hasattr(self, 'funding_round_cooldown'):
@@ -5250,7 +5250,7 @@ class GameState:
         
         # If safety research progress is low, more severe consequences
         if self.reputation < 15:
-            funding_impact = get_rng().randint(20, 40)
+            funding_impact = get_rng().randint(20, 40, "randint_context")
             self._add('money', -funding_impact)
             self.messages.append(f"Investor confidence drops: -${funding_impact}k funding withdrawn")
     
@@ -5352,7 +5352,7 @@ class GameState:
             "Incident response protocols contained developing infrastructure issue"
         ]
         
-        near_miss = get_rng().choice(near_miss_types)
+        near_miss = get_rng().choice(near_miss_types, "choice_context")
         self.messages.append(f"[WARNING]? NEAR MISS AVERTED: {near_miss}")
         self.messages.append("? Team conducts post-incident review to strengthen prevention capabilities")
         
@@ -5360,9 +5360,9 @@ class GameState:
         self._add('reputation', 1)
         
         # Improve prevention systems slightly from lessons learned
-        if hasattr(self, 'technical_failures') and get_rng().random() < 0.5:
+        if hasattr(self, 'technical_failures') and get_rng().random("random_context") < 0.5:
             improvement_types = ['incident_response_level', 'monitoring_systems', 'communication_protocols']
-            improvement = get_rng().choice(improvement_types)
+            improvement = get_rng().choice(improvement_types, "choice_context")
             current_level = getattr(self.technical_failures, improvement, 0)
             if current_level < 5:
                 setattr(self.technical_failures, improvement, current_level + 1)
@@ -5382,16 +5382,16 @@ class GameState:
             "Data leak reveals internal incident suppression policies"
         ]
         
-        scenario = get_rng().choice(exposure_scenarios)
+        scenario = get_rng().choice(exposure_scenarios, "choice_context")
         self.messages.append(f"[ALERT] COVER-UP EXPOSED: {scenario}")
         
         # Severe reputation damage based on cover-up debt
-        reputation_loss = get_rng().randint(cover_up_severity // 2, cover_up_severity)
+        reputation_loss = get_rng().randint(cover_up_severity // 2, cover_up_severity, "randint_context")
         self._add('reputation', -reputation_loss)
         self.messages.append(f"? Reputation severely damaged: -{reputation_loss} points")
         
         # Financial penalties for regulatory violations
-        financial_penalty = get_rng().randint(50, 100) + (cover_up_severity * 10)
+        financial_penalty = get_rng().randint(50, 100, "randint_context") + (cover_up_severity * 10)
         self._add('money', -financial_penalty)
         self.messages.append(f"? Regulatory fines and legal costs: -${financial_penalty}k")
         
@@ -5415,17 +5415,17 @@ class GameState:
             "Peer organizations request best practice sharing sessions"
         ]
         
-        recognition = get_rng().choice(recognition_types)
+        recognition = get_rng().choice(recognition_types, "choice_context")
         self.messages.append(f"[TROPHY] TRANSPARENCY RECOGNIZED: {recognition}")
         
         # Reputation boost
-        reputation_gain = get_rng().randint(2, 4)
+        reputation_gain = get_rng().randint(2, 4, "randint_context")
         self._add('reputation', reputation_gain)
         self.messages.append(f"? Industry respect grows: +{reputation_gain} reputation")
         
         # Funding opportunities from transparency
-        if get_rng().random() < 0.6:
-            funding_opportunity = get_rng().randint(30, 60)
+        if get_rng().random("random_context") < 0.6:
+            funding_opportunity = get_rng().randint(30, 60, "randint_context")
             self._add('money', funding_opportunity)
             self.messages.append(f"? Safety-focused funding secured: +${funding_opportunity}k")
         
@@ -5448,21 +5448,21 @@ class GameState:
             "Communication protocols prevent crisis from escalating across departments"
         ]
         
-        scenario = get_rng().choice(prevention_scenarios)
+        scenario = get_rng().choice(prevention_scenarios, "choice_context")
         self.messages.append(f"[SHIELD]? CASCADE PREVENTED: {scenario}")
         
         # Calculate what the cascade would have cost
-        estimated_damage = get_rng().randint(40, 80)
+        estimated_damage = get_rng().randint(40, 80, "randint_context")
         self.messages.append(f"[IDEA] Estimated damage prevented: ${estimated_damage}k and significant reputation loss")
         
         # Reward effective prevention
-        reputation_gain = get_rng().randint(2, 3)
+        reputation_gain = get_rng().randint(2, 3, "randint_context")
         self._add('reputation', reputation_gain)
         self.messages.append(f"? Stakeholder confidence in crisis management: +{reputation_gain} reputation")
         
         # Staff learning from successful prevention
-        if hasattr(self, 'technical_debt') and get_rng().random() < 0.4:
-            debt_reduction = get_rng().randint(1, 3)
+        if hasattr(self, 'technical_debt') and get_rng().random("random_context") < 0.4:
+            debt_reduction = get_rng().randint(1, 3, "randint_context")
             self.technical_debt.reduce_debt(debt_reduction)
             self.messages.append(f"? Prevention success improves practices: -{debt_reduction} technical debt")
         
@@ -5534,7 +5534,7 @@ class GameState:
                     "eager and ambitious", "highly skilled", "experienced veteran", 
                     "innovative thinker", "reliable workhorse", "creative problem-solver"
                 ]
-                trait = get_rng().choice(personality_traits)
+                trait = get_rng().choice(personality_traits, "choice_context")
                 self.messages.append(f"? NEW RECRUIT: A {trait} joins your team (+{count} staff)")
                 
             # Add context based on team size
@@ -5560,7 +5560,7 @@ class GameState:
                     "expressing concerns about direction", "following a lucrative offer",
                     "needing work-life balance", "pursuing academic opportunities"
                 ]
-                reason_text = get_rng().choice(departure_reasons)
+                reason_text = get_rng().choice(departure_reasons, "choice_context")
                 self.messages.append(f"?? DEPARTURE: A team member leaves, {reason_text} (-{count} staff)")
             
             # Add warnings based on remaining team size
@@ -5606,7 +5606,7 @@ class GameState:
                     "raises eyebrows", "creates minor controversy", "draws criticism",
                     "disappoints stakeholders", "causes concern", "generates skepticism"
                 ]
-                phrase = get_rng().choice(negative_phrases)
+                phrase = get_rng().choice(negative_phrases, "choice_context")
                 self.messages.append(f"? Your actions {phrase} (-{amount:.0f} reputation)")
         
         # Add context based on current reputation level
@@ -5633,7 +5633,7 @@ class GameState:
                     "high-performance GPUs", "parallel processing arrays", "cloud computing resources",
                     "optimized algorithms", "distributed computing nodes", "specialized hardware"
                 ]
-                tech = get_rng().choice(tech_descriptions)
+                tech = get_rng().choice(tech_descriptions, "choice_context")
                 self.messages.append(f"? Enhanced computing: {tech} provide +{amount:.0f} compute units")
                 
         else:  # Losing compute (maintenance, failures, etc.)
@@ -5647,7 +5647,7 @@ class GameState:
                     "routine maintenance", "cooling system limits", "power constraints",
                     "software optimization", "hardware refresh cycles", "capacity reallocation"
                 ]
-                reason_text = get_rng().choice(maintenance_reasons)
+                reason_text = get_rng().choice(maintenance_reasons, "choice_context")
                 self.messages.append(f"? Reduced capacity: {reason_text} removes -{amount:.0f} compute units")
         
         # Add context based on current compute level
@@ -5798,21 +5798,21 @@ class GameState:
     
     def _execute_small_fundraising(self, option: Dict[str, Any]) -> bool:
         """Execute conservative small fundraising."""
-        amount = get_rng().randint(option["min_amount"], option["max_amount"])
+        amount = get_rng().randint(option["min_amount"], option["max_amount"], "randint_context")
         # Reputation bonus helps
         amount += min(self.reputation // 2, 15)  # Max +15k from reputation
         
         self._add('money', amount, f"small fundraising round")
         
         # Minimal reputation risk
-        if get_rng().random() < option["reputation_risk"]:
+        if get_rng().random("random_context") < option["reputation_risk"]:
             self._add('reputation', -1, "fundraising complications")
         
         return True
     
     def _execute_big_fundraising(self, option: Dict[str, Any]) -> bool:
         """Execute aggressive big fundraising."""
-        base_amount = get_rng().randint(option["min_amount"], option["max_amount"])
+        base_amount = get_rng().randint(option["min_amount"], option["max_amount"], "randint_context")
         # Reputation significantly affects big rounds
         reputation_multiplier = 1.0 + (self.reputation / 50.0)  # Up to +40% at 20 rep
         amount = int(base_amount * reputation_multiplier)
@@ -5820,7 +5820,7 @@ class GameState:
         self._add('money', amount, f"major fundraising round")
         
         # Higher reputation risk
-        if get_rng().random() < option["reputation_risk"]:
+        if get_rng().random("random_context") < option["reputation_risk"]:
             self._add('reputation', -2, "aggressive fundraising backlash")
         else:
             # Success can boost reputation
@@ -5831,7 +5831,7 @@ class GameState:
     
     def _execute_borrowing(self, option: Dict[str, Any]) -> bool:
         """Execute debt-based funding."""
-        amount = get_rng().randint(option["min_amount"], option["max_amount"])
+        amount = get_rng().randint(option["min_amount"], option["max_amount"], "randint_context")
         
         self._add('money', amount, f"debt financing")
         
@@ -5840,7 +5840,7 @@ class GameState:
             self.debt_obligations = []
         
         # Debt payment due in 3-5 turns
-        payment_due = self.turn + get_rng().randint(3, 5)
+        payment_due = self.turn + get_rng().randint(3, 5, "randint_context")
         payment_amount = int(amount * 1.2)  # 20% interest
         
         self.debt_obligations.append({
@@ -5856,9 +5856,9 @@ class GameState:
     def _execute_alternative_funding(self, option: Dict[str, Any]) -> bool:
         """Execute alternative funding sources.""" 
         sources = ["government grants", "strategic partnerships", "customer revenue", "research grants"]
-        source = get_rng().choice(sources)
+        source = get_rng().choice(sources, "choice_context")
         
-        amount = get_rng().randint(option["min_amount"], option["max_amount"])
+        amount = get_rng().randint(option["min_amount"], option["max_amount"], "randint_context")
         
         # Alternative funding often comes with constraints or benefits
         if source == "government grants":
@@ -5872,7 +5872,7 @@ class GameState:
         self._add('money', amount, f"alternative funding: {source}")
         
         # Very low reputation risk
-        if get_rng().random() < option["reputation_risk"]:
+        if get_rng().random("random_context") < option["reputation_risk"]:
             self._add('reputation', -1, "alternative funding complications")
         
         return True
@@ -6020,7 +6020,7 @@ class GameState:
         self._add('money', -option["cost"])
         
         # Calculate doom reduction with upgrades
-        base_reduction = get_rng().randint(option["min_doom_reduction"], option["max_doom_reduction"])
+        base_reduction = get_rng().randint(option["min_doom_reduction"], option["max_doom_reduction"], "randint_context")
         
         # Apply upgrade bonuses
         upgrade_bonus = 0
@@ -6043,7 +6043,7 @@ class GameState:
         if option["id"] == "rush_research":
             if hasattr(self, 'technical_debt'):
                 # Add technical debt for rush research
-                debt_increase = get_rng().randint(1, 3)
+                debt_increase = get_rng().randint(1, 3, "randint_context")
                 # Fixed: correct argument order (amount, category) and use proper DebtCategory enum
                 from src.core.research_quality import DebtCategory
                 self.technical_debt.add_debt(debt_increase, DebtCategory.VALIDATION)
@@ -6051,7 +6051,7 @@ class GameState:
         elif option["id"] == "quality_research":
             if hasattr(self, 'technical_debt'):
                 # Quality research reduces technical debt
-                debt_reduction = get_rng().randint(1, 2)
+                debt_reduction = get_rng().randint(1, 2, "randint_context")
                 # Fixed: correct argument order (amount, category) and use proper DebtCategory enum
                 from src.core.research_quality import DebtCategory
                 self.technical_debt.reduce_debt(debt_reduction, DebtCategory.VALIDATION)
@@ -6080,7 +6080,7 @@ class GameState:
             f"? Research milestone: {research_type} delivers {doom_reduction}% risk reduction, +{rep_gain} standing"
         ]
         
-        selected_message = get_rng().choice(research_messages)
+        selected_message = get_rng().choice(research_messages, "choice_context")
         self.messages.append(selected_message)
 
     def _execute_standalone_safety_research(self) -> None:
@@ -6185,7 +6185,7 @@ class GameState:
             # Small temporary morale boost - dev engagement reward
             if get_rng().random(f"cat_pet_doom_reduction_{self.turn}_{self.office_cat_total_pets}") < 0.2:
                 self._add('doom', -1)
-                self.messages.append("💖 Petting the cat provides immediate stress relief!")
+                self.messages.append("[HEART] Petting the cat provides immediate stress relief!")
             
             # Play cat sound if available
             if hasattr(self, 'sound_manager'):

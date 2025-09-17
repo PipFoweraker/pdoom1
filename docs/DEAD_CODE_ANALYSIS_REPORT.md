@@ -20,7 +20,7 @@ Analysis of the earliest 50 commits and current codebase reveals significant tec
 
 ## High-Priority Dead Code Candidates
 
-### 1. Non-Deterministic Random Usage ⚠️ CRITICAL
+### 1. Non-Deterministic Random Usage [WARNING] CRITICAL
 **Impact**: Breaks competitive gameplay and debugging reproducibility
 **Files Affected**: 20+ files across core, features, and tests
 **Examples**:
@@ -29,9 +29,9 @@ Analysis of the earliest 50 commits and current codebase reveals significant tec
 - `src/core/game_state.py`: Lines 1329, 1471
 
 **Current State**: 
-- ✅ `deterministic_rng.py` system exists and is properly designed
-- ✅ GameState initializes deterministic RNG in constructor (line 164)
-- ❌ Most code still uses `import random` and `random.randint()`
+- [CHECK] `deterministic_rng.py` system exists and is properly designed
+- [CHECK] GameState initializes deterministic RNG in constructor (line 164)
+- [X] Most code still uses `import random` and `random.randint()`
 
 **Recommended Action**: Global refactoring to replace all `random.*` calls with context-aware deterministic equivalents
 
@@ -80,22 +80,22 @@ Analysis of the earliest 50 commits and current codebase reveals significant tec
 ### Early Architecture (Commits 1-50)
 ```
 root/
-├── main.py (entry point with embedded game loop)
-├── game_state.py (monolithic state management) 
-├── actions.py (hardcoded action definitions)
-├── events.py (hardcoded event definitions)
-├── ui.py (monolithic UI rendering)
-└── upgrades.py (hardcoded upgrade definitions)
+|------ main.py (entry point with embedded game loop)
+|------ game_state.py (monolithic state management) 
+|------ actions.py (hardcoded action definitions)
+|------ events.py (hardcoded event definitions)
+|------ ui.py (monolithic UI rendering)
+`------ upgrades.py (hardcoded upgrade definitions)
 ```
 
 ### Current Architecture  
 ```
 src/
-├── core/ (game logic)
-├── features/ (modular systems)
-├── services/ (utilities)
-├── ui/ (interface components)
-└── scores/ (leaderboard system)
+|------ core/ (game logic)
+|------ features/ (modular systems)
+|------ services/ (utilities)
+|------ ui/ (interface components)
+`------ scores/ (leaderboard system)
 ```
 
 **Assessment**: Architecture evolution is excellent, but legacy patterns persist within refactored files.

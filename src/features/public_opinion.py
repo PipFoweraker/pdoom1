@@ -377,7 +377,7 @@ def create_media_story_from_action(action_name: str, player_lab: str, turn: int,
     template = story_templates[story_type]
     
     return MediaStory(
-        headline=get_rng().choice(template['headlines']),
+        headline=get_rng().choice(template['headlines'], "choice_context"),
         story_type=template['type'],
         sentiment_impact=template['sentiment_impact'],
         duration=template['duration'],

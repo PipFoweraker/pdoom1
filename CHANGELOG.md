@@ -13,8 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Philosophical Framework Integration** - Added acausal decision theory context throughout RNG documentation
 
 #### Fixed
-- **Test Suite Stability** - Fixed 86 test failures (46% improvement: 185 → 99 total issues)
-- **RNG Initialization Order** - Corrected GameState → RNG → test objects pattern in 8 test files
+- **Test Suite Stability** - Fixed 86 test failures (46% improvement: 185 -> 99 total issues)
+- **RNG Initialization Order** - Corrected GameState -> RNG -> test objects pattern in 8 test files
 - **Syntax Corruption** - Repaired automated migration script damage in multiple test files
 - **Opponents Test Architecture** - Fixed test class to use GameState-managed opponents (8/9 tests passing)
 

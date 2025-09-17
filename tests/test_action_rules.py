@@ -293,11 +293,11 @@ class TestActionRulesIntegration(unittest.TestCase):
         # Find the scout action
         scout_action = None
         for action in self.game_state.actions:
-            if action["name"] == "Scout Opponent":
+            if action["name"] == "Scout Opponents":
                 scout_action = action
                 break
         
-        self.assertIsNotNone(scout_action, "Scout Opponent action should exist")
+        self.assertIsNotNone(scout_action, "Scout Opponents action should exist")
         
         # Test that it uses the new rule function
         self.assertEqual(scout_action["rules"], scout_unlock_rule)

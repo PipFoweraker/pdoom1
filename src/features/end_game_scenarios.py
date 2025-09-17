@@ -243,7 +243,7 @@ class EndGameScenariosManager:
         # additional game state analysis (resource levels, specific events, etc.)
         seed_value = hash(str(game_state.seed) + str(game_state.turn))  # Deterministic based on game
         get_rng().seed(seed_value)
-        return get_rng().choice(scenarios)
+        return get_rng().choice(scenarios, "choice_context")
     
     def _check_victory_scenarios(self, game_state) -> Optional[EndGameScenario]:
         """

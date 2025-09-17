@@ -32,7 +32,7 @@ class TestOfficeCat(unittest.TestCase):
         
         # Check messages were added
         self.assertGreater(len(self.gs.messages), 0)
-        cat_messages = [msg for msg in self.gs.messages if 'cat' in msg.lower() or '🐱' in msg]
+        cat_messages = [msg for msg in self.gs.messages if 'cat' in msg.lower() or '[CAT]' in msg]
         self.assertGreater(len(cat_messages), 0)
     
     def test_cat_petting_mechanics(self):

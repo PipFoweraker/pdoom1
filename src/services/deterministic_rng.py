@@ -131,6 +131,14 @@ class DeterministicRNG:
         self._record_call("choice", {"sequence_len": len(sequence), "context": context}, result, context)
         return result
     
+    def choices(self, population: List[Any], weights: Optional[List[float]] = None, k: int = 1, context: str = "choices") -> List[Any]:
+        """Choose k elements from population with replacement deterministically."""
+        seed = self._get_context_seed(context)
+        rng = random.Random(seed)
+        result = rng.choices(population, weights=weights, k=k)
+        self._record_call("choices", {"population_len": len(population), "k": k, "weights": weights is not None, "context": context}, result, context)
+        return result
+    
     def uniform(self, a: float, b: float, context: str) -> float:
         """Generate deterministic random float between a and b."""
         seed = self._get_context_seed(context)
@@ -145,6 +153,21 @@ class DeterministicRNG:
         rng = random.Random(seed)
         rng.shuffle(sequence)
         self._record_call("shuffle", {"sequence_len": len(sequence), "context": context}, None, context)
+    
+    def sample(self, population: List[Any], k: int, context: str) -> List[Any]:
+        """Return k unique elements chosen from population deterministically."""
+        seed = self._get_context_seed(context)
+        rng = random.Random(seed)
+        result = rng.sample(population, k)
+        self._record_call("sample", {"population_len": len(population), "k": k, "context": context}, result, context)
+        return result
+    
+    def seed(self, new_seed: str) -> None:
+        """Reset the RNG with a new seed (for compatibility)."""
+        self.base_seed = str(new_seed)
+        self.context_counters.clear()
+        self.call_history.clear()
+        self._record_call("seed", {"new_seed": new_seed}, None, "seed_reset")
     
     def reset_context(self, context: str) -> None:
         """Reset counter for specific context (useful for testing)."""

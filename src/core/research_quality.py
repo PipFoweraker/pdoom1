@@ -198,7 +198,7 @@ class TechnicalDebt:
             # Distribute among categories if no specific category given
             categories = list(self.debt_categories.keys())
             for _ in range(amount):
-                cat = get_rng().choice(categories)
+                cat = get_rng().choice(categories, "choice_context")
                 self.debt_categories[cat] += 1
     
     def reduce_debt(self, amount: int, category: Optional[DebtCategory] = None) -> int:

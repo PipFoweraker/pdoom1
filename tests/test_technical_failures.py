@@ -12,7 +12,7 @@ Tests cover:
 
 import unittest
 from src.services.deterministic_rng import get_rng
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from src.core.game_state import GameState
 from src.features.technical_failures import (
     TechnicalFailureCascades, FailureType, CascadeState
@@ -173,7 +173,10 @@ class TestTechnicalFailureCascades(unittest.TestCase):
         initial_failures = len(cascade.subsequent_failures)
         
         # Mock random to ensure cascade expansion
-        with patch('get_rng().random', return_value=0.3):  # Below 0.4 threshold
+        with patch('src.services.deterministic_rng.get_rng') as mock_get_rng:
+            mock_rng = Mock()
+            mock_rng.random.return_value = 0.3  # Below 0.4 threshold
+            mock_get_rng.return_value = mock_rng
             self.cascade_system._update_cascade(cascade)
             
         # Should add subsequent failures or resolve
@@ -295,7 +298,7 @@ class TestTechnicalFailureCascades(unittest.TestCase):
                 total_turns=0
             )
             containment_chance = 0.5 + (self.cascade_system.incident_response_level * 0.1)
-            if get_rng().random() < containment_chance:
+            if get_rng().random("containment_test") < containment_chance:
                 successes += 1
                 
         # Should succeed more often with high incident response capability
@@ -308,7 +311,10 @@ class TestTechnicalFailureCascades(unittest.TestCase):
         self.game_state.technical_debt.accumulated_debt = 18
         
         # Mock random to trigger cascade check
-        with patch('get_rng().random', return_value=0.05):  # Within accident chance
+        with patch('src.services.deterministic_rng.get_rng') as mock_get_rng:
+            mock_rng = Mock()
+            mock_rng.random.return_value = 0.05  # Within accident chance
+            mock_get_rng.return_value = mock_rng
             len(self.game_state.messages)
             self.cascade_system.check_for_cascades()
             

@@ -226,7 +226,7 @@ class TestActionPointsBackwardCompatibility(unittest.TestCase):
         # Updated to match current action names in v0.4.1
         expected_actions = [
             "Grow Community", "Fundraising Options", "Research Options", 
-            "Buy Compute", "Hire Staff", "Espionage", "Scout Opponent"
+            "Buy Compute", "Hire Staff", "Espionage", "Scout Opponents"
         ]
         
         for expected_action in expected_actions:
@@ -573,11 +573,9 @@ class TestKeyboardShortcuts(unittest.TestCase):
     
     def test_execute_gameplay_action_by_keyboard_action_not_available(self):
         """Test keyboard shortcuts handle unavailable actions correctly."""
-        # Try an action that has rules (Scout Opponent requires turn 5+)
-        scout_idx = next(i for i, action in enumerate(self.game_state.actions) 
-                        if action["name"] == "Scout Opponent")
-        
-        # Should fail on turn 0
+        # Try an action that has rules (Scout Opponents requires turn 5+)
+        scout_idx = next(i for i, action in enumerate(self.game_state.actions)
+                        if action["name"] == "Scout Opponents")        # Should fail on turn 0
         success = self.game_state.execute_gameplay_action_by_keyboard(scout_idx)
         
         self.assertFalse(success)

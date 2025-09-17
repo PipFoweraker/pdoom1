@@ -260,10 +260,10 @@ class MediaSystem:
         
         for competitor in competitors:
             for story_template in self.competitor_stories_pool:
-                if get_rng().random() < story_template['trigger_chance']:
+                if get_rng().random("random_context") < story_template['trigger_chance']:
                     # Adjust chance based on media attention level
                     attention_multiplier = 1 + (self.public_opinion.media_attention / 100)
-                    if get_rng().random() < story_template['trigger_chance'] * attention_multiplier:
+                    if get_rng().random("random_context") < story_template['trigger_chance'] * attention_multiplier:
                         story = MediaStory(
                             headline=story_template['headline_template'].format(lab=competitor),
                             story_type=story_template['type'],
@@ -283,7 +283,7 @@ class MediaSystem:
         new_stories = []
         
         for event_template in self.random_events_pool:
-            if get_rng().random() < event_template['trigger_chance']:
+            if get_rng().random("random_context") < event_template['trigger_chance']:
                 story = MediaStory(
                     headline=event_template['headline'],
                     story_type=event_template['type'],
@@ -339,11 +339,11 @@ class MediaSystem:
     def _execute_exclusive_interview(self, game_state) -> str:
         """Execute exclusive interview action."""
         # High impact but with some risk
-        trust_change = get_rng().randint(4, 8)
-        sentiment_change = get_rng().randint(1, 4)
+        trust_change = get_rng().randint(4, 8, "randint_context")
+        sentiment_change = get_rng().randint(1, 4, "randint_context")
         
         # Small chance of negative outcome if reputation is low
-        if game_state.reputation < 30 and get_rng().random() < 0.2:
+        if game_state.reputation < 30 and get_rng().random("random_context") < 0.2:
             trust_change = -2
             sentiment_change = -1
             result_msg = "Interview goes poorly, raising questions about your leadership."
@@ -414,13 +414,13 @@ class MediaSystem:
             return "No competitors to target."
         
         # Select random competitor
-        target = get_rng().choice(game_state.opponents)
+        target = get_rng().choice(game_state.opponents, "choice_context")
         target_name = target['name']
         
         # Risk of discovery based on reputation
         discovery_chance = max(0.1, 0.3 - (game_state.reputation / 200))
         
-        if get_rng().random() < discovery_chance:
+        if get_rng().random("random_context") < discovery_chance:
             # Discovered! Take reputation hit
             self.public_opinion.add_modifier(OpinionModifier(
                 category=OpinionCategory.TRUST_IN_PLAYER,
@@ -438,7 +438,7 @@ class MediaSystem:
         ]
         
         scandal_story = MediaStory(
-            headline=get_rng().choice(scandal_headlines),
+            headline=get_rng().choice(scandal_headlines, "choice_context"),
             story_type=MediaStoryType.SCANDAL,
             sentiment_impact={
                 OpinionCategory.GENERAL_SENTIMENT: -2,
@@ -485,8 +485,8 @@ class MediaSystem:
     def _execute_social_media_campaign(self, game_state) -> str:
         """Execute social media campaign action."""
         # Good for general sentiment, less for trust
-        sentiment_boost = get_rng().randint(3, 6)
-        trust_boost = get_rng().randint(1, 3)
+        sentiment_boost = get_rng().randint(3, 6, "randint_context")
+        trust_boost = get_rng().randint(1, 3, "randint_context")
         
         self.public_opinion.add_modifier(OpinionModifier(
             category=OpinionCategory.GENERAL_SENTIMENT,

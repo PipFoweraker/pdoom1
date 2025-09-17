@@ -322,11 +322,11 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
         self.assertGreater(len(discovered), 0)
         
     def test_scout_opponent_action_availability(self):
-        """Test that Scout Opponent action is restricted before turn 5."""
-        # Check that the Scout Opponent action exists
+        """Test that Scout Opponents action is restricted before turn 5."""
+        # Check that the Scout Opponents action exists
         scout_action = None
         for action in self.game_state.actions:
-            if action['name'] == 'Scout Opponent':
+            if action['name'] == 'Scout Opponents':
                 scout_action = action
                 break
                 

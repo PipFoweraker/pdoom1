@@ -806,7 +806,8 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
                 onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
             
             # Set the seed and start the game
-            get_rng().seed(seed)
+            from src.services.deterministic_rng import init_deterministic_rng
+            init_deterministic_rng(seed)
             current_state = 'game'
             break
 
@@ -856,7 +857,8 @@ def handle_tutorial_choice_keyboard(key):
             onboarding.start_stepwise_tutorial()
         
         # Set the seed and start the game
-        get_rng().seed(seed)
+        from src.services.deterministic_rng import init_deterministic_rng
+        init_deterministic_rng(seed)
         current_state = 'game'
     elif key == pygame.K_ESCAPE:
         current_state = 'seed_selection'
@@ -910,7 +912,8 @@ def handle_new_player_experience_click(mouse_pos, w, h):
             pass
         
         # Set the seed and start the game
-        get_rng().seed(seed)
+        from src.services.deterministic_rng import init_deterministic_rng
+        init_deterministic_rng(seed)
         current_state = 'game'
 
 
@@ -974,7 +977,8 @@ def handle_new_player_experience_keyboard(key):
                 pass
             
             # Set the seed and start the game
-            get_rng().seed(seed)
+            from src.services.deterministic_rng import init_deterministic_rng
+            init_deterministic_rng(seed)
             current_state = 'game'
     elif key == pygame.K_ESCAPE:
         current_state = 'main_menu'

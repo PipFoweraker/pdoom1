@@ -94,11 +94,14 @@ class TestCriticalBugFixes(unittest.TestCase):
             self.game_state.opponents.append(opponent)
         
         # Mock random functions to ensure deterministic behavior
-        with patch('get_rng().randint', return_value=3), \
-             patch('get_rng().sample') as mock_sample:
+        with patch('src.services.deterministic_rng.get_rng') as mock_get_rng:
+            mock_rng = Mock()
+            mock_rng.randint.return_value = 3
+            mock_rng.sample.return_value = ["money", "staff"]  # Sample result
+            mock_get_rng.return_value = mock_rng
             
             # Mock sample to return a predictable subset
-            mock_sample.return_value = ['budget', 'compute', 'progress']
+            # mock_sample.return_value = ['budget', 'compute', 'progress']  # Already set above
             
             # Execute scout opponents action (triggers the magical orb logic)
             action = next(a for a in self.game_state.actions if a['name'] == 'Scout Opponents')
@@ -119,7 +122,7 @@ class TestCriticalBugFixes(unittest.TestCase):
                 self.fail(f"List modification during iteration caused error: {e}")
             
             # Verify the fix: get_rng().sample should have been called instead of list.remove()
-            self.assertTrue(mock_sample.called, "Should use get_rng().sample for safe sampling")
+            self.assertTrue(mock_rng.sample.called, "Should use get_rng().sample for safe sampling")
             
             # Verify that we didn't modify the original list during iteration
             expected_stats = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
@@ -257,6 +260,12 @@ class TestCriticalBugFixes(unittest.TestCase):
 class TestRegressionPrevention(unittest.TestCase):
     """Test that the critical bugs cannot regress."""
 
+    def setUp(self):
+        """Set up test fixtures."""
+        from src.services.deterministic_rng import init_deterministic_rng
+        init_deterministic_rng('test-seed')
+        self.game_state = GameState('test-seed')
+
     def test_check_hover_single_return_path(self):
         """Ensure check_hover has only one return path per logical branch (prevents #263 regression)."""
         # This is a structural test - we check that the fixed code maintains the correct structure
@@ -314,7 +323,7 @@ class TestRegressionPrevention(unittest.TestCase):
         try:
             # Simulate the fixed add_debt call with correct signature: (amount, category)
             self.game_state.technical_debt.add_debt(2, DebtCategory.VALIDATION)
-            self.assertGreater(self.game_state.technical_debt.get_total_debt(), 0)
+            self.assertGreater(self.game_state.technical_debt.accumulated_debt, 0)
         except TypeError as e:
             self.fail(f"Rush research add_debt crashed with TypeError: {e}")
         
@@ -322,9 +331,9 @@ class TestRegressionPrevention(unittest.TestCase):
         # This tests the fix for the parallel issue in reduce_debt
         try:
             # Simulate the fixed reduce_debt call with correct signature: (amount, category)
-            initial_debt = self.game_state.technical_debt.get_total_debt()
+            initial_debt = self.game_state.technical_debt.accumulated_debt
             self.game_state.technical_debt.reduce_debt(1, DebtCategory.VALIDATION)
-            final_debt = self.game_state.technical_debt.get_total_debt()
+            final_debt = self.game_state.technical_debt.accumulated_debt
             # Should have reduced debt
             self.assertLessEqual(final_debt, initial_debt)
         except TypeError as e:
@@ -354,15 +363,18 @@ class TestRegressionPrevention(unittest.TestCase):
         # This is the integration test for the actual bug that was reported
         try:
             # Mock random to ensure consistent behavior
-            with patch('get_rng().randint', return_value=2):
+            with patch('src.services.deterministic_rng.get_rng') as mock_get_rng:
+                mock_rng = Mock()
+                mock_rng.randint.return_value = 2
+                mock_get_rng.return_value = mock_rng
                 # This should not crash with TypeError
                 self.game_state._execute_research_option(rush_option)
-                self.assertGreater(self.game_state.technical_debt.get_total_debt(), 0)
+                self.assertGreater(self.game_state.technical_debt.accumulated_debt, 0)
                 
                 # This should not crash with TypeError  
                 self.game_state._execute_research_option(quality_option)
                 # Debt should be reduced but not necessarily zero
-                self.assertGreaterEqual(self.game_state.technical_debt.get_total_debt(), 0)
+                self.assertGreaterEqual(self.game_state.technical_debt.accumulated_debt, 0)
                 
         except TypeError as e:
             self.fail(f"Research option execution crashed with TypeError: {e}")

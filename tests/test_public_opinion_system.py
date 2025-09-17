@@ -295,7 +295,10 @@ class TestMediaSystem(unittest.TestCase):
     def test_competitor_story_generation(self):
         """Test generating stories about competitors."""
         # Mock random to ensure story generation
-        with patch('get_rng().random', return_value=0.01):  # Force story generation
+        with patch('src.services.deterministic_rng.get_rng') as mock_get_rng:
+            mock_rng = Mock()
+            mock_rng.random.return_value = 0.01  # Force story generation
+            mock_get_rng.return_value = mock_rng
             stories = self.media_system.generate_competitor_stories(
                 ["Competitor A", "Competitor B"], 
                 self.mock_game_state.turn
@@ -308,7 +311,10 @@ class TestMediaSystem(unittest.TestCase):
     def test_random_event_generation(self):
         """Test generating random media events."""
         # Mock random to ensure event generation
-        with patch('get_rng().random', return_value=0.01):  # Force event generation
+        with patch('src.services.deterministic_rng.get_rng') as mock_get_rng:
+            mock_rng = Mock()
+            mock_rng.random.return_value = 0.01  # Force event generation
+            mock_get_rng.return_value = mock_rng
             stories = self.media_system.generate_random_events(self.mock_game_state.turn)
             
             # Should generate at least one story
