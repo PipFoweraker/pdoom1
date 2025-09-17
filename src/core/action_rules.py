@@ -24,6 +24,11 @@ Example:
     }
 """
 
+from typing import Any, Callable
+
+# Import will be resolved at runtime to avoid circular imports
+# GameState type annotation will use TYPE_CHECKING pattern if needed
+
 
 class ActionRules:
     """
@@ -37,7 +42,7 @@ class ActionRules:
     # === Turn-based Rules ===
     
     @staticmethod
-    def requires_turn(gs, min_turn):
+    def requires_turn(gs: Any, min_turn: int) -> bool:
         """
         Rule: Action requires a minimum turn number.
         
@@ -56,7 +61,7 @@ class ActionRules:
     # === Resource-based Rules ===
     
     @staticmethod
-    def requires_staff(gs, min_staff):
+    def requires_staff(gs: Any, min_staff: int) -> bool:
         """
         Rule: Action requires a minimum number of staff.
         
@@ -73,7 +78,7 @@ class ActionRules:
         return gs.staff >= min_staff
     
     @staticmethod
-    def requires_money(gs, min_money):
+    def requires_money(gs: Any, min_money: int) -> bool:
         """
         Rule: Action requires a minimum amount of money.
         
@@ -87,7 +92,7 @@ class ActionRules:
         return gs.money >= min_money
     
     @staticmethod
-    def requires_reputation(gs, min_reputation):
+    def requires_reputation(gs: Any, min_reputation: int) -> bool:
         """
         Rule: Action requires a minimum reputation level.
         
@@ -103,7 +108,7 @@ class ActionRules:
     # === Milestone-based Rules ===
     
     @staticmethod
-    def requires_milestone_triggered(gs, milestone_attr):
+    def requires_milestone_triggered(gs: Any, milestone_attr: str) -> bool:
         """
         Rule: Action requires a specific milestone to be triggered.
         
@@ -120,7 +125,7 @@ class ActionRules:
         return getattr(gs, milestone_attr, False)
     
     @staticmethod
-    def requires_board_members(gs, min_board_members=1):
+    def requires_board_members(gs: Any, min_board_members: int = 1) -> bool:
         """
         Rule: Action requires board members to be installed.
         
@@ -139,7 +144,7 @@ class ActionRules:
     # === Upgrade-based Rules ===
     
     @staticmethod
-    def requires_upgrade(gs, upgrade_key):
+    def requires_upgrade(gs: Any, upgrade_key: str) -> bool:
         """
         Rule: Action requires a specific upgrade to be purchased.
         
@@ -156,7 +161,7 @@ class ActionRules:
         return upgrade_key in gs.upgrade_effects
     
     @staticmethod
-    def requires_scrollable_log(gs):
+    def requires_scrollable_log(gs: Any) -> bool:
         """
         Rule: Action requires scrollable event log to be enabled.
         
@@ -174,7 +179,7 @@ class ActionRules:
     # === Composite Rules ===
     
     @staticmethod
-    def requires_staff_and_turn(gs, min_staff, min_turn):
+    def requires_staff_and_turn(gs: Any, min_staff: int, min_turn: int) -> bool:
         """
         Rule: Action requires both minimum staff and turn requirements.
         
@@ -192,7 +197,7 @@ class ActionRules:
         return gs.staff >= min_staff and gs.turn >= min_turn
     
     @staticmethod
-    def requires_any_specialized_staff(gs, min_count=1):
+    def requires_any_specialized_staff(gs: Any, min_count: int = 1) -> bool:
         """
         Rule: Action requires any type of specialized staff.
         
@@ -212,7 +217,7 @@ class ActionRules:
     # === Negation and Complex Logic ===
     
     @staticmethod
-    def not_yet_triggered(gs, milestone_attr):
+    def not_yet_triggered(gs: Any, milestone_attr: str) -> bool:
         """
         Rule: Action is only available if milestone has NOT been triggered yet.
         
@@ -229,7 +234,7 @@ class ActionRules:
         return not getattr(gs, milestone_attr, False)
     
     @staticmethod
-    def combine_and(gs, *rule_functions):
+    def combine_and(gs: Any, *rule_functions: Callable[[Any], bool]) -> bool:
         """
         Rule: Combine multiple rules with AND logic.
         
@@ -246,7 +251,7 @@ class ActionRules:
         return all(rule_func(gs) for rule_func in rule_functions)
     
     @staticmethod
-    def combine_or(gs, *rule_functions):
+    def combine_or(gs: Any, *rule_functions: Callable[[Any], bool]) -> bool:
         """
         Rule: Combine multiple rules with OR logic.
         
@@ -265,7 +270,7 @@ class ActionRules:
 
 # === Convenience Functions for Common Patterns ===
 
-def manager_unlock_rule(gs):
+def manager_unlock_rule(gs: Any) -> bool:
     """
     Convenience function: Manager hiring becomes available at 9+ staff.
     
@@ -275,7 +280,7 @@ def manager_unlock_rule(gs):
     return ActionRules.requires_staff(gs, min_staff=9)
 
 
-def scout_unlock_rule(gs):
+def scout_unlock_rule(gs: Any) -> bool:
     """
     Convenience function: Scout Opponent becomes available after turn 5.
     
@@ -285,7 +290,7 @@ def scout_unlock_rule(gs):
     return ActionRules.requires_turn(gs, min_turn=5)
 
 
-def search_unlock_rule(gs):
+def search_unlock_rule(gs: Any) -> bool:
     """
     Convenience function: Search action requires board oversight.
     
