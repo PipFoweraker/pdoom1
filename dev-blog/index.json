@@ -1,6 +1,26 @@
 {
   "entries": [
     {
+      "filename": "2025-09-17-phase2-ui-navigation-fixes.md",
+      "slug": "2025-09-17-phase2-ui-navigation-fixes",
+      "path": "entries/2025-09-17-phase2-ui-navigation-fixes.md",
+      "frontmatter": {
+        "title": "Phase 2: UI Navigation Fixes - Complete Success",
+        "date": "2025-09-17",
+        "tags": [
+          "ui-navigation",
+          "game-completion-flow",
+          "phase2",
+          "critical-fixes"
+        ],
+        "summary": "Resolved all three critical UI navigation issues blocking game completion, achieving 100% success on Phase 2 objectives",
+        "commit": "1d6c527"
+      },
+      "word_count": 304,
+      "file_size": 2545,
+      "modified_at": "2025-09-17T12:05:17.034466"
+    },
+    {
       "filename": "2025-09-16-ascii-compliance-sweep.md",
       "slug": "2025-09-16-ascii-compliance-sweep",
       "path": "entries/2025-09-16-ascii-compliance-sweep.md",
@@ -40,7 +60,7 @@
       },
       "word_count": 530,
       "file_size": 4728,
-      "modified_at": "2025-09-16T19:50:39.478114"
+      "modified_at": "2025-09-16T19:57:31.020551"
     },
     {
       "filename": "2025-09-16-ui-hotfix-session-3-completion.md",
@@ -192,25 +212,24 @@
       "modified_at": "2025-09-15T22:28:39.687642"
     },
     {
-      "filename": "2025-09-14-action-rules-type-annotation.md",
-      "slug": "2025-09-14-action-rules-type-annotation",
-      "path": "entries/2025-09-14-action-rules-type-annotation.md",
+      "filename": "2025-09-14-dead-code-analysis-complete.md",
+      "slug": "2025-09-14-dead-code-analysis-complete",
+      "path": "entries/2025-09-14-dead-code-analysis-complete.md",
       "frontmatter": {
-        "title": "Type Annotation: action_rules.py Complete",
+        "title": "Dead Code Analysis and Refactoring Planning Complete",
         "date": "2025-09-14",
         "tags": [
-          "type-annotation",
-          "milestone",
-          "core",
-          "action-rules",
-          "game-logic"
+          "analysis",
+          "refactoring",
+          "technical-debt",
+          "planning"
         ],
-        "summary": "Successfully completed comprehensive type annotation for ActionRules class (14 static methods) and 3 standalone functions in 355-line core game logic module",
-        "commit": "4638ba5"
+        "summary": "Comprehensive analysis of legacy code patterns and creation of prioritized refactoring plan for monolith breakdown preparation",
+        "commit": "TBD"
       },
-      "word_count": 749,
-      "file_size": 6360,
-      "modified_at": "2025-09-14T21:57:54.589623"
+      "word_count": 349,
+      "file_size": 3041,
+      "modified_at": "2025-09-17T12:05:56.346738"
     },
     {
       "filename": "2025-09-14-deterministic-rng-complete.md",
@@ -565,12 +584,15 @@
     }
   },
   "errors": [
-    "2025-09-15-modular-ui-architecture-hotfix.md: Title exceeds 60 character limit"
+    "2025-09-14-action-rules-type-annotation.md: Title exceeds 60 character limit",
+    "2025-09-15-modular-ui-architecture-hotfix.md: Title exceeds 60 character limit",
+    "2025-09-17-rng-deterministic-migration.md: Title exceeds 60 character limit",
+    "2025-09-17-strategic-analysis-sept-17.md: Title exceeds 60 character limit"
   ],
   "stats": {
-    "total_entries": 25,
-    "total_errors": 1,
-    "latest_entry": "2025-09-16"
+    "total_entries": 26,
+    "total_errors": 4,
+    "latest_entry": "2025-09-17"
   },
-  "generated_at": "2025-09-16T19:51:40.392089"
+  "generated_at": "2025-09-17T15:39:42.206527"
 }

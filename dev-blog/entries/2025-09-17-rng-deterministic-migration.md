@@ -77,7 +77,7 @@ The migration embodies our commitment to deterministic systems based on acausal 
 ### Testing Strategy
 Changes validated through systematic test suite execution:
 - Ran individual test modules to verify RNG initialization fixes
-- Measured overall test failure reduction (185→99 issues)
+- Measured overall test failure reduction (185 to 99 issues)
 - Confirmed game startup functionality remains intact
 - Verified deterministic RNG system core functionality
 
