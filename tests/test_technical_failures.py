@@ -25,7 +25,8 @@ class TestTechnicalFailureCascades(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         # Use deterministic seed for reproducible tests
-        # get_rng().seed() removed - RNG initialized by GameState self.game_state = GameState('test-cascade-system')
+        # get_rng().seed() removed - RNG initialized by GameState
+        self.game_state = GameState('test-cascade-system')
         self.cascade_system = self.game_state.technical_failures
         
         # Set up basic game state for testing

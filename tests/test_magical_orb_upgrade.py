@@ -169,7 +169,8 @@ class TestMagicalOrbIntegration(unittest.TestCase):
     
     def test_full_discovery_to_purchase_flow(self):
         """Test the complete flow from discovering Palandir to purchasing the orb."""
-        # get_rng().seed() removed - RNG initialized by GameState # Use a seed that should give successful discovery
+        # get_rng().seed() removed - RNG initialized by GameState
+        # Use a seed that should give successful discovery
         game_state = GameState("integration_test")
         
         # Initially, magical orb should not be available
