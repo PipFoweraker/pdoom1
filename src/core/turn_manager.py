@@ -250,6 +250,32 @@ class TurnManager:
                 else:
                     staff_loss = max(1, total_staff // 3)
                     gs._add('staff', -staff_loss, f"Staff left due to unpaid maintenance (${unpaid_amount:,} short)")
+        
+        # Office Cat upkeep costs (if adopted) - part of responsible pet ownership
+        self._process_office_cat_upkeep()
+    
+    def _process_office_cat_upkeep(self):
+        """Process office cat upkeep costs and morale benefits"""
+        gs = self.game_state
+        
+        if not getattr(gs, 'office_cat_adopted', False):
+            return
+            
+        # Weekly cat food costs: $1.25 (wet) + $0.80 (dry) = $2.05/day * 7 = $14.35/week
+        cat_food_cost = 14  # Rounded down for game balance
+        gs._add('money', -cat_food_cost)
+        gs.office_cat_total_food_cost = getattr(gs, 'office_cat_total_food_cost', 0) + cat_food_cost
+        gs.messages.append(f"🐱 Cat upkeep: ${cat_food_cost} (total: ${gs.office_cat_total_food_cost})")
+        
+        # Small morale benefit (reduce doom slightly) - dev engagement reward
+        from src.services.deterministic_rng import get_rng
+        if get_rng().random(f"cat_morale_turn_{gs.turn}") < 0.3:  # 30% chance per turn
+            gs._add('doom', -1)
+            gs.messages.append("🐾 Office cat provides small morale boost!")
+        
+        # Update cat love emoji timer
+        if hasattr(gs, 'office_cat_love_emoji_timer') and gs.office_cat_love_emoji_timer > 0:
+            gs.office_cat_love_emoji_timer -= 1
     
     def _process_opponents(self):
         """Process opponent turns and doom contributions"""

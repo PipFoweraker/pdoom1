@@ -393,6 +393,19 @@ class GameState:
         # Initialize employee blobs for starting staff
         self._initialize_employee_blobs()
         
+        # Office Cat System - Enhanced interactive pet mechanics for dev engagement
+        self.office_cat_adopted = False  # Whether any cats have been adopted
+        self.office_cats_adopted = False  # Legacy compatibility with existing event system
+        self.office_cat_position = (0, 0)  # Current cat position on screen
+        self.office_cat_target_position = (400, 300)  # Where cat should be
+        self.office_cat_last_petted = 0  # Turn when cat was last petted
+        self.office_cat_love_emoji_timer = 0  # Timer for love emoji display
+        self.office_cat_love_emoji_pos = (0, 0)  # Position for love emoji
+        self.office_cat_total_food_cost = 0  # Total spent on cat food (for stats)
+        self.office_cat_total_pets = 0  # Total times cat was petted (for stats)
+        self.office_cat_turns_with_5_staff = 0  # Track consecutive turns with 5+ staff
+        self.office_cat_adoption_offered = False  # Track if adoption event was already shown
+        
         # Load tutorial settings (after initialization)
         self.load_tutorial_settings()
 
@@ -1907,6 +1920,11 @@ class GameState:
             status = "enabled" if new_state else "disabled"
             self.messages.append(f"Sound {status}")
             return None
+
+        # Office cat petting interaction - enhanced dev engagement feature
+        if getattr(self, 'office_cat_adopted', False):
+            if self.pet_office_cat(mouse_pos):
+                return None  # Cat was petted, interaction handled
 
         return None
 
@@ -4205,9 +4223,15 @@ class GameState:
             self.messages.append("Enhanced event system required for interactive expense approval.")
     
     def _trigger_stray_cat_adoption(self) -> None:
-        """Handle the stray cat adoption event - a positive morale boost for the team."""
+        """Handle the stray cat adoption event - Enhanced interactive office cat system for dev engagement."""
         # Mark that the event has occurred so it doesn't repeat
         self.office_cats_adopted = True
+        self.office_cat_adopted = True  # Enable full interactive system
+        self.office_cat_adoption_offered = True
+        
+        # Set initial cat position in a nice corner
+        self.office_cat_position = (350, 280)
+        self.office_cat_target_position = (350, 280)
         
         # Responsible pet ownership costs
         flea_treatment_cost = 50
@@ -4215,13 +4239,14 @@ class GameState:
         
         # Positive effects: small morale boost through reputation gain
         reputation_boost = 2
-        self._add('reputation', reputation_boost)
+        self.reputation += reputation_boost  # Direct assignment to avoid verbose messaging for cat adoption
         
-        # Fun message for the player
-        self.messages.append("[EMOJI] SPECIAL EVENT: A box of adorable kittens was left outside your office!")
+        # Fun message for the player with interaction hints
+        self.messages.append("🐱 SPECIAL EVENT: A box of adorable kittens was left outside your office!")
         self.messages.append("Your staff has unanimously decided to adopt them as official office cats.")
         self.messages.append(f"Responsible pet ownership: Flea treatment purchased for ${flea_treatment_cost}")
         self.messages.append(f"The office atmosphere has improved significantly! +{reputation_boost} reputation")
+        self.messages.append("💡 TIP: Click on the office cat to pet them for morale boosts!")
         self.messages.append("The cats seem particularly interested in the server room...")
     
     def _trigger_hiring_dialog(self) -> None:
@@ -5566,7 +5591,7 @@ class GameState:
                     "earns modest recognition", "builds credibility", "gains industry respect",
                     "demonstrates competence", "shows promise", "establishes credibility"
                 ]
-                phrase = get_rng().choice(positive_phrases)
+                phrase = get_rng().choice(positive_phrases, f"reputation_phrase_positive_{self.turn}")
                 self.messages.append(f"? Your work {phrase} (+{amount:.0f} reputation)")
                 
         else:  # Losing reputation
@@ -6137,3 +6162,72 @@ class GameState:
             
         if enhanced:
             self.messages.append("[ORB] DEEP SCAN COMPLETE - All major capabilities assessed")
+
+    def pet_office_cat(self, mouse_pos: Tuple[int, int]) -> bool:
+        """Handle office cat petting interaction - core dev engagement feature!"""
+        if not getattr(self, 'office_cat_adopted', False):
+            return False
+
+        # Check if click is near the cat
+        cat_x, cat_y = getattr(self, 'office_cat_position', (400, 300))
+        mx, my = mouse_pos
+
+        # Cat is clickable in a 64x64 area
+        if abs(mx - cat_x) <= 32 and abs(my - cat_y) <= 32:
+            # Pet the cat! This is the main dev reward system
+            self.office_cat_total_pets = getattr(self, 'office_cat_total_pets', 0) + 1
+            self.office_cat_last_petted = self.turn
+
+            # Show love emoji for 60 frames (2 seconds at 30 FPS)
+            self.office_cat_love_emoji_timer = 60
+            self.office_cat_love_emoji_pos = (cat_x + 16, cat_y - 20)
+
+            # Small temporary morale boost - dev engagement reward
+            if get_rng().random(f"cat_pet_doom_reduction_{self.turn}_{self.office_cat_total_pets}") < 0.2:
+                self._add('doom', -1)
+                self.messages.append("💖 Petting the cat provides immediate stress relief!")
+            
+            # Play cat sound if available
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_sound('blob')  # Reuse existing sound
+            
+            return True
+
+        return False
+
+    def get_cat_doom_stage(self) -> int:
+        """Get the current doom stage of the office cat for visual representation."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return 0
+
+        # Cat gets more ominous as doom increases - visual feedback system
+        doom_percentage = self.doom / self.max_doom
+
+        if doom_percentage < 0.2:
+            return 0  # Happy, normal cat
+        elif doom_percentage < 0.4:
+            return 1  # Slightly concerned cat
+        elif doom_percentage < 0.6:
+            return 2  # Alert cat with glowing eyes
+        elif doom_percentage < 0.8:
+            return 3  # Ominous cat with red eyes
+        else:
+            return 4  # Terrifying doom cat with laser eyes
+
+    def update_cat_position(self, screen_w: int, screen_h: int) -> None:
+        """Update office cat position and animation."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return
+
+        # Cat likes to stay in the bottom-right area, avoiding UI elements
+        target_x = screen_w - 150  # Stay away from right edge UI
+        target_y = screen_h - 120  # Stay away from bottom UI
+
+        # Slowly move towards target position (smooth movement)
+        current_x, current_y = getattr(self, 'office_cat_position', (target_x, target_y))
+        
+        # Move 10% of the way to target each frame
+        new_x = current_x + (target_x - current_x) * 0.1
+        new_y = current_y + (target_y - current_y) * 0.1
+
+        self.office_cat_position = (int(new_x), int(new_y))
