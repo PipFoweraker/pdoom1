@@ -5,12 +5,14 @@ This module contains all the menu-related drawing functions including
 main menu, settings menus, and configuration screens.
 """
 
+from typing import Union, Optional, Dict, Any
+
 import pygame
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
 from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
 
-def get_research_intensity_display(difficulty):
+def get_research_intensity_display(difficulty: str) -> str:
     """Convert difficulty setting to bureaucratic terminology."""
     mapping = {
         "EASY": "CONSERVATIVE",
@@ -21,7 +23,7 @@ def get_research_intensity_display(difficulty):
     return mapping.get(difficulty, "REGULATORY")
 
 
-def get_volume_display(volume):
+def get_volume_display(volume: Union[str, int]) -> str:
     """Convert volume to descriptive levels."""
     if isinstance(volume, str) or volume == 123:  # Handle dummy value
         volume = 80
@@ -37,7 +39,7 @@ def get_volume_display(volume):
         return "MINIMAL"
 
 
-def get_graphics_display(quality):
+def get_graphics_display(quality: str) -> str:
     """Convert graphics quality to bureaucratic terms."""
     mapping = {
         "LOW": "EFFICIENT", 
@@ -48,7 +50,7 @@ def get_graphics_display(quality):
     return mapping.get(quality, "COMPLIANT")
 
 
-def get_safety_display(safety_level):
+def get_safety_display(safety_level: str) -> str:
     """Safety protocol levels for the bureaucratic theme."""
     mapping = {
         "MINIMAL": "MINIMAL",
@@ -60,7 +62,7 @@ def get_safety_display(safety_level):
     return mapping.get(safety_level, "STANDARD")
 
 
-def draw_enhanced_continue_button(screen, rect, text, button_state):
+def draw_enhanced_continue_button(screen: pygame.Surface, rect: pygame.Rect, text: str, button_state: ButtonState) -> None:
     """Draw the continue button with special highlighting."""
     # Enhanced colors for the continue button
     if button_state == ButtonState.FOCUSED:
@@ -83,7 +85,7 @@ def draw_enhanced_continue_button(screen, rect, text, button_state):
     screen.blit(text_surf, text_rect)
 
 
-def draw_bureaucratic_setting_button(screen, rect, text, button_state, setting_name):
+def draw_bureaucratic_setting_button(screen: pygame.Surface, rect: pygame.Rect, text: str, button_state: ButtonState, setting_name: str) -> None:
     """Draw setting buttons with bureaucratic styling."""
     # Color scheme based on button state
     if button_state == ButtonState.FOCUSED:
@@ -121,7 +123,7 @@ def draw_bureaucratic_setting_button(screen, rect, text, button_state, setting_n
     screen.blit(text_surf, (text_x, text_y))
 
 
-def draw_mute_button_standalone(screen, sound_manager, w, h):
+def draw_mute_button_standalone(screen: pygame.Surface, sound_manager: Any, w: int, h: int) -> pygame.Rect:
     """
     Draw a standalone mute button for menus.
     
@@ -177,7 +179,7 @@ def draw_mute_button_standalone(screen, sound_manager, w, h):
     return button_rect
 
 
-def draw_version_footer(screen, w, h, font=None):
+def draw_version_footer(screen: pygame.Surface, w: int, h: int, font: Optional[pygame.font.Font] = None) -> None:
     """
     Draw version information in bottom right corner.
     
@@ -202,7 +204,7 @@ def draw_version_footer(screen, w, h, font=None):
     screen.blit(version_surf, (version_x, version_y))
 
 
-def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
+def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, sound_manager: Optional[Any] = None) -> None:
     """
     Draw the main menu with vertically stacked, center-oriented buttons.
     
@@ -324,7 +326,7 @@ def draw_main_menu(screen, w, h, selected_item, sound_manager=None):
     draw_version_footer(screen, w, h)
 
 
-def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
+def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, game_state: Optional[Any] = None) -> None:
     """
     Draw the sounds options menu with toggles for individual sound effects.
     
@@ -405,7 +407,7 @@ def draw_sounds_menu(screen, w, h, selected_item, game_state=None):
         screen.blit(inst_surf, (inst_x, inst_y))
 
 
-def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
+def draw_config_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, configs: list[str], current_config_name: str) -> None:
     """
     Draw the configuration selection menu.
     
@@ -473,7 +475,7 @@ def draw_config_menu(screen, w, h, selected_item, configs, current_config_name):
         screen.blit(inst_surf, (inst_x, inst_y))
 
 
-def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=None):
+def draw_pre_game_settings(screen: pygame.Surface, w: int, h: int, settings: Dict[str, Any], selected_item: int, sound_manager: Optional[Any] = None) -> None:
     """
     Draw the Laboratory Configuration screen with P(Doom) bureaucracy theme.
     
@@ -574,7 +576,7 @@ def draw_pre_game_settings(screen, w, h, settings, selected_item, sound_manager=
         draw_mute_button_standalone(screen, sound_manager, w, h)
 
 
-def draw_audio_menu(screen, w, h, selected_item, audio_settings, sound_manager):
+def draw_audio_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, audio_settings: Dict[str, Any], sound_manager: Any) -> None:
     """
     Draw the audio settings menu.
     
