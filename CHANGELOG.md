@@ -4,11 +4,28 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.7.6] - 2025-09-16 - "Hot Hotfix Zone"
+## [0.7.6] - 2025-09-17 - "Phase 1 Critical Stability Release"
 ### Added
+- **NEW ACTION: Investigate Opponent** - Deep analysis of revealed competitors with enhanced intelligence gathering
+- **Strategic Development Plan** - Comprehensive 3-phase development roadmap (docs/STRATEGIC_DEVELOPMENT_PLAN_2025-09-17.md)
+- **Development Analysis System** - Created systematic repository analysis methodology and dev blog integration
+
 ### Changed
+- **BREAKING: Scout Opponent -> Scout Opponents** - Renamed to plural form for consistency with test expectations and game design
+- **ENHANCED: Safety Research Action** - Restored as standalone action alongside Research Options menu for backward compatibility
+- **IMPROVED: Action System Architecture** - Added proper rule functions and availability checking for competitor intelligence actions
+
 ### Fixed
+- **CRITICAL: Missing Safety Research Action** - Restored core gameplay action that was accidentally removed during research consolidation
+- **CRITICAL: ASCII Compliance** - Fixed 923 Unicode character violations across 11 files using automated compliance fixer
+- **MAJOR: Duplicate Safety Audit Actions** - Renamed conflict to "Technical Debt Audit" vs "Safety Audit" for distinct functionality
+- **MAJOR: Action System Test Failures** - Fixed multiple test suite failures in action points, keyboard shortcuts, and Scout Opponents functionality
+
 ### Technical Implementation
+- **Method Addition**: _execute_standalone_safety_research(), _investigate_specific_opponent(), _has_revealed_opponents()
+- **Test Suite Fixes**: Corrected action execution patterns from action['execute'] to action['upside'] 
+- **Cross-Platform Compatibility**: 100% ASCII compliance restored across Python files, documentation, and configuration
+- **Development Infrastructure**: Enhanced dev blog system with strategic analysis templates and automated documentation generation
 
 ## [0.7.5] - 2025-09-16 - "Extended Gameplay & Architecture Overhaul"
 ### Added
