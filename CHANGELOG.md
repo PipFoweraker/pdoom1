@@ -4,6 +4,25 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-09-17 - "RNG Architecture Discovery Release"
+
+### Major Discovery: RNG System Already Complete
+#### Analysis
+- **INVESTIGATION COMPLETE** - Deterministic RNG system was already fully implemented and working correctly
+- **Test Architecture Fixes** - What appeared to be RNG issues were actually test initialization order problems
+- **Philosophical Framework Integration** - Added acausal decision theory context throughout RNG documentation
+
+#### Fixed
+- **Test Suite Stability** - Fixed 86 test failures (46% improvement: 185 → 99 total issues)
+- **RNG Initialization Order** - Corrected GameState → RNG → test objects pattern in 8 test files
+- **Syntax Corruption** - Repaired automated migration script damage in multiple test files
+- **Opponents Test Architecture** - Fixed test class to use GameState-managed opponents (8/9 tests passing)
+
+#### Changed
+- **Enhanced RNG Documentation** - Added decision theory philosophical context to deterministic_rng.py
+- **Test Migration Tooling** - Created fix_rng_tests.py automated migration script (with lessons learned)
+- **Dev Blog Integration** - Created comprehensive session documentation for RNG investigation
+
 ## [0.7.6] - 2025-09-17 - "Phase 1 & 2 UI Navigation Stability Release"
 
 ### Phase 2: Game Completion Flow Improvements
