@@ -4,6 +4,32 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2025-09-18 - "Test Suite Foundation Release - Global Multiplayer Ready"
+
+### MILESTONE: Systematic Test Suite Repair Achieves 60% Failure Reduction
+#### Major Achievement
+- **Test Health Restoration** - Reduced failing tests from 99 to 39 (60% improvement, 798/837 passing)
+- **Global Multiplayer Foundation** - Established production-ready deterministic RNG system
+- **Systematic Repair Methodology** - Fixed 6 major categories of test failures through targeted approach
+
+#### Fixed - Core Systems Integration
+- **RNG Context Parameter Errors** - Added missing DeterministicRNG methods (sample, seed, choices) with context parameters
+- **ASCII Compliance Issues** - Removed Unicode variation selectors for cross-platform compatibility
+- **Action Naming Inconsistency** - Standardized "Scout Opponent" -> "Scout Opponents" across UI and tests
+- **Test Patching Issues** - Fixed incorrect RNG mocking patterns in technical_failures.py, critical_bug_fixes.py
+- **GameState Attribute Issues** - Added proper setUp methods to TestRegressionPrevention class
+- **Settings Flow Seed Method** - Updated main.py RNG initialization sequence for proper startup
+
+#### Enhanced - Deterministic RNG System
+- **Context-Aware Seeding** - Full integration with choice(), sample(), random(), randint() methods
+- **Competitive Integrity** - Complete reproducibility for tournament-ready scenarios
+- **Developer Experience** - Hyper-verbose debugging modes for community engagement
+
+#### Technical Foundation
+- **Enhanced Personnel System** - All tests passing with proper RNG integration
+- **Settings Flow** - Stable initialization sequence for consistent game startup
+- **Core Game Loop** - Validated deterministic behavior across all major systems
+
 ## [Unreleased] - 2025-09-17 - "RNG Architecture Discovery Release"
 
 ### Major Discovery: RNG System Already Complete

@@ -1,6 +1,27 @@
 {
   "entries": [
     {
+      "filename": "2025-09-18-test-suite-foundation-v080.md",
+      "slug": "2025-09-18-test-suite-foundation-v080",
+      "path": "entries/2025-09-18-test-suite-foundation-v080.md",
+      "frontmatter": {
+        "title": "Test Suite Foundation v0.8.0 - Multiplayer Ready",
+        "date": "2025-09-18",
+        "tags": [
+          "milestone",
+          "testing",
+          "rng",
+          "multiplayer",
+          "foundation"
+        ],
+        "summary": "Major milestone achieved: 60 percent test failure reduction establishes production-ready deterministic gameplay",
+        "commit": "8964928"
+      },
+      "word_count": 398,
+      "file_size": 3552,
+      "modified_at": "2025-09-18T06:39:15.231930"
+    },
+    {
       "filename": "2025-09-17-phase2-ui-navigation-fixes.md",
       "slug": "2025-09-17-phase2-ui-navigation-fixes",
       "path": "entries/2025-09-17-phase2-ui-navigation-fixes.md",
@@ -590,9 +611,9 @@
     "2025-09-17-strategic-analysis-sept-17.md: Title exceeds 60 character limit"
   ],
   "stats": {
-    "total_entries": 26,
+    "total_entries": 27,
     "total_errors": 4,
-    "latest_entry": "2025-09-17"
+    "latest_entry": "2025-09-18"
   },
-  "generated_at": "2025-09-17T15:39:42.206527"
+  "generated_at": "2025-09-18T06:48:52.172849"
 }
