@@ -693,12 +693,10 @@ def handle_pre_game_settings_keyboard(key):
     elif key == pygame.K_DOWN:
         selected_settings_item = (selected_settings_item + 1) % 7  # Updated for 2 new name fields
     elif key == pygame.K_RETURN:
-        if selected_settings_item == 0:  # Continue button (now first)
-            # If seed is already set (from Basic New Game), skip seed selection
-            if seed is not None:
-                current_state = 'tutorial_choice'
-            else:
-                current_state = 'seed_selection'
+        if selected_settings_item == 0:  # Continue button (first item)
+            # Always go to seed selection to allow user choice
+            # The seed selection screen can handle pre-set seeds appropriately
+            current_state = 'seed_selection'
         else:
             # Cycle through setting values
             cycle_setting_value(selected_settings_item)
@@ -2802,8 +2800,8 @@ def main():
             if (current_state == 'game' and game_state and 
                 not first_time_help_content and 
                 not onboarding.show_tutorial_overlay):
-                # Check for various first-time mechanics (but not first_staff_hire - that's context-sensitive)
-                for mechanic in ['first_upgrade_purchase', 'high_doom_warning']:
+                # Check for various first-time mechanics (but not first_staff_hire or first_upgrade_purchase - those are context-sensitive)
+                for mechanic in ['high_doom_warning']:
                     if onboarding.should_show_hint(mechanic):
                         help_content = onboarding.get_mechanic_help(mechanic)
                         if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
