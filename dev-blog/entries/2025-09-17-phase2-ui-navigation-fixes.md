@@ -29,7 +29,7 @@ Successfully completed Phase 2 of the P(Doom) strategic development plan, resolv
 ### Metrics
 - **Files modified**: 3 files (main.py, tests/test_settings_flow.py, CHANGELOG.md)
 - **Issues resolved**: 3/3 priority UI navigation blockers (100% success rate)
-- **Test improvements**: Settings flow tests went from 2 failures → 1 failure (83% improvement)
+- **Test improvements**: Settings flow tests went from 2 failures -> 1 failure (83% improvement)
 - **Test coverage**: X tests passing
 - **Performance impact**: Describe any performance changes
 

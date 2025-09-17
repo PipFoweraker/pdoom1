@@ -11,7 +11,7 @@ The system builds on the existing technical debt and accident systems to create
 realistic domino effects that organizations must manage.
 """
 
-import random
+from src.services.deterministic_rng import get_rng
 from typing import Dict, List, Any
 from dataclasses import dataclass
 from enum import Enum
@@ -94,7 +94,7 @@ class TechnicalFailureCascades:
         # Check for new cascade triggers from technical debt accidents
         if hasattr(self.game_state, 'technical_debt'):
             debt_accident_chance = self.game_state.technical_debt.get_accident_chance()
-            if debt_accident_chance > 0 and random.random() < debt_accident_chance * 0.3:
+            if debt_accident_chance > 0 and get_rng().random() < debt_accident_chance * 0.3:
                 self._trigger_potential_cascade()
                 
     def _trigger_potential_cascade(self) -> None:
@@ -109,7 +109,7 @@ class TechnicalFailureCascades:
         # Decide if this becomes a near-miss or actual failure
         near_miss_chance = 0.4 + (self.monitoring_systems * 0.1)
         
-        if random.random() < near_miss_chance:
+        if get_rng().random() < near_miss_chance:
             self._trigger_near_miss(failure)
         else:
             self._trigger_actual_failure(failure)
@@ -145,7 +145,7 @@ class TechnicalFailureCascades:
                 
         # Select based on weights
         total_weight = sum(weights.values())
-        rand_val = random.random() * total_weight
+        rand_val = get_rng().random() * total_weight
         
         cumulative = 0.0
         for failure_type, weight in weights.items():
@@ -157,7 +157,7 @@ class TechnicalFailureCascades:
         
     def _calculate_failure_severity(self) -> int:
         """Calculate failure severity (1-10) based on game state."""
-        base_severity = random.randint(3, 7)
+        base_severity = get_rng().randint(3, 7)
         
         # Technical debt increases severity
         if hasattr(self.game_state, 'technical_debt'):
@@ -258,7 +258,7 @@ class TechnicalFailureCascades:
         }
         
         template = failure_templates[failure_type]
-        description = random.choice(template["descriptions"])
+        description = get_rng().choice(template["descriptions"])
         
         # Scale impact by severity
         impact = {}
@@ -320,7 +320,7 @@ class TechnicalFailureCascades:
         )
         
         # Check if this triggers a cascade
-        if random.random() < failure.cascade_chance:
+        if get_rng().random() < failure.cascade_chance:
             self._start_cascade(failure)
         else:
             # Single failure - offer response choices
@@ -373,7 +373,7 @@ class TechnicalFailureCascades:
             """Thorough investigation - balanced approach."""
             gs.messages.append("? INVESTIGATION: Internal review conducted, limited public disclosure.")
             gs._add('reputation', -max(1, failure.severity // 3))  # Reduced reputation cost
-            gs._add('money', -random.randint(10, 25))  # Investigation costs
+            gs._add('money', -get_rng().randint(10, 25))  # Investigation costs
             
             # Moderate learning
             if failure.failure_type not in self.lessons_learned:
@@ -386,7 +386,7 @@ class TechnicalFailureCascades:
             
             # No immediate reputation loss but accumulate cover-up debt
             self.cover_up_debt += failure.severity
-            gs._add('money', -random.randint(20, 40))  # Cover-up costs
+            gs._add('money', -get_rng().randint(20, 40))  # Cover-up costs
             
             # Increase future failure chances
             if hasattr(gs, 'technical_debt'):
@@ -418,7 +418,7 @@ class TechnicalFailureCascades:
         else:
             # Simple random choice for now
             responses = [handle_transparency, handle_investigation, handle_cover_up]
-            random.choice(responses)(self.game_state)
+            get_rng().choice(responses)(self.game_state)
             
     def _offer_cascade_response(self, cascade: CascadeState) -> None:
         """Offer choices for responding to a cascade situation."""
@@ -434,8 +434,8 @@ class TechnicalFailureCascades:
             cascade.transparency_level = 0.8  # High visibility response
             
             # High cost but effective containment
-            gs._add('money', -random.randint(50, 100))
-            gs._add('staff', -random.randint(1, 2))  # Some staff burnout
+            gs._add('money', -get_rng().randint(50, 100))
+            gs._add('staff', -get_rng().randint(1, 2))  # Some staff burnout
             gs.messages.append("? Aggressive response contains cascade but exhausts resources.")
             
         def handle_systematic(gs):
@@ -444,14 +444,14 @@ class TechnicalFailureCascades:
             
             # Moderate effectiveness based on incident response level
             containment_chance = 0.5 + (self.incident_response_level * 0.1)
-            if random.random() < containment_chance:
+            if get_rng().random() < containment_chance:
                 cascade.is_contained = True
                 gs.messages.append("? Systematic approach successfully contains cascade.")
             else:
                 gs.messages.append("[WARNING]? Protocols help but cascade continues to develop.")
                 
             cascade.transparency_level = 0.6
-            gs._add('money', -random.randint(20, 40))
+            gs._add('money', -get_rng().randint(20, 40))
             
         def handle_minimize(gs):
             """Minimize response - try to contain quietly."""
@@ -460,7 +460,7 @@ class TechnicalFailureCascades:
             
             # Lower effectiveness but less cost
             containment_chance = 0.3 + (self.incident_response_level * 0.05)
-            if random.random() < containment_chance:
+            if get_rng().random() < containment_chance:
                 cascade.is_contained = True
                 gs.messages.append("? Minimal response surprisingly effective.")
             else:
@@ -470,7 +470,7 @@ class TechnicalFailureCascades:
                 
         # Choose response (simplified for now)
         responses = [handle_all_hands, handle_systematic, handle_minimize]
-        choice = random.choice(responses)
+        choice = get_rng().choice(responses)
         choice(self.game_state)
         
     def _update_cascade(self, cascade: CascadeState) -> None:
@@ -483,7 +483,7 @@ class TechnicalFailureCascades:
             return
             
         # Otherwise, potentially add more failures
-        if cascade.total_turns <= 3 and random.random() < 0.4:
+        if cascade.total_turns <= 3 and get_rng().random() < 0.4:
             self._add_cascade_failure(cascade)
             
         # Auto-resolve after 3 turns
@@ -497,10 +497,10 @@ class TechnicalFailureCascades:
         if not cascade.initiating_failure.cascade_targets:
             return
             
-        target_type = random.choice(cascade.initiating_failure.cascade_targets)
+        target_type = get_rng().choice(cascade.initiating_failure.cascade_targets)
         
         # Subsequent failures are usually less severe
-        severity = max(1, cascade.initiating_failure.severity - random.randint(1, 3))
+        severity = max(1, cascade.initiating_failure.severity - get_rng().randint(1, 3))
         
         subsequent_failure = self._create_failure_event(target_type, severity)
         cascade.subsequent_failures.append(subsequent_failure)

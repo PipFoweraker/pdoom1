@@ -7,7 +7,7 @@ debt reduction actions, and integration with existing game mechanics.
 """
 
 import unittest
-import random
+from src.services.deterministic_rng import get_rng
 from src.core.game_state import GameState
 from src.core.research_quality import (
     ResearchQuality, ResearchProject, TechnicalDebt, 
@@ -258,10 +258,10 @@ class TestGameStateIntegration(unittest.TestCase):
         self.gs.technical_debt.accumulated_debt = 25
         
         # Mock random to ensure we can test the consequence paths
-        original_random = random.random
+        original_random = get_rng().random
         try:
             # Force accident to trigger
-            random.random = lambda: 0.01  # Very low value to trigger accident
+            get_rng().random = lambda: 0.01  # Very low value to trigger accident
             
             initial_messages = len(self.gs.messages)
             self.gs.check_debt_consequences()
@@ -270,7 +270,7 @@ class TestGameStateIntegration(unittest.TestCase):
             self.assertGreater(len(self.gs.messages), initial_messages)
             
         finally:
-            random.random = original_random
+            get_rng().random = original_random
     
     def test_research_effectiveness_modifier(self):
         """Test that technical debt affects research effectiveness."""

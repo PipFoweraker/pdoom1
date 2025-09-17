@@ -1,5 +1,5 @@
 import unittest
-import random
+from src.services.deterministic_rng import get_rng
 import sys
 import os
 
@@ -16,7 +16,7 @@ class TestOpponent(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures with a consistent seed."""
-        random.seed(42)
+        get_rng().seed(42)
         self.opponent = Opponent(
             name="Test Corp",
             budget=500,
@@ -55,7 +55,7 @@ class TestOpponent(unittest.TestCase):
     def test_scout_stat_success(self):
         """Test successful stat scouting."""
         # Set seed to ensure success
-        random.seed(1)  # This should give us a successful scout
+        get_rng().seed(1)  # This should give us a successful scout
         
         success, value, message = self.opponent.scout_stat('budget')
         
@@ -68,7 +68,7 @@ class TestOpponent(unittest.TestCase):
     def test_scout_stat_failure(self):
         """Test failed stat scouting."""
         # Set seed to ensure failure
-        random.seed(100)  # This should give us a failed scout
+        get_rng().seed(100)  # This should give us a failed scout
         
         success, value, message = self.opponent.scout_stat('budget')
         
@@ -137,7 +137,7 @@ class TestOpponentAI(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        random.seed(42)
+        get_rng().seed(42)
         self.opponent = Opponent(
             name="AI Test Corp",
             budget=1000,
@@ -239,7 +239,7 @@ class TestOpponentIntegration(unittest.TestCase):
     
     def test_full_scouting_cycle(self):
         """Test a complete cycle of discovering and scouting an opponent."""
-        random.seed(1)  # Use seed that should give successes
+        get_rng().seed(1)  # Use seed that should give successes
         opponent = Opponent("Integration Test", 500, 10, 5, 30)
         
         # Discover the opponent
@@ -288,7 +288,7 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        random.seed(42)
+        get_rng().seed(42)
         self.game_state = GameState(seed=42)
         
     def test_gamestate_has_opponents(self):

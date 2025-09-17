@@ -11,7 +11,7 @@ Tests cover:
 """
 
 import unittest
-import random
+from src.services.deterministic_rng import get_rng
 from unittest.mock import patch
 from src.core.game_state import GameState
 from src.features.technical_failures import (
@@ -25,7 +25,7 @@ class TestTechnicalFailureCascades(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         # Use deterministic seed for reproducible tests
-        random.seed(42)
+        get_rng().seed(42)
         self.game_state = GameState('test-cascade-system')
         self.cascade_system = self.game_state.technical_failures
         
@@ -173,7 +173,7 @@ class TestTechnicalFailureCascades(unittest.TestCase):
         initial_failures = len(cascade.subsequent_failures)
         
         # Mock random to ensure cascade expansion
-        with patch('random.random', return_value=0.3):  # Below 0.4 threshold
+        with patch('get_rng().random', return_value=0.3):  # Below 0.4 threshold
             self.cascade_system._update_cascade(cascade)
             
         # Should add subsequent failures or resolve
@@ -280,7 +280,7 @@ class TestTechnicalFailureCascades(unittest.TestCase):
         # Test systematic response with high capabilities
         def mock_systematic_response(gs):
             containment_chance = 0.5 + (self.cascade_system.incident_response_level * 0.1)
-            if random.random() < containment_chance:
+            if get_rng().random() < containment_chance:
                 cascade.is_contained = True
             cascade.transparency_level = 0.6
             gs._add('money', -30)
@@ -295,7 +295,7 @@ class TestTechnicalFailureCascades(unittest.TestCase):
                 total_turns=0
             )
             containment_chance = 0.5 + (self.cascade_system.incident_response_level * 0.1)
-            if random.random() < containment_chance:
+            if get_rng().random() < containment_chance:
                 successes += 1
                 
         # Should succeed more often with high incident response capability
@@ -308,7 +308,7 @@ class TestTechnicalFailureCascades(unittest.TestCase):
         self.game_state.technical_debt.accumulated_debt = 18
         
         # Mock random to trigger cascade check
-        with patch('random.random', return_value=0.05):  # Within accident chance
+        with patch('get_rng().random', return_value=0.05):  # Within accident chance
             len(self.game_state.messages)
             self.cascade_system.check_for_cascades()
             
@@ -325,7 +325,7 @@ class TestTechnicalFailureCascadeActions(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        random.seed(42)
+        get_rng().seed(42)
         self.game_state = GameState('test-cascade-actions')
         self.game_state.money = 500
         self.game_state.staff = 10
@@ -414,7 +414,7 @@ class TestTechnicalFailureCascadeEvents(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        random.seed(42)
+        get_rng().seed(42)
         self.game_state = GameState('test-cascade-events')
         self.game_state.money = 200
         self.game_state.reputation = 15
@@ -491,7 +491,7 @@ class TestTechnicalFailureCascadeIntegration(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        random.seed(42)
+        get_rng().seed(42)
         self.game_state = GameState('test-cascade-integration')
         
     def test_integration_with_turn_processing(self):

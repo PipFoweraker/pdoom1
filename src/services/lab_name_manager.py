@@ -8,6 +8,8 @@ This module provides functionality for:
 - Supporting pseudonymous leaderboard integration
 """
 
+from src.services.deterministic_rng import get_rng
+
 import csv
 from typing import List, Tuple, Optional
 from src.services.deterministic_rng import get_rng
@@ -62,12 +64,11 @@ class LabNameManager:
                     return rng.choice(self._lab_names, "lab_name_selection")[0]
             except RuntimeError:
                 # RNG not initialized yet, fall back to system random with seed
-                import random
-                temp_rng = random.Random(seed)
+                temp_rng = get_rng().Random(seed)
                 return temp_rng.choice(self._lab_names)[0]
         
         # Fallback to system random
-        return random.choice(self._lab_names)[0]
+        return get_rng().choice(self._lab_names)[0]
     
     def get_lab_names_by_theme(self, theme: str) -> List[str]:
         """Get all lab names matching a specific theme"""

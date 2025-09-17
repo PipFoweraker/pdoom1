@@ -41,7 +41,7 @@ def get_duplicate_issues():
 
 def delete_issues(issues, dry_run=True):
     """Delete the duplicate issues."""
-    print(f"{'🔍 DRY RUN' if dry_run else '🗑️ DELETING'} - Found {len(issues)} duplicate issues:")
+    print(f"{'[SEARCH] DRY RUN' if dry_run else '[EMOJI][EMOJI] DELETING'} - Found {len(issues)} duplicate issues:")
     
     for issue in issues:
         print(f"  #{issue['number']}: {issue['title']}")
@@ -51,11 +51,11 @@ def delete_issues(issues, dry_run=True):
             try:
                 result = subprocess.run(cmd, capture_output=True, text=True, encoding='utf-8')
                 if result.returncode == 0:
-                    print(f"    ✅ Deleted #{issue['number']}")
+                    print(f"    [EMOJI] Deleted #{issue['number']}")
                 else:
-                    print(f"    ❌ Failed to delete #{issue['number']}: {result.stderr}")
+                    print(f"    [EMOJI] Failed to delete #{issue['number']}: {result.stderr}")
             except Exception as e:
-                print(f"    ❌ Error deleting #{issue['number']}: {e}")
+                print(f"    [EMOJI] Error deleting #{issue['number']}: {e}")
 
 def main():
     dry_run = '--execute' not in sys.argv
@@ -72,10 +72,10 @@ def main():
     delete_issues(duplicates, dry_run)
     
     if dry_run:
-        print("\n🔍 This was a dry run. Use --execute to actually delete issues.")
-        print("⚠️  WARNING: This will permanently delete these GitHub issues!")
+        print("\n[SEARCH] This was a dry run. Use --execute to actually delete issues.")
+        print("[WARNING][EMOJI]  WARNING: This will permanently delete these GitHub issues!")
     else:
-        print(f"\n✅ Cleanup complete. Deleted {len(duplicates)} duplicate issues.")
+        print(f"\n[EMOJI] Cleanup complete. Deleted {len(duplicates)} duplicate issues.")
 
 if __name__ == "__main__":
     main()

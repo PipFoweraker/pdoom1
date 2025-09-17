@@ -60,10 +60,10 @@ class ComprehensiveGameTester:
         """Initialize game state for testing"""
         try:
             self.game_state = GameState(seed)
-            self.log(f"✓ Game state initialized with seed: {seed}")
+            self.log(f"v Game state initialized with seed: {seed}")
             return True
         except Exception as e:
-            self.log(f"✗ Failed to initialize game state: {e}")
+            self.log(f"x Failed to initialize game state: {e}")
             return False
     
     def run_test(self, test_func, test_name: str) -> TestResult:
@@ -73,12 +73,12 @@ class ComprehensiveGameTester:
             test_func()
             execution_time = time.time() - start_time
             result = TestResult(test_name, True, execution_time=execution_time)
-            self.log(f"✓ {test_name} passed ({execution_time:.3f}s)")
+            self.log(f"v {test_name} passed ({execution_time:.3f}s)")
         except Exception as e:
             execution_time = time.time() - start_time
             error_msg = f"{type(e).__name__}: {str(e)}"
             result = TestResult(test_name, False, error_msg, execution_time)
-            self.log(f"✗ {test_name} failed ({execution_time:.3f}s): {error_msg}")
+            self.log(f"x {test_name} failed ({execution_time:.3f}s): {error_msg}")
             if self.verbose:
                 traceback.print_exc()
         
@@ -204,7 +204,7 @@ class ComprehensiveGameTester:
         # Test safe sampling (the fix for issue #265)
         import random
         if self.game_state.opponents:
-            selected = random.sample(self.game_state.opponents, 
+            selected = get_rng().sample(self.game_state.opponents, 
                                    min(2, len(self.game_state.opponents)))
         
         # Restore original state
@@ -332,8 +332,8 @@ class ComprehensiveGameTester:
         print("P(DOOM) COMPREHENSIVE TEST RESULTS")
         print("="*60)
         print(f"Total Tests: {summary['total_tests']}")
-        print(f"Passed: {summary['passed']} ✓")
-        print(f"Failed: {summary['failed']} ✗")
+        print(f"Passed: {summary['passed']} v")
+        print(f"Failed: {summary['failed']} x")
         print(f"Success Rate: {summary['success_rate']:.1f}%")
         print(f"Execution Time: {summary['total_execution_time']:.3f} seconds")
         
@@ -341,7 +341,7 @@ class ComprehensiveGameTester:
             print("\nFAILED TESTS:")
             for result in report["test_results"]:
                 if not result["passed"]:
-                    print(f"  ✗ {result['name']}: {result['error']}")
+                    print(f"  x {result['name']}: {result['error']}")
         
         print("="*60)
 

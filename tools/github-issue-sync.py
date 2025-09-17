@@ -93,13 +93,13 @@ class GitHubIssueSync:
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=self.repo_path)
             if result.returncode == 0:
-                print(f"✅ Created GitHub issue: {title}")
+                print(f"[EMOJI] Created GitHub issue: {title}")
                 return True
             else:
-                print(f"❌ Failed to create issue: {result.stderr}")
+                print(f"[EMOJI] Failed to create issue: {result.stderr}")
                 return False
         except Exception as e:
-            print(f"❌ Error creating issue: {e}")
+            print(f"[EMOJI] Error creating issue: {e}")
             return False
     
     def sync_issues(self, dry_run: bool = True) -> Dict:
@@ -115,17 +115,17 @@ class GitHubIssueSync:
             'created': 0
         }
         
-        print(f"🔍 Analyzing {len(local_issues)} local vs {len(github_issues)} GitHub issues...")
+        print(f"[SEARCH] Analyzing {len(local_issues)} local vs {len(github_issues)} GitHub issues...")
         
         for local_issue in local_issues:
             match = self.find_matching_github_issue(local_issue, github_issues)
             
             if match:
                 results['matched'] += 1
-                print(f"✅ Found match: {local_issue['title']} -> #{match['number']}")
+                print(f"[EMOJI] Found match: {local_issue['title']} -> #{match['number']}")
             else:
                 results['missing'].append(local_issue)
-                print(f"❌ Missing: {local_issue['title']} ({local_issue['filename']})")
+                print(f"[EMOJI] Missing: {local_issue['title']} ({local_issue['filename']})")
                 
                 if not dry_run:
                     if self.create_github_issue(local_issue):
@@ -219,13 +219,13 @@ def main():
     syncer = GitHubIssueSync()
     
     if args.create:
-        print("🚀 CREATING MISSING GITHUB ISSUES")
+        print("[ROCKET] CREATING MISSING GITHUB ISSUES")
         results = syncer.sync_issues(dry_run=False)
     else:
-        print("🔍 DRY RUN - Showing what would be created")
+        print("[SEARCH] DRY RUN - Showing what would be created")
         results = syncer.sync_issues(dry_run=True)
     
-    print(f"\n📊 SUMMARY:")
+    print(f"\n[CHART] SUMMARY:")
     print(f"Local issues: {results['total_local']}")
     print(f"GitHub issues: {results['total_github']}")
     print(f"Matched: {results['matched']}")
@@ -233,7 +233,7 @@ def main():
     print(f"Created: {results['created']}")
     
     if results['missing'] and not args.create:
-        print(f"\n💡 Run with --create to actually create {len(results['missing'])} missing issues")
+        print(f"\n[IDEA] Run with --create to actually create {len(results['missing'])} missing issues")
 
 if __name__ == "__main__":
     main()

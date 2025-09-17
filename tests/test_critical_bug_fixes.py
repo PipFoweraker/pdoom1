@@ -9,7 +9,7 @@ This module tests the fixes for critical bugs identified in the pre-alpha bug sw
 
 import unittest
 from unittest.mock import Mock, patch, MagicMock
-import random
+from src.services.deterministic_rng import get_rng
 from src.core.game_state import GameState
 
 
@@ -18,7 +18,7 @@ class TestCriticalBugFixes(unittest.TestCase):
 
     def setUp(self):
         """Set up test environment with seeded randomness."""
-        random.seed(12345)
+        get_rng().seed(12345)
         self.game_state = GameState('test-critical-fixes')
 
     def test_check_hover_no_duplicate_returns_fix_263(self):
@@ -94,8 +94,8 @@ class TestCriticalBugFixes(unittest.TestCase):
             self.game_state.opponents.append(opponent)
         
         # Mock random functions to ensure deterministic behavior
-        with patch('random.randint', return_value=3), \
-             patch('random.sample') as mock_sample:
+        with patch('get_rng().randint', return_value=3), \
+             patch('get_rng().sample') as mock_sample:
             
             # Mock sample to return a predictable subset
             mock_sample.return_value = ['budget', 'compute', 'progress']
@@ -118,8 +118,8 @@ class TestCriticalBugFixes(unittest.TestCase):
                 test_passed = False
                 self.fail(f"List modification during iteration caused error: {e}")
             
-            # Verify the fix: random.sample should have been called instead of list.remove()
-            self.assertTrue(mock_sample.called, "Should use random.sample for safe sampling")
+            # Verify the fix: get_rng().sample should have been called instead of list.remove()
+            self.assertTrue(mock_sample.called, "Should use get_rng().sample for safe sampling")
             
             # Verify that we didn't modify the original list during iteration
             expected_stats = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
@@ -283,7 +283,7 @@ class TestRegressionPrevention(unittest.TestCase):
                           "Exception handler should come after main return statement")
 
     def test_magical_orb_uses_safe_sampling(self):
-        """Ensure magical orb code uses random.sample instead of list.remove (prevents #265 regression)."""
+        """Ensure magical orb code uses get_rng().sample instead of list.remove (prevents #265 regression)."""
         import inspect
         from src.core.game_state import GameState
         
@@ -294,9 +294,9 @@ class TestRegressionPrevention(unittest.TestCase):
         magical_orb_section = source[source.find('magical_orb_active'):source.find('magical_orb_active') + 2000]
         
         if 'stats_to_scout' in magical_orb_section:
-            # Should use random.sample, not list.remove in iteration
-            self.assertIn('random.sample', magical_orb_section,
-                         "Magical orb code should use random.sample for safe list sampling")
+            # Should use get_rng().sample, not list.remove in iteration
+            self.assertIn('get_rng().sample', magical_orb_section,
+                         "Magical orb code should use get_rng().sample for safe list sampling")
             
             # Should not remove items from list during iteration
             problematic_pattern = 'stats_to_scout.remove'
@@ -354,7 +354,7 @@ class TestRegressionPrevention(unittest.TestCase):
         # This is the integration test for the actual bug that was reported
         try:
             # Mock random to ensure consistent behavior
-            with patch('random.randint', return_value=2):
+            with patch('get_rng().randint', return_value=2):
                 # This should not crash with TypeError
                 self.game_state._execute_research_option(rush_option)
                 self.assertGreater(self.game_state.technical_debt.get_total_debt(), 0)

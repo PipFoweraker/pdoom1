@@ -41,7 +41,7 @@ class DevTool:
     
     def test_dual_identity(self):
         """Test dual identity system (player_name + lab_name)."""
-        print(f"🧪 Testing Dual Identity System - P(Doom) {get_display_version()}")
+        print(f"[U+1F9EA] Testing Dual Identity System - P(Doom) {get_display_version()}")
         print("=" * 60)
         
         # Test basic dual identity
@@ -58,21 +58,21 @@ class DevTool:
         gs2 = GameState('different-seed')
         print(f"Different seed lab name: {gs2.lab_name}")
         
-        print("✅ Dual identity system working correctly")
+        print("[EMOJI] Dual identity system working correctly")
     
     def test_leaderboard_system(self):
         """Test enhanced leaderboard functionality."""
-        print(f"🏆 Testing Enhanced Leaderboard System - P(Doom) {get_display_version()}")
+        print(f"[TROPHY] Testing Enhanced Leaderboard System - P(Doom) {get_display_version()}")
         print("=" * 60)
         
         # Create manager
         manager = EnhancedLeaderboardManager()
-        print("✅ EnhancedLeaderboardManager created")
+        print("[EMOJI] EnhancedLeaderboardManager created")
         
         # Test seed-specific retrieval
         seed = 'dev-test-seed'
         leaderboard = manager.get_leaderboard_for_seed(seed)
-        print(f"✅ Retrieved leaderboard for '{seed}': {len(leaderboard.entries)} entries")
+        print(f"[EMOJI] Retrieved leaderboard for '{seed}': {len(leaderboard.entries)} entries")
         
         # Test session creation via end_game_session
         gs = GameState(seed)
@@ -83,13 +83,13 @@ class DevTool:
         # Start and end session to test full lifecycle
         manager.start_game_session(gs)
         success, rank, session = manager.end_game_session(gs)
-        print(f"✅ Session lifecycle: Player='{session.player_name}', Lab='{session.lab_name}', Rank=#{rank}")
+        print(f"[EMOJI] Session lifecycle: Player='{session.player_name}', Lab='{session.lab_name}', Rank=#{rank}")
         
-        print("✅ Leaderboard system functioning correctly")
+        print("[EMOJI] Leaderboard system functioning correctly")
     
     def test_game_state(self):
         """Test basic game state functionality."""
-        print(f"🎮 Testing Game State - P(Doom) {get_display_version()}")
+        print(f"[EMOJI] Testing Game State - P(Doom) {get_display_version()}")
         print("=" * 60)
         
         gs = GameState('dev-game-test')
@@ -107,11 +107,11 @@ class DevTool:
         print(f"  Turn: {gs.turn}")
         print(f"  Action Points: {gs.action_points}")
         
-        print("✅ Game state working correctly")
+        print("[EMOJI] Game state working correctly")
     
     def test_complete_session(self):
         """Test complete game session simulation."""
-        print(f"🔄 Testing Complete Session Simulation - P(Doom) {get_display_version()}")
+        print(f"[EMOJI] Testing Complete Session Simulation - P(Doom) {get_display_version()}")
         print("=" * 60)
         
         # Create game and simulate progress
@@ -132,15 +132,15 @@ class DevTool:
         manager.start_game_session(gs)
         success, rank, session = manager.end_game_session(gs)
         
-        print(f"✅ Session recorded to leaderboard (Rank #{rank})")
+        print(f"[EMOJI] Session recorded to leaderboard (Rank #{rank})")
         
         # Verify recording
         leaderboard = manager.get_leaderboard_for_seed('session-test')
-        print(f"✅ Leaderboard now has {len(leaderboard.entries)} entries")
+        print(f"[EMOJI] Leaderboard now has {len(leaderboard.entries)} entries")
     
     def test_seed_variations(self):
         """Test how different seeds create different experiences."""
-        print(f"🌱 Testing Seed Variations - P(Doom) {get_display_version()}")
+        print(f"[EMOJI] Testing Seed Variations - P(Doom) {get_display_version()}")
         print("=" * 60)
         
         seeds = ['alpha', 'beta', 'gamma', 'delta', 'epsilon']
@@ -149,11 +149,11 @@ class DevTool:
             gs = GameState(seed)
             print(f"Seed '{seed}': Lab Name = '{gs.lab_name}'")
         
-        print("✅ Seed variation system working correctly")
+        print("[EMOJI] Seed variation system working correctly")
     
     def list_tests(self):
         """List all available tests."""
-        print(f"📋 Available Tests - P(Doom) {get_display_version()}")
+        print(f"[CHECKLIST] Available Tests - P(Doom) {get_display_version()}")
         print("=" * 60)
         
         for name, func in self.tests.items():
@@ -162,7 +162,7 @@ class DevTool:
     
     def interactive_menu(self):
         """Run interactive test selection menu."""
-        print(f"🛠️  P(Doom) Development Tool - {get_display_version()}")
+        print(f"[EMOJI][EMOJI]  P(Doom) Development Tool - {get_display_version()}")
         print("=" * 60)
         print("Select a test to run:")
         print()
@@ -195,16 +195,16 @@ class DevTool:
     def run_test(self, test_name: str):
         """Run a specific test by name."""
         if test_name not in self.tests:
-            print(f"❌ Unknown test: {test_name}")
+            print(f"[EMOJI] Unknown test: {test_name}")
             print(f"Available tests: {', '.join(self.tests.keys())}")
             return
         
         try:
             self.tests[test_name]()
             print()
-            print("✅ Test completed successfully!")
+            print("[EMOJI] Test completed successfully!")
         except Exception as e:
-            print(f"❌ Test failed: {e}")
+            print(f"[EMOJI] Test failed: {e}")
             import traceback
             traceback.print_exc()
 

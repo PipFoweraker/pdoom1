@@ -9,7 +9,7 @@ system while providing more nuanced public sentiment mechanics.
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
 from enum import Enum
-import random
+from src.services.deterministic_rng import get_rng
 
 
 
@@ -377,7 +377,7 @@ def create_media_story_from_action(action_name: str, player_lab: str, turn: int,
     template = story_templates[story_type]
     
     return MediaStory(
-        headline=random.choice(template['headlines']),
+        headline=get_rng().choice(template['headlines']),
         story_type=template['type'],
         sentiment_impact=template['sentiment_impact'],
         duration=template['duration'],

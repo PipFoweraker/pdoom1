@@ -1,4 +1,4 @@
-import random
+from src.services.deterministic_rng import get_rng
 from typing import Any, Callable, List, TypedDict
 
 
@@ -77,20 +77,20 @@ EVENTS: List[EventDefinition] = [
     {
         "name": "Lab Breakthrough",
         "desc": "A frontier lab makes a major breakthrough, doom spikes!",
-        "trigger": lambda gs: gs.doom > 35 and random.random() < gs.doom / 120,
+        "trigger": lambda gs: gs.doom > 35 and get_rng().random() < gs.doom / 120,
         "effect": lambda gs: gs._breakthrough_event()
     },
     {
         "name": "Funding Crisis",
         "desc": "Major donor pulls out, lose money.",
-        "trigger": lambda gs: gs.money < 80 and random.random() < 0.2,
-        "effect": lambda gs: gs._add('money', -random.randint(40, 100))
+        "trigger": lambda gs: gs.money < 80 and get_rng().random() < 0.2,
+        "effect": lambda gs: gs._add('money', -get_rng().randint(40, 100))
     },
     {
         "name": "Staff Burnout",
         "desc": "Overworked staff quit.",
-        "trigger": lambda gs: gs.staff > 6 and gs.money < gs.staff * gs.staff_maintenance and random.random() < 0.2,
-        "effect": lambda gs: gs._add('staff', -random.randint(1, 2))
+        "trigger": lambda gs: gs.staff > 6 and gs.money < gs.staff * gs.staff_maintenance and get_rng().random() < 0.2,
+        "effect": lambda gs: gs._add('staff', -get_rng().randint(1, 2))
     },
     {
         "name": "Event Log System Upgrade",
@@ -128,7 +128,7 @@ EVENTS: List[EventDefinition] = [
         "name": "Competitor Spotted",
         "desc": "Your contacts report increased activity in the AI capabilities space.",
         # Trigger: Random chance after turn 3, more likely as doom increases
-        "trigger": lambda gs: gs.turn >= 3 and random.random() < (0.05 + gs.doom / 1000),
+        "trigger": lambda gs: gs.turn >= 3 and get_rng().random() < (0.05 + gs.doom / 1000),
         "effect": lambda gs: gs._trigger_competitor_discovery()
     },
     {
@@ -137,14 +137,14 @@ EVENTS: List[EventDefinition] = [
         # Trigger: Random chance if any opponents are discovered and scouting is unlocked
         "trigger": lambda gs: (getattr(gs, "scouting_unlocked", False) and 
                               any(opp.discovered for opp in gs.opponents) and 
-                              random.random() < 0.15),
+                              get_rng().random() < 0.15),
         "effect": lambda gs: gs._provide_competitor_update()
     },
     {
         "name": "Employee Expense Request",
         "desc": "An employee has submitted an expense request for approval.",
         # Trigger: Regular chance based on staff count, more likely with more staff
-        "trigger": lambda gs: gs.staff >= 2 and random.random() < (0.1 + gs.staff * 0.01),
+        "trigger": lambda gs: gs.staff >= 2 and get_rng().random() < (0.1 + gs.staff * 0.01),
         "effect": lambda gs: gs._trigger_expense_request()
     },
     {
@@ -159,21 +159,21 @@ EVENTS: List[EventDefinition] = [
         "name": "Researcher Breakthrough",
         "desc": "One of your researchers makes a significant breakthrough!",
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
-                              random.random() < len(gs.researchers) * 0.03),
+                              get_rng().random() < len(gs.researchers) * 0.03),
         "effect": lambda gs: gs._researcher_breakthrough()
     },
     {
         "name": "Researcher Burnout Crisis",
         "desc": "High burnout levels are affecting your research team.",
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
-                              any(r.burnout > 60 for r in gs.researchers) and random.random() < 0.15),
+                              any(r.burnout > 60 for r in gs.researchers) and get_rng().random() < 0.15),
         "effect": lambda gs: gs._researcher_burnout_crisis()
     },
     {
         "name": "Researcher Poaching Attempt",
         "desc": "A competitor is trying to poach one of your researchers!",
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
-                              gs.turn > 3 and random.random() < len(gs.researchers) * 0.02),
+                              gs.turn > 3 and get_rng().random() < len(gs.researchers) * 0.02),
         "effect": lambda gs: gs._researcher_poaching_attempt()
     },
     {
@@ -181,7 +181,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "One of your researchers raises concerns about the ethical implications of your research.",
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
                               any(r.specialization == 'capabilities' for r in gs.researchers) and
-                              gs.doom > 40 and random.random() < 0.1),
+                              gs.doom > 40 and get_rng().random() < 0.1),
         "effect": lambda gs: gs._research_ethics_concern()
     },
     {
@@ -189,21 +189,21 @@ EVENTS: List[EventDefinition] = [
         "desc": "One of your researchers has been invited to present at a prestigious conference.",
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 0 and 
                               any(r.traits and 'media_savvy' in r.traits for r in gs.researchers) and
-                              gs.reputation > 15 and random.random() < 0.08),
+                              gs.reputation > 15 and get_rng().random() < 0.08),
         "effect": lambda gs: gs._researcher_conference_invitation()
     },
     {
         "name": "Collaborative Research Opportunity",
         "desc": "An opportunity for collaborative research with another organization has emerged.",
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) >= 2 and 
-                              gs.reputation > 20 and random.random() < 0.06),
+                              gs.reputation > 20 and get_rng().random() < 0.06),
         "effect": lambda gs: gs._collaborative_research_opportunity()
     },
     {
         "name": "Researcher Loyalty Crisis",
         "desc": "Several researchers are showing signs of low loyalty and may leave.",
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) > 1 and 
-                              sum(1 for r in gs.researchers if r.loyalty < 30) >= 2 and random.random() < 0.12),
+                              sum(1 for r in gs.researchers if r.loyalty < 30) >= 2 and get_rng().random() < 0.12),
         "effect": lambda gs: gs._researcher_loyalty_crisis()
     },
     # Research Quality Events for Issue #190
@@ -212,7 +212,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "A researcher suggests cutting corners on safety validation to speed up progress.",
         "trigger": lambda gs: (gs.research_quality_unlocked and 
                               len(gs.researcher_assignments) > 0 and 
-                              random.random() < 0.15),
+                              get_rng().random() < 0.15),
         "effect": lambda gs: gs._trigger_safety_shortcut_event()
     },
     {
@@ -220,14 +220,14 @@ EVENTS: List[EventDefinition] = [
         "desc": "Your lead researcher warns that accumulated shortcuts are creating risks.",
         "trigger": lambda gs: (gs.technical_debt.accumulated_debt >= 8 and 
                               not gs.technical_debt.has_reputation_risk() and 
-                              random.random() < 0.20),
+                              get_rng().random() < 0.20),
         "effect": lambda gs: gs._trigger_technical_debt_warning()
     },
     {
         "name": "Quality vs Speed Dilemma",
         "desc": "A critical deadline approaches. Do you maintain quality or rush to completion?",
         "trigger": lambda gs: (hasattr(gs, 'researchers') and len(gs.researchers) >= 2 and 
-                              gs.turn >= 8 and random.random() < 0.10),
+                              gs.turn >= 8 and get_rng().random() < 0.10),
         "effect": lambda gs: gs._trigger_quality_speed_dilemma()
     },
     {
@@ -236,7 +236,7 @@ EVENTS: List[EventDefinition] = [
         "trigger": lambda gs: (gs.turn >= 10 and 
                               any(hasattr(opp, 'technical_debt') and opp.technical_debt > 5 
                                   for opp in getattr(gs, 'opponents', [])) and 
-                              random.random() < 0.12),
+                              get_rng().random() < 0.12),
         "effect": lambda gs: gs._trigger_competitor_shortcut_discovery()
     },
     # Economic Cycles & Funding Volatility Events for Issue #192
@@ -245,7 +245,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Rising interest rates have spooked venture capitalists. Funding is much harder to secure.",
         "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
                               gs.economic_cycles.current_state.phase.name in ['RECESSION', 'CORRECTION'] and
-                              gs.turn % 15 == 0 and random.random() < 0.3),
+                              gs.turn % 15 == 0 and get_rng().random() < 0.3),
         "effect": lambda gs: gs._trigger_funding_drought_event()
     },
     {
@@ -253,7 +253,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Industry analysts warn that AI valuations are unsustainable. Market correction incoming.",
         "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
                               gs.economic_cycles.current_state.phase.name == 'BOOM' and
-                              gs.turn > 50 and random.random() < 0.15),
+                              gs.turn > 50 and get_rng().random() < 0.15),
         "effect": lambda gs: gs._trigger_bubble_warning_event()
     },
     {
@@ -261,7 +261,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Government announces massive AI research funding initiative.",
         "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
                               gs.turn > 20 and gs.reputation >= 8 and 
-                              random.random() < 0.08),
+                              get_rng().random() < 0.08),
         "effect": lambda gs: gs._trigger_government_funding_event()
     },
     {
@@ -269,7 +269,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "A major corporation is looking for AI partnerships during the economic downturn.",
         "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
                               gs.economic_cycles.current_state.phase.name in ['RECESSION', 'CORRECTION'] and
-                              gs.reputation >= 12 and random.random() < 0.12),
+                              gs.reputation >= 12 and get_rng().random() < 0.12),
         "effect": lambda gs: gs._trigger_corporate_partnership_event()
     },
     {
@@ -277,7 +277,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Economic conditions force you to consider emergency cost reduction measures.",
         "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
                               gs.economic_cycles.current_state.phase.name == 'RECESSION' and
-                              gs.money < gs.staff * 50 and random.random() < 0.25),
+                              gs.money < gs.staff * 50 and get_rng().random() < 0.25),
         "effect": lambda gs: gs._trigger_emergency_measures_event()
     },
     {
@@ -286,7 +286,7 @@ EVENTS: List[EventDefinition] = [
         "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
                               gs.economic_cycles.current_state.phase.name == 'BOOM' and
                               any(opp.discovered for opp in getattr(gs, 'opponents', [])) and
-                              random.random() < 0.1),
+                              get_rng().random() < 0.1),
         "effect": lambda gs: gs._trigger_competitor_funding_event()
     },
     {
@@ -294,7 +294,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Industry veterans warn of potential 'AI Winter' if current promises don't materialize.",
         "trigger": lambda gs: (hasattr(gs, 'economic_cycles') and 
                               gs.doom > 60 and gs.turn > 100 and 
-                              random.random() < 0.08),
+                              get_rng().random() < 0.08),
         "effect": lambda gs: gs._trigger_ai_winter_warning_event()
     },
     # Technical Failure Cascade Events for Issue #193
@@ -303,7 +303,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Quick thinking prevents a potential technical failure from becoming a crisis.",
         "trigger": lambda gs: (hasattr(gs, 'technical_failures') and 
                               gs.technical_failures.monitoring_systems >= 2 and 
-                              random.random() < 0.12),
+                              get_rng().random() < 0.12),
         "effect": lambda gs: gs._trigger_near_miss_averted_event()
     },
     {
@@ -311,7 +311,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Past incident cover-ups come to light, damaging organizational credibility.",
         "trigger": lambda gs: (hasattr(gs, 'technical_failures') and 
                               gs.technical_failures.cover_up_debt >= 8 and 
-                              random.random() < gs.technical_failures.cover_up_debt * 0.02),
+                              get_rng().random() < gs.technical_failures.cover_up_debt * 0.02),
         "effect": lambda gs: gs._trigger_cover_up_exposed_event()
     },
     {
@@ -319,7 +319,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Your organization's transparent failure handling is recognized as industry best practice.",
         "trigger": lambda gs: (hasattr(gs, 'technical_failures') and 
                               gs.technical_failures.transparency_reputation >= 3.0 and 
-                              random.random() < 0.15),
+                              get_rng().random() < 0.15),
         "effect": lambda gs: gs._trigger_transparency_dividend_event()
     },
     {
@@ -327,7 +327,7 @@ EVENTS: List[EventDefinition] = [
         "desc": "Advanced incident response capabilities prevent a potential failure cascade.",
         "trigger": lambda gs: (hasattr(gs, 'technical_failures') and 
                               gs.technical_failures.incident_response_level >= 3 and 
-                              random.random() < 0.1),
+                              get_rng().random() < 0.1),
         "effect": lambda gs: gs._trigger_cascade_prevention_event()
     }
 ]

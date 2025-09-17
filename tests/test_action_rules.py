@@ -1,5 +1,5 @@
 import unittest
-import random
+from src.services.deterministic_rng import get_rng
 from src.core.game_state import GameState
 from src.core.action_rules import ActionRules, manager_unlock_rule, scout_unlock_rule, search_unlock_rule
 
@@ -9,7 +9,7 @@ class TestActionRulesSystem(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        random.seed(42)  # Consistent results
+        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
 
     # === Turn-based Rules Tests ===
@@ -217,7 +217,7 @@ class TestConvenienceRuleFunctions(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        random.seed(42)  # Consistent results
+        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
 
     def test_manager_unlock_rule(self):
@@ -265,7 +265,7 @@ class TestActionRulesIntegration(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        random.seed(42)  # Consistent results
+        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
 
     def test_manager_action_uses_new_rule_system(self):

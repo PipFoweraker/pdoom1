@@ -7,7 +7,7 @@ implemented for Issue #193. It shows how failures can cascade, how prevention
 systems work, and the difference between transparency and cover-up approaches.
 """
 
-import random
+from src.services.deterministic_rng import get_rng
 from src.core.game_state import GameState
 from src.features.technical_failures import FailureType
 
@@ -17,7 +17,7 @@ def demonstrate_cascade_system():
     print()
     
     # Initialize game state
-    random.seed(42)  # Deterministic for demo
+    get_rng().seed(42)  # Deterministic for demo
     gs = GameState('cascade-demo')
     
     # Set up a mid-game scenario

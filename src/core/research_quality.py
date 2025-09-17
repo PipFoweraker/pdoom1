@@ -15,7 +15,7 @@ The system provides strategic choices between short-term speed and long-term sta
 with escalating consequences for accumulated technical debt.
 """
 
-import random
+from src.services.deterministic_rng import get_rng
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
@@ -198,7 +198,7 @@ class TechnicalDebt:
             # Distribute among categories if no specific category given
             categories = list(self.debt_categories.keys())
             for _ in range(amount):
-                cat = random.choice(categories)
+                cat = get_rng().choice(categories)
                 self.debt_categories[cat] += 1
     
     def reduce_debt(self, amount: int, category: Optional[DebtCategory] = None) -> int:

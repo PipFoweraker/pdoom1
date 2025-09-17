@@ -4,7 +4,7 @@
 import json
 import os
 from typing import Dict, Any, Tuple
-import random
+from src.services.deterministic_rng import get_rng
 
 class EconomicConfig:
     """
@@ -140,13 +140,13 @@ class EconomicConfig:
         
         # Deterministic calculation based on seed
         seed_hash = hash(f"{seed}_{fundraising_type}_{reputation}")
-        random.seed(seed_hash)
+        get_rng().seed(seed_hash)
         
         base_rate = success_config.get("base_success_rate", 0.7)
         reputation_modifier = success_config.get("reputation_modifier", 0.02)
         
         # Add some variation but keep it deterministic
-        variation = (random.random() - 0.5) * 0.2  # +/- 10% variation
+        variation = (get_rng().random() - 0.5) * 0.2  # +/- 10% variation
         
         final_probability = base_rate + (reputation * reputation_modifier) + variation
         return max(0.1, min(0.95, final_probability))

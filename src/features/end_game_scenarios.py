@@ -9,7 +9,7 @@ Enhanced in Issue #195 to support victory scenarios, pyrrhic victories, and stra
 beyond binary win/lose outcomes.
 """
 
-import random
+from src.services.deterministic_rng import get_rng
 from typing import Dict, Optional
 
 
@@ -242,8 +242,8 @@ class EndGameScenariosManager:
         # For now, use random selection, but this could be enhanced with
         # additional game state analysis (resource levels, specific events, etc.)
         seed_value = hash(str(game_state.seed) + str(game_state.turn))  # Deterministic based on game
-        random.seed(seed_value)
-        return random.choice(scenarios)
+        get_rng().seed(seed_value)
+        return get_rng().choice(scenarios)
     
     def _check_victory_scenarios(self, game_state) -> Optional[EndGameScenario]:
         """

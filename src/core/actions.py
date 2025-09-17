@@ -1,4 +1,4 @@
-import random
+from src.services.deterministic_rng import get_rng
 from typing import TYPE_CHECKING
 
 from src.core.action_rules import manager_unlock_rule, search_unlock_rule
@@ -18,7 +18,7 @@ def execute_fundraising_action(gs: 'GameState') -> None:
     # Check if economic cycles system is available
     if not hasattr(gs, 'economic_cycles'):
         # Fallback to original fundraising logic
-        amount = random.randint(40, 70) + gs.reputation * 2
+        amount = get_rng().randint(40, 70) + gs.reputation * 2
         gs._add('money', amount)
         gs.messages.append(f"Raised ${amount}k in funding")
         return
@@ -44,7 +44,7 @@ def execute_fundraising_action(gs: 'GameState') -> None:
         chosen_source = max(available_sources, key=lambda s: s['multiplier'])
     
     # Calculate funding amount
-    base_amount = random.randint(40, 70) + gs.reputation * 2
+    base_amount = get_rng().randint(40, 70) + gs.reputation * 2
     multiplier = chosen_source['multiplier']
     final_amount = int(base_amount * multiplier)
     
@@ -70,7 +70,7 @@ def execute_series_a_funding(gs: 'GameState') -> None:
     
     if not hasattr(gs, 'economic_cycles'):
         # Fallback for missing economic system
-        amount = random.randint(150, 300) + gs.reputation * 5
+        amount = get_rng().randint(150, 300) + gs.reputation * 5
         gs._add('money', amount)
         gs.messages.append(f"Secured ${amount}k in Series A funding")
         return
@@ -84,7 +84,7 @@ def execute_series_a_funding(gs: 'GameState') -> None:
         return
     
     # Calculate substantial funding amount
-    base_amount = random.randint(150, 300) + gs.reputation * 5
+    base_amount = get_rng().randint(150, 300) + gs.reputation * 5
     final_amount = int(base_amount * multiplier)
     
     gs._add('money', final_amount)
@@ -100,7 +100,7 @@ def execute_government_grant_application(gs: 'GameState') -> None:
     
     if not hasattr(gs, 'economic_cycles'):
         # Fallback
-        amount = random.randint(50, 120)
+        amount = get_rng().randint(50, 120)
         gs._add('money', amount)
         gs.messages.append(f"Government grant awarded: ${amount}k")
         return
@@ -110,7 +110,7 @@ def execute_government_grant_application(gs: 'GameState') -> None:
     
     # Base amount depends on reputation and safety focus
     safety_bonus = 20 if gs.reputation >= 15 else 0
-    base_amount = random.randint(50, 100) + safety_bonus
+    base_amount = get_rng().randint(50, 100) + safety_bonus
     final_amount = int(base_amount * multiplier)
     
     gs._add('money', final_amount)
@@ -130,11 +130,11 @@ def execute_corporate_partnership(gs: 'GameState') -> None:
     from src.features.economic_cycles import FundingSource
     
     corp_names = ["TechGiant", "DataCorp", "CloudSystems", "AutomationInc"]
-    partner = random.choice(corp_names)
+    partner = get_rng().choice(corp_names)
     
     if not hasattr(gs, 'economic_cycles'):
         # Fallback
-        amount = random.randint(80, 200)
+        amount = get_rng().randint(80, 200)
         gs._add('money', amount)
         gs.messages.append(f"Partnership with {partner}: ${amount}k investment")
         return
@@ -143,7 +143,7 @@ def execute_corporate_partnership(gs: 'GameState') -> None:
     multiplier = gs.economic_cycles.get_funding_multiplier(FundingSource.CORPORATE)
     
     # Amount based on reputation and staff size
-    base_amount = random.randint(80, 150) + gs.reputation * 3 + gs.staff * 5
+    base_amount = get_rng().randint(80, 150) + gs.reputation * 3 + gs.staff * 5
     final_amount = int(base_amount * multiplier)
     
     gs._add('money', final_amount)
@@ -152,8 +152,8 @@ def execute_corporate_partnership(gs: 'GameState') -> None:
     gs.messages.append(f"Strategic partnership with {partner}: ${final_amount}k")
     
     # Corporate partnerships provide some stability but limit growth
-    if random.random() < 0.7:
-        gs._add('reputation', random.randint(1, 3))
+    if get_rng().random() < 0.7:
+        gs._add('reputation', get_rng().randint(1, 3))
     else:
         gs.messages.append("Partnership comes with operational constraints")
 
@@ -163,7 +163,7 @@ def execute_revenue_diversification(gs: 'GameState') -> None:
     
     if not hasattr(gs, 'economic_cycles'):
         # Fallback
-        amount = random.randint(30, 80)
+        amount = get_rng().randint(30, 80)
         gs._add('money', amount)
         gs.messages.append(f"Customer revenue generated: ${amount}k")
         return
@@ -172,7 +172,7 @@ def execute_revenue_diversification(gs: 'GameState') -> None:
     multiplier = gs.economic_cycles.get_funding_multiplier(FundingSource.REVENUE)
     
     # Revenue scales with reputation and staff capability
-    base_amount = gs.reputation * 2 + gs.staff * 3 + random.randint(20, 50)
+    base_amount = gs.reputation * 2 + gs.staff * 3 + get_rng().randint(20, 50)
     final_amount = int(base_amount * multiplier)
     
     gs._add('money', final_amount)
@@ -317,7 +317,7 @@ def execute_safety_audit(gs: 'GameState') -> None:
     
     # Reduce technical debt significantly
     if hasattr(gs, 'technical_debt'):
-        debt_reduced = random.randint(3, 6)
+        debt_reduced = get_rng().randint(3, 6)
         gs.technical_debt.reduce_debt(debt_reduced)
         gs.messages.append(f"Safety audit identifies and resolves {debt_reduced} technical debt issues")
     
@@ -331,7 +331,7 @@ def execute_safety_audit(gs: 'GameState') -> None:
         gs._add('reputation', 2)
         
     # Small chance to discover near-miss that could have been a failure
-    if random.random() < 0.3:
+    if get_rng().random() < 0.3:
         gs.messages.append("[WARNING]? Audit discovers potential failure that was narrowly avoided!")
         if hasattr(gs, 'technical_failures'):
             gs.technical_failures.near_miss_count += 1
@@ -346,8 +346,8 @@ ACTIONS = [
         "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
         "delegate_ap_cost": 0,  # Lower AP cost when delegated (routine task)
         "delegate_effectiveness": 1.0,  # Full effectiveness when delegated
-        "upside": lambda gs: (gs._add('reputation', random.randint(2, 5)),
-                              gs._add('staff', random.choice([0, 1]))),
+        "upside": lambda gs: (gs._add('reputation', get_rng().randint(2, 5)),
+                              gs._add('staff', get_rng().choice([0, 1]))),
         "downside": lambda gs: None,
         "rules": None
     },
@@ -622,7 +622,7 @@ ACTIONS = [
         "cost": 0,
         "ap_cost": 2,  # More complex than basic fundraising
         "upside": lambda gs: execute_series_a_funding(gs),
-        "downside": lambda gs: gs._add('reputation', -1 if random.random() < 0.4 else 0),
+        "downside": lambda gs: gs._add('reputation', -1 if get_rng().random() < 0.4 else 0),
         "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
                            gs.reputation >= 15)
     },
@@ -642,7 +642,7 @@ ACTIONS = [
         "cost": 0,
         "ap_cost": 2,
         "upside": lambda gs: execute_corporate_partnership(gs),
-        "downside": lambda gs: gs._add('reputation', -2 if random.random() < 0.3 else 0),
+        "downside": lambda gs: gs._add('reputation', -2 if get_rng().random() < 0.3 else 0),
         "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
                            gs.reputation >= 12)
     },

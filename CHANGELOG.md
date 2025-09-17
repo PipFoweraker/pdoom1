@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CRITICAL: Seed Selection Navigation (Issue #255)** - Fixed keyboard navigation in custom seed selection screen, Continue button now properly navigates from pre_game_settings to seed_selection
 - **CRITICAL: Lab Configuration Flow (Issue #256)** - Resolved laboratory configuration screen access, users can now reach seed selection regardless of tutorial choice
 - **CRITICAL: Premature Upgrade Popup (Issue #258)** - Fixed "Your First Laboratory Upgrade" popup appearing immediately on game start, now only appears when upgrade conditions are actually met
-- **UI Flow Integration** - Complete navigation path from pre_game_settings → seed_selection → tutorial_choice now works correctly
+- **UI Flow Integration** - Complete navigation path from pre_game_settings -> seed_selection -> tutorial_choice now works correctly
 - **Test Suite Compatibility** - Updated test expectations to match corrected UI flow (Continue button index fix)
 
 ### Phase 1: Critical Stability Foundation

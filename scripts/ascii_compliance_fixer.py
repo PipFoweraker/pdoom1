@@ -44,15 +44,15 @@ class ASCIIComplianceFixer:
             '\u21d2': '=>',  # RIGHTWARDS DOUBLE ARROW
             '\u2934': '->',  # ARROW POINTING RIGHTWARDS THEN CURVING UPWARDS
             '\u2935': '->',  # ARROW POINTING RIGHTWARDS THEN CURVING DOWNWARDS
-            '\u2191': '^',   # UPWARDS ARROW (↑)
-            '\u2193': 'v',   # DOWNWARDS ARROW (↓)
+            '\u2191': '^',   # UPWARDS ARROW (^)
+            '\u2193': 'v',   # DOWNWARDS ARROW (v)
             '\u2196': '<-',  # NORTH WEST ARROW
             '\u2197': '->',  # NORTH EAST ARROW
             '\u2198': '->',  # SOUTH EAST ARROW
             '\u2199': '<-',  # SOUTH WEST ARROW
             
             # Mathematical symbols
-            '\u2713': 'v',   # CHECK MARK (✓)
+            '\u2713': 'v',   # CHECK MARK (v)
             '\u2717': 'x',   # BALLOT X
             '\u2718': 'x',   # HEAVY BALLOT X
             '\u2714': 'V',   # HEAVY CHECK MARK
@@ -79,8 +79,8 @@ class ASCIIComplianceFixer:
             '\u00b0': 'deg',  # DEGREE SIGN
             '\u00b1': '+/-',  # PLUS-MINUS SIGN
             '\u00b5': 'u',    # MICRO SIGN
-            '\u2328': '[KEYBOARD]',  # KEYBOARD (⌨)
-            '\U0001FA91': '[CHAIR]', # CHAIR (🪑)
+            '\u2328': '[KEYBOARD]',  # KEYBOARD ([KEYBOARD])
+            '\U0001FA91': '[CHAIR]', # CHAIR ([CHAIR])
             
             # Fractions
             '\u00bd': '1/2',  # VULGAR FRACTION ONE HALF
@@ -91,85 +91,85 @@ class ASCIIComplianceFixer:
         # Emoji patterns (remove entirely or replace with text)
         self.emoji_replacements = {
             # Common emojis in documentation
-            '\U0001f4a1': '[IDEA]',      # 💡 ELECTRIC LIGHT BULB
-            '\U0001f4dd': '[NOTE]',      # 📝 MEMO
-            '\U0001f4cb': '[CHECKLIST]', # 📋 CLIPBOARD
-            '\U0001f4ca': '[CHART]',     # 📊 BAR CHART
-            '\U0001f4c8': '[GRAPH]',     # 📈 CHART WITH UPWARDS TREND
-            '\U0001f4c9': '[GRAPH]',     # 📉 CHART WITH DOWNWARDS TREND
-            '\U0001f4c5': '[CALENDAR]',  # 📅 CALENDAR
-            '\U0001f4c6': '[DATE]',      # 📆 TEAR-OFF CALENDAR
-            '\U0001f4e7': '[EMAIL]',     # 📧 E-MAIL SYMBOL
-            '\U0001f4e8': '[INBOX]',     # 📨 INCOMING ENVELOPE
-            '\U0001f4f1': '[PHONE]',     # 📱 MOBILE PHONE
-            '\U0001f4bb': '[LAPTOP]',    # 💻 PERSONAL COMPUTER
-            '\U0001f4be': '[DISK]',      # 💾 FLOPPY DISK
-            '\U0001f4bf': '[DISC]',      # 💿 OPTICAL DISC
-            '\U0001f4c0': '[DVD]',       # 📀 DVD
-            '\U0001f50d': '[SEARCH]',    # 🔍 LEFT-POINTING MAGNIFYING GLASS
-            '\U0001f512': '[LOCK]',      # 🔒 LOCK
-            '\U0001f513': '[UNLOCK]',    # 🔓 OPEN LOCK
-            '\U0001f514': '[BELL]',      # 🔔 BELL
-            '\U0001f515': '[SILENT]',    # 🔕 BELL WITH CANCELLATION STROKE
-            '\U0001f5a5': '[DESKTOP]',   # 🖥️ DESKTOP COMPUTER
-            '\U0001f5a8': '[PRINTER]',   # 🖨️ PRINTER
-            '\U0001f680': '[ROCKET]',    # 🚀 ROCKET
-            '\U0001f525': '[FIRE]',      # 🔥 FIRE
-            '\U0001f4af': '[100]',       # 💯 HUNDRED POINTS SYMBOL
-            '\U0001f389': '[PARTY]',     # 🎉 PARTY POPPER
-            '\U0001f38a': '[CONFETTI]',  # 🎊 CONFETTI BALL
-            '\U0001f44d': '[THUMBS_UP]', # 👍 THUMBS UP SIGN
-            '\U0001f44e': '[THUMBS_DOWN]', # 👎 THUMBS DOWN SIGN
-            '\U0001f44f': '[CLAP]',      # 👏 CLAPPING HANDS SIGN
-            '\U0001f64f': '[PRAY]',      # 🙏 PERSON WITH FOLDED HANDS
-            '\U0001f3af': '[TARGET]',    # 🎯 DIRECT HIT
-            '\U0001f3c6': '[TROPHY]',    # 🏆 TROPHY
-            '\U0001f3c5': '[MEDAL]',     # 🏅 SPORTS MEDAL
-            '\U0001f451': '[CROWN]',     # 👑 CROWN
-            '\U0001f4a5': '[BOOM]',      # 💥 COLLISION SYMBOL
-            '\U0001f4a6': '[SPLASH]',    # 💦 SPLASHING SWEAT SYMBOL
-            '\U0001f4a8': '[DASH]',      # 💨 DASH SYMBOL
-            '\U0001f4ab': '[DIZZY]',     # 💫 DIZZY SYMBOL
-            '\U0001f4ac': '[SPEECH]',    # 💬 SPEECH BALLOON
-            '\U0001f4ad': '[THOUGHT]',   # 💭 THOUGHT BALLOON
-            '\U0001f590': '[HAND]',      # 🖐️ RAISED HAND WITH FINGERS SPLAYED
-            '\U0001f595': '[FINGER]',    # 🖕 REVERSED HAND WITH MIDDLE FINGER EXTENDED
+            '\U0001f4a1': '[IDEA]',      # [IDEA] ELECTRIC LIGHT BULB
+            '\U0001f4dd': '[NOTE]',      # [NOTE] MEMO
+            '\U0001f4cb': '[CHECKLIST]', # [CHECKLIST] CLIPBOARD
+            '\U0001f4ca': '[CHART]',     # [CHART] BAR CHART
+            '\U0001f4c8': '[GRAPH]',     # [GRAPH] CHART WITH UPWARDS TREND
+            '\U0001f4c9': '[GRAPH]',     # [GRAPH] CHART WITH DOWNWARDS TREND
+            '\U0001f4c5': '[CALENDAR]',  # [CALENDAR] CALENDAR
+            '\U0001f4c6': '[DATE]',      # [DATE] TEAR-OFF CALENDAR
+            '\U0001f4e7': '[EMAIL]',     # [EMAIL] E-MAIL SYMBOL
+            '\U0001f4e8': '[INBOX]',     # [INBOX] INCOMING ENVELOPE
+            '\U0001f4f1': '[PHONE]',     # [PHONE] MOBILE PHONE
+            '\U0001f4bb': '[LAPTOP]',    # [LAPTOP] PERSONAL COMPUTER
+            '\U0001f4be': '[DISK]',      # [DISK] FLOPPY DISK
+            '\U0001f4bf': '[DISC]',      # [DISC] OPTICAL DISC
+            '\U0001f4c0': '[DVD]',       # [DVD] DVD
+            '\U0001f50d': '[SEARCH]',    # [SEARCH] LEFT-POINTING MAGNIFYING GLASS
+            '\U0001f512': '[LOCK]',      # [LOCK] LOCK
+            '\U0001f513': '[UNLOCK]',    # [UNLOCK] OPEN LOCK
+            '\U0001f514': '[BELL]',      # [BELL] BELL
+            '\U0001f515': '[SILENT]',    # [SILENT] BELL WITH CANCELLATION STROKE
+            '\U0001f5a5': '[DESKTOP]',   # [DESKTOP][EMOJI] DESKTOP COMPUTER
+            '\U0001f5a8': '[PRINTER]',   # [PRINTER][EMOJI] PRINTER
+            '\U0001f680': '[ROCKET]',    # [ROCKET] ROCKET
+            '\U0001f525': '[FIRE]',      # [FIRE] FIRE
+            '\U0001f4af': '[100]',       # [100] HUNDRED POINTS SYMBOL
+            '\U0001f389': '[PARTY]',     # [PARTY] PARTY POPPER
+            '\U0001f38a': '[CONFETTI]',  # [CONFETTI] CONFETTI BALL
+            '\U0001f44d': '[THUMBS_UP]', # [THUMBS_UP] THUMBS UP SIGN
+            '\U0001f44e': '[THUMBS_DOWN]', # [THUMBS_DOWN] THUMBS DOWN SIGN
+            '\U0001f44f': '[CLAP]',      # [CLAP] CLAPPING HANDS SIGN
+            '\U0001f64f': '[PRAY]',      # [PRAY] PERSON WITH FOLDED HANDS
+            '\U0001f3af': '[TARGET]',    # [TARGET] DIRECT HIT
+            '\U0001f3c6': '[TROPHY]',    # [TROPHY] TROPHY
+            '\U0001f3c5': '[MEDAL]',     # [MEDAL] SPORTS MEDAL
+            '\U0001f451': '[CROWN]',     # [CROWN] CROWN
+            '\U0001f4a5': '[BOOM]',      # [BOOM] COLLISION SYMBOL
+            '\U0001f4a6': '[SPLASH]',    # [SPLASH] SPLASHING SWEAT SYMBOL
+            '\U0001f4a8': '[DASH]',      # [DASH] DASH SYMBOL
+            '\U0001f4ab': '[DIZZY]',     # [DIZZY] DIZZY SYMBOL
+            '\U0001f4ac': '[SPEECH]',    # [SPEECH] SPEECH BALLOON
+            '\U0001f4ad': '[THOUGHT]',   # [THOUGHT] THOUGHT BALLOON
+            '\U0001f590': '[HAND]',      # [HAND][EMOJI] RAISED HAND WITH FINGERS SPLAYED
+            '\U0001f595': '[FINGER]',    # [FINGER] REVERSED HAND WITH MIDDLE FINGER EXTENDED
             
             # Weather
-            '\u2600': '[SUN]',           # ☀️ BLACK SUN WITH RAYS
-            '\u2601': '[CLOUD]',         # ☁️ CLOUD
-            '\u26c5': '[PARTLY_CLOUDY]', # ⛅ SUN BEHIND CLOUD
-            '\u2614': '[RAIN]',          # ☔ UMBRELLA WITH RAIN DROPS
-            '\u26a1': '[LIGHTNING]',     # ⚡ HIGH VOLTAGE SIGN
-            '\u2744': '[SNOW]',          # ❄️ SNOWFLAKE
+            '\u2600': '[SUN]',           # [SUN][EMOJI] BLACK SUN WITH RAYS
+            '\u2601': '[CLOUD]',         # [CLOUD][EMOJI] CLOUD
+            '\u26c5': '[PARTLY_CLOUDY]', # [PARTLY_CLOUDY] SUN BEHIND CLOUD
+            '\u2614': '[RAIN]',          # [RAIN] UMBRELLA WITH RAIN DROPS
+            '\u26a1': '[LIGHTNING]',     # [LIGHTNING] HIGH VOLTAGE SIGN
+            '\u2744': '[SNOW]',          # [SNOW][EMOJI] SNOWFLAKE
             
             # Symbols
-            '\u2764': '[HEART]',         # ❤️ HEAVY BLACK HEART
-            '\u2665': '[HEART]',         # ♥ BLACK HEART SUIT
-            '\u2660': '[SPADE]',         # ♠ BLACK SPADE SUIT
-            '\u2663': '[CLUB]',          # ♣ BLACK CLUB SUIT
-            '\u2666': '[DIAMOND]',       # ♦ BLACK DIAMOND SUIT
-            '\u2709': '[ENVELOPE]',      # ✉️ ENVELOPE
-            '\u270f': '[PENCIL]',        # ✏️ PENCIL
-            '\u2712': '[NIB]',           # ✒️ BLACK NIB
-            '\u2702': '[SCISSORS]',      # ✂️ BLACK SCISSORS
-            '\u2708': '[PLANE]',         # ✈️ AIRPLANE
-            '\u26f5': '[SAILBOAT]',      # ⛵ SAILBOAT
-            '\u26ea': '[CHURCH]',        # ⛪ CHURCH
-            '\u26fd': '[FUEL]',          # ⛽ FUEL PUMP
-            '\u2699': '[GEAR]',          # ⚙️ GEAR
-            '\u269b': '[ATOM]',          # ⚛️ ATOM SYMBOL
-            '\u269c': '[FLEUR]',         # ⚜️ FLEUR-DE-LIS
-            '\u26a0': '[WARNING]',       # ⚠️ WARNING SIGN
-            '\u26d4': '[NO_ENTRY]',      # ⛔ NO ENTRY
-            '\u2753': '[QUESTION]',      # ❓ BLACK QUESTION MARK ORNAMENT
-            '\u2757': '[EXCLAMATION]',   # ❗ HEAVY EXCLAMATION MARK SYMBOL
-            '\u27a1': '[RIGHT_ARROW]',   # ➡️ BLACK RIGHTWARDS ARROW
-            '\u2b06': '[UP_ARROW]',      # ⬆️ UPWARDS BLACK ARROW
-            '\u2b07': '[DOWN_ARROW]',    # ⬇️ DOWNWARDS BLACK ARROW
-            '\u2b05': '[LEFT_ARROW]',    # ⬅️ LEFTWARDS BLACK ARROW
-            '\u2934': '[CURVE_RIGHT]',   # ⤴️ ARROW POINTING RIGHTWARDS THEN CURVING UPWARDS
-            '\u2935': '[CURVE_LEFT]',    # ⤵️ ARROW POINTING RIGHTWARDS THEN CURVING DOWNWARDS
+            '\u2764': '[HEART]',         # [HEART][EMOJI] HEAVY BLACK HEART
+            '\u2665': '[HEART]',         # [HEART] BLACK HEART SUIT
+            '\u2660': '[SPADE]',         # [SPADE] BLACK SPADE SUIT
+            '\u2663': '[CLUB]',          # [CLUB] BLACK CLUB SUIT
+            '\u2666': '[DIAMOND]',       # [DIAMOND] BLACK DIAMOND SUIT
+            '\u2709': '[ENVELOPE]',      # [ENVELOPE][EMOJI] ENVELOPE
+            '\u270f': '[PENCIL]',        # [PENCIL][EMOJI] PENCIL
+            '\u2712': '[NIB]',           # [NIB][EMOJI] BLACK NIB
+            '\u2702': '[SCISSORS]',      # [SCISSORS][EMOJI] BLACK SCISSORS
+            '\u2708': '[PLANE]',         # [PLANE][EMOJI] AIRPLANE
+            '\u26f5': '[SAILBOAT]',      # [SAILBOAT] SAILBOAT
+            '\u26ea': '[CHURCH]',        # [CHURCH] CHURCH
+            '\u26fd': '[FUEL]',          # [FUEL] FUEL PUMP
+            '\u2699': '[GEAR]',          # [GEAR][EMOJI] GEAR
+            '\u269b': '[ATOM]',          # [ATOM][EMOJI] ATOM SYMBOL
+            '\u269c': '[FLEUR]',         # [FLEUR][EMOJI] FLEUR-DE-LIS
+            '\u26a0': '[WARNING]',       # [WARNING][EMOJI] WARNING SIGN
+            '\u26d4': '[NO_ENTRY]',      # [NO_ENTRY] NO ENTRY
+            '\u2753': '[QUESTION]',      # [QUESTION] BLACK QUESTION MARK ORNAMENT
+            '\u2757': '[EXCLAMATION]',   # [EXCLAMATION] HEAVY EXCLAMATION MARK SYMBOL
+            '\u27a1': '[RIGHT_ARROW]',   # [RIGHT_ARROW][EMOJI] BLACK RIGHTWARDS ARROW
+            '\u2b06': '[UP_ARROW]',      # [UP_ARROW][EMOJI] UPWARDS BLACK ARROW
+            '\u2b07': '[DOWN_ARROW]',    # [DOWN_ARROW][EMOJI] DOWNWARDS BLACK ARROW
+            '\u2b05': '[LEFT_ARROW]',    # [LEFT_ARROW][EMOJI] LEFTWARDS BLACK ARROW
+            '\u2934': '[CURVE_RIGHT]',   # ->[EMOJI] ARROW POINTING RIGHTWARDS THEN CURVING UPWARDS
+            '\u2935': '[CURVE_LEFT]',    # ->[EMOJI] ARROW POINTING RIGHTWARDS THEN CURVING DOWNWARDS
         }
         
         # Generic emoji pattern for anything we missed

@@ -48,18 +48,18 @@ def demo_context_aware_buttons():
     print()
     
     print("Benefits:")
-    print("  ✓ More accurate user experience")
-    print("  ✓ Context reflects user's actual situation")
-    print("  ✓ Clearer intent for new vs returning players")
-    print("  ✓ Maintains all existing functionality")
+    print("  v More accurate user experience")
+    print("  v Context reflects user's actual situation")
+    print("  v Clearer intent for new vs returning players")
+    print("  v Maintains all existing functionality")
     print()
     
     # Test game state creation for demonstration
     try:
         test_game = GameState('demo-seed')
-        print("✓ Context system ready for party demonstration!")
+        print("v Context system ready for party demonstration!")
     except Exception as e:
-        print(f"✗ Error: {e}")
+        print(f"x Error: {e}")
 
 if __name__ == "__main__":
     demo_context_aware_buttons()

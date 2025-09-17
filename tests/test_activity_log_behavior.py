@@ -1,5 +1,5 @@
 import unittest
-import random
+from src.services.deterministic_rng import get_rng
 from src.core.game_state import GameState
 
 
@@ -8,7 +8,7 @@ class TestActivityLogBehavior(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        random.seed(42)  # Consistent results
+        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
         
     def test_activity_log_clears_by_default_every_turn(self):
@@ -116,7 +116,7 @@ class TestActivityLogMinimization(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        random.seed(42)  # Consistent results
+        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
         
         # Enable upgrades needed for minimization
