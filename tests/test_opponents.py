@@ -1,5 +1,4 @@
 import unittest
-from src.services.deterministic_rng import get_rng
 import sys
 import os
 
@@ -16,8 +15,7 @@ class TestOpponent(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures with a consistent seed."""
-        get_rng().seed(42)
-        self.opponent = Opponent(
+        # get_rng().seed() removed - RNG initialized by GameState self.opponent = Opponent(
             name="Test Corp",
             budget=500,
             capabilities_researchers=10,
@@ -55,7 +53,7 @@ class TestOpponent(unittest.TestCase):
     def test_scout_stat_success(self):
         """Test successful stat scouting."""
         # Set seed to ensure success
-        get_rng().seed(1)  # This should give us a successful scout
+        # get_rng().seed() removed - RNG initialized by GameState # This should give us a successful scout
         
         success, value, message = self.opponent.scout_stat('budget')
         
@@ -68,7 +66,7 @@ class TestOpponent(unittest.TestCase):
     def test_scout_stat_failure(self):
         """Test failed stat scouting."""
         # Set seed to ensure failure
-        get_rng().seed(100)  # This should give us a failed scout
+        # get_rng().seed() removed - RNG initialized by GameState # This should give us a failed scout
         
         success, value, message = self.opponent.scout_stat('budget')
         
@@ -137,8 +135,7 @@ class TestOpponentAI(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        get_rng().seed(42)
-        self.opponent = Opponent(
+        # get_rng().seed() removed - RNG initialized by GameState self.opponent = Opponent(
             name="AI Test Corp",
             budget=1000,
             capabilities_researchers=5,
@@ -239,7 +236,7 @@ class TestOpponentIntegration(unittest.TestCase):
     
     def test_full_scouting_cycle(self):
         """Test a complete cycle of discovering and scouting an opponent."""
-        get_rng().seed(1)  # Use seed that should give successes
+        # get_rng().seed() removed - RNG initialized by GameState # Use seed that should give successes
         opponent = Opponent("Integration Test", 500, 10, 5, 30)
         
         # Discover the opponent
@@ -288,8 +285,8 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        get_rng().seed(42)
         self.game_state = GameState(seed=42)
+        # RNG is now initialized by GameState constructor
         
     def test_gamestate_has_opponents(self):
         """Test that GameState initializes with opponents."""

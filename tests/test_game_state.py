@@ -231,7 +231,7 @@ class TestScrollableEventLog(unittest.TestCase):
         # Manually trigger the event (simulating the condition being met)
         # Find the event log upgrade event
         event_log_event = None
-        for event in game_state.events:
+        for event in game_state.game_events:
             if event["name"] == "Event Log System Upgrade":
                 event_log_event = event
                 break

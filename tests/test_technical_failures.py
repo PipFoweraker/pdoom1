@@ -25,8 +25,7 @@ class TestTechnicalFailureCascades(unittest.TestCase):
     def setUp(self):
         """Set up test fixtures."""
         # Use deterministic seed for reproducible tests
-        get_rng().seed(42)
-        self.game_state = GameState('test-cascade-system')
+        # get_rng().seed() removed - RNG initialized by GameState self.game_state = GameState('test-cascade-system')
         self.cascade_system = self.game_state.technical_failures
         
         # Set up basic game state for testing
@@ -325,8 +324,8 @@ class TestTechnicalFailureCascadeActions(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        get_rng().seed(42)
         self.game_state = GameState('test-cascade-actions')
+        # RNG is now initialized by GameState constructor
         self.game_state.money = 500
         self.game_state.staff = 10
         
@@ -414,8 +413,8 @@ class TestTechnicalFailureCascadeEvents(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        get_rng().seed(42)
         self.game_state = GameState('test-cascade-events')
+        # RNG is now initialized by GameState constructor
         self.game_state.money = 200
         self.game_state.reputation = 15
         
@@ -491,8 +490,8 @@ class TestTechnicalFailureCascadeIntegration(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        get_rng().seed(42)
         self.game_state = GameState('test-cascade-integration')
+        # RNG is now initialized by GameState constructor
         
     def test_integration_with_turn_processing(self):
         """Test that cascades are checked during turn processing."""

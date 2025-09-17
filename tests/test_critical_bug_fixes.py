@@ -18,8 +18,8 @@ class TestCriticalBugFixes(unittest.TestCase):
 
     def setUp(self):
         """Set up test environment with seeded randomness."""
-        get_rng().seed(12345)
         self.game_state = GameState('test-critical-fixes')
+        # RNG is now initialized by GameState constructor
 
     def test_check_hover_no_duplicate_returns_fix_263(self):
         """Test fix for issue #263: duplicate return statements in check_hover."""

@@ -2,7 +2,6 @@
 Tests for the Magical Orb of Seeing upgrade functionality.
 """
 import unittest
-from src.services.deterministic_rng import get_rng
 from src.core.game_state import GameState
 
 
@@ -11,8 +10,8 @@ class TestMagicalOrbUpgrade(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures with a consistent seed."""
-        get_rng().seed(42)
         self.game_state = GameState("test_seed")
+        # RNG is now initialized by GameState constructor
     
     def test_palandir_opponent_exists(self):
         """Test that Palandir opponent is created in the game."""
@@ -170,7 +169,7 @@ class TestMagicalOrbIntegration(unittest.TestCase):
     
     def test_full_discovery_to_purchase_flow(self):
         """Test the complete flow from discovering Palandir to purchasing the orb."""
-        get_rng().seed(1)  # Use a seed that should give successful discovery
+        # get_rng().seed() removed - RNG initialized by GameState # Use a seed that should give successful discovery
         game_state = GameState("integration_test")
         
         # Initially, magical orb should not be available

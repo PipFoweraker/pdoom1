@@ -1,5 +1,4 @@
 import unittest
-from src.services.deterministic_rng import get_rng
 from src.core.game_state import GameState
 
 
@@ -8,8 +7,8 @@ class TestManagerMilestone(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
+        # RNG is now initialized by GameState constructor
         
     def test_manager_milestone_trigger_at_9_staff(self):
         """Test that manager action unlocks at 9+ staff"""
@@ -131,8 +130,8 @@ class TestBoardMemberMilestone(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
+        # RNG is now initialized by GameState constructor
         
     def test_board_member_trigger_on_high_spending(self):
         """Test that board members are installed on high spending without accounting software"""
@@ -222,8 +221,8 @@ class TestAccountingSoftware(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        get_rng().seed(42)  # Consistent results  
         self.game_state = GameState("test_seed")
+        # RNG is now initialized by GameState constructor
         
     def test_accounting_software_upgrade_exists(self):
         """Test that accounting software appears as an upgrade"""
@@ -270,8 +269,8 @@ class TestStaticEffects(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
+        # RNG is now initialized by GameState constructor
         
     def test_unmanaged_employee_productivity_penalty(self):
         """Test that unmanaged employees beyond 9 are unproductive"""

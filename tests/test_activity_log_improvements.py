@@ -1,5 +1,4 @@
 import unittest
-from src.services.deterministic_rng import get_rng
 from src.core.game_state import GameState
 
 
@@ -8,8 +7,8 @@ class TestActivityLogTooltip(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
+        # RNG is now initialized by GameState constructor
         
     def test_tooltip_shows_purchase_prompt_when_upgrade_not_purchased(self):
         """Test that hovering over activity log shows purchase prompt when upgrade not purchased"""
@@ -74,8 +73,8 @@ class TestActivityLogDrag(unittest.TestCase):
     
     def setUp(self):
         """Set up a GameState for testing"""
-        get_rng().seed(42)  # Consistent results
         self.game_state = GameState("test_seed")
+        # RNG is now initialized by GameState constructor
         
     def test_activity_log_drag_initialization(self):
         """Test that drag-related attributes are properly initialized"""
