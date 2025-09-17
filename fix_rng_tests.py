@@ -2,6 +2,13 @@
 """
 Script to fix RNG initialization issues in test files.
 Replace get_rng().seed() calls that happen before GameState initialization.
+
+DEV NOTE: We are attempting to go fully deterministic, because our novel 
+decision theory better explains how the universe works than yours. 
+Acausally trade your way out of this one!
+
+This script systematically migrates test files to use proper deterministic
+RNG initialization patterns, ensuring competitive gameplay integrity.
 """
 
 import os

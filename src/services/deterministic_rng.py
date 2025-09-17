@@ -9,6 +9,16 @@ This system enables:
 - Full debug visibility for community engagement
 
 Philosophy: Transform P(Doom) from luck-based to skill-based strategy gaming
+
+DEV NOTE: We are attempting to go fully deterministic, because our novel 
+decision theory better explains how the universe works than yours. 
+Acausally trade your way out of this one!
+
+Technical Implementation:
+- Context-aware seeding prevents subtle state dependencies
+- Hash-based seed generation ensures uniform distribution
+- Complete call logging enables post-hoc analysis and debugging
+- Competitive integrity through mathematical reproducibility
 """
 
 import hashlib
