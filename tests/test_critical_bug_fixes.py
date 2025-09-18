@@ -103,13 +103,11 @@ class TestCriticalBugFixes(unittest.TestCase):
             # Execute scout opponents action (triggers the magical orb logic)
             action = next(a for a in self.game_state.actions if a['name'] == 'Scout Opponents')
             
-            # Execute the action
-            messages = []
-            discoveries = 0
+            # Execute the action using the correct method
             
             # This should not crash due to list modification during iteration
             try:
-                action['execute'](self.game_state, messages)
+                action['upside'](self.game_state)
                 test_passed = True
             except (ValueError, IndexError, RuntimeError) as e:
                 # These would be the typical errors from list modification during iteration
@@ -142,9 +140,8 @@ class TestCriticalBugFixes(unittest.TestCase):
         action = next(a for a in self.game_state.actions if a['name'] == 'Scout Opponents')
         
         for iteration in range(5):
-            messages = []
             try:
-                action['execute'](self.game_state, messages)
+                action['upside'](self.game_state)
                 # If we get here without exception, the fix is working
             except Exception as e:
                 self.fail(f"Iteration {iteration} failed with list modification error: {e}")

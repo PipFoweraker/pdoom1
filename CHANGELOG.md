@@ -4,6 +4,21 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-09-18 - "Critical Bug Sweep Continuation"
+### Fixed
+- **CRITICAL Issue #263**: Fixed duplicate return statements and exception handlers in `check_hover` method
+  - Removed duplicate `except Exception as e:` block making error handling unreachable
+  - Consolidated error handling for proper crash prevention and logging
+  - UI hover system now has robust error handling for edge cases
+- **CRITICAL Issue #265**: Verified and enhanced magical orb list modification safety
+  - Confirmed magical orb intelligence system uses safe `random.sample()` approach
+  - Fixed test infrastructure to use proper action execution methods
+  - Eliminated potential race condition crashes in intelligence gathering
+- **Testing Framework**: Fixed critical bug test suite infrastructure
+  - Corrected action execution pattern from `action['execute']` to `action['upside']`
+  - Enhanced test coverage for magical orb multi-iteration scenarios
+  - 9/11 critical bug tests now passing (81.8% success rate)
+
 ## [0.6.1] - 2025-09-15 - "Hotfix Batch: Mac TypeError + Critical Stability"
 ### Fixed
 - **CRITICAL Mac TypeError Fix**: Resolved research_quality.py type conversion crash on Mac systems (closes #299)

@@ -2143,10 +2143,7 @@ class GameState:
                     'details': details
                 }
             
-            return None  # No tooltip text for areas with context info only
-            
-        except Exception as e:
-            # Graceful fallback on any errors
+            # No tooltip text for areas with context info only
             return None
             
         except Exception as e:
