@@ -38,6 +38,10 @@ from src.core.ui_utils import (
     get_activity_log_expand_button_rect, get_activity_log_rect, get_activity_log_base_position,
     get_activity_log_current_position, validate_rect, get_ui_element_rects, calculate_blob_position
 )
+from src.core.verbose_logging import (
+    create_verbose_money_message, create_verbose_staff_message, 
+    create_verbose_reputation_message, create_verbose_compute_message
+)
 
 class GameState:
     def _get_action_cost(self, action: Dict[str, Any]) -> int:
@@ -5384,186 +5388,23 @@ class GameState:
     
     def _add_verbose_money_message(self, val: float, reason: str = "") -> None:
         """Add detailed, flavorful messages for money changes like an RPG combat log."""
-        amount = abs(val)
-        
-        # Create verbose, flavor-rich messages based on amount and context
-        if val > 0:  # Gaining money
-            if amount >= 1000:
-                if "funding" in reason.lower() or "fundrais" in reason.lower():
-                    self.messages.append(f"? MAJOR CAPITAL INJECTION: +${amount:.0f}k secured through strategic funding!")
-                elif "revenue" in reason.lower() or "customer" in reason.lower():
-                    self.messages.append(f"? REVENUE WINDFALL: +${amount:.0f}k earned from satisfied customers!")
-                elif "grant" in reason.lower() or "government" in reason.lower():
-                    self.messages.append(f"? GOVERNMENT BACKING: +${amount:.0f}k awarded through official channels!")
-                else:
-                    self.messages.append(f"? FINANCIAL SUCCESS: +${amount:.0f}k added to your war chest!")
-            elif amount >= 100:
-                self.messages.append(f"? Solid gains: +${amount:.0f}k helps strengthen your position")
-            else:
-                self.messages.append(f"? Minor income: +${amount:.0f}k trickles into your accounts")
-                
-        else:  # Spending money
-            if amount >= 1000:
-                if "staff" in reason.lower() or "hir" in reason.lower():
-                    self.messages.append(f"?? MAJOR EXPANSION: -${amount:.0f}k invested in growing your team!")
-                elif "research" in reason.lower():
-                    self.messages.append(f"?? RESEARCH INVESTMENT: -${amount:.0f}k allocated to cutting-edge work!")
-                elif "upgrade" in reason.lower() or "equipment" in reason.lower():
-                    self.messages.append(f"?? INFRASTRUCTURE UPGRADE: -${amount:.0f}k spent on essential systems!")
-                else:
-                    self.messages.append(f"?? STRATEGIC SPENDING: -${amount:.0f}k deployed for organizational needs")
-            elif amount >= 100:
-                self.messages.append(f"? Measured spending: -${amount:.0f}k allocated to operations")
-            else:
-                self.messages.append(f"? Minor expense: -${amount:.0f}k spent on day-to-day needs")
-        
-        # Add flavor text based on remaining balance
-        if hasattr(self, 'money'):
-            if self.money < 100:
-                self.messages.append("?? [CASH FLOW ALERT] Reserves running critically low!")
-            elif self.money > 10000:
-                self.messages.append("? [FINANCIAL STRENGTH] Substantial reserves provide strategic flexibility")
+        messages = create_verbose_money_message(val, reason, self.money)
+        self.messages.extend(messages)
     
     def _add_verbose_staff_message(self, val: float, reason: str = "") -> None:
         """Add detailed, flavorful messages for staff changes like an RPG party management log."""
-        count = abs(int(val))
-        
-        if val > 0:  # Hiring staff
-            if count >= 5:
-                self.messages.append(f"? HIRING SPREE: +{count} new team members join your growing organization!")
-                self.messages.append("? The lab buzzes with fresh energy and ambitious conversations")
-            elif count >= 2:
-                self.messages.append(f"? TEAM EXPANSION: +{count} talented individuals strengthen your capabilities")
-            else:
-                # Single hire with personality
-                personality_traits = [
-                    "eager and ambitious", "highly skilled", "experienced veteran", 
-                    "innovative thinker", "reliable workhorse", "creative problem-solver"
-                ]
-                trait = get_rng().choice(personality_traits, "choice_context")
-                self.messages.append(f"? NEW RECRUIT: A {trait} joins your team (+{count} staff)")
-                
-            # Add context based on team size
-            if hasattr(self, 'staff'):
-                if self.staff >= 20:
-                    self.messages.append("? [MAJOR ORGANIZATION] Your lab now rivals established institutions")
-                elif self.staff >= 10:
-                    self.messages.append("? [GROWING TEAM] Coordination becomes more complex but capabilities expand")
-                elif self.staff >= 5:
-                    self.messages.append("? [SOLID FOUNDATION] Your team gains critical mass for serious work")
-                    
-        else:  # Staff leaving
-            if count >= 5:
-                self.messages.append(f"?? MASS EXODUS: -{count} team members abandon ship!")
-                self.messages.append("?? Morale plummets as remaining staff question the organization's future")
-            elif count >= 2:
-                self.messages.append(f"?? DEPARTURES: -{count} valuable team members seek opportunities elsewhere")
-                self.messages.append("? The remaining staff work harder to fill the gaps")
-            else:
-                # Single departure with context
-                departure_reasons = [
-                    "citing burnout and overwork", "seeking better opportunities", 
-                    "expressing concerns about direction", "following a lucrative offer",
-                    "needing work-life balance", "pursuing academic opportunities"
-                ]
-                reason_text = get_rng().choice(departure_reasons, "choice_context")
-                self.messages.append(f"?? DEPARTURE: A team member leaves, {reason_text} (-{count} staff)")
-            
-            # Add warnings based on remaining team size
-            if hasattr(self, 'staff'):
-                if self.staff <= 1:
-                    self.messages.append("?? [CRITICAL SHORTAGE] Operating with skeleton crew - productivity severely limited!")
-                elif self.staff <= 3:
-                    self.messages.append("?? [UNDERSTAFFED] Limited team may struggle with complex projects")
+        messages = create_verbose_staff_message(val, reason, self.staff)
+        self.messages.extend(messages)
     
     def _add_verbose_reputation_message(self, val: float, reason: str = "") -> None:
         """Add detailed, flavorful messages for reputation changes."""
-        amount = abs(val)
-        
-        if val > 0:  # Gaining reputation
-            if amount >= 10:
-                if "research" in reason.lower():
-                    self.messages.append(f"? SCIENTIFIC BREAKTHROUGH: +{amount:.0f} reputation from groundbreaking research!")
-                    self.messages.append("? The academic community takes notice of your innovative work")
-                elif "safety" in reason.lower():
-                    self.messages.append(f"? SAFETY LEADERSHIP: +{amount:.0f} reputation for prioritizing responsible development!")
-                    self.messages.append("? Industry peers respect your commitment to safety protocols")
-                else:
-                    self.messages.append(f"? MAJOR RECOGNITION: +{amount:.0f} reputation boost from outstanding achievements!")
-            elif amount >= 5:
-                self.messages.append(f"? Strong recognition: +{amount:.0f} reputation from solid professional work")
-            else:
-                positive_phrases = [
-                    "earns modest recognition", "builds credibility", "gains industry respect",
-                    "demonstrates competence", "shows promise", "establishes credibility"
-                ]
-                phrase = get_rng().choice(positive_phrases, f"reputation_phrase_positive_{self.turn}")
-                self.messages.append(f"? Your work {phrase} (+{amount:.0f} reputation)")
-                
-        else:  # Losing reputation
-            if amount >= 10:
-                self.messages.append(f"?? REPUTATION CRISIS: -{amount:.0f} reputation lost from major controversy!")
-                self.messages.append("?? Industry confidence shaken - recovery will require significant effort")
-            elif amount >= 5:
-                self.messages.append(f"?? Significant damage: -{amount:.0f} reputation lost from poor decisions")
-                self.messages.append("? Professional standing diminished in key circles")
-            else:
-                negative_phrases = [
-                    "raises eyebrows", "creates minor controversy", "draws criticism",
-                    "disappoints stakeholders", "causes concern", "generates skepticism"
-                ]
-                phrase = get_rng().choice(negative_phrases, "choice_context")
-                self.messages.append(f"? Your actions {phrase} (-{amount:.0f} reputation)")
-        
-        # Add context based on current reputation level
-        if hasattr(self, 'reputation'):
-            if self.reputation >= 100:
-                self.messages.append("? [INDUSTRY LEADER] Your reputation opens doors others cannot access")
-            elif self.reputation >= 50:
-                self.messages.append("? [RESPECTED PROFESSIONAL] Your voice carries weight in important discussions")
-            elif self.reputation <= 10:
-                self.messages.append("?? [DAMAGED CREDIBILITY] Public trust severely compromised")
+        messages = create_verbose_reputation_message(val, reason, self.reputation)
+        self.messages.extend(messages)
     
     def _add_verbose_compute_message(self, val: float, reason: str = "") -> None:
         """Add detailed, flavorful messages for compute resource changes."""
-        amount = abs(val)
-        
-        if val > 0:  # Gaining compute
-            if amount >= 1000:
-                self.messages.append(f"? SUPERCOMPUTING POWER: +{amount:.0f} compute units from massive infrastructure!")
-                self.messages.append("? Your computational capabilities now rival major institutions")
-            elif amount >= 100:
-                self.messages.append(f"? Major upgrade: +{amount:.0f} compute units significantly boost processing power")
-            else:
-                tech_descriptions = [
-                    "high-performance GPUs", "parallel processing arrays", "cloud computing resources",
-                    "optimized algorithms", "distributed computing nodes", "specialized hardware"
-                ]
-                tech = get_rng().choice(tech_descriptions, "choice_context")
-                self.messages.append(f"? Enhanced computing: {tech} provide +{amount:.0f} compute units")
-                
-        else:  # Losing compute (maintenance, failures, etc.)
-            if amount >= 1000:
-                self.messages.append(f"?? SYSTEM FAILURE: -{amount:.0f} compute units lost to catastrophic hardware problems!")
-                self.messages.append("?? Critical systems offline - emergency repairs needed")
-            elif amount >= 100:
-                self.messages.append(f"?? Hardware issues: -{amount:.0f} compute units offline due to technical problems")
-            else:
-                maintenance_reasons = [
-                    "routine maintenance", "cooling system limits", "power constraints",
-                    "software optimization", "hardware refresh cycles", "capacity reallocation"
-                ]
-                reason_text = get_rng().choice(maintenance_reasons, "choice_context")
-                self.messages.append(f"? Reduced capacity: {reason_text} removes -{amount:.0f} compute units")
-        
-        # Add context based on current compute level
-        if hasattr(self, 'compute'):
-            if self.compute >= 5000:
-                self.messages.append("? [COMPUTATIONAL GIANT] Your processing power enables cutting-edge research")
-            elif self.compute >= 1000:
-                self.messages.append("? [SERIOUS INFRASTRUCTURE] Substantial computational resources available")
-            elif self.compute <= 50:
-                self.messages.append("?? [LIMITED PROCESSING] Computational constraints may hinder complex projects")
+        messages = create_verbose_compute_message(val, reason, self.compute)
+        self.messages.extend(messages)
     
     # ======= FUNDRAISING DIALOG SYSTEM =======
     # Similar to hiring dialog but for fundraising options
