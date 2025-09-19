@@ -4,6 +4,7 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ## [0.8.0] - 2025-09-18 - "Test Suite Foundation Release - Global Multiplayer Ready"
 
 ### MILESTONE: Systematic Test Suite Repair Achieves 60% Failure Reduction
@@ -290,6 +291,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Dynamic layout system scales automatically with content and screen size
   - Reusable components reduce code duplication across menu systems
   - Clear separation of concerns: layout, rendering, state management
+
+## [Unreleased] - 2025-09-19 - "Bug Sweep Session: Critical Stability Fixes"
+### Fixed
+- **CRITICAL DEBUG CONSOLE CRASH**: Fixed fatal access violation in debug console rendering
+  - **Root Cause**: Font objects were not initialized before being used in draw methods
+  - **Solution**: Added safety checks to ensure font initialization before rendering operations
+  - **Impact**: Prevents test suite crashes and UI instability during development
+  - **Files**: `src/ui/debug_console.py` - Added font initialization safety checks
+- **Issue #245**: Fixed post-rebase test failures in menu system
+  - **Root Cause**: Test expectations outdated after menu structure changes
+  - **Solution**: Updated expected menu items to match current implementation
+  - **Details**: Menu now correctly expects ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
+  - **Files**: `tests/test_new_player_experience.py` - Updated test expectations
+- **Issues #315, #227, #226**: Verified resolution status
+  - **Analysis**: Action list display issues, action points validation, and sound system configuration were already resolved in previous sessions
+  - **Status**: Tests confirmed passing, no additional fixes needed
+  - **Impact**: Confirms systematic bug sweep approach is working effectively
+- **CRITICAL Issue #316**: Fixed Action Points double deduction bug
+  - **Root Cause**: AP was being deducted twice (during action selection AND turn execution)
+  - **Solution**: Removed AP deduction from `end_turn()` method since AP should be deducted at selection time for immediate player feedback
+  - **Impact**: Core turn-based gameplay now works correctly, no more phantom AP loss
+  - **Testing**: Reactivated 14 core action points tests, all now passing
+- **Issue #317**: Resolved Action Points validation confusion
+  - **Analysis**: Found 3 legitimate meta-actions with 0 AP cost (research quality settings)
+  - **Understanding**: Meta-actions for configuration changes should be free
+  - **Status**: No code changes needed, validation logic was already correct
+- **Test Infrastructure**: Reactivated core Action Points test suite
+  - TestActionPointsDeduction: 3/3 tests passing
+  - TestActionPointsReset: 2/2 tests passing  
+  - TestActionPointsBackwardCompatibility: 4/4 tests passing
+  - Total: 14 core AP tests restored and passing
+
+### Previous Fixes (2025-09-18)
+- **CRITICAL Issue #263**: Fixed duplicate return statements and exception handlers in `check_hover` method
+  - Removed duplicate `except Exception as e:` block making error handling unreachable
+  - Consolidated error handling for proper crash prevention and logging
+  - UI hover system now has robust error handling for edge cases
+- **CRITICAL Issue #265**: Verified and enhanced magical orb list modification safety
+  - Confirmed magical orb intelligence system uses safe `random.sample()` approach
+  - Fixed test infrastructure to use proper action execution methods
+  - Eliminated potential race condition crashes in intelligence gathering
+- **Testing Framework**: Fixed critical bug test suite infrastructure
+  - Corrected action execution pattern from `action['execute']` to `action['upside']`
+  - Enhanced test coverage for magical orb multi-iteration scenarios
+  - 9/11 critical bug tests now passing (81.8% success rate)
+
 
 ## [0.6.1] - 2025-09-15 - "Hotfix Batch: Mac TypeError + Critical Stability"
 ### Fixed

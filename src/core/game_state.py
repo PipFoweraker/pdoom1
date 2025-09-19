@@ -164,12 +164,17 @@ class GameState:
 # In __init__, initialize:
 
     def __init__(self, seed: str) -> None:
-        # Get current configuration
+        # Get current configuration with safe defaults
         config = get_current_config()
-        starting_resources = config['starting_resources']
-        ap_config = config['action_points']
-        limits_config = config['resource_limits']
-        config['milestones']
+        
+        # Safe configuration access with defaults
+        starting_resources = config.get('starting_resources', {
+            'money': 100, 'staff': 2, 'reputation': 5, 'doom': 25, 
+            'action_points': 3, 'compute': 0
+        })
+        ap_config = config.get('action_points', {'base_ap_per_turn': 3})
+        limits_config = config.get('resource_limits', {})
+        milestones_config = config.get('milestones', {})
         
         # Initialize deterministic systems first
         init_deterministic_rng(seed)
@@ -208,18 +213,18 @@ class GameState:
         self.completed_research_projects = []  # History of completed projects
         self.research_quality_unlocked = False  # Unlocks after first research action
         
-        # Core resources (from config)
-        self.money = starting_resources['money']
-        self.staff = starting_resources['staff']
-        self.reputation = starting_resources['reputation']
-        self.doom = starting_resources['doom']
+        # Core resources (from config with safe defaults)
+        self.money = starting_resources.get('money', 100)
+        self.staff = starting_resources.get('staff', 2)
+        self.reputation = starting_resources.get('reputation', 5)
+        self.doom = starting_resources.get('doom', 25)
         self.compute = starting_resources.get('compute', 0)
         self.research_progress = 0  # Track research progress for paper generation
         self.papers_published = 0  # Count of research papers published
         
-        # Action Points system (from config)
-        self.action_points = starting_resources['action_points']
-        self.max_action_points = ap_config['base_ap_per_turn']
+        # Action Points system (from config with safe defaults)
+        self.action_points = starting_resources.get('action_points', 3)
+        self.max_action_points = ap_config.get('base_ap_per_turn', 3)
         self.ap_spent_this_turn = False  # Track if AP was spent for UI glow effects
         self.ap_glow_timer = 0  # Timer for AP glow animation
         
@@ -2223,8 +2228,8 @@ class GameState:
                     'description': 'Computational resources for research and employee productivity.',
                     'details': details
                 }
-            
-            return None  # No tooltip text for areas with context info only
+            # No tooltip text for areas with context info only
+            return None
             
         except Exception as e:
             # Log the error with context for debugging
@@ -2541,8 +2546,9 @@ class GameState:
             ap_cost = delegation_info['ap_cost']
             effectiveness = delegation_info['effectiveness']
             
-            # Deduct Action Points
-            self.action_points -= ap_cost
+            # NOTE: AP is already deducted during action selection (_handle_action_selection)
+            # No need to deduct again here - this was causing double deduction bug
+            # Just track for UI glow effects
             self.ap_spent_this_turn = True  # Track for UI glow effects
             self.ap_glow_timer = 30  # 30 frames of glow effect
             
@@ -6128,7 +6134,7 @@ class GameState:
         # Reveal detailed stats (more than basic scouting)
         all_stats = ['budget', 'compute', 'progress', 'reputation', 'staff_count', 'strategy_focus']
         num_stats = 4 if enhanced else 3
-        stats_revealed = get_rng().sample(all_stats, min(num_stats, len(all_stats)))
+        stats_revealed = get_rng().sample(all_stats, min(num_stats, len(all_stats)), "opponent_investigation_stats")
         
         for stat in stats_revealed:
             if stat == 'budget':

@@ -46,13 +46,16 @@ class DebugConsole:
         Returns:
             Dictionary containing organized debug information
         """
-        # Get starting values from config for comparison
+        # Get starting values from config for comparison with safe defaults
         config = get_current_config()
-        starting_resources = config['starting_resources']
+        starting_resources = config.get('starting_resources', {
+            'money': 100, 'staff': 2, 'reputation': 5, 'doom': 25, 
+            'action_points': 3, 'compute': 0
+        })
         
         # Action Points calculation breakdown with starting comparison
         ap_breakdown = {
-            'current': f"{game_state.action_points} (start: {starting_resources['action_points']})",
+            'current': f"{game_state.action_points} (start: {starting_resources.get('action_points', 3)})",
             'max': game_state.max_action_points,
             'base': 3,  # From config
             'staff_bonus': game_state.staff * 0.5,
@@ -64,7 +67,7 @@ class DebugConsole:
         
         # Staff composition with starting comparison
         staff_info = {
-            'total_staff': f"{game_state.staff} (start: {starting_resources['staff']})",
+            'total_staff': f"{game_state.staff} (start: {starting_resources.get('staff', 2)})",
             'admin_staff': game_state.admin_staff,
             'research_staff': getattr(game_state, 'research_staff', 0),
             'ops_staff': getattr(game_state, 'ops_staff', 0),
@@ -75,9 +78,9 @@ class DebugConsole:
         
         # Economic state with starting vs current comparison
         economic_info = {
-            'money': f"{game_state.money} (start: {starting_resources['money']})",
-            'reputation': f"{game_state.reputation} (start: {starting_resources['reputation']})",
-            'doom': f"{game_state.doom}% (start: {starting_resources['doom']}%)",
+            'money': f"{game_state.money} (start: {starting_resources.get('money', 100)})",
+            'reputation': f"{game_state.reputation} (start: {starting_resources.get('reputation', 5)})",
+            'doom': f"{game_state.doom}% (start: {starting_resources.get('doom', 25)}%)",
             'compute': f"{game_state.compute} (start: {starting_resources.get('compute', 0)})",
             'research_progress': getattr(game_state, 'research_progress', 0),
             'papers_published': getattr(game_state, 'papers_published', 0),
@@ -209,6 +212,11 @@ class DebugConsole:
         pygame.draw.rect(screen, (200, 200, 200), self.toggle_button_rect, 2)
         
         # Button text - ASCII-only characters for compliance
+        # Safety check: ensure font is initialized before rendering
+        if self.font is None:
+            screen_height = screen.get_height()
+            self.initialize_fonts(screen_height)
+            
         button_text = "D" if not self.visible else ("-" if not self.collapsed else "+")
         text_surface = self.font.render(button_text, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=self.toggle_button_rect.center)
@@ -220,6 +228,11 @@ class DebugConsole:
     
     def _draw_console_panel(self, screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         """Draw the main console panel with debug information."""
+        # Safety check: ensure fonts are initialized
+        if self.font is None or self.small_font is None:
+            screen_height = screen.get_height()
+            self.initialize_fonts(screen_height)
+            
         # Calculate console dimensions - 40% larger for better visibility
         if self.collapsed:
             console_width = 420  # Increased from 300 (40% larger)

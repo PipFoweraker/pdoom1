@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-19T11:57:33.691970",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Storm Systems",
+      "date": "2025-09-19T11:57:33.690447",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.003687,
+      "entry_uuid": "dbf8168f-4e45-4710-b8fe-08987a2ebf86"
+    }
+  ]
+}

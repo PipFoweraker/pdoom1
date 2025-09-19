@@ -23,7 +23,6 @@ from unittest.mock import patch
 from src.services.config_manager import ConfigManager, get_current_config, initialize_config_system
 
 
-@pytest.mark.skip(reason="Config validation bugs - See issue #config-validation-bug")
 class TestConfigManager(unittest.TestCase):
     """Test cases for the ConfigManager class."""
     
@@ -59,11 +58,9 @@ class TestConfigManager(unittest.TestCase):
         for section in required_sections:
             self.assertIn(section, default_config)
         
-        # Check specific game balance values - verify structure exists
-        self.assertIn('money', default_config['starting_resources'])
-        self.assertIn('staff', default_config['starting_resources'])
-        self.assertGreater(default_config['starting_resources']['money'], 0)
-        self.assertGreaterEqual(default_config['starting_resources']['staff'], 0)
+        # Check specific game balance values
+        self.assertEqual(default_config['starting_resources']['money'], 100000)
+        self.assertEqual(default_config['starting_resources']['staff'], 2)
         self.assertEqual(default_config['action_points']['base_ap_per_turn'], 3)
         self.assertEqual(default_config['milestones']['manager_threshold'], 9)
         
@@ -473,7 +470,7 @@ class TestConfigGameBalanceValidation(unittest.TestCase):
         
         # Money should be positive and reasonable
         self.assertGreater(starting['money'], 0)
-        self.assertLessEqual(starting['money'], 1000000)  # Allow up to 1M for bootstrap scenarios
+        self.assertLessEqual(starting['money'], 100000)  # Current balanced amount
         
         # Staff should be a small positive number
         self.assertGreaterEqual(starting['staff'], 1)
@@ -516,9 +513,8 @@ class TestConfigGameBalanceValidation(unittest.TestCase):
         self.assertGreater(milestones['manager_threshold'], config['starting_resources']['staff'])
         self.assertLess(milestones['manager_threshold'], 20)
         
-        # Board spending threshold should be positive and reasonable for gameplay progression
-        self.assertGreater(milestones['board_spending_threshold'], 0)
-        self.assertLessEqual(milestones['board_spending_threshold'], config['starting_resources']['money'])  # Can be triggered early in bootstrap model
+        # Board spending threshold should be significant
+        self.assertGreater(milestones['board_spending_threshold'], config['starting_resources']['money'])
         
         # Event unlock turns should be reasonable
         self.assertGreater(milestones['enhanced_events_turn'], 1)

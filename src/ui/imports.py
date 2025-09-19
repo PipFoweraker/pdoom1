@@ -68,8 +68,9 @@ def initialize_display(current_config):
     
     # Set up initial screen for loading
     info = pygame.display.Info()
-    window_scale = current_config['ui']['window_scale']
-    fullscreen_enabled = current_config['ui'].get('fullscreen', False)
+    ui_config = current_config.get('ui', {})
+    window_scale = ui_config.get('window_scale', 0.8)
+    fullscreen_enabled = ui_config.get('fullscreen', False)
     
     if fullscreen_enabled:
         screen_w = info.current_w

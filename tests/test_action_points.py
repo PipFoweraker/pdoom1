@@ -94,7 +94,6 @@ class TestActionPointsValidation(unittest.TestCase):
             self.assertIn("Action Points", expected_message)
 
 
-@pytest.mark.skip(reason="Action Points deduction bugs - See issue #action-points-deduction-bug")
 class TestActionPointsDeduction(unittest.TestCase):
     """Test AP deduction during action execution."""
     
@@ -155,7 +154,6 @@ class TestActionPointsDeduction(unittest.TestCase):
         self.assertLess(self.game_state.action_points, initial_ap)
 
 
-@pytest.mark.skip(reason="Action Points reset bugs - See issue #action-points-reset-bug")
 class TestActionPointsReset(unittest.TestCase):
     """Test AP reset at end of turn."""
     

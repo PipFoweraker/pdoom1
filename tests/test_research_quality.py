@@ -7,7 +7,7 @@ debt reduction actions, and integration with existing game mechanics.
 """
 
 import unittest
-from src.services.deterministic_rng import get_rng
+import random
 from src.core.game_state import GameState
 from src.core.research_quality import (
     ResearchQuality, ResearchProject, TechnicalDebt, 
@@ -258,10 +258,10 @@ class TestGameStateIntegration(unittest.TestCase):
         self.gs.technical_debt.accumulated_debt = 25
         
         # Mock random to ensure we can test the consequence paths
-        original_random = get_rng().random
+        original_random = random.random
         try:
             # Force accident to trigger
-            get_rng().random = lambda: 0.01  # Very low value to trigger accident
+            random.random = lambda: 0.01  # Very low value to trigger accident
             
             initial_messages = len(self.gs.messages)
             self.gs.check_debt_consequences()
@@ -270,7 +270,7 @@ class TestGameStateIntegration(unittest.TestCase):
             self.assertGreater(len(self.gs.messages), initial_messages)
             
         finally:
-            get_rng().random = original_random
+            random.random = original_random
     
     def test_research_effectiveness_modifier(self):
         """Test that technical debt affects research effectiveness."""
@@ -309,10 +309,13 @@ class TestResearchActions(unittest.TestCase):
         """Test that research actions are in the actions list."""
         action_names = [action["name"] for action in ACTIONS]
         
+        # Research system was consolidated into submenu in v0.4.0
         self.assertIn("Research Options", action_names)
+        # Research quality setting actions
         self.assertIn("Set Research Quality: Rushed", action_names)
         self.assertIn("Set Research Quality: Standard", action_names)
         self.assertIn("Set Research Quality: Thorough", action_names)
+        # Technical debt reduction actions
         self.assertIn("Refactoring Sprint", action_names)
         self.assertIn("Safety Audit", action_names)
         self.assertIn("Code Review", action_names)

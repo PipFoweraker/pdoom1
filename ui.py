@@ -1222,6 +1222,9 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     # DEV MODE indicator (top-left corner, above title)
     draw_dev_mode_indicator(screen, w, h)
     
+    # DEV MODE indicator (top-left corner, above title)
+    draw_dev_mode_indicator(screen, w, h)
+    
     # TOP BAR ENHANCEMENTS: Date, Version, Debug Hotkeys
     draw_top_bar_info(screen, game_state, w, h, small_font, font)
 

@@ -1,0 +1,35 @@
+{
+  "seed": "test-cascade-integration",
+  "final_turn": 21,
+  "final_score": 21,
+  "game_version": "v0.6.1+hotfix-batch-mac-gameclock",
+  "economic_model": "Bootstrap_v0.4.1",
+<<<<<<<< HEAD:leaderboards/sessions/session_test-cascade-integration_3a285390_20250915_202115.json
+  "start_time": "2025-09-15T20:21:15.343539",
+  "end_time": "2025-09-15T20:21:15.347663",
+  "duration_minutes": 6.873333333333333e-05,
+========
+  "start_time": "2025-09-19T15:19:45.350506",
+  "end_time": "2025-09-19T15:19:45.362191",
+  "duration_minutes": 0.00019475,
+>>>>>>>> bug-sweep-critical-stability:leaderboards/sessions/session_test-cascade-integration_3a285390_20250919_151945.json
+  "player_name": "Anonymous",
+  "lab_name": "Axiom Labs",
+  "final_money": 100000,
+  "final_staff": 0,
+  "final_reputation": 50,
+<<<<<<<< HEAD:leaderboards/sessions/session_test-cascade-integration_3a285390_20250915_202115.json
+  "final_doom": 28,
+========
+  "final_doom": 27,
+>>>>>>>> bug-sweep-critical-stability:leaderboards/sessions/session_test-cascade-integration_3a285390_20250919_151945.json
+  "final_compute": 0,
+  "total_staff_maintenance_paid": 0.0,
+  "total_research_spending": 0.0,
+  "total_fundraising_gained": 0.0,
+  "moore_law_savings": 0.0,
+  "actions_taken": 0,
+  "average_ap_per_turn": 3.0,
+  "research_papers_published": 0,
+  "technical_debt_accumulated": 15
+}
