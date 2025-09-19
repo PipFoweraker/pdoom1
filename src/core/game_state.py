@@ -47,6 +47,9 @@ from src.core.employee_management import (
     reset_employee_productivity, separate_employees_and_managers,
     apply_management_assignments, calculate_compute_per_employee
 )
+from src.core.dialog_systems import (
+    DialogManager, FundraisingDialogBuilder, ResearchDialogBuilder, DialogValidator
+)
 
 class GameState:
     def _get_action_cost(self, action: Dict[str, Any]) -> int:
@@ -5380,12 +5383,8 @@ class GameState:
             self.messages.append("No fundraising options available at this time.")
             return
         
-        # Set up the fundraising dialog state
-        self.pending_fundraising_dialog = {
-            "available_options": available_options,
-            "title": "Fundraising Strategy Selection",
-            "description": "Choose your approach to raising capital. Each option has different risk/reward profiles."
-        }
+        # Set up the fundraising dialog state using dialog manager
+        self.pending_fundraising_dialog = DialogManager.create_fundraising_dialog_state(available_options)
     
     def _get_available_fundraising_options(self) -> List[Dict[str, Any]]:
         """Get available fundraising options based on current game state."""
