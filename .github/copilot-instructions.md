@@ -112,7 +112,9 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Regression prevention**: Validate all functionality after each extraction
 
 ### Quality Assurance Tools
-- **autoflake cleanup**: Use `.venv\\Scripts\\python.exe -m autoflake --remove-all-unused-imports --remove-unused-variables --check --recursive .`
+- **Standards enforcement**: Use `python scripts/enforce_standards.py --check-all` for comprehensive project validation
+- **ASCII compliance**: Use `python scripts/ascii_compliance_fixer.py` to remove Unicode characters from all files
+- **autoflake cleanup**: Use `python -m autoflake --remove-all-unused-imports --remove-unused-variables --check --recursive .`
 - **Type checking**: pylance strict mode with comprehensive coverage
 - **Import validation**: Regular `from src.core.game_state import GameState` checks
 

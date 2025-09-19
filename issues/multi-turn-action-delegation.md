@@ -4,15 +4,15 @@
 **PRIORITY: MEDIUM** - Implement multi-turn action sequences that allow delegation of decision-making to staff/managers, creating more strategic AP management.
 
 ## Strategic Context
-- **Goal**: Enable complex actions like "advertise → receive applicants → interview → hire"
+- **Goal**: Enable complex actions like "advertise -> receive applicants -> interview -> hire"
 - **Benefit**: Reduces micro-management while adding strategic depth
 - **Timeline**: Beta phase enhancement (post-alpha)
 
 ## Vision
 Players can initiate longer-term actions that unfold over multiple turns:
-1. **Recruitment Process**: Advertise (1 AP) → Get applicants (2 turns) → Interview (1 AP) → Decision
-2. **Research Projects**: Start research (2 AP) → Progress updates (3 turns) → Results  
-3. **Marketing Campaigns**: Launch campaign (1 AP) → Market response (4 turns) → Reputation effects
+1. **Recruitment Process**: Advertise (1 AP) -> Get applicants (2 turns) -> Interview (1 AP) -> Decision
+2. **Research Projects**: Start research (2 AP) -> Progress updates (3 turns) -> Results  
+3. **Marketing Campaigns**: Launch campaign (1 AP) -> Market response (4 turns) -> Reputation effects
 
 ## Current State Analysis
 - **Action system**: Single-turn immediate effects (`actions.py`)

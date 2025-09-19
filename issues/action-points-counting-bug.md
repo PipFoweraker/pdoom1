@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## 🔴 Critical Issue: Action Points Counting Bug
+## ? Critical Issue: Action Points Counting Bug
 
 **Version**: v0.3.0
 **Priority**: Critical (affects core gameplay)

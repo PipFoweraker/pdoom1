@@ -68,7 +68,7 @@ def demonstrate_command_validation():
     
     for cmd_str, description in test_cases:
         is_valid, message = parser.validate_command_string(cmd_str)
-        status = "✓" if is_valid else "✗"
+        status = "PASS" if is_valid else "FAIL"
         print(f"  {status} '{cmd_str}' ({description})")
         print(f"      {message}")
 
@@ -122,10 +122,10 @@ def execute_command_string_example(command_string: str, seed: str):
         # Show final state
         final_state = report.final_state
         print(f"\nFinal State (Turn {final_state['turn']}):")
-        print(f"  Money: ${final_state['money']} (Δ{final_state['money'] - initial_state['money']:+d})")
-        print(f"  Staff: {final_state['staff']} (Δ{final_state['staff'] - initial_state['staff']:+d})")
-        print(f"  Reputation: {final_state['reputation']} (Δ{final_state['reputation'] - initial_state['reputation']:+d})")
-        print(f"  Doom: {final_state['doom']} (Δ{final_state['doom'] - initial_state['doom']:+d})")
+        print(f"  Money: ${final_state['money']} (?{final_state['money'] - initial_state['money']:+d})")
+        print(f"  Staff: {final_state['staff']} (?{final_state['staff'] - initial_state['staff']:+d})")
+        print(f"  Reputation: {final_state['reputation']} (?{final_state['reputation'] - initial_state['reputation']:+d})")
+        print(f"  Doom: {final_state['doom']} (?{final_state['doom'] - initial_state['doom']:+d})")
         
         # Show command details
         if report.failed_commands > 0:

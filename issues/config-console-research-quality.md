@@ -21,9 +21,9 @@ Create a dedicated **Config Console Area** positioned below the End Turn button 
 - **Location**: Below End Turn button (bottom-center area)
 - **Visual Style**: Small panel with compact controls
 - **Research Quality**: Traffic light style indicator showing current setting
-  - 🔴 Rushed (fast, technical debt)
-  - 🟡 Standard (balanced)
-  - 🟢 Thorough (slow, high quality)
+  - ? Rushed (fast, technical debt)
+  - ? Standard (balanced)
+  - ? Thorough (slow, high quality)
 - **Expandable**: Future settings can be added (employee management, etc.)
 
 ### Benefits

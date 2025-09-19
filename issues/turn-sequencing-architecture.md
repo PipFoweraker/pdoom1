@@ -23,7 +23,7 @@ end_turn() method current sequence:
 2. Execute selected actions (immediate commitment)
 3. Process staff maintenance  
 4. Process opponent actions
-5. trigger_events() ← EVENTS HAPPEN AFTER ACTIONS!
+5. trigger_events() <- EVENTS HAPPEN AFTER ACTIONS!
 6. Check milestones
 7. Handle deferred events  
 8. Increment turn counter

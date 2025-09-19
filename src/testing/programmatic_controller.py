@@ -555,19 +555,19 @@ if __name__ == "__main__":
     # Test basic functionality
     try:
         controller = ProgrammaticGameController(seed="demo-test-123")
-        print(f"✓ Controller initialized with seed: {controller.initial_snapshot.seed}")
+        print(f"PASS Controller initialized with seed: {controller.initial_snapshot.seed}")
         
         # Test action execution
         result = controller.execute_action("hire_staff", {"count": 2})
-        print(f"✓ Action executed: {result.action_id} - Success: {result.success}")
+        print(f"PASS Action executed: {result.action_id} - Success: {result.success}")
         
         # Test state snapshot
         state = controller.get_state_snapshot()
-        print(f"✓ State snapshot: Turn {state.turn}, Money ${state.money:,}")
+        print(f"PASS State snapshot: Turn {state.turn}, Money ${state.money:,}")
         
         # Test performance
         summary = controller.get_execution_summary()
-        print(f"✓ Performance: {summary['actions_per_second']:.2f} actions/second")
+        print(f"PASS Performance: {summary['actions_per_second']:.2f} actions/second")
         
         print("\n[SUCCESS] Programmatic controller is functional!")
         

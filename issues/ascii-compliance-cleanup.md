@@ -10,36 +10,36 @@ Remove Unicode characters (emojis, special symbols) from all project documentati
 ## Files Requiring Cleanup
 
 ### README.md
-- Line 92: 🆕 **PRIVACY-FIRST SYSTEMS:**
-- Line 98: 🎯 **DETERMINISTIC GAMEPLAY:**
-- Line 104: 📊 **ADVANCED ANALYTICS (OPT-IN):**
-- Line 110: 🏦 **ECONOMIC CYCLES & FUNDING VOLATILITY:**
-- Line 116: 🎮 **ENHANCED NEW PLAYER EXPERIENCE:**
-- Line 122: 🏆 **PRIVACY-RESPECTING LEADERBOARDS:**
-- Line 218: Settings → Privacy → [Configure all privacy options]
-- Line 238: 🔒 **YOUR DATA STAYS YOURS:**
-- Line 244: 🎮 **PRIVACY-ENHANCED GAMING:**
-- Line 250: 📋 **TRANSPARENT PRACTICES:**
+- Line 92: ? **PRIVACY-FIRST SYSTEMS:**
+- Line 98: TARGET **DETERMINISTIC GAMEPLAY:**
+- Line 104: CHART **ADVANCED ANALYTICS (OPT-IN):**
+- Line 110: ? **ECONOMIC CYCLES & FUNDING VOLATILITY:**
+- Line 116: GAME **ENHANCED NEW PLAYER EXPERIENCE:**
+- Line 122: TROPHY **PRIVACY-RESPECTING LEADERBOARDS:**
+- Line 218: Settings -> Privacy -> [Configure all privacy options]
+- Line 238: ? **YOUR DATA STAYS YOURS:**
+- Line 244: GAME **PRIVACY-ENHANCED GAMING:**
+- Line 250: LIST **TRANSPARENT PRACTICES:**
 
 ### docs/PLAYERGUIDE.md
-- Line 53: **🎯 For First-Time Players:**
-- Line 82: **Dismissing Help**: Click the × button
-- Line 94: **🔊 Audio Settings:**
-- Line 99: **⚙️ Game Configuration:**
-- Line 105: **🎮 Gameplay Settings:**
-- Line 111: **♿ Accessibility:**
-- Line 116: **⌨️ Keybindings:**
-- Line 175-182: Resource icons (💰, 👥, ⭐, ⚡, ☢️, 🖥️, 📄, 🎯)
-- Line 269: Arrow keys ↑↓ or mouse
+- Line 53: **TARGET For First-Time Players:**
+- Line 82: **Dismissing Help**: Click the ? button
+- Line 94: **? Audio Settings:**
+- Line 99: **SETTINGS Game Configuration:**
+- Line 105: **GAME Gameplay Settings:**
+- Line 111: **? Accessibility:**
+- Line 116: **? Keybindings:**
+- Line 175-182: Resource icons (?, ?, STAR, FAST, ?, ?, ?, TARGET)
+- Line 269: Arrow keys ^v or mouse
 
 ### Additional Files
 - PYLANCE_CLEANUP_ISSUE.md: Various emoji usage in status indicators
 
 ## Implementation Strategy
 1. Replace emoji headers with **NEW:**, **FEATURE:** style prefixes
-2. Convert arrow symbols to ASCII equivalents (up/down arrows → "up/down")
+2. Convert arrow symbols to ASCII equivalents (up/down arrows -> "up/down")
 3. Replace resource icons with text labels or ASCII symbols
-4. Convert special characters (→, ×) to ASCII equivalents (=>, X)
+4. Convert special characters (->, ?) to ASCII equivalents (=>, X)
 
 ## Acceptance Criteria
 - [ ] All files pass ASCII-only validation

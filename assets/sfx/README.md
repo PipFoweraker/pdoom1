@@ -14,10 +14,10 @@ This directory will contain sound effect files for PDoom1.
 ## Organization
 ```
 sfx/
-├── weapons/          # Weapon-related sounds
-├── ambient/          # Background/environment sounds
-├── ui/               # User interface sounds
-└── enemy/            # Enemy-related sounds
+? weapons/          # Weapon-related sounds
+? ambient/          # Background/environment sounds
+? ui/               # User interface sounds
+? enemy/            # Enemy-related sounds
 ```
 
 ## Audio Specifications

@@ -36,10 +36,10 @@ Each hat should have a corresponding JSON file with metadata:
 ## Organization
 ```
 hats/
-├── common/           # Common/default hats
-├── rare/            # Rare unlockable hats
-├── legendary/       # Legendary/special hats
-└── seasonal/        # Holiday/seasonal hats
+? common/           # Common/default hats
+? rare/            # Rare unlockable hats
+? legendary/       # Legendary/special hats
+? seasonal/        # Holiday/seasonal hats
 ```
 
 ## Unlock Conditions

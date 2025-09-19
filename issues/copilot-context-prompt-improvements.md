@@ -7,7 +7,7 @@
 
 ## Background
 
-After successfully implementing a comprehensive branching strategy and cleaning up the repository (59 → 7 branches, 88% reduction), several context prompt improvements became apparent that would make future Git/repository management sessions more efficient.
+After successfully implementing a comprehensive branching strategy and cleaning up the repository (59 -> 7 branches, 88% reduction), several context prompt improvements became apparent that would make future Git/repository management sessions more efficient.
 
 ## Problem Statement
 
@@ -25,7 +25,7 @@ Current copilot instructions lack specific context about:
 ## Repository State Management
 
 ### Current Branching Strategy
-- **Main workflow**: main → develop → feature/* → hotfix/*
+- **Main workflow**: main -> develop -> feature/* -> hotfix/*
 - **Protection rules**: [Enabled/Disabled] branch protection on main/develop
 - **Cleanup status**: Last cleanup performed on [date], reduced from X to Y branches
 - **Active branches**: List current feature/hotfix branches in progress
@@ -94,7 +94,7 @@ Current copilot instructions lack specific context about:
 - **Tools**: Complete branch management toolkit implemented
 - **Documentation**: Comprehensive branching strategy documented
 - **Workflow**: Hotfix workflow tested and validated (v0.2.12-hotfix)
-- **Cleanup**: 88% branch reduction completed (59 → 7 branches)
+- **Cleanup**: 88% branch reduction completed (59 -> 7 branches)
 
 ## Action Items
 

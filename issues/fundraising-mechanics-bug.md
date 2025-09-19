@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## 🔴 Critical Issue: Fundraising Mechanics Bug
+## ? Critical Issue: Fundraising Mechanics Bug
 
 **Version**: v0.3.0
 **Priority**: Critical (affects economic gameplay)

@@ -1,6 +1,6 @@
 # Enhanced Context Prompt for P(Doom) Development
 
-## 📋 **Core Project Context**
+## LIST **Core Project Context**
 
 **Project**: P(Doom) - AI Safety Strategy Game  
 **Language**: Python 3.9+ with pygame  
@@ -9,7 +9,7 @@
 **Development Phase**: Alpha Testing Ready  
 **Repository**: GitHub - PipFoweraker/pdoom1  
 
-## 🎯 **Current Development State**
+## TARGET **Current Development State**
 
 ### **Architecture Status**
 - **Modular Achievement**: 558 lines extracted from 6,240-line monolith (11.6% reduction)
@@ -30,7 +30,7 @@
 - **Verbose Logging**: Configurable detail levels for troubleshooting
 - **Debug Overlays**: Real-time performance and state information
 
-## 🔧 **Technical Validation Requirements**
+## TOOL **Technical Validation Requirements**
 
 ### **Pre-Session Validation**
 ```bash
@@ -58,7 +58,7 @@ print("All 6 modules importing successfully")
 - **Acceptable Failures**: <5 failures normal (unrelated to core functionality)
 - **Command**: `python -m unittest discover tests -v`
 
-## 🎮 **Gameplay Context**
+## GAME **Gameplay Context**
 
 ### **Core Systems**
 - **Turn-Based**: Players select actions, advance turns, manage resources
@@ -73,7 +73,7 @@ print("All 6 modules importing successfully")
 - **Performance**: Startup time, memory usage, responsiveness baselines
 - **Cross-Platform**: Windows/macOS/Linux compatibility validation
 
-## 📋 **Session Continuity Protocol**
+## LIST **Session Continuity Protocol**
 
 ### **Development Phase Awareness**
 **Current Phase**: Alpha Testing (v0.8.0)  
@@ -93,7 +93,7 @@ print("All 6 modules importing successfully")
 **Type Coverage**: Comprehensive annotations maintained throughout refactoring  
 **Cross-Platform**: Validate on multiple OS when architectural changes made  
 
-## 🚀 **Success Metrics and Standards**
+## LAUNCH **Success Metrics and Standards**
 
 ### **Code Quality Standards**
 - **Type Annotations**: Maintain comprehensive typing (pygame.Surface, Optional[Dict], Tuple[bool, str])
@@ -120,4 +120,4 @@ print("All 6 modules importing successfully")
 **Community Readiness**: Alpha testing features complete, documentation organized  
 **Next Focus**: Quality assurance, performance validation, community engagement  
 
-**🎯 The project is in excellent shape for systematic development and community collaboration!**
+**TARGET The project is in excellent shape for systematic development and community collaboration!**

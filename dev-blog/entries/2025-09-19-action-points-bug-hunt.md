@@ -57,10 +57,10 @@ Conducted systematic investigation and resolution of critical Action Points syst
 ### Key Code Changes
 ```python
 # REMOVED from end_turn() method - this was causing double deduction:
-# self.action_points -= ap_cost  # ❌ Already deducted during selection
+# self.action_points -= ap_cost  # ERROR Already deducted during selection
 
 # KEPT in _handle_action_selection() method:
-self.action_points -= ap_cost  # ✅ Immediate player feedback
+self.action_points -= ap_cost  # OK Immediate player feedback
 ```
 
 ### Testing Strategy

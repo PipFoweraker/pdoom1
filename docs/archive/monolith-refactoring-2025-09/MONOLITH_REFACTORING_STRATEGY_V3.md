@@ -18,11 +18,11 @@ The `refactor/monolith-breakdown` branch had:
 **Target**: Extract 3-5 self-contained modules from `game_state.py` (6,239 lines)
 
 #### Extraction Candidates (Minimal Risk)
-1. **Constants & Enums** → `src/core/game_constants.py` (~100 lines)
-2. **Utility Functions** → `src/core/game_utils.py` (~200 lines)  
-3. **Validation Logic** → `src/core/validators.py` (~300 lines)
-4. **Display Helpers** → `src/core/display_helpers.py` (~150 lines)
-5. **Save/Load Logic** → `src/core/persistence.py` (~400 lines)
+1. **Constants & Enums** -> `src/core/game_constants.py` (~100 lines)
+2. **Utility Functions** -> `src/core/game_utils.py` (~200 lines)  
+3. **Validation Logic** -> `src/core/validators.py` (~300 lines)
+4. **Display Helpers** -> `src/core/display_helpers.py` (~150 lines)
+5. **Save/Load Logic** -> `src/core/persistence.py` (~400 lines)
 
 **Success Metrics**: 
 - Reduce `game_state.py` by 1,000+ lines (15-20%)
@@ -34,9 +34,9 @@ The `refactor/monolith-breakdown` branch had:
 **Target**: Extract event handling from `main.py` (3,064 lines)
 
 #### Extraction Candidates
-1. **Input Processing** → `src/core/input_handler.py` (~400 lines)
-2. **Event Management** → `src/core/event_manager.py` (~300 lines)
-3. **Screen Management** → `src/core/screen_manager.py` (~200 lines)
+1. **Input Processing** -> `src/core/input_handler.py` (~400 lines)
+2. **Event Management** -> `src/core/event_manager.py` (~300 lines)
+3. **Screen Management** -> `src/core/screen_manager.py` (~200 lines)
 
 ### Phase 3: UI Stabilization (Week 3)
 **Target**: Stabilize existing UI extractions or create safer alternatives
@@ -147,8 +147,8 @@ python dev-blog/create_entry.py development-session extract-{module-name}
 ## Success Metrics
 
 ### Quantitative Goals
-- **game_state.py**: 6,239 → ~5,000 lines (20% reduction)
-- **main.py**: 3,064 → ~2,400 lines (20% reduction)
+- **game_state.py**: 6,239 -> ~5,000 lines (20% reduction)
+- **main.py**: 3,064 -> ~2,400 lines (20% reduction)
 - **Total refactored**: ~1,500 lines moved to modular structure
 - **Test coverage**: Maintained at 507+ tests
 - **Performance**: No degradation in startup time

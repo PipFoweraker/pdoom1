@@ -84,7 +84,7 @@ S       Save (when applicable)
 
 ### Navigation
 ```
-↑↓←→    Navigate UI elements
+^v<-->    Navigate UI elements
 Tab     Next element
 Shift+Tab Previous element
 Enter   Activate/Select

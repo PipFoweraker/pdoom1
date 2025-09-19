@@ -144,10 +144,10 @@ report.save_to_file("strategy_report.json")
 ## ASCII-Only Design
 
 All commands and content use standard ASCII characters for maximum compatibility:
-- ✓ Works in all text editors and terminals
-- ✓ Copy-paste friendly across all platforms
-- ✓ No Unicode or special character dependencies
-- ✓ Safe for configuration files and documentation
+- PASS Works in all text editors and terminals
+- PASS Copy-paste friendly across all platforms
+- PASS No Unicode or special character dependencies
+- PASS Safe for configuration files and documentation
 
 ## Integration with Existing Code
 

@@ -1471,16 +1471,6 @@ class GameState:
             if action_summary.get("failed", 0) > 0:
                 self.messages.append(f"Productivity Issues: {action_summary['failed']} employees unable to perform specialized tasks")
             
-        # Check if research threshold reached for paper publication
-        if self.research_progress >= 100:
-            papers_to_publish = self.research_progress // 100
-            self.papers_published += papers_to_publish
-            self.research_progress = self.research_progress % 100
-            self._add('reputation', papers_to_publish * 5)  # Papers boost reputation
-            self.messages.append(f"Research paper{'s' if papers_to_publish > 1 else ''} published! (+{papers_to_publish}, total: {self.papers_published})")
-            # Play Zabinga sound for paper completion
-            self.sound_manager.play_zabinga_sound()
-            
         # Update compute consumption
         self.compute = max(0, self.compute - compute_assigned)
         if compute_assigned > 0:
@@ -2449,6 +2439,16 @@ class GameState:
 
         # Update employee productivity and compute consumption (weekly cycle)
         self._update_employee_productivity()
+
+        # Check if research threshold reached for paper publication
+        if self.research_progress >= 100:
+            papers_to_publish = self.research_progress // 100
+            self.papers_published += papers_to_publish
+            self.research_progress = self.research_progress % 100
+            self._add('reputation', papers_to_publish * 5)  # Papers boost reputation
+            self.messages.append(f"Research paper{'s' if papers_to_publish > 1 else ''} published! (+{papers_to_publish}, total: {self.papers_published})")
+            # Play Zabinga sound for paper completion
+            self.sound_manager.play_zabinga_sound()
 
         # Doom rises over time, faster with more staff
         doom_rise = 2 + self.staff // 5 + (1 if self.doom > 60 else 0)

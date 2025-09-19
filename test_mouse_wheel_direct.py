@@ -17,7 +17,7 @@ from src.core.game_state import GameState
 
 def test_mouse_wheel_direct():
     """Test mouse wheel events directly by simulating pygame events."""
-    print("🧪 Testing Mouse Wheel Functionality...")
+    print("? Testing Mouse Wheel Functionality...")
     
     # Initialize pygame
     pygame.init()
@@ -39,13 +39,13 @@ def test_mouse_wheel_direct():
         game_state.messages = ["Message 1", "Message 2", "Message 3"]
         game_state.event_log_scroll_offset = 0
         
-        print(f"✓ Game state created successfully")
+        print(f"PASS Game state created successfully")
         print(f"  - Event log history: {len(game_state.event_log_history)} items")
         print(f"  - Messages: {len(game_state.messages)} items")
         print(f"  - Initial scroll offset: {game_state.event_log_scroll_offset}")
         
         # Test mouse wheel up (simulating event.y > 0)
-        print("\n🖱️ Testing Mouse Wheel UP...")
+        print("\n? Testing Mouse Wheel UP...")
         initial_offset = game_state.event_log_scroll_offset
         
         # Simulate the exact logic from main.py MOUSEWHEEL handler
@@ -56,10 +56,10 @@ def test_mouse_wheel_direct():
             game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 3)
             
         print(f"  - Scroll offset after wheel up: {game_state.event_log_scroll_offset}")
-        print(f"  - Change: {initial_offset} → {game_state.event_log_scroll_offset}")
+        print(f"  - Change: {initial_offset} -> {game_state.event_log_scroll_offset}")
         
         # Test mouse wheel down (simulating event.y < 0)
-        print("\n🖱️ Testing Mouse Wheel DOWN...")
+        print("\n? Testing Mouse Wheel DOWN...")
         initial_offset = game_state.event_log_scroll_offset
         
         if (current_state == 'game' and game_state and 
@@ -70,10 +70,10 @@ def test_mouse_wheel_direct():
             
         print(f"  - Max scroll calculated: {max_scroll}")
         print(f"  - Scroll offset after wheel down: {game_state.event_log_scroll_offset}")
-        print(f"  - Change: {initial_offset} → {game_state.event_log_scroll_offset}")
+        print(f"  - Change: {initial_offset} -> {game_state.event_log_scroll_offset}")
         
         # Test multiple scroll operations
-        print("\n🔄 Testing Multiple Scroll Operations...")
+        print("\nREFRESH Testing Multiple Scroll Operations...")
         for i in range(5):
             # Scroll down
             max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
@@ -86,7 +86,7 @@ def test_mouse_wheel_direct():
             print(f"  - After scroll up {i+1}: offset = {game_state.event_log_scroll_offset}")
             
         # Test edge cases
-        print("\n🧪 Testing Edge Cases...")
+        print("\n? Testing Edge Cases...")
         
         # Test with empty event log
         game_state.event_log_history = []
@@ -105,15 +105,15 @@ def test_mouse_wheel_direct():
             getattr(game_state_test, 'scrollable_event_log_enabled', False)):
             print("  - This should not execute (game_state is None)")
         else:
-            print("  - ✓ None game_state handled safely")
+            print("  - PASS None game_state handled safely")
             
-        print("\n✅ All mouse wheel tests completed successfully!")
-        print("🎉 Mouse wheel functionality is SAFE and STABLE!")
+        print("\nOK All mouse wheel tests completed successfully!")
+        print("PARTY Mouse wheel functionality is SAFE and STABLE!")
         
         return True
         
     except Exception as e:
-        print(f"\n❌ Mouse wheel test FAILED: {e}")
+        print(f"\nERROR Mouse wheel test FAILED: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -124,10 +124,10 @@ def test_mouse_wheel_direct():
 if __name__ == "__main__":
     success = test_mouse_wheel_direct()
     if success:
-        print("\n🏆 VERDICT: Mouse wheel handling is working correctly!")
+        print("\nTROPHY VERDICT: Mouse wheel handling is working correctly!")
         print("   No crashes detected. Issue #261 appears to be RESOLVED.")
         sys.exit(0)
     else:
-        print("\n💥 VERDICT: Mouse wheel handling has issues!")
+        print("\n? VERDICT: Mouse wheel handling has issues!")
         print("   Crashes detected. Issue #261 needs fixing.")
         sys.exit(1)

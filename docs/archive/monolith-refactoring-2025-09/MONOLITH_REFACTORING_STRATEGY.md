@@ -2,16 +2,16 @@
 
 ## Executive Summary
 
-P(Doom) has successfully completed **Phase 1: UI Monolith Breakdown**, achieving a 47% reduction in ui.py size (4,982 → 2,664 lines). This document outlines the next phases of systematic monolith reduction to improve maintainability, testability, and modularity.
+P(Doom) has successfully completed **Phase 1: UI Monolith Breakdown**, achieving a 47% reduction in ui.py size (4,982 -> 2,664 lines). This document outlines the next phases of systematic monolith reduction to improve maintainability, testability, and modularity.
 
 ## Current Monolith Status
 
-### ✅ Phase 1 Complete: UI Breakdown
-- **ui.py**: 4,982 → 2,664 lines (47% reduction)  
+### OK Phase 1 Complete: UI Breakdown
+- **ui.py**: 4,982 -> 2,664 lines (47% reduction)  
 - **Extracted modules**: `src/ui/` system with 20+ specialized modules
 - **Status**: Ready for merge validation and Phase 2 initiation
 
-### 🎯 Remaining Monoliths (Priority Order)
+### TARGET Remaining Monoliths (Priority Order)
 
 1. **game_state.py**: 5,880 lines (current target - 6% initial reduction)
 2. **main.py**: 2,749 lines (10% initial reduction) 
@@ -23,9 +23,9 @@ P(Doom) has successfully completed **Phase 1: UI Monolith Breakdown**, achieving
 ### Branch Naming Convention
 ```
 refactor/monolith-{TARGET}-phase{N}
-└── refactor/monolith-game-state-phase1
-└── refactor/monolith-main-phase1  
-└── refactor/monolith-actions-phase1
+? refactor/monolith-game-state-phase1
+? refactor/monolith-main-phase1  
+? refactor/monolith-actions-phase1
 ```
 
 ### Success Metrics Per Phase
@@ -35,11 +35,11 @@ refactor/monolith-{TARGET}-phase{N}
 - **Integration Win**: Maintain all functionality and test coverage
 
 ### Phase Completion Criteria
-1. ✅ All tests pass (507+ tests, 38s runtime)
-2. ✅ Size reduction achieved (minimum 20%)
-3. ✅ Modules follow established patterns (`src/features/`, `src/core/`, `src/ui/`)
-4. ✅ Documentation updated (CHANGELOG.md, dev blog entry)
-5. ✅ Programmatic validation successful
+1. OK All tests pass (507+ tests, 38s runtime)
+2. OK Size reduction achieved (minimum 20%)
+3. OK Modules follow established patterns (`src/features/`, `src/core/`, `src/ui/`)
+4. OK Documentation updated (CHANGELOG.md, dev blog entry)
+5. OK Programmatic validation successful
 
 ## Phase 2: Game State Monolith (5,880 lines)
 
@@ -53,11 +53,11 @@ refactor/monolith-{TARGET}-phase{N}
 ### Extraction Targets
 ```
 src/core/
-├── game_state.py (core state only, ~2,000 lines target)
-├── turn_processor.py (turn logic extraction)
-├── resource_manager.py (resource calculations)
-├── action_processor.py (action validation/execution)
-└── milestone_system.py (progress tracking)
+? game_state.py (core state only, ~2,000 lines target)
+? turn_processor.py (turn logic extraction)
+? resource_manager.py (resource calculations)
+? action_processor.py (action validation/execution)
+? milestone_system.py (progress tracking)
 ```
 
 ### Quick Win Opportunities
@@ -77,11 +77,11 @@ src/core/
 ### Extraction Targets
 ```
 src/core/
-├── main.py (core loop only, ~1,000 lines target)
-├── event_processor.py (pygame event handling)
-├── input_manager.py (input processing) 
-├── game_flow_manager.py (state transitions)
-└── render_coordinator.py (display management)
+? main.py (core loop only, ~1,000 lines target)
+? event_processor.py (pygame event handling)
+? input_manager.py (input processing) 
+? game_flow_manager.py (state transitions)
+? render_coordinator.py (display management)
 ```
 
 ## Implementation Workflow
@@ -150,8 +150,8 @@ src/core/
 ## Success Metrics
 
 ### Overall Goal: 50% Monolith Reduction
-- **game_state.py**: 5,880 → ~3,000 lines (50% reduction)
-- **main.py**: 2,749 → ~1,500 lines (45% reduction)
+- **game_state.py**: 5,880 -> ~3,000 lines (50% reduction)
+- **main.py**: 2,749 -> ~1,500 lines (45% reduction)
 - **Total impact**: ~4,500 lines reorganized into modular structure
 
 ### Quality Improvements

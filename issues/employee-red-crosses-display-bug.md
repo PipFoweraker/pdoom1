@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-## 🔴 Critical Issue: Employee Red Crosses Display Bug
+## ? Critical Issue: Employee Red Crosses Display Bug
 
 **Version**: v0.3.0
 **Priority**: Critical (affects core UX)

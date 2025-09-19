@@ -7,23 +7,23 @@
  
 In this satirical strategy game, you manage a bootstrap AI safety lab racing against well-funded opponents to solve the alignment problem before everyone dies. Experience the challenge of running a scrappy nonprofit in the competitive AI safety space.
 
-## 🏆 Latest Achievement: Major Architecture Overhaul
+## TROPHY Latest Achievement: Major Architecture Overhaul
 
 **Version 0.8.0 "Modular Architecture"** represents a massive refactoring success:
 - **558 lines extracted** from monolithic code (111.6% of 500-line goal exceeded!)
 - **6 focused modules created** with clean separation of concerns
-- **10.9% reduction** in core monolith size (6,240 → 5,682 lines)
+- **10.9% reduction** in core monolith size (6,240 -> 5,682 lines)
 - **Zero functional regressions** - all game systems preserved and enhanced
 
 ### New Modular Architecture
 ```
 src/core/
-├── game_constants.py      # Core defaults and configuration
-├── ui_utils.py           # UI positioning and collision detection  
-├── verbose_logging.py    # RPG-style message formatting
-├── employee_management.py # Employee lifecycle management
-├── dialog_systems.py     # Dialog state and option management
-└── utility_functions.py  # Validation and processing utilities
+? game_constants.py      # Core defaults and configuration
+? ui_utils.py           # UI positioning and collision detection  
+? verbose_logging.py    # RPG-style message formatting
+? employee_management.py # Employee lifecycle management
+? dialog_systems.py     # Dialog state and option management
+? utility_functions.py  # Validation and processing utilities
 ```
 
 ### Key Features
@@ -34,7 +34,7 @@ src/core/
 - **[TROPHY] Competitive Leaderboards**: Seed-specific competition tracking
 - **[SPEAKER] Audio Experience**: Professional sound effects for demonstrations
 
-## 🎮 Core Features
+## GAME Core Features
 
 - **Privacy-First Design** - Your data stays under your control  
 - **Deterministic Gameplay** - Reproducible games for competitive verification  
@@ -43,7 +43,7 @@ src/core/
 
 ![Game Interface](screenshots/pdoom_screenshot_20250918_104406.png)
 
-## 🚀 Quick Start
+## LAUNCH Quick Start
 
 ### Option 1: Windows Executable (Recommended)
 
@@ -83,39 +83,39 @@ python main.py
 
 **Privacy Note:** P(Doom) is designed with privacy-first principles. All data stays local by default, and any optional features require explicit opt-in. See [docs/PRIVACY.md](docs/PRIVACY.md) for full details.
 
-## 🎯 Game Features
+## TARGET Game Features
 
-### 🏗️ **Modular Architecture (v0.8.0)**
+### ? **Modular Architecture (v0.8.0)**
 - **Clean Code Organization**: 6 focused modules extracted from monolithic structure
 - **Enhanced Maintainability**: 558 lines systematically refactored for clarity
 - **Zero Regressions**: All functionality preserved through systematic testing
 - **Developer-Friendly**: Comprehensive type annotations and documentation
 
-### 🎮 **Core Gameplay**
+### GAME **Core Gameplay**
 - **Strategic Decision Making**: Balance funding, hiring, and research priorities
 - **Realistic Economics**: $100k starting budget with authentic startup costs
 - **Competitive AI**: Face 3 opponent labs with unique strategies and capabilities
 - **12-13 Turn Games**: Extended gameplay for meaningful strategic depth
 
-### 🔒 **Privacy & Security**
+### ? **Privacy & Security**
 - **Local-First Storage**: All data stays on your device by default
 - **Pseudonymous Competition**: Compete without revealing personal information
 - **Deterministic Gameplay**: Same seed = same outcomes for fair verification
 - **Granular Privacy Controls**: Choose exactly what data to share and when
 
-### 🏆 **Competition Features**
+### TROPHY **Competition Features**
 - **Seed-Specific Leaderboards**: Each game seed has isolated competition
 - **Dual Identity Support**: Separate player names and lab names
 - **Achievement System**: Track progress across multiple playthroughs
 - **Data Export**: JSON export for custom analysis tools (opt-in)
 
-### 🔧 **Technical Features**
+### TOOL **Technical Features**
 - **Professional Audio**: Sound effects enabled by default for demonstrations
 - **Tutorial System**: Interactive guided walkthrough for new players
 - **Debug Tools**: Comprehensive development and troubleshooting utilities
 - **Cross-Platform**: Works on Windows, macOS, and Linux
 
-### 🧪 **Alpha Testing Features**
+### ? **Alpha Testing Features**
 - **Dev Mode**: Press F10 to toggle development overlay with debug information
 - **Verbose Logging**: Comprehensive action tracking and game state analysis
 - **Screenshot System**: Press `[` to capture screenshots for bug reports
@@ -124,7 +124,7 @@ python main.py
 - **Pseudonymous Only**: Compete with chosen display names, not real identities
 - **User-Controlled**: Enable/disable leaderboard participation anytime
 - **Local-First**: Scores stored locally with optional cloud sync
-## 🎲 How to Play
+## ? How to Play
 
 ### Game Overview
 You run an AI safety lab competing against 3 opponent organizations to reduce P(Doom) - the probability of AI causing human extinction. Balance your budget, hire researchers, and make strategic decisions across 12-13 turns.
@@ -159,15 +159,15 @@ You run an AI safety lab competing against 3 opponent organizations to reduce P(
 4. Research AI Safety while navigating funding challenges
 5. Compete with rival labs to reduce P(Doom) to zero!
 
-## 🛠️ Troubleshooting
+## TOOLS Troubleshooting
 
 ### Common Issues
-- **"pygame not found"** → Run `pip install pygame`
-- **"Python not found"** → Install Python 3.9+ from [python.org](https://python.org)
-- **Game won't start** → Check Python version: `python --version`
-- **Missing dependencies** → Run `pip install -r requirements.txt`
-- **Screen too small** → Game requires 1024x768 minimum resolution
-- **Keyboard not working** → Click on game window to ensure it has focus
+- **"pygame not found"** -> Run `pip install pygame`
+- **"Python not found"** -> Install Python 3.9+ from [python.org](https://python.org)
+- **Game won't start** -> Check Python version: `python --version`
+- **Missing dependencies** -> Run `pip install -r requirements.txt`
+- **Screen too small** -> Game requires 1024x768 minimum resolution
+- **Keyboard not working** -> Click on game window to ensure it has focus
 
 ### Testing Installation
 ```bash
@@ -188,7 +188,7 @@ PLAYER RESOURCES:
 
 DEVELOPER RESOURCES:  
 - Developer Guide (docs/DEVELOPERGUIDE.md) - Contributing and code structure
-## 🎮 Game Modes
+## GAME Game Modes
 
 - **Standard**: Balanced gameplay experience for casual play
 - **Deterministic**: Reproducible games using custom seeds for competition
@@ -196,7 +196,7 @@ DEVELOPER RESOURCES:
 - **Privacy Mode**: All analytics and logging disabled (default)
 - **Community Competition**: Seed-specific leaderboards with pseudonymous play
 
-## ⚙️ Configuration & Testing
+## SETTINGS Configuration & Testing
 
 **Testing Installation:**
 ```bash
@@ -211,15 +211,15 @@ python -m pytest tests/test_deterministic_rng.py -v
 ```
 
 **Privacy Controls:**
-Access privacy settings in-game via Settings → Privacy, or review [docs/PRIVACY.md](docs/PRIVACY.md) for complete documentation.
+Access privacy settings in-game via Settings -> Privacy, or review [docs/PRIVACY.md](docs/PRIVACY.md) for complete documentation.
 
-## 🧪 Alpha Testing & Development
+## ? Alpha Testing & Development
 
 **P(Doom) v0.8.0 is in active alpha development.** We welcome feedback, bug reports, and suggestions!
 
 ### Development Mode Features
 - **F10 Toggle**: Activate dev mode for detailed game state information
-- **Verbose Logging**: Enable comprehensive action tracking (Settings → Logging)
+- **Verbose Logging**: Enable comprehensive action tracking (Settings -> Logging)
 - **Debug Overlay**: Ctrl+D shows UI element boundaries and collision detection
 - **Emergency Recovery**: Ctrl+E resets game state if issues occur
 - **Screenshot Tools**: `[` key captures timestamped screenshots in `screenshots/`
@@ -228,7 +228,7 @@ Access privacy settings in-game via Settings → Privacy, or review [docs/PRIVAC
 - **Screenshots**: Use `[` key to capture visual bugs or interesting moments
 - **Log Files**: Located in `logs/` directory with detailed session information  
 - **GitHub Issues**: [Report bugs](https://github.com/PipFoweraker/pdoom1/issues) with screenshots and log excerpts
-- **Verbose Mode**: Enable in Settings → Logging for detailed troubleshooting data
+- **Verbose Mode**: Enable in Settings -> Logging for detailed troubleshooting data
 
 ### Alpha Testing Checklist
 - [ ] Test different game seeds for reproducibility issues
@@ -237,7 +237,7 @@ Access privacy settings in-game via Settings → Privacy, or review [docs/PRIVAC
 - [ ] Test save/load functionality and settings persistence
 - [ ] Verify privacy controls work as expected
 
-## 🔒 Privacy & Data Protection
+## ? Privacy & Data Protection
 
 P(Doom) is built with **privacy-first design principles**:
 
@@ -254,7 +254,7 @@ P(Doom) is built with **privacy-first design principles**:
 - **User Ownership**: Export, modify, or delete your data anytime
 - **Full Documentation**: Complete privacy policy at [docs/PRIVACY.md](docs/PRIVACY.md)
 
-## 🛠️ Development & Contributing
+## TOOLS Development & Contributing
 
 ### Running Tests
 ```bash
@@ -284,7 +284,7 @@ python tools/dev_tool.py --list
 - **Privacy Policy**: [docs/PRIVACY.md](docs/PRIVACY.md) - Complete privacy documentation
 - **Technical Documentation**: See organized [docs/](docs/) directory structure
 
-## 📋 Project Status
+## LIST Project Status
 
 **Current Version**: v0.8.0 "Modular Architecture" (Alpha)  
 **Status**: Major refactoring complete with enhanced stability  
@@ -299,7 +299,7 @@ python tools/dev_tool.py --list
 - [ ] Community feedback integration
 - [ ] Performance optimization and stability testing
 
-## 📄 License & Attribution
+## ? License & Attribution
 
 **Educational & Satirical Use Only** - Not affiliated with any AI organization
 

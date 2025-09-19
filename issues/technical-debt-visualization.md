@@ -16,7 +16,7 @@ Implement comprehensive UI visualization for the technical debt system introduce
 
 ### 1. Technical Debt Meter
 - **Visual Indicator**: Progress bar or meter showing current technical debt level
-- **Color Coding**: Green (low debt) → Yellow (moderate) → Red (high debt)
+- **Color Coding**: Green (low debt) -> Yellow (moderate) -> Red (high debt)
 - **Placement**: Integrate into main UI resource panel alongside money, doom, reputation
 - **Tooltips**: Hover details explaining current debt impact
 

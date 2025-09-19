@@ -1,4 +1,4 @@
-# Office Cat Photo Contributions 🐱
+# Office Cat Photo Contributions ?
 
 ## Dev Incentive System: Supply Cat Photos!
 

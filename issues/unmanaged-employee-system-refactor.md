@@ -6,16 +6,16 @@ The current unmanaged employee productivity penalty system has poor user experie
 ## Current Problems
 
 ### 1. **Poor User Experience**
-- ❌ Employees become unproductive immediately with no warning
-- ❌ Red X visual indicators appear suddenly without explanation
-- ❌ No clear mechanism for players to understand or fix the issue
-- ❌ No progressive warning system before penalties kick in
+- ERROR Employees become unproductive immediately with no warning
+- ERROR Red X visual indicators appear suddenly without explanation
+- ERROR No clear mechanism for players to understand or fix the issue
+- ERROR No progressive warning system before penalties kick in
 
 ### 2. **Architectural Issues**
-- ❌ Logic scattered across multiple files (`game_state.py`, `ui.py`, `ui_new/layouts/three_column.py`)
-- ❌ Complex productivity calculations mixed with visual rendering
-- ❌ Inconsistent implementation between UI systems
-- ❌ Hard to maintain and modify
+- ERROR Logic scattered across multiple files (`game_state.py`, `ui.py`, `ui_new/layouts/three_column.py`)
+- ERROR Complex productivity calculations mixed with visual rendering
+- ERROR Inconsistent implementation between UI systems
+- ERROR Hard to maintain and modify
 
 ### 3. **Current System Functions to Refactor**
 
@@ -46,35 +46,35 @@ get_researcher_productivity_effects()    # Multiple calls - Researcher-specific 
 ### 1. **Separate Concerns**
 ```
 Game Logic Layer (src/core/):
-├── Employee productivity calculations
-├── Management capacity rules
-└── Penalty application
+? Employee productivity calculations
+? Management capacity rules
+? Penalty application
 
 UI Feedback Layer (src/ui/):
-├── Warning system (tooltips, notifications)
-├── Progressive visual indicators
-└── Management action suggestions
+? Warning system (tooltips, notifications)
+? Progressive visual indicators
+? Management action suggestions
 
 Event System Layer (src/events/):
-├── Management capacity warnings
-├── Productivity decline notifications
-└── Tutorial integration for new players
+? Management capacity warnings
+? Productivity decline notifications
+? Tutorial integration for new players
 ```
 
 ### 2. **Improved User Experience Flow**
 
 #### Phase 1: Early Warning (at 8 employees)
-- 🟡 Yellow tooltip warning: "Consider hiring management staff"
-- 📝 Event message: "Your team is growing! Management will help maintain productivity."
+- ? Yellow tooltip warning: "Consider hiring management staff"
+- NOTE Event message: "Your team is growing! Management will help maintain productivity."
 
 #### Phase 2: Approaching Limit (at 9 employees)
-- 🟠 Orange notification: "Management capacity reached. New hires may be less productive."
-- 💡 Action suggestion: "Hire Admin Staff or promote experienced employees"
+- ? Orange notification: "Management capacity reached. New hires may be less productive."
+- IDEA Action suggestion: "Hire Admin Staff or promote experienced employees"
 
 #### Phase 3: Over Limit (10+ employees)
-- 🔴 Clear notification: "Unmanaged employees are 50% less productive"
-- 🛠️ Specific remediation options presented
-- 📊 Clear productivity impact shown in tooltips
+- ? Clear notification: "Unmanaged employees are 50% less productive"
+- TOOLS Specific remediation options presented
+- CHART Clear productivity impact shown in tooltips
 
 ### 3. **Clean Architecture Implementation**
 
@@ -100,7 +100,7 @@ class ManagementEvents:
 
 ## Implementation Plan
 
-### Phase 1: Remove Confusing Visuals ✅
+### Phase 1: Remove Confusing Visuals OK
 - [x] Remove red X/slash indicators from employee blobs
 - [x] Keep core productivity penalty mechanic functional
 - [x] Preserve existing game balance
@@ -123,16 +123,16 @@ class ManagementEvents:
 ## Success Criteria
 
 ### User Experience
-- ✅ Players understand why productivity penalties occur
-- ✅ Clear warning system before penalties apply
-- ✅ Obvious paths to remedy management issues
-- ✅ Progressive feedback rather than sudden changes
+- OK Players understand why productivity penalties occur
+- OK Clear warning system before penalties apply
+- OK Obvious paths to remedy management issues
+- OK Progressive feedback rather than sudden changes
 
 ### Code Quality
-- ✅ Clear separation between game logic and UI
-- ✅ Consistent implementation across UI systems
-- ✅ Easy to maintain and extend
-- ✅ Well-tested productivity calculations
+- OK Clear separation between game logic and UI
+- OK Consistent implementation across UI systems
+- OK Easy to maintain and extend
+- OK Well-tested productivity calculations
 
 ## Files Affected
 

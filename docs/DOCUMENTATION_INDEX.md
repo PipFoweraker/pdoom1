@@ -12,12 +12,12 @@ This document provides an overview of the organized documentation structure foll
 ### New Module Structure
 ```
 src/core/
-├── game_constants.py      # Core defaults and configuration constants
-├── ui_utils.py           # UI positioning and collision detection utilities  
-├── verbose_logging.py    # RPG-style message formatting (160 lines)
-├── employee_management.py # Employee blob lifecycle management (38 lines)
-├── dialog_systems.py     # Dialog state and option management (153 lines)
-└── utility_functions.py  # Validation and processing utilities (171 lines)
+? game_constants.py      # Core defaults and configuration constants
+? ui_utils.py           # UI positioning and collision detection utilities  
+? verbose_logging.py    # RPG-style message formatting (160 lines)
+? employee_management.py # Employee blob lifecycle management (38 lines)
+? dialog_systems.py     # Dialog state and option management (153 lines)
+? utility_functions.py  # Validation and processing utilities (171 lines)
 ```
 
 ## Organized Documentation Structure

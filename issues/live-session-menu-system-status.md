@@ -2,7 +2,7 @@
 
 ## Current Menu System State
 
-### ✅ Completed Improvements
+### OK Completed Improvements
 Based on existing documentation, significant menu work has been completed:
 
 #### Enhanced Menu Manager (`src/ui/enhanced_menu_manager.py`)
@@ -21,7 +21,7 @@ Based on existing documentation, significant menu work has been completed:
 - **Professional Polish**: No more unprofessional popups at game start
 - **Debug Features**: Ctrl+D, Ctrl+E, Ctrl+R for troubleshooting
 
-### 🔍 Identified Issues Still to Address
+### SEARCH Identified Issues Still to Address
 
 #### Navigation Issues
 - **Seed Selection Arrow Navigation**: Up/down arrows broken (`issues/seed-selection-arrow-navigation.md`)
@@ -32,13 +32,13 @@ Based on existing documentation, significant menu work has been completed:
 
 ## Live Session Assessment
 
-### ✅ What's Working Well
+### OK What's Working Well
 1. **Enhanced Menu Manager**: Solid foundation for menu handling
 2. **Navigation Stack**: Proper back button behavior implemented
 3. **Settings Organization**: Well-structured submenu system
 4. **Context Window**: Rich information display system
 
-### ⚠️ Areas for Live Session Focus
+### WARNING Areas for Live Session Focus
 1. **Arrow Key Navigation**: Fix broken up/down navigation in seed selection
 2. **Keyboard Shortcuts**: Resolve positioning and navigation issues
 3. **Menu Polish**: Any remaining rough edges in menu transitions
