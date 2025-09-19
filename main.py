@@ -2363,24 +2363,30 @@ def main():
                             seed_input += event.unicode
                             
                     elif current_state == 'game':
+                        # Track if this keyboard event was consumed to prevent multiple processing
+                        key_event_consumed = False
 
                         # Help key (H) - always available regardless of overlay state
                         if event.key == pygame.K_h:
                             overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
                             overlay_title = "Player Guide"
                             push_navigation_state('overlay')
+                            key_event_consumed = True
                         
                         # Stepwise tutorial keyboard handling (takes precedence when tutorial is active)
-                        elif onboarding.show_tutorial_overlay:
+                        elif not key_event_consumed and onboarding.show_tutorial_overlay:
                             if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                                 # Advance tutorial step
                                 onboarding.advance_stepwise_tutorial()
+                                key_event_consumed = True
                             elif event.key == pygame.K_BACKSPACE:
                                 # Go back in tutorial
                                 onboarding.go_back_stepwise_tutorial()
+                                key_event_consumed = True
                             elif event.key == pygame.K_ESCAPE or event.key == pygame.K_s:
                                 # Skip tutorial (ESC or S key)
                                 onboarding.dismiss_tutorial()
+                                key_event_consumed = True
                         
                         # Help key (H) - redundant check removed since it's handled above
                         
@@ -2454,28 +2460,6 @@ def main():
                         elif _handle_debug_console_keypress(event.key, game_state):
                             pass  # Debug console manager handled it
                         
-                        # DEV MODE toggle (F10)
-                        elif event.key == pygame.K_F10:
-                            try:
-                                from src.services.dev_mode import toggle_dev_mode, get_dev_mode_manager
-                                new_state = toggle_dev_mode()
-                                status_msg = "DEV MODE ON" if new_state else "DEV MODE OFF"
-                                
-                                # Initialize verbose logging if DEV MODE was enabled
-                                if new_state and game_state:
-                                    dev_manager = get_dev_mode_manager()
-                                    dev_manager.initialize_verbose_logging(game_state.seed)
-                                    if dev_manager.is_verbose_logging_enabled():
-                                        status_msg += " | VERBOSE LOGGING ON"
-                                
-                                if game_state:
-                                    game_state.add_message(f"System: {status_msg} (F10)")
-                                    # Play UI sound
-                                    if hasattr(game_state, 'sound_manager'):
-                                        game_state.sound_manager.play_sound('ui_accept')
-                            except ImportError:
-                                pass  # Silently fail if dev_mode module not available
-                        
                         # Dev tools menu (F11) - only available in DEV MODE
                         elif event.key == pygame.K_F11:
                             try:
@@ -2489,7 +2473,7 @@ def main():
                             except ImportError:
                                 pass
                         
-                        elif event.key == pygame.K_RETURN and first_time_help_content:
+                        elif not key_event_consumed and event.key == pygame.K_RETURN and first_time_help_content:
                             # Mark mechanic as seen so it won't reappear
                             if current_help_mechanic:
                                 onboarding.mark_mechanic_seen(current_help_mechanic)
@@ -2499,6 +2483,7 @@ def main():
                             first_time_help_content = None
                             first_time_help_close_button = None
                             current_help_mechanic = None
+                            key_event_consumed = True
                         
                         # Arrow key scrolling for scrollable event log
                         elif game_state and game_state.scrollable_event_log_enabled:
@@ -2589,7 +2574,7 @@ def main():
                                         pass  # Error feedback already provided by end_turn method
                         
                         # Handle ENTER as alternative end turn key when space is configured
-                        elif event.key == pygame.K_RETURN and game_state and not game_state.game_over:
+                        elif not key_event_consumed and event.key == pygame.K_RETURN and game_state and not game_state.game_over:
                             from src.services.keybinding_manager import keybinding_manager
                             end_turn_key = keybinding_manager.get_key_for_action("end_turn")
                             
@@ -2626,6 +2611,7 @@ def main():
                                 else:
                                     if not game_state.end_turn():
                                         pass
+                            key_event_consumed = True
                         
                         # Regular game keyboard handling (only if tutorial is not active)
                         elif not onboarding.show_tutorial_overlay:
