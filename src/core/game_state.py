@@ -50,6 +50,10 @@ from src.core.employee_management import (
 from src.core.dialog_systems import (
     DialogManager, FundraisingDialogBuilder, ResearchDialogBuilder, DialogValidator
 )
+from src.core.utility_functions import (
+    is_upgrade_available, check_point_in_rect, process_achievements_and_warnings_complete,
+    filter_available_upgrades, get_milestone_check_functions
+)
 
 class GameState:
     def _get_action_cost(self, action: Dict[str, Any]) -> int:
@@ -1638,12 +1642,12 @@ class GameState:
         # Check context window minimize/maximize button FIRST
         if (hasattr(self, 'context_window_button_rect') and 
             self.context_window_button_rect and 
-            self._in_rect(mouse_pos, self.context_window_button_rect)):
+            check_point_in_rect(mouse_pos, self.context_window_button_rect)):
             self.context_window_minimized = not getattr(self, 'context_window_minimized', False)
             return None
         
         # Check End Turn button
-        if hasattr(self, 'endturn_rect') and self.endturn_rect and self._in_rect(mouse_pos, self.endturn_rect):
+        if hasattr(self, 'endturn_rect') and self.endturn_rect and check_point_in_rect(mouse_pos, self.endturn_rect):
             if not self.game_over:
                 self.end_turn()
                 return None
@@ -1651,7 +1655,7 @@ class GameState:
         # Check 3-column action buttons
         if hasattr(self, 'three_column_button_rects'):
             for button_rect, original_idx in self.three_column_button_rects:
-                if self._in_rect(mouse_pos, button_rect):
+                if check_point_in_rect(mouse_pos, button_rect):
                     if not self.game_over and original_idx < len(self.gameplay_actions):
                         # Check for undo (if action is already selected, try to undo it)
                         is_undo = original_idx in self.selected_gameplay_actions
@@ -1665,13 +1669,13 @@ class GameState:
         # Handle popup events if active
         if hasattr(self, 'popup_button_rects'):
             for button_rect, action, event in self.popup_button_rects:
-                if self._in_rect(mouse_pos, button_rect):
+                if check_point_in_rect(mouse_pos, button_rect):
                     self._handle_popup_action(action, event)
                     return None
         
         # Handle tutorial dismiss if active
         if hasattr(self, 'tutorial_dismiss_rect') and self.tutorial_dismiss_rect:
-            if self._in_rect(mouse_pos, self.tutorial_dismiss_rect):
+            if check_point_in_rect(mouse_pos, self.tutorial_dismiss_rect):
                 self.dismiss_tutorial_message()
                 return None
         
@@ -1682,31 +1686,31 @@ class GameState:
         # Check context window minimize/maximize button FIRST
         if (hasattr(self, 'context_window_button_rect') and 
             self.context_window_button_rect and 
-            self._in_rect(mouse_pos, self.context_window_button_rect)):
+            check_point_in_rect(mouse_pos, self.context_window_button_rect)):
             self.context_window_minimized = not getattr(self, 'context_window_minimized', False)
             return None
         
         # Check End Turn button FIRST for reliability (Issue #3 requirement)
         btn_rect = self._get_endturn_rect(w, h)
-        if self._in_rect(mouse_pos, btn_rect) and not self.game_over:
+        if check_point_in_rect(mouse_pos, btn_rect) and not self.game_over:
             # Try to end turn, sound feedback handled in end_turn method
             self.end_turn()
             return None
         
         # Activity log drag functionality - Handle after end turn check
         activity_log_rect = self._get_activity_log_rect(w, h)
-        if self._in_rect(mouse_pos, activity_log_rect):
+        if check_point_in_rect(mouse_pos, activity_log_rect):
             # Don't start drag if clicking on minimize/expand buttons
             if "compact_activity_display" in self.upgrade_effects:
                 if hasattr(self, 'activity_log_minimized') and self.activity_log_minimized:
                     expand_rect = self._get_activity_log_expand_button_rect(w, h)
-                    if self._in_rect(mouse_pos, expand_rect):
+                    if check_point_in_rect(mouse_pos, expand_rect):
                         self.activity_log_minimized = False
                         self.messages.append("Activity log expanded.")
                         return None  # Button click handled
                 elif self.scrollable_event_log_enabled:
                     minimize_rect = self._get_activity_log_minimize_button_rect(w, h)
-                    if self._in_rect(mouse_pos, minimize_rect):
+                    if check_point_in_rect(mouse_pos, minimize_rect):
                         self.activity_log_minimized = True
                         self.messages.append("Activity log minimized.")
                         return None  # Button click handled
@@ -1723,7 +1727,7 @@ class GameState:
             # Use filtered action rects if available (when UI shows only unlocked actions)
             action_rects = self.filtered_action_rects
             for display_idx, rect in enumerate(action_rects):
-                if self._in_rect(mouse_pos, rect):
+                if check_point_in_rect(mouse_pos, rect):
                     if not self.game_over and display_idx < len(self.display_to_action_index_map):
                         original_idx = self.display_to_action_index_map[display_idx]
                         # Check for undo (if action is already selected, try to undo it)
@@ -1738,7 +1742,7 @@ class GameState:
             # Fallback to original action handling (show all actions)
             a_rects = self._get_action_rects(w, h)
             for idx, rect in enumerate(a_rects):
-                if self._in_rect(mouse_pos, rect):
+                if check_point_in_rect(mouse_pos, rect):
                     if not self.game_over:
                         # Check for undo (if action is already selected, try to undo it)
                         is_undo = idx in self.selected_gameplay_actions
@@ -1755,7 +1759,7 @@ class GameState:
             # Skip None rectangles (unavailable/hidden upgrades)
             if rect is None:
                 continue
-            if self._in_rect(mouse_pos, rect):
+            if check_point_in_rect(mouse_pos, rect):
                 upg = self.upgrades[idx]
                 if not upg.get("purchased", False):
                     if self.money >= upg["cost"]:
@@ -1809,7 +1813,7 @@ class GameState:
 
         # Mute button (bottom right)
         mute_rect = self._get_mute_button_rect(w, h)
-        if self._in_rect(mouse_pos, mute_rect):
+        if check_point_in_rect(mouse_pos, mute_rect):
             new_state = self.sound_manager.toggle()
             status = "enabled" if new_state else "disabled"
             self.messages.append(f"Sound {status}")
@@ -1861,7 +1865,7 @@ class GameState:
             
             # Check activity log area for hover FIRST (highest priority for specific interactions)
             activity_log_rect = self._get_activity_log_rect(w, h)
-            if self._in_rect(mouse_pos, activity_log_rect):
+            if check_point_in_rect(mouse_pos, activity_log_rect):
                 # Show context about activity log
                 if "compact_activity_display" not in self.upgrade_effects:
                     self.current_context_info = {
@@ -1894,7 +1898,7 @@ class GameState:
                 # Use filtered action rects if available (when UI shows only unlocked actions)
                 action_rects = self.filtered_action_rects
                 for display_idx, rect in enumerate(action_rects):
-                    if self._in_rect(mouse_pos, rect):
+                    if check_point_in_rect(mouse_pos, rect):
                         if display_idx < len(self.display_to_action_index_map):
                             original_idx = self.display_to_action_index_map[display_idx]
                             self.hovered_action_idx = original_idx
@@ -1904,7 +1908,7 @@ class GameState:
                 # Fallback to original action handling (show all actions)
                 action_rects = self._get_action_rects(w, h)
                 for idx, rect in enumerate(action_rects):
-                    if self._in_rect(mouse_pos, rect):
+                    if check_point_in_rect(mouse_pos, rect):
                         self.hovered_action_idx = idx
                         hovered_action = self.gameplay_actions[idx]
                         break
@@ -1964,7 +1968,7 @@ class GameState:
                 # Skip None rectangles (unavailable/hidden upgrades)
                 if rect is None:
                     continue
-                if self._in_rect(mouse_pos, rect):
+                if check_point_in_rect(mouse_pos, rect):
                     self.hovered_upgrade_idx = idx
                     upgrade = self.upgrades[idx]
                     
@@ -2004,7 +2008,7 @@ class GameState:
             
             # Check end turn button for hover
             endturn_rect = self._get_endturn_rect(w, h)
-            if self._in_rect(mouse_pos, endturn_rect):
+            if check_point_in_rect(mouse_pos, endturn_rect):
                 self.endturn_hovered = True
                 ap_remaining = self.action_points
                 
@@ -2032,7 +2036,7 @@ class GameState:
             # Check resource area for hover
             # Money area
             money_rect = pygame.Rect(int(w*0.04), int(h*0.11), int(w*0.15), int(h*0.03))
-            if self._in_rect(mouse_pos, money_rect):
+            if check_point_in_rect(mouse_pos, money_rect):
                 details = [f"Current: ${self.money}"]
                 if hasattr(self, 'accounting_software_bought') and self.accounting_software_bought:
                     change = getattr(self, 'last_balance_change', 0)
@@ -2048,7 +2052,7 @@ class GameState:
             
             # Staff area
             staff_rect = pygame.Rect(int(w*0.21), int(h*0.11), int(w*0.12), int(h*0.03))
-            if self._in_rect(mouse_pos, staff_rect):
+            if check_point_in_rect(mouse_pos, staff_rect):
                 details = [f"Total Staff: {self.staff}"]
                 if hasattr(self, 'admin_staff'):
                     details.append(f"Admin: {self.admin_staff}")
@@ -2065,7 +2069,7 @@ class GameState:
             
             # Reputation area
             rep_rect = pygame.Rect(int(w*0.35), int(h*0.11), int(w*0.13), int(h*0.03))
-            if self._in_rect(mouse_pos, rep_rect):
+            if check_point_in_rect(mouse_pos, rep_rect):
                 self.current_context_info = {
                     'title': 'Reputation',
                     'description': 'Public trust affecting funding opportunities. Gained through good decisions.',
@@ -2074,7 +2078,7 @@ class GameState:
             
             # Action Points area
             ap_rect = pygame.Rect(int(w*0.49), int(h*0.11), int(w*0.12), int(h*0.03))
-            if self._in_rect(mouse_pos, ap_rect):
+            if check_point_in_rect(mouse_pos, ap_rect):
                 max_ap = self.max_action_points
                 details = [
                     f"Current: {self.action_points}/{max_ap}",
@@ -2090,7 +2094,7 @@ class GameState:
                 
             # P(Doom) area
             doom_rect = pygame.Rect(int(w*0.62), int(h*0.11), int(w*0.18), int(h*0.03))
-            if self._in_rect(mouse_pos, doom_rect):
+            if check_point_in_rect(mouse_pos, doom_rect):
                 self.current_context_info = {
                     'title': 'P(Doom)',
                     'description': 'Probability of existential catastrophe. Keep this low while making progress.',
@@ -2103,7 +2107,7 @@ class GameState:
             
             # Compute area (second row)
             compute_rect = pygame.Rect(int(w*0.04), int(h*0.135), int(w*0.12), int(h*0.03))
-            if self._in_rect(mouse_pos, compute_rect):
+            if check_point_in_rect(mouse_pos, compute_rect):
                 details = [f"Current: {self.compute}"]
                 if hasattr(self, 'employee_blobs') and self.employee_blobs:
                     productive_employees = sum(1 for blob in self.employee_blobs if blob.get('has_compute', False))
@@ -2149,24 +2153,11 @@ class GameState:
             clamped.append((x, y, w0, clamped_h))
         return clamped
 
-    def _is_upgrade_available(self, upgrade: Dict[str, Any]) -> bool:
-        """Check if an upgrade should be visible based on its unlock conditions."""
-        unlock_condition = upgrade.get("unlock_condition")
-        if not unlock_condition:
-            return True  # No condition means always available
-        
-        if unlock_condition == "palandir_discovered":
-            # Check if Palandir opponent has been discovered
-            for opponent in self.opponents:
-                if opponent.name == "Palandir" and opponent.discovered:
-                    return True
-            return False
-        
-        return True  # Default to available for unknown conditions
+
 
     def _get_upgrade_rects(self, w: int, h: int) -> List[Optional[pygame.Rect]]:
         # Filter upgrades based on availability conditions
-        available_upgrades = [(i, u) for i, u in enumerate(self.upgrades) if self._is_upgrade_available(u)]
+        available_upgrades = filter_available_upgrades(self.upgrades, self.opponents)
         
         # Display upgrades as icons/buttons on right
         len(available_upgrades)
@@ -2324,24 +2315,9 @@ class GameState:
             else:
                 return False  # For other operations, return False
     
-    def _validate_rect(self, rect: Any, context: str = "") -> bool:
-        """Validate that a rectangle is properly formatted."""
-        return validate_rect(rect, context)
 
-    def _in_rect(self, pt: Tuple[int, int], rect: Union[Tuple[int, int, int, int], pygame.Rect]) -> bool:
-        """Check if point is within rectangle, with graceful error handling."""
-        if not self._validate_rect(rect, "_in_rect"):
-            return False
-        
-        try:
-            x, y = pt
-            rx, ry, rw, rh = rect
-            return rx <= x <= rx+rw and ry <= y <= ry+rh
-        except (TypeError, ValueError) as e:
-            # Log the error for debugging
-            if hasattr(self, 'game_logger'):
-                self.game_logger.log(f"_in_rect error: pt={pt}, rect={rect}, error={e}")
-            return False
+
+
 
     def end_turn(self) -> bool:
         """Process end of turn using TurnManager for proper state management."""
@@ -2533,7 +2509,7 @@ class GameState:
         self.messages.append(f"Week of {formatted_date} (Mon)")
         
         # Issue #195: Check for achievements and critical warnings at start of new turn
-        self._process_achievements_and_warnings()
+        process_achievements_and_warnings_complete(self, achievements_endgame_system)
         
         # Reset Action Points for new turn (Phase 2: Staff-Based AP Scaling)
         self.max_action_points = self.calculate_max_ap()
@@ -5126,89 +5102,7 @@ class GameState:
     
     # Technical Failure Cascade Event Handlers for Issue #193
     
-    def _process_achievements_and_warnings(self) -> None:
-        """
-        Process achievements and critical warnings at the start of each turn.
-        
-        This method implements Issue #195 enhancements:
-        - Check for newly unlocked achievements
-        - Display critical warnings for dangerous game states
-        - Track strategic analysis data for endgame scenarios
-        
-        Called at the beginning of each turn to provide timely feedback.
-        """
-        try:
-            # Update achievements system with current turn for warning tracking
-            achievements_endgame_system._current_turn = self.turn
-            
-            # Check for newly unlocked achievements
-            new_achievements = achievements_endgame_system.check_new_achievements(self)
-            
-            # Display achievement notifications
-            for achievement in new_achievements:
-                # Add achievement to player's unlocked set
-                self.unlocked_achievements.add(achievement.id)
-                
-                # Display achievement notification with rarity styling
-                rarity_indicators = {
-                    "common": "[TARGET]",
-                    "uncommon": "[STAR]", 
-                    "rare": "[TROPHY]",
-                    "legendary": "?"
-                }
-                indicator = rarity_indicators.get(achievement.rarity, "[TARGET]")
-                
-                self.messages.append(f"{indicator} ACHIEVEMENT UNLOCKED: {achievement.name}")
-                self.messages.append(f"? {achievement.description}")
-                
-                # Play achievement sound based on rarity
-                if hasattr(self, 'sound_manager'):
-                    if achievement.rarity in ["legendary", "rare"]:
-                        self.sound_manager.play_sound('zabinga')  # Special celebratory sound
-                    else:
-                        self.sound_manager.play_sound('popup_accept')  # Regular achievement sound
-            
-            # Check for critical warnings that need immediate attention
-            warnings = achievements_endgame_system.check_critical_warnings(self)
-            
-            # Display critical warnings at start of turn
-            for warning in warnings:
-                severity_indicators = {
-                    "WARNING": "[WARNING]?",
-                    "CRITICAL": "[ALERT]", 
-                    "SEVERE": "[SKULL]",
-                    "EXTREME": "[RADIATION]?",
-                    "EMERGENCY": "[FIRE]",
-                    "IMMINENT": "[EXPLOSION]"
-                }
-                indicator = severity_indicators.get(warning['severity'], "[WARNING]?")
-                
-                self.messages.append(f"{indicator} {warning['title']}")
-                self.messages.append(f"[LIST] {warning['message']}")
-                
-                # Play warning sound for critical situations
-                if hasattr(self, 'sound_manager') and warning['severity'] in ["CRITICAL", "SEVERE", "EXTREME", "EMERGENCY", "IMMINENT"]:
-                    self.sound_manager.play_sound('error_beep')
-            
-            # Check for victory conditions (Issue #195 primary goal)
-            if self.doom <= 0 and not self.game_over:
-                # Ultimate victory achieved!
-                self.game_over = True
-                self.messages.append("[CELEBRATION] ULTIMATE VICTORY: P(Doom) eliminated! AI alignment problem solved!")
-                
-                # Play victory sound
-                if hasattr(self, 'sound_manager'):
-                    self.sound_manager.play_sound('zabinga')
-                
-                # Achievement system will handle the victory scenario in get_scenario()
-                
-        except Exception as e:
-            # Defensive programming - achievements system should never crash the game
-            try:
-                import logging
-                logging.error(f"Error in achievements and warnings processing: {e}")
-            except:
-                pass  # Even logging errors shouldn't crash the game
+
     
     def _trigger_near_miss_averted_event(self) -> None:
         """Handle near-miss events that were successfully averted."""
