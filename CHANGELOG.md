@@ -4,8 +4,22 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-09-19 - "Action Points System Bug Hunt"
+## [Unreleased] - 2025-09-19 - "Bug Sweep Session: Critical Stability Fixes"
 ### Fixed
+- **CRITICAL DEBUG CONSOLE CRASH**: Fixed fatal access violation in debug console rendering
+  - **Root Cause**: Font objects were not initialized before being used in draw methods
+  - **Solution**: Added safety checks to ensure font initialization before rendering operations
+  - **Impact**: Prevents test suite crashes and UI instability during development
+  - **Files**: `src/ui/debug_console.py` - Added font initialization safety checks
+- **Issue #245**: Fixed post-rebase test failures in menu system
+  - **Root Cause**: Test expectations outdated after menu structure changes
+  - **Solution**: Updated expected menu items to match current implementation
+  - **Details**: Menu now correctly expects ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
+  - **Files**: `tests/test_new_player_experience.py` - Updated test expectations
+- **Issues #315, #227, #226**: Verified resolution status
+  - **Analysis**: Action list display issues, action points validation, and sound system configuration were already resolved in previous sessions
+  - **Status**: Tests confirmed passing, no additional fixes needed
+  - **Impact**: Confirms systematic bug sweep approach is working effectively
 - **CRITICAL Issue #316**: Fixed Action Points double deduction bug
   - **Root Cause**: AP was being deducted twice (during action selection AND turn execution)
   - **Solution**: Removed AP deduction from `end_turn()` method since AP should be deducted at selection time for immediate player feedback

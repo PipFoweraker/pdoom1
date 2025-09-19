@@ -212,6 +212,11 @@ class DebugConsole:
         pygame.draw.rect(screen, (200, 200, 200), self.toggle_button_rect, 2)
         
         # Button text - ASCII-only characters for compliance
+        # Safety check: ensure font is initialized before rendering
+        if self.font is None:
+            screen_height = screen.get_height()
+            self.initialize_fonts(screen_height)
+            
         button_text = "D" if not self.visible else ("-" if not self.collapsed else "+")
         text_surface = self.font.render(button_text, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=self.toggle_button_rect.center)
@@ -223,6 +228,11 @@ class DebugConsole:
     
     def _draw_console_panel(self, screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         """Draw the main console panel with debug information."""
+        # Safety check: ensure fonts are initialized
+        if self.font is None or self.small_font is None:
+            screen_height = screen.get_height()
+            self.initialize_fonts(screen_height)
+            
         # Calculate console dimensions - 40% larger for better visibility
         if self.collapsed:
             console_width = 420  # Increased from 300 (40% larger)
