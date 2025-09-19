@@ -309,11 +309,13 @@ class TestResearchActions(unittest.TestCase):
         """Test that research actions are in the actions list."""
         action_names = [action["name"] for action in ACTIONS]
         
-        self.assertIn("Safety Research", action_names)
-        self.assertIn("Governance Research", action_names)
+        # Research system was consolidated into submenu in v0.4.0
+        self.assertIn("Research Options", action_names)
+        # Research quality setting actions
         self.assertIn("Set Research Quality: Rushed", action_names)
         self.assertIn("Set Research Quality: Standard", action_names)
         self.assertIn("Set Research Quality: Thorough", action_names)
+        # Technical debt reduction actions
         self.assertIn("Refactoring Sprint", action_names)
         self.assertIn("Safety Audit", action_names)
         self.assertIn("Code Review", action_names)

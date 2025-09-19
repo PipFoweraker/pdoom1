@@ -45,9 +45,9 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
     
     def test_end_game_menu_items_defined(self):
         """Test that end-game menu items are properly defined."""
-        expected_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
+        expected_items = ["View Full Leaderboard", "Play Again", "Main Menu", "Settings", "Submit Feedback"]
         self.assertEqual(end_game_menu_items, expected_items)
-        self.assertEqual(len(end_game_menu_items), 6)
+        self.assertEqual(len(end_game_menu_items), 5)
     
     def test_settings_content_creation(self):
         """Test that settings content is created successfully."""
@@ -68,7 +68,7 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
         self.assertEqual(self.main_module.end_game_selected_item, 1)
         
         # Test wrapping at bottom
-        self.main_module.end_game_selected_item = 5
+        self.main_module.end_game_selected_item = 4  # Last item index (5 items = indices 0-4)
         handle_end_game_menu_keyboard(pygame.K_DOWN)
         self.assertEqual(self.main_module.end_game_selected_item, 0)
         
@@ -80,7 +80,7 @@ class TestEndGameMenuFunctionality(unittest.TestCase):
         # Test wrapping at top
         self.main_module.end_game_selected_item = 0
         handle_end_game_menu_keyboard(pygame.K_UP)
-        self.assertEqual(self.main_module.end_game_selected_item, 5)
+        self.assertEqual(self.main_module.end_game_selected_item, 4)  # Last item index (5 items = indices 0-4)
     
     def test_view_high_scores_action(self):
         """Test view high scores functionality."""
