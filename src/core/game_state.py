@@ -27,8 +27,11 @@ from src.core.productive_actions import (get_employee_category, get_available_ac
 from src.core.research_quality import TechnicalDebt, ResearchQuality, ResearchProject
 from src.core.economic_config import EconomicConfig
 from src.core.turn_manager import TurnManager
-
-SCORE_FILE = "local_highscore.json"
+from src.core.game_constants import (
+    SCORE_FILE, DEFAULT_STARTING_RESOURCES, HIGH_DOOM_WARNING_THRESHOLD,
+    DEFAULT_STAFF_MAINTENANCE, HIGH_REPUTATION_THRESHOLD, LOW_REPUTATION_THRESHOLD,
+    HIGH_TRUST_VALUE, LOW_TRUST_VALUE, DEFAULT_ACTION_POINTS
+)
 
 class GameState:
     def _get_action_cost(self, action: Dict[str, Any]) -> int:
@@ -93,7 +96,7 @@ class GameState:
                 self.messages.append(f"p(Doom) {change_str}: {reason_text}")
             
             # Trigger high doom warning (existing system)
-            if old_doom < 70 and self.doom >= 70 and onboarding.should_show_mechanic_help('high_doom_warning'):
+            if old_doom < HIGH_DOOM_WARNING_THRESHOLD and self.doom >= HIGH_DOOM_WARNING_THRESHOLD and onboarding.should_show_mechanic_help('high_doom_warning'):
                 onboarding.mark_mechanic_seen('high_doom_warning')
                 
         elif attr == 'reputation':
@@ -168,10 +171,7 @@ class GameState:
         config = get_current_config()
         
         # Safe configuration access with defaults
-        starting_resources = config.get('starting_resources', {
-            'money': 100, 'staff': 2, 'reputation': 5, 'doom': 25, 
-            'action_points': 3, 'compute': 0
-        })
+        starting_resources = config.get('starting_resources', DEFAULT_STARTING_RESOURCES)
         ap_config = config.get('action_points', {'base_ap_per_turn': 3})
         limits_config = config.get('resource_limits', {})
         milestones_config = config.get('milestones', {})
@@ -238,7 +238,7 @@ class GameState:
         self.selected_gameplay_actions = []
         self.selected_gameplay_action_instances = []  # Track individual action instances for undo
         self.gameplay_action_clicks_this_turn = {}  # Track clicks per action per turn
-        self.staff_maintenance = 15
+        self.staff_maintenance = DEFAULT_STAFF_MAINTENANCE
         self.seed = seed
         self.upgrades = [dict(u) for u in UPGRADES]
         self.upgrade_effects = set()
@@ -359,10 +359,10 @@ class GameState:
         self.media_system = MediaSystem(self.public_opinion)
         
         # Initialize public opinion based on starting reputation
-        if self.reputation > 60:
-            self.public_opinion.trust_in_player = 60.0
-        elif self.reputation < 30:
-            self.public_opinion.trust_in_player = 40.0
+        if self.reputation > HIGH_REPUTATION_THRESHOLD:
+            self.public_opinion.trust_in_player = HIGH_TRUST_VALUE
+        elif self.reputation < LOW_REPUTATION_THRESHOLD:
+            self.public_opinion.trust_in_player = LOW_TRUST_VALUE
         
         # Initialize game logger
         self.logger = GameLogger(seed)
