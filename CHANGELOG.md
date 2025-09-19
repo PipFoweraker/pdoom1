@@ -4,8 +4,24 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-09-18 - "Critical Bug Sweep Continuation"
+## [Unreleased] - 2025-09-19 - "Action Points System Bug Hunt"
 ### Fixed
+- **CRITICAL Issue #316**: Fixed Action Points double deduction bug
+  - **Root Cause**: AP was being deducted twice (during action selection AND turn execution)
+  - **Solution**: Removed AP deduction from `end_turn()` method since AP should be deducted at selection time for immediate player feedback
+  - **Impact**: Core turn-based gameplay now works correctly, no more phantom AP loss
+  - **Testing**: Reactivated 14 core action points tests, all now passing
+- **Issue #317**: Resolved Action Points validation confusion
+  - **Analysis**: Found 3 legitimate meta-actions with 0 AP cost (research quality settings)
+  - **Understanding**: Meta-actions for configuration changes should be free
+  - **Status**: No code changes needed, validation logic was already correct
+- **Test Infrastructure**: Reactivated core Action Points test suite
+  - TestActionPointsDeduction: 3/3 tests passing
+  - TestActionPointsReset: 2/2 tests passing  
+  - TestActionPointsBackwardCompatibility: 4/4 tests passing
+  - Total: 14 core AP tests restored and passing
+
+### Previous Fixes (2025-09-18)
 - **CRITICAL Issue #263**: Fixed duplicate return statements and exception handlers in `check_hover` method
   - Removed duplicate `except Exception as e:` block making error handling unreachable
   - Consolidated error handling for proper crash prevention and logging

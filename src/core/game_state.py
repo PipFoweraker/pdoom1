@@ -2453,8 +2453,9 @@ class GameState:
             ap_cost = delegation_info['ap_cost']
             effectiveness = delegation_info['effectiveness']
             
-            # Deduct Action Points
-            self.action_points -= ap_cost
+            # NOTE: AP is already deducted during action selection (_handle_action_selection)
+            # No need to deduct again here - this was causing double deduction bug
+            # Just track for UI glow effects
             self.ap_spent_this_turn = True  # Track for UI glow effects
             self.ap_glow_timer = 30  # 30 frames of glow effect
             

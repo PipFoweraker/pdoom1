@@ -94,7 +94,6 @@ class TestActionPointsValidation(unittest.TestCase):
             self.assertIn("Action Points", expected_message)
 
 
-@pytest.mark.skip(reason="Action Points deduction bugs - See issue #action-points-deduction-bug")
 class TestActionPointsDeduction(unittest.TestCase):
     """Test AP deduction during action execution."""
     
@@ -105,9 +104,9 @@ class TestActionPointsDeduction(unittest.TestCase):
     
     def test_ap_deduction_on_action_execution(self):
         """Test that AP is deducted when actions are executed."""
-        # Select an action (Fundraise is free and safe to test)
+        # Select an action (Fundraising Options is safe to test)
         fundraise_idx = next(i for i, action in enumerate(self.game_state.actions) 
-                           if action["name"] == "Fundraise")
+                           if action["name"] == "Fundraising Options")
         
         self.game_state.selected_actions.append(fundraise_idx)
         
@@ -155,7 +154,6 @@ class TestActionPointsDeduction(unittest.TestCase):
         self.assertLess(self.game_state.action_points, initial_ap)
 
 
-@pytest.mark.skip(reason="Action Points reset bugs - See issue #action-points-reset-bug")
 class TestActionPointsReset(unittest.TestCase):
     """Test AP reset at end of turn."""
     
