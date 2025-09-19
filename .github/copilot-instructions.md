@@ -2,9 +2,29 @@
 
 P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI application with comprehensive testing and documentation.
 
-**Current Version**: v0.7.3 "Critical Hotfix Release"
+**Current Version**: v0.8.0 "Alpha Release - Modular Architecture"
 
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
+
+## Session Handoff Protocol
+
+### Session Documentation Standards
+- **Handoff files**: Use format `SESSION_HANDOFF_YYYY-MM-DD_HHMM.md`
+- **Archive location**: Move completed handoffs to `docs/development-sessions/`
+- **Template**: Maintain `SESSION_HANDOFF_TEMPLATE.md` for consistent structure
+- **Key sections**: Achievements, Next Priorities, Technical Context, Success Metrics
+
+### Development State Tracking
+- **Current version**: Always verify via `src/services/version.py`
+- **Architecture status**: Track modular extraction progress (currently 558 lines extracted)
+- **Test suite status**: Document test count and expected runtime (~500+ tests, 90+ seconds)
+- **Documentation organization**: Reference current `docs/` structure with 5 subdirectories
+
+### Context Preservation Between Sessions
+- **Technical debt**: Document refactoring targets and architectural decisions
+- **Community engagement**: Track alpha testing feedback and GitHub activity
+- **Performance metrics**: Note baseline measurements for regression detection
+- **Configuration state**: Document any settings or environment changes
 
 ## Version Management Protocol
 - **CRITICAL**: Always verify version display matches current development state
@@ -13,14 +33,14 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Version synchronization**: If version appears outdated, check `src/services/version.py` and update accordingly
 - **Format**: `vMAJOR.MINOR.PATCH+BUILD` (e.g., "v0.3.4+hotfix1")
 
-## Critical System Information (v0.7.3)
-- **BOOTSTRAP ECONOMIC SYSTEM**: Complete economic calibration implemented
-- **Dynamic Cost Evaluation**: All action costs now support callable functions for Moore's Law integration
-- **Location**: `src/core/economic_config.py` - comprehensive economic configuration system
-- **Key Fix**: `_get_action_cost()` helper method handles both static and dynamic costs
-- **UI Integration**: Cost display and validation works with economic config lambdas
-- **Starting Funds**: $100k realistic nonprofit bootstrap model
-- **RECENT CRITICAL FIXES**: Version consistency, ASCII compliance, sound defaults, menu integration, action system fixes
+## Critical System Information (v0.8.0)
+- **MODULAR ARCHITECTURE ACHIEVEMENT**: 558 lines extracted from game_state.py monolith (11.6% reduction)
+- **6 FOCUSED MODULES CREATED**: Clean separation of concerns with zero regressions
+- **ALPHA TESTING READY**: F10 dev mode, screenshot tools, verbose logging, debug overlays
+- **DOCUMENTATION ORGANIZED**: 5 focused subdirectories replacing flat structure
+- **MODERN README**: Updated with screenshots, alpha features, and v0.8.0 achievements
+- **BOOTSTRAP ECONOMIC SYSTEM**: Complete economic calibration implemented ($100k starting funds)
+- **RECENT MAJOR WORK**: Monolith refactoring, documentation organization, README modernization
 
 ## Development Infrastructure Status
 
@@ -50,6 +70,46 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 - **Documentation**: No Unicode characters (emojis, special symbols) in any text
 - **Code comments**: ASCII-only for cross-platform compatibility
 - **File content**: All project files must be ASCII-compliant
+
+## Alpha Testing Protocol (v0.8.0+)
+
+### Current Alpha Features
+- **Dev mode**: F10 toggle, Ctrl+D diagnostics, Ctrl+E emergency recovery
+- **Screenshot system**: `[` key capture with automatic timestamping
+- **Verbose logging**: Configurable detail levels for troubleshooting
+- **Debug overlays**: Real-time performance and state information
+
+### Community Feedback Integration
+- **GitHub Discussions**: Primary channel for alpha testing feedback
+- **Issue templates**: Structured bug reports with log excerpts and screenshots
+- **Testing scenarios**: Provide specific checklist items for community validation
+- **Performance tracking**: Document baseline metrics for comparison
+
+### Quality Assurance Requirements
+- **Pre-session validation**: Always run module import tests before development
+- **Post-session testing**: Full test suite execution with regression checking
+- **Cross-platform verification**: Test on multiple OS when possible
+- **Performance profiling**: Regular analysis of startup time and memory usage
+
+## Modular Architecture Status (Updated 2025-09-19)
+
+### Extraction Progress
+- **Total extracted**: 558 lines from game_state.py monolith
+- **Current modules**: 6 focused components with clean separation
+- **Remaining monolith**: 5,682 lines (down from 6,240 original)
+- **Next targets**: Input management system, audio system, UI rendering pipeline
+
+### Module Dependencies
+- **Import validation**: Test all extracted modules on session start
+- **Circular dependency prevention**: Monitor import chains during development
+- **Type annotation maintenance**: Preserve comprehensive typing during refactoring
+- **Test coverage**: Ensure each module has dedicated test coverage
+
+### Refactoring Guidelines
+- **Minimum extraction**: Target 100+ line extractions for meaningful modules
+- **Functional cohesion**: Group related functionality, avoid utility dump modules
+- **Clean interfaces**: Minimize parameter passing between modules
+- **Regression prevention**: Validate all functionality after each extraction
 
 ### Quality Assurance Tools
 - **autoflake cleanup**: Use `.venv\\Scripts\\python.exe -m autoflake --remove-all-unused-imports --remove-unused-variables --check --recursive .`
