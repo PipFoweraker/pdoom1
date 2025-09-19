@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-19T11:59:15.867428",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Synthesis Corp",
+      "date": "2025-09-19T11:59:15.866017",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.479017,
+      "entry_uuid": "2c7c8ba4-c37b-462b-8d8b-bdf4e9e04943"
+    }
+  ]
+}

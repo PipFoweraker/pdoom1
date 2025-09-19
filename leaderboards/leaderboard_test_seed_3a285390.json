@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2025-09-15T17:37:20.365684",
+  "created": "2025-09-19T12:06:06.270561",
   "max_entries": 50,
   "entries": [
     {
@@ -164,6 +164,60 @@
       "game_mode": "Bootstrap_v0.4.1",
       "duration_seconds": 0.003452,
       "entry_uuid": "09c5e383-da80-40ae-8003-001b82ace96f"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-19T12:03:13.868915",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.037824,
+      "entry_uuid": "49ba465b-e999-419e-aea8-b1892d10a037"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-19T12:03:13.892893",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.00419,
+      "entry_uuid": "c63e3a38-4fbd-4a03-849a-19be35ec6f71"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-19T12:04:08.030619",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.052239,
+      "entry_uuid": "bec71174-eb37-4930-9dcc-55c9adb9dc26"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-19T12:06:06.193287",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.004499,
+      "entry_uuid": "c07138c0-cfe8-45fd-9090-1517b3c941f1"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-19T12:06:06.246326",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.002642,
+      "entry_uuid": "34eb3627-b14a-40e7-a4b7-0f7de4b1b51a"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-19T12:06:06.270501",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.002793,
+      "entry_uuid": "c8cb0671-7c3e-467a-8603-62d82ecc9de2"
     }
   ]
 }

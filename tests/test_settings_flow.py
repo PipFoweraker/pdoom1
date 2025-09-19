@@ -14,7 +14,6 @@ from main import (
     handle_tutorial_choice_keyboard
 )
 
-@pytest.mark.skip(reason="Settings flow bugs - See issue #settings-flow-bug")
 class TestSettingsFlow(unittest.TestCase):
     """Test the new pre-game settings flow."""
     
@@ -29,6 +28,7 @@ class TestSettingsFlow(unittest.TestCase):
         main.selected_settings_item = 0
         main.seed_choice = "weekly"
         main.tutorial_enabled = True
+        main.tutorial_choice_selected_item = 1  # Default to "Yes - Enable Tutorial"
         main.seed = None
         main.seed_input = ""
         main.pre_game_settings = {
@@ -78,8 +78,8 @@ class TestSettingsFlow(unittest.TestCase):
         handle_pre_game_settings_keyboard(pygame.K_UP)
         self.assertEqual(main.selected_settings_item, 0)
         
-        # Test continue button (item 4)
-        main.selected_settings_item = 4
+        # Test continue button (item 0)
+        main.selected_settings_item = 0
         handle_pre_game_settings_keyboard(pygame.K_RETURN)
         self.assertEqual(main.current_state, 'seed_selection')
         
@@ -127,7 +127,7 @@ class TestSettingsFlow(unittest.TestCase):
         
         # Start from pre-game settings
         main.current_state = 'pre_game_settings'
-        main.selected_settings_item = 4  # Continue button
+        main.selected_settings_item = 0  # Continue button
         
         # Continue to seed selection
         handle_pre_game_settings_keyboard(pygame.K_RETURN)

@@ -119,7 +119,7 @@ class ConfigManager:
             # Game Balance - Milestone Thresholds
             "milestones": {
                 "manager_threshold": 9,        # Staff count to trigger manager milestone
-                "board_spending_threshold": 10000,  # Spending to trigger board member search
+                "board_spending_threshold": 200000,  # Spending to trigger board member search (2x starting money)
                 "enhanced_events_turn": 8,     # Turn when enhanced events unlock
                 "scrollable_log_turn": 5       # Turn when scrollable event log unlocks
             },
