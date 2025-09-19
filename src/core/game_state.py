@@ -2184,13 +2184,13 @@ class GameState:
         out = [None] * len(self.upgrades)
         for j, (original_idx, upgrade) in enumerate(purchased): 
             rect = purchased_rects[j]
-            if self._validate_rect(rect, f"purchased upgrade {original_idx}"):
+            if validate_rect(rect, f"purchased upgrade {original_idx}"):
                 out[original_idx] = rect
             else:
                 out[original_idx] = None
         for k, (original_idx, upgrade) in enumerate(not_purchased): 
             rect = not_purchased_rects[k]
-            if self._validate_rect(rect, f"unpurchased upgrade {original_idx}"):
+            if validate_rect(rect, f"unpurchased upgrade {original_idx}"):
                 out[original_idx] = rect
             else:
                 out[original_idx] = None

@@ -114,25 +114,28 @@ class TurnManager:
             # Phase 4: Execute selected actions
             self._execute_selected_actions()
             
-            # Phase 5: Staff maintenance and doom calculations
+            # Phase 5: Employee productivity and research processing
+            self._process_employee_productivity()
+            
+            # Phase 6: Staff maintenance and doom calculations
             self._process_staff_maintenance()
             
-            # Phase 6: Opponent processing
+            # Phase 7: Opponent processing
             self._process_opponents()
             
-            # Phase 7: Milestone checks
+            # Phase 8: Milestone checks
             self._check_milestones()
             
-            # Phase 8: Deferred events
+            # Phase 9: Deferred events
             self._process_deferred_events()
             
-            # Phase 9: Turn increment and reset
+            # Phase 10: Turn increment and reset
             self._advance_turn()
             
-            # Phase 10: Win/loss conditions
+            # Phase 11: Win/loss conditions
             self._check_game_over_conditions()
             
-            # Phase 11: UI updates
+            # Phase 12: UI updates
             self._update_ui_state()
             
             # Complete processing
@@ -220,6 +223,23 @@ class TurnManager:
         gs.selected_gameplay_action_instances = []
         gs.gameplay_action_clicks_this_turn = {}
         gs._action_delegations = {}
+    
+    def _process_employee_productivity(self):
+        """Process employee productivity and research progress"""
+        gs = self.game_state
+        
+        # Update employee productivity and compute consumption (weekly cycle)
+        gs._update_employee_productivity()
+
+        # Check if research threshold reached for paper publication
+        if gs.research_progress >= 100:
+            papers_to_publish = gs.research_progress // 100
+            gs.papers_published += papers_to_publish
+            gs.research_progress = gs.research_progress % 100
+            gs._add('reputation', papers_to_publish * 5)  # Papers boost reputation
+            gs.messages.append(f"Research paper{'s' if papers_to_publish > 1 else ''} published! (+{papers_to_publish}, total: {gs.papers_published})")
+            # Play Zabinga sound for paper completion
+            gs.sound_manager.play_zabinga_sound()
     
     def _process_staff_maintenance(self):
         """Process staff maintenance costs and effects"""
@@ -411,8 +431,9 @@ class TurnManager:
         
         # Handle game over scenario
         if gs.game_over and game_end_reason:
-            from src.features import end_game_scenarios
-            gs.end_game_scenario = end_game_scenarios.get_scenario(gs)
+            from src.features.end_game_scenarios import EndGameScenariosManager
+            scenarios_manager = EndGameScenariosManager()
+            gs.end_game_scenario = scenarios_manager.get_scenario(gs)
             
             if gs.end_game_scenario:
                 gs.messages.append(f"GAME OVER: {gs.end_game_scenario.title}")
