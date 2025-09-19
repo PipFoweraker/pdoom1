@@ -1,6 +1,26 @@
 {
   "entries": [
     {
+      "filename": "2025-09-19-bug-sweep-critical-stability.md",
+      "slug": "2025-09-19-bug-sweep-critical-stability",
+      "path": "entries/2025-09-19-bug-sweep-critical-stability.md",
+      "frontmatter": {
+        "title": "Bug Sweep Critical Stability Session",
+        "date": "2025-09-19",
+        "tags": [
+          "bug-fix",
+          "stability",
+          "ui",
+          "testing"
+        ],
+        "summary": "Fixed critical debug console crash and verified resolution of 4 GitHub issues in systematic bug sweep",
+        "commit": "179028c"
+      },
+      "word_count": 219,
+      "file_size": 1841,
+      "modified_at": "2025-09-19T15:23:51.994047"
+    },
+    {
       "filename": "2025-09-15-action-button-layout-optimization.md",
       "slug": "2025-09-15-action-button-layout-optimization",
       "path": "entries/2025-09-15-action-button-layout-optimization.md",
@@ -18,7 +38,7 @@
       },
       "word_count": 393,
       "file_size": 3069,
-      "modified_at": "2025-09-15T18:33:58.734056"
+      "modified_at": "2025-09-15T22:06:53.586092"
     },
     {
       "filename": "2025-09-15-hotfix-batch-deployment.md",
@@ -84,7 +104,7 @@
       },
       "word_count": 749,
       "file_size": 6360,
-      "modified_at": "2025-09-14T21:57:54.589623"
+      "modified_at": "2025-09-18T12:47:58.435049"
     },
     {
       "filename": "2025-09-14-deterministic-rng-complete.md",
@@ -438,11 +458,13 @@
       ]
     }
   },
-  "errors": [],
+  "errors": [
+    "2025-09-19-action-points-bug-hunt.md: Content contains non-ASCII characters"
+  ],
   "stats": {
-    "total_entries": 19,
-    "total_errors": 0,
-    "latest_entry": "2025-09-15"
+    "total_entries": 20,
+    "total_errors": 1,
+    "latest_entry": "2025-09-19"
   },
-  "generated_at": "2025-09-15T18:34:12.373955"
+  "generated_at": "2025-09-19T15:26:36.586919"
 }
