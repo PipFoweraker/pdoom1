@@ -36,7 +36,7 @@ from src.core.ui_utils import (
     get_action_rects, get_upgrade_rects, get_upgrade_icon_rect, get_context_window_top,
     get_endturn_rect, get_mute_button_rect, get_activity_log_minimize_button_rect,
     get_activity_log_expand_button_rect, get_activity_log_rect, get_activity_log_base_position,
-    get_activity_log_current_position, validate_rect, get_ui_element_rects
+    get_activity_log_current_position, validate_rect, get_ui_element_rects, calculate_blob_position
 )
 
 class GameState:
@@ -1013,48 +1013,8 @@ class GameState:
             self.sound_manager.play_blob_sound()
     
     def _calculate_blob_position(self, blob_index: int, screen_w: int = 1200, screen_h: int = 800) -> Tuple[int, int]:
-        """
-        Calculate initial blob position in the employee pen area.
-        Uses the employee pen area defined below the action log in the middle column.
-        
-        Args:
-            blob_index (int): Index of the blob (for initial positioning variation)
-            screen_w (int): Screen width (default 1200 for backward compatibility) 
-            screen_h (int): Screen height (default 800 for backward compatibility)
-            
-        Returns:
-            tuple: (x, y) initial position for the blob in employee pen area
-        """
-        import math
-        
-        # Employee pen area - below action log in middle column
-        # Match coordinates from ui.py employee pen area
-        pen_x = int(screen_w * 0.33)  # Start of middle column
-        pen_y = int(screen_h * 0.32)  # Below action log (action log uses 0.05 + 0.25 height)
-        pen_width = int(screen_w * 0.33)  # One-third screen width
-        pen_height = int(screen_h * 0.20)  # Generous roaming space
-        
-        # Center of employee pen for base positioning
-        pen_center_x = pen_x + pen_width // 2
-        pen_center_y = pen_y + pen_height // 2
-        
-        # First blob goes to center of pen
-        if blob_index == 0:
-            return pen_center_x, pen_center_y
-        
-        # Create a spiral pattern within the employee pen area
-        angle = blob_index * 2.4  # Golden angle for nice spiral distribution
-        radius = min(blob_index * 12, min(pen_width, pen_height) // 3)  # Constrain to pen size
-        
-        x = pen_center_x + int(radius * math.cos(angle)) 
-        y = pen_center_y + int(radius * math.sin(angle))
-        
-        # Ensure positions stay within employee pen bounds
-        blob_radius = 25
-        x = max(pen_x + blob_radius, min(pen_x + pen_width - blob_radius, x))
-        y = max(pen_y + blob_radius, min(pen_y + pen_height - blob_radius, y))
-        
-        return x, y
+        """Calculate initial blob position in the employee pen area."""
+        return calculate_blob_position(blob_index, screen_w, screen_h)
     
     def _get_ui_element_rects(self, screen_w: int = 1200, screen_h: int = 800) -> List[Tuple[int, int, int, int]]:
         """
