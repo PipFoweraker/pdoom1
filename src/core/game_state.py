@@ -1062,55 +1062,9 @@ class GameState:
         return ui_rects
     
     def _check_blob_ui_collision(self, blob_x: int, blob_y: int, blob_radius: int, ui_rects: List[Tuple[int, int, int, int]]) -> Tuple[bool, float, float]:
-        """
-        Check if a blob collides with any UI element.
-        
-        Args:
-            blob_x (float): Blob center x position
-            blob_y (float): Blob center y position
-            blob_radius (float): Blob radius
-            ui_rects (list): List of UI element rectangles
-            
-        Returns:
-            tuple: (collides, repulsion_force_x, repulsion_force_y)
-        """
-        total_repulsion_x = 0
-        total_repulsion_y = 0
-        collides = False
-        
-        for rect in ui_rects:
-            rx, ry, rw, rh = rect
-            
-            # Find closest point on rectangle to blob center
-            closest_x = max(rx, min(blob_x, rx + rw))
-            closest_y = max(ry, min(blob_y, ry + rh))
-            
-            # Calculate distance from blob center to closest point
-            dx = blob_x - closest_x
-            dy = blob_y - closest_y
-            distance = (dx * dx + dy * dy) ** 0.5
-            
-            # If distance is less than blob radius, there's a collision
-            if distance < blob_radius + 10:  # Add 10px buffer zone
-                collides = True
-                
-                # Calculate repulsion force
-                if distance > 0:
-                    # Normalize direction and apply repulsion strength
-                    repulsion_strength = (blob_radius + 20 - distance) * 0.1
-                    repulsion_x = (dx / distance) * repulsion_strength
-                    repulsion_y = (dy / distance) * repulsion_strength
-                else:
-                    # If blob is exactly on the edge, push away from rectangle center
-                    rect_center_x = rx + rw / 2
-                    rect_center_y = ry + rh / 2
-                    repulsion_x = (blob_x - rect_center_x) * 0.1
-                    repulsion_y = (blob_y - rect_center_y) * 0.1
-                
-                total_repulsion_x += repulsion_x
-                total_repulsion_y += repulsion_y
-        
-        return collides, total_repulsion_x, total_repulsion_y
+        """Check if a blob collides with any UI element (delegates to ui_utils)."""
+        from src.core.ui_utils import check_blob_ui_collision
+        return check_blob_ui_collision(blob_x, blob_y, blob_radius, ui_rects)
     
     def _update_blob_positions_dynamically(self, screen_w: int = 1200, screen_h: int = 800) -> None:
         """
@@ -2376,12 +2330,14 @@ class GameState:
             return (log_x - 5, log_y - 5, log_width + 10, log_height + 10)
 
     def _get_activity_log_base_position(self, w: int, h: int) -> Tuple[int, int]:
-        """Get the base position of activity log (middle column top for cleaner UI)"""
-        return (int(w * 0.33), int(h * 0.05))
+        """Get the base position of activity log (delegates to ui_utils)"""
+        from src.core.ui_utils import get_activity_log_base_position
+        return get_activity_log_base_position(w, h)
 
     def _get_activity_log_current_position(self, w: int, h: int) -> Tuple[int, int]:
-        """Get the current position of activity log (including drag offset)"""
-        base_x, base_y = self._get_activity_log_base_position(w, h)
+        """Get the current position of activity log (includes drag offset)"""
+        from src.core.ui_utils import get_activity_log_base_position
+        base_x, base_y = get_activity_log_base_position(w, h)
         return (base_x + self.activity_log_position[0], base_y + self.activity_log_position[1])
 
     def _safe_ui_operation(self, operation_name: str, operation_func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:
