@@ -42,6 +42,11 @@ from src.core.verbose_logging import (
     create_verbose_money_message, create_verbose_staff_message, 
     create_verbose_reputation_message, create_verbose_compute_message
 )
+from src.core.employee_management import (
+    initialize_employee_blobs, add_employee_blobs, remove_employee_blobs,
+    reset_employee_productivity, separate_employees_and_managers,
+    apply_management_assignments, calculate_compute_per_employee
+)
 
 class GameState:
     def _get_action_cost(self, action: Dict[str, Any]) -> int:
@@ -964,56 +969,15 @@ class GameState:
 
     def _initialize_employee_blobs(self) -> None:
         """Initialize employee blobs for starting staff with improved positioning"""
-        for i in range(self.staff):
-            # Use improved positioning that avoids UI overlap
-            target_x, target_y = self._calculate_blob_position(i)
-            
-            blob = {
-                'id': i,
-                'x': target_x,
-                'y': target_y, 
-                'target_x': target_x,
-                'target_y': target_y,
-                'has_compute': False,
-                'productivity': 0.0,
-                'animation_progress': 1.0,  # Already positioned
-                'type': 'employee',  # Track blob type
-                'managed_by': None,  # Which manager manages this employee (None if unmanaged)
-                'unproductive_reason': None,  # Reason for being unproductive (for overlay display)
-                'subtype': 'generalist',  # Default employee subtype
-                'productive_action_index': 0,  # Default to first action
-                'productive_action_bonus': 1.0,  # Current productivity bonus
-                'productive_action_active': False  # Whether productive action is active
-            }
-            self.employee_blobs.append(blob)
+        self.employee_blobs = initialize_employee_blobs(self.staff, self._calculate_blob_position)
     
     def _add_employee_blobs(self, count: int) -> None:
         """Add new employee blobs with animation from side and improved positioning"""
-        for i in range(count):
-            blob_id = len(self.employee_blobs)
-            # Use improved positioning that avoids UI overlap
-            target_x, target_y = self._calculate_blob_position(blob_id)
-            
-            blob = {
-                'id': blob_id,
-                'x': -50,  # Start off-screen left
-                'y': target_y,
-                'target_x': target_x, 
-                'target_y': target_y,
-                'has_compute': False,
-                'productivity': 0.0,
-                'animation_progress': 0.0,  # Will animate in
-                'type': 'employee',  # Track blob type
-                'managed_by': None,  # Which manager manages this employee (None if unmanaged)
-                'unproductive_reason': None,  # Reason for being unproductive (for overlay display)
-                'subtype': 'generalist',  # Default employee subtype
-                'productive_action_index': 0,  # Default to first action
-                'productive_action_bonus': 1.0,  # Current productivity bonus
-                'productive_action_active': False  # Whether productive action is active
-            }
-            self.employee_blobs.append(blob)
-            
-            # Play sound for new employee
+        new_blobs = add_employee_blobs(self.employee_blobs, count, self._calculate_blob_position)
+        self.employee_blobs.extend(new_blobs)
+        
+        # Play sounds for new employees
+        for _ in range(count):
             self.sound_manager.play_blob_sound()
     
     def _calculate_blob_position(self, blob_index: int, screen_w: int = 1200, screen_h: int = 800) -> Tuple[int, int]:
@@ -1339,9 +1303,7 @@ class GameState:
             
     def _remove_employee_blobs(self, count: int) -> None:
         """Remove employee blobs when staff leave"""
-        for _ in range(min(count, len(self.employee_blobs))):
-            if self.employee_blobs:
-                self.employee_blobs.pop()
+        self.employee_blobs = remove_employee_blobs(self.employee_blobs, count)
                 
     def _update_employee_productivity(self) -> None:
         """Update employee productivity based on compute availability, management, and productive actions each week"""
