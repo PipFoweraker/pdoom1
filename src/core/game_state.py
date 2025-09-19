@@ -32,6 +32,12 @@ from src.core.game_constants import (
     DEFAULT_STAFF_MAINTENANCE, HIGH_REPUTATION_THRESHOLD, LOW_REPUTATION_THRESHOLD,
     HIGH_TRUST_VALUE, LOW_TRUST_VALUE, DEFAULT_ACTION_POINTS
 )
+from src.core.ui_utils import (
+    get_action_rects, get_upgrade_rects, get_upgrade_icon_rect, get_context_window_top,
+    get_endturn_rect, get_mute_button_rect, get_activity_log_minimize_button_rect,
+    get_activity_log_expand_button_rect, get_activity_log_rect, get_activity_log_base_position,
+    get_activity_log_current_position, validate_rect, get_ui_element_rects
+)
 
 class GameState:
     def _get_action_cost(self, action: Dict[str, Any]) -> int:
@@ -2366,13 +2372,10 @@ class GameState:
         return (x, y, icon_w, icon_h)
 
     def _get_endturn_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
-        return (int(w*0.39), int(h*0.74), int(w*0.22), int(h*0.07))  # Moved up to account for context window
+        return get_endturn_rect(w, h)
 
     def _get_mute_button_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
-        button_size = int(min(w, h) * 0.04)
-        button_x = w - button_size - 20
-        button_y = h - button_size - 20
-        return (button_x, button_y, button_size, button_size)
+        return get_mute_button_rect(w, h)
 
     def _get_activity_log_minimize_button_rect(self, w: int, h: int) -> Tuple[int, int, int, int]:
         """Get rectangle for the activity log minimize button (only when scrollable log is enabled)"""
@@ -2438,26 +2441,7 @@ class GameState:
     
     def _validate_rect(self, rect: Any, context: str = "") -> bool:
         """Validate that a rectangle is properly formatted."""
-        if rect is None:
-            return False
-        
-        try:
-            if len(rect) != 4:
-                if hasattr(self, 'game_logger'):
-                    self.game_logger.log(f"Invalid rectangle length in {context}: {rect}")
-                return False
-            
-            x, y, w, h = rect
-            if not all(isinstance(val, (int, float)) for val in rect):
-                if hasattr(self, 'game_logger'):
-                    self.game_logger.log(f"Invalid rectangle values in {context}: {rect}")
-                return False
-                
-            return True
-        except Exception as e:
-            if hasattr(self, 'game_logger'):
-                self.game_logger.log(f"Error validating rectangle in {context}: {rect}, error={e}")
-            return False
+        return validate_rect(rect, context)
 
     def _in_rect(self, pt: Tuple[int, int], rect: Union[Tuple[int, int, int, int], pygame.Rect]) -> bool:
         """Check if point is within rectangle, with graceful error handling."""
