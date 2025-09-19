@@ -4150,13 +4150,8 @@ class GameState:
             self.messages.append("No employees available for hiring at this time.")
             return
         
-        # Set up the hiring dialog state
-        self.pending_hiring_dialog = {
-            "available_subtypes": available_subtypes,
-            "complexity_level": complexity_level,
-            "title": f"Hire Employee - {complexity_level['description']}",
-            "description": complexity_level['complexity_note']
-        }
+        # Set up the hiring dialog state using dialog manager
+        self.pending_hiring_dialog = DialogManager.create_hiring_dialog_state(available_subtypes, complexity_level)
     
     def select_employee_subtype(self, subtype_id: str) -> Tuple[bool, str]:
         """Handle player selection of an employee subtype."""
@@ -5388,75 +5383,10 @@ class GameState:
     
     def _get_available_fundraising_options(self) -> List[Dict[str, Any]]:
         """Get available fundraising options based on current game state."""
-        options = []
-        
-        # Option 1: Conservative Small Fundraising (always available)
-        small_range = self.economic_config.get_fundraising_amount_range("small")
-        options.append({
-            "id": "fundraise_small",
-            "name": "Fundraise Small",
-            "description": f"Conservative funding approach - ${small_range[0]//1000}-{small_range[1]//1000}k range, minimal reputation risk",
-            "min_amount": small_range[0] // 1000,
-            "max_amount": small_range[1] // 1000,
-            "reputation_risk": 0.1,  # 10% chance of -1 reputation
-            "requirements": "Always available",
-            "cost": 0,
-            "ap_cost": 1,
-            "affordable": True,  # Always affordable since no cost
-            "available": True
-        })
-        
-        # Option 2: Aggressive Big Fundraising (requires some reputation)
-        big_available = self.reputation >= 10
-        big_range = self.economic_config.get_fundraising_amount_range("big")
-        options.append({
-            "id": "fundraise_big", 
-            "name": "Fundraise Big",
-            "description": f"Aggressive funding round - ${big_range[0]//1000}-{big_range[1]//1000}k range, higher stakes and reputation requirements",
-            "min_amount": big_range[0] // 1000,
-            "max_amount": big_range[1] // 1000,
-            "reputation_risk": 0.3,  # 30% chance of -2 reputation
-            "requirements": "Requires 10+ reputation",
-            "cost": 0,
-            "ap_cost": 1,
-            "affordable": True,
-            "available": big_available
-        })
-        
-        # Option 3: Borrow Money (requires reputation for credit)
-        borrow_available = self.reputation >= 5
-        options.append({
-            "id": "borrow_money",
-            "name": "Borrow Money", 
-            "description": "Immediate $50-80k via debt - creates future payment obligations",
-            "min_amount": 50,
-            "max_amount": 80,
-            "reputation_risk": 0.0,  # No reputation risk, but creates debt
-            "requirements": "Requires 5+ reputation for creditworthiness",
-            "cost": 0,
-            "ap_cost": 1,
-            "affordable": True,
-            "available": borrow_available,
-            "creates_debt": True
-        })
-        
-        # Option 4: Alternative Funding (unlocked after first major milestone)
-        alt_available = hasattr(self, 'advanced_funding_unlocked') and self.advanced_funding_unlocked
-        options.append({
-            "id": "alternative_funding",
-            "name": "Alternative Funding",
-            "description": "Grants, partnerships, revenue - $40-100k from non-traditional sources",
-            "min_amount": 40,
-            "max_amount": 100, 
-            "reputation_risk": 0.05,  # Very low risk
-            "requirements": "Unlocked after first major funding round",
-            "cost": 0,
-            "ap_cost": 1,
-            "affordable": True,
-            "available": alt_available
-        })
-        
-        return options
+        advanced_funding_unlocked = hasattr(self, 'advanced_funding_unlocked') and self.advanced_funding_unlocked
+        return FundraisingDialogBuilder.build_fundraising_options(
+            self.economic_config, self.reputation, advanced_funding_unlocked
+        )
     
     def dismiss_fundraising_dialog(self) -> None:
         """Dismiss the fundraising dialog without making a selection."""
@@ -5592,18 +5522,10 @@ class GameState:
         # Get available research options
         available_options = self._get_available_research_options()
         
-        # Create research dialog state
-        self.pending_research_dialog = {
-            "title": "Research Strategy Selection",
-            "description": "Choose your research approach. Each type has different costs, benefits, and risks.",
-            "available_options": available_options
-        }
+        # Create research dialog state using dialog manager
+        self.pending_research_dialog = DialogManager.create_research_dialog_state(available_options)
         
         # Ensure research quality system is also unlocked for quality settings
-        if not self.research_quality_unlocked:
-            self.research_quality_unlocked = True
-            self.add_message("? Research Quality Dashboard unlocked! Use the panel below End Turn to change research approach.")
-        
         if not self.research_quality_unlocked:
             self.research_quality_unlocked = True
             self.add_message("? Research Quality Dashboard unlocked! Use the panel below End Turn to change research approach.")
@@ -5612,82 +5534,7 @@ class GameState:
     
     def _get_available_research_options(self) -> List[Dict[str, Any]]:
         """Get available research options based on current game state."""
-        options = []
-        
-        # Safety Research - Traditional AI Safety
-        safety_cost = 40
-        safety_affordable = self.money >= safety_cost
-        options.append({
-            "id": "safety_research", 
-            "name": "Safety Research",
-            "description": "Traditional AI safety research - interpretability, alignment, robustness",
-            "min_doom_reduction": 2,
-            "max_doom_reduction": 6,
-            "reputation_gain": 2,
-            "cost": safety_cost,
-            "ap_cost": 1,
-            "available": True,
-            "affordable": safety_affordable,
-            "requirements": f"Cost: ${safety_cost}k" if safety_affordable else f"Need ${safety_cost}k (have ${self.money}k)",
-            "technical_debt_risk": "Low"
-        })
-        
-        # Governance Research - Policy and Coordination
-        governance_cost = 45
-        governance_affordable = self.money >= governance_cost
-        options.append({
-            "id": "governance_research",
-            "name": "Governance Research", 
-            "description": "Policy research, international coordination, regulatory frameworks",
-            "min_doom_reduction": 2,
-            "max_doom_reduction": 5,
-            "reputation_gain": 3,
-            "cost": governance_cost,
-            "ap_cost": 1,
-            "available": True,
-            "affordable": governance_affordable,
-            "requirements": f"Cost: ${governance_cost}k" if governance_affordable else f"Need ${governance_cost}k (have ${self.money}k)",
-            "technical_debt_risk": "Very Low"
-        })
-        
-        # Rush Research - Fast but risky
-        rush_cost = 30
-        rush_affordable = self.money >= rush_cost
-        options.append({
-            "id": "rush_research",
-            "name": "Rush Research",
-            "description": "Fast research cycle - publish quickly but accumulate technical debt",
-            "min_doom_reduction": 1,
-            "max_doom_reduction": 4,
-            "reputation_gain": 1,
-            "cost": rush_cost,
-            "ap_cost": 1,
-            "available": True,
-            "affordable": rush_affordable,
-            "requirements": f"Cost: ${rush_cost}k" if rush_affordable else f"Need ${rush_cost}k (have ${self.money}k)",
-            "technical_debt_risk": "High"
-        })
-        
-        # Quality Research - Slow but thorough (unlocked after first research)
-        quality_cost = 60
-        quality_affordable = self.money >= quality_cost
-        quality_unlocked = hasattr(self, 'research_quality_unlocked') and self.research_quality_unlocked
-        options.append({
-            "id": "quality_research",
-            "name": "Quality Research",
-            "description": "Thorough, methodical research - slower but builds on solid foundations",
-            "min_doom_reduction": 4,
-            "max_doom_reduction": 8,
-            "reputation_gain": 4,
-            "cost": quality_cost,
-            "ap_cost": 2,  # More AP but better results
-            "available": quality_unlocked,
-            "affordable": quality_affordable if quality_unlocked else False,
-            "requirements": "Locked: Complete any research first" if not quality_unlocked else (f"Cost: ${quality_cost}k, 2 AP" if quality_affordable else f"Need ${quality_cost}k (have ${self.money}k)"),
-            "technical_debt_risk": "None"
-        })
-        
-        return options
+        return ResearchDialogBuilder.build_research_options(self.money, self.reputation)
     
     def dismiss_research_dialog(self) -> None:
         """Dismiss the research dialog."""
