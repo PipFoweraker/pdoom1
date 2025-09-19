@@ -186,6 +186,58 @@ def calculate_blob_position(blob_index: int, screen_w: int = 1200, screen_h: int
     return x, y
 
 
+def check_blob_ui_collision(blob_x: int, blob_y: int, blob_radius: int, ui_rects: List[Tuple[int, int, int, int]]) -> Tuple[bool, float, float]:
+    """
+    Check if a blob collides with any UI element.
+    
+    Args:
+        blob_x (float): Blob center x position
+        blob_y (float): Blob center y position
+        blob_radius (float): Blob radius
+        ui_rects (list): List of UI element rectangles
+        
+    Returns:
+        tuple: (collides, repulsion_force_x, repulsion_force_y)
+    """
+    total_repulsion_x = 0
+    total_repulsion_y = 0
+    collides = False
+    
+    for rect in ui_rects:
+        rx, ry, rw, rh = rect
+        
+        # Find closest point on rectangle to blob center
+        closest_x = max(rx, min(blob_x, rx + rw))
+        closest_y = max(ry, min(blob_y, ry + rh))
+        
+        # Calculate distance from blob center to closest point
+        dx = blob_x - closest_x
+        dy = blob_y - closest_y
+        distance = (dx * dx + dy * dy) ** 0.5
+        
+        # If distance is less than blob radius, there's a collision
+        if distance < blob_radius + 10:  # Add 10px buffer zone
+            collides = True
+            
+            # Calculate repulsion force
+            if distance > 0:
+                # Normalize direction and apply repulsion strength
+                repulsion_strength = (blob_radius + 20 - distance) * 0.1
+                repulsion_x = (dx / distance) * repulsion_strength
+                repulsion_y = (dy / distance) * repulsion_strength
+            else:
+                # If blob is exactly on the edge, push away from rectangle center
+                rect_center_x = rx + rw / 2
+                rect_center_y = ry + rh / 2
+                repulsion_x = (blob_x - rect_center_x) * 0.1
+                repulsion_y = (blob_y - rect_center_y) * 0.1
+            
+            total_repulsion_x += repulsion_x
+            total_repulsion_y += repulsion_y
+    
+    return collides, total_repulsion_x, total_repulsion_y
+
+
 def get_ui_element_rects(screen_w: int = 1200, screen_h: int = 800) -> List[Tuple[int, int, int, int]]:
     """Get rectangles for all major UI elements for collision detection."""
     ui_rects = []
