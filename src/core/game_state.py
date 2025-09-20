@@ -806,7 +806,13 @@ class GameState:
         get_action_availability_manager().invalidate_cache()
         
         # Handle immediate actions that should execute right away (like dialogs)
-        if action['name'] in ['Hire Staff', 'Fundraising Options', 'Research Options']:
+        # Check if this is a submenu action or known dialog action
+        is_submenu_action = (
+            action.get('action_type') == 'submenu' or
+            action['name'] in ['Hire Staff', 'Intelligence']  # Special dialog actions without action_type
+        )
+        
+        if is_submenu_action:
             # Execute immediately instead of deferring to end_turn
             try:
                 # Remove from selected actions since it's executed immediately

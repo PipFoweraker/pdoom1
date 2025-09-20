@@ -673,25 +673,29 @@ def draw_intelligence_dialog(screen: pygame.Surface, intelligence_dialog: Dict[s
     overlay.fill((0, 0, 0))
     screen.blit(overlay, (0, 0))
     
-    # Dialog dimensions (smaller than hiring dialog)
-    dialog_width = int(w * 0.7)
-    dialog_height = int(h * 0.6)
+    # Dialog dimensions (match hiring dialog for consistency)
+    dialog_width = int(w * 0.8)
+    dialog_height = int(h * 0.85)
     dialog_x = (w - dialog_width) // 2
     dialog_y = (h - dialog_height) // 2
     
     # Draw main dialog background
     dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
-    pygame.draw.rect(screen, (40, 40, 45), dialog_rect, border_radius=10)
-    pygame.draw.rect(screen, (100, 100, 120), dialog_rect, width=3, border_radius=5)
+    pygame.draw.rect(screen, (40, 50, 60), dialog_rect, border_radius=10)
+    pygame.draw.rect(screen, (100, 150, 200), dialog_rect, width=3, border_radius=10)
+    
+    # Fonts (responsive sizing like hiring dialog)
+    title_font = pygame.font.Font(None, int(h * 0.04))
+    desc_font = pygame.font.Font(None, int(h * 0.025))
+    option_font = pygame.font.Font(None, int(h * 0.028))
+    detail_font = pygame.font.Font(None, int(h * 0.022))
     
     # Title
-    title_font = pygame.font.Font(None, 48)
     title_text = title_font.render(intelligence_dialog["title"], True, (255, 255, 255))
     title_rect = title_text.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
     screen.blit(title_text, title_rect)
     
     # Description
-    desc_font = pygame.font.Font(None, 28)
     desc_y = title_rect.bottom + 15
     desc_lines = wrap_text(intelligence_dialog["description"], desc_font, dialog_width - 40)
     for line in desc_lines:
@@ -702,11 +706,9 @@ def draw_intelligence_dialog(screen: pygame.Surface, intelligence_dialog: Dict[s
     
     # Intelligence options
     clickable_rects = []
-    option_font = pygame.font.Font(None, 32)
-    detail_font = pygame.font.Font(None, 24)
     
     option_y = desc_y + 20
-    button_height = 60
+    button_height = int(h * 0.08)  # Responsive button height
     button_margin = 10
     
     for option in intelligence_dialog["options"]:
@@ -811,25 +813,29 @@ def draw_media_dialog(screen: pygame.Surface, media_dialog: Dict[str, Any], w: i
     overlay.fill((0, 0, 0))
     screen.blit(overlay, (0, 0))
     
-    # Dialog dimensions (smaller than hiring dialog)
-    dialog_width = int(w * 0.7)
-    dialog_height = int(h * 0.6)
+    # Dialog dimensions (match hiring dialog for consistency)
+    dialog_width = int(w * 0.8)
+    dialog_height = int(h * 0.85)
     dialog_x = (w - dialog_width) // 2
     dialog_y = (h - dialog_height) // 2
     
     # Draw main dialog background
     dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
-    pygame.draw.rect(screen, (40, 40, 45), dialog_rect, border_radius=10)
-    pygame.draw.rect(screen, (100, 100, 120), dialog_rect, width=3, border_radius=5)
+    pygame.draw.rect(screen, (40, 50, 60), dialog_rect, border_radius=10)
+    pygame.draw.rect(screen, (100, 150, 200), dialog_rect, width=3, border_radius=10)
+    
+    # Fonts (responsive sizing like hiring dialog)
+    title_font = pygame.font.Font(None, int(h * 0.04))
+    desc_font = pygame.font.Font(None, int(h * 0.025))
+    option_font = pygame.font.Font(None, int(h * 0.028))
+    detail_font = pygame.font.Font(None, int(h * 0.022))
     
     # Title
-    title_font = pygame.font.Font(None, 48)
     title_text = title_font.render(media_dialog["title"], True, (255, 255, 255))
     title_rect = title_text.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
     screen.blit(title_text, title_rect)
     
     # Description
-    desc_font = pygame.font.Font(None, 28)
     desc_y = title_rect.bottom + 15
     desc_lines = wrap_text(media_dialog["description"], desc_font, dialog_width - 40)
     for line in desc_lines:
@@ -840,11 +846,9 @@ def draw_media_dialog(screen: pygame.Surface, media_dialog: Dict[str, Any], w: i
     
     # Media options
     clickable_rects = []
-    option_font = pygame.font.Font(None, 32)
-    detail_font = pygame.font.Font(None, 24)
     
     option_y = desc_y + 20
-    button_height = 60
+    button_height = int(h * 0.08)  # Responsive button height
     button_margin = 10
     
     for option in media_dialog["options"]:
@@ -949,25 +953,29 @@ def draw_technical_debt_dialog(screen: pygame.Surface, technical_debt_dialog: Di
     overlay.fill((0, 0, 0))
     screen.blit(overlay, (0, 0))
     
-    # Dialog dimensions (smaller than hiring dialog)
-    dialog_width = int(w * 0.7)
-    dialog_height = int(h * 0.6)
+    # Dialog dimensions (match hiring dialog for consistency)
+    dialog_width = int(w * 0.8)
+    dialog_height = int(h * 0.85)
     dialog_x = (w - dialog_width) // 2
     dialog_y = (h - dialog_height) // 2
     
     # Draw main dialog background
     dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
-    pygame.draw.rect(screen, (40, 40, 45), dialog_rect, border_radius=10)
-    pygame.draw.rect(screen, (100, 100, 120), dialog_rect, width=3, border_radius=5)
+    pygame.draw.rect(screen, (40, 50, 60), dialog_rect, border_radius=10)
+    pygame.draw.rect(screen, (100, 150, 200), dialog_rect, width=3, border_radius=10)
+    
+    # Fonts (responsive sizing like hiring dialog)
+    title_font = pygame.font.Font(None, int(h * 0.04))
+    desc_font = pygame.font.Font(None, int(h * 0.025))
+    option_font = pygame.font.Font(None, int(h * 0.028))
+    detail_font = pygame.font.Font(None, int(h * 0.022))
     
     # Title
-    title_font = pygame.font.Font(None, 48)
     title_text = title_font.render(technical_debt_dialog["title"], True, (255, 255, 255))
     title_rect = title_text.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
     screen.blit(title_text, title_rect)
     
     # Description
-    desc_font = pygame.font.Font(None, 28)
     desc_y = title_rect.bottom + 15
     desc_lines = wrap_text(technical_debt_dialog["description"], desc_font, dialog_width - 40)
     for line in desc_lines:
@@ -978,11 +986,9 @@ def draw_technical_debt_dialog(screen: pygame.Surface, technical_debt_dialog: Di
     
     # Technical debt options
     clickable_rects = []
-    option_font = pygame.font.Font(None, 32)
-    detail_font = pygame.font.Font(None, 24)
     
     option_y = desc_y + 20
-    button_height = 60
+    button_height = int(h * 0.08)  # Responsive button height
     button_margin = 10
     
     for option in technical_debt_dialog["options"]:
