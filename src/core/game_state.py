@@ -3890,19 +3890,39 @@ class GameState:
         
         intelligence_options = []
         
-        # Always available: Scout Opponents (existing functionality)
+        # Scout Opponents - Low risk internet research
         intelligence_options.append({
             "id": "scout_opponents",
             "name": "Scout Opponents",
             "description": "Gather intelligence on competing labs via internet research.",
-            "cost": 0,
+            "cost": 50,
             "ap_cost": 1,
             "available": True,
             "details": f"Known labs: {len(discovered_opponents)}, Unknown labs: {len(undiscovered_opponents)}"
         })
         
-        # Future intelligence options can be added here
-        # For now, just Scout Opponents to consolidate the functionality
+        # Espionage - Higher risk, more detailed information
+        intelligence_options.append({
+            "id": "espionage", 
+            "name": "Espionage",
+            "description": "Risky operation to reveal detailed opponent progress and capabilities.",
+            "cost": self.economic_config.get_intelligence_cost('espionage') if hasattr(self, 'economic_config') else 500,
+            "ap_cost": 1,
+            "available": len(discovered_opponents) > 0,
+            "details": f"Target: Random discovered opponent. High risk, detailed intel."
+        })
+        
+        # Investigate Opponent - Deep dive on specific target
+        if len(discovered_opponents) > 0:
+            intelligence_options.append({
+                "id": "investigate_opponent",
+                "name": "Investigate Opponent", 
+                "description": "Deep investigation of a specific revealed opponent.",
+                "cost": 75,
+                "ap_cost": 1,
+                "available": True,
+                "details": f"Choose from {len(discovered_opponents)} known opponents for detailed analysis."
+            })
         
         self.pending_intelligence_dialog = {
             "options": intelligence_options,
@@ -3942,13 +3962,36 @@ class GameState:
             self.action_points -= selected_option["ap_cost"]
             
             # Execute scout opponents functionality
-            self._scout_opponents()
+            self._scout_opponent()
+            # Apply espionage risk
+            self._espionage_risk()
             
-            # Clear the intelligence dialog
-            self.pending_intelligence_dialog = None
-            return True, "Intelligence gathering complete."
+        elif option_id == "espionage":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute espionage functionality
+            self._spy()
+            # Apply espionage risk
+            self._espionage_risk()
+            
+        elif option_id == "investigate_opponent":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute investigation functionality
+            self._investigate_specific_opponent()
+            # Apply espionage risk
+            self._espionage_risk()
+            
+        else:
+            return False, f"Unknown intelligence option: {option_id}"
         
-        return False, f"Unknown intelligence option: {option_id}"
+        # Clear the intelligence dialog
+        self.pending_intelligence_dialog = None
+        return True, "Intelligence operation complete."
     
     def _trigger_competitor_discovery(self) -> None:
         """Trigger discovery of a new competitor through intelligence."""

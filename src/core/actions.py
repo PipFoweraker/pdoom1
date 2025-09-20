@@ -420,33 +420,6 @@ ACTIONS = [
         "rules": manager_unlock_rule
     },
     {
-        "name": "Espionage",
-        "desc": "Chance to reveal opponent progress, risky. Minimal operational costs.",
-        "cost": lambda gs: gs.economic_config.get_intelligence_cost('espionage'),
-        "ap_cost": 1,  # Action Points cost
-        "upside": lambda gs: gs._spy(),
-        "downside": lambda gs: gs._espionage_risk(),
-        "rules": None
-    },
-    {
-        "name": "Scout Opponents",
-        "desc": "Intelligence gathering to discover and reveal opponent capabilities - costs $50 with exposure risk.",
-        "cost": 50,
-        "ap_cost": 1,  # Action Points cost
-        "upside": lambda gs: gs._scout_opponent(),
-        "downside": lambda gs: gs._espionage_risk(),
-        "rules": None  # Always available for intelligence gathering
-    },
-    {
-        "name": "Investigate Opponent",
-        "desc": "Deep investigation of a specific revealed opponent - analyze their strategies and progress.",
-        "cost": 75,
-        "ap_cost": 1,  # Action Points cost
-        "upside": lambda gs: gs._investigate_specific_opponent(),
-        "downside": lambda gs: gs._espionage_risk(),
-        "rules": lambda gs: gs._has_revealed_opponents()  # Requires at least one revealed opponent
-    },
-    {
         "name": "General News Reading",
         "desc": "PLACEHOLDER: Read industry news for market intelligence and trends.",
         "cost": 10,  # PLACEHOLDER cost
@@ -512,33 +485,6 @@ ACTIONS = [
         "upside": lambda gs: gs._execute_standalone_safety_research(),
         "downside": lambda gs: None,
         "rules": None  # Always available
-    },
-    {
-        "name": "Research Speed: Fast & Risky (Rushed)",
-        "desc": "Move fast and break things - quicker results but higher doom risk and technical debt",
-        "cost": 0,
-        "action_type": "setting",  # Setting change - no AP cost
-        "upside": lambda gs: gs.set_research_quality(ResearchQuality.RUSHED),
-        "downside": lambda gs: None,
-        "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
-    },
-    {
-        "name": "Research Speed: Balanced (Standard)",
-        "desc": "Steady progress with balanced trade-offs - the default research approach",
-        "cost": 0,
-        "action_type": "setting",  # Setting change - no AP cost
-        "upside": lambda gs: gs.set_research_quality(ResearchQuality.STANDARD),
-        "downside": lambda gs: None,
-        "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
-    },
-    {
-        "name": "Research Speed: Careful & Safe (Thorough)", 
-        "desc": "Take time to do it right - slower but safer with less doom risk and better quality",
-        "cost": 0,
-        "action_type": "setting",  # Setting change - no AP cost
-        "upside": lambda gs: gs.set_research_quality(ResearchQuality.THOROUGH),
-        "downside": lambda gs: None,
-        "rules": lambda gs: gs.research_quality_unlocked  # Unlocks after first research
     },
     {
         "name": "Refactoring Sprint",
