@@ -361,6 +361,16 @@ class GameState:
         self.pending_research_dialog = None  # Current research dialog waiting for player selection
         # Intelligence dialog system
         self.pending_intelligence_dialog = None  # Current intelligence dialog waiting for player selection
+        # Media & PR dialog system
+        self.pending_media_dialog = None  # Current media dialog waiting for player selection
+        # Infrastructure dialog system
+        self.pending_infrastructure_dialog = None  # Current infrastructure dialog waiting for player selection
+        # Technical debt dialog system
+        self.pending_technical_debt_dialog = None  # Current technical debt dialog waiting for player selection
+        # Advanced funding dialog system
+        self.pending_advanced_funding_dialog = None  # Current advanced funding dialog waiting for player selection
+        # Operations dialog system
+        self.pending_operations_dialog = None  # Current operations dialog waiting for player selection
         self._pending_first_time_help = None  # Track pending first-time help to show
 
         # Copy modular content
@@ -3924,6 +3934,28 @@ class GameState:
                 "details": f"Choose from {len(discovered_opponents)} known opponents for detailed analysis."
             })
         
+        # General News Reading - Industry intelligence
+        intelligence_options.append({
+            "id": "general_news_reading",
+            "name": "General News Reading",
+            "description": "Read industry news for market intelligence and trends.",
+            "cost": 10,
+            "ap_cost": 1,
+            "available": True,
+            "details": "Low-cost intelligence gathering from public sources."
+        })
+        
+        # General Networking - Social intelligence
+        intelligence_options.append({
+            "id": "general_networking",
+            "name": "General Networking",
+            "description": "Network with industry contacts for insider intelligence.",
+            "cost": 25,
+            "ap_cost": 1,
+            "available": True,
+            "details": "Build relationships and gather social intelligence."
+        })
+        
         self.pending_intelligence_dialog = {
             "options": intelligence_options,
             "title": "Intelligence Operations",
@@ -3986,6 +4018,22 @@ class GameState:
             # Apply espionage risk
             self._espionage_risk()
             
+        elif option_id == "general_news_reading":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute news reading functionality
+            self._general_news_reading()
+            
+        elif option_id == "general_networking":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute networking functionality
+            self._general_networking()
+            
         else:
             return False, f"Unknown intelligence option: {option_id}"
         
@@ -3993,6 +4041,500 @@ class GameState:
         self.pending_intelligence_dialog = None
         return True, "Intelligence operation complete."
     
+    def _trigger_media_dialog(self) -> None:
+        """Trigger the media & PR dialog with available communication options."""
+        media_options = []
+        
+        # Press Release
+        media_options.append({
+            "id": "press_release",
+            "name": "Press Release",
+            "description": "Issue official press release to announce achievements or respond to events.",
+            "cost": 100,
+            "ap_cost": 1,
+            "available": True,
+            "details": "Controlled messaging to media outlets for reputation management."
+        })
+        
+        # Exclusive Interview
+        media_options.append({
+            "id": "exclusive_interview",
+            "name": "Exclusive Interview", 
+            "description": "Grant exclusive interview to major media outlet for deep coverage.",
+            "cost": 150,
+            "ap_cost": 2,
+            "available": self.reputation >= 10,  # Need some reputation for interviews
+            "details": f"Requires 10+ reputation (current: {self.reputation}). High-impact media engagement."
+        })
+        
+        # Damage Control (Crisis Response)
+        media_options.append({
+            "id": "damage_control",
+            "name": "Damage Control (Crisis Response)",
+            "description": "Rapid response to negative publicity or crisis situations.",
+            "cost": 200,
+            "ap_cost": 1,
+            "available": True,
+            "details": "Emergency PR response for reputation recovery and crisis management."
+        })
+        
+        # Social Media Campaign
+        media_options.append({
+            "id": "social_media_campaign",
+            "name": "Social Media Campaign",
+            "description": "Launch coordinated social media campaign to build public awareness.",
+            "cost": 75,
+            "ap_cost": 1,
+            "available": True,
+            "details": "Digital outreach campaign for community engagement and reputation building."
+        })
+        
+        # Public Statement
+        media_options.append({
+            "id": "public_statement",
+            "name": "Public Statement",
+            "description": "Make formal public statement on AI safety position or industry developments.",
+            "cost": 50,
+            "ap_cost": 1,
+            "available": True,
+            "details": "Official position statement for thought leadership and transparency."
+        })
+        
+        self.pending_media_dialog = {
+            "options": media_options,
+            "title": "Media & PR Operations",
+            "description": "Select a media and public relations operation to execute."
+        }
+    
+    def select_media_option(self, option_id: str) -> Tuple[bool, str]:
+        """Handle player selection of a media & PR option."""
+        if not self.pending_media_dialog:
+            return False, "No media dialog active."
+        
+        # Find the selected option
+        selected_option = None
+        for option in self.pending_media_dialog["options"]:
+            if option["id"] == option_id:
+                selected_option = option
+                break
+        
+        if not selected_option:
+            return False, f"Invalid media option: {option_id}"
+        
+        if not selected_option["available"]:
+            return False, f"Media option not available: {selected_option['name']}"
+        
+        # Check costs
+        if self.money < selected_option["cost"]:
+            return False, f"Insufficient funds. Need ${selected_option['cost']}, have ${self.money}."
+        
+        if self.action_points < selected_option["ap_cost"]:
+            return False, f"Insufficient action points. Need {selected_option['ap_cost']}, have {self.action_points}."
+        
+        # Execute the selected media option
+        if option_id == "press_release":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute press release functionality
+            self._press_release()
+            
+        elif option_id == "exclusive_interview":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute exclusive interview functionality
+            self._exclusive_interview()
+            
+        elif option_id == "damage_control":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute damage control functionality
+            self._damage_control()
+            
+        elif option_id == "social_media_campaign":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute social media campaign functionality
+            self._social_media_campaign()
+            
+        elif option_id == "public_statement":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute public statement functionality
+            self._public_statement()
+            
+        else:
+            return False, f"Unknown media option: {option_id}"
+        
+        # Clear the media dialog
+        self.pending_media_dialog = None
+        return True, "Media & PR operation complete."
+
+    def _trigger_technical_debt_dialog(self) -> None:
+        """Trigger the technical debt dialog with available debt management options."""
+        debt_options = []
+        
+        # Check current technical debt level
+        current_debt = getattr(self.technical_debt, 'accumulated_debt', 0) if hasattr(self, 'technical_debt') else 0
+        
+        # Refactoring Sprint
+        debt_options.append({
+            "id": "refactoring_sprint",
+            "name": "Refactoring Sprint",
+            "description": "Intensive code refactoring to reduce technical debt and improve maintainability.", 
+            "cost": self.economic_config.get_technical_debt_cost('refactoring_sprint') if hasattr(self, 'economic_config') else 250,
+            "ap_cost": 2,
+            "available": current_debt >= 5,  # Need significant debt to justify
+            "details": f"Requires 5+ debt (current: {current_debt}). Major debt reduction effort."
+        })
+        
+        # Technical Debt Audit (Safety Audit)
+        debt_options.append({
+            "id": "technical_debt_audit",
+            "name": "Technical Debt Audit",
+            "description": "External safety audit to identify and assess technical debt risks.",
+            "cost": self.economic_config.get_technical_debt_cost('safety_audit_external') if hasattr(self, 'economic_config') else 400,
+            "ap_cost": 1,
+            "available": current_debt >= 3,  # Need some debt to audit
+            "details": f"Requires 3+ debt (current: {current_debt}). Professional assessment of risks."
+        })
+        
+        # Code Review
+        debt_options.append({
+            "id": "code_review", 
+            "name": "Code Review",
+            "description": "Systematic peer code review to prevent technical debt accumulation.",
+            "cost": 80,
+            "ap_cost": 1,
+            "available": self.research_staff >= 1 and current_debt >= 1,
+            "details": f"Requires 1+ research staff and 1+ debt. Staff: {self.research_staff}, Debt: {current_debt}"
+        })
+        
+        self.pending_technical_debt_dialog = {
+            "options": debt_options,
+            "title": "Technical Debt Management",
+            "description": "Select a technical debt management operation to execute."
+        }
+    
+    def select_technical_debt_option(self, option_id: str) -> Tuple[bool, str]:
+        """Handle player selection of a technical debt option."""
+        if not self.pending_technical_debt_dialog:
+            return False, "No technical debt dialog active."
+        
+        # Find the selected option
+        selected_option = None
+        for option in self.pending_technical_debt_dialog["options"]:
+            if option["id"] == option_id:
+                selected_option = option
+                break
+        
+        if not selected_option:
+            return False, f"Invalid technical debt option: {option_id}"
+        
+        if not selected_option["available"]:
+            return False, f"Technical debt option not available: {selected_option['name']}"
+        
+        # Check costs
+        if self.money < selected_option["cost"]:
+            return False, f"Insufficient funds. Need ${selected_option['cost']}, have ${self.money}."
+        
+        if self.action_points < selected_option["ap_cost"]:
+            return False, f"Insufficient action points. Need {selected_option['ap_cost']}, have {self.action_points}."
+        
+        # Execute the selected technical debt option
+        if option_id == "refactoring_sprint":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute refactoring sprint functionality
+            self.execute_debt_reduction_action("Refactoring Sprint")
+            
+        elif option_id == "technical_debt_audit":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute technical debt audit functionality
+            self.execute_debt_reduction_action("Safety Audit")
+            
+        elif option_id == "code_review":
+            # Deduct costs
+            self.money -= selected_option["cost"] 
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute code review functionality
+            self.execute_debt_reduction_action("Code Review")
+            
+        else:
+            return False, f"Unknown technical debt option: {option_id}"
+        
+        # Clear the technical debt dialog
+        self.pending_technical_debt_dialog = None
+        return True, "Technical debt management operation complete."
+
+    def _trigger_advanced_funding_dialog(self) -> None:
+        """Trigger the advanced funding dialog with available funding options."""
+        funding_options = []
+        
+        # Series A Funding
+        funding_options.append({
+            "id": "series_a_funding",
+            "name": "Series A Funding",
+            "description": "Pursue institutional venture capital funding for large-scale growth.",
+            "cost": 0,
+            "ap_cost": 2,  # More complex than basic fundraising
+            "available": self.reputation >= 15,
+            "details": f"Requires 15+ reputation (current: {self.reputation}). High-impact institutional funding."
+        })
+        
+        # Government Grant Application
+        funding_options.append({
+            "id": "government_grant",
+            "name": "Government Grant Application",
+            "description": "Apply for government AI safety research grants with counter-cyclical funding.",
+            "cost": 10,  # Application costs
+            "ap_cost": 1,
+            "available": self.reputation >= 8,
+            "details": f"Requires 8+ reputation (current: {self.reputation}). Stable government funding source."
+        })
+        
+        # Corporate Partnership
+        funding_options.append({
+            "id": "corporate_partnership",
+            "name": "Corporate Partnership",
+            "description": "Form strategic partnership with established corporation for funding and resources.",
+            "cost": 0,
+            "ap_cost": 2,
+            "available": self.reputation >= 12,
+            "details": f"Requires 12+ reputation (current: {self.reputation}). Strategic business alliance."
+        })
+        
+        # Revenue Diversification
+        funding_options.append({
+            "id": "revenue_diversification",
+            "name": "Revenue Diversification",
+            "description": "Develop alternative revenue streams through consulting and licensing.",
+            "cost": 0,
+            "ap_cost": 1,
+            "available": self.reputation >= 10 and self.staff >= 5,
+            "details": f"Requires 10+ reputation and 5+ staff. Current: {self.reputation} reputation, {self.staff} staff."
+        })
+        
+        self.pending_advanced_funding_dialog = {
+            "options": funding_options,
+            "title": "Advanced Funding Options",
+            "description": "Select an advanced funding strategy to execute."
+        }
+    
+    def select_advanced_funding_option(self, option_id: str) -> Tuple[bool, str]:
+        """Handle player selection of an advanced funding option."""
+        if not self.pending_advanced_funding_dialog:
+            return False, "No advanced funding dialog active."
+        
+        # Find the selected option
+        selected_option = None
+        for option in self.pending_advanced_funding_dialog["options"]:
+            if option["id"] == option_id:
+                selected_option = option
+                break
+        
+        if not selected_option:
+            return False, f"Invalid advanced funding option: {option_id}"
+        
+        if not selected_option["available"]:
+            return False, f"Advanced funding option not available: {selected_option['name']}"
+        
+        # Check costs
+        if self.money < selected_option["cost"]:
+            return False, f"Insufficient funds. Need ${selected_option['cost']}, have ${self.money}."
+        
+        if self.action_points < selected_option["ap_cost"]:
+            return False, f"Insufficient action points. Need {selected_option['ap_cost']}, have {self.action_points}."
+        
+        # Import funding functions
+        from src.core.actions import (
+            execute_series_a_funding,
+            execute_government_grant_application,
+            execute_corporate_partnership,
+            execute_revenue_diversification
+        )
+        from src.services.rng_service import get_rng
+        
+        # Execute the selected advanced funding option
+        if option_id == "series_a_funding":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute series A funding functionality
+            execute_series_a_funding(self)
+            # Apply potential reputation risk
+            if get_rng().random("random_context") < 0.4:
+                self._add('reputation', -1)
+            
+        elif option_id == "government_grant":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute government grant functionality
+            execute_government_grant_application(self)
+            
+        elif option_id == "corporate_partnership":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute corporate partnership functionality
+            execute_corporate_partnership(self)
+            # Apply potential reputation risk
+            if get_rng().random("random_context") < 0.3:
+                self._add('reputation', -2)
+            
+        elif option_id == "revenue_diversification":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute revenue diversification functionality
+            execute_revenue_diversification(self)
+            
+        else:
+            return False, f"Unknown advanced funding option: {option_id}"
+        
+        # Clear the advanced funding dialog
+        self.pending_advanced_funding_dialog = None
+        return True, "Advanced funding operation complete."
+
+    def _trigger_infrastructure_dialog(self) -> None:
+        """Trigger the infrastructure dialog with available system upgrade options."""
+        infrastructure_options = []
+        
+        # Check technical failures system availability
+        has_tech_failures = hasattr(self, 'technical_failures')
+        
+        # Incident Response Training
+        current_incident_level = getattr(self.technical_failures, 'incident_response_level', 0) if has_tech_failures else 0
+        incident_cost = (current_incident_level + 1) * 30 if has_tech_failures else 30
+        
+        infrastructure_options.append({
+            "id": "incident_response_training",
+            "name": "Incident Response Training",
+            "description": "Upgrade incident response capabilities to prevent failure cascades and improve crisis management.",
+            "cost": incident_cost,
+            "ap_cost": 1,
+            "available": (current_incident_level < 5) if has_tech_failures else True,
+            "details": f"Current level: {current_incident_level}/5. Systematic emergency response preparation."
+        })
+        
+        # Monitoring Systems
+        current_monitoring = getattr(self.technical_failures, 'monitoring_systems', 0) if has_tech_failures else 0
+        monitoring_cost = (current_monitoring + 1) * 40 if has_tech_failures else 40
+        
+        infrastructure_options.append({
+            "id": "monitoring_systems",
+            "name": "Monitoring Systems",
+            "description": "Deploy advanced monitoring systems for early failure detection and system health tracking.",
+            "cost": monitoring_cost,
+            "ap_cost": 1,
+            "available": (current_monitoring < 5) if has_tech_failures else True,
+            "details": f"Current level: {current_monitoring}/5. Proactive system surveillance and alerting."
+        })
+        
+        # Communication Protocols
+        current_protocols = getattr(self.technical_failures, 'communication_protocols', 0) if has_tech_failures else 0
+        protocols_cost = (current_protocols + 1) * 25 if has_tech_failures else 25
+        
+        infrastructure_options.append({
+            "id": "communication_protocols",
+            "name": "Communication Protocols",
+            "description": "Standardize crisis communication and coordination procedures for effective team response.",
+            "cost": protocols_cost,
+            "ap_cost": 1,
+            "available": (current_protocols < 5) if has_tech_failures else True,
+            "details": f"Current level: {current_protocols}/5. Clear crisis communication frameworks."
+        })
+        
+        self.pending_infrastructure_dialog = {
+            "options": infrastructure_options,
+            "title": "Infrastructure Systems",
+            "description": "Select an infrastructure upgrade to implement."
+        }
+    
+    def select_infrastructure_option(self, option_id: str) -> Tuple[bool, str]:
+        """Handle player selection of an infrastructure option."""
+        if not self.pending_infrastructure_dialog:
+            return False, "No infrastructure dialog active."
+        
+        # Find the selected option
+        selected_option = None
+        for option in self.pending_infrastructure_dialog["options"]:
+            if option["id"] == option_id:
+                selected_option = option
+                break
+        
+        if not selected_option:
+            return False, f"Invalid infrastructure option: {option_id}"
+        
+        if not selected_option["available"]:
+            return False, f"Infrastructure option not available: {selected_option['name']}"
+        
+        # Check costs
+        if self.money < selected_option["cost"]:
+            return False, f"Insufficient funds. Need ${selected_option['cost']}, have ${self.money}."
+        
+        if self.action_points < selected_option["ap_cost"]:
+            return False, f"Insufficient action points. Need {selected_option['ap_cost']}, have {self.action_points}."
+        
+        # Import infrastructure functions
+        from src.core.actions import (
+            execute_incident_response_upgrade,
+            execute_monitoring_systems_upgrade,
+            execute_communication_protocols_upgrade
+        )
+        
+        # Execute the selected infrastructure option
+        if option_id == "incident_response_training":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute incident response upgrade functionality
+            execute_incident_response_upgrade(self)
+            
+        elif option_id == "monitoring_systems":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute monitoring systems upgrade functionality
+            execute_monitoring_systems_upgrade(self)
+            
+        elif option_id == "communication_protocols":
+            # Deduct costs
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            
+            # Execute communication protocols upgrade functionality
+            execute_communication_protocols_upgrade(self)
+            
+        else:
+            return False, f"Unknown infrastructure option: {option_id}"
+        
+        # Clear the infrastructure dialog
+        self.pending_infrastructure_dialog = None
+        return True, "Infrastructure upgrade complete."
+
     def _trigger_competitor_discovery(self) -> None:
         """Trigger discovery of a new competitor through intelligence."""
         undiscovered_opponents = [opp for opp in self.opponents if not opp.discovered]
@@ -4239,13 +4781,23 @@ class GameState:
     
     def dismiss_hiring_dialog(self) -> None:
         """Dismiss the hiring dialog without making a selection."""
-        if self.pending_hiring_dialog:
-            self.pending_hiring_dialog = None
+        from .dialog_manager import DialogManager
+        DialogManager.dismiss_dialog(self, 'hiring')
     
     def dismiss_intelligence_dialog(self) -> None:
         """Dismiss the intelligence dialog without making a selection."""
-        if self.pending_intelligence_dialog:
-            self.pending_intelligence_dialog = None
+        from .dialog_manager import DialogManager
+        DialogManager.dismiss_dialog(self, 'intelligence')
+
+    def dismiss_media_dialog(self) -> None:
+        """Dismiss the media dialog without making a selection."""
+        from .dialog_manager import DialogManager
+        DialogManager.dismiss_dialog(self, 'media')
+
+    def dismiss_technical_debt_dialog(self) -> None:
+        """Dismiss the technical debt dialog without making a selection."""
+        from .dialog_manager import DialogManager
+        DialogManager.dismiss_dialog(self, 'technical_debt')
     
     def _create_upgrade_transition(self, upgrade_idx: int, start_rect: pygame.Rect, end_rect: pygame.Rect) -> None:
         """Create a smooth transition animation for an upgrade moving from button to icon."""
@@ -5327,7 +5879,8 @@ class GameState:
     
     def dismiss_fundraising_dialog(self) -> None:
         """Dismiss the fundraising dialog without making a selection."""
-        self.pending_fundraising_dialog = None
+        from .dialog_manager import DialogManager
+        DialogManager.dismiss_dialog(self, 'fundraising')
     
     def select_fundraising_option(self, option_id: str) -> Tuple[bool, str]:
         """Execute a selected fundraising option and dismiss the dialog."""
@@ -5475,7 +6028,8 @@ class GameState:
     
     def dismiss_research_dialog(self) -> None:
         """Dismiss the research dialog."""
-        self.pending_research_dialog = None
+        from .dialog_manager import DialogManager
+        DialogManager.dismiss_dialog(self, 'research')
     
     def select_research_option(self, option_id: str) -> Tuple[bool, str]:
         """Execute the selected research option."""

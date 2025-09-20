@@ -411,6 +411,62 @@ ACTIONS = [
         "rules": None
     },
     {
+        "name": "Media & PR",
+        "desc": "Open media & PR dialog to select from press releases, interviews, and communication options.",
+        "cost": 0,  # No immediate cost - cost depends on selection
+        "ap_cost": 1,
+        "action_type": "submenu",  # Opens dialog menu
+        "delegatable": True,  # Can be delegated to admin staff
+        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
+        "delegate_ap_cost": 1,  # Same AP cost when delegated (requires coordination)
+        "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated
+        "upside": lambda gs: gs._trigger_media_dialog(),
+        "downside": lambda gs: None,  # No downside for opening menu
+        "rules": None
+    },
+    {
+        "name": "Technical Debt",
+        "desc": "Open technical debt management dialog for code quality and safety improvements.",
+        "cost": 0,  # No immediate cost - cost depends on selection
+        "ap_cost": 1,
+        "action_type": "submenu",  # Opens dialog menu
+        "delegatable": True,  # Can be delegated to research staff
+        "delegate_staff_req": 2,  # Requires 2 research staff to delegate (technical work)
+        "delegate_ap_cost": 1,  # Same AP cost when delegated
+        "delegate_effectiveness": 0.85,  # 85% effectiveness when delegated (requires oversight)
+        "upside": lambda gs: gs._trigger_technical_debt_dialog(),
+        "downside": lambda gs: None,  # No downside for opening menu
+        "rules": None
+    },
+    {
+        "name": "Advanced Funding",
+        "desc": "Open advanced funding dialog for Series A, grants, partnerships, and revenue diversification.",
+        "cost": 0,  # No immediate cost - cost depends on selection
+        "ap_cost": 1,
+        "action_type": "submenu",  # Opens dialog menu
+        "delegatable": True,  # Can be delegated to admin staff
+        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
+        "delegate_ap_cost": 1,  # Same AP cost when delegated (requires coordination)
+        "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated (requires personal touch)
+        "upside": lambda gs: gs._trigger_advanced_funding_dialog(),
+        "downside": lambda gs: None,  # No downside for opening menu
+        "rules": lambda gs: getattr(gs, 'advanced_funding_unlocked', False)  # Requires advanced funding to be unlocked
+    },
+    {
+        "name": "Infrastructure",
+        "desc": "Open infrastructure dialog for incident response, monitoring systems, and communication protocols.",
+        "cost": 0,  # No immediate cost - cost depends on selection
+        "ap_cost": 1,
+        "action_type": "submenu",  # Opens dialog menu
+        "delegatable": True,  # Can be delegated to operations staff
+        "delegate_staff_req": 1,  # Requires 1 operations staff to delegate
+        "delegate_ap_cost": 1,  # Same AP cost when delegated
+        "delegate_effectiveness": 0.9,  # 90% effectiveness when delegated (operational tasks)
+        "upside": lambda gs: gs._trigger_infrastructure_dialog(),
+        "downside": lambda gs: None,  # No downside for opening menu
+        "rules": None  # Always available - balance through other mechanics
+    },
+    {
         "name": "Hire Manager",
         "desc": "Team leader; required for organizations with 9+ employees.",
         "cost": 90,
@@ -418,32 +474,6 @@ ACTIONS = [
         "upside": lambda gs: gs._hire_employee_subtype("manager"),
         "downside": lambda gs: None,
         "rules": manager_unlock_rule
-    },
-    {
-        "name": "General News Reading",
-        "desc": "PLACEHOLDER: Read industry news for market intelligence and trends.",
-        "cost": 10,  # PLACEHOLDER cost
-        "ap_cost": 1,  # Action Points cost
-        "delegatable": True,  # Can be delegated to admin staff
-        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
-        "delegate_ap_cost": 0,  # Lower AP cost when delegated (routine task)
-        "delegate_effectiveness": 1.0,  # Full effectiveness when delegated
-        "upside": lambda gs: gs._general_news_reading(),
-        "downside": lambda gs: None,
-        "rules": None
-    },
-    {
-        "name": "General Networking",
-        "desc": "PLACEHOLDER: Attend conferences and build industry connections.",
-        "cost": 25,  # PLACEHOLDER cost
-        "ap_cost": 1,  # Action Points cost
-        "delegatable": True,  # Can be delegated to admin staff
-        "delegate_staff_req": 1,  # Requires 1 admin staff to delegate
-        "delegate_ap_cost": 1,  # Same AP cost when delegated (needs personal touch)
-        "delegate_effectiveness": 0.8,  # 80% effectiveness when delegated
-        "upside": lambda gs: gs._general_networking(),
-        "downside": lambda gs: None,
-        "rules": None
     },
     {
         "name": "Search",
@@ -485,153 +515,6 @@ ACTIONS = [
         "upside": lambda gs: gs._execute_standalone_safety_research(),
         "downside": lambda gs: None,
         "rules": None  # Always available
-    },
-    {
-        "name": "Refactoring Sprint",
-        "desc": "Major code cleanup. Focus team effort, reduces debt by 3-5 points",
-        "cost": lambda gs: gs.economic_config.get_technical_debt_cost('refactoring_sprint'),
-        "ap_cost": 2,
-        "upside": lambda gs: gs.execute_debt_reduction_action("Refactoring Sprint"),
-        "downside": lambda gs: None,
-        "rules": lambda gs: gs.technical_debt.accumulated_debt >= 5  # Need significant debt to justify
-    },
-    {
-        "name": "Technical Debt Audit",
-        "desc": "External code quality audit. Professional review, reduces technical debt by 2, +reputation",
-        "cost": lambda gs: gs.economic_config.get_technical_debt_cost('safety_audit_external'),
-        "ap_cost": 1,
-        "upside": lambda gs: gs.execute_debt_reduction_action("Safety Audit"),
-        "downside": lambda gs: None,
-        "rules": lambda gs: gs.technical_debt.accumulated_debt >= 3  # Need some debt to audit
-    },
-    {
-        "name": "Code Review",
-        "desc": "Peer review process. $50k per researcher, reduces debt by 1 per researcher",
-        "cost": 0,  # Dynamic cost based on researchers
-        "ap_cost": 1,
-        "upside": lambda gs: gs.execute_debt_reduction_action("Code Review"),
-        "downside": lambda gs: None,
-        "rules": lambda gs: gs.research_staff >= 1 and gs.technical_debt.accumulated_debt >= 1
-    },
-    # Media & Public Opinion Actions
-    {
-        "name": "Press Release",
-        "desc": "Issue press release via social media/blog. Self-funded organic outreach.",
-        "cost": 0,
-        "ap_cost": 1,
-        "upside": lambda gs: gs.media_system.execute_media_action('press_release', gs) if hasattr(gs, 'media_system') else None,
-        "downside": lambda gs: None,
-        "rules": lambda gs: hasattr(gs, 'media_system')
-    },
-    {
-        "name": "Exclusive Interview",
-        "desc": "High-impact interview with major outlet. Costs reputation and time.",
-        "cost": 0,
-        "ap_cost": 1,
-        "upside": lambda gs: gs.media_system.execute_media_action('exclusive_interview', gs) if hasattr(gs, 'media_system') else None,
-        "downside": lambda gs: None,
-        "rules": lambda gs: hasattr(gs, 'media_system') and gs.reputation >= 10
-    },
-    {
-        "name": "Damage Control (Crisis Response)",
-        "desc": "Reduce negative media coverage impact by 50%. Costs $200k. Only available during active scandals or negative press coverage.",
-        "cost": 200000,
-        "ap_cost": 1,
-        "upside": lambda gs: gs.media_system.execute_media_action('damage_control', gs) if hasattr(gs, 'media_system') else None,
-        "downside": lambda gs: None,
-        "rules": lambda gs: (hasattr(gs, 'media_system') and 
-                           any(story.story_type.value == 'scandal' for story in gs.public_opinion.active_stories)),
-        "unavailable_reason": "No active scandals or negative press to respond to"
-    },
-    {
-        "name": "Social Media Campaign", 
-        "desc": "Organic social media outreach to improve public sentiment. Self-funded.",
-        "cost": 0,
-        "ap_cost": 1,
-        "upside": lambda gs: gs.media_system.execute_media_action('social_media_campaign', gs) if hasattr(gs, 'media_system') else None,
-        "downside": lambda gs: None,
-        "rules": lambda gs: hasattr(gs, 'media_system')
-    },
-    {
-        "name": "Public Statement",
-        "desc": "Issue statement on current events via blog/social media. Self-funded.",
-        "cost": 0,
-        "ap_cost": 1,
-        "upside": lambda gs: gs.media_system.execute_media_action('public_statement', gs) if hasattr(gs, 'media_system') else None,
-        "downside": lambda gs: None,
-        "rules": lambda gs: hasattr(gs, 'media_system')
-    },
-    # Advanced Economic & Funding Actions for Issue #192
-    {
-        "name": "Series A Funding",
-        "desc": "Pursue institutional venture capital funding (requires proven traction)",
-        "cost": 0,
-        "ap_cost": 2,  # More complex than basic fundraising
-        "upside": lambda gs: execute_series_a_funding(gs),
-        "downside": lambda gs: gs._add('reputation', -1 if get_rng().random("random_context") < 0.4 else 0),
-        "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
-                           gs.reputation >= 15)
-    },
-    {
-        "name": "Government Grant Application",
-        "desc": "Apply for government AI safety research grants (counter-cyclical funding)",
-        "cost": 10,  # Application costs
-        "ap_cost": 1,
-        "upside": lambda gs: execute_government_grant_application(gs),
-        "downside": lambda gs: None,
-        "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
-                           gs.reputation >= 8)
-    },
-    {
-        "name": "Corporate Partnership",
-        "desc": "Negotiate strategic partnership with established technology company",
-        "cost": 0,
-        "ap_cost": 2,
-        "upside": lambda gs: execute_corporate_partnership(gs),
-        "downside": lambda gs: gs._add('reputation', -2 if get_rng().random("random_context") < 0.3 else 0),
-        "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
-                           gs.reputation >= 12)
-    },
-    {
-        "name": "Revenue Diversification",
-        "desc": "Develop customer revenue streams to reduce funding dependence",
-        "cost": 50,
-        "ap_cost": 2,
-        "upside": lambda gs: execute_revenue_diversification(gs),
-        "downside": lambda gs: None,
-        "rules": lambda gs: (getattr(gs, 'advanced_funding_unlocked', False) and 
-                           gs.reputation >= 10 and gs.staff >= 5)
-    },
-    # Technical Failure Cascade Prevention Actions for Issue #193
-    {
-        "name": "Incident Response Training",
-        "desc": "Upgrade incident response capabilities to prevent failure cascades",
-        "cost": lambda gs: (getattr(gs.technical_failures, 'incident_response_level', 0) + 1) * 30 if hasattr(gs, 'technical_failures') else 30,
-        "ap_cost": 1,
-        "upside": lambda gs: execute_incident_response_upgrade(gs),
-        "downside": lambda gs: None,
-        "rules": lambda gs: (hasattr(gs, 'technical_failures') and 
-                           gs.technical_failures.incident_response_level < 5) or not hasattr(gs, 'technical_failures')
-    },
-    {
-        "name": "Monitoring Systems",
-        "desc": "Deploy advanced monitoring for early failure detection",
-        "cost": lambda gs: (getattr(gs.technical_failures, 'monitoring_systems', 0) + 1) * 40 if hasattr(gs, 'technical_failures') else 40,
-        "ap_cost": 1,
-        "upside": lambda gs: execute_monitoring_systems_upgrade(gs),
-        "downside": lambda gs: None,
-        "rules": lambda gs: (hasattr(gs, 'technical_failures') and 
-                           gs.technical_failures.monitoring_systems < 5) or not hasattr(gs, 'technical_failures')
-    },
-    {
-        "name": "Communication Protocols",
-        "desc": "Standardize crisis communication and coordination procedures",
-        "cost": lambda gs: (getattr(gs.technical_failures, 'communication_protocols', 0) + 1) * 25 if hasattr(gs, 'technical_failures') else 25,
-        "ap_cost": 1,
-        "upside": lambda gs: execute_communication_protocols_upgrade(gs),
-        "downside": lambda gs: None,
-        "rules": lambda gs: (hasattr(gs, 'technical_failures') and 
-                           gs.technical_failures.communication_protocols < 5) or not hasattr(gs, 'technical_failures')
     },
     {
         "name": "Safety Audit",

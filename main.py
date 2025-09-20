@@ -1831,6 +1831,10 @@ def main():
     cached_research_dialog_rects = None
     # Initialize cached intelligence dialog rects
     cached_intelligence_dialog_rects = None
+    # Initialize cached media dialog rects
+    cached_media_dialog_rects = None
+    # Initialize cached technical debt dialog rects
+    cached_technical_debt_dialog_rects = None
 
     running = True
     try:
@@ -2106,6 +2110,74 @@ def main():
                                     else:
                                         # Click is outside dialog area - dismiss the dialog
                                         game_state.dismiss_intelligence_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for media dialog clicks
+                            elif game_state and game_state.pending_media_dialog and cached_media_dialog_rects is not None:
+                                media_handled = False
+                                for rect_info in cached_media_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'media_option':
+                                            # Player selected a media option
+                                            game_state.select_media_option(rect_info['option_id'])
+                                            media_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the media dialog
+                                            game_state.dismiss_media_dialog()
+                                            media_handled = True
+                                            break
+                                
+                                if media_handled:
+                                    pass  # Media dialog handled the click
+                                else:
+                                    # When media dialog is open, check if click is inside dialog area
+                                    dialog_width = int(SCREEN_W * 0.7)
+                                    dialog_height = int(SCREEN_H * 0.6)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_media_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for technical debt dialog clicks
+                            elif game_state and game_state.pending_technical_debt_dialog and cached_technical_debt_dialog_rects is not None:
+                                technical_debt_handled = False
+                                for rect_info in cached_technical_debt_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'technical_debt_option':
+                                            # Player selected a technical debt option
+                                            game_state.select_technical_debt_option(rect_info['option_id'])
+                                            technical_debt_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the technical debt dialog
+                                            game_state.dismiss_technical_debt_dialog()
+                                            technical_debt_handled = True
+                                            break
+                                
+                                if technical_debt_handled:
+                                    pass  # Technical debt dialog handled the click
+                                else:
+                                    # When technical debt dialog is open, check if click is inside dialog area
+                                    dialog_width = int(SCREEN_W * 0.7)
+                                    dialog_height = int(SCREEN_H * 0.6)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_technical_debt_dialog()
                                         if hasattr(game_state, 'sound_manager'):
                                             game_state.sound_manager.play_sound('popup_close')
                             # Check for fundraising dialog clicks
@@ -2998,6 +3070,22 @@ def main():
                     else:
                         # Clear cached rects when dialog is not active
                         cached_research_dialog_rects = None
+                    
+                    # Draw media dialog if active
+                    if game_state and game_state.pending_media_dialog:
+                        from src.ui.dialogs import draw_media_dialog
+                        cached_media_dialog_rects = draw_media_dialog(screen, game_state.pending_media_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_media_dialog_rects = None
+                    
+                    # Draw technical debt dialog if active
+                    if game_state and game_state.pending_technical_debt_dialog:
+                        from src.ui.dialogs import draw_technical_debt_dialog
+                        cached_technical_debt_dialog_rects = draw_technical_debt_dialog(screen, game_state.pending_technical_debt_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_technical_debt_dialog_rects = None
                     
 
                     # Draw stepwise tutorial overlay if active

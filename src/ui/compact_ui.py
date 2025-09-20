@@ -5,6 +5,7 @@ Provides icon-based compact buttons with shortcut key indicators to maximize
 screen real estate when tutorial mode is disabled.
 """
 
+from typing import Dict, Tuple, Optional, Union
 
 # Try to import pygame, fallback to dummy values for CI/testing environments
 try:
@@ -180,6 +181,83 @@ def get_upgrade_icon(upgrade_name: str, upgrade_index: int) -> str:
     return upgrade_name[0].upper() if upgrade_name else "??"
 
 
+def get_action_color_scheme(action_name: str) -> Dict[str, Tuple[int, int, int]]:
+    """
+    Get color scheme for different action types following P(Doom) style guide.
+    
+    Args:
+        action_name: Name of the action
+        
+    Returns:
+        dict: Color scheme with 'normal' and 'hover' colors
+    """
+    action_lower = action_name.lower()
+    
+    # Core Actions - Default blue-grey theme
+    if any(word in action_lower for word in ['grow community', 'hire staff', 'hire manager']):
+        return {
+            'normal': (70, 90, 120),     # Medium blue-grey
+            'hover': (90, 110, 140),     # Lighter blue-grey
+            'border': (100, 120, 160)
+        }
+    
+    # Economic Actions - Green theme
+    elif any(word in action_lower for word in ['fundraising', 'buy compute', 'advanced funding']):
+        return {
+            'normal': (60, 100, 70),     # Forest green
+            'hover': (80, 120, 90),      # Lighter green
+            'border': (100, 140, 110)
+        }
+    
+    # Research & Development - Blue theme
+    elif any(word in action_lower for word in ['research', 'safety research', 'refresh researchers', 'team building']):
+        return {
+            'normal': (60, 80, 120),     # Deep blue
+            'hover': (80, 100, 140),     # Lighter blue
+            'border': (100, 120, 160)
+        }
+    
+    # Intelligence & Information - Purple theme
+    elif 'intelligence' in action_lower:
+        return {
+            'normal': (90, 70, 120),     # Purple
+            'hover': (110, 90, 140),     # Lighter purple
+            'border': (130, 110, 160)
+        }
+    
+    # Media & PR - Orange theme
+    elif 'media' in action_lower or 'pr' in action_lower:
+        return {
+            'normal': (120, 80, 50),     # Orange-brown
+            'hover': (140, 100, 70),     # Lighter orange
+            'border': (160, 120, 90)
+        }
+    
+    # Technical Systems - Teal theme
+    elif any(word in action_lower for word in ['technical debt', 'infrastructure']):
+        return {
+            'normal': (50, 100, 100),    # Teal
+            'hover': (70, 120, 120),     # Lighter teal
+            'border': (90, 140, 140)
+        }
+    
+    # Special Actions - Red theme
+    elif any(word in action_lower for word in ['search', 'safety audit']):
+        return {
+            'normal': (100, 60, 60),     # Red
+            'hover': (120, 80, 80),      # Lighter red
+            'border': (140, 100, 100)
+        }
+    
+    # Default theme for unmatched actions
+    else:
+        return {
+            'normal': (70, 70, 90),      # Neutral grey-blue
+            'hover': (90, 90, 110),      # Lighter grey-blue
+            'border': (110, 110, 130)
+        }
+
+
 def draw_compact_action_button(screen, rect_tuple, action, action_index, button_state, shortcut_key=None):
     """
     Draw a compact action button with icon and shortcut key indicator.
@@ -204,38 +282,29 @@ def draw_compact_action_button(screen, rect_tuple, action, action_index, button_
     elif shortcut_key is None:
         shortcut_key = str(action_index + 1)
     
-    # Get category-based colors for this action
-    try:
-        from src.ui.visual_themes import get_action_colors
-        action_name = action.get("name", f"action_{action_index}")
-        theme_colors = get_action_colors(action_name)
-        
-        # Create custom color scheme based on button state
-        custom_colors = {}
-        if button_state == ButtonState.NORMAL:
-            custom_colors = {
-                'bg': theme_colors['bg'],
-                'border': theme_colors['border'], 
-                'text': theme_colors['text']
-            }
-        elif button_state == ButtonState.HOVER:
-            custom_colors = {
-                'bg': theme_colors['hover_bg'],
-                'border': theme_colors['border'],
-                'text': theme_colors['text']
-            }
-        elif button_state == ButtonState.PRESSED:
-            custom_colors = {
-                'bg': theme_colors['pressed_bg'],
-                'border': theme_colors['border'],
-                'text': theme_colors['text'] 
-            }
-    except ImportError:
-        custom_colors = None
+    # Get action-specific colors
+    action_name = action.get("name", f"action_{action_index}")
+    color_scheme = get_action_color_scheme(action_name)
     
-    # Draw base button using visual feedback system with custom colors
-    if VISUAL_FEEDBACK_AVAILABLE:
-        visual_feedback.draw_button(screen, rect, "", button_state, FeedbackStyle.BUTTON, custom_colors)
+    # Select colors based on button state
+    if button_state == ButtonState.HOVER:
+        bg_color = color_scheme['hover']
+        border_color = color_scheme['border']
+    elif button_state == ButtonState.PRESSED:
+        # Darker version of normal for pressed state
+        bg_color = tuple(max(0, c - 20) for c in color_scheme['normal'])
+        border_color = color_scheme['border']
+    elif button_state == ButtonState.DISABLED:
+        # Grey out disabled buttons
+        bg_color = (60, 60, 60)
+        border_color = (80, 80, 80)
+    else:  # NORMAL
+        bg_color = color_scheme['normal']
+        border_color = color_scheme['border']
+    
+    # Draw button background and border
+    pygame.draw.rect(screen, bg_color, rect, border_radius=3)
+    pygame.draw.rect(screen, border_color, rect, width=2, border_radius=3)
     
     # Get action icon
     action_name = action.get("name", f"Action {action_index + 1}")
@@ -394,9 +463,9 @@ def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
         cutoff_height = int(h * 0.78)  # Stop before context window at bottom
         available_height = cutoff_height - int(h * 0.2)  # Space from start_y to cutoff
         
-        # Dynamically size buttons to fit available space
-        spacing = 4
-        max_button_size = int(min(w, h) * 0.045)
+        # Dynamically size buttons to fit available space - matched to action button proportions
+        spacing = int(h * 0.004)  # Match action button gap spacing
+        max_button_size = int(h * 0.033)  # Match action button height for consistency
         min_button_size = int(min(w, h) * 0.025)
         
         # Calculate required space and adjust button size if needed
@@ -407,8 +476,8 @@ def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
         else:
             button_size = max_button_size
             
-        start_x = w - int(w * 0.08)
-        start_y = int(h * 0.2)
+        start_x = w - int(w * 0.09)  # Increased width for better proportion matching
+        start_y = int(h * 0.22)  # Match action button starting Y position
         
         for i in range(num_purchased, min(num_upgrades, num_purchased + available_upgrades)):
             idx = i - num_purchased
@@ -417,8 +486,10 @@ def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
             # Double-check we don't exceed cutoff height
             if y + button_size > cutoff_height:
                 break
-                
-            rects.append((start_x, y, button_size, button_size))
+            
+            # Use rectangular buttons to better match action button proportions
+            button_width = int(w * 0.16)  # Wider than square for better match to action buttons
+            rects.append((start_x, y, button_width, button_size))
     
     return rects
 

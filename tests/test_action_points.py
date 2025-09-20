@@ -221,10 +221,10 @@ class TestActionPointsBackwardCompatibility(unittest.TestCase):
         """Test that existing actions still work with AP system."""
         # Verify that all existing actions have reasonable AP costs
         action_names = [action["name"] for action in self.game_state.actions]
-        # Updated to match current action names in v0.4.1
+        # Updated to match current action names in v0.8.0 (post-UI consolidation)
         expected_actions = [
             "Grow Community", "Fundraising Options", "Research Options", 
-            "Buy Compute", "Hire Staff", "Espionage", "Scout Opponents"
+            "Buy Compute", "Hire Staff", "Intelligence", "Search"
         ]
         
         for expected_action in expected_actions:

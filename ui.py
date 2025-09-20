@@ -1418,11 +1418,11 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         # Use traditional layout with filtered actions - calculate rects manually
         count = len(available_actions)
         base_x = int(w * 0.04)
-        base_y = int(h * 0.20)  # Button displacement fix: moved up from 0.22 to 0.20 for maximum fit
+        base_y = int(h * 0.22)  # UI cleanup: moved down from 0.20 to 0.22 for better visual balance
         # Ultra-compact action buttons to ensure ALL actions are clickable (final clipping fix)
         width = int(w * 0.23)  # Further reduced from 0.24 to 0.23
-        height = int(h * 0.031)  # Final reduction from 0.034 to 0.031 to eliminate all clipping
-        gap = int(h * 0.003)  # Final reduction from 0.005 to 0.003 for maximum density
+        height = int(h * 0.033)  # UI cleanup: increased from 0.031 to 0.033 for better button spacing
+        gap = int(h * 0.004)  # UI cleanup: increased from 0.003 to 0.004 for improved readability
         action_rects = [
             pygame.Rect(base_x, base_y + i * (height + gap), width, height)
             for i in range(count)
@@ -1472,6 +1472,7 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
                 continue
             # Traditional button with text (shorter in non-tutorial mode)
             from src.services.keybinding_manager import keybinding_manager
+            from src.ui.compact_ui import get_action_color_scheme
             
             # Use shorter text for cleaner interface - context window provides details
             button_text = action["name"]
@@ -1479,8 +1480,49 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
                 shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
                 button_text = f"[{shortcut_key}] {action['name']}"
             
+            # Get action-specific colors
+            action_name = action.get("name", f"action_{original_idx}")
+            color_scheme = get_action_color_scheme(action_name)
+            
+            # Create custom color mapping for visual feedback system
+            custom_colors = {}
+            if button_state == ButtonState.NORMAL:
+                custom_colors = {
+                    'bg': color_scheme['normal'],
+                    'border': color_scheme['border'],
+                    'text': (255, 255, 255),  # White text for good contrast
+                    'shadow': tuple(max(0, c - 30) for c in color_scheme['normal']),  # Darker shadow
+                    'glow': color_scheme['border']  # Use border color for glow
+                }
+            elif button_state == ButtonState.HOVER:
+                custom_colors = {
+                    'bg': color_scheme['hover'],
+                    'border': color_scheme['border'],
+                    'text': (255, 255, 255),
+                    'shadow': tuple(max(0, c - 30) for c in color_scheme['hover']),
+                    'glow': color_scheme['border']
+                }
+            elif button_state == ButtonState.PRESSED:
+                # Darker version of normal for pressed state
+                pressed_bg = tuple(max(0, c - 20) for c in color_scheme['normal'])
+                custom_colors = {
+                    'bg': pressed_bg,
+                    'border': color_scheme['border'],
+                    'text': (255, 255, 255),
+                    'shadow': tuple(max(0, c - 30) for c in pressed_bg),
+                    'glow': color_scheme['border']
+                }
+            else:  # DISABLED
+                custom_colors = {
+                    'bg': (60, 60, 60),
+                    'border': (80, 80, 80),
+                    'text': (150, 150, 150),
+                    'shadow': (30, 30, 30),
+                    'glow': (100, 100, 100)
+                }
+            
             visual_feedback.draw_button(
-                screen, rect, button_text, button_state, FeedbackStyle.BUTTON
+                screen, rect, button_text, button_state, FeedbackStyle.BUTTON, custom_colors
             )
             
             # Description text is now shown in context window instead of cluttering buttons
