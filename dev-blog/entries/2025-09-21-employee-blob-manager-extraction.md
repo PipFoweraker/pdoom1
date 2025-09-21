@@ -3,7 +3,7 @@ title: "Employee Blob Manager Extraction - Second Major Monolith Module"
 date: "2025-09-21"
 tags: ["architecture", "refactoring", "monolith-breakdown", "employee-management"]
 summary: "Extracted comprehensive employee blob visualization system (272 lines) from game_state.py monolith with zero regressions"
-commit: "TBD"
+commit: "1ddfc26"
 ---
 
 # Employee Blob Manager Extraction - Second Major Monolith Module
