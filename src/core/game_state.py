@@ -36,14 +36,13 @@ from src.core.ui_utils import (
     get_action_rects, get_upgrade_rects, get_upgrade_icon_rect, get_context_window_top,
     get_endturn_rect, get_mute_button_rect, get_activity_log_minimize_button_rect,
     get_activity_log_expand_button_rect, get_activity_log_rect, get_activity_log_base_position,
-    get_activity_log_current_position, validate_rect, get_ui_element_rects, calculate_blob_position
+    get_activity_log_current_position, validate_rect
 )
 from src.core.verbose_logging import (
     create_verbose_money_message, create_verbose_staff_message, 
     create_verbose_reputation_message, create_verbose_compute_message
 )
 from src.core.employee_management import (
-    initialize_employee_blobs, add_employee_blobs, remove_employee_blobs,
     reset_employee_productivity, separate_employees_and_managers,
     apply_management_assignments, calculate_compute_per_employee
 )
@@ -51,6 +50,8 @@ from src.core.dialog_systems import (
     DialogManager, FundraisingDialogBuilder, ResearchDialogBuilder, DialogValidator
 )
 from src.core.input_manager import InputManager
+from src.core.employee_blob_manager import EmployeeBlobManager
+from src.core.ui_transition_manager import UITransitionManager
 from src.core.utility_functions import (
     is_upgrade_available, check_point_in_rect, process_achievements_and_warnings_complete,
     filter_available_upgrades, get_milestone_check_functions
@@ -350,6 +351,10 @@ class GameState:
         
         # Input management system
         self.input_manager = InputManager(self)
+        self.employee_blob_manager = EmployeeBlobManager(self)
+        
+        # UI transition system for smooth visual feedback
+        self.ui_transition_manager = UITransitionManager(self)
 
         # Tutorial and onboarding system
         self.tutorial_enabled = True  # Whether tutorial is enabled (default True for new players)
@@ -413,9 +418,7 @@ class GameState:
         )
         self.logger = GameLogger(seed)
         
-        # UI Transition System for smooth visual feedback
-        self.ui_transitions = []  # List of active UI transition animations
-        self.upgrade_transitions = {}  # Track transitions for individual upgrades
+        # UI Transition System now handled by UITransitionManager
         
         # Turn Processing State for reliable input handling
         self.turn_processing = False  # True during turn transition
@@ -432,7 +435,7 @@ class GameState:
         self.turn_manager = TurnManager(self)
         
         # Initialize employee blobs for starting staff
-        self._initialize_employee_blobs()
+        self.employee_blob_manager.initialize_employee_blobs()
         
         # Office Cat System - Enhanced interactive pet mechanics for dev engagement
         self.office_cat_adopted = False  # Whether any cats have been adopted
@@ -996,224 +999,35 @@ class GameState:
 
     def _initialize_employee_blobs(self) -> None:
         """Initialize employee blobs for starting staff with improved positioning"""
-        self.employee_blobs = initialize_employee_blobs(self.staff, self._calculate_blob_position)
+        return self.employee_blob_manager.initialize_employee_blobs()
     
     def _add_employee_blobs(self, count: int) -> None:
         """Add new employee blobs with animation from side and improved positioning"""
-        new_blobs = add_employee_blobs(self.employee_blobs, count, self._calculate_blob_position)
-        self.employee_blobs.extend(new_blobs)
-        
-        # Play sounds for new employees
-        for _ in range(count):
-            self.sound_manager.play_blob_sound()
+        return self.employee_blob_manager.add_employee_blobs(count)
     
     def _calculate_blob_position(self, blob_index: int, screen_w: int = 1200, screen_h: int = 800) -> Tuple[int, int]:
         """Calculate initial blob position in the employee pen area."""
-        return calculate_blob_position(blob_index, screen_w, screen_h)
+        return self.employee_blob_manager.calculate_blob_position(blob_index, screen_w, screen_h)
     
     def _get_ui_element_rects(self, screen_w: int = 1200, screen_h: int = 800) -> List[Tuple[int, int, int, int]]:
-        """
-        Get rectangles of all UI elements that employee blobs should avoid.
-        
-        Args:
-            screen_w (int): Screen width
-            screen_h (int): Screen height
-            
-        Returns:
-            list: List of (x, y, width, height) rectangles representing UI elements
-        """
-        ui_rects = []
-        
-        # Action buttons (left side)
-        action_rects = self._get_action_rects(screen_w, screen_h)
-        ui_rects.extend(action_rects)
-        
-        # Upgrade buttons and icons (right side)
-        upgrade_rects = self._get_upgrade_rects(screen_w, screen_h)
-        for rect in upgrade_rects:
-            if rect is not None:  # Some upgrades might not have rects if purchased
-                ui_rects.append(rect)
-        
-        # End turn button (bottom center)
-        endturn_rect = self._get_endturn_rect(screen_w, screen_h)
-        ui_rects.append(endturn_rect)
-        
-        # Resource display area (top)
-        resource_rect = (0, 0, screen_w, int(screen_h * 0.25))
-        ui_rects.append(resource_rect)
-        
-        # Message log area (bottom left)
-        log_rect = (int(screen_w*0.04), int(screen_h*0.74), int(screen_w * 0.44), int(screen_h * 0.22))
-        ui_rects.append(log_rect)
-        
-        # Opponents panel (between resources and actions)
-        opponents_rect = (int(screen_w * 0.04), int(screen_h * 0.19), int(screen_w * 0.92), int(screen_h * 0.08))
-        ui_rects.append(opponents_rect)
-        
-        # Mute button (bottom right)
-        mute_rect = self._get_mute_button_rect(screen_w, screen_h)
-        ui_rects.append(mute_rect)
-        
-        return ui_rects
+        """Get rectangles of all UI elements that employee blobs should avoid."""
+        return self.employee_blob_manager.get_ui_element_rects(screen_w, screen_h)
     
     def _check_blob_ui_collision(self, blob_x: int, blob_y: int, blob_radius: int, ui_rects: List[Tuple[int, int, int, int]]) -> Tuple[bool, float, float]:
         """Check if a blob collides with any UI element (delegates to ui_utils)."""
-        from src.core.ui_utils import check_blob_ui_collision
-        return check_blob_ui_collision(blob_x, blob_y, blob_radius, ui_rects)
+        return self.employee_blob_manager.check_blob_ui_collision(blob_x, blob_y, blob_radius, ui_rects)
     
     def _update_blob_positions_dynamically(self, screen_w: int = 1200, screen_h: int = 800) -> None:
-        """
-        Update blob positions dynamically to avoid UI elements.
-        This method should be called every frame to ensure continuous movement.
-        
-        Args:
-            screen_w (int): Screen width
-            screen_h (int): Screen height
-        """
-        if not self.employee_blobs:
-            return
-        
-        ui_rects = self._get_ui_element_rects(screen_w, screen_h)
-        blob_radius = 25
-        
-        # Update each blob's position
-        for i, blob in enumerate(self.employee_blobs):
-            # Skip if blob is still animating in from the side
-            if blob['animation_progress'] < 1.0:
-                continue
-            
-            current_x = blob['x']
-            current_y = blob['y']
-            
-            # Check for UI collisions
-            collides, repulsion_x, repulsion_y = self._check_blob_ui_collision(
-                current_x, current_y, blob_radius, ui_rects
-            )
-            
-            # Apply blob-to-blob repulsion to prevent clustering
-            for j, other_blob in enumerate(self.employee_blobs):
-                if i != j and other_blob['animation_progress'] >= 1.0:
-                    other_x = other_blob['x']
-                    other_y = other_blob['y']
-                    
-                    dx = current_x - other_x
-                    dy = current_y - other_y
-                    distance = (dx * dx + dy * dy) ** 0.5
-                    
-                    min_distance = blob_radius * 2 + 5  # Minimum distance between blobs
-                    if distance < min_distance and distance > 0:
-                        # Apply repulsion between blobs
-                        repulsion_strength = (min_distance - distance) * 0.05
-                        repulsion_x += (dx / distance) * repulsion_strength
-                        repulsion_y += (dy / distance) * repulsion_strength
-            
-            # Apply slight attraction to employee pen center to keep blobs contained
-            # Employee pen area - match coordinates from _calculate_blob_position
-            pen_x = int(screen_w * 0.33)
-            pen_y = int(screen_h * 0.32)
-            pen_width = int(screen_w * 0.33)
-            pen_height = int(screen_h * 0.20)
-            pen_center_x = pen_x + pen_width / 2
-            pen_center_y = pen_y + pen_height / 2
-            
-            center_attraction = 0.002
-            repulsion_x += (pen_center_x - current_x) * center_attraction
-            repulsion_y += (pen_center_y - current_y) * center_attraction
-            
-            # Apply movement with damping
-            if abs(repulsion_x) > 0.1 or abs(repulsion_y) > 0.1:
-                # Cap maximum movement speed
-                max_speed = 2.0
-                speed = (repulsion_x * repulsion_x + repulsion_y * repulsion_y) ** 0.5
-                if speed > max_speed:
-                    repulsion_x = (repulsion_x / speed) * max_speed
-                    repulsion_y = (repulsion_y / speed) * max_speed
-                
-                # Update blob position
-                new_x = current_x + repulsion_x
-                new_y = current_y + repulsion_y
-                
-                # Keep blobs within employee pen bounds
-                new_x = max(pen_x + blob_radius, min(pen_x + pen_width - blob_radius, new_x))
-                new_y = max(pen_y + blob_radius, min(pen_y + pen_height - blob_radius, new_y))
-                
-                blob['x'] = new_x
-                blob['y'] = new_y
-                
-                # Update target position to current position for smooth animation
-                blob['target_x'] = new_x
-                blob['target_y'] = new_y
+        """Update blob positions dynamically to avoid UI elements."""
+        return self.employee_blob_manager.update_blob_positions_dynamically(screen_w, screen_h)
             
     def _add_manager_blob(self) -> None:
         """Add a new manager blob with animation from side"""
-        blob_id = len(self.employee_blobs)
-        # Position managers slightly offset from regular employees
-        target_x = 350 + (len(self.managers) % 2) * 300  # Alternate sides
-        target_y = 450 + (len(self.managers) // 2) * 120  # Stack down
-        
-        manager_blob = {
-            'id': blob_id,
-            'x': -50,  # Start off-screen left
-            'y': target_y,
-            'target_x': target_x,
-            'target_y': target_y,
-            'has_compute': True,  # Managers always have access
-            'productivity': 1.0,
-            'animation_progress': 0.0,  # Will animate in
-            'type': 'manager',  # Manager type
-            'managed_employees': [],  # List of employee IDs this manager oversees
-            'management_capacity': 9,  # Can manage up to 9 employees
-            'subtype': 'manager',  # Manager subtype
-            'productive_action_index': 0,  # Default to first action
-            'productive_action_bonus': 1.0,  # Current productivity bonus
-            'productive_action_active': False  # Whether productive action is active
-        }
-        
-        # Add to both general blobs and specific managers list
-        self.employee_blobs.append(manager_blob)
-        self.managers.append(manager_blob)
-        
-        # Play special sound effect for manager hire
-        self.sound_manager.play_blob_sound()
-        
-        # Reassign employee management after adding new manager
-        self._reassign_employee_management()
+        return self.employee_blob_manager.add_manager_blob()
         
     def _reassign_employee_management(self) -> None:
         """Reassign employees to managers based on capacity and efficiency"""
-        # Reset all employee assignments
-        employees = [blob for blob in self.employee_blobs if blob['type'] == 'employee']
-        managers = [blob for blob in self.employee_blobs if blob['type'] == 'manager']
-        
-        # Clear previous assignments
-        for employee in employees:
-            employee['managed_by'] = None
-            employee['unproductive_reason'] = None
-        for manager in managers:
-            manager['managed_employees'] = []
-        
-        # Assign employees to managers (max 9 per manager)
-        manager_idx = 0
-        for i, employee in enumerate(employees):
-            if manager_idx < len(managers):
-                manager = managers[manager_idx]
-                if len(manager['managed_employees']) < manager['management_capacity']:
-                    # Assign this employee to current manager
-                    employee['managed_by'] = manager['id']
-                    manager['managed_employees'].append(employee['id'])
-                else:
-                    # Current manager is full, move to next
-                    manager_idx += 1
-                    if manager_idx < len(managers):
-                        manager = managers[manager_idx]
-                        employee['managed_by'] = manager['id']
-                        manager['managed_employees'].append(employee['id'])
-                    else:
-                        # No more managers available - employee becomes unmanaged
-                        employee['unproductive_reason'] = 'no_manager'
-            else:
-                # No managers available for this employee
-                employee['unproductive_reason'] = 'no_manager'
+        return self.employee_blob_manager.reassign_employee_management()
                 
     def _hire_manager(self) -> None:
         """Hire a new manager to oversee employees"""
@@ -1330,7 +1144,7 @@ class GameState:
             
     def _remove_employee_blobs(self, count: int) -> None:
         """Remove employee blobs when staff leave"""
-        self.employee_blobs = remove_employee_blobs(self.employee_blobs, count)
+        return self.employee_blob_manager.remove_employee_blobs(count)
                 
     def _update_employee_productivity(self) -> None:
         """Update employee productivity based on compute availability, management, and productive actions each week"""
@@ -2151,7 +1965,7 @@ class GameState:
                 self.messages.append(f"[NEWS] {story.headline}")
         
         # Update UI transitions - animations advance each frame/turn
-        self._update_ui_transitions()
+        self.ui_transition_manager.update_ui_transitions()
         
         # Reset turn processing state immediately to prevent stuck turns
         # This ensures turn processing doesn't get stuck if update_turn_processing() isn't called
@@ -4318,190 +4132,13 @@ class GameState:
         from .dialog_manager import DialogManager
         DialogManager.dismiss_dialog(self, 'technical_debt')
     
-    def _create_upgrade_transition(self, upgrade_idx: int, start_rect: pygame.Rect, end_rect: pygame.Rect) -> None:
+    def _create_upgrade_transition(self, upgrade_idx: int, start_rect: pygame.Rect, end_rect: pygame.Rect) -> Dict[str, Any]:
         """Create a smooth transition animation for an upgrade moving from button to icon."""
-        transition = {
-            'type': 'upgrade_transition',
-            'upgrade_idx': upgrade_idx,
-            'start_rect': start_rect,
-            'end_rect': end_rect,
-            'progress': 0.0,
-            'duration': 45,  # Longer duration for more elegant motion (1.5 seconds)
-            'trail_points': [],  # For visual trail effect
-            'particle_trail': [],  # Enhanced particle system for more dramatic effect
-            'glow_timer': 90,  # Extended glow time for better visual feedback
-            'glow_intensity': 0,  # Current glow intensity for smooth fade-in
-            'completed': False,
-            'arc_height': 80,  # More dramatic arc height
-            'ease_type': 'cubic_out'  # Smooth deceleration easing
-        }
-        self.ui_transitions.append(transition)
-        self.upgrade_transitions[upgrade_idx] = transition
-        return transition
+        return self.ui_transition_manager.create_upgrade_transition(upgrade_idx, start_rect, end_rect)
     
-    def _update_ui_transitions(self) -> None:
-        """Update all active UI transitions."""
-        transitions_to_remove = []
-        
-        for transition in self.ui_transitions:
-            if transition['type'] == 'upgrade_transition':
-                self._update_upgrade_transition(transition)
-                
-                # Mark completed transitions for removal
-                if transition['completed'] and transition['glow_timer'] <= 0:
-                    transitions_to_remove.append(transition)
-        
-        # Remove completed transitions
-        for transition in transitions_to_remove:
-            self.ui_transitions.remove(transition)
-            if transition['upgrade_idx'] in self.upgrade_transitions:
-                del self.upgrade_transitions[transition['upgrade_idx']]
+
     
-    def _update_upgrade_transition(self, transition: Dict[str, Any]) -> None:
-        """Update a single upgrade transition animation with enhanced effects."""
-        if not transition['completed']:
-            # Advance animation progress with configurable easing
-            transition['progress'] = min(1.0, transition['progress'] + (1.0 / transition['duration']))
-            
-            # Calculate eased progress for smoother motion
-            eased_progress = self._apply_easing(transition['progress'], transition.get('ease_type', 'cubic_out'))
-            
-            # Add trail point for current position
-            current_pos = self._interpolate_position(
-                transition['start_rect'], 
-                transition['end_rect'], 
-                eased_progress,
-                transition.get('arc_height', 80)
-            )
-            
-            # Enhanced trail system with varying properties
-            transition['trail_points'].append({
-                'pos': current_pos,
-                'alpha': 255,
-                'age': 0,
-                'size': 12,  # Larger initial size
-                'color_variation': get_rng().randint(-20, 20, "randint_context")  # Color variation for organic feel
-            })
-            
-            # Add particle effects for more dramatic visual impact
-            if len(transition['trail_points']) % 3 == 0:  # Every 3rd frame
-                self._add_particle_to_trail(transition, current_pos)
-            
-            # Limit trail length for performance
-            if len(transition['trail_points']) > 15:  # Longer trail
-                transition['trail_points'].pop(0)
-            
-            # Mark as completed when progress reaches 1.0
-            if transition['progress'] >= 1.0:
-                transition['completed'] = True
-        
-        # Update trail points with enhanced fading
-        for point in transition['trail_points']:
-            point['age'] += 1
-            # Smoother alpha fade with size reduction
-            fade_factor = max(0, 1.0 - (point['age'] / 20.0))
-            point['alpha'] = int(255 * fade_factor)
-            point['size'] = max(2, int(point['size'] * fade_factor))
-        
-        # Update particle trail
-        for particle in transition.get('particle_trail', []):
-            particle['age'] += 1
-            particle['alpha'] = max(0, 180 - (particle['age'] * 12))
-            # Add slight drift to particles
-            particle['pos'][0] += particle['velocity'][0]
-            particle['pos'][1] += particle['velocity'][1]
-            particle['velocity'][1] += 0.2  # Gravity effect
-        
-        # Remove fully faded elements
-        transition['trail_points'] = [p for p in transition['trail_points'] if p['alpha'] > 0]
-        transition['particle_trail'] = [p for p in transition.get('particle_trail', []) if p['alpha'] > 0]
-        
-        # Enhanced glow system with smooth fade-in and pulsing
-        if transition['completed']:
-            if transition['glow_timer'] > 0:
-                transition['glow_timer'] -= 1
-                # Smooth glow intensity changes
-                max_intensity = 255
-                fade_duration = 30
-                if transition['glow_timer'] > fade_duration:
-                    transition['glow_intensity'] = min(max_intensity, transition['glow_intensity'] + 8)
-                else:
-                    # Fade out
-                    transition['glow_intensity'] = int(max_intensity * (transition['glow_timer'] / fade_duration))
-        else:
-            # Building up glow as transition progresses
-            transition['glow_intensity'] = int(100 * transition['progress'])
-    
-    def _interpolate_position(self, start_rect: Tuple[int, int, int, int], end_rect: Tuple[int, int, int, int], progress: float, arc_height: int = 80) -> Tuple[int, int]:
-        """Interpolate position between start and end rectangles with enhanced curved motion."""
-        # Use easeOutCubic for smooth deceleration
-        eased_progress = 1 - (1 - progress) ** 3
-        
-        start_x = start_rect[0] + start_rect[2] // 2  # Center of start rect
-        start_y = start_rect[1] + start_rect[3] // 2
-        end_x = end_rect[0] + end_rect[2] // 2  # Center of end rect  
-        end_y = end_rect[1] + end_rect[3] // 2
-        
-        # Create more dramatic curved arc path
-        mid_x = (start_x + end_x) / 2
-        # Dynamic arc height based on distance and direction
-        distance = ((end_x - start_x) ** 2 + (end_y - start_y) ** 2) ** 0.5
-        dynamic_arc_height = min(arc_height, distance * 0.3)  # Scale with distance
-        min(start_y, end_y) - dynamic_arc_height
-        
-        # Enhanced Bezier curve with control points for more elegant motion
-        t = eased_progress
-        
-        # Use cubic Bezier for even smoother curves
-        control1_x = start_x + (mid_x - start_x) * 0.5
-        control1_y = start_y - dynamic_arc_height * 0.3
-        control2_x = end_x - (end_x - mid_x) * 0.5  
-        control2_y = end_y - dynamic_arc_height * 0.3
-        
-        # Cubic Bezier interpolation for ultra-smooth motion
-        x = ((1-t)**3 * start_x + 
-             3*(1-t)**2*t * control1_x + 
-             3*(1-t)*t**2 * control2_x + 
-             t**3 * end_x)
-        y = ((1-t)**3 * start_y + 
-             3*(1-t)**2*t * control1_y + 
-             3*(1-t)*t**2 * control2_y + 
-             t**3 * end_y)
-        
-        return (int(x), int(y))
-    
-    def _apply_easing(self, t: float, ease_type: str = 'cubic_out') -> float:
-        """Apply easing function for smoother animations."""
-        if ease_type == 'cubic_out':
-            return 1 - (1 - t) ** 3
-        elif ease_type == 'elastic_out':
-            import math
-            if t == 0 or t == 1:
-                return t
-            return (2 ** (-10 * t)) * math.sin((t - 0.1) * 2 * math.pi / 0.4) + 1
-        elif ease_type == 'back_out':
-            c1 = 1.70158
-            c3 = c1 + 1
-            return 1 + c3 * ((t - 1) ** 3) + c1 * ((t - 1) ** 2)
-        else:
-            return t  # Linear fallback
-    
-    def _add_particle_to_trail(self, transition: Dict[str, Any], position: Tuple[int, int]) -> None:
-        """Add particle effects to transition trail."""
-        if 'particle_trail' not in transition:
-            transition['particle_trail'] = []
-        
-        # Create multiple particles for richer effect
-        for _ in range(2):
-            particle = {
-                'pos': [position[0] + get_rng().randint(-5, 5, "randint_context"), position[1] + get_rng().randint(-5, 5, "randint_context")],
-                'velocity': [get_rng().uniform(-1, 1, "particle_velocity_x"), get_rng().uniform(-2, 0, "particle_velocity_y")],
-                'alpha': 180,
-                'age': 0,
-                'size': get_rng().randint(3, 8, "randint_context"),
-                'color_shift': get_rng().randint(-30, 30, "randint_context")
-            }
-            transition['particle_trail'].append(particle)
+    # UI Transition methods now handled by UITransitionManager
     
     def track_error(self, error_message: str) -> bool:
         """
@@ -5768,3 +5405,14 @@ class GameState:
         new_y = current_y + (target_y - current_y) * 0.1
 
         self.office_cat_position = (int(new_x), int(new_y))
+    
+    # UI Transition Manager Delegation Properties
+    @property
+    def ui_transitions(self) -> List[Dict[str, Any]]:
+        """Delegate to UITransitionManager for backward compatibility."""
+        return self.ui_transition_manager.get_ui_transitions()
+    
+    @property
+    def upgrade_transitions(self) -> Dict[int, Dict[str, Any]]:
+        """Delegate to UITransitionManager for backward compatibility."""
+        return self.ui_transition_manager.get_upgrade_transitions()
