@@ -3,7 +3,7 @@ title: "UI Transition Manager Extraction - Animation System Modularity"
 date: "2025-09-24"
 tags: ["architecture", "modular-design", "ui-transitions", "animation", "monolith-breakdown"]
 summary: "Extracted comprehensive UI transition system (195 lines) from game_state.py monolith with zero regressions, achieving 13.8% total reduction"
-commit: "COMMIT_HASH_TBD"
+commit: "c238ee8"
 ---
 
 # UI Transition Manager Extraction - Animation System Modularity
