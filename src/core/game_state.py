@@ -3,7 +3,7 @@ import json
 import os
 import pygame
 
-from typing import Tuple, Dict, Any, Optional, List, Union, Callable
+from typing import Tuple, Dict, Any, Optional, List, Union, Callable, TYPE_CHECKING
 
 from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
@@ -359,6 +359,13 @@ class GameState:
         
         # Deterministic event system for competitive gameplay
         self.deterministic_event_manager = DeterministicEventManager(self)
+        
+        # Research system management for quality, debt, and assignments
+        if TYPE_CHECKING:
+            from src.core.research_system_manager import ResearchSystemManager
+        else:
+            from src.core.research_system_manager import ResearchSystemManager
+        self.research_system = ResearchSystemManager(self)
 
         # Tutorial and onboarding system
         self.tutorial_enabled = True  # Whether tutorial is enabled (default True for new players)
@@ -2484,65 +2491,25 @@ class GameState:
         except Exception:
             pass
     
-    # --- Research Quality System --- #
+    # --- Research Quality System (Delegated) --- #
     
     def set_research_quality(self, quality: ResearchQuality) -> None:
-        """
-        Set the current research quality approach for future research actions.
-        
-        Args:
-            quality: The research quality level to use (rushed, standard, thorough)
-        """
-        self.current_research_quality = quality
-        self.messages.append(f"Research approach set to: {quality.value.title()}")
-        
-        # Unlock the research quality system on first use
-        if not self.research_quality_unlocked:
-            self.research_quality_unlocked = True
-            self.messages.append("? Research Quality System unlocked! Choose your approach wisely.")
+        """Set research quality approach - delegated to research system."""
+        return self.research_system.set_research_quality(quality)
     
     def create_research_project(self, name: str, base_cost: int, base_duration: int) -> ResearchProject:
-        """
-        Create a new research project with the current quality settings.
-        
-        Args:
-            name: Project name/identifier
-            base_cost: Base monetary cost
-            base_duration: Base time cost in action points
-            
-        Returns:
-            Configured ResearchProject instance
-        """
-        project = ResearchProject(name, base_cost, base_duration)
-        project.set_quality_level(self.current_research_quality)
-        self.active_research_projects.append(project)
-        return project
+        """Create research project - delegated to research system."""
+        return self.research_system.create_research_project(name, base_cost, base_duration)
     
     def complete_research_project(self, project: ResearchProject) -> None:
-        """
-        Mark a research project as completed and apply debt changes.
-        
-        Args:
-            project: The research project to complete
-        """
-        if project in self.active_research_projects:
-            self.active_research_projects.remove(project)
-        
-        project.completed = True
-        self.completed_research_projects.append(project)
-        
-        # Apply technical debt changes
-        modifiers = project.get_quality_modifiers()
-        if modifiers.debt_change != 0:
-            if modifiers.debt_change > 0:
-                self.technical_debt.add_debt(modifiers.debt_change)
-                self.messages.append(f"[WARNING]? Technical debt increased by {modifiers.debt_change} points")
-            else:
-                reduced = self.technical_debt.reduce_debt(abs(modifiers.debt_change))
-                if reduced > 0:
-                    self.messages.append(f"? Technical debt reduced by {reduced} points")
+        """Complete research project - delegated to research system."""
+        return self.research_system.complete_research_project(project)
     
     def execute_debt_reduction_action(self, action_name: str) -> bool:
+        """Execute debt reduction action - delegated to research system."""
+        return self.research_system.execute_debt_reduction_action(action_name)
+    
+    def _execute_debt_reduction_action_original(self, action_name: str) -> bool:
         """
         Execute a technical debt reduction action.
         
