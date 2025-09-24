@@ -52,6 +52,7 @@ from src.core.dialog_systems import (
 from src.core.input_manager import InputManager
 from src.core.employee_blob_manager import EmployeeBlobManager
 from src.core.ui_transition_manager import UITransitionManager
+from src.core.deterministic_event_manager import DeterministicEventManager
 from src.core.utility_functions import (
     is_upgrade_available, check_point_in_rect, process_achievements_and_warnings_complete,
     filter_available_upgrades, get_milestone_check_functions
@@ -355,6 +356,9 @@ class GameState:
         
         # UI transition system for smooth visual feedback
         self.ui_transition_manager = UITransitionManager(self)
+        
+        # Deterministic event system for competitive gameplay
+        self.deterministic_event_manager = DeterministicEventManager(self)
 
         # Tutorial and onboarding system
         self.tutorial_enabled = True  # Whether tutorial is enabled (default True for new players)
@@ -1676,7 +1680,7 @@ class GameState:
         
         # CRITICAL FIX: Process events BEFORE executing actions
         # This ensures players see events before committing to actions
-        self.trigger_events()
+        self.deterministic_event_manager.trigger_events()
         
         # Update economic cycles and display news if phase changed
         if hasattr(self, 'economic_cycles'):
@@ -1982,12 +1986,22 @@ class GameState:
                 self.turn_processing = False
                 self.turn_processing_timer = 0
 
-    # ========== DETERMINISTIC EVENT SYSTEM ==========
-    # Deterministic replacements for all event trigger/effect random calls
+    # ========== DETERMINISTIC EVENT SYSTEM DELEGATION ==========
+    # All event system functionality delegated to DeterministicEventManager
     
-    def _deterministic_event_trigger_lab_breakthrough(self) -> bool:
-        """Deterministic replacement for Lab Breakthrough event trigger."""
-        return self.doom > 35 and get_rng().random(f"event_lab_breakthrough_trigger_turn_{self.turn}") < self.doom / 120
+    def trigger_events(self) -> None:
+        """Delegate to deterministic event manager."""
+        self.deterministic_event_manager.trigger_events()
+    
+    def handle_popup_event_action(self, event: Event, action: EventAction) -> None:
+        """Delegate to deterministic event manager."""
+        return self.deterministic_event_manager.handle_popup_event_action(event, action)
+    
+    def clear_stuck_popup_events(self) -> bool:
+        """Delegate to deterministic event manager."""
+        return self.deterministic_event_manager.clear_stuck_popup_events()
+    
+# Event methods extracted to DeterministicEventManager
     
     def _deterministic_event_trigger_funding_crisis(self) -> bool:
         """Deterministic replacement for Funding Crisis event trigger."""
