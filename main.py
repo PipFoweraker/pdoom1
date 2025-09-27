@@ -2783,28 +2783,43 @@ def main():
             # --- UI State Cleanup and Debugging --- #
             # CRITICAL FIX: Automatic cleanup for stuck UI states
             if current_state == 'game' and game_state:
-                # Debug key (D) - check for blocking conditions when pressed (simplified version)
+                # Enhanced Debug key (D) - comprehensive blocking condition check
                 current_keys = pygame.key.get_pressed()
                 if current_keys[pygame.K_d] and current_keys[pygame.K_LCTRL]:  # Ctrl+D for debug
-                    # Simplified debug info (ui_interaction_fixes module not available)
-                    blocking_conditions = [
-                        first_time_help_content,
-                        game_state.pending_hiring_dialog,
-                        game_state.pending_fundraising_dialog,
-                        game_state.pending_research_dialog,
-                        onboarding.show_tutorial_overlay
-                    ]
-                    blocking = [name for name, condition in [
+                    # Check all possible blocking conditions
+                    blocking_checks = [
                         ("help", first_time_help_content),
+                        ("tutorial", onboarding.show_tutorial_overlay),
                         ("hiring", game_state.pending_hiring_dialog),
                         ("funding", game_state.pending_fundraising_dialog),
                         ("research", game_state.pending_research_dialog),
-                        ("tutorial", onboarding.show_tutorial_overlay)
-                    ] if condition]
-                    spacebar_works = not any(blocking_conditions)
+                        ("intelligence", game_state.pending_intelligence_dialog),
+                        ("media", game_state.pending_media_dialog),
+                        ("tech_debt", game_state.pending_technical_debt_dialog),
+                        ("infrastructure", game_state.pending_infrastructure_dialog),
+                        ("adv_funding", game_state.pending_advanced_funding_dialog),
+                        ("operations", game_state.pending_operations_dialog)
+                    ]
+                    
+                    # Add popup events check
+                    popup_events_active = (hasattr(game_state, 'pending_popup_events') and 
+                                          game_state.pending_popup_events)
+                    if popup_events_active:
+                        blocking_checks.append(("popup_events", True))
+                    
+                    # Find active blocking conditions
+                    blocking = [name for name, condition in blocking_checks if condition]
+                    spacebar_works = not blocking
+                    
+                    # Create comprehensive debug message
                     debug_msg = f"DEBUG: Spacebar {'WORKS' if spacebar_works else 'BLOCKED'}"
                     if blocking:
                         debug_msg += f" | Blocking: {', '.join(blocking)}"
+                    
+                    # Add helpful hint about emergency reset
+                    if blocking:
+                        debug_msg += " | Use Ctrl+E to emergency reset"
+                    
                     game_state.add_message(debug_msg)
                 
                 # Automatic cleanup for turn processing that's been stuck too long
@@ -2818,24 +2833,64 @@ def main():
                     onboarding.show_tutorial_overlay = False
                     game_state.add_message("System: Auto-dismissed stuck tutorial overlay")
                 
-                # Automatic cleanup for stuck popup events (if they've been pending for too long)
-                if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events and
-                    game_state.turn > 3):  # If we're past turn 3 and still have popup events, they might be stuck
-                    # Allow players to dismiss stuck popup events with Ctrl+E
-                    current_keys = pygame.key.get_pressed()
-                    if current_keys[pygame.K_e] and current_keys[pygame.K_LCTRL]:  # Ctrl+E to clear stuck popups
+                # ENHANCED Emergency recovery system (Ctrl+E) - clears ALL blocking UI states
+                current_keys = pygame.key.get_pressed()
+                if current_keys[pygame.K_e] and current_keys[pygame.K_LCTRL]:  # Ctrl+E emergency reset
+                    emergency_cleared = []
+                    
+                    # Clear popup events
+                    if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
                         game_state.pending_popup_events.clear()
-                        game_state.add_message("System: Cleared stuck popup events (Ctrl+E)")
-                
-                # Add recovery for deferred events system too
-                if (hasattr(game_state, 'deferred_events') and 
-                    hasattr(game_state.deferred_events, 'pending_popup_events') and
-                    game_state.deferred_events.pending_popup_events and
-                    game_state.turn > 3):
-                    current_keys = pygame.key.get_pressed()
-                    if current_keys[pygame.K_e] and current_keys[pygame.K_LCTRL]:  # Ctrl+E to clear stuck popups
+                        emergency_cleared.append("popup events")
+                    
+                    # Clear deferred popup events
+                    if (hasattr(game_state, 'deferred_events') and 
+                        hasattr(game_state.deferred_events, 'pending_popup_events') and
+                        game_state.deferred_events.pending_popup_events):
                         game_state.deferred_events.pending_popup_events.clear()
-                        game_state.add_message("System: Cleared stuck deferred popup events (Ctrl+E)")
+                        emergency_cleared.append("deferred events")
+                    
+                    # Clear all dialog states that can block spacebar
+                    dialog_states = [
+                        ('hiring_dialog', 'pending_hiring_dialog'),
+                        ('fundraising_dialog', 'pending_fundraising_dialog'),
+                        ('research_dialog', 'pending_research_dialog'),
+                        ('intelligence_dialog', 'pending_intelligence_dialog'),
+                        ('media_dialog', 'pending_media_dialog'),
+                        ('technical_debt_dialog', 'pending_technical_debt_dialog'),
+                        ('infrastructure_dialog', 'pending_infrastructure_dialog'),
+                        ('advanced_funding_dialog', 'pending_advanced_funding_dialog'),
+                        ('operations_dialog', 'pending_operations_dialog')
+                    ]
+                    
+                    for dialog_name, attr_name in dialog_states:
+                        if hasattr(game_state, attr_name) and getattr(game_state, attr_name) is not None:
+                            setattr(game_state, attr_name, None)
+                            emergency_cleared.append(dialog_name)
+                    
+                    # Clear global help content that can block spacebar
+                    global first_time_help_content, first_time_help_close_button, current_help_mechanic
+                    if first_time_help_content:
+                        first_time_help_content = None
+                        first_time_help_close_button = None
+                        current_help_mechanic = None
+                        emergency_cleared.append("help overlay")
+                    
+                    # Clear tutorial overlay
+                    if onboarding.show_tutorial_overlay:
+                        onboarding.dismiss_tutorial()
+                        emergency_cleared.append("tutorial overlay")
+                    
+                    # Provide feedback about what was cleared
+                    if emergency_cleared:
+                        cleared_list = ", ".join(emergency_cleared)
+                        game_state.add_message(f"EMERGENCY RESET: Cleared {cleared_list} (Ctrl+E)")
+                        if hasattr(game_state, 'sound_manager'):
+                            game_state.sound_manager.play_sound('ui_accept')
+                    else:
+                        game_state.add_message("EMERGENCY RESET: No stuck UI states found (Ctrl+E)")
+                        if hasattr(game_state, 'sound_manager'):
+                            game_state.sound_manager.play_sound('ui_click')
                 
                 # Factorio-style hint reset with Ctrl+R
                 current_keys = pygame.key.get_pressed()

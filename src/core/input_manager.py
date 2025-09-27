@@ -166,6 +166,9 @@ class InputManager:
             # Skip None rectangles (unavailable/hidden upgrades)
             if rect is None:
                 continue
+            # Bounds check: ensure we don't access beyond available upgrades
+            if idx >= len(gs.upgrades):
+                continue
             if check_point_in_rect(mouse_pos, rect):
                 upg = gs.upgrades[idx]
                 if not upg.get("purchased", False):
