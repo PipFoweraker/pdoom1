@@ -1947,7 +1947,33 @@ class GameState:
     def clear_stuck_popup_events(self) -> bool:
         """Delegate to deterministic event manager."""
         return self.deterministic_event_manager.clear_stuck_popup_events()
-    
+
+    def _update_ui_transitions(self) -> None:
+        """Delegate to UI transition manager."""
+        self.ui_transition_manager.update_ui_transitions()
+
+    def _interpolate_position(self, start_rect: Tuple[int, int, int, int], end_rect: Tuple[int, int, int, int], progress: float, arc_height: int = 80) -> Tuple[int, int]:
+        """Delegate to UI transition manager."""
+        return self.ui_transition_manager.interpolate_position(start_rect, end_rect, progress, arc_height)
+
+    def _in_rect(self, pt: Tuple[int, int], rect: Union[Tuple[int, int, int, int], pygame.Rect]) -> bool:
+        """Check if point is inside rectangle. Simple utility method."""
+        if rect is None:
+            return False
+        try:
+            if hasattr(rect, 'collidepoint'):  # pygame.Rect
+                return rect.collidepoint(pt)
+            else:  # tuple format (x, y, w, h)
+                rx, ry, rw, rh = rect
+                return rx <= pt[0] <= rx + rw and ry <= pt[1] <= ry + rh
+        except (TypeError, ValueError):
+            return False
+
+    def _is_upgrade_available(self, upgrade: Dict[str, Any]) -> bool:
+        """Check if upgrade should be visible based on unlock conditions."""
+        from src.core.utility_functions import is_upgrade_available
+        return is_upgrade_available(upgrade, self.opponents)
+
     # --- High score --- #
     def load_highscore(self) -> int:
         try:
@@ -3021,7 +3047,7 @@ class GameState:
         discovered_opponents = [opp for opp in self.opponents if opp.discovered]
         
         if discovered_opponents:
-            target = get_rng().choice(discovered_opponents)
+            target = get_rng().choice(discovered_opponents, f"competitor_update_target_turn_{self.turn}")
             
             # Generate a random intelligence snippet
             snippets = [
@@ -3653,7 +3679,7 @@ class GameState:
                 return
             researcher = get_rng().choice(self.researchers, "choice_context")
         else:
-            researcher = get_rng().choice(media_savvy_researchers)
+            researcher = get_rng().choice(media_savvy_researchers, f"conference_researcher_turn_{self.turn}")
         
         # Conference provides reputation boost
         rep_gain = get_rng().randint(3, 6, "randint_context")

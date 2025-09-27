@@ -446,7 +446,7 @@ class TurnManager:
                 'doom': gs.doom,
                 'turn': gs.turn
             }
-            gs.logger.log_game_end(game_end_reason, final_resources)
+            gs.logger.log_game_end(game_end_reason, gs.turn, final_resources)
             
             # Update leaderboard
             success, rank, session = gs.leaderboard_manager.end_game_session(gs)
