@@ -364,11 +364,14 @@ class GameState:
         if TYPE_CHECKING:
             from src.core.research_system_manager import ResearchSystemManager
             from src.core.intelligence_system_manager import IntelligenceSystemManager
+            from src.core.media_pr_system_manager import MediaPRSystemManager
         else:
             from src.core.research_system_manager import ResearchSystemManager
             from src.core.intelligence_system_manager import IntelligenceSystemManager
+            from src.core.media_pr_system_manager import MediaPRSystemManager
         self.research_system = ResearchSystemManager(self)
         self.intelligence_system = IntelligenceSystemManager(self)
+        self.media_pr_system = MediaPRSystemManager(self)
 
         # Tutorial and onboarding system
         self.tutorial_enabled = True  # Whether tutorial is enabled (default True for new players)
@@ -3067,142 +3070,12 @@ class GameState:
         return self.intelligence_system.select_intelligence_option(option_id)
     
     def _trigger_media_dialog(self) -> None:
-        """Trigger the media & PR dialog with available communication options."""
-        media_options = []
-        
-        # Press Release
-        media_options.append({
-            "id": "press_release",
-            "name": "Press Release",
-            "description": "Issue official press release to announce achievements or respond to events.",
-            "cost": 100,
-            "ap_cost": 1,
-            "available": True,
-            "details": "Controlled messaging to media outlets for reputation management."
-        })
-        
-        # Exclusive Interview
-        media_options.append({
-            "id": "exclusive_interview",
-            "name": "Exclusive Interview", 
-            "description": "Grant exclusive interview to major media outlet for deep coverage.",
-            "cost": 150,
-            "ap_cost": 2,
-            "available": self.reputation >= 10,  # Need some reputation for interviews
-            "details": f"Requires 10+ reputation (current: {self.reputation}). High-impact media engagement."
-        })
-        
-        # Damage Control (Crisis Response)
-        media_options.append({
-            "id": "damage_control",
-            "name": "Damage Control (Crisis Response)",
-            "description": "Rapid response to negative publicity or crisis situations.",
-            "cost": 200,
-            "ap_cost": 1,
-            "available": True,
-            "details": "Emergency PR response for reputation recovery and crisis management."
-        })
-        
-        # Social Media Campaign
-        media_options.append({
-            "id": "social_media_campaign",
-            "name": "Social Media Campaign",
-            "description": "Launch coordinated social media campaign to build public awareness.",
-            "cost": 75,
-            "ap_cost": 1,
-            "available": True,
-            "details": "Digital outreach campaign for community engagement and reputation building."
-        })
-        
-        # Public Statement
-        media_options.append({
-            "id": "public_statement",
-            "name": "Public Statement",
-            "description": "Make formal public statement on AI safety position or industry developments.",
-            "cost": 50,
-            "ap_cost": 1,
-            "available": True,
-            "details": "Official position statement for thought leadership and transparency."
-        })
-        
-        self.pending_media_dialog = {
-            "options": media_options,
-            "title": "Media & PR Operations",
-            "description": "Select a media and public relations operation to execute."
-        }
+        """Trigger media dialog - delegated to media PR system manager."""
+        return self.media_pr_system.trigger_media_dialog()
     
     def select_media_option(self, option_id: str) -> Tuple[bool, str]:
-        """Handle player selection of a media & PR option."""
-        if not self.pending_media_dialog:
-            return False, "No media dialog active."
-        
-        # Find the selected option
-        selected_option = None
-        for option in self.pending_media_dialog["options"]:
-            if option["id"] == option_id:
-                selected_option = option
-                break
-        
-        if not selected_option:
-            return False, f"Invalid media option: {option_id}"
-        
-        if not selected_option["available"]:
-            return False, f"Media option not available: {selected_option['name']}"
-        
-        # Check costs
-        if self.money < selected_option["cost"]:
-            return False, f"Insufficient funds. Need ${selected_option['cost']}, have ${self.money}."
-        
-        if self.action_points < selected_option["ap_cost"]:
-            return False, f"Insufficient action points. Need {selected_option['ap_cost']}, have {self.action_points}."
-        
-        # Execute the selected media option
-        if option_id == "press_release":
-            # Deduct costs
-            self.money -= selected_option["cost"]
-            self.action_points -= selected_option["ap_cost"]
-            
-            # Execute press release functionality
-            self._press_release()
-            
-        elif option_id == "exclusive_interview":
-            # Deduct costs
-            self.money -= selected_option["cost"]
-            self.action_points -= selected_option["ap_cost"]
-            
-            # Execute exclusive interview functionality
-            self._exclusive_interview()
-            
-        elif option_id == "damage_control":
-            # Deduct costs
-            self.money -= selected_option["cost"]
-            self.action_points -= selected_option["ap_cost"]
-            
-            # Execute damage control functionality
-            self._damage_control()
-            
-        elif option_id == "social_media_campaign":
-            # Deduct costs
-            self.money -= selected_option["cost"]
-            self.action_points -= selected_option["ap_cost"]
-            
-            # Execute social media campaign functionality
-            self._social_media_campaign()
-            
-        elif option_id == "public_statement":
-            # Deduct costs
-            self.money -= selected_option["cost"]
-            self.action_points -= selected_option["ap_cost"]
-            
-            # Execute public statement functionality
-            self._public_statement()
-            
-        else:
-            return False, f"Unknown media option: {option_id}"
-        
-        # Clear the media dialog
-        self.pending_media_dialog = None
-        return True, "Media & PR operation complete."
+        """Handle media option selection - delegated to media PR system manager."""
+        return self.media_pr_system.select_media_option(option_id)
 
     def _trigger_technical_debt_dialog(self) -> None:
         """Trigger the technical debt dialog with available debt management options."""
