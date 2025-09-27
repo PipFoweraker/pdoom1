@@ -1807,6 +1807,7 @@ def main():
     global seed, seed_input, current_state, screen, SCREEN_W, SCREEN_H, selected_menu_item, overlay_scroll
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
     global end_game_selected_item, high_score_submit_to_leaderboard, game_state
+    global first_time_help_content, first_time_help_close_button, current_help_mechanic
     # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
     global first_time_help_content, first_time_help_close_button, current_tutorial_content, current_help_mechanic
     global overlay_content, overlay_title
@@ -2869,7 +2870,6 @@ def main():
                             emergency_cleared.append(dialog_name)
                     
                     # Clear global help content that can block spacebar
-                    global first_time_help_content, first_time_help_close_button, current_help_mechanic
                     if first_time_help_content:
                         first_time_help_content = None
                         first_time_help_close_button = None
