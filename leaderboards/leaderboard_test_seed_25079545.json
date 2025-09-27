@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2025-09-27T15:05:21.023027",
+  "created": "2025-09-28T07:35:43.429058",
   "max_entries": 50,
   "entries": [
     {
@@ -11,6 +11,15 @@
       "game_mode": "Bootstrap_v0.4.1",
       "duration_seconds": 0.003963,
       "entry_uuid": "322160f6-1c2f-4091-9912-188264589400"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-28T07:35:43.419785",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.004272,
+      "entry_uuid": "985d9f18-706d-45fd-8348-793a82a0bc88"
     }
   ]
 }

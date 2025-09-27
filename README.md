@@ -282,7 +282,8 @@ python tools/dev_tool.py --list
 - **Developer Guide**: [docs/DEVELOPERGUIDE.md](docs/DEVELOPERGUIDE.md) - Code structure and contributing
 - **Player Guide**: [docs/PLAYERGUIDE.md](docs/PLAYERGUIDE.md) - Complete gameplay reference  
 - **Privacy Policy**: [docs/PRIVACY.md](docs/PRIVACY.md) - Complete privacy documentation
-- **Technical Documentation**: See organized [docs/](docs/) directory structure
+- **Documentation Index**: [docs/DOCUMENTATION_INDEX.md](docs/DOCUMENTATION_INDEX.md) - Complete navigation guide
+- **Organized Structure**: Clean [docs/](docs/) directory with categorized subdirectories (recently reorganized Sept 2025)
 
 ## LIST Project Status
 

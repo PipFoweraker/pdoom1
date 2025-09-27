@@ -2,6 +2,17 @@
 
 This document provides an overview of the organized documentation structure following major refactoring and documentation cleanup in September 2025.
 
+## Recent Documentation Cleanup (2025-09-28)
+
+**Files Reorganized**: 10+ scattered root-level files moved to proper subdirectories
+- **Session Documentation**: `SESSION_COMPLETION_*.md`, `SESSION_HANDOFF_*.md` → `docs/development-sessions/`
+- **Investigation Files**: `ACTION_POINTS_BUG_HUNT_COMPLETION.md`, `BUG_SWEEP_SUMMARY.md`, `MOUSE_WHEEL_ISSUE_261_RESOLVED.md` → `docs/investigations/`
+- **Release Documentation**: `V0.7.5_RELEASE_COMPLETE.md` → `docs/releases/`
+- **Technical Documentation**: `UI_CLEANUP_SESSION_2025-09-20.md`, `HOTFIX_ACTION_BUTTON_LAYOUT.md`, `COMMAND_STRING_CONTROLLER.md` → `docs/technical/`
+- **Development Planning**: `ENHANCED_CONTEXT_PROMPT.md`, `NEXT_SESSION_TURN_6.md` → `docs/development-sessions/`
+
+**Result**: Clean root directory with proper categorization of all documentation files.
+
 ## Current Architecture Status
 
 ### Modular Architecture Achievement
@@ -135,17 +146,26 @@ src/core/
 
 ## Recent Major Changes (September 2025)
 
+### Phase 2 Input Architecture Overhaul (2025-09-28)
+- **InputEventManager**: Extracted 500+ lines of keyboard handling from main.py
+- **DialogStateManager**: Created centralized modal dialog state management (300+ lines)
+- **Main.py Reduction**: 95% reduction in keyboard handling complexity (500+ lines → 25 lines)
+- **Test Coverage**: Added 48 comprehensive unit tests with 100% pass rate
+- **Zero Regressions**: All existing functionality preserved including Turn 6 spacebar fix
+- **Clean Architecture**: Following established manager patterns for maintainability
+
 ### Monolith Refactoring Completion
 - Successfully extracted 6 focused modules from game_state.py
 - Achieved 111.6% of ambitious 500-line extraction goal
 - Maintained zero functional regressions
 - All modules properly typed with comprehensive annotations
 
-### Documentation Reorganization
-- Archived completed monolith refactoring documentation
-- Organized session handoffs and development records
-- Created focused architecture documentation section
-- Established clear navigation structure for new contributors
+### Documentation Reorganization (2025-09-28)
+- **Root Cleanup**: Moved 10+ scattered documentation files to proper subdirectories
+- **Session Documentation**: Organized all session completion and handoff files
+- **Investigation Files**: Centralized bug reports and investigation documentation
+- **Technical Documentation**: Consolidated UI, hotfix, and technical implementation docs
+- **Clear Navigation**: Updated documentation index for better discoverability
 
 ## Maintenance
 

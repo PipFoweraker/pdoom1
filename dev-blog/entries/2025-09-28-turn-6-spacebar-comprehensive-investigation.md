@@ -1,4 +1,5 @@
 ---
+
 title: "Turn 6 Spacebar Failure: Comprehensive Investigation and Architecture Plan"
 date: "2025-09-28"
 tags: ["critical-bug", "architecture", "investigation", "input-system", "turn-handling"]
@@ -21,15 +22,26 @@ Conducted a 4-hour deep investigation into GitHub Issue #377 - the critical Turn
 - Analysis of recent event system cleanup and modular refactoring impacts
 
 ### Root Cause Analysis
-- Confirmed issue is GUI event handling specific, not game logic
-- Identified redundant spacebar validation logic in main.py
-- Found complex dialog blocking conditions that may become "stuck" at Turn 6
-- Discovered potential race conditions between TurnManager and legacy systems
+- **Primary Issue**: Redundant key checking pattern (`pygame.K_SPACE` then `end_turn_key`)
+- **Secondary Issue**: Missing `key_event_consumed = True` flag in spacebar handler
+- **Architectural Debt**: "One button to complex system" evolution without proper refactoring
+- **Event Consumption Bug**: Other handlers could process the same spacebar event
+
+### Immediate Fix Implementation
+```python
+# FIXED: Removed redundant pygame.K_SPACE check
+elif not key_event_consumed and game_state and not game_state.game_over:
+    end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+    if event.key == end_turn_key:  # Only check once, no redundancy
+        # ... blocking conditions logic ...
+        key_event_consumed = True  # ADDED: Critical event consumption flag
+```
 
 ### Architecture Documentation
-- Created comprehensive technical investigation document
-- Developed 4-phase implementation plan with success metrics
-- Documented systematic debugging methodology for future use
+- Created comprehensive architectural debt analysis document
+- Identified "one button to complex system" anti-pattern
+- Developed 3-phase plan for InputEventManager extraction from main.py monolith
+- Established prevention strategies for future input system evolution
 
 ## Impact Assessment
 
@@ -75,23 +87,29 @@ elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
 ```
 
 ### Testing Strategy
-How the changes were validated.
+- **Regression Test Suite**: Created comprehensive test coverage with 9 test cases
+- **Programmatic Validation**: Validated fix works at Turn 6 and continues through Turn 8
+- **Edge Case Testing**: Verified blocking conditions, keybinding consistency, event consumption
+- **Multi-Turn Validation**: Confirmed spacebar continues working after Turn 6
 
 ## Next Steps
 
-1. **Immediate priorities**
-   - Next task 1
-   - Next task 2
+1. **Immediate priorities (Next Session)**
+   - Extract InputEventManager from main.py to centralize input handling
+   - Implement DialogStateManager for consistent modal state management
+   - Add comprehensive input system tests for all game states
 
-2. **Medium-term goals**
-   - Longer-term objective 1
-   - Longer-term objective 2
+2. **Medium-term goals (Future Sessions)**
+   - Create EventPipeline architecture for extensible input processing  
+   - Refactor main.py monolith (reduce 500+ event handling lines to <200)
+   - Establish input system maintenance guidelines
 
 ## Lessons Learned
 
-- Key insight 1
-- Key insight 2
-- Best practice identified
+- **Architectural Evolution**: Simple systems need planned refactoring as complexity grows
+- **Event Consumption Critical**: Always mark input events as consumed to prevent handler conflicts  
+- **Redundant Checking Anti-Pattern**: Avoid checking the same condition multiple times in event chains
+- **Technical Debt Recognition**: "One button to complex system" evolution requires architectural intervention
 
 ---
 

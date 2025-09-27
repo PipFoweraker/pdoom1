@@ -23,6 +23,10 @@ from src.services.config_manager import initialize_config_system, get_current_co
 from src.services.sound_manager import SoundManager
 from src.ui.pre_game_settings import pre_game_settings_manager
 
+# Import new input management system
+from src.core.input_event_manager import InputEventManager, KeyEventResult
+from src.core.dialog_state_manager import DialogStateManager
+
 # Initialize config system on startup
 initialize_config_system()
 current_config = get_current_config()
@@ -314,6 +318,88 @@ def load_markdown_file(filename):
             return f.read()
     except FileNotFoundError:
         return f"Could not load {filename}"
+
+
+def handle_game_keyboard_input(event, game_state, onboarding_manager, 
+                             first_time_help_content, current_help_mechanic, 
+                             overlay_content, overlay_title, current_state,
+                             escape_count, escape_timer, running):
+    """
+    Handle keyboard input for the main game using the new Input Event Manager.
+    
+    This replaces the massive keyboard handling section in main() with a clean,
+    testable interface using the extracted InputEventManager and DialogStateManager.
+    
+    Args:
+        event: pygame keyboard event
+        game_state: Current game state
+        onboarding_manager: Tutorial/onboarding system
+        first_time_help_content: Current help popup content
+        current_help_mechanic: Current help mechanic being shown
+        overlay_content: Current overlay content
+        overlay_title: Current overlay title  
+        current_state: Current game state string
+        escape_count: Current escape key count
+        escape_timer: Current escape timer
+        running: Current running state
+        
+    Returns:
+        Tuple of (updated_values_dict, should_quit, key_consumed)
+    """
+    # Initialize managers if not already done
+    if not hasattr(game_state, '_input_manager'):
+        game_state._input_manager = InputEventManager(game_state)
+        game_state._dialog_manager = DialogStateManager(game_state)
+    
+    # Create overlay handlers dictionary for the input manager
+    overlay_handlers = {
+        'load_markdown_file': load_markdown_file,
+        'push_navigation_state': lambda state: None,  # This will be handled by caller
+        'overlay_content': overlay_content,
+        'overlay_title': overlay_title,
+        'current_state': current_state,
+        'first_time_help_content': first_time_help_content,
+        'first_time_help_close_button': None,
+        'current_help_mechanic': current_help_mechanic,
+        'onboarding': onboarding_manager
+    }
+    
+    # Handle the keyboard event using the InputEventManager
+    result = game_state._input_manager.handle_keydown_event(
+        event, first_time_help_content, onboarding_manager, overlay_handlers
+    )
+    
+    # Prepare return values
+    updated_values = {}
+    should_quit = False
+    key_consumed = (result != KeyEventResult.NOT_HANDLED)
+    
+    # Handle special cases that need to update main loop state
+    if result == KeyEventResult.CONSUMED:
+        # Update overlay state if help key was pressed
+        if event.key == pygame.K_h:
+            updated_values['overlay_content'] = overlay_handlers.get('overlay_content')
+            updated_values['overlay_title'] = overlay_handlers.get('overlay_title')
+            updated_values['push_navigation_state'] = 'overlay'
+        
+        # Update state if menu key was pressed
+        if event.key == pygame.K_m:
+            updated_values['current_state'] = overlay_handlers.get('current_state')
+        
+        # Update help state if help popup was handled
+        if first_time_help_content and event.key in [pygame.K_ESCAPE, pygame.K_RETURN]:
+            updated_values['first_time_help_content'] = overlay_handlers.get('first_time_help_content')
+            updated_values['first_time_help_close_button'] = overlay_handlers.get('first_time_help_close_button')
+            updated_values['current_help_mechanic'] = overlay_handlers.get('current_help_mechanic')
+        
+        # Handle escape menu and quit logic
+        if game_state._input_manager.should_show_escape_menu():
+            updated_values['current_state'] = 'escape_menu'
+        
+        if game_state._input_manager.should_quit_game():
+            should_quit = True
+    
+    return updated_values, should_quit, key_consumed
 
 def push_navigation_state(new_state):
     """Push current state to navigation stack and transition to new state."""
@@ -2436,322 +2522,34 @@ def main():
                             seed_input += event.unicode
                             
                     elif current_state == 'game':
-                        # Track if this keyboard event was consumed to prevent multiple processing
-                        key_event_consumed = False
-
-                        # Help key (H) - always available regardless of overlay state
-                        if event.key == pygame.K_h:
-                            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                            overlay_title = "Player Guide"
-                            push_navigation_state('overlay')
-                            key_event_consumed = True
+                        # NEW: Use extracted InputEventManager for clean keyboard handling
+                        updated_values, should_quit, key_event_consumed = handle_game_keyboard_input(
+                            event, game_state, onboarding, first_time_help_content, 
+                            current_help_mechanic, overlay_content, overlay_title, 
+                            current_state, escape_count, escape_timer, running
+                        )
                         
-                        # Stepwise tutorial keyboard handling (takes precedence when tutorial is active)
-                        elif not key_event_consumed and onboarding.show_tutorial_overlay:
-                            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                                # Advance tutorial step
-                                onboarding.advance_stepwise_tutorial()
-                                key_event_consumed = True
-                            elif event.key == pygame.K_BACKSPACE:
-                                # Go back in tutorial
-                                onboarding.go_back_stepwise_tutorial()
-                                key_event_consumed = True
-                            elif event.key == pygame.K_ESCAPE or event.key == pygame.K_s:
-                                # Skip tutorial (ESC or S key)
-                                onboarding.dismiss_tutorial()
-                                key_event_consumed = True
+                        # Apply any state updates from the input handler
+                        for key, value in updated_values.items():
+                            if key == 'overlay_content':
+                                overlay_content = value
+                            elif key == 'overlay_title':
+                                overlay_title = value
+                            elif key == 'push_navigation_state':
+                                push_navigation_state(value)
+                            elif key == 'current_state':
+                                current_state = value
+                            elif key == 'first_time_help_content':
+                                first_time_help_content = value
+                            elif key == 'first_time_help_close_button':
+                                first_time_help_close_button = value
+                            elif key == 'current_help_mechanic':
+                                current_help_mechanic = value
                         
-                        # Help key (H) - redundant check removed since it's handled above
-                        
-                        # Close first-time help
-                        elif event.key == pygame.K_ESCAPE and first_time_help_content:
-                            # Mark mechanic as seen so it won't reappear
-                            if current_help_mechanic:
-                                onboarding.mark_mechanic_seen(current_help_mechanic)
-                            # Play popup close sound
-                            if game_state and hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_close')
-                            first_time_help_content = None
-                            first_time_help_close_button = None
-                            current_help_mechanic = None
-                        
-                        # Close hiring dialog with multiple keys (Left Arrow, Backspace, or ESC)
-                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
-                              game_state and game_state.pending_hiring_dialog):
-                            game_state.dismiss_hiring_dialog()
-                            # Play popup close sound
-                            if hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_close')
-                        
-                        # Close intelligence dialog with multiple keys (Left Arrow, Backspace, or ESC)
-                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
-                              game_state and game_state.pending_intelligence_dialog):
-                            game_state.dismiss_intelligence_dialog()
-                            # Play popup close sound
-                            if hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_close')
-                        
-                        # Close fundraising dialog with multiple keys (Left Arrow, Backspace, or ESC)
-                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
-                              game_state and game_state.pending_fundraising_dialog):
-                            game_state.dismiss_fundraising_dialog()
-                            # Play popup close sound
-                            if hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_close')
-                        
-                        # Close research dialog with multiple keys (Left Arrow, Backspace, or ESC)
-                        elif (event.key in [pygame.K_LEFT, pygame.K_BACKSPACE, pygame.K_ESCAPE] and 
-                              game_state and game_state.pending_research_dialog):
-                            game_state.dismiss_research_dialog()
-                            # Play popup close sound
-                            if hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_close')
-                        
-                        # Dedicated menu key - 'M' to access main menu/pause
-                        elif event.key == pygame.K_m and current_state == 'game' and game_state:
-                            # Toggle escape menu (pause/main menu access)
-                            current_state = 'escape_menu'
-                        
-                        # Screenshot functionality with [ key
-                        elif event.key == pygame.K_LEFTBRACKET:
-                            import datetime
-                            import os
-                            # Create screenshots directory if it doesn't exist
-                            screenshots_dir = os.path.join(os.getcwd(), 'screenshots')
-                            os.makedirs(screenshots_dir, exist_ok=True)
-                            # Generate timestamp for filename
-                            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                            screenshot_path = os.path.join(screenshots_dir, f'pdoom_screenshot_{timestamp}.png')
-                            # Save the current screen
-                            pygame.image.save(screen, screenshot_path)
-                            # print(f"Screenshot saved: {screenshot_path}")
-                            # Play UI sound if available
-                            if game_state and hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('ui_accept')
-                        
-                        # Debug console toggle
-                        elif _handle_debug_console_keypress(event.key, game_state):
-                            pass  # Debug console manager handled it
-                        
-                        # Dev tools menu (F11) - only available in DEV MODE
-                        elif event.key == pygame.K_F11:
-                            try:
-                                from src.services.dev_mode import is_dev_mode_enabled
-                                if is_dev_mode_enabled():
-                                    # Future: Open dev tools menu
-                                    if game_state:
-                                        game_state.add_message("System: Dev tools menu not yet implemented (F11)")
-                                        if hasattr(game_state, 'sound_manager'):
-                                            game_state.sound_manager.play_sound('error_beep')
-                            except ImportError:
-                                pass
-                        
-                        elif not key_event_consumed and event.key == pygame.K_RETURN and first_time_help_content:
-                            # Mark mechanic as seen so it won't reappear
-                            if current_help_mechanic:
-                                onboarding.mark_mechanic_seen(current_help_mechanic)
-                            # Play popup accept sound
-                            if game_state and hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_accept')
-                            first_time_help_content = None
-                            first_time_help_close_button = None
-                            current_help_mechanic = None
-                            key_event_consumed = True
-                        
-                        # Arrow key scrolling for scrollable event log
-                        elif game_state and game_state.scrollable_event_log_enabled:
-                            if event.key == pygame.K_UP:
-                                game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 1)
-                            elif event.key == pygame.K_DOWN:
-                                max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
-                                game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 1)
-                        
-                        # Safe escape handling - ALWAYS ACTIVE (not blocked by tutorial)
-                        elif event.key == pygame.K_ESCAPE:
-                            # Safe escape menu system
-                            current_time = pygame.time.get_ticks()
-                            
-                            # Reset escape count if too much time has passed
-                            if current_time - escape_timer > ESCAPE_TIMEOUT:
-                                escape_count = 0
-                            
-                            escape_count += 1
-                            escape_timer = current_time
-                            
-                            if escape_count >= ESCAPE_THRESHOLD:
-                                # Show quit confirmation after multiple escapes
-                                current_state = 'escape_menu'
-                                escape_count = 0  # Reset counter
-                            else:
-                                # First few escapes - show pause/menu hint
-                                if hasattr(game_state, 'messages'):
-                                    remaining = ESCAPE_THRESHOLD - escape_count
-                                    if remaining == 1:
-                                        game_state.add_message(f"Press ESCAPE {remaining} more time to access quit menu, or press ENTER to confirm quit")
-                                    else:
-                                        game_state.add_message(f"Press ESCAPE {remaining} more times to access quit menu")
-                                
-                                # Play UI sound
-                                if game_state and hasattr(game_state, 'sound_manager'):
-                                    game_state.sound_manager.play_sound('ui_click')
-                        
-                        # Handle ENTER to confirm quit when multiple escapes were pressed
-                        elif event.key == pygame.K_RETURN and escape_count >= ESCAPE_THRESHOLD - 1:
+                        # Handle quit request from input handler
+                        if should_quit:
                             running = False
-                        
-                        # CRITICAL FIX: End turn handling - HIGHEST PRIORITY for game flow
-                        # Check for end turn first to prevent overlay/modal interference
-                        elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
-                            # Import keybinding manager for customizable controls
-                            from src.services.keybinding_manager import keybinding_manager
-                            
-                            # Get configured end turn key
-                            end_turn_key = keybinding_manager.get_key_for_action("end_turn")
-                            
-                            # Check if this is the end turn key (space bar is default)
-                            if event.key == end_turn_key:
-                                # Only block end turn for true modal states
-                                blocking_conditions = [
-                                    first_time_help_content,  # Help overlay is blocking
-                                    game_state.pending_hiring_dialog,  # Hiring dialog is modal
-                                    game_state.pending_fundraising_dialog,  # Fundraising dialog is modal
-                                    game_state.pending_research_dialog,  # Research dialog is modal
-                                    onboarding.show_tutorial_overlay  # Tutorial is active
-                                ]
-                                
-                                if any(blocking_conditions):
-                                    # Provide clear feedback about why end turn is blocked
-                                    if first_time_help_content:
-                                        game_state.add_message("Close the help popup first (ESC or click X)")
-                                    elif game_state.pending_hiring_dialog:
-                                        game_state.add_message("Close the hiring dialog first (ESC or click outside)")
-                                    elif game_state.pending_fundraising_dialog:
-                                        game_state.add_message("Close the funding dialog first (ESC or click outside)")
-                                    elif game_state.pending_research_dialog:
-                                        game_state.add_message("Close the research dialog first (ESC or click outside)")
-                                    elif onboarding.show_tutorial_overlay:
-                                        game_state.add_message("Complete or skip the tutorial step first")
-                                    
-                                    if hasattr(game_state, 'sound_manager'):
-                                        game_state.sound_manager.play_sound('error_beep')
-                                
-                                # Check for popup events - allow end turn but give feedback
-                                elif (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
-                                    game_state.messages.append("Please resolve the pending events before ending turn")
-                                    if hasattr(game_state, 'sound_manager'):
-                                        game_state.sound_manager.play_sound('error_beep')
-                                else:
-                                    # Try to end turn - this should work now
-                                    if not game_state.end_turn():
-                                        # Turn was rejected (already processing or other reason)
-                                        pass  # Error feedback already provided by end_turn method
-                        
-                        # Handle ENTER as alternative end turn key when space is configured
-                        elif not key_event_consumed and event.key == pygame.K_RETURN and game_state and not game_state.game_over:
-                            from src.services.keybinding_manager import keybinding_manager
-                            end_turn_key = keybinding_manager.get_key_for_action("end_turn")
-                            
-                            # Allow Enter as alternative to space bar for end turn
-                            if end_turn_key == pygame.K_SPACE:
-                                # Same logic as space bar handling above
-                                blocking_conditions = [
-                                    first_time_help_content,
-                                    game_state.pending_hiring_dialog,
-                                    game_state.pending_fundraising_dialog,
-                                    game_state.pending_research_dialog,
-                                    onboarding.show_tutorial_overlay
-                                ]
-                                
-                                if any(blocking_conditions):
-                                    if first_time_help_content:
-                                        game_state.add_message("Close the help popup first (ESC or click X)")
-                                    elif game_state.pending_hiring_dialog:
-                                        game_state.add_message("Close the hiring dialog first (ESC or click outside)")
-                                    elif game_state.pending_fundraising_dialog:
-                                        game_state.add_message("Close the funding dialog first (ESC or click outside)")
-                                    elif game_state.pending_research_dialog:
-                                        game_state.add_message("Close the research dialog first (ESC or click outside)")
-                                    elif onboarding.show_tutorial_overlay:
-                                        game_state.add_message("Complete or skip the tutorial step first")
-                                    
-                                    if hasattr(game_state, 'sound_manager'):
-                                        game_state.sound_manager.play_sound('error_beep')
-                                
-                                elif (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
-                                    game_state.add_message("Please resolve the pending events before ending turn")
-                                    if hasattr(game_state, 'sound_manager'):
-                                        game_state.sound_manager.play_sound('error_beep')
-                                else:
-                                    if not game_state.end_turn():
-                                        pass
-                            key_event_consumed = True
-                        
-                        # Regular game keyboard handling (only if tutorial is not active)
-                        elif not onboarding.show_tutorial_overlay:
-                            # Import keybinding manager for customizable controls
-                            from src.services.keybinding_manager import keybinding_manager
-                            
-                            # 3-column layout keybindings (temporarily disabled - ui_new module not available)
-                            # TODO: Re-enable when ui_new module is restored
-                            # if game_state and not game_state.game_over:
-                            #     from src.services.config_manager import get_current_config
-                            #     config = get_current_config()
-                            #     if config.get('enable_three_column_layout', False):
-                            #         # Handle 3-column layout keybindings here
-                            #         pass
-                            
-                            # Action shortcuts using customizable keybindings (fallback)
-                            if game_state and not game_state.game_over:
-                                # Check if this key is bound to an action
-                                for action_index in range(min(9, len(game_state.actions))):
-                                    action_key = keybinding_manager.get_action_number_key(action_index)
-                                    if action_key and event.key == action_key:
-                                        # Check if this would be an undo operation before calling
-                                        was_undo = action_index in game_state.selected_gameplay_actions
-                                        
-                                        # Try to execute the action using keyboard shortcut
-                                        success = game_state.execute_gameplay_action_by_keyboard(action_index)
-                                        if success and not was_undo:
-                                            # Play AP spend sound for successful new selections (not undos)
-                                            game_state.sound_manager.play_ap_spend_sound()
-                                        break
-                            
-                            # 'H' key for help (Player Guide)
-                            elif event.key == pygame.K_h:
-                                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                                overlay_title = "Player Guide"
-                                overlay_scroll = 0
-                                push_navigation_state('overlay')
-                            
-                            # 'C' key for clearing stuck popup events (UI interaction fix)
-                            elif event.key == pygame.K_c and game_state:
-                                if game_state.clear_stuck_popup_events():
-                                    game_state.add_message("Emergency UI cleanup: Stuck events cleared")
-                                else:
-                                    game_state.add_message("No stuck popup events found")
-                            
-                            # 'W' key for window management demo (debug feature)
-                            elif event.key == pygame.K_w and current_config.get('advanced', {}).get('enable_demo_window', False):
-                                from src.ui.overlay_manager import UIElement, ZLayer
-                                
-                                # Create a demo window if it doesn't exist
-                                demo_window_id = "demo_window"
-                                if demo_window_id not in window_manager.elements:
-                                    demo_rect = pygame.Rect(200, 150, 300, 200)
-                                    demo_element = UIElement(
-                                        id=demo_window_id,
-                                        layer=ZLayer.DIALOGS,
-                                        rect=demo_rect,
-                                        title="Demo Window",
-                                        content="This is a draggable window!\n\nYou can:\n- Click and drag the header\n- Click minimize button\n- Press W again to close",
-                                        draggable=True
-                                    )
-                                    # Set header area for dragging (top 30 pixels)
-                                    demo_element.header_rect = pygame.Rect(demo_rect.x, demo_rect.y, demo_rect.width, 30)
-                                    window_manager.register_element(demo_element)
-                                else:
-                                    # Remove existing window
-                                    window_manager.unregister_element(demo_window_id)
+
 
             # --- Game state initialization --- #
             # Create game state when entering game for first time

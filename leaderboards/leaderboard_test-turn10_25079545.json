@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-28T07:47:44.223697",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 9,
+      "player_name": "Oracle Dynamics",
+      "date": "2025-09-28T07:47:44.222129",
+      "level_reached": 9,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.014251,
+      "entry_uuid": "7e61fb53-02db-47ff-b9f5-e371e8472bc9"
+    }
+  ]
+}

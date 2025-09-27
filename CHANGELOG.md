@@ -4,7 +4,29 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - "Modular Extraction Pipeline"
+## [Unreleased] - "Input System Architecture Overhaul"
+
+### Added - Phase 2 Architecture 
+- **🎯 InputEventManager System** - Extracted complete keyboard event processing from main.py monolith (500+ lines)
+- **🎯 DialogStateManager System** - Centralized modal dialog state management and validation (300+ lines)
+- **Clean Integration Interface** - Reduced main.py keyboard handling from 500+ lines to 25 lines (95% reduction)
+- **Comprehensive Test Coverage** - Added 48 unit tests (23 InputEventManager + 25 DialogStateManager) with 100% pass rate
+- **Zero Regression Validation** - All existing functionality preserved including Turn 6 spacebar fix
+- **Manager Pattern Continuation** - Following established MediaPRSystemManager architectural patterns
+
+### Fixed - Input System Issues
+- **Redundant Keybinding Imports** - Eliminated repeated keybinding_manager imports in event loop
+- **Duplicated Blocking Logic** - Centralized modal state validation in DialogStateManager
+- **Scattered Input Processing** - Consolidated all keyboard handling in InputEventManager
+- **Testing Gaps** - Added comprehensive test coverage for previously untestable input logic
+
+## [Previous] - "Modular Extraction Pipeline"
+
+### Fixed - Critical Issues
+- **CRITICAL: Turn 6 Spacebar Input Failure (Issue #377)** - Fixed spacebar input system failure that made game unplayable at Turn 6
+- **Redundant Key Checking Pattern** - Removed duplicate `pygame.K_SPACE` and `end_turn_key` validation that caused event processing conflicts
+- **Missing Event Consumption Flag** - Added critical `key_event_consumed = True` flag to prevent event handler conflicts
+- **Input System Architectural Debt** - Documented and partially resolved "one button to complex system" evolution technical debt
 
 ### Added - Architecture
 - **🏆 20% MILESTONE ACHIEVED - Media & PR System Management Module** - Extracted comprehensive MediaPRSystemManager class (227 lines) from game_state.py monolith
