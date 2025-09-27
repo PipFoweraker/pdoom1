@@ -1,5 +1,10 @@
 # P(Doom) Development Session Handoff - [DATE]
 
+## Documentation Organization Note
+**Investigation Workspaces**: Complex issues now have dedicated workspaces in `docs/investigations/`  
+**Current Active**: Turn 6 spacebar issue - see `NEXT_SESSION_TURN_6.md` for immediate access  
+**Session Documentation**: Organized by date in `docs/development-sessions/`
+
 ## PARTY **SESSION ACHIEVEMENTS COMPLETED**
 
 ### OK **[Primary Achievement Category]**

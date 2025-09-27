@@ -42,12 +42,26 @@ src/core/
 - `PR_DESCRIPTION.md` - Pull request templates
 
 #### Bug Reports & Issue Analysis (`issues/`)
-- `BUG_SWEEP_SUMMARY.md` - Bug sweep analysis results
-- `DEAD_CODE_ANALYSIS_REPORT.md` - Dead code identification
-- `GITHUB_ISSUE_CLEANUP_SESSION.md` - Issue cleanup documentation
-- `ISSUE_195_IMPLEMENTATION_SUMMARY.md` - Specific issue implementation
-- `ISSUE_TRIAGE_VICTORY_REPORT.md` - Issue triage results
-- `PYLANCE_CLEANUP_ISSUE.md` - Type checking improvements
+**Structure**: Organized by status (active/completed) with dedicated investigation workspaces
+- `README.md` - Issues documentation index and workflow
+- `active/` - Current issues requiring attention
+- `completed/` - Resolved issues and implementation summaries  
+- `GITHUB_ISSUE_CLEANUP_SESSION.md` - Issue management processes
+- `TECHNICAL_DEBT_RESOLUTION.md` - Systematic technical debt tracking
+
+#### Investigation Workspaces (`investigations/`)
+**Purpose**: Comprehensive analysis and resolution planning for complex issues
+- `turn-6-spacebar-issue/` - Turn 6 spacebar input failure investigation
+  - `README.md` - Investigation workspace index and status
+  - `TURN_6_SPACEBAR_INVESTIGATION.md` - Technical analysis and findings
+  - `TURN_STRUCTURE_ENHANCEMENT_PLAN.md` - 4-phase implementation plan
+
+#### Development Sessions (`development-sessions/`)
+**Structure**: Chronologically organized session tracking with templates
+- `README.md` - Session workflow and documentation standards
+- `2025-09/` - September 2025 sessions (modular architecture focus)
+- `NEXT_SESSION_HANDOFF_PROMPT.md` - Session handoff template
+- `PHASE_3A_COMPLETION_REPORT.md` - Recent milestone completion
 - `Prelaunch-Bug-Sweep-Plan.md` - Pre-launch bug identification
 - `PRE_ALPHA_BUG_SWEEP_PLAN.md` - Alpha testing bug strategy
 - `TECHNICAL_DEBT_RESOLUTION.md` - Technical debt management
