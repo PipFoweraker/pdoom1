@@ -1054,6 +1054,10 @@ class GameState:
         # Increment staff count for the manager
         self.staff += 1
         
+        # Play staff hiring sound
+        if hasattr(self, 'sound_manager') and self.sound_manager.is_enabled():
+            self.sound_manager.play_sound('popup_close')
+        
         # Add success message
         self.messages.append(f"Manager hired! Now managing {len(self.managers)} team cluster(s).")
         
@@ -1368,6 +1372,10 @@ class GameState:
         
         # Increment staff count for the manager
         self.staff += 1
+        
+        # Play staff hiring sound
+        if hasattr(self, 'sound_manager') and self.sound_manager.is_enabled():
+            self.sound_manager.play_sound('popup_close')
         
         # Add success message
         self.messages.append(f"Manager hired! Now managing {len(self.managers)} team cluster(s).")

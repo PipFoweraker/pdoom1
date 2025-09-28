@@ -42,14 +42,21 @@ class SoundManager:
             return
             
         try:
-            pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
-            self.audio_available = True
-        except pygame.error:
+            # Check if mixer is already initialized
+            mixer_info = pygame.mixer.get_init()
+            if mixer_info is not None:
+                self.audio_available = True
+            else:
+                pygame.mixer.init(frequency=22050, size=-16, channels=2, buffer=512)
+                self.audio_available = True
+        except pygame.error as e:
             # If mixer initialization fails (e.g., no audio device), note that audio is unavailable
             # but don't disable user preference
+            print(f"[DEBUG] Pygame error during mixer init: {e}")
             self.audio_available = False
-        except Exception:
+        except Exception as e:
             # Handle any other initialization errors
+            print(f"[DEBUG] Other error during mixer init: {e}")
             self.audio_available = False
     
     def _create_blob_sound(self):
@@ -66,8 +73,9 @@ class SoundManager:
             duration = 0.3  # 300ms
             samples = int(sample_rate * duration)
             
-            # Create sound wave array
-            wave_array = array.array('h')
+            # Create sound wave array as 2D numpy array for stereo
+            import numpy as np
+            wave_array = np.zeros((samples, 2), dtype=np.int16)
             
             for i in range(samples):
                 # Time in seconds
@@ -83,9 +91,9 @@ class SoundManager:
                 # Generate sine wave sample
                 sample = int(amplitude * math.sin(2 * math.pi * frequency * t))
                 
-                # Add to stereo array (left and right channels)
-                wave_array.append(sample)
-                wave_array.append(sample)
+                # Set both stereo channels
+                wave_array[i][0] = sample  # Left channel
+                wave_array[i][1] = sample  # Right channel
             
             # Create pygame sound from array
             self.sounds['blob'] = pygame.sndarray.make_sound(wave_array)
@@ -103,7 +111,7 @@ class SoundManager:
             # Create popup sounds for UI feedback
             self._create_popup_sounds()
 
-        except Exception:
+        except Exception as e:
             # If sound creation fails, note that audio is unavailable
             self.audio_available = False
     

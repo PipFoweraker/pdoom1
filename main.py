@@ -46,6 +46,10 @@ if current_config.get('audio', {}).get('sound_enabled', True):
 else:
     global_sound_manager.set_enabled(False)
 
+# Play startup sound to confirm audio is working
+if global_sound_manager.is_enabled():
+    global_sound_manager.play_sound('ROCKETPOWERUP')
+
 # Check for dev mode
 def is_dev_mode_enabled():
     """Check if dev mode is enabled from dev_mode.json"""
@@ -80,6 +84,8 @@ def log_shutdown(reason="User exit"):
         print(f"P(Doom) {get_display_version()} - Thanks for playing!")
 
 # --- Adaptive window sizing with loading screen --- #
+# Initialize pygame mixer first with proper settings for sound
+pygame.mixer.pre_init(frequency=22050, size=-16, channels=2, buffer=512)
 pygame.init()
 
 # Enhanced startup information with dev mode support
@@ -894,6 +900,11 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
             # Set the seed and start the game
             from src.services.deterministic_rng import init_deterministic_rng
             init_deterministic_rng(seed)
+            
+            # Play new game sound
+            if global_sound_manager and global_sound_manager.is_enabled():
+                global_sound_manager.play_sound('blob')
+                
             current_state = 'game'
             break
 
