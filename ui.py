@@ -1474,11 +1474,16 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             from src.services.keybinding_manager import keybinding_manager
             from src.ui.compact_ui import get_action_color_scheme
             
-            # Use shorter text for cleaner interface - context window provides details
-            button_text = action["name"]
-            if original_idx < 9:  # Only first 9 actions get keyboard shortcuts
-                shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
-                button_text = f"[{shortcut_key}] {action['name']}"
+            # Use optimized text for better readability and fit
+            try:
+                from src.ui.text_utils import get_optimal_action_text
+                button_text, font_size_used = get_optimal_action_text(action, original_idx, rect.width)
+            except ImportError:
+                # Fallback to original logic if text_utils not available
+                button_text = action["name"]
+                if original_idx < 9:  # Only first 9 actions get keyboard shortcuts
+                    shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
+                    button_text = f"[{shortcut_key}] {action['name']}"
             
             # Get action-specific colors
             action_name = action.get("name", f"action_{original_idx}")

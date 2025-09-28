@@ -310,15 +310,24 @@ def draw_compact_action_button(screen, rect_tuple, action, action_index, button_
     action_name = action.get("name", f"Action {action_index + 1}")
     icon = get_action_icon(action_name, action_index)
     
-    # Draw icon in center of button
-    icon_font = pygame.font.SysFont('Consolas', int(min(rect.width, rect.height) * 0.4), bold=True)
+    # Draw icon in center of button with improved sizing
+    min_dimension = min(rect.width, rect.height)
+    icon_size = max(12, int(min_dimension * 0.35))  # Slightly smaller for better fit
+    icon_font = pygame.font.SysFont('Consolas', icon_size, bold=True)
+    
+    # Ensure icon fits in button
+    if icon_font.size(icon)[0] > rect.width - 4:
+        icon_size = max(8, int(min_dimension * 0.25))
+        icon_font = pygame.font.SysFont('Consolas', icon_size, bold=True)
+    
     icon_surface = icon_font.render(icon, True, (255, 255, 255))
     icon_x = rect.centerx - icon_surface.get_width() // 2
     icon_y = rect.centery - icon_surface.get_height() // 2
     screen.blit(icon_surface, (icon_x, icon_y))
     
-    # Draw shortcut key in top-right corner
-    key_font = pygame.font.SysFont('Consolas', int(min(rect.width, rect.height) * 0.2), bold=True)
+    # Draw shortcut key in top-right corner with improved sizing
+    key_size = max(8, int(min_dimension * 0.18))  # Smaller shortcut key
+    key_font = pygame.font.SysFont('Consolas', key_size, bold=True)
     key_surface = key_font.render(shortcut_key, True, (255, 255, 100))
     key_x = rect.right - key_surface.get_width() - 2
     key_y = rect.top + 2

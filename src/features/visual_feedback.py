@@ -153,11 +153,52 @@ class VisualFeedback:
                            width=2, border_radius=self.corner_radius + 4)
             surface.blit(focus_surface, focus_rect.topleft)
         
-        # Draw text with proper scaling
+        # Draw text with proper scaling and overflow handling
         if text:
             font_size = int(self.base_font_size * self.font_scale_factor)
             font = pygame.font.SysFont('Consolas', font_size, bold=(style == FeedbackStyle.BUTTON))
-            text_surface = font.render(text, True, colors['text'])
+            
+            # Check if text fits, if not try to make it fit
+            available_width = display_rect.width - 10  # 5px margin on each side
+            text_width = font.size(text)[0]
+            
+            final_text = text
+            final_font = font
+            
+            if text_width > available_width:
+                # Try smaller font first
+                smaller_font_size = max(10, font_size - 2)
+                smaller_font = pygame.font.SysFont('Consolas', smaller_font_size, bold=(style == FeedbackStyle.BUTTON))
+                
+                if smaller_font.size(text)[0] <= available_width:
+                    final_text = text
+                    final_font = smaller_font
+                else:
+                    # Truncate text with ellipsis
+                    ellipsis = "..."
+                    ellipsis_width = font.size(ellipsis)[0]
+                    target_width = available_width - ellipsis_width
+                    
+                    if target_width > 0:
+                        # Binary search for longest fitting text
+                        left, right = 0, len(text)
+                        best_fit = ""
+                        
+                        while left <= right:
+                            mid = (left + right) // 2
+                            candidate = text[:mid]
+                            
+                            if font.size(candidate)[0] <= target_width:
+                                best_fit = candidate
+                                left = mid + 1
+                            else:
+                                right = mid - 1
+                        
+                        final_text = best_fit + ellipsis if best_fit else ellipsis
+                    else:
+                        final_text = ellipsis[:max(1, available_width // font.size("X")[0])]
+            
+            text_surface = final_font.render(final_text, True, colors['text'])
             
             # Center text in button
             text_rect = text_surface.get_rect(center=display_rect.center)

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2025-09-28T07:01:13.658726",
+  "created": "2025-09-28T09:31:56.566144",
   "max_entries": 50,
   "entries": [
     {
@@ -11,6 +11,15 @@
       "game_mode": "Bootstrap_v0.4.1",
       "duration_seconds": 18.775655,
       "entry_uuid": "dae54f6d-7eb1-47c3-be4d-b468ae173723"
+    },
+    {
+      "score": 8,
+      "player_name": "Silver Stream AI",
+      "date": "2025-09-28T09:31:56.547928",
+      "level_reached": 8,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 2.409599,
+      "entry_uuid": "4d38eeb8-783b-4b92-b395-584ecafcbd2f"
     }
   ]
 }
