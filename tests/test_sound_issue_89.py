@@ -9,7 +9,6 @@ Tests the following requirements:
 """
 
 import unittest
-import pytest
 import sys
 import os
 
@@ -19,7 +18,6 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.services.sound_manager import SoundManager
 from src.core.game_state import GameState
 
-@pytest.mark.skip(reason="Sound system bugs - See issue #sound-system-bug")
 class TestSoundIssue89(unittest.TestCase):
     """Test sound system fixes for issue #89"""
 
@@ -34,7 +32,7 @@ class TestSoundIssue89(unittest.TestCase):
 
     def test_game_state_sound_enabled_by_default(self):
         """Test that GameState has sound enabled by default (Issue #89)"""
-        game_state = GameState(seed=12345)
+        game_state = GameState(seed="12345")
         self.assertTrue(game_state.sound_manager.is_enabled(),
                        "Game state sound manager should be enabled by default")
 
@@ -110,7 +108,6 @@ class TestSoundIssue89(unittest.TestCase):
         except (ImportError, AttributeError) as e:
             self.fail(f"Failed to access global sound manager: {e}")
 
-@pytest.mark.skip(reason="Sound system integration bugs - See issue #sound-integration-bug")
 class TestSoundSystemIntegration(unittest.TestCase):
     """Integration tests for sound system with game state"""
 
@@ -118,7 +115,7 @@ class TestSoundSystemIntegration(unittest.TestCase):
         """Test that sound state can be synced between global and game managers"""
         # Create managers
         global_manager = SoundManager()
-        game_state = GameState(seed=12345)
+        game_state = GameState(seed="12345")
         
         # Change global state
         global_manager.set_enabled(False)
