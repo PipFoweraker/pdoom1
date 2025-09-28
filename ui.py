@@ -4764,7 +4764,7 @@ def draw_high_score_screen(screen: pygame.Surface, w: int, h: int, game_state, s
     
     # Seed and configuration info
     config_y = int(h * 0.1)
-    seed_info = f"Seed: '{seed}' | Economic Model: Bootstrap v0.4.1"
+    seed_info = f"Seed: '{seed}' | Economic Model: Bootstrap v0.9.0"
     seed_surf = desc_font.render(seed_info, True, light_gray)
     seed_x = w // 2 - seed_surf.get_width() // 2
     screen.blit(seed_surf, (seed_x, config_y))
@@ -4901,7 +4901,7 @@ def draw_high_score_screen_legacy(screen: pygame.Surface, w: int, h: int, game_s
     
     # Seed and configuration info
     config_y = int(h * 0.095)
-    seed_info = f"Seed: '{seed}' | Economic Model: Bootstrap v0.4.1"
+    seed_info = f"Seed: '{seed}' | Economic Model: Bootstrap v0.9.0"
     seed_surf = font_medium.render(seed_info, True, light_gray)
     seed_x = w // 2 - seed_surf.get_width() // 2
     screen.blit(seed_surf, (seed_x, config_y))

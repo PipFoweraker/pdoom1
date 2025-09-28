@@ -242,25 +242,25 @@ print('=== P(Doom) v0.8.0+ Functionality Test ===')
 
 # Basic game state
 gs = GameState('validation-test')
-print(f'✓ Game initializes: Turn {gs.turn}, AP {gs.action_points}/{gs.max_action_points}')
+print(f'v Game initializes: Turn {gs.turn}, AP {gs.action_points}/{gs.max_action_points}')
 
 # Action selection and execution
 actions = gs.get_available_actions()
-print(f'✓ Available actions: {len(actions)} actions found')
-print(f'✓ Sample actions: {actions[:3]}')
+print(f'v Available actions: {len(actions)} actions found')
+print(f'v Sample actions: {actions[:3]}')
 
 # Turn progression  
 initial_turn = gs.turn
 gs.select_action('Grow Community')
 gs.end_turn()
-print(f'✓ Turn progression: {initial_turn} -> {gs.turn}')
-print(f'✓ Action clearing: {len(gs.selected_gameplay_actions)} selected actions remaining')
+print(f'v Turn progression: {initial_turn} -> {gs.turn}')
+print(f'v Action clearing: {len(gs.selected_gameplay_actions)} selected actions remaining')
 
 # System integration
 media_available = any('Media' in action for action in actions)
 research_available = any('Research' in action for action in actions) 
-print(f'✓ Media system integration: {media_available}')
-print(f'✓ Research system integration: {research_available}')
+print(f'v Media system integration: {media_available}')
+print(f'v Research system integration: {research_available}')
 
 print('=== Validation Complete ===')
 "
@@ -276,7 +276,7 @@ print('=== Validation Complete ===')
 ```
 
 #### Create Session Summary:
-- [ ] Document test failure reduction (79 → target <45)
+- [ ] Document test failure reduction (79 -> target <45)
 - [ ] List critical systems restored to functionality
 - [ ] Identify remaining high-priority issues for next session
 - [ ] Update dev blog with stabilization phase progress
@@ -292,7 +292,7 @@ print('=== Validation Complete ===')
 ## Success Metrics and Exit Criteria
 
 ### Quantitative Targets:
-- **Test Pass Rate**: 91.5% → 95%+ (785/864 → 820+/864 passing tests)
+- **Test Pass Rate**: 91.5% -> 95%+ (785/864 -> 820+/864 passing tests)
 - **Critical System Failures**: 0 action point, turn progression, or game state failures
 - **ASCII Compliance**: 0 Unicode violations in documentation  
 - **Infrastructure Failures**: <5 remaining sound/logging/UI failures

@@ -80,10 +80,10 @@ blocking_conditions = [
    ```
 
 ### Validation Results
-- ✅ **Core logic works**: `end_turn()` returns `True` at Turn 6
-- ✅ **Blocking conditions correct**: No false positives at Turn 6  
-- ✅ **Event consumption**: Prevents handler conflicts
-- ✅ **Regression tests pass**: 9/9 tests pass with comprehensive coverage
+- [EMOJI] **Core logic works**: `end_turn()` returns `True` at Turn 6
+- [EMOJI] **Blocking conditions correct**: No false positives at Turn 6  
+- [EMOJI] **Event consumption**: Prevents handler conflicts
+- [EMOJI] **Regression tests pass**: 9/9 tests pass with comprehensive coverage
 
 ## Architectural Improvement Plan
 

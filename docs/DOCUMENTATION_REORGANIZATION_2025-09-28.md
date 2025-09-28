@@ -77,10 +77,10 @@ Comprehensive reorganization of P(Doom) documentation structure to improve acces
 - `docs/development-sessions/2025-09/`
 
 ### Moved Files
-- `docs/issues/TURN_6_SPACEBAR_INVESTIGATION.md` → `docs/investigations/turn-6-spacebar-issue/`
-- `docs/game-design/TURN_STRUCTURE_ENHANCEMENT_PLAN.md` → `docs/investigations/turn-6-spacebar-issue/`
-- Multiple completed issues → `docs/issues/completed/`
-- September 2025 session files → `docs/development-sessions/2025-09/`
+- `docs/issues/TURN_6_SPACEBAR_INVESTIGATION.md` -> `docs/investigations/turn-6-spacebar-issue/`
+- `docs/game-design/TURN_STRUCTURE_ENHANCEMENT_PLAN.md` -> `docs/investigations/turn-6-spacebar-issue/`
+- Multiple completed issues -> `docs/issues/completed/`
+- September 2025 session files -> `docs/development-sessions/2025-09/`
 
 ### Created New Files
 - `docs/investigations/turn-6-spacebar-issue/README.md`

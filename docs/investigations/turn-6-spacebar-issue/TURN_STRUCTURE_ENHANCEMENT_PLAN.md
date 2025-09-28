@@ -20,13 +20,13 @@ Based on comprehensive investigation of GitHub Issue #377 (Turn 6 spacebar failu
 
 ### Investigation Findings
 
-#### Core Logic Validation: ✅ WORKING
+#### Core Logic Validation: [EMOJI] WORKING
 ```python
 # Programmatic test confirms core logic is sound
 game_state = GameState('test-seed-turn6')
 for i in range(6):
     result = game_state.end_turn()  # Returns True consistently
-# Successfully advances: Turn 0 → 1 → 2 → 3 → 4 → 5 → 6
+# Successfully advances: Turn 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6
 ```
 
 #### GUI Event Handling Issues Identified:

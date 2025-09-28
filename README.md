@@ -1,5 +1,5 @@
 # P(Doom): AI Safety Strategy Game
-**v0.8.0 "Modular Architecture" - Major Refactoring & Quality Update**
+**v0.9.0 "Modular Architecture" - Major Refactoring & Quality Update**
 
 ![P(Doom) Gameplay Screenshot](screenshots/pdoom_screenshot_20250918_104357.png)
 

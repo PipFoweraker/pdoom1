@@ -38,17 +38,17 @@
 
 ## Key Investigation Results
 
-### ✅ What Works (Validated)
+### [EMOJI] What Works (Validated)
 - Core game logic (`game_state.end_turn()`) works perfectly through Turn 6
 - TurnManager system processes turns correctly
 - Programmatic turn advancement functions properly
 
-### ❌ What's Broken (Identified)
+### [EMOJI] What's Broken (Identified)
 - GUI pygame event loop spacebar handling at Turn 6
 - Redundant spacebar validation logic in main.py (lines 2603-2612)
 - Complex dialog blocking conditions may become "stuck"
 
-### 🔍 Root Cause Hypothesis
+### [SEARCH] Root Cause Hypothesis
 **Primary**: Dialog state corruption at Turn 6
 1. Turn 6 triggers event/milestone that sets dialog flag incorrectly
 2. Recent event system changes prevent proper state cleanup  

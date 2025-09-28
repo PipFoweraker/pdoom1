@@ -12,7 +12,7 @@ Key functionality:
 - Social media campaigns and community outreach
 """
 
-from typing import Dict, Any, List, Optional, Tuple, TYPE_CHECKING
+from typing import Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.core.game_state import GameState

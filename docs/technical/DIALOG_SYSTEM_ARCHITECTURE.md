@@ -122,12 +122,12 @@ class DialogManager:
 ### Media & PR Dialog  
 - **Purpose**: Media and public relations operations
 - **Options**: Press Release, Exclusive Interview, Damage Control, Social Media Campaign, Community Outreach
-- **Integration**: ✅ **Fixed** - Now fully functional
+- **Integration**: [EMOJI] **Fixed** - Now fully functional
 
 ### Technical Debt Dialog
 - **Purpose**: Technical debt management operations  
 - **Options**: Refactoring Sprint, Technical Debt Audit, Code Review
-- **Integration**: ✅ **Fixed** - Now fully functional
+- **Integration**: [EMOJI] **Fixed** - Now fully functional
 
 ## Dialog Option Structure
 

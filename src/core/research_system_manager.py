@@ -8,9 +8,8 @@ and separation of concerns.
 """
 
 from typing import Dict, Any, Optional, Tuple, TYPE_CHECKING
-import json
 from src.services.deterministic_rng import get_rng
-from src.core.research_quality import TechnicalDebt, ResearchQuality, ResearchProject
+from src.core.research_quality import ResearchQuality, ResearchProject
 
 if TYPE_CHECKING:
     from src.core.game_state import GameState

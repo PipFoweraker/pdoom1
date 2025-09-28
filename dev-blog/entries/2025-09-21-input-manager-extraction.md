@@ -19,7 +19,7 @@ Completed a major architectural extraction by separating all mouse input handlin
 - Extracted all mouse input processing: clicks, motion, hover detection, drag operations
 - Implemented clean delegation pattern - GameState methods now delegate to InputManager
 - Maintained zero regressions through comprehensive method preservation
-- Achieved 515 net line reduction in monolith (6,285 → 5,770 lines)
+- Achieved 515 net line reduction in monolith (6,285 -> 5,770 lines)
 
 ### Infrastructure Updates
 - Added proper TYPE_CHECKING imports for clean type annotations

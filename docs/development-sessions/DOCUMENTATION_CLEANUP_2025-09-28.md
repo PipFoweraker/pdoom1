@@ -8,31 +8,31 @@ Completed comprehensive documentation organization to address sprawling files in
 
 ### Files Moved to Proper Locations
 
-**Session Documentation → `docs/development-sessions/`**
+**Session Documentation -> `docs/development-sessions/`**
 - `SESSION_COMPLETION_2025-*.md` (4 files)
 - `SESSION_HANDOFF_*.md` (2 files)
 - `ENHANCED_CONTEXT_PROMPT.md`
 - `NEXT_SESSION_TURN_6.md`
 
-**Investigation Files → `docs/investigations/`**
+**Investigation Files -> `docs/investigations/`**
 - `ACTION_POINTS_BUG_HUNT_COMPLETION.md`
 - `BUG_SWEEP_SUMMARY.md`
 - `MOUSE_WHEEL_ISSUE_261_RESOLVED.md`
 
-**Release Documentation → `docs/releases/`**
+**Release Documentation -> `docs/releases/`**
 - `V0.7.5_RELEASE_COMPLETE.md`
 
-**Technical Documentation → `docs/technical/`**
+**Technical Documentation -> `docs/technical/`**
 - `UI_CLEANUP_SESSION_2025-09-20.md`
 - `HOTFIX_ACTION_BUTTON_LAYOUT.md`
 - `COMMAND_STRING_CONTROLLER.md`
 
-**Test Files → `tests/`**
+**Test Files -> `tests/`**
 - `test_command_strings.py`
 - `test_mouse_wheel_direct.py`
 - `test_pygame_mousewheel.py`
 
-**Development Tools → `tools/`**
+**Development Tools -> `tools/`**
 - `temp_intelligence_dialog.py`
 
 ### Documentation Updates
@@ -64,30 +64,30 @@ Completed comprehensive documentation organization to address sprawling files in
 ### Current Root Directory Structure
 ```
 pdoom1/
-├── README.md                 # Main project documentation
-├── CHANGELOG.md             # Version history
-├── main.py                  # Application entry point
-├── requirements.txt         # Dependencies
-├── src/                     # Source code
-├── tests/                   # All test files
-├── docs/                    # All documentation (organized)
-├── tools/                   # Development utilities
-├── configs/                 # Configuration files
-└── [other essential dirs]   # Assets, logs, etc.
+[EMOJI][EMOJI][EMOJI] README.md                 # Main project documentation
+[EMOJI][EMOJI][EMOJI] CHANGELOG.md             # Version history
+[EMOJI][EMOJI][EMOJI] main.py                  # Application entry point
+[EMOJI][EMOJI][EMOJI] requirements.txt         # Dependencies
+[EMOJI][EMOJI][EMOJI] src/                     # Source code
+[EMOJI][EMOJI][EMOJI] tests/                   # All test files
+[EMOJI][EMOJI][EMOJI] docs/                    # All documentation (organized)
+[EMOJI][EMOJI][EMOJI] tools/                   # Development utilities
+[EMOJI][EMOJI][EMOJI] configs/                 # Configuration files
+[EMOJI][EMOJI][EMOJI] [other essential dirs]   # Assets, logs, etc.
 ```
 
 ### Current docs/ Structure
 ```
 docs/
-├── DOCUMENTATION_INDEX.md   # Navigation hub
-├── [core guides]           # README, DEVELOPERGUIDE, etc.
-├── development-sessions/   # All session documentation
-├── investigations/         # Bug reports and analysis
-├── releases/              # Release-specific documentation
-├── technical/             # Implementation documentation
-├── architecture/          # System architecture docs
-├── game-design/          # Game mechanics documentation
-└── [other categories]     # Process, project-management, etc.
+[EMOJI][EMOJI][EMOJI] DOCUMENTATION_INDEX.md   # Navigation hub
+[EMOJI][EMOJI][EMOJI] [core guides]           # README, DEVELOPERGUIDE, etc.
+[EMOJI][EMOJI][EMOJI] development-sessions/   # All session documentation
+[EMOJI][EMOJI][EMOJI] investigations/         # Bug reports and analysis
+[EMOJI][EMOJI][EMOJI] releases/              # Release-specific documentation
+[EMOJI][EMOJI][EMOJI] technical/             # Implementation documentation
+[EMOJI][EMOJI][EMOJI] architecture/          # System architecture docs
+[EMOJI][EMOJI][EMOJI] game-design/          # Game mechanics documentation
+[EMOJI][EMOJI][EMOJI] [other categories]     # Process, project-management, etc.
 ```
 
 ## Maintenance Notes

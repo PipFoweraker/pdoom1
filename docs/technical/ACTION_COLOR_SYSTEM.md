@@ -8,7 +8,7 @@ P(Doom) v0.8.0 implements a comprehensive color-coding system for action buttons
 
 The system categorizes actions into 7 distinct color themes:
 
-### 🔵 Core Actions (Blue-Grey)
+### [EMOJI] Core Actions (Blue-Grey)
 **RGB**: `(70, 90, 120)` normal, `(90, 110, 140)` hover, `(100, 120, 160)` border
 
 **Actions**:
@@ -18,7 +18,7 @@ The system categorizes actions into 7 distinct color themes:
 
 **Purpose**: Foundational organizational activities that form the core of lab management.
 
-### 🟢 Economic Actions (Green)  
+### [U+1F7E2] Economic Actions (Green)  
 **RGB**: `(60, 100, 70)` normal, `(80, 120, 90)` hover, `(100, 140, 110)` border
 
 **Actions**:
@@ -28,7 +28,7 @@ The system categorizes actions into 7 distinct color themes:
 
 **Purpose**: Financial and resource acquisition activities essential for lab growth.
 
-### 🔷 Research Actions (Blue)
+### [EMOJI] Research Actions (Blue)
 **RGB**: `(60, 80, 120)` normal, `(80, 100, 140)` hover, `(100, 120, 160)` border
 
 **Actions**:
@@ -39,7 +39,7 @@ The system categorizes actions into 7 distinct color themes:
 
 **Purpose**: Technical research and development activities advancing AI safety.
 
-### 🟣 Intelligence Actions (Purple)
+### [U+1F7E3] Intelligence Actions (Purple)
 **RGB**: `(90, 70, 120)` normal, `(110, 90, 140)` hover, `(130, 110, 160)` border
 
 **Actions**:
@@ -47,7 +47,7 @@ The system categorizes actions into 7 distinct color themes:
 
 **Purpose**: Information gathering and competitive intelligence operations.
 
-### 🟠 Media Actions (Orange)
+### [U+1F7E0] Media Actions (Orange)
 **RGB**: `(120, 80, 50)` normal, `(140, 100, 70)` hover, `(160, 120, 90)` border
 
 **Actions**:
@@ -55,7 +55,7 @@ The system categorizes actions into 7 distinct color themes:
 
 **Purpose**: Public relations and media management for reputation building.
 
-### 🟦 Technical Actions (Teal)
+### [U+1F7E6] Technical Actions (Teal)
 **RGB**: `(50, 100, 100)` normal, `(70, 120, 120)` hover, `(90, 140, 140)` border
 
 **Actions**:
@@ -64,7 +64,7 @@ The system categorizes actions into 7 distinct color themes:
 
 **Purpose**: Technical infrastructure and system maintenance activities.
 
-### 🔴 Special Actions (Red)
+### [EMOJI] Special Actions (Red)
 **RGB**: `(100, 60, 60)` normal, `(120, 80, 80)` hover, `(140, 100, 100)` border
 
 **Actions**:
@@ -168,7 +168,7 @@ elif any(word in action_lower for word in ['research', 'safety research', 'team 
 ```
 
 This approach ensures:
-- **Robust matching** for dialog system actions ("Intelligence Dialog" → Intelligence theme)
+- **Robust matching** for dialog system actions ("Intelligence Dialog" -> Intelligence theme)
 - **Future compatibility** with new action names
 - **Sensible defaults** for unrecognized actions
 
@@ -234,13 +234,13 @@ The system is designed for easy extension:
 ### Adding New Actions
 When adding new actions, consider the color category:
 
-1. **Economic**: Financial, resource acquisition → Green
-2. **Research**: Technical development, AI safety → Blue
-3. **Core**: Staff, community management → Blue-grey
-4. **Intelligence**: Information gathering → Purple
-5. **Media**: Public relations, communications → Orange
-6. **Technical**: Infrastructure, system maintenance → Teal  
-7. **Special**: Critical safety, emergency actions → Red
+1. **Economic**: Financial, resource acquisition -> Green
+2. **Research**: Technical development, AI safety -> Blue
+3. **Core**: Staff, community management -> Blue-grey
+4. **Intelligence**: Information gathering -> Purple
+5. **Media**: Public relations, communications -> Orange
+6. **Technical**: Infrastructure, system maintenance -> Teal  
+7. **Special**: Critical safety, emergency actions -> Red
 
 ### Color Selection Principles
 - **Professional appearance**: Muted, business-appropriate colors
@@ -251,6 +251,6 @@ When adding new actions, consider the color category:
 
 ## Implementation History
 
-- **v0.7.x**: Basic UI consolidation (29 → 16 actions)
+- **v0.7.x**: Basic UI consolidation (29 -> 16 actions)
 - **v0.8.0**: Added comprehensive color-coding system
 - **Future**: Enhanced accessibility and customization options

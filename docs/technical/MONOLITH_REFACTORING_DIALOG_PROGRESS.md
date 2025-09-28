@@ -79,41 +79,41 @@ def dismiss_media_dialog(self):
 ### Before Refactoring
 ```
 game_state.py (6000+ lines)
-├── Core game logic
-├── Dialog trigger functions
-├── Dialog dismiss functions (duplicated)
-├── Dialog state management
-├── UI rendering concerns (mixed)
-└── Click handling logic (mixed)
+[EMOJI][EMOJI][EMOJI] Core game logic
+[EMOJI][EMOJI][EMOJI] Dialog trigger functions
+[EMOJI][EMOJI][EMOJI] Dialog dismiss functions (duplicated)
+[EMOJI][EMOJI][EMOJI] Dialog state management
+[EMOJI][EMOJI][EMOJI] UI rendering concerns (mixed)
+[EMOJI][EMOJI][EMOJI] Click handling logic (mixed)
 ```
 
 ### After Refactoring
 ```
 src/core/game_state.py (focused on core logic)
-├── Core game logic
-├── Dialog trigger functions
-└── DialogManager integration calls
+[EMOJI][EMOJI][EMOJI] Core game logic
+[EMOJI][EMOJI][EMOJI] Dialog trigger functions
+[EMOJI][EMOJI][EMOJI] DialogManager integration calls
 
 src/core/dialog_manager.py (dialog services)
-├── Universal dismiss function
-├── Dialog state checking
-└── Centralized dialog utilities
+[EMOJI][EMOJI][EMOJI] Universal dismiss function
+[EMOJI][EMOJI][EMOJI] Dialog state checking
+[EMOJI][EMOJI][EMOJI] Centralized dialog utilities
 
 src/ui/dialogs.py (presentation layer)
-├── Dialog rendering functions
-├── UI layout and styling
-└── Clickable rectangle generation
+[EMOJI][EMOJI][EMOJI] Dialog rendering functions
+[EMOJI][EMOJI][EMOJI] UI layout and styling
+[EMOJI][EMOJI][EMOJI] Clickable rectangle generation
 
 main.py (integration layer)
-├── Dialog display orchestration
-├── Click handling coordination  
-└── Dialog lifecycle management
+[EMOJI][EMOJI][EMOJI] Dialog display orchestration
+[EMOJI][EMOJI][EMOJI] Click handling coordination  
+[EMOJI][EMOJI][EMOJI] Dialog lifecycle management
 ```
 
 ### Code Quality Metrics
 
 **Cyclomatic Complexity Reduction:**
-- Dialog dismiss functions: O(n) → O(1) complexity
+- Dialog dismiss functions: O(n) -> O(1) complexity
 - Centralized logic reduces conditional branching
 - Consistent interface pattern across dialog types
 
@@ -200,17 +200,17 @@ The DialogManager pattern can be replicated for:
 ## Impact Assessment
 
 ### Positive Impacts
-✅ **Reduced Code Duplication**: Universal dismiss function eliminates repetition
-✅ **Improved Testability**: DialogManager can be tested in isolation  
-✅ **Enhanced Maintainability**: Centralized dialog logic easier to modify
-✅ **Clear Separation of Concerns**: Logic, presentation, and integration separated
-✅ **Established Refactoring Pattern**: Template for future extractions
+[EMOJI] **Reduced Code Duplication**: Universal dismiss function eliminates repetition
+[EMOJI] **Improved Testability**: DialogManager can be tested in isolation  
+[EMOJI] **Enhanced Maintainability**: Centralized dialog logic easier to modify
+[EMOJI] **Clear Separation of Concerns**: Logic, presentation, and integration separated
+[EMOJI] **Established Refactoring Pattern**: Template for future extractions
 
 ### Risk Mitigation
-✅ **No Functionality Regression**: All existing features preserved
-✅ **Comprehensive Test Coverage**: 15 new tests validate functionality
-✅ **Backward Compatibility**: Existing interfaces maintained
-✅ **Performance Maintained**: No performance degradation observed
+[EMOJI] **No Functionality Regression**: All existing features preserved
+[EMOJI] **Comprehensive Test Coverage**: 15 new tests validate functionality
+[EMOJI] **Backward Compatibility**: Existing interfaces maintained
+[EMOJI] **Performance Maintained**: No performance degradation observed
 
 ## Recommendations
 

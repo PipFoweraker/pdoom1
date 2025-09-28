@@ -78,7 +78,7 @@ elif not key_event_consumed and game_state and not game_state.game_over:
 game_state = GameState('test-seed-turn6')
 for i in range(6):
     result = game_state.end_turn()  # Returns True consistently
-# Successfully advances: Turn 0 → 1 → 2 → 3 → 4 → 5 → 6
+# Successfully advances: Turn 0 -> 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 # GUI event handling issue - REDUNDANT VALIDATION
 elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
