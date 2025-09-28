@@ -1001,6 +1001,12 @@ quality = gs.get_task_quality_setting(task_name, researcher_id)
 
 ### Technical Debt Management
 
+**IMPORTANT: Naming Convention (v0.9.1+)**
+- **Technical Debt Methods**: Use `add_technical_debt()` and `reduce_technical_debt()` 
+- **Future Financial Debt**: Will use `add_financial_debt()` and `reduce_financial_debt()`
+- **Backward Compatibility**: Legacy `add_debt()` / `reduce_debt()` methods still work but are deprecated
+- **Rationale**: Clear distinction prevents confusion when lab financial management is added
+
 **Debt Accumulation:**
 - RUSHED research: +2 debt points per project
 - THOROUGH research: -1 debt point per project
