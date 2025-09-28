@@ -1915,7 +1915,7 @@ def main():
     # Research dialog rects need to persist between frames for click detection
     global cached_research_dialog_rects  
     # Keybinding menu variables
-    global keybinding_all_bindings
+    global keybinding_all_bindings, keybinding_menu_selected_item, keybinding_change_action, keybinding_change_display
     # Escape handling variables
     global escape_count, escape_timer
     
