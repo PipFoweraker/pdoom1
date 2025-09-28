@@ -182,13 +182,13 @@ class TechnicalDebt:
             DebtCategory.VALIDATION: 0
         }
     
-    def add_debt(self, amount: int, category: Optional[DebtCategory] = None) -> None:
+    def add_technical_debt(self, amount: int, category: Optional[DebtCategory] = None) -> None:
         """
         Add technical debt to the total and optionally to a specific category.
         
         Args:
-            amount: Debt points to add
-            category: Optional specific category to add debt to
+            amount: Technical debt points to add
+            category: Optional specific category to add technical debt to
         """
         self.accumulated_debt += amount
         
@@ -201,16 +201,16 @@ class TechnicalDebt:
                 cat = get_rng().choice(categories, "choice_context")
                 self.debt_categories[cat] += 1
     
-    def reduce_debt(self, amount: int, category: Optional[DebtCategory] = None) -> int:
+    def reduce_technical_debt(self, amount: int, category: Optional[DebtCategory] = None) -> int:
         """
         Reduce technical debt and return actual amount reduced.
         
         Args:
-            amount: Maximum debt points to reduce
-            category: Optional specific category to reduce debt from
+            amount: Maximum technical debt points to reduce
+            category: Optional specific category to reduce technical debt from
             
         Returns:
-            Actual amount of debt reduced
+            Actual amount of technical debt reduced
         """
         if category and category in self.debt_categories:
             category_debt = self.debt_categories[category]
@@ -239,6 +239,15 @@ class TechnicalDebt:
             
             self.accumulated_debt -= actual_reduction
             return actual_reduction
+    
+    # Backward compatibility aliases (TODO: Remove after migrating all code)
+    def add_debt(self, amount: int, category: Optional[DebtCategory] = None) -> None:
+        """Backward compatibility alias for add_technical_debt."""
+        return self.add_technical_debt(amount, category)
+    
+    def reduce_debt(self, amount: int, category: Optional[DebtCategory] = None) -> int:
+        """Backward compatibility alias for reduce_technical_debt."""
+        return self.reduce_technical_debt(amount, category)
     
     def get_research_speed_penalty(self) -> float:
         """

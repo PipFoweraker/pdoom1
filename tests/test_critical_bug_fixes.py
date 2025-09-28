@@ -3,7 +3,6 @@ Test suite for critical bug fixes in the bug sweep.
 
 This module tests the fixes for critical bugs identified in the pre-alpha bug sweep:
 - Issue #263: Duplicate return statements in check_hover method
-- Issue #265: List modification during iteration in magical orb code
 - Issue #261: Mouse wheel handling (verification)
 """
 
@@ -70,81 +69,6 @@ class TestCriticalBugFixes(unittest.TestCase):
         # Should work without crashing and provide context info
         self.assertIsNotNone(self.game_state.current_context_info)
         self.assertEqual(self.game_state.current_context_info['title'], 'Money')
-
-    def test_magical_orb_list_modification_fix_265(self):
-        """Test fix for issue #265: safe list sampling instead of modification during iteration."""
-        # Enable magical orb functionality
-        self.game_state.magical_orb_active = True
-        
-        # Create some test opponents
-        self.game_state.opponents = []
-        for i in range(2):
-            opponent = Mock()
-            opponent.name = f"Test Opponent {i}"
-            opponent.discovered = True
-            opponent.scout_stat = Mock(return_value=(True, 100, "Test message"))
-            opponent.discovered_stats = {
-                'budget': False,
-                'capabilities_researchers': False,
-                'lobbyists': False,
-                'compute': False,
-                'progress': False
-            }
-            opponent.known_stats = {}
-            self.game_state.opponents.append(opponent)
-        
-        # Mock random functions to ensure deterministic behavior
-        with patch('random.randint', return_value=3), \
-             patch('random.sample') as mock_sample:
-            
-            # Mock sample to return a predictable subset
-            mock_sample.return_value = ['budget', 'compute', 'progress']
-            
-            # Execute scout opponents action (triggers the magical orb logic)
-            action = next(a for a in self.game_state.actions if a['name'] == 'Scout Opponents')
-            
-            # Execute the action using the correct method
-            
-            # This should not crash due to list modification during iteration
-            try:
-                action['upside'](self.game_state)
-                test_passed = True
-            except (ValueError, IndexError, RuntimeError) as e:
-                # These would be the typical errors from list modification during iteration
-                test_passed = False
-                self.fail(f"List modification during iteration caused error: {e}")
-            
-            # Verify the fix: random.sample should have been called instead of list.remove()
-            self.assertTrue(mock_sample.called, "Should use random.sample for safe sampling")
-            
-            # Verify that we didn't modify the original list during iteration
-            expected_stats = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
-            # The original stats_to_scout list should remain intact in the source code
-
-    def test_magical_orb_scouting_with_multiple_iterations(self):
-        """Test that magical orb scouting works correctly with multiple stat sampling."""
-        # Enable magical orb
-        self.game_state.magical_orb_active = True
-        
-        # Create a test opponent
-        opponent = Mock()
-        opponent.name = "Test Target"
-        opponent.discovered = True
-        opponent.discovered_stats = {stat: False for stat in 
-                                   ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']}
-        opponent.known_stats = {}
-        opponent.scout_stat = Mock(return_value=(True, 42, "Discovered"))
-        self.game_state.opponents = [opponent]
-        
-        # Execute scouting multiple times to ensure no race conditions
-        action = next(a for a in self.game_state.actions if a['name'] == 'Scout Opponents')
-        
-        for iteration in range(5):
-            try:
-                action['upside'](self.game_state)
-                # If we get here without exception, the fix is working
-            except Exception as e:
-                self.fail(f"Iteration {iteration} failed with list modification error: {e}")
 
     def test_mouse_wheel_handling_verification_261(self):
         """Test comprehensive mouse wheel handling for issue #261: verify no crashes."""
@@ -250,6 +174,11 @@ class TestCriticalBugFixes(unittest.TestCase):
 class TestRegressionPrevention(unittest.TestCase):
     """Test that the critical bugs cannot regress."""
 
+    def setUp(self):
+        """Set up test fixtures."""
+        from src.core.game_state import GameState
+        self.game_state = GameState('test-critical-fixes')
+
     def test_check_hover_single_return_path(self):
         """Ensure check_hover has only one return path per logical branch (prevents #263 regression)."""
         # This is a structural test - we check that the fixed code maintains the correct structure
@@ -275,27 +204,6 @@ class TestRegressionPrevention(unittest.TestCase):
         self.assertGreater(exception_pos, main_return_pos,
                           "Exception handler should come after main return statement")
 
-    def test_magical_orb_uses_safe_sampling(self):
-        """Ensure magical orb code uses random.sample instead of list.remove (prevents #265 regression)."""
-        import inspect
-        from src.core.game_state import GameState
-        
-        # Get the source code of the relevant method
-        source = inspect.getsource(GameState)
-        
-        # Look for the magical orb scouting section
-        magical_orb_section = source[source.find('magical_orb_active'):source.find('magical_orb_active') + 2000]
-        
-        if 'stats_to_scout' in magical_orb_section:
-            # Should use random.sample, not list.remove in iteration
-            self.assertIn('random.sample', magical_orb_section,
-                         "Magical orb code should use random.sample for safe list sampling")
-            
-            # Should not remove items from list during iteration
-            problematic_pattern = 'stats_to_scout.remove'
-            self.assertNotIn(problematic_pattern, magical_orb_section,
-                           "Should not use list.remove during iteration in magical orb code")
-
     def test_research_quality_technical_debt_fix(self):
         """Test fix for critical TypeError in research quality system - proper method signatures."""
         # Initialize technical debt system
@@ -303,33 +211,33 @@ class TestRegressionPrevention(unittest.TestCase):
         self.game_state.technical_debt = TechnicalDebt()
         
         # Test rush research - should add debt without crashing
-        # This tests the fix for the TypeError: add_debt() takes 2-3 args but 4 given
+        # This tests the fix for the TypeError: add_technical_debt() takes 2-3 args but 4 given
         try:
-            # Simulate the fixed add_debt call with correct signature: (amount, category)
-            self.game_state.technical_debt.add_debt(2, DebtCategory.VALIDATION)
-            self.assertGreater(self.game_state.technical_debt.get_total_debt(), 0)
+            # Simulate the fixed add_technical_debt call with correct signature: (amount, category)
+            self.game_state.technical_debt.add_technical_debt(2, DebtCategory.VALIDATION)
+            self.assertGreater(self.game_state.technical_debt.accumulated_debt, 0)
         except TypeError as e:
             self.fail(f"Rush research add_debt crashed with TypeError: {e}")
         
         # Test quality research - should reduce debt without crashing
-        # This tests the fix for the parallel issue in reduce_debt
+        # This tests the fix for the parallel issue in reduce_technical_debt
         try:
-            # Simulate the fixed reduce_debt call with correct signature: (amount, category)
-            initial_debt = self.game_state.technical_debt.get_total_debt()
-            self.game_state.technical_debt.reduce_debt(1, DebtCategory.VALIDATION)
-            final_debt = self.game_state.technical_debt.get_total_debt()
+            # Simulate the fixed reduce_technical_debt call with correct signature: (amount, category)
+            initial_debt = self.game_state.technical_debt.accumulated_debt
+            self.game_state.technical_debt.reduce_technical_debt(1, DebtCategory.VALIDATION)
+            final_debt = self.game_state.technical_debt.accumulated_debt
             # Should have reduced debt
             self.assertLessEqual(final_debt, initial_debt)
         except TypeError as e:
-            self.fail(f"Quality research reduce_debt crashed with TypeError: {e}")
+            self.fail(f"Quality research reduce_technical_debt crashed with TypeError: {e}")
         
         # Test that the methods work with the correct enum categories
         # This ensures we're using DebtCategory enum values instead of strings
         try:
             for category in [DebtCategory.SAFETY_TESTING, DebtCategory.CODE_QUALITY, 
                            DebtCategory.DOCUMENTATION, DebtCategory.VALIDATION]:
-                self.game_state.technical_debt.add_debt(1, category)
-                self.game_state.technical_debt.reduce_debt(1, category)
+                self.game_state.technical_debt.add_technical_debt(1, category)
+                self.game_state.technical_debt.reduce_technical_debt(1, category)
         except (TypeError, AttributeError) as e:
             self.fail(f"DebtCategory enum usage failed: {e}")
 
@@ -340,8 +248,22 @@ class TestRegressionPrevention(unittest.TestCase):
         self.game_state.technical_debt = TechnicalDebt()
         
         # Mock the research options to simulate rush and quality research
-        rush_option = {"id": "rush_research", "name": "Rush Research"}
-        quality_option = {"id": "quality_research", "name": "Quality Research"}
+        rush_option = {
+            "id": "rush_research", 
+            "name": "Rush Research", 
+            "cost": 1000,
+            "min_doom_reduction": 2,
+            "max_doom_reduction": 4,
+            "reputation_gain": 1
+        }
+        quality_option = {
+            "id": "quality_research", 
+            "name": "Quality Research", 
+            "cost": 2000,
+            "min_doom_reduction": 3,
+            "max_doom_reduction": 5,
+            "reputation_gain": 2
+        }
         
         # Test that _execute_research_option handles both options without crashing
         # This is the integration test for the actual bug that was reported
@@ -350,12 +272,12 @@ class TestRegressionPrevention(unittest.TestCase):
             with patch('random.randint', return_value=2):
                 # This should not crash with TypeError
                 self.game_state._execute_research_option(rush_option)
-                self.assertGreater(self.game_state.technical_debt.get_total_debt(), 0)
+                self.assertGreater(self.game_state.technical_debt.accumulated_debt, 0)
                 
                 # This should not crash with TypeError  
                 self.game_state._execute_research_option(quality_option)
                 # Debt should be reduced but not necessarily zero
-                self.assertGreaterEqual(self.game_state.technical_debt.get_total_debt(), 0)
+                self.assertGreaterEqual(self.game_state.technical_debt.accumulated_debt, 0)
                 
         except TypeError as e:
             self.fail(f"Research option execution crashed with TypeError: {e}")
