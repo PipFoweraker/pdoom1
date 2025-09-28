@@ -4,6 +4,38 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.9.0] - 2025-09-28 - "Alpha Stability & Audio System"
+
+### 🎯 Major Achievements
+- **AUDIO SYSTEM BREAKTHROUGH**: Fixed longstanding audio system that had never worked since project inception
+- **MONOLITH BREAKDOWN**: Successfully extracted 558+ lines from game_state.py monolith into 6 focused modules
+- **CRITICAL STABILITY**: Fixed 5 major GitHub issues systematically (#315, #227, #226, #213, #211)
+- **DOCUMENTATION OVERHAUL**: Reorganized into 5 focused subdirectories with comprehensive alpha testing docs
+
+### Added
+- **🔊 Complete Audio System**: SoundManager with numpy-based sound generation, staff hiring sounds, milestone celebrations
+- **📱 Audio UI Components**: Modular sound settings interfaces extracted from ui.py monolith (344 lines)
+- **🎨 Enhanced Text Rendering**: New text_utils.py with adaptive sizing and intelligent truncation 
+- **🔧 Dev Mode Features**: F10 toggle, Ctrl+D diagnostics, screenshot system with `[` key capture
+- **🏗️ Modular Architecture**: 6 new focused modules (UtilityFunctions, DialogSystems, EmployeeBlob, VerboseLogging, etc.)
+- **🧪 Test Suite Expansion**: Re-enabled 9 sound tests + 8 new action text display tests
+
+### Fixed  
+- **#211 CRITICAL**: UnboundLocalError crash in keybinding system (main.py global declarations)
+- **#226 CRITICAL**: Audio system completely broken since inception - now fully functional
+- **#315**: Action list text display overflow and truncation issues
+- **#227**: Action points validation (already resolved, confirmed working)
+- **#213**: Sound system tests (re-enabled after audio fixes)
+- **Turn Progression**: Critical turn progression bugs after surgical cleanup
+- **Input Handling**: Spacebar input and upgrade click handling after IndexError
+- **UI Layout**: Button displacement issue - all 20 actions now clickable
+
+### Changed
+- **Architecture**: Extracted 558+ lines from game_state.py monolith (11.6% reduction)
+- **Documentation**: Reorganized into docs/architecture/, docs/development-sessions/, docs/process/, docs/technical/, docs/game-design/
+- **README**: Modernized with alpha testing features and screenshots
+- **Dependencies**: numpy>=2.3.3 now required for audio functionality
+
 ## [Unreleased] - "Input System Architecture Overhaul"
 
 ### Added - Phase 2 Architecture 
