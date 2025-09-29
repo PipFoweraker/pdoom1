@@ -1598,14 +1598,13 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     if hasattr(game_state, '_get_activity_log_current_position'):
         log_x, log_y = game_state._get_activity_log_current_position(w, h)
     else:
-        # Demo hotfix: Position activity log below action buttons to reduce dead space
-        # Calculate where action buttons end (observed ~11 actions due to submenu consolidation)
-        estimated_actions = 11  # Realistic count based on current UI with submenus
-        action_base_y = int(h * 0.22)
-        action_height = int(h * 0.033)
-        action_gap = int(h * 0.004)
-        action_buttons_end = action_base_y + estimated_actions * (action_height + action_gap)
-        log_x, log_y = int(w*0.04), min(int(h*0.74), action_buttons_end + int(h*0.02))  # 2% margin below buttons
+        # Use modular positioning utility for elegant dynamic layout
+        try:
+            from src.ui.positioning_utils import calculate_activity_log_position
+            log_x, log_y = calculate_activity_log_position(game_state, w, h)
+        except ImportError:
+            # Fallback to original positioning if module not available
+            log_x, log_y = int(w*0.04), int(h*0.74)
 
 
     
@@ -1642,9 +1641,9 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         screen.blit(plus_text, plus_rect)
         
     elif game_state.scrollable_event_log_enabled:
-        # Enhanced scrollable event log with border and visual indicators (Demo hotfix: extended width)
+        # Enhanced scrollable event log with border and visual indicators (Demo hotfix: extended width & height)
         log_width = int(w * 0.32)  # Extended from 0.22 to 0.32 to touch END TURN button (at 0.39)
-        log_height = int(h * 0.14)  # Reduced to account for context window at bottom
+        log_height = int(h * 0.22)  # Increased from 0.14 to 0.22 to make it more prominent
         
         # Draw border around the event log area
         border_rect = pygame.Rect(log_x - 5, log_y - 5, log_width + 10, log_height + 10)
@@ -1708,12 +1707,12 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
                 msg = all_messages[msg_index]
                 y_pos = content_y + i * line_height
                 
-                # Different colors for turn headers vs regular messages
+                # Different colors for turn headers vs regular messages (Demo hotfix: brighter text)
                 if msg.startswith("=== Turn"):
-                    color = (255, 220, 120)  # Yellow for turn headers
+                    color = (255, 240, 140)  # Brighter yellow for turn headers
                     font_to_use = font
                 else:
-                    color = (255, 255, 210)  # White for regular messages
+                    color = (255, 255, 255)  # Pure white for regular messages (better visibility)
                     font_to_use = small_font
                 
                 # Use word wrapping instead of truncation
