@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-29T13:24:02.153149",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-29T13:24:02.151007",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.002525,
+      "entry_uuid": "139c71e1-5f50-44f7-8dd3-d6ac5e0a266e"
+    }
+  ]
+}

@@ -379,19 +379,20 @@ ACTIONS = [
         "downside": lambda gs: None,  # No downside for opening menu
         "rules": None  # Always available - balance through other mechanics
     },
-    {
-        "name": "Buy Compute",
-        "desc": "Purchase compute resources. Cost decreases over time (Moore's Law).",
-        "cost": lambda gs: gs.economic_config.get_compute_cost(10),
-        "ap_cost": 1,  # Action Points cost
-        "delegatable": True,  # Phase 3: Can be delegated (operational task)
-        "delegate_staff_req": 1,  # Requires 1 operations staff to delegate
-        "delegate_ap_cost": 0,  # Lower AP cost when delegated (routine task)
-        "delegate_effectiveness": 1.0,  # Full effectiveness when delegated (routine task)
-        "upside": lambda gs: gs._add('compute', 10),
-        "downside": lambda gs: None,
-        "rules": None
-    },
+    # DEMO HOTFIX: "Buy Compute" moved to Infrastructure dialog - commented out standalone action
+    # {
+    #     "name": "Buy Compute",
+    #     "desc": "Purchase compute resources. Cost decreases over time (Moore's Law).",
+    #     "cost": lambda gs: gs.economic_config.get_compute_cost(10),
+    #     "ap_cost": 1,  # Action Points cost
+    #     "delegatable": True,  # Phase 3: Can be delegated (operational task)
+    #     "delegate_staff_req": 1,  # Requires 1 operations staff to delegate
+    #     "delegate_ap_cost": 0,  # Lower AP cost when delegated (routine task)
+    #     "delegate_effectiveness": 1.0,  # Full effectiveness when delegated (routine task)
+    #     "upside": lambda gs: gs._add('compute', 10),
+    #     "downside": lambda gs: None,
+    #     "rules": None
+    # },
     {
         "name": "Hire Staff",
         "desc": "Open hiring dialog to select from available employee types.",
@@ -484,16 +485,16 @@ ACTIONS = [
         "downside": lambda gs: None,
         "rules": search_unlock_rule  # Requires board members (refactored rule)
     },
-    {
-
-        "name": "Refresh Researchers",
-        "desc": "Get new specialist researcher applications for hiring.",
-        "cost": 10,
-        "ap_cost": 1,
-        "upside": lambda gs: gs.refresh_researcher_hiring_pool(),
-        "downside": lambda gs: None,
-        "rules": lambda gs: hasattr(gs, 'researchers')  # Only available if researcher system is enabled
-    },
+    # DEMO HOTFIX: "Refresh Researchers" moved to Hire Staff dialog - commented out standalone action
+    # {
+    #     "name": "Refresh Researchers",
+    #     "desc": "Get new specialist researcher applications for hiring.",
+    #     "cost": 10,
+    #     "ap_cost": 1,
+    #     "upside": lambda gs: gs.refresh_researcher_hiring_pool(),
+    #     "downside": lambda gs: None,
+    #     "rules": lambda gs: hasattr(gs, 'researchers')  # Only available if researcher system is enabled
+    # },
     {
         "name": "Team Building",
         "desc": "Reduce researcher burnout and improve team cohesion ($50).",

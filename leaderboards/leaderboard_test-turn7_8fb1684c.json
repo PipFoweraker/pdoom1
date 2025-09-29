@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-29T13:24:39.897510",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 8,
+      "player_name": "Quantum Leap",
+      "date": "2025-09-29T13:24:39.895758",
+      "level_reached": 8,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.015845,
+      "entry_uuid": "fe52fa04-5222-4850-8fa2-9e182e1a7f56"
+    }
+  ]
+}

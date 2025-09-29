@@ -1180,9 +1180,23 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     screen.blit(doom_text, (current_x + text_offset_x, y_pos))
     current_x += text_offset_x + doom_text.get_width() + int(w*0.03)  # Add spacing
     
-    # Opponent progress (smaller font, positioned at the end)
-    if current_x + 200 < w:  # Only show if there's enough space
-        screen.blit(font.render(f"Opponent progress: {game_state.known_opp_progress if game_state.known_opp_progress is not None else '???'}/100", True, (240, 200, 160)), (current_x, y_pos + 5))
+    # Opponent progress - show individual scouted opponents (Demo hotfix)
+    if hasattr(game_state, 'opponents') and current_x + 200 < w:  # Only show if there's enough space
+        discovered_opponents = [opp for opp in game_state.opponents if opp.discovered]
+        if discovered_opponents:
+            opp_text_parts = []
+            for opp in discovered_opponents[:3]:  # Limit to first 3 to avoid overflow
+                if opp.discovered_stats.get('progress', False):
+                    progress = opp.known_stats.get('progress', '??')
+                    opp_text_parts.append(f"{opp.name}: {progress}")
+                else:
+                    opp_text_parts.append(f"{opp.name}: ??")
+            
+            if opp_text_parts:
+                opponent_text = " | ".join(opp_text_parts)
+                screen.blit(font.render(f"Opponents: {opponent_text}", True, (240, 200, 160)), (current_x, y_pos + 5))
+        else:
+            screen.blit(font.render("Opponents: Scout to discover", True, (200, 180, 140)), (current_x, y_pos + 5))
     
     # Second line of resources with improved spacing and icons
     current_x = int(w*0.04)  # Reset to starting position
@@ -1584,8 +1598,14 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
     if hasattr(game_state, '_get_activity_log_current_position'):
         log_x, log_y = game_state._get_activity_log_current_position(w, h)
     else:
-        # Improved fallback positioning with better alignment
-        log_x, log_y = int(w*0.04), int(h*0.74)  # Keep existing position for compatibility
+        # Demo hotfix: Position activity log below action buttons to reduce dead space
+        # Calculate where action buttons end (observed ~11 actions due to submenu consolidation)
+        estimated_actions = 11  # Realistic count based on current UI with submenus
+        action_base_y = int(h * 0.22)
+        action_height = int(h * 0.033)
+        action_gap = int(h * 0.004)
+        action_buttons_end = action_base_y + estimated_actions * (action_height + action_gap)
+        log_x, log_y = int(w*0.04), min(int(h*0.74), action_buttons_end + int(h*0.02))  # 2% margin below buttons
 
 
     
@@ -1622,8 +1642,8 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         screen.blit(plus_text, plus_rect)
         
     elif game_state.scrollable_event_log_enabled:
-        # Enhanced scrollable event log with border and visual indicators
-        log_width = int(w * 0.22)  # Reduced from 0.44 to 0.22 to avoid upgrade button overlap
+        # Enhanced scrollable event log with border and visual indicators (Demo hotfix: extended width)
+        log_width = int(w * 0.32)  # Extended from 0.22 to 0.32 to touch END TURN button (at 0.39)
         log_height = int(h * 0.14)  # Reduced to account for context window at bottom
         
         # Draw border around the event log area
@@ -2541,10 +2561,10 @@ def draw_opponents_panel(screen: pygame.Surface, game_state, w: int, h: int, fon
         font: font for opponent names
         small_font: font for opponent stats
     """
-    # Panel position and dimensions
-    panel_x = int(w * 0.04)
+    # Panel position and dimensions (Demo hotfix: moved right to avoid action button overlap)
+    panel_x = int(w * 0.30)  # Moved right from 0.04 to 0.30 to clear action buttons
     panel_y = int(h * 0.19)  # Below resources, above actions
-    panel_width = int(w * 0.92)
+    panel_width = int(w * 0.66)  # Reduced from 0.92 to 0.66 to account for new x position
     panel_height = int(h * 0.08)
     
     # Draw panel background with improved contrast

@@ -2940,6 +2940,18 @@ class GameState:
         current_incident_level = getattr(self.technical_failures, 'incident_response_level', 0) if has_tech_failures else 0
         incident_cost = (current_incident_level + 1) * 30 if has_tech_failures else 30
         
+        # Demo hotfix: Add Buy Compute to Infrastructure menu
+        compute_cost = self.economic_config.get_compute_cost(10) if hasattr(self, 'economic_config') else 50
+        infrastructure_options.append({
+            "id": "buy_compute",
+            "name": "Buy Compute",
+            "description": "Purchase compute resources. Cost decreases over time (Moore's Law).",
+            "cost": compute_cost,
+            "ap_cost": 1,
+            "available": True,
+            "details": f"Adds 10 compute units. Current: {self.compute}"
+        })
+        
         infrastructure_options.append({
             "id": "incident_response_training",
             "name": "Incident Response Training",
@@ -3017,7 +3029,15 @@ class GameState:
         )
         
         # Execute the selected infrastructure option
-        if option_id == "incident_response_training":
+        if option_id == "buy_compute":
+            # Demo hotfix: Handle buy compute in infrastructure dialog
+            self.money -= selected_option["cost"]
+            self.action_points -= selected_option["ap_cost"]
+            self._add('compute', 10)
+            self.pending_infrastructure_dialog = None
+            return True, f"Purchased 10 compute units for ${selected_option['cost']}."
+            
+        elif option_id == "incident_response_training":
             # Deduct costs
             self.money -= selected_option["cost"]
             self.action_points -= selected_option["ap_cost"]
