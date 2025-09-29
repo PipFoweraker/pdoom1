@@ -116,7 +116,7 @@ class InputManager:
                         gs.upgrade_effects.add(upg["effect_key"])
                         
                         # Trigger first-time help for upgrade purchase
-                        if gs.onboarding.should_show_mechanic_help('first_upgrade_purchase'):
+                        if hasattr(gs, 'onboarding') and gs.onboarding and gs.onboarding.should_show_mechanic_help('first_upgrade_purchase'):
                             gs.onboarding.mark_mechanic_seen('first_upgrade_purchase')
                         
                         # Special handling for custom effects
@@ -256,7 +256,7 @@ class InputManager:
                         gs.upgrade_effects.add(upg["effect_key"])
                         
                         # Trigger first-time help for upgrade purchase
-                        if gs.onboarding.should_show_mechanic_help('first_upgrade_purchase'):
+                        if hasattr(gs, 'onboarding') and gs.onboarding and gs.onboarding.should_show_mechanic_help('first_upgrade_purchase'):
                             gs.onboarding.mark_mechanic_seen('first_upgrade_purchase')
                         
                         # Special handling for custom effects
