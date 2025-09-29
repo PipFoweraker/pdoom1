@@ -56,6 +56,11 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
         ("Blob Sound", "Notification and feedback sounds"),
         ("Error Beep", "Warning and error sounds"),
         ("Popup Sounds", "Menu open/close sounds"),
+        ("Milestone Sound", "Achievement and milestone completions"),
+        ("Warning Sound", "High doom and caution alerts"),
+        ("Danger Sound", "Critical doom and emergency alerts"),
+        ("Success Sound", "Action completions and positive events"),
+        ("Research Complete", "Major research milestone completions"),
         ("Back", "Return to main menu")
     ]
     
@@ -78,6 +83,16 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
                 enabled = sound_manager.sound_toggles.get('error_beep', True)
             elif i == 5:  # Popup Sounds
                 enabled = sound_manager.sound_toggles.get('popup_open', True)
+            elif i == 6:  # Milestone Sound
+                enabled = sound_manager.sound_toggles.get('milestone', True)
+            elif i == 7:  # Warning Sound
+                enabled = sound_manager.sound_toggles.get('warning', True)
+            elif i == 8:  # Danger Sound
+                enabled = sound_manager.sound_toggles.get('danger', True)
+            elif i == 9:  # Success Sound
+                enabled = sound_manager.sound_toggles.get('success', True)
+            elif i == 10:  # Research Complete
+                enabled = sound_manager.sound_toggles.get('research_complete', True)
         
         # Color based on selection and enabled state
         if i == selected_item:
@@ -292,19 +307,25 @@ def handle_sounds_menu_input(selected_item: int, game_state: Optional[Any] = Non
         
     Returns:
         Action string: "toggle_master", "toggle_money", "toggle_ap", "toggle_blob", 
-                      "toggle_error", "toggle_popup", "back", or "none"
+                      "toggle_error", "toggle_popup", "toggle_milestone", "toggle_warning",
+                      "toggle_danger", "toggle_success", "toggle_research_complete", "back", or "none"
     """
     if not game_state or not hasattr(game_state, 'sound_manager'):
-        return "back" if selected_item == 6 else "none"
+        return "back" if selected_item == 11 else "none"  # Updated back button index
         
     actions = [
-        "toggle_master",    # Master Audio
-        "toggle_money",     # Money Spend Sound  
-        "toggle_ap",        # Action Point Sound
-        "toggle_blob",      # Blob Sound
-        "toggle_error",     # Error Beep
-        "toggle_popup",     # Popup Sounds
-        "back"              # Back
+        "toggle_master",            # Master Audio
+        "toggle_money",             # Money Spend Sound  
+        "toggle_ap",                # Action Point Sound
+        "toggle_blob",              # Blob Sound
+        "toggle_error",             # Error Beep
+        "toggle_popup",             # Popup Sounds
+        "toggle_milestone",         # Milestone Sound
+        "toggle_warning",           # Warning Sound
+        "toggle_danger",            # Danger Sound
+        "toggle_success",           # Success Sound
+        "toggle_research_complete", # Research Complete
+        "back"                      # Back
     ]
     
     return actions[selected_item] if selected_item < len(actions) else "none"
@@ -342,3 +363,18 @@ def apply_sound_toggle(action: str, game_state: Any) -> None:
         sound_manager.sound_toggles['popup_open'] = not current
         sound_manager.sound_toggles['popup_close'] = not current
         sound_manager.sound_toggles['popup_accept'] = not current
+    elif action == "toggle_milestone":
+        current = sound_manager.sound_toggles.get('milestone', True)
+        sound_manager.sound_toggles['milestone'] = not current
+    elif action == "toggle_warning":
+        current = sound_manager.sound_toggles.get('warning', True)
+        sound_manager.sound_toggles['warning'] = not current
+    elif action == "toggle_danger":
+        current = sound_manager.sound_toggles.get('danger', True)
+        sound_manager.sound_toggles['danger'] = not current
+    elif action == "toggle_success":
+        current = sound_manager.sound_toggles.get('success', True)
+        sound_manager.sound_toggles['success'] = not current
+    elif action == "toggle_research_complete":
+        current = sound_manager.sound_toggles.get('research_complete', True)
+        sound_manager.sound_toggles['research_complete'] = not current

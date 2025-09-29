@@ -125,6 +125,15 @@ class GameState:
             if old_doom < HIGH_DOOM_WARNING_THRESHOLD and self.doom >= HIGH_DOOM_WARNING_THRESHOLD and onboarding.should_show_mechanic_help('high_doom_warning'):
                 onboarding.mark_mechanic_seen('high_doom_warning')
                 
+                # Play warning sound for high doom
+                if hasattr(self, 'sound_manager'):
+                    self.sound_manager.play_warning_sound()
+                    
+            # Trigger danger sound for very high doom (80%+)
+            elif self.doom >= self.max_doom * 0.8:  # 80% doom or higher
+                if hasattr(self, 'sound_manager') and val > 0:  # Only on doom increases
+                    self.sound_manager.play_danger_sound()
+                
         elif attr == 'reputation':
             self.reputation = max(self.reputation + val, 0)
             
@@ -1070,6 +1079,10 @@ class GameState:
             self.manager_milestone_triggered = True
             self.messages.append("MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.")
             
+            # Play milestone sound for this achievement
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_milestone_sound()
+            
             # Show tutorial for manager system
             self.show_tutorial_message(
                 "manager_system",
@@ -1098,6 +1111,10 @@ class GameState:
             self.messages.append("MILESTONE: Excessive spending without accounting oversight!")
             self.messages.append("Board has installed 2 Board Members for compliance monitoring.")
             self.messages.append("Search action unlocked. Audit risk penalties now active until compliant.")
+            
+            # Play milestone sound for this achievement
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_milestone_sound()
             
             # Show tutorial for board member system
             self.show_tutorial_message(
@@ -1388,6 +1405,10 @@ class GameState:
         if len(self.managers) == 1 and not self.manager_milestone_triggered:
             self.manager_milestone_triggered = True
             self.messages.append("MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.")
+            
+            # Play milestone sound for this achievement
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_milestone_sound()
             
             # Show tutorial for manager system
             self.show_tutorial_message(
@@ -1766,6 +1787,10 @@ class GameState:
             self.messages.append(f"Research paper{'s' if papers_to_publish > 1 else ''} published! (+{papers_to_publish}, total: {self.papers_published})")
             # Play Zabinga sound for paper completion
             self.sound_manager.play_zabinga_sound()
+            
+            # Also play research complete sound for multiple papers
+            if papers_to_publish > 1 and hasattr(self, 'sound_manager'):
+                self.sound_manager.play_research_complete_sound()
 
         # Doom rises over time, faster with more staff
         doom_rise = 2 + self.staff // 5 + (1 if self.doom > 60 else 0)

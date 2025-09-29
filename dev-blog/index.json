@@ -1,6 +1,27 @@
 {
   "entries": [
     {
+      "filename": "2025-09-28-input-system-architectural-overhaul.md",
+      "slug": "2025-09-28-input-system-architectural-overhaul",
+      "path": "entries/2025-09-28-input-system-architectural-overhaul.md",
+      "frontmatter": {
+        "title": "Input System Architectural Overhaul - Phase 2",
+        "date": "2025-09-28",
+        "tags": [
+          "architecture",
+          "refactoring",
+          "input-system",
+          "managers",
+          "phase-2"
+        ],
+        "summary": "Extracted 500+ lines of keyboard handling from main.py into clean, testable managers with 48 new tests and zero regressions",
+        "commit": "TBD"
+      },
+      "word_count": 657,
+      "file_size": 5557,
+      "modified_at": "2025-09-28T09:02:46.972245"
+    },
+    {
       "filename": "2025-09-27-20-percent-modular-milestone.md",
       "slug": "2025-09-27-20-percent-modular-milestone",
       "path": "entries/2025-09-27-20-percent-modular-milestone.md",
@@ -18,7 +39,7 @@
       },
       "word_count": 597,
       "file_size": 5317,
-      "modified_at": "2025-09-27T10:00:16.086652"
+      "modified_at": "2025-09-27T11:39:04.971869"
     },
     {
       "filename": "2025-09-25-intelligence-system-extraction.md",
@@ -38,7 +59,7 @@
       },
       "word_count": 493,
       "file_size": 4369,
-      "modified_at": "2025-09-25T16:22:21.018651"
+      "modified_at": "2025-09-27T11:37:42.245176"
     },
     {
       "filename": "2025-09-24-research-system-extraction.md",
@@ -58,7 +79,7 @@
       },
       "word_count": 254,
       "file_size": 2287,
-      "modified_at": "2025-09-24T17:48:36.317405"
+      "modified_at": "2025-09-27T11:37:42.244177"
     },
     {
       "filename": "2025-09-19-action-points-bug-hunt.md",
@@ -711,15 +732,18 @@
     "2025-09-17-rng-deterministic-migration.md: Title exceeds 60 character limit",
     "2025-09-17-strategic-analysis-sept-17.md: Title exceeds 60 character limit",
     "2025-09-21-employee-blob-manager-extraction.md: Title exceeds 60 character limit",
-    "2025-09-21-input-manager-extraction.md: Content contains non-ASCII characters",
     "2025-09-21-input-manager-extraction.md: Title exceeds 60 character limit",
     "2025-09-24-deterministic-event-manager-extraction.md: Title exceeds 60 character limit",
-    "2025-09-24-ui-transition-manager-extraction.md: Title exceeds 60 character limit"
+    "2025-09-24-ui-transition-manager-extraction.md: Title exceeds 60 character limit",
+    "2025-09-27-holistic-analysis-post-20-percent-milestone.md: Title exceeds 60 character limit",
+    "2025-09-28-turn-6-spacebar-comprehensive-investigation.md: Title exceeds 60 character limit",
+    "type-annotation-phase-2-completion-2025-09-29.md: Filename must follow YYYY-MM-DD-title.md format",
+    "type-annotation-phase-2-completion-2025-09-29.md: Title exceeds 60 character limit"
   ],
   "stats": {
-    "total_entries": 32,
-    "total_errors": 9,
-    "latest_entry": "2025-09-27"
+    "total_entries": 33,
+    "total_errors": 12,
+    "latest_entry": "2025-09-28"
   },
-  "generated_at": "2025-09-27T11:30:38.117717"
+  "generated_at": "2025-09-29T20:36:49.885755"
 }

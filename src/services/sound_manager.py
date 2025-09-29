@@ -25,13 +25,24 @@ class SoundManager:
             'error_beep': True,
             'popup_open': True,
             'popup_close': True,
-            'popup_accept': True
+            'popup_accept': True,
+            'milestone': True,
+            'warning': True,
+            'danger': True,
+            'success': True,
+            'research_complete': True
         }
         if PYGAME_AVAILABLE:
             self._initialize_pygame_mixer()
             self._create_blob_sound()
             # Always try to create popup sounds, even if blob sound creation failed
             self._create_popup_sounds()
+            # Create new sound effects
+            self._create_milestone_sound()
+            self._create_warning_sound()
+            self._create_danger_sound()
+            self._create_success_sound()
+            self._create_research_complete_sound()
             # Load custom sound overrides from sounds/ folder
             self._load_sounds_from_folder(Path("sounds"))
     
@@ -367,6 +378,237 @@ class SoundManager:
             # If sound loading fails, continue without this file
             pass
     
+    def _create_milestone_sound(self):
+        """Create a triumphant milestone achievement sound"""
+        if not self.audio_available:
+            return
+            
+        try:
+            import pygame.sndarray
+            import numpy as np
+            
+            sample_rate = 22050
+            duration = 0.8  # 800ms for a substantial milestone sound
+            samples = int(sample_rate * duration)
+            
+            # Create sound wave array as 2D numpy array for stereo
+            wave_array = np.zeros((samples, 2), dtype=np.int16)
+            
+            # Create a triumphant ascending chord progression
+            frequencies = [261.63, 329.63, 392.00, 523.25]  # C-E-G-C major chord
+            for i, freq in enumerate(frequencies):
+                start_time = i * 0.15  # Stagger notes
+                end_time = min(duration, start_time + 0.4)
+                start_sample = int(start_time * sample_rate)
+                end_sample = int(end_time * sample_rate)
+                
+                for j in range(start_sample, min(end_sample, samples)):
+                    t = j / sample_rate
+                    # Fade in/out envelope
+                    envelope = min(1.0, (t - start_time) / 0.05, (end_time - t) / 0.1)
+                    amplitude = int(10000 * envelope)
+                    sample = int(amplitude * math.sin(2 * math.pi * freq * t))
+                    
+                    # Set both stereo channels
+                    wave_array[j][0] = max(-32767, min(32767, wave_array[j][0] + sample))
+                    wave_array[j][1] = max(-32767, min(32767, wave_array[j][1] + sample))
+            
+            self.sounds['milestone'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, ImportError, Exception):
+            # If sound creation fails, continue without this sound
+            pass
+    
+    def _create_warning_sound(self):
+        """Create a cautionary warning sound"""
+        if not self.audio_available:
+            return
+            
+        try:
+            import pygame.sndarray
+            import numpy as np
+            
+            sample_rate = 22050
+            duration = 0.5  # 500ms
+            samples = int(sample_rate * duration)
+            
+            # Create sound wave array as 2D numpy array for stereo
+            wave_array = np.zeros((samples, 2), dtype=np.int16)
+            
+            # Create a two-tone warning sound (like a gentle alarm)
+            frequencies = [440.0, 554.37]  # A to C# (tritone - naturally tense interval)
+            
+            for i in range(samples):
+                t = i / sample_rate
+                # Alternate between the two frequencies every 0.1 seconds
+                freq_index = int(t / 0.1) % 2
+                frequency = frequencies[freq_index]
+                
+                # Create envelope for smooth transitions
+                cycle_pos = (t % 0.1) / 0.1
+                envelope = 0.3 * (1.0 - abs(cycle_pos - 0.5) * 2)  # Triangle wave envelope
+                
+                amplitude = int(8000 * envelope)
+                sample = int(amplitude * math.sin(2 * math.pi * frequency * t))
+                
+                # Set both stereo channels
+                wave_array[i][0] = sample
+                wave_array[i][1] = sample
+            
+            self.sounds['warning'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, ImportError, Exception):
+            pass
+    
+    def _create_danger_sound(self):
+        """Create an urgent danger sound for high doom situations"""
+        if not self.audio_available:
+            return
+            
+        try:
+            import pygame.sndarray
+            import numpy as np
+            
+            sample_rate = 22050
+            duration = 0.6  # 600ms
+            samples = int(sample_rate * duration)
+            
+            # Create sound wave array as 2D numpy array for stereo
+            wave_array = np.zeros((samples, 2), dtype=np.int16)
+            
+            # Create a harsh, discordant sound with rapid frequency changes
+            base_freq = 220.0  # Low A
+            
+            for i in range(samples):
+                t = i / sample_rate
+                
+                # Rapid oscillation between frequencies for urgency
+                freq_modulation = 1.0 + 0.5 * math.sin(2 * math.pi * 8 * t)  # 8Hz modulation
+                frequency = base_freq * freq_modulation
+                
+                # Add some harsh harmonics
+                harmonic1 = frequency * 2.1  # Slightly detuned octave
+                harmonic2 = frequency * 3.3  # Detuned fifth
+                
+                # Aggressive envelope
+                envelope = 0.4 * (1.0 - t / duration)  # Quick decay
+                
+                amplitude = int(12000 * envelope)
+                sample = int(amplitude * (
+                    0.6 * math.sin(2 * math.pi * frequency * t) +
+                    0.3 * math.sin(2 * math.pi * harmonic1 * t) +
+                    0.1 * math.sin(2 * math.pi * harmonic2 * t)
+                ))
+                
+                # Set both stereo channels
+                wave_array[i][0] = max(-32767, min(32767, sample))
+                wave_array[i][1] = max(-32767, min(32767, sample))
+            
+            self.sounds['danger'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, ImportError, Exception):
+            pass
+    
+    def _create_success_sound(self):
+        """Create a pleasant success sound for completed actions"""
+        if not self.audio_available:
+            return
+            
+        try:
+            import pygame.sndarray
+            import numpy as np
+            
+            sample_rate = 22050
+            duration = 0.4  # 400ms
+            samples = int(sample_rate * duration)
+            
+            # Create sound wave array as 2D numpy array for stereo
+            wave_array = np.zeros((samples, 2), dtype=np.int16)
+            
+            # Create a pleasant ascending arpeggio
+            frequencies = [523.25, 659.25, 783.99]  # C-E-G major triad, one octave up
+            
+            for i, freq in enumerate(frequencies):
+                start_time = i * 0.1
+                end_time = min(duration, start_time + 0.2)
+                start_sample = int(start_time * sample_rate)
+                end_sample = int(end_time * sample_rate)
+                
+                for j in range(start_sample, min(end_sample, samples)):
+                    t = j / sample_rate
+                    # Gentle envelope
+                    note_time = t - start_time
+                    envelope = 0.3 * math.exp(-note_time * 4)  # Exponential decay
+                    
+                    amplitude = int(8000 * envelope)
+                    sample = int(amplitude * math.sin(2 * math.pi * freq * t))
+                    
+                    # Set both stereo channels
+                    wave_array[j][0] = max(-32767, min(32767, wave_array[j][0] + sample))
+                    wave_array[j][1] = max(-32767, min(32767, wave_array[j][1] + sample))
+            
+            self.sounds['success'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, ImportError, Exception):
+            pass
+    
+    def _create_research_complete_sound(self):
+        """Create a special sound for research completion"""
+        if not self.audio_available:
+            return
+            
+        try:
+            import pygame.sndarray
+            import numpy as np
+            
+            sample_rate = 22050
+            duration = 1.0  # 1 second for important research milestones
+            samples = int(sample_rate * duration)
+            
+            # Create sound wave array as 2D numpy array for stereo
+            wave_array = np.zeros((samples, 2), dtype=np.int16)
+            
+            # Create a sophisticated research completion sound
+            # Start with zabinga-like elements but extend into triumph
+            
+            # Phase 1: Quick "eureka" burst (0-0.3s)
+            phase1_samples = int(0.3 * sample_rate)
+            for i in range(phase1_samples):
+                t = i / sample_rate
+                freq = 800 + 400 * t  # Rising sweep like zabinga
+                envelope = 0.4 * math.exp(-t * 8)
+                
+                amplitude = int(8000 * envelope)
+                sample = int(amplitude * math.sin(2 * math.pi * freq * t))
+                
+                # Set both stereo channels
+                wave_array[i][0] = sample
+                wave_array[i][1] = sample
+            
+            # Phase 2: Triumphant chord (0.3-1.0s)
+            chord_freqs = [261.63, 329.63, 392.00, 523.25]  # C major chord
+            start_sample = int(0.3 * sample_rate)
+            
+            for i in range(start_sample, samples):
+                t = i / sample_rate
+                chord_time = t - 0.3
+                
+                # Gentle fade-in for the chord
+                chord_envelope = min(0.2, chord_time / 0.2) * (1.0 - chord_time / 0.7)
+                
+                chord_sample = 0
+                for freq in chord_freqs:
+                    chord_sample += int(chord_envelope * 6000 * math.sin(2 * math.pi * freq * t))
+                
+                # Set both stereo channels
+                wave_array[i][0] = max(-32767, min(32767, wave_array[i][0] + chord_sample))
+                wave_array[i][1] = max(-32767, min(32767, wave_array[i][1] + chord_sample))
+            
+            self.sounds['research_complete'] = pygame.sndarray.make_sound(wave_array)
+            
+        except (pygame.error, AttributeError, ImportError, Exception):
+            pass
+
     def play_sound(self, sound_name):
         """Generic method to play any sound by name."""
         if (self.enabled and self.audio_available and 
@@ -422,6 +664,46 @@ class SoundManager:
 
             except pygame.error:
                 # Sound playback failed, but don't crash
+                pass
+    
+    def play_milestone_sound(self):
+        """Play the milestone achievement sound"""
+        if self.enabled and self.audio_available and self.sound_toggles.get('milestone', True) and 'milestone' in self.sounds:
+            try:
+                self.sounds['milestone'].play()
+            except pygame.error:
+                pass
+    
+    def play_warning_sound(self):
+        """Play the warning sound for cautionary situations"""
+        if self.enabled and self.audio_available and self.sound_toggles.get('warning', True) and 'warning' in self.sounds:
+            try:
+                self.sounds['warning'].play()
+            except pygame.error:
+                pass
+    
+    def play_danger_sound(self):
+        """Play the danger sound for high-risk situations"""
+        if self.enabled and self.audio_available and self.sound_toggles.get('danger', True) and 'danger' in self.sounds:
+            try:
+                self.sounds['danger'].play()
+            except pygame.error:
+                pass
+    
+    def play_success_sound(self):
+        """Play the success sound for completed actions"""
+        if self.enabled and self.audio_available and self.sound_toggles.get('success', True) and 'success' in self.sounds:
+            try:
+                self.sounds['success'].play()
+            except pygame.error:
+                pass
+    
+    def play_research_complete_sound(self):
+        """Play the research completion sound for major research milestones"""
+        if self.enabled and self.audio_available and self.sound_toggles.get('research_complete', True) and 'research_complete' in self.sounds:
+            try:
+                self.sounds['research_complete'].play()
+            except pygame.error:
                 pass
     
     def set_enabled(self, enabled):

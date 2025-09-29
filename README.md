@@ -110,7 +110,10 @@ python main.py
 - **Data Export**: JSON export for custom analysis tools (opt-in)
 
 ### TOOL **Technical Features**
-- **Professional Audio**: Sound effects enabled by default for demonstrations
+- **Enhanced Audio System**: 12 programmatically generated sound effects with granular controls
+  - Milestone celebrations, warning alerts, success feedback, research fanfares
+  - Individual toggle controls for each sound category in audio settings
+  - Numpy-based generation for consistent, professional audio experience
 - **Tutorial System**: Interactive guided walkthrough for new players
 - **Debug Tools**: Comprehensive development and troubleshooting utilities
 - **Cross-Platform**: Works on Windows, macOS, and Linux
