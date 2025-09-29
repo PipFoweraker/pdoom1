@@ -355,7 +355,7 @@ ACTIONS = [
         "name": "Fundraising Options",
         "desc": "Open fundraising menu with multiple strategic options",
         "cost": 0,
-        "ap_cost": 1,  # Action Points cost
+        "ap_cost": 0,  # No AP cost for opening menu
         "action_type": "submenu",  # Opens dialog menu
         "delegatable": True,  # Can be delegated to admin staff
         "delegate_staff_req": 1,  # Requires 1 admin staff to delegate  
