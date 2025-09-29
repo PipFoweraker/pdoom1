@@ -1326,18 +1326,14 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             for i in range(count)
         ]
     
-    # Store the action rects for click handling (with display indices)
-    game_state.filtered_action_rects = action_rects
+    # Apply elegant modular clipping to ensure click detection matches visual rendering
+    from src.ui.clipping_utils import apply_clipping_to_ui_elements
+    clipped_action_rects = apply_clipping_to_ui_elements(action_rects, game_state, h)
     
-    # Hard clamp: ensure buttons don't extend below context window top
-    try:
-        context_top = game_state._get_context_window_top(h)
-    except Exception:
-        context_top = int(h * 0.90) - 5
-
-    for display_idx, rect in enumerate(action_rects):
-        if display_idx >= len(available_actions):
-            break
+    # Draw action buttons using clipped rectangles
+    for display_idx, rect in enumerate(clipped_action_rects):
+        if display_idx >= len(available_actions) or rect is None:
+            continue  # Skip clipped-away buttons
             
         action = available_actions[display_idx]
         action_info = visible_action_infos[display_idx]  # Get availability info
@@ -1354,20 +1350,9 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             button_state = ButtonState.NORMAL
         
         if use_compact_ui:
-            # Clamp for compact mode where rect is a tuple
-            rx, ry, rw0, rh0 = rect
-            if ry + rh0 > context_top:
-                rh0 = max(0, context_top - ry - 2)
-            if rh0 <= 0:
-                continue
             # Draw compact button with icon and shortcut key
-            draw_compact_action_button(screen, (rx, ry, rw0, rh0), action, original_idx, button_state)
+            draw_compact_action_button(screen, (rect.x, rect.y, rect.width, rect.height), action, original_idx, button_state)
         else:
-            # Clamp rect height if it would overlap the context window (pygame.Rect)
-            if rect.bottom > context_top:
-                rect.height = max(0, context_top - rect.top - 2)
-            if rect.height <= 0:
-                continue
             # Traditional button with text (shorter in non-tutorial mode)
             from src.services.keybinding_manager import keybinding_manager
             from src.ui.compact_ui import get_action_color_scheme
@@ -1457,6 +1442,9 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
                     more_text = small_font.render(f"+{action_count-5}", True, indicator_color)
                     screen.blit(more_text, (start_x + 5 * indicator_size * 2 + 2, start_y))
 
+    # Store the clipped action rects for accurate click detection (filter out None values)
+    game_state.filtered_action_rects = [rect for rect in clipped_action_rects if rect is not None]
+
     # Upgrades (right: purchased as icons at top right, available as buttons) - Enhanced with visual feedback
     if use_compact_ui:
         # Import compact UI functions
@@ -1477,24 +1465,18 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
             else:
                 upgrade_rects.append(None)  # Keep None for unavailable upgrades
     
-    for idx, rect in enumerate(upgrade_rects):
+    # Apply elegant modular clipping to upgrade rectangles  
+    from src.ui.clipping_utils import apply_clipping_to_ui_elements
+    clipped_upgrade_rects = apply_clipping_to_ui_elements(upgrade_rects, game_state, h)
+    
+    for idx, rect in enumerate(clipped_upgrade_rects):
         if idx >= len(game_state.upgrades) or rect is None:
-            continue  # Skip unavailable upgrades
+            continue  # Skip unavailable or clipped upgrades
             
         upg = game_state.upgrades[idx]
         is_purchased = upg.get("purchased", False)
         
         if use_compact_ui:
-            # Clamp for compact mode where rect is a tuple
-            rx, ry, rw0, rh0 = rect
-            try:
-                context_top = game_state._get_context_window_top(h)
-            except Exception:
-                context_top = int(h * 0.90) - 5
-            if ry + rh0 > context_top:
-                rh0 = max(0, context_top - ry - 2)
-            if rh0 <= 0:
-                continue
             # Determine button state for compact mode
             if not is_purchased and upg['cost'] > game_state.money:
                 button_state = ButtonState.DISABLED
@@ -1504,17 +1486,8 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
                 button_state = ButtonState.NORMAL
             
             # Draw compact upgrade button
-            draw_compact_upgrade_button(screen, (rx, ry, rw0, rh0), upg, idx, button_state, is_purchased)
+            draw_compact_upgrade_button(screen, (rect.x, rect.y, rect.width, rect.height), upg, idx, button_state, is_purchased)
         else:
-            # Clamp rect height for traditional mode (pygame.Rect)
-            try:
-                context_top = game_state._get_context_window_top(h)
-            except Exception:
-                context_top = int(h * 0.90) - 5
-            if rect.bottom > context_top:
-                rect.height = max(0, context_top - rect.top - 2)
-            if rect.height <= 0:
-                continue
             # Traditional upgrade display
             if is_purchased:
                 # Draw as small icon using visual feedback system
@@ -1535,6 +1508,9 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
                 
                 # Description text is now shown in context window instead of cluttering buttons
                 # This eliminates text overflow issues and provides cleaner UI
+
+    # Store clipped upgrade rectangles for accurate click detection
+    game_state.upgrade_rects = [rect for rect in clipped_upgrade_rects if rect is not None]
 
     # --- Balance change display (after buying accounting software) ---
     # If accounting software was bought, show last balance change under Money
@@ -1642,7 +1618,7 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         
     elif game_state.scrollable_event_log_enabled:
         # Enhanced scrollable event log with border and visual indicators (Demo hotfix: extended width & height)
-        log_width = int(w * 0.32)  # Extended from 0.22 to 0.32 to touch END TURN button (at 0.39)
+        log_width = int(w * 0.34)  # Extended from 0.32 to 0.34 to get close to END TURN button (at 0.39) with proper gap
         log_height = int(h * 0.22)  # Increased from 0.14 to 0.22 to make it more prominent
         
         # Draw border around the event log area

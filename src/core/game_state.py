@@ -846,13 +846,14 @@ class GameState:
                 self.selected_gameplay_actions.pop()  # Remove the action we just added
                 self.selected_gameplay_action_instances.pop()  # Remove the instance we just added
                 
+                # Trigger the dialog/submenu (don't show "executed" message for dialogs)
                 action['upside'](self)
-                success_msg = f"Executed: {action['name']}{delegation_info}"
-                self.messages.append(success_msg)
+                
+                # For submenu actions, success means dialog was triggered, not completed
                 return {
                     'success': True,
-                    'message': success_msg,
-                    'play_sound': True
+                    'message': None,  # No message for dialog triggers
+                    'play_sound': False  # No completion sound for dialogs
                 }
             except Exception as e:
                 # If immediate execution fails, restore AP and show error
@@ -1590,9 +1591,16 @@ class GameState:
         return get_activity_log_base_position(w, h)
 
     def _get_activity_log_current_position(self, w: int, h: int) -> Tuple[int, int]:
-        """Get the current position of activity log (includes drag offset)"""
-        from src.core.ui_utils import get_activity_log_base_position
-        base_x, base_y = get_activity_log_base_position(w, h)
+        """Get the current position of activity log (includes drag offset) - DEMO HOTFIX: Use dynamic positioning"""
+        try:
+            # Use the new dynamic positioning system
+            from src.ui.positioning_utils import calculate_activity_log_position
+            base_x, base_y = calculate_activity_log_position(self, w, h)
+        except ImportError:
+            # Fallback to old system if positioning utils not available
+            from src.core.ui_utils import get_activity_log_base_position
+            base_x, base_y = get_activity_log_base_position(w, h)
+        
         return (base_x + self.activity_log_position[0], base_y + self.activity_log_position[1])
 
     def _safe_ui_operation(self, operation_name: str, operation_func: Callable[..., Any], *args: Any, **kwargs: Any) -> Any:

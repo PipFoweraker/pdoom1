@@ -71,12 +71,84 @@ class InputManager:
                         return 'play_sound' if result['play_sound'] else None
                     return None
         
+        # Check legacy action buttons (filtered_action_rects with display mapping)
+        elif hasattr(gs, 'filtered_action_rects') and hasattr(gs, 'display_to_action_index_map'):
+            for display_idx, rect in enumerate(gs.filtered_action_rects):
+                if check_point_in_rect(mouse_pos, rect):
+                    if not gs.game_over and display_idx < len(gs.display_to_action_index_map):
+                        # Map display index to original action index
+                        original_idx = gs.display_to_action_index_map[display_idx]
+                        
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = original_idx in gs.selected_gameplay_actions
+                        
+                        result = gs.attempt_action_selection(original_idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
+        
         # Handle popup events if active
         if hasattr(gs, 'popup_button_rects'):
             for button_rect, action, event in gs.popup_button_rects:
                 if check_point_in_rect(mouse_pos, button_rect):
                     gs._handle_popup_action(action, event)
                     return None
+        
+        # Handle upgrade buttons (right side) - Support both 3-column and legacy UI
+        u_rects = get_upgrade_rects(w, h)
+        for idx, rect in enumerate(u_rects):
+            # Skip None rectangles (unavailable/hidden upgrades)
+            if rect is None:
+                continue
+            # Bounds check: ensure we don't access beyond available upgrades
+            if idx >= len(gs.upgrades):
+                continue
+            if check_point_in_rect(mouse_pos, rect):
+                upg = gs.upgrades[idx]
+                if not upg.get("purchased", False):
+                    if gs.money >= upg["cost"]:
+                        gs._add('money', -upg["cost"])  # Use _add to track spending
+                        upg["purchased"] = True
+                        gs.upgrade_effects.add(upg["effect_key"])
+                        
+                        # Trigger first-time help for upgrade purchase
+                        if gs.onboarding.should_show_mechanic_help('first_upgrade_purchase'):
+                            gs.onboarding.mark_mechanic_seen('first_upgrade_purchase')
+                        
+                        # Special handling for custom effects
+                        if upg.get("custom_effect") == "buy_accounting_software":
+                            gs.accounting_software_bought = True
+                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!")
+                        elif upg.get("custom_effect") == "buy_compact_activity_display":
+                            # Allow toggle functionality for the activity log
+                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
+                        elif upg.get("effect_key") == "hpc_cluster":
+                            gs._add('compute', 20)
+                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.")
+                        elif upg.get("effect_key") == "research_automation":
+                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Research actions now benefit from available compute resources.")
+                        else:
+                            gs.messages.append(f"Upgrade purchased: {upg['name']}")
+                        
+                        # Log upgrade purchase
+                        gs.logger.log_upgrade(upg["name"], upg["cost"], gs.turn)
+                        
+                        # Create smooth transition animation from button to icon
+                        icon_rect = get_upgrade_icon_rect(idx, w, h)
+                        gs._create_upgrade_transition(idx, rect, icon_rect)
+                    else:
+                        error_msg = f"Not enough money for {upg['name']} (need ${upg['cost']}, have ${gs.money})."
+                        gs.messages.append(error_msg)
+                        
+                        # Track error for easter egg detection
+                        gs.track_error(f"Insufficient money: {upg['name']}")
+                else:
+                    gs.messages.append(f"{upg['name']} already purchased.")
+                    
+                    # Track error for easter egg detection
+                    gs.track_error(f"Already purchased: {upg['name']}")
+                return None
         
         # Handle tutorial dismiss if active
         if hasattr(gs, 'tutorial_dismiss_rect') and gs.tutorial_dismiss_rect:
