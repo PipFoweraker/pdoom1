@@ -9,6 +9,7 @@ from src.core.actions import ACTIONS
 from src.core.upgrades import UPGRADES
 from src.core.events import EVENTS
 from src.services.game_logger import GameLogger
+from src.services.game_run_logger import GameRunLogger, LoggingLevel, init_game_logger
 from src.services.sound_manager import SoundManager
 from src.services.game_clock import GameClock
 from src.services.deterministic_rng import init_deterministic_rng, get_rng
@@ -229,7 +230,6 @@ class GameState:
         
         self.last_balance_change = 0
         self.accounting_software_bought = False  # So the flag always exists
-        self.magical_orb_active = False  # Track if magical orb of seeing is purchased
         
         # Research Quality System - Technical Debt vs. Speed Trade-offs
         self.technical_debt = TechnicalDebt()  # Track accumulated technical debt
@@ -422,8 +422,12 @@ class GameState:
         elif self.reputation < LOW_REPUTATION_THRESHOLD:
             self.public_opinion.trust_in_player = LOW_TRUST_VALUE
         
-        # Initialize game logger
+        # Initialize game logger (original system for basic events)
         self.logger = GameLogger(seed)
+        
+        # Initialize game run logger (new privacy-respecting analytics system)
+        # Enable by default for alpha testing - collect comprehensive strategy data
+        self.run_logger = init_game_logger(LoggingLevel.STANDARD, enabled_by_default=True)
         
         # Initialize UI overlay management system
         self.overlay_manager = OverlayManager()
@@ -433,7 +437,6 @@ class GameState:
             sound_manager=self.sound_manager,
             message_callback=lambda msg: self.messages.append(msg)
         )
-        self.logger = GameLogger(seed)
         
         # UI Transition System now handled by UITransitionManager
         
@@ -1703,6 +1706,10 @@ class GameState:
                 action_name += " (delegated)"
             self.logger.log_action(action_name, action_cost, self.turn)
             
+            # Log to GameRunLogger for analytics
+            if hasattr(self, 'run_logger') and self.run_logger:
+                self.run_logger.log_action(action_name, action_cost, self.turn)
+            
             # Execute action effects with effectiveness modifier
             if action.get("upside"):
                 if effectiveness < 1.0:
@@ -1879,6 +1886,10 @@ class GameState:
             log_path = self.logger.write_log_file()
             if log_path:
                 self.messages.append(f"Game log saved to: {log_path}")
+                
+            # Log to GameRunLogger for analytics
+            if hasattr(self, 'run_logger') and self.run_logger:
+                self.run_logger.log_game_end(game_end_reason, self.turn, final_resources)
 
         # Save high score if achieved (legacy system)
         self.save_highscore()

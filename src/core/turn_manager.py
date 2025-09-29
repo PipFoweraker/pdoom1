@@ -376,7 +376,9 @@ class TurnManager:
         gs.messages.append(f"Week of {formatted_date} (Mon)")
         
         # Reset action points for new turn
-        gs.action_points = gs.calculate_max_ap()
+        calculated_max_ap = gs.calculate_max_ap()
+        gs.max_action_points = calculated_max_ap
+        gs.action_points = calculated_max_ap
         gs.ap_spent_this_turn = False
         
         # Decay AP glow effect

@@ -115,85 +115,43 @@ class IntelligenceSystemManager:
         messages = []
         discoveries = 0
         
-        # Enhanced capabilities with magical orb
-        if hasattr(self.game_state, 'magical_orb_active') and self.game_state.magical_orb_active:
-            messages.append("[ORB] MAGICAL ORB OF SEEING ACTIVATED")
-            messages.append("Penetrating digital infrastructure across the globe...")
-            
         # First, check if any opponents can be discovered
         undiscovered_opponents = [opp for opp in self.game_state.opponents if not opp.discovered]
         
-        # Enhanced discovery rate with magical orb
-        discovery_chance = 0.9 if (hasattr(self.game_state, 'magical_orb_active') and self.game_state.magical_orb_active) else 0.6
+        discovery_chance = 0.6
         
         if undiscovered_opponents and get_rng().random("random_context") < discovery_chance:
             # Discover a new opponent
             new_opponent = get_rng().choice(undiscovered_opponents, "choice_context")
             new_opponent.discover()
             discoveries += 1
-            if hasattr(self.game_state, 'magical_orb_active') and self.game_state.magical_orb_active:
-                messages.append(f"? SURVEILLANCE BREAKTHROUGH: Orbital data streams reveal {new_opponent.name}")
-                messages.append(f"? Access granted to laptop and mobile communications...")
-                messages.append(f"? {new_opponent.description}")
-            else:
-                messages.append(f"Intelligence breakthrough! Discovered new competing lab: {new_opponent.name}")
-                messages.append(f"? {new_opponent.description}")
+            messages.append(f"Intelligence breakthrough! Discovered new competing lab: {new_opponent.name}")
+            messages.append(f"? {new_opponent.description}")
         
         # Scout stats from known opponents
         discovered_opponents = [opp for opp in self.game_state.opponents if opp.discovered]
         
         if discovered_opponents:
-            # With magical orb, scout multiple opponents and stats
-            if hasattr(self.game_state, 'magical_orb_active') and self.game_state.magical_orb_active:
-                # Scout all discovered opponents with enhanced success
-                for target_opponent in discovered_opponents:
-                    stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
-                    # Scout 2-3 stats per opponent with high success rate
-                    num_stats = get_rng().randint(2, 3, "randint_context")
-                    # Use safe sampling to avoid list modification during iteration
-                    stats_to_sample = get_rng().sample(stats_to_scout, min(num_stats, len(stats_to_scout)), "scout_stats_sampling")
-                    for stat_to_scout in stats_to_sample:
-                        # Force success with magical orb (no need to remove from list anymore)
-                            success, value, message = target_opponent.scout_stat(stat_to_scout)
-                            if not target_opponent.discovered_stats[stat_to_scout]:
-                                # Force discovery with magical orb
-                                target_opponent.discovered_stats[stat_to_scout] = True
-                                actual_value = getattr(target_opponent, stat_to_scout)
-                                target_opponent.known_stats[stat_to_scout] = actual_value
-                                discoveries += 1
-                                messages.append(f"? Digital intercept: {target_opponent.name}'s {stat_to_scout}: {actual_value}")
-                            else:
-                                messages.append(f"[CHART] Confirming {target_opponent.name}'s {stat_to_scout}: {value}")
-            else:
-                # Standard scouting
-                target_opponent = get_rng().choice(discovered_opponents, "choice_context")
-                
-                # Try to scout a random stat
-                stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
-                stat_to_scout = get_rng().choice(stats_to_scout, "choice_context")
-                
-                success, value, message = target_opponent.scout_stat(stat_to_scout)
-                messages.append(message)
-                
-                if success:
-                    discoveries += 1
+            # Standard scouting
+            target_opponent = get_rng().choice(discovered_opponents, "choice_context")
+            
+            # Try to scout a random stat
+            stats_to_scout = ['budget', 'capabilities_researchers', 'lobbyists', 'compute', 'progress']
+            stat_to_scout = get_rng().choice(stats_to_scout, "choice_context")
+            
+            success, value, message = target_opponent.scout_stat(stat_to_scout)
+            messages.append(message)
+            
+            if success:
+                discoveries += 1
         
         # Add intelligence gained message
         if discoveries > 0:
-            if hasattr(self.game_state, 'magical_orb_active') and self.game_state.magical_orb_active:
-                messages.append(f"[ORB] SURVEILLANCE MATRIX ANALYSIS COMPLETE: {discoveries} intelligence targets processed")
-                messages.append("Global data streams flowing through the orb... No device is hidden from its gaze.")
-                # Enhanced reputation gain with magical orb
-                self.game_state._add('reputation', min(3, discoveries))
-            else:
-                messages.append(f"Intelligence gathering successful! ({discoveries} new insights)")
-                # Small reputation gain for successful intelligence work
-                self.game_state._add('reputation', 1)
+            messages.append(f"Intelligence gathering successful! ({discoveries} new insights)")
+            # Small reputation gain for successful intelligence work
+            self.game_state._add('reputation', 1)
         else:
-            if hasattr(self.game_state, 'magical_orb_active') and self.game_state.magical_orb_active:
-                messages.append("[ORB] Orb scanning global networks... All targets already under surveillance.")
-            else:
-                messages.append("Intelligence gathering yielded limited results this time.")
+            messages.append("Intelligence gathering yielded limited results this time.")
         
         # Add all messages to game state
         for msg in messages:
@@ -366,14 +324,9 @@ class IntelligenceSystemManager:
         # Detailed investigation reveals more information than basic scouting
         self.game_state.messages.append(f"INVESTIGATION: Deep analysis of {target.name}")
         
-        # Enhanced information gathering with magical orb
-        enhanced = hasattr(self.game_state, 'magical_orb_active') and self.game_state.magical_orb_active
-        if enhanced:
-            self.game_state.messages.append("[ORB] MAGICAL ORB REVEALS DEEPER SECRETS...")
-        
         # Reveal detailed stats (more than basic scouting)
         all_stats = ['budget', 'compute', 'progress', 'reputation', 'staff_count', 'strategy_focus']
-        num_stats = 4 if enhanced else 3
+        num_stats = 3
         stats_revealed = get_rng().sample(all_stats, min(num_stats, len(all_stats)), "opponent_investigation_stats")
         
         for stat in stats_revealed:
@@ -405,6 +358,3 @@ class IntelligenceSystemManager:
                 f"? Hiring spree: {target.name} aggressively recruiting top AI researchers"
             ]
             self.game_state.messages.append(get_rng().choice(action_insights, f"investigate_insight_turn_{self.game_state.turn}"))
-            
-        if enhanced:
-            self.game_state.messages.append("[ORB] DEEP SCAN COMPLETE - All major capabilities assessed")

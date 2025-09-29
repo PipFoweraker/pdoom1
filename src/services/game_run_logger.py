@@ -326,6 +326,94 @@ class GameRunLogger:
             ])
         }
 
+    # ==========================================
+    # GameLogger Compatibility Methods
+    # ==========================================
+    # These methods provide backward compatibility with the existing GameLogger interface
+    # used throughout the codebase, enabling gradual migration to the new system.
+    
+    def log_event(self, event_name: str, description: str, turn: int) -> None:
+        """Log a game event (GameLogger compatibility)."""
+        if not self.should_log(LoggingLevel.STANDARD):
+            return
+            
+        self.run_data['actions'].append({
+            'type': 'event',
+            'name': event_name,
+            'description': description,
+            'turn': turn,
+            'timestamp': time.time() - self.start_time
+        })
+    
+    def log_upgrade(self, upgrade_name: str, cost: int, turn: int) -> None:
+        """Log an upgrade purchase (GameLogger compatibility)."""
+        if not self.should_log(LoggingLevel.STANDARD):
+            return
+            
+        self.run_data['actions'].append({
+            'type': 'upgrade',
+            'name': upgrade_name,
+            'cost': cost,
+            'turn': turn,
+            'timestamp': time.time() - self.start_time
+        })
+    
+    def log_turn_summary(self, turn: int, money: int, staff: int, reputation: int, doom: int) -> None:
+        """Log end-of-turn resource summary (GameLogger compatibility)."""
+        if not self.should_log(LoggingLevel.MINIMAL):
+            return
+            
+        self.run_data['state_changes'].append({
+            'type': 'turn_summary',
+            'turn': turn,
+            'resources': {
+                'money': money,
+                'staff': staff, 
+                'reputation': reputation,
+                'doom': doom
+            },
+            'timestamp': time.time() - self.start_time
+        })
+    
+    def log_game_end(self, victory: bool, reason: str, final_stats: Dict[str, Any]) -> None:
+        """Log game end conditions (GameLogger compatibility)."""
+        if not self.should_log(LoggingLevel.MINIMAL):
+            return
+            
+        self.run_data['metadata']['game_end'] = {
+            'victory': victory,
+            'reason': reason,
+            'final_stats': final_stats,
+            'timestamp': time.time() - self.start_time,
+            'total_duration': time.time() - self.start_time
+        }
+        
+        # Auto-finalize session on game end
+        self.finalize_session()
+    
+    def log_message(self, message: str) -> None:
+        """Log a general message (GameLogger compatibility)."""
+        if not self.should_log(LoggingLevel.DEBUG):
+            return
+            
+        self.run_data['performance'].append({
+            'type': 'message',
+            'content': message,
+            'timestamp': time.time() - self.start_time
+        })
+    
+    def get_log_filename(self) -> str:
+        """Get log filename (GameLogger compatibility)."""
+        return f"game_run_{self.session_id}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+    
+    def get_log_summary(self) -> Dict[str, Any]:
+        """Get log summary (GameLogger compatibility)."""
+        return self.get_data_summary()
+    
+    def write_log_file(self) -> str:
+        """Write log file and return filename (GameLogger compatibility)."""
+        return self.finalize_session()
+
 
 # Global logger instance for easy access
 _global_logger: Optional[GameRunLogger] = None

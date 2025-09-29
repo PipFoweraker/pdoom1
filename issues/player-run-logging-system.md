@@ -1,5 +1,7 @@
 # Privacy-Respecting Player Run Logging System
 
+## Status: COMPLETED (v0.9.1 - September 2025)
+
 ## Summary
 **PRIORITY: HIGH** - Enable comprehensive game run logging with privacy controls, defaulting to ON for dev builds to accumulate strategy data for balancing.
 

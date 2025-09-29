@@ -188,12 +188,6 @@ class InputManager:
                         elif upg.get("custom_effect") == "buy_compact_activity_display":
                             # Allow toggle functionality for the activity log
                             gs.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
-                        elif upg.get("custom_effect") == "buy_magical_orb_seeing":
-                            # Enable enhanced intelligence gathering capabilities
-                            gs.magical_orb_active = True
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Enhanced global surveillance capabilities now active!")
-                            gs.messages.append("The orb reveals detailed intelligence on all competitors and their activities...")
-                            gs.messages.append("Intelligence gathering actions now provide comprehensive insights!")
                         elif upg.get("effect_key") == "hpc_cluster":
                             gs._add('compute', 20)
                             gs.messages.append(f"Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.")

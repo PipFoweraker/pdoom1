@@ -12,8 +12,8 @@ providing a cleaner initial experience.
 
 import pygame
 from typing import Any, List, Dict, Tuple, Optional
-from ..components.colours import *
-# from ..components.typography import font_manager  # Temporarily disabled
+from ...modular_components.colours import *
+# from ...modular_components.typography import font_manager  # Temporarily disabled
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle
 
 

@@ -7,7 +7,7 @@ modular architecture. Routes screen rendering to appropriate modules.
 
 import pygame
 from typing import Optional, Any
-from .screens.game import render_game_screen
+from .modular_screens.screens.game import render_game_screen
 
 
 class UIFacade:

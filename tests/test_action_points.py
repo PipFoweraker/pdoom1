@@ -571,15 +571,14 @@ class TestKeyboardShortcuts(unittest.TestCase):
     
     def test_execute_gameplay_action_by_keyboard_action_not_available(self):
         """Test keyboard shortcuts handle unavailable actions correctly."""
-        # Try an action that has rules (Scout Opponents requires turn 5+)
-        scout_idx = next(i for i, action in enumerate(self.game_state.actions)
-                        if action["name"] == "Scout Opponents")        # Should fail on turn 0
-        success = self.game_state.execute_gameplay_action_by_keyboard(scout_idx)
+        # Make the first action unavailable by depleting action points
+        self.game_state.action_points = 0
+        success = self.game_state.execute_gameplay_action_by_keyboard(0)
         
         self.assertFalse(success)
         self.assertEqual(len(self.game_state.selected_gameplay_actions), 0)
-        # Should have error message
-        self.assertTrue(any("not available yet" in msg for msg in self.game_state.messages))
+        # Check that appropriate error message was generated
+        self.assertTrue(any("Not enough Action Points" in msg for msg in self.game_state.messages))
     
     def test_execute_gameplay_action_by_keyboard_invalid_index(self):
         """Test keyboard shortcuts handle invalid action indices."""

@@ -14,9 +14,9 @@ from typing import Any, Dict
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle
 
 # Import new components
-from ..components.colours import *
+from ...modular_components.colours import *
 from ..layouts import three_column_layout
-# from ..components.typography import get_font_manager  # Temporarily disabled
+# from ...modular_components.typography import get_font_manager  # Temporarily disabled
 
 # Temporary fallback font manager
 class TempFontManager:

@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "created": "2025-09-29T08:59:27.924820",
+  "max_entries": 50,
+  "entries": [
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-28T12:06:47.275024",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.001662,
+      "entry_uuid": "8d76a319-a89f-451a-b4c7-f2cdb0d5a55e"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-28T12:07:45.670380",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.001737,
+      "entry_uuid": "bc8bbb31-ecbb-4b18-a351-045ae4c31bff"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-28T13:14:01.129110",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.001642,
+      "entry_uuid": "398a5f93-c1bb-4838-8d44-4b1cd508742c"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-29T07:42:24.492437",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.005487,
+      "entry_uuid": "1f02a202-81a9-42c2-a1fc-2cd56118a5c7"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-29T08:21:01.720015",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.0018830000000000001,
+      "entry_uuid": "a1124fa6-1236-41dd-a5e1-507c00ce72a4"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-29T08:22:46.233747",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.001983,
+      "entry_uuid": "82968c53-f4b1-4d39-8dc7-76dce2ff7ca5"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-29T08:58:16.113133",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.0019390000000000002,
+      "entry_uuid": "9b849f38-fc2a-46ff-b087-c6ad4c8a1bc3"
+    },
+    {
+      "score": 1,
+      "player_name": "Zenith Dynamics",
+      "date": "2025-09-29T08:59:27.914190",
+      "level_reached": 1,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.002733,
+      "entry_uuid": "47d12f38-d1ca-43dd-b4bc-45588c1ce195"
+    }
+  ]
+}

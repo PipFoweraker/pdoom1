@@ -63,14 +63,5 @@ UPGRADES: List[UpgradeDict] = [
         "cost": 600,
         "purchased": False,
         "effect_key": "research_automation"
-    },
-    {
-        "name": "Magical Orb of Seeing",
-        "desc": "Advanced surveillance apparatus revealing laptop and mobile contents of all humans connected to the Internet",
-        "cost": 371640000000,  # 371.64 billion USD placeholder
-        "purchased": False,
-        "effect_key": "magical_orb_seeing",
-        "unlock_condition": "palandir_discovered",  # Only shows when Palandir is discovered
-        "custom_effect": "buy_magical_orb_seeing"  # Special handling for this upgrade
     }
 ]
