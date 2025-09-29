@@ -95,8 +95,11 @@ class InputManager:
                     gs._handle_popup_action(action, event)
                     return None
         
-        # Handle upgrade buttons (right side) - Support both 3-column and legacy UI
-        u_rects = get_upgrade_rects(w, h)
+        # Handle upgrade buttons (right side) - Use stored rectangles from UI rendering
+        if hasattr(gs, 'upgrade_rects') and gs.upgrade_rects:
+            u_rects = gs.upgrade_rects
+        else:
+            u_rects = get_upgrade_rects(w, h)  # Fallback
         for idx, rect in enumerate(u_rects):
             # Skip None rectangles (unavailable/hidden upgrades)
             if rect is None:
@@ -232,8 +235,11 @@ class InputManager:
                         return 'play_sound' if result['play_sound'] else None
                     return None
 
-        # Upgrades (right, as icons or buttons)
-        u_rects = get_upgrade_rects(w, h)
+        # Upgrades (right, as icons or buttons) - Use stored rectangles from UI rendering
+        if hasattr(gs, 'upgrade_rects') and gs.upgrade_rects:
+            u_rects = gs.upgrade_rects
+        else:
+            u_rects = get_upgrade_rects(w, h)  # Fallback
         for idx, rect in enumerate(u_rects):
             # Skip None rectangles (unavailable/hidden upgrades)
             if rect is None:
@@ -444,8 +450,11 @@ class InputManager:
                 status = "[OK] Available" if affordable else "[FAIL] Cannot afford"
                 return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
             
-            # Check upgrade buttons for hover
-            u_rects = get_upgrade_rects(w, h)
+            # Check upgrade buttons for hover - Use stored rectangles from UI rendering
+            if hasattr(gs, 'upgrade_rects') and gs.upgrade_rects:
+                u_rects = gs.upgrade_rects
+            else:
+                u_rects = get_upgrade_rects(w, h)  # Fallback
             for idx, rect in enumerate(u_rects):
                 # Skip None rectangles (unavailable/hidden upgrades)
                 if rect is None:

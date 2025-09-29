@@ -1617,9 +1617,9 @@ def draw_ui(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
         screen.blit(plus_text, plus_rect)
         
     elif game_state.scrollable_event_log_enabled:
-        # Enhanced scrollable event log with border and visual indicators (Demo hotfix: extended width & height)
-        log_width = int(w * 0.34)  # Extended from 0.32 to 0.34 to get close to END TURN button (at 0.39) with proper gap
-        log_height = int(h * 0.22)  # Increased from 0.14 to 0.22 to make it more prominent
+        # Enhanced scrollable event log with border and visual indicators (Demo hotfix: MAXIMIZED width & height)
+        log_width = int(w * 0.37)  # MAXIMIZED: nestle right up to END TURN button left edge (at 0.39) - 2% gap
+        log_height = int(h * 0.47)  # MAXIMIZED: extend down to context bar top (from 0.22 to 0.47)
         
         # Draw border around the event log area
         border_rect = pygame.Rect(log_x - 5, log_y - 5, log_width + 10, log_height + 10)
