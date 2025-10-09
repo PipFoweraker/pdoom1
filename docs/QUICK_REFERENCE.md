@@ -65,5 +65,17 @@ cd pdoom1 && pip install -r requirements.txt && python main.py
 - 'Try seed 'challenge' - I got ranked #5!'
 - 'Should AI labs prioritize safety or capability research?'
 
+## [WRENCH] DEVELOPER COMMANDS
+```bash
+# Health monitoring
+python scripts/project_health.py              # Check project health
+python scripts/health_tracker.py --show-trends # View health history
+python scripts/ci_health_integration.py --gate-check # CI/CD health gate
+
+# Testing & validation
+python -m unittest discover tests -v          # Run full test suite
+python scripts/enforce_standards.py --check-all # Standards validation
+```
+
 ---
 **P(Doom) v0.4.1** - Turn-based AI safety strategy * Educational gameplay * Competitive leaderboards * Party-ready demonstrations

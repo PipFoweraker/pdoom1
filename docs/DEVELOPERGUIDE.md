@@ -7,7 +7,8 @@ For **installation and troubleshooting**, see the [README](../README.md).
 
 ## Table of Contents
 - [Development Setup](#development-setup) (Line 28)
-- [Enhanced Settings System Architecture](#enhanced-settings-system-architecture) (Line 54)
+- [Health Monitoring Infrastructure](#health-monitoring-infrastructure) (Line 60)
+- [Enhanced Settings System Architecture](#enhanced-settings-system-architecture) (Line 90)
 - [Custom Sound Overrides (sounds/)](#custom-sound-overrides-sounds) (Line 100)
 - [Project Structure](#project-structure) (Line 146)
 - [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 168)
@@ -54,6 +55,30 @@ python -m unittest discover tests -v
 # Run the game
 python main.py
 ```
+
+### Health Monitoring Infrastructure
+
+P(Doom) includes enterprise-grade health monitoring infrastructure for automated CI/CD pipeline integration and project quality tracking.
+
+#### Quick Health Check
+```bash
+# Run comprehensive health assessment
+python scripts/project_health.py
+
+# View historical trends
+python scripts/health_tracker.py --show-trends --format human
+
+# CI/CD integration
+python scripts/ci_health_integration.py --gate-check
+```
+
+#### Key Features
+- **Real-time Assessment**: Code quality, testing, documentation, repository status
+- **Historical Tracking**: SQLite-based trend analysis with milestone detection
+- **CI/CD Integration**: Machine-readable outputs for automated pipeline gates
+- **ASCII Compliance**: Cross-platform compatible outputs for all automation systems
+
+For complete documentation, see [HEALTH_MONITORING_INFRASTRUCTURE.md](technical/HEALTH_MONITORING_INFRASTRUCTURE.md).
 
 ---
 

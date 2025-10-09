@@ -32,7 +32,7 @@ def create_entry(template_name: str, title_slug: str) -> bool:
     
     template_path = templates_dir / f'{template_name}.md'
     if not template_path.exists():
-        print(f'ERROR: Template '{template_name}' not found')
+        print(f'ERROR: Template "{template_name}" not found')
         print(f'Available templates:')
         for template in templates_dir.glob('*.md'):
             print(f'  - {template.stem}')
@@ -44,7 +44,7 @@ def create_entry(template_name: str, title_slug: str) -> bool:
     output_path = entries_dir / filename
     
     if output_path.exists():
-        print(f'ERROR: Entry '{filename}' already exists')
+        print(f'ERROR: Entry "{filename}" already exists')
         return False
     
     # Read template
@@ -60,7 +60,7 @@ def create_entry(template_name: str, title_slug: str) -> bool:
     with open(output_path, 'w', encoding='utf-8') as f:
         f.write(content)
     
-    print(f'SUCCESS: Created '{filename}'')
+    print(f'SUCCESS: Created "{filename}"')
     print(f'Path: {output_path}')
     print(f'Edit the file to customize title, tags, and content')
     return True
