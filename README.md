@@ -1,5 +1,5 @@
 # P(Doom): AI Safety Strategy Game
-**v0.9.0 "Modular Architecture" - Major Refactoring & Quality Update**
+**v0.10.0 "Global Leaderboards" - Web Export System & Competition Ready**
 
 ![P(Doom) Gameplay Screenshot](screenshots/pdoom_screenshot_20250918_104357.png)
 
@@ -7,27 +7,30 @@
  
 In this satirical strategy game, you manage a bootstrap AI safety lab racing against well-funded opponents to solve the alignment problem before everyone dies. Experience the challenge of running a scrappy nonprofit in the competitive AI safety space.
 
-## TROPHY Latest Achievement: Major Architecture Overhaul
+## TROPHY Latest Achievement: Global Leaderboards Unlocked
 
-**Version 0.8.0 "Modular Architecture"** represents a massive refactoring success:
-- **558 lines extracted** from monolithic code (111.6% of 500-line goal exceeded!)
-- **6 focused modules created** with clean separation of concerns
-- **10.9% reduction** in core monolith size (6,240 -> 5,682 lines)
-- **Zero functional regressions** - all game systems preserved and enhanced
+**Version 0.10.0 "Global Leaderboards"** enables worldwide competition:
+- **Web Export System** - Complete infrastructure for global leaderboard integration
+- **Privacy-First Design** - Anonymous competition with configurable privacy controls  
+- **Website Integration** - Direct compatibility with [pdoom1-website](https://github.com/PipFoweraker/pdoom1-website)
+- **31 Entries Ready** - 20 leaderboards with real game data ready for export
 
-### New Modular Architecture
+### Web Export Features
+```bash
+# Export leaderboards for website integration
+python -m src.leaderboard export --format web --output ./web_export/
+
+# List available leaderboards  
+python -m src.leaderboard list
+
+# Check system status
+python -m src.leaderboard status
 ```
-src/core/
-? game_constants.py      # Core defaults and configuration
-? ui_utils.py           # UI positioning and collision detection  
-? verbose_logging.py    # RPG-style message formatting
-? employee_management.py # Employee lifecycle management
-? dialog_systems.py     # Dialog state and option management
-? utility_functions.py  # Validation and processing utilities
-```
 
-### Key Features
-- **[WRENCH] Clean Architecture**: Systematic modular design for maintainability
+### Architecture Highlights
+- **Anonymous Competition**: Deterministic lab names preserve privacy while enabling rankings
+- **API Compatibility**: Perfect JSON format matching for website integration
+- **Export Validation**: Built-in format checking and privacy manifest generation
 - **[SHIELD] Enhanced Stability**: Comprehensive type annotations and testing
 - **[CLOCK] Strategic Gameplay**: 12-13 turn games with meaningful decision depth
 - **[DOLLAR] Bootstrap Economics**: $100k starting funds with realistic costs

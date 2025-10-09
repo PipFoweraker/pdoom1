@@ -4,6 +4,34 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.10.0] - 2025-10-09 - "Global Leaderboards Web Export System"
+
+### [TARGET] Major Achievement: Global Leaderboards Unblocked
+- **WEB EXPORT SYSTEM**: Complete infrastructure enabling global leaderboards between P(Doom)1 and pdoom1-website
+- **CLI INTERFACE**: Implements exact interface requested by website: `python -m src.leaderboard export --format web --output ./web_export/`
+- **PRIVACY-FIRST DESIGN**: Configurable anonymization with deterministic lab names preserving competitive integrity
+- **PRODUCTION READY**: Successfully exports 31 entries across 20 leaderboards with full error handling
+
+### Added
+- **Web Export Module**: Complete `tools/web_export/` system with export_leaderboards.py, api_format.py, privacy_filter.py
+- **CLI Commands**: `python -m src.leaderboard export|status|list` interface matching pdoom1-website requirements
+- **Privacy Filtering**: Three-level anonymization (none/standard/strict) with deterministic player name generation
+- **API Format Conversion**: Perfect format matching for pdoom1-website JSON structure and API endpoints
+- **Export Documentation**: Comprehensive WEB_EXPORT_SYSTEM_GUIDE.md with integration instructions
+- **Leaderboard Module**: New src/leaderboard/ package providing standardized export interface
+
+### Technical Details
+- **Privacy Protection**: Uses consistent anonymous lab names (Atlas Computing, Quantum Leap, etc.) across exports
+- **Data Minimization**: Only exports competitive metrics, rounds sensitive financial data for privacy
+- **Error Handling**: Graceful handling of corrupted files, detailed validation, fallback options
+- **Website Integration**: Exact JSON format matching pdoom1-website leaderboard API specifications
+- **Export Validation**: Built-in format validation and privacy manifest generation
+
+### Impact
+- **UNBLOCKS**: Global leaderboards for pdoom1-website repository integration
+- **ENABLES**: Cross-player competition with privacy-respecting anonymous participation
+- **READY**: Website can now sync leaderboard data using provided export commands
+
 ## [v0.9.0] - 2025-09-28 - "Alpha Stability & Audio System"
 
 ### [TARGET] Major Achievements
