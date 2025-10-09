@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "created": "2025-09-29T13:24:02.046170",
+  "created": "2025-10-09T21:16:15.575081",
   "max_entries": 50,
   "entries": [
     {
@@ -11,6 +11,42 @@
       "game_mode": "Bootstrap_v0.4.1",
       "duration_seconds": 0.006391,
       "entry_uuid": "222c724c-472e-43b3-b48a-217e0c11572b"
+    },
+    {
+      "score": 4,
+      "player_name": "Apex Intelligence",
+      "date": "2025-09-29T16:42:06.844704",
+      "level_reached": 4,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.009943,
+      "entry_uuid": "a59508aa-34c8-4f27-aef4-9fda64cf51e9"
+    },
+    {
+      "score": 4,
+      "player_name": "Apex Intelligence",
+      "date": "2025-09-29T20:26:44.088800",
+      "level_reached": 4,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.005917,
+      "entry_uuid": "e0fa3e90-0829-4fb8-87f5-e8a1ee48ecd8"
+    },
+    {
+      "score": 4,
+      "player_name": "Apex Intelligence",
+      "date": "2025-09-29T20:35:01.302380",
+      "level_reached": 4,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.004625,
+      "entry_uuid": "ff7cf1f7-94df-4f89-a5af-4905ac9d4987"
+    },
+    {
+      "score": 4,
+      "player_name": "Apex Intelligence",
+      "date": "2025-10-09T21:16:15.574539",
+      "level_reached": 4,
+      "game_mode": "Bootstrap_v0.4.1",
+      "duration_seconds": 0.012313,
+      "entry_uuid": "21d93d6c-e1de-47ef-971d-43ade9e3a53d"
     }
   ]
 }
