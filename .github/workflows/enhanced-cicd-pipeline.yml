@@ -198,12 +198,64 @@ jobs:
           echo "score=$quality_score" >> $GITHUB_OUTPUT
           echo "SUCCESS Quality score: $quality_score (Type coverage: $type_coverage%)"
 
+      - name: Project Health Assessment
+        id: health-check
+        run: |
+          echo "HEALTH Running comprehensive project health assessment..."
+          
+          # Run health check and capture output
+          python scripts/project_health.py --ci-mode --output health_report.json
+          
+          # Get machine-readable CI/CD metrics
+          health_output=$(python scripts/health_tracker.py --show-trends --format ci)
+          
+          # Extract key metrics for GitHub Actions
+          health_score=$(echo "$health_output" | grep "CICD_HEALTH_SCORE=" | cut -d= -f2)
+          health_status=$(echo "$health_output" | grep "CICD_HEALTH_STATUS=" | cut -d= -f2)
+          health_trend=$(echo "$health_output" | grep "CICD_HEALTH_TREND_PERCENTAGE=" | cut -d= -f2)
+          
+          # Set GitHub Actions environment variables
+          echo "HEALTH_SCORE=$health_score" >> $GITHUB_ENV
+          echo "HEALTH_STATUS=$health_status" >> $GITHUB_ENV
+          echo "HEALTH_TREND=$health_trend" >> $GITHUB_ENV
+          
+          # Set outputs for dependent jobs
+          echo "health-score=$health_score" >> $GITHUB_OUTPUT
+          echo "health-status=$health_status" >> $GITHUB_OUTPUT
+          echo "health-trend=$health_trend" >> $GITHUB_OUTPUT
+          
+          # Display health summary
+          echo "SUMMARY Project Health: $health_score/100 ($health_status, trend: $health_trend%)"
+          
+      - name: Health Gate Check
+        run: |
+          echo "GATE Running automated health gate check..."
+          
+          # Run health gate check (returns exit code 0/1)
+          python scripts/ci_health_integration.py --gate-check
+          gate_result=$?
+          
+          if [ $gate_result -eq 0 ]; then
+            echo "SUCCESS Health gate: PASSED (Score: ${{ env.HEALTH_SCORE }}/100)"
+          else
+            echo "ERROR Health gate: FAILED (Score: ${{ env.HEALTH_SCORE }}/100)"
+            echo "HELP Run 'python scripts/health_automation.py --mode improvement' to fix issues"
+            exit 1
+          fi
+          
+      - name: Upload Health Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: health-report-${{ github.sha }}
+          path: health_report.json
+          retention-days: 30
+
   # Stage 3: Integration Testing (< 5 minutes)
   integration-testing:
     name: "Stage 3: Integration Testing"
     runs-on: ubuntu-latest
     needs: code-quality
-    if: needs.code-quality.outputs.quality-score != 'LOW'
+    if: needs.code-quality.outputs.quality-score != 'LOW' && needs.code-quality.outputs.health-score >= 70
     
     strategy:
       matrix:

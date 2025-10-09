@@ -65,7 +65,7 @@ cd pdoom1 && pip install -r requirements.txt && python main.py
 - 'Try seed 'challenge' - I got ranked #5!'
 - 'Should AI labs prioritize safety or capability research?'
 
-## [WRENCH] DEVELOPER COMMANDS
+## [TERMINAL] DEVELOPER COMMANDS
 ```bash
 # Health monitoring
 python scripts/project_health.py              # Check project health
