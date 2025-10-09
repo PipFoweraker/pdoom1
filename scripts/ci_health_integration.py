@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 CI/CD Health Integration - GitHub Actions Integration
 
@@ -371,7 +371,7 @@ class CIHealthIntegration:
                     f.write(f"{name}={value}\n")
         else:
             # Local testing - just print
-            print(f"📤 OUTPUT: {name}={value}")
+            print(f"[REMOVED] OUTPUT: {name}={value}")
 
 
 def main():

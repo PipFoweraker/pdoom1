@@ -80,7 +80,7 @@ class CIHealthIntegration:
 2. **Testing Infrastructure**: Test count (9,914 tests), execution status, coverage
 3. **Documentation Health**: Markdown files (286), organization, completeness
 4. **Repository Status**: Branch health, working tree cleanliness, commit activity
-5. **Issue Tracking**: Open issues (reduced 45→41), priority distribution, triage
+5. **Issue Tracking**: Open issues (reduced 45[REMOVED]41), priority distribution, triage
 6. **Development Velocity**: Commit frequency, branch management, release readiness
 
 ## Strategic Impact
@@ -94,7 +94,7 @@ class CIHealthIntegration:
 ### Quality Improvements Achieved
 - **Overall Health**: 83/100 (improved from 80/100 baseline)
 - **Branch Health**: 100/100 (clean working tree)
-- **Issue Reduction**: 45→41 open issues with systematic triage
+- **Issue Reduction**: 45[REMOVED]41 open issues with systematic triage
 - **Code Cleanup**: autoflake applied to 54 files
 
 ### Development Efficiency Gains

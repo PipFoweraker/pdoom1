@@ -54,7 +54,7 @@ class StandardsEnforcer:
         success = True
         
         # Check for deterministic RNG usage
-        print('[EMOJI] Checking deterministic RNG usage...')
+        print('[CHECK] Checking deterministic RNG usage...')
         random_imports = self._find_files_with_pattern('import random', exclude_dirs=['tests', '.venv', 'scripts'])
         # Filter out the deterministic_rng.py file which legitimately uses random
         random_imports = [r for r in random_imports if 'deterministic_rng.py' not in r[0]]
@@ -64,10 +64,10 @@ class StandardsEnforcer:
                 self.errors.append(f'  {file_path}:{line_num} - {line.strip()}')
             success = False
         else:
-            print('[EMOJI] No problematic random imports found')
+            print('[CHECK] No problematic random imports found')
         
         # Check for hardcoded magic numbers
-        print('[EMOJI] Checking for magic numbers...')
+        print('[CHECK] Checking for magic numbers...')
         magic_numbers = self._find_magic_numbers()
         if magic_numbers:
             self.warnings.extend([f'Potential magic number: {mn}' for mn in magic_numbers[:5]])
@@ -86,7 +86,7 @@ class StandardsEnforcer:
     
     def check_documentation(self) -> bool:
         '''Check documentation standards.'''
-        print('\n[EMOJI] Documentation Checks')
+        print('\n[CHECK] Documentation Checks')
         print('-' * 23)
         
         success = True
@@ -112,7 +112,7 @@ class StandardsEnforcer:
     
     def check_dev_blog_compliance(self) -> bool:
         '''Check dev blog system compliance.'''
-        print('\n[EMOJI] Dev Blog Compliance')
+        print('\n[CHECK] Dev Blog Compliance')
         print('-' * 21)
         
         success = True
@@ -185,7 +185,7 @@ class StandardsEnforcer:
     
     def check_import_patterns(self) -> bool:
         '''Check import pattern consistency.'''
-        print('\n[EMOJI] Import Pattern Check')
+        print('\n[CHECK] Import Pattern Check')
         print('-' * 22)
         
         success = True
@@ -214,11 +214,11 @@ class StandardsEnforcer:
     
     def check_test_coverage(self) -> bool:
         '''Check test coverage standards.'''
-        print('\n[U+1F9EA] Test Coverage Check')
+        print('\n[CHECK] Test Coverage Check')
         print('-' * 21)
         
         # This would integrate with pytest coverage
-        print('[U+2139][EMOJI]  Test coverage check - placeholder (integrate with pytest-cov)')
+        print('[INFO]  Test coverage check - placeholder (integrate with pytest-cov)')
         return True
     
     def pre_commit_check(self) -> bool:
@@ -231,7 +231,7 @@ class StandardsEnforcer:
         success &= self.check_import_patterns()
         
         # Quick syntax check
-        print('\n[EMOJI] Python Syntax Check')
+        print('\n[CHECK] Python Syntax Check')
         if not self._check_python_syntax():
             success = False
         
@@ -240,13 +240,13 @@ class StandardsEnforcer:
     
     def pre_deploy_check(self) -> bool:
         '''Comprehensive checks before deployment.'''
-        print('[EMOJI] Pre-deployment Standards Check')
+        print('[CHECK] Pre-deployment Standards Check')
         print('=' * 33)
         
         success = self.check_all()
         
         # Additional deployment-specific checks
-        print('\n[EMOJI] Deployment Readiness')
+        print('\n[CHECK] Deployment Readiness')
         print('-' * 20)
         
         # Check version consistency
@@ -391,7 +391,7 @@ class StandardsEnforcer:
             self.errors.extend(syntax_errors)
             return False
         
-        print('[EMOJI] All Python files have valid syntax')
+        print('[CHECK] All Python files have valid syntax')
         return True
     
     def _check_version_consistency(self) -> bool:
@@ -417,17 +417,17 @@ class StandardsEnforcer:
         print('=' * 50)
         
         if self.errors:
-            print(f'[EMOJI] ERRORS ({len(self.errors)}):')
+            print(f'[ERROR] ERRORS ({len(self.errors)}):')
             for error in self.errors:
                 print(f'   {error}')
         
         if self.warnings:
-            print(f'\n[WARNING][EMOJI]  WARNINGS ({len(self.warnings)}):')
+            print(f'\n[WARNING] WARNINGS ({len(self.warnings)}):')
             for warning in self.warnings:
                 print(f'   {warning}')
         
         if not self.errors and not self.warnings:
-            print('[EMOJI] All checks passed!')
+            print('[SUCCESS] All checks passed!')
         
         print(f'\nSummary: {len(self.errors)} errors, {len(self.warnings)} warnings')
 

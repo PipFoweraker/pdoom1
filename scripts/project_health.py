@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 P(Doom) Project Health Dashboard - BLITZ MODE IMPLEMENTATION
 
@@ -493,7 +493,7 @@ class ProjectHealthDashboard:
             recommendations.append("[FIX] URGENT: Address code quality issues - run linting tools and fix critical issues")
             
         if self.health_data['code_quality']['type_coverage'] < 60:
-            recommendations.append("🏷️ Add type annotations to improve code maintainability")
+            recommendations.append("[REMOVED][REMOVED] Add type annotations to improve code maintainability")
         
         # Issue tracking recommendations
         if self.health_data['issue_tracking']['priority_breakdown']['high'] > 5:
@@ -550,7 +550,7 @@ class ProjectHealthDashboard:
         
         print("\n" + "="*60)
         execution_time = (datetime.now() - self.start_time).total_seconds()
-        print(f"⏱️ Analysis completed in {execution_time:.2f} seconds")
+        print(f"[REMOVED][REMOVED] Analysis completed in {execution_time:.2f} seconds")
     
     def quick_check(self) -> Dict[str, Any]:
         """Perform quick health check with essential metrics only."""

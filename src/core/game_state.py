@@ -1087,11 +1087,11 @@ class GameState:
             self.show_tutorial_message(
                 'manager_system',
                 'Manager System Unlocked!',
-                'You've hired your first manager! This unlocks the management system:\n\n'
-                '? Each manager can oversee up to 9 employees\n'
-                '? Unmanaged employees beyond 9 become unproductive (shown with red slash)\n'
-                '? Managers appear as green blobs vs blue employee blobs\n'
-                '? Manager hiring costs 1.5x normal employee cost\n\n'
+                'You\'ve hired your first manager! This unlocks the management system:\n\n'
+                '- Each manager can oversee up to 9 employees\n'
+                '- Unmanaged employees beyond 9 become unproductive (shown with red slash)\n'
+                '- Managers appear as green blobs vs blue employee blobs\n'
+                '- Manager hiring costs 1.5x normal employee cost\n\n'
                 'Plan your team structure carefully as you scale!'
             )
         
@@ -1386,44 +1386,6 @@ class GameState:
         '''Handle espionage risks - delegated to intelligence system manager.'''
         return self.intelligence_system.espionage_risk()
         
-    def _hire_manager(self) -> None:
-        '''Hire a new manager to oversee employees'''
-        # Add manager blob to the system
-        self._add_manager_blob()
-        
-        # Increment staff count for the manager
-        self.staff += 1
-        
-        # Play staff hiring sound
-        if hasattr(self, 'sound_manager') and self.sound_manager.is_enabled():
-            self.sound_manager.play_sound('popup_close')
-        
-        # Add success message
-        self.messages.append(f'Manager hired! Now managing {len(self.managers)} team cluster(s).')
-        
-        # Check if this is the first manager hire (milestone)
-        if len(self.managers) == 1 and not self.manager_milestone_triggered:
-            self.manager_milestone_triggered = True
-            self.messages.append('MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.')
-            
-            # Play milestone sound for this achievement
-            if hasattr(self, 'sound_manager'):
-                self.sound_manager.play_milestone_sound()
-            
-            # Show tutorial for manager system
-            self.show_tutorial_message(
-                'manager_system',
-                'Manager System Unlocked!',
-                'You've hired your first manager! This unlocks the management system:\n\n'
-                '? Each manager can oversee up to 9 employees\n'
-                '? Unmanaged employees beyond 9 become unproductive (shown with red slash)\n'
-                '? Managers appear as green blobs vs blue employee blobs\n'
-                '? Manager hiring costs 1.5x normal employee cost\n\n'
-                'Plan your team structure carefully as you scale!'
-            )
-        
-        return None
-
     def _breakthrough_event(self) -> None:
         if 'secure_cloud' in self.upgrade_effects:
             spike = get_rng().randint(1, 2, f'breakthrough_spike_secure_turn_{self.turn}')
@@ -2387,7 +2349,7 @@ class GameState:
         
         self.researcher_default_quality[researcher_id] = quality
         quality_name = quality.value.title()
-        self.messages.append(f'?? {researcher.name}'s default quality set to {quality_name}')
+        self.messages.append(f'{researcher.name}\'s default quality set to {quality_name}')
         return True
     
     def get_researcher_by_id(self, researcher_id: str) -> Optional[Any]:

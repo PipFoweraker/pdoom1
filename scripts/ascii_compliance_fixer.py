@@ -324,7 +324,7 @@ def main():
             if violations:
                 print(f'Found {len(violations)} violations in {args.file}:')
                 for pos, char, suggestion in violations[:10]:  # Show first 10
-                    print(f'  Position {pos}: '{char}' -> '{suggestion}'')
+                    print(f'  Position {pos}: \'{char}\' -> \'{suggestion}\'')
                 if len(violations) > 10:
                     print(f'  ... and {len(violations) - 10} more')
                 

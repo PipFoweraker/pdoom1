@@ -37,7 +37,7 @@ class BranchInfo:
         self.last_commit_hash = last_commit_hash
         self.author = author
         self.is_merged = is_merged
-        self.age_days = (datetime.now() - last_commit_date).days
+        self.age_days = (datetime.now() - last_commit_date.replace(tzinfo=None)).days
     
     def __repr__(self):
         return f'BranchInfo(name="{self.name}", age_days={self.age_days}, author="{self.author}")'
@@ -74,7 +74,7 @@ class GitRepository:
         cmd_args = ['for-each-ref', '--format=%(refname:short)|%(committerdate:iso)|%(objectname:short)|%(authorname)', 'refs/heads']
         result = self.run_git_command(cmd_args)
         
-        for line in result.stdout.strip().split('\\n'):
+        for line in result.stdout.strip().split('\n'):
             if not line:
                 continue
             parts = line.split('|')
@@ -92,7 +92,7 @@ class GitRepository:
             cmd_args = ['for-each-ref', '--format=%(refname:short)|%(committerdate:iso)|%(objectname:short)|%(authorname)', 'refs/remotes/origin']
             result = self.run_git_command(cmd_args)
             
-            for line in result.stdout.strip().split('\\n'):
+            for line in result.stdout.strip().split('\n'):
                 if not line or 'origin/HEAD' in line:
                     continue
                 parts = line.split('|')
