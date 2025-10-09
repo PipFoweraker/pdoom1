@@ -1,8 +1,50 @@
 # Employee Subtypes System
 # Defines different employee roles and their specializations
 
+from typing import Any, Dict, List, Optional, Callable, TypedDict, Tuple
+
+class EmployeeSubtypeEffects(TypedDict, total=False):
+    """Type definition for employee subtype effects structure.
+    
+    All fields are optional since different subtypes have different effects.
+    """
+    staff: int
+    research_staff: int
+    ops_staff: int
+    admin_staff: int
+    research_progress: int
+    compute: int
+    doom: int
+    reputation: int
+
+class EmployeeSubtype(TypedDict):
+    """Type definition for employee subtype structure.
+    
+    Each subtype contains metadata, cost, effects, and unlock conditions.
+    """
+    name: str
+    description: str
+    cost: int
+    ap_cost: int
+    effects: EmployeeSubtypeEffects
+    specialization: Optional[str]
+    unlock_condition: Optional[Callable[[Any], bool]]
+
+class AvailableSubtype(TypedDict):
+    """Type definition for available subtype with affordability check."""
+    id: str
+    data: EmployeeSubtype
+    affordable: bool
+
+class HiringComplexityLevel(TypedDict):
+    """Type definition for hiring complexity level information."""
+    level: int
+    description: str
+    available_roles: List[str]
+    complexity_note: str
+
 # Employee subtype definitions
-EMPLOYEE_SUBTYPES = {
+EMPLOYEE_SUBTYPES: Dict[str, EmployeeSubtype] = {
     # Basic generalist (existing "Hire Staff" equivalent)
     "generalist": {
         "name": "Generalist",
@@ -117,12 +159,18 @@ EMPLOYEE_SUBTYPES = {
     }
 }
 
-def get_available_subtypes(game_state):
+def get_available_subtypes(game_state: Any) -> List[AvailableSubtype]:
     """
     Returns list of employee subtypes available for hiring based on game state.
     Includes unlock conditions and current availability.
+    
+    Args:
+        game_state (Any): The current game state object
+        
+    Returns:
+        List[AvailableSubtype]: List of available subtypes with affordability info
     """
-    available = []
+    available: List[AvailableSubtype] = []
     
     for subtype_id, subtype in EMPLOYEE_SUBTYPES.items():
         # Check unlock condition
@@ -137,12 +185,18 @@ def get_available_subtypes(game_state):
     
     return available
 
-def get_hiring_complexity_level(game_state):
+def get_hiring_complexity_level(game_state: Any) -> HiringComplexityLevel:
     """
     Determines the complexity level for hiring based on organization size.
     Returns the level and description of what's available.
+    
+    Args:
+        game_state (Any): The current game state object
+        
+    Returns:
+        HiringComplexityLevel: Dictionary with level info and available roles
     """
-    staff_count = game_state.staff
+    staff_count: int = game_state.staff
     
     if staff_count <= 3:
         return {
@@ -166,15 +220,22 @@ def get_hiring_complexity_level(game_state):
             "complexity_note": "Full complexity - all roles available, management required"
         }
 
-def apply_subtype_effects(game_state, subtype_id):
+def apply_subtype_effects(game_state: Any, subtype_id: str) -> Tuple[bool, str]:
     """
     Apply the effects of hiring a specific employee subtype.
     Returns success message and any special effects.
+    
+    Args:
+        game_state (Any): The current game state object
+        subtype_id (str): The employee subtype identifier
+        
+    Returns:
+        Tuple[bool, str]: (success, message) indicating result and description
     """
     if subtype_id not in EMPLOYEE_SUBTYPES:
         return False, f"Unknown employee subtype: {subtype_id}"
     
-    subtype = EMPLOYEE_SUBTYPES[subtype_id]
+    subtype: EmployeeSubtype = EMPLOYEE_SUBTYPES[subtype_id]
     
     # Special handling for manager
     if subtype_id == "manager":
@@ -185,13 +246,14 @@ def apply_subtype_effects(game_state, subtype_id):
         return True, f"Manager hired! Specialized in {subtype['specialization']}."
     
     # Apply standard effects
-    messages = []
+    messages: List[str] = []
     for attribute, value in subtype["effects"].items():
         game_state._add(attribute, value)
-        if value > 0:
-            messages.append(f"+{value} {attribute}")
+        typed_value = int(value) if isinstance(value, (int, float)) else 0
+        if typed_value > 0:
+            messages.append(f"+{typed_value} {attribute}")
         else:
-            messages.append(f"{value} {attribute}")
+            messages.append(f"{typed_value} {attribute}")
     
     # Set subtype for the most recently added employee blob
     if game_state.employee_blobs:
