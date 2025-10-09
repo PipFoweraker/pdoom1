@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Pre-Version Bump Quality Checks for P(Doom)
 
