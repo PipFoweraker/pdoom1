@@ -42,18 +42,18 @@ python tools/web_export/export_leaderboards.py --status
 
 ## Features
 
-### 🌐 Web API Format
+### GLOBAL Web API Format
 - **Compatible JSON Structure**: Matches the exact format expected by pdoom1-website
 - **Metadata Fields**: Includes game version, timestamps, player counts, and export source
 - **Entry Format**: Standard fields like `score`, `player_name`, `date`, `level_reached`, plus game-specific metrics
 
-### 🔒 Privacy Protection  
+### SECURE Privacy Protection  
 - **Anonymous Player Names**: Uses deterministic lab name generation for consistent anonymization
 - **Configurable Levels**: `none`, `standard`, `strict` anonymization levels
 - **Sensitive Data Filtering**: Rounds or excludes sensitive numerical data
 - **Privacy Manifest**: Generates documentation of privacy controls applied
 
-### 📊 Export Options
+### METRICS Export Options
 - **Individual Seeds**: Export leaderboards for specific game seeds
 - **Combined Leaderboard**: Creates unified leaderboard for general display
 - **Batch Export**: Process all available leaderboards at once
@@ -122,10 +122,10 @@ python tools/web_export/export_leaderboards.py --status
 
 This export system provides the missing functionality identified in the website repository:
 
-1. ✅ **Web Export Command**: `python -m src.leaderboard export --format web --output ./web_export/`
-2. ✅ **API-Compatible JSON Format**: Matches website's expected leaderboard structure
-3. ✅ **Privacy-Compliant Export**: Anonymous/pseudonymous options with configurable filtering
-4. ✅ **Folder Structure**: Located in `tools/web_export/` as requested
+1. SUCCESS **Web Export Command**: `python -m src.leaderboard export --format web --output ./web_export/`
+2. SUCCESS **API-Compatible JSON Format**: Matches website's expected leaderboard structure
+3. SUCCESS **Privacy-Compliant Export**: Anonymous/pseudonymous options with configurable filtering
+4. SUCCESS **Folder Structure**: Located in `tools/web_export/` as requested
 
 ### Website Integration Workflow
 
@@ -158,11 +158,11 @@ This export system provides the missing functionality identified in the website 
 ### File Structure
 ```
 tools/web_export/
-├── __init__.py              # Module interface
-├── export_leaderboards.py   # Main export functionality
-├── api_format.py           # Web format conversion
-├── privacy_filter.py       # Privacy controls
-└── README.md              # This documentation
+|--- __init__.py              # Module interface
+|--- export_leaderboards.py   # Main export functionality
+|--- api_format.py           # Web format conversion
+|--- privacy_filter.py       # Privacy controls
+`--- README.md              # This documentation
 ```
 
 ### Error Handling
@@ -192,7 +192,7 @@ python tools/web_export/export_leaderboards.py --seed test-seed --output ./test_
 
 ## Status
 
-✅ **READY FOR PRODUCTION**
+SUCCESS **READY FOR PRODUCTION**
 
 This web export system successfully provides the missing functionality needed to enable global leaderboards between the P(Doom)1 game and the pdoom1-website repository. All requirements from the website's integration specification have been implemented and tested.
 

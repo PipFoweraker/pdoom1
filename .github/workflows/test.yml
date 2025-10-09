@@ -34,7 +34,7 @@ jobs:
         print(f'  Version: {get_version()}')
         print(f'  Display: {get_display_version()}')
         print(f'  Info: {get_version_info()}')
-        print('✓ Version system working correctly')
+        print('CHECKED Version system working correctly')
         "
     
     - name: Run unit tests
@@ -54,12 +54,12 @@ jobs:
         from src.services.version import get_display_version
         print(f'Testing P(Doom) {get_display_version()}')
         gs = GameState('ci-test')
-        print('✓ Game state initializes correctly')
+        print('CHECKED Game state initializes correctly')
         assert gs.logger.game_version == get_display_version()
-        print(f'✓ Logger version consistency: {gs.logger.game_version}')
+        print(f'CHECKED Logger version consistency: {gs.logger.game_version}')
         gs.messages.append('Test message')
         gs.end_turn()
         assert len([m for m in gs.messages if 'Test message' in m]) == 0
-        print('✓ Event log clears correctly on turn end')
-        print('✓ All critical functionality verified')
+        print('CHECKED Event log clears correctly on turn end')
+        print('CHECKED All critical functionality verified')
         "

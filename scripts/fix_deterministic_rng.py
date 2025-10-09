@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Fix deterministic RNG compliance in P(Doom) codebase.
 Replaces 'import random' with proper deterministic RNG imports.

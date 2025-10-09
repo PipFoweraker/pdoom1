@@ -149,7 +149,7 @@ Create a central documentation hub that references all repositories:
 
 **File: `scripts/sync-docs.py`**
 ```python
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Sync important documentation between repositories
 """
@@ -217,7 +217,7 @@ git submodule update
 
 **File: `scripts/status-all.sh`**
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Check status of all repositories
 
 echo "=== P(Doom) Ecosystem Status ==="
@@ -246,7 +246,7 @@ done
 
 **File: `scripts/pull-all.sh`**
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Pull latest changes from all repositories
 
 repos=("pdoom1" "pdoom1-website" "pdoom1-data")
@@ -287,7 +287,7 @@ Create a simple status dashboard you can run:
 
 **File: `scripts/dashboard.py`**
 ```python
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Simple repository status dashboard
 """

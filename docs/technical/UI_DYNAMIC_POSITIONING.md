@@ -12,7 +12,7 @@ Instead, use **dynamic positioning** based on actual rendered component rectangl
 ## The Problem with Static Positioning
 
 ```python
-# ❌ BAD: Static positioning with hardcoded estimates
+# [EMOJI] BAD: Static positioning with hardcoded estimates
 estimated_actions = 15  # This breaks when actions change!
 action_height = int(h * 0.033) 
 buttons_end = base_y + estimated_actions * (action_height + gap)
@@ -28,7 +28,7 @@ log_y = buttons_end + margin
 ## The Elegant Solution: Dynamic Positioning
 
 ```python
-# ✅ GOOD: Dynamic positioning using actual component rects
+# [EMOJI] GOOD: Dynamic positioning using actual component rects
 if hasattr(game_state, 'filtered_action_rects') and game_state.filtered_action_rects:
     last_button_bottom = max(rect.bottom for rect in game_state.filtered_action_rects)
     log_y = last_button_bottom + int(h * 0.015)  # Small adaptive buffer
@@ -37,11 +37,11 @@ else:
 ```
 
 **Benefits:**
-- ✅ Automatically adapts to UI changes
-- ✅ Works with any number of action buttons
-- ✅ Scales properly across screen sizes
-- ✅ Self-maintaining - no manual updates needed
-- ✅ Graceful fallback when components missing
+- [EMOJI] Automatically adapts to UI changes
+- [EMOJI] Works with any number of action buttons
+- [EMOJI] Scales properly across screen sizes
+- [EMOJI] Self-maintaining - no manual updates needed
+- [EMOJI] Graceful fallback when components missing
 
 ## Implementation Pattern
 
@@ -81,14 +81,14 @@ Contains reusable positioning functions:
 
 ## Future UI Development Guidelines
 
-### ✅ DO:
+### [EMOJI] DO:
 - Calculate positions from actual component rectangles
 - Use modular positioning utilities
 - Include graceful fallbacks
 - Store component rects during rendering
 - Design for adaptability
 
-### ❌ DON'T:
+### [EMOJI] DON'T:
 - Hardcode element counts or estimates
 - Use fixed pixel positions
 - Calculate positions without fallbacks
@@ -109,7 +109,7 @@ For existing UI code:
 **Demo Hotfix Session Results:**
 - Replaced hardcoded 15-action estimate with dynamic calculation
 - Activity log now automatically positions below actual action buttons
-- Works seamlessly with submenu consolidation (15→9 actions)
+- Works seamlessly with submenu consolidation (15->9 actions)
 - Zero maintenance required for future action changes
 - Improved code readability and maintainability
 

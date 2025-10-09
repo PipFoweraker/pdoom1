@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Cleanup script for duplicate GitHub issues created by sync tool failure.
 Target: Issues #313-#359 created on 2025-09-16 between 07:05-07:06Z

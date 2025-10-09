@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Test script for the new player experience functionality.
 Validates that the new system works correctly.

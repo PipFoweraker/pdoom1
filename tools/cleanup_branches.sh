@@ -1,4 +1,4 @@
-#!/bin/bash
+# !/bin/bash
 # P(Doom) Branch Cleanup Script
 # This script helps identify and clean up old branches safely
 
@@ -30,14 +30,14 @@ TOTAL_BRANCHES=$(git branch -r | grep -v "HEAD" | wc -l)
 MERGED_BRANCHES=$(git branch -r --merged main | grep -v "HEAD" | wc -l)
 UNMERGED_BRANCHES=$((TOTAL_BRANCHES - MERGED_BRANCHES))
 
-echo -e "${BLUE}📊 Branch Statistics:${NC}"
+echo -e "${BLUE}METRICS Branch Statistics:${NC}"
 echo "  Total remote branches: $TOTAL_BRANCHES"
 echo "  Merged into main: $MERGED_BRANCHES"
 echo "  Unmerged: $UNMERGED_BRANCHES"
 echo ""
 
 # Analyze merged branches that can be safely deleted
-echo -e "${GREEN}✅ SAFE TO DELETE (Already merged into main):${NC}"
+echo -e "${GREEN}SUCCESS SAFE TO DELETE (Already merged into main):${NC}"
 echo ""
 
 echo "Copilot fix branches:"
@@ -64,7 +64,7 @@ done
 echo ""
 
 # Analyze unmerged branches that need review
-echo -e "${YELLOW}🔍 NEEDS REVIEW (Contains unmerged work):${NC}"
+echo -e "${YELLOW}SEARCH NEEDS REVIEW (Contains unmerged work):${NC}"
 echo ""
 
 git branch -r --no-merged main | grep -v "HEAD" | while read branch; do
@@ -76,18 +76,18 @@ done
 echo ""
 
 # New strategy branches
-echo -e "${BLUE}🏠 NEW STRATEGY BRANCHES (Keep these):${NC}"
+echo -e "${BLUE}HOME NEW STRATEGY BRANCHES (Keep these):${NC}"
 for branch in "develop" "release/staging" "experimental/playground" "hotfix/ui-button-shrink"; do
     if branch_exists "$branch"; then
-        echo "  ✓ $branch"
+        echo "  CHECKED $branch"
     else
-        echo "  ✗ $branch (missing)"
+        echo "  FAILED $branch (missing)"
     fi
 done
 echo ""
 
 # Generate cleanup commands
-echo -e "${RED}🗑️  CLEANUP COMMANDS:${NC}"
+echo -e "${RED}TRASH  CLEANUP COMMANDS:${NC}"
 echo ""
 echo "# Delete merged copilot fix branches (run these one by one to be safe):"
 git branch -r --merged main | grep "origin/copilot/fix-" | head -5 | while read branch; do
@@ -111,7 +111,7 @@ git branch -r --merged main | grep -E "origin/[0-9]+-" | while read branch; do
 done
 echo ""
 
-echo -e "${YELLOW}⚠️  MANUAL REVIEW REQUIRED:${NC}"
+echo -e "${YELLOW}WARNING  MANUAL REVIEW REQUIRED:${NC}"
 echo "Before deleting any branches, review unmerged content:"
 git branch -r --no-merged main | grep -v "HEAD" | while read branch; do
     branch_name=${branch#origin/}
@@ -119,7 +119,7 @@ git branch -r --no-merged main | grep -v "HEAD" | while read branch; do
 done
 echo ""
 
-echo -e "${GREEN}✨ RECOMMENDATIONS:${NC}"
+echo -e "${GREEN}SPARKLES RECOMMENDATIONS:${NC}"
 echo "1. Review unmerged branches for valuable content"
 echo "2. Merge useful fixes to 'develop' branch"
 echo "3. Move experimental features to 'experimental/playground'"

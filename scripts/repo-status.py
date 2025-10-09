@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 P(Doom) Ecosystem Repository Status Dashboard
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Test script for the achievements and endgame scenarios functionality.
 Validates Issue #195 implementation - endgame scenarios beyond binary win/lose.

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 GitHub Issue Sync Tool for P(Doom)
 Prevents information loss by ensuring all local markdown issues are tracked in GitHub.

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Test specifically for issue #176: Verifying that hiring dialog blocks clicks to underlying UI elements.
 

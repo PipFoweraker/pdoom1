@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Web Export Script for P(Doom)1 Leaderboards
 

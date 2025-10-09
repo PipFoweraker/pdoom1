@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Demo script to showcase the UI improvements:
 1. Fixed kerning in resource display

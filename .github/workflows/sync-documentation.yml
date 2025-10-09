@@ -75,11 +75,11 @@ jobs:
         id: changes
         run: |
           if [ "${{ github.event.inputs.force_sync }}" == "true" ]; then
-            echo "🔄 Force sync requested - syncing all documentation"
+            echo "REFRESH Force sync requested - syncing all documentation"
             echo "sync_needed=true" >> $GITHUB_OUTPUT
             echo "changed_files=all" >> $GITHUB_OUTPUT
           else
-            echo "🔍 Detecting changed documentation files..."
+            echo "SEARCH Detecting changed documentation files..."
             
             # Check which documentation directories have changes
             changed_docs=""
@@ -90,11 +90,11 @@ jobs:
             done
             
             if [ -n "$changed_docs" ]; then
-              echo "📝 Changed documentation: $changed_docs"
+              echo "MEMO Changed documentation: $changed_docs"
               echo "sync_needed=true" >> $GITHUB_OUTPUT
               echo "changed_files=$changed_docs" >> $GITHUB_OUTPUT
             else
-              echo "ℹ️ No documentation changes detected for ${{ matrix.target.repo }}"
+              echo "INFO No documentation changes detected for ${{ matrix.target.repo }}"
               echo "sync_needed=false" >> $GITHUB_OUTPUT
             fi
           fi
@@ -102,11 +102,11 @@ jobs:
       - name: Sync documentation files
         if: steps.changes.outputs.sync_needed == 'true'
         run: |
-          echo "🚀 Syncing documentation to ${{ matrix.target.repo }}..."
+          echo "LAUNCH Syncing documentation to ${{ matrix.target.repo }}..."
           
           # Load sync configuration
           if [ ! -f "docs/sync-config.yml" ]; then
-            echo "❌ Sync configuration not found"
+            echo "ERROR Sync configuration not found"
             exit 1
           fi
           
@@ -126,7 +126,7 @@ jobs:
               
               target_repo = "${{ matrix.target.repo }}"
               if target_repo not in config['repositories']:
-                  print(f"❌ No configuration found for {target_repo}")
+                  print(f"ERROR No configuration found for {target_repo}")
                   return False
               
               repo_config = config['repositories'][target_repo]
@@ -139,7 +139,7 @@ jobs:
                   destination = Path('target-repo') / dest_path
                   
                   if source.exists():
-                      print(f"📄 Syncing {source} → {destination}")
+                      print(f"DOCUMENT Syncing {source}  ->  {destination}")
                       
                       if source.is_file():
                           # Copy single file with processing
@@ -207,7 +207,7 @@ jobs:
         if: steps.changes.outputs.sync_needed == 'true'
         working-directory: target-repo
         run: |
-          echo "📊 Documentation Sync Summary" > sync-summary.md
+          echo "METRICS Documentation Sync Summary" > sync-summary.md
           echo "Repository: ${{ matrix.target.repo }}" >> sync-summary.md
           echo "Source commit: ${{ github.sha }}" >> sync-summary.md
           echo "Sync timestamp: $(date -Iseconds)" >> sync-summary.md
@@ -215,10 +215,10 @@ jobs:
           
           # List changed files
           if [ -n "$(git status --porcelain)" ]; then
-            echo "📝 Files changed:" >> sync-summary.md
+            echo "MEMO Files changed:" >> sync-summary.md
             git status --porcelain | sed 's/^/  /' >> sync-summary.md
           else
-            echo "ℹ️ No files changed" >> sync-summary.md
+            echo "INFO No files changed" >> sync-summary.md
           fi
           
           cat sync-summary.md
@@ -254,18 +254,18 @@ jobs:
             # Push to repository
             git push origin main
             
-            echo "✅ Successfully synced documentation to ${{ matrix.target.repo }}"
+            echo "SUCCESS Successfully synced documentation to ${{ matrix.target.repo }}"
           else
-            echo "ℹ️ No documentation changes to commit for ${{ matrix.target.repo }}"
+            echo "INFO No documentation changes to commit for ${{ matrix.target.repo }}"
           fi
           
       - name: Report sync status
         if: always()
         run: |
           if [ "${{ steps.changes.outputs.sync_needed }}" == "true" ]; then
-            echo "📋 Sync completed for ${{ matrix.target.repo }}"
+            echo "CLIPBOARD Sync completed for ${{ matrix.target.repo }}"
           else
-            echo "⏭️ Sync skipped for ${{ matrix.target.repo }} (no changes)"
+            echo "SKIP Sync skipped for ${{ matrix.target.repo }} (no changes)"
           fi
           
   notify-completion:
@@ -276,7 +276,7 @@ jobs:
     steps:
       - name: Notification
         run: |
-          echo "🎯 Documentation sync workflow completed"
+          echo "TARGET Documentation sync workflow completed"
           echo "Trigger: ${{ github.event_name }}"
           echo "Commit: ${{ github.sha }}"
           

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Script to fix RNG initialization issues in test files.
 Replace get_rng().seed() calls that happen before GameState initialization.

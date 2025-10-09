@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Test for issue #181: Ensure hiring dialog covers functionality of removed redundant actions.
 """

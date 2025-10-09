@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Quick GitHub Token Setup Guide for P(Doom) Cross-Repository Sync
 

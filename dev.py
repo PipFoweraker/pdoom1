@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Convenience launcher for P(Doom) development tools.
 Simply forwards all arguments to the main dev tool.

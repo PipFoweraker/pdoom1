@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 GitHub Token Setup Helper for VS Code Users
 Helps set up cross-repository token through VS Code's GitHub integration

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 ASCII Compliance Fixer - Remove all Unicode characters from project files
 """

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Test script to validate the demo hotfix session fixes:
 1. Activity log width extension
@@ -37,10 +37,10 @@ def test_activity_log_width():
     print(f"Gap between log and button: {gap}px")
     
     if gap >= 10:  # At least 10px gap is reasonable
-        print("✓ Activity log width is appropriate - good gap to END TURN button")
+        print("CHECKED Activity log width is appropriate - good gap to END TURN button")
         return True
     else:
-        print("✗ Activity log might overlap with END TURN button")
+        print("FAILED Activity log might overlap with END TURN button")
         return False
 
 
@@ -67,7 +67,7 @@ def test_action_button_click_detection():
     # Check if filtered_action_rects is properly set
     if hasattr(gs, 'filtered_action_rects') and gs.filtered_action_rects:
         num_rects = len(gs.filtered_action_rects)
-        print(f"✓ Found {num_rects} action button rectangles stored for click detection")
+        print(f"CHECKED Found {num_rects} action button rectangles stored for click detection")
         
         # Check if rectangles are reasonable (not zero height/width)
         valid_rects = 0
@@ -77,13 +77,13 @@ def test_action_button_click_detection():
                 print(f"  Action {i+1}: {rect.width}x{rect.height} at ({rect.x}, {rect.y})")
         
         if valid_rects == num_rects:
-            print(f"✓ All {valid_rects} action button rectangles have valid dimensions")
+            print(f"CHECKED All {valid_rects} action button rectangles have valid dimensions")
             return True
         else:
-            print(f"✗ Only {valid_rects}/{num_rects} rectangles have valid dimensions")
+            print(f"FAILED Only {valid_rects}/{num_rects} rectangles have valid dimensions")
             return False
     else:
-        print("✗ No action button rectangles found - click detection will fail")
+        print("FAILED No action button rectangles found - click detection will fail")
         return False
 
 
@@ -97,10 +97,10 @@ def main():
     
     print("\n" + "=" * 40)
     if test1_passed and test2_passed:
-        print("✓ ALL TESTS PASSED - Demo hotfixes are working correctly!")
+        print("CHECKED ALL TESTS PASSED - Demo hotfixes are working correctly!")
         return True
     else:
-        print("✗ Some tests failed - fixes need review")
+        print("FAILED Some tests failed - fixes need review")
         return False
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 P(Doom)1 Leaderboard Module Entry Point
 

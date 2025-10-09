@@ -1035,7 +1035,7 @@ quality = gs.get_task_quality_setting(task_name, researcher_id)
 ```python
 audit_result = gs.execute_technical_debt_audit()
 # Returns: risk_level, total_debt, speed_penalty_percent, 
-#          accident_chance_percent, recommendations, category_breakdown
+# accident_chance_percent, recommendations, category_breakdown
 ```
 
 **Risk Indicators:**

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """Debug typography module loading"""
 
 print("Starting debug...")

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 P(Doom) Development Standards Enforcement Script
 
@@ -135,20 +135,54 @@ class StandardsEnforcer:
         return success
     
     def check_ascii_compliance(self) -> bool:
-        """Check ASCII-only compliance."""
-        print("\n[EMOJI] ASCII Compliance Check")
+        """Check ASCII-only compliance and optionally fix issues."""
+        print("\n[ASCII] ASCII Compliance Check")
         print("-" * 24)
         
         success = True
         
+        # First, check for Unicode content
         unicode_files = self._find_unicode_content()
         if unicode_files:
-            self.errors.append("Non-ASCII content found:")
-            for file_path, line_num, char in unicode_files:
-                self.errors.append(f"  {file_path}:{line_num} - Non-ASCII character: {repr(char)}")
-            success = False
+            print(f"[WARNING] Found {len(unicode_files)} files with Unicode content")
+            
+            # Try to auto-fix using intelligent ASCII converter
+            try:
+                converter_path = self.project_root / "scripts" / "intelligent_ascii_converter.py"
+                if converter_path.exists():
+                    print("[INFO] Attempting auto-fix with intelligent ASCII converter...")
+                    
+                    # Run the intelligent converter
+                    import subprocess
+                    result = subprocess.run([
+                        sys.executable, str(converter_path), "--dry-run"
+                    ], capture_output=True, text=True, cwd=self.project_root)
+                    
+                    if result.returncode == 0:
+                        if "All files are ASCII compliant" in result.stdout:
+                            print("[SUCCESS] All files are already ASCII compliant")
+                        else:
+                            print("[ACTION] Unicode characters found. Run the following to fix:")
+                            print(f"  python {converter_path}")
+                            self.warnings.append("Unicode content can be auto-fixed with intelligent ASCII converter")
+                            success = False
+                    else:
+                        print(f"[ERROR] ASCII converter failed: {result.stderr}")
+                        self.errors.append("ASCII compliance check failed")
+                        success = False
+                else:
+                    # Fallback to old behavior
+                    self.errors.append("Non-ASCII content found:")
+                    for file_path, line_num, char in unicode_files:
+                        self.errors.append(f"  {file_path}:{line_num} - Non-ASCII character: {repr(char)}")
+                    success = False
+                    
+            except Exception as e:
+                print(f"[ERROR] ASCII compliance check failed: {e}")
+                self.errors.append(f"ASCII compliance check error: {e}")
+                success = False
         else:
-            print("[EMOJI] All content is ASCII-compliant")
+            print("[SUCCESS] All content is ASCII-compliant")
         
         return success
     
@@ -315,23 +349,29 @@ class StandardsEnforcer:
         """Find non-ASCII content in files."""
         unicode_issues = []
         
-        for py_file in self.project_root.rglob("*.py"):
-            if ".venv" in str(py_file) or "__pycache__" in str(py_file):
-                continue
-                
-            try:
-                with open(py_file, 'r', encoding='utf-8') as f:
-                    for line_num, line in enumerate(f, 1):
-                        for char in line:
-                            if ord(char) > 127:  # Non-ASCII
-                                unicode_issues.append((
-                                    str(py_file.relative_to(self.project_root)), 
-                                    line_num, 
-                                    char
-                                ))
-                                break  # One per line is enough
-            except (UnicodeDecodeError, PermissionError):
-                continue
+        # File patterns to check
+        patterns = ["*.py", "*.md", "*.txt", "*.json", "*.yaml", "*.yml", "*.toml", "*.cfg", "*.sh"]
+        exclude_dirs = {'.git', '__pycache__', '.venv', 'venv', 'node_modules', '.pytest_cache'}
+        
+        for pattern in patterns:
+            for file_path in self.project_root.rglob(pattern):
+                # Skip files in excluded directories
+                if any(excluded in file_path.parts for excluded in exclude_dirs):
+                    continue
+                    
+                try:
+                    with open(file_path, 'r', encoding='utf-8') as f:
+                        for line_num, line in enumerate(f, 1):
+                            for char in line:
+                                if ord(char) > 127:  # Non-ASCII
+                                    unicode_issues.append((
+                                        str(file_path.relative_to(self.project_root)), 
+                                        line_num, 
+                                        char
+                                    ))
+                                    break  # One per line is enough
+                except (UnicodeDecodeError, PermissionError):
+                    continue
         
         return unicode_issues
     

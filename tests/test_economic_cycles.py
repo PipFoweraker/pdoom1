@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Test script for Economic Cycles & Funding Volatility system (Issue #192)
 """

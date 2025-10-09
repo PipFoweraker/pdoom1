@@ -185,7 +185,7 @@ jobs:
 
 **File: `scripts/sync-docs.py`**
 ```python
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Cross-repository documentation synchronization tool
 """
@@ -403,7 +403,7 @@ This endpoint is part of the {{REPO_NAME}} service in the P(Doom) ecosystem.
 
 **File: `scripts/validate-links.py`**
 ```python
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Validate cross-repository documentation links
 """

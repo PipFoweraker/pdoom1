@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Menu System Diagnostic Tests
 Comprehensive testing for menu layout, positioning, and behavior across different game states.

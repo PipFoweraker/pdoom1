@@ -240,7 +240,7 @@ jobs:
         Automated sync from: ${{ github.repository }}@${{ github.sha }}"
           
           git push origin main
-          echo "✅ Successfully updated website with game version v${{ steps.game_details.outputs.game_version }}"
+          echo "SUCCESS Successfully updated website with game version v${{ steps.game_details.outputs.game_version }}"
         fi
         
     - name: Update Version History
@@ -311,7 +311,7 @@ jobs:
           git add data/version-history.json
           git commit -m "update: version history with v${{ steps.game_details.outputs.game_version }}"
           git push origin main
-          echo "✅ Updated version history"
+          echo "SUCCESS Updated version history"
         fi
         
     - name: Trigger Website Rebuild
@@ -332,7 +332,7 @@ jobs:
             }
           }'
         
-        echo "✅ Triggered website rebuild"
+        echo "SUCCESS Triggered website rebuild"
         
     - name: Notify Data Repository (Future)
       env:
@@ -366,11 +366,11 @@ jobs:
     - name: Summary
       run: |
         echo "=== Game Version Sync Complete ==="
-        echo "✅ Game Version: v${{ steps.game_details.outputs.game_version }}"
-        echo "✅ Website Repository: Updated with release content"
-        echo "✅ Version History: Updated with new release"
-        echo "✅ Website Rebuild: Triggered"
-        echo "🔄 Data Integration: Placeholder ready for future implementation"
+        echo "SUCCESS Game Version: v${{ steps.game_details.outputs.game_version }}"
+        echo "SUCCESS Website Repository: Updated with release content"
+        echo "SUCCESS Version History: Updated with new release"
+        echo "SUCCESS Website Rebuild: Triggered"
+        echo "REFRESH Data Integration: Placeholder ready for future implementation"
         echo ""
         echo "Website will be updated with:"
         echo "- Release notes at /game/releases/v${{ steps.game_details.outputs.game_version }}"

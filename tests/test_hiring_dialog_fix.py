@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Test specifically for issue #177: Verifying that hiring staff screen buttons are clickable.
 """

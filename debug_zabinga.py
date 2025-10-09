@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """Debug zabinga sound issue"""
 
 from src.core.game_state import GameState

@@ -31,11 +31,11 @@ python -m src.leaderboard status
 - **Anonymous Competition**: Deterministic lab names preserve privacy while enabling rankings
 - **API Compatibility**: Perfect JSON format matching for website integration
 - **Export Validation**: Built-in format checking and privacy manifest generation
-- **[SHIELD] Enhanced Stability**: Comprehensive type annotations and testing
-- **[CLOCK] Strategic Gameplay**: 12-13 turn games with meaningful decision depth
-- **[DOLLAR] Bootstrap Economics**: $100k starting funds with realistic costs
-- **[TROPHY] Competitive Leaderboards**: Seed-specific competition tracking
-- **[SPEAKER] Audio Experience**: Professional sound effects for demonstrations
+- **Enhanced Stability**: Comprehensive type annotations and testing
+- **Strategic Gameplay**: 12-13 turn games with meaningful decision depth
+- **Bootstrap Economics**: $100k starting funds with realistic costs
+- **Competitive Leaderboards**: Seed-specific competition tracking
+- **Audio Experience**: Professional sound effects for demonstrations
 
 ## GAME Core Features
 
