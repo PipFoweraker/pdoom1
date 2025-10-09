@@ -1,9 +1,9 @@
-"""
+'''
 Developer Mode System for P(Doom)
 
 Provides centralized control for development features including verbose logging,
 debug tools, and development UI indicators.
-"""
+'''
 
 import os
 import json
@@ -12,17 +12,17 @@ from src.services.verbose_logging import init_verbose_logging, LogLevel, is_logg
 
 
 class DevModeManager:
-    """Manages developer mode state and features across the application."""
+    '''Manages developer mode state and features across the application.'''
     
     def __init__(self):
         self.dev_mode_enabled = False
         self.verbose_logging_enabled = False
         self.debug_console_enabled = True  # Debug console is separate from dev mode
-        self.dev_config_file = "dev_mode.json"
+        self.dev_config_file = 'dev_mode.json'
         self._load_dev_config()
     
     def _load_dev_config(self):
-        """Load dev mode configuration from file if it exists."""
+        '''Load dev mode configuration from file if it exists.'''
         if os.path.exists(self.dev_config_file):
             try:
                 with open(self.dev_config_file, 'r') as f:
@@ -35,7 +35,7 @@ class DevModeManager:
                 pass
     
     def _save_dev_config(self):
-        """Save current dev mode configuration to file."""
+        '''Save current dev mode configuration to file.'''
         config = {
             'dev_mode_enabled': self.dev_mode_enabled,
             'verbose_logging_enabled': self.verbose_logging_enabled,
@@ -48,7 +48,7 @@ class DevModeManager:
             pass  # Fail silently if we can't save
     
     def toggle_dev_mode(self) -> bool:
-        """Toggle developer mode on/off. Returns new state."""
+        '''Toggle developer mode on/off. Returns new state.'''
         self.dev_mode_enabled = not self.dev_mode_enabled
         
         # When enabling dev mode, also enable verbose logging by default
@@ -59,21 +59,21 @@ class DevModeManager:
         return self.dev_mode_enabled
     
     def toggle_verbose_logging(self) -> bool:
-        """Toggle verbose logging on/off. Returns new state."""
+        '''Toggle verbose logging on/off. Returns new state.'''
         self.verbose_logging_enabled = not self.verbose_logging_enabled
         self._save_dev_config()
         return self.verbose_logging_enabled
     
     def is_dev_mode_enabled(self) -> bool:
-        """Check if developer mode is currently enabled."""
+        '''Check if developer mode is currently enabled.'''
         return self.dev_mode_enabled
     
     def is_verbose_logging_enabled(self) -> bool:
-        """Check if verbose logging is currently enabled."""
+        '''Check if verbose logging is currently enabled.'''
         return self.verbose_logging_enabled
     
     def initialize_verbose_logging(self, game_seed: str):
-        """Initialize verbose logging system if enabled."""
+        '''Initialize verbose logging system if enabled.'''
         if self.verbose_logging_enabled:
             if not is_logging_enabled():
                 log_level = LogLevel.DEBUG if self.dev_mode_enabled else LogLevel.VERBOSE
@@ -85,20 +85,20 @@ class DevModeManager:
                 )
     
     def get_dev_status_text(self) -> str:
-        """Get text to display in dev mode indicator."""
+        '''Get text to display in dev mode indicator.'''
         if not self.dev_mode_enabled:
-            return ""
+            return ''
         
-        status_parts = ["DEV"]
+        status_parts = ['DEV']
         if self.verbose_logging_enabled:
-            status_parts.append("VERBOSE")
+            status_parts.append('VERBOSE')
         if is_logging_enabled():
-            status_parts.append("LOGGING")
+            status_parts.append('LOGGING')
         
-        return " | ".join(status_parts)
+        return ' | '.join(status_parts)
     
     def get_dev_tools_available(self) -> Dict[str, Any]:
-        """Get list of available dev tools and their status."""
+        '''Get list of available dev tools and their status.'''
         return {
             'screenshot': {
                 'name': 'Take Screenshot',
@@ -139,7 +139,7 @@ _dev_mode_manager: Optional[DevModeManager] = None
 
 
 def get_dev_mode_manager() -> DevModeManager:
-    """Get the global dev mode manager instance."""
+    '''Get the global dev mode manager instance.'''
     global _dev_mode_manager
     if _dev_mode_manager is None:
         _dev_mode_manager = DevModeManager()
@@ -147,15 +147,15 @@ def get_dev_mode_manager() -> DevModeManager:
 
 
 def is_dev_mode_enabled() -> bool:
-    """Quick check if dev mode is enabled."""
+    '''Quick check if dev mode is enabled.'''
     return get_dev_mode_manager().is_dev_mode_enabled()
 
 
 def toggle_dev_mode() -> bool:
-    """Quick toggle for dev mode."""
+    '''Quick toggle for dev mode.'''
     return get_dev_mode_manager().toggle_dev_mode()
 
 
 def get_dev_status_text() -> str:
-    """Quick access to dev status text."""
+    '''Quick access to dev status text.'''
     return get_dev_mode_manager().get_dev_status_text()

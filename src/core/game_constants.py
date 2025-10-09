@@ -1,12 +1,12 @@
-"""
+'''
 Game constants and default values extracted from game_state.py
 
 This module contains all the constant values, default settings, and magic numbers
 used throughout the game to improve maintainability and reduce code duplication.
-"""
+'''
 
 # File paths
-SCORE_FILE = "local_highscore.json"
+SCORE_FILE = 'local_highscore.json'
 
 # Default game values (matching current config reality)
 DEFAULT_STARTING_RESOURCES = {

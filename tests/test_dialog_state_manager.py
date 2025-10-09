@@ -1,4 +1,4 @@
-"""
+'''
 Unit tests for DialogStateManager - Modal dialog state management
 
 Tests the centralized dialog state handling logic to ensure proper
@@ -6,7 +6,7 @@ modal blocking, state validation, and None vs False consistency.
 
 Follows patterns established in test_turn6_spacebar_regression.py and
 provides comprehensive coverage for dialog state management.
-"""
+'''
 
 import unittest
 from unittest.mock import Mock, patch
@@ -16,10 +16,10 @@ from src.core.game_state import GameState
 
 
 class TestDialogStateManager(unittest.TestCase):
-    """Unit tests for DialogStateManager modal dialog handling."""
+    '''Unit tests for DialogStateManager modal dialog handling.'''
     
     def setUp(self):
-        """Set up test fixtures with mock game state."""
+        '''Set up test fixtures with mock game state.'''
         self.game_state = Mock(spec=GameState)
         
         # Initialize all dialog attributes to None (must set all for proper testing)
@@ -48,13 +48,13 @@ class TestDialogStateManager(unittest.TestCase):
         self.dialog_manager = DialogStateManager(self.game_state)
     
     def test_no_active_dialogs_initially(self):
-        """Test that no dialogs are active initially."""
+        '''Test that no dialogs are active initially.'''
         self.assertFalse(self.dialog_manager.has_blocking_dialog())
         self.assertEqual(len(self.dialog_manager.get_active_dialogs()), 0)
         self.assertIsNone(self.dialog_manager.get_blocking_dialog())
     
     def test_hiring_dialog_detection(self):
-        """Test detection of active hiring dialog."""
+        '''Test detection of active hiring dialog.'''
         # Set hiring dialog as active
         self.game_state.pending_hiring_dialog = {'type': 'hiring', 'candidates': []}
         
@@ -64,7 +64,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertIn(DialogType.HIRING, self.dialog_manager.get_active_dialogs())
     
     def test_fundraising_dialog_detection(self):
-        """Test detection of active fundraising dialog."""
+        '''Test detection of active fundraising dialog.'''
         self.game_state.pending_fundraising_dialog = {'type': 'fundraising'}
         
         self.assertTrue(self.dialog_manager.is_dialog_active(DialogType.FUNDRAISING))
@@ -72,7 +72,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertEqual(self.dialog_manager.get_blocking_dialog(), DialogType.FUNDRAISING)
     
     def test_research_dialog_detection(self):
-        """Test detection of active research dialog."""
+        '''Test detection of active research dialog.'''
         self.game_state.pending_research_dialog = {'type': 'research'}
         
         self.assertTrue(self.dialog_manager.is_dialog_active(DialogType.RESEARCH))
@@ -80,7 +80,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertEqual(self.dialog_manager.get_blocking_dialog(), DialogType.RESEARCH)
     
     def test_intelligence_dialog_detection(self):
-        """Test detection of active intelligence dialog."""
+        '''Test detection of active intelligence dialog.'''
         self.game_state.pending_intelligence_dialog = {'type': 'intelligence'}
         
         self.assertTrue(self.dialog_manager.is_dialog_active(DialogType.INTELLIGENCE))
@@ -88,7 +88,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertEqual(self.dialog_manager.get_blocking_dialog(), DialogType.INTELLIGENCE)
     
     def test_none_vs_false_handling(self):
-        """Test that None and False are both treated as inactive."""
+        '''Test that None and False are both treated as inactive.'''
         # Test None (correct inactive state)
         self.game_state.pending_hiring_dialog = None
         self.assertFalse(self.dialog_manager.is_dialog_active(DialogType.HIRING))
@@ -98,7 +98,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertFalse(self.dialog_manager.is_dialog_active(DialogType.HIRING))
     
     def test_multiple_dialogs_priority(self):
-        """Test dialog priority when multiple dialogs are active."""
+        '''Test dialog priority when multiple dialogs are active.'''
         # Set up multiple dialogs
         self.game_state.pending_hiring_dialog = {'type': 'hiring'}
         self.game_state.pending_fundraising_dialog = {'type': 'fundraising'}
@@ -114,7 +114,7 @@ class TestDialogStateManager(unittest.TestCase):
     
     @patch('src.features.onboarding.onboarding')
     def test_tutorial_priority(self, mock_onboarding):
-        """Test that tutorial has highest priority."""
+        '''Test that tutorial has highest priority.'''
         # Set tutorial active
         mock_onboarding.show_tutorial_overlay = True
         
@@ -126,7 +126,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertEqual(self.dialog_manager.get_blocking_dialog(), DialogType.TUTORIAL)
     
     def test_dismiss_hiring_dialog(self):
-        """Test dismissing hiring dialog."""
+        '''Test dismissing hiring dialog.'''
         self.game_state.pending_hiring_dialog = {'type': 'hiring'}
         
         result = self.dialog_manager.dismiss_dialog(DialogType.HIRING)
@@ -135,7 +135,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.game_state.dismiss_hiring_dialog.assert_called_once()
     
     def test_dismiss_fundraising_dialog(self):
-        """Test dismissing fundraising dialog."""
+        '''Test dismissing fundraising dialog.'''
         self.game_state.pending_fundraising_dialog = {'type': 'fundraising'}
         
         result = self.dialog_manager.dismiss_dialog(DialogType.FUNDRAISING)
@@ -144,7 +144,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.game_state.dismiss_fundraising_dialog.assert_called_once()
     
     def test_dismiss_research_dialog(self):
-        """Test dismissing research dialog."""
+        '''Test dismissing research dialog.'''
         self.game_state.pending_research_dialog = {'type': 'research'}
         
         result = self.dialog_manager.dismiss_dialog(DialogType.RESEARCH)
@@ -153,7 +153,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.game_state.dismiss_research_dialog.assert_called_once()
     
     def test_dismiss_intelligence_dialog(self):
-        """Test dismissing intelligence dialog."""
+        '''Test dismissing intelligence dialog.'''
         self.game_state.pending_intelligence_dialog = {'type': 'intelligence'}
         
         result = self.dialog_manager.dismiss_dialog(DialogType.INTELLIGENCE)
@@ -163,7 +163,7 @@ class TestDialogStateManager(unittest.TestCase):
     
     @patch('src.features.onboarding.onboarding')
     def test_dismiss_tutorial(self, mock_onboarding):
-        """Test dismissing tutorial."""
+        '''Test dismissing tutorial.'''
         mock_onboarding.show_tutorial_overlay = True
         mock_onboarding.dismiss_tutorial = Mock()
         
@@ -173,7 +173,7 @@ class TestDialogStateManager(unittest.TestCase):
         mock_onboarding.dismiss_tutorial.assert_called_once()
     
     def test_dismiss_inactive_dialog(self):
-        """Test dismissing a dialog that isn't active."""
+        '''Test dismissing a dialog that isn't active.'''
         # No hiring dialog active
         self.game_state.pending_hiring_dialog = None
         
@@ -183,7 +183,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertFalse(result)
     
     def test_dismiss_all_dialogs(self):
-        """Test dismissing all active dialogs."""
+        '''Test dismissing all active dialogs.'''
         # Set up multiple active dialogs
         self.game_state.pending_hiring_dialog = {'type': 'hiring'}
         self.game_state.pending_fundraising_dialog = {'type': 'fundraising'}
@@ -198,49 +198,49 @@ class TestDialogStateManager(unittest.TestCase):
         self.game_state.dismiss_research_dialog.assert_called_once()
     
     def test_blocking_feedback_messages(self):
-        """Test appropriate blocking feedback messages."""
+        '''Test appropriate blocking feedback messages.'''
         # Test hiring dialog feedback
         self.game_state.pending_hiring_dialog = {'type': 'hiring'}
         message = self.dialog_manager.get_blocking_feedback_message()
-        self.assertIn("hiring dialog", message)
+        self.assertIn('hiring dialog', message)
         
         # Test fundraising dialog feedback
         self.game_state.pending_hiring_dialog = None
         self.game_state.pending_fundraising_dialog = {'type': 'fundraising'}
         message = self.dialog_manager.get_blocking_feedback_message()
-        self.assertIn("funding dialog", message)
+        self.assertIn('funding dialog', message)
         
         # Test research dialog feedback
         self.game_state.pending_fundraising_dialog = None
         self.game_state.pending_research_dialog = {'type': 'research'}
         message = self.dialog_manager.get_blocking_feedback_message()
-        self.assertIn("research dialog", message)
+        self.assertIn('research dialog', message)
     
     @patch('src.features.onboarding.onboarding')
     def test_tutorial_feedback_message(self, mock_onboarding):
-        """Test tutorial blocking feedback message."""
+        '''Test tutorial blocking feedback message.'''
         mock_onboarding.show_tutorial_overlay = True
         
         message = self.dialog_manager.get_blocking_feedback_message()
-        self.assertIn("tutorial", message)
+        self.assertIn('tutorial', message)
     
     def test_validate_dialog_states_no_issues(self):
-        """Test state validation with no issues."""
+        '''Test state validation with no issues.'''
         # All dialogs properly set to None
         issues = self.dialog_manager.validate_dialog_states()
         self.assertEqual(len(issues), 0)
     
     def test_validate_dialog_states_false_issue(self):
-        """Test state validation detects False values."""
+        '''Test state validation detects False values.'''
         # Set a dialog to False instead of None
         self.game_state.pending_hiring_dialog = False
         
         issues = self.dialog_manager.validate_dialog_states()
         self.assertGreater(len(issues), 0)
-        self.assertTrue(any("should be None" in issue for issue in issues))
+        self.assertTrue(any('should be None' in issue for issue in issues))
     
     def test_emergency_cleanup(self):
-        """Test emergency cleanup of stuck dialog states."""
+        '''Test emergency cleanup of stuck dialog states.'''
         # Set up multiple stuck dialogs (some with data, some False)
         self.game_state.pending_hiring_dialog = {'stuck': True}
         self.game_state.pending_fundraising_dialog = False  # Wrong state
@@ -258,7 +258,7 @@ class TestDialogStateManager(unittest.TestCase):
     
     @patch('pygame.time.get_ticks')
     def test_blocking_state_caching(self, mock_time):
-        """Test that blocking state is cached for performance."""
+        '''Test that blocking state is cached for performance.'''
         mock_time.return_value = 0
         
         # First call should calculate
@@ -280,7 +280,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertFalse(result3)  # Should detect the change
     
     def test_context_manager_usage(self):
-        """Test using dialog manager as context manager."""
+        '''Test using dialog manager as context manager.'''
         with self.dialog_manager as dm:
             # Set up a dialog
             self.game_state.pending_hiring_dialog = {'type': 'hiring'}
@@ -292,7 +292,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertIsNotNone(self.dialog_manager)
     
     def test_context_manager_validation_on_exit(self):
-        """Test context manager performs validation on exit."""
+        '''Test context manager performs validation on exit.'''
         # This is more of a smoke test since the validation logic
         # is already tested separately
         with self.dialog_manager:
@@ -302,7 +302,7 @@ class TestDialogStateManager(unittest.TestCase):
         self.assertTrue(True)
     
     def test_dialog_type_coverage(self):
-        """Test that all dialog types are properly handled."""
+        '''Test that all dialog types are properly handled.'''
         # This ensures we haven't missed any dialog types
         all_dialog_types = {
             DialogType.HIRING,
@@ -322,7 +322,7 @@ class TestDialogStateManager(unittest.TestCase):
             self.dialog_manager.dismiss_dialog(dialog_type)
     
     def test_get_active_dialogs_immutable(self):
-        """Test that get_active_dialogs returns an immutable copy."""
+        '''Test that get_active_dialogs returns an immutable copy.'''
         self.game_state.pending_hiring_dialog = {'type': 'hiring'}
         
         active_dialogs1 = self.dialog_manager.get_active_dialogs()

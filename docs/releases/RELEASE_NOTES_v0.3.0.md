@@ -4,7 +4,7 @@
 ## [TARGET] **Major Features**
 
 ### [EMOJI][EMOJI] **Longtermist Date Format**
-Transform your temporal perspective with revolutionary 5-digit year dates! Experience dates like "21/May/02025" instead of "21/May/25" for enhanced long-term thinking immersion.
+Transform your temporal perspective with revolutionary 5-digit year dates! Experience dates like '21/May/02025' instead of '21/May/25' for enhanced long-term thinking immersion.
 
 - **Complete GameClock overhaul** with backward compatibility
 - **Enhanced UI integration** showing longtermist dates in turn counter
@@ -16,7 +16,7 @@ Universal keyboard navigation framework establishing the foundation for comprehe
 
 - **Systematic keyboard navigation** across all UI components
 - **Screen reader compatibility** preparation
-- **"Every button has one default key"** design principle implementation
+- **'Every button has one default key'** design principle implementation
 - **Enhanced navigation patterns** for improved usability
 
 ### [EMOJI] **Comprehensive Bug Discovery**
@@ -66,7 +66,7 @@ Systematic code audit revealing and documenting critical stability issues for al
 ### **For Existing Players**
 ```bash
 git pull origin main
-python -c "from src.services.version import get_display_version; print(f'[EMOJI] {get_display_version()}')"
+python -c 'from src.services.version import get_display_version; print(f'[EMOJI] {get_display_version()}')'
 ```
 
 ### **For New Players**

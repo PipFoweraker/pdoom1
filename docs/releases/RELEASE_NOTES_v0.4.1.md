@@ -1,4 +1,4 @@
-# Release Notes: P(Doom) v0.4.1 "Bootstrap Economic Calibration"
+# Release Notes: P(Doom) v0.4.1 'Bootstrap Economic Calibration'
 
 **Release Date**: September 13, 2025  
 **Branch**: feature/leaderboard-activation-v0.4.1  
@@ -24,11 +24,11 @@
 ### [PARTY] Spectacular Game Over Screen
 **Visual celebration system for achievements**
 
-- **"NEW HIGH SCORE!" Celebration**: Animated text with glow effects for achievements
+- **'NEW HIGH SCORE!' Celebration**: Animated text with glow effects for achievements
 - **Mini Leaderboard Preview**: Top 5 players displayed with highlighting
 - **Enhanced Statistics**: Lab names, economic model, and detailed performance metrics
 - **Rank Visualization**: Gold/silver/bronze coloring for top performers
-- **Natural Flow Progression**: Prominent "View Full Leaderboard" option
+- **Natural Flow Progression**: Prominent 'View Full Leaderboard' option
 
 **User Experience Impact:**
 - Professional presentation worthy of party demonstrations
@@ -53,8 +53,8 @@
 ### [TARGET] Context-Aware User Experience
 **Smart interface adaptation based on user context**
 
-- **Dynamic Button Text**: "Launch New Game" vs "Play Again" based on access method
-- **Main Menu Integration**: Direct "View Leaderboard" access for faster testing
+- **Dynamic Button Text**: 'Launch New Game' vs 'Play Again' based on access method
+- **Main Menu Integration**: Direct 'View Leaderboard' access for faster testing
 - **Error Handling**: Graceful None seed handling for edge cases
 - **Navigation Improvements**: Natural flow between game states
 
@@ -80,7 +80,7 @@
 
 ### Critical Fixes
 - **Sound Configuration**: Fixed sound being disabled by default
-- **Main Menu Navigation**: Added missing "View Leaderboard" option
+- **Main Menu Navigation**: Added missing 'View Leaderboard' option
 - **Leaderboard Access**: Fixed crashes when accessing leaderboard without game state
 - **Button Text Context**: Fixed hardcoded menu references in event handlers
 
@@ -115,7 +115,7 @@ python main.py
 1. **Opening Hook**: $100k bootstrap AI safety lab vs well-funded competition
 2. **Interactive Audio**: Engaging sound feedback for all actions
 3. **Achievement Moment**: Spectacular high score celebration
-4. **Competitive Hook**: "Try the same seed to compare strategies"
+4. **Competitive Hook**: 'Try the same seed to compare strategies'
 
 ## Development Statistics
 

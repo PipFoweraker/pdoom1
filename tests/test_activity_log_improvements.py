@@ -3,17 +3,17 @@ from src.core.game_state import GameState
 
 
 class TestActivityLogTooltip(unittest.TestCase):
-    """Test activity log tooltip functionality"""
+    '''Test activity log tooltip functionality'''
     
     def setUp(self):
-        """Set up a GameState for testing"""
-        self.game_state = GameState("test_seed")
+        '''Set up a GameState for testing'''
+        self.game_state = GameState('test_seed')
         # RNG is now initialized by GameState constructor
         
     def test_tooltip_shows_purchase_prompt_when_upgrade_not_purchased(self):
-        """Test that hovering over activity log shows purchase prompt when upgrade not purchased"""
+        '''Test that hovering over activity log shows purchase prompt when upgrade not purchased'''
         # Ensure compact display upgrade is not purchased
-        self.assertNotIn("compact_activity_display", self.game_state.upgrade_effects)
+        self.assertNotIn('compact_activity_display', self.game_state.upgrade_effects)
         
         # Simulate mouse hovering over activity log area
         w, h = 800, 600
@@ -22,16 +22,16 @@ class TestActivityLogTooltip(unittest.TestCase):
         log_center_y = activity_log_rect[1] + activity_log_rect[3] // 2
         
         tooltip = self.game_state.check_hover((log_center_x, log_center_y), w, h)
-        self.assertEqual(tooltip, "You may purchase the ability to minimise this for $150!")
+        self.assertEqual(tooltip, 'You may purchase the ability to minimise this for $150!')
         
     def test_tooltip_shows_minimize_info_when_upgrade_purchased(self):
-        """Test that hovering over activity log shows minimize info when upgrade is purchased"""
+        '''Test that hovering over activity log shows minimize info when upgrade is purchased'''
         # Purchase the compact activity display upgrade
         self.game_state.money = 200
         for upgrade in self.game_state.upgrades:
-            if upgrade["name"] == "Compact Activity Display":
-                upgrade["purchased"] = True
-                self.game_state.upgrade_effects.add(upgrade["effect_key"])
+            if upgrade['name'] == 'Compact Activity Display':
+                upgrade['purchased'] = True
+                self.game_state.upgrade_effects.add(upgrade['effect_key'])
                 break
         
         self.game_state.scrollable_event_log_enabled = True
@@ -43,16 +43,16 @@ class TestActivityLogTooltip(unittest.TestCase):
         log_center_y = activity_log_rect[1] + activity_log_rect[3] // 2
         
         tooltip = self.game_state.check_hover((log_center_x, log_center_y), w, h)
-        self.assertEqual(tooltip, "Activity Log - Click minimize button to reduce screen space")
+        self.assertEqual(tooltip, 'Activity Log - Click minimize button to reduce screen space')
         
     def test_tooltip_shows_expand_info_when_minimized(self):
-        """Test that hovering over minimized activity log shows expand info"""
+        '''Test that hovering over minimized activity log shows expand info'''
         # Purchase the compact activity display upgrade and minimize
         self.game_state.money = 200
         for upgrade in self.game_state.upgrades:
-            if upgrade["name"] == "Compact Activity Display":
-                upgrade["purchased"] = True
-                self.game_state.upgrade_effects.add(upgrade["effect_key"])
+            if upgrade['name'] == 'Compact Activity Display':
+                upgrade['purchased'] = True
+                self.game_state.upgrade_effects.add(upgrade['effect_key'])
                 break
         
         self.game_state.scrollable_event_log_enabled = True
@@ -65,25 +65,25 @@ class TestActivityLogTooltip(unittest.TestCase):
         log_center_y = activity_log_rect[1] + activity_log_rect[3] // 2
         
         tooltip = self.game_state.check_hover((log_center_x, log_center_y), w, h)
-        self.assertEqual(tooltip, "Activity Log (minimized) - Click expand button to show full log")
+        self.assertEqual(tooltip, 'Activity Log (minimized) - Click expand button to show full log')
 
 
 class TestActivityLogDrag(unittest.TestCase):
-    """Test activity log drag/move functionality"""
+    '''Test activity log drag/move functionality'''
     
     def setUp(self):
-        """Set up a GameState for testing"""
-        self.game_state = GameState("test_seed")
+        '''Set up a GameState for testing'''
+        self.game_state = GameState('test_seed')
         # RNG is now initialized by GameState constructor
         
     def test_activity_log_drag_initialization(self):
-        """Test that drag-related attributes are properly initialized"""
+        '''Test that drag-related attributes are properly initialized'''
         self.assertFalse(self.game_state.activity_log_being_dragged)
         self.assertEqual(self.game_state.activity_log_drag_offset, (0, 0))
         self.assertEqual(self.game_state.activity_log_position, (0, 0))
         
     def test_activity_log_position_methods(self):
-        """Test position calculation methods"""
+        '''Test position calculation methods'''
         w, h = 800, 600
         
         # Test base position
@@ -101,7 +101,7 @@ class TestActivityLogDrag(unittest.TestCase):
         self.assertEqual(current_pos, expected)
         
     def test_drag_start_on_activity_log_click(self):
-        """Test that clicking on activity log starts drag operation"""
+        '''Test that clicking on activity log starts drag operation'''
         w, h = 800, 600
         
         # Get activity log area and click in the center
@@ -117,7 +117,7 @@ class TestActivityLogDrag(unittest.TestCase):
         self.assertNotEqual(self.game_state.activity_log_drag_offset, (0, 0))
         
     def test_drag_motion_updates_position(self):
-        """Test that mouse motion updates activity log position during drag"""
+        '''Test that mouse motion updates activity log position during drag'''
         w, h = 800, 600
         
         # Start dragging
@@ -133,7 +133,7 @@ class TestActivityLogDrag(unittest.TestCase):
         self.assertNotEqual(self.game_state.activity_log_position, initial_position)
         
     def test_drag_release_stops_dragging(self):
-        """Test that mouse release stops drag operation"""
+        '''Test that mouse release stops drag operation'''
         w, h = 800, 600
         
         # Start dragging
@@ -149,7 +149,7 @@ class TestActivityLogDrag(unittest.TestCase):
         self.assertTrue(result)  # Should return True indicating drag was completed
         
     def test_drag_constrains_position_to_screen(self):
-        """Test that dragging constrains activity log position to screen bounds"""
+        '''Test that dragging constrains activity log position to screen bounds'''
         w, h = 800, 600
         
         # Start dragging

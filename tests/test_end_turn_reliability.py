@@ -1,4 +1,4 @@
-"""
+'''
 Test end turn input reliability improvements.
 
 Covers:
@@ -7,7 +7,7 @@ Covers:
 - Visual feedback during turn transition
 - Sound feedback for accepted/rejected inputs
 - Input works regardless of other UI state
-"""
+'''
 
 import pytest
 import pygame
@@ -22,10 +22,10 @@ from src.services.sound_manager import SoundManager
 
 
 class TestEndTurnReliability:
-    """Test end turn input reliability and processing state."""
+    '''Test end turn input reliability and processing state.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
         
@@ -34,12 +34,12 @@ class TestEndTurnReliability:
         self.game_state.sound_manager = SoundManager()
     
     def test_end_turn_returns_success(self):
-        """Test that end_turn returns True on success."""
+        '''Test that end_turn returns True on success.'''
         result = self.game_state.end_turn()
         assert result == True
     
     def test_end_turn_processing_state_initialized(self):
-        """Test that turn processing state is properly initialized."""
+        '''Test that turn processing state is properly initialized.'''
         assert hasattr(self.game_state, 'turn_processing')
         assert hasattr(self.game_state, 'turn_processing_timer')
         assert hasattr(self.game_state, 'turn_processing_duration')
@@ -49,7 +49,7 @@ class TestEndTurnReliability:
         assert self.game_state.turn_processing_timer == 0
     
     def test_end_turn_sets_processing_state(self):
-        """Test that end_turn sets processing state correctly."""
+        '''Test that end_turn sets processing state correctly.'''
         # Should not be processing initially
         assert not self.game_state.turn_processing
         
@@ -62,7 +62,7 @@ class TestEndTurnReliability:
         assert result == True
     
     def test_multiple_end_turn_calls_rejected(self):
-        """Test that multiple end_turn calls are rejected during processing."""
+        '''Test that multiple end_turn calls are rejected during processing.'''
         # First call should succeed
         result1 = self.game_state.end_turn()
         assert result1 == True
@@ -74,7 +74,7 @@ class TestEndTurnReliability:
         assert self.game_state.turn_processing == True  # Still processing
     
     def test_turn_processing_timer_update(self):
-        """Test that turn processing timer updates correctly."""
+        '''Test that turn processing timer updates correctly.'''
         # Start processing
         self.game_state.end_turn()
         initial_timer = self.game_state.turn_processing_timer
@@ -87,7 +87,7 @@ class TestEndTurnReliability:
         assert self.game_state.turn_processing == True  # Still processing
     
     def test_turn_processing_completes(self):
-        """Test that turn processing completes after timer expires."""
+        '''Test that turn processing completes after timer expires.'''
         # Start processing
         self.game_state.end_turn()
         
@@ -100,7 +100,7 @@ class TestEndTurnReliability:
         assert self.game_state.turn_processing_timer == 0
     
     def test_end_turn_after_processing_completes(self):
-        """Test that end_turn works again after processing completes."""
+        '''Test that end_turn works again after processing completes.'''
         # First turn
         self.game_state.end_turn()
         
@@ -114,7 +114,7 @@ class TestEndTurnReliability:
         assert self.game_state.turn_processing == True
     
     def test_update_turn_processing_method_exists(self):
-        """Test that update_turn_processing method exists."""
+        '''Test that update_turn_processing method exists.'''
         assert hasattr(self.game_state, 'update_turn_processing')
         assert callable(self.game_state.update_turn_processing)
         
@@ -123,10 +123,10 @@ class TestEndTurnReliability:
 
 
 class TestEndTurnSoundFeedback:
-    """Test sound feedback for end turn actions."""
+    '''Test sound feedback for end turn actions.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
         
@@ -134,7 +134,7 @@ class TestEndTurnSoundFeedback:
         self.game_state.sound_manager = SoundManager()
     
     def test_successful_end_turn_sound(self):
-        """Test that successful end turn plays accept sound."""
+        '''Test that successful end turn plays accept sound.'''
         # Mock the sound manager to track calls
         sounds_played = []
         original_play_sound = self.game_state.sound_manager.play_sound
@@ -151,7 +151,7 @@ class TestEndTurnSoundFeedback:
         assert 'popup_accept' in sounds_played
     
     def test_rejected_end_turn_sound(self):
-        """Test that rejected end turn plays error sound."""
+        '''Test that rejected end turn plays error sound.'''
         # Mock the sound manager to track calls
         sounds_played = []
         original_play_sound = self.game_state.sound_manager.play_sound
@@ -173,15 +173,15 @@ class TestEndTurnSoundFeedback:
 
 
 class TestTurnTransitionVisualFeedback:
-    """Test visual feedback during turn transition."""
+    '''Test visual feedback during turn transition.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         self.screen = pygame.display.set_mode((800, 600), pygame.NOFRAME)
     
     def test_draw_turn_transition_overlay_exists(self):
-        """Test that draw_turn_transition_overlay function exists."""
+        '''Test that draw_turn_transition_overlay function exists.'''
         # Should not raise ImportError
         from ui import draw_turn_transition_overlay
         
@@ -189,7 +189,7 @@ class TestTurnTransitionVisualFeedback:
         assert callable(draw_turn_transition_overlay)
     
     def test_draw_turn_transition_overlay_with_timer(self):
-        """Test drawing transition overlay with active timer."""
+        '''Test drawing transition overlay with active timer.'''
         from ui import draw_turn_transition_overlay
         
         # Should not crash when called with valid parameters
@@ -201,10 +201,10 @@ class TestTurnTransitionVisualFeedback:
             # If we get here without exception, the function works
             assert True
         except Exception as e:
-            pytest.fail(f"draw_turn_transition_overlay failed: {e}")
+            pytest.fail(f'draw_turn_transition_overlay failed: {e}')
     
     def test_draw_turn_transition_overlay_no_timer(self):
-        """Test that overlay doesn't draw when timer is 0."""
+        '''Test that overlay doesn't draw when timer is 0.'''
         from ui import draw_turn_transition_overlay
         
         # Should not crash and should return early
@@ -215,10 +215,10 @@ class TestTurnTransitionVisualFeedback:
             draw_turn_transition_overlay(self.screen, 800, 600, timer, duration)
             assert True
         except Exception as e:
-            pytest.fail(f"draw_turn_transition_overlay failed with timer=0: {e}")
+            pytest.fail(f'draw_turn_transition_overlay failed with timer=0: {e}')
     
     def test_turn_transition_overlay_progress_calculation(self):
-        """Test that transition overlay calculates progress correctly."""
+        '''Test that transition overlay calculates progress correctly.'''
         from ui import draw_turn_transition_overlay
         
         # Test various progress points
@@ -236,14 +236,14 @@ class TestTurnTransitionVisualFeedback:
                 draw_turn_transition_overlay(self.screen, 800, 600, timer, duration)
                 assert True
             except Exception as e:
-                pytest.fail(f"draw_turn_transition_overlay failed with timer={timer}: {e}")
+                pytest.fail(f'draw_turn_transition_overlay failed with timer={timer}: {e}')
 
 
 class TestEndTurnIntegration:
-    """Test integration of all end turn improvements."""
+    '''Test integration of all end turn improvements.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
         
@@ -251,7 +251,7 @@ class TestEndTurnIntegration:
         self.game_state.sound_manager = SoundManager()
     
     def test_full_end_turn_cycle(self):
-        """Test complete end turn cycle with all improvements."""
+        '''Test complete end turn cycle with all improvements.'''
         # Initial state
         assert not self.game_state.turn_processing
         initial_turn = self.game_state.turn
@@ -280,7 +280,7 @@ class TestEndTurnIntegration:
         assert self.game_state.turn_processing == True
     
     def test_end_turn_regardless_of_game_state(self):
-        """Test that end turn works regardless of other game state."""
+        '''Test that end turn works regardless of other game state.'''
         # Test with various game states
         test_scenarios = [
             {'money': 0, 'action_points': 0},  # No money, no AP
@@ -297,14 +297,14 @@ class TestEndTurnIntegration:
             # End turn should still work
             if not self.game_state.turn_processing:
                 result = self.game_state.end_turn()
-                assert result == True, f"End turn failed with scenario: {scenario}"
+                assert result == True, f'End turn failed with scenario: {scenario}'
                 
                 # Reset processing for next test
                 while self.game_state.turn_processing:
                     self.game_state.update_turn_processing()
     
     def test_mouse_click_end_turn_through_handle_click(self):
-        """Test that mouse click end turn works through handle_click method."""
+        '''Test that mouse click end turn works through handle_click method.'''
         # Get end turn button rect
         w, h = 800, 600
         btn_rect = self.game_state._get_endturn_rect(w, h)

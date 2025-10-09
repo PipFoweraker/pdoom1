@@ -1,10 +1,10 @@
-"""
+'''
 Public Opinion System - Track public sentiment and media coverage in P(Doom).
 
 This module implements dynamic public opinion tracking that responds to player actions,
 competitor actions, and external events. It integrates with the existing reputation
 system while providing more nuanced public sentiment mechanics.
-"""
+'''
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
@@ -14,39 +14,39 @@ from src.services.deterministic_rng import get_rng
 
 
 class OpinionCategory(Enum):
-    """Categories of public opinion that can be tracked."""
-    GENERAL_SENTIMENT = "general_sentiment"
-    TRUST_IN_PLAYER = "trust_in_player"
-    AI_SAFETY_AWARENESS = "ai_safety_awareness"
-    MEDIA_ATTENTION = "media_attention"
+    '''Categories of public opinion that can be tracked.'''
+    GENERAL_SENTIMENT = 'general_sentiment'
+    TRUST_IN_PLAYER = 'trust_in_player'
+    AI_SAFETY_AWARENESS = 'ai_safety_awareness'
+    MEDIA_ATTENTION = 'media_attention'
 
 
 class MediaStoryType(Enum):
-    """Types of media stories that can occur."""
-    BREAKTHROUGH = "breakthrough"
-    SCANDAL = "scandal"
-    HUMAN_INTEREST = "human_interest"
-    POLICY = "policy"
-    SAFETY_CONCERN = "safety_concern"
-    INDUSTRY_NEWS = "industry_news"
+    '''Types of media stories that can occur.'''
+    BREAKTHROUGH = 'breakthrough'
+    SCANDAL = 'scandal'
+    HUMAN_INTEREST = 'human_interest'
+    POLICY = 'policy'
+    SAFETY_CONCERN = 'safety_concern'
+    INDUSTRY_NEWS = 'industry_news'
 
 
 @dataclass
 class OpinionModifier:
-    """Represents a modifier to public opinion metrics."""
+    '''Represents a modifier to public opinion metrics.'''
     category: OpinionCategory
     change: float
     duration: int = 1  # Number of turns the modifier lasts
-    source: str = "unknown"  # What caused this modifier
+    source: str = 'unknown'  # What caused this modifier
     
     def apply(self, current_value: float) -> float:
-        """Apply this modifier to a current opinion value."""
+        '''Apply this modifier to a current opinion value.'''
         return max(0.0, min(100.0, current_value + self.change))
 
 
 @dataclass
 class MediaStory:
-    """Represents a media story affecting public opinion."""
+    '''Represents a media story affecting public opinion.'''
     headline: str
     story_type: MediaStoryType
     sentiment_impact: Dict[OpinionCategory, float]
@@ -56,31 +56,31 @@ class MediaStory:
     source_lab: Optional[str] = None  # Which lab triggered this story
     
     def __post_init__(self):
-        """Validate story data after creation."""
+        '''Validate story data after creation.'''
         if not self.headline:
-            raise ValueError("Media story must have a headline")
+            raise ValueError('Media story must have a headline')
         if self.duration < 1:
-            raise ValueError("Media story duration must be at least 1 turn")
+            raise ValueError('Media story duration must be at least 1 turn')
         if not 0 <= self.attention_level <= 100:
-            raise ValueError("Attention level must be between 0 and 100")
+            raise ValueError('Attention level must be between 0 and 100')
     
     def is_expired(self, current_turn: int) -> bool:
-        """Check if this story has expired."""
+        '''Check if this story has expired.'''
         return current_turn >= self.created_turn + self.duration
     
     def get_remaining_turns(self, current_turn: int) -> int:
-        """Get remaining turns before story expires."""
+        '''Get remaining turns before story expires.'''
         return max(0, self.created_turn + self.duration - current_turn)
 
 
 @dataclass
 class PublicOpinion:
-    """
+    '''
     Tracks public opinion metrics and handles their evolution over time.
     
     Integrates with the existing reputation system while providing more
     granular tracking of public sentiment.
-    """
+    '''
     # Core opinion metrics (0-100 scale)
     general_sentiment: float = 50.0  # Overall optimism about AI
     trust_in_player: float = 50.0    # Specific trust in player's organization
@@ -99,7 +99,7 @@ class PublicOpinion:
     volatility: float = 1.0  # Multiplier for opinion changes
     
     def __post_init__(self):
-        """Initialize history tracking if not provided."""
+        '''Initialize history tracking if not provided.'''
         if not self.opinion_history:
             self.opinion_history = {
                 'general_sentiment': [self.general_sentiment],
@@ -109,7 +109,7 @@ class PublicOpinion:
             }
     
     def get_opinion(self, category: OpinionCategory) -> float:
-        """Get the current value for an opinion category."""
+        '''Get the current value for an opinion category.'''
         if category == OpinionCategory.GENERAL_SENTIMENT:
             return self.general_sentiment
         elif category == OpinionCategory.TRUST_IN_PLAYER:
@@ -119,10 +119,10 @@ class PublicOpinion:
         elif category == OpinionCategory.MEDIA_ATTENTION:
             return self.media_attention
         else:
-            raise ValueError(f"Unknown opinion category: {category}")
+            raise ValueError(f'Unknown opinion category: {category}')
     
     def set_opinion(self, category: OpinionCategory, value: float):
-        """Set the value for an opinion category."""
+        '''Set the value for an opinion category.'''
         value = max(0.0, min(100.0, value))
         
         if category == OpinionCategory.GENERAL_SENTIMENT:
@@ -134,17 +134,17 @@ class PublicOpinion:
         elif category == OpinionCategory.MEDIA_ATTENTION:
             self.media_attention = value
         else:
-            raise ValueError(f"Unknown opinion category: {category}")
+            raise ValueError(f'Unknown opinion category: {category}')
     
     def add_modifier(self, modifier: OpinionModifier):
-        """Add a temporary modifier to public opinion."""
+        '''Add a temporary modifier to public opinion.'''
         self.active_modifiers.append(modifier)
         # Note: GameLogger requires a turn parameter, but we don't have access to it here
         # This is fine since the add_modifier method is typically called during game actions
         # where turn information isn't always available
     
     def add_media_story(self, story: MediaStory):
-        """Add a new media story."""
+        '''Add a new media story.'''
         self.active_stories.append(story)
         
         # Apply initial sentiment impact
@@ -159,7 +159,7 @@ class PublicOpinion:
         # Note: We would log here if we had access to turn information
     
     def update_turn(self, current_turn: int):
-        """Update public opinion for a new turn."""
+        '''Update public opinion for a new turn.'''
         # Apply active modifiers
         for modifier in self.active_modifiers[:]:  # Copy list to allow removal during iteration
             current = self.get_opinion(modifier.category)
@@ -183,7 +183,7 @@ class PublicOpinion:
         self._record_history()
     
     def _apply_natural_decay(self):
-        """Apply natural decay to bring extreme values toward neutral."""
+        '''Apply natural decay to bring extreme values toward neutral.'''
         # General sentiment drifts toward 50 (neutral)
         if self.general_sentiment > 50:
             self.general_sentiment = max(50, self.general_sentiment - self.decay_rate)
@@ -204,7 +204,7 @@ class PublicOpinion:
             self.ai_safety_awareness = max(0, self.ai_safety_awareness - self.decay_rate * 0.5)
     
     def _record_history(self):
-        """Record current values in history."""
+        '''Record current values in history.'''
         self.opinion_history['general_sentiment'].append(self.general_sentiment)
         self.opinion_history['trust_in_player'].append(self.trust_in_player)
         self.opinion_history['ai_safety_awareness'].append(self.ai_safety_awareness)
@@ -216,37 +216,37 @@ class PublicOpinion:
                 self.opinion_history[key] = self.opinion_history[key][-20:]
     
     def get_trend(self, category: OpinionCategory, turns: int = 3) -> str:
-        """Get trend direction for an opinion category."""
+        '''Get trend direction for an opinion category.'''
         history_key = category.value
         if history_key not in self.opinion_history or len(self.opinion_history[history_key]) < 2:
-            return "stable"
+            return 'stable'
         
         recent_values = self.opinion_history[history_key][-min(turns + 1, len(self.opinion_history[history_key])):]
         
         if len(recent_values) < 2:
-            return "stable"
+            return 'stable'
         
         # Calculate average change over the period
         total_change = recent_values[-1] - recent_values[0]
         
         if total_change > 2:
-            return "rising"
+            return 'rising'
         elif total_change < -2:
-            return "falling"
+            return 'falling'
         else:
-            return "stable"
+            return 'stable'
     
     def get_summary(self) -> str:
-        """Get a text summary of current public opinion."""
-        sentiment_desc = "optimistic" if self.general_sentiment > 60 else "pessimistic" if self.general_sentiment < 40 else "neutral"
-        trust_desc = "high" if self.trust_in_player > 70 else "low" if self.trust_in_player < 30 else "moderate"
-        awareness_desc = "high" if self.ai_safety_awareness > 60 else "low" if self.ai_safety_awareness < 30 else "moderate"
-        attention_desc = "intense" if self.media_attention > 70 else "minimal" if self.media_attention < 20 else "moderate"
+        '''Get a text summary of current public opinion.'''
+        sentiment_desc = 'optimistic' if self.general_sentiment > 60 else 'pessimistic' if self.general_sentiment < 40 else 'neutral'
+        trust_desc = 'high' if self.trust_in_player > 70 else 'low' if self.trust_in_player < 30 else 'moderate'
+        awareness_desc = 'high' if self.ai_safety_awareness > 60 else 'low' if self.ai_safety_awareness < 30 else 'moderate'
+        attention_desc = 'intense' if self.media_attention > 70 else 'minimal' if self.media_attention < 20 else 'moderate'
         
-        return f"Public is {sentiment_desc} about AI, has {trust_desc} trust in your lab, shows {awareness_desc} safety awareness, with {attention_desc} media attention."
+        return f'Public is {sentiment_desc} about AI, has {trust_desc} trust in your lab, shows {awareness_desc} safety awareness, with {attention_desc} media attention.'
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
+        '''Convert to dictionary for serialization.'''
         return {
             'general_sentiment': self.general_sentiment,
             'trust_in_player': self.trust_in_player,
@@ -271,7 +271,7 @@ class PublicOpinion:
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'PublicOpinion':
-        """Create from dictionary for deserialization."""
+        '''Create from dictionary for deserialization.'''
         opinion = cls(
             general_sentiment=data.get('general_sentiment', 50.0),
             trust_in_player=data.get('trust_in_player', 50.0),
@@ -304,18 +304,18 @@ class PublicOpinion:
 
 def create_media_story_from_action(action_name: str, player_lab: str, turn: int, 
                                  reputation_change: float = 0) -> Optional[MediaStory]:
-    """
+    '''
     Create a media story based on a player action.
     
     Returns None if the action doesn't warrant media coverage.
-    """
+    '''
     # Define story templates for different action types
     story_templates = {
         'safety_research': {
             'headlines': [
-                f"{player_lab} Publishes Groundbreaking AI Safety Research",
-                f"New Safety Protocols Developed by {player_lab}",
-                f"{player_lab} Leads Industry in AI Safety Innovation"
+                f'{player_lab} Publishes Groundbreaking AI Safety Research',
+                f'New Safety Protocols Developed by {player_lab}',
+                f'{player_lab} Leads Industry in AI Safety Innovation'
             ],
             'type': MediaStoryType.BREAKTHROUGH,
             'sentiment_impact': {
@@ -328,9 +328,9 @@ def create_media_story_from_action(action_name: str, player_lab: str, turn: int,
         },
         'capability_research': {
             'headlines': [
-                f"{player_lab} Achieves Major AI Breakthrough",
-                f"Revolutionary AI Technology from {player_lab}",
-                f"{player_lab} Pushes Boundaries of AI Capability"
+                f'{player_lab} Achieves Major AI Breakthrough',
+                f'Revolutionary AI Technology from {player_lab}',
+                f'{player_lab} Pushes Boundaries of AI Capability'
             ],
             'type': MediaStoryType.BREAKTHROUGH,
             'sentiment_impact': {
@@ -343,9 +343,9 @@ def create_media_story_from_action(action_name: str, player_lab: str, turn: int,
         },
         'transparency_action': {
             'headlines': [
-                f"{player_lab} Opens Doors with Unprecedented Transparency",
-                f"Inside Look: How {player_lab} Operates",
-                f"{player_lab} Sets New Standard for AI Lab Transparency"
+                f'{player_lab} Opens Doors with Unprecedented Transparency',
+                f'Inside Look: How {player_lab} Operates',
+                f'{player_lab} Sets New Standard for AI Lab Transparency'
             ],
             'type': MediaStoryType.HUMAN_INTEREST,
             'sentiment_impact': {
@@ -377,7 +377,7 @@ def create_media_story_from_action(action_name: str, player_lab: str, turn: int,
     template = story_templates[story_type]
     
     return MediaStory(
-        headline=get_rng().choice(template['headlines'], "choice_context"),
+        headline=get_rng().choice(template['headlines'], 'choice_context'),
         story_type=template['type'],
         sentiment_impact=template['sentiment_impact'],
         duration=template['duration'],

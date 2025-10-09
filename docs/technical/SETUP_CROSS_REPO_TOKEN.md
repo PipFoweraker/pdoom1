@@ -12,7 +12,7 @@ To enable automated documentation synchronization across your P(Doom) repositori
    - Or: GitHub -> Profile -> Settings -> Developer settings -> Personal access tokens -> Tokens (classic)
 
 2. **Generate New Token**:
-   - Click "Generate new token" -> "Generate new token (classic)"
+   - Click 'Generate new token' -> 'Generate new token (classic)'
    - **Token name**: `P(Doom) Cross-Repository Documentation Sync`
    - **Expiration**: Choose appropriate duration (recommend 1 year)
 
@@ -32,7 +32,7 @@ To enable automated documentation synchronization across your P(Doom) repositori
    ```
 
 4. **Generate Token**:
-   - Click "Generate token"
+   - Click 'Generate token'
    - **[WARNING][EMOJI] IMPORTANT**: Copy the token immediately - you won't see it again!
 
 ## Step 2: Add Token as Repository Secret
@@ -44,10 +44,10 @@ To enable automated documentation synchronization across your P(Doom) repositori
    - Or: pdoom1 repository -> Settings -> Secrets and variables -> Actions
 
 2. **Create New Secret**:
-   - Click "New repository secret"
+   - Click 'New repository secret'
    - **Name**: `CROSS_REPO_TOKEN`
    - **Secret**: Paste the token you copied in Step 1
-   - Click "Add secret"
+   - Click 'Add secret'
 
 ## Step 3: Verify Token Setup
 
@@ -56,10 +56,10 @@ You can test the token using curl (replace `YOUR_TOKEN` with the actual token):
 
 ```bash
 # Test repository access
-curl -H "Authorization: token YOUR_TOKEN" https://api.github.com/repos/PipFoweraker/pdoom1-website
+curl -H 'Authorization: token YOUR_TOKEN' https://api.github.com/repos/PipFoweraker/pdoom1-website
 
 # Test write permissions (this should return repository info)
-curl -H "Authorization: token YOUR_TOKEN" https://api.github.com/repos/PipFoweraker/pdoom-data
+curl -H 'Authorization: token YOUR_TOKEN' https://api.github.com/repos/PipFoweraker/pdoom-data
 ```
 
 ### Verify Secret in Repository:
@@ -73,15 +73,15 @@ curl -H "Authorization: token YOUR_TOKEN" https://api.github.com/repos/PipFowera
 
 1. **Manual Trigger** (recommended for first test):
    - Go to https://github.com/PipFoweraker/pdoom1/actions
-   - Find "Sync Documentation Across Repositories" workflow
-   - Click "Run workflow" -> Select "main branch" -> "Run workflow"
+   - Find 'Sync Documentation Across Repositories' workflow
+   - Click 'Run workflow' -> Select 'main branch' -> 'Run workflow'
 
 2. **Automatic Trigger** (make a documentation change):
    ```bash
    # Make a small change to trigger sync
-   echo "<!-- Test sync $(date) -->" >> docs/shared/ECOSYSTEM_OVERVIEW.md
+   echo '<!-- Test sync $(date) -->' >> docs/shared/ECOSYSTEM_OVERVIEW.md
    git add docs/shared/ECOSYSTEM_OVERVIEW.md
-   git commit -m "docs: test cross-repository sync"
+   git commit -m 'docs: test cross-repository sync'
    git push
    ```
 
@@ -111,7 +111,7 @@ If you prefer using GitHub CLI, you can set up the token programmatically:
 gh auth login
 
 # Create the repository secret
-gh secret set CROSS_REPO_TOKEN --repo PipFoweraker/pdoom1 --body "your_token_here"
+gh secret set CROSS_REPO_TOKEN --repo PipFoweraker/pdoom1 --body 'your_token_here'
 
 # Verify the secret was created
 gh secret list --repo PipFoweraker/pdoom1
@@ -135,12 +135,12 @@ gh secret list --repo PipFoweraker/pdoom1
 
 ### Common Issues:
 
-1. **"Bad credentials" error**:
+1. **'Bad credentials' error**:
    - Token may be expired or incorrect
    - Verify token is copied correctly without extra spaces
    - Check token permissions include `repo` scope
 
-2. **"Resource not accessible by integration" error**:
+2. **'Resource not accessible by integration' error**:
    - Token missing required permissions
    - Add `workflow` scope to token
    - Ensure token has access to target repositories
@@ -153,13 +153,13 @@ gh secret list --repo PipFoweraker/pdoom1
 ### Debug Commands:
 ```bash
 # Check repository access with token
-curl -H "Authorization: token YOUR_TOKEN" \
-     -H "Accept: application/vnd.github.v3+json" \
+curl -H 'Authorization: token YOUR_TOKEN' \
+     -H 'Accept: application/vnd.github.v3+json' \
      https://api.github.com/repos/PipFoweraker/pdoom1-website
 
 # Check repository permissions
-curl -H "Authorization: token YOUR_TOKEN" \
-     -H "Accept: application/vnd.github.v3+json" \
+curl -H 'Authorization: token YOUR_TOKEN' \
+     -H 'Accept: application/vnd.github.v3+json' \
      https://api.github.com/repos/PipFoweraker/pdoom-data/collaborators/PipFoweraker/permission
 ```
 
@@ -169,7 +169,7 @@ After successful setup, you should see:
 
 1. **Automated Sync**: Documentation changes in `pdoom1/docs/shared/` automatically appear in other repositories
 2. **Sync Headers**: Files in target repositories include sync metadata headers
-3. **Commit History**: Target repositories show commits from "Documentation Sync Bot"
+3. **Commit History**: Target repositories show commits from 'Documentation Sync Bot'
 4. **Workflow Success**: GitHub Actions show successful runs for documentation sync
 
 ## Next Steps

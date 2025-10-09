@@ -1,9 +1,9 @@
-"""
+'''
 Tests for accounting software functionality - Issue #52.
 
 This module tests the last_balance_change tracking and display when
 accounting software upgrade is purchased.
-"""
+'''
 
 import sys
 import os
@@ -15,14 +15,14 @@ from src.core.game_state import GameState
 
 
 class TestAccountingSoftware(unittest.TestCase):
-    """Test accounting software bug fixes."""
+    '''Test accounting software bug fixes.'''
 
     def setUp(self):
-        """Set up test fixtures."""
-        self.game_state = GameState("test_seed")
+        '''Set up test fixtures.'''
+        self.game_state = GameState('test_seed')
 
     def test_no_balance_change_without_accounting_software(self):
-        """Test that last_balance_change is not updated without accounting software."""
+        '''Test that last_balance_change is not updated without accounting software.'''
         initial_money = self.game_state.money
         
         # Make a transaction without accounting software
@@ -33,7 +33,7 @@ class TestAccountingSoftware(unittest.TestCase):
         self.assertEqual(self.game_state.money, initial_money + 100)
 
     def test_balance_change_with_accounting_software(self):
-        """Test that last_balance_change is updated when accounting software is bought."""
+        '''Test that last_balance_change is updated when accounting software is bought.'''
         initial_money = self.game_state.money
         
         # Buy accounting software
@@ -55,7 +55,7 @@ class TestAccountingSoftware(unittest.TestCase):
         self.assertEqual(self.game_state.money, initial_money + 500 - 200)
 
     def test_sequential_transactions(self):
-        """Test that last_balance_change reflects only the most recent transaction."""
+        '''Test that last_balance_change reflects only the most recent transaction.'''
         # Buy accounting software
         self.game_state.accounting_software_bought = True
         
@@ -70,7 +70,7 @@ class TestAccountingSoftware(unittest.TestCase):
         self.assertEqual(self.game_state.last_balance_change, 300)
 
     def test_balance_change_sign_correctness(self):
-        """Test that balance change sign is correct for positive and negative amounts."""
+        '''Test that balance change sign is correct for positive and negative amounts.'''
         # Buy accounting software
         self.game_state.accounting_software_bought = True
         
@@ -89,7 +89,7 @@ class TestAccountingSoftware(unittest.TestCase):
         self.assertEqual(self.game_state.last_balance_change, 0)
 
     def test_other_resources_dont_affect_balance_change(self):
-        """Test that changing other resources doesn't affect last_balance_change."""
+        '''Test that changing other resources doesn't affect last_balance_change.'''
         # Buy accounting software
         self.game_state.accounting_software_bought = True
         
@@ -107,21 +107,21 @@ class TestAccountingSoftware(unittest.TestCase):
 
 
 class TestAccountingUIColorDisplay(unittest.TestCase):
-    """Test that accounting display shows correct colors."""
+    '''Test that accounting display shows correct colors.'''
 
     def setUp(self):
-        """Set up pygame for UI tests."""
+        '''Set up pygame for UI tests.'''
         pygame.init()
         self.screen = pygame.display.set_mode((800, 600))
-        self.game_state = GameState("test_seed")
+        self.game_state = GameState('test_seed')
         self.game_state.accounting_software_bought = True
 
     def tearDown(self):
-        """Clean up pygame."""
+        '''Clean up pygame.'''
         pygame.quit()
 
     def test_positive_balance_change_color(self):
-        """Test that positive balance changes are displayed in green."""
+        '''Test that positive balance changes are displayed in green.'''
         # Set positive balance change
         self.game_state._add('money', 250)
         self.assertEqual(self.game_state.last_balance_change, 250)
@@ -131,7 +131,7 @@ class TestAccountingUIColorDisplay(unittest.TestCase):
         self.assertGreater(self.game_state.last_balance_change, 0)
 
     def test_negative_balance_change_color(self):
-        """Test that negative balance changes are displayed in red."""
+        '''Test that negative balance changes are displayed in red.'''
         # Set negative balance change
         self.game_state._add('money', -150)
         self.assertEqual(self.game_state.last_balance_change, -150)
@@ -141,7 +141,7 @@ class TestAccountingUIColorDisplay(unittest.TestCase):
         self.assertLess(self.game_state.last_balance_change, 0)
 
     def test_zero_balance_change_color(self):
-        """Test that zero balance changes are displayed appropriately."""
+        '''Test that zero balance changes are displayed appropriately.'''
         # Set zero balance change
         self.game_state._add('money', 0)
         self.assertEqual(self.game_state.last_balance_change, 0)

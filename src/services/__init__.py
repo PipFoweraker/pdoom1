@@ -1,4 +1,4 @@
-"""
+'''
 Services module for PDoom1.
 
 Provides core game services including:
@@ -7,4 +7,4 @@ Provides core game services including:
 - Settings management with JSON persistence
 - Cross-platform data directory handling
 - Telemetry and logging services
-"""
+'''

@@ -1,9 +1,9 @@
 ---
-title: "P(Doom) v0.2.12: Development Infrastructure"
-date: "2025-09-10"
-tags: ["release", "milestone", "type-annotations", "infrastructure", "quality"]
-summary: "Major version release featuring comprehensive type annotations and development tooling infrastructure"
-commit: "fedc543"
+title: 'P(Doom) v0.2.12: Development Infrastructure'
+date: '2025-09-10'
+tags: ['release', 'milestone', 'type-annotations', 'infrastructure', 'quality']
+summary: 'Major version release featuring comprehensive type annotations and development tooling infrastructure'
+commit: 'fedc543'
 ---
 
 # P(Doom) v0.2.12 Release: Development Infrastructure Enhancement

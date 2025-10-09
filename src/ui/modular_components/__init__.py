@@ -1,4 +1,4 @@
-"""
+'''
 UI components package for P(Doom).
 
 Contains reusable UI components:
@@ -8,4 +8,4 @@ Contains reusable UI components:
 - colours.py: Colour constants and themes
 
 Components are designed for reuse across multiple screens.
-"""
+'''

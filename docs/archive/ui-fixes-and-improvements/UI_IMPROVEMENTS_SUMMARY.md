@@ -13,19 +13,19 @@ Replaced fixed percentage-based positioning with dynamic spacing calculation:
 
 **Before:**
 ```python
-screen.blit(big_font.render(f"Money: ${game_state.money}", True, color), (int(w*0.04), int(h*0.11)))
-screen.blit(big_font.render(f"Staff: {game_state.staff}", True, color), (int(w*0.21), int(h*0.11)))
-screen.blit(big_font.render(f"Reputation: {game_state.reputation}", True, color), (int(w*0.35), int(h*0.11)))
+screen.blit(big_font.render(f'Money: ${game_state.money}', True, color), (int(w*0.04), int(h*0.11)))
+screen.blit(big_font.render(f'Staff: {game_state.staff}', True, color), (int(w*0.21), int(h*0.11)))
+screen.blit(big_font.render(f'Reputation: {game_state.reputation}', True, color), (int(w*0.35), int(h*0.11)))
 ```
 
 **After:**
 ```python
 current_x = int(w*0.04)  # Starting position
-money_text = big_font.render(f"Money: ${game_state.money}", True, color)
+money_text = big_font.render(f'Money: ${game_state.money}', True, color)
 screen.blit(money_text, (current_x, y_pos))
 current_x += money_text.get_width() + int(w*0.02)  # Add spacing
 
-staff_text = big_font.render(f"Staff: {game_state.staff}", True, color)
+staff_text = big_font.render(f'Staff: {game_state.staff}', True, color)
 screen.blit(staff_text, (current_x, y_pos))
 current_x += staff_text.get_width() + int(w*0.02)  # Add spacing
 ```
@@ -114,7 +114,7 @@ Extended the existing hover system to provide rich context information:
 ### Example Usage
 
 ```python
-# When hovering over "Safety Research" action:
+# When hovering over 'Safety Research' action:
 context_info = {
     'title': 'Safety Research',
     'description': 'Conduct research into AI safety measures to reduce existential risk. This is the core activity of your lab.',
@@ -159,12 +159,12 @@ Created `demo_ui_improvements.py` to showcase both improvements:
 Consider adding to config system:
 ```json
 {
-  "ui": {
-    "context_window": {
-      "enabled": true,
-      "default_minimized": false,
-      "position": "bottom",
-      "opacity": 0.9
+  'ui': {
+    'context_window': {
+      'enabled': true,
+      'default_minimized': false,
+      'position': 'bottom',
+      'opacity': 0.9
     }
   }
 }

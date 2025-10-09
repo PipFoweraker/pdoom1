@@ -1,7 +1,7 @@
-"""
+'''
 Debug Console System for P(Doom)
 Provides a collapsible debug overlay showing game state variables and calculations.
-"""
+'''
 
 import pygame
 from typing import Any, Dict, List, Tuple, Optional
@@ -9,7 +9,7 @@ from src.services.config_manager import get_current_config
 
 
 class DebugConsole:
-    """
+    '''
     A collapsible debug console that displays game state information.
     
     Features:
@@ -19,10 +19,10 @@ class DebugConsole:
     - Staff composition details
     - Economic state tracking
     - Turn-by-turn information
-    """
+    '''
     
     def __init__(self):
-        """Initialize the debug console."""
+        '''Initialize the debug console.'''
         self.visible = False
         self.collapsed = True  # Start collapsed
         self.toggle_button_rect = None
@@ -31,13 +31,13 @@ class DebugConsole:
         self.small_font = None
         
     def initialize_fonts(self, screen_height: int) -> None:
-        """Initialize fonts based on screen size."""
+        '''Initialize fonts based on screen size.'''
         # Increased font sizes by 25% for better readability
         self.font = pygame.font.Font(None, max(20, int(screen_height * 0.025)))
         self.small_font = pygame.font.Font(None, max(16, int(screen_height * 0.019)))
     
     def get_debug_data(self, game_state: Any) -> Dict[str, Any]:
-        """
+        '''
         Extract debug information from game state.
         
         Args:
@@ -45,7 +45,7 @@ class DebugConsole:
             
         Returns:
             Dictionary containing organized debug information
-        """
+        '''
         # Get starting values from config for comparison with safe defaults
         config = get_current_config()
         starting_resources = config.get('starting_resources', {
@@ -55,7 +55,7 @@ class DebugConsole:
         
         # Action Points calculation breakdown with starting comparison
         ap_breakdown = {
-            'current': f"{game_state.action_points} (start: {starting_resources.get('action_points', 3)})",
+            'current': f'{game_state.action_points} (start: {starting_resources.get('action_points', 3)})',
             'max': game_state.max_action_points,
             'base': 3,  # From config
             'staff_bonus': game_state.staff * 0.5,
@@ -67,7 +67,7 @@ class DebugConsole:
         
         # Staff composition with starting comparison
         staff_info = {
-            'total_staff': f"{game_state.staff} (start: {starting_resources.get('staff', 2)})",
+            'total_staff': f'{game_state.staff} (start: {starting_resources.get('staff', 2)})',
             'admin_staff': game_state.admin_staff,
             'research_staff': getattr(game_state, 'research_staff', 0),
             'ops_staff': getattr(game_state, 'ops_staff', 0),
@@ -78,10 +78,10 @@ class DebugConsole:
         
         # Economic state with starting vs current comparison
         economic_info = {
-            'money': f"{game_state.money} (start: {starting_resources.get('money', 100)})",
-            'reputation': f"{game_state.reputation} (start: {starting_resources.get('reputation', 5)})",
-            'doom': f"{game_state.doom}% (start: {starting_resources.get('doom', 25)}%)",
-            'compute': f"{game_state.compute} (start: {starting_resources.get('compute', 0)})",
+            'money': f'{game_state.money} (start: {starting_resources.get('money', 100)})',
+            'reputation': f'{game_state.reputation} (start: {starting_resources.get('reputation', 5)})',
+            'doom': f'{game_state.doom}% (start: {starting_resources.get('doom', 25)}%)',
+            'compute': f'{game_state.compute} (start: {starting_resources.get('compute', 0)})',
             'research_progress': getattr(game_state, 'research_progress', 0),
             'papers_published': getattr(game_state, 'papers_published', 0),
             'spending_this_turn': getattr(game_state, 'spending_this_turn', 0),
@@ -114,7 +114,7 @@ class DebugConsole:
         }
     
     def handle_click(self, pos: Tuple[int, int]) -> bool:
-        """
+        '''
         Handle mouse clicks on the debug console.
         
         Args:
@@ -122,7 +122,7 @@ class DebugConsole:
             
         Returns:
             True if click was handled by the console
-        """
+        '''
         if self.toggle_button_rect and self.toggle_button_rect.collidepoint(pos):
             if self.visible:
                 self.collapsed = not self.collapsed
@@ -133,24 +133,24 @@ class DebugConsole:
         return False
     
     def get_debug_console_key_name(self) -> str:
-        """Get the current debug console keybinding name for display."""
+        '''Get the current debug console keybinding name for display.'''
         try:
             from src.services.keybinding_manager import keybinding_manager
-            key_code = keybinding_manager.get_key_for_action("debug_console")
+            key_code = keybinding_manager.get_key_for_action('debug_console')
             # Convert common key codes to readable names
             key_names = {
-                96: "`",      # Backtick
-                49: "1", 50: "2", 51: "3", 52: "4", 53: "5",
-                54: "6", 55: "7", 56: "8", 57: "9", 48: "0",
-                299: "F12", 292: "F5", 32: "Space", 27: "Esc",
-                97: "A", 100: "D", 122: "Z", 120: "X", 99: "C"
+                96: '`',      # Backtick
+                49: '1', 50: '2', 51: '3', 52: '4', 53: '5',
+                54: '6', 55: '7', 56: '8', 57: '9', 48: '0',
+                299: 'F12', 292: 'F5', 32: 'Space', 27: 'Esc',
+                97: 'A', 100: 'D', 122: 'Z', 120: 'X', 99: 'C'
             }
-            return key_names.get(key_code, f"Key{key_code}")
+            return key_names.get(key_code, f'Key{key_code}')
         except ImportError:
-            return "`"  # Fallback to backtick
+            return '`'  # Fallback to backtick
 
     def handle_keypress(self, key: int) -> bool:
-        """
+        '''
         Handle keyboard shortcuts for the debug console.
         
         Args:
@@ -158,11 +158,11 @@ class DebugConsole:
             
         Returns:
             True if keypress was handled
-        """
+        '''
         # Check if this key matches the configured debug console keybinding
         try:
             from src.services.keybinding_manager import keybinding_manager
-            debug_key = keybinding_manager.get_key_for_action("debug_console")
+            debug_key = keybinding_manager.get_key_for_action('debug_console')
             if key == debug_key:
                 if self.visible:
                     self.collapsed = not self.collapsed
@@ -188,7 +188,7 @@ class DebugConsole:
         return False
     
     def draw(self, screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
-        """
+        '''
         Draw the debug console on screen.
         
         Args:
@@ -196,7 +196,7 @@ class DebugConsole:
             game_state: Current game state
             w: Screen width
             h: Screen height
-        """
+        '''
         if not self.font:
             self.initialize_fonts(h)
         
@@ -217,7 +217,7 @@ class DebugConsole:
             screen_height = screen.get_height()
             self.initialize_fonts(screen_height)
             
-        button_text = "D" if not self.visible else ("-" if not self.collapsed else "+")
+        button_text = 'D' if not self.visible else ('-' if not self.collapsed else '+')
         text_surface = self.font.render(button_text, True, (255, 255, 255))
         text_rect = text_surface.get_rect(center=self.toggle_button_rect.center)
         screen.blit(text_surface, text_rect)
@@ -227,7 +227,7 @@ class DebugConsole:
             self._draw_console_panel(screen, game_state, w, h)
     
     def _draw_console_panel(self, screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
-        """Draw the main console panel with debug information."""
+        '''Draw the main console panel with debug information.'''
         # Safety check: ensure fonts are initialized
         if self.font is None or self.small_font is None:
             screen_height = screen.get_height()
@@ -256,7 +256,7 @@ class DebugConsole:
         if self.collapsed:
             # Collapsed state - just show title
             key_name = self.get_debug_console_key_name()
-            title_text = self.font.render(f"Debug Console ({key_name} to expand)", True, (200, 200, 200))
+            title_text = self.font.render(f'Debug Console ({key_name} to expand)', True, (200, 200, 200))
             screen.blit(title_text, (console_x + 10, console_y + 10))
         else:
             # Expanded state - show full debug info
@@ -264,12 +264,12 @@ class DebugConsole:
     
     def _draw_debug_info(self, screen: pygame.Surface, game_state: Any, 
                         x: int, y: int, width: int, height: int) -> None:
-        """Draw the detailed debug information."""
+        '''Draw the detailed debug information.'''
         debug_data = self.get_debug_data(game_state)
         
         # Header
         key_name = self.get_debug_console_key_name()
-        header_text = self.font.render(f"Debug Console ({key_name} to collapse)", True, (255, 255, 255))
+        header_text = self.font.render(f'Debug Console ({key_name} to collapse)', True, (255, 255, 255))
         screen.blit(header_text, (x + 10, y + 5))
         
         # Content area - optimized spacing for better real estate usage
@@ -278,26 +278,26 @@ class DebugConsole:
         col_width = width // 3
         
         # Column 1: Action Points & Staff - optimized spacing for larger console
-        self._draw_section(screen, "ACTION POINTS", debug_data['action_points'], 
+        self._draw_section(screen, 'ACTION POINTS', debug_data['action_points'], 
                           x + 10, content_y, col_width)
         
-        self._draw_section(screen, "STAFF", debug_data['staff'], 
+        self._draw_section(screen, 'STAFF', debug_data['staff'], 
                           x + 10, content_y + 140, col_width)  # Increased from 120 to use more space
         
         # Column 2: Economy & Turn
-        self._draw_section(screen, "ECONOMY", debug_data['economy'], 
+        self._draw_section(screen, 'ECONOMY', debug_data['economy'], 
                           x + col_width + 10, content_y, col_width)
         
-        self._draw_section(screen, "TURN INFO", debug_data['turn'], 
+        self._draw_section(screen, 'TURN INFO', debug_data['turn'], 
                           x + col_width + 10, content_y + 140, col_width)  # Increased from 120
         
         # Column 3: Milestones
-        self._draw_section(screen, "MILESTONES", debug_data['milestones'], 
+        self._draw_section(screen, 'MILESTONES', debug_data['milestones'], 
                           x + col_width * 2 + 10, content_y, col_width)
     
     def _draw_section(self, screen: pygame.Surface, title: str, data: Dict[str, Any], 
                      x: int, y: int, width: int) -> None:
-        """Draw a section of debug information."""
+        '''Draw a section of debug information.'''
         # Section title
         title_surface = self.font.render(title, True, (255, 255, 100))
         screen.blit(title_surface, (x, y))
@@ -307,9 +307,9 @@ class DebugConsole:
         for key, value in data.items():
             # Format the display
             if isinstance(value, float):
-                display_value = f"{value:.1f}"
+                display_value = f'{value:.1f}'
             elif isinstance(value, bool):
-                display_value = "Y" if value else "N"  # ASCII-only compliance
+                display_value = 'Y' if value else 'N'  # ASCII-only compliance
             else:
                 display_value = str(value)
             
@@ -324,7 +324,7 @@ class DebugConsole:
                 color = (200, 200, 200)  # Gray for normal values
             
             # Draw the key-value pair with optimized spacing
-            text = f"{key}: {display_value}"
+            text = f'{key}: {display_value}'
             text_surface = self.small_font.render(text, True, color)
             screen.blit(text_surface, (x, data_y))
             data_y += 16  # Increased from 14 for better readability with larger fonts
@@ -339,15 +339,15 @@ debug_console = DebugConsole()
 
 
 def handle_debug_console_click(pos: Tuple[int, int]) -> bool:
-    """Handle clicks for the debug console."""
+    '''Handle clicks for the debug console.'''
     return debug_console.handle_click(pos)
 
 
 def handle_debug_console_keypress(key: int) -> bool:
-    """Handle keypresses for the debug console."""
+    '''Handle keypresses for the debug console.'''
     return debug_console.handle_keypress(key)
 
 
 def draw_debug_console(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
-    """Draw the debug console overlay."""
+    '''Draw the debug console overlay.'''
     debug_console.draw(screen, game_state, w, h)

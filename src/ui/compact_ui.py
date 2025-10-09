@@ -1,9 +1,9 @@
-"""
+'''
 Compact UI mode for P(Doom) - Starcraft 2 inspired interface.
 
 Provides icon-based compact buttons with shortcut key indicators to maximize
 screen real estate when tutorial mode is disabled.
-"""
+'''
 
 from typing import Dict, Tuple, Optional, Union
 
@@ -70,13 +70,13 @@ except ImportError:
     KEYBINDING_AVAILABLE = False
     # Define dummy keybinding manager for testing
     class DummyKeybindingManager:
-        def get_action_display_key(self, action): return "1"
+        def get_action_display_key(self, action): return '1'
     
     keybinding_manager = DummyKeybindingManager()
 
 
 def get_action_icon(action_name: str, action_index: int) -> str:
-    """
+    '''
     Get placeholder icon character for an action.
     
     These are temporary placeholders that can be replaced with actual icons later.
@@ -87,45 +87,45 @@ def get_action_icon(action_name: str, action_index: int) -> str:
         
     Returns:
         str: Single character icon
-    """
+    '''
     # Map common action names to icon characters
     icon_mapping = {
         # Research actions
-        "hire_researcher": "???",
-        "conduct_research": "[CHART]", 
-        "publish_paper": "?",
-        "research": "?",
+        'hire_researcher': '???',
+        'conduct_research': '[CHART]', 
+        'publish_paper': '?',
+        'research': '?',
         
         # Business actions
-        "hire_staff": "?",
-        "marketing": "?",
-        "fundraising": "?",
-        "hire": "?",
-        "marketing_campaign": "?",
+        'hire_staff': '?',
+        'marketing': '?',
+        'fundraising': '?',
+        'hire': '?',
+        'marketing_campaign': '?',
         
         # Infrastructure
-        "buy_computer": "?",
-        "upgrade_equipment": "[LIGHTNING]",
-        "rent_office": "?",
-        "infrastructure": "[CONSTRUCTION]?",
+        'buy_computer': '?',
+        'upgrade_equipment': '[LIGHTNING]',
+        'rent_office': '?',
+        'infrastructure': '[CONSTRUCTION]?',
         
         # Intelligence/Security
-        "espionage": "??",
-        "scout": "??",
-        "security": "[SHIELD]?",
-        "counter_intelligence": "[LOCK]",
+        'espionage': '??',
+        'scout': '??',
+        'security': '[SHIELD]?',
+        'counter_intelligence': '[LOCK]',
         
         # Training/Development
-        "training": "?",
-        "workshop": "?",
-        "seminar": "?",
-        "development": "?",
+        'training': '?',
+        'workshop': '?',
+        'seminar': '?',
+        'development': '?',
         
         # Special actions
-        "lobby": "??",
-        "pr_campaign": "?",
-        "patent": "?",
-        "acquisition": "?",
+        'lobby': '??',
+        'pr_campaign': '?',
+        'patent': '?',
+        'acquisition': '?',
     }
     
     # Try to find icon by name (case insensitive partial matching)
@@ -138,11 +138,11 @@ def get_action_icon(action_name: str, action_index: int) -> str:
     if action_index < 26:
         return chr(ord('A') + action_index)
     else:
-        return action_name[0].upper() if action_name else "?"
+        return action_name[0].upper() if action_name else '?'
 
 
 def get_upgrade_icon(upgrade_name: str, upgrade_index: int) -> str:
-    """
+    '''
     Get placeholder icon character for an upgrade.
     
     Args:
@@ -151,25 +151,25 @@ def get_upgrade_icon(upgrade_name: str, upgrade_index: int) -> str:
         
     Returns:
         str: Single character icon
-    """
+    '''
     # Map upgrades to icons
     icon_mapping = {
-        "accounting": "[CHART]",
-        "software": "?",
-        "hardware": "??",
-        "networking": "?",
-        "security": "[LOCK]",
-        "automation": "?",
-        "ai": "?",
-        "quantum": "??",
-        "cloud": "??",
-        "database": "?",
-        "office": "?",
-        "equipment": "[LIGHTNING]",
-        "laboratory": "?",
-        "supercomputer": "??",
-        "scanner": "?",
-        "server": "??",
+        'accounting': '[CHART]',
+        'software': '?',
+        'hardware': '??',
+        'networking': '?',
+        'security': '[LOCK]',
+        'automation': '?',
+        'ai': '?',
+        'quantum': '??',
+        'cloud': '??',
+        'database': '?',
+        'office': '?',
+        'equipment': '[LIGHTNING]',
+        'laboratory': '?',
+        'supercomputer': '??',
+        'scanner': '?',
+        'server': '??',
     }
     
     upgrade_lower = upgrade_name.lower()
@@ -178,11 +178,11 @@ def get_upgrade_icon(upgrade_name: str, upgrade_index: int) -> str:
             return icon
     
     # Fallback to first letter
-    return upgrade_name[0].upper() if upgrade_name else "??"
+    return upgrade_name[0].upper() if upgrade_name else '??'
 
 
 def get_action_color_scheme(action_name: str) -> Dict[str, Tuple[int, int, int]]:
-    """
+    '''
     Get color scheme for different action types following P(Doom) style guide.
     
     Args:
@@ -190,7 +190,7 @@ def get_action_color_scheme(action_name: str) -> Dict[str, Tuple[int, int, int]]
         
     Returns:
         dict: Color scheme with 'normal' and 'hover' colors
-    """
+    '''
     action_lower = action_name.lower()
     
     # Core Actions - Default blue-grey theme
@@ -259,7 +259,7 @@ def get_action_color_scheme(action_name: str) -> Dict[str, Tuple[int, int, int]]
 
 
 def draw_compact_action_button(screen, rect_tuple, action, action_index, button_state, shortcut_key=None):
-    """
+    '''
     Draw a compact action button with icon and shortcut key indicator.
     
     Args:
@@ -269,7 +269,7 @@ def draw_compact_action_button(screen, rect_tuple, action, action_index, button_
         action_index: 0-based index of the action
         button_state: ButtonState (NORMAL, HOVER, PRESSED, DISABLED)
         shortcut_key: optional override for shortcut key display
-    """
+    '''
     if not PYGAME_AVAILABLE:
         return
     
@@ -278,12 +278,12 @@ def draw_compact_action_button(screen, rect_tuple, action, action_index, button_
     
     # Get shortcut key display
     if shortcut_key is None and KEYBINDING_AVAILABLE:
-        shortcut_key = keybinding_manager.get_action_display_key(f"action_{action_index + 1}")
+        shortcut_key = keybinding_manager.get_action_display_key(f'action_{action_index + 1}')
     elif shortcut_key is None:
         shortcut_key = str(action_index + 1)
     
     # Get action-specific colors
-    action_name = action.get("name", f"action_{action_index}")
+    action_name = action.get('name', f'action_{action_index}')
     color_scheme = get_action_color_scheme(action_name)
     
     # Select colors based on button state
@@ -307,7 +307,7 @@ def draw_compact_action_button(screen, rect_tuple, action, action_index, button_
     pygame.draw.rect(screen, border_color, rect, width=2, border_radius=3)
     
     # Get action icon
-    action_name = action.get("name", f"Action {action_index + 1}")
+    action_name = action.get('name', f'Action {action_index + 1}')
     icon = get_action_icon(action_name, action_index)
     
     # Draw icon in center of button with improved sizing
@@ -341,7 +341,7 @@ def draw_compact_action_button(screen, rect_tuple, action, action_index, button_
 
 
 def draw_compact_upgrade_button(screen, rect_tuple, upgrade, upgrade_index, button_state, is_purchased=False):
-    """
+    '''
     Draw a compact upgrade button with icon.
     
     Args:
@@ -351,19 +351,19 @@ def draw_compact_upgrade_button(screen, rect_tuple, upgrade, upgrade_index, butt
         upgrade_index: 0-based index of the upgrade
         button_state: ButtonState (NORMAL, HOVER, PRESSED, DISABLED)
         is_purchased: whether the upgrade is already purchased
-    """
+    '''
     if not PYGAME_AVAILABLE:
         return
     
     # Convert tuple to pygame.Rect for drawing
     rect = pygame.Rect(rect_tuple)
     
-    upgrade_name = upgrade.get("name", f"Upgrade {upgrade_index + 1}")
+    upgrade_name = upgrade.get('name', f'Upgrade {upgrade_index + 1}')
     
     if is_purchased:
         # Draw as small icon for purchased upgrades
         if VISUAL_FEEDBACK_AVAILABLE:
-            visual_feedback.draw_icon_button(screen, rect, "", ButtonState.NORMAL)
+            visual_feedback.draw_icon_button(screen, rect, '', ButtonState.NORMAL)
         
         # Get upgrade icon
         icon = get_upgrade_icon(upgrade_name, upgrade_index)
@@ -377,7 +377,7 @@ def draw_compact_upgrade_button(screen, rect_tuple, upgrade, upgrade_index, butt
     else:
         # Draw base button
         if VISUAL_FEEDBACK_AVAILABLE:
-            visual_feedback.draw_button(screen, rect, "", button_state, FeedbackStyle.BUTTON)
+            visual_feedback.draw_button(screen, rect, '', button_state, FeedbackStyle.BUTTON)
         
         # Get upgrade icon
         icon = get_upgrade_icon(upgrade_name, upgrade_index)
@@ -392,7 +392,7 @@ def draw_compact_upgrade_button(screen, rect_tuple, upgrade, upgrade_index, butt
         
         # Draw cost in bottom-right corner for available upgrades
         cost_font = pygame.font.SysFont('Consolas', int(min(rect.width, rect.height) * 0.15), bold=True)
-        cost_text = f"${upgrade.get('cost', 0)}"
+        cost_text = f'${upgrade.get('cost', 0)}'
         cost_surface = cost_font.render(cost_text, True, (255, 255, 100))
         cost_x = rect.right - cost_surface.get_width() - 1
         cost_y = rect.bottom - cost_surface.get_height() - 1
@@ -406,7 +406,7 @@ def draw_compact_upgrade_button(screen, rect_tuple, upgrade, upgrade_index, butt
 
 
 def get_compact_action_rects(w, h, num_actions=9):
-    """
+    '''
     Get rectangles for compact action buttons arranged in a grid.
     
     Args:
@@ -415,7 +415,7 @@ def get_compact_action_rects(w, h, num_actions=9):
         
     Returns:
         List of (x, y, width, height) tuples for action button positions
-    """
+    '''
     # Make buttons smaller and arrange in a grid
     button_size = int(min(w, h) * 0.055)  # Slightly smaller than before
     start_x = int(w * 0.02)
@@ -434,7 +434,7 @@ def get_compact_action_rects(w, h, num_actions=9):
 
 
 def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
-    """
+    '''
     Get rectangles for compact upgrade buttons.
     
     Purchased upgrades are shown as small icons at the top right.
@@ -447,7 +447,7 @@ def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
         
     Returns:
         List of (x, y, width, height) tuples for upgrade button positions
-    """
+    '''
     rects = []
     
     # Purchased upgrades as small icons in top right
@@ -504,7 +504,7 @@ def get_compact_upgrade_rects(w, h, num_upgrades, num_purchased=0):
 
 
 def should_use_compact_ui(game_state) -> bool:
-    """
+    '''
     Determine if compact UI mode should be used.
     
     Args:
@@ -512,13 +512,13 @@ def should_use_compact_ui(game_state) -> bool:
         
     Returns:
         bool: True if compact mode should be used
-    """
+    '''
     # Use compact mode when tutorial is disabled
     return not getattr(game_state, 'tutorial_enabled', True)
 
 
 def draw_compact_end_turn_button(screen, w, h, button_state):
-    """
+    '''
     Draw compact end turn button with shortcut key indicator.
     
     Args:
@@ -528,7 +528,7 @@ def draw_compact_end_turn_button(screen, w, h, button_state):
         
     Returns:
         tuple: (x, y, width, height) rect for click detection
-    """
+    '''
     # Position in bottom center, but above the context window
     button_width = int(w * 0.12)
     button_height = int(h * 0.04)
@@ -548,9 +548,9 @@ def draw_compact_end_turn_button(screen, w, h, button_state):
     
     # Get shortcut key
     if KEYBINDING_AVAILABLE:
-        shortcut_key = keybinding_manager.get_action_display_key("end_turn")
+        shortcut_key = keybinding_manager.get_action_display_key('end_turn')
     else:
-        shortcut_key = "Space"
+        shortcut_key = 'Space'
     
     # Draw base button
     custom_colors = {
@@ -571,14 +571,14 @@ def draw_compact_end_turn_button(screen, w, h, button_state):
     
     if VISUAL_FEEDBACK_AVAILABLE:
         visual_feedback.draw_button(
-            screen, rect, "", button_state, 
+            screen, rect, '', button_state, 
             FeedbackStyle.BUTTON, custom_colors.get(button_state)
         )
     
     if PYGAME_AVAILABLE:
-        # Draw "END" text in center
+        # Draw 'END' text in center
         font = pygame.font.SysFont('Consolas', int(button_height * 0.4), bold=True)
-        text_surface = font.render("END", True, (255, 240, 240))
+        text_surface = font.render('END', True, (255, 240, 240))
         text_x = rect.centerx - text_surface.get_width() // 2
         text_y = rect.centery - text_surface.get_height() // 2
         screen.blit(text_surface, (text_x, text_y))

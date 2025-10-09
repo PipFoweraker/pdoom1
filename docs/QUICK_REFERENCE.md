@@ -35,7 +35,7 @@ cd pdoom1 && pip install -r requirements.txt && python main.py
 
 ## [EMOJI] AUDIO CUES
 - **Action Sounds**: Feedback for spending action points
-- **Hiring**: "Blob" sound when adding team members
+- **Hiring**: 'Blob' sound when adding team members
 - **UI Feedback**: Popup sounds for professional feel
 - **Achievement**: Special sounds for reaching milestones
 
@@ -44,7 +44,7 @@ cd pdoom1 && pip install -r requirements.txt && python main.py
 ### For Demo Hosts
 - Game takes 5-10 minutes per person
 - Leave at main menu between players
-- Suggest interesting seeds: "party2024", "demo", "challenge"
+- Suggest interesting seeds: 'party2024', 'demo', 'challenge'
 - Point out the leaderboard for competition
 
 ### For Players
@@ -60,10 +60,10 @@ cd pdoom1 && pip install -r requirements.txt && python main.py
 - **Game Too Easy**: Focus more on capability research (increases doom)
 
 ## [IDEA] CONVERSATION STARTERS
-- "What's your AI safety strategy?"
-- "Can you survive longer than 47 turns?"
-- "Try seed 'challenge' - I got ranked #5!"
-- "Should AI labs prioritize safety or capability research?"
+- 'What's your AI safety strategy?'
+- 'Can you survive longer than 47 turns?'
+- 'Try seed 'challenge' - I got ranked #5!'
+- 'Should AI labs prioritize safety or capability research?'
 
 ---
 **P(Doom) v0.4.1** - Turn-based AI safety strategy * Educational gameplay * Competitive leaderboards * Party-ready demonstrations

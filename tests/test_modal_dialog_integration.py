@@ -1,10 +1,10 @@
 # !/usr/bin/env python3
-"""
+'''
 Integration test for the modal dialog click blocking fix.
 
 This test simulates the actual click handling logic from main.py to verify 
 that the fix prevents click fall-through while preserving normal dialog functionality.
-"""
+'''
 import unittest
 import pygame
 import sys
@@ -18,10 +18,10 @@ from ui import draw_hiring_dialog
 
 
 def simulate_main_click_handling(game_state, mouse_x, mouse_y, screen_w, screen_h, cached_hiring_dialog_rects):
-    """
+    '''
     Simulate the click handling logic from main.py to test the fix.
     Returns True if click was processed, False if blocked.
-    """
+    '''
     if game_state and game_state.pending_hiring_dialog and cached_hiring_dialog_rects is not None:
         hiring_handled = False
         for rect_info in cached_hiring_dialog_rects:
@@ -60,19 +60,19 @@ def simulate_main_click_handling(game_state, mouse_x, mouse_y, screen_w, screen_
 
 
 class TestModalDialogClickBlocking(unittest.TestCase):
-    """Integration test for the modal dialog click blocking fix."""
+    '''Integration test for the modal dialog click blocking fix.'''
     
     def setUp(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         self.screen = pygame.display.set_mode((1200, 800), pygame.HIDDEN)
         
     def tearDown(self):
-        """Clean up test environment."""
+        '''Clean up test environment.'''
         pygame.quit()
     
     def test_hiring_dialog_blocks_clicks_outside_dialog(self):
-        """Test that clicks outside the hiring dialog are blocked."""
+        '''Test that clicks outside the hiring dialog are blocked.'''
         # Create game state with hiring dialog
         game_state = GameState('test-modal-blocking')
         game_state.money = 1000
@@ -96,16 +96,16 @@ class TestModalDialogClickBlocking(unittest.TestCase):
         )
         
         # Click should be blocked
-        self.assertFalse(click_processed, "Click outside dialog should be blocked")
+        self.assertFalse(click_processed, 'Click outside dialog should be blocked')
         
         # Dialog should still be open
-        self.assertIsNotNone(game_state.pending_hiring_dialog, "Dialog should remain open")
+        self.assertIsNotNone(game_state.pending_hiring_dialog, 'Dialog should remain open')
         
         # Turn should not have advanced
-        self.assertEqual(game_state.turn, initial_turn, "Turn should not advance when click is blocked")
+        self.assertEqual(game_state.turn, initial_turn, 'Turn should not advance when click is blocked')
     
     def test_hiring_dialog_allows_clicks_on_dialog_buttons(self):
-        """Test that clicks on dialog buttons still work."""
+        '''Test that clicks on dialog buttons still work.'''
         # Create game state with hiring dialog
         game_state = GameState('test-modal-buttons')
         game_state.money = 1000
@@ -128,7 +128,7 @@ class TestModalDialogClickBlocking(unittest.TestCase):
                 cancel_rect = rect_info['rect']
                 break
         
-        self.assertIsNotNone(cancel_rect, "Cancel button should be available")
+        self.assertIsNotNone(cancel_rect, 'Cancel button should be available')
         
         # Click on cancel button
         cancel_click_x = cancel_rect.centerx
@@ -139,13 +139,13 @@ class TestModalDialogClickBlocking(unittest.TestCase):
         )
         
         # Click should be processed
-        self.assertTrue(click_processed, "Click on cancel button should be processed")
+        self.assertTrue(click_processed, 'Click on cancel button should be processed')
         
         # Dialog should be dismissed
-        self.assertIsNone(game_state.pending_hiring_dialog, "Dialog should be dismissed after cancel")
+        self.assertIsNone(game_state.pending_hiring_dialog, 'Dialog should be dismissed after cancel')
     
     def test_hiring_dialog_blocks_clicks_inside_dialog_but_not_on_buttons(self):
-        """Test that clicks inside dialog area but not on buttons are blocked."""
+        '''Test that clicks inside dialog area but not on buttons are blocked.'''
         # Create game state with hiring dialog
         game_state = GameState('test-modal-inside')
         game_state.money = 1000
@@ -174,7 +174,7 @@ class TestModalDialogClickBlocking(unittest.TestCase):
         # Verify this click is inside dialog but not on any button
         dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
         self.assertTrue(dialog_rect.collidepoint(inside_click_x, inside_click_y), 
-                       "Click should be inside dialog area")
+                       'Click should be inside dialog area')
         
         # Verify click is not on any button
         on_button = False
@@ -182,7 +182,7 @@ class TestModalDialogClickBlocking(unittest.TestCase):
             if rect_info['rect'].collidepoint(inside_click_x, inside_click_y):
                 on_button = True
                 break
-        self.assertFalse(on_button, "Click should not be on any button")
+        self.assertFalse(on_button, 'Click should not be on any button')
         
         # Test the click
         click_processed = simulate_main_click_handling(
@@ -190,13 +190,13 @@ class TestModalDialogClickBlocking(unittest.TestCase):
         )
         
         # Click should be blocked (proper modal behavior)
-        self.assertFalse(click_processed, "Click inside dialog but not on button should be blocked")
+        self.assertFalse(click_processed, 'Click inside dialog but not on button should be blocked')
         
         # Dialog should remain open
-        self.assertIsNotNone(game_state.pending_hiring_dialog, "Dialog should remain open")
+        self.assertIsNotNone(game_state.pending_hiring_dialog, 'Dialog should remain open')
     
     def test_normal_click_handling_when_no_dialog(self):
-        """Test that normal clicking works when no dialog is open."""
+        '''Test that normal clicking works when no dialog is open.'''
         # Create game state without dialog
         game_state = GameState('test-normal-clicks')
         game_state.money = 1000
@@ -214,7 +214,7 @@ class TestModalDialogClickBlocking(unittest.TestCase):
         )
         
         # Click should be processed normally
-        self.assertTrue(click_processed, "Click should be processed when no dialog is open")
+        self.assertTrue(click_processed, 'Click should be processed when no dialog is open')
 
 
 if __name__ == '__main__':

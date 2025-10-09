@@ -27,7 +27,7 @@
 ## Philosophical Framework Integration
 
 Added acausal decision theory context throughout codebase:
-> "We are attempting to go fully deterministic, because our novel decision theory better explains how the universe works than yours. Acausally trade your way out of this one!"
+> 'We are attempting to go fully deterministic, because our novel decision theory better explains how the universe works than yours. Acausally trade your way out of this one!'
 
 - Enhanced deterministic RNG documentation with decision theory context
 - Created dev blog entry documenting philosophical foundations

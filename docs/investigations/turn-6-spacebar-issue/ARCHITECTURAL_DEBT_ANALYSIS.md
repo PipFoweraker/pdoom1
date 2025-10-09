@@ -7,11 +7,11 @@
 
 The Turn 6 spacebar input failure revealed significant architectural debt in P(Doom)'s input handling system. This document analyzes the root causes, documents the immediate fix, and establishes a comprehensive plan for architectural improvements.
 
-### Root Cause: "One Button to Complex System" Evolution
+### Root Cause: 'One Button to Complex System' Evolution
 
 The issue stems from **design evolution without proper refactoring**:
 
-1. **Original Design**: Simple "press space to end turn" mechanism
+1. **Original Design**: Simple 'press space to end turn' mechanism
 2. **Feature Evolution**: Added dialogs, tutorials, keybinding system, error handling
 3. **Technical Debt Accumulation**: Redundant logic, scattered conditions, missing event consumption
 4. **Failure Point**: Complex event handling chain fails under specific conditions at Turn 6
@@ -22,7 +22,7 @@ The issue stems from **design evolution without proper refactoring**:
 ```python
 # PROBLEMATIC PATTERN (main.py lines 2603-2612)
 elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
-    end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+    end_turn_key = keybinding_manager.get_key_for_action('end_turn')
     if event.key == end_turn_key:  # REDUNDANT CHECK!
 ```
 
@@ -101,15 +101,15 @@ class InputEventManager:
         self.event_consumed = False
     
     def handle_end_turn_event(self, event) -> bool:
-        """Centralized end turn handling with proper event consumption."""
+        '''Centralized end turn handling with proper event consumption.'''
         # Single source of truth for end turn logic
         
     def check_blocking_conditions(self) -> tuple[bool, str]:
-        """Centralized blocking condition logic."""
+        '''Centralized blocking condition logic.'''
         # Eliminates duplication across handlers
         
     def consume_event(self):
-        """Proper event consumption tracking."""
+        '''Proper event consumption tracking.'''
         self.event_consumed = True
 ```
 
@@ -129,13 +129,13 @@ class DialogStateManager:
         self.active_dialogs = {}
         
     def is_modal_active(self) -> bool:
-        """Check if any modal dialog is blocking input."""
+        '''Check if any modal dialog is blocking input.'''
         
     def register_dialog(self, dialog_type: str, dialog_data):
-        """Register active dialog."""
+        '''Register active dialog.'''
         
     def clear_dialog(self, dialog_type: str):
-        """Clear specific dialog type."""
+        '''Clear specific dialog type.'''
 ```
 
 **Benefits**:
@@ -153,10 +153,10 @@ class EventPipeline:
         self.handlers = []
         
     def add_handler(self, handler: EventHandler, priority: int):
-        """Add event handler with priority."""
+        '''Add event handler with priority.'''
         
     def process_event(self, event) -> bool:
-        """Process event through handler chain."""
+        '''Process event through handler chain.'''
         for handler in sorted(self.handlers, key=lambda h: h.priority):
             if handler.can_handle(event):
                 consumed = handler.handle(event)
@@ -172,7 +172,7 @@ class EventPipeline:
 
 ## Lessons Learned: Design Evolution Patterns
 
-### The "One Button to Complex System" Anti-Pattern
+### The 'One Button to Complex System' Anti-Pattern
 
 1. **Initial State**: Simple, single-purpose input handling
 2. **Feature Creep**: Additional requirements added incrementally

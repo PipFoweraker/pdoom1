@@ -1,9 +1,9 @@
-"""
+'''
 Verbose Logging System for P(Doom)
 
 Provides comprehensive logging for debugging, balancing, and competitive verification.
 All game actions, decisions, and state changes are logged for transparency.
-"""
+'''
 
 import json
 import logging
@@ -15,16 +15,16 @@ from enum import Enum
 
 
 class LogLevel(Enum):
-    """Logging detail levels."""
-    MINIMAL = "minimal"      # Only critical events (wins, losses, major milestones)
-    STANDARD = "standard"    # Standard gameplay logging (actions, resource changes)
-    VERBOSE = "verbose"      # Detailed logging (all calculations, RNG calls)
-    DEBUG = "debug"         # Everything (internal state, performance metrics)
+    '''Logging detail levels.'''
+    MINIMAL = 'minimal'      # Only critical events (wins, losses, major milestones)
+    STANDARD = 'standard'    # Standard gameplay logging (actions, resource changes)
+    VERBOSE = 'verbose'      # Detailed logging (all calculations, RNG calls)
+    DEBUG = 'debug'         # Everything (internal state, performance metrics)
 
 
 @dataclass
 class GameAction:
-    """Structured representation of a game action."""
+    '''Structured representation of a game action.'''
     turn: int
     action_name: str
     cost: int
@@ -36,7 +36,7 @@ class GameAction:
     
 @dataclass
 class ResourceChange:
-    """Structured representation of resource changes."""
+    '''Structured representation of resource changes.'''
     turn: int
     resource: str
     old_value: int
@@ -48,7 +48,7 @@ class ResourceChange:
 
 @dataclass
 class RandomEvent:
-    """Structured representation of random events and RNG calls."""
+    '''Structured representation of random events and RNG calls.'''
     turn: int
     context: str
     rng_function: str
@@ -59,7 +59,7 @@ class RandomEvent:
 
 
 class VerboseLogger:
-    """
+    '''
     Comprehensive logging system for game transparency and debugging.
     
     Features:
@@ -68,21 +68,21 @@ class VerboseLogger:
     - Configurable verbosity levels
     - Privacy-respecting data collection
     - Competitive verification support
-    """
+    '''
     
     def __init__(self, 
                  game_seed: str,
                  log_level: LogLevel = LogLevel.STANDARD,
                  enable_human_readable: bool = True,
                  enable_json_export: bool = True):
-        """Initialize logging system."""
+        '''Initialize logging system.'''
         self.game_seed = game_seed
         self.log_level = log_level
         self.enable_human_readable = enable_human_readable
         self.enable_json_export = enable_json_export
         
         # Create logs directory
-        self.logs_dir = "logs"
+        self.logs_dir = 'logs'
         os.makedirs(self.logs_dir, exist_ok=True)
         
         # Initialize log storage
@@ -97,26 +97,26 @@ class VerboseLogger:
         }
         
         # Set up file logging
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.log_filename = f"game_{game_seed}_{timestamp}"
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        self.log_filename = f'game_{game_seed}_{timestamp}'
         
         if enable_human_readable:
             self._setup_human_readable_logger()
     
     def _get_game_version(self) -> str:
-        """Get current game version."""
+        '''Get current game version.'''
         try:
             from src.services.version import get_display_version
             return get_display_version()
         except ImportError:
-            return "unknown"
+            return 'unknown'
     
     def _setup_human_readable_logger(self):
-        """Set up human-readable logging."""
-        log_file = os.path.join(self.logs_dir, f"{self.log_filename}.log")
+        '''Set up human-readable logging.'''
+        log_file = os.path.join(self.logs_dir, f'{self.log_filename}.log')
         
         # Configure logger
-        self.logger = logging.getLogger(f"pdoom_{self.game_seed}")
+        self.logger = logging.getLogger(f'pdoom_{self.game_seed}')
         self.logger.setLevel(logging.DEBUG)
         
         # Clear existing handlers
@@ -141,7 +141,7 @@ class VerboseLogger:
                    ap_cost: int, 
                    result: Dict[str, Any],
                    rng_context: Optional[str] = None):
-        """Log a game action."""
+        '''Log a game action.'''
         action = GameAction(
             turn=turn,
             action_name=action_name,
@@ -156,7 +156,7 @@ class VerboseLogger:
         
         if self.enable_human_readable and self.log_level.value in ['standard', 'verbose', 'debug']:
             self.logger.info(
-                f"Action: {action_name} (${cost}, {ap_cost}AP) -> {result}",
+                f'Action: {action_name} (${cost}, {ap_cost}AP) -> {result}',
                 extra={'turn': turn}
             )
     
@@ -166,7 +166,7 @@ class VerboseLogger:
                            old_value: int,
                            new_value: int,
                            reason: str):
-        """Log a resource change."""
+        '''Log a resource change.'''
         change = ResourceChange(
             turn=turn,
             resource=resource,
@@ -180,9 +180,9 @@ class VerboseLogger:
         self.resource_changes_log.append(change)
         
         if self.enable_human_readable and self.log_level.value in ['verbose', 'debug']:
-            change_str = f"+{change.change}" if change.change >= 0 else str(change.change)
+            change_str = f'+{change.change}' if change.change >= 0 else str(change.change)
             self.logger.debug(
-                f"Resource: {resource} {old_value} -> {new_value} ({change_str}) [{reason}]",
+                f'Resource: {resource} {old_value} -> {new_value} ({change_str}) [{reason}]',
                 extra={'turn': turn}
             )
     
@@ -193,7 +193,7 @@ class VerboseLogger:
                         parameters: Dict[str, Any],
                         result: Any,
                         seed_info: Dict[str, Any]):
-        """Log a random number generation event."""
+        '''Log a random number generation event.'''
         event = RandomEvent(
             turn=turn,
             context=context,
@@ -208,12 +208,12 @@ class VerboseLogger:
         
         if self.enable_human_readable and self.log_level.value in ['debug']:
             self.logger.debug(
-                f"RNG: {rng_function}({parameters}) = {result} [ctx: {context}]",
+                f'RNG: {rng_function}({parameters}) = {result} [ctx: {context}]',
                 extra={'turn': turn}
             )
     
     def log_game_event(self, turn: int, level: str, message: str, data: Dict[str, Any] = None):
-        """Log a general game event."""
+        '''Log a general game event.'''
         if not self.enable_human_readable:
             return
             
@@ -229,14 +229,14 @@ class VerboseLogger:
         log_level = level_map.get(level, logging.INFO)
         
         if data:
-            message = f"{message} | Data: {data}"
+            message = f'{message} | Data: {data}'
             
         self.logger.log(log_level, message, extra={'turn': turn})
     
     def export_json_logs(self) -> str:
-        """Export all logs as JSON for analysis."""
+        '''Export all logs as JSON for analysis.'''
         if not self.enable_json_export:
-            return ""
+            return ''
             
         export_data = {
             'metadata': self.game_metadata,
@@ -245,7 +245,7 @@ class VerboseLogger:
             'random_events': [asdict(event) for event in self.random_events_log]
         }
         
-        json_file = os.path.join(self.logs_dir, f"{self.log_filename}.json")
+        json_file = os.path.join(self.logs_dir, f'{self.log_filename}.json')
         
         with open(json_file, 'w', encoding='utf-8') as f:
             json.dump(export_data, f, indent=2, ensure_ascii=False)
@@ -253,7 +253,7 @@ class VerboseLogger:
         return json_file
     
     def get_game_summary(self) -> Dict[str, Any]:
-        """Generate summary statistics for competitive verification."""
+        '''Generate summary statistics for competitive verification.'''
         return {
             'seed': self.game_seed,
             'total_actions': len(self.actions_log),
@@ -265,14 +265,14 @@ class VerboseLogger:
         }
     
     def _get_action_breakdown(self) -> Dict[str, int]:
-        """Get count of each action type."""
+        '''Get count of each action type.'''
         breakdown = {}
         for action in self.actions_log:
             breakdown[action.action_name] = breakdown.get(action.action_name, 0) + 1
         return breakdown
     
     def _get_resource_summary(self) -> Dict[str, Dict[str, int]]:
-        """Get resource change summary."""
+        '''Get resource change summary.'''
         summary = {}
         for change in self.resource_changes_log:
             if change.resource not in summary:
@@ -282,7 +282,7 @@ class VerboseLogger:
         return summary
     
     def _calculate_log_checksum(self) -> str:
-        """Calculate checksum for log integrity verification."""
+        '''Calculate checksum for log integrity verification.'''
         import hashlib
         
         # Create deterministic string representation of logs
@@ -295,7 +295,7 @@ class VerboseLogger:
         return hashlib.sha256(log_string.encode()).hexdigest()[:16]
 
     def close(self):
-        """Close all file handlers properly."""
+        '''Close all file handlers properly.'''
         try:
             # Close all file handlers
             for handler in self.logger.handlers[:]:
@@ -323,7 +323,7 @@ def init_verbose_logging(game_seed: str,
                         log_level: LogLevel = LogLevel.STANDARD,
                         enable_human_readable: bool = True,
                         enable_json_export: bool = True):
-    """Initialize verbose logging system."""
+    '''Initialize verbose logging system.'''
     global verbose_logger
     verbose_logger = VerboseLogger(
         game_seed=game_seed,
@@ -334,12 +334,12 @@ def init_verbose_logging(game_seed: str,
 
 
 def get_logger() -> VerboseLogger:
-    """Get current verbose logger instance."""
+    '''Get current verbose logger instance.'''
     if verbose_logger is None:
-        raise RuntimeError("Verbose logger not initialized. Call init_verbose_logging() first.")
+        raise RuntimeError('Verbose logger not initialized. Call init_verbose_logging() first.')
     return verbose_logger
 
 
 def is_logging_enabled() -> bool:
-    """Check if verbose logging is enabled."""
+    '''Check if verbose logging is enabled.'''
     return verbose_logger is not None

@@ -1,10 +1,10 @@
 # !/usr/bin/env python3
-"""
+'''
 ASCII Compliance Fixer for P(Doom) Documentation
 
 This tool systematically finds and replaces Unicode characters with ASCII equivalents
 across all documentation files to ensure cross-platform compatibility.
-"""
+'''
 
 import os
 import glob
@@ -21,12 +21,12 @@ class ASCIIComplianceFixer:
             '\u2015': '--', # HORIZONTAL BAR
             
             # Quotation marks
-            '\u201c': '"',  # LEFT DOUBLE QUOTATION MARK
-            '\u201d': '"',  # RIGHT DOUBLE QUOTATION MARK
-            '\u2018': "'",  # LEFT SINGLE QUOTATION MARK  
-            '\u2019': "'",  # RIGHT SINGLE QUOTATION MARK
-            '\u00ab': '"',  # LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
-            '\u00bb': '"',  # RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+            '\u201c': ''',  # LEFT DOUBLE QUOTATION MARK
+            '\u201d': ''',  # RIGHT DOUBLE QUOTATION MARK
+            '\u2018': ''',  # LEFT SINGLE QUOTATION MARK  
+            '\u2019': ''',  # RIGHT SINGLE QUOTATION MARK
+            '\u00ab': ''',  # LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+            '\u00bb': ''',  # RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
             
             # Bullets and list markers
             '\u2022': '*',  # BULLET
@@ -176,7 +176,7 @@ class ASCIIComplianceFixer:
         self.emoji_pattern = re.compile(r'[\U0001F600-\U0001F64F]|[\U0001F300-\U0001F5FF]|[\U0001F680-\U0001F6FF]|[\U0001F1E0-\U0001F1FF]|[\U00002702-\U000027B0]|[\U000024C2-\U0001F251]')
 
     def find_violations(self, file_path: str) -> List[Tuple[int, str, str]]:
-        """Find all Unicode violations in a file."""
+        '''Find all Unicode violations in a file.'''
         violations = []
         
         try:
@@ -207,12 +207,12 @@ class ASCIIComplianceFixer:
                     violations.append((i, char, suggestion))
         
         except Exception as e:
-            print(f"Error processing {file_path}: {e}")
+            print(f'Error processing {file_path}: {e}')
         
         return violations
 
     def fix_file(self, file_path: str, dry_run: bool = False) -> Tuple[bool, int]:
-        """Fix Unicode violations in a file."""
+        '''Fix Unicode violations in a file.'''
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
@@ -261,11 +261,11 @@ class ASCIIComplianceFixer:
             return content != original_content, replacements_made
             
         except Exception as e:
-            print(f"Error fixing {file_path}: {e}")
+            print(f'Error fixing {file_path}: {e}')
             return False, 0
 
     def process_directory(self, dry_run: bool = False) -> Dict[str, Tuple[bool, int]]:
-        """Process all documentation files in the repository."""
+        '''Process all documentation files in the repository.'''
         results = {}
         
         # File patterns to check
@@ -291,19 +291,19 @@ class ASCIIComplianceFixer:
             violations = self.find_violations(file_path)
             if violations:
                 if dry_run:
-                    print(f"Would fix {file_path}: {len(violations)} violations")
+                    print(f'Would fix {file_path}: {len(violations)} violations')
                     results[file_path] = (True, len(violations))
                 else:
                     success, count = self.fix_file(file_path)
                     if success:
-                        print(f"Fixed {file_path}: {count} replacements")
+                        print(f'Fixed {file_path}: {count} replacements')
                     else:
-                        print(f"No changes needed: {file_path}")
+                        print(f'No changes needed: {file_path}')
                     results[file_path] = (success, count)
             
             processed += 1
             if processed % 10 == 0:
-                print(f"Progress: {processed}/{total_files} files processed")
+                print(f'Progress: {processed}/{total_files} files processed')
         
         return results
 
@@ -322,33 +322,33 @@ def main():
         if os.path.exists(args.file):
             violations = fixer.find_violations(args.file)
             if violations:
-                print(f"Found {len(violations)} violations in {args.file}:")
+                print(f'Found {len(violations)} violations in {args.file}:')
                 for pos, char, suggestion in violations[:10]:  # Show first 10
-                    print(f"  Position {pos}: '{char}' -> '{suggestion}'")
+                    print(f'  Position {pos}: '{char}' -> '{suggestion}'')
                 if len(violations) > 10:
-                    print(f"  ... and {len(violations) - 10} more")
+                    print(f'  ... and {len(violations) - 10} more')
                 
                 if not args.dry_run:
                     success, count = fixer.fix_file(args.file)
                     if success:
-                        print(f"Fixed {count} violations in {args.file}")
+                        print(f'Fixed {count} violations in {args.file}')
                     else:
-                        print("No changes made")
+                        print('No changes made')
             else:
-                print(f"No violations found in {args.file}")
+                print(f'No violations found in {args.file}')
         else:
-            print(f"File not found: {args.file}")
+            print(f'File not found: {args.file}')
     else:
-        print("Processing all files...")
+        print('Processing all files...')
         results = fixer.process_directory(dry_run=args.dry_run)
         
         total_files_fixed = sum(1 for success, _ in results.values() if success)
         total_replacements = sum(count for _, count in results.values())
         
-        print(f"\nSummary:")
-        print(f"Files processed: {len(results)}")
-        print(f"Files {'would be ' if args.dry_run else ''}fixed: {total_files_fixed}")
-        print(f"Total replacements {'would be ' if args.dry_run else ''}made: {total_replacements}")
+        print(f'\nSummary:')
+        print(f'Files processed: {len(results)}')
+        print(f'Files {'would be ' if args.dry_run else ''}fixed: {total_files_fixed}')
+        print(f'Total replacements {'would be ' if args.dry_run else ''}made: {total_replacements}')
 
 if __name__ == '__main__':
     main()

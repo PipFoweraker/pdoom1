@@ -1,25 +1,25 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-28T07:35:43.391514",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-28T07:35:43.391514',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 4,
-      "player_name": "Apex Intelligence",
-      "date": "2025-09-27T15:05:20.981023",
-      "level_reached": 4,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.00929,
-      "entry_uuid": "15430802-fdcf-4eec-a29b-38a47f482a70"
+      'score': 4,
+      'player_name': 'Apex Intelligence',
+      'date': '2025-09-27T15:05:20.981023',
+      'level_reached': 4,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.00929,
+      'entry_uuid': '15430802-fdcf-4eec-a29b-38a47f482a70'
     },
     {
-      "score": 4,
-      "player_name": "Apex Intelligence",
-      "date": "2025-09-28T07:35:43.383658",
-      "level_reached": 4,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.006465,
-      "entry_uuid": "fcf92d14-3d28-4b04-9ea9-e70c0dc21ccb"
+      'score': 4,
+      'player_name': 'Apex Intelligence',
+      'date': '2025-09-28T07:35:43.383658',
+      'level_reached': 4,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.006465,
+      'entry_uuid': 'fcf92d14-3d28-4b04-9ea9-e70c0dc21ccb'
     }
   ]
 }

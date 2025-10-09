@@ -2,12 +2,12 @@
 
 **Release Date**: September 13, 2025  
 **Branch**: hotfix/live-session-enhancements -> main  
-**Codename**: "Strategic Menu Revolution"
+**Codename**: 'Strategic Menu Revolution'
 
 ## [TARGET] Major Enhancements
 
 ### **1. Fundraising System Overhaul**
-- **Replaced single "Fundraise" action** with comprehensive "Fundraising Options" submenu
+- **Replaced single 'Fundraise' action** with comprehensive 'Fundraising Options' submenu
 - **4 Strategic Funding Approaches:**
   - **Fundraise Small** ($30-60k, low risk) - Conservative growth funding
   - **Fundraise Big** ($80-150k, high stakes) - Major funding rounds with visibility
@@ -17,8 +17,8 @@
 - **Dynamic Availability** - Options become available based on reputation and game state
 
 ### **2. Research Menu Consolidation** 
-- **Unified Research System** - Replaced separate "Safety Research" and "Governance Research" actions
-- **Strategic "Research Options" submenu** with 4 research approaches:
+- **Unified Research System** - Replaced separate 'Safety Research' and 'Governance Research' actions
+- **Strategic 'Research Options' submenu** with 4 research approaches:
   - **Safety Research** ($40k, 2-6% doom reduction) - Traditional AI safety research
   - **Governance Research** ($45k, 2-5% doom reduction) - Policy and coordination focus  
   - **Rush Research** ($30k, 1-4% doom reduction) - Fast but accumulates technical debt

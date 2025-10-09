@@ -1,9 +1,9 @@
-"""
+'''
 Tutorial UI functions for the P(Doom) game interface.
 
 This module contains all tutorial-related drawing functions including
 tutorial overlays, stepwise tutorials, help popups, and new player experience.
-"""
+'''
 
 import pygame
 from typing import Dict, Any, Optional, Tuple
@@ -12,7 +12,7 @@ from src.features.visual_feedback import draw_low_poly_button, ButtonState
 
 
 def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, str], w: int, h: int) -> pygame.Rect:
-    """
+    '''
     Draw a tutorial overlay with message content and dismiss button.
     
     Args:
@@ -22,7 +22,7 @@ def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, st
         
     Returns:
         Rect of the dismiss button for click detection
-    """
+    '''
     if not tutorial_message:
         return None
         
@@ -49,13 +49,13 @@ def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, st
     button_font = pygame.font.Font(None, int(h * 0.03))
     
     # Title
-    title = tutorial_message["title"]
+    title = tutorial_message['title']
     title_surface = title_font.render(title, True, (255, 255, 255))
     title_rect = title_surface.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
     screen.blit(title_surface, title_rect)
     
     # Content area
-    content = tutorial_message["content"]
+    content = tutorial_message['content']
     content_y = title_rect.bottom + 30
     content_width = dialog_width - 40
     content_height = dialog_height - 120  # Leave space for title and button
@@ -67,9 +67,9 @@ def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, st
     for i, line in enumerate(wrapped_lines):
         line_y = content_y + i * line_height
         if line_y + line_height > content_y + content_height:
-            # Add "..." if content is too long
+            # Add '...' if content is too long
             if i < len(wrapped_lines) - 1:
-                ellipsis = content_font.render("...", True, (200, 200, 200))
+                ellipsis = content_font.render('...', True, (200, 200, 200))
                 screen.blit(ellipsis, (dialog_x + 20, line_y))
             break
         line_surface = content_font.render(line, True, (220, 220, 220))
@@ -85,13 +85,13 @@ def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, st
     pygame.draw.rect(screen, (80, 120, 160), button_rect, border_radius=5)
     pygame.draw.rect(screen, (120, 180, 240), button_rect, width=2, border_radius=5)
     
-    button_text = button_font.render("Got it!", True, (255, 255, 255))
+    button_text = button_font.render('Got it!', True, (255, 255, 255))
     text_rect = button_text.get_rect(center=button_rect.center)
     screen.blit(button_text, text_rect)
     
     # Footer text
     footer_text = pygame.font.Font(None, int(h * 0.02)).render(
-        "Click 'Got it!' or press Enter to dismiss", True, (150, 150, 150)
+        'Click 'Got it!' or press Enter to dismiss', True, (150, 150, 150)
     )
     footer_rect = footer_text.get_rect(centerx=dialog_rect.centerx, y=button_rect.bottom + 10)
     screen.blit(footer_text, footer_rect)
@@ -100,7 +100,7 @@ def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, st
 
 
 def draw_stepwise_tutorial_overlay(screen: pygame.Surface, tutorial_data: Dict[str, Any], w: int, h: int) -> Dict[str, pygame.Rect]:
-    """
+    '''
     Draw the stepwise tutorial overlay for onboarding new players.
     
     Args:
@@ -110,7 +110,7 @@ def draw_stepwise_tutorial_overlay(screen: pygame.Surface, tutorial_data: Dict[s
     
     Returns:
         dict with button rectangles for click detection
-    """
+    '''
     if not tutorial_data:
         return {}
     
@@ -140,7 +140,7 @@ def draw_stepwise_tutorial_overlay(screen: pygame.Surface, tutorial_data: Dict[s
     # Progress indicator
     step_number = tutorial_data.get('step_number', 1)
     total_steps = tutorial_data.get('total_steps', 1)
-    progress_text = f"Step {step_number} of {total_steps}"
+    progress_text = f'Step {step_number} of {total_steps}'
     progress_surface = progress_font.render(progress_text, True, (200, 200, 200))
     progress_rect = progress_surface.get_rect(topright=(box_x + box_width - 20, box_y + 15))
     screen.blit(progress_surface, progress_rect)
@@ -191,7 +191,7 @@ def draw_stepwise_tutorial_overlay(screen: pygame.Surface, tutorial_data: Dict[s
         pygame.draw.rect(screen, (150, 150, 150), back_button_rect, border_radius=8)
         pygame.draw.rect(screen, (255, 255, 255), back_button_rect, width=2, border_radius=8)
         
-        back_text = button_font.render("Back", True, (255, 255, 255))
+        back_text = button_font.render('Back', True, (255, 255, 255))
         back_text_rect = back_text.get_rect(center=back_button_rect.center)
         screen.blit(back_text, back_text_rect)
         buttons['back'] = back_button_rect
@@ -202,7 +202,7 @@ def draw_stepwise_tutorial_overlay(screen: pygame.Surface, tutorial_data: Dict[s
     pygame.draw.rect(screen, (180, 100, 100), skip_button_rect, border_radius=8)
     pygame.draw.rect(screen, (255, 255, 255), skip_button_rect, width=2, border_radius=8)
     
-    skip_text = button_font.render("Skip (S)", True, (255, 255, 255))
+    skip_text = button_font.render('Skip (S)', True, (255, 255, 255))
     skip_text_rect = skip_text.get_rect(center=skip_button_rect.center)
     screen.blit(skip_text, skip_text_rect)
     buttons['skip'] = skip_button_rect
@@ -216,7 +216,7 @@ def draw_stepwise_tutorial_overlay(screen: pygame.Surface, tutorial_data: Dict[s
     pygame.draw.rect(screen, (100, 200, 100), next_button_rect, border_radius=8)
     pygame.draw.rect(screen, (255, 255, 255), next_button_rect, width=2, border_radius=8)
     
-    next_label = "Finish" if is_final_step else "Next"
+    next_label = 'Finish' if is_final_step else 'Next'
     next_text = button_font.render(next_label, True, (255, 255, 255))
     next_text_rect = next_text.get_rect(center=next_button_rect.center)
     screen.blit(next_text, next_text_rect)
@@ -233,7 +233,7 @@ def draw_stepwise_tutorial_overlay(screen: pygame.Surface, tutorial_data: Dict[s
 
 
 def draw_first_time_help(screen: pygame.Surface, help_content: Dict[str, Any], w: int, h: int, mouse_pos: Optional[Tuple[int, int]] = None) -> Optional[pygame.Rect]:
-    """
+    '''
     Draw a small help popup for first-time mechanics.
     
     Args:
@@ -241,7 +241,7 @@ def draw_first_time_help(screen: pygame.Surface, help_content: Dict[str, Any], w
         help_content: dict with title and content for the help popup
         w, h: screen width and height
         mouse_pos: current mouse position for hover effects (optional)
-    """
+    '''
     if not help_content or not isinstance(help_content, dict):
         return None
         
@@ -290,13 +290,13 @@ def draw_first_time_help(screen: pygame.Surface, help_content: Dict[str, Any], w
     pygame.draw.rect(screen, close_button_color, close_button_rect, border_radius=3)
     
     close_font = pygame.font.SysFont('Consolas', int(h*0.02), bold=True)
-    close_text = close_font.render("X", True, close_text_color)
+    close_text = close_font.render('X', True, close_text_color)
     close_text_rect = close_text.get_rect(center=close_button_rect.center)
     screen.blit(close_text, close_text_rect)
     
     # Add dismiss instructions at bottom of popup
     dismiss_font = pygame.font.SysFont('Consolas', int(h*0.015))
-    dismiss_text = dismiss_font.render("Press Esc to dismiss, Enter to accept", True, (180, 180, 180))
+    dismiss_text = dismiss_font.render('Press Esc to dismiss, Enter to accept', True, (180, 180, 180))
     dismiss_y = popup_y + popup_height - 25
     screen.blit(dismiss_text, (popup_x + 10, dismiss_y))
     
@@ -304,14 +304,14 @@ def draw_first_time_help(screen: pygame.Surface, help_content: Dict[str, Any], w
 
 
 def draw_tutorial_choice(screen: pygame.Surface, w: int, h: int, selected_item: int) -> None:
-    """
+    '''
     Draw the tutorial choice screen.
     
     Args:
         screen: pygame surface to draw on
         w, h: screen width and height for responsive layout
         selected_item: index of currently selected item (0=No, 1=Yes)
-    """
+    '''
     # Clear background
     screen.fill((50, 50, 50))
     
@@ -320,20 +320,20 @@ def draw_tutorial_choice(screen: pygame.Surface, w: int, h: int, selected_item: 
     desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
     
     # Title
-    title_surf = title_font.render("Tutorial Mode?", True, (255, 255, 255))
+    title_surf = title_font.render('Tutorial Mode?', True, (255, 255, 255))
     title_x = w // 2 - title_surf.get_width() // 2
     title_y = int(h * 0.15)
     screen.blit(title_surf, (title_x, title_y))
     
     # Description
-    desc_text = "Would you like to play with tutorial guidance?"
+    desc_text = 'Would you like to play with tutorial guidance?'
     desc_surf = desc_font.render(desc_text, True, (200, 200, 200))
     desc_x = w // 2 - desc_surf.get_width() // 2
     desc_y = title_y + title_surf.get_height() + 20
     screen.blit(desc_surf, (desc_x, desc_y))
     
     # Tutorial options - No tutorial first (default), Yes tutorial second
-    tutorial_items = ["No - Regular Mode", "Yes - Enable Tutorial"]
+    tutorial_items = ['No - Regular Mode', 'Yes - Enable Tutorial']
     
     # Button layout
     button_width = int(w * 0.4)
@@ -360,8 +360,8 @@ def draw_tutorial_choice(screen: pygame.Surface, w: int, h: int, selected_item: 
     # Instructions
     inst_font = pygame.font.SysFont('Consolas', int(h*0.025))
     instructions = [
-        "Use arrow keys or mouse to navigate, Enter/Space to confirm",
-        "Tutorial mode provides helpful guidance for new players"
+        'Use arrow keys or mouse to navigate, Enter/Space to confirm',
+        'Tutorial mode provides helpful guidance for new players'
     ]
     
     inst_y = int(h * 0.8)
@@ -373,7 +373,7 @@ def draw_tutorial_choice(screen: pygame.Surface, w: int, h: int, selected_item: 
 
 
 def draw_new_player_experience(screen: pygame.Surface, w: int, h: int, selected_item: int, tutorial_enabled: bool, intro_enabled: bool) -> None:
-    """
+    '''
     Draw the new player experience screen with tutorial and intro checkboxes.
     
     Args:
@@ -382,7 +382,7 @@ def draw_new_player_experience(screen: pygame.Surface, w: int, h: int, selected_
         selected_item: index of currently selected item (0=Tutorial, 1=Intro, 2=Start button)
         tutorial_enabled: whether tutorial checkbox is checked
         intro_enabled: whether intro checkbox is checked
-    """
+    '''
     # Clear background
     screen.fill((50, 50, 50))
     
@@ -392,13 +392,13 @@ def draw_new_player_experience(screen: pygame.Surface, w: int, h: int, selected_
     desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
     
     # Title
-    title_surf = title_font.render("New Player Experience", True, (255, 255, 255))
+    title_surf = title_font.render('New Player Experience', True, (255, 255, 255))
     title_x = w // 2 - title_surf.get_width() // 2
     title_y = int(h * 0.12)
     screen.blit(title_surf, (title_x, title_y))
     
     # Description
-    desc_text = "Choose your starting options:"
+    desc_text = 'Choose your starting options:'
     desc_surf = desc_font.render(desc_text, True, (200, 200, 200))
     desc_x = w // 2 - desc_surf.get_width() // 2
     desc_y = title_y + title_surf.get_height() + 20
@@ -412,8 +412,8 @@ def draw_new_player_experience(screen: pygame.Surface, w: int, h: int, selected_
     
     # Options with checkboxes
     options = [
-        ("Tutorial", "Get helpful guidance for new players", tutorial_enabled),
-        ("Intro", "Read an introduction to the scenario", intro_enabled)
+        ('Tutorial', 'Get helpful guidance for new players', tutorial_enabled),
+        ('Intro', 'Read an introduction to the scenario', intro_enabled)
     ]
     
     for i, (option_name, option_desc, checked) in enumerate(options):
@@ -464,16 +464,16 @@ def draw_new_player_experience(screen: pygame.Surface, w: int, h: int, selected_
         button_state = ButtonState.NORMAL
     
     # Draw start button
-    draw_low_poly_button(screen, button_rect, "Start Game", button_state)
+    draw_low_poly_button(screen, button_rect, 'Start Game', button_state)
     
     # Intro text preview if intro is enabled
     if intro_enabled:
         intro_y = button_y + button_height + 30
         intro_font = pygame.font.SysFont('Consolas', int(h*0.022))
         intro_lines = [
-            "Doom is coming. You convinced a funder to give you $1,000.",
-            "You'll be assigned a lab name for pseudonymous competition.",
-            "Your job is to save the world. Good luck!"
+            'Doom is coming. You convinced a funder to give you $1,000.',
+            'You'll be assigned a lab name for pseudonymous competition.',
+            'Your job is to save the world. Good luck!'
         ]
         
         for line in intro_lines:
@@ -485,9 +485,9 @@ def draw_new_player_experience(screen: pygame.Surface, w: int, h: int, selected_
     # Instructions
     inst_font = pygame.font.SysFont('Consolas', int(h*0.02))
     instructions = [
-        "Use arrow keys or mouse to navigate",
-        "Space/Enter to toggle checkboxes or start game",
-        "Escape to return to main menu"
+        'Use arrow keys or mouse to navigate',
+        'Space/Enter to toggle checkboxes or start game',
+        'Escape to return to main menu'
     ]
     
     inst_y = int(h * 0.85)

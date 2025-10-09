@@ -1,9 +1,9 @@
-"""
+'''
 Import manager for main.py to organize and optimize imports.
 
 This module consolidates all imports for main.py in a cleaner, more maintainable way.
 Part of the internal polish phase to improve code organization.
-"""
+'''
 
 # Standard library imports
 
@@ -40,7 +40,7 @@ from src.ui.menu_handlers.menu_system import (
 
 
 def initialize_systems():
-    """Initialize all game systems and return configuration."""
+    '''Initialize all game systems and return configuration.'''
     # Initialize config system on startup
     initialize_config_system()
     current_config = get_current_config()
@@ -63,7 +63,7 @@ def initialize_systems():
 
 
 def initialize_display(current_config):
-    """Initialize pygame display based on configuration."""
+    '''Initialize pygame display based on configuration.'''
     pygame.init()
     
     # Set up initial screen for loading
@@ -81,7 +81,7 @@ def initialize_display(current_config):
         screen_h = int(800 * window_scale)
         screen = pygame.display.set_mode((screen_w, screen_h))
     
-    pygame.display.set_caption(f"P(Doom): Bureaucracy Strategy Game {get_display_version()}")
+    pygame.display.set_caption(f'P(Doom): Bureaucracy Strategy Game {get_display_version()}')
     
     return screen, screen_w, screen_h
 

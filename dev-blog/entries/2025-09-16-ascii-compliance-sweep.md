@@ -1,9 +1,9 @@
 ---
-title: "ASCII Compliance Sweep: Professional Documentation Standards"
-date: "2025-09-16"
-tags: ["documentation", "standards", "ascii", "quality", "automation"]
-summary: "Eliminated 6,255 Unicode violations across 85 files, reducing test failures by 84% and achieving 100% ASCII compliance"
-commit: "TBD"
+title: 'ASCII Compliance Sweep: Professional Documentation Standards'
+date: '2025-09-16'
+tags: ['documentation', 'standards', 'ascii', 'quality', 'automation']
+summary: 'Eliminated 6,255 Unicode violations across 85 files, reducing test failures by 84% and achieving 100% ASCII compliance'
+commit: 'TBD'
 ---
 
 # ASCII Compliance Sweep: Professional Documentation Standards

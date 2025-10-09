@@ -1,4 +1,4 @@
-"""
+'''
 UI Layout and State Module
 
 This module provides UI layout and state management functions for the P(Doom) UI system.
@@ -11,21 +11,21 @@ Functions:
 - draw_version_header: Version display in header area
 - draw_context_window: Bottom context window with detailed information
 - UI state utility functions
-"""
+'''
 
 import pygame
 from typing import Dict, Any, Optional, Tuple
 
 
 def draw_dev_mode_indicator(screen: pygame.Surface, w: int, h: int, font: Optional[pygame.font.Font] = None) -> None:
-    """
+    '''
     Draw developer mode indicator in top-left corner if DEV MODE is enabled.
     
     Args:
         screen: pygame surface to draw on
         w, h: screen width and height for positioning
         font: optional font for dev mode text
-    """
+    '''
     try:
         from src.services.dev_mode import get_dev_status_text
         dev_text = get_dev_status_text()
@@ -37,7 +37,7 @@ def draw_dev_mode_indicator(screen: pygame.Surface, w: int, h: int, font: Option
             font = pygame.font.SysFont('Consolas', max(14, int(h * 0.022)), bold=True)
         
         # Create text with bright orange/yellow color for visibility
-        dev_surf = font.render(f"[{dev_text}]", True, (255, 165, 0))
+        dev_surf = font.render(f'[{dev_text}]', True, (255, 165, 0))
         
         # Position in top-left corner with margin
         margin = int(h * 0.015)
@@ -48,19 +48,19 @@ def draw_dev_mode_indicator(screen: pygame.Surface, w: int, h: int, font: Option
 
 
 def draw_version_footer(screen: pygame.Surface, w: int, h: int, font: Optional[pygame.font.Font] = None) -> None:
-    """
+    '''
     Draw version information in the footer area.
     
     Args:
         screen: pygame surface to draw on
         w, h: screen width and height for positioning
         font: optional font for version text
-    """
+    '''
     try:
         from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
-        version_text = "dev"
+        version_text = 'dev'
     
     if font is None:
         font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
@@ -76,19 +76,19 @@ def draw_version_footer(screen: pygame.Surface, w: int, h: int, font: Optional[p
 
 
 def draw_version_header(screen: pygame.Surface, w: int, h: int, font: Optional[pygame.font.Font] = None) -> None:
-    """
+    '''
     Draw version information in the header area (alternative placement).
     
     Args:
         screen: pygame surface to draw on
         w, h: screen width and height for positioning
         font: optional font for version text
-    """
+    '''
     try:
         from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
-        version_text = "dev"
+        version_text = 'dev'
     
     if font is None:
         font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
@@ -104,7 +104,7 @@ def draw_version_header(screen: pygame.Surface, w: int, h: int, font: Optional[p
 
 
 def draw_top_bar_info(screen: pygame.Surface, game_state: Any, w: int, h: int, small_font: pygame.font.Font, font: pygame.font.Font) -> None:
-    """
+    '''
     Draw enhanced top bar with game date, version, and debug hotkeys.
     
     Args:
@@ -112,7 +112,7 @@ def draw_top_bar_info(screen: pygame.Surface, game_state: Any, w: int, h: int, s
         game_state: current game state
         w, h: screen dimensions
         small_font, font: pygame font objects
-    """
+    '''
     from src.services.version import get_display_version
     from src.services.config_manager import get_current_config
     
@@ -120,13 +120,13 @@ def draw_top_bar_info(screen: pygame.Surface, game_state: Any, w: int, h: int, s
     
     # 1. GAME DATE (Top Left)
     if hasattr(game_state, 'game_clock') and game_state.game_clock:
-        date_text = f"Week of {game_state.game_clock.get_formatted_date()}"
+        date_text = f'Week of {game_state.game_clock.get_formatted_date()}'
         date_color = (180, 220, 255)  # Light blue
         date_surface = small_font.render(date_text, True, date_color)
         screen.blit(date_surface, (int(w * 0.02), top_y))
     
     # 2. VERSION NUMBER (Top Right)
-    version_text = f"v{get_display_version()}"
+    version_text = f'v{get_display_version()}'
     version_color = (200, 200, 200)  # Light gray
     version_surface = small_font.render(version_text, True, version_color)
     version_x = w - version_surface.get_width() - int(w * 0.02)
@@ -138,7 +138,7 @@ def draw_top_bar_info(screen: pygame.Surface, game_state: Any, w: int, h: int, s
     
     if debug_mode:
         # Debug hotkey hints in center
-        hotkeys_text = "[H] Help  [C] Clear UI  [[] Screenshot  [M] Menu"
+        hotkeys_text = '[H] Help  [C] Clear UI  [[] Screenshot  [M] Menu'
         hotkeys_color = (160, 160, 160)  # Dim gray so not distracting
         hotkeys_surface = small_font.render(hotkeys_text, True, hotkeys_color)
         hotkeys_x = (w - hotkeys_surface.get_width()) // 2
@@ -146,7 +146,7 @@ def draw_top_bar_info(screen: pygame.Surface, game_state: Any, w: int, h: int, s
 
 
 def draw_context_window(screen: pygame.Surface, context_info: Dict[str, Any], w: int, h: int, minimized: bool = False, config: Optional[Dict[str, Any]] = None) -> Tuple[Optional[pygame.Rect], Optional[pygame.Rect]]:
-    """
+    '''
     Draw a context window at the bottom of the screen showing detailed information.
     
     Args:
@@ -158,7 +158,7 @@ def draw_context_window(screen: pygame.Surface, context_info: Dict[str, Any], w:
         
     Returns:
         tuple: (context_rect, button_rect) for interaction handling
-    """
+    '''
     if not context_info:
         return None, None  # No context to show
     

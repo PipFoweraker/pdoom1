@@ -33,7 +33,7 @@ Sound effects are loaded and played through the AudioManager service:
 from pdoom1.services.audio_manager import AudioManager
 
 audio = AudioManager()
-audio.play_sound(Path("assets/sfx/weapons/shot.wav"))
+audio.play_sound(Path('assets/sfx/weapons/shot.wav'))
 ```
 
 ## License

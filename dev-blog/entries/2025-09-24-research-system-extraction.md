@@ -1,9 +1,9 @@
 ---
-title: "ResearchSystemManager Extraction - 5th Major Module"
-date: "2025-09-24"
-tags: ["modular-architecture", "extraction", "research-system", "technical-debt"]
-summary: "Extracted comprehensive ResearchSystemManager (610 lines) handling research quality, technical debt, and researcher assignments"
-commit: "TBD"
+title: 'ResearchSystemManager Extraction - 5th Major Module'
+date: '2025-09-24'
+tags: ['modular-architecture', 'extraction', 'research-system', 'technical-debt']
+summary: 'Extracted comprehensive ResearchSystemManager (610 lines) handling research quality, technical debt, and researcher assignments'
+commit: 'TBD'
 ---
 
 # ResearchSystemManager Extraction - 5th Major Module

@@ -1,8 +1,8 @@
 # !/usr/bin/env python3
-"""
+'''
 Fix deterministic RNG compliance in P(Doom) codebase.
 Replaces 'import random' with proper deterministic RNG imports.
-"""
+'''
 
 import os
 import re
@@ -16,7 +16,7 @@ class DeterministicRNGFixer:
         self.fixes_made = 0
         
     def should_skip_file(self, file_path):
-        """Skip certain files that should keep random imports"""
+        '''Skip certain files that should keep random imports'''
         skip_patterns = [
             'tests/',
             '.venv/',
@@ -32,7 +32,7 @@ class DeterministicRNGFixer:
         return False
     
     def fix_file(self, file_path):
-        """Fix deterministic RNG imports in a single file"""
+        '''Fix deterministic RNG imports in a single file'''
         if self.should_skip_file(file_path):
             return False
             
@@ -68,30 +68,30 @@ class DeterministicRNGFixer:
                 with open(file_path, 'w', encoding='utf-8') as f:
                     f.write(content)
                 
-                print(f"Fixed {fixes_in_file} issues in {file_path}")
+                print(f'Fixed {fixes_in_file} issues in {file_path}')
                 self.files_fixed += 1
                 self.fixes_made += fixes_in_file
                 return True
                 
         except Exception as e:
-            print(f"Error processing {file_path}: {e}")
+            print(f'Error processing {file_path}: {e}')
             
         return False
     
     def fix_all_files(self):
-        """Fix all Python files in the codebase"""
-        print("Fixing deterministic RNG compliance...")
-        print("=" * 50)
+        '''Fix all Python files in the codebase'''
+        print('Fixing deterministic RNG compliance...')
+        print('=' * 50)
         
         for py_file in self.root_path.rglob('*.py'):
             self.fix_file(py_file)
             
-        print("=" * 50)
-        print(f"Summary: Fixed {self.fixes_made} issues in {self.files_fixed} files")
+        print('=' * 50)
+        print(f'Summary: Fixed {self.fixes_made} issues in {self.files_fixed} files')
 
 def main():
     if len(sys.argv) > 1 and sys.argv[1] == '--dry-run':
-        print("DRY RUN - No changes will be made")
+        print('DRY RUN - No changes will be made')
         return
         
     root_path = Path(__file__).parent.parent

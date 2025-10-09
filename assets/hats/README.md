@@ -23,13 +23,13 @@ Each hat should have a corresponding JSON file with metadata:
 
 ```json
 {
-  "name": "Fedora",
-  "description": "A classic fedora hat",
-  "rarity": "common",
-  "unlock_condition": "score_1000",
-  "offset_x": 0,
-  "offset_y": -8,
-  "animated": false
+  'name': 'Fedora',
+  'description': 'A classic fedora hat',
+  'rarity': 'common',
+  'unlock_condition': 'score_1000',
+  'offset_x': 0,
+  'offset_y': -8,
+  'animated': false
 }
 ```
 
@@ -54,7 +54,7 @@ Hats will be integrated through the cosmetics system:
 
 ```python
 # Future implementation
-cosmetics.equip_hat("fedora")
+cosmetics.equip_hat('fedora')
 cosmetics.get_available_hats(player_stats)
 ```
 

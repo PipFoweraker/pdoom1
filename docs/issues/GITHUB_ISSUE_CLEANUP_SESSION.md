@@ -8,7 +8,7 @@ During the Privacy-Respecting Game Run Logger implementation push, the GitHub is
 **Evidence of Problems**:
 - Unicode decode errors: `UnicodeDecodeError: 'charmap' codec can't decode byte 0x90`
 - JSON parsing failures: `Error: the JSON object must be str, bytes or bytearray, not NoneType`
-- Tool reported "GitHub issues: 0" when repository likely had existing issues
+- Tool reported 'GitHub issues: 0' when repository likely had existing issues
 - Tool then created 47 issues that may be duplicates
 
 ### Immediate Assessment Required
@@ -26,7 +26,7 @@ During the Privacy-Respecting Game Run Logger implementation push, the GitHub is
 
 **Step 2: Validate Sync Tool Functionality**
 ```bash
-cd "c:\Users\gday\Documents\A Local Code\pdoom1"
+cd 'c:\Users\gday\Documents\A Local Code\pdoom1'
 
 # Test authentication
 python tools/github-issue-sync.py --dry-run
@@ -124,7 +124,7 @@ The priority is getting back to productive development work, not perfect issue t
 # Assess the situation
 # 1. Check GitHub issues page in browser
 # 2. Run diagnostic on sync tool
-cd "c:\Users\gday\Documents\A Local Code\pdoom1"
+cd 'c:\Users\gday\Documents\A Local Code\pdoom1'
 python tools/github-issue-sync.py --dry-run
 
 # 3. Plan cleanup strategy based on findings

@@ -1,9 +1,9 @@
-"""
+'''
 Button components for P(Doom) UI.
 
 Provides reusable button components with consistent styling and state management.
 Integrates with the existing visual_feedback system while adding modular components.
-"""
+'''
 
 import pygame
 from enum import Enum
@@ -29,25 +29,25 @@ font_manager = _FontManagerStub()
 
 
 class ButtonState(Enum):
-    """Button visual states."""
-    NORMAL = "normal"
-    HOVER = "hover"
-    PRESSED = "pressed"
-    DISABLED = "disabled"
-    FOCUSED = "focused"
+    '''Button visual states.'''
+    NORMAL = 'normal'
+    HOVER = 'hover'
+    PRESSED = 'pressed'
+    DISABLED = 'disabled'
+    FOCUSED = 'focused'
 
 
 class ButtonStyle(Enum):
-    """Button style variants."""
-    DEFAULT = "default"
-    END_TURN = "end_turn"
-    ACTION = "action"
-    UPGRADE = "upgrade"
-    ICON = "icon"
+    '''Button style variants.'''
+    DEFAULT = 'default'
+    END_TURN = 'end_turn'
+    ACTION = 'action'
+    UPGRADE = 'upgrade'
+    ICON = 'icon'
 
 
 def get_button_colours(state: ButtonState, style: ButtonStyle = ButtonStyle.DEFAULT) -> Dict[str, Tuple[int, int, int]]:
-    """Get the colour scheme for a button based on its state and style."""
+    '''Get the colour scheme for a button based on its state and style.'''
     
     if style == ButtonStyle.END_TURN:
         return {
@@ -116,7 +116,7 @@ def draw_button(screen: pygame.Surface,
                 state: ButtonState = ButtonState.NORMAL,
                 style: ButtonStyle = ButtonStyle.DEFAULT,
                 custom_colours: Optional[Dict[str, Any]] = None) -> None:
-    """
+    '''
     Draw a button with the specified state and style.
     
     Args:
@@ -126,7 +126,7 @@ def draw_button(screen: pygame.Surface,
         state: Button state
         style: Button style variant
         custom_colours: Optional custom colour overrides
-    """
+    '''
     colours = get_button_colours(state, style)
     if custom_colours:
         colours.update(custom_colours)
@@ -159,7 +159,7 @@ def draw_icon_button(screen: pygame.Surface,
                     rect: pygame.Rect,
                     icon_text: str,
                     state: ButtonState = ButtonState.NORMAL) -> None:
-    """
+    '''
     Draw a small icon button (typically used for purchased upgrades).
     
     Args:
@@ -167,7 +167,7 @@ def draw_icon_button(screen: pygame.Surface,
         rect: Button rectangle
         icon_text: Single character or short text for icon
         state: Button state
-    """
+    '''
     colours = get_button_colours(state)
     
     # Draw background circle or rounded rect
@@ -188,7 +188,7 @@ def draw_toggle_button(screen: pygame.Surface,
                       text: str,
                       is_toggled: bool,
                       state: ButtonState = ButtonState.NORMAL) -> None:
-    """
+    '''
     Draw a toggle button that can be in on/off state.
     
     Args:
@@ -197,7 +197,7 @@ def draw_toggle_button(screen: pygame.Surface,
         text: Button text
         is_toggled: Whether the button is in toggled/active state
         state: Button interaction state
-    """
+    '''
     # Modify colours based on toggle state
     colours = get_button_colours(state)
     if is_toggled:
@@ -214,11 +214,11 @@ def draw_toggle_button(screen: pygame.Surface,
 
 
 def is_button_hovered(mouse_pos: Tuple[int, int], button_rect: pygame.Rect) -> bool:
-    """Check if the mouse is hovering over a button."""
+    '''Check if the mouse is hovering over a button.'''
     return button_rect.collidepoint(mouse_pos)
 
 
 def is_button_clicked(mouse_pos: Tuple[int, int], button_rect: pygame.Rect,
                      mouse_button: int = 1) -> bool:
-    """Check if a button was clicked (mouse button 1 = left click)."""
+    '''Check if a button was clicked (mouse button 1 = left click).'''
     return button_rect.collidepoint(mouse_pos)

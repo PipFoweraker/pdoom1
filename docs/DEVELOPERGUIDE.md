@@ -132,14 +132,14 @@ from src.services.game_config_manager import GameConfigManager
 config_manager = GameConfigManager()
 
 # Create new configuration
-config_id = config_manager.create_config("My Custom Game", {
-    "starting_money": 500,
-    "doom_threshold": 75,
-    "event_frequency": 0.8
+config_id = config_manager.create_config('My Custom Game', {
+    'starting_money': 500,
+    'doom_threshold': 75,
+    'event_frequency': 0.8
 })
 
 # Export for sharing
-config_manager.export_config(config_id, "my_game.json")
+config_manager.export_config(config_id, 'my_game.json')
 ```
 
 ### Testing and Validation
@@ -394,10 +394,10 @@ def _calculate_blob_position(self, blob_index, screen_w=1200, screen_h=800):
 ```python
 # Elements are automatically layered by ZLayer enum
 overlay_manager.register_element(UIElement(
-    id="dialog",
+    id='dialog',
     layer=ZLayer.DIALOGS,
     rect=pygame.Rect(x, y, w, h),
-    title="Dialog Title"
+    title='Dialog Title'
 ))
 ```
 
@@ -405,7 +405,7 @@ overlay_manager.register_element(UIElement(
 ```python
 # Buttons automatically get proper visual feedback
 visual_feedback.draw_button(
-    surface, rect, "Button Text", 
+    surface, rect, 'Button Text', 
     ButtonState.HOVER,  # State determines styling
     FeedbackStyle.BUTTON
 )
@@ -414,7 +414,7 @@ visual_feedback.draw_button(
 #### Error Tracking and Easter Eggs
 ```python
 # Three identical errors trigger beep sound
-if game_state.track_error("Insufficient money"):
+if game_state.track_error('Insufficient money'):
     # Easter egg activated automatically
     pass
 ```
@@ -441,10 +441,10 @@ The Action Points (AP) system includes sophisticated visual and audio feedback:
 - **Visual State Indicators**: ButtonState enum reflects AP availability in real-time
 
 **Audio Feedback:**
-- **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
+- **AP Spend Sound**: Satisfying 'ding' sound when Action Points are spent
 - **Error Easter Egg**: Audio beep after 3 repeated identical errors
 - **Sound Integration**: Integrated with `SoundManager` for consistent audio experience
-- **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
+- **AP Spend Sound**: Satisfying 'ding' sound when Action Points are spent
 - **Achievement Sound**: Celebratory 'Zabinga!' sound when research papers are completed
 - **Error Easter Egg**: Audio beep after 3 repeated identical errors
 
@@ -462,7 +462,7 @@ if success:
 
 **Architecture:**
 - **Action Shortcuts**: Keys 1-9 map to first 9 actions in the action list
-- **Visual Integration**: Action buttons display shortcuts as "[1] Action Name"
+- **Visual Integration**: Action buttons display shortcuts as '[1] Action Name'
 - **Error Handling**: Comprehensive validation with user-friendly error messages
 - **Auto-Delegation**: Keyboard shortcuts automatically use delegation when beneficial
 
@@ -650,16 +650,16 @@ The `get_mechanic_help()` method provides structured help content for specific g
 **New Methods in OnboardingSystem:**
 ```python
 def should_show_hint(self, mechanic: str) -> bool:
-    """Check if hint should be shown (considers both config and seen status)"""
+    '''Check if hint should be shown (considers both config and seen status)'''
 
 def are_hints_enabled(self) -> bool:
-    """Check if hints are enabled in config"""
+    '''Check if hints are enabled in config'''
 
 def reset_all_hints(self) -> None:
-    """Reset all hints for new players (Ctrl+R functionality)"""
+    '''Reset all hints for new players (Ctrl+R functionality)'''
 
 def get_hint_status(self) -> Dict:
-    """Get status of all hints for settings display"""
+    '''Get status of all hints for settings display'''
 ```
 
 ### Mechanic Help Content System
@@ -675,14 +675,14 @@ The `get_mechanic_help()` method provides structured help content for specific g
 **Method Signature:**
 ```python
 def get_mechanic_help(self, mechanic: str) -> Optional[Dict]:
-    """
+    '''
     Get help content for a specific game mechanic.
     
     Returns:
         Dict with 'title' and 'content' keys for valid mechanics, None for invalid ones
         
     Note: Currently a stub implementation with warning logging.
-    """
+    '''
 ```
 
 **Return Format:**
@@ -704,11 +704,11 @@ The system uses `onboarding_progress.json` to store:
 
 ```json
 {
-  "tutorial_enabled": true,
-  "is_first_time": false,
-  "completed_steps": ["welcome", "resources", "actions", ...],
-  "seen_mechanics": ["first_staff_hire", "first_upgrade_purchase", ...],
-  "tutorial_dismissed": false
+  'tutorial_enabled': true,
+  'is_first_time': false,
+  'completed_steps': ['welcome', 'resources', 'actions', ...],
+  'seen_mechanics': ['first_staff_hire', 'first_upgrade_purchase', ...],
+  'tutorial_dismissed': false
 }
 ```
 
@@ -816,7 +816,7 @@ from game_state import GameState
 
 class TestNewFeature(unittest.TestCase):
     def test_new_functionality(self):
-        gs = GameState("test_seed")
+        gs = GameState('test_seed')
         # Test implementation
         self.assertEqual(expected, actual)
 ```
@@ -838,12 +838,12 @@ Actions are defined in `actions.py` as a list of dictionaries:
 
 ```python
 {
-    "name": "New Action",
-    "desc": "Description of what it does",
-    "cost": 50,
-    "upside": lambda gs: gs._add('money', 10),
-    "downside": lambda gs: gs._add('reputation', -1),
-    "rules": rule_function  # Optional availability conditions
+    'name': 'New Action',
+    'desc': 'Description of what it does',
+    'cost': 50,
+    'upside': lambda gs: gs._add('money', 10),
+    'downside': lambda gs: gs._add('reputation', -1),
+    'rules': rule_function  # Optional availability conditions
 }
 ```
 
@@ -858,14 +858,14 @@ from action_rules import ActionRules, manager_unlock_rule
 
 # In actions.py
 {
-    "name": "Manager Action",
-    "rules": manager_unlock_rule  # Pre-defined rule function
+    'name': 'Manager Action',
+    'rules': manager_unlock_rule  # Pre-defined rule function
 }
 
 # Or using the rule system directly
 {
-    "name": "Advanced Action", 
-    "rules": lambda gs: ActionRules.requires_staff_and_turn(gs, min_staff=10, min_turn=5)
+    'name': 'Advanced Action', 
+    'rules': lambda gs: ActionRules.requires_staff_and_turn(gs, min_staff=10, min_turn=5)
 }
 ```
 
@@ -884,7 +884,7 @@ For new game mechanics, add rules to `action_rules.py`:
 ```python
 @staticmethod
 def requires_new_condition(gs, min_value):
-    """
+    '''
     Rule: Action requires new game condition.
     
     Args:
@@ -893,7 +893,7 @@ def requires_new_condition(gs, min_value):
         
     Returns:
         bool: True if condition is met
-    """
+    '''
     return gs.new_attribute >= min_value
 ```
 
@@ -911,10 +911,10 @@ Upgrades are defined in `upgrades.py`:
 
 ```python
 {
-    "name": "New Upgrade",
-    "desc": "What this upgrade provides",
-    "cost": 100,
-    "effect_key": "new_upgrade_effect"
+    'name': 'New Upgrade',
+    'desc': 'What this upgrade provides',
+    'cost': 100,
+    'effect_key': 'new_upgrade_effect'
 }
 ```
 
@@ -926,10 +926,10 @@ Events are defined in `events.py`:
 
 ```python
 {
-    "name": "New Event",
-    "desc": "Event description",
-    "trigger": lambda gs: gs.turn > 5 and random.random() < 0.1,
-    "effect": lambda gs: gs._add('doom', 5)
+    'name': 'New Event',
+    'desc': 'Event description',
+    'trigger': lambda gs: gs.turn > 5 and random.random() < 0.1,
+    'effect': lambda gs: gs._add('doom', 5)
 }
 ```
 
@@ -939,12 +939,12 @@ To add new opponents, modify `create_default_opponents()` in `opponents.py`:
 
 ```python
 opponents.append(Opponent(
-    name="New Competitor",
+    name='New Competitor',
     budget=random.randint(500, 1000),
     capabilities_researchers=random.randint(10, 20),
     lobbyists=random.randint(5, 15),
     compute=random.randint(30, 80),
-    description="Description of this competitor"
+    description='Description of this competitor'
 ))
 ```
 
@@ -1217,7 +1217,7 @@ The system supports:
 ## End Game Scenarios System
 
 ### Overview
-The end game scenarios system replaces generic "GAME OVER" messages with rich, contextual narratives that provide detailed explanations of what led to defeat and how the player's organization performed.
+The end game scenarios system replaces generic 'GAME OVER' messages with rich, contextual narratives that provide detailed explanations of what led to defeat and how the player's organization performed.
 
 ### Core Components
 
@@ -1284,7 +1284,7 @@ blob = {
 
 **Board Member Compliance (Spending Threshold):**
 - **Trigger**: `_check_board_member_threshold()` detects `spend_this_turn > 10000` without accounting software
-- **Effect**: Unlocks "Search for Board Member" action, starts audit risk accumulation
+- **Effect**: Unlocks 'Search for Board Member' action, starts audit risk accumulation
 - **Audit Risk**: Increases p(Doom) over time until 2 board members found
 - **Visual**: Board members show purple color with briefcase icon in UI
 
@@ -1471,10 +1471,10 @@ The game uses a centralized version management system in `version.py`:
 ```python
 from version import get_version, get_display_version, get_version_info
 
-# Get semantic version (e.g., "0.1.0")
+# Get semantic version (e.g., '0.1.0')
 version = get_version()
 
-# Get display version for UI (e.g., "v0.1.0") 
+# Get display version for UI (e.g., 'v0.1.0') 
 display = get_display_version()
 
 # Get detailed version information
@@ -1515,7 +1515,7 @@ The release workflow:
 ## Milestone-Driven Special Events & Static Effects System
 
 ### Overview
-The milestone system introduces persistent "static effects" that activate based on organizational growth and behavior. Unlike events that trigger once, static effects continuously influence gameplay until conditions change.
+The milestone system introduces persistent 'static effects' that activate based on organizational growth and behavior. Unlike events that trigger once, static effects continuously influence gameplay until conditions change.
 
 ### System Architecture
 
@@ -1669,7 +1669,7 @@ P(Doom) has transitioned to a modular UI architecture with clear separation of c
 ### UI Adaptability
 
 - Window is resizable and adaptive (80% of screen by default)
-- UI elements scale and may overlap intentionally for "bureaucratic clutter" feel
+- UI elements scale and may overlap intentionally for 'bureaucratic clutter' feel
 - Upgrades shrink to icons after purchase with tooltip support
 - **New**: All screens rendered via UIFacade maintain consistent scaling behaviour
 
@@ -1703,7 +1703,7 @@ def main():
 Python treats variables as local when they are assigned anywhere in a function scope. Without global declaration, referencing these variables before assignment raises UnboundLocalError even if they exist at module level.
 
 **[WARNING][EMOJI] WARNING: Common Bug Pattern**
-The most common manifestation of this bug is when menu handlers (like `handle_menu_click` or `handle_menu_keyboard`) assign overlay variables, but the main() function lacks proper global declarations. This causes crashes when selecting menu items like "Options" or "Player Guide".
+The most common manifestation of this bug is when menu handlers (like `handle_menu_click` or `handle_menu_keyboard`) assign overlay variables, but the main() function lacks proper global declarations. This causes crashes when selecting menu items like 'Options' or 'Player Guide'.
 
 **Always verify that:**
 1. Overlay variables are declared at module level
@@ -1766,9 +1766,9 @@ The tutorial system provides context-sensitive guidance for new players while re
 **Tutorial Message Structure:**
 ```python
 {
-    "milestone_id": "unique_identifier",
-    "title": "Tutorial Title",
-    "content": "Multi-line tutorial content with guidance"
+    'milestone_id': 'unique_identifier',
+    'title': 'Tutorial Title',
+    'content': 'Multi-line tutorial content with guidance'
 }
 ```
 

@@ -9,14 +9,14 @@ from src.core.game_state import GameState
 
 
 class TestUITransitions(unittest.TestCase):
-    """Test the UI transition system for smooth visual feedback."""
+    '''Test the UI transition system for smooth visual feedback.'''
     
     def setUp(self):
-        """Set up a fresh GameState for each test."""
-        self.game_state = GameState("test_seed")
+        '''Set up a fresh GameState for each test.'''
+        self.game_state = GameState('test_seed')
     
     def test_ui_transitions_initialized(self):
-        """Test that UI transition system is properly initialized."""
+        '''Test that UI transition system is properly initialized.'''
         self.assertTrue(hasattr(self.game_state, 'ui_transitions'))
         self.assertTrue(hasattr(self.game_state, 'upgrade_transitions'))
         self.assertIsInstance(self.game_state.ui_transitions, list)
@@ -25,7 +25,7 @@ class TestUITransitions(unittest.TestCase):
         self.assertEqual(len(self.game_state.upgrade_transitions), 0)
     
     def test_create_upgrade_transition(self):
-        """Test that upgrade transitions are created correctly."""
+        '''Test that upgrade transitions are created correctly.'''
         # Set up screen dimensions and rectangles
         w, h = 800, 600
         start_rect = (100, 200, 150, 50)  # Button position
@@ -52,7 +52,7 @@ class TestUITransitions(unittest.TestCase):
         self.assertEqual(self.game_state.upgrade_transitions[upgrade_idx], transition)
     
     def test_transition_progress_advancement(self):
-        """Test that transitions advance correctly over time."""
+        '''Test that transitions advance correctly over time.'''
         # Create a transition
         w, h = 800, 600
         start_rect = (100, 200, 150, 50)
@@ -79,7 +79,7 @@ class TestUITransitions(unittest.TestCase):
         self.assertTrue(transition['completed'])
     
     def test_transition_interpolation(self):
-        """Test that position interpolation works correctly."""
+        '''Test that position interpolation works correctly.'''
         start_rect = (100, 200, 150, 50)
         end_rect = (650, 50, 45, 45)
         
@@ -105,7 +105,7 @@ class TestUITransitions(unittest.TestCase):
         self.assertLess(pos_50[1], min(pos_0[1], pos_100[1]))
     
     def test_trail_fade_effect(self):
-        """Test that trail points fade correctly."""
+        '''Test that trail points fade correctly.'''
         # Create a transition and advance it
         start_rect = (100, 200, 150, 50)
         end_rect = (650, 50, 45, 45)
@@ -139,7 +139,7 @@ class TestUITransitions(unittest.TestCase):
                 self.assertLessEqual(point['age'], 20)  # Enhanced trail limit
     
     def test_transition_cleanup(self):
-        """Test that completed transitions are cleaned up properly."""
+        '''Test that completed transitions are cleaned up properly.'''
         # Create a transition
         start_rect = (100, 200, 150, 50)
         end_rect = (650, 50, 45, 45)
@@ -159,7 +159,7 @@ class TestUITransitions(unittest.TestCase):
         self.assertNotIn(upgrade_idx, self.game_state.upgrade_transitions)
     
     def test_upgrade_icon_rect_calculation(self):
-        """Test that upgrade icon rectangles are calculated correctly."""
+        '''Test that upgrade icon rectangles are calculated correctly.'''
         w, h = 800, 600
         
         # Test for first upgrade (no others purchased)
@@ -178,7 +178,7 @@ class TestUITransitions(unittest.TestCase):
         self.assertLess(icon_rect_2[0], icon_rect[0])
     
     def test_multiple_transitions(self):
-        """Test that multiple transitions can run simultaneously."""
+        '''Test that multiple transitions can run simultaneously.'''
         w, h = 800, 600
         
         # Create multiple transitions
@@ -200,14 +200,14 @@ class TestUITransitions(unittest.TestCase):
 
 
 class TestUITransitionIntegration(unittest.TestCase):
-    """Test integration of UI transitions with upgrade purchase system."""
+    '''Test integration of UI transitions with upgrade purchase system.'''
     
     def setUp(self):
-        """Set up a fresh GameState for each test."""
-        self.game_state = GameState("test_seed")
+        '''Set up a fresh GameState for each test.'''
+        self.game_state = GameState('test_seed')
     
     def test_transition_triggered_on_upgrade_purchase(self):
-        """Test that purchasing an upgrade creates a transition."""
+        '''Test that purchasing an upgrade creates a transition.'''
         # Set sufficient money and simulate screen size
         self.game_state.money = 1000
         w, h = 800, 600
@@ -221,12 +221,12 @@ class TestUITransitionIntegration(unittest.TestCase):
         self.assertEqual(len(self.game_state.ui_transitions), 0)
         
         # Simulate clicking on upgrade (from handle_click logic)
-        if not upgrade.get("purchased", False) and self.game_state.money >= upgrade["cost"]:
-            self.game_state._add('money', -upgrade["cost"])
-            upgrade["purchased"] = True
-            self.game_state.upgrade_effects.add(upgrade["effect_key"])
-            self.game_state.messages.append(f"Upgrade purchased: {upgrade['name']}")
-            self.game_state.logger.log_upgrade(upgrade["name"], upgrade["cost"], self.game_state.turn)
+        if not upgrade.get('purchased', False) and self.game_state.money >= upgrade['cost']:
+            self.game_state._add('money', -upgrade['cost'])
+            upgrade['purchased'] = True
+            self.game_state.upgrade_effects.add(upgrade['effect_key'])
+            self.game_state.messages.append(f'Upgrade purchased: {upgrade['name']}')
+            self.game_state.logger.log_upgrade(upgrade['name'], upgrade['cost'], self.game_state.turn)
             
             # Create transition (as in modified handle_click)
             icon_rect = self.game_state._get_upgrade_icon_rect(0, w, h)
@@ -237,10 +237,10 @@ class TestUITransitionIntegration(unittest.TestCase):
         transition = self.game_state.ui_transitions[0]
         self.assertEqual(transition['type'], 'upgrade_transition')
         self.assertEqual(transition['upgrade_idx'], 0)
-        self.assertTrue(upgrade.get("purchased", False))
+        self.assertTrue(upgrade.get('purchased', False))
     
     def test_extensible_transition_system(self):
-        """Test that the transition system can handle different types of UI elements."""
+        '''Test that the transition system can handle different types of UI elements.'''
         # The system is designed to be extensible for other UI elements
         # Test that we can add different transition types
         

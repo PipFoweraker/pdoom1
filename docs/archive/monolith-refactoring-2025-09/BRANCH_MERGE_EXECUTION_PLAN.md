@@ -18,19 +18,19 @@ git pull origin main
 git status
 
 # Verify ready branches exist and are up to date
-git branch -r | grep -E "(bug-sweep-critical-stability|hotfix/mac-research-debt-fix|feature/leaderboard-activation-v0.4.1)"
+git branch -r | grep -E '(bug-sweep-critical-stability|hotfix/mac-research-debt-fix|feature/leaderboard-activation-v0.4.1)'
 ```
 
 ### 1.2 Run Tests on Ready Branches
 ```bash
 # Test each branch before merge
 for branch in bug-sweep-critical-stability hotfix/mac-research-debt-fix feature/leaderboard-activation-v0.4.1; do
-    echo "Testing branch: $branch"
+    echo 'Testing branch: $branch'
     git checkout $branch
     git pull origin $branch
     python -m unittest discover tests -v
     if [ $? -ne 0 ]; then
-        echo "FAIL: Tests failed on branch $branch"
+        echo 'FAIL: Tests failed on branch $branch'
         exit 1
     fi
 done
@@ -48,39 +48,39 @@ done
 #### Step 1: Merge hotfix/mac-research-debt-fix (CRITICAL)
 ```bash
 git checkout main
-git merge --no-ff hotfix/mac-research-debt-fix -m "Merge critical Mac compatibility fixes
+git merge --no-ff hotfix/mac-research-debt-fix -m 'Merge critical Mac compatibility fixes
 
 - Fix Mac TypeError with verbose naming pattern
 - Add GameClock array bounds protection  
 - Verify hiring dialog ESC functionality
 - 24 new test scenarios (15 type safety + 9 integration)
-- Resolves blocking issues for Mac users"
+- Resolves blocking issues for Mac users'
 ```
 
 #### Step 2: Merge PR #300 (bug-sweep-critical-stability)
 ```bash
 # Option A: Use GitHub UI to merge PR #300 (RECOMMENDED)
-# Go to https://github.com/PipFoweraker/pdoom1/pull/300 and click "Merge pull request"
+# Go to https://github.com/PipFoweraker/pdoom1/pull/300 and click 'Merge pull request'
 
 # Option B: Command line merge
-git merge --no-ff bug-sweep-critical-stability -m "Merge UI layout optimization hotfix
+git merge --no-ff bug-sweep-critical-stability -m 'Merge UI layout optimization hotfix
 
 - Reduce button width from 30% to 25% (17% smaller)
 - Reduce button height from 5.5% to 4.5% (18% smaller)
 - Reduce button spacing from 1.5% to 0.8% (47% smaller)
 - Better space utilization and professional layout
-- No logic changes, UI improvements only"
+- No logic changes, UI improvements only'
 ```
 
 #### Step 3: Merge feature/leaderboard-activation-v0.4.1
 ```bash
-git merge --no-ff feature/leaderboard-activation-v0.4.1 -m "Merge complete v0.4.1 party-ready release
+git merge --no-ff feature/leaderboard-activation-v0.4.1 -m 'Merge complete v0.4.1 party-ready release
 
 - Enhanced leaderboard system with seed-specific competition
 - Spectacular game over screen with celebration effects
 - Mini leaderboard preview with rank highlighting  
 - Context-aware button text and natural flow progression
-- Complete party demo functionality"
+- Complete party demo functionality'
 ```
 
 ### 2.3 Post-Merge Validation
@@ -92,7 +92,7 @@ git log --oneline -10
 python -m unittest discover tests -v
 
 # Verify game starts correctly
-python -c "from src.core.game_state import GameState; gs = GameState('test'); print('Game initializes correctly')"
+python -c 'from src.core.game_state import GameState; gs = GameState('test'); print('Game initializes correctly')'
 
 # Push merged main
 git push origin main
@@ -152,7 +152,7 @@ git log --oneline -5
 python main.py  # Should start without errors
 
 # Verify version consistency
-python -c "from src.services.version import get_display_version; print(f'Version: {get_display_version()}')"
+python -c 'from src.services.version import get_display_version; print(f'Version: {get_display_version()}')'
 ```
 
 ### 5.2 Documentation Updates

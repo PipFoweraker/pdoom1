@@ -1,4 +1,4 @@
-# P(Doom) v0.7.0 "Modular UI Architecture" 
+# P(Doom) v0.7.0 'Modular UI Architecture' 
 
 **Release Date:** September 15, 2025  
 **Type:** Major Technical Milestone  

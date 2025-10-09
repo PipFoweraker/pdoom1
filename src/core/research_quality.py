@@ -1,4 +1,4 @@
-"""
+'''
 Research Quality System for P(Doom) - Technical Debt vs. Speed Trade-offs
 
 This module implements the research quality mechanics where players choose between
@@ -13,7 +13,7 @@ Key Components:
 
 The system provides strategic choices between short-term speed and long-term stability,
 with escalating consequences for accumulated technical debt.
-"""
+'''
 
 from src.services.deterministic_rng import get_rng
 from typing import Dict, List, Optional, Tuple
@@ -22,34 +22,34 @@ from enum import Enum
 
 
 class ResearchQuality(Enum):
-    """
+    '''
     Research quality levels with different time/cost/risk trade-offs.
     
     RUSHED: Fast and cheap but risky, increases technical debt
     STANDARD: Balanced approach with baseline metrics
     THOROUGH: Slow and expensive but safe, reduces technical debt
-    """
-    RUSHED = "rushed"
-    STANDARD = "standard"
-    THOROUGH = "thorough"
+    '''
+    RUSHED = 'rushed'
+    STANDARD = 'standard'
+    THOROUGH = 'thorough'
 
 
 class DebtCategory(Enum):
-    """
+    '''
     Categories of technical debt that can accumulate.
     
     Different categories represent different types of shortcuts taken
     during development, each with specific consequences.
-    """
-    SAFETY_TESTING = "safety_testing"
-    CODE_QUALITY = "code_quality"
-    DOCUMENTATION = "documentation"
-    VALIDATION = "validation"
+    '''
+    SAFETY_TESTING = 'safety_testing'
+    CODE_QUALITY = 'code_quality'
+    DOCUMENTATION = 'documentation'
+    VALIDATION = 'validation'
 
 
 @dataclass
 class QualityModifiers:
-    """
+    '''
     Modifiers applied based on research quality level.
     
     These modifiers affect the outcome of research projects based on
@@ -62,7 +62,7 @@ class QualityModifiers:
         debt_change: Technical debt points added/removed
         success_rate_modifier: Success chance modifier (-10 = -10%, +15 = +15%)
         reputation_bonus: Extra reputation for thorough work
-    """
+    '''
     duration_multiplier: float
     cost_multiplier: float
     doom_modifier: int  # Percentage change to doom impact
@@ -101,7 +101,7 @@ QUALITY_MODIFIERS = {
 
 
 class ResearchProject:
-    """
+    '''
     Represents a research project with configurable quality approach.
     
     Research projects can be executed with different quality levels,
@@ -115,17 +115,17 @@ class ResearchProject:
         technical_debt: Debt accumulated from this project
         safety_verification: Whether extra safety testing was performed
         completed: Whether the project has been completed
-    """
+    '''
     
     def __init__(self, name: str, base_cost: int, base_duration: int):
-        """
+        '''
         Initialize a new research project.
         
         Args:
             name: Project identifier/name
             base_cost: Base monetary cost in game currency
             base_duration: Base time cost in turns/action points
-        """
+        '''
         self.name = name
         self.base_cost = base_cost
         self.base_duration = base_duration
@@ -135,28 +135,28 @@ class ResearchProject:
         self.completed = False
     
     def set_quality_level(self, quality: ResearchQuality) -> None:
-        """Set the quality approach for this project."""
+        '''Set the quality approach for this project.'''
         self.quality_level = quality
         if quality == ResearchQuality.THOROUGH:
             self.safety_verification = True
     
     def get_modified_cost(self) -> int:
-        """Calculate actual cost after quality modifiers."""
+        '''Calculate actual cost after quality modifiers.'''
         modifiers = QUALITY_MODIFIERS[self.quality_level]
         return int(self.base_cost * modifiers.cost_multiplier)
     
     def get_modified_duration(self) -> int:
-        """Calculate actual duration after quality modifiers."""
+        '''Calculate actual duration after quality modifiers.'''
         modifiers = QUALITY_MODIFIERS[self.quality_level]
         return max(1, int(self.base_duration * modifiers.duration_multiplier))
     
     def get_quality_modifiers(self) -> QualityModifiers:
-        """Get the modifiers for the current quality level."""
+        '''Get the modifiers for the current quality level.'''
         return QUALITY_MODIFIERS[self.quality_level]
 
 
 class TechnicalDebt:
-    """
+    '''
     Tracks accumulated technical debt and its consequences.
     
     Technical debt accumulates from taking shortcuts in research and development.
@@ -170,10 +170,10 @@ class TechnicalDebt:
     - 11-15: -10% research speed, +5% accident chance
     - 16-20: -15% research speed, +10% accident chance, reputation risk
     - 20+: Major system failure events become possible
-    """
+    '''
     
     def __init__(self):
-        """Initialize technical debt tracking."""
+        '''Initialize technical debt tracking.'''
         self.accumulated_debt = 0
         self.debt_categories = {
             DebtCategory.SAFETY_TESTING: 0,
@@ -183,13 +183,13 @@ class TechnicalDebt:
         }
     
     def add_technical_debt(self, amount: int, category: Optional[DebtCategory] = None) -> None:
-        """
+        '''
         Add technical debt to the total and optionally to a specific category.
         
         Args:
             amount: Technical debt points to add
             category: Optional specific category to add technical debt to
-        """
+        '''
         self.accumulated_debt += amount
         
         if category:
@@ -198,11 +198,11 @@ class TechnicalDebt:
             # Distribute among categories if no specific category given
             categories = list(self.debt_categories.keys())
             for _ in range(amount):
-                cat = get_rng().choice(categories, "choice_context")
+                cat = get_rng().choice(categories, 'choice_context')
                 self.debt_categories[cat] += 1
     
     def reduce_technical_debt(self, amount: int, category: Optional[DebtCategory] = None) -> int:
-        """
+        '''
         Reduce technical debt and return actual amount reduced.
         
         Args:
@@ -211,7 +211,7 @@ class TechnicalDebt:
             
         Returns:
             Actual amount of technical debt reduced
-        """
+        '''
         if category and category in self.debt_categories:
             category_debt = self.debt_categories[category]
             reduction = min(amount, category_debt)
@@ -242,20 +242,20 @@ class TechnicalDebt:
     
     # Backward compatibility aliases (TODO: Remove after migrating all code)
     def add_debt(self, amount: int, category: Optional[DebtCategory] = None) -> None:
-        """Backward compatibility alias for add_technical_debt."""
+        '''Backward compatibility alias for add_technical_debt.'''
         return self.add_technical_debt(amount, category)
     
     def reduce_debt(self, amount: int, category: Optional[DebtCategory] = None) -> int:
-        """Backward compatibility alias for reduce_technical_debt."""
+        '''Backward compatibility alias for reduce_technical_debt.'''
         return self.reduce_technical_debt(amount, category)
     
     def get_research_speed_penalty(self) -> float:
-        """
+        '''
         Calculate research speed penalty based on accumulated debt.
         
         Returns:
             Multiplier for research speed (0.85 = 15% slower)
-        """
+        '''
         if self.accumulated_debt <= 5:
             return 1.0
         elif self.accumulated_debt <= 10:
@@ -268,12 +268,12 @@ class TechnicalDebt:
             return 0.80  # -20% speed for very high debt
     
     def get_accident_chance(self) -> float:
-        """
+        '''
         Calculate chance of accidents based on accumulated debt.
         
         Returns:
             Probability of accidents (0.1 = 10% chance)
-        """
+        '''
         if self.accumulated_debt <= 10:
             return 0.0
         elif self.accumulated_debt <= 15:
@@ -284,21 +284,21 @@ class TechnicalDebt:
             return 0.15  # 15% accident chance for very high debt
     
     def has_reputation_risk(self) -> bool:
-        """Check if debt level creates reputation risk."""
+        '''Check if debt level creates reputation risk.'''
         return self.accumulated_debt >= 16
     
     def can_trigger_system_failure(self) -> bool:
-        """Check if debt level can trigger major system failure events."""
+        '''Check if debt level can trigger major system failure events.'''
         return self.accumulated_debt > 20
     
     def get_debt_summary(self) -> Dict[str, int]:
-        """Get a summary of debt by category for display."""
+        '''Get a summary of debt by category for display.'''
         return {
-            "total": self.accumulated_debt,
-            "safety_testing": self.debt_categories[DebtCategory.SAFETY_TESTING],
-            "code_quality": self.debt_categories[DebtCategory.CODE_QUALITY],
-            "documentation": self.debt_categories[DebtCategory.DOCUMENTATION],
-            "validation": self.debt_categories[DebtCategory.VALIDATION]
+            'total': self.accumulated_debt,
+            'safety_testing': self.debt_categories[DebtCategory.SAFETY_TESTING],
+            'code_quality': self.debt_categories[DebtCategory.CODE_QUALITY],
+            'documentation': self.debt_categories[DebtCategory.DOCUMENTATION],
+            'validation': self.debt_categories[DebtCategory.VALIDATION]
         }
 
 
@@ -308,7 +308,7 @@ def calculate_research_outcome(
     quality: ResearchQuality,
     technical_debt: TechnicalDebt
 ) -> Tuple[int, int, int, List[str]]:
-    """
+    '''
     Calculate the outcome of a research project based on quality and debt.
     
     This function applies quality modifiers and technical debt penalties
@@ -322,7 +322,7 @@ def calculate_research_outcome(
         
     Returns:
         Tuple of (doom_change, reputation_change, debt_change, messages)
-    """
+    '''
     modifiers = QUALITY_MODIFIERS[quality]
     messages = []
     
@@ -353,53 +353,53 @@ def calculate_research_outcome(
     
     # Add quality-specific messages
     if quality == ResearchQuality.RUSHED:
-        messages.append("[LIGHTNING] Rushed research completed quickly but with shortcuts")
+        messages.append('[LIGHTNING] Rushed research completed quickly but with shortcuts')
     elif quality == ResearchQuality.THOROUGH:
-        messages.append("? Thorough research completed with extra safety verification")
+        messages.append('? Thorough research completed with extra safety verification')
     
     # Add debt penalty messages if applicable
     if debt_penalty < 1.0:
         penalty_percent = int((1.0 - debt_penalty) * 100)
-        messages.append(f"[WARNING]? Technical debt reduced research effectiveness by {penalty_percent}%")
+        messages.append(f'[WARNING]? Technical debt reduced research effectiveness by {penalty_percent}%')
     
     return actual_doom_reduction, actual_reputation_gain, debt_change, messages
 
 
 def get_debt_reduction_actions() -> List[Dict]:
-    """
+    '''
     Get available technical debt reduction actions.
     
     Returns:
         List of action dictionaries for debt reduction options
-    """
+    '''
     return [
         {
-            "name": "Refactoring Sprint",
-            "desc": "Major code cleanup and improvement. Costs 1 turn + $100k, reduces debt by 3-5 points.",
-            "cost": 100,  # $100k in game units
-            "ap_cost": 2,  # Takes significant time
-            "debt_reduction": (3, 5),  # Range of debt reduction
-            "requires_staff": True,
-            "staff_type": "research_staff",
-            "min_staff": 2
+            'name': 'Refactoring Sprint',
+            'desc': 'Major code cleanup and improvement. Costs 1 turn + $100k, reduces debt by 3-5 points.',
+            'cost': 100,  # $100k in game units
+            'ap_cost': 2,  # Takes significant time
+            'debt_reduction': (3, 5),  # Range of debt reduction
+            'requires_staff': True,
+            'staff_type': 'research_staff',
+            'min_staff': 2
         },
         {
-            "name": "Safety Audit", 
-            "desc": "Comprehensive safety review. Costs $200k, reduces debt by 2 points, +reputation.",
-            "cost": 200,  # $200k in game units
-            "ap_cost": 1,
-            "debt_reduction": (2, 2),  # Fixed reduction
-            "reputation_bonus": 1,
-            "requires_staff": False
+            'name': 'Safety Audit', 
+            'desc': 'Comprehensive safety review. Costs $200k, reduces debt by 2 points, +reputation.',
+            'cost': 200,  # $200k in game units
+            'ap_cost': 1,
+            'debt_reduction': (2, 2),  # Fixed reduction
+            'reputation_bonus': 1,
+            'requires_staff': False
         },
         {
-            "name": "Code Review",
-            "desc": "Peer review process. Costs $50k per researcher, reduces debt by 1 point per researcher.",
-            "cost_per_researcher": 50,  # $50k per researcher
-            "ap_cost": 1,
-            "debt_reduction_per_researcher": 1,
-            "requires_staff": True,
-            "staff_type": "research_staff",
-            "min_staff": 1
+            'name': 'Code Review',
+            'desc': 'Peer review process. Costs $50k per researcher, reduces debt by 1 point per researcher.',
+            'cost_per_researcher': 50,  # $50k per researcher
+            'ap_cost': 1,
+            'debt_reduction_per_researcher': 1,
+            'requires_staff': True,
+            'staff_type': 'research_staff',
+            'min_staff': 1
         }
     ]

@@ -23,7 +23,7 @@ P(Doom) codebase had **5,093+ pylance strict mode issues** that need systematic 
 
 ### Issue Categories (from initial sample)
 1. **Type annotations missing** (highest frequency)
-   - `Type of "blit" is unknown` - pygame Surface methods
+   - `Type of 'blit' is unknown` - pygame Surface methods
    - `Argument type is unknown` - pygame font size parameters
    - `Type is partially unknown` - method return types
 
@@ -137,7 +137,7 @@ P(Doom) codebase had **5,093+ pylance strict mode issues** that need systematic 
 2. **Complete game_state.py** (biggest impact):
    ```bash
    # Start with GameState class methods
-   # Focus on _add method: def _add(self, attr: str, val: Union[int, float], reason: str = "") -> None:
+   # Focus on _add method: def _add(self, attr: str, val: Union[int, float], reason: str = '') -> None:
    ```
 
 3. **Quick wins in smaller files**:
@@ -149,8 +149,8 @@ P(Doom) codebase had **5,093+ pylance strict mode issues** that need systematic 
 ### Validation Commands
 ```bash
 # After each change batch (CRITICAL):
-"C:/Users/gday/Documents/A Local Code/pdoom1/.venv/Scripts/python.exe" -m unittest discover tests -v  # 38 second timeout
-"C:/Users/gday/Documents/A Local Code/pdoom1/.venv/Scripts/python.exe" -c "from src.core.game_state import GameState; GameState('test')"  # Verify core functionality
+'C:/Users/gday/Documents/A Local Code/pdoom1/.venv/Scripts/python.exe' -m unittest discover tests -v  # 38 second timeout
+'C:/Users/gday/Documents/A Local Code/pdoom1/.venv/Scripts/python.exe' -c 'from src.core.game_state import GameState; GameState('test')'  # Verify core functionality
 ```
 
 ### Long-term Benefits

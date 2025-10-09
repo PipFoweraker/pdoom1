@@ -58,7 +58,7 @@ Current copilot instructions lack specific context about:
 ```markdown
 ### Branch Management Quality Checks
 - **Before major changes**: Run `git fetch --prune` to sync branch state
-- **Test validation**: Use `python -c "from src.core.game_state import GameState; GameState('test')"` for quick checks
+- **Test validation**: Use `python -c 'from src.core.game_state import GameState; GameState('test')'` for quick checks
 - **Branch analysis**: Use cleanup script to review repository health
 - **Merge validation**: Ensure hotfixes merge to both main AND develop
 ```

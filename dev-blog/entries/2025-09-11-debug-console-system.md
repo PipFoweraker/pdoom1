@@ -1,9 +1,9 @@
 ---
-title: "Debug Console System"
-date: "2025-09-11"
-tags: ["debug", "ui", "development"]
-summary: "Added real-time debug console with backtick toggle for game state monitoring"
-commit: "7aa2673"
+title: 'Debug Console System'
+date: '2025-09-11'
+tags: ['debug', 'ui', 'development']
+summary: 'Added real-time debug console with backtick toggle for game state monitoring'
+commit: '7aa2673'
 ---
 
 # Debug Console System

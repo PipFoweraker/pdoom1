@@ -1,11 +1,11 @@
-"""
+'''
 UI layout utilities for P(Doom).
 
 Consolidates common UI layout calculations and patterns that were
 previously duplicated throughout main.py and ui.py.
 
 Part of internal polish phase to reduce code duplication.
-"""
+'''
 
 import pygame
 from typing import Tuple, List
@@ -14,7 +14,7 @@ from dataclasses import dataclass
 
 @dataclass
 class ButtonLayout:
-    """Standard button layout configuration."""
+    '''Standard button layout configuration.'''
     x: int
     y: int
     width: int
@@ -22,23 +22,23 @@ class ButtonLayout:
     
     @property 
     def rect(self) -> pygame.Rect:
-        """Get pygame.Rect for this button layout."""
+        '''Get pygame.Rect for this button layout.'''
         return pygame.Rect(self.x, self.y, self.width, self.height)
     
     @property
     def center_x(self) -> int:
-        """Get center X coordinate."""
+        '''Get center X coordinate.'''
         return self.x + self.width // 2
     
     @property
     def center_y(self) -> int:
-        """Get center Y coordinate."""
+        '''Get center Y coordinate.'''
         return self.y + self.height // 2
 
 
 @dataclass
 class MenuLayoutConfig:
-    """Configuration for standard menu layouts."""
+    '''Configuration for standard menu layouts.'''
     button_width_ratio: float = 0.4      # Button width as ratio of screen width
     button_height_ratio: float = 0.08    # Button height as ratio of screen height
     start_y_ratio: float = 0.35          # Starting Y position as ratio of screen height
@@ -47,7 +47,7 @@ class MenuLayoutConfig:
 
 
 class UILayoutManager:
-    """Manages common UI layout calculations and patterns."""
+    '''Manages common UI layout calculations and patterns.'''
     
     # Standard menu layouts used throughout the application
     STANDARD_MENU_LAYOUTS = {
@@ -61,7 +61,7 @@ class UILayoutManager:
     @classmethod
     def calculate_menu_buttons(cls, w: int, h: int, num_buttons: int, 
                               layout_name: str = 'main_menu') -> List[ButtonLayout]:
-        """
+        '''
         Calculate button layouts for a standard menu.
         
         Args:
@@ -71,7 +71,7 @@ class UILayoutManager:
             
         Returns:
             List of ButtonLayout objects for each button
-        """
+        '''
         if layout_name not in cls.STANDARD_MENU_LAYOUTS:
             layout_name = 'main_menu'  # Fallback to default
             
@@ -98,7 +98,7 @@ class UILayoutManager:
     def calculate_button_at_position(cls, w: int, h: int, width_ratio: float, 
                                    height_ratio: float, x_ratio: float, 
                                    y_ratio: float) -> ButtonLayout:
-        """
+        '''
         Calculate a single button layout at a specific position.
         
         Args:
@@ -110,7 +110,7 @@ class UILayoutManager:
             
         Returns:
             ButtonLayout for the button
-        """
+        '''
         return ButtonLayout(
             x=int(w * x_ratio),
             y=int(h * y_ratio),
@@ -121,7 +121,7 @@ class UILayoutManager:
     @classmethod
     def calculate_centered_button(cls, w: int, h: int, width_ratio: float,
                                 height_ratio: float, y_ratio: float) -> ButtonLayout:
-        """
+        '''
         Calculate a centered button layout.
         
         Args:
@@ -132,7 +132,7 @@ class UILayoutManager:
             
         Returns:
             ButtonLayout for the centered button
-        """
+        '''
         button_width = int(w * width_ratio)
         button_height = int(h * height_ratio)
         x = w // 2 - button_width // 2
@@ -143,7 +143,7 @@ class UILayoutManager:
     @classmethod
     def find_clicked_button(cls, mouse_pos: Tuple[int, int], 
                           buttons: List[ButtonLayout]) -> int:
-        """
+        '''
         Find which button was clicked based on mouse position.
         
         Args:
@@ -152,7 +152,7 @@ class UILayoutManager:
             
         Returns:
             Index of clicked button, or -1 if no button was clicked
-        """
+        '''
         mx, my = mouse_pos
         
         for i, button in enumerate(buttons):
@@ -163,7 +163,7 @@ class UILayoutManager:
     
     @classmethod
     def get_safe_margin(cls, w: int, h: int, margin_ratio: float = 0.02) -> int:
-        """
+        '''
         Calculate a safe margin based on screen size.
         
         Args:
@@ -172,16 +172,16 @@ class UILayoutManager:
             
         Returns:
             Margin size in pixels
-        """
+        '''
         return int(min(w, h) * margin_ratio)
 
 
 class ResponsiveLayout:
-    """Handles responsive layout calculations for different screen sizes."""
+    '''Handles responsive layout calculations for different screen sizes.'''
     
     @staticmethod
     def scale_font_size(base_size: int, screen_h: int, reference_height: int = 800) -> int:
-        """
+        '''
         Scale font size based on screen height.
         
         Args:
@@ -191,13 +191,13 @@ class ResponsiveLayout:
             
         Returns:
             Scaled font size
-        """
+        '''
         scale_factor = screen_h / reference_height
         return max(12, int(base_size * scale_factor))  # Minimum readable size
     
     @staticmethod
     def get_responsive_spacing(screen_h: int, spacing_type: str = 'normal') -> int:
-        """
+        '''
         Get responsive spacing based on screen height.
         
         Args:
@@ -206,7 +206,7 @@ class ResponsiveLayout:
             
         Returns:
             Spacing in pixels
-        """
+        '''
         base_ratios = {
             'tight': 0.01,
             'normal': 0.02, 
@@ -220,18 +220,18 @@ class ResponsiveLayout:
 # Convenience functions for common layout patterns
 def create_standard_menu_layout(w: int, h: int, menu_items: List[str], 
                               layout_type: str = 'main_menu') -> List[ButtonLayout]:
-    """Create a standard menu layout for the given items."""
+    '''Create a standard menu layout for the given items.'''
     return UILayoutManager.calculate_menu_buttons(w, h, len(menu_items), layout_type)
 
 
 def create_back_button_layout(w: int, h: int) -> ButtonLayout:
-    """Create layout for a standard back button in top-left corner."""
+    '''Create layout for a standard back button in top-left corner.'''
     margin = UILayoutManager.get_safe_margin(w, h)
     return ButtonLayout(margin, margin, int(w * 0.1), int(h * 0.05))
 
 
 def create_sound_button_layout(w: int, h: int) -> ButtonLayout:
-    """Create layout for a sound toggle button in bottom-right corner."""
+    '''Create layout for a sound toggle button in bottom-right corner.'''
     button_size = int(min(w, h) * 0.06)
     margin = 20
     return ButtonLayout(

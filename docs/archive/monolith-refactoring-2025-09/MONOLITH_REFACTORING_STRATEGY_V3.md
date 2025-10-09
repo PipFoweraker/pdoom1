@@ -49,7 +49,7 @@ Each extraction follows this **mandatory sequence**:
 1. **Create extraction branch**: `refactor/extract-{module-name}`
 2. **Extract single module** (1-2 hours max)
 3. **Run full test suite** (must pass 100%)
-4. **Validate imports**: `python -c "from src.core.game_state import GameState"`
+4. **Validate imports**: `python -c 'from src.core.game_state import GameState'`
 5. **ASCII compliance check**: `python scripts/enforce_standards.py --check-all`
 6. **Programmatic validation**: Basic game state operations  
 7. **Commit & merge** if successful, **abandon** if issues
@@ -65,7 +65,7 @@ python -m autoflake --remove-all-unused-imports --remove-unused-variables --chec
 ```python
 # 1. Create new module with clear interface
 # src/core/game_constants.py
-"""Game constants and enums extracted from game_state.py"""
+'''Game constants and enums extracted from game_state.py'''
 
 # 2. Import in game_state.py 
 from src.core.game_constants import *

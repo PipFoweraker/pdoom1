@@ -1,4 +1,4 @@
-"""
+'''
 Dialog Management Module
 
 Extracted from game_state.py monolith for better maintainability.
@@ -6,18 +6,18 @@ Handles all dialog dismissal and state management operations.
 
 This module reduces the game_state.py monolith by centralizing dialog operations
 that were previously scattered throughout the main class.
-"""
+'''
 
 from typing import Any, Optional
 
 
 class DialogManager:
-    """
+    '''
     Centralized dialog management system for P(Doom) game dialogs.
     
     Handles dismissal, validation, and state management for all dialog types
     including hiring, intelligence, media, technical debt, fundraising, and research.
-    """
+    '''
     
     # Valid dialog types that can be managed
     VALID_DIALOG_TYPES = {
@@ -27,7 +27,7 @@ class DialogManager:
     
     @staticmethod
     def dismiss_dialog(game_state: Any, dialog_type: str) -> bool:
-        """
+        '''
         Universal dialog dismiss function for all dialog types.
         
         Args:
@@ -37,7 +37,7 @@ class DialogManager:
                         
         Returns:
             bool: True if dialog was successfully dismissed, False if invalid type or not found
-        """
+        '''
         if dialog_type not in DialogManager.VALID_DIALOG_TYPES:
             return False
             
@@ -51,7 +51,7 @@ class DialogManager:
     
     @staticmethod
     def has_pending_dialog(game_state: Any, dialog_type: str) -> bool:
-        """
+        '''
         Check if a specific dialog type is currently pending.
         
         Args:
@@ -60,7 +60,7 @@ class DialogManager:
             
         Returns:
             bool: True if the dialog is pending, False otherwise
-        """
+        '''
         if dialog_type not in DialogManager.VALID_DIALOG_TYPES:
             return False
             
@@ -69,7 +69,7 @@ class DialogManager:
     
     @staticmethod
     def get_pending_dialog(game_state: Any, dialog_type: str) -> Optional[Any]:
-        """
+        '''
         Get the pending dialog data for a specific dialog type.
         
         Args:
@@ -78,7 +78,7 @@ class DialogManager:
             
         Returns:
             The dialog data if pending, None otherwise
-        """
+        '''
         if dialog_type not in DialogManager.VALID_DIALOG_TYPES:
             return None
             
@@ -89,7 +89,7 @@ class DialogManager:
     
     @staticmethod
     def dismiss_all_dialogs(game_state: Any) -> int:
-        """
+        '''
         Dismiss all pending dialogs.
         
         Args:
@@ -97,7 +97,7 @@ class DialogManager:
             
         Returns:
             int: Number of dialogs that were dismissed
-        """
+        '''
         dismissed_count = 0
         for dialog_type in DialogManager.VALID_DIALOG_TYPES:
             if DialogManager.dismiss_dialog(game_state, dialog_type):
@@ -106,7 +106,7 @@ class DialogManager:
     
     @staticmethod
     def get_active_dialog_types(game_state: Any) -> list[str]:
-        """
+        '''
         Get a list of all currently active dialog types.
         
         Args:
@@ -114,7 +114,7 @@ class DialogManager:
             
         Returns:
             list[str]: List of active dialog type names
-        """
+        '''
         active_dialogs = []
         for dialog_type in DialogManager.VALID_DIALOG_TYPES:
             if DialogManager.has_pending_dialog(game_state, dialog_type):
@@ -123,7 +123,7 @@ class DialogManager:
     
     @staticmethod
     def has_any_pending_dialog(game_state: Any) -> bool:
-        """
+        '''
         Check if any dialog is currently pending.
         
         Args:
@@ -131,5 +131,5 @@ class DialogManager:
             
         Returns:
             bool: True if any dialog is pending, False otherwise
-        """
+        '''
         return len(DialogManager.get_active_dialog_types(game_state)) > 0

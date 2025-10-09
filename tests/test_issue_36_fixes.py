@@ -1,4 +1,4 @@
-"""
+'''
 Tests for Issue #36: Batch UI Bugfixes and Logic Polish
 
 This test file covers:
@@ -6,7 +6,7 @@ This test file covers:
 - Activity log auto-scroll behavior
 - UI boundary checking for top-right info panel
 - Scaled up employee costs with overheads
-"""
+'''
 
 import unittest
 from unittest.mock import patch
@@ -15,11 +15,11 @@ from src.core.game_state import GameState
 
 class TestButtonClickLimits(unittest.TestCase):
     def setUp(self):
-        """Set up test game state."""
+        '''Set up test game state.'''
         self.game_state = GameState(seed=42)
     
     def test_unlimited_clicks_by_default(self):
-        """Test that actions without max_clicks_per_turn can be selected multiple times."""
+        '''Test that actions without max_clicks_per_turn can be selected multiple times.'''
         # Select same action multiple times (should work by default)
         initial_ap = self.game_state.action_points
         
@@ -32,7 +32,7 @@ class TestButtonClickLimits(unittest.TestCase):
         self.assertEqual(self.game_state.action_points, initial_ap - 3)
     
     def test_click_limit_enforcement(self):
-        """Test that actions with max_clicks_per_turn are limited properly."""
+        '''Test that actions with max_clicks_per_turn are limited properly.'''
         # Modify an action to have click limits
         action_idx = 0
         original_action = dict(self.game_state.actions[action_idx])
@@ -49,7 +49,7 @@ class TestButtonClickLimits(unittest.TestCase):
             # Third click should fail
             result3 = self.game_state.attempt_action_selection(action_idx, is_undo=False)
             self.assertFalse(result3['success'])
-            self.assertIn("already used maximum times", result3['message'])
+            self.assertIn('already used maximum times', result3['message'])
             
             # Should only have 2 instances selected
             action_count = sum(1 for idx in self.game_state.selected_gameplay_actions if idx == action_idx)
@@ -60,7 +60,7 @@ class TestButtonClickLimits(unittest.TestCase):
             self.game_state.actions[action_idx] = original_action
     
     def test_click_tracking_reset_on_turn_end(self):
-        """Test that click tracking resets at end of turn."""
+        '''Test that click tracking resets at end of turn.'''
         # Modify an action to have click limits
         action_idx = 0
         original_action = dict(self.game_state.actions[action_idx])
@@ -87,7 +87,7 @@ class TestButtonClickLimits(unittest.TestCase):
             self.game_state.actions[action_idx] = original_action
     
     def test_click_tracking_only_for_limited_actions(self):
-        """Test that click tracking only happens for actions with limits."""
+        '''Test that click tracking only happens for actions with limits.'''
         # Use an action without limits multiple times
         for _ in range(3):
             self.game_state.attempt_action_selection(0, is_undo=False)
@@ -98,11 +98,11 @@ class TestButtonClickLimits(unittest.TestCase):
 
 class TestEmployeeCostScaling(unittest.TestCase):
     def setUp(self):
-        """Set up test game state."""
+        '''Set up test game state.'''
         self.game_state = GameState(seed=42)
     
     def test_no_cost_for_zero_employees(self):
-        """Test that no maintenance cost applies with zero employees."""
+        '''Test that no maintenance cost applies with zero employees.'''
         self.game_state.staff = 0
         self.game_state.money
         
@@ -125,7 +125,7 @@ class TestEmployeeCostScaling(unittest.TestCase):
         self.assertEqual(expected_maintenance, 0)
     
     def test_single_employee_cost(self):
-        """Test scaled up cost for single employee."""
+        '''Test scaled up cost for single employee.'''
         self.game_state.staff = 1
         
         # Calculate expected cost (should be 25, scaled up from 15)
@@ -142,7 +142,7 @@ class TestEmployeeCostScaling(unittest.TestCase):
         self.assertEqual(actual_cost, expected_cost)
     
     def test_multiple_employee_overhead(self):
-        """Test overhead costs for multiple employees."""
+        '''Test overhead costs for multiple employees.'''
         test_cases = [
             (2, 25 + 35),      # 1 base + 1 with overhead
             (3, 25 + 2 * 35),  # 1 base + 2 with overhead
@@ -164,7 +164,7 @@ class TestEmployeeCostScaling(unittest.TestCase):
                 self.assertEqual(actual_cost, expected_cost)
     
     def test_cost_scaling_integration(self):
-        """Test that the new cost scaling is actually applied in end_turn."""
+        '''Test that the new cost scaling is actually applied in end_turn.'''
         # Set up scenario with multiple staff
         self.game_state.staff = 3
         self.game_state.money = 1000
@@ -184,11 +184,11 @@ class TestEmployeeCostScaling(unittest.TestCase):
 
 class TestUIBoundaryChecking(unittest.TestCase):
     def setUp(self):
-        """Set up test game state."""
+        '''Set up test game state.'''
         self.game_state = GameState(seed=42)
     
     def test_upgrade_icon_positioning_respects_boundaries(self):
-        """Test that purchased upgrade icons don't overlap with info panel."""
+        '''Test that purchased upgrade icons don't overlap with info panel.'''
         # Set up screen dimensions
         w, h = 1200, 800
         
@@ -203,7 +203,7 @@ class TestUIBoundaryChecking(unittest.TestCase):
         info_panel_boundary = w * 0.84
         
         # Check that all purchased upgrade icons respect the boundary
-        purchased_upgrades = [i for i, u in enumerate(self.game_state.upgrades) if u.get("purchased", False)]
+        purchased_upgrades = [i for i, u in enumerate(self.game_state.upgrades) if u.get('purchased', False)]
         
         for i, upgrade_idx in enumerate(purchased_upgrades):
             if i < len(upgrade_rects):
@@ -212,10 +212,10 @@ class TestUIBoundaryChecking(unittest.TestCase):
                 
                 # Icon should start at or after the info panel boundary
                 self.assertGreaterEqual(x, info_panel_boundary, 
-                    f"Upgrade icon {upgrade_idx} at x={x} overlaps with info panel boundary at {info_panel_boundary}")
+                    f'Upgrade icon {upgrade_idx} at x={x} overlaps with info panel boundary at {info_panel_boundary}')
     
     def test_multiple_upgrade_rows_when_needed(self):
-        """Test that upgrade icons stack vertically when horizontal space is limited."""
+        '''Test that upgrade icons stack vertically when horizontal space is limited.'''
         w, h = 800, 600  # Smaller screen to force stacking
         
         # Purchase many upgrades
@@ -227,7 +227,7 @@ class TestUIBoundaryChecking(unittest.TestCase):
         
         # With limited width, should have multiple rows
         # Check that y-coordinates vary (indicating multiple rows)
-        purchased_upgrades = [i for i, u in enumerate(self.game_state.upgrades) if u.get("purchased", False)]
+        purchased_upgrades = [i for i, u in enumerate(self.game_state.upgrades) if u.get('purchased', False)]
         
         if len(purchased_upgrades) > 2:  # Need multiple icons to test stacking
             y_positions = []
@@ -242,12 +242,12 @@ class TestUIBoundaryChecking(unittest.TestCase):
             if len(y_positions) > 1:
                 unique_y_positions = len(set(y_positions))
                 self.assertGreater(unique_y_positions, 1, 
-                    "Upgrade icons should stack vertically when horizontal space is limited")
+                    'Upgrade icons should stack vertically when horizontal space is limited')
 
 
 class TestActivityLogScrollBehavior(unittest.TestCase):
     def setUp(self):
-        """Set up test game state."""
+        '''Set up test game state.'''
         self.game_state = GameState(seed=42)
         # Initialize event log scroll offset
         if not hasattr(self.game_state, 'event_log_scroll_offset'):
@@ -255,13 +255,13 @@ class TestActivityLogScrollBehavior(unittest.TestCase):
     
     @patch('ui.draw_ui')
     def test_auto_scroll_to_bottom_logic(self, mock_draw_ui):
-        """Test the auto-scroll logic in the UI drawing function."""
+        '''Test the auto-scroll logic in the UI drawing function.'''
         # This is tested indirectly through the UI module since that's where the logic is implemented
         # The logic should auto-scroll when the user is at or near the bottom of the log
         
         # Add many messages to force scrolling
         for i in range(20):
-            self.game_state.messages.append(f"Test message {i}")
+            self.game_state.messages.append(f'Test message {i}')
         
         # Test that scroll offset gets updated appropriately
         # Note: The actual auto-scroll logic is in ui.py, this tests the game state setup

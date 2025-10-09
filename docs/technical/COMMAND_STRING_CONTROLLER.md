@@ -9,7 +9,7 @@ The Command String Controller provides a simple, ASCII-only interface for contro
 python test_command_strings.py
 
 # Run a simple strategy
-python command_string_example.py "H F S T" my-seed
+python command_string_example.py 'H F S T' my-seed
 
 # Show available commands and examples
 python command_string_example.py
@@ -45,32 +45,32 @@ Use `*` followed by a number (1-99) to repeat commands:
 ### Command String Format
 Commands are separated by spaces:
 ```
-"T H F S T"           # Basic sequence
-"H*3 F*2 S T"         # With repetition
-"F S C T H I T"       # Mixed strategy
+'T H F S T'           # Basic sequence
+'H*3 F*2 S T'         # With repetition
+'F S C T H I T'       # Mixed strategy
 ```
 
 ## Example Strategies
 
 ### Early Game Strategies
 ```
-"H*2 F*3 T"           # Early Economy: Build staff and funding
-"F S*3 C T H S"       # Research Focus: Prioritize safety early
-"H F S C T*2 H F"     # Balanced Growth: Steady progression
+'H*2 F*3 T'           # Early Economy: Build staff and funding
+'F S*3 C T H S'       # Research Focus: Prioritize safety early
+'H F S C T*2 H F'     # Balanced Growth: Steady progression
 ```
 
 ### Specialized Strategies
 ```
-"I*3 E H F S T"       # Intelligence Heavy: Scout opponents first
-"G*2 P N H F T"       # Community Building: Focus on reputation
-"T*10"                # Speed Run: Skip to turn 10 quickly
+'I*3 E H F S T'       # Intelligence Heavy: Scout opponents first
+'G*2 P N H F T'       # Community Building: Focus on reputation
+'T*10'                # Speed Run: Skip to turn 10 quickly
 ```
 
 ### Advanced Strategies
 ```
-"H*5 F*3 S*2 C U T"   # Resource Buildup: Mass hiring and funding
-"F S C H I E T*3"     # Information Warfare: Intelligence then coast
-"G P N L A M T"       # Governance Focus: Political and audit actions
+'H*5 F*3 S*2 C U T'   # Resource Buildup: Mass hiring and funding
+'F S C H I E T*3'     # Information Warfare: Intelligence then coast
+'G P N L A M T'       # Governance Focus: Political and audit actions
 ```
 
 ## Deterministic Execution
@@ -83,8 +83,8 @@ With the same seed and command string, execution is 100% deterministic:
 
 ```python
 # These will produce identical results every time
-controller.execute_command_string("H*3 F*2 S T", "fixed-seed-123")
-controller.execute_command_string("H*3 F*2 S T", "fixed-seed-123")
+controller.execute_command_string('H*3 F*2 S T', 'fixed-seed-123')
+controller.execute_command_string('H*3 F*2 S T', 'fixed-seed-123')
 ```
 
 ## Programmatic Usage
@@ -95,16 +95,16 @@ from src.testing.command_string_controller import CommandStringController
 from src.core.game_state import GameState
 
 # Create game state
-game_state = GameState("my-seed-123")
+game_state = GameState('my-seed-123')
 
 # Create controller
 controller = CommandStringController(game_state)
 
 # Execute strategy
-report = controller.execute_command_string("H F S T", "my-seed-123")
+report = controller.execute_command_string('H F S T', 'my-seed-123')
 
-print(f"Executed {report.total_commands} commands")
-print(f"Success rate: {report.successful_commands}/{report.total_commands}")
+print(f'Executed {report.total_commands} commands')
+print(f'Success rate: {report.successful_commands}/{report.total_commands}')
 ```
 
 ### Validation Before Execution
@@ -114,31 +114,31 @@ from src.testing.command_string_controller import CommandStringParser
 parser = CommandStringParser()
 
 # Validate command string
-is_valid, message = parser.validate_command_string("H*3 F*2 S T")
+is_valid, message = parser.validate_command_string('H*3 F*2 S T')
 if is_valid:
-    print("Command string is valid!")
-    expanded = parser.expand_command_string("H*3 F*2 S T")
-    print(f"Will execute {len(expanded)} commands: {expanded}")
+    print('Command string is valid!')
+    expanded = parser.expand_command_string('H*3 F*2 S T')
+    print(f'Will execute {len(expanded)} commands: {expanded}')
 else:
-    print(f"Invalid command string: {message}")
+    print(f'Invalid command string: {message}')
 ```
 
 ### Detailed Execution Reports
 ```python
 # Execute and get detailed report
-report = controller.execute_command_string("H F S T", "test-seed")
+report = controller.execute_command_string('H F S T', 'test-seed')
 
 # Access execution details
-print(f"Total execution time: {report.total_execution_time_ms:.1f}ms")
-print(f"Final turn: {report.final_turn}")
+print(f'Total execution time: {report.total_execution_time_ms:.1f}ms')
+print(f'Final turn: {report.final_turn}')
 
 # Check individual command results
 for result in report.command_results:
     if not result.success:
-        print(f"Failed: {result.command} - {result.message}")
+        print(f'Failed: {result.command} - {result.message}')
 
 # Save report to file
-report.save_to_file("strategy_report.json")
+report.save_to_file('strategy_report.json')
 ```
 
 ## ASCII-Only Design
@@ -178,7 +178,7 @@ def _dispatch_command(self, cmd_letter: str) -> Tuple[bool, str]:
         return self._whistleblowing()
 
 def _whistleblowing(self) -> Tuple[bool, str]:
-    return self._find_and_execute_action(['whistleblow'], "Whistleblowing")
+    return self._find_and_execute_action(['whistleblow'], 'Whistleblowing')
 ```
 
 ### Error Handling
@@ -207,8 +207,8 @@ python test_command_strings.py
 python command_string_example.py
 
 # Test specific strategies
-python command_string_example.py "H*2 F S T" test-strategy-1
-python command_string_example.py "I*3 E T" intelligence-test
+python command_string_example.py 'H*2 F S T' test-strategy-1
+python command_string_example.py 'I*3 E T' intelligence-test
 ```
 
 ### Integration Testing
@@ -239,4 +239,4 @@ The command system integrates with existing P(Doom) testing infrastructure:
 
 ---
 
-*The Command String Controller enables "HFS*FCS" style deterministic strategy execution, making P(Doom) strategies shareable via simple text strings that execute identically across all installations.*
+*The Command String Controller enables 'HFS*FCS' style deterministic strategy execution, making P(Doom) strategies shareable via simple text strings that execute identically across all installations.*

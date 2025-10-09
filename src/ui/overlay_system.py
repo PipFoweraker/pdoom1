@@ -1,4 +1,4 @@
-"""
+'''
 Overlay and Window System Module
 
 This module provides overlay and window drawing functionality for the P(Doom) UI system.
@@ -14,14 +14,14 @@ Functions:
 - find_safe_overlay_position: Smart overlay positioning
 - should_show_back_button: Navigation depth helper
 - draw_back_button: Back navigation button
-"""
+'''
 
 import pygame
 from typing import Dict, Any, Optional, List, Tuple
 
 
 def get_ui_safe_zones(w: int, h: int) -> List[pygame.Rect]:
-    """
+    '''
     Define safe zones where overlays should not be positioned to avoid obscuring interactive areas.
     
     This function implements the solution for Issue #121 (UI overlap / lack of draggability)
@@ -32,7 +32,7 @@ def get_ui_safe_zones(w: int, h: int) -> List[pygame.Rect]:
         
     Returns:
         List of pygame.Rect representing reserved areas that should be avoided by overlays
-    """
+    '''
     safe_zones: List[pygame.Rect] = []
     
     # Resource header area (top bar with money, staff, reputation, etc.)
@@ -63,7 +63,7 @@ def get_ui_safe_zones(w: int, h: int) -> List[pygame.Rect]:
 
 
 def find_safe_overlay_position(overlay_rect: pygame.Rect, screen_w: int, screen_h: int, safe_zones: List[pygame.Rect]) -> pygame.Rect:
-    """
+    '''
     Find a position for an overlay that doesn't intersect with safe zones.
     
     This implements the first-fit positioning algorithm for Issue #121 (UI overlap prevention)
@@ -76,7 +76,7 @@ def find_safe_overlay_position(overlay_rect: pygame.Rect, screen_w: int, screen_
         
     Returns:
         pygame.Rect: positioned overlay rectangle
-    """
+    '''
     # Try different positions, prioritizing the gap between action and upgrade areas
     # Based on safe zones: action area ends at x=280, upgrade area starts at x=520
     # So we have a gap from x=280 to x=520 (width=240)
@@ -158,7 +158,7 @@ def find_safe_overlay_position(overlay_rect: pygame.Rect, screen_w: int, screen_
 
 
 def should_show_back_button(depth: int) -> bool:
-    """
+    '''
     Helper function to determine if back button should be shown.
     
     Args:
@@ -170,12 +170,12 @@ def should_show_back_button(depth: int) -> bool:
     Note: 
         Changed from depth > 1 to depth >= 1 to fix Issue #122/#118 
         (No back functionality / duplicate back button issue)
-    """
+    '''
     return depth >= 1
 
 
 def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: int, font: Optional[pygame.font.Font] = None) -> Optional[pygame.Rect]:
-    """
+    '''
     Draw a Back button when navigation depth >= 1.
     
     Args:
@@ -186,7 +186,7 @@ def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: i
     
     Returns:
         pygame.Rect: The button rectangle for click detection, or None if not rendered
-    """
+    '''
     if not should_show_back_button(navigation_depth):
         return None
     
@@ -195,7 +195,7 @@ def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: i
     
     # Position button in top-left corner with margin
     margin = int(h * 0.02)
-    button_text = "< Back"
+    button_text = '< Back'
     text_surf = font.render(button_text, True, (255, 255, 255))
     
     # Button styling
@@ -217,11 +217,11 @@ def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: i
 
 
 def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
-    """
+    '''
     Splits the text into multiple lines so that each line fits within max_width.
     Returns a list of strings, each representing a line.
     Improved to handle overflow with better word breaking.
-    """
+    '''
     lines: List[str] = []
     # Use textwrap to split into words, then try to pack as many as possible per line
     words = text.split(' ')
@@ -252,7 +252,7 @@ def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
 
 
 def render_text(text: str, font: pygame.font.Font, max_width: Optional[int] = None, color: Tuple[int, int, int] = (255,255,255), line_height_multiplier: float = 1.35) -> Tuple[List[Tuple[pygame.Surface, Tuple[int, int]]], pygame.Rect]:
-    """Render text with optional word wrapping and consistent line height. Returns [(surface, (x_offset, y_offset)), ...], bounding rect."""
+    '''Render text with optional word wrapping and consistent line height. Returns [(surface, (x_offset, y_offset)), ...], bounding rect.'''
     lines = [text]
     if max_width:
         lines = wrap_text(text, font, max_width)
@@ -272,7 +272,7 @@ def render_text(text: str, font: pygame.font.Font, max_width: Optional[int] = No
 
 
 def draw_overlay(screen: pygame.Surface, title: Optional[str], content: Optional[str], scroll_offset: int, w: int, h: int, navigation_depth: int = 0) -> Optional[pygame.Rect]:
-    """
+    '''
     Draw a scrollable overlay for displaying README or Player Guide content.
     
     Args:
@@ -299,12 +299,12 @@ def draw_overlay(screen: pygame.Surface, title: Optional[str], content: Optional
     The overlay handles long documents by breaking them into lines and showing
     only the visible portion based on scroll_offset. Users can scroll with
     arrow keys to view the full document.
-    """
+    '''
     # Defensive handling for None values
     if title is None:
-        title = "Information Unavailable"
+        title = 'Information Unavailable'
     if content is None:
-        content = "Content Not Available\n\nThe requested information could not be loaded at this time.\n\nPossible solutions:\n- Press Escape or Back to return to the previous screen\n- Try accessing this information again from the main menu\n- Check the Player Guide (F1) for general help\n\nIf this problem persists, it may indicate a technical issue."
+        content = 'Content Not Available\n\nThe requested information could not be loaded at this time.\n\nPossible solutions:\n- Press Escape or Back to return to the previous screen\n- Try accessing this information again from the main menu\n- Check the Player Guide (F1) for general help\n\nIf this problem persists, it may indicate a technical issue.'
     # Overlay background - semi-transparent dark background
     overlay_surface = pygame.Surface((w, h))
     overlay_surface.set_alpha(240)
@@ -366,19 +366,19 @@ def draw_overlay(screen: pygame.Surface, title: Optional[str], content: Optional
     if scroll_offset > 0:
         # Up arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        up_arrow = arrow_font.render("^", True, (255, 255, 255))
+        up_arrow = arrow_font.render('^', True, (255, 255, 255))
         screen.blit(up_arrow, (content_x + content_width - 30, text_area_y))
     
     if (start_line + visible_lines) < len(lines):
         # Down arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        down_arrow = arrow_font.render("v", True, (255, 255, 255))
+        down_arrow = arrow_font.render('v', True, (255, 255, 255))
         screen.blit(down_arrow, (content_x + content_width - 30, text_area_y + text_area_height - 30))
     
     # Instructions at bottom with better visibility
     from src.ui.asset_manager import draw_text_with_background
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    instructions = "Use arrow keys to scroll - Press Escape or click to return to menu"
+    instructions = 'Use arrow keys to scroll - Press Escape or click to return to menu'
     inst_x = w // 2 - instruction_font.size(instructions)[0] // 2
     inst_y = content_y + content_height + int(h * 0.03)
     draw_text_with_background(
@@ -390,7 +390,7 @@ def draw_overlay(screen: pygame.Surface, title: Optional[str], content: Optional
 
 
 def draw_window_with_header(screen: pygame.Surface, rect: pygame.Rect, title: str, content: Optional[str] = None, minimized: bool = False, font: Optional[pygame.font.Font] = None) -> Tuple[pygame.Rect, pygame.Rect]:
-    """
+    '''
     Draw a window with a draggable header and minimize button.
     
     Args:
@@ -403,7 +403,7 @@ def draw_window_with_header(screen: pygame.Surface, rect: pygame.Rect, title: st
         
     Returns:
         tuple: (header_rect, minimize_button_rect) for interaction handling
-    """
+    '''
     if font is None:
         font = pygame.font.SysFont('Consolas', 16)
     
@@ -481,8 +481,8 @@ def draw_window_with_header(screen: pygame.Surface, rect: pygame.Rect, title: st
     return header_rect, minimize_button_rect
 
 
-def draw_loading_screen(screen: pygame.Surface, w: int, h: int, progress: float = 0, status_text: str = "Loading...", font: Optional[pygame.font.Font] = None) -> None:
-    """
+def draw_loading_screen(screen: pygame.Surface, w: int, h: int, progress: float = 0, status_text: str = 'Loading...', font: Optional[pygame.font.Font] = None) -> None:
+    '''
     Draw a loading screen with progress indicator and accessibility support.
     
     Args:
@@ -496,10 +496,10 @@ def draw_loading_screen(screen: pygame.Surface, w: int, h: int, progress: float 
         None
     
     Accessibility:
-    - role="status" equivalent through clear status text
+    - role='status' equivalent through clear status text
     - High contrast colors for visibility
     - Clear progress indication
-    """
+    '''
     if font is None:
         font = pygame.font.SysFont('Consolas', max(16, int(h * 0.03)))
     
@@ -508,14 +508,14 @@ def draw_loading_screen(screen: pygame.Surface, w: int, h: int, progress: float 
     
     # Title
     title_font = pygame.font.SysFont('Consolas', int(h * 0.06), bold=True)
-    title_text = title_font.render("P(Doom)", True, (255, 255, 255))
+    title_text = title_font.render('P(Doom)', True, (255, 255, 255))
     title_x = w // 2 - title_text.get_width() // 2
     title_y = int(h * 0.3)
     screen.blit(title_text, (title_x, title_y))
     
     # Subtitle
     subtitle_font = pygame.font.SysFont('Consolas', int(h * 0.025))
-    subtitle_text = subtitle_font.render("Bureaucracy Strategy Prototype", True, (180, 180, 180))
+    subtitle_text = subtitle_font.render('Bureaucracy Strategy Prototype', True, (180, 180, 180))
     subtitle_x = w // 2 - subtitle_text.get_width() // 2
     subtitle_y = title_y + title_text.get_height() + 10
     screen.blit(subtitle_text, (subtitle_x, subtitle_y))
@@ -545,7 +545,7 @@ def draw_loading_screen(screen: pygame.Surface, w: int, h: int, progress: float 
     
     # Progress percentage
     if progress > 0:
-        percent_text = subtitle_font.render(f"{int(progress * 100)}%", True, (150, 150, 150))
+        percent_text = subtitle_font.render(f'{int(progress * 100)}%', True, (150, 150, 150))
         percent_x = w // 2 - percent_text.get_width() // 2
         percent_y = status_y + status_surf.get_height() + 10
         screen.blit(percent_text, (percent_x, percent_y))

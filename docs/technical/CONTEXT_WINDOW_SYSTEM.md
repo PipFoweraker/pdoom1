@@ -38,7 +38,7 @@ available_actions = []
 available_action_indices = []
 for idx, action in enumerate(game_state.actions):
     # Check if action is unlocked (no rules or rules return True)
-    if not action.get("rules") or action["rules"](game_state):
+    if not action.get('rules') or action['rules'](game_state):
         available_actions.append(action)
         available_action_indices.append(idx)
 
@@ -51,17 +51,17 @@ game_state.display_to_action_index_map = available_action_indices
 #### Context Information Generation
 ```python
 def create_action_context_info(action, game_state, action_idx):
-    """Create context info for an action to display in the context window."""
+    '''Create context info for an action to display in the context window.'''
     # Returns dict with 'title', 'description', 'details'
     # Enhanced with delegation info and availability status
 
 def create_upgrade_context_info(upgrade, game_state, upgrade_idx):
-    """Create context info for an upgrade to display in the context window."""
+    '''Create context info for an upgrade to display in the context window.'''
     # Returns dict with 'title', 'description', 'details'
     # Shows purchase status and availability
 
 def get_default_context_info(game_state):
-    """Get default context info when nothing is hovered."""
+    '''Get default context info when nothing is hovered.'''
     # Returns dict with general game state information
     # Shows turn, money, AP, and p(Doom) in DOS style
 ```
@@ -69,7 +69,7 @@ def get_default_context_info(game_state):
 #### UI Integration
 ```python
 def draw_context_window(screen, context_info, w, h, minimized=False, config=None):
-    """Draw the retro-styled context window at the bottom of the screen."""
+    '''Draw the retro-styled context window at the bottom of the screen.'''
     # 80's techno-green color scheme
     # DOS-style Courier font with ALL CAPS text
     # Configurable height (8-10% of screen)
@@ -98,14 +98,14 @@ The context window behavior is controlled through the configuration system:
 
 ```json
 {
-  "ui": {
-    "context_window": {
-      "enabled": true,
-      "always_visible": true,
-      "minimized": false,
-      "height_percent": 0.13,
-      "minimized_height_percent": 0.06,
-      "position": "bottom"
+  'ui': {
+    'context_window': {
+      'enabled': true,
+      'always_visible': true,
+      'minimized': false,
+      'height_percent': 0.13,
+      'minimized_height_percent': 0.06,
+      'position': 'bottom'
     }
   }
 }
@@ -117,7 +117,7 @@ The context window behavior is controlled through the configuration system:
 - **minimized**: Start the window in minimized state
 - **height_percent**: Height as percentage of screen height (expanded)
 - **minimized_height_percent**: Height when minimized
-- **position**: Position on screen (currently only "bottom" supported)
+- **position**: Position on screen (currently only 'bottom' supported)
 
 ### Layout Adjustments
 
@@ -214,17 +214,17 @@ The context window automatically adjusts:
 ### Configuration Extensions
 ```json
 {
-  "context_window": {
-    "animations": {
-      "enabled": true,
-      "duration": 300,
-      "easing": "ease-in-out"
+  'context_window': {
+    'animations': {
+      'enabled': true,
+      'duration': 300,
+      'easing': 'ease-in-out'
     },
-    "content": {
-      "show_shortcuts": true,
-      "show_costs": true,
-      "show_availability": true,
-      "max_details": 4
+    'content': {
+      'show_shortcuts': true,
+      'show_costs': true,
+      'show_availability': true,
+      'max_details': 4
     }
   }
 }

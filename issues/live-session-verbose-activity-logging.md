@@ -1,7 +1,7 @@
 # LIVE SESSION: Enhanced Activity Log Verbosity
 
 ## Issue Summary
-Make activity log more verbose by default to show detailed turn-by-turn progression like classic RPG combat logs ("you deal 20 damage to the orc!" style).
+Make activity log more verbose by default to show detailed turn-by-turn progression like classic RPG combat logs ('you deal 20 damage to the orc!' style).
 
 ## Current State
 - Activity log shows basic action results
@@ -36,7 +36,7 @@ Add detailed, RPG-style logging throughout turn sequence:
 
 ### Event System Feedback
 ```
-> Random event triggered: "Competitor Announces Breakthrough" 
+> Random event triggered: 'Competitor Announces Breakthrough' 
 > Impact: Doom +2, Competitive pressure increased
 > Your response: Accelerate safety research recommended
 ```

@@ -1,4 +1,4 @@
-"""
+'''
 Audio UI Components Module
 
 Extracted from ui.py monolith for modular architecture.
@@ -10,14 +10,14 @@ Contains all sound-related UI components:
 
 This module handles the visual representation of audio controls,
 while src.services.sound_manager handles the actual audio playback.
-"""
+'''
 
 from typing import Any, Dict, Optional
 import pygame
 
 
 def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, game_state: Optional[Any] = None) -> None:
-    """
+    '''
     Draw the sounds options menu with toggles for individual sound effects.
     
     Args:
@@ -32,13 +32,13 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     - Individual sound effect toggles (money spend, AP spend, blob, error beep)
     - Real-time preview of sound settings
     - Consistent with overall game UI theme
-    """
+    '''
     # Clear screen with dark background
     screen.fill((20, 20, 30))
     
     # Title
     title_font = pygame.font.Font(None, 48)
-    title_surf = title_font.render("Sound Options", True, (255, 255, 255))
+    title_surf = title_font.render('Sound Options', True, (255, 255, 255))
     title_rect = title_surf.get_rect(center=(w // 2, h // 6))
     screen.blit(title_surf, title_rect)
     
@@ -50,18 +50,18 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     # Menu items with current status
     menu_font = pygame.font.Font(None, 32)
     items = [
-        ("Master Audio", "Toggle all game sounds"),
-        ("Money Spend Sound", "Sound when spending money"),  
-        ("Action Point Sound", "Sound when spending action points"),
-        ("Blob Sound", "Notification and feedback sounds"),
-        ("Error Beep", "Warning and error sounds"),
-        ("Popup Sounds", "Menu open/close sounds"),
-        ("Milestone Sound", "Achievement and milestone completions"),
-        ("Warning Sound", "High doom and caution alerts"),
-        ("Danger Sound", "Critical doom and emergency alerts"),
-        ("Success Sound", "Action completions and positive events"),
-        ("Research Complete", "Major research milestone completions"),
-        ("Back", "Return to main menu")
+        ('Master Audio', 'Toggle all game sounds'),
+        ('Money Spend Sound', 'Sound when spending money'),  
+        ('Action Point Sound', 'Sound when spending action points'),
+        ('Blob Sound', 'Notification and feedback sounds'),
+        ('Error Beep', 'Warning and error sounds'),
+        ('Popup Sounds', 'Menu open/close sounds'),
+        ('Milestone Sound', 'Achievement and milestone completions'),
+        ('Warning Sound', 'High doom and caution alerts'),
+        ('Danger Sound', 'Critical doom and emergency alerts'),
+        ('Success Sound', 'Action completions and positive events'),
+        ('Research Complete', 'Major research milestone completions'),
+        ('Back', 'Return to main menu')
     ]
     
     start_y = h // 3
@@ -70,7 +70,7 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     for i, (item_text, description) in enumerate(items):
         # Determine if this item is enabled
         enabled = True
-        if sound_manager and i < len(items) - 1:  # Not "Back" option
+        if sound_manager and i < len(items) - 1:  # Not 'Back' option
             if i == 0:  # Master Audio
                 enabled = sound_manager.is_enabled()
             elif i == 1:  # Money Spend
@@ -103,9 +103,9 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
             bg_color = None
             
         # Status indicator for toggles
-        status = ""
-        if i < len(items) - 1:  # Not "Back" option
-            status = " [ON]" if enabled else " [OFF]"
+        status = ''
+        if i < len(items) - 1:  # Not 'Back' option
+            status = ' [ON]' if enabled else ' [OFF]'
             
         # Draw background highlight for selected item
         if bg_color:
@@ -128,9 +128,9 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     # Instructions
     instruction_font = pygame.font.Font(None, 24)
     instructions = [
-        "Use UP/DOWN arrows to navigate",
-        "Press ENTER to toggle settings",
-        "Press ESC to go back"
+        'Use UP/DOWN arrows to navigate',
+        'Press ENTER to toggle settings',
+        'Press ESC to go back'
     ]
     
     inst_y = h - 120
@@ -142,7 +142,7 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
 
 
 def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
-    """
+    '''
     Draw a mute button in the bottom right corner.
     
     Args:
@@ -150,7 +150,7 @@ def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) ->
         game_state: game state object with sound_manager
         w: screen width
         h: screen height
-    """
+    '''
     if not hasattr(game_state, 'sound_manager'):
         return
         
@@ -159,7 +159,7 @@ def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) ->
 
 
 def draw_mute_button_standalone(screen: pygame.Surface, sound_manager, w: int, h: int) -> None:
-    """
+    '''
     Draw a standalone mute button in the bottom right corner.
     
     Args:
@@ -167,7 +167,7 @@ def draw_mute_button_standalone(screen: pygame.Surface, sound_manager, w: int, h
         sound_manager: SoundManager instance
         w: screen width
         h: screen height
-    """
+    '''
     if not sound_manager:
         return
         
@@ -221,7 +221,7 @@ def draw_mute_button_standalone(screen: pygame.Surface, sound_manager, w: int, h
 
 def draw_audio_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, 
                    audio_settings: Dict[str, Any], sound_manager) -> None:
-    """
+    '''
     Draw the audio configuration menu.
     
     Args:
@@ -231,25 +231,25 @@ def draw_audio_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
         selected_item: currently selected menu item index
         audio_settings: dictionary of audio configuration settings
         sound_manager: SoundManager instance for real-time control
-    """
+    '''
     # Clear screen
     screen.fill((20, 20, 30))
     
     # Title
     title_font = pygame.font.Font(None, 48)
-    title_surf = title_font.render("Audio Settings", True, (255, 255, 255))
+    title_surf = title_font.render('Audio Settings', True, (255, 255, 255))
     title_rect = title_surf.get_rect(center=(w // 2, h // 6))
     screen.blit(title_surf, title_rect)
     
     # Menu items
     menu_font = pygame.font.Font(None, 32)
     items = [
-        ("Master Volume", f"{audio_settings.get('master_volume', 100)}%"),
-        ("Sound Effects", "ON" if audio_settings.get('sound_enabled', True) else "OFF"),
-        ("UI Sounds", "ON" if audio_settings.get('ui_sounds', True) else "OFF"), 
-        ("Test Sound", "Play test sound"),
-        ("Reset to Defaults", "Restore default audio settings"),
-        ("Back", "Return to previous menu")
+        ('Master Volume', f'{audio_settings.get('master_volume', 100)}%'),
+        ('Sound Effects', 'ON' if audio_settings.get('sound_enabled', True) else 'OFF'),
+        ('UI Sounds', 'ON' if audio_settings.get('ui_sounds', True) else 'OFF'), 
+        ('Test Sound', 'Play test sound'),
+        ('Reset to Defaults', 'Restore default audio settings'),
+        ('Back', 'Return to previous menu')
     ]
     
     start_y = h // 3
@@ -283,10 +283,10 @@ def draw_audio_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     # Instructions
     instruction_font = pygame.font.Font(None, 24)
     instructions = [
-        "Use UP/DOWN to navigate",
-        "Use LEFT/RIGHT to adjust values", 
-        "Press ENTER to activate",
-        "Press ESC to go back"
+        'Use UP/DOWN to navigate',
+        'Use LEFT/RIGHT to adjust values', 
+        'Press ENTER to activate',
+        'Press ESC to go back'
     ]
     
     inst_y = h - 140
@@ -298,7 +298,7 @@ def draw_audio_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
 
 
 def handle_sounds_menu_input(selected_item: int, game_state: Optional[Any] = None) -> str:
-    """
+    '''
     Handle input for the sounds menu and return the action to take.
     
     Args:
@@ -306,75 +306,75 @@ def handle_sounds_menu_input(selected_item: int, game_state: Optional[Any] = Non
         game_state: game state object to access sound manager
         
     Returns:
-        Action string: "toggle_master", "toggle_money", "toggle_ap", "toggle_blob", 
-                      "toggle_error", "toggle_popup", "toggle_milestone", "toggle_warning",
-                      "toggle_danger", "toggle_success", "toggle_research_complete", "back", or "none"
-    """
+        Action string: 'toggle_master', 'toggle_money', 'toggle_ap', 'toggle_blob', 
+                      'toggle_error', 'toggle_popup', 'toggle_milestone', 'toggle_warning',
+                      'toggle_danger', 'toggle_success', 'toggle_research_complete', 'back', or 'none'
+    '''
     if not game_state or not hasattr(game_state, 'sound_manager'):
-        return "back" if selected_item == 11 else "none"  # Updated back button index
+        return 'back' if selected_item == 11 else 'none'  # Updated back button index
         
     actions = [
-        "toggle_master",            # Master Audio
-        "toggle_money",             # Money Spend Sound  
-        "toggle_ap",                # Action Point Sound
-        "toggle_blob",              # Blob Sound
-        "toggle_error",             # Error Beep
-        "toggle_popup",             # Popup Sounds
-        "toggle_milestone",         # Milestone Sound
-        "toggle_warning",           # Warning Sound
-        "toggle_danger",            # Danger Sound
-        "toggle_success",           # Success Sound
-        "toggle_research_complete", # Research Complete
-        "back"                      # Back
+        'toggle_master',            # Master Audio
+        'toggle_money',             # Money Spend Sound  
+        'toggle_ap',                # Action Point Sound
+        'toggle_blob',              # Blob Sound
+        'toggle_error',             # Error Beep
+        'toggle_popup',             # Popup Sounds
+        'toggle_milestone',         # Milestone Sound
+        'toggle_warning',           # Warning Sound
+        'toggle_danger',            # Danger Sound
+        'toggle_success',           # Success Sound
+        'toggle_research_complete', # Research Complete
+        'back'                      # Back
     ]
     
-    return actions[selected_item] if selected_item < len(actions) else "none"
+    return actions[selected_item] if selected_item < len(actions) else 'none'
 
 
 def apply_sound_toggle(action: str, game_state: Any) -> None:
-    """
+    '''
     Apply a sound toggle action to the game state.
     
     Args:
         action: action string from handle_sounds_menu_input
         game_state: game state object with sound manager
-    """
+    '''
     if not hasattr(game_state, 'sound_manager'):
         return
         
     sound_manager = game_state.sound_manager
     
-    if action == "toggle_master":
+    if action == 'toggle_master':
         sound_manager.set_enabled(not sound_manager.is_enabled())
-    elif action == "toggle_money":
+    elif action == 'toggle_money':
         current = sound_manager.sound_toggles.get('money_spend', True)
         sound_manager.sound_toggles['money_spend'] = not current
-    elif action == "toggle_ap":
+    elif action == 'toggle_ap':
         current = sound_manager.sound_toggles.get('ap_spend', True)  
         sound_manager.sound_toggles['ap_spend'] = not current
-    elif action == "toggle_blob":
+    elif action == 'toggle_blob':
         current = sound_manager.sound_toggles.get('blob', True)
         sound_manager.sound_toggles['blob'] = not current
-    elif action == "toggle_error":
+    elif action == 'toggle_error':
         current = sound_manager.sound_toggles.get('error_beep', True)
         sound_manager.sound_toggles['error_beep'] = not current
-    elif action == "toggle_popup":
+    elif action == 'toggle_popup':
         current = sound_manager.sound_toggles.get('popup_open', True)
         sound_manager.sound_toggles['popup_open'] = not current
         sound_manager.sound_toggles['popup_close'] = not current
         sound_manager.sound_toggles['popup_accept'] = not current
-    elif action == "toggle_milestone":
+    elif action == 'toggle_milestone':
         current = sound_manager.sound_toggles.get('milestone', True)
         sound_manager.sound_toggles['milestone'] = not current
-    elif action == "toggle_warning":
+    elif action == 'toggle_warning':
         current = sound_manager.sound_toggles.get('warning', True)
         sound_manager.sound_toggles['warning'] = not current
-    elif action == "toggle_danger":
+    elif action == 'toggle_danger':
         current = sound_manager.sound_toggles.get('danger', True)
         sound_manager.sound_toggles['danger'] = not current
-    elif action == "toggle_success":
+    elif action == 'toggle_success':
         current = sound_manager.sound_toggles.get('success', True)
         sound_manager.sound_toggles['success'] = not current
-    elif action == "toggle_research_complete":
+    elif action == 'toggle_research_complete':
         current = sound_manager.sound_toggles.get('research_complete', True)
         sound_manager.sound_toggles['research_complete'] = not current

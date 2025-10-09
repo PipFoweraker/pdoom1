@@ -3,59 +3,59 @@
 
 repositories:
   pdoom1-website:
-    url: "https://github.com/PipFoweraker/pdoom1-website.git"
-    description: "Website and community platform"
+    url: 'https://github.com/PipFoweraker/pdoom1-website.git'
+    description: 'Website and community platform'
     mappings:
       # Shared ecosystem documentation
-      "shared/ECOSYSTEM_OVERVIEW.md": "docs/ECOSYSTEM_OVERVIEW.md"
-      "shared/INTEGRATION_PLAN.md": "docs/INTEGRATION_PLAN.md" 
-      "shared/CROSS_REPOSITORY_DOCUMENTATION_STRATEGY.md": "docs/CROSS_REPOSITORY_DOCUMENTATION_STRATEGY.md"
+      'shared/ECOSYSTEM_OVERVIEW.md': 'docs/ECOSYSTEM_OVERVIEW.md'
+      'shared/INTEGRATION_PLAN.md': 'docs/INTEGRATION_PLAN.md' 
+      'shared/CROSS_REPOSITORY_DOCUMENTATION_STRATEGY.md': 'docs/CROSS_REPOSITORY_DOCUMENTATION_STRATEGY.md'
       
       # Website-specific documentation
-      "website/": "docs/website/"
+      'website/': 'docs/website/'
       
       # Templates for consistency
-      "templates/README.template.md": "docs/templates/README.template.md"
-      "templates/CHANGELOG.template.md": "docs/templates/CHANGELOG.template.md"
+      'templates/README.template.md': 'docs/templates/README.template.md'
+      'templates/CHANGELOG.template.md': 'docs/templates/CHANGELOG.template.md'
     
     branches:
-      production: "main"
-      development: "dev"
+      production: 'main'
+      development: 'dev'
   
   pdoom-data:
-    url: "https://github.com/PipFoweraker/pdoom-data.git"
-    description: "Data service and API backend"
+    url: 'https://github.com/PipFoweraker/pdoom-data.git'
+    description: 'Data service and API backend'
     mappings:
       # Shared ecosystem documentation
-      "shared/ECOSYSTEM_OVERVIEW.md": "docs/ECOSYSTEM_OVERVIEW.md"
-      "shared/INTEGRATION_PLAN.md": "docs/INTEGRATION_PLAN.md"
-      "shared/API_REFERENCE.md": "docs/API_REFERENCE.md"
-      "shared/DATABASE_SCHEMA.md": "docs/DATABASE_SCHEMA.md"
-      "shared/CROSS_REPOSITORY_DOCUMENTATION_STRATEGY.md": "docs/CROSS_REPOSITORY_DOCUMENTATION_STRATEGY.md"
+      'shared/ECOSYSTEM_OVERVIEW.md': 'docs/ECOSYSTEM_OVERVIEW.md'
+      'shared/INTEGRATION_PLAN.md': 'docs/INTEGRATION_PLAN.md'
+      'shared/API_REFERENCE.md': 'docs/API_REFERENCE.md'
+      'shared/DATABASE_SCHEMA.md': 'docs/DATABASE_SCHEMA.md'
+      'shared/CROSS_REPOSITORY_DOCUMENTATION_STRATEGY.md': 'docs/CROSS_REPOSITORY_DOCUMENTATION_STRATEGY.md'
       
       # Data service specific documentation
-      "data/": "docs/"
+      'data/': 'docs/'
       
       # Templates
-      "templates/": "docs/templates/"
+      'templates/': 'docs/templates/'
     
     branches:
-      production: "main"
-      development: "dev"
+      production: 'main'
+      development: 'dev'
 
 # Content transformations for different repositories
 transformations:
   pdoom1-website:
     # Update repository references for website context
-    "pdoom-data": "pdoom-data"
-    "pdoom1/docs/": "docs/"
-    "../pdoom1/": "../"
+    'pdoom-data': 'pdoom-data'
+    'pdoom1/docs/': 'docs/'
+    '../pdoom1/': '../'
     
   pdoom-data:
     # Update repository references for data service context
-    "pdoom1/docs/": "docs/"
-    "game repository": "pdoom1 repository"
-    "../pdoom1/": "../pdoom1/"
+    'pdoom1/docs/': 'docs/'
+    'game repository': 'pdoom1 repository'
+    '../pdoom1/': '../pdoom1/'
 
 # Documentation validation rules
 validation:
@@ -69,37 +69,37 @@ validation:
   # Ensure consistency across repositories
   consistency:
     repository_list:
-      files: ["shared/ECOSYSTEM_OVERVIEW.md"]
-      check: "All repositories listed consistently"
+      files: ['shared/ECOSYSTEM_OVERVIEW.md']
+      check: 'All repositories listed consistently'
     
     api_endpoints:
-      files: ["shared/API_REFERENCE.md"]
-      check: "API endpoints match implementation"
+      files: ['shared/API_REFERENCE.md']
+      check: 'API endpoints match implementation'
     
     version_compatibility:
-      files: ["shared/INTEGRATION_PLAN.md"]
-      check: "Version requirements are consistent"
+      files: ['shared/INTEGRATION_PLAN.md']
+      check: 'Version requirements are consistent'
 
 # Synchronization behavior
 sync_behavior:
   # When to sync
   triggers:
-    - "push to main branch"
-    - "manual workflow dispatch"
-    - "documentation files changed"
+    - 'push to main branch'
+    - 'manual workflow dispatch'
+    - 'documentation files changed'
   
   # What to include in sync commits
-  commit_message: "docs: sync from pdoom1@{commit_hash}"
+  commit_message: 'docs: sync from pdoom1@{commit_hash}'
   
   # How to handle conflicts
-  conflict_resolution: "source_wins"  # pdoom1 is authoritative
+  conflict_resolution: 'source_wins'  # pdoom1 is authoritative
   
   # Sync frequency
-  schedule: "on_change"  # Alternative: "hourly", "daily"
+  schedule: 'on_change'  # Alternative: 'hourly', 'daily'
 
 # Metadata for sync tracking
 metadata:
-  version: "1.0.0"
-  last_updated: "2025-09-15"
-  maintainer: "PipFoweraker"
-  source_repository: "pdoom1"
+  version: '1.0.0'
+  last_updated: '2025-09-15'
+  maintainer: 'PipFoweraker'
+  source_repository: 'pdoom1'

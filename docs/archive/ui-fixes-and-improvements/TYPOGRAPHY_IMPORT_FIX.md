@@ -31,7 +31,7 @@ ui_new/components/
 
 ```python
 class FontManager:
-    """Simple font manager stub for P(Doom) UI."""
+    '''Simple font manager stub for P(Doom) UI.'''
     
     def get_font(self, size, bold=False):
         return pygame.font.Font(None, size) if pygame.get_init() else None
@@ -143,13 +143,13 @@ The current stub-based approach provides a stable foundation for:
 ### Validation Commands
 ```bash
 # Quick validation
-python -c "from ui_new.components.typography import font_manager; print('v Typography working')"
+python -c 'from ui_new.components.typography import font_manager; print('v Typography working')'
 
 # Test suite validation (90+ second timeout)
 python -m unittest discover tests -v
 
 # Main application import test
-python -c "import main; print('v Main import working')"
+python -c 'import main; print('v Main import working')'
 ```
 
 ## Current Status & Remaining Work

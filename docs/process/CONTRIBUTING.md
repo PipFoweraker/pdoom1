@@ -52,7 +52,7 @@ When implementing UI and visual feedback enhancements, follow these protocols:
 
 ### Keyboard Shortcut Implementation
 - **Mapping**: Use 1-9 keys for first 9 actions in action list
-- **Visual Integration**: Display shortcuts as "[N] Action Name" on buttons  
+- **Visual Integration**: Display shortcuts as '[N] Action Name' on buttons  
 - **Error Handling**: Provide clear error messages for insufficient resources/AP
 - **Validation**: Use `execute_action_by_keyboard()` method with full validation
 - **Sound Feedback**: Play `play_ap_spend_sound()` on successful action execution

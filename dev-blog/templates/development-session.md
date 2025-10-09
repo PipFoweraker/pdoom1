@@ -1,9 +1,9 @@
 ---
-title: "TITLE_HERE"
-date: "YYYY-MM-DD"
-tags: ["tag1", "tag2"]
-summary: "Brief one-sentence summary of the work accomplished"
-commit: "git-hash-here"
+title: 'TITLE_HERE'
+date: 'YYYY-MM-DD'
+tags: ['tag1', 'tag2']
+summary: 'Brief one-sentence summary of the work accomplished'
+commit: 'git-hash-here'
 ---
 
 # TITLE_HERE

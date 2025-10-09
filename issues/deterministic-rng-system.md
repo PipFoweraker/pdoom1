@@ -60,21 +60,21 @@ class DeterministicRNG:
         self.state_history = []
         
     def random(self):
-        """Replacement for random.random()"""
+        '''Replacement for random.random()'''
         value = self.rng.random()
         self.state_history.append(self.rng.getstate())
         return value
         
     def choice(self, sequence):
-        """Replacement for random.choice()"""
+        '''Replacement for random.choice()'''
         return self.rng.choice(sequence)
         
     def randint(self, a, b):
-        """Replacement for random.randint()"""
+        '''Replacement for random.randint()'''
         return self.rng.randint(a, b)
         
     def get_state(self):
-        """Get current RNG state for saving"""
+        '''Get current RNG state for saving'''
         return {
             'seed': self.seed,
             'state': self.rng.getstate(),
@@ -82,7 +82,7 @@ class DeterministicRNG:
         }
         
     def set_state(self, state_data):
-        """Restore RNG state from save"""
+        '''Restore RNG state from save'''
         self.seed = state_data['seed']
         self.rng.setstate(state_data['state'])
 ```
@@ -117,7 +117,7 @@ class GameReplay:
         self.rng_checkpoints = []
         
     def record_action(self, action_data, rng_state):
-        """Record player action with RNG state"""
+        '''Record player action with RNG state'''
         self.action_sequence.append({
             'action': action_data,
             'rng_state': rng_state,
@@ -125,7 +125,7 @@ class GameReplay:
         })
         
     def replay_to_turn(self, target_turn):
-        """Replay game to specific turn"""
+        '''Replay game to specific turn'''
         game_state = GameState(self.seed)
         for i, recorded_action in enumerate(self.action_sequence):
             if game_state.turn >= target_turn:
@@ -138,7 +138,7 @@ class GameReplay:
 ## Migration Strategy
 
 ### Phase 1: Audit and Replace
-1. **Search all random usage**: `grep -r "import random" src/`
+1. **Search all random usage**: `grep -r 'import random' src/`
 2. **Replace random calls**: Convert to deterministic equivalents
 3. **Test compatibility**: Verify identical behavior with seeds
 4. **Performance validation**: Ensure no significant slowdown
@@ -184,12 +184,12 @@ success_chance = self.game_state.rng.random()
 ### Seed Generation
 ```python
 def generate_game_seed():
-    """Generate human-readable game seed"""
+    '''Generate human-readable game seed'''
     # Use timestamp + random component for uniqueness
-    # Format: "DOOM-2024-1234-ABCD" (human readable)
+    # Format: 'DOOM-2024-1234-ABCD' (human readable)
     
 def parse_seed_input(user_input):
-    """Parse user-provided seed (flexible format)"""
+    '''Parse user-provided seed (flexible format)'''
     # Accept various formats: numbers, words, mixed
 ```
 

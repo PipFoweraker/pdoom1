@@ -1,4 +1,4 @@
-"""UI layouts package"""
+'''UI layouts package'''
 
 from .three_column import ThreeColumnLayout
 

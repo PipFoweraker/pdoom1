@@ -1,4 +1,4 @@
-"""
+'''
 Action Rules System for P(Doom) Game
 
 This module provides a structured way to define and manage action availability rules.
@@ -19,10 +19,10 @@ Usage:
 Example:
     # In actions.py
     {
-        "name": "Advanced Action",
-        "rules": lambda gs: ActionRules.requires_staff_and_turn(gs, min_staff=10, min_turn=8)
+        'name': 'Advanced Action',
+        'rules': lambda gs: ActionRules.requires_staff_and_turn(gs, min_staff=10, min_turn=8)
     }
-"""
+'''
 
 from typing import Any, Callable
 
@@ -31,19 +31,19 @@ from typing import Any, Callable
 
 
 class ActionRules:
-    """
+    '''
     Centralized action rules system for managing action availability.
     
     This class provides static methods that define when actions become available.
     All rule methods take a GameState object as their first parameter and return
     a boolean indicating whether the action should be available.
-    """
+    '''
     
     # === Turn-based Rules ===
     
     @staticmethod
     def requires_turn(gs: Any, min_turn: int) -> bool:
-        """
+        '''
         Rule: Action requires a minimum turn number.
         
         Args:
@@ -55,14 +55,14 @@ class ActionRules:
             
         Example:
             Scout Opponent unlocks after turn 5
-        """
+        '''
         return gs.turn >= min_turn
     
     # === Resource-based Rules ===
     
     @staticmethod
     def requires_staff(gs: Any, min_staff: int) -> bool:
-        """
+        '''
         Rule: Action requires a minimum number of staff.
         
         Args:
@@ -74,12 +74,12 @@ class ActionRules:
             
         Example:
             Manager hiring unlocks at 9 staff
-        """
+        '''
         return gs.staff >= min_staff
     
     @staticmethod
     def requires_money(gs: Any, min_money: int) -> bool:
-        """
+        '''
         Rule: Action requires a minimum amount of money.
         
         Args:
@@ -88,12 +88,12 @@ class ActionRules:
             
         Returns:
             bool: True if current money >= min_money
-        """
+        '''
         return gs.money >= min_money
     
     @staticmethod
     def requires_reputation(gs: Any, min_reputation: int) -> bool:
-        """
+        '''
         Rule: Action requires a minimum reputation level.
         
         Args:
@@ -102,14 +102,14 @@ class ActionRules:
             
         Returns:
             bool: True if current reputation >= min_reputation
-        """
+        '''
         return gs.reputation >= min_reputation
     
     # === Milestone-based Rules ===
     
     @staticmethod
     def requires_milestone_triggered(gs: Any, milestone_attr: str) -> bool:
-        """
+        '''
         Rule: Action requires a specific milestone to be triggered.
         
         Args:
@@ -121,12 +121,12 @@ class ActionRules:
             
         Example:
             Some actions might only be available after manager milestone
-        """
+        '''
         return getattr(gs, milestone_attr, False)
     
     @staticmethod
     def requires_board_members(gs: Any, min_board_members: int = 1) -> bool:
-        """
+        '''
         Rule: Action requires board members to be installed.
         
         Args:
@@ -138,14 +138,14 @@ class ActionRules:
             
         Example:
             Search action requires board oversight
-        """
+        '''
         return gs.board_members >= min_board_members
     
     # === Upgrade-based Rules ===
     
     @staticmethod
     def requires_upgrade(gs: Any, upgrade_key: str) -> bool:
-        """
+        '''
         Rule: Action requires a specific upgrade to be purchased.
         
         Args:
@@ -157,12 +157,12 @@ class ActionRules:
             
         Example:
             Advanced actions might require specific technology upgrades
-        """
+        '''
         return upgrade_key in gs.upgrade_effects
     
     @staticmethod
     def requires_scrollable_log(gs: Any) -> bool:
-        """
+        '''
         Rule: Action requires scrollable event log to be enabled.
         
         Args:
@@ -173,14 +173,14 @@ class ActionRules:
             
         Example:
             Log management actions require the scrollable log upgrade
-        """
+        '''
         return gs.scrollable_event_log_enabled
     
     # === Composite Rules ===
     
     @staticmethod
     def requires_staff_and_turn(gs: Any, min_staff: int, min_turn: int) -> bool:
-        """
+        '''
         Rule: Action requires both minimum staff and turn requirements.
         
         Args:
@@ -193,12 +193,12 @@ class ActionRules:
             
         Example:
             Advanced management actions require experience (turns) and scale (staff)
-        """
+        '''
         return gs.staff >= min_staff and gs.turn >= min_turn
     
     @staticmethod
     def requires_any_specialized_staff(gs: Any, min_count: int = 1) -> bool:
-        """
+        '''
         Rule: Action requires any type of specialized staff.
         
         Args:
@@ -210,7 +210,7 @@ class ActionRules:
             
         Example:
             Delegation features require specialized staff
-        """
+        '''
         total_specialized = gs.admin_staff + gs.research_staff + gs.ops_staff
         return total_specialized >= min_count
     
@@ -218,7 +218,7 @@ class ActionRules:
     
     @staticmethod
     def not_yet_triggered(gs: Any, milestone_attr: str) -> bool:
-        """
+        '''
         Rule: Action is only available if milestone has NOT been triggered yet.
         
         Args:
@@ -230,12 +230,12 @@ class ActionRules:
             
         Example:
             First-time actions that should only happen once
-        """
+        '''
         return not getattr(gs, milestone_attr, False)
     
     @staticmethod
     def combine_and(gs: Any, *rule_functions: Callable[[Any], bool]) -> bool:
-        """
+        '''
         Rule: Combine multiple rules with AND logic.
         
         Args:
@@ -247,12 +247,12 @@ class ActionRules:
             
         Example:
             Action requires multiple conditions to be met simultaneously
-        """
+        '''
         return all(rule_func(gs) for rule_func in rule_functions)
     
     @staticmethod
     def combine_or(gs: Any, *rule_functions: Callable[[Any], bool]) -> bool:
-        """
+        '''
         Rule: Combine multiple rules with OR logic.
         
         Args:
@@ -264,45 +264,45 @@ class ActionRules:
             
         Example:
             Action available through multiple different paths
-        """
+        '''
         return any(rule_func(gs) for rule_func in rule_functions)
 
 
 # === Convenience Functions for Common Patterns ===
 
 def manager_unlock_rule(gs: Any) -> bool:
-    """
+    '''
     Convenience function: Manager hiring becomes available at 9+ staff.
     
     This is the canonical rule for manager availability, used as an example
     of how to create clear, named rule functions for specific game mechanics.
-    """
+    '''
     return ActionRules.requires_staff(gs, min_staff=9)
 
 
 def scout_unlock_rule(gs: Any) -> bool:
-    """
+    '''
     Convenience function: Scout Opponent becomes available after turn 5.
     
     Represents the game progression where intelligence operations become
     available after the player develops the necessary infrastructure and reputation.
-    """
+    '''
     return ActionRules.requires_turn(gs, min_turn=5)
 
 
 def search_unlock_rule(gs: Any) -> bool:
-    """
+    '''
     Convenience function: Search action requires board oversight.
     
     This action only becomes available when board members have been installed
     due to high spending without accounting software.
-    """
+    '''
     return ActionRules.requires_board_members(gs, min_board_members=1)
 
 
 # === Future Extension Guidelines ===
 
-"""
+'''
 Guidelines for extending the action rules system:
 
 1. **Naming Convention**: Use descriptive names that clearly indicate the condition
@@ -352,4 +352,4 @@ Example of adding a new rule:
             Defensive actions become available when enemies are advancing
         '''
         return any(opp.progress >= min_enemy_progress for opp in gs.opponents)
-"""
+'''

@@ -23,7 +23,7 @@
 **Validation Commands**: 
 ```bash
 # Test current state
-python -c "from src.ui.menu_system import draw_main_menu; from src.ui.dialog_system import draw_fundraising_dialog; print('v All systems ready!')"
+python -c 'from src.ui.menu_system import draw_main_menu; from src.ui.dialog_system import draw_fundraising_dialog; print('v All systems ready!')'
 
 # Check current line count  
 wc -l ui.py

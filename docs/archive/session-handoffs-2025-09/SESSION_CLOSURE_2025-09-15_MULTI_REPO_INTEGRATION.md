@@ -6,8 +6,8 @@
 ## [TARGET] **Mission Complete**
 
 ### **Original Request**
-> "versioning for my website, and the website will track the versions of the game as part of its content"
-> "eventually it will tie into the latest 'batch' or sets of data from pdoom-data, also, so build stubs and placeholders for that too"
+> 'versioning for my website, and the website will track the versions of the game as part of its content'
+> 'eventually it will tie into the latest 'batch' or sets of data from pdoom-data, also, so build stubs and placeholders for that too'
 
 ### **Final Deliverable**
 Complete multi-repository ecosystem with professional automation, documentation sync, and scalable architecture ready for production deployment.

@@ -1,9 +1,9 @@
 ---
-title: "Type Annotation Milestone: opponents.py Complete"
-date: "2025-09-14"
-tags: ["type-annotation", "opponents", "milestone", "pylance"]
-summary: "Completed comprehensive type annotation of opponents.py (296 lines, 9 methods) with advanced typing patterns and full integration testing"
-commit: "TBD"
+title: 'Type Annotation Milestone: opponents.py Complete'
+date: '2025-09-14'
+tags: ['type-annotation', 'opponents', 'milestone', 'pylance']
+summary: 'Completed comprehensive type annotation of opponents.py (296 lines, 9 methods) with advanced typing patterns and full integration testing'
+commit: 'TBD'
 ---
 
 # Type Annotation Milestone: opponents.py Complete

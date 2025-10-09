@@ -1,4 +1,4 @@
-"""
+'''
 Enhanced Menu System for P(Doom)
 
 This module provides updated menu handling that integrates:
@@ -8,7 +8,7 @@ This module provides updated menu handling that integrates:
 - Community sharing features via config + seed packages
 
 This replaces the broken menu handling in main.py with a robust, extensible system.
-"""
+'''
 
 import pygame
 from typing import List, Optional, Tuple, Any
@@ -24,21 +24,21 @@ from src.services.config_manager import config_manager
 
 
 class MenuState(Enum):
-    """Enhanced menu states for the updated system."""
-    MAIN_MENU = "main_menu"
-    GAME_CONFIG = "game_config"
-    SETTINGS_MAIN = "settings_main"
-    SETTINGS_AUDIO = "settings_audio" 
-    SETTINGS_GAMEPLAY = "settings_gameplay"
-    SETTINGS_ACCESSIBILITY = "settings_accessibility"
-    SETTINGS_KEYBINDINGS = "settings_keybindings"
-    CUSTOM_SEED = "custom_seed"
-    PRE_GAME = "pre_game"
-    TUTORIAL_CHOICE = "tutorial_choice"
+    '''Enhanced menu states for the updated system.'''
+    MAIN_MENU = 'main_menu'
+    GAME_CONFIG = 'game_config'
+    SETTINGS_MAIN = 'settings_main'
+    SETTINGS_AUDIO = 'settings_audio' 
+    SETTINGS_GAMEPLAY = 'settings_gameplay'
+    SETTINGS_ACCESSIBILITY = 'settings_accessibility'
+    SETTINGS_KEYBINDINGS = 'settings_keybindings'
+    CUSTOM_SEED = 'custom_seed'
+    PRE_GAME = 'pre_game'
+    TUTORIAL_CHOICE = 'tutorial_choice'
     
 
 class EnhancedMenuManager:
-    """Manages the enhanced menu system with proper state transitions."""
+    '''Manages the enhanced menu system with proper state transitions.'''
     
     def __init__(self):
         self.current_state = MenuState.MAIN_MENU
@@ -49,7 +49,7 @@ class EnhancedMenuManager:
         self.config_mode = GameConfigMode.SELECT
         self.available_configs = []
         self.selected_config = None
-        self.custom_seed = ""
+        self.custom_seed = ''
         
         # Settings state
         self.settings_category = None
@@ -58,26 +58,26 @@ class EnhancedMenuManager:
         self.refresh_available_configs()
     
     def refresh_available_configs(self):
-        """Refresh the list of available configurations."""
+        '''Refresh the list of available configurations.'''
         self.available_configs = game_config_manager.get_available_configs()
     
     def get_main_menu_items(self) -> List[str]:
-        """Get the correct main menu items."""
+        '''Get the correct main menu items.'''
         return [
-            "Launch Lab",  # Quick start with current/default config
-            "Game Config",  # Configure game parameters
-            "Settings",     # Audio, gameplay, accessibility settings
-            "Player Guide", # Documentation
-            "Exit"
+            'Launch Lab',  # Quick start with current/default config
+            'Game Config',  # Configure game parameters
+            'Settings',     # Audio, gameplay, accessibility settings
+            'Player Guide', # Documentation
+            'Exit'
         ]
     
     def handle_main_menu_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
-        """
+        '''
         Handle clicks on the main menu.
         
         Returns:
             Action to take or None if no action
-        """
+        '''
         menu_items = self.get_main_menu_items()
         
         # Calculate button positions to match draw_main_menu layout
@@ -98,84 +98,84 @@ class EnhancedMenuManager:
                 self.selected_item = i
                 
                 if i == 0:  # Launch Lab
-                    return "launch_lab"
+                    return 'launch_lab'
                 elif i == 1:  # Game Config
                     self.push_state(MenuState.GAME_CONFIG)
                     self.config_mode = GameConfigMode.SELECT
-                    return "enter_game_config"
+                    return 'enter_game_config'
                 elif i == 2:  # Settings
                     self.push_state(MenuState.SETTINGS_MAIN)
-                    return "enter_settings"
+                    return 'enter_settings'
                 elif i == 3:  # Player Guide
-                    return "show_player_guide"
+                    return 'show_player_guide'
                 elif i == 4:  # Exit
-                    return "exit_game"
+                    return 'exit_game'
                 break
         
         return None
     
     def handle_game_config_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
-        """Handle clicks in the game configuration menu."""
+        '''Handle clicks in the game configuration menu.'''
         if self.config_mode == GameConfigMode.SELECT:
             action, data = handle_game_config_click(
                 mouse_pos, w, h, self.config_mode, 
-                [config["name"] for config in self.available_configs]
+                [config['name'] for config in self.available_configs]
             )
             
-            if action == "select_config":
+            if action == 'select_config':
                 self.selected_config = data
-                return "config_selected"
-            elif action == "create_config":
-                return "create_config"
-            elif action == "set_seed":
+                return 'config_selected'
+            elif action == 'create_config':
+                return 'create_config'
+            elif action == 'set_seed':
                 self.push_state(MenuState.CUSTOM_SEED)
-                return "enter_seed_input"
-            elif action == "back":
+                return 'enter_seed_input'
+            elif action == 'back':
                 self.pop_state()
-                return "back_to_main"
+                return 'back_to_main'
         
         return None
     
     def handle_settings_main_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
-        """Handle clicks in the main settings menu.""" 
+        '''Handle clicks in the main settings menu.''' 
         category = handle_settings_main_menu_click(mouse_pos, w, h)
         
         if category == SettingsCategory.AUDIO:
             self.push_state(MenuState.SETTINGS_AUDIO)
-            return "enter_audio_settings"
+            return 'enter_audio_settings'
         elif category == SettingsCategory.GAMEPLAY:
             self.push_state(MenuState.SETTINGS_GAMEPLAY)
-            return "enter_gameplay_settings"
+            return 'enter_gameplay_settings'
         elif category == SettingsCategory.ACCESSIBILITY:
             self.push_state(MenuState.SETTINGS_ACCESSIBILITY)
-            return "enter_accessibility_settings"
+            return 'enter_accessibility_settings'
         elif category == SettingsCategory.KEYBINDINGS:
             self.push_state(MenuState.SETTINGS_KEYBINDINGS)
-            return "enter_keybindings"
+            return 'enter_keybindings'
         elif category is None:  # Back button
             self.pop_state()
-            return "back_to_main"
+            return 'back_to_main'
         
         return None
     
     def handle_custom_seed_input(self, event: pygame.event.Event) -> Optional[str]:
-        """
+        '''
         Handle keyboard input for custom seed entry.
         
         Returns:
             Action to take or None
-        """
+        '''
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RETURN:
                 # Use entered seed or generate default
                 if not self.custom_seed.strip():
                     from src.services.seed_manager import get_weekly_seed
                     self.custom_seed = get_weekly_seed()
-                return "seed_confirmed"
+                return 'seed_confirmed'
             elif event.key == pygame.K_ESCAPE:
-                self.custom_seed = ""
+                self.custom_seed = ''
                 self.pop_state()
-                return "seed_cancelled"
+                return 'seed_cancelled'
             elif event.key == pygame.K_BACKSPACE:
                 self.custom_seed = self.custom_seed[:-1]
             elif event.unicode and event.unicode.isprintable():
@@ -184,18 +184,18 @@ class EnhancedMenuManager:
         return None
     
     def push_state(self, new_state: MenuState):
-        """Push current state to navigation stack and change to new state."""
+        '''Push current state to navigation stack and change to new state.'''
         self.navigation_stack.append(self.current_state)
         self.current_state = new_state
         self.selected_item = 0  # Reset selection
     
     def pop_state(self) -> bool:
-        """
+        '''
         Pop previous state from navigation stack.
         
         Returns:
             True if state was popped, False if stack was empty
-        """
+        '''
         if self.navigation_stack:
             self.current_state = self.navigation_stack.pop()
             self.selected_item = 0
@@ -203,11 +203,11 @@ class EnhancedMenuManager:
         return False
     
     def get_navigation_depth(self) -> int:
-        """Get current navigation depth for UI display."""
+        '''Get current navigation depth for UI display.'''
         return len(self.navigation_stack)
     
     def draw_current_menu(self, screen: pygame.Surface, w: int, h: int, **kwargs):
-        """Draw the current menu based on state."""
+        '''Draw the current menu based on state.'''
         if self.current_state == MenuState.MAIN_MENU:
             # Use existing draw_main_menu function
             from ui import draw_main_menu
@@ -234,18 +234,18 @@ class EnhancedMenuManager:
             self._draw_custom_seed_input(screen, w, h)
     
     def _draw_custom_seed_input(self, screen: pygame.Surface, w: int, h: int):
-        """Draw the custom seed input screen."""
+        '''Draw the custom seed input screen.'''
         screen.fill((32, 32, 44))
         
         # Title
         title_font = pygame.font.SysFont('Consolas', 70, bold=True)
-        title_text = title_font.render("P(Doom)", True, (240, 255, 220))
+        title_text = title_font.render('P(Doom)', True, (240, 255, 220))
         title_x = (w - title_text.get_width()) // 2
         screen.blit(title_text, (title_x, h // 6))
         
         # Prompt
         font = pygame.font.SysFont('Consolas', 40)
-        prompt_text = font.render("Enter Custom Seed:", True, (210, 210, 255))
+        prompt_text = font.render('Enter Custom Seed:', True, (210, 210, 255))
         prompt_x = (w - prompt_text.get_width()) // 2
         screen.blit(prompt_text, (prompt_x, h // 3))
         
@@ -261,8 +261,8 @@ class EnhancedMenuManager:
         # Instructions
         small_font = pygame.font.SysFont('Consolas', 24)
         instructions = [
-            "Leave blank for weekly challenge seed",
-            "Press [Enter] to continue, [Esc] to cancel"
+            'Leave blank for weekly challenge seed',
+            'Press [Enter] to continue, [Esc] to cancel'
         ]
         
         y_offset = h // 2 + 100
@@ -273,21 +273,21 @@ class EnhancedMenuManager:
             y_offset += 30
     
     def get_current_state_name(self) -> str:
-        """Get current state name for debugging/logging."""
+        '''Get current state name for debugging/logging.'''
         return self.current_state.value
     
     def reset_to_main_menu(self):
-        """Reset to main menu, clearing navigation stack."""
+        '''Reset to main menu, clearing navigation stack.'''
         self.current_state = MenuState.MAIN_MENU
         self.navigation_stack.clear()
         self.selected_item = 0
-        self.custom_seed = ""
+        self.custom_seed = ''
 
 
 # Additional helper functions for menu integration
 
 def create_game_with_config(config_name: str = None, seed: str = None) -> Tuple[Any, str]:
-    """
+    '''
     Create a new game with specified configuration and seed.
     
     Args:
@@ -296,7 +296,7 @@ def create_game_with_config(config_name: str = None, seed: str = None) -> Tuple[
         
     Returns:
         Tuple of (game_state, actual_seed_used)
-    """
+    '''
     # Import here to avoid circular imports
     from src.core.game_state import GameState
     from src.services.seed_manager import get_weekly_seed
@@ -320,17 +320,17 @@ def create_game_with_config(config_name: str = None, seed: str = None) -> Tuple[
 
 
 def get_menu_transition_sound(from_state: str, to_state: str) -> Optional[str]:
-    """
+    '''
     Get appropriate sound effect for menu transitions.
     
     Returns:
         Sound effect name or None
-    """
-    if to_state == "game":
-        return "game_start"
-    elif "settings" in to_state:
-        return "menu_enter"
-    elif from_state != "main_menu" and to_state == "main_menu":
-        return "menu_back"
+    '''
+    if to_state == 'game':
+        return 'game_start'
+    elif 'settings' in to_state:
+        return 'menu_enter'
+    elif from_state != 'main_menu' and to_state == 'main_menu':
+        return 'menu_back'
     else:
-        return "menu_navigate"
+        return 'menu_navigate'

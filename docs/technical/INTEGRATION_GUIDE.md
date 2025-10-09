@@ -1,4 +1,4 @@
-"""
+'''
 Quick Integration Guide for Enhanced Settings System
 ==================================================
 
@@ -9,11 +9,11 @@ STEP 1: IMMEDIATE FIX (ALREADY DONE)
 The custom seed functionality is now fixed. These changes have been applied:
 
 1. main.py line 89: Fixed menu_items to match UI
-2. main.py handle_menu_click(): Fixed to handle "Launch with Custom Seed" 
+2. main.py handle_menu_click(): Fixed to handle 'Launch with Custom Seed' 
 3. main.py handle_menu_keyboard(): Updated for new menu structure
 4. ui.py and src/ui/menus.py: Aligned menu items
 
-TEST: Run the game and click "Launch with Custom Seed" - it should now work!
+TEST: Run the game and click 'Launch with Custom Seed' - it should now work!
 
 STEP 2: ENHANCED SETTINGS (OPTIONAL)
 ===================================
@@ -94,9 +94,9 @@ Once integrated, players can:
 IMMEDIATE BENEFIT
 ================
 The custom seed functionality is fixed RIGHT NOW. Players can:
-1. Click "Launch with Custom Seed"
+1. Click 'Launch with Custom Seed'
 2. Enter any seed or leave blank for weekly seed
 3. Start the game with their chosen seed
 
 This was the core issue and it's resolved!
-"""
+'''

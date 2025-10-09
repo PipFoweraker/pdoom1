@@ -52,7 +52,7 @@
 - **Tool Created**: `tools/ascii_compliance_fixer.py` (447 lines)
 - **Fixes Applied**:
   - Emoji replacement: [FIRE] -> [FIRE], [TARGET] -> [TARGET], [WARNING] -> [WARNING]
-  - Smart quotes: " " -> " "
+  - Smart quotes: ' ' -> ' '
   - Mathematical symbols: x -> x, / -> /, <= -> <=, >= -> >=
   - Accented characters: [U+00E9] -> e, [U+00F1] -> n, etc.
 - **Files Fixed**: 40+ files across entire codebase

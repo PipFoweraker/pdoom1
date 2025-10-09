@@ -1,5 +1,5 @@
 {
-  "dev_mode_enabled": true,
-  "verbose_logging_enabled": true,
-  "debug_console_enabled": true
+  'dev_mode_enabled': true,
+  'verbose_logging_enabled': true,
+  'debug_console_enabled': true
 }

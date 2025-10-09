@@ -1,14 +1,14 @@
-"""
+'''
 Text rendering and navigation utilities for the UI system.
 
 This module provides text wrapping, rendering, and navigation button functionality.
-"""
+'''
 
 import pygame
 
 
 def should_show_back_button(depth: int) -> bool:
-    """
+    '''
     Determine if a back button should be shown based on navigation depth.
     
     Args:
@@ -16,12 +16,12 @@ def should_show_back_button(depth: int) -> bool:
         
     Returns:
         bool: True if back button should be shown
-    """
+    '''
     return depth > 0
 
 
 def draw_back_button(screen, w, h, navigation_depth, font=None):
-    """
+    '''
     Draw a back navigation button if appropriate for the current depth.
     
     Args:
@@ -32,7 +32,7 @@ def draw_back_button(screen, w, h, navigation_depth, font=None):
         
     Returns:
         pygame.Rect: button rectangle if drawn, None otherwise
-    """
+    '''
     if not should_show_back_button(navigation_depth):
         return None
         
@@ -41,7 +41,7 @@ def draw_back_button(screen, w, h, navigation_depth, font=None):
     
     # Position back button in top-left corner with margin based on screen height
     margin = int(h * 0.02)  # 2% of height for consistent positioning
-    back_text = font.render("? Back", True, (255, 255, 255))
+    back_text = font.render('? Back', True, (255, 255, 255))
     back_rect = pygame.Rect(margin, margin, back_text.get_width() + 20, back_text.get_height() + 10)
     
     # Draw button background
@@ -57,7 +57,7 @@ def draw_back_button(screen, w, h, navigation_depth, font=None):
 
 
 def wrap_text(text, font, max_width):
-    """
+    '''
     Wrap text to fit within the given width using the provided font.
     
     Args:
@@ -67,16 +67,16 @@ def wrap_text(text, font, max_width):
         
     Returns:
         list: lines of wrapped text
-    """
+    '''
     if not text:
         return []
     
     words = text.split(' ')
     lines = []
-    current_line = ""
+    current_line = ''
     
     for word in words:
-        test_line = current_line + (" " if current_line else "") + word
+        test_line = current_line + (' ' if current_line else '') + word
         test_surface = font.render(test_line, True, (255, 255, 255))
         
         if test_surface.get_width() <= max_width:
@@ -96,7 +96,7 @@ def wrap_text(text, font, max_width):
 
 
 def render_text(text, font, max_width=None, color=(255,255,255), line_height_multiplier=1.35):
-    """
+    '''
     Render text with optional wrapping and return list of surfaces and total height.
     
     Args:
@@ -108,7 +108,7 @@ def render_text(text, font, max_width=None, color=(255,255,255), line_height_mul
         
     Returns:
         tuple: (list of text surfaces, total height)
-    """
+    '''
     if max_width:
         lines = wrap_text(text, font, max_width)
     else:

@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-"""
+'''
 Intelligent ASCII Converter for P(Doom) Documentation
 
 A sophisticated tool that converts Unicode to ASCII while preserving semantic meaning
@@ -10,49 +10,52 @@ Philosophy:
 - Elegant ASCII alternatives that maintain readability  
 - Semantic preservation over mechanical replacement
 - Professional documentation standards
-"""
+'''
 
-import os
 import re
 import argparse
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Any, Union
 import unicodedata
 
 # Import our logging system
 try:
-    from logging_system import get_logger, LogCategory, TimedOperation
+    from scripts.logging_system import LogCategory
+    has_logging_system = True
+    logcategory_ascii = LogCategory.ASCII if hasattr(LogCategory, 'ASCII') else 'ASCII'
 except ImportError:
-    # Fallback if logging system not available
-    class MockLogger:
-        def info(self, msg, **kwargs): print(f"[INFO] {msg}")
-        def warning(self, msg, **kwargs): print(f"[WARNING] {msg}")
-        def error(self, msg, **kwargs): print(f"[ERROR] {msg}")
-        def debug(self, msg, **kwargs): print(f"[DEBUG] {msg}")
-        def step_start(self, name, **kwargs): print(f"[START] {name}")
-        def step_success(self, name, **kwargs): print(f"[SUCCESS] {name}")
-        def step_failure(self, name, **kwargs): print(f"[FAILURE] {name}")
-        def file_operation(self, op, path, result, **kwargs): print(f"[FILE] {op} {path}: {result}")
-        def metrics(self, name, value, unit=None, **kwargs): print(f"[METRIC] {name}: {value} {unit or ''}")
-        def session_summary(self, success, **kwargs): print(f"[SUMMARY] Success: {success}")
-    
-    def get_logger(name, category=None, verbose=False, structured=False):
-        return MockLogger()
-    
-    class TimedOperation:
-        def __init__(self, logger, name, **kwargs):
-            self.logger = logger
-            self.name = name
-        def __enter__(self): return self
-        def __exit__(self, *args): pass
+    has_logging_system = False
+    logcategory_ascii = 'ASCII'
+
+class MockLogger:
+    def info(self, msg: str, **kwargs: Any) -> None: print(f'[INFO] {msg}')
+    def warning(self, msg: str, **kwargs: Any) -> None: print(f'[WARNING] {msg}')
+    def error(self, msg: str, **kwargs: Any) -> None: print(f'[ERROR] {msg}')
+    def debug(self, msg: str, **kwargs: Any) -> None: print(f'[DEBUG] {msg}')
+    def step_start(self, name: str, **kwargs: Any) -> None: print(f'[START] {name}')
+    def step_success(self, name: str, **kwargs: Any) -> None: print(f'[SUCCESS] {name}')
+    def step_failure(self, name: str, **kwargs: Any) -> None: print(f'[FAILURE] {name}')
+    def file_operation(self, op: str, path: str, result: str, **kwargs: Any) -> None: print(f'[FILE] {op} {path}: {result}')
+    def metrics(self, name: str, value: Union[str, int, float], unit: Optional[str] = None, **kwargs: Any) -> None: print(f'[METRIC] {name}: {value} {unit or ""}')
+    def session_summary(self, success: bool, **kwargs: Any) -> None: print(f'[SUMMARY] Success: {success}')
+
+def get_logger(name: str, category: Optional[Any] = None, verbose: bool = False, structured: bool = False) -> MockLogger:
+    return MockLogger()
+
+class TimedOperation:
+    def __init__(self, logger: MockLogger, name: str, **kwargs: Any) -> None:
+        self.logger = logger
+        self.name = name
+    def __enter__(self) -> 'TimedOperation': return self
+    def __exit__(self, *args: Any) -> None: pass
 
 
 class IntelligentASCIIConverter:
-    """Converts Unicode to ASCII with contextual intelligence and semantic preservation."""
+    '''Converts Unicode to ASCII with contextual intelligence and semantic preservation.'''
     
     def __init__(self, verbose: bool = False):
-        self.logger = get_logger("ascii_converter", LogCategory.ASCII, verbose=verbose)
-        self.logger.info("Intelligent ASCII Converter initialized")
+        self.logger = get_logger('ascii_converter', logcategory_ascii, verbose=verbose)
+        self.logger.info('Intelligent ASCII Converter initialized')
         # Intelligent contextual replacements
         self.smart_replacements = {
             # Typography - elegant alternatives
@@ -62,12 +65,12 @@ class IntelligentASCIIConverter:
             '\u2026': '...',      # ELLIPSIS -> three dots
             
             # Quotation marks - standard ASCII quotes
-            '\u201c': '"',        # LEFT DOUBLE QUOTATION 
-            '\u201d': '"',        # RIGHT DOUBLE QUOTATION
-            '\u2018': "'",        # LEFT SINGLE QUOTATION
-            '\u2019': "'",        # RIGHT SINGLE QUOTATION
-            '\u00ab': '"',        # LEFT ANGLE QUOTATION
-            '\u00bb': '"',        # RIGHT ANGLE QUOTATION
+            '\u201c': ''',        # LEFT DOUBLE QUOTATION 
+            '\u201d': ''',        # RIGHT DOUBLE QUOTATION
+            '\u2018': ''',        # LEFT SINGLE QUOTATION
+            '\u2019': ''',        # RIGHT SINGLE QUOTATION
+            '\u00ab': ''',        # LEFT ANGLE QUOTATION
+            '\u00bb': ''',        # RIGHT ANGLE QUOTATION
             
             # List markers - clean alternatives
             '\u2022': '* ',       # BULLET -> asterisk with space
@@ -237,7 +240,7 @@ class IntelligentASCIIConverter:
         }
         
         # Markdown-specific patterns that need special handling
-        self.markdown_patterns = [
+        self.markdown_patterns: List[Tuple[str, Any]] = [
             # Header markers that might contain Unicode
             (r'^(#{1,6})\s*([^\n]*?)(\s*)$', self._fix_header_line),
             # List items that might have Unicode bullets
@@ -250,33 +253,33 @@ class IntelligentASCIIConverter:
             (r'`([^`]+)`', self._preserve_inline_code),
         ]
     
-    def _fix_header_line(self, match) -> str:
-        """Fix Unicode in markdown headers while preserving structure."""
+    def _fix_header_line(self, match: re.Match[str]) -> str:
+        '''Fix Unicode in markdown headers while preserving structure.'''
         prefix, content, suffix = match.groups()
         clean_content = self._apply_replacements(content)
-        return f"{prefix} {clean_content}{suffix}"
+        return f'{prefix} {clean_content}{suffix}'
     
-    def _fix_list_item(self, match) -> str:
-        """Convert Unicode list bullets to standard ASCII."""
+    def _fix_list_item(self, match: re.Match[str]) -> str:
+        '''Convert Unicode list bullets to standard ASCII.'''
         indent, bullet, content = match.groups()
         ascii_bullet = self.smart_replacements.get(bullet, '*')
         clean_content = self._apply_replacements(content)
-        return f"{indent}{ascii_bullet} {clean_content}"
+        return f'{indent}{ascii_bullet} {clean_content}'
     
-    def _preserve_emphasis(self, match) -> str:
-        """Preserve markdown emphasis while cleaning content."""
+    def _preserve_emphasis(self, match: re.Match[str]) -> str:
+        '''Preserve markdown emphasis while cleaning content.'''
         return match.group(0)  # Return unchanged for now
     
-    def _preserve_code_block(self, match) -> str:
-        """Preserve code blocks unchanged."""
+    def _preserve_code_block(self, match: re.Match[str]) -> str:
+        '''Preserve code blocks unchanged.'''
         return match.group(0)
     
-    def _preserve_inline_code(self, match) -> str:
-        """Preserve inline code unchanged."""
+    def _preserve_inline_code(self, match: re.Match[str]) -> str:
+        '''Preserve inline code unchanged.'''
         return match.group(0)
     
     def _apply_replacements(self, text: str) -> str:
-        """Apply intelligent replacements to text."""
+        '''Apply intelligent replacements to text.'''
         # First apply smart typography replacements
         for unicode_char, replacement in self.smart_replacements.items():
             text = text.replace(unicode_char, replacement)
@@ -292,7 +295,7 @@ class IntelligentASCIIConverter:
         return text
     
     def _detect_context(self, text: str, position: int) -> str:
-        """Detect context around a Unicode character for smarter replacement."""
+        '''Detect context around a Unicode character for smarter replacement.'''
         # Look at surrounding text to determine best replacement
         start = max(0, position - 20)
         end = min(len(text), position + 20)
@@ -311,42 +314,42 @@ class IntelligentASCIIConverter:
             return 'neutral_context'
     
     def convert_text(self, text: str) -> Tuple[str, List[str]]:
-        """Convert text with intelligent ASCII replacements."""
+        '''Convert text with intelligent ASCII replacements.'''
         original_text = text
-        changes = []
+        changes: List[str] = []
         
-        self.logger.debug("Starting text conversion", extra_data={
+        self.logger.debug('Starting text conversion', extra_data={
             'text_length': len(text),
             'original_text_preview': text[:100] + '...' if len(text) > 100 else text
         })
         
-        with TimedOperation(self.logger, "markdown_processing"):
+        with TimedOperation(self.logger, 'markdown_processing'):
             # Apply markdown-aware processing
             for pattern, handler in self.markdown_patterns:
                 text = re.sub(pattern, handler, text, flags=re.MULTILINE)
         
-        with TimedOperation(self.logger, "replacement_processing"):
+        with TimedOperation(self.logger, 'replacement_processing'):
             # Apply general replacements
             text = self._apply_replacements(text)
         
         # Find any remaining non-ASCII characters for reporting
-        remaining_unicode = []
+        remaining_unicode: List[str] = []
         for i, char in enumerate(text):
             if ord(char) > 127:
-                char_name = unicodedata.name(char, f"U+{ord(char):04X}")
+                char_name = unicodedata.name(char, f'U+{ord(char):04X}')
                 context = self._detect_context(text, i)
                 remaining_unicode.append(f"'{char}' ({char_name}) at position {i} in {context}")
         
         if text != original_text:
-            changes.append(f"Applied intelligent ASCII conversion")
-            self.logger.metrics("characters_converted", len(original_text) - len(text.encode('ascii', 'ignore').decode('ascii')))
+            changes.append(f'Applied intelligent ASCII conversion')
+            self.logger.metrics('characters_converted', len(original_text) - len(text.encode('ascii', 'ignore').decode('ascii')))
         
         if remaining_unicode:
-            changes.extend([f"Remaining Unicode: {char}" for char in remaining_unicode[:5]])
-            self.logger.warning(f"Found {len(remaining_unicode)} remaining Unicode characters", 
+            changes.extend([f'Remaining Unicode: {char}' for char in remaining_unicode[:5]])
+            self.logger.warning(f'Found {len(remaining_unicode)} remaining Unicode characters', 
                               extra_data={'remaining_count': len(remaining_unicode)})
         
-        self.logger.debug("Text conversion completed", extra_data={
+        self.logger.debug('Text conversion completed', extra_data={
             'changes_made': len(changes) > 0,
             'remaining_unicode_count': len(remaining_unicode)
         })
@@ -354,8 +357,8 @@ class IntelligentASCIIConverter:
         return text, changes
     
     def process_file(self, file_path: Path, dry_run: bool = False) -> Tuple[bool, List[str]]:
-        """Process a single file with intelligent conversion."""
-        self.logger.step_start(f"process_file", extra_data={
+        '''Process a single file with intelligent conversion.'''
+        self.logger.step_start(f'process_file', extra_data={
             'file_path': str(file_path),
             'dry_run': dry_run
         })
@@ -364,47 +367,47 @@ class IntelligentASCIIConverter:
             with open(file_path, 'r', encoding='utf-8') as f:
                 original_content = f.read()
         except UnicodeDecodeError:
-            self.logger.file_operation("READ", str(file_path), "FAILED - encoding issue")
-            return False, [f"Cannot read {file_path} - encoding issue"]
+            self.logger.file_operation('READ', str(file_path), 'FAILED - encoding issue')
+            return False, [f'Cannot read {file_path} - encoding issue']
         except Exception as e:
-            self.logger.error(f"Error reading file: {e}", extra_data={'file_path': str(file_path)})
-            return False, [f"Error reading {file_path}: {e}"]
+            self.logger.error(f'Error reading file: {e}', extra_data={'file_path': str(file_path)})
+            return False, [f'Error reading {file_path}: {e}']
         
         converted_content, changes = self.convert_text(original_content)
         
         if original_content == converted_content:
-            self.logger.file_operation("PROCESS", str(file_path), "NO_CHANGES")
-            return True, ["No changes needed"]
+            self.logger.file_operation('PROCESS', str(file_path), 'NO_CHANGES')
+            return True, ['No changes needed']
         
         if not dry_run:
             try:
                 with open(file_path, 'w', encoding='utf-8') as f:
                     f.write(converted_content)
-                self.logger.file_operation("WRITE", str(file_path), "SUCCESS", extra_data={
+                self.logger.file_operation('WRITE', str(file_path), 'SUCCESS', extra_data={
                     'changes_count': len(changes)
                 })
-                self.logger.step_success("process_file", extra_data={'file_path': str(file_path)})
-                return True, changes + ["File updated successfully"]
+                self.logger.step_success('process_file', extra_data={'file_path': str(file_path)})
+                return True, changes + ['File updated successfully']
             except Exception as e:
-                self.logger.error(f"Error writing file: {e}", extra_data={'file_path': str(file_path)})
-                return False, [f"Error writing {file_path}: {e}"]
+                self.logger.error(f'Error writing file: {e}', extra_data={'file_path': str(file_path)})
+                return False, [f'Error writing {file_path}: {e}']
         
-        self.logger.file_operation("SIMULATE", str(file_path), "WOULD_UPDATE", extra_data={
+        self.logger.file_operation('SIMULATE', str(file_path), 'WOULD_UPDATE', extra_data={
             'changes_count': len(changes)
         })
-        return True, changes + ["Would update file (dry run)"]
+        return True, changes + ['Would update file (dry run)']
     
     def process_directory(self, directory: Path, dry_run: bool = False) -> Dict[str, List[str]]:
-        """Process all relevant files in a directory."""
-        results = {}
+        '''Process all relevant files in a directory.'''
+        results: Dict[str, List[str]] = {}
         
         # File patterns to process
         patterns = [
-            "*.md", "*.txt", "*.rst", "*.py", "*.json", "*.yaml", "*.yml",
-            "*.toml", "*.cfg", "*.ini", "*.sh", "*.bat"
+            '*.md', '*.txt', '*.rst', '*.py', '*.json', '*.yaml', '*.yml',
+            '*.toml', '*.cfg', '*.ini', '*.sh', '*.bat'
         ]
         
-        files_to_process = []
+        files_to_process: List[Path] = []
         for pattern in patterns:
             files_to_process.extend(directory.rglob(pattern))
         
@@ -425,14 +428,14 @@ class IntelligentASCIIConverter:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Intelligent ASCII converter for P(Doom) documentation",
+        description='Intelligent ASCII converter for P(Doom) documentation',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
+        epilog='''
 Examples:
   python intelligent_ascii_converter.py --dry-run
   python intelligent_ascii_converter.py --file README.md
   python intelligent_ascii_converter.py --directory docs/
-        """
+        '''
     )
     
     parser.add_argument('--dry-run', action='store_true',
@@ -452,7 +455,7 @@ Examples:
     converter = IntelligentASCIIConverter(verbose=args.verbose)
     
     # Log session start
-    converter.logger.info("ASCII Converter session started", extra_data={
+    converter.logger.info('ASCII Converter session started', extra_data={
         'dry_run': args.dry_run,
         'target_file': str(args.file) if args.file else None,
         'target_directory': str(args.directory),
@@ -461,65 +464,67 @@ Examples:
     })
     
     success = True
+    results: Dict[str, List[str]] = {}
     
     if args.file:
         if not args.file.exists():
-            converter.logger.error(f"File does not exist: {args.file}")
+            converter.logger.error(f'File does not exist: {args.file}')
             return 1
         
-        with TimedOperation(converter.logger, f"process_single_file"):
+        with TimedOperation(converter.logger, f'process_single_file'):
             file_success, messages = converter.process_file(args.file, args.dry_run)
         
         if args.verbose or not file_success or len(messages) > 1:
-            print(f"\n{args.file}:")
+            print(f'\n{args.file}:')
             for message in messages:
-                print(f"  {message}")
+                print(f'  {message}')
         
         if not file_success:
             success = False
     
     else:
         if not args.directory.exists():
-            converter.logger.error(f"Directory does not exist: {args.directory}")
+            converter.logger.error(f'Directory does not exist: {args.directory}')
             return 1
         
-        with TimedOperation(converter.logger, "process_directory", extra_data={
+        with TimedOperation(converter.logger, 'process_directory', extra_data={
             'directory': str(args.directory)
         }):
             results = converter.process_directory(args.directory, args.dry_run)
         
-        converter.logger.metrics("files_processed", len(results), "files")
+        converter.logger.metrics('files_processed', len(results), 'files')
         
         if not results:
-            print("All files are ASCII compliant - no changes needed")
-            converter.logger.info("All files ASCII compliant")
+            print('All files are ASCII compliant - no changes needed')
+            converter.logger.info('All files ASCII compliant')
         else:
-            print(f"\nProcessed {len(results)} files with changes:")
+            print(f'\nProcessed {len(results)} files with changes:')
             for file_path, messages in results.items():
-                print(f"\n{file_path}:")
+                print(f'\n{file_path}:')
                 for message in messages:
-                    print(f"  {message}")
+                    print(f'  {message}')
             
             if args.dry_run:
-                print(f"\nDry run complete. Run without --dry-run to apply changes.")
-                converter.logger.info("Dry run completed", extra_data={
+                print(f'\nDry run complete. Run without --dry-run to apply changes.')
+                converter.logger.info('Dry run completed', extra_data={
                     'files_with_changes': len(results)
                 })
             else:
-                print(f"\nConversion complete. {len(results)} files updated.")
-                converter.logger.info("Conversion completed", extra_data={
+                print(f'\nConversion complete. {len(results)} files updated.')
+                converter.logger.info('Conversion completed', extra_data={
                     'files_updated': len(results)
                 })
     
     # Log session summary
+    results_count = len(results) if 'results' in locals() and results else 0
     converter.logger.session_summary(success, extra_data={
         'mode': 'single_file' if args.file else 'directory',
         'dry_run': args.dry_run,
-        'files_processed': 1 if args.file else len(results) if 'results' in locals() else 0
+        'files_processed': 1 if args.file else results_count
     })
     
     return 0 if success else 1
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     exit(main())

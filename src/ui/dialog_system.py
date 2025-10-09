@@ -1,4 +1,4 @@
-"""
+'''
 Dialog System Module
 
 Handles all dialog rendering functions for P(Doom) UI system.
@@ -9,14 +9,14 @@ Functions:
 - draw_research_dialog: Renders research strategy dialog  
 - draw_hiring_dialog: Renders employee hiring dialog
 - draw_researcher_pool_dialog: Renders specialist researcher pool dialog
-"""
+'''
 
 import pygame
 from typing import Dict, Any, Optional, List, Tuple
 
 
 def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
-    """Wrap text to fit within max_width using the provided font."""
+    '''Wrap text to fit within max_width using the provided font.'''
     words = text.split(' ')
     lines = []
     current_line = []
@@ -45,7 +45,7 @@ def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
 
 
 def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str, Any], w: int, h: int) -> List[Dict[str, Any]]:
-    """
+    '''
     Draw the fundraising strategy dialog with multiple funding options.
     
     Args:
@@ -55,7 +55,7 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
         
     Returns:
         List of rects for each fundraising option and dismiss button for click detection
-    """
+    '''
     if not fundraising_dialog:
         return []
         
@@ -84,13 +84,13 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
     detail_font = pygame.font.Font(None, int(h * 0.022))
     
     # Title
-    title = fundraising_dialog["title"]
+    title = fundraising_dialog['title']
     title_surface = title_font.render(title, True, (255, 255, 255))
     title_rect = title_surface.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
     screen.blit(title_surface, title_rect)
     
     # Description
-    description = fundraising_dialog["description"]
+    description = fundraising_dialog['description']
     desc_surface = desc_font.render(description, True, (220, 220, 220))
     desc_rect = desc_surface.get_rect(centerx=dialog_rect.centerx, y=title_rect.bottom + 15)
     screen.blit(desc_surface, desc_rect)
@@ -101,7 +101,7 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
     option_spacing = 15
     clickable_rects = []
     
-    available_options = fundraising_dialog["available_options"]
+    available_options = fundraising_dialog['available_options']
     
     for i, option in enumerate(available_options):
         # Option background
@@ -109,11 +109,11 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
         option_rect = pygame.Rect(dialog_x + 20, option_y, dialog_width - 40, option_height)
         
         # Color based on availability and affordability
-        if option["available"] and option["affordable"]:
+        if option['available'] and option['affordable']:
             bg_color = (60, 90, 70)  # Green tint for money
             border_color = (120, 200, 150)
             text_color = (255, 255, 255)
-        elif option["available"]:
+        elif option['available']:
             bg_color = (70, 70, 50)  # Yellow tint for expensive but available
             border_color = (150, 150, 100)
             text_color = (255, 255, 200)
@@ -126,32 +126,32 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
         pygame.draw.rect(screen, border_color, option_rect, width=2, border_radius=8)
         
         # Option name
-        name_surface = option_font.render(option["name"], True, text_color)
+        name_surface = option_font.render(option['name'], True, text_color)
         name_rect = name_surface.get_rect(x=option_rect.x + 15, y=option_rect.y + 10)
         screen.blit(name_surface, name_rect)
         
         # Amount range and AP cost info
-        if option.get("creates_debt"):
-            cost_text = f"${option['min_amount']}-{option['max_amount']}k (DEBT) - {option['ap_cost']} AP"
+        if option.get('creates_debt'):
+            cost_text = f'${option['min_amount']}-{option['max_amount']}k (DEBT) - {option['ap_cost']} AP'
         else:
-            cost_text = f"${option['min_amount']}-{option['max_amount']}k - {option['ap_cost']} AP"
+            cost_text = f'${option['min_amount']}-{option['max_amount']}k - {option['ap_cost']} AP'
         cost_surface = button_font.render(cost_text, True, text_color)
         cost_rect = cost_surface.get_rect(x=option_rect.right - 15 - cost_surface.get_width(), y=option_rect.y + 10)
         screen.blit(cost_surface, cost_rect)
         
         # Description
-        desc_lines = wrap_text(option["description"], detail_font, dialog_width - 80)
+        desc_lines = wrap_text(option['description'], detail_font, dialog_width - 80)
         for j, line in enumerate(desc_lines[:2]):  # Limit to 2 lines
             line_surface = detail_font.render(line, True, text_color)
             line_y = name_rect.bottom + 5 + j * (detail_font.get_height() + 2)
             screen.blit(line_surface, (option_rect.x + 15, line_y))
         
         # Requirements/status line
-        if not option["available"]:
-            req_text = f"Locked: {option['requirements']}"
+        if not option['available']:
+            req_text = f'Locked: {option['requirements']}'
             req_color = (200, 100, 100)
         else:
-            req_text = f"Available: {option['requirements']}"
+            req_text = f'Available: {option['requirements']}'
             req_color = (100, 200, 100)
         
         req_surface = detail_font.render(req_text, True, req_color)
@@ -159,10 +159,10 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
         screen.blit(req_surface, req_rect)
         
         # Store clickable rect with option ID
-        if option["available"] and option["affordable"]:
+        if option['available'] and option['affordable']:
             clickable_rects.append({
                 'rect': option_rect,
-                'option_id': option["id"],
+                'option_id': option['id'],
                 'type': 'funding_option'
             })
     
@@ -178,13 +178,13 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
     pygame.draw.rect(screen, (200, 120, 120), cancel_rect, width=3, border_radius=8)
     
     # Cancel button text
-    cancel_text = button_font.render("Cancel", True, (255, 255, 255))
+    cancel_text = button_font.render('Cancel', True, (255, 255, 255))
     text_rect = cancel_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery - 8))
     screen.blit(cancel_text, text_rect)
     
     # Keyboard shortcut hint on button  
     shortcut_font = pygame.font.Font(None, int(h * 0.018))
-    shortcut_text = shortcut_font.render("(ESC or Backspace)", True, (200, 200, 200))
+    shortcut_text = shortcut_font.render('(ESC or Backspace)', True, (200, 200, 200))
     shortcut_rect = shortcut_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery + 10))
     screen.blit(shortcut_text, shortcut_rect)
     
@@ -195,9 +195,9 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
     
     # Instructions
     instructions = [
-        "Click a funding option to execute your strategy",
-        "Each approach has different risk/reward profiles", 
-        "Choose wisely based on your current position"
+        'Click a funding option to execute your strategy',
+        'Each approach has different risk/reward profiles', 
+        'Choose wisely based on your current position'
     ]
     
     inst_font = pygame.font.Font(None, int(h * 0.022))
@@ -219,7 +219,7 @@ def draw_fundraising_dialog(screen: pygame.Surface, fundraising_dialog: Dict[str
 
 
 def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any], w: int, h: int) -> List[Dict[str, Any]]:
-    """
+    '''
     Draw the research strategy dialog with multiple research approaches.
     
     Args:
@@ -229,7 +229,7 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
         
     Returns:
         List of rects for each research option and dismiss button for click detection
-    """
+    '''
     if not research_dialog:
         return []
         
@@ -258,13 +258,13 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
     detail_font = pygame.font.Font(None, int(h * 0.022))
     
     # Title
-    title = research_dialog["title"]
+    title = research_dialog['title']
     title_surface = title_font.render(title, True, (255, 255, 255))
     title_rect = title_surface.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
     screen.blit(title_surface, title_rect)
     
     # Description
-    description = research_dialog["description"]
+    description = research_dialog['description']
     desc_surface = desc_font.render(description, True, (220, 220, 220))
     desc_rect = desc_surface.get_rect(centerx=dialog_rect.centerx, y=title_rect.bottom + 15)
     screen.blit(desc_surface, desc_rect)
@@ -275,7 +275,7 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
     option_spacing = 15
     clickable_rects = []
     
-    available_options = research_dialog["available_options"]
+    available_options = research_dialog['available_options']
     
     for i, option in enumerate(available_options):
         # Option background
@@ -283,11 +283,11 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
         option_rect = pygame.Rect(dialog_x + 20, option_y, dialog_width - 40, option_height)
         
         # Color based on availability and affordability
-        if option["available"] and option["affordable"]:
+        if option['available'] and option['affordable']:
             bg_color = (50, 70, 100)  # Blue for research
             border_color = (100, 150, 220)
             text_color = (255, 255, 255)
-        elif option["available"]:
+        elif option['available']:
             bg_color = (70, 60, 50)  # Brown for expensive but available
             border_color = (150, 120, 100)
             text_color = (255, 255, 200)
@@ -300,38 +300,38 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
         pygame.draw.rect(screen, border_color, option_rect, width=2, border_radius=8)
         
         # Option name
-        name_surface = option_font.render(option["name"], True, text_color)
+        name_surface = option_font.render(option['name'], True, text_color)
         name_rect = name_surface.get_rect(x=option_rect.x + 15, y=option_rect.y + 10)
         screen.blit(name_surface, name_rect)
         
         # Cost and AP info
-        cost_text = f"${option['cost']}k - {option['ap_cost']} AP"
+        cost_text = f'${option['cost']}k - {option['ap_cost']} AP'
         cost_surface = button_font.render(cost_text, True, text_color)
         cost_rect = cost_surface.get_rect(x=option_rect.right - 15 - cost_surface.get_width(), y=option_rect.y + 10)
         screen.blit(cost_surface, cost_rect)
         
         # Description
-        desc_lines = wrap_text(option["description"], detail_font, dialog_width - 80)
+        desc_lines = wrap_text(option['description'], detail_font, dialog_width - 80)
         for j, line in enumerate(desc_lines[:2]):  # Limit to 2 lines
             line_surface = detail_font.render(line, True, text_color)
             line_y = name_rect.bottom + 5 + j * (detail_font.get_height() + 2)
             screen.blit(line_surface, (option_rect.x + 15, line_y))
         
         # Research effectiveness info
-        effectiveness_text = f"Doom reduction: {option['min_doom_reduction']}-{option['max_doom_reduction']}%, Rep: +{option['reputation_gain']}"
+        effectiveness_text = f'Doom reduction: {option['min_doom_reduction']}-{option['max_doom_reduction']}%, Rep: +{option['reputation_gain']}'
         effectiveness_surface = detail_font.render(effectiveness_text, True, (150, 200, 255))
         effectiveness_y = option_rect.y + option_rect.height - 45
         screen.blit(effectiveness_surface, (option_rect.x + 15, effectiveness_y))
         
         # Technical debt risk
         debt_risk_color = {
-            "None": (100, 255, 100),
-            "Very Low": (150, 255, 150), 
-            "Low": (200, 255, 100),
-            "High": (255, 200, 100)
-        }.get(option["technical_debt_risk"], (200, 200, 200))
+            'None': (100, 255, 100),
+            'Very Low': (150, 255, 150), 
+            'Low': (200, 255, 100),
+            'High': (255, 200, 100)
+        }.get(option['technical_debt_risk'], (200, 200, 200))
         
-        debt_text = f"Technical Debt Risk: {option['technical_debt_risk']}"
+        debt_text = f'Technical Debt Risk: {option['technical_debt_risk']}'
         debt_surface = detail_font.render(debt_text, True, debt_risk_color)
         debt_y = effectiveness_y + detail_font.get_height() + 2
         screen.blit(debt_surface, (option_rect.x + 15, debt_y))
@@ -342,10 +342,10 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
         screen.blit(req_surface, req_rect)
         
         # Store clickable rect with option ID
-        if option["available"] and option["affordable"]:
+        if option['available'] and option['affordable']:
             clickable_rects.append({
                 'rect': option_rect,
-                'option_id': option["id"],
+                'option_id': option['id'],
                 'type': 'research_option'
             })
     
@@ -361,13 +361,13 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
     pygame.draw.rect(screen, (120, 120, 200), cancel_rect, width=3, border_radius=8)
     
     # Cancel button text
-    cancel_text = button_font.render("Cancel", True, (255, 255, 255))
+    cancel_text = button_font.render('Cancel', True, (255, 255, 255))
     text_rect = cancel_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery - 8))
     screen.blit(cancel_text, text_rect)
     
     # Keyboard shortcut hint on button  
     shortcut_font = pygame.font.Font(None, int(h * 0.018))
-    shortcut_text = shortcut_font.render("(ESC or Backspace)", True, (200, 200, 200))
+    shortcut_text = shortcut_font.render('(ESC or Backspace)', True, (200, 200, 200))
     shortcut_rect = shortcut_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery + 10))
     screen.blit(shortcut_text, shortcut_rect)
     
@@ -380,7 +380,7 @@ def draw_research_dialog(screen: pygame.Surface, research_dialog: Dict[str, Any]
 
 
 def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int, game_state=None) -> List[Dict[str, Any]]:
-    """
+    '''
     Draw the researcher pool hiring dialog showing available specialist researchers.
     
     Args:
@@ -391,7 +391,7 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
         
     Returns:
         List of clickable rects for interaction
-    """
+    '''
     # Get available researchers from game_state if provided
     if game_state and hasattr(game_state, 'available_researchers'):
         available_researchers = game_state.available_researchers
@@ -422,12 +422,12 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
     detail_font = pygame.font.Font(None, int(h * 0.022))
     
     # Title
-    title_surface = title_font.render("Available Specialist Researchers", True, (255, 255, 255))
+    title_surface = title_font.render('Available Specialist Researchers', True, (255, 255, 255))
     title_rect = title_surface.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
     screen.blit(title_surface, title_rect)
     
     # Description
-    desc_text = "Select a researcher to hire for your team. Each has unique specializations and traits."
+    desc_text = 'Select a researcher to hire for your team. Each has unique specializations and traits.'
     desc_surface = desc_font.render(desc_text, True, (200, 200, 200))
     desc_rect = desc_surface.get_rect(centerx=dialog_rect.centerx, y=title_rect.bottom + 15)
     screen.blit(desc_surface, desc_rect)
@@ -464,8 +464,8 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
         pygame.draw.rect(screen, border_color, item_rect, width=2, border_radius=5)
         
         # Researcher name and specialization
-        name_text = f"{researcher.name}"
-        specialization_text = f"Specialization: {researcher.specialization.replace('_', ' ').title()}"
+        name_text = f'{researcher.name}'
+        specialization_text = f'Specialization: {researcher.specialization.replace('_', ' ').title()}'
         
         name_surface = researcher_font.render(name_text, True, text_color)
         spec_surface = detail_font.render(specialization_text, True, text_color)
@@ -477,8 +477,8 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
         screen.blit(spec_surface, spec_rect)
         
         # Skill level and salary
-        skill_text = f"Skill Level: {researcher.skill_level}/10"
-        salary_text = f"Salary: ${researcher.salary_expectation} - 2 AP"
+        skill_text = f'Skill Level: {researcher.skill_level}/10'
+        salary_text = f'Salary: ${researcher.salary_expectation} - 2 AP'
         
         skill_surface = detail_font.render(skill_text, True, text_color)
         salary_surface = detail_font.render(salary_text, True, text_color)
@@ -491,13 +491,13 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
         
         # Traits
         if researcher.traits:
-            traits_text = f"Traits: {', '.join(trait.replace('_', ' ').title() for trait in researcher.traits)}"
+            traits_text = f'Traits: {', '.join(trait.replace('_', ' ').title() for trait in researcher.traits)}'
         else:
-            traits_text = "Traits: None"
+            traits_text = 'Traits: None'
         
         # Limit traits text length
         if len(traits_text) > 60:
-            traits_text = traits_text[:57] + "..."
+            traits_text = traits_text[:57] + '...'
         
         traits_surface = detail_font.render(traits_text, True, text_color)
         traits_rect = traits_surface.get_rect(x=item_rect.x + 15, y=skill_rect.bottom + 5)
@@ -522,7 +522,7 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
     pygame.draw.rect(screen, (80, 120, 160), back_rect, border_radius=5)
     pygame.draw.rect(screen, (120, 160, 200), back_rect, width=2, border_radius=5)
     
-    back_text = detail_font.render("Back", True, (255, 255, 255))
+    back_text = detail_font.render('Back', True, (255, 255, 255))
     back_text_rect = back_text.get_rect(center=back_rect.center)
     screen.blit(back_text, back_text_rect)
     
@@ -537,7 +537,7 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
     pygame.draw.rect(screen, (100, 60, 60), cancel_rect, border_radius=5)
     pygame.draw.rect(screen, (160, 100, 100), cancel_rect, width=2, border_radius=5)
     
-    cancel_text = detail_font.render("Cancel", True, (255, 255, 255))
+    cancel_text = detail_font.render('Cancel', True, (255, 255, 255))
     cancel_text_rect = cancel_text.get_rect(center=cancel_rect.center)
     screen.blit(cancel_text, cancel_text_rect)
     
@@ -550,7 +550,7 @@ def draw_researcher_pool_dialog(screen: pygame.Surface, hiring_dialog: Dict[str,
 
 
 def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w: int, h: int, game_state=None) -> List[Dict[str, Any]]:
-    """
+    '''
     Draw the employee hiring dialog with available employee subtypes for selection.
     
     Args:
@@ -560,12 +560,12 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
         
     Returns:
         List of rects for each employee option and dismiss button for click detection
-    """
+    '''
     if not hiring_dialog:
         return []
     
     # Check if we're in researcher pool mode
-    if hiring_dialog.get("mode") == "researcher_pool":
+    if hiring_dialog.get('mode') == 'researcher_pool':
         return draw_researcher_pool_dialog(screen, hiring_dialog, w, h, game_state)
         
     # Create semi-transparent background overlay
@@ -592,13 +592,13 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
     button_font = pygame.font.Font(None, int(h * 0.025))
     
     # Title
-    title = hiring_dialog["title"]
+    title = hiring_dialog['title']
     title_surface = title_font.render(title, True, (255, 255, 255))
     title_rect = title_surface.get_rect(centerx=dialog_rect.centerx, y=dialog_y + 20)
     screen.blit(title_surface, title_rect)
     
     # Description
-    description = hiring_dialog["description"]
+    description = hiring_dialog['description']
     desc_surface = desc_font.render(description, True, (200, 200, 200))
     desc_rect = desc_surface.get_rect(centerx=dialog_rect.centerx, y=title_rect.bottom + 15)
     screen.blit(desc_surface, desc_rect)
@@ -609,11 +609,11 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
     option_spacing = 10
     clickable_rects = []
     
-    available_subtypes = hiring_dialog["available_subtypes"]
+    available_subtypes = hiring_dialog['available_subtypes']
     
     for i, subtype_info in enumerate(available_subtypes):
-        subtype_data = subtype_info["data"]
-        affordable = subtype_info["affordable"]
+        subtype_data = subtype_info['data']
+        affordable = subtype_info['affordable']
         
         # Option background
         option_y = options_start_y + i * (option_height + option_spacing)
@@ -633,18 +633,18 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
         pygame.draw.rect(screen, border_color, option_rect, width=2, border_radius=5)
         
         # Employee name
-        name_surface = employee_font.render(subtype_data["name"], True, text_color)
+        name_surface = employee_font.render(subtype_data['name'], True, text_color)
         name_rect = name_surface.get_rect(x=option_rect.x + 15, y=option_rect.y + 10)
         screen.blit(name_surface, name_rect)
         
         # Cost and AP info
-        cost_text = f"${subtype_data['cost']} - {subtype_data['ap_cost']} AP"
+        cost_text = f'${subtype_data['cost']} - {subtype_data['ap_cost']} AP'
         cost_surface = button_font.render(cost_text, True, text_color)
         cost_rect = cost_surface.get_rect(x=option_rect.right - 15 - cost_surface.get_width(), y=option_rect.y + 10)
         screen.blit(cost_surface, cost_rect)
         
         # Description
-        desc_lines = wrap_text(subtype_data["description"], button_font, dialog_width - 80)
+        desc_lines = wrap_text(subtype_data['description'], button_font, dialog_width - 80)
         for j, line in enumerate(desc_lines[:2]):  # Limit to 2 lines
             line_surface = button_font.render(line, True, text_color)
             line_y = name_rect.bottom + 5 + j * (button_font.get_height() + 2)
@@ -654,7 +654,7 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
         if affordable:
             clickable_rects.append({
                 'rect': option_rect,
-                'subtype_id': subtype_info["id"],
+                'subtype_id': subtype_info['id'],
                 'type': 'employee_option'
             })
     
@@ -670,13 +670,13 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
     pygame.draw.rect(screen, (200, 120, 120), cancel_rect, width=3, border_radius=8)
     
     # Cancel button text with keyboard shortcut
-    cancel_text = button_font.render("Cancel", True, (255, 255, 255))
+    cancel_text = button_font.render('Cancel', True, (255, 255, 255))
     text_rect = cancel_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery - 8))
     screen.blit(cancel_text, text_rect)
     
     # Keyboard shortcut hint on button  
     shortcut_font = pygame.font.Font(None, int(h * 0.018))
-    shortcut_text = shortcut_font.render("(? or Backspace)", True, (200, 200, 200))
+    shortcut_text = shortcut_font.render('(? or Backspace)', True, (200, 200, 200))
     shortcut_rect = shortcut_text.get_rect(center=(cancel_rect.centerx, cancel_rect.centery + 10))
     screen.blit(shortcut_text, shortcut_rect)
     
@@ -687,9 +687,9 @@ def draw_hiring_dialog(screen: pygame.Surface, hiring_dialog: Dict[str, Any], w:
     
     # Enhanced instructions with clear keyboard mapping
     instructions = [
-        "Click an employee type to hire them",
-        "? (Left Arrow) or Backspace to cancel ? Escape for emergency exit",
-        "One function per key - simple navigation"
+        'Click an employee type to hire them',
+        '? (Left Arrow) or Backspace to cancel ? Escape for emergency exit',
+        'One function per key - simple navigation'
     ]
     
     inst_font = pygame.font.Font(None, int(h * 0.022))

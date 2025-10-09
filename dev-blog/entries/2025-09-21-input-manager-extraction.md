@@ -1,9 +1,9 @@
 ---
-title: "Input Management System Extraction - Major Monolith Reduction"
-date: "2025-09-21"
-tags: ["refactoring", "architecture", "monolith-breakdown", "input-management"]
-summary: "Successfully extracted 580-line input management system from game_state.py, achieving 515 net line reduction and clean separation of input handling concerns."
-commit: "c1a8f7c"
+title: 'Input Management System Extraction - Major Monolith Reduction'
+date: '2025-09-21'
+tags: ['refactoring', 'architecture', 'monolith-breakdown', 'input-management']
+summary: 'Successfully extracted 580-line input management system from game_state.py, achieving 515 net line reduction and clean separation of input handling concerns.'
+commit: 'c1a8f7c'
 ---
 
 # Input Management System Extraction - Major Monolith Reduction

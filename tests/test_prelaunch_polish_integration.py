@@ -1,4 +1,4 @@
-"""
+'''
 Test comprehensive integration of all pre-launch polish improvements.
 
 Covers:
@@ -7,7 +7,7 @@ Covers:
 - Sound system integration
 - Audio menu functionality
 - Onboarding defensive code
-"""
+'''
 
 import pytest
 import pygame
@@ -25,10 +25,10 @@ from src.ui.menus import draw_audio_menu
 
 
 class TestPreLaunchPolishIntegration:
-    """Test integration of all pre-launch polish features."""
+    '''Test integration of all pre-launch polish features.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
         
@@ -41,7 +41,7 @@ class TestPreLaunchPolishIntegration:
         onboarding.tutorial_enabled = True
     
     def test_all_main_imports_work(self):
-        """Test that all imports in main.py work without errors."""
+        '''Test that all imports in main.py work without errors.'''
         # This test ensures all our new imports don't break anything
         import main
         assert hasattr(main, 'draw_audio_menu')
@@ -49,7 +49,7 @@ class TestPreLaunchPolishIntegration:
         assert hasattr(main, 'handle_audio_menu_keyboard')
     
     def test_tutorial_choice_menu_improvements(self):
-        """Test tutorial choice menu navigation works."""
+        '''Test tutorial choice menu navigation works.'''
         # Test keyboard navigation
         main.tutorial_choice_selected_item = 0
         main.handle_tutorial_choice_keyboard(pygame.K_DOWN)
@@ -60,7 +60,7 @@ class TestPreLaunchPolishIntegration:
         # Should work without errors
     
     def test_popup_improvements_integration(self):
-        """Test popup improvements don't break game flow."""
+        '''Test popup improvements don't break game flow.'''
         game_state = GameState(seed=12345)
         
         # Test that action points popup is properly gated
@@ -77,7 +77,7 @@ class TestPreLaunchPolishIntegration:
         assert 'popup_accept' in game_state.sound_manager.sound_toggles
     
     def test_end_turn_reliability_integration(self):
-        """Test end turn reliability improvements work."""
+        '''Test end turn reliability improvements work.'''
         game_state = GameState(seed=12345)
         
         # Test turn processing state
@@ -94,7 +94,7 @@ class TestPreLaunchPolishIntegration:
         # Should work without errors
     
     def test_audio_menu_functionality(self):
-        """Test audio menu functionality."""
+        '''Test audio menu functionality.'''
         # Test audio settings structure
         assert 'master_enabled' in main.audio_settings
         assert 'sfx_volume' in main.audio_settings
@@ -109,10 +109,10 @@ class TestPreLaunchPolishIntegration:
             # Should not crash
             assert True
         except Exception as e:
-            pytest.fail(f"Audio menu drawing failed: {e}")
+            pytest.fail(f'Audio menu drawing failed: {e}')
     
     def test_audio_menu_navigation(self):
-        """Test audio menu keyboard and mouse navigation."""
+        '''Test audio menu keyboard and mouse navigation.'''
         # Test keyboard navigation
         main.sounds_menu_selected_item = 0
         main.handle_audio_menu_keyboard(pygame.K_DOWN)
@@ -123,7 +123,7 @@ class TestPreLaunchPolishIntegration:
         # Should work without errors
     
     def test_onboarding_defensive_code(self):
-        """Test onboarding system defensive coding."""
+        '''Test onboarding system defensive coding.'''
         # Test normal operation
         result = onboarding.get_mechanic_help('action_points_exhausted')
         assert result is not None
@@ -133,20 +133,20 @@ class TestPreLaunchPolishIntegration:
         
         # Test invalid inputs (should not crash)
         assert onboarding.get_mechanic_help(None) is None
-        assert onboarding.get_mechanic_help("") is None
+        assert onboarding.get_mechanic_help('') is None
         assert onboarding.get_mechanic_help(123) is None
-        assert onboarding.get_mechanic_help("nonexistent_mechanic") is None
+        assert onboarding.get_mechanic_help('nonexistent_mechanic') is None
         
         # Test that errors don't crash
         # The method should handle any internal errors gracefully
         try:
-            onboarding.get_mechanic_help("action_points_exhausted")
+            onboarding.get_mechanic_help('action_points_exhausted')
             assert True  # Should not crash
         except Exception as e:
-            pytest.fail(f"Onboarding get_mechanic_help crashed: {e}")
+            pytest.fail(f'Onboarding get_mechanic_help crashed: {e}')
     
     def test_sound_system_integration(self):
-        """Test sound system works with all new features."""
+        '''Test sound system works with all new features.'''
         sound_manager = SoundManager()
         
         # Test that all popup sounds exist in toggles
@@ -161,10 +161,10 @@ class TestPreLaunchPolishIntegration:
             # Should not crash even if audio unavailable
             assert True
         except Exception as e:
-            pytest.fail(f"Sound playing failed: {e}")
+            pytest.fail(f'Sound playing failed: {e}')
     
     def test_config_persistence_integration(self):
-        """Test that audio settings can be persisted."""
+        '''Test that audio settings can be persisted.'''
         from src.services.config_manager import get_current_config
         
         config = get_current_config()
@@ -177,7 +177,7 @@ class TestPreLaunchPolishIntegration:
         assert isinstance(main.audio_settings, dict)
     
     def test_no_import_errors(self):
-        """Test that all new imports work correctly."""
+        '''Test that all new imports work correctly.'''
         # Test UI imports
         from ui import draw_turn_transition_overlay
         from src.ui.menus import draw_audio_menu
@@ -193,10 +193,10 @@ class TestPreLaunchPolishIntegration:
 
 
 class TestGameLaunchStability:
-    """Test that all improvements don't break game launch."""
+    '''Test that all improvements don't break game launch.'''
     
     def test_game_state_creation(self):
-        """Test game state creation with all improvements."""
+        '''Test game state creation with all improvements.'''
         try:
             game_state = GameState(seed=12345)
             
@@ -211,10 +211,10 @@ class TestGameLaunchStability:
             
             assert True
         except Exception as e:
-            pytest.fail(f"Game state creation failed: {e}")
+            pytest.fail(f'Game state creation failed: {e}')
     
     def test_main_module_loading(self):
-        """Test main module loads without errors."""
+        '''Test main module loads without errors.'''
         try:
             import main
             
@@ -225,10 +225,10 @@ class TestGameLaunchStability:
             
             assert True
         except Exception as e:
-            pytest.fail(f"Main module loading failed: {e}")
+            pytest.fail(f'Main module loading failed: {e}')
     
     def test_ui_module_enhancements(self):
-        """Test UI module has all new functions."""
+        '''Test UI module has all new functions.'''
         from ui import (draw_tutorial_choice, draw_turn_transition_overlay, 
                         draw_first_time_help)
         from src.ui.menus import draw_audio_menu
@@ -239,7 +239,7 @@ class TestGameLaunchStability:
             assert callable(func)
     
     def test_onboarding_stability(self):
-        """Test onboarding system is stable and defensive."""
+        '''Test onboarding system is stable and defensive.'''
         from src.features.onboarding import onboarding
         
         # Should handle all edge cases gracefully
@@ -259,25 +259,25 @@ class TestGameLaunchStability:
                 # Should either return valid dict or None, never crash
                 assert result is None or (isinstance(result, dict) and 'title' in result)
             except Exception as e:
-                pytest.fail(f"Onboarding failed for input {test_case}: {e}")
+                pytest.fail(f'Onboarding failed for input {test_case}: {e}')
 
 
 class TestFullFeatureIntegration:
-    """Test all features working together in realistic scenarios."""
+    '''Test all features working together in realistic scenarios.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
     
     def test_complete_tutorial_choice_flow(self):
-        """Test complete tutorial choice flow with all improvements."""
+        '''Test complete tutorial choice flow with all improvements.'''
         # Reset state
         main.tutorial_choice_selected_item = 0
         main.tutorial_enabled = False
         
         # Test keyboard navigation
-        main.handle_tutorial_choice_keyboard(pygame.K_DOWN)  # Select "Yes"
+        main.handle_tutorial_choice_keyboard(pygame.K_DOWN)  # Select 'Yes'
         assert main.tutorial_choice_selected_item == 1
         
         # Test selection via Enter
@@ -286,7 +286,7 @@ class TestFullFeatureIntegration:
         assert main.current_state == 'game'
     
     def test_complete_audio_menu_flow(self):
-        """Test complete audio menu flow."""
+        '''Test complete audio menu flow.'''
         # Start in audio menu
         main.current_state = 'sounds_menu'
         main.sounds_menu_selected_item = 0
@@ -305,7 +305,7 @@ class TestFullFeatureIntegration:
         # Should work without errors
     
     def test_complete_popup_flow(self):
-        """Test complete popup flow with all improvements."""
+        '''Test complete popup flow with all improvements.'''
         game_state = GameState(seed=12345)
         
         # Trigger action points exhausted condition
@@ -319,7 +319,7 @@ class TestFullFeatureIntegration:
             assert help_content['title'] == 'No Action Points Remaining'
     
     def test_complete_end_turn_flow(self):
-        """Test complete end turn flow with all improvements."""
+        '''Test complete end turn flow with all improvements.'''
         game_state = GameState(seed=12345)
         
         # Test normal end turn

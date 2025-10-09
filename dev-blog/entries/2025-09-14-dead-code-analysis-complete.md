@@ -1,9 +1,9 @@
 ---
-title: "Dead Code Analysis and Refactoring Planning Complete"
-date: "2025-09-14"
-tags: ["analysis", "refactoring", "technical-debt", "planning"]
-summary: "Comprehensive analysis of legacy code patterns and creation of prioritized refactoring plan for monolith breakdown preparation"
-commit: "TBD"
+title: 'Dead Code Analysis and Refactoring Planning Complete'
+date: '2025-09-14'
+tags: ['analysis', 'refactoring', 'technical-debt', 'planning']
+summary: 'Comprehensive analysis of legacy code patterns and creation of prioritized refactoring plan for monolith breakdown preparation'
+commit: 'TBD'
 ---
 
 # Dead Code Analysis and Refactoring Planning Complete

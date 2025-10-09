@@ -1,16 +1,16 @@
-"""
+'''
 Window, overlay, and screen rendering utilities for the P(Doom) game interface.
 
 This module contains functions for drawing overlays, windows with headers,
 version information, and loading screens.
-"""
+'''
 
 import pygame
 from src.ui.text import wrap_text, draw_back_button
 
 
 def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0):
-    """
+    '''
     Draw a scrollable overlay for displaying README or Player Guide content.
     
     Args:
@@ -37,12 +37,12 @@ def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0
     The overlay handles long documents by breaking them into lines and showing
     only the visible portion based on scroll_offset. Users can scroll with
     arrow keys to view the full document.
-    """
+    '''
     # Defensive handling for None values
     if title is None:
-        title = "Information Unavailable"
+        title = 'Information Unavailable'
     if content is None:
-        content = "Content Not Available\n\nThe requested information could not be loaded at this time.\n\nPossible solutions:\n- Press Escape or Back to return to the previous screen\n- Try accessing this information again from the main menu\n- Check the Player Guide (F1) for general help\n\nIf this problem persists, it may indicate a technical issue."
+        content = 'Content Not Available\n\nThe requested information could not be loaded at this time.\n\nPossible solutions:\n- Press Escape or Back to return to the previous screen\n- Try accessing this information again from the main menu\n- Check the Player Guide (F1) for general help\n\nIf this problem persists, it may indicate a technical issue.'
     # Overlay background - semi-transparent dark background
     overlay_surface = pygame.Surface((w, h))
     overlay_surface.set_alpha(240)
@@ -104,18 +104,18 @@ def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0
     if scroll_offset > 0:
         # Up arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        up_arrow = arrow_font.render("?", True, (255, 255, 255))
+        up_arrow = arrow_font.render('?', True, (255, 255, 255))
         screen.blit(up_arrow, (content_x + content_width - 30, text_area_y))
     
     if (start_line + visible_lines) < len(lines):
         # Down arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        down_arrow = arrow_font.render("?", True, (255, 255, 255))
+        down_arrow = arrow_font.render('?', True, (255, 255, 255))
         screen.blit(down_arrow, (content_x + content_width - 30, text_area_y + text_area_height - 30))
     
     # Instructions at bottom
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    instructions = "Use arrow keys to scroll ? Press Escape or click to return to menu"
+    instructions = 'Use arrow keys to scroll ? Press Escape or click to return to menu'
     inst_surf = instruction_font.render(instructions, True, (180, 200, 255))
     inst_x = w // 2 - inst_surf.get_width() // 2
     inst_y = content_y + content_height + int(h * 0.03)
@@ -125,7 +125,7 @@ def draw_overlay(screen, title, content, scroll_offset, w, h, navigation_depth=0
 
 
 def draw_window_with_header(screen, rect, title, content=None, minimized=False, font=None):
-    """
+    '''
     Draw a window with a draggable header and minimize button.
     
     Args:
@@ -138,7 +138,7 @@ def draw_window_with_header(screen, rect, title, content=None, minimized=False, 
         
     Returns:
         tuple: (header_rect, minimize_button_rect) for interaction handling
-    """
+    '''
     if font is None:
         font = pygame.font.SysFont('Consolas', 16)
     
@@ -217,19 +217,19 @@ def draw_window_with_header(screen, rect, title, content=None, minimized=False, 
 
 
 def draw_version_footer(screen, w, h, font=None):
-    """
+    '''
     Draw version information in the footer area.
     
     Args:
         screen: pygame surface to draw on
         w, h: screen width and height for positioning
         font: optional font for version text
-    """
+    '''
     try:
         from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
-        version_text = "dev"
+        version_text = 'dev'
     
     if font is None:
         font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
@@ -245,19 +245,19 @@ def draw_version_footer(screen, w, h, font=None):
 
 
 def draw_version_header(screen, w, h, font=None):
-    """
+    '''
     Draw version information in the header area (alternative placement).
     
     Args:
         screen: pygame surface to draw on
         w, h: screen width and height for positioning
         font: optional font for version text
-    """
+    '''
     try:
         from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
-        version_text = "dev"
+        version_text = 'dev'
     
     if font is None:
         font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
@@ -272,8 +272,8 @@ def draw_version_header(screen, w, h, font=None):
     screen.blit(version_surf, (version_x, version_y))
 
 
-def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font=None):
-    """
+def draw_loading_screen(screen, w, h, progress=0, status_text='Loading...', font=None):
+    '''
     Draw a loading screen with progress indicator and accessibility support.
     
     Args:
@@ -287,10 +287,10 @@ def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font
         None
     
     Accessibility:
-    - role="status" equivalent through clear status text
+    - role='status' equivalent through clear status text
     - High contrast colors for visibility
     - Clear progress indication
-    """
+    '''
     if font is None:
         font = pygame.font.SysFont('Consolas', max(16, int(h * 0.03)))
     
@@ -299,14 +299,14 @@ def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font
     
     # Title
     title_font = pygame.font.SysFont('Consolas', int(h * 0.06), bold=True)
-    title_text = title_font.render("P(Doom)", True, (255, 255, 255))
+    title_text = title_font.render('P(Doom)', True, (255, 255, 255))
     title_x = w // 2 - title_text.get_width() // 2
     title_y = int(h * 0.3)
     screen.blit(title_text, (title_x, title_y))
     
     # Subtitle
     subtitle_font = pygame.font.SysFont('Consolas', int(h * 0.025))
-    subtitle_text = subtitle_font.render("Bureaucracy Strategy Prototype", True, (180, 180, 180))
+    subtitle_text = subtitle_font.render('Bureaucracy Strategy Prototype', True, (180, 180, 180))
     subtitle_x = w // 2 - subtitle_text.get_width() // 2
     subtitle_y = title_y + title_text.get_height() + 10
     screen.blit(subtitle_text, (subtitle_x, subtitle_y))
@@ -336,7 +336,7 @@ def draw_loading_screen(screen, w, h, progress=0, status_text="Loading...", font
     
     # Progress percentage
     if progress > 0:
-        percent_text = font.render(f"{int(progress * 100)}%", True, (150, 150, 150))
+        percent_text = font.render(f'{int(progress * 100)}%', True, (150, 150, 150))
         percent_x = w // 2 - percent_text.get_width() // 2
         percent_y = status_y + status_surf.get_height() + 10
         screen.blit(percent_text, (percent_x, percent_y))

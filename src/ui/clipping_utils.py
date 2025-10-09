@@ -1,11 +1,11 @@
-"""
+'''
 UI Rectangle Clipping Utilities - Elegant Modular Solution
 
 This module provides clean, reusable functions for handling UI element clipping
 against context windows while maintaining accurate click detection.
 
 Created: 2025-09-29 - Demo Hotfix Session (Elegant Modularization)
-"""
+'''
 
 from typing import List, Tuple, Union, Optional
 import pygame
@@ -16,7 +16,7 @@ def clip_rectangles_for_context_window(
     context_top: int,
     buffer: int = 2
 ) -> List[Optional[pygame.Rect]]:
-    """
+    '''
     Elegantly clip UI rectangles to avoid overlap with context window.
     
     This ensures that stored rectangles match what's visually rendered,
@@ -29,7 +29,7 @@ def clip_rectangles_for_context_window(
         
     Returns:
         List of clipped pygame.Rect objects, or None for completely hidden elements
-    """
+    '''
     clipped_rects = []
     
     for rect in rectangles:
@@ -57,7 +57,7 @@ def clip_rectangles_for_context_window(
 
 
 def get_safe_context_top(game_state, screen_height: int) -> int:
-    """
+    '''
     Elegantly determine context window top position with fallback.
     
     Args:
@@ -66,7 +66,7 @@ def get_safe_context_top(game_state, screen_height: int) -> int:
         
     Returns:
         Y-coordinate where context window starts
-    """
+    '''
     try:
         return game_state._get_context_window_top(screen_height)
     except (AttributeError, Exception):
@@ -78,7 +78,7 @@ def apply_clipping_to_ui_elements(
     game_state,
     screen_height: int
 ) -> List[Optional[pygame.Rect]]:
-    """
+    '''
     Complete clipping workflow for UI elements.
     
     Combines context window detection and rectangle clipping in one elegant call.
@@ -90,6 +90,6 @@ def apply_clipping_to_ui_elements(
         
     Returns:
         List of properly clipped rectangles matching visual rendering
-    """
+    '''
     context_top = get_safe_context_top(game_state, screen_height)
     return clip_rectangles_for_context_window(rectangles, context_top)

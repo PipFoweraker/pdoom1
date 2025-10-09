@@ -27,9 +27,9 @@ Following a systematic 4-hour audit of the P(Doom) repository, I've identified *
 
 **Problem**: Version mismatch between documentation (v0.8.0) and code (v0.9.0)
 ```
-README.md line 2: "v0.8.0 Modular Architecture"
-version.py line 13: __version__ = "0.9.0"
-ui.py lines 4767,4904: "Bootstrap v0.4.1" (outdated economic model reference)
+README.md line 2: 'v0.8.0 Modular Architecture'
+version.py line 13: __version__ = '0.9.0'
+ui.py lines 4767,4904: 'Bootstrap v0.4.1' (outdated economic model reference)
 ```
 
 **Fix**: Update README.md to v0.9.0, update ui.py economic model references to match current version
@@ -180,7 +180,7 @@ git checkout -b hotfix-v0.9.1-cleanup
 # ASCII compliance cleanup  
 # Import optimization
 # Sound default configuration
-git commit -m "Hotfix v0.9.1: Version sync, ASCII compliance, import cleanup"
+git commit -m 'Hotfix v0.9.1: Version sync, ASCII compliance, import cleanup'
 ```
 
 ### Beta Timeline Sprints

@@ -1,4 +1,4 @@
-"""
+'''
 Bug Report Module
 
 Handles bug report form rendering for P(Doom) UI system.
@@ -7,14 +7,14 @@ Extracted from monolithic ui.py for better maintainability.
 Functions:
 - draw_bug_report_form: Renders the bug reporting form interface
 - draw_bug_report_success: Renders success message after bug report submission
-"""
+'''
 
 import pygame
 from typing import Dict, Any, List, Tuple
 
 
 def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
-    """Wrap text to fit within max_width using the provided font."""
+    '''Wrap text to fit within max_width using the provided font.'''
     words = text.split(' ')
     lines = []
     current_line = []
@@ -43,7 +43,7 @@ def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
 
 
 def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], selected_field: int, w: int, h: int) -> List[Dict[str, Any]]:
-    """
+    '''
     Draw the bug reporting form interface.
     
     Args:
@@ -54,7 +54,7 @@ def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], sele
         
     Returns:
         List of button data for click handling
-    """
+    '''
     # Colors
     bg_color = (40, 40, 50)
     field_color = (60, 60, 70)
@@ -73,21 +73,21 @@ def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], sele
     screen.fill(bg_color)
     
     # Title
-    title_text = title_font.render("Report Bug / Suggest Feature", True, text_color)
+    title_text = title_font.render('Report Bug / Suggest Feature', True, text_color)
     title_rect = title_text.get_rect(center=(w//2, 40))
     screen.blit(title_text, title_rect)
     
     # Form fields configuration
     fields = [
-        {"key": "type", "label": "Type", "type": "dropdown"},
-        {"key": "title", "label": "Title (brief summary)", "type": "text"},
-        {"key": "description", "label": "Description", "type": "textarea"},
-        {"key": "steps", "label": "Steps to Reproduce (optional)", "type": "textarea"},
-        {"key": "expected", "label": "Expected Behavior (optional)", "type": "text"},
-        {"key": "actual", "label": "Actual Behavior (optional)", "type": "text"},
-        {"key": "attribution", "label": "Include your name?", "type": "checkbox"},
-        {"key": "name", "label": "Your name (if attribution enabled)", "type": "text"},
-        {"key": "contact", "label": "Contact info (optional)", "type": "text"},
+        {'key': 'type', 'label': 'Type', 'type': 'dropdown'},
+        {'key': 'title', 'label': 'Title (brief summary)', 'type': 'text'},
+        {'key': 'description', 'label': 'Description', 'type': 'textarea'},
+        {'key': 'steps', 'label': 'Steps to Reproduce (optional)', 'type': 'textarea'},
+        {'key': 'expected', 'label': 'Expected Behavior (optional)', 'type': 'text'},
+        {'key': 'actual', 'label': 'Actual Behavior (optional)', 'type': 'text'},
+        {'key': 'attribution', 'label': 'Include your name?', 'type': 'checkbox'},
+        {'key': 'name', 'label': 'Your name (if attribution enabled)', 'type': 'text'},
+        {'key': 'contact', 'label': 'Contact info (optional)', 'type': 'text'},
     ]
     
     # Calculate layout
@@ -102,11 +102,11 @@ def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], sele
         y_pos = start_y + i * field_spacing
         
         # Skip name field if attribution is not checked
-        if field["key"] == "name" and not form_data.get("attribution", False):
+        if field['key'] == 'name' and not form_data.get('attribution', False):
             continue
             
         # Field label
-        label_text = label_font.render(field["label"], True, label_color)
+        label_text = label_font.render(field['label'], True, label_color)
         screen.blit(label_text, (margin, y_pos))
         
         # Field input area
@@ -121,38 +121,38 @@ def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], sele
         pygame.draw.rect(screen, (100, 100, 120), field_rect, width=2, border_radius=5)
         
         # Field content
-        field_value = form_data.get(field["key"], "")
+        field_value = form_data.get(field['key'], '')
         
-        if field["type"] == "dropdown" and field["key"] == "type":
+        if field['type'] == 'dropdown' and field['key'] == 'type':
             # Type dropdown
-            type_options = ["Bug Report", "Feature Request", "Feedback/Suggestion"]
-            type_index = form_data.get("type_index", 0)
-            display_text = type_options[type_index] if type_index < len(type_options) else "Bug Report"
+            type_options = ['Bug Report', 'Feature Request', 'Feedback/Suggestion']
+            type_index = form_data.get('type_index', 0)
+            display_text = type_options[type_index] if type_index < len(type_options) else 'Bug Report'
             text_surface = field_font.render(display_text, True, text_color)
             screen.blit(text_surface, (field_rect.x + 10, field_rect.y + 8))
             
             # Dropdown arrow
-            arrow_text = field_font.render("v", True, text_color)
+            arrow_text = field_font.render('v', True, text_color)
             screen.blit(arrow_text, (field_rect.right - 30, field_rect.y + 8))
             
-        elif field["type"] == "checkbox":
+        elif field['type'] == 'checkbox':
             # Checkbox
             checkbox_rect = pygame.Rect(field_rect.x + 10, field_rect.y + 8, 20, 20)
             pygame.draw.rect(screen, (200, 200, 200), checkbox_rect, border_radius=3)
-            if form_data.get(field["key"], False):
+            if form_data.get(field['key'], False):
                 pygame.draw.rect(screen, (100, 255, 100), checkbox_rect.inflate(-6, -6), border_radius=2)
             
             # Checkbox label
-            checkbox_label = field_font.render("Yes, credit me in the report", True, text_color)
+            checkbox_label = field_font.render('Yes, credit me in the report', True, text_color)
             screen.blit(checkbox_label, (checkbox_rect.right + 10, field_rect.y + 8))
             
         else:
             # Text input
             display_text = field_value
-            if field["type"] == "textarea" and len(display_text) > 60:
-                display_text = display_text[:60] + "..."
+            if field['type'] == 'textarea' and len(display_text) > 60:
+                display_text = display_text[:60] + '...'
             elif len(display_text) > 80:
-                display_text = display_text[:80] + "..."
+                display_text = display_text[:80] + '...'
                 
             text_surface = field_font.render(display_text, True, text_color)
             screen.blit(text_surface, (field_rect.x + 10, field_rect.y + 8))
@@ -171,9 +171,9 @@ def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], sele
     button_spacing = 20
     
     buttons = [
-        {"text": "Save Locally", "action": "save_local"},
-        {"text": "Submit to GitHub", "action": "submit_github"},
-        {"text": "Cancel", "action": "cancel"}
+        {'text': 'Save Locally', 'action': 'save_local'},
+        {'text': 'Submit to GitHub', 'action': 'submit_github'},
+        {'text': 'Cancel', 'action': 'cancel'}
     ]
     
     # Calculate button positions
@@ -186,26 +186,26 @@ def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], sele
         
         # Button color (could be enhanced with hover detection)
         color = button_color
-        if button["action"] == "cancel":
+        if button['action'] == 'cancel':
             color = (120, 80, 80)
         
         pygame.draw.rect(screen, color, button_rect, border_radius=8)
         pygame.draw.rect(screen, (150, 150, 150), button_rect, width=2, border_radius=8)
         
         # Button text
-        button_text = button_font.render(button["text"], True, text_color)
+        button_text = button_font.render(button['text'], True, text_color)
         text_rect = button_text.get_rect(center=button_rect.center)
         screen.blit(button_text, text_rect)
         
         # Store button rect for click detection
-        button["rect"] = button_rect
+        button['rect'] = button_rect
     
     # Instructions
     instruction_y = button_y + button_height + 20
     instructions = [
-        "Use Up/Down arrows to navigate fields, Enter to edit, Tab to move to next field",
-        "Bug reports help improve the game and are greatly appreciated!",
-        "All reports are privacy-focused - only technical info needed for debugging is collected"
+        'Use Up/Down arrows to navigate fields, Enter to edit, Tab to move to next field',
+        'Bug reports help improve the game and are greatly appreciated!',
+        'All reports are privacy-focused - only technical info needed for debugging is collected'
     ]
     
     instruction_font = pygame.font.SysFont('Consolas', 14)
@@ -218,14 +218,14 @@ def draw_bug_report_form(screen: pygame.Surface, form_data: Dict[str, str], sele
 
 
 def draw_bug_report_success(screen: pygame.Surface, message: str, w: int, h: int) -> None:
-    """
+    '''
     Draw the bug report success screen with confirmation message.
     
     Args:
         screen: pygame surface to draw on
         message: success message to display
         w, h: screen width and height
-    """
+    '''
     # Colors
     bg_color = (40, 50, 40)  # Slightly green for success
     text_color = (255, 255, 255)
@@ -240,7 +240,7 @@ def draw_bug_report_success(screen: pygame.Surface, message: str, w: int, h: int
     instruction_font = pygame.font.SysFont('Consolas', 16)
     
     # Success title
-    title_text = title_font.render("Bug Report Submitted!", True, accent_color)
+    title_text = title_font.render('Bug Report Submitted!', True, accent_color)
     title_rect = title_text.get_rect(center=(w//2, h//2 - 100))
     screen.blit(title_text, title_rect)
     
@@ -259,8 +259,8 @@ def draw_bug_report_success(screen: pygame.Surface, message: str, w: int, h: int
     # Instructions
     instruction_y = start_y + total_message_height + 60
     instructions = [
-        "Thank you for helping improve P(Doom)!",
-        "Press any key to return to the main menu"
+        'Thank you for helping improve P(Doom)!',
+        'Press any key to return to the main menu'
     ]
     
     for i, instruction in enumerate(instructions):

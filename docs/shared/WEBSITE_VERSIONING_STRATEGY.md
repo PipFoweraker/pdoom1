@@ -27,32 +27,32 @@ Examples:
 ### Version Storage
 ```json
 {
-  "website": {
-    "version": "1.2.0",
-    "release_date": "2025-09-15T00:00:00Z",
-    "changelog_url": "/changelog",
-    "build_info": {
-      "commit": "abc123",
-      "build_date": "2025-09-15T12:00:00Z",
-      "environment": "production"
+  'website': {
+    'version': '1.2.0',
+    'release_date': '2025-09-15T00:00:00Z',
+    'changelog_url': '/changelog',
+    'build_info': {
+      'commit': 'abc123',
+      'build_date': '2025-09-15T12:00:00Z',
+      'environment': 'production'
     }
   },
-  "game_tracking": {
-    "current_version": "0.6.0",
-    "latest_release": {
-      "version": "0.6.0",
-      "release_date": "2025-09-14T00:00:00Z",
-      "changelog_url": "/game/releases/0.6.0",
-      "download_url": "https://github.com/PipFoweraker/pdoom1/releases/tag/v0.6.0"
+  'game_tracking': {
+    'current_version': '0.6.0',
+    'latest_release': {
+      'version': '0.6.0',
+      'release_date': '2025-09-14T00:00:00Z',
+      'changelog_url': '/game/releases/0.6.0',
+      'download_url': 'https://github.com/PipFoweraker/pdoom1/releases/tag/v0.6.0'
     },
-    "supported_versions": ["0.6.0", "0.5.0", "0.4.1"],
-    "deprecated_versions": ["0.2.x", "0.1.x"]
+    'supported_versions': ['0.6.0', '0.5.0', '0.4.1'],
+    'deprecated_versions': ['0.2.x', '0.1.x']
   },
-  "data_integration": {
-    "current_batch": "2025-09-15",
-    "data_version": "1.0.0",
-    "last_sync": "2025-09-15T12:00:00Z",
-    "status": "active"
+  'data_integration': {
+    'current_batch': '2025-09-15',
+    'data_version': '1.0.0',
+    'last_sync': '2025-09-15T12:00:00Z',
+    'status': 'active'
   }
 }
 ```
@@ -86,27 +86,27 @@ Examples:
 ### Data Version Tracking
 ```json
 {
-  "data_batches": {
-    "leaderboards": {
-      "version": "1.2.0",
-      "batch_date": "2025-09-15",
-      "records_count": 15420,
-      "schema_version": "1.0",
-      "compatible_game_versions": ["0.6.0", "0.5.0"]
+  'data_batches': {
+    'leaderboards': {
+      'version': '1.2.0',
+      'batch_date': '2025-09-15',
+      'records_count': 15420,
+      'schema_version': '1.0',
+      'compatible_game_versions': ['0.6.0', '0.5.0']
     },
-    "analytics": {
-      "version": "1.1.0", 
-      "batch_date": "2025-09-15",
-      "metrics_count": 8940,
-      "schema_version": "1.0",
-      "retention_days": 90
+    'analytics': {
+      'version': '1.1.0', 
+      'batch_date': '2025-09-15',
+      'metrics_count': 8940,
+      'schema_version': '1.0',
+      'retention_days': 90
     },
-    "challenges": {
-      "version": "1.0.0",
-      "batch_date": "2025-09-15", 
-      "active_challenges": 12,
-      "schema_version": "1.0",
-      "seasonal_event": "autumn_2025"
+    'challenges': {
+      'version': '1.0.0',
+      'batch_date': '2025-09-15', 
+      'active_challenges': 12,
+      'schema_version': '1.0',
+      'seasonal_event': 'autumn_2025'
     }
   }
 }

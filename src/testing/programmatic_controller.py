@@ -1,4 +1,4 @@
-"""
+'''
 Programmatic Game Controller - Core Interface for Automated Testing
 
 This module provides the main interface for programmatic game control, enabling
@@ -18,17 +18,17 @@ changes, and enable continuous integration workflows.
 
 Usage Examples:
     # Basic programmatic control
-    controller = ProgrammaticGameController(seed="test-001")
-    result = controller.execute_action("hire_staff", {"count": 2})
+    controller = ProgrammaticGameController(seed='test-001')
+    result = controller.execute_action('hire_staff', {'count': 2})
     state = controller.get_state_snapshot()
     
     # Scenario-based testing  
-    scenario = load_scenario("test_scenarios/early_game.yaml")
+    scenario = load_scenario('test_scenarios/early_game.yaml')
     results = controller.run_scenario(scenario)
     
     # Batch testing for statistical analysis
-    results = controller.run_batch_scenarios("balance_test_suite", iterations=1000)
-"""
+    results = controller.run_batch_scenarios('balance_test_suite', iterations=1000)
+'''
 
 import json
 import copy
@@ -45,13 +45,13 @@ try:
     from src.services.deterministic_rng import get_rng, set_rng_seed
     from src.services.version import get_display_version
 except ImportError as e:
-    print(f"Warning: Could not import game components: {e}")
-    print("Ensure you're running from project root and all dependencies are available")
+    print(f'Warning: Could not import game components: {e}')
+    print('Ensure you're running from project root and all dependencies are available')
 
 
 @dataclass
 class ActionResult:
-    """Result of a programmatic action execution."""
+    '''Result of a programmatic action execution.'''
     success: bool
     action_id: str
     parameters: Dict[str, Any]
@@ -61,13 +61,13 @@ class ActionResult:
     error_message: Optional[str] = None
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
+        '''Convert to dictionary for serialization.'''
         return asdict(self)
 
 
 @dataclass
 class GameStateSnapshot:
-    """Complete snapshot of game state for serialization."""
+    '''Complete snapshot of game state for serialization.'''
     turn: int
     money: int
     staff: int
@@ -90,7 +90,7 @@ class GameStateSnapshot:
     
     @classmethod
     def from_game_state(cls, game_state: 'GameState') -> 'GameStateSnapshot':
-        """Create snapshot from GameState instance."""
+        '''Create snapshot from GameState instance.'''
         return cls(
             turn=game_state.turn,
             money=game_state.money,
@@ -112,17 +112,17 @@ class GameStateSnapshot:
         )
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for JSON serialization."""
+        '''Convert to dictionary for JSON serialization.'''
         return asdict(self)
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'GameStateSnapshot':
-        """Create snapshot from dictionary."""
+        '''Create snapshot from dictionary.'''
         return cls(**data)
 
 
 class ProgrammaticGameController:
-    """
+    '''
     Main interface for programmatic game control.
     
     This class provides comprehensive programmatic control over game execution,
@@ -138,17 +138,17 @@ class ProgrammaticGameController:
     - Target: 1000+ game simulations per minute
     - Memory: Minimal state retention (snapshots on demand)
     - CPU: Optimized for batch processing
-    """
+    '''
     
     def __init__(self, seed: Optional[str] = None, config: Optional[Dict[str, Any]] = None, headless: bool = True):
-        """
+        '''
         Initialize programmatic game controller.
         
         Args:
             seed: Deterministic seed for reproducible testing
             config: Game configuration overrides
             headless: Run without pygame/GUI dependencies
-        """
+        '''
         self.headless = headless
         self.config = config or {}
         self.execution_log: List[ActionResult] = []
@@ -166,21 +166,21 @@ class ProgrammaticGameController:
         self.action_count = 0
         
     def _create_game_state(self, seed: Optional[str] = None) -> 'GameState':
-        """
+        '''
         Create GameState instance for programmatic control.
         
         Note: This may need adjustment based on GameState constructor requirements.
-        """
+        '''
         try:
             if seed:
                 return GameState(seed)
             else:
                 return GameState()
         except Exception as e:
-            raise RuntimeError(f"Failed to create GameState: {e}")
+            raise RuntimeError(f'Failed to create GameState: {e}')
     
     def execute_action(self, action_id: str, parameters: Optional[Dict[str, Any]] = None) -> ActionResult:
-        """
+        '''
         Execute a game action programmatically.
         
         Args:
@@ -191,10 +191,10 @@ class ProgrammaticGameController:
             ActionResult containing execution details and outcomes
             
         Example:
-            result = controller.execute_action("hire_staff", {"count": 2})
+            result = controller.execute_action('hire_staff', {'count': 2})
             if result.success:
-                print(f"Hired {result.outcome['staff_hired']} staff members")
-        """
+                print(f'Hired {result.outcome['staff_hired']} staff members')
+        '''
         start_time = time.time()
         parameters = parameters or {}
         
@@ -244,21 +244,21 @@ class ProgrammaticGameController:
             return result
     
     def _execute_game_action(self, action_id: str, parameters: Dict[str, Any]) -> Tuple[bool, Dict[str, Any]]:
-        """
+        '''
         Execute specific game action based on action_id.
         
         This method maps action_ids to actual GameState methods.
         Extend this method to support additional actions.
-        """
+        '''
         outcome = {}
         
         try:
-            if action_id == "hire_staff":
-                count = parameters.get("count", 1)
+            if action_id == 'hire_staff':
+                count = parameters.get('count', 1)
                 # Assuming GameState has a hire_staff method or equivalent
                 if hasattr(self.game_state, 'hire_staff'):
                     result = self.game_state.hire_staff(count)
-                    outcome = {"staff_hired": count, "method_result": result}
+                    outcome = {'staff_hired': count, 'method_result': result}
                     return True, outcome
                 else:
                     # Fallback: direct staff manipulation for testing
@@ -270,53 +270,53 @@ class ProgrammaticGameController:
                         self.game_state.money -= total_cost
                         if hasattr(self.game_state, 'staff'):
                             self.game_state.staff += count
-                        outcome = {"staff_hired": count, "cost": total_cost}
+                        outcome = {'staff_hired': count, 'cost': total_cost}
                         return True, outcome
                     else:
-                        outcome = {"error": "Insufficient funds", "required": total_cost, "available": self.game_state.money}
+                        outcome = {'error': 'Insufficient funds', 'required': total_cost, 'available': self.game_state.money}
                         return False, outcome
             
-            elif action_id == "end_turn":
+            elif action_id == 'end_turn':
                 # Execute end turn logic
                 if hasattr(self.game_state, 'end_turn'):
                     result = self.game_state.end_turn()
-                    outcome = {"turn_ended": True, "new_turn": self.game_state.turn, "method_result": result}
+                    outcome = {'turn_ended': True, 'new_turn': self.game_state.turn, 'method_result': result}
                     return True, outcome
                 else:
                     # Fallback: manual turn advancement
                     old_turn = self.game_state.turn
                     self.game_state.turn += 1
-                    outcome = {"turn_ended": True, "old_turn": old_turn, "new_turn": self.game_state.turn}
+                    outcome = {'turn_ended': True, 'old_turn': old_turn, 'new_turn': self.game_state.turn}
                     return True, outcome
             
-            elif action_id == "select_action":
-                action_index = parameters.get("index", 0)
+            elif action_id == 'select_action':
+                action_index = parameters.get('index', 0)
                 # Select a gameplay action
                 if hasattr(self.game_state, 'select_gameplay_action'):
                     result = self.game_state.select_gameplay_action(action_index)
-                    outcome = {"action_selected": action_index, "method_result": result}
+                    outcome = {'action_selected': action_index, 'method_result': result}
                     return True, outcome
                 else:
-                    outcome = {"error": "Action selection not available"}
+                    outcome = {'error': 'Action selection not available'}
                     return False, outcome
             
-            elif action_id == "fundraising":
-                option = parameters.get("option", "foundation_grant")
+            elif action_id == 'fundraising':
+                option = parameters.get('option', 'foundation_grant')
                 # Execute fundraising logic
                 # This would need to be implemented based on actual fundraising system
-                outcome = {"fundraising_option": option, "status": "simulated"}
+                outcome = {'fundraising_option': option, 'status': 'simulated'}
                 return True, outcome
             
             else:
-                outcome = {"error": f"Unknown action_id: {action_id}"}
+                outcome = {'error': f'Unknown action_id: {action_id}'}
                 return False, outcome
                 
         except Exception as e:
-            outcome = {"error": f"Action execution failed: {str(e)}"}
+            outcome = {'error': f'Action execution failed: {str(e)}'}
             return False, outcome
     
     def advance_turn(self, count: int = 1) -> List[ActionResult]:
-        """
+        '''
         Advance game by specified number of turns.
         
         Args:
@@ -324,11 +324,11 @@ class ProgrammaticGameController:
             
         Returns:
             List of ActionResult objects, one per turn
-        """
+        '''
         results = []
         
         for i in range(count):
-            result = self.execute_action("end_turn")
+            result = self.execute_action('end_turn')
             results.append(result)
             
             if not result.success:
@@ -337,16 +337,16 @@ class ProgrammaticGameController:
         return results
     
     def get_state_snapshot(self) -> GameStateSnapshot:
-        """
+        '''
         Get complete game state as structured snapshot.
         
         Returns:
             GameStateSnapshot containing all relevant game state
-        """
+        '''
         return GameStateSnapshot.from_game_state(self.game_state)
     
     def load_state_snapshot(self, snapshot: Union[GameStateSnapshot, Dict[str, Any]]) -> bool:
-        """
+        '''
         Load game state from snapshot.
         
         Args:
@@ -354,7 +354,7 @@ class ProgrammaticGameController:
             
         Returns:
             True if successful, False otherwise
-        """
+        '''
         try:
             if isinstance(snapshot, dict):
                 snapshot = GameStateSnapshot.from_dict(snapshot)
@@ -382,11 +382,11 @@ class ProgrammaticGameController:
             return True
             
         except Exception as e:
-            print(f"Failed to load state snapshot: {e}")
+            print(f'Failed to load state snapshot: {e}')
             return False
     
     def _calculate_state_changes(self, pre_state: GameStateSnapshot, post_state: GameStateSnapshot) -> Dict[str, Any]:
-        """Calculate differences between two state snapshots."""
+        '''Calculate differences between two state snapshots.'''
         changes = {}
         
         # Track numeric changes
@@ -410,12 +410,12 @@ class ProgrammaticGameController:
         return changes
     
     def get_execution_summary(self) -> Dict[str, Any]:
-        """
+        '''
         Get summary of all executed actions and performance metrics.
         
         Returns:
             Dictionary containing execution statistics and performance data
-        """
+        '''
         total_time = time.time() - self.start_time
         
         success_count = sum(1 for result in self.execution_log if result.success)
@@ -436,12 +436,12 @@ class ProgrammaticGameController:
         }
     
     def reset_to_initial_state(self) -> bool:
-        """
+        '''
         Reset game to initial state from when controller was created.
         
         Returns:
             True if successful, False otherwise
-        """
+        '''
         success = self.load_state_snapshot(self.initial_snapshot)
         if success:
             self.execution_log.clear()
@@ -450,7 +450,7 @@ class ProgrammaticGameController:
         return success
     
     def export_execution_log(self, filepath: Optional[str] = None) -> str:
-        """
+        '''
         Export execution log to JSON file.
         
         Args:
@@ -458,10 +458,10 @@ class ProgrammaticGameController:
             
         Returns:
             Path to exported file
-        """
+        '''
         if filepath is None:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            filepath = f"execution_log_{timestamp}.json"
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filepath = f'execution_log_{timestamp}.json'
         
         export_data = {
             'metadata': {
@@ -484,8 +484,8 @@ class ProgrammaticGameController:
 
 # Convenience functions for common testing patterns
 
-def quick_test_action(action_id: str, parameters: Optional[Dict[str, Any]] = None, seed: str = "quick-test") -> ActionResult:
-    """
+def quick_test_action(action_id: str, parameters: Optional[Dict[str, Any]] = None, seed: str = 'quick-test') -> ActionResult:
+    '''
     Quick test of a single action with minimal setup.
     
     Args:
@@ -495,13 +495,13 @@ def quick_test_action(action_id: str, parameters: Optional[Dict[str, Any]] = Non
         
     Returns:
         ActionResult from execution
-    """
+    '''
     controller = ProgrammaticGameController(seed=seed)
     return controller.execute_action(action_id, parameters)
 
 
-def benchmark_action_sequence(actions: List[Tuple[str, Dict[str, Any]]], iterations: int = 100, seed: str = "benchmark") -> Dict[str, Any]:
-    """
+def benchmark_action_sequence(actions: List[Tuple[str, Dict[str, Any]]], iterations: int = 100, seed: str = 'benchmark') -> Dict[str, Any]:
+    '''
     Benchmark a sequence of actions over multiple iterations.
     
     Args:
@@ -511,11 +511,11 @@ def benchmark_action_sequence(actions: List[Tuple[str, Dict[str, Any]]], iterati
         
     Returns:
         Performance and statistical analysis
-    """
+    '''
     results = []
     
     for i in range(iterations):
-        iter_seed = f"{seed}-{i}"
+        iter_seed = f'{seed}-{i}'
         controller = ProgrammaticGameController(seed=iter_seed)
         
         start_time = time.time()
@@ -547,30 +547,30 @@ def benchmark_action_sequence(actions: List[Tuple[str, Dict[str, Any]]], iterati
     }
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Example usage and basic testing
-    print(f"P(Doom) Programmatic Game Controller - {get_display_version()}")
-    print("=" * 60)
+    print(f'P(Doom) Programmatic Game Controller - {get_display_version()}')
+    print('=' * 60)
     
     # Test basic functionality
     try:
-        controller = ProgrammaticGameController(seed="demo-test-123")
-        print(f"PASS Controller initialized with seed: {controller.initial_snapshot.seed}")
+        controller = ProgrammaticGameController(seed='demo-test-123')
+        print(f'PASS Controller initialized with seed: {controller.initial_snapshot.seed}')
         
         # Test action execution
-        result = controller.execute_action("hire_staff", {"count": 2})
-        print(f"PASS Action executed: {result.action_id} - Success: {result.success}")
+        result = controller.execute_action('hire_staff', {'count': 2})
+        print(f'PASS Action executed: {result.action_id} - Success: {result.success}')
         
         # Test state snapshot
         state = controller.get_state_snapshot()
-        print(f"PASS State snapshot: Turn {state.turn}, Money ${state.money:,}")
+        print(f'PASS State snapshot: Turn {state.turn}, Money ${state.money:,}')
         
         # Test performance
         summary = controller.get_execution_summary()
-        print(f"PASS Performance: {summary['actions_per_second']:.2f} actions/second")
+        print(f'PASS Performance: {summary['actions_per_second']:.2f} actions/second')
         
-        print("\n[SUCCESS] Programmatic controller is functional!")
+        print('\n[SUCCESS] Programmatic controller is functional!')
         
     except Exception as e:
-        print(f"[ERROR] Controller test failed: {e}")
-        print("This may be expected if GameState dependencies are not available in headless mode")
+        print(f'[ERROR] Controller test failed: {e}')
+        print('This may be expected if GameState dependencies are not available in headless mode')

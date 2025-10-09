@@ -109,10 +109,10 @@ margin = context_top - last_button_bottom  # 21px safety margin
 ```python
 # Restored research options
 research_options = [
-    ("Safety Research", "High quality, longer duration"),
-    ("Governance Research", "Medium quality, medium duration"), 
-    ("Rush Research", "Lower quality, faster completion"),
-    ("Quality Research", "Highest quality, longest duration")
+    ('Safety Research', 'High quality, longer duration'),
+    ('Governance Research', 'Medium quality, medium duration'), 
+    ('Rush Research', 'Lower quality, faster completion'),
+    ('Quality Research', 'Highest quality, longest duration')
 ]
 ```
 

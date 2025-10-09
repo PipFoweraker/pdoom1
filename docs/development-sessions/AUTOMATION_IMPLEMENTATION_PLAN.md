@@ -16,7 +16,7 @@ Based on our analysis, here's what we've accomplished and what we need to implem
 
 3. **Intelligent Branch Manager**: Powerful script in `scripts/branch_manager.py` with:
    - Stale branch detection and cleanup
-   - "Nuclear option" for develop branch reset
+   - 'Nuclear option' for develop branch reset
    - Automated PR merging
    - Comprehensive branch reporting
 

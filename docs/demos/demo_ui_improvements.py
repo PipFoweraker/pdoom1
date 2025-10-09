@@ -1,11 +1,11 @@
 # !/usr/bin/env python3
-"""
+'''
 Demo script to showcase the UI improvements:
 1. Fixed kerning in resource display
 2. New context window system
 
 This script demonstrates the improved UI features without requiring full gameplay.
-"""
+'''
 
 import pygame
 from src.core.game_state import GameState
@@ -17,7 +17,7 @@ def main():
     # Set up display
     width, height = 1200, 800
     screen = pygame.display.set_mode((width, height))
-    pygame.display.set_caption("P(Doom) UI Improvements Demo")
+    pygame.display.set_caption('P(Doom) UI Improvements Demo')
     clock = pygame.time.Clock()
     
     # Create game state
@@ -50,12 +50,12 @@ def main():
     show_context = False
     context_minimized = False
     
-    print("Demo Controls:")
-    print("- SPACE: Toggle context window")
-    print("- M: Toggle minimize context window")
-    print("- TAB: Cycle through different context examples")
-    print("- ESC: Exit demo")
-    print("\nMove mouse around to see hover effects!")
+    print('Demo Controls:')
+    print('- SPACE: Toggle context window')
+    print('- M: Toggle minimize context window')
+    print('- TAB: Cycle through different context examples')
+    print('- ESC: Exit demo')
+    print('\nMove mouse around to see hover effects!')
     
     running = True
     while running:
@@ -67,13 +67,13 @@ def main():
                     running = False
                 elif event.key == pygame.K_SPACE:
                     show_context = not show_context
-                    print(f"Context window: {'ON' if show_context else 'OFF'}")
+                    print(f'Context window: {'ON' if show_context else 'OFF'}')
                 elif event.key == pygame.K_m and show_context:
                     context_minimized = not context_minimized
-                    print(f"Context window: {'minimized' if context_minimized else 'expanded'}")
+                    print(f'Context window: {'minimized' if context_minimized else 'expanded'}')
                 elif event.key == pygame.K_TAB:
                     context_index = (context_index + 1) % len(demo_contexts)
-                    print(f"Switched to context: {demo_contexts[context_index]['title']}")
+                    print(f'Switched to context: {demo_contexts[context_index]['title']}')
             elif event.type == pygame.MOUSEMOTION:
                 # Update hover state
                 game_state.check_hover(event.pos, width, height)
@@ -99,10 +99,10 @@ def main():
         # Draw instructions
         font = pygame.font.SysFont('Arial', 16)
         instructions = [
-            "DEMO: UI Improvements",
-            "1. Notice improved spacing in top resource bar",
-            "2. Move mouse over elements to see context info",
-            "3. Press SPACE to toggle context window"
+            'DEMO: UI Improvements',
+            '1. Notice improved spacing in top resource bar',
+            '2. Move mouse over elements to see context info',
+            '3. Press SPACE to toggle context window'
         ]
         
         for i, instruction in enumerate(instructions):
@@ -114,7 +114,7 @@ def main():
         clock.tick(60)
     
     pygame.quit()
-    print("Demo complete!")
+    print('Demo complete!')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

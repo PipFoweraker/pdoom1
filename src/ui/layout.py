@@ -1,15 +1,15 @@
-"""
+'''
 Layout utilities for UI positioning and safe zone management.
 
 This module handles the positioning logic for UI elements to prevent overlap
 and maintain usability according to Issue #121.
-"""
+'''
 
 import pygame
 
 
 def get_ui_safe_zones(w, h):
-    """
+    '''
     Define safe zones where overlays should not be positioned to avoid obscuring interactive areas.
     
     This function implements the solution for Issue #121 (UI overlap / lack of draggability)
@@ -20,7 +20,7 @@ def get_ui_safe_zones(w, h):
         
     Returns:
         List of pygame.Rect representing reserved areas that should be avoided by overlays
-    """
+    '''
     safe_zones = []
     
     # Resource header area (top bar with money, staff, reputation, etc.)
@@ -47,7 +47,7 @@ def get_ui_safe_zones(w, h):
 
 
 def find_safe_overlay_position(overlay_rect, screen_w, screen_h, safe_zones):
-    """
+    '''
     Find a position for an overlay that doesn't intersect with safe zones.
     
     This implements the first-fit positioning algorithm for Issue #121 (UI overlap prevention)
@@ -60,7 +60,7 @@ def find_safe_overlay_position(overlay_rect, screen_w, screen_h, safe_zones):
         
     Returns:
         pygame.Rect: positioned overlay rectangle
-    """
+    '''
     # Try different positions, prioritizing the gap between action and upgrade areas
     # Based on safe zones: action area ends at x=280, upgrade area starts at x=520
     # So we have a gap from x=280 to x=520 (width=240)
@@ -118,12 +118,12 @@ def find_safe_overlay_position(overlay_rect, screen_w, screen_h, safe_zones):
 
 
 def should_show_back_button(depth: int) -> bool:
-    """Helper function to determine if back button should be shown."""
+    '''Helper function to determine if back button should be shown.'''
     return depth >= 1
 
 
 def draw_back_button(screen, w: int, h: int, navigation_depth: int, font=None):
-    """Draw a Back button when navigation depth >= 1."""
+    '''Draw a Back button when navigation depth >= 1.'''
     if not should_show_back_button(navigation_depth):
         return None
     
@@ -132,7 +132,7 @@ def draw_back_button(screen, w: int, h: int, navigation_depth: int, font=None):
     
     # Position button in top-left corner with margin
     margin = int(h * 0.02)
-    button_text = "< Back"
+    button_text = '< Back'
     text_surf = font.render(button_text, True, (255, 255, 255))
     
     # Button styling
@@ -154,14 +154,14 @@ def draw_back_button(screen, w: int, h: int, navigation_depth: int, font=None):
 
 
 def draw_overlay(screen, title, content, scroll_offset: int, w: int, h: int, navigation_depth: int = 0):
-    """Draw a scrollable overlay for displaying README or Player Guide content."""
+    '''Draw a scrollable overlay for displaying README or Player Guide content.'''
     from src.ui.rendering import wrap_text
     
     # Defensive handling for None values
     if title is None:
-        title = "Information Unavailable"
+        title = 'Information Unavailable'
     if content is None:
-        content = "Content Not Available\\n\\nThe requested information could not be loaded at this time.\\n\\nPossible solutions:\\n- Press Escape or Back to return to the previous screen\\n- Try accessing this information again from the main menu\\n- Check the Player Guide (F1) for general help\\n\\nIf this problem persists, it may indicate a technical issue."
+        content = 'Content Not Available\\n\\nThe requested information could not be loaded at this time.\\n\\nPossible solutions:\\n- Press Escape or Back to return to the previous screen\\n- Try accessing this information again from the main menu\\n- Check the Player Guide (F1) for general help\\n\\nIf this problem persists, it may indicate a technical issue.'
     
     # Overlay background - semi-transparent dark background
     overlay_surface = pygame.Surface((w, h))
@@ -224,18 +224,18 @@ def draw_overlay(screen, title, content, scroll_offset: int, w: int, h: int, nav
     if scroll_offset > 0:
         # Up arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        up_arrow = arrow_font.render("^", True, (255, 255, 255))
+        up_arrow = arrow_font.render('^', True, (255, 255, 255))
         screen.blit(up_arrow, (content_x + content_width - 30, text_area_y))
     
     if (start_line + visible_lines) < len(lines):
         # Down arrow
         arrow_font = pygame.font.SysFont('Consolas', int(h*0.03), bold=True)
-        down_arrow = arrow_font.render("v", True, (255, 255, 255))
+        down_arrow = arrow_font.render('v', True, (255, 255, 255))
         screen.blit(down_arrow, (content_x + content_width - 30, text_area_y + text_area_height - 30))
     
     # Instructions at bottom
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    instructions = "Use arrow keys to scroll - Press Escape or click to return to menu"
+    instructions = 'Use arrow keys to scroll - Press Escape or click to return to menu'
     inst_surf = instruction_font.render(instructions, True, (180, 200, 255))
     inst_x = w // 2 - inst_surf.get_width() // 2
     inst_y = content_y + content_height + int(h * 0.03)
@@ -245,7 +245,7 @@ def draw_overlay(screen, title, content, scroll_offset: int, w: int, h: int, nav
 
 
 def draw_window_with_header(screen, rect, title: str, content=None, minimized: bool = False, font=None):
-    """Draw a window with a draggable header and minimize button."""
+    '''Draw a window with a draggable header and minimize button.'''
     if font is None:
         font = pygame.font.SysFont('Consolas', 16)
     

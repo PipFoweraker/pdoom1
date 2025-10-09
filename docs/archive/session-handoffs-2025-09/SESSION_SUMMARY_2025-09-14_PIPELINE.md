@@ -23,7 +23,7 @@ Successfully created comprehensive infrastructure connecting P(Doom) game develo
 - **Challenge**: Multiple formatting violations preventing automated sync
 - **Solution**: Fixed 16 dev blog entries for ASCII compliance and title length limits
 - **Technical Details**:
-  - Resolved non-ASCII character issues (arrow symbols -> "to")
+  - Resolved non-ASCII character issues (arrow symbols -> 'to')
   - Shortened overly long titles (60 character limit compliance)
   - Successfully generated clean blog index with all entries
 - **Result**: Blog validation passes, ready for automated deployment

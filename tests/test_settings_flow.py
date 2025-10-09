@@ -15,10 +15,10 @@ from main import (
 )
 
 class TestSettingsFlow(unittest.TestCase):
-    """Test the new pre-game settings flow."""
+    '''Test the new pre-game settings flow.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         # Initialize pygame to avoid issues with font rendering
         pygame.init()
         
@@ -26,25 +26,25 @@ class TestSettingsFlow(unittest.TestCase):
         import main
         main.current_state = 'main_menu'
         main.selected_settings_item = 0
-        main.seed_choice = "weekly"
+        main.seed_choice = 'weekly'
         main.tutorial_enabled = True
-        main.tutorial_choice_selected_item = 1  # Default to "Yes - Enable Tutorial"
+        main.tutorial_choice_selected_item = 1  # Default to 'Yes - Enable Tutorial'
         main.seed = None
-        main.seed_input = ""
+        main.seed_input = ''
         main.pre_game_settings = {
-            "difficulty": "DUMMY",
-            "music_volume": 123,
-            "sound_volume": 123,
-            "graphics_quality": "DUMMY",
-            "safety_level": "STANDARD"
+            'difficulty': 'DUMMY',
+            'music_volume': 123,
+            'sound_volume': 123,
+            'graphics_quality': 'DUMMY',
+            'safety_level': 'STANDARD'
         }
     
     def tearDown(self):
-        """Clean up after tests."""
+        '''Clean up after tests.'''
         pygame.quit()
     
     def test_pre_game_settings_state_exists(self):
-        """Test that pre-game settings state is properly defined."""
+        '''Test that pre-game settings state is properly defined.'''
         import main
         # Test that the new states are in the comment
         with open(main.__file__, 'r') as f:
@@ -58,7 +58,7 @@ class TestSettingsFlow(unittest.TestCase):
         self.assertIn('graphics_quality', main.pre_game_settings)
     
     def test_pre_game_settings_dummy_values(self):
-        """Test that dummy values are set as specified."""
+        '''Test that dummy values are set as specified.'''
         import main
         self.assertEqual(main.pre_game_settings['difficulty'], 'DUMMY')
         self.assertEqual(main.pre_game_settings['music_volume'], 123)
@@ -66,7 +66,7 @@ class TestSettingsFlow(unittest.TestCase):
         self.assertEqual(main.pre_game_settings['graphics_quality'], 'DUMMY')
     
     def test_settings_keyboard_navigation(self):
-        """Test keyboard navigation in settings screen."""
+        '''Test keyboard navigation in settings screen.'''
         import main
         main.current_state
         
@@ -89,7 +89,7 @@ class TestSettingsFlow(unittest.TestCase):
         self.assertEqual(main.current_state, 'main_menu')
     
     def test_seed_selection_flow(self):
-        """Test seed selection screen functionality."""
+        '''Test seed selection screen functionality.'''
         import main
         
         # Test weekly seed selection
@@ -105,13 +105,13 @@ class TestSettingsFlow(unittest.TestCase):
         self.assertEqual(main.current_state, 'pre_game_settings')
     
     def test_tutorial_choice_flow(self):
-        """Test tutorial choice screen functionality."""
+        '''Test tutorial choice screen functionality.'''
         import main
         
         # Test tutorial enabled (select Yes option at index 1)
         main.current_state = 'tutorial_choice'
-        main.tutorial_choice_selected_item = 1  # Select "Yes - Enable Tutorial"
-        main.seed = "test_seed"
+        main.tutorial_choice_selected_item = 1  # Select 'Yes - Enable Tutorial'
+        main.seed = 'test_seed'
         handle_tutorial_choice_keyboard(pygame.K_RETURN)
         self.assertEqual(main.current_state, 'game')
         self.assertTrue(main.tutorial_enabled)
@@ -122,7 +122,7 @@ class TestSettingsFlow(unittest.TestCase):
         self.assertEqual(main.current_state, 'seed_selection')
     
     def test_complete_flow_integration(self):
-        """Test the complete flow from settings to game."""
+        '''Test the complete flow from settings to game.'''
         import main
         
         # Start from pre-game settings
@@ -144,7 +144,7 @@ class TestSettingsFlow(unittest.TestCase):
         self.assertTrue(main.tutorial_enabled)
     
     def test_seed_selection_mouse_clicks(self):
-        """Test mouse click handling in seed selection."""
+        '''Test mouse click handling in seed selection.'''
         import main
         
         # Mock screen dimensions
@@ -165,7 +165,7 @@ class TestSettingsFlow(unittest.TestCase):
         self.assertEqual(main.seed_choice, 'weekly')
     
     def test_tutorial_choice_mouse_clicks(self):
-        """Test mouse click handling in tutorial choice."""
+        '''Test mouse click handling in tutorial choice.'''
         import main
         
         # Mock screen dimensions
@@ -182,7 +182,7 @@ class TestSettingsFlow(unittest.TestCase):
         button_x = center_x - button_width // 2 + 10  # Click inside button
         button_y = start_y + spacing + 10  # Second button position
         
-        main.seed = "test_seed"
+        main.seed = 'test_seed'
         handle_tutorial_choice_click((button_x, button_y), w, h)
         self.assertEqual(main.current_state, 'game')
         self.assertTrue(main.tutorial_enabled)
@@ -196,21 +196,21 @@ class TestSettingsFlow(unittest.TestCase):
         self.assertFalse(main.tutorial_enabled)
 
 
-@pytest.mark.skip(reason="UI functions bugs - See issue #ui-functions-bug")
+@pytest.mark.skip(reason='UI functions bugs - See issue #ui-functions-bug')
 class TestUIFunctions(unittest.TestCase):
-    """Test the new UI drawing functions."""
+    '''Test the new UI drawing functions.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         pygame.init()
         self.screen = pygame.display.set_mode((800, 600), pygame.NOFRAME)
     
     def tearDown(self):
-        """Clean up after tests."""
+        '''Clean up after tests.'''
         pygame.quit()
     
     def test_ui_functions_importable(self):
-        """Test that new UI functions can be imported."""
+        '''Test that new UI functions can be imported.'''
         from src.ui.menus import draw_pre_game_settings
         from ui import draw_seed_selection, draw_tutorial_choice
         
@@ -220,41 +220,41 @@ class TestUIFunctions(unittest.TestCase):
         self.assertTrue(callable(draw_tutorial_choice))
     
     def test_draw_pre_game_settings_no_crash(self):
-        """Test that draw_pre_game_settings doesn't crash."""
+        '''Test that draw_pre_game_settings doesn't crash.'''
         from src.ui.menus import draw_pre_game_settings
         
         settings = {
-            "difficulty": "DUMMY",
-            "music_volume": 123,
-            "sound_volume": 123,
-            "graphics_quality": "DUMMY"
+            'difficulty': 'DUMMY',
+            'music_volume': 123,
+            'sound_volume': 123,
+            'graphics_quality': 'DUMMY'
         }
         
         # Should not raise an exception
         try:
             draw_pre_game_settings(self.screen, 800, 600, settings, 0)
         except Exception as e:
-            self.fail(f"draw_pre_game_settings raised an exception: {e}")
+            self.fail(f'draw_pre_game_settings raised an exception: {e}')
     
     def test_draw_seed_selection_no_crash(self):
-        """Test that draw_seed_selection doesn't crash."""
+        '''Test that draw_seed_selection doesn't crash.'''
         from ui import draw_seed_selection
         
         # Should not raise an exception
         try:
-            draw_seed_selection(self.screen, 800, 600, 0, "")
+            draw_seed_selection(self.screen, 800, 600, 0, '')
         except Exception as e:
-            self.fail(f"draw_seed_selection raised an exception: {e}")
+            self.fail(f'draw_seed_selection raised an exception: {e}')
     
     def test_draw_tutorial_choice_no_crash(self):
-        """Test that draw_tutorial_choice doesn't crash."""
+        '''Test that draw_tutorial_choice doesn't crash.'''
         from ui import draw_tutorial_choice
         
         # Should not raise an exception
         try:
             draw_tutorial_choice(self.screen, 800, 600, 0)
         except Exception as e:
-            self.fail(f"draw_tutorial_choice raised an exception: {e}")
+            self.fail(f'draw_tutorial_choice raised an exception: {e}')
 
 
 if __name__ == '__main__':

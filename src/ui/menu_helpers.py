@@ -1,8 +1,8 @@
-"""
+'''
 Menu helper utilities for consistent menu behavior across P(Doom).
 
 Quick win refactoring to reduce duplication in menu click handling.
-"""
+'''
 
 import pygame
 from typing import Tuple, List, Optional, Callable
@@ -18,7 +18,7 @@ def get_menu_button_collision(
     start_y_ratio: float = 0.35,
     spacing_ratio: float = 0.1
 ) -> Optional[int]:
-    """
+    '''
     Check if mouse position collides with any menu button.
     
     Args:
@@ -32,7 +32,7 @@ def get_menu_button_collision(
         
     Returns:
         Index of clicked menu item, or None if no collision
-    """
+    '''
     button_width = int(w * button_width_ratio)
     button_height = int(h * button_height_ratio)
     start_y = int(h * start_y_ratio)
@@ -58,7 +58,7 @@ def handle_menu_navigation(
     menu_items: List[str],
     on_select: Optional[Callable[[int], None]] = None
 ) -> int:
-    """
+    '''
     Handle keyboard navigation for menus with consistent behavior.
     
     Args:
@@ -69,7 +69,7 @@ def handle_menu_navigation(
         
     Returns:
         New selection index
-    """
+    '''
     if key in [pygame.K_UP, pygame.K_LEFT]:
         return (current_selection - 1) % len(menu_items)
     elif key in [pygame.K_DOWN, pygame.K_RIGHT]:
@@ -86,7 +86,7 @@ def handle_mouse_wheel_menu_navigation(
     current_selection: int,
     menu_items: List[str]
 ) -> int:
-    """
+    '''
     Handle mouse wheel navigation for menus with consistent behavior.
     
     Args:
@@ -96,7 +96,7 @@ def handle_mouse_wheel_menu_navigation(
         
     Returns:
         New selection index
-    """
+    '''
     if wheel_y > 0:  # Mouse wheel up
         return (current_selection - 1) % len(menu_items)
     elif wheel_y < 0:  # Mouse wheel down

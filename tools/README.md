@@ -57,10 +57,10 @@ The dev tool is designed for easy extension. To add a new test:
 1. Add a method to the `DevTool` class:
 ```python
 def test_my_feature(self):
-    """Test my new feature."""
-    print("[TEST] Testing My Feature")
+    '''Test my new feature.'''
+    print('[TEST] Testing My Feature')
     # Your test code here
-    print("[OK] My feature working correctly")
+    print('[OK] My feature working correctly')
 ```
 
 2. Register it in `__init__`:

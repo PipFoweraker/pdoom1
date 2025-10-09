@@ -1,14 +1,13 @@
 # !/usr/bin/env python3
-"""
+'''
 ASCII Compliance Fixer - Remove all Unicode characters from project files
-"""
+'''
 
-import os
 import re
 from pathlib import Path
 
 def fix_unicode_in_file(filepath: str) -> bool:
-    """Remove Unicode characters from a file, return True if changes made"""
+    '''Remove Unicode characters from a file, return True if changes made'''
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -20,7 +19,8 @@ def fix_unicode_in_file(filepath: str) -> bool:
     original_content = content
     
     # Common Unicode replacements
-    replacements = [
+    # Type ignore because this list intentionally contains Unicode for replacement
+    replacements = [  # type: ignore
         ('PASS', 'PASS'),
         ('FAIL', 'FAIL'),
         ('OK', 'OK'),
@@ -43,7 +43,7 @@ def fix_unicode_in_file(filepath: str) -> bool:
         ('PARTY', 'PARTY'),
         ('HOT', 'HOT'),
         ('100%', '100%'),
-        ('STAR?', 'STAR'),
+        ('STAR', 'STAR'),
         ('CONSTRUCTION', 'CONSTRUCTION'),
         ('GROWTH', 'GROWTH'),
         ('DESIGN', 'DESIGN'),
@@ -57,9 +57,9 @@ def fix_unicode_in_file(filepath: str) -> bool:
         # Unicode dashes and quotes
         ('-', '-'),
         ('-', '-'),
-        ('"', '"'),
-        ('"', '"'),
-        (''''''', "'"),
+        (''', '''),
+        (''', '''),
+        (''', '''),
         # Unicode bullets and arrows  
         ('*', '*'),
         ('->', '->'),
@@ -74,8 +74,9 @@ def fix_unicode_in_file(filepath: str) -> bool:
     ]
     
     # Apply replacements
-    for unicode_char, replacement in replacements:
-        content = content.replace(unicode_char, replacement)
+    # Type ignore because we're intentionally processing Unicode characters
+    for unicode_char, replacement in replacements:  # type: ignore
+        content = content.replace(unicode_char, replacement)  # type: ignore
     
     # Remove any remaining non-ASCII characters
     content = re.sub(r'[^\x00-\x7F]+', '?', content)
@@ -89,7 +90,7 @@ def fix_unicode_in_file(filepath: str) -> bool:
     return False
 
 def main():
-    """Fix ASCII compliance across the entire project"""
+    '''Fix ASCII compliance across the entire project'''
     project_root = Path('.')
     
     # File patterns to check
@@ -109,12 +110,12 @@ def main():
             if filepath.is_file() and not any(part.startswith('.') for part in filepath.parts):
                 try:
                     if fix_unicode_in_file(str(filepath)):
-                        print(f"Fixed: {filepath}")
+                        print(f'Fixed: {filepath}')
                         files_changed += 1
                 except Exception as e:
-                    print(f"Error processing {filepath}: {e}")
+                    print(f'Error processing {filepath}: {e}')
     
-    print(f"\nFixed {files_changed} files for ASCII compliance")
+    print(f'\nFixed {files_changed} files for ASCII compliance')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

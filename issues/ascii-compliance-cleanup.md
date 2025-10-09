@@ -37,7 +37,7 @@ Remove Unicode characters (emojis, special symbols) from all project documentati
 
 ## Implementation Strategy
 1. Replace emoji headers with **NEW:**, **FEATURE:** style prefixes
-2. Convert arrow symbols to ASCII equivalents (up/down arrows -> "up/down")
+2. Convert arrow symbols to ASCII equivalents (up/down arrows -> 'up/down')
 3. Replace resource icons with text labels or ASCII symbols
 4. Convert special characters (->, ?) to ASCII equivalents (=>, X)
 
@@ -50,7 +50,7 @@ Remove Unicode characters (emojis, special symbols) from all project documentati
 ## Commands for Validation
 ```bash
 # Check for non-ASCII characters
-grep -P "[^\x00-\x7F]" README.md docs/PLAYERGUIDE.md
+grep -P '[^\x00-\x7F]' README.md docs/PLAYERGUIDE.md
 ```
 
 ## Notes

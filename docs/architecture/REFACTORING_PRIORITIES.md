@@ -29,7 +29,7 @@ amount = random.randint(40, 70)
 
 # With this:
 from src.services.deterministic_rng import get_rng
-amount = get_rng().randint(40, 70, f"fundraise_turn_{gs.turn}")
+amount = get_rng().randint(40, 70, f'fundraise_turn_{gs.turn}')
 ```
 
 ### 2. Root-Level Workspace Cleanup
@@ -104,7 +104,7 @@ from src.services.deterministic_rng import get_rng
 def some_function(gs):
     # Always include context for reproducibility
     rng = get_rng()  
-    value = rng.randint(1, 10, f"function_name_turn_{gs.turn}")
+    value = rng.randint(1, 10, f'function_name_turn_{gs.turn}')
 ```
 
 ## P3 - Low Priority (Complete as Time Permits)

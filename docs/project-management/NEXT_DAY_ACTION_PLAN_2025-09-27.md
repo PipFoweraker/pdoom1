@@ -30,14 +30,14 @@ Following our 20% modular milestone achievement, we now face significant test su
 
 ```bash
 # Investigation commands:
-python -c "
+python -c '
 from src.core.game_state import GameState
 gs = GameState('test')
 print('Initial AP:', gs.action_points, 'Max AP:', gs.max_action_points)
 gs.staff = 7
 gs.end_turn()
 print('After turn with 7 staff - AP:', gs.action_points, 'Max AP:', gs.max_action_points)
-"
+'
 ```
 
 **Target Files**: 
@@ -54,14 +54,14 @@ print('After turn with 7 staff - AP:', gs.action_points, 'Max AP:', gs.max_actio
 
 ```bash
 # Investigation commands:
-python -c "
+python -c '
 from src.core.game_state import GameState
 gs = GameState('test')
 gs.messages.append('Test message')
 print('Before turn end:', gs.messages)
 gs.end_turn()
 print('After turn end:', gs.messages)
-"
+'
 ```
 
 **Target Files**:
@@ -95,14 +95,14 @@ print('After turn end:', gs.messages)
 
 ```bash
 # Investigation commands:
-python -c "
+python -c '
 from src.core.game_state import GameState
 gs = GameState('test')
 gs.select_action('Grow Community')
 print('Selected actions:', len(gs.selected_gameplay_actions))
 gs.end_turn()
 print('After turn end:', len(gs.selected_gameplay_actions))
-"
+'
 ```
 
 **Target Files**:
@@ -144,13 +144,13 @@ print('After turn end:', len(gs.selected_gameplay_actions))
 
 ```bash
 # Investigation commands:
-python -c "
+python -c '
 from src.core.game_state import GameState
 gs = GameState('test')
 actions = gs.get_available_actions()
 media_actions = [a for a in actions if 'Press Release' in a or 'Media' in a]
 print('Available media actions:', media_actions)
-"
+'
 ```
 
 **Target Files**:
@@ -236,7 +236,7 @@ time python -m unittest discover tests -v
 #### Game Functionality Validation:
 ```bash
 # Programmatic functionality test:
-python -c "
+python -c '
 from src.core.game_state import GameState
 print('=== P(Doom) v0.8.0+ Functionality Test ===')
 
@@ -263,7 +263,7 @@ print(f'v Media system integration: {media_available}')
 print(f'v Research system integration: {research_available}')
 
 print('=== Validation Complete ===')
-"
+'
 ```
 
 ### Task 5.2: Progress Documentation (30 minutes)

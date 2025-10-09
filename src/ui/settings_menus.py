@@ -1,4 +1,4 @@
-"""
+'''
 Settings and Configuration Menu System for P(Doom)
 
 This module provides a comprehensive settings system with the following structure:
@@ -11,7 +11,7 @@ Design Philosophy:
 - Support for community sharing via config + seed combinations
 - Extensible system for adding new settings categories
 - Consistent with P(Doom)'s bureaucratic theme
-"""
+'''
 
 import pygame
 from enum import Enum
@@ -20,54 +20,54 @@ from src.ui.visual_feedback import ButtonState, visual_feedback
 
 
 class SettingsCategory(Enum):
-    """Categories of settings available to the player."""
-    AUDIO = "audio"
-    GAMEPLAY = "gameplay" 
-    ACCESSIBILITY = "accessibility"
-    KEYBINDINGS = "keybindings"
+    '''Categories of settings available to the player.'''
+    AUDIO = 'audio'
+    GAMEPLAY = 'gameplay' 
+    ACCESSIBILITY = 'accessibility'
+    KEYBINDINGS = 'keybindings'
 
 
 class GameConfigMode(Enum):
-    """Modes for game configuration management."""
-    SELECT = "select"  # Choose from existing configs
-    CREATE = "create"  # Create new config
-    EDIT = "edit"     # Edit existing config
-    SEED = "seed"     # Set custom seed for config
+    '''Modes for game configuration management.'''
+    SELECT = 'select'  # Choose from existing configs
+    CREATE = 'create'  # Create new config
+    EDIT = 'edit'     # Edit existing config
+    SEED = 'seed'     # Set custom seed for config
 
 
 def draw_settings_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int) -> None:
-    """
+    '''
     Draw the main settings menu with categories.
     
     Args:
         screen: Pygame surface to draw on
         w, h: Screen dimensions
         selected_item: Currently selected menu item
-    """
+    '''
     # Clear background
     screen.fill((40, 45, 55))
     
     # Title
     title_font = pygame.font.SysFont('Consolas', int(h * 0.06), bold=True)
-    title_text = title_font.render("INSTITUTIONAL SETTINGS", True, (220, 240, 255))
+    title_text = title_font.render('INSTITUTIONAL SETTINGS', True, (220, 240, 255))
     title_x = w // 2 - title_text.get_width() // 2
     title_y = int(h * 0.12)
     screen.blit(title_text, (title_x, title_y))
     
     # Subtitle
     subtitle_font = pygame.font.SysFont('Consolas', int(h * 0.025))
-    subtitle_text = subtitle_font.render("Configure Laboratory Operations & Protocols", True, (180, 200, 220))
+    subtitle_text = subtitle_font.render('Configure Laboratory Operations & Protocols', True, (180, 200, 220))
     subtitle_x = w // 2 - subtitle_text.get_width() // 2
     subtitle_y = title_y + title_text.get_height() + 10
     screen.blit(subtitle_text, (subtitle_x, subtitle_y))
     
     # Menu items with descriptions
     settings_options = [
-        ("? Audio Settings", "Configure sound effects and volume levels"),
-        ("[GAME] Gameplay Settings", "Adjust difficulty and game mechanics"),
-        ("? Accessibility", "Visual and interaction accessibility options"),
-        ("?? Keybindings", "Customize keyboard shortcuts and controls"),
-        ("? Back to Main Menu", "Return to the main menu")
+        ('? Audio Settings', 'Configure sound effects and volume levels'),
+        ('[GAME] Gameplay Settings', 'Adjust difficulty and game mechanics'),
+        ('? Accessibility', 'Visual and interaction accessibility options'),
+        ('?? Keybindings', 'Customize keyboard shortcuts and controls'),
+        ('? Back to Main Menu', 'Return to the main menu')
     ]
     
     # Button layout
@@ -107,8 +107,8 @@ def draw_game_config_menu(screen: pygame.Surface, w: int, h: int,
                          mode: GameConfigMode, selected_item: int,
                          available_configs: List[str] = None,
                          current_config_name: str = None,
-                         custom_seed: str = "") -> None:
-    """
+                         custom_seed: str = '') -> None:
+    '''
     Draw the game configuration menu for creating/selecting game configs.
     
     Args:
@@ -119,23 +119,23 @@ def draw_game_config_menu(screen: pygame.Surface, w: int, h: int,
         available_configs: List of available configuration names
         current_config_name: Name of currently active config
         custom_seed: Custom seed if being set
-    """
+    '''
     screen.fill((35, 40, 50))
     
     # Title based on mode
     title_font = pygame.font.SysFont('Consolas', int(h * 0.055), bold=True)
     if mode == GameConfigMode.SELECT:
-        title = "LABORATORY CONFIGURATION SELECTION"
-        subtitle = "Choose your research parameters & experimental conditions"
+        title = 'LABORATORY CONFIGURATION SELECTION'
+        subtitle = 'Choose your research parameters & experimental conditions'
     elif mode == GameConfigMode.CREATE:
-        title = "CREATE NEW CONFIGURATION"
-        subtitle = "Design custom laboratory parameters for community sharing"
+        title = 'CREATE NEW CONFIGURATION'
+        subtitle = 'Design custom laboratory parameters for community sharing'
     elif mode == GameConfigMode.SEED:
-        title = "SET EXPERIMENTAL SEED"
-        subtitle = "Configure randomization parameters for reproducible experiments"
+        title = 'SET EXPERIMENTAL SEED'
+        subtitle = 'Configure randomization parameters for reproducible experiments'
     else:
-        title = "LABORATORY CONFIGURATION"
-        subtitle = "Manage experimental parameters"
+        title = 'LABORATORY CONFIGURATION'
+        subtitle = 'Manage experimental parameters'
         
     title_text = title_font.render(title, True, (220, 240, 255))
     title_x = w // 2 - title_text.get_width() // 2
@@ -158,11 +158,11 @@ def draw_game_config_menu(screen: pygame.Surface, w: int, h: int,
 def _draw_config_selection(screen: pygame.Surface, w: int, h: int, 
                           selected_item: int, available_configs: List[str],
                           current_config_name: str) -> None:
-    """Draw the configuration selection interface."""
+    '''Draw the configuration selection interface.'''
     if not available_configs:
         # No configs available
         font = pygame.font.SysFont('Consolas', int(h * 0.03))
-        text = font.render("No configurations available. Creating default...", True, (255, 200, 200))
+        text = font.render('No configurations available. Creating default...', True, (255, 200, 200))
         text_x = w // 2 - text.get_width() // 2
         text_y = h // 2
         screen.blit(text, (text_x, text_y))
@@ -176,7 +176,7 @@ def _draw_config_selection(screen: pygame.Surface, w: int, h: int,
     center_x = w // 2
     
     # Show available configs + option to create new + option to set seed
-    options = available_configs + ["Create New Configuration", "Set Custom Seed", "? Back"]
+    options = available_configs + ['Create New Configuration', 'Set Custom Seed', '? Back']
     
     for i, option in enumerate(options):
         button_x = center_x - button_width // 2
@@ -193,7 +193,7 @@ def _draw_config_selection(screen: pygame.Surface, w: int, h: int,
         display_text = option
         if i < len(available_configs):
             if option == current_config_name:
-                display_text = f"? {option} (ACTIVE)"
+                display_text = f'? {option} (ACTIVE)'
                 
         visual_feedback.draw_button(
             screen, button_rect, display_text, button_state,
@@ -202,13 +202,13 @@ def _draw_config_selection(screen: pygame.Surface, w: int, h: int,
 
 
 def _draw_seed_input(screen: pygame.Surface, w: int, h: int, custom_seed: str) -> None:
-    """Draw the custom seed input interface."""
+    '''Draw the custom seed input interface.'''
     # Seed input box
     input_font = pygame.font.SysFont('Consolas', int(h * 0.035))
     label_font = pygame.font.SysFont('Consolas', int(h * 0.025))
     
     # Label
-    label_text = label_font.render("EXPERIMENTAL SEED:", True, (200, 220, 240))
+    label_text = label_font.render('EXPERIMENTAL SEED:', True, (200, 220, 240))
     label_x = w // 2 - label_text.get_width() // 2
     label_y = int(h * 0.35)
     screen.blit(label_text, (label_x, label_y))
@@ -232,9 +232,9 @@ def _draw_seed_input(screen: pygame.Surface, w: int, h: int, custom_seed: str) -
     
     # Instructions
     instructions = [
-        "Enter custom seed for reproducible experiments",
-        "Leave blank to use weekly challenge seed",
-        "Press [ENTER] to continue, [ESC] to cancel"
+        'Enter custom seed for reproducible experiments',
+        'Leave blank to use weekly challenge seed',
+        'Press [ENTER] to continue, [ESC] to cancel'
     ]
     
     inst_font = pygame.font.SysFont('Consolas', int(h * 0.02))
@@ -247,12 +247,12 @@ def _draw_seed_input(screen: pygame.Surface, w: int, h: int, custom_seed: str) -
 
 
 def handle_settings_main_menu_click(mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[SettingsCategory]:
-    """
+    '''
     Handle clicks on the main settings menu.
     
     Returns:
         SettingsCategory if a category was selected, None for back button
-    """
+    '''
     button_width = int(w * 0.6)
     button_height = int(h * 0.08)
     start_y = int(h * 0.35)
@@ -284,12 +284,12 @@ def handle_settings_main_menu_click(mouse_pos: Tuple[int, int], w: int, h: int) 
 
 def handle_game_config_click(mouse_pos: Tuple[int, int], w: int, h: int,
                            mode: GameConfigMode, available_configs: List[str]) -> Tuple[str, Any]:
-    """
+    '''
     Handle clicks on the game configuration menu.
     
     Returns:
         Tuple of (action, data) where action describes what was clicked
-    """
+    '''
     if mode == GameConfigMode.SELECT:
         button_width = int(w * 0.7)
         button_height = int(h * 0.08)
@@ -299,7 +299,7 @@ def handle_game_config_click(mouse_pos: Tuple[int, int], w: int, h: int,
         
         mx, my = mouse_pos
         
-        options = available_configs + ["Create New Configuration", "Set Custom Seed", "? Back"]
+        options = available_configs + ['Create New Configuration', 'Set Custom Seed', '? Back']
         
         for i, option in enumerate(options):
             button_x = center_x - button_width // 2
@@ -308,32 +308,32 @@ def handle_game_config_click(mouse_pos: Tuple[int, int], w: int, h: int,
             
             if button_rect.collidepoint(mx, my):
                 if i < len(available_configs):
-                    return ("select_config", available_configs[i])
-                elif option == "Create New Configuration":
-                    return ("create_config", None)
-                elif option == "Set Custom Seed":
-                    return ("set_seed", None)
-                elif option == "? Back":
-                    return ("back", None)
+                    return ('select_config', available_configs[i])
+                elif option == 'Create New Configuration':
+                    return ('create_config', None)
+                elif option == 'Set Custom Seed':
+                    return ('set_seed', None)
+                elif option == '? Back':
+                    return ('back', None)
                 break
     
-    return ("none", None)
+    return ('none', None)
 
 
 def get_settings_navigation_info() -> Dict[str, Any]:
-    """
+    '''
     Get information about settings menu navigation structure.
     
     Returns:
         Dictionary with navigation information for breadcrumb display
-    """
+    '''
     return {
-        "main_settings": {
-            "title": "Settings",
-            "categories": ["Audio", "Gameplay", "Accessibility", "Keybindings"]
+        'main_settings': {
+            'title': 'Settings',
+            'categories': ['Audio', 'Gameplay', 'Accessibility', 'Keybindings']
         },
-        "game_config": {
-            "title": "Game Configuration", 
-            "modes": ["Select", "Create", "Seed"]
+        'game_config': {
+            'title': 'Game Configuration', 
+            'modes': ['Select', 'Create', 'Seed']
         }
     }

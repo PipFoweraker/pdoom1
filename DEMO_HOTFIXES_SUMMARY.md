@@ -7,7 +7,7 @@
 ## Issues Fixed
 
 ### 1. [EMOJI] Competitors Panel Overlap
-- **Problem**: "Competitors:" text covered by left-side action buttons
+- **Problem**: 'Competitors:' text covered by left-side action buttons
 - **Solution**: Moved panel from `w*0.04` to `w*0.30` (30% from left edge)
 - **Result**: Clean separation, no overlap
 
@@ -22,12 +22,12 @@
 - **Result**: Automatically adapts to UI changes, no maintenance required
 
 ### 4. [EMOJI] Opponent Progress Display
-- **Problem**: Generic "???/100" progress, no individual opponent visibility
+- **Problem**: Generic '???/100' progress, no individual opponent visibility
 - **Solution**: Show individual scouted opponents with their specific progress
-- **Result**: "Opponents: CompanyA: 45 | CompanyB: ??" - visceral sense of competition
+- **Result**: 'Opponents: CompanyA: 45 | CompanyB: ??' - visceral sense of competition
 
 ### 5. [EMOJI] Action Menu Consolidation
-- **Problem**: "Refresh Researchers" cluttered main UI, "Buy Compute" should be in Infrastructure
+- **Problem**: 'Refresh Researchers' cluttered main UI, 'Buy Compute' should be in Infrastructure
 - **Solution**: Removed standalone actions, integrated into appropriate submenus
 - **Result**: Cleaner main UI (11->9 actions), logical grouping
 

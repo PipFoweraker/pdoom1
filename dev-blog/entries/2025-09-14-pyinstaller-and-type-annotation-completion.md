@@ -1,9 +1,9 @@
 ---
-title: "PyInstaller Distribution & Major Type Annotation Milestone"
-date: "2025-09-14"
-tags: ["distribution", "type-annotations", "pyinstaller", "infrastructure"]
-summary: "Successfully merged PyInstaller v0.5.0 distribution system and completed systematic type annotations for game_state.py and actions.py"
-commit: "8eccc76"
+title: 'PyInstaller Distribution & Major Type Annotation Milestone'
+date: '2025-09-14'
+tags: ['distribution', 'type-annotations', 'pyinstaller', 'infrastructure']
+summary: 'Successfully merged PyInstaller v0.5.0 distribution system and completed systematic type annotations for game_state.py and actions.py'
+commit: '8eccc76'
 ---
 
 # PyInstaller Distribution & Major Type Annotation Milestone
@@ -61,11 +61,11 @@ if TYPE_CHECKING:
 
 # Consistent action function pattern
 def execute_fundraising_action(gs: 'GameState') -> None:
-    """Execute enhanced fundraising action using economic cycles system."""
+    '''Execute enhanced fundraising action using economic cycles system.'''
     
 # Method annotation with complex return types
 def select_employee_subtype(self, subtype_id: str) -> Tuple[bool, str]:
-    """Handle player selection of an employee subtype."""
+    '''Handle player selection of an employee subtype.'''
 ```
 
 ### Testing Strategy

@@ -1,7 +1,7 @@
 # LIVE SESSION: Consolidated Research Actions
 
 ## Issue Summary
-Combine "Safety Research" and "Governance Research" into a single "Research" action with submenu options, including quality trade-offs and strategic choices.
+Combine 'Safety Research' and 'Governance Research' into a single 'Research' action with submenu options, including quality trade-offs and strategic choices.
 
 ## Current State
 - Safety Research and Governance Research are separate actions
@@ -11,27 +11,27 @@ Combine "Safety Research" and "Governance Research" into a single "Research" act
 ## Proposed Research Menu Structure
 
 ### 1. Safety Research
-- **Description**: "Reduce AI risk through technical safety research"
+- **Description**: 'Reduce AI risk through technical safety research'
 - **Mechanics**: Doom reduction, reputation gain, existing quality system
 - **Focus**: Technical alignment, safety techniques
 
 ### 2. Governance Research  
-- **Description**: "Policy and governance approaches to AI safety"
+- **Description**: 'Policy and governance approaches to AI safety'
 - **Mechanics**: Different balance of doom/reputation/political influence
 - **Focus**: Regulatory frameworks, policy development
 
 ### 3. Quick Research
-- **Description**: "Fast research with lower quality standards"
+- **Description**: 'Fast research with lower quality standards'
 - **Mechanics**: Lower cost, faster results, quality debt accumulation
 - **Trade-off**: Speed vs long-term research debt
 
 ### 4. Thorough Research
-- **Description**: "High-quality research with rigorous standards"  
+- **Description**: 'High-quality research with rigorous standards'  
 - **Mechanics**: Higher cost, better results, builds research reputation
 - **Trade-off**: Cost vs quality and long-term benefits
 
 ### 5. Collaborative Research
-- **Description**: "Partner with other labs for shared research"
+- **Description**: 'Partner with other labs for shared research'
 - **Mechanics**: Cost sharing, relationship building, knowledge exchange
 - **Trade-off**: Shared benefits vs independent control
 
@@ -56,38 +56,38 @@ def get_research_submenu_options(game_state):
     
     # Core research types - always available
     options.append({
-        "name": "Safety Research",
-        "desc": f"Technical AI safety research {get_quality_description_suffix(gs)}",
-        "action": "safety_research"
+        'name': 'Safety Research',
+        'desc': f'Technical AI safety research {get_quality_description_suffix(gs)}',
+        'action': 'safety_research'
     })
     
     options.append({
-        "name": "Governance Research", 
-        "desc": f"Policy and governance research {get_quality_description_suffix(gs)}",
-        "action": "governance_research"
+        'name': 'Governance Research', 
+        'desc': f'Policy and governance research {get_quality_description_suffix(gs)}',
+        'action': 'governance_research'
     })
     
     # Quality-based variations
     if game_state.money >= 60:  # Can afford thorough research
         options.append({
-            "name": "Thorough Research",
-            "desc": "High-quality research (higher cost, better results)",
-            "action": "thorough_research"
+            'name': 'Thorough Research',
+            'desc': 'High-quality research (higher cost, better results)',
+            'action': 'thorough_research'
         })
     
     if game_state.turn >= 5:  # Unlocked after establishing lab
         options.append({
-            "name": "Quick Research",
-            "desc": "Fast research (lower cost, quality debt risk)", 
-            "action": "quick_research"
+            'name': 'Quick Research',
+            'desc': 'Fast research (lower cost, quality debt risk)', 
+            'action': 'quick_research'
         })
     
     # Advanced options
     if hasattr(game_state, 'collaboration_unlocked'):
         options.append({
-            "name": "Collaborative Research",
-            "desc": "Partner research (shared costs and benefits)",
-            "action": "collaborative_research"
+            'name': 'Collaborative Research',
+            'desc': 'Partner research (shared costs and benefits)',
+            'action': 'collaborative_research'
         })
     
     return options
@@ -102,7 +102,7 @@ def get_research_submenu_options(game_state):
 - UI files (add research submenu interface)
 
 ## Acceptance Criteria
-- [ ] Single "Research" action opens submenu
+- [ ] Single 'Research' action opens submenu
 - [ ] 4+ research options with distinct strategies  
 - [ ] Quality trade-offs prominently featured
 - [ ] Integration with existing research quality system

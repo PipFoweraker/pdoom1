@@ -1,9 +1,9 @@
-"""
+'''
 Test module for menu system refactoring.
 
 Tests the extracted menu handling functionality to ensure
 the refactoring doesn't break existing behavior.
-"""
+'''
 
 import unittest
 import pygame
@@ -14,15 +14,15 @@ from src.ui.menu_handlers.menu_system import (
 
 
 class TestMenuSystemRefactoring(unittest.TestCase):
-    """Test cases for the refactored menu system."""
+    '''Test cases for the refactored menu system.'''
     
     def setUp(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         self.nav_manager = NavigationManager()
         pygame.init()  # Initialize pygame for key constants
     
     def test_navigation_manager(self):
-        """Test navigation stack management."""
+        '''Test navigation stack management.'''
         # Initial state
         self.assertEqual(self.nav_manager.get_depth(), 0)
         
@@ -41,7 +41,7 @@ class TestMenuSystemRefactoring(unittest.TestCase):
         self.assertEqual(same_state, 'main_menu')
     
     def test_weekly_seed_generation(self):
-        """Test weekly seed generation."""
+        '''Test weekly seed generation.'''
         seed = get_weekly_seed()
         
         # Should be a string with year and week
@@ -50,7 +50,7 @@ class TestMenuSystemRefactoring(unittest.TestCase):
         self.assertTrue(seed.startswith('2025'))  # Current year
     
     def test_menu_click_handler(self):
-        """Test menu click detection."""
+        '''Test menu click detection.'''
         menu_items = ['Start Game', 'Settings', 'Exit']
         
         # Test valid click (approximate center of first button)
@@ -73,7 +73,7 @@ class TestMenuSystemRefactoring(unittest.TestCase):
         self.assertEqual(result['action'], 'none')
     
     def test_menu_keyboard_handler(self):
-        """Test keyboard navigation."""
+        '''Test keyboard navigation.'''
         menu_items = ['Start Game', 'Settings', 'Exit']
         
         # Test down arrow
@@ -97,12 +97,12 @@ class TestMenuSystemRefactoring(unittest.TestCase):
         self.assertEqual(result['index'], 1)
     
     def test_load_markdown_file_error_handling(self):
-        """Test markdown file loading with non-existent file."""
+        '''Test markdown file loading with non-existent file.'''
         content = load_markdown_file('nonexistent_file.md')
         self.assertIn('Could not load', content)
     
     def tearDown(self):
-        """Clean up after tests."""
+        '''Clean up after tests.'''
         pygame.quit()
 
 

@@ -1,9 +1,9 @@
-"""
+'''
 Window and panel components with headers for P(Doom) UI.
 
 Provides reusable window and panel components including those with draggable headers.
 Replaces dynamic imports of draw_window_with_header function.
-"""
+'''
 
 import pygame
 from typing import Tuple, Optional
@@ -29,7 +29,7 @@ def draw_window_with_header(screen: pygame.Surface,
                           content: Optional[str] = None,
                           minimized: bool = False,
                           font: Optional[pygame.font.Font] = None) -> Tuple[pygame.Rect, Optional[pygame.Rect]]:
-    """
+    '''
     Draw a window with a header and optional minimize button.
     
     Maintains compatibility with legacy draw_window_with_header function signature.
@@ -44,7 +44,7 @@ def draw_window_with_header(screen: pygame.Surface,
         
     Returns:
         Tuple of (header_rect, minimize_button_rect or None)
-    """
+    '''
     x, y, width, height = rect.x, rect.y, rect.width, rect.height
     
     if font is None:
@@ -118,7 +118,7 @@ def draw_window_with_header_positioned(screen: pygame.Surface,
                                      title: str, 
                                      minimizable: bool = True,
                                      header_height: Optional[int] = None) -> Tuple[pygame.Rect, Optional[pygame.Rect]]:
-    """
+    '''
     Draw a window with a header and optional minimize button using position parameters.
     
     Args:
@@ -131,7 +131,7 @@ def draw_window_with_header_positioned(screen: pygame.Surface,
         
     Returns:
         Tuple of (header_rect, minimize_button_rect or None)
-    """
+    '''
     if header_height is None:
         header_height = int(screen.get_height() * 0.04)
     
@@ -193,7 +193,7 @@ def draw_panel(screen: pygame.Surface,
                border_colour: Tuple[int, int, int] = BUTTON_NORMAL_BORDER,
                bg_colour: Tuple[int, int, int] = BACKGROUND_COLOUR,
                border_width: int = 2) -> pygame.Rect:
-    """
+    '''
     Draw a simple panel with background and border.
     
     Args:
@@ -206,7 +206,7 @@ def draw_panel(screen: pygame.Surface,
         
     Returns:
         The panel rectangle
-    """
+    '''
     panel_rect = pygame.Rect(x, y, width, height)
     pygame.draw.rect(screen, bg_colour, panel_rect)
     pygame.draw.rect(screen, border_colour, panel_rect, border_width)
@@ -216,14 +216,14 @@ def draw_panel(screen: pygame.Surface,
 def draw_dialog_background(screen: pygame.Surface,
                           dialog_rect: pygame.Rect,
                           alpha: int = 128) -> None:
-    """
+    '''
     Draw a semi-transparent background for modal dialogs.
     
     Args:
         screen: The surface to draw on
         dialog_rect: The dialog rectangle to leave uncovered
         alpha: Transparency level (0-255)
-    """
+    '''
     # Create semi-transparent overlay
     overlay = pygame.Surface(screen.get_size())
     overlay.set_alpha(alpha)
@@ -237,7 +237,7 @@ def draw_bordered_rect(screen: pygame.Surface,
                       border_colour: Tuple[int, int, int],
                       border_width: int = 1,
                       corner_radius: int = 0) -> None:
-    """
+    '''
     Draw a rectangle with background and border.
     
     Args:
@@ -247,7 +247,7 @@ def draw_bordered_rect(screen: pygame.Surface,
         border_colour: Border colour
         border_width: Border thickness
         corner_radius: Corner radius for rounded rectangles
-    """
+    '''
     if corner_radius > 0:
         pygame.draw.rect(screen, bg_colour, rect, border_radius=corner_radius)
         pygame.draw.rect(screen, border_colour, rect, border_width, border_radius=corner_radius)

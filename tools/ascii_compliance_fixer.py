@@ -1,25 +1,25 @@
-"""
+'''
 ASCII compliance fixer for P(Doom) codebase.
 
 Automatically detects and fixes non-ASCII characters in Python files,
 replacing them with ASCII-compatible alternatives.
 
 Part of internal polish phase to improve code quality and compliance.
-"""
+'''
 
 import os
 from typing import Dict, List, Tuple
 
 
 class ASCIIComplianceFixer:
-    """Fixes non-ASCII characters in Python source files."""
+    '''Fixes non-ASCII characters in Python source files.'''
     
     # Mapping of common non-ASCII characters to ASCII alternatives
     ASCII_REPLACEMENTS = {
         # Common Unicode quotes
-        '"': '"',  # Left double quotation mark  
-        '"': '"',  # Right double quotation mark
-        "\u2019": "'",  # Right single quotation mark
+        ''': ''',  # Left double quotation mark  
+        ''': ''',  # Right double quotation mark
+        '\u2019': ''',  # Right single quotation mark
         
         # Common Unicode dashes
         '-': '-',  # En dash
@@ -96,18 +96,18 @@ class ASCIIComplianceFixer:
     }
     
     def __init__(self, dry_run: bool = False):
-        """
+        '''
         Initialize the ASCII compliance fixer.
         
         Args:
             dry_run: If True, only report issues without fixing them
-        """
+        '''
         self.dry_run = dry_run
         self.issues_found = []
         self.fixes_applied = []
     
     def find_non_ascii_chars(self, content: str, filename: str) -> List[Tuple[int, str, str]]:
-        """
+        '''
         Find all non-ASCII characters in content.
         
         Args:
@@ -116,7 +116,7 @@ class ASCIIComplianceFixer:
             
         Returns:
             List of (position, character, context) tuples
-        """
+        '''
         issues = []
         
         for i, char in enumerate(content):
@@ -131,7 +131,7 @@ class ASCIIComplianceFixer:
         return issues
     
     def fix_content(self, content: str, filename: str) -> str:
-        """
+        '''
         Fix non-ASCII characters in content.
         
         Args:
@@ -140,7 +140,7 @@ class ASCIIComplianceFixer:
             
         Returns:
             Fixed content with ASCII-compatible characters
-        """
+        '''
         fixed_content = content
         fixes_made = []
         
@@ -161,7 +161,7 @@ class ASCIIComplianceFixer:
                     result.append('#')  # Unknown digit
                 else:
                     result.append('?')  # Unknown symbol
-                self.issues_found.append(f"{filename}: Replaced unknown character '{char}' (ord {ord(char)}) with placeholder")
+                self.issues_found.append(f'{filename}: Replaced unknown character '{char}' (ord {ord(char)}) with placeholder')
             else:
                 result.append(char)
         
@@ -169,14 +169,14 @@ class ASCIIComplianceFixer:
         
         if fixes_made:
             self.fixes_applied.extend([
-                f"{filename}: Replaced '{char}' with '{replacement}' ({count} times)"
+                f'{filename}: Replaced '{char}' with '{replacement}' ({count} times)'
                 for char, replacement, count in fixes_made
             ])
         
         return final_content
     
     def fix_file(self, filepath: str) -> bool:
-        """
+        '''
         Fix a single Python file.
         
         Args:
@@ -184,12 +184,12 @@ class ASCIIComplianceFixer:
             
         Returns:
             True if file was modified, False otherwise
-        """
+        '''
         try:
             with open(filepath, 'r', encoding='utf-8') as f:
                 original_content = f.read()
         except Exception as e:
-            self.issues_found.append(f"Error reading {filepath}: {e}")
+            self.issues_found.append(f'Error reading {filepath}: {e}')
             return False
         
         # Check if file has non-ASCII characters
@@ -203,7 +203,7 @@ class ASCIIComplianceFixer:
         
         if self.dry_run:
             self.issues_found.extend([
-                f"{filepath}:{pos}: Non-ASCII character '{char}' in context: {context}"
+                f'{filepath}:{pos}: Non-ASCII character '{char}' in context: {context}'
                 for pos, char, context in issues
             ])
             return False
@@ -214,11 +214,11 @@ class ASCIIComplianceFixer:
                 f.write(fixed_content)
             return True
         except Exception as e:
-            self.issues_found.append(f"Error writing {filepath}: {e}")
+            self.issues_found.append(f'Error writing {filepath}: {e}')
             return False
     
     def fix_directory(self, directory: str) -> Dict[str, int]:
-        """
+        '''
         Fix all Python files in a directory and its subdirectories.
         
         Args:
@@ -226,7 +226,7 @@ class ASCIIComplianceFixer:
             
         Returns:
             Dictionary with statistics about fixes applied
-        """
+        '''
         stats = {
             'files_scanned': 0,
             'files_with_issues': 0,
@@ -258,24 +258,24 @@ class ASCIIComplianceFixer:
         return stats
     
     def get_report(self) -> str:
-        """Generate a report of issues found and fixes applied."""
+        '''Generate a report of issues found and fixes applied.'''
         report = []
         
         if self.issues_found:
-            report.append("Issues Found:")
+            report.append('Issues Found:')
             for issue in self.issues_found:
-                report.append(f"  - {issue}")
+                report.append(f'  - {issue}')
         
         if self.fixes_applied:
-            report.append("\nFixes Applied:")
+            report.append('\nFixes Applied:')
             for fix in self.fixes_applied:
-                report.append(f"  - {fix}")
+                report.append(f'  - {fix}')
         
-        return '\n'.join(report) if report else "No issues found."
+        return '\n'.join(report) if report else 'No issues found.'
 
 
 def main():
-    """Main function to run ASCII compliance fixes."""
+    '''Main function to run ASCII compliance fixes.'''
     import argparse
     
     parser = argparse.ArgumentParser(description='Fix ASCII compliance issues in Python files')
@@ -287,12 +287,12 @@ def main():
     fixer = ASCIIComplianceFixer(dry_run=args.dry_run)
     stats = fixer.fix_directory(args.directory)
     
-    print(f"ASCII Compliance Report")
-    print(f"=" * 40)
-    print(f"Files scanned: {stats['files_scanned']}")
-    print(f"Files with issues: {stats['files_with_issues']}")
-    print(f"Files fixed: {stats['files_fixed']}")
-    print(f"Total issues: {stats['total_issues']}")
+    print(f'ASCII Compliance Report')
+    print(f'=' * 40)
+    print(f'Files scanned: {stats['files_scanned']}')
+    print(f'Files with issues: {stats['files_with_issues']}')
+    print(f'Files fixed: {stats['files_fixed']}')
+    print(f'Total issues: {stats['total_issues']}')
     print()
     print(fixer.get_report())
 

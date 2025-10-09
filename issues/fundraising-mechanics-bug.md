@@ -1,7 +1,7 @@
 ---
 name: Fundraising Mechanics Issues
 about: Critical gameplay bug affecting investment and fundraising system
-title: "Fundraising and Investment System Issues"
+title: 'Fundraising and Investment System Issues'
 labels: bug, critical, gameplay, economy, hotfix
 assignees: ''
 
@@ -59,7 +59,7 @@ Issues with the fundraising and investment system are affecting players' ability
 # Test fundraising system
 from src.core.game_state import GameState
 gs = GameState('test-fundraising')
-print(f"Starting money: ${gs.money}")
+print(f'Starting money: ${gs.money}')
 # Test fundraising actions and outcomes
 ```
 

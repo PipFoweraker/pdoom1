@@ -1,3 +1,3 @@
-"""
+'''
 Core game engine modules.
-"""
+'''

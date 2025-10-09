@@ -1,4 +1,4 @@
-# P(Doom) v0.7.5 "Extended Gameplay & Architecture Overhaul" - Release Notes
+# P(Doom) v0.7.5 'Extended Gameplay & Architecture Overhaul' - Release Notes
 
 **Release Date**: January 2025  
 **Previous Version**: v0.7.4  

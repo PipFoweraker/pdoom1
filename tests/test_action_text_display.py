@@ -1,4 +1,4 @@
-"""
+'''
 Test for Action List Text Display Issues (#315, #257)
 
 Verifies that text rendering improvements fix the reported issues:
@@ -8,7 +8,7 @@ Verifies that text rendering improvements fix the reported issues:
 4. Good readability in both modes
 
 Run with: python -m pytest tests/test_action_text_display.py -v
-"""
+'''
 
 import unittest
 import os
@@ -28,35 +28,35 @@ class TestActionTextDisplay(unittest.TestCase):
         self.font = pygame.font.SysFont('Consolas', 16)
         
     def test_text_truncation(self):
-        """Test that long text is properly truncated with ellipsis"""
-        long_text = "This is a very long action name that should definitely be truncated"
+        '''Test that long text is properly truncated with ellipsis'''
+        long_text = 'This is a very long action name that should definitely be truncated'
         truncated = truncate_text_for_rect(long_text, self.font, 100)
         
         # Should be truncated and end with ellipsis
         self.assertTrue(len(truncated) < len(long_text))
-        self.assertTrue(truncated.endswith("..."))
+        self.assertTrue(truncated.endswith('...'))
         
         # Truncated text should fit in the specified width
         text_width = self.font.size(truncated)[0]
         self.assertLessEqual(text_width, 100)
         
     def test_optimal_action_text_short_name(self):
-        """Test optimal text for action with short name"""
-        action = {"name": "Buy"}
+        '''Test optimal text for action with short name'''
+        action = {'name': 'Buy'}
         text, font_size = get_optimal_action_text(action, 0, 200)
         
         # Short name should include shortcut key
-        self.assertIn("[", text)
-        self.assertIn("]", text) 
-        self.assertIn("Buy", text)
+        self.assertIn('[', text)
+        self.assertIn(']', text) 
+        self.assertIn('Buy', text)
         
     def test_optimal_action_text_long_name(self):
-        """Test optimal text for action with very long name"""
-        action = {"name": "Conduct Comprehensive Research Into Advanced AI Safety"}
+        '''Test optimal text for action with very long name'''
+        action = {'name': 'Conduct Comprehensive Research Into Advanced AI Safety'}
         text, font_size = get_optimal_action_text(action, 5, 150)  # Small width
         
         # Long name should be truncated
-        self.assertTrue(len(text) < len(action["name"]))
+        self.assertTrue(len(text) < len(action['name']))
         
         # Should fit in specified width
         font = pygame.font.SysFont('Consolas', font_size, bold=True)
@@ -64,17 +64,17 @@ class TestActionTextDisplay(unittest.TestCase):
         self.assertLessEqual(text_width, 150 - 10)  # Account for margin
         
     def test_optimal_action_text_no_shortcut(self):
-        """Test optimal text for action without shortcut (index >= 9)"""
-        action = {"name": "Advanced Action"}
+        '''Test optimal text for action without shortcut (index >= 9)'''
+        action = {'name': 'Advanced Action'}
         text, font_size = get_optimal_action_text(action, 10, 200)  # Index 10, no shortcut
         
         # Should not include bracket notation for shortcut
-        self.assertNotIn("[", text)
-        self.assertNotIn("]", text)
+        self.assertNotIn('[', text)
+        self.assertNotIn(']', text)
         
     def test_compact_text_parameters(self):
-        """Test compact UI text parameters are reasonable"""
-        action = {"name": "Test Action"}
+        '''Test compact UI text parameters are reasonable'''
+        action = {'name': 'Test Action'}
         params = get_optimal_compact_text(action, 0, 60, 30)  # Small button
         
         # Icon and key sizes should be reasonable for small button
@@ -84,7 +84,7 @@ class TestActionTextDisplay(unittest.TestCase):
         self.assertLessEqual(params['key_size'], 15)
         
     def test_ui_renders_without_crash(self):
-        """Test that UI renders without crashing with text fixes"""
+        '''Test that UI renders without crashing with text fixes'''
         game_state = GameState('test-text-display')
         
         # Test tutorial mode
@@ -103,12 +103,12 @@ class TestActionTextDisplay(unittest.TestCase):
         except Exception:
             compact_success = False
             
-        self.assertTrue(tutorial_success, "Tutorial mode should render without crashing")
-        self.assertTrue(compact_success, "Compact mode should render without crashing")
+        self.assertTrue(tutorial_success, 'Tutorial mode should render without crashing')
+        self.assertTrue(compact_success, 'Compact mode should render without crashing')
         
     def test_text_fits_in_small_buttons(self):
-        """Test that text properly handles very small button sizes"""
-        action = {"name": "Research"}
+        '''Test that text properly handles very small button sizes'''
+        action = {'name': 'Research'}
         
         # Very small width - should still produce valid text
         text, font_size = get_optimal_action_text(action, 0, 50)
@@ -117,11 +117,11 @@ class TestActionTextDisplay(unittest.TestCase):
         self.assertGreaterEqual(font_size, 10)  # Should not go below minimum
         
     def test_visual_feedback_text_handling(self):
-        """Test that visual feedback system handles text overflow"""
+        '''Test that visual feedback system handles text overflow'''
         from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle
         
         rect = pygame.Rect(10, 10, 100, 30)  # Small button
-        long_text = "Very Long Button Text That Should Be Handled Properly"
+        long_text = 'Very Long Button Text That Should Be Handled Properly'
         
         # Should not crash with long text
         try:
@@ -130,7 +130,7 @@ class TestActionTextDisplay(unittest.TestCase):
         except Exception:
             success = False
             
-        self.assertTrue(success, "Visual feedback should handle long text without crashing")
+        self.assertTrue(success, 'Visual feedback should handle long text without crashing')
 
 
 if __name__ == '__main__':

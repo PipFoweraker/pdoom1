@@ -1,4 +1,4 @@
-"""
+'''
 Test popup improvements for Action Points Exhausted popup.
 
 Covers:
@@ -6,7 +6,7 @@ Covers:
 - Improved dismissal mechanisms (Escape/Enter keys)
 - Sound feedback for popup open/close/accept
 - Visual feedback improvements (hover effects)
-"""
+'''
 
 import pygame
 import sys
@@ -22,10 +22,10 @@ from src.services.sound_manager import SoundManager
 
 
 class TestActionPointsPopupGating:
-    """Test that action points popup is properly gated."""
+    '''Test that action points popup is properly gated.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         # Initialize pygame for testing
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
@@ -40,7 +40,7 @@ class TestActionPointsPopupGating:
         main.first_time_help_close_button = None
     
     def test_popup_not_shown_with_full_action_points(self):
-        """Test that popup doesn't show when player has action points."""
+        '''Test that popup doesn't show when player has action points.'''
         # Create game state with full action points
         game_state = GameState(seed=12345)
         game_state.action_points = 3  # Full action points
@@ -52,7 +52,7 @@ class TestActionPointsPopupGating:
         assert not should_show
     
     def test_popup_shown_with_zero_action_points(self):
-        """Test that popup shows when player has zero action points."""
+        '''Test that popup shows when player has zero action points.'''
         # Create game state with zero action points
         game_state = GameState(seed=12345)
         game_state.action_points = 0  # Exhausted action points
@@ -64,7 +64,7 @@ class TestActionPointsPopupGating:
         assert should_show
     
     def test_popup_not_shown_after_first_time(self):
-        """Test that popup doesn't show after it's been seen once."""
+        '''Test that popup doesn't show after it's been seen once.'''
         # Mark mechanic as already seen
         onboarding.seen_mechanics.add('action_points_exhausted')
         
@@ -80,10 +80,10 @@ class TestActionPointsPopupGating:
 
 
 class TestPopupDismissal:
-    """Test popup dismissal mechanisms."""
+    '''Test popup dismissal mechanisms.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
         
@@ -99,13 +99,13 @@ class TestPopupDismissal:
         main.game_state.sound_manager = SoundManager()
     
     def teardown_method(self):
-        """Clean up after test."""
+        '''Clean up after test.'''
         main.first_time_help_content = None
         main.first_time_help_close_button = None
         main.game_state = None
     
     def test_escape_key_dismissal(self):
-        """Test that Escape key dismisses popup."""
+        '''Test that Escape key dismisses popup.'''
         # Simulate escape key press
         event = type('Event', (), {})()
         event.key = pygame.K_ESCAPE
@@ -123,7 +123,7 @@ class TestPopupDismissal:
         assert main.first_time_help_close_button is None
     
     def test_enter_key_dismissal(self):
-        """Test that Enter key dismisses popup."""
+        '''Test that Enter key dismisses popup.'''
         # Initially popup should be present
         assert main.first_time_help_content is not None
         
@@ -137,7 +137,7 @@ class TestPopupDismissal:
         assert main.first_time_help_close_button is None
     
     def test_close_button_click_dismissal(self):
-        """Test that clicking close button dismisses popup."""
+        '''Test that clicking close button dismisses popup.'''
         # Initially popup should be present
         assert main.first_time_help_content is not None
         
@@ -156,17 +156,17 @@ class TestPopupDismissal:
 
 
 class TestPopupSounds:
-    """Test popup sound feedback."""
+    '''Test popup sound feedback.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
         
         self.sound_manager = SoundManager()
     
     def test_popup_sounds_created(self):
-        """Test that popup sounds are created in sound manager."""
+        '''Test that popup sounds are created in sound manager.'''
         # Check that popup sounds exist
         expected_sounds = ['popup_open', 'popup_close', 'popup_accept']
         
@@ -175,7 +175,7 @@ class TestPopupSounds:
             assert sound_name in self.sound_manager.sound_toggles
     
     def test_play_sound_method_exists(self):
-        """Test that generic play_sound method exists."""
+        '''Test that generic play_sound method exists.'''
         # Should not raise AttributeError
         assert hasattr(self.sound_manager, 'play_sound')
         
@@ -183,7 +183,7 @@ class TestPopupSounds:
         assert callable(self.sound_manager.play_sound)
     
     def test_sound_toggle_functionality(self):
-        """Test that individual sound toggles work."""
+        '''Test that individual sound toggles work.'''
         # Test popup sound toggles
         popup_sounds = ['popup_open', 'popup_close', 'popup_accept']
         
@@ -201,15 +201,15 @@ class TestPopupSounds:
 
 
 class TestPopupVisualFeedback:
-    """Test popup visual feedback improvements."""
+    '''Test popup visual feedback improvements.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         self.screen = pygame.display.set_mode((800, 600), pygame.NOFRAME)
     
     def test_draw_first_time_help_with_mouse_pos(self):
-        """Test that draw function accepts mouse position parameter."""
+        '''Test that draw function accepts mouse position parameter.'''
         from ui import draw_first_time_help
         
         help_content = {
@@ -226,7 +226,7 @@ class TestPopupVisualFeedback:
         assert isinstance(close_button_rect, pygame.Rect)
     
     def test_draw_first_time_help_without_mouse_pos(self):
-        """Test that draw function works without mouse position (backward compatibility)."""
+        '''Test that draw function works without mouse position (backward compatibility).'''
         from ui import draw_first_time_help
         
         help_content = {
@@ -242,7 +242,7 @@ class TestPopupVisualFeedback:
         assert isinstance(close_button_rect, pygame.Rect)
     
     def test_popup_has_dismiss_instructions(self):
-        """Test that popup includes dismiss instructions."""
+        '''Test that popup includes dismiss instructions.'''
         from ui import draw_first_time_help
         
         help_content = {
@@ -258,10 +258,10 @@ class TestPopupVisualFeedback:
 
 
 class TestIntegration:
-    """Test integration of popup improvements."""
+    '''Test integration of popup improvements.'''
     
     def setup_method(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         pygame.display.set_mode((800, 600), pygame.NOFRAME)
         
@@ -271,7 +271,7 @@ class TestIntegration:
         main.first_time_help_content = None
     
     def test_full_action_points_exhausted_flow(self):
-        """Test complete flow from action points exhausted to popup dismissal."""
+        '''Test complete flow from action points exhausted to popup dismissal.'''
         # Create game state with zero action points
         game_state = GameState(seed=12345)
         game_state.action_points = 0

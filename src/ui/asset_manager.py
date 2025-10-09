@@ -1,8 +1,8 @@
-"""
+'''
 Asset loading utilities for P(Doom) game assets.
 
 Handles loading and caching of background images, icons, and other visual assets.
-"""
+'''
 
 import pygame
 import os
@@ -10,14 +10,14 @@ from typing import Optional, Dict, Tuple
 
 
 class AssetManager:
-    """Manages loading and caching of game assets."""
+    '''Manages loading and caching of game assets.'''
     
     def __init__(self):
         self._image_cache: Dict[str, pygame.Surface] = {}
         self.assets_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 'assets', 'images')
     
     def load_image(self, filename: str, size: Optional[Tuple[int, int]] = None) -> Optional[pygame.Surface]:
-        """
+        '''
         Load an image from the assets directory.
         
         Args:
@@ -26,8 +26,8 @@ class AssetManager:
             
         Returns:
             pygame.Surface or None if loading fails
-        """
-        cache_key = f"{filename}_{size}" if size else filename
+        '''
+        cache_key = f'{filename}_{size}' if size else filename
         
         if cache_key in self._image_cache:
             return self._image_cache[cache_key]
@@ -35,7 +35,7 @@ class AssetManager:
         try:
             filepath = os.path.join(self.assets_path, filename)
             if not os.path.exists(filepath):
-                print(f"Asset not found: {filepath}")
+                print(f'Asset not found: {filepath}')
                 return None
                 
             image = pygame.image.load(filepath)
@@ -53,11 +53,11 @@ class AssetManager:
             return image
             
         except pygame.error as e:
-            print(f"Failed to load image {filename}: {e}")
+            print(f'Failed to load image {filename}: {e}')
             return None
     
     def get_background_image(self, name: str, screen_size: Tuple[int, int]) -> Optional[pygame.Surface]:
-        """
+        '''
         Get a background image scaled to screen size.
         
         Args:
@@ -66,7 +66,7 @@ class AssetManager:
             
         Returns:
             Scaled background image or None
-        """
+        '''
         filename_map = {
             'cat_throne': '20250915_0948_Doom\'s Cat Throne_simple_compose_01k559ztmqefybe80mbvyqgyvd.png',
             'office_inferno': '20250915_0952_Ominous Office Inferno_remix_01k55a6bc5fkxbq4txbwr8f61m.png',
@@ -75,7 +75,7 @@ class AssetManager:
         
         filename = filename_map.get(name)
         if not filename:
-            print(f"Unknown background: {name}")
+            print(f'Unknown background: {name}')
             return None
             
         return self.load_image(filename, screen_size)
@@ -89,7 +89,7 @@ def draw_text_with_background(screen: pygame.Surface, text: str, font: pygame.fo
                             pos: Tuple[int, int], text_color: Tuple[int, int, int] = (255, 255, 255),
                             bg_color: Tuple[int, int, int, int] = (0, 0, 0, 128), 
                             padding: int = 10) -> pygame.Rect:
-    """
+    '''
     Draw text with a semi-transparent background for better visibility.
     
     Args:
@@ -103,7 +103,7 @@ def draw_text_with_background(screen: pygame.Surface, text: str, font: pygame.fo
         
     Returns:
         Rectangle area that was drawn
-    """
+    '''
     # Render the text
     text_surface = font.render(text, True, text_color)
     text_rect = text_surface.get_rect()

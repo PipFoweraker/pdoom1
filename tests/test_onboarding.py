@@ -1,6 +1,6 @@
-"""
+'''
 Tests for the onboarding and tutorial system.
-"""
+'''
 
 import unittest
 import tempfile
@@ -11,10 +11,10 @@ from src.features.onboarding import OnboardingSystem, ONBOARDING_FILE
 
 
 class TestOnboardingSystem(unittest.TestCase):
-    """Test the onboarding system functionality."""
+    '''Test the onboarding system functionality.'''
     
     def setUp(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         # Use a temporary file for testing
         self.temp_file = tempfile.NamedTemporaryFile(delete=False)
         self.temp_file.close()
@@ -24,13 +24,13 @@ class TestOnboardingSystem(unittest.TestCase):
         OnboardingSystem.__module__ = self.temp_file.name
         
     def tearDown(self):
-        """Clean up test environment."""
+        '''Clean up test environment.'''
         # Remove temporary file
         if os.path.exists(self.temp_file.name):
             os.unlink(self.temp_file.name)
     
     def test_onboarding_initialization(self):
-        """Test that onboarding system initializes correctly."""
+        '''Test that onboarding system initializes correctly.'''
         # Create a fresh instance for testing
         with patch('src.features.onboarding.ONBOARDING_FILE', self.temp_file.name):
             onboarding = OnboardingSystem()
@@ -43,7 +43,7 @@ class TestOnboardingSystem(unittest.TestCase):
             self.assertEqual(len(onboarding.seen_mechanics), 0)
     
     def test_should_show_tutorial(self):
-        """Test tutorial showing logic."""
+        '''Test tutorial showing logic.'''
         with patch('src.features.onboarding.ONBOARDING_FILE', self.temp_file.name):
             onboarding = OnboardingSystem()
             
@@ -60,7 +60,7 @@ class TestOnboardingSystem(unittest.TestCase):
             self.assertFalse(onboarding.should_show_tutorial())
     
     def test_tutorial_progression(self):
-        """Test tutorial step progression."""
+        '''Test tutorial step progression.'''
         with patch('src.features.onboarding.ONBOARDING_FILE', self.temp_file.name):
             onboarding = OnboardingSystem()
             onboarding.start_tutorial()
@@ -88,7 +88,7 @@ class TestOnboardingSystem(unittest.TestCase):
             self.assertFalse(onboarding.is_first_time)
     
     def test_mechanic_help(self):
-        """Test first-time mechanic help system."""
+        '''Test first-time mechanic help system.'''
         with patch('src.features.onboarding.ONBOARDING_FILE', self.temp_file.name):
             onboarding = OnboardingSystem()
             
@@ -107,7 +107,7 @@ class TestOnboardingSystem(unittest.TestCase):
             self.assertFalse(is_first_time)
     
     def test_tutorial_content(self):
-        """Test tutorial content retrieval."""
+        '''Test tutorial content retrieval.'''
         onboarding = OnboardingSystem()
         
         # Test welcome content
@@ -121,7 +121,7 @@ class TestOnboardingSystem(unittest.TestCase):
         self.assertIsNone(complete_content['next_step'])
     
     def test_mechanic_help_content(self):
-        """Test mechanic help content retrieval."""
+        '''Test mechanic help content retrieval.'''
         onboarding = OnboardingSystem()
         
         # Test staff hire help
@@ -135,21 +135,21 @@ class TestOnboardingSystem(unittest.TestCase):
         self.assertIsNone(no_help)
     
     def test_tooltip_system(self):
-        """Test tooltip management."""
+        '''Test tooltip management.'''
         onboarding = OnboardingSystem()
         
         # Add tooltips
-        onboarding.add_tooltip("Test tooltip 1", priority=1)
-        onboarding.add_tooltip("Test tooltip 2", priority=3)
-        onboarding.add_tooltip("Test tooltip 3", priority=2)
+        onboarding.add_tooltip('Test tooltip 1', priority=1)
+        onboarding.add_tooltip('Test tooltip 2', priority=3)
+        onboarding.add_tooltip('Test tooltip 3', priority=2)
         
         # Should return highest priority first
         tooltip = onboarding.get_next_tooltip()
-        self.assertEqual(tooltip, "Test tooltip 2")
+        self.assertEqual(tooltip, 'Test tooltip 2')
         
         # Next should be second highest
         tooltip = onboarding.get_next_tooltip()
-        self.assertEqual(tooltip, "Test tooltip 3")
+        self.assertEqual(tooltip, 'Test tooltip 3')
         
         # Clear tooltips
         onboarding.clear_tooltips()
@@ -158,10 +158,10 @@ class TestOnboardingSystem(unittest.TestCase):
 
 
 class TestOnboardingIntegration(unittest.TestCase):
-    """Test onboarding integration with game systems."""
+    '''Test onboarding integration with game systems.'''
     
     def test_onboarding_file_operations(self):
-        """Test onboarding file save/load operations."""
+        '''Test onboarding file save/load operations.'''
         # Create temporary onboarding system
         with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.json') as temp_file:
             temp_path = temp_file.name

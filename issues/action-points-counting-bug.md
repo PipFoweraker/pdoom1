@@ -1,7 +1,7 @@
 ---
 name: Action Points Counting Bug
 about: Critical gameplay bug affecting action point system
-title: "Action Points Not Counting Correctly"
+title: 'Action Points Not Counting Correctly'
 labels: bug, critical, gameplay, hotfix
 assignees: ''
 
@@ -59,7 +59,7 @@ Action points are not counting correctly, causing confusion about available acti
 # Debug action points system
 from src.core.game_state import GameState
 gs = GameState('test-action-points')
-print(f"Starting AP: {gs.action_points}")
+print(f'Starting AP: {gs.action_points}')
 # Test action execution and point consumption
 ```
 

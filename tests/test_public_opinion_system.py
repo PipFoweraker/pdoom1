@@ -1,9 +1,9 @@
-"""
+'''
 Tests for the Public Opinion & Media System.
 
 Tests the core functionality of public opinion tracking, media stories,
 and their integration with the game state.
-"""
+'''
 
 import unittest
 from unittest.mock import Mock, patch
@@ -17,14 +17,14 @@ from src.features.media_system import MediaSystem
 
 
 class TestPublicOpinion(unittest.TestCase):
-    """Test the PublicOpinion class."""
+    '''Test the PublicOpinion class.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         self.opinion = PublicOpinion()
     
     def test_opinion_initialization(self):
-        """Test that public opinion initializes with correct default values."""
+        '''Test that public opinion initializes with correct default values.'''
         self.assertEqual(self.opinion.general_sentiment, 50.0)
         self.assertEqual(self.opinion.trust_in_player, 50.0)
         self.assertEqual(self.opinion.ai_safety_awareness, 20.0)
@@ -34,7 +34,7 @@ class TestPublicOpinion(unittest.TestCase):
         self.assertEqual(len(self.opinion.active_stories), 0)
     
     def test_get_set_opinion(self):
-        """Test getting and setting opinion values."""
+        '''Test getting and setting opinion values.'''
         # Test getting values
         self.assertEqual(self.opinion.get_opinion(OpinionCategory.GENERAL_SENTIMENT), 50.0)
         
@@ -50,12 +50,12 @@ class TestPublicOpinion(unittest.TestCase):
         self.assertEqual(self.opinion.general_sentiment, 0.0)
     
     def test_opinion_modifiers(self):
-        """Test adding and applying opinion modifiers."""
+        '''Test adding and applying opinion modifiers.'''
         modifier = OpinionModifier(
             category=OpinionCategory.TRUST_IN_PLAYER,
             change=10.0,
             duration=2,
-            source="Test Action"
+            source='Test Action'
         )
         
         self.opinion.add_modifier(modifier)
@@ -74,9 +74,9 @@ class TestPublicOpinion(unittest.TestCase):
         self.assertEqual(len(self.opinion.active_modifiers), 0)
     
     def test_media_stories(self):
-        """Test adding and managing media stories."""
+        '''Test adding and managing media stories.'''
         story = MediaStory(
-            headline="Test Lab Achieves Breakthrough",
+            headline='Test Lab Achieves Breakthrough',
             story_type=MediaStoryType.BREAKTHROUGH,
             sentiment_impact={
                 OpinionCategory.GENERAL_SENTIMENT: 5.0,
@@ -107,7 +107,7 @@ class TestPublicOpinion(unittest.TestCase):
         self.assertEqual(len(self.opinion.active_stories), 0)
     
     def test_natural_decay(self):
-        """Test that opinion values naturally decay toward neutral."""
+        '''Test that opinion values naturally decay toward neutral.'''
         # Set extreme values
         self.opinion.general_sentiment = 90.0
         self.opinion.trust_in_player = 10.0
@@ -123,32 +123,32 @@ class TestPublicOpinion(unittest.TestCase):
         self.assertLess(self.opinion.media_attention, 80.0)
     
     def test_trend_calculation(self):
-        """Test opinion trend calculation."""
+        '''Test opinion trend calculation.'''
         # Add some history manually
         self.opinion.opinion_history['trust_in_player'] = [50.0, 55.0, 60.0, 65.0]
         
         trend = self.opinion.get_trend(OpinionCategory.TRUST_IN_PLAYER)
-        self.assertEqual(trend, "rising")
+        self.assertEqual(trend, 'rising')
         
         # Test falling trend
         self.opinion.opinion_history['trust_in_player'] = [65.0, 60.0, 55.0, 50.0]
         trend = self.opinion.get_trend(OpinionCategory.TRUST_IN_PLAYER)
-        self.assertEqual(trend, "falling")
+        self.assertEqual(trend, 'falling')
     
     def test_serialization(self):
-        """Test converting public opinion to/from dictionary."""
+        '''Test converting public opinion to/from dictionary.'''
         # Add some data
         self.opinion.general_sentiment = 65.0
         modifier = OpinionModifier(
             category=OpinionCategory.TRUST_IN_PLAYER,
             change=5.0,
             duration=1,
-            source="Test"
+            source='Test'
         )
         self.opinion.add_modifier(modifier)
         
         story = MediaStory(
-            headline="Test Story",
+            headline='Test Story',
             story_type=MediaStoryType.HUMAN_INTEREST,
             sentiment_impact={OpinionCategory.GENERAL_SENTIMENT: 2.0},
             duration=1,
@@ -164,47 +164,47 @@ class TestPublicOpinion(unittest.TestCase):
         # Check values are preserved (story impact was applied: 65.0 + 2.0 = 67.0)
         self.assertEqual(restored_opinion.general_sentiment, 67.0)
         self.assertEqual(len(restored_opinion.active_stories), 1)
-        self.assertEqual(restored_opinion.active_stories[0].headline, "Test Story")
+        self.assertEqual(restored_opinion.active_stories[0].headline, 'Test Story')
 
 
 class TestMediaStory(unittest.TestCase):
-    """Test the MediaStory class."""
+    '''Test the MediaStory class.'''
     
     def test_story_creation(self):
-        """Test creating a media story."""
+        '''Test creating a media story.'''
         story = MediaStory(
-            headline="AI Lab Makes Discovery",
+            headline='AI Lab Makes Discovery',
             story_type=MediaStoryType.BREAKTHROUGH,
             sentiment_impact={OpinionCategory.GENERAL_SENTIMENT: 5.0},
             duration=3,
             attention_level=30.0,
             created_turn=1,
-            source_lab="Test Lab"
+            source_lab='Test Lab'
         )
         
-        self.assertEqual(story.headline, "AI Lab Makes Discovery")
+        self.assertEqual(story.headline, 'AI Lab Makes Discovery')
         self.assertEqual(story.story_type, MediaStoryType.BREAKTHROUGH)
         self.assertEqual(story.duration, 3)
-        self.assertEqual(story.source_lab, "Test Lab")
+        self.assertEqual(story.source_lab, 'Test Lab')
     
     def test_story_validation(self):
-        """Test story creation validation."""
+        '''Test story creation validation.'''
         # Test empty headline
         with self.assertRaises(ValueError):
-            MediaStory("", MediaStoryType.BREAKTHROUGH, {}, 1, 50.0, 1)
+            MediaStory('', MediaStoryType.BREAKTHROUGH, {}, 1, 50.0, 1)
         
         # Test invalid duration
         with self.assertRaises(ValueError):
-            MediaStory("Test", MediaStoryType.BREAKTHROUGH, {}, 0, 50.0, 1)
+            MediaStory('Test', MediaStoryType.BREAKTHROUGH, {}, 0, 50.0, 1)
         
         # Test invalid attention level
         with self.assertRaises(ValueError):
-            MediaStory("Test", MediaStoryType.BREAKTHROUGH, {}, 1, 150.0, 1)
+            MediaStory('Test', MediaStoryType.BREAKTHROUGH, {}, 1, 150.0, 1)
     
     def test_story_expiration(self):
-        """Test story expiration logic."""
+        '''Test story expiration logic.'''
         story = MediaStory(
-            headline="Test Story",
+            headline='Test Story',
             story_type=MediaStoryType.HUMAN_INTEREST,
             sentiment_impact={},
             duration=2,
@@ -222,10 +222,10 @@ class TestMediaStory(unittest.TestCase):
 
 
 class TestMediaSystem(unittest.TestCase):
-    """Test the MediaSystem class."""
+    '''Test the MediaSystem class.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         self.opinion = PublicOpinion()
         self.media_system = MediaSystem(self.opinion)
         self.mock_game_state = Mock()
@@ -233,10 +233,10 @@ class TestMediaSystem(unittest.TestCase):
         self.mock_game_state.reputation = 50
         self.mock_game_state.action_points = 3
         self.mock_game_state.turn = 1
-        self.mock_game_state.company_name = "Test Lab"
+        self.mock_game_state.company_name = 'Test Lab'
         self.mock_game_state.opponents = [
-            Mock(name="Competitor A"),
-            Mock(name="Competitor B")
+            Mock(name='Competitor A'),
+            Mock(name='Competitor B')
         ]
         # Mock the _add method
         self.mock_game_state._add = Mock()
@@ -246,13 +246,13 @@ class TestMediaSystem(unittest.TestCase):
         self.mock_game_state.public_opinion.active_stories = []
     
     def test_media_system_initialization(self):
-        """Test media system initializes correctly."""
+        '''Test media system initializes correctly.'''
         self.assertIsInstance(self.media_system.public_opinion, PublicOpinion)
         self.assertGreater(len(self.media_system.media_actions), 0)
         self.assertEqual(len(self.media_system.actions_taken_this_turn), 0)
     
     def test_get_available_actions(self):
-        """Test getting available media actions."""
+        '''Test getting available media actions.'''
         # Mock the media_system's hasattr check
         self.mock_game_state.media_system = self.media_system
         
@@ -264,7 +264,7 @@ class TestMediaSystem(unittest.TestCase):
             self.assertTrue(action.can_execute(self.mock_game_state))
     
     def test_press_release_action(self):
-        """Test executing press release action."""
+        '''Test executing press release action.'''
         result = self.media_system.execute_media_action('press_release', self.mock_game_state)
         
         self.assertIsInstance(result, str)
@@ -274,7 +274,7 @@ class TestMediaSystem(unittest.TestCase):
         self.mock_game_state._add.assert_any_call('money', -50000)
     
     def test_exclusive_interview_action(self):
-        """Test executing exclusive interview action."""
+        '''Test executing exclusive interview action.'''
         result = self.media_system.execute_media_action('exclusive_interview', self.mock_game_state)
         
         self.assertIsInstance(result, str)
@@ -284,23 +284,23 @@ class TestMediaSystem(unittest.TestCase):
         self.assertGreater(len(self.opinion.active_stories), 0)
     
     def test_insufficient_funds(self):
-        """Test action execution with insufficient funds."""
+        '''Test action execution with insufficient funds.'''
         self.mock_game_state.money = 1000  # Not enough for press release
         
         result = self.media_system.execute_media_action('press_release', self.mock_game_state)
         
-        self.assertIn("Cannot afford", result)
+        self.assertIn('Cannot afford', result)
         self.assertEqual(len(self.media_system.actions_taken_this_turn), 0)
     
     def test_competitor_story_generation(self):
-        """Test generating stories about competitors."""
+        '''Test generating stories about competitors.'''
         # Mock random to ensure story generation
         with patch('src.services.deterministic_rng.get_rng') as mock_get_rng:
             mock_rng = Mock()
             mock_rng.random.return_value = 0.01  # Force story generation
             mock_get_rng.return_value = mock_rng
             stories = self.media_system.generate_competitor_stories(
-                ["Competitor A", "Competitor B"], 
+                ['Competitor A', 'Competitor B'], 
                 self.mock_game_state.turn
             )
             
@@ -309,7 +309,7 @@ class TestMediaSystem(unittest.TestCase):
             self.assertGreater(len(self.opinion.active_stories), 0)
     
     def test_random_event_generation(self):
-        """Test generating random media events."""
+        '''Test generating random media events.'''
         # Mock random to ensure event generation
         with patch('src.services.deterministic_rng.get_rng') as mock_get_rng:
             mock_rng = Mock()
@@ -322,7 +322,7 @@ class TestMediaSystem(unittest.TestCase):
             self.assertGreater(len(self.opinion.active_stories), 0)
     
     def test_turn_update(self):
-        """Test media system turn update."""
+        '''Test media system turn update.'''
         stories = self.media_system.update_turn(self.mock_game_state)
         
         # Should return list of new stories (even if empty)
@@ -334,61 +334,61 @@ class TestMediaSystem(unittest.TestCase):
 
 
 class TestMediaStoryGeneration(unittest.TestCase):
-    """Test media story generation from actions."""
+    '''Test media story generation from actions.'''
     
     def test_create_story_from_safety_research(self):
-        """Test creating media story from safety research action."""
+        '''Test creating media story from safety research action.'''
         story = create_media_story_from_action(
-            "safety_research", "Test Lab", 5, 3.0
+            'safety_research', 'Test Lab', 5, 3.0
         )
         
         self.assertIsNotNone(story)
         self.assertEqual(story.story_type, MediaStoryType.BREAKTHROUGH)
-        self.assertIn("Test Lab", story.headline)
+        self.assertIn('Test Lab', story.headline)
         self.assertEqual(story.created_turn, 5)
-        self.assertEqual(story.source_lab, "Test Lab")
+        self.assertEqual(story.source_lab, 'Test Lab')
     
     def test_create_story_from_capability_research(self):
-        """Test creating media story from capability research action."""
+        '''Test creating media story from capability research action.'''
         story = create_media_story_from_action(
-            "capability_research", "Research Corp", 10, 2.0
+            'capability_research', 'Research Corp', 10, 2.0
         )
         
         self.assertIsNotNone(story)
         self.assertEqual(story.story_type, MediaStoryType.BREAKTHROUGH)
-        self.assertIn("Research Corp", story.headline)
+        self.assertIn('Research Corp', story.headline)
     
     def test_no_story_for_unknown_action(self):
-        """Test that unknown actions don't generate stories."""
+        '''Test that unknown actions don't generate stories.'''
         story = create_media_story_from_action(
-            "unknown_action", "Test Lab", 1, 1.0
+            'unknown_action', 'Test Lab', 1, 1.0
         )
         
         self.assertIsNone(story)
 
 
 class TestGameStateIntegration(unittest.TestCase):
-    """Test integration with the main game state."""
+    '''Test integration with the main game state.'''
     
     def setUp(self):
-        """Set up test game state."""
-        self.game_state = GameState("test-seed")
+        '''Set up test game state.'''
+        self.game_state = GameState('test-seed')
     
     def test_public_opinion_initialization(self):
-        """Test that public opinion is initialized in game state."""
+        '''Test that public opinion is initialized in game state.'''
         self.assertTrue(hasattr(self.game_state, 'public_opinion'))
         self.assertTrue(hasattr(self.game_state, 'media_system'))
         self.assertIsInstance(self.game_state.public_opinion, PublicOpinion)
         self.assertIsInstance(self.game_state.media_system, MediaSystem)
     
     def test_company_name_set(self):
-        """Test that company name is set for media stories."""
+        '''Test that company name is set for media stories.'''
         self.assertTrue(hasattr(self.game_state, 'company_name'))
         self.assertIsInstance(self.game_state.company_name, str)
         self.assertGreater(len(self.game_state.company_name), 0)
     
     def test_opinion_updates_on_turn_end(self):
-        """Test that public opinion updates when turn ends."""
+        '''Test that public opinion updates when turn ends.'''
         initial_history_length = len(self.game_state.public_opinion.opinion_history['general_sentiment'])
         
         # End a turn
@@ -399,10 +399,10 @@ class TestGameStateIntegration(unittest.TestCase):
         self.assertGreater(new_history_length, initial_history_length)
     
     def test_media_actions_available(self):
-        """Test that media actions are available in the actions list."""
+        '''Test that media actions are available in the actions list.'''
         media_action_names = [
-            "Press Release", "Exclusive Interview", "Damage Control",
-            "Social Media Campaign", "Public Statement"
+            'Press Release', 'Exclusive Interview', 'Damage Control',
+            'Social Media Campaign', 'Public Statement'
         ]
         
         available_actions = [action['name'] for action in self.game_state.actions]
@@ -411,7 +411,7 @@ class TestGameStateIntegration(unittest.TestCase):
             self.assertIn(media_action, available_actions)
     
     def test_research_action_generates_story(self):
-        """Test that research actions can generate media stories."""
+        '''Test that research actions can generate media stories.'''
         # Find a research action
         research_actions = [
             action for action in self.game_state.actions 

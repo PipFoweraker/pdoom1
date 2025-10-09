@@ -218,19 +218,19 @@ Endpoints:
 ```javascript
 // JWT Token Structure
 {
-  "sub": "user_uuid",
-  "pseudonym": "user_pseudonym",
-  "permissions": ["leaderboard_submit", "analytics_opt_in"],
-  "iat": 1234567890,
-  "exp": 1234567890
+  'sub': 'user_uuid',
+  'pseudonym': 'user_pseudonym',
+  'permissions': ['leaderboard_submit', 'analytics_opt_in'],
+  'iat': 1234567890,
+  'exp': 1234567890
 }
 
 // API Request Headers
 {
-  "Authorization": "Bearer {jwt_token}",
-  "Content-Type": "application/json",
-  "X-Game-Version": "v0.4.1",
-  "X-Client-ID": "pdoom1-client"
+  'Authorization': 'Bearer {jwt_token}',
+  'Content-Type': 'application/json',
+  'X-Game-Version': 'v0.4.1',
+  'X-Client-ID': 'pdoom1-client'
 }
 ```
 

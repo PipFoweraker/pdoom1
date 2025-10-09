@@ -1,4 +1,4 @@
-"""
+'''
 UI screens package for P(Doom).
 
 Contains screen rendering modules that handle different game states:
@@ -7,4 +7,4 @@ Contains screen rendering modules that handle different game states:
 - settings.py: Settings and configuration screens
 
 All screens are routed through the UIFacade for consistent management.
-"""
+'''

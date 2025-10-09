@@ -1,9 +1,9 @@
 ---
-title: "Action Button Layout Optimization Hotfix"
-date: "2025-09-15"
-tags: ["hotfix", "ui", "layout", "optimization"]
-summary: "Optimized action button dimensions to improve space utilization and reduce UI clutter"
-commit: "b5a1e6b"
+title: 'Action Button Layout Optimization Hotfix'
+date: '2025-09-15'
+tags: ['hotfix', 'ui', 'layout', 'optimization']
+summary: 'Optimized action button dimensions to improve space utilization and reduce UI clutter'
+commit: 'b5a1e6b'
 ---
 
 # Action Button Layout Optimization Hotfix

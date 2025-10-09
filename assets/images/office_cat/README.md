@@ -20,7 +20,7 @@ The office cat feature is our way of rewarding developers who contribute to P(Do
    - `office_cat_doom.png` - Terrifying doom cat with laser eyes (doom stage 4)
 
 3. **Submission Process:**
-   - Open a GitHub issue with title "Cat Photo Contribution: [Your Name]"
+   - Open a GitHub issue with title 'Cat Photo Contribution: [Your Name]'
    - Attach your cat photo(s)
    - Include a brief description of your cat
    - Tag it with the `cat-photos` label
@@ -29,7 +29,7 @@ The office cat feature is our way of rewarding developers who contribute to P(Do
    - Your cat will appear in the game for all players
    - You'll be credited in the game's credits
    - Your contribution will be documented in the dev blog
-   - Special "Cat Contributor" badge in Discord
+   - Special 'Cat Contributor' badge in Discord
 
 ### Current Cat Photos Needed
 

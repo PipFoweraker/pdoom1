@@ -1,4 +1,4 @@
-"""
+'''
 Menu System Module
 
 Handles all menu rendering functions for P(Doom) UI system.
@@ -11,7 +11,7 @@ Functions:
 - draw_config_menu: Renders configuration selection menu
 - MenuConfig: Configuration class for consolidated menu system
 - draw_consolidated_menu: Unified menu renderer with consistent styling
-"""
+'''
 
 import pygame
 from typing import Dict, Any, Optional, List, Tuple
@@ -20,7 +20,7 @@ from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game
 
 
 class MenuConfig:
-    """Configuration class for consolidated menu system."""
+    '''Configuration class for consolidated menu system.'''
     def __init__(self, 
                  title: str,
                  items: List[str],
@@ -28,20 +28,20 @@ class MenuConfig:
                  subtitle: Optional[str] = None,
                  current_item: Optional[str] = None,
                  show_shortcuts: bool = False,
-                 button_style: str = "normal"):
+                 button_style: str = 'normal'):
         self.title = title
         self.items = items
-        self.instructions = instructions or ["Use arrow keys or mouse to navigate", "Press Enter or click to select", "Press Escape to go back"]
+        self.instructions = instructions or ['Use arrow keys or mouse to navigate', 'Press Enter or click to select', 'Press Escape to go back']
         self.subtitle = subtitle
         self.current_item = current_item  # For highlighting current selection (e.g., config menus)
         self.show_shortcuts = show_shortcuts  # Show keyboard shortcuts on sides
-        self.button_style = button_style  # "normal", "with_descriptions", "toggle"
+        self.button_style = button_style  # 'normal', 'with_descriptions', 'toggle'
 
 
 def draw_consolidated_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, 
                          config: MenuConfig, descriptions: Optional[List[str]] = None,
                          item_states: Optional[List[str]] = None) -> None:
-    """
+    '''
     Consolidated menu renderer that handles all menu types with consistent styling.
     
     Args:
@@ -50,8 +50,8 @@ def draw_consolidated_menu(screen: pygame.Surface, w: int, h: int, selected_item
         selected_item: index of currently selected menu item
         config: MenuConfig object with menu settings
         descriptions: optional list of descriptions for each item (for submenu style)
-        item_states: optional list of state indicators for toggle items (e.g., "ON"/"OFF")
-    """
+        item_states: optional list of state indicators for toggle items (e.g., 'ON'/'OFF')
+    '''
     # Standard menu fonts - consistent across all menus
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
     menu_font = pygame.font.SysFont('Consolas', int(h*0.035))
@@ -99,10 +99,10 @@ def draw_consolidated_menu(screen: pygame.Surface, w: int, h: int, selected_item
         # Append state indicator for toggle items
         display_text = item
         if item_states and i < len(item_states):
-            display_text = f"{item}: {item_states[i]}"
+            display_text = f'{item}: {item_states[i]}'
         
         # Draw button using appropriate style
-        if config.button_style == "with_descriptions" and descriptions:
+        if config.button_style == 'with_descriptions' and descriptions:
             draw_low_poly_button(screen, button_rect, display_text, button_state)
             # Draw description below button
             if i < len(descriptions):
@@ -128,7 +128,7 @@ def draw_consolidated_menu(screen: pygame.Surface, w: int, h: int, selected_item
         left_shortcuts = get_main_menu_shortcuts()
         left_formatted = format_shortcut_list(left_shortcuts)
         
-        left_title_surf = shortcut_font.render("Menu Controls:", True, (160, 160, 160))
+        left_title_surf = shortcut_font.render('Menu Controls:', True, (160, 160, 160))
         left_x = int(w * 0.05)
         left_y = int(h * 0.25)
         screen.blit(left_title_surf, (left_x, left_y))
@@ -141,7 +141,7 @@ def draw_consolidated_menu(screen: pygame.Surface, w: int, h: int, selected_item
         right_shortcuts = get_in_game_shortcuts()[:4]
         right_formatted = format_shortcut_list(right_shortcuts)
         
-        right_title_surf = shortcut_font.render("In-Game Controls:", True, (160, 160, 160))
+        right_title_surf = shortcut_font.render('In-Game Controls:', True, (160, 160, 160))
         right_x = int(w * 0.75)
         right_y = int(h * 0.25)
         screen.blit(right_title_surf, (right_x, right_y))
@@ -152,7 +152,7 @@ def draw_consolidated_menu(screen: pygame.Surface, w: int, h: int, selected_item
 
 
 def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, sound_manager: Optional[Any] = None) -> None:
-    """
+    '''
     Draw the main menu with vertically stacked, center-oriented buttons.
     
     Args:
@@ -171,32 +171,32 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     - Responsive sizing based on screen dimensions
     - Clear usage instructions at bottom
     - Sound toggle button in bottom right (if sound_manager provided)
-    """
+    '''
     # Fonts for menu - scale based on screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.08), bold=True)
     pygame.font.SysFont('Consolas', int(h*0.035))
     
     # Title at top
-    title_surf = title_font.render("P(Doom)", True, (255, 255, 255))
+    title_surf = title_font.render('P(Doom)', True, (255, 255, 255))
     title_x = w // 2 - title_surf.get_width() // 2
     title_y = int(h * 0.15)
     screen.blit(title_surf, (title_x, title_y))
     
     # Subtitle
     subtitle_font = pygame.font.SysFont('Consolas', int(h*0.025))
-    subtitle_surf = subtitle_font.render("Bureaucracy Strategy Prototype", True, (200, 200, 200))
+    subtitle_surf = subtitle_font.render('Bureaucracy Strategy Prototype', True, (200, 200, 200))
     subtitle_x = w // 2 - subtitle_surf.get_width() // 2
     subtitle_y = title_y + title_surf.get_height() + 10
     screen.blit(subtitle_surf, (subtitle_x, subtitle_y))
     
     # Menu items
     menu_items = [
-        "Launch Lab",
-        "Launch with Custom Seed", 
-        "Settings",
-        "Player Guide",
-        "View Leaderboard",
-        "Exit"
+        'Launch Lab',
+        'Launch with Custom Seed', 
+        'Settings',
+        'Player Guide',
+        'View Leaderboard',
+        'Exit'
     ]
     
     # Button layout
@@ -226,16 +226,16 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     # Instructions at bottom  
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
     instructions = [
-        "Use mouse or arrow keys to navigate",
-        "Press Enter or click to select", 
-        "Press Escape to quit"
+        'Use mouse or arrow keys to navigate',
+        'Press Enter or click to select', 
+        'Press Escape to quit'
     ]
     
     # Add DEV MODE specific instructions if enabled
     try:
         from src.services.dev_mode import is_dev_mode_enabled
         if is_dev_mode_enabled():
-            instructions.append("F10 to toggle DEV MODE")
+            instructions.append('F10 to toggle DEV MODE')
     except ImportError:
         pass
     
@@ -252,7 +252,7 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     left_shortcuts = get_main_menu_shortcuts()
     left_formatted = format_shortcut_list(left_shortcuts)
     
-    left_title_surf = shortcut_font.render("Menu Controls:", True, (160, 160, 160))
+    left_title_surf = shortcut_font.render('Menu Controls:', True, (160, 160, 160))
     left_x = int(w * 0.05)
     left_y = int(h * 0.25)
     screen.blit(left_title_surf, (left_x, left_y))
@@ -265,7 +265,7 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     right_shortcuts = get_in_game_shortcuts()[:4]  # Show first 4 to fit space
     right_formatted = format_shortcut_list(right_shortcuts)
     
-    right_title_surf = shortcut_font.render("In-Game Controls:", True, (160, 160, 160))
+    right_title_surf = shortcut_font.render('In-Game Controls:', True, (160, 160, 160))
     right_x = int(w * 0.75)
     right_y = int(h * 0.25)
     screen.blit(right_title_surf, (right_x, right_y))
@@ -288,7 +288,7 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
 
 
 def draw_start_game_submenu(screen: pygame.Surface, w: int, h: int, selected_item: int) -> None:
-    """Draw the start game submenu with different game launch options."""
+    '''Draw the start game submenu with different game launch options.'''
     # Clear background
     screen.fill((50, 50, 50))
     
@@ -298,13 +298,13 @@ def draw_start_game_submenu(screen: pygame.Surface, w: int, h: int, selected_ite
     desc_font = pygame.font.SysFont('Consolas', int(h*0.022))
     
     # Title
-    title_surf = title_font.render("Start Game", True, (255, 255, 255))
+    title_surf = title_font.render('Start Game', True, (255, 255, 255))
     title_x = w // 2 - title_surf.get_width() // 2
     title_y = int(h * 0.15)
     screen.blit(title_surf, (title_x, title_y))
     
     # Subtitle
-    subtitle_text = "Choose your starting configuration:"
+    subtitle_text = 'Choose your starting configuration:'
     subtitle_surf = desc_font.render(subtitle_text, True, (200, 200, 200))
     subtitle_x = w // 2 - subtitle_surf.get_width() // 2
     subtitle_y = title_y + title_surf.get_height() + 10
@@ -312,10 +312,10 @@ def draw_start_game_submenu(screen: pygame.Surface, w: int, h: int, selected_ite
     
     # Menu items with descriptions
     items_with_desc = [
-        ("Basic New Game (Default Global Seed)", "Quick start with weekly seed - zero configuration"),
-        ("Configure Game / Custom Seed", "Choose your own seed for reproducible games"), 
-        ("Config Settings", "Modify game difficulty and starting resources"),
-        ("Game Options", "Audio, display, and accessibility settings")
+        ('Basic New Game (Default Global Seed)', 'Quick start with weekly seed - zero configuration'),
+        ('Configure Game / Custom Seed', 'Choose your own seed for reproducible games'), 
+        ('Config Settings', 'Modify game difficulty and starting resources'),
+        ('Game Options', 'Audio, display, and accessibility settings')
     ]
     
     # Button layout
@@ -349,8 +349,8 @@ def draw_start_game_submenu(screen: pygame.Surface, w: int, h: int, selected_ite
     # Instructions
     inst_font = pygame.font.SysFont('Consolas', int(h*0.02))
     instructions = [
-        "Use arrow keys or mouse to navigate",
-        "Press Enter or click to select ? Press Escape to go back"
+        'Use arrow keys or mouse to navigate',
+        'Press Enter or click to select ? Press Escape to go back'
     ]
     
     inst_y = int(h * 0.85)
@@ -362,7 +362,7 @@ def draw_start_game_submenu(screen: pygame.Surface, w: int, h: int, selected_ite
 
 
 def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, game_state: Optional[Any] = None) -> None:
-    """
+    '''
     Draw the sounds options menu with toggles for individual sound effects.
     
     Args:
@@ -376,13 +376,13 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     - Individual sound effect toggles (money spend, AP spend, blob, error beep)
     - Back button to return to main menu
     - Responsive sizing and keyboard navigation
-    """
+    '''
     # Fonts for menu - scale based on screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
     pygame.font.SysFont('Consolas', int(h*0.03))
     
     # Title at top
-    title_surf = title_font.render("Sound Options", True, (255, 255, 255))
+    title_surf = title_font.render('Sound Options', True, (255, 255, 255))
     title_x = w // 2 - title_surf.get_width() // 2
     title_y = int(h * 0.15)
     screen.blit(title_surf, (title_x, title_y))
@@ -396,12 +396,12 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     master_enabled = sound_manager.is_enabled() if sound_manager else True
     
     menu_items = [
-        f"Master Sound: {'ON' if master_enabled else 'OFF'}",
-        f"Money Spend Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('money_spend')) else 'OFF'}",
-        f"Action Points Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('ap_spend')) else 'OFF'}",
-        f"Employee Hire Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('blob')) else 'OFF'}",
-        f"Error Beep Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('error_beep')) else 'OFF'}",
-        "Back to Main Menu"
+        f'Master Sound: {'ON' if master_enabled else 'OFF'}',
+        f'Money Spend Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('money_spend')) else 'OFF'}',
+        f'Action Points Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('ap_spend')) else 'OFF'}',
+        f'Employee Hire Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('blob')) else 'OFF'}',
+        f'Error Beep Sound: {'ON' if (sound_manager and sound_manager.is_sound_enabled('error_beep')) else 'OFF'}',
+        'Back to Main Menu'
     ]
     
     # Button layout
@@ -431,8 +431,8 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     # Instructions at bottom
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.02))
     instructions = [
-        "Use arrow keys to navigate, Enter to toggle",
-        "Press Escape or select Back to return to Main Menu"
+        'Use arrow keys to navigate, Enter to toggle',
+        'Press Escape or select Back to return to Main Menu'
     ]
     
     for i, instruction in enumerate(instructions):
@@ -443,7 +443,7 @@ def draw_sounds_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
 
 
 def draw_config_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, configs: List[str], current_config_name: str) -> None:
-    """
+    '''
     Draw the configuration selection menu showing available game configurations.
     
     Args:
@@ -452,27 +452,27 @@ def draw_config_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
         selected_item: index of currently selected menu item
         configs: list of available configuration names
         current_config_name: name of currently selected configuration
-    """
+    '''
     # Fonts for menu - scale based on screen size
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
     pygame.font.SysFont('Consolas', int(h*0.03))
     desc_font = pygame.font.SysFont('Consolas', int(h*0.02))
     
     # Title at top
-    title_surf = title_font.render("Configuration Selection", True, (255, 255, 255))
+    title_surf = title_font.render('Configuration Selection', True, (255, 255, 255))
     title_x = w // 2 - title_surf.get_width() // 2
     title_y = int(h * 0.12)
     screen.blit(title_surf, (title_x, title_y))
     
     # Subtitle showing current config
-    subtitle_text = f"Current: {current_config_name}"
+    subtitle_text = f'Current: {current_config_name}'
     subtitle_surf = desc_font.render(subtitle_text, True, (200, 200, 200))
     subtitle_x = w // 2 - subtitle_surf.get_width() // 2
     subtitle_y = title_y + title_surf.get_height() + 10
     screen.blit(subtitle_surf, (subtitle_x, subtitle_y))
     
     # Menu items - configs plus back option
-    menu_items = configs + ["Back to Main Menu"]
+    menu_items = configs + ['Back to Main Menu']
     
     # Button layout
     button_width = int(w * 0.5)
@@ -506,9 +506,9 @@ def draw_config_menu(screen: pygame.Surface, w: int, h: int, selected_item: int,
     # Instructions at bottom
     instruction_font = pygame.font.SysFont('Consolas', int(h*0.018))
     instructions = [
-        "Select a configuration to change game difficulty and starting resources",
-        "Use arrow keys to navigate, Enter to select",
-        "Press Escape or select Back to return to Main Menu"
+        'Select a configuration to change game difficulty and starting resources',
+        'Use arrow keys to navigate, Enter to select',
+        'Press Escape or select Back to return to Main Menu'
     ]
     
     inst_y = int(h * 0.8)

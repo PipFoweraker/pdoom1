@@ -1,4 +1,4 @@
-# Release Notes - P(Doom) v0.2.4 "Economic Cycles & Enhanced Onboarding"
+# Release Notes - P(Doom) v0.2.4 'Economic Cycles & Enhanced Onboarding'
 
 **Release Date**: September 6, 2025  
 **Version**: 0.2.4  
@@ -30,7 +30,7 @@ Players must now consider economic timing when planning fundraising activities. 
 We've completely redesigned the initial game flow to provide a better onboarding experience for new players.
 
 **Improvements:**
-- **Enhanced Menu**: Replaced "Launch Lab" with "New Player Experience" in the main menu
+- **Enhanced Menu**: Replaced 'Launch Lab' with 'New Player Experience' in the main menu
 - **Checkbox Interface**: Choose between tutorial guidance and intro scenario
 - **Contextual Introduction**: Optional intro text that explains the game premise and starting conditions
 - **Responsive Design**: UI adapts to different screen sizes and input methods

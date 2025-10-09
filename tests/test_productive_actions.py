@@ -1,4 +1,4 @@
-"""Tests for the productive actions system."""
+'''Tests for the productive actions system.'''
 
 import unittest
 import sys
@@ -15,7 +15,7 @@ from src.core.productive_actions import (
 
 
 class MockGameState:
-    """Mock game state for testing productive action requirements."""
+    '''Mock game state for testing productive action requirements.'''
     
     def __init__(self):
         self.reputation = 10
@@ -29,39 +29,39 @@ class MockGameState:
 
 
 class TestProductiveActions(unittest.TestCase):
-    """Test productive actions definitions and functionality."""
+    '''Test productive actions definitions and functionality.'''
     
     def test_all_categories_defined(self):
-        """Test that all required employee categories have productive actions defined."""
+        '''Test that all required employee categories have productive actions defined.'''
         required_categories = [
             'junior_researcher', 'senior_researcher', 'security_engineer',
             'operations_specialist', 'administrative_staff', 'manager'
         ]
         
         for category in required_categories:
-            self.assertIn(category, PRODUCTIVE_ACTIONS, f"Category {category} not defined")
+            self.assertIn(category, PRODUCTIVE_ACTIONS, f'Category {category} not defined')
             self.assertEqual(len(PRODUCTIVE_ACTIONS[category]), 3, 
-                           f"Category {category} should have exactly 3 actions")
+                           f'Category {category} should have exactly 3 actions')
     
     def test_action_structure(self):
-        """Test that all actions have required fields."""
+        '''Test that all actions have required fields.'''
         required_fields = ['name', 'description', 'effectiveness_bonus', 'requirements']
         
         for category, actions in PRODUCTIVE_ACTIONS.items():
             for i, action in enumerate(actions):
                 for field in required_fields:
                     self.assertIn(field, action, 
-                                f"Action {i} in category {category} missing field {field}")
+                                f'Action {i} in category {category} missing field {field}')
                 
                 # Test effectiveness bonus is reasonable (between 1.0 and 1.2)
                 bonus = action['effectiveness_bonus']
                 self.assertGreaterEqual(bonus, 1.0, 
-                                      f"Effectiveness bonus {bonus} too low")
+                                      f'Effectiveness bonus {bonus} too low')
                 self.assertLessEqual(bonus, 1.2, 
-                                   f"Effectiveness bonus {bonus} too high")
+                                   f'Effectiveness bonus {bonus} too high')
     
     def test_employee_subtype_mapping(self):
-        """Test that all employee subtypes map to productive action categories."""
+        '''Test that all employee subtypes map to productive action categories.'''
         expected_mappings = {
             'researcher': 'junior_researcher',
             'data_scientist': 'senior_researcher',
@@ -75,10 +75,10 @@ class TestProductiveActions(unittest.TestCase):
         for subtype, expected_category in expected_mappings.items():
             actual_category = get_employee_category(subtype)
             self.assertEqual(actual_category, expected_category,
-                           f"Subtype {subtype} should map to {expected_category}")
+                           f'Subtype {subtype} should map to {expected_category}')
     
     def test_get_available_actions(self):
-        """Test getting available actions for categories."""
+        '''Test getting available actions for categories.'''
         # Test valid category
         actions = get_available_actions('junior_researcher')
         self.assertEqual(len(actions), 3)
@@ -89,7 +89,7 @@ class TestProductiveActions(unittest.TestCase):
         self.assertEqual(actions, [])
     
     def test_default_action_index(self):
-        """Test getting default action index."""
+        '''Test getting default action index.'''
         # Test valid category
         index = get_default_action_index('junior_researcher')
         self.assertEqual(index, 0)
@@ -99,7 +99,7 @@ class TestProductiveActions(unittest.TestCase):
         self.assertIsNone(index)
     
     def test_requirements_checking(self):
-        """Test checking action requirements against game state."""
+        '''Test checking action requirements against game state.'''
         game_state = MockGameState()
         
         # Test junior researcher first action (should pass)
@@ -121,18 +121,18 @@ class TestProductiveActions(unittest.TestCase):
 
 
 class TestGameStateIntegration(unittest.TestCase):
-    """Test integration with game state (requires pygame)."""
+    '''Test integration with game state (requires pygame).'''
     
     def setUp(self):
-        """Set up test game state."""
+        '''Set up test game state.'''
         try:
             from src.core.game_state import GameState
             self.game_state = GameState(seed=12345)
         except ImportError as e:
-            self.skipTest(f"Could not import GameState: {e}")
+            self.skipTest(f'Could not import GameState: {e}')
     
     def test_employee_blob_structure(self):
-        """Test that employee blobs have productive action fields."""
+        '''Test that employee blobs have productive action fields.'''
         # Add some employees
         self.game_state._add('staff', 3)
         
@@ -145,7 +145,7 @@ class TestGameStateIntegration(unittest.TestCase):
                 self.assertIn('productive_action_active', blob)
     
     def test_productive_action_methods(self):
-        """Test productive action management methods."""
+        '''Test productive action management methods.'''
         # Add some employees
         self.game_state._add('staff', 2)
         
@@ -168,7 +168,7 @@ class TestGameStateIntegration(unittest.TestCase):
             self.assertEqual(updated_info['current_action_index'], 1)
     
     def test_productivity_update_with_actions(self):
-        """Test that productivity update applies productive actions."""
+        '''Test that productivity update applies productive actions.'''
         # Add staff and resources
         self.game_state._add('staff', 3)
         self.game_state._add('compute', 20)

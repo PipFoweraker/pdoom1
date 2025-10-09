@@ -1,4 +1,4 @@
-"""
+'''
 Tests for the game configuration system.
 
 Tests cover:
@@ -10,7 +10,7 @@ Tests cover:
 
 NOTE: Tests temporarily disabled due to config_manager module import issues.
 See GitHub issue: https://github.com/PipFoweraker/pdoom1/issues/config-manager-import-bug
-"""
+'''
 
 import unittest
 import tempfile
@@ -24,28 +24,28 @@ from src.services.config_manager import ConfigManager, get_current_config, initi
 
 
 class TestConfigManager(unittest.TestCase):
-    """Test cases for the ConfigManager class."""
+    '''Test cases for the ConfigManager class.'''
     
     def setUp(self):
-        """Set up test environment with temporary directory."""
+        '''Set up test environment with temporary directory.'''
         self.test_dir = tempfile.mkdtemp()
         self.config_manager = ConfigManager()
         # Override the config directory to use our test directory
-        self.config_manager.CONFIG_DIR = os.path.join(self.test_dir, "configs")
-        self.config_manager.CURRENT_CONFIG_FILE = os.path.join(self.test_dir, "current_config.json")
+        self.config_manager.CONFIG_DIR = os.path.join(self.test_dir, 'configs')
+        self.config_manager.CURRENT_CONFIG_FILE = os.path.join(self.test_dir, 'current_config.json')
         self.config_manager._ensure_config_directory()
     
     def tearDown(self):
-        """Clean up test environment."""
+        '''Clean up test environment.'''
         shutil.rmtree(self.test_dir)
     
     def test_config_directory_creation(self):
-        """Test that config directory is created when needed."""
+        '''Test that config directory is created when needed.'''
         # Directory should be created in setUp
         self.assertTrue(os.path.exists(self.config_manager.CONFIG_DIR))
     
     def test_default_config_generation(self):
-        """Test that default config is generated with expected structure."""
+        '''Test that default config is generated with expected structure.'''
         default_config = self.config_manager.get_default_config()
         
         # Check required top-level sections
@@ -69,7 +69,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertTrue(default_config['audio']['sound_enabled'])
     
     def test_create_default_config_if_needed(self):
-        """Test default config file creation when none exists."""
+        '''Test default config file creation when none exists.'''
         # Should create config and return True
         created = self.config_manager.create_default_config_if_needed()
         self.assertTrue(created)
@@ -83,7 +83,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertFalse(created_again)
     
     def test_list_available_configs(self):
-        """Test listing available configuration files."""
+        '''Test listing available configuration files.'''
         # Initially should be empty
         configs = self.config_manager.list_available_configs()
         self.assertEqual(len(configs), 1)  # Default is created automatically
@@ -100,7 +100,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertIn('test_config', configs)
     
     def test_save_and_load_config(self):
-        """Test saving and loading configuration files."""
+        '''Test saving and loading configuration files.'''
         test_config = {
             'config_name': 'Test Configuration',
             'description': 'Test config for unit tests',
@@ -122,7 +122,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertIsNone(missing_config)
     
     def test_config_switching(self):
-        """Test switching between different configurations."""
+        '''Test switching between different configurations.'''
         # Create test config
         test_config = self.config_manager.get_default_config()
         test_config['config_name'] = 'Test Config'
@@ -144,7 +144,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertEqual(self.config_manager.get_current_config_name(), 'test')  # Should remain unchanged
     
     def test_current_config_persistence(self):
-        """Test that current config selection persists across sessions."""
+        '''Test that current config selection persists across sessions.'''
         # Create and switch to test config
         test_config = self.config_manager.get_default_config()
         self.config_manager.save_config('persistent_test', test_config)
@@ -160,7 +160,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertEqual(new_config_manager.get_current_config_name(), 'persistent_test')
     
     def test_create_config_copy(self):
-        """Test creating copies of existing configurations."""
+        '''Test creating copies of existing configurations.'''
         # Create original config
         original_config = self.config_manager.get_default_config()
         original_config['config_name'] = 'Original Config'
@@ -185,7 +185,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertFalse(success)
     
     def test_delete_config(self):
-        """Test deleting configuration files."""
+        '''Test deleting configuration files.'''
         # Create test config
         test_config = self.config_manager.get_default_config()
         self.config_manager.save_config('deleteme', test_config)
@@ -211,7 +211,7 @@ class TestConfigManager(unittest.TestCase):
         self.assertFalse(success)
     
     def test_config_info_retrieval(self):
-        """Test getting metadata about configurations."""
+        '''Test getting metadata about configurations.'''
         # Create test config
         test_config = self.config_manager.get_default_config()
         test_config['config_name'] = 'Info Test Config'
@@ -231,27 +231,27 @@ class TestConfigManager(unittest.TestCase):
         self.assertIsNone(info)
     
     def test_error_handling(self):
-        """Test error handling for file operations."""
+        '''Test error handling for file operations.'''
         # Test saving to invalid path
-        with patch('builtins.open', side_effect=PermissionError("Access denied")):
+        with patch('builtins.open', side_effect=PermissionError('Access denied')):
             success = self.config_manager.save_config('test', {})
             self.assertFalse(success)
         
         # Test loading corrupted config file
         corrupted_path = self.config_manager._get_config_path('corrupted')
         with open(corrupted_path, 'w') as f:
-            f.write("invalid json content {")
+            f.write('invalid json content {')
         
         loaded_config = self.config_manager.load_config('corrupted')
         self.assertIsNone(loaded_config)
 
 
-@pytest.mark.skip(reason="Config system integration bugs - See issue #config-integration-bug")
+@pytest.mark.skip(reason='Config system integration bugs - See issue #config-integration-bug')
 class TestConfigSystemIntegration(unittest.TestCase):
-    """Test integration of config system with existing game components."""
+    '''Test integration of config system with existing game components.'''
     
     def test_initialize_config_system(self):
-        """Test the initialization function."""
+        '''Test the initialization function.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = os.path.join(temp_dir, 'configs')
             with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
@@ -269,7 +269,7 @@ class TestConfigSystemIntegration(unittest.TestCase):
                     self.assertFalse(created)
     
     def test_get_current_config_function(self):
-        """Test the convenience function for getting current config."""
+        '''Test the convenience function for getting current config.'''
         # Mock the global config manager
         with patch('src.services.config_manager.config_manager') as mock_manager:
             mock_config = {'test': 'value'}
@@ -280,17 +280,17 @@ class TestConfigSystemIntegration(unittest.TestCase):
             mock_manager.get_current_config.assert_called_once()
 
 
-@pytest.mark.skip(reason="Config error handling bugs - See issue #config-error-handling-bug")
+@pytest.mark.skip(reason='Config error handling bugs - See issue #config-error-handling-bug')
 class TestConfigErrorHandling(unittest.TestCase):
-    """Test error handling and edge cases in the config system."""
+    '''Test error handling and edge cases in the config system.'''
     
     def test_config_directory_creation_failure(self):
-        """Test handling when config directory cannot be created."""
+        '''Test handling when config directory cannot be created.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             # Create a file where we want the directory to be
             fake_dir_path = os.path.join(temp_dir, 'configs')
             with open(fake_dir_path, 'w') as f:
-                f.write("blocking file")
+                f.write('blocking file')
             
             # Try to create config manager with blocked directory
             with patch.object(ConfigManager, 'CONFIG_DIR', fake_dir_path):
@@ -299,7 +299,7 @@ class TestConfigErrorHandling(unittest.TestCase):
                 self.assertIsInstance(manager, ConfigManager)
     
     def test_config_save_permission_denied(self):
-        """Test handling when config files cannot be saved due to permissions."""
+        '''Test handling when config files cannot be saved due to permissions.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = os.path.join(temp_dir, 'configs')
             os.makedirs(config_dir)
@@ -308,12 +308,12 @@ class TestConfigErrorHandling(unittest.TestCase):
                 manager = ConfigManager()
                 
                 # Mock open to raise PermissionError
-                with patch('builtins.open', side_effect=PermissionError("Access denied")):
+                with patch('builtins.open', side_effect=PermissionError('Access denied')):
                     result = manager.save_config('test', {'test': 'data'})
                     self.assertFalse(result)
     
     def test_config_load_corrupted_file(self):
-        """Test handling when config files are corrupted."""
+        '''Test handling when config files are corrupted.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = os.path.join(temp_dir, 'configs')
             os.makedirs(config_dir)
@@ -321,7 +321,7 @@ class TestConfigErrorHandling(unittest.TestCase):
             # Create corrupted config file
             corrupted_path = os.path.join(config_dir, 'corrupted.json')
             with open(corrupted_path, 'w') as f:
-                f.write('{"incomplete": json}')
+                f.write('{'incomplete': json}')
             
             with patch.object(ConfigManager, 'CONFIG_DIR', config_dir):
                 manager = ConfigManager()
@@ -329,7 +329,7 @@ class TestConfigErrorHandling(unittest.TestCase):
                 self.assertIsNone(result)
     
     def test_config_load_empty_file(self):
-        """Test handling when config files are empty."""
+        '''Test handling when config files are empty.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = os.path.join(temp_dir, 'configs')
             os.makedirs(config_dir)
@@ -345,7 +345,7 @@ class TestConfigErrorHandling(unittest.TestCase):
                 self.assertIsNone(result)
     
     def test_config_load_binary_file(self):
-        """Test handling when config files contain binary data."""
+        '''Test handling when config files contain binary data.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = os.path.join(temp_dir, 'configs')
             os.makedirs(config_dir)
@@ -361,7 +361,7 @@ class TestConfigErrorHandling(unittest.TestCase):
                 self.assertIsNone(result)
     
     def test_graceful_fallback_when_all_fails(self):
-        """Test that system gracefully falls back to in-memory defaults when everything fails."""
+        '''Test that system gracefully falls back to in-memory defaults when everything fails.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = os.path.join(temp_dir, 'configs')
             current_config_path = os.path.join(temp_dir, 'current_config.json')
@@ -373,10 +373,10 @@ class TestConfigErrorHandling(unittest.TestCase):
                         # Allow tempfile operations but block config file operations
                         if 'pdoom_configs' in str(args[0]):
                             return unittest.mock.mock_open()(*args, **kwargs)
-                        raise OSError("No filesystem access")
+                        raise OSError('No filesystem access')
                     
                     with patch('builtins.open', side_effect=mock_open_side_effect):
-                        with patch('os.makedirs', side_effect=OSError("Cannot create directories")):
+                        with patch('os.makedirs', side_effect=OSError('Cannot create directories')):
                             manager = ConfigManager()
                             # Should still be able to get a config (in-memory default)
                             config = manager.get_current_config()
@@ -384,7 +384,7 @@ class TestConfigErrorHandling(unittest.TestCase):
                             self.assertIn('starting_resources', config)
     
     def test_config_switching_to_nonexistent(self):
-        """Test switching to a config that doesn't exist."""
+        '''Test switching to a config that doesn't exist.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = os.path.join(temp_dir, 'configs')
             os.makedirs(config_dir)
@@ -403,7 +403,7 @@ class TestConfigErrorHandling(unittest.TestCase):
                     self.assertEqual(manager.get_current_config_name(), 'default')
     
     def test_current_config_file_corruption(self):
-        """Test handling when current_config.json is corrupted."""
+        '''Test handling when current_config.json is corrupted.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             # Create corrupted current_config.json
             current_config_path = os.path.join(temp_dir, 'current_config.json')
@@ -417,7 +417,7 @@ class TestConfigErrorHandling(unittest.TestCase):
                     self.assertEqual(manager.get_current_config_name(), 'default')
     
     def test_config_system_resilience(self):
-        """Test that the config system remains functional even with multiple failures."""
+        '''Test that the config system remains functional even with multiple failures.'''
         with tempfile.TemporaryDirectory() as temp_dir:
             config_dir = os.path.join(temp_dir, 'configs')
             current_config_path = os.path.join(temp_dir, 'current_config.json')
@@ -455,16 +455,16 @@ class TestConfigErrorHandling(unittest.TestCase):
                     self.assertEqual(manager.get_current_config_name(), 'good1')
 
 
-@pytest.mark.skip(reason="Config game balance bugs - See issue #config-balance-bug")
+@pytest.mark.skip(reason='Config game balance bugs - See issue #config-balance-bug')
 class TestConfigGameBalanceValidation(unittest.TestCase):
-    """Test that default config contains sensible game balance values."""
+    '''Test that default config contains sensible game balance values.'''
     
     def setUp(self):
-        """Set up config manager for testing."""
+        '''Set up config manager for testing.'''
         self.config_manager = ConfigManager()
     
     def test_starting_resources_reasonable(self):
-        """Test that starting resources are reasonable."""
+        '''Test that starting resources are reasonable.'''
         config = self.config_manager.get_default_config()
         starting = config['starting_resources']
         
@@ -485,7 +485,7 @@ class TestConfigGameBalanceValidation(unittest.TestCase):
         self.assertLess(starting['doom'], 50)
     
     def test_action_points_balanced(self):
-        """Test that action point settings are balanced."""
+        '''Test that action point settings are balanced.'''
         config = self.config_manager.get_default_config()
         ap = config['action_points']
         
@@ -505,7 +505,7 @@ class TestConfigGameBalanceValidation(unittest.TestCase):
         self.assertLess(ap['max_ap_per_turn'], 20)
     
     def test_milestones_progression(self):
-        """Test that milestone thresholds create good progression."""
+        '''Test that milestone thresholds create good progression.'''
         config = self.config_manager.get_default_config()
         milestones = config['milestones']
         
@@ -524,13 +524,13 @@ class TestConfigGameBalanceValidation(unittest.TestCase):
         self.assertLess(milestones['scrollable_log_turn'], 15)
     
     def test_resource_limits_sensible(self):
-        """Test that resource limits prevent overflow/underflow."""
+        '''Test that resource limits prevent overflow/underflow.'''
         config = self.config_manager.get_default_config()
         limits = config['resource_limits']
         
         # All limits should be positive
         for limit_name, limit_value in limits.items():
-            self.assertGreater(limit_value, 0, f"{limit_name} limit should be positive")
+            self.assertGreater(limit_value, 0, f'{limit_name} limit should be positive')
         
         # Limits should be higher than starting values
         starting = config['starting_resources']
@@ -540,7 +540,7 @@ class TestConfigGameBalanceValidation(unittest.TestCase):
         self.assertGreater(limits['max_doom'], starting['doom'])
     
     def test_ui_settings_valid(self):
-        """Test that UI settings have valid values."""
+        '''Test that UI settings have valid values.'''
         config = self.config_manager.get_default_config()
         ui = config['ui']
         

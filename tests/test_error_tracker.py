@@ -1,4 +1,4 @@
-"""
+'''
 Tests for the ErrorTracker system
 
 Tests cover:
@@ -6,7 +6,7 @@ Tests cover:
 - Beep timing and cooldown functionality
 - Sound manager integration
 - Message callback integration
-"""
+'''
 
 import unittest
 from unittest.mock import Mock, patch
@@ -36,7 +36,7 @@ class TestErrorTracker(unittest.TestCase):
         pygame.quit()
     
     def test_error_tracker_initialization(self):
-        """Test that ErrorTracker initializes with correct defaults."""
+        '''Test that ErrorTracker initializes with correct defaults.'''
         tracker = ErrorTracker()
         
         self.assertEqual(tracker.recent_errors, [])
@@ -48,20 +48,20 @@ class TestErrorTracker(unittest.TestCase):
         self.assertIsNone(tracker.message_callback)
     
     def test_error_tracking_single_error(self):
-        """Test tracking a single error doesn't trigger easter egg."""
-        result = self.error_tracker.track_error("Test error")
+        '''Test tracking a single error doesn't trigger easter egg.'''
+        result = self.error_tracker.track_error('Test error')
         
         self.assertFalse(result)
         self.assertEqual(len(self.error_tracker.recent_errors), 1)
-        self.assertEqual(self.error_tracker.get_error_count("Test error"), 1)
+        self.assertEqual(self.error_tracker.get_error_count('Test error'), 1)
         
         # Should not have triggered sound or message
         self.mock_sound_manager.play_error_beep.assert_not_called()
         self.assertEqual(len(self.mock_messages), 0)
     
     def test_error_tracking_repeated_errors(self):
-        """Test that 3 repeated errors trigger easter egg."""
-        error_msg = "Repeated error"
+        '''Test that 3 repeated errors trigger easter egg.'''
+        error_msg = 'Repeated error'
         
         # First two errors should not trigger
         result1 = self.error_tracker.track_error(error_msg)
@@ -79,36 +79,36 @@ class TestErrorTracker(unittest.TestCase):
         # Should have triggered sound and message
         self.mock_sound_manager.play_error_beep.assert_called_once()
         self.assertEqual(len(self.mock_messages), 1)
-        self.assertIn("Easter egg activated", self.mock_messages[0])
+        self.assertIn('Easter egg activated', self.mock_messages[0])
     
     def test_error_tracking_different_errors(self):
-        """Test that different errors don't contribute to each other's count."""
-        self.error_tracker.track_error("Error A")
-        self.error_tracker.track_error("Error B")
-        self.error_tracker.track_error("Error A")
-        self.error_tracker.track_error("Error B")
+        '''Test that different errors don't contribute to each other's count.'''
+        self.error_tracker.track_error('Error A')
+        self.error_tracker.track_error('Error B')
+        self.error_tracker.track_error('Error A')
+        self.error_tracker.track_error('Error B')
         
         # Track Error A one more time - this should trigger (count reaches 3)
         with patch('pygame.time.get_ticks', return_value=1000):
-            result_a = self.error_tracker.track_error("Error A")
+            result_a = self.error_tracker.track_error('Error A')
         
         # Each error should have the right count
-        self.assertEqual(self.error_tracker.get_error_count("Error A"), 3)
-        self.assertEqual(self.error_tracker.get_error_count("Error B"), 2)
+        self.assertEqual(self.error_tracker.get_error_count('Error A'), 3)
+        self.assertEqual(self.error_tracker.get_error_count('Error B'), 2)
         
         # Error A should have triggered
         self.assertTrue(result_a)
         
         # Now track Error B after cooldown period - this should also trigger (count reaches 3)
         with patch('pygame.time.get_ticks', return_value=4000):  # After cooldown
-            result_b = self.error_tracker.track_error("Error B")
+            result_b = self.error_tracker.track_error('Error B')
         
         self.assertTrue(result_b)  # Error B should trigger after cooldown
-        self.assertEqual(self.error_tracker.get_error_count("Error B"), 3)
+        self.assertEqual(self.error_tracker.get_error_count('Error B'), 3)
     
     def test_beep_cooldown(self):
-        """Test that beep cooldown prevents spam."""
-        error_msg = "Spam error"
+        '''Test that beep cooldown prevents spam.'''
+        error_msg = 'Spam error'
         
         # Set up initial time
         with patch('pygame.time.get_ticks', return_value=1000):
@@ -130,8 +130,8 @@ class TestErrorTracker(unittest.TestCase):
         self.assertEqual(self.mock_sound_manager.play_error_beep.call_count, 1)
     
     def test_beep_after_cooldown(self):
-        """Test that beep works again after cooldown period."""
-        error_msg = "Cooldown test"
+        '''Test that beep works again after cooldown period.'''
+        error_msg = 'Cooldown test'
         
         # Trigger first easter egg
         with patch('pygame.time.get_ticks', return_value=1000):
@@ -152,8 +152,8 @@ class TestErrorTracker(unittest.TestCase):
         self.assertEqual(self.mock_sound_manager.play_error_beep.call_count, 2)
     
     def test_time_window_cleanup(self):
-        """Test that old errors are cleaned up after time window."""
-        error_msg = "Old error"
+        '''Test that old errors are cleaned up after time window.'''
+        error_msg = 'Old error'
         
         # Add errors at different times
         with patch('pygame.time.get_ticks', return_value=0):
@@ -168,43 +168,43 @@ class TestErrorTracker(unittest.TestCase):
         self.assertEqual(self.error_tracker.get_error_count(error_msg), 1)
     
     def test_no_sound_manager(self):
-        """Test that error tracking works without sound manager."""
+        '''Test that error tracking works without sound manager.'''
         tracker = ErrorTracker(message_callback=self.message_callback)
         
         # Should still track and trigger easter egg
         with patch('pygame.time.get_ticks', return_value=1000):
             for _ in range(3):
-                result = tracker.track_error("No sound test")
+                result = tracker.track_error('No sound test')
         
         self.assertTrue(result)
         self.assertEqual(len(self.mock_messages), 1)
     
     def test_no_message_callback(self):
-        """Test that error tracking works without message callback."""
+        '''Test that error tracking works without message callback.'''
         tracker = ErrorTracker(sound_manager=self.mock_sound_manager)
         
         # Should still track and trigger easter egg
         with patch('pygame.time.get_ticks', return_value=1000):
             for _ in range(3):
-                result = tracker.track_error("No message test")
+                result = tracker.track_error('No message test')
         
         self.assertTrue(result)
         self.mock_sound_manager.play_error_beep.assert_called_once()
     
     def test_clear_errors(self):
-        """Test clearing all tracked errors."""
-        self.error_tracker.track_error("Error 1")
-        self.error_tracker.track_error("Error 2")
+        '''Test clearing all tracked errors.'''
+        self.error_tracker.track_error('Error 1')
+        self.error_tracker.track_error('Error 2')
         
         self.assertEqual(len(self.error_tracker.recent_errors), 2)
         
         self.error_tracker.clear_errors()
         
         self.assertEqual(len(self.error_tracker.recent_errors), 0)
-        self.assertEqual(self.error_tracker.get_error_count("Error 1"), 0)
+        self.assertEqual(self.error_tracker.get_error_count('Error 1'), 0)
     
     def test_set_dependencies(self):
-        """Test setting sound manager and message callback after initialization."""
+        '''Test setting sound manager and message callback after initialization.'''
         tracker = ErrorTracker()
         
         new_sound_manager = Mock()

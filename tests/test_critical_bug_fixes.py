@@ -1,10 +1,10 @@
-"""
+'''
 Test suite for critical bug fixes in the bug sweep.
 
 This module tests the fixes for critical bugs identified in the pre-alpha bug sweep:
 - Issue #263: Duplicate return statements in check_hover method
 - Issue #261: Mouse wheel handling (verification)
-"""
+'''
 
 import unittest
 from unittest.mock import Mock, patch, MagicMock
@@ -13,15 +13,15 @@ from src.core.game_state import GameState
 
 
 class TestCriticalBugFixes(unittest.TestCase):
-    """Test critical bug fixes from the bug sweep."""
+    '''Test critical bug fixes from the bug sweep.'''
 
     def setUp(self):
-        """Set up test environment with seeded randomness."""
+        '''Set up test environment with seeded randomness.'''
         random.seed(12345)
         self.game_state = GameState('test-critical-fixes')
 
     def test_check_hover_no_duplicate_returns_fix_263(self):
-        """Test fix for issue #263: duplicate return statements in check_hover."""
+        '''Test fix for issue #263: duplicate return statements in check_hover.'''
         # This test ensures that the exception handler is reachable after removing duplicate returns
         
         # Mock a scenario that would cause an exception in check_hover
@@ -29,7 +29,7 @@ class TestCriticalBugFixes(unittest.TestCase):
         
         def mock_in_rect_exception(*args):
             # Cause an exception during hover checking
-            raise ValueError("Test exception for check_hover")
+            raise ValueError('Test exception for check_hover')
         
         # Replace _in_rect method to trigger exception
         self.game_state._in_rect = mock_in_rect_exception
@@ -46,13 +46,13 @@ class TestCriticalBugFixes(unittest.TestCase):
         
         # Verify that the exception was logged (proving exception handler is reachable)
         mock_logger.log.assert_called_once()
-        self.assertIn("Error in check_hover", mock_logger.log.call_args[0][0])
+        self.assertIn('Error in check_hover', mock_logger.log.call_args[0][0])
         
         # Restore original method
         self.game_state._in_rect = original_in_rect
 
     def test_check_hover_normal_operation_after_fix(self):
-        """Test that check_hover works normally after removing duplicate returns."""
+        '''Test that check_hover works normally after removing duplicate returns.'''
         # Test normal operation without exceptions
         result = self.game_state.check_hover((50, 50), 800, 600)
         
@@ -71,7 +71,7 @@ class TestCriticalBugFixes(unittest.TestCase):
         self.assertEqual(self.game_state.current_context_info['title'], 'Money')
 
     def test_mouse_wheel_handling_verification_261(self):
-        """Test comprehensive mouse wheel handling for issue #261: verify no crashes."""
+        '''Test comprehensive mouse wheel handling for issue #261: verify no crashes.'''
         # Test that mouse wheel event handling is robust and doesn't crash
         
         # Check that game state has scrollable event log functionality
@@ -81,10 +81,10 @@ class TestCriticalBugFixes(unittest.TestCase):
         # Test various edge cases that could cause crashes
         test_cases = [
             # (scrollable_enabled, event_log_history, messages, description)
-            (False, [], [], "Disabled scrolling with empty logs"),
-            (True, [], [], "Enabled scrolling with empty logs"),
-            (True, ['event1', 'event2'], ['msg1'], "Enabled scrolling with some content"),
-            (True, ['e'] * 20, ['m'] * 10, "Enabled scrolling with lots of content"),
+            (False, [], [], 'Disabled scrolling with empty logs'),
+            (True, [], [], 'Enabled scrolling with empty logs'),
+            (True, ['event1', 'event2'], ['msg1'], 'Enabled scrolling with some content'),
+            (True, ['e'] * 20, ['m'] * 10, 'Enabled scrolling with lots of content'),
         ]
         
         for enabled, history, messages, description in test_cases:
@@ -115,7 +115,7 @@ class TestCriticalBugFixes(unittest.TestCase):
                     self.assertGreaterEqual(self.game_state.event_log_scroll_offset, 0)
                     
                 except Exception as e:
-                    self.fail(f"Mouse wheel handling crashed for case '{description}': {e}")
+                    self.fail(f'Mouse wheel handling crashed for case '{description}': {e}')
         
         # Test that None game_state doesn't crash the check
         try:
@@ -124,14 +124,14 @@ class TestCriticalBugFixes(unittest.TestCase):
             if (current_state == 'game' and game_state and 
                 game_state.scrollable_event_log_enabled):
                 # This should never execute
-                self.fail("Should not reach here with None game_state")
+                self.fail('Should not reach here with None game_state')
             # Should safely skip the mouse wheel handling
-            self.assertTrue(True, "None game_state handled safely")
+            self.assertTrue(True, 'None game_state handled safely')
         except Exception as e:
-            self.fail(f"None game_state check crashed: {e}")
+            self.fail(f'None game_state check crashed: {e}')
 
     def test_robust_error_handling_in_critical_methods(self):
-        """Test that critical methods have robust error handling after fixes."""
+        '''Test that critical methods have robust error handling after fixes.'''
         # Test check_hover with various edge cases
         edge_cases = [
             ((-1, -1), 800, 600),  # Negative coordinates
@@ -146,14 +146,14 @@ class TestCriticalBugFixes(unittest.TestCase):
                 # Should not crash, should return None for invalid positions
                 self.assertIsNone(result)
             except Exception as e:
-                self.fail(f"check_hover crashed with edge case {mouse_pos}, {w}, {h}: {e}")
+                self.fail(f'check_hover crashed with edge case {mouse_pos}, {w}, {h}: {e}')
 
     def test_list_operations_are_safe_in_game_loops(self):
-        """Test that game state operations don't modify lists during iteration."""
+        '''Test that game state operations don't modify lists during iteration.'''
         # Test that common game operations don't have list modification issues
         
         # Add some test data that might be iterated over
-        self.game_state.messages = ["Test message 1", "Test message 2", "Test message 3"]
+        self.game_state.messages = ['Test message 1', 'Test message 2', 'Test message 3']
         
         # Simulate operations that might modify lists during iteration
         original_messages = list(self.game_state.messages)
@@ -163,8 +163,8 @@ class TestCriticalBugFixes(unittest.TestCase):
             self.game_state.end_turn()
             # Should complete without list modification errors
         except (ValueError, IndexError, RuntimeError) as e:
-            if "list" in str(e).lower() and ("modify" in str(e).lower() or "changed" in str(e).lower()):
-                self.fail(f"List modification during iteration in end_turn: {e}")
+            if 'list' in str(e).lower() and ('modify' in str(e).lower() or 'changed' in str(e).lower()):
+                self.fail(f'List modification during iteration in end_turn: {e}')
         
         # Verify game state is still consistent
         self.assertIsNotNone(self.game_state.turn)
@@ -172,15 +172,15 @@ class TestCriticalBugFixes(unittest.TestCase):
 
 
 class TestRegressionPrevention(unittest.TestCase):
-    """Test that the critical bugs cannot regress."""
+    '''Test that the critical bugs cannot regress.'''
 
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         from src.core.game_state import GameState
         self.game_state = GameState('test-critical-fixes')
 
     def test_check_hover_single_return_path(self):
-        """Ensure check_hover has only one return path per logical branch (prevents #263 regression)."""
+        '''Ensure check_hover has only one return path per logical branch (prevents #263 regression).'''
         # This is a structural test - we check that the fixed code maintains the correct structure
         import inspect
         from src.core.game_state import GameState
@@ -195,17 +195,17 @@ class TestRegressionPrevention(unittest.TestCase):
         # 1. At the end of the try block 
         # 2. In the exception handler
         self.assertLessEqual(return_count, 2, 
-                            "check_hover should have at most 2 'return None' statements after fix")
+                            'check_hover should have at most 2 'return None' statements after fix')
         
         # Verify the exception handler is after the main return
         exception_pos = source.find('except Exception')
         main_return_pos = source.find('return None')
         
         self.assertGreater(exception_pos, main_return_pos,
-                          "Exception handler should come after main return statement")
+                          'Exception handler should come after main return statement')
 
     def test_research_quality_technical_debt_fix(self):
-        """Test fix for critical TypeError in research quality system - proper method signatures."""
+        '''Test fix for critical TypeError in research quality system - proper method signatures.'''
         # Initialize technical debt system
         from src.core.research_quality import TechnicalDebt, DebtCategory
         self.game_state.technical_debt = TechnicalDebt()
@@ -217,7 +217,7 @@ class TestRegressionPrevention(unittest.TestCase):
             self.game_state.technical_debt.add_technical_debt(2, DebtCategory.VALIDATION)
             self.assertGreater(self.game_state.technical_debt.accumulated_debt, 0)
         except TypeError as e:
-            self.fail(f"Rush research add_debt crashed with TypeError: {e}")
+            self.fail(f'Rush research add_debt crashed with TypeError: {e}')
         
         # Test quality research - should reduce debt without crashing
         # This tests the fix for the parallel issue in reduce_technical_debt
@@ -229,7 +229,7 @@ class TestRegressionPrevention(unittest.TestCase):
             # Should have reduced debt
             self.assertLessEqual(final_debt, initial_debt)
         except TypeError as e:
-            self.fail(f"Quality research reduce_technical_debt crashed with TypeError: {e}")
+            self.fail(f'Quality research reduce_technical_debt crashed with TypeError: {e}')
         
         # Test that the methods work with the correct enum categories
         # This ensures we're using DebtCategory enum values instead of strings
@@ -239,30 +239,30 @@ class TestRegressionPrevention(unittest.TestCase):
                 self.game_state.technical_debt.add_technical_debt(1, category)
                 self.game_state.technical_debt.reduce_technical_debt(1, category)
         except (TypeError, AttributeError) as e:
-            self.fail(f"DebtCategory enum usage failed: {e}")
+            self.fail(f'DebtCategory enum usage failed: {e}')
 
     def test_research_option_execution_integration(self):
-        """Integration test for research option execution with technical debt."""
+        '''Integration test for research option execution with technical debt.'''
         # Initialize technical debt system
         from src.core.research_quality import TechnicalDebt
         self.game_state.technical_debt = TechnicalDebt()
         
         # Mock the research options to simulate rush and quality research
         rush_option = {
-            "id": "rush_research", 
-            "name": "Rush Research", 
-            "cost": 1000,
-            "min_doom_reduction": 2,
-            "max_doom_reduction": 4,
-            "reputation_gain": 1
+            'id': 'rush_research', 
+            'name': 'Rush Research', 
+            'cost': 1000,
+            'min_doom_reduction': 2,
+            'max_doom_reduction': 4,
+            'reputation_gain': 1
         }
         quality_option = {
-            "id": "quality_research", 
-            "name": "Quality Research", 
-            "cost": 2000,
-            "min_doom_reduction": 3,
-            "max_doom_reduction": 5,
-            "reputation_gain": 2
+            'id': 'quality_research', 
+            'name': 'Quality Research', 
+            'cost': 2000,
+            'min_doom_reduction': 3,
+            'max_doom_reduction': 5,
+            'reputation_gain': 2
         }
         
         # Test that _execute_research_option handles both options without crashing
@@ -280,9 +280,9 @@ class TestRegressionPrevention(unittest.TestCase):
                 self.assertGreaterEqual(self.game_state.technical_debt.accumulated_debt, 0)
                 
         except TypeError as e:
-            self.fail(f"Research option execution crashed with TypeError: {e}")
+            self.fail(f'Research option execution crashed with TypeError: {e}')
         except AttributeError as e:
-            self.fail(f"Research option execution failed due to missing imports: {e}")
+            self.fail(f'Research option execution failed due to missing imports: {e}')
 
 
 if __name__ == '__main__':

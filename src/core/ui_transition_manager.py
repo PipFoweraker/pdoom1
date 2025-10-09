@@ -1,9 +1,9 @@
-"""UI Transition Manager for P(Doom) Strategy Game.
+'''UI Transition Manager for P(Doom) Strategy Game.
 
 This module handles all UI transition animations including upgrade animations,
 easing functions, particle effects, and visual transitions. Extracted from 
 the main GameState monolith for better separation of concerns.
-"""
+'''
 
 from typing import Dict, Any, List, Tuple
 import pygame
@@ -11,24 +11,24 @@ from src.services.deterministic_rng import get_rng
 
 
 class UITransitionManager:
-    """Manages UI transition animations and visual effects.
+    '''Manages UI transition animations and visual effects.
     
     Handles upgrade animations, particle trails, easing functions,
     and smooth visual transitions throughout the game.
-    """
+    '''
     
     def __init__(self, game_state_ref) -> None:
-        """Initialize the UI transition manager.
+        '''Initialize the UI transition manager.
         
         Args:
             game_state_ref: Reference to main GameState for accessing shared state
-        """
+        '''
         self.game_state_ref = game_state_ref
         self.ui_transitions: List[Dict[str, Any]] = []  # Active UI transition animations
         self.upgrade_transitions: Dict[int, Dict[str, Any]] = {}  # Track transitions for individual upgrades
     
     def create_upgrade_transition(self, upgrade_idx: int, start_rect: pygame.Rect, end_rect: pygame.Rect) -> Dict[str, Any]:
-        """Create a smooth transition animation for an upgrade moving from button to icon."""
+        '''Create a smooth transition animation for an upgrade moving from button to icon.'''
         transition = {
             'type': 'upgrade_transition',
             'upgrade_idx': upgrade_idx,
@@ -49,7 +49,7 @@ class UITransitionManager:
         return transition
     
     def update_ui_transitions(self) -> None:
-        """Update all active UI transitions."""
+        '''Update all active UI transitions.'''
         transitions_to_remove = []
         
         for transition in self.ui_transitions:
@@ -67,7 +67,7 @@ class UITransitionManager:
                 del self.upgrade_transitions[transition['upgrade_idx']]
     
     def update_upgrade_transition(self, transition: Dict[str, Any]) -> None:
-        """Update a single upgrade transition animation with enhanced effects."""
+        '''Update a single upgrade transition animation with enhanced effects.'''
         if not transition['completed']:
             # Advance animation progress with configurable easing
             transition['progress'] = min(1.0, transition['progress'] + (1.0 / transition['duration']))
@@ -89,7 +89,7 @@ class UITransitionManager:
                 'alpha': 255,
                 'age': 0,
                 'size': 12,  # Larger initial size
-                'color_variation': get_rng().randint(-20, 20, "randint_context")  # Color variation for organic feel
+                'color_variation': get_rng().randint(-20, 20, 'randint_context')  # Color variation for organic feel
             })
             
             # Add particle effects for more dramatic visual impact
@@ -142,7 +142,7 @@ class UITransitionManager:
             transition['glow_intensity'] = int(100 * transition['progress'])
     
     def interpolate_position(self, start_rect: Tuple[int, int, int, int], end_rect: Tuple[int, int, int, int], progress: float, arc_height: int = 80) -> Tuple[int, int]:
-        """Interpolate position between start and end rectangles with enhanced curved motion."""
+        '''Interpolate position between start and end rectangles with enhanced curved motion.'''
         # Use easeOutCubic for smooth deceleration
         eased_progress = 1 - (1 - progress) ** 3
         
@@ -180,7 +180,7 @@ class UITransitionManager:
         return (int(x), int(y))
     
     def apply_easing(self, t: float, ease_type: str = 'cubic_out') -> float:
-        """Apply easing function for smoother animations."""
+        '''Apply easing function for smoother animations.'''
         if ease_type == 'cubic_out':
             return 1 - (1 - t) ** 3
         elif ease_type == 'elastic_out':
@@ -196,26 +196,26 @@ class UITransitionManager:
             return t  # Linear fallback
     
     def add_particle_to_trail(self, transition: Dict[str, Any], position: Tuple[int, int]) -> None:
-        """Add particle effects to transition trail."""
+        '''Add particle effects to transition trail.'''
         if 'particle_trail' not in transition:
             transition['particle_trail'] = []
         
         # Create multiple particles for richer effect
         for _ in range(2):
             particle = {
-                'pos': [position[0] + get_rng().randint(-5, 5, "randint_context"), position[1] + get_rng().randint(-5, 5, "randint_context")],
-                'velocity': [get_rng().uniform(-1, 1, "particle_velocity_x"), get_rng().uniform(-2, 0, "particle_velocity_y")],
+                'pos': [position[0] + get_rng().randint(-5, 5, 'randint_context'), position[1] + get_rng().randint(-5, 5, 'randint_context')],
+                'velocity': [get_rng().uniform(-1, 1, 'particle_velocity_x'), get_rng().uniform(-2, 0, 'particle_velocity_y')],
                 'alpha': 180,
                 'age': 0,
-                'size': get_rng().randint(3, 8, "randint_context"),
-                'color_shift': get_rng().randint(-30, 30, "randint_context")
+                'size': get_rng().randint(3, 8, 'randint_context'),
+                'color_shift': get_rng().randint(-30, 30, 'randint_context')
             }
             transition['particle_trail'].append(particle)
     
     def get_ui_transitions(self) -> List[Dict[str, Any]]:
-        """Get the current list of UI transitions for rendering."""
+        '''Get the current list of UI transitions for rendering.'''
         return self.ui_transitions
     
     def get_upgrade_transitions(self) -> Dict[int, Dict[str, Any]]:
-        """Get the current upgrade transition mappings."""
+        '''Get the current upgrade transition mappings.'''
         return self.upgrade_transitions

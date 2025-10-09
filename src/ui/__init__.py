@@ -1,4 +1,4 @@
-"""
+'''
 User interface modules.
 
 This module provides compatibility imports for the UI system during the
@@ -14,7 +14,7 @@ monolith breakdown transition. Individual modules can be imported directly:
 - src.ui.forms: Form and input dialogs (TODO)
 - src.ui.game_ui: Core game UI functions (TODO) 
 - src.ui.screens: Menu and screen functions (TODO)
-"""
+'''
 
 # Re-export all functions from the main ui.py for now (compatibility layer)
 # TODO: Remove this once all imports are updated to modular structure

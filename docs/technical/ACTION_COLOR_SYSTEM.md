@@ -81,7 +81,7 @@ Located in `src/ui/compact_ui.py`, this function provides the foundation for all
 
 ```python
 def get_action_color_scheme(action_name: str) -> Dict[str, Tuple[int, int, int]]:
-    """
+    '''
     Get color scheme for different action types following P(Doom) style guide.
     
     Args:
@@ -89,7 +89,7 @@ def get_action_color_scheme(action_name: str) -> Dict[str, Tuple[int, int, int]]
         
     Returns:
         dict: Color scheme with 'normal', 'hover', and 'border' colors
-    """
+    '''
 ```
 
 **Returns**: Dictionary with RGB tuples for:
@@ -106,7 +106,7 @@ The traditional UI integrates colors through the visual feedback system:
 
 ```python
 # Get action-specific colors
-action_name = action.get("name", f"action_{original_idx}")
+action_name = action.get('name', f'action_{original_idx}')
 color_scheme = get_action_color_scheme(action_name)
 
 # Create custom color mapping for visual feedback system
@@ -168,7 +168,7 @@ elif any(word in action_lower for word in ['research', 'safety research', 'team 
 ```
 
 This approach ensures:
-- **Robust matching** for dialog system actions ("Intelligence Dialog" -> Intelligence theme)
+- **Robust matching** for dialog system actions ('Intelligence Dialog' -> Intelligence theme)
 - **Future compatibility** with new action names
 - **Sensible defaults** for unrecognized actions
 

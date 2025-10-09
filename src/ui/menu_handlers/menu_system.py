@@ -1,9 +1,9 @@
-"""
+'''
 Menu handling functions for P(Doom) main menu system.
 
 This module contains all the menu interaction handlers that were previously
 in main.py, extracted for better code organization and maintainability.
-"""
+'''
 
 import pygame
 import json
@@ -12,46 +12,46 @@ from src.features.onboarding import onboarding
 
 
 def get_weekly_seed():
-    """Generate a weekly seed based on current date."""
+    '''Generate a weekly seed based on current date.'''
     # Example: YYYYWW (year and ISO week number)
     now = datetime.now(timezone.utc)
-    return f"{now.year}{now.isocalendar()[1]}"
+    return f'{now.year}{now.isocalendar()[1]}'
 
 
 def load_markdown_file(filename):
-    """Load and return the contents of a markdown file"""
+    '''Load and return the contents of a markdown file'''
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             return f.read()
     except FileNotFoundError:
-        return f"Could not load {filename}"
+        return f'Could not load {filename}'
 
 
 def get_tutorial_settings():
-    """Get current tutorial settings from file."""
+    '''Get current tutorial settings from file.'''
     try:
-        with open("tutorial_settings.json", "r") as f:
+        with open('tutorial_settings.json', 'r') as f:
             data = json.load(f)
         return {
-            "tutorial_enabled": data.get("tutorial_enabled", True),
-            "first_game_launch": data.get("first_game_launch", True)
+            'tutorial_enabled': data.get('tutorial_enabled', True),
+            'first_game_launch': data.get('first_game_launch', True)
         }
     except Exception:
-        return {"tutorial_enabled": True, "first_game_launch": True}
+        return {'tutorial_enabled': True, 'first_game_launch': True}
 
 
 def create_settings_content(game_state=None):
-    """Create settings content for the settings overlay"""
-    tutorial_status = "Enabled" if onboarding.tutorial_enabled else "Disabled"
-    tutorial_completed = "Yes" if not onboarding.is_first_time else "No"
-    hints_enabled = "Enabled" if onboarding.are_hints_enabled() else "Disabled"
+    '''Create settings content for the settings overlay'''
+    tutorial_status = 'Enabled' if onboarding.tutorial_enabled else 'Disabled'
+    tutorial_completed = 'Yes' if not onboarding.is_first_time else 'No'
+    hints_enabled = 'Enabled' if onboarding.are_hints_enabled() else 'Disabled'
     
     # Get hint status
     hint_status = onboarding.get_hint_status()
     seen_hints = [name for name, seen in hint_status.items() if seen]
     unseen_hints = [name for name, seen in hint_status.items() if not seen]
     
-    return f"""# Settings
+    return f'''# Settings
 ## Tutorial & Help System
 - **Tutorial System**: {tutorial_status}
 - **Tutorial Completed**: {tutorial_completed}
@@ -74,41 +74,41 @@ If you want to reset your tutorial progress or hint status, you can delete the f
 
 ## Version Info
 Version: {game_state.get_display_version() if hasattr(game_state, 'get_display_version') else 'Unknown'}
-"""
+'''
 
 
 class NavigationManager:
-    """Manages navigation state stack for menu system."""
+    '''Manages navigation state stack for menu system.'''
     
     def __init__(self):
         self.navigation_stack = []
     
     def push_state(self, current_state, new_state):
-        """Push current state to navigation stack and return new state."""
+        '''Push current state to navigation stack and return new state.'''
         self.navigation_stack.append(current_state)
         return new_state
     
     def pop_state(self, current_state):
-        """Pop from navigation stack and return previous state, or current if stack empty."""
+        '''Pop from navigation stack and return previous state, or current if stack empty.'''
         if self.navigation_stack:
             return self.navigation_stack.pop()
         return current_state
     
     def get_depth(self):
-        """Get current navigation depth (number of states in stack)."""
+        '''Get current navigation depth (number of states in stack).'''
         return len(self.navigation_stack)
     
     def clear(self):
-        """Clear the navigation stack."""
+        '''Clear the navigation stack.'''
         self.navigation_stack.clear()
 
 
 class MenuClickHandler:
-    """Handles mouse clicks for various menu screens."""
+    '''Handles mouse clicks for various menu screens.'''
     
     @staticmethod
     def handle_main_menu_click(mouse_pos, w, h, menu_items):
-        """
+        '''
         Handle mouse clicks on main menu items.
         
         Args:
@@ -118,7 +118,7 @@ class MenuClickHandler:
             
         Returns:
             Dict with action and any additional data
-        """
+        '''
         # Calculate menu button positions (must match draw_main_menu layout)
         button_width = int(w * 0.4)
         button_height = int(h * 0.08)
@@ -141,7 +141,7 @@ class MenuClickHandler:
     
     @staticmethod
     def handle_start_game_submenu_click(mouse_pos, w, h, submenu_items):
-        """Handle mouse clicks on start game submenu."""
+        '''Handle mouse clicks on start game submenu.'''
         # Calculate button positions (match the standard menu layout)
         button_width = int(w * 0.5)
         button_height = int(w * 0.08)
@@ -164,11 +164,11 @@ class MenuClickHandler:
 
 
 class MenuKeyboardHandler:
-    """Handles keyboard navigation for various menu screens."""
+    '''Handles keyboard navigation for various menu screens.'''
     
     @staticmethod
     def handle_main_menu_keyboard(key, selected_item, menu_items):
-        """
+        '''
         Handle keyboard navigation in main menu.
         
         Args:
@@ -178,7 +178,7 @@ class MenuKeyboardHandler:
             
         Returns:
             Dict with new_selected_item and action
-        """
+        '''
         if key == pygame.K_UP:
             new_selected = (selected_item - 1) % len(menu_items)
             return {'new_selected_item': new_selected, 'action': 'navigate'}
@@ -192,11 +192,11 @@ class MenuKeyboardHandler:
 
 
 class SettingsHandler:
-    """Handles pre-game settings interactions."""
+    '''Handles pre-game settings interactions.'''
     
     @staticmethod
     def cycle_setting_value(setting_index, settings_dict, reverse=False):
-        """
+        '''
         Cycle through available values for a setting.
         
         Args:
@@ -206,7 +206,7 @@ class SettingsHandler:
             
         Returns:
             Updated settings dictionary
-        """
+        '''
         # Implementation would be moved from main.py
         # This is a placeholder for the refactoring
         return settings_dict

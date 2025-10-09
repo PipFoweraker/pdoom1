@@ -1,16 +1,16 @@
-"""
+'''
 Panel drawing functions for the P(Doom) game interface.
 
 This module contains large UI panel functions including context windows,
 scoreboards, event panels, and other complex display elements.
-"""
+'''
 
 import pygame
 from typing import Dict, Any, Optional, Tuple
 
 
 def draw_context_window(screen: pygame.Surface, context_info: Dict[str, Any], w: int, h: int, minimized: bool = False, config: Optional[Dict[str, Any]] = None) -> Tuple[Optional[pygame.Rect], Optional[pygame.Rect]]:
-    """
+    '''
     Draw a context window at the bottom of the screen showing detailed information.
     
     Args:
@@ -19,7 +19,7 @@ def draw_context_window(screen: pygame.Surface, context_info: Dict[str, Any], w:
         w, h: screen dimensions
         minimized: whether the context window is minimized
         config: optional config dict for customization
-    """
+    '''
     if not context_info:
         return None, None  # No context to show
     
@@ -150,7 +150,7 @@ def draw_context_window(screen: pygame.Surface, context_info: Dict[str, Any], w:
 
 
 def draw_scoreboard(screen: pygame.Surface, game_state, w: int, h: int, seed: str) -> None:
-    """
+    '''
     Draw the enhanced game over scoreboard with final statistics.
     
     Args:
@@ -158,7 +158,7 @@ def draw_scoreboard(screen: pygame.Surface, game_state, w: int, h: int, seed: st
         game_state: current game state object
         w, h: screen dimensions
         seed: game seed string
-    """
+    '''
     # Enhanced version - defer to main ui.py implementation for consistency
     from ui import draw_scoreboard as main_draw_scoreboard
     main_draw_scoreboard(screen, game_state, w, h, seed)

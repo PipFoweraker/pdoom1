@@ -83,7 +83,7 @@ POST /api/v1/versions/sync             # GitHub webhook endpoint
 ## [EMOJI] **Website Components Ready**
 
 ```jsx
-<CurrentVersionBadge />           // Shows "v0.6.0" badge
+<CurrentVersionBadge />           // Shows 'v0.6.0' badge
 <VersionHeader />                 // Hero section with download
 <VersionCard version={...} />     // Individual version display  
 <VersionTimeline limit={5} />     // Release history timeline

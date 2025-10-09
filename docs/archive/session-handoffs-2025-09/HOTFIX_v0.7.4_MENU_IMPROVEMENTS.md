@@ -29,7 +29,7 @@ This hotfix addresses menu navigation issues and implements code consolidation f
 - **End Game Menu**: Prioritized continuation actions
   - Before: Leaderboard -> Play Again -> Main Menu -> Settings -> Feedback
   - After: Play Again -> Leaderboard -> Feedback -> Settings -> Main Menu
-  - *Rationale*: "Play Again" is primary action after completing a game
+  - *Rationale*: 'Play Again' is primary action after completing a game
 
 ### [EMOJI] Code Quality Improvements
 
@@ -75,7 +75,7 @@ This hotfix addresses menu navigation issues and implements code consolidation f
 **Already Implemented**: GameClock service was already fully integrated
 - Game state initializes `GameClock()` instance
 - `end_turn()` calls `game_clock.tick()` to advance weekly
-- Activity log shows formatted dates: "Week of 15/Dec/02031 (Mon)"
+- Activity log shows formatted dates: 'Week of 15/Dec/02031 (Mon)'
 - No additional changes needed
 
 ## Backward Compatibility

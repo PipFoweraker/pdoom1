@@ -1,7 +1,7 @@
 ---
 name: Employee Red Crosses Not Displaying Correctly
 about: Critical UI bug affecting employee status visualization
-title: "[HOTFIX] Employee red crosses not showing properly in UI"
+title: '[HOTFIX] Employee red crosses not showing properly in UI'
 labels: bug, critical, ui, hotfix
 assignees: ''
 

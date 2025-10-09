@@ -12,12 +12,12 @@ The game has a hover context system that shows information in the bottom context
 - Top resource icons show values but no explanatory context
 
 ## Acceptance Criteria
-- [ ] Hovering over Money icon shows: "Money: Funds for actions, upgrades, and staff salaries"
-- [ ] Hovering over Staff icon shows: "Staff: Team members providing action points"
-- [ ] Hovering over AP icon shows: "Action Points: Actions you can take this turn"
-- [ ] Hovering over Reputation icon shows: "Reputation: Public trust affecting funding opportunities"
-- [ ] Hovering over Doom icon shows: "p(Doom): Probability of existential catastrophe"
-- [ ] Hovering over Compute icon shows: "Compute: Computational resources for research"
+- [ ] Hovering over Money icon shows: 'Money: Funds for actions, upgrades, and staff salaries'
+- [ ] Hovering over Staff icon shows: 'Staff: Team members providing action points'
+- [ ] Hovering over AP icon shows: 'Action Points: Actions you can take this turn'
+- [ ] Hovering over Reputation icon shows: 'Reputation: Public trust affecting funding opportunities'
+- [ ] Hovering over Doom icon shows: 'p(Doom): Probability of existential catastrophe'
+- [ ] Hovering over Compute icon shows: 'Compute: Computational resources for research'
 - [ ] Context appears in the existing bottom context window
 - [ ] Context is concise and informative (under 80 characters)
 

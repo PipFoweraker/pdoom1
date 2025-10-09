@@ -35,7 +35,7 @@ def _get_activity_log_current_position(self, w: int, h: int) -> Tuple[int, int]:
 ```
 
 ### 2. Right-Side Upgrade Button Clicks [EMOJI]
-**Problem**: Upgrade buttons completely unclickable - "I can't click on any of the buttons on the right hand side, like, at all"  
+**Problem**: Upgrade buttons completely unclickable - 'I can't click on any of the buttons on the right hand side, like, at all'  
 **Root Cause**: UI system mismatch - game uses legacy `draw_ui()` rendering but `InputManager` routes to 3-column click handler which only looks for `three_column_button_rects` (action buttons), not upgrade buttons  
 **Solution**: 
 - Added upgrade button handling to `_handle_three_column_click()` method in `InputManager`

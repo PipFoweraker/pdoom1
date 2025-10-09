@@ -27,7 +27,7 @@ Based on comprehensive analysis of 18+ open branches, 20+ open issues, and curre
    - 11 specific documentation files failing compliance
 
 3. **Action System Core Bugs**
-   - Missing actions in action lists ("Safety Research" not found)
+   - Missing actions in action lists ('Safety Research' not found)
    - Action rules system not properly initialized
    - Scout actions failing with None rules
 
@@ -62,7 +62,7 @@ Based on comprehensive analysis of 18+ open branches, 20+ open issues, and curre
 - **Issues**: #316, #317, #227
 - **Actions**:
   - Fix action point calculation and staff scaling
-  - Restore missing actions ("Safety Research", "Scout Opponents")
+  - Restore missing actions ('Safety Research', 'Scout Opponents')
   - Implement proper action rules system integration
   - Fix action list generation bugs
 

@@ -1,9 +1,9 @@
 ---
-title: "Type Annotation Sprint: game_state.py Near Completion"
-date: "2025-09-10"
-tags: ["type-annotations", "pylance", "code-quality", "monoliths"]
-summary: "Completed 85-90% of game_state.py type annotations with 25+ methods annotated across core systems"
-commit: "08180d1"
+title: 'Type Annotation Sprint: game_state.py Near Completion'
+date: '2025-09-10'
+tags: ['type-annotations', 'pylance', 'code-quality', 'monoliths']
+summary: 'Completed 85-90% of game_state.py type annotations with 25+ methods annotated across core systems'
+commit: '08180d1'
 ---
 
 # Type Annotation Sprint: game_state.py Near Completion
@@ -59,13 +59,13 @@ Systematic method-by-method annotation following established patterns from ui.py
 ### Key Code Changes
 ```python
 def get_employee_productive_actions(self, employee_id: int) -> Optional[Dict[str, Any]]:
-    """Get available productive actions with comprehensive type safety."""
+    '''Get available productive actions with comprehensive type safety.'''
     
 def _in_rect(self, pt: Tuple[int, int], rect: Union[Tuple[int, int, int, int], pygame.Rect]) -> bool:
-    """Support both pygame.Rect and tuple formats with Union types."""
+    '''Support both pygame.Rect and tuple formats with Union types.'''
     
 def set_employee_productive_action(self, employee_id: int, action_index: int) -> Tuple[bool, str]:
-    """Clear success/failure return pattern with tuple types."""
+    '''Clear success/failure return pattern with tuple types.'''
 ```
 
 ### Testing Strategy

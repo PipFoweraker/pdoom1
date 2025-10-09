@@ -106,12 +106,12 @@ pdoom1/
 ### Game Clock
 - **Start Date**: July 1, 2014 00:00:00
 - **Advancement**: +1 week per tick (configurable)
-- **Format**: DD/Mon/YY (e.g., "01/Jul/14", "08/Jul/14")
+- **Format**: DD/Mon/YY (e.g., '01/Jul/14', '08/Jul/14')
 - **Persistence**: JSON state file with atomic writes
 - **Time Zone**: UTC (no local time complications)
 
 ### Settings Management
-- **Schema Version**: "1.0.0" (semantic versioning)
+- **Schema Version**: '1.0.0' (semantic versioning)
 - **Device UUID**: Generated once, persisted locally
 - **Atomic Writes**: Temp file + rename for corruption prevention
 - **Defaults**: Sensible defaults merged with user preferences
@@ -183,22 +183,22 @@ This scaffolding enables future implementations:
 ```python
 # Audio with persistent settings
 audio = AudioManager()
-audio.play_sound(Path("assets/sfx/shot.wav"))
-audio.set_volume("sfx", 0.8)
+audio.play_sound(Path('assets/sfx/shot.wav'))
+audio.set_volume('sfx', 0.8)
 
 # Game time progression
 clock = GameClock()
-current_date = clock.get_formatted_date()  # "01/Jul/14"
+current_date = clock.get_formatted_date()  # '01/Jul/14'
 clock.tick()  # Advance one week
 
 # Score tracking
 leaderboard = LocalLeaderboard()
-entry = ScoreEntry(score=1000, player_name="Player1", level_reached=5)
+entry = ScoreEntry(score=1000, player_name='Player1', level_reached=5)
 success, rank = leaderboard.add_score(entry)
 
 # Event logging (if enabled)
 telemetry = TelemetryLogger()
-telemetry.log_game_start("normal", "normal")
+telemetry.log_game_start('normal', 'normal')
 telemetry.log_level_complete(level=1, time_seconds=45.2, score=250)
 ```
 

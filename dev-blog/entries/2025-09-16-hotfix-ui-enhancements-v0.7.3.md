@@ -1,9 +1,9 @@
 ---
-title: "Hotfix UI Enhancements v0.7.3: Quick Wins & Enhanced Scoring"
-date: "2025-09-16"
-tags: ["hotfix", "ui-enhancements", "quick-wins", "scoring-system", "user-experience"]
-summary: "Comprehensive UI improvements including stray cat adoption event, overlay text visibility fixes, and enhanced end-game scoring display with strategic analysis integration"
-commit: "fd7b4d5"
+title: 'Hotfix UI Enhancements v0.7.3: Quick Wins & Enhanced Scoring'
+date: '2025-09-16'
+tags: ['hotfix', 'ui-enhancements', 'quick-wins', 'scoring-system', 'user-experience']
+summary: 'Comprehensive UI improvements including stray cat adoption event, overlay text visibility fixes, and enhanced end-game scoring display with strategic analysis integration'
+commit: 'fd7b4d5'
 ---
 
 # Hotfix UI Enhancements v0.7.3: Quick Wins & Enhanced Scoring

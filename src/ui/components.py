@@ -1,16 +1,16 @@
-"""
+'''
 Reusable UI components for the P(Doom) interface.
 
 This module contains small, focused utility functions for drawing
 common UI elements like tooltips, version info, and status indicators.
-"""
+'''
 
 import pygame
 from typing import Tuple, Optional
 
 
 def draw_dev_mode_indicator(screen, w: int, h: int, font=None):
-    """Draw developer mode indicator in top-left corner if DEV MODE is enabled."""
+    '''Draw developer mode indicator in top-left corner if DEV MODE is enabled.'''
     try:
         from src.services.dev_mode import get_dev_status_text
         dev_text = get_dev_status_text()
@@ -22,7 +22,7 @@ def draw_dev_mode_indicator(screen, w: int, h: int, font=None):
             font = pygame.font.SysFont('Consolas', max(14, int(h * 0.022)), bold=True)
         
         # Create text with bright orange/yellow color for visibility
-        dev_surf = font.render(f"[{dev_text}]", True, (255, 165, 0))
+        dev_surf = font.render(f'[{dev_text}]', True, (255, 165, 0))
         
         # Position in top-left corner with margin
         margin = int(h * 0.015)
@@ -33,12 +33,12 @@ def draw_dev_mode_indicator(screen, w: int, h: int, font=None):
 
 
 def draw_version_footer(screen, w: int, h: int, font=None):
-    """Draw version information in the footer area."""
+    '''Draw version information in the footer area.'''
     try:
         from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
-        version_text = "dev"
+        version_text = 'dev'
     
     if font is None:
         font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
@@ -54,12 +54,12 @@ def draw_version_footer(screen, w: int, h: int, font=None):
 
 
 def draw_version_header(screen, w: int, h: int, font=None):
-    """Draw version information in the header area (alternative placement)."""
+    '''Draw version information in the header area (alternative placement).'''
     try:
         from src.services.version import get_display_version
         version_text = get_display_version()
     except ImportError:
-        version_text = "dev"
+        version_text = 'dev'
     
     if font is None:
         font = pygame.font.SysFont('Consolas', max(12, int(h * 0.02)))
@@ -75,7 +75,7 @@ def draw_version_header(screen, w: int, h: int, font=None):
 
 
 def draw_tooltip(screen, text: str, mouse_pos: Tuple[int, int], w: int, h: int):
-    """Draw a tooltip at the mouse position with text."""
+    '''Draw a tooltip at the mouse position with text.'''
     font = pygame.font.SysFont('Consolas', int(h*0.018))
     surf = font.render(text, True, (230,255,200))
     tw, th = surf.get_size()
@@ -87,8 +87,8 @@ def draw_tooltip(screen, text: str, mouse_pos: Tuple[int, int], w: int, h: int):
     screen.blit(surf, (px+6, py+6))
 
 
-def draw_loading_screen(screen, w: int, h: int, progress: float = 0, status_text: str = "Loading...", font=None):
-    """Draw a loading screen with progress indicator and accessibility support."""
+def draw_loading_screen(screen, w: int, h: int, progress: float = 0, status_text: str = 'Loading...', font=None):
+    '''Draw a loading screen with progress indicator and accessibility support.'''
     if font is None:
         font = pygame.font.SysFont('Consolas', max(16, int(h * 0.03)))
     
@@ -97,14 +97,14 @@ def draw_loading_screen(screen, w: int, h: int, progress: float = 0, status_text
     
     # Title
     title_font = pygame.font.SysFont('Consolas', int(h * 0.06), bold=True)
-    title_text = title_font.render("P(Doom)", True, (255, 255, 255))
+    title_text = title_font.render('P(Doom)', True, (255, 255, 255))
     title_x = w // 2 - title_text.get_width() // 2
     title_y = int(h * 0.3)
     screen.blit(title_text, (title_x, title_y))
     
     # Subtitle
     subtitle_font = pygame.font.SysFont('Consolas', int(h * 0.025))
-    subtitle_text = subtitle_font.render("Bureaucracy Strategy Prototype", True, (180, 180, 180))
+    subtitle_text = subtitle_font.render('Bureaucracy Strategy Prototype', True, (180, 180, 180))
     subtitle_x = w // 2 - subtitle_text.get_width() // 2
     subtitle_y = title_y + title_text.get_height() + 10
     screen.blit(subtitle_text, (subtitle_x, subtitle_y))
@@ -134,14 +134,14 @@ def draw_loading_screen(screen, w: int, h: int, progress: float = 0, status_text
     
     # Progress percentage
     if progress > 0:
-        percent_text = subtitle_font.render(f"{int(progress * 100)}%", True, (150, 150, 150))
+        percent_text = subtitle_font.render(f'{int(progress * 100)}%', True, (150, 150, 150))
         percent_x = w // 2 - percent_text.get_width() // 2
         percent_y = status_y + status_surf.get_height() + 10
         screen.blit(percent_text, (percent_x, percent_y))
 
 
 def should_show_ui_element(game_state, element_id: str) -> bool:
-    """Check if a UI element should be visible based on tutorial progress."""
+    '''Check if a UI element should be visible based on tutorial progress.'''
     # Import onboarding here to avoid circular imports
     from src.features.onboarding import onboarding
     
@@ -154,7 +154,7 @@ def should_show_ui_element(game_state, element_id: str) -> bool:
 
 
 def draw_mute_button_standalone(screen, sound_manager, w: int, h: int):
-    """Draw mute/unmute button in bottom right corner (standalone version for menus)"""
+    '''Draw mute/unmute button in bottom right corner (standalone version for menus)'''
     # Button position (bottom right) - made larger per issue #89
     button_size = int(min(w, h) * 0.06)  # Same size as main game mute button
     button_x = w - button_size - 20
@@ -164,11 +164,11 @@ def draw_mute_button_standalone(screen, sound_manager, w: int, h: int):
     if sound_manager and sound_manager.is_enabled():
         bg_color = (100, 200, 100)  # Green when sound is on
         icon_color = (255, 255, 255)
-        symbol = "~"  # Musical note when sound is on
+        symbol = '~'  # Musical note when sound is on
     else:
         bg_color = (200, 100, 100)  # Red when sound is off
         icon_color = (255, 255, 255) 
-        symbol = "X"  # Muted symbol when sound is off
+        symbol = 'X'  # Muted symbol when sound is off
     
     # Draw button background
     button_rect = pygame.Rect(button_x, button_y, button_size, button_size)

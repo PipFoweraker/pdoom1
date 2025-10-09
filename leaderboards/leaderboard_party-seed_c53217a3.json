@@ -1,16 +1,16 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-14T02:28:35.898665",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-14T02:28:35.898665',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 1,
-      "player_name": "Nexus Computing",
-      "date": "2025-09-14T02:28:35.896648",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.043876,
-      "entry_uuid": "9195cd08-f93f-4e88-9349-8ac6fbbac14c"
+      'score': 1,
+      'player_name': 'Nexus Computing',
+      'date': '2025-09-14T02:28:35.896648',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.043876,
+      'entry_uuid': '9195cd08-f93f-4e88-9349-8ac6fbbac14c'
     }
   ]
 }

@@ -19,12 +19,12 @@ python main.py
 ## Demo Flow (5-10 minutes per player)
 
 ### Opening Hook (30 seconds)
-> "You're running a scrappy AI safety nonprofit with $100k. Three well-funded labs are racing toward AGI. Can you solve alignment before everyone dies?"
+> 'You're running a scrappy AI safety nonprofit with $100k. Three well-funded labs are racing toward AGI. Can you solve alignment before everyone dies?'
 
 ### Core Gameplay Demo (3-5 minutes)
 1. **Show Starting Position**: $100k, 2 staff, 25% doom
 2. **Demonstrate Actions**: Hire researchers, conduct research, manage budget
-3. **Highlight Audio**: Action sounds, hiring "blob" sound, menu interactions
+3. **Highlight Audio**: Action sounds, hiring 'blob' sound, menu interactions
 4. **Show Opponents**: Mysterious labs making progress in the background
 5. **Economic Pressure**: Weekly staff costs of $600-800, tough decisions
 
@@ -32,12 +32,12 @@ python main.py
 1. **Game Over Scenario**: Let doom reach 100% or run out of money
 2. **Spectacular Screen**: Visual celebration if high score achieved
 3. **Leaderboard Integration**: Show ranking against other players
-4. **Natural Flow**: "View Full Leaderboard" -> "Launch New Game"
+4. **Natural Flow**: 'View Full Leaderboard' -> 'Launch New Game'
 
 ### Competitive Hook (1-2 minutes)
-1. **Seed-Specific Competition**: "Try the same seed to compare strategies"
-2. **Dual Identity**: "Set your player name and lab name separately"
-3. **Progress Tracking**: "Play 10 games and watch your skills improve"
+1. **Seed-Specific Competition**: 'Try the same seed to compare strategies'
+2. **Dual Identity**: 'Set your player name and lab name separately'
+3. **Progress Tracking**: 'Play 10 games and watch your skills improve'
 
 ## Key Talking Points
 
@@ -70,9 +70,9 @@ python main.py
 - **Display Issues**: Game requires display - won't work in headless environments
 
 ### Gameplay Questions
-- **"I ran out of money"**: Try hiring fewer staff, or choose different research focus
-- **"Doom is too high"**: Balance capability research with safety research
-- **"Opponents winning"**: Use espionage to learn their strategies
+- **'I ran out of money'**: Try hiring fewer staff, or choose different research focus
+- **'Doom is too high'**: Balance capability research with safety research
+- **'Opponents winning'**: Use espionage to learn their strategies
 
 ## Party Integration Tips
 
@@ -87,13 +87,13 @@ python main.py
 - Have backup laptop in case of crashes
 
 ### Conversation Starters
-- "What's your AI safety strategy?"
-- "Can you beat my 47-turn survival record?"
-- "Try seed 'party2024' - I got ranked #3"
+- 'What's your AI safety strategy?'
+- 'Can you beat my 47-turn survival record?'
+- 'Try seed 'party2024' - I got ranked #3'
 
 ## Version History Highlight
 
-**v0.4.1 "Bootstrap Economic Calibration"** - Current party-ready version
+**v0.4.1 'Bootstrap Economic Calibration'** - Current party-ready version
 - Enhanced leaderboard system with visual celebration
 - Sound effects enabled by default
 - Spectacular game over screen

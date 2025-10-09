@@ -1,9 +1,9 @@
 ---
-title: "Employee Blob Manager Extraction - Second Major Monolith Module"
-date: "2025-09-21"
-tags: ["architecture", "refactoring", "monolith-breakdown", "employee-management"]
-summary: "Extracted comprehensive employee blob visualization system (272 lines) from game_state.py monolith with zero regressions"
-commit: "1ddfc26"
+title: 'Employee Blob Manager Extraction - Second Major Monolith Module'
+date: '2025-09-21'
+tags: ['architecture', 'refactoring', 'monolith-breakdown', 'employee-management']
+summary: 'Extracted comprehensive employee blob visualization system (272 lines) from game_state.py monolith with zero regressions'
+commit: '1ddfc26'
 ---
 
 # Employee Blob Manager Extraction - Second Major Monolith Module
@@ -61,12 +61,12 @@ class EmployeeBlobManager:
         self.game_state = game_state
         
     def initialize_employee_blobs(self) -> None:
-        """Initialize employee blobs for starting staff"""
+        '''Initialize employee blobs for starting staff'''
         self.game_state.employee_blobs = initialize_employee_blobs(
             self.game_state.staff, self.calculate_blob_position)
     
     def update_blob_positions_dynamically(self, screen_w: int = 1200, screen_h: int = 800) -> None:
-        """Update blob positions with collision avoidance and management logic"""
+        '''Update blob positions with collision avoidance and management logic'''
         # Complex positioning algorithm with UI collision detection
         # Blob-to-blob repulsion physics
         # Management assignment visualization

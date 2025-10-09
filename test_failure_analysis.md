@@ -83,7 +83,7 @@
 ## Fixed Issues (2/7 ERRORS resolved)
 
 ### ERRORS Fixed
-1. [EMOJI] `test_execute_gameplay_action_by_keyboard_action_not_available` - Fixed by updating test to use action point depletion instead of missing "Scout Opponents"
+1. [EMOJI] `test_execute_gameplay_action_by_keyboard_action_not_available` - Fixed by updating test to use action point depletion instead of missing 'Scout Opponents'
 2. [EMOJI] `test_command_strings` - Fixed by correcting import path and renaming file to avoid unittest discovery
 
 ### ERRORS Remaining (5/7)

@@ -1,33 +1,33 @@
-"""
+'''
 Visual Themes and Color Coding System for P(Doom)
 
 Provides consistent color schemes for action buttons and employee visual differentiation.
-"""
+'''
 
 from typing import Dict, Tuple, Optional
 from enum import Enum
 
 
 class ActionCategory(Enum):
-    """Categories for action button color coding"""
-    BUSINESS = "business"          # Fundraising, PR, outreach
-    HIRING = "hiring"             # Hire staff, hire specialists  
-    RESEARCH = "research"         # Research actions, publications
-    INFRASTRUCTURE = "infrastructure"  # Compute, upgrades, facilities
-    SECURITY = "security"         # Safety measures, security actions
-    INTELLIGENCE = "intelligence" # Espionage, scouting, surveillance
-    MANAGEMENT = "management"     # Strategic, administrative actions
+    '''Categories for action button color coding'''
+    BUSINESS = 'business'          # Fundraising, PR, outreach
+    HIRING = 'hiring'             # Hire staff, hire specialists  
+    RESEARCH = 'research'         # Research actions, publications
+    INFRASTRUCTURE = 'infrastructure'  # Compute, upgrades, facilities
+    SECURITY = 'security'         # Safety measures, security actions
+    INTELLIGENCE = 'intelligence' # Espionage, scouting, surveillance
+    MANAGEMENT = 'management'     # Strategic, administrative actions
 
 
 class EmployeeType(Enum):
-    """Employee types for visual differentiation"""
-    GENERALIST = "generalist"
-    RESEARCHER = "researcher" 
-    ENGINEER = "engineer"
-    ADMINISTRATOR = "administrator"
-    SECURITY_SPECIALIST = "security_specialist"
-    DATA_SCIENTIST = "data_scientist"
-    MANAGER = "manager"
+    '''Employee types for visual differentiation'''
+    GENERALIST = 'generalist'
+    RESEARCHER = 'researcher' 
+    ENGINEER = 'engineer'
+    ADMINISTRATOR = 'administrator'
+    SECURITY_SPECIALIST = 'security_specialist'
+    DATA_SCIENTIST = 'data_scientist'
+    MANAGER = 'manager'
 
 
 # Action button color schemes by category
@@ -184,7 +184,7 @@ ACTION_CATEGORY_MAPPING = {
 
 
 def get_action_colors(action_name: str) -> Dict[str, Tuple[int, int, int]]:
-    """
+    '''
     Get color scheme for an action button based on its category.
     
     Args:
@@ -192,7 +192,7 @@ def get_action_colors(action_name: str) -> Dict[str, Tuple[int, int, int]]:
         
     Returns:
         Dict with color values for different button states
-    """
+    '''
     # Normalize action name (remove underscores, lowercase)
     normalized_name = action_name.lower().replace('_', '')
     
@@ -211,7 +211,7 @@ def get_action_colors(action_name: str) -> Dict[str, Tuple[int, int, int]]:
 
 
 def get_employee_visuals(employee_subtype: str) -> Dict:
-    """
+    '''
     Get visual properties for an employee based on their subtype.
     
     Args:  
@@ -219,7 +219,7 @@ def get_employee_visuals(employee_subtype: str) -> Dict:
         
     Returns:
         Dict with visual properties (colors, hat info)
-    """
+    '''
     try:
         employee_type = EmployeeType(employee_subtype)
         return EMPLOYEE_VISUALS[employee_type]
@@ -229,7 +229,7 @@ def get_employee_visuals(employee_subtype: str) -> Dict:
 
 
 def draw_employee_hat(surface, x: int, y: int, hat_shape: str, hat_color: Tuple[int, int, int], size: int = 20):
-    """
+    '''
     Draw a hat on an employee blob using geometric shapes.
     
     Args:
@@ -238,7 +238,7 @@ def draw_employee_hat(surface, x: int, y: int, hat_shape: str, hat_color: Tuple[
         hat_shape: Type of hat to draw
         hat_color: RGB color tuple for the hat
         size: Base size for hat scaling
-    """
+    '''
     import pygame
     
     if hat_shape == 'none':

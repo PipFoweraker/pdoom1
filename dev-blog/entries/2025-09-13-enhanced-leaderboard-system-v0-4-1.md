@@ -1,16 +1,16 @@
 ---
-title: "Enhanced Leaderboard System v0.4.1: Seed Competition"
-date: "2025-09-13"
-tags: ["milestone", "leaderboard", "bootstrap-economics", "ui", "competition"]
-summary: "Major competitive gaming milestone: seed-specific leaderboards, lab name integration, bootstrap economic model, and comprehensive session tracking"
-commit: "2dd48ac"
+title: 'Enhanced Leaderboard System v0.4.1: Seed Competition'
+date: '2025-09-13'
+tags: ['milestone', 'leaderboard', 'bootstrap-economics', 'ui', 'competition']
+summary: 'Major competitive gaming milestone: seed-specific leaderboards, lab name integration, bootstrap economic model, and comprehensive session tracking'
+commit: '2dd48ac'
 ---
 
 # Enhanced Leaderboard System v0.4.1: Seed Competition
 
 ## Milestone Summary
 
-This milestone represents a transformational achievement in P(Doom)'s competitive gameplay infrastructure. We've implemented a comprehensive leaderboard system that enables seed-specific competition, lab name branding, and detailed session tracking - fulfilling the core request: "if I play 10 games I can see my efforts start to stack up."
+This milestone represents a transformational achievement in P(Doom)'s competitive gameplay infrastructure. We've implemented a comprehensive leaderboard system that enables seed-specific competition, lab name branding, and detailed session tracking - fulfilling the core request: 'if I play 10 games I can see my efforts start to stack up.'
 
 ## Achievements
 

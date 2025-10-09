@@ -1,9 +1,9 @@
 ---
-title: "Bug Sweep Critical Stability Session"
-date: "2025-09-19"
-tags: ["bug-fix", "stability", "ui", "testing"]
-summary: "Fixed critical debug console crash and verified resolution of 4 GitHub issues in systematic bug sweep"
-commit: "179028c"
+title: 'Bug Sweep Critical Stability Session'
+date: '2025-09-19'
+tags: ['bug-fix', 'stability', 'ui', 'testing']
+summary: 'Fixed critical debug console crash and verified resolution of 4 GitHub issues in systematic bug sweep'
+commit: '179028c'
 ---
 
 # Bug Sweep Critical Stability Session

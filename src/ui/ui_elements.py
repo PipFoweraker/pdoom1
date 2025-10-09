@@ -1,4 +1,4 @@
-"""
+'''
 UI element drawing functions for P(Doom) - Employee blobs, buttons, and UI widgets
 
 This module contains drawing functions for interactive UI elements including:
@@ -7,19 +7,19 @@ This module contains drawing functions for interactive UI elements including:
 - Basic UI widgets and controls
 
 Extracted from ui.py as part of Phase 3 UI modularization.
-"""
+'''
 
 import pygame
 from typing import Any, Optional, Tuple, List
 
 
 def draw_employee_blobs(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
-    """
+    '''
     Draw animated employee blobs (circles representing staff members).
     
     Handles positioning, animation, visual effects, and employee state display.
     Includes productivity halos, type differentiation, and dynamic repositioning.
-    """
+    '''
     if not hasattr(game_state, 'employee_blobs') or not game_state.employee_blobs:
         return
     
@@ -92,7 +92,7 @@ def draw_employee_blobs(screen: pygame.Surface, game_state: Any, w: int, h: int)
 
 
 def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) -> None:
-    """Draw mute/unmute button in bottom right corner"""
+    '''Draw mute/unmute button in bottom right corner'''
     # Button position (bottom right) - made larger per issue #89
     button_size = int(min(w, h) * 0.06)  # Increased from 0.04 to 0.06 for better visibility
     button_x = w - button_size - 20
@@ -102,11 +102,11 @@ def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) ->
     if hasattr(game_state, 'sound_manager') and game_state.sound_manager and game_state.sound_manager.is_enabled():
         bg_color = (100, 200, 100)  # Green when sound is on
         icon_color = (255, 255, 255)
-        symbol = "~"  # Musical note when sound is on
+        symbol = '~'  # Musical note when sound is on
     else:
         bg_color = (200, 100, 100)  # Red when sound is off
         icon_color = (255, 255, 255) 
-        symbol = "X"  # Muted symbol when sound is off
+        symbol = 'X'  # Muted symbol when sound is off
     
     # Draw button background
     button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
@@ -123,7 +123,7 @@ def draw_mute_button(screen: pygame.Surface, game_state: Any, w: int, h: int) ->
 
 
 def draw_mute_button_standalone(screen: pygame.Surface, sound_manager: Any, w: int, h: int) -> None:
-    """Draw mute/unmute button in bottom right corner (standalone version for menus)"""
+    '''Draw mute/unmute button in bottom right corner (standalone version for menus)'''
     # Button position (bottom right) - made larger per issue #89
     button_size = int(min(w, h) * 0.06)  # Same size as main game mute button
     button_x = w - button_size - 20
@@ -133,11 +133,11 @@ def draw_mute_button_standalone(screen: pygame.Surface, sound_manager: Any, w: i
     if sound_manager and sound_manager.is_enabled():
         bg_color = (100, 200, 100)  # Green when sound is on
         icon_color = (255, 255, 255)
-        symbol = "~"  # Musical note when sound is on
+        symbol = '~'  # Musical note when sound is on
     else:
         bg_color = (200, 100, 100)  # Red when sound is off
         icon_color = (255, 255, 255) 
-        symbol = "X"  # Muted symbol when sound is off
+        symbol = 'X'  # Muted symbol when sound is off
     
     # Draw button background
     button_rect = pygame.Rect(button_x, button_y, button_size, button_size)
@@ -154,7 +154,7 @@ def draw_mute_button_standalone(screen: pygame.Surface, sound_manager: Any, w: i
 
 
 def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: int, font: Optional[pygame.font.Font] = None) -> Optional[pygame.Rect]:
-    """
+    '''
     Draw a Back button when navigation depth >= 1.
     
     Args:
@@ -165,7 +165,7 @@ def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: i
     
     Returns:
         pygame.Rect: The button rectangle for click detection, or None if not rendered
-    """
+    '''
     if navigation_depth < 1:
         return None
     
@@ -174,7 +174,7 @@ def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: i
     
     # Position button in top-left corner with margin
     margin = int(h * 0.02)
-    button_text = "< Back"
+    button_text = '< Back'
     text_surf = font.render(button_text, True, (255, 255, 255))
     
     # Button styling
@@ -196,7 +196,7 @@ def draw_back_button(screen: pygame.Surface, w: int, h: int, navigation_depth: i
 
 
 def draw_tooltip(screen: pygame.Surface, text: str, mouse_pos: Tuple[int, int], w: int, h: int) -> None:
-    """
+    '''
     Draw a tooltip near the mouse position with the given text.
     
     Args:
@@ -204,7 +204,7 @@ def draw_tooltip(screen: pygame.Surface, text: str, mouse_pos: Tuple[int, int], 
         text: tooltip text to display
         mouse_pos: current mouse position (x, y)
         w, h: screen dimensions for boundary checking
-    """
+    '''
     font = pygame.font.SysFont('Consolas', int(h*0.018))
     surf = font.render(text, True, (230,255,200))
     tw, th = surf.get_size()
@@ -222,11 +222,11 @@ def draw_tooltip(screen: pygame.Surface, text: str, mouse_pos: Tuple[int, int], 
 
 
 def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
-    """
+    '''
     Splits the text into multiple lines so that each line fits within max_width.
     Returns a list of strings, each representing a line.
     Improved to handle overflow with better word breaking.
-    """
+    '''
     lines: list[str] = []
     # Use textwrap to split into words, then try to pack as many as possible per line
     words = text.split(' ')

@@ -1,9 +1,9 @@
 ---
-title: "P(Doom) v0.3.0: Consolidated Feature Release"
-date: "2025-09-11"
-tags: ["milestone", "release", "longtermist", "accessibility", "alpha", "consolidation"]
-summary: "Major consolidated release featuring longtermist 5-digit year dates, accessibility framework, comprehensive bug sweep plan, and systematic branch merge for alpha readiness"
-commit: "76de59c"
+title: 'P(Doom) v0.3.0: Consolidated Feature Release'
+date: '2025-09-11'
+tags: ['milestone', 'release', 'longtermist', 'accessibility', 'alpha', 'consolidation']
+summary: 'Major consolidated release featuring longtermist 5-digit year dates, accessibility framework, comprehensive bug sweep plan, and systematic branch merge for alpha readiness'
+commit: '76de59c'
 ---
 
 # P(Doom) v0.3.0: Consolidated Feature Release

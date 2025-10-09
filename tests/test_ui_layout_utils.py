@@ -1,9 +1,9 @@
-"""
+'''
 Test module for UI layout utilities.
 
 Tests the layout calculation functionality to ensure consistency
 and correctness of UI positioning.
-"""
+'''
 
 import unittest
 import pygame
@@ -14,14 +14,14 @@ from src.ui.layout_utils import (
 
 
 class TestUILayoutUtils(unittest.TestCase):
-    """Test cases for UI layout utilities."""
+    '''Test cases for UI layout utilities.'''
     
     def setUp(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
     
     def test_button_layout_properties(self):
-        """Test ButtonLayout data class properties."""
+        '''Test ButtonLayout data class properties.'''
         button = ButtonLayout(100, 200, 300, 50)
         
         self.assertEqual(button.x, 100)
@@ -41,7 +41,7 @@ class TestUILayoutUtils(unittest.TestCase):
         self.assertEqual(rect.height, 50)
     
     def test_menu_button_calculation(self):
-        """Test standard menu button layout calculation."""
+        '''Test standard menu button layout calculation.'''
         w, h = 1200, 800
         num_buttons = 3
         
@@ -67,7 +67,7 @@ class TestUILayoutUtils(unittest.TestCase):
         self.assertEqual(buttons[2].y - buttons[1].y, spacing)
     
     def test_centered_button_calculation(self):
-        """Test centered button calculation."""
+        '''Test centered button calculation.'''
         w, h = 1200, 800
         button = UILayoutManager.calculate_centered_button(w, h, 0.3, 0.06, 0.5)
         
@@ -82,7 +82,7 @@ class TestUILayoutUtils(unittest.TestCase):
         self.assertEqual(button.y, expected_y)
     
     def test_button_click_detection(self):
-        """Test button click detection."""
+        '''Test button click detection.'''
         buttons = [
             ButtonLayout(100, 100, 200, 50),  # Button 0
             ButtonLayout(100, 200, 200, 50),  # Button 1  
@@ -106,7 +106,7 @@ class TestUILayoutUtils(unittest.TestCase):
         self.assertEqual(clicked, -1)
     
     def test_different_layout_types(self):
-        """Test different menu layout configurations."""
+        '''Test different menu layout configurations.'''
         w, h = 1200, 800
         
         # Test submenu layout (wider buttons)
@@ -125,7 +125,7 @@ class TestUILayoutUtils(unittest.TestCase):
         self.assertEqual(fallback_buttons[0].width, expected_width)
     
     def test_responsive_layout(self):
-        """Test responsive layout calculations."""
+        '''Test responsive layout calculations.'''
         # Test font scaling
         base_size = 20
         scaled_size = ResponsiveLayout.scale_font_size(base_size, 1600, 800)
@@ -146,7 +146,7 @@ class TestUILayoutUtils(unittest.TestCase):
         self.assertEqual(loose_spacing, 32)  # 800 * 0.04
     
     def test_convenience_functions(self):
-        """Test convenience layout functions."""
+        '''Test convenience layout functions.'''
         w, h = 1200, 800
         
         # Test standard menu layout
@@ -161,7 +161,7 @@ class TestUILayoutUtils(unittest.TestCase):
         self.assertEqual(back_button.y, margin)
     
     def test_safe_margin_calculation(self):
-        """Test safe margin calculation."""
+        '''Test safe margin calculation.'''
         # Test with square screen
         margin = UILayoutManager.get_safe_margin(800, 800)
         self.assertEqual(margin, 16)  # 800 * 0.02
@@ -171,7 +171,7 @@ class TestUILayoutUtils(unittest.TestCase):
         self.assertEqual(margin, 12)  # 600 * 0.02
     
     def tearDown(self):
-        """Clean up after tests."""
+        '''Clean up after tests.'''
         pygame.quit()
 
 

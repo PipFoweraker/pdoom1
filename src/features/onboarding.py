@@ -1,4 +1,4 @@
-"""
+'''
 Onboarding and tutorial system for P(Doom).
 
 This module handles:
@@ -6,19 +6,19 @@ This module handles:
 - Tutorial progression tracking  
 - Context-sensitive help triggers
 - Tooltip and help overlay management
-"""
+'''
 
 import json
 import os
 from typing import Dict, Optional
 
-ONBOARDING_FILE = "onboarding_progress.json"
+ONBOARDING_FILE = 'onboarding_progress.json'
 
 class OnboardingSystem:
-    """Manages onboarding state and tutorial progression."""
+    '''Manages onboarding state and tutorial progression.'''
     
     def __init__(self):
-        """Initialize onboarding system and load existing progress."""
+        '''Initialize onboarding system and load existing progress.'''
         self.progress = self._load_progress()
         self.tutorial_enabled = self.progress.get('tutorial_enabled', True)
         self.is_first_time = self.progress.get('is_first_time', True)
@@ -37,7 +37,7 @@ class OnboardingSystem:
         self.tutorial_navigation_history = []  # For back button functionality
         
     def _load_progress(self) -> Dict:
-        """Load onboarding progress from file."""
+        '''Load onboarding progress from file.'''
         try:
             if os.path.exists(ONBOARDING_FILE):
                 with open(ONBOARDING_FILE, 'r') as f:
@@ -47,7 +47,7 @@ class OnboardingSystem:
         return {}
     
     def _save_progress(self):
-        """Save current onboarding progress to file."""
+        '''Save current onboarding progress to file.'''
         progress_data = {
             'tutorial_enabled': self.tutorial_enabled,
             'is_first_time': self.is_first_time,
@@ -62,17 +62,17 @@ class OnboardingSystem:
             pass  # Silently fail if we can't save
     
     def should_show_tutorial(self) -> bool:
-        """Check if tutorial should be shown."""
+        '''Check if tutorial should be shown.'''
         return (self.tutorial_enabled and 
                 self.is_first_time and 
                 not self.tutorial_dismissed)
     
     def start_tutorial(self):
-        """Start the tutorial sequence (using new stepwise system)."""
+        '''Start the tutorial sequence (using new stepwise system).'''
         self.start_stepwise_tutorial()
     
     def start_stepwise_tutorial(self):
-        """Start the new stepwise tutorial sequence."""
+        '''Start the new stepwise tutorial sequence.'''
         if self.should_show_tutorial():
             self.show_tutorial_overlay = True
             self.current_step_index = 0
@@ -84,7 +84,7 @@ class OnboardingSystem:
                 self._reveal_current_step_elements()
     
     def advance_stepwise_tutorial(self):
-        """Advance to the next step in the stepwise tutorial."""
+        '''Advance to the next step in the stepwise tutorial.'''
         tutorial_sequence = self.get_stepwise_tutorial_sequence()
         
         # Save current state to history for back navigation
@@ -108,7 +108,7 @@ class OnboardingSystem:
         self._save_progress()
     
     def go_back_stepwise_tutorial(self):
-        """Go back to the previous step in the stepwise tutorial."""
+        '''Go back to the previous step in the stepwise tutorial.'''
         if not self.tutorial_navigation_history:
             return  # Can't go back from first step
         
@@ -123,7 +123,7 @@ class OnboardingSystem:
             self.current_tutorial_step = current_step['id']
     
     def _reveal_current_step_elements(self):
-        """Reveal UI elements for the current tutorial step."""
+        '''Reveal UI elements for the current tutorial step.'''
         tutorial_sequence = self.get_stepwise_tutorial_sequence()
         if self.current_step_index < len(tutorial_sequence):
             current_step = tutorial_sequence[self.current_step_index]
@@ -143,14 +143,14 @@ class OnboardingSystem:
                     self.revealed_elements.add(element)
     
     def should_show_ui_element(self, element_id: str) -> bool:
-        """Check if a UI element should be visible based on tutorial progress."""
+        '''Check if a UI element should be visible based on tutorial progress.'''
         if not self.show_tutorial_overlay:
             return True  # Show all elements when tutorial is not active
         
         return element_id in self.revealed_elements
     
     def get_current_stepwise_tutorial_data(self) -> Optional[Dict]:
-        """Get data for the current stepwise tutorial step."""
+        '''Get data for the current stepwise tutorial step.'''
         if not self.show_tutorial_overlay:
             return None
         
@@ -169,26 +169,26 @@ class OnboardingSystem:
         return None
     
     def complete_tutorial(self):
-        """Mark tutorial as completed."""
+        '''Mark tutorial as completed.'''
         self.show_tutorial_overlay = False
         self.current_tutorial_step = None
         self.is_first_time = False
         self._save_progress()
     
     def dismiss_tutorial(self):
-        """Allow user to dismiss/skip tutorial."""
+        '''Allow user to dismiss/skip tutorial.'''
         self.tutorial_dismissed = True
         self.show_tutorial_overlay = False
         self.current_tutorial_step = None
         self._save_progress()
     
     def enable_tutorial(self, enabled: bool):
-        """Enable or disable tutorial system."""
+        '''Enable or disable tutorial system.'''
         self.tutorial_enabled = enabled
         self._save_progress()
     
     def mark_mechanic_seen(self, mechanic: str):
-        """Mark a game mechanic as seen (for first-time help)."""
+        '''Mark a game mechanic as seen (for first-time help).'''
         if mechanic not in self.seen_mechanics:
             self.seen_mechanics.add(mechanic)
             self._save_progress()
@@ -196,12 +196,12 @@ class OnboardingSystem:
         return False
     
     def should_show_mechanic_help(self, mechanic: str) -> bool:
-        """Check if first-time help should be shown for a mechanic."""
+        '''Check if first-time help should be shown for a mechanic.'''
         return (self.tutorial_enabled and 
                 mechanic not in self.seen_mechanics)
     
     def get_mechanic_help(self, mechanic: str) -> Optional[Dict]:
-        """
+        '''
         Get help content for a specific game mechanic.
         
         Args:
@@ -211,7 +211,7 @@ class OnboardingSystem:
             Dict with 'title' and 'content' keys for valid mechanics, None for invalid ones
             
         Note: This implementation is defensive to prevent any crashes that could prevent game launch.
-        """
+        '''
         try:
             # Handle invalid inputs gracefully
             if not isinstance(mechanic, str) or not mechanic:
@@ -229,7 +229,7 @@ class OnboardingSystem:
                 },
                 'action_points_exhausted': {
                     'title': 'No Action Points Remaining',
-                    'content': 'You\'ve used all your action points for this turn. Click "End Turn" to proceed to the next turn, where your action points will be refreshed. Consider hiring more staff to get additional action points per turn.'
+                    'content': 'You\'ve used all your action points for this turn. Click 'End Turn' to proceed to the next turn, where your action points will be refreshed. Consider hiring more staff to get additional action points per turn.'
                 },
                 'high_doom_warning': {
                     'title': 'Warning: High P(Doom)',
@@ -243,21 +243,21 @@ class OnboardingSystem:
             # Defensive coding: never let onboarding system crash the game
             try:
                 import logging
-                logging.error(f"Error in get_mechanic_help for mechanic '{mechanic}': {e}")
+                logging.error(f'Error in get_mechanic_help for mechanic '{mechanic}': {e}')
             except:
                 pass  # Even logging errors shouldn't crash
             return None  # Return None to gracefully handle any errors
     
     def add_tooltip(self, message: str, priority: int = 1):
-        """
+        '''
         Add a tooltip to the pending tooltip queue.
         
         Args:
             message: The tooltip message to display
             priority: Priority level (higher number = higher priority)
-        """
+        '''
         import logging
-        logging.warning(f"add_tooltip called with message: {message}, priority: {priority}. This is a stub implementation.")
+        logging.warning(f'add_tooltip called with message: {message}, priority: {priority}. This is a stub implementation.')
         
         self.pending_tooltips.append({
             'message': message,
@@ -267,22 +267,22 @@ class OnboardingSystem:
         self.pending_tooltips.sort(key=lambda x: x['priority'], reverse=True)
     
     def get_next_tooltip(self) -> Optional[str]:
-        """
+        '''
         Get the next tooltip message from the queue.
         
         Returns:
             The next tooltip message or None if queue is empty
-        """
+        '''
         if self.pending_tooltips:
             return self.pending_tooltips.pop(0)['message']
         return None
     
     def clear_tooltips(self):
-        """Clear all pending tooltips."""
+        '''Clear all pending tooltips.'''
         self.pending_tooltips.clear()
     
     def get_tutorial_content(self, step_id: str) -> Optional[Dict]:
-        """
+        '''
         Get tutorial content for a specific step.
         
         Args:
@@ -290,9 +290,9 @@ class OnboardingSystem:
             
         Returns:
             Dict with tutorial content or None if step not found
-        """
+        '''
         import logging
-        logging.warning(f"get_tutorial_content called for step: {step_id}. This is a stub implementation.")
+        logging.warning(f'get_tutorial_content called for step: {step_id}. This is a stub implementation.')
         
         tutorial_content = {
             'welcome': {
@@ -317,7 +317,7 @@ class OnboardingSystem:
             },
             'end_turn': {
                 'title': 'Ending Your Turn',
-                'content': 'Click "End Turn" when you\'re done taking actions. This advances time and triggers events.',
+                'content': 'Click 'End Turn' when you\'re done taking actions. This advances time and triggers events.',
                 'next_step': 'events'
             },
             'events': {
@@ -340,14 +340,14 @@ class OnboardingSystem:
         return tutorial_content.get(step_id)
     
     def advance_tutorial_step(self, current_step: str):
-        """
+        '''
         Advance to the next tutorial step.
         
         Args:
             current_step: The current step being completed
-        """
+        '''
         import logging
-        logging.warning(f"advance_tutorial_step called for step: {current_step}. This is a stub implementation.")
+        logging.warning(f'advance_tutorial_step called for step: {current_step}. This is a stub implementation.')
         
         # Mark current step as completed
         self.completed_steps.add(current_step)
@@ -364,7 +364,7 @@ class OnboardingSystem:
         self._save_progress()
     
     def get_stepwise_tutorial_sequence(self):
-        """Get the complete stepwise tutorial sequence with UI element visibility control."""
+        '''Get the complete stepwise tutorial sequence with UI element visibility control.'''
         return [
             {
                 'id': 'welcome',
@@ -407,39 +407,39 @@ class OnboardingSystem:
         self._save_progress()
 
     def are_hints_enabled(self) -> bool:
-        """Check if hints are enabled in the current configuration."""
+        '''Check if hints are enabled in the current configuration.'''
         from src.services.config_manager import get_current_config
         config = get_current_config()
         return config.get('tutorial', {}).get('first_time_help', True)
 
     def are_tutorials_enabled(self) -> bool:
-        """Check if tutorials are enabled in the current configuration."""
+        '''Check if tutorials are enabled in the current configuration.'''
         from src.services.config_manager import get_current_config
         config = get_current_config()
         return config.get('tutorial', {}).get('tutorial_enabled', True)
 
     def reset_all_hints(self):
-        """Reset all hints so they will show again (Factorio-style reset)."""
+        '''Reset all hints so they will show again (Factorio-style reset).'''
         # Clear all seen mechanics so hints will show again
         self.seen_mechanics.clear()
         self._save_progress()
         
         # Add log message for confirmation
         import logging
-        logging.info("All hints reset - they will show again for new actions")
+        logging.info('All hints reset - they will show again for new actions')
 
     def reset_specific_hint(self, mechanic: str):
-        """Reset a specific hint so it will show again."""
+        '''Reset a specific hint so it will show again.'''
         if mechanic in self.seen_mechanics:
             self.seen_mechanics.remove(mechanic)
             self._save_progress()
             
             # Add log message for confirmation
             import logging
-            logging.info(f"Hint '{mechanic}' reset - will show again")
+            logging.info(f'Hint '{mechanic}' reset - will show again')
 
     def get_hint_status(self) -> Dict[str, bool]:
-        """Get the status of all available hints."""
+        '''Get the status of all available hints.'''
         available_mechanics = ['first_staff_hire', 'first_upgrade_purchase', 'action_points_exhausted', 'high_doom_warning']
         return {
             mechanic: mechanic in self.seen_mechanics
@@ -447,13 +447,13 @@ class OnboardingSystem:
         }
 
     def should_show_hint(self, mechanic: str) -> bool:
-        """
+        '''
         Check if a hint should be shown (Factorio-style behavior).
         
         Returns True if:
         1. Hints are enabled in config
         2. This specific hint hasn't been seen before
-        """
+        '''
         return (self.are_hints_enabled() and 
                 self.should_show_mechanic_help(mechanic))
 

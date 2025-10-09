@@ -1,9 +1,9 @@
 ---
-title: "Type Annotation: Events.py TypedDict Complete"
-date: "2025-09-14"
-tags: ["type-annotations", "typescript", "events", "typeddict", "pylance", "phase-2"]
-summary: "Achieved zero pylance errors on 307-line events.py using comprehensive TypedDict patterns and systematic function annotation"
-commit: "TBD"
+title: 'Type Annotation: Events.py TypedDict Complete'
+date: '2025-09-14'
+tags: ['type-annotations', 'typescript', 'events', 'typeddict', 'pylance', 'phase-2']
+summary: 'Achieved zero pylance errors on 307-line events.py using comprehensive TypedDict patterns and systematic function annotation'
+commit: 'TBD'
 ---
 
 # Type Annotation Campaign Phase 2: Events.py TypedDict Milestone
@@ -61,7 +61,7 @@ Applied systematic todo-driven methodology:
 ```python
 # Advanced TypedDict with Callable annotations
 class EventDefinition(TypedDict):
-    """Type definition for event dictionary structure."""
+    '''Type definition for event dictionary structure.'''
     name: str
     desc: str
     trigger: Callable[[Any], bool]  # Function that evaluates if event should fire
@@ -69,19 +69,19 @@ class EventDefinition(TypedDict):
 
 # Comprehensive function annotation with documentation
 def unlock_scrollable_event_log(gs: Any) -> None:
-    """Custom event effect function for unlocking the scrollable event log.
+    '''Custom event effect function for unlocking the scrollable event log.
     
     Args:
         gs (Any): Game state object to modify
-    """
+    '''
 
 # Typed events list with TypedDict structure
 EVENTS: List[EventDefinition] = [
     {
-        "name": "Lab Breakthrough",
-        "desc": "A frontier lab makes a major breakthrough, doom spikes!",
-        "trigger": lambda gs: gs.doom > 35 and random.random() < gs.doom / 120,
-        "effect": lambda gs: gs._breakthrough_event()
+        'name': 'Lab Breakthrough',
+        'desc': 'A frontier lab makes a major breakthrough, doom spikes!',
+        'trigger': lambda gs: gs.doom > 35 and random.random() < gs.doom / 120,
+        'effect': lambda gs: gs._breakthrough_event()
     },
     # ... 31 more events all conforming to TypedDict structure
 ]

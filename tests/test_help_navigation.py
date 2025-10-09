@@ -1,9 +1,9 @@
-"""
+'''
 Test the help screen navigation fix.
 
 Test that pressing 'H' in game properly uses the navigation stack
 so that Escape returns to the game instead of the main menu.
-"""
+'''
 
 import unittest
 import sys
@@ -14,10 +14,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
 class TestHelpScreenNavigation(unittest.TestCase):
-    """Test help screen navigation fix"""
+    '''Test help screen navigation fix'''
     
     def test_navigation_stack_functions(self):
-        """Test that navigation stack functions work correctly"""
+        '''Test that navigation stack functions work correctly'''
         import main
         
         # Start with empty navigation stack
@@ -44,7 +44,7 @@ class TestHelpScreenNavigation(unittest.TestCase):
         self.assertEqual(main.current_state, 'game')
     
     def test_multiple_navigation_levels(self):
-        """Test navigation stack with multiple levels"""
+        '''Test navigation stack with multiple levels'''
         import main
         
         # Start fresh

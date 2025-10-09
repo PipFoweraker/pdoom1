@@ -21,7 +21,7 @@ Transform the current action button system (left side of screen) to use progress
 2. **Discovered State** (Prerequisites Met)
    - Button becomes highlighted and obviously clickable
    - Full description and cost information revealed
-   - Visual transition to indicate "unlocked" status
+   - Visual transition to indicate 'unlocked' status
    - Even if cost-blocked, shows as discoverable
 
 3. **Available State** (Ready to Use)
@@ -63,7 +63,7 @@ enum ActionButtonState {
   - Full description visible
   - Subtle highlight border
   - Hover effects enabled
-  - "Newly unlocked" visual cue
+  - 'Newly unlocked' visual cue
 
 - **Available**:
   - 100% opacity
@@ -100,7 +100,7 @@ Define clear unlock conditions:
 
 ### Phase 2: Visual Polish
 - [ ] Smooth state transition animations
-- [ ] "Newly unlocked" highlight effects
+- [ ] 'Newly unlocked' highlight effects
 - [ ] Consistent visual language across all buttons
 
 ### Phase 3: Balance and Tuning

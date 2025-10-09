@@ -16,7 +16,7 @@
 - Shortened button text with smart abbreviations
 - Larger buttons for readability (50px height for core actions)
 - Color-coded columns with retro green theme
-- Better column headers: "CORE ACTIONS", "RESEARCH TEAM", "STRATEGY"
+- Better column headers: 'CORE ACTIONS', 'RESEARCH TEAM', 'STRATEGY'
 - Early game filtering - only shows 4 essential actions initially
 
 ### Temporarily Disabled (for cleaner playtest):

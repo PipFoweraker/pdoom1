@@ -1,9 +1,9 @@
-"""
+'''
 Input management system extracted from game_state.py
 
 This module handles all mouse input processing including clicks, motion, and hover detection.
 Provides clean separation of input handling concerns from core game logic.
-"""
+'''
 
 from typing import Tuple, Dict, Any, Optional, List, Union, TYPE_CHECKING
 import pygame
@@ -21,14 +21,14 @@ if TYPE_CHECKING:
 
 
 class InputManager:
-    """Handles all mouse input processing for the game interface."""
+    '''Handles all mouse input processing for the game interface.'''
     
     def __init__(self, game_state: Any):
-        """Initialize the input manager with a reference to the game state."""
+        '''Initialize the input manager with a reference to the game state.'''
         self.game_state = game_state
     
     def handle_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
-        """Main entry point for handling mouse clicks."""
+        '''Main entry point for handling mouse clicks.'''
         # Check if using 3-column layout
         use_three_column = False
         if hasattr(self.game_state, 'config') and self.game_state.config:
@@ -41,7 +41,7 @@ class InputManager:
             return self._handle_legacy_click(mouse_pos, w, h)
     
     def _handle_three_column_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
-        """Handle clicks for the new 3-column layout."""
+        '''Handle clicks for the new 3-column layout.'''
         gs = self.game_state
         
         # Check context window minimize/maximize button FIRST
@@ -109,48 +109,48 @@ class InputManager:
                 continue
             if check_point_in_rect(mouse_pos, rect):
                 upg = gs.upgrades[idx]
-                if not upg.get("purchased", False):
-                    if gs.money >= upg["cost"]:
-                        gs._add('money', -upg["cost"])  # Use _add to track spending
-                        upg["purchased"] = True
-                        gs.upgrade_effects.add(upg["effect_key"])
+                if not upg.get('purchased', False):
+                    if gs.money >= upg['cost']:
+                        gs._add('money', -upg['cost'])  # Use _add to track spending
+                        upg['purchased'] = True
+                        gs.upgrade_effects.add(upg['effect_key'])
                         
                         # Trigger first-time help for upgrade purchase
                         if hasattr(gs, 'onboarding') and gs.onboarding and gs.onboarding.should_show_mechanic_help('first_upgrade_purchase'):
                             gs.onboarding.mark_mechanic_seen('first_upgrade_purchase')
                         
                         # Special handling for custom effects
-                        if upg.get("custom_effect") == "buy_accounting_software":
+                        if upg.get('custom_effect') == 'buy_accounting_software':
                             gs.accounting_software_bought = True
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!")
-                        elif upg.get("custom_effect") == "buy_compact_activity_display":
+                            gs.messages.append(f'Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!')
+                        elif upg.get('custom_effect') == 'buy_compact_activity_display':
                             # Allow toggle functionality for the activity log
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
-                        elif upg.get("effect_key") == "hpc_cluster":
+                            gs.messages.append(f'Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.')
+                        elif upg.get('effect_key') == 'hpc_cluster':
                             gs._add('compute', 20)
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.")
-                        elif upg.get("effect_key") == "research_automation":
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Research actions now benefit from available compute resources.")
+                            gs.messages.append(f'Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.')
+                        elif upg.get('effect_key') == 'research_automation':
+                            gs.messages.append(f'Upgrade purchased: {upg['name']} - Research actions now benefit from available compute resources.')
                         else:
-                            gs.messages.append(f"Upgrade purchased: {upg['name']}")
+                            gs.messages.append(f'Upgrade purchased: {upg['name']}')
                         
                         # Log upgrade purchase
-                        gs.logger.log_upgrade(upg["name"], upg["cost"], gs.turn)
+                        gs.logger.log_upgrade(upg['name'], upg['cost'], gs.turn)
                         
                         # Create smooth transition animation from button to icon
                         icon_rect = get_upgrade_icon_rect(idx, w, h)
                         gs._create_upgrade_transition(idx, rect, icon_rect)
                     else:
-                        error_msg = f"Not enough money for {upg['name']} (need ${upg['cost']}, have ${gs.money})."
+                        error_msg = f'Not enough money for {upg['name']} (need ${upg['cost']}, have ${gs.money}).'
                         gs.messages.append(error_msg)
                         
                         # Track error for easter egg detection
-                        gs.track_error(f"Insufficient money: {upg['name']}")
+                        gs.track_error(f'Insufficient money: {upg['name']}')
                 else:
-                    gs.messages.append(f"{upg['name']} already purchased.")
+                    gs.messages.append(f'{upg['name']} already purchased.')
                     
                     # Track error for easter egg detection
-                    gs.track_error(f"Already purchased: {upg['name']}")
+                    gs.track_error(f'Already purchased: {upg['name']}')
                 return None
         
         # Handle tutorial dismiss if active
@@ -162,7 +162,7 @@ class InputManager:
         return None
     
     def _handle_legacy_click(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
-        """Handle clicks for the legacy UI layout."""
+        '''Handle clicks for the legacy UI layout.'''
         gs = self.game_state
         
         # Check context window minimize/maximize button FIRST
@@ -183,18 +183,18 @@ class InputManager:
         activity_log_rect = get_activity_log_rect(w, h)
         if check_point_in_rect(mouse_pos, activity_log_rect):
             # Don't start drag if clicking on minimize/expand buttons
-            if "compact_activity_display" in gs.upgrade_effects:
+            if 'compact_activity_display' in gs.upgrade_effects:
                 if hasattr(gs, 'activity_log_minimized') and gs.activity_log_minimized:
                     expand_rect = get_activity_log_expand_button_rect(w, h)
                     if check_point_in_rect(mouse_pos, expand_rect):
                         gs.activity_log_minimized = False
-                        gs.messages.append("Activity log expanded.")
+                        gs.messages.append('Activity log expanded.')
                         return None  # Button click handled
                 elif gs.scrollable_event_log_enabled:
                     minimize_rect = get_activity_log_minimize_button_rect(w, h)
                     if check_point_in_rect(mouse_pos, minimize_rect):
                         gs.activity_log_minimized = True
-                        gs.messages.append("Activity log minimized.")
+                        gs.messages.append('Activity log minimized.')
                         return None  # Button click handled
             
             # Start dragging the activity log
@@ -249,56 +249,56 @@ class InputManager:
                 continue
             if check_point_in_rect(mouse_pos, rect):
                 upg = gs.upgrades[idx]
-                if not upg.get("purchased", False):
-                    if gs.money >= upg["cost"]:
-                        gs._add('money', -upg["cost"])  # Use _add to track spending
-                        upg["purchased"] = True
-                        gs.upgrade_effects.add(upg["effect_key"])
+                if not upg.get('purchased', False):
+                    if gs.money >= upg['cost']:
+                        gs._add('money', -upg['cost'])  # Use _add to track spending
+                        upg['purchased'] = True
+                        gs.upgrade_effects.add(upg['effect_key'])
                         
                         # Trigger first-time help for upgrade purchase
                         if hasattr(gs, 'onboarding') and gs.onboarding and gs.onboarding.should_show_mechanic_help('first_upgrade_purchase'):
                             gs.onboarding.mark_mechanic_seen('first_upgrade_purchase')
                         
                         # Special handling for custom effects
-                        if upg.get("custom_effect") == "buy_accounting_software":
+                        if upg.get('custom_effect') == 'buy_accounting_software':
                             gs.accounting_software_bought = True
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!")
-                        elif upg.get("custom_effect") == "buy_compact_activity_display":
+                            gs.messages.append(f'Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!')
+                        elif upg.get('custom_effect') == 'buy_compact_activity_display':
                             # Allow toggle functionality for the activity log
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
-                        elif upg.get("effect_key") == "hpc_cluster":
+                            gs.messages.append(f'Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.')
+                        elif upg.get('effect_key') == 'hpc_cluster':
                             gs._add('compute', 20)
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.")
-                        elif upg.get("effect_key") == "research_automation":
-                            gs.messages.append(f"Upgrade purchased: {upg['name']} - Research actions now benefit from available compute resources.")
+                            gs.messages.append(f'Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.')
+                        elif upg.get('effect_key') == 'research_automation':
+                            gs.messages.append(f'Upgrade purchased: {upg['name']} - Research actions now benefit from available compute resources.')
                         else:
-                            gs.messages.append(f"Upgrade purchased: {upg['name']}")
+                            gs.messages.append(f'Upgrade purchased: {upg['name']}')
                         
                         # Log upgrade purchase
-                        gs.logger.log_upgrade(upg["name"], upg["cost"], gs.turn)
+                        gs.logger.log_upgrade(upg['name'], upg['cost'], gs.turn)
                         
                         # Create smooth transition animation from button to icon
                         icon_rect = get_upgrade_icon_rect(idx, w, h)
                         gs._create_upgrade_transition(idx, rect, icon_rect)
                     else:
-                        error_msg = f"Not enough money for {upg['name']} (need ${upg['cost']}, have ${gs.money})."
+                        error_msg = f'Not enough money for {upg['name']} (need ${upg['cost']}, have ${gs.money}).'
                         gs.messages.append(error_msg)
                         
                         # Track error for easter egg detection
-                        gs.track_error(f"Insufficient money: {upg['name']}")
+                        gs.track_error(f'Insufficient money: {upg['name']}')
                 else:
-                    gs.messages.append(f"{upg['name']} already purchased.")
+                    gs.messages.append(f'{upg['name']} already purchased.')
                     
                     # Track error for easter egg detection
-                    gs.track_error(f"Already purchased: {upg['name']}")
+                    gs.track_error(f'Already purchased: {upg['name']}')
                 return None
 
         # Mute button (bottom right)
         mute_rect = get_mute_button_rect(w, h)
         if check_point_in_rect(mouse_pos, mute_rect):
             new_state = gs.sound_manager.toggle()
-            status = "enabled" if new_state else "disabled"
-            gs.messages.append(f"Sound {status}")
+            status = 'enabled' if new_state else 'disabled'
+            gs.messages.append(f'Sound {status}')
             return None
 
         # Office cat petting interaction - enhanced dev engagement feature
@@ -309,7 +309,7 @@ class InputManager:
         return None
 
     def handle_mouse_motion(self, mouse_pos: Tuple[int, int], w: int, h: int) -> None:
-        """Handle mouse motion events for dragging functionality"""
+        '''Handle mouse motion events for dragging functionality'''
         gs = self.game_state
         
         if gs.activity_log_being_dragged:
@@ -331,7 +331,7 @@ class InputManager:
             gs.activity_log_position = (new_offset_x, new_offset_y)
 
     def handle_mouse_release(self, mouse_pos: Tuple[int, int], w: int, h: int) -> bool:
-        """Handle mouse release events to stop dragging"""
+        '''Handle mouse release events to stop dragging'''
         gs = self.game_state
         
         if gs.activity_log_being_dragged:
@@ -341,7 +341,7 @@ class InputManager:
         return False
 
     def check_hover(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[str]:
-        """Check for UI element hover with robust error handling and provide context information."""
+        '''Check for UI element hover with robust error handling and provide context information.'''
         gs = self.game_state
         
         try:
@@ -355,7 +355,7 @@ class InputManager:
             activity_log_rect = get_activity_log_rect(w, h)
             if check_point_in_rect(mouse_pos, activity_log_rect):
                 # Show context about activity log
-                if "compact_activity_display" not in gs.upgrade_effects:
+                if 'compact_activity_display' not in gs.upgrade_effects:
                     gs.current_context_info = {
                         'title': 'Activity Log',
                         'description': 'Shows recent events and actions. Shows events from the current turn only and clears automatically when you end your turn.',
@@ -364,21 +364,21 @@ class InputManager:
                             'Upgrade adds minimize button for better screen space management'
                         ]
                     }
-                    return "You may purchase the ability to minimise this for $150!"
+                    return 'You may purchase the ability to minimise this for $150!'
                 elif hasattr(gs, 'activity_log_minimized') and gs.activity_log_minimized:
                     gs.current_context_info = {
                         'title': 'Activity Log (Minimized)',
                         'description': 'Activity log is currently minimized to save screen space.',
                         'details': ['Click expand button to show full log', 'Shows current turn events when expanded']
                     }
-                    return "Activity Log (minimized) - Click expand button to show full log"
+                    return 'Activity Log (minimized) - Click expand button to show full log'
                 else:
                     gs.current_context_info = {
                         'title': 'Activity Log',
                         'description': 'Shows recent events and actions from the current turn. Clears automatically when you end your turn.',
                         'details': ['Click minimize button to reduce screen space', 'Enhanced mode available later for full history']
                     }
-                    return "Activity Log - Click minimize button to reduce screen space"
+                    return 'Activity Log - Click minimize button to reduce screen space'
             
             # Check action buttons for hover - Handle filtered actions
             hovered_action = None
@@ -406,38 +406,38 @@ class InputManager:
                 action = hovered_action
                 
                 # Determine delegation status
-                delegate_info = ""
-                if action.get("delegatable", False) and gs.can_delegate_action(action):
-                    delegate_ap = action.get("delegate_ap_cost", action.get("ap_cost", 1))
-                    delegate_eff = action.get("delegate_effectiveness", 1.0)
-                    if delegate_ap < action.get("ap_cost", 1):
-                        delegate_info = f"Can delegate: {delegate_ap} AP, {int(delegate_eff*100)}% effectiveness"
+                delegate_info = ''
+                if action.get('delegatable', False) and gs.can_delegate_action(action):
+                    delegate_ap = action.get('delegate_ap_cost', action.get('ap_cost', 1))
+                    delegate_eff = action.get('delegate_effectiveness', 1.0)
+                    if delegate_ap < action.get('ap_cost', 1):
+                        delegate_info = f'Can delegate: {delegate_ap} AP, {int(delegate_eff*100)}% effectiveness'
                     else:
-                        delegate_info = f"Can delegate: {int(delegate_eff*100)}% effectiveness"
+                        delegate_info = f'Can delegate: {int(delegate_eff*100)}% effectiveness'
                         
                 # Get action requirements
                 requirements = []
-                if action.get("rules") and not action["rules"](gs):
-                    requirements.append("Requirements not met")
+                if action.get('rules') and not action['rules'](gs):
+                    requirements.append('Requirements not met')
                 
-                ap_cost = action.get("ap_cost", 1)
+                ap_cost = action.get('ap_cost', 1)
                 if action['cost'] > gs.money:
-                    requirements.append(f"Need ${action['cost']} (have ${gs.money})")
+                    requirements.append(f'Need ${action['cost']} (have ${gs.money})')
                 if ap_cost > gs.action_points:
-                    requirements.append(f"Need {ap_cost} AP (have {gs.action_points})")
+                    requirements.append(f'Need {ap_cost} AP (have {gs.action_points})')
                 
                 # Build context info
                 details = []
-                cost_str = f"${action['cost']}" if action['cost'] > 0 else "Free"
-                ap_str = f"{ap_cost} AP" if ap_cost > 1 else "1 AP"
-                details.append(f"Cost: {cost_str}, {ap_str}")
+                cost_str = f'${action['cost']}' if action['cost'] > 0 else 'Free'
+                ap_str = f'{ap_cost} AP' if ap_cost > 1 else '1 AP'
+                details.append(f'Cost: {cost_str}, {ap_str}')
                 
                 if delegate_info:
                     details.append(delegate_info)
                 if requirements:
                     details.extend(requirements)
                 else:
-                    details.append("[OK] Available to execute")
+                    details.append('[OK] Available to execute')
                 
                 gs.current_context_info = {
                     'title': action['name'],
@@ -447,8 +447,8 @@ class InputManager:
                 
                 # Return legacy tooltip for compatibility
                 affordable = action['cost'] <= gs.money and ap_cost <= gs.action_points
-                status = "[OK] Available" if affordable else "[FAIL] Cannot afford"
-                return f"{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}"
+                status = '[OK] Available' if affordable else '[FAIL] Cannot afford'
+                return f'{action['name']}: {action['desc']} (Cost: {cost_str}, {ap_str}) - {status}'
             
             # Check upgrade buttons for hover - Use stored rectangles from UI rendering
             if hasattr(gs, 'upgrade_rects') and gs.upgrade_rects:
@@ -465,23 +465,23 @@ class InputManager:
                     
                     # Build upgrade context
                     details = []
-                    if not upgrade.get("purchased", False):
-                        details.append(f"Cost: ${upgrade['cost']}")
+                    if not upgrade.get('purchased', False):
+                        details.append(f'Cost: ${upgrade['cost']}')
                         if upgrade['cost'] <= gs.money:
-                            details.append("[OK] Can afford")
+                            details.append('[OK] Can afford')
                         else:
-                            details.append(f"[FAIL] Need ${upgrade['cost'] - gs.money} more")
+                            details.append(f'[FAIL] Need ${upgrade['cost'] - gs.money} more')
                         
                         # Add unlock requirements if any
-                        if upgrade.get("turn_req") and gs.turn < upgrade["turn_req"]:
-                            details.append(f"Unlocks turn {upgrade['turn_req']}")
-                        if upgrade.get("staff_req") and gs.staff < upgrade["staff_req"]:
-                            details.append(f"Requires {upgrade['staff_req']} staff")
+                        if upgrade.get('turn_req') and gs.turn < upgrade['turn_req']:
+                            details.append(f'Unlocks turn {upgrade['turn_req']}')
+                        if upgrade.get('staff_req') and gs.staff < upgrade['staff_req']:
+                            details.append(f'Requires {upgrade['staff_req']} staff')
                     else:
-                        details.append("[OK] Purchased and active")
+                        details.append('[OK] Purchased and active')
                         # Show effect details for purchased upgrades
-                        if "effect" in upgrade:
-                            details.append("Providing passive benefits")
+                        if 'effect' in upgrade:
+                            details.append('Providing passive benefits')
                     
                     gs.current_context_info = {
                         'title': upgrade['name'],
@@ -490,12 +490,12 @@ class InputManager:
                     }
                     
                     # Return legacy tooltip
-                    if not upgrade.get("purchased", False):
+                    if not upgrade.get('purchased', False):
                         affordable = upgrade['cost'] <= gs.money
-                        status = "[OK] Available" if affordable else "[FAIL] Cannot afford"
-                        return f"{upgrade['name']}: {upgrade['desc']} (Cost: ${upgrade['cost']}) - {status}"
+                        status = '[OK] Available' if affordable else '[FAIL] Cannot afford'
+                        return f'{upgrade['name']}: {upgrade['desc']} (Cost: ${upgrade['cost']}) - {status}'
                     else:
-                        return f"{upgrade['name']}: {upgrade['desc']} (Purchased)"
+                        return f'{upgrade['name']}: {upgrade['desc']} (Purchased)'
             
             # Check end turn button for hover
             endturn_rect = get_endturn_rect(w, h)
@@ -505,13 +505,13 @@ class InputManager:
                 
                 details = []
                 if ap_remaining > 0:
-                    details.append(f"Warning: {ap_remaining} AP will be wasted")
-                    details.append("Consider taking more actions this turn")
+                    details.append(f'Warning: {ap_remaining} AP will be wasted')
+                    details.append('Consider taking more actions this turn')
                 else:
-                    details.append("All AP spent efficiently")
+                    details.append('All AP spent efficiently')
                 
-                details.append("Advances to next turn")
-                details.append("Processes selected actions and events")
+                details.append('Advances to next turn')
+                details.append('Processes selected actions and events')
                 
                 gs.current_context_info = {
                     'title': 'End Turn',
@@ -520,20 +520,20 @@ class InputManager:
                 }
                 
                 if ap_remaining > 0:
-                    return f"End Turn ({ap_remaining} AP remaining - these will be wasted!)"
+                    return f'End Turn ({ap_remaining} AP remaining - these will be wasted!)'
                 else:
-                    return "End Turn (All AP spent efficiently)"
+                    return 'End Turn (All AP spent efficiently)'
             
             # Check resource area for hover
             # Money area
             money_rect = pygame.Rect(int(w*0.04), int(h*0.11), int(w*0.15), int(h*0.03))
             if check_point_in_rect(mouse_pos, money_rect):
-                details = [f"Current: ${gs.money}"]
+                details = [f'Current: ${gs.money}']
                 if hasattr(gs, 'accounting_software_bought') and gs.accounting_software_bought:
                     change = getattr(gs, 'last_balance_change', 0)
                     if change != 0:
-                        sign = "+" if change > 0 else ""
-                        details.append(f"Last change: {sign}${change}")
+                        sign = '+' if change > 0 else ''
+                        details.append(f'Last change: {sign}${change}')
                 
                 gs.current_context_info = {
                     'title': 'Money',
@@ -544,13 +544,13 @@ class InputManager:
             # Staff area
             staff_rect = pygame.Rect(int(w*0.21), int(h*0.11), int(w*0.12), int(h*0.03))
             if check_point_in_rect(mouse_pos, staff_rect):
-                details = [f"Total Staff: {gs.staff}"]
+                details = [f'Total Staff: {gs.staff}']
                 if hasattr(gs, 'admin_staff'):
-                    details.append(f"Admin: {gs.admin_staff}")
+                    details.append(f'Admin: {gs.admin_staff}')
                 if hasattr(gs, 'research_staff'):
-                    details.append(f"Research: {gs.research_staff}")
+                    details.append(f'Research: {gs.research_staff}')
                 if hasattr(gs, 'ops_staff'):
-                    details.append(f"Operations: {gs.ops_staff}")
+                    details.append(f'Operations: {gs.ops_staff}')
                     
                 gs.current_context_info = {
                     'title': 'Staff',
@@ -564,7 +564,7 @@ class InputManager:
                 gs.current_context_info = {
                     'title': 'Reputation',
                     'description': 'Public trust affecting funding opportunities. Gained through good decisions.',
-                    'details': [f"Current: {gs.reputation}", "Higher reputation unlocks opportunities", "Can be lost through poor choices"]
+                    'details': [f'Current: {gs.reputation}', 'Higher reputation unlocks opportunities', 'Can be lost through poor choices']
                 }
             
             # Action Points area
@@ -572,9 +572,9 @@ class InputManager:
             if check_point_in_rect(mouse_pos, ap_rect):
                 max_ap = gs.max_action_points
                 details = [
-                    f"Current: {gs.action_points}/{max_ap}",
-                    f"Base: 3 + Staff bonus: {max_ap - 3}",
-                    "Resets to maximum each turn"
+                    f'Current: {gs.action_points}/{max_ap}',
+                    f'Base: 3 + Staff bonus: {max_ap - 3}',
+                    'Resets to maximum each turn'
                 ]
                 
                 gs.current_context_info = {
@@ -590,22 +590,22 @@ class InputManager:
                     'title': 'P(Doom)',
                     'description': 'Probability of existential catastrophe. Keep this low while making progress.',
                     'details': [
-                        f"Current: {gs.doom}/{gs.max_doom}",
-                        "Reduced by safety research",
-                        "Game ends if it reaches maximum"
+                        f'Current: {gs.doom}/{gs.max_doom}',
+                        'Reduced by safety research',
+                        'Game ends if it reaches maximum'
                     ]
                 }
             
             # Compute area (second row)
             compute_rect = pygame.Rect(int(w*0.04), int(h*0.135), int(w*0.12), int(h*0.03))
             if check_point_in_rect(mouse_pos, compute_rect):
-                details = [f"Current: {gs.compute}"]
+                details = [f'Current: {gs.compute}']
                 if hasattr(gs, 'employee_blobs') and gs.employee_blobs:
                     productive_employees = sum(1 for blob in gs.employee_blobs if blob.get('has_compute', False))
                     if productive_employees > 0:
-                        details.append(f"Assigned to {productive_employees} employees")
+                        details.append(f'Assigned to {productive_employees} employees')
                     else:
-                        details.append("No employees currently assigned")
+                        details.append('No employees currently assigned')
                 
                 gs.current_context_info = {
                     'title': 'Compute',
@@ -619,12 +619,12 @@ class InputManager:
         except Exception as e:
             # Log the error with context for debugging
             if hasattr(gs, 'game_logger'):
-                gs.game_logger.log(f"Error in check_hover: mouse_pos={mouse_pos}, w={w}, h={h}, error={e}")
+                gs.game_logger.log(f'Error in check_hover: mouse_pos={mouse_pos}, w={w}, h={h}, error={e}')
             # Return None gracefully so game continues to work
             return None
 
     def pet_office_cat(self, mouse_pos: Tuple[int, int]) -> bool:
-        """Handle office cat petting interaction - core dev engagement feature!"""
+        '''Handle office cat petting interaction - core dev engagement feature!'''
         gs = self.game_state
         
         if not getattr(gs, 'office_cat_adopted', False):
@@ -645,9 +645,9 @@ class InputManager:
             gs.office_cat_love_emoji_pos = (cat_x + 16, cat_y - 20)
 
             # Small temporary morale boost - dev engagement reward
-            if get_rng().random(f"cat_pet_doom_reduction_{gs.turn}_{gs.office_cat_total_pets}") < 0.2:
+            if get_rng().random(f'cat_pet_doom_reduction_{gs.turn}_{gs.office_cat_total_pets}') < 0.2:
                 gs._add('doom', -1)
-                gs.messages.append("[HEART] Petting the cat provides immediate stress relief!")
+                gs.messages.append('[HEART] Petting the cat provides immediate stress relief!')
             
             # Play cat sound if available
             if hasattr(gs, 'sound_manager'):

@@ -1,8 +1,8 @@
-"""
+'''
 Modular Menu Components
 Reusable UI components for building dynamic, responsive menus.
 Replaces hardcoded positioning with flexible layout management.
-"""
+'''
 
 import pygame
 from typing import Dict, List, Tuple, Optional, Any, Union
@@ -11,7 +11,7 @@ from dataclasses import dataclass
 
 @dataclass
 class LayoutConfig:
-    """Configuration for dynamic layout calculations"""
+    '''Configuration for dynamic layout calculations'''
     screen_width: int
     screen_height: int
     margin_factor: float = 0.05  # Percentage of screen for margins
@@ -36,7 +36,7 @@ class LayoutConfig:
 
 @dataclass
 class MenuButton:
-    """Represents a menu button with dynamic positioning"""
+    '''Represents a menu button with dynamic positioning'''
     text: str
     index: int
     selected: bool = False
@@ -44,7 +44,7 @@ class MenuButton:
     rect: Optional[pygame.Rect] = None
     
     def get_colors(self) -> Dict[str, Tuple[int, int, int]]:
-        """Get button colors based on state"""
+        '''Get button colors based on state'''
         if not self.enabled:
             return {
                 'bg': (40, 40, 40),
@@ -66,30 +66,30 @@ class MenuButton:
 
 
 class MenuLayoutManager:
-    """Manages dynamic layout for menu components"""
+    '''Manages dynamic layout for menu components'''
     
     def __init__(self, layout_config: LayoutConfig):
         self.config = layout_config
         self.current_y = layout_config.margin
         
     def reset_position(self):
-        """Reset layout position to top"""
+        '''Reset layout position to top'''
         self.current_y = self.config.margin
         
     def reserve_space(self, height: int) -> int:
-        """Reserve vertical space and return the starting Y position"""
+        '''Reserve vertical space and return the starting Y position'''
         start_y = self.current_y
         self.current_y += height + self.config.spacing
         return start_y
         
     def center_rect(self, width: int, height: int) -> pygame.Rect:
-        """Create a centered rectangle with given dimensions"""
+        '''Create a centered rectangle with given dimensions'''
         x = (self.config.screen_width - width) // 2
         y = self.reserve_space(height)
         return pygame.Rect(x, y, width, height)
         
     def get_button_layout(self, button_count: int, button_height: int) -> List[pygame.Rect]:
-        """Calculate layout for a series of buttons (vertical)"""
+        '''Calculate layout for a series of buttons (vertical)'''
         button_width = int(self.config.screen_width * 0.35)
         buttons = []
         
@@ -100,7 +100,7 @@ class MenuLayoutManager:
         return buttons
     
     def get_horizontal_button_layout(self, button_count: int, button_height: int) -> List[pygame.Rect]:
-        """Calculate horizontal layout for buttons to prevent overflow"""
+        '''Calculate horizontal layout for buttons to prevent overflow'''
         # Use smaller buttons that fit horizontally
         button_width = min(int(self.config.screen_width * 0.18), 200)  # Smaller buttons
         total_width = button_count * button_width + (button_count - 1) * self.config.spacing
@@ -123,7 +123,7 @@ class MenuLayoutManager:
 
 
 class EndGameMenuRenderer:
-    """Renders end game menu components with dynamic layout"""
+    '''Renders end game menu components with dynamic layout'''
     
     def __init__(self, layout_config: LayoutConfig):
         self.config = layout_config
@@ -166,14 +166,14 @@ class EndGameMenuRenderer:
         }
     
     def render_title_section(self, surface: pygame.Surface, game_state: Any) -> None:
-        """Render the title and scenario description"""
+        '''Render the title and scenario description'''
         self.layout.reset_position()
         
         # Main title
         if game_state.end_game_scenario:
             title_text = game_state.end_game_scenario.title
         else:
-            title_text = "GAME OVER"
+            title_text = 'GAME OVER'
             
         title_surface = self.fonts['title'].render(title_text, True, self.colors['title'])
         title_height = title_surface.get_height()
@@ -196,7 +196,7 @@ class EndGameMenuRenderer:
                 surface.blit(desc_surface, (desc_x, desc_y))
         else:
             # Fallback message
-            end_message = game_state.messages[-1] if game_state.messages else "Game ended"
+            end_message = game_state.messages[-1] if game_state.messages else 'Game ended'
             subtitle_surface = self.fonts['subtitle'].render(end_message, True, self.colors['subtitle'])
             subtitle_height = subtitle_surface.get_height()
             subtitle_y = self.layout.reserve_space(subtitle_height)
@@ -204,11 +204,11 @@ class EndGameMenuRenderer:
             surface.blit(subtitle_surface, (subtitle_x, subtitle_y))
     
     def render_celebration_section(self, surface: pygame.Surface, is_new_record: bool, current_rank: Optional[int]) -> None:
-        """Render celebration section for new records"""
+        '''Render celebration section for new records'''
         if not (is_new_record and current_rank == 1):
             return
             
-        celebration_text = "NEW HIGH SCORE!"
+        celebration_text = 'NEW HIGH SCORE!'
         celebration_surface = self.fonts['celebration'].render(celebration_text, True, self.colors['celebration'])
         glow_surface = self.fonts['celebration'].render(celebration_text, True, self.colors['celebration_glow'])
         
@@ -221,7 +221,7 @@ class EndGameMenuRenderer:
         surface.blit(celebration_surface, (celebration_x, celebration_y))
     
     def render_stats_section(self, surface: pygame.Surface, game_state: Any, current_rank: Optional[int], is_new_record: bool) -> None:
-        """Render game statistics in a box"""
+        '''Render game statistics in a box'''
         # Box dimensions
         box_width = int(self.config.content_width * 0.67)
         box_height = int(self.config.screen_height * 0.24)
@@ -236,28 +236,28 @@ class EndGameMenuRenderer:
         
         # Statistics content
         stats_lines = [
-            f"Lab: {game_state.lab_name}",
-            f"Survived {game_state.turn} turns",
-            f"Final Staff: {game_state.staff} researchers",
-            f"Final Money: ${game_state.money:,}",
-            f"Final Reputation: {game_state.reputation}",
-            f"Final p(Doom): {game_state.doom}%"
+            f'Lab: {game_state.lab_name}',
+            f'Survived {game_state.turn} turns',
+            f'Final Staff: {game_state.staff} researchers',
+            f'Final Money: ${game_state.money:,}',
+            f'Final Reputation: {game_state.reputation}',
+            f'Final p(Doom): {game_state.doom}%'
         ]
         
         # Add rank information
         if current_rank:
-            rank_suffix = {1: "st", 2: "nd", 3: "rd"}.get(current_rank, "th")
-            rank_line = f"Leaderboard Rank: #{current_rank}{rank_suffix} for seed '{game_state.seed}'"
+            rank_suffix = {1: 'st', 2: 'nd', 3: 'rd'}.get(current_rank, 'th')
+            rank_line = f'Leaderboard Rank: #{current_rank}{rank_suffix} for seed '{game_state.seed}''
             stats_lines.append(rank_line)
         else:
-            stats_lines.append(f"Seed: '{game_state.seed}'")
+            stats_lines.append(f'Seed: '{game_state.seed}'')
         
         # Add high score comparison
         if hasattr(game_state, 'highscore') and game_state.highscore > 0:
             if game_state.turn > game_state.highscore:
-                stats_lines.append(f"Previous Best: {game_state.highscore} turns (BEATEN!)")
+                stats_lines.append(f'Previous Best: {game_state.highscore} turns (BEATEN!)')
             else:
-                stats_lines.append(f"Personal Best: {game_state.highscore} turns")
+                stats_lines.append(f'Personal Best: {game_state.highscore} turns')
         
         # Render stats text
         line_height = int(self.config.screen_height * 0.025)
@@ -266,7 +266,7 @@ class EndGameMenuRenderer:
             surface.blit(stats_surface, (box_rect.x + 20, box_rect.y + 15 + i * line_height))
     
     def render_scenario_analysis(self, surface: pygame.Surface, game_state: Any) -> None:
-        """Render cause analysis and legacy sections if available"""
+        '''Render cause analysis and legacy sections if available'''
         if not game_state.end_game_scenario:
             return
             
@@ -280,7 +280,7 @@ class EndGameMenuRenderer:
             pygame.draw.rect(surface, self.colors['analysis_border'], analysis_rect, width=2, border_radius=8)
             
             # Analysis title
-            title_surface = self.fonts['small'].render("What Went Wrong:", True, self.colors['analysis_text'])
+            title_surface = self.fonts['small'].render('What Went Wrong:', True, self.colors['analysis_text'])
             surface.blit(title_surface, (analysis_rect.x + 15, analysis_rect.y + 8))
             
             # Analysis text
@@ -303,7 +303,7 @@ class EndGameMenuRenderer:
             pygame.draw.rect(surface, self.colors['legacy_border'], legacy_rect, width=2, border_radius=8)
             
             # Legacy title
-            title_surface = self.fonts['small'].render("Your Legacy:", True, self.colors['legacy_text'])
+            title_surface = self.fonts['small'].render('Your Legacy:', True, self.colors['legacy_text'])
             surface.blit(title_surface, (legacy_rect.x + 15, legacy_rect.y + 8))
             
             # Legacy text
@@ -317,7 +317,7 @@ class EndGameMenuRenderer:
                 surface.blit(line_surface, (legacy_rect.x + 15, legacy_rect.y + 25 + i * 16))
     
     def render_menu_buttons(self, surface: pygame.Surface, buttons: List[MenuButton]) -> None:
-        """Render menu buttons with dynamic layout to prevent overflow"""
+        '''Render menu buttons with dynamic layout to prevent overflow'''
         button_height = int(self.config.screen_height * 0.055)
         
         # Check if vertical layout would overflow
@@ -346,8 +346,8 @@ class EndGameMenuRenderer:
                 surface.blit(text_surface, text_rect)
     
     def render_instructions(self, surface: pygame.Surface) -> None:
-        """Render keyboard instructions at bottom"""
-        instruction_text = "Use arrow keys to navigate, Enter to select, Escape for Main Menu"
+        '''Render keyboard instructions at bottom'''
+        instruction_text = 'Use arrow keys to navigate, Enter to select, Escape for Main Menu'
         instruction_surface = self.fonts['small'].render(instruction_text, True, self.colors['instructions'])
         
         # Position at bottom with margin
@@ -356,13 +356,13 @@ class EndGameMenuRenderer:
         surface.blit(instruction_surface, (instruction_x, instruction_y))
     
     def _wrap_text(self, text: str, font: pygame.font.Font, max_width: int) -> List[str]:
-        """Wrap text to fit within specified width"""
+        '''Wrap text to fit within specified width'''
         words = text.split(' ')
         lines = []
-        current_line = ""
+        current_line = ''
         
         for word in words:
-            test_line = current_line + (" " if current_line else "") + word
+            test_line = current_line + (' ' if current_line else '') + word
             if font.size(test_line)[0] <= max_width:
                 current_line = test_line
             else:

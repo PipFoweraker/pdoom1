@@ -1,24 +1,24 @@
-"""
+'''
 Test the office cat feature - enhanced dev engagement system
-"""
+'''
 import unittest
 from src.core.game_state import GameState
 
 
 class TestOfficeCat(unittest.TestCase):
     def setUp(self):
-        """Set up test game state"""
+        '''Set up test game state'''
         self.gs = GameState('test-cat-seed')
     
     def test_office_cat_initialization(self):
-        """Test that office cat system initializes correctly"""
+        '''Test that office cat system initializes correctly'''
         # Cat should not be adopted initially
         self.assertFalse(self.gs.office_cat_adopted)
         self.assertEqual(self.gs.office_cat_total_pets, 0)
         self.assertEqual(self.gs.office_cat_total_food_cost, 0)
     
     def test_cat_adoption_event(self):
-        """Test that cat adoption event works correctly"""
+        '''Test that cat adoption event works correctly'''
         # Manually trigger the adoption event
         self.gs._trigger_stray_cat_adoption()
         
@@ -36,7 +36,7 @@ class TestOfficeCat(unittest.TestCase):
         self.assertGreater(len(cat_messages), 0)
     
     def test_cat_petting_mechanics(self):
-        """Test that cat petting works correctly"""
+        '''Test that cat petting works correctly'''
         # Adopt the cat first
         self.gs._trigger_stray_cat_adoption()
         
@@ -54,7 +54,7 @@ class TestOfficeCat(unittest.TestCase):
         self.assertGreater(self.gs.office_cat_love_emoji_timer, 0)
     
     def test_cat_upkeep_costs(self):
-        """Test that cat upkeep costs are applied correctly"""
+        '''Test that cat upkeep costs are applied correctly'''
         # Adopt the cat first
         self.gs._trigger_stray_cat_adoption()
         
@@ -73,7 +73,7 @@ class TestOfficeCat(unittest.TestCase):
         self.assertGreater(len(upkeep_messages), 0)
     
     def test_cat_doom_stages(self):
-        """Test that cat doom stages work correctly"""
+        '''Test that cat doom stages work correctly'''
         # Adopt the cat first
         self.gs._trigger_stray_cat_adoption()
         
@@ -94,7 +94,7 @@ class TestOfficeCat(unittest.TestCase):
         self.assertEqual(self.gs.get_cat_doom_stage(), 4)  # Doom cat
     
     def test_cat_position_updates(self):
-        """Test that cat position updates work correctly"""
+        '''Test that cat position updates work correctly'''
         # Adopt the cat first
         self.gs._trigger_stray_cat_adoption()
         

@@ -1,11 +1,11 @@
-"""
+'''
 Modular UI Overlay and Z-Order Management System for P(Doom)
 
 This module provides a centralized system for managing UI overlays, popups, and windows
 with proper z-order layering, minimization/expansion, and visual feedback.
 
 Inspired by Papers Please, SimPark, and Starcraft 2 UI patterns.
-"""
+'''
 
 import pygame
 from enum import Enum
@@ -15,7 +15,7 @@ from src.services.error_tracker import ErrorTracker
 
 
 class ZLayer(Enum):
-    """Z-order layers for UI elements, from bottom to top"""
+    '''Z-order layers for UI elements, from bottom to top'''
     BACKGROUND = 0
     GAME_UI = 1
     TOOLTIPS = 2
@@ -25,17 +25,17 @@ class ZLayer(Enum):
 
 
 class UIState(Enum):
-    """States for UI elements"""
-    HIDDEN = "hidden"
-    MINIMIZED = "minimized"
-    NORMAL = "normal"
-    EXPANDED = "expanded"
-    ANIMATING = "animating"
+    '''States for UI elements'''
+    HIDDEN = 'hidden'
+    MINIMIZED = 'minimized'
+    NORMAL = 'normal'
+    EXPANDED = 'expanded'
+    ANIMATING = 'animating'
 
 
 @dataclass
 class UIElement:
-    """Represents a managed UI element/overlay"""
+    '''Represents a managed UI element/overlay'''
     id: str
     layer: ZLayer
     rect: pygame.Rect
@@ -44,7 +44,7 @@ class UIElement:
     clickable: bool = True
     
     # Content and rendering
-    title: str = ""
+    title: str = ''
     content: Any = None
     render_func: Optional[Callable] = None
     
@@ -73,7 +73,7 @@ class UIElement:
 
 
 class OverlayManager:
-    """
+    '''
     Central manager for UI overlays with z-order control and visual feedback.
     
     Features:
@@ -82,7 +82,7 @@ class OverlayManager:
     - Standardized visual feedback
     - Animation system integration
     - Accessibility support
-    """
+    '''
     
     def __init__(self):
         self.elements: Dict[str, UIElement] = {}
@@ -103,7 +103,7 @@ class OverlayManager:
         self.error_tracker = ErrorTracker()
         
     def register_element(self, element: UIElement) -> bool:
-        """
+        '''
         Register a new UI element with the overlay manager.
         
         Args:
@@ -111,7 +111,7 @@ class OverlayManager:
             
         Returns:
             bool: True if successful, False if ID already exists
-        """
+        '''
         if element.id in self.elements:
             return False
             
@@ -124,7 +124,7 @@ class OverlayManager:
         return True
     
     def unregister_element(self, element_id: str) -> bool:
-        """
+        '''
         Remove an element from management.
         
         Args:
@@ -132,7 +132,7 @@ class OverlayManager:
             
         Returns:
             bool: True if removed, False if not found
-        """
+        '''
         if element_id not in self.elements:
             return False
             
@@ -149,7 +149,7 @@ class OverlayManager:
         return True
     
     def set_element_state(self, element_id: str, state: UIState) -> bool:
-        """
+        '''
         Change the state of an element (minimize, expand, etc.)
         
         Args:
@@ -158,7 +158,7 @@ class OverlayManager:
             
         Returns:
             bool: True if successful
-        """
+        '''
         if element_id not in self.elements:
             return False
             
@@ -185,7 +185,7 @@ class OverlayManager:
         return True
     
     def bring_to_front(self, element_id: str) -> bool:
-        """
+        '''
         Bring an element to the front of its layer.
         
         Args:
@@ -193,7 +193,7 @@ class OverlayManager:
             
         Returns:
             bool: True if successful
-        """
+        '''
         if element_id not in self.elements:
             return False
             
@@ -208,7 +208,7 @@ class OverlayManager:
         return True
     
     def handle_mouse_event(self, event: pygame.event.Event, screen_w: int, screen_h: int) -> Optional[str]:
-        """
+        '''
         Handle mouse events for all managed elements with drag support.
         
         Args:
@@ -217,7 +217,7 @@ class OverlayManager:
             
         Returns:
             Optional[str]: ID of element that handled the event, if any
-        """
+        '''
         mouse_pos = pygame.mouse.get_pos()
         
         # Handle mouse button release - stop any dragging
@@ -259,7 +259,7 @@ class OverlayManager:
         return None
     
     def handle_keyboard_event(self, event: pygame.event.Event) -> bool:
-        """
+        '''
         Handle keyboard events for accessibility and navigation.
         
         Args:
@@ -267,7 +267,7 @@ class OverlayManager:
             
         Returns:
             bool: True if event was handled
-        """
+        '''
         if event.type == pygame.KEYDOWN:
             # Tab navigation between elements
             if event.key == pygame.K_TAB:
@@ -300,7 +300,7 @@ class OverlayManager:
         return False
     
     def update_animations(self) -> None:
-        """Update all element animations."""
+        '''Update all element animations.'''
         for element in self.elements.values():
             if element.state == UIState.ANIMATING and element.target_rect:
                 # Smooth easing animation
@@ -334,12 +334,12 @@ class OverlayManager:
                     element.rect.height = int(start_rect.height + (target_rect.height - start_rect.height) * eased_progress)
     
     def render_elements(self, screen: pygame.Surface) -> None:
-        """
+        '''
         Render all visible elements in proper z-order.
         
         Args:
             screen: pygame surface to render to
-        """
+        '''
         # Render from bottom layer to top
         for layer in ZLayer:
             for element_id in self.z_order[layer]:
@@ -349,7 +349,7 @@ class OverlayManager:
                     self._render_element(screen, element)
     
     def add_error(self, error_message: str, timestamp: int = None) -> bool:
-        """
+        '''
         Track an error for the easter egg beep system.
         
         This method is kept for backward compatibility but now delegates to ErrorTracker.
@@ -360,7 +360,7 @@ class OverlayManager:
             
         Returns:
             bool: True if this triggers the easter egg (3 repeated errors)
-        """
+        '''
         # For backward compatibility, this just delegates to the error tracker
         # but only returns whether the threshold was reached (doesn't play sounds)
         current_count = self.error_tracker.get_error_count(error_message) + 1
@@ -368,26 +368,26 @@ class OverlayManager:
         return current_count >= self.error_tracker.error_repeat_threshold
     
     def get_elements_by_layer(self, layer: ZLayer) -> List[UIElement]:
-        """Get all elements in a specific layer."""
+        '''Get all elements in a specific layer.'''
         return [self.elements[eid] for eid in self.z_order[layer] if eid in self.elements]
     
     def get_visible_elements(self) -> List[UIElement]:
-        """Get all currently visible elements."""
+        '''Get all currently visible elements.'''
         return [element for element in self.elements.values() if element.visible]
     
     def clear_layer(self, layer: ZLayer) -> None:
-        """Remove all elements from a specific layer."""
+        '''Remove all elements from a specific layer.'''
         for element_id in list(self.z_order[layer]):
             self.unregister_element(element_id)
     
     # Private helper methods
     
     def _get_current_rect(self, element: UIElement) -> pygame.Rect:
-        """Get the current display rectangle for an element."""
+        '''Get the current display rectangle for an element.'''
         return element.rect
     
     def _handle_element_click(self, element_id: str, mouse_pos: Tuple[int, int]) -> str:
-        """Handle click on an element with drag support."""
+        '''Handle click on an element with drag support.'''
         element = self.elements[element_id]
         element.pressed_state = True
         element.last_interaction = pygame.time.get_ticks()
@@ -402,7 +402,7 @@ class OverlayManager:
         return element_id
     
     def _handle_element_hover(self, element_id: str, mouse_pos: Tuple[int, int]) -> str:
-        """Handle hover on an element."""
+        '''Handle hover on an element.'''
         # Clear previous hover
         if self.hover_element and self.hover_element != element_id:
             self.elements[self.hover_element].hover_state = False
@@ -414,13 +414,13 @@ class OverlayManager:
         return element_id
     
     def _clear_hover(self) -> None:
-        """Clear hover state from all elements."""
+        '''Clear hover state from all elements.'''
         if self.hover_element:
             self.elements[self.hover_element].hover_state = False
             self.hover_element = None
     
     def _navigate_elements(self, forward: bool = True) -> bool:
-        """Navigate between focusable elements with Tab."""
+        '''Navigate between focusable elements with Tab.'''
         focusable = [eid for eid, elem in self.elements.items() 
                     if elem.visible and elem.clickable]
         
@@ -446,7 +446,7 @@ class OverlayManager:
         return True
     
     def _activate_element(self, element_id: str) -> bool:
-        """Activate an element (simulate click)."""
+        '''Activate an element (simulate click).'''
         if element_id in self.elements:
             element = self.elements[element_id]
             element.pressed_state = True
@@ -455,7 +455,7 @@ class OverlayManager:
         return False
     
     def _close_top_modal(self) -> bool:
-        """Close the topmost modal/dialog element."""
+        '''Close the topmost modal/dialog element.'''
         # Find topmost modal in critical or modal layers
         for layer in [ZLayer.CRITICAL, ZLayer.MODALS]:
             if self.z_order[layer]:
@@ -465,20 +465,20 @@ class OverlayManager:
         return False
     
     def _ease_in_out_cubic(self, t: float) -> float:
-        """Cubic easing function for smooth animations."""
+        '''Cubic easing function for smooth animations.'''
         if t < 0.5:
             return 4 * t * t * t
         else:
             return 1 - pow(-2 * t + 2, 3) / 2
     
     def _render_element(self, screen: pygame.Surface, element: UIElement) -> None:
-        """
+        '''
         Render a single element with visual feedback.
         
         Args:
             screen: pygame surface to render to
             element: UIElement to render
-        """
+        '''
         current_rect = self._get_current_rect(element)
         
         # Apply visual feedback effects
@@ -522,7 +522,7 @@ class OverlayManager:
                 screen.blit(title_surface, (title_x, title_y))
     
     def _handle_drag_motion(self, mouse_pos: Tuple[int, int]) -> str:
-        """Handle mouse motion during drag operation."""
+        '''Handle mouse motion during drag operation.'''
         if not self.dragging_element:
             return None
             
@@ -542,7 +542,7 @@ class OverlayManager:
         return self.dragging_element
     
     def _start_drag(self, element_id: str, mouse_pos: Tuple[int, int]) -> bool:
-        """Start dragging an element."""
+        '''Start dragging an element.'''
         if element_id not in self.elements:
             return False
             
@@ -569,7 +569,7 @@ class OverlayManager:
         return True
     
     def toggle_minimize(self, element_id: str) -> bool:
-        """Toggle minimize state of an element."""
+        '''Toggle minimize state of an element.'''
         if element_id not in self.elements:
             return False
             
@@ -601,12 +601,12 @@ def create_dialog(overlay_manager: OverlayManager,
                  width: int, height: int,
                  render_func: Optional[Callable] = None,
                  use_safe_positioning: bool = True) -> UIElement:
-    """
+    '''
     Create a dialog overlay element with optional safe positioning.
     
     Args:
         use_safe_positioning: If True, use safe zone system to avoid UI overlap
-    """
+    '''
     # Constrain overlay size to prevent excessive overlap with permanent UI
     max_width = min(width, 300)  # Max width to keep overlays compact
     max_height = min(height, 200)  # Max height to prevent covering too much UI
@@ -658,7 +658,7 @@ def create_tooltip(overlay_manager: OverlayManager,
                   text: str,
                   x: int, y: int,
                   render_func: Optional[Callable] = None) -> UIElement:
-    """Create a tooltip overlay element."""
+    '''Create a tooltip overlay element.'''
     # Calculate size based on text
     font = pygame.font.SysFont('Consolas', 14)
     text_surface = font.render(text, True, (255, 255, 255))
@@ -688,7 +688,7 @@ def create_modal(overlay_manager: OverlayManager,
                 width_ratio: float = 0.6,
                 height_ratio: float = 0.6,
                 render_func: Optional[Callable] = None) -> UIElement:
-    """Create a modal overlay element that covers the screen."""
+    '''Create a modal overlay element that covers the screen.'''
     width = int(screen_w * width_ratio)
     height = int(screen_h * height_ratio)
     x = (screen_w - width) // 2

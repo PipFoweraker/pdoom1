@@ -1,7 +1,7 @@
 # Universal Keyboard Navigation: Every Button Has a Key
 
 ## Summary
-**ACCESSIBILITY PRIORITY**: Implement the design rule "every button in the UI has one default key assignment" to enable complete keyboard-only gameplay and terminal-like accessibility.
+**ACCESSIBILITY PRIORITY**: Implement the design rule 'every button in the UI has one default key assignment' to enable complete keyboard-only gameplay and terminal-like accessibility.
 
 ## Design Philosophy
 Create a game that can be played entirely through keyboard shortcuts, enabling:
@@ -12,7 +12,7 @@ Create a game that can be played entirely through keyboard shortcuts, enabling:
 - Alternative input methods
 
 ## Core Design Rule
-**"Every interactive element must have a dedicated keyboard shortcut"**
+**'Every interactive element must have a dedicated keyboard shortcut'**
 
 ## Current State Analysis
 The game currently has some keyboard shortcuts but lacks comprehensive coverage:
@@ -129,17 +129,17 @@ class KeyboardNavigationManager:
         self.focus_element = None
     
     def register_shortcut(self, key, action, context=None):
-        """Register a keyboard shortcut for an action"""
+        '''Register a keyboard shortcut for an action'''
         
     def handle_key_event(self, event):
-        """Process keyboard events and execute actions"""
+        '''Process keyboard events and execute actions'''
         
     def show_help(self):
-        """Display context-sensitive keyboard help"""
+        '''Display context-sensitive keyboard help'''
 ```
 
 ### Visual Indicators
-- Button labels include shortcut in parentheses: "End Turn (Q)"
+- Button labels include shortcut in parentheses: 'End Turn (Q)'
 - Underlined letters for Alt+ shortcuts
 - Help overlay showing all current shortcuts
 - Focus highlighting for keyboard navigation

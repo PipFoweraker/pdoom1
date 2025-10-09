@@ -4,7 +4,7 @@ This directory contains the web export functionality that enables global leaderb
 
 ## Overview
 
-The web export system addresses the "Data Requests for Main Repository" outlined in the website's [leaderboard integration specification](https://github.com/PipFoweraker/pdoom1-website/blob/main/docs/03-integrations/leaderboard-integration-spec.md).
+The web export system addresses the 'Data Requests for Main Repository' outlined in the website's [leaderboard integration specification](https://github.com/PipFoweraker/pdoom1-website/blob/main/docs/03-integrations/leaderboard-integration-spec.md).
 
 ## Components
 
@@ -64,37 +64,37 @@ python tools/web_export/export_leaderboards.py --status
 ### Individual Leaderboard Files
 ```json
 {
-  "meta": {
-    "generated": "2025-10-09T21:37:14.150421Z",
-    "game_version": "v0.9.1",
-    "total_seeds": 1,
-    "total_players": 4,
-    "export_source": "game-repository",
-    "api_version": "1.0.0",
-    "config_hash": "c53217a3",
-    "note": "Exported from actual game leaderboard data",
-    "privacy_filtered": true,
-    "anonymization_level": "standard",
-    "privacy_notice": "Player names have been anonymized..."
+  'meta': {
+    'generated': '2025-10-09T21:37:14.150421Z',
+    'game_version': 'v0.9.1',
+    'total_seeds': 1,
+    'total_players': 4,
+    'export_source': 'game-repository',
+    'api_version': '1.0.0',
+    'config_hash': 'c53217a3',
+    'note': 'Exported from actual game leaderboard data',
+    'privacy_filtered': true,
+    'anonymization_level': 'standard',
+    'privacy_notice': 'Player names have been anonymized...'
   },
-  "seed": "party-demo-seed",
-  "economic_model": "Bootstrap_v0.4.1",
-  "entries": [
+  'seed': 'party-demo-seed',
+  'economic_model': 'Bootstrap_v0.4.1',
+  'entries': [
     {
-      "score": 25,
-      "player_name": "Atlas Computing",
-      "date": "2025-09-13T16:01:32.035414",
-      "level_reached": 25,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 4.1e-05,
-      "entry_uuid": "cacd160c-6c5f-42f5-a073-d06db9cf70c7",
-      "final_money": 100000,
-      "final_staff": 5,
-      "final_reputation": 50,
-      "final_doom": 25,
-      "final_compute": 10000,
-      "research_papers_published": 0,
-      "technical_debt_accumulated": 0
+      'score': 25,
+      'player_name': 'Atlas Computing',
+      'date': '2025-09-13T16:01:32.035414',
+      'level_reached': 25,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 4.1e-05,
+      'entry_uuid': 'cacd160c-6c5f-42f5-a073-d06db9cf70c7',
+      'final_money': 100000,
+      'final_staff': 5,
+      'final_reputation': 50,
+      'final_doom': 25,
+      'final_compute': 10000,
+      'research_papers_published': 0,
+      'technical_debt_accumulated': 0
     }
   ]
 }
@@ -103,16 +103,16 @@ python tools/web_export/export_leaderboards.py --status
 ### Export Metadata
 ```json
 {
-  "export_timestamp": "2025-10-09T21:37:35.892019",
-  "game_version": "v0.9.1",
-  "export_tool_version": "1.0.0",
-  "privacy_filtered": true,
-  "exported_leaderboards": [
+  'export_timestamp': '2025-10-09T21:37:35.892019',
+  'game_version': 'v0.9.1',
+  'export_tool_version': '1.0.0',
+  'privacy_filtered': true,
+  'exported_leaderboards': [
     {
-      "seed": "party-demo-seed",
-      "filename": "leaderboard_party-demo-seed.json",
-      "entry_count": 4,
-      "top_score": 25
+      'seed': 'party-demo-seed',
+      'filename': 'leaderboard_party-demo-seed.json',
+      'entry_count': 4,
+      'top_score': 25
     }
   ]
 }

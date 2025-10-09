@@ -1,4 +1,4 @@
-"""
+'''
 Web Export Module for P(Doom)1 Leaderboards
 
 This module provides functionality to export leaderboard data in formats
@@ -18,11 +18,11 @@ Usage:
     
     # Export specific seed with privacy filtering
     python -m tools.web_export.export_leaderboards --seed test-seed --privacy-filter
-"""
+'''
 
 from .export_leaderboards import LeaderboardWebExporter
 from .api_format import WebAPIFormatter
 from .privacy_filter import PrivacyFilter
 
-__version__ = "1.0.0"
-__all__ = ["LeaderboardWebExporter", "WebAPIFormatter", "PrivacyFilter"]
+__version__ = '1.0.0'
+__all__ = ['LeaderboardWebExporter', 'WebAPIFormatter', 'PrivacyFilter']

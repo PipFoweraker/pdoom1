@@ -1,9 +1,9 @@
 ---
-title: "DeterministicEventManager Extraction - 4th Major Module Success"
-date: "2025-09-24"
-tags: ["monolith-breakdown", "architecture", "event-system", "modular-design"]
-summary: "Extracted comprehensive 463-line DeterministicEventManager from game_state.py monolith, achieving 4th successful modular extraction with zero regressions"
-commit: "f7a54fe"
+title: 'DeterministicEventManager Extraction - 4th Major Module Success'
+date: '2025-09-24'
+tags: ['monolith-breakdown', 'architecture', 'event-system', 'modular-design']
+summary: 'Extracted comprehensive 463-line DeterministicEventManager from game_state.py monolith, achieving 4th successful modular extraction with zero regressions'
+commit: 'f7a54fe'
 ---
 
 # DeterministicEventManager Extraction - 4th Major Module Success
@@ -62,7 +62,7 @@ class DeterministicEventManager:
     
     def deterministic_event_trigger_funding_crisis(self) -> bool:
         return (self.game_state.money < 80 and 
-                get_rng().random(f"event_funding_crisis_trigger_turn_{self.game_state.turn}") < 0.2)
+                get_rng().random(f'event_funding_crisis_trigger_turn_{self.game_state.turn}') < 0.2)
     
     def trigger_events(self) -> None:
         # Complete event orchestration with 30+ deterministic mappings

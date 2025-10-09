@@ -53,33 +53,33 @@ This system has **critical long-term implications** for our ability to:
 ### Core Programmatic Interface
 ```python
 class ProgrammaticGameController:
-    """
+    '''
     Main interface for programmatic game control.
     Enables headless execution and automated testing.
-    """
+    '''
     
     def __init__(self, seed: str = None, config: dict = None):
-        """Initialize headless game with optional seed and configuration."""
+        '''Initialize headless game with optional seed and configuration.'''
         pass
         
     def execute_action(self, action_id: str, parameters: dict = None) -> dict:
-        """Execute a game action programmatically."""
+        '''Execute a game action programmatically.'''
         pass
         
     def advance_turn(self, count: int = 1) -> list:
-        """Advance game by specified number of turns."""
+        '''Advance game by specified number of turns.'''
         pass
         
     def get_state_snapshot(self) -> dict:
-        """Get complete game state as dictionary."""
+        '''Get complete game state as dictionary.'''
         pass
         
     def load_state_snapshot(self, state: dict) -> bool:
-        """Load game state from dictionary."""
+        '''Load game state from dictionary.'''
         pass
         
     def run_scenario(self, scenario_config: dict) -> dict:
-        """Execute a complete test scenario."""
+        '''Execute a complete test scenario.'''
         pass
 ```
 
@@ -87,11 +87,11 @@ class ProgrammaticGameController:
 ```yaml
 # Example scenario configuration
 scenario:
-  name: "Early Game Resource Management"
-  description: "Test resource management in first 10 turns"
+  name: 'Early Game Resource Management'
+  description: 'Test resource management in first 10 turns'
   
   initial_state:
-    seed: "test-resource-mgmt-001"
+    seed: 'test-resource-mgmt-001'
     turn: 1
     money: 100000
     staff: 0
@@ -100,14 +100,14 @@ scenario:
     
   actions:
     - turn: 1
-      action: "hire_staff"
+      action: 'hire_staff'
       parameters: { count: 2 }
       expected_outcome: { staff: 2, money: 99200 }
       
     - turn: 2
-      action: "fundraising_options"
-      parameters: { option: "foundation_grant" }
-      validation: { money: ">= 120000" }
+      action: 'fundraising_options'
+      parameters: { option: 'foundation_grant' }
+      validation: { money: '>= 120000' }
       
   end_conditions:
     max_turns: 10
@@ -124,28 +124,28 @@ scenario:
 # In test files - example usage
 class TestProgrammaticControl(unittest.TestCase):
     def test_hiring_sequence(self):
-        """Test programmatic hiring sequence."""
-        controller = ProgrammaticGameController(seed="test-hiring-001")
+        '''Test programmatic hiring sequence.'''
+        controller = ProgrammaticGameController(seed='test-hiring-001')
         
         # Execute hiring action
-        result = controller.execute_action("hire_staff", {"count": 3})
-        self.assertEqual(result["staff_hired"], 3)
+        result = controller.execute_action('hire_staff', {'count': 3})
+        self.assertEqual(result['staff_hired'], 3)
         
         # Validate state
         state = controller.get_state_snapshot()
-        self.assertEqual(state["staff"], 3)
-        self.assertLess(state["money"], 100000)  # Money was spent
+        self.assertEqual(state['staff'], 3)
+        self.assertLess(state['money'], 100000)  # Money was spent
         
     def test_scenario_execution(self):
-        """Test full scenario execution."""
-        scenario = load_scenario("test_scenarios/early_game_balance.yaml")
+        '''Test full scenario execution.'''
+        scenario = load_scenario('test_scenarios/early_game_balance.yaml')
         controller = ProgrammaticGameController()
         
         result = controller.run_scenario(scenario)
         
-        self.assertTrue(result["success"])
-        self.assertEqual(result["final_turn"], 10)
-        self.assertGreater(result["final_state"]["money"], 80000)
+        self.assertTrue(result['success'])
+        self.assertEqual(result['final_turn'], 10)
+        self.assertGreater(result['final_state']['money'], 80000)
 ```
 
 ## File Structure
@@ -180,8 +180,8 @@ tools/
 ### Dev Tools Integration
 - Extend existing dev_tool.py with programmatic scenarios
 - Add scenario recording capability to debug console
-- Add "Export Current State" functionality
-- Add "Generate Test Scenario" from current game
+- Add 'Export Current State' functionality
+- Add 'Generate Test Scenario' from current game
 
 ### CI/CD Integration
 - GitHub Actions workflow for automated testing

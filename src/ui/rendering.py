@@ -1,20 +1,20 @@
-"""
+'''
 Low-level text and graphics rendering utilities for UI components.
 
 This module contains fundamental rendering functions used across the UI system
 for text wrapping, rendering, and drawing basic interface elements.
-"""
+'''
 
 import pygame
 from typing import List, Tuple, Optional
 
 
 def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
-    """
+    '''
     Splits the text into multiple lines so that each line fits within max_width.
     Returns a list of strings, each representing a line.
     Improved to handle overflow with better word breaking.
-    """
+    '''
     lines = []
     # Use textwrap to split into words, then try to pack as many as possible per line
     words = text.split(' ')
@@ -45,7 +45,7 @@ def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:
 
 
 def render_text(text: str, font: pygame.font.Font, max_width: Optional[int] = None, color: Tuple[int, int, int] = (255,255,255), line_height_multiplier: float = 1.35) -> Tuple[List[Tuple[pygame.Surface, Tuple[int, int]]], pygame.Rect]:
-    """Render text with optional word wrapping and consistent line height. Returns [(surface, (x_offset, y_offset)), ...], bounding rect."""
+    '''Render text with optional word wrapping and consistent line height. Returns [(surface, (x_offset, y_offset)), ...], bounding rect.'''
     lines = [text]
     if max_width:
         lines = wrap_text(text, font, max_width)
@@ -65,7 +65,7 @@ def render_text(text: str, font: pygame.font.Font, max_width: Optional[int] = No
 
 
 def draw_resource_icon(screen: pygame.Surface, icon_type: str, x: int, y: int, size: int = 16) -> None:
-    """
+    '''
     Draw 8-bit style resource icons.
     
     Args:
@@ -73,7 +73,7 @@ def draw_resource_icon(screen: pygame.Surface, icon_type: str, x: int, y: int, s
         icon_type: 'money', 'research', 'papers', 'compute'
         x, y: position to draw at
         size: icon size in pixels
-    """
+    '''
     if icon_type == 'money':
         # Stylized $ sign in 8-bit style
         # Vertical line
@@ -108,11 +108,11 @@ def draw_resource_icon(screen: pygame.Surface, icon_type: str, x: int, y: int, s
             
     elif icon_type == 'compute':
         # Exponential/power symbol (like e^x or 2^n)
-        # Draw "2" 
+        # Draw '2' 
         pygame.draw.rect(screen, (100, 255, 150), (x + 2, y + 2, 4, 2))
         pygame.draw.rect(screen, (100, 255, 150), (x + 6, y + 4, 2, 3))
         pygame.draw.rect(screen, (100, 255, 150), (x + 2, y + 7, 6, 2))
-        # Draw superscript "n"
+        # Draw superscript 'n'
         pygame.draw.rect(screen, (100, 255, 150), (x + 10, y + 2, 2, 4))
         pygame.draw.rect(screen, (100, 255, 150), (x + 12, y + 3, 1, 1))
         pygame.draw.rect(screen, (100, 255, 150), (x + 13, y + 4, 2, 2))

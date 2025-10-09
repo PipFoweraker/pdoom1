@@ -1,4 +1,4 @@
-"""
+'''
 Dialog State Management System - Extracted from main.py monolith
 
 This module standardizes dialog state handling across the game, eliminating
@@ -15,7 +15,7 @@ Following patterns established in:
 - DialogManager for basic dialog operations
 - TurnManager for state management patterns
 - MediaPRSystemManager for extraction architecture
-"""
+'''
 
 from typing import List, Optional, Set, TYPE_CHECKING
 from enum import Enum
@@ -25,38 +25,38 @@ if TYPE_CHECKING:
 
 
 class DialogType(Enum):
-    """Enumeration of all dialog types in the game."""
-    HIRING = "hiring"
-    INTELLIGENCE = "intelligence"  
-    FUNDRAISING = "fundraising"
-    RESEARCH = "research"
-    MEDIA = "media"
-    TECHNICAL_DEBT = "technical_debt"
-    HELP = "help"
-    TUTORIAL = "tutorial"
+    '''Enumeration of all dialog types in the game.'''
+    HIRING = 'hiring'
+    INTELLIGENCE = 'intelligence'  
+    FUNDRAISING = 'fundraising'
+    RESEARCH = 'research'
+    MEDIA = 'media'
+    TECHNICAL_DEBT = 'technical_debt'
+    HELP = 'help'
+    TUTORIAL = 'tutorial'
 
 
 class ModalState(Enum):
-    """Modal dialog states."""
-    CLOSED = "closed"
-    OPEN = "open"
-    TRANSITIONING = "transitioning"
+    '''Modal dialog states.'''
+    CLOSED = 'closed'
+    OPEN = 'open'
+    TRANSITIONING = 'transitioning'
 
 
 class DialogStateManager:
-    """
+    '''
     Centralized dialog state management for P(Doom).
     
     Provides consistent tracking and validation of all modal dialogs,
     eliminating the None vs False confusion that caused blocking issues.
-    """
+    '''
     
     def __init__(self, game_state: 'GameState') -> None:
-        """Initialize the dialog state manager.
+        '''Initialize the dialog state manager.
         
         Args:
             game_state: Reference to the main game state
-        """
+        '''
         self.game_state = game_state
         
         # Track active dialogs
@@ -72,7 +72,7 @@ class DialogStateManager:
         self._validation_timeout = 100  # milliseconds
     
     def is_dialog_active(self, dialog_type: DialogType) -> bool:
-        """
+        '''
         Check if a specific dialog type is currently active.
         
         Args:
@@ -80,7 +80,7 @@ class DialogStateManager:
             
         Returns:
             True if dialog is active, False otherwise
-        """
+        '''
         if dialog_type == DialogType.HELP:
             # Help dialogs are managed differently (first_time_help_content)
             return self._check_help_dialog_active()
@@ -92,46 +92,46 @@ class DialogStateManager:
             return self._check_game_dialog_active(dialog_type)
     
     def get_active_dialogs(self) -> Set[DialogType]:
-        """Get set of all currently active dialogs."""
+        '''Get set of all currently active dialogs.'''
         self._refresh_active_dialogs()
         return self._active_dialogs.copy()
     
     def has_blocking_dialog(self) -> bool:
-        """Check if any blocking (modal) dialog is currently active."""
+        '''Check if any blocking (modal) dialog is currently active.'''
         # Always refresh for now (we can optimize caching later)
         self._refresh_active_dialogs()
         return len(self._active_dialogs) > 0
     
     def get_blocking_dialog(self) -> Optional[DialogType]:
-        """Get the currently blocking dialog (if any)."""
+        '''Get the currently blocking dialog (if any).'''
         self._refresh_active_dialogs()
         return self._blocking_dialog
     
     def get_blocking_feedback_message(self) -> str:
-        """Get appropriate feedback message for the blocking dialog."""
+        '''Get appropriate feedback message for the blocking dialog.'''
         blocking_dialog = self.get_blocking_dialog()
         
         if blocking_dialog == DialogType.HELP:
-            return "Close the help popup first (ESC or click X)"
+            return 'Close the help popup first (ESC or click X)'
         elif blocking_dialog == DialogType.TUTORIAL:
-            return "Complete or skip the tutorial step first"
+            return 'Complete or skip the tutorial step first'
         elif blocking_dialog == DialogType.HIRING:
-            return "Close the hiring dialog first (ESC or click outside)"
+            return 'Close the hiring dialog first (ESC or click outside)'
         elif blocking_dialog == DialogType.FUNDRAISING:
-            return "Close the funding dialog first (ESC or click outside)"
+            return 'Close the funding dialog first (ESC or click outside)'
         elif blocking_dialog == DialogType.RESEARCH:
-            return "Close the research dialog first (ESC or click outside)"
+            return 'Close the research dialog first (ESC or click outside)'
         elif blocking_dialog == DialogType.INTELLIGENCE:
-            return "Close the intelligence dialog first (ESC or click outside)"
+            return 'Close the intelligence dialog first (ESC or click outside)'
         elif blocking_dialog == DialogType.MEDIA:
-            return "Close the media dialog first (ESC or click outside)"
+            return 'Close the media dialog first (ESC or click outside)'
         elif blocking_dialog == DialogType.TECHNICAL_DEBT:
-            return "Close the technical debt dialog first (ESC or click outside)"
+            return 'Close the technical debt dialog first (ESC or click outside)'
         else:
-            return "Close the open dialog first"
+            return 'Close the open dialog first'
     
     def dismiss_dialog(self, dialog_type: DialogType) -> bool:
-        """
+        '''
         Dismiss a specific dialog type.
         
         Args:
@@ -139,7 +139,7 @@ class DialogStateManager:
             
         Returns:
             True if dialog was successfully dismissed, False otherwise
-        """
+        '''
         if dialog_type == DialogType.HELP:
             return self._dismiss_help_dialog()
         elif dialog_type == DialogType.TUTORIAL:
@@ -148,12 +148,12 @@ class DialogStateManager:
             return self._dismiss_game_dialog(dialog_type)
     
     def dismiss_all_dialogs(self) -> int:
-        """
+        '''
         Dismiss all active dialogs.
         
         Returns:
             Number of dialogs that were dismissed
-        """
+        '''
         active_dialogs = self.get_active_dialogs()
         dismissed_count = 0
         
@@ -167,12 +167,12 @@ class DialogStateManager:
         return dismissed_count
     
     def validate_dialog_states(self) -> List[str]:
-        """
+        '''
         Validate all dialog states for debugging.
         
         Returns:
             List of validation issues found
-        """
+        '''
         issues: List[str] = []
         
         # Check for inconsistent dialog states
@@ -180,9 +180,9 @@ class DialogStateManager:
             is_active = self.is_dialog_active(dialog_type)
             
             if dialog_type in self._active_dialogs and not is_active:
-                issues.append(f"Dialog {dialog_type.value} marked as active but not actually active")
+                issues.append(f'Dialog {dialog_type.value} marked as active but not actually active')
             elif dialog_type not in self._active_dialogs and is_active:
-                issues.append(f"Dialog {dialog_type.value} is active but not marked as active")
+                issues.append(f'Dialog {dialog_type.value} is active but not marked as active')
         
         # Check for None vs False issues
         game_dialog_attrs = [
@@ -198,17 +198,17 @@ class DialogStateManager:
             if hasattr(self.game_state, attr):
                 value = getattr(self.game_state, attr)
                 if value is False:  # Should be None instead of False
-                    issues.append(f"Dialog attribute {attr} is False, should be None")
+                    issues.append(f'Dialog attribute {attr} is False, should be None')
         
         return issues
     
     def emergency_cleanup(self) -> int:
-        """
+        '''
         Emergency cleanup of stuck dialog states.
         
         Returns:
             Number of states that were cleaned up
-        """
+        '''
         cleanup_count = 0
         
         # Reset all game dialog attributes to None (not False)
@@ -240,7 +240,7 @@ class DialogStateManager:
         return cleanup_count
     
     def _refresh_active_dialogs(self) -> None:
-        """Refresh the set of active dialogs by checking current state."""
+        '''Refresh the set of active dialogs by checking current state.'''
         self._active_dialogs.clear()
         
         # Check each dialog type
@@ -258,7 +258,7 @@ class DialogStateManager:
             self._blocking_dialog = None
     
     def _calculate_blocking_dialog(self) -> Optional[DialogType]:
-        """Calculate which dialog is blocking (highest priority) without recursion."""
+        '''Calculate which dialog is blocking (highest priority) without recursion.'''
         # Priority order for blocking dialogs
         blocking_priority = [
             DialogType.TUTORIAL,      # Tutorial blocks everything
@@ -278,13 +278,13 @@ class DialogStateManager:
         return None
     
     def _check_help_dialog_active(self) -> bool:
-        """Check if help dialog is active (external state)."""
+        '''Check if help dialog is active (external state).'''
         # This needs to be passed in from main.py since help state 
         # is managed there as first_time_help_content
         return False  # Placeholder - will be updated during integration
     
     def _check_tutorial_active(self) -> bool:
-        """Check if tutorial is active via onboarding system."""
+        '''Check if tutorial is active via onboarding system.'''
         try:
             from src.features.onboarding import onboarding
             return getattr(onboarding, 'show_tutorial_overlay', False)
@@ -292,7 +292,7 @@ class DialogStateManager:
             return False
     
     def _check_game_dialog_active(self, dialog_type: DialogType) -> bool:
-        """Check if a game dialog is active."""
+        '''Check if a game dialog is active.'''
         dialog_mapping = {
             DialogType.HIRING: 'pending_hiring_dialog',
             DialogType.FUNDRAISING: 'pending_fundraising_dialog',
@@ -311,13 +311,13 @@ class DialogStateManager:
         return False
     
     def _dismiss_help_dialog(self) -> bool:
-        """Dismiss help dialog (needs integration with main.py)."""
+        '''Dismiss help dialog (needs integration with main.py).'''
         # This will be handled during integration since help state
         # is managed in main.py
         return False  # Placeholder
     
     def _dismiss_tutorial(self) -> bool:
-        """Dismiss tutorial via onboarding system."""
+        '''Dismiss tutorial via onboarding system.'''
         try:
             from src.features.onboarding import onboarding
             if getattr(onboarding, 'show_tutorial_overlay', False):
@@ -328,7 +328,7 @@ class DialogStateManager:
         return False
     
     def _dismiss_game_dialog(self, dialog_type: DialogType) -> bool:
-        """Dismiss a game dialog using the appropriate method."""
+        '''Dismiss a game dialog using the appropriate method.'''
         dialog_methods = {
             DialogType.HIRING: 'dismiss_hiring_dialog',
             DialogType.FUNDRAISING: 'dismiss_fundraising_dialog',
@@ -353,12 +353,12 @@ class DialogStateManager:
     
     # Context manager support for dialog state tracking
     def __enter__(self):
-        """Enter context for dialog state tracking."""
+        '''Enter context for dialog state tracking.'''
         self._refresh_active_dialogs()
         return self
     
     def __exit__(self, exc_type: Optional[type], exc_val: Optional[BaseException], exc_tb: Optional[object]) -> None:
-        """Exit context and validate state consistency."""
+        '''Exit context and validate state consistency.'''
         if exc_type is None:
             # No exception - validate states are consistent
             issues = self.validate_dialog_states()

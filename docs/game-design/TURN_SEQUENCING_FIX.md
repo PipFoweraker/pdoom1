@@ -4,7 +4,7 @@
 Events were triggering AFTER actions were executed, causing:
 - Events appearing after player had already committed to actions
 - Poor player agency - couldn't respond to events that should influence decisions  
-- Confusing game flow where events seemed to "interrupt" turn processing
+- Confusing game flow where events seemed to 'interrupt' turn processing
 
 ## Solution Implemented  
 **Quick Fix (Phase 1)**: Moved `trigger_events()` to the **beginning** of `end_turn()` method

@@ -64,10 +64,10 @@
 
 **Problem Locations**:
 ```bash
-README.md:2          # Claims "v0.8.0 Modular Architecture" 
-version.py:13        # Actually shows __version__ = "0.9.0"
-ui.py:4767          # "Bootstrap v0.4.1" (outdated economic reference)
-ui.py:4904          # "Bootstrap v0.4.1" (duplicate outdated reference)
+README.md:2          # Claims 'v0.8.0 Modular Architecture' 
+version.py:13        # Actually shows __version__ = '0.9.0'
+ui.py:4767          # 'Bootstrap v0.4.1' (outdated economic reference)
+ui.py:4904          # 'Bootstrap v0.4.1' (duplicate outdated reference)
 ```
 
 **Completed Actions**:
@@ -323,7 +323,7 @@ python scripts/ascii_compliance_fixer.py --check  # Must be clean
 
 # 4. Commit and merge
 git add -A
-git commit -m "Hotfix v0.9.1: Version sync, ASCII compliance, import cleanup, sound config"
+git commit -m 'Hotfix v0.9.1: Version sync, ASCII compliance, import cleanup, sound config'
 git push origin hotfix-v0.9.1-cleanup
 # Create PR for review
 ```

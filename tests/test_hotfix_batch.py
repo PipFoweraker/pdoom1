@@ -1,9 +1,9 @@
-"""
+'''
 Comprehensive tests for hotfix batch: Mac TypeError, GameClock bounds, and hiring dialog UX.
 
 This test module validates the fixes implemented in the hotfix batch deployment,
 ensuring all critical bugs are resolved and no regressions are introduced.
-"""
+'''
 
 import unittest
 from unittest.mock import Mock, patch
@@ -15,15 +15,15 @@ from src.core.game_state import GameState
 
 
 class TestHotfixBatch(unittest.TestCase):
-    """Test all fixes in the hotfix batch deployment."""
+    '''Test all fixes in the hotfix batch deployment.'''
 
     def setUp(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         self.game_clock = GameClock()
         self.leaderboard_manager = EnhancedLeaderboardManager()
         
     def test_mac_technical_debt_fix_verified(self):
-        """Verify the Mac TypeError fix is working."""
+        '''Verify the Mac TypeError fix is working.'''
         # Create game state with technical debt
         gs = GameState('test-hotfix-mac')
         gs.technical_debt.add_debt(15)
@@ -43,22 +43,22 @@ class TestHotfixBatch(unittest.TestCase):
         self.assertEqual(self.leaderboard_manager.current_session.technical_debt_accumulated, 15)
     
     def test_gameclock_bounds_checking_fix(self):
-        """Test GameClock array bounds checking prevents IndexError."""
+        '''Test GameClock array bounds checking prevents IndexError.'''
         # Test normal dates (should work as before)
         normal_date = datetime(2024, 6, 15)  # June 15, valid month
         result = self.game_clock.format_date(normal_date)
-        self.assertIn("Jun", result)
-        self.assertIn("02024", result)
+        self.assertIn('Jun', result)
+        self.assertIn('02024', result)
         
         # Test edge case: month = 1 (January, index 0)
         january_date = datetime(2024, 1, 1)
         result = self.game_clock.format_date(january_date)
-        self.assertIn("Jan", result)
+        self.assertIn('Jan', result)
         
         # Test edge case: month = 12 (December, index 11)
         december_date = datetime(2024, 12, 31)
         result = self.game_clock.format_date(december_date)
-        self.assertIn("Dec", result)
+        self.assertIn('Dec', result)
         
         # Test bounds protection with invalid datetime object
         # Create a mock datetime with invalid month
@@ -69,26 +69,26 @@ class TestHotfixBatch(unittest.TestCase):
         
         # Should not crash, should use bounds checking
         result = self.game_clock.format_date(invalid_date)
-        self.assertIn("Jan", result)  # Should default to first month (index 0)
+        self.assertIn('Jan', result)  # Should default to first month (index 0)
         
         # Test bounds protection with month > 12
         invalid_date.month = 15  # Invalid month > 12
         result = self.game_clock.format_date(invalid_date)
-        self.assertIn("Dec", result)  # Should default to last month (index 11)
+        self.assertIn('Dec', result)  # Should default to last month (index 11)
         
         # Test bounds protection with negative month
         invalid_date.month = -5  # Invalid negative month
         result = self.game_clock.format_date(invalid_date)
-        self.assertIn("Jan", result)  # Should default to first month (index 0)
+        self.assertIn('Jan', result)  # Should default to first month (index 0)
     
     def test_gameclock_instance_method_bounds_checking(self):
-        """Test instance method also has bounds checking."""
+        '''Test instance method also has bounds checking.'''
         # Set up GameClock with current date
         self.game_clock.current_date = datetime(2024, 6, 15)
         
         # Normal case
         result = self.game_clock.get_formatted_date()
-        self.assertIn("Jun", result)
+        self.assertIn('Jun', result)
         
         # Test with mock invalid date
         invalid_date = Mock()
@@ -98,17 +98,17 @@ class TestHotfixBatch(unittest.TestCase):
         
         self.game_clock.current_date = invalid_date
         result = self.game_clock.get_formatted_date()
-        self.assertIn("Jan", result)  # Should use bounds checking
+        self.assertIn('Jan', result)  # Should use bounds checking
     
     def test_hiring_dialog_esc_functionality_exists(self):
-        """Test that hiring dialog ESC functionality is properly implemented."""
+        '''Test that hiring dialog ESC functionality is properly implemented.'''
         gs = GameState('test-hiring-esc')
         
         # Set up a pending hiring dialog
         gs.pending_hiring_dialog = {
-            "available_subtypes": [{"id": "test", "data": {"name": "Test Employee"}}],
-            "title": "Test Hiring",
-            "description": "Test hiring dialog"
+            'available_subtypes': [{'id': 'test', 'data': {'name': 'Test Employee'}}],
+            'title': 'Test Hiring',
+            'description': 'Test hiring dialog'
         }
         
         # Verify dialog is active
@@ -121,7 +121,7 @@ class TestHotfixBatch(unittest.TestCase):
         self.assertIsNone(gs.pending_hiring_dialog)
     
     def test_hiring_dialog_insufficient_funds_handling(self):
-        """Test that hiring dialog properly handles insufficient funds."""
+        '''Test that hiring dialog properly handles insufficient funds.'''
         gs = GameState('test-hiring-funds')
         
         # Set up low money scenario
@@ -139,7 +139,7 @@ class TestHotfixBatch(unittest.TestCase):
         self.assertIsNone(gs.pending_hiring_dialog)
     
     def test_all_safe_accessor_methods_error_handling(self):
-        """Test that all safe accessor methods handle errors gracefully."""
+        '''Test that all safe accessor methods handle errors gracefully.'''
         # Test with None game state
         debt_result = self.leaderboard_manager._safe_get_technical_debt_total(None)
         papers_result = self.leaderboard_manager._safe_get_research_papers_count(None)
@@ -157,13 +157,13 @@ class TestHotfixBatch(unittest.TestCase):
         
         # Test with problematic game state that raises exceptions
         problematic_state = Mock()
-        problematic_state.technical_debt = Mock(side_effect=ValueError("Test error"))
+        problematic_state.technical_debt = Mock(side_effect=ValueError('Test error'))
         
         debt_result = self.leaderboard_manager._safe_get_technical_debt_total(problematic_state)
         self.assertEqual(debt_result, 0)  # Should return 0, not crash
     
     def test_hotfix_integration_no_regressions(self):
-        """Test that fixes don't introduce regressions in normal gameplay."""
+        '''Test that fixes don't introduce regressions in normal gameplay.'''
         gs = GameState('test-integration')
         
         # Test normal game state creation
@@ -194,22 +194,22 @@ class TestHotfixBatch(unittest.TestCase):
 
 
 class TestHotfixRegressionPrevention(unittest.TestCase):
-    """Prevent regressions of the original bugs."""
+    '''Prevent regressions of the original bugs.'''
     
     def test_mac_bug_cannot_regress(self):
-        """Ensure Mac TypeError cannot regress by testing old problematic patterns."""
+        '''Ensure Mac TypeError cannot regress by testing old problematic patterns.'''
         lm = EnhancedLeaderboardManager()
         
         # Test the old problematic pattern that caused Mac bug
         mock_gs = Mock()
-        mock_gs.technical_debt = "15"  # String instead of object (old bug scenario)
+        mock_gs.technical_debt = '15'  # String instead of object (old bug scenario)
         
         # New code should handle this gracefully
         result = lm._safe_get_technical_debt_total(mock_gs)
         self.assertEqual(result, 0)  # Should return 0, not crash
         
     def test_gameclock_indexerror_cannot_regress(self):
-        """Ensure GameClock IndexError cannot regress."""
+        '''Ensure GameClock IndexError cannot regress.'''
         gc = GameClock()
         
         # Test all the scenarios that could cause IndexError
@@ -227,7 +227,7 @@ class TestHotfixRegressionPrevention(unittest.TestCase):
                 self.assertIsInstance(result, str)
                 self.assertGreater(len(result), 0)
             except IndexError:
-                self.fail(f"IndexError raised for month {invalid_month} - bounds checking failed")
+                self.fail(f'IndexError raised for month {invalid_month} - bounds checking failed')
 
 
 if __name__ == '__main__':

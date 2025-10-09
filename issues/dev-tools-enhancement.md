@@ -95,7 +95,7 @@ class GameProfiler:
 
 ### Resource Manipulation Panel
 - **Direct Editing**: Click resources to edit values
-- **Preset Scenarios**: "Rich Start", "Crisis Mode", "End Game"  
+- **Preset Scenarios**: 'Rich Start', 'Crisis Mode', 'End Game'  
 - **Batch Operations**: Modify multiple resources simultaneously
 - **Validation**: Prevent impossible game states
 

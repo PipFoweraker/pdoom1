@@ -1,4 +1,4 @@
-"""
+'''
 Employee Blob Manager - Extracted from game_state.py
 
 Handles all employee blob visualization, positioning, animation, and management
@@ -15,7 +15,7 @@ Extracted methods:
 - _add_manager_blob
 - _reassign_employee_management
 - _remove_employee_blobs
-"""
+'''
 
 from typing import Dict, Any, List, Tuple, TYPE_CHECKING
 
@@ -29,21 +29,21 @@ from src.core.ui_utils import calculate_blob_position, check_blob_ui_collision
 
 
 class EmployeeBlobManager:
-    """Manages employee blob visualization and positioning"""
+    '''Manages employee blob visualization and positioning'''
     
     def __init__(self, game_state: 'GameState'):
-        """Initialize the EmployeeBlobManager with reference to GameState."""
+        '''Initialize the EmployeeBlobManager with reference to GameState.'''
         self.game_state = game_state
         
     def initialize_employee_blobs(self) -> None:
-        """Initialize employee blobs for starting staff with improved positioning"""
+        '''Initialize employee blobs for starting staff with improved positioning'''
         self.game_state.employee_blobs = initialize_employee_blobs(
             self.game_state.staff, 
             self.calculate_blob_position
         )
     
     def add_employee_blobs(self, count: int) -> None:
-        """Add new employee blobs with animation from side and improved positioning"""
+        '''Add new employee blobs with animation from side and improved positioning'''
         new_blobs = add_employee_blobs(
             self.game_state.employee_blobs, 
             count, 
@@ -56,11 +56,11 @@ class EmployeeBlobManager:
             self.game_state.sound_manager.play_blob_sound()
     
     def calculate_blob_position(self, blob_index: int, screen_w: int = 1200, screen_h: int = 800) -> Tuple[int, int]:
-        """Calculate initial blob position in the employee pen area."""
+        '''Calculate initial blob position in the employee pen area.'''
         return calculate_blob_position(blob_index, screen_w, screen_h)
     
     def get_ui_element_rects(self, screen_w: int = 1200, screen_h: int = 800) -> List[Tuple[int, int, int, int]]:
-        """
+        '''
         Get rectangles of all UI elements that employee blobs should avoid.
         
         Args:
@@ -69,7 +69,7 @@ class EmployeeBlobManager:
             
         Returns:
             list: List of (x, y, width, height) rectangles representing UI elements
-        """
+        '''
         ui_rects: List[Tuple[int, int, int, int]] = []
         
         # Convert pygame.Rect to tuple helper function
@@ -111,18 +111,18 @@ class EmployeeBlobManager:
         return ui_rects
     
     def check_blob_ui_collision(self, blob_x: int, blob_y: int, blob_radius: int, ui_rects: List[Tuple[int, int, int, int]]) -> Tuple[bool, float, float]:
-        """Check if a blob collides with any UI element (delegates to ui_utils)."""
+        '''Check if a blob collides with any UI element (delegates to ui_utils).'''
         return check_blob_ui_collision(blob_x, blob_y, blob_radius, ui_rects)
     
     def update_blob_positions_dynamically(self, screen_w: int = 1200, screen_h: int = 800) -> None:
-        """
+        '''
         Update blob positions dynamically to avoid UI elements.
         This method should be called every frame to ensure continuous movement.
         
         Args:
             screen_w (int): Screen width
             screen_h (int): Screen height
-        """
+        '''
         if not self.game_state.employee_blobs:
             return
         
@@ -198,7 +198,7 @@ class EmployeeBlobManager:
                 blob['target_y'] = new_y
             
     def add_manager_blob(self) -> None:
-        """Add a new manager blob with animation from side"""
+        '''Add a new manager blob with animation from side'''
         blob_id = len(self.game_state.employee_blobs)
         # Position managers slightly offset from regular employees
         target_x = 350 + (len(self.game_state.managers) % 2) * 300  # Alternate sides
@@ -233,7 +233,7 @@ class EmployeeBlobManager:
         self.reassign_employee_management()
         
     def reassign_employee_management(self) -> None:
-        """Reassign employees to managers based on capacity and efficiency"""
+        '''Reassign employees to managers based on capacity and efficiency'''
         # Reset all employee assignments
         employees = [blob for blob in self.game_state.employee_blobs if blob['type'] == 'employee']
         managers = [blob for blob in self.game_state.employee_blobs if blob['type'] == 'manager']
@@ -269,5 +269,5 @@ class EmployeeBlobManager:
                 employee['unproductive_reason'] = 'no_manager'
                 
     def remove_employee_blobs(self, count: int) -> None:
-        """Remove employee blobs when staff leave"""
+        '''Remove employee blobs when staff leave'''
         self.game_state.employee_blobs = remove_employee_blobs(self.game_state.employee_blobs, count)

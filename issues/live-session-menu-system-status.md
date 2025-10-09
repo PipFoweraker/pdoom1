@@ -13,7 +13,7 @@ Based on existing documentation, significant menu work has been completed:
 
 #### Menu Simplification (`docs/MENU_IMPROVEMENTS.md`)
 - **Main Menu**: Reduced from 7 to 4 options (Launch Lab, Game Config, Settings, Exit)
-- **Tutorial Flow**: Default to "No tutorial" for experienced players
+- **Tutorial Flow**: Default to 'No tutorial' for experienced players
 - **Consistent Navigation**: Unified click/keyboard navigation patterns
 
 #### UI Improvements (`docs/UI_IMPROVEMENTS_SUMMARY.md`)

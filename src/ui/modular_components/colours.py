@@ -1,8 +1,8 @@
-"""
+'''
 Colour constants for P(Doom) UI.
 
 Defines the colour palette used throughout the game UI for consistent styling.
-"""
+'''
 
 # Resource colours
 MONEY_COLOUR = (255, 230, 60)

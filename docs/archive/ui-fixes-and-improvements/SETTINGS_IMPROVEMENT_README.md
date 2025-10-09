@@ -1,6 +1,6 @@
 # Enhanced Pre-Game Settings Screen
 
-This directory contains screenshots demonstrating the improvement to the "generic loading screen" (pre-game settings screen) in P(Doom).
+This directory contains screenshots demonstrating the improvement to the 'generic loading screen' (pre-game settings screen) in P(Doom).
 
 ## Files
 
@@ -11,18 +11,18 @@ This directory contains screenshots demonstrating the improvement to the "generi
 
 ### Visual Design
 - **Themed Background**: Replaced plain grey with subtle bureaucratic grid pattern
-- **Enhanced Typography**: Better font hierarchy with themed titles ("LABORATORY CONFIGURATION")
+- **Enhanced Typography**: Better font hierarchy with themed titles ('LABORATORY CONFIGURATION')
 - **Color Scheme**: Cohesive blue/grey theme matching P(Doom)'s bureaucracy aesthetic
 - **Visual Icons**: Small indicators for each setting type (research, audio, visual, safety)
 
 ### Functionality
-- **Working Settings**: Replaced "DUMMY" placeholders with functional settings that actually cycle
+- **Working Settings**: Replaced 'DUMMY' placeholders with functional settings that actually cycle
 - **Realistic Values**: Settings now use appropriate ranges and terminology
 - **Interactive Controls**: Click buttons or use arrow keys to cycle through options
 
 ### Thematic Integration
-- **Bureaucratic Language**: "Research Intensity" instead of "Difficulty", "Audio Alerts Volume" instead of "Sound Volume"
-- **Laboratory Theme**: "LABORATORY CONFIGURATION" and "INITIALIZE LABORATORY" buttons
+- **Bureaucratic Language**: 'Research Intensity' instead of 'Difficulty', 'Audio Alerts Volume' instead of 'Sound Volume'
+- **Laboratory Theme**: 'LABORATORY CONFIGURATION' and 'INITIALIZE LABORATORY' buttons
 - **Safety Protocols**: Added institutional safety level setting
 - **Instructions**: Enhanced with emoji and bureaucratic terminology
 

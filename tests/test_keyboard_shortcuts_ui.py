@@ -1,6 +1,6 @@
-"""
+'''
 Tests for keyboard shortcuts UI integration.
-"""
+'''
 import unittest
 import pygame
 from unittest.mock import patch
@@ -17,22 +17,22 @@ from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game
 class TestKeyboardShortcutsUI(unittest.TestCase):
     
     def setUp(self):
-        """Set up test environment."""
+        '''Set up test environment.'''
         pygame.init()
         # Create a test surface
         self.test_surface = pygame.Surface((800, 600))
         
     def tearDown(self):
-        """Clean up after tests."""
+        '''Clean up after tests.'''
         pygame.quit()
     
     @patch('src.ui.menus.get_main_menu_shortcuts')
     @patch('src.ui.menus.get_in_game_shortcuts')  
     def test_draw_main_menu_calls_shortcut_functions(self, mock_in_game, mock_main_menu):
-        """Test that draw_main_menu calls the keyboard shortcut functions."""
+        '''Test that draw_main_menu calls the keyboard shortcut functions.'''
         # Set up mocks
-        mock_main_menu.return_value = [("Test", "Test shortcut")]
-        mock_in_game.return_value = [("Game", "Game shortcut")]
+        mock_main_menu.return_value = [('Test', 'Test shortcut')]
+        mock_in_game.return_value = [('Game', 'Game shortcut')]
         
         # Call the function
         draw_main_menu(self.test_surface, 800, 600, 0)
@@ -42,7 +42,7 @@ class TestKeyboardShortcutsUI(unittest.TestCase):
         mock_in_game.assert_called_once()
         
     def test_shortcuts_data_available_for_ui(self):
-        """Test that shortcut data is available and properly structured for UI use."""
+        '''Test that shortcut data is available and properly structured for UI use.'''
         main_shortcuts = get_main_menu_shortcuts()
         in_game_shortcuts = get_in_game_shortcuts()
         
@@ -61,12 +61,12 @@ class TestKeyboardShortcutsUI(unittest.TestCase):
             self.assertLess(len(desc), 50)  # Descriptions should fit on screen
             
     def test_main_menu_with_shortcuts_no_errors(self):
-        """Test that drawing main menu with shortcuts doesn't raise errors."""
+        '''Test that drawing main menu with shortcuts doesn't raise errors.'''
         try:
             # This should not raise any exceptions
             draw_main_menu(self.test_surface, 800, 600, 0)
         except Exception as e:
-            self.fail(f"draw_main_menu raised an exception: {e}")
+            self.fail(f'draw_main_menu raised an exception: {e}')
 
 
 if __name__ == '__main__':

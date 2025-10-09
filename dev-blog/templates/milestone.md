@@ -1,9 +1,9 @@
 ---
-title: "MILESTONE_NAME"
-date: "YYYY-MM-DD"
-tags: ["milestone", "tag2"]
-summary: "Major milestone achieved: brief description"
-commit: "git-hash-here"
+title: 'MILESTONE_NAME'
+date: 'YYYY-MM-DD'
+tags: ['milestone', 'tag2']
+summary: 'Major milestone achieved: brief description'
+commit: 'git-hash-here'
 ---
 
 # MILESTONE_NAME

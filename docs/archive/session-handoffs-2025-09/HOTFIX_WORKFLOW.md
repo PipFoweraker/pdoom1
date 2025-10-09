@@ -1,6 +1,6 @@
 # P(Doom) Hotfix Workflow - UI Stability Push
 
-## Current Status: v0.2.5 "UI Interaction Fixes & Hint System" - Professional Polish Release
+## Current Status: v0.2.5 'UI Interaction Fixes & Hint System' - Professional Polish Release
 
 [EMOJI] **MAJOR UI ISSUES RESOLVED**: This release addresses critical user experience issues including:
 - Fixed spacebar blocking during tutorial overlays
@@ -20,7 +20,7 @@
 2. **Update the version:**
    - Edit `src/services/version.py`
    - Change `VERSION_PATCH = X` to `VERSION_PATCH = Y` 
-   - Update `__version__ = "0.2.X"` to `__version__ = "0.2.Y"`
+   - Update `__version__ = '0.2.X'` to `__version__ = '0.2.Y'`
 
 3. **Document the change:**
    - Add one line to the development log about what was fixed
@@ -75,7 +75,7 @@ When making changes, always:
 
 **Test the game:**
 ```bash
-cd "c:\Users\Pip\Documents\Local Code (Upstairs PC)\Pdoom1Folder\pdoom1"
+cd 'c:\Users\Pip\Documents\Local Code (Upstairs PC)\Pdoom1Folder\pdoom1'
 python main.py
 ```
 

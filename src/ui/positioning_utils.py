@@ -1,4 +1,4 @@
-"""
+'''
 UI Positioning Utilities - Elegant Dynamic Layout System
 
 This module provides dynamic UI positioning utilities that automatically adapt
@@ -8,14 +8,14 @@ PREFERRED APPROACH: Instead of hardcoding element counts or positions,
 calculate positions dynamically based on actual rendered component rectangles.
 
 Created: 2025-09-29 - Demo Hotfix Session
-"""
+'''
 
 from typing import Tuple, List, Optional
 import pygame
 
 
 def calculate_activity_log_position(game_state, w: int, h: int) -> Tuple[int, int]:
-    """
+    '''
     Elegantly calculate activity log position based on actual action button layout.
     
     DESIGN PRINCIPLE: Position elements relative to actual rendered components,
@@ -30,7 +30,7 @@ def calculate_activity_log_position(game_state, w: int, h: int) -> Tuple[int, in
         
     Example Usage:
         log_x, log_y = calculate_activity_log_position(game_state, w, h)
-    """
+    '''
     log_x = int(w * 0.04)  # Standard left margin
     
     # Check if we have actual action button rects to work with
@@ -50,7 +50,7 @@ def calculate_activity_log_position(game_state, w: int, h: int) -> Tuple[int, in
 
 def calculate_dynamic_element_spacing(base_elements: List[pygame.Rect], 
                                     buffer_percent: float = 0.015) -> int:
-    """
+    '''
     Calculate spacing for new UI elements based on existing element layout.
     
     Args:
@@ -59,7 +59,7 @@ def calculate_dynamic_element_spacing(base_elements: List[pygame.Rect],
         
     Returns:
         int: Y-coordinate for next element placement
-    """
+    '''
     if not base_elements:
         return 0
         
@@ -68,7 +68,7 @@ def calculate_dynamic_element_spacing(base_elements: List[pygame.Rect],
 
 def get_safe_positioning_zone(occupied_rects: List[pygame.Rect], 
                             screen_w: int, screen_h: int) -> pygame.Rect:
-    """
+    '''
     Find safe area for new UI elements that doesn't overlap existing ones.
     
     Args:
@@ -77,7 +77,7 @@ def get_safe_positioning_zone(occupied_rects: List[pygame.Rect],
         
     Returns:
         pygame.Rect: Safe area for new element placement
-    """
+    '''
     # Simple implementation - find area below all existing elements
     if occupied_rects:
         min_safe_y = max(rect.bottom for rect in occupied_rects) + 10

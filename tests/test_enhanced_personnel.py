@@ -8,32 +8,32 @@ from src.core.researchers import (
 class TestResearcherSystem(unittest.TestCase):
     
     def setUp(self):
-        """Set up test game state with researchers."""
+        '''Set up test game state with researchers.'''
         self.gs = GameState('test-researcher')
         self.gs.researchers = []
         self.gs.available_researchers = []
         
     def test_researcher_creation(self):
-        """Test creating individual researchers."""
-        researcher = Researcher("Test Researcher", "safety", 5, ["workaholic"], 100)
+        '''Test creating individual researchers.'''
+        researcher = Researcher('Test Researcher', 'safety', 5, ['workaholic'], 100)
         
-        self.assertEqual(researcher.name, "Test Researcher")
-        self.assertEqual(researcher.specialization, "safety")
+        self.assertEqual(researcher.name, 'Test Researcher')
+        self.assertEqual(researcher.specialization, 'safety')
         self.assertEqual(researcher.skill_level, 5)
-        self.assertIn("workaholic", researcher.traits)
+        self.assertIn('workaholic', researcher.traits)
         self.assertEqual(researcher.salary_expectation, 100)
         self.assertEqual(researcher.current_salary, 100)
         self.assertEqual(researcher.loyalty, 50)
         self.assertEqual(researcher.burnout, 0)
     
     def test_researcher_traits_effects(self):
-        """Test that traits affect researcher productivity."""
+        '''Test that traits affect researcher productivity.'''
         # Workaholic should increase productivity
-        workaholic = Researcher("Workaholic", "safety", 5, ["workaholic"], 100)
+        workaholic = Researcher('Workaholic', 'safety', 5, ['workaholic'], 100)
         self.assertGreater(workaholic.productivity, 1.0)
         
         # Prima donna should not affect base productivity
-        prima_donna = Researcher("Prima Donna", "safety", 5, ["prima_donna"], 100)
+        prima_donna = Researcher('Prima Donna', 'safety', 5, ['prima_donna'], 100)
         self.assertEqual(prima_donna.productivity, 1.0)
         
         # Test effective productivity with prima donna
@@ -42,24 +42,24 @@ class TestResearcherSystem(unittest.TestCase):
         self.assertLess(effective, prima_donna.productivity)
     
     def test_specialization_effects(self):
-        """Test that specializations provide correct effects."""
-        safety_researcher = Researcher("Safety Expert", "safety", 5, [], 100)
+        '''Test that specializations provide correct effects.'''
+        safety_researcher = Researcher('Safety Expert', 'safety', 5, [], 100)
         effects = safety_researcher.get_specialization_effects()
         
-        self.assertIn("doom_reduction_bonus", effects)
-        self.assertGreater(effects["doom_reduction_bonus"], 0)
+        self.assertIn('doom_reduction_bonus', effects)
+        self.assertGreater(effects['doom_reduction_bonus'], 0)
         
-        capabilities_researcher = Researcher("Capabilities Expert", "capabilities", 5, [], 100)
+        capabilities_researcher = Researcher('Capabilities Expert', 'capabilities', 5, [], 100)
         effects = capabilities_researcher.get_specialization_effects()
         
-        self.assertIn("research_speed_modifier", effects)
-        self.assertGreater(effects["research_speed_modifier"], 1.0)
-        self.assertIn("doom_per_research", effects)
-        self.assertGreater(effects["doom_per_research"], 0)
+        self.assertIn('research_speed_modifier', effects)
+        self.assertGreater(effects['research_speed_modifier'], 1.0)
+        self.assertIn('doom_per_research', effects)
+        self.assertGreater(effects['doom_per_research'], 0)
     
     def test_researcher_turnover(self):
-        """Test researcher advancement and burnout."""
-        researcher = Researcher("Test", "safety", 5, ["workaholic"], 100)
+        '''Test researcher advancement and burnout.'''
+        researcher = Researcher('Test', 'safety', 5, ['workaholic'], 100)
         initial_burnout = researcher.burnout
         initial_loyalty = researcher.loyalty
         
@@ -72,7 +72,7 @@ class TestResearcherSystem(unittest.TestCase):
         self.assertEqual(researcher.turns_employed, 1)
     
     def test_hiring_system(self):
-        """Test researcher hiring functionality."""
+        '''Test researcher hiring functionality.'''
         # Setup game state with money and AP
         self.gs.money = 200
         self.gs.action_points = 5
@@ -94,27 +94,27 @@ class TestResearcherSystem(unittest.TestCase):
         self.assertEqual(self.gs.action_points, 3)  # Should cost 2 AP
     
     def test_salary_management(self):
-        """Test salary adjustment functionality."""
-        researcher = Researcher("Test", "safety", 5, [], 100)
+        '''Test salary adjustment functionality.'''
+        researcher = Researcher('Test', 'safety', 5, [], 100)
         initial_loyalty = researcher.loyalty
         
         # Increase salary
         result = adjust_researcher_salary(researcher, 120)
-        self.assertTrue(result["success"])
+        self.assertTrue(result['success'])
         self.assertEqual(researcher.current_salary, 120)
         self.assertGreater(researcher.loyalty, initial_loyalty)
         
         # Decrease salary
         result = adjust_researcher_salary(researcher, 90)
-        self.assertTrue(result["success"])
+        self.assertTrue(result['success'])
         self.assertEqual(researcher.current_salary, 90)
         self.assertLess(researcher.loyalty, initial_loyalty)
     
     def test_team_building(self):
-        """Test team building functionality."""
+        '''Test team building functionality.'''
         researchers = [
-            Researcher("Test1", "safety", 5, [], 100),
-            Researcher("Test2", "capabilities", 5, [], 100)
+            Researcher('Test1', 'safety', 5, [], 100),
+            Researcher('Test2', 'capabilities', 5, [], 100)
         ]
         
         # Add some burnout
@@ -122,64 +122,64 @@ class TestResearcherSystem(unittest.TestCase):
             r.burnout = 50
         
         result = conduct_team_building(researchers, 100)
-        self.assertTrue(result["success"])
+        self.assertTrue(result['success'])
         
         # Should reduce burnout
         for r in researchers:
             self.assertLess(r.burnout, 50)
     
     def test_performance_review(self):
-        """Test performance review functionality."""
-        researcher = Researcher("Test", "safety", 5, ["workaholic"], 100)
+        '''Test performance review functionality.'''
+        researcher = Researcher('Test', 'safety', 5, ['workaholic'], 100)
         researcher.burnout = 30  # Moderate burnout (was 70)
         researcher.loyalty = 20  # Low loyalty
         
         result = conduct_performance_review(researcher)
-        self.assertTrue(result["success"])
-        self.assertEqual(result["researcher"], "Test")
+        self.assertTrue(result['success'])
+        self.assertEqual(result['researcher'], 'Test')
         # With 30% burnout: 1.2 * (1 - 0.15) = 1.02, still > 1.0
-        self.assertGreater(result["productivity"], 1.0)  # Workaholic bonus minus burnout
-        self.assertGreater(len(result["insights"]), 0)
+        self.assertGreater(result['productivity'], 1.0)  # Workaholic bonus minus burnout
+        self.assertGreater(len(result['insights']), 0)
     
     def test_researcher_effects_integration(self):
-        """Test that researcher effects integrate with game state."""
+        '''Test that researcher effects integrate with game state.'''
         # Add some researchers with different specializations
-        safety_researcher = Researcher("Safety Expert", "safety", 8, ["safety_conscious"], 100)
-        capabilities_researcher = Researcher("Capabilities Expert", "capabilities", 6, [], 100)
+        safety_researcher = Researcher('Safety Expert', 'safety', 8, ['safety_conscious'], 100)
+        capabilities_researcher = Researcher('Capabilities Expert', 'capabilities', 6, [], 100)
         
         self.gs.researchers = [safety_researcher, capabilities_researcher]
         
         effects = self.gs.get_researcher_productivity_effects()
         
         # Should have research speed bonus from capabilities researcher
-        self.assertGreater(effects["research_speed_modifier"], 1.0)
+        self.assertGreater(effects['research_speed_modifier'], 1.0)
         
         # Should have doom reduction from safety researcher
-        self.assertGreater(effects["doom_reduction_bonus"], 0)
+        self.assertGreater(effects['doom_reduction_bonus'], 0)
         
         # Should have doom per research from capabilities researcher
-        self.assertGreater(effects["doom_per_research"], 0)
+        self.assertGreater(effects['doom_per_research'], 0)
     
     def test_random_generation(self):
-        """Test random researcher generation."""
+        '''Test random researcher generation.'''
         # Test name generation
         name = generate_researcher_name()
         self.assertIsInstance(name, str)
-        self.assertIn(" ", name)  # Should have first and last name
+        self.assertIn(' ', name)  # Should have first and last name
         
         # Test trait generation
         traits = generate_random_traits(2)
         self.assertLessEqual(len(traits), 2)
         
         # Test researcher generation
-        researcher = generate_researcher("safety")
-        self.assertEqual(researcher.specialization, "safety")
+        researcher = generate_researcher('safety')
+        self.assertEqual(researcher.specialization, 'safety')
         self.assertGreaterEqual(researcher.skill_level, 3)
         self.assertLessEqual(researcher.skill_level, 8)
     
     def test_serialization(self):
-        """Test researcher serialization and deserialization."""
-        original = Researcher("Test", "safety", 7, ["workaholic", "media_savvy"], 110)
+        '''Test researcher serialization and deserialization.'''
+        original = Researcher('Test', 'safety', 7, ['workaholic', 'media_savvy'], 110)
         original.burnout = 20
         original.loyalty = 75
         original.turns_employed = 5
@@ -202,13 +202,13 @@ class TestResearcherSystem(unittest.TestCase):
 class TestResearcherGameIntegration(unittest.TestCase):
     
     def setUp(self):
-        """Set up test game state."""
+        '''Set up test game state.'''
         self.gs = GameState('test-integration')
         
     def test_researcher_doom_effects(self):
-        """Test that researchers affect doom calculations."""
+        '''Test that researchers affect doom calculations.'''
         # Add safety researcher
-        safety_researcher = Researcher("Safety Expert", "safety", 8, [], 100)
+        safety_researcher = Researcher('Safety Expert', 'safety', 8, [], 100)
         self.gs.researchers = [safety_researcher]
         
         self.gs.doom
@@ -225,11 +225,11 @@ class TestResearcherGameIntegration(unittest.TestCase):
         self.assertLess(doom_rise, 10)
     
     def test_researcher_actions_available(self):
-        """Test that researcher management actions become available."""
+        '''Test that researcher management actions become available.'''
         # Check refresh researchers action
         refresh_action = None
         for action in self.gs.actions:
-            if action["name"] == "Refresh Researchers":
+            if action['name'] == 'Refresh Researchers':
                 refresh_action = action
                 break
         
@@ -237,14 +237,14 @@ class TestResearcherGameIntegration(unittest.TestCase):
         
         # Should be available if researchers attribute exists
         self.assertTrue(hasattr(self.gs, 'researchers'))
-        if refresh_action.get("rules"):
-            self.assertTrue(refresh_action["rules"](self.gs))
+        if refresh_action.get('rules'):
+            self.assertTrue(refresh_action['rules'](self.gs))
     
     def test_researcher_events_integration(self):
-        """Test that researcher events are properly integrated."""
+        '''Test that researcher events are properly integrated.'''
         # Add researchers to trigger events
-        safety_researcher = Researcher("Dr. Safety", "safety", 8, ["media_savvy"], 100)
-        capabilities_researcher = Researcher("Dr. Capabilities", "capabilities", 7, [], 110)
+        safety_researcher = Researcher('Dr. Safety', 'safety', 8, ['media_savvy'], 100)
+        capabilities_researcher = Researcher('Dr. Capabilities', 'capabilities', 7, [], 110)
         capabilities_researcher.loyalty = 20  # Low loyalty
         
         self.gs.researchers = [safety_researcher, capabilities_researcher]
@@ -271,17 +271,17 @@ class TestResearcherGameIntegration(unittest.TestCase):
             self.assertTrue(True)  # Event executed without error
 
 class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
-    """Comprehensive test of the complete enhanced personnel system."""
+    '''Comprehensive test of the complete enhanced personnel system.'''
     
     def setUp(self):
-        """Set up comprehensive test scenario."""
+        '''Set up comprehensive test scenario.'''
         self.gs = GameState('test-complete')
         self.gs.money = 1000
         self.gs.action_points = 20
         self.gs.turn = 10
         
     def test_complete_researcher_lifecycle(self):
-        """Test complete researcher lifecycle from hiring to events."""
+        '''Test complete researcher lifecycle from hiring to events.'''
         # 1. Refresh hiring pool
         self.gs.refresh_researcher_hiring_pool()
         self.assertGreater(len(self.gs.available_researchers), 0)
@@ -310,15 +310,15 @@ class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
             researcher = self.gs.researchers[0]
             initial_salary = researcher.current_salary
             result = self.gs.conduct_researcher_management_action(
-                "salary_review", 
+                'salary_review', 
                 researcher_id=0, 
                 new_salary=initial_salary + 20
             )
-            self.assertTrue(result["success"])
+            self.assertTrue(result['success'])
             
         # Team building
-        result = self.gs.conduct_researcher_management_action("team_building", cost=50)
-        self.assertTrue(result["success"])
+        result = self.gs.conduct_researcher_management_action('team_building', cost=50)
+        self.assertTrue(result['success'])
         
         # 5. Test turn advancement
         for researcher in self.gs.researchers:
@@ -339,12 +339,12 @@ class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
             self.gs._researcher_breakthrough()
             
         # 7. Test UI integration (specialist researcher selection)
-        self.gs.pending_hiring_dialog = {"mode": None, "available_subtypes": []}
+        self.gs.pending_hiring_dialog = {'mode': None, 'available_subtypes': []}
         
         # Select specialist researcher should switch to pool mode
-        success, message = self.gs.select_employee_subtype("specialist_researcher")
+        success, message = self.gs.select_employee_subtype('specialist_researcher')
         self.assertTrue(success)
-        self.assertEqual(self.gs.pending_hiring_dialog.get("mode"), "researcher_pool")
+        self.assertEqual(self.gs.pending_hiring_dialog.get('mode'), 'researcher_pool')
         
         # 8. Test serialization (if we had it)
         for researcher in self.gs.researchers:
@@ -354,11 +354,11 @@ class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
             self.assertEqual(restored.specialization, researcher.specialization)
     
     def test_specialization_balance(self):
-        """Test that all specializations provide meaningful but balanced effects."""
-        specializations = ["safety", "capabilities", "interpretability", "alignment"]
+        '''Test that all specializations provide meaningful but balanced effects.'''
+        specializations = ['safety', 'capabilities', 'interpretability', 'alignment']
         
         for spec in specializations:
-            researcher = Researcher(f"Test {spec}", spec, 5, [], 100)
+            researcher = Researcher(f'Test {spec}', spec, 5, [], 100)
             effects = researcher.get_specialization_effects()
             
             # Each specialization should have at least one effect
@@ -366,7 +366,7 @@ class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
             
             # Effects should be reasonable magnitudes
             for effect_name, value in effects.items():
-                if effect_name == "research_speed_modifier":
+                if effect_name == 'research_speed_modifier':
                     self.assertGreaterEqual(value, 1.0)
                     self.assertLessEqual(value, 2.0)  # Not too overpowered
                 else:
@@ -374,29 +374,29 @@ class TestCompleteEnhancedPersonnelSystem(unittest.TestCase):
                     self.assertLessEqual(abs(value), 1.0)  # Reasonable magnitude
     
     def test_trait_system_balance(self):
-        """Test that trait system is balanced between positive and negative effects."""
+        '''Test that trait system is balanced between positive and negative effects.'''
         # Positive traits should provide benefits
-        workaholic = Researcher("Workaholic", "safety", 5, ["workaholic"], 100)
-        Researcher("Team Player", "safety", 5, ["team_player"], 100)
+        workaholic = Researcher('Workaholic', 'safety', 5, ['workaholic'], 100)
+        Researcher('Team Player', 'safety', 5, ['team_player'], 100)
         
         self.assertGreater(workaholic.productivity, 1.0)
         
         # Negative traits should have costs
-        prima_donna = Researcher("Prima Donna", "safety", 5, ["prima_donna"], 100)
+        prima_donna = Researcher('Prima Donna', 'safety', 5, ['prima_donna'], 100)
         prima_donna.current_salary = 80  # Below expectation
         self.assertLess(prima_donna.get_effective_productivity(), prima_donna.productivity)
         
         # Burnout should reduce productivity
-        burnt_out = Researcher("Burnt Out", "safety", 5, [], 100)
+        burnt_out = Researcher('Burnt Out', 'safety', 5, [], 100)
         burnt_out.burnout = 80
         self.assertLess(burnt_out.get_effective_productivity(), 1.0)
     
     def test_poaching_resistance_mechanics(self):
-        """Test that loyalty affects poaching resistance."""
-        high_loyalty = Researcher("Loyal", "safety", 5, [], 100)
+        '''Test that loyalty affects poaching resistance.'''
+        high_loyalty = Researcher('Loyal', 'safety', 5, [], 100)
         high_loyalty.loyalty = 90
         
-        low_loyalty = Researcher("Disloyal", "safety", 5, [], 100) 
+        low_loyalty = Researcher('Disloyal', 'safety', 5, [], 100) 
         low_loyalty.loyalty = 10
         
         # In a real poaching scenario, high loyalty should be more resistant

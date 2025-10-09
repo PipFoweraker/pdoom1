@@ -1,9 +1,9 @@
 ---
-title: "Major Type Annotation Milestone: UI and GameState Complete"
-date: "2025-09-10"
-tags: ["milestone", "type-annotations", "infrastructure", "code-quality"]
-summary: "Completed comprehensive type annotations for ui.py and 60% of game_state.py, resolving 1,100-1,600 pylance issues"
-commit: "867127d"
+title: 'Major Type Annotation Milestone: UI and GameState Complete'
+date: '2025-09-10'
+tags: ['milestone', 'type-annotations', 'infrastructure', 'code-quality']
+summary: 'Completed comprehensive type annotations for ui.py and 60% of game_state.py, resolving 1,100-1,600 pylance issues'
+commit: '867127d'
 ---
 
 # Major Type Annotation Milestone: UI and GameState Complete

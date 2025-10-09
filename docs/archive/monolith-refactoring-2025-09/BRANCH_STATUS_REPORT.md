@@ -30,14 +30,14 @@ The P(Doom) repository is in an **active and well-organized development state** 
 
 #### 1. `bug-sweep-critical-stability` 
 - **Status**: [EMOJI] **READY TO MERGE** (PR #300 active)
-- **Last Commit**: Sep 15 - "docs: add dev blog entry for action button layout hotfix"
+- **Last Commit**: Sep 15 - 'docs: add dev blog entry for action button layout hotfix'
 - **Changes**: Action button layout optimization (17-47% size reductions)
 - **Risk Level**: LOW - UI layout changes only, no logic modifications
 - **Merge Priority**: HIGH - Immediate deployment ready
 
 #### 2. `hotfix/mac-research-debt-fix`
 - **Status**: [EMOJI] **READY TO MERGE**
-- **Last Commit**: Sep 15 - "HOTFIX BATCH: Mac TypeError + GameClock Bounds + Hiring Dialog"
+- **Last Commit**: Sep 15 - 'HOTFIX BATCH: Mac TypeError + GameClock Bounds + Hiring Dialog'
 - **Critical Fixes**: 
   - Mac TypeError resolution with verbose naming pattern
   - GameClock array bounds protection
@@ -47,7 +47,7 @@ The P(Doom) repository is in an **active and well-organized development state** 
 
 #### 3. `feature/leaderboard-activation-v0.4.1`
 - **Status**: [EMOJI] **PARTY READY** - Complete v0.4.1 release
-- **Last Commit**: Sep 13 - "PARTY READY: Complete v0.4.1 demo with enhanced leaderboards"
+- **Last Commit**: Sep 13 - 'PARTY READY: Complete v0.4.1 demo with enhanced leaderboards'
 - **Major Features**:
   - Enhanced leaderboard system with seed-specific competition
   - Spectacular game over screen with celebration effects
@@ -60,7 +60,7 @@ The P(Doom) repository is in an **active and well-organized development state** 
 
 #### 4. `type-annotation-upgrades`
 - **Status**: [EMOJI] **ADVANCED DEVELOPMENT** - Major infrastructure milestone
-- **Last Commit**: Sep 14 - "Complete Website Pipeline Infrastructure v0.6.0"
+- **Last Commit**: Sep 14 - 'Complete Website Pipeline Infrastructure v0.6.0'
 - **Major Achievement**: Development-to-community bridge infrastructure
 - **Key Features**:
   - GitHub Actions workflow for automated dev blog sync
@@ -71,7 +71,7 @@ The P(Doom) repository is in an **active and well-organized development state** 
 
 #### 5. `develop`
 - **Status**: [EMOJI] **ACTIVE DEVELOPMENT** - Sound system improvements
-- **Last Commit**: Sep 11 - "Fix: Enable sound by default for immediate player experience"
+- **Last Commit**: Sep 11 - 'Fix: Enable sound by default for immediate player experience'
 - **Key Fix**: Sound enabled by default in configuration
 - **Impact**: Immediate player experience improvement
 - **Merge Priority**: HIGH - Critical UX fix

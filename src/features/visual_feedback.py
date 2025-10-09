@@ -1,11 +1,11 @@
-"""
+'''
 Visual Feedback Utilities for P(Doom) UI
 
 Provides standardized visual feedback for clickable elements including
 button depression, gradient changes, hover effects, and accessibility support.
 
 Inspired by low-bit, low-poly UI design with modern accessibility features.
-"""
+'''
 
 import pygame
 from typing import Tuple, Optional, Dict
@@ -13,30 +13,30 @@ from enum import Enum
 
 
 class ButtonState(Enum):
-    """States for interactive buttons"""
-    NORMAL = "normal"
-    HOVER = "hover"
-    PRESSED = "pressed"
-    DISABLED = "disabled"
-    FOCUSED = "focused"  # For keyboard navigation
+    '''States for interactive buttons'''
+    NORMAL = 'normal'
+    HOVER = 'hover'
+    PRESSED = 'pressed'
+    DISABLED = 'disabled'
+    FOCUSED = 'focused'  # For keyboard navigation
 
 
 class FeedbackStyle(Enum):
-    """Visual feedback styles for different UI elements"""
-    BUTTON = "button"
-    ICON = "icon"
-    PANEL = "panel"
-    MENU_ITEM = "menu_item"
-    DIALOG = "dialog"
+    '''Visual feedback styles for different UI elements'''
+    BUTTON = 'button'
+    ICON = 'icon'
+    PANEL = 'panel'
+    MENU_ITEM = 'menu_item'
+    DIALOG = 'dialog'
 
 
 class VisualFeedback:
-    """
+    '''
     Centralized visual feedback system for UI elements.
     
     Provides consistent styling, animations, and accessibility features
     across all interactive elements in the game.
-    """
+    '''
     
     def __init__(self):
         # Color schemes for different states
@@ -90,7 +90,7 @@ class VisualFeedback:
                    text: str, state: ButtonState, 
                    style: FeedbackStyle = FeedbackStyle.BUTTON,
                    custom_colors: Optional[Dict] = None) -> pygame.Rect:
-        """
+        '''
         Draw a button with standardized visual feedback.
         
         Args:
@@ -103,7 +103,7 @@ class VisualFeedback:
             
         Returns:
             pygame.Rect: actual drawn rectangle (may be offset for press effect)
-        """
+        '''
         colors = custom_colors or self.color_schemes[state]
         
         # Calculate display rectangle with state effects
@@ -175,14 +175,14 @@ class VisualFeedback:
                     final_font = smaller_font
                 else:
                     # Truncate text with ellipsis
-                    ellipsis = "..."
+                    ellipsis = '...'
                     ellipsis_width = font.size(ellipsis)[0]
                     target_width = available_width - ellipsis_width
                     
                     if target_width > 0:
                         # Binary search for longest fitting text
                         left, right = 0, len(text)
-                        best_fit = ""
+                        best_fit = ''
                         
                         while left <= right:
                             mid = (left + right) // 2
@@ -196,7 +196,7 @@ class VisualFeedback:
                         
                         final_text = best_fit + ellipsis if best_fit else ellipsis
                     else:
-                        final_text = ellipsis[:max(1, available_width // font.size("X")[0])]
+                        final_text = ellipsis[:max(1, available_width // font.size('X')[0])]
             
             text_surface = final_font.render(final_text, True, colors['text'])
             
@@ -209,7 +209,7 @@ class VisualFeedback:
     def draw_icon_button(self, surface: pygame.Surface, rect: pygame.Rect,
                         icon_char: str, state: ButtonState,
                         tooltip: Optional[str] = None) -> pygame.Rect:
-        """
+        '''
         Draw an icon button with visual feedback.
         
         Args:
@@ -221,9 +221,9 @@ class VisualFeedback:
             
         Returns:
             pygame.Rect: actual drawn rectangle
-        """
+        '''
         colors = self.color_schemes[state]
-        display_rect = self.draw_button(surface, rect, "", state, FeedbackStyle.ICON)
+        display_rect = self.draw_button(surface, rect, '', state, FeedbackStyle.ICON)
         
         # Draw icon character
         icon_font_size = int(min(rect.width, rect.height) * 0.5)
@@ -239,7 +239,7 @@ class VisualFeedback:
                   title: Optional[str] = None, 
                   state: ButtonState = ButtonState.NORMAL,
                   minimizable: bool = False) -> Dict[str, pygame.Rect]:
-        """
+        '''
         Draw a panel with optional title bar and controls.
         
         Args:
@@ -251,7 +251,7 @@ class VisualFeedback:
             
         Returns:
             Dict[str, pygame.Rect]: rectangles for interactive elements
-        """
+        '''
         colors = self.color_schemes[state]
         
         # Draw panel background
@@ -291,7 +291,7 @@ class VisualFeedback:
                 )
                 
                 # Draw minimize button
-                self.draw_icon_button(surface, min_button_rect, "?", ButtonState.NORMAL)
+                self.draw_icon_button(surface, min_button_rect, '?', ButtonState.NORMAL)
                 interactive_rects['minimize'] = min_button_rect
         
         return interactive_rects
@@ -300,7 +300,7 @@ class VisualFeedback:
                       text: str, state: ButtonState,
                       icon: Optional[str] = None,
                       shortcut: Optional[str] = None) -> pygame.Rect:
-        """
+        '''
         Draw a menu item with keyboard shortcut support.
         
         Args:
@@ -313,7 +313,7 @@ class VisualFeedback:
             
         Returns:
             pygame.Rect: actual drawn rectangle
-        """
+        '''
         colors = self.color_schemes[state]
         
         # Menu items have subtle styling
@@ -348,14 +348,14 @@ class VisualFeedback:
     
     def highlight_error(self, surface: pygame.Surface, rect: pygame.Rect,
                        pulse_phase: float = 0.0) -> None:
-        """
+        '''
         Draw error highlighting with pulsing red border.
         
         Args:
             surface: pygame surface to draw on
             rect: rectangle to highlight
             pulse_phase: animation phase (0.0 to 1.0)
-        """
+        '''
         import math
         
         # Pulsing red highlight
@@ -375,12 +375,12 @@ class VisualFeedback:
             surface.blit(glow_surface, glow_rect.topleft)
     
     def set_font_scale(self, scale: float) -> None:
-        """Set font scaling factor for accessibility."""
+        '''Set font scaling factor for accessibility.'''
         self.font_scale_factor = max(0.5, min(2.0, scale))  # Clamp between 0.5x and 2.0x
     
     def get_accessible_color(self, base_color: Tuple[int, int, int], 
                             high_contrast: bool = False) -> Tuple[int, int, int]:
-        """
+        '''
         Get an accessible version of a color with proper contrast.
         
         Args:
@@ -389,7 +389,7 @@ class VisualFeedback:
             
         Returns:
             Tuple[int, int, int]: accessible color
-        """
+        '''
         if high_contrast:
             # High contrast mode: use white or black based on luminance
             r, g, b = base_color
@@ -401,7 +401,7 @@ class VisualFeedback:
     
     def draw_tooltip(self, surface: pygame.Surface, text: str, 
                     mouse_pos: Tuple[int, int], screen_w: int, screen_h: int) -> None:
-        """
+        '''
         Draw an accessible tooltip near the mouse cursor.
         
         Args:
@@ -409,7 +409,7 @@ class VisualFeedback:
             text: tooltip text
             mouse_pos: current mouse position
             screen_w, screen_h: screen dimensions
-        """
+        '''
         if not text:
             return
             
@@ -452,14 +452,14 @@ visual_feedback = VisualFeedback()
 
 def draw_low_poly_button(surface: pygame.Surface, rect: pygame.Rect, 
                         text: str, state: ButtonState) -> pygame.Rect:
-    """Draw a button with low-poly/retro styling."""
+    '''Draw a button with low-poly/retro styling.'''
     return visual_feedback.draw_button(surface, rect, text, state)
 
 
 def draw_gradient_background(surface: pygame.Surface, rect: pygame.Rect,
                            color1: Tuple[int, int, int], color2: Tuple[int, int, int],
                            vertical: bool = True) -> None:
-    """Draw a subtle gradient background for panels."""
+    '''Draw a subtle gradient background for panels.'''
     if vertical:
         for i in range(rect.height):
             ratio = i / rect.height
@@ -481,6 +481,6 @@ def draw_gradient_background(surface: pygame.Surface, rect: pygame.Rect,
 
 
 def create_icon_from_text(text: str, size: int, color: Tuple[int, int, int]) -> pygame.Surface:
-    """Create a simple icon surface from text for low-poly styling."""
+    '''Create a simple icon surface from text for low-poly styling.'''
     font = pygame.font.SysFont('Consolas', size, bold=True)
     return font.render(text, True, color)

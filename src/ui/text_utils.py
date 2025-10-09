@@ -1,4 +1,4 @@
-"""
+'''
 Fix for Action List Text Display Issues (#315, #257)
 
 This patch addresses several text rendering problems in the action list:
@@ -8,13 +8,13 @@ This patch addresses several text rendering problems in the action list:
 4. Poor readability in compact UI mode
 
 Issues: #315, #257
-"""
+'''
 
 import pygame
 from typing import Tuple, Dict, Any
 
-def truncate_text_for_rect(text: str, font: pygame.font.Font, max_width: int, ellipsis: str = "...") -> str:
-    """
+def truncate_text_for_rect(text: str, font: pygame.font.Font, max_width: int, ellipsis: str = '...') -> str:
+    '''
     Truncate text to fit within a given width, adding ellipsis if needed.
     
     Args:
@@ -25,7 +25,7 @@ def truncate_text_for_rect(text: str, font: pygame.font.Font, max_width: int, el
         
     Returns:
         str: Truncated text that fits within max_width
-    """
+    '''
     if font.size(text)[0] <= max_width:
         return text
     
@@ -34,10 +34,10 @@ def truncate_text_for_rect(text: str, font: pygame.font.Font, max_width: int, el
     available_width = max_width - ellipsis_width
     
     if available_width <= 0:
-        return ellipsis[:max_width//font.size("X")[0]] if max_width > 0 else ""
+        return ellipsis[:max_width//font.size('X')[0]] if max_width > 0 else ''
     
     left, right = 0, len(text)
-    best_fit = ""
+    best_fit = ''
     
     while left <= right:
         mid = (left + right) // 2
@@ -53,7 +53,7 @@ def truncate_text_for_rect(text: str, font: pygame.font.Font, max_width: int, el
 
 
 def get_optimal_action_text(action: Dict[str, Any], original_idx: int, rect_width: int, font_size: int = 16) -> Tuple[str, int]:
-    """
+    '''
     Get optimally formatted action text that fits in the button rect.
     
     Args:
@@ -64,8 +64,8 @@ def get_optimal_action_text(action: Dict[str, Any], original_idx: int, rect_widt
         
     Returns:
         Tuple[str, int]: (formatted_text, actual_font_size)
-    """
-    action_name = action.get("name", f"Action {original_idx + 1}")
+    '''
+    action_name = action.get('name', f'Action {original_idx + 1}')
     
     # Try different text formats in order of preference
     font = pygame.font.SysFont('Consolas', font_size, bold=True)
@@ -73,8 +73,8 @@ def get_optimal_action_text(action: Dict[str, Any], original_idx: int, rect_widt
     # Format 1: Full text with shortcut key
     if original_idx < 9:
         from src.services.keybinding_manager import keybinding_manager
-        shortcut_key = keybinding_manager.get_action_display_key(f"action_{original_idx + 1}")
-        full_text = f"[{shortcut_key}] {action_name}"
+        shortcut_key = keybinding_manager.get_action_display_key(f'action_{original_idx + 1}')
+        full_text = f'[{shortcut_key}] {action_name}'
         
         if font.size(full_text)[0] <= rect_width - 10:  # 10px margin
             return full_text, font_size
@@ -101,7 +101,7 @@ def get_optimal_action_text(action: Dict[str, Any], original_idx: int, rect_widt
 
 
 def get_optimal_compact_text(action: Dict[str, Any], action_index: int, rect_width: int, rect_height: int) -> Dict[str, Any]:
-    """
+    '''
     Get optimal text rendering parameters for compact UI mode.
     
     Args:
@@ -112,7 +112,7 @@ def get_optimal_compact_text(action: Dict[str, Any], action_index: int, rect_wid
         
     Returns:
         dict: Parameters for text rendering (icon_size, key_size, text_truncation)
-    """
+    '''
     # Scale icon and key sizes based on button size
     min_dimension = min(rect_width, rect_height)
     

@@ -42,7 +42,7 @@ Branch name pattern: main
 - [EMOJI] **Require status checks to pass before merging**
   - Required status checks:
     - `test` (ensure tests pass)
-  - Do NOT require "up to date" (allows faster merging)
+  - Do NOT require 'up to date' (allows faster merging)
 
 - [EMOJI] **Allow force pushes**: [EMOJI] (Enabled for rebasing)
 - [EMOJI] **Allow deletions**: [EMOJI] (Disabled)
@@ -167,14 +167,14 @@ jobs:
 
 ### Step 1: Access GitHub Settings
 1. Go to your repository on GitHub
-2. Click "Settings" tab
-3. Click "Branches" in left sidebar
+2. Click 'Settings' tab
+3. Click 'Branches' in left sidebar
 
 ### Step 2: Create Branch Protection Rules
-1. Click "Add rule"
+1. Click 'Add rule'
 2. Enter branch name pattern (e.g., `main`)
 3. Configure protection settings as outlined above
-4. Click "Create"
+4. Click 'Create'
 
 ### Step 3: Verify Protection Rules
 Test the rules by:
@@ -185,8 +185,8 @@ Test the rules by:
 
 ### Step 4: Configure Auto-Delete
 1. Go to Settings > General
-2. Scroll to "Pull Requests" section
-3. Check "Automatically delete head branches"
+2. Scroll to 'Pull Requests' section
+3. Check 'Automatically delete head branches'
 
 ## Enforcement Commands
 

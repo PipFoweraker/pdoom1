@@ -11,17 +11,17 @@ from src.services.deterministic_rng import init_deterministic_rng
 
 
 class TestOpponent(unittest.TestCase):
-    """Test the Opponent class functionality."""
+    '''Test the Opponent class functionality.'''
     
     def setUp(self):
-        """Set up test fixtures with a consistent seed."""
+        '''Set up test fixtures with a consistent seed.'''
         # Initialize GameState first to setup RNG, then get opponents
-        self.game_state = GameState("test-opponents")
+        self.game_state = GameState('test-opponents')
         # Use the first opponent from the game state for testing
         self.opponent = self.game_state.opponents[0]
     
     def test_opponent_initialization(self):
-        """Test that opponents initialize with correct values."""
+        '''Test that opponents initialize with correct values.'''
         # Test that opponent has required attributes
         self.assertIsInstance(self.opponent.name, str)
         self.assertGreater(self.opponent.budget, 0)
@@ -45,13 +45,13 @@ class TestOpponent(unittest.TestCase):
             self.assertFalse(stat)
             
     def test_discover_opponent(self):
-        """Test opponent discovery functionality."""
+        '''Test opponent discovery functionality.'''
         self.assertFalse(self.opponent.discovered)
         self.opponent.discover()
         self.assertTrue(self.opponent.discovered)
         
     def test_scout_stat_success(self):
-        """Test successful stat scouting."""
+        '''Test successful stat scouting.'''
         # Set seed to ensure success
         # get_rng().seed() removed - RNG initialized by GameState # This should give us a successful scout
         
@@ -59,12 +59,12 @@ class TestOpponent(unittest.TestCase):
         
         self.assertTrue(success)
         self.assertIsNotNone(value)
-        self.assertIn("budget", message.lower())
+        self.assertIn('budget', message.lower())
         self.assertTrue(self.opponent.discovered_stats['budget'])
         self.assertEqual(self.opponent.known_stats['budget'], value)
         
     def test_scout_stat_failure(self):
-        """Test failed stat scouting."""
+        '''Test failed stat scouting.'''
         # Set seed to ensure failure
         # get_rng().seed() removed - RNG initialized by GameState # This should give us a failed scout
         
@@ -73,11 +73,11 @@ class TestOpponent(unittest.TestCase):
         if not success:  # Only test if it actually failed
             self.assertFalse(success)
             self.assertIsNone(value)
-            self.assertIn("failed", message.lower())
+            self.assertIn('failed', message.lower())
             self.assertFalse(self.opponent.discovered_stats['budget'])
             
     def test_scout_already_discovered_stat(self):
-        """Test scouting a stat that's already been discovered."""
+        '''Test scouting a stat that's already been discovered.'''
         # First, discover the stat
         self.opponent.discovered_stats['budget'] = True
         self.opponent.known_stats['budget'] = 500
@@ -86,24 +86,24 @@ class TestOpponent(unittest.TestCase):
         
         self.assertTrue(success)
         self.assertEqual(value, self.opponent.budget)
-        self.assertIn("already known", message)
+        self.assertIn('already known', message)
         
     def test_scout_invalid_stat(self):
-        """Test scouting an invalid stat name."""
+        '''Test scouting an invalid stat name.'''
         success, value, message = self.opponent.scout_stat('invalid_stat')
         
         self.assertFalse(success)
         self.assertIsNone(value)
-        self.assertIn("unknown stat", message.lower())
+        self.assertIn('unknown stat', message.lower())
         
     def test_take_turn_undiscovered(self):
-        """Test that undiscovered opponents don't generate messages."""
+        '''Test that undiscovered opponents don't generate messages.'''
         self.assertFalse(self.opponent.discovered)
         messages = self.opponent.take_turn()
         self.assertEqual(len(messages), 0)
         
     def test_take_turn_discovered(self):
-        """Test that discovered opponents take actions."""
+        '''Test that discovered opponents take actions.'''
         self.opponent.discover()
         self.opponent.budget
         
@@ -116,7 +116,7 @@ class TestOpponent(unittest.TestCase):
         # We can't guarantee specific behavior due to randomness, but we can check the structure
         
     def test_get_impact_on_doom(self):
-        """Test doom impact calculation."""
+        '''Test doom impact calculation.'''
         # Test undiscovered opponent
         self.assertFalse(self.opponent.discovered)
         doom_impact = self.opponent.get_impact_on_doom()
@@ -131,23 +131,23 @@ class TestOpponent(unittest.TestCase):
 
 
 class TestOpponentAI(unittest.TestCase):
-    """Test opponent AI behavior over multiple turns."""
+    '''Test opponent AI behavior over multiple turns.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         # get_rng().seed() removed - RNG initialized by GameState
         self.opponent = Opponent(
-            name="AI Test Corp",
+            name='AI Test Corp',
             budget=1000,
             capabilities_researchers=5,
             lobbyists=2,
             compute=20,
-            description="Test AI behavior"
+            description='Test AI behavior'
         )
         self.opponent.discover()  # Make it discovered so it takes actions
         
     def test_opponent_spends_budget(self):
-        """Test that opponents spend their budget over time."""
+        '''Test that opponents spend their budget over time.'''
         initial_budget = self.opponent.budget
         
         # Run multiple turns
@@ -159,7 +159,7 @@ class TestOpponentAI(unittest.TestCase):
         self.assertLessEqual(self.opponent.budget, initial_budget)
         
     def test_opponent_makes_progress(self):
-        """Test that opponents make research progress over time."""
+        '''Test that opponents make research progress over time.'''
         initial_progress = self.opponent.progress
         
         # Run multiple turns
@@ -171,7 +171,7 @@ class TestOpponentAI(unittest.TestCase):
         self.assertGreaterEqual(self.opponent.progress, initial_progress)
         
     def test_progress_caps_at_100(self):
-        """Test that progress doesn't exceed 100."""
+        '''Test that progress doesn't exceed 100.'''
         # Set progress high to test capping
         self.opponent.progress = 95
         
@@ -183,14 +183,14 @@ class TestOpponentAI(unittest.TestCase):
 
 
 class TestCreateDefaultOpponents(unittest.TestCase):
-    """Test the default opponents creation function."""
+    '''Test the default opponents creation function.'''
     
     def setUp(self):
-        """Initialize deterministic RNG for opponent creation tests."""
+        '''Initialize deterministic RNG for opponent creation tests.'''
         init_deterministic_rng('test-opponents-seed')
     
     def test_creates_four_opponents(self):
-        """Test that create_default_opponents returns exactly 4 opponents."""
+        '''Test that create_default_opponents returns exactly 4 opponents.'''
         opponents = create_default_opponents()
         
         self.assertEqual(len(opponents), 4)
@@ -200,14 +200,14 @@ class TestCreateDefaultOpponents(unittest.TestCase):
             self.assertIsInstance(opponent, Opponent)
             
     def test_opponents_have_unique_names(self):
-        """Test that default opponents have unique names."""
+        '''Test that default opponents have unique names.'''
         opponents = create_default_opponents()
         names = [opp.name for opp in opponents]
         
         self.assertEqual(len(names), len(set(names)))  # All names should be unique
         
     def test_opponents_have_varied_stats(self):
-        """Test that default opponents have different stat distributions."""
+        '''Test that default opponents have different stat distributions.'''
         opponents = create_default_opponents()
         
         # Check that not all opponents have the same budget
@@ -220,10 +220,10 @@ class TestCreateDefaultOpponents(unittest.TestCase):
             self.assertGreater(opponent.capabilities_researchers, 0)
             self.assertGreaterEqual(opponent.lobbyists, 0)
             self.assertGreater(opponent.compute, 0)
-            self.assertNotEqual(opponent.name, "")
+            self.assertNotEqual(opponent.name, '')
             
     def test_opponents_start_undiscovered(self):
-        """Test that default opponents start undiscovered."""
+        '''Test that default opponents start undiscovered.'''
         opponents = create_default_opponents()
         
         for opponent in opponents:
@@ -233,12 +233,12 @@ class TestCreateDefaultOpponents(unittest.TestCase):
 
 
 class TestOpponentIntegration(unittest.TestCase):
-    """Integration tests for opponent system."""
+    '''Integration tests for opponent system.'''
     
     def test_full_scouting_cycle(self):
-        """Test a complete cycle of discovering and scouting an opponent."""
+        '''Test a complete cycle of discovering and scouting an opponent.'''
         # get_rng().seed() removed - RNG initialized by GameState # Use seed that should give successes
-        opponent = Opponent("Integration Test", 500, 10, 5, 30)
+        opponent = Opponent('Integration Test', 500, 10, 5, 30)
         
         # Discover the opponent
         opponent.discover()
@@ -255,8 +255,8 @@ class TestOpponentIntegration(unittest.TestCase):
                 self.assertIsNotNone(opponent.known_stats[stat])
                 
     def test_opponent_lifecycle(self):
-        """Test a complete opponent lifecycle from creation to end game."""
-        opponent = Opponent("Lifecycle Test", 1000, 15, 8, 50)
+        '''Test a complete opponent lifecycle from creation to end game.'''
+        opponent = Opponent('Lifecycle Test', 1000, 15, 8, 50)
         
         # Start undiscovered
         self.assertFalse(opponent.discovered)
@@ -282,15 +282,15 @@ class TestOpponentIntegration(unittest.TestCase):
 
 
 class TestGameStateOpponentsIntegration(unittest.TestCase):
-    """Test integration of opponents with GameState."""
+    '''Test integration of opponents with GameState.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         self.game_state = GameState(seed=42)
         # RNG is now initialized by GameState constructor
         
     def test_gamestate_has_opponents(self):
-        """Test that GameState initializes with opponents."""
+        '''Test that GameState initializes with opponents.'''
         self.assertIsInstance(self.game_state.opponents, list)
         self.assertEqual(len(self.game_state.opponents), 4)
         
@@ -298,12 +298,12 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
             self.assertIsInstance(opponent, Opponent)
             
     def test_opponents_start_undiscovered(self):
-        """Test that opponents start undiscovered in game."""
+        '''Test that opponents start undiscovered in game.'''
         for opponent in self.game_state.opponents:
             self.assertFalse(opponent.discovered)
             
     def test_espionage_discovers_opponents(self):
-        """Test that espionage can discover opponents."""
+        '''Test that espionage can discover opponents.'''
         # Run espionage several times to discover opponents
         for _ in range(10):
             self.game_state._spy()
@@ -313,7 +313,7 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
         self.assertGreater(len(discovered), 0)
         
     def test_scout_opponent_function(self):
-        """Test the scout opponent functionality."""
+        '''Test the scout opponent functionality.'''
         # Should work even if no opponents discovered yet
         self.game_state._scout_opponent()
         
@@ -322,7 +322,7 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
         self.assertGreater(len(discovered), 0)
         
     def test_scout_opponent_action_availability(self):
-        """Test that Scout Opponents action is restricted before turn 5."""
+        '''Test that Scout Opponents action is restricted before turn 5.'''
         # Check that the Scout Opponents action exists
         scout_action = None
         for action in self.game_state.actions:
@@ -341,7 +341,7 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
         self.assertTrue(scout_action['rules'](self.game_state))
         
     def test_opponents_affect_doom(self):
-        """Test that opponents contribute to doom over time."""
+        '''Test that opponents contribute to doom over time.'''
         initial_doom = self.game_state.doom
         
         # Discover some opponents so they become active
@@ -356,7 +356,7 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
         self.assertGreater(self.game_state.doom, initial_doom)
         
     def test_opponent_victory_condition(self):
-        """Test that game ends when opponent reaches 100% progress."""
+        '''Test that game ends when opponent reaches 100% progress.'''
         # Force an opponent to high progress
         self.game_state.opponents[0].progress = 99
         self.game_state.opponents[0].discover()
@@ -368,7 +368,7 @@ class TestGameStateOpponentsIntegration(unittest.TestCase):
         self.assertTrue(self.game_state.game_over)
         
     def test_opponents_take_turns(self):
-        """Test that discovered opponents take actions during turn."""
+        '''Test that discovered opponents take actions during turn.'''
         # Discover some opponents
         for opp in self.game_state.opponents:
             opp.discover()

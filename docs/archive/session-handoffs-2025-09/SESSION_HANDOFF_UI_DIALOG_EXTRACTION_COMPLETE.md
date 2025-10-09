@@ -2,7 +2,7 @@
 
 **Date**: September 15, 2025  
 **Branch**: `refactor/monolith-breakdown`  
-**Commit**: f079953 - "UI Monolith Breakdown: Extract dialog and bug report systems"
+**Commit**: f079953 - 'UI Monolith Breakdown: Extract dialog and bug report systems'
 
 ## [EMOJI] MAJOR ACCOMPLISHMENTS
 
@@ -87,10 +87,10 @@ from src.ui.bug_report import draw_bug_report_form, draw_bug_report_success
 ### Validation Commands
 ```bash
 # Test basic ui.py import (should work)
-python -c "import sys; sys.path.append('.'); import ui; print('v UI imports successfully!')"
+python -c 'import sys; sys.path.append('.'); import ui; print('v UI imports successfully!')'
 
 # Test extracted modules (should work once circular import fixed)
-python -c "from src.ui.dialog_system import draw_fundraising_dialog; print('v Dialog system working!')"
+python -c 'from src.ui.dialog_system import draw_fundraising_dialog; print('v Dialog system working!')'
 ```
 
 ## [CHART] PROGRESS TRACKING
@@ -126,10 +126,10 @@ git checkout refactor/monolith-breakdown
 git log --oneline -3
 
 # 3. Fix circular import in dialog_system.py
-# Edit src/ui/dialog_system.py line ~396, remove "import main"
+# Edit src/ui/dialog_system.py line ~396, remove 'import main'
 
 # 4. Test import resolution
-python -c "from src.ui.dialog_system import draw_fundraising_dialog; print('Success!')"
+python -c 'from src.ui.dialog_system import draw_fundraising_dialog; print('Success!')'
 
 # 5. Re-enable imports in ui.py and continue extraction
 ```

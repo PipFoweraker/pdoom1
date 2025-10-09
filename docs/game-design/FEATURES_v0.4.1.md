@@ -40,17 +40,17 @@
 - **Persistent Storage**: JSON files preserve progress between sessions
 
 ### Spectacular Game Over Screen (v0.4.1)
-- **Achievement Celebration**: "NEW HIGH SCORE!" with visual effects
+- **Achievement Celebration**: 'NEW HIGH SCORE!' with visual effects
 - **Mini Leaderboard Preview**: Show top 5 players with highlighting
 - **Detailed Statistics**: Final resources, game duration, economic model
-- **Natural Flow**: "View Full Leaderboard" prominently displayed
-- **Context-Aware Actions**: "Play Again" vs "Launch New Game" buttons
+- **Natural Flow**: 'View Full Leaderboard' prominently displayed
+- **Context-Aware Actions**: 'Play Again' vs 'Launch New Game' buttons
 
 ### Audio System (Party-Ready)
 - **Sound Effects Enabled**: Audio feedback on by default
 - **Action Sounds**: Action point spending, money transactions
 - **UI Feedback**: Popup open/close, button confirmation sounds
-- **Employee Hiring**: Distinctive "blob" sound for team growth
+- **Employee Hiring**: Distinctive 'blob' sound for team growth
 - **Error Feedback**: Audio cues for invalid actions
 
 ## Gameplay Mechanics

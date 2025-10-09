@@ -1,17 +1,17 @@
-"""
+'''
 UI positioning utilities extracted from game_state.py
 
 This module contains all the UI rectangle calculation and positioning methods
 that were cluttering the main GameState class. These are pure functions that
 calculate screen positions and sizes based on screen dimensions.
-"""
+'''
 
 from typing import List, Optional, Tuple, Any
 import pygame
 
 
 def get_action_rects(w: int, h: int) -> List[pygame.Rect]:
-    """Calculate action button rectangles based on screen dimensions."""
+    '''Calculate action button rectangles based on screen dimensions.'''
     action_rects = []
     actions_per_column = 9
     action_start_x = int(w * 0.15)
@@ -30,7 +30,7 @@ def get_action_rects(w: int, h: int) -> List[pygame.Rect]:
 
 
 def get_upgrade_rects(w: int, h: int) -> List[Optional[pygame.Rect]]:
-    """Calculate upgrade button rectangles based on screen dimensions."""
+    '''Calculate upgrade button rectangles based on screen dimensions.'''
     upgrade_rects = []
     upgrade_width = int(w * 0.028)
     upgrade_height = int(h * 0.05)
@@ -48,7 +48,7 @@ def get_upgrade_rects(w: int, h: int) -> List[Optional[pygame.Rect]]:
 
 
 def get_upgrade_icon_rect(upgrade_idx: int, w: int, h: int) -> Optional[Tuple[int, int, int, int]]:
-    """Get the rectangle for a specific upgrade icon."""
+    '''Get the rectangle for a specific upgrade icon.'''
     if upgrade_idx < 0:
         return None
     
@@ -66,17 +66,17 @@ def get_upgrade_icon_rect(upgrade_idx: int, w: int, h: int) -> Optional[Tuple[in
 
 
 def get_context_window_top(h: int) -> int:
-    """Calculate the top position of the context window."""
+    '''Calculate the top position of the context window.'''
     return int(h * 0.37)
 
 
 def get_endturn_rect(w: int, h: int) -> Tuple[int, int, int, int]:
-    """Calculate the End Turn button rectangle."""
+    '''Calculate the End Turn button rectangle.'''
     return (int(w*0.39), int(h*0.74), int(w*0.22), int(h*0.07))  # Moved up to account for context window
 
 
 def get_mute_button_rect(w: int, h: int) -> Tuple[int, int, int, int]:
-    """Calculate the mute button rectangle."""
+    '''Calculate the mute button rectangle.'''
     button_size = int(min(w, h) * 0.04)
     button_x = w - button_size - 20
     button_y = h - button_size - 20
@@ -84,7 +84,7 @@ def get_mute_button_rect(w: int, h: int) -> Tuple[int, int, int, int]:
 
 
 def get_activity_log_minimize_button_rect(w: int, h: int) -> Tuple[int, int, int, int]:
-    """Calculate the activity log minimize button rectangle."""
+    '''Calculate the activity log minimize button rectangle.'''
     base_x, base_y = get_activity_log_base_position(w, h)
     button_size = 20
     log_width = int(w * 0.33)
@@ -92,7 +92,7 @@ def get_activity_log_minimize_button_rect(w: int, h: int) -> Tuple[int, int, int
 
 
 def get_activity_log_expand_button_rect(w: int, h: int) -> Tuple[int, int, int, int]:
-    """Calculate the activity log expand button rectangle."""
+    '''Calculate the activity log expand button rectangle.'''
     base_x, base_y = get_activity_log_base_position(w, h)
     button_size = 20
     log_width = int(w * 0.33)
@@ -102,7 +102,7 @@ def get_activity_log_expand_button_rect(w: int, h: int) -> Tuple[int, int, int, 
 
 
 def get_activity_log_rect(w: int, h: int) -> Tuple[int, int, int, int]:
-    """Calculate the activity log rectangle."""
+    '''Calculate the activity log rectangle.'''
     base_x, base_y = get_activity_log_base_position(w, h)
     log_width = int(w * 0.33)
     log_height = int(h * 0.15)
@@ -110,18 +110,18 @@ def get_activity_log_rect(w: int, h: int) -> Tuple[int, int, int, int]:
 
 
 def get_activity_log_base_position(w: int, h: int) -> Tuple[int, int]:
-    """Calculate the base position for the activity log."""
+    '''Calculate the base position for the activity log.'''
     return (int(w * 0.04), int(h * 0.74))
 
 
 def get_activity_log_current_position(w: int, h: int) -> Tuple[int, int]:
-    """Calculate the current position for the activity log (could be dragged)."""
+    '''Calculate the current position for the activity log (could be dragged).'''
     # For now, return base position - dragging would modify this in the future
     return get_activity_log_base_position(w, h)
 
 
-def validate_rect(rect: Any, context: str = "") -> bool:
-    """Validate that a rectangle is properly formatted."""
+def validate_rect(rect: Any, context: str = '') -> bool:
+    '''Validate that a rectangle is properly formatted.'''
     if rect is None:
         return False
     
@@ -142,7 +142,7 @@ def validate_rect(rect: Any, context: str = "") -> bool:
 
 
 def calculate_blob_position(blob_index: int, screen_w: int = 1200, screen_h: int = 800) -> Tuple[int, int]:
-    """
+    '''
     Calculate initial blob position in the employee pen area.
     Uses the employee pen area defined below the action log in the middle column.
     
@@ -153,7 +153,7 @@ def calculate_blob_position(blob_index: int, screen_w: int = 1200, screen_h: int
         
     Returns:
         tuple: (x, y) initial position for the blob in employee pen area
-    """
+    '''
     import math
     
     # Employee pen area - below action log in middle column
@@ -187,7 +187,7 @@ def calculate_blob_position(blob_index: int, screen_w: int = 1200, screen_h: int
 
 
 def check_blob_ui_collision(blob_x: int, blob_y: int, blob_radius: int, ui_rects: List[Tuple[int, int, int, int]]) -> Tuple[bool, float, float]:
-    """
+    '''
     Check if a blob collides with any UI element.
     
     Args:
@@ -198,7 +198,7 @@ def check_blob_ui_collision(blob_x: int, blob_y: int, blob_radius: int, ui_rects
         
     Returns:
         tuple: (collides, repulsion_force_x, repulsion_force_y)
-    """
+    '''
     total_repulsion_x = 0
     total_repulsion_y = 0
     collides = False
@@ -239,7 +239,7 @@ def check_blob_ui_collision(blob_x: int, blob_y: int, blob_radius: int, ui_rects
 
 
 def get_ui_element_rects(screen_w: int = 1200, screen_h: int = 800) -> List[Tuple[int, int, int, int]]:
-    """Get rectangles for all major UI elements for collision detection."""
+    '''Get rectangles for all major UI elements for collision detection.'''
     ui_rects = []
     
     # Action buttons area

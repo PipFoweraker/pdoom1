@@ -1,9 +1,9 @@
 ---
-title: "Complete Deterministic RNG System v0.6.0"
-date: "2025-09-14"
-tags: ["milestone", "deterministic", "competitive", "rng", "v0.6.0"]
-summary: "MAJOR MILESTONE: Transform P(Doom) into fully deterministic competitive gaming platform with perfect reproducibility"
-commit: "9956d94"
+title: 'Complete Deterministic RNG System v0.6.0'
+date: '2025-09-14'
+tags: ['milestone', 'deterministic', 'competitive', 'rng', 'v0.6.0']
+summary: 'MAJOR MILESTONE: Transform P(Doom) into fully deterministic competitive gaming platform with perfect reproducibility'
+commit: '9956d94'
 ---
 
 # Complete Deterministic RNG System - Competitive Gaming Foundation

@@ -45,12 +45,12 @@ PR merged  ->  Auto-close issue  ->  Archive local file
 
 # Trigger: Branch stale detection
 1. Identify stale branches (>30 days, no commits)
-2. Auto-create "branch cleanup" issue
+2. Auto-create 'branch cleanup' issue
 3. Ping stakeholders for decision
 4. Auto-archive if no response in 7 days
 ```
 
-#### B. Develop Branch "Nuke from Orbit" System
+#### B. Develop Branch 'Nuke from Orbit' System
 ```bash
 # Automated develop branch reset
 git checkout main
@@ -92,11 +92,11 @@ Stage 4: Deployment Readiness (< 1 minute)
 ```python
 # Continuous quality tracking
 metrics = {
-    "test_coverage": "90%+",
-    "type_annotation_coverage": "85%+", 
-    "documentation_coverage": "80%+",
-    "performance_baseline": "startup < 2s",
-    "memory_usage": "< 200MB steady state"
+    'test_coverage': '90%+',
+    'type_annotation_coverage': '85%+', 
+    'documentation_coverage': '80%+',
+    'performance_baseline': 'startup < 2s',
+    'memory_usage': '< 200MB steady state'
 }
 ```
 
@@ -132,7 +132,7 @@ Major: Breaking changes  ->  Full regression suite  ->  Manual release
    - Add automated cleanup workflows
 
 3. **Develop Branch Reset Automation**
-   - Create safe "nuke from orbit" script
+   - Create safe 'nuke from orbit' script
    - Implement backup and recovery procedures
    - Add stakeholder notification system
 
@@ -203,12 +203,12 @@ class BidirectionalIssueSync:
 class QualityMetricsCollector:
     def collect_all_metrics(self):
         return {
-            "timestamp": datetime.now().isoformat(),
-            "test_coverage": self.get_test_coverage(),
-            "type_annotations": self.count_type_annotations(),
-            "performance": self.run_performance_benchmarks(),
-            "memory_usage": self.measure_memory_usage(),
-            "code_quality": self.run_static_analysis()
+            'timestamp': datetime.now().isoformat(),
+            'test_coverage': self.get_test_coverage(),
+            'type_annotations': self.count_type_annotations(),
+            'performance': self.run_performance_benchmarks(),
+            'memory_usage': self.measure_memory_usage(),
+            'code_quality': self.run_static_analysis()
         }
 ```
 
@@ -219,19 +219,19 @@ class QualityMetricsCollector:
 
 # Detect stale branches
 STALE_BRANCHES=$(git for-each-ref --format='%(refname:short) %(committerdate)' refs/heads | 
-                 awk '$2 <= "'$(date -d '30 days ago' '+%Y-%m-%d')'"' | 
+                 awk '$2 <= ''$(date -d '30 days ago' '+%Y-%m-%d')''' | 
                  cut -d' ' -f1)
 
 # Create cleanup issues for stale branches
 for branch in $STALE_BRANCHES; do
-    ./scripts/create_cleanup_issue.py --branch "$branch"
+    ./scripts/create_cleanup_issue.py --branch '$branch'
 done
 
 # Auto-merge ready PRs
 gh pr list --state open --json number,mergeable,checks | 
-jq '.[] | select(.mergeable == true and .checks[].conclusion == "success")' |
+jq '.[] | select(.mergeable == true and .checks[].conclusion == 'success')' |
 while read pr; do
-    gh pr merge "$(echo $pr | jq -r '.number')" --auto --squash
+    gh pr merge '$(echo $pr | jq -r '.number')' --auto --squash
 done
 ```
 

@@ -1,4 +1,4 @@
-"""
+'''
 Drawing Utilities Module
 
 This module provides drawing utility functions for the P(Doom) UI system.
@@ -10,14 +10,14 @@ Functions:
 - should_show_ui_element: Tutorial progress UI element visibility
 - draw_seed_prompt: Seed selection screen rendering
 - Context info creation helpers
-"""
+'''
 
 import pygame
 from typing import Dict, Any, Tuple
 
 
 def draw_resource_icon(screen: pygame.Surface, icon_type: str, x: int, y: int, size: int = 16) -> None:
-    """
+    '''
     Draw 8-bit style resource icons.
     
     Args:
@@ -25,7 +25,7 @@ def draw_resource_icon(screen: pygame.Surface, icon_type: str, x: int, y: int, s
         icon_type: 'money', 'research', 'papers', 'compute'
         x, y: position to draw at
         size: icon size in pixels
-    """
+    '''
     if icon_type == 'money':
         # Stylized $ sign in 8-bit style
         # Vertical line
@@ -60,18 +60,18 @@ def draw_resource_icon(screen: pygame.Surface, icon_type: str, x: int, y: int, s
             
     elif icon_type == 'compute':
         # Exponential/power symbol (like e^x or 2^n)
-        # Draw "2" 
+        # Draw '2' 
         pygame.draw.rect(screen, (100, 255, 150), (x + 2, y + 2, 4, 2))
         pygame.draw.rect(screen, (100, 255, 150), (x + 6, y + 4, 2, 3))
         pygame.draw.rect(screen, (100, 255, 150), (x + 2, y + 7, 6, 2))
-        # Draw superscript "n"
+        # Draw superscript 'n'
         pygame.draw.rect(screen, (100, 255, 150), (x + 10, y + 2, 2, 4))
         pygame.draw.rect(screen, (100, 255, 150), (x + 12, y + 3, 1, 1))
         pygame.draw.rect(screen, (100, 255, 150), (x + 13, y + 4, 2, 2))
 
 
 def draw_tooltip(screen: pygame.Surface, text: str, mouse_pos: Tuple[int, int], w: int, h: int) -> None:
-    """
+    '''
     Draw a tooltip at the mouse position with automatic boundary checking.
     
     Args:
@@ -79,7 +79,7 @@ def draw_tooltip(screen: pygame.Surface, text: str, mouse_pos: Tuple[int, int], 
         text: tooltip text content
         mouse_pos: (x, y) mouse position
         w, h: screen dimensions for boundary checking
-    """
+    '''
     font = pygame.font.SysFont('Consolas', int(h*0.018))
     surf = font.render(text, True, (230,255,200))
     tw, th = surf.get_size()
@@ -92,7 +92,7 @@ def draw_tooltip(screen: pygame.Surface, text: str, mouse_pos: Tuple[int, int], 
 
 
 def should_show_ui_element(game_state: Any, element_id: str) -> bool:
-    """
+    '''
     Check if a UI element should be visible based on tutorial progress.
     
     Args:
@@ -101,7 +101,7 @@ def should_show_ui_element(game_state: Any, element_id: str) -> bool:
         
     Returns:
         bool: True if the element should be visible
-    """
+    '''
     # Import onboarding here to avoid circular imports
     try:
         from src.features.onboarding import onboarding
@@ -118,16 +118,16 @@ def should_show_ui_element(game_state: Any, element_id: str) -> bool:
 
 
 def create_action_context_info(action: Dict[str, Any], game_state: Any, action_idx: int) -> Dict[str, Any]:
-    """Create context info for an action to display in the context window."""
-    ap_cost = action.get("ap_cost", 1)
+    '''Create context info for an action to display in the context window.'''
+    ap_cost = action.get('ap_cost', 1)
     
     # Build title with shortcut key if available
-    title = action["name"]
+    title = action['name']
     if action_idx < 9:  # Only first 9 actions get keyboard shortcuts
         try:
             from src.services.keybinding_manager import keybinding_manager
-            shortcut_key = keybinding_manager.get_action_display_key(f"action_{action_idx + 1}")
-            title = f"[{shortcut_key}] {action['name']}"
+            shortcut_key = keybinding_manager.get_action_display_key(f'action_{action_idx + 1}')
+            title = f'[{shortcut_key}] {action['name']}'
         except ImportError:
             pass
     
@@ -135,7 +135,7 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
     base_desc = action['desc']
     if hasattr(game_state, 'research_quality_unlocked') and game_state.research_quality_unlocked:
         if 'Research' in action['name'] and action['name'] not in ['Set Research Quality: Rushed', 'Set Research Quality: Standard', 'Set Research Quality: Thorough']:
-            quality_suffix = f" [{game_state.current_research_quality.value.title()}]"
+            quality_suffix = f' [{game_state.current_research_quality.value.title()}]'
             base_desc += quality_suffix
     
     # Build details list - handle dynamic costs
@@ -144,20 +144,20 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
         action_cost = action_cost(game_state)
     
     details = [
-        f"Cost: ${action_cost}",
-        f"Action Points: {ap_cost}",
+        f'Cost: ${action_cost}',
+        f'Action Points: {ap_cost}',
     ]
     
     # Add delegation info if available
-    if action.get("delegatable", False):
-        staff_req = action.get("delegate_staff_req", 1)
-        delegate_ap = action.get("delegate_ap_cost", 0)
-        effectiveness = action.get("Delegate_effectiveness", 1.0)
-        details.append(f"Delegatable: Requires {staff_req} admin staff, {delegate_ap} AP, {int(effectiveness*100)}% effective")
+    if action.get('delegatable', False):
+        staff_req = action.get('delegate_staff_req', 1)
+        delegate_ap = action.get('delegate_ap_cost', 0)
+        effectiveness = action.get('Delegate_effectiveness', 1.0)
+        details.append(f'Delegatable: Requires {staff_req} admin staff, {delegate_ap} AP, {int(effectiveness*100)}% effective')
     
     # Add availability status
     if game_state.action_points < ap_cost:
-        details.append("! Not enough Action Points")
+        details.append('! Not enough Action Points')
     
     # Handle dynamic cost evaluation (for economic config system)
     action_cost = action['cost']
@@ -165,7 +165,7 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
         action_cost = action_cost(game_state)
     
     if game_state.money < action_cost:
-        details.append("! Not enough Money")
+        details.append('! Not enough Money')
     
     return {
         'title': title,
@@ -175,35 +175,35 @@ def create_action_context_info(action: Dict[str, Any], game_state: Any, action_i
 
 
 def create_upgrade_context_info(upgrade: Dict[str, Any], game_state: Any, upgrade_idx: int) -> Dict[str, Any]:
-    """Create context info for an upgrade to display in the context window."""
-    is_purchased = upgrade.get("purchased", False)
+    '''Create context info for an upgrade to display in the context window.'''
+    is_purchased = upgrade.get('purchased', False)
     
-    title = upgrade["name"]
+    title = upgrade['name']
     if is_purchased:
-        title += " (Purchased)"
+        title += ' (Purchased)'
     
     details = [
-        f"Cost: ${upgrade['cost']}",
+        f'Cost: ${upgrade['cost']}',
     ]
     
     # Add availability status
     if not is_purchased:
         if game_state.money < upgrade['cost']:
-            details.append("! Not enough Money")
+            details.append('! Not enough Money')
         else:
-            details.append("+ Available for purchase")
+            details.append('+ Available for purchase')
     else:
-        details.append("+ Effect is active")
+        details.append('+ Effect is active')
     
     return {
         'title': title,
-        'description': upgrade["desc"],
+        'description': upgrade['desc'],
         'details': details
     }
 
 
 def get_default_context_info(game_state: Any) -> Dict[str, Any]:
-    """Get default context info when nothing is hovered."""
+    '''Get default context info when nothing is hovered.'''
     lab_name = getattr(game_state, 'lab_name', 'Unknown Labs')
     return {
         'title': f'{lab_name}',
@@ -219,26 +219,26 @@ def get_default_context_info(game_state: Any) -> Dict[str, Any]:
 
 
 def draw_seed_prompt(screen: pygame.Surface, current_input: str, weekly_suggestion: str) -> None:
-    """
+    '''
     Draw the seed selection prompt screen.
     
     Args:
         screen: pygame surface to draw on
         current_input: current text input from user
         weekly_suggestion: suggested weekly challenge seed
-    """
+    '''
     font = pygame.font.SysFont('Consolas', 40)
     small = pygame.font.SysFont('Consolas', 24)
     title = pygame.font.SysFont('Consolas', 70, bold=True)
     w, h = screen.get_size()
     
     # Fix alignment: center title properly without hardcoded offset
-    title_text = title.render("P(Doom)", True, (240,255,220))
+    title_text = title.render('P(Doom)', True, (240,255,220))
     title_x = (w - title_text.get_width()) // 2  # Proper centering
     screen.blit(title_text, (title_x, h//6))
     
     # Center prompt text properly
-    prompt_text = font.render("Enter Seed (for weekly challenge, or blank for default):", True, (210,210,255))
+    prompt_text = font.render('Enter Seed (for weekly challenge, or blank for default):', True, (210,210,255))
     prompt_x = (w - prompt_text.get_width()) // 2
     screen.blit(prompt_text, (prompt_x, h//3))
     
@@ -250,10 +250,10 @@ def draw_seed_prompt(screen: pygame.Surface, current_input: str, weekly_suggesti
     screen.blit(txt, (box.x+10, box.y+10))
     
     # Center additional text properly
-    weekly_text = small.render(f"Suggested weekly seed: {weekly_suggestion}", True, (200,255,200))
+    weekly_text = small.render(f'Suggested weekly seed: {weekly_suggestion}', True, (200,255,200))
     weekly_x = (w - weekly_text.get_width()) // 2
     screen.blit(weekly_text, (weekly_x, h//2 + 80))
     
-    instruction_text = small.render("Press [Enter] to start, [Esc] to quit.", True, (255,255,180))
+    instruction_text = small.render('Press [Enter] to start, [Esc] to quit.', True, (255,255,180))
     instruction_x = (w - instruction_text.get_width()) // 2
     screen.blit(instruction_text, (instruction_x, h//2 + 120))

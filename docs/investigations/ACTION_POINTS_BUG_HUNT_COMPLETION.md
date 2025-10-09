@@ -22,9 +22,9 @@
 - **Status**: CLOSED OK (Understanding/Clarification)
 - **Root Cause**: Test validation incorrectly expected ALL actions to have AP cost > 0
 - **Analysis**: Found 3 legitimate meta-actions with 0 AP cost:
-  - "Set Research Quality: Rushed"
-  - "Set Research Quality: Standard" 
-  - "Set Research Quality: Thorough"
+  - 'Set Research Quality: Rushed'
+  - 'Set Research Quality: Standard' 
+  - 'Set Research Quality: Thorough'
 - **Resolution**: These are legitimate configuration/meta-actions that should be free
 - **Files Modified**: None (no code changes needed)
 - **Testing**: `test_all_actions_have_ap_cost` was already correctly implemented

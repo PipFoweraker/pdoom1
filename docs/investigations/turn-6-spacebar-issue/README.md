@@ -1,7 +1,7 @@
 # Turn 6 Spacebar Issue Investigation Workspace
 
 ## Overview
-This workspace contains the comprehensive investigation and resolution plan for GitHub Issue #377: "CRITICAL: Spacebar input stops working at Turn 6".
+This workspace contains the comprehensive investigation and resolution plan for GitHub Issue #377: 'CRITICAL: Spacebar input stops working at Turn 6'.
 
 **Investigation Date**: September 28, 2025  
 **Status**: Investigation Complete, Ready for Implementation  

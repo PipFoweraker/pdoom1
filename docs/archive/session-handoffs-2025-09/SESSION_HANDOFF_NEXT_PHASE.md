@@ -41,7 +41,7 @@ git checkout refactor/monolith-breakdown
 git pull origin refactor/monolith-breakdown
 
 # Validate current state  
-python -c "from src.core.game_state import GameState; print('[EMOJI] Ready')"
+python -c 'from src.core.game_state import GameState; print('[EMOJI] Ready')'
 wc -l ui.py  # Should show ~4,801 lines
 
 # Begin Issue #303 work

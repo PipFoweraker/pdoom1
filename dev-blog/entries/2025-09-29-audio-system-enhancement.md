@@ -1,9 +1,9 @@
 ---
-title: "Audio System Enhancement: Five New Sound Effects for Enhanced Gameplay Feedback"
-date: "2025-09-29"
-tags: ["audio", "sound-effects", "game-enhancement", "pygame", "user-experience"]
-summary: "Added five new programmatically generated sound effects with full game integration and UI controls for enhanced player feedback on milestones, warnings, and achievements"
-commit: "15bd668"
+title: 'Audio System Enhancement: Five New Sound Effects for Enhanced Gameplay Feedback'
+date: '2025-09-29'
+tags: ['audio', 'sound-effects', 'game-enhancement', 'pygame', 'user-experience']
+summary: 'Added five new programmatically generated sound effects with full game integration and UI controls for enhanced player feedback on milestones, warnings, and achievements'
+commit: '15bd668'
 ---
 
 # Audio System Enhancement: Five New Sound Effects for Enhanced Gameplay Feedback
@@ -76,7 +76,7 @@ Enhanced P(Doom)'s audio system with five new programmatically generated sound e
 #### Sound Generation (numpy-based approach)
 ```python
 def _create_milestone_sound(self):
-    """Create a triumphant milestone achievement sound"""
+    '''Create a triumphant milestone achievement sound'''
     if not self.audio_available:
         return
         
@@ -105,7 +105,7 @@ def _create_milestone_sound(self):
 # Manager hiring milestone with audio feedback
 if len(self.managers) == 1 and not self.manager_milestone_triggered:
     self.manager_milestone_triggered = True
-    self.messages.append("MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.")
+    self.messages.append('MILESTONE: First manager hired! Teams beyond 9 employees now need management to stay productive.')
     
     # Play milestone sound for this achievement
     if hasattr(self, 'sound_manager'):
@@ -115,18 +115,18 @@ if len(self.managers) == 1 and not self.manager_milestone_triggered:
 #### UI Enhancement (audio menu expansion)
 ```python
 actions = [
-    "toggle_master",            # Master Audio
-    "toggle_money",             # Money Spend Sound  
-    "toggle_ap",                # Action Point Sound
-    "toggle_blob",              # Blob Sound
-    "toggle_error",             # Error Beep
-    "toggle_popup",             # Popup Sounds
-    "toggle_milestone",         # Milestone Sound
-    "toggle_warning",           # Warning Sound  
-    "toggle_danger",            # Danger Sound
-    "toggle_success",           # Success Sound
-    "toggle_research_complete", # Research Complete
-    "back"                      # Back
+    'toggle_master',            # Master Audio
+    'toggle_money',             # Money Spend Sound  
+    'toggle_ap',                # Action Point Sound
+    'toggle_blob',              # Blob Sound
+    'toggle_error',             # Error Beep
+    'toggle_popup',             # Popup Sounds
+    'toggle_milestone',         # Milestone Sound
+    'toggle_warning',           # Warning Sound  
+    'toggle_danger',            # Danger Sound
+    'toggle_success',           # Success Sound
+    'toggle_research_complete', # Research Complete
+    'back'                      # Back
 ]
 ```
 

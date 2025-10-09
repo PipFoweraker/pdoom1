@@ -1,4 +1,4 @@
-"""
+'''
 Modern UI Positioning System for UI_new Environment
 
 This module implements the dynamic positioning approach documented in 
@@ -7,7 +7,7 @@ UI_DYNAMIC_POSITIONING.md for the new modular UI system.
 Usage in UI_new:
     from src.ui.ui_new.positioning import calculate_element_position
     pos = calculate_element_position(element_type, game_state, screen_dims)
-"""
+'''
 
 from typing import Tuple, Dict, Any, List
 import pygame
@@ -21,12 +21,12 @@ from src.ui.positioning_utils import (
 
 
 class ModernUIPositioning:
-    """
+    '''
     Modern UI positioning system for UI_new environment.
     
     Implements dynamic positioning patterns that automatically adapt
     to layout changes, screen sizes, and component variations.
-    """
+    '''
     
     def __init__(self):
         self.cached_positions: Dict[str, Tuple[int, int]] = {}
@@ -34,7 +34,7 @@ class ModernUIPositioning:
     
     def get_element_position(self, element_type: str, game_state: Any, 
                            w: int, h: int, **kwargs) -> Tuple[int, int]:
-        """
+        '''
         Get position for a UI element using dynamic calculation.
         
         Args:
@@ -45,7 +45,7 @@ class ModernUIPositioning:
             
         Returns:
             Tuple[int, int]: (x, y) coordinates for element
-        """
+        '''
         if element_type == 'activity_log':
             return calculate_activity_log_position(game_state, w, h)
             
@@ -63,7 +63,7 @@ class ModernUIPositioning:
     
     def _calculate_context_panel_position(self, game_state: Any, 
                                         w: int, h: int) -> Tuple[int, int]:
-        """Calculate context panel position dynamically."""
+        '''Calculate context panel position dynamically.'''
         # Position in bottom-right, accounting for END TURN button
         panel_width = int(w * 0.25)
         panel_height = int(h * 0.3)
@@ -75,7 +75,7 @@ class ModernUIPositioning:
     
     def _calculate_upgrade_panel_position(self, game_state: Any,
                                         w: int, h: int) -> Tuple[int, int]:
-        """Calculate upgrade panel position dynamically."""
+        '''Calculate upgrade panel position dynamically.'''
         # Position in right column, below competitors panel
         competitors_bottom = int(h * 0.27)  # Competitors panel bottom approx
         
@@ -90,15 +90,15 @@ ui_positioning = ModernUIPositioning()
 
 # Convenience functions for UI_new
 def get_activity_log_pos(game_state: Any, w: int, h: int) -> Tuple[int, int]:
-    """Get activity log position for UI_new layouts."""
+    '''Get activity log position for UI_new layouts.'''
     return ui_positioning.get_element_position('activity_log', game_state, w, h)
 
 
 def get_context_panel_pos(game_state: Any, w: int, h: int) -> Tuple[int, int]:
-    """Get context panel position for UI_new layouts."""
+    '''Get context panel position for UI_new layouts.'''
     return ui_positioning.get_element_position('context_panel', game_state, w, h)
 
 
 def get_upgrade_panel_pos(game_state: Any, w: int, h: int) -> Tuple[int, int]:
-    """Get upgrade panel position for UI_new layouts."""
+    '''Get upgrade panel position for UI_new layouts.'''
     return ui_positioning.get_element_position('upgrade_panel', game_state, w, h)

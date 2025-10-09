@@ -1,5 +1,5 @@
 # P(Doom): AI Safety Strategy Game
-**v0.10.0 "Global Leaderboards" - Web Export System & Competition Ready**
+**v0.10.0 'Global Leaderboards' - Web Export System & Competition Ready**
 
 ![P(Doom) Gameplay Screenshot](screenshots/pdoom_screenshot_20250918_104357.png)
 
@@ -9,7 +9,7 @@ In this satirical strategy game, you manage a bootstrap AI safety lab racing aga
 
 ## TROPHY Latest Achievement: Global Leaderboards Unlocked
 
-**Version 0.10.0 "Global Leaderboards"** enables worldwide competition:
+**Version 0.10.0 'Global Leaderboards'** enables worldwide competition:
 - **Web Export System** - Complete infrastructure for global leaderboard integration
 - **Privacy-First Design** - Anonymous competition with configurable privacy controls  
 - **Website Integration** - Direct compatibility with [pdoom1-website](https://github.com/PipFoweraker/pdoom1-website)
@@ -53,7 +53,7 @@ python -m src.leaderboard status
 **For Windows 10/11 users who want the simplest experience:**
 
 1. **Download** the single executable from [Releases](https://github.com/PipFoweraker/pdoom1/releases)
-2. **Run** by double-clicking (Windows Defender may show a warning - click "More info" -> "Run anyway")
+2. **Run** by double-clicking (Windows Defender may show a warning - click 'More info' -> 'Run anyway')
 3. **Play** immediately - no Python installation or setup required!
 
 See [docs/technical/DISTRIBUTION.md](docs/technical/DISTRIBUTION.md) for detailed distribution instructions.
@@ -168,8 +168,8 @@ You run an AI safety lab competing against 3 opponent organizations to reduce P(
 ## TOOLS Troubleshooting
 
 ### Common Issues
-- **"pygame not found"** -> Run `pip install pygame`
-- **"Python not found"** -> Install Python 3.9+ from [python.org](https://python.org)
+- **'pygame not found'** -> Run `pip install pygame`
+- **'Python not found'** -> Install Python 3.9+ from [python.org](https://python.org)
 - **Game won't start** -> Check Python version: `python --version`
 - **Missing dependencies** -> Run `pip install -r requirements.txt`
 - **Screen too small** -> Game requires 1024x768 minimum resolution
@@ -179,7 +179,7 @@ You run an AI safety lab competing against 3 opponent organizations to reduce P(
 ```bash
 # Verify Python and dependencies
 python --version  # Should be 3.9+
-python -c "import pygame; print('Pygame working!')"
+python -c 'import pygame; print('Pygame working!')'
 ```
 - Antivirus blocking? Add folder to exclusions
 
@@ -293,7 +293,7 @@ python tools/dev_tool.py --list
 
 ## LIST Project Status
 
-**Current Version**: v0.8.0 "Modular Architecture" (Alpha)  
+**Current Version**: v0.8.0 'Modular Architecture' (Alpha)  
 **Status**: Major refactoring complete with enhanced stability  
 **Alpha Focus**: Clean modular design with comprehensive type safety and debugging tools  
 **Testing Phase**: Active development with community feedback integration  
