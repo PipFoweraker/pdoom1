@@ -135,7 +135,7 @@ class GameState:
                     self.sound_manager.play_danger_sound()
                 
         elif attr == 'reputation':
-            self.reputation = max(self.reputation + val, 0)
+            self.reputation = int(max(self.reputation + val, 0))
             
             # Track peak reputation for strategic analysis
             if self.reputation > self.peak_reputation:
@@ -146,7 +146,7 @@ class GameState:
                 self._add_verbose_reputation_message(val, reason)
         elif attr == 'staff':
             old_staff = self.staff
-            self.staff = max(self.staff + val, 0)
+            self.staff = int(max(self.staff + val, 0))
             # Update employee blobs when staff changes
             if val > 0:  # Hiring
                 self._add_employee_blobs(val)
@@ -164,19 +164,19 @@ class GameState:
             if val != 0:
                 self._add_verbose_staff_message(val, reason)
         elif attr == 'compute':
-            self.compute = max(self.compute + val, 0)
+            self.compute = int(max(self.compute + val, 0))
             
             # Add verbose activity log message for compute changes
             if val != 0:
                 self._add_verbose_compute_message(val, reason)
         elif attr == 'research_progress':
-            self.research_progress = max(self.research_progress + val, 0)
+            self.research_progress = int(max(self.research_progress + val, 0))
         elif attr == 'admin_staff':
-            self.admin_staff = max(self.admin_staff + val, 0)
+            self.admin_staff = int(max(self.admin_staff + val, 0))
         elif attr == 'research_staff':
-            self.research_staff = max(self.research_staff + val, 0)
+            self.research_staff = int(max(self.research_staff + val, 0))
         elif attr == 'ops_staff':
-            self.ops_staff = max(self.ops_staff + val, 0)
+            self.ops_staff = int(max(self.ops_staff + val, 0))
         
         # Log the change for debugging and verification
         new_value = getattr(self, attr, 0)
@@ -248,35 +248,37 @@ class GameState:
         self.research_quality_unlocked = False  # Unlocks after first research action
         
         # Core resources (from config with safe defaults)
-        self.money = starting_resources.get('money', 100)
-        self.staff = starting_resources.get('staff', 2)
-        self.reputation = starting_resources.get('reputation', 5)
-        self.doom = starting_resources.get('doom', 25)
-        self.compute = starting_resources.get('compute', 0)
-        self.research_progress = 0  # Track research progress for paper generation
-        self.papers_published = 0  # Count of research papers published
+        self.money: Union[int, float] = starting_resources.get('money', 100)
+        self.staff: int = starting_resources.get('staff', 2)
+        self.reputation: int = starting_resources.get('reputation', 5)
+        self.doom: Union[int, float] = starting_resources.get('doom', 25)
+        self.compute: int = starting_resources.get('compute', 0)
+        self.research_progress: int = 0  # Track research progress for paper generation
+        self.papers_published: int = 0  # Count of research papers published
         
         # Action Points system (from config with safe defaults)
-        self.action_points = starting_resources.get('action_points', 3)
-        self.max_action_points = ap_config.get('base_ap_per_turn', 3)
-        self.ap_spent_this_turn = False  # Track if AP was spent for UI glow effects
-        self.ap_glow_timer = 0  # Timer for AP glow animation
+        # Initialize with base AP, then calculate proper max AP after staff is set
+        base_ap = ap_config.get('base_ap_per_turn', 3)
+        self.action_points: int = starting_resources.get('action_points', base_ap)
+        self.max_action_points: int = base_ap  # Will be recalculated after staff setup
+        self.ap_spent_this_turn: bool = False  # Track if AP was spent for UI glow effects
+        self.ap_glow_timer: int = 0  # Timer for AP glow animation
         
         # Phase 2: Staff-Based AP Scaling
-        self.admin_staff = 0  # Admin assistants: +1.0 AP each
-        self.research_staff = 0  # Research staff: Enable research action delegation
-        self.ops_staff = 0  # Operations staff: Enable operational action delegation
+        self.admin_staff: int = 0  # Admin assistants: +1.0 AP each
+        self.research_staff: int = 0  # Research staff: Enable research action delegation
+        self.ops_staff: int = 0  # Operations staff: Enable operational action delegation
         
         self.turn = 0
         self.max_doom = limits_config['max_doom']
-        self.selected_gameplay_actions = []
-        self.selected_gameplay_action_instances = []  # Track individual action instances for undo
-        self.gameplay_action_clicks_this_turn = {}  # Track clicks per action per turn
+        self.selected_gameplay_actions: List[int] = []
+        self.selected_gameplay_action_instances: List[Dict[str, Any]] = []  # Track individual action instances for undo
+        self.gameplay_action_clicks_this_turn: Dict[int, int] = {}  # Track clicks per action per turn
         self.staff_maintenance = DEFAULT_STAFF_MAINTENANCE
         self.seed = seed
         self.upgrades = [dict(u) for u in UPGRADES]
         self.upgrade_effects = set()
-        self.messages = ["Game started! Select actions, then End Turn."]
+        self.messages: List[str] = ["Game started! Select actions, then End Turn."]
         self.game_over = False
         self.end_game_scenario = None  # Will hold the EndGameScenario when game ends
         self.highscore = self.load_highscore()
@@ -348,7 +350,7 @@ class GameState:
 
         # Scrollable event log feature
         self.scrollable_event_log_enabled = False
-        self.event_log_history = []  # Full history of all messages
+        self.event_log_history: List[str] = []  # Full history of all messages
         self.event_log_scroll_offset = 0
         
         # Activity log minimization feature
@@ -409,8 +411,8 @@ class GameState:
         self._pending_first_time_help = None  # Track pending first-time help to show
 
         # Copy modular content
-        self.gameplay_actions = [dict(a) for a in ACTIONS]
-        self.game_events = [dict(e) for e in EVENTS]
+        self.gameplay_actions: List[Dict[str, Any]] = [dict(a) for a in ACTIONS]
+        self.game_events: List[Dict[str, Any]] = [dict(e) for e in EVENTS]
         
         # Enhanced event system (from config)
         gameplay_config = config.get('gameplay', {})
@@ -481,6 +483,11 @@ class GameState:
         
         # Load tutorial settings (after initialization)
         self.load_tutorial_settings()
+        
+        # Calculate proper max AP after all staff and systems are initialized
+        # This ensures AP calculation accounts for starting staff from config
+        self.max_action_points = self.calculate_max_ap()
+        self.action_points = self.max_action_points
 
     @property
     def actions(self) -> List[Dict[str, Any]]:
@@ -489,10 +496,15 @@ class GameState:
 
     def calculate_max_ap(self) -> int:
         """
-        Calculate maximum Action Points per turn based on staff composition.
+        Calculate maximum Action Points per turn based on player + staff composition.
+        
+        Architecture:
+        - Player base AP = 1 (inherent personal capacity)
+        - Staff bonus = staff_count * staff_ap_bonus
+        - Admin bonus = admin_staff * admin_ap_bonus
+        - Environmental/upgrade bonuses can be added here later
         
         Uses configuration values for:
-        - Base AP per turn
         - Staff AP bonus per regular staff member  
         - Admin AP bonus per admin assistant
         - Maximum AP cap to prevent excessive accumulation
@@ -503,14 +515,19 @@ class GameState:
         config = get_current_config()
         ap_config = config['action_points']
         
-        base = ap_config['base_ap_per_turn']
+        # Player inherent capacity (not configurable - represents personal willpower/skill)
+        player_base_ap = 1
+        
+        # Staff-based bonuses (configurable)
         staff_bonus = self.staff * ap_config['staff_ap_bonus']
         admin_bonus = self.admin_staff * ap_config['admin_ap_bonus']
-        calculated_ap = base + staff_bonus + admin_bonus
         
-        # Apply maximum cap
+        # Calculate total AP
+        calculated_ap = player_base_ap + staff_bonus + admin_bonus
+        
+        # Apply maximum cap (round to nearest integer for fractional staff bonuses)
         max_cap = ap_config['max_ap_per_turn']
-        return int(min(calculated_ap, max_cap))
+        return round(min(calculated_ap, max_cap))
     
     def add_delayed_action(self, action_name: str, delay_turns: int, effects: Dict[str, Any]) -> None:
         """
@@ -582,8 +599,8 @@ class GameState:
         """Update spend tracking display logic."""
         if self.spend_this_turn > 0:
             if not self.spend_this_turn_display_shown:
-                # First time spending multiple actions in a turn
-                spend_actions_count = len([a for a in self.selected_gameplay_actions if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
+                # First time spending multiple actions in a turn - check action instances, not indices
+                spend_actions_count = len([a for a in self.selected_gameplay_action_instances if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
                 
                 if spend_actions_count > 1:
                     self.spend_this_turn_display_shown = True
@@ -2914,7 +2931,7 @@ class GameState:
             execute_corporate_partnership,
             execute_revenue_diversification
         )
-        from src.services.rng_service import get_rng
+        # Import already available at top of file: from src.services.deterministic_rng import get_rng
         
         # Execute the selected advanced funding option
         if option_id == "series_a_funding":
