@@ -4,7 +4,6 @@ Handles all debug console integration without polluting main game loop.
 '''
 
 import pygame
-from typing import Optional
 
 
 class DebugConsoleManager:

@@ -7,7 +7,6 @@ Target: Issues #313-#359 created on 2025-09-16 between 07:05-07:06Z
 import subprocess
 import json
 import sys
-from datetime import datetime
 
 def get_duplicate_issues():
     '''Get all issues created during the sync failure window.'''

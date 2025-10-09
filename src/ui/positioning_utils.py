@@ -10,7 +10,7 @@ calculate positions dynamically based on actual rendered component rectangles.
 Created: 2025-09-29 - Demo Hotfix Session
 '''
 
-from typing import Tuple, List, Optional
+from typing import Tuple, List
 import pygame
 
 

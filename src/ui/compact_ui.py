@@ -5,7 +5,7 @@ Provides icon-based compact buttons with shortcut key indicators to maximize
 screen real estate when tutorial mode is disabled.
 '''
 
-from typing import Dict, Tuple, Optional, Union
+from typing import Dict, Tuple
 
 # Try to import pygame, fallback to dummy values for CI/testing environments
 try:

@@ -2,7 +2,6 @@
 # Provides configurable economic parameters for bootstrap AI safety lab model
 
 import json
-import os
 from typing import Dict, Any, Tuple
 from src.services.deterministic_rng import get_rng
 

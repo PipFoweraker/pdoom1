@@ -5,7 +5,7 @@ This module contains pure utility functions for validation, upgrade availability
 checking, and achievements processing that have minimal game state dependencies.
 '''
 
-from typing import Dict, Any, List, Tuple, Optional, Union, TYPE_CHECKING
+from typing import Dict, Any, List, Tuple, Union, TYPE_CHECKING
 import pygame
 
 if TYPE_CHECKING:

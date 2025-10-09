@@ -17,7 +17,7 @@ Extracted methods:
 - _remove_employee_blobs
 '''
 
-from typing import Dict, Any, List, Tuple, TYPE_CHECKING
+from typing import List, Tuple, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from src.core.game_state import GameState

@@ -17,7 +17,7 @@ Functions:
 '''
 
 import pygame
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Optional, List, Tuple
 
 
 def get_ui_safe_zones(w: int, h: int) -> List[pygame.Rect]:

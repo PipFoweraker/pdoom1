@@ -594,7 +594,6 @@ class TestKeyboardShortcuts(unittest.TestCase):
     def test_keyboard_shortcut_auto_delegation(self):
         '''Test that keyboard shortcuts use auto-delegation when beneficial.'''
         # TODO: Re-enable when delegation system is properly implemented
-        pass
 
 
 @pytest.mark.skip(reason='Enhanced AP feedback bugs - See issue #enhanced-ap-feedback-bug')

@@ -15,11 +15,11 @@ Design Philosophy:
 '''
 
 import pygame
-from typing import Dict, List, Optional, Tuple, Any
+from typing import List, Optional, Tuple
 from enum import Enum
 
-from src.services.game_run_logger import GameRunLogger, LoggingLevel, get_game_logger
-from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle
+from src.services.game_run_logger import LoggingLevel, get_game_logger
+from src.features.visual_feedback import visual_feedback, ButtonState
 
 
 class PrivacyUIState(Enum):

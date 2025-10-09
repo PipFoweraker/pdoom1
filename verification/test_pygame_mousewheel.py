@@ -21,7 +21,7 @@ def test_pygame_mousewheel_events():
     
     # Initialize pygame
     pygame.init()
-    screen = pygame.display.set_mode((800, 600))
+    pygame.display.set_mode((800, 600))
     pygame.display.set_caption('Pygame Mouse Wheel Event Test')
     
     try:

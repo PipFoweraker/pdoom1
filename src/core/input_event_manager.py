@@ -18,7 +18,7 @@ Following patterns established in:
 - TurnManager for processing logic
 '''
 
-from typing import Dict, Any, List, Optional, Tuple, TYPE_CHECKING
+from typing import Dict, Any, TYPE_CHECKING
 import pygame
 from enum import Enum
 
@@ -263,7 +263,7 @@ class InputEventManager:
             
             # Generate timestamp for filename
             timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-            screenshot_path = os.path.join(screenshots_dir, f'pdoom_screenshot_{timestamp}.png')
+            os.path.join(screenshots_dir, f'pdoom_screenshot_{timestamp}.png')
             
             # Save the current screen (this needs to be handled by caller)
             # Note: Screen saving needs to be done by the main game loop

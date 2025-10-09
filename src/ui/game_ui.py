@@ -7,7 +7,7 @@ action buttons, upgrades, activity log, and other core game interface elements.
 '''
 
 import pygame
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Optional, Tuple
 
 # Import required modules
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle
@@ -664,7 +664,7 @@ def draw_game_context_window(screen: pygame.Surface, game_state: Any, w: int, h:
     # Always show context window (persistent at bottom)
     # Context window should always be visible to show action details
     # This replaces the old text overflow on action buttons
-    use_compact_ui = not getattr(game_state, 'tutorial_enabled', True)
+    not getattr(game_state, 'tutorial_enabled', True)
     context_info = None
     
     # Check if context window should be shown based on configuration

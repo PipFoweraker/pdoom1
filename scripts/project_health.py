@@ -18,13 +18,12 @@ Usage:
 """
 
 import sys
-import os
 import json
 import subprocess
 import argparse
 from pathlib import Path
-from typing import Dict, List, Tuple, Optional, Any
-from datetime import datetime, timedelta
+from typing import Dict, Any
+from datetime import datetime
 import re
 
 # Project root detection

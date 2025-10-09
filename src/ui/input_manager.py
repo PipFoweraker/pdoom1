@@ -6,7 +6,7 @@ providing a clean event pipeline that prevents duplicate processing and infinite
 '''
 
 import pygame
-from typing import Optional, Dict, Any, Callable
+from typing import Dict, Callable
 
 
 class InputManager:

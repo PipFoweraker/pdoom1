@@ -9,7 +9,7 @@ provides comprehensive coverage for the input event management system.
 '''
 
 import unittest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import pygame
 
 from src.core.input_event_manager import InputEventManager, KeyEventResult

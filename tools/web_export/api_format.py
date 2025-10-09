@@ -11,7 +11,7 @@ https://github.com/PipFoweraker/pdoom1-website/blob/main/docs/03-integrations/le
 
 import json
 from datetime import datetime
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 from pathlib import Path
 import sys
 

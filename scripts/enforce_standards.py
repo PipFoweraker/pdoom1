@@ -13,13 +13,10 @@ Usage:
 '''
 
 import sys
-import os
 import subprocess
-import json
 import argparse
 from pathlib import Path
-from typing import List, Dict, Tuple, Optional
-from datetime import datetime
+from typing import List, Tuple, Optional
 
 # Project root detection
 PROJECT_ROOT = Path(__file__).parent.parent

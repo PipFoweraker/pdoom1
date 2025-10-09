@@ -6,11 +6,10 @@ ensuring all critical bugs are resolved and no regressions are introduced.
 '''
 
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from datetime import datetime
 from src.services.game_clock import GameClock
 from src.scores.enhanced_leaderboard import EnhancedLeaderboardManager
-from src.core.research_quality import TechnicalDebt
 from src.core.game_state import GameState
 
 

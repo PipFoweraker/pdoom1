@@ -4,7 +4,6 @@ Fix deterministic RNG compliance in P(Doom) codebase.
 Replaces 'import random' with proper deterministic RNG imports.
 '''
 
-import os
 import re
 import sys
 from pathlib import Path
@@ -40,7 +39,6 @@ class DeterministicRNGFixer:
             with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
                 
-            original_content = content
             fixes_in_file = 0
             
             # Pattern 1: Replace standalone 'import random'

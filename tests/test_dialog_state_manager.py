@@ -11,7 +11,7 @@ provides comprehensive coverage for dialog state management.
 import unittest
 from unittest.mock import Mock, patch
 
-from src.core.dialog_state_manager import DialogStateManager, DialogType, ModalState
+from src.core.dialog_state_manager import DialogStateManager, DialogType
 from src.core.game_state import GameState
 
 

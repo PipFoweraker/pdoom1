@@ -8,10 +8,9 @@ for when the data service becomes available.
 '''
 
 from typing import Dict, List, Optional, Any, Union
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from datetime import datetime, date
 from enum import Enum
-import json
 
 
 class DataBatchType(Enum):

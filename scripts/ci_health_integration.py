@@ -23,7 +23,7 @@ import sys
 import os
 import json
 from pathlib import Path
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 from datetime import datetime
 
 # Project root detection

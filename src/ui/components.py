@@ -6,7 +6,7 @@ common UI elements like tooltips, version info, and status indicators.
 '''
 
 import pygame
-from typing import Tuple, Optional
+from typing import Tuple
 
 
 def draw_dev_mode_indicator(screen, w: int, h: int, font=None):

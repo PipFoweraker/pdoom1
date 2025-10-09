@@ -23,7 +23,6 @@ Usage:
 """
 
 import sys
-import subprocess
 from pathlib import Path
 from typing import Dict, List, Any
 from datetime import datetime

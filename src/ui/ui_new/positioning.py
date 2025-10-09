@@ -9,14 +9,11 @@ Usage in UI_new:
     pos = calculate_element_position(element_type, game_state, screen_dims)
 '''
 
-from typing import Tuple, Dict, Any, List
-import pygame
+from typing import Tuple, Dict, Any
 
 # Import the core utilities
 from src.ui.positioning_utils import (
-    calculate_activity_log_position,
-    calculate_dynamic_element_spacing,
-    get_safe_positioning_zone
+    calculate_activity_log_position
 )
 
 

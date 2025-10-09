@@ -5,19 +5,18 @@ This module handles all mouse input processing including clicks, motion, and hov
 Provides clean separation of input handling concerns from core game logic.
 '''
 
-from typing import Tuple, Dict, Any, Optional, List, Union, TYPE_CHECKING
+from typing import Tuple, Any, Optional, TYPE_CHECKING
 import pygame
 from src.services.deterministic_rng import get_rng
 from src.core.utility_functions import check_point_in_rect
 from src.core.ui_utils import (
-    get_action_rects, get_upgrade_rects, get_upgrade_icon_rect, get_context_window_top,
-    get_endturn_rect, get_mute_button_rect, get_activity_log_minimize_button_rect,
-    get_activity_log_expand_button_rect, get_activity_log_rect, get_activity_log_base_position,
-    get_activity_log_current_position
+    get_action_rects, get_upgrade_rects, get_upgrade_icon_rect, get_endturn_rect,
+    get_mute_button_rect, get_activity_log_minimize_button_rect, get_activity_log_expand_button_rect,
+    get_activity_log_rect, get_activity_log_base_position
 )
 
 if TYPE_CHECKING:
-    from src.core.game_state import GameState
+    pass
 
 
 class InputManager:

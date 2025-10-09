@@ -13,11 +13,10 @@ Usage:
 '''
 
 import sys
-import os
 import subprocess
 import argparse
 from pathlib import Path
-from typing import List, Tuple, Optional
+from typing import Optional
 from datetime import datetime
 
 # Project root detection

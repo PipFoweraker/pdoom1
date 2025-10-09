@@ -12,9 +12,8 @@ Validates community-focused features:
 import unittest
 from unittest.mock import patch
 from src.services.deterministic_rng import (
-    DeterministicRNG, init_deterministic_rng, get_rng, reset_rng,
-    create_challenge_seed, enable_community_debug, get_challenge_export,
-    is_deterministic_enabled
+    init_deterministic_rng, get_rng, reset_rng, create_challenge_seed,
+    get_challenge_export
 )
 
 

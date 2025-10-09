@@ -4,7 +4,7 @@ UI Configuration Helper
 Small, focused module for UI configuration access patterns.
 Reduces repetitive config access code throughout the codebase.
 '''
-from typing import Any, Optional, Dict
+from typing import Any
 
 
 def should_show_tooltips(game_state: Any) -> bool:

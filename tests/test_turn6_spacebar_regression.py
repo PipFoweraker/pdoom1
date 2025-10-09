@@ -8,7 +8,6 @@ spacebar input to fail at Turn 6.
 '''
 
 import unittest
-from unittest.mock import Mock, patch
 from src.core.game_state import GameState
 from src.features.onboarding import onboarding
 from src.services.keybinding_manager import keybinding_manager

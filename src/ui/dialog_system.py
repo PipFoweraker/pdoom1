@@ -12,7 +12,7 @@ Functions:
 '''
 
 import pygame
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Dict, Any, List
 
 
 def wrap_text(text: str, font: pygame.font.Font, max_width: int) -> List[str]:

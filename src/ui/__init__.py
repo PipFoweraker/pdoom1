@@ -19,10 +19,5 @@ monolith breakdown transition. Individual modules can be imported directly:
 # Re-export all functions from the main ui.py for now (compatibility layer)
 # TODO: Remove this once all imports are updated to modular structure
 # NOTE: Avoiding direct imports from extracted modules to prevent circular imports
-from ui import *
 
 # Import extracted modules for direct access
-from . import dialogs
-from . import panels  
-from . import rendering
-from . import tutorials

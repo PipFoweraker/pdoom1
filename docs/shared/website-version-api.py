@@ -306,7 +306,6 @@ class VersionTrackingAPI:
         # 2. Cache invalidation
         # 3. Static site rebuild
         # 4. CDN cache purge
-        pass
 
 
 # === Data Batch Integration Stubs ===
@@ -385,7 +384,7 @@ def example_usage():
     
     # Initialize API
     version_api = VersionTrackingAPI()
-    data_api = DataBatchAPI()
+    DataBatchAPI()
     
     # Get current game version for header display
     current_version = version_api.get_current_game_version()

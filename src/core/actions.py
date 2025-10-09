@@ -2,7 +2,6 @@ from src.services.deterministic_rng import get_rng
 from typing import TYPE_CHECKING
 
 from src.core.action_rules import manager_unlock_rule, search_unlock_rule
-from src.core.research_quality import ResearchQuality
 
 if TYPE_CHECKING:
     from src.core.game_state import GameState

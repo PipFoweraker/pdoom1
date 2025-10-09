@@ -7,7 +7,7 @@ It ensures safe attribute access patterns across the leaderboard system.
 '''
 
 import unittest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from src.scores.enhanced_leaderboard import EnhancedLeaderboardManager
 from src.core.research_quality import TechnicalDebt
 

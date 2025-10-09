@@ -9,7 +9,6 @@ Using our 'slightly more verbose but clearer' naming approach for maintainabilit
 
 from typing import List, Dict, Any, Optional, Tuple, Callable
 from enum import Enum
-import pygame
 
 
 class SubmenuTheme(Enum):

@@ -214,7 +214,7 @@ class TurnManager:
             gs._add('money', -action_cost)
             
             # Log and execute action
-            action_name = action['name']
+            action['name']
             effect_type = action.get('effect_type', 'unknown')
             gs._execute_action_with_effectiveness(action, effect_type, effectiveness)
         

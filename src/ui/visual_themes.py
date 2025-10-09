@@ -4,7 +4,7 @@ Visual Themes and Color Coding System for P(Doom)
 Provides consistent color schemes for action buttons and employee visual differentiation.
 '''
 
-from typing import Dict, Tuple, Optional
+from typing import Dict, Tuple
 from enum import Enum
 
 

@@ -100,7 +100,7 @@ class TestOfficeCat(unittest.TestCase):
         
         # Update cat position with screen dimensions
         screen_w, screen_h = 800, 600
-        initial_pos = self.gs.office_cat_position
+        self.gs.office_cat_position
         
         self.gs.update_cat_position(screen_w, screen_h)
         

@@ -4,12 +4,10 @@ GitHub Issue Sync Tool for P(Doom)
 Prevents information loss by ensuring all local markdown issues are tracked in GitHub.
 '''
 
-import os
 import json
 import subprocess
-import re
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional
 
 class GitHubIssueSync:
     def __init__(self, repo_path: str = '.'):

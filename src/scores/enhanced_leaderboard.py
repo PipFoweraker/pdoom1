@@ -6,14 +6,12 @@ comprehensive game metadata tracking for the bootstrap economic system.
 '''
 
 import json
-import os
 import hashlib
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, Any, Optional, Tuple
 from dataclasses import dataclass, asdict
 from src.scores.local_store import LocalLeaderboard, ScoreEntry
-from src.services.data_paths import get_leaderboard_file
 from src.services.version import get_display_version
 
 

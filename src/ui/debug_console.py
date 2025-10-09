@@ -4,7 +4,7 @@ Provides a collapsible debug overlay showing game state variables and calculatio
 '''
 
 import pygame
-from typing import Any, Dict, List, Tuple, Optional
+from typing import Any, Dict, Tuple
 from src.services.config_manager import get_current_config
 
 

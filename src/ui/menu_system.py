@@ -14,7 +14,7 @@ Functions:
 '''
 
 import pygame
-from typing import Dict, Any, Optional, List, Tuple
+from typing import Any, Optional, List
 from src.features.visual_feedback import visual_feedback, ButtonState, FeedbackStyle, draw_low_poly_button
 from src.services.keyboard_shortcuts import get_main_menu_shortcuts, get_in_game_shortcuts, format_shortcut_list
 
@@ -54,7 +54,7 @@ def draw_consolidated_menu(screen: pygame.Surface, w: int, h: int, selected_item
     '''
     # Standard menu fonts - consistent across all menus
     title_font = pygame.font.SysFont('Consolas', int(h*0.06), bold=True)
-    menu_font = pygame.font.SysFont('Consolas', int(h*0.035))
+    pygame.font.SysFont('Consolas', int(h*0.035))
     desc_font = pygame.font.SysFont('Consolas', int(h*0.025))
     inst_font = pygame.font.SysFont('Consolas', int(h*0.02))
     

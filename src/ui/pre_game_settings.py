@@ -10,7 +10,7 @@ This reduces complexity in main.py by extracting specialized functionality.
 '''
 
 import time
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Tuple
 from src.services.lab_name_manager import get_lab_name_manager
 
 
@@ -171,7 +171,7 @@ class PreGameSettingsManager:
         random_button_y = lab_name_button_y + (button_height - random_button_size) // 2
         
         mx, my = mouse_pos
-        random_button_rect = (random_button_x, random_button_y, random_button_size, random_button_size)
+        (random_button_x, random_button_y, random_button_size, random_button_size)
         
         if (random_button_x <= mx <= random_button_x + random_button_size and 
             random_button_y <= my <= random_button_y + random_button_size):
