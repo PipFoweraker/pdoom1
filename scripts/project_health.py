@@ -42,7 +42,7 @@ class ProjectHealthDashboard:
         
     def generate_full_report(self) -> Dict[str, Any]:
         """Generate comprehensive project health report."""
-        print("🚀 PROJECT HEALTH DASHBOARD - FULL SCAN INITIATED")
+        print("[LAUNCH] PROJECT HEALTH DASHBOARD - FULL SCAN INITIATED")
         print("=" * 60)
         
         self.health_data = {
@@ -69,7 +69,7 @@ class ProjectHealthDashboard:
     
     def _analyze_code_quality(self) -> Dict[str, Any]:
         """Analyze code quality metrics."""
-        print("🔍 SCANNING: Code Quality Analysis...")
+        print("[SCAN] SCANNING: Code Quality Analysis...")
         
         quality_data = {
             'linting_issues': self._check_linting_issues(),
@@ -88,9 +88,9 @@ class ProjectHealthDashboard:
         
         quality_data['score'] = max(0, 100 - linting_penalty + (complexity_bonus + type_bonus + import_bonus) // 3)
         
-        print(f"   ✅ Linting Issues: {quality_data['linting_issues']}")
-        print(f"   ✅ Type Coverage: {quality_data['type_coverage']}%")
-        print(f"   ✅ Quality Score: {quality_data['score']}/100")
+        print(f"   [OK] Linting Issues: {quality_data['linting_issues']}")
+        print(f"   [OK] Type Coverage: {quality_data['type_coverage']}%")
+        print(f"   [OK] Quality Score: {quality_data['score']}/100")
         
         return quality_data
     
@@ -214,7 +214,7 @@ class ProjectHealthDashboard:
     
     def _analyze_github_issues(self) -> Dict[str, Any]:
         """Analyze GitHub issues and local issue tracking."""
-        print("📋 SCANNING: Issue Tracking Analysis...")
+        print("[LIST] SCANNING: Issue Tracking Analysis...")
         
         # Analyze local issues directory
         issues_dir = self.project_root / 'issues'
@@ -265,15 +265,15 @@ class ProjectHealthDashboard:
             priority_penalty = min(30, high_priority * 10)
             issue_data['score'] = max(0, 100 - issue_penalty - priority_penalty)
         
-        print(f"   ✅ Total Local Issues: {total_issues}")
-        print(f"   ✅ High Priority: {high_priority}")
-        print(f"   ✅ Issue Health Score: {issue_data['score']}/100")
+        print(f"   [OK] Total Local Issues: {total_issues}")
+        print(f"   [OK] High Priority: {high_priority}")
+        print(f"   [OK] Issue Health Score: {issue_data['score']}/100")
         
         return issue_data
     
     def _analyze_branch_status(self) -> Dict[str, Any]:
         """Analyze git branch health."""
-        print("🌿 SCANNING: Branch Health Analysis...")
+        print("[BRANCH] SCANNING: Branch Health Analysis...")
         
         try:
             # Get branch information
@@ -304,10 +304,10 @@ class ProjectHealthDashboard:
                 
             branch_data['score'] = max(0, score)
             
-            print(f"   ✅ Current Branch: {current_branch}")
-            print(f"   ✅ Total Branches: {branch_data['total_branches']}")
-            print(f"   ✅ Clean Working Tree: {branch_data['clean_working_tree']}")
-            print(f"   ✅ Branch Health Score: {branch_data['score']}/100")
+            print(f"   [OK] Current Branch: {current_branch}")
+            print(f"   [OK] Total Branches: {branch_data['total_branches']}")
+            print(f"   [OK] Clean Working Tree: {branch_data['clean_working_tree']}")
+            print(f"   [OK] Branch Health Score: {branch_data['score']}/100")
             
         except Exception as e:
             branch_data = {'error': str(e), 'score': 50}
@@ -325,7 +325,7 @@ class ProjectHealthDashboard:
     
     def _analyze_test_coverage(self) -> Dict[str, Any]:
         """Analyze test coverage and metrics."""
-        print("🧪 SCANNING: Test Coverage Analysis...")
+        print("[TEST] SCANNING: Test Coverage Analysis...")
         
         test_data = {
             'test_files': len(list(self.project_root.rglob("test_*.py"))),
@@ -354,15 +354,15 @@ class ProjectHealthDashboard:
         else:
             test_data['score'] = max(0, test_data['total_tests'] * 3)
         
-        print(f"   ✅ Test Files: {test_data['test_files']}")
-        print(f"   ✅ Total Tests: {test_data['total_tests']}")
-        print(f"   ✅ Test Score: {test_data['score']}/100")
+        print(f"   [OK] Test Files: {test_data['test_files']}")
+        print(f"   [OK] Total Tests: {test_data['total_tests']}")
+        print(f"   [OK] Test Score: {test_data['score']}/100")
         
         return test_data
     
     def _analyze_documentation(self) -> Dict[str, Any]:
         """Analyze documentation completeness."""
-        print("📚 SCANNING: Documentation Analysis...")
+        print("[DOCS] SCANNING: Documentation Analysis...")
         
         doc_data = {
             'readme_exists': (self.project_root / 'README.md').exists(),
@@ -385,10 +385,10 @@ class ProjectHealthDashboard:
         
         doc_data['score'] = min(100, score)
         
-        print(f"   ✅ README: {doc_data['readme_exists']}")
-        print(f"   ✅ Docs Directory: {doc_data['docs_directory']}")
-        print(f"   ✅ Markdown Files: {doc_data['markdown_files']}")
-        print(f"   ✅ Documentation Score: {doc_data['score']}/100")
+        print(f"   [OK] README: {doc_data['readme_exists']}")
+        print(f"   [OK] Docs Directory: {doc_data['docs_directory']}")
+        print(f"   [OK] Markdown Files: {doc_data['markdown_files']}")
+        print(f"   [OK] Documentation Score: {doc_data['score']}/100")
         
         return doc_data
     
@@ -438,7 +438,7 @@ class ProjectHealthDashboard:
     
     def _analyze_ci_status(self) -> Dict[str, Any]:
         """Analyze CI/CD pipeline status."""
-        print("⚙️ SCANNING: CI/CD Analysis...")
+        print("[CONFIG] SCANNING: CI/CD Analysis...")
         
         ci_data = {
             'github_actions': (self.project_root / '.github' / 'workflows').exists(),
@@ -460,9 +460,9 @@ class ProjectHealthDashboard:
             
         ci_data['score'] = min(100, score)
         
-        print(f"   ✅ GitHub Actions: {ci_data['github_actions']}")
-        print(f"   ✅ Workflow Files: {ci_data['workflow_files']}")
-        print(f"   ✅ CI/CD Score: {ci_data['score']}/100")
+        print(f"   [OK] GitHub Actions: {ci_data['github_actions']}")
+        print(f"   [OK] Workflow Files: {ci_data['workflow_files']}")
+        print(f"   [OK] CI/CD Score: {ci_data['score']}/100")
         
         return ci_data
     
@@ -490,61 +490,61 @@ class ProjectHealthDashboard:
         
         # Code quality recommendations
         if self.health_data['code_quality']['score'] < 70:
-            recommendations.append("🔧 URGENT: Address code quality issues - run linting tools and fix critical issues")
+            recommendations.append("[FIX] URGENT: Address code quality issues - run linting tools and fix critical issues")
             
         if self.health_data['code_quality']['type_coverage'] < 60:
             recommendations.append("🏷️ Add type annotations to improve code maintainability")
         
         # Issue tracking recommendations
         if self.health_data['issue_tracking']['priority_breakdown']['high'] > 5:
-            recommendations.append("🚨 CRITICAL: Address high-priority issues immediately")
+            recommendations.append("[URGENT] CRITICAL: Address high-priority issues immediately")
             
         if self.health_data['issue_tracking']['total_local_issues'] > 30:
-            recommendations.append("📋 Consider issue triage session to reduce backlog")
+            recommendations.append("[LIST] Consider issue triage session to reduce backlog")
         
         # Test recommendations
         if self.health_data['test_metrics']['total_tests'] < 50:
-            recommendations.append("🧪 Increase test coverage - aim for 100+ tests minimum")
+            recommendations.append("[TEST] Increase test coverage - aim for 100+ tests minimum")
         
         # Documentation recommendations
         if self.health_data['documentation']['score'] < 70:
-            recommendations.append("📚 Improve documentation coverage and quality")
+            recommendations.append("[DOCS] Improve documentation coverage and quality")
         
         # Overall health recommendations
         if self.health_data['overall_score'] < 60:
-            recommendations.append("⚠️ PROJECT HEALTH CRITICAL - Immediate action required")
+            recommendations.append("[WARNING] PROJECT HEALTH CRITICAL - Immediate action required")
         elif self.health_data['overall_score'] < 80:
-            recommendations.append("⚡ Project health needs attention - focus on top issues")
+            recommendations.append("[QUICK] Project health needs attention - focus on top issues")
         else:
-            recommendations.append("🎯 Project health is good - maintain current standards")
+            recommendations.append("[TARGET] Project health is good - maintain current standards")
         
         self.health_data['recommendations'] = recommendations
     
     def _display_health_report(self):
         """Display comprehensive health report."""
-        print("\n" + "🏥 PROJECT HEALTH REPORT".center(60, "="))
+        print("\n" + "[HEALTH] PROJECT HEALTH REPORT".center(60, "="))
         print(f"Generated: {self.health_data['timestamp']}")
         print(f"Overall Health Score: {self.health_data['overall_score']}/100")
         
         # Health indicator
         if self.health_data['overall_score'] >= 90:
-            print("🟢 EXCELLENT - Project is in outstanding health!")
+            print("[GREEN] EXCELLENT - Project is in outstanding health!")
         elif self.health_data['overall_score'] >= 80:
-            print("🟡 GOOD - Project health is solid with room for improvement")
+            print("[YELLOW] GOOD - Project health is solid with room for improvement")
         elif self.health_data['overall_score'] >= 60:
-            print("🟠 FAIR - Project needs attention in several areas")
+            print("[ORANGE] FAIR - Project needs attention in several areas")
         else:
-            print("🔴 POOR - Project requires immediate health improvements")
+            print("[RED] POOR - Project requires immediate health improvements")
         
-        print("\n📊 DETAILED BREAKDOWN:")
+        print("\n[DATA] DETAILED BREAKDOWN:")
         categories = ['code_quality', 'issue_tracking', 'branch_health', 'test_metrics', 'documentation', 'automation']
         for category in categories:
             if category in self.health_data:
                 score = self.health_data[category].get('score', 0)
-                indicator = "🟢" if score >= 80 else "🟡" if score >= 60 else "🔴"
+                indicator = "[GREEN]" if score >= 80 else "[YELLOW]" if score >= 60 else "[RED]"
                 print(f"   {indicator} {category.replace('_', ' ').title()}: {score}/100")
         
-        print(f"\n🎯 RECOMMENDATIONS ({len(self.health_data['recommendations'])} items):")
+        print(f"\n[TARGET] RECOMMENDATIONS ({len(self.health_data['recommendations'])} items):")
         for i, rec in enumerate(self.health_data['recommendations'], 1):
             print(f"   {i}. {rec}")
         
@@ -554,7 +554,7 @@ class ProjectHealthDashboard:
     
     def quick_check(self) -> Dict[str, Any]:
         """Perform quick health check with essential metrics only."""
-        print("⚡ QUICK HEALTH CHECK")
+        print("[QUICK] QUICK HEALTH CHECK")
         print("=" * 30)
         
         quick_data = {
@@ -577,17 +577,17 @@ class ProjectHealthDashboard:
             
         quick_data['quick_score'] = max(0, score)
         
-        print(f"🔍 Linting Issues: {quick_data['linting_issues']}")
-        print(f"📋 Open Issues: {quick_data['total_issues']}")
-        print(f"🌿 Clean Working Tree: {quick_data['working_tree_clean']}")
-        print(f"🧪 Test Files: {quick_data['test_count']}")
-        print(f"⚡ Quick Health Score: {quick_data['quick_score']}/100")
+        print(f"[SCAN] Linting Issues: {quick_data['linting_issues']}")
+        print(f"[LIST] Open Issues: {quick_data['total_issues']}")
+        print(f"[BRANCH] Clean Working Tree: {quick_data['working_tree_clean']}")
+        print(f"[TEST] Test Files: {quick_data['test_count']}")
+        print(f"[QUICK] Quick Health Score: {quick_data['quick_score']}/100")
         
         return quick_data
     
     def generate_github_issues(self):
         """Generate GitHub issues for critical health problems."""
-        print("📝 GENERATING GITHUB ISSUES FOR CRITICAL PROBLEMS...")
+        print("[WRITE] GENERATING GITHUB ISSUES FOR CRITICAL PROBLEMS...")
         
         # Generate full report first
         if not self.health_data:
@@ -706,7 +706,7 @@ def main():
     if args.output:
         with open(args.output, 'w') as f:
             json.dump(result, f, indent=2, default=str)
-        print(f"\n💾 Report saved to {args.output}")
+        print(f"\n[SAVE] Report saved to {args.output}")
     
     # CI mode exit codes
     if args.ci_mode:

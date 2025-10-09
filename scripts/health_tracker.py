@@ -22,6 +22,7 @@ Usage:
 import sys
 import json
 import sqlite3
+import argparse
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from datetime import datetime, timedelta
@@ -101,7 +102,7 @@ class HealthHistoryTracker:
         
     def record_health_snapshot(self, notes: Optional[str] = None) -> Dict[str, Any]:
         """Record current project health to database."""
-        print("📊 RECORDING HEALTH SNAPSHOT...")
+        print("[DATA] RECORDING HEALTH SNAPSHOT...")
         
         # Get current health data
         dashboard = ProjectHealthDashboard()
@@ -153,8 +154,8 @@ class HealthHistoryTracker:
         
         conn.close()
         
-        print(f"✅ Health snapshot recorded (ID: {record_id})")
-        print(f"📈 Overall Score: {health_data.get('overall_score', 0)}/100")
+        print(f"[OK] Health snapshot recorded (ID: {record_id})")
+        print(f"[UP] Overall Score: {health_data.get('overall_score', 0)}/100")
         
         return {
             'record_id': record_id,
@@ -211,7 +212,7 @@ class HealthHistoryTracker:
                     INSERT INTO health_milestones (timestamp, milestone_type, description, health_score, details)
                     VALUES (?, ?, ?, ?, ?)
                 ''', (timestamp, milestone_type, description, overall_score, json.dumps({'value': value})))
-                print(f"🎯 MILESTONE: {description}")
+                print(f"[TARGET] MILESTONE: {description}")
     
     def _update_trends(self, cursor):
         """Update trend analysis data."""
@@ -265,7 +266,100 @@ class HealthHistoryTracker:
                 VALUES (?, ?, ?, ?, ?, ?)
             ''', (metric_name, curr_val, prev_val, direction, trend_percentage, timestamp))
     
-    def get_health_history(self, days: int = 30) -> List[Dict[str, Any]]:
+    def generate_comprehensive_health_trend_analysis_for_cicd_integration(self, analysis_period_days: int = 30, output_format: str = 'human') -> Dict[str, Any]:
+        """Generate comprehensive health trend analysis optimized for CI/CD pipeline integration.
+        
+        This method provides detailed trend analysis across all health metrics with multiple
+        output formats suitable for human consumption, automated reporting, and CI/CD gates.
+        
+        Args:
+            analysis_period_days: Number of historical days to analyze for trend calculation
+            output_format: Output presentation format ('human', 'json', 'csv', 'summary', 'ci')
+            
+        Returns:
+            Dictionary containing comprehensive trend analysis data with metrics, directions, and percentages
+        """
+        database_connection = sqlite3.connect(self.db_path)
+        database_cursor = database_connection.cursor()
+        
+        historical_cutoff_timestamp = (datetime.now() - timedelta(days=analysis_period_days)).isoformat()
+        database_cursor.execute('''
+            SELECT timestamp, overall_score, code_quality_score, issue_tracking_score,
+                   branch_health_score, test_metrics_score, documentation_score, automation_score
+            FROM health_records 
+            WHERE timestamp >= ? 
+            ORDER BY timestamp ASC
+        ''', (historical_cutoff_timestamp,))
+        
+        historical_health_records = database_cursor.fetchall()
+        database_connection.close()
+        
+        if len(historical_health_records) < 2:
+            insufficient_data_response = {
+                'error_message': f'Insufficient historical data for trend analysis (need 2+ records, have {len(historical_health_records)})',
+                'analysis_period_days': analysis_period_days,
+                'available_records_count': len(historical_health_records)
+            }
+            if output_format in ['human', 'summary']:
+                print(f"[UP] HEALTH TRENDS: Insufficient data ({len(historical_health_records)} records)")
+            elif output_format == 'json':
+                print(json.dumps(insufficient_data_response, indent=2))
+            return insufficient_data_response
+        
+        # Calculate comprehensive trend analysis for each health metric
+        health_metric_names_list = ['overall_score', 'code_quality', 'issue_tracking', 
+                                  'branch_health', 'test_metrics', 'documentation', 'automation']
+        
+        comprehensive_trend_analysis_data = {
+            'analysis_period_days': analysis_period_days,
+            'available_records_count': len(historical_health_records),
+            'trend_analysis_timestamp': datetime.now().isoformat(),
+            'individual_metric_trends': {}
+        }
+        
+        for metric_index, health_metric_name in enumerate(health_metric_names_list, 1):
+            metric_historical_values = [record[metric_index] for record in historical_health_records]
+            if metric_historical_values:
+                earliest_metric_value = metric_historical_values[0]
+                most_recent_metric_value = metric_historical_values[-1]
+                absolute_metric_change = most_recent_metric_value - earliest_metric_value
+                percentage_metric_change = (absolute_metric_change / earliest_metric_value * 100) if earliest_metric_value != 0 else 0
+                
+                comprehensive_trend_analysis_data['individual_metric_trends'][health_metric_name] = {
+                    'current_value': most_recent_metric_value,
+                    'historical_starting_value': earliest_metric_value,
+                    'absolute_change': absolute_metric_change,
+                    'percentage_change': round(percentage_metric_change, 1),
+                    'trend_direction_indicator': 'improving' if absolute_metric_change > 0 else 'declining' if absolute_metric_change < 0 else 'stable',
+                    'average_value_over_period': round(statistics.mean(metric_historical_values), 1),
+                    'peak_value_in_period': max(metric_historical_values),
+                    'lowest_value_in_period': min(metric_historical_values)
+                }
+        
+        # Generate appropriate output based on requested format
+        if output_format == 'json':
+            print(json.dumps(comprehensive_trend_analysis_data, indent=2))
+        elif output_format == 'csv':
+            print("metric_name,current_value,starting_value,absolute_change,percentage_change,trend_direction,average_value,peak_value,lowest_value")
+            for metric_name, metric_data in comprehensive_trend_analysis_data['individual_metric_trends'].items():
+                print(f"{metric_name},{metric_data['current_value']},{metric_data['historical_starting_value']},{metric_data['absolute_change']},{metric_data['percentage_change']},{metric_data['trend_direction_indicator']},{metric_data['average_value_over_period']},{metric_data['peak_value_in_period']},{metric_data['lowest_value_in_period']}")
+        elif output_format == 'summary':
+            overall_health_metric_data = comprehensive_trend_analysis_data['individual_metric_trends'].get('overall_score', {})
+            print(f"HEALTH_TREND_SUMMARY: {overall_health_metric_data.get('current_value', 0)}/100 ({overall_health_metric_data.get('percentage_change', 0):+.1f}% over {analysis_period_days}d)")
+        elif output_format == 'ci':
+            # Machine-readable format optimized for CI/CD pipeline consumption
+            overall_health_metric_data = comprehensive_trend_analysis_data['individual_metric_trends'].get('overall_score', {})
+            print(f"CICD_HEALTH_SCORE={overall_health_metric_data.get('current_value', 0)}")
+            print(f"CICD_HEALTH_TREND_PERCENTAGE={overall_health_metric_data.get('percentage_change', 0)}")
+            print(f"CICD_HEALTH_STATUS={overall_health_metric_data.get('trend_direction_indicator', 'unknown')}")
+        elif output_format == 'human':
+            print(f"[UP] COMPREHENSIVE HEALTH TRENDS ({analysis_period_days} days, {len(historical_health_records)} snapshots):")
+            for metric_name, metric_data in comprehensive_trend_analysis_data['individual_metric_trends'].items():
+                trend_direction_emoji = "[UP]" if metric_data['trend_direction_indicator'] == 'improving' else "[DOWN]" if metric_data['trend_direction_indicator'] == 'declining' else "[STABLE]"
+                human_readable_metric_name = metric_name.replace('_', ' ').title()
+                print(f"   {trend_direction_emoji} {human_readable_metric_name}: {metric_data['current_value']}/100 ({metric_data['percentage_change']:+.1f}%)")
+        
+        return comprehensive_trend_analysis_data
         """Get health history for specified number of days."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -344,7 +438,7 @@ class HealthHistoryTracker:
     
     def generate_dev_blog_entry(self, title_suffix: Optional[str] = None) -> str:
         """Generate automated dev blog entry with health insights."""
-        print("📝 GENERATING DEV BLOG ENTRY...")
+        print("[WRITE] GENERATING DEV BLOG ENTRY...")
         
         # Get current health data
         dashboard = ProjectHealthDashboard()
@@ -370,7 +464,7 @@ class HealthHistoryTracker:
         with open(blog_file, 'w', encoding='utf-8') as f:
             f.write(content)
         
-        print(f"✅ Dev blog entry created: {blog_file}")
+        print(f"[OK] Dev blog entry created: {blog_file}")
         return str(blog_file)
     
     def _generate_blog_content(self, current_health: Dict[str, Any], 
@@ -388,10 +482,10 @@ class HealthHistoryTracker:
 **Overall Health Score: {current_health.get('quick_score', 0)}/100**
 
 ### Quick Metrics:
-- 🔍 Linting Issues: {current_health.get('linting_issues', 0)}
-- 📋 Open Issues: {current_health.get('total_issues', 0)}
-- 🧪 Test Files: {current_health.get('test_count', 0)}
-- 🌿 Clean Working Tree: {'✅' if current_health.get('working_tree_clean') else '❌'}
+- [SCAN] Linting Issues: {current_health.get('linting_issues', 0)}
+- [LIST] Open Issues: {current_health.get('total_issues', 0)}
+- [TEST] Test Files: {current_health.get('test_count', 0)}
+- [BRANCH] Clean Working Tree: {'[OK]' if current_health.get('working_tree_clean') else '[FAIL]'}
 
 ## Health Trends (Last 7 Days)
 
@@ -402,17 +496,17 @@ class HealthHistoryTracker:
             content += "### Trend Analysis:\n"
             for metric, trend_data in trends.items():
                 direction_emoji = {
-                    'IMPROVING': '📈',
-                    'DECLINING': '📉',
-                    'STABLE': '➡️'
-                }.get(trend_data['trend_direction'], '❓')
+                    'IMPROVING': '[UP]',
+                    'DECLINING': '[DOWN]',
+                    'STABLE': '[STABLE]'
+                }.get(trend_data['trend_direction'], '[UNKNOWN]')
                 
                 content += f"- **{metric.replace('_', ' ').title()}**: {direction_emoji} {trend_data['trend_direction']} "
                 content += f"({trend_data['trend_percentage']:+.1f}%)\n"
         
         # Add milestones
         if milestones:
-            content += "\n## Recent Milestones 🎯\n\n"
+            content += "\n## Recent Milestones [TARGET]\n\n"
             for milestone in milestones:
                 milestone_date = datetime.fromisoformat(milestone['timestamp']).strftime('%m/%d')
                 content += f"- **{milestone_date}**: {milestone['description']}\n"
@@ -430,19 +524,19 @@ class HealthHistoryTracker:
         content += "\n## Action Items\n\n"
         
         if current_health.get('linting_issues', 0) > 100:
-            content += "- 🚨 **URGENT**: Address linting issues (current: {})\n".format(
+            content += "- [URGENT] **URGENT**: Address linting issues (current: {})\n".format(
                 current_health.get('linting_issues', 0))
         
         if current_health.get('total_issues', 0) > 30:
-            content += "- 📋 **HIGH**: Reduce issue backlog (current: {})\n".format(
+            content += "- [LIST] **HIGH**: Reduce issue backlog (current: {})\n".format(
                 current_health.get('total_issues', 0))
         
         if current_health.get('test_count', 0) < 50:
-            content += "- 🧪 **MEDIUM**: Increase test coverage (current: {} files)\n".format(
+            content += "- [TEST] **MEDIUM**: Increase test coverage (current: {} files)\n".format(
                 current_health.get('test_count', 0))
         
         if not current_health.get('working_tree_clean', True):
-            content += "- 🌿 **LOW**: Clean up working tree\n"
+            content += "- [BRANCH] **LOW**: Clean up working tree\n"
         
         # Add automation note
         content += f"\n---\n*Generated automatically by Project Health Tracker at {datetime.now().strftime('%H:%M')}*\n"
@@ -451,35 +545,35 @@ class HealthHistoryTracker:
     
     def show_health_dashboard(self):
         """Display interactive health dashboard."""
-        print("🏥 PROJECT HEALTH DASHBOARD")
+        print("[HEALTH] PROJECT HEALTH DASHBOARD")
         print("=" * 50)
         
         # Current status
         dashboard = ProjectHealthDashboard()
         current = dashboard.quick_check()
         
-        print(f"\n📊 CURRENT STATUS:")
+        print(f"\n[DATA] CURRENT STATUS:")
         print(f"   Health Score: {current.get('quick_score', 0)}/100")
         
         # Recent trends
         trends = self.get_trend_analysis()
         if trends:
-            print(f"\n📈 TRENDS:")
+            print(f"\n[UP] TRENDS:")
             for metric, data in trends.items():
-                emoji = {'IMPROVING': '📈', 'DECLINING': '📉', 'STABLE': '➡️'}
-                direction_emoji = emoji.get(data['trend_direction'], '❓')
+                emoji = {'IMPROVING': '[UP]', 'DECLINING': '[DOWN]', 'STABLE': '[STABLE]'}
+                direction_emoji = emoji.get(data['trend_direction'], '[UNKNOWN]')
                 print(f"   {direction_emoji} {metric.replace('_', ' ').title()}: {data['trend_direction']}")
         
         # Recent milestones
         milestones = self.get_recent_milestones()
         if milestones:
-            print(f"\n🎯 RECENT MILESTONES:")
+            print(f"\n[TARGET] RECENT MILESTONES:")
             for milestone in milestones[:3]:  # Show top 3
                 date = datetime.fromisoformat(milestone['timestamp']).strftime('%m/%d')
                 print(f"   {date}: {milestone['description']}")
         
         # Quick actions
-        print(f"\n⚡ QUICK ACTIONS:")
+        print(f"\n[QUICK] QUICK ACTIONS:")
         print(f"   Record health: python scripts/health_tracker.py --record-health")
         print(f"   Generate blog: python scripts/health_tracker.py --generate-blog-entry")
         print(f"   View history: python scripts/health_tracker.py --health-history")
@@ -488,7 +582,7 @@ class HealthHistoryTracker:
 def main():
     import argparse
     
-    parser = argparse.ArgumentParser(description='Project Health History Tracker')
+    parser = argparse.ArgumentParser(description='Project Health History Tracker & CI/CD Integration')
     parser.add_argument('--record-health', action='store_true',
                        help='Record current health snapshot')
     parser.add_argument('--generate-blog-entry', action='store_true',
@@ -503,26 +597,51 @@ def main():
                        help='Add notes to health record')
     parser.add_argument('--days', type=int, default=30,
                        help='Number of days for history')
+    parser.add_argument('--format', type=str, default='human',
+                       choices=['human', 'json', 'csv', 'summary', 'ci'],
+                       help='Output format for CI/CD integration')
+    parser.add_argument('--export', type=str,
+                       help='Export data to file')
+    parser.add_argument('--ci-mode', action='store_true',
+                       help='CI/CD mode: machine-readable output')
     
     args = parser.parse_args()
     
     tracker = HealthHistoryTracker()
     
+    # CI mode overrides format
+    if args.ci_mode:
+        args.format = 'ci'
+    
     if args.record_health:
-        tracker.record_health_snapshot(notes=args.notes)
+        result = tracker.record_health_snapshot(notes=args.notes)
+        if args.format in ['json', 'ci']:
+            print(json.dumps({'health_recorded': True, 'timestamp': result.get('timestamp', '')}))
     elif args.generate_blog_entry:
-        tracker.generate_dev_blog_entry()
+        blog_path = tracker.generate_dev_blog_entry()
+        if args.format in ['json', 'ci']:
+            print(json.dumps({'blog_generated': str(blog_path)}))
     elif args.show_trends:
-        trends = tracker.get_trend_analysis()
-        print("📈 HEALTH TRENDS:")
-        for metric, data in trends.items():
-            print(f"   {metric}: {data['trend_direction']} ({data['trend_percentage']:+.1f}%)")
+        comprehensive_trend_analysis_results = tracker.generate_comprehensive_health_trend_analysis_for_cicd_integration(analysis_period_days=args.days, output_format=args.format)
+        if args.export:
+            with open(args.export, 'w') as export_file_handle:
+                if args.format == 'json':
+                    json.dump(comprehensive_trend_analysis_results, export_file_handle, indent=2)
+                else:
+                    export_file_handle.write(str(comprehensive_trend_analysis_results))
     elif args.health_history:
         history = tracker.get_health_history(days=args.days)
-        print(f"📊 HEALTH HISTORY (Last {args.days} days):")
-        for record in history:
-            date = datetime.fromisoformat(record['timestamp']).strftime('%m/%d %H:%M')
-            print(f"   {date}: Score {record['overall_score']}/100")
+        if args.format == 'json':
+            print(json.dumps(history, indent=2))
+        elif args.format == 'csv':
+            print("timestamp,overall_score,code_quality,issue_tracking,branch_health,test_metrics,documentation,automation")
+            for record in history:
+                print(f"{record['timestamp']},{record['overall_score']},{record['code_quality']},{record['issue_tracking']},{record['branch_health']},{record['test_metrics']},{record['documentation']},{record['automation']}")
+        else:
+            print(f"[DATA] HEALTH HISTORY (Last {args.days} days):")
+            for record in history:
+                date = datetime.fromisoformat(record['timestamp']).strftime('%m/%d %H:%M')
+                print(f"   {date}: Score {record['overall_score']}/100")
     elif args.dashboard:
         tracker.show_health_dashboard()
     else:

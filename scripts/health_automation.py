@@ -44,33 +44,33 @@ class HealthAutomationSuite:
         
     def daily_health_check(self):
         """Automated daily health check with full reporting."""
-        print("🌅 DAILY HEALTH CHECK INITIATED")
+        print("[DAILY] DAILY HEALTH CHECK INITIATED")
         print("=" * 50)
         
         # 1. Record health snapshot
-        print("\n📊 STEP 1: Recording health snapshot...")
+        print("\n[DATA] STEP 1: Recording health snapshot...")
         snapshot = self.tracker.record_health_snapshot(
             notes=f"Daily automated health check - {datetime.now().strftime('%Y-%m-%d')}"
         )
         
         # 2. Generate dev blog entry
-        print("\n📝 STEP 2: Generating dev blog entry...")
+        print("\n[WRITE] STEP 2: Generating dev blog entry...")
         blog_file = self.tracker.generate_dev_blog_entry()
         
         # 3. Check for critical issues
-        print("\n🚨 STEP 3: Checking for critical issues...")
+        print("\n[URGENT] STEP 3: Checking for critical issues...")
         health_data = snapshot['health_data']
         critical_issues = self._identify_critical_issues(health_data)
         
         if critical_issues:
-            print(f"🚨 FOUND {len(critical_issues)} CRITICAL ISSUES:")
+            print(f"[URGENT] FOUND {len(critical_issues)} CRITICAL ISSUES:")
             for issue in critical_issues:
                 print(f"   - {issue}")
         else:
-            print("✅ No critical issues detected!")
+            print("[OK] No critical issues detected!")
         
         # 4. Generate summary
-        print("\n📋 STEP 4: Daily summary...")
+        print("\n[LIST] STEP 4: Daily summary...")
         self._print_daily_summary(health_data, blog_file, critical_issues)
         
         return {
@@ -81,7 +81,7 @@ class HealthAutomationSuite:
     
     def emergency_triage(self):
         """Emergency triage mode for critical health issues."""
-        print("🚨 EMERGENCY TRIAGE MODE ACTIVATED")
+        print("[URGENT] EMERGENCY TRIAGE MODE ACTIVATED")
         print("=" * 50)
         
         # Get current health
@@ -91,10 +91,10 @@ class HealthAutomationSuite:
         critical_issues = self._identify_critical_issues(health_data)
         
         if not critical_issues:
-            print("✅ No emergency issues detected!")
+            print("[OK] No emergency issues detected!")
             return
         
-        print(f"\n🚨 EMERGENCY ISSUES DETECTED ({len(critical_issues)}):")
+        print(f"\n[URGENT] EMERGENCY ISSUES DETECTED ({len(critical_issues)}):")
         
         # Prioritize issues
         prioritized_issues = self._prioritize_emergency_issues(critical_issues, health_data)
@@ -110,7 +110,7 @@ class HealthAutomationSuite:
     
     def improvement_blitz(self):
         """Rapid improvement mode targeting biggest wins."""
-        print("⚡ IMPROVEMENT BLITZ MODE")
+        print("[QUICK] IMPROVEMENT BLITZ MODE")
         print("=" * 50)
         
         health_data = self.dashboard.generate_full_report()
@@ -118,20 +118,20 @@ class HealthAutomationSuite:
         # Identify biggest wins
         improvements = self._identify_biggest_wins(health_data)
         
-        print(f"\n🎯 BIGGEST IMPROVEMENT OPPORTUNITIES ({len(improvements)}):")
+        print(f"\n[TARGET] BIGGEST IMPROVEMENT OPPORTUNITIES ({len(improvements)}):")
         
         for i, (impact, effort, improvement, action) in enumerate(improvements, 1):
-            impact_emoji = "🎯" if impact == "HIGH" else "📈" if impact == "MEDIUM" else "⚡"
-            effort_emoji = "🟢" if effort == "LOW" else "🟡" if effort == "MEDIUM" else "🔴"
+            impact_emoji = "[TARGET]" if impact == "HIGH" else "[UP]" if impact == "MEDIUM" else "[QUICK]"
+            effort_emoji = "[GREEN]" if effort == "LOW" else "[YELLOW]" if effort == "MEDIUM" else "[RED]"
             
             print(f"\n{i}. {impact_emoji} {improvement} (Impact: {impact}, Effort: {effort_emoji} {effort})")
-            print(f"   🔧 ACTION: {action}")
+            print(f"   [FIX] ACTION: {action}")
         
         return improvements
     
     def celebration_mode(self):
         """Celebrate recent achievements and milestones."""
-        print("🎉 CELEBRATION MODE - ACKNOWLEDGING WINS!")
+        print("[CELEBRATE] CELEBRATION MODE - ACKNOWLEDGING WINS!")
         print("=" * 50)
         
         # Get recent milestones
@@ -142,9 +142,9 @@ class HealthAutomationSuite:
         
         # Celebrate milestones
         if milestones:
-            print(f"\n🏆 RECENT MILESTONES ({len(milestones)}):")
+            print(f"\n[TROPHY] RECENT MILESTONES ({len(milestones)}):")
             for milestone in milestones:
-                print(f"   🎯 {milestone['description']}")
+                print(f"   [TARGET] {milestone['description']}")
                 celebrations.append(f"Milestone: {milestone['description']}")
         
         # Celebrate positive trends
@@ -154,9 +154,9 @@ class HealthAutomationSuite:
         ]
         
         if positive_trends:
-            print(f"\n📈 POSITIVE TRENDS ({len(positive_trends)}):")
+            print(f"\n[UP] POSITIVE TRENDS ({len(positive_trends)}):")
             for metric, data in positive_trends:
-                print(f"   📈 {metric.replace('_', ' ').title()}: +{data['trend_percentage']:.1f}%")
+                print(f"   [UP] {metric.replace('_', ' ').title()}: +{data['trend_percentage']:.1f}%")
                 celebrations.append(f"Improved {metric}: +{data['trend_percentage']:.1f}%")
         
         # Celebrate big numbers
@@ -164,15 +164,15 @@ class HealthAutomationSuite:
         big_wins = self._identify_celebration_worthy_metrics(health_data)
         
         if big_wins:
-            print(f"\n🌟 IMPRESSIVE METRICS:")
+            print(f"\n[STAR] IMPRESSIVE METRICS:")
             for metric, value, description in big_wins:
-                print(f"   🌟 {description}: {value}")
+                print(f"   [STAR] {description}: {value}")
                 celebrations.append(f"{description}: {value}")
         
         if not celebrations:
-            print("🔧 Keep working - your next celebration is coming!")
+            print("[FIX] Keep working - your next celebration is coming!")
         else:
-            print(f"\n🎊 TOTAL CELEBRATIONS: {len(celebrations)}")
+            print(f"\n[PARTY] TOTAL CELEBRATIONS: {len(celebrations)}")
             
         return celebrations
     
@@ -215,20 +215,20 @@ class HealthAutomationSuite:
         
         for issue in critical_issues:
             if "HEALTH CRISIS" in issue:
-                prioritized.append(("🔴 CRITICAL", issue, "Run full health improvement blitz"))
+                prioritized.append(("[RED] CRITICAL", issue, "Run full health improvement blitz"))
             elif "LINTING CRISIS" in issue:
-                prioritized.append(("🟠 HIGH", issue, "Run automated linting fixes"))
+                prioritized.append(("[ORANGE] HIGH", issue, "Run automated linting fixes"))
             elif "ISSUE BACKLOG CRISIS" in issue:
-                prioritized.append(("🟡 MEDIUM", issue, "Emergency issue triage session"))
+                prioritized.append(("[YELLOW] MEDIUM", issue, "Emergency issue triage session"))
             elif "TEST CRISIS" in issue:
-                prioritized.append(("🟠 HIGH", issue, "Immediate test coverage review"))
+                prioritized.append(("[ORANGE] HIGH", issue, "Immediate test coverage review"))
             elif "WORKING TREE CHAOS" in issue:
-                prioritized.append(("🟢 LOW", issue, "Commit or stash changes"))
+                prioritized.append(("[GREEN] LOW", issue, "Commit or stash changes"))
             else:
-                prioritized.append(("❓ UNKNOWN", issue, "Manual investigation required"))
+                prioritized.append(("[UNKNOWN] UNKNOWN", issue, "Manual investigation required"))
         
         # Sort by priority (CRITICAL > HIGH > MEDIUM > LOW)
-        priority_order = {"🔴 CRITICAL": 0, "🟠 HIGH": 1, "🟡 MEDIUM": 2, "🟢 LOW": 3, "❓ UNKNOWN": 4}
+        priority_order = {"[RED] CRITICAL": 0, "[ORANGE] HIGH": 1, "[YELLOW] MEDIUM": 2, "[GREEN] LOW": 3, "[UNKNOWN] UNKNOWN": 4}
         prioritized.sort(key=lambda x: priority_order.get(x[0], 5))
         
         return prioritized
@@ -319,7 +319,7 @@ class HealthAutomationSuite:
     
     def _generate_emergency_action_plan(self, prioritized_issues: List[tuple]):
         """Generate actionable emergency plan."""
-        print(f"\n⚡ EMERGENCY ACTION PLAN:")
+        print(f"\n[QUICK] EMERGENCY ACTION PLAN:")
         print(f"   1. Focus on {prioritized_issues[0][1] if prioritized_issues else 'general improvements'}")
         print(f"   2. Execute: {prioritized_issues[0][2] if prioritized_issues else 'run health check'}")
         print(f"   3. Re-run health check to verify improvement")
@@ -329,19 +329,19 @@ class HealthAutomationSuite:
         """Print daily summary report."""
         overall_score = health_data.get('overall_score', 0)
         
-        print(f"\n📊 DAILY HEALTH SUMMARY:")
-        print(f"   🏥 Overall Health: {overall_score}/100")
-        print(f"   📝 Blog Entry: {Path(blog_file).name}")
-        print(f"   🚨 Critical Issues: {len(critical_issues)}")
+        print(f"\n[DATA] DAILY HEALTH SUMMARY:")
+        print(f"   [HEALTH] Overall Health: {overall_score}/100")
+        print(f"   [WRITE] Blog Entry: {Path(blog_file).name}")
+        print(f"   [URGENT] Critical Issues: {len(critical_issues)}")
         
         if overall_score >= 80:
-            print(f"   🎉 STATUS: Project health is EXCELLENT!")
+            print(f"   [CELEBRATE] STATUS: Project health is EXCELLENT!")
         elif overall_score >= 60:
-            print(f"   📈 STATUS: Project health is GOOD - keep improving!")
+            print(f"   [UP] STATUS: Project health is GOOD - keep improving!")
         else:
-            print(f"   ⚠️ STATUS: Project needs attention")
+            print(f"   [WARNING] STATUS: Project needs attention")
         
-        print(f"\n⚡ NEXT ACTIONS:")
+        print(f"\n[QUICK] NEXT ACTIONS:")
         if critical_issues:
             print(f"   - Run: python scripts/health_automation.py --emergency-triage")
         else:
@@ -377,7 +377,7 @@ def main():
     elif args.celebration_mode:
         suite.celebration_mode()
     elif args.full_automation:
-        print("🚀 FULL AUTOMATION SUITE")
+        print("[LAUNCH] FULL AUTOMATION SUITE")
         print("=" * 50)
         suite.daily_health_check()
         print("\n" + "="*50)

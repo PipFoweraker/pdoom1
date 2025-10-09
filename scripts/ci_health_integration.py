@@ -47,28 +47,28 @@ class CIHealthIntegration:
         
     def health_gate_check(self, min_score: int = 60) -> bool:
         """Health gate check for CI/CD pipeline."""
-        print("🚦 HEALTH GATE CHECK")
+        print("[GATE] HEALTH GATE CHECK")
         print("=" * 40)
         
         # Quick health check for speed
         health_data = self.dashboard.quick_check()
         score = health_data.get('quick_score', 0)
         
-        print(f"📊 Current Health Score: {score}/100")
-        print(f"🎯 Required Minimum: {min_score}/100")
+        print(f"[DATA] Current Health Score: {score}/100")
+        print(f"[TARGET] Required Minimum: {min_score}/100")
         
         if score >= min_score:
-            print("✅ HEALTH GATE: PASSED")
+            print("[OK] HEALTH GATE: PASSED")
             self._set_github_output('health_gate_status', 'passed')
             self._set_github_output('health_score', str(score))
             return True
         else:
-            print("❌ HEALTH GATE: FAILED")
-            print(f"💡 Improvement needed: {min_score - score} points")
+            print("[FAIL] HEALTH GATE: FAILED")
+            print(f"[IDEA] Improvement needed: {min_score - score} points")
             
             # Generate immediate action recommendations
             critical_issues = self._identify_gate_blockers(health_data)
-            print(f"\n🚨 GATE BLOCKERS ({len(critical_issues)}):")
+            print(f"\n[URGENT] GATE BLOCKERS ({len(critical_issues)}):")
             for issue in critical_issues:
                 print(f"   - {issue}")
             
@@ -80,7 +80,7 @@ class CIHealthIntegration:
     
     def post_merge_health_tracking(self):
         """Track health changes after merge to main."""
-        print("📈 POST-MERGE HEALTH TRACKING")
+        print("[UP] POST-MERGE HEALTH TRACKING")
         print("=" * 40)
         
         # Record health snapshot
@@ -94,24 +94,24 @@ class CIHealthIntegration:
         regressions = self._detect_health_regressions(health_data)
         
         if regressions:
-            print(f"⚠️ HEALTH REGRESSIONS DETECTED ({len(regressions)}):")
+            print(f"[WARNING] HEALTH REGRESSIONS DETECTED ({len(regressions)}):")
             for regression in regressions:
-                print(f"   📉 {regression}")
+                print(f"   [DOWN] {regression}")
         else:
-            print("✅ No health regressions detected")
+            print("[OK] No health regressions detected")
         
         # Check for improvements
         improvements = self._detect_health_improvements(health_data)
         
         if improvements:
-            print(f"🎉 HEALTH IMPROVEMENTS DETECTED ({len(improvements)}):")
+            print(f"[CELEBRATE] HEALTH IMPROVEMENTS DETECTED ({len(improvements)}):")
             for improvement in improvements:
-                print(f"   📈 {improvement}")
+                print(f"   [UP] {improvement}")
         
         # Generate dev blog entry if significant changes
         if regressions or improvements:
             blog_file = self.tracker.generate_dev_blog_entry(title_suffix="post-merge")
-            print(f"📝 Dev blog entry created: {Path(blog_file).name}")
+            print(f"[WRITE] Dev blog entry created: {Path(blog_file).name}")
         
         # Set GitHub outputs
         self._set_github_output('health_regressions', json.dumps(regressions))
@@ -126,14 +126,14 @@ class CIHealthIntegration:
     
     def release_readiness_check(self, target_score: int = 80) -> bool:
         """Comprehensive release readiness assessment."""
-        print("🚀 RELEASE READINESS CHECK")
+        print("[LAUNCH] RELEASE READINESS CHECK")
         print("=" * 40)
         
         health_data = self.dashboard.generate_full_report()
         overall_score = health_data.get('overall_score', 0)
         
-        print(f"📊 Overall Health Score: {overall_score}/100")
-        print(f"🎯 Release Target: {target_score}/100")
+        print(f"[DATA] Overall Health Score: {overall_score}/100")
+        print(f"[TARGET] Release Target: {target_score}/100")
         
         # Detailed readiness assessment
         readiness_checks = self._perform_release_readiness_checks(health_data)
@@ -141,25 +141,25 @@ class CIHealthIntegration:
         passed_checks = sum(1 for check in readiness_checks if check['passed'])
         total_checks = len(readiness_checks)
         
-        print(f"\n✅ READINESS CHECKS: {passed_checks}/{total_checks} passed")
+        print(f"\n[OK] READINESS CHECKS: {passed_checks}/{total_checks} passed")
         
         for check in readiness_checks:
-            status = "✅" if check['passed'] else "❌"
+            status = "[OK]" if check['passed'] else "[FAIL]"
             print(f"   {status} {check['name']}: {check['description']}")
         
         # Overall readiness determination
         is_ready = overall_score >= target_score and passed_checks == total_checks
         
         if is_ready:
-            print(f"\n🎉 RELEASE READY! All checks passed.")
+            print(f"\n[CELEBRATE] RELEASE READY! All checks passed.")
         else:
-            print(f"\n⚠️ RELEASE NOT READY - {total_checks - passed_checks} checks failed")
+            print(f"\n[WARNING] RELEASE NOT READY - {total_checks - passed_checks} checks failed")
             
             # Generate release blockers report
             blockers = [check for check in readiness_checks if not check['passed']]
-            print(f"\n🚫 RELEASE BLOCKERS ({len(blockers)}):")
+            print(f"\n[BLOCK] RELEASE BLOCKERS ({len(blockers)}):")
             for blocker in blockers:
-                print(f"   🚫 {blocker['name']}: {blocker['blocker_reason']}")
+                print(f"   [BLOCK] {blocker['name']}: {blocker['blocker_reason']}")
         
         # Set GitHub outputs
         self._set_github_output('release_ready', 'true' if is_ready else 'false')
@@ -170,7 +170,7 @@ class CIHealthIntegration:
     
     def automated_health_reporting(self):
         """Generate automated health reports for stakeholders."""
-        print("📊 AUTOMATED HEALTH REPORTING")
+        print("[DATA] AUTOMATED HEALTH REPORTING")
         print("=" * 40)
         
         # Generate comprehensive report
@@ -184,11 +184,11 @@ class CIHealthIntegration:
         with open(report_file, 'w') as f:
             json.dump(report, f, indent=2, default=str)
         
-        print(f"📄 Health report saved: {report_file.name}")
+        print(f"[FILE] Health report saved: {report_file.name}")
         
         # Generate dev blog entry
         blog_file = self.tracker.generate_dev_blog_entry(title_suffix="automated-report")
-        print(f"📝 Dev blog entry: {Path(blog_file).name}")
+        print(f"[WRITE] Dev blog entry: {Path(blog_file).name}")
         
         # Set GitHub outputs
         self._set_github_output('report_file', str(report_file))
