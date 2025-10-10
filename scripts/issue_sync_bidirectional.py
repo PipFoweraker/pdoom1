@@ -142,7 +142,7 @@ class LocalIssueManager:
         self.save_metadata()
 
 class GitHubIssueManager:
-    '''Manages GitHub Issues via GitHub CLI.'''
+    '''Manages GitHub Issues via GitHub CLI with robust encoding.'''
     
     def __init__(self):
         self.verify_gh_cli()
@@ -150,44 +150,96 @@ class GitHubIssueManager:
     def verify_gh_cli(self) -> None:
         '''Verify GitHub CLI is installed and authenticated.'''
         try:
-            result = subprocess.run(['gh', 'auth', 'status'], 
-                                  capture_output=True, text=True)
+            result = self._run_command(['gh', 'auth', 'status'])
             if result.returncode != 0:
                 raise RuntimeError("GitHub CLI not authenticated. Run 'gh auth login'")
         except FileNotFoundError:
             raise RuntimeError('GitHub CLI not found. Please install GitHub CLI')
     
+    def _run_command(self, cmd: List[str], input_text: Optional[str] = None) -> subprocess.CompletedProcess:
+        '''Run subprocess command with robust encoding handling.'''
+        import platform
+        
+        # Determine the best encoding for the current platform
+        encoding = 'utf-8'
+        if platform.system() == 'Windows':
+            # Windows can have encoding issues, try multiple fallbacks
+            try:
+                encoding = 'utf-8'
+            except:
+                encoding = 'cp1252'  # Windows default
+        
+        try:
+            result = subprocess.run(
+                cmd,
+                input=input_text,
+                capture_output=True,
+                text=True,
+                encoding=encoding,
+                errors='replace',  # Replace invalid characters instead of failing
+                cwd=PROJECT_ROOT
+            )
+            return result
+        except UnicodeDecodeError:
+            # Fallback to bytes mode if encoding fails
+            print(f'Warning: Encoding issue with command {cmd}, using fallback')
+            result = subprocess.run(
+                cmd,
+                input=input_text.encode('utf-8') if input_text else None,
+                capture_output=True,
+                cwd=PROJECT_ROOT
+            )
+            # Decode manually with error handling
+            result.stdout = result.stdout.decode('utf-8', errors='replace')
+            result.stderr = result.stderr.decode('utf-8', errors='replace')
+            return result
+    
     def get_all_issues(self) -> List[Dict[str, Any]]:
-        '''Get all GitHub issues.'''
+        '''Get all GitHub issues with robust encoding handling.'''
         try:
             cmd = ['gh', 'issue', 'list', '--limit', '1000', '--json', 
                    'number,title,body,state,labels,createdAt,updatedAt']
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            return json.loads(result.stdout)
-        except subprocess.CalledProcessError as e:
+            result = self._run_command(cmd)
+            
+            if result.returncode == 0:
+                return json.loads(result.stdout)
+            else:
+                print(f'Error fetching GitHub issues: {result.stderr}')
+                return []
+                
+        except json.JSONDecodeError as e:
+            print(f'Error parsing GitHub issues JSON: {e}')
+            return []
+        except Exception as e:
             print(f'Error fetching GitHub issues: {e}')
             return []
     
     def create_issue(self, title: str, body: str, labels: Optional[List[str]] = None) -> Optional[int]:
-        '''Create a new GitHub issue and return its number.'''
+        '''Create a new GitHub issue with robust encoding.'''
         cmd = ['gh', 'issue', 'create', '--title', title, '--body', body]
         if labels:
             cmd.extend(['--label', ','.join(labels)])
         
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-            # Parse issue number from output URL
-            output = result.stdout.strip()
-            if '/issues/' in output:
-                return int(output.split('/issues/')[-1])
-        except subprocess.CalledProcessError as e:
+            result = self._run_command(cmd)
+            if result.returncode == 0:
+                # Extract issue number from output
+                output_lines = result.stdout.strip().split('\n')
+                for line in output_lines:
+                    if 'github.com' in line and '/issues/' in line:
+                        issue_number = line.split('/issues/')[-1].split()[0]
+                        return int(issue_number)
+                return None
+            else:
+                print(f'Error creating GitHub issue: {result.stderr}')
+                return None
+        except Exception as e:
             print(f'Error creating GitHub issue: {e}')
-        
-        return None
+            return None
     
     def update_issue(self, issue_number: int, title: Optional[str] = None, 
                     body: Optional[str] = None) -> bool:
-        '''Update an existing GitHub issue.'''
+        '''Update an existing GitHub issue with robust encoding.'''
         cmd = ['gh', 'issue', 'edit', str(issue_number)]
         if title:
             cmd.extend(['--title', title])
@@ -195,9 +247,15 @@ class GitHubIssueManager:
             cmd.extend(['--body', body])
         
         try:
-            subprocess.run(cmd, capture_output=True, text=True, check=True)
-            return True
-        except subprocess.CalledProcessError as e:
+            result = self._run_command(cmd)
+            if result.returncode == 0:
+                return True
+            else:
+                print(f'Error updating GitHub issue #{issue_number}: {result.stderr}')
+                return False
+        except Exception as e:
+            print(f'Error updating GitHub issue #{issue_number}: {e}')
+            return False
             print(f'Error updating GitHub issue #{issue_number}: {e}')
             return False
 

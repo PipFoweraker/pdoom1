@@ -89,15 +89,16 @@ class GitHubIssueSync:
             cmd.extend(['--label', ','.join(labels)])
             
         try:
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=self.repo_path)
+            result = subprocess.run(cmd, capture_output=True, text=True, 
+                                  encoding='utf-8', errors='replace', cwd=self.repo_path)
             if result.returncode == 0:
-                print(f'[EMOJI] Created GitHub issue: {title}')
+                print(f'SUCCESS Created GitHub issue: {title}')
                 return True
             else:
-                print(f'[EMOJI] Failed to create issue: {result.stderr}')
+                print(f'ERROR Failed to create issue: {result.stderr}')
                 return False
         except Exception as e:
-            print(f'[EMOJI] Error creating issue: {e}')
+            print(f'ERROR Error creating issue: {e}')
             return False
     
     def sync_issues(self, dry_run: bool = True) -> Dict:
