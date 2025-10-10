@@ -796,6 +796,42 @@ pip install pytest
 pytest tests/ -v
 ```
 
+### Development Tools
+
+**Interactive Development Tool:**
+```sh
+# Interactive menu for testing game systems
+python tools/dev_tool.py
+
+# Run specific tests
+python tools/dev_tool.py --test leaderboard
+python tools/dev_tool.py --test dual
+python tools/dev_tool.py --list
+```
+
+**Cross-Platform ASCII Compliance & Documentation Quality Tools:**
+```sh
+# Comprehensive standards enforcement
+python scripts/enforce_standards.py --check-all
+
+# ASCII compliance for cross-platform compatibility
+python scripts/ascii_compliance_fixer.py --file filename.md
+python scripts/ascii_compliance_fixer.py --directory docs/
+
+# Intelligent cleanup of leftover Unicode artifacts and formatting remnants
+python scripts/ascii_cleanup_remnants.py --file filename.md
+python scripts/ascii_cleanup_remnants.py --scan docs/
+```
+
+**Pre-release Validation:**
+```sh
+# Pre-version bump quality checks
+python scripts/pre_version_bump.py
+
+# Logging system testing
+python scripts/logging_system.py
+```
+
 ### Test Coverage
 
 **233 automated tests** covering all major systems:

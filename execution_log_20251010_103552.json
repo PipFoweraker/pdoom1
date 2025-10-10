@@ -1,0 +1,202 @@
+{
+  "metadata": {
+    "export_timestamp": "2025-10-10T10:35:52.989499",
+    "game_version": "v0.10.1",
+    "initial_seed": "test-logging-001",
+    "controller_config": {}
+  },
+  "initial_state": {
+    "turn": 0,
+    "money": 100000,
+    "staff": 2,
+    "reputation": 50,
+    "doom": 25,
+    "action_points": 2,
+    "compute": 0,
+    "seed": "test-logging-001",
+    "player_name": "Anonymous",
+    "lab_name": "Adaptive Computing",
+    "timestamp": "2025-10-10T10:35:52.989141",
+    "game_version": "v0.10.1",
+    "selected_actions": [],
+    "messages": [
+      "Game started! Select actions, then End Turn."
+    ],
+    "event_log": [],
+    "upgrades": [
+      {
+        "name": "Upgrade Computer System",
+        "desc": "Boosts research effectiveness (+1 research per action)",
+        "cost": 200,
+        "purchased": false,
+        "effect_key": "better_computers"
+      },
+      {
+        "name": "Buy Comfy Office Chairs",
+        "desc": "Staff morale up (less likely to lose staff on low funds)",
+        "cost": 120,
+        "purchased": false,
+        "effect_key": "comfy_chairs"
+      },
+      {
+        "name": "Secure Cloud Provider",
+        "desc": "Reduces doom spikes from lab breakthroughs",
+        "cost": 160,
+        "purchased": false,
+        "effect_key": "secure_cloud"
+      },
+      {
+        "name": "Accounting Software",
+        "desc": "Enables cash flow tracking, prevents board oversight ($500)",
+        "cost": 500,
+        "purchased": false,
+        "effect_key": "accounting_software",
+        "custom_effect": "buy_accounting_software"
+      },
+      {
+        "name": "Compact Activity Display",
+        "desc": "Minimize activity log to save screen space ($150)",
+        "cost": 150,
+        "purchased": false,
+        "effect_key": "compact_activity_display",
+        "custom_effect": "buy_compact_activity_display"
+      },
+      {
+        "name": "High-Performance Computing Cluster",
+        "desc": "Advanced compute infrastructure (+20 compute, research effectiveness +25%)",
+        "cost": 800,
+        "purchased": false,
+        "effect_key": "hpc_cluster"
+      },
+      {
+        "name": "Research Automation Suite",
+        "desc": "AI-assisted research tools (research actions more effective with compute)",
+        "cost": 600,
+        "purchased": false,
+        "effect_key": "research_automation"
+      }
+    ],
+    "opponents": [
+      "<src.core.opponents.Opponent object at 0x000001CBBFEA53D0>",
+      "<src.core.opponents.Opponent object at 0x000001CBBFEA5FD0>",
+      "<src.core.opponents.Opponent object at 0x000001CBBFEA56D0>",
+      "<src.core.opponents.Opponent object at 0x000001CBBFEA5550>"
+    ]
+  },
+  "final_state": {
+    "turn": 0,
+    "money": 99200,
+    "staff": 3,
+    "reputation": 50,
+    "doom": 25,
+    "action_points": 2,
+    "compute": 0,
+    "seed": "test-logging-001",
+    "player_name": "Anonymous",
+    "lab_name": "Adaptive Computing",
+    "timestamp": "2025-10-10T10:35:52.989610",
+    "game_version": "v0.10.1",
+    "selected_actions": [],
+    "messages": [
+      "Game started! Select actions, then End Turn."
+    ],
+    "event_log": [],
+    "upgrades": [
+      {
+        "name": "Upgrade Computer System",
+        "desc": "Boosts research effectiveness (+1 research per action)",
+        "cost": 200,
+        "purchased": false,
+        "effect_key": "better_computers"
+      },
+      {
+        "name": "Buy Comfy Office Chairs",
+        "desc": "Staff morale up (less likely to lose staff on low funds)",
+        "cost": 120,
+        "purchased": false,
+        "effect_key": "comfy_chairs"
+      },
+      {
+        "name": "Secure Cloud Provider",
+        "desc": "Reduces doom spikes from lab breakthroughs",
+        "cost": 160,
+        "purchased": false,
+        "effect_key": "secure_cloud"
+      },
+      {
+        "name": "Accounting Software",
+        "desc": "Enables cash flow tracking, prevents board oversight ($500)",
+        "cost": 500,
+        "purchased": false,
+        "effect_key": "accounting_software",
+        "custom_effect": "buy_accounting_software"
+      },
+      {
+        "name": "Compact Activity Display",
+        "desc": "Minimize activity log to save screen space ($150)",
+        "cost": 150,
+        "purchased": false,
+        "effect_key": "compact_activity_display",
+        "custom_effect": "buy_compact_activity_display"
+      },
+      {
+        "name": "High-Performance Computing Cluster",
+        "desc": "Advanced compute infrastructure (+20 compute, research effectiveness +25%)",
+        "cost": 800,
+        "purchased": false,
+        "effect_key": "hpc_cluster"
+      },
+      {
+        "name": "Research Automation Suite",
+        "desc": "AI-assisted research tools (research actions more effective with compute)",
+        "cost": 600,
+        "purchased": false,
+        "effect_key": "research_automation"
+      }
+    ],
+    "opponents": [
+      "<src.core.opponents.Opponent object at 0x000001CBBFEA5C10>",
+      "<src.core.opponents.Opponent object at 0x000001CBBFEA5E50>",
+      "<src.core.opponents.Opponent object at 0x000001CBBFEA5850>",
+      "<src.core.opponents.Opponent object at 0x000001CBBFEA62D0>"
+    ]
+  },
+  "execution_log": [
+    {
+      "success": true,
+      "action_id": "hire_staff",
+      "parameters": {
+        "count": 1
+      },
+      "outcome": {
+        "staff_hired": 1,
+        "cost": 800
+      },
+      "state_changes": {
+        "money": {
+          "from": 100000,
+          "to": 99200,
+          "delta": -800
+        },
+        "staff": {
+          "from": 2,
+          "to": 3,
+          "delta": 1
+        }
+      },
+      "execution_time_ms": 0.19979476928710938,
+      "error_message": null
+    }
+  ],
+  "summary": {
+    "total_actions": 1,
+    "successful_actions": 1,
+    "failed_actions": 0,
+    "success_rate": 1.0,
+    "total_execution_time_seconds": 0.0005311965942382812,
+    "average_action_time_ms": 0.19979476928710938,
+    "actions_per_second": 1882.5421903052065,
+    "current_turn": 0,
+    "game_version": "v0.10.1"
+  }
+}

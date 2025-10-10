@@ -1,0 +1,24 @@
+{
+  "name": "Quick Action Test",
+  "description": "Simple test for basic action execution",
+  "initial_state": {
+    "seed": "quick-action-test",
+    "money": 100000
+  },
+  "actions": [
+    {
+      "action_id": "hire_staff",
+      "parameters": {"count": 1}
+    },
+    {
+      "action_id": "end_turn"
+    }
+  ],
+  "end_conditions": {
+    "max_turns": 2
+  },
+  "success_criteria": [
+    {"money": "> 0"},
+    {"turn": "== 2"}
+  ]
+}
