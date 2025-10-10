@@ -4,6 +4,8 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 
 **Current Version**: v0.8.0 "Alpha Release - Modular Architecture"
 
+**CRITICAL ASCII-ONLY RULE: ALL commit messages, GitHub issue comments, documentation, and project content MUST use ASCII characters only. NO Unicode symbols, emojis, or special characters. Use text like "SUCCESS" instead of checkmarks, "BULLET" instead of bullet points.**
+
 **Always reference these instructions first and fallback to search or bash commands only when you encounter unexpected information that does not match the info here.**
 
 ## Session Handoff Protocol
@@ -67,9 +69,11 @@ P(Doom) is a Python-based pygame strategy game about AI Safety. It's a GUI appli
 
 ### ASCII Compliance Requirements
 - **CRITICAL**: All commit messages must use ASCII characters only
+- **GitHub interactions**: NO emojis or Unicode in issue comments, PR descriptions, close messages
 - **Documentation**: No Unicode characters (emojis, special symbols) in any text
 - **Code comments**: ASCII-only for cross-platform compatibility
 - **File content**: All project files must be ASCII-compliant
+- **Terminal output**: Use "SUCCESS", "ERROR", "WARNING" instead of symbols
 
 ## Alpha Testing Protocol (v0.8.0+)
 
