@@ -27,6 +27,7 @@ from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime
 import hashlib
 import re
+import yaml
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent
@@ -282,7 +283,7 @@ class ConflictResolver:
                 github_issue = github_by_id[metadata.github_id]
                 
                 # Calculate GitHub content hash
-                github_content = f'# {github_issue['title']}\\n\\n{github_issue['body'] or ''}'
+                github_content = f'# {github_issue['title']}\n\n{github_issue['body'] or ''}'
                 github_hash = self._calculate_hash(github_content)
                 
                 # Check for conflicts
@@ -382,7 +383,7 @@ class BidirectionalIssueSync:
         for filename, content, metadata in local_issues:
             if metadata.github_id is None or metadata.github_id not in github_ids:
                 title = self._extract_title_from_content(content)
-                labels = self._extract_labels_from_filename(filename)
+                labels = self._extract_labels_from_content(content, filename)
                 
                 if self.dry_run:
                     print(f'[DRY RUN] Would create GitHub issue: {title}')
@@ -476,19 +477,74 @@ class BidirectionalIssueSync:
         
         print('\\nRun with --resolve-conflicts to handle these interactively')
     
+    def _parse_frontmatter(self, content: str) -> Tuple[Dict[str, Any], str]:
+        '''Parse YAML frontmatter from markdown content.
+        
+        Returns:
+            Tuple of (frontmatter_dict, content_without_frontmatter)
+        '''
+        if not content.strip().startswith('---'):
+            return {}, content
+        
+        lines = content.split('\n')
+        if len(lines) < 3:
+            return {}, content
+        
+        # Find the closing --- 
+        end_index = -1
+        for i in range(1, len(lines)):
+            if lines[i].strip() == '---':
+                end_index = i
+                break
+        
+        if end_index == -1:
+            return {}, content
+        
+        # Extract frontmatter (include empty lines - YAML can handle them)
+        frontmatter_lines = lines[1:end_index]
+        frontmatter_text = '\n'.join(frontmatter_lines)
+        
+        try:
+            frontmatter = yaml.safe_load(frontmatter_text) or {}
+        except yaml.YAMLError as e:
+            print(f'WARNING: Failed to parse YAML frontmatter: {e}')
+            return {}, content
+        
+        # Extract content without frontmatter
+        content_lines = lines[end_index + 1:]
+        content_without_frontmatter = '\n'.join(content_lines).strip()
+        
+        return frontmatter, content_without_frontmatter
+    
     def _extract_title_from_content(self, content: str) -> str:
-        '''Extract title from Markdown content.'''
-        lines = content.split('\\n')
+        '''Extract title from Markdown content, checking YAML frontmatter first.'''
+        # Parse frontmatter first
+        frontmatter, content_body = self._parse_frontmatter(content)
+        
+        # Check for title in frontmatter
+        if 'title' in frontmatter and frontmatter['title']:
+            return str(frontmatter['title']).strip('\'"')
+        
+        # Check for name in frontmatter (GitHub issue template format)
+        if 'name' in frontmatter and frontmatter['name']:
+            return str(frontmatter['name']).strip('\'"')
+        
+        # Fallback to markdown header
+        lines = content_body.split('\n')
         for line in lines:
             if line.startswith('# '):
                 return line[2:].strip()
         
-        # Fallback to filename-based title
+        # Final fallback
         return 'Untitled Issue'
     
     def _extract_body_from_content(self, content: str) -> str:
-        '''Extract body from Markdown content.'''
-        lines = content.split('\\n')
+        '''Extract body from Markdown content, skipping YAML frontmatter.'''
+        # Parse frontmatter and get clean content
+        frontmatter, content_body = self._parse_frontmatter(content)
+        
+        # Skip first H1 title if present
+        lines = content_body.split('\n')
         body_lines: List[str] = []
         found_title = False
         
@@ -496,10 +552,33 @@ class BidirectionalIssueSync:
             if line.startswith('# ') and not found_title:
                 found_title = True
                 continue
-            if found_title:
-                body_lines.append(line)
+            body_lines.append(line)
         
-        return '\\n'.join(body_lines).strip()
+        return '\n'.join(body_lines).strip()
+    
+    def _extract_labels_from_content(self, content: str, filename: str) -> List[str]:
+        '''Extract labels from YAML frontmatter and filename patterns.'''
+        labels: List[str] = []
+        
+        # Parse frontmatter for labels
+        frontmatter, _ = self._parse_frontmatter(content)
+        
+        # Extract from frontmatter labels field
+        if 'labels' in frontmatter:
+            fm_labels = frontmatter['labels']
+            if isinstance(fm_labels, str):
+                # Handle comma-separated string
+                labels.extend([label.strip() for label in fm_labels.split(',')])
+            elif isinstance(fm_labels, list):
+                # Handle list format
+                labels.extend([str(label).strip() for label in fm_labels])
+        
+        # Fallback to filename-based label extraction
+        filename_labels = self._extract_labels_from_filename(filename)
+        labels.extend(filename_labels)
+        
+        # Remove duplicates and empty labels
+        return list(set(label for label in labels if label.strip()))
     
     def _extract_labels_from_filename(self, filename: str) -> List[str]:
         '''Extract labels from filename patterns.'''

@@ -1,93 +1,69 @@
 {
   "1.md": {
-    "github_id": 387,
+    "github_id": 393,
     "last_sync": "2025-10-10T11:43:24.120410",
     "local_hash": "f3884052e088da01",
     "github_hash": "f3884052e088da01"
   },
   "action-list-text-display.md": {
-    "github_id": null,
+    "github_id": 394,
     "last_sync": "2025-10-10T11:43:24.120805",
     "local_hash": "04471ccb96be25fd",
-    "github_hash": null
-  },
-  "action-points-counting-bug.md": {
-    "github_id": 388,
-    "last_sync": "2025-10-10T11:43:24.121018",
-    "local_hash": "2e96514bfc62c990",
-    "github_hash": "2e96514bfc62c990"
-  },
-  "action-points-system-validation.md": {
-    "github_id": 389,
-    "last_sync": "2025-10-10T11:43:24.121228",
-    "local_hash": "02fac0dab8f3978b",
-    "github_hash": "02fac0dab8f3978b"
+    "github_hash": "04471ccb96be25fd"
   },
   "advanced-funding-relationships.md": {
-    "github_id": null,
+    "github_id": 395,
     "last_sync": "2025-10-10T11:43:24.121437",
     "local_hash": "92671156cfad8b6b",
-    "github_hash": null
+    "github_hash": "92671156cfad8b6b"
   },
   "advanced-menu-consolidation.md": {
-    "github_id": null,
+    "github_id": 396,
     "last_sync": "2025-10-10T11:43:24.121670",
     "local_hash": "e129c49cd1c77eff",
-    "github_hash": null
-  },
-  "ascii-compliance-cleanup.md": {
-    "github_id": null,
-    "last_sync": "2025-10-10T11:43:24.121876",
-    "local_hash": "956968f31c43eda7",
-    "github_hash": null
+    "github_hash": "e129c49cd1c77eff"
   },
   "config-console-research-quality.md": {
-    "github_id": null,
+    "github_id": 397,
     "last_sync": "2025-10-10T11:43:24.122112",
     "local_hash": "790de112b0d796a8",
-    "github_hash": null
+    "github_hash": "790de112b0d796a8"
   },
   "configuration-system-import-failures.md": {
-    "github_id": null,
+    "github_id": 398,
     "last_sync": "2025-10-10T11:43:24.122320",
     "local_hash": "dfc2e1d9f0ee5ea2",
-    "github_hash": null
+    "github_hash": "dfc2e1d9f0ee5ea2"
   },
   "copilot-context-prompt-improvements.md": {
-    "github_id": null,
+    "github_id": 399,
     "last_sync": "2025-10-10T11:43:24.122531",
     "local_hash": "aef8135b2f54aec1",
-    "github_hash": null
-  },
-  "critical-game-state-syntax-errors.md": {
-    "github_id": null,
-    "last_sync": "2025-10-10T11:43:24.122782",
-    "local_hash": "feeb65f2d7a20613",
-    "github_hash": null
+    "github_hash": "aef8135b2f54aec1"
   },
   "deterministic-rng-system.md": {
-    "github_id": null,
+    "github_id": 400,
     "last_sync": "2025-10-10T11:43:24.123028",
     "local_hash": "2bb2481b9a1d6f21",
-    "github_hash": null
+    "github_hash": "2bb2481b9a1d6f21"
   },
   "dev-tools-enhancement.md": {
-    "github_id": null,
+    "github_id": 401,
     "last_sync": "2025-10-10T11:43:24.123293",
     "local_hash": "c913f6d61ab2ca81",
-    "github_hash": null
+    "github_hash": "c913f6d61ab2ca81"
   },
   "documentation-emoji-cleanup.md": {
-    "github_id": null,
+    "github_id": 402,
     "last_sync": "2025-10-10T11:43:24.123512",
     "local_hash": "285e5b66e16b215e",
-    "github_hash": null
+    "github_hash": "285e5b66e16b215e"
   },
   "doom-change-attribution.md": {
-    "github_id": null,
+    "github_id": 403,
     "last_sync": "2025-10-10T11:43:24.123715",
     "local_hash": "959e4a95a319843d",
-    "github_hash": null
+    "github_hash": "959e4a95a319843d"
   },
   "employee-red-crosses-display-bug.md": {
     "github_id": 390,
@@ -96,118 +72,88 @@
     "github_hash": "c606bee62a2cb35c"
   },
   "event-system-error-handling.md": {
-    "github_id": null,
+    "github_id": 404,
     "last_sync": "2025-10-10T11:43:24.124110",
     "local_hash": "7fa836bdc89b8662",
-    "github_hash": null
+    "github_hash": "7fa836bdc89b8662"
   },
   "expense-accept-deny-labels.md": {
-    "github_id": null,
+    "github_id": 405,
     "last_sync": "2025-10-10T11:43:24.124300",
     "local_hash": "8708e3a79dda2d29",
-    "github_hash": null
-  },
-  "fundraising-mechanics-bug.md": {
-    "github_id": 391,
-    "last_sync": "2025-10-10T11:43:24.124492",
-    "local_hash": "afdf9a195d658487",
-    "github_hash": "afdf9a195d658487"
+    "github_hash": "8708e3a79dda2d29"
   },
   "game-clock-date-display.md": {
-    "github_id": null,
+    "github_id": 406,
     "last_sync": "2025-10-10T11:43:24.124695",
     "local_hash": "2ed842304ec7e34e",
-    "github_hash": null
+    "github_hash": "2ed842304ec7e34e"
   },
   "game-state-action-validation.md": {
-    "github_id": null,
+    "github_id": 407,
     "last_sync": "2025-10-10T11:43:24.124892",
     "local_hash": "6211cc2bfe50bb98",
-    "github_hash": null
-  },
-  "live-session-activity-log-repositioning.md": {
-    "github_id": null,
-    "last_sync": "2025-10-10T11:43:24.125087",
-    "local_hash": "fc33df2467e07a2c",
-    "github_hash": null
+    "github_hash": "6211cc2bfe50bb98"
   },
   "live-session-fundraising-submenu.md": {
-    "github_id": null,
+    "github_id": 408,
     "last_sync": "2025-10-10T11:43:24.125324",
     "local_hash": "93d37a68bacb2a16",
-    "github_hash": null
+    "github_hash": "93d37a68bacb2a16"
   },
   "live-session-research-consolidation.md": {
-    "github_id": null,
+    "github_id": 409,
     "last_sync": "2025-10-10T11:43:24.125562",
     "local_hash": "23036241dd545e11",
-    "github_hash": null
-  },
-  "live-session-verbose-activity-logging.md": {
-    "github_id": null,
-    "last_sync": "2025-10-10T11:43:24.125774",
-    "local_hash": "c51db06dc9c5aec5",
-    "github_hash": null
+    "github_hash": "23036241dd545e11"
   },
   "longtermist-date-format.md": {
-    "github_id": null,
+    "github_id": 410,
     "last_sync": "2025-10-10T11:43:24.126008",
     "local_hash": "70360158094d7ba5",
-    "github_hash": null
+    "github_hash": "70360158094d7ba5"
   },
   "multi-turn-action-delegation.md": {
-    "github_id": null,
+    "github_id": 411,
     "last_sync": "2025-10-10T11:43:24.126236",
     "local_hash": "c2ffeb0da6a0353e",
-    "github_hash": null
+    "github_hash": "c2ffeb0da6a0353e"
   },
   "premature-upgrade-popup.md": {
-    "github_id": null,
+    "github_id": 412,
     "last_sync": "2025-10-10T11:43:24.126428",
     "local_hash": "14991b21a98653c1",
-    "github_hash": null
-  },
-  "programmatic-game-control-system.md": {
-    "github_id": null,
-    "last_sync": "2025-10-10T11:43:24.126664",
-    "local_hash": "92a15f35669462a8",
-    "github_hash": null
+    "github_hash": "14991b21a98653c1"
   },
   "public-opinion-system-logic.md": {
-    "github_id": null,
+    "github_id": 413,
     "last_sync": "2025-10-10T11:43:24.126937",
     "local_hash": "1e532d29df61a050",
-    "github_hash": null
+    "github_hash": "1e532d29df61a050"
   },
   "seed-selection-arrow-navigation.md": {
-    "github_id": null,
+    "github_id": 414,
     "last_sync": "2025-10-10T11:43:24.127067",
     "local_hash": "c878eff581165d33",
-    "github_hash": null
+    "github_hash": "c878eff581165d33"
   },
   "smart-action-button-discovery.md": {
-    "github_id": null,
+    "github_id": 415,
     "last_sync": "2025-10-10T11:43:24.127216",
     "local_hash": "f41e326d60999846",
-    "github_hash": null
-  },
-  "sound-system-default-configuration.md": {
-    "github_id": null,
-    "last_sync": "2025-10-10T11:43:24.127343",
-    "local_hash": "9e38654477b6744b",
-    "github_hash": null
+    "github_hash": "f41e326d60999846"
   },
   "technical-debt-visualization.md": {
-    "github_id": null,
+    "github_id": 416,
     "last_sync": "2025-10-10T11:43:24.127483",
     "local_hash": "ab199268941da700",
-    "github_hash": null
+    "github_hash": "ab199268941da700"
   },
   "top-icon-hover-context.md": {
-    "github_id": null,
+    "github_id": 417,
     "last_sync": "2025-10-10T11:43:24.127610",
     "local_hash": "910398bad06fca07",
-    "github_hash": null
+    "github_hash": "910398bad06fca07"
   },
   "tracking-refactor.md": {
     "github_id": 392,
@@ -216,58 +162,52 @@
     "github_hash": "77a5d4b7fee399ea"
   },
   "turn-sequencing-architecture.md": {
-    "github_id": null,
+    "github_id": 418,
     "last_sync": "2025-10-10T11:43:24.127858",
     "local_hash": "f4545812c9fde471",
-    "github_hash": null
+    "github_hash": "f4545812c9fde471"
   },
   "tutorial-skip-missing-lab-config.md": {
-    "github_id": null,
+    "github_id": 419,
     "last_sync": "2025-10-10T11:43:24.128019",
     "local_hash": "d55604eaadb72079",
-    "github_hash": null
+    "github_hash": "d55604eaadb72079"
   },
   "tutorial-system-state-management.md": {
-    "github_id": null,
+    "github_id": 420,
     "last_sync": "2025-10-10T11:43:24.128227",
     "local_hash": "7c850d581594c99a",
-    "github_hash": null
+    "github_hash": "7c850d581594c99a"
   },
   "type-annotation-next-phase.md": {
-    "github_id": null,
+    "github_id": 421,
     "last_sync": "2025-10-10T11:43:24.128423",
     "local_hash": "e8e4be07c0ac6dcb",
-    "github_hash": null
+    "github_hash": "e8e4be07c0ac6dcb"
   },
   "ui-navigation-keyboard-shortcuts.md": {
-    "github_id": null,
+    "github_id": 422,
     "last_sync": "2025-10-10T11:43:24.128683",
     "local_hash": "6f8f18217513aa61",
-    "github_hash": null
+    "github_hash": "6f8f18217513aa61"
   },
   "universal-keyboard-navigation.md": {
-    "github_id": null,
+    "github_id": 423,
     "last_sync": "2025-10-10T11:43:24.128895",
     "local_hash": "068cceaaa7377541",
-    "github_hash": null
+    "github_hash": "068cceaaa7377541"
   },
   "unmanaged-employee-system-refactor.md": {
-    "github_id": null,
+    "github_id": 424,
     "last_sync": "2025-10-10T11:43:24.129142",
     "local_hash": "646908f65689b77a",
-    "github_hash": null
+    "github_hash": "646908f65689b77a"
   },
   "evaluateandintegraterefactoringbranches.md": {
     "github_id": 383,
     "last_sync": "2025-10-10T11:44:20.418871",
     "local_hash": "fd1251657f033746",
     "github_hash": "fd1251657f033746"
-  },
-  "investigatecriticalgameplaybugs.md": {
-    "github_id": 382,
-    "last_sync": "2025-10-10T11:44:20.420969",
-    "local_hash": "b6a2dddb2a1cd8d7",
-    "github_hash": "b6a2dddb2a1cd8d7"
   },
   "systematicissuearchiveandtriage.md": {
     "github_id": 381,
@@ -278,7 +218,7 @@
   "completeissuesyncautomationinfrastructure.md": {
     "github_id": 380,
     "last_sync": "2025-10-10T11:44:20.424467",
-    "local_hash": "2d09e97304f00b33",
+    "local_hash": "67eefee2cf518197",
     "github_hash": "2d09e97304f00b33"
   },
   "phase2implementautomaticscoresubmissiontowebsiteapi.md": {
@@ -422,20 +362,20 @@
   "multi-turnactiondelegationsystem.md": {
     "github_id": 294,
     "last_sync": "2025-10-10T11:44:20.497419",
-    "local_hash": "a6c620dd733e117c",
-    "github_hash": "a6c620dd733e117c"
+    "local_hash": "0cfd42e7a11955a5",
+    "github_hash": "7aa311e752231987"
   },
   "advanceddevelopertoolsenhancement.md": {
     "github_id": 293,
     "last_sync": "2025-10-10T11:44:20.502697",
-    "local_hash": "cbcd4845f21a82b3",
-    "github_hash": "cbcd4845f21a82b3"
+    "local_hash": "abc62f477dd8eb8e",
+    "github_hash": "3572c7e3f3f49ace"
   },
   "enableleaderboardsystemforalphatesting.md": {
     "github_id": 291,
     "last_sync": "2025-10-10T11:44:20.505371",
-    "local_hash": "f168321cee7a76e3",
-    "github_hash": "f168321cee7a76e3"
+    "local_hash": "b1b368adf47db4ae",
+    "github_hash": "0280179a6684e332"
   },
   "typeannotationcompletemenuspysystematicannotation.md": {
     "github_id": 289,
@@ -560,32 +500,26 @@
   "universalkeyboardnavigation.md": {
     "github_id": 262,
     "last_sync": "2025-10-10T11:44:20.570368",
-    "local_hash": "a0f7a20a8b1d6ccb",
-    "github_hash": "a0f7a20a8b1d6ccb"
+    "local_hash": "91505a544117aae3",
+    "github_hash": "474a14e68b64cf1f"
   },
   "removeobsoleteemployeemotionsystem.md": {
     "github_id": 260,
     "last_sync": "2025-10-10T11:44:20.574072",
-    "local_hash": "4673096685d72ba4",
-    "github_hash": "4673096685d72ba4"
+    "local_hash": "656a7655605b7cc9",
+    "github_hash": "4a30638e17092299"
   },
   "smartactionbuttondiscoverysystemtechtreestyle.md": {
     "github_id": 259,
     "last_sync": "2025-10-10T11:44:20.577392",
-    "local_hash": "957339fd3f2ef9c0",
-    "github_hash": "957339fd3f2ef9c0"
+    "local_hash": "0af63ff9891dc2c2",
+    "github_hash": "7feb697b052e5e00"
   },
   "actionlisttextdisplayissues.md": {
     "github_id": 257,
     "last_sync": "2025-10-10T11:44:20.580736",
-    "local_hash": "fac5e25abd3c8976",
-    "github_hash": "fac5e25abd3c8976"
-  },
-  "uiinteractionissuesbuttonclicksandspacebarnotworkingconsistently.md": {
-    "github_id": 240,
-    "last_sync": "2025-10-10T11:44:20.584807",
-    "local_hash": "ee9d3ec8dada3e2d",
-    "github_hash": "ee9d3ec8dada3e2d"
+    "local_hash": "aabe09a34ba38a36",
+    "github_hash": "281fc64ba3d606e6"
   },
   "03enhancement-improvewelcomeandexitterminalmessages.md": {
     "github_id": 239,
