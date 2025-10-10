@@ -242,7 +242,7 @@ class GameClock:
             return datetime(year, month, day)
             
         except (ValueError, IndexError) as e:
-            raise ValueError(f'Invalid date format '{date_str}': {e}')
+            raise ValueError(f'Invalid date format \'{date_str}\': {e}')
     
     def __str__(self) -> str:
         '''String representation of the current game time.'''

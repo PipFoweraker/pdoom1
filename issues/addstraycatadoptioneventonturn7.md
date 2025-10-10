@@ -1,0 +1,1 @@
+# Add stray cat adoption event on turn 7\n\nImplement timed event on turn 7 where players can adopt a stray cat. If adopted, cat appears under the end turn icon using cat icon placeholder.\n\n<!-- GitHub Issue #365 -->

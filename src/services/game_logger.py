@@ -62,17 +62,17 @@ class GameLogger:
     def log_action(self, action_name: str, cost: int, turn: int):
         '''Log a player action.'''
         timestamp = datetime.datetime.now().strftime('%H:%M:%S')
-        self.log_entries.append(f'[{timestamp}] Turn {turn}: Action '{action_name}' (cost: {cost})')
+        self.log_entries.append(f'[{timestamp}] Turn {turn}: Action \'{action_name}\' (cost: {cost})')
     
     def log_upgrade(self, upgrade_name: str, cost: int, turn: int):
         '''Log an upgrade purchase.'''
         timestamp = datetime.datetime.now().strftime('%H:%M:%S')
-        self.log_entries.append(f'[{timestamp}] Turn {turn}: Upgrade '{upgrade_name}' purchased (cost: {cost})')
+        self.log_entries.append(f'[{timestamp}] Turn {turn}: Upgrade \'{upgrade_name}\' purchased (cost: {cost})')
     
     def log_event(self, event_name: str, description: str, turn: int):
         '''Log a game event.'''
         timestamp = datetime.datetime.now().strftime('%H:%M:%S')
-        self.log_entries.append(f'[{timestamp}] Turn {turn}: Event '{event_name}' - {description}')
+        self.log_entries.append(f'[{timestamp}] Turn {turn}: Event \'{event_name}\' - {description}')
     
     def log_turn_summary(self, turn: int, money: int, staff: int, reputation: int, doom: int):
         '''Log end-of-turn resource summary.'''
@@ -140,4 +140,4 @@ class GameLogger:
     
     def get_log_summary(self) -> str:
         '''Get a summary of what's currently logged (for testing/debugging).'''
-        return f'Logger for seed '{self.seed}': {len(self.log_entries)} entries'
+        return f'Logger for seed \'{self.seed}\': {len(self.log_entries)} entries'

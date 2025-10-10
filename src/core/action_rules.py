@@ -336,20 +336,4 @@ Guidelines for extending the action rules system:
 
 Example of adding a new rule:
 
-    @staticmethod
-    def requires_enemy_activity(gs, min_enemy_progress=50):
-        '''
-        Rule: Action requires enemy progress to reach threshold.
-        
-        Args:
-            gs: GameState object
-            min_enemy_progress: Minimum enemy progress percentage
-            
-        Returns:
-            bool: True if any opponent has >= min_enemy_progress
-            
-        Example:
-            Defensive actions become available when enemies are advancing
-        '''
-        return any(opp.progress >= min_enemy_progress for opp in gs.opponents)
 '''

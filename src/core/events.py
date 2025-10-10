@@ -69,7 +69,7 @@ def trigger_first_manager_hire(gs: Any) -> None:
     if not gs.manager_milestone_triggered:
         gs.messages.append('SPECIAL EVENT: Your organization has grown to 9 employees!')
         gs.messages.append('Management complexity requires hiring your first Manager.')
-        gs.messages.append('The 'Hire Manager' action is now available to organize your growing team.')
+        gs.messages.append('The \'Hire Manager\' action is now available to organize your growing team.')
         gs.manager_milestone_triggered = True
 
 
@@ -120,7 +120,7 @@ EVENTS: List[EventDefinition] = [
         'trigger': lambda gs: gs.turn >= 6 and gs.reputation >= 10 and not getattr(gs, 'scouting_unlocked', False),
         'effect': lambda gs: (
             setattr(gs, 'scouting_unlocked', True),
-            gs.messages.append('Intelligence gathering capabilities unlocked! 'Scout Opponents' action is now available.'),
+            gs.messages.append('Intelligence gathering capabilities unlocked! \'Scout Opponents\' action is now available.'),
             gs.messages.append('Use this to discover and monitor competing AI laboratories.')
         )
     },
@@ -291,7 +291,7 @@ EVENTS: List[EventDefinition] = [
     },
     {
         'name': 'AI Winter Warning',
-        'desc': 'Industry veterans warn of potential 'AI Winter' if current promises don't materialize.',
+        'desc': 'Industry veterans warn of potential \'AI Winter\' if current promises don\'t materialize.',
         'trigger': lambda gs: (hasattr(gs, 'economic_cycles') and 
                               gs.doom > 60 and gs.turn > 100 and 
                               get_rng().random('random_context') < 0.08),
@@ -316,7 +316,7 @@ EVENTS: List[EventDefinition] = [
     },
     {
         'name': 'Transparency Dividend',
-        'desc': 'Your organization's transparent failure handling is recognized as industry best practice.',
+        'desc': 'Your organization\'s transparent failure handling is recognized as industry best practice.',
         'trigger': lambda gs: (hasattr(gs, 'technical_failures') and 
                               gs.technical_failures.transparency_reputation >= 3.0 and 
                               get_rng().random('random_context') < 0.15),

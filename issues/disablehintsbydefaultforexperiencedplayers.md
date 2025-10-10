@@ -1,0 +1,1 @@
+# Disable hints by default for experienced players\n\nSet hints to disabled by default in main game settings. Experienced players should not have popups interfering with their preferred openings.\n\n<!-- GitHub Issue #371 -->

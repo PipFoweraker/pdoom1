@@ -229,7 +229,7 @@ class OnboardingSystem:
                 },
                 'action_points_exhausted': {
                     'title': 'No Action Points Remaining',
-                    'content': 'You\'ve used all your action points for this turn. Click 'End Turn' to proceed to the next turn, where your action points will be refreshed. Consider hiring more staff to get additional action points per turn.'
+                    'content': 'You\'ve used all your action points for this turn. Click \'End Turn\' to proceed to the next turn, where your action points will be refreshed. Consider hiring more staff to get additional action points per turn.'
                 },
                 'high_doom_warning': {
                     'title': 'Warning: High P(Doom)',
@@ -243,7 +243,7 @@ class OnboardingSystem:
             # Defensive coding: never let onboarding system crash the game
             try:
                 import logging
-                logging.error(f'Error in get_mechanic_help for mechanic '{mechanic}': {e}')
+                logging.error(f'Error in get_mechanic_help for mechanic \'{mechanic}\': {e}')
             except:
                 pass  # Even logging errors shouldn't crash
             return None  # Return None to gracefully handle any errors
@@ -317,7 +317,7 @@ class OnboardingSystem:
             },
             'end_turn': {
                 'title': 'Ending Your Turn',
-                'content': 'Click 'End Turn' when you\'re done taking actions. This advances time and triggers events.',
+                'content': 'Click \'End Turn\' when you\'re done taking actions. This advances time and triggers events.',
                 'next_step': 'events'
             },
             'events': {
@@ -436,7 +436,7 @@ class OnboardingSystem:
             
             # Add log message for confirmation
             import logging
-            logging.info(f'Hint '{mechanic}' reset - will show again')
+            logging.info(f'Hint \'{mechanic}\' reset - will show again')
 
     def get_hint_status(self) -> Dict[str, bool]:
         '''Get the status of all available hints.'''

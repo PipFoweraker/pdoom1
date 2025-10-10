@@ -421,7 +421,7 @@ class ResearchSystemManager:
         
         self.game_state.researcher_default_quality[researcher_id] = quality
         quality_name = quality.value.title()
-        self.game_state.messages.append(f'?? {researcher.name}'s default quality set to {quality_name}')
+        self.game_state.messages.append(f'?? {researcher.name}\'s default quality set to {quality_name}')
         return True
     
     def get_researcher_by_id(self, researcher_id: str) -> Optional[Any]:

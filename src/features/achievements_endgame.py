@@ -243,7 +243,7 @@ class AchievementsEndgameSystem:
         
         achievements['influential_voice'] = Achievement(
             'influential_voice', 'Influential Voice',
-            'Achieved major influence (150+ reputation) - your organization's voice carries significant weight.',
+            'Achieved major influence (150+ reputation) - your organization\'s voice carries significant weight.',
             AchievementType.REPUTATION,
             lambda gs: gs.reputation >= 150,
             'uncommon'

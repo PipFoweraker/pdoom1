@@ -1,0 +1,1 @@
+# Standardize deterministic RNG import patterns across codebase\n\nInconsistent import patterns for randomness across files. Establish standard pattern using deterministic_rng.get_rng() with context strings. Remove remaining import random statements. Supports deterministic RNG migration effort.\n\n<!-- GitHub Issue #273 -->

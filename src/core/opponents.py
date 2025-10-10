@@ -67,7 +67,7 @@ class Opponent:
         if self.discovered_stats[stat_name]:
             # Already discovered, return known value
             actual_value = getattr(self, stat_name)
-            return True, actual_value, f'{self.name}'s {stat_name}: {actual_value} (already known)'
+            return True, actual_value, f'{self.name}\'s {stat_name}: {actual_value} (already known)'
             
         # Attempt to discover the stat (70% success rate)
         if get_rng().random(f'scout_success_{self.name}_{stat_name}') < 0.7:
@@ -82,9 +82,9 @@ class Opponent:
                 revealed_value = max(0, actual_value + noise)
                 
             self.known_stats[stat_name] = revealed_value
-            return True, revealed_value, f'Discovered {self.name}'s {stat_name}: {revealed_value}'
+            return True, revealed_value, f'Discovered {self.name}\'s {stat_name}: {revealed_value}'
         else:
-            return False, None, f'Failed to scout {self.name}'s {stat_name}'
+            return False, None, f'Failed to scout {self.name}\'s {stat_name}'
             
     def discover(self) -> None:
         '''Mark this opponent as discovered by the player.'''

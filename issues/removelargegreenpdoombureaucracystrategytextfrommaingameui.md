@@ -1,0 +1,1 @@
+# Remove large green P(Doom): Bureaucracy Strategy text from main game UI\n\nRemove the unexpected large green title text that appears across the main game UI. This may be from an accidental paste or mod.\n\n<!-- GitHub Issue #370 -->

@@ -1,0 +1,1 @@
+# Extract hardcoded magic numbers to configuration system\n\nHardcoded balance values throughout codebase should be configuration-driven. Target areas: action cost/benefit ranges in actions.py, event probability thresholds in events.py, opponent balance parameters. Improves configurability for monolith breakdown.\n\n<!-- GitHub Issue #272 -->

@@ -1,0 +1,1 @@
+# Update documentation to use current import paths\n\nLegacy documentation references old import patterns that confuse developers. Update .github/copilot-instructions.md, docs/DEVELOPERGUIDE.md, docs/RELEASE_CHECKLIST.md to use src.core.game_state imports instead of root-level imports.\n\n<!-- GitHub Issue #270 -->

@@ -1,0 +1,1 @@
+# Performance benchmarking during deterministic RNG migration\n\nMonitor game performance during RNG system migration to ensure no regression. Benchmark critical paths like action execution, event processing, opponent AI. Document before/after metrics. Establish performance testing infrastructure for future changes.\n\n<!-- GitHub Issue #278 -->

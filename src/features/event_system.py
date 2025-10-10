@@ -266,7 +266,7 @@ def create_enhanced_events():
     enhanced_events = [
         Event(
             name='AI Lab Incident',
-            desc='A major incident at a competitor's lab raises safety concerns worldwide!',
+            desc='A major incident at a competitor\'s lab raises safety concerns worldwide!',
             trigger=lambda gs: gs.doom > 50 and gs.turn > 10,
             effect=popup_crisis_effect,
             event_type=EventType.POPUP,

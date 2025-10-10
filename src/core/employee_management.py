@@ -145,7 +145,7 @@ def validate_blob_data_integrity(employee_blobs: List[Dict[str, Any]]) -> Tuple[
         # Check required fields exist
         for field in required_fields:
             if field not in blob:
-                issues.append(f'Blob {i}: Missing required field '{field}'')
+                issues.append(f'Blob {i}: Missing required field \'{field}\'')
         
         # Check data types
         if 'id' in blob and not isinstance(blob['id'], int):
@@ -155,7 +155,7 @@ def validate_blob_data_integrity(employee_blobs: List[Dict[str, Any]]) -> Tuple[
             issues.append(f'Blob {i}: Invalid productivity type (expected number)')
         
         if 'type' in blob and blob['type'] not in ['employee', 'manager']:
-            issues.append(f'Blob {i}: Invalid type '{blob['type']}' (expected 'employee' or 'manager')')
+            issues.append(f'Blob {i}: Invalid type \'{blob["type"]}\' (expected \'employee\' or \'manager\')')
     
     return len(issues) == 0, issues
 

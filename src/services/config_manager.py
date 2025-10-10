@@ -43,7 +43,7 @@ class ConfigManager:
             if not os.path.exists(self.CONFIG_DIR):
                 os.makedirs(self.CONFIG_DIR)
         except OSError as e:
-            print(f'Warning: Could not create config directory '{self.CONFIG_DIR}': {e}')
+            print(f'Warning: Could not create config directory \'{self.CONFIG_DIR}\': {e}')
             # Create a fallback temporary directory if possible
             import tempfile
             try:
@@ -230,7 +230,7 @@ class ConfigManager:
             with open(config_path, 'r') as f:
                 return json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            print(f'Warning: Could not load config '{config_name}': {e}')
+            print(f'Warning: Could not load config \'{config_name}\': {e}')
             return None
     
     def save_config(self, config_name: str, config_data: Dict[str, Any]) -> bool:
@@ -255,10 +255,10 @@ class ConfigManager:
                 json.dump(config_data, f, indent=2)
             return True
         except (OSError, IOError, PermissionError) as e:
-            print(f'Error: Could not save config '{config_name}': {e}')
+            print(f'Error: Could not save config \'{config_name}\': {e}')
             return False
         except Exception as e:
-            print(f'Error: Unexpected error saving config '{config_name}': {e}')
+            print(f'Error: Unexpected error saving config \'{config_name}\': {e}')
             return False
     
     def get_current_config(self) -> Dict[str, Any]:
@@ -272,7 +272,7 @@ class ConfigManager:
             self.current_config = self.load_config(self.current_config_name)
             if not self.current_config:
                 # Fallback to default if current config is missing
-                print(f'Warning: Current config '{self.current_config_name}' not found, falling back to default')
+                print(f'Warning: Current config \'{self.current_config_name}\' not found, falling back to default')
                 self.create_default_config_if_needed()
                 self.current_config = self.load_config(self.DEFAULT_CONFIG_NAME)
                 if not self.current_config:
@@ -350,7 +350,7 @@ class ConfigManager:
                 return True
             return False
         except Exception as e:
-            print(f'Error: Could not delete config '{config_name}': {e}')
+            print(f'Error: Could not delete config \'{config_name}\': {e}')
             return False
     
     def get_config_info(self, config_name: str) -> Optional[Dict[str, str]]:

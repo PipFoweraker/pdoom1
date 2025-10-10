@@ -1,0 +1,1 @@
+# Clean up root-level debug utilities and workspace organization\n\nRemove obsolete debug scripts cluttering workspace root. Files to remove: debug_typography.py, test_minimal.py, ui_interaction_fixes.py. Move demo scripts to tools/demos/ directory. See docs/DEAD_CODE_ANALYSIS_REPORT.md for details.\n\n<!-- GitHub Issue #269 -->

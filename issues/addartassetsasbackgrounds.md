@@ -1,0 +1,1 @@
+# Add Art Assets as Backgrounds\n\nArt assets implementation deferred to post-1.0.0 release for scope management. Focus on core functionality first.\n\n<!-- GitHub Issue #308 -->

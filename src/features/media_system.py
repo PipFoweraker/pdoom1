@@ -161,7 +161,7 @@ class MediaSystem:
                 'trigger_chance': 0.10
             },
             {
-                'headline_template': '{lab} Executive Discusses AI's Future in Interview',
+                'headline_template': '{lab} Executive Discusses AI\'s Future in Interview',
                 'type': MediaStoryType.HUMAN_INTEREST,
                 'sentiment_impact': {
                     OpinionCategory.GENERAL_SENTIMENT: 2,
@@ -406,7 +406,7 @@ class MediaSystem:
         # Reduce the story's duration
         latest_scandal.duration = max(1, latest_scandal.duration - 1)
         
-        return f'Damage control reduces impact of '{latest_scandal.headline}''
+        return f'Damage control reduces impact of \'{latest_scandal.headline}\''
     
     def _execute_investigative_tip(self, game_state) -> str:
         '''Execute investigative tip action.'''
@@ -434,7 +434,7 @@ class MediaSystem:
         scandal_headlines = [
             f'{target_name} Under Investigation for Safety Protocol Violations',
             f'Former {target_name} Employee Raises Serious Concerns',
-            f'Questions Mount About {target_name}'s Rushed Development Timeline'
+            f'Questions Mount About {target_name}\'s Rushed Development Timeline'
         ]
         
         scandal_story = MediaStory(

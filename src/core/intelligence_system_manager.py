@@ -41,8 +41,8 @@ class IntelligenceSystemManager:
             if undiscovered:
                 target = get_rng().choice(undiscovered, f'scout_discover_opponent_turn_{self.game_state.turn}')
                 target.discover()
-                self.game_state.messages.append(f'Scouting: Discovered new competitor '{target.name}'!')
-                self.game_state.messages.append(f''{target.description}'')
+                self.game_state.messages.append(f'Scouting: Discovered new competitor \'{target.name}\'!')
+                self.game_state.messages.append(f'\'{target.description}\'')
             else:
                 self.game_state.messages.append('Scouting: All competitors already discovered.')
             return None
@@ -76,7 +76,7 @@ class IntelligenceSystemManager:
             if undiscovered:
                 target = get_rng().choice(undiscovered, f'espionage_discover_opponent_turn_{self.game_state.turn}')
                 target.discover()
-                self.game_state.messages.append(f'Espionage: Discovered new competitor '{target.name}'!')
+                self.game_state.messages.append(f'Espionage: Discovered new competitor \'{target.name}\'!')
             else:
                 self.game_state.messages.append('Espionage: No new competitors to discover.')
             return None
