@@ -42,7 +42,7 @@ from datetime import datetime
 # Import game components - these imports assume headless capability
 try:
     from src.core.game_state import GameState
-    from src.services.deterministic_rng import get_rng, set_rng_seed
+    from src.services.deterministic_rng import get_rng, init_deterministic_rng
     from src.services.version import get_display_version
 except ImportError as e:
     print(f'Warning: Could not import game components: {e}')
@@ -156,7 +156,7 @@ class ProgrammaticGameController:
         
         # Initialize game state
         if seed:
-            set_rng_seed(seed)
+            init_deterministic_rng(seed)
         
         self.game_state = self._create_game_state(seed)
         self.initial_snapshot = GameStateSnapshot.from_game_state(self.game_state)
@@ -175,7 +175,8 @@ class ProgrammaticGameController:
             if seed:
                 return GameState(seed)
             else:
-                return GameState()
+                # Use default seed when none provided
+                return GameState("programmatic-default")
         except Exception as e:
             raise RuntimeError(f'Failed to create GameState: {e}')
     

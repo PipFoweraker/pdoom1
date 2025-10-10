@@ -4,6 +4,7 @@ numpy>=1.20.0
 
 # Data and configuration
 jsonschema>=4.0.0
+PyYAML>=6.0.0
 
 # Testing dependencies (also in requirements-dev.txt)
 pytest>=7.0.0

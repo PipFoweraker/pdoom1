@@ -288,6 +288,13 @@ python dev.py
 # Test specific systems
 python tools/dev_tool.py --test leaderboard
 python tools/dev_tool.py --list
+
+# Code quality and cross-platform documentation standards
+python scripts/enforce_standards.py --check-all
+
+# Intelligent ASCII compliance for universal compatibility
+python scripts/ascii_compliance_fixer.py --file docs/example.md
+python scripts/ascii_cleanup_remnants.py --scan docs/
 ```
 
 ### Documentation
