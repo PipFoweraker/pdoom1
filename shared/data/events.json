@@ -1,0 +1,137 @@
+{
+  "events": {
+    "funding_crisis": {
+      "id": "funding_crisis",
+      "name": "Funding Crisis",
+      "description": "Your lab is running dangerously low on funds!",
+      "type": "popup",
+      "trigger": {
+        "type": "turn_and_resource",
+        "turn": 10,
+        "condition": "money < 50000"
+      },
+      "options": [
+        {
+          "id": "emergency_fundraise",
+          "text": "Emergency Fundraising",
+          "effects": {
+            "money": 75000
+          },
+          "message": "Secured emergency funding: +$75,000"
+        },
+        {
+          "id": "accept",
+          "text": "Continue Anyway",
+          "effects": {},
+          "message": "Continuing with limited funds..."
+        }
+      ],
+      "sound": "event"
+    },
+    "breakthrough": {
+      "id": "breakthrough",
+      "name": "Safety Breakthrough!",
+      "description": "Your researchers have made a significant safety advancement!",
+      "type": "popup",
+      "trigger": {
+        "type": "threshold",
+        "condition": "safety >= 50 and capabilities < safety"
+      },
+      "options": [
+        {
+          "id": "publish",
+          "text": "Publish Results",
+          "effects": {
+            "safety": 10,
+            "money": -20000
+          },
+          "message": "Published breakthrough (+10 safety, -$20k for publication)"
+        },
+        {
+          "id": "keep_secret",
+          "text": "Keep Secret",
+          "effects": {
+            "safety": 5
+          },
+          "message": "Kept research confidential (+5 safety)"
+        }
+      ],
+      "sound": "upgrade"
+    },
+    "compute_shortage": {
+      "id": "compute_shortage",
+      "name": "Compute Shortage",
+      "description": "Your compute resources are critically low!",
+      "type": "normal",
+      "trigger": {
+        "type": "threshold",
+        "condition": "compute < 20"
+      },
+      "effect": {
+        "message": "WARNING: Compute critically low!"
+      },
+      "sound": "event"
+    },
+    "talent_recruitment": {
+      "id": "talent_recruitment",
+      "name": "Talent Opportunity",
+      "description": "A brilliant researcher wants to join your lab at reduced cost!",
+      "type": "popup",
+      "trigger": {
+        "type": "random",
+        "probability": 0.1,
+        "min_turn": 5
+      },
+      "options": [
+        {
+          "id": "hire_discounted",
+          "text": "Hire at Discount",
+          "costs": {
+            "money": 25000
+          },
+          "effects": {
+            "safety": 3,
+            "employees.safety_researchers": 1
+          },
+          "message": "Hired talented researcher at discount!"
+        },
+        {
+          "id": "decline",
+          "text": "Decline Offer",
+          "effects": {},
+          "message": "Declined the recruitment opportunity"
+        }
+      ],
+      "sound": "hire"
+    },
+    "capabilities_race": {
+      "id": "capabilities_race",
+      "name": "Capabilities Race Intensifies",
+      "description": "Competitors are rapidly advancing AI capabilities!",
+      "type": "normal",
+      "trigger": {
+        "type": "turn_threshold",
+        "turn": 15,
+        "condition": "capabilities < 30"
+      },
+      "effect": {
+        "message": "The capabilities race is heating up!"
+      },
+      "sound": "event"
+    }
+  },
+  "event_types": {
+    "normal": {
+      "name": "Normal Event",
+      "description": "Immediate effect, no player choice"
+    },
+    "popup": {
+      "name": "Popup Event",
+      "description": "Requires player decision"
+    },
+    "deferred": {
+      "name": "Deferred Event",
+      "description": "Can be postponed, expires after turns"
+    }
+  }
+}

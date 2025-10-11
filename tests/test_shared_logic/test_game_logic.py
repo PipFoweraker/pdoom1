@@ -292,7 +292,7 @@ class TestGameLogicEvents(unittest.TestCase):
         
         self.assertTrue(result.success)
         self.assertEqual(self.logic.state.money, initial_money + 75000)
-        self.assertIn('Emergency fundraising', result.messages[0])
+        self.assertIn('Secured emergency funding', result.messages[0])
     
     def test_event_choice_continue(self):
         """Test continuing without action."""

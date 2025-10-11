@@ -9,6 +9,7 @@ from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field, asdict
 from shared.core.engine_interface import IGameEngine, MessageCategory, DialogOption, DialogResult
 from shared.core.actions_engine import ActionsEngine
+from shared.core.events_engine import EventsEngine
 
 @dataclass
 class GameState:
@@ -83,6 +84,10 @@ class GameLogic:
         
         # Initialize actions engine
         self.actions_engine = ActionsEngine()
+        
+        # Initialize events engine with deterministic seed
+        seed_hash = hash(seed) % (2**31)
+        self.events_engine = EventsEngine(seed=seed_hash)
         
         # Initialize default employees
         self.state.employees = {
@@ -186,40 +191,48 @@ class GameLogic:
     def get_available_actions(self) -> List[str]:
         """Get list of available actions for current state."""
         return self.actions_engine.get_available_actions(self.state)
-
-        # ========== Event Handling ==========
+# ========== Event Handling ==========
     
     def check_events(self) -> List[Dict[str, Any]]:
-        """Check for triggered events (pure logic)."""
-        events = []
+        """Check for triggered events using EventsEngine."""
+        triggered_ids = self.events_engine.check_all_events(self.state)
         
-        # Example: Funding crisis at turn 10
-        if self.state.turn == 10 and self.state.money < 50000:
-            events.append({
-                'id': 'funding_crisis',
-                'name': 'Funding Crisis',
-                'description': 'Your lab is running low on funds!',
-                'options': [
-                    DialogOption('emergency_fundraise', 'Emergency fundraising'),
-                    DialogOption('accept', 'Continue anyway'),
-                ]
-            })
+        events = []
+        for event_id in triggered_ids:
+            event_def = self.events_engine.get_event(event_id)
+            if not event_def:
+                continue
+            
+            if self.events_engine.is_popup_event(event_id):
+                events.append({
+                    'id': event_id,
+                    'name': event_def['name'],
+                    'description': event_def['description'],
+                    'options': self.events_engine.get_event_options(event_id)
+                })
+            else:
+                self.events_engine.execute_normal_event(
+                    event_id,
+                    self.state,
+                    self.engine
+                )
         
         return events
     
     def handle_event_choice(self, event_id: str, choice_id: str) -> TurnResult:
-        """Handle player's choice for an event."""
+        """Handle player's event choice using EventsEngine."""
         result = TurnResult(success=True)
         
-        if event_id == 'funding_crisis':
-            if choice_id == 'emergency_fundraise':
-                self.state.money += 75000
-                result.messages.append("Emergency fundraising: +$75,000")
-                self.engine.display_message(
-                    "Secured emergency funding",
-                    MessageCategory.SUCCESS
-                )
-            else:
-                result.messages.append("Continuing with low funds...")
+        event_result = self.events_engine.execute_event_choice(
+            event_id,
+            choice_id,
+            self.state,
+            self.engine
+        )
+        
+        result.success = event_result.triggered
+        if event_result.message:
+            result.messages.append(event_result.message)
+        result.state_changes = event_result.state_changes
         
         return result
