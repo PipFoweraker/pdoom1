@@ -1,0 +1,12 @@
+[application]
+config/name="P(Doom)"
+config/description="Privacy-First Bureaucracy Strategy Game"
+run/main_scene="res://scenes/main.tscn"
+
+[display]
+window/size/width=1024
+window/size/height=768
+window/size/resizable=true
+
+[rendering]
+environment/default_environment="res://default_env.tres"
