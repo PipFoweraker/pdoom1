@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from shared.core.engine_interface import MessageCategory
+from .engine_interface import MessageCategory
 
 @dataclass
 class ActionResult:

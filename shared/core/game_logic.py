@@ -7,9 +7,9 @@ All UI interactions go through IGameEngine interface.
 
 from typing import Dict, Any, List, Optional, Tuple
 from dataclasses import dataclass, field, asdict
-from shared.core.engine_interface import IGameEngine, MessageCategory, DialogOption, DialogResult
-from shared.core.actions_engine import ActionsEngine
-from shared.core.events_engine import EventsEngine
+from .engine_interface import IGameEngine, MessageCategory, DialogOption, DialogResult
+from .actions_engine import ActionsEngine
+from .events_engine import EventsEngine
 
 @dataclass
 class GameState:

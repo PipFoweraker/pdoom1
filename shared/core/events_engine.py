@@ -9,7 +9,7 @@ import random
 from pathlib import Path
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass
-from shared.core.engine_interface import MessageCategory, DialogOption
+from .engine_interface import MessageCategory, DialogOption
 
 @dataclass
 class EventResult:
