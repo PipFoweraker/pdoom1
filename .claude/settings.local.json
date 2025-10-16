@@ -14,7 +14,11 @@
       "Bash(winget:*)",
       "Bash(export:*)",
       "Bash(find:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(timeout 5 python main.py --help)",
+      "Bash(git log:*)",
+      "Bash(sed:*)",
+      "Bash(cp:*)"
     ],
     "deny": [],
     "ask": []
