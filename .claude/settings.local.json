@@ -5,7 +5,16 @@
       "Bash(jj:*)",
       "Bash(uv:*)",
       "Bash(powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\")",
-      "Bash(export PATH=\"$HOME/.local/bin:$PATH\")"
+      "Bash(export PATH=\"$HOME/.local/bin:$PATH\")",
+      "Bash(gh:*)",
+      "Bash(where gh)",
+      "Bash(command -v:*)",
+      "Bash(powershell:*)",
+      "Bash(cat:*)",
+      "Bash(winget:*)",
+      "Bash(export:*)",
+      "Bash(find:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

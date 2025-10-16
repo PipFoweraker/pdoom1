@@ -115,10 +115,10 @@ print(f'  Starting Funds: $100k')
 print(f'  Staff Maintenance: $600 first, $800 additional/week') 
 print(f'  Research Costs: $3k/week (reduced from $40k)')
 print(f'  Hiring Costs: $0 (no signing bonuses)')
-print(f'  Moore's Law: 2% compute cost reduction/week')
-print(f'  Audio: {'Enabled' if current_config['audio']['sound_enabled'] else 'Disabled'}')
-print(f'  Window Scale: {current_config['ui']['window_scale']:.1f}x')
-print(f'  Fullscreen: {'Yes' if current_config['ui'].get('fullscreen', False) else 'No'}')
+print(f'  Moore\'s Law: 2% compute cost reduction/week')
+print(f"  Audio: {'Enabled' if current_config['audio']['sound_enabled'] else 'Disabled'}")
+print(f"  Window Scale: {current_config['ui']['window_scale']:.1f}x")
+print(f"  Fullscreen: {'Yes' if current_config['ui'].get('fullscreen', False) else 'No'}")
 
 if verbose_logging:
     print(f'  Config Directory: {config_manager.CONFIG_DIR}')
@@ -1535,7 +1535,7 @@ def submit_bug_report_to_github():
         # Save locally with GitHub formatting
         filepath = reporter.save_report_locally(report)
         
-        bug_report_success_message = f'Bug report prepared for GitHub!\n\nTitle: {github_format['title']}\n\nTo submit to GitHub:\n1. Go to the P(Doom) repository issues page\n2. Click 'New Issue'\n3. Copy the content from: {filepath}\n\nThank you for contributing!'
+        bug_report_success_message = f"Bug report prepared for GitHub!\n\nTitle: {github_format['title']}\n\nTo submit to GitHub:\n1. Go to the P(Doom) repository issues page\n2. Click 'New Issue'\n3. Copy the content from: {filepath}\n\nThank you for contributing!"
         current_state = 'bug_report_success'
         
         # Reset form

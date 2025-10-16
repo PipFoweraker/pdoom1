@@ -183,7 +183,7 @@ def test_new_player_experience():
         # Simulate the intro message logic
         startup_money = test_game_state.money
         expected_intro = f'Doom is coming. You convinced a funder to give you ${startup_money:,}. Your job is to save the world. Good luck!'
-        print(f'[INFO] Intro message would be: '{expected_intro}'')
+        print(f"[INFO] Intro message would be: '{expected_intro}'")
         
         # Reset
         main.npe_intro_enabled = False
