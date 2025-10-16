@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Pip/**)",
+      "Bash(jj:*)",
+      "Bash(uv:*)",
+      "Bash(powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\")",
+      "Bash(export PATH=\"$HOME/.local/bin:$PATH\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
