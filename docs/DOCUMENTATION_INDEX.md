@@ -2,7 +2,21 @@
 
 This document provides an overview of the organized documentation structure following major refactoring and documentation cleanup in September 2025.
 
-## Recent Documentation Cleanup (2025-09-28)
+## Recent Documentation Cleanups
+
+### October 2025 Reorganization (2025-10-17)
+
+**Godot Migration Documentation**: Organized Godot-specific docs and archived historical content
+- **Godot Docs Consolidated**: `UI_DESIGN_VISION.md` -> `godot/`
+- **October Sessions Archived**: All `SESSION_*_2025-10-*.md` -> `docs/archive/session-handoffs/2025-10/`
+- **Root Cleanup**: 15+ files moved to proper locations
+  - Copilot docs -> `docs/archive/by-topic/copilot-instructions/`
+  - Hotfix summaries -> `docs/archive/by-topic/hotfixes-2025-09/`
+- **Current Status**: Created `docs/current/GODOT_MIGRATION_TRACKER.md` for active work tracking
+
+**Result**: Root directory reduced to README + CHANGELOG only. Clear separation between active and archived docs.
+
+### September 2025 Cleanup (2025-09-28)
 
 **Files Reorganized**: 10+ scattered root-level files moved to proper subdirectories
 - **Session Documentation**: `SESSION_COMPLETION_*.md`, `SESSION_HANDOFF_*.md` -> `docs/development-sessions/`
@@ -121,13 +135,30 @@ src/core/
 - `releases/` - Version-specific release notes
 - `RELEASE_CHECKLIST.md` - Release process checklist
 
+### Godot Migration (Active - October 2025)
+**Status**: Phase 4 Complete, Phase 5 Next
+- `godot/README.md` - Quick start guide
+- `godot/SETUP.md` - Installation instructions
+- `godot/UI_DESIGN_VISION.md` - Design philosophy (function over form)
+- `current/GODOT_MIGRATION_TRACKER.md` - **Phase tracker with current status**
+- `GODOT_DOCUMENTATION_PLAN.md` - Documentation strategy
+
+**Related**:
+- `archive/session-handoffs/2025-10/` - Godot migration sessions
+- `shared_bridge/` - Python ↔ Godot communication layer
+- `tools/godot/` - Godot 4.5 engine binaries (.gitignored)
+
 ### Archived Documentation
 - `archive/monolith-refactoring-2025-09/` - Monolith breakdown session records
-- `archive/session-handoffs-2025-09/` - Development session handoffs
+- `archive/session-handoffs-2025-09/` - September development sessions
+- `archive/session-handoffs/2025-10/` - October development sessions
 - `archive/root-docs-cleanup-2025-09-15/` - Previous cleanup records
+- `archive/by-topic/copilot-instructions/` - Copilot configuration history
+- `archive/by-topic/hotfixes-2025-09/` - September hotfixes and cleanup
 
 ### Development Sessions
 - `development-sessions/` - Strategic planning and phase documentation
+- `current/` - **Active work tracking (check here first!)**
 
 ## Quick Reference for Developers
 
@@ -182,5 +213,5 @@ src/core/
 - Maintain architectural decision records for future reference
 - Keep active documentation focused and current
 
-Last Updated: September 19, 2025
-Architecture Status: Modular (Post-Monolith Refactoring)
+Last Updated: October 17, 2025
+Architecture Status: Modular (Post-Monolith Refactoring) + Godot Migration Active
