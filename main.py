@@ -2755,8 +2755,8 @@ def main():
             back_button_rect = None  # Initialize for click handling
             
             if current_state == 'main_menu':
-                # Grey background as specified in requirements
-                screen.fill((128, 128, 128))
+                # Enhanced grey background for better contrast (Option 3)
+                screen.fill((140, 140, 140))
                 draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item, global_sound_manager)
             
             elif current_state == 'start_game_submenu':

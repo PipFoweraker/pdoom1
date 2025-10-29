@@ -471,7 +471,7 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
         pass
     
     for i, instruction in enumerate(instructions):
-        inst_surf = instruction_font.render(instruction, True, (180, 180, 180))
+        inst_surf = instruction_font.render(instruction, True, (10, 10, 10))
         inst_x = w // 2 - inst_surf.get_width() // 2
         inst_y = int(h * 0.85) + i * int(h * 0.03)
         screen.blit(inst_surf, (inst_x, inst_y))
@@ -483,26 +483,26 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     left_shortcuts = get_main_menu_shortcuts()
     left_formatted = format_shortcut_list(left_shortcuts)
     
-    left_title_surf = shortcut_font.render('Menu Controls:', True, (160, 160, 160))
+    left_title_surf = shortcut_font.render('Menu Controls:', True, (0, 0, 0))
     left_x = int(w * 0.05)
     left_y = int(h * 0.25)
     screen.blit(left_title_surf, (left_x, left_y))
     
     for i, shortcut_text in enumerate(left_formatted):
-        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (20, 20, 20))
         screen.blit(shortcut_surf, (left_x, left_y + 30 + i * 25))
     
     # Right side - In-Game shortcuts preview
     right_shortcuts = get_in_game_shortcuts()[:4]  # Show first 4 to fit space
     right_formatted = format_shortcut_list(right_shortcuts)
     
-    right_title_surf = shortcut_font.render('In-Game Controls:', True, (160, 160, 160))
+    right_title_surf = shortcut_font.render('In-Game Controls:', True, (0, 0, 0))
     right_x = int(w * 0.75)
     right_y = int(h * 0.25)
     screen.blit(right_title_surf, (right_x, right_y))
     
     for i, shortcut_text in enumerate(right_formatted):
-        shortcut_surf = shortcut_font.render(shortcut_text, True, (140, 140, 140))
+        shortcut_surf = shortcut_font.render(shortcut_text, True, (20, 20, 20))
         screen.blit(shortcut_surf, (right_x, right_y + 30 + i * 25))
     
     # Draw sound toggle button if sound manager is available (Issue #89)
