@@ -6,6 +6,7 @@ signal turn_phase_changed(phase: String)
 signal actions_available(actions: Array)
 signal action_executed(result: Dictionary)
 signal error_occurred(error_msg: String)
+signal event_triggered(event: Dictionary)
 
 # Game objects
 var state: GameState
@@ -110,6 +111,12 @@ func end_turn():
 	# Emit updated state
 	game_state_updated.emit(state.to_dict())
 
+	# Check for triggered events
+	if result.has("triggered_events"):
+		var triggered_events = result["triggered_events"]
+		for event in triggered_events:
+			event_triggered.emit(event)
+
 	# If game not over, start next turn
 	if not state.game_over:
 		await get_tree().create_timer(0.5).timeout
@@ -135,3 +142,17 @@ func get_game_state() -> Dictionary:
 	if state:
 		return state.to_dict()
 	return {}
+
+func resolve_event(event: Dictionary, choice_id: String):
+	"""Handle player's event choice"""
+	if not is_initialized:
+		error_occurred.emit("Game not initialized")
+		return
+
+	var result = GameEvents.execute_event_choice(event, choice_id, state)
+
+	if result["success"]:
+		action_executed.emit(result)
+		game_state_updated.emit(state.to_dict())
+	else:
+		error_occurred.emit(result["message"])

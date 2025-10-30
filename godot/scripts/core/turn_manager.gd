@@ -84,6 +84,15 @@ func execute_turn() -> Dictionary:
 		]
 	})
 
+	# Check for triggered events
+	var triggered_events = GameEvents.check_triggered_events(state, state.rng)
+	if triggered_events.size() > 0:
+		results.append({
+			"success": true,
+			"message": "Events triggered: %d" % triggered_events.size(),
+			"triggered_events": triggered_events
+		})
+
 	# Check win/lose
 	state.check_win_lose()
 
@@ -97,7 +106,8 @@ func execute_turn() -> Dictionary:
 	return {
 		"success": all_success,
 		"action_results": results,
-		"turn_complete": true
+		"turn_complete": true,
+		"triggered_events": triggered_events
 	}
 
 func get_available_actions() -> Array[Dictionary]:

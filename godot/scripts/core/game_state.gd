@@ -22,11 +22,19 @@ var game_over: bool = false
 var victory: bool = false
 var seed: String = ""
 
+# Deterministic RNG for events
+var rng: RandomNumberGenerator
+
 # Queued actions for this turn
 var queued_actions: Array[String] = []
 
 func _init(game_seed: String = ""):
 	seed = game_seed if game_seed != "" else str(Time.get_ticks_msec())
+
+	# Initialize deterministic RNG from seed
+	rng = RandomNumberGenerator.new()
+	rng.seed = hash(seed)
+
 	reset()
 
 func reset():
