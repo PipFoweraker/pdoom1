@@ -1,5 +1,6 @@
 import sys
 import pygame
+import atexit
 from src.services.deterministic_rng import get_rng
 import json
 from src.core.game_state import GameState
@@ -114,6 +115,14 @@ print_welcome_message(
 
 # Initialize exit tracker for enhanced shutdown messages
 exit_tracker = get_exit_tracker()
+
+# Register exit handler for clean shutdown
+def on_exit_handler():
+    """Ensure exit messages are printed even on abrupt termination."""
+    if exit_tracker.exit_reason == "Unknown exit":
+        exit_tracker.set_user_exit("abrupt termination")
+    # Note: log_shutdown() will be called in finally block
+atexit.register(on_exit_handler)
 
 # Set up initial screen for loading
 info = pygame.display.Info()
@@ -1521,7 +1530,7 @@ def submit_bug_report_to_github():
         # Save locally with GitHub formatting
         filepath = reporter.save_report_locally(report)
         
-        bug_report_success_message = f'Bug report prepared for GitHub!\n\nTitle: {github_format['title']}\n\nTo submit to GitHub:\n1. Go to the P(Doom) repository issues page\n2. Click 'New Issue'\n3. Copy the content from: {filepath}\n\nThank you for contributing!'
+        bug_report_success_message = f"Bug report prepared for GitHub!\n\nTitle: {github_format['title']}\n\nTo submit to GitHub:\n1. Go to the P(Doom) repository issues page\n2. Click 'New Issue'\n3. Copy the content from: {filepath}\n\nThank you for contributing!"
         current_state = 'bug_report_success'
         
         # Reset form
@@ -2111,6 +2120,9 @@ def main():
                                     result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                                     if result == 'play_sound':
                                         game_state.sound_manager.play_ap_spend_sound()
+                                    elif result and isinstance(result, str) and not result.startswith('Tooltip'):
+                                        # Track action for exit history (only significant actions)
+                                        exit_tracker.add_action(f"Turn {game_state.turn}: {result}")
                                     tooltip_text = result
                         # Check if tutorial overlay is active
                         elif game_state and game_state.pending_tutorial_message:
@@ -2368,6 +2380,9 @@ def main():
                                 result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                                 if result == 'play_sound':
                                     game_state.sound_manager.play_ap_spend_sound()
+                                elif result and isinstance(result, str) and not result.startswith('Tooltip'):
+                                    # Track action for exit history (only significant actions)
+                                    exit_tracker.add_action(f"Turn {game_state.turn}: {result}")
                                 tooltip_text = result
                         
                 elif event.type == pygame.TEXTINPUT:
@@ -2892,6 +2907,22 @@ def main():
                         else:
                             game_state.update_turn_processing()  # Fallback to old method
                         game_state.overlay_manager.update_animations()
+                        
+                        # Periodically update exit tracker game state (every 5 turns or on turn change)
+                        if not hasattr(exit_tracker, '_last_tracked_turn'):
+                            exit_tracker._last_tracked_turn = -1
+                        if game_state.turn != exit_tracker._last_tracked_turn:
+                            exit_tracker._last_tracked_turn = game_state.turn
+                            exit_tracker.update_game_state({
+                                'turn': game_state.turn,
+                                'money': game_state.money,
+                                'compute': getattr(game_state, 'compute', 0),
+                                'safety': getattr(game_state, 'safety_research', 0),
+                                'capabilities': getattr(game_state, 'capabilities_research', 0),
+                                'employees': {
+                                    'total': game_state.staff,
+                                }
+                            })
                     
                     draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
                     
