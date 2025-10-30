@@ -159,7 +159,7 @@ func log_message(text: String):
 		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
 
 func _on_actions_available(actions: Array):
-	"""Populate action list dynamically"""
+	"""Populate action list dynamically, grouped by category"""
 	print("[MainUI] Populating ", actions.size(), " actions")
 
 	# Clear existing action buttons (except test button for now)
@@ -170,51 +170,83 @@ func _on_actions_available(actions: Array):
 	# Get current state for affordability checking
 	var current_state = game_manager.get_game_state()
 
-	# Create button for each action
+	# Group actions by category
+	var categories = {}
 	for action in actions:
-		var action_id = action.get("id", "")
-		var action_name = action.get("name", "Unknown")
-		var action_cost = action.get("costs", {})
-		var action_description = action.get("description", "")
 		var category = action.get("category", "other")
+		if not categories.has(category):
+			categories[category] = []
+		categories[category].append(action)
 
-		# Create button
-		var button = Button.new()
-		button.text = action_name
+	# Define category order and display names
+	var category_order = ["hiring", "resources", "research", "management", "other"]
+	var category_names = {
+		"hiring": "Hiring",
+		"resources": "Resources",
+		"research": "Research",
+		"management": "Management",
+		"other": "Other"
+	}
 
-		# Check if player can afford this action
-		var can_afford = true
-		var missing_resources = []
+	# Create sections for each category
+	for category_key in category_order:
+		if not categories.has(category_key):
+			continue
 
-		for resource in action_cost.keys():
-			var cost = action_cost[resource]
-			var available = current_state.get(resource, 0)
+		var category_actions = categories[category_key]
+		if category_actions.is_empty():
+			continue
 
-			if available < cost:
-				can_afford = false
-				missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
+		# Create category label
+		var category_label = Label.new()
+		category_label.text = "-- " + category_names.get(category_key, category_key.capitalize()) + " --"
+		category_label.add_theme_color_override("font_color", Color(0.7, 0.7, 1.0))
+		actions_list.add_child(category_label)
 
-		# Add cost info to tooltip
-		var tooltip = action_description + "\n\nCosts:"
-		for resource in action_cost.keys():
-			tooltip += "\n  %s: %s" % [resource, action_cost[resource]]
+		# Create buttons for actions in this category
+		for action in category_actions:
+			var action_id = action.get("id", "")
+			var action_name = action.get("name", "Unknown")
+			var action_cost = action.get("costs", {})
+			var action_description = action.get("description", "")
 
-		if not can_afford:
-			tooltip += "\n\n[CANNOT AFFORD]"
-			for msg in missing_resources:
-				tooltip += "\n  Missing: " + msg
-			button.disabled = true
-			button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
+			# Create button
+			var button = Button.new()
+			button.text = "  " + action_name  # Indent actions under category
 
-		button.tooltip_text = tooltip
+			# Check if player can afford this action
+			var can_afford = true
+			var missing_resources = []
 
-		# Connect button press
-		button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
+			for resource in action_cost.keys():
+				var cost = action_cost[resource]
+				var available = current_state.get(resource, 0)
 
-		# Add to list
-		actions_list.add_child(button)
+				if available < cost:
+					can_afford = false
+					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
 
-	log_message("[color=cyan]Loaded %d available actions[/color]" % actions.size())
+			# Add cost info to tooltip
+			var tooltip = action_description + "\n\nCosts:"
+			for resource in action_cost.keys():
+				tooltip += "\n  %s: %s" % [resource, action_cost[resource]]
+
+			if not can_afford:
+				tooltip += "\n\n[CANNOT AFFORD]"
+				for msg in missing_resources:
+					tooltip += "\n  Missing: " + msg
+				button.disabled = true
+				button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
+
+			button.tooltip_text = tooltip
+
+			# Connect button press
+			button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
+
+			# Add to list
+			actions_list.add_child(button)
+
+	log_message("[color=cyan]Loaded %d available actions in %d categories[/color]" % [actions.size(), categories.size()])
 
 func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	"""Handle dynamic action button press"""

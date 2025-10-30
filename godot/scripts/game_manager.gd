@@ -37,18 +37,50 @@ func start_new_game(game_seed: String = ""):
 	print("[GameManager] Game initialized - Turn %d" % state.turn)
 
 func select_action(action_id: String):
-	"""Queue action for execution"""
+	"""Queue action for execution with immediate AP deduction"""
 	if not is_initialized:
 		error_occurred.emit("Game not initialized")
 		return
 
-	print("[GameManager] Action queued: %s" % action_id)
+	# Get action details to check AP cost
+	var action = _get_action_by_id(action_id)
+	if not action:
+		error_occurred.emit("Action not found: " + action_id)
+		return
+
+	var ap_cost = action.get("costs", {}).get("action_points", 0)
+
+	# Check if player has enough AP
+	if state.action_points < ap_cost:
+		error_occurred.emit("Not enough AP for " + action.get("name", action_id))
+		return
+
+	# Check if player can afford the action
+	if not state.can_afford(action.get("costs", {})):
+		error_occurred.emit("Cannot afford " + action.get("name", action_id))
+		return
+
+	# Deduct AP immediately (like old game)
+	state.action_points -= ap_cost
+
+	print("[GameManager] Action queued: %s (AP cost: %d, remaining: %d)" % [action_id, ap_cost, state.action_points])
 	state.queued_actions.append(action_id)
 
 	action_executed.emit({
 		"success": true,
-		"message": "Action queued: " + action_id
+		"message": "Action queued: " + action.get("name", action_id)
 	})
+
+	# Emit updated state to refresh UI
+	game_state_updated.emit(state.to_dict())
+
+func _get_action_by_id(action_id: String) -> Dictionary:
+	"""Helper to get action by ID"""
+	var all_actions = GameActions.get_all_actions()
+	for action in all_actions:
+		if action.get("id") == action_id:
+			return action
+	return {}
 
 func end_turn():
 	"""Execute queued actions and process turn"""
