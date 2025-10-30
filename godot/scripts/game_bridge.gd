@@ -8,7 +8,7 @@ signal game_state_updated(state: Dictionary)
 signal event_triggered(event: Dictionary)
 signal action_result(result: Dictionary)
 
-var python_process: OS.ProcessInfo
+var python_process: int = -1
 var game_state: Dictionary = {}
 var is_initialized: bool = false
 
