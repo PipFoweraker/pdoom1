@@ -141,6 +141,143 @@ static func get_all_events() -> Array[Dictionary]:
 					"message": "Declined compute partnership"
 				}
 			]
+		},
+		{
+			"id": "employee_burnout",
+			"name": "Employee Burnout Crisis",
+			"description": "Your team is overworked! Several researchers are considering leaving.",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "safety_researchers >= 5",
+			"repeatable": true,
+			"options": [
+				{
+					"id": "team_retreat",
+					"text": "Organize Team Retreat ($30k)",
+					"costs": {"money": 30000},
+					"effects": {"reputation": 5, "doom": -2},
+					"message": "Team retreat restored morale (+5 reputation, -2 doom)"
+				},
+				{
+					"id": "salary_raise",
+					"text": "Give Raises ($50k)",
+					"costs": {"money": 50000},
+					"effects": {"reputation": 8},
+					"message": "Salary raises improved retention (+8 reputation)"
+				},
+				{
+					"id": "ignore_burnout",
+					"text": "Push Through",
+					"effects": {"doom": 3},
+					"message": "Team morale suffered (+3 doom)"
+				}
+			]
+		},
+		{
+			"id": "rival_poaching",
+			"name": "Rival Lab Poaching",
+			"description": "A well-funded competitor is trying to recruit your best researchers!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.08,
+			"min_turn": 10,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "counter_offer",
+					"text": "Counter-Offer ($80k)",
+					"costs": {"money": 80000},
+					"effects": {},
+					"message": "Successfully retained researchers with counter-offer"
+				},
+				{
+					"id": "let_go",
+					"text": "Let Them Go",
+					"effects": {"safety_researchers": -1, "money": 20000},
+					"message": "Lost researcher but saved money (-1 safety researcher, +$20k saved)"
+				}
+			]
+		},
+		{
+			"id": "media_scandal",
+			"name": "Media Scandal",
+			"description": "Negative press coverage is damaging your lab's reputation!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.06,
+			"min_turn": 7,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "pr_campaign",
+					"text": "Launch PR Campaign ($40k)",
+					"costs": {"money": 40000},
+					"effects": {"reputation": 10},
+					"message": "PR campaign restored public image (+10 reputation)"
+				},
+				{
+					"id": "ignore_media",
+					"text": "Ignore and Focus on Work",
+					"effects": {"reputation": -8},
+					"message": "Reputation suffered from negative coverage (-8 reputation)"
+				}
+			]
+		},
+		{
+			"id": "government_regulation",
+			"name": "New AI Regulation Proposed",
+			"description": "Government is considering new AI safety regulations. Should you lobby?",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "doom >= 60",
+			"repeatable": false,
+			"options": [
+				{
+					"id": "support_regulation",
+					"text": "Publicly Support ($50k lobbying)",
+					"costs": {"money": 50000, "action_points": 1},
+					"effects": {"doom": -10, "reputation": 15},
+					"message": "Regulation passed! Global safety improved (-10 doom, +15 reputation)"
+				},
+				{
+					"id": "oppose_regulation",
+					"text": "Oppose (Stay Competitive)",
+					"effects": {"doom": 5, "reputation": -5},
+					"message": "Regulation weakened (+5 doom, -5 reputation)"
+				},
+				{
+					"id": "stay_neutral",
+					"text": "Remain Neutral",
+					"effects": {"doom": 2},
+					"message": "Stayed neutral as doom increased (+2 doom)"
+				}
+			]
+		},
+		{
+			"id": "technical_failure",
+			"name": "Critical System Failure",
+			"description": "Your compute infrastructure suffered a major failure!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 12,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "emergency_repair",
+					"text": "Emergency Repair ($60k)",
+					"costs": {"money": 60000},
+					"effects": {"compute": 30},
+					"message": "System repaired and upgraded (+30 compute)"
+				},
+				{
+					"id": "basic_fix",
+					"text": "Basic Fix ($20k)",
+					"costs": {"money": 20000},
+					"effects": {"compute": -20},
+					"message": "System limping along (-20 compute)"
+				}
+			]
 		}
 	]
 
@@ -220,6 +357,14 @@ static func evaluate_condition(condition: String, state: GameState) -> bool:
 			resource_value = state.doom
 		"action_points":
 			resource_value = state.action_points
+		"safety_researchers":
+			resource_value = state.safety_researchers
+		"capability_researchers":
+			resource_value = state.capability_researchers
+		"compute_engineers":
+			resource_value = state.compute_engineers
+		"managers":
+			resource_value = state.managers
 		_:
 			return false
 

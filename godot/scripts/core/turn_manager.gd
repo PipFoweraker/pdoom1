@@ -23,14 +23,53 @@ func start_turn() -> Dictionary:
 	var max_ap = 3 + int(total_staff * 0.5)
 	state.action_points = max_ap
 
+	# === RESEARCHER TURN PROCESSING ===
+	# Process individual researchers (burnout, skill growth, loyalty)
+	for researcher in state.researchers:
+		researcher.process_turn()
+
 	# Staff maintenance costs (salary per employee per turn)
 	var staff_salaries = total_staff * 5000  # $5k per employee per turn
 	if staff_salaries > 0:
 		state.add_resources({"money": -staff_salaries})
 
-	# Generate research from compute (deterministic)
-	var research_generated = state.compute * 0.05 * (1.0 + state.compute_engineers * 0.1)
-	state.add_resources({"research": research_generated})
+	# === EMPLOYEE PRODUCTIVITY SYSTEM ===
+	# Based on Python implementation: src/core/game_state.py lines 1208-1372
+
+	# 1. Management capacity check - unmanaged employees are unproductive
+	var non_manager_staff = state.safety_researchers + state.capability_researchers + state.compute_engineers
+	var management_capacity = state.get_management_capacity()
+	var managed_employees = min(non_manager_staff, management_capacity)
+	var unmanaged_employees = state.get_unmanaged_count()
+
+	# 2. Compute distribution - each productive employee needs 1 compute
+	var available_compute = int(state.compute)
+	var productive_employees = min(managed_employees, available_compute)
+
+	# 3. Research generation from employees (30% chance per productive employee)
+	var research_from_employees = 0.0
+	for i in range(productive_employees):
+		if state.rng.randf() < 0.30:  # 30% chance per employee
+			var base_research = state.rng.randi_range(1, 3)
+			research_from_employees += base_research
+
+	# 4. Compute engineer bonus (+10% effectiveness per engineer)
+	var compute_efficiency_bonus = 1.0 + (state.compute_engineers * 0.1)
+	research_from_employees *= compute_efficiency_bonus
+
+	# 5. Safety researchers reduce doom passively (only if productive)
+	var productive_safety = min(state.safety_researchers, productive_employees)
+	var doom_reduction_from_safety = productive_safety * 0.3
+	state.add_resources({"doom": -doom_reduction_from_safety})
+
+	# 6. Unproductive employees (no compute OR no manager) cause doom
+	var total_unproductive = (non_manager_staff - productive_employees) + unmanaged_employees
+	if total_unproductive > 0:
+		var doom_penalty = total_unproductive * 0.5
+		state.add_resources({"doom": doom_penalty})
+
+	# Apply research gains
+	state.add_resources({"research": research_from_employees})
 
 	var messages = [
 		"Turn %d started" % state.turn,
@@ -40,7 +79,17 @@ func start_turn() -> Dictionary:
 	if staff_salaries > 0:
 		messages.append("Paid $%d in staff salaries" % staff_salaries)
 
-	messages.append("Generated %.1f research from compute" % research_generated)
+	if research_from_employees > 0:
+		messages.append("Generated %.1f research from %d productive employees" % [research_from_employees, productive_employees])
+
+	if doom_reduction_from_safety > 0:
+		messages.append("Safety researchers reduced doom by %.1f" % doom_reduction_from_safety)
+
+	if unmanaged_employees > 0:
+		messages.append("WARNING: %d unmanaged employees (need more managers!)" % unmanaged_employees)
+
+	if total_unproductive > 0:
+		messages.append("WARNING: %d unproductive employees! (+%.1f doom)" % [total_unproductive, total_unproductive * 0.5])
 
 	# CHECK FOR EVENTS FIRST (FIX #418)
 	# Events must be presented and resolved BEFORE player selects actions
@@ -96,18 +145,63 @@ func execute_turn() -> Dictionary:
 			]
 		})
 
-	# Environmental doom increase (time pressure)
-	var base_doom_increase = 1.0
-	var capability_doom = state.capability_researchers * 0.5
-	var total_doom_increase = base_doom_increase + capability_doom
+	# === RIVAL LABS TAKE ACTIONS ===
+	var rival_doom_contribution = 0.0
+	for rival in state.rival_labs:
+		var rival_result = RivalLabs.process_rival_turn(rival, state, state.rng)
+		rival_doom_contribution += rival_result["doom_contribution"]
+		results.append({
+			"success": true,
+			"message": "%s: %s" % [rival_result["name"], ", ".join(rival_result["actions"])]
+		})
 
-	state.add_resources({"doom": total_doom_increase})
-	results.append({
-		"success": true,
-		"message": "Environmental doom +%.1f (base %.1f, capabilities %.1f)" % [
-			total_doom_increase, base_doom_increase, capability_doom
+	# === USE DOOM SYSTEM FOR CALCULATION ===
+	if state.doom_system:
+		# Set rival contribution (calculated externally)
+		state.doom_system.set_rival_doom_contribution(rival_doom_contribution)
+
+		# Calculate doom with momentum system
+		var doom_result = state.doom_system.calculate_doom_change(state)
+
+		# Create detailed message
+		var doom_msg = "Doom %.1f → %.1f (change: %+.1f)" % [
+			doom_result["new_doom"] - doom_result["total_change"],
+			doom_result["new_doom"],
+			doom_result["total_change"]
 		]
-	})
+
+		# Add breakdown if significant changes
+		if abs(doom_result["total_change"]) > 0.1:
+			var breakdown_parts = []
+			for source in doom_result["sources"]:
+				var value = doom_result["sources"][source]
+				if abs(value) > 0.1:
+					breakdown_parts.append("%s: %+.1f" % [source, value])
+			if breakdown_parts.size() > 0:
+				doom_msg += "\n  └─ " + ", ".join(breakdown_parts)
+
+		# Add momentum info if significant
+		if abs(doom_result["momentum"]) > 0.5:
+			doom_msg += "\n  └─ Momentum: %s (%.1f)" % [
+				state.doom_system.get_momentum_description(),
+				doom_result["momentum"]
+			]
+
+		results.append({
+			"success": true,
+			"message": doom_msg
+		})
+
+		# Sync to state.doom for backward compatibility
+		state.doom = state.doom_system.current_doom
+	else:
+		# Fallback if doom system not initialized
+		var total_doom_increase = 1.0 + (state.capability_researchers * 0.5) + rival_doom_contribution
+		state.add_resources({"doom": total_doom_increase})
+		results.append({
+			"success": true,
+			"message": "Doom +%.1f (legacy calculation)" % total_doom_increase
+		})
 
 	# REMOVED: Event checking now happens in start_turn() (FIX #418)
 	# Events are checked BEFORE actions, not after

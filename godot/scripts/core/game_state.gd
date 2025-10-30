@@ -11,10 +11,14 @@ var reputation: float = 50.0
 var doom: float = 50.0  # 0-100, lose at 100
 var action_points: int = 3
 
-# Staff
+# Staff (legacy counts for backward compatibility)
 var safety_researchers: int = 0
 var capability_researchers: int = 0
 var compute_engineers: int = 0
+var managers: int = 0  # Each manager can handle 9 employees
+
+# Individual researchers (new system)
+var researchers: Array[Researcher] = []
 
 # Game status
 var turn: int = 0
@@ -34,12 +38,25 @@ var rng: RandomNumberGenerator
 # Queued actions for this turn
 var queued_actions: Array[String] = []
 
+# Rival labs
+var rival_labs: Array = []  # Array of RivalLabs.RivalLab
+
+# Doom system (modular, extensible)
+var doom_system: DoomSystem
+
 func _init(game_seed: String = ""):
 	seed = game_seed if game_seed != "" else str(Time.get_ticks_msec())
 
 	# Initialize deterministic RNG from seed
 	rng = RandomNumberGenerator.new()
 	rng.seed = hash(seed)
+
+	# Initialize doom system
+	doom_system = DoomSystem.new()
+	doom_system.current_doom = doom
+
+	# Initialize rival labs
+	rival_labs = RivalLabs.get_rival_labs()
 
 	reset()
 
@@ -56,6 +73,7 @@ func reset():
 	safety_researchers = 0
 	capability_researchers = 0
 	compute_engineers = 0
+	managers = 0
 
 	turn = 0
 	game_over = false
@@ -66,6 +84,12 @@ func reset():
 	current_phase = TurnPhase.ACTION_SELECTION
 	pending_events.clear()
 	can_end_turn = false
+
+	# Reset doom system
+	if doom_system:
+		doom_system.current_doom = doom
+		doom_system.doom_velocity = 0.0
+		doom_system.doom_momentum = 0.0
 
 func can_afford(costs: Dictionary) -> bool:
 	"""Check if player can afford given costs (FIX #407: added reputation validation)"""
@@ -117,6 +141,10 @@ func add_resources(gains: Dictionary):
 
 func check_win_lose():
 	"""Check victory/defeat conditions"""
+	# Sync doom from doom system
+	if doom_system:
+		doom = doom_system.current_doom
+
 	if doom >= 100.0:
 		game_over = true
 		victory = false
@@ -128,10 +156,85 @@ func check_win_lose():
 		victory = true
 
 func get_total_staff() -> int:
-	return safety_researchers + capability_researchers + compute_engineers
+	# Count individual researchers if using new system
+	if researchers.size() > 0:
+		return researchers.size() + managers
+	# Fallback to legacy counts
+	return safety_researchers + capability_researchers + compute_engineers + managers
+
+func get_researcher_count_by_spec(spec: String) -> int:
+	"""Count researchers by specialization"""
+	var count = 0
+	for researcher in researchers:
+		if researcher.specialization == spec:
+			count += 1
+	return count
+
+func add_researcher(researcher: Researcher):
+	"""Add a researcher to the team"""
+	researchers.append(researcher)
+
+	# Update legacy counts for backward compatibility
+	match researcher.specialization:
+		"safety":
+			safety_researchers += 1
+		"capabilities":
+			capability_researchers += 1
+		"interpretability", "alignment":
+			safety_researchers += 1  # Count as safety for legacy systems
+
+func remove_researcher(researcher: Researcher):
+	"""Remove a researcher from the team"""
+	var idx = researchers.find(researcher)
+	if idx >= 0:
+		researchers.remove_at(idx)
+
+		# Update legacy counts
+		match researcher.specialization:
+			"safety":
+				safety_researchers = max(0, safety_researchers - 1)
+			"capabilities":
+				capability_researchers = max(0, capability_researchers - 1)
+			"interpretability", "alignment":
+				safety_researchers = max(0, safety_researchers - 1)
+
+func get_management_capacity() -> int:
+	"""How many employees can current managers handle?"""
+	if managers == 0:
+		return 9  # Base capacity before first manager
+	return managers * 9
+
+func get_unmanaged_count() -> int:
+	"""How many employees exceed management capacity?"""
+	var non_manager_staff = safety_researchers + capability_researchers + compute_engineers
+	var capacity = get_management_capacity()
+	return max(0, non_manager_staff - capacity)
 
 func to_dict() -> Dictionary:
 	"""Serialize state for UI"""
+	var rival_summaries = []
+	for rival in rival_labs:
+		rival_summaries.append(RivalLabs.get_rival_summary(rival))
+
+	# Sync doom from doom system
+	if doom_system:
+		doom = doom_system.current_doom
+
+	# Get doom system data
+	var doom_data = {}
+	if doom_system:
+		doom_data = {
+			"doom": doom,
+			"doom_velocity": doom_system.doom_velocity,
+			"doom_momentum": doom_system.doom_momentum,
+			"doom_trend": doom_system._get_doom_trend(),
+			"doom_status": doom_system.get_doom_status(),
+			"momentum_description": doom_system.get_momentum_description(),
+			"doom_sources": doom_system.doom_sources.duplicate()
+		}
+	else:
+		doom_data = {"doom": doom}
+
 	return {
 		"money": money,
 		"compute": compute,
@@ -139,12 +242,17 @@ func to_dict() -> Dictionary:
 		"papers": papers,
 		"reputation": reputation,
 		"doom": doom,
+		"doom_system": doom_data,
 		"action_points": action_points,
 		"safety_researchers": safety_researchers,
 		"capability_researchers": capability_researchers,
 		"compute_engineers": compute_engineers,
+		"managers": managers,
 		"total_staff": get_total_staff(),
+		"management_capacity": get_management_capacity(),
+		"unmanaged_count": get_unmanaged_count(),
 		"turn": turn,
 		"game_over": game_over,
-		"victory": victory
+		"victory": victory,
+		"rival_labs": rival_summaries
 	}
