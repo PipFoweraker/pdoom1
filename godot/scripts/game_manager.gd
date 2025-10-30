@@ -80,6 +80,11 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 	for action in all_actions:
 		if action.get("id") == action_id:
 			return action
+	# Check hiring submenu actions
+	var hiring_options = GameActions.get_hiring_options()
+	for action in hiring_options:
+		if action.get("id") == action_id:
+			return action
 	return {}
 
 func end_turn():
