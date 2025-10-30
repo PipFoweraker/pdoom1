@@ -198,7 +198,9 @@ func send_command(command: Dictionary, callback: Callable):
 	var output = []
 
 	# Use PowerShell for reliable piping on Windows
-	var ps_command = 'echo \'' + json_str + '\' | python "' + bridge_path + '"'
+	# Escape double quotes in JSON for PowerShell
+	var json_escaped = json_str.replace('"', '`"')
+	var ps_command = 'echo "' + json_escaped + '" | python "' + bridge_path + '"'
 
 	var exit_code = OS.execute(
 		"powershell",
