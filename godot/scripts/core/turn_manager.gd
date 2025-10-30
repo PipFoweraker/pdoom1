@@ -10,19 +10,35 @@ func _init(game_state: GameState):
 func start_turn() -> Dictionary:
 	"""Begin new turn - Phase 1"""
 	state.turn += 1
-	state.action_points = 3  # Refresh AP each turn
+
+	# Calculate max AP based on staff (base 3 + 0.5 per staff member)
+	var total_staff = state.get_total_staff()
+	var max_ap = 3 + int(total_staff * 0.5)
+	state.action_points = max_ap
+
+	# Staff maintenance costs (salary per employee per turn)
+	var staff_salaries = total_staff * 5000  # $5k per employee per turn
+	if staff_salaries > 0:
+		state.add_resources({"money": -staff_salaries})
 
 	# Generate research from compute (deterministic)
 	var research_generated = state.compute * 0.05 * (1.0 + state.compute_engineers * 0.1)
 	state.add_resources({"research": research_generated})
 
+	var messages = [
+		"Turn %d started" % state.turn,
+		"Action Points: %d (base 3 + %d from %d staff)" % [max_ap, max_ap - 3, total_staff]
+	]
+
+	if staff_salaries > 0:
+		messages.append("Paid $%d in staff salaries" % staff_salaries)
+
+	messages.append("Generated %.1f research from compute" % research_generated)
+
 	return {
 		"success": true,
 		"phase": "action_selection",
-		"messages": [
-			"Turn %d started" % state.turn,
-			"Generated %.1f research from compute" % research_generated
-		]
+		"messages": messages
 	}
 
 func execute_turn() -> Dictionary:
