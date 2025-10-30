@@ -36,9 +36,9 @@ def test_command_parsing():
     for cmd_str in valid_cases:
         try:
             expanded = parser.expand_command_string(cmd_str)
-            print(f'  '{cmd_str}' -> {expanded} ({len(expanded)} commands)')
+            print(f"  '{cmd_str}' -> {expanded} ({len(expanded)} commands)")
         except ValueError as e:
-            print(f'  '{cmd_str}' -> ERROR: {e}')
+            print(f"  '{cmd_str}' -> ERROR: {e}")
     
     print('\nInvalid Command Strings:')
     invalid_cases = [
@@ -53,7 +53,7 @@ def test_command_parsing():
     
     for cmd_str in invalid_cases:
         is_valid, message = parser.validate_command_string(cmd_str)
-        print(f'  '{cmd_str}' -> {message}')
+        print(f"  '{cmd_str}' -> {message}")
 
 
 def test_command_descriptions():
@@ -79,7 +79,7 @@ def test_example_generation():
     
     print(f'Generated Examples ({len(examples)}):')
     for cmd_str, description in examples:
-        print(f'  '{cmd_str}'')
+        print(f"  '{cmd_str}'")
         print(f'    -> {description}')
         
         # Validate the example
@@ -106,7 +106,7 @@ def test_controller_initialization():
     test_string = 'H*3 F*2 S T'
     
     is_valid, message = parser.validate_command_string(test_string)
-    print(f'  Command validation: {'OK' if is_valid else 'FAILED'}')
+    print(f"  Command validation: {'OK' if is_valid else 'FAILED'}")
     print(f'  Message: {message}')
     
     if is_valid:
@@ -172,7 +172,7 @@ def run_all_tests():
         print('  Command descriptions: PASSED')
         print('  Example generation: PASSED')
         print('  Controller initialization: PASSED')
-        print(f'  ASCII compliance: {'PASSED' if ascii_ok else 'FAILED'}')
+        print(f"  ASCII compliance: {'PASSED' if ascii_ok else 'FAILED'}")
         
         if ascii_ok:
             print('\nAll tests PASSED! Command string system is ready.')

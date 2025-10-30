@@ -388,7 +388,7 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     
     # Attribution above title  
     attribution_font = pygame.font.SysFont('Consolas', int(h*0.018))
-    attribution_surf = attribution_font.render("Pip Foweraker's", True, (180, 180, 180))
+    attribution_surf = attribution_font.render('Pip Foweraker's', True, (180, 180, 180))
     attribution_x = w // 2 - attribution_surf.get_width() // 2
     attribution_y = int(h * 0.12)
     
@@ -3043,13 +3043,13 @@ def draw_tutorial_overlay(screen: pygame.Surface, tutorial_message: Dict[str, st
     pygame.draw.rect(screen, (80, 120, 160), button_rect, border_radius=5)
     pygame.draw.rect(screen, (120, 180, 240), button_rect, width=2, border_radius=5)
     
-    button_text = button_font.render("Got it!", True, (255, 255, 255))
+    button_text = button_font.render('Got it!', True, (255, 255, 255))
     text_rect = button_text.get_rect(center=button_rect.center)
     screen.blit(button_text, text_rect)
     
     # Footer text
     footer_text = pygame.font.Font(None, int(h * 0.02)).render(
-        'Click "Got it!" or press Enter to dismiss', True, (150, 150, 150)
+        'Click 'Got it!' or press Enter to dismiss', True, (150, 150, 150)
     )
     footer_rect = footer_text.get_rect(centerx=dialog_rect.centerx, y=button_rect.bottom + 10)
     screen.blit(footer_text, footer_rect)
@@ -4440,7 +4440,7 @@ def draw_new_player_experience(screen: pygame.Surface, w: int, h: int, selected_
         intro_font = pygame.font.SysFont('Consolas', int(h*0.022))
         intro_lines = [
             'Doom is coming. You convinced a funder to give you $1,000.',
-            "You'll be assigned a lab name for pseudonymous competition.",
+            'You'll be assigned a lab name for pseudonymous competition.',
             'Your job is to save the world. Good luck!'
         ]
         
@@ -4643,7 +4643,7 @@ def draw_high_score_screen(screen: pygame.Surface, w: int, h: int, game_state, s
     
     # Seed and configuration info
     config_y = int(h * 0.1)
-    seed_info = f"Seed: {seed} | Economic Model: Bootstrap v0.9.0"
+    seed_info = f'Seed: '{seed}' | Economic Model: Bootstrap v0.9.0'
     seed_surf = desc_font.render(seed_info, True, light_gray)
     seed_x = w // 2 - seed_surf.get_width() // 2
     screen.blit(seed_surf, (seed_x, config_y))
@@ -4669,7 +4669,7 @@ def draw_high_score_screen(screen: pygame.Surface, w: int, h: int, game_state, s
             no_seed_x = w // 2 - no_seed_surf.get_width() // 2
             screen.blit(no_seed_surf, (no_seed_x, leaderboard_y + 30))
             
-            hint_text = "Play a game or use 'Launch with Custom Seed' to see scores"
+            hint_text = 'Play a game or use 'Launch with Custom Seed' to see scores'
             hint_surf = pygame.font.SysFont('Consolas', int(h*0.018)).render(hint_text, True, light_gray)
             hint_x = w // 2 - hint_surf.get_width() // 2
             screen.blit(hint_surf, (hint_x, leaderboard_y + 60))
@@ -4780,7 +4780,7 @@ def draw_high_score_screen_legacy(screen: pygame.Surface, w: int, h: int, game_s
     
     # Seed and configuration info
     config_y = int(h * 0.095)
-    seed_info = f"Seed: {seed} | Economic Model: Bootstrap v0.9.0"
+    seed_info = f'Seed: '{seed}' | Economic Model: Bootstrap v0.9.0'
     seed_surf = font_medium.render(seed_info, True, light_gray)
     seed_x = w // 2 - seed_surf.get_width() // 2
     screen.blit(seed_surf, (seed_x, config_y))

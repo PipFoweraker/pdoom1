@@ -37,10 +37,10 @@ class TestStepwiseTutorial(unittest.TestCase):
         self.assertLess(len(sequence), 20, 'Should have at most 20 tutorial steps')
         # Each step should have required fields
         for i, step in enumerate(sequence):
-            self.assertIn('id', step, f'Step {i} missing 'id'')
-            self.assertIn('title', step, f'Step {i} missing 'title'')
-            self.assertIn('content', step, f'Step {i} missing 'content'')
-            self.assertIn('reveal_elements', step, f'Step {i} missing 'reveal_elements'')
+            self.assertIn('id', step, f"Step {i} missing 'id'")
+            self.assertIn('title', step, f"Step {i} missing 'title'")
+            self.assertIn('content', step, f"Step {i} missing 'content'")
+            self.assertIn('reveal_elements', step, f"Step {i} missing 'reveal_elements'")
             self.assertIsInstance(step['reveal_elements'], list, f'Step {i} reveal_elements should be a list')
     
     def test_stepwise_tutorial_start(self):

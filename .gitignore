@@ -85,3 +85,13 @@ configs/default.json
 tools/temp/
 tools/test_output/
 tools/*.log
+
+# Godot engine binaries (download locally)
+tools/godot/*.exe
+tools/godot/*.zip
+tools/godot/.import/
+
+# Godot editor data
+godot/.godot/
+godot/.import/
+godot/export_presets.cfg

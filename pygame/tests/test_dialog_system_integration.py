@@ -165,12 +165,12 @@ class TestDialogSystemIntegration(unittest.TestCase):
                 
                 # Test each option has required fields
                 for option in dialog['options']:
-                    self.assertIn('id', option, f'{dialog_type} option missing 'id'')
-                    self.assertIn('name', option, f'{dialog_type} option missing 'name'')
-                    self.assertIn('description', option, f'{dialog_type} option missing 'description'')
-                    self.assertIn('cost', option, f'{dialog_type} option missing 'cost'')
-                    self.assertIn('ap_cost', option, f'{dialog_type} option missing 'ap_cost'')
-                    self.assertIn('available', option, f'{dialog_type} option missing 'available'')
+                    self.assertIn('id', option, f"{dialog_type} option missing 'id'")
+                    self.assertIn('name', option, f"{dialog_type} option missing 'name'")
+                    self.assertIn('description', option, f"{dialog_type} option missing 'description'")
+                    self.assertIn('cost', option, f"{dialog_type} option missing 'cost'")
+                    self.assertIn('ap_cost', option, f"{dialog_type} option missing 'ap_cost'")
+                    self.assertIn('available', option, f"{dialog_type} option missing 'available'")
                     
                 # Clean up
                 DialogManager.dismiss_dialog(self.game_state, dialog_type)

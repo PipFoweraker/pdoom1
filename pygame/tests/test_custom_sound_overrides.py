@@ -139,8 +139,8 @@ class TestCustomSoundOverrides(unittest.TestCase):
         
         for file_path, expected_key in test_cases:
             actual_key = file_path.stem.lower()
-            self.assertEqual(actual_key, expected_key, 
-                           f'File {file_path} should map to key '{expected_key}'')
+            self.assertEqual(actual_key, expected_key,
+                           f"File {file_path} should map to key '{expected_key}'")
 
     @patch('pygame.mixer.Sound')
     def test_sound_override_behavior(self, mock_sound_class):
@@ -206,7 +206,7 @@ class TestSoundOverrideKeys(unittest.TestCase):
         
         for key in expected_keys:
             self.assertIn(key, sound_manager.sound_toggles,
-                         f'Sound toggle for '{key}' should exist')
+                         f"Sound toggle for '{key}' should exist")
 
     def test_zabinga_key_exists(self):
         '''Test that zabinga key is handled (even if not in sound_toggles)'''

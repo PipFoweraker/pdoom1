@@ -40,9 +40,9 @@ class TestActionColorScheme(unittest.TestCase):
                 colors = get_action_color_scheme(action)
                 
                 # Verify required keys exist
-                self.assertIn('normal', colors, f'Missing 'normal' color for {action}')
-                self.assertIn('hover', colors, f'Missing 'hover' color for {action}')
-                self.assertIn('border', colors, f'Missing 'border' color for {action}')
+                self.assertIn('normal', colors, f"Missing 'normal' color for {action}")
+                self.assertIn('hover', colors, f"Missing 'hover' color for {action}")
+                self.assertIn('border', colors, f"Missing 'border' color for {action}")
                 
                 # Verify color format (RGB tuples)
                 for color_type, color_value in colors.items():
