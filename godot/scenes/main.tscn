@@ -52,10 +52,30 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "Compute: 0"
 
-[node name="SafetyLabel" type="Label" parent="MainUI/ResourceDisplay"]
+[node name="ResearchLabel" type="Label" parent="MainUI/ResourceDisplay"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Safety: 0"
+text = "Research: 0"
+
+[node name="PapersLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Papers: 0"
+
+[node name="ReputationLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reputation: 0"
+
+[node name="DoomLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Doom: 0"
+
+[node name="APLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "AP: 0"
 
 [node name="HSeparator1" type="HSeparator" parent="MainUI"]
 layout_mode = 2

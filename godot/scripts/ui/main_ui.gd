@@ -5,7 +5,11 @@ extends VBoxContainer
 @onready var turn_label = $ResourceDisplay/TurnLabel
 @onready var money_label = $ResourceDisplay/MoneyLabel
 @onready var compute_label = $ResourceDisplay/ComputeLabel
-@onready var safety_label = $ResourceDisplay/SafetyLabel
+@onready var research_label = $ResourceDisplay/ResearchLabel
+@onready var papers_label = $ResourceDisplay/PapersLabel
+@onready var reputation_label = $ResourceDisplay/ReputationLabel
+@onready var doom_label = $ResourceDisplay/DoomLabel
+@onready var ap_label = $ResourceDisplay/APLabel
 @onready var phase_label = $BottomBar/PhaseLabel
 @onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
 @onready var actions_list = $ContentArea/LeftPanel/ActionsScroll/ActionsList
@@ -33,7 +37,6 @@ func _ready():
 	game_manager.action_executed.connect(_on_action_executed)
 	game_manager.error_occurred.connect(_on_error_occurred)
 	game_manager.actions_available.connect(_on_actions_available)
-	game_manager.event_triggered.connect(_on_event_triggered)
 
 	log_message("[color=yellow]UI Ready. Click 'Init Game' to start.[/color]")
 
@@ -63,27 +66,31 @@ func _on_game_state_updated(state: Dictionary):
 	print("[MainUI] State updated: ", state)
 
 	# Update resource displays
-	turn_label.text = "Turn: " + str(state.get("turn", 0))
-	money_label.text = "Money: $" + str(state.get("money", 0))
-	compute_label.text = "Compute: " + str(state.get("compute", 0))
-	safety_label.text = "Safety: " + str(state.get("safety", 0))
+	turn_label.text = "Turn: %d" % state.get("turn", 0)
+	money_label.text = "Money: $%.0f" % state.get("money", 0)
+	compute_label.text = "Compute: %.1f" % state.get("compute", 0)
+	research_label.text = "Research: %.1f" % state.get("research", 0)
+	papers_label.text = "Papers: %d" % state.get("papers", 0)
+	reputation_label.text = "Rep: %.0f" % state.get("reputation", 0)
+	doom_label.text = "Doom: %.1f%%" % state.get("doom", 0)
+	ap_label.text = "AP: %d" % state.get("action_points", 0)
 
-	# Log state change
-	log_message("[color=green]State updated - Turn %d | $%d | Compute: %d | Safety: %d[/color]" % [
-		state.get("turn", 0),
-		state.get("money", 0),
-		state.get("compute", 0),
-		state.get("safety", 0)
-	])
+	# Color-code doom (green < 30, yellow < 70, red >= 70)
+	var doom = state.get("doom", 0)
+	if doom < 30:
+		doom_label.modulate = Color(0.2, 1.0, 0.2)
+	elif doom < 70:
+		doom_label.modulate = Color(1.0, 1.0, 0.2)
+	else:
+		doom_label.modulate = Color(1.0, 0.2, 0.2)
 
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:
 		test_action_button.disabled = false
 		init_button.disabled = true
 
-		# Refresh action list to update affordability
-		if state.get("turn", -1) >= 0:
-			game_manager.get_available_actions()
+		# Note: Actions are now included in init_game response
+		# No need to call get_available_actions() separately
 
 	# Check game over
 	if state.get("game_over", false):
@@ -97,10 +104,9 @@ func _on_game_state_updated(state: Dictionary):
 		test_action_button.disabled = true
 		end_turn_button.disabled = true
 
-func _on_turn_phase_changed(phase_info: Dictionary):
-	print("[MainUI] Phase changed: ", phase_info)
+func _on_turn_phase_changed(phase_name: String):
+	print("[MainUI] Phase changed: ", phase_name)
 
-	var phase_name = phase_info.get("phase", "UNKNOWN")
 	current_turn_phase = phase_name
 
 	# Update phase label with color coding
@@ -124,17 +130,6 @@ func _on_turn_phase_changed(phase_info: Dictionary):
 
 	log_message("[color=magenta]Turn Phase: " + phase_name + "[/color]")
 
-	# Handle pending events
-	if phase_info.has("pending_events") and phase_info["pending_events"].size() > 0:
-		log_message("[color=yellow]%d Events triggered![/color]" % phase_info["pending_events"].size())
-		for event in phase_info["pending_events"]:
-			log_message("[color=yellow]  - " + str(event.get("name", "Unknown Event")) + "[/color]")
-
-	# Handle events array (alternative format)
-	if phase_info.has("events") and phase_info["events"].size() > 0:
-		for event in phase_info["events"]:
-			game_manager.event_triggered.emit(event)
-
 func _on_action_executed(result: Dictionary):
 	print("[MainUI] Action executed: ", result)
 
@@ -146,11 +141,7 @@ func _on_action_executed(result: Dictionary):
 		for msg in result.get("messages", []):
 			log_message("[color=white]  " + str(msg) + "[/color]")
 
-	# After turn ends, automatically start new turn
-	if result.has("turn_number"):
-		log_message("[color=cyan]Auto-starting turn %d...[/color]" % result.get("turn_number"))
-		await get_tree().create_timer(0.5).timeout  # Small delay for readability
-		game_manager.start_turn()
+	# Note: GameManager now handles auto-starting next turn
 
 func _on_error_occurred(error_msg: String):
 	print("[MainUI] Error: ", error_msg)
@@ -183,7 +174,7 @@ func _on_actions_available(actions: Array):
 	for action in actions:
 		var action_id = action.get("id", "")
 		var action_name = action.get("name", "Unknown")
-		var action_cost = action.get("cost", {})
+		var action_cost = action.get("costs", {})
 		var action_description = action.get("description", "")
 		var category = action.get("category", "other")
 
@@ -234,39 +225,6 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	update_queued_actions_display()
 
 	game_manager.select_action(action_id)
-
-func _on_event_triggered(event: Dictionary):
-	"""Show event popup dialog"""
-	print("[MainUI] Event triggered: ", event)
-
-	var event_name = event.get("name", "Unknown Event")
-	var event_description = event.get("description", "")
-	var choices = event.get("choices", [])
-
-	# Create popup dialog
-	var dialog = AcceptDialog.new()
-	dialog.title = event_name
-	dialog.dialog_text = event_description
-	dialog.size = Vector2(500, 300)
-
-	# Add choice buttons
-	for choice in choices:
-		var choice_id = choice.get("id", "")
-		var choice_text = choice.get("text", "")
-
-		dialog.add_button(choice_text, false, choice_id)
-
-	# Connect custom action signal
-	dialog.custom_action.connect(func(choice_id):
-		game_manager.resolve_event(event.get("id", ""), choice_id)
-		dialog.queue_free()
-	)
-
-	# Add to scene
-	add_child(dialog)
-	dialog.popup_centered()
-
-	log_message("[color=yellow]Event: %s[/color]" % event_name)
 
 func update_queued_actions_display():
 	"""Update the message log to show queued actions"""
