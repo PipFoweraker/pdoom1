@@ -63,7 +63,7 @@ Implemented comprehensive enhanced terminal welcome and exit messages for P(Doom
   - Added action tracking on player interactions
   - Added game state updates every turn
   - Added victory/defeat detection
-  - Fixed pre-existing f-string syntax error
+  - Fixed pre-existing f-string syntax error in bug report message (line 1533: changed single quotes to double quotes to allow dictionary key access within f-string)
 
 ## Usage Examples
 
@@ -277,9 +277,9 @@ Both integrations use the same `terminal_messages.py` module, ensuring consisten
 
 ## Credits
 
-Implementation by: GitHub Copilot  
+Implementation: Contributors to PipFoweraker/pdoom1  
 Issue Reporter: @PipFoweraker  
-Feature Suggestion (cowsay): @stevenhobartwork-create  
+Feature Suggestion (ASCII art/cowsay): @stevenhobartwork-create  
 
 ## Related Issues
 
