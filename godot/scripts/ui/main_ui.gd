@@ -28,6 +28,8 @@ func _ready():
 	game_manager.turn_phase_changed.connect(_on_turn_phase_changed)
 	game_manager.action_executed.connect(_on_action_executed)
 	game_manager.error_occurred.connect(_on_error_occurred)
+	game_manager.actions_available.connect(_on_actions_available)
+	game_manager.event_triggered.connect(_on_event_triggered)
 
 	log_message("[color=yellow]UI Ready. Click 'Init Game' to start.[/color]")
 
@@ -66,6 +68,10 @@ func _on_game_state_updated(state: Dictionary):
 		test_action_button.disabled = false
 		end_turn_button.disabled = false
 		init_button.disabled = true
+
+		# Load available actions on first init
+		if state.get("turn", 0) == 0:
+			game_manager.get_available_actions()
 
 	# Check game over
 	if state.get("game_over", false):
@@ -118,3 +124,76 @@ func log_message(text: String):
 	var scroll = message_log.get_parent() as ScrollContainer
 	if scroll:
 		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
+
+func _on_actions_available(actions: Array):
+	"""Populate action list dynamically"""
+	print("[MainUI] Populating ", actions.size(), " actions")
+
+	# Clear existing action buttons (except test button for now)
+	for child in actions_list.get_children():
+		if child.name != "TestActionButton":
+			child.queue_free()
+
+	# Create button for each action
+	for action in actions:
+		var action_id = action.get("id", "")
+		var action_name = action.get("name", "Unknown")
+		var action_cost = action.get("cost", {})
+		var action_description = action.get("description", "")
+		var category = action.get("category", "other")
+
+		# Create button
+		var button = Button.new()
+		button.text = action_name
+
+		# Add cost info to tooltip
+		var tooltip = action_description + "\n\nCosts:"
+		for resource in action_cost.keys():
+			tooltip += "\n  %s: %s" % [resource, action_cost[resource]]
+		button.tooltip_text = tooltip
+
+		# Connect button press
+		button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
+
+		# Add to list
+		actions_list.add_child(button)
+
+	log_message("[color=cyan]Loaded %d available actions[/color]" % actions.size())
+
+func _on_dynamic_action_pressed(action_id: String, action_name: String):
+	"""Handle dynamic action button press"""
+	log_message("[color=cyan]Selecting action: %s[/color]" % action_name)
+	game_manager.select_action(action_id)
+
+func _on_event_triggered(event: Dictionary):
+	"""Show event popup dialog"""
+	print("[MainUI] Event triggered: ", event)
+
+	var event_name = event.get("name", "Unknown Event")
+	var event_description = event.get("description", "")
+	var choices = event.get("choices", [])
+
+	# Create popup dialog
+	var dialog = AcceptDialog.new()
+	dialog.title = event_name
+	dialog.dialog_text = event_description
+	dialog.size = Vector2(500, 300)
+
+	# Add choice buttons
+	for choice in choices:
+		var choice_id = choice.get("id", "")
+		var choice_text = choice.get("text", "")
+
+		dialog.add_button(choice_text, false, choice_id)
+
+	# Connect custom action signal
+	dialog.custom_action.connect(func(choice_id):
+		game_manager.resolve_event(event.get("id", ""), choice_id)
+		dialog.queue_free()
+	)
+
+	# Add to scene
+	add_child(dialog)
+	dialog.popup_centered()
+
+	log_message("[color=yellow]Event: %s[/color]" % event_name)

@@ -9,6 +9,7 @@ signal turn_phase_changed(phase_info: Dictionary)
 signal event_triggered(event: Dictionary)
 signal action_executed(result: Dictionary)
 signal error_occurred(error_msg: String)
+signal actions_available(actions: Array)
 
 # Python process
 var python_process: int = -1
@@ -81,9 +82,10 @@ func get_available_actions():
 		if response.get("success", false):
 			var actions = response.get("actions", [])
 			print("[GameManager] Got ", actions.size(), " available actions")
-			# Emit or store actions for UI
+			actions_available.emit(actions)
 		else:
 			print("[GameManager] Failed to get actions: ", response.get("error", ""))
+			error_occurred.emit(response.get("error", "Failed to load actions"))
 	)
 
 func select_action(action_id: String):
