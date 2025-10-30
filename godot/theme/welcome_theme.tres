@@ -1,0 +1,54 @@
+[gd_resource type="Theme" format=3]
+
+[resource]
+Button/styles/normal = {
+	"bg_color": Color(0.2, 0.3, 0.5, 1.0),
+	"border_width_left": 2,
+	"border_width_top": 2,
+	"border_width_right": 2,
+	"border_width_bottom": 2,
+	"border_color": Color(0.4, 0.5, 0.7, 1.0),
+	"corner_radius_top_left": 4,
+	"corner_radius_top_right": 4,
+	"corner_radius_bottom_left": 4,
+	"corner_radius_bottom_right": 4
+}
+
+Button/styles/hover = {
+	"bg_color": Color(0.3, 0.5, 0.8, 1.0),
+	"border_width_left": 2,
+	"border_width_top": 2,
+	"border_width_right": 2,
+	"border_width_bottom": 2,
+	"border_color": Color(0.9, 0.9, 1.0, 1.0),
+	"corner_radius_top_left": 4,
+	"corner_radius_top_right": 4,
+	"corner_radius_bottom_left": 4,
+	"corner_radius_bottom_right": 4
+}
+
+Button/styles/pressed = {
+	"bg_color": Color(0.15, 0.25, 0.4, 1.0),
+	"border_width_left": 2,
+	"border_width_top": 2,
+	"border_width_right": 2,
+	"border_width_bottom": 2,
+	"border_color": Color(0.9, 0.9, 1.0, 1.0),
+	"corner_radius_top_left": 4,
+	"corner_radius_top_right": 4,
+	"corner_radius_bottom_left": 4,
+	"corner_radius_bottom_right": 4
+}
+
+Button/styles/focus = {
+	"bg_color": Color(0.4, 0.6, 1.0, 1.0),
+	"border_width_left": 3,
+	"border_width_top": 3,
+	"border_width_right": 3,
+	"border_width_bottom": 3,
+	"border_color": Color(1.0, 1.0, 1.0, 1.0),
+	"corner_radius_top_left": 4,
+	"corner_radius_top_right": 4,
+	"corner_radius_bottom_left": 4,
+	"corner_radius_bottom_right": 4
+}

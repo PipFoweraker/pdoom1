@@ -12,7 +12,7 @@ config_version=5
 
 config/name="P(Doom)"
 config/description="Privacy-First Bureaucracy Strategy Game"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/welcome.tscn"
 config/features=PackedStringArray("4.5")
 
 [display]
