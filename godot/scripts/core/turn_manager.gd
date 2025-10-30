@@ -40,6 +40,21 @@ func execute_turn() -> Dictionary:
 	# Clear queued actions
 	state.queued_actions.clear()
 
+	# Check for paper publication (research threshold)
+	if state.research >= 100:
+		var papers_to_publish = int(state.research / 100)
+		state.papers += papers_to_publish
+		state.research = fmod(state.research, 100)  # Keep remainder
+		state.add_resources({"reputation": papers_to_publish * 5})  # Papers boost reputation
+		results.append({
+			"success": true,
+			"message": "Published %d paper%s! (+%d reputation)" % [
+				papers_to_publish,
+				"s" if papers_to_publish > 1 else "",
+				papers_to_publish * 5
+			]
+		})
+
 	# Environmental doom increase (time pressure)
 	var base_doom_increase = 1.0
 	var capability_doom = state.capability_researchers * 0.5
