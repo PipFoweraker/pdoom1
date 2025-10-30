@@ -37,6 +37,7 @@ func _ready():
 	game_manager.action_executed.connect(_on_action_executed)
 	game_manager.error_occurred.connect(_on_error_occurred)
 	game_manager.actions_available.connect(_on_actions_available)
+	game_manager.event_triggered.connect(_on_event_triggered)
 
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
@@ -395,3 +396,87 @@ func update_queued_actions_display():
 		log_message("[color=lime]Queued actions (%d): %s[/color]" % [queued_actions.size(), ", ".join(action_names)])
 	else:
 		log_message("[color=gray]No actions queued[/color]")
+
+func _on_event_triggered(event: Dictionary):
+	"""Handle event trigger - show popup dialog"""
+	print("[MainUI] Event triggered: ", event.get("name", "Unknown"))
+
+	log_message("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
+
+	# Create event popup dialog
+	var dialog = AcceptDialog.new()
+	dialog.title = event.get("name", "Event")
+	dialog.dialog_text = event.get("description", "An event has occurred!")
+	dialog.size = Vector2(600, 450)
+
+	# Create container for option buttons
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+
+	# Add each option as a button
+	var options = event.get("options", [])
+	var current_state = game_manager.get_game_state()
+
+	for option in options:
+		var choice_id = option.get("id", "")
+		var choice_text = option.get("text", "")
+		var costs = option.get("costs", {})
+
+		var btn = Button.new()
+		btn.text = choice_text
+		btn.custom_minimum_size = Vector2(500, 45)
+
+		# Check affordability
+		var can_afford = true
+		var missing_resources = []
+
+		for resource in costs.keys():
+			var cost = costs[resource]
+			var available = current_state.get(resource, 0)
+
+			if available < cost:
+				can_afford = false
+				missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
+
+		# Add tooltip with costs/effects
+		var tooltip = ""
+		if not costs.is_empty():
+			tooltip += "Costs:\n"
+			for resource in costs.keys():
+				tooltip += "  %s: %s\n" % [resource, costs[resource]]
+
+		var effects = option.get("effects", {})
+		if not effects.is_empty():
+			tooltip += "\nEffects:\n"
+			for resource in effects.keys():
+				var value = effects[resource]
+				var sign = "+" if value >= 0 else ""
+				tooltip += "  %s: %s%s\n" % [resource, sign, value]
+
+		if not can_afford:
+			tooltip += "\n[CANNOT AFFORD]\n"
+			for msg in missing_resources:
+				tooltip += "  Missing: " + msg + "\n"
+			btn.disabled = true
+			btn.modulate = Color(0.6, 0.6, 0.6)
+
+		btn.tooltip_text = tooltip
+
+		# Connect button
+		btn.pressed.connect(func(): _on_event_choice_selected(event, choice_id, dialog))
+
+		vbox.add_child(btn)
+
+	# Add to dialog
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: AcceptDialog):
+	"""Handle event choice selection"""
+	dialog.queue_free()
+
+	log_message("[color=cyan]Event choice: %s[/color]" % choice_id)
+
+	# Tell game manager to resolve event
+	game_manager.resolve_event(event, choice_id)
