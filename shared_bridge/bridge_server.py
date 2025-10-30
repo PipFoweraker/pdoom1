@@ -74,11 +74,16 @@ class GodotBridge:
         # Start first turn (triggers initial events if any)
         turn_start = self.turn_manager.start_turn()
 
+        # Get available actions for convenience (after initialization)
+        available_actions = self.logic.get_available_actions()
+        serialized_actions = [self._serialize_action(a) for a in available_actions]
+
         return {
             "success": True,
             "type": "game_initialized",
             "state": self._serialize_state(),
-            "turn_phase": turn_start
+            "turn_phase": turn_start,
+            "actions": serialized_actions  # Include actions in init response
         }
 
     def _start_turn(self) -> dict:

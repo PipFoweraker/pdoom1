@@ -72,7 +72,7 @@ func execute_turn() -> Dictionary:
 func get_available_actions() -> Array[Dictionary]:
 	"""Get actions player can currently take"""
 	var all_actions = GameActions.get_all_actions()
-	var available = []
+	var available: Array[Dictionary] = []
 
 	for action in all_actions:
 		var can_afford = state.can_afford(action["costs"])
