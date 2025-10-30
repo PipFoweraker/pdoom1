@@ -16,14 +16,29 @@ Communication Protocol:
 
 import sys
 import json
+import atexit
 from pathlib import Path
 
-# Add shared to path
+# Add shared and src to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "shared"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
 from core.game_logic import GameLogic
 from core.engine_interface import MockEngine
 from turn_architecture import TurnManager
+
+# Import enhanced terminal messages
+try:
+    from services.terminal_messages import (
+        print_welcome_message,
+        get_exit_tracker,
+        create_startup_config_dict
+    )
+    from services.version import get_display_version
+    ENHANCED_MESSAGES_AVAILABLE = True
+except ImportError:
+    ENHANCED_MESSAGES_AVAILABLE = False
+    get_display_version = lambda: "unknown"
 
 
 class GodotBridge:
@@ -34,6 +49,7 @@ class GodotBridge:
         self.logic = None
         self.turn_manager = None
         self.initialized = False
+        self.exit_tracker = get_exit_tracker() if ENHANCED_MESSAGES_AVAILABLE else None
 
     def handle_command(self, command: dict) -> dict:
         """Process a command from Godot and return result"""
@@ -70,6 +86,10 @@ class GodotBridge:
         self.logic = GameLogic(self.engine, seed=seed)
         self.turn_manager = TurnManager(self.logic)
         self.initialized = True
+
+        # Track game initialization for exit tracking
+        if self.exit_tracker:
+            self.exit_tracker.update_game_state(self._serialize_state())
 
         # Start first turn (triggers initial events if any)
         turn_start = self.turn_manager.start_turn()
@@ -148,8 +168,17 @@ class GodotBridge:
             return {"success": False, "error": "Game not initialized"}
 
         action_id = command.get("action_id")
+        
+        # Track action for exit history
+        if self.exit_tracker:
+            self.exit_tracker.add_action(f"Execute: {action_id}")
+        
         # execute_action returns TurnResult which contains messages list
         turn_result = self.logic.execute_action(action_id)
+        
+        # Update game state tracking
+        if self.exit_tracker:
+            self.exit_tracker.update_game_state(self._serialize_state())
 
         return {
             "success": turn_result.success,
@@ -265,20 +294,51 @@ class GodotBridge:
 
 def run_stdio_mode():
     """Run bridge in stdio mode (one command per line)"""
+    # Print enhanced welcome message
+    if ENHANCED_MESSAGES_AVAILABLE:
+        config = create_startup_config_dict()
+        print_welcome_message(
+            version=get_display_version(),
+            config=config,
+            engine="Godot",
+            verbose=False,
+            show_banner=True,
+            show_flavor=True
+        )
+        
+        # Register exit handler
+        exit_tracker = get_exit_tracker()
+        def on_exit():
+            if not exit_tracker.exit_reason or exit_tracker.exit_reason == "Unknown exit":
+                exit_tracker.set_user_exit("bridge shutdown")
+            exit_tracker.print_exit(get_display_version(), verbose=False)
+        atexit.register(on_exit)
+    
     bridge = GodotBridge()
     print(json.dumps({"ready": True}), flush=True)
 
-    for line in sys.stdin:
-        try:
-            command = json.loads(line.strip())
-            result = bridge.handle_command(command)
-            print(json.dumps(result), flush=True)
-        except json.JSONDecodeError as e:
-            error = {"success": False, "error": f"Invalid JSON: {e}"}
-            print(json.dumps(error), flush=True)
-        except Exception as e:
-            error = {"success": False, "error": f"Unexpected error: {e}"}
-            print(json.dumps(error), flush=True)
+    try:
+        for line in sys.stdin:
+            try:
+                command = json.loads(line.strip())
+                result = bridge.handle_command(command)
+                print(json.dumps(result), flush=True)
+            except json.JSONDecodeError as e:
+                error = {"success": False, "error": f"Invalid JSON: {e}"}
+                print(json.dumps(error), flush=True)
+            except Exception as e:
+                error = {"success": False, "error": f"Unexpected error: {e}"}
+                print(json.dumps(error), flush=True)
+                # Track crash
+                if ENHANCED_MESSAGES_AVAILABLE and bridge.exit_tracker:
+                    bridge.exit_tracker.set_crash(str(e))
+    except KeyboardInterrupt:
+        if ENHANCED_MESSAGES_AVAILABLE and bridge.exit_tracker:
+            bridge.exit_tracker.set_user_exit("keyboard interrupt")
+    except Exception as e:
+        if ENHANCED_MESSAGES_AVAILABLE and bridge.exit_tracker:
+            bridge.exit_tracker.set_crash(str(e))
+        raise
 
 
 if __name__ == "__main__":

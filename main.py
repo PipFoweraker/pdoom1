@@ -18,6 +18,12 @@ from src.ui.privacy_controls import privacy_controls
 from src.ui.overlay_manager import OverlayManager
 from src.services.bug_reporter import BugReporter
 from src.services.version import get_display_version
+from src.services.terminal_messages import (
+    print_welcome_message,
+    get_exit_tracker,
+    create_startup_config_dict,
+    ExitReasonTracker
+)
 from src.features.onboarding import onboarding
 from src.services.config_manager import initialize_config_system, get_current_config, config_manager
 from src.services.sound_manager import SoundManager
@@ -70,18 +76,21 @@ def is_verbose_logging_enabled():
         return False
 
 def log_shutdown(reason='User exit'):
-    '''Log shutdown information when dev mode is enabled'''
-    if is_verbose_logging_enabled():
-        print('=' * 80)
-        print(f'[SHUTDOWN] P(Doom) {get_display_version()} shutting down')
-        print(f'[SHUTDOWN] Reason: {reason}')
-        print(f'[SHUTDOWN] Pygame version: {pygame.version.ver}')
-        print(f'[SHUTDOWN] Thank you for playing!')
-        print('=' * 80)
-    elif is_dev_mode_enabled():
-        print(f'[DEV] P(Doom) {get_display_version()} shutting down - {reason}')
-    else:
-        print(f'P(Doom) {get_display_version()} - Thanks for playing!')
+    '''Log shutdown information with enhanced terminal messages'''
+    exit_tracker = get_exit_tracker()
+    
+    # Update exit reason if not already set
+    if exit_tracker.exit_reason == "Unknown exit":
+        if "crash" in reason.lower():
+            exit_tracker.set_crash(reason)
+        elif "graceful" in reason.lower():
+            exit_tracker.set_graceful_crash(reason)
+        else:
+            exit_tracker.set_user_exit(reason)
+    
+    # Print enhanced exit message
+    verbose = is_verbose_logging_enabled()
+    exit_tracker.print_exit(get_display_version(), verbose=verbose)
 
 # --- Adaptive window sizing with loading screen --- #
 # Initialize pygame mixer first with proper settings for sound
@@ -92,44 +101,19 @@ pygame.init()
 dev_mode = is_dev_mode_enabled()
 verbose_logging = is_verbose_logging_enabled()
 
-print(f'Starting P(Doom): Bureaucracy Strategy Game {get_display_version()}')
-print('=' * 80)
+# Print enhanced welcome message
+config_dict = create_startup_config_dict(current_config)
+print_welcome_message(
+    version=get_display_version(),
+    config=config_dict,
+    engine="Pygame",
+    verbose=verbose_logging,
+    show_banner=True,
+    show_flavor=True
+)
 
-if dev_mode:
-    print('[DEV MODE] Development mode enabled')
-    if verbose_logging:
-        print('[VERBOSE] Verbose logging enabled')
-
-print('STARTUP CONFIGURATION:')
-print(f'  Version: {get_display_version()}')
-
-if verbose_logging:
-    from src.services.version import get_version_info
-    version_info = get_version_info() 
-    print(f'  Full Version Info: {version_info}')
-    print(f'  Python Version: {sys.version}')
-    print(f'  Pygame Version: {pygame.version.ver}')
-
-print(f'  Economic Model: Bootstrap AI Safety Nonprofit')
-print(f'  Starting Funds: $100k')
-print(f'  Staff Maintenance: $600 first, $800 additional/week') 
-print(f'  Research Costs: $3k/week (reduced from $40k)')
-print(f'  Hiring Costs: $0 (no signing bonuses)')
-print(f'  Moore's Law: 2% compute cost reduction/week')
-print(f'  Audio: {'Enabled' if current_config['audio']['sound_enabled'] else 'Disabled'}')
-print(f'  Window Scale: {current_config['ui']['window_scale']:.1f}x')
-print(f'  Fullscreen: {'Yes' if current_config['ui'].get('fullscreen', False) else 'No'}')
-
-if verbose_logging:
-    print(f'  Config Directory: {config_manager.CONFIG_DIR}')
-    print(f'  Current Config: {config_manager.current_config_name}')
-    try:
-        available_configs = config_manager.list_available_configs()
-        print(f'  Available Configs: {', '.join(available_configs)}')
-    except Exception:
-        print(f'  Available Configs: [Error loading config list]')
-
-print('=' * 80)
+# Initialize exit tracker for enhanced shutdown messages
+exit_tracker = get_exit_tracker()
 
 # Set up initial screen for loading
 info = pygame.display.Info()
@@ -554,6 +538,7 @@ def handle_menu_click(mouse_pos, w, h):
         elif i == 4:  # Settings
             current_state = 'settings_menu'
         elif i == 5:  # Exit
+            exit_tracker.set_user_exit("main menu")
             log_shutdown('Main menu exit')
             pygame.quit()
             sys.exit()
@@ -614,6 +599,7 @@ def handle_menu_keyboard(key):
         elif selected_menu_item == 4:  # Settings
             current_state = 'settings_menu'
         elif selected_menu_item == 5:  # Exit
+            exit_tracker.set_user_exit("main menu keyboard")
             log_shutdown('Menu keyboard exit')
             pygame.quit()
             sys.exit()
@@ -2458,6 +2444,7 @@ def main():
                     # Keyboard handling varies by state
                     elif current_state == 'main_menu':
                         if event.key == pygame.K_ESCAPE:
+                            exit_tracker.set_user_exit("main menu escape key")
                             running = False
                         else:
                             handle_menu_keyboard(event.key)
@@ -2578,6 +2565,19 @@ def main():
                 
                 # Sync sound state from global sound manager to game state
                 game_state.sound_manager.set_enabled(global_sound_manager.is_enabled())
+                
+                # Track initial game state for exit tracking
+                if exit_tracker:
+                    exit_tracker.update_game_state({
+                        'turn': game_state.turn,
+                        'money': game_state.money,
+                        'compute': getattr(game_state, 'compute', 0),
+                        'safety': getattr(game_state, 'safety_research', 0),
+                        'capabilities': getattr(game_state, 'capabilities_research', 0),
+                        'employees': {
+                            'total': game_state.staff,
+                        }
+                    })
                 
                 # Add intro scenario message if enabled
                 if npe_intro_enabled:
@@ -2866,6 +2866,21 @@ def main():
                 # Preserve original game appearance and logic
                 screen.fill((25, 25, 35))
                 if game_state.game_over:
+                    # Track game over for exit message
+                    victory = getattr(game_state, 'victory', False)
+                    exit_tracker.set_game_over(victory)
+                    exit_tracker.update_game_state({
+                        'turn': game_state.turn,
+                        'money': game_state.money,
+                        'compute': getattr(game_state, 'compute', 0),
+                        'safety': getattr(game_state, 'safety_research', 0),
+                        'capabilities': getattr(game_state, 'capabilities_research', 0),
+                        'game_over': True,
+                        'victory': victory,
+                        'employees': {
+                            'total': game_state.staff,
+                        }
+                    })
                     current_state = 'end_game_menu'
                     end_game_selected_item = 0  # Reset selection
                 else:
@@ -2976,6 +2991,9 @@ def main():
                         
             pygame.display.flip()
     except Exception as e:
+        # Track crash for exit message
+        exit_tracker.set_crash(str(e))
+        
         # If an exception occurs during gameplay, try to save the game log
         if game_state and hasattr(game_state, 'logger') and not game_state.game_over:
             try:
@@ -2986,7 +3004,9 @@ def main():
                     'doom': game_state.doom
                 }
                 game_state.logger.log_game_end(f'Game crashed: {str(e)}', game_state.turn, final_resources)
-                game_state.logger.write_log_file()
+                log_path = game_state.logger.write_log_file()
+                if log_path:
+                    exit_tracker.set_log_path(log_path)
                 # print(f'Game crashed, but log saved to: {log_path}')
             except Exception:
                 # print('Game crashed and could not save log')
@@ -3003,12 +3023,25 @@ def main():
                     'doom': game_state.doom
                 }
                 game_state.logger.log_game_end('Game quit by user', game_state.turn, final_resources)
-                game_state.logger.write_log_file()
+                log_path = game_state.logger.write_log_file()
+                if log_path:
+                    exit_tracker.set_log_path(log_path)
+                # Update exit tracker with final game state
+                exit_tracker.update_game_state({
+                    'turn': game_state.turn,
+                    'money': game_state.money,
+                    'compute': getattr(game_state, 'compute', 0),
+                    'safety': getattr(game_state, 'safety_research', 0),
+                    'capabilities': getattr(game_state, 'capabilities_research', 0),
+                    'employees': {
+                        'total': game_state.staff,
+                    }
+                })
                 # print(f'Game log saved to: {log_path}')
             except Exception:
                 pass
         
-        # Final shutdown logging
+        # Final shutdown logging with enhanced messages
         log_shutdown()
         pygame.quit()
 
