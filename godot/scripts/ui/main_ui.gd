@@ -73,7 +73,20 @@ func _on_game_state_updated(state: Dictionary):
 	papers_label.text = "Papers: %d" % state.get("papers", 0)
 	reputation_label.text = "Rep: %.0f" % state.get("reputation", 0)
 	doom_label.text = "Doom: %.1f%%" % state.get("doom", 0)
-	ap_label.text = "AP: %d" % state.get("action_points", 0)
+
+	# Add employee blob display to AP label
+	var safety = state.get("safety_researchers", 0)
+	var capability = state.get("capability_researchers", 0)
+	var compute_eng = state.get("compute_engineers", 0)
+	var blob_display = ""
+	for i in range(safety):
+		blob_display += "[color=green]●[/color]"
+	for i in range(capability):
+		blob_display += "[color=red]●[/color]"
+	for i in range(compute_eng):
+		blob_display += "[color=blue]●[/color]"
+
+	ap_label.text = "AP: %d  %s" % [state.get("action_points", 0), blob_display]
 
 	# Color-code doom (green < 30, yellow < 70, red >= 70)
 	var doom = state.get("doom", 0)
@@ -252,7 +265,81 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	"""Handle dynamic action button press"""
 	log_message("[color=cyan]Selecting action: %s[/color]" % action_name)
 
+	# Check if this is a submenu action
+	var action = _get_action_by_id(action_id)
+	if action.get("is_submenu", false):
+		# Open submenu dialog instead of queuing
+		_show_hiring_submenu()
+		return
+
 	# Track queued action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	game_manager.select_action(action_id)
+
+func _get_action_by_id(action_id: String) -> Dictionary:
+	"""Helper to find action definition"""
+	for action in GameActions.get_all_actions():
+		if action.get("id") == action_id:
+			return action
+	return {}
+
+func _show_hiring_submenu():
+	"""Show popup dialog with hiring options"""
+	var dialog = AcceptDialog.new()
+	dialog.title = "Hire Staff"
+	dialog.dialog_text = "Choose a staff member to hire:"
+	dialog.size = Vector2(500, 400)
+
+	# Create container for hiring buttons
+	var vbox = VBoxContainer.new()
+
+	# Get hiring options
+	var hiring_options = GameActions.get_hiring_options()
+	var current_state = game_manager.get_game_state()
+
+	for option in hiring_options:
+		var hire_id = option.get("id", "")
+		var hire_name = option.get("name", "")
+		var hire_desc = option.get("description", "")
+		var hire_costs = option.get("costs", {})
+
+		# Create button for this option
+		var btn = Button.new()
+		btn.text = "%s ($%d, %d AP)" % [hire_name, hire_costs.get("money", 0), hire_costs.get("action_points", 0)]
+
+		# Check affordability
+		var can_afford = true
+		for resource in hire_costs.keys():
+			if current_state.get(resource, 0) < hire_costs[resource]:
+				can_afford = false
+				break
+
+		if not can_afford:
+			btn.disabled = true
+			btn.modulate = Color(0.6, 0.6, 0.6)
+
+		# Add tooltip
+		btn.tooltip_text = hire_desc + "\n\nCosts: $%d, %d AP" % [hire_costs.get("money", 0), hire_costs.get("action_points", 0)]
+
+		# Connect button
+		btn.pressed.connect(func(): _on_hiring_option_selected(hire_id, hire_name, dialog))
+
+		vbox.add_child(btn)
+
+	# Add to dialog
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_hiring_option_selected(action_id: String, action_name: String, dialog: AcceptDialog):
+	"""Handle hiring submenu selection"""
+	dialog.queue_free()
+
+	log_message("[color=cyan]Hiring: %s[/color]" % action_name)
+
+	# Queue the actual hiring action
 	queued_actions.append({"id": action_id, "name": action_name})
 	update_queued_actions_display()
 

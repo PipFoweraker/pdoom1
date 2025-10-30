@@ -6,18 +6,12 @@ static func get_all_actions() -> Array[Dictionary]:
 	"""Return all available actions"""
 	return [
 		{
-			"id": "hire_safety_researcher",
-			"name": "Hire Safety Researcher",
-			"description": "Hire a researcher focused on AI safety",
-			"costs": {"money": 60000, "action_points": 1},
-			"category": "hiring"
-		},
-		{
-			"id": "hire_capability_researcher",
-			"name": "Hire Capability Researcher",
-			"description": "Hire a researcher to advance AI capabilities",
-			"costs": {"money": 60000, "action_points": 1},
-			"category": "hiring"
+			"id": "hire_staff",
+			"name": "Hire Staff",
+			"description": "Open hiring menu to recruit researchers",
+			"costs": {},  # No cost to open menu
+			"category": "hiring",
+			"is_submenu": true
 		},
 		{
 			"id": "buy_compute",
@@ -68,7 +62,37 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 	for action in get_all_actions():
 		if action["id"] == action_id:
 			return action
+	# Check submenu actions
+	for action in get_hiring_options():
+		if action["id"] == action_id:
+			return action
 	return {}
+
+static func get_hiring_options() -> Array[Dictionary]:
+	"""Get all hiring submenu options"""
+	return [
+		{
+			"id": "hire_safety_researcher",
+			"name": "Safety Researcher",
+			"description": "Focused on AI safety and alignment research",
+			"costs": {"money": 60000, "action_points": 1},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_capability_researcher",
+			"name": "Capability Researcher",
+			"description": "Advances AI capabilities (increases doom!)",
+			"costs": {"money": 60000, "action_points": 1},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_compute_engineer",
+			"name": "Compute Engineer",
+			"description": "Improves compute efficiency",
+			"costs": {"money": 50000, "action_points": 1},
+			"category": "hiring"
+		}
+	]
 
 static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	"""Execute an action, modify state, return result"""
@@ -87,6 +111,11 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	var result = {"success": true, "message": action["name"] + " executed"}
 
 	match action_id:
+		"hire_staff":
+			# Submenu action - doesn't execute, opens dialog
+			result["message"] = "Opening hiring menu..."
+			result["open_submenu"] = "hiring"
+
 		"hire_safety_researcher":
 			state.safety_researchers += 1
 			result["message"] = "Hired safety researcher (+1 safety staff)"
@@ -95,6 +124,10 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			state.capability_researchers += 1
 			state.add_resources({"doom": 2})  # Capabilities increase doom
 			result["message"] = "Hired capability researcher (+1 cap staff, +2 doom)"
+
+		"hire_compute_engineer":
+			state.compute_engineers += 1
+			result["message"] = "Hired compute engineer (+1 compute staff)"
 
 		"buy_compute":
 			state.add_resources({"compute": 50})
