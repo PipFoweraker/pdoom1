@@ -388,7 +388,7 @@ def draw_main_menu(screen: pygame.Surface, w: int, h: int, selected_item: int, s
     
     # Attribution above title  
     attribution_font = pygame.font.SysFont('Consolas', int(h*0.018))
-    attribution_surf = attribution_font.render('Pip Foweraker's', True, (180, 180, 180))
+    attribution_surf = attribution_font.render("Pip Foweraker's", True, (180, 180, 180))
     attribution_x = w // 2 - attribution_surf.get_width() // 2
     attribution_y = int(h * 0.12)
     
