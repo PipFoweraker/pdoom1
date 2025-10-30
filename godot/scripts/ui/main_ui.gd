@@ -17,6 +17,10 @@ extends VBoxContainer
 # Reference to GameManager
 var game_manager: Node
 
+# Track queued actions
+var queued_actions: Array = []
+var current_turn_phase: String = "NOT_STARTED"
+
 func _ready():
 	print("[MainUI] Initializing UI...")
 
@@ -43,7 +47,16 @@ func _on_test_action_button_pressed():
 	game_manager.select_action("hire_safety_researcher")
 
 func _on_end_turn_button_pressed():
-	log_message("[color=cyan]Ending turn...[/color]")
+	if queued_actions.size() == 0:
+		log_message("[color=yellow]No actions queued! Select actions first.[/color]")
+		return
+
+	log_message("[color=cyan]Ending turn with %d queued actions...[/color]" % queued_actions.size())
+
+	# Clear queued actions (will be repopulated after turn processes)
+	queued_actions.clear()
+	update_queued_actions_display()
+
 	game_manager.end_turn()
 
 func _on_game_state_updated(state: Dictionary):
@@ -66,11 +79,10 @@ func _on_game_state_updated(state: Dictionary):
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:
 		test_action_button.disabled = false
-		end_turn_button.disabled = false
 		init_button.disabled = true
 
-		# Load available actions on first init
-		if state.get("turn", 0) == 0:
+		# Refresh action list to update affordability
+		if state.get("turn", -1) >= 0:
 			game_manager.get_available_actions()
 
 	# Check game over
@@ -89,15 +101,39 @@ func _on_turn_phase_changed(phase_info: Dictionary):
 	print("[MainUI] Phase changed: ", phase_info)
 
 	var phase_name = phase_info.get("phase", "UNKNOWN")
-	phase_label.text = "Phase: " + phase_name
+	current_turn_phase = phase_name
+
+	# Update phase label with color coding
+	var phase_color = "white"
+	var phase_display = phase_name
+
+	if phase_name == "turn_start" or phase_name == "TURN_START":
+		phase_color = "red"
+		phase_display = "TURN START (Processing...)"
+		end_turn_button.disabled = true
+	elif phase_name == "action_selection" or phase_name == "ACTION_SELECTION":
+		phase_color = "green"
+		phase_display = "ACTION SELECTION (Ready)"
+		end_turn_button.disabled = false
+	elif phase_name == "turn_end" or phase_name == "TURN_END":
+		phase_color = "yellow"
+		phase_display = "TURN END (Executing...)"
+		end_turn_button.disabled = true
+
+	phase_label.text = "[color=%s]Phase: %s[/color]" % [phase_color, phase_display]
 
 	log_message("[color=magenta]Turn Phase: " + phase_name + "[/color]")
 
 	# Handle pending events
 	if phase_info.has("pending_events") and phase_info["pending_events"].size() > 0:
-		log_message("[color=yellow]Events triggered! (Event UI not implemented yet)[/color]")
+		log_message("[color=yellow]%d Events triggered![/color]" % phase_info["pending_events"].size())
 		for event in phase_info["pending_events"]:
 			log_message("[color=yellow]  - " + str(event.get("name", "Unknown Event")) + "[/color]")
+
+	# Handle events array (alternative format)
+	if phase_info.has("events") and phase_info["events"].size() > 0:
+		for event in phase_info["events"]:
+			game_manager.event_triggered.emit(event)
 
 func _on_action_executed(result: Dictionary):
 	print("[MainUI] Action executed: ", result)
@@ -109,6 +145,12 @@ func _on_action_executed(result: Dictionary):
 	if result.has("messages"):
 		for msg in result.get("messages", []):
 			log_message("[color=white]  " + str(msg) + "[/color]")
+
+	# After turn ends, automatically start new turn
+	if result.has("turn_number"):
+		log_message("[color=cyan]Auto-starting turn %d...[/color]" % result.get("turn_number"))
+		await get_tree().create_timer(0.5).timeout  # Small delay for readability
+		game_manager.start_turn()
 
 func _on_error_occurred(error_msg: String):
 	print("[MainUI] Error: ", error_msg)
@@ -134,6 +176,9 @@ func _on_actions_available(actions: Array):
 		if child.name != "TestActionButton":
 			child.queue_free()
 
+	# Get current state for affordability checking
+	var current_state = game_manager.get_game_state()
+
 	# Create button for each action
 	for action in actions:
 		var action_id = action.get("id", "")
@@ -146,10 +191,30 @@ func _on_actions_available(actions: Array):
 		var button = Button.new()
 		button.text = action_name
 
+		# Check if player can afford this action
+		var can_afford = true
+		var missing_resources = []
+
+		for resource in action_cost.keys():
+			var cost = action_cost[resource]
+			var available = current_state.get(resource, 0)
+
+			if available < cost:
+				can_afford = false
+				missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
+
 		# Add cost info to tooltip
 		var tooltip = action_description + "\n\nCosts:"
 		for resource in action_cost.keys():
 			tooltip += "\n  %s: %s" % [resource, action_cost[resource]]
+
+		if not can_afford:
+			tooltip += "\n\n[CANNOT AFFORD]"
+			for msg in missing_resources:
+				tooltip += "\n  Missing: " + msg
+			button.disabled = true
+			button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
+
 		button.tooltip_text = tooltip
 
 		# Connect button press
@@ -163,6 +228,11 @@ func _on_actions_available(actions: Array):
 func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	"""Handle dynamic action button press"""
 	log_message("[color=cyan]Selecting action: %s[/color]" % action_name)
+
+	# Track queued action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
 	game_manager.select_action(action_id)
 
 func _on_event_triggered(event: Dictionary):
@@ -197,3 +267,13 @@ func _on_event_triggered(event: Dictionary):
 	dialog.popup_centered()
 
 	log_message("[color=yellow]Event: %s[/color]" % event_name)
+
+func update_queued_actions_display():
+	"""Update the message log to show queued actions"""
+	if queued_actions.size() > 0:
+		var action_names = []
+		for action in queued_actions:
+			action_names.append(action.get("name", "Unknown"))
+		log_message("[color=lime]Queued actions (%d): %s[/color]" % [queued_actions.size(), ", ".join(action_names)])
+	else:
+		log_message("[color=gray]No actions queued[/color]")

@@ -126,11 +126,13 @@ layout_mode = 2
 text = "End Turn"
 disabled = true
 
-[node name="PhaseLabel" type="Label" parent="MainUI/BottomBar"]
+[node name="PhaseLabel" type="RichTextLabel" parent="MainUI/BottomBar"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Phase: Not Started"
-horizontal_alignment = 2
+bbcode_enabled = true
+text = "[color=white]Phase: Not Started[/color]"
+fit_content = true
+scroll_active = false
 
 [connection signal="pressed" from="MainUI/BottomBar/ControlButtons/InitButton" to="MainUI" method="_on_init_button_pressed"]
 [connection signal="pressed" from="MainUI/BottomBar/ControlButtons/TestActionButton" to="MainUI" method="_on_test_action_button_pressed"]
