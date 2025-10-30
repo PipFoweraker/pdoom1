@@ -82,19 +82,17 @@ func _on_launch_lab_pressed():
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 func _on_custom_seed_pressed():
-	print("[WelcomeScreen] Custom seed not yet implemented")
-	# TODO: Show seed input dialog
-	_show_placeholder_dialog("Custom Seed", "Custom seed functionality coming soon!")
+	print("[WelcomeScreen] Opening pre-game setup...")
+	# Show pre-game setup dialog
+	get_tree().change_scene_to_file("res://scenes/pregame_setup.tscn")
 
 func _on_settings_pressed():
-	print("[WelcomeScreen] Settings not yet implemented")
-	# TODO: Show settings menu
-	_show_placeholder_dialog("Settings", "Settings menu coming soon!")
+	print("[WelcomeScreen] Opening settings menu...")
+	get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
 
 func _on_guide_pressed():
-	print("[WelcomeScreen] Player guide not yet implemented")
-	# TODO: Show player guide
-	_show_placeholder_dialog("Player Guide", "Player guide coming soon!\n\nFor now:\n- Use number keys 1-9 to select actions\n- Press Space or Enter to end turn\n- Reduce p(doom) to 0 to win!")
+	print("[WelcomeScreen] Opening player guide...")
+	get_tree().change_scene_to_file("res://scenes/player_guide.tscn")
 
 func _on_exit_pressed():
 	print("[WelcomeScreen] Exiting game...")
