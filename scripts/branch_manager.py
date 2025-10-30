@@ -62,7 +62,7 @@ class GitRepository:
             return subprocess.run(cmd, cwd=self.repo_path, capture_output=True, 
                                 text=True, check=check)
         except subprocess.CalledProcessError as e:
-            print(f'Git command failed: {' '.join(cmd)}')
+            print(f'Git command failed: {" ".join(cmd)}')
             print(f'Error: {e.stderr}')
             raise
     
