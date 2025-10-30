@@ -54,6 +54,27 @@ static func get_all_actions() -> Array[Dictionary]:
 			"description": "Build relationships, gain reputation",
 			"costs": {"action_points": 1},
 			"category": "management"
+		},
+		{
+			"id": "team_building",
+			"name": "Team Building",
+			"description": "Improve morale, reduce doom slightly",
+			"costs": {"money": 10000, "action_points": 1},
+			"category": "management"
+		},
+		{
+			"id": "media_campaign",
+			"name": "Media Campaign",
+			"description": "Public outreach, gain reputation",
+			"costs": {"money": 30000, "action_points": 2},
+			"category": "management"
+		},
+		{
+			"id": "audit_safety",
+			"name": "Safety Audit",
+			"description": "Comprehensive safety review",
+			"costs": {"money": 40000, "action_points": 2},
+			"category": "research"
 		}
 	]
 
@@ -157,5 +178,19 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 		"network":
 			state.add_resources({"reputation": 3})
 			result["message"] = "Networking (+3 reputation)"
+
+		"team_building":
+			state.add_resources({"reputation": 2, "doom": -1})
+			result["message"] = "Team building event (+2 reputation, -1 doom)"
+
+		"media_campaign":
+			var rep_gained = 10 + int(state.reputation * 0.1)
+			state.add_resources({"reputation": rep_gained})
+			result["message"] = "Media campaign (+%d reputation)" % rep_gained
+
+		"audit_safety":
+			var doom_reduced = 5 + state.safety_researchers
+			state.add_resources({"doom": -doom_reduced, "reputation": 3})
+			result["message"] = "Safety audit (-%d doom, +3 reputation)" % doom_reduced
 
 	return result
