@@ -165,3 +165,147 @@ func test_turn_sequence_integration():
 	var exec_result = turn_manager.execute_turn()
 	assert_true(exec_result["success"], "Execute should succeed")
 	assert_eq(state.queued_actions.size(), 0, "Actions should be cleared")
+
+# === TURN SEQUENCING TESTS (FIX #418) ===
+
+func test_turn_phase_starts_at_action_selection():
+	# FIX #418: New games should start in ACTION_SELECTION phase
+	assert_eq(state.current_phase, GameState.TurnPhase.ACTION_SELECTION,
+		"Should start in ACTION_SELECTION phase (FIX #418)")
+
+func test_start_turn_with_no_events_allows_actions():
+	# FIX #418: When no events trigger, actions should be selectable
+	state.turn = 5  # Use turn that won't trigger events
+	state.money = 100000  # Ensure no funding crisis
+
+	var result = turn_manager.start_turn()
+
+	assert_true(result.get("can_select_actions", false),
+		"Should allow action selection when no events (FIX #418)")
+	assert_eq(state.current_phase, GameState.TurnPhase.ACTION_SELECTION,
+		"Phase should be ACTION_SELECTION when no events (FIX #418)")
+	assert_eq(state.pending_events.size(), 0,
+		"No pending events should exist (FIX #418)")
+
+func test_start_turn_with_events_blocks_actions():
+	# FIX #418: When events trigger, actions should be blocked
+	state.turn = 10
+	state.money = 40000  # Triggers funding_crisis event
+
+	var result = turn_manager.start_turn()
+
+	assert_false(result.get("can_select_actions", true),
+		"Should block action selection when events pending (FIX #418)")
+	assert_eq(state.current_phase, GameState.TurnPhase.TURN_START,
+		"Phase should remain TURN_START when events pending (FIX #418)")
+	assert_gt(state.pending_events.size(), 0,
+		"Pending events should be recorded (FIX #418)")
+
+func test_start_turn_sets_pending_events():
+	# FIX #418: Triggered events should be stored in pending_events
+	state.turn = 10
+	state.money = 40000
+
+	turn_manager.start_turn()
+
+	assert_gt(state.pending_events.size(), 0,
+		"Pending events array should be populated (FIX #418)")
+	assert_has(state.pending_events[0], "id",
+		"Pending events should be valid event dictionaries (FIX #418)")
+
+func test_start_turn_sets_can_end_turn_false_when_events():
+	# FIX #418: can_end_turn should be false when events pending
+	state.turn = 10
+	state.money = 40000
+
+	turn_manager.start_turn()
+
+	assert_false(state.can_end_turn,
+		"can_end_turn should be false when events pending (FIX #418)")
+
+func test_start_turn_sets_can_end_turn_true_when_no_events():
+	# FIX #418: can_end_turn should be true when no events
+	state.turn = 5
+	state.money = 100000
+
+	turn_manager.start_turn()
+
+	assert_true(state.can_end_turn,
+		"can_end_turn should be true when no events (FIX #418)")
+
+func test_resolve_event_removes_from_pending():
+	# FIX #418: Resolving an event should remove it from pending
+	state.turn = 10
+	state.money = 40000
+
+	turn_manager.start_turn()
+	var event = state.pending_events[0]
+	var initial_pending_count = state.pending_events.size()
+
+	turn_manager.resolve_event(event, "emergency_fundraise")
+
+	assert_lt(state.pending_events.size(), initial_pending_count,
+		"Pending events should decrease after resolution (FIX #418)")
+
+func test_resolve_event_transitions_to_action_selection():
+	# FIX #418: After all events resolved, should transition to ACTION_SELECTION
+	state.turn = 10
+	state.money = 40000
+
+	turn_manager.start_turn()
+	var event = state.pending_events[0]
+
+	# Resolve all pending events
+	turn_manager.resolve_event(event, "emergency_fundraise")
+
+	assert_eq(state.current_phase, GameState.TurnPhase.ACTION_SELECTION,
+		"Phase should transition to ACTION_SELECTION after all events resolved (FIX #418)")
+
+func test_resolve_event_sets_can_end_turn_true():
+	# FIX #418: After resolving all events, can_end_turn should be true
+	state.turn = 10
+	state.money = 40000
+
+	turn_manager.start_turn()
+	var event = state.pending_events[0]
+
+	turn_manager.resolve_event(event, "emergency_fundraise")
+
+	assert_true(state.can_end_turn,
+		"can_end_turn should be true after events resolved (FIX #418)")
+
+func test_resolve_event_blocked_in_wrong_phase():
+	# FIX #418: Event resolution should only work in TURN_START phase
+	state.current_phase = GameState.TurnPhase.ACTION_SELECTION
+
+	var test_event = {"id": "test", "options": [{"id": "choice", "effects": {}, "costs": {}, "message": "test"}]}
+	var result = turn_manager.resolve_event(test_event, "choice")
+
+	assert_false(result["success"],
+		"Event resolution should fail in wrong phase (FIX #418)")
+
+func test_phase_transitions_complete_cycle():
+	# FIX #418: Test complete phase cycle with event
+	state.turn = 10
+	state.money = 40000
+
+	# Phase 1: TURN_START (events)
+	turn_manager.start_turn()
+	assert_eq(state.current_phase, GameState.TurnPhase.TURN_START,
+		"Phase 1 should be TURN_START (FIX #418)")
+
+	# Resolve event
+	var event = state.pending_events[0]
+	turn_manager.resolve_event(event, "emergency_fundraise")
+
+	# Phase 2: ACTION_SELECTION
+	assert_eq(state.current_phase, GameState.TurnPhase.ACTION_SELECTION,
+		"Phase 2 should be ACTION_SELECTION (FIX #418)")
+
+	# Queue actions and execute
+	state.queued_actions = ["buy_compute"]
+
+	# Phase 3: TURN_PROCESSING (happens in execute_turn)
+	turn_manager.execute_turn()
+
+	# Turn completes, ready for next cycle

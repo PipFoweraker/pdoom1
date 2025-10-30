@@ -160,3 +160,58 @@ func test_rng_initialization():
 	var val2 = state2.rng.randf()
 
 	assert_eq(val1, val2, "Same seed should produce same random values")
+
+# FIX #407: Action validation tests for reputation costs
+func test_can_afford_reputation_sufficient():
+	# Test can_afford returns true when reputation is sufficient (FIX #407)
+	var state = GameState.new("test_seed")
+
+	assert_true(state.can_afford({"reputation": 5}), "Should afford 5 reputation")
+	assert_true(state.can_afford({"reputation": 50}), "Should afford 50 reputation (exact match)")
+	assert_true(state.can_afford({"reputation": 10, "action_points": 1}), "Should afford combo with reputation")
+
+func test_can_afford_reputation_insufficient():
+	# Test can_afford returns false when reputation is insufficient (FIX #407)
+	var state = GameState.new("test_seed")
+
+	assert_false(state.can_afford({"reputation": 100}), "Should not afford 100 reputation")
+	assert_false(state.can_afford({"reputation": 51}), "Should not afford 51 reputation")
+	assert_false(state.can_afford({"money": 10000, "reputation": 60}), "Should not afford if reputation insufficient")
+
+func test_spend_resources_reputation_deduction():
+	# Test spend_resources deducts reputation correctly (FIX #407)
+	var state = GameState.new("test_seed")
+
+	state.spend_resources({"reputation": 10})
+	assert_eq(state.reputation, 40.0, "Reputation should decrease by 10")
+
+	state.spend_resources({"reputation": 5, "action_points": 1})
+	assert_eq(state.reputation, 35.0, "Reputation should decrease by another 5")
+	assert_eq(state.action_points, 2, "AP should also decrease")
+
+func test_spend_resources_reputation_clamped_to_zero():
+	# Test that reputation is clamped to 0 when spending (FIX #407)
+	var state = GameState.new("test_seed")
+	state.reputation = 10.0
+
+	# Spend more than available (shouldn't happen with validation, but test clamping)
+	state.spend_resources({"reputation": 15})
+	assert_eq(state.reputation, 0.0, "Reputation should be clamped to 0, not negative")
+
+func test_action_validation_fundraise_with_insufficient_reputation():
+	# Test that fundraise action is correctly blocked without enough reputation (FIX #407)
+	var state = GameState.new("test_seed")
+	state.reputation = 3.0  # Fundraise costs 5 reputation
+
+	var fundraise_action = GameActions.get_action_by_id("fundraise")
+	assert_false(fundraise_action.is_empty(), "Fundraise action should exist")
+	assert_false(state.can_afford(fundraise_action["costs"]), "Should not afford fundraise with only 3 reputation")
+
+func test_action_validation_fundraise_with_sufficient_reputation():
+	# Test that fundraise action is allowed with enough reputation (FIX #407)
+	var state = GameState.new("test_seed")
+	state.reputation = 50.0  # Default starting value
+	state.action_points = 3
+
+	var fundraise_action = GameActions.get_action_by_id("fundraise")
+	assert_true(state.can_afford(fundraise_action["costs"]), "Should afford fundraise with 50 reputation and 3 AP")

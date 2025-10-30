@@ -8,8 +8,15 @@ func _init(game_state: GameState):
 	state = game_state
 
 func start_turn() -> Dictionary:
-	"""Begin new turn - Phase 1"""
+	"""
+	Begin new turn - Phase 1: TURN_START
+	FIX #418: Events trigger BEFORE action selection
+	"""
 	state.turn += 1
+	state.current_phase = GameState.TurnPhase.TURN_START
+	state.pending_events.clear()
+	state.queued_actions.clear()
+	state.can_end_turn = false
 
 	# Calculate max AP based on staff (base 3 + 0.5 per staff member)
 	var total_staff = state.get_total_staff()
@@ -35,10 +42,28 @@ func start_turn() -> Dictionary:
 
 	messages.append("Generated %.1f research from compute" % research_generated)
 
+	# CHECK FOR EVENTS FIRST (FIX #418)
+	# Events must be presented and resolved BEFORE player selects actions
+	var triggered_events = GameEvents.check_triggered_events(state, state.rng)
+
+	if triggered_events.size() > 0:
+		# Events block action selection until resolved
+		state.pending_events = triggered_events
+		state.current_phase = GameState.TurnPhase.TURN_START  # Stay in TURN_START
+		state.can_end_turn = false
+		messages.append("%d event(s) require attention!" % triggered_events.size())
+	else:
+		# No events, can proceed to action selection
+		state.current_phase = GameState.TurnPhase.ACTION_SELECTION
+		state.can_end_turn = true
+
 	return {
 		"success": true,
-		"phase": "action_selection",
-		"messages": messages
+		"phase": "turn_start" if triggered_events.size() > 0 else "action_selection",
+		"messages": messages,
+		"triggered_events": triggered_events,
+		"can_select_actions": triggered_events.size() == 0,
+		"can_end_turn": state.can_end_turn
 	}
 
 func execute_turn() -> Dictionary:
@@ -84,14 +109,8 @@ func execute_turn() -> Dictionary:
 		]
 	})
 
-	# Check for triggered events
-	var triggered_events = GameEvents.check_triggered_events(state, state.rng)
-	if triggered_events.size() > 0:
-		results.append({
-			"success": true,
-			"message": "Events triggered: %d" % triggered_events.size(),
-			"triggered_events": triggered_events
-		})
+	# REMOVED: Event checking now happens in start_turn() (FIX #418)
+	# Events are checked BEFORE actions, not after
 
 	# Check win/lose
 	state.check_win_lose()
@@ -106,9 +125,47 @@ func execute_turn() -> Dictionary:
 	return {
 		"success": all_success,
 		"action_results": results,
-		"turn_complete": true,
-		"triggered_events": triggered_events
+		"turn_complete": true
 	}
+
+func resolve_event(event: Dictionary, choice_id: String) -> Dictionary:
+	"""
+	Resolve player's event choice during TURN_START phase
+	FIX #418: After all events resolved, transition to ACTION_SELECTION
+	"""
+	if state.current_phase != GameState.TurnPhase.TURN_START:
+		return {
+			"success": false,
+			"error": "Cannot resolve events in phase %s" % state.current_phase
+		}
+
+	# Execute the event choice
+	var result = GameEvents.execute_event_choice(event, choice_id, state)
+
+	if not result["success"]:
+		return result
+
+	# Remove this event from pending
+	var event_id = event.get("id", "")
+	var new_pending: Array[Dictionary] = []
+	for pending in state.pending_events:
+		if pending.get("id", "") != event_id:
+			new_pending.append(pending)
+	state.pending_events = new_pending
+
+	# If no more pending events, transition to ACTION_SELECTION
+	if state.pending_events.size() == 0:
+		state.current_phase = GameState.TurnPhase.ACTION_SELECTION
+		state.can_end_turn = true
+		result["phase_transitioned"] = true
+		result["new_phase"] = "action_selection"
+	else:
+		result["pending_events"] = state.pending_events.size()
+
+	result["can_select_actions"] = state.pending_events.size() == 0
+	result["can_end_turn"] = state.can_end_turn
+
+	return result
 
 func get_available_actions() -> Array[Dictionary]:
 	"""Get actions player can currently take"""

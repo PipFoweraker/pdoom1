@@ -22,6 +22,12 @@ var game_over: bool = false
 var victory: bool = false
 var seed: String = ""
 
+# Turn phase tracking (fixes #418 - proper event sequencing)
+enum TurnPhase { TURN_START, ACTION_SELECTION, TURN_PROCESSING, TURN_END }
+var current_phase: TurnPhase = TurnPhase.ACTION_SELECTION
+var pending_events: Array[Dictionary] = []  # Events that must be resolved before actions
+var can_end_turn: bool = false
+
 # Deterministic RNG for events
 var rng: RandomNumberGenerator
 
@@ -56,8 +62,13 @@ func reset():
 	victory = false
 	queued_actions.clear()
 
+	# Reset phase tracking (#418 fix)
+	current_phase = TurnPhase.ACTION_SELECTION
+	pending_events.clear()
+	can_end_turn = false
+
 func can_afford(costs: Dictionary) -> bool:
-	"""Check if player can afford given costs"""
+	"""Check if player can afford given costs (FIX #407: added reputation validation)"""
 	if costs.has("money") and money < costs["money"]:
 		return false
 	if costs.has("compute") and compute < costs["compute"]:
@@ -66,12 +77,14 @@ func can_afford(costs: Dictionary) -> bool:
 		return false
 	if costs.has("papers") and papers < costs["papers"]:
 		return false
+	if costs.has("reputation") and reputation < costs["reputation"]:
+		return false
 	if costs.has("action_points") and action_points < costs["action_points"]:
 		return false
 	return true
 
 func spend_resources(costs: Dictionary):
-	"""Spend resources (assumes can_afford was checked)"""
+	"""Spend resources (assumes can_afford was checked) (FIX #407: added reputation deduction)"""
 	if costs.has("money"):
 		money -= costs["money"]
 	if costs.has("compute"):
@@ -80,6 +93,9 @@ func spend_resources(costs: Dictionary):
 		research -= costs["research"]
 	if costs.has("papers"):
 		papers -= costs["papers"]
+	if costs.has("reputation"):
+		reputation -= costs["reputation"]
+		reputation = max(reputation, 0.0)  # Clamp to 0 minimum
 	if costs.has("action_points"):
 		action_points -= costs["action_points"]
 

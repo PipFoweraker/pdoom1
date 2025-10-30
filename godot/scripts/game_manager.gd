@@ -17,30 +17,48 @@ func _ready():
 	print("[GameManager] Pure GDScript version ready")
 
 func start_new_game(game_seed: String = ""):
-	"""Initialize new game - pure GDScript"""
+	"""Initialize new game - pure GDScript - FIX #418: Handle initial events"""
 	print("[GameManager] Starting new game (seed: %s)" % game_seed)
 
 	state = GameState.new(game_seed)
 	turn_manager = TurnManager.new(state)
 	is_initialized = true
 
-	# Start first turn
+	# Start first turn (may trigger events!)
 	var turn_result = turn_manager.start_turn()
 
 	# Emit initial state
 	game_state_updated.emit(state.to_dict())
-	turn_phase_changed.emit("action_selection")
 
-	# Emit available actions
-	var actions = turn_manager.get_available_actions()
-	actions_available.emit(actions)
+	# Emit phase (might be turn_start if events, or action_selection if not)
+	turn_phase_changed.emit(turn_result["phase"])
+
+	# Check for initial events (FIX #418)
+	if turn_result.has("triggered_events") and turn_result["triggered_events"].size() > 0:
+		print("[GameManager] Initial events triggered!")
+		for event in turn_result["triggered_events"]:
+			event_triggered.emit(event)
+	else:
+		# No events, emit available actions
+		var actions = turn_manager.get_available_actions()
+		actions_available.emit(actions)
 
 	print("[GameManager] Game initialized - Turn %d" % state.turn)
 
 func select_action(action_id: String):
-	"""Queue action for execution with immediate AP deduction"""
+	"""Queue action for execution with immediate AP deduction - FIX #418: Block if events pending"""
 	if not is_initialized:
 		error_occurred.emit("Game not initialized")
+		return
+
+	# BLOCK action selection if events are pending (FIX #418)
+	if state.pending_events.size() > 0:
+		error_occurred.emit("Resolve pending events before selecting actions!")
+		return
+
+	# BLOCK action selection if not in ACTION_SELECTION phase (FIX #418)
+	if state.current_phase != GameState.TurnPhase.ACTION_SELECTION:
+		error_occurred.emit("Cannot select actions in current phase")
 		return
 
 	# Get action details to check AP cost
@@ -123,20 +141,30 @@ func end_turn():
 		start_next_turn()
 
 func start_next_turn():
-	"""Begin next turn"""
+	"""Begin next turn - FIX #418: Events before actions"""
 	print("[GameManager] Starting turn %d" % (state.turn + 1))
 
 	var turn_result = turn_manager.start_turn()
-	turn_phase_changed.emit("action_selection")
+
+	# Emit phase (might be "turn_start" if events pending, or "action_selection" if not)
+	turn_phase_changed.emit(turn_result["phase"])
 
 	# Emit messages
 	for message in turn_result["messages"]:
 		action_executed.emit({"success": true, "message": message})
 
-	# Emit updated state and actions
+	# Emit updated state
 	game_state_updated.emit(state.to_dict())
-	var actions = turn_manager.get_available_actions()
-	actions_available.emit(actions)
+
+	# Emit triggered events if any (FIX #418)
+	if turn_result.has("triggered_events") and turn_result["triggered_events"].size() > 0:
+		print("[GameManager] %d event(s) triggered - blocking action selection" % turn_result["triggered_events"].size())
+		for event in turn_result["triggered_events"]:
+			event_triggered.emit(event)
+	else:
+		# No events, emit available actions
+		var actions = turn_manager.get_available_actions()
+		actions_available.emit(actions)
 
 func get_game_state() -> Dictionary:
 	if state:
@@ -144,15 +172,24 @@ func get_game_state() -> Dictionary:
 	return {}
 
 func resolve_event(event: Dictionary, choice_id: String):
-	"""Handle player's event choice"""
+	"""Handle player's event choice - FIX #418: Use TurnManager"""
 	if not is_initialized:
 		error_occurred.emit("Game not initialized")
 		return
 
-	var result = GameEvents.execute_event_choice(event, choice_id, state)
+	# Use TurnManager's resolve_event which handles phase transitions
+	var result = turn_manager.resolve_event(event, choice_id)
 
 	if result["success"]:
 		action_executed.emit(result)
 		game_state_updated.emit(state.to_dict())
+
+		# If all events resolved, transition to action selection
+		if result.get("phase_transitioned", false):
+			print("[GameManager] All events resolved - transitioning to action selection")
+			turn_phase_changed.emit("action_selection")
+			# Now emit available actions
+			var actions = turn_manager.get_available_actions()
+			actions_available.emit(actions)
 	else:
-		error_occurred.emit(result["message"])
+		error_occurred.emit(result.get("error", result.get("message", "Event resolution failed")))
