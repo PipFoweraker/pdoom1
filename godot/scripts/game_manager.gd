@@ -193,18 +193,19 @@ func send_command(command: Dictionary, callback: Callable):
 	var project_path = ProjectSettings.globalize_path("res://")
 	var bridge_path = project_path.path_join(BRIDGE_SCRIPT).replace("/", "\\")
 
-	# Execute: printf 'json\n' | python bridge_server.py
-	# On Windows, use powershell or cmd
+	print("[GameManager] Bridge path: ", bridge_path)
+	print("[GameManager] Sending JSON: ", json_str)
+
+	# Execute: Use cmd with echo piping for Windows compatibility
 	var output = []
 
-	# Use PowerShell for reliable piping on Windows
-	# Escape double quotes in JSON for PowerShell
-	var json_escaped = json_str.replace('"', '`"')
-	var ps_command = 'echo "' + json_escaped + '" | python "' + bridge_path + '"'
+	# Escape double quotes for cmd
+	var json_escaped = json_str.replace('"', '\\"')
 
+	# Use cmd /c with parentheses for piping
 	var exit_code = OS.execute(
-		"powershell",
-		["-NoProfile", "-Command", ps_command],
+		"cmd",
+		["/c", "echo " + json_str + " | python \"" + bridge_path + "\""],
 		output,
 		true,  # read_stderr
 		false  # open_console
