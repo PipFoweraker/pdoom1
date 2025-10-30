@@ -38,7 +38,48 @@ func _ready():
 	game_manager.error_occurred.connect(_on_error_occurred)
 	game_manager.actions_available.connect(_on_actions_available)
 
+	# Enable input processing for keyboard shortcuts
+	set_process_input(true)
+
 	log_message("[color=yellow]UI Ready. Click 'Init Game' to start.[/color]")
+	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to end turn[/color]")
+
+func _input(event: InputEvent):
+	"""Handle keyboard shortcuts"""
+	if event is InputEventKey and event.pressed and not event.echo:
+		# Number keys 1-9 for action shortcuts
+		if event.keycode >= KEY_1 and event.keycode <= KEY_9:
+			var action_index = event.keycode - KEY_1  # 0-indexed
+			_trigger_action_by_index(action_index)
+			get_viewport().set_input_as_handled()
+
+		# Space or Enter to end turn
+		elif event.keycode == KEY_SPACE or event.keycode == KEY_ENTER:
+			if not end_turn_button.disabled:
+				_on_end_turn_button_pressed()
+				get_viewport().set_input_as_handled()
+
+		# Escape to init game (if not started)
+		elif event.keycode == KEY_ESCAPE:
+			if not init_button.disabled:
+				_on_init_button_pressed()
+				get_viewport().set_input_as_handled()
+
+func _trigger_action_by_index(index: int):
+	"""Trigger action button by its index (for keyboard shortcuts)"""
+	var buttons = actions_list.get_children()
+	var action_buttons = []
+
+	# Filter out category labels, get only buttons
+	for child in buttons:
+		if child is Button and child.name != "TestActionButton":
+			action_buttons.append(child)
+
+	if index < action_buttons.size():
+		var button = action_buttons[index]
+		if not button.disabled:
+			button.emit_signal("pressed")
+			log_message("[color=cyan]Keyboard shortcut: %d[/color]" % (index + 1))
 
 func _on_init_button_pressed():
 	log_message("[color=cyan]Initializing game...[/color]")
