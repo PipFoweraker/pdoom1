@@ -17,6 +17,7 @@ extends VBoxContainer
 @onready var init_button = $BottomBar/ControlButtons/InitButton
 @onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
+@onready var cat_panel = $BottomBar/CatPanel
 
 # Reference to GameManager
 var game_manager: Node
@@ -138,6 +139,12 @@ func _on_game_state_updated(state: Dictionary):
 		doom_label.modulate = Color(1.0, 1.0, 0.2)
 	else:
 		doom_label.modulate = Color(1.0, 0.2, 0.2)
+
+	# Show cat panel if adopted
+	if state.get("has_cat", false):
+		cat_panel.visible = true
+	else:
+		cat_panel.visible = false
 
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:

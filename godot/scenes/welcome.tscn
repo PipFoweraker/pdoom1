@@ -155,6 +155,19 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
 text = "Player Guide"
 
+[node name="LeaderboardButton" type="Button" parent="VBox/MenuContainer"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
+text = "🏆 Leaderboard"
+
 [node name="ExitButton" type="Button" parent="VBox/MenuContainer"]
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2

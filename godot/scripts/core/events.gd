@@ -278,6 +278,37 @@ static func get_all_events() -> Array[Dictionary]:
 					"message": "System limping along (-20 compute)"
 				}
 			]
+		},
+		{
+			"id": "stray_cat",
+			"name": "A Stray Cat Appears!",
+			"description": "A friendly stray cat has wandered into your lab. It seems to enjoy watching the researchers work and occasionally walks across keyboards. Adopt it?",
+			"type": "popup",
+			"trigger_type": "turn_exact",
+			"trigger_turn": 7,
+			"repeatable": false,
+			"options": [
+				{
+					"id": "adopt_cat",
+					"text": "Adopt the Cat",
+					"costs": {"money": 500},
+					"effects": {"has_cat": 1, "doom": -1},
+					"message": "Cat adopted! Your researchers' morale improves slightly. The cat has claimed its spot in the lab. (-1 doom)"
+				},
+				{
+					"id": "feed_and_release",
+					"text": "Feed It and Let It Go",
+					"costs": {"money": 100},
+					"effects": {},
+					"message": "You give the cat some food and it wanders off, purring contentedly."
+				},
+				{
+					"id": "shoo_away",
+					"text": "Shoo It Away",
+					"effects": {"doom": 1},
+					"message": "The cat leaves, disappointed. Your researchers seem a bit sad. (+1 doom for being heartless)"
+				}
+			]
 		}
 	]
 
@@ -304,6 +335,10 @@ static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumbe
 	var trigger_type = event.get("trigger_type", "")
 
 	match trigger_type:
+		"turn_exact":
+			# Exact turn trigger (e.g., cat on turn 7)
+			return state.turn == event.get("trigger_turn", -1)
+
 		"turn_and_resource":
 			# Specific turn + condition
 			if state.turn != event.get("trigger_turn", -1):
@@ -434,6 +469,8 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 				state.capability_researchers += value
 			"compute_engineers":
 				state.compute_engineers += value
+			"has_cat":
+				state.has_cat = (value > 0)
 
 	var message = chosen_option.get("message", "Event resolved")
 	return {"success": true, "message": message}

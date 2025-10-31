@@ -139,24 +139,14 @@ func _on_play_again_pressed():
 
 func _on_view_leaderboard_pressed():
 	"""View full leaderboard"""
-	# TODO: Create dedicated leaderboard screen
-	print("[EndGameScreen] View full leaderboard - TODO")
-	# For now, show simple dialog
-	_show_leaderboard_dialog()
+	print("[EndGameScreen] Opening full leaderboard screen...")
+	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Opening leaderboard from end game", {})
+	get_tree().change_scene_to_file("res://scenes/leaderboard_screen.tscn")
 
 func _on_main_menu_pressed():
 	"""Return to main menu"""
 	print("[EndGameScreen] Returning to main menu...")
 	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
-
-func _show_leaderboard_dialog():
-	"""Show a dialog with leaderboard info"""
-	var dialog = AcceptDialog.new()
-	dialog.title = "Full Leaderboard"
-	dialog.dialog_text = "Full leaderboard view coming soon!\n\nTop 5 are shown on this screen."
-	dialog.size = Vector2(400, 200)
-	add_child(dialog)
-	dialog.popup_centered()
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""

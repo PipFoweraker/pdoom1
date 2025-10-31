@@ -8,6 +8,7 @@ extends Control
 @onready var custom_seed_button = $VBox/MenuContainer/CustomSeedButton
 @onready var settings_button = $VBox/MenuContainer/SettingsButton
 @onready var guide_button = $VBox/MenuContainer/GuideButton
+@onready var leaderboard_button = $VBox/MenuContainer/LeaderboardButton
 @onready var exit_button = $VBox/MenuContainer/ExitButton
 
 var menu_buttons: Array[Button] = []
@@ -22,6 +23,7 @@ func _ready():
 		custom_seed_button,
 		settings_button,
 		guide_button,
+		leaderboard_button,
 		exit_button
 	]
 
@@ -30,6 +32,7 @@ func _ready():
 	custom_seed_button.pressed.connect(_on_custom_seed_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	guide_button.pressed.connect(_on_guide_pressed)
+	leaderboard_button.pressed.connect(_on_leaderboard_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 
 	# Enable input processing for keyboard navigation
@@ -93,6 +96,10 @@ func _on_settings_pressed():
 func _on_guide_pressed():
 	print("[WelcomeScreen] Opening player guide...")
 	get_tree().change_scene_to_file("res://scenes/player_guide.tscn")
+
+func _on_leaderboard_pressed():
+	print("[WelcomeScreen] Opening leaderboard...")
+	get_tree().change_scene_to_file("res://scenes/leaderboard_screen.tscn")
 
 func _on_exit_pressed():
 	print("[WelcomeScreen] Exiting game...")

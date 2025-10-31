@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bvqxj8x5p6h8c"]
+[gd_scene load_steps=4 format=3 uid="uid://bvqxj8x5p6h8c"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_main_gm"]
 [ext_resource type="Script" path="res://scripts/ui/main_ui.gd" id="2_main_ui"]
+[ext_resource type="Texture2D" path="res://assets/images/office_cat.png" id="3_cat_texture"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -145,6 +146,24 @@ disabled = true
 layout_mode = 2
 text = "End Turn"
 disabled = true
+
+[node name="CatPanel" type="PanelContainer" parent="MainUI/BottomBar"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(80, 80)
+
+[node name="MarginContainer" type="MarginContainer" parent="MainUI/BottomBar/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CatDisplay" type="TextureRect" parent="MainUI/BottomBar/CatPanel/MarginContainer"]
+layout_mode = 2
+texture = ExtResource("3_cat_texture")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="PhaseLabel" type="RichTextLabel" parent="MainUI/BottomBar"]
 layout_mode = 2

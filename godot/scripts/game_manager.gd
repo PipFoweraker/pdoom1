@@ -59,40 +59,100 @@ func start_new_game(game_seed: String = ""):
 
 func select_action(action_id: String):
 	"""Queue action for execution with immediate AP deduction - FIX #418: Block if events pending"""
+	# Validation: Game initialized
 	if not is_initialized:
-		error_occurred.emit("Game not initialized")
+		var err = ErrorHandler.error(
+			ErrorHandler.Category.ACTIONS,
+			"Cannot select action: Game not initialized",
+			{"action_id": action_id}
+		)
+		error_occurred.emit(err.message)
 		return
 
-	# BLOCK action selection if events are pending (FIX #418)
+	# Validation: No pending events (FIX #418)
 	if state.pending_events.size() > 0:
+		var err = ErrorHandler.warning(
+			ErrorHandler.Category.ACTIONS,
+			"Cannot select actions while events are pending",
+			{"action_id": action_id, "pending_events": state.pending_events.size()}
+		)
 		error_occurred.emit("Resolve pending events before selecting actions!")
 		return
 
-	# BLOCK action selection if not in ACTION_SELECTION phase (FIX #418)
+	# Validation: Correct phase (FIX #418)
 	if state.current_phase != GameState.TurnPhase.ACTION_SELECTION:
-		error_occurred.emit("Cannot select actions in current phase")
+		var phase_name = GameState.TurnPhase.keys()[state.current_phase]
+		var err = ErrorHandler.warning(
+			ErrorHandler.Category.ACTIONS,
+			"Cannot select actions in current phase",
+			{"action_id": action_id, "current_phase": phase_name}
+		)
+		error_occurred.emit("Cannot select actions in %s phase" % phase_name)
 		return
 
 	# Get action details to check AP cost
 	var action = _get_action_by_id(action_id)
-	if not action:
+	if not action or action.is_empty():
+		var err = ErrorHandler.error(
+			ErrorHandler.Category.ACTIONS,
+			"Action not found",
+			{"action_id": action_id}
+		)
 		error_occurred.emit("Action not found: " + action_id)
 		return
 
 	var ap_cost = action.get("costs", {}).get("action_points", 0)
 
-	# Check if player has enough AP
+	# Validation: Sufficient AP
 	if state.action_points < ap_cost:
+		var err = ErrorHandler.warning(
+			ErrorHandler.Category.RESOURCES,
+			"Insufficient action points",
+			{
+				"action_id": action_id,
+				"action_name": action.get("name", ""),
+				"required": ap_cost,
+				"available": state.action_points
+			}
+		)
 		error_occurred.emit("Not enough AP for " + action.get("name", action_id))
 		return
 
-	# Check if player can afford the action
+	# Validation: Can afford costs
 	if not state.can_afford(action.get("costs", {})):
+		var costs = action.get("costs", {})
+		var err = ErrorHandler.warning(
+			ErrorHandler.Category.RESOURCES,
+			"Cannot afford action",
+			{
+				"action_id": action_id,
+				"action_name": action.get("name", ""),
+				"costs": costs,
+				"state": {
+					"money": state.money,
+					"compute": state.compute,
+					"research": state.research,
+					"papers": state.papers,
+					"reputation": state.reputation
+				}
+			}
+		)
 		error_occurred.emit("Cannot afford " + action.get("name", action_id))
 		return
 
 	# Deduct AP immediately (like old game)
 	state.action_points -= ap_cost
+
+	ErrorHandler.info(
+		ErrorHandler.Category.ACTIONS,
+		"Action queued successfully",
+		{
+			"action_id": action_id,
+			"action_name": action.get("name", ""),
+			"ap_cost": ap_cost,
+			"remaining_ap": state.action_points
+		}
+	)
 
 	print("[GameManager] Action queued: %s (AP cost: %d, remaining: %d)" % [action_id, ap_cost, state.action_points])
 	state.queued_actions.append(action_id)
@@ -120,19 +180,58 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 
 func end_turn():
 	"""Execute queued actions and process turn"""
+	# Validation: Game initialized
 	if not is_initialized:
-		error_occurred.emit("Game not initialized")
+		var err = ErrorHandler.error(
+			ErrorHandler.Category.TURN,
+			"Cannot end turn: Game not initialized",
+			{}
+		)
+		error_occurred.emit(err.message)
 		return
 
+	# Validation: Actions queued
 	if state.queued_actions.is_empty():
+		var err = ErrorHandler.warning(
+			ErrorHandler.Category.TURN,
+			"Cannot end turn: No actions queued",
+			{"turn": state.turn, "phase": GameState.TurnPhase.keys()[state.current_phase]}
+		)
 		error_occurred.emit("No actions queued")
 		return
+
+	# Validation: Check phase (should be in ACTION_SELECTION)
+	if state.current_phase != GameState.TurnPhase.ACTION_SELECTION:
+		var phase_name = GameState.TurnPhase.keys()[state.current_phase]
+		ErrorHandler.warning(
+			ErrorHandler.Category.TURN,
+			"Ending turn in unexpected phase",
+			{"turn": state.turn, "phase": phase_name}
+		)
+
+	ErrorHandler.info(
+		ErrorHandler.Category.TURN,
+		"Ending turn",
+		{
+			"turn": state.turn,
+			"queued_actions": state.queued_actions.size(),
+			"actions": state.queued_actions
+		}
+	)
 
 	print("[GameManager] Executing turn...")
 	turn_phase_changed.emit("turn_end")
 
 	# Execute all queued actions
 	var result = turn_manager.execute_turn()
+
+	# Validate turn execution result
+	if not result.has("success") or not result.has("action_results"):
+		ErrorHandler.error(
+			ErrorHandler.Category.TURN,
+			"Invalid turn execution result",
+			{"result_keys": result.keys()}
+		)
 
 	# Emit results
 	for action_result in result["action_results"]:
@@ -151,6 +250,12 @@ func end_turn():
 	if not state.game_over:
 		await get_tree().create_timer(0.5).timeout
 		start_next_turn()
+	else:
+		ErrorHandler.info(
+			ErrorHandler.Category.GAME_STATE,
+			"Game ended",
+			{"victory": state.victory, "final_turn": state.turn}
+		)
 
 func start_next_turn():
 	"""Begin next turn - FIX #418: Events before actions"""

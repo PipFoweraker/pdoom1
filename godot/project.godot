@@ -21,8 +21,10 @@ buses/default_bus_layout="res://default_bus_layout.tres"
 
 [autoload]
 
+ErrorHandler="*res://autoload/error_handler.gd"
 GameConfig="*res://autoload/game_config.gd"
 SceneTransition="*res://autoload/scene_transition.gd"
+GameManager="*res://scripts/game_manager.gd"
 
 [display]
 

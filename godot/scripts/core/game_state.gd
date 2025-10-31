@@ -26,6 +26,9 @@ var game_over: bool = false
 var victory: bool = false
 var seed: String = ""
 
+# Lab mascot 🐱
+var has_cat: bool = false
+
 # Turn phase tracking (fixes #418 - proper event sequencing)
 enum TurnPhase { TURN_START, ACTION_SELECTION, TURN_PROCESSING, TURN_END }
 var current_phase: TurnPhase = TurnPhase.ACTION_SELECTION
@@ -109,19 +112,55 @@ func can_afford(costs: Dictionary) -> bool:
 
 func spend_resources(costs: Dictionary):
 	"""Spend resources (assumes can_afford was checked) (FIX #407: added reputation deduction)"""
+	# Validate we can afford before spending
+	if not can_afford(costs):
+		ErrorHandler.error(
+			ErrorHandler.Category.RESOURCES,
+			"Attempted to spend unaffordable resources",
+			{
+				"costs": costs,
+				"current": {
+					"money": money,
+					"compute": compute,
+					"research": research,
+					"papers": papers,
+					"reputation": reputation,
+					"action_points": action_points
+				}
+			}
+		)
+		return
+
 	if costs.has("money"):
 		money -= costs["money"]
+		if money < 0:
+			ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Money went negative", {"money": money})
+
 	if costs.has("compute"):
 		compute -= costs["compute"]
+		if compute < 0:
+			ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Compute went negative", {"compute": compute})
+
 	if costs.has("research"):
 		research -= costs["research"]
+		if research < 0:
+			ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Research went negative", {"research": research})
+
 	if costs.has("papers"):
 		papers -= costs["papers"]
+		if papers < 0:
+			ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Papers went negative", {"papers": papers})
+
 	if costs.has("reputation"):
 		reputation -= costs["reputation"]
 		reputation = max(reputation, 0.0)  # Clamp to 0 minimum
+		if reputation <= 0:
+			ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Reputation reached zero", {})
+
 	if costs.has("action_points"):
 		action_points -= costs["action_points"]
+		if action_points < 0:
+			ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Action points went negative", {"action_points": action_points})
 
 func add_resources(gains: Dictionary):
 	"""Add resources"""
@@ -254,5 +293,6 @@ func to_dict() -> Dictionary:
 		"turn": turn,
 		"game_over": game_over,
 		"victory": victory,
-		"rival_labs": rival_summaries
+		"rival_labs": rival_summaries,
+		"has_cat": has_cat
 	}
