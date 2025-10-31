@@ -1,5 +1,5 @@
 extends Control
-## Settings Menu - Comprehensive settings management
+## Settings Menu - Comprehensive settings management using GameConfig
 
 # UI References
 @onready var master_volume_slider = $VBox/SettingsContainer/AudioSettings/MasterVolumeRow/Slider
@@ -10,119 +10,83 @@ extends Control
 @onready var fullscreen_checkbox = $VBox/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox
 @onready var difficulty_option = $VBox/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton
 
-# Settings data
-var settings = {
-	"master_volume": 80,
-	"sfx_volume": 80,
-	"graphics_quality": 1,  # 0=Low, 1=Medium, 2=High
-	"fullscreen": false,
-	"difficulty": 1  # 0=Easy, 1=Standard, 2=Hard
-}
-
-var original_settings = {}
-
 func _ready():
 	print("[SettingsMenu] Initializing...")
 
-	# Load current settings
-	load_settings()
+	# Load settings from GameConfig singleton
+	update_ui_from_game_config()
 
-	# Update UI to reflect current settings
-	update_ui_from_settings()
+func update_ui_from_game_config():
+	"""Update all UI elements to reflect GameConfig settings"""
+	master_volume_slider.value = GameConfig.master_volume
+	master_volume_label.text = "%d%%" % GameConfig.master_volume
 
-	# Store original settings for cancel functionality
-	original_settings = settings.duplicate()
+	sfx_volume_slider.value = GameConfig.sfx_volume
+	sfx_volume_label.text = "%d%%" % GameConfig.sfx_volume
 
-func load_settings():
-	"""Load settings from config file or use defaults"""
-	# TODO: Load from config file when implemented
-	# For now, use defaults
-	print("[SettingsMenu] Using default settings")
-
-func save_settings():
-	"""Save settings to config file"""
-	# TODO: Implement config file saving
-	print("[SettingsMenu] Settings saved: ", settings)
-
-	# Apply settings immediately
-	apply_settings()
-
-func apply_settings():
-	"""Apply current settings to the game"""
-	print("[SettingsMenu] Applying settings...")
-
-	# Audio settings
-	# TODO: Apply to audio bus when audio system is implemented
-	AudioServer.set_bus_volume_db(0, linear_to_db(settings.master_volume / 100.0))
-
-	# Graphics settings
-	if settings.fullscreen:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
-	else:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-
-	# Difficulty is applied when starting new game
-	# TODO: Store in global config for game manager to access
-
-func update_ui_from_settings():
-	"""Update all UI elements to reflect current settings"""
-	master_volume_slider.value = settings.master_volume
-	master_volume_label.text = "%d%%" % settings.master_volume
-
-	sfx_volume_slider.value = settings.sfx_volume
-	sfx_volume_label.text = "%d%%" % settings.sfx_volume
-
-	graphics_quality_option.selected = settings.graphics_quality
-	fullscreen_checkbox.button_pressed = settings.fullscreen
-	difficulty_option.selected = settings.difficulty
+	graphics_quality_option.selected = GameConfig.graphics_quality
+	fullscreen_checkbox.button_pressed = GameConfig.fullscreen
+	difficulty_option.selected = GameConfig.difficulty
 
 func _on_master_volume_changed(value: float):
 	"""Handle master volume slider change"""
-	settings.master_volume = int(value)
-	master_volume_label.text = "%d%%" % settings.master_volume
-
-	# Apply immediately for preview
-	AudioServer.set_bus_volume_db(0, linear_to_db(value / 100.0))
+	master_volume_label.text = "%d%%" % int(value)
+	# Update GameConfig (will apply to audio bus automatically)
+	GameConfig.set_setting("master_volume", int(value), false)
 
 func _on_sfx_volume_changed(value: float):
 	"""Handle SFX volume slider change"""
-	settings.sfx_volume = int(value)
-	sfx_volume_label.text = "%d%%" % settings.sfx_volume
-
-	# TODO: Apply to SFX bus when audio system is implemented
+	sfx_volume_label.text = "%d%%" % int(value)
+	# Update GameConfig (will apply when SFX bus is implemented)
+	GameConfig.set_setting("sfx_volume", int(value), false)
 
 func _on_graphics_quality_changed(index: int):
 	"""Handle graphics quality dropdown change"""
-	settings.graphics_quality = index
 	print("[SettingsMenu] Graphics quality changed to: ", ["Low", "Medium", "High"][index])
+	GameConfig.set_setting("graphics_quality", index, false)
 
 func _on_fullscreen_toggled(pressed: bool):
 	"""Handle fullscreen checkbox toggle"""
-	settings.fullscreen = pressed
 	print("[SettingsMenu] Fullscreen: ", pressed)
+	GameConfig.set_setting("fullscreen", pressed, false)
 
 func _on_difficulty_changed(index: int):
 	"""Handle difficulty dropdown change"""
-	settings.difficulty = index
 	print("[SettingsMenu] Difficulty changed to: ", ["Easy", "Standard", "Hard"][index])
+	GameConfig.set_setting("difficulty", index, false)
 
 func _on_apply_pressed():
-	"""Handle Apply button press"""
-	print("[SettingsMenu] Applying and saving settings...")
-	save_settings()
+	"""Handle Apply button press - save all settings"""
+	print("[SettingsMenu] Saving settings to disk...")
+	GameConfig.save_config()
+	print("[SettingsMenu] Settings saved successfully!")
 
-	# Show confirmation (TODO: Add visual feedback)
-	print("[SettingsMenu] Settings applied successfully!")
+	# Show confirmation feedback
+	_show_confirmation("Settings Saved", "Your settings have been saved successfully!")
 
 func _on_back_pressed():
 	"""Handle Back button press"""
 	print("[SettingsMenu] Returning to welcome screen...")
 
-	# Restore original settings if not applied
-	# (In a real implementation, ask user if they want to save changes)
+	# Ask if user wants to save unsaved changes
+	# For now, just return (changes are applied in real-time anyway)
 
 	# Return to welcome screen
 	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+
+func _show_confirmation(title: String, message: String):
+	"""Show a confirmation dialog"""
+	var dialog = AcceptDialog.new()
+	dialog.title = title
+	dialog.dialog_text = message
+	dialog.size = Vector2(400, 150)
+	add_child(dialog)
+	dialog.popup_centered()
+
+	# Auto-close after 2 seconds
+	await get_tree().create_timer(2.0).timeout
+	if is_instance_valid(dialog):
+		dialog.queue_free()
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""

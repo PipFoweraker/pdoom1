@@ -18,9 +18,21 @@ func _ready():
 
 func start_new_game(game_seed: String = ""):
 	"""Initialize new game - pure GDScript - FIX #418: Handle initial events"""
-	print("[GameManager] Starting new game (seed: %s)" % game_seed)
+	# Get config from GameConfig singleton if seed not provided
+	if game_seed.is_empty():
+		game_seed = GameConfig.get_display_seed()
+
+	print("[GameManager] Starting new game")
+	print("  Player: %s" % GameConfig.player_name)
+	print("  Lab: %s" % GameConfig.lab_name)
+	print("  Seed: %s" % game_seed)
+	print("  Difficulty: %s" % GameConfig.get_difficulty_string())
 
 	state = GameState.new(game_seed)
+
+	# Apply difficulty settings to game state
+	_apply_difficulty_settings()
+
 	turn_manager = TurnManager.new(state)
 	is_initialized = true
 
@@ -193,3 +205,18 @@ func resolve_event(event: Dictionary, choice_id: String):
 			actions_available.emit(actions)
 	else:
 		error_occurred.emit(result.get("error", result.get("message", "Event resolution failed")))
+
+func _apply_difficulty_settings():
+	"""Apply difficulty modifiers to game state"""
+	match GameConfig.difficulty:
+		0:  # Easy
+			print("[GameManager] Applying EASY difficulty modifiers")
+			state.money *= 1.5  # 50% more starting money
+			state.max_action_points = 4  # Extra AP
+		1:  # Standard
+			print("[GameManager] Applying STANDARD difficulty (default)")
+			# No changes
+		2:  # Hard
+			print("[GameManager] Applying HARD difficulty modifiers")
+			state.money *= 0.75  # 25% less starting money
+			state.max_action_points = 2  # Less AP

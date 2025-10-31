@@ -15,6 +15,15 @@ config/description="Privacy-First Bureaucracy Strategy Game"
 run/main_scene="res://scenes/welcome.tscn"
 config/features=PackedStringArray("4.5")
 
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"
+
+[autoload]
+
+GameConfig="*res://autoload/game_config.gd"
+SceneTransition="*res://autoload/scene_transition.gd"
+
 [display]
 
 window/size/width=1024
