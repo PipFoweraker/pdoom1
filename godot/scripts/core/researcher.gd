@@ -318,6 +318,6 @@ func from_dict(data: Dictionary):
 	turns_employed = data.get("turns_employed", 0)
 
 	if data.has("traits"):
-		traits = []
-		for trait in data["traits"]:
-			traits.append(trait)
+		traits.clear()
+		for trait_name in data["traits"]:
+			traits.append(trait_name)

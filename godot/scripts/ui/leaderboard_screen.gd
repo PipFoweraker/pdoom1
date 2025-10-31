@@ -145,7 +145,7 @@ func _display_current_page():
 		var entry_row = _create_entry_row(entry, global_rank)
 		entries_container.add_child(entry_row)
 
-func _create_entry_row(entry: LeaderboardClass.ScoreEntry, rank: int) -> HBoxContainer:
+func _create_entry_row(entry, rank: int) -> HBoxContainer:
 	"""Create a styled entry row"""
 	var row = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 10)

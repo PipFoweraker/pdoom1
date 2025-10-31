@@ -2,7 +2,7 @@ extends CanvasLayer
 ## Debug Overlay - Press F3 to toggle
 
 @onready var panel = $Panel
-@ontml:parameter name="state_label = $Panel/MarginContainer/VBoxContainer/TabContainer/"Game State"/StateLabel
+@onready var state_label = $"Panel/MarginContainer/VBoxContainer/TabContainer/Game State/StateLabel"
 @onready var errors_list = $Panel/MarginContainer/VBoxContainer/TabContainer/Errors/ErrorsList
 @onready var performance_label = $Panel/MarginContainer/VBoxContainer/TabContainer/Performance/PerformanceLabel
 @onready var rate_slider = $Panel/MarginContainer/VBoxContainer/RefreshRate/RateSlider
@@ -16,17 +16,17 @@ var max_frame_samples: int = 60
 
 func _ready():
 	panel.visible = false
-	print("[DebugOverlay] Ready - Press F3 to toggle")
+
+	# Connect to keybind signals
+	KeybindManager.debug_overlay_toggled.connect(toggle_visibility)
+
+	var key_name = KeybindManager.get_key_name("debug_overlay")
+	print("[DebugOverlay] Ready - Press %s to toggle" % key_name)
 
 	# Connect to ErrorHandler signals
 	if ErrorHandler:
 		ErrorHandler.error_occurred.connect(_on_error_occurred)
 		ErrorHandler.warning_occurred.connect(_on_warning_occurred)
-
-func _input(event):
-	if event is InputEventKey:
-		if event.pressed and event.keycode == KEY_F3:
-			toggle_visibility()
 
 func _process(delta):
 	# Track frame time for performance monitoring

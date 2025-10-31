@@ -15,15 +15,14 @@ config/description="Privacy-First Bureaucracy Strategy Game"
 run/main_scene="res://scenes/welcome.tscn"
 config/features=PackedStringArray("4.5")
 
-[audio]
-
-buses/default_bus_layout="res://default_bus_layout.tres"
-
 [autoload]
 
 ErrorHandler="*res://autoload/error_handler.gd"
 GameConfig="*res://autoload/game_config.gd"
 SceneTransition="*res://autoload/scene_transition.gd"
+KeybindManager="*res://autoload/keybind_manager.gd"
+ScreenshotManager="*res://autoload/screenshot_manager.gd"
+LogExporter="*res://autoload/log_exporter.gd"
 GameManager="*res://scripts/game_manager.gd"
 
 [display]

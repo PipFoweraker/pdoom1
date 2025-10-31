@@ -51,7 +51,7 @@ class GameError:
 			"stack_trace": stack_trace
 		}
 
-	func to_string() -> String:
+	func format_message() -> String:
 		var severity_str = Severity.keys()[severity]
 		var category_str = Category.keys()[category]
 		var ctx_str = ""
@@ -81,7 +81,7 @@ func report_error(severity: Severity, category: Category, message: String, conte
 	# Log to console if enabled
 	if log_to_console:
 		var color_code = _get_color_for_severity(severity)
-		print_rich("[color=%s]%s[/color]" % [color_code, error.to_string()])
+		print_rich("[color=%s]%s[/color]" % [color_code, error.format_message()])
 
 	# Log to file if enabled
 	if log_to_file:
@@ -157,7 +157,7 @@ func export_error_log() -> String:
 	log_lines.append("")
 
 	for error in error_history:
-		log_lines.append(error.to_string())
+		log_lines.append(error.format_message())
 		if error.context.size() > 0:
 			log_lines.append("  Context: %s" % JSON.stringify(error.context, "  "))
 		log_lines.append("")
@@ -225,5 +225,5 @@ func _write_to_log_file(error: GameError):
 			return
 
 	file.seek_end()
-	file.store_line(error.to_string())
+	file.store_line(error.format_message())
 	file.close()

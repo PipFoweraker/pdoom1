@@ -8,6 +8,7 @@ extends Control
 @onready var custom_seed_button = $VBox/MenuContainer/CustomSeedButton
 @onready var settings_button = $VBox/MenuContainer/SettingsButton
 @onready var guide_button = $VBox/MenuContainer/GuideButton
+@onready var keybindings_button = $VBox/MenuContainer/KeybindingsButton
 @onready var leaderboard_button = $VBox/MenuContainer/LeaderboardButton
 @onready var exit_button = $VBox/MenuContainer/ExitButton
 
@@ -23,6 +24,7 @@ func _ready():
 		custom_seed_button,
 		settings_button,
 		guide_button,
+		keybindings_button,
 		leaderboard_button,
 		exit_button
 	]
@@ -32,6 +34,7 @@ func _ready():
 	custom_seed_button.pressed.connect(_on_custom_seed_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	guide_button.pressed.connect(_on_guide_pressed)
+	keybindings_button.pressed.connect(_on_keybindings_pressed)
 	leaderboard_button.pressed.connect(_on_leaderboard_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 
@@ -96,6 +99,10 @@ func _on_settings_pressed():
 func _on_guide_pressed():
 	print("[WelcomeScreen] Opening player guide...")
 	get_tree().change_scene_to_file("res://scenes/player_guide.tscn")
+
+func _on_keybindings_pressed():
+	print("[WelcomeScreen] Opening keybindings...")
+	get_tree().change_scene_to_file("res://scenes/keybind_screen.tscn")
 
 func _on_leaderboard_pressed():
 	print("[WelcomeScreen] Opening leaderboard...")
