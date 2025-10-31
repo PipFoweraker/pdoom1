@@ -55,7 +55,21 @@ class ThemeData:
 
 	# Asset paths
 	var assets: Dictionary = {
+		# Cat assets
 		"cat": "res://assets/images/office_cat.png",
+		"cat_closeup": "res://assets/images/misc/cat_closeup.png",
+		"cat_icon": "res://assets/ui/buttons/glowcat/cat_icon.svg",
+
+		# Backgrounds
+		"background_office": "res://assets/images/backgrounds/office_scene.png",
+		"background_computer_1": "res://assets/images/misc/computer_1.png",
+		"background_computer_2": "res://assets/images/misc/computer_2.png",
+
+		# UI Components
+		"glow_button_shader": "res://assets/ui/buttons/glowcat/GlowButton.shader",
+		"glow_button_script": "res://assets/ui/buttons/glowcat/GlowButton.gd",
+
+		# Icons (placeholders - not yet created)
 		"logo": "res://assets/images/logo.png",
 		"icon_money": "res://assets/icons/money.png",
 		"icon_compute": "res://assets/icons/compute.png",

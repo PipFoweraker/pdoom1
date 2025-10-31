@@ -64,40 +64,14 @@ func take_screenshot() -> String:
 		screenshot_count += 1
 
 		# Show notification
-		_show_notification("Screenshot saved!")
+		NotificationManager.success("Screenshot saved!")
 
 		return full_path
 	else:
 		push_error("Failed to save screenshot: %s" % err)
-		_show_notification("Screenshot FAILED!", true)
+		NotificationManager.error("Screenshot failed!")
 		return ""
 
-## Show a brief notification
-func _show_notification(message: String, is_error: bool = false):
-	# Create a temporary label overlay
-	var label = Label.new()
-	label.text = message
-	label.add_theme_font_size_override("font_size", 20)
-
-	if is_error:
-		label.add_theme_color_override("font_color", Color.RED)
-	else:
-		label.add_theme_color_override("font_color", Color.GREEN)
-
-	# Center it
-	label.anchor_left = 0.5
-	label.anchor_top = 0.1
-	label.anchor_right = 0.5
-	label.anchor_bottom = 0.1
-	label.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	# Add to root
-	get_tree().root.add_child(label)
-
-	# Fade out and remove after 2 seconds
-	await get_tree().create_timer(2.0).timeout
-	label.queue_free()
 
 ## Open screenshot folder in file explorer
 func open_screenshot_folder():

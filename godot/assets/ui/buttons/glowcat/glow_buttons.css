@@ -1,0 +1,66 @@
+
+:root{
+  --bg:#0e1318;
+  --btn:#1c2730;
+  --btn-deep:#0f171d;
+  --line:#6b7c8c;
+  --text:#e9f2f2;
+  --teal:#1ec3b3;
+  --teal-2:#0fa5a0;
+  --amber:#f6a800;
+  --amber-2:#e78010;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; padding:24px; background:var(--bg); color:var(--text);
+  font:16px/1.4 Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+.grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+
+.btn{
+  position:relative; display:inline-flex; align-items:center; justify-content:center;
+  height:48px; padding:0 22px; border-radius:12px; letter-spacing:.06em;
+  background:linear-gradient(180deg,var(--btn) 0%, var(--btn-deep) 100%);
+  color:var(--text); border:1px solid rgba(255,255,255,.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.15),
+    inset 0 -1px 0 rgba(0,0,0,.5),
+    0 8px 20px rgba(0,0,0,.35);
+  text-transform:uppercase; font-weight:600;
+  transition:transform .05s ease, filter .15s ease, box-shadow .15s ease;
+  isolation:isolate; /* keep inner glows inside */
+}
+
+.btn .icon{
+  width:22px; height:22px; margin-right:10px; flex:0 0 auto;
+  color:var(--teal);
+  filter: drop-shadow(0 0 4px rgba(30,195,179,.65)) drop-shadow(0 0 10px rgba(30,195,179,.35));
+}
+
+/* under-glass specular strip */
+.btn::before{
+  content:""; position:absolute; inset:2px 2px auto 2px; height:35%;
+  background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,0));
+  border-radius:10px; mix-blend-mode:screen; pointer-events:none;
+}
+
+/* edge neon ring (subtle) */
+.btn::after{
+  content:""; position:absolute; inset:0; border-radius:12px;
+  box-shadow: 0 0 0 1px rgba(30,195,179,.25), 0 0 14px rgba(30,195,179,.12), inset 0 0 14px rgba(0,0,0,.5);
+  pointer-events:none; transition: box-shadow .15s ease;
+}
+
+.btn:hover{ filter:brightness(1.06); }
+.btn:active{ transform:translateY(1px); }
+
+/* colorways */
+.btn--teal .icon{ color:var(--teal); }
+.btn--teal::after{ box-shadow:0 0 0 1px rgba(30,195,179,.4), 0 0 18px rgba(30,195,179,.22), inset 0 0 14px rgba(0,0,0,.5); }
+
+.btn--amber .icon{ color:var(--amber); filter: drop-shadow(0 0 4px rgba(246,168,0,.7)) drop-shadow(0 0 10px rgba(246,168,0,.35)); }
+.btn--amber::after{ box-shadow:0 0 0 1px rgba(246,168,0,.45), 0 0 18px rgba(246,168,0,.25), inset 0 0 14px rgba(0,0,0,.55); }
+
+/* circle variant */
+.btn--round{ width:56px; height:56px; padding:0; border-radius:999px; }
+.btn--round::before{ inset:3px; height:auto; }

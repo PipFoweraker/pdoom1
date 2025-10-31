@@ -112,32 +112,9 @@ func export_full_log() -> String:
 	var full_path = OS.get_user_data_dir().path_join("logs").path_join(filename)
 	print("[LogExporter] Exported log: %s" % full_path)
 
-	_show_notification("Log exported!")
+	NotificationManager.success("Log exported to logs/")
 
 	return full_path
-
-## Show a brief notification
-func _show_notification(message: String, is_error: bool = false):
-	var label = Label.new()
-	label.text = message
-	label.add_theme_font_size_override("font_size", 20)
-
-	if is_error:
-		label.add_theme_color_override("font_color", Color.RED)
-	else:
-		label.add_theme_color_override("font_color", Color.YELLOW)
-
-	label.anchor_left = 0.5
-	label.anchor_top = 0.1
-	label.anchor_right = 0.5
-	label.anchor_bottom = 0.1
-	label.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-
-	get_tree().root.add_child(label)
-
-	await get_tree().create_timer(2.0).timeout
-	label.queue_free()
 
 ## Open logs folder
 func open_logs_folder():

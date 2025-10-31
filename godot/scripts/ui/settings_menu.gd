@@ -9,12 +9,23 @@ extends Control
 @onready var graphics_quality_option = $VBox/SettingsContainer/GraphicsSettings/QualityRow/OptionButton
 @onready var fullscreen_checkbox = $VBox/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox
 @onready var difficulty_option = $VBox/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton
+@onready var theme_dropdown = $VBox/SettingsContainer/UISettings/ThemeRow/ThemeDropdown
 
 func _ready():
 	print("[SettingsMenu] Initializing...")
 
 	# Load settings from GameConfig singleton
 	update_ui_from_game_config()
+
+	# Connect theme dropdown
+	theme_dropdown.item_selected.connect(_on_theme_changed)
+
+	# Set current theme
+	var themes = ThemeManager.get_available_themes()
+	for i in range(themes.size()):
+		if themes[i] == ThemeManager.current_theme:
+			theme_dropdown.selected = i
+			break
 
 func update_ui_from_game_config():
 	"""Update all UI elements to reflect GameConfig settings"""
@@ -55,6 +66,15 @@ func _on_difficulty_changed(index: int):
 	print("[SettingsMenu] Difficulty changed to: ", ["Easy", "Standard", "Hard"][index])
 	GameConfig.set_setting("difficulty", index, false)
 
+func _on_theme_changed(index: int):
+	"""Handle theme dropdown change"""
+	var themes = ThemeManager.get_available_themes()
+	if index < themes.size():
+		var theme_name = themes[index]
+		print("[SettingsMenu] Theme changed to: ", theme_name)
+		ThemeManager.apply_theme(theme_name)
+		NotificationManager.info("Theme changed to " + ThemeManager.themes[theme_name].display_name)
+
 func _on_apply_pressed():
 	"""Handle Apply button press - save all settings"""
 	print("[SettingsMenu] Saving settings to disk...")
@@ -62,7 +82,7 @@ func _on_apply_pressed():
 	print("[SettingsMenu] Settings saved successfully!")
 
 	# Show confirmation feedback
-	_show_confirmation("Settings Saved", "Your settings have been saved successfully!")
+	NotificationManager.success("Settings saved successfully!")
 
 func _on_back_pressed():
 	"""Handle Back button press"""
@@ -73,20 +93,6 @@ func _on_back_pressed():
 
 	# Return to welcome screen
 	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
-
-func _show_confirmation(title: String, message: String):
-	"""Show a confirmation dialog"""
-	var dialog = AcceptDialog.new()
-	dialog.title = title
-	dialog.dialog_text = message
-	dialog.size = Vector2(400, 150)
-	add_child(dialog)
-	dialog.popup_centered()
-
-	# Auto-close after 2 seconds
-	await get_tree().create_timer(2.0).timeout
-	if is_instance_valid(dialog):
-		dialog.queue_free()
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""

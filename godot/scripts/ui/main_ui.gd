@@ -131,14 +131,9 @@ func _on_game_state_updated(state: Dictionary):
 
 	ap_label.text = "AP: %d  %s" % [state.get("action_points", 0), blob_display]
 
-	# Color-code doom (green < 30, yellow < 70, red >= 70)
+	# Color-code doom using ThemeManager
 	var doom = state.get("doom", 0)
-	if doom < 30:
-		doom_label.modulate = Color(0.2, 1.0, 0.2)
-	elif doom < 70:
-		doom_label.modulate = Color(1.0, 1.0, 0.2)
-	else:
-		doom_label.modulate = Color(1.0, 0.2, 0.2)
+	doom_label.modulate = ThemeManager.get_doom_color(doom)
 
 	# Show cat panel if adopted
 	if state.get("has_cat", false):
@@ -272,9 +267,8 @@ func _on_actions_available(actions: Array):
 			var action_cost = action.get("costs", {})
 			var action_description = action.get("description", "")
 
-			# Create button
-			var button = Button.new()
-			button.text = "  " + action_name  # Indent actions under category
+			# Create styled button using ThemeManager
+			var button = ThemeManager.create_button("  " + action_name)  # Indent actions under category
 
 			# Check if player can afford this action
 			var can_afford = true

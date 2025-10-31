@@ -43,6 +43,17 @@ assets/
 
 ### Images
 - `images/office_cat.png` - Office cat mascot (3.8MB - consider optimizing)
+- `images/backgrounds/office_scene.png` - Main office doom chair scene (2.5MB)
+- `images/misc/computer_1.png` - Computer vibes variant 1 (2.0MB)
+- `images/misc/computer_2.png` - Computer vibes variant 2 (2.6MB)
+- `images/misc/cat_closeup.png` - Zoomed cat close-up (1.8MB)
+
+### UI Components
+- `ui/buttons/glowcat/` - Complete glowing button system
+  - `cat_icon.svg` - Scalable cat icon (SVG)
+  - `GlowButton.shader` - Neon glow shader
+  - `GlowButton.gd` - Button behavior script
+  - `glow_cat_button_design.md` - Full design system
 
 ### Icons (Placeholders Needed)
 - [ ] `icons/money.png` - Money/funding icon

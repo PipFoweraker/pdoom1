@@ -245,6 +245,37 @@ popup/item_1/id = 1
 popup/item_2/text = "Hard"
 popup/item_2/id = 2
 
+[node name="UISettings" type="VBoxContainer" parent="VBox/SettingsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="UILabel" type="Label" parent="VBox/SettingsContainer/UISettings"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "UI Settings"
+
+[node name="ThemeRow" type="HBoxContainer" parent="VBox/SettingsContainer/UISettings"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="VBox/SettingsContainer/UISettings/ThemeRow"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Visual Theme:"
+
+[node name="ThemeDropdown" type="OptionButton" parent="VBox/SettingsContainer/UISettings/ThemeRow"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+item_count = 3
+popup/item_0/text = "Default"
+popup/item_1/text = "Retro Terminal"
+popup/item_1/id = 1
+popup/item_2/text = "High Contrast"
+popup/item_2/id = 2
+
 [node name="Spacer" type="Control" parent="VBox"]
 layout_mode = 2
 size_flags_vertical = 3
