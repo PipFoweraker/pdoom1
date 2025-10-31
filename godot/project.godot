@@ -20,6 +20,7 @@ config/features=PackedStringArray("4.5")
 ErrorHandler="*res://autoload/error_handler.gd"
 GameConfig="*res://autoload/game_config.gd"
 SceneTransition="*res://autoload/scene_transition.gd"
+ThemeManager="*res://autoload/theme_manager.gd"
 KeybindManager="*res://autoload/keybind_manager.gd"
 ScreenshotManager="*res://autoload/screenshot_manager.gd"
 LogExporter="*res://autoload/log_exporter.gd"
