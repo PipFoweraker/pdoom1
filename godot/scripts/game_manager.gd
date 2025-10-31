@@ -178,6 +178,24 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 			return action
 	return {}
 
+func purchase_upgrade(upgrade_id: String):
+	"""Purchase an upgrade - doesn't consume AP"""
+	if not is_initialized:
+		error_occurred.emit("Cannot purchase upgrade: Game not initialized")
+		return
+
+	# Purchase the upgrade
+	var result = GameUpgrades.purchase_upgrade(upgrade_id, state)
+
+	if result.get("success", false):
+		print("[GameManager] Upgrade purchased: %s" % upgrade_id)
+		action_executed.emit(result)
+
+		# Emit updated state (money and upgrades changed)
+		emit_state_update()
+	else:
+		error_occurred.emit(result.get("message", "Upgrade purchase failed"))
+
 func end_turn():
 	"""Execute queued actions and process turn"""
 	# Validation: Game initialized

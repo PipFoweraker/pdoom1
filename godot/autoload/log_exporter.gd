@@ -34,7 +34,7 @@ func export_full_log() -> String:
 
 	if file == null:
 		push_error("Failed to create log file: %s" % path)
-		_show_notification("Log export FAILED!", true)
+		NotificationManager.error("Log export failed!")
 		return ""
 
 	# Write header

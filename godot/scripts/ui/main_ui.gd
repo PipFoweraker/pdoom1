@@ -13,11 +13,13 @@ extends VBoxContainer
 @onready var phase_label = $BottomBar/PhaseLabel
 @onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
 @onready var actions_list = $ContentArea/LeftPanel/ActionsScroll/ActionsList
+@onready var upgrades_list = $ContentArea/LeftPanel/UpgradesScroll/UpgradesList
+@onready var info_label = $InfoBar/MarginContainer/InfoLabel
 
 @onready var init_button = $BottomBar/ControlButtons/InitButton
 @onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
-@onready var cat_panel = $BottomBar/CatPanel
+@onready var cat_panel = $TopBar/CatPanel
 
 # Reference to GameManager
 var game_manager: Node
@@ -299,10 +301,99 @@ func _on_actions_available(actions: Array):
 			# Connect button press
 			button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
 
+			# Connect mouse hover for info bar
+			button.mouse_entered.connect(func(): _on_action_hover(action, can_afford, missing_resources))
+			button.mouse_exited.connect(func(): _on_action_unhover())
+
 			# Add to list
 			actions_list.add_child(button)
 
 	log_message("[color=cyan]Loaded %d available actions in %d categories[/color]" % [actions.size(), categories.size()])
+
+	# Also populate upgrades
+	_populate_upgrades()
+
+func _populate_upgrades():
+	"""Populate upgrades list"""
+	# Clear existing upgrades
+	for child in upgrades_list.get_children():
+		child.queue_free()
+
+	var current_state = game_manager.get_game_state()
+	var all_upgrades = GameUpgrades.get_all_upgrades()
+
+	for upgrade in all_upgrades:
+		var upgrade_id = upgrade.get("id", "")
+		var upgrade_name = upgrade.get("name", "Unknown")
+		var upgrade_desc = upgrade.get("description", "")
+		var upgrade_cost = upgrade.get("cost", 0)
+
+		# Check if already purchased
+		var is_purchased = current_state.get("purchased_upgrades", []).has(upgrade_id)
+
+		# Create button
+		var button = ThemeManager.create_button(upgrade_name)
+
+		# If purchased, show differently
+		if is_purchased:
+			button.text = "✓ " + upgrade_name
+			button.disabled = true
+			button.modulate = Color(0.5, 1.0, 0.5)  # Green tint
+		else:
+			button.text = "%s ($%dk)" % [upgrade_name, upgrade_cost / 1000]
+
+			# Check affordability
+			var can_afford = current_state.get("money", 0) >= upgrade_cost
+			if not can_afford:
+				button.disabled = true
+				button.modulate = Color(0.6, 0.6, 0.6)
+
+		# Tooltip
+		var tooltip = upgrade_desc + "\n\nCost: $%d" % upgrade_cost
+		if is_purchased:
+			tooltip += "\n\n[PURCHASED]"
+		elif not current_state.get("money", 0) >= upgrade_cost:
+			tooltip += "\n\n[CANNOT AFFORD]"
+		button.tooltip_text = tooltip
+
+		# Connect button press
+		if not is_purchased:
+			button.pressed.connect(func(): _on_upgrade_pressed(upgrade_id, upgrade_name))
+
+		# Connect hover
+		button.mouse_entered.connect(func(): _on_upgrade_hover(upgrade, is_purchased))
+		button.mouse_exited.connect(func(): _on_action_unhover())
+
+		upgrades_list.add_child(button)
+
+	log_message("[color=cyan]Loaded %d upgrades[/color]" % all_upgrades.size())
+
+func _on_upgrade_pressed(upgrade_id: String, upgrade_name: String):
+	"""Handle upgrade purchase button press"""
+	log_message("[color=cyan]Purchasing upgrade: %s[/color]" % upgrade_name)
+
+	# Purchase via GameManager (will handle state update)
+	game_manager.purchase_upgrade(upgrade_id)
+
+func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
+	"""Update info bar when hovering over an upgrade"""
+	var upgrade_name = upgrade.get("name", "Unknown")
+	var upgrade_desc = upgrade.get("description", "")
+	var upgrade_cost = upgrade.get("cost", 0)
+
+	var info_text = "[b]%s[/b]: %s" % [upgrade_name, upgrade_desc]
+	info_text += " [color=yellow]Cost: $%d[/color]" % upgrade_cost
+
+	if is_purchased:
+		info_text += " [color=lime][PURCHASED][/color]"
+	else:
+		var current_state = game_manager.get_game_state()
+		if current_state.get("money", 0) >= upgrade_cost:
+			info_text += " [color=lime][READY][/color]"
+		else:
+			info_text += " [color=red][CANNOT AFFORD][/color]"
+
+	info_label.text = info_text
 
 func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	"""Handle dynamic action button press"""
@@ -311,8 +402,11 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	# Check if this is a submenu action
 	var action = _get_action_by_id(action_id)
 	if action.get("is_submenu", false):
-		# Open submenu dialog instead of queuing
-		_show_hiring_submenu()
+		# Open appropriate submenu dialog instead of queuing
+		if action_id == "hire_staff":
+			_show_hiring_submenu()
+		elif action_id == "fundraise":
+			_show_fundraising_submenu()
 		return
 
 	# Track queued action
@@ -334,6 +428,8 @@ func _show_hiring_submenu():
 	dialog.title = "Hire Staff"
 	dialog.dialog_text = "Choose a staff member to hire:"
 	dialog.size = Vector2(500, 400)
+	dialog.exclusive = true  # Block input to other windows
+	dialog.popup_window = false  # Use panel instead of popup window
 
 	# Create container for hiring buttons
 	var vbox = VBoxContainer.new()
@@ -388,6 +484,92 @@ func _on_hiring_option_selected(action_id: String, action_name: String, dialog: 
 
 	game_manager.select_action(action_id)
 
+func _show_fundraising_submenu():
+	"""Show popup dialog with fundraising options"""
+	var dialog = AcceptDialog.new()
+	dialog.title = "Fundraising Options"
+	dialog.dialog_text = "Choose your funding strategy:"
+	dialog.size = Vector2(550, 450)
+	dialog.exclusive = true  # Block input to other windows
+	dialog.popup_window = false  # Use panel instead of popup window
+
+	# Create container for fundraising buttons
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+
+	# Get fundraising options
+	var funding_options = GameActions.get_fundraising_options()
+	var current_state = game_manager.get_game_state()
+
+	for option in funding_options:
+		var fund_id = option.get("id", "")
+		var fund_name = option.get("name", "")
+		var fund_desc = option.get("description", "")
+		var fund_costs = option.get("costs", {})
+		var fund_gains = option.get("gains", {})
+
+		# Create button for this option
+		var btn = Button.new()
+		btn.custom_minimum_size = Vector2(500, 50)
+
+		# Format costs
+		var cost_text = ""
+		if fund_costs.get("action_points", 0) > 0:
+			cost_text += "%d AP" % fund_costs.get("action_points")
+		if fund_costs.get("reputation", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += "%d Rep" % fund_costs.get("reputation")
+		if fund_costs.get("papers", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += "%d Papers" % fund_costs.get("papers")
+
+		# Format gains
+		var gain_text = ""
+		if fund_gains.has("money_min") and fund_gains.has("money_max"):
+			gain_text = "$%d-$%d" % [fund_gains.get("money_min"), fund_gains.get("money_max")]
+		elif fund_gains.has("money"):
+			gain_text = "$%d" % fund_gains.get("money")
+
+		btn.text = "%s\n(%s → %s)" % [fund_name, cost_text if cost_text != "" else "Free", gain_text]
+
+		# Check affordability
+		var can_afford = true
+		for resource in fund_costs.keys():
+			if current_state.get(resource, 0) < fund_costs[resource]:
+				can_afford = false
+				break
+
+		if not can_afford:
+			btn.disabled = true
+			btn.modulate = Color(0.6, 0.6, 0.6)
+
+		# Add tooltip
+		btn.tooltip_text = fund_desc + "\n\nCosts: %s\nGains: %s" % [cost_text if cost_text != "" else "None", gain_text]
+
+		# Connect button
+		btn.pressed.connect(func(): _on_fundraising_option_selected(fund_id, fund_name, dialog))
+
+		vbox.add_child(btn)
+
+	# Add to dialog
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_fundraising_option_selected(action_id: String, action_name: String, dialog: AcceptDialog):
+	"""Handle fundraising submenu selection"""
+	dialog.queue_free()
+
+	log_message("[color=cyan]Fundraising: %s[/color]" % action_name)
+
+	# Queue the actual fundraising action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	game_manager.select_action(action_id)
+
 func update_queued_actions_display():
 	"""Update the message log to show queued actions"""
 	if queued_actions.size() > 0:
@@ -409,6 +591,8 @@ func _on_event_triggered(event: Dictionary):
 	dialog.title = event.get("name", "Event")
 	dialog.dialog_text = event.get("description", "An event has occurred!")
 	dialog.size = Vector2(600, 450)
+	dialog.exclusive = true  # Block input to other windows
+	dialog.popup_window = false  # Use panel instead of popup window
 
 	# Create container for option buttons
 	var vbox = VBoxContainer.new()
@@ -481,3 +665,34 @@ func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Acc
 
 	# Tell game manager to resolve event
 	game_manager.resolve_event(event, choice_id)
+
+func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: Array):
+	"""Update info bar when hovering over an action"""
+	var action_name = action.get("name", "Unknown")
+	var action_desc = action.get("description", "")
+	var action_costs = action.get("costs", {})
+
+	# Build info text
+	var info_text = "[b]%s[/b]: %s" % [action_name, action_desc]
+
+	# Add costs
+	if not action_costs.is_empty():
+		info_text += " [color=yellow]Costs:[/color] "
+		var cost_parts = []
+		for resource in action_costs.keys():
+			var cost_val = action_costs[resource]
+			var resource_name = resource.replace("_", " ").capitalize()
+			cost_parts.append("%s %s" % [cost_val, resource_name])
+		info_text += ", ".join(cost_parts)
+
+	# Show affordability
+	if not can_afford:
+		info_text += " [color=red][CANNOT AFFORD][/color]"
+	else:
+		info_text += " [color=lime][READY][/color]"
+
+	info_label.text = info_text
+
+func _on_action_unhover():
+	"""Reset info bar when mouse leaves action"""
+	info_label.text = "[color=gray]Hover over actions to see details...[/color]"

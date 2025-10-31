@@ -34,6 +34,24 @@ size_flags_horizontal = 3
 text = "P(Doom) - Godot Version (MVP)"
 horizontal_alignment = 1
 
+[node name="CatPanel" type="PanelContainer" parent="MainUI/TopBar"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(80, 80)
+
+[node name="MarginContainer" type="MarginContainer" parent="MainUI/TopBar/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CatDisplay" type="TextureRect" parent="MainUI/TopBar/CatPanel/MarginContainer"]
+layout_mode = 2
+texture = ExtResource("3_cat_texture")
+expand_mode = 1
+stretch_mode = 5
+
 [node name="ResourceDisplay" type="HBoxContainer" parent="MainUI"]
 layout_mode = 2
 size_flags_vertical = 0
@@ -101,6 +119,22 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="HSeparator" type="HSeparator" parent="MainUI/ContentArea/LeftPanel"]
+layout_mode = 2
+
+[node name="UpgradesLabel" type="Label" parent="MainUI/ContentArea/LeftPanel"]
+layout_mode = 2
+text = "Upgrades:"
+
+[node name="UpgradesScroll" type="ScrollContainer" parent="MainUI/ContentArea/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 1
+custom_minimum_size = Vector2(0, 150)
+
+[node name="UpgradesList" type="VBoxContainer" parent="MainUI/ContentArea/LeftPanel/UpgradesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="RightPanel" type="VBoxContainer" parent="MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -125,6 +159,24 @@ scroll_following = true
 [node name="HSeparator2" type="HSeparator" parent="MainUI"]
 layout_mode = 2
 
+[node name="InfoBar" type="PanelContainer" parent="MainUI"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
+
+[node name="MarginContainer" type="MarginContainer" parent="MainUI/InfoBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="InfoLabel" type="RichTextLabel" parent="MainUI/InfoBar/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]Hover over actions to see details...[/color]"
+fit_content = true
+scroll_active = false
+
 [node name="BottomBar" type="HBoxContainer" parent="MainUI"]
 layout_mode = 2
 size_flags_vertical = 0
@@ -146,24 +198,6 @@ disabled = true
 layout_mode = 2
 text = "End Turn"
 disabled = true
-
-[node name="CatPanel" type="PanelContainer" parent="MainUI/BottomBar"]
-visible = false
-layout_mode = 2
-custom_minimum_size = Vector2(80, 80)
-
-[node name="MarginContainer" type="MarginContainer" parent="MainUI/BottomBar/CatPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 5
-theme_override_constants/margin_top = 5
-theme_override_constants/margin_right = 5
-theme_override_constants/margin_bottom = 5
-
-[node name="CatDisplay" type="TextureRect" parent="MainUI/BottomBar/CatPanel/MarginContainer"]
-layout_mode = 2
-texture = ExtResource("3_cat_texture")
-expand_mode = 1
-stretch_mode = 5
 
 [node name="PhaseLabel" type="RichTextLabel" parent="MainUI/BottomBar"]
 layout_mode = 2

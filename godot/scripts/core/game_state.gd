@@ -29,6 +29,9 @@ var seed: String = ""
 # Lab mascot 🐱
 var has_cat: bool = false
 
+# Purchased upgrades (one-time purchases)
+var purchased_upgrades: Array[String] = []
+
 # Turn phase tracking (fixes #418 - proper event sequencing)
 enum TurnPhase { TURN_START, ACTION_SELECTION, TURN_PROCESSING, TURN_END }
 var current_phase: TurnPhase = TurnPhase.ACTION_SELECTION
@@ -249,6 +252,19 @@ func get_unmanaged_count() -> int:
 	var capacity = get_management_capacity()
 	return max(0, non_manager_staff - capacity)
 
+func has_upgrade(upgrade_id: String) -> bool:
+	"""Check if an upgrade has been purchased"""
+	return purchased_upgrades.has(upgrade_id)
+
+func add_upgrade(upgrade_id: String):
+	"""Mark an upgrade as purchased"""
+	if not purchased_upgrades.has(upgrade_id):
+		purchased_upgrades.append(upgrade_id)
+
+		# Handle special upgrade effects
+		if upgrade_id == "cat_adoption":
+			has_cat = true
+
 func to_dict() -> Dictionary:
 	"""Serialize state for UI"""
 	var rival_summaries = []
@@ -294,5 +310,6 @@ func to_dict() -> Dictionary:
 		"game_over": game_over,
 		"victory": victory,
 		"rival_labs": rival_summaries,
-		"has_cat": has_cat
+		"has_cat": has_cat,
+		"purchased_upgrades": purchased_upgrades
 	}

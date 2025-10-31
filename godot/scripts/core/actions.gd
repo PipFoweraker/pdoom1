@@ -44,9 +44,10 @@ static func get_all_actions() -> Array[Dictionary]:
 		{
 			"id": "fundraise",
 			"name": "Fundraising",
-			"description": "Raise money from investors",
-			"costs": {"action_points": 2, "reputation": 5},
-			"category": "management"
+			"description": "Choose funding strategy - different risk/reward options",
+			"costs": {},  # No cost to open menu
+			"category": "management",
+			"is_submenu": true
 		},
 		{
 			"id": "network",
@@ -144,6 +145,9 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 	for action in get_hiring_options():
 		if action["id"] == action_id:
 			return action
+	for action in get_fundraising_options():
+		if action["id"] == action_id:
+			return action
 	return {}
 
 static func get_hiring_options() -> Array[Dictionary]:
@@ -176,6 +180,43 @@ static func get_hiring_options() -> Array[Dictionary]:
 			"description": "Can oversee 9 employees (prevents unproductive staff)",
 			"costs": {"money": 80000, "action_points": 1},
 			"category": "hiring"
+		}
+	]
+
+static func get_fundraising_options() -> Array[Dictionary]:
+	"""Get all fundraising submenu options"""
+	return [
+		{
+			"id": "fundraise_small",
+			"name": "Modest Funding Round",
+			"description": "Conservative fundraising - lower amounts, lower risk, always available",
+			"costs": {"action_points": 1, "reputation": 2},
+			"gains": {"money_min": 30000, "money_max": 60000},
+			"category": "funding"
+		},
+		{
+			"id": "fundraise_big",
+			"name": "Major Funding Round",
+			"description": "Aggressive funding - higher amounts but requires strong reputation",
+			"costs": {"action_points": 2, "reputation": 8},
+			"gains": {"money_min": 80000, "money_max": 150000},
+			"category": "funding"
+		},
+		{
+			"id": "take_loan",
+			"name": "Business Loan",
+			"description": "Immediate funds via debt - creates future repayment obligation",
+			"costs": {"action_points": 1},
+			"gains": {"money": 75000, "debt": 90000},  # +15k interest
+			"category": "funding"
+		},
+		{
+			"id": "apply_grant",
+			"name": "Research Grant",
+			"description": "Government/foundation funding - requires published papers",
+			"costs": {"action_points": 1, "papers": 1},
+			"gains": {"money_min": 50000, "money_max": 100000},
+			"category": "funding"
 		}
 	]
 
@@ -251,9 +292,33 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Published paper (+1 paper, -3 doom, +2 reputation)"
 
 		"fundraise":
-			var money_raised = 100000 + (state.reputation * 1000)
+			# Submenu action - doesn't execute, opens dialog
+			result["message"] = "Opening fundraising menu..."
+			result["open_submenu"] = "fundraising"
+
+		"fundraise_small":
+			var money_raised = state.rng.randi_range(30000, 60000)
 			state.add_resources({"money": money_raised})
-			result["message"] = "Fundraised $%d" % money_raised
+			result["message"] = "Modest funding round successful! Raised $%d" % money_raised
+
+		"fundraise_big":
+			var base_amount = state.rng.randi_range(80000, 150000)
+			var rep_bonus = int(state.reputation * 500)
+			var total_raised = base_amount + rep_bonus
+			state.add_resources({"money": total_raised})
+			result["message"] = "Major funding round! Raised $%d (base: $%d, reputation bonus: $%d)" % [total_raised, base_amount, rep_bonus]
+
+		"take_loan":
+			state.add_resources({"money": 75000})
+			# Note: debt tracking would require expanded state
+			result["message"] = "Loan approved! Received $75,000 (repayment: $90,000 due later)"
+
+		"apply_grant":
+			var grant_amount = state.rng.randi_range(50000, 100000)
+			var paper_bonus = state.papers * 5000
+			var total = grant_amount + paper_bonus
+			state.add_resources({"money": total})
+			result["message"] = "Grant approved! Received $%d (base: $%d, papers bonus: $%d)" % [total, grant_amount, paper_bonus]
 
 		"network":
 			state.add_resources({"reputation": 3})
