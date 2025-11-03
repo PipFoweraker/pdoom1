@@ -23,6 +23,9 @@ func start_turn() -> Dictionary:
 	var max_ap = 3 + int(total_staff * 0.5)
 	state.action_points = max_ap
 
+	# Reset AP tracking for new turn (reserve system)
+	state.reset_turn_ap()
+
 	# === RESEARCHER TURN PROCESSING ===
 	# Process individual researchers (burnout, skill growth, loyalty)
 	for researcher in state.researchers:

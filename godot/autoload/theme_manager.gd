@@ -196,42 +196,59 @@ func create_button(text: String, size: Vector2 = Vector2.ZERO) -> Button:
 	if size != Vector2.ZERO:
 		button.custom_minimum_size = size
 	else:
-		button.custom_minimum_size = Vector2(200, get_spacing("button_height"))
+		# Smaller buttons: 32px height instead of 40px
+		button.custom_minimum_size = Vector2(200, 32)
 
 	apply_button_style(button)
 	return button
 
-## Apply button style to existing button
+## Apply button style to existing button (Style Guide colors)
 func apply_button_style(button: Button):
-	var theme = get_theme()
+	# Style Guide colors
+	var STEEL_DARK = Color(0.110, 0.153, 0.188)
+	var ELECTRIC_BLUE = Color(0.204, 0.596, 0.859)
+	var NEON_MAGENTA = Color(0.929, 0.263, 0.792)
 
-	# Create normal state
+	# Create normal state - dark background with blue border
 	var style_normal = StyleBoxFlat.new()
-	style_normal.bg_color = theme.colors["accent"]
-	style_normal.border_color = theme.colors["accent_hover"]
-	style_normal.border_width_left = theme.styles["border_width"]
-	style_normal.border_width_top = theme.styles["border_width"]
-	style_normal.border_width_right = theme.styles["border_width"]
-	style_normal.border_width_bottom = theme.styles["border_width"]
-	style_normal.corner_radius_top_left = theme.styles["button_corner_radius"]
-	style_normal.corner_radius_top_right = theme.styles["button_corner_radius"]
-	style_normal.corner_radius_bottom_left = theme.styles["button_corner_radius"]
-	style_normal.corner_radius_bottom_right = theme.styles["button_corner_radius"]
+	style_normal.bg_color = STEEL_DARK
+	style_normal.border_color = ELECTRIC_BLUE
+	style_normal.border_width_left = 2
+	style_normal.border_width_top = 2
+	style_normal.border_width_right = 2
+	style_normal.border_width_bottom = 2
+	style_normal.corner_radius_top_left = 4
+	style_normal.corner_radius_top_right = 4
+	style_normal.corner_radius_bottom_left = 4
+	style_normal.corner_radius_bottom_right = 4
 
-	# Create hover state
+	# Create hover state - brighter blue glow
 	var style_hover = style_normal.duplicate()
-	style_hover.bg_color = theme.colors["accent_hover"]
+	style_hover.bg_color = STEEL_DARK.lightened(0.1)
+	style_hover.border_color = ELECTRIC_BLUE.lightened(0.2)
+	style_hover.shadow_color = Color(ELECTRIC_BLUE.r, ELECTRIC_BLUE.g, ELECTRIC_BLUE.b, 0.3)
+	style_hover.shadow_size = 4
 
-	# Create pressed state
+	# Create pressed state - magenta accent
 	var style_pressed = style_normal.duplicate()
-	style_pressed.bg_color = theme.colors["accent_pressed"]
+	style_pressed.bg_color = STEEL_DARK.lightened(0.15)
+	style_pressed.border_color = NEON_MAGENTA
+
+	# Disabled state - grey and transparent
+	var style_disabled = style_normal.duplicate()
+	style_disabled.bg_color = STEEL_DARK.darkened(0.2)
+	style_disabled.border_color = Color(0.4, 0.4, 0.5)
 
 	# Apply styles
 	button.add_theme_stylebox_override("normal", style_normal)
 	button.add_theme_stylebox_override("hover", style_hover)
 	button.add_theme_stylebox_override("pressed", style_pressed)
-	button.add_theme_color_override("font_color", theme.colors["text"])
-	button.add_theme_font_size_override("font_size", theme.fonts["body_size"])
+	button.add_theme_stylebox_override("disabled", style_disabled)
+
+	# Font styling (white text, 12px)
+	button.add_theme_color_override("font_color", Color.WHITE)
+	button.add_theme_color_override("font_disabled_color", Color(0.5, 0.5, 0.5))
+	button.add_theme_font_size_override("font_size", 12)
 
 ## Create a styled panel
 func create_panel(size: Vector2 = Vector2.ZERO) -> PanelContainer:

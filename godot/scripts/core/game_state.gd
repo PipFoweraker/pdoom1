@@ -11,6 +11,11 @@ var reputation: float = 50.0
 var doom: float = 50.0  # 0-100, lose at 100
 var action_points: int = 3
 
+# AP Reserve System (for event responses)
+var committed_ap: int = 0      # AP spent on queued actions
+var reserved_ap: int = 0       # AP held back for events
+var used_event_ap: int = 0     # AP spent on event responses
+
 # Staff (legacy counts for backward compatibility)
 var safety_researchers: int = 0
 var capability_researchers: int = 0
@@ -265,6 +270,42 @@ func add_upgrade(upgrade_id: String):
 		if upgrade_id == "cat_adoption":
 			has_cat = true
 
+# AP Reserve System Methods
+func get_available_ap() -> int:
+	"""AP available for queuing actions"""
+	return action_points - committed_ap - reserved_ap
+
+func get_event_ap() -> int:
+	"""AP available for event responses"""
+	return reserved_ap - used_event_ap
+
+func reserve_ap_amount(amount: int) -> bool:
+	"""Reserve AP for events"""
+	if get_available_ap() >= amount:
+		reserved_ap += amount
+		return true
+	return false
+
+func commit_ap_amount(amount: int) -> bool:
+	"""Commit AP to queued action"""
+	if get_available_ap() >= amount:
+		committed_ap += amount
+		return true
+	return false
+
+func spend_event_ap(amount: int) -> bool:
+	"""Spend reserved AP on event response"""
+	if get_event_ap() >= amount:
+		used_event_ap += amount
+		return true
+	return false
+
+func reset_turn_ap():
+	"""Reset AP tracking for new turn"""
+	committed_ap = 0
+	reserved_ap = 0
+	used_event_ap = 0
+
 func to_dict() -> Dictionary:
 	"""Serialize state for UI"""
 	var rival_summaries = []
@@ -299,6 +340,10 @@ func to_dict() -> Dictionary:
 		"doom": doom,
 		"doom_system": doom_data,
 		"action_points": action_points,
+		"committed_ap": committed_ap,
+		"reserved_ap": reserved_ap,
+		"available_ap": get_available_ap(),
+		"event_ap": get_event_ap(),
 		"safety_researchers": safety_researchers,
 		"capability_researchers": capability_researchers,
 		"compute_engineers": compute_engineers,

@@ -51,17 +51,23 @@ func _input(event: InputEvent):
 		if event.keycode == KEY_UP or event.keycode == KEY_W:
 			selected_index = (selected_index - 1) % menu_buttons.size()
 			_update_button_focus()
-			get_viewport().set_input_as_handled()
+			var viewport = get_viewport()
+			if viewport:
+				viewport.set_input_as_handled()
 
 		elif event.keycode == KEY_DOWN or event.keycode == KEY_S:
 			selected_index = (selected_index + 1) % menu_buttons.size()
 			_update_button_focus()
-			get_viewport().set_input_as_handled()
+			var viewport = get_viewport()
+			if viewport:
+				viewport.set_input_as_handled()
 
 		# Enter or Space to activate selected button
 		elif event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
 			menu_buttons[selected_index].emit_signal("pressed")
-			get_viewport().set_input_as_handled()
+			var viewport = get_viewport()
+			if viewport:
+				viewport.set_input_as_handled()
 
 		# Number keys 1-5 for direct selection
 		elif event.keycode >= KEY_1 and event.keycode <= KEY_5:
@@ -69,7 +75,9 @@ func _input(event: InputEvent):
 			if index < menu_buttons.size():
 				selected_index = index
 				menu_buttons[selected_index].emit_signal("pressed")
-				get_viewport().set_input_as_handled()
+				var viewport = get_viewport()
+				if viewport:
+					viewport.set_input_as_handled()
 
 func _update_button_focus():
 	"""Update visual focus indicator on buttons"""
@@ -85,20 +93,29 @@ func _update_button_focus():
 func _on_launch_lab_pressed():
 	print("[WelcomeScreen] Launching lab with default seed...")
 	# Transition to main game scene
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	var err = get_tree().change_scene_to_file("res://scenes/main.tscn")
+	if err != OK:
+		print("[WelcomeScreen] ERROR: Failed to load main scene, error code: ", err)
+		push_error("Failed to load main.tscn")
 
 func _on_custom_seed_pressed():
 	print("[WelcomeScreen] Opening pre-game setup...")
 	# Show pre-game setup dialog
-	get_tree().change_scene_to_file("res://scenes/pregame_setup.tscn")
+	var err = get_tree().change_scene_to_file("res://scenes/pregame_setup.tscn")
+	if err != OK:
+		print("[WelcomeScreen] ERROR: Failed to load pregame setup, error code: ", err)
 
 func _on_settings_pressed():
 	print("[WelcomeScreen] Opening settings menu...")
-	get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
+	var err = get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
+	if err != OK:
+		print("[WelcomeScreen] ERROR: Failed to load settings, error code: ", err)
 
 func _on_guide_pressed():
 	print("[WelcomeScreen] Opening player guide...")
-	get_tree().change_scene_to_file("res://scenes/player_guide.tscn")
+	var err = get_tree().change_scene_to_file("res://scenes/player_guide.tscn")
+	if err != OK:
+		print("[WelcomeScreen] ERROR: Failed to load guide, error code: ", err)
 
 func _on_keybindings_pressed():
 	print("[WelcomeScreen] Opening keybindings...")

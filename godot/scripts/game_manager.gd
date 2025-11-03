@@ -176,6 +176,11 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 	for action in hiring_options:
 		if action.get("id") == action_id:
 			return action
+	# Check fundraising submenu actions
+	var fundraising_options = GameActions.get_fundraising_options()
+	for action in fundraising_options:
+		if action.get("id") == action_id:
+			return action
 	return {}
 
 func purchase_upgrade(upgrade_id: String):
@@ -192,9 +197,24 @@ func purchase_upgrade(upgrade_id: String):
 		action_executed.emit(result)
 
 		# Emit updated state (money and upgrades changed)
-		emit_state_update()
+		game_state_updated.emit(state.to_dict())
 	else:
 		error_occurred.emit(result.get("message", "Upgrade purchase failed"))
+
+func reserve_ap(amount: int):
+	"""Reserve AP for event responses"""
+	if not is_initialized:
+		error_occurred.emit("Cannot reserve AP: Game not initialized")
+		return
+
+	if state.reserve_ap_amount(amount):
+		print("[GameManager] Reserved %d AP for events (Available: %d, Reserved: %d)" % [amount, state.get_available_ap(), state.reserved_ap])
+		action_executed.emit({"success": true, "message": "Reserved %d AP for events" % amount})
+
+		# Emit updated state
+		game_state_updated.emit(state.to_dict())
+	else:
+		error_occurred.emit("Not enough AP to reserve (need %d, have %d)" % [amount, state.get_available_ap()])
 
 func end_turn():
 	"""Execute queued actions and process turn"""

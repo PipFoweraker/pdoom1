@@ -20,13 +20,22 @@ static func get_all_events() -> Array[Dictionary]:
 			"options": [
 				{
 					"id": "emergency_fundraise",
-					"text": "Emergency Fundraising",
+					"text": "Emergency Fundraising (costs 1 AP)",
+					"costs": {"action_points": 1},
 					"effects": {"money": 75000},
 					"message": "Secured emergency funding: +$75,000"
 				},
 				{
+					"id": "sell_assets",
+					"text": "Sell Lab Equipment (costs 2 AP)",
+					"costs": {"action_points": 2},
+					"effects": {"money": 120000, "research": -10},
+					"message": "Sold equipment for emergency funds: +$120,000, -10 research"
+				},
+				{
 					"id": "accept",
-					"text": "Continue Anyway",
+					"text": "Continue Anyway (no AP cost)",
+					"costs": {},
 					"effects": {},
 					"message": "Continuing with limited funds..."
 				}
@@ -43,15 +52,23 @@ static func get_all_events() -> Array[Dictionary]:
 			"repeatable": true,
 			"options": [
 				{
+					"id": "hire_immediately",
+					"text": "Fast-Track Hiring (costs 1 AP, $25k)",
+					"costs": {"money": 25000, "action_points": 1},
+					"effects": {"safety_researchers": 1, "doom": -3},
+					"message": "Fast-tracked hiring process! (+1 safety researcher, -3 doom)"
+				},
+				{
 					"id": "hire_discounted",
-					"text": "Hire at Discount ($25k)",
+					"text": "Standard Hiring ($25k, no AP)",
 					"costs": {"money": 25000},
 					"effects": {"safety_researchers": 1, "doom": -2},
 					"message": "Hired talented researcher at discount! (+1 safety researcher, -2 doom)"
 				},
 				{
 					"id": "decline",
-					"text": "Decline Offer",
+					"text": "Decline Offer (no cost)",
+					"costs": {},
 					"effects": {},
 					"message": "Declined recruitment opportunity"
 				}
@@ -152,22 +169,30 @@ static func get_all_events() -> Array[Dictionary]:
 			"repeatable": true,
 			"options": [
 				{
+					"id": "emergency_intervention",
+					"text": "Emergency Intervention (costs 2 AP, $30k)",
+					"costs": {"money": 30000, "action_points": 2},
+					"effects": {"reputation": 8, "doom": -5},
+					"message": "Personal intervention prevented resignations! (+8 reputation, -5 doom)"
+				},
+				{
 					"id": "team_retreat",
-					"text": "Organize Team Retreat ($30k)",
+					"text": "Organize Team Retreat ($30k, no AP)",
 					"costs": {"money": 30000},
 					"effects": {"reputation": 5, "doom": -2},
 					"message": "Team retreat restored morale (+5 reputation, -2 doom)"
 				},
 				{
 					"id": "salary_raise",
-					"text": "Give Raises ($50k)",
+					"text": "Give Raises ($50k, no AP)",
 					"costs": {"money": 50000},
 					"effects": {"reputation": 8},
 					"message": "Salary raises improved retention (+8 reputation)"
 				},
 				{
 					"id": "ignore_burnout",
-					"text": "Push Through",
+					"text": "Push Through (no cost)",
+					"costs": {},
 					"effects": {"doom": 3},
 					"message": "Team morale suffered (+3 doom)"
 				}
