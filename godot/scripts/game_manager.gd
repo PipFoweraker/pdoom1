@@ -103,8 +103,9 @@ func select_action(action_id: String):
 
 	var ap_cost = action.get("costs", {}).get("action_points", 0)
 
-	# Validation: Sufficient AP
-	if state.action_points < ap_cost:
+	# Validation: Sufficient AP (check REMAINING AP, not total - fixes overcommitment bug)
+	var available_ap = state.action_points - state.committed_ap
+	if available_ap < ap_cost:
 		var err = ErrorHandler.warning(
 			ErrorHandler.Category.RESOURCES,
 			"Insufficient action points",
@@ -112,10 +113,12 @@ func select_action(action_id: String):
 				"action_id": action_id,
 				"action_name": action.get("name", ""),
 				"required": ap_cost,
-				"available": state.action_points
+				"available": available_ap,
+				"total_ap": state.action_points,
+				"committed_ap": state.committed_ap
 			}
 		)
-		error_occurred.emit("Not enough AP for " + action.get("name", action_id))
+		error_occurred.emit("Not enough AP: %d needed, %d remaining (of %d total)" % [ap_cost, available_ap, state.action_points])
 		return
 
 	# Validation: Can afford costs
@@ -215,6 +218,18 @@ func reserve_ap(amount: int):
 		game_state_updated.emit(state.to_dict())
 	else:
 		error_occurred.emit("Not enough AP to reserve (need %d, have %d)" % [amount, state.get_available_ap()])
+
+func clear_action_queue():
+	"""Clear all queued actions and refund committed AP"""
+	if not is_initialized:
+		return
+
+	var refunded_ap = state.committed_ap
+	state.queued_actions.clear()
+	state.committed_ap = 0
+
+	print("[GameManager] Queue cleared, refunded %d AP" % refunded_ap)
+	game_state_updated.emit(state.to_dict())
 
 func end_turn():
 	"""Execute queued actions and process turn"""

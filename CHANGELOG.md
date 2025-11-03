@@ -4,14 +4,23 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.10.1] - 2025-11-03 - 'Documentation & Repository Cleanup'
+## [v0.10.1] - 2025-11-03 - 'UX Improvements & Public Release'
+
+### Fixed
+- **CRITICAL: Action Overcommitment Bug** - Players can no longer queue more actions than they have AP for
+  - Now validates against remaining AP (total - committed) instead of total AP
+  - Clear error messages showing AP needed vs remaining
 
 ### Changed
+- **UI Clarity Improvements**:
+  - Renamed "End Turn" → "Commit Actions (Space)" for better player understanding
+  - AP counter now shows remaining AP: "AP: 3 (1 free, 2 queued)"
+  - Color-coded AP display: Green (available), Yellow (low), Red (depleted)
+  - Updated keyboard shortcut hints to say "commit" instead of "end turn"
 - **README**: Complete overhaul for public presentation
   - Fixed website URL (pdoom1.com, not pdoom.org)
   - Removed Python instructions from player quick start
   - Clarified Godot as primary platform, Python for dev/testing only
-  - Added prominent website link at top
   - PC/Windows focus, Mac/Linux documented as high-priority future work
 - **Documentation Organization**: Moved 20 markdown files into logical structure
   - Godot docs → `godot/docs/` (5 files)
@@ -24,12 +33,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Root Python files: 20 → 5 (only essentials)
 
 ### Added
+- **Queue Management Controls**:
+  - "Clear Queue (X)" button - Clears all queued actions and refunds AP
+  - Keyboard shortcut: X key to clear queue
+  - Button automatically enables/disables based on queue state
 - **Godot Dev Tools**: Development validation tool for Godot implementation
   - `godot/tools/dev_tool_minimal.gd` - Code structure validator
   - `godot/tools/quick_test.gd` - Basic functionality test
   - Comprehensive documentation in `godot/tools/README.md`
 - **Documentation Indexes**: Created `docs/README.md` and `archive/README.md`
 - **Analysis Documents**:
+  - QUICK_UX_WINS_v0.10.2.md - UX improvement roadmap
   - DEV_TOOLS_PORTING_ANALYSIS.md - Tool migration strategy
   - DOCS_ORGANIZATION_PLAN.md - Documentation structure plan
 
@@ -37,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Godot 4.x continues as primary platform
 - Python codebase preserved for development/testing purposes only
 - All moves preserve git history (non-destructive cleanup)
+- Fixed GUT addon compatibility with Godot 4.5.1 (Logger naming conflict)
 
 ## [v0.10.0] - 2025-10-09 - 'Global Leaderboards Web Export System'
 

@@ -21,6 +21,7 @@ extends VBoxContainer
 @onready var init_button = $BottomBar/ControlButtons/InitButton
 @onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
 @onready var reserve_ap_button = $BottomBar/ControlButtons/ReserveAPButton
+@onready var clear_queue_button = $BottomBar/ControlButtons/ClearQueueButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
 @onready var cat_panel = $TopBar/CatPanel
 @onready var doom_meter = $BottomBar/DoomMeterContainer/MarginContainer/DoomMeter
@@ -58,7 +59,7 @@ func _ready():
 
 	# Auto-initialize game when scene loads
 	log_message("[color=cyan]Initializing game...[/color]")
-	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to end turn[/color]")
+	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to commit[/color]")
 
 	# Call init on next frame to ensure everything is ready
 	await get_tree().process_frame
@@ -138,6 +139,12 @@ func _input(event: InputEvent):
 			_trigger_action_by_index(action_index)
 			get_viewport().set_input_as_handled()
 
+		# X to clear queue
+		elif event.keycode == KEY_X:
+			if not clear_queue_button.disabled:
+				_on_clear_queue_button_pressed()
+				get_viewport().set_input_as_handled()
+
 		# Space or Enter to end turn
 		elif event.keycode == KEY_SPACE or event.keycode == KEY_ENTER:
 			if not end_turn_button.disabled:
@@ -199,6 +206,20 @@ func _on_reserve_ap_button_pressed():
 	log_message("[color=cyan]Reserving 1 AP for events...[/color]")
 	game_manager.reserve_ap(1)
 
+func _on_clear_queue_button_pressed():
+	"""Clear all queued actions and refund AP"""
+	if queued_actions.size() == 0:
+		return
+
+	# Call GameManager to clear queue (refunds AP)
+	game_manager.clear_action_queue()
+
+	# Update local display
+	queued_actions.clear()
+	update_queued_actions_display()
+
+	log_message("[color=yellow]Action queue cleared - AP refunded[/color]")
+
 func _on_end_turn_button_pressed():
 	if queued_actions.size() == 0:
 		log_message("[color=yellow]No actions queued! Select actions first.[/color]")
@@ -236,13 +257,27 @@ func _on_game_state_updated(state: Dictionary):
 	for i in range(compute_eng):
 		blob_display += "[color=blue]●[/color]"
 
-	# Show AP split if reserve system is in use
+	# Show AP split with remaining AP tracking
 	var total_ap = state.get("action_points", 0)
-	var available_ap = state.get("available_ap", total_ap)
+	var committed_ap = state.get("committed_ap", 0)
 	var reserved_ap = state.get("reserved_ap", 0)
+	var remaining_ap = total_ap - committed_ap - reserved_ap
+
+	# Color-code based on remaining AP
+	var ap_color = Color(0.9, 0.9, 0.9)  # White (default)
+	if remaining_ap <= 0:
+		ap_color = Color(0.8, 0.2, 0.2)  # Red (depleted)
+	elif remaining_ap == 1:
+		ap_color = Color(0.9, 0.7, 0.2)  # Yellow (low)
+	elif remaining_ap < total_ap:
+		ap_color = Color(0.7, 0.9, 0.7)  # Light green (partially committed)
+
+	ap_label.add_theme_color_override("font_color", ap_color)
 
 	if reserved_ap > 0:
-		ap_label.text = "AP: %d (Avail: %d | Reserved: %d)  %s" % [total_ap, available_ap, reserved_ap, blob_display]
+		ap_label.text = "AP: %d (%d free, %d reserved)  %s" % [total_ap, remaining_ap, reserved_ap, blob_display]
+	elif committed_ap > 0:
+		ap_label.text = "AP: %d (%d free, %d queued)  %s" % [total_ap, remaining_ap, committed_ap, blob_display]
 	else:
 		ap_label.text = "AP: %d  %s" % [total_ap, blob_display]
 
@@ -310,6 +345,7 @@ func _on_turn_phase_changed(phase_name: String):
 		phase_color = "green"
 		phase_display = "ACTION SELECTION (Ready)"
 		end_turn_button.disabled = false
+		clear_queue_button.disabled = (queued_actions.size() == 0)
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
 		phase_display = "TURN END (Executing...)"
@@ -934,6 +970,10 @@ func update_queued_actions_display():
 		# Show hint, hide items
 		queue_hint.visible = true
 		log_message("[color=gray]No actions queued[/color]")
+
+	# Update clear queue button state
+	if current_turn_phase == "ACTION_SELECTION":
+		clear_queue_button.disabled = (queued_actions.size() == 0)
 
 func _on_event_triggered(event: Dictionary):
 	"""Handle event trigger - show popup dialog"""
