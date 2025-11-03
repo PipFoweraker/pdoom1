@@ -481,6 +481,18 @@ class GameState:
         self.office_cat_turns_with_5_staff = 0  # Track consecutive turns with 5+ staff
         self.office_cat_adoption_offered = False  # Track if adoption event was already shown
         
+        # Office Cat System
+        self.office_cat_adopted = False  # Whether the cat has been adopted
+        self.office_cat_position = (0, 0)  # Current cat position on screen
+        self.office_cat_target_position = (400, 300)  # Where cat should be
+        self.office_cat_last_petted = 0  # Turn when cat was last petted
+        self.office_cat_love_emoji_timer = 0  # Timer for love emoji display
+        self.office_cat_love_emoji_pos = (0, 0)  # Position for love emoji
+        self.office_cat_total_food_cost = 0  # Total spent on cat food (for stats)
+        self.office_cat_total_pets = 0  # Total times cat was petted (for stats)
+        self.office_cat_turns_with_5_staff = 0  # Track consecutive turns with 5+ staff
+        self.office_cat_adoption_offered = False  # Track if adoption event was already shown
+        
         # Load tutorial settings (after initialization)
         self.load_tutorial_settings()
         
@@ -1457,6 +1469,107 @@ class GameState:
         """Delegate mouse motion handling to the input manager."""
         return self.input_manager.handle_mouse_motion(mouse_pos, w, h)
 
+        # Actions (left) - Handle filtered actions with display mapping
+        if hasattr(self, 'filtered_action_rects') and hasattr(self, 'display_to_action_index_map'):
+            # Use filtered action rects if available (when UI shows only unlocked actions)
+            action_rects = self.filtered_action_rects
+            for display_idx, rect in enumerate(action_rects):
+                if self._in_rect(mouse_pos, rect):
+                    if not self.game_over and display_idx < len(self.display_to_action_index_map):
+                        original_idx = self.display_to_action_index_map[display_idx]
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = original_idx in self.selected_actions
+                        
+                        result = self.attempt_action_selection(original_idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
+        else:
+            # Fallback to original action handling (show all actions)
+            a_rects = self._get_action_rects(w, h)
+            for idx, rect in enumerate(a_rects):
+                if self._in_rect(mouse_pos, rect):
+                    if not self.game_over:
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = idx in self.selected_actions
+                        
+                        result = self.attempt_action_selection(idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
+
+        # Upgrades (right, as icons or buttons)
+        u_rects = self._get_upgrade_rects(w, h)
+        for idx, rect in enumerate(u_rects):
+            # Skip None rectangles (unavailable/hidden upgrades)
+            if rect is None:
+                continue
+            if self._in_rect(mouse_pos, rect):
+                upg = self.upgrades[idx]
+                if not upg.get("purchased", False):
+                    if self.money >= upg["cost"]:
+                        self._add('money', -upg["cost"])  # Use _add to track spending
+                        upg["purchased"] = True
+                        self.upgrade_effects.add(upg["effect_key"])
+                        
+                        # Trigger first-time help for upgrade purchase
+                        if onboarding.should_show_mechanic_help('first_upgrade_purchase'):
+                            onboarding.mark_mechanic_seen('first_upgrade_purchase')
+                        
+                        # Special handling for custom effects
+                        if upg.get("custom_effect") == "buy_accounting_software":
+                            self.accounting_software_bought = True
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!")
+                        elif upg.get("custom_effect") == "buy_compact_activity_display":
+                            # Allow toggle functionality for the activity log
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
+                        elif upg.get("custom_effect") == "buy_magical_orb_seeing":
+                            # Enable enhanced intelligence gathering capabilities
+                            self.magical_orb_active = True
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Enhanced global surveillance capabilities now active!")
+                            self.messages.append("The orb reveals detailed intelligence on all competitors and their activities...")
+                            self.messages.append("Intelligence gathering actions now provide comprehensive insights!")
+                        elif upg.get("effect_key") == "hpc_cluster":
+                            self._add('compute', 20)
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.")
+                        elif upg.get("effect_key") == "research_automation":
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Research actions now benefit from available compute resources.")
+                        else:
+                            self.messages.append(f"Upgrade purchased: {upg['name']}")
+                        
+                        # Log upgrade purchase
+                        self.logger.log_upgrade(upg["name"], upg["cost"], self.turn)
+                        
+                        # Create smooth transition animation from button to icon
+                        icon_rect = self._get_upgrade_icon_rect(idx, w, h)
+                        self._create_upgrade_transition(idx, rect, icon_rect)
+                    else:
+                        error_msg = f"Not enough money for {upg['name']} (need ${upg['cost']}, have ${self.money})."
+                        self.messages.append(error_msg)
+                        
+                        # Track error for easter egg detection
+                        self.track_error(f"Insufficient money: {upg['name']}")
+                else:
+                    self.messages.append(f"{upg['name']} already purchased.")
+                    
+                    # Track error for easter egg detection
+                    self.track_error(f"Already purchased: {upg['name']}")
+                return None
+
+        # Mute button (bottom right)
+        mute_rect = self._get_mute_button_rect(w, h)
+        if self._in_rect(mouse_pos, mute_rect):
+            new_state = self.sound_manager.toggle()
+            status = "enabled" if new_state else "disabled"
+            self.messages.append(f"Sound {status}")
+            return None
+        
+        # Office cat petting interaction
+        if getattr(self, 'office_cat_adopted', False):
+            if self.pet_office_cat(mouse_pos):
+                return None  # Cat was petted, interaction handled
     def handle_mouse_release(self, mouse_pos: Tuple[int, int], w: int, h: int) -> bool:
         """Delegate mouse release handling to the input manager."""
         return self.input_manager.handle_mouse_release(mouse_pos, w, h)
@@ -1696,6 +1809,13 @@ class GameState:
         if hasattr(self, 'technical_failures'):
             self.technical_failures.check_for_cascades()
         
+        # Office Cat System: Track consecutive turns with 5+ staff (check at start of turn)
+        if hasattr(self, 'office_cat_turns_with_5_staff'):
+            if self.staff >= 5:
+                self.office_cat_turns_with_5_staff += 1
+            else:
+                self.office_cat_turns_with_5_staff = 0  # Reset streak if below 5 staff
+        
         # Check if there are pending popup events that need resolution
         if (hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled and
             hasattr(self, 'deferred_events') and hasattr(self.deferred_events, 'pending_popup_events') and
@@ -1853,6 +1973,23 @@ class GameState:
         # Handle deferred events (tick expiration and auto-execute expired ones)
         if hasattr(self, 'deferred_events'):
             self.deferred_events.tick_all_events(self)
+        
+        # Office Cat upkeep costs (if adopted)
+        if getattr(self, 'office_cat_adopted', False):
+            # Weekly cat food costs: $1.25 (wet) + $0.80 (dry) = $2.05/day * 7 = $14.35/week
+            cat_food_cost = 14  # Rounded down for game balance
+            self._add('money', -cat_food_cost)
+            self.office_cat_total_food_cost = getattr(self, 'office_cat_total_food_cost', 0) + cat_food_cost
+            self.messages.append(f"🐱 Cat upkeep: ${cat_food_cost} (total: ${self.office_cat_total_food_cost})")
+            
+            # Small morale benefit (reduce doom slightly)
+            if random.random() < 0.3:  # 30% chance per turn
+                self._add('doom', -1)
+                self.messages.append("🐾 Office cat provides small morale boost!")
+            
+            # Update cat love emoji timer
+            if hasattr(self, 'office_cat_love_emoji_timer') and self.office_cat_love_emoji_timer > 0:
+                self.office_cat_love_emoji_timer -= 1
         
         self.turn += 1
         
@@ -3838,6 +3975,47 @@ class GameState:
             self.messages.append("? Loyalty crisis among researchers! Morale significantly decreased.")
         
         self.messages.append("Consider salary increases and team building to restore loyalty.")
+    
+    def pet_office_cat(self, mouse_pos):
+        """Handle office cat petting interaction."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return False
+        
+        # Check if click is near the cat
+        cat_x, cat_y = getattr(self, 'office_cat_position', (400, 300))
+        mx, my = mouse_pos
+        
+        # Cat is clickable in a 64x64 area
+        if abs(mx - cat_x) <= 32 and abs(my - cat_y) <= 32:
+            # Pet the cat!
+            self.office_cat_total_pets = getattr(self, 'office_cat_total_pets', 0) + 1
+            self.office_cat_last_petted = self.turn
+            
+            # Show love emoji for 60 frames (2 seconds at 30 FPS)
+            self.office_cat_love_emoji_timer = 60
+            self.office_cat_love_emoji_pos = (cat_x + 16, cat_y - 20)
+            
+            # Small temporary morale boost
+            if random.random() < 0.2:  # 20% chance for immediate doom reduction
+                self._add('doom', -1)
+                self.messages.append("💖 Petting the cat provides immediate stress relief!")
+            
+            # Play cat sound if available
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_sound('blob')  # Reuse existing sound
+            
+            return True
+        
+        return False
+    
+    def get_cat_doom_stage(self):
+        """Get the current doom stage of the office cat for visual representation."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return 0
+        
+        # Cat gets more ominous as doom increases
+        doom_percentage = self.doom / self.max_doom
+        
 
     # Research Quality Event Handlers for Issue #190
     def _trigger_safety_shortcut_event(self) -> None:
@@ -4584,6 +4762,16 @@ class GameState:
             return 3  # Ominous cat with red eyes
         else:
             return 4  # Terrifying doom cat with laser eyes
+    
+    def update_cat_position(self, screen_w, screen_h):
+        """Update office cat position and animation."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return
+        
+        # Cat likes to stay in the bottom-right area, avoiding UI elements
+        target_x = screen_w - 150  # Stay away from right edge UI
+        target_y = screen_h - 120  # Stay away from bottom UI
+        
 
     def update_cat_position(self, screen_w: int, screen_h: int) -> None:
         """Update office cat position and animation."""
@@ -4600,6 +4788,8 @@ class GameState:
         # Move 10% of the way to target each frame
         new_x = current_x + (target_x - current_x) * 0.1
         new_y = current_y + (target_y - current_y) * 0.1
+        
+        self.office_cat_position = (int(new_x), int(new_y))
 
         self.office_cat_position = (int(new_x), int(new_y))
     

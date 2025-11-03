@@ -154,6 +154,19 @@ EVENTS: List[EventDefinition] = [
         'trigger': lambda gs: gs.turn == 8 and not getattr(gs, 'office_cats_adopted', False),
         'effect': lambda gs: gs._trigger_stray_cat_adoption()
     },
+    {
+        "name": "Mysterious Office Visitor",
+        "desc": "A feline visitor has arrived at your office, seeking employment benefits.",
+        # Trigger: 5+ employees for 5+ consecutive turns, enough money, not already offered
+        "trigger": lambda gs: (
+            gs.staff >= 5 and 
+            getattr(gs, 'office_cat_turns_with_5_staff', 0) >= 5 and
+            gs.money >= 89 and  # Minimum adoption cost
+            not getattr(gs, 'office_cat_adoption_offered', False) and
+            not getattr(gs, 'office_cat_adopted', False)
+        ),
+        "effect": trigger_office_cat_adoption
+    },
     # Enhanced Personnel System Events
     {
         'name': 'Researcher Breakthrough',
