@@ -24,3 +24,4 @@ sphinx-rtd-theme>=1.2.0
 # Packaging and distribution
 build>=0.10.0
 twine>=4.0.0
+pyinstaller>=5.0.0

@@ -1,0 +1,52 @@
+{
+  'version': '1.0.0',
+  'created': '2025-10-09T21:18:07.396257',
+  'max_entries': 50,
+  'entries': [
+    {
+      'score': 8,
+      'player_name': 'Quantum Leap',
+      'date': '2025-09-29T13:24:39.895758',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.015845,
+      'entry_uuid': 'fe52fa04-5222-4850-8fa2-9e182e1a7f56'
+    },
+    {
+      'score': 8,
+      'player_name': 'Quantum Leap',
+      'date': '2025-09-29T16:42:53.990242',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.022423,
+      'entry_uuid': '044af23f-97c2-4dcd-b40d-917a783d5832'
+    },
+    {
+      'score': 8,
+      'player_name': 'Quantum Leap',
+      'date': '2025-09-29T20:27:12.252832',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.012799,
+      'entry_uuid': '95dafb50-b580-48da-beea-3ecbb2a866b1'
+    },
+    {
+      'score': 8,
+      'player_name': 'Quantum Leap',
+      'date': '2025-09-29T20:35:30.073817',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.012168,
+      'entry_uuid': '63bae760-1672-448e-afa4-3d5e42b4602d'
+    },
+    {
+      'score': 8,
+      'player_name': 'Quantum Leap',
+      'date': '2025-10-09T21:18:07.395738',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.02489,
+      'entry_uuid': '8f30b902-1a7a-42f8-af1a-e89b6c3a40ea'
+    }
+  ]
+}

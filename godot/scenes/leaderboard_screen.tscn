@@ -1,0 +1,211 @@
+[gd_scene load_steps=2 format=3 uid="uid://c8jkm2s8cdp4t"]
+
+[ext_resource type="Script" path="res://scripts/ui/leaderboard_screen.gd" id="1_leaderboard"]
+
+[node name="LeaderboardScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_leaderboard")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1, 0.1, 0.15, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Header" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+text = "🏆 Leaderboard 🏆"
+theme_override_font_sizes/font_size = 40
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+text = "Top scores across all seeds"
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Filters" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="SeedLabel" type="Label" parent="MarginContainer/VBoxContainer/Filters"]
+layout_mode = 2
+text = "Filter by Seed:"
+theme_override_font_sizes/font_size = 16
+
+[node name="SeedDropdown" type="OptionButton" parent="MarginContainer/VBoxContainer/Filters"]
+layout_mode = 2
+custom_minimum_size = Vector2(250, 0)
+theme_override_font_sizes/font_size = 14
+
+[node name="RefreshButton" type="Button" parent="MarginContainer/VBoxContainer/Filters"]
+layout_mode = 2
+text = "Refresh"
+theme_override_font_sizes/font_size = 14
+
+[node name="ClearButton" type="Button" parent="MarginContainer/VBoxContainer/Filters"]
+layout_mode = 2
+text = "Clear All Scores"
+theme_override_font_sizes/font_size = 14
+
+[node name="LeaderboardPanel" type="Panel" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/LeaderboardPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Rank" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+text = "Rank"
+theme_override_font_sizes/font_size = 16
+
+[node name="Player" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+text = "Player"
+theme_override_font_sizes/font_size = 16
+
+[node name="Score" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Turns"
+theme_override_font_sizes/font_size = 16
+
+[node name="Duration" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "Duration"
+theme_override_font_sizes/font_size = 16
+
+[node name="Date" type="Label" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Date"
+theme_override_font_sizes/font_size = 16
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="EntriesContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="Pagination" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="PrevButton" type="Button" parent="MarginContainer/VBoxContainer/Pagination"]
+layout_mode = 2
+text = "← Previous"
+theme_override_font_sizes/font_size = 14
+
+[node name="PageLabel" type="Label" parent="MarginContainer/VBoxContainer/Pagination"]
+layout_mode = 2
+text = "Page 1 of 1"
+theme_override_font_sizes/font_size = 16
+
+[node name="NextButton" type="Button" parent="MarginContainer/VBoxContainer/Pagination"]
+layout_mode = 2
+text = "Next →"
+theme_override_font_sizes/font_size = 14
+
+[node name="Stats" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="TotalGames" type="Label" parent="MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Total Games: 0"
+theme_override_font_sizes/font_size = 14
+
+[node name="AvgScore" type="Label" parent="MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Avg Score: 0"
+theme_override_font_sizes/font_size = 14
+
+[node name="BestScore" type="Label" parent="MarginContainer/VBoxContainer/Stats"]
+layout_mode = 2
+text = "Best Score: 0"
+theme_override_font_sizes/font_size = 14
+
+[node name="Buttons" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="BackButton" type="Button" parent="MarginContainer/VBoxContainer/Buttons"]
+layout_mode = 2
+text = "Back"
+theme_override_font_sizes/font_size = 18
+
+[node name="PlayAgainButton" type="Button" parent="MarginContainer/VBoxContainer/Buttons"]
+layout_mode = 2
+text = "Play Again"
+theme_override_font_sizes/font_size = 18
+
+[connection signal="item_selected" from="MarginContainer/VBoxContainer/Filters/SeedDropdown" to="." method="_on_seed_dropdown_item_selected"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Filters/RefreshButton" to="." method="_on_refresh_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Filters/ClearButton" to="." method="_on_clear_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Pagination/PrevButton" to="." method="_on_prev_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Pagination/NextButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Buttons/BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/Buttons/PlayAgainButton" to="." method="_on_play_again_button_pressed"]

@@ -1,0 +1,1 @@
+# Remove barely visible text under boxes in early screens\n\nRemove the barely visible and unhelpful text appearing under boxes in the first few screens. Players can intuit button functions.\n\n<!-- GitHub Issue #368 -->

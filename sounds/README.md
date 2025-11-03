@@ -17,6 +17,7 @@ This directory allows you to override built-in sound effects with custom audio f
 
 Name your files to match these event keys to override built-in sounds:
 
+**Basic Game Sounds:**
 - `ap_spend.wav` - Action Point spend sound
 - `popup_open.wav` - Popup dialog open sound  
 - `popup_close.wav` - Popup dialog close sound
@@ -24,6 +25,13 @@ Name your files to match these event keys to override built-in sounds:
 - `error_beep.wav` - Error feedback sound (easter egg)
 - `blob.wav` - Employee hiring sound
 - `zabinga.wav` - Research paper completion celebration
+
+**Enhanced Feedback Sounds (v0.9.1+):**
+- `milestone.wav` - Achievement milestone celebrations (manager hiring, board members)
+- `warning.wav` - Cautionary alerts for doom level increases
+- `danger.wav` - Urgent alerts for critical doom levels (80%+)
+- `success.wav` - Positive feedback for successful actions
+- `research_complete.wav` - Major research breakthrough fanfare
 
 ## Examples
 
@@ -37,6 +45,15 @@ cp my_celebration.ogg zabinga.ogg
 # Override popup sounds
 cp open_sound.wav popup_open.wav
 cp close_sound.wav popup_close.wav
+
+# Override milestone achievements  
+cp triumph_fanfare.wav milestone.wav
+
+# Override warning alerts
+cp alert_tone.wav warning.wav
+
+# Override danger alerts
+cp alarm_sound.wav danger.wav
 ```
 
 ## Subdirectories

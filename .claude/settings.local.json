@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Pip/**)",
+      "Bash(jj:*)",
+      "Bash(uv:*)",
+      "Bash(powershell -ExecutionPolicy ByPass -c \"irm https://astral.sh/uv/install.ps1 | iex\")",
+      "Bash(export PATH=\"$HOME/.local/bin:$PATH\")",
+      "Bash(gh:*)",
+      "Bash(where gh)",
+      "Bash(command -v:*)",
+      "Bash(powershell:*)",
+      "Bash(cat:*)",
+      "Bash(winget:*)",
+      "Bash(export:*)",
+      "Bash(find:*)",
+      "Bash(python:*)",
+      "Bash(timeout 5 python main.py --help)",
+      "Bash(git log:*)",
+      "Bash(sed:*)",
+      "Bash(cp:*)",
+      "Bash(where godot)",
+      "Bash(printf '%s\\n%s\\n' '{\"\"\"\"action\"\"\"\": \"\"\"\"init_game\"\"\"\", \"\"\"\"seed\"\"\"\": \"\"\"\"test\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"execute_action\"\"\"\", \"\"\"\"action_id\"\"\"\": \"\"\"\"hire_safety_researcher\"\"\"\"}')",
+      "Bash(printf '%s\\n%s\\n%s\\n%s\\n' '{\"\"\"\"action\"\"\"\": \"\"\"\"init_game\"\"\"\", \"\"\"\"seed\"\"\"\": \"\"\"\"full-turn-test\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"select_action\"\"\"\", \"\"\"\"action_id\"\"\"\": \"\"\"\"hire_safety_researcher\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"end_turn\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"start_turn\"\"\"\"}')"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,1 @@
+# Systematic Issue Archive and Triage\n\nArchive resolved/obsolete issues to docs/issues/archive/ and implement systematic triage of 42 open issues. Prioritize critical gameplay bugs and create clear development roadmap.\n\n<!-- GitHub Issue #381 -->

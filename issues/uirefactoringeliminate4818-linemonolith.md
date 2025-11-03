@@ -1,0 +1,1 @@
+# UI Refactoring: Eliminate 4818-line Monolith\n\nRoot ui.py (4818 lines) duplicates functions in src/ui/ modules. See docs/UI_REFACTOR_TARGETS.md for plan.\n\n<!-- GitHub Issue #306 -->

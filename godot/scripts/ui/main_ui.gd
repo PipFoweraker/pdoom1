@@ -1,0 +1,698 @@
+extends VBoxContainer
+## Main UI controller - connects UI elements to GameManager
+
+# References to UI elements
+@onready var turn_label = $ResourceDisplay/TurnLabel
+@onready var money_label = $ResourceDisplay/MoneyLabel
+@onready var compute_label = $ResourceDisplay/ComputeLabel
+@onready var research_label = $ResourceDisplay/ResearchLabel
+@onready var papers_label = $ResourceDisplay/PapersLabel
+@onready var reputation_label = $ResourceDisplay/ReputationLabel
+@onready var doom_label = $ResourceDisplay/DoomLabel
+@onready var ap_label = $ResourceDisplay/APLabel
+@onready var phase_label = $BottomBar/PhaseLabel
+@onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
+@onready var actions_list = $ContentArea/LeftPanel/ActionsScroll/ActionsList
+@onready var upgrades_list = $ContentArea/LeftPanel/UpgradesScroll/UpgradesList
+@onready var info_label = $InfoBar/MarginContainer/InfoLabel
+
+@onready var init_button = $BottomBar/ControlButtons/InitButton
+@onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
+@onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
+@onready var cat_panel = $TopBar/CatPanel
+
+# Reference to GameManager
+var game_manager: Node
+
+# Track queued actions
+var queued_actions: Array = []
+var current_turn_phase: String = "NOT_STARTED"
+
+func _ready():
+	print("[MainUI] Initializing UI...")
+
+	# Get GameManager reference
+	game_manager = get_node("../GameManager")
+
+	# Connect to GameManager signals
+	game_manager.game_state_updated.connect(_on_game_state_updated)
+	game_manager.turn_phase_changed.connect(_on_turn_phase_changed)
+	game_manager.action_executed.connect(_on_action_executed)
+	game_manager.error_occurred.connect(_on_error_occurred)
+	game_manager.actions_available.connect(_on_actions_available)
+	game_manager.event_triggered.connect(_on_event_triggered)
+
+	# Enable input processing for keyboard shortcuts
+	set_process_input(true)
+
+	log_message("[color=yellow]UI Ready. Click 'Init Game' to start.[/color]")
+	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to end turn[/color]")
+
+func _input(event: InputEvent):
+	"""Handle keyboard shortcuts"""
+	if event is InputEventKey and event.pressed and not event.echo:
+		# Number keys 1-9 for action shortcuts
+		if event.keycode >= KEY_1 and event.keycode <= KEY_9:
+			var action_index = event.keycode - KEY_1  # 0-indexed
+			_trigger_action_by_index(action_index)
+			get_viewport().set_input_as_handled()
+
+		# Space or Enter to end turn
+		elif event.keycode == KEY_SPACE or event.keycode == KEY_ENTER:
+			if not end_turn_button.disabled:
+				_on_end_turn_button_pressed()
+				get_viewport().set_input_as_handled()
+
+		# Escape to init game (if not started)
+		elif event.keycode == KEY_ESCAPE:
+			if not init_button.disabled:
+				_on_init_button_pressed()
+				get_viewport().set_input_as_handled()
+
+func _trigger_action_by_index(index: int):
+	"""Trigger action button by its index (for keyboard shortcuts)"""
+	var buttons = actions_list.get_children()
+	var action_buttons = []
+
+	# Filter out category labels, get only buttons
+	for child in buttons:
+		if child is Button and child.name != "TestActionButton":
+			action_buttons.append(child)
+
+	if index < action_buttons.size():
+		var button = action_buttons[index]
+		if not button.disabled:
+			button.emit_signal("pressed")
+			log_message("[color=cyan]Keyboard shortcut: %d[/color]" % (index + 1))
+
+func _on_init_button_pressed():
+	log_message("[color=cyan]Initializing game...[/color]")
+	init_button.disabled = true
+	game_manager.start_new_game("test-seed")
+
+func _on_test_action_button_pressed():
+	log_message("[color=cyan]Selecting action: hire_safety_researcher[/color]")
+	game_manager.select_action("hire_safety_researcher")
+
+func _on_end_turn_button_pressed():
+	if queued_actions.size() == 0:
+		log_message("[color=yellow]No actions queued! Select actions first.[/color]")
+		return
+
+	log_message("[color=cyan]Ending turn with %d queued actions...[/color]" % queued_actions.size())
+
+	# Clear queued actions (will be repopulated after turn processes)
+	queued_actions.clear()
+	update_queued_actions_display()
+
+	game_manager.end_turn()
+
+func _on_game_state_updated(state: Dictionary):
+	print("[MainUI] State updated: ", state)
+
+	# Update resource displays
+	turn_label.text = "Turn: %d" % state.get("turn", 0)
+	money_label.text = "Money: $%.0f" % state.get("money", 0)
+	compute_label.text = "Compute: %.1f" % state.get("compute", 0)
+	research_label.text = "Research: %.1f" % state.get("research", 0)
+	papers_label.text = "Papers: %d" % state.get("papers", 0)
+	reputation_label.text = "Rep: %.0f" % state.get("reputation", 0)
+	doom_label.text = "Doom: %.1f%%" % state.get("doom", 0)
+
+	# Add employee blob display to AP label
+	var safety = state.get("safety_researchers", 0)
+	var capability = state.get("capability_researchers", 0)
+	var compute_eng = state.get("compute_engineers", 0)
+	var blob_display = ""
+	for i in range(safety):
+		blob_display += "[color=green]●[/color]"
+	for i in range(capability):
+		blob_display += "[color=red]●[/color]"
+	for i in range(compute_eng):
+		blob_display += "[color=blue]●[/color]"
+
+	ap_label.text = "AP: %d  %s" % [state.get("action_points", 0), blob_display]
+
+	# Color-code doom using ThemeManager
+	var doom = state.get("doom", 0)
+	doom_label.modulate = ThemeManager.get_doom_color(doom)
+
+	# Show cat panel if adopted
+	if state.get("has_cat", false):
+		cat_panel.visible = true
+	else:
+		cat_panel.visible = false
+
+	# Enable controls after first init
+	if state.get("turn", 0) >= 0:
+		test_action_button.disabled = false
+		init_button.disabled = true
+
+		# Note: Actions are now included in init_game response
+		# No need to call get_available_actions() separately
+
+	# Check game over
+	if state.get("game_over", false):
+		var victory = state.get("victory", false)
+		if victory:
+			log_message("[color=gold]VICTORY! You survived![/color]")
+		else:
+			log_message("[color=red]GAME OVER! The AI destroyed humanity.[/color]")
+
+		# Disable controls
+		test_action_button.disabled = true
+		end_turn_button.disabled = true
+
+func _on_turn_phase_changed(phase_name: String):
+	print("[MainUI] Phase changed: ", phase_name)
+
+	current_turn_phase = phase_name
+
+	# Update phase label with color coding
+	var phase_color = "white"
+	var phase_display = phase_name
+
+	if phase_name == "turn_start" or phase_name == "TURN_START":
+		phase_color = "red"
+		phase_display = "TURN START (Processing...)"
+		end_turn_button.disabled = true
+	elif phase_name == "action_selection" or phase_name == "ACTION_SELECTION":
+		phase_color = "green"
+		phase_display = "ACTION SELECTION (Ready)"
+		end_turn_button.disabled = false
+	elif phase_name == "turn_end" or phase_name == "TURN_END":
+		phase_color = "yellow"
+		phase_display = "TURN END (Executing...)"
+		end_turn_button.disabled = true
+
+	phase_label.text = "[color=%s]Phase: %s[/color]" % [phase_color, phase_display]
+
+	log_message("[color=magenta]Turn Phase: " + phase_name + "[/color]")
+
+func _on_action_executed(result: Dictionary):
+	print("[MainUI] Action executed: ", result)
+
+	var message = result.get("message", "Action completed")
+	log_message("[color=lime]" + message + "[/color]")
+
+	# Show any additional messages from action
+	if result.has("messages"):
+		for msg in result.get("messages", []):
+			log_message("[color=white]  " + str(msg) + "[/color]")
+
+	# Note: GameManager now handles auto-starting next turn
+
+func _on_error_occurred(error_msg: String):
+	print("[MainUI] Error: ", error_msg)
+	log_message("[color=red]ERROR: " + error_msg + "[/color]")
+
+func log_message(text: String):
+	"""Add a message to the log with timestamp"""
+	var timestamp = Time.get_ticks_msec() / 1000.0
+	message_log.text += "\n[color=gray][%.1fs][/color] %s" % [timestamp, text]
+
+	# Auto-scroll to bottom
+	await get_tree().process_frame
+	var scroll = message_log.get_parent() as ScrollContainer
+	if scroll:
+		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
+
+func _on_actions_available(actions: Array):
+	"""Populate action list dynamically, grouped by category"""
+	print("[MainUI] Populating ", actions.size(), " actions")
+
+	# Clear existing action buttons (except test button for now)
+	for child in actions_list.get_children():
+		if child.name != "TestActionButton":
+			child.queue_free()
+
+	# Get current state for affordability checking
+	var current_state = game_manager.get_game_state()
+
+	# Group actions by category
+	var categories = {}
+	for action in actions:
+		var category = action.get("category", "other")
+		if not categories.has(category):
+			categories[category] = []
+		categories[category].append(action)
+
+	# Define category order and display names
+	var category_order = ["hiring", "resources", "research", "management", "other"]
+	var category_names = {
+		"hiring": "Hiring",
+		"resources": "Resources",
+		"research": "Research",
+		"management": "Management",
+		"other": "Other"
+	}
+
+	# Create sections for each category
+	for category_key in category_order:
+		if not categories.has(category_key):
+			continue
+
+		var category_actions = categories[category_key]
+		if category_actions.is_empty():
+			continue
+
+		# Create category label
+		var category_label = Label.new()
+		category_label.text = "-- " + category_names.get(category_key, category_key.capitalize()) + " --"
+		category_label.add_theme_color_override("font_color", Color(0.7, 0.7, 1.0))
+		actions_list.add_child(category_label)
+
+		# Create buttons for actions in this category
+		for action in category_actions:
+			var action_id = action.get("id", "")
+			var action_name = action.get("name", "Unknown")
+			var action_cost = action.get("costs", {})
+			var action_description = action.get("description", "")
+
+			# Create styled button using ThemeManager
+			var button = ThemeManager.create_button("  " + action_name)  # Indent actions under category
+
+			# Check if player can afford this action
+			var can_afford = true
+			var missing_resources = []
+
+			for resource in action_cost.keys():
+				var cost = action_cost[resource]
+				var available = current_state.get(resource, 0)
+
+				if available < cost:
+					can_afford = false
+					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
+
+			# Add cost info to tooltip
+			var tooltip = action_description + "\n\nCosts:"
+			for resource in action_cost.keys():
+				tooltip += "\n  %s: %s" % [resource, action_cost[resource]]
+
+			if not can_afford:
+				tooltip += "\n\n[CANNOT AFFORD]"
+				for msg in missing_resources:
+					tooltip += "\n  Missing: " + msg
+				button.disabled = true
+				button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
+
+			button.tooltip_text = tooltip
+
+			# Connect button press
+			button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
+
+			# Connect mouse hover for info bar
+			button.mouse_entered.connect(func(): _on_action_hover(action, can_afford, missing_resources))
+			button.mouse_exited.connect(func(): _on_action_unhover())
+
+			# Add to list
+			actions_list.add_child(button)
+
+	log_message("[color=cyan]Loaded %d available actions in %d categories[/color]" % [actions.size(), categories.size()])
+
+	# Also populate upgrades
+	_populate_upgrades()
+
+func _populate_upgrades():
+	"""Populate upgrades list"""
+	# Clear existing upgrades
+	for child in upgrades_list.get_children():
+		child.queue_free()
+
+	var current_state = game_manager.get_game_state()
+	var all_upgrades = GameUpgrades.get_all_upgrades()
+
+	for upgrade in all_upgrades:
+		var upgrade_id = upgrade.get("id", "")
+		var upgrade_name = upgrade.get("name", "Unknown")
+		var upgrade_desc = upgrade.get("description", "")
+		var upgrade_cost = upgrade.get("cost", 0)
+
+		# Check if already purchased
+		var is_purchased = current_state.get("purchased_upgrades", []).has(upgrade_id)
+
+		# Create button
+		var button = ThemeManager.create_button(upgrade_name)
+
+		# If purchased, show differently
+		if is_purchased:
+			button.text = "✓ " + upgrade_name
+			button.disabled = true
+			button.modulate = Color(0.5, 1.0, 0.5)  # Green tint
+		else:
+			button.text = "%s ($%dk)" % [upgrade_name, upgrade_cost / 1000]
+
+			# Check affordability
+			var can_afford = current_state.get("money", 0) >= upgrade_cost
+			if not can_afford:
+				button.disabled = true
+				button.modulate = Color(0.6, 0.6, 0.6)
+
+		# Tooltip
+		var tooltip = upgrade_desc + "\n\nCost: $%d" % upgrade_cost
+		if is_purchased:
+			tooltip += "\n\n[PURCHASED]"
+		elif not current_state.get("money", 0) >= upgrade_cost:
+			tooltip += "\n\n[CANNOT AFFORD]"
+		button.tooltip_text = tooltip
+
+		# Connect button press
+		if not is_purchased:
+			button.pressed.connect(func(): _on_upgrade_pressed(upgrade_id, upgrade_name))
+
+		# Connect hover
+		button.mouse_entered.connect(func(): _on_upgrade_hover(upgrade, is_purchased))
+		button.mouse_exited.connect(func(): _on_action_unhover())
+
+		upgrades_list.add_child(button)
+
+	log_message("[color=cyan]Loaded %d upgrades[/color]" % all_upgrades.size())
+
+func _on_upgrade_pressed(upgrade_id: String, upgrade_name: String):
+	"""Handle upgrade purchase button press"""
+	log_message("[color=cyan]Purchasing upgrade: %s[/color]" % upgrade_name)
+
+	# Purchase via GameManager (will handle state update)
+	game_manager.purchase_upgrade(upgrade_id)
+
+func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
+	"""Update info bar when hovering over an upgrade"""
+	var upgrade_name = upgrade.get("name", "Unknown")
+	var upgrade_desc = upgrade.get("description", "")
+	var upgrade_cost = upgrade.get("cost", 0)
+
+	var info_text = "[b]%s[/b]: %s" % [upgrade_name, upgrade_desc]
+	info_text += " [color=yellow]Cost: $%d[/color]" % upgrade_cost
+
+	if is_purchased:
+		info_text += " [color=lime][PURCHASED][/color]"
+	else:
+		var current_state = game_manager.get_game_state()
+		if current_state.get("money", 0) >= upgrade_cost:
+			info_text += " [color=lime][READY][/color]"
+		else:
+			info_text += " [color=red][CANNOT AFFORD][/color]"
+
+	info_label.text = info_text
+
+func _on_dynamic_action_pressed(action_id: String, action_name: String):
+	"""Handle dynamic action button press"""
+	log_message("[color=cyan]Selecting action: %s[/color]" % action_name)
+
+	# Check if this is a submenu action
+	var action = _get_action_by_id(action_id)
+	if action.get("is_submenu", false):
+		# Open appropriate submenu dialog instead of queuing
+		if action_id == "hire_staff":
+			_show_hiring_submenu()
+		elif action_id == "fundraise":
+			_show_fundraising_submenu()
+		return
+
+	# Track queued action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	game_manager.select_action(action_id)
+
+func _get_action_by_id(action_id: String) -> Dictionary:
+	"""Helper to find action definition"""
+	for action in GameActions.get_all_actions():
+		if action.get("id") == action_id:
+			return action
+	return {}
+
+func _show_hiring_submenu():
+	"""Show popup dialog with hiring options"""
+	var dialog = AcceptDialog.new()
+	dialog.title = "Hire Staff"
+	dialog.dialog_text = "Choose a staff member to hire:"
+	dialog.size = Vector2(500, 400)
+	dialog.exclusive = true  # Block input to other windows
+	dialog.popup_window = false  # Use panel instead of popup window
+
+	# Create container for hiring buttons
+	var vbox = VBoxContainer.new()
+
+	# Get hiring options
+	var hiring_options = GameActions.get_hiring_options()
+	var current_state = game_manager.get_game_state()
+
+	for option in hiring_options:
+		var hire_id = option.get("id", "")
+		var hire_name = option.get("name", "")
+		var hire_desc = option.get("description", "")
+		var hire_costs = option.get("costs", {})
+
+		# Create button for this option
+		var btn = Button.new()
+		btn.text = "%s ($%d, %d AP)" % [hire_name, hire_costs.get("money", 0), hire_costs.get("action_points", 0)]
+
+		# Check affordability
+		var can_afford = true
+		for resource in hire_costs.keys():
+			if current_state.get(resource, 0) < hire_costs[resource]:
+				can_afford = false
+				break
+
+		if not can_afford:
+			btn.disabled = true
+			btn.modulate = Color(0.6, 0.6, 0.6)
+
+		# Add tooltip
+		btn.tooltip_text = hire_desc + "\n\nCosts: $%d, %d AP" % [hire_costs.get("money", 0), hire_costs.get("action_points", 0)]
+
+		# Connect button
+		btn.pressed.connect(func(): _on_hiring_option_selected(hire_id, hire_name, dialog))
+
+		vbox.add_child(btn)
+
+	# Add to dialog
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_hiring_option_selected(action_id: String, action_name: String, dialog: AcceptDialog):
+	"""Handle hiring submenu selection"""
+	dialog.queue_free()
+
+	log_message("[color=cyan]Hiring: %s[/color]" % action_name)
+
+	# Queue the actual hiring action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	game_manager.select_action(action_id)
+
+func _show_fundraising_submenu():
+	"""Show popup dialog with fundraising options"""
+	var dialog = AcceptDialog.new()
+	dialog.title = "Fundraising Options"
+	dialog.dialog_text = "Choose your funding strategy:"
+	dialog.size = Vector2(550, 450)
+	dialog.exclusive = true  # Block input to other windows
+	dialog.popup_window = false  # Use panel instead of popup window
+
+	# Create container for fundraising buttons
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+
+	# Get fundraising options
+	var funding_options = GameActions.get_fundraising_options()
+	var current_state = game_manager.get_game_state()
+
+	for option in funding_options:
+		var fund_id = option.get("id", "")
+		var fund_name = option.get("name", "")
+		var fund_desc = option.get("description", "")
+		var fund_costs = option.get("costs", {})
+		var fund_gains = option.get("gains", {})
+
+		# Create button for this option
+		var btn = Button.new()
+		btn.custom_minimum_size = Vector2(500, 50)
+
+		# Format costs
+		var cost_text = ""
+		if fund_costs.get("action_points", 0) > 0:
+			cost_text += "%d AP" % fund_costs.get("action_points")
+		if fund_costs.get("reputation", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += "%d Rep" % fund_costs.get("reputation")
+		if fund_costs.get("papers", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += "%d Papers" % fund_costs.get("papers")
+
+		# Format gains
+		var gain_text = ""
+		if fund_gains.has("money_min") and fund_gains.has("money_max"):
+			gain_text = "$%d-$%d" % [fund_gains.get("money_min"), fund_gains.get("money_max")]
+		elif fund_gains.has("money"):
+			gain_text = "$%d" % fund_gains.get("money")
+
+		btn.text = "%s\n(%s → %s)" % [fund_name, cost_text if cost_text != "" else "Free", gain_text]
+
+		# Check affordability
+		var can_afford = true
+		for resource in fund_costs.keys():
+			if current_state.get(resource, 0) < fund_costs[resource]:
+				can_afford = false
+				break
+
+		if not can_afford:
+			btn.disabled = true
+			btn.modulate = Color(0.6, 0.6, 0.6)
+
+		# Add tooltip
+		btn.tooltip_text = fund_desc + "\n\nCosts: %s\nGains: %s" % [cost_text if cost_text != "" else "None", gain_text]
+
+		# Connect button
+		btn.pressed.connect(func(): _on_fundraising_option_selected(fund_id, fund_name, dialog))
+
+		vbox.add_child(btn)
+
+	# Add to dialog
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_fundraising_option_selected(action_id: String, action_name: String, dialog: AcceptDialog):
+	"""Handle fundraising submenu selection"""
+	dialog.queue_free()
+
+	log_message("[color=cyan]Fundraising: %s[/color]" % action_name)
+
+	# Queue the actual fundraising action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	game_manager.select_action(action_id)
+
+func update_queued_actions_display():
+	"""Update the message log to show queued actions"""
+	if queued_actions.size() > 0:
+		var action_names = []
+		for action in queued_actions:
+			action_names.append(action.get("name", "Unknown"))
+		log_message("[color=lime]Queued actions (%d): %s[/color]" % [queued_actions.size(), ", ".join(action_names)])
+	else:
+		log_message("[color=gray]No actions queued[/color]")
+
+func _on_event_triggered(event: Dictionary):
+	"""Handle event trigger - show popup dialog"""
+	print("[MainUI] Event triggered: ", event.get("name", "Unknown"))
+
+	log_message("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
+
+	# Create event popup dialog
+	var dialog = AcceptDialog.new()
+	dialog.title = event.get("name", "Event")
+	dialog.dialog_text = event.get("description", "An event has occurred!")
+	dialog.size = Vector2(600, 450)
+	dialog.exclusive = true  # Block input to other windows
+	dialog.popup_window = false  # Use panel instead of popup window
+
+	# Create container for option buttons
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 10)
+
+	# Add each option as a button
+	var options = event.get("options", [])
+	var current_state = game_manager.get_game_state()
+
+	for option in options:
+		var choice_id = option.get("id", "")
+		var choice_text = option.get("text", "")
+		var costs = option.get("costs", {})
+
+		var btn = Button.new()
+		btn.text = choice_text
+		btn.custom_minimum_size = Vector2(500, 45)
+
+		# Check affordability
+		var can_afford = true
+		var missing_resources = []
+
+		for resource in costs.keys():
+			var cost = costs[resource]
+			var available = current_state.get(resource, 0)
+
+			if available < cost:
+				can_afford = false
+				missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
+
+		# Add tooltip with costs/effects
+		var tooltip = ""
+		if not costs.is_empty():
+			tooltip += "Costs:\n"
+			for resource in costs.keys():
+				tooltip += "  %s: %s\n" % [resource, costs[resource]]
+
+		var effects = option.get("effects", {})
+		if not effects.is_empty():
+			tooltip += "\nEffects:\n"
+			for resource in effects.keys():
+				var value = effects[resource]
+				var sign = "+" if value >= 0 else ""
+				tooltip += "  %s: %s%s\n" % [resource, sign, value]
+
+		if not can_afford:
+			tooltip += "\n[CANNOT AFFORD]\n"
+			for msg in missing_resources:
+				tooltip += "  Missing: " + msg + "\n"
+			btn.disabled = true
+			btn.modulate = Color(0.6, 0.6, 0.6)
+
+		btn.tooltip_text = tooltip
+
+		# Connect button
+		btn.pressed.connect(func(): _on_event_choice_selected(event, choice_id, dialog))
+
+		vbox.add_child(btn)
+
+	# Add to dialog
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: AcceptDialog):
+	"""Handle event choice selection"""
+	dialog.queue_free()
+
+	log_message("[color=cyan]Event choice: %s[/color]" % choice_id)
+
+	# Tell game manager to resolve event
+	game_manager.resolve_event(event, choice_id)
+
+func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: Array):
+	"""Update info bar when hovering over an action"""
+	var action_name = action.get("name", "Unknown")
+	var action_desc = action.get("description", "")
+	var action_costs = action.get("costs", {})
+
+	# Build info text
+	var info_text = "[b]%s[/b]: %s" % [action_name, action_desc]
+
+	# Add costs
+	if not action_costs.is_empty():
+		info_text += " [color=yellow]Costs:[/color] "
+		var cost_parts = []
+		for resource in action_costs.keys():
+			var cost_val = action_costs[resource]
+			var resource_name = resource.replace("_", " ").capitalize()
+			cost_parts.append("%s %s" % [cost_val, resource_name])
+		info_text += ", ".join(cost_parts)
+
+	# Show affordability
+	if not can_afford:
+		info_text += " [color=red][CANNOT AFFORD][/color]"
+	else:
+		info_text += " [color=lime][READY][/color]"
+
+	info_label.text = info_text
+
+func _on_action_unhover():
+	"""Reset info bar when mouse leaves action"""
+	info_label.text = "[color=gray]Hover over actions to see details...[/color]"

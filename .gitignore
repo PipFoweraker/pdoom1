@@ -25,7 +25,12 @@ MANIFEST
 
 # PyInstaller
 *.manifest
-*.spec
+# Keep .spec files for build configuration
+# *.spec
+
+# PyInstaller build directories
+build/
+dist/
 
 # Unit test / coverage
 htmlcov/
@@ -75,3 +80,18 @@ tutorial_settings.json
 
 # User configuration files (modified during gameplay)
 configs/default.json
+
+# Development tools artifacts
+tools/temp/
+tools/test_output/
+tools/*.log
+
+# Godot engine binaries (download locally)
+tools/godot/*.exe
+tools/godot/*.zip
+tools/godot/.import/
+
+# Godot editor data
+godot/.godot/
+godot/.import/
+godot/export_presets.cfg

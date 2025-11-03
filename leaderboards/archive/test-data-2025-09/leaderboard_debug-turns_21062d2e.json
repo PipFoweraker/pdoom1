@@ -1,0 +1,16 @@
+{
+  'version': '1.0.0',
+  'created': '2025-09-16T22:29:51.592689',
+  'max_entries': 50,
+  'entries': [
+    {
+      'score': 1,
+      'player_name': 'Wavelength AI',
+      'date': '2025-09-16T22:29:51.591088',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.045969,
+      'entry_uuid': '4f551e9c-49e7-46df-b6ac-ab6a268c59c0'
+    }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "actions": {
+    "hire_safety_researcher": {
+      "id": "hire_safety_researcher",
+      "name": "Hire Safety Researcher",
+      "category": "hiring",
+      "costs": {
+        "money": 50000
+      },
+      "effects": {
+        "safety": 2,
+        "employees.safety_researchers": 1
+      },
+      "requirements": {
+        "min_turn": 0
+      },
+      "messages": {
+        "success": "Hired safety researcher (+2 safety)",
+        "insufficient_funds": "Not enough money to hire safety researcher"
+      },
+      "sound": "hire"
+    },
+    "hire_capabilities_researcher": {
+      "id": "hire_capabilities_researcher",
+      "name": "Hire Capabilities Researcher",
+      "category": "hiring",
+      "costs": {
+        "money": 50000
+      },
+      "effects": {
+        "capabilities": 3,
+        "employees.capabilities_researchers": 1
+      },
+      "requirements": {
+        "min_turn": 0
+      },
+      "messages": {
+        "success": "Hired capabilities researcher (+3 capabilities)",
+        "insufficient_funds": "Not enough money to hire capabilities researcher"
+      },
+      "sound": "hire"
+    },
+    "hire_compute_researcher": {
+      "id": "hire_compute_researcher",
+      "name": "Hire Compute Researcher",
+      "category": "hiring",
+      "costs": {
+        "money": 50000
+      },
+      "effects": {
+        "employees.compute_researchers": 1,
+        "compute_rate": -1
+      },
+      "requirements": {
+        "min_turn": 0
+      },
+      "messages": {
+        "success": "Hired compute researcher (-1 compute/turn)",
+        "insufficient_funds": "Not enough money to hire compute researcher"
+      },
+      "sound": "hire"
+    },
+    "purchase_compute": {
+      "id": "purchase_compute",
+      "name": "Purchase Compute",
+      "category": "resources",
+      "costs": {
+        "money": 10000
+      },
+      "effects": {
+        "compute": 50
+      },
+      "requirements": {
+        "min_turn": 0
+      },
+      "messages": {
+        "success": "Purchased compute (+50)",
+        "insufficient_funds": "Not enough money to purchase compute"
+      },
+      "sound": "upgrade"
+    },
+    "fundraise": {
+      "id": "fundraise",
+      "name": "Fundraise",
+      "category": "resources",
+      "costs": {},
+      "effects": {
+        "money": 100000
+      },
+      "requirements": {
+        "min_turn": 0
+      },
+      "messages": {
+        "success": "Successfully raised $100,000",
+        "failure": "Fundraising failed"
+      },
+      "sound": "event"
+    },
+    "research_safety": {
+      "id": "research_safety",
+      "name": "Research Safety",
+      "category": "research",
+      "costs": {
+        "compute": 20
+      },
+      "effects": {
+        "safety": 5
+      },
+      "requirements": {
+        "min_turn": 0,
+        "min_employees.safety_researchers": 1
+      },
+      "messages": {
+        "success": "Safety research completed (+5 safety)",
+        "insufficient_compute": "Not enough compute for research",
+        "no_researchers": "Need safety researchers to research safety"
+      },
+      "sound": "upgrade"
+    },
+    "research_capabilities": {
+      "id": "research_capabilities",
+      "name": "Research Capabilities",
+      "category": "research",
+      "costs": {
+        "compute": 30
+      },
+      "effects": {
+        "capabilities": 8
+      },
+      "requirements": {
+        "min_turn": 0,
+        "min_employees.capabilities_researchers": 1
+      },
+      "messages": {
+        "success": "Capabilities research completed (+8 capabilities)",
+        "insufficient_compute": "Not enough compute for research",
+        "no_researchers": "Need capabilities researchers to research capabilities"
+      },
+      "sound": "upgrade"
+    }
+  },
+  "categories": {
+    "hiring": {
+      "name": "Hiring",
+      "description": "Hire staff to improve your lab"
+    },
+    "resources": {
+      "name": "Resources",
+      "description": "Acquire money and compute"
+    },
+    "research": {
+      "name": "Research",
+      "description": "Conduct safety and capabilities research"
+    }
+  }
+}

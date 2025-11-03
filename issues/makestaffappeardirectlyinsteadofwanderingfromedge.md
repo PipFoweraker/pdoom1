@@ -1,0 +1,1 @@
+# Make staff appear directly instead of wandering from edge\n\nChange staff spawning behavior to have them appear directly rather than wandering in from the edge of the map.\n\n<!-- GitHub Issue #369 -->

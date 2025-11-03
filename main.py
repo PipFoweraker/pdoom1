@@ -1,22 +1,38 @@
-import os
 import sys
 import pygame
-import random
+import atexit
+from src.services.deterministic_rng import get_rng
 import json
 from src.core.game_state import GameState
+from src.services.game_state_manager import get_game_state_manager
 
-from ui import draw_scoreboard, draw_seed_prompt, draw_tooltip, draw_main_menu, draw_overlay, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_stepwise_tutorial_overlay, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_popup_events, draw_loading_screen, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen
-from ui_new.facade import ui_facade
+from ui import draw_seed_prompt, draw_bug_report_form, draw_bug_report_success, draw_end_game_menu, draw_first_time_help, draw_pre_game_settings, draw_seed_selection, draw_tutorial_choice, draw_new_player_experience, draw_popup_events, draw_turn_transition_overlay, draw_audio_menu, draw_high_score_screen, draw_ui
+from src.ui.menus import draw_main_menu
+from src.ui.tutorials import draw_stepwise_tutorial_overlay
+from src.ui.menus import draw_start_game_submenu
+from src.ui.layout import draw_overlay
+from src.ui.components import draw_tooltip, draw_loading_screen
 from src.ui.keybinding_menu import draw_keybinding_menu, draw_keybinding_change_prompt, get_keybinding_menu_click_item
-
+from src.ui.enhanced_settings import draw_settings_main_menu
+from src.ui.privacy_controls import privacy_controls
 
 from src.ui.overlay_manager import OverlayManager
 from src.services.bug_reporter import BugReporter
 from src.services.version import get_display_version
+from src.services.terminal_messages import (
+    print_welcome_message,
+    get_exit_tracker,
+    create_startup_config_dict,
+    ExitReasonTracker
+)
 from src.features.onboarding import onboarding
 from src.services.config_manager import initialize_config_system, get_current_config, config_manager
-from src.features.event_system import EventAction
 from src.services.sound_manager import SoundManager
+from src.ui.pre_game_settings import pre_game_settings_manager
+
+# Import new input management system
+from src.core.input_event_manager import InputEventManager, KeyEventResult
+from src.core.dialog_state_manager import DialogStateManager
 
 # Initialize config system on startup
 initialize_config_system()
@@ -37,8 +53,76 @@ if current_config.get('audio', {}).get('sound_enabled', True):
 else:
     global_sound_manager.set_enabled(False)
 
+# Play startup sound to confirm audio is working
+if global_sound_manager.is_enabled():
+    global_sound_manager.play_sound('ROCKETPOWERUP')
+
+# Check for dev mode
+def is_dev_mode_enabled():
+    '''Check if dev mode is enabled from dev_mode.json'''
+    try:
+        with open('dev_mode.json', 'r') as f:
+            dev_config = json.load(f)
+            return dev_config.get('dev_mode_enabled', False)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return False
+
+def is_verbose_logging_enabled():
+    '''Check if verbose logging is enabled from dev_mode.json'''
+    try:
+        with open('dev_mode.json', 'r') as f:
+            dev_config = json.load(f)
+            return dev_config.get('verbose_logging_enabled', False)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return False
+
+def log_shutdown(reason='User exit'):
+    '''Log shutdown information with enhanced terminal messages'''
+    exit_tracker = get_exit_tracker()
+    
+    # Update exit reason if not already set
+    if exit_tracker.exit_reason == "Unknown exit":
+        if "crash" in reason.lower():
+            exit_tracker.set_crash(reason)
+        elif "graceful" in reason.lower():
+            exit_tracker.set_graceful_crash(reason)
+        else:
+            exit_tracker.set_user_exit(reason)
+    
+    # Print enhanced exit message
+    verbose = is_verbose_logging_enabled()
+    exit_tracker.print_exit(get_display_version(), verbose=verbose)
+
 # --- Adaptive window sizing with loading screen --- #
+# Initialize pygame mixer first with proper settings for sound
+pygame.mixer.pre_init(frequency=22050, size=-16, channels=2, buffer=512)
 pygame.init()
+
+# Enhanced startup information with dev mode support
+dev_mode = is_dev_mode_enabled()
+verbose_logging = is_verbose_logging_enabled()
+
+# Print enhanced welcome message
+config_dict = create_startup_config_dict(current_config)
+print_welcome_message(
+    version=get_display_version(),
+    config=config_dict,
+    engine="Pygame",
+    verbose=verbose_logging,
+    show_banner=True,
+    show_flavor=True
+)
+
+# Initialize exit tracker for enhanced shutdown messages
+exit_tracker = get_exit_tracker()
+
+# Register exit handler for clean shutdown
+def on_exit_handler():
+    """Ensure exit messages are printed even on abrupt termination."""
+    if exit_tracker.exit_reason == "Unknown exit":
+        exit_tracker.set_user_exit("abrupt termination")
+    # Note: log_shutdown() will be called in finally block
+atexit.register(on_exit_handler)
 
 # Set up initial screen for loading
 info = pygame.display.Info()
@@ -55,44 +139,50 @@ else:
     FLAGS = pygame.RESIZABLE
 
 screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
-pygame.display.set_caption(f"P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}")
+pygame.display.set_caption(f'P(Doom) - Bureaucracy Strategy Prototype {get_display_version()}')
 clock = pygame.time.Clock()
 
 # Show loading screen during initialization
 
 # Phase 1: Basic setup
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.2, "Initializing systems...")
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.2, 'Initializing systems...')
 pygame.display.flip()
 
 # Phase 2: Config and sound
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.4, "Loading configuration...")
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.4, 'Loading configuration...')
 pygame.display.flip()
 
 # Phase 3: Sound and audio setup
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.6, "Setting up audio...")
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.6, 'Setting up audio...')
 pygame.display.flip()
 
 # Initialize window manager for UI panels
 window_manager = OverlayManager()
 
 # Phase 4: UI components
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.8, "Loading UI components...")
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 0.8, 'Loading UI components...')
 pygame.display.flip()
 
 # --- Menu and game state management --- #
-# Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial', 'sounds_menu', 'keybinding_menu', 'keybinding_change'
+# Menu states: 'main_menu', 'custom_seed_prompt', 'config_select', 'pre_game_settings', 'seed_selection', 'tutorial_choice', 'game', 'overlay', 'bug_report', 'bug_report_success', 'end_game_menu', 'tutorial', 'sounds_menu', 'keybinding_menu', 'keybinding_change', 'leaderboard', 'settings_menu', 'privacy_controls'
 
 # Panel stack tracking for navigation depth
 navigation_stack = []
 current_state = 'main_menu'
+game_state = None  # Global game state variable
 selected_menu_item = 0  # For keyboard navigation
-menu_items = ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "Exit"]
-end_game_menu_items = ["View High Scores", "Relaunch Game", "Main Menu", "Settings", "Submit Feedback", "Submit Bug Request"]
+# Main menu: Primary actions first, then secondary, exit last
+menu_items = ['Launch Lab', 'Launch with Custom Seed', 'Player Guide', 'View Leaderboard', 'Settings', 'Exit']
+# Start game submenu: Quick start first, then configuration options
+start_game_submenu_items = ['Basic New Game (Default Global Seed)', 'Configure Game / Custom Seed', 'Config Settings', 'Game Options']
+start_game_submenu_selected_item = 0  # For start game submenu navigation
+# End game menu: Primary actions first (continue playing), then meta actions
+end_game_menu_items = ['Play Again', 'View Full Leaderboard', 'Submit Feedback', 'Settings', 'Main Menu']
 end_game_selected_item = 0  # For end-game menu navigation
 high_score_selected_item = 0  # For high-score screen navigation
 high_score_submit_to_leaderboard = False  # Leaderboard submission toggle
 seed = None
-seed_input = ""
+seed_input = ''
 overlay_content = None
 overlay_title = None
 overlay_scroll = 0
@@ -104,17 +194,26 @@ available_configs = []
 # Tutorial choice state
 tutorial_choice_selected_item = 0  # For tutorial choice navigation (0=No, 1=Yes) - Default to No
 
+# New Player Experience state
+npe_tutorial_enabled = False    # Tutorial checkbox state
+npe_intro_enabled = False       # Intro scenario checkbox state
+npe_selected_item = 0           # Currently selected item (0=Tutorial checkbox, 1=Intro checkbox, 2=Start button)
+
 # Pre-game settings state
 pre_game_settings = {
-    "difficulty": "STANDARD",
-    "music_volume": 70,
-    "sound_volume": 80,
-    "graphics_quality": "STANDARD",
-    "safety_level": "STANDARD"
+    'difficulty': 'STANDARD',
+    'music_volume': 70,
+    'sound_volume': 80,
+    'graphics_quality': 'STANDARD',
+    'safety_level': 'STANDARD',
+    'player_name': 'Anonymous',
+    'lab_name': ''  # Will be auto-generated if left empty
 }
 selected_settings_item = 0
-seed_choice = "weekly"  # "weekly" or "custom"
+seed_choice = 'weekly'  # 'weekly' or 'custom'
 tutorial_enabled = False  # Default to no tutorial
+
+# Text input for name fields - managed by pre_game_settings_manager
 
 # Tutorial state
 current_tutorial_content = None
@@ -144,6 +243,10 @@ audio_settings = {
     }
 }
 
+# Settings menu state
+settings_menu_selected_item = 0
+privacy_controls_selected_item = 0
+
 # Keybinding menu state
 keybinding_menu_selected_item = 0
 keybinding_change_action = None  # Action being rebound
@@ -152,53 +255,159 @@ keybinding_all_bindings = []  # List of all keybinding items
 
 # Bug report form state
 bug_report_data = {
-    "type_index": 0,
-    "title": "",
-    "description": "",
-    "steps": "",
-    "expected": "",
-    "actual": "",
-    "attribution": False,
-    "name": "",
-    "contact": ""
+    'type_index': 0,
+    'title': '',
+    'description': '',
+    'steps': '',
+    'expected': '',
+    'actual': '',
+    'attribution': False,
+    'name': '',
+    'contact': ''
 }
 bug_report_selected_field = 0
 bug_report_editing_field = False
-bug_report_success_message = ""
+bug_report_success_message = ''
 
 # Phase 5: Complete initialization
-draw_loading_screen(screen, SCREEN_W, SCREEN_H, 1.0, "Ready!")
+draw_loading_screen(screen, SCREEN_W, SCREEN_H, 1.0, 'Ready!')
 pygame.display.flip()
 
 # Brief pause to show completion (fast-load optimization: skip if under 100ms total)
 import time
 loading_start = time.time()
 if time.time() - loading_start > 0.1:  # Only pause if loading took time
-    pygame.time.wait(500)  # Brief pause to show "Ready!" message
+    pygame.time.wait(500)  # Brief pause to show 'Ready!' message
 
 
 def get_weekly_seed():
     import datetime
     # Example: YYYYWW (year and ISO week number)
     now = datetime.datetime.now(datetime.timezone.utc)
-    return f"{now.year}{now.isocalendar()[1]}"
+    return f'{now.year}{now.isocalendar()[1]}'
+
+def _handle_debug_console_keypress(key, game_state):
+    '''Handle debug console keypress using the debug console manager.'''
+    try:
+        from src.ui.debug_console_manager import debug_console_manager
+        return debug_console_manager.handle_keypress(key, game_state)
+    except ImportError:
+        return False
+
+def _handle_debug_console_click(pos, screen_w, screen_h):
+    '''Handle debug console click using the debug console manager.'''
+    try:
+        from src.ui.debug_console_manager import debug_console_manager
+        return debug_console_manager.handle_click(pos, screen_w, screen_h)
+    except ImportError:
+        return False
+
+def _draw_debug_console(screen, game_state, screen_w, screen_h):
+    '''Draw debug console using the debug console manager.'''
+    try:
+        from src.ui.debug_console_manager import debug_console_manager
+        debug_console_manager.draw(screen, game_state, screen_w, screen_h)
+    except ImportError:
+        pass
 
 def load_markdown_file(filename):
-    """Load and return the contents of a markdown file"""
+    '''Load and return the contents of a markdown file'''
     try:
         with open(filename, 'r', encoding='utf-8') as f:
             return f.read()
     except FileNotFoundError:
-        return f"Could not load {filename}"
+        return f'Could not load {filename}'
+
+
+def handle_game_keyboard_input(event, game_state, onboarding_manager, 
+                             first_time_help_content, current_help_mechanic, 
+                             overlay_content, overlay_title, current_state,
+                             escape_count, escape_timer, running):
+    '''
+    Handle keyboard input for the main game using the new Input Event Manager.
+    
+    This replaces the massive keyboard handling section in main() with a clean,
+    testable interface using the extracted InputEventManager and DialogStateManager.
+    
+    Args:
+        event: pygame keyboard event
+        game_state: Current game state
+        onboarding_manager: Tutorial/onboarding system
+        first_time_help_content: Current help popup content
+        current_help_mechanic: Current help mechanic being shown
+        overlay_content: Current overlay content
+        overlay_title: Current overlay title  
+        current_state: Current game state string
+        escape_count: Current escape key count
+        escape_timer: Current escape timer
+        running: Current running state
+        
+    Returns:
+        Tuple of (updated_values_dict, should_quit, key_consumed)
+    '''
+    # Initialize managers if not already done
+    if not hasattr(game_state, '_input_manager'):
+        game_state._input_manager = InputEventManager(game_state)
+        game_state._dialog_manager = DialogStateManager(game_state)
+    
+    # Create overlay handlers dictionary for the input manager
+    overlay_handlers = {
+        'load_markdown_file': load_markdown_file,
+        'push_navigation_state': lambda state: None,  # This will be handled by caller
+        'overlay_content': overlay_content,
+        'overlay_title': overlay_title,
+        'current_state': current_state,
+        'first_time_help_content': first_time_help_content,
+        'first_time_help_close_button': None,
+        'current_help_mechanic': current_help_mechanic,
+        'onboarding': onboarding_manager
+    }
+    
+    # Handle the keyboard event using the InputEventManager
+    result = game_state._input_manager.handle_keydown_event(
+        event, first_time_help_content, onboarding_manager, overlay_handlers
+    )
+    
+    # Prepare return values
+    updated_values = {}
+    should_quit = False
+    key_consumed = (result != KeyEventResult.NOT_HANDLED)
+    
+    # Handle special cases that need to update main loop state
+    if result == KeyEventResult.CONSUMED:
+        # Update overlay state if help key was pressed
+        if event.key == pygame.K_h:
+            updated_values['overlay_content'] = overlay_handlers.get('overlay_content')
+            updated_values['overlay_title'] = overlay_handlers.get('overlay_title')
+            updated_values['push_navigation_state'] = 'overlay'
+        
+        # Update state if menu key was pressed
+        if event.key == pygame.K_m:
+            updated_values['current_state'] = overlay_handlers.get('current_state')
+        
+        # Update help state if help popup was handled
+        if first_time_help_content and event.key in [pygame.K_ESCAPE, pygame.K_RETURN]:
+            updated_values['first_time_help_content'] = overlay_handlers.get('first_time_help_content')
+            updated_values['first_time_help_close_button'] = overlay_handlers.get('first_time_help_close_button')
+            updated_values['current_help_mechanic'] = overlay_handlers.get('current_help_mechanic')
+        
+        # Handle escape menu and quit logic
+        if game_state._input_manager.should_show_escape_menu():
+            updated_values['current_state'] = 'escape_menu'
+        
+        if game_state._input_manager.should_quit_game():
+            should_quit = True
+    
+    return updated_values, should_quit, key_consumed
 
 def push_navigation_state(new_state):
-    """Push current state to navigation stack and transition to new state."""
+    '''Push current state to navigation stack and transition to new state.'''
     global navigation_stack, current_state
     navigation_stack.append(current_state)
     current_state = new_state
 
 def pop_navigation_state():
-    """Pop from navigation stack and return to previous state."""
+    '''Pop from navigation stack and return to previous state.'''
     global navigation_stack, current_state
     if navigation_stack:
         current_state = navigation_stack.pop()
@@ -206,34 +415,49 @@ def pop_navigation_state():
     return False
 
 def get_navigation_depth():
-    """Get current navigation depth (number of states in stack)."""
+    '''Get current navigation depth (number of states in stack).'''
     return len(navigation_stack)
 
 def get_tutorial_settings():
-    """Get current tutorial settings from file."""
+    '''Get current tutorial settings from file.'''
     try:
-        with open("tutorial_settings.json", "r") as f:
+        with open('tutorial_settings.json', 'r') as f:
             data = json.load(f)
         return {
-            "tutorial_enabled": data.get("tutorial_enabled", True),
-            "first_game_launch": data.get("first_game_launch", True)
+            'tutorial_enabled': data.get('tutorial_enabled', True),
+            'first_game_launch': data.get('first_game_launch', True)
         }
     except Exception:
-        return {"tutorial_enabled": True, "first_game_launch": True}
+        return {'tutorial_enabled': True, 'first_game_launch': True}
 
 def create_settings_content(game_state=None):
-    """Create settings content for the settings overlay"""
+    '''Create settings content for the settings overlay'''
 
-    tutorial_status = "Enabled" if onboarding.tutorial_enabled else "Disabled"
-    tutorial_completed = "Yes" if not onboarding.is_first_time else "No"
+    tutorial_status = 'Enabled' if onboarding.tutorial_enabled else 'Disabled'
+    tutorial_completed = 'Yes' if not onboarding.is_first_time else 'No'
+    hints_enabled = 'Enabled' if onboarding.are_hints_enabled() else 'Disabled'
     
-    return f"""# Settings
+    # Get hint status
+    hint_status = onboarding.get_hint_status()
+    seen_hints = [name for name, seen in hint_status.items() if seen]
+    unseen_hints = [name for name, seen in hint_status.items() if not seen]
+    
+    return f'''# Settings
 
 ## Tutorial & Help System
 - **Tutorial System**: {tutorial_status}
 - **Tutorial Completed**: {tutorial_completed}
+- **In-Game Hints**: {hints_enabled}
 - **In-Game Help**: Press 'H' key anytime to access Player Guide
-- **First-Time Tips**: Automatic contextual help for new mechanics
+
+### Hint Status (Factorio-style)
+**Seen Hints ({len(seen_hints)}):** {', '.join(seen_hints) if seen_hints else 'None'}
+**Available Hints ({len(unseen_hints)}):** {', '.join(unseen_hints) if unseen_hints else 'All seen'}
+
+**Hint Controls:**
+- Press **Ctrl+R** during gameplay to reset all hints
+- Hints show once per new action, then auto-dismiss
+- Configurable in config files (first_time_help setting)
 
 To reset tutorial: Delete `onboarding_progress.json` file and restart game
 
@@ -269,11 +493,14 @@ To reset tutorial: Delete `onboarding_progress.json` file and restart game
 - **Arrow Keys**: Navigate menus, scroll event log
 - **Enter**: Confirm selection
 - **Escape**: Return to previous menu or quit
+- **Ctrl+D**: Debug UI state (shows blocking conditions)
+- **Ctrl+E**: Clear stuck popup events (emergency)
+- **Ctrl+R**: Reset all hints to show again
 
-*Note: Settings are currently informational. Configuration options will be added in future updates.*"""
+*Note: Settings are currently informational. Configuration options will be added in future updates.*'''
 
 def handle_menu_click(mouse_pos, w, h):
-    """
+    '''
     Handle mouse clicks on main menu items.
     
     Args:
@@ -281,50 +508,49 @@ def handle_menu_click(mouse_pos, w, h):
         w, h: Screen width and height for button positioning
     
     Updates global state based on which menu item was clicked:
-    - Launch Lab: Start game with current weekly seed
+    - New Player Experience: Tutorial and intro selection screen
     - Launch with Custom Seed: Transitions to seed input prompt
-    - Options: Settings menu (audio, keybindings, etc.)
+    - Settings: Settings menu (audio, keybindings, etc.)
     - Player Guide: Shows docs/PLAYERGUIDE.md in scrollable overlay
-    - README: Shows README.md in scrollable overlay
-    """
+    - Exit: Closes the game
+    '''
     global current_state, selected_menu_item, overlay_content, overlay_title, seed
     
-    # Calculate menu button positions (must match draw_main_menu layout)
-    button_width = int(w * 0.4)
-    button_height = int(h * 0.08)
-    start_y = int(h * 0.35)
-    spacing = int(h * 0.1)
-    center_x = w // 2
-    
+    # Extract mouse coordinates for sound button handler
     mx, my = mouse_pos
     
-    # Check each menu button for collision
-    for i, item in enumerate(menu_items):
-        button_x = center_x - button_width // 2
-        button_y = start_y + i * spacing
-        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    # Use unified menu helper for collision detection
+    from src.ui.menu_helpers import get_menu_button_collision
+    clicked_item = get_menu_button_collision(mouse_pos, menu_items, w, h)
+    
+    if clicked_item is not None:
+        i = clicked_item
+        selected_menu_item = i
         
-        if button_rect.collidepoint(mx, my):
-            selected_menu_item = i
-            
-            # Execute menu action based on selection
-            if i == 0:  # Launch Lab (weekly seed)
-                seed = get_weekly_seed()
-                current_state = 'pre_game_settings'
-            elif i == 1:  # Launch with Custom Seed
-                current_state = 'custom_seed_prompt'
-                seed_input = ""  # Clear any previous input
-            elif i == 2:  # Settings
-                current_state = 'sounds_menu'
-                sounds_menu_selected_item = 0
-            elif i == 3:  # Player Guide
-                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                overlay_title = "Player Guide"
-                push_navigation_state('overlay')
-            elif i == 4:  # Exit
-                pygame.quit()
-                sys.exit()
-            break
+        # Execute menu action based on selection (updated for new order)
+        if i == 0:  # Launch Lab
+            current_state = 'start_game_submenu'
+        elif i == 1:  # Launch with Custom Seed
+            current_state = 'custom_seed_prompt'
+            seed_input = ''  # Clear any previous input
+        elif i == 2:  # Player Guide
+            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
+            overlay_title = 'Player Guide'
+            push_navigation_state('overlay')
+        elif i == 3:  # View Leaderboard
+            # Go directly to leaderboard screen with default seed
+            current_state = 'high_score'
+            high_score_selected_item = 0  # Reset selection
+            # Set a default seed for leaderboard viewing if none exists
+            if seed is None:
+                seed = get_weekly_seed()  # Use the default weekly seed
+        elif i == 4:  # Settings
+            current_state = 'settings_menu'
+        elif i == 5:  # Exit
+            exit_tracker.set_user_exit("main menu")
+            log_shutdown('Main menu exit')
+            pygame.quit()
+            sys.exit()
     
     # Check for sound button click (bottom right corner)
     button_size = int(min(w, h) * 0.06)
@@ -341,7 +567,7 @@ def handle_menu_click(mouse_pos, w, h):
         config_manager.save_config(config_manager.get_current_config_name(), current_config)
 
 def handle_menu_keyboard(key):
-    """
+    '''
     Handle keyboard navigation in main menu.
     
     Args:
@@ -352,7 +578,7 @@ def handle_menu_keyboard(key):
     - Enter: Activate currently selected menu item
     
     Same functionality as handle_menu_click but for keyboard users.
-    """
+    '''
     global selected_menu_item, current_state, overlay_content, overlay_title, seed, seed_input
     
     if key == pygame.K_UP:
@@ -363,33 +589,100 @@ def handle_menu_keyboard(key):
         selected_menu_item = (selected_menu_item + 1) % len(menu_items)
     elif key == pygame.K_RETURN:
         # Activate selected menu item (same logic as mouse click)
-        if selected_menu_item == 0:  # Launch Lab (weekly seed)
-            seed = get_weekly_seed()
-            current_state = 'pre_game_settings'
+        if selected_menu_item == 0:  # Launch Lab
+            current_state = 'start_game_submenu'
         elif selected_menu_item == 1:  # Launch with Custom Seed
             current_state = 'custom_seed_prompt'
-            seed_input = ""  # Clear any previous input
-        elif selected_menu_item == 2:  # Settings
-            current_state = 'sounds_menu'
-            sounds_menu_selected_item = 0
-        elif selected_menu_item == 3:  # Player Guide
+            seed_input = ''  # Clear any previous input
+        elif selected_menu_item == 2:  # Player Guide
             overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-            overlay_title = "Player Guide"
+            overlay_title = 'Player Guide'
             push_navigation_state('overlay')
-        elif selected_menu_item == 4:  # Exit
+        elif selected_menu_item == 3:  # View Leaderboard
+            # Go directly to leaderboard screen with default seed
+            current_state = 'high_score'
+            high_score_selected_item = 0  # Reset selection
+            # Set a default seed for leaderboard viewing if none exists
+            if seed is None:
+                seed = get_weekly_seed()  # Use the default weekly seed
+        elif selected_menu_item == 4:  # Settings
+            current_state = 'settings_menu'
+        elif selected_menu_item == 5:  # Exit
+            exit_tracker.set_user_exit("main menu keyboard")
+            log_shutdown('Menu keyboard exit')
             pygame.quit()
             sys.exit()
 
+def handle_start_game_submenu_click(mouse_pos, w, h):
+    '''Handle mouse clicks on start game submenu.'''
+    global current_state, start_game_submenu_selected_item, seed, seed_input, config_selected_item, sounds_menu_selected_item
+    
+    # Calculate button positions (match the standard menu layout)
+    button_width = int(w * 0.5)
+    button_height = int(h * 0.08)
+    start_y = int(h * 0.3)
+    spacing = int(h * 0.1)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    # Check each submenu button
+    for i, item in enumerate(start_game_submenu_items):
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            start_game_submenu_selected_item = i
+            
+            if i == 0:  # Basic New Game (Default Global Seed)
+                seed = get_weekly_seed()
+                current_state = 'pre_game_settings'  # Go to lab config screen first
+            elif i == 1:  # Configure Game / Custom Seed
+                current_state = 'seed_selection'
+                seed_input = ''
+            elif i == 2:  # Config Settings
+                current_state = 'config_select'
+                config_selected_item = 0
+            elif i == 3:  # Game Options
+                current_state = 'sounds_menu'
+                sounds_menu_selected_item = 0
+            break
+
+def handle_start_game_submenu_keyboard(key):
+    '''Handle keyboard navigation in start game submenu.'''
+    global start_game_submenu_selected_item, current_state, seed, seed_input, config_selected_item, sounds_menu_selected_item
+    
+    if key == pygame.K_UP:
+        start_game_submenu_selected_item = (start_game_submenu_selected_item - 1) % len(start_game_submenu_items)
+    elif key == pygame.K_DOWN:
+        start_game_submenu_selected_item = (start_game_submenu_selected_item + 1) % len(start_game_submenu_items)
+    elif key == pygame.K_RETURN:
+        if start_game_submenu_selected_item == 0:  # Basic New Game
+            seed = get_weekly_seed()
+            current_state = 'pre_game_settings'  # Go to lab config screen first
+        elif start_game_submenu_selected_item == 1:  # Configure Game / Custom Seed
+            current_state = 'seed_selection'
+            seed_input = ''
+        elif start_game_submenu_selected_item == 2:  # Config Settings
+            current_state = 'config_select'
+            config_selected_item = 0
+        elif start_game_submenu_selected_item == 3:  # Game Options
+            current_state = 'sounds_menu'
+            sounds_menu_selected_item = 0
+    elif key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
+
 def handle_config_keyboard(key):
-    """
+    '''
     Handle keyboard navigation in config selection menu.
     
     Args:
         key: pygame key constant from keydown event
-    """
+    '''
     global config_selected_item, current_state, current_config
     
-    all_items = available_configs + ["← Back to Main Menu"]
+    all_items = available_configs + ['< Back to Main Menu']
     
     if key == pygame.K_UP:
         config_selected_item = (config_selected_item - 1) % len(all_items)
@@ -401,7 +694,7 @@ def handle_config_keyboard(key):
             selected_config = available_configs[config_selected_item]
             if config_manager.switch_config(selected_config):
                 current_config = get_current_config()  # Reload config
-                print(f"Switched to configuration: {selected_config}")
+                # print(f'Switched to configuration: {selected_config}')
         # Return to main menu (both for config selection and back button)
         current_state = 'main_menu'
     elif key == pygame.K_ESCAPE:
@@ -410,8 +703,12 @@ def handle_config_keyboard(key):
 
 
 def handle_pre_game_settings_click(mouse_pos, w, h):
-    """Handle mouse clicks on pre-game settings screen."""
+    '''Handle mouse clicks on pre-game settings screen.'''
     global current_state, selected_settings_item, pre_game_settings
+    
+    # Check for random lab name button first
+    if pre_game_settings_manager.handle_random_lab_name_click(mouse_pos, w, h, pre_game_settings):
+        return  # Handled by the manager
     
     # Calculate button positions (must match draw_pre_game_settings layout)
     button_width = int(w * 0.55)
@@ -422,8 +719,8 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
     
     mx, my = mouse_pos
     
-    # Settings items (4 settings + 1 continue button)
-    num_items = 5
+    # Settings items (1 continue button + 2 name fields + 4 settings = 7 total)
+    num_items = 7
     
     for i in range(num_items):
         button_x = center_x - button_width // 2
@@ -434,7 +731,11 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
             selected_settings_item = i
             
             if i == 0:  # Continue button (now first)
-                current_state = 'seed_selection'
+                # If seed is already set (from Basic New Game), skip seed selection
+                if seed is not None:
+                    current_state = 'tutorial_choice'
+                else:
+                    current_state = 'seed_selection'
             else:
                 # Cycle through setting values when clicked
                 cycle_setting_value(i)
@@ -456,15 +757,32 @@ def handle_pre_game_settings_click(mouse_pos, w, h):
 
 
 def handle_pre_game_settings_keyboard(key):
-    """Handle keyboard navigation for pre-game settings screen."""
+    '''Handle keyboard navigation for pre-game settings screen.'''
     global selected_settings_item, current_state, pre_game_settings
     
+    # Handle text input mode first
+    if pre_game_settings_manager.is_text_input_active():
+        if key == pygame.K_RETURN:
+            # Exit text input mode
+            pre_game_settings_manager.deactivate_text_input()
+        elif key == pygame.K_ESCAPE:
+            # Cancel text input, revert changes
+            pre_game_settings_manager.deactivate_text_input()
+        elif key == pygame.K_BACKSPACE:
+            # Handle backspace (clear selected text or remove character)
+            pre_game_settings_manager.handle_backspace(pre_game_settings)
+        # Other text input will be handled by TEXTINPUT event
+        return
+    
+    # Normal navigation mode
     if key == pygame.K_UP:
-        selected_settings_item = (selected_settings_item - 1) % 5
+        selected_settings_item = (selected_settings_item - 1) % 7  # Updated for 2 new name fields
     elif key == pygame.K_DOWN:
-        selected_settings_item = (selected_settings_item + 1) % 5
+        selected_settings_item = (selected_settings_item + 1) % 7  # Updated for 2 new name fields
     elif key == pygame.K_RETURN:
-        if selected_settings_item == 0:  # Continue button (now first)
+        if selected_settings_item == 0:  # Continue button (first item)
+            # Always go to seed selection to allow user choice
+            # The seed selection screen can handle pre-set seeds appropriately
             current_state = 'seed_selection'
         else:
             # Cycle through setting values
@@ -483,43 +801,13 @@ def handle_pre_game_settings_keyboard(key):
 
 
 def cycle_setting_value(setting_index, reverse=False):
-    """Cycle through available values for a setting."""
+    '''Cycle through available values for a setting.'''
     global pre_game_settings
-    
-    if setting_index == 1:  # Research Intensity (Difficulty) - now at index 1
-        options = ["EASY", "STANDARD", "HARD"]
-        current = pre_game_settings["difficulty"]
-        current_idx = options.index(current) if current in options else 1
-        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
-        pre_game_settings["difficulty"] = options[new_idx]
-        
-    elif setting_index == 2:  # Audio Alerts Volume (Sound Volume) - now at index 2
-        options = [30, 50, 70, 80, 90, 100]
-        current = pre_game_settings["sound_volume"]
-        try:
-            current_idx = options.index(current)
-        except ValueError:
-            current_idx = 3  # Default to 80
-        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
-        pre_game_settings["sound_volume"] = options[new_idx]
-        
-    elif setting_index == 3:  # Visual Enhancement (Graphics Quality) - now at index 3
-        options = ["LOW", "STANDARD", "HIGH"]
-        current = pre_game_settings["graphics_quality"]
-        current_idx = options.index(current) if current in options else 1
-        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
-        pre_game_settings["graphics_quality"] = options[new_idx]
-        
-    elif setting_index == 4:  # Safety Protocol Level - now at index 4
-        options = ["MINIMAL", "STANDARD", "ENHANCED", "MAXIMUM"]
-        current = pre_game_settings["safety_level"]
-        current_idx = options.index(current) if current in options else 1
-        new_idx = (current_idx + (-1 if reverse else 1)) % len(options)
-        pre_game_settings["safety_level"] = options[new_idx]
+    pre_game_settings_manager.cycle_setting_value(setting_index, pre_game_settings, reverse)
 
 
 def handle_seed_selection_click(mouse_pos, w, h):
-    """Handle mouse clicks on seed selection screen."""
+    '''Handle mouse clicks on seed selection screen.'''
     global current_state, seed_choice, seed
     
     # Calculate button positions (must match draw_seed_selection layout)
@@ -538,11 +826,11 @@ def handle_seed_selection_click(mouse_pos, w, h):
         
         if button_rect.collidepoint(mx, my):
             if i == 0:  # Weekly seed
-                seed_choice = "weekly"
+                seed_choice = 'weekly'
                 seed = get_weekly_seed()
                 current_state = 'tutorial_choice'
             elif i == 1:  # Custom seed
-                seed_choice = "custom"
+                seed_choice = 'custom'
                 current_state = 'custom_seed_prompt'
             break
     
@@ -562,7 +850,7 @@ def handle_seed_selection_click(mouse_pos, w, h):
 
 
 def handle_seed_selection_keyboard(key):
-    """Handle keyboard navigation for seed selection screen."""
+    '''Handle keyboard navigation for seed selection screen.'''
     global current_state, seed_choice, seed
     
     if key == pygame.K_UP or key == pygame.K_DOWN:
@@ -570,7 +858,7 @@ def handle_seed_selection_keyboard(key):
         pass  # Visual selection can be added later
     elif key == pygame.K_RETURN:
         # Default to weekly seed for now
-        seed_choice = "weekly"
+        seed_choice = 'weekly'
         seed = get_weekly_seed()
         current_state = 'tutorial_choice'
     elif key == pygame.K_ESCAPE:
@@ -578,7 +866,7 @@ def handle_seed_selection_keyboard(key):
 
 
 def handle_tutorial_choice_click(mouse_pos, w, h):
-    """Handle mouse clicks on tutorial choice screen."""
+    '''Handle mouse clicks on tutorial choice screen.'''
     global current_state, tutorial_enabled, tutorial_choice_selected_item
     
     # Calculate button positions (must match draw_tutorial_choice layout)
@@ -605,13 +893,19 @@ def handle_tutorial_choice_click(mouse_pos, w, h):
                 onboarding.start_stepwise_tutorial()  # Start the new stepwise tutorial
             
             # Set the seed and start the game
-            random.seed(seed)
+            from src.services.deterministic_rng import init_deterministic_rng
+            init_deterministic_rng(seed)
+            
+            # Play new game sound
+            if global_sound_manager and global_sound_manager.is_enabled():
+                global_sound_manager.play_sound('blob')
+                
             current_state = 'game'
             break
 
 
 def handle_tutorial_choice_hover(mouse_pos, w, h):
-    """Handle mouse hover for tutorial choice screen to update selection."""
+    '''Handle mouse hover for tutorial choice screen to update selection.'''
     global tutorial_choice_selected_item
     
     # Calculate button positions (must match draw_tutorial_choice layout)
@@ -634,7 +928,7 @@ def handle_tutorial_choice_hover(mouse_pos, w, h):
 
 
 def handle_tutorial_choice_keyboard(key):
-    """Handle keyboard navigation for tutorial choice screen."""
+    '''Handle keyboard navigation for tutorial choice screen.'''
     global current_state, tutorial_enabled, tutorial_choice_selected_item
     
     if key == pygame.K_UP:
@@ -655,14 +949,135 @@ def handle_tutorial_choice_keyboard(key):
             onboarding.start_stepwise_tutorial()
         
         # Set the seed and start the game
-        random.seed(seed)
+        from src.services.deterministic_rng import init_deterministic_rng
+        init_deterministic_rng(seed)
         current_state = 'game'
     elif key == pygame.K_ESCAPE:
         current_state = 'seed_selection'
 
 
+def handle_new_player_experience_click(mouse_pos, w, h):
+    '''Handle mouse clicks on new player experience screen.'''
+    global current_state, tutorial_enabled, npe_tutorial_enabled, npe_intro_enabled, npe_selected_item
+    
+    # Layout constants (must match draw_new_player_experience)
+    center_x = w // 2
+    checkbox_size = int(h * 0.04)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.08)
+    button_width = int(w * 0.3)
+    button_height = int(h * 0.06)
+    button_y = int(h * 0.65)
+    
+    mx, my = mouse_pos
+    
+    # Check checkbox clicks
+    for i in range(2):  # Tutorial checkbox, Intro checkbox
+        checkbox_x = center_x - checkbox_size // 2 - int(w * 0.15)
+        checkbox_y = start_y + i * spacing
+        checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
+        
+        if checkbox_rect.collidepoint(mx, my):
+            npe_selected_item = i
+            if i == 0:  # Tutorial checkbox
+                npe_tutorial_enabled = not npe_tutorial_enabled
+            elif i == 1:  # Intro checkbox
+                npe_intro_enabled = not npe_intro_enabled
+            return
+    
+    # Check start button click
+    button_x = center_x - button_width // 2
+    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    if button_rect.collidepoint(mx, my):
+        npe_selected_item = 2
+        # Apply settings and start game
+        tutorial_enabled = npe_tutorial_enabled
+        if tutorial_enabled:
+            onboarding.start_stepwise_tutorial()
+        else:
+            onboarding.dismiss_tutorial()
+        
+        # Set up intro scenario if enabled
+        if npe_intro_enabled:
+            # This will be handled in game initialization
+            pass
+        
+        # Set the seed and start the game
+        from src.services.deterministic_rng import init_deterministic_rng
+        init_deterministic_rng(seed)
+        current_state = 'game'
+
+
+def handle_new_player_experience_hover(mouse_pos, w, h):
+    '''Handle mouse hover for new player experience screen.'''
+    global npe_selected_item
+    
+    # Layout constants (must match draw_new_player_experience)
+    center_x = w // 2
+    checkbox_size = int(h * 0.04)
+    start_y = int(h * 0.35)
+    spacing = int(h * 0.08)
+    button_width = int(w * 0.3)
+    button_height = int(h * 0.06)
+    button_y = int(h * 0.65)
+    
+    mx, my = mouse_pos
+    
+    # Check checkbox hover
+    for i in range(2):  # Tutorial checkbox, Intro checkbox
+        checkbox_x = center_x - checkbox_size // 2 - int(w * 0.15)
+        checkbox_y = start_y + i * spacing
+        checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
+        
+        if checkbox_rect.collidepoint(mx, my):
+            npe_selected_item = i
+            return
+    
+    # Check start button hover
+    button_x = center_x - button_width // 2
+    button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+    
+    if button_rect.collidepoint(mx, my):
+        npe_selected_item = 2
+
+
+def handle_new_player_experience_keyboard(key):
+    '''Handle keyboard navigation for new player experience screen.'''
+    global current_state, tutorial_enabled, npe_tutorial_enabled, npe_intro_enabled, npe_selected_item
+    
+    if key == pygame.K_UP:
+        npe_selected_item = (npe_selected_item - 1) % 3
+    elif key == pygame.K_DOWN:
+        npe_selected_item = (npe_selected_item + 1) % 3
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        if npe_selected_item == 0:  # Tutorial checkbox
+            npe_tutorial_enabled = not npe_tutorial_enabled
+        elif npe_selected_item == 1:  # Intro checkbox
+            npe_intro_enabled = not npe_intro_enabled
+        elif npe_selected_item == 2:  # Start button
+            # Apply settings and start game
+            tutorial_enabled = npe_tutorial_enabled
+            if tutorial_enabled:
+                onboarding.start_stepwise_tutorial()
+            else:
+                onboarding.dismiss_tutorial()
+            
+            # Set up intro scenario if enabled
+            if npe_intro_enabled:
+                # This will be handled in game initialization
+                pass
+            
+            # Set the seed and start the game
+            from src.services.deterministic_rng import init_deterministic_rng
+            init_deterministic_rng(seed)
+            current_state = 'game'
+    elif key == pygame.K_ESCAPE:
+        current_state = 'main_menu'
+
+
 def handle_audio_menu_click(mouse_pos, w, h):
-    """Handle mouse clicks on audio settings menu."""
+    '''Handle mouse clicks on audio settings menu.'''
     global current_state, sounds_menu_selected_item, audio_settings, global_sound_manager
     
     # Menu item layout (matching draw_audio_menu)
@@ -676,12 +1091,12 @@ def handle_audio_menu_click(mouse_pos, w, h):
     
     # Audio menu items
     menu_items = [
-        "Master Sound Toggle",
-        "SFX Volume",
-        "Sound Effects Settings", 
-        "Keybinding Configuration",
-        "Test Sound",
-        "← Back to Main Menu"
+        'Master Sound Toggle',
+        'SFX Volume',
+        'Sound Effects Settings', 
+        'Keybinding Configuration',
+        'Test Sound',
+        '< Back to Main Menu'
     ]
     
     for i in range(len(menu_items)):
@@ -713,17 +1128,16 @@ def handle_audio_menu_click(mouse_pos, w, h):
                     global_sound_manager.sound_toggles[first_sound] = audio_settings['individual_sounds'][first_sound]
             elif i == 3:  # Keybinding Configuration
                 current_state = 'keybinding_menu'
-                keybinding_menu_selected_item = 0
             elif i == 4:  # Test Sound
                 if global_sound_manager and audio_settings['master_enabled']:
                     global_sound_manager.play_sound('popup_accept')
-            elif i == 5:  # Back to Main Menu
-                current_state = 'main_menu'
+            elif i == 5:  # Back to Settings Menu
+                current_state = 'settings_menu'
             break
 
 
 def handle_audio_menu_keyboard(key):
-    """Handle keyboard navigation for audio settings menu."""
+    '''Handle keyboard navigation for audio settings menu.'''
     global current_state, sounds_menu_selected_item, audio_settings, global_sound_manager
     
     menu_items_count = 6  # Number of menu items (updated for keybinding option)
@@ -754,12 +1168,11 @@ def handle_audio_menu_keyboard(key):
                 global_sound_manager.sound_toggles[first_sound] = audio_settings['individual_sounds'][first_sound]
         elif sounds_menu_selected_item == 3:  # Keybinding Configuration
             current_state = 'keybinding_menu'
-            keybinding_menu_selected_item = 0
         elif sounds_menu_selected_item == 4:  # Test Sound
             if global_sound_manager and audio_settings['master_enabled']:
                 global_sound_manager.play_sound('popup_accept')
-        elif sounds_menu_selected_item == 5:  # Back to Main Menu
-            current_state = 'main_menu'
+        elif sounds_menu_selected_item == 5:  # Back to Settings Menu
+            current_state = 'settings_menu'
     elif key == pygame.K_LEFT:
         # Allow left arrow for settings adjustment
         if sounds_menu_selected_item == 1:  # SFX Volume
@@ -773,11 +1186,137 @@ def handle_audio_menu_keyboard(key):
             current_idx = volumes.index(audio_settings['sfx_volume']) if audio_settings['sfx_volume'] in volumes else 3
             audio_settings['sfx_volume'] = volumes[(current_idx + 1) % len(volumes)]
     elif key == pygame.K_ESCAPE:
+        current_state = 'settings_menu'
+
+
+def handle_settings_menu_click(mouse_pos, w, h):
+    '''Handle mouse clicks on main settings menu.'''
+    global current_state, settings_menu_selected_item
+    
+    # Menu item layout (matching draw_settings_main_menu)
+    button_width = int(w * 0.65)
+    button_height = int(h * 0.07)
+    start_y = int(h * 0.25)
+    spacing = int(h * 0.08)
+    center_x = w // 2
+    
+    mx, my = mouse_pos
+    
+    # Settings menu items (matching enhanced_settings.py)
+    settings_categories = [
+        'Audio Settings',
+        'Game Configuration', 
+        'Gameplay Settings',
+        'Accessibility',
+        'Keybindings',
+        'Privacy Controls',  # Our new option
+        'Back to Main Menu'
+    ]
+    
+    for i, _ in enumerate(settings_categories):
+        button_x = center_x - button_width // 2
+        button_y = start_y + i * spacing
+        button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            settings_menu_selected_item = i
+            
+            # Execute selected menu action
+            if i == 0:  # Audio Settings
+                current_state = 'sounds_menu'
+                sounds_menu_selected_item = 0
+            elif i == 1:  # Game Configuration
+                # TODO: Implement game config menu
+                pass
+            elif i == 2:  # Gameplay Settings
+                # TODO: Implement gameplay settings
+                pass
+            elif i == 3:  # Accessibility
+                # TODO: Implement accessibility settings
+                pass
+            elif i == 4:  # Keybindings
+                current_state = 'keybinding_menu'
+                keybinding_menu_selected_item = 0
+            elif i == 5:  # Privacy Controls
+                current_state = 'privacy_controls'
+                privacy_controls.reset()
+            elif i == 6:  # Back to Main Menu
+                current_state = 'main_menu'
+            break
+
+
+def handle_settings_menu_keyboard(key):
+    '''Handle keyboard navigation for main settings menu.'''
+    global current_state, settings_menu_selected_item
+    
+    menu_items_count = 7  # Number of menu items
+    
+    if key == pygame.K_UP:
+        settings_menu_selected_item = (settings_menu_selected_item - 1) % menu_items_count
+    elif key == pygame.K_DOWN:
+        settings_menu_selected_item = (settings_menu_selected_item + 1) % menu_items_count
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        # Execute selected menu action
+        if settings_menu_selected_item == 0:  # Audio Settings
+            current_state = 'sounds_menu'
+            sounds_menu_selected_item = 0
+        elif settings_menu_selected_item == 1:  # Game Configuration
+            # TODO: Implement game config menu
+            pass
+        elif settings_menu_selected_item == 2:  # Gameplay Settings
+            # TODO: Implement gameplay settings
+            pass
+        elif settings_menu_selected_item == 3:  # Accessibility
+            # TODO: Implement accessibility settings
+            pass
+        elif settings_menu_selected_item == 4:  # Keybindings
+            current_state = 'keybinding_menu'
+            keybinding_menu_selected_item = 0
+        elif settings_menu_selected_item == 5:  # Privacy Controls
+            current_state = 'privacy_controls'
+            privacy_controls.reset()
+        elif settings_menu_selected_item == 6:  # Back to Main Menu
+            current_state = 'main_menu'
+    elif key == pygame.K_ESCAPE:
         current_state = 'main_menu'
 
 
+def handle_privacy_controls_click(mouse_pos, w, h):
+    '''Handle mouse clicks on privacy controls menu.'''
+    global current_state
+    
+    # Delegate to privacy controls component
+    action = privacy_controls.handle_mouse_click(mouse_pos, w, h)
+    
+    if action == 'back':
+        current_state = 'settings_menu'
+    elif action == 'level_changed':
+        # Optionally show a confirmation message
+        pass
+    elif action == 'data_deleted':
+        # Optionally show a success message
+        pass
+
+
+def handle_privacy_controls_keyboard(key):
+    '''Handle keyboard navigation for privacy controls menu.'''
+    global current_state
+    
+    # Delegate to privacy controls component
+    action = privacy_controls.handle_key_press(key)
+    
+    if action == 'back':
+        current_state = 'settings_menu'
+    elif action == 'level_changed':
+        # Optionally show a confirmation message
+        pass
+    elif action == 'data_deleted':
+        # Optionally show a success message
+        pass
+
+
 def handle_keybinding_menu_keyboard(key):
-    """Handle keyboard navigation in the keybinding configuration menu."""
+    '''Handle keyboard navigation in the keybinding configuration menu.'''
     global keybinding_menu_selected_item, current_state
     
     total_items = 18  # 9 actions + 3 game controls + 4 nav controls + 2 special items
@@ -789,11 +1328,11 @@ def handle_keybinding_menu_keyboard(key):
     elif key == pygame.K_RETURN or key == pygame.K_SPACE:
         handle_keybinding_menu_select()
     elif key == pygame.K_ESCAPE:
-        current_state = 'sounds_menu'  # Go back to audio menu
+        current_state = 'settings_menu'  # Go back to settings menu
 
 
 def handle_keybinding_menu_select():
-    """Handle selection of a keybinding menu item."""
+    '''Handle selection of a keybinding menu item.'''
     global current_state, keybinding_change_action, keybinding_change_display
     from src.services.keybinding_manager import keybinding_manager
     
@@ -801,21 +1340,21 @@ def handle_keybinding_menu_select():
     if keybinding_menu_selected_item < 9:
         # Action keybindings (0-8)
         action_num = keybinding_menu_selected_item + 1
-        keybinding_change_action = f"action_{action_num}"
-        keybinding_change_display = f"Action {action_num}"
+        keybinding_change_action = f'action_{action_num}'
+        keybinding_change_display = f'Action {action_num}'
         current_state = 'keybinding_change'
     elif keybinding_menu_selected_item < 12:
         # Game control keybindings (9-11)
-        game_actions = ["end_turn", "help_guide", "quit_to_menu"]
-        game_displays = ["End Turn", "Help Guide", "Quit to Menu"]
+        game_actions = ['end_turn', 'help_guide', 'quit_to_menu']
+        game_displays = ['End Turn', 'Help Guide', 'Quit to Menu']
         idx = keybinding_menu_selected_item - 9
         keybinding_change_action = game_actions[idx]
         keybinding_change_display = game_displays[idx]
         current_state = 'keybinding_change'
     elif keybinding_menu_selected_item < 16:
         # Navigation keybindings (12-15)
-        nav_actions = ["menu_up", "menu_down", "menu_select", "menu_back"]
-        nav_displays = ["Menu Up", "Menu Down", "Menu Select", "Menu Back"]
+        nav_actions = ['menu_up', 'menu_down', 'menu_select', 'menu_back']
+        nav_displays = ['Menu Up', 'Menu Down', 'Menu Select', 'Menu Back']
         idx = keybinding_menu_selected_item - 12
         keybinding_change_action = nav_actions[idx]
         keybinding_change_display = nav_displays[idx]
@@ -830,7 +1369,7 @@ def handle_keybinding_menu_select():
 
 
 def handle_keybinding_change_keyboard(key):
-    """Handle keyboard input when changing a keybinding."""
+    '''Handle keyboard input when changing a keybinding.'''
     global current_state, keybinding_change_action
     from src.services.keybinding_manager import keybinding_manager
     
@@ -848,7 +1387,7 @@ def handle_keybinding_change_keyboard(key):
 
 
 def handle_bug_report_click(mouse_pos, w, h):
-    """Handle mouse clicks in the bug report form."""
+    '''Handle mouse clicks in the bug report form.'''
     global current_state, bug_report_data, bug_report_selected_field, bug_report_success_message
     
     # For now, just implement button handling - form field clicking can be added later
@@ -865,9 +1404,9 @@ def handle_bug_report_click(mouse_pos, w, h):
     
     # Check which button was clicked
     buttons = [
-        {"text": "Save Locally", "action": "save_local"},
-        {"text": "Submit to GitHub", "action": "submit_github"},
-        {"text": "Cancel", "action": "cancel"}
+        {'text': 'Save Locally', 'action': 'save_local'},
+        {'text': 'Submit to GitHub', 'action': 'submit_github'},
+        {'text': 'Cancel', 'action': 'cancel'}
     ]
     
     for i, button in enumerate(buttons):
@@ -875,20 +1414,20 @@ def handle_bug_report_click(mouse_pos, w, h):
         button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
         
         if button_rect.collidepoint(mx, my):
-            if button["action"] == "cancel":
+            if button['action'] == 'cancel':
                 current_state = 'main_menu'
-            elif button["action"] == "save_local":
+            elif button['action'] == 'save_local':
                 save_bug_report_locally()
-            elif button["action"] == "submit_github":
+            elif button['action'] == 'submit_github':
                 submit_bug_report_to_github()
             break
 
 def handle_bug_report_keyboard(key):
-    """Handle keyboard input in the bug report form."""
+    '''Handle keyboard input in the bug report form.'''
     global bug_report_selected_field, bug_report_editing_field, bug_report_data, current_state
     
     # Number of fields (excluding name field when attribution is off)
-    total_fields = 8 if bug_report_data.get("attribution", False) else 7
+    total_fields = 8 if bug_report_data.get('attribution', False) else 7
     
     if key == pygame.K_ESCAPE:
         current_state = 'main_menu'
@@ -899,68 +1438,68 @@ def handle_bug_report_keyboard(key):
     elif key == pygame.K_RETURN:
         # Handle field-specific actions
         if bug_report_selected_field == 0:  # Type dropdown
-            type_options = ["bug", "feature_request", "feedback"]
-            current_index = bug_report_data.get("type_index", 0)
-            bug_report_data["type_index"] = (current_index + 1) % len(type_options)
+            type_options = ['bug', 'feature_request', 'feedback']
+            current_index = bug_report_data.get('type_index', 0)
+            bug_report_data['type_index'] = (current_index + 1) % len(type_options)
         elif bug_report_selected_field == 6:  # Attribution checkbox
-            bug_report_data["attribution"] = not bug_report_data.get("attribution", False)
-            if not bug_report_data["attribution"]:
-                bug_report_data["name"] = ""  # Clear name if attribution disabled
+            bug_report_data['attribution'] = not bug_report_data.get('attribution', False)
+            if not bug_report_data['attribution']:
+                bug_report_data['name'] = ''  # Clear name if attribution disabled
         else:
             # Toggle editing mode for text fields
             bug_report_editing_field = not bug_report_editing_field
     elif bug_report_editing_field and bug_report_selected_field in [1, 2, 3, 4, 5, 7, 8]:
         # Handle text input for text fields
-        field_keys = ["", "title", "description", "steps", "expected", "actual", "", "name", "contact"]
+        field_keys = ['', 'title', 'description', 'steps', 'expected', 'actual', '', 'name', 'contact']
         field_key = field_keys[bug_report_selected_field]
         
         if field_key:
             if key == pygame.K_BACKSPACE:
-                bug_report_data[field_key] = bug_report_data.get(field_key, "")[:-1]
+                bug_report_data[field_key] = bug_report_data.get(field_key, '')[:-1]
             elif key == pygame.K_RETURN:
                 bug_report_editing_field = False
             elif hasattr(pygame.event.Event, 'unicode'):  # Handle text input
                 # This is a simplified approach - in a real implementation,
                 # you'd want to handle unicode input properly
                 if key < 256 and chr(key).isprintable():
-                    bug_report_data[field_key] = bug_report_data.get(field_key, "") + chr(key)
+                    bug_report_data[field_key] = bug_report_data.get(field_key, '') + chr(key)
 
 def save_bug_report_locally():
-    """Save the bug report to local storage."""
+    '''Save the bug report to local storage.'''
     global bug_report_success_message, current_state
     
     try:
         reporter = BugReporter()
         
         # Convert form data to bug report
-        type_options = ["bug", "feature_request", "feedback"]
-        report_type = type_options[bug_report_data.get("type_index", 0)]
+        type_options = ['bug', 'feature_request', 'feedback']
+        report_type = type_options[bug_report_data.get('type_index', 0)]
         
         report = reporter.create_bug_report(
             report_type=report_type,
-            title=bug_report_data.get("title", ""),
-            description=bug_report_data.get("description", ""),
-            steps_to_reproduce=bug_report_data.get("steps", ""),
-            expected_behavior=bug_report_data.get("expected", ""),
-            actual_behavior=bug_report_data.get("actual", ""),
-            include_attribution=bug_report_data.get("attribution", False),
-            attribution_name=bug_report_data.get("name", ""),
-            contact_info=bug_report_data.get("contact", "")
+            title=bug_report_data.get('title', ''),
+            description=bug_report_data.get('description', ''),
+            steps_to_reproduce=bug_report_data.get('steps', ''),
+            expected_behavior=bug_report_data.get('expected', ''),
+            actual_behavior=bug_report_data.get('actual', ''),
+            include_attribution=bug_report_data.get('attribution', False),
+            attribution_name=bug_report_data.get('name', ''),
+            contact_info=bug_report_data.get('contact', '')
         )
         
         filepath = reporter.save_report_locally(report)
-        bug_report_success_message = f"Bug report saved successfully!\n\nSaved to: {filepath}\n\nThank you for helping improve P(Doom)!"
+        bug_report_success_message = f'Bug report saved successfully!\n\nSaved to: {filepath}\n\nThank you for helping improve P(Doom)!'
         current_state = 'bug_report_success'
         
         # Reset form
         reset_bug_report_form()
         
     except Exception as e:
-        bug_report_success_message = f"Error saving bug report:\n{str(e)}\n\nPlease try again or contact the developers directly."
+        bug_report_success_message = f'Error saving bug report:\n{str(e)}\n\nPlease try again or contact the developers directly.'
         current_state = 'bug_report_success'
 
 def submit_bug_report_to_github():
-    """Submit the bug report to GitHub (placeholder for future implementation)."""
+    '''Submit the bug report to GitHub (placeholder for future implementation).'''
     global bug_report_success_message, current_state
     
     # For now, this will just format the report for GitHub and save it locally
@@ -970,19 +1509,19 @@ def submit_bug_report_to_github():
         reporter = BugReporter()
         
         # Convert form data to bug report
-        type_options = ["bug", "feature_request", "feedback"]
-        report_type = type_options[bug_report_data.get("type_index", 0)]
+        type_options = ['bug', 'feature_request', 'feedback']
+        report_type = type_options[bug_report_data.get('type_index', 0)]
         
         report = reporter.create_bug_report(
             report_type=report_type,
-            title=bug_report_data.get("title", ""),
-            description=bug_report_data.get("description", ""),
-            steps_to_reproduce=bug_report_data.get("steps", ""),
-            expected_behavior=bug_report_data.get("expected", ""),
-            actual_behavior=bug_report_data.get("actual", ""),
-            include_attribution=bug_report_data.get("attribution", False),
-            attribution_name=bug_report_data.get("name", ""),
-            contact_info=bug_report_data.get("contact", "")
+            title=bug_report_data.get('title', ''),
+            description=bug_report_data.get('description', ''),
+            steps_to_reproduce=bug_report_data.get('steps', ''),
+            expected_behavior=bug_report_data.get('expected', ''),
+            actual_behavior=bug_report_data.get('actual', ''),
+            include_attribution=bug_report_data.get('attribution', False),
+            attribution_name=bug_report_data.get('name', ''),
+            contact_info=bug_report_data.get('contact', '')
         )
         
         # Format for GitHub
@@ -998,29 +1537,29 @@ def submit_bug_report_to_github():
         reset_bug_report_form()
         
     except Exception as e:
-        bug_report_success_message = f"Error preparing GitHub report:\n{str(e)}\n\nPlease try saving locally instead."
+        bug_report_success_message = f'Error preparing GitHub report:\n{str(e)}\n\nPlease try saving locally instead.'
         current_state = 'bug_report_success'
 
 def reset_bug_report_form():
-    """Reset the bug report form to default values."""
+    '''Reset the bug report form to default values.'''
     global bug_report_data, bug_report_selected_field, bug_report_editing_field
     
     bug_report_data = {
-        "type_index": 0,
-        "title": "",
-        "description": "",
-        "steps": "",
-        "expected": "",
-        "actual": "",
-        "attribution": False,
-        "name": "",
-        "contact": ""
+        'type_index': 0,
+        'title': '',
+        'description': '',
+        'steps': '',
+        'expected': '',
+        'actual': '',
+        'attribution': False,
+        'name': '',
+        'contact': ''
     }
     bug_report_selected_field = 0
     bug_report_editing_field = False
 
 def handle_end_game_menu_click(mouse_pos, w, h):
-    """Handle mouse clicks on end-game menu items."""
+    '''Handle mouse clicks on end-game menu items.'''
     global current_state, selected_menu_item, seed, overlay_content, overlay_title, end_game_selected_item
     
     # Calculate menu button positions (similar to main menu layout)
@@ -1041,76 +1580,71 @@ def handle_end_game_menu_click(mouse_pos, w, h):
         if button_rect.collidepoint(mx, my):
             end_game_selected_item = i
             
-            # Execute menu action based on selection
-            if i == 0:  # View High Scores
+            # Execute menu action based on selection (updated for new order)
+            if i == 0:  # Play Again - PRIMARY ACTION for continuing play
+                # Use Game State Manager for clean restart (End Game State Reset Bug fix)
+                game_state_manager = get_game_state_manager()
+                game_state = game_state_manager.restart_game_with_same_seed()
+                current_state = 'game'
+            elif i == 1:  # View Full Leaderboard
                 current_state = 'high_score'
                 high_score_selected_item = 0  # Reset high score selection
-            elif i == 1:  # Relaunch Game
-                current_state = 'game'
-                # Keep the same seed for relaunch
-            elif i == 2:  # Main Menu
-                current_state = 'main_menu'
-                selected_menu_item = 0
-            elif i == 3:  # Settings
-                overlay_content = create_settings_content()
-                overlay_title = "Settings"
-                push_navigation_state('overlay')
-            elif i == 4:  # Submit Feedback
+            elif i == 2:  # Submit Feedback (simplified menu)
                 # Reset and pre-fill feedback form
                 reset_bug_report_form()
-                bug_report_data["type_index"] = 2  # Feedback
+                bug_report_data['type_index'] = 2  # Feedback
                 current_state = 'bug_report'
-            elif i == 5:  # Submit Bug Request
-                # Reset and pre-fill bug report form
-                reset_bug_report_form()
-                bug_report_data["type_index"] = 0  # Bug
-                current_state = 'bug_report'
+            elif i == 3:  # Settings
+                overlay_content = create_settings_content()
+                overlay_title = 'Settings'
+                push_navigation_state('overlay')
+            elif i == 4:  # Main Menu
+                _flush_game_state()  # Clear game state to prevent end game loop
+                current_state = 'main_menu'
+                selected_menu_item = 0
             break
 
 def handle_end_game_menu_keyboard(key):
-    """Handle keyboard navigation for end-game menu."""
+    '''Handle keyboard navigation for end-game menu with both horizontal and vertical support.'''
     global end_game_selected_item, current_state, selected_menu_item, overlay_content, overlay_title
     
-    if key == pygame.K_UP:
+    # Support both vertical (UP/DOWN) and horizontal (LEFT/RIGHT) navigation
+    # This handles both horizontal and vertical button layouts
+    if key == pygame.K_UP or key == pygame.K_LEFT:
         end_game_selected_item = (end_game_selected_item - 1) % len(end_game_menu_items)
-    elif key == pygame.K_DOWN:
+    elif key == pygame.K_DOWN or key == pygame.K_RIGHT:
         end_game_selected_item = (end_game_selected_item + 1) % len(end_game_menu_items)
     elif key == pygame.K_RETURN or key == pygame.K_SPACE:
-        # Execute selected menu action
-        if end_game_selected_item == 0:  # View High Scores
-            current_state = 'high_score'
-            high_score_selected_item = 0
-        elif end_game_selected_item == 1:  # Relaunch Game
+        # Execute selected menu action (updated for new order)
+        if end_game_selected_item == 0:  # Play Again - PRIMARY ACTION
             current_state = 'game'
-        elif end_game_selected_item == 2:  # Main Menu
-            current_state = 'main_menu'
-            selected_menu_item = 0
+        elif end_game_selected_item == 1:  # View Full Leaderboard
+            current_state = 'high_score'
+        elif end_game_selected_item == 2:  # Submit Feedback
+            reset_bug_report_form()
+            bug_report_data['type_index'] = 2  # Feedback
+            current_state = 'bug_report'
         elif end_game_selected_item == 3:  # Settings
             overlay_content = create_settings_content()
-            overlay_title = "Settings"
+            overlay_title = 'Settings'
             push_navigation_state('overlay')
-        elif end_game_selected_item == 4:  # Submit Feedback
-            # Reset and pre-fill feedback form
-            reset_bug_report_form()
-            bug_report_data["type_index"] = 2  # Feedback
-            current_state = 'bug_report'
-        elif end_game_selected_item == 5:  # Submit Bug Request
-            # Reset and pre-fill bug report form
-            reset_bug_report_form()
-            bug_report_data["type_index"] = 0  # Bug
-            current_state = 'bug_report'
+        elif end_game_selected_item == 4:  # Main Menu
+            _flush_game_state()  # Clear game state to prevent end game loop
+            current_state = 'main_menu'
+            selected_menu_item = 0
     elif key == pygame.K_ESCAPE:
         # Return to main menu
+        _flush_game_state()  # Clear game state to prevent end game loop
         current_state = 'main_menu'
         selected_menu_item = 0
 
 
 # Escape menu state
 escape_menu_selected_item = 0
-escape_menu_items = ["Resume Game", "Main Menu", "Quit Game"]
+escape_menu_items = ['Resume Game', 'Main Menu', 'Quit Game']
 
 def handle_escape_menu_click(mouse_pos, w, h):
-    """Handle mouse clicks on escape menu."""
+    '''Handle mouse clicks on escape menu.'''
     global escape_menu_selected_item, current_state, selected_menu_item, running
     
     mx, my = mouse_pos
@@ -1136,7 +1670,7 @@ def handle_escape_menu_click(mouse_pos, w, h):
             break
 
 def handle_escape_menu_keyboard(key):
-    """Handle keyboard navigation for escape menu."""
+    '''Handle keyboard navigation for escape menu.'''
     global escape_menu_selected_item, current_state, selected_menu_item, running
     
     if key == pygame.K_UP:
@@ -1150,7 +1684,7 @@ def handle_escape_menu_keyboard(key):
         current_state = 'game'
 
 def handle_escape_menu_select():
-    """Handle escape menu selection."""
+    '''Handle escape menu selection.'''
     global current_state, selected_menu_item, running, escape_count
     
     if escape_menu_selected_item == 0:  # Resume Game
@@ -1165,7 +1699,7 @@ def handle_escape_menu_select():
 
 
 def draw_escape_menu(screen, w, h):
-    """Draw the escape menu overlay."""
+    '''Draw the escape menu overlay.'''
     # Menu dimensions
     menu_width = 400
     menu_height = 300
@@ -1179,13 +1713,13 @@ def draw_escape_menu(screen, w, h):
     
     # Draw title
     font = pygame.font.SysFont('Consolas', 24, bold=True)
-    title_text = font.render("ESCAPE MENU", True, (255, 255, 255))
+    title_text = font.render('ESCAPE MENU', True, (255, 255, 255))
     title_rect = title_text.get_rect(centerx=menu_x + menu_width // 2, y=menu_y + 20)
     screen.blit(title_text, title_rect)
     
     # Draw subtitle
     subtitle_font = pygame.font.SysFont('Consolas', 14)
-    subtitle_text = subtitle_font.render("Use UP/DOWN arrows and ENTER to select", True, (180, 180, 180))
+    subtitle_text = subtitle_font.render('Use UP/DOWN arrows and ENTER to select', True, (180, 180, 180))
     subtitle_rect = subtitle_text.get_rect(centerx=menu_x + menu_width // 2, y=menu_y + 50)
     screen.blit(subtitle_text, subtitle_rect)
     
@@ -1218,11 +1752,11 @@ def draw_escape_menu(screen, w, h):
 
 
 def handle_popup_button_click(mouse_pos, game_state, screen_w, screen_h):
-    """
+    '''
     Handle mouse clicks on popup event buttons.
     
     Returns True if a popup button was clicked, False otherwise.
-    """
+    '''
     if not hasattr(game_state, 'pending_popup_events') or not game_state.pending_popup_events:
         return False
     
@@ -1247,57 +1781,77 @@ def handle_popup_button_click(mouse_pos, game_state, screen_w, screen_h):
     return False
 
 def handle_high_score_click(mouse_pos, w, h):
-    """Handle mouse clicks on high score screen."""
-    global current_state, selected_menu_item, high_score_submit_to_leaderboard, game_state
+    '''Handle mouse clicks on high score screen with interactive menu.'''
+    global current_state, selected_menu_item, high_score_selected_item, high_score_submit_to_leaderboard, game_state
     
-    # Button layout (similar to other menus)
-    button_width = int(w * 0.3)
+    # Menu items count for button layout (text is dynamic: 'Play Again' or 'Launch New Game')
+    MENU_ITEM_COUNT = 5  # Total number of buttons
+    
+    # Button layout matching the UI
+    button_width = int(w * 0.4)
     button_height = int(h * 0.06)
-    button_y = int(h * 0.85)
+    start_y = int(h * 0.52)
     
     mx, my = mouse_pos
     
-    # Continue button (centered)
-    continue_x = w // 2 - button_width // 2
-    continue_rect = pygame.Rect(continue_x, button_y, button_width, button_height)
-    
-    if continue_rect.collidepoint(mx, my):
-        # Flush game state and return to main menu
-        _flush_game_state()
-        current_state = 'main_menu'
-        selected_menu_item = 0
-        return
-    
-    # Leaderboard toggle checkbox (left side)
-    checkbox_size = int(h * 0.03)
-    checkbox_x = int(w * 0.1)
-    checkbox_y = int(h * 0.75)
-    checkbox_rect = pygame.Rect(checkbox_x, checkbox_y, checkbox_size, checkbox_size)
-    
-    if checkbox_rect.collidepoint(mx, my):
-        high_score_submit_to_leaderboard = not high_score_submit_to_leaderboard
-        return
+    # Check each menu button
+    for i in range(MENU_ITEM_COUNT):
+        y = start_y + i * int(button_height + h * 0.02)
+        x = w // 2 - button_width // 2
+        button_rect = pygame.Rect(x, y, button_width, button_height)
+        
+        if button_rect.collidepoint(mx, my):
+            high_score_selected_item = i  # Update selection
+            # Execute the selected action
+            _execute_high_score_menu_action(i)
+            return
 
 def handle_high_score_keyboard(key):
-    """Handle keyboard navigation for high score screen."""
-    global current_state, selected_menu_item, high_score_submit_to_leaderboard, game_state
+    '''Handle keyboard navigation for high score screen with interactive menu.'''
+    global current_state, selected_menu_item, high_score_selected_item, high_score_submit_to_leaderboard, game_state
     
-    if key == pygame.K_SPACE or key == pygame.K_RETURN:
-        # Continue to main menu (default action)
-        _flush_game_state()
-        current_state = 'main_menu'
-        selected_menu_item = 0
-    elif key == pygame.K_l:
-        # Toggle leaderboard submission
-        high_score_submit_to_leaderboard = not high_score_submit_to_leaderboard
+    # Menu items count for navigation (text is dynamic: 'Play Again' or 'Launch New Game')
+    MENU_ITEM_COUNT = 5  # Total number of buttons
+    
+    if key == pygame.K_UP:
+        high_score_selected_item = (high_score_selected_item - 1) % MENU_ITEM_COUNT
+    elif key == pygame.K_DOWN:
+        high_score_selected_item = (high_score_selected_item + 1) % MENU_ITEM_COUNT
+    elif key == pygame.K_RETURN or key == pygame.K_SPACE:
+        _execute_high_score_menu_action(high_score_selected_item)
     elif key == pygame.K_ESCAPE:
-        # Quick escape to main menu
+        # Quick exit to main menu
         _flush_game_state()
         current_state = 'main_menu'
         selected_menu_item = 0
 
+def _execute_high_score_menu_action(action_index):
+    '''Execute the selected menu action from the high score screen.'''
+    global current_state, selected_menu_item, high_score_selected_item, game_state
+    
+    # Note: Menu items are dynamic - first item is 'Play Again' or 'Launch New Game' based on context
+    # Actions remain the same regardless of button text
+    
+    if action_index == 0:  # Play Again / Launch New Game - go to seed selection (pre-game)
+        _flush_game_state()
+        current_state = 'seed_selection'
+        selected_menu_item = 0
+    elif action_index == 1:  # Main Menu
+        _flush_game_state()
+        current_state = 'main_menu'
+        selected_menu_item = 0
+    elif action_index == 2:  # Settings
+        current_state = 'sounds_menu'  # Could be settings menu if available
+        selected_menu_item = 0
+    elif action_index == 3:  # Submit Feedback
+        current_state = 'bug_report'
+        selected_menu_item = 0
+    elif action_index == 4:  # View Full Leaderboard (same screen, different focus)
+        # Stay on the same screen but maybe scroll to leaderboard section
+        pass
+
 def _flush_game_state():
-    """Flush/reset the game state for a new game sequence, with logging."""
+    '''Flush/reset the game state for a new game sequence, with logging.'''
     global game_state
     
     if game_state:
@@ -1310,13 +1864,15 @@ def _flush_game_state():
                     'reputation': game_state.reputation,
                     'doom': game_state.doom
                 }
-                game_state.logger.log_game_end("Player returned to main menu", game_state.turn, final_resources)
+                game_state.logger.log_game_end('Player returned to main menu', game_state.turn, final_resources)
                 log_path = game_state.logger.write_log_file()
                 if log_path:
-                    print(f"Game log flushed to: {log_path}")
+                    # print(f'Game log flushed to: {log_path}')
+                    pass
                 game_state._final_logged = True
             except Exception as e:
-                print(f"Error during game state flush: {e}")
+                # print(f'Error during game state flush: {e}')
+                pass
         
         # Reset game state for next game
         game_state = None
@@ -1326,7 +1882,7 @@ def _flush_game_state():
     high_score_submit_to_leaderboard = False
 
 def main():
-    """
+    '''
     Main game loop with state management for menu system.
     
     States:
@@ -1339,21 +1895,39 @@ def main():
     
     The state machine allows smooth transitions between menu, documentation,
     bug reporting, and gameplay while preserving the original game experience.
-    """
+    '''
     global seed, seed_input, current_state, screen, SCREEN_W, SCREEN_H, selected_menu_item, overlay_scroll
     global bug_report_data, bug_report_selected_field, bug_report_editing_field, bug_report_success_message
-    global end_game_selected_item, high_score_submit_to_leaderboard
+    global end_game_selected_item, high_score_submit_to_leaderboard, game_state
+    global first_time_help_content, first_time_help_close_button, current_help_mechanic
     # UI overlay variables need global declaration to prevent UnboundLocalError when referenced before assignment
     global first_time_help_content, first_time_help_close_button, current_tutorial_content, current_help_mechanic
     global overlay_content, overlay_title
     # Hiring dialog rects need to persist between frames for click detection
     global cached_hiring_dialog_rects
+    # Fundraising dialog rects need to persist between frames for click detection 
+    global cached_fundraising_dialog_rects
+    # Research dialog rects need to persist between frames for click detection
+    global cached_research_dialog_rects  
+    # Keybinding menu variables
+    global keybinding_all_bindings, keybinding_menu_selected_item, keybinding_change_action, keybinding_change_display
+    # Escape handling variables
+    global escape_count, escape_timer
     
-    # Initialize game state as None - will be created when game starts
-    game_state = None
+    # Game state is initialized globally
     tooltip_text = None
     # Initialize cached hiring dialog rects
     cached_hiring_dialog_rects = None
+    # Initialize cached fundraising dialog rects
+    cached_fundraising_dialog_rects = None
+    # Initialize cached research dialog rects
+    cached_research_dialog_rects = None
+    # Initialize cached intelligence dialog rects
+    cached_intelligence_dialog_rects = None
+    # Initialize cached media dialog rects
+    cached_media_dialog_rects = None
+    # Initialize cached technical debt dialog rects
+    cached_technical_debt_dialog_rects = None
 
     running = True
     try:
@@ -1372,20 +1946,56 @@ def main():
                     # Update screen size and redraw (responsive design)
                     SCREEN_W, SCREEN_H = event.w, event.h
                     screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), FLAGS)
-                    
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    mx, my = event.pos
-                    
-                    # Handle mouse wheel for scrollable event log ONLY when explicitly enabled
+                
+                elif event.type == pygame.MOUSEWHEEL:
+                    # Modern pygame mouse wheel handling (prevents crashes)
                     if (current_state == 'game' and game_state and 
-                        game_state.scrollable_event_log_enabled and
-                        event.button in [4, 5]):  # Only handle mouse wheel events
-                        if event.button == 4:  # Mouse wheel up
+                        game_state.scrollable_event_log_enabled):
+                        # Handle mouse wheel scrolling for event log
+                        if event.y > 0:  # Mouse wheel up
                             game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 3)
-                        elif event.button == 5:  # Mouse wheel down
+                        elif event.y < 0:  # Mouse wheel down
                             max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
                             game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 3)
-                        continue  # Skip other mouse handling for wheel events
+                    elif current_state == 'overlay':
+                        # Handle mouse wheel scrolling for overlay content
+                        if event.y > 0:  # Mouse wheel up - scroll up
+                            overlay_scroll = max(0, overlay_scroll - 30)
+                        elif event.y < 0:  # Mouse wheel down - scroll down
+                            overlay_scroll += 30
+                    elif current_state in ['main_menu', 'start_game_submenu', 'end_game_menu', 'sounds_menu', 'settings_menu']:
+                        # Unified mouse wheel menu navigation
+                        if event.y > 0:  # Mouse wheel up - move selection up
+                            if current_state == 'main_menu':
+                                selected_menu_item = (selected_menu_item - 1) % len(menu_items)
+                            elif current_state == 'start_game_submenu':
+                                selected_menu_item = (selected_menu_item - 1) % len(start_game_submenu_items)
+                            elif current_state == 'end_game_menu':
+                                selected_menu_item = (selected_menu_item - 1) % len(end_game_menu_items)
+                            elif current_state == 'sounds_menu':
+                                selected_menu_item = (selected_menu_item - 1) % 6  # Audio menu has 6 items
+                            elif current_state == 'settings_menu':
+                                selected_menu_item = (selected_menu_item - 1) % 7  # Settings menu has 7 items
+                        elif event.y < 0:  # Mouse wheel down - move selection down
+                            if current_state == 'main_menu':
+                                selected_menu_item = (selected_menu_item + 1) % len(menu_items)
+                            elif current_state == 'start_game_submenu':
+                                selected_menu_item = (selected_menu_item + 1) % len(start_game_submenu_items)
+                            elif current_state == 'end_game_menu':
+                                selected_menu_item = (selected_menu_item + 1) % len(end_game_menu_items)
+                            elif current_state == 'sounds_menu':
+                                selected_menu_item = (selected_menu_item + 1) % 6  # Audio menu has 6 items
+                            elif current_state == 'settings_menu':
+                                selected_menu_item = (selected_menu_item + 1) % 7  # Settings menu has 7 items
+                    # Always continue - don't let unhandled wheel events cause issues
+                    continue
+                    
+                elif event.type == pygame.MOUSEBUTTONDOWN:
+                    # Skip mouse wheel button events (buttons 4 and 5) to prevent wheel clicks
+                    if event.button in [4, 5]:  # Mouse wheel up/down as button events
+                        continue
+                    
+                    mx, my = event.pos
                     
                     # Handle overlay manager events first (highest priority)
                     if current_state == 'game' and game_state:
@@ -1397,14 +2007,22 @@ def main():
                     # Handle mouse clicks based on current state
                     if current_state == 'main_menu':
                         handle_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'start_game_submenu':
+                        handle_start_game_submenu_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'pre_game_settings':
                         handle_pre_game_settings_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'seed_selection':
                         handle_seed_selection_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'new_player_experience':
+                        handle_new_player_experience_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'sounds_menu':
                         handle_audio_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'settings_menu':
+                        handle_settings_menu_click((mx, my), SCREEN_W, SCREEN_H)
+                    elif current_state == 'privacy_controls':
+                        handle_privacy_controls_click((mx, my), SCREEN_W, SCREEN_H)
                     elif current_state == 'keybinding_menu':
                         # Handle keybinding menu clicks
                         clicked_item = get_keybinding_menu_click_item((mx, my), SCREEN_W, SCREEN_H, len(keybinding_all_bindings))
@@ -1478,7 +2096,6 @@ def main():
                                         window_manager.toggle_minimize(element_id)
                                         break
                             # Window manager handled the event, skip other processing
-                            pass
                         
                         # First-time help close button
                         elif first_time_help_content and first_time_help_close_button:
@@ -1503,6 +2120,9 @@ def main():
                                     result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                                     if result == 'play_sound':
                                         game_state.sound_manager.play_ap_spend_sound()
+                                    elif result and isinstance(result, str) and not result.startswith('Tooltip'):
+                                        # Track action for exit history (only significant actions)
+                                        exit_tracker.add_action(f"Turn {game_state.turn}: {result}")
                                     tooltip_text = result
                         # Check if tutorial overlay is active
                         elif game_state and game_state.pending_tutorial_message:
@@ -1526,7 +2146,7 @@ def main():
                                             break
                                         elif rect_info['type'] == 'back_to_subtypes':
                                             # Player wants to go back to employee subtype selection
-                                            game_state.pending_hiring_dialog["mode"] = None
+                                            game_state.pending_hiring_dialog['mode'] = None
                                             hiring_handled = True
                                             break
                                         elif rect_info['type'] == 'cancel':
@@ -1549,18 +2169,226 @@ def main():
                                     if dialog_rect.collidepoint(mx, my):
                                         # Click is inside dialog area but not on a button - do nothing (modal behavior)
                                         pass
-                                    # Click is outside dialog area - block it (modal behavior)
-                                    # Don't pass to regular game handling to prevent clicking through dialog
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_hiring_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for intelligence dialog clicks
+                            elif game_state and game_state.pending_intelligence_dialog and cached_intelligence_dialog_rects is not None:
+                                intelligence_handled = False
+                                for rect_info in cached_intelligence_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'intelligence_option':
+                                            # Player selected an intelligence option
+                                            game_state.select_intelligence_option(rect_info['option_id'])
+                                            intelligence_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the intelligence dialog
+                                            game_state.dismiss_intelligence_dialog()
+                                            intelligence_handled = True
+                                            break
+                                
+                                if intelligence_handled:
+                                    pass  # Intelligence dialog handled the click
+                                else:
+                                    # When intelligence dialog is open, check if click is inside dialog area
+                                    dialog_width = int(SCREEN_W * 0.7)
+                                    dialog_height = int(SCREEN_H * 0.6)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_intelligence_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for media dialog clicks
+                            elif game_state and game_state.pending_media_dialog and cached_media_dialog_rects is not None:
+                                media_handled = False
+                                for rect_info in cached_media_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'media_option':
+                                            # Player selected a media option
+                                            game_state.select_media_option(rect_info['option_id'])
+                                            media_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the media dialog
+                                            game_state.dismiss_media_dialog()
+                                            media_handled = True
+                                            break
+                                
+                                if media_handled:
+                                    pass  # Media dialog handled the click
+                                else:
+                                    # When media dialog is open, check if click is inside dialog area
+                                    dialog_width = int(SCREEN_W * 0.7)
+                                    dialog_height = int(SCREEN_H * 0.6)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_media_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for technical debt dialog clicks
+                            elif game_state and game_state.pending_technical_debt_dialog and cached_technical_debt_dialog_rects is not None:
+                                technical_debt_handled = False
+                                for rect_info in cached_technical_debt_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'technical_debt_option':
+                                            # Player selected a technical debt option
+                                            game_state.select_technical_debt_option(rect_info['option_id'])
+                                            technical_debt_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the technical debt dialog
+                                            game_state.dismiss_technical_debt_dialog()
+                                            technical_debt_handled = True
+                                            break
+                                
+                                if technical_debt_handled:
+                                    pass  # Technical debt dialog handled the click
+                                else:
+                                    # When technical debt dialog is open, check if click is inside dialog area
+                                    dialog_width = int(SCREEN_W * 0.7)
+                                    dialog_height = int(SCREEN_H * 0.6)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_technical_debt_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for fundraising dialog clicks
+                            elif game_state and game_state.pending_fundraising_dialog and cached_fundraising_dialog_rects is not None:
+                                fundraising_handled = False
+                                for rect_info in cached_fundraising_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'funding_option':
+                                            # Player selected a funding option
+                                            game_state.select_fundraising_option(rect_info['option_id'])
+                                            fundraising_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the fundraising dialog
+                                            game_state.dismiss_fundraising_dialog()
+                                            fundraising_handled = True
+                                            break
+                                
+                                if fundraising_handled:
+                                    pass  # Fundraising dialog handled the click
+                                else:
+                                    # When fundraising dialog is open, check if click is inside dialog area
+                                    # Calculate dialog rect (same as in ui.py draw_fundraising_dialog)
+                                    dialog_width = int(SCREEN_W * 0.85)
+                                    dialog_height = int(SCREEN_H * 0.9)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_fundraising_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for research dialog clicks
+                            elif game_state and game_state.pending_research_dialog and cached_research_dialog_rects is not None:
+                                research_handled = False
+                                for rect_info in cached_research_dialog_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'research_option':
+                                            # Player selected a research option
+                                            game_state.select_research_option(rect_info['option_id'])
+                                            research_handled = True
+                                            break
+                                        elif rect_info['type'] == 'cancel':
+                                            # Player cancelled the research dialog
+                                            game_state.dismiss_research_dialog()
+                                            research_handled = True
+                                            break
+                                
+                                if research_handled:
+                                    pass  # Research dialog handled the click
+                                else:
+                                    # When research dialog is open, check if click is inside dialog area
+                                    # Calculate dialog rect (same as in ui.py draw_research_dialog)
+                                    dialog_width = int(SCREEN_W * 0.85)
+                                    dialog_height = int(SCREEN_H * 0.9)
+                                    dialog_x = (SCREEN_W - dialog_width) // 2
+                                    dialog_y = (SCREEN_H - dialog_height) // 2
+                                    dialog_rect = pygame.Rect(dialog_x, dialog_y, dialog_width, dialog_height)
+                                    
+                                    if dialog_rect.collidepoint(mx, my):
+                                        # Click is inside dialog area but not on a button - do nothing (modal behavior)
+                                        pass
+                                    else:
+                                        # Click is outside dialog area - dismiss the dialog
+                                        game_state.dismiss_research_dialog()
+                                        if hasattr(game_state, 'sound_manager'):
+                                            game_state.sound_manager.play_sound('popup_close')
+                            # Check for dashboard element clicks - Research Quality Selection Submenu Bug fix
+                            elif (game_state and hasattr(game_state, '_dashboard_clickable_rects') and 
+                                  game_state._dashboard_clickable_rects):
+                                dashboard_handled = False
+                                for rect_info in game_state._dashboard_clickable_rects:
+                                    if rect_info['rect'].collidepoint(mx, my):
+                                        if rect_info['type'] == 'research_quality_select':
+                                            # Player selected a research quality option
+                                            from src.services.dashboard_manager import get_dashboard_manager
+                                            dashboard_manager = get_dashboard_manager()
+                                            success = dashboard_manager.handle_research_quality_selection(
+                                                rect_info['quality'], game_state
+                                            )
+                                            if success and hasattr(game_state, 'sound_manager'):
+                                                game_state.sound_manager.play_sound('button_click')
+                                            dashboard_handled = True
+                                            break
+                                
+                                if not dashboard_handled:
+                                    # Dashboard elements didn't handle the click, continue with other handlers
+                                    pass
                             # Check for popup button clicks first
                             elif handle_popup_button_click((mx, my), game_state, SCREEN_W, SCREEN_H):
                                 # Popup button was clicked, no need for further processing
+                                pass
+                            # Check for debug console clicks
+                            elif _handle_debug_console_click((mx, my), SCREEN_W, SCREEN_H):
+                                # Debug console handled the click
                                 pass
                             else:
                                 # Regular game mouse handling
                                 result = game_state.handle_click((mx, my), SCREEN_W, SCREEN_H)
                                 if result == 'play_sound':
                                     game_state.sound_manager.play_ap_spend_sound()
+                                elif result and isinstance(result, str) and not result.startswith('Tooltip'):
+                                    # Track action for exit history (only significant actions)
+                                    exit_tracker.add_action(f"Turn {game_state.turn}: {result}")
                                 tooltip_text = result
+                        
+                elif event.type == pygame.TEXTINPUT:
+                    # Handle text input for name fields in pre_game_settings
+                    if current_state == 'pre_game_settings' and pre_game_settings_manager.is_text_input_active():
+                        pre_game_settings_manager.handle_text_input(event.text, pre_game_settings)
                         
                 elif event.type == pygame.MOUSEMOTION:
                     # Handle window manager motion events first (for dragging)
@@ -1583,9 +2411,18 @@ def main():
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_hover(event.pos, SCREEN_W, SCREEN_H)
                     
+                    # Mouse hover effects for new player experience screen
+                    elif current_state == 'new_player_experience':
+                        handle_new_player_experience_hover(event.pos, SCREEN_W, SCREEN_H)
+                    
                     # Mouse hover effects only active during gameplay
                     if current_state == 'game' and game_state:
                         tooltip_text = game_state.check_hover(event.pos, SCREEN_W, SCREEN_H)
+                        
+                        # Handle dashboard hover effects - Research Quality Selection Submenu Bug fix
+                        from src.services.dashboard_manager import get_dashboard_manager
+                        dashboard_manager = get_dashboard_manager()
+                        dashboard_manager.handle_mouse_hover(event.pos, game_state, SCREEN_W, SCREEN_H)
                 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     # Handle window manager button release (for ending drag operations)
@@ -1604,12 +2441,31 @@ def main():
                             # Overlay manager handled the event
                             continue
                     
+                    # Global DEV MODE toggle (F10) - available in all states
+                    if event.key == pygame.K_F10:
+                        try:
+                            from src.services.dev_mode import toggle_dev_mode
+                            new_state = toggle_dev_mode()
+                            status_msg = 'DEV MODE ON' if new_state else 'DEV MODE OFF'
+                            
+                            # If we're in game, show message there. Otherwise, we'll just toggle silently.
+                            if current_state == 'game' and game_state:
+                                game_state.add_message(f'System: {status_msg} (F10)')
+                                if hasattr(game_state, 'sound_manager'):
+                                    game_state.sound_manager.play_sound('ui_accept')
+                        except ImportError:
+                            pass  # Silently fail if dev_mode module not available
+                    
                     # Keyboard handling varies by state
-                    if current_state == 'main_menu':
+                    elif current_state == 'main_menu':
                         if event.key == pygame.K_ESCAPE:
+                            exit_tracker.set_user_exit("main menu escape key")
                             running = False
                         else:
                             handle_menu_keyboard(event.key)
+                    
+                    elif current_state == 'start_game_submenu':
+                        handle_start_game_submenu_keyboard(event.key)
                     
                     elif current_state == 'config_select':
                         handle_config_keyboard(event.key)
@@ -1620,8 +2476,14 @@ def main():
                         handle_seed_selection_keyboard(event.key)
                     elif current_state == 'tutorial_choice':
                         handle_tutorial_choice_keyboard(event.key)
+                    elif current_state == 'new_player_experience':
+                        handle_new_player_experience_keyboard(event.key)
                     elif current_state == 'sounds_menu':
                         handle_audio_menu_keyboard(event.key)
+                    elif current_state == 'settings_menu':
+                        handle_settings_menu_keyboard(event.key)
+                    elif current_state == 'privacy_controls':
+                        handle_privacy_controls_keyboard(event.key)
                     elif current_state == 'keybinding_menu':
                         handle_keybinding_menu_keyboard(event.key)
                     elif current_state == 'keybinding_change':
@@ -1668,219 +2530,197 @@ def main():
                             seed_input = seed_input[:-1]
                         elif event.key == pygame.K_ESCAPE:
                             current_state = 'seed_selection'
-                            seed_input = ""
+                            seed_input = ''
                         elif event.unicode.isprintable():
                             seed_input += event.unicode
                             
                     elif current_state == 'game':
-
-                        # Stepwise tutorial keyboard handling (takes precedence when tutorial is active)
-                        if onboarding.show_tutorial_overlay:
-                            if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
-                                # Advance tutorial step
-                                onboarding.advance_stepwise_tutorial()
-                            elif event.key == pygame.K_BACKSPACE:
-                                # Go back in tutorial
-                                onboarding.go_back_stepwise_tutorial()
-                            elif event.key == pygame.K_ESCAPE:
-                                # Skip tutorial
-                                onboarding.dismiss_tutorial()
-                            elif event.key == pygame.K_h:
-                                # Show help overlay
-                                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                                overlay_title = "Player Guide"
-                                push_navigation_state('overlay')
+                        # NEW: Use extracted InputEventManager for clean keyboard handling
+                        updated_values, should_quit, key_event_consumed = handle_game_keyboard_input(
+                            event, game_state, onboarding, first_time_help_content, 
+                            current_help_mechanic, overlay_content, overlay_title, 
+                            current_state, escape_count, escape_timer, running
+                        )
                         
-                        # Help key (H) - always available
-                        elif event.key == pygame.K_h:
-                            overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                            overlay_title = "Player Guide"
-                            push_navigation_state('overlay')
+                        # Apply any state updates from the input handler
+                        for key, value in updated_values.items():
+                            if key == 'overlay_content':
+                                overlay_content = value
+                            elif key == 'overlay_title':
+                                overlay_title = value
+                            elif key == 'push_navigation_state':
+                                push_navigation_state(value)
+                            elif key == 'current_state':
+                                current_state = value
+                            elif key == 'first_time_help_content':
+                                first_time_help_content = value
+                            elif key == 'first_time_help_close_button':
+                                first_time_help_close_button = value
+                            elif key == 'current_help_mechanic':
+                                current_help_mechanic = value
                         
-                        # Close first-time help
-                        elif event.key == pygame.K_ESCAPE and first_time_help_content:
-                            # Mark mechanic as seen so it won't reappear
-                            if current_help_mechanic:
-                                onboarding.mark_mechanic_seen(current_help_mechanic)
-                            # Play popup close sound
-                            if game_state and hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_close')
-                            first_time_help_content = None
-                            first_time_help_close_button = None
-                            current_help_mechanic = None
-                        
-                        # Close hiring dialog with ESC
-                        elif event.key == pygame.K_ESCAPE and game_state and game_state.pending_hiring_dialog:
-                            game_state.dismiss_hiring_dialog()
-                            # Play popup close sound
-                            if hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_close')
-                        
-                        # Screenshot functionality with [ key
-                        elif event.key == pygame.K_LEFTBRACKET:
-                            import datetime
-                            import os
-                            # Create screenshots directory if it doesn't exist
-                            screenshots_dir = os.path.join(os.getcwd(), 'screenshots')
-                            os.makedirs(screenshots_dir, exist_ok=True)
-                            # Generate timestamp for filename
-                            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-                            screenshot_path = os.path.join(screenshots_dir, f'pdoom_screenshot_{timestamp}.png')
-                            # Save the current screen
-                            pygame.image.save(screen, screenshot_path)
-                            print(f"Screenshot saved: {screenshot_path}")
-                            # Play UI sound if available
-                            if game_state and hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('ui_accept')
-                        
-                        elif event.key == pygame.K_RETURN and first_time_help_content:
-                            # Mark mechanic as seen so it won't reappear
-                            if current_help_mechanic:
-                                onboarding.mark_mechanic_seen(current_help_mechanic)
-                            # Play popup accept sound
-                            if game_state and hasattr(game_state, 'sound_manager'):
-                                game_state.sound_manager.play_sound('popup_accept')
-                            first_time_help_content = None
-                            first_time_help_close_button = None
-                            current_help_mechanic = None
-                        
-                        # Arrow key scrolling for scrollable event log
-                        elif game_state and game_state.scrollable_event_log_enabled:
-                            if event.key == pygame.K_UP:
-                                game_state.event_log_scroll_offset = max(0, game_state.event_log_scroll_offset - 1)
-                            elif event.key == pygame.K_DOWN:
-                                max_scroll = max(0, len(game_state.event_log_history) + len(game_state.messages) - 7)
-                                game_state.event_log_scroll_offset = min(max_scroll, game_state.event_log_scroll_offset + 1)
-                        
-                        # Safe escape handling - ALWAYS ACTIVE (not blocked by tutorial)
-                        elif event.key == pygame.K_ESCAPE:
-                            # Safe escape menu system
-                            global escape_count, escape_timer
-                            current_time = pygame.time.get_ticks()
-                            
-                            # Reset escape count if too much time has passed
-                            if current_time - escape_timer > ESCAPE_TIMEOUT:
-                                escape_count = 0
-                            
-                            escape_count += 1
-                            escape_timer = current_time
-                            
-                            if escape_count >= ESCAPE_THRESHOLD:
-                                # Show quit confirmation after multiple escapes
-                                current_state = 'escape_menu'
-                                escape_count = 0  # Reset counter
-                            else:
-                                # First few escapes - show pause/menu hint
-                                if hasattr(game_state, 'messages'):
-                                    remaining = ESCAPE_THRESHOLD - escape_count
-                                    if remaining == 1:
-                                        game_state.add_message(f"Press ESCAPE {remaining} more time to access quit menu, or press ENTER to confirm quit")
-                                    else:
-                                        game_state.add_message(f"Press ESCAPE {remaining} more times to access quit menu")
-                                
-                                # Play UI sound
-                                if game_state and hasattr(game_state, 'sound_manager'):
-                                    game_state.sound_manager.play_sound('ui_click')
-                        
-                        # Handle ENTER to confirm quit when multiple escapes were pressed
-                        elif event.key == pygame.K_RETURN and escape_count >= ESCAPE_THRESHOLD - 1:
+                        # Handle quit request from input handler
+                        if should_quit:
                             running = False
-                        
-                        # Regular game keyboard handling (only if tutorial is not active)
-                        elif not onboarding.show_tutorial_overlay:
-                            # Import keybinding manager for customizable controls
-                            from src.services.keybinding_manager import keybinding_manager
-                            
-                            # Check for end turn key (including Enter/Return as space equivalent)
-                            end_turn_key = keybinding_manager.get_key_for_action("end_turn")
-                            if (event.key == end_turn_key or 
-                                (end_turn_key == pygame.K_SPACE and event.key == pygame.K_RETURN)) and game_state and not game_state.game_over:
-                                # Try to end turn, play error sound if rejected
-                                if not game_state.end_turn():
-                                    # Turn was rejected (already processing)
-                                    pass  # Error sound already played in end_turn method
-                            
-                            # New 3-column layout keybindings
-                            elif game_state and not game_state.game_over:
-                                # Check if using 3-column layout
-                                from configs.config_manager import get_config
-                                config = get_config()
-                                if config.get('enable_three_column_layout', False):
-                                    # Import 3-column layout manager
-                                    from ui_new.screens.game import three_column_layout
-                                    
-                                    # Convert pygame key to string
-                                    key_name = pygame.key.name(event.key)
-                                    
-                                    # Handle keypress through layout system
-                                    bound_action = three_column_layout.handle_keypress(key_name)
-                                    if bound_action:
-                                        action_idx = bound_action['original_index']
-                                        # Check if this would be an undo operation before calling
-                                        was_undo = action_idx in game_state.selected_actions
-                                        
-                                        # Try to select/deselect the action
-                                        game_state.select_action(action_idx, was_undo=was_undo)
-                                        continue  # Skip original keybinding system
-                            
-                            # Action shortcuts using customizable keybindings (fallback)
-                            if game_state and not game_state.game_over:
-                                # Check if this key is bound to an action
-                                for action_index in range(min(9, len(game_state.actions))):
-                                    action_key = keybinding_manager.get_action_number_key(action_index)
-                                    if action_key and event.key == action_key:
-                                        # Check if this would be an undo operation before calling
-                                        was_undo = action_index in game_state.selected_actions
-                                        
-                                        # Try to execute the action using keyboard shortcut
-                                        success = game_state.execute_action_by_keyboard(action_index)
-                                        if success and not was_undo:
-                                            # Play AP spend sound for successful new selections (not undos)
-                                            game_state.sound_manager.play_ap_spend_sound()
-                                        break
-                            
-                            # 'H' key for help (Player Guide)
-                            elif event.key == pygame.K_h:
-                                overlay_content = load_markdown_file('docs/PLAYERGUIDE.md')
-                                overlay_title = "Player Guide"
-                                overlay_scroll = 0
-                                push_navigation_state('overlay')
-                            
-                            # 'W' key for window management demo (debug feature)
-                            elif event.key == pygame.K_w and current_config.get('advanced', {}).get('enable_demo_window', False):
-                                from src.ui.overlay_manager import UIElement, ZLayer
-                                
-                                # Create a demo window if it doesn't exist
-                                demo_window_id = "demo_window"
-                                if demo_window_id not in window_manager.elements:
-                                    demo_rect = pygame.Rect(200, 150, 300, 200)
-                                    demo_element = UIElement(
-                                        id=demo_window_id,
-                                        layer=ZLayer.DIALOGS,
-                                        rect=demo_rect,
-                                        title="Demo Window",
-                                        content="This is a draggable window!\n\nYou can:\n- Click and drag the header\n- Click minimize button\n- Press W again to close",
-                                        draggable=True
-                                    )
-                                    # Set header area for dragging (top 30 pixels)
-                                    demo_element.header_rect = pygame.Rect(demo_rect.x, demo_rect.y, demo_rect.width, 30)
-                                    window_manager.register_element(demo_element)
-                                else:
-                                    # Remove existing window
-                                    window_manager.unregister_element(demo_window_id)
+
 
             # --- Game state initialization --- #
             # Create game state when entering game for first time
             if current_state == 'game' and game_state is None:
-                game_state = GameState(seed)
+                # Use Game State Manager for clean game initialization
+                game_state_manager = get_game_state_manager()
+                game_state = game_state_manager.create_fresh_game_state(seed)
+                
+                # Apply custom names from pre_game_settings
+                if pre_game_settings.get('player_name') and pre_game_settings['player_name'] != 'Anonymous':
+                    game_state.player_name = pre_game_settings['player_name']
+                
+                if pre_game_settings.get('lab_name') and pre_game_settings['lab_name']:
+                    game_state.lab_name = pre_game_settings['lab_name']
                 
                 # Sync sound state from global sound manager to game state
                 game_state.sound_manager.set_enabled(global_sound_manager.is_enabled())
+                
+                # Track initial game state for exit tracking
+                if exit_tracker:
+                    exit_tracker.update_game_state({
+                        'turn': game_state.turn,
+                        'money': game_state.money,
+                        'compute': getattr(game_state, 'compute', 0),
+                        'safety': getattr(game_state, 'safety_research', 0),
+                        'capabilities': getattr(game_state, 'capabilities_research', 0),
+                        'employees': {
+                            'total': game_state.staff,
+                        }
+                    })
+                
+                # Add intro scenario message if enabled
+                if npe_intro_enabled:
+                    startup_money = game_state.money  # Get the actual starting money from config
+                    intro_message = f'Doom is coming. You convinced a funder to give you ${startup_money:,}. Your job is to save the world. Good luck!'
+                    game_state.messages.append(intro_message)
                 
                 # Check if tutorial should be shown for new players
                 if onboarding.should_show_tutorial() and not game_state.onboarding_started:
                     onboarding.start_tutorial()
                     game_state.onboarding_started = True
+
+            # --- UI State Cleanup and Debugging --- #
+            # CRITICAL FIX: Automatic cleanup for stuck UI states
+            if current_state == 'game' and game_state:
+                # Enhanced Debug key (D) - comprehensive blocking condition check
+                current_keys = pygame.key.get_pressed()
+                if current_keys[pygame.K_d] and current_keys[pygame.K_LCTRL]:  # Ctrl+D for debug
+                    # Check all possible blocking conditions
+                    blocking_checks = [
+                        ('help', first_time_help_content),
+                        ('tutorial', onboarding.show_tutorial_overlay),
+                        ('hiring', game_state.pending_hiring_dialog),
+                        ('funding', game_state.pending_fundraising_dialog),
+                        ('research', game_state.pending_research_dialog),
+                        ('intelligence', game_state.pending_intelligence_dialog),
+                        ('media', game_state.pending_media_dialog),
+                        ('tech_debt', game_state.pending_technical_debt_dialog),
+                        ('infrastructure', game_state.pending_infrastructure_dialog),
+                        ('adv_funding', game_state.pending_advanced_funding_dialog),
+                        ('operations', game_state.pending_operations_dialog)
+                    ]
+                    
+                    # Add popup events check
+                    popup_events_active = (hasattr(game_state, 'pending_popup_events') and 
+                                          game_state.pending_popup_events)
+                    if popup_events_active:
+                        blocking_checks.append(('popup_events', True))
+                    
+                    # Find active blocking conditions
+                    blocking = [name for name, condition in blocking_checks if condition]
+                    spacebar_works = not blocking
+                    
+                    # Create comprehensive debug message
+                    debug_msg = f'DEBUG: Spacebar {'WORKS' if spacebar_works else 'BLOCKED'}'
+                    if blocking:
+                        debug_msg += f' | Blocking: {', '.join(blocking)}'
+                    
+                    # Add helpful hint about emergency reset
+                    if blocking:
+                        debug_msg += ' | Use Ctrl+E to emergency reset'
+                    
+                    game_state.add_message(debug_msg)
+                
+                # Automatic cleanup for turn processing that's been stuck too long
+                if hasattr(game_state, 'turn_manager') and game_state.turn_manager.is_processing_stuck():
+                    game_state.turn_manager.reset_processing()
+                    game_state.add_message('System: Reset stuck turn processing')
+                
+                # Automatic cleanup for tutorial overlay that's been active too long without interaction
+                if (onboarding.show_tutorial_overlay and 
+                    game_state.turn > 10):  # If we're past turn 10, tutorial should definitely be dismissible
+                    onboarding.show_tutorial_overlay = False
+                    game_state.add_message('System: Auto-dismissed stuck tutorial overlay')
+                
+                # ENHANCED Emergency recovery system (Ctrl+E) - clears ALL blocking UI states
+                current_keys = pygame.key.get_pressed()
+                if current_keys[pygame.K_e] and current_keys[pygame.K_LCTRL]:  # Ctrl+E emergency reset
+                    emergency_cleared = []
+                    
+                    # Clear popup events
+                    if (hasattr(game_state, 'pending_popup_events') and game_state.pending_popup_events):
+                        game_state.pending_popup_events.clear()
+                        emergency_cleared.append('popup events')
+                    
+                    # Clear deferred popup events
+                    if (hasattr(game_state, 'deferred_events') and 
+                        hasattr(game_state.deferred_events, 'pending_popup_events') and
+                        game_state.deferred_events.pending_popup_events):
+                        game_state.deferred_events.pending_popup_events.clear()
+                        emergency_cleared.append('deferred events')
+                    
+                    # Clear all dialog states that can block spacebar
+                    dialog_states = [
+                        ('hiring_dialog', 'pending_hiring_dialog'),
+                        ('fundraising_dialog', 'pending_fundraising_dialog'),
+                        ('research_dialog', 'pending_research_dialog'),
+                        ('intelligence_dialog', 'pending_intelligence_dialog'),
+                        ('media_dialog', 'pending_media_dialog'),
+                        ('technical_debt_dialog', 'pending_technical_debt_dialog'),
+                        ('infrastructure_dialog', 'pending_infrastructure_dialog'),
+                        ('advanced_funding_dialog', 'pending_advanced_funding_dialog'),
+                        ('operations_dialog', 'pending_operations_dialog')
+                    ]
+                    
+                    for dialog_name, attr_name in dialog_states:
+                        if hasattr(game_state, attr_name) and getattr(game_state, attr_name) is not None:
+                            setattr(game_state, attr_name, None)
+                            emergency_cleared.append(dialog_name)
+                    
+                    # Clear global help content that can block spacebar
+                    if first_time_help_content:
+                        first_time_help_content = None
+                        first_time_help_close_button = None
+                        current_help_mechanic = None
+                        emergency_cleared.append('help overlay')
+                    
+                    # Clear tutorial overlay
+                    if onboarding.show_tutorial_overlay:
+                        onboarding.dismiss_tutorial()
+                        emergency_cleared.append('tutorial overlay')
+                    
+                    # Provide feedback about what was cleared
+                    if emergency_cleared:
+                        cleared_list = ', '.join(emergency_cleared)
+                        game_state.add_message(f'EMERGENCY RESET: Cleared {cleared_list} (Ctrl+E)')
+                        if hasattr(game_state, 'sound_manager'):
+                            game_state.sound_manager.play_sound('ui_accept')
+                    else:
+                        game_state.add_message('EMERGENCY RESET: No stuck UI states found (Ctrl+E)')
+                        if hasattr(game_state, 'sound_manager'):
+                            game_state.sound_manager.play_sound('ui_click')
+                
+                # Factorio-style hint reset with Ctrl+R
+                current_keys = pygame.key.get_pressed()
+                if current_keys[pygame.K_r] and current_keys[pygame.K_LCTRL]:  # Ctrl+R to reset hints
+                    onboarding.reset_all_hints()
+                    game_state.add_message('System: All hints reset! They will show again for new actions (Ctrl+R)')
 
             # --- First-time help checking --- #
             # Check for pending first-time help triggered by specific actions
@@ -1901,9 +2741,9 @@ def main():
             if (current_state == 'game' and game_state and 
                 not first_time_help_content and 
                 not onboarding.show_tutorial_overlay):
-                # Check for various first-time mechanics (but not first_staff_hire - that's context-sensitive)
-                for mechanic in ['first_upgrade_purchase', 'high_doom_warning']:
-                    if onboarding.should_show_mechanic_help(mechanic):
+                # Check for various first-time mechanics (but not first_staff_hire or first_upgrade_purchase - those are context-sensitive)
+                for mechanic in ['high_doom_warning']:
+                    if onboarding.should_show_hint(mechanic):
                         help_content = onboarding.get_mechanic_help(mechanic)
                         if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
                             first_time_help_content = help_content
@@ -1915,7 +2755,7 @@ def main():
                 
                 # Special case: action_points_exhausted should only show when actually exhausted
                 if (not first_time_help_content and 
-                    onboarding.should_show_mechanic_help('action_points_exhausted') and 
+                    onboarding.should_show_hint('action_points_exhausted') and 
                     game_state.action_points == 0):
                     help_content = onboarding.get_mechanic_help('action_points_exhausted')
                     if help_content and isinstance(help_content, dict) and 'title' in help_content and 'content' in help_content:
@@ -1930,9 +2770,13 @@ def main():
             back_button_rect = None  # Initialize for click handling
             
             if current_state == 'main_menu':
-                # Grey background as specified in requirements
-                screen.fill((128, 128, 128))
+                # Enhanced grey background for better contrast (Option 3)
+                screen.fill((140, 140, 140))
                 draw_main_menu(screen, SCREEN_W, SCREEN_H, selected_menu_item, global_sound_manager)
+            
+            elif current_state == 'start_game_submenu':
+                # Start game submenu
+                draw_start_game_submenu(screen, SCREEN_W, SCREEN_H, start_game_submenu_selected_item)
             
             elif current_state == 'config_select':
                 # Config selection menu
@@ -1956,10 +2800,25 @@ def main():
                 screen.fill((50, 50, 50))
                 draw_tutorial_choice(screen, SCREEN_W, SCREEN_H, tutorial_choice_selected_item)
             
+            elif current_state == 'new_player_experience':
+                # New player experience screen
+                screen.fill((50, 50, 50))
+                draw_new_player_experience(screen, SCREEN_W, SCREEN_H, npe_selected_item, npe_tutorial_enabled, npe_intro_enabled)
+            
             elif current_state == 'sounds_menu':
                 # Audio settings menu
                 screen.fill((40, 45, 55))
                 draw_audio_menu(screen, SCREEN_W, SCREEN_H, sounds_menu_selected_item, audio_settings, global_sound_manager)
+                
+            elif current_state == 'settings_menu':
+                # Main settings menu
+                screen.fill((40, 45, 55))
+                draw_settings_main_menu(screen, SCREEN_W, SCREEN_H, settings_menu_selected_item)
+                
+            elif current_state == 'privacy_controls':
+                # Privacy controls menu
+                screen.fill((40, 45, 55))
+                privacy_controls.draw(screen, SCREEN_W, SCREEN_H)
                 
             elif current_state == 'keybinding_menu':
                 # Keybinding configuration menu
@@ -1984,7 +2843,7 @@ def main():
                 
             elif current_state == 'bug_report':
                 # Bug report form
-                buttons = draw_bug_report_form(screen, bug_report_data, bug_report_selected_field, SCREEN_W, SCREEN_H)
+                draw_bug_report_form(screen, bug_report_data, bug_report_selected_field, SCREEN_W, SCREEN_H)
                 
             elif current_state == 'bug_report_success':
                 # Bug report success message
@@ -1996,15 +2855,17 @@ def main():
                 draw_end_game_menu(screen, SCREEN_W, SCREEN_H, end_game_selected_item, game_state, seed)
                 
             elif current_state == 'high_score':
-                # High score screen with AI safety researchers and player score
-                screen.fill((20, 30, 40))  # Dark blue background for high scores
-                draw_high_score_screen(screen, SCREEN_W, SCREEN_H, game_state, seed, high_score_submit_to_leaderboard)
+                # High score screen with interactive menu (lab config styling)
+                screen.fill((64, 64, 64))  # Grey background matching config menu
+                # Determine context: from_main_menu = True if no game_state (accessed from main menu)
+                from_main_menu = game_state is None
+                draw_high_score_screen(screen, SCREEN_W, SCREEN_H, game_state, seed, high_score_submit_to_leaderboard, high_score_selected_item, from_main_menu)
 
             elif current_state == 'escape_menu':
                 # Draw the game in background (dimmed)
                 screen.fill((25, 25, 35))
                 if game_state:
-                    ui_facade.render_game(screen, game_state, SCREEN_W, SCREEN_H)
+                    draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
                     
                 # Draw dark overlay
                 overlay = pygame.Surface((SCREEN_W, SCREEN_H))
@@ -2020,16 +2881,50 @@ def main():
                 # Preserve original game appearance and logic
                 screen.fill((25, 25, 35))
                 if game_state.game_over:
+                    # Track game over for exit message
+                    victory = getattr(game_state, 'victory', False)
+                    exit_tracker.set_game_over(victory)
+                    exit_tracker.update_game_state({
+                        'turn': game_state.turn,
+                        'money': game_state.money,
+                        'compute': getattr(game_state, 'compute', 0),
+                        'safety': getattr(game_state, 'safety_research', 0),
+                        'capabilities': getattr(game_state, 'capabilities_research', 0),
+                        'game_over': True,
+                        'victory': victory,
+                        'employees': {
+                            'total': game_state.staff,
+                        }
+                    })
                     current_state = 'end_game_menu'
                     end_game_selected_item = 0  # Reset selection
                 else:
                     # Update systems every frame for smooth animation
                     if game_state:
                         game_state._update_ui_transitions()
-                        game_state.update_turn_processing()  # Handle turn transition timing
+                        if hasattr(game_state, 'turn_manager'):
+                            game_state.turn_manager.update_processing_timer()  # Handle turn transition timing
+                        else:
+                            game_state.update_turn_processing()  # Fallback to old method
                         game_state.overlay_manager.update_animations()
+                        
+                        # Periodically update exit tracker game state (every 5 turns or on turn change)
+                        if not hasattr(exit_tracker, '_last_tracked_turn'):
+                            exit_tracker._last_tracked_turn = -1
+                        if game_state.turn != exit_tracker._last_tracked_turn:
+                            exit_tracker._last_tracked_turn = game_state.turn
+                            exit_tracker.update_game_state({
+                                'turn': game_state.turn,
+                                'money': game_state.money,
+                                'compute': getattr(game_state, 'compute', 0),
+                                'safety': getattr(game_state, 'safety_research', 0),
+                                'capabilities': getattr(game_state, 'capabilities_research', 0),
+                                'employees': {
+                                    'total': game_state.staff,
+                                }
+                            })
                     
-                    ui_facade.render_game(screen, game_state, SCREEN_W, SCREEN_H)
+                    draw_ui(screen, game_state, SCREEN_W, SCREEN_H)
                     
                     # Render overlay manager elements
                     if game_state:
@@ -2048,23 +2943,66 @@ def main():
                                 # Update header rect for dragging
                                 element.header_rect = header_rect
                     
+                    # Only show tooltips if enabled in configuration (default: off for cleaner UI)
                     if tooltip_text:
-                        draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
+                        from src.services.ui_config import should_show_tooltips
+                        if should_show_tooltips(game_state):
+                            draw_tooltip(screen, tooltip_text, pygame.mouse.get_pos(), SCREEN_W, SCREEN_H)
                     
                     # Draw hiring dialog if active
                     if game_state and game_state.pending_hiring_dialog:
-                        from ui import draw_hiring_dialog
+                        from src.ui.dialogs import draw_hiring_dialog
                         cached_hiring_dialog_rects = draw_hiring_dialog(screen, game_state.pending_hiring_dialog, SCREEN_W, SCREEN_H)
                     else:
                         # Clear cached rects when dialog is not active
                         cached_hiring_dialog_rects = None
+                    
+                    # Draw intelligence dialog if active
+                    if game_state and game_state.pending_intelligence_dialog:
+                        from src.ui.dialogs import draw_intelligence_dialog
+                        cached_intelligence_dialog_rects = draw_intelligence_dialog(screen, game_state.pending_intelligence_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_intelligence_dialog_rects = None
+                    
+                    # Draw fundraising dialog if active
+                    if game_state and game_state.pending_fundraising_dialog:
+                        from src.ui.dialogs import draw_fundraising_dialog
+                        cached_fundraising_dialog_rects = draw_fundraising_dialog(screen, game_state.pending_fundraising_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_fundraising_dialog_rects = None
+                    
+                    # Draw research dialog if active
+                    if game_state and game_state.pending_research_dialog:
+                        from src.ui.dialogs import draw_research_dialog
+                        cached_research_dialog_rects = draw_research_dialog(screen, game_state.pending_research_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_research_dialog_rects = None
+                    
+                    # Draw media dialog if active
+                    if game_state and game_state.pending_media_dialog:
+                        from src.ui.dialogs import draw_media_dialog
+                        cached_media_dialog_rects = draw_media_dialog(screen, game_state.pending_media_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_media_dialog_rects = None
+                    
+                    # Draw technical debt dialog if active
+                    if game_state and game_state.pending_technical_debt_dialog:
+                        from src.ui.dialogs import draw_technical_debt_dialog
+                        cached_technical_debt_dialog_rects = draw_technical_debt_dialog(screen, game_state.pending_technical_debt_dialog, SCREEN_W, SCREEN_H)
+                    else:
+                        # Clear cached rects when dialog is not active
+                        cached_technical_debt_dialog_rects = None
                     
 
                     # Draw stepwise tutorial overlay if active
                     if onboarding.show_tutorial_overlay:
                         tutorial_data = onboarding.get_current_stepwise_tutorial_data()
                         if tutorial_data:
-                            tutorial_button_rects = draw_stepwise_tutorial_overlay(screen, tutorial_data, SCREEN_W, SCREEN_H)
+                            draw_stepwise_tutorial_overlay(screen, tutorial_data, SCREEN_W, SCREEN_H)
                     
                     # Draw first-time help if available (but not when other dialogs are active)
                     if (first_time_help_content and isinstance(first_time_help_content, dict) and
@@ -2076,12 +3014,17 @@ def main():
                             first_time_help_content = None
                     
                     # Draw turn transition overlay if processing
-                    if game_state and game_state.turn_processing:
+                    if game_state and hasattr(game_state, 'turn_manager') and game_state.turn_manager.is_processing():
+                        draw_turn_transition_overlay(screen, SCREEN_W, SCREEN_H, game_state.turn_manager.processing_timer, game_state.turn_manager.processing_duration)
+                    elif game_state and game_state.turn_processing:  # Fallback to old system
                         draw_turn_transition_overlay(screen, SCREEN_W, SCREEN_H, game_state.turn_processing_timer, game_state.turn_processing_duration)
 
                         
             pygame.display.flip()
     except Exception as e:
+        # Track crash for exit message
+        exit_tracker.set_crash(str(e))
+        
         # If an exception occurs during gameplay, try to save the game log
         if game_state and hasattr(game_state, 'logger') and not game_state.game_over:
             try:
@@ -2091,11 +3034,14 @@ def main():
                     'reputation': game_state.reputation,
                     'doom': game_state.doom
                 }
-                game_state.logger.log_game_end(f"Game crashed: {str(e)}", game_state.turn, final_resources)
+                game_state.logger.log_game_end(f'Game crashed: {str(e)}', game_state.turn, final_resources)
                 log_path = game_state.logger.write_log_file()
-                print(f"Game crashed, but log saved to: {log_path}")
+                if log_path:
+                    exit_tracker.set_log_path(log_path)
+                # print(f'Game crashed, but log saved to: {log_path}')
             except Exception:
-                print("Game crashed and could not save log")
+                # print('Game crashed and could not save log')
+                pass
         raise  # Re-raise the exception
     finally:
         # Ensure we try to write log on any exit if game was in progress
@@ -2107,12 +3053,28 @@ def main():
                     'reputation': game_state.reputation,
                     'doom': game_state.doom
                 }
-                game_state.logger.log_game_end("Game quit by user", game_state.turn, final_resources)
+                game_state.logger.log_game_end('Game quit by user', game_state.turn, final_resources)
                 log_path = game_state.logger.write_log_file()
-                print(f"Game log saved to: {log_path}")
+                if log_path:
+                    exit_tracker.set_log_path(log_path)
+                # Update exit tracker with final game state
+                exit_tracker.update_game_state({
+                    'turn': game_state.turn,
+                    'money': game_state.money,
+                    'compute': getattr(game_state, 'compute', 0),
+                    'safety': getattr(game_state, 'safety_research', 0),
+                    'capabilities': getattr(game_state, 'capabilities_research', 0),
+                    'employees': {
+                        'total': game_state.staff,
+                    }
+                })
+                # print(f'Game log saved to: {log_path}')
             except Exception:
                 pass
+        
+        # Final shutdown logging with enhanced messages
+        log_shutdown()
         pygame.quit()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

@@ -1,0 +1,1 @@
+# Show settings as visible-but-locked in default config mode\n\nWhen using default config, show key settings (starting money, compute, seed) as visible but locked so players understand what is configured for them.\n\n<!-- GitHub Issue #363 -->

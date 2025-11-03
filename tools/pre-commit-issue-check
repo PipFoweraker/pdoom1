@@ -1,0 +1,37 @@
+#!/bin/bash
+# Pre-commit hook to ensure local issues are synced to GitHub
+# Install: cp tools/pre-commit-issue-check .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+echo "[CHECK] Checking for new local issues that need GitHub sync..."
+
+# Check if any files in issues/ are being added
+if git diff --cached --name-only | grep -q "^issues/.*\.md$"; then
+    echo "[WARN] New issue files detected in commit"
+    
+    # Run the sync tool in dry-run mode
+    if [ -f "tools/github-issue-sync.py" ]; then
+        echo "Running issue sync check..."
+        cd tools
+        python github-issue-sync.py --dry-run
+        sync_result=$?
+        cd ..
+        
+        if [ $sync_result -ne 0 ]; then
+            echo "[ERROR] Issue sync check failed"
+            exit 1
+        fi
+        
+        echo ""
+        echo "[INFO] IMPORTANT: New local issues detected!"
+        echo "   After committing, run: python tools/github-issue-sync.py --create"
+        echo "   Or use the GitHub Actions workflow to sync automatically"
+        echo ""
+        echo "   This ensures no information is lost between local and GitHub tracking"
+        echo ""
+    else
+        echo "[WARN] Issue sync tool not found. Consider adding GitHub sync."
+    fi
+fi
+
+echo "[SUCCESS] Pre-commit issue check complete"
+exit 0

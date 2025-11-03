@@ -1,0 +1,1 @@
+# Organize demo scripts into structured directory\n\nDemo scripts scattered in workspace root. Create tools/demos/ directory and move demo_technical_failures.py, party_demo.py, demo_settings.py with updated imports. Add README.md with usage instructions.\n\n<!-- GitHub Issue #271 -->

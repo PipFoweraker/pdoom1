@@ -1,0 +1,1 @@
+# Implement automated dead code detection and analysis tooling\n\nCreate tooling to automatically detect unused imports, unreferenced functions, and dead code patterns. Add to dev tools collection for ongoing maintenance. Prevent future accumulation of technical debt through CI integration. Research tools like vulture, autoflake integration.\n\n<!-- GitHub Issue #280 -->

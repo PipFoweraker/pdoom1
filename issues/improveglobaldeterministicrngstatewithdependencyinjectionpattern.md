@@ -1,0 +1,1 @@
+# Improve global deterministic RNG state with dependency injection pattern\n\nCurrent global deterministic_rng variable pattern could be improved with dependency injection. Consider passing RNG instance through GameState or using proper DI pattern. Architectural improvement for better testability and modularity.\n\n<!-- GitHub Issue #275 -->

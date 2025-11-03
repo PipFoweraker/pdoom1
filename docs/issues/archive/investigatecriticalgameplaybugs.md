@@ -1,0 +1,1 @@
+# Investigate Critical Gameplay Bugs\n\nValidate and fix reported critical bugs: action-points-counting-bug and fundraising-mechanics-bug. These affect core turn mechanics and economic progression. Use programmatic testing to verify issues exist and implement fixes.\n\n<!-- GitHub Issue #382 -->

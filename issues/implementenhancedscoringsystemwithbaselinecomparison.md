@@ -1,0 +1,1 @@
+# Implement enhanced scoring system with baseline comparison\n\nCreate baseline scoring by running default no-action games for weekly seeds, then allow players to compare performance against baseline for various achievements.\n\n<!-- GitHub Issue #372 -->

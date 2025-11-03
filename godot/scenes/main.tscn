@@ -1,0 +1,212 @@
+[gd_scene load_steps=4 format=3 uid="uid://bvqxj8x5p6h8c"]
+
+[ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_main_gm"]
+[ext_resource type="Script" path="res://scripts/ui/main_ui.gd" id="2_main_ui"]
+[ext_resource type="Texture2D" path="res://assets/images/office_cat.png" id="3_cat_texture"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("1_main_gm")
+
+[node name="MainUI" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("2_main_ui")
+
+[node name="TopBar" type="HBoxContainer" parent="MainUI"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="TitleLabel" type="Label" parent="MainUI/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "P(Doom) - Godot Version (MVP)"
+horizontal_alignment = 1
+
+[node name="CatPanel" type="PanelContainer" parent="MainUI/TopBar"]
+visible = false
+layout_mode = 2
+custom_minimum_size = Vector2(80, 80)
+
+[node name="MarginContainer" type="MarginContainer" parent="MainUI/TopBar/CatPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="CatDisplay" type="TextureRect" parent="MainUI/TopBar/CatPanel/MarginContainer"]
+layout_mode = 2
+texture = ExtResource("3_cat_texture")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ResourceDisplay" type="HBoxContainer" parent="MainUI"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="TurnLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Turn: 0"
+
+[node name="MoneyLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Money: $0"
+
+[node name="ComputeLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Compute: 0"
+
+[node name="ResearchLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Research: 0"
+
+[node name="PapersLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Papers: 0"
+
+[node name="ReputationLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reputation: 0"
+
+[node name="DoomLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Doom: 0"
+
+[node name="APLabel" type="Label" parent="MainUI/ResourceDisplay"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "AP: 0"
+
+[node name="HSeparator1" type="HSeparator" parent="MainUI"]
+layout_mode = 2
+
+[node name="ContentArea" type="HBoxContainer" parent="MainUI"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="VBoxContainer" parent="MainUI/ContentArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ActionsLabel" type="Label" parent="MainUI/ContentArea/LeftPanel"]
+layout_mode = 2
+text = "Actions:"
+
+[node name="ActionsScroll" type="ScrollContainer" parent="MainUI/ContentArea/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ActionsList" type="VBoxContainer" parent="MainUI/ContentArea/LeftPanel/ActionsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSeparator" type="HSeparator" parent="MainUI/ContentArea/LeftPanel"]
+layout_mode = 2
+
+[node name="UpgradesLabel" type="Label" parent="MainUI/ContentArea/LeftPanel"]
+layout_mode = 2
+text = "Upgrades:"
+
+[node name="UpgradesScroll" type="ScrollContainer" parent="MainUI/ContentArea/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 1
+custom_minimum_size = Vector2(0, 150)
+
+[node name="UpgradesList" type="VBoxContainer" parent="MainUI/ContentArea/LeftPanel/UpgradesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightPanel" type="VBoxContainer" parent="MainUI/ContentArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MessageLogLabel" type="Label" parent="MainUI/ContentArea/RightPanel"]
+layout_mode = 2
+text = "Message Log:"
+
+[node name="MessageScroll" type="ScrollContainer" parent="MainUI/ContentArea/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MessageLog" type="RichTextLabel" parent="MainUI/ContentArea/RightPanel/MessageScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+text = "[color=gray]Game not started...[/color]"
+fit_content = true
+scroll_following = true
+
+[node name="HSeparator2" type="HSeparator" parent="MainUI"]
+layout_mode = 2
+
+[node name="InfoBar" type="PanelContainer" parent="MainUI"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 40)
+
+[node name="MarginContainer" type="MarginContainer" parent="MainUI/InfoBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="InfoLabel" type="RichTextLabel" parent="MainUI/InfoBar/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]Hover over actions to see details...[/color]"
+fit_content = true
+scroll_active = false
+
+[node name="BottomBar" type="HBoxContainer" parent="MainUI"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="ControlButtons" type="HBoxContainer" parent="MainUI/BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="InitButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+layout_mode = 2
+text = "Init Game"
+
+[node name="TestActionButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+layout_mode = 2
+text = "Hire Safety Researcher"
+disabled = true
+
+[node name="EndTurnButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+layout_mode = 2
+text = "End Turn"
+disabled = true
+
+[node name="PhaseLabel" type="RichTextLabel" parent="MainUI/BottomBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "[color=white]Phase: Not Started[/color]"
+fit_content = true
+scroll_active = false
+
+[connection signal="pressed" from="MainUI/BottomBar/ControlButtons/InitButton" to="MainUI" method="_on_init_button_pressed"]
+[connection signal="pressed" from="MainUI/BottomBar/ControlButtons/TestActionButton" to="MainUI" method="_on_test_action_button_pressed"]
+[connection signal="pressed" from="MainUI/BottomBar/ControlButtons/EndTurnButton" to="MainUI" method="_on_end_turn_button_pressed"]

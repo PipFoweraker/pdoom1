@@ -76,14 +76,14 @@ jobs:
           exit 1
         fi
         
-        echo "✓ Version consistency check passed"
+        echo "CHECKED Version consistency check passed"
 
   test:
     runs-on: ubuntu-latest
     needs: validate-version
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10', 3.11]
+        python-version: [3.9, '3.10', 3.11, 3.12]
     
     steps:
     - uses: actions/checkout@v4
@@ -109,8 +109,8 @@ jobs:
         from src.services.version import get_display_version
         print(f'Testing P(Doom) {get_display_version()}')
         gs = GameState('release-test')
-        print('✓ Game initializes correctly')
-        print(f'✓ Version: {gs.logger.game_version}')
+        print('CHECKED Game initializes correctly')
+        print(f'CHECKED Version: {gs.logger.game_version}')
         "
 
   create-release:

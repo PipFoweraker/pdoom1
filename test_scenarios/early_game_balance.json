@@ -1,0 +1,50 @@
+{
+  "name": "Early Game Resource Management",
+  "description": "Test basic resource management in the first 5 turns",
+  "initial_state": {
+    "seed": "early-game-test-001",
+    "money": 100000,
+    "staff": 0,
+    "reputation": 50,
+    "doom": 25
+  },
+  "actions": [
+    {
+      "turn": 1,
+      "action_id": "hire_staff",
+      "parameters": {"count": 2},
+      "expected_outcome": {"staff_hired": 2}
+    },
+    {
+      "turn": 2,
+      "action_id": "end_turn"
+    },
+    {
+      "turn": 3,
+      "action_id": "hire_staff", 
+      "parameters": {"count": 1}
+    },
+    {
+      "turn": 4,
+      "action_id": "end_turn"
+    },
+    {
+      "turn": 5,
+      "action_id": "end_turn"
+    }
+  ],
+  "end_conditions": {
+    "max_turns": 5,
+    "doom_threshold": 80
+  },
+  "success_criteria": [
+    {"money": "> 90000"},
+    {"staff": ">= 3"},
+    {"doom": "< 70"}
+  ],
+  "metadata": {
+    "category": "balance_testing",
+    "difficulty": "easy",
+    "expected_duration_ms": 500
+  }
+}

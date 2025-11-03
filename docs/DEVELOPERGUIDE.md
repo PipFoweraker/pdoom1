@@ -7,7 +7,8 @@ For **installation and troubleshooting**, see the [README](../README.md).
 
 ## Table of Contents
 - [Development Setup](#development-setup) (Line 28)
-- [Enhanced Settings System Architecture](#enhanced-settings-system-architecture) (Line 54)
+- [Health Monitoring Infrastructure](#health-monitoring-infrastructure) (Line 60)
+- [Enhanced Settings System Architecture](#enhanced-settings-system-architecture) (Line 90)
 - [Custom Sound Overrides (sounds/)](#custom-sound-overrides-sounds) (Line 100)
 - [Project Structure](#project-structure) (Line 146)
 - [UI Architecture and Overlay Management](#ui-architecture-and-overlay-management) (Line 168)
@@ -27,12 +28,14 @@ For **installation and troubleshooting**, see the [README](../README.md).
 
 **Configuration System**: For config management and modding support, see [CONFIG_SYSTEM.md](CONFIG_SYSTEM.md).
 
+**NEW IN v0.7.5**: TurnManager architecture extraction from monolithic GameState.end_turn() method provides better state management and debugging capabilities.
+
 ---
 
 ## Development Setup
 
 ### Prerequisites
-- Python 3.8+
+- Python 3.9+
 - pygame (`pip install pygame`)
 - pytest for testing (`pip install pytest` or `pip install -r requirements.txt`)
 - numpy for sound effects (`pip install numpy` - optional but recommended)
@@ -53,6 +56,30 @@ python -m unittest discover tests -v
 python main.py
 ```
 
+### Health Monitoring Infrastructure
+
+P(Doom) includes enterprise-grade health monitoring infrastructure for automated CI/CD pipeline integration and project quality tracking.
+
+#### Quick Health Check
+```bash
+# Run comprehensive health assessment
+python scripts/project_health.py
+
+# View historical trends
+python scripts/health_tracker.py --show-trends --format human
+
+# CI/CD integration
+python scripts/ci_health_integration.py --gate-check
+```
+
+#### Key Features
+- **Real-time Assessment**: Code quality, testing, documentation, repository status
+- **Historical Tracking**: SQLite-based trend analysis with milestone detection
+- **CI/CD Integration**: Machine-readable outputs for automated pipeline gates
+- **ASCII Compliance**: Cross-platform compatible outputs for all automation systems
+
+For complete documentation, see [HEALTH_MONITORING_INFRASTRUCTURE.md](technical/HEALTH_MONITORING_INFRASTRUCTURE.md).
+
 ---
 
 ## Enhanced Settings System Architecture
@@ -62,10 +89,10 @@ P(Doom) features a comprehensive settings and configuration system designed for 
 ### System Architecture
 
 **Core Components:**
-- **src/services/seed_manager.py** — Centralized seed generation, validation, and management
-- **src/services/game_config_manager.py** — Custom game configuration creation and sharing
-- **src/ui/enhanced_settings.py** — Modern settings UI with categorical organization
-- **src/ui/settings_integration.py** — Integration layer for gradual adoption
+- **src/services/seed_manager.py** -- Centralized seed generation, validation, and management
+- **src/services/game_config_manager.py** -- Custom game configuration creation and sharing
+- **src/ui/enhanced_settings.py** -- Modern settings UI with categorical organization
+- **src/ui/settings_integration.py** -- Integration layer for gradual adoption
 
 ### Settings Categories
 
@@ -130,21 +157,21 @@ from src.services.game_config_manager import GameConfigManager
 config_manager = GameConfigManager()
 
 # Create new configuration
-config_id = config_manager.create_config("My Custom Game", {
-    "starting_money": 500,
-    "doom_threshold": 75,
-    "event_frequency": 0.8
+config_id = config_manager.create_config('My Custom Game', {
+    'starting_money': 500,
+    'doom_threshold': 75,
+    'event_frequency': 0.8
 })
 
 # Export for sharing
-config_manager.export_config(config_id, "my_game.json")
+config_manager.export_config(config_id, 'my_game.json')
 ```
 
 ### Testing and Validation
 
 **Demo Script**: `demo_settings.py` - Interactive demonstration of all settings features
 **Test Suite**: `test_fixes.py` - Validates core functionality and integration
-**Manual Testing**: Use Settings menu → Enhanced Settings to test UI components
+**Manual Testing**: Use Settings menu -> Enhanced Settings to test UI components
 
 ---
 
@@ -210,39 +237,46 @@ python main.py
 ## Project Structure
 
 ### Core Game Files
-- **main.py** — Game entry point and menu system
-- **game_state.py** — Core game logic and state management
-- **actions.py** — Action definitions (as Python dicts)
-- **action_rules.py** — Centralized action availability rule system
-- **upgrades.py** — Upgrade definitions
-- **events.py** — Event definitions and special event logic
-- **event_system.py** — Enhanced event system with deferred events and popups
-- **opponents.py** — Opponent AI and intelligence system
+- **main.py** -- Game entry point and menu system with new player experience
+- **game_state.py** -- Core game logic and state management
+- **actions.py** -- Action definitions (as Python dicts)
+- **action_rules.py** -- Centralized action availability rule system
+- **upgrades.py** -- Upgrade definitions
+- **events.py** -- Event definitions and special event logic
+- **event_system.py** -- Enhanced event system with deferred events and popups
+- **opponents.py** -- Opponent AI and intelligence system
+
+### Economic Systems
+- **src/features/economic_cycles.py** -- Economic cycles and funding volatility system
+  - Historical AI funding timeline (2017-2025) with realistic market phases
+  - 5 funding sources with different economic sensitivities
+  - Enhanced fundraising actions and advanced funding mechanisms
+  - Economic events triggered by market conditions
 
 ### UI and Interface
-- **ui.py** — Pygame-based UI code with visual feedback integration
-- **overlay_manager.py** — Modular UI overlay and z-order management system
-- **visual_feedback.py** — Standardized visual feedback for clickable elements
+- **ui.py** -- Pygame-based UI code with visual feedback integration
+- **overlay_manager.py** -- Modular UI overlay and z-order management system
+- **visual_feedback.py** -- Standardized visual feedback for clickable elements
 
 ### Enhanced Settings System
-- **src/services/seed_manager.py** — Centralized seed generation, validation, and management
-- **src/services/game_config_manager.py** — Custom game configuration creation and sharing
-- **src/ui/enhanced_settings.py** — Modern settings UI with categorical organization
-- **src/ui/settings_integration.py** — Integration layer for gradual adoption
+- **src/services/seed_manager.py** -- Centralized seed generation, validation, and management
+- **src/services/game_config_manager.py** -- Custom game configuration creation and sharing
+- **src/ui/enhanced_settings.py** -- Modern settings UI with categorical organization
+- **src/ui/settings_integration.py** -- Integration layer for gradual adoption
 
 ### Audio and Feedback
-- **sound_manager.py** — Sound effects and audio feedback
-- **game_logger.py** — Comprehensive game logging system
+- **sound_manager.py** -- Sound effects and audio feedback
+- **game_logger.py** -- Comprehensive game logging system
 
 ### Development and Testing
-- **tests/** — Automated tests for core logic
-- **demo_settings.py** — Interactive demonstration of enhanced settings features
-- **test_fixes.py** — Validation script for core functionality and integration
+- **tests/** -- Automated tests for core logic
+- **demo_settings.py** -- Interactive demonstration of enhanced settings features
+- **test_fixes.py** -- Validation script for core functionality and integration
 
 ### Documentation
-- **README.md** — Installation, troubleshooting, dependencies
-- **PLAYERGUIDE.md** — Player experience and gameplay guide
-- **DEVELOPERGUIDE.md** (this file) — Contributor documentation
+- **README.md** -- Installation, troubleshooting, dependencies
+- **PLAYERGUIDE.md** -- Player experience and gameplay guide
+- **DEVELOPERGUIDE.md** (this file) -- Contributor documentation
 
 ---
 
@@ -385,10 +419,10 @@ def _calculate_blob_position(self, blob_index, screen_w=1200, screen_h=800):
 ```python
 # Elements are automatically layered by ZLayer enum
 overlay_manager.register_element(UIElement(
-    id="dialog",
+    id='dialog',
     layer=ZLayer.DIALOGS,
     rect=pygame.Rect(x, y, w, h),
-    title="Dialog Title"
+    title='Dialog Title'
 ))
 ```
 
@@ -396,7 +430,7 @@ overlay_manager.register_element(UIElement(
 ```python
 # Buttons automatically get proper visual feedback
 visual_feedback.draw_button(
-    surface, rect, "Button Text", 
+    surface, rect, 'Button Text', 
     ButtonState.HOVER,  # State determines styling
     FeedbackStyle.BUTTON
 )
@@ -405,7 +439,7 @@ visual_feedback.draw_button(
 #### Error Tracking and Easter Eggs
 ```python
 # Three identical errors trigger beep sound
-if game_state.track_error("Insufficient money"):
+if game_state.track_error('Insufficient money'):
     # Easter egg activated automatically
     pass
 ```
@@ -432,10 +466,10 @@ The Action Points (AP) system includes sophisticated visual and audio feedback:
 - **Visual State Indicators**: ButtonState enum reflects AP availability in real-time
 
 **Audio Feedback:**
-- **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
+- **AP Spend Sound**: Satisfying 'ding' sound when Action Points are spent
 - **Error Easter Egg**: Audio beep after 3 repeated identical errors
 - **Sound Integration**: Integrated with `SoundManager` for consistent audio experience
-- **AP Spend Sound**: Satisfying "ding" sound when Action Points are spent
+- **AP Spend Sound**: Satisfying 'ding' sound when Action Points are spent
 - **Achievement Sound**: Celebratory 'Zabinga!' sound when research papers are completed
 - **Error Easter Egg**: Audio beep after 3 repeated identical errors
 
@@ -453,7 +487,7 @@ if success:
 
 **Architecture:**
 - **Action Shortcuts**: Keys 1-9 map to first 9 actions in the action list
-- **Visual Integration**: Action buttons display shortcuts as "[1] Action Name"
+- **Visual Integration**: Action buttons display shortcuts as '[1] Action Name'
 - **Error Handling**: Comprehensive validation with user-friendly error messages
 - **Auto-Delegation**: Keyboard shortcuts automatically use delegation when beneficial
 
@@ -554,7 +588,7 @@ class Opponent:
 
 Opponents execute simple AI logic each turn:
 - Budget allocation based on priorities (research > hiring > compute > lobbying)
-- Research progress scaled by resources (researchers × compute bonus)
+- Research progress scaled by resources (researchers x compute bonus)
 - Doom contribution proportional to capabilities research
 
 ---
@@ -604,13 +638,54 @@ Provides automatic contextual help when players encounter key mechanics for the 
 - **Staff Hiring**: When hiring beyond starting staff (triggers at staff > 2)
 - **Upgrade Purchase**: When buying any upgrade for the first time
 - **Action Points Exhausted**: When attempting actions without sufficient AP
-- **High p(Doom) Warning**: When p(Doom) reaches dangerous levels (≥70%)
+- **High p(Doom) Warning**: When p(Doom) reaches dangerous levels (>=70%)
 
 **Help Features:**
 - Small popup notifications in top-right corner
 - Dismissible with click or escape key
-- Only shown once per mechanic per player
+- Only shown once per mechanic per player (Factorio-style)
 - Disabled during active tutorial to avoid interference
+- Can be reset with Ctrl+R for new players
+
+### Hint System vs Tutorial System
+
+P(Doom) now has two separate help systems:
+
+**Tutorial System** (`tutorial_enabled` config):
+- Interactive step-by-step walkthrough for new players
+- Can be enabled/disabled in New Player Experience
+- Uses `show_tutorial_overlay` state variable
+
+**Hint System** (`first_time_help` config):
+- Factorio-style context-sensitive hints
+- Shows once per mechanic, then auto-dismisses
+- Can be reset with Ctrl+R for new players
+- Uses `should_show_hint()` method that checks both config and seen status
+
+### Mechanic Help Content System
+
+The `get_mechanic_help()` method provides structured help content for specific game mechanics:
+
+**Supported Mechanics:**
+- `first_staff_hire`: Guidance on hiring staff and action point benefits (triggered on first manual hire attempt)
+- `first_upgrade_purchase`: Explanation of laboratory upgrades and efficiency
+- `action_points_exhausted`: Instructions when no action points remain
+- `high_doom_warning`: Critical safety warnings for high p(Doom) levels
+
+**New Methods in OnboardingSystem:**
+```python
+def should_show_hint(self, mechanic: str) -> bool:
+    '''Check if hint should be shown (considers both config and seen status)'''
+
+def are_hints_enabled(self) -> bool:
+    '''Check if hints are enabled in config'''
+
+def reset_all_hints(self) -> None:
+    '''Reset all hints for new players (Ctrl+R functionality)'''
+
+def get_hint_status(self) -> Dict:
+    '''Get status of all hints for settings display'''
+```
 
 ### Mechanic Help Content System
 
@@ -625,14 +700,14 @@ The `get_mechanic_help()` method provides structured help content for specific g
 **Method Signature:**
 ```python
 def get_mechanic_help(self, mechanic: str) -> Optional[Dict]:
-    """
+    '''
     Get help content for a specific game mechanic.
     
     Returns:
         Dict with 'title' and 'content' keys for valid mechanics, None for invalid ones
         
     Note: Currently a stub implementation with warning logging.
-    """
+    '''
 ```
 
 **Return Format:**
@@ -654,11 +729,11 @@ The system uses `onboarding_progress.json` to store:
 
 ```json
 {
-  "tutorial_enabled": true,
-  "is_first_time": false,
-  "completed_steps": ["welcome", "resources", "actions", ...],
-  "seen_mechanics": ["first_staff_hire", "first_upgrade_purchase", ...],
-  "tutorial_dismissed": false
+  'tutorial_enabled': true,
+  'is_first_time': false,
+  'completed_steps': ['welcome', 'resources', 'actions', ...],
+  'seen_mechanics': ['first_staff_hire', 'first_upgrade_purchase', ...],
+  'tutorial_dismissed': false
 }
 ```
 
@@ -746,6 +821,42 @@ pip install pytest
 pytest tests/ -v
 ```
 
+### Development Tools
+
+**Interactive Development Tool:**
+```sh
+# Interactive menu for testing game systems
+python tools/dev_tool.py
+
+# Run specific tests
+python tools/dev_tool.py --test leaderboard
+python tools/dev_tool.py --test dual
+python tools/dev_tool.py --list
+```
+
+**Cross-Platform ASCII Compliance & Documentation Quality Tools:**
+```sh
+# Comprehensive standards enforcement
+python scripts/enforce_standards.py --check-all
+
+# ASCII compliance for cross-platform compatibility
+python scripts/ascii_compliance_fixer.py --file filename.md
+python scripts/ascii_compliance_fixer.py --directory docs/
+
+# Intelligent cleanup of leftover Unicode artifacts and formatting remnants
+python scripts/ascii_cleanup_remnants.py --file filename.md
+python scripts/ascii_cleanup_remnants.py --scan docs/
+```
+
+**Pre-release Validation:**
+```sh
+# Pre-version bump quality checks
+python scripts/pre_version_bump.py
+
+# Logging system testing
+python scripts/logging_system.py
+```
+
 ### Test Coverage
 
 **233 automated tests** covering all major systems:
@@ -766,7 +877,7 @@ from game_state import GameState
 
 class TestNewFeature(unittest.TestCase):
     def test_new_functionality(self):
-        gs = GameState("test_seed")
+        gs = GameState('test_seed')
         # Test implementation
         self.assertEqual(expected, actual)
 ```
@@ -776,7 +887,7 @@ class TestNewFeature(unittest.TestCase):
 Tests run automatically on GitHub Actions for:
 - Push to main/develop branches
 - Pull requests
-- Multiple Python versions (3.8, 3.9, 3.10, 3.11)
+- Multiple Python versions (3.9, 3.10, 3.11, 3.12)
 
 ---
 
@@ -788,12 +899,12 @@ Actions are defined in `actions.py` as a list of dictionaries:
 
 ```python
 {
-    "name": "New Action",
-    "desc": "Description of what it does",
-    "cost": 50,
-    "upside": lambda gs: gs._add('money', 10),
-    "downside": lambda gs: gs._add('reputation', -1),
-    "rules": rule_function  # Optional availability conditions
+    'name': 'New Action',
+    'desc': 'Description of what it does',
+    'cost': 50,
+    'upside': lambda gs: gs._add('money', 10),
+    'downside': lambda gs: gs._add('reputation', -1),
+    'rules': rule_function  # Optional availability conditions
 }
 ```
 
@@ -808,14 +919,14 @@ from action_rules import ActionRules, manager_unlock_rule
 
 # In actions.py
 {
-    "name": "Manager Action",
-    "rules": manager_unlock_rule  # Pre-defined rule function
+    'name': 'Manager Action',
+    'rules': manager_unlock_rule  # Pre-defined rule function
 }
 
 # Or using the rule system directly
 {
-    "name": "Advanced Action", 
-    "rules": lambda gs: ActionRules.requires_staff_and_turn(gs, min_staff=10, min_turn=5)
+    'name': 'Advanced Action', 
+    'rules': lambda gs: ActionRules.requires_staff_and_turn(gs, min_staff=10, min_turn=5)
 }
 ```
 
@@ -834,7 +945,7 @@ For new game mechanics, add rules to `action_rules.py`:
 ```python
 @staticmethod
 def requires_new_condition(gs, min_value):
-    """
+    '''
     Rule: Action requires new game condition.
     
     Args:
@@ -843,7 +954,7 @@ def requires_new_condition(gs, min_value):
         
     Returns:
         bool: True if condition is met
-    """
+    '''
     return gs.new_attribute >= min_value
 ```
 
@@ -861,10 +972,10 @@ Upgrades are defined in `upgrades.py`:
 
 ```python
 {
-    "name": "New Upgrade",
-    "desc": "What this upgrade provides",
-    "cost": 100,
-    "effect_key": "new_upgrade_effect"
+    'name': 'New Upgrade',
+    'desc': 'What this upgrade provides',
+    'cost': 100,
+    'effect_key': 'new_upgrade_effect'
 }
 ```
 
@@ -876,10 +987,10 @@ Events are defined in `events.py`:
 
 ```python
 {
-    "name": "New Event",
-    "desc": "Event description",
-    "trigger": lambda gs: gs.turn > 5 and random.random() < 0.1,
-    "effect": lambda gs: gs._add('doom', 5)
+    'name': 'New Event',
+    'desc': 'Event description',
+    'trigger': lambda gs: gs.turn > 5 and random.random() < 0.1,
+    'effect': lambda gs: gs._add('doom', 5)
 }
 ```
 
@@ -889,12 +1000,12 @@ To add new opponents, modify `create_default_opponents()` in `opponents.py`:
 
 ```python
 opponents.append(Opponent(
-    name="New Competitor",
+    name='New Competitor',
     budget=random.randint(500, 1000),
     capabilities_researchers=random.randint(10, 20),
     lobbyists=random.randint(5, 15),
     compute=random.randint(30, 80),
-    description="Description of this competitor"
+    description='Description of this competitor'
 ))
 ```
 
@@ -908,6 +1019,179 @@ opponents.append(Opponent(
 - Add tests to `tests/test_opponents.py`
 - Test discovery mechanics, AI behavior, and victory conditions
 - Verify integration with espionage actions
+
+---
+
+## Research Quality & Technical Debt System (Issue #190)
+
+### Overview
+The Research Quality System implements strategic trade-offs between research speed and safety, with long-term consequences through technical debt accumulation. This system provides depth to research decisions while maintaining strategic tension between short-term progress and long-term stability.
+
+### Core Components
+
+**Research Quality Levels:**
+- **RUSHED**: -40% time, -20% cost, +15% doom, +2 debt points, -10% success rate
+- **STANDARD**: Baseline metrics (default behavior) 
+- **THOROUGH**: +60% time, +40% cost, -20% doom, -1 debt point, +15% success rate, +reputation
+
+**Technical Debt System:**
+- Accumulates from shortcuts taken during research
+- Progressive penalties affecting research speed and accident chance
+- Swiss cheese model: multiple failure modes with escalating consequences
+- Categories: Safety testing, code quality, documentation, validation
+
+### Researcher Assignment System
+
+**Individual Researcher Management:**
+```python
+# Assign specific researchers to specific tasks
+gs.assign_researcher_to_task(researcher_id, task_name, quality_override)
+
+# Set researcher default quality preferences
+gs.set_researcher_default_quality(researcher_id, ResearchQuality.THOROUGH)
+
+# Get effective quality for task (hierarchy: task override -> researcher default -> org default)
+quality = gs.get_task_quality_setting(task_name, researcher_id)
+```
+
+**Assignment Tracking:**
+- Researchers have unique IDs for reliable tracking
+- Task-specific quality overrides
+- Per-researcher default quality settings
+- Assignment summary for UI display
+
+### Technical Debt Management
+
+**IMPORTANT: Naming Convention (v0.9.1+)**
+- **Technical Debt Methods**: Use `add_technical_debt()` and `reduce_technical_debt()` 
+- **Future Financial Debt**: Will use `add_financial_debt()` and `reduce_financial_debt()`
+- **Backward Compatibility**: Legacy `add_debt()` / `reduce_debt()` methods still work but are deprecated
+- **Rationale**: Clear distinction prevents confusion when lab financial management is added
+
+**Debt Accumulation:**
+- RUSHED research: +2 debt points per project
+- THOROUGH research: -1 debt point per project
+- Debt categories track different types of shortcuts
+
+**Consequences by Debt Level:**
+- 0-5: No penalties
+- 6-10: -5% research speed
+- 11-15: -10% research speed, +5% accident chance
+- 16-20: -15% research speed, +10% accident chance, reputation risk
+- 20+: Major system failure events possible
+
+**Debt Reduction Actions:**
+- **Refactoring Sprint**: Costs time + money, reduces 3-5 debt points
+- **Safety Audit**: Costs money, reduces 2 debt points, gains reputation
+- **Code Review**: Per-researcher cost, reduces 1 debt point per researcher
+
+### Technical Debt Audit System
+
+**Administrator Requirement:**
+- Requires admin_staff >= 1
+- Costs 2 Action Points
+- Reveals exact debt numbers and category breakdown
+
+**Audit Results:**
+```python
+audit_result = gs.execute_technical_debt_audit()
+# Returns: risk_level, total_debt, speed_penalty_percent, 
+# accident_chance_percent, recommendations, category_breakdown
+```
+
+**Risk Indicators:**
+- **Low Risk**: 0-5 debt points (green)
+- **Medium Risk**: 6-15 debt points (yellow) 
+- **High Risk**: 16+ debt points (red)
+
+### Research Quality Events
+
+**Event Types:**
+1. **Safety Shortcut Temptation**: Researcher suggests cutting corners
+2. **Technical Debt Warning**: Lead researcher warns about debt accumulation
+3. **Quality vs Speed Dilemma**: Critical deadline forces quality choices
+4. **Competitor Shortcut Discovery**: Intelligence reveals competitor shortcuts
+
+**Event Integration:**
+- Uses existing event system framework
+- Multiple response options affecting debt and reputation
+- Triggers based on debt levels and research activity
+
+### Integration Points
+
+**Turn Structure Integration:**
+- Debt consequences checked during end_turn()
+- Assignment tracking persists across turns
+- Quality settings affect research action outcomes
+
+**UI Integration Points:**
+- Assignment interface for researcher-task pairing
+- Quality setting controls with default hierarchy
+- Risk level indicators (Low/Medium/High)
+- Audit results display with detailed breakdown
+
+**Action System Integration:**
+```python
+# Research actions automatically use quality system
+execute_research_action(gs, action_name, base_doom_reduction, base_reputation_gain)
+# Applies quality modifiers and technical debt penalties
+```
+
+### Extension Points
+
+**Adding New Quality Levels:**
+1. Add to ResearchQuality enum
+2. Define modifiers in QUALITY_MODIFIERS
+3. Update UI quality selection
+4. Add tests for new quality level
+
+**Adding New Debt Categories:**
+1. Add to DebtCategory enum
+2. Update debt distribution logic
+3. Add category-specific consequences
+4. Update audit breakdown display
+
+**Adding New Research Events:**
+1. Add event definition to events.py
+2. Implement event handler in GameState
+3. Define trigger conditions
+4. Add multiple response options
+
+### Testing Strategy
+
+**Unit Tests:**
+- Quality modifier calculations
+- Debt accumulation and reduction
+- Assignment tracking functionality
+- Audit result generation
+
+**Integration Tests:**
+- Research action quality integration
+- Event system integration
+- Turn progression with debt consequences
+- UI data flow validation
+
+**Performance Considerations:**
+- Assignment lookups optimized for UI responsiveness
+- Debt calculations cached where appropriate
+- Event triggers evaluated efficiently
+
+### Future Roadmap
+
+**Manager Integration (v3.1):**
+- Managers can assign multiple researchers
+- Bulk quality setting changes
+- Team coordination bonuses
+
+**Advanced Debt Mechanics (v3.2):**
+- Debt compound interest
+- Failure cascade events
+- Recovery time after major failures
+
+**Competitor Technical Debt (v3.3):**
+- Visible competitor debt levels (with intelligence)
+- Competitor failure events affecting global doom
+- Strategic intelligence actions
 
 ---
 
@@ -994,7 +1278,7 @@ The system supports:
 ## End Game Scenarios System
 
 ### Overview
-The end game scenarios system replaces generic "GAME OVER" messages with rich, contextual narratives that provide detailed explanations of what led to defeat and how the player's organization performed.
+The end game scenarios system replaces generic 'GAME OVER' messages with rich, contextual narratives that provide detailed explanations of what led to defeat and how the player's organization performed.
 
 ### Core Components
 
@@ -1061,7 +1345,7 @@ blob = {
 
 **Board Member Compliance (Spending Threshold):**
 - **Trigger**: `_check_board_member_threshold()` detects `spend_this_turn > 10000` without accounting software
-- **Effect**: Unlocks "Search for Board Member" action, starts audit risk accumulation
+- **Effect**: Unlocks 'Search for Board Member' action, starts audit risk accumulation
 - **Audit Risk**: Increases p(Doom) over time until 2 board members found
 - **Visual**: Board members show purple color with briefcase icon in UI
 
@@ -1248,10 +1532,10 @@ The game uses a centralized version management system in `version.py`:
 ```python
 from version import get_version, get_display_version, get_version_info
 
-# Get semantic version (e.g., "0.1.0")
+# Get semantic version (e.g., '0.1.0')
 version = get_version()
 
-# Get display version for UI (e.g., "v0.1.0") 
+# Get display version for UI (e.g., 'v0.1.0') 
 display = get_display_version()
 
 # Get detailed version information
@@ -1292,7 +1576,7 @@ The release workflow:
 ## Milestone-Driven Special Events & Static Effects System
 
 ### Overview
-The milestone system introduces persistent "static effects" that activate based on organizational growth and behavior. Unlike events that trigger once, static effects continuously influence gameplay until conditions change.
+The milestone system introduces persistent 'static effects' that activate based on organizational growth and behavior. Unlike events that trigger once, static effects continuously influence gameplay until conditions change.
 
 ### System Architecture
 
@@ -1409,6 +1693,23 @@ def test_static_effect_integration(self):
 
 ## Architecture Notes
 
+### TurnManager Architecture (v0.7.5)
+
+**Monolith Breakdown Achievement:**
+P(Doom) v0.7.5 successfully extracted turn processing from the monolithic `GameState.end_turn()` method:
+
+- **TurnManager Class**: Dedicated turn processing with proper state management (`src/core/turn_manager.py`)
+- **TurnProcessingState Enum**: Explicit states (READY, PROCESSING, STUCK, COMPLETED) for debugging
+- **Phase-Based Processing**: Clear separation of turn phases with error handling
+- **Enhanced Debugging**: Comprehensive logging for doom tracking and opponent progress
+- **State Validation**: Stuck detection with automatic recovery mechanisms
+
+**Development Benefits:**
+- **Improved Maintainability**: Turn logic isolated from game state management
+- **Better Debugging**: Clear state transitions and comprehensive logging
+- **Easier Testing**: Turn processing can be unit tested independently
+- **Future Extension**: New turn phases can be added cleanly
+
 ### UI Architecture Modernisation
 
 **New Modular Architecture (2024):**
@@ -1429,7 +1730,7 @@ P(Doom) has transitioned to a modular UI architecture with clear separation of c
 ### UI Adaptability
 
 - Window is resizable and adaptive (80% of screen by default)
-- UI elements scale and may overlap intentionally for "bureaucratic clutter" feel
+- UI elements scale and may overlap intentionally for 'bureaucratic clutter' feel
 - Upgrades shrink to icons after purchase with tooltip support
 - **New**: All screens rendered via UIFacade maintain consistent scaling behaviour
 
@@ -1462,8 +1763,8 @@ def main():
 **Why This Is Required:**
 Python treats variables as local when they are assigned anywhere in a function scope. Without global declaration, referencing these variables before assignment raises UnboundLocalError even if they exist at module level.
 
-**⚠️ WARNING: Common Bug Pattern**
-The most common manifestation of this bug is when menu handlers (like `handle_menu_click` or `handle_menu_keyboard`) assign overlay variables, but the main() function lacks proper global declarations. This causes crashes when selecting menu items like "Options" or "Player Guide".
+**[WARNING][EMOJI] WARNING: Common Bug Pattern**
+The most common manifestation of this bug is when menu handlers (like `handle_menu_click` or `handle_menu_keyboard`) assign overlay variables, but the main() function lacks proper global declarations. This causes crashes when selecting menu items like 'Options' or 'Player Guide'.
 
 **Always verify that:**
 1. Overlay variables are declared at module level
@@ -1526,9 +1827,9 @@ The tutorial system provides context-sensitive guidance for new players while re
 **Tutorial Message Structure:**
 ```python
 {
-    "milestone_id": "unique_identifier",
-    "title": "Tutorial Title",
-    "content": "Multi-line tutorial content with guidance"
+    'milestone_id': 'unique_identifier',
+    'title': 'Tutorial Title',
+    'content': 'Multi-line tutorial content with guidance'
 }
 ```
 
