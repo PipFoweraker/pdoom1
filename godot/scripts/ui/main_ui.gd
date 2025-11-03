@@ -139,8 +139,8 @@ func _input(event: InputEvent):
 			_trigger_action_by_index(action_index)
 			get_viewport().set_input_as_handled()
 
-		# X to clear queue
-		elif event.keycode == KEY_X:
+		# C to clear queue
+		elif event.keycode == KEY_C:
 			if not clear_queue_button.disabled:
 				_on_clear_queue_button_pressed()
 				get_viewport().set_input_as_handled()
@@ -222,10 +222,10 @@ func _on_clear_queue_button_pressed():
 
 func _on_end_turn_button_pressed():
 	if queued_actions.size() == 0:
-		log_message("[color=yellow]No actions queued! Select actions first.[/color]")
+		log_message("[color=red]ERROR: No actions queued! Press C to clear queue or select actions.[/color]")
 		return
 
-	log_message("[color=cyan]Ending turn with %d queued actions...[/color]" % queued_actions.size())
+	log_message("[color=cyan]Committing %d actions...[/color]" % queued_actions.size())
 
 	# Clear queued actions (will be repopulated after turn processes)
 	queued_actions.clear()
@@ -344,7 +344,8 @@ func _on_turn_phase_changed(phase_name: String):
 	elif phase_name == "action_selection" or phase_name == "ACTION_SELECTION":
 		phase_color = "green"
 		phase_display = "ACTION SELECTION (Ready)"
-		end_turn_button.disabled = false
+		# Only enable if actions are queued
+		end_turn_button.disabled = (queued_actions.size() == 0)
 		clear_queue_button.disabled = (queued_actions.size() == 0)
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
@@ -971,9 +972,10 @@ func update_queued_actions_display():
 		queue_hint.visible = true
 		log_message("[color=gray]No actions queued[/color]")
 
-	# Update clear queue button state
+	# Update button states based on queue
 	if current_turn_phase == "ACTION_SELECTION":
 		clear_queue_button.disabled = (queued_actions.size() == 0)
+		end_turn_button.disabled = (queued_actions.size() == 0)
 
 func _on_event_triggered(event: Dictionary):
 	"""Handle event trigger - show popup dialog"""

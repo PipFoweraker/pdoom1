@@ -257,7 +257,7 @@ disabled = true
 
 [node name="ClearQueueButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Clear Queue (X)"
+text = "Clear Queue (C)"
 disabled = true
 
 [node name="EndTurnButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
