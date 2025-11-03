@@ -972,10 +972,13 @@ func update_queued_actions_display():
 		queue_hint.visible = true
 		log_message("[color=gray]No actions queued[/color]")
 
-	# Update button states based on queue
-	if current_turn_phase == "ACTION_SELECTION":
-		clear_queue_button.disabled = (queued_actions.size() == 0)
-		end_turn_button.disabled = (queued_actions.size() == 0)
+	# Update button states based on queue (case-insensitive phase check)
+	var phase_upper = current_turn_phase.to_upper()
+	if phase_upper == "ACTION_SELECTION":
+		var queue_empty = queued_actions.size() == 0
+		clear_queue_button.disabled = queue_empty
+		end_turn_button.disabled = queue_empty
+		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [queued_actions.size(), queue_empty])
 
 func _on_event_triggered(event: Dictionary):
 	"""Handle event trigger - show popup dialog"""
@@ -1084,8 +1087,8 @@ func _on_event_triggered(event: Dictionary):
 			tooltip += "\nEffects:\n"
 			for resource in effects.keys():
 				var value = effects[resource]
-				var sign = "+" if value >= 0 else ""
-				tooltip += "  %s: %s%s\n" % [resource, sign, value]
+				var value_sign = "+" if value >= 0 else ""  # Renamed from 'sign' to avoid shadowing built-in function
+				tooltip += "  %s: %s%s\n" % [resource, value_sign, value]
 
 		if not can_afford:
 			tooltip += "\n[CANNOT AFFORD]\n"

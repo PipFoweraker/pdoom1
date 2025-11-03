@@ -143,8 +143,11 @@ func select_action(action_id: String):
 		error_occurred.emit("Cannot afford " + action.get("name", action_id))
 		return
 
-	# Deduct AP immediately (like old game)
-	state.action_points -= ap_cost
+	# Track committed AP (queued but not yet spent)
+	state.committed_ap += ap_cost
+
+	# Queue the action
+	state.queued_actions.append(action_id)
 
 	ErrorHandler.info(
 		ErrorHandler.Category.ACTIONS,
@@ -153,12 +156,11 @@ func select_action(action_id: String):
 			"action_id": action_id,
 			"action_name": action.get("name", ""),
 			"ap_cost": ap_cost,
-			"remaining_ap": state.action_points
+			"remaining_ap": state.action_points - state.committed_ap
 		}
 	)
 
-	print("[GameManager] Action queued: %s (AP cost: %d, remaining: %d)" % [action_id, ap_cost, state.action_points])
-	state.queued_actions.append(action_id)
+	print("[GameManager] Action queued: %s (AP cost: %d, committed: %d, remaining: %d)" % [action_id, ap_cost, state.committed_ap, state.action_points - state.committed_ap])
 
 	action_executed.emit({
 		"success": true,
@@ -274,6 +276,10 @@ func end_turn():
 
 	print("[GameManager] Executing turn...")
 	turn_phase_changed.emit("turn_end")
+
+	# Convert committed AP to spent AP
+	state.action_points -= state.committed_ap
+	state.committed_ap = 0
 
 	# Execute all queued actions
 	var result = turn_manager.execute_turn()
