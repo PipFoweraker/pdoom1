@@ -2,128 +2,223 @@
 
 Development utilities for P(Doom) Godot implementation.
 
-## Tools
+## Tools Overview
 
-### `dev_tool.gd` - Interactive Development Testing
+### ✅ `dev_tool_minimal.gd` - Code Validation Tool (WORKING)
 
-Ported from Python `tools/dev_tool.py`. Provides quick testing and validation of game systems.
+Validates GameState code structure without instantiating it. **This is the recommended tool to use.**
+
+**Why minimal?** Instantiating GameState triggers all autoloads (GameManager, GameConfig, etc.) which prevent clean script exit. The minimal version inspects the code without running it.
 
 **Usage:**
 
 ```bash
-# Interactive menu (runs all tests)
-godot --script tools/dev_tool.gd
+# Full path (recommended until PATH is fixed)
+"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe" --headless --script tools/dev_tool_minimal.gd
 
-# List available tests
-godot --script tools/dev_tool.gd --list
+# Run all validations
+godot --headless --script tools/dev_tool_minimal.gd
 
-# Run specific test
-godot --script tools/dev_tool.gd --test game_state
-godot --script tools/dev_tool.gd --test seeds
-godot --script tools/dev_tool.gd --test leaderboard
-godot --script tools/dev_tool.gd --test turn
-godot --script tools/dev_tool.gd --test dual
-godot --script tools/dev_tool.gd --test session
+# Run specific validation
+godot --headless --script tools/dev_tool_minimal.gd --test exists
+godot --headless --script tools/dev_tool_minimal.gd --test methods
+godot --headless --script tools/dev_tool_minimal.gd --test properties
 ```
 
-**Available Tests:**
-
-- `game_state` - Test GameState initialization and basic operations
-- `seeds` - Test seed variation consistency
-- `leaderboard` - Test leaderboard system integration
-- `turn` - Test turn progression over multiple turns
-- `dual` - Test dual identity system (player + lab names)
-- `session` - Test complete game session simulation
+**What it checks:**
+- ✅ GameState script exists and loads
+- ✅ GameState has expected methods
+- ✅ GameState has expected properties
+- ✅ Lists all available methods and properties
 
 **Example Output:**
-
 ```
-===========================================================
-P(Doom) Godot Development Tool
-===========================================================
-[TEST] Running: game_state
-===========================================================
-Testing GameState initialization and basic operations...
-  Initial State:
-    Seed: dev-test-seed
-    Turn: 1
-    Money: $100000
-    Staff: 0
-    Reputation: 0.0
-    Doom: 80.0%
-    Action Points: 3 / 3
-
-  Testing turn advancement...
-    Turn advanced: 1 → 2
-    Action Points reset: 3
-
-[✓] GameState working correctly
-[OK] Test completed: game_state
+[✓] GameState script found: res://scripts/core/game_state.gd
+[✓] seed - Found
+[✓] turn - Found
+[✓] money - Found
+[✓] doom - Found
+[✓] reputation - Found
 ```
 
-## Comparison with Python Version
+---
 
-| Feature | Python | Godot | Notes |
-|---------|--------|-------|-------|
-| Interactive Menu | ✓ | ✓ | Godot runs all tests in sequence |
-| Game State Tests | ✓ | ✓ | Fully ported |
-| Seed Variations | ✓ | ✓ | Includes consistency checks |
-| Leaderboard Tests | ✓ | ⚠️ | Depends on Leaderboard autoload |
-| Turn Progression | ✓ | ✓ | 10-turn simulation |
-| Complete Session | ✓ | ✓ | Full session lifecycle |
+### ⚠️ `dev_tool_v2.gd` - Runtime Testing (HANGS - DO NOT USE)
 
-## Future Additions
+This version instantiates GameState to test runtime behavior, but it hangs due to autoload initialization.
 
-### Seed Parity Validator
-Compare Python and Godot implementations for identical behavior:
+**Status:** Does not exit cleanly, requires Ctrl+C to kill
+**Issue:** Autoloads (GameManager, etc.) prevent script exit
+**Solution:** Use `dev_tool_minimal.gd` instead for validation
 
+---
+
+### ⚠️ `dev_tool.gd` - Original Full Test Suite (HANGS - DO NOT USE)
+
+Original comprehensive test suite. Has same hanging issue as v2.
+
+**Status:** Archived for reference
+**Use instead:** `dev_tool_minimal.gd`
+
+---
+
+### ✅ `quick_test.gd` - Basic Functionality Test (WORKING)
+
+Simple test to verify GDScript basics and script loading.
+
+**Usage:**
 ```bash
-godot --script tools/validate_seed_parity.gd --seed "test-123"
+godot --headless --script tools/quick_test.gd
 ```
 
-### Performance Profiler
-Automated performance benchmarking:
+**What it does:**
+- Tests basic GDScript functionality
+- Checks for autoloads
+- Loads GameState script (but doesn't instantiate)
+- Quick validation that environment is working
 
+---
+
+## PATH Issues with Godot
+
+**Problem:** Space in "Program Files" breaks bash PATH
+
+**Temporary Solution (per session):**
 ```bash
-godot --script tools/profile_performance.gd --iterations 100
+alias godot='"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe"'
 ```
 
-### Integration Test Suite
-Headless full-game simulations:
-
+**Permanent Solution (create wrapper in project root):**
 ```bash
-godot --script tools/run_integration_tests.gd --headless
+# Create godot.sh in project root
+printf '#!/bin/bash\n"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe" "$@"\n' > ../godot.sh
+chmod +x ../godot.sh
+
+# Use it
+./godot.sh --headless --script tools/dev_tool_minimal.gd
 ```
+
+**Best Solution (move Godot):**
+```bash
+mkdir -p /c/Godot
+cp "/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe" /c/Godot/godot.exe
+export PATH="/c/Godot:$PATH"  # Add to ~/.bashrc
+```
+
+---
+
+## Discovered GameState Structure
+
+From validation tool output:
+
+**Methods:**
+- `reset()` - Reset game state
+- `can_afford(amount)` - Check if player can afford cost
+
+**Properties:**
+- `seed` - Game seed
+- `turn` - Current turn number
+- `money`, `compute`, `research`, `papers` - Resources
+- `reputation`, `doom` - Key metrics
+- `action_points`, `committed_ap`, `reserved_ap`, `used_event_ap` - Action point tracking
+- `safety_researchers`, `capability_researchers`, `compute_engineers`, `managers` - Staff (not single `staff` property)
+
+**Note:** Method names differ from Python version:
+- Python: `initialize()` → Godot: `reset()`
+- Python: `advance_turn()` / `end_turn()` → Godot: (different implementation)
+
+---
 
 ## Development Workflow
 
-1. **Make changes to game code**
-2. **Run quick validation:**
-   ```bash
-   godot --script tools/dev_tool.gd --test game_state
-   ```
-3. **Test specific systems:**
-   ```bash
-   godot --script tools/dev_tool.gd --test seeds
-   ```
-4. **Run full test suite:**
-   ```bash
-   godot --script tools/dev_tool.gd
-   ```
-
-## Integration with CI/CD
-
-Add to GitHub Actions workflow:
-
-```yaml
-- name: Run Godot Dev Tools
-  run: |
-    godot --headless --script tools/dev_tool.gd
+### Quick Validation
+```bash
+cd godot
+"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe" --headless --script tools/dev_tool_minimal.gd
 ```
+
+### Check Specific Aspect
+```bash
+# Check methods only
+godot --headless --script tools/dev_tool_minimal.gd --test methods
+
+# Check properties only
+godot --headless --script tools/dev_tool_minimal.gd --test properties
+```
+
+### After Code Changes
+```bash
+# Validate code structure is intact
+godot --headless --script tools/dev_tool_minimal.gd
+```
+
+---
+
+## Comparison: Python vs Godot Tools
+
+| Feature | Python (tools/dev_tool.py) | Godot (tools/dev_tool_minimal.gd) |
+|---------|---------------------------|-----------------------------------|
+| **Status** | ✅ Working | ✅ Working |
+| **Method** | Runtime testing | Static validation |
+| **Exit behavior** | Clean | Clean (forced with OS.kill) |
+| **Instantiates GameState** | Yes | No (avoids autoload issues) |
+| **Tests gameplay** | Yes | No (structure only) |
+| **Tests consistency** | Yes (seed parity) | No |
+| **Use case** | Full integration testing | Code structure validation |
+
+---
+
+## Future Improvements
+
+### High Priority
+1. **Fix autoload hanging issue** - Investigate why autoloads prevent script exit
+2. **Create wrapper script** - Permanent solution to PATH problem
+3. **Runtime testing** - Get dev_tool_v2.gd working without hanging
+
+### Medium Priority
+4. **Seed parity validator** - Compare Python vs Godot results
+5. **Integration tests** - Headless full-game simulations
+6. **CI/CD integration** - Automate validation in GitHub Actions
+
+### Low Priority
+7. **Performance profiling** - Automated benchmarks
+8. **Export validation** - Test built executables
+
+---
+
+## Troubleshooting
+
+### Script hangs and won't exit
+**Problem:** Instantiating GameState triggers autoloads that don't shut down
+**Solution:** Use `dev_tool_minimal.gd` which doesn't instantiate
+**Workaround:** Kill with Ctrl+C
+
+### "bash: /c/Program: No such file or directory"
+**Problem:** Space in "Program Files" breaks bash
+**Solution:** Use full quoted path: `"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe"`
+**Or:** Create wrapper script (see PATH Issues section)
+
+### "Could not load GameState script"
+**Problem:** Wrong working directory or script path
+**Solution:** Run from `godot/` directory: `cd godot`
+**Check:** Script is at `res://scripts/core/game_state.gd`
+
+---
 
 ## Notes
 
-- Tools run in `SceneTree` context, not as scenes
-- Use `--headless` flag for CI/CD environments
+- All tools work in `--headless` mode (no GUI)
 - Exit codes: 0 = success, 1 = failure
-- All tests should be deterministic and repeatable
+- Verbose output by default for debugging
+- Tools are deterministic and repeatable
+
+---
+
+## Contributing
+
+When adding new tools:
+1. Test exit behavior (`quit(0)` or `OS.kill()`)
+2. Add verbose logging
+3. Document in this README
+4. Avoid instantiating objects with autoload dependencies
+5. Prefer validation over runtime testing when possible

@@ -4,6 +4,40 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.10.1] - 2025-11-03 - 'Documentation & Repository Cleanup'
+
+### Changed
+- **README**: Complete overhaul for public presentation
+  - Fixed website URL (pdoom1.com, not pdoom.org)
+  - Removed Python instructions from player quick start
+  - Clarified Godot as primary platform, Python for dev/testing only
+  - Added prominent website link at top
+  - PC/Windows focus, Mac/Linux documented as high-priority future work
+- **Documentation Organization**: Moved 20 markdown files into logical structure
+  - Godot docs → `godot/docs/` (5 files)
+  - Guides → `docs/guides/` (7 files)
+  - Summaries → `docs/summaries/` (7 files)
+  - Root directory: 28 → 8 markdown files (71% reduction)
+- **Archive Cleanup**: Moved 30 files from root
+  - 15 Python utility files → `archive/python-root/`
+  - 15 session docs → `archive/session-docs/`
+  - Root Python files: 20 → 5 (only essentials)
+
+### Added
+- **Godot Dev Tools**: Development validation tool for Godot implementation
+  - `godot/tools/dev_tool_minimal.gd` - Code structure validator
+  - `godot/tools/quick_test.gd` - Basic functionality test
+  - Comprehensive documentation in `godot/tools/README.md`
+- **Documentation Indexes**: Created `docs/README.md` and `archive/README.md`
+- **Analysis Documents**:
+  - DEV_TOOLS_PORTING_ANALYSIS.md - Tool migration strategy
+  - DOCS_ORGANIZATION_PLAN.md - Documentation structure plan
+
+### Technical
+- Godot 4.x continues as primary platform
+- Python codebase preserved for development/testing purposes only
+- All moves preserve git history (non-destructive cleanup)
+
 ## [v0.10.0] - 2025-10-09 - 'Global Leaderboards Web Export System'
 
 ### >> Major Achievement: Global Leaderboards Unblocked

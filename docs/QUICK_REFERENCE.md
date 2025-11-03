@@ -4,9 +4,17 @@
 **You run a scrappy AI safety nonprofit ($100k budget) racing against 3 well-funded labs to solve alignment before everyone dies.**
 
 ## [LIGHTNING] QUICK START
+
+**For Players:**
+- Download from [Releases](https://github.com/PipFoweraker/pdoom1/releases) (Windows)
+- Extract and run `PDoom.exe`
+- Visit [pdoom1.com](https://pdoom1.com) for guides!
+
+**For Developers:**
 ```bash
 git clone https://github.com/PipFoweraker/pdoom1.git
-cd pdoom1 && pip install -r requirements.txt && python main.py
+cd pdoom1
+# See docs/developer/CONTRIBUTING.md for setup
 ```
 
 ## [CHART] RESOURCES TO WATCH

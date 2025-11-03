@@ -27,16 +27,16 @@ var tests := {
 }
 
 func _init():
-	print("=" * 60)
+	print("=" .repeat(60))
 	print("P(Doom) Godot Development Tool")
-	print("=" * 60)
+	print("=" .repeat(60))
 
 	var args = OS.get_cmdline_args()
 
 	# Parse command line arguments
 	if "--list" in args:
 		list_tests()
-		quit()
+		quit(0)
 		return
 
 	if "--test" in args:
@@ -44,25 +44,29 @@ func _init():
 		if test_idx + 1 < args.size():
 			var test_name = args[test_idx + 1]
 			run_test(test_name)
+			print("\n" + "=" .repeat(60))
+			print("Test execution complete - exiting")
+			print("=" .repeat(60))
 		else:
 			print("[ERROR] --test requires a test name")
 			list_tests()
-		quit()
+		quit(0)
 		return
 
 	# Interactive mode
 	interactive_menu()
+	quit(0)
 
 func interactive_menu():
 	"""Display interactive test menu"""
 	print("\nAvailable Tests:")
-	print("-" * 60)
+	print("-" .repeat(60))
 	var idx = 1
 	for test_name in tests.keys():
 		print("  %d. %s" % [idx, test_name])
 		idx += 1
 	print("  0. Exit")
-	print("-" * 60)
+	print("-" .repeat(60))
 	print("\nNote: For interactive input, run tests individually via:")
 	print("  godot --script tools/dev_tool.gd --test <test_name>")
 	print("\nRunning all tests in sequence...")
@@ -72,7 +76,9 @@ func interactive_menu():
 		run_test(test_name)
 		print()
 
-	quit()
+	print("\n" + "=" .repeat(60))
+	print("All tests complete")
+	print("=" .repeat(60))
 
 func list_tests():
 	"""List all available tests"""
@@ -84,7 +90,7 @@ func run_test(test_name: String):
 	"""Run a specific test by name"""
 	if test_name in tests:
 		print("[TEST] Running: %s" % test_name)
-		print("=" * 60)
+		print("=" .repeat(60))
 		tests[test_name].call()
 		print("[OK] Test completed: %s" % test_name)
 	else:
@@ -99,8 +105,14 @@ func test_game_state():
 	"""Test basic game state functionality"""
 	print("Testing GameState initialization and basic operations...")
 
+	# Load GameState class directly (since we're outside main game context)
+	var GameStateClass = load("res://scripts/core/game_state.gd")
+	if not GameStateClass:
+		print("[ERROR] Could not load GameState script")
+		return
+
 	# Create a game state with test seed
-	var game_state = GameState.new()
+	var game_state = GameStateClass.new()
 	game_state.initialize("dev-test-seed")
 
 	print("  Initial State:")
@@ -126,12 +138,17 @@ func test_seed_variations():
 	"""Test how different seeds create different experiences"""
 	print("Testing seed variation consistency...")
 
+	var GameStateClass = load("res://scripts/core/game_state.gd")
+	if not GameStateClass:
+		print("[ERROR] Could not load GameState script")
+		return
+
 	var test_seeds = ["alpha", "beta", "gamma", "delta", "epsilon"]
 	var lab_names = {}
 
 	print("\n  Generating lab names for different seeds:")
 	for seed in test_seeds:
-		var gs = GameState.new()
+		var gs = GameStateClass.new()
 		gs.initialize(seed)
 		var lab_name = gs.lab_name if "lab_name" in gs else "N/A"
 		lab_names[seed] = lab_name
@@ -141,12 +158,12 @@ func test_seed_variations():
 	# Test consistency - same seed should produce same lab name
 	print("\n  Testing seed consistency (run twice):")
 	for seed in test_seeds.slice(0, 2):  # Test first 3 seeds
-		var gs1 = GameState.new()
+		var gs1 = GameStateClass.new()
 		gs1.initialize(seed)
 		var name1 = gs1.lab_name if "lab_name" in gs1 else "N/A"
 		gs1.free()
 
-		var gs2 = GameState.new()
+		var gs2 = GameStateClass.new()
 		gs2.initialize(seed)
 		var name2 = gs2.lab_name if "lab_name" in gs2 else "N/A"
 		gs2.free()
@@ -161,7 +178,12 @@ func test_dual_identity():
 	"""Test dual identity system (player_name + lab_name)"""
 	print("Testing Dual Identity System...")
 
-	var gs = GameState.new()
+	var GameStateClass = load("res://scripts/core/game_state.gd")
+	if not GameStateClass:
+		print("[ERROR] Could not load GameState script")
+		return
+
+	var gs = GameStateClass.new()
 	gs.initialize("test-seed-123")
 
 	print("  Default Identity:")
@@ -176,7 +198,7 @@ func test_dual_identity():
 		print("    Lab Name: %s (should be unchanged)" % gs.lab_name)
 
 	# Test different seed
-	var gs2 = GameState.new()
+	var gs2 = GameStateClass.new()
 	gs2.initialize("different-seed")
 	print("\n  Different Seed:")
 	print("    Lab Name: %s" % (gs2.lab_name if "lab_name" in gs2 else "N/A"))
@@ -191,12 +213,15 @@ func test_leaderboard_system():
 	print("  [NOTE] This requires Leaderboard autoload to be configured")
 
 	# Check if leaderboard exists
-	if not Engine.has_singleton("Leaderboard") and not has_node("/root/Leaderboard"):
+	# Note: SceneTree doesn't have get_node, need to access root
+	var leaderboard = null
+	if root and root.has_node("/root/Leaderboard"):
+		leaderboard = root.get_node("/root/Leaderboard")
+
+	if not leaderboard:
 		print("  [SKIP] Leaderboard autoload not found")
 		print("  [INFO] To enable: Configure Leaderboard in Project Settings > Autoload")
 		return
-
-	var leaderboard = get_node_or_null("/root/Leaderboard")
 	if not leaderboard:
 		print("  [SKIP] Could not access Leaderboard node")
 		return
@@ -222,11 +247,16 @@ func test_turn_progression():
 	print("Testing Turn Progression...")
 	print("  Simulating 10 turns of gameplay...")
 
-	var gs = GameState.new()
+	var GameStateClass = load("res://scripts/core/game_state.gd")
+	if not GameStateClass:
+		print("[ERROR] Could not load GameState script")
+		return
+
+	var gs = GameStateClass.new()
 	gs.initialize("turn-test-seed")
 
 	print("\n  %-4s | %-6s | %-10s | %-6s | %-6s | %-8s" % ["Turn", "Staff", "Money", "Doom", "Rep", "GameOver"])
-	print("  " + "-" * 60)
+	print("  " + "-".repeat(60))
 
 	for i in range(10):
 		var turn_str = "%d" % gs.turn
@@ -261,7 +291,12 @@ func test_complete_session():
 	"""Test complete game session simulation"""
 	print("Testing Complete Session Simulation...")
 
-	var gs = GameState.new()
+	var GameStateClass = load("res://scripts/core/game_state.gd")
+	if not GameStateClass:
+		print("[ERROR] Could not load GameState script")
+		return
+
+	var gs = GameStateClass.new()
 	gs.initialize("session-test-seed")
 
 	if "player_name" in gs:
@@ -280,7 +315,9 @@ func test_complete_session():
 	print("\n  [✓] Session simulation completed")
 
 	# Test leaderboard recording (if available)
-	var leaderboard = get_node_or_null("/root/Leaderboard")
+	var leaderboard = null
+	if root and root.has_node("/root/Leaderboard"):
+		leaderboard = root.get_node("/root/Leaderboard")
 	if leaderboard and leaderboard.has_method("record_session"):
 		print("  [INFO] Recording session to leaderboard...")
 		# Implementation depends on actual Leaderboard API
@@ -295,4 +332,4 @@ func test_complete_session():
 ## ============================================================================
 
 func print_separator():
-	print("=" * 60)
+	print("=".repeat(60))
