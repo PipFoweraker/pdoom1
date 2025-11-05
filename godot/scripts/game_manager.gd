@@ -61,7 +61,7 @@ func select_action(action_id: String):
 	"""Queue action for execution with immediate AP deduction - FIX #418: Block if events pending"""
 	# Validation: Game initialized
 	if not is_initialized:
-		var err = ErrorHandler.error(
+		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusederror(
 			ErrorHandler.Category.ACTIONS,
 			"Cannot select action: Game not initialized",
 			{"action_id": action_id}
@@ -71,7 +71,7 @@ func select_action(action_id: String):
 
 	# Validation: No pending events (FIX #418)
 	if state.pending_events.size() > 0:
-		var err = ErrorHandler.warning(
+		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
 			ErrorHandler.Category.ACTIONS,
 			"Cannot select actions while events are pending",
 			{"action_id": action_id, "pending_events": state.pending_events.size()}
@@ -82,7 +82,7 @@ func select_action(action_id: String):
 	# Validation: Correct phase (FIX #418)
 	if state.current_phase != GameState.TurnPhase.ACTION_SELECTION:
 		var phase_name = GameState.TurnPhase.keys()[state.current_phase]
-		var err = ErrorHandler.warning(
+		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
 			ErrorHandler.Category.ACTIONS,
 			"Cannot select actions in current phase",
 			{"action_id": action_id, "current_phase": phase_name}
@@ -93,7 +93,7 @@ func select_action(action_id: String):
 	# Get action details to check AP cost
 	var action = _get_action_by_id(action_id)
 	if not action or action.is_empty():
-		var err = ErrorHandler.error(
+		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusederror(
 			ErrorHandler.Category.ACTIONS,
 			"Action not found",
 			{"action_id": action_id}
@@ -106,7 +106,7 @@ func select_action(action_id: String):
 	# Validation: Sufficient AP (check REMAINING AP, not total - fixes overcommitment bug)
 	var available_ap = state.action_points - state.committed_ap
 	if available_ap < ap_cost:
-		var err = ErrorHandler.warning(
+		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
 			ErrorHandler.Category.RESOURCES,
 			"Insufficient action points",
 			{
@@ -124,7 +124,7 @@ func select_action(action_id: String):
 	# Validation: Can afford costs
 	if not state.can_afford(action.get("costs", {})):
 		var costs = action.get("costs", {})
-		var err = ErrorHandler.warning(
+		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
 			ErrorHandler.Category.RESOURCES,
 			"Cannot afford action",
 			{
@@ -233,11 +233,37 @@ func clear_action_queue():
 	print("[GameManager] Queue cleared, refunded %d AP" % refunded_ap)
 	game_state_updated.emit(state.to_dict())
 
+func remove_queued_action(action_id: String):
+	"""Remove specific action from queue and refund its AP cost"""
+	if not is_initialized:
+		return
+
+	# Find and remove the action
+	var removed_index = -1
+	for i in range(state.queued_actions.size()):
+		if state.queued_actions[i] == action_id:
+			removed_index = i
+			break
+
+	if removed_index >= 0:
+		# Get AP cost before removing
+		var action = _get_action_by_id(action_id)
+		var ap_cost = action.get("costs", {}).get("action_points", 0)
+
+		# Remove and refund
+		state.queued_actions.remove_at(removed_index)
+		state.committed_ap -= ap_cost
+
+		print("[GameManager] Removed %s from queue, refunded %d AP (committed: %d)" % [action_id, ap_cost, state.committed_ap])
+		game_state_updated.emit(state.to_dict())
+	else:
+		print("[GameManager] WARNING: Action not found in queue: %s" % action_id)
+
 func end_turn():
 	"""Execute queued actions and process turn"""
 	# Validation: Game initialized
 	if not is_initialized:
-		var err = ErrorHandler.error(
+		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusederror(
 			ErrorHandler.Category.TURN,
 			"Cannot end turn: Game not initialized",
 			{}
@@ -247,7 +273,7 @@ func end_turn():
 
 	# Validation: Actions queued
 	if state.queued_actions.is_empty():
-		var err = ErrorHandler.warning(
+		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
 			ErrorHandler.Category.TURN,
 			"Cannot end turn: No actions queued",
 			{"turn": state.turn, "phase": GameState.TurnPhase.keys()[state.current_phase]}

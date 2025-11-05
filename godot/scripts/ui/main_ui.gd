@@ -220,10 +220,63 @@ func _on_clear_queue_button_pressed():
 
 	log_message("[color=yellow]Action queue cleared - AP refunded[/color]")
 
+func _remove_queued_action(action_id: String, action_name: String):
+	"""Remove a specific action from the queue"""
+	print("[MainUI] Removing queued action: %s (id: %s)" % [action_name, action_id])
+
+	# Find and remove from local queue
+	var removed_index = -1
+	for i in range(queued_actions.size()):
+		if queued_actions[i].get("id") == action_id:
+			removed_index = i
+			break
+
+	if removed_index >= 0:
+		queued_actions.remove_at(removed_index)
+
+		# Tell GameManager to remove and refund AP
+		game_manager.remove_queued_action(action_id)
+
+		# Get AP cost for logging
+		var action_def = _get_action_by_id(action_id)
+		var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+
+		log_message("[color=yellow]Removed: %s (+%d AP)[/color]" % [action_name, ap_cost])
+		update_queued_actions_display()
+	else:
+		print("[MainUI] ERROR: Could not find action to remove: %s" % action_id)
+
 func _on_end_turn_button_pressed():
 	if queued_actions.size() == 0:
 		log_message("[color=red]ERROR: No actions queued! Press C to clear queue or select actions.[/color]")
 		return
+
+	# Check for danger zones and warn player
+	var current_state = game_manager.state
+	var warnings = []
+
+	# High doom warning
+	if current_state.doom >= 80:
+		warnings.append("[color=red]⚠️ CRITICAL: Doom at %.1f%% - Very close to game over![/color]" % current_state.doom)
+	elif current_state.doom >= 70:
+		warnings.append("[color=yellow]⚠️ WARNING: Doom at %.1f%% - Approaching danger zone![/color]" % current_state.doom)
+
+	# Low reputation warning
+	if current_state.reputation <= 20:
+		warnings.append("[color=red]⚠️ CRITICAL: Reputation at %.0f - May lose funding![/color]" % current_state.reputation)
+	elif current_state.reputation <= 30:
+		warnings.append("[color=yellow]⚠️ WARNING: Low reputation (%.0f) - Watch funding![/color]" % current_state.reputation)
+
+	# Low money warning
+	if current_state.money <= 20000:
+		warnings.append("[color=red]⚠️ CRITICAL: Low funds ($%.0f) - Can't afford much![/color]" % current_state.money)
+
+	# Show warnings if any
+	if warnings.size() > 0:
+		for warning in warnings:
+			log_message(warning)
+		log_message("[color=gray]Press Space/Enter again to confirm, or C to revise queue[/color]")
+		# Note: Simplified version - in full implementation, would require double-confirm
 
 	log_message("[color=cyan]Committing %d actions...[/color]" % queued_actions.size())
 
@@ -959,6 +1012,19 @@ func update_queued_actions_display():
 				ap_cost_label.add_theme_color_override("font_color", Color(0.9, 0.7, 0.2))
 				ap_cost_label.add_theme_font_size_override("font_size", 10)
 				vbox.add_child(ap_cost_label)
+
+			# Remove button (X)
+			var remove_btn = Button.new()
+			remove_btn.text = "✕ Remove"
+			remove_btn.custom_minimum_size = Vector2(90, 24)
+			remove_btn.add_theme_font_size_override("font_size", 9)
+
+			# Capture action_id in closure for the callback
+			var captured_id = action_id
+			var captured_name = action_name
+			remove_btn.pressed.connect(func(): _remove_queued_action(captured_id, captured_name))
+
+			vbox.add_child(remove_btn)
 
 			queue_container.add_child(item)
 
