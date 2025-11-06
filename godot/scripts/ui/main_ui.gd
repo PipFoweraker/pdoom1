@@ -142,8 +142,8 @@ func _input(event: InputEvent):
 			_trigger_action_by_index(action_index)
 			get_viewport().set_input_as_handled()
 
-		# C to clear queue
-		elif event.keycode == KEY_C:
+		# Clear queue (C key by default, configurable via KeybindManager)
+		elif KeybindManager.is_action_pressed(event, "clear_queue"):
 			if not clear_queue_button.disabled:
 				_on_clear_queue_button_pressed()
 				get_viewport().set_input_as_handled()

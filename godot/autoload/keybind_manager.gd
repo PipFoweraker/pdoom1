@@ -23,6 +23,7 @@ var keybinds: Dictionary = {
 
 	# Gameplay
 	"end_turn": {"key": KEY_SPACE, "category": Category.GAMEPLAY, "description": "End Turn"},
+	"clear_queue": {"key": KEY_C, "category": Category.GAMEPLAY, "description": "Clear Action Queue"},
 	"cancel": {"key": KEY_ESCAPE, "category": Category.GAMEPLAY, "description": "Cancel/Back"},
 
 	# UI Navigation
