@@ -61,17 +61,17 @@ func select_action(action_id: String):
 	"""Queue action for execution with immediate AP deduction - FIX #418: Block if events pending"""
 	# Validation: Game initialized
 	if not is_initialized:
-		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusederror(
+		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.ACTIONS,
 			"Cannot select action: Game not initialized",
 			{"action_id": action_id}
 		)
-		error_occurred.emit(err.message)
+		error_occurred.emit(_err.message)
 		return
 
 	# Validation: No pending events (FIX #418)
 	if state.pending_events.size() > 0:
-		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.ACTIONS,
 			"Cannot select actions while events are pending",
 			{"action_id": action_id, "pending_events": state.pending_events.size()}
@@ -82,7 +82,7 @@ func select_action(action_id: String):
 	# Validation: Correct phase (FIX #418)
 	if state.current_phase != GameState.TurnPhase.ACTION_SELECTION:
 		var phase_name = GameState.TurnPhase.keys()[state.current_phase]
-		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.ACTIONS,
 			"Cannot select actions in current phase",
 			{"action_id": action_id, "current_phase": phase_name}
@@ -93,7 +93,7 @@ func select_action(action_id: String):
 	# Get action details to check AP cost
 	var action = _get_action_by_id(action_id)
 	if not action or action.is_empty():
-		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusederror(
+		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.ACTIONS,
 			"Action not found",
 			{"action_id": action_id}
@@ -106,7 +106,7 @@ func select_action(action_id: String):
 	# Validation: Sufficient AP (check REMAINING AP, not total - fixes overcommitment bug)
 	var available_ap = state.action_points - state.committed_ap
 	if available_ap < ap_cost:
-		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.RESOURCES,
 			"Insufficient action points",
 			{
@@ -124,7 +124,7 @@ func select_action(action_id: String):
 	# Validation: Can afford costs
 	if not state.can_afford(action.get("costs", {})):
 		var costs = action.get("costs", {})
-		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.RESOURCES,
 			"Cannot afford action",
 			{
@@ -263,17 +263,17 @@ func end_turn():
 	"""Execute queued actions and process turn"""
 	# Validation: Game initialized
 	if not is_initialized:
-		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusederror(
+		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.TURN,
 			"Cannot end turn: Game not initialized",
 			{}
 		)
-		error_occurred.emit(err.message)
+		error_occurred.emit(_err.message)
 		return
 
 	# Validation: Actions queued
 	if state.queued_actions.is_empty():
-		var _err = ErrorHandler.  # Underscore prefix indicates intentionally unusedwarning(
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.TURN,
 			"Cannot end turn: No actions queued",
 			{"turn": state.turn, "phase": GameState.TurnPhase.keys()[state.current_phase]}
