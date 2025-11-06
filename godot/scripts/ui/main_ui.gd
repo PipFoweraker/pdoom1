@@ -17,6 +17,7 @@ extends VBoxContainer
 
 @onready var init_button = $BottomBar/ControlButtons/InitButton
 @onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
+@onready var clear_queue_button = $BottomBar/ControlButtons/ClearQueueButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
 
 # Reference to GameManager
@@ -58,6 +59,12 @@ func _input(event: InputEvent):
 			_trigger_action_by_index(action_index)
 			get_viewport().set_input_as_handled()
 
+		# C key to clear queue
+		elif event.keycode == KEY_C:
+			if not clear_queue_button.disabled:
+				_on_clear_queue_button_pressed()
+				get_viewport().set_input_as_handled()
+
 		# Space or Enter to end turn
 		elif event.keycode == KEY_SPACE or event.keycode == KEY_ENTER:
 			if not end_turn_button.disabled:
@@ -94,6 +101,17 @@ func _on_init_button_pressed():
 func _on_test_action_button_pressed():
 	log_message("[color=cyan]Selecting action: hire_safety_researcher[/color]")
 	game_manager.select_action("hire_safety_researcher")
+
+func _on_clear_queue_button_pressed():
+	"""Clear all queued actions (fix for issue #436)"""
+	if queued_actions.size() > 0:
+		log_message("[color=yellow]Clearing %d queued action(s)...[/color]" % queued_actions.size())
+		queued_actions.clear()
+		game_manager.clear_queued_actions()
+		update_queued_actions_display()
+		log_message("[color=green]Queue cleared![/color]")
+	else:
+		log_message("[color=gray]Queue is already empty[/color]")
 
 func _on_end_turn_button_pressed():
 	if queued_actions.size() == 0:

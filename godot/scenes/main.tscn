@@ -162,6 +162,11 @@ layout_mode = 2
 text = "Hire Safety Researcher"
 disabled = true
 
+[node name="ClearQueueButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+layout_mode = 2
+text = "Clear Queue (C)"
+disabled = true
+
 [node name="EndTurnButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "End Turn"
@@ -177,4 +182,5 @@ scroll_active = false
 
 [connection signal="pressed" from="MainUI/BottomBar/ControlButtons/InitButton" to="MainUI" method="_on_init_button_pressed"]
 [connection signal="pressed" from="MainUI/BottomBar/ControlButtons/TestActionButton" to="MainUI" method="_on_test_action_button_pressed"]
+[connection signal="pressed" from="MainUI/BottomBar/ControlButtons/ClearQueueButton" to="MainUI" method="_on_clear_queue_button_pressed"]
 [connection signal="pressed" from="MainUI/BottomBar/ControlButtons/EndTurnButton" to="MainUI" method="_on_end_turn_button_pressed"]
