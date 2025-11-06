@@ -1,6 +1,6 @@
 # P(Doom): AI Safety Strategy Game
 
-**A satirical strategy game about managing an AI safety lab racing to solve alignment before it's too late.**
+**A strategic simulation about managing an AI safety lab racing to solve alignment before it's too late.**
 
 🌐 **[Visit pdoom1.com](https://pdoom1.com)** for guides, community, and updates!
 
