@@ -308,15 +308,6 @@ func reset_turn_ap():
 	reserved_ap = 0
 	used_event_ap = 0
 
-func has_upgrade(upgrade_id: String) -> bool:
-	"""Check if an upgrade has been purchased"""
-	return purchased_upgrades.has(upgrade_id)
-
-func purchase_upgrade(upgrade_id: String):
-	"""Purchase an upgrade (assumes affordability check done)"""
-	if not purchased_upgrades.has(upgrade_id):
-		purchased_upgrades.append(upgrade_id)
-
 func to_dict() -> Dictionary:
 	"""Serialize state for UI"""
 	var rival_summaries = []
