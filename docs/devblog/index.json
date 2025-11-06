@@ -1,0 +1,27 @@
+{
+  "entries": [
+    {
+      "title": "Development Update - November 06, 2025",
+      "date": "2025-11-06T21:10:55.834817",
+      "categories": [
+        "bugfix",
+        "chore",
+        "docs",
+        "feature",
+        "godot",
+        "refactor",
+        "test",
+        "ui-ux"
+      ],
+      "issues": [
+        407,
+        418
+      ],
+      "contributors": [
+        "Pip"
+      ],
+      "content": "## Bug Fixes\n\n- feat(godot): Fix #407 & #418 + comprehensive test suite\n\n## Maintenance\n\n- chore: Phase 2 - Automation infrastructure deployment\n- chore: Phase 1 - Critical project cleanup and restructuring\n\n## Documentation\n\n- chore: Phase 2 - Automation infrastructure deployment\n- chore: Phase 1 - Critical project cleanup and restructuring\n- feat(godot): Fix #407 & #418 + comprehensive test suite\n\n## Features\n\n- feat(godot): Fix #407 & #418 + comprehensive test suite\n\n## Godot Port\n\n- chore: Phase 1 - Critical project cleanup and restructuring\n- feat(godot): Fix #407 & #418 + comprehensive test suite\n\n## Refactoring\n\n- chore: Phase 1 - Critical project cleanup and restructuring\n\n## Testing\n\n- chore: Phase 1 - Critical project cleanup and restructuring\n- feat(godot): Fix #407 & #418 + comprehensive test suite\n\n## UI/UX Improvements\n\n- feat(godot): Fix #407 & #418 + comprehensive test suite",
+      "filename": "2025-11-06-development-update-november-06-2025.md"
+    }
+  ]
+}

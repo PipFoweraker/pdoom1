@@ -1,0 +1,77 @@
+# Pre-commit hooks configuration
+# See https://pre-commit.com for more information
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: mixed-line-ending
+        args: ['--fix=lf']
+
+  # Python formatting
+  - repo: https://github.com/psf/black
+    rev: 24.1.1
+    hooks:
+      - id: black
+        language_version: python3
+        args: ['--line-length=100']
+
+  # Python import sorting
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ['--profile=black', '--line-length=100']
+
+  # Python linting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.15
+    hooks:
+      - id: ruff
+        args: ['--fix']
+
+  # Custom project-specific checks
+  - repo: local
+    hooks:
+      - id: enforce-standards
+        name: Enforce Project Standards
+        entry: python scripts/enforce_standards.py
+        language: system
+        args: ['--pre-commit']
+        pass_filenames: false
+
+      - id: check-pyc-files
+        name: Check for .pyc files
+        entry: python -c "import sys; sys.exit(1 if any('.pyc' in arg for arg in sys.argv[1:]) else 0)"
+        language: system
+        pass_filenames: true
+
+      - id: check-pygame-dir
+        name: Ensure pygame/ directory is not added
+        entry: python -c "import sys; sys.exit(1 if any('pygame/' in arg for arg in sys.argv[1:]) else 0)"
+        language: system
+        pass_filenames: true
+
+# Configuration
+default_language_version:
+  python: python3
+
+# Skip some hooks for certain files
+exclude: |
+  (?x)^(
+      archived/.*|
+      docs/archive/.*|
+      \.git/.*|
+      \.mypy_cache/.*|
+      \.pytest_cache/.*
+  )$

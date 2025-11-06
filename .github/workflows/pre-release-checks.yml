@@ -1,0 +1,82 @@
+name: Pre-Release Checks
+
+# Run when creating a release tag or manually
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  pre-release-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+
+      - name: Run tests
+        run: |
+          cd python
+          pytest tests/ -v
+        continue-on-error: true
+
+      - name: Check CHANGELOG updated
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "Checking if CHANGELOG.md contains version $TAG_VERSION..."
+
+          if grep -q "$TAG_VERSION" CHANGELOG.md; then
+            echo "✅ CHANGELOG.md contains version $TAG_VERSION"
+          else
+            echo "❌ ERROR: CHANGELOG.md does not mention version $TAG_VERSION"
+            echo "Please update CHANGELOG.md before releasing!"
+            exit 1
+          fi
+        shell: bash
+
+      - name: Check version in project.godot
+        run: |
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "Checking project.godot version..."
+
+          if grep -q "config/version=\"$TAG_VERSION\"" godot/project.godot; then
+            echo "✅ project.godot version matches tag"
+          else
+            echo "❌ WARNING: project.godot version does not match tag v$TAG_VERSION"
+            exit 1
+          fi
+        shell: bash
+
+      - name: Check for uncommitted changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "❌ ERROR: Uncommitted changes found!"
+            git status
+            exit 1
+          else
+            echo "✅ No uncommitted changes"
+          fi
+
+      - name: Post validation results
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const tagName = context.ref.replace('refs/tags/', '');
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `⚠️ Pre-Release Checks Failed: ${tagName}`,
+              body: `## Pre-release validation failed for ${tagName}\n\nPlease check the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.\n\n**Common issues:**\n- CHANGELOG.md not updated\n- Version mismatch in project.godot\n- Tests failing\n- Uncommitted changes\n\nFix these issues and re-tag the release.`,
+              labels: ['release', 'build-failed']
+            });

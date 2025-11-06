@@ -11,18 +11,33 @@ config_version=5
 [application]
 
 config/name="P(Doom)"
-config/description="Privacy-First Bureaucracy Strategy Game"
+config/description="AI Safety Lab Management Simulation - Strategic resource allocation and risk management"
 run/main_scene="res://scenes/welcome.tscn"
 config/features=PackedStringArray("4.5")
 
+[autoload]
+
+ErrorHandler="*res://autoload/error_handler.gd"
+GameConfig="*res://autoload/game_config.gd"
+SceneTransition="*res://autoload/scene_transition.gd"
+ThemeManager="*res://autoload/theme_manager.gd"
+NotificationManager="*res://autoload/notification_manager.gd"
+KeybindManager="*res://autoload/keybind_manager.gd"
+ScreenshotManager="*res://autoload/screenshot_manager.gd"
+LogExporter="*res://autoload/log_exporter.gd"
+GameManager="*res://scripts/game_manager.gd"
+
 [display]
 
-window/size/width=1024
-window/size/height=768
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/mode=2
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/gut/plugin.cfg")
+enabled=PackedStringArray()
 
 [rendering]
 

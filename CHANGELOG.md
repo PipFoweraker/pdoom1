@@ -4,6 +4,76 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.10.1] - 2025-11-03 - 'UX Improvements & Public Release'
+
+### Fixed
+- **CRITICAL: Action Overcommitment Bug** - Players can no longer queue more actions than they have AP for
+  - Now validates against remaining AP (total - committed) instead of total AP
+  - Clear error messages showing AP needed vs remaining
+- **CRITICAL: AP Tracking** - Committed AP now properly tracked when queuing actions
+  - AP only deducted when turn actually processes (not when queuing)
+  - Clear Queue correctly refunds all committed AP
+- **CRITICAL: Button States** - Clear Queue and Commit Actions buttons now enable/disable correctly
+  - Fixed case-sensitive phase checking
+  - Commit Actions disabled when queue is empty (prevents illegal turns)
+- **Code Quality:** Zero GDScript warnings
+  - Renamed `sign` → `value_sign` (shadowing built-in function)
+  - Renamed `seed` → `game_seed_str` (shadowing built-in function)
+  - Prefixed 8 unused `err` variables with underscore
+
+### Changed
+- **UI Clarity Improvements**:
+  - Renamed "End Turn" → "Commit Actions (Space)" for better player understanding
+  - AP counter now shows remaining AP: "AP: 3 (1 free, 2 queued)"
+  - Color-coded AP display: Green (available), Yellow (low), Red (depleted)
+  - Updated keyboard shortcut hints to say "commit" instead of "end turn"
+  - Keyboard shortcut: X → C for clear queue (avoids submenu conflicts)
+- **Game Description**: Professional tone for public presentation
+  - README.md: "satirical" → "strategic simulation"
+  - project.godot: Updated to "AI Safety Lab Management Simulation"
+- **README**: Complete overhaul for public presentation
+  - Fixed website URL (pdoom1.com, not pdoom.org)
+  - Removed Python instructions from player quick start
+  - Clarified Godot as primary platform, Python for dev/testing only
+  - PC/Windows focus, Mac/Linux documented as high-priority future work
+- **Documentation Organization**: Moved 20 markdown files into logical structure
+  - Godot docs → `godot/docs/` (5 files)
+  - Guides → `docs/guides/` (7 files)
+  - Summaries → `docs/summaries/` (7 files)
+  - Root directory: 28 → 8 markdown files (71% reduction)
+- **Archive Cleanup**: Moved 30 files from root
+  - 15 Python utility files → `archive/python-root/`
+  - 15 session docs → `archive/session-docs/`
+  - Root Python files: 20 → 5 (only essentials)
+
+### Added
+- **Queue Management Controls**:
+  - "Clear Queue (C)" button - Clears all queued actions and refunds AP
+  - "✕ Remove" buttons on each individual queue item
+  - Keyboard shortcut: C key to clear entire queue
+  - Click remove button to delete specific actions from queue
+  - Buttons automatically enable/disable based on queue state
+- **Danger Zone Warnings**:
+  - Warns before committing when doom >= 80% (CRITICAL) or >= 70% (WARNING)
+  - Warns before committing when reputation <= 20 (CRITICAL) or <= 30 (WARNING)
+  - Warns before committing when money <= $20k (CRITICAL)
+  - Helps prevent accidental game-over situations
+- **Godot Dev Tools**: Development validation tool for Godot implementation
+  - `godot/tools/dev_tool_minimal.gd` - Code structure validator
+  - `godot/tools/quick_test.gd` - Basic functionality test
+  - Comprehensive documentation in `godot/tools/README.md`
+- **Documentation Indexes**: Created `docs/README.md` and `archive/README.md`
+- **Analysis Documents**:
+  - QUICK_UX_WINS_v0.10.2.md - UX improvement roadmap
+  - DEV_TOOLS_PORTING_ANALYSIS.md - Tool migration strategy
+  - DOCS_ORGANIZATION_PLAN.md - Documentation structure plan
+
+### Technical
+- Godot 4.x continues as primary platform
+- Python codebase preserved for development/testing purposes only
+- All moves preserve git history (non-destructive cleanup)
+- Fixed GUT addon compatibility with Godot 4.5.1 (Logger naming conflict)
+
 ## [v0.10.0] - 2025-10-09 - 'Global Leaderboards Web Export System'
 
 ### >> Major Achievement: Global Leaderboards Unblocked

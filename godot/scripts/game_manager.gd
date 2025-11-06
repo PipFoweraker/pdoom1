@@ -18,9 +18,21 @@ func _ready():
 
 func start_new_game(game_seed: String = ""):
 	"""Initialize new game - pure GDScript - FIX #418: Handle initial events"""
-	print("[GameManager] Starting new game (seed: %s)" % game_seed)
+	# Get config from GameConfig singleton if seed not provided
+	if game_seed.is_empty():
+		game_seed = GameConfig.get_display_seed()
+
+	print("[GameManager] Starting new game")
+	print("  Player: %s" % GameConfig.player_name)
+	print("  Lab: %s" % GameConfig.lab_name)
+	print("  Seed: %s" % game_seed)
+	print("  Difficulty: %s" % GameConfig.get_difficulty_string())
 
 	state = GameState.new(game_seed)
+
+	# Apply difficulty settings to game state
+	_apply_difficulty_settings()
+
 	turn_manager = TurnManager.new(state)
 	is_initialized = true
 
@@ -47,43 +59,108 @@ func start_new_game(game_seed: String = ""):
 
 func select_action(action_id: String):
 	"""Queue action for execution with immediate AP deduction - FIX #418: Block if events pending"""
+	# Validation: Game initialized
 	if not is_initialized:
-		error_occurred.emit("Game not initialized")
+		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
+			ErrorHandler.Category.ACTIONS,
+			"Cannot select action: Game not initialized",
+			{"action_id": action_id}
+		)
+		error_occurred.emit(_err.message)
 		return
 
-	# BLOCK action selection if events are pending (FIX #418)
+	# Validation: No pending events (FIX #418)
 	if state.pending_events.size() > 0:
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
+			ErrorHandler.Category.ACTIONS,
+			"Cannot select actions while events are pending",
+			{"action_id": action_id, "pending_events": state.pending_events.size()}
+		)
 		error_occurred.emit("Resolve pending events before selecting actions!")
 		return
 
-	# BLOCK action selection if not in ACTION_SELECTION phase (FIX #418)
+	# Validation: Correct phase (FIX #418)
 	if state.current_phase != GameState.TurnPhase.ACTION_SELECTION:
-		error_occurred.emit("Cannot select actions in current phase")
+		var phase_name = GameState.TurnPhase.keys()[state.current_phase]
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
+			ErrorHandler.Category.ACTIONS,
+			"Cannot select actions in current phase",
+			{"action_id": action_id, "current_phase": phase_name}
+		)
+		error_occurred.emit("Cannot select actions in %s phase" % phase_name)
 		return
 
 	# Get action details to check AP cost
 	var action = _get_action_by_id(action_id)
-	if not action:
+	if not action or action.is_empty():
+		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
+			ErrorHandler.Category.ACTIONS,
+			"Action not found",
+			{"action_id": action_id}
+		)
 		error_occurred.emit("Action not found: " + action_id)
 		return
 
 	var ap_cost = action.get("costs", {}).get("action_points", 0)
 
-	# Check if player has enough AP
-	if state.action_points < ap_cost:
-		error_occurred.emit("Not enough AP for " + action.get("name", action_id))
+	# Validation: Sufficient AP (check REMAINING AP, not total - fixes overcommitment bug)
+	var available_ap = state.action_points - state.committed_ap
+	if available_ap < ap_cost:
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
+			ErrorHandler.Category.RESOURCES,
+			"Insufficient action points",
+			{
+				"action_id": action_id,
+				"action_name": action.get("name", ""),
+				"required": ap_cost,
+				"available": available_ap,
+				"total_ap": state.action_points,
+				"committed_ap": state.committed_ap
+			}
+		)
+		error_occurred.emit("Not enough AP: %d needed, %d remaining (of %d total)" % [ap_cost, available_ap, state.action_points])
 		return
 
-	# Check if player can afford the action
+	# Validation: Can afford costs
 	if not state.can_afford(action.get("costs", {})):
+		var costs = action.get("costs", {})
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
+			ErrorHandler.Category.RESOURCES,
+			"Cannot afford action",
+			{
+				"action_id": action_id,
+				"action_name": action.get("name", ""),
+				"costs": costs,
+				"state": {
+					"money": state.money,
+					"compute": state.compute,
+					"research": state.research,
+					"papers": state.papers,
+					"reputation": state.reputation
+				}
+			}
+		)
 		error_occurred.emit("Cannot afford " + action.get("name", action_id))
 		return
 
-	# Deduct AP immediately (like old game)
-	state.action_points -= ap_cost
+	# Track committed AP (queued but not yet spent)
+	state.committed_ap += ap_cost
 
-	print("[GameManager] Action queued: %s (AP cost: %d, remaining: %d)" % [action_id, ap_cost, state.action_points])
+	# Queue the action
 	state.queued_actions.append(action_id)
+
+	ErrorHandler.info(
+		ErrorHandler.Category.ACTIONS,
+		"Action queued successfully",
+		{
+			"action_id": action_id,
+			"action_name": action.get("name", ""),
+			"ap_cost": ap_cost,
+			"remaining_ap": state.action_points - state.committed_ap
+		}
+	)
+
+	print("[GameManager] Action queued: %s (AP cost: %d, committed: %d, remaining: %d)" % [action_id, ap_cost, state.committed_ap, state.action_points - state.committed_ap])
 
 	action_executed.emit({
 		"success": true,
@@ -104,23 +181,142 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 	for action in hiring_options:
 		if action.get("id") == action_id:
 			return action
+	# Check fundraising submenu actions
+	var fundraising_options = GameActions.get_fundraising_options()
+	for action in fundraising_options:
+		if action.get("id") == action_id:
+			return action
 	return {}
+
+func purchase_upgrade(upgrade_id: String):
+	"""Purchase an upgrade - doesn't consume AP"""
+	if not is_initialized:
+		error_occurred.emit("Cannot purchase upgrade: Game not initialized")
+		return
+
+	# Purchase the upgrade
+	var result = GameUpgrades.purchase_upgrade(upgrade_id, state)
+
+	if result.get("success", false):
+		print("[GameManager] Upgrade purchased: %s" % upgrade_id)
+		action_executed.emit(result)
+
+		# Emit updated state (money and upgrades changed)
+		game_state_updated.emit(state.to_dict())
+	else:
+		error_occurred.emit(result.get("message", "Upgrade purchase failed"))
+
+func reserve_ap(amount: int):
+	"""Reserve AP for event responses"""
+	if not is_initialized:
+		error_occurred.emit("Cannot reserve AP: Game not initialized")
+		return
+
+	if state.reserve_ap_amount(amount):
+		print("[GameManager] Reserved %d AP for events (Available: %d, Reserved: %d)" % [amount, state.get_available_ap(), state.reserved_ap])
+		action_executed.emit({"success": true, "message": "Reserved %d AP for events" % amount})
+
+		# Emit updated state
+		game_state_updated.emit(state.to_dict())
+	else:
+		error_occurred.emit("Not enough AP to reserve (need %d, have %d)" % [amount, state.get_available_ap()])
+
+func clear_action_queue():
+	"""Clear all queued actions and refund committed AP"""
+	if not is_initialized:
+		return
+
+	var refunded_ap = state.committed_ap
+	state.queued_actions.clear()
+	state.committed_ap = 0
+
+	print("[GameManager] Queue cleared, refunded %d AP" % refunded_ap)
+	game_state_updated.emit(state.to_dict())
+
+func remove_queued_action(action_id: String):
+	"""Remove specific action from queue and refund its AP cost"""
+	if not is_initialized:
+		return
+
+	# Find and remove the action
+	var removed_index = -1
+	for i in range(state.queued_actions.size()):
+		if state.queued_actions[i] == action_id:
+			removed_index = i
+			break
+
+	if removed_index >= 0:
+		# Get AP cost before removing
+		var action = _get_action_by_id(action_id)
+		var ap_cost = action.get("costs", {}).get("action_points", 0)
+
+		# Remove and refund
+		state.queued_actions.remove_at(removed_index)
+		state.committed_ap -= ap_cost
+
+		print("[GameManager] Removed %s from queue, refunded %d AP (committed: %d)" % [action_id, ap_cost, state.committed_ap])
+		game_state_updated.emit(state.to_dict())
+	else:
+		print("[GameManager] WARNING: Action not found in queue: %s" % action_id)
 
 func end_turn():
 	"""Execute queued actions and process turn"""
+	# Validation: Game initialized
 	if not is_initialized:
-		error_occurred.emit("Game not initialized")
+		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
+			ErrorHandler.Category.TURN,
+			"Cannot end turn: Game not initialized",
+			{}
+		)
+		error_occurred.emit(_err.message)
 		return
 
+	# Validation: Actions queued
 	if state.queued_actions.is_empty():
+		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
+			ErrorHandler.Category.TURN,
+			"Cannot end turn: No actions queued",
+			{"turn": state.turn, "phase": GameState.TurnPhase.keys()[state.current_phase]}
+		)
 		error_occurred.emit("No actions queued")
 		return
+
+	# Validation: Check phase (should be in ACTION_SELECTION)
+	if state.current_phase != GameState.TurnPhase.ACTION_SELECTION:
+		var phase_name = GameState.TurnPhase.keys()[state.current_phase]
+		ErrorHandler.warning(
+			ErrorHandler.Category.TURN,
+			"Ending turn in unexpected phase",
+			{"turn": state.turn, "phase": phase_name}
+		)
+
+	ErrorHandler.info(
+		ErrorHandler.Category.TURN,
+		"Ending turn",
+		{
+			"turn": state.turn,
+			"queued_actions": state.queued_actions.size(),
+			"actions": state.queued_actions
+		}
+	)
 
 	print("[GameManager] Executing turn...")
 	turn_phase_changed.emit("turn_end")
 
+	# Convert committed AP to spent AP
+	state.action_points -= state.committed_ap
+	state.committed_ap = 0
+
 	# Execute all queued actions
 	var result = turn_manager.execute_turn()
+
+	# Validate turn execution result
+	if not result.has("success") or not result.has("action_results"):
+		ErrorHandler.error(
+			ErrorHandler.Category.TURN,
+			"Invalid turn execution result",
+			{"result_keys": result.keys()}
+		)
 
 	# Emit results
 	for action_result in result["action_results"]:
@@ -139,6 +335,12 @@ func end_turn():
 	if not state.game_over:
 		await get_tree().create_timer(0.5).timeout
 		start_next_turn()
+	else:
+		ErrorHandler.info(
+			ErrorHandler.Category.GAME_STATE,
+			"Game ended",
+			{"victory": state.victory, "final_turn": state.turn}
+		)
 
 func start_next_turn():
 	"""Begin next turn - FIX #418: Events before actions"""
@@ -194,60 +396,17 @@ func resolve_event(event: Dictionary, choice_id: String):
 	else:
 		error_occurred.emit(result.get("error", result.get("message", "Event resolution failed")))
 
-func purchase_upgrade(upgrade_id: String):
-	"""Purchase an upgrade"""
-	if not is_initialized:
-		error_occurred.emit("Game not initialized")
-		return
-
-	# Get upgrade details
-	var upgrades = GameUpgrades.get_all_upgrades()
-	var upgrade = null
-	for u in upgrades:
-		if u["id"] == upgrade_id:
-			upgrade = u
-			break
-
-	if not upgrade:
-		error_occurred.emit("Upgrade not found: " + upgrade_id)
-		return
-
-	# Check if already purchased
-	if state.has_upgrade(upgrade_id):
-		error_occurred.emit("Upgrade already purchased: " + upgrade["name"])
-		return
-
-	# Check affordability
-	var cost = upgrade["cost"]
-	if state.money < cost:
-		error_occurred.emit("Not enough money for " + upgrade["name"])
-		return
-
-	# Purchase upgrade
-	state.money -= cost
-	state.purchase_upgrade(upgrade_id)
-
-	# Apply upgrade effects (basic implementation)
-	_apply_upgrade_effect(upgrade)
-
-	action_executed.emit({
-		"success": true,
-		"message": "Purchased: " + upgrade["name"]
-	})
-
-	# Emit updated state
-	game_state_updated.emit(state.to_dict())
-
-func _apply_upgrade_effect(upgrade: Dictionary):
-	"""Apply upgrade effects to game state"""
-	var effect_key = upgrade.get("effect_key", "")
-
-	match effect_key:
-		"better_computers":
-			# +1 research per action - handled in action execution
-			pass
-		"hpc_cluster":
-			state.compute += 20.0
-		"comfy_chairs", "secure_cloud", "accounting_software", "compact_activity_display", "research_automation":
-			# These have passive effects or UI changes
-			pass
+func _apply_difficulty_settings():
+	"""Apply difficulty modifiers to game state"""
+	match GameConfig.difficulty:
+		0:  # Easy
+			print("[GameManager] Applying EASY difficulty modifiers")
+			state.money *= 1.5  # 50% more starting money
+			state.max_action_points = 4  # Extra AP
+		1:  # Standard
+			print("[GameManager] Applying STANDARD difficulty (default)")
+			# No changes
+		2:  # Hard
+			print("[GameManager] Applying HARD difficulty modifiers")
+			state.money *= 0.75  # 25% less starting money
+			state.max_action_points = 2  # Less AP

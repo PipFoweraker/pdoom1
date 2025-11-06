@@ -21,7 +21,13 @@
       "Bash(cp:*)",
       "Bash(where godot)",
       "Bash(printf '%s\\n%s\\n' '{\"\"\"\"action\"\"\"\": \"\"\"\"init_game\"\"\"\", \"\"\"\"seed\"\"\"\": \"\"\"\"test\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"execute_action\"\"\"\", \"\"\"\"action_id\"\"\"\": \"\"\"\"hire_safety_researcher\"\"\"\"}')",
-      "Bash(printf '%s\\n%s\\n%s\\n%s\\n' '{\"\"\"\"action\"\"\"\": \"\"\"\"init_game\"\"\"\", \"\"\"\"seed\"\"\"\": \"\"\"\"full-turn-test\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"select_action\"\"\"\", \"\"\"\"action_id\"\"\"\": \"\"\"\"hire_safety_researcher\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"end_turn\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"start_turn\"\"\"\"}')"
+      "Bash(printf '%s\\n%s\\n%s\\n%s\\n' '{\"\"\"\"action\"\"\"\": \"\"\"\"init_game\"\"\"\", \"\"\"\"seed\"\"\"\": \"\"\"\"full-turn-test\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"select_action\"\"\"\", \"\"\"\"action_id\"\"\"\": \"\"\"\"hire_safety_researcher\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"end_turn\"\"\"\"}' '{\"\"\"\"action\"\"\"\": \"\"\"\"start_turn\"\"\"\"}')",
+      "Bash(\"/c/Program Files/Godot/Godot_v4.5.1-stable_win64.exe\" --headless --export-release \"Windows Desktop\" \"../builds/windows/v0.10.1/PDoom.exe\")",
+      "Bash(curl:*)",
+      "Bash(bash:*)",
+      "Bash(git add:*)",
+      "Bash(git commit --no-verify -m \"$(cat <<''EOF''\nbuild: Rebuild v0.10.1 executables with latest changes\n\n- Rebuild PDoom.exe with latest code from main branch\n- Update Godot import metadata files\n- Package ready for distribution\n\nThis ensures the v0.10.1 release includes all automation\ninfrastructure and documentation improvements from the\nlatest commits.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push)"
     ],
     "deny": [],
     "ask": []

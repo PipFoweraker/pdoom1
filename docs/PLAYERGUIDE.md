@@ -40,11 +40,17 @@ A bootstrap strategy game about managing a scrappy AI safety lab with realistic 
 
 ## Quick Setup
 
-1. **Install Python 3.9+** (if not already installed)
-2. **Install pygame**: `pip install pygame`
-3. **Run the game**: `python main.py`
+### For Players (Recommended)
 
-That's it! The game will open with a main menu.
+1. **Download the game**: Get the latest release from [GitHub Releases](https://github.com/PipFoweraker/pdoom1/releases)
+2. **Extract and run**: Double-click `PDoom.exe` (Windows)
+3. **Play**: The game will open with the main menu
+
+### For Developers
+
+Building from source or contributing? See [Development Setup](../docs/developer/CONTRIBUTING.md).
+
+**Note:** This game is built with Godot 4.x. The Python/Pygame version is for development only.
 
 ---
 

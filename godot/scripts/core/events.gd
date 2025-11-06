@@ -20,13 +20,22 @@ static func get_all_events() -> Array[Dictionary]:
 			"options": [
 				{
 					"id": "emergency_fundraise",
-					"text": "Emergency Fundraising",
+					"text": "Emergency Fundraising (costs 1 AP)",
+					"costs": {"action_points": 1},
 					"effects": {"money": 75000},
 					"message": "Secured emergency funding: +$75,000"
 				},
 				{
+					"id": "sell_assets",
+					"text": "Sell Lab Equipment (costs 2 AP)",
+					"costs": {"action_points": 2},
+					"effects": {"money": 120000, "research": -10},
+					"message": "Sold equipment for emergency funds: +$120,000, -10 research"
+				},
+				{
 					"id": "accept",
-					"text": "Continue Anyway",
+					"text": "Continue Anyway (no AP cost)",
+					"costs": {},
 					"effects": {},
 					"message": "Continuing with limited funds..."
 				}
@@ -43,15 +52,23 @@ static func get_all_events() -> Array[Dictionary]:
 			"repeatable": true,
 			"options": [
 				{
+					"id": "hire_immediately",
+					"text": "Fast-Track Hiring (costs 1 AP, $25k)",
+					"costs": {"money": 25000, "action_points": 1},
+					"effects": {"safety_researchers": 1, "doom": -3},
+					"message": "Fast-tracked hiring process! (+1 safety researcher, -3 doom)"
+				},
+				{
 					"id": "hire_discounted",
-					"text": "Hire at Discount ($25k)",
+					"text": "Standard Hiring ($25k, no AP)",
 					"costs": {"money": 25000},
 					"effects": {"safety_researchers": 1, "doom": -2},
 					"message": "Hired talented researcher at discount! (+1 safety researcher, -2 doom)"
 				},
 				{
 					"id": "decline",
-					"text": "Decline Offer",
+					"text": "Decline Offer (no cost)",
+					"costs": {},
 					"effects": {},
 					"message": "Declined recruitment opportunity"
 				}
@@ -141,6 +158,182 @@ static func get_all_events() -> Array[Dictionary]:
 					"message": "Declined compute partnership"
 				}
 			]
+		},
+		{
+			"id": "employee_burnout",
+			"name": "Employee Burnout Crisis",
+			"description": "Your team is overworked! Several researchers are considering leaving.",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "safety_researchers >= 5",
+			"repeatable": true,
+			"options": [
+				{
+					"id": "emergency_intervention",
+					"text": "Emergency Intervention (costs 2 AP, $30k)",
+					"costs": {"money": 30000, "action_points": 2},
+					"effects": {"reputation": 8, "doom": -5},
+					"message": "Personal intervention prevented resignations! (+8 reputation, -5 doom)"
+				},
+				{
+					"id": "team_retreat",
+					"text": "Organize Team Retreat ($30k, no AP)",
+					"costs": {"money": 30000},
+					"effects": {"reputation": 5, "doom": -2},
+					"message": "Team retreat restored morale (+5 reputation, -2 doom)"
+				},
+				{
+					"id": "salary_raise",
+					"text": "Give Raises ($50k, no AP)",
+					"costs": {"money": 50000},
+					"effects": {"reputation": 8},
+					"message": "Salary raises improved retention (+8 reputation)"
+				},
+				{
+					"id": "ignore_burnout",
+					"text": "Push Through (no cost)",
+					"costs": {},
+					"effects": {"doom": 3},
+					"message": "Team morale suffered (+3 doom)"
+				}
+			]
+		},
+		{
+			"id": "rival_poaching",
+			"name": "Rival Lab Poaching",
+			"description": "A well-funded competitor is trying to recruit your best researchers!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.08,
+			"min_turn": 10,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "counter_offer",
+					"text": "Counter-Offer ($80k)",
+					"costs": {"money": 80000},
+					"effects": {},
+					"message": "Successfully retained researchers with counter-offer"
+				},
+				{
+					"id": "let_go",
+					"text": "Let Them Go",
+					"effects": {"safety_researchers": -1, "money": 20000},
+					"message": "Lost researcher but saved money (-1 safety researcher, +$20k saved)"
+				}
+			]
+		},
+		{
+			"id": "media_scandal",
+			"name": "Media Scandal",
+			"description": "Negative press coverage is damaging your lab's reputation!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.06,
+			"min_turn": 7,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "pr_campaign",
+					"text": "Launch PR Campaign ($40k)",
+					"costs": {"money": 40000},
+					"effects": {"reputation": 10},
+					"message": "PR campaign restored public image (+10 reputation)"
+				},
+				{
+					"id": "ignore_media",
+					"text": "Ignore and Focus on Work",
+					"effects": {"reputation": -8},
+					"message": "Reputation suffered from negative coverage (-8 reputation)"
+				}
+			]
+		},
+		{
+			"id": "government_regulation",
+			"name": "New AI Regulation Proposed",
+			"description": "Government is considering new AI safety regulations. Should you lobby?",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "doom >= 60",
+			"repeatable": false,
+			"options": [
+				{
+					"id": "support_regulation",
+					"text": "Publicly Support ($50k lobbying)",
+					"costs": {"money": 50000, "action_points": 1},
+					"effects": {"doom": -10, "reputation": 15},
+					"message": "Regulation passed! Global safety improved (-10 doom, +15 reputation)"
+				},
+				{
+					"id": "oppose_regulation",
+					"text": "Oppose (Stay Competitive)",
+					"effects": {"doom": 5, "reputation": -5},
+					"message": "Regulation weakened (+5 doom, -5 reputation)"
+				},
+				{
+					"id": "stay_neutral",
+					"text": "Remain Neutral",
+					"effects": {"doom": 2},
+					"message": "Stayed neutral as doom increased (+2 doom)"
+				}
+			]
+		},
+		{
+			"id": "technical_failure",
+			"name": "Critical System Failure",
+			"description": "Your compute infrastructure suffered a major failure!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 12,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "emergency_repair",
+					"text": "Emergency Repair ($60k)",
+					"costs": {"money": 60000},
+					"effects": {"compute": 30},
+					"message": "System repaired and upgraded (+30 compute)"
+				},
+				{
+					"id": "basic_fix",
+					"text": "Basic Fix ($20k)",
+					"costs": {"money": 20000},
+					"effects": {"compute": -20},
+					"message": "System limping along (-20 compute)"
+				}
+			]
+		},
+		{
+			"id": "stray_cat",
+			"name": "A Stray Cat Appears!",
+			"description": "A friendly stray cat has wandered into your lab. It seems to enjoy watching the researchers work and occasionally walks across keyboards. Adopt it?",
+			"type": "popup",
+			"trigger_type": "turn_exact",
+			"trigger_turn": 7,
+			"repeatable": false,
+			"options": [
+				{
+					"id": "adopt_cat",
+					"text": "Adopt the Cat",
+					"costs": {"money": 500},
+					"effects": {"has_cat": 1, "doom": -1},
+					"message": "Cat adopted! Your researchers' morale improves slightly. The cat has claimed its spot in the lab. (-1 doom)"
+				},
+				{
+					"id": "feed_and_release",
+					"text": "Feed It and Let It Go",
+					"costs": {"money": 100},
+					"effects": {},
+					"message": "You give the cat some food and it wanders off, purring contentedly."
+				},
+				{
+					"id": "shoo_away",
+					"text": "Shoo It Away",
+					"effects": {"doom": 1},
+					"message": "The cat leaves, disappointed. Your researchers seem a bit sad. (+1 doom for being heartless)"
+				}
+			]
 		}
 	]
 
@@ -167,6 +360,10 @@ static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumbe
 	var trigger_type = event.get("trigger_type", "")
 
 	match trigger_type:
+		"turn_exact":
+			# Exact turn trigger (e.g., cat on turn 7)
+			return state.turn == event.get("trigger_turn", -1)
+
 		"turn_and_resource":
 			# Specific turn + condition
 			if state.turn != event.get("trigger_turn", -1):
@@ -220,6 +417,14 @@ static func evaluate_condition(condition: String, state: GameState) -> bool:
 			resource_value = state.doom
 		"action_points":
 			resource_value = state.action_points
+		"safety_researchers":
+			resource_value = state.safety_researchers
+		"capability_researchers":
+			resource_value = state.capability_researchers
+		"compute_engineers":
+			resource_value = state.compute_engineers
+		"managers":
+			resource_value = state.managers
 		_:
 			return false
 
@@ -289,6 +494,8 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 				state.capability_researchers += value
 			"compute_engineers":
 				state.compute_engineers += value
+			"has_cat":
+				state.has_cat = (value > 0)
 
 	var message = chosen_option.get("message", "Event resolved")
 	return {"success": true, "message": message}
