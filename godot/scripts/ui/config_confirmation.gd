@@ -48,8 +48,8 @@ func _display_configuration():
 		difficulty_label.text = ["Easy (Conservative)", "Standard (Regulatory)", "Hard (Aggressive)"][GameConfig.difficulty]
 		difficulty_label.modulate = Color(1, 1, 1)  # Normal color
 
-	# Starting funding - Always $245,000 (from game_state.gd:6)
-	funding_label.text = "$245,000"
+	# Starting funding - Always $245,000 (from game_state.gd:5)
+	funding_label.text = GameConfig.format_money(245000)
 	funding_label.modulate = Color(0.5, 0.5, 0.5)  # Grey out (always locked)
 
 func _on_launch_pressed():

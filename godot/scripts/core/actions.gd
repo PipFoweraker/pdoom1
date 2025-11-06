@@ -299,26 +299,26 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 		"fundraise_small":
 			var money_raised = state.rng.randi_range(30000, 60000)
 			state.add_resources({"money": money_raised})
-			result["message"] = "Modest funding round successful! Raised $%d" % money_raised
+			result["message"] = "Modest funding round successful! Raised %s" % GameConfig.format_money(money_raised)
 
 		"fundraise_big":
 			var base_amount = state.rng.randi_range(80000, 150000)
 			var rep_bonus = int(state.reputation * 500)
 			var total_raised = base_amount + rep_bonus
 			state.add_resources({"money": total_raised})
-			result["message"] = "Major funding round! Raised $%d (base: $%d, reputation bonus: $%d)" % [total_raised, base_amount, rep_bonus]
+			result["message"] = "Major funding round! Raised %s (base: %s, reputation bonus: %s)" % [GameConfig.format_money(total_raised), GameConfig.format_money(base_amount), GameConfig.format_money(rep_bonus)]
 
 		"take_loan":
 			state.add_resources({"money": 75000})
 			# Note: debt tracking would require expanded state
-			result["message"] = "Loan approved! Received $75,000 (repayment: $90,000 due later)"
+			result["message"] = "Loan approved! Received %s (repayment: %s due later)" % [GameConfig.format_money(75000), GameConfig.format_money(90000)]
 
 		"apply_grant":
 			var grant_amount = state.rng.randi_range(50000, 100000)
 			var paper_bonus = state.papers * 5000
 			var total = grant_amount + paper_bonus
 			state.add_resources({"money": total})
-			result["message"] = "Grant approved! Received $%d (base: $%d, papers bonus: $%d)" % [total, grant_amount, paper_bonus]
+			result["message"] = "Grant approved! Received %s (base: %s, papers bonus: %s)" % [GameConfig.format_money(total), GameConfig.format_money(grant_amount), GameConfig.format_money(paper_bonus)]
 
 		"network":
 			state.add_resources({"reputation": 3})
@@ -400,7 +400,7 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			var bonus = state.reputation * 1500
 			var total = base_funding + bonus
 			state.add_resources({"money": total})
-			result["message"] = "Grant approved! Received $%d" % total
+			result["message"] = "Grant approved! Received %s" % GameConfig.format_money(total)
 
 		"hire_ethicist":
 			# Ethicist improves safety research effectiveness

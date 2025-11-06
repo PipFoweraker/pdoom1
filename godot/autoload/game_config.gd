@@ -218,6 +218,41 @@ func get_display_seed() -> String:
 		return get_weekly_seed()
 	return seed
 
+## Format money with comma separators (e.g., $245,000)
+## Issue #436 - Player feedback: add commas to all $ references
+static func format_money(amount: float) -> String:
+	var is_negative = amount < 0
+	var abs_amount = abs(amount)
+
+	# Convert to string and split at decimal point
+	var int_part = int(abs_amount)
+	var decimal_part = abs_amount - int_part
+
+	# Format integer part with commas
+	var int_str = str(int_part)
+	var formatted = ""
+	var count = 0
+
+	# Add commas from right to left
+	for i in range(int_str.length() - 1, -1, -1):
+		if count > 0 and count % 3 == 0:
+			formatted = "," + formatted
+		formatted = int_str[i] + formatted
+		count += 1
+
+	# Add negative sign if needed
+	if is_negative:
+		formatted = "-$" + formatted
+	else:
+		formatted = "$" + formatted
+
+	# Add decimal part if significant (for costs like $2,500.50)
+	if decimal_part > 0.01:
+		formatted += "%.2f" % decimal_part
+		formatted = formatted.replace("0.", ".")
+
+	return formatted
+
 ## Debug print current configuration
 func print_config() -> void:
 	print("[GameConfig] === Current Configuration ===")

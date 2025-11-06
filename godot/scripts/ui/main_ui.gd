@@ -272,7 +272,7 @@ func _on_end_turn_button_pressed():
 
 	# Low money warning
 	if current_state.money <= 20000:
-		warnings.append("[color=red]⚠️ CRITICAL: Low funds ($%.0f) - Can't afford much![/color]" % current_state.money)
+		warnings.append("[color=red]⚠️ CRITICAL: Low funds (%s) - Can't afford much![/color]" % GameConfig.format_money(current_state.money))
 
 	# Show warnings if any
 	if warnings.size() > 0:
@@ -294,7 +294,7 @@ func _on_game_state_updated(state: Dictionary):
 
 	# Update resource displays
 	turn_label.text = "Turn: %d" % state.get("turn", 0)
-	money_label.text = "Money: $%s" % _format_money(state.get("money", 0))
+	money_label.text = "Money: %s" % GameConfig.format_money(state.get("money", 0))
 	compute_label.text = "Compute: %.1f" % state.get("compute", 0)
 	research_label.text = "Research: %.1f" % state.get("research", 0)
 	papers_label.text = "Papers: %d" % state.get("papers", 0)
@@ -463,22 +463,29 @@ func _on_actions_available(actions: Array):
 			categories[category] = []
 		categories[category].append(action)
 
-	# Define category order and display names
-	var category_order = ["hiring", "resources", "research", "management", "other"]
+	# Define category order and display names (issue #436 - comprehensive categories)
+	var category_order = ["hiring", "resources", "research", "funding", "management", "influence", "strategic", "other"]
 	var category_names = {
 		"hiring": "Hiring",
 		"resources": "Resources",
 		"research": "Research",
+		"funding": "Fundraising",
 		"management": "Management",
+		"influence": "Public Influence",
+		"strategic": "Strategic",
 		"other": "Other"
 	}
 
 	# Define category colors (from issue #436 player feedback)
+	# Using ThemeManager for centralized color management
 	var category_colors = {
-		"hiring": Color(0.4, 0.7, 1.0),      # Blue - people/staff
-		"resources": Color(1.0, 0.8, 0.3),   # Gold - money/resources
-		"research": Color(0.6, 1.0, 0.6),    # Green - research/growth
-		"management": Color(1.0, 0.6, 0.8),  # Pink - administrative
+		"hiring": ThemeManager.get_category_color("hiring"),
+		"resources": ThemeManager.get_category_color("resources"),
+		"research": ThemeManager.get_category_color("research"),
+		"management": ThemeManager.get_category_color("management"),
+		"influence": ThemeManager.get_category_color("influence"),
+		"strategic": ThemeManager.get_category_color("strategic"),
+		"funding": ThemeManager.get_category_color("funding"),
 		"other": Color(0.8, 0.8, 0.8)        # Gray - misc
 	}
 
@@ -518,11 +525,7 @@ func _on_actions_available(actions: Array):
 			if action_cost.has("action_points"):
 				cost_parts.append("%d AP" % action_cost["action_points"])
 			if action_cost.has("money"):
-				var money_k = action_cost["money"] / 1000.0
-				if money_k >= 1:
-					cost_parts.append("$%dk" % int(money_k))
-				else:
-					cost_parts.append("$%d" % action_cost["money"])
+				cost_parts.append(GameConfig.format_money(action_cost["money"]))
 			if action_cost.has("reputation"):
 				cost_parts.append("%d Rep" % action_cost["reputation"])
 			if action_cost.has("papers"):
@@ -609,7 +612,7 @@ func _populate_upgrades():
 			button.disabled = true
 			button.modulate = Color(0.5, 1.0, 0.5)  # Green tint
 		else:
-			button.text = "%s ($%dk)" % [upgrade_name, upgrade_cost / 1000]
+			button.text = "%s (%s)" % [upgrade_name, GameConfig.format_money(upgrade_cost)]
 
 			# Check affordability
 			var can_afford = current_state.get("money", 0) >= upgrade_cost
@@ -618,7 +621,7 @@ func _populate_upgrades():
 				button.modulate = Color(0.6, 0.6, 0.6)
 
 		# Tooltip
-		var tooltip = upgrade_desc + "\n\nCost: $%d" % upgrade_cost
+		var tooltip = upgrade_desc + "\n\nCost: %s" % GameConfig.format_money(upgrade_cost)
 		if is_purchased:
 			tooltip += "\n\n[PURCHASED]"
 		elif not current_state.get("money", 0) >= upgrade_cost:
@@ -654,11 +657,7 @@ func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
 	var info_text = "[b][color=cyan]%s[/color][/b] — %s" % [upgrade_name, upgrade_desc]
 
 	# Show cost
-	var money_k = upgrade_cost / 1000.0
-	if money_k >= 1:
-		info_text += "\n[color=gray]├─[/color] [color=yellow]Cost:[/color] [color=gold]$%dk[/color]" % int(money_k)
-	else:
-		info_text += "\n[color=gray]├─[/color] [color=yellow]Cost:[/color] [color=gold]$%d[/color]" % upgrade_cost
+	info_text += "\n[color=gray]├─[/color] [color=yellow]Cost:[/color] [color=gold]%s[/color]" % GameConfig.format_money(upgrade_cost)
 
 	# Show status
 	info_text += "\n[color=gray]└─[/color] "
@@ -670,11 +669,7 @@ func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
 			info_text += "[color=lime]✓ READY TO PURCHASE[/color]"
 		else:
 			var needed = upgrade_cost - current_state.get("money", 0)
-			var needed_k = needed / 1000.0
-			if needed_k >= 1:
-				info_text += "[color=red]✗ NEED $%dk MORE[/color]" % int(needed_k)
-			else:
-				info_text += "[color=red]✗ NEED $%d MORE[/color]" % needed
+			info_text += "[color=red]✗ NEED %s MORE[/color]" % GameConfig.format_money(needed)
 
 	info_label.text = info_text
 
@@ -773,7 +768,7 @@ func _show_hiring_submenu():
 		btn.focus_mode = Control.FOCUS_NONE  # Don't grab focus - let MainUI handle keys
 		btn.mouse_filter = Control.MOUSE_FILTER_PASS  # Still allow mouse clicks
 		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		var btn_text = "[%s] %s ($%d, %d AP)" % [key_label, hire_name, hire_costs.get("money", 0), hire_costs.get("action_points", 0)]
+		var btn_text = "[%s] %s (%s, %d AP)" % [key_label, hire_name, GameConfig.format_money(hire_costs.get("money", 0)), hire_costs.get("action_points", 0)]
 		btn.text = btn_text
 
 		# Check affordability
@@ -788,7 +783,7 @@ func _show_hiring_submenu():
 			btn.modulate = Color(0.6, 0.6, 0.6)
 
 		# Add tooltip
-		btn.tooltip_text = hire_desc + "\n\nCosts: $%d, %d AP\n\nPress %d to select" % [hire_costs.get("money", 0), hire_costs.get("action_points", 0), button_index + 1]
+		btn.tooltip_text = hire_desc + "\n\nCosts: %s, %d AP\n\nPress %d to select" % [GameConfig.format_money(hire_costs.get("money", 0)), hire_costs.get("action_points", 0), button_index + 1]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_hiring_option_selected(hire_id, hire_name, dialog))
@@ -924,9 +919,9 @@ func _show_fundraising_submenu():
 		# Format gains
 		var gain_text = ""
 		if fund_gains.has("money_min") and fund_gains.has("money_max"):
-			gain_text = "$%d-$%d" % [fund_gains.get("money_min"), fund_gains.get("money_max")]
+			gain_text = "%s-%s" % [GameConfig.format_money(fund_gains.get("money_min")), GameConfig.format_money(fund_gains.get("money_max"))]
 		elif fund_gains.has("money"):
-			gain_text = "$%d" % fund_gains.get("money")
+			gain_text = GameConfig.format_money(fund_gains.get("money"))
 
 		# Add keyboard hint (LETTERS not numbers)
 		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
@@ -1242,11 +1237,7 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 		if action_costs.has("action_points"):
 			cost_parts.append("[color=magenta]%d AP[/color]" % action_costs["action_points"])
 		if action_costs.has("money"):
-			var money_k = action_costs["money"] / 1000.0
-			if money_k >= 1:
-				cost_parts.append("[color=gold]$%dk[/color]" % int(money_k))
-			else:
-				cost_parts.append("[color=gold]$%d[/color]" % action_costs["money"])
+			cost_parts.append("[color=gold]%s[/color]" % GameConfig.format_money(action_costs["money"]))
 		if action_costs.has("reputation"):
 			cost_parts.append("[color=orange]%d Rep[/color]" % action_costs["reputation"])
 		if action_costs.has("papers"):

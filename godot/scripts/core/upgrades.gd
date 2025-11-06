@@ -83,7 +83,7 @@ static func purchase_upgrade(upgrade_id: String, state: GameState) -> Dictionary
 	# Check affordability (only money cost)
 	var cost = upgrade.get("cost", 0)
 	if state.money < cost:
-		return {"success": false, "message": "Cannot afford %s (need $%d, have $%d)" % [upgrade["name"], cost, state.money]}
+		return {"success": false, "message": "Cannot afford %s (need %s, have %s)" % [upgrade["name"], GameConfig.format_money(cost), GameConfig.format_money(state.money)]}
 
 	# Spend money
 	state.spend_resources({"money": cost})
@@ -92,7 +92,7 @@ static func purchase_upgrade(upgrade_id: String, state: GameState) -> Dictionary
 	state.add_upgrade(upgrade_id)
 
 	# Apply immediate effects based on upgrade
-	var result = {"success": true, "message": "%s purchased! ($%d)" % [upgrade["name"], cost]}
+	var result = {"success": true, "message": "%s purchased! (%s)" % [upgrade["name"], GameConfig.format_money(cost)]}
 
 	match upgrade_id:
 		"upgrade_computer":

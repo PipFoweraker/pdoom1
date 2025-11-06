@@ -28,6 +28,15 @@ class ThemeData:
 		"doom_medium": Color(0.9, 0.7, 0.2),
 		"doom_high": Color(0.9, 0.3, 0.2),
 		"doom_critical": Color(0.7, 0.1, 0.1),
+
+		# Action category colors (issue #436 - player feedback)
+		"category_hiring": Color(0.4, 0.7, 0.4),        # Green - people/growth
+		"category_resources": Color(0.5, 0.5, 0.8),     # Blue - infrastructure
+		"category_research": Color(0.7, 0.5, 0.9),      # Purple - science/knowledge
+		"category_management": Color(0.9, 0.7, 0.3),    # Gold - leadership/organization
+		"category_influence": Color(0.9, 0.5, 0.3),     # Orange - external impact
+		"category_strategic": Color(0.8, 0.3, 0.4),     # Red - high-stakes decisions
+		"category_funding": Color(0.3, 0.8, 0.7),       # Cyan - financial
 	}
 
 	# Fonts
@@ -309,6 +318,13 @@ func get_doom_color(doom_percent: float) -> Color:
 		return theme.colors["doom_high"]
 	else:
 		return theme.colors["doom_critical"]
+
+## Get action category color (issue #436 - player feedback)
+## Returns colored accent for action buttons based on their category
+func get_category_color(category: String) -> Color:
+	var theme = get_theme()
+	var color_key = "category_" + category
+	return theme.colors.get(color_key, theme.colors["accent"])  # Fallback to default accent
 
 ## List all available themes
 func get_available_themes() -> Array:
