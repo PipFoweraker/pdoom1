@@ -3,7 +3,7 @@ class_name GameState
 ## Core game state - all resources and game status
 
 # Resources
-var money: float = 100000.0
+var money: float = 245000.0  # Updated from player feedback (issue #436)
 var compute: float = 100.0
 var research: float = 0.0  # Generated from compute
 var papers: float = 0.0
@@ -48,7 +48,7 @@ func _init(game_seed: String = ""):
 
 func reset():
 	"""Reset to starting state"""
-	money = 100000.0
+	money = 245000.0  # Updated from player feedback (issue #436)
 	compute = 100.0
 	research = 0.0
 	papers = 0.0

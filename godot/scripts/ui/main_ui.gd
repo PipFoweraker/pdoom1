@@ -113,7 +113,7 @@ func _on_game_state_updated(state: Dictionary):
 
 	# Update resource displays
 	turn_label.text = "Turn: %d" % state.get("turn", 0)
-	money_label.text = "Money: $%.0f" % state.get("money", 0)
+	money_label.text = "Money: $%s" % _format_money(state.get("money", 0))
 	compute_label.text = "Compute: %.1f" % state.get("compute", 0)
 	research_label.text = "Research: %.1f" % state.get("research", 0)
 	papers_label.text = "Papers: %d" % state.get("papers", 0)
@@ -250,6 +250,15 @@ func _on_actions_available(actions: Array):
 		"other": "Other"
 	}
 
+	# Define category colors (from issue #436 player feedback)
+	var category_colors = {
+		"hiring": Color(0.4, 0.7, 1.0),      # Blue - people/staff
+		"resources": Color(1.0, 0.8, 0.3),   # Gold - money/resources
+		"research": Color(0.6, 1.0, 0.6),    # Green - research/growth
+		"management": Color(1.0, 0.6, 0.8),  # Pink - administrative
+		"other": Color(0.8, 0.8, 0.8)        # Gray - misc
+	}
+
 	# Create sections for each category
 	for category_key in category_order:
 		if not categories.has(category_key):
@@ -262,7 +271,8 @@ func _on_actions_available(actions: Array):
 		# Create category label
 		var category_label = Label.new()
 		category_label.text = "-- " + category_names.get(category_key, category_key.capitalize()) + " --"
-		category_label.add_theme_color_override("font_color", Color(0.7, 0.7, 1.0))
+		var label_color = category_colors.get(category_key, Color(0.7, 0.7, 1.0))
+		category_label.add_theme_color_override("font_color", label_color)
 		actions_list.add_child(category_label)
 
 		# Create buttons for actions in this category
@@ -299,6 +309,11 @@ func _on_actions_available(actions: Array):
 					tooltip += "\n  Missing: " + msg
 				button.disabled = true
 				button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
+			else:
+				# Apply subtle category color tint to affordable buttons (issue #436)
+				var button_color = category_colors.get(category_key, Color(1.0, 1.0, 1.0))
+				# Lighten the color for buttons (70% white + 30% category color for subtle tint)
+				button.modulate = Color(0.7, 0.7, 0.7).lerp(button_color, 0.3)
 
 			button.tooltip_text = tooltip
 
@@ -488,6 +503,21 @@ func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Acc
 	# Tell game manager to resolve event
 	game_manager.resolve_event(event, choice_id)
 
+func _format_money(amount: float) -> String:
+	"""Format money with thousand separators"""
+	var amount_str = str(int(amount))
+	var result = ""
+	var count = 0
+
+	# Process string from right to left
+	for i in range(amount_str.length() - 1, -1, -1):
+		if count > 0 and count % 3 == 0:
+			result = "," + result
+		result = amount_str[i] + result
+		count += 1
+
+	return result
+
 func _populate_upgrades_list():
 	"""Populate the upgrades list with all available upgrades"""
 	# Clear existing upgrade buttons
@@ -516,7 +546,7 @@ func _populate_upgrades_list():
 			button.disabled = true
 			button.modulate = Color(0.5, 1.0, 0.5)  # Green tint for purchased
 		else:
-			button.text = upgrade_name + " ($" + str(upgrade_cost) + ")"
+			button.text = upgrade_name + " ($" + _format_money(upgrade_cost) + ")"
 
 			# Check affordability
 			var can_afford = current_state.get("money", 0) >= upgrade_cost
@@ -525,7 +555,7 @@ func _populate_upgrades_list():
 				button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
 
 		# Add tooltip
-		button.tooltip_text = upgrade_desc + "\n\nCost: $" + str(upgrade_cost)
+		button.tooltip_text = upgrade_desc + "\n\nCost: $" + _format_money(upgrade_cost)
 
 		# Connect button press
 		if not is_purchased:
