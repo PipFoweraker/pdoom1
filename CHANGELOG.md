@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **CRITICAL: Action Overcommitment Bug** - Players can no longer queue more actions than they have AP for
   - Now validates against remaining AP (total - committed) instead of total AP
   - Clear error messages showing AP needed vs remaining
+- **CRITICAL: AP Tracking** - Committed AP now properly tracked when queuing actions
+  - AP only deducted when turn actually processes (not when queuing)
+  - Clear Queue correctly refunds all committed AP
+- **CRITICAL: Button States** - Clear Queue and Commit Actions buttons now enable/disable correctly
+  - Fixed case-sensitive phase checking
+  - Commit Actions disabled when queue is empty (prevents illegal turns)
+- **Code Quality:** Zero GDScript warnings
+  - Renamed `sign` → `value_sign` (shadowing built-in function)
+  - Renamed `seed` → `game_seed_str` (shadowing built-in function)
+  - Prefixed 8 unused `err` variables with underscore
 
 ### Changed
 - **UI Clarity Improvements**:
@@ -17,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - AP counter now shows remaining AP: "AP: 3 (1 free, 2 queued)"
   - Color-coded AP display: Green (available), Yellow (low), Red (depleted)
   - Updated keyboard shortcut hints to say "commit" instead of "end turn"
+  - Keyboard shortcut: X → C for clear queue (avoids submenu conflicts)
+- **Game Description**: Professional tone for public presentation
+  - README.md: "satirical" → "strategic simulation"
+  - project.godot: Updated to "AI Safety Lab Management Simulation"
 - **README**: Complete overhaul for public presentation
   - Fixed website URL (pdoom1.com, not pdoom.org)
   - Removed Python instructions from player quick start
@@ -34,9 +48,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Queue Management Controls**:
-  - "Clear Queue (X)" button - Clears all queued actions and refunds AP
-  - Keyboard shortcut: X key to clear queue
-  - Button automatically enables/disables based on queue state
+  - "Clear Queue (C)" button - Clears all queued actions and refunds AP
+  - "✕ Remove" buttons on each individual queue item
+  - Keyboard shortcut: C key to clear entire queue
+  - Click remove button to delete specific actions from queue
+  - Buttons automatically enable/disable based on queue state
+- **Danger Zone Warnings**:
+  - Warns before committing when doom >= 80% (CRITICAL) or >= 70% (WARNING)
+  - Warns before committing when reputation <= 20 (CRITICAL) or <= 30 (WARNING)
+  - Warns before committing when money <= $20k (CRITICAL)
+  - Helps prevent accidental game-over situations
 - **Godot Dev Tools**: Development validation tool for Godot implementation
   - `godot/tools/dev_tool_minimal.gd` - Code structure validator
   - `godot/tools/quick_test.gd` - Basic functionality test
