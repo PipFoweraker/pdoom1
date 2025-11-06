@@ -193,3 +193,61 @@ func resolve_event(event: Dictionary, choice_id: String):
 			actions_available.emit(actions)
 	else:
 		error_occurred.emit(result.get("error", result.get("message", "Event resolution failed")))
+
+func purchase_upgrade(upgrade_id: String):
+	"""Purchase an upgrade"""
+	if not is_initialized:
+		error_occurred.emit("Game not initialized")
+		return
+
+	# Get upgrade details
+	var upgrades = GameUpgrades.get_all_upgrades()
+	var upgrade = null
+	for u in upgrades:
+		if u["id"] == upgrade_id:
+			upgrade = u
+			break
+
+	if not upgrade:
+		error_occurred.emit("Upgrade not found: " + upgrade_id)
+		return
+
+	# Check if already purchased
+	if state.has_upgrade(upgrade_id):
+		error_occurred.emit("Upgrade already purchased: " + upgrade["name"])
+		return
+
+	# Check affordability
+	var cost = upgrade["cost"]
+	if state.money < cost:
+		error_occurred.emit("Not enough money for " + upgrade["name"])
+		return
+
+	# Purchase upgrade
+	state.money -= cost
+	state.purchase_upgrade(upgrade_id)
+
+	# Apply upgrade effects (basic implementation)
+	_apply_upgrade_effect(upgrade)
+
+	action_executed.emit({
+		"success": true,
+		"message": "Purchased: " + upgrade["name"]
+	})
+
+	# Emit updated state
+	game_state_updated.emit(state.to_dict())
+
+func _apply_upgrade_effect(upgrade: Dictionary):
+	"""Apply upgrade effects to game state"""
+	var effect_key = upgrade.get("effect_key", "")
+
+	match effect_key:
+		"better_computers":
+			# +1 research per action - handled in action execution
+			pass
+		"hpc_cluster":
+			state.compute += 20.0
+		"comfy_chairs", "secure_cloud", "accounting_software", "compact_activity_display", "research_automation":
+			# These have passive effects or UI changes
+			pass

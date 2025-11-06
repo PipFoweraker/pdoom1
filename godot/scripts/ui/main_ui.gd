@@ -13,6 +13,7 @@ extends VBoxContainer
 @onready var phase_label = $BottomBar/PhaseLabel
 @onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
 @onready var actions_list = $ContentArea/LeftPanel/ActionsScroll/ActionsList
+@onready var upgrades_list = $ContentArea/RightPanel/UpgradesScroll/UpgradesList
 
 @onready var init_button = $BottomBar/ControlButtons/InitButton
 @onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
@@ -44,6 +45,9 @@ func _ready():
 
 	log_message("[color=yellow]UI Ready. Click 'Init Game' to start.[/color]")
 	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to end turn[/color]")
+
+	# Populate upgrades list
+	_populate_upgrades_list()
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
@@ -158,6 +162,9 @@ func _on_game_state_updated(state: Dictionary):
 		# Disable controls
 		test_action_button.disabled = true
 		end_turn_button.disabled = true
+
+	# Refresh upgrades list to update affordability
+	_populate_upgrades_list()
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
@@ -480,3 +487,56 @@ func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Acc
 
 	# Tell game manager to resolve event
 	game_manager.resolve_event(event, choice_id)
+
+func _populate_upgrades_list():
+	"""Populate the upgrades list with all available upgrades"""
+	# Clear existing upgrade buttons
+	for child in upgrades_list.get_children():
+		child.queue_free()
+
+	# Get all upgrades
+	var upgrades = GameUpgrades.get_all_upgrades()
+	var current_state = game_manager.get_game_state()
+	var purchased = current_state.get("purchased_upgrades", [])
+
+	for upgrade in upgrades:
+		var upgrade_id = upgrade.get("id", "")
+		var upgrade_name = upgrade.get("name", "")
+		var upgrade_desc = upgrade.get("description", "")
+		var upgrade_cost = upgrade.get("cost", 0)
+
+		# Create button
+		var button = Button.new()
+
+		# Check if already purchased
+		var is_purchased = purchased.has(upgrade_id)
+
+		if is_purchased:
+			button.text = "✓ " + upgrade_name + " (OWNED)"
+			button.disabled = true
+			button.modulate = Color(0.5, 1.0, 0.5)  # Green tint for purchased
+		else:
+			button.text = upgrade_name + " ($" + str(upgrade_cost) + ")"
+
+			# Check affordability
+			var can_afford = current_state.get("money", 0) >= upgrade_cost
+			if not can_afford:
+				button.disabled = true
+				button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
+
+		# Add tooltip
+		button.tooltip_text = upgrade_desc + "\n\nCost: $" + str(upgrade_cost)
+
+		# Connect button press
+		if not is_purchased:
+			button.pressed.connect(func(): _on_upgrade_button_pressed(upgrade_id, upgrade_name))
+
+		upgrades_list.add_child(button)
+
+func _on_upgrade_button_pressed(upgrade_id: String, upgrade_name: String):
+	"""Handle upgrade purchase button press"""
+	log_message("[color=cyan]Purchasing upgrade: %s[/color]" % upgrade_name)
+	game_manager.purchase_upgrade(upgrade_id)
+
+	# Refresh upgrades list
+	_populate_upgrades_list()

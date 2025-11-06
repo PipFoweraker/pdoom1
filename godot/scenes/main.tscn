@@ -87,6 +87,7 @@ size_flags_vertical = 3
 [node name="LeftPanel" type="VBoxContainer" parent="MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
 
 [node name="ActionsLabel" type="Label" parent="MainUI/ContentArea/LeftPanel"]
 layout_mode = 2
@@ -100,7 +101,26 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="CenterSpacer" type="Control" parent="MainUI/ContentArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+
 [node name="RightPanel" type="VBoxContainer" parent="MainUI/ContentArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.4
+
+[node name="UpgradesLabel" type="Label" parent="MainUI/ContentArea/RightPanel"]
+layout_mode = 2
+text = "Upgrades:"
+
+[node name="UpgradesScroll" type="ScrollContainer" parent="MainUI/ContentArea/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="UpgradesList" type="VBoxContainer" parent="MainUI/ContentArea/RightPanel/UpgradesScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 
@@ -111,6 +131,7 @@ text = "Message Log:"
 [node name="MessageScroll" type="ScrollContainer" parent="MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
 
 [node name="MessageLog" type="RichTextLabel" parent="MainUI/ContentArea/RightPanel/MessageScroll"]
 layout_mode = 2

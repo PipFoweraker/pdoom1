@@ -16,6 +16,9 @@ var safety_researchers: int = 0
 var capability_researchers: int = 0
 var compute_engineers: int = 0
 
+# Upgrades
+var purchased_upgrades: Array[String] = []
+
 # Game status
 var turn: int = 0
 var game_over: bool = false
@@ -56,6 +59,8 @@ func reset():
 	safety_researchers = 0
 	capability_researchers = 0
 	compute_engineers = 0
+
+	purchased_upgrades.clear()
 
 	turn = 0
 	game_over = false
@@ -130,6 +135,15 @@ func check_win_lose():
 func get_total_staff() -> int:
 	return safety_researchers + capability_researchers + compute_engineers
 
+func has_upgrade(upgrade_id: String) -> bool:
+	"""Check if an upgrade has been purchased"""
+	return purchased_upgrades.has(upgrade_id)
+
+func purchase_upgrade(upgrade_id: String):
+	"""Purchase an upgrade (assumes affordability check done)"""
+	if not purchased_upgrades.has(upgrade_id):
+		purchased_upgrades.append(upgrade_id)
+
 func to_dict() -> Dictionary:
 	"""Serialize state for UI"""
 	return {
@@ -146,5 +160,6 @@ func to_dict() -> Dictionary:
 		"total_staff": get_total_staff(),
 		"turn": turn,
 		"game_over": game_over,
-		"victory": victory
+		"victory": victory,
+		"purchased_upgrades": purchased_upgrades
 	}
