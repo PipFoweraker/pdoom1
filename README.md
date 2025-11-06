@@ -10,15 +10,11 @@
 
 ### For Players
 
-**⚠️ Windows builds coming soon!** We're preparing the first Godot 4.x release (v0.10.1).
+**🎮 [Download v0.10.1 for Windows](https://github.com/PipFoweraker/pdoom1/releases/tag/v0.10.1)** - First official Godot 4.x release!
 
-**Current Options:**
-- **Build from source**: See [Deployment Guide](docs/deployment/DEPLOYMENT.md) to export from Godot 4.x
+**Other Options:**
+- **Mac/Linux**: Build from source using [Deployment Guide](docs/deployment/DEPLOYMENT.md) (native builds coming soon)
 - **Python version (legacy)**: [v0.1.0 release](https://github.com/PipFoweraker/pdoom1/releases/tag/v0.1.0) - older version, still playable
-
-**Mac/Linux:**
-- Planned for future release (high priority)
-- Can build from Godot source now
 
 ### For Developers
 
