@@ -29,7 +29,7 @@ var researchers: Array[Researcher] = []
 var turn: int = 0
 var game_over: bool = false
 var victory: bool = false
-var seed: String = ""
+var game_seed_str: String = ""  # Renamed from 'seed' to avoid shadowing built-in function
 
 # Lab mascot 🐱
 var has_cat: bool = false
@@ -56,11 +56,11 @@ var rival_labs: Array = []  # Array of RivalLabs.RivalLab
 var doom_system: DoomSystem
 
 func _init(game_seed: String = ""):
-	seed = game_seed if game_seed != "" else str(Time.get_ticks_msec())
+	game_seed_str = game_seed if game_seed != "" else str(Time.get_ticks_msec())
 
 	# Initialize deterministic RNG from seed
 	rng = RandomNumberGenerator.new()
-	rng.seed = hash(seed)
+	rng.seed = hash(game_seed_str)
 
 	# Initialize doom system
 	doom_system = DoomSystem.new()
