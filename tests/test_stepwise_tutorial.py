@@ -1,4 +1,4 @@
-"""
+'''
 Tests for Stepwise Tutorial System (Issue #127)
 
 Tests cover:
@@ -6,7 +6,7 @@ Tests cover:
 - UI element visibility control
 - Back/forward navigation functionality
 - Tutorial state management
-"""
+'''
 
 import unittest
 import sys
@@ -19,7 +19,7 @@ from src.features.onboarding import OnboardingSystem
 
 
 class TestStepwiseTutorial(unittest.TestCase):
-    """Test the stepwise tutorial system."""
+    '''Test the stepwise tutorial system.'''
     
     def setUp(self):
         self.onboarding = OnboardingSystem()
@@ -30,21 +30,21 @@ class TestStepwiseTutorial(unittest.TestCase):
         self.onboarding.revealed_elements = set()
     
     def test_tutorial_sequence_structure(self):
-        """Test that the tutorial sequence is properly structured."""
+        '''Test that the tutorial sequence is properly structured.'''
         sequence = self.onboarding.get_stepwise_tutorial_sequence()
         # Should have the expected number of steps (denser, fewer steps)
-        self.assertGreaterEqual(len(sequence), 5, "Should have at least 5 tutorial steps in the new denser system")
-        self.assertLess(len(sequence), 20, "Should have at most 20 tutorial steps")
+        self.assertGreaterEqual(len(sequence), 5, 'Should have at least 5 tutorial steps in the new denser system')
+        self.assertLess(len(sequence), 20, 'Should have at most 20 tutorial steps')
         # Each step should have required fields
         for i, step in enumerate(sequence):
-            self.assertIn('id', step, f"Step {i} missing 'id'")
-            self.assertIn('title', step, f"Step {i} missing 'title'")
-            self.assertIn('content', step, f"Step {i} missing 'content'")
-            self.assertIn('reveal_elements', step, f"Step {i} missing 'reveal_elements'")
-            self.assertIsInstance(step['reveal_elements'], list, f"Step {i} reveal_elements should be a list")
+            self.assertIn('id', step, f'Step {i} missing 'id'')
+            self.assertIn('title', step, f'Step {i} missing 'title'')
+            self.assertIn('content', step, f'Step {i} missing 'content'')
+            self.assertIn('reveal_elements', step, f'Step {i} missing 'reveal_elements'')
+            self.assertIsInstance(step['reveal_elements'], list, f'Step {i} reveal_elements should be a list')
     
     def test_stepwise_tutorial_start(self):
-        """Test starting the stepwise tutorial."""
+        '''Test starting the stepwise tutorial.'''
         # Should not be showing tutorial initially
         self.assertFalse(self.onboarding.show_tutorial_overlay)
         
@@ -57,7 +57,7 @@ class TestStepwiseTutorial(unittest.TestCase):
         self.assertEqual(len(self.onboarding.tutorial_navigation_history), 0)
     
     def test_tutorial_advancement(self):
-        """Test advancing through tutorial steps."""
+        '''Test advancing through tutorial steps.'''
         # Start tutorial
         self.onboarding.start_stepwise_tutorial()
         initial_step = self.onboarding.current_step_index
@@ -70,7 +70,7 @@ class TestStepwiseTutorial(unittest.TestCase):
         self.assertEqual(len(self.onboarding.tutorial_navigation_history), 1)
     
     def test_tutorial_back_navigation(self):
-        """Test going back in the tutorial."""
+        '''Test going back in the tutorial.'''
         # Start and advance a few steps
         self.onboarding.start_stepwise_tutorial()
         self.onboarding.advance_stepwise_tutorial()
@@ -85,7 +85,7 @@ class TestStepwiseTutorial(unittest.TestCase):
         self.assertEqual(self.onboarding.current_step_index, current_step - 1)
     
     def test_ui_element_visibility(self):
-        """Test UI element visibility control."""
+        '''Test UI element visibility control.'''
         # Start tutorial
         self.onboarding.start_stepwise_tutorial()
         
@@ -109,7 +109,7 @@ class TestStepwiseTutorial(unittest.TestCase):
             self.assertTrue(self.onboarding.should_show_ui_element('money_display'))
     
     def test_tutorial_data_retrieval(self):
-        """Test getting current tutorial step data."""
+        '''Test getting current tutorial step data.'''
         # Start tutorial
         self.onboarding.start_stepwise_tutorial()
         
@@ -129,7 +129,7 @@ class TestStepwiseTutorial(unittest.TestCase):
         self.assertEqual(step_data['step_number'], 1)
     
     def test_tutorial_completion(self):
-        """Test tutorial completion."""
+        '''Test tutorial completion.'''
         # Start tutorial
         self.onboarding.start_stepwise_tutorial()
         
@@ -146,13 +146,13 @@ class TestStepwiseTutorial(unittest.TestCase):
 
 
 class TestTutorialIntegration(unittest.TestCase):
-    """Test tutorial integration with the rest of the system."""
+    '''Test tutorial integration with the rest of the system.'''
     
     def setUp(self):
         self.onboarding = OnboardingSystem()
     
     def test_tutorial_disabled_shows_all_elements(self):
-        """Test that when tutorial is disabled, all UI elements are visible."""
+        '''Test that when tutorial is disabled, all UI elements are visible.'''
         # Disable tutorial
         self.onboarding.show_tutorial_overlay = False
         

@@ -54,13 +54,13 @@
 ### Validation Commands
 ```bash
 # Verify game stability
-python -c "from src.core.game_state import GameState; gs = GameState('test'); print('Stable')"
+python -c 'from src.core.game_state import GameState; gs = GameState('test'); print('Stable')'
 
 # Start full game
 python main.py
 
 # Check version
-python -c "from src.services.version import get_display_version; print(get_display_version())"
+python -c 'from src.services.version import get_display_version; print(get_display_version())'
 ```
 
 ---

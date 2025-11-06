@@ -1,4 +1,4 @@
-"""
+'''
 Dialog System Architecture Documentation
 
 This document describes the dialog system architecture implemented to fix
@@ -25,7 +25,7 @@ Each dialog action has a trigger function that creates pending dialog state:
 **Structure:**
 ```python
 def _trigger_media_dialog(self) -> None:
-    """Trigger media & PR operations dialog."""
+    '''Trigger media & PR operations dialog.'''
     # Create dialog options based on current game state
     options = self._get_available_media_options()
     
@@ -50,12 +50,12 @@ Each dialog type has a dedicated rendering function:
 ```python
 def draw_media_dialog(screen: pygame.Surface, media_dialog: Dict[str, Any], 
                      w: int, h: int) -> List[Dict[str, Any]]:
-    """
+    '''
     Draw the media & PR operations dialog.
     
     Returns:
         List of clickable rect information for click handling
-    """
+    '''
     # Render dialog background, title, description
     # Render option buttons with hover effects
     # Render cancel button
@@ -99,14 +99,14 @@ The DialogManager provides centralized dialog state management:
 class DialogManager:
     @staticmethod
     def dismiss_dialog(game_state, dialog_type: str) -> None:
-        """Universal dialog dismiss function."""
+        '''Universal dialog dismiss function.'''
         dialog_attr = f'pending_{dialog_type}_dialog'
         if hasattr(game_state, dialog_attr):
             setattr(game_state, dialog_attr, None)
     
     @staticmethod
     def has_pending_dialog(game_state, dialog_type: str) -> bool:
-        """Check if a dialog of given type is pending."""
+        '''Check if a dialog of given type is pending.'''
         dialog_attr = f'pending_{dialog_type}_dialog'
         return (hasattr(game_state, dialog_attr) and 
                 getattr(game_state, dialog_attr) is not None)
@@ -147,7 +147,7 @@ Each dialog option must include these fields:
 
 ## Dialog Workflow
 
-1. **Trigger**: User clicks dialog action button (e.g., "Media & PR")
+1. **Trigger**: User clicks dialog action button (e.g., 'Media & PR')
 2. **Action Execution**: Action's upside lambda calls `gs._trigger_*_dialog()`
 3. **State Creation**: Trigger function creates `pending_*_dialog` state
 4. **UI Rendering**: Main loop detects pending dialog and calls `draw_*_dialog()`
@@ -227,4 +227,4 @@ Common issues and solutions:
 - Check option availability logic in trigger function
 - Verify game state meets option requirements
 - Review cost calculations and resource availability
-"""
+'''

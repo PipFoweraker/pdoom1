@@ -1,0 +1,1 @@
+# Build validation testing framework for refactoring safety\n\nComprehensive validation framework to ensure refactoring changes maintain game behavior. Include regression testing, performance benchmarking, deterministic behavior validation. Critical safety net for multiple agents working on codebase simultaneously.\n\n<!-- GitHub Issue #287 -->

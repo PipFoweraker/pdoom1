@@ -27,7 +27,7 @@ except Exception as e:
 except Exception as e:
     # Log the error with context for debugging - UNREACHABLE!
     if hasattr(self, 'game_logger'):
-        self.game_logger.log(f"Error in check_hover: ...")
+        self.game_logger.log(f'Error in check_hover: ...')
     return None
 
 # AFTER (fixed):
@@ -37,7 +37,7 @@ return None
 except Exception as e:
     # Log the error with context for debugging
     if hasattr(self, 'game_logger'):
-        self.game_logger.log(f"Error in check_hover: ...")
+        self.game_logger.log(f'Error in check_hover: ...')
     return None
 ```
 

@@ -9,7 +9,7 @@ The GameClock service exists in `src/services/game_clock.py` with weekly tick fu
 ## Acceptance Criteria
 - [ ] GameState initializes a GameClock instance on startup
 - [ ] Each `end_turn()` call advances the clock by one week (7 days)
-- [ ] Activity log shows date on turn advancement: "Week of 01/Jul/14 (Mon)"
+- [ ] Activity log shows date on turn advancement: 'Week of 01/Jul/14 (Mon)'
 - [ ] Date starts at July 1, 2014 (GameClock default) and increments to Mondays
 - [ ] GameClock state persists between game sessions (save/load)
 

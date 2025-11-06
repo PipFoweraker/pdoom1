@@ -1,7 +1,7 @@
 # Longtermist Date Format (5-Digit Years)
 
 ## Summary
-Implement 5-digit year format (YYYYY-MMM-DD) for P(Doom) game dates as a longtermist touch, displaying dates like "02025/May/21" instead of "25/May/25".
+Implement 5-digit year format (YYYYY-MMM-DD) for P(Doom) game dates as a longtermist touch, displaying dates like '02025/May/21' instead of '25/May/25'.
 
 ## Background
 As a longtermist-themed game, P(Doom) would benefit from a date format that emphasizes longer time horizons. The current GameClock system uses 2-digit years (YY format), but displaying 5-digit years would add thematic flavor while maintaining all existing functionality.
@@ -17,14 +17,14 @@ This is a **display-only change** - no breaking changes to core logic:
 
 ### Phase 1: Core Display Methods
 Modify GameClock formatting methods:
-- `get_formatted_date()` - Change from "DD/Mon/YY" to "DD/Mon/YYYYY"
+- `get_formatted_date()` - Change from 'DD/Mon/YY' to 'DD/Mon/YYYYY'
 - `format_date()` - Update arbitrary date formatting
 - `parse_formatted_date()` - Update parsing to handle 5-digit years
 
 ### Phase 2: Test Updates
 Update test expectations:
 - All format assertions in `tests/test_clock.py`
-- Update expected strings from "04/Apr/16" to "04/Apr/02016"
+- Update expected strings from '04/Apr/16' to '04/Apr/02016'
 - Verify parsing handles both formats (backward compatibility)
 
 ### Phase 3: Optional Extensions
@@ -34,9 +34,9 @@ Consider updating (low priority):
 - Documentation examples
 
 ## Target Format Examples
-- Current: "04/Apr/16", "25/Dec/14", "01/Jan/20"
-- New: "04/Apr/02016", "25/Dec/02014", "01/Jan/02020"
-- Game start: "04/Apr/02016" (April 4, 2016)
+- Current: '04/Apr/16', '25/Dec/14', '01/Jan/20'
+- New: '04/Apr/02016', '25/Dec/02014', '01/Jan/02020'
+- Game start: '04/Apr/02016' (April 4, 2016)
 
 ## Technical Details
 
@@ -61,7 +61,7 @@ year = self.current_date.year % 100  # Last 2 digits
 
 # New formatting:
 year = self.current_date.year  # Full 5-digit display with leading zeros
-return f"{day:02d}/{month_abbrev}/{year:05d}"
+return f'{day:02d}/{month_abbrev}/{year:05d}'
 ```
 
 ## Testing Strategy
@@ -78,7 +78,7 @@ return f"{day:02d}/{month_abbrev}/{year:05d}"
 - Easy to revert if needed
 
 ## Acceptance Criteria
-- [ ] Game dates display as 5-digit years (e.g., "04/Apr/02016")
+- [ ] Game dates display as 5-digit years (e.g., '04/Apr/02016')
 - [ ] Date progression works correctly through gameplay
 - [ ] All existing tests pass with updated expectations
 - [ ] Save/load functionality unchanged
@@ -88,7 +88,7 @@ return f"{day:02d}/{month_abbrev}/{year:05d}"
 ## Future Considerations
 - Could add configuration option to switch between formats
 - Consider extending to other date displays in UI
-- Potential for "deep time" calendar features
+- Potential for 'deep time' calendar features
 
 ## Priority
 **Experimental** - Fun longtermist flavor enhancement, no impact on core gameplay

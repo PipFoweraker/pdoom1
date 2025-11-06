@@ -4,9 +4,17 @@
 **You run a scrappy AI safety nonprofit ($100k budget) racing against 3 well-funded labs to solve alignment before everyone dies.**
 
 ## [LIGHTNING] QUICK START
+
+**For Players:**
+- Download from [Releases](https://github.com/PipFoweraker/pdoom1/releases) (Windows)
+- Extract and run `PDoom.exe`
+- Visit [pdoom1.com](https://pdoom1.com) for guides!
+
+**For Developers:**
 ```bash
 git clone https://github.com/PipFoweraker/pdoom1.git
-cd pdoom1 && pip install -r requirements.txt && python main.py
+cd pdoom1
+# See docs/developer/CONTRIBUTING.md for setup
 ```
 
 ## [CHART] RESOURCES TO WATCH
@@ -35,7 +43,7 @@ cd pdoom1 && pip install -r requirements.txt && python main.py
 
 ## [EMOJI] AUDIO CUES
 - **Action Sounds**: Feedback for spending action points
-- **Hiring**: "Blob" sound when adding team members
+- **Hiring**: 'Blob' sound when adding team members
 - **UI Feedback**: Popup sounds for professional feel
 - **Achievement**: Special sounds for reaching milestones
 
@@ -44,7 +52,7 @@ cd pdoom1 && pip install -r requirements.txt && python main.py
 ### For Demo Hosts
 - Game takes 5-10 minutes per person
 - Leave at main menu between players
-- Suggest interesting seeds: "party2024", "demo", "challenge"
+- Suggest interesting seeds: 'party2024', 'demo', 'challenge'
 - Point out the leaderboard for competition
 
 ### For Players
@@ -60,10 +68,22 @@ cd pdoom1 && pip install -r requirements.txt && python main.py
 - **Game Too Easy**: Focus more on capability research (increases doom)
 
 ## [IDEA] CONVERSATION STARTERS
-- "What's your AI safety strategy?"
-- "Can you survive longer than 47 turns?"
-- "Try seed 'challenge' - I got ranked #5!"
-- "Should AI labs prioritize safety or capability research?"
+- 'What's your AI safety strategy?'
+- 'Can you survive longer than 47 turns?'
+- 'Try seed 'challenge' - I got ranked #5!'
+- 'Should AI labs prioritize safety or capability research?'
+
+## [TERMINAL] DEVELOPER COMMANDS
+```bash
+# Health monitoring
+python scripts/project_health.py              # Check project health
+python scripts/health_tracker.py --show-trends # View health history
+python scripts/ci_health_integration.py --gate-check # CI/CD health gate
+
+# Testing & validation
+python -m unittest discover tests -v          # Run full test suite
+python scripts/enforce_standards.py --check-all # Standards validation
+```
 
 ---
 **P(Doom) v0.4.1** - Turn-based AI safety strategy * Educational gameplay * Competitive leaderboards * Party-ready demonstrations

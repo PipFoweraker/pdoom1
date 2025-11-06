@@ -6,7 +6,7 @@ I have successfully built a comprehensive settings and configuration system that
 
 ### [EMOJI] Issues Fixed
 
-1. **Custom Seed Functionality**: Fixed the broken "Launch with Custom Seed" option
+1. **Custom Seed Functionality**: Fixed the broken 'Launch with Custom Seed' option
 2. **Menu Structure Inconsistency**: Aligned UI menu items with main.py menu handling
 3. **Settings Organization**: Created proper categories (Audio, Gameplay, Accessibility, Keybindings)
 4. **Game Configuration System**: Built a robust system for custom configs and community sharing
@@ -48,7 +48,7 @@ Main Menu -> Settings
 ## [ROCKET] Current Status
 
 ### What's Working
-1. **Fixed Custom Seed**: The "Launch with Custom Seed" menu option now works properly
+1. **Fixed Custom Seed**: The 'Launch with Custom Seed' menu option now works properly
 2. **Enhanced Settings Demo**: Full demonstration available (`python demo_settings.py`)
 3. **Config System Integration**: Works with existing config manager
 4. **Seed Management**: Robust seed validation and generation
@@ -62,7 +62,7 @@ I've already fixed the immediate issues in `main.py`:
 ### Test the Fixes
 You can immediately test the custom seed functionality:
 1. Run `python main.py`
-2. Click "Launch with Custom Seed" 
+2. Click 'Launch with Custom Seed' 
 3. Enter a custom seed or press Enter for weekly seed
 4. The game should now start properly
 
@@ -110,7 +110,7 @@ Enable the complete game configuration and community sharing features.
 ## [EMOJI] Community Engagement Vision
 
 The new system enables scenarios like:
-1. **Weekly Challenges**: "Beat config 'hardcore_research' with seed 'challenge_2025'"
+1. **Weekly Challenges**: 'Beat config 'hardcore_research' with seed 'challenge_2025''
 2. **Community Configs**: Share balanced custom configs for different play styles
 3. **Speedrun Categories**: Standardized configs for competitive play
 4. **Accessibility Support**: Pre-configured setups for different needs

@@ -1,9 +1,9 @@
 ---
-title: "UI Transition Manager Extraction - Animation System Modularity"
-date: "2025-09-24"
-tags: ["architecture", "modular-design", "ui-transitions", "animation", "monolith-breakdown"]
-summary: "Extracted comprehensive UI transition system (195 lines) from game_state.py monolith with zero regressions, achieving 13.8% total reduction"
-commit: "c238ee8"
+title: 'UI Transition Manager Extraction - Animation System Modularity'
+date: '2025-09-24'
+tags: ['architecture', 'modular-design', 'ui-transitions', 'animation', 'monolith-breakdown']
+summary: 'Extracted comprehensive UI transition system (195 lines) from game_state.py monolith with zero regressions, achieving 13.8% total reduction'
+commit: 'c238ee8'
 ---
 
 # UI Transition Manager Extraction - Animation System Modularity
@@ -63,7 +63,7 @@ self.ui_transition_manager = UITransitionManager(self)
 # Property-based backward compatibility
 @property
 def ui_transitions(self) -> List[Dict[str, Any]]:
-    """Delegate to UITransitionManager for backward compatibility."""
+    '''Delegate to UITransitionManager for backward compatibility.'''
     return self.ui_transition_manager.get_ui_transitions()
 
 # Method delegation with preserved API

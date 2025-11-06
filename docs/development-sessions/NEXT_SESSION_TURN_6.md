@@ -14,7 +14,7 @@
 **Dev Blog Entry**: `dev-blog/entries/2025-09-28-turn-6-spacebar-comprehensive-investigation.md`
 
 ### GitHub Issue
-**Issue #377**: "CRITICAL: Spacebar input stops working at Turn 6"
+**Issue #377**: 'CRITICAL: Spacebar input stops working at Turn 6'
 - View with: `gh issue view 377`
 - Status: Investigation complete, ready for Phase 1 implementation
 
@@ -46,13 +46,13 @@
 ### [EMOJI] What's Broken (Identified)
 - GUI pygame event loop spacebar handling at Turn 6
 - Redundant spacebar validation logic in main.py (lines 2603-2612)
-- Complex dialog blocking conditions may become "stuck"
+- Complex dialog blocking conditions may become 'stuck'
 
 ### [SEARCH] Root Cause Hypothesis
 **Primary**: Dialog state corruption at Turn 6
 1. Turn 6 triggers event/milestone that sets dialog flag incorrectly
 2. Recent event system changes prevent proper state cleanup  
-3. Dialog remains "stuck", blocking spacebar via blocking_conditions
+3. Dialog remains 'stuck', blocking spacebar via blocking_conditions
 4. No automatic recovery without manual intervention (Ctrl+E)
 
 ## Implementation Strategy
@@ -60,10 +60,10 @@
 ### Phase 1: Critical Resolution (NEXT 24-48 HOURS)
 ```python
 # Enhanced diagnostics to add to main.py spacebar handler
-print(f"Turn {game_state.turn}: Spacebar pressed")
-print(f"end_turn_key: {keybinding_manager.get_key_for_action('end_turn')}")
-print(f"blocking_conditions: {[str(c) for c in blocking_conditions if c]}")
-print(f"turn_processing: {game_state.turn_processing}")
+print(f'Turn {game_state.turn}: Spacebar pressed')
+print(f'end_turn_key: {keybinding_manager.get_key_for_action('end_turn')}')
+print(f'blocking_conditions: {[str(c) for c in blocking_conditions if c]}')
+print(f'turn_processing: {game_state.turn_processing}')
 ```
 
 ### Files to Focus On
@@ -86,17 +86,17 @@ print(f"turn_processing: {game_state.turn_processing}")
 gh issue view 377
 
 # Run core logic validation test
-python -c "
+python -c '
 from src.core.game_state import GameState
 game_state = GameState('test-turn6')
 for i in range(7):
     print(f'Turn {game_state.turn} -> {game_state.turn + 1}')
     result = game_state.end_turn()
     print(f'Result: {result}')
-"
+'
 
 # Check recent commits affecting event handling
-git log --oneline --grep="event" --grep="spacebar" --since="2 weeks ago"
+git log --oneline --grep='event' --grep='spacebar' --since='2 weeks ago'
 ```
 
 ### Testing Framework  

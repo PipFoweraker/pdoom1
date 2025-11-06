@@ -78,10 +78,10 @@ jobs:
       - name: Commit and push to website
         working-directory: website
         run: |
-          git config user.name "Dev Blog Sync Bot"
-          git config user.email "dev@pdoom.net"
+          git config user.name 'Dev Blog Sync Bot'
+          git config user.email 'dev@pdoom.net'
           git add public/blog/
-          git commit -m "Auto-sync: Dev blog entries from pdoom1" || exit 0
+          git commit -m 'Auto-sync: Dev blog entries from pdoom1' || exit 0
           git push
 ```
 

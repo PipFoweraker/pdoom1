@@ -1,70 +1,70 @@
 {
-  "config_name": "Default Configuration",
-  "description": "Balanced settings for standard gameplay",
-  "version": "1.0.0",
-  "starting_resources": {
-    "money": 2000,
-    "staff": 2,
-    "reputation": 50,
-    "action_points": 3,
-    "doom": 25,
-    "compute": 0
+  'config_name': 'Default Configuration',
+  'description': 'Balanced settings for standard gameplay',
+  'version': '1.0.0',
+  'starting_resources': {
+    'money': 2000,
+    'staff': 2,
+    'reputation': 50,
+    'action_points': 3,
+    'doom': 25,
+    'compute': 0
   },
-  "action_points": {
-    "base_ap_per_turn": 3,
-    "staff_ap_bonus": 0.5,
-    "admin_ap_bonus": 1.0,
-    "max_ap_per_turn": 10
+  'action_points': {
+    'base_ap_per_turn': 3,
+    'staff_ap_bonus': 0.5,
+    'admin_ap_bonus': 1.0,
+    'max_ap_per_turn': 10
   },
-  "resource_limits": {
-    "max_doom": 100,
-    "max_reputation": 200,
-    "max_money": 1000000,
-    "max_staff": 100
+  'resource_limits': {
+    'max_doom': 100,
+    'max_reputation': 200,
+    'max_money': 1000000,
+    'max_staff': 100
   },
-  "milestones": {
-    "manager_threshold": 9,
-    "board_spending_threshold": 10000,
-    "enhanced_events_turn": 8,
-    "scrollable_log_turn": 5
+  'milestones': {
+    'manager_threshold': 9,
+    'board_spending_threshold': 10000,
+    'enhanced_events_turn': 8,
+    'scrollable_log_turn': 5
   },
-  "ui": {
-    "window_scale": 0.8,
-    "fullscreen": true,
-    "font_scale": 1.0,
-    "animation_speed": 1.0,
-    "tooltip_delay": 500,
-    "show_balance_changes": true,
-    "show_keyboard_shortcuts": true
+  'ui': {
+    'window_scale': 0.8,
+    'fullscreen': true,
+    'font_scale': 1.0,
+    'animation_speed': 1.0,
+    'tooltip_delay': 500,
+    'show_balance_changes': true,
+    'show_keyboard_shortcuts': true
   },
-  "audio": {
-    "sound_enabled": true,
-    "master_volume": 1.0,
-    "ui_sounds": true,
-    "feedback_sounds": true
+  'audio': {
+    'sound_enabled': true,
+    'master_volume': 1.0,
+    'ui_sounds': true,
+    'feedback_sounds': true
   },
-  "tutorial": {
-    "tutorial_enabled": true,
-    "first_time_help": true,
-    "show_tips": true,
-    "auto_help_on_errors": true
+  'tutorial': {
+    'tutorial_enabled': true,
+    'first_time_help': true,
+    'show_tips': true,
+    'auto_help_on_errors': true
   },
-  "gameplay": {
-    "auto_delegation": true,
-    "show_opponent_intel": true,
-    "event_frequency": 1.0,
-    "difficulty_modifier": 1.0,
-    "enhanced_events_enabled": true
+  'gameplay': {
+    'auto_delegation': true,
+    'show_opponent_intel': true,
+    'event_frequency': 1.0,
+    'difficulty_modifier': 1.0,
+    'enhanced_events_enabled': true
   },
-  "advanced": {
-    "safety_level": "STANDARD",
-    "debug_mode": false,
-    "verbose_logging": true,
-    "log_level": "INFO",
-    "enable_experimental_features": false,
-    "enable_demo_window": false,
-    "custom_event_weights": {},
-    "custom_action_costs": {},
-    "custom_upgrade_costs": {}
+  'advanced': {
+    'safety_level': 'STANDARD',
+    'debug_mode': false,
+    'verbose_logging': true,
+    'log_level': 'INFO',
+    'enable_experimental_features': false,
+    'enable_demo_window': false,
+    'custom_event_weights': {},
+    'custom_action_costs': {},
+    'custom_upgrade_costs': {}
   }
 }

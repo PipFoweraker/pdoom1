@@ -40,7 +40,7 @@ The system models 7 types of technical failures:
 - Full public disclosure of incidents
 - Immediate reputation cost but long-term trust building
 - Maximum learning from failures (2x lessons learned)
-- Builds "transparency reputation" leading to future benefits
+- Builds 'transparency reputation' leading to future benefits
 
 **Investigation Approach:**
 - Internal review with limited public disclosure
@@ -50,7 +50,7 @@ The system models 7 types of technical failures:
 
 **Cover-Up Approach:**
 - Minimal public disclosure, classify incidents
-- No immediate reputation loss but accumulates "cover-up debt"
+- No immediate reputation loss but accumulates 'cover-up debt'
 - Cover-up costs and increased future failure risks
 - Risk of exposure events with severe consequences
 
@@ -159,22 +159,22 @@ The system models 7 types of technical failures:
 **Near-Miss Crisis Averted** - Successful prevention showcase
 - **Trigger:** Monitoring Systems Level 2+, 12% chance per turn
 - **Effect:** +1 reputation, +1 near-miss count, possible system improvements
-- **Message:** "Advanced monitoring detected system anomaly before critical failure"
+- **Message:** 'Advanced monitoring detected system anomaly before critical failure'
 
 **Cover-Up Exposed** - Past cover-ups discovered
 - **Trigger:** Cover-up debt 8+, chance scales with debt level
 - **Effect:** Severe reputation loss, financial penalties, forced transparency
-- **Message:** "Whistleblower reveals pattern of unreported incidents"
+- **Message:** 'Whistleblower reveals pattern of unreported incidents'
 
 **Transparency Dividend** - Recognition for transparent handling
 - **Trigger:** Transparency reputation 3.0+, 15% chance per turn
 - **Effect:** +2-4 reputation, potential funding opportunities, staff morale boost
-- **Message:** "Industry safety consortium recognizes transparent incident reporting"
+- **Message:** 'Industry safety consortium recognizes transparent incident reporting'
 
 **Cascade Prevention Success** - Effective crisis management
 - **Trigger:** Incident Response Level 3+, 10% chance per turn
 - **Effect:** +2-3 reputation, technical debt reduction, industry recognition
-- **Message:** "Rapid incident response prevents system failure from spreading"
+- **Message:** 'Rapid incident response prevents system failure from spreading'
 
 ### Long-Term Consequences
 
@@ -185,7 +185,7 @@ The system models 7 types of technical failures:
 - Provides maximum learning from failures
 
 **Cover-Up Risks:**
-- Accumulates institutional risk ("cover-up debt")
+- Accumulates institutional risk ('cover-up debt')
 - Increases future failure chances (5% per debt point)
 - Risk of catastrophic exposure events
 - Reduced organizational learning capacity
@@ -262,10 +262,10 @@ near_miss_chance = 0.4 + (monitoring_systems * 0.1)
 python -m unittest tests.test_technical_failures -v
 
 # Verify integration with existing systems
-python -c "from src.core.game_state import GameState; gs = GameState('test'); print('Technical failures system initialized:', hasattr(gs, 'technical_failures'))"
+python -c 'from src.core.game_state import GameState; gs = GameState('test'); print('Technical failures system initialized:', hasattr(gs, 'technical_failures'))'
 
 # Test action availability
-python -c "from src.core.actions import ACTIONS; print('Cascade actions available:', any('Incident Response' in a['name'] for a in ACTIONS))"
+python -c 'from src.core.actions import ACTIONS; print('Cascade actions available:', any('Incident Response' in a['name'] for a in ACTIONS))'
 ```
 
 ## Balancing and Game Design

@@ -1,0 +1,1 @@
+# Add comprehensive tests for deterministic gameplay behavior\n\nAfter RNG migration, need extensive testing to ensure same seed produces identical results across all game systems. Test coverage for actions, events, opponents, researchers. Critical for competitive gameplay integrity.\n\n<!-- GitHub Issue #277 -->

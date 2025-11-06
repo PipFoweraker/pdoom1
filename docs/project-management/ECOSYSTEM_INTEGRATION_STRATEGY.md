@@ -92,28 +92,28 @@ pdoom1 (Core Game) --> pdoom1-website (Community/API) --> pdoom-data (Analytics/
 #### Game Session Export Format (Proposed)
 ```json
 {
-  "session_id": "uuid4",
-  "version": "0.8.0",
-  "seed": "deterministic_seed",
-  "duration_turns": 50,
-  "player_decisions": [
+  'session_id': 'uuid4',
+  'version': '0.8.0',
+  'seed': 'deterministic_seed',
+  'duration_turns': 50,
+  'player_decisions': [
     {
-      "turn": 1,
-      "actions_selected": ["Grow Community", "Buy Compute"],
-      "resources_before": {"money": 100000, "staff": 5, "doom": 25},
-      "resources_after": {"money": 95000, "staff": 6, "doom": 24}
+      'turn': 1,
+      'actions_selected': ['Grow Community', 'Buy Compute'],
+      'resources_before': {'money': 100000, 'staff': 5, 'doom': 25},
+      'resources_after': {'money': 95000, 'staff': 6, 'doom': 24}
     }
   ],
-  "final_outcome": {
-    "victory": true,
-    "score": 85,
-    "doom_final": 15,
-    "turns_survived": 50
+  'final_outcome': {
+    'victory': true,
+    'score': 85,
+    'doom_final': 15,
+    'turns_survived': 50
   },
-  "ai_safety_metrics": {
-    "safety_research_investment": 15000,
-    "technical_debt_accumulated": 5,
-    "public_opinion_final": 72
+  'ai_safety_metrics': {
+    'safety_research_investment': 15000,
+    'technical_debt_accumulated': 5,
+    'public_opinion_final': 72
   }
 }
 ```

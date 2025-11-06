@@ -1,0 +1,191 @@
+{
+  "year": 2017,
+  "default_timeline_events": [
+    {
+      "event_id": "openai_dota2_announcement",
+      "trigger_date": "2017-08-11",
+      "trigger_turn": 6,
+      "trigger_condition": "always",
+      "type": "capability",
+      "name": "OpenAI Dota 2 Bot Announced",
+      "description": "OpenAI announces bot that can beat amateur Dota 2 players in 1v1 matches",
+      "detailed_description": "OpenAI's bot learned to play Dota 2 through self-play using a scaled-up version of Proximal Policy Optimization. This demonstrated the potential of reinforcement learning at scale and sparked discussions about AI capabilities advancement.",
+      "game_effect": {
+        "doom_increase": 2.0,
+        "capability_research_boost": 5,
+        "media_attention": true,
+        "reputation_change": -1
+      },
+      "player_can_influence": false,
+      "historical_fact": true,
+      "source": "https://openai.com/blog/dota-2/",
+      "attribution": "OpenAI Blog",
+      "tags": ["reinforcement-learning", "gaming", "capability-demonstration"],
+      "related_orgs": ["OpenAI"]
+    },
+    {
+      "event_id": "deepmind_alphago_zero",
+      "trigger_date": "2017-10-18",
+      "trigger_turn": 16,
+      "trigger_condition": "always",
+      "type": "capability",
+      "name": "AlphaGo Zero Announced",
+      "description": "DeepMind's AlphaGo Zero learns Go from scratch without human data, defeating previous versions 100-0",
+      "detailed_description": "AlphaGo Zero achieved superhuman performance in Go using only self-play reinforcement learning, without any human game data. This milestone demonstrated that AI systems could surpass human knowledge entirely through self-learning.",
+      "game_effect": {
+        "doom_increase": 3.0,
+        "capability_research_boost": 10,
+        "media_attention": true
+      },
+      "player_can_influence": false,
+      "historical_fact": true,
+      "source": "https://www.nature.com/articles/nature24270",
+      "attribution": "Nature (DeepMind)",
+      "tags": ["reinforcement-learning", "go", "self-play", "superhuman"],
+      "related_orgs": ["DeepMind"]
+    },
+    {
+      "event_id": "attention_is_all_you_need",
+      "trigger_date": "2017-06-12",
+      "trigger_turn": 2,
+      "trigger_condition": "always",
+      "type": "paper_publication",
+      "name": "'Attention Is All You Need' Published",
+      "description": "Google researchers introduce the Transformer architecture, revolutionizing NLP",
+      "detailed_description": "Vaswani et al. introduce the Transformer model architecture, which would become the foundation for GPT, BERT, and virtually all modern large language models. The self-attention mechanism proved more effective than recurrent architectures.",
+      "game_effect": {
+        "doom_increase": 1.0,
+        "capability_research_boost": 15,
+        "unlocks_research_option": "transformer_architectures"
+      },
+      "player_can_influence": true,
+      "historical_fact": true,
+      "source": "https://arxiv.org/abs/1706.03762",
+      "attribution": "arXiv (Google Research)",
+      "tags": ["transformers", "nlp", "architecture", "foundational"],
+      "related_people": ["Ashish Vaswani", "Noam Shazeer", "Niki Parmar"],
+      "options": [
+        {
+          "id": "study_transformers",
+          "text": "Assign researchers to study transformer architecture",
+          "costs": {"action_points": 1, "money": 5000},
+          "effects": {"research": 15, "compute": 10}
+        },
+        {
+          "id": "ignore",
+          "text": "Note for later",
+          "costs": {},
+          "effects": {}
+        }
+      ]
+    },
+    {
+      "event_id": "concrete_problems_ai_safety_impact",
+      "trigger_date": "2017-07-15",
+      "trigger_turn": 3,
+      "trigger_condition": "player_has_safety_researchers >= 1",
+      "type": "paper_publication",
+      "name": "AI Safety Community Discusses 'Concrete Problems'",
+      "description": "Safety researchers reference 'Concrete Problems in AI Safety' paper (published June 2016)",
+      "detailed_description": "Amodei et al.'s 'Concrete Problems in AI Safety' paper from 2016 gains traction in the safety community during 2017, establishing a research agenda around reward misspecification, safe exploration, distributional shift, robustness, and interpretability.",
+      "game_effect": {
+        "doom_decrease": -0.5,
+        "reputation_boost": 3,
+        "unlocks_research_option": "reward_modeling_basics"
+      },
+      "player_can_influence": true,
+      "historical_fact": true,
+      "source": "https://arxiv.org/abs/1606.06565",
+      "attribution": "arXiv (OpenAI/DeepMind/Stanford)",
+      "tags": ["safety", "research-agenda", "alignment"],
+      "related_orgs": ["OpenAI", "DeepMind", "Stanford"],
+      "related_people": ["Dario Amodei", "Chris Olah", "Paul Christiano"],
+      "options": [
+        {
+          "id": "study_paper",
+          "text": "Assign researchers to study concrete safety problems",
+          "costs": {"action_points": 1},
+          "effects": {"research": 10, "doom": -1.0, "reputation": 2}
+        },
+        {
+          "id": "organize_reading_group",
+          "text": "Organize safety reading group (costs 2 AP)",
+          "costs": {"action_points": 2, "money": 3000},
+          "effects": {"research": 20, "doom": -2.0, "reputation": 5}
+        },
+        {
+          "id": "ignore",
+          "text": "Note for later",
+          "costs": {},
+          "effects": {}
+        }
+      ]
+    },
+    {
+      "event_id": "fli_asilomar_principles",
+      "trigger_date": "2017-01-17",
+      "trigger_turn": -23,
+      "trigger_condition": "always",
+      "type": "governance",
+      "name": "Asilomar AI Principles Published",
+      "description": "Future of Life Institute publishes 23 principles for beneficial AI development",
+      "detailed_description": "At the Asilomar conference, AI researchers and thought leaders agree on 23 principles for safe and beneficial AI development, covering research issues, ethics and values, and longer-term considerations. These become influential in AI governance discussions.",
+      "game_effect": {
+        "doom_decrease": -1.0,
+        "reputation_boost": 5,
+        "governance_boost": 10
+      },
+      "player_can_influence": true,
+      "historical_fact": true,
+      "source": "https://futureoflife.org/open-letter/ai-principles/",
+      "attribution": "Future of Life Institute",
+      "tags": ["governance", "principles", "ethics"],
+      "related_orgs": ["Future of Life Institute"],
+      "options": [
+        {
+          "id": "endorse_principles",
+          "text": "Publicly endorse Asilomar Principles",
+          "costs": {"action_points": 1},
+          "effects": {"reputation": 8, "doom": -0.5}
+        },
+        {
+          "id": "integrate_principles",
+          "text": "Integrate principles into lab policy (costs 2 AP, $10k)",
+          "costs": {"action_points": 2, "money": 10000},
+          "effects": {"reputation": 15, "doom": -2.0}
+        },
+        {
+          "id": "ignore",
+          "text": "Acknowledge but don't act",
+          "costs": {},
+          "effects": {}
+        }
+      ]
+    }
+  ],
+  "background_events": [
+    {
+      "event_id": "neurips_2017",
+      "date": "2017-12-04",
+      "name": "NeurIPS 2017 Conference",
+      "description": "Major AI/ML conference held in Long Beach, California with growing safety track",
+      "appears_in_log": true,
+      "flavor_text_only": true
+    },
+    {
+      "event_id": "icml_2017",
+      "date": "2017-08-06",
+      "name": "ICML 2017 Conference",
+      "description": "International Conference on Machine Learning held in Sydney, Australia",
+      "appears_in_log": true,
+      "flavor_text_only": true
+    }
+  ],
+  "metadata": {
+    "created_date": "2025-11-03",
+    "last_updated": "2025-11-03",
+    "source": "Manual compilation from historical sources",
+    "coverage": "Major AI safety and capabilities milestones in 2017",
+    "notes": "Starting point: July 1, 2017 is turn 0 in default game timeline"
+  }
+}

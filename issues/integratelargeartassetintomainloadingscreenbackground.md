@@ -1,0 +1,1 @@
+# Integrate large art asset into main loading screen background\n\nAdd the large art asset as background for the main loading screen to improve visual appeal.\n\n<!-- GitHub Issue #364 -->

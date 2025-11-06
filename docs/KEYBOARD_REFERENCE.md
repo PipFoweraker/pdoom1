@@ -2,7 +2,7 @@
 
 ## Design Philosophy: One Function Per Key
 
-P(Doom) follows a "one function per key" design principle for clarity and simplicity. Each key has a primary dedicated function to avoid confusion.
+P(Doom) follows a 'one function per key' design principle for clarity and simplicity. Each key has a primary dedicated function to avoid confusion.
 
 ## Core Game Controls
 
@@ -60,7 +60,7 @@ P(Doom) follows a "one function per key" design principle for clarity and simpli
 
 ## Configuration
 
-All keybindings are configurable in `configs/default.json` under the `keybindings` section. The default configuration implements the "one function per key" principle but can be customized for accessibility needs.
+All keybindings are configurable in `configs/default.json` under the `keybindings` section. The default configuration implements the 'one function per key' principle but can be customized for accessibility needs.
 
 ## Alpha/Beta Notes
 

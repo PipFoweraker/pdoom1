@@ -1,749 +1,749 @@
 {
-  "entries": [
+  'entries': [
     {
-      "filename": "2025-09-28-input-system-architectural-overhaul.md",
-      "slug": "2025-09-28-input-system-architectural-overhaul",
-      "path": "entries/2025-09-28-input-system-architectural-overhaul.md",
-      "frontmatter": {
-        "title": "Input System Architectural Overhaul - Phase 2",
-        "date": "2025-09-28",
-        "tags": [
-          "architecture",
-          "refactoring",
-          "input-system",
-          "managers",
-          "phase-2"
+      'filename': '2025-09-28-input-system-architectural-overhaul.md',
+      'slug': '2025-09-28-input-system-architectural-overhaul',
+      'path': 'entries/2025-09-28-input-system-architectural-overhaul.md',
+      'frontmatter': {
+        'title': 'Input System Architectural Overhaul - Phase 2',
+        'date': '2025-09-28',
+        'tags': [
+          'architecture',
+          'refactoring',
+          'input-system',
+          'managers',
+          'phase-2'
         ],
-        "summary": "Extracted 500+ lines of keyboard handling from main.py into clean, testable managers with 48 new tests and zero regressions",
-        "commit": "TBD"
+        'summary': 'Extracted 500+ lines of keyboard handling from main.py into clean, testable managers with 48 new tests and zero regressions',
+        'commit': 'TBD'
       },
-      "word_count": 657,
-      "file_size": 5557,
-      "modified_at": "2025-09-28T09:02:46.972245"
+      'word_count': 657,
+      'file_size': 5557,
+      'modified_at': '2025-09-28T09:02:46.972245'
     },
     {
-      "filename": "2025-09-27-20-percent-modular-milestone.md",
-      "slug": "2025-09-27-20-percent-modular-milestone",
-      "path": "entries/2025-09-27-20-percent-modular-milestone.md",
-      "frontmatter": {
-        "title": "20% Modular Architecture Transformation Complete",
-        "date": "2025-09-27",
-        "tags": [
-          "milestone",
-          "architecture",
-          "modular-design",
-          "refactoring"
+      'filename': '2025-09-27-20-percent-modular-milestone.md',
+      'slug': '2025-09-27-20-percent-modular-milestone',
+      'path': 'entries/2025-09-27-20-percent-modular-milestone.md',
+      'frontmatter': {
+        'title': '20% Modular Architecture Transformation Complete',
+        'date': '2025-09-27',
+        'tags': [
+          'milestone',
+          'architecture',
+          'modular-design',
+          'refactoring'
         ],
-        "summary": "Major milestone achieved: 20% Strategic Milestone reached with 7th module extraction (MediaPRSystemManager), reducing game_state.py monolith by 21.6%",
-        "commit": "e0004c2"
+        'summary': 'Major milestone achieved: 20% Strategic Milestone reached with 7th module extraction (MediaPRSystemManager), reducing game_state.py monolith by 21.6%',
+        'commit': 'e0004c2'
       },
-      "word_count": 597,
-      "file_size": 5317,
-      "modified_at": "2025-09-27T11:39:04.971869"
+      'word_count': 597,
+      'file_size': 5317,
+      'modified_at': '2025-09-27T11:39:04.971869'
     },
     {
-      "filename": "2025-09-25-intelligence-system-extraction.md",
-      "slug": "2025-09-25-intelligence-system-extraction",
-      "path": "entries/2025-09-25-intelligence-system-extraction.md",
-      "frontmatter": {
-        "title": "Intelligence System Extraction - 6th Major Module",
-        "date": "2025-09-25",
-        "tags": [
-          "modular-architecture",
-          "intelligence-system",
-          "code-extraction",
-          "refactoring"
+      'filename': '2025-09-25-intelligence-system-extraction.md',
+      'slug': '2025-09-25-intelligence-system-extraction',
+      'path': 'entries/2025-09-25-intelligence-system-extraction.md',
+      'frontmatter': {
+        'title': 'Intelligence System Extraction - 6th Major Module',
+        'date': '2025-09-25',
+        'tags': [
+          'modular-architecture',
+          'intelligence-system',
+          'code-extraction',
+          'refactoring'
         ],
-        "summary": "Extracted comprehensive Intelligence System as 6th major module achieving 19.5% total monolith reduction",
-        "commit": "TBD"
+        'summary': 'Extracted comprehensive Intelligence System as 6th major module achieving 19.5% total monolith reduction',
+        'commit': 'TBD'
       },
-      "word_count": 493,
-      "file_size": 4369,
-      "modified_at": "2025-09-27T11:37:42.245176"
+      'word_count': 493,
+      'file_size': 4369,
+      'modified_at': '2025-09-27T11:37:42.245176'
     },
     {
-      "filename": "2025-09-24-research-system-extraction.md",
-      "slug": "2025-09-24-research-system-extraction",
-      "path": "entries/2025-09-24-research-system-extraction.md",
-      "frontmatter": {
-        "title": "ResearchSystemManager Extraction - 5th Major Module",
-        "date": "2025-09-24",
-        "tags": [
-          "modular-architecture",
-          "extraction",
-          "research-system",
-          "technical-debt"
+      'filename': '2025-09-24-research-system-extraction.md',
+      'slug': '2025-09-24-research-system-extraction',
+      'path': 'entries/2025-09-24-research-system-extraction.md',
+      'frontmatter': {
+        'title': 'ResearchSystemManager Extraction - 5th Major Module',
+        'date': '2025-09-24',
+        'tags': [
+          'modular-architecture',
+          'extraction',
+          'research-system',
+          'technical-debt'
         ],
-        "summary": "Extracted comprehensive ResearchSystemManager (610 lines) handling research quality, technical debt, and researcher assignments",
-        "commit": "TBD"
+        'summary': 'Extracted comprehensive ResearchSystemManager (610 lines) handling research quality, technical debt, and researcher assignments',
+        'commit': 'TBD'
       },
-      "word_count": 254,
-      "file_size": 2287,
-      "modified_at": "2025-09-27T11:37:42.244177"
+      'word_count': 254,
+      'file_size': 2287,
+      'modified_at': '2025-09-27T11:37:42.244177'
     },
     {
-      "filename": "2025-09-19-action-points-bug-hunt.md",
-      "slug": "2025-09-19-action-points-bug-hunt",
-      "path": "entries/2025-09-19-action-points-bug-hunt.md",
-      "frontmatter": {
-        "title": "Action Points System Bug Hunt: Critical Gameplay Fixes",
-        "date": "2025-09-19",
-        "tags": [
-          "bug-fixes",
-          "critical",
-          "gameplay",
-          "testing",
-          "action-points"
+      'filename': '2025-09-19-action-points-bug-hunt.md',
+      'slug': '2025-09-19-action-points-bug-hunt',
+      'path': 'entries/2025-09-19-action-points-bug-hunt.md',
+      'frontmatter': {
+        'title': 'Action Points System Bug Hunt: Critical Gameplay Fixes',
+        'date': '2025-09-19',
+        'tags': [
+          'bug-fixes',
+          'critical',
+          'gameplay',
+          'testing',
+          'action-points'
         ],
-        "summary": "Fixed critical Action Points double deduction bug affecting core turn-based gameplay and reactivated 14 test cases",
-        "commit": "e80b6b3"
+        'summary': 'Fixed critical Action Points double deduction bug affecting core turn-based gameplay and reactivated 14 test cases',
+        'commit': 'e80b6b3'
       },
-      "word_count": 460,
-      "file_size": 3869,
-      "modified_at": "2025-09-20T00:17:54.815482"
+      'word_count': 460,
+      'file_size': 3869,
+      'modified_at': '2025-09-20T00:17:54.815482'
     },
     {
-      "filename": "2025-09-19-bug-sweep-critical-stability.md",
-      "slug": "2025-09-19-bug-sweep-critical-stability",
-      "path": "entries/2025-09-19-bug-sweep-critical-stability.md",
-      "frontmatter": {
-        "title": "Bug Sweep Critical Stability Session",
-        "date": "2025-09-19",
-        "tags": [
-          "bug-fix",
-          "stability",
-          "ui",
-          "testing"
+      'filename': '2025-09-19-bug-sweep-critical-stability.md',
+      'slug': '2025-09-19-bug-sweep-critical-stability',
+      'path': 'entries/2025-09-19-bug-sweep-critical-stability.md',
+      'frontmatter': {
+        'title': 'Bug Sweep Critical Stability Session',
+        'date': '2025-09-19',
+        'tags': [
+          'bug-fix',
+          'stability',
+          'ui',
+          'testing'
         ],
-        "summary": "Fixed critical debug console crash and verified resolution of 4 GitHub issues in systematic bug sweep",
-        "commit": "179028c"
+        'summary': 'Fixed critical debug console crash and verified resolution of 4 GitHub issues in systematic bug sweep',
+        'commit': '179028c'
       },
-      "word_count": 219,
-      "file_size": 1841,
-      "modified_at": "2025-09-19T18:15:43.095410"
+      'word_count': 219,
+      'file_size': 1841,
+      'modified_at': '2025-09-19T18:15:43.095410'
     },
     {
-      "filename": "2025-09-18-test-suite-foundation-v080.md",
-      "slug": "2025-09-18-test-suite-foundation-v080",
-      "path": "entries/2025-09-18-test-suite-foundation-v080.md",
-      "frontmatter": {
-        "title": "Test Suite Foundation v0.8.0 - Multiplayer Ready",
-        "date": "2025-09-18",
-        "tags": [
-          "milestone",
-          "testing",
-          "rng",
-          "multiplayer",
-          "foundation"
+      'filename': '2025-09-18-test-suite-foundation-v080.md',
+      'slug': '2025-09-18-test-suite-foundation-v080',
+      'path': 'entries/2025-09-18-test-suite-foundation-v080.md',
+      'frontmatter': {
+        'title': 'Test Suite Foundation v0.8.0 - Multiplayer Ready',
+        'date': '2025-09-18',
+        'tags': [
+          'milestone',
+          'testing',
+          'rng',
+          'multiplayer',
+          'foundation'
         ],
-        "summary": "Major milestone achieved: 60 percent test failure reduction establishes production-ready deterministic gameplay",
-        "commit": "8964928"
+        'summary': 'Major milestone achieved: 60 percent test failure reduction establishes production-ready deterministic gameplay',
+        'commit': '8964928'
       },
-      "word_count": 398,
-      "file_size": 3552,
-      "modified_at": "2025-09-19T18:15:43.092256"
+      'word_count': 398,
+      'file_size': 3552,
+      'modified_at': '2025-09-19T18:15:43.092256'
     },
     {
-      "filename": "2025-09-17-phase2-ui-navigation-fixes.md",
-      "slug": "2025-09-17-phase2-ui-navigation-fixes",
-      "path": "entries/2025-09-17-phase2-ui-navigation-fixes.md",
-      "frontmatter": {
-        "title": "Phase 2: UI Navigation Fixes - Complete Success",
-        "date": "2025-09-17",
-        "tags": [
-          "ui-navigation",
-          "game-completion-flow",
-          "phase2",
-          "critical-fixes"
+      'filename': '2025-09-17-phase2-ui-navigation-fixes.md',
+      'slug': '2025-09-17-phase2-ui-navigation-fixes',
+      'path': 'entries/2025-09-17-phase2-ui-navigation-fixes.md',
+      'frontmatter': {
+        'title': 'Phase 2: UI Navigation Fixes - Complete Success',
+        'date': '2025-09-17',
+        'tags': [
+          'ui-navigation',
+          'game-completion-flow',
+          'phase2',
+          'critical-fixes'
         ],
-        "summary": "Resolved all three critical UI navigation issues blocking game completion, achieving 100% success on Phase 2 objectives",
-        "commit": "1d6c527"
+        'summary': 'Resolved all three critical UI navigation issues blocking game completion, achieving 100% success on Phase 2 objectives',
+        'commit': '1d6c527'
       },
-      "word_count": 304,
-      "file_size": 2545,
-      "modified_at": "2025-09-19T18:15:43.084096"
+      'word_count': 304,
+      'file_size': 2545,
+      'modified_at': '2025-09-19T18:15:43.084096'
     },
     {
-      "filename": "2025-09-16-ascii-compliance-sweep.md",
-      "slug": "2025-09-16-ascii-compliance-sweep",
-      "path": "entries/2025-09-16-ascii-compliance-sweep.md",
-      "frontmatter": {
-        "title": "ASCII Compliance Sweep: Professional Documentation Standards",
-        "date": "2025-09-16",
-        "tags": [
-          "documentation",
-          "standards",
-          "ascii",
-          "quality",
-          "automation"
+      'filename': '2025-09-16-ascii-compliance-sweep.md',
+      'slug': '2025-09-16-ascii-compliance-sweep',
+      'path': 'entries/2025-09-16-ascii-compliance-sweep.md',
+      'frontmatter': {
+        'title': 'ASCII Compliance Sweep: Professional Documentation Standards',
+        'date': '2025-09-16',
+        'tags': [
+          'documentation',
+          'standards',
+          'ascii',
+          'quality',
+          'automation'
         ],
-        "summary": "Eliminated 6,255 Unicode violations across 85 files, reducing test failures by 84% and achieving 100% ASCII compliance",
-        "commit": "TBD"
+        'summary': 'Eliminated 6,255 Unicode violations across 85 files, reducing test failures by 84% and achieving 100% ASCII compliance',
+        'commit': 'TBD'
       },
-      "word_count": 210,
-      "file_size": 1908,
-      "modified_at": "2025-09-19T18:15:43.080040"
+      'word_count': 210,
+      'file_size': 1908,
+      'modified_at': '2025-09-19T18:15:43.080040'
     },
     {
-      "filename": "2025-09-16-hotfix-ui-enhancements-v0.7.3.md",
-      "slug": "2025-09-16-hotfix-ui-enhancements-v0.7.3",
-      "path": "entries/2025-09-16-hotfix-ui-enhancements-v0.7.3.md",
-      "frontmatter": {
-        "title": "Hotfix UI Enhancements v0.7.3: Quick Wins & Enhanced Scoring",
-        "date": "2025-09-16",
-        "tags": [
-          "hotfix",
-          "ui-enhancements",
-          "quick-wins",
-          "scoring-system",
-          "user-experience"
+      'filename': '2025-09-16-hotfix-ui-enhancements-v0.7.3.md',
+      'slug': '2025-09-16-hotfix-ui-enhancements-v0.7.3',
+      'path': 'entries/2025-09-16-hotfix-ui-enhancements-v0.7.3.md',
+      'frontmatter': {
+        'title': 'Hotfix UI Enhancements v0.7.3: Quick Wins & Enhanced Scoring',
+        'date': '2025-09-16',
+        'tags': [
+          'hotfix',
+          'ui-enhancements',
+          'quick-wins',
+          'scoring-system',
+          'user-experience'
         ],
-        "summary": "Comprehensive UI improvements including stray cat adoption event, overlay text visibility fixes, and enhanced end-game scoring display with strategic analysis integration",
-        "commit": "fd7b4d5"
+        'summary': 'Comprehensive UI improvements including stray cat adoption event, overlay text visibility fixes, and enhanced end-game scoring display with strategic analysis integration',
+        'commit': 'fd7b4d5'
       },
-      "word_count": 530,
-      "file_size": 4728,
-      "modified_at": "2025-09-19T18:15:43.080040"
+      'word_count': 530,
+      'file_size': 4728,
+      'modified_at': '2025-09-19T18:15:43.080040'
     },
     {
-      "filename": "2025-09-16-ui-hotfix-session-3-completion.md",
-      "slug": "2025-09-16-ui-hotfix-session-3-completion",
-      "path": "entries/2025-09-16-ui-hotfix-session-3-completion.md",
-      "frontmatter": {
-        "title": "UI Hotfix Session 3: Complete Accessibility & Error Handling",
-        "date": "2025-09-16",
-        "tags": [
-          "ui",
-          "hotfix",
-          "accessibility",
-          "error-handling",
-          "user-experience"
+      'filename': '2025-09-16-ui-hotfix-session-3-completion.md',
+      'slug': '2025-09-16-ui-hotfix-session-3-completion',
+      'path': 'entries/2025-09-16-ui-hotfix-session-3-completion.md',
+      'frontmatter': {
+        'title': 'UI Hotfix Session 3: Complete Accessibility & Error Handling',
+        'date': '2025-09-16',
+        'tags': [
+          'ui',
+          'hotfix',
+          'accessibility',
+          'error-handling',
+          'user-experience'
         ],
-        "summary": "Completed systematic UI improvement session resolving 3 critical UX issues across overlay, dialog, and settings systems",
-        "commit": "012a569"
+        'summary': 'Completed systematic UI improvement session resolving 3 critical UX issues across overlay, dialog, and settings systems',
+        'commit': '012a569'
       },
-      "word_count": 247,
-      "file_size": 2302,
-      "modified_at": "2025-09-19T18:15:43.083021"
+      'word_count': 247,
+      'file_size': 2302,
+      'modified_at': '2025-09-19T18:15:43.083021'
     },
     {
-      "filename": "2025-09-16-ui-hotfixes-session.md",
-      "slug": "2025-09-16-ui-hotfixes-session",
-      "path": "entries/2025-09-16-ui-hotfixes-session.md",
-      "frontmatter": {
-        "title": "UI Hotfixes - Systematic Resolution Session",
-        "date": "2025-09-16",
-        "tags": [
-          "ui",
-          "hotfixes",
-          "bugfixes",
-          "intelligence",
-          "overlap-prevention"
+      'filename': '2025-09-16-ui-hotfixes-session.md',
+      'slug': '2025-09-16-ui-hotfixes-session',
+      'path': 'entries/2025-09-16-ui-hotfixes-session.md',
+      'frontmatter': {
+        'title': 'UI Hotfixes - Systematic Resolution Session',
+        'date': '2025-09-16',
+        'tags': [
+          'ui',
+          'hotfixes',
+          'bugfixes',
+          'intelligence',
+          'overlap-prevention'
         ],
-        "summary": "Systematic resolution of 6 major UI issues including researcher pool display, scroll wheel navigation, scout actions, and overlap prevention",
-        "commit": "cff6dea"
+        'summary': 'Systematic resolution of 6 major UI issues including researcher pool display, scroll wheel navigation, scout actions, and overlap prevention',
+        'commit': 'cff6dea'
       },
-      "word_count": 509,
-      "file_size": 4305,
-      "modified_at": "2025-09-19T18:15:43.084096"
+      'word_count': 509,
+      'file_size': 4305,
+      'modified_at': '2025-09-19T18:15:43.084096'
     },
     {
-      "filename": "2025-09-15-action-button-layout-optimization.md",
-      "slug": "2025-09-15-action-button-layout-optimization",
-      "path": "entries/2025-09-15-action-button-layout-optimization.md",
-      "frontmatter": {
-        "title": "Action Button Layout Optimization Hotfix",
-        "date": "2025-09-15",
-        "tags": [
-          "hotfix",
-          "ui",
-          "layout",
-          "optimization"
+      'filename': '2025-09-15-action-button-layout-optimization.md',
+      'slug': '2025-09-15-action-button-layout-optimization',
+      'path': 'entries/2025-09-15-action-button-layout-optimization.md',
+      'frontmatter': {
+        'title': 'Action Button Layout Optimization Hotfix',
+        'date': '2025-09-15',
+        'tags': [
+          'hotfix',
+          'ui',
+          'layout',
+          'optimization'
         ],
-        "summary": "Optimized action button dimensions to improve space utilization and reduce UI clutter",
-        "commit": "b5a1e6b"
+        'summary': 'Optimized action button dimensions to improve space utilization and reduce UI clutter',
+        'commit': 'b5a1e6b'
       },
-      "word_count": 393,
-      "file_size": 3069,
-      "modified_at": "2025-09-15T22:06:53.586092"
+      'word_count': 393,
+      'file_size': 3069,
+      'modified_at': '2025-09-15T22:06:53.586092'
     },
     {
-      "filename": "2025-09-15-hotfix-batch-deployment.md",
-      "slug": "2025-09-15-hotfix-batch-deployment",
-      "path": "entries/2025-09-15-hotfix-batch-deployment.md",
-      "frontmatter": {
-        "title": "Hotfix Batch: Mac TypeError + GameClock Bounds + Dialog UX",
-        "date": "2025-09-15",
-        "tags": [
-          "hotfix",
-          "mac-bug",
-          "type-safety",
-          "gameclock",
-          "batch-deployment",
-          "critical-fixes"
+      'filename': '2025-09-15-hotfix-batch-deployment.md',
+      'slug': '2025-09-15-hotfix-batch-deployment',
+      'path': 'entries/2025-09-15-hotfix-batch-deployment.md',
+      'frontmatter': {
+        'title': 'Hotfix Batch: Mac TypeError + GameClock Bounds + Dialog UX',
+        'date': '2025-09-15',
+        'tags': [
+          'hotfix',
+          'mac-bug',
+          'type-safety',
+          'gameclock',
+          'batch-deployment',
+          'critical-fixes'
         ],
-        "summary": "Systematic batch deployment of three critical bug fixes including Mac TypeError resolution, GameClock bounds protection, and hiring dialog UX validation",
-        "commit": "f806f80"
+        'summary': 'Systematic batch deployment of three critical bug fixes including Mac TypeError resolution, GameClock bounds protection, and hiring dialog UX validation',
+        'commit': 'f806f80'
       },
-      "word_count": 627,
-      "file_size": 5525,
-      "modified_at": "2025-09-15T17:41:17.393241"
+      'word_count': 627,
+      'file_size': 5525,
+      'modified_at': '2025-09-15T17:41:17.393241'
     },
     {
-      "filename": "2025-09-15-monolith-breakdown-tutorial-extraction.md",
-      "slug": "2025-09-15-monolith-breakdown-tutorial-extraction",
-      "path": "entries/2025-09-15-monolith-breakdown-tutorial-extraction.md",
-      "frontmatter": {
-        "title": "Monolith Breakdown: Tutorial Extraction & Legacy Cleanup",
-        "date": "2025-09-15",
-        "tags": [
-          "refactoring",
-          "monolith-breakdown",
-          "ui",
-          "cleanup",
-          "modular-architecture"
+      'filename': '2025-09-15-monolith-breakdown-tutorial-extraction.md',
+      'slug': '2025-09-15-monolith-breakdown-tutorial-extraction',
+      'path': 'entries/2025-09-15-monolith-breakdown-tutorial-extraction.md',
+      'frontmatter': {
+        'title': 'Monolith Breakdown: Tutorial Extraction & Legacy Cleanup',
+        'date': '2025-09-15',
+        'tags': [
+          'refactoring',
+          'monolith-breakdown',
+          'ui',
+          'cleanup',
+          'modular-architecture'
         ],
-        "summary": "Extracted 486 lines of tutorial functions, removed 151 lines of legacy code, and fixed critical hover tooltips bug",
-        "commit": "139ef35"
+        'summary': 'Extracted 486 lines of tutorial functions, removed 151 lines of legacy code, and fixed critical hover tooltips bug',
+        'commit': '139ef35'
       },
-      "word_count": 308,
-      "file_size": 2792,
-      "modified_at": "2025-09-19T15:35:58.711004"
+      'word_count': 308,
+      'file_size': 2792,
+      'modified_at': '2025-09-19T15:35:58.711004'
     },
     {
-      "filename": "2025-09-15-multi-repository-integration-complete.md",
-      "slug": "2025-09-15-multi-repository-integration-complete",
-      "path": "entries/2025-09-15-multi-repository-integration-complete.md",
-      "frontmatter": {
-        "title": "Multi-Repository Integration System Complete",
-        "date": "2025-09-15",
-        "category": "infrastructure",
-        "tags": [
-          "automation",
-          "versioning",
-          "documentation",
-          "architecture",
-          "github-actions"
+      'filename': '2025-09-15-multi-repository-integration-complete.md',
+      'slug': '2025-09-15-multi-repository-integration-complete',
+      'path': 'entries/2025-09-15-multi-repository-integration-complete.md',
+      'frontmatter': {
+        'title': 'Multi-Repository Integration System Complete',
+        'date': '2025-09-15',
+        'category': 'infrastructure',
+        'tags': [
+          'automation',
+          'versioning',
+          'documentation',
+          'architecture',
+          'github-actions'
         ],
-        "status": "completed",
-        "session_type": "architecture",
-        "summary": "Completed comprehensive multi-repository integration system establishing professional automation and documentation management across pdoom1, pdoom1-website, and pdoom-data repositories with zero-manual-overhead release process."
+        'status': 'completed',
+        'session_type': 'architecture',
+        'summary': 'Completed comprehensive multi-repository integration system establishing professional automation and documentation management across pdoom1, pdoom1-website, and pdoom-data repositories with zero-manual-overhead release process.'
       },
-      "word_count": 713,
-      "file_size": 6799,
-      "modified_at": "2025-09-15T15:11:14.236792"
+      'word_count': 713,
+      'file_size': 6799,
+      'modified_at': '2025-09-15T15:11:14.236792'
     },
     {
-      "filename": "2025-09-15-ui-monolith-breakdown-complete.md",
-      "slug": "2025-09-15-ui-monolith-breakdown-complete",
-      "path": "entries/2025-09-15-ui-monolith-breakdown-complete.md",
-      "frontmatter": {
-        "title": "UI Monolith Breakdown Complete - Architecture Transformation",
-        "date": "2025-09-15",
-        "tags": [
-          "milestone",
-          "architecture",
-          "ui",
-          "refactoring",
-          "v0.7.0"
+      'filename': '2025-09-15-ui-monolith-breakdown-complete.md',
+      'slug': '2025-09-15-ui-monolith-breakdown-complete',
+      'path': 'entries/2025-09-15-ui-monolith-breakdown-complete.md',
+      'frontmatter': {
+        'title': 'UI Monolith Breakdown Complete - Architecture Transformation',
+        'date': '2025-09-15',
+        'tags': [
+          'milestone',
+          'architecture',
+          'ui',
+          'refactoring',
+          'v0.7.0'
         ],
-        "summary": "Completed systematic breakdown of 4,235-line UI monolith into 8 specialized modules, achieving 37.1% reduction with zero functionality regression",
-        "commit": "4c615f3"
+        'summary': 'Completed systematic breakdown of 4,235-line UI monolith into 8 specialized modules, achieving 37.1% reduction with zero functionality regression',
+        'commit': '4c615f3'
       },
-      "word_count": 343,
-      "file_size": 3053,
-      "modified_at": "2025-09-19T18:15:43.076401"
+      'word_count': 343,
+      'file_size': 3053,
+      'modified_at': '2025-09-19T18:15:43.076401'
     },
     {
-      "filename": "2025-09-14-dead-code-analysis-complete.md",
-      "slug": "2025-09-14-dead-code-analysis-complete",
-      "path": "entries/2025-09-14-dead-code-analysis-complete.md",
-      "frontmatter": {
-        "title": "Dead Code Analysis and Refactoring Planning Complete",
-        "date": "2025-09-14",
-        "tags": [
-          "analysis",
-          "refactoring",
-          "technical-debt",
-          "planning"
+      'filename': '2025-09-14-dead-code-analysis-complete.md',
+      'slug': '2025-09-14-dead-code-analysis-complete',
+      'path': 'entries/2025-09-14-dead-code-analysis-complete.md',
+      'frontmatter': {
+        'title': 'Dead Code Analysis and Refactoring Planning Complete',
+        'date': '2025-09-14',
+        'tags': [
+          'analysis',
+          'refactoring',
+          'technical-debt',
+          'planning'
         ],
-        "summary": "Comprehensive analysis of legacy code patterns and creation of prioritized refactoring plan for monolith breakdown preparation",
-        "commit": "TBD"
+        'summary': 'Comprehensive analysis of legacy code patterns and creation of prioritized refactoring plan for monolith breakdown preparation',
+        'commit': 'TBD'
       },
-      "word_count": 349,
-      "file_size": 3041,
-      "modified_at": "2025-09-19T18:15:43.073884"
+      'word_count': 349,
+      'file_size': 3041,
+      'modified_at': '2025-09-19T18:15:43.073884'
     },
     {
-      "filename": "2025-09-14-deterministic-rng-complete.md",
-      "slug": "2025-09-14-deterministic-rng-complete",
-      "path": "entries/2025-09-14-deterministic-rng-complete.md",
-      "frontmatter": {
-        "title": "Complete Deterministic RNG System v0.6.0",
-        "date": "2025-09-14",
-        "tags": [
-          "milestone",
-          "deterministic",
-          "competitive",
-          "rng",
-          "v0.6.0"
+      'filename': '2025-09-14-deterministic-rng-complete.md',
+      'slug': '2025-09-14-deterministic-rng-complete',
+      'path': 'entries/2025-09-14-deterministic-rng-complete.md',
+      'frontmatter': {
+        'title': 'Complete Deterministic RNG System v0.6.0',
+        'date': '2025-09-14',
+        'tags': [
+          'milestone',
+          'deterministic',
+          'competitive',
+          'rng',
+          'v0.6.0'
         ],
-        "summary": "MAJOR MILESTONE: Transform P(Doom) into fully deterministic competitive gaming platform with perfect reproducibility",
-        "commit": "9956d94"
+        'summary': 'MAJOR MILESTONE: Transform P(Doom) into fully deterministic competitive gaming platform with perfect reproducibility',
+        'commit': '9956d94'
       },
-      "word_count": 566,
-      "file_size": 5164,
-      "modified_at": "2025-09-14T21:57:54.589623"
+      'word_count': 566,
+      'file_size': 5164,
+      'modified_at': '2025-09-14T21:57:54.589623'
     },
     {
-      "filename": "2025-09-14-events-typeddict-milestone.md",
-      "slug": "2025-09-14-events-typeddict-milestone",
-      "path": "entries/2025-09-14-events-typeddict-milestone.md",
-      "frontmatter": {
-        "title": "Type Annotation: Events.py TypedDict Complete",
-        "date": "2025-09-14",
-        "tags": [
-          "type-annotations",
-          "typescript",
-          "events",
-          "typeddict",
-          "pylance",
-          "phase-2"
+      'filename': '2025-09-14-events-typeddict-milestone.md',
+      'slug': '2025-09-14-events-typeddict-milestone',
+      'path': 'entries/2025-09-14-events-typeddict-milestone.md',
+      'frontmatter': {
+        'title': 'Type Annotation: Events.py TypedDict Complete',
+        'date': '2025-09-14',
+        'tags': [
+          'type-annotations',
+          'typescript',
+          'events',
+          'typeddict',
+          'pylance',
+          'phase-2'
         ],
-        "summary": "Achieved zero pylance errors on 307-line events.py using comprehensive TypedDict patterns and systematic function annotation",
-        "commit": "TBD"
+        'summary': 'Achieved zero pylance errors on 307-line events.py using comprehensive TypedDict patterns and systematic function annotation',
+        'commit': 'TBD'
       },
-      "word_count": 758,
-      "file_size": 6348,
-      "modified_at": "2025-09-14T21:57:54.589623"
+      'word_count': 758,
+      'file_size': 6348,
+      'modified_at': '2025-09-14T21:57:54.589623'
     },
     {
-      "filename": "2025-09-14-opponents-type-annotations.md",
-      "slug": "2025-09-14-opponents-type-annotations",
-      "path": "entries/2025-09-14-opponents-type-annotations.md",
-      "frontmatter": {
-        "title": "Type Annotation Milestone: opponents.py Complete",
-        "date": "2025-09-14",
-        "tags": [
-          "type-annotation",
-          "opponents",
-          "milestone",
-          "pylance"
+      'filename': '2025-09-14-opponents-type-annotations.md',
+      'slug': '2025-09-14-opponents-type-annotations',
+      'path': 'entries/2025-09-14-opponents-type-annotations.md',
+      'frontmatter': {
+        'title': 'Type Annotation Milestone: opponents.py Complete',
+        'date': '2025-09-14',
+        'tags': [
+          'type-annotation',
+          'opponents',
+          'milestone',
+          'pylance'
         ],
-        "summary": "Completed comprehensive type annotation of opponents.py (296 lines, 9 methods) with advanced typing patterns and full integration testing",
-        "commit": "TBD"
+        'summary': 'Completed comprehensive type annotation of opponents.py (296 lines, 9 methods) with advanced typing patterns and full integration testing',
+        'commit': 'TBD'
       },
-      "word_count": 443,
-      "file_size": 3858,
-      "modified_at": "2025-09-14T21:47:25.388979"
+      'word_count': 443,
+      'file_size': 3858,
+      'modified_at': '2025-09-14T21:47:25.388979'
     },
     {
-      "filename": "2025-09-14-productive-actions-typeddict-milestone.md",
-      "slug": "2025-09-14-productive-actions-typeddict-milestone",
-      "path": "entries/2025-09-14-productive-actions-typeddict-milestone.md",
-      "frontmatter": {
-        "title": "Type Annotation: Productive Actions TypedDict",
-        "date": "2025-09-14",
-        "tags": [
-          "type-annotations",
-          "typeddict",
-          "employee-actions",
-          "method-chains",
-          "pylance",
-          "phase-2-milestone"
+      'filename': '2025-09-14-productive-actions-typeddict-milestone.md',
+      'slug': '2025-09-14-productive-actions-typeddict-milestone',
+      'path': 'entries/2025-09-14-productive-actions-typeddict-milestone.md',
+      'frontmatter': {
+        'title': 'Type Annotation: Productive Actions TypedDict',
+        'date': '2025-09-14',
+        'tags': [
+          'type-annotations',
+          'typeddict',
+          'employee-actions',
+          'method-chains',
+          'pylance',
+          'phase-2-milestone'
         ],
-        "summary": "Achieved zero pylance errors on 315-line productive_actions.py using nested TypedDict patterns and advanced parameter validation",
-        "commit": "TBD"
+        'summary': 'Achieved zero pylance errors on 315-line productive_actions.py using nested TypedDict patterns and advanced parameter validation',
+        'commit': 'TBD'
       },
-      "word_count": 795,
-      "file_size": 6964,
-      "modified_at": "2025-09-14T21:57:54.589623"
+      'word_count': 795,
+      'file_size': 6964,
+      'modified_at': '2025-09-14T21:57:54.589623'
     },
     {
-      "filename": "2025-09-14-pyinstaller-and-type-annotation-completion.md",
-      "slug": "2025-09-14-pyinstaller-and-type-annotation-completion",
-      "path": "entries/2025-09-14-pyinstaller-and-type-annotation-completion.md",
-      "frontmatter": {
-        "title": "PyInstaller Distribution & Major Type Annotation Milestone",
-        "date": "2025-09-14",
-        "tags": [
-          "distribution",
-          "type-annotations",
-          "pyinstaller",
-          "infrastructure"
+      'filename': '2025-09-14-pyinstaller-and-type-annotation-completion.md',
+      'slug': '2025-09-14-pyinstaller-and-type-annotation-completion',
+      'path': 'entries/2025-09-14-pyinstaller-and-type-annotation-completion.md',
+      'frontmatter': {
+        'title': 'PyInstaller Distribution & Major Type Annotation Milestone',
+        'date': '2025-09-14',
+        'tags': [
+          'distribution',
+          'type-annotations',
+          'pyinstaller',
+          'infrastructure'
         ],
-        "summary": "Successfully merged PyInstaller v0.5.0 distribution system and completed systematic type annotations for game_state.py and actions.py",
-        "commit": "8eccc76"
+        'summary': 'Successfully merged PyInstaller v0.5.0 distribution system and completed systematic type annotations for game_state.py and actions.py',
+        'commit': '8eccc76'
       },
-      "word_count": 421,
-      "file_size": 3698,
-      "modified_at": "2025-09-14T17:12:32.052502"
+      'word_count': 421,
+      'file_size': 3698,
+      'modified_at': '2025-09-14T17:12:32.052502'
     },
     {
-      "filename": "2025-09-14-pyinstaller-implementation.md",
-      "slug": "2025-09-14-pyinstaller-implementation",
-      "path": "entries/2025-09-14-pyinstaller-implementation.md",
-      "frontmatter": {
-        "title": "PyInstaller Windows Distribution Implementation",
-        "date": "2025-09-14",
-        "tags": [
-          "distribution",
-          "pyinstaller",
-          "windows",
-          "packaging",
-          "alpha-beta"
+      'filename': '2025-09-14-pyinstaller-implementation.md',
+      'slug': '2025-09-14-pyinstaller-implementation',
+      'path': 'entries/2025-09-14-pyinstaller-implementation.md',
+      'frontmatter': {
+        'title': 'PyInstaller Windows Distribution Implementation',
+        'date': '2025-09-14',
+        'tags': [
+          'distribution',
+          'pyinstaller',
+          'windows',
+          'packaging',
+          'alpha-beta'
         ],
-        "summary": "Implemented complete PyInstaller Windows .exe distribution system with asset bundling, resource management, and build automation for alpha/beta testing",
-        "commit": "ccc6e7a"
+        'summary': 'Implemented complete PyInstaller Windows .exe distribution system with asset bundling, resource management, and build automation for alpha/beta testing',
+        'commit': 'ccc6e7a'
       },
-      "word_count": 717,
-      "file_size": 6190,
-      "modified_at": "2025-09-14T15:33:18.302845"
+      'word_count': 717,
+      'file_size': 6190,
+      'modified_at': '2025-09-14T15:33:18.302845'
     },
     {
-      "filename": "2025-09-14-type-annotation-session-wrap.md",
-      "slug": "2025-09-14-type-annotation-session-wrap",
-      "path": "entries/2025-09-14-type-annotation-session-wrap.md",
-      "frontmatter": {
-        "title": "Type Annotation Session Complete: Phase 1 Wrapped",
-        "date": "2025-09-14",
-        "tags": [
-          "type-annotation",
-          "session-wrap",
-          "milestone",
-          "pylance"
+      'filename': '2025-09-14-type-annotation-session-wrap.md',
+      'slug': '2025-09-14-type-annotation-session-wrap',
+      'path': 'entries/2025-09-14-type-annotation-session-wrap.md',
+      'frontmatter': {
+        'title': 'Type Annotation Session Complete: Phase 1 Wrapped',
+        'date': '2025-09-14',
+        'tags': [
+          'type-annotation',
+          'session-wrap',
+          'milestone',
+          'pylance'
         ],
-        "summary": "Completed opponents.py milestone, pushed branch, updated docs, created Phase 2 roadmap",
-        "commit": "2235aa1"
+        'summary': 'Completed opponents.py milestone, pushed branch, updated docs, created Phase 2 roadmap',
+        'commit': '2235aa1'
       },
-      "word_count": 393,
-      "file_size": 3522,
-      "modified_at": "2025-09-14T21:47:25.389979"
+      'word_count': 393,
+      'file_size': 3522,
+      'modified_at': '2025-09-14T21:47:25.389979'
     },
     {
-      "filename": "2025-09-14-ui-menus-type-annotation.md",
-      "slug": "2025-09-14-ui-menus-type-annotation",
-      "path": "entries/2025-09-14-ui-menus-type-annotation.md",
-      "frontmatter": {
-        "title": "MILESTONE: Complete Type Annotation for src/ui/menus.py",
-        "date": "2025-09-14",
-        "tags": [
-          "type-annotation",
-          "milestone",
-          "ui",
-          "menus",
-          "systematic-improvement"
+      'filename': '2025-09-14-ui-menus-type-annotation.md',
+      'slug': '2025-09-14-ui-menus-type-annotation',
+      'path': 'entries/2025-09-14-ui-menus-type-annotation.md',
+      'frontmatter': {
+        'title': 'MILESTONE: Complete Type Annotation for src/ui/menus.py',
+        'date': '2025-09-14',
+        'tags': [
+          'type-annotation',
+          'milestone',
+          'ui',
+          'menus',
+          'systematic-improvement'
         ],
-        "summary": "Successfully completed comprehensive type annotation for all 13 functions in src/ui/menus.py (654 lines) following established patterns",
-        "commit": "a410316"
+        'summary': 'Successfully completed comprehensive type annotation for all 13 functions in src/ui/menus.py (654 lines) following established patterns',
+        'commit': 'a410316'
       },
-      "word_count": 615,
-      "file_size": 5254,
-      "modified_at": "2025-09-14T21:47:25.390982"
+      'word_count': 615,
+      'file_size': 5254,
+      'modified_at': '2025-09-14T21:47:25.390982'
     },
     {
-      "filename": "2025-09-14-upgrades-type-annotation.md",
-      "slug": "2025-09-14-upgrades-type-annotation",
-      "path": "entries/2025-09-14-upgrades-type-annotation.md",
-      "frontmatter": {
-        "title": "Type Annotation: upgrades.py Data Structure",
-        "date": "2025-09-14",
-        "tags": [
-          "type-annotation",
-          "milestone",
-          "core",
-          "upgrades",
-          "data-structure",
-          "typeddict"
+      'filename': '2025-09-14-upgrades-type-annotation.md',
+      'slug': '2025-09-14-upgrades-type-annotation',
+      'path': 'entries/2025-09-14-upgrades-type-annotation.md',
+      'frontmatter': {
+        'title': 'Type Annotation: upgrades.py Data Structure',
+        'date': '2025-09-14',
+        'tags': [
+          'type-annotation',
+          'milestone',
+          'core',
+          'upgrades',
+          'data-structure',
+          'typeddict'
         ],
-        "summary": "Successfully added comprehensive TypedDict type annotations to UPGRADES data structure with zero errors - demonstrates advanced typing patterns for game data",
-        "commit": "1b4ee92"
+        'summary': 'Successfully added comprehensive TypedDict type annotations to UPGRADES data structure with zero errors - demonstrates advanced typing patterns for game data',
+        'commit': '1b4ee92'
       },
-      "word_count": 551,
-      "file_size": 4579,
-      "modified_at": "2025-09-14T21:57:54.589623"
+      'word_count': 551,
+      'file_size': 4579,
+      'modified_at': '2025-09-14T21:57:54.589623'
     },
     {
-      "filename": "2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
-      "slug": "2025-09-13-enhanced-leaderboard-system-v0-4-1",
-      "path": "entries/2025-09-13-enhanced-leaderboard-system-v0-4-1.md",
-      "frontmatter": {
-        "title": "Enhanced Leaderboard System v0.4.1: Seed Competition",
-        "date": "2025-09-13",
-        "tags": [
-          "milestone",
-          "leaderboard",
-          "bootstrap-economics",
-          "ui",
-          "competition"
+      'filename': '2025-09-13-enhanced-leaderboard-system-v0-4-1.md',
+      'slug': '2025-09-13-enhanced-leaderboard-system-v0-4-1',
+      'path': 'entries/2025-09-13-enhanced-leaderboard-system-v0-4-1.md',
+      'frontmatter': {
+        'title': 'Enhanced Leaderboard System v0.4.1: Seed Competition',
+        'date': '2025-09-13',
+        'tags': [
+          'milestone',
+          'leaderboard',
+          'bootstrap-economics',
+          'ui',
+          'competition'
         ],
-        "summary": "Major competitive gaming milestone: seed-specific leaderboards, lab name integration, bootstrap economic model, and comprehensive session tracking",
-        "commit": "2dd48ac"
+        'summary': 'Major competitive gaming milestone: seed-specific leaderboards, lab name integration, bootstrap economic model, and comprehensive session tracking',
+        'commit': '2dd48ac'
       },
-      "word_count": 317,
-      "file_size": 2812,
-      "modified_at": "2025-09-13T18:09:43.110438"
+      'word_count': 317,
+      'file_size': 2812,
+      'modified_at': '2025-09-13T18:09:43.110438'
     },
     {
-      "filename": "2025-09-11-debug-console-system.md",
-      "slug": "2025-09-11-debug-console-system",
-      "path": "entries/2025-09-11-debug-console-system.md",
-      "frontmatter": {
-        "title": "Debug Console System",
-        "date": "2025-09-11",
-        "tags": [
-          "debug",
-          "ui",
-          "development"
+      'filename': '2025-09-11-debug-console-system.md',
+      'slug': '2025-09-11-debug-console-system',
+      'path': 'entries/2025-09-11-debug-console-system.md',
+      'frontmatter': {
+        'title': 'Debug Console System',
+        'date': '2025-09-11',
+        'tags': [
+          'debug',
+          'ui',
+          'development'
         ],
-        "summary": "Added real-time debug console with backtick toggle for game state monitoring",
-        "commit": "7aa2673"
+        'summary': 'Added real-time debug console with backtick toggle for game state monitoring',
+        'commit': '7aa2673'
       },
-      "word_count": 181,
-      "file_size": 1528,
-      "modified_at": "2025-09-12T21:45:50.665884"
+      'word_count': 181,
+      'file_size': 1528,
+      'modified_at': '2025-09-12T21:45:50.665884'
     },
     {
-      "filename": "2025-09-11-v0-3-0-consolidated-release.md",
-      "slug": "2025-09-11-v0-3-0-consolidated-release",
-      "path": "entries/2025-09-11-v0-3-0-consolidated-release.md",
-      "frontmatter": {
-        "title": "P(Doom) v0.3.0: Consolidated Feature Release",
-        "date": "2025-09-11",
-        "tags": [
-          "milestone",
-          "release",
-          "longtermist",
-          "accessibility",
-          "alpha",
-          "consolidation"
+      'filename': '2025-09-11-v0-3-0-consolidated-release.md',
+      'slug': '2025-09-11-v0-3-0-consolidated-release',
+      'path': 'entries/2025-09-11-v0-3-0-consolidated-release.md',
+      'frontmatter': {
+        'title': 'P(Doom) v0.3.0: Consolidated Feature Release',
+        'date': '2025-09-11',
+        'tags': [
+          'milestone',
+          'release',
+          'longtermist',
+          'accessibility',
+          'alpha',
+          'consolidation'
         ],
-        "summary": "Major consolidated release featuring longtermist 5-digit year dates, accessibility framework, comprehensive bug sweep plan, and systematic branch merge for alpha readiness",
-        "commit": "76de59c"
+        'summary': 'Major consolidated release featuring longtermist 5-digit year dates, accessibility framework, comprehensive bug sweep plan, and systematic branch merge for alpha readiness',
+        'commit': '76de59c'
       },
-      "word_count": 596,
-      "file_size": 5363,
-      "modified_at": "2025-09-14T21:47:25.385984"
+      'word_count': 596,
+      'file_size': 5363,
+      'modified_at': '2025-09-14T21:47:25.385984'
     },
     {
-      "filename": "2025-09-10-major-type-annotation-milestone.md",
-      "slug": "2025-09-10-major-type-annotation-milestone",
-      "path": "entries/2025-09-10-major-type-annotation-milestone.md",
-      "frontmatter": {
-        "title": "Major Type Annotation Milestone: UI and GameState Complete",
-        "date": "2025-09-10",
-        "tags": [
-          "milestone",
-          "type-annotations",
-          "infrastructure",
-          "code-quality"
+      'filename': '2025-09-10-major-type-annotation-milestone.md',
+      'slug': '2025-09-10-major-type-annotation-milestone',
+      'path': 'entries/2025-09-10-major-type-annotation-milestone.md',
+      'frontmatter': {
+        'title': 'Major Type Annotation Milestone: UI and GameState Complete',
+        'date': '2025-09-10',
+        'tags': [
+          'milestone',
+          'type-annotations',
+          'infrastructure',
+          'code-quality'
         ],
-        "summary": "Completed comprehensive type annotations for ui.py and 60% of game_state.py, resolving 1,100-1,600 pylance issues",
-        "commit": "867127d"
+        'summary': 'Completed comprehensive type annotations for ui.py and 60% of game_state.py, resolving 1,100-1,600 pylance issues',
+        'commit': '867127d'
       },
-      "word_count": 606,
-      "file_size": 5162,
-      "modified_at": "2025-09-10T12:21:12.687333"
+      'word_count': 606,
+      'file_size': 5162,
+      'modified_at': '2025-09-10T12:21:12.687333'
     },
     {
-      "filename": "2025-09-10-type-annotation-sprint.md",
-      "slug": "2025-09-10-type-annotation-sprint",
-      "path": "entries/2025-09-10-type-annotation-sprint.md",
-      "frontmatter": {
-        "title": "Type Annotation Sprint: game_state.py Near Completion",
-        "date": "2025-09-10",
-        "tags": [
-          "type-annotations",
-          "pylance",
-          "code-quality",
-          "monoliths"
+      'filename': '2025-09-10-type-annotation-sprint.md',
+      'slug': '2025-09-10-type-annotation-sprint',
+      'path': 'entries/2025-09-10-type-annotation-sprint.md',
+      'frontmatter': {
+        'title': 'Type Annotation Sprint: game_state.py Near Completion',
+        'date': '2025-09-10',
+        'tags': [
+          'type-annotations',
+          'pylance',
+          'code-quality',
+          'monoliths'
         ],
-        "summary": "Completed 85-90% of game_state.py type annotations with 25+ methods annotated across core systems",
-        "commit": "08180d1"
+        'summary': 'Completed 85-90% of game_state.py type annotations with 25+ methods annotated across core systems',
+        'commit': '08180d1'
       },
-      "word_count": 517,
-      "file_size": 4598,
-      "modified_at": "2025-09-10T12:21:12.689361"
+      'word_count': 517,
+      'file_size': 4598,
+      'modified_at': '2025-09-10T12:21:12.689361'
     },
     {
-      "filename": "2025-09-10-version-0-2-12-release.md",
-      "slug": "2025-09-10-version-0-2-12-release",
-      "path": "entries/2025-09-10-version-0-2-12-release.md",
-      "frontmatter": {
-        "title": "P(Doom) v0.2.12: Development Infrastructure",
-        "date": "2025-09-10",
-        "tags": [
-          "release",
-          "milestone",
-          "type-annotations",
-          "infrastructure",
-          "quality"
+      'filename': '2025-09-10-version-0-2-12-release.md',
+      'slug': '2025-09-10-version-0-2-12-release',
+      'path': 'entries/2025-09-10-version-0-2-12-release.md',
+      'frontmatter': {
+        'title': 'P(Doom) v0.2.12: Development Infrastructure',
+        'date': '2025-09-10',
+        'tags': [
+          'release',
+          'milestone',
+          'type-annotations',
+          'infrastructure',
+          'quality'
         ],
-        "summary": "Major version release featuring comprehensive type annotations and development tooling infrastructure",
-        "commit": "fedc543"
+        'summary': 'Major version release featuring comprehensive type annotations and development tooling infrastructure',
+        'commit': 'fedc543'
       },
-      "word_count": 428,
-      "file_size": 3875,
-      "modified_at": "2025-09-14T21:47:25.384981"
+      'word_count': 428,
+      'file_size': 3875,
+      'modified_at': '2025-09-14T21:47:25.384981'
     }
   ],
-  "config": {
-    "blog": {
-      "title": "P(Doom) Development Blog",
-      "description": "Development progress updates for the P(Doom) pygame strategy game",
-      "base_url": "/dev-blog",
-      "author": "P(Doom) Development Team",
-      "language": "en"
+  'config': {
+    'blog': {
+      'title': 'P(Doom) Development Blog',
+      'description': 'Development progress updates for the P(Doom) pygame strategy game',
+      'base_url': '/dev-blog',
+      'author': 'P(Doom) Development Team',
+      'language': 'en'
     },
-    "build": {
-      "auto_generate_index": true,
-      "sort_by": "date",
-      "sort_order": "desc",
-      "entries_per_page": 10
+    'build': {
+      'auto_generate_index': true,
+      'sort_by': 'date',
+      'sort_order': 'desc',
+      'entries_per_page': 10
     },
-    "content_policy": {
-      "ascii_only": true,
-      "max_title_length": 60,
-      "required_frontmatter": [
-        "title",
-        "date",
-        "tags",
-        "summary"
+    'content_policy': {
+      'ascii_only': true,
+      'max_title_length': 60,
+      'required_frontmatter': [
+        'title',
+        'date',
+        'tags',
+        'summary'
       ]
     },
-    "tags": {
-      "allowed": [
-        "infrastructure",
-        "type-annotations",
-        "refactoring",
-        "ui-improvements",
-        "testing",
-        "performance",
-        "bugfixes",
-        "milestone",
-        "automation",
-        "code-quality"
+    'tags': {
+      'allowed': [
+        'infrastructure',
+        'type-annotations',
+        'refactoring',
+        'ui-improvements',
+        'testing',
+        'performance',
+        'bugfixes',
+        'milestone',
+        'automation',
+        'code-quality'
       ]
     }
   },
-  "errors": [
-    "2025-09-14-action-rules-type-annotation.md: Title exceeds 60 character limit",
-    "2025-09-15-modular-ui-architecture-hotfix.md: Title exceeds 60 character limit",
-    "2025-09-17-rng-deterministic-migration.md: Title exceeds 60 character limit",
-    "2025-09-17-strategic-analysis-sept-17.md: Title exceeds 60 character limit",
-    "2025-09-21-employee-blob-manager-extraction.md: Title exceeds 60 character limit",
-    "2025-09-21-input-manager-extraction.md: Title exceeds 60 character limit",
-    "2025-09-24-deterministic-event-manager-extraction.md: Title exceeds 60 character limit",
-    "2025-09-24-ui-transition-manager-extraction.md: Title exceeds 60 character limit",
-    "2025-09-27-holistic-analysis-post-20-percent-milestone.md: Title exceeds 60 character limit",
-    "2025-09-28-turn-6-spacebar-comprehensive-investigation.md: Title exceeds 60 character limit",
-    "type-annotation-phase-2-completion-2025-09-29.md: Filename must follow YYYY-MM-DD-title.md format",
-    "type-annotation-phase-2-completion-2025-09-29.md: Title exceeds 60 character limit"
+  'errors': [
+    '2025-09-14-action-rules-type-annotation.md: Title exceeds 60 character limit',
+    '2025-09-15-modular-ui-architecture-hotfix.md: Title exceeds 60 character limit',
+    '2025-09-17-rng-deterministic-migration.md: Title exceeds 60 character limit',
+    '2025-09-17-strategic-analysis-sept-17.md: Title exceeds 60 character limit',
+    '2025-09-21-employee-blob-manager-extraction.md: Title exceeds 60 character limit',
+    '2025-09-21-input-manager-extraction.md: Title exceeds 60 character limit',
+    '2025-09-24-deterministic-event-manager-extraction.md: Title exceeds 60 character limit',
+    '2025-09-24-ui-transition-manager-extraction.md: Title exceeds 60 character limit',
+    '2025-09-27-holistic-analysis-post-20-percent-milestone.md: Title exceeds 60 character limit',
+    '2025-09-28-turn-6-spacebar-comprehensive-investigation.md: Title exceeds 60 character limit',
+    'type-annotation-phase-2-completion-2025-09-29.md: Filename must follow YYYY-MM-DD-title.md format',
+    'type-annotation-phase-2-completion-2025-09-29.md: Title exceeds 60 character limit'
   ],
-  "stats": {
-    "total_entries": 33,
-    "total_errors": 12,
-    "latest_entry": "2025-09-28"
+  'stats': {
+    'total_entries': 33,
+    'total_errors': 12,
+    'latest_entry': '2025-09-28'
   },
-  "generated_at": "2025-09-29T20:36:49.885755"
+  'generated_at': '2025-09-29T20:36:49.885755'
 }

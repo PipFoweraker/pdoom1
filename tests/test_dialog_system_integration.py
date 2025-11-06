@@ -1,4 +1,4 @@
-"""
+'''
 Test suite for dialog system integration and functionality.
 
 Tests the complete dialog system including:
@@ -10,7 +10,7 @@ Tests the complete dialog system including:
 
 This test suite validates the fixes for non-responsive dialog actions
 (Technical Debt, Intelligence, Media & PR) implemented in v0.8.0+.
-"""
+'''
 
 import unittest
 import pygame
@@ -20,10 +20,10 @@ from src.ui.dialogs import draw_intelligence_dialog, draw_media_dialog, draw_tec
 
 
 class TestDialogSystemIntegration(unittest.TestCase):
-    """Test dialog system functionality and integration."""
+    '''Test dialog system functionality and integration.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         # Initialize pygame for UI rendering tests
         pygame.init()
         self.test_surface = pygame.Surface((800, 600))
@@ -32,11 +32,11 @@ class TestDialogSystemIntegration(unittest.TestCase):
         self.game_state = GameState('test-dialog-system')
         
     def tearDown(self):
-        """Clean up after tests."""
+        '''Clean up after tests.'''
         pygame.quit()
         
     def test_dialog_trigger_functions_exist(self):
-        """Test that all dialog trigger functions exist and are callable."""
+        '''Test that all dialog trigger functions exist and are callable.'''
         # Intelligence dialog
         self.assertTrue(hasattr(self.game_state, '_trigger_intelligence_dialog'))
         self.assertTrue(callable(getattr(self.game_state, '_trigger_intelligence_dialog')))
@@ -50,14 +50,14 @@ class TestDialogSystemIntegration(unittest.TestCase):
         self.assertTrue(callable(getattr(self.game_state, '_trigger_technical_debt_dialog')))
         
     def test_dialog_dismiss_functions_exist(self):
-        """Test that all dialog dismiss functions exist and use DialogManager."""
+        '''Test that all dialog dismiss functions exist and use DialogManager.'''
         # All dialogs should have dismiss functions
         self.assertTrue(hasattr(self.game_state, 'dismiss_intelligence_dialog'))
         self.assertTrue(hasattr(self.game_state, 'dismiss_media_dialog'))
         self.assertTrue(hasattr(self.game_state, 'dismiss_technical_debt_dialog'))
         
     def test_intelligence_dialog_workflow(self):
-        """Test complete intelligence dialog workflow."""
+        '''Test complete intelligence dialog workflow.'''
         # Initially no pending dialog
         self.assertFalse(DialogManager.has_pending_dialog(self.game_state, 'intelligence'))
         
@@ -79,14 +79,14 @@ class TestDialogSystemIntegration(unittest.TestCase):
             rects = draw_intelligence_dialog(self.test_surface, dialog, 800, 600)
             self.assertIsInstance(rects, list)
         except Exception as e:
-            self.fail(f"Intelligence dialog rendering failed: {e}")
+            self.fail(f'Intelligence dialog rendering failed: {e}')
             
         # Dismiss dialog
         self.game_state.dismiss_intelligence_dialog()
         self.assertFalse(DialogManager.has_pending_dialog(self.game_state, 'intelligence'))
         
     def test_media_dialog_workflow(self):
-        """Test complete media dialog workflow."""
+        '''Test complete media dialog workflow.'''
         # Initially no pending dialog
         self.assertFalse(DialogManager.has_pending_dialog(self.game_state, 'media'))
         
@@ -109,14 +109,14 @@ class TestDialogSystemIntegration(unittest.TestCase):
             rects = draw_media_dialog(self.test_surface, dialog, 800, 600)
             self.assertIsInstance(rects, list)
         except Exception as e:
-            self.fail(f"Media dialog rendering failed: {e}")
+            self.fail(f'Media dialog rendering failed: {e}')
             
         # Dismiss dialog
         self.game_state.dismiss_media_dialog()
         self.assertFalse(DialogManager.has_pending_dialog(self.game_state, 'media'))
         
     def test_technical_debt_dialog_workflow(self):
-        """Test complete technical debt dialog workflow."""
+        '''Test complete technical debt dialog workflow.'''
         # Initially no pending dialog
         self.assertFalse(DialogManager.has_pending_dialog(self.game_state, 'technical_debt'))
         
@@ -139,14 +139,14 @@ class TestDialogSystemIntegration(unittest.TestCase):
             rects = draw_technical_debt_dialog(self.test_surface, dialog, 800, 600)
             self.assertIsInstance(rects, list)
         except Exception as e:
-            self.fail(f"Technical debt dialog rendering failed: {e}")
+            self.fail(f'Technical debt dialog rendering failed: {e}')
             
         # Dismiss dialog
         self.game_state.dismiss_technical_debt_dialog()
         self.assertFalse(DialogManager.has_pending_dialog(self.game_state, 'technical_debt'))
         
     def test_dialog_option_structures(self):
-        """Test that dialog options have required fields."""
+        '''Test that dialog options have required fields.'''
         # Test all dialog types
         dialogs = [
             (self.game_state._trigger_intelligence_dialog, 'intelligence'),
@@ -165,18 +165,18 @@ class TestDialogSystemIntegration(unittest.TestCase):
                 
                 # Test each option has required fields
                 for option in dialog['options']:
-                    self.assertIn('id', option, f"{dialog_type} option missing 'id'")
-                    self.assertIn('name', option, f"{dialog_type} option missing 'name'")
-                    self.assertIn('description', option, f"{dialog_type} option missing 'description'")
-                    self.assertIn('cost', option, f"{dialog_type} option missing 'cost'")
-                    self.assertIn('ap_cost', option, f"{dialog_type} option missing 'ap_cost'")
-                    self.assertIn('available', option, f"{dialog_type} option missing 'available'")
+                    self.assertIn('id', option, f'{dialog_type} option missing 'id'')
+                    self.assertIn('name', option, f'{dialog_type} option missing 'name'')
+                    self.assertIn('description', option, f'{dialog_type} option missing 'description'')
+                    self.assertIn('cost', option, f'{dialog_type} option missing 'cost'')
+                    self.assertIn('ap_cost', option, f'{dialog_type} option missing 'ap_cost'')
+                    self.assertIn('available', option, f'{dialog_type} option missing 'available'')
                     
                 # Clean up
                 DialogManager.dismiss_dialog(self.game_state, dialog_type)
                 
     def test_dialog_manager_integration(self):
-        """Test DialogManager integration with all dialog types."""
+        '''Test DialogManager integration with all dialog types.'''
         dialog_types = ['intelligence', 'media', 'technical_debt']
         
         for dialog_type in dialog_types:
@@ -198,7 +198,7 @@ class TestDialogSystemIntegration(unittest.TestCase):
                 self.assertFalse(DialogManager.has_pending_dialog(self.game_state, dialog_type))
                 
     def test_dialog_ui_rendering_returns_clickable_rects(self):
-        """Test that dialog UI functions return clickable rectangles."""
+        '''Test that dialog UI functions return clickable rectangles.'''
         # Test intelligence dialog
         self.game_state._trigger_intelligence_dialog()
         intel_rects = draw_intelligence_dialog(
@@ -230,7 +230,7 @@ class TestDialogSystemIntegration(unittest.TestCase):
         self.assertGreater(len(debt_rects), 0)
         
     def test_dialog_selection_functions_exist(self):
-        """Test that dialog selection functions exist for option handling."""
+        '''Test that dialog selection functions exist for option handling.'''
         # Test that selection functions exist
         self.assertTrue(hasattr(self.game_state, 'select_intelligence_option'))
         self.assertTrue(hasattr(self.game_state, 'select_media_option'))
@@ -242,7 +242,7 @@ class TestDialogSystemIntegration(unittest.TestCase):
         self.assertTrue(callable(self.game_state.select_technical_debt_option))
         
     def test_multiple_dialogs_exclusivity(self):
-        """Test that only one dialog can be pending at a time."""
+        '''Test that only one dialog can be pending at a time.'''
         # Trigger intelligence dialog
         self.game_state._trigger_intelligence_dialog()
         self.assertTrue(DialogManager.has_pending_dialog(self.game_state, 'intelligence'))
@@ -253,7 +253,7 @@ class TestDialogSystemIntegration(unittest.TestCase):
         self.assertTrue(DialogManager.has_pending_dialog(self.game_state, 'media'))
         
     def test_dialog_system_no_memory_leaks(self):
-        """Test that dialogs are properly cleaned up."""
+        '''Test that dialogs are properly cleaned up.'''
         # Trigger and dismiss multiple dialogs
         for _ in range(5):
             # Test all dialog types
@@ -273,19 +273,19 @@ class TestDialogSystemIntegration(unittest.TestCase):
 
 
 class TestDialogUIRendering(unittest.TestCase):
-    """Test dialog UI rendering functions in isolation."""
+    '''Test dialog UI rendering functions in isolation.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         pygame.init()
         self.test_surface = pygame.Surface((800, 600))
         
     def tearDown(self):
-        """Clean up after tests."""
+        '''Clean up after tests.'''
         pygame.quit()
         
     def create_mock_dialog(self, title, num_options=3):
-        """Create a mock dialog for testing UI rendering."""
+        '''Create a mock dialog for testing UI rendering.'''
         options = []
         for i in range(num_options):
             options.append({
@@ -304,7 +304,7 @@ class TestDialogUIRendering(unittest.TestCase):
         }
         
     def test_draw_intelligence_dialog_rendering(self):
-        """Test intelligence dialog UI rendering."""
+        '''Test intelligence dialog UI rendering.'''
         mock_dialog = self.create_mock_dialog('Intelligence Operations', 4)
         rects = draw_intelligence_dialog(self.test_surface, mock_dialog, 800, 600)
         
@@ -316,7 +316,7 @@ class TestDialogUIRendering(unittest.TestCase):
         self.assertEqual(len(rects), expected_rects)
         
     def test_draw_media_dialog_rendering(self):
-        """Test media dialog UI rendering."""
+        '''Test media dialog UI rendering.'''
         mock_dialog = self.create_mock_dialog('Media & PR Operations', 5)
         rects = draw_media_dialog(self.test_surface, mock_dialog, 800, 600)
         
@@ -328,7 +328,7 @@ class TestDialogUIRendering(unittest.TestCase):
         self.assertEqual(len(rects), expected_rects)
         
     def test_draw_technical_debt_dialog_rendering(self):
-        """Test technical debt dialog UI rendering.""" 
+        '''Test technical debt dialog UI rendering.''' 
         mock_dialog = self.create_mock_dialog('Technical Debt Management', 3)
         rects = draw_technical_debt_dialog(self.test_surface, mock_dialog, 800, 600)
         
@@ -340,7 +340,7 @@ class TestDialogUIRendering(unittest.TestCase):
         self.assertEqual(len(rects), expected_rects)
         
     def test_dialog_rendering_with_unavailable_options(self):
-        """Test dialog rendering handles unavailable options correctly."""
+        '''Test dialog rendering handles unavailable options correctly.'''
         mock_dialog = self.create_mock_dialog('Test Dialog', 2)
         # Make one option unavailable
         mock_dialog['options'][1]['available'] = False

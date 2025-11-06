@@ -63,7 +63,7 @@
 ## Next Phase Planning
 
 ### Created Issue #303 [EMOJI]
-**Title**: "MONOLITH BREAKDOWN: Extract core draw_ui function (662 lines)"
+**Title**: 'MONOLITH BREAKDOWN: Extract core draw_ui function (662 lines)'
 **Target**: The massive `draw_ui` function (13% of entire file)
 **Strategy**: Break into 5-7 logical sub-functions:
 1. Resource display rendering

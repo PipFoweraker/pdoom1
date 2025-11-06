@@ -1,34 +1,34 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-28T10:55:52.284677",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-28T10:55:52.284677',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 8,
-      "player_name": "Silver Stream AI",
-      "date": "2025-09-28T07:01:13.657469",
-      "level_reached": 8,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 18.775655,
-      "entry_uuid": "dae54f6d-7eb1-47c3-be4d-b468ae173723"
+      'score': 8,
+      'player_name': 'Silver Stream AI',
+      'date': '2025-09-28T07:01:13.657469',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 18.775655,
+      'entry_uuid': 'dae54f6d-7eb1-47c3-be4d-b468ae173723'
     },
     {
-      "score": 8,
-      "player_name": "Silver Stream AI",
-      "date": "2025-09-28T09:31:56.547928",
-      "level_reached": 8,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 2.409599,
-      "entry_uuid": "4d38eeb8-783b-4b92-b395-584ecafcbd2f"
+      'score': 8,
+      'player_name': 'Silver Stream AI',
+      'date': '2025-09-28T09:31:56.547928',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 2.409599,
+      'entry_uuid': '4d38eeb8-783b-4b92-b395-584ecafcbd2f'
     },
     {
-      "score": 8,
-      "player_name": "Silver Stream AI",
-      "date": "2025-09-28T10:55:52.284025",
-      "level_reached": 8,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 3.11863,
-      "entry_uuid": "2f375dbe-075f-4d6c-af32-0596f1915d53"
+      'score': 8,
+      'player_name': 'Silver Stream AI',
+      'date': '2025-09-28T10:55:52.284025',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 3.11863,
+      'entry_uuid': '2f375dbe-075f-4d6c-af32-0596f1915d53'
     }
   ]
 }

@@ -33,44 +33,44 @@ Create a workspace file to manage all repositories together:
 **File: `pdoom1-ecosystem.code-workspace`**
 ```json
 {
-    "folders": [
+    'folders': [
         {
-            "name": "Game (pdoom1)",
-            "path": "./pdoom1"
+            'name': 'Game (pdoom1)',
+            'path': './pdoom1'
         },
         {
-            "name": "Website",
-            "path": "./pdoom1-website"
+            'name': 'Website',
+            'path': './pdoom1-website'
         },
         {
-            "name": "Data & API",
-            "path": "./pdoom1-data"
+            'name': 'Data & API',
+            'path': './pdoom1-data'
         }
     ],
-    "settings": {
-        "files.exclude": {
-            "**/node_modules": true,
-            "**/__pycache__": true,
-            "**/venv": true,
-            "**/.pytest_cache": true
+    'settings': {
+        'files.exclude': {
+            '**/node_modules': true,
+            '**/__pycache__': true,
+            '**/venv': true,
+            '**/.pytest_cache': true
         },
-        "search.exclude": {
-            "**/node_modules": true,
-            "**/__pycache__": true,
-            "**/venv": true
+        'search.exclude': {
+            '**/node_modules': true,
+            '**/__pycache__': true,
+            '**/venv': true
         },
-        "git.enableSmartCommit": true,
-        "git.autofetch": true,
-        "python.defaultInterpreterPath": "./pdoom1/venv/bin/python"
+        'git.enableSmartCommit': true,
+        'git.autofetch': true,
+        'python.defaultInterpreterPath': './pdoom1/venv/bin/python'
     },
-    "extensions": {
-        "recommendations": [
-            "ms-python.python",
-            "ms-vscode.vscode-json",
-            "redhat.vscode-yaml",
-            "ms-vscode.vscode-typescript-next",
-            "GitHub.vscode-pull-request-github",
-            "eamodio.gitlens"
+    'extensions': {
+        'recommendations': [
+            'ms-python.python',
+            'ms-vscode.vscode-json',
+            'redhat.vscode-yaml',
+            'ms-vscode.vscode-typescript-next',
+            'GitHub.vscode-pull-request-github',
+            'eamodio.gitlens'
         ]
     }
 }
@@ -94,13 +94,13 @@ pdoom1-ecosystem/
 
 ```bash
 # Navigate to parent directory
-cd "$(dirname "$(pwd)")"
+cd '$(dirname '$(pwd)')'
 
 # Create ecosystem directory structure
 mkdir -p pdoom1-ecosystem/{docs,scripts}
 
 # Move current game repo (if needed)
-mv "Pdoom1Folder/pdoom1" pdoom1-ecosystem/
+mv 'Pdoom1Folder/pdoom1' pdoom1-ecosystem/
 
 # Clone other repositories
 cd pdoom1-ecosystem
@@ -150,30 +150,30 @@ Create a central documentation hub that references all repositories:
 **File: `scripts/sync-docs.py`**
 ```python
 # !/usr/bin/env python3
-"""
+'''
 Sync important documentation between repositories
-"""
+'''
 import os
 import shutil
 from pathlib import Path
 
 def sync_documentation():
-    """Sync key documentation files across repositories"""
+    '''Sync key documentation files across repositories'''
     base_dir = Path(__file__).parent.parent
     
     # Documentation sync map
     sync_map = {
         # Source -> Destinations
-        "pdoom1/docs/MULTI_REPOSITORY_INTEGRATION_PLAN.md": [
-            "pdoom1-website/docs/",
-            "pdoom1-data/docs/"
+        'pdoom1/docs/MULTI_REPOSITORY_INTEGRATION_PLAN.md': [
+            'pdoom1-website/docs/',
+            'pdoom1-data/docs/'
         ],
-        "pdoom1/docs/WEBSITE_PIPELINE_STRATEGY.md": [
-            "pdoom1-website/docs/"
+        'pdoom1/docs/WEBSITE_PIPELINE_STRATEGY.md': [
+            'pdoom1-website/docs/'
         ],
-        "pdoom1/CHANGELOG.md": [
-            "pdoom1-website/docs/",
-            "docs/"
+        'pdoom1/CHANGELOG.md': [
+            'pdoom1-website/docs/',
+            'docs/'
         ]
     }
     
@@ -184,14 +184,14 @@ def sync_documentation():
                 dest_path = base_dir / dest_dir
                 if dest_path.exists():
                     dest_file = dest_path / source_path.name
-                    print(f"Syncing {source} -> {dest_file}")
+                    print(f'Syncing {source} -> {dest_file}')
                     shutil.copy2(source_path, dest_file)
                 else:
-                    print(f"[WARNING][EMOJI]  Destination not found: {dest_path}")
+                    print(f'[WARNING][EMOJI]  Destination not found: {dest_path}')
         else:
-            print(f"[WARNING][EMOJI]  Source not found: {source_path}")
+            print(f'[WARNING][EMOJI]  Source not found: {source_path}')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     sync_documentation()
 ```
 
@@ -220,25 +220,25 @@ git submodule update
 # !/bin/bash
 # Check status of all repositories
 
-echo "=== P(Doom) Ecosystem Status ==="
+echo '=== P(Doom) Ecosystem Status ==='
 echo
 
-repos=("pdoom1" "pdoom1-website" "pdoom1-data")
+repos=('pdoom1' 'pdoom1-website' 'pdoom1-data')
 
-for repo in "${repos[@]}"; do
-    if [ -d "$repo" ]; then
-        echo "[EMOJI] $repo:"
-        cd "$repo"
+for repo in '${repos[@]}'; do
+    if [ -d '$repo' ]; then
+        echo '[EMOJI] $repo:'
+        cd '$repo'
         
         # Git status
-        echo "   Branch: $(git branch --show-current)"
-        echo "   Status: $(git status --porcelain | wc -l) files changed"
-        echo "   Remote: $(git rev-list --count HEAD..origin/$(git branch --show-current) 2>/dev/null || echo '0') commits behind"
+        echo '   Branch: $(git branch --show-current)'
+        echo '   Status: $(git status --porcelain | wc -l) files changed'
+        echo '   Remote: $(git rev-list --count HEAD..origin/$(git branch --show-current) 2>/dev/null || echo '0') commits behind'
         
         cd ..
         echo
     else
-        echo "[EMOJI] $repo: Not found"
+        echo '[EMOJI] $repo: Not found'
         echo
     fi
 done
@@ -249,12 +249,12 @@ done
 # !/bin/bash
 # Pull latest changes from all repositories
 
-repos=("pdoom1" "pdoom1-website" "pdoom1-data")
+repos=('pdoom1' 'pdoom1-website' 'pdoom1-data')
 
-for repo in "${repos[@]}"; do
-    if [ -d "$repo" ]; then
-        echo "[EMOJI] Updating $repo..."
-        cd "$repo"
+for repo in '${repos[@]}'; do
+    if [ -d '$repo' ]; then
+        echo '[EMOJI] Updating $repo...'
+        cd '$repo'
         git pull origin $(git branch --show-current)
         cd ..
         echo
@@ -268,15 +268,15 @@ Install these extensions for better multi-repo development:
 
 ```json
 {
-    "recommendations": [
-        "eamodio.gitlens",           // Advanced Git integration
-        "GitHub.vscode-pull-request-github", // GitHub PR management
-        "ms-vscode.vscode-json",     // JSON editing
-        "redhat.vscode-yaml",        // YAML editing  
-        "ms-python.python",          // Python support
-        "ms-vscode.vscode-typescript-next", // TypeScript support
-        "streetsidesoftware.code-spell-checker", // Spell checking
-        "yzhang.markdown-all-in-one" // Markdown editing
+    'recommendations': [
+        'eamodio.gitlens',           // Advanced Git integration
+        'GitHub.vscode-pull-request-github', // GitHub PR management
+        'ms-vscode.vscode-json',     // JSON editing
+        'redhat.vscode-yaml',        // YAML editing  
+        'ms-python.python',          // Python support
+        'ms-vscode.vscode-typescript-next', // TypeScript support
+        'streetsidesoftware.code-spell-checker', // Spell checking
+        'yzhang.markdown-all-in-one' // Markdown editing
     ]
 }
 ```
@@ -288,76 +288,76 @@ Create a simple status dashboard you can run:
 **File: `scripts/dashboard.py`**
 ```python
 # !/usr/bin/env python3
-"""
+'''
 Simple repository status dashboard
-"""
+'''
 import subprocess
 import json
 from pathlib import Path
 
 def get_repo_info(repo_path):
-    """Get information about a repository"""
+    '''Get information about a repository'''
     if not repo_path.exists():
-        return {"status": "missing", "path": str(repo_path)}
+        return {'status': 'missing', 'path': str(repo_path)}
     
     try:
         # Get current branch
         branch = subprocess.check_output(
-            ["git", "branch", "--show-current"], 
+            ['git', 'branch', '--show-current'], 
             cwd=repo_path,
             text=True
         ).strip()
         
         # Get status
         status = subprocess.check_output(
-            ["git", "status", "--porcelain"], 
+            ['git', 'status', '--porcelain'], 
             cwd=repo_path,
             text=True
         ).strip()
         
         # Get last commit
         last_commit = subprocess.check_output(
-            ["git", "log", "-1", "--pretty=format:%h %s"], 
+            ['git', 'log', '-1', '--pretty=format:%h %s'], 
             cwd=repo_path,
             text=True
         ).strip()
         
         return {
-            "status": "active",
-            "branch": branch,
-            "uncommitted_changes": len(status.split('\n')) if status else 0,
-            "last_commit": last_commit,
-            "path": str(repo_path)
+            'status': 'active',
+            'branch': branch,
+            'uncommitted_changes': len(status.split('\n')) if status else 0,
+            'last_commit': last_commit,
+            'path': str(repo_path)
         }
     except subprocess.CalledProcessError:
-        return {"status": "error", "path": str(repo_path)}
+        return {'status': 'error', 'path': str(repo_path)}
 
 def main():
     base_dir = Path(__file__).parent.parent
     
     repos = {
-        "Game": base_dir / "pdoom1",
-        "Website": base_dir / "pdoom1-website", 
-        "Data": base_dir / "pdoom1-data"
+        'Game': base_dir / 'pdoom1',
+        'Website': base_dir / 'pdoom1-website', 
+        'Data': base_dir / 'pdoom1-data'
     }
     
-    print("[EMOJI] P(Doom) Ecosystem Status")
-    print("=" * 50)
+    print('[EMOJI] P(Doom) Ecosystem Status')
+    print('=' * 50)
     
     for name, path in repos.items():
         info = get_repo_info(path)
-        print(f"\n[EMOJI] {name}:")
+        print(f'\n[EMOJI] {name}:')
         
-        if info["status"] == "missing":
-            print("   [EMOJI] Repository not found")
-        elif info["status"] == "error":
-            print("   [WARNING][EMOJI]  Git error")
+        if info['status'] == 'missing':
+            print('   [EMOJI] Repository not found')
+        elif info['status'] == 'error':
+            print('   [WARNING][EMOJI]  Git error')
         else:
-            print(f"   [EMOJI] Branch: {info['branch']}")
-            print(f"   [NOTE] Changes: {info['uncommitted_changes']}")
-            print(f"   [DIZZY] Last: {info['last_commit']}")
+            print(f'   [EMOJI] Branch: {info['branch']}')
+            print(f'   [NOTE] Changes: {info['uncommitted_changes']}')
+            print(f'   [DIZZY] Last: {info['last_commit']}')
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 ```
 

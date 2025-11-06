@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <defs>
+    <filter id="outer-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Simple cat outline: ears + rounded head -->
+  <path d="M32 42 L48 22 C52 18 60 18 64 22 L68 26 L72 22 C76 18 84 18 88 22 L104 42
+           C110 50 112 60 108 70 C100 92 82 106 64 106 C46 106 28 92 20 70 C16 60 18 50 24 42 Z"
+        fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round" filter="url(#outer-glow)"/>
+  <!-- Eyes -->
+  <circle cx="50" cy="72" r="6" fill="currentColor"/>
+  <circle cx="78" cy="72" r="6" fill="currentColor"/>
+</svg>

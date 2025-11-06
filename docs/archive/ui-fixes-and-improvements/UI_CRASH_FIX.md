@@ -12,7 +12,7 @@
 
 ## Additional Navigation Fix
 
-**Issue**: End game menu "Settings" button was returning to main game launch window instead of proper settings menu.
+**Issue**: End game menu 'Settings' button was returning to main game launch window instead of proper settings menu.
 
 **Root Cause**: The `handle_end_game_menu_click()` function was directly setting `current_state = 'overlay'` instead of using the navigation stack system with `push_navigation_state('overlay')`.
 
@@ -54,8 +54,8 @@
 1. **`_in_rect` method**:
    ```python
    def _in_rect(self, pt, rect):
-       """Check if point is within rectangle, with graceful error handling."""
-       if not self._validate_rect(rect, "_in_rect"):
+       '''Check if point is within rectangle, with graceful error handling.'''
+       if not self._validate_rect(rect, '_in_rect'):
            return False
        
        try:
@@ -65,7 +65,7 @@
        except (TypeError, ValueError) as e:
            # Log the error for debugging
            if hasattr(self, 'game_logger'):
-               self.game_logger.log(f"_in_rect error: pt={pt}, rect={rect}, error={e}")
+               self.game_logger.log(f'_in_rect error: pt={pt}, rect={rect}, error={e}')
            return False
    ```
 
@@ -81,8 +81,8 @@
 
 3. **Added validation framework**:
    ```python
-   def _validate_rect(self, rect, context=""):
-       """Validate that a rectangle is properly formatted."""
+   def _validate_rect(self, rect, context=''):
+       '''Validate that a rectangle is properly formatted.'''
        # ... validation logic with logging
    ```
 
@@ -114,11 +114,11 @@ for idx, rect in enumerate(rect_list):
         # ... safe to use rect
 
 # Good: Validate before use
-if self._validate_rect(rect, "operation_name"):
+if self._validate_rect(rect, 'operation_name'):
     # ... safe to use rect
 
 # Good: Use error wrapping for complex operations
-result = self._safe_ui_operation("hover_check", self.check_hover, mouse_pos, w, h)
+result = self._safe_ui_operation('hover_check', self.check_hover, mouse_pos, w, h)
 ```
 
 ### Code Patterns to Avoid:
@@ -153,7 +153,7 @@ The fix includes comprehensive logging that will help identify:
 - Performance issues in rectangle operations
 
 Check game logs for messages starting with:
-- "Invalid rectangle"
-- "Error in check_hover"
-- "_in_rect error"
-- "Error validating rectangle"
+- 'Invalid rectangle'
+- 'Error in check_hover'
+- '_in_rect error'
+- 'Error validating rectangle'

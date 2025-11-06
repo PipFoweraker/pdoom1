@@ -15,15 +15,15 @@ on:
       force_sync:
         description: 'Force sync all documentation'
         required: false
-        default: 'false'
+        default: false
         type: boolean
       target_repo:
         description: 'Specific repository to sync (leave empty for all)'
         required: false
-        default: ''
+        default: 'all'
         type: choice
         options:
-          - ''
+          - 'all'
           - 'pdoom1-website'
           - 'pdoom-data'
 

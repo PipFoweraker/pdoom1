@@ -1,10 +1,10 @@
 ---
 
-title: "Turn 6 Spacebar Failure: Comprehensive Investigation and Architecture Plan"
-date: "2025-09-28"
-tags: ["critical-bug", "architecture", "investigation", "input-system", "turn-handling"]
-summary: "Deep investigation of Turn 6 spacebar input failure revealing GUI event handling issues and comprehensive architectural improvement plan"
-commit: "f72a880"
+title: 'Turn 6 Spacebar Failure: Comprehensive Investigation and Architecture Plan'
+date: '2025-09-28'
+tags: ['critical-bug', 'architecture', 'investigation', 'input-system', 'turn-handling']
+summary: 'Deep investigation of Turn 6 spacebar input failure revealing GUI event handling issues and comprehensive architectural improvement plan'
+commit: 'f72a880'
 ---
 
 # Turn 6 Spacebar Failure: Comprehensive Investigation and Architecture Plan
@@ -24,14 +24,14 @@ Conducted a 4-hour deep investigation into GitHub Issue #377 - the critical Turn
 ### Root Cause Analysis
 - **Primary Issue**: Redundant key checking pattern (`pygame.K_SPACE` then `end_turn_key`)
 - **Secondary Issue**: Missing `key_event_consumed = True` flag in spacebar handler
-- **Architectural Debt**: "One button to complex system" evolution without proper refactoring
+- **Architectural Debt**: 'One button to complex system' evolution without proper refactoring
 - **Event Consumption Bug**: Other handlers could process the same spacebar event
 
 ### Immediate Fix Implementation
 ```python
 # FIXED: Removed redundant pygame.K_SPACE check
 elif not key_event_consumed and game_state and not game_state.game_over:
-    end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+    end_turn_key = keybinding_manager.get_key_for_action('end_turn')
     if event.key == end_turn_key:  # Only check once, no redundancy
         # ... blocking conditions logic ...
         key_event_consumed = True  # ADDED: Critical event consumption flag
@@ -39,7 +39,7 @@ elif not key_event_consumed and game_state and not game_state.game_over:
 
 ### Architecture Documentation
 - Created comprehensive architectural debt analysis document
-- Identified "one button to complex system" anti-pattern
+- Identified 'one button to complex system' anti-pattern
 - Developed 3-phase plan for InputEventManager extraction from main.py monolith
 - Established prevention strategies for future input system evolution
 
@@ -82,7 +82,7 @@ for i in range(6):
 
 # GUI event handling issue - REDUNDANT VALIDATION
 elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
-    end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+    end_turn_key = keybinding_manager.get_key_for_action('end_turn')
     if event.key == end_turn_key:  # <-- PROBLEMATIC DOUBLE-CHECK
 ```
 
@@ -109,7 +109,7 @@ elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
 - **Architectural Evolution**: Simple systems need planned refactoring as complexity grows
 - **Event Consumption Critical**: Always mark input events as consumed to prevent handler conflicts  
 - **Redundant Checking Anti-Pattern**: Avoid checking the same condition multiple times in event chains
-- **Technical Debt Recognition**: "One button to complex system" evolution requires architectural intervention
+- **Technical Debt Recognition**: 'One button to complex system' evolution requires architectural intervention
 
 ---
 

@@ -1,0 +1,1 @@
+# Poor contrast UI\n\nThe UI has poor contrast, notably at launch the ingame controls and menu navigation instructions are hard to see on my cheap display. \n\n<!-- GitHub Issue #214 -->

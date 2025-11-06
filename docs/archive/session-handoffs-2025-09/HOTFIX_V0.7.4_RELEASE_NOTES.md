@@ -7,7 +7,7 @@
 
 ## RELEASE SUMMARY
 
-This hotfix addresses **5 critical bugs** identified through friend playtesting feedback and implements a **comprehensive dashboard system** for persistent game configuration. The release follows a "slightly more verbose but clearer" naming strategy with modular service architecture.
+This hotfix addresses **5 critical bugs** identified through friend playtesting feedback and implements a **comprehensive dashboard system** for persistent game configuration. The release follows a 'slightly more verbose but clearer' naming strategy with modular service architecture.
 
 ## CRITICAL BUGS FIXED
 
@@ -202,6 +202,6 @@ eada3e1 hotfix: Menu system improvements and code consolidation
 
 ## CONCLUSION
 
-This hotfix represents a **significant quality improvement** to P(Doom), addressing all identified critical bugs while implementing a **foundational dashboard system**. The "slightly more verbose but clearer" naming strategy and modular architecture provide excellent groundwork for future development.
+This hotfix represents a **significant quality improvement** to P(Doom), addressing all identified critical bugs while implementing a **foundational dashboard system**. The 'slightly more verbose but clearer' naming strategy and modular architecture provide excellent groundwork for future development.
 
 **Ready for production deployment and player testing.**

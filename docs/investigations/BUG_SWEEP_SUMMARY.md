@@ -8,7 +8,7 @@
 ### OK **Fixed Critical Bugs**
 
 #### 1. **Research Quality System Crash (Production Critical)**
-- **Issue**: TypeError in TechnicalDebt.add_debt() - "takes 2-3 args but 4 given"
+- **Issue**: TypeError in TechnicalDebt.add_debt() - 'takes 2-3 args but 4 given'
 - **Root Cause**: Method signature mismatch in research quality system
 - **Fix**: Corrected add_debt/reduce_debt calls to use proper argument order
 - **Impact**: **GAME-BREAKING BUG RESOLVED** - Players can now use research quality options without crashes
@@ -43,7 +43,7 @@
 ### TOOLS **Comprehensive Testing Framework Built**
 
 #### **New Tool: dev_tool_testing.py**
-**Exactly what you requested**: "develop some ways of brute force testing the game using inputs and a dev tool"
+**Exactly what you requested**: 'develop some ways of brute force testing the game using inputs and a dev tool'
 
 **Features**:
 - **Brute Force Action Testing**: Tests all available game actions systematically

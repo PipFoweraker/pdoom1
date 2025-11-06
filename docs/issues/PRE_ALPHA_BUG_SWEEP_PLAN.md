@@ -152,7 +152,7 @@ After comprehensive analysis of the P(Doom) codebase, this plan outlines a strat
 ```bash
 # Full validation suite
 python -m unittest discover tests -v  # Must pass 100%
-python -c "from src.core.game_state import GameState; GameState('alpha-test')"
+python -c 'from src.core.game_state import GameState; GameState('alpha-test')'
 python main.py  # 5-minute smoke test
 ```
 

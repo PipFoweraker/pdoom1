@@ -11,31 +11,31 @@ Build on the successful fundraising and research dialog patterns to consolidate 
 
 ### 1. Staff Management Menu
 Currently scattered actions:
-- "Hire Staff" (already dialog-based)
-- "Fire Staff" (if exists)
-- "Training Programs" 
-- "Staff Morale Initiatives"
+- 'Hire Staff' (already dialog-based)
+- 'Fire Staff' (if exists)
+- 'Training Programs' 
+- 'Staff Morale Initiatives'
 
-**Proposed**: "Staff Options" submenu with hiring, management, and development choices.
+**Proposed**: 'Staff Options' submenu with hiring, management, and development choices.
 
 ### 2. Upgrade & Technology Menu  
 Currently scattered actions:
-- "Buy Compute"
-- "Better Computers"
-- "Research Automation"
-- "HPC Cluster"
+- 'Buy Compute'
+- 'Better Computers'
+- 'Research Automation'
+- 'HPC Cluster'
 - Various other upgrades
 
-**Proposed**: "Technology Options" submenu with infrastructure and upgrade paths.
+**Proposed**: 'Technology Options' submenu with infrastructure and upgrade paths.
 
 ### 3. External Relations Menu
 Currently scattered actions:
-- "Scout Opponents"  
-- "Public Relations"
-- "Industry Networking"
-- "Government Relations"
+- 'Scout Opponents'  
+- 'Public Relations'
+- 'Industry Networking'
+- 'Government Relations'
 
-**Proposed**: "External Affairs" submenu for all outward-facing strategic actions.
+**Proposed**: 'External Affairs' submenu for all outward-facing strategic actions.
 
 ## Technical Implementation
 

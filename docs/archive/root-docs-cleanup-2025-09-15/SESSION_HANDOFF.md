@@ -41,7 +41,7 @@
 
 ### GitHub Issue Created
 - Issue opened with comprehensive scope and requirements
-- Label "type-annotations" created and applied
+- Label 'type-annotations' created and applied
 - Clear validation requirements specified
 
 ### Additional High-Priority Targets
@@ -53,12 +53,12 @@
 - **Branch**: main
 - **Commits**: All work committed and clean
 - **Stage**: Ready for systematic continuation
-- **Validation Command**: `python -c "from src.core.game_state import GameState; gs = GameState('test'); print('SUCCESS')"`
+- **Validation Command**: `python -c 'from src.core.game_state import GameState; gs = GameState('test'); print('SUCCESS')'`
 
 ## Recommended Next Session Start
 ```bash
-cd "c:/Users/gday/Documents/A Local Code/pdoom1"
-python -c "from src.core.game_state import GameState; print('Validation: game_state.py annotations working')"
+cd 'c:/Users/gday/Documents/A Local Code/pdoom1'
+python -c 'from src.core.game_state import GameState; print('Validation: game_state.py annotations working')'
 # Begin work on src/ui/menus.py systematic annotation
 ```
 

@@ -4,7 +4,7 @@
 **PRIORITY: MEDIUM** - Implement multi-turn action sequences that allow delegation of decision-making to staff/managers, creating more strategic AP management.
 
 ## Strategic Context
-- **Goal**: Enable complex actions like "advertise -> receive applicants -> interview -> hire"
+- **Goal**: Enable complex actions like 'advertise -> receive applicants -> interview -> hire'
 - **Benefit**: Reduces micro-management while adding strategic depth
 - **Timeline**: Beta phase enhancement (post-alpha)
 
@@ -66,13 +66,13 @@ class DelegationManager:
 ## Example Action Flows
 
 ### Recruitment (3-4 turns)
-1. **T1**: Player spends 1 AP to "Post Job Advertisement"
+1. **T1**: Player spends 1 AP to 'Post Job Advertisement'
 2. **T2-T3**: Applications arrive (automatic)  
 3. **T4**: Manager reviews applications (if delegated) OR player chooses (1 AP)
 4. **T5**: Hiring decision executed
 
 ### Research Project (5-7 turns)
-1. **T1**: Player spends 2 AP to "Start Research Project"
+1. **T1**: Player spends 2 AP to 'Start Research Project'
 2. **T2-T5**: Research progresses (automatic updates)
 3. **T6**: Results available, player decides on publication/secrecy (1 AP)
 4. **T7**: Effects applied to game state

@@ -76,14 +76,14 @@ Windows Defender will likely flag the executable as potentially unwanted softwar
 #### User Workaround Instructions
 
 **For Windows Defender SmartScreen**:
-1. When Windows shows "Windows protected your PC", click "More info"
-2. Click "Run anyway" at the bottom
+1. When Windows shows 'Windows protected your PC', click 'More info'
+2. Click 'Run anyway' at the bottom
 3. The game will start normally
 
 **For Windows Defender Antivirus**:
 1. If the file is quarantined, open Windows Security
-2. Go to "Virus & threat protection" > "Protection history"
-3. Find the P(Doom) detection and click "Actions" > "Allow"
+2. Go to 'Virus & threat protection' > 'Protection history'
+3. Find the P(Doom) detection and click 'Actions' > 'Allow'
 4. Re-download or restore the file if needed
 
 **For Corporate/Managed Systems**:
@@ -122,12 +122,12 @@ dist/                # Distribution output
 
 #### Common Issues
 
-**"Failed to execute script 'main'"**:
+**'Failed to execute script 'main''**:
 - Usually indicates missing dependencies or import errors
 - Check `build/pdoom/warn-pdoom.txt` for warnings
 - Verify all modules are included in `pdoom.spec`
 
-**"No module named 'ui'"**:
+**'No module named 'ui''**:
 - Root-level modules must be explicitly included
 - Check that `ui.py` is in the `datas` section of `pdoom.spec`
 

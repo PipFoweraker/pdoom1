@@ -75,10 +75,10 @@ These were the most critical local-only issues that needed immediate GitHub trac
 
 ```bash
 # PREFERRED: Create GitHub issue directly
-gh issue create --title "Issue Title" --body "Description" --label "enhancement"
+gh issue create --title 'Issue Title' --body 'Description' --label 'enhancement'
 
 # ALTERNATIVE: If you must create local file, immediately sync
-echo "# Issue Title\nDescription" > issues/new-issue.md
+echo '# Issue Title\nDescription' > issues/new-issue.md
 python tools/github-issue-sync.py --create
 ```
 

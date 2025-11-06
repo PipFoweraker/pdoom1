@@ -11,7 +11,7 @@ A bootstrap strategy game about managing a scrappy AI safety lab with realistic 
 - **TurnManager Architecture**: More stable turn processing with better error handling
 - **Multiple Research Projects**: Time to execute 2-3 research projects per game
 
-**Current Version**: v0.7.5 "Extended Gameplay & Architecture Overhaul" - Major balance and technical improvements
+**Current Version**: v0.7.5 'Extended Gameplay & Architecture Overhaul' - Major balance and technical improvements
 
 **Strategic Challenge**: Experience the real constraints of running an AI safety nonprofit - manage weekly cash flow, make strategic funding decisions, and scale your team efficiently while keeping doom levels low. With extended gameplay, you now have time to build meaningful strategies and recover from setbacks!
 
@@ -40,11 +40,17 @@ A bootstrap strategy game about managing a scrappy AI safety lab with realistic 
 
 ## Quick Setup
 
-1. **Install Python 3.9+** (if not already installed)
-2. **Install pygame**: `pip install pygame`
-3. **Run the game**: `python main.py`
+### For Players (Recommended)
 
-That's it! The game will open with a main menu.
+1. **Download the game**: Get the latest release from [GitHub Releases](https://github.com/PipFoweraker/pdoom1/releases)
+2. **Extract and run**: Double-click `PDoom.exe` (Windows)
+3. **Play**: The game will open with the main menu
+
+### For Developers
+
+Building from source or contributing? See [Development Setup](../docs/developer/CONTRIBUTING.md).
+
+**Note:** This game is built with Godot 4.x. The Python/Pygame version is for development only.
 
 ---
 
@@ -153,7 +159,7 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 ### Basic Game Loop
 1. **Take actions** (left panel) - Click buttons to spend money and affect your lab
 2. **Buy upgrades** (right panel) - One-time purchases that give permanent benefits  
-3. **End your turn** - Click "END TURN" or press `Space` to see results
+3. **End your turn** - Click 'END TURN' or press `Space` to see results
 
 ### Keyboard Controls & Debug Features
 - **Space**: End turn (always available, even during tutorials)
@@ -226,7 +232,7 @@ As your organization grows, you'll encounter special milestone events:
 
 ### Board Compliance (>$10K Spending)  
 - **Trigger**: Spend >$10K without Accounting Software
-- **Effect**: Installs board members, audit risk, "Search" action unlocked
+- **Effect**: Installs board members, audit risk, 'Search' action unlocked
 - **Prevention**: Purchase Accounting Software ($500) beforehand
 
 *For detailed milestone mechanics, see [Milestone-Driven Special Events](#milestone-driven-special-events) below.*
@@ -278,7 +284,7 @@ Each employee performs specialized productive actions when requirements are met,
 |--------|--------|
 | Take action | Click action button (left panel) **OR** press number keys 1-9 |
 | Buy upgrade | Click upgrade button (right panel) |
-| End turn | Click "END TURN" or press `Space` |
+| End turn | Click 'END TURN' or press `Space` |
 | View upgrade details | Hover mouse over purchased upgrades (top right) |
 | Open Player Guide | Press `H` key anytime |
 | Quit to menu | Press `Esc` |
@@ -376,7 +382,7 @@ The Action Points (AP) system creates strategic depth through resource managemen
 - Automatically delegated when beneficial (lower AP cost)
 
 ### Visual Indicators
-- **AP Counter**: Displayed as "AP: 2/3" in the top resource bar
+- **AP Counter**: Displayed as 'AP: 2/3' in the top resource bar
 - **Glow Effect**: AP counter glows yellow when Action Points are spent
 - **Button States**: Action buttons gray out when you lack sufficient AP
 - **Cost Display**: Each action shows both money cost and AP cost
@@ -441,7 +447,7 @@ The competitors panel (between resources and actions) shows:
 **Left Panel:** Available unlocked actions (filtered to show only what you can currently access)
 **Right Panel:** Available upgrades (becomes icons after purchase)
 **Bottom Context Window:** Retro 80's-style terminal showing detailed information (8-10% of screen height)
-**Bottom Center:** "END TURN" button
+**Bottom Center:** 'END TURN' button
 **Bottom Left:** Activity log showing recent events
 
 ### Context Window (Bottom Terminal)
@@ -536,7 +542,7 @@ As your organization grows, you'll unlock new systems and face new challenges th
 **Board Member Trigger:**
 - **Condition**: Spend >$10,000 in a single turn without accounting software
 - **Effect**: Board installs 2 Board Members for compliance monitoring
-- **Consequences**: Unlocks "Search" action, begins audit risk accumulation
+- **Consequences**: Unlocks 'Search' action, begins audit risk accumulation
 
 **Board Search Action:**
 - **Unlock**: Available when board members are active
@@ -599,7 +605,7 @@ After turn 8, your organization will unlock advanced event handling capabilities
 
 **[U+23F3] Deferred Events** - Strategic event management:
 - Defer non-critical events to handle at a better time
-- Deferred events appear in the lower-right "Deferred Events" zone
+- Deferred events appear in the lower-right 'Deferred Events' zone
 - Show countdown timers (events auto-execute when expired)
 - Strategic deferring allows you to manage multiple crises
 
@@ -644,7 +650,7 @@ You lose if any of these happen:
 - **[EMOJI] All staff quit** - No one left to run the lab
 - **[EMOJI] Opponent wins** - Competition reaches 100% progress first
 
-Instead of generic "GAME OVER" messages, you'll receive detailed end game scenarios that explain what led to your defeat and analyze your organization's performance based on how long you survived and what caused the end.
+Instead of generic 'GAME OVER' messages, you'll receive detailed end game scenarios that explain what led to your defeat and analyze your organization's performance based on how long you survived and what caused the end.
 
 Your score is how many turns you survived. Try to beat your previous best!
 
@@ -677,13 +683,13 @@ When your game ends, you'll see your final statistics followed by an **End-Game 
 - **Keyboard**: Use arrow keys to navigate, Enter to select, Escape for Main Menu
 - **Features**: Same bug reporting system as main menu, preserves game statistics
 
-This replaces the old "click anywhere to restart" behavior, giving you more control over what to do after a game ends.
+This replaces the old 'click anywhere to restart' behavior, giving you more control over what to do after a game ends.
 
 ---
 
 ## Need Help?
 
-- **Stuck?** Try the in-game "Report Bug" feature to get help
+- **Stuck?** Try the in-game 'Report Bug' feature to get help
 - **Technical issues?** See the [README](../README.md) for troubleshooting  
 - **Want to contribute?** Check the [Developer Guide](DEVELOPERGUIDE.md)
 - **Version questions?** See [CHANGELOG.md](../CHANGELOG.md) for release history and known issues

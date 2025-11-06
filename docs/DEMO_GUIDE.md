@@ -17,7 +17,7 @@ A bureaucracy strategy game about AI Safety with retro 80s aesthetics.
 
 ### 1. Quick Start
 ```bash
-cd "c:\Users\gday\Documents\A Local Code\pdoom1"
+cd 'c:\Users\gday\Documents\A Local Code\pdoom1'
 python main.py
 ```
 
@@ -40,14 +40,14 @@ python main.py
 ```python
 # Show how version is managed centrally
 from src.services.version import get_display_version
-print(get_display_version())  # "P(Doom) v0.2.5"
+print(get_display_version())  # 'P(Doom) v0.2.5'
 ```
 
 ### Icon System Architecture  
 ```python
 # Example of clean, modular code
 def draw_resource_icon(screen, icon_type, x, y, size=16):
-    """Demonstrates good function design with clear parameters"""
+    '''Demonstrates good function design with clear parameters'''
     if icon_type == 'money':
         # Pixel-perfect drawing code
 ```
@@ -85,11 +85,11 @@ git status
 
 ## [DEMO] Demo Script (2 minutes)
 
-1. **"This is P(Doom), a strategy game I built in Python"**
-2. **Show UI**: "Notice the retro 8-bit icons instead of cluttered text"
-3. **Hover actions**: "The green context window shows details without crowding the interface"  
-4. **Press [**: "Built-in screenshot functionality for documentation"
-5. **Show code**: "Everything follows modern development practices - semantic versioning, git tags, comprehensive docs"
-6. **Git log**: "Clean commit history shows the development process"
+1. **'This is P(Doom), a strategy game I built in Python'**
+2. **Show UI**: 'Notice the retro 8-bit icons instead of cluttered text'
+3. **Hover actions**: 'The green context window shows details without crowding the interface'  
+4. **Press [**: 'Built-in screenshot functionality for documentation'
+5. **Show code**: 'Everything follows modern development practices - semantic versioning, git tags, comprehensive docs'
+6. **Git log**: 'Clean commit history shows the development process'
 
 **Perfect for showing how to build polished Python applications! [AWESOME]**

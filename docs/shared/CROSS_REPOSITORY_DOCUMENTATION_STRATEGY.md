@@ -127,24 +127,24 @@ jobs:
       - name: Sync documentation
         run: |
           for doc_dir in ${{ join(matrix.target.docs, ' ') }}; do
-            echo "Syncing docs/$doc_dir to ${{ matrix.target.repo }}"
+            echo 'Syncing docs/$doc_dir to ${{ matrix.target.repo }}'
             rsync -av --delete \
-              "docs/$doc_dir" \
-              "target-repo/${{ matrix.target.destination }}"
+              'docs/$doc_dir' \
+              'target-repo/${{ matrix.target.destination }}'
           done
           
       - name: Commit and push changes
         working-directory: target-repo
         run: |
-          git config user.email "docs-sync@pdoom.net"
-          git config user.name "Documentation Sync Bot"
+          git config user.email 'docs-sync@pdoom.net'
+          git config user.name 'Documentation Sync Bot'
           
           if [[ -n $(git status --porcelain) ]]; then
             git add .
-            git commit -m "docs: sync from pdoom1@$(echo $GITHUB_SHA | head -c 7)"
+            git commit -m 'docs: sync from pdoom1@$(echo $GITHUB_SHA | head -c 7)'
             git push
           else
-            echo "No documentation changes to sync"
+            echo 'No documentation changes to sync'
           fi
 ```
 
@@ -186,9 +186,9 @@ jobs:
 **File: `scripts/sync-docs.py`**
 ```python
 # !/usr/bin/env python3
-"""
+'''
 Cross-repository documentation synchronization tool
-"""
+'''
 import subprocess
 import yaml
 import json
@@ -196,17 +196,17 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 class DocSyncer:
-    def __init__(self, config_file: str = "docs/sync-config.yml"):
+    def __init__(self, config_file: str = 'docs/sync-config.yml'):
         self.config = self._load_config(config_file)
-        self.base_path = Path(".")
+        self.base_path = Path('.')
         
     def _load_config(self, config_file: str) -> Dict:
-        """Load synchronization configuration"""
+        '''Load synchronization configuration'''
         with open(config_file, 'r') as f:
             return yaml.safe_load(f)
     
     def sync_to_repository(self, target_repo: str) -> bool:
-        """Sync documentation to target repository"""
+        '''Sync documentation to target repository'''
         config = self.config['repositories'][target_repo]
         
         # Clone or update target repository
@@ -220,22 +220,22 @@ class DocSyncer:
         return self._commit_changes(repo_path, target_repo)
     
     def _ensure_repo(self, repo_name: str, repo_url: str) -> Path:
-        """Ensure repository is available locally"""
-        repo_path = Path(f"temp/{repo_name}")
+        '''Ensure repository is available locally'''
+        repo_path = Path(f'temp/{repo_name}')
         
         if repo_path.exists():
             # Pull latest changes
-            subprocess.run(["git", "pull"], cwd=repo_path)
+            subprocess.run(['git', 'pull'], cwd=repo_path)
         else:
             # Clone repository
             repo_path.parent.mkdir(exist_ok=True)
-            subprocess.run(["git", "clone", repo_url, str(repo_path)])
+            subprocess.run(['git', 'clone', repo_url, str(repo_path)])
         
         return repo_path
     
     def _copy_docs(self, source: str, destination: Path):
-        """Copy documentation files with preprocessing"""
-        source_path = self.base_path / "docs" / source
+        '''Copy documentation files with preprocessing'''
+        source_path = self.base_path / 'docs' / source
         
         if source_path.is_file():
             # Process single file
@@ -244,7 +244,7 @@ class DocSyncer:
             destination.write_text(content)
         elif source_path.is_dir():
             # Process directory
-            for file_path in source_path.rglob("*.md"):
+            for file_path in source_path.rglob('*.md'):
                 rel_path = file_path.relative_to(source_path)
                 dest_file = destination / rel_path
                 content = self._process_file(file_path, destination.name)
@@ -252,7 +252,7 @@ class DocSyncer:
                 dest_file.write_text(content)
     
     def _process_file(self, file_path: Path, target_repo: str) -> str:
-        """Process documentation file for target repository"""
+        '''Process documentation file for target repository'''
         content = file_path.read_text()
         
         # Apply repository-specific transformations
@@ -263,47 +263,47 @@ class DocSyncer:
             content = content.replace(pattern, replacement)
         
         # Add sync metadata
-        sync_header = f"""<!-- 
+        sync_header = f'''<!-- 
 This file is automatically synced from pdoom1/docs/{file_path.relative_to(self.base_path / 'docs')}
 Last synced: {datetime.now().isoformat()}
 DO NOT EDIT DIRECTLY - Changes will be overwritten
 -->
 
-"""
+'''
         return sync_header + content
     
     def _commit_changes(self, repo_path: Path, repo_name: str) -> bool:
-        """Commit and push documentation changes"""
+        '''Commit and push documentation changes'''
         try:
             # Check for changes
             result = subprocess.run(
-                ["git", "status", "--porcelain"], 
+                ['git', 'status', '--porcelain'], 
                 cwd=repo_path, 
                 capture_output=True, 
                 text=True
             )
             
             if not result.stdout.strip():
-                print(f"No documentation changes for {repo_name}")
+                print(f'No documentation changes for {repo_name}')
                 return True
             
             # Commit changes
-            subprocess.run(["git", "add", "."], cwd=repo_path)
+            subprocess.run(['git', 'add', '.'], cwd=repo_path)
             subprocess.run([
-                "git", "commit", "-m", 
-                f"docs: sync from pdoom1 ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})"
+                'git', 'commit', '-m', 
+                f'docs: sync from pdoom1 ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})'
             ], cwd=repo_path)
             
             # Push changes
-            subprocess.run(["git", "push"], cwd=repo_path)
-            print(f"Successfully synced documentation to {repo_name}")
+            subprocess.run(['git', 'push'], cwd=repo_path)
+            print(f'Successfully synced documentation to {repo_name}')
             return True
             
         except subprocess.CalledProcessError as e:
-            print(f"Failed to sync documentation to {repo_name}: {e}")
+            print(f'Failed to sync documentation to {repo_name}: {e}')
             return False
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     syncer = DocSyncer()
     
     # Sync to all configured repositories
@@ -318,42 +318,42 @@ if __name__ == "__main__":
 # Documentation synchronization configuration
 repositories:
   pdoom1-website:
-    url: "https://github.com/PipFoweraker/pdoom1-website.git"
+    url: 'https://github.com/PipFoweraker/pdoom1-website.git'
     mappings:
-      "shared/ECOSYSTEM_OVERVIEW.md": "docs/ECOSYSTEM_OVERVIEW.md"
-      "shared/INTEGRATION_PLAN.md": "docs/INTEGRATION_PLAN.md"
-      "website/": "docs/website/"
-      "templates/README.template.md": "docs/templates/README.template.md"
+      'shared/ECOSYSTEM_OVERVIEW.md': 'docs/ECOSYSTEM_OVERVIEW.md'
+      'shared/INTEGRATION_PLAN.md': 'docs/INTEGRATION_PLAN.md'
+      'website/': 'docs/website/'
+      'templates/README.template.md': 'docs/templates/README.template.md'
     
   pdoom-data:
-    url: "https://github.com/PipFoweraker/pdoom-data.git"
+    url: 'https://github.com/PipFoweraker/pdoom-data.git'
     mappings:
-      "shared/ECOSYSTEM_OVERVIEW.md": "docs/ECOSYSTEM_OVERVIEW.md"
-      "shared/API_REFERENCE.md": "docs/API_REFERENCE.md"
-      "data/": "docs/"
-      "templates/": "docs/templates/"
+      'shared/ECOSYSTEM_OVERVIEW.md': 'docs/ECOSYSTEM_OVERVIEW.md'
+      'shared/API_REFERENCE.md': 'docs/API_REFERENCE.md'
+      'data/': 'docs/'
+      'templates/': 'docs/templates/'
 
 # Repository-specific content transformations
 transformations:
   pdoom1-website:
-    "pdoom-data": "pdoom-data"
-    "../pdoom1/": "../"
+    'pdoom-data': 'pdoom-data'
+    '../pdoom1/': '../'
   
   pdoom-data:
-    "pdoom1/docs/": "docs/"
-    "game repository": "pdoom1 repository"
+    'pdoom1/docs/': 'docs/'
+    'game repository': 'pdoom1 repository'
 
 # Documentation validation rules
 validation:
   cross_references:
     - pattern: '\[.*\]\(\.\.\/.*\.md\)'
-      check: "relative_links"
+      check: 'relative_links'
   
   consistency:
-    - files: ["shared/ECOSYSTEM_OVERVIEW.md"]
-      check: "repository_list"
-    - files: ["shared/API_REFERENCE.md"] 
-      check: "endpoint_consistency"
+    - files: ['shared/ECOSYSTEM_OVERVIEW.md']
+      check: 'repository_list'
+    - files: ['shared/API_REFERENCE.md'] 
+      check: 'endpoint_consistency'
 ```
 
 ### 4. Advanced Documentation Patterns
@@ -363,22 +363,22 @@ validation:
 ```yaml
 # docs/versions.yml
 documentation_versions:
-  current: "v0.4.1"
+  current: 'v0.4.1'
   
   versions:
-    "v0.4.1":
-      pdoom1: "main"
-      pdoom1-website: "main"
-      pdoom-data: "main"
+    'v0.4.1':
+      pdoom1: 'main'
+      pdoom1-website: 'main'
+      pdoom-data: 'main'
     
-    "v0.4.0":
-      pdoom1: "v0.4.0"
-      pdoom1-website: "v0.4.0-website"
-      pdoom-data: "v0.4.0-data"
+    'v0.4.0':
+      pdoom1: 'v0.4.0'
+      pdoom1-website: 'v0.4.0-website'
+      pdoom-data: 'v0.4.0-data'
 
 sync_strategy:
-  production: "tag_based"    # Sync on version tags
-  development: "branch_based" # Sync on main branch updates
+  production: 'tag_based'    # Sync on version tags
+  development: 'branch_based' # Sync on main branch updates
 ```
 
 #### B. Documentation Templates with Variables
@@ -404,9 +404,9 @@ This endpoint is part of the {{REPO_NAME}} service in the P(Doom) ecosystem.
 **File: `scripts/validate-links.py`**
 ```python
 # !/usr/bin/env python3
-"""
+'''
 Validate cross-repository documentation links
-"""
+'''
 import re
 import requests
 from pathlib import Path
@@ -421,16 +421,16 @@ class LinkValidator:
         }
     
     def validate_all_links(self) -> List[Tuple[str, str, bool]]:
-        """Validate all cross-repository links"""
+        '''Validate all cross-repository links'''
         results = []
         
-        for md_file in Path("docs").rglob("*.md"):
+        for md_file in Path('docs').rglob('*.md'):
             results.extend(self._validate_file_links(md_file))
         
         return results
     
     def _validate_file_links(self, file_path: Path) -> List[Tuple[str, str, bool]]:
-        """Validate links in a single file"""
+        '''Validate links in a single file'''
         content = file_path.read_text()
         results = []
         
@@ -446,11 +446,11 @@ class LinkValidator:
         return results
     
     def _is_cross_repo_link(self, url: str) -> bool:
-        """Check if link is a cross-repository reference"""
+        '''Check if link is a cross-repository reference'''
         return any(repo in url for repo in self.repositories.keys())
     
     def _validate_cross_repo_link(self, url: str) -> bool:
-        """Validate a cross-repository link"""
+        '''Validate a cross-repository link'''
         # Convert relative paths to absolute GitHub URLs
         github_url = self._convert_to_github_url(url)
         
@@ -461,24 +461,24 @@ class LinkValidator:
             return False
     
     def _convert_to_github_url(self, relative_url: str) -> str:
-        """Convert relative repository path to GitHub URL"""
+        '''Convert relative repository path to GitHub URL'''
         # Implementation to convert ../pdoom1-website/docs/file.md
         # to https://github.com/PipFoweraker/pdoom1-website/blob/main/docs/file.md
         pass
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     validator = LinkValidator()
     results = validator.validate_all_links()
     
     # Report results
     broken_links = [r for r in results if not r[2]]
     if broken_links:
-        print("[EMOJI] Broken cross-repository links found:")
+        print('[EMOJI] Broken cross-repository links found:')
         for file_path, link, _ in broken_links:
-            print(f"  {file_path}: {link}")
+            print(f'  {file_path}: {link}')
         exit(1)
     else:
-        print("[EMOJI] All cross-repository links are valid")
+        print('[EMOJI] All cross-repository links are valid')
 ```
 
 ## Implementation Roadmap

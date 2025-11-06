@@ -157,7 +157,7 @@ The refactor maintains full backward compatibility through wrapper functions:
 
 ```python
 def draw_end_game_menu(screen, w, h, selected_item, game_state, seed):
-    """Legacy wrapper - calls modular version for backward compatibility"""
+    '''Legacy wrapper - calls modular version for backward compatibility'''
     draw_end_game_menu_modular(screen, w, h, selected_item, game_state, seed)
 ```
 

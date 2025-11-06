@@ -1,9 +1,9 @@
 ---
-title: "UI Monolith Breakdown Complete - Architecture Transformation"
-date: "2025-09-15"
-tags: ["milestone", "architecture", "ui", "refactoring", "v0.7.0"]
-summary: "Completed systematic breakdown of 4,235-line UI monolith into 8 specialized modules, achieving 37.1% reduction with zero functionality regression"
-commit: "4c615f3"
+title: 'UI Monolith Breakdown Complete - Architecture Transformation'
+date: '2025-09-15'
+tags: ['milestone', 'architecture', 'ui', 'refactoring', 'v0.7.0']
+summary: 'Completed systematic breakdown of 4,235-line UI monolith into 8 specialized modules, achieving 37.1% reduction with zero functionality regression'
+commit: '4c615f3'
 ---
 
 # UI Monolith Breakdown Complete - Architecture Transformation

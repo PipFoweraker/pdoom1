@@ -109,10 +109,10 @@ economic_models = {
 ```python
 # Custom events through JSON
 {
-    "id": "custom_event",
-    "title": "Your Event",
-    "description": "Event description",
-    "effects": {"money": -1000, "reputation": 5}
+    'id': 'custom_event',
+    'title': 'Your Event',
+    'description': 'Event description',
+    'effects': {'money': -1000, 'reputation': 5}
 }
 ```
 

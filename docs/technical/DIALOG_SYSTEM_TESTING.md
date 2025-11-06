@@ -1,4 +1,4 @@
-"""
+'''
 Dialog System Testing Documentation
 
 This document provides comprehensive information about the dialog system
@@ -31,7 +31,7 @@ test suite and testing methodology.
 
 ```python
 class TestDialogSystemIntegration(unittest.TestCase):
-    """Integration tests for dialog system functionality."""
+    '''Integration tests for dialog system functionality.'''
     
     def setUp(self):
         self.game_state = GameState('test-seed')
@@ -52,7 +52,7 @@ class TestDialogSystemIntegration(unittest.TestCase):
     def test_dialog_manager_universal_dismiss(self)
 
 class TestDialogUIRendering(unittest.TestCase):
-    """Tests for dialog UI rendering functions."""
+    '''Tests for dialog UI rendering functions.'''
     
     # UI rendering tests
     def test_intelligence_dialog_rendering(self)
@@ -74,7 +74,7 @@ class TestDialogUIRendering(unittest.TestCase):
 **Test Pattern**:
 ```python
 def test_media_dialog_trigger(self):
-    """Test media dialog trigger functionality."""
+    '''Test media dialog trigger functionality.'''
     # Trigger the dialog
     self.game_state._trigger_media_dialog()
     
@@ -99,7 +99,7 @@ def test_media_dialog_trigger(self):
 **Test Pattern**:
 ```python
 def test_media_dialog_rendering(self):
-    """Test media dialog UI rendering."""
+    '''Test media dialog UI rendering.'''
     # Create mock dialog data
     mock_dialog = {
         'title': 'Test Media Dialog',
@@ -128,7 +128,7 @@ def test_media_dialog_rendering(self):
 **Test Pattern**:
 ```python
 def test_media_dialog_workflow(self):
-    """Test complete media dialog workflow."""
+    '''Test complete media dialog workflow.'''
     # Initial state - no pending dialog
     self.assertIsNone(self.game_state.pending_media_dialog)
     
@@ -160,7 +160,7 @@ def test_media_dialog_workflow(self):
 **Test Pattern**:
 ```python
 def test_dialog_manager_dismiss_functionality(self):
-    """Test DialogManager dismiss functionality."""
+    '''Test DialogManager dismiss functionality.'''
     # Set up dialog state
     self.game_state.pending_media_dialog = {'test': 'data'}
     
@@ -342,4 +342,4 @@ implementation is robust and ready for production use.
 
 The test architecture establishes patterns for testing similar UI systems
 and provides a foundation for future dialog system enhancements.
-"""
+'''

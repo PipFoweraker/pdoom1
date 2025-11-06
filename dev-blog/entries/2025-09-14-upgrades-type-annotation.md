@@ -1,9 +1,9 @@
 ---
-title: "Type Annotation: upgrades.py Data Structure"
-date: "2025-09-14"
-tags: ["type-annotation", "milestone", "core", "upgrades", "data-structure", "typeddict"]
-summary: "Successfully added comprehensive TypedDict type annotations to UPGRADES data structure with zero errors - demonstrates advanced typing patterns for game data"
-commit: "1b4ee92"
+title: 'Type Annotation: upgrades.py Data Structure'
+date: '2025-09-14'
+tags: ['type-annotation', 'milestone', 'core', 'upgrades', 'data-structure', 'typeddict']
+summary: 'Successfully added comprehensive TypedDict type annotations to UPGRADES data structure with zero errors - demonstrates advanced typing patterns for game data'
+commit: '1b4ee92'
 ---
 
 # MILESTONE: Complete Type Annotation for src/core/upgrades.py (Data Structure)
@@ -62,11 +62,11 @@ Used systematic 5-step approach for data structure typing:
 # Before: Untyped data structure
 UPGRADES = [
     {
-        "name": "Upgrade Computer System",
-        "desc": "Boosts research effectiveness (+1 research per action)",
-        "cost": 200,
-        "purchased": False,
-        "effect_key": "better_computers"
+        'name': 'Upgrade Computer System',
+        'desc': 'Boosts research effectiveness (+1 research per action)',
+        'cost': 200,
+        'purchased': False,
+        'effect_key': 'better_computers'
     },
     # ... more upgrades
 ]
@@ -75,7 +75,7 @@ UPGRADES = [
 from typing import List, Optional, TypedDict
 
 class UpgradeDict(TypedDict, total=False):
-    """Type definition for upgrade dictionary structure."""
+    '''Type definition for upgrade dictionary structure.'''
     name: str
     desc: str
     cost: int

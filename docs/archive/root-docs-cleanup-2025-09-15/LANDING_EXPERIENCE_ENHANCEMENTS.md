@@ -4,7 +4,7 @@
 Comprehensive improvements needed for the new player landing experience and tutorial system.
 
 ## Current State Analysis
-- "Start Game" launches directly without configuration options
+- 'Start Game' launches directly without configuration options
 - Tutorial system has 17 verbose screens that need condensation
 - Missing visual polish (fade-in effects, sparkles, better real estate usage)
 - Unclear skip functionality during intro sequence
@@ -12,7 +12,7 @@ Comprehensive improvements needed for the new player landing experience and tuto
 ## Proposed Enhancements for Future Release
 
 ### 1. Landing Experience Flow
-- **Design Decision Needed**: Should "Start Game" include configuration options or remain minimal-friction entry?
+- **Design Decision Needed**: Should 'Start Game' include configuration options or remain minimal-friction entry?
 - Consider hybrid approach: quick start + optional settings expansion
 - Player name entry integration with lab name system
 - Settings preview/quick config before game start

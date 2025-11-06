@@ -1,9 +1,9 @@
 ---
-title: "Modular UI Architecture Hotfix - Eliminating Menu Positioning Monoliths"
-date: "2025-09-15"
-tags: ["hotfix", "ui-architecture", "refactoring", "monolith-elimination"]
-summary: "Critical hotfix replacing 300+ line monolithic menu functions with dynamic, modular components that eliminate hardcoded positioning issues"
-commit: "7b9034f"
+title: 'Modular UI Architecture Hotfix - Eliminating Menu Positioning Monoliths'
+date: '2025-09-15'
+tags: ['hotfix', 'ui-architecture', 'refactoring', 'monolith-elimination']
+summary: 'Critical hotfix replacing 300+ line monolithic menu functions with dynamic, modular components that eliminate hardcoded positioning issues'
+commit: '7b9034f'
 ---
 
 # Modular UI Architecture Hotfix - Eliminating Menu Positioning Monoliths

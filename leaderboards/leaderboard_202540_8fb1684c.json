@@ -1,34 +1,34 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-29T14:49:56.465520",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-29T14:49:56.465520',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 11,
-      "player_name": "Infinitas Research",
-      "date": "2025-09-29T14:13:05.632445",
-      "level_reached": 11,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 15.990487000000002,
-      "entry_uuid": "21cf1b7c-d2d0-4164-93d9-9fe395267090"
+      'score': 11,
+      'player_name': 'Infinitas Research',
+      'date': '2025-09-29T14:13:05.632445',
+      'level_reached': 11,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 15.990487000000002,
+      'entry_uuid': '21cf1b7c-d2d0-4164-93d9-9fe395267090'
     },
     {
-      "score": 11,
-      "player_name": "Infinitas Research",
-      "date": "2025-09-29T14:49:56.463980",
-      "level_reached": 11,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 156.906781,
-      "entry_uuid": "5f6ad8a6-c9d5-4858-ae1b-a5ee0e40690d"
+      'score': 11,
+      'player_name': 'Infinitas Research',
+      'date': '2025-09-29T14:49:56.463980',
+      'level_reached': 11,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 156.906781,
+      'entry_uuid': '5f6ad8a6-c9d5-4858-ae1b-a5ee0e40690d'
     },
     {
-      "score": 8,
-      "player_name": "Infinitas Research",
-      "date": "2025-09-29T14:18:18.462285",
-      "level_reached": 8,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 57.751537,
-      "entry_uuid": "41c3ed79-e341-46fd-8fe7-610d1bbee636"
+      'score': 8,
+      'player_name': 'Infinitas Research',
+      'date': '2025-09-29T14:18:18.462285',
+      'level_reached': 8,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 57.751537,
+      'entry_uuid': '41c3ed79-e341-46fd-8fe7-610d1bbee636'
     }
   ]
 }

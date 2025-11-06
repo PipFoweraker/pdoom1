@@ -1,0 +1,57 @@
+name: Release Reminder
+
+# Triggered manually or when a release tag is pushed
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release-checklist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Post Release Checklist Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            // Read the release checklist
+            const checklist = fs.readFileSync('.github/RELEASE_CHECKLIST.md', 'utf8');
+
+            // Get the tag name
+            const tagName = context.ref.replace('refs/tags/', '');
+
+            // Post as issue comment or create discussion
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Release Checklist: ${tagName}`,
+              body: `## 🚀 Release Preparation for ${tagName}\n\n${checklist}\n\n---\n\n*This checklist was automatically created by the release-reminder workflow.*\n\nOnce all items are checked, close this issue.`,
+              labels: ['release', 'checklist']
+            });
+
+      - name: Check Version Consistency
+        run: |
+          echo "Checking version consistency across files..."
+
+          TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          echo "Tag version: $TAG_VERSION"
+
+          # Check project.godot
+          GODOT_VERSION=$(grep 'config/version=' godot/project.godot | cut -d'"' -f2)
+          echo "Godot version: $GODOT_VERSION"
+
+          if [ "$TAG_VERSION" != "$GODOT_VERSION" ]; then
+            echo "⚠️ WARNING: Version mismatch!"
+            echo "Tag: v$TAG_VERSION"
+            echo "Godot: $GODOT_VERSION"
+            exit 1
+          else
+            echo "✅ Version consistency check passed"
+          fi
+        shell: bash

@@ -19,8 +19,8 @@ assert False == True
 The `main.tutorial_enabled` state is not being properly set when tutorial choices are made through UI interactions.
 
 ## Expected Behavior
-- Clicking "Yes" in tutorial choice should set `tutorial_enabled = True`
-- Clicking "No" in tutorial choice should set `tutorial_enabled = False`
+- Clicking 'Yes' in tutorial choice should set `tutorial_enabled = True`
+- Clicking 'No' in tutorial choice should set `tutorial_enabled = False`
 - Keyboard interactions should properly update the state
 
 ## Investigation Areas

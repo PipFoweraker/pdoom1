@@ -1,16 +1,16 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-27T14:25:31.878807",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-27T14:25:31.878807',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 10,
-      "player_name": "Quantum Quill",
-      "date": "2025-09-27T14:25:31.874156",
-      "level_reached": 10,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.123564,
-      "entry_uuid": "c4360c97-93b9-4b1f-bda1-f1e48bf9067e"
+      'score': 10,
+      'player_name': 'Quantum Quill',
+      'date': '2025-09-27T14:25:31.874156',
+      'level_reached': 10,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.123564,
+      'entry_uuid': 'c4360c97-93b9-4b1f-bda1-f1e48bf9067e'
     }
   ]
 }

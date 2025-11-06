@@ -3,7 +3,7 @@
 ## Problem Description
 
 **Reported Issue**: Events are appearing out of sequence during turn processing. Specifically:
-- Player takes actions and clicks "End Turn" 
+- Player takes actions and clicks 'End Turn' 
 - Events that should appear before action selection are showing up after actions are committed
 - This breaks the intended game flow where players should see all available events/opportunities before making decisions
 
@@ -12,7 +12,7 @@
 2. Player attempts to end turn by clicking
 3. Click doesn't work initially (likely due to turn processing state)
 4. Player takes an action and ends turn successfully  
-5. "Industry networking event" popup appears - but should have appeared BEFORE action selection
+5. 'Industry networking event' popup appears - but should have appeared BEFORE action selection
 
 ## Root Cause Analysis
 
@@ -34,7 +34,7 @@ end_turn() method current sequence:
 1. **Events trigger after action commitment** - Players can't respond to events that should influence their decisions
 2. **No pre-action event phase** - Events that unlock new actions or change strategy appear too late
 3. **Poor player agency** - Players commit to actions without seeing all available information
-4. **Confusing UX** - Events appear to "interrupt" the turn flow rather than guide it
+4. **Confusing UX** - Events appear to 'interrupt' the turn flow rather than guide it
 
 ## Proposed Solution: Proper Turn Sequencing
 
@@ -48,7 +48,7 @@ Turn Start Phase:
 
 Action Selection Phase:  
 5. Player selects actions (can see all current events/opportunities)
-6. Player commits turn (clicks "End Turn")
+6. Player commits turn (clicks 'End Turn')
 
 Turn Processing Phase:
 7. Execute committed actions
@@ -115,7 +115,7 @@ def end_turn(self):
 self.turn_phase = 'events'  # 'events', 'actions', 'processing', 'complete'
 
 def process_turn_events(self):
-    """Handle events at start of turn before action selection."""
+    '''Handle events at start of turn before action selection.'''
     self.turn_phase = 'events'
     self.trigger_events()
     # If popup events exist, stay in events phase
@@ -123,7 +123,7 @@ def process_turn_events(self):
         self.turn_phase = 'actions'
     
 def end_turn(self):
-    """Execute actions and process turn after events are handled."""
+    '''Execute actions and process turn after events are handled.'''
     if self.turn_phase != 'actions':
         return False  # Events must be resolved first
         
@@ -133,7 +133,7 @@ def end_turn(self):
 
 ### Phase 3: UI Integration
 - Update UI to show turn phase clearly
-- Disable "End Turn" button during events phase
+- Disable 'End Turn' button during events phase
 - Add visual indicators for pending events
 - Improve feedback for why actions might be blocked
 

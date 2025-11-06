@@ -8,13 +8,13 @@ This guide will get the automated dev blog sync pipeline operational.
 
 1. **Create Personal Access Token** (if not exists):
    - Go to GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)
-   - Click "Generate new token (classic)"
+   - Click 'Generate new token (classic)'
    - Select scopes: `repo` (full repository access)
    - Copy the token (you won't see it again)
 
 2. **Add Secret to pdoom1 Repository**:
    - Go to pdoom1 repository Settings > Secrets and variables > Actions
-   - Click "New repository secret"
+   - Click 'New repository secret'
    - Name: `WEBSITE_SYNC_TOKEN`
    - Value: [paste your token]
 
@@ -24,10 +24,10 @@ The workflow is already created at `.github/workflows/sync-dev-blog.yml`. To tes
 
 1. **Manual Trigger** (recommended first test):
    - Go to Actions tab in pdoom1 repository
-   - Select "Sync Dev Blog to Website" workflow
-   - Click "Run workflow"
-   - Select "Force sync all entries" checkbox
-   - Click "Run workflow"
+   - Select 'Sync Dev Blog to Website' workflow
+   - Click 'Run workflow'
+   - Select 'Force sync all entries' checkbox
+   - Click 'Run workflow'
 
 2. **Automatic Trigger Test**:
    - Create or edit any file in `dev-blog/entries/`
@@ -107,7 +107,7 @@ After the workflow runs:
 
 3. **No Changes Detected**:
    - Workflow only syncs changed entries
-   - Use "Force sync" option for full sync
+   - Use 'Force sync' option for full sync
    - Check that changes are in `dev-blog/entries/` directory
 
 ### Debug Commands

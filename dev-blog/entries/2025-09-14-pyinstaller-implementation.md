@@ -1,9 +1,9 @@
 ---
-title: "PyInstaller Windows Distribution Implementation"
-date: "2025-09-14"
-tags: ["distribution", "pyinstaller", "windows", "packaging", "alpha-beta"]
-summary: "Implemented complete PyInstaller Windows .exe distribution system with asset bundling, resource management, and build automation for alpha/beta testing"
-commit: "ccc6e7a"
+title: 'PyInstaller Windows Distribution Implementation'
+date: '2025-09-14'
+tags: ['distribution', 'pyinstaller', 'windows', 'packaging', 'alpha-beta']
+summary: 'Implemented complete PyInstaller Windows .exe distribution system with asset bundling, resource management, and build automation for alpha/beta testing'
+commit: 'ccc6e7a'
 ---
 
 # PyInstaller Windows Distribution Implementation
@@ -40,7 +40,7 @@ def get_resource_path(relative_path: str) -> str:
     if hasattr(sys, '_MEIPASS'):
         base_path = str(getattr(sys, '_MEIPASS'))  # PyInstaller bundle
     else:
-        base_path = os.path.abspath(".")           # Development
+        base_path = os.path.abspath('.')           # Development
     return os.path.join(base_path, relative_path)
 ```
 
@@ -106,7 +106,7 @@ Key PyInstaller settings in `pdoom.spec`:
 
 ## Resolution Status
 
-Successfully addresses Issue #288: "Implement PyInstaller Windows .exe distribution for alpha/beta testing"
+Successfully addresses Issue #288: 'Implement PyInstaller Windows .exe distribution for alpha/beta testing'
 
 - [x] Single-file Windows executable created
 - [x] Complete asset bundling and resource management

@@ -112,7 +112,7 @@ tests/test_privacy_controls_ui.py # Comprehensive test suite (26 tests)
 #### First-Time User Experience
 ```python
 def _check_first_time_access(self) -> None:
-    """Check if this is user's first time accessing privacy controls."""
+    '''Check if this is user's first time accessing privacy controls.'''
     if self.logger and self.logger.privacy_manager:
         current_level = self.logger.privacy_manager.get_logging_level()
         self.show_first_time_info = (current_level is None)
@@ -132,17 +132,17 @@ def _check_first_time_access(self) -> None:
 def handle_privacy_controls_click(mx, my):
     global game_state
     action = privacy_controls.handle_mouse_click((mx, my), w, h)
-    if action == "back":
-        game_state = "settings_menu"
-    elif action in ["level_changed", "data_deleted"]:
+    if action == 'back':
+        game_state = 'settings_menu'
+    elif action in ['level_changed', 'data_deleted']:
         # Privacy controls handles internal state updates
         pass
 
 def handle_privacy_controls_keyboard(key):
     global game_state  
     action = privacy_controls.handle_key_press(key)
-    if action == "back":
-        game_state = "settings_menu"
+    if action == 'back':
+        game_state = 'settings_menu'
 ```
 
 ### Settings Persistence
@@ -152,7 +152,7 @@ The privacy controls seamlessly integrate with the existing PrivacyManager syste
 
 ```python
 def set_logging_level(self, level: int) -> bool:
-    """Set logging level and persist settings."""
+    '''Set logging level and persist settings.'''
     if self.logger:
         success = self.logger.configure_logging_level(level)
         if success:
@@ -267,7 +267,7 @@ Main Menu -> Settings -> Privacy Controls
 ```
 Privacy Controls -> Delete All Data
 [EMOJI][EMOJI] Confirmation dialog with clear warning
-[EMOJI][EMOJI] "Cancel" or "Delete All Data" options
+[EMOJI][EMOJI] 'Cancel' or 'Delete All Data' options
 [EMOJI][EMOJI] Immediate data removal if confirmed
 [EMOJI][EMOJI] UI updates to reflect empty data state
 ```
@@ -334,7 +334,7 @@ CHANGELOG.md                        # UPDATED: Version 0.7.5 release notes
 
 ## [CHECKLIST] Issue #314 Resolution Summary
 
-**Original Request**: "Privacy Controls UI Integration for Game Run Logger"
+**Original Request**: 'Privacy Controls UI Integration for Game Run Logger'
 
 **Requirements Met**:
 - [EMOJI] Privacy controls accessible from Settings menu

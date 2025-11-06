@@ -1,4 +1,4 @@
-"""
+'''
 Monolith Refactoring Progress - Dialog System
 
 This document tracks the monolith refactoring progress achieved through
@@ -47,7 +47,7 @@ def dismiss_technical_debt_dialog(self):
 class DialogManager:
     @staticmethod
     def dismiss_dialog(game_state, dialog_type: str) -> None:
-        """Universal dialog dismiss function."""
+        '''Universal dialog dismiss function.'''
         dialog_attr = f'pending_{dialog_type}_dialog'
         if hasattr(game_state, dialog_attr):
             setattr(game_state, dialog_attr, None)
@@ -227,4 +227,4 @@ The DialogManager pattern can be replicated for:
 - Document architectural decisions and patterns
 - Validate no performance or functionality regression
 - Use consistent naming and organizational patterns
-"""
+'''

@@ -17,15 +17,15 @@
 - Limited ability to test various strategic paths
 
 ## Proposed Changes
-1. **Update default config**: Change `"money": 2000` to `"money": 10000`
+1. **Update default config**: Change `'money': 2000` to `'money': 10000`
 2. **Verify balance**: Ensure $10k doesn't trivialize early-game challenges
 3. **Document change**: Update changelog with balance rationale
 
 ## Implementation
 **Location**: `src/services/config_manager.py` line ~95
 ```python
-"starting_resources": {
-    "money": 10000,  # Increased from 2000 for alpha testing
+'starting_resources': {
+    'money': 10000,  # Increased from 2000 for alpha testing
     ...
 }
 ```

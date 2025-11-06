@@ -1,0 +1,1 @@
+# CI/CD pipeline integration with Jira automation rules\n\nIntegrate GitHub Actions CI/CD with Jira automation. Auto-transition stories on PR merge, update story status on build completion, link commits to Jira issues. Enable automated project tracking through Atlassian ecosystem while maintaining GitHub for code hosting.\n\n<!-- GitHub Issue #285 -->

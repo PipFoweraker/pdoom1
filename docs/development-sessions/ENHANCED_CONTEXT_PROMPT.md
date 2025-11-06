@@ -5,7 +5,7 @@
 **Project**: P(Doom) - AI Safety Strategy Game  
 **Language**: Python 3.9+ with pygame  
 **Architecture**: Modular (6 extracted modules, 558 lines from monolith)  
-**Current Version**: v0.8.0 "Alpha Release - Modular Architecture"  
+**Current Version**: v0.8.0 'Alpha Release - Modular Architecture'  
 **Development Phase**: Alpha Testing Ready  
 **Repository**: GitHub - PipFoweraker/pdoom1  
 
@@ -35,9 +35,9 @@
 ### **Pre-Session Validation**
 ```bash
 # Always run before starting development
-cd "c:\Users\gday\Documents\A Local Code\pdoom1"
+cd 'c:\Users\gday\Documents\A Local Code\pdoom1'
 git status  # Should be clean
-python -c "from src.core.game_state import GameState; GameState('test')"
+python -c 'from src.core.game_state import GameState; GameState('test')'
 ```
 
 ### **Module Import Validation**
@@ -49,7 +49,7 @@ from src.core.verbose_logging import create_verbose_money_message
 from src.core.employee_management import create_employee_blob
 from src.core.dialog_systems import DialogManager
 from src.core.utility_functions import is_upgrade_available
-print("All 6 modules importing successfully")
+print('All 6 modules importing successfully')
 ```
 
 ### **Test Suite Standards**

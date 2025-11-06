@@ -4,22 +4,22 @@
 Major UI cleanup to remove redundant action buttons and better organize intelligence features.
 
 ## Issues Identified
-1. **Redundant Intelligence Actions**: "Espionage" and "Scout Opponents" existed as separate buttons when they should be inside the Intelligence dialog
+1. **Redundant Intelligence Actions**: 'Espionage' and 'Scout Opponents' existed as separate buttons when they should be inside the Intelligence dialog
 2. **Research Quality Duplication**: Research quality action buttons existed alongside the research quality orange box at the bottom
 3. **UI Clutter**: Too many buttons on the left sidebar creating poor UX
 
 ## Changes Made
 
 ### Actions Removed (5 total)
-- [EMOJI] **"Espionage"** - Moved to Intelligence dialog
-- [EMOJI] **"Scout Opponents"** - Moved to Intelligence dialog  
-- [EMOJI] **"Investigate Opponent"** - Moved to Intelligence dialog
-- [EMOJI] **"Research Speed: Fast & Risky (Rushed)"** - Redundant with research quality box
-- [EMOJI] **"Research Speed: Balanced (Standard)"** - Redundant with research quality box
-- [EMOJI] **"Research Speed: Careful & Safe (Thorough)"** - Redundant with research quality box
+- [EMOJI] **'Espionage'** - Moved to Intelligence dialog
+- [EMOJI] **'Scout Opponents'** - Moved to Intelligence dialog  
+- [EMOJI] **'Investigate Opponent'** - Moved to Intelligence dialog
+- [EMOJI] **'Research Speed: Fast & Risky (Rushed)'** - Redundant with research quality box
+- [EMOJI] **'Research Speed: Balanced (Standard)'** - Redundant with research quality box
+- [EMOJI] **'Research Speed: Careful & Safe (Thorough)'** - Redundant with research quality box
 
 ### Intelligence Dialog Enhanced
-The **"Intelligence"** button now opens a dialog with 3 options:
+The **'Intelligence'** button now opens a dialog with 3 options:
 1. **Scout Opponents** ($50) - Low-risk internet research
 2. **Espionage** ($500) - High-risk detailed intelligence  
 3. **Investigate Opponent** ($75) - Deep dive on specific target

@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://cw3j8x5p6doom"]
+
+[ext_resource type="Script" path="res://scripts/ui/doom_meter.gd" id="1_doom_meter"]
+
+[node name="DoomMeter" type="Control"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_doom_meter")
+doom_value = 50.0
+doom_momentum = 0.0
+gauge_thickness = 12.0
+show_momentum_indicator = true
+
+[node name="TooltipLabel" type="Label" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -40.0
+offset_top = 60.0
+offset_right = 40.0
+offset_bottom = 80.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "P(Doom)"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,9 +1,9 @@
 ---
-title: "Monolith Breakdown: Tutorial Extraction & Legacy Cleanup"
-date: "2025-09-15"
-tags: ["refactoring", "monolith-breakdown", "ui", "cleanup", "modular-architecture"]
-summary: "Extracted 486 lines of tutorial functions, removed 151 lines of legacy code, and fixed critical hover tooltips bug"
-commit: "139ef35"
+title: 'Monolith Breakdown: Tutorial Extraction & Legacy Cleanup'
+date: '2025-09-15'
+tags: ['refactoring', 'monolith-breakdown', 'ui', 'cleanup', 'modular-architecture']
+summary: 'Extracted 486 lines of tutorial functions, removed 151 lines of legacy code, and fixed critical hover tooltips bug'
+commit: '139ef35'
 ---
 
 # Monolith Breakdown: Tutorial Extraction & Legacy Cleanup
@@ -56,7 +56,7 @@ def check_hover(self, mouse_pos: Tuple[int, int], w: int, h: int) -> Optional[Di
         # Proper exception handling without duplicate returns
         return self._process_hover_logic(mouse_pos, w, h)
     except Exception as e:
-        logging.error(f"Error in check_hover: {e}")
+        logging.error(f'Error in check_hover: {e}')
         return None
 ```
 

@@ -1,9 +1,9 @@
 ---
-title: "RNG Deterministic Migration: Acausal Decision Theory in Action"
-date: "2025-09-17"
-tags: ["rng", "deterministic", "testing", "architecture", "decision-theory"]
-summary: "Fixed 86 test failures by migrating to fully deterministic RNG system because our novel decision theory better explains how the universe works"
-commit: "3a59f12"
+title: 'RNG Deterministic Migration: Acausal Decision Theory in Action'
+date: '2025-09-17'
+tags: ['rng', 'deterministic', 'testing', 'architecture', 'decision-theory']
+summary: 'Fixed 86 test failures by migrating to fully deterministic RNG system because our novel decision theory better explains how the universe works'
+commit: '3a59f12'
 ---
 
 # RNG Deterministic Migration: Acausal Decision Theory in Action
@@ -63,11 +63,11 @@ Created automated migration script (`fix_rng_tests.py`) that systematically:
 # BEFORE: Problematic pattern causing RNG initialization errors
 def setUp(self):
     get_rng().seed(42)  # ERROR: RNG not initialized yet!
-    self.game_state = GameState("test_seed")
+    self.game_state = GameState('test_seed')
 
 # AFTER: Proper deterministic pattern
 def setUp(self):
-    self.game_state = GameState("test_seed")
+    self.game_state = GameState('test_seed')
     # RNG is now initialized by GameState constructor
 ```
 

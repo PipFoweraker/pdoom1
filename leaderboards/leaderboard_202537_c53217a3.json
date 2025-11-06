@@ -1,70 +1,70 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-14T02:32:19.203537",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-14T02:32:19.203537',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 1,
-      "player_name": "Anonymous",
-      "date": "2025-09-13T11:17:18.048610",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 3.666186,
-      "entry_uuid": "631a91a2-353c-47eb-8785-e6fd43c2c364"
+      'score': 1,
+      'player_name': 'Anonymous',
+      'date': '2025-09-13T11:17:18.048610',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 3.666186,
+      'entry_uuid': '631a91a2-353c-47eb-8785-e6fd43c2c364'
     },
     {
-      "score": 1,
-      "player_name": "Anonymous",
-      "date": "2025-09-13T11:21:36.359208",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 12.198839,
-      "entry_uuid": "77a13f0d-c5fa-480d-b765-fb45a625909d"
+      'score': 1,
+      'player_name': 'Anonymous',
+      'date': '2025-09-13T11:21:36.359208',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 12.198839,
+      'entry_uuid': '77a13f0d-c5fa-480d-b765-fb45a625909d'
     },
     {
-      "score": 1,
-      "player_name": "Pulsar AI",
-      "date": "2025-09-13T16:04:10.131388",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 9.05036,
-      "entry_uuid": "90b57f73-e3ca-456f-8180-a825a157ae2b"
+      'score': 1,
+      'player_name': 'Pulsar AI',
+      'date': '2025-09-13T16:04:10.131388',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 9.05036,
+      'entry_uuid': '90b57f73-e3ca-456f-8180-a825a157ae2b'
     },
     {
-      "score": 1,
-      "player_name": "Pulsar AI",
-      "date": "2025-09-13T16:06:55.399729",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.995275,
-      "entry_uuid": "c3fbf91a-bc85-4d1a-b4b5-c67367b3682e"
+      'score': 1,
+      'player_name': 'Pulsar AI',
+      'date': '2025-09-13T16:06:55.399729',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.995275,
+      'entry_uuid': 'c3fbf91a-bc85-4d1a-b4b5-c67367b3682e'
     },
     {
-      "score": 1,
-      "player_name": "Pulsar AI",
-      "date": "2025-09-14T01:15:47.330356",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 21.7336,
-      "entry_uuid": "e8de6c9d-9a4a-4ad7-b0e7-60e31c67a974"
+      'score': 1,
+      'player_name': 'Pulsar AI',
+      'date': '2025-09-14T01:15:47.330356',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 21.7336,
+      'entry_uuid': 'e8de6c9d-9a4a-4ad7-b0e7-60e31c67a974'
     },
     {
-      "score": 1,
-      "player_name": "Pulsar AI",
-      "date": "2025-09-14T01:21:00.047436",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.694016,
-      "entry_uuid": "2171c11b-9116-44ae-bf04-38361668cd9d"
+      'score': 1,
+      'player_name': 'Pulsar AI',
+      'date': '2025-09-14T01:21:00.047436',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.694016,
+      'entry_uuid': '2171c11b-9116-44ae-bf04-38361668cd9d'
     },
     {
-      "score": 1,
-      "player_name": "Pulsar AI",
-      "date": "2025-09-14T02:32:19.203153",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 165.393368,
-      "entry_uuid": "97201da2-57ea-41b7-adab-93cb94dd1654"
+      'score': 1,
+      'player_name': 'Pulsar AI',
+      'date': '2025-09-14T02:32:19.203153',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 165.393368,
+      'entry_uuid': '97201da2-57ea-41b7-adab-93cb94dd1654'
     }
   ]
 }

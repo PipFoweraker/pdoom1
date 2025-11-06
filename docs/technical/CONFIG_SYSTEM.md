@@ -98,98 +98,98 @@ The config system is designed to integrate with:
 
 ### Starting Resources
 ```json
-"starting_resources": {
-  "money": 1000,           // Starting funds
-  "staff": 2,              // Initial team size
-  "reputation": 50,        // Starting reputation
-  "action_points": 3,      // AP per turn
-  "doom": 25,              // Initial p(Doom) %
-  "compute": 0             // Starting compute resources
+'starting_resources': {
+  'money': 1000,           // Starting funds
+  'staff': 2,              // Initial team size
+  'reputation': 50,        // Starting reputation
+  'action_points': 3,      // AP per turn
+  'doom': 25,              // Initial p(Doom) %
+  'compute': 0             // Starting compute resources
 }
 ```
 
 ### Action Point System
 ```json
-"action_points": {
-  "base_ap_per_turn": 3,     // Base AP granted each turn
-  "staff_ap_bonus": 0.5,     // AP bonus per regular staff
-  "admin_ap_bonus": 1.0,     // AP bonus per admin assistant
-  "max_ap_per_turn": 10      // Maximum AP per turn
+'action_points': {
+  'base_ap_per_turn': 3,     // Base AP granted each turn
+  'staff_ap_bonus': 0.5,     // AP bonus per regular staff
+  'admin_ap_bonus': 1.0,     // AP bonus per admin assistant
+  'max_ap_per_turn': 10      // Maximum AP per turn
 }
 ```
 
 ### Resource Limits
 ```json
-"resource_limits": {
-  "max_doom": 100,           // P(Doom) ceiling
-  "max_reputation": 200,     // Reputation cap
-  "max_money": 1000000,      // Practical money limit
-  "max_staff": 100           // Staff limit for performance
+'resource_limits': {
+  'max_doom': 100,           // P(Doom) ceiling
+  'max_reputation': 200,     // Reputation cap
+  'max_money': 1000000,      // Practical money limit
+  'max_staff': 100           // Staff limit for performance
 }
 ```
 
 ### Milestone Thresholds
 ```json
-"milestones": {
-  "manager_threshold": 9,         // Staff count for manager milestone
-  "board_spending_threshold": 10000, // Spending for board member
-  "enhanced_events_turn": 8,      // Turn for enhanced events
-  "scrollable_log_turn": 5        // Turn for scrollable log
+'milestones': {
+  'manager_threshold': 9,         // Staff count for manager milestone
+  'board_spending_threshold': 10000, // Spending for board member
+  'enhanced_events_turn': 8,      // Turn for enhanced events
+  'scrollable_log_turn': 5        // Turn for scrollable log
 }
 ```
 
 ### UI Settings
 ```json
-"ui": {
-  "window_scale": 0.8,           // Screen size percentage
-  "font_scale": 1.0,             // Font size multiplier
-  "animation_speed": 1.0,        // Animation speed
-  "tooltip_delay": 500,          // Tooltip delay (ms)
-  "show_balance_changes": true,  // Resource change indicators
-  "show_keyboard_shortcuts": true // Button shortcuts
+'ui': {
+  'window_scale': 0.8,           // Screen size percentage
+  'font_scale': 1.0,             // Font size multiplier
+  'animation_speed': 1.0,        // Animation speed
+  'tooltip_delay': 500,          // Tooltip delay (ms)
+  'show_balance_changes': true,  // Resource change indicators
+  'show_keyboard_shortcuts': true // Button shortcuts
 }
 ```
 
 ### Audio Settings
 ```json
-"audio": {
-  "sound_enabled": true,         // Master audio toggle
-  "master_volume": 1.0,          // Volume level (0.0-1.0)
-  "ui_sounds": true,             // UI feedback sounds
-  "feedback_sounds": true        // Action feedback sounds
+'audio': {
+  'sound_enabled': true,         // Master audio toggle
+  'master_volume': 1.0,          // Volume level (0.0-1.0)
+  'ui_sounds': true,             // UI feedback sounds
+  'feedback_sounds': true        // Action feedback sounds
 }
 ```
 
 ### Tutorial and Help
 ```json
-"tutorial": {
-  "tutorial_enabled": true,      // Interactive tutorial system (step-by-step guidance)
-  "first_time_help": true,       // Context-sensitive hints (Factorio-style, show once)
-  "show_tips": true,             // General gameplay tips
-  "auto_help_on_errors": true    // Error help system
+'tutorial': {
+  'tutorial_enabled': true,      // Interactive tutorial system (step-by-step guidance)
+  'first_time_help': true,       // Context-sensitive hints (Factorio-style, show once)
+  'show_tips': true,             // General gameplay tips
+  'auto_help_on_errors': true    // Error help system
 }
 ```
 **Note**: `tutorial_enabled` controls the interactive tutorial, while `first_time_help` controls context-sensitive hints that appear once when encountering new mechanics.
 
 ### Gameplay Settings
 ```json
-"gameplay": {
-  "auto_delegation": true,       // Auto-use delegation
-  "show_opponent_intel": true,   // Show opponent info
-  "event_frequency": 1.0,        // Event probability multiplier
-  "difficulty_modifier": 1.0     // General difficulty
+'gameplay': {
+  'auto_delegation': true,       // Auto-use delegation
+  'show_opponent_intel': true,   // Show opponent info
+  'event_frequency': 1.0,        // Event probability multiplier
+  'difficulty_modifier': 1.0     // General difficulty
 }
 ```
 
 ### Advanced Settings (Modding)
 ```json
-"advanced": {
-  "debug_mode": false,           // Debug features
-  "log_level": "INFO",           // Logging level
-  "enable_experimental_features": false,
-  "custom_event_weights": {},    // Event probability overrides
-  "custom_action_costs": {},     // Action cost overrides
-  "custom_upgrade_costs": {}     // Upgrade cost overrides
+'advanced': {
+  'debug_mode': false,           // Debug features
+  'log_level': 'INFO',           // Logging level
+  'enable_experimental_features': false,
+  'custom_event_weights': {},    // Event probability overrides
+  'custom_action_costs': {},     // Action cost overrides
+  'custom_upgrade_costs': {}     // Upgrade cost overrides
 }
 ```
 
@@ -209,22 +209,22 @@ current_config.json       # Tracks selected config
 ### Example Config File
 ```json
 {
-  "config_name": "Hardcore Mode",
-  "description": "Challenging settings for experienced players",
-  "version": "1.0.0",
-  "starting_resources": {
-    "money": 500,
-    "staff": 1,
-    "reputation": 25,
-    "action_points": 2,
-    "doom": 35,
-    "compute": 0
+  'config_name': 'Hardcore Mode',
+  'description': 'Challenging settings for experienced players',
+  'version': '1.0.0',
+  'starting_resources': {
+    'money': 500,
+    'staff': 1,
+    'reputation': 25,
+    'action_points': 2,
+    'doom': 35,
+    'compute': 0
   },
-  "resource_limits": {
-    "max_doom": 100,
-    "max_reputation": 150,
-    "max_money": 500000,
-    "max_staff": 50
+  'resource_limits': {
+    'max_doom': 100,
+    'max_reputation': 150,
+    'max_money': 500000,
+    'max_staff': 50
   },
   // ... other sections
 }
@@ -240,37 +240,37 @@ current_config.json       # Tracks selected config
 ### Custom Event Weights
 Override default event probabilities:
 ```json
-"custom_event_weights": {
-  "competitor_breakthrough": 0.5,  // Reduce competitor events
-  "funding_opportunity": 2.0       // Increase funding events
+'custom_event_weights': {
+  'competitor_breakthrough': 0.5,  // Reduce competitor events
+  'funding_opportunity': 2.0       // Increase funding events
 }
 ```
 
 ### Custom Action Costs
 Modify action point costs:
 ```json
-"custom_action_costs": {
-  "hire_staff": 2,                 // Make hiring more expensive
-  "research": 1                    // Make research cheaper
+'custom_action_costs': {
+  'hire_staff': 2,                 // Make hiring more expensive
+  'research': 1                    // Make research cheaper
 }
 ```
 
 ### Custom Upgrade Costs
 Adjust upgrade pricing:
 ```json
-"custom_upgrade_costs": {
-  "compute_upgrade": 1500,         // Increase compute cost
-  "reputation_boost": 800          // Decrease reputation cost
+'custom_upgrade_costs': {
+  'compute_upgrade': 1500,         // Increase compute cost
+  'reputation_boost': 800          // Decrease reputation cost
 }
 ```
 
 ### Debug Features
 Enable development tools:
 ```json
-"advanced": {
-  "debug_mode": true,              // Enable debug overlay
-  "log_level": "DEBUG",            // Verbose logging
-  "enable_experimental_features": true
+'advanced': {
+  'debug_mode': true,              // Enable debug overlay
+  'log_level': 'DEBUG',            // Verbose logging
+  'enable_experimental_features': true
 }
 ```
 
@@ -299,9 +299,9 @@ Enable development tools:
 ### Advanced Debugging
 Enable detailed logging by setting:
 ```json
-"advanced": {
-  "debug_mode": true,
-  "log_level": "DEBUG"
+'advanced': {
+  'debug_mode': true,
+  'log_level': 'DEBUG'
 }
 ```
 

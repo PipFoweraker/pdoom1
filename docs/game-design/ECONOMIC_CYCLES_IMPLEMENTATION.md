@@ -38,14 +38,14 @@ This document summarizes the implementation of Issue #192 (Economic Cycles & Fun
 ### 2. New Player Experience (`main.py`, `ui.py`)
 
 **Enhanced Tutorial Choice**
-- Replaced "Launch Lab" with "New Player Experience" in main menu
+- Replaced 'Launch Lab' with 'New Player Experience' in main menu
 - Checkbox-based interface for tutorial and intro selection
 - Responsive layout adapting to different screen sizes
 
 **Intro Scenario**
 - Optional introductory text explaining the game premise
 - References starting cash amount from configuration
-- Sets context: "Doom is coming. You convinced a funder to give you $1,000. Your job is to save the world. Good luck!"
+- Sets context: 'Doom is coming. You convinced a funder to give you $1,000. Your job is to save the world. Good luck!'
 
 **User Interface**
 - ASCII-only character set for maximum compatibility

@@ -1,0 +1,253 @@
+[gd_scene load_steps=6 format=3 uid="uid://cq8j9x4k2lp3m"]
+
+[ext_resource type="Script" path="res://scripts/ui/player_guide.gd" id="1_guide"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
+bg_color = Color(0.2, 0.3, 0.5, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.5, 0.7, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.3, 0.5, 0.8, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.8, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
+bg_color = Color(0.15, 0.25, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.9, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.12, 0.14, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.4, 0.6, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="PlayerGuide" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_guide")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.16, 0.18, 0.22, 1)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -550.0
+offset_top = -330.0
+offset_right = 550.0
+offset_bottom = 330.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 42
+text = "PLAYER GUIDE"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 16
+text = "How to Navigate P(Doom): Bureaucracy Strategy"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="ContentScroll" type="ScrollContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ContentVBox" type="VBoxContainer" parent="Panel/VBox/ContentScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="ObjectiveSection" type="VBoxContainer" parent="Panel/VBox/ContentScroll/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/VBox/ContentScroll/ContentVBox/ObjectiveSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "GAME OBJECTIVE"
+
+[node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ObjectiveSection"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "Your goal is to [color=green][b]reduce P(Doom) to 0%[/b][/color] before running out of money or turns.
+
+P(Doom) represents the probability of AI causing human extinction. Balance [color=red]AI capabilities[/color] research with [color=green]safety research[/color] to prevent catastrophe while advancing the field."
+
+[node name="HSeparator1" type="HSeparator" parent="Panel/VBox/ContentScroll/ContentVBox"]
+layout_mode = 2
+
+[node name="ControlsSection" type="VBoxContainer" parent="Panel/VBox/ContentScroll/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/VBox/ContentScroll/ContentVBox/ControlsSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "CONTROLS"
+
+[node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ControlsSection"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[b]Mouse:[/b] Click buttons and UI elements
+[b]Keyboard Numbers (1-9):[/b] Quick-select actions
+[b]Space/Enter:[/b] End turn and execute queued actions
+[b]Escape:[/b] Cancel/Back
+
+[b]In-Game:[/b]
+• Select actions from the left panel
+• Actions cost Action Points (AP) and resources
+• End your turn to execute all queued actions
+• Watch resource changes in the top panel"
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBox/ContentScroll/ContentVBox"]
+layout_mode = 2
+
+[node name="ResourcesSection" type="VBoxContainer" parent="Panel/VBox/ContentScroll/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/VBox/ContentScroll/ContentVBox/ResourcesSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "KEY RESOURCES"
+
+[node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/ResourcesSection"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "[color=yellow][b]Money ($):[/b][/color] Hire staff, buy compute, fund research
+[color=cyan][b]Compute:[/b][/color] Required for running AI experiments
+[color=purple][b]Research:[/b][/color] Accumulated knowledge points
+[color=orange][b]Papers:[/b][/color] Published research (increases reputation)
+[color=blue][b]Reputation:[/b][/color] Affects fundraising and hiring
+
+[color=green][b]Safety Researchers:[/b][/color] Green dots (●) - Reduce P(Doom)
+[color=red][b]Capability Researchers:[/b][/color] Red dots (●) - Increase capabilities
+[color=blue][b]Compute Engineers:[/b][/color] Blue dots (●) - Boost compute efficiency
+
+[color=red][b]P(Doom):[/b][/color] The probability of AI catastrophe - REDUCE TO ZERO TO WIN!"
+
+[node name="HSeparator3" type="HSeparator" parent="Panel/VBox/ContentScroll/ContentVBox"]
+layout_mode = 2
+
+[node name="StrategySection" type="VBoxContainer" parent="Panel/VBox/ContentScroll/ContentVBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Title" type="Label" parent="Panel/VBox/ContentScroll/ContentVBox/StrategySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "STRATEGY TIPS"
+
+[node name="Text" type="RichTextLabel" parent="Panel/VBox/ContentScroll/ContentVBox/StrategySection"]
+custom_minimum_size = Vector2(0, 180)
+layout_mode = 2
+theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/normal_font_size = 16
+bbcode_enabled = true
+text = "1. [b]Early Game:[/b] Hire safety researchers and fundraise for sustainability
+2. [b]Balance:[/b] Don't ignore capabilities - you need research progress
+3. [b]Reputation:[/b] Publish papers to boost reputation for better fundraising
+4. [b]Compute:[/b] Buy compute upgrades to accelerate research
+5. [b]Watch P(Doom):[/b] If it rises too fast, pivot to safety research
+6. [b]Action Points:[/b] Use all your AP each turn - wasted AP = wasted time
+7. [b]Events:[/b] Random events can help or harm - read them carefully!"
+
+[node name="Spacer" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ButtonRow" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="BackButton" type="Button" parent="Panel/VBox/ButtonRow"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+text = "← Back to Menu"
+
+[connection signal="pressed" from="Panel/VBox/ButtonRow/BackButton" to="." method="_on_back_pressed"]

@@ -1,9 +1,9 @@
 ---
-title: "UI Hotfixes - Systematic Resolution Session"
-date: "2025-09-16"
-tags: ["ui", "hotfixes", "bugfixes", "intelligence", "overlap-prevention"]
-summary: "Systematic resolution of 6 major UI issues including researcher pool display, scroll wheel navigation, scout actions, and overlap prevention"
-commit: "cff6dea"
+title: 'UI Hotfixes - Systematic Resolution Session'
+date: '2025-09-16'
+tags: ['ui', 'hotfixes', 'bugfixes', 'intelligence', 'overlap-prevention']
+summary: 'Systematic resolution of 6 major UI issues including researcher pool display, scroll wheel navigation, scout actions, and overlap prevention'
+commit: 'cff6dea'
 ---
 
 # UI Hotfixes - Systematic Resolution Session

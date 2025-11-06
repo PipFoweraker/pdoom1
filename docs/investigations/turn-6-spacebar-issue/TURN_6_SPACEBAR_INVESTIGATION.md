@@ -1,7 +1,7 @@
 # CRITICAL INVESTIGATION: Turn 6 Spacebar Input Failure
 
 ## Issue Summary
-**GitHub Issue #377**: "CRITICAL: Spacebar input stops working at Turn 6"
+**GitHub Issue #377**: 'CRITICAL: Spacebar input stops working at Turn 6'
 
 - **Reproducibility**: Consistently occurs at Turn 6 in GUI mode
 - **Scope**: GUI-specific issue (core game logic works correctly)
@@ -44,7 +44,7 @@ for i in range(6):
 # main.py lines 2603-2612 - PROBLEMATIC PATTERN
 elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
     from src.services.keybinding_manager import keybinding_manager
-    end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+    end_turn_key = keybinding_manager.get_key_for_action('end_turn')
     
     if event.key == end_turn_key:  # <-- REDUNDANT CHECK
         # Blocking conditions logic...
@@ -68,7 +68,7 @@ blocking_conditions = [
 ]
 ```
 
-**Risk**: If any of these conditions become "stuck" at Turn 6, spacebar becomes permanently blocked.
+**Risk**: If any of these conditions become 'stuck' at Turn 6, spacebar becomes permanently blocked.
 
 ### Turn 6 Specificity: PATTERN ANALYSIS
 
@@ -104,7 +104,7 @@ blocking_conditions = [
 
 ### Primary Hypothesis: Dialog State Corruption
 1. **Turn 6 Event/Milestone**: Something at Turn 6 sets a dialog flag
-2. **State Not Cleared**: Dialog state remains "stuck" due to event system changes
+2. **State Not Cleared**: Dialog state remains 'stuck' due to event system changes
 3. **Spacebar Blocked**: Blocking conditions check prevents spacebar processing
 4. **No Recovery**: Without proper state reset, input remains blocked
 

@@ -42,7 +42,7 @@
 ## Git Workflow Summary
 
 1. **Feature Development:** refactor/extract-research-system branch
-2. **Milestone Commit:** 1898acb - "feat(architecture): 20% STRATEGIC MILESTONE"
+2. **Milestone Commit:** 1898acb - 'feat(architecture): 20% STRATEGIC MILESTONE'
 3. **Branch Merge:** Successfully merged to main with fast-forward
 4. **GitHub Sync:** Pushed to origin/main, all changes now in production
 

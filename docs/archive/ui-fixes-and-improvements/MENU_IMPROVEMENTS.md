@@ -23,28 +23,28 @@ Completed comprehensive menu restructuring and tutorial flow optimization to imp
 
 ### 2. Tutorial Choice Optimization
 **Before:**
-- "Yes - Enable Tutorial" (first option, default)
-- "No - Regular Mode" (second option)
+- 'Yes - Enable Tutorial' (first option, default)
+- 'No - Regular Mode' (second option)
 
 **After:** 
-- "No - Regular Mode" (first option, default)
-- "Yes - Enable Tutorial" (second option)
+- 'No - Regular Mode' (first option, default)
+- 'Yes - Enable Tutorial' (second option)
 
 ### 3. Implementation Details
 
 #### Menu Items Array
 ```python
 # Old
-menu_items = ["Launch Lab", "Launch with Custom Seed", "Game Config", "Settings", "Player Guide", "README", "Report Bug"]
+menu_items = ['Launch Lab', 'Launch with Custom Seed', 'Game Config', 'Settings', 'Player Guide', 'README', 'Report Bug']
 
 # New  
-menu_items = ["Launch Lab", "Game Config", "Settings", "Exit"]
+menu_items = ['Launch Lab', 'Game Config', 'Settings', 'Exit']
 ```
 
 #### Tutorial Choice Handlers
-- Updated `handle_tutorial_choice_click()` to map index 0 to "No tutorial"
+- Updated `handle_tutorial_choice_click()` to map index 0 to 'No tutorial'
 - Updated `handle_tutorial_choice_keyboard()` for consistent behavior
-- Set `tutorial_choice_selected_item = 1` to default to "No tutorial"
+- Set `tutorial_choice_selected_item = 1` to default to 'No tutorial'
 
 #### Menu Navigation
 - Updated both click and keyboard handlers for main menu
@@ -77,13 +77,13 @@ menu_items = ["Launch Lab", "Game Config", "Settings", "Exit"]
 - [EMOJI] Game Config opens configuration selection
 - [EMOJI] Settings opens audio/accessibility menu
 - [EMOJI] Exit properly closes application
-- [EMOJI] Tutorial choice shows "No" first, "Yes" second
-- [EMOJI] Default tutorial selection is "No" (works with both mouse and keyboard)
+- [EMOJI] Tutorial choice shows 'No' first, 'Yes' second
+- [EMOJI] Default tutorial selection is 'No' (works with both mouse and keyboard)
 - [EMOJI] Navigation stack maintains proper back button behavior
 
 ## Future Considerations
 - Monitor user feedback on simplified menu structure
-- Consider adding "Advanced Options" submenu if needed
+- Consider adding 'Advanced Options' submenu if needed
 - Evaluate if custom seed functionality should be restored
 - Track tutorial engagement metrics with new default
 

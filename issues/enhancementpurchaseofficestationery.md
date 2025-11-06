@@ -1,0 +1,1 @@
+# (enhancement) purchase office stationery\n\nEnhancement: Create a way to purchase office stationery every now and then for some trivial expense and trivial reward. The meta-theme is that this is the kind of activity that will pop up and at a certain point be fully automated / delegated away.\n\n<!-- GitHub Issue #183 -->

@@ -1,70 +1,70 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-16T22:30:50.620822",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-16T22:30:50.620822',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 1,
-      "player_name": "Catalyst Labs",
-      "date": "2025-09-16T22:00:18.934112",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 2.583491,
-      "entry_uuid": "7399e348-f7d7-4808-aebe-d61a7535d962"
+      'score': 1,
+      'player_name': 'Catalyst Labs',
+      'date': '2025-09-16T22:00:18.934112',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 2.583491,
+      'entry_uuid': '7399e348-f7d7-4808-aebe-d61a7535d962'
     },
     {
-      "score": 1,
-      "player_name": "Catalyst Labs",
-      "date": "2025-09-16T22:10:18.673632",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 1.378045,
-      "entry_uuid": "4c8723f6-36f3-44f7-8d00-f2c5d650bf3d"
+      'score': 1,
+      'player_name': 'Catalyst Labs',
+      'date': '2025-09-16T22:10:18.673632',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 1.378045,
+      'entry_uuid': '4c8723f6-36f3-44f7-8d00-f2c5d650bf3d'
     },
     {
-      "score": 1,
-      "player_name": "Catalyst Labs",
-      "date": "2025-09-16T22:12:18.298695",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 1.29574,
-      "entry_uuid": "3a90cdcf-e85c-4cfb-9210-04b627a32de0"
+      'score': 1,
+      'player_name': 'Catalyst Labs',
+      'date': '2025-09-16T22:12:18.298695',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 1.29574,
+      'entry_uuid': '3a90cdcf-e85c-4cfb-9210-04b627a32de0'
     },
     {
-      "score": 1,
-      "player_name": "Catalyst Labs",
-      "date": "2025-09-16T22:13:55.644271",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.96037,
-      "entry_uuid": "5eec1b2c-b6fb-43fe-85d5-3dff83bb0cbc"
+      'score': 1,
+      'player_name': 'Catalyst Labs',
+      'date': '2025-09-16T22:13:55.644271',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.96037,
+      'entry_uuid': '5eec1b2c-b6fb-43fe-85d5-3dff83bb0cbc'
     },
     {
-      "score": 1,
-      "player_name": "Catalyst Labs",
-      "date": "2025-09-16T22:15:31.164856",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.813491,
-      "entry_uuid": "68322f9a-4a74-41a0-87e1-4206ac28e5dd"
+      'score': 1,
+      'player_name': 'Catalyst Labs',
+      'date': '2025-09-16T22:15:31.164856',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.813491,
+      'entry_uuid': '68322f9a-4a74-41a0-87e1-4206ac28e5dd'
     },
     {
-      "score": 1,
-      "player_name": "Catalyst Labs",
-      "date": "2025-09-16T22:21:17.181025",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 1.9415180000000003,
-      "entry_uuid": "b31cb925-fc50-4cf6-b5fd-dcfe057082f8"
+      'score': 1,
+      'player_name': 'Catalyst Labs',
+      'date': '2025-09-16T22:21:17.181025',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 1.9415180000000003,
+      'entry_uuid': 'b31cb925-fc50-4cf6-b5fd-dcfe057082f8'
     },
     {
-      "score": 1,
-      "player_name": "Catalyst Labs",
-      "date": "2025-09-16T22:30:50.620418",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.912917,
-      "entry_uuid": "668cba70-db51-45e3-9c22-a439686a6011"
+      'score': 1,
+      'player_name': 'Catalyst Labs',
+      'date': '2025-09-16T22:30:50.620418',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.912917,
+      'entry_uuid': '668cba70-db51-45e3-9c22-a439686a6011'
     }
   ]
 }

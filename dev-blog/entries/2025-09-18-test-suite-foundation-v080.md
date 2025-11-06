@@ -1,9 +1,9 @@
 ---
-title: "Test Suite Foundation v0.8.0 - Multiplayer Ready"
-date: "2025-09-18"
-tags: ["milestone", "testing", "rng", "multiplayer", "foundation"]
-summary: "Major milestone achieved: 60 percent test failure reduction establishes production-ready deterministic gameplay"
-commit: "8964928"
+title: 'Test Suite Foundation v0.8.0 - Multiplayer Ready'
+date: '2025-09-18'
+tags: ['milestone', 'testing', 'rng', 'multiplayer', 'foundation']
+summary: 'Major milestone achieved: 60 percent test failure reduction establishes production-ready deterministic gameplay'
+commit: '8964928'
 ---
 
 # Test Suite Foundation Release - Global Multiplayer Ready (v0.8.0)

@@ -67,12 +67,12 @@
 ### **Development Environment Setup**
 ```bash
 # Verify current state
-cd "c:\Users\gday\Documents\A Local Code\pdoom1"
+cd 'c:\Users\gday\Documents\A Local Code\pdoom1'
 git status  # Should be clean
-python -c "[basic validation command]"  # Should work
+python -c '[basic validation command]'  # Should work
 
 # Run comprehensive validation  
-python -c "[module validation or system check]"
+python -c '[module validation or system check]'
 ```
 
 ## GAME **[TESTING/VALIDATION FOCUS AREAS]**
@@ -108,9 +108,9 @@ python -c "[module validation or system check]"
 ### **Session Startup Validation**
 ```bash
 # Verify environment
-cd "c:\Users\gday\Documents\A Local Code\pdoom1"
+cd 'c:\Users\gday\Documents\A Local Code\pdoom1'
 git log --oneline -3  # Should show recent commits
-python -c "[quick functionality test]"
+python -c '[quick functionality test]'
 
 # Check current status
 git status  # Should be clean  

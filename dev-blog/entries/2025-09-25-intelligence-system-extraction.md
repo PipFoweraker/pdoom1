@@ -1,9 +1,9 @@
 ---
-title: "Intelligence System Extraction - 6th Major Module"
-date: "2025-09-25"
-tags: ["modular-architecture", "intelligence-system", "code-extraction", "refactoring"]
-summary: "Extracted comprehensive Intelligence System as 6th major module achieving 19.5% total monolith reduction"
-commit: "TBD"
+title: 'Intelligence System Extraction - 6th Major Module'
+date: '2025-09-25'
+tags: ['modular-architecture', 'intelligence-system', 'code-extraction', 'refactoring']
+summary: 'Extracted comprehensive Intelligence System as 6th major module achieving 19.5% total monolith reduction'
+commit: 'TBD'
 ---
 
 # Intelligence System Extraction - 6th Major Module

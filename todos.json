@@ -1,0 +1,1510 @@
+{
+  "generated": "G:\\Documents\\Organising Life\\Code\\pdoom1",
+  "total_todos": 188,
+  "todos": [
+    {
+      "type": "NOTE",
+      "file": "main.py",
+      "line": 124,
+      "text": "log_shutdown() will be called in finally block",
+      "context": "on_exit_handler",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "main.py",
+      "line": 256,
+      "text": "report form state",
+      "context": "on_exit_handler",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1229,
+      "text": "Implement game config menu",
+      "context": "handle_settings_menu_click",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1232,
+      "text": "Implement gameplay settings",
+      "context": "handle_settings_menu_click",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1235,
+      "text": "Implement accessibility settings",
+      "context": "handle_settings_menu_click",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1264,
+      "text": "Implement game config menu",
+      "context": "handle_settings_menu_keyboard",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1267,
+      "text": "Implement gameplay settings",
+      "context": "handle_settings_menu_keyboard",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1270,
+      "text": "Implement accessibility settings",
+      "context": "handle_settings_menu_keyboard",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "main.py",
+      "line": 1832,
+      "text": "Menu items are dynamic - first item is 'Play Again' or 'Launch New Game' based on context",
+      "context": "_execute_high_score_menu_action",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "main.py",
+      "line": 2503,
+      "text": "report form keyboard handling",
+      "context": "main",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "main.py",
+      "line": 2845,
+      "text": "report form",
+      "context": "main",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "main.py",
+      "line": 2849,
+      "text": "report success message",
+      "context": "main",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\branch_manager.py",
+      "line": 281,
+      "text": "Create GitHub issue for manual review",
+      "context": "BranchManager",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "scripts\\devblog_automation.py",
+      "line": 200,
+      "text": "Fixes',",
+      "context": "DevBlogAutomation",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "scripts\\monitor-sync.py",
+      "line": 12,
+      "text": "This requires GitHub CLI, but we'll provide manual instructions",
+      "context": "check_workflow_status",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\project_health.py",
+      "line": 120,
+      "text": "items",
+      "context": "ProjectHealthDashboard",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\project_health.py",
+      "line": 200,
+      "text": "Implement proper analysis",
+      "context": "ProjectHealthDashboard",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\todo_tracker.py",
+      "line": 24,
+      "text": "FIXME, HACK, NOTE",
+      "context": "TodoItem",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\todo_tracker.py",
+      "line": 196,
+      "text": "Tracker Report\\n\\n\"",
+      "context": "TodoTracker",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "tests\\test_action_points.py",
+      "line": 596,
+      "text": "Re-enable when delegation system is properly implemented",
+      "context": "TestKeyboardShortcuts",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_action_points.py",
+      "line": 636,
+      "text": "The actual beep sound can't be tested easily, but we can verify the error tracking",
+      "context": "TestEnhancedAPFeedback",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_custom_sound_overrides.py",
+      "line": 165,
+      "text": "In a headless environment, this might not always work as expected",
+      "context": "TestCustomSoundOverrides",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_dialog_system_integration.py",
+      "line": 252,
+      "text": "This behavior depends on implementation - adjust test as needed",
+      "context": "TestDialogSystemIntegration",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_issue_36_fixes.py",
+      "line": 267,
+      "text": "The actual auto-scroll logic is in ui.py, this tests the game state setup",
+      "context": "TestActivityLogScrollBehavior",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_office_cat.py",
+      "line": 61,
+      "text": "starting money",
+      "context": "TestOfficeCat",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_scenario_runner.py",
+      "line": 173,
+      "text": "Success may depend on game mechanics, but we can test execution",
+      "context": "TestScenarioExecution",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_verbose_logging.py",
+      "line": 167,
+      "text": "Log level filtering only affects human-readable logging,",
+      "context": "TestVerboseLogger",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\game_state.py",
+      "line": 1387,
+      "text": "Implement news reading mechanics",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\game_state.py",
+      "line": 1396,
+      "text": "Implement networking mechanics",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\game_state.py",
+      "line": 1735,
+      "text": "AP is already deducted during action selection (_handle_action_selection)",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\game_state.py",
+      "line": 1847,
+      "text": "trigger_events() moved to beginning of end_turn() for proper sequencing",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\game_state.py",
+      "line": 3643,
+      "text": "Cost is already deducted by the action system, so we don't deduct it again here",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\input_event_manager.py",
+      "line": 269,
+      "text": "Screen saving needs to be done by the main game loop",
+      "context": "InputEventManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 172,
+      "text": "Implement press release mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 183,
+      "text": "Implement exclusive interview mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 195,
+      "text": "Implement damage control mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 209,
+      "text": "Implement social media campaign mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 220,
+      "text": "Implement public statement mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\ui_utils.py",
+      "line": 130,
+      "text": "Could add logging here if needed",
+      "context": "validate_rect",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\ui_utils.py",
+      "line": 135,
+      "text": "Could add logging here if needed",
+      "context": "validate_rect",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\ui_utils.py",
+      "line": 140,
+      "text": "Could add logging here if needed",
+      "context": "validate_rect",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\features\\economic_cycles.py",
+      "line": 346,
+      "text": "Implement emergency funding mechanics",
+      "context": "EconomicCycles",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\features\\media_system.py",
+      "line": 253,
+      "text": "Logging would happen here with proper turn information",
+      "context": "MediaSystem",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\features\\public_opinion.py",
+      "line": 142,
+      "text": "GameLogger requires a turn parameter, but we don't have access to it here",
+      "context": "PublicOpinion",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\features\\public_opinion.py",
+      "line": 159,
+      "text": "We would log here if we had access to turn information",
+      "context": "PublicOpinion",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\features\\public_opinion.py",
+      "line": 177,
+      "text": "We would log story expiration here if needed",
+      "context": "PublicOpinion",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\services\\audio_manager.py",
+      "line": 80,
+      "text": "pygame.mixer doesn't have global volume control",
+      "context": "AudioManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\ui\\__init__.py",
+      "line": 20,
+      "text": "Remove this once all imports are updated to modular structure",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\ui\\__init__.py",
+      "line": 21,
+      "text": "Avoiding direct imports from extracted modules to prevent circular imports",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "archived\\pygame_migration\\pygame_adapter.py",
+      "line": 265,
+      "text": "Integrate with visual_feedback.py",
+      "context": "PygameEngine",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "archived\\pygame_migration\\pygame_adapter.py",
+      "line": 269,
+      "text": "Implement tooltip system",
+      "context": "PygameEngine",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\tests\\unit\\test_game_manager.gd",
+      "line": 256,
+      "text": "This depends on game state not triggering events",
+      "context": "test_start_next_turn_emits_actions_available_when_no_events",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\scripts\\ui\\main_ui.gd",
+      "line": 147,
+      "text": "Actions are now included in init_game response",
+      "context": "_on_game_state_updated",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\scripts\\ui\\main_ui.gd",
+      "line": 199,
+      "text": "GameManager now handles auto-starting next turn",
+      "context": "_on_action_executed",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\scripts\\ui\\welcome_screen.gd",
+      "line": 86,
+      "text": "Show seed input dialog",
+      "context": "_on_custom_seed_pressed",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\scripts\\ui\\welcome_screen.gd",
+      "line": 91,
+      "text": "Show settings menu",
+      "context": "_on_settings_pressed",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\scripts\\ui\\welcome_screen.gd",
+      "line": 96,
+      "text": "Show player guide",
+      "context": "_on_guide_pressed",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\collected_script.gd",
+      "line": 85,
+      "text": "although this no longer needs to export the inner_class names since",
+      "context": "has_inner_class",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 63,
+      "text": "4.0",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 87,
+      "text": "rework what this is and then document it here.",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 255,
+      "text": "this appears to only be checked and never set anywhere.  Verify that this",
+      "context": "is_running",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 275,
+      "text": "remove_at these, universal logger should fix this.",
+      "context": "_init",
+      "priority": "medium"
+    },
+    {
+      "type": "HACK",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 748,
+      "text": "so there isn't another indent to this monster of a method.  if",
+      "context": "_test_the_scripts",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\gut_to_move.gd",
+      "line": 66,
+      "text": "Objects can disable their processing methods using 'set_process(false)' and",
+      "context": "file_touch",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\input_sender.gd",
+      "line": 70,
+      "text": "should this be done in _physics_process instead or should it be",
+      "context": "InputQueueItem",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\printers.gd",
+      "line": 169,
+      "text": "printraw does not print to the console.",
+      "context": "TerminalPrinter",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\result_exporter.gd",
+      "line": 25,
+      "text": "",
+      "context": "_export_tests",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\test.gd",
+      "line": 944,
+      "text": "make 3rd parameter \"param_or_text\" and add fourth parameter of \"text\" and",
+      "context": "assert_string_ends_with",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\test.gd",
+      "line": 1053,
+      "text": "that get_counter will return -1 if the counter does not exist.  This",
+      "context": "assert_no_new_orphans",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\test.gd",
+      "line": 1454,
+      "text": "right now we cannot stub inner classes at the path level so this should",
+      "context": "ignore_method_when_doubling",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\test.gd",
+      "line": 1497,
+      "text": "see replace_by method, this could simplify the logic here.",
+      "context": "simulate",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\utils.gd",
+      "line": 7,
+      "text": "these cannot change since places are checking for TYPE_INT to determine",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gui\\GutControl.gd",
+      "line": 58,
+      "text": "This might not need to be called deferred after changing GutUtils to",
+      "context": "_ready",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gui\\GutRunner.gd",
+      "line": 117,
+      "text": "this should be checked and _wrote_results should maybe not be set, or",
+      "context": "_write_results_for_gut_panel",
+      "priority": "low"
+    },
+    {
+      "type": "TODO",
+      "file": "docs\\AUTOMATION.md",
+      "line": 270,
+      "text": "Tracker Report",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "docs\\AUTOMATION.md",
+      "line": 584,
+      "text": "tracker missing comments",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "docs\\DEVELOPERGUIDE.md",
+      "line": 510,
+      "text": "Future Accessibility Improvements",
+      "context": "_calculate_blob_position",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\DOCUMENTATION_INDEX.md",
+      "line": 55,
+      "text": "Reports & Issue Analysis (`issues/`)",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\SESSION_HANDOFF_2025-10-16_ARCHITECTURE_REVIEW.md",
+      "line": 51,
+      "text": "1: Game Would Not Launch (CRITICAL)",
+      "context": "global",
+      "priority": "high"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\SESSION_HANDOFF_2025-10-16_ARCHITECTURE_REVIEW.md",
+      "line": 67,
+      "text": "2: Test Suite Broken",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\development-sessions\\DOCUMENTATION_CLEANUP_2025-09-28.md",
+      "line": 85,
+      "text": "reports and analysis",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "docs\\development-sessions\\SESSION_COMPLETION_2025-09-18-19.md",
+      "line": 128,
+      "text": "**Documentation Created**",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\investigations\\BUG_SWEEP_SUMMARY.md",
+      "line": 1,
+      "text": "Sweep Session Summary - Critical Stability Fixes",
+      "context": "global",
+      "priority": "high"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\project-management\\WEBSITE_PIPELINE_STRATEGY.md",
+      "line": 21,
+      "text": "report processing",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\releases\\RELEASE_NOTES_v0.4.1.md",
+      "line": 79,
+      "text": "Fixes",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\releases\\RELEASE_NOTES_V0.7.5.md",
+      "line": 84,
+      "text": "Fixes",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\technical\\TECHNICAL_SUMMARY_v0.4.1.md",
+      "line": 162,
+      "text": "Fixes",
+      "context": "add_custom_action",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\sessions\\2024-2025\\SESSION_SUMMARY_2025-01-06_PROJECT_CLEANUP.md",
+      "line": 234,
+      "text": "Fix",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\issues\\completed\\BUG_SWEEP_SUMMARY.md",
+      "line": 1,
+      "text": "Sweep Session Summary - Critical Stability Fixes",
+      "context": "global",
+      "priority": "high"
+    },
+    {
+      "type": "NOTE",
+      "file": "docs\\development-sessions\\2025-09\\SESSION_HANDOFF_2025-09-19_2135.md",
+      "line": 332,
+      "text": "**Quick Reference Links**",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "docs\\development-sessions\\2025-09\\SESSION_HANDOFF_2025-09-20_0000.md",
+      "line": 332,
+      "text": "**Quick Reference Links**",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\devblog\\entries\\2025-11-06-development-update-november-06-2025.md",
+      "line": 9,
+      "text": "Fixes",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "docs\\archive\\session-handoffs-2025-09\\SESSION_COMPLETION_2025-09-18_CRITICAL_BUG_FIXES.md",
+      "line": 84,
+      "text": "**Documentation Updates**",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "dev-blog\\entries\\2025-09-19-bug-sweep-critical-stability.md",
+      "line": 9,
+      "text": "Sweep Critical Stability Session",
+      "context": "global",
+      "priority": "high"
+    },
+    {
+      "type": "NOTE",
+      "file": "main.py",
+      "line": 124,
+      "text": "log_shutdown() will be called in finally block",
+      "context": "on_exit_handler",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "main.py",
+      "line": 256,
+      "text": "report form state",
+      "context": "on_exit_handler",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1229,
+      "text": "Implement game config menu",
+      "context": "handle_settings_menu_click",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1232,
+      "text": "Implement gameplay settings",
+      "context": "handle_settings_menu_click",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1235,
+      "text": "Implement accessibility settings",
+      "context": "handle_settings_menu_click",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1264,
+      "text": "Implement game config menu",
+      "context": "handle_settings_menu_keyboard",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1267,
+      "text": "Implement gameplay settings",
+      "context": "handle_settings_menu_keyboard",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "main.py",
+      "line": 1270,
+      "text": "Implement accessibility settings",
+      "context": "handle_settings_menu_keyboard",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "main.py",
+      "line": 1832,
+      "text": "Menu items are dynamic - first item is 'Play Again' or 'Launch New Game' based on context",
+      "context": "_execute_high_score_menu_action",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "main.py",
+      "line": 2503,
+      "text": "report form keyboard handling",
+      "context": "main",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "main.py",
+      "line": 2845,
+      "text": "report form",
+      "context": "main",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "main.py",
+      "line": 2849,
+      "text": "report success message",
+      "context": "main",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\branch_manager.py",
+      "line": 281,
+      "text": "Create GitHub issue for manual review",
+      "context": "BranchManager",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "scripts\\devblog_automation.py",
+      "line": 200,
+      "text": "Fixes',",
+      "context": "DevBlogAutomation",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "scripts\\monitor-sync.py",
+      "line": 12,
+      "text": "This requires GitHub CLI, but we'll provide manual instructions",
+      "context": "check_workflow_status",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\project_health.py",
+      "line": 120,
+      "text": "items",
+      "context": "ProjectHealthDashboard",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\project_health.py",
+      "line": 200,
+      "text": "Implement proper analysis",
+      "context": "ProjectHealthDashboard",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\todo_tracker.py",
+      "line": 24,
+      "text": "FIXME, HACK, NOTE",
+      "context": "TodoItem",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "scripts\\todo_tracker.py",
+      "line": 196,
+      "text": "Tracker Report\\n\\n\"",
+      "context": "TodoTracker",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "tests\\test_action_points.py",
+      "line": 596,
+      "text": "Re-enable when delegation system is properly implemented",
+      "context": "TestKeyboardShortcuts",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_action_points.py",
+      "line": 636,
+      "text": "The actual beep sound can't be tested easily, but we can verify the error tracking",
+      "context": "TestEnhancedAPFeedback",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_custom_sound_overrides.py",
+      "line": 165,
+      "text": "In a headless environment, this might not always work as expected",
+      "context": "TestCustomSoundOverrides",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_dialog_system_integration.py",
+      "line": 252,
+      "text": "This behavior depends on implementation - adjust test as needed",
+      "context": "TestDialogSystemIntegration",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_issue_36_fixes.py",
+      "line": 267,
+      "text": "The actual auto-scroll logic is in ui.py, this tests the game state setup",
+      "context": "TestActivityLogScrollBehavior",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_office_cat.py",
+      "line": 61,
+      "text": "starting money",
+      "context": "TestOfficeCat",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_scenario_runner.py",
+      "line": 173,
+      "text": "Success may depend on game mechanics, but we can test execution",
+      "context": "TestScenarioExecution",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "tests\\test_verbose_logging.py",
+      "line": 167,
+      "text": "Log level filtering only affects human-readable logging,",
+      "context": "TestVerboseLogger",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\game_state.py",
+      "line": 1387,
+      "text": "Implement news reading mechanics",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\game_state.py",
+      "line": 1396,
+      "text": "Implement networking mechanics",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\game_state.py",
+      "line": 1735,
+      "text": "AP is already deducted during action selection (_handle_action_selection)",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\game_state.py",
+      "line": 1847,
+      "text": "trigger_events() moved to beginning of end_turn() for proper sequencing",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\game_state.py",
+      "line": 3643,
+      "text": "Cost is already deducted by the action system, so we don't deduct it again here",
+      "context": "GameState",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\input_event_manager.py",
+      "line": 269,
+      "text": "Screen saving needs to be done by the main game loop",
+      "context": "InputEventManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 172,
+      "text": "Implement press release mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 183,
+      "text": "Implement exclusive interview mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 195,
+      "text": "Implement damage control mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 209,
+      "text": "Implement social media campaign mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\core\\media_pr_system_manager.py",
+      "line": 220,
+      "text": "Implement public statement mechanics",
+      "context": "MediaPRSystemManager",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\ui_utils.py",
+      "line": 130,
+      "text": "Could add logging here if needed",
+      "context": "validate_rect",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\ui_utils.py",
+      "line": 135,
+      "text": "Could add logging here if needed",
+      "context": "validate_rect",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\core\\ui_utils.py",
+      "line": 140,
+      "text": "Could add logging here if needed",
+      "context": "validate_rect",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\features\\economic_cycles.py",
+      "line": 346,
+      "text": "Implement emergency funding mechanics",
+      "context": "EconomicCycles",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\features\\media_system.py",
+      "line": 253,
+      "text": "Logging would happen here with proper turn information",
+      "context": "MediaSystem",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\features\\public_opinion.py",
+      "line": 142,
+      "text": "GameLogger requires a turn parameter, but we don't have access to it here",
+      "context": "PublicOpinion",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\features\\public_opinion.py",
+      "line": 159,
+      "text": "We would log here if we had access to turn information",
+      "context": "PublicOpinion",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\features\\public_opinion.py",
+      "line": 177,
+      "text": "We would log story expiration here if needed",
+      "context": "PublicOpinion",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\services\\audio_manager.py",
+      "line": 80,
+      "text": "pygame.mixer doesn't have global volume control",
+      "context": "AudioManager",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "src\\ui\\__init__.py",
+      "line": 20,
+      "text": "Remove this once all imports are updated to modular structure",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "src\\ui\\__init__.py",
+      "line": 21,
+      "text": "Avoiding direct imports from extracted modules to prevent circular imports",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "archived\\pygame_migration\\pygame_adapter.py",
+      "line": 265,
+      "text": "Integrate with visual_feedback.py",
+      "context": "PygameEngine",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "archived\\pygame_migration\\pygame_adapter.py",
+      "line": 269,
+      "text": "Implement tooltip system",
+      "context": "PygameEngine",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\tests\\unit\\test_game_manager.gd",
+      "line": 256,
+      "text": "This depends on game state not triggering events",
+      "context": "test_start_next_turn_emits_actions_available_when_no_events",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\scripts\\ui\\main_ui.gd",
+      "line": 147,
+      "text": "Actions are now included in init_game response",
+      "context": "_on_game_state_updated",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\scripts\\ui\\main_ui.gd",
+      "line": 199,
+      "text": "GameManager now handles auto-starting next turn",
+      "context": "_on_action_executed",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\scripts\\ui\\welcome_screen.gd",
+      "line": 86,
+      "text": "Show seed input dialog",
+      "context": "_on_custom_seed_pressed",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\scripts\\ui\\welcome_screen.gd",
+      "line": 91,
+      "text": "Show settings menu",
+      "context": "_on_settings_pressed",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\scripts\\ui\\welcome_screen.gd",
+      "line": 96,
+      "text": "Show player guide",
+      "context": "_on_guide_pressed",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\collected_script.gd",
+      "line": 85,
+      "text": "although this no longer needs to export the inner_class names since",
+      "context": "has_inner_class",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 63,
+      "text": "4.0",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 87,
+      "text": "rework what this is and then document it here.",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 255,
+      "text": "this appears to only be checked and never set anywhere.  Verify that this",
+      "context": "is_running",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 275,
+      "text": "remove_at these, universal logger should fix this.",
+      "context": "_init",
+      "priority": "medium"
+    },
+    {
+      "type": "HACK",
+      "file": "godot\\addons\\gut\\gut.gd",
+      "line": 748,
+      "text": "so there isn't another indent to this monster of a method.  if",
+      "context": "_test_the_scripts",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\gut_to_move.gd",
+      "line": 66,
+      "text": "Objects can disable their processing methods using 'set_process(false)' and",
+      "context": "file_touch",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\input_sender.gd",
+      "line": 70,
+      "text": "should this be done in _physics_process instead or should it be",
+      "context": "InputQueueItem",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\printers.gd",
+      "line": 169,
+      "text": "printraw does not print to the console.",
+      "context": "TerminalPrinter",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\result_exporter.gd",
+      "line": 25,
+      "text": "",
+      "context": "_export_tests",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\test.gd",
+      "line": 944,
+      "text": "make 3rd parameter \"param_or_text\" and add fourth parameter of \"text\" and",
+      "context": "assert_string_ends_with",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\test.gd",
+      "line": 1053,
+      "text": "that get_counter will return -1 if the counter does not exist.  This",
+      "context": "assert_no_new_orphans",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\test.gd",
+      "line": 1454,
+      "text": "right now we cannot stub inner classes at the path level so this should",
+      "context": "ignore_method_when_doubling",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\test.gd",
+      "line": 1497,
+      "text": "see replace_by method, this could simplify the logic here.",
+      "context": "simulate",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "godot\\addons\\gut\\utils.gd",
+      "line": 7,
+      "text": "these cannot change since places are checking for TYPE_INT to determine",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gui\\GutControl.gd",
+      "line": 58,
+      "text": "This might not need to be called deferred after changing GutUtils to",
+      "context": "_ready",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "godot\\addons\\gut\\gui\\GutRunner.gd",
+      "line": 117,
+      "text": "this should be checked and _wrote_results should maybe not be set, or",
+      "context": "_write_results_for_gut_panel",
+      "priority": "low"
+    },
+    {
+      "type": "TODO",
+      "file": "docs\\AUTOMATION.md",
+      "line": 270,
+      "text": "Tracker Report",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "docs\\AUTOMATION.md",
+      "line": 584,
+      "text": "tracker missing comments",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "TODO",
+      "file": "docs\\DEVELOPERGUIDE.md",
+      "line": 510,
+      "text": "Future Accessibility Improvements",
+      "context": "_calculate_blob_position",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\DOCUMENTATION_INDEX.md",
+      "line": 55,
+      "text": "Reports & Issue Analysis (`issues/`)",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\SESSION_HANDOFF_2025-10-16_ARCHITECTURE_REVIEW.md",
+      "line": 51,
+      "text": "1: Game Would Not Launch (CRITICAL)",
+      "context": "global",
+      "priority": "high"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\SESSION_HANDOFF_2025-10-16_ARCHITECTURE_REVIEW.md",
+      "line": 67,
+      "text": "2: Test Suite Broken",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\development-sessions\\DOCUMENTATION_CLEANUP_2025-09-28.md",
+      "line": 85,
+      "text": "reports and analysis",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "docs\\development-sessions\\SESSION_COMPLETION_2025-09-18-19.md",
+      "line": 128,
+      "text": "**Documentation Created**",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\investigations\\BUG_SWEEP_SUMMARY.md",
+      "line": 1,
+      "text": "Sweep Session Summary - Critical Stability Fixes",
+      "context": "global",
+      "priority": "high"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\project-management\\WEBSITE_PIPELINE_STRATEGY.md",
+      "line": 21,
+      "text": "report processing",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\releases\\RELEASE_NOTES_v0.4.1.md",
+      "line": 79,
+      "text": "Fixes",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\releases\\RELEASE_NOTES_V0.7.5.md",
+      "line": 84,
+      "text": "Fixes",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\technical\\TECHNICAL_SUMMARY_v0.4.1.md",
+      "line": 162,
+      "text": "Fixes",
+      "context": "add_custom_action",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\sessions\\2024-2025\\SESSION_SUMMARY_2025-01-06_PROJECT_CLEANUP.md",
+      "line": 234,
+      "text": "Fix",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\issues\\completed\\BUG_SWEEP_SUMMARY.md",
+      "line": 1,
+      "text": "Sweep Session Summary - Critical Stability Fixes",
+      "context": "global",
+      "priority": "high"
+    },
+    {
+      "type": "NOTE",
+      "file": "docs\\development-sessions\\2025-09\\SESSION_HANDOFF_2025-09-19_2135.md",
+      "line": 332,
+      "text": "**Quick Reference Links**",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "docs\\development-sessions\\2025-09\\SESSION_HANDOFF_2025-09-20_0000.md",
+      "line": 332,
+      "text": "**Quick Reference Links**",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "docs\\devblog\\entries\\2025-11-06-development-update-november-06-2025.md",
+      "line": 9,
+      "text": "Fixes",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "NOTE",
+      "file": "docs\\archive\\session-handoffs-2025-09\\SESSION_COMPLETION_2025-09-18_CRITICAL_BUG_FIXES.md",
+      "line": 84,
+      "text": "**Documentation Updates**",
+      "context": "global",
+      "priority": "medium"
+    },
+    {
+      "type": "BUG",
+      "file": "dev-blog\\entries\\2025-09-19-bug-sweep-critical-stability.md",
+      "line": 9,
+      "text": "Sweep Critical Stability Session",
+      "context": "global",
+      "priority": "high"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 # !/usr/bin/env python3
-"""
+'''
 Test suite for P(Doom) action color-coding system.
 
 Tests the comprehensive color scheme functionality implemented across both
@@ -13,7 +13,7 @@ This ensures consistent visual categorization of actions by type:
 - Media Actions (orange): Media & PR activities
 - Technical Actions (teal): Infrastructure, Technical debt
 - Special Actions (red): Search, Safety audits
-"""
+'''
 
 import unittest
 from src.ui.compact_ui import get_action_color_scheme
@@ -21,14 +21,14 @@ from src.core.game_state import GameState
 
 
 class TestActionColorScheme(unittest.TestCase):
-    """Test the action color scheme function and categorization logic."""
+    '''Test the action color scheme function and categorization logic.'''
 
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         self.game_state = GameState('test-color-scheme')
         
     def test_color_scheme_structure(self):
-        """Test that color schemes have the correct structure."""
+        '''Test that color schemes have the correct structure.'''
         test_actions = [
             'Grow Community', 'Fundraising Options', 'Research Options',
             'Intelligence', 'Media & PR', 'Technical Debt', 'Safety Audit',
@@ -40,22 +40,22 @@ class TestActionColorScheme(unittest.TestCase):
                 colors = get_action_color_scheme(action)
                 
                 # Verify required keys exist
-                self.assertIn('normal', colors, f"Missing 'normal' color for {action}")
-                self.assertIn('hover', colors, f"Missing 'hover' color for {action}")
-                self.assertIn('border', colors, f"Missing 'border' color for {action}")
+                self.assertIn('normal', colors, f'Missing 'normal' color for {action}')
+                self.assertIn('hover', colors, f'Missing 'hover' color for {action}')
+                self.assertIn('border', colors, f'Missing 'border' color for {action}')
                 
                 # Verify color format (RGB tuples)
                 for color_type, color_value in colors.items():
-                    self.assertIsInstance(color_value, tuple, f"{action} {color_type} not a tuple")
-                    self.assertEqual(len(color_value), 3, f"{action} {color_type} not RGB tuple")
+                    self.assertIsInstance(color_value, tuple, f'{action} {color_type} not a tuple')
+                    self.assertEqual(len(color_value), 3, f'{action} {color_type} not RGB tuple')
                     
                     for component in color_value:
-                        self.assertIsInstance(component, int, f"{action} {color_type} component not int")
-                        self.assertGreaterEqual(component, 0, f"{action} {color_type} component < 0")
-                        self.assertLessEqual(component, 255, f"{action} {color_type} component > 255")
+                        self.assertIsInstance(component, int, f'{action} {color_type} component not int')
+                        self.assertGreaterEqual(component, 0, f'{action} {color_type} component < 0')
+                        self.assertLessEqual(component, 255, f'{action} {color_type} component > 255')
     
     def test_hover_brightness_progression(self):
-        """Test that hover colors are lighter than normal colors."""
+        '''Test that hover colors are lighter than normal colors.'''
         test_actions = ['Grow Community', 'Fundraising Options', 'Research Options']
         
         for action in test_actions:
@@ -66,11 +66,11 @@ class TestActionColorScheme(unittest.TestCase):
                 
                 self.assertGreaterEqual(
                     hover_brightness, normal_brightness,
-                    f"{action} hover ({hover_brightness}) not lighter than normal ({normal_brightness})"
+                    f'{action} hover ({hover_brightness}) not lighter than normal ({normal_brightness})'
                 )
     
     def test_core_action_categorization(self):
-        """Test that core actions get blue-grey colors."""
+        '''Test that core actions get blue-grey colors.'''
         core_actions = ['Grow Community', 'Hire Staff', 'Hire Manager']
         expected_normal = (70, 90, 120)
         expected_hover = (90, 110, 140)
@@ -82,7 +82,7 @@ class TestActionColorScheme(unittest.TestCase):
                 self.assertEqual(colors['hover'], expected_hover)
     
     def test_economic_action_categorization(self):
-        """Test that economic actions get green colors."""
+        '''Test that economic actions get green colors.'''
         economic_actions = ['Fundraising Options', 'Buy Compute', 'Advanced Funding']
         expected_normal = (60, 100, 70)
         expected_hover = (80, 120, 90)
@@ -94,7 +94,7 @@ class TestActionColorScheme(unittest.TestCase):
                 self.assertEqual(colors['hover'], expected_hover)
     
     def test_research_action_categorization(self):
-        """Test that research actions get blue colors."""
+        '''Test that research actions get blue colors.'''
         research_actions = ['Research Options', 'Safety Research', 'Team Building']
         expected_normal = (60, 80, 120)
         expected_hover = (80, 100, 140)
@@ -106,7 +106,7 @@ class TestActionColorScheme(unittest.TestCase):
                 self.assertEqual(colors['hover'], expected_hover)
     
     def test_special_action_categorization(self):
-        """Test that special actions get appropriate unique colors."""
+        '''Test that special actions get appropriate unique colors.'''
         test_cases = [
             ('Intelligence', (90, 70, 120)),    # Purple
             ('Media & PR', (120, 80, 50)),      # Orange  
@@ -120,7 +120,7 @@ class TestActionColorScheme(unittest.TestCase):
                 self.assertEqual(colors['normal'], expected_normal)
     
     def test_default_fallback(self):
-        """Test that unknown actions get default colors."""
+        '''Test that unknown actions get default colors.'''
         unknown_actions = ['Unknown Action', 'Random Thing', '']
         expected_normal = (70, 70, 90)
         expected_hover = (90, 90, 110)
@@ -133,16 +133,16 @@ class TestActionColorScheme(unittest.TestCase):
 
 
 class TestGameActionsColorIntegration(unittest.TestCase):
-    """Test color system integration with actual game actions."""
+    '''Test color system integration with actual game actions.'''
     
     def setUp(self):
-        """Set up test fixtures."""
+        '''Set up test fixtures.'''
         self.game_state = GameState('test-game-integration')
         
     def test_all_game_actions_have_colors(self):
-        """Test that all game actions return valid color schemes."""
+        '''Test that all game actions return valid color schemes.'''
         actions = self.game_state.gameplay_actions
-        self.assertGreater(len(actions), 0, "No actions available for testing")
+        self.assertGreater(len(actions), 0, 'No actions available for testing')
         
         for i, action in enumerate(actions):
             action_name = action.get('name', f'Action {i}')
@@ -161,7 +161,7 @@ class TestGameActionsColorIntegration(unittest.TestCase):
                     self.assertTrue(all(isinstance(c, int) and 0 <= c <= 255 for c in color_value))
     
     def test_color_distribution(self):
-        """Test that actions are distributed across different color categories."""
+        '''Test that actions are distributed across different color categories.'''
         actions = self.game_state.gameplay_actions
         color_categories = set()
         
@@ -186,14 +186,14 @@ class TestGameActionsColorIntegration(unittest.TestCase):
         
         # Should have at least 3 different color categories
         self.assertGreaterEqual(len(color_categories), 3, 
-                               f"Actions should span multiple color categories, found: {color_categories}")
+                               f'Actions should span multiple color categories, found: {color_categories}')
 
 
 class TestVisualFeedbackIntegration(unittest.TestCase):
-    """Test that our color system integrates properly with the visual feedback system."""
+    '''Test that our color system integrates properly with the visual feedback system.'''
     
     def test_visual_feedback_color_mapping(self):
-        """Test that color schemes can be converted to visual feedback format."""
+        '''Test that color schemes can be converted to visual feedback format.'''
         from src.features.visual_feedback import ButtonState
         
         test_action = 'Grow Community'
@@ -234,12 +234,12 @@ class TestVisualFeedbackIntegration(unittest.TestCase):
                 # Verify all required keys are present
                 required_keys = ['bg', 'border', 'text', 'shadow', 'glow']
                 for key in required_keys:
-                    self.assertIn(key, custom_colors, f"Missing {key} for {state}")
+                    self.assertIn(key, custom_colors, f'Missing {key} for {state}')
                     self.assertIsInstance(custom_colors[key], tuple)
                     self.assertEqual(len(custom_colors[key]), 3)
     
     def test_shadow_color_generation(self):
-        """Test that shadow colors are properly darkened."""
+        '''Test that shadow colors are properly darkened.'''
         test_actions = ['Grow Community', 'Fundraising Options', 'Intelligence']
         
         for action in test_actions:
@@ -251,18 +251,18 @@ class TestVisualFeedbackIntegration(unittest.TestCase):
                 normal_brightness = sum(colors['normal'])
                 shadow_brightness = sum(shadow)
                 self.assertLess(shadow_brightness, normal_brightness, 
-                              f"Shadow not darker than normal for {action}")
+                              f'Shadow not darker than normal for {action}')
                 
                 # Shadow components should be non-negative
                 self.assertTrue(all(c >= 0 for c in shadow), 
-                              f"Shadow has negative components for {action}")
+                              f'Shadow has negative components for {action}')
 
 
 class TestUIModesColorConsistency(unittest.TestCase):
-    """Test that color systems work consistently across UI modes."""
+    '''Test that color systems work consistently across UI modes.'''
     
     def setUp(self):
-        """Set up test fixtures for both UI modes."""
+        '''Set up test fixtures for both UI modes.'''
         self.traditional_gs = GameState('test-traditional')
         self.traditional_gs.tutorial_enabled = True
         
@@ -270,7 +270,7 @@ class TestUIModesColorConsistency(unittest.TestCase):
         self.compact_gs.tutorial_enabled = False
     
     def test_color_consistency_across_modes(self):
-        """Test that the same actions get the same colors in both UI modes."""
+        '''Test that the same actions get the same colors in both UI modes.'''
         actions_traditional = self.traditional_gs.gameplay_actions
         actions_compact = self.compact_gs.gameplay_actions
         
@@ -287,7 +287,7 @@ class TestUIModesColorConsistency(unittest.TestCase):
                 compact_colors = get_action_color_scheme(compact_name)
                 
                 self.assertEqual(traditional_colors, compact_colors,
-                               f"Color mismatch for {traditional_name} between UI modes")
+                               f'Color mismatch for {traditional_name} between UI modes')
 
 
 if __name__ == '__main__':

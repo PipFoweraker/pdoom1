@@ -1,52 +1,52 @@
 {
-  "version": "1.0.0",
-  "created": "2025-10-09T21:16:16.057123",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-10-09T21:16:16.057123',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 1,
-      "player_name": "Zenith Dynamics",
-      "date": "2025-09-29T13:24:02.151007",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.002525,
-      "entry_uuid": "139c71e1-5f50-44f7-8dd3-d6ac5e0a266e"
+      'score': 1,
+      'player_name': 'Zenith Dynamics',
+      'date': '2025-09-29T13:24:02.151007',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.002525,
+      'entry_uuid': '139c71e1-5f50-44f7-8dd3-d6ac5e0a266e'
     },
     {
-      "score": 1,
-      "player_name": "Zenith Dynamics",
-      "date": "2025-09-29T16:42:07.005118",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.004448,
-      "entry_uuid": "99790a9f-5130-405b-aee1-2d32c05d250b"
+      'score': 1,
+      'player_name': 'Zenith Dynamics',
+      'date': '2025-09-29T16:42:07.005118',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.004448,
+      'entry_uuid': '99790a9f-5130-405b-aee1-2d32c05d250b'
     },
     {
-      "score": 1,
-      "player_name": "Zenith Dynamics",
-      "date": "2025-09-29T20:26:44.167481",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.002365,
-      "entry_uuid": "14b2d2ae-8fd9-461f-873f-f8716c66f76c"
+      'score': 1,
+      'player_name': 'Zenith Dynamics',
+      'date': '2025-09-29T20:26:44.167481',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.002365,
+      'entry_uuid': '14b2d2ae-8fd9-461f-873f-f8716c66f76c'
     },
     {
-      "score": 1,
-      "player_name": "Zenith Dynamics",
-      "date": "2025-09-29T20:35:01.387018",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.001669,
-      "entry_uuid": "d7fe4342-3f8b-4276-8439-eb3230291ebf"
+      'score': 1,
+      'player_name': 'Zenith Dynamics',
+      'date': '2025-09-29T20:35:01.387018',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.001669,
+      'entry_uuid': 'd7fe4342-3f8b-4276-8439-eb3230291ebf'
     },
     {
-      "score": 1,
-      "player_name": "Zenith Dynamics",
-      "date": "2025-10-09T21:16:16.056392",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.004316,
-      "entry_uuid": "96076953-c005-4212-b44f-cc644b4701ae"
+      'score': 1,
+      'player_name': 'Zenith Dynamics',
+      'date': '2025-10-09T21:16:16.056392',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.004316,
+      'entry_uuid': '96076953-c005-4212-b44f-cc644b4701ae'
     }
   ]
 }

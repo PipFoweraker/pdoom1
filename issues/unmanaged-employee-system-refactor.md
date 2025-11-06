@@ -64,15 +64,15 @@ Event System Layer (src/events/):
 ### 2. **Improved User Experience Flow**
 
 #### Phase 1: Early Warning (at 8 employees)
-- ? Yellow tooltip warning: "Consider hiring management staff"
-- NOTE Event message: "Your team is growing! Management will help maintain productivity."
+- ? Yellow tooltip warning: 'Consider hiring management staff'
+- NOTE Event message: 'Your team is growing! Management will help maintain productivity.'
 
 #### Phase 2: Approaching Limit (at 9 employees)
-- ? Orange notification: "Management capacity reached. New hires may be less productive."
-- IDEA Action suggestion: "Hire Admin Staff or promote experienced employees"
+- ? Orange notification: 'Management capacity reached. New hires may be less productive.'
+- IDEA Action suggestion: 'Hire Admin Staff or promote experienced employees'
 
 #### Phase 3: Over Limit (10+ employees)
-- ? Clear notification: "Unmanaged employees are 50% less productive"
+- ? Clear notification: 'Unmanaged employees are 50% less productive'
 - TOOLS Specific remediation options presented
 - CHART Clear productivity impact shown in tooltips
 

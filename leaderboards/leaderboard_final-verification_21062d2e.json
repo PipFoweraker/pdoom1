@@ -1,16 +1,16 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-16T22:14:55.457487",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-16T22:14:55.457487',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 1,
-      "player_name": "Rain Research",
-      "date": "2025-09-16T22:14:55.455524",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 0.044944,
-      "entry_uuid": "a9d48376-83f6-4552-8ce8-ab7bed5c23cf"
+      'score': 1,
+      'player_name': 'Rain Research',
+      'date': '2025-09-16T22:14:55.455524',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 0.044944,
+      'entry_uuid': 'a9d48376-83f6-4552-8ce8-ab7bed5c23cf'
     }
   ]
 }

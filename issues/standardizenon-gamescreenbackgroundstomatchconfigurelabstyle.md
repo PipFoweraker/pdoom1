@@ -1,0 +1,1 @@
+# Standardize non-game screen backgrounds to match configure lab style\n\nMake all non-main-game screens use the configure lab UI style as default, create reusable style system for web mirroring.\n\n<!-- GitHub Issue #367 -->

@@ -4,7 +4,77 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v0.10.0] - 2025-10-09 - "Global Leaderboards Web Export System"
+## [v0.10.1] - 2025-11-03 - 'UX Improvements & Public Release'
+
+### Fixed
+- **CRITICAL: Action Overcommitment Bug** - Players can no longer queue more actions than they have AP for
+  - Now validates against remaining AP (total - committed) instead of total AP
+  - Clear error messages showing AP needed vs remaining
+- **CRITICAL: AP Tracking** - Committed AP now properly tracked when queuing actions
+  - AP only deducted when turn actually processes (not when queuing)
+  - Clear Queue correctly refunds all committed AP
+- **CRITICAL: Button States** - Clear Queue and Commit Actions buttons now enable/disable correctly
+  - Fixed case-sensitive phase checking
+  - Commit Actions disabled when queue is empty (prevents illegal turns)
+- **Code Quality:** Zero GDScript warnings
+  - Renamed `sign` → `value_sign` (shadowing built-in function)
+  - Renamed `seed` → `game_seed_str` (shadowing built-in function)
+  - Prefixed 8 unused `err` variables with underscore
+
+### Changed
+- **UI Clarity Improvements**:
+  - Renamed "End Turn" → "Commit Actions (Space)" for better player understanding
+  - AP counter now shows remaining AP: "AP: 3 (1 free, 2 queued)"
+  - Color-coded AP display: Green (available), Yellow (low), Red (depleted)
+  - Updated keyboard shortcut hints to say "commit" instead of "end turn"
+  - Keyboard shortcut: X → C for clear queue (avoids submenu conflicts)
+- **Game Description**: Professional tone for public presentation
+  - README.md: "satirical" → "strategic simulation"
+  - project.godot: Updated to "AI Safety Lab Management Simulation"
+- **README**: Complete overhaul for public presentation
+  - Fixed website URL (pdoom1.com, not pdoom.org)
+  - Removed Python instructions from player quick start
+  - Clarified Godot as primary platform, Python for dev/testing only
+  - PC/Windows focus, Mac/Linux documented as high-priority future work
+- **Documentation Organization**: Moved 20 markdown files into logical structure
+  - Godot docs → `godot/docs/` (5 files)
+  - Guides → `docs/guides/` (7 files)
+  - Summaries → `docs/summaries/` (7 files)
+  - Root directory: 28 → 8 markdown files (71% reduction)
+- **Archive Cleanup**: Moved 30 files from root
+  - 15 Python utility files → `archive/python-root/`
+  - 15 session docs → `archive/session-docs/`
+  - Root Python files: 20 → 5 (only essentials)
+
+### Added
+- **Queue Management Controls**:
+  - "Clear Queue (C)" button - Clears all queued actions and refunds AP
+  - "✕ Remove" buttons on each individual queue item
+  - Keyboard shortcut: C key to clear entire queue
+  - Click remove button to delete specific actions from queue
+  - Buttons automatically enable/disable based on queue state
+- **Danger Zone Warnings**:
+  - Warns before committing when doom >= 80% (CRITICAL) or >= 70% (WARNING)
+  - Warns before committing when reputation <= 20 (CRITICAL) or <= 30 (WARNING)
+  - Warns before committing when money <= $20k (CRITICAL)
+  - Helps prevent accidental game-over situations
+- **Godot Dev Tools**: Development validation tool for Godot implementation
+  - `godot/tools/dev_tool_minimal.gd` - Code structure validator
+  - `godot/tools/quick_test.gd` - Basic functionality test
+  - Comprehensive documentation in `godot/tools/README.md`
+- **Documentation Indexes**: Created `docs/README.md` and `archive/README.md`
+- **Analysis Documents**:
+  - QUICK_UX_WINS_v0.10.2.md - UX improvement roadmap
+  - DEV_TOOLS_PORTING_ANALYSIS.md - Tool migration strategy
+  - DOCS_ORGANIZATION_PLAN.md - Documentation structure plan
+
+### Technical
+- Godot 4.x continues as primary platform
+- Python codebase preserved for development/testing purposes only
+- All moves preserve git history (non-destructive cleanup)
+- Fixed GUT addon compatibility with Godot 4.5.1 (Logger naming conflict)
+
+## [v0.10.0] - 2025-10-09 - 'Global Leaderboards Web Export System'
 
 ### >> Major Achievement: Global Leaderboards Unblocked
 - **WEB EXPORT SYSTEM**: Complete infrastructure enabling global leaderboards between P(Doom)1 and pdoom1-website
@@ -32,7 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **ENABLES**: Cross-player competition with privacy-respecting anonymous participation
 - **READY**: Website can now sync leaderboard data using provided export commands
 
-## [v0.9.0] - 2025-09-28 - "Alpha Stability & Audio System"
+## [v0.9.0] - 2025-09-28 - 'Alpha Stability & Audio System'
 
 ### >> Major Achievements
 - **AUDIO SYSTEM BREAKTHROUGH**: Fixed longstanding audio system that had never worked since project inception
@@ -64,7 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **README**: Modernized with alpha testing features and screenshots
 - **Dependencies**: numpy>=2.3.3 now required for audio functionality
 
-## [Unreleased] - "Input System Architecture Overhaul"
+## [Unreleased] - 'Input System Architecture Overhaul'
 
 ### Added - Phase 2 Architecture 
 - **[TARGET] InputEventManager System** - Extracted complete keyboard event processing from main.py monolith (500+ lines)
@@ -80,13 +150,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Scattered Input Processing** - Consolidated all keyboard handling in InputEventManager
 - **Testing Gaps** - Added comprehensive test coverage for previously untestable input logic
 
-## [Previous] - "Modular Extraction Pipeline"
+## [Previous] - 'Modular Extraction Pipeline'
 
 ### Fixed - Critical Issues
 - **CRITICAL: Turn 6 Spacebar Input Failure (Issue #377)** - Fixed spacebar input system failure that made game unplayable at Turn 6
 - **Redundant Key Checking Pattern** - Removed duplicate `pygame.K_SPACE` and `end_turn_key` validation that caused event processing conflicts
 - **Missing Event Consumption Flag** - Added critical `key_event_consumed = True` flag to prevent event handler conflicts
-- **Input System Architectural Debt** - Documented and partially resolved "one button to complex system" evolution technical debt
+- **Input System Architectural Debt** - Documented and partially resolved 'one button to complex system' evolution technical debt
 
 ### Added - Architecture
 - **[TROPHY] 20% MILESTONE ACHIEVED - Media & PR System Management Module** - Extracted comprehensive MediaPRSystemManager class (227 lines) from game_state.py monolith
@@ -116,7 +186,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Extraction Progress**: 7th major module completed - media and PR system isolation achieved, 20% strategic milestone reached
 - **Methodology**: Functional cohesion with minimal coupling via delegation pattern and property-based backward compatibility
 
-## [0.8.0] - 2025-09-18 - "Test Suite Foundation Release - Global Multiplayer Ready"
+## [0.8.0] - 2025-09-18 - 'Test Suite Foundation Release - Global Multiplayer Ready'
 
 ### MILESTONE: Systematic Test Suite Repair Achieves 60% Failure Reduction
 #### Major Achievement
@@ -127,7 +197,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Fixed - Core Systems Integration
 - **RNG Context Parameter Errors** - Added missing DeterministicRNG methods (sample, seed, choices) with context parameters
 - **ASCII Compliance Issues** - Removed Unicode variation selectors for cross-platform compatibility
-- **Action Naming Inconsistency** - Standardized "Scout Opponent" -> "Scout Opponents" across UI and tests
+- **Action Naming Inconsistency** - Standardized 'Scout Opponent' -> 'Scout Opponents' across UI and tests
 - **Test Patching Issues** - Fixed incorrect RNG mocking patterns in technical_failures.py, critical_bug_fixes.py
 - **GameState Attribute Issues** - Added proper setUp methods to TestRegressionPrevention class
 - **Settings Flow Seed Method** - Updated main.py RNG initialization sequence for proper startup
@@ -142,7 +212,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Settings Flow** - Stable initialization sequence for consistent game startup
 - **Core Game Loop** - Validated deterministic behavior across all major systems
 
-## [Unreleased] - 2025-09-17 - "RNG Architecture Discovery Release"
+## [Unreleased] - 2025-09-17 - 'RNG Architecture Discovery Release'
 
 ### Major Discovery: RNG System Already Complete
 #### Analysis
@@ -161,7 +231,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Test Migration Tooling** - Created fix_rng_tests.py automated migration script (with lessons learned)
 - **Dev Blog Integration** - Created comprehensive session documentation for RNG investigation
 
-## [0.7.6] - 2025-09-17 - "Phase 1 & 2 UI Navigation Stability Release"
+## [0.7.6] - 2025-09-17 - 'Phase 1 & 2 UI Navigation Stability Release'
 
 ### Phase 2: Game Completion Flow Improvements
 #### Added
@@ -171,7 +241,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Fixed
 - **CRITICAL: Seed Selection Navigation (Issue #255)** - Fixed keyboard navigation in custom seed selection screen, Continue button now properly navigates from pre_game_settings to seed_selection
 - **CRITICAL: Lab Configuration Flow (Issue #256)** - Resolved laboratory configuration screen access, users can now reach seed selection regardless of tutorial choice
-- **CRITICAL: Premature Upgrade Popup (Issue #258)** - Fixed "Your First Laboratory Upgrade" popup appearing immediately on game start, now only appears when upgrade conditions are actually met
+- **CRITICAL: Premature Upgrade Popup (Issue #258)** - Fixed 'Your First Laboratory Upgrade' popup appearing immediately on game start, now only appears when upgrade conditions are actually met
 - **UI Flow Integration** - Complete navigation path from pre_game_settings -> seed_selection -> tutorial_choice now works correctly
 - **Test Suite Compatibility** - Updated test expectations to match corrected UI flow (Continue button index fix)
 
@@ -189,7 +259,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Fixed
 - **CRITICAL: Missing Safety Research Action** - Restored core gameplay action that was accidentally removed during research consolidation
 - **CRITICAL: ASCII Compliance** - Fixed 923 Unicode character violations across 11 files using automated compliance fixer
-- **MAJOR: Duplicate Safety Audit Actions** - Renamed conflict to "Technical Debt Audit" vs "Safety Audit" for distinct functionality
+- **MAJOR: Duplicate Safety Audit Actions** - Renamed conflict to 'Technical Debt Audit' vs 'Safety Audit' for distinct functionality
 - **MAJOR: Action System Test Failures** - Fixed multiple test suite failures in action points, keyboard shortcuts, and Scout Opponents functionality
 
 ### Technical Implementation
@@ -198,7 +268,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Cross-Platform Compatibility**: 100% ASCII compliance restored across Python files, documentation, and configuration
 - **Development Infrastructure**: Enhanced dev blog system with strategic analysis templates and automated documentation generation
 
-## [0.7.5] - 2025-09-16 - "Extended Gameplay & Architecture Overhaul"
+## [0.7.5] - 2025-09-16 - 'Extended Gameplay & Architecture Overhaul'
 ### Added
 - **MAJOR: TurnManager Architecture**: Extracted turn processing from monolithic GameState into dedicated TurnManager class
   - Proper state management with TurnProcessingState enum (IDLE, PROCESSING, COMPLETE, ERROR)
@@ -248,7 +318,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Learning Curve**: New players have more time to understand core mechanics
 - **Maintained Tension**: Extended gameplay while preserving strategic pressure
 
-## [0.7.4] - 2025-09-16 - "Privacy Controls UI Integration Complete - Issue #314 Resolved"
+## [0.7.4] - 2025-09-16 - 'Privacy Controls UI Integration Complete - Issue #314 Resolved'
 ### Added
 - **MAJOR: Privacy Controls User Interface**: Complete frontend implementation for Game Run Logger privacy controls
   - Comprehensive settings menu accessible from main game settings with dedicated privacy controls screen
@@ -279,9 +349,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Test Suite**: `tests/test_privacy_controls_ui.py` with 26 tests covering UI, persistence, navigation, and edge cases
 - **Architecture**: Follows established P(Doom) UI patterns with proper state management and visual feedback integration
 
-## [0.7.4] - 2025-09-16 - "Privacy-Respecting Game Run Logger - Alpha Blocker Complete"
+## [0.7.4] - 2025-09-16 - 'Privacy-Respecting Game Run Logger - Alpha Blocker Complete'
 
-## [0.7.3+] - 2025-09-16 - "ASCII Compliance Sweep - Documentation Standards"
+## [0.7.3+] - 2025-09-16 - 'ASCII Compliance Sweep - Documentation Standards'
 ### Added
 - **ASCII Compliance Automation**: Created comprehensive Unicode detection and replacement tool
   - Built scripts/ascii_compliance_fixer.py with 100+ character mappings
@@ -298,14 +368,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed Unicode dashes (EN DASH, EM DASH) -> standard ASCII dashes (-), (--)
   - Fixed Unicode arrows (RIGHTWARDS, LEFTWARDS) -> ASCII arrows (->, <-, ^, v)
   - Fixed Unicode symbols (CHECK MARK, BULLET) -> ASCII equivalents (v, *, x)
-  - Fixed Unicode punctuation (smart quotes, ellipsis) -> ASCII equivalents (", ', ...)
+  - Fixed Unicode punctuation (smart quotes, ellipsis) -> ASCII equivalents (', ', ...)
   - Fixed special characters (keyboard, chair symbols) -> descriptive ASCII ([KEYBOARD], [CHAIR])
 - **Test Suite Improvement**: Reduced test failures from 77 to 12 (65 failures eliminated)
   - All ASCII compliance tests now pass (0 violations remaining)
   - Improved test execution reliability and cross-platform consistency
   - Faster test execution: 794 tests in 22 seconds (vs previous 26+ seconds)
 
-## [0.7.3] - 2025-09-16 - "Critical Issue Resolution - Phase W Hotfixes"
+## [0.7.3] - 2025-09-16 - 'Critical Issue Resolution - Phase W Hotfixes'
 ### Fixed
 - **CRITICAL ASCII Compliance**: Resolved all Unicode character violations across codebase
   - Replaced Unicode bullet points (*) with ASCII dashes (-) in UI error messages
@@ -313,7 +383,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Ensures cross-platform compatibility and prevents encoding errors
   - Files fixed: src/ui/layout.py, src/ui/overlay_system.py, src/ui/screens.py, tests/test_menu_diagnostics.py
 - **CRITICAL Version Consistency**: Fixed version component mismatch in version.py
-  - Updated VERSION_PATCH from 2 to 3 to match __version__ = "0.7.3"
+  - Updated VERSION_PATCH from 2 to 3 to match __version__ = '0.7.3'
   - Prevents version display inconsistencies and test failures
 - **CRITICAL Economic Configuration**: Aligned test expectations with bootstrap economic model
   - Updated config validation tests to handle $100K starting funds (vs previous $2K expectation)
@@ -328,12 +398,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Aligns with config manager defaults and test expectations
   - Ensures consistent audio experience out of the box
 - **CRITICAL Menu System Integration**: Updated menu structure tests to match current implementation
-  - Fixed end-game menu items: ["View Full Leaderboard", "Play Again", "Main Menu", "Settings", "Submit Feedback"]
-  - Fixed main menu items: ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
+  - Fixed end-game menu items: ['View Full Leaderboard', 'Play Again', 'Main Menu', 'Settings', 'Submit Feedback']
+  - Fixed main menu items: ['Launch Lab', 'Launch with Custom Seed', 'Settings', 'Player Guide', 'View Leaderboard', 'Exit']
   - Updated keyboard navigation bounds checking (5 items vs previous 6)
 - **CRITICAL Action System**: Fixed action execution and naming inconsistencies
   - Fixed magical orb scouting test to use 'upside' key instead of missing 'execute' key
-  - Updated research action tests to expect "Research Options" instead of deprecated "Safety Research"/"Governance Research"
+  - Updated research action tests to expect 'Research Options' instead of deprecated 'Safety Research'/'Governance Research'
   - Aligns tests with current modular action dialog system
 
 ### Infrastructure
@@ -342,10 +412,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Dynamic Cost Integration**: Full support for economic calibration lambda functions
 - **Menu System Modernization**: Tests now reflect current UI implementation patterns
 
-## [0.7.2] - 2025-09-16 - "UI Hotfixes - Systematic Resolution"
+## [0.7.2] - 2025-09-16 - 'UI Hotfixes - Systematic Resolution'
 ### Fixed
 - **Researcher Pool Display**: Fixed empty dialog showing blank screen instead of helpful message
-  - Early return [] in `draw_researcher_pool_dialog` now shows "No researchers available" message
+  - Early return [] in `draw_researcher_pool_dialog` now shows 'No researchers available' message
   - Improved user experience when no researchers are in hiring pool (ui.py line 2982)
 - **One-offs UI Overlap**: Enhanced upgrade button positioning to prevent screen overflow
   - Dynamic button sizing in `get_compact_upgrade_rects` with 78% screen height cutoff
@@ -358,7 +428,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Intelligence Action System**: New strategic action category with consistent theming
   - Added `ActionCategory.INTELLIGENCE` with dark purple color scheme (60, 40, 100)
-  - Two new placeholder actions: "General News Reading" ($10) and "General Networking" ($25)
+  - Two new placeholder actions: 'General News Reading' ($10) and 'General Networking' ($25)
   - Both actions support delegation mechanics and proper cost evaluation
 - **Scroll Wheel Menu Navigation**: Enhanced main menu accessibility
   - Mouse wheel up/down navigation for main menu items
@@ -375,7 +445,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Systematic tracking and resolution of UI hotfixes with proper labeling
   - Development blog entry created for session documentation
 
-## [0.7.1] - 2025-09-15 - "Modular UI Architecture Hotfix"
+## [0.7.1] - 2025-09-15 - 'Modular UI Architecture Hotfix'
 ### Fixed
 - **CRITICAL Menu System Refactor**: Eliminated hardcoded positioning issues in end-game menus
   - Replaced monolithic 300+ line `draw_end_game_menu` function with modular component system
@@ -403,7 +473,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Reusable components reduce code duplication across menu systems
   - Clear separation of concerns: layout, rendering, state management
 
-## [Unreleased] - 2025-09-19 - "Bug Sweep Session: Critical Stability Fixes"
+## [Unreleased] - 2025-09-19 - 'Bug Sweep Session: Critical Stability Fixes'
 ### Fixed
 - **CRITICAL DEBUG CONSOLE CRASH**: Fixed fatal access violation in debug console rendering
   - **Root Cause**: Font objects were not initialized before being used in draw methods
@@ -413,7 +483,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Issue #245**: Fixed post-rebase test failures in menu system
   - **Root Cause**: Test expectations outdated after menu structure changes
   - **Solution**: Updated expected menu items to match current implementation
-  - **Details**: Menu now correctly expects ["Launch Lab", "Launch with Custom Seed", "Settings", "Player Guide", "View Leaderboard", "Exit"]
+  - **Details**: Menu now correctly expects ['Launch Lab', 'Launch with Custom Seed', 'Settings', 'Player Guide', 'View Leaderboard', 'Exit']
   - **Files**: `tests/test_new_player_experience.py` - Updated test expectations
 - **Issues #315, #227, #226**: Verified resolution status
   - **Analysis**: Action list display issues, action points validation, and sound system configuration were already resolved in previous sessions
@@ -449,7 +519,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 9/11 critical bug tests now passing (81.8% success rate)
 
 
-## [0.6.1] - 2025-09-15 - "Hotfix Batch: Mac TypeError + Critical Stability"
+## [0.6.1] - 2025-09-15 - 'Hotfix Batch: Mac TypeError + Critical Stability'
 ### Fixed
 - **CRITICAL Mac TypeError Fix**: Resolved research_quality.py type conversion crash on Mac systems (closes #299)
   - Added verbose naming pattern with `_safe_get_technical_debt_total()` and `_safe_get_research_papers_count()`
@@ -579,13 +649,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0] - 2025-09-11
 ### Added
 - **[FEATURE] Longtermist Date Format**: Revolutionary 5-digit year date display system
-  - Dates now display as "21/May/02025" instead of "21/May/25" for longtermist flavor
+  - Dates now display as '21/May/02025' instead of '21/May/25' for longtermist flavor
   - Complete GameClock service overhaul with backward compatibility
   - Enhanced temporal immersion for long-term thinking gameplay
   - All 13 GameClock tests updated and passing with new format expectations
 - **[ACCESSIBILITY] Universal Keyboard Navigation Framework**: Foundation for comprehensive accessibility
   - Enhanced keyboard navigation infrastructure
-  - Systematic approach to "every button has one default key assignment" rule
+  - Systematic approach to 'every button has one default key assignment' rule
   - Improved screen reader compatibility preparation
   - Standardized navigation patterns across all UI components
 - **[INFRASTRUCTURE] Comprehensive Pre-Alpha Bug Sweep Plan**: Strategic approach to alpha readiness
@@ -667,7 +737,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[FEATURE] P(Doom) Change Attribution**: All doom fluctuations now include clear reasons in activity log
 - **[FEATURE] GameClock Date Display**: Weekly date progression starting April 4, 2016 shown in activity log
 - **[FEATURE] Resource Icon Hover Tooltips**: All 6 top bar resources now have informative hover context
-- **[FEATURE] Expense Accept/Deny Labels**: Standardized terminology from "Approve/Dismiss" to "Accept/Deny"
+- **[FEATURE] Expense Accept/Deny Labels**: Standardized terminology from 'Approve/Dismiss' to 'Accept/Deny'
 
 ### Changed
 - **[BALANCE] Starting Money**: Doubled from $1,000 to $2,000 for improved new player experience
@@ -737,9 +807,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.7] - 2025-09-08
 ### Added
 - **[LABS] Lab Name System**: Implemented pseudonymous lab naming for enhanced immersion and leaderboard integration
-  - Added 104 unique AI lab names across 87 different themes (e.g., "Axiom Labs", "Beacon AI", "Cerberus Systems")
+  - Added 104 unique AI lab names across 87 different themes (e.g., 'Axiom Labs', 'Beacon AI', 'Cerberus Systems')
   - Lab names are deterministically assigned based on game seed for consistency
-  - Lab name displays in UI context panel replacing generic "P(Doom) Context Panel"
+  - Lab name displays in UI context panel replacing generic 'P(Doom) Context Panel'
   - Leaderboard integration saves lab names alongside scores for pseudonymous gameplay
   - CSV asset system (`assets/lab_names.csv`) for easy lab name management
   - Comprehensive lab name manager service with theme-based organization
@@ -797,7 +867,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - 7 economic-specific events triggered by market conditions
   - Historical anchors based on real AI funding patterns and market cycles
 - **[PLAYER] New Player Experience Enhancement**: Improved onboarding with tutorial/intro selection
-  - Replaced "Launch Lab" with "New Player Experience" in main menu
+  - Replaced 'Launch Lab' with 'New Player Experience' in main menu
   - Checkbox-based interface for tutorial and intro scenario selection
   - Contextual intro text explaining game premise and starting conditions
   - Responsive UI design with keyboard and mouse navigation support
@@ -820,7 +890,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Clean separation between game logic, UI, and specialized mechanics
   - Backward compatibility maintained for existing save files
 
-## [0.2.2] - 2025-09-04 - "Technical Debt Resolution & Privacy-First Systems"
+## [0.2.2] - 2025-09-04 - 'Technical Debt Resolution & Privacy-First Systems'
 ### [TECH] Technical Debt Resolution
 - **Fixed all critical test failures**: 137/137 tests now passing (previously 4 categories failing)
 - **Action Points System**: Fixed validation logic for meta-actions (0 AP cost properly supported)
@@ -874,7 +944,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Backward Compatibility**: All existing saves and configurations work unchanged
 - **Error Handling**: Graceful degradation and comprehensive error recovery
 
-## [0.2.1] - 2025-09-04 - "Three Column" Hotfix Candidate
+## [0.2.1] - 2025-09-04 - 'Three Column' Hotfix Candidate
 ### Added
 - **[LAYOUT] 3-Column Layout System**: Complete UI architecture overhaul for better organization
   - **Left Column**: Repeating actions (hire, research, etc.) with visual action counters
@@ -883,7 +953,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Smart Action Categorization**: Automatic sorting of actions by type and frequency
 - **[KEYBOARD] Comprehensive Keystroke Support**: Fast-paced gameplay with keyboard shortcuts
   - **Auto-Generated Keybindings**: Every visible action gets a unique keyboard shortcut
-  - **Visual Key Display**: All buttons show their assigned keys (e.g., "[1] Hire Staff")
+  - **Visual Key Display**: All buttons show their assigned keys (e.g., '[1] Hire Staff')
   - **Enter Key Support**: Enter/Return now works same as Space for turn processing
   - **Conflict Resolution**: Intelligent key assignment prevents duplicate bindings
 - **[VISUAL] Enhanced Visual Differentiation**: Color-coded action categories for quick recognition
@@ -920,7 +990,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Reputation Icon**: Star polygon in blue (180,210,255)
   - **Action Points Icon**: Lightning bolt with glow effects
   - **Doom Icon**: Skull symbol in red (255,80,80)
-  - **Compute Icon**: "2^n" exponential notation for computing power
+  - **Compute Icon**: '2^n' exponential notation for computing power
   - **Research Icon**: Light bulb for research progress
   - **Papers Icon**: Document with text lines for publications
 - **[DEV] Developer Tools & Quality of Life**
@@ -929,7 +999,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Window Mode Default**: Disabled fullscreen for better Alt+Tab and screen capture compatibility
 - **[UI] Action Filtering & UI Polish**
   - **Smart Action Display**: Only show unlocked actions (12/24 visible initially)
-  - **Button Reorganization**: Moved "Hire Staff" to logical position 5
+  - **Button Reorganization**: Moved 'Hire Staff' to logical position 5
   - **Starting Resources**: Set default staff to 0 for better game balance
   - **Tutorial Independence**: Resource display works regardless of tutorial state
 
@@ -943,7 +1013,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - **[SETTINGS] Enhanced Settings System**: Comprehensive settings and configuration architecture
-  - **Custom Seed Management**: Fixed critical "Launch with Custom Seed" crash, added seed validation and normalization
+  - **Custom Seed Management**: Fixed critical 'Launch with Custom Seed' crash, added seed validation and normalization
   - **Categorical Settings Organization**: Audio, Gameplay, Accessibility, and Game Configuration modes
   - **Seed Management System**: Weekly community seeds, custom seed validation, seed history tracking
   - **Game Configuration System**: Custom game rule modifications, scenario sharing, template system
@@ -964,7 +1034,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Better Information Density**: Contextual help reduces UI clutter while improving accessibility
 
 ### Fixed
-- **Critical Menu Alignment Bug**: Fixed crash when selecting "Launch with Custom Seed" from main menu
+- **Critical Menu Alignment Bug**: Fixed crash when selecting 'Launch with Custom Seed' from main menu
   - Synchronized menu_items arrays across main.py, ui.py, and src/ui/menus.py
   - Corrected menu handling logic in handle_menu_click() and handle_menu_keyboard()
   - Restored full functionality of custom seed system with proper validation
@@ -982,7 +1052,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Menu Structure Optimization**: Streamlined main menu and tutorial flow for improved user experience
   - Simplified main menu from 7 to 4 core options: Launch Lab, Game Config, Settings, Exit
-  - Reordered tutorial choice to default to "No - Regular Mode" for faster game access
+  - Reordered tutorial choice to default to 'No - Regular Mode' for faster game access
   - Removed less essential options from main screen (Player Guide, README, Report Bug, Custom Seed)
   - Maintained all functionality while reducing choice overload and cognitive load
 - **Batch 1 - Stability & UI Correctness Improvements**: Critical bug fixes and UI enhancements
@@ -1020,7 +1090,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - First-time help popups with dismissible notifications
   - 8 comprehensive tests covering all onboarding functionality
 - **Activity Log Minimization (Issue #69)**: New UI enhancement system
-  - "Compact Activity Display" upgrade ($150) enables activity log minimization
+  - 'Compact Activity Display' upgrade ($150) enables activity log minimization
   - Minimize/expand buttons for activity log when upgrade is purchased
   - Minimized state shows only title bar to save screen space
   - Visual feedback with plus/minus icons for expand/minimize actions
@@ -1055,19 +1125,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Future-proofs code for Python 3.12+ compatibility
   - Eliminates deprecation warning during startup
 - **Enhanced numpy dependency handling for sound (Issue #74)**: Improved error handling and documentation for sound effects
-  - Added clear error message when numpy is missing: "Install numpy for sound: pip install numpy"
+  - Added clear error message when numpy is missing: 'Install numpy for sound: pip install numpy'
   - Updated README.md and DEVELOPERGUIDE.md to document numpy as optional dependency for sound
   - Enhanced sound manager error handling with specific ImportError detection
   - Game runs without sound if numpy is not available (graceful degradation)
 - **Options Menu UnboundLocalError**: Fixed crash when selecting Options from main menu
   - Added missing global declarations for `overlay_content` and `overlay_title` in main() function
   - Enhanced `draw_overlay` function with defensive logic for None values
-  - Prevents "UnboundLocalError: cannot access local variable 'overlay_title'" crashes
+  - Prevents 'UnboundLocalError: cannot access local variable 'overlay_title'' crashes
   - Added comprehensive test coverage for Options menu selection via keyboard and mouse
   - Updated DEVELOPERGUIDE.md with overlay variable pattern requirements and warnings
 
 ### Changed
-- Game window title now shows semantic version (v0.1.0) instead of hardcoded "v3"
+- Game window title now shows semantic version (v0.1.0) instead of hardcoded 'v3'
 - GameLogger now defaults to current version if none specified
 
 ### Fixed

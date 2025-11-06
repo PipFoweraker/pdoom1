@@ -51,7 +51,7 @@ Temporary effects that modify opinion over time:
 ### High Safety Awareness (70+)
 - Safety research generates more reputation
 - Capabilities research generates suspicion
-- Unlocks "Public Safety Advocate" funding source
+- Unlocks 'Public Safety Advocate' funding source
 
 ### High Media Attention (50+)
 - Your actions have amplified public impact

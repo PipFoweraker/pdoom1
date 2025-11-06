@@ -106,12 +106,12 @@ python -m cProfile -o profile_results.prof main.py
 ### **Development Environment Setup**
 ```bash
 # Verify current state
-cd "c:\Users\gday\Documents\A Local Code\pdoom1"
+cd 'c:\Users\gday\Documents\A Local Code\pdoom1'
 git status  # Should be clean
-python -c "from src.core.game_state import GameState; GameState('test')"  # Should work
+python -c 'from src.core.game_state import GameState; GameState('test')'  # Should work
 
 # Run comprehensive validation
-python -c "
+python -c '
 from src.core.game_constants import DEFAULT_STARTING_RESOURCES
 from src.core.ui_utils import validate_rect
 from src.core.verbose_logging import create_verbose_money_message
@@ -119,7 +119,7 @@ from src.core.employee_management import create_employee_blob
 from src.core.dialog_systems import DialogManager
 from src.core.utility_functions import is_upgrade_available
 print('All 6 modules importing successfully')
-"
+'
 ```
 
 ## GAME **ALPHA TESTING FOCUS AREAS**
@@ -165,9 +165,9 @@ print('All 6 modules importing successfully')
 ### **Session Startup Validation**
 ```bash
 # Verify environment
-cd "c:\Users\gday\Documents\A Local Code\pdoom1"
+cd 'c:\Users\gday\Documents\A Local Code\pdoom1'
 git log --oneline -3  # Should show recent commits
-python -c "from src.core.game_state import GameState; print('Ready!')"
+python -c 'from src.core.game_state import GameState; print('Ready!')'
 
 # Check current status
 git status  # Should be clean

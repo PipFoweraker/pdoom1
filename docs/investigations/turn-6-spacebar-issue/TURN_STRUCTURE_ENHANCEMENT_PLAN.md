@@ -35,7 +35,7 @@ for i in range(6):
    ```python
    # main.py:2603 - Redundant validation creates risk
    elif event.key == pygame.K_SPACE and game_state and not game_state.game_over:
-       end_turn_key = keybinding_manager.get_key_for_action("end_turn")
+       end_turn_key = keybinding_manager.get_key_for_action('end_turn')
        if event.key == end_turn_key:  # <-- REDUNDANT CHECK
    ```
 
@@ -49,7 +49,7 @@ for i in range(6):
        onboarding.show_tutorial_overlay
    ]
    ```
-   **Risk**: If any condition becomes "stuck" at Turn 6, spacebar permanently blocked.
+   **Risk**: If any condition becomes 'stuck' at Turn 6, spacebar permanently blocked.
 
 3. **Recent Architectural Changes**:
    - Event system cleanup removed 425 lines (potential side effects)
@@ -61,7 +61,7 @@ for i in range(6):
 #### Primary: Dialog State Corruption at Turn 6
 1. Turn 6 triggers specific event/milestone that sets dialog flag
 2. Recent event system changes prevent proper state cleanup
-3. Dialog remains "stuck", blocking spacebar via blocking_conditions
+3. Dialog remains 'stuck', blocking spacebar via blocking_conditions
 4. No recovery mechanism without manual intervention (Ctrl+E)
 
 #### Secondary: Event Processing Race Condition  
@@ -84,10 +84,10 @@ for i in range(6):
 #### 1.1 Enhanced Diagnostics Implementation
 ```python
 # Add to main.py spacebar handler
-print(f"Turn {game_state.turn}: Spacebar pressed")
-print(f"end_turn_key: {keybinding_manager.get_key_for_action('end_turn')}")
-print(f"blocking_conditions: {[str(c) for c in blocking_conditions if c]}")
-print(f"turn_processing: {game_state.turn_processing}")
+print(f'Turn {game_state.turn}: Spacebar pressed')
+print(f'end_turn_key: {keybinding_manager.get_key_for_action('end_turn')}')
+print(f'blocking_conditions: {[str(c) for c in blocking_conditions if c]}')
+print(f'turn_processing: {game_state.turn_processing}')
 ```
 
 #### 1.2 Turn 6 Event/Milestone Analysis
@@ -123,7 +123,7 @@ elif event.key == pygame.K_e and (event.mod & pygame.KMOD_CTRL):
 # tests/test_turn_6_spacebar.py
 class TestTurn6SpacebarIssue(unittest.TestCase):
     def test_spacebar_input_through_turn_6(self):
-        """Systematic test for spacebar input failure at Turn 6"""
+        '''Systematic test for spacebar input failure at Turn 6'''
         game_state = GameState('test-turn6-spacebar')
         
         # Simulate GUI event processing through Turn 6
@@ -134,7 +134,7 @@ class TestTurn6SpacebarIssue(unittest.TestCase):
             # Test spacebar handling logic
             result = self._simulate_spacebar_handler(game_state, spacebar_event)
             
-            self.assertTrue(result, f"Spacebar failed at turn {game_state.turn}")
+            self.assertTrue(result, f'Spacebar failed at turn {game_state.turn}')
             
             # Advance turn
             game_state.end_turn()
@@ -152,7 +152,7 @@ class SpacebarHandler:
         self.keybinding_manager = keybinding_manager
     
     def handle_spacebar_event(self, event) -> bool:
-        """Centralized spacebar/end-turn handling with clear logic flow"""
+        '''Centralized spacebar/end-turn handling with clear logic flow'''
         if not self._can_process_end_turn():
             return False
             
@@ -176,13 +176,13 @@ class DialogStateManager:
         self.dialog_states = {}
     
     def set_dialog_active(self, dialog_type: str, state: Any):
-        """Centralized dialog state management"""
+        '''Centralized dialog state management'''
         
     def clear_all_dialogs(self):
-        """Emergency dialog state reset"""
+        '''Emergency dialog state reset'''
         
     def is_any_dialog_active(self) -> bool:
-        """Check if any dialog blocks input"""
+        '''Check if any dialog blocks input'''
 ```
 
 #### 2.3 TurnManager Integration Completion
@@ -201,7 +201,7 @@ class GameInputSystem:
         self.keybinding_manager = KeybindingManager()
     
     def process_game_input(self, event, game_state):
-        """Unified input processing with clear delegation"""
+        '''Unified input processing with clear delegation'''
 ```
 
 ### Phase 3: Comprehensive Testing Implementation (2-3 weeks)
@@ -215,13 +215,13 @@ class TestGUIInputIntegration(unittest.TestCase):
         self.mock_pygame_events = MockPygameEventSystem()
         
     def test_spacebar_through_all_turns(self):
-        """Test spacebar input for turns 0-50"""
+        '''Test spacebar input for turns 0-50'''
         
     def test_dialog_blocking_behavior(self):
-        """Test that dialogs properly block/unblock input"""
+        '''Test that dialogs properly block/unblock input'''
         
     def test_keybinding_integration(self):
-        """Test custom keybinding scenarios"""
+        '''Test custom keybinding scenarios'''
 ```
 
 #### 3.2 Turn Progression Validation

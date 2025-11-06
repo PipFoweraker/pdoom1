@@ -95,5 +95,5 @@ DEFAULT_SUBMISSION_OPT_IN = True  # Alpha only
 - OK Score calculation uses final turn (higher = better survival)
 - OK Metadata includes economic model, final resources, and game statistics
 
-**User Impact**: Players can now track progress across multiple games with "if I play 10 games I can see my efforts start to stack up" - mission accomplished!
+**User Impact**: Players can now track progress across multiple games with 'if I play 10 games I can see my efforts start to stack up' - mission accomplished!
 **Risk**: Low (existing robust system)

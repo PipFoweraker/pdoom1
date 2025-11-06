@@ -40,10 +40,10 @@ This document outlines the design for making P(Doom)'s progression system more e
 # New file: progression_trees.py
 
 class ProgressionNode:
-    """
+    '''
     Represents a single unlock/milestone in the progression system.
     Can represent actions, upgrades, events, mechanics, or combinations.
-    """
+    '''
     def __init__(self, 
                  node_id: str,
                  name: str,
@@ -52,28 +52,28 @@ class ProgressionNode:
                  effects: List[Effect],
                  node_type: NodeType = NodeType.FEATURE,
                  prerequisites: List[str] = None,
-                 category: str = "general"):
+                 category: str = 'general'):
         pass
 
 class ProgressionTree:
-    """
+    '''
     Manages the complete progression system with dependency tracking.
-    """
+    '''
     def __init__(self):
         self.nodes = {}
         self.unlocked_nodes = set()
         self.dependency_graph = {}
     
     def register_node(self, node: ProgressionNode):
-        """Add a progression node to the tree."""
+        '''Add a progression node to the tree.'''
         pass
     
     def check_unlocks(self, game_state):
-        """Check and trigger any newly available unlocks."""
+        '''Check and trigger any newly available unlocks.'''
         pass
     
     def get_available_nodes(self, category: str = None):
-        """Get all currently available progression nodes."""
+        '''Get all currently available progression nodes.'''
         pass
 ```
 
@@ -83,7 +83,7 @@ class ProgressionTree:
 # Enhanced condition system
 
 class UnlockCondition(ABC):
-    """Base class for all unlock conditions."""
+    '''Base class for all unlock conditions.'''
     @abstractmethod
     def check(self, game_state) -> bool:
         pass
@@ -104,16 +104,16 @@ class ResourceCondition(UnlockCondition):
         return getattr(game_state, self.resource) >= self.min_amount
 
 class CompositeCondition(UnlockCondition):
-    """Combine multiple conditions with AND/OR logic."""
+    '''Combine multiple conditions with AND/OR logic.'''
     def __init__(self, conditions: List[UnlockCondition], 
-                 operator: str = "AND"):
+                 operator: str = 'AND'):
         self.conditions = conditions
         self.operator = operator
     
     def check(self, game_state) -> bool:
-        if self.operator == "AND":
+        if self.operator == 'AND':
             return all(c.check(game_state) for c in self.conditions)
-        elif self.operator == "OR":
+        elif self.operator == 'OR':
             return any(c.check(game_state) for c in self.conditions)
 ```
 
@@ -123,13 +123,13 @@ class CompositeCondition(UnlockCondition):
 # Unified effect system
 
 class Effect(ABC):
-    """Base class for all progression effects."""
+    '''Base class for all progression effects.'''
     @abstractmethod
     def apply(self, game_state):
         pass
 
 class ResourceEffect(Effect):
-    """Add/subtract resources."""
+    '''Add/subtract resources.'''
     def __init__(self, resource: str, amount: int):
         self.resource = resource
         self.amount = amount
@@ -138,7 +138,7 @@ class ResourceEffect(Effect):
         game_state._add(self.resource, self.amount)
 
 class UnlockActionEffect(Effect):
-    """Unlock new actions."""
+    '''Unlock new actions.'''
     def __init__(self, action_ids: List[str]):
         self.action_ids = action_ids
     
@@ -147,12 +147,12 @@ class UnlockActionEffect(Effect):
             game_state.unlocked_actions.add(action_id)
 
 class EnableMechanicEffect(Effect):
-    """Enable new game mechanics."""
+    '''Enable new game mechanics.'''
     def __init__(self, mechanic_name: str):
         self.mechanic_name = mechanic_name
     
     def apply(self, game_state):
-        setattr(game_state, f"{self.mechanic_name}_enabled", True)
+        setattr(game_state, f'{self.mechanic_name}_enabled', True)
 ```
 
 ### 4. Data-Driven Configuration
@@ -161,61 +161,61 @@ class EnableMechanicEffect(Effect):
 # progression_config.py - Data-driven progression definitions
 
 PROGRESSION_TREES = {
-    "intelligence_operations": {
-        "name": "Intelligence Operations",
-        "description": "Competitive intelligence and opponent monitoring",
-        "nodes": [
+    'intelligence_operations': {
+        'name': 'Intelligence Operations',
+        'description': 'Competitive intelligence and opponent monitoring',
+        'nodes': [
             {
-                "id": "basic_intelligence",
-                "name": "Intelligence Network",
-                "unlock_conditions": [
+                'id': 'basic_intelligence',
+                'name': 'Intelligence Network',
+                'unlock_conditions': [
                     TurnCondition(6),
-                    ResourceCondition("reputation", 10)
+                    ResourceCondition('reputation', 10)
                 ],
-                "effects": [
-                    EnableMechanicEffect("scouting"),
-                    UnlockActionEffect(["scout_opponents"])
+                'effects': [
+                    EnableMechanicEffect('scouting'),
+                    UnlockActionEffect(['scout_opponents'])
                 ]
             },
             {
-                "id": "advanced_intelligence", 
-                "name": "Advanced Intelligence",
-                "prerequisites": ["basic_intelligence"],
-                "unlock_conditions": [
-                    ResourceCondition("reputation", 25),
-                    ResourceCondition("admin_staff", 2)
+                'id': 'advanced_intelligence', 
+                'name': 'Advanced Intelligence',
+                'prerequisites': ['basic_intelligence'],
+                'unlock_conditions': [
+                    ResourceCondition('reputation', 25),
+                    ResourceCondition('admin_staff', 2)
                 ],
-                "effects": [
-                    UnlockActionEffect(["deep_intelligence", "counter_intelligence"])
+                'effects': [
+                    UnlockActionEffect(['deep_intelligence', 'counter_intelligence'])
                 ]
             }
         ]
     },
     
-    "research_capabilities": {
-        "name": "Research Capabilities",
-        "description": "Technical research and compute infrastructure",
-        "nodes": [
+    'research_capabilities': {
+        'name': 'Research Capabilities',
+        'description': 'Technical research and compute infrastructure',
+        'nodes': [
             {
-                "id": "basic_compute",
-                "name": "Compute Infrastructure",
-                "unlock_conditions": [
+                'id': 'basic_compute',
+                'name': 'Compute Infrastructure',
+                'unlock_conditions': [
                     TurnCondition(3)
                 ],
-                "effects": [
-                    UnlockActionEffect(["buy_compute"])
+                'effects': [
+                    UnlockActionEffect(['buy_compute'])
                 ]
             },
             {
-                "id": "hpc_systems",
-                "name": "High-Performance Computing",
-                "prerequisites": ["basic_compute"],
-                "unlock_conditions": [
-                    ResourceCondition("compute", 30),
-                    ResourceCondition("money", 800)
+                'id': 'hpc_systems',
+                'name': 'High-Performance Computing',
+                'prerequisites': ['basic_compute'],
+                'unlock_conditions': [
+                    ResourceCondition('compute', 30),
+                    ResourceCondition('money', 800)
                 ],
-                "effects": [
-                    UnlockUpgradeEffect(["hpc_cluster"])
+                'effects': [
+                    UnlockUpgradeEffect(['hpc_cluster'])
                 ]
             }
         ]

@@ -1,16 +1,16 @@
 {
-  "version": "1.0.0",
-  "created": "2025-09-15T23:18:04.985345",
-  "max_entries": 50,
-  "entries": [
+  'version': '1.0.0',
+  'created': '2025-09-15T23:18:04.985345',
+  'max_entries': 50,
+  'entries': [
     {
-      "score": 1,
-      "player_name": "Catalyst Labs",
-      "date": "2025-09-15T23:18:04.983570",
-      "level_reached": 1,
-      "game_mode": "Bootstrap_v0.4.1",
-      "duration_seconds": 28.196656,
-      "entry_uuid": "f19c05b2-5156-41f4-aa86-8cc9424bbf71"
+      'score': 1,
+      'player_name': 'Catalyst Labs',
+      'date': '2025-09-15T23:18:04.983570',
+      'level_reached': 1,
+      'game_mode': 'Bootstrap_v0.4.1',
+      'duration_seconds': 28.196656,
+      'entry_uuid': 'f19c05b2-5156-41f4-aa86-8cc9424bbf71'
     }
   ]
 }

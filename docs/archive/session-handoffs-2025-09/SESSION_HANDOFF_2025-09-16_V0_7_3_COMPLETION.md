@@ -103,7 +103,7 @@ Successfully completed **all 8 critical issues** from phase-w-critical branch:
 - **Documentation**: Current and accurate for development needs
 
 ### First Actions Next Session
-1. **Verification**: `python -c "from src.services.version import get_display_version; print(get_display_version())"`
+1. **Verification**: `python -c 'from src.services.version import get_display_version; print(get_display_version())'`
 2. **Test Status**: `python -m unittest discover tests -v` (expect stable results)
 3. **Priority Selection**: Choose from Issue #312 items or Alpha roadmap features
 

@@ -2,7 +2,7 @@
 
 **Status**: v0.3.1 Patch Release Planning
 **Created**: 2025-01-21
-**Base Version**: v0.3.0 "Consolidated Release"
+**Base Version**: v0.3.0 'Consolidated Release'
 
 ## [ROCKET] Immediate Hotfixes (v0.3.1)
 
@@ -95,10 +95,10 @@
 python -m unittest discover tests -v
 
 # Game state validation
-python -c "from src.core.game_state import GameState; gs = GameState('test'); print('v Working')"
+python -c 'from src.core.game_state import GameState; gs = GameState('test'); print('v Working')'
 
 # Version verification
-python -c "from src.services.version import get_display_version; print(get_display_version())"
+python -c 'from src.services.version import get_display_version; print(get_display_version())'
 ```
 
 ## Release Notes Template

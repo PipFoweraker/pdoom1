@@ -1,0 +1,14 @@
+#this tmp text file lists the contributiors
+#
+#im sure there is a better way to do this....in future
+#
+#Git username is the first column
+#
+#their title is the second
+#
+#the thrid column is just extra text or whatever 
+@PipFoweraker,Project-Lead,Creator of pdoom1
+@stevenhobartwork-create,Intern
+valini,Balance-Lead
+C-Dawg,First-Tester
+Aline,Playtester,Guardian of Kambu

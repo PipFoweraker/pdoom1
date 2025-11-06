@@ -46,8 +46,8 @@ This document provides a comprehensive checklist for releasing new versions of P
 ### 4. Version Consistency Verification
 - [ ] Verify version consistency across all files:
   ```bash
-  python -c "from version import get_display_version; print(get_display_version())"
-  python -c "from game_state import GameState; gs = GameState('test'); print(gs.logger.game_version)"
+  python -c 'from version import get_display_version; print(get_display_version())'
+  python -c 'from game_state import GameState; gs = GameState('test'); print(gs.logger.game_version)'
   ```
 - [ ] Check that window title shows correct version
 - [ ] Verify changelog mentions correct version
@@ -75,7 +75,7 @@ This document provides a comprehensive checklist for releasing new versions of P
 - [ ] Ensure CI/CD tests pass on main branch
 - [ ] Create and push version tag:
   ```bash
-  git tag -a v0.1.0 -m "Release version 0.1.0"
+  git tag -a v0.1.0 -m 'Release version 0.1.0'
   git push origin v0.1.0
   ```
 - [ ] Verify GitHub Actions release workflow triggers successfully
@@ -165,13 +165,13 @@ If a critical bug is discovered after release:
 
 ```bash
 # Version verification
-python -c "from version import get_version_info; print(get_version_info())"
+python -c 'from version import get_version_info; print(get_version_info())'
 
 # Run all tests
 python -m unittest discover tests -v
 
 # Create and push tag
-git tag -a v0.1.0 -m "Release version 0.1.0"
+git tag -a v0.1.0 -m 'Release version 0.1.0'
 git push origin v0.1.0
 
 # Manual release trigger (if needed)

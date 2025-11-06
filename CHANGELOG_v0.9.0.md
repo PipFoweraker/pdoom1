@@ -1,4 +1,4 @@
-# P(Doom) v0.9.0 - "Alpha Stability & Audio System" Release
+# P(Doom) v0.9.0 - 'Alpha Stability & Audio System' Release
 
 **Release Date**: 2025-09-28  
 **Previous Version**: v0.7.4  

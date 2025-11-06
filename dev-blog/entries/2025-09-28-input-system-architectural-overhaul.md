@@ -1,9 +1,9 @@
 ---
-title: "Input System Architectural Overhaul - Phase 2"
-date: "2025-09-28"
-tags: ["architecture", "refactoring", "input-system", "managers", "phase-2"]
-summary: "Extracted 500+ lines of keyboard handling from main.py into clean, testable managers with 48 new tests and zero regressions"
-commit: "TBD"
+title: 'Input System Architectural Overhaul - Phase 2'
+date: '2025-09-28'
+tags: ['architecture', 'refactoring', 'input-system', 'managers', 'phase-2']
+summary: 'Extracted 500+ lines of keyboard handling from main.py into clean, testable managers with 48 new tests and zero regressions'
+commit: 'TBD'
 ---
 
 # Input System Architectural Overhaul - Phase 2

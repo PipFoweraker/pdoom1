@@ -94,6 +94,7 @@ src/core/
 - `CONTEXT_WINDOW_SYSTEM.md` - Context management system
 - `DETERMINISTIC_RNG_IMPLEMENTATION_SUMMARY.md` - RNG system design
 - `DISTRIBUTION.md` - Distribution and deployment
+- `HEALTH_MONITORING_INFRASTRUCTURE.md` - Enterprise CI/CD health monitoring system
 - `INTEGRATION_GUIDE.md` - System integration documentation
 - `PIPELINE_IMPLEMENTATION_GUIDE.md` - CI/CD pipeline setup
 - `PRIVACY_CONTROLS_UI_IMPLEMENTATION.md` - Privacy UI implementation

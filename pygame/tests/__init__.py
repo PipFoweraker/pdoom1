@@ -1,0 +1,1 @@
+# Tests package for pdoom1 game

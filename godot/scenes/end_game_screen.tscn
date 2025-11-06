@@ -1,0 +1,179 @@
+[gd_scene load_steps=2 format=3 uid="uid://c7iji1r7bycwu"]
+
+[ext_resource type="Script" path="res://scripts/end_game_screen.gd" id="1_endgame"]
+
+[node name="EndGameScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_endgame")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.8)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = "GAME OVER"
+theme_override_font_sizes/font_size = 32
+horizontal_alignment = 1
+
+[node name="Reason" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = "Out of money! Lab bankrupt."
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="HSeparator1" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="Stats" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Score" type="HBoxContainer" parent="Panel/VBox/Stats"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/Stats/Score"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Final Score (Turns Survived):"
+theme_override_font_sizes/font_size = 16
+
+[node name="Value" type="Label" parent="Panel/VBox/Stats/Score"]
+layout_mode = 2
+text = "0"
+theme_override_font_sizes/font_size = 16
+
+[node name="Rank" type="HBoxContainer" parent="Panel/VBox/Stats"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/Stats/Rank"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Leaderboard Rank:"
+theme_override_font_sizes/font_size = 16
+
+[node name="Value" type="Label" parent="Panel/VBox/Stats/Rank"]
+layout_mode = 2
+text = "#0"
+theme_override_font_sizes/font_size = 16
+
+[node name="Duration" type="HBoxContainer" parent="Panel/VBox/Stats"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/Stats/Duration"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Game Duration:"
+theme_override_font_sizes/font_size = 16
+
+[node name="Value" type="Label" parent="Panel/VBox/Stats/Duration"]
+layout_mode = 2
+text = "0s"
+theme_override_font_sizes/font_size = 16
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="FinalResources" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="Panel/VBox/FinalResources"]
+layout_mode = 2
+text = "Final Resources:"
+theme_override_font_sizes/font_size = 14
+
+[node name="Money" type="Label" parent="Panel/VBox/FinalResources"]
+layout_mode = 2
+text = "Money: $0"
+
+[node name="Compute" type="Label" parent="Panel/VBox/FinalResources"]
+layout_mode = 2
+text = "Compute: 0"
+
+[node name="Safety" type="Label" parent="Panel/VBox/FinalResources"]
+layout_mode = 2
+text = "Safety: 0"
+
+[node name="Capabilities" type="Label" parent="Panel/VBox/FinalResources"]
+layout_mode = 2
+text = "Capabilities: 0"
+
+[node name="HSeparator3" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="Leaderboard" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Panel/VBox/Leaderboard"]
+layout_mode = 2
+text = "Top 5 Leaderboard:"
+theme_override_font_sizes/font_size = 14
+
+[node name="Entries" type="VBoxContainer" parent="Panel/VBox/Leaderboard"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 3
+
+[node name="Spacer" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Buttons" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="PlayAgainButton" type="Button" parent="Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Play Again (R)"
+
+[node name="ViewFullLeaderboardButton" type="Button" parent="Panel/VBox/Buttons"]
+layout_mode = 2
+text = "View Full Leaderboard"
+
+[node name="MainMenuButton" type="Button" parent="Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Main Menu"
+
+[connection signal="pressed" from="Panel/VBox/Buttons/PlayAgainButton" to="." method="_on_play_again_pressed"]
+[connection signal="pressed" from="Panel/VBox/Buttons/ViewFullLeaderboardButton" to="." method="_on_view_leaderboard_pressed"]
+[connection signal="pressed" from="Panel/VBox/Buttons/MainMenuButton" to="." method="_on_main_menu_pressed"]

@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-The P(Doom) ecosystem is a multi-repository architecture designed to support the strategic business simulation game "P(Doom): Save the world from deadly AI through paperwork" and its surrounding community platform. The ecosystem consists of three primary repositories working together to deliver a comprehensive gaming and community experience.
+The P(Doom) ecosystem is a multi-repository architecture designed to support the strategic business simulation game 'P(Doom): Save the world from deadly AI through paperwork' and its surrounding community platform. The ecosystem consists of three primary repositories working together to deliver a comprehensive gaming and community experience.
 
 ## Repository Architecture
 

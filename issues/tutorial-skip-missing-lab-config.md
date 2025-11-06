@@ -1,13 +1,13 @@
 # Tutorial Skip: Missing Lab Configuration Screen
 
 ## Summary
-When starting a new game, selecting "No - Regular Mode" after the tutorial prompt bypasses the lab name configuration and other cosmetic setup options that should be available.
+When starting a new game, selecting 'No - Regular Mode' after the tutorial prompt bypasses the lab name configuration and other cosmetic setup options that should be available.
 
 ## Problem Description
 The new game flow has a broken path:
 1. Start new game
-2. Tutorial screen appears: "Would you like to do the tutorial?"
-3. Select "No - Regular Mode"
+2. Tutorial screen appears: 'Would you like to do the tutorial?'
+3. Select 'No - Regular Mode'
 4. **PROBLEM**: Game starts immediately without lab configuration
 
 ## Missing Configuration Options
@@ -20,7 +20,7 @@ When skipping tutorial, users should still access:
 
 ## Expected Behavior
 Tutorial skip should lead to:
-1. Tutorial prompt: "Do tutorial?" -> "No - Regular Mode"
+1. Tutorial prompt: 'Do tutorial?' -> 'No - Regular Mode'
 2. **Lab Configuration Screen**: Set lab name, cosmetic options
 3. Game starts with configured settings
 

@@ -1,6 +1,6 @@
 # P(Doom) v0.2.0 Release Notes
 
-## [ROCKET] Major UI Overhaul - "Retro Command Interface"
+## [ROCKET] Major UI Overhaul - 'Retro Command Interface'
 
 **Release Date**: September 4, 2025  
 **Version**: 0.2.0  
@@ -23,7 +23,7 @@ Complete replacement of text-heavy resource display:
 - [EMOJI] **Reputation**: Blue star polygon
 - [LIGHTNING] **Action Points**: Lightning bolt with glow effects
 - [EMOJI] **Doom**: Red skull icon
-- [LAPTOP] **Compute**: "2^n" exponential notation
+- [LAPTOP] **Compute**: '2^n' exponential notation
 - [IDEA] **Research**: Light bulb icon
 - [EMOJI] **Papers**: Document with text lines
 
@@ -41,7 +41,7 @@ Complete replacement of text-heavy resource display:
 ```python
 # New icon system example
 def draw_resource_icon(screen, icon_type, x, y, size=16):
-    """8-bit style resource icons with consistent theming"""
+    '''8-bit style resource icons with consistent theming'''
     if icon_type == 'money':
         # Stylized $ sign implementation
         pygame.draw.rect(screen, (255, 230, 60), (x + size//2 - 1, y, 2, size))
@@ -55,14 +55,14 @@ def draw_resource_icon(screen, icon_type, x, y, size=16):
 ### Smart Interface Design
 - **Action filtering**: Only show unlocked actions (12/24 initially visible)
 - **Tutorial independence**: Core UI works regardless of tutorial state
-- **Logical organization**: "Hire Staff" moved to appropriate position
+- **Logical organization**: 'Hire Staff' moved to appropriate position
 - **Starting balance**: Staff begins at 0 for better game balance
 
 ### Fixed Alignment Issues
 - **Kerning problems**: Eliminated overlap between Reputation/Research/AP
 - **Consistent spacing**: Uniform margins across all UI elements
 - **Visual hierarchy**: Icons above values for better readability
-- **Clean labels**: Removed redundant "Money:", "Research:" prefixes
+- **Clean labels**: Removed redundant 'Money:', 'Research:' prefixes
 
 ---
 
@@ -76,7 +76,7 @@ git pull origin main
 ### 2. Verify Version
 ```python
 from src.services.version import get_display_version
-print(f"Current version: {get_display_version()}")
+print(f'Current version: {get_display_version()}')
 # Should show: P(Doom) v0.2.0
 ```
 
@@ -98,11 +98,11 @@ python main.py
 New defaults in `configs/default.json`:
 ```json
 {
-  "starting_resources": {
-    "staff": 0  // Changed from 2
+  'starting_resources': {
+    'staff': 0  // Changed from 2
   },
-  "ui_settings": {
-    "fullscreen": false  // Changed for better debugging
+  'ui_settings': {
+    'fullscreen': false  // Changed for better debugging
   }
 }
 ```

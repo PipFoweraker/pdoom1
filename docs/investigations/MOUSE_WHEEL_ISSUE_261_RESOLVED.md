@@ -98,7 +98,7 @@ TROPHY FINAL VERDICT: Pygame MOUSEWHEEL events are handled safely!
 
 ### Issue Status: OK **CONFIRMED RESOLVED**
 
-The mouse wheel "game breaking bug" reported in Issue #261 **does not exist in the current codebase**. The implementation is:
+The mouse wheel 'game breaking bug' reported in Issue #261 **does not exist in the current codebase**. The implementation is:
 
 - OK **Crash-resistant** with comprehensive bounds checking
 - OK **Functionally correct** with proper event handling  

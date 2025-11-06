@@ -135,7 +135,7 @@ class GameState:
                     self.sound_manager.play_danger_sound()
                 
         elif attr == 'reputation':
-            self.reputation = max(self.reputation + val, 0)
+            self.reputation = int(max(self.reputation + val, 0))
             
             # Track peak reputation for strategic analysis
             if self.reputation > self.peak_reputation:
@@ -146,7 +146,7 @@ class GameState:
                 self._add_verbose_reputation_message(val, reason)
         elif attr == 'staff':
             old_staff = self.staff
-            self.staff = max(self.staff + val, 0)
+            self.staff = int(max(self.staff + val, 0))
             # Update employee blobs when staff changes
             if val > 0:  # Hiring
                 self._add_employee_blobs(val)
@@ -164,19 +164,19 @@ class GameState:
             if val != 0:
                 self._add_verbose_staff_message(val, reason)
         elif attr == 'compute':
-            self.compute = max(self.compute + val, 0)
+            self.compute = int(max(self.compute + val, 0))
             
             # Add verbose activity log message for compute changes
             if val != 0:
                 self._add_verbose_compute_message(val, reason)
         elif attr == 'research_progress':
-            self.research_progress = max(self.research_progress + val, 0)
+            self.research_progress = int(max(self.research_progress + val, 0))
         elif attr == 'admin_staff':
-            self.admin_staff = max(self.admin_staff + val, 0)
+            self.admin_staff = int(max(self.admin_staff + val, 0))
         elif attr == 'research_staff':
-            self.research_staff = max(self.research_staff + val, 0)
+            self.research_staff = int(max(self.research_staff + val, 0))
         elif attr == 'ops_staff':
-            self.ops_staff = max(self.ops_staff + val, 0)
+            self.ops_staff = int(max(self.ops_staff + val, 0))
         
         # Log the change for debugging and verification
         new_value = getattr(self, attr, 0)
@@ -248,35 +248,37 @@ class GameState:
         self.research_quality_unlocked = False  # Unlocks after first research action
         
         # Core resources (from config with safe defaults)
-        self.money = starting_resources.get('money', 100)
-        self.staff = starting_resources.get('staff', 2)
-        self.reputation = starting_resources.get('reputation', 5)
-        self.doom = starting_resources.get('doom', 25)
-        self.compute = starting_resources.get('compute', 0)
-        self.research_progress = 0  # Track research progress for paper generation
-        self.papers_published = 0  # Count of research papers published
+        self.money: Union[int, float] = starting_resources.get('money', 100)
+        self.staff: int = starting_resources.get('staff', 2)
+        self.reputation: int = starting_resources.get('reputation', 5)
+        self.doom: Union[int, float] = starting_resources.get('doom', 25)
+        self.compute: int = starting_resources.get('compute', 0)
+        self.research_progress: int = 0  # Track research progress for paper generation
+        self.papers_published: int = 0  # Count of research papers published
         
         # Action Points system (from config with safe defaults)
-        self.action_points = starting_resources.get('action_points', 3)
-        self.max_action_points = ap_config.get('base_ap_per_turn', 3)
-        self.ap_spent_this_turn = False  # Track if AP was spent for UI glow effects
-        self.ap_glow_timer = 0  # Timer for AP glow animation
+        # Initialize with base AP, then calculate proper max AP after staff is set
+        base_ap = ap_config.get('base_ap_per_turn', 3)
+        self.action_points: int = starting_resources.get('action_points', base_ap)
+        self.max_action_points: int = base_ap  # Will be recalculated after staff setup
+        self.ap_spent_this_turn: bool = False  # Track if AP was spent for UI glow effects
+        self.ap_glow_timer: int = 0  # Timer for AP glow animation
         
         # Phase 2: Staff-Based AP Scaling
-        self.admin_staff = 0  # Admin assistants: +1.0 AP each
-        self.research_staff = 0  # Research staff: Enable research action delegation
-        self.ops_staff = 0  # Operations staff: Enable operational action delegation
+        self.admin_staff: int = 0  # Admin assistants: +1.0 AP each
+        self.research_staff: int = 0  # Research staff: Enable research action delegation
+        self.ops_staff: int = 0  # Operations staff: Enable operational action delegation
         
         self.turn = 0
         self.max_doom = limits_config['max_doom']
-        self.selected_gameplay_actions = []
-        self.selected_gameplay_action_instances = []  # Track individual action instances for undo
-        self.gameplay_action_clicks_this_turn = {}  # Track clicks per action per turn
+        self.selected_gameplay_actions: List[int] = []
+        self.selected_gameplay_action_instances: List[Dict[str, Any]] = []  # Track individual action instances for undo
+        self.gameplay_action_clicks_this_turn: Dict[int, int] = {}  # Track clicks per action per turn
         self.staff_maintenance = DEFAULT_STAFF_MAINTENANCE
         self.seed = seed
         self.upgrades = [dict(u) for u in UPGRADES]
         self.upgrade_effects = set()
-        self.messages = ["Game started! Select actions, then End Turn."]
+        self.messages: List[str] = ["Game started! Select actions, then End Turn."]
         self.game_over = False
         self.end_game_scenario = None  # Will hold the EndGameScenario when game ends
         self.highscore = self.load_highscore()
@@ -348,7 +350,7 @@ class GameState:
 
         # Scrollable event log feature
         self.scrollable_event_log_enabled = False
-        self.event_log_history = []  # Full history of all messages
+        self.event_log_history: List[str] = []  # Full history of all messages
         self.event_log_scroll_offset = 0
         
         # Activity log minimization feature
@@ -409,8 +411,8 @@ class GameState:
         self._pending_first_time_help = None  # Track pending first-time help to show
 
         # Copy modular content
-        self.gameplay_actions = [dict(a) for a in ACTIONS]
-        self.game_events = [dict(e) for e in EVENTS]
+        self.gameplay_actions: List[Dict[str, Any]] = [dict(a) for a in ACTIONS]
+        self.game_events: List[Dict[str, Any]] = [dict(e) for e in EVENTS]
         
         # Enhanced event system (from config)
         gameplay_config = config.get('gameplay', {})
@@ -479,8 +481,25 @@ class GameState:
         self.office_cat_turns_with_5_staff = 0  # Track consecutive turns with 5+ staff
         self.office_cat_adoption_offered = False  # Track if adoption event was already shown
         
+        # Office Cat System
+        self.office_cat_adopted = False  # Whether the cat has been adopted
+        self.office_cat_position = (0, 0)  # Current cat position on screen
+        self.office_cat_target_position = (400, 300)  # Where cat should be
+        self.office_cat_last_petted = 0  # Turn when cat was last petted
+        self.office_cat_love_emoji_timer = 0  # Timer for love emoji display
+        self.office_cat_love_emoji_pos = (0, 0)  # Position for love emoji
+        self.office_cat_total_food_cost = 0  # Total spent on cat food (for stats)
+        self.office_cat_total_pets = 0  # Total times cat was petted (for stats)
+        self.office_cat_turns_with_5_staff = 0  # Track consecutive turns with 5+ staff
+        self.office_cat_adoption_offered = False  # Track if adoption event was already shown
+        
         # Load tutorial settings (after initialization)
         self.load_tutorial_settings()
+        
+        # Calculate proper max AP after all staff and systems are initialized
+        # This ensures AP calculation accounts for starting staff from config
+        self.max_action_points = self.calculate_max_ap()
+        self.action_points = self.max_action_points
 
     @property
     def actions(self) -> List[Dict[str, Any]]:
@@ -489,10 +508,15 @@ class GameState:
 
     def calculate_max_ap(self) -> int:
         """
-        Calculate maximum Action Points per turn based on staff composition.
+        Calculate maximum Action Points per turn based on player + staff composition.
+        
+        Architecture:
+        - Player base AP = 1 (inherent personal capacity)
+        - Staff bonus = staff_count * staff_ap_bonus
+        - Admin bonus = admin_staff * admin_ap_bonus
+        - Environmental/upgrade bonuses can be added here later
         
         Uses configuration values for:
-        - Base AP per turn
         - Staff AP bonus per regular staff member  
         - Admin AP bonus per admin assistant
         - Maximum AP cap to prevent excessive accumulation
@@ -503,14 +527,19 @@ class GameState:
         config = get_current_config()
         ap_config = config['action_points']
         
-        base = ap_config['base_ap_per_turn']
+        # Player inherent capacity (not configurable - represents personal willpower/skill)
+        player_base_ap = 1
+        
+        # Staff-based bonuses (configurable)
         staff_bonus = self.staff * ap_config['staff_ap_bonus']
         admin_bonus = self.admin_staff * ap_config['admin_ap_bonus']
-        calculated_ap = base + staff_bonus + admin_bonus
         
-        # Apply maximum cap
+        # Calculate total AP
+        calculated_ap = player_base_ap + staff_bonus + admin_bonus
+        
+        # Apply maximum cap (round to nearest integer for fractional staff bonuses)
         max_cap = ap_config['max_ap_per_turn']
-        return int(min(calculated_ap, max_cap))
+        return round(min(calculated_ap, max_cap))
     
     def add_delayed_action(self, action_name: str, delay_turns: int, effects: Dict[str, Any]) -> None:
         """
@@ -582,8 +611,8 @@ class GameState:
         """Update spend tracking display logic."""
         if self.spend_this_turn > 0:
             if not self.spend_this_turn_display_shown:
-                # First time spending multiple actions in a turn
-                spend_actions_count = len([a for a in self.selected_gameplay_actions if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
+                # First time spending multiple actions in a turn - check action instances, not indices
+                spend_actions_count = len([a for a in self.selected_gameplay_action_instances if any(cost > 0 for cost in [a.get('money_cost', 0), a.get('reputation_cost', 0)])])
                 
                 if spend_actions_count > 1:
                     self.spend_this_turn_display_shown = True
@@ -1440,6 +1469,107 @@ class GameState:
         """Delegate mouse motion handling to the input manager."""
         return self.input_manager.handle_mouse_motion(mouse_pos, w, h)
 
+        # Actions (left) - Handle filtered actions with display mapping
+        if hasattr(self, 'filtered_action_rects') and hasattr(self, 'display_to_action_index_map'):
+            # Use filtered action rects if available (when UI shows only unlocked actions)
+            action_rects = self.filtered_action_rects
+            for display_idx, rect in enumerate(action_rects):
+                if self._in_rect(mouse_pos, rect):
+                    if not self.game_over and display_idx < len(self.display_to_action_index_map):
+                        original_idx = self.display_to_action_index_map[display_idx]
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = original_idx in self.selected_actions
+                        
+                        result = self.attempt_action_selection(original_idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
+        else:
+            # Fallback to original action handling (show all actions)
+            a_rects = self._get_action_rects(w, h)
+            for idx, rect in enumerate(a_rects):
+                if self._in_rect(mouse_pos, rect):
+                    if not self.game_over:
+                        # Check for undo (if action is already selected, try to undo it)
+                        is_undo = idx in self.selected_actions
+                        
+                        result = self.attempt_action_selection(idx, is_undo)
+                        
+                        # Return play_sound flag for main.py to handle sound
+                        return 'play_sound' if result['play_sound'] else None
+                    return None
+
+        # Upgrades (right, as icons or buttons)
+        u_rects = self._get_upgrade_rects(w, h)
+        for idx, rect in enumerate(u_rects):
+            # Skip None rectangles (unavailable/hidden upgrades)
+            if rect is None:
+                continue
+            if self._in_rect(mouse_pos, rect):
+                upg = self.upgrades[idx]
+                if not upg.get("purchased", False):
+                    if self.money >= upg["cost"]:
+                        self._add('money', -upg["cost"])  # Use _add to track spending
+                        upg["purchased"] = True
+                        self.upgrade_effects.add(upg["effect_key"])
+                        
+                        # Trigger first-time help for upgrade purchase
+                        if onboarding.should_show_mechanic_help('first_upgrade_purchase'):
+                            onboarding.mark_mechanic_seen('first_upgrade_purchase')
+                        
+                        # Special handling for custom effects
+                        if upg.get("custom_effect") == "buy_accounting_software":
+                            self.accounting_software_bought = True
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Cash flow tracking enabled, board oversight blocked!")
+                        elif upg.get("custom_effect") == "buy_compact_activity_display":
+                            # Allow toggle functionality for the activity log
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Activity log can now be minimized! Click the minimize button.")
+                        elif upg.get("custom_effect") == "buy_magical_orb_seeing":
+                            # Enable enhanced intelligence gathering capabilities
+                            self.magical_orb_active = True
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Enhanced global surveillance capabilities now active!")
+                            self.messages.append("The orb reveals detailed intelligence on all competitors and their activities...")
+                            self.messages.append("Intelligence gathering actions now provide comprehensive insights!")
+                        elif upg.get("effect_key") == "hpc_cluster":
+                            self._add('compute', 20)
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Massive compute boost! Research effectiveness increased.")
+                        elif upg.get("effect_key") == "research_automation":
+                            self.messages.append(f"Upgrade purchased: {upg['name']} - Research actions now benefit from available compute resources.")
+                        else:
+                            self.messages.append(f"Upgrade purchased: {upg['name']}")
+                        
+                        # Log upgrade purchase
+                        self.logger.log_upgrade(upg["name"], upg["cost"], self.turn)
+                        
+                        # Create smooth transition animation from button to icon
+                        icon_rect = self._get_upgrade_icon_rect(idx, w, h)
+                        self._create_upgrade_transition(idx, rect, icon_rect)
+                    else:
+                        error_msg = f"Not enough money for {upg['name']} (need ${upg['cost']}, have ${self.money})."
+                        self.messages.append(error_msg)
+                        
+                        # Track error for easter egg detection
+                        self.track_error(f"Insufficient money: {upg['name']}")
+                else:
+                    self.messages.append(f"{upg['name']} already purchased.")
+                    
+                    # Track error for easter egg detection
+                    self.track_error(f"Already purchased: {upg['name']}")
+                return None
+
+        # Mute button (bottom right)
+        mute_rect = self._get_mute_button_rect(w, h)
+        if self._in_rect(mouse_pos, mute_rect):
+            new_state = self.sound_manager.toggle()
+            status = "enabled" if new_state else "disabled"
+            self.messages.append(f"Sound {status}")
+            return None
+        
+        # Office cat petting interaction
+        if getattr(self, 'office_cat_adopted', False):
+            if self.pet_office_cat(mouse_pos):
+                return None  # Cat was petted, interaction handled
     def handle_mouse_release(self, mouse_pos: Tuple[int, int], w: int, h: int) -> bool:
         """Delegate mouse release handling to the input manager."""
         return self.input_manager.handle_mouse_release(mouse_pos, w, h)
@@ -1679,6 +1809,13 @@ class GameState:
         if hasattr(self, 'technical_failures'):
             self.technical_failures.check_for_cascades()
         
+        # Office Cat System: Track consecutive turns with 5+ staff (check at start of turn)
+        if hasattr(self, 'office_cat_turns_with_5_staff'):
+            if self.staff >= 5:
+                self.office_cat_turns_with_5_staff += 1
+            else:
+                self.office_cat_turns_with_5_staff = 0  # Reset streak if below 5 staff
+        
         # Check if there are pending popup events that need resolution
         if (hasattr(self, 'enhanced_events_enabled') and self.enhanced_events_enabled and
             hasattr(self, 'deferred_events') and hasattr(self.deferred_events, 'pending_popup_events') and
@@ -1836,6 +1973,23 @@ class GameState:
         # Handle deferred events (tick expiration and auto-execute expired ones)
         if hasattr(self, 'deferred_events'):
             self.deferred_events.tick_all_events(self)
+        
+        # Office Cat upkeep costs (if adopted)
+        if getattr(self, 'office_cat_adopted', False):
+            # Weekly cat food costs: $1.25 (wet) + $0.80 (dry) = $2.05/day * 7 = $14.35/week
+            cat_food_cost = 14  # Rounded down for game balance
+            self._add('money', -cat_food_cost)
+            self.office_cat_total_food_cost = getattr(self, 'office_cat_total_food_cost', 0) + cat_food_cost
+            self.messages.append(f"🐱 Cat upkeep: ${cat_food_cost} (total: ${self.office_cat_total_food_cost})")
+            
+            # Small morale benefit (reduce doom slightly)
+            if random.random() < 0.3:  # 30% chance per turn
+                self._add('doom', -1)
+                self.messages.append("🐾 Office cat provides small morale boost!")
+            
+            # Update cat love emoji timer
+            if hasattr(self, 'office_cat_love_emoji_timer') and self.office_cat_love_emoji_timer > 0:
+                self.office_cat_love_emoji_timer -= 1
         
         self.turn += 1
         
@@ -2914,7 +3068,7 @@ class GameState:
             execute_corporate_partnership,
             execute_revenue_diversification
         )
-        from src.services.rng_service import get_rng
+        # Import already available at top of file: from src.services.deterministic_rng import get_rng
         
         # Execute the selected advanced funding option
         if option_id == "series_a_funding":
@@ -3821,6 +3975,47 @@ class GameState:
             self.messages.append("? Loyalty crisis among researchers! Morale significantly decreased.")
         
         self.messages.append("Consider salary increases and team building to restore loyalty.")
+    
+    def pet_office_cat(self, mouse_pos):
+        """Handle office cat petting interaction."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return False
+        
+        # Check if click is near the cat
+        cat_x, cat_y = getattr(self, 'office_cat_position', (400, 300))
+        mx, my = mouse_pos
+        
+        # Cat is clickable in a 64x64 area
+        if abs(mx - cat_x) <= 32 and abs(my - cat_y) <= 32:
+            # Pet the cat!
+            self.office_cat_total_pets = getattr(self, 'office_cat_total_pets', 0) + 1
+            self.office_cat_last_petted = self.turn
+            
+            # Show love emoji for 60 frames (2 seconds at 30 FPS)
+            self.office_cat_love_emoji_timer = 60
+            self.office_cat_love_emoji_pos = (cat_x + 16, cat_y - 20)
+            
+            # Small temporary morale boost
+            if random.random() < 0.2:  # 20% chance for immediate doom reduction
+                self._add('doom', -1)
+                self.messages.append("💖 Petting the cat provides immediate stress relief!")
+            
+            # Play cat sound if available
+            if hasattr(self, 'sound_manager'):
+                self.sound_manager.play_sound('blob')  # Reuse existing sound
+            
+            return True
+        
+        return False
+    
+    def get_cat_doom_stage(self):
+        """Get the current doom stage of the office cat for visual representation."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return 0
+        
+        # Cat gets more ominous as doom increases
+        doom_percentage = self.doom / self.max_doom
+        
 
     # Research Quality Event Handlers for Issue #190
     def _trigger_safety_shortcut_event(self) -> None:
@@ -4567,6 +4762,16 @@ class GameState:
             return 3  # Ominous cat with red eyes
         else:
             return 4  # Terrifying doom cat with laser eyes
+    
+    def update_cat_position(self, screen_w, screen_h):
+        """Update office cat position and animation."""
+        if not getattr(self, 'office_cat_adopted', False):
+            return
+        
+        # Cat likes to stay in the bottom-right area, avoiding UI elements
+        target_x = screen_w - 150  # Stay away from right edge UI
+        target_y = screen_h - 120  # Stay away from bottom UI
+        
 
     def update_cat_position(self, screen_w: int, screen_h: int) -> None:
         """Update office cat position and animation."""
@@ -4583,6 +4788,8 @@ class GameState:
         # Move 10% of the way to target each frame
         new_x = current_x + (target_x - current_x) * 0.1
         new_y = current_y + (target_y - current_y) * 0.1
+        
+        self.office_cat_position = (int(new_x), int(new_y))
 
         self.office_cat_position = (int(new_x), int(new_y))
     

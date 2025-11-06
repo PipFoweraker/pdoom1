@@ -153,7 +153,7 @@ git checkout -b experimental/experiment-name experimental/playground
 git branch --merged develop
 
 # Delete merged feature branches
-git branch --merged develop | grep "feature/" | xargs -n 1 git branch -d
+git branch --merged develop | grep 'feature/' | xargs -n 1 git branch -d
 
 # Clean up remote tracking branches
 git remote prune origin

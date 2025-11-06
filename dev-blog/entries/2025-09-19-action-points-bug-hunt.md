@@ -1,9 +1,9 @@
 ---
-title: "Action Points System Bug Hunt: Critical Gameplay Fixes"
-date: "2025-09-19"
-tags: ["bug-fixes", "critical", "gameplay", "testing", "action-points"]
-summary: "Fixed critical Action Points double deduction bug affecting core turn-based gameplay and reactivated 14 test cases"
-commit: "e80b6b3"
+title: 'Action Points System Bug Hunt: Critical Gameplay Fixes'
+date: '2025-09-19'
+tags: ['bug-fixes', 'critical', 'gameplay', 'testing', 'action-points']
+summary: 'Fixed critical Action Points double deduction bug affecting core turn-based gameplay and reactivated 14 test cases'
+commit: 'e80b6b3'
 ---
 
 # Action Points System Bug Hunt: Critical Gameplay Fixes
@@ -65,7 +65,7 @@ self.action_points -= ap_cost  # OK Immediate player feedback
 
 ### Testing Strategy
 - Reactivated TestActionPointsDeduction, TestActionPointsReset classes
-- Fixed test action name from "Fundraise" to "Fundraising Options" 
+- Fixed test action name from 'Fundraise' to 'Fundraising Options' 
 - Validated meta-actions (research quality) correctly cost 0 AP
 - Confirmed backward compatibility maintained
 

@@ -1,0 +1,1 @@
+# Fix weird gap in config lab screen layout\n\nThere is an unexpected gap in the middle of the config lab screen that affects the visual layout.\n\n<!-- GitHub Issue #362 -->

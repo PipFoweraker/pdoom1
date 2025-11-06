@@ -27,7 +27,7 @@
 - **Branch:** refactor/monolith-breakdown (up to date)
 - **ui.py:** 4,245 lines (down from 4,802 - 11.6% reduction)
 - **New Module:** src/ui/game_ui.py (716 lines of specialized UI functions)
-- **Version:** v0.4.1 "Bootstrap Economic Calibration"
+- **Version:** v0.4.1 'Bootstrap Economic Calibration'
 - **Tests:** Core UI functionality validated, import issues resolved
 
 ### Codebase Health
@@ -82,15 +82,15 @@
 ### Setup Commands (Copy-Paste Ready)
 ```bash
 # Navigate to project
-cd "C:/Users/gday/Documents/A Local Code/pdoom1"
+cd 'C:/Users/gday/Documents/A Local Code/pdoom1'
 
 # Verify current state
 git status
 git log --oneline -5
 
 # Validate functionality
-python -c "from src.core.game_state import GameState; gs = GameState('test'); print('v GameState works')"
-python -c "from src.ui.game_ui import draw_resource_display; print('v Game UI functions work')"
+python -c 'from src.core.game_state import GameState; gs = GameState('test'); print('v GameState works')'
+python -c 'from src.ui.game_ui import draw_resource_display; print('v Game UI functions work')'
 
 # Run focused tests
 python -m unittest tests.test_ui_facade_smoke -v
@@ -112,7 +112,7 @@ python -m unittest discover tests -v  # Full suite (90+ second timeout)
 - **Cross-platform:** Ensures compatibility across all systems
 
 ### Version Management  
-- **Current:** v0.4.1 "Bootstrap Economic Calibration"
+- **Current:** v0.4.1 'Bootstrap Economic Calibration'
 - **Location:** src/services/version.py
 - **Display:** Available via get_display_version() function
 - **Economic System:** Complete economic calibration with dynamic costs
@@ -170,7 +170,7 @@ python -m unittest discover tests -v  # Full suite (90+ second timeout)
 
 ## [IDEA] Development Philosophy Reminder
 
-This project follows the principle of **"Progressive Enhancement Through Methodical Refactoring"**:
+This project follows the principle of **'Progressive Enhancement Through Methodical Refactoring'**:
 1. Identify monolithic components
 2. Extract logical sub-systems  
 3. Maintain zero breaking changes

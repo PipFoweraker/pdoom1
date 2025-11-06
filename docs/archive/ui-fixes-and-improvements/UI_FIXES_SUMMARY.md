@@ -78,18 +78,18 @@ The settings menu now displays:
 
 ### Tutorial vs Hints Configuration
 ```json
-"tutorial": {
-  "tutorial_enabled": true,      // Interactive step-by-step tutorial
-  "first_time_help": true,       // Context-sensitive hints (Factorio-style)
-  "show_tips": true,             // General gameplay tips
-  "auto_help_on_errors": true    // Error help system
+'tutorial': {
+  'tutorial_enabled': true,      // Interactive step-by-step tutorial
+  'first_time_help': true,       // Context-sensitive hints (Factorio-style)
+  'show_tips': true,             // General gameplay tips
+  'auto_help_on_errors': true    // Error help system
 }
 ```
 
 ### Starting Resources Fix
 ```json
-"starting_resources": {
-  "staff": 2,                    // Fixed from 0 to match config manager
+'starting_resources': {
+  'staff': 2,                    // Fixed from 0 to match config manager
   // ... other resources
 }
 ```
