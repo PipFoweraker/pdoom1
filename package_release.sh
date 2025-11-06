@@ -1,15 +1,18 @@
 #!/bin/bash
-# Package v0.10.1 release for distribution
+# Package release for distribution
 
 set -e  # Exit on error
 
+# Accept version as parameter or use default
+VERSION="${1:-v0.10.1}"
+
 echo "==================================="
-echo "P(Doom) v0.10.1 Release Packager"
+echo "P(Doom) $VERSION Release Packager"
 echo "==================================="
 echo ""
 
-BUILD_DIR="builds/windows/v0.10.1"
-PACKAGE_NAME="PDoom-v0.10.1-Windows"
+BUILD_DIR="builds/windows/$VERSION"
+PACKAGE_NAME="PDoom-${VERSION}-Windows"
 TEMP_DIR="temp_package"
 
 # Check if build exists

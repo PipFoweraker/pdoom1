@@ -95,3 +95,16 @@ tools/godot/.import/
 godot/.godot/
 godot/.import/
 godot/export_presets.cfg
+
+# Build artifacts (keep .exe and .pck in builds/ for release archival)
+# But ignore the Godot-generated names that get renamed
+builds/**/P(Doom)*.exe
+builds/**/P(Doom)*.pck
+builds/**/P(Doom)*.console.exe
+
+# Release packages (large files - uploaded to GitHub releases)
+*.zip
+PDoom-*.zip
+
+# Temporary packaging directory
+temp_package/
