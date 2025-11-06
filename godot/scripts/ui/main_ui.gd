@@ -13,7 +13,7 @@ extends VBoxContainer
 @onready var phase_label = $BottomBar/PhaseLabel
 @onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
 @onready var actions_list = $ContentArea/LeftPanel/ActionsScroll/ActionsList
-@onready var upgrades_list = $ContentArea/LeftPanel/UpgradesScroll/UpgradesList
+@onready var upgrades_list = $ContentArea/RightPanel/UpgradesScroll/UpgradesList
 @onready var info_label = $InfoBar/MarginContainer/InfoLabel
 @onready var queue_container = $ContentArea/RightPanel/QueuePanel/QueueContainer
 @onready var queue_hint = $ContentArea/RightPanel/QueuePanel/QueueContainer/QueueHint
