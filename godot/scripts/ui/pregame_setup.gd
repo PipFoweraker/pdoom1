@@ -110,22 +110,19 @@ func _on_launch_pressed():
 	if launch_button.disabled:
 		return
 
+	# Set custom config mode (allows all options to be edited)
+	GameConfig.config_mode = "custom"
+
 	# Save configuration
 	GameConfig.save_config()
 
 	# Print configuration for debugging
 	GameConfig.print_config()
 
-	# Increment games played counter
-	GameConfig.increment_games_played()
+	print("[PreGameSetup] Going to configuration confirmation...")
 
-	# Mark game as active
-	GameConfig.current_game_active = true
-
-	print("[PreGameSetup] Launching game...")
-
-	# Transition to main game
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	# Go to confirmation screen (consistent UX with default pathway)
+	get_tree().change_scene_to_file("res://scenes/config_confirmation.tscn")
 
 func _on_cancel_pressed():
 	"""Return to welcome screen"""

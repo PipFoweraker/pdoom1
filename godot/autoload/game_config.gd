@@ -19,6 +19,7 @@ var fullscreen: bool = false
 # Game State
 var current_game_active: bool = false
 var games_played: int = 0
+var config_mode: String = "default"  # "default" = weekly seed (locked), "custom" = user configured
 
 # Config file path
 const CONFIG_FILE = "user://config.cfg"

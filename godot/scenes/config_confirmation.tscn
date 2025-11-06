@@ -1,0 +1,265 @@
+[gd_scene load_steps=6 format=3 uid="uid://cfmfqvp1h8k3d"]
+
+[ext_resource type="Script" path="res://scripts/ui/config_confirmation.gd" id="1_config"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
+bg_color = Color(0.2, 0.3, 0.5, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.5, 0.7, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
+bg_color = Color(0.3, 0.5, 0.8, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.7, 0.8, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
+bg_color = Color(0.15, 0.25, 0.4, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.9, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
+bg_color = Color(0.4, 0.6, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="ConfigConfirmation" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_config")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.16, 0.18, 0.22, 1)
+
+[node name="PatternOverlay" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = -350.0
+offset_right = 450.0
+offset_bottom = 350.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 38
+text = "LABORATORY CONFIGURATION"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.78, 0.86, 1)
+theme_override_font_sizes/font_size = 16
+text = "Review Your Settings Before Launch"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="FieldsContainer" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 15
+
+[node name="PlayerNameRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/PlayerNameRow"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Player Name:"
+
+[node name="ValueLabel" type="Label" parent="Panel/VBox/FieldsContainer/PlayerNameRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Researcher"
+
+[node name="LabNameRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/LabNameRow"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Lab Name:"
+
+[node name="ValueLabel" type="Label" parent="Panel/VBox/FieldsContainer/LabNameRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "AI Safety Lab"
+
+[node name="SeedRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/SeedRow"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Experimental Seed:"
+
+[node name="ValueLabel" type="Label" parent="Panel/VBox/FieldsContainer/SeedRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "weekly-2025-w45 (Weekly Challenge)"
+
+[node name="DifficultyRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/DifficultyRow"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Research Intensity:"
+
+[node name="ValueLabel" type="Label" parent="Panel/VBox/FieldsContainer/DifficultyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "Standard (Regulatory)"
+
+[node name="FundingRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/FundingRow"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Starting Funding:"
+
+[node name="ValueLabel" type="Label" parent="Panel/VBox/FieldsContainer/FundingRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_font_sizes/font_size = 18
+text = "$245,000"
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBox/FieldsContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="Panel/VBox/FieldsContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 14
+text = "Greyed options are locked for this configuration.
+Click 'Customize' to change seed and difficulty."
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ButtonRow" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="LaunchButton" type="Button" parent="Panel/VBox/ButtonRow"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_hover")
+theme_override_styles/hover = SubResource("StyleBoxFlat_focus")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+text = "▶ INITIALIZE LAB"
+
+[node name="CustomizeButton" type="Button" parent="Panel/VBox/ButtonRow"]
+custom_minimum_size = Vector2(150, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+text = "Customize"
+
+[node name="BackButton" type="Button" parent="Panel/VBox/ButtonRow"]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+text = "Back"
+
+[connection signal="pressed" from="Panel/VBox/ButtonRow/LaunchButton" to="." method="_on_launch_pressed"]
+[connection signal="pressed" from="Panel/VBox/ButtonRow/CustomizeButton" to="." method="_on_customize_pressed"]
+[connection signal="pressed" from="Panel/VBox/ButtonRow/BackButton" to="." method="_on_back_pressed"]
