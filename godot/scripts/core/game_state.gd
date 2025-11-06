@@ -25,7 +25,7 @@ var managers: int = 0  # Each manager can handle 9 employees
 # Individual researchers (new system)
 var researchers: Array[Researcher] = []
 
-# Upgrades
+# Purchased upgrades (one-time purchases)
 var purchased_upgrades: Array[String] = []
 
 # Game status
@@ -36,9 +36,6 @@ var game_seed_str: String = ""  # Renamed from 'seed' to avoid shadowing built-i
 
 # Lab mascot 🐱
 var has_cat: bool = false
-
-# Purchased upgrades (one-time purchases)
-var purchased_upgrades: Array[String] = []
 
 # Turn phase tracking (fixes #418 - proper event sequencing)
 enum TurnPhase { TURN_START, ACTION_SELECTION, TURN_PROCESSING, TURN_END }

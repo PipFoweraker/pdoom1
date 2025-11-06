@@ -1,0 +1,169 @@
+name: Godot Tests
+
+on:
+  push:
+    branches: [main, dev/enhancements, develop]
+    paths:
+      - 'godot/**/*.gd'
+      - 'godot/**/*.tscn'
+      - 'godot/project.godot'
+      - '.github/workflows/godot-tests.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'godot/**/*.gd'
+      - 'godot/**/*.tscn'
+      - 'godot/project.godot'
+
+jobs:
+  syntax-check:
+    name: GDScript Syntax Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.5.1
+          use-dotnet: false
+
+      - name: Verify Godot installation
+        run: godot --version
+
+      - name: Check GDScript syntax
+        run: |
+          echo "Checking GDScript compilation..."
+          godot --headless --path godot --quit 2>&1 | tee godot_output.log
+
+          # Check for parse errors
+          if grep -i "parse error\|error:" godot_output.log; then
+            echo "❌ GDScript syntax errors found!"
+            exit 1
+          else
+            echo "✅ GDScript syntax check passed!"
+          fi
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: syntax-check
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.5.1
+          use-dotnet: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Unit Tests
+        run: |
+          python scripts/run_godot_tests.py --quick --ci-mode
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: test-results-*.xml
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: syntax-check
+    # Only run if integration tests exist
+    if: hashFiles('godot/tests/integration/*.gd') != ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.5.1
+          use-dotnet: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Integration Tests
+        run: |
+          godot --headless --path godot \
+                -s res://addons/gut/gut_cmdln.gd \
+                -gdir=res://tests/integration \
+                -glog=2 \
+                -gexit
+
+  smoke-tests:
+    name: Smoke Tests
+    runs-on: ubuntu-latest
+    needs: [unit-tests]
+    # Only run if smoke tests exist
+    if: hashFiles('godot/tests/smoke/*.gd') != ''
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.5.1
+          use-dotnet: false
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run Smoke Tests
+        run: |
+          python scripts/run_godot_tests.py --smoke-only --ci-mode
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-results
+          path: test-results-*.xml
+
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [syntax-check, unit-tests]
+    if: always()
+    steps:
+      - name: Check test results
+        run: |
+          if [ "${{ needs.syntax-check.result }}" != "success" ]; then
+            echo "❌ Syntax check failed"
+            exit 1
+          fi
+
+          if [ "${{ needs.unit-tests.result }}" != "success" ]; then
+            echo "❌ Unit tests failed"
+            exit 1
+          fi
+
+          echo "✅ All required tests passed!"
+
+      - name: Post comment on PR
+        if: github.event_name == 'pull_request' && needs.unit-tests.result == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ All Godot tests passed!\n\n- GDScript syntax: ✓\n- Unit tests: ✓\n\nReady for review!'
+            })
