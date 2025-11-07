@@ -26,6 +26,7 @@ extends VBoxContainer
 @onready var cat_panel = $TopBar/CatPanel
 @onready var doom_meter = $BottomBar/DoomMeterContainer/MarginContainer/DoomMeter
 @onready var game_over_screen = $"../GameOverScreen"
+@onready var tab_manager = get_parent()
 
 # Reference to GameManager
 var game_manager: Node
@@ -42,7 +43,7 @@ func _ready():
 	print("[MainUI] Initializing UI...")
 
 	# Get GameManager reference
-	game_manager = get_node("../GameManager")
+	game_manager = get_node("../../GameManager")
 
 	# Connect to GameManager signals
 	game_manager.game_state_updated.connect(_on_game_state_updated)
@@ -59,7 +60,7 @@ func _ready():
 
 	# Auto-initialize game when scene loads
 	log_message("[color=cyan]Initializing game...[/color]")
-	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to commit[/color]")
+	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to commit, E for employees[/color]")
 
 	# Call init on next frame to ensure everything is ready
 	await get_tree().process_frame
@@ -80,11 +81,15 @@ func _unhandled_key_input(event: InputEvent):
 				return
 
 	# Populate upgrades list
-	_populate_upgrades_list()
+	_populate_upgrades()
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
+		# Skip E key - handled by TabManager
+		if event.keycode == KEY_E and active_dialog == null:
+			return
+
 		var key_char = char(event.unicode) if event.unicode > 0 else "?"
 		print("[MainUI] _input called, keycode: %d (%s), active_dialog: %s, buttons: %d" % [event.keycode, key_char, active_dialog != null, active_dialog_buttons.size()])
 
@@ -385,7 +390,7 @@ func _on_game_state_updated(state: Dictionary):
 			game_over_screen.show_game_over(victory, state)
 
 	# Refresh upgrades list to update affordability
-	_populate_upgrades_list()
+	_populate_upgrades()
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)

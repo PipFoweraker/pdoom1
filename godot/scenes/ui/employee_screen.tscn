@@ -1,0 +1,109 @@
+[gd_scene load_steps=2 format=3 uid="uid://employee_screen123"]
+
+[ext_resource type="Script" path="res://scripts/ui/employee_screen.gd" id="1_employee"]
+
+[node name="EmployeeScreen" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_employee")
+
+[node name="Header" type="HBoxContainer" parent="."]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 50)
+
+[node name="TitleLabel" type="Label" parent="Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Employee Management"
+theme_override_font_sizes/font_size = 20
+
+[node name="BackButton" type="Button" parent="Header"]
+layout_mode = 2
+text = "← Back to Game (Esc)"
+custom_minimum_size = Vector2(150, 0)
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="ContentArea" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="VBoxContainer" parent="ContentArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+
+[node name="StatsLabel" type="Label" parent="ContentArea/LeftPanel"]
+layout_mode = 2
+text = "Team Overview:"
+theme_override_font_sizes/font_size = 16
+
+[node name="StatsPanel" type="PanelContainer" parent="ContentArea/LeftPanel"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 200)
+
+[node name="MarginContainer" type="MarginContainer" parent="ContentArea/LeftPanel/StatsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="StatsText" type="RichTextLabel" parent="ContentArea/LeftPanel/StatsPanel/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=gray]Loading...[/color]"
+fit_content = true
+scroll_active = false
+
+[node name="Spacer" type="Control" parent="ContentArea/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="WarningsLabel" type="Label" parent="ContentArea/LeftPanel"]
+layout_mode = 2
+text = "Warnings:"
+theme_override_font_sizes/font_size = 16
+
+[node name="WarningsPanel" type="PanelContainer" parent="ContentArea/LeftPanel"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 150)
+
+[node name="MarginContainer" type="MarginContainer" parent="ContentArea/LeftPanel/WarningsPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="WarningsText" type="RichTextLabel" parent="ContentArea/LeftPanel/WarningsPanel/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=green]✓ No warnings[/color]"
+fit_content = true
+scroll_active = false
+
+[node name="RightPanel" type="VBoxContainer" parent="ContentArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="EmployeesLabel" type="Label" parent="ContentArea/RightPanel"]
+layout_mode = 2
+text = "Employee Details:"
+theme_override_font_sizes/font_size = 16
+
+[node name="EmployeesScroll" type="ScrollContainer" parent="ContentArea/RightPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EmployeesList" type="VBoxContainer" parent="ContentArea/RightPanel/EmployeesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[connection signal="pressed" from="Header/BackButton" to="." method="_on_back_button_pressed"]
