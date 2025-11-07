@@ -37,184 +37,184 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_main_ui")
 
-[node name="TopBar" type="HBoxContainer" parent="MainUI"]
+[node name="TopBar" type="HBoxContainer" parent="TabManager/MainUI"]
 layout_mode = 2
 size_flags_vertical = 0
 custom_minimum_size = Vector2(0, 40)
 theme_override_constants/separation = 15
 
-[node name="TitleLabel" type="Label" parent="MainUI/TopBar"]
+[node name="TitleLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "P(Doom)"
 theme_override_font_sizes/font_size = 18
 
-[node name="Sep1" type="Label" parent="MainUI/TopBar"]
+[node name="Sep1" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="TurnLabel" type="Label" parent="MainUI/TopBar"]
+[node name="TurnLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Turn: 0"
 theme_override_font_sizes/font_size = 14
 
-[node name="Sep2" type="Label" parent="MainUI/TopBar"]
+[node name="Sep2" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="MoneyLabel" type="Label" parent="MainUI/TopBar"]
+[node name="MoneyLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Money: $0"
 theme_override_font_sizes/font_size = 14
 
-[node name="Sep3" type="Label" parent="MainUI/TopBar"]
+[node name="Sep3" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="ComputeLabel" type="Label" parent="MainUI/TopBar"]
+[node name="ComputeLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Compute: 0"
 theme_override_font_sizes/font_size = 14
 
-[node name="Sep4" type="Label" parent="MainUI/TopBar"]
+[node name="Sep4" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="ResearchLabel" type="Label" parent="MainUI/TopBar"]
+[node name="ResearchLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Research: 0"
 theme_override_font_sizes/font_size = 14
 
-[node name="Sep5" type="Label" parent="MainUI/TopBar"]
+[node name="Sep5" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="PapersLabel" type="Label" parent="MainUI/TopBar"]
+[node name="PapersLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Papers: 0"
 theme_override_font_sizes/font_size = 14
 
-[node name="Sep6" type="Label" parent="MainUI/TopBar"]
+[node name="Sep6" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="ReputationLabel" type="Label" parent="MainUI/TopBar"]
+[node name="ReputationLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Rep: 0"
 theme_override_font_sizes/font_size = 14
 
-[node name="Sep7" type="Label" parent="MainUI/TopBar"]
+[node name="Sep7" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="DoomLabel" type="Label" parent="MainUI/TopBar"]
+[node name="DoomLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Doom: 0%"
 theme_override_font_sizes/font_size = 14
 
-[node name="Sep8" type="Label" parent="MainUI/TopBar"]
+[node name="Sep8" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="APLabel" type="Label" parent="MainUI/TopBar"]
+[node name="APLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "AP: 0"
 theme_override_font_sizes/font_size = 14
 
-[node name="Spacer" type="Control" parent="MainUI/TopBar"]
+[node name="Spacer" type="Control" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CatPanel" type="PanelContainer" parent="MainUI/TopBar"]
+[node name="CatPanel" type="PanelContainer" parent="TabManager/MainUI/TopBar"]
 visible = false
 layout_mode = 2
 custom_minimum_size = Vector2(40, 40)
 
-[node name="CatDisplay" type="TextureRect" parent="MainUI/TopBar/CatPanel"]
+[node name="CatDisplay" type="TextureRect" parent="TabManager/MainUI/TopBar/CatPanel"]
 layout_mode = 2
 texture = ExtResource("3_cat_texture")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HSeparator1" type="HSeparator" parent="MainUI"]
+[node name="HSeparator1" type="HSeparator" parent="TabManager/MainUI"]
 layout_mode = 2
 
-[node name="ContentArea" type="HBoxContainer" parent="MainUI"]
+[node name="ContentArea" type="HBoxContainer" parent="TabManager/MainUI"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="LeftPanel" type="VBoxContainer" parent="MainUI/ContentArea"]
+[node name="LeftPanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 
-[node name="ActionsLabel" type="Label" parent="MainUI/ContentArea/LeftPanel"]
+[node name="ActionsLabel" type="Label" parent="TabManager/MainUI/ContentArea/LeftPanel"]
 layout_mode = 2
 text = "Actions:"
 
-[node name="ActionsScroll" type="ScrollContainer" parent="MainUI/ContentArea/LeftPanel"]
+[node name="ActionsScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/LeftPanel"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ActionsList" type="VBoxContainer" parent="MainUI/ContentArea/LeftPanel/ActionsScroll"]
+[node name="ActionsList" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/LeftPanel/ActionsScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="RightPanel" type="VBoxContainer" parent="MainUI/ContentArea"]
+[node name="RightPanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.4
 
-[node name="UpgradesLabel" type="Label" parent="MainUI/ContentArea/RightPanel"]
+[node name="UpgradesLabel" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 text = "Upgrades:"
 
-[node name="UpgradesScroll" type="ScrollContainer" parent="MainUI/ContentArea/RightPanel"]
+[node name="UpgradesScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.6
 
-[node name="UpgradesList" type="VBoxContainer" parent="MainUI/ContentArea/RightPanel/UpgradesScroll"]
+[node name="UpgradesList" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/RightPanel/UpgradesScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="QueueLabel" type="Label" parent="MainUI/ContentArea/RightPanel"]
+[node name="QueueLabel" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 text = "Action Queue:"
 
-[node name="QueuePanel" type="PanelContainer" parent="MainUI/ContentArea/RightPanel"]
+[node name="QueuePanel" type="PanelContainer" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 80)
 
-[node name="QueueContainer" type="HBoxContainer" parent="MainUI/ContentArea/RightPanel/QueuePanel"]
+[node name="QueueContainer" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/RightPanel/QueuePanel"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="QueueHint" type="Label" parent="MainUI/ContentArea/RightPanel/QueuePanel/QueueContainer"]
+[node name="QueueHint" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel/QueuePanel/QueueContainer"]
 layout_mode = 2
 text = "No actions queued..."
 modulate = Color(0.5, 0.5, 0.5, 1)
 
-[node name="HSeparator" type="HSeparator" parent="MainUI/ContentArea/RightPanel"]
+[node name="HSeparator" type="HSeparator" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 
-[node name="MessageLogLabel" type="Label" parent="MainUI/ContentArea/RightPanel"]
+[node name="MessageLogLabel" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 text = "Message Log:"
 
-[node name="MessageScroll" type="ScrollContainer" parent="MainUI/ContentArea/RightPanel"]
+[node name="MessageScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.4
 
-[node name="MessageLog" type="RichTextLabel" parent="MainUI/ContentArea/RightPanel/MessageScroll"]
+[node name="MessageLog" type="RichTextLabel" parent="TabManager/MainUI/ContentArea/RightPanel/MessageScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -223,60 +223,60 @@ text = "[color=gray]Game not started...[/color]"
 fit_content = true
 scroll_following = true
 
-[node name="HSeparator2" type="HSeparator" parent="MainUI"]
+[node name="HSeparator2" type="HSeparator" parent="TabManager/MainUI"]
 layout_mode = 2
 
-[node name="InfoBar" type="PanelContainer" parent="MainUI"]
+[node name="InfoBar" type="PanelContainer" parent="TabManager/MainUI"]
 layout_mode = 2
 custom_minimum_size = Vector2(0, 40)
 
-[node name="MarginContainer" type="MarginContainer" parent="MainUI/InfoBar"]
+[node name="MarginContainer" type="MarginContainer" parent="TabManager/MainUI/InfoBar"]
 layout_mode = 2
 theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 5
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 5
 
-[node name="InfoLabel" type="RichTextLabel" parent="MainUI/InfoBar/MarginContainer"]
+[node name="InfoLabel" type="RichTextLabel" parent="TabManager/MainUI/InfoBar/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
 text = "[color=gray]Hover over actions to see details...[/color]"
 fit_content = true
 scroll_active = false
 
-[node name="BottomBar" type="HBoxContainer" parent="MainUI"]
+[node name="BottomBar" type="HBoxContainer" parent="TabManager/MainUI"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="ControlButtons" type="HBoxContainer" parent="MainUI/BottomBar"]
+[node name="ControlButtons" type="HBoxContainer" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="InitButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+[node name="InitButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Init Game"
 
-[node name="TestActionButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+[node name="TestActionButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Hire Safety Researcher"
 disabled = true
 
-[node name="ReserveAPButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+[node name="ReserveAPButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Reserve 1 AP"
 disabled = true
 
-[node name="ClearQueueButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+[node name="ClearQueueButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Clear Queue (C)"
 disabled = true
 
-[node name="EndTurnButton" type="Button" parent="MainUI/BottomBar/ControlButtons"]
+[node name="EndTurnButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Commit Actions (Space)"
 disabled = true
 
-[node name="PhaseLabel" type="RichTextLabel" parent="MainUI/BottomBar"]
+[node name="PhaseLabel" type="RichTextLabel" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 bbcode_enabled = true
@@ -284,11 +284,11 @@ text = "[color=white]Phase: Not Started[/color]"
 fit_content = true
 scroll_active = false
 
-[node name="DoomMeterContainer" type="PanelContainer" parent="MainUI/BottomBar"]
+[node name="DoomMeterContainer" type="PanelContainer" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
 custom_minimum_size = Vector2(100, 100)
 
-[node name="MarginContainer" type="MarginContainer" parent="MainUI/BottomBar/DoomMeterContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="TabManager/MainUI/BottomBar/DoomMeterContainer"]
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 8
