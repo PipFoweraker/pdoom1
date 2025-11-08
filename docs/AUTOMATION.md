@@ -455,11 +455,12 @@ Add project-specific hooks in `.pre-commit-config.yaml`:
 ```yaml
 - repo: local
   hooks:
-    - id: no-pygame-code
-      name: Prevent pygame directory changes
-      entry: scripts/hooks/check_pygame.sh
+    - id: no-legacy-code-changes
+      name: Prevent archive/ directory changes
+      entry: scripts/hooks/check_archive.sh
       language: script
       pass_filenames: false
+      # Prevents accidental modification of archived legacy code
 ```
 
 ---

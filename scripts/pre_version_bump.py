@@ -201,7 +201,7 @@ class PreVersionBumpChecker:
         
         try:
             # Check current version
-            from src.services.version import get_display_version
+            from scripts.lib.services.version import get_display_version
             current_version = get_display_version()
             
             print(f'Current Version: {current_version}')

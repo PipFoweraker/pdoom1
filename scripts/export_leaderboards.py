@@ -16,10 +16,10 @@ import argparse
 import sys
 from pathlib import Path
 
-# Add src to path for imports
+# Add scripts to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from src.scores.enhanced_leaderboard import leaderboard_manager
+from scripts.lib.scores.enhanced_leaderboard import leaderboard_manager
 
 
 def main():

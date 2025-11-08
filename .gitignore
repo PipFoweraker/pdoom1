@@ -96,11 +96,21 @@ godot/.godot/
 godot/.import/
 godot/export_presets.cfg
 
-# Build artifacts (keep .exe and .pck in builds/ for release archival)
-# But ignore the Godot-generated names that get renamed
-builds/**/P(Doom)*.exe
-builds/**/P(Doom)*.pck
-builds/**/P(Doom)*.console.exe
+# Build artifacts (all platform builds - uploaded to GitHub releases)
+builds/
+
+# Game runtime logs
+game_logs/
+
+# Web exports (Godot HTML5)
+web_export/
+
+# Screenshots (keep a few for docs, gitignore bulk)
+screenshots/*.png
+!screenshots/pdoom_screenshot_20250918_104357.png
+
+# Ruff cache (Python linter)
+.ruff_cache/
 
 # Release packages (large files - uploaded to GitHub releases)
 *.zip
