@@ -126,13 +126,6 @@ static func get_all_actions() -> Array[Dictionary]:
 			"description": "Apply for government/foundation funding",
 			"costs": {"action_points": 1, "papers": 1},
 			"category": "funding"
-		},
-		{
-			"id": "hire_ethicist",
-			"name": "Hire AI Ethicist",
-			"description": "Add philosophical perspective to research",
-			"costs": {"money": 70000, "action_points": 1},
-			"category": "hiring"
 		}
 	]
 
@@ -179,6 +172,13 @@ static func get_hiring_options() -> Array[Dictionary]:
 			"name": "Manager",
 			"description": "Can oversee 9 employees (prevents unproductive staff)",
 			"costs": {"money": 80000, "action_points": 1},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_ethicist",
+			"name": "AI Ethicist",
+			"description": "Add philosophical perspective to research (+5 reputation)",
+			"costs": {"money": 70000, "action_points": 1},
 			"category": "hiring"
 		}
 	]

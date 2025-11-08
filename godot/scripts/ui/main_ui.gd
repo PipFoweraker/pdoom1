@@ -567,6 +567,9 @@ func _on_actions_available(actions: Array):
 
 			# Create styled button using ThemeManager
 			var button = ThemeManager.create_button(button_text)
+			# Constrain button width to prevent extending into middle
+			button.size_flags_horizontal = Control.SIZE_FILL
+			button.custom_minimum_size = Vector2(0, 32)
 
 			action_index += 1  # Increment for next action
 
@@ -634,6 +637,9 @@ func _populate_upgrades():
 
 		# Create button
 		var button = ThemeManager.create_button(upgrade_name)
+		# Constrain button width to prevent extending into middle
+		button.size_flags_horizontal = Control.SIZE_FILL
+		button.custom_minimum_size = Vector2(0, 32)
 
 		# If purchased, show differently
 		if is_purchased:
@@ -1258,9 +1264,10 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 	# Build info text with enhanced formatting
 	var info_text = "[b][color=cyan]%s[/color][/b] — %s" % [action_name, action_desc]
 
-	# Add costs with icons/colors
+	# Add costs with icons/colors (always add line for consistent 2-line format)
+	info_text += "\n[color=gray]├─[/color] "
 	if not action_costs.is_empty():
-		info_text += "\n[color=gray]├─[/color] [color=yellow]Costs:[/color] "
+		info_text += "[color=yellow]Costs:[/color] "
 		var cost_parts = []
 
 		# Format each resource cost with appropriate color
@@ -1278,6 +1285,8 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 			cost_parts.append("[color=purple]%.1f Research[/color]" % action_costs["research"])
 
 		info_text += " • ".join(cost_parts)
+	else:
+		info_text += "[color=gray]No costs[/color]"
 
 	# Show affordability with visual indicator
 	info_text += "\n[color=gray]└─[/color] "
@@ -1292,4 +1301,4 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 
 func _on_action_unhover():
 	"""Reset info bar when mouse leaves action"""
-	info_label.text = "[color=gray]Hover over actions to see details...[/color]"
+	info_label.text = "[color=gray]Hover over actions to see details...\n [/color]"

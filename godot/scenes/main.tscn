@@ -233,7 +233,7 @@ layout_mode = 2
 
 [node name="InfoBar" type="PanelContainer" parent="TabManager/MainUI"]
 layout_mode = 2
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 60)
 
 [node name="MarginContainer" type="MarginContainer" parent="TabManager/MainUI/InfoBar"]
 layout_mode = 2
@@ -245,7 +245,8 @@ theme_override_constants/margin_bottom = 5
 [node name="InfoLabel" type="RichTextLabel" parent="TabManager/MainUI/InfoBar/MarginContainer"]
 layout_mode = 2
 bbcode_enabled = true
-text = "[color=gray]Hover over actions to see details...[/color]"
+text = "[color=gray]Hover over actions to see details...
+ [/color]"
 fit_content = true
 scroll_active = false
 
