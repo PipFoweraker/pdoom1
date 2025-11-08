@@ -72,7 +72,7 @@ jobs:
 
       - name: Upload validation report
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: validation-report
           path: |
@@ -147,19 +147,19 @@ jobs:
           python scripts/build_all_platforms.py --version "$VERSION" --godot-path "$(which godot)"
 
       - name: Upload Windows build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-windows
           path: builds/windows/${{ github.event.inputs.version || github.ref_name }}/
 
       - name: Upload Linux build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-linux
           path: builds/linux/${{ github.event.inputs.version || github.ref_name }}/
 
       - name: Upload macOS build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: build-mac
           path: builds/mac/${{ github.event.inputs.version || github.ref_name }}/
@@ -190,7 +190,7 @@ jobs:
           python scripts/generate_release_metadata.py --version "$VERSION"
 
       - name: Upload metadata artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-feeds
           path: public/releases/
@@ -249,7 +249,7 @@ jobs:
           cat release_manifest.json | jq .
 
       - name: Upload manifest
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: release-manifest
           path: release_manifest.json
@@ -264,7 +264,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Extract changelog
         id: changelog
@@ -316,7 +316,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Download feed artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: release-feeds
           path: public/releases/
