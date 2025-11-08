@@ -312,6 +312,10 @@ func _on_skip_turn_button_pressed():
 	# Just end the turn without checks
 	game_manager.end_turn()
 
+func _on_employee_tab_button_pressed():
+	"""Switch to employee management screen"""
+	tab_manager.show_employee_screen()
+
 func _on_game_state_updated(state: Dictionary):
 	print("[MainUI] State updated: ", state)
 
@@ -607,8 +611,6 @@ func _on_actions_available(actions: Array):
 			# Add to list
 			actions_list.add_child(button)
 
-	log_message("[color=cyan]Loaded %d available actions in %d categories[/color]" % [actions.size(), categories.size()])
-
 	# Also populate upgrades
 	_populate_upgrades()
 
@@ -664,8 +666,6 @@ func _populate_upgrades():
 		button.mouse_exited.connect(func(): _on_action_unhover())
 
 		upgrades_list.add_child(button)
-
-	log_message("[color=cyan]Loaded %d upgrades[/color]" % all_upgrades.size())
 
 func _on_upgrade_pressed(upgrade_id: String, upgrade_name: String):
 	"""Handle upgrade purchase button press"""
@@ -832,7 +832,8 @@ func _show_hiring_submenu():
 	print("[MainUI] Adding dialog to TabManager as overlay...")
 	tab_manager.add_child(dialog)
 	dialog.visible = true
-	dialog.z_index = 100  # Ensure it's on top
+	dialog.z_index = 1000  # Very high z-index to ensure it's on top
+	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
 	print("[MainUI] Dialog added and made visible: %s" % dialog.visible)
 
 	# Wait one frame for dialog to be ready
@@ -986,7 +987,8 @@ func _show_fundraising_submenu():
 	print("[MainUI] Adding dialog to TabManager as overlay...")
 	tab_manager.add_child(dialog)
 	dialog.visible = true
-	dialog.z_index = 100  # Ensure it's on top
+	dialog.z_index = 1000  # Very high z-index to ensure it's on top
+	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
 	print("[MainUI] Dialog added and made visible: %s" % dialog.visible)
 
 	# Wait one frame for dialog to be ready
@@ -1225,7 +1227,8 @@ func _on_event_triggered(event: Dictionary):
 	print("[MainUI] Adding event dialog to TabManager as overlay...")
 	tab_manager.add_child(dialog)
 	dialog.visible = true
-	dialog.z_index = 100  # Ensure it's on top
+	dialog.z_index = 1000  # Very high z-index to ensure it's on top
+	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
 	print("[MainUI] Event dialog added and made visible: %s" % dialog.visible)
 
 	# Wait one frame
