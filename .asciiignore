@@ -1,0 +1,51 @@
+# ASCII Compliance Ignore List
+# Files and directories that should be excluded from ASCII compliance checks
+#
+# Patterns are Python glob patterns (supports *, **, ?)
+# Lines starting with # are comments
+# Empty lines are ignored
+
+# Legacy/archived code - not actively maintained
+pygame/**
+archive/**
+archived/**
+
+# Development/testing files with known issues
+dev-blog/**
+tools/**
+
+# External dependencies and vendored code
+.venv/**
+venv/**
+node_modules/**
+
+# Build artifacts and caches
+__pycache__/**
+.pytest_cache/**
+.mypy_cache/**
+*.pyc
+*.pyo
+
+# Git and IDE files
+.git/**
+.vscode/**
+.idea/**
+
+# Documentation archives
+docs/archive/**
+
+# Test fixtures with intentional non-ASCII content
+tests/fixtures/**
+
+# Godot import metadata (auto-generated, contains UIDs)
+godot/**/*.import
+godot/.godot/**
+
+# Specific problematic files (to be fixed later)
+ui.py
+pygame/comprehensive_quote_fix.py
+pygame/ui_test.py
+scripts/monitor-sync.py
+scripts/repo-status.py
+scripts/setup-token.py
+scripts/token-setup-guide.py

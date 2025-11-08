@@ -1,0 +1,32 @@
+{
+  "generated_at": "2025-11-08T01:17:49.037051+00:00",
+  "latest_version": "v0.9.0",
+  "latest_stable": "v0.9.0",
+  "releases": [
+    {
+      "version": "v0.9.0",
+      "version_number": "0.9.0",
+      "release_date": "2025-09-28T11:58:20+10:00",
+      "commit_hash": "cd054e6b9e4cc2fb0bca7464280a843e9d6f0cc4",
+      "is_prerelease": false,
+      "changelog": "Release v0.9.0\n\nSee CHANGELOG.md for details.",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom.exe",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom.x86_64",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/PDoom.app.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/pdoom-0.9.0-source.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.9.0/pdoom-0.9.0-source.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": [
+          "Windows",
+          "Linux",
+          "macOS"
+        ],
+        "tag_message": "v0.9.0: Alpha Stability & Audio System\n\nMajor milestone release featuring:\n- Complete audio system breakthrough (fixed since inception)\n- Monolith architecture extraction (558+ lines)\n- Critical stability improvements (5 GitHub issues resolved)\n- Comprehensive documentation reorganization\n- Enhanced test suite with re-enabled sound tests\n- Ready for stable alpha and beta progression"
+      }
+    }
+  ],
+  "total_releases": 1
+}

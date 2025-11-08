@@ -27,7 +27,14 @@
       "Bash(bash:*)",
       "Bash(git add:*)",
       "Bash(git commit --no-verify -m \"$(cat <<''EOF''\nbuild: Rebuild v0.10.1 executables with latest changes\n\n- Rebuild PDoom.exe with latest code from main branch\n- Update Godot import metadata files\n- Package ready for distribution\n\nThis ensures the v0.10.1 release includes all automation\ninfrastructure and documentation improvements from the\nlatest commits.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git push)"
+      "Bash(git push)",
+      "Bash(\"C:\\Program Files\\Godot\\Godot_v4.5.1-stable_win64.exe\" --headless --quit-after 5 project.godot)",
+      "Bash(\"C:\\Program Files\\Godot\\Godot_v4.5.1-stable_win64.exe\" --headless --check-only --script scripts/ui/employee_screen.gd)",
+      "Bash(\"C:\\Program Files\\Godot\\Godot_v4.5.1-stable_win64.exe\" --headless --check-only --script scripts/ui/tab_manager.gd)",
+      "Bash(\"C:\\Program Files\\Godot\\Godot_v4.5.1-stable_win64.exe\" --headless --check-only --script scripts/ui/main_ui.gd)",
+      "Bash(\"C:\\Program Files\\Godot\\Godot_v4.5.1-stable_win64.exe\" --headless --check-only scenes/main.tscn)",
+      "Bash(git push:*)",
+      "Bash(git commit --no-verify -m \"$(cat <<''EOF''\nrefactor: UI polish - prevent visual flicker and improve layout\n\nActions Organization:\n- Move AI Ethicist from standalone action to hiring submenu\n- Consolidates all hiring options in one location\n- Reduces action list clutter\n\nInfo Bar Stability:\n- Increase InfoBar height from 40px to 60px\n- Make info bar permanently 2 lines to prevent UI shifting/flicker\n- Update default text and unhover text to maintain 2-line format\n- Add \"No costs\" text for actions without costs\n- Consistent height prevents visual jarring when hovering actions\n\nButton Layout Improvements:\n- Add size constraints to action and upgrade buttons\n- Set size_flags_horizontal = SIZE_FILL for proper container behavior\n- Set custom_minimum_size for consistent button heights\n- Prevents buttons from extending too far into middle area\n- Creates better negative space and visual breathing room\n\nStarCraft 2 / X-COM inspired UI consistency and polish.\nAddresses all user feedback from playtesting session.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
