@@ -122,13 +122,10 @@ jobs:
             });
 
   build-godot:
-    name: Build Godot Game
+    name: Build Godot Game (All Platforms)
     runs-on: ubuntu-latest
     needs: validate-data
     if: needs.validate-data.outputs.validation_status == 'success' || inputs.skip_validation
-    strategy:
-      matrix:
-        platform: [windows, linux, mac]
     steps:
       - uses: actions/checkout@v4
 
@@ -138,30 +135,34 @@ jobs:
           version: 4.5.1
           use-dotnet: false
 
-      - name: Build for ${{ matrix.platform }}
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Build all platforms
         run: |
-          cd godot
-          mkdir -p ../builds/${{ matrix.platform }}
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          echo "🎮 Building P(Doom) $VERSION for all platforms..."
+          python scripts/build_all_platforms.py --version "$VERSION" --godot-path "$(which godot)"
 
-          case "${{ matrix.platform }}" in
-            windows)
-              godot --headless --export-release "Windows Desktop" ../builds/windows/PDoom.exe
-              ;;
-            linux)
-              godot --headless --export-release "Linux/X11" ../builds/linux/PDoom.x86_64
-              ;;
-            mac)
-              godot --headless --export-release "macOS" ../builds/mac/PDoom.app
-              cd ../builds/mac
-              zip -r PDoom.app.zip PDoom.app
-              ;;
-          esac
-
-      - name: Upload build artifact
+      - name: Upload Windows build
         uses: actions/upload-artifact@v3
         with:
-          name: build-${{ matrix.platform }}
-          path: builds/${{ matrix.platform }}/
+          name: build-windows
+          path: builds/windows/${{ github.event.inputs.version || github.ref_name }}/
+
+      - name: Upload Linux build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-linux
+          path: builds/linux/${{ github.event.inputs.version || github.ref_name }}/
+
+      - name: Upload macOS build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-mac
+          path: builds/mac/${{ github.event.inputs.version || github.ref_name }}/
 
   generate-feeds:
     name: Generate Release Feeds & Metadata
