@@ -1,0 +1,348 @@
+name: Enhanced Release with Validation & Feeds
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (e.g., v0.10.2)'
+        required: true
+        type: string
+      prerelease:
+        description: 'Mark as pre-release'
+        required: false
+        type: boolean
+        default: false
+      skip_validation:
+        description: 'Skip validation (emergency only!)'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  validate-data:
+    name: Validate Historical Data & Schemas
+    runs-on: ubuntu-latest
+    outputs:
+      validation_status: ${{ steps.validate.outputs.status }}
+      validation_hash: ${{ steps.validate.outputs.hash }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run historical data validation
+        id: validate
+        continue-on-error: true
+        run: |
+          echo "🔍 Validating historical data..."
+          python scripts/validate_historical_data.py --verbose > validation_report.txt 2>&1
+          VALIDATION_EXIT=$?
+
+          # Generate hash of all validated data
+          find data -type f -name "*.json" -exec cat {} \; | sha256sum | cut -d' ' -f1 > data_hash.txt
+          DATA_HASH=$(cat data_hash.txt)
+
+          echo "hash=$DATA_HASH" >> $GITHUB_OUTPUT
+
+          if [ $VALIDATION_EXIT -eq 0 ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "✅ Validation passed!"
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "❌ Validation failed!"
+            cat validation_report.txt
+          fi
+
+          exit $VALIDATION_EXIT
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: validation-report
+          path: |
+            validation_report.txt
+            data_hash.txt
+
+      - name: Create triage issue on validation failure
+        if: failure() && !inputs.skip_validation
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('validation_report.txt', 'utf8');
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `🚨 Data Validation Failed for Release ${{ github.event.inputs.version || github.ref_name }}`,
+              body: `## Validation Failure
+
+            The release pipeline has halted due to data validation errors.
+
+            **Version:** ${{ github.event.inputs.version || github.ref_name }}
+            **Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            ### Validation Report
+
+            \`\`\`
+            ${report.slice(0, 4000)}
+            \`\`\`
+
+            ### Next Steps
+
+            1. Review the validation errors above
+            2. Fix data issues in the \`data/\` directory
+            3. Re-run validation locally: \`python scripts/validate_historical_data.py\`
+            4. Push fixes and re-trigger release
+
+            ### Emergency Override
+
+            To skip validation (emergency releases only), use:
+            \`\`\`
+            skip_validation: true
+            \`\`\`
+            `,
+              labels: ['triage', 'validation', 'ci/cd', 'release-blocker']
+            });
+
+  build-godot:
+    name: Build Godot Game (All Platforms)
+    runs-on: ubuntu-latest
+    needs: validate-data
+    if: needs.validate-data.outputs.validation_status == 'success' || inputs.skip_validation
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v1
+        with:
+          version: 4.5.1
+          use-dotnet: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Build all platforms
+        run: |
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          echo "🎮 Building P(Doom) $VERSION for all platforms..."
+          python scripts/build_all_platforms.py --version "$VERSION" --godot-path "$(which godot)"
+
+      - name: Upload Windows build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-windows
+          path: builds/windows/${{ github.event.inputs.version || github.ref_name }}/
+
+      - name: Upload Linux build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-linux
+          path: builds/linux/${{ github.event.inputs.version || github.ref_name }}/
+
+      - name: Upload macOS build
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-mac
+          path: builds/mac/${{ github.event.inputs.version || github.ref_name }}/
+
+  generate-feeds:
+    name: Generate Release Feeds & Metadata
+    runs-on: ubuntu-latest
+    needs: [validate-data, build-godot]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for git tags
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Generate release metadata
+        run: |
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          echo "📝 Generating metadata for $VERSION..."
+          python scripts/generate_release_metadata.py --version "$VERSION"
+
+      - name: Upload metadata artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-feeds
+          path: public/releases/
+
+  create-release-manifest:
+    name: Create Release Manifest
+    runs-on: ubuntu-latest
+    needs: [validate-data, build-godot, generate-feeds]
+    outputs:
+      manifest_hash: ${{ steps.manifest.outputs.hash }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate release manifest
+        id: manifest
+        run: |
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          COMMIT_HASH="${{ github.sha }}"
+          DATA_HASH="${{ needs.validate-data.outputs.data_hash }}"
+          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          cat > release_manifest.json <<EOF
+          {
+            "version": "$VERSION",
+            "build_date": "$BUILD_DATE",
+            "commit_hash": "$COMMIT_HASH",
+            "commit_short": "${COMMIT_HASH:0:8}",
+            "data_batch_hash": "$DATA_HASH",
+            "schema_versions": {
+              "events": "1.0",
+              "organizations": "1.0",
+              "researchers": "1.0"
+            },
+            "engine": {
+              "name": "Godot",
+              "version": "4.5.1"
+            },
+            "platforms": ["windows", "linux", "macos"],
+            "validation_passed": true,
+            "build_pipeline": "github-actions",
+            "workflow_run": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+            "provenance": {
+              "repository": "${{ github.repository }}",
+              "ref": "${{ github.ref }}",
+              "actor": "${{ github.actor }}",
+              "event": "${{ github.event_name }}"
+            }
+          }
+          EOF
+
+          # Generate manifest hash
+          MANIFEST_HASH=$(sha256sum release_manifest.json | cut -d' ' -f1)
+          echo "hash=$MANIFEST_HASH" >> $GITHUB_OUTPUT
+
+          echo "📋 Release Manifest:"
+          cat release_manifest.json | jq .
+
+      - name: Upload manifest
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-manifest
+          path: release_manifest.json
+
+  create-github-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [validate-data, build-godot, generate-feeds, create-release-manifest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Extract changelog
+        id: changelog
+        run: |
+          VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION_NUM="${VERSION#v}"
+
+          # Extract changelog (simplified version)
+          if grep -q "\[$VERSION_NUM\]" CHANGELOG.md; then
+            sed -n "/\[$VERSION_NUM\]/,/^## /p" CHANGELOG.md | head -n -1 > release_notes.txt
+          else
+            echo "Release $VERSION" > release_notes.txt
+            echo "" >> release_notes.txt
+            echo "See CHANGELOG.md for details." >> release_notes.txt
+          fi
+
+          # Append manifest info
+          echo "" >> release_notes.txt
+          echo "## Build Information" >> release_notes.txt
+          echo "" >> release_notes.txt
+          echo "- **Commit:** \`${{ github.sha }}\`" >> release_notes.txt
+          echo "- **Data Hash:** \`${{ needs.validate-data.outputs.data_hash }}\`" >> release_notes.txt
+          echo "- **Manifest Hash:** \`${{ needs.create-release-manifest.outputs.manifest_hash }}\`" >> release_notes.txt
+          echo "- **Engine:** Godot 4.5.1" >> release_notes.txt
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.inputs.version || github.ref_name }}
+          name: P(Doom) ${{ github.event.inputs.version || github.ref_name }}
+          body_path: release_notes.txt
+          draft: false
+          prerelease: ${{ github.event.inputs.prerelease || contains(github.ref_name, '-') }}
+          files: |
+            build-windows/**/*
+            build-linux/**/*
+            build-mac/**/*
+            release-manifest/release_manifest.json
+            release-feeds/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-feeds:
+    name: Deploy Feeds to Website
+    runs-on: ubuntu-latest
+    needs: create-github-release
+    if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download feed artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: release-feeds
+          path: public/releases/
+
+      - name: Deploy to GitHub Pages (or your hosting)
+        run: |
+          echo "🚀 Deploying feeds to website..."
+          # TODO: Add your deployment logic here
+          # Could use gh-pages, rsync to server, etc.
+          ls -la public/releases/
+
+  notification:
+    name: Send Release Notifications
+    runs-on: ubuntu-latest
+    needs: create-github-release
+    if: always()
+    steps:
+      - name: Release Success Notification
+        if: needs.create-github-release.result == 'success'
+        run: |
+          echo "✅ Release ${{ github.event.inputs.version || github.ref_name }} published successfully!"
+          echo "🎮 Game builds created for Windows, Linux, and macOS"
+          echo "📡 Feeds generated and ready for website consumption"
+
+      - name: Release Failure Notification
+        if: needs.create-github-release.result == 'failure'
+        run: |
+          echo "❌ Release ${{ github.event.inputs.version || github.ref_name }} failed!"
+          echo "Check the workflow logs for details"

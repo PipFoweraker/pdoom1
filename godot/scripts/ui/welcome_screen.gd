@@ -92,11 +92,14 @@ func _update_button_focus():
 
 func _on_launch_lab_pressed():
 	print("[WelcomeScreen] Launching lab with default seed...")
-	# Transition to main game scene
-	var err = get_tree().change_scene_to_file("res://scenes/main.tscn")
+	# Set default config mode and show confirmation screen
+	GameConfig.config_mode = "default"
+	GameConfig.seed = ""  # Use weekly seed
+	GameConfig.difficulty = 1  # Standard difficulty
+	var err = get_tree().change_scene_to_file("res://scenes/config_confirmation.tscn")
 	if err != OK:
-		print("[WelcomeScreen] ERROR: Failed to load main scene, error code: ", err)
-		push_error("Failed to load main.tscn")
+		print("[WelcomeScreen] ERROR: Failed to load config confirmation scene, error code: ", err)
+		push_error("Failed to load config_confirmation.tscn")
 
 func _on_custom_seed_pressed():
 	print("[WelcomeScreen] Opening pre-game setup...")

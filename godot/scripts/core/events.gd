@@ -53,14 +53,14 @@ static func get_all_events() -> Array[Dictionary]:
 			"options": [
 				{
 					"id": "hire_immediately",
-					"text": "Fast-Track Hiring (costs 1 AP, $25k)",
+					"text": "Fast-Track Hiring (costs 1 AP, %s)" % GameConfig.format_money(25000),
 					"costs": {"money": 25000, "action_points": 1},
 					"effects": {"safety_researchers": 1, "doom": -3},
 					"message": "Fast-tracked hiring process! (+1 safety researcher, -3 doom)"
 				},
 				{
 					"id": "hire_discounted",
-					"text": "Standard Hiring ($25k, no AP)",
+					"text": "Standard Hiring (%s, no AP)" % GameConfig.format_money(25000),
 					"costs": {"money": 25000},
 					"effects": {"safety_researchers": 1, "doom": -2},
 					"message": "Hired talented researcher at discount! (+1 safety researcher, -2 doom)"
@@ -170,14 +170,14 @@ static func get_all_events() -> Array[Dictionary]:
 			"options": [
 				{
 					"id": "emergency_intervention",
-					"text": "Emergency Intervention (costs 2 AP, $30k)",
+					"text": "Emergency Intervention (costs 2 AP, %s)" % GameConfig.format_money(30000),
 					"costs": {"money": 30000, "action_points": 2},
 					"effects": {"reputation": 8, "doom": -5},
 					"message": "Personal intervention prevented resignations! (+8 reputation, -5 doom)"
 				},
 				{
 					"id": "team_retreat",
-					"text": "Organize Team Retreat ($30k, no AP)",
+					"text": "Organize Team Retreat (%s, no AP)" % GameConfig.format_money(30000),
 					"costs": {"money": 30000},
 					"effects": {"reputation": 5, "doom": -2},
 					"message": "Team retreat restored morale (+5 reputation, -2 doom)"

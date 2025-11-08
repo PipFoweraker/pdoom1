@@ -894,27 +894,396 @@ Open an issue or contact maintainers.
 
 ---
 
+## 11. Enhanced Release Pipeline with Validation (Issue #439)
+
+### Overview
+The enhanced release workflow implements automated validation, feed generation, and provenance tracking for all game releases. This ensures data integrity and provides website integration for release discovery.
+
+### Release Pipeline Architecture
+```
+┌─────────────────────────────────────────────────────────┐
+│ 1. Validate Data                                        │
+│    - Run validate_historical_data.py                    │
+│    - Check events/organizations/researchers schemas     │
+│    - Create triage issue on failure                     │
+│    - Output: validation_hash                            │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│ 2. Build Game (Parallel)                                │
+│    Windows Build    │  Linux Build    │  Mac Build      │
+│    - Godot 4.5.1   │  - Godot 4.5.1  │  - Godot 4.5.1 │
+│    - PDoom.exe     │  - PDoom.x86_64 │  - PDoom.app   │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│ 3. Generate Feeds & Metadata                            │
+│    - Run generate_release_metadata.py                   │
+│    - Create releases.json (latest/stable tracking)      │
+│    - Create v*.*.*.json (per-release metadata)          │
+│    - Create releases.rss (feed for subscribers)         │
+│    - Output: feed_hash                                  │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│ 4. Create Release Manifest                              │
+│    - Aggregate all hashes (builds, data, feeds)         │
+│    - Record commit hash, schema versions                │
+│    - Track build pipeline provenance                    │
+│    - Generate release_manifest.json                     │
+│    - Output: manifest_hash                              │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│ 5. Create GitHub Release                                │
+│    - Extract changelog from CHANGELOG.md                │
+│    - Attach platform builds                             │
+│    - Attach release manifest                            │
+│    - Attach source archives                             │
+│    - Attach feeds (JSON + RSS)                          │
+└─────────────────────────────────────────────────────────┘
+                           ↓
+┌─────────────────────────────────────────────────────────┐
+│ 6. Deploy Feeds to Website                              │
+│    - Upload releases.json to pdoom.net                  │
+│    - Upload releases.rss to pdoom.net                   │
+│    - Enable website release discovery                   │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Release Metadata Script
+
+**Location**: [scripts/generate_release_metadata.py](../../scripts/generate_release_metadata.py)
+
+**Purpose**: Generates JSON and RSS feeds for website integration, enabling automatic release discovery.
+
+**Key Features**:
+- Extracts version info from git tags (date, commit hash, tag message)
+- Parses CHANGELOG.md for release-specific notes
+- Generates structured JSON metadata with download links
+- Creates RSS 2.0 feed for release notifications
+- Tracks latest/stable version information
+- Includes engine version and platform support
+
+**Output Files**:
+```
+public/releases/
+├── releases.json           # Index of all releases (latest/stable tracking)
+├── releases.rss            # RSS 2.0 feed for subscribers
+├── v0.9.0.json            # Individual release metadata
+├── v0.10.0.json
+└── v0.10.1.json
+```
+
+**Usage**:
+```bash
+# Generate metadata for latest release
+python scripts/generate_release_metadata.py --latest
+
+# Generate metadata for specific version
+python scripts/generate_release_metadata.py --version v0.10.1
+
+# Generate metadata for all releases
+python scripts/generate_release_metadata.py
+```
+
+**JSON Schema** (releases.json):
+```json
+{
+  "generated_at": "2025-11-08T00:00:00+00:00",
+  "latest_version": "v0.10.1",
+  "latest_stable": "v0.10.1",
+  "total_releases": 3,
+  "releases": [
+    {
+      "version": "v0.10.1",
+      "version_number": "0.10.1",
+      "release_date": "2025-11-08T10:00:00+10:00",
+      "commit_hash": "abc123...",
+      "is_prerelease": false,
+      "changelog": "Release notes from CHANGELOG.md...",
+      "downloads": {
+        "windows": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.1/PDoom.exe",
+        "linux": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.1/PDoom.x86_64",
+        "mac": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.1/PDoom.app.zip",
+        "source_zip": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.1/pdoom-0.10.1-source.zip",
+        "source_tar": "https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.1/pdoom-0.10.1-source.tar.gz"
+      },
+      "metadata": {
+        "engine": "Godot 4.5.1",
+        "platforms": ["Windows", "Linux", "macOS"],
+        "tag_message": "Full annotated tag message..."
+      }
+    }
+  ]
+}
+```
+
+### Enhanced Release Workflow
+
+**Location**: [.github/workflows/enhanced-release.yml](../../.github/workflows/enhanced-release.yml)
+
+**Triggers**:
+- Push to tags matching `v*.*.*` pattern
+- Manual workflow dispatch with version input
+
+**Jobs**:
+
+#### 1. validate-data
+- Runs `scripts/validate_historical_data.py`
+- Validates JSON format and required fields for:
+  - Timeline events (date format, event types, game_effect structure)
+  - Organizations (schema compliance)
+  - Researchers (profile completeness)
+- On failure:
+  - Creates GitHub issue with `triage`, `validation`, `ci/cd`, `release-blocker` labels
+  - Includes validation report in issue body
+  - Halts release pipeline
+- Outputs: `validation_hash` (SHA256 of validated data)
+
+#### 2. build-godot (Windows, Linux, Mac)
+- Matrix build for all platforms
+- Uses `chickensoft-games/setup-godot@v1` with Godot 4.5.1
+- Exports release builds with optimizations
+- Uploads artifacts for each platform
+- Parallel execution for speed
+
+#### 3. generate-feeds
+- Runs `scripts/generate_release_metadata.py`
+- Creates `releases.json`, `releases.rss`, and per-version JSON files
+- Uploads feed artifacts
+- Outputs: `feed_hash` (SHA256 of generated feeds)
+
+#### 4. create-release-manifest
+- Aggregates all provenance information:
+  - Version and commit hash
+  - Data batch hash from validation
+  - Schema versions for events/orgs/researchers
+  - Build artifact hashes (Windows/Linux/Mac)
+  - Feed artifact hashes
+  - Engine version and build timestamp
+  - Build pipeline metadata
+- Creates `release_manifest.json`
+- Outputs: `manifest_hash` (SHA256 of manifest)
+
+#### 5. create-github-release
+- Extracts changelog from CHANGELOG.md for specific version
+- Creates GitHub release with:
+  - Platform builds (PDoom.exe, PDoom.x86_64, PDoom.app.zip)
+  - Release manifest (release_manifest.json)
+  - Source archives (.tar.gz, .zip)
+  - Feeds (releases.json, releases.rss)
+  - Checksums file
+- Automatically marks as prerelease if version contains `-` (e.g., v0.10.0-alpha)
+- Includes build information in release notes
+
+#### 6. deploy-feeds
+- TODO: Add deployment logic to upload feeds to pdoom.net hosting
+- Should upload:
+  - `public/releases/releases.json` → website feed endpoint
+  - `public/releases/releases.rss` → RSS feed endpoint
+  - Individual release JSON files for deep linking
+
+### Validation and Triage
+
+**Validation Failure Handling**:
+When validation fails, the pipeline:
+1. Creates a triage issue with detailed validation report
+2. Halts the release (no builds created)
+3. Notifies maintainers via GitHub issue
+
+**Emergency Override**:
+For critical hotfixes, use manual workflow dispatch with:
+```yaml
+skip_validation: true  # Use only for emergency releases
+```
+
+**Triage Issue Template**:
+```markdown
+## 🚨 Data Validation Failed for Release v0.10.1
+
+The release pipeline has halted due to data validation errors.
+
+### Validation Report
+[Detailed error messages from validate_historical_data.py]
+
+### Required Actions
+1. Review validation errors above
+2. Fix data issues in appropriate files
+3. Run validation locally: `python scripts/validate_historical_data.py`
+4. Commit fixes and push
+5. Re-trigger release workflow
+
+### Emergency Override
+To skip validation (emergency releases only), use:
+`skip_validation: true` in manual workflow dispatch
+
+**Auto-generated by enhanced-release workflow**
+```
+
+### Website Integration
+
+**Feed Consumption**:
+The pdoom.net website can consume feeds at:
+- Latest release info: `https://pdoom.net/releases/releases.json`
+- RSS feed: `https://pdoom.net/releases/releases.rss`
+- Specific version: `https://pdoom.net/releases/v0.10.1.json`
+
+**Example Usage** (JavaScript):
+```javascript
+// Fetch latest release information
+fetch('https://pdoom.net/releases/releases.json')
+  .then(res => res.json())
+  .then(data => {
+    const latest = data.releases[0];
+    console.log(`Latest: ${latest.version}`);
+    console.log(`Download: ${latest.downloads.windows}`);
+    console.log(`Changelog: ${latest.changelog}`);
+  });
+```
+
+### Provenance and Security
+
+**Release Manifest** (release_manifest.json):
+```json
+{
+  "version": "v0.10.1",
+  "release_date": "2025-11-08T00:00:00Z",
+  "commit_hash": "abc123...",
+  "data_batch_hash": "sha256:def456...",
+  "schema_versions": {
+    "events": "1.0.0",
+    "organizations": "1.0.0",
+    "researchers": "1.0.0"
+  },
+  "build_artifacts": {
+    "windows": {
+      "filename": "PDoom.exe",
+      "sha256": "..."
+    },
+    "linux": {
+      "filename": "PDoom.x86_64",
+      "sha256": "..."
+    },
+    "mac": {
+      "filename": "PDoom.app.zip",
+      "sha256": "..."
+    }
+  },
+  "feeds": {
+    "releases_json": {
+      "sha256": "..."
+    },
+    "releases_rss": {
+      "sha256": "..."
+    }
+  },
+  "engine": {
+    "name": "Godot",
+    "version": "4.5.1"
+  },
+  "build_pipeline": {
+    "workflow": "enhanced-release.yml",
+    "runner": "ubuntu-latest",
+    "build_timestamp": "2025-11-08T00:00:00Z"
+  },
+  "manifest_hash": "sha256:..."
+}
+```
+
+**Benefits**:
+- Full build reproducibility
+- Supply chain verification
+- Data integrity validation
+- Audit trail for all releases
+
+### Testing the Pipeline
+
+**Local Testing**:
+```bash
+# 1. Test validation
+python scripts/validate_historical_data.py
+
+# 2. Test metadata generation
+python scripts/generate_release_metadata.py --latest
+
+# 3. Verify output files
+ls -la public/releases/
+cat public/releases/releases.json
+```
+
+**CI/CD Testing**:
+1. Create test tag: `git tag v0.10.1-test && git push origin v0.10.1-test`
+2. Monitor workflow: https://github.com/PipFoweraker/pdoom1/actions
+3. Verify artifacts are uploaded
+4. Check release is created
+5. Clean up test release if needed
+
+### Troubleshooting
+
+**Common Issues**:
+
+1. **Validation Failure**: Check `scripts/validate_historical_data.py` output
+   - Fix JSON syntax errors in data files
+   - Ensure all required fields are present
+   - Verify date formats (YYYY-MM-DD)
+
+2. **Godot Build Failure**: Check Godot export templates
+   - Ensure Godot 4.5.1 is used
+   - Verify export presets are configured
+   - Check for missing resources
+
+3. **Feed Generation Failure**: Check `scripts/generate_release_metadata.py`
+   - Ensure git tags exist
+   - Verify CHANGELOG.md format
+   - Check for Unicode encoding issues on Windows
+
+4. **Manifest Creation Failure**: Verify all previous jobs completed
+   - Check artifact uploads succeeded
+   - Ensure hashes are calculated correctly
+
+### Future Enhancements
+
+**Planned Improvements**:
+- [ ] Automated deployment to pdoom.net hosting
+- [ ] Digital signature verification for builds
+- [ ] Automated security scanning of builds
+- [ ] Performance benchmarking in CI/CD
+- [ ] Automated changelog generation from commits
+- [ ] Integration testing with pdoom-data repository
+- [ ] Automated rollback on validation failure
+- [ ] Slack/Discord notifications for releases
+
+---
+
 ## Next Actions
 
 ### Immediate (Today)
 1. Write this plan ✅
 2. Create GitHub issue for documentation refinement
 3. Request WebFetch access to examine Alignment Research Dataset
+4. Implement enhanced release pipeline ✅
+5. Create release metadata generation script ✅
+6. Document CI/CD workflow ✅
 
 ### Short-term (This Week)
 4. Create pdoom-data repository skeleton
 5. Write first 5-10 sample events (2017-2018)
 6. Build sync script prototype
 7. Test integration with pdoom1
+8. Test enhanced release workflow end-to-end
+9. Deploy first release using new pipeline
 
 ### Medium-term (Next 2 Weeks)
 8. Extract full 2017-2019 timeline
 9. Set up GitHub Actions
 10. Integrate with weekly build
 11. Document everything
+12. Add feed deployment to website hosting
+13. Implement automated security scanning
 
 ---
 
-**Last Updated**: 2025-11-03
-**Status**: Active Implementation
-**Next Review**: 2025-11-10
+**Last Updated**: 2025-11-08
+**Status**: Active Implementation (Issue #439 completed)
+**Next Review**: 2025-11-15

@@ -80,7 +80,7 @@ func start_turn() -> Dictionary:
 	]
 
 	if staff_salaries > 0:
-		messages.append("Paid $%d in staff salaries" % staff_salaries)
+		messages.append("Paid %s in staff salaries" % GameConfig.format_money(staff_salaries))
 
 	if research_from_employees > 0:
 		messages.append("Generated %.1f research from %d productive employees" % [research_from_employees, productive_employees])

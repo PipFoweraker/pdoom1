@@ -3,7 +3,7 @@ class_name GameState
 ## Core game state - all resources and game status
 
 # Resources
-var money: float = 100000.0
+var money: float = 245000.0  # Updated from player feedback (issue #436)
 var compute: float = 100.0
 var research: float = 0.0  # Generated from compute
 var papers: float = 0.0
@@ -25,6 +25,9 @@ var managers: int = 0  # Each manager can handle 9 employees
 # Individual researchers (new system)
 var researchers: Array[Researcher] = []
 
+# Purchased upgrades (one-time purchases)
+var purchased_upgrades: Array[String] = []
+
 # Game status
 var turn: int = 0
 var game_over: bool = false
@@ -33,9 +36,6 @@ var game_seed_str: String = ""  # Renamed from 'seed' to avoid shadowing built-i
 
 # Lab mascot 🐱
 var has_cat: bool = false
-
-# Purchased upgrades (one-time purchases)
-var purchased_upgrades: Array[String] = []
 
 # Turn phase tracking (fixes #418 - proper event sequencing)
 enum TurnPhase { TURN_START, ACTION_SELECTION, TURN_PROCESSING, TURN_END }
@@ -73,7 +73,7 @@ func _init(game_seed: String = ""):
 
 func reset():
 	"""Reset to starting state"""
-	money = 100000.0
+	money = 245000.0  # Updated from player feedback (issue #436)
 	compute = 100.0
 	research = 0.0
 	papers = 0.0
@@ -85,6 +85,8 @@ func reset():
 	capability_researchers = 0
 	compute_engineers = 0
 	managers = 0
+
+	purchased_upgrades.clear()
 
 	turn = 0
 	game_over = false

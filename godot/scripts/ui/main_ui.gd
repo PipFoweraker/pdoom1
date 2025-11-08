@@ -13,7 +13,7 @@ extends VBoxContainer
 @onready var phase_label = $BottomBar/PhaseLabel
 @onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
 @onready var actions_list = $ContentArea/LeftPanel/ActionsScroll/ActionsList
-@onready var upgrades_list = $ContentArea/LeftPanel/UpgradesScroll/UpgradesList
+@onready var upgrades_list = $ContentArea/RightPanel/UpgradesScroll/UpgradesList
 @onready var info_label = $InfoBar/MarginContainer/InfoLabel
 @onready var queue_container = $ContentArea/RightPanel/QueuePanel/QueueContainer
 @onready var queue_hint = $ContentArea/RightPanel/QueuePanel/QueueContainer/QueueHint
@@ -23,9 +23,11 @@ extends VBoxContainer
 @onready var reserve_ap_button = $BottomBar/ControlButtons/ReserveAPButton
 @onready var clear_queue_button = $BottomBar/ControlButtons/ClearQueueButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
+@onready var skip_turn_button = $BottomBar/ControlButtons/SkipTurnButton
 @onready var cat_panel = $TopBar/CatPanel
 @onready var doom_meter = $BottomBar/DoomMeterContainer/MarginContainer/DoomMeter
 @onready var game_over_screen = $"../GameOverScreen"
+@onready var tab_manager = get_parent()
 
 # Reference to GameManager
 var game_manager: Node
@@ -42,7 +44,7 @@ func _ready():
 	print("[MainUI] Initializing UI...")
 
 	# Get GameManager reference
-	game_manager = get_node("../GameManager")
+	game_manager = get_node("../../GameManager")
 
 	# Connect to GameManager signals
 	game_manager.game_state_updated.connect(_on_game_state_updated)
@@ -59,7 +61,7 @@ func _ready():
 
 	# Auto-initialize game when scene loads
 	log_message("[color=cyan]Initializing game...[/color]")
-	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to commit[/color]")
+	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to commit, E for employees[/color]")
 
 	# Call init on next frame to ensure everything is ready
 	await get_tree().process_frame
@@ -79,9 +81,16 @@ func _unhandled_key_input(event: InputEvent):
 				accept_event()
 				return
 
+	# Populate upgrades list
+	_populate_upgrades()
+
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
+		# Skip E key - handled by TabManager
+		if event.keycode == KEY_E and active_dialog == null:
+			return
+
 		var key_char = char(event.unicode) if event.unicode > 0 else "?"
 		print("[MainUI] _input called, keycode: %d (%s), active_dialog: %s, buttons: %d" % [event.keycode, key_char, active_dialog != null, active_dialog_buttons.size()])
 
@@ -139,16 +148,22 @@ func _input(event: InputEvent):
 			_trigger_action_by_index(action_index)
 			get_viewport().set_input_as_handled()
 
-		# C to clear queue
-		elif event.keycode == KEY_C:
+		# Clear queue (C key by default, configurable via KeybindManager)
+		elif KeybindManager.is_action_pressed(event, "clear_queue"):
 			if not clear_queue_button.disabled:
 				_on_clear_queue_button_pressed()
 				get_viewport().set_input_as_handled()
 
-		# Space or Enter to end turn
-		elif event.keycode == KEY_SPACE or event.keycode == KEY_ENTER:
+		# Space to end turn (with warnings)
+		elif event.keycode == KEY_SPACE:
 			if not end_turn_button.disabled:
 				_on_end_turn_button_pressed()
+				get_viewport().set_input_as_handled()
+
+		# Enter to skip turn (no warnings)
+		elif event.keycode == KEY_ENTER:
+			if not skip_turn_button.disabled:
+				_on_skip_turn_button_pressed()
 				get_viewport().set_input_as_handled()
 
 		# Escape to init game (if not started)
@@ -269,7 +284,7 @@ func _on_end_turn_button_pressed():
 
 	# Low money warning
 	if current_state.money <= 20000:
-		warnings.append("[color=red]⚠️ CRITICAL: Low funds ($%.0f) - Can't afford much![/color]" % current_state.money)
+		warnings.append("[color=red]⚠️ CRITICAL: Low funds (%s) - Can't afford much![/color]" % GameConfig.format_money(current_state.money))
 
 	# Show warnings if any
 	if warnings.size() > 0:
@@ -286,12 +301,27 @@ func _on_end_turn_button_pressed():
 
 	game_manager.end_turn()
 
+func _on_skip_turn_button_pressed():
+	"""Skip turn without AP warnings - useful for passing with reserved AP"""
+	log_message("[color=cyan]Skipping turn (no actions committed)...[/color]")
+
+	# Clear any queued actions
+	queued_actions.clear()
+	update_queued_actions_display()
+
+	# Just end the turn without checks
+	game_manager.end_turn()
+
+func _on_employee_tab_button_pressed():
+	"""Switch to employee management screen"""
+	tab_manager.show_employee_screen()
+
 func _on_game_state_updated(state: Dictionary):
 	print("[MainUI] State updated: ", state)
 
 	# Update resource displays
 	turn_label.text = "Turn: %d" % state.get("turn", 0)
-	money_label.text = "Money: $%.0f" % state.get("money", 0)
+	money_label.text = "Money: %s" % GameConfig.format_money(state.get("money", 0))
 	compute_label.text = "Compute: %.1f" % state.get("compute", 0)
 	research_label.text = "Research: %.1f" % state.get("research", 0)
 	papers_label.text = "Papers: %d" % state.get("papers", 0)
@@ -375,11 +405,15 @@ func _on_game_state_updated(state: Dictionary):
 		# Disable controls
 		test_action_button.disabled = true
 		end_turn_button.disabled = true
+		skip_turn_button.disabled = true
 		reserve_ap_button.disabled = true
 
 		# Show game over screen with stats
 		if game_over_screen:
 			game_over_screen.show_game_over(victory, state)
+
+	# Refresh upgrades list to update affordability
+	_populate_upgrades()
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
@@ -394,16 +428,19 @@ func _on_turn_phase_changed(phase_name: String):
 		phase_color = "red"
 		phase_display = "TURN START (Processing...)"
 		end_turn_button.disabled = true
+		skip_turn_button.disabled = true
 	elif phase_name == "action_selection" or phase_name == "ACTION_SELECTION":
 		phase_color = "green"
 		phase_display = "ACTION SELECTION (Ready)"
-		# Only enable if actions are queued
+		# End turn requires actions, skip turn is always available
 		end_turn_button.disabled = (queued_actions.size() == 0)
+		skip_turn_button.disabled = false
 		clear_queue_button.disabled = (queued_actions.size() == 0)
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
 		phase_display = "TURN END (Executing...)"
 		end_turn_button.disabled = true
+		skip_turn_button.disabled = true
 
 	phase_label.text = "[color=%s]Phase: %s[/color]" % [phase_color, phase_display]
 
@@ -457,14 +494,30 @@ func _on_actions_available(actions: Array):
 			categories[category] = []
 		categories[category].append(action)
 
-	# Define category order and display names
-	var category_order = ["hiring", "resources", "research", "management", "other"]
+	# Define category order and display names (issue #436 - comprehensive categories)
+	var category_order = ["hiring", "resources", "research", "funding", "management", "influence", "strategic", "other"]
 	var category_names = {
 		"hiring": "Hiring",
 		"resources": "Resources",
 		"research": "Research",
+		"funding": "Fundraising",
 		"management": "Management",
+		"influence": "Public Influence",
+		"strategic": "Strategic",
 		"other": "Other"
+	}
+
+	# Define category colors (from issue #436 player feedback)
+	# Using ThemeManager for centralized color management
+	var category_colors = {
+		"hiring": ThemeManager.get_category_color("hiring"),
+		"resources": ThemeManager.get_category_color("resources"),
+		"research": ThemeManager.get_category_color("research"),
+		"management": ThemeManager.get_category_color("management"),
+		"influence": ThemeManager.get_category_color("influence"),
+		"strategic": ThemeManager.get_category_color("strategic"),
+		"funding": ThemeManager.get_category_color("funding"),
+		"other": Color(0.8, 0.8, 0.8)        # Gray - misc
 	}
 
 	# Create sections for each category
@@ -480,7 +533,8 @@ func _on_actions_available(actions: Array):
 		# Create category label
 		var category_label = Label.new()
 		category_label.text = "-- " + category_names.get(category_key, category_key.capitalize()) + " --"
-		category_label.add_theme_color_override("font_color", Color(0.7, 0.7, 1.0))
+		var label_color = category_colors.get(category_key, Color(0.7, 0.7, 1.0))
+		category_label.add_theme_color_override("font_color", label_color)
 		actions_list.add_child(category_label)
 
 		# Create buttons for actions in this category
@@ -502,11 +556,7 @@ func _on_actions_available(actions: Array):
 			if action_cost.has("action_points"):
 				cost_parts.append("%d AP" % action_cost["action_points"])
 			if action_cost.has("money"):
-				var money_k = action_cost["money"] / 1000.0
-				if money_k >= 1:
-					cost_parts.append("$%dk" % int(money_k))
-				else:
-					cost_parts.append("$%d" % action_cost["money"])
+				cost_parts.append(GameConfig.format_money(action_cost["money"]))
 			if action_cost.has("reputation"):
 				cost_parts.append("%d Rep" % action_cost["reputation"])
 			if action_cost.has("papers"):
@@ -517,6 +567,9 @@ func _on_actions_available(actions: Array):
 
 			# Create styled button using ThemeManager
 			var button = ThemeManager.create_button(button_text)
+			# Constrain button width to prevent extending into middle
+			button.size_flags_horizontal = Control.SIZE_FILL
+			button.custom_minimum_size = Vector2(0, 32)
 
 			action_index += 1  # Increment for next action
 
@@ -543,6 +596,11 @@ func _on_actions_available(actions: Array):
 					tooltip += "\n  Missing: " + msg
 				button.disabled = true
 				button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
+			else:
+				# Apply subtle category color tint to affordable buttons (issue #436)
+				var button_color = category_colors.get(category_key, Color(1.0, 1.0, 1.0))
+				# Lighten the color for buttons (70% white + 30% category color for subtle tint)
+				button.modulate = Color(0.7, 0.7, 0.7).lerp(button_color, 0.3)
 
 			button.tooltip_text = tooltip
 
@@ -555,8 +613,6 @@ func _on_actions_available(actions: Array):
 
 			# Add to list
 			actions_list.add_child(button)
-
-	log_message("[color=cyan]Loaded %d available actions in %d categories[/color]" % [actions.size(), categories.size()])
 
 	# Also populate upgrades
 	_populate_upgrades()
@@ -581,6 +637,9 @@ func _populate_upgrades():
 
 		# Create button
 		var button = ThemeManager.create_button(upgrade_name)
+		# Constrain button width to prevent extending into middle
+		button.size_flags_horizontal = Control.SIZE_FILL
+		button.custom_minimum_size = Vector2(0, 32)
 
 		# If purchased, show differently
 		if is_purchased:
@@ -588,7 +647,7 @@ func _populate_upgrades():
 			button.disabled = true
 			button.modulate = Color(0.5, 1.0, 0.5)  # Green tint
 		else:
-			button.text = "%s ($%dk)" % [upgrade_name, upgrade_cost / 1000]
+			button.text = "%s (%s)" % [upgrade_name, GameConfig.format_money(upgrade_cost)]
 
 			# Check affordability
 			var can_afford = current_state.get("money", 0) >= upgrade_cost
@@ -597,7 +656,7 @@ func _populate_upgrades():
 				button.modulate = Color(0.6, 0.6, 0.6)
 
 		# Tooltip
-		var tooltip = upgrade_desc + "\n\nCost: $%d" % upgrade_cost
+		var tooltip = upgrade_desc + "\n\nCost: %s" % GameConfig.format_money(upgrade_cost)
 		if is_purchased:
 			tooltip += "\n\n[PURCHASED]"
 		elif not current_state.get("money", 0) >= upgrade_cost:
@@ -613,8 +672,6 @@ func _populate_upgrades():
 		button.mouse_exited.connect(func(): _on_action_unhover())
 
 		upgrades_list.add_child(button)
-
-	log_message("[color=cyan]Loaded %d upgrades[/color]" % all_upgrades.size())
 
 func _on_upgrade_pressed(upgrade_id: String, upgrade_name: String):
 	"""Handle upgrade purchase button press"""
@@ -633,11 +690,7 @@ func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
 	var info_text = "[b][color=cyan]%s[/color][/b] — %s" % [upgrade_name, upgrade_desc]
 
 	# Show cost
-	var money_k = upgrade_cost / 1000.0
-	if money_k >= 1:
-		info_text += "\n[color=gray]├─[/color] [color=yellow]Cost:[/color] [color=gold]$%dk[/color]" % int(money_k)
-	else:
-		info_text += "\n[color=gray]├─[/color] [color=yellow]Cost:[/color] [color=gold]$%d[/color]" % upgrade_cost
+	info_text += "\n[color=gray]├─[/color] [color=yellow]Cost:[/color] [color=gold]%s[/color]" % GameConfig.format_money(upgrade_cost)
 
 	# Show status
 	info_text += "\n[color=gray]└─[/color] "
@@ -649,11 +702,7 @@ func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
 			info_text += "[color=lime]✓ READY TO PURCHASE[/color]"
 		else:
 			var needed = upgrade_cost - current_state.get("money", 0)
-			var needed_k = needed / 1000.0
-			if needed_k >= 1:
-				info_text += "[color=red]✗ NEED $%dk MORE[/color]" % int(needed_k)
-			else:
-				info_text += "[color=red]✗ NEED $%d MORE[/color]" % needed
+			info_text += "[color=red]✗ NEED %s MORE[/color]" % GameConfig.format_money(needed)
 
 	info_label.text = info_text
 
@@ -752,7 +801,7 @@ func _show_hiring_submenu():
 		btn.focus_mode = Control.FOCUS_NONE  # Don't grab focus - let MainUI handle keys
 		btn.mouse_filter = Control.MOUSE_FILTER_PASS  # Still allow mouse clicks
 		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		var btn_text = "[%s] %s ($%d, %d AP)" % [key_label, hire_name, hire_costs.get("money", 0), hire_costs.get("action_points", 0)]
+		var btn_text = "[%s] %s (%s, %d AP)" % [key_label, hire_name, GameConfig.format_money(hire_costs.get("money", 0)), hire_costs.get("action_points", 0)]
 		btn.text = btn_text
 
 		# Check affordability
@@ -767,7 +816,7 @@ func _show_hiring_submenu():
 			btn.modulate = Color(0.6, 0.6, 0.6)
 
 		# Add tooltip
-		btn.tooltip_text = hire_desc + "\n\nCosts: $%d, %d AP\n\nPress %d to select" % [hire_costs.get("money", 0), hire_costs.get("action_points", 0), button_index + 1]
+		btn.tooltip_text = hire_desc + "\n\nCosts: %s, %d AP\n\nPress %d to select" % [GameConfig.format_money(hire_costs.get("money", 0)), hire_costs.get("action_points", 0), button_index + 1]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_hiring_option_selected(hire_id, hire_name, dialog))
@@ -785,11 +834,12 @@ func _show_hiring_submenu():
 	for i in range(buttons.size()):
 		print("[MainUI]   Button %d: %s" % [i, buttons[i].text])
 
-	# Add dialog to scene tree and show
-	print("[MainUI] Adding dialog to scene tree...")
-	add_child(dialog)
+	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
+	print("[MainUI] Adding dialog to TabManager as overlay...")
+	tab_manager.add_child(dialog)
 	dialog.visible = true
-	dialog.z_index = 100  # Ensure it's on top
+	dialog.z_index = 1000  # Very high z-index to ensure it's on top
+	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
 	print("[MainUI] Dialog added and made visible: %s" % dialog.visible)
 
 	# Wait one frame for dialog to be ready
@@ -903,9 +953,9 @@ func _show_fundraising_submenu():
 		# Format gains
 		var gain_text = ""
 		if fund_gains.has("money_min") and fund_gains.has("money_max"):
-			gain_text = "$%d-$%d" % [fund_gains.get("money_min"), fund_gains.get("money_max")]
+			gain_text = "%s-%s" % [GameConfig.format_money(fund_gains.get("money_min")), GameConfig.format_money(fund_gains.get("money_max"))]
 		elif fund_gains.has("money"):
-			gain_text = "$%d" % fund_gains.get("money")
+			gain_text = GameConfig.format_money(fund_gains.get("money"))
 
 		# Add keyboard hint (LETTERS not numbers)
 		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
@@ -939,11 +989,12 @@ func _show_fundraising_submenu():
 	print("[MainUI] active_dialog is now: %s" % (active_dialog != null))
 	print("[MainUI] Fundraising submenu opened, tracked %d buttons" % buttons.size())
 
-	# Add dialog to scene tree and show
-	print("[MainUI] Adding dialog to scene tree...")
-	add_child(dialog)
+	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
+	print("[MainUI] Adding dialog to TabManager as overlay...")
+	tab_manager.add_child(dialog)
 	dialog.visible = true
-	dialog.z_index = 100  # Ensure it's on top
+	dialog.z_index = 1000  # Very high z-index to ensure it's on top
+	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
 	print("[MainUI] Dialog added and made visible: %s" % dialog.visible)
 
 	# Wait one frame for dialog to be ready
@@ -1178,11 +1229,12 @@ func _on_event_triggered(event: Dictionary):
 	active_dialog_buttons = buttons
 	print("[MainUI] Event dialog opened, tracked %d buttons" % buttons.size())
 
-	# Add dialog to scene tree and show
-	print("[MainUI] Adding event dialog to scene tree...")
-	add_child(dialog)
+	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
+	print("[MainUI] Adding event dialog to TabManager as overlay...")
+	tab_manager.add_child(dialog)
 	dialog.visible = true
-	dialog.z_index = 100  # Ensure it's on top
+	dialog.z_index = 1000  # Very high z-index to ensure it's on top
+	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
 	print("[MainUI] Event dialog added and made visible: %s" % dialog.visible)
 
 	# Wait one frame
@@ -1212,20 +1264,17 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 	# Build info text with enhanced formatting
 	var info_text = "[b][color=cyan]%s[/color][/b] — %s" % [action_name, action_desc]
 
-	# Add costs with icons/colors
+	# Add costs with icons/colors (always add line for consistent 2-line format)
+	info_text += "\n[color=gray]├─[/color] "
 	if not action_costs.is_empty():
-		info_text += "\n[color=gray]├─[/color] [color=yellow]Costs:[/color] "
+		info_text += "[color=yellow]Costs:[/color] "
 		var cost_parts = []
 
 		# Format each resource cost with appropriate color
 		if action_costs.has("action_points"):
 			cost_parts.append("[color=magenta]%d AP[/color]" % action_costs["action_points"])
 		if action_costs.has("money"):
-			var money_k = action_costs["money"] / 1000.0
-			if money_k >= 1:
-				cost_parts.append("[color=gold]$%dk[/color]" % int(money_k))
-			else:
-				cost_parts.append("[color=gold]$%d[/color]" % action_costs["money"])
+			cost_parts.append("[color=gold]%s[/color]" % GameConfig.format_money(action_costs["money"]))
 		if action_costs.has("reputation"):
 			cost_parts.append("[color=orange]%d Rep[/color]" % action_costs["reputation"])
 		if action_costs.has("papers"):
@@ -1236,6 +1285,8 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 			cost_parts.append("[color=purple]%.1f Research[/color]" % action_costs["research"])
 
 		info_text += " • ".join(cost_parts)
+	else:
+		info_text += "[color=gray]No costs[/color]"
 
 	# Show affordability with visual indicator
 	info_text += "\n[color=gray]└─[/color] "
@@ -1250,4 +1301,4 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 
 func _on_action_unhover():
 	"""Reset info bar when mouse leaves action"""
-	info_label.text = "[color=gray]Hover over actions to see details...[/color]"
+	info_label.text = "[color=gray]Hover over actions to see details...\n [/color]"

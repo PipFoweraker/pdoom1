@@ -4,6 +4,89 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.10.2] - 2025-11-08 - 'Multi-Platform Release & Enhanced CI/CD'
+
+### Added
+- **Multi-Platform Build Support**: Automated builds for Windows, Linux, and macOS
+  - New `scripts/build_all_platforms.py` for unified build automation
+  - Auto-detects Godot executable on all platforms
+  - Updates export paths automatically for each version
+  - Comprehensive error reporting and build summaries
+- **Linux/X11 Export Preset**: Native x86_64 Linux builds with SSH remote deploy
+- **macOS Export Preset**: Universal binary support (Intel + Apple Silicon)
+  - Enabled ETC2/ASTC texture compression for ARM64 compatibility
+  - Code signing and notarization configuration ready
+  - macOS 10.13+ minimum version support
+- **Enhanced CI/CD Pipeline** (#439):
+  - Automated data validation before every release
+  - Release metadata generation (JSON + RSS feeds)
+  - Build provenance tracking with SHA256 hashes
+  - Triage issue creation on validation failures
+  - Release manifest for supply chain verification
+- **Employee Management Screen** (#434, #430, #424):
+  - Tab-based interface for better organization
+  - Progressive warnings system for dangerous actions
+  - Hire employees with various specializations
+  - Fire employees with confirmation dialogs
+- **Pre-Game Configuration Screen** (#436):
+  - Player feedback: confirm settings before game start
+  - Seed display and configuration review
+  - Clean transition to main game
+- **Testing Infrastructure** (#434):
+  - Comprehensive GUT test framework integration
+  - Quality gates in CI/CD pipeline
+  - Automated testing for core game mechanics
+- **Release Metadata Generation**:
+  - Automatic changelog extraction from CHANGELOG.md
+  - JSON feeds for website integration (releases.json)
+  - RSS 2.0 feed for release notifications
+  - Per-version metadata with download links
+
+### Changed
+- **UI Polish and Visual Improvements**:
+  - Increased InfoBar height (40px → 60px) to prevent flicker
+  - Made info bar permanently 2-line format
+  - Added "No costs" text for actions without resource requirements
+  - Moved upgrades to right panel for better visibility
+  - Improved button sizing with size constraints
+  - Better negative space and visual breathing room
+  - StarCraft 2 / X-COM inspired UI consistency
+- **Build Process Integration**:
+  - CI/CD now uses unified build script for consistency
+  - Single job builds all platforms (Windows, Linux, macOS)
+  - Version paths automatically updated in export presets
+  - Parallel artifact uploads for faster deployments
+- **Action Organization**:
+  - Moved AI Ethicist from standalone to hiring submenu
+  - Consolidated all hiring options in one location
+  - Reduced action list clutter
+
+### Fixed
+- **Duplicate Function Definitions**: Removed duplicates in game_state.gd
+- **UI Visual Flicker**: InfoBar no longer shifts between 1-2 lines
+- **Scene Hierarchy**: Corrected paths in main.tscn after TabManager restructure
+- **Keyboard Shortcuts**: Integrated Clear Queue with KeybindManager system
+
+### Technical
+- **Build Artifacts**:
+  - Windows: PDoom.exe (x86_64)
+  - Linux: PDoom.x86_64
+  - macOS: PDoom.app.zip (Universal Binary)
+- **CI/CD Workflow**: Enhanced release workflow with 6-stage pipeline
+  1. Data validation
+  2. Multi-platform builds
+  3. Feed generation
+  4. Release manifest creation
+  5. GitHub release publication
+  6. Feed deployment (planned)
+- **Engine**: Godot 4.5.1 stable
+
+### Documentation
+- Added comprehensive CI/CD pipeline documentation
+- Multi-platform build usage guide
+- Release metadata generation instructions
+- Supply chain verification documentation
+
 ## [v0.10.1] - 2025-11-03 - 'UX Improvements & Public Release'
 
 ### Fixed
