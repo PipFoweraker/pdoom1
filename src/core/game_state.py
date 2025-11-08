@@ -1935,11 +1935,11 @@ class GameState:
         # Apply researcher effects to doom calculation
         if hasattr(self, 'researchers') and self.researchers:
             researcher_effects = self.get_researcher_productivity_effects()
-            
-            # Apply doom reduction from safety specialists
+
+            # Apply doom reduction from safety specialists (but don't let it go negative)
             if researcher_effects.get('doom_reduction_bonus', 0) > 0:
                 doom_reduction = doom_rise * researcher_effects['doom_reduction_bonus']
-                doom_rise = max(0, doom_rise - doom_reduction)
+                doom_rise = max(1, doom_rise - doom_reduction)  # Changed from max(0, ...) to max(1, ...) - doom always rises, just slower
                 self.messages.append(f"Safety researchers reduced doom increase by {doom_reduction:.1f}")
             
             # Apply doom increase from capabilities research

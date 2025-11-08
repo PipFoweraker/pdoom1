@@ -23,6 +23,7 @@ extends VBoxContainer
 @onready var reserve_ap_button = $BottomBar/ControlButtons/ReserveAPButton
 @onready var clear_queue_button = $BottomBar/ControlButtons/ClearQueueButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
+@onready var skip_turn_button = $BottomBar/ControlButtons/SkipTurnButton
 @onready var cat_panel = $TopBar/CatPanel
 @onready var doom_meter = $BottomBar/DoomMeterContainer/MarginContainer/DoomMeter
 @onready var game_over_screen = $"../GameOverScreen"
@@ -153,10 +154,16 @@ func _input(event: InputEvent):
 				_on_clear_queue_button_pressed()
 				get_viewport().set_input_as_handled()
 
-		# Space or Enter to end turn
-		elif event.keycode == KEY_SPACE or event.keycode == KEY_ENTER:
+		# Space to end turn (with warnings)
+		elif event.keycode == KEY_SPACE:
 			if not end_turn_button.disabled:
 				_on_end_turn_button_pressed()
+				get_viewport().set_input_as_handled()
+
+		# Enter to skip turn (no warnings)
+		elif event.keycode == KEY_ENTER:
+			if not skip_turn_button.disabled:
+				_on_skip_turn_button_pressed()
 				get_viewport().set_input_as_handled()
 
 		# Escape to init game (if not started)
@@ -294,6 +301,17 @@ func _on_end_turn_button_pressed():
 
 	game_manager.end_turn()
 
+func _on_skip_turn_button_pressed():
+	"""Skip turn without AP warnings - useful for passing with reserved AP"""
+	log_message("[color=cyan]Skipping turn (no actions committed)...[/color]")
+
+	# Clear any queued actions
+	queued_actions.clear()
+	update_queued_actions_display()
+
+	# Just end the turn without checks
+	game_manager.end_turn()
+
 func _on_game_state_updated(state: Dictionary):
 	print("[MainUI] State updated: ", state)
 
@@ -383,6 +401,7 @@ func _on_game_state_updated(state: Dictionary):
 		# Disable controls
 		test_action_button.disabled = true
 		end_turn_button.disabled = true
+		skip_turn_button.disabled = true
 		reserve_ap_button.disabled = true
 
 		# Show game over screen with stats
@@ -405,16 +424,19 @@ func _on_turn_phase_changed(phase_name: String):
 		phase_color = "red"
 		phase_display = "TURN START (Processing...)"
 		end_turn_button.disabled = true
+		skip_turn_button.disabled = true
 	elif phase_name == "action_selection" or phase_name == "ACTION_SELECTION":
 		phase_color = "green"
 		phase_display = "ACTION SELECTION (Ready)"
-		# Only enable if actions are queued
+		# End turn requires actions, skip turn is always available
 		end_turn_button.disabled = (queued_actions.size() == 0)
+		skip_turn_button.disabled = false
 		clear_queue_button.disabled = (queued_actions.size() == 0)
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
 		phase_display = "TURN END (Executing...)"
 		end_turn_button.disabled = true
+		skip_turn_button.disabled = true
 
 	phase_label.text = "[color=%s]Phase: %s[/color]" % [phase_color, phase_display]
 
@@ -806,9 +828,9 @@ func _show_hiring_submenu():
 	for i in range(buttons.size()):
 		print("[MainUI]   Button %d: %s" % [i, buttons[i].text])
 
-	# Add dialog to scene tree and show
-	print("[MainUI] Adding dialog to scene tree...")
-	add_child(dialog)
+	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
+	print("[MainUI] Adding dialog to TabManager as overlay...")
+	tab_manager.add_child(dialog)
 	dialog.visible = true
 	dialog.z_index = 100  # Ensure it's on top
 	print("[MainUI] Dialog added and made visible: %s" % dialog.visible)
@@ -960,9 +982,9 @@ func _show_fundraising_submenu():
 	print("[MainUI] active_dialog is now: %s" % (active_dialog != null))
 	print("[MainUI] Fundraising submenu opened, tracked %d buttons" % buttons.size())
 
-	# Add dialog to scene tree and show
-	print("[MainUI] Adding dialog to scene tree...")
-	add_child(dialog)
+	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
+	print("[MainUI] Adding dialog to TabManager as overlay...")
+	tab_manager.add_child(dialog)
 	dialog.visible = true
 	dialog.z_index = 100  # Ensure it's on top
 	print("[MainUI] Dialog added and made visible: %s" % dialog.visible)
@@ -1199,9 +1221,9 @@ func _on_event_triggered(event: Dictionary):
 	active_dialog_buttons = buttons
 	print("[MainUI] Event dialog opened, tracked %d buttons" % buttons.size())
 
-	# Add dialog to scene tree and show
-	print("[MainUI] Adding event dialog to scene tree...")
-	add_child(dialog)
+	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
+	print("[MainUI] Adding event dialog to TabManager as overlay...")
+	tab_manager.add_child(dialog)
 	dialog.visible = true
 	dialog.z_index = 100  # Ensure it's on top
 	print("[MainUI] Event dialog added and made visible: %s" % dialog.visible)
