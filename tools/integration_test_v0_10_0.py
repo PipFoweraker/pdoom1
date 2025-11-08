@@ -16,7 +16,7 @@ project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
 from tools.web_export import LeaderboardWebExporter
-from src.services.version import get_display_version
+from scripts.lib.services.version import get_display_version
 
 
 def test_web_export_integration():
