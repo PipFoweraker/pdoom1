@@ -10,10 +10,12 @@
 
 ### For Players
 
-**🎮 [Download v0.10.1 for Windows](https://github.com/PipFoweraker/pdoom1/releases/tag/v0.10.1)** - First official Godot 4.x release!
+**🎮 Download Latest Release (v0.10.2):**
+- **[Windows](https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom.exe)** - x86_64
+- **[Linux](https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom.x86_64)** - x86_64
+- **[macOS](https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom.app.zip)** - Universal (Intel + Apple Silicon)
 
 **Other Options:**
-- **Mac/Linux**: Build from source using [Deployment Guide](docs/deployment/DEPLOYMENT.md) (native builds coming soon)
 - **Python version (legacy)**: [v0.1.0 release](https://github.com/PipFoweraker/pdoom1/releases/tag/v0.1.0) - older version, still playable
 
 ### For Developers
@@ -51,14 +53,16 @@ You manage a bootstrap AI safety lab with limited funds, racing against well-fun
 - **[Deployment](docs/deployment/DEPLOYMENT.md)** - Creating builds
 - **[Privacy](docs/PRIVACY.md)** - Privacy design principles
 
-## Current Version: v0.10.1
+## Current Version: v0.10.2
 
-Built with **Godot 4.x** - Fully featured UI, sound, gameplay, and leaderboards.
+Built with **Godot 4.5.1** - Fully featured UI, sound, gameplay, and leaderboards.
 
-**What's New in v0.10.1:**
-- Documentation cleanup and organization
-- Development tools for validation
-- Root directory cleanup
+**What's New in v0.10.2:**
+- **Multi-Platform Support**: Native builds for Windows, Linux, and macOS
+- **Enhanced CI/CD**: Automated builds and validation pipeline
+- **Employee Management**: New employee screen for hiring safety and capabilities researchers
+- **Pre-Game Configuration**: Configure game settings before starting
+- **UI Polish**: Improved layouts, information displays, and visual consistency
 - See [CHANGELOG.md](CHANGELOG.md) for full history
 
 ## Links
@@ -70,14 +74,15 @@ Built with **Godot 4.x** - Fully featured UI, sound, gameplay, and leaderboards.
 
 ## Platform Support
 
-- ✅ **Windows**: Fully supported
-- ⏳ **Mac/Linux**: Coming soon (high priority)
-- 🛠️ **Build from source**: Godot 4.x project
+- ✅ **Windows**: x86_64 native build
+- ✅ **Linux**: x86_64 native build
+- ✅ **macOS**: Universal binary (Intel + Apple Silicon)
+- 🛠️ **Build from source**: Godot 4.5.1 project
 
 ## Technical Details
 
-**Engine:** Godot 4.x
-**Platform:** Windows (Mac/Linux in development)
+**Engine:** Godot 4.5.1
+**Platforms:** Windows, Linux, macOS
 **Development:** Active
 
 **Note:** A Python/Pygame prototype exists for development and testing purposes only. Players should use the Godot version.
