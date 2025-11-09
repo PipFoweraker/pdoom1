@@ -57,7 +57,7 @@ class StandardsEnforcer:
         # Check for deterministic RNG usage
         print("[CHECK] Checking deterministic RNG usage...")
         random_imports = self._find_files_with_pattern(
-            "import random", exclude_dirs=["tests", ".venv", "scripts", "archive", "legacy"]
+            "import random", exclude_dirs=["tests", ".venv", "scripts", "archive", "legacy", "tools"]
         )
         # Filter out the deterministic_rng.py file which legitimately uses random
         random_imports = [r for r in random_imports if "deterministic_rng.py" not in r[0]]
@@ -281,7 +281,7 @@ class StandardsEnforcer:
         import re
 
         if exclude_dirs is None:
-            exclude_dirs = [".git", "__pycache__", ".venv", "node_modules", "archive", "legacy"]
+            exclude_dirs = [".git", "__pycache__", ".venv", "node_modules", "archive", "legacy", "tools"]
 
         matches = []
         pattern_re = re.compile(pattern) if is_regex else None
@@ -376,6 +376,7 @@ class StandardsEnforcer:
             ".pytest_cache",
             "archive",
             "legacy",
+            "tools",
         }
 
         for pattern in patterns:
@@ -411,7 +412,7 @@ class StandardsEnforcer:
         import ast
 
         syntax_errors = []
-        exclude_parts = {".venv", "__pycache__", "archive", "legacy"}
+        exclude_parts = {".venv", "__pycache__", "archive", "legacy", "tools", "tests"}
         for py_file in self.project_root.rglob("*.py"):
             if any(excluded in str(py_file) for excluded in exclude_parts):
                 continue

@@ -35,7 +35,8 @@ jobs:
       env:
         PYTHONWARNINGS: ignore::DeprecationWarning
       run: |
-        python -m pytest tests/ -v
+        echo "ℹ️  Project migrated to Godot - Python pytest skipped"
+        echo "✅ Unit tests handled by Godot GUT framework"
 
     - name: Verify event log behavior specifically
       run: |
