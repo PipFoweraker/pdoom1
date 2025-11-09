@@ -355,7 +355,11 @@ class StandardsEnforcer:
                 # Skip files in excluded directories
                 if any(excluded in file_path.parts for excluded in exclude_dirs):
                     continue
-                    
+
+                # Skip if it's actually a directory (edge case)
+                if file_path.is_dir():
+                    continue
+
                 try:
                     with open(file_path, 'r', encoding='utf-8') as f:
                         for line_num, line in enumerate(f, 1):
