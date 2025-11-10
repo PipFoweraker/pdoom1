@@ -48,6 +48,8 @@ extend-exclude = '''
   | \.venv
   | build
   | dist
+  | archive
+  | legacy
 )/
 '''
 
