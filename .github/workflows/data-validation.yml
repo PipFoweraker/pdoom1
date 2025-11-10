@@ -1,0 +1,215 @@
+name: Data Validation & Feed Publishing
+
+# Run on PRs and pushes to main/develop, plus manual trigger
+on:
+  pull_request:
+    paths:
+      - 'godot/data/**'
+      - 'shared/data/**'
+      - 'shared/schemas/**'
+      - 'scripts/validate_historical_data.py'
+      - '.github/workflows/data-validation.yml'
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'godot/data/**'
+      - 'shared/data/**'
+      - 'shared/schemas/**'
+      - 'scripts/validate_historical_data.py'
+  workflow_dispatch:
+
+jobs:
+  validate-data:
+    name: Validate Historical Data
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install jsonschema>=4.0.0
+
+      - name: Run schema validation
+        id: validate
+        run: |
+          echo "::group::Data Validation"
+          python scripts/validate_historical_data.py --verbose
+          VALIDATION_STATUS=$?
+          echo "::endgroup::"
+
+          if [ $VALIDATION_STATUS -ne 0 ]; then
+            echo "❌ Data validation failed!"
+            exit 1
+          else
+            echo "✅ Data validation passed!"
+          fi
+
+      - name: Generate validation report
+        if: always()
+        run: |
+          python scripts/validate_historical_data.py --verbose > validation-report.txt 2>&1 || true
+          echo "## Validation Report" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat validation-report.txt >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: validation-report.txt
+          retention-days: 30
+
+      - name: Comment on PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('validation-report.txt', 'utf8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `## ❌ Data Validation Failed
+
+The historical data validation checks have failed. Please review and fix the errors below:
+
+\`\`\`
+${report}
+\`\`\`
+
+**What to do:**
+1. Review the errors in the validation report
+2. Fix the data files or schemas as needed
+3. Run \`python scripts/validate_historical_data.py -v\` locally to verify
+4. Push your fixes to trigger re-validation
+
+See [shared/schemas/README.md](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/shared/schemas/README.md) for schema documentation.`
+            });
+
+  schema-validation-status:
+    name: Check Schema Validation Health
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify schema files exist
+        run: |
+          echo "Checking for required schema files..."
+          MISSING_SCHEMAS=0
+
+          for schema in event organization researcher; do
+            if [ ! -f "shared/schemas/${schema}.schema.json" ]; then
+              echo "❌ Missing: shared/schemas/${schema}.schema.json"
+              MISSING_SCHEMAS=$((MISSING_SCHEMAS + 1))
+            else
+              echo "✅ Found: shared/schemas/${schema}.schema.json"
+            fi
+          done
+
+          if [ $MISSING_SCHEMAS -gt 0 ]; then
+            echo "❌ $MISSING_SCHEMAS schema file(s) missing!"
+            exit 1
+          fi
+
+      - name: Validate schema syntax
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install AJV for schema validation
+        run: npm install -g ajv-cli
+
+      - name: Check JSON Schema syntax
+        run: |
+          echo "Validating JSON Schema syntax..."
+          for schema in shared/schemas/*.schema.json; do
+            echo "Checking $schema..."
+            ajv compile -s "$schema" --strict=true
+            if [ $? -eq 0 ]; then
+              echo "✅ $schema is valid"
+            else
+              echo "❌ $schema has syntax errors"
+              exit 1
+            fi
+          done
+
+  publish-feeds:
+    name: Publish RSS & JSON Feeds
+    needs: validate-data
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Generate feeds (placeholder)
+        run: |
+          echo "Feed generation will be implemented in Issue #437"
+          echo "This job confirms the automation structure is in place"
+          mkdir -p public/feeds
+          echo '{"status": "placeholder"}' > public/feeds/events.json
+
+      - name: Upload feed artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-feeds
+          path: public/feeds/
+          retention-days: 30
+
+      - name: Generate provenance log
+        run: |
+          cat > public/feeds/provenance.json << EOF
+          {
+            "build_timestamp": "$(date -Iseconds)",
+            "commit_sha": "${{ github.sha }}",
+            "commit_ref": "${{ github.ref }}",
+            "run_id": "${{ github.run_id }}",
+            "run_number": "${{ github.run_number }}",
+            "schemas_version": "1.0.0",
+            "validation_passed": true
+          }
+          EOF
+
+      - name: Create release manifest
+        run: |
+          cat > release-manifest.md << EOF
+          # Data Release Manifest
+
+          **Build Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Commit:** ${{ github.sha }}
+          **Triggered By:** ${{ github.actor }}
+
+          ## Validation Status
+          - ✅ Schema validation: PASSED
+          - ✅ Data integrity: VERIFIED
+
+          ## Artifacts
+          - Event data: validated against event.schema.json
+          - Organization data: validated against organization.schema.json
+          - Researcher data: validated against researcher.schema.json
+
+          ## Provenance
+          See \`public/feeds/provenance.json\` for detailed build metadata.
+          EOF
+
+          cat release-manifest.md >> $GITHUB_STEP_SUMMARY
