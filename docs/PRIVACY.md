@@ -41,6 +41,29 @@ P(Doom) is designed with **privacy-first principles**. We believe that your game
 - Local logs can be disabled in privacy settings
 - No local data is transmitted without your explicit consent
 
+### In-Game Bug Reporter (F8 Key)
+**What we collect when you submit a bug report:**
+- **Technical information only** (OS type, Godot version, game version, timestamp)
+- **Your description** of the bug or suggestion
+- **Optional screenshot** (auto-captured if you choose)
+- **Optional save file** (if you choose to include it)
+- **Optional attribution** (your name and contact, only if you choose)
+
+**How it's used:**
+- Reports saved locally in `user://bug_reports/` by default
+- Processed into GitHub issues (manually, with your consent)
+- Used to improve game quality and fix bugs
+- Attribution used for contributor recognition (if opted-in)
+
+**Your control:**
+- **Anonymous by default** - no personal information required
+- **Local-first** - reports saved on your device
+- **Opt-in attribution** - choose whether to be recognized
+- **Manual processing** - reports are not automatically uploaded
+- **Contributor program** - optional participation in office cat recognition
+
+See [CONTRIBUTOR_REWARDS.md](CONTRIBUTOR_REWARDS.md) for details on the contributor recognition program.
+
 ### Optional Leaderboard System
 **When you opt-in to leaderboards:**
 - **Pseudonymous identity**: You choose a display name (no real names required)
@@ -85,7 +108,7 @@ Our deterministic RNG system enhances privacy by:
 ### Privacy-Respecting Leaderboards
 **Pseudonymous Design:**
 ```
-Real Identity -> [Local Only] 
+Real Identity -> [Local Only]
 Pseudonym -> Leaderboard Entry
 Game Data -> Verification Hash
 ```
@@ -217,6 +240,6 @@ Settings -> Privacy -> Verbose Logging
 
 *This document reflects our current privacy implementation and commitment. As an open-source project, you can verify these practices by reviewing our code. Privacy is fundamental to P(Doom)'s design, not an afterthought.*
 
-**Last Updated:** September 4, 2025  
-**Version:** 1.0  
+**Last Updated:** September 4, 2025
+**Version:** 1.0
 **Effective:** Immediately
