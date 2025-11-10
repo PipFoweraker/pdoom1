@@ -236,7 +236,7 @@ jobs:
           fi
           
       - name: Upload Health Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: health-report-${{ github.sha }}
           path: health_report.json
