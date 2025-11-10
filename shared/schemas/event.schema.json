@@ -1,0 +1,146 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pdoom1.com/schemas/event.schema.json",
+  "title": "Event Schema",
+  "description": "Schema for historical AI safety timeline events in PDoom1",
+  "type": "object",
+  "properties": {
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/event"
+      }
+    }
+  },
+  "required": ["events"],
+  "definitions": {
+    "event": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the event",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "type": {
+          "type": "string",
+          "description": "Category of the event",
+          "enum": [
+            "paper_publication",
+            "conference",
+            "org_founding",
+            "funding",
+            "capability",
+            "governance"
+          ]
+        },
+        "date": {
+          "type": "string",
+          "description": "Event date in ISO 8601 format",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "year": {
+          "type": "integer",
+          "description": "Year of the event",
+          "minimum": 1950,
+          "maximum": 2030
+        },
+        "month": {
+          "type": "integer",
+          "description": "Month of the event (1-12)",
+          "minimum": 1,
+          "maximum": 12
+        },
+        "day": {
+          "type": "integer",
+          "description": "Day of the month (1-31)",
+          "minimum": 1,
+          "maximum": 31
+        },
+        "title": {
+          "type": "string",
+          "description": "Event title",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description for game UI",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "detailed_description": {
+          "type": "string",
+          "description": "Longer context for tooltips/logs"
+        },
+        "source_url": {
+          "type": "string",
+          "description": "URL to source material",
+          "format": "uri"
+        },
+        "attribution": {
+          "type": "string",
+          "description": "Source name/citation"
+        },
+        "game_impact": {
+          "type": "object",
+          "description": "How this event affects game mechanics",
+          "properties": {
+            "doom_change": {
+              "type": "number",
+              "description": "Change to doom counter"
+            },
+            "reputation_change": {
+              "type": "integer",
+              "description": "Change to reputation"
+            },
+            "money_change": {
+              "type": "integer",
+              "description": "Change to money"
+            },
+            "triggers_research_unlock": {
+              "type": "boolean",
+              "description": "Whether this unlocks research"
+            }
+          },
+          "additionalProperties": false
+        },
+        "tags": {
+          "type": "array",
+          "description": "Tags for categorization",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "related_orgs": {
+          "type": "array",
+          "description": "IDs of related organizations",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "related_people": {
+          "type": "array",
+          "description": "Names of related people",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "id",
+        "type",
+        "date",
+        "year",
+        "title",
+        "description",
+        "source_url",
+        "attribution"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

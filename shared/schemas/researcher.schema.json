@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pdoom1.com/schemas/researcher.schema.json",
+  "title": "Researcher Schema",
+  "description": "Schema for researcher profiles in PDoom1",
+  "type": "object",
+  "properties": {
+    "researchers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/researcher"
+      }
+    }
+  },
+  "required": ["researchers"],
+  "definitions": {
+    "researcher": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the researcher",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Researcher name",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "specialization": {
+          "type": "string",
+          "description": "Primary research area",
+          "enum": [
+            "safety",
+            "capabilities",
+            "interpretability",
+            "alignment",
+            "governance",
+            "policy",
+            "theory"
+          ]
+        },
+        "affiliated_orgs": {
+          "type": "array",
+          "description": "IDs of affiliated organizations",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "notable_work": {
+          "type": "array",
+          "description": "List of notable publications/work",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Title of the work",
+                "minLength": 1
+              },
+              "year": {
+                "type": "integer",
+                "description": "Year of publication",
+                "minimum": 1950,
+                "maximum": 2030
+              },
+              "url": {
+                "type": "string",
+                "description": "URL to the work",
+                "format": "uri"
+              }
+            },
+            "required": ["title", "year"],
+            "additionalProperties": false
+          }
+        },
+        "public_profile": {
+          "type": "string",
+          "description": "URL to public profile or bio",
+          "format": "uri"
+        },
+        "use_in_game": {
+          "type": "object",
+          "description": "How researcher can be used in game",
+          "properties": {
+            "as_hireable_character": {
+              "type": "boolean",
+              "description": "Can be hired in game"
+            },
+            "as_rival_researcher": {
+              "type": "boolean",
+              "description": "Can appear as competitor"
+            },
+            "name_in_papers": {
+              "type": "boolean",
+              "description": "Name appears in research papers"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["id", "name", "specialization"],
+      "additionalProperties": false
+    }
+  }
+}

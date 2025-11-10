@@ -19,8 +19,14 @@ import json
 import sys
 from pathlib import Path
 from datetime import datetime
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Optional
 import argparse
+try:
+    import jsonschema
+    from jsonschema import Draft7Validator
+    HAS_JSONSCHEMA = True
+except ImportError:
+    HAS_JSONSCHEMA = False
 
 
 class Colors:
@@ -31,6 +37,58 @@ class Colors:
     BLUE = '\033[94m'
     RESET = '\033[0m'
     BOLD = '\033[1m'
+
+
+# Cache for loaded schemas
+_SCHEMA_CACHE: Dict[str, Dict] = {}
+
+
+def load_schema(schema_name: str) -> Optional[Dict]:
+    """Load and cache a JSON Schema file"""
+    if schema_name in _SCHEMA_CACHE:
+        return _SCHEMA_CACHE[schema_name]
+
+    schema_path = Path("shared/schemas") / f"{schema_name}.schema.json"
+    if not schema_path.exists():
+        return None
+
+    try:
+        with open(schema_path, 'r', encoding='utf-8') as f:
+            schema = json.load(f)
+        _SCHEMA_CACHE[schema_name] = schema
+        return schema
+    except Exception as e:
+        print(f"{Colors.YELLOW}Warning: Failed to load schema {schema_name}: {e}{Colors.RESET}")
+        return None
+
+
+def validate_with_schema(data: Dict, schema_name: str, file_path: Path) -> List[str]:
+    """Validate data against a JSON Schema"""
+    errors = []
+
+    if not HAS_JSONSCHEMA:
+        errors.append(f"{file_path.name}: jsonschema library not installed, skipping schema validation")
+        return errors
+
+    schema = load_schema(schema_name)
+    if not schema:
+        errors.append(f"{file_path.name}: Schema {schema_name} not found")
+        return errors
+
+    try:
+        validator = Draft7Validator(schema)
+        validation_errors = list(validator.iter_errors(data))
+
+        for error in validation_errors:
+            # Build path to the error
+            path = ".".join(str(p) for p in error.path) if error.path else "root"
+            errors.append(
+                f"{file_path.name}/{path}: {error.message}"
+            )
+    except Exception as e:
+        errors.append(f"{file_path.name}: Schema validation failed: {e}")
+
+    return errors
 
 
 def validate_json_file(file_path: Path) -> Tuple[bool, List[str]]:
@@ -158,6 +216,15 @@ def validate_researcher_file(file_path: Path) -> List[str]:
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
+    # Use JSON Schema validation if available
+    schema_errors = validate_with_schema(data, 'researcher', file_path)
+    if schema_errors:
+        errors.extend(schema_errors)
+        # If schema validation passed, skip legacy checks
+        if not any("not found" in e or "not installed" in e for e in schema_errors):
+            return errors
+
+    # Legacy validation (fallback if schema unavailable)
     if 'researchers' not in data:
         errors.append(f"{file_path.name}: Missing 'researchers' array")
         return errors
@@ -174,7 +241,7 @@ def validate_researcher_file(file_path: Path) -> List[str]:
                 )
 
         # Validate specialization
-        valid_specs = ['safety', 'capabilities', 'interpretability', 'alignment', 'governance']
+        valid_specs = ['safety', 'capabilities', 'interpretability', 'alignment', 'governance', 'policy', 'theory']
         if researcher.get('specialization') not in valid_specs:
             errors.append(
                 f"{file_path.name}/{researcher_id}: Invalid specialization "
@@ -196,6 +263,15 @@ def validate_organization_file(file_path: Path) -> List[str]:
     with open(file_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
 
+    # Use JSON Schema validation if available
+    schema_errors = validate_with_schema(data, 'organization', file_path)
+    if schema_errors:
+        errors.extend(schema_errors)
+        # If schema validation passed, skip legacy checks
+        if not any("not found" in e or "not installed" in e for e in schema_errors):
+            return errors
+
+    # Legacy validation (fallback if schema unavailable)
     if 'organizations' not in data:
         errors.append(f"{file_path.name}: Missing 'organizations' array")
         return errors
@@ -204,7 +280,7 @@ def validate_organization_file(file_path: Path) -> List[str]:
         org_id = org.get('id', 'unknown')
 
         # Required fields
-        required = ['id', 'name', 'type', 'founded_date']
+        required = ['id', 'name', 'type', 'description']
         for field in required:
             if field not in org:
                 errors.append(
@@ -212,7 +288,7 @@ def validate_organization_file(file_path: Path) -> List[str]:
                 )
 
         # Validate type
-        valid_types = ['safety', 'frontier', 'governance']
+        valid_types = ['safety', 'frontier', 'governance', 'academic', 'nonprofit']
         if org.get('type') not in valid_types:
             errors.append(
                 f"{file_path.name}/{org_id}: Invalid type "
@@ -328,6 +404,13 @@ def main():
     args = parser.parse_args()
 
     print(f"{Colors.BOLD}=== P(Doom) Historical Data Validation ==={Colors.RESET}\n")
+
+    # Check schema validation availability
+    if HAS_JSONSCHEMA:
+        print(f"{Colors.GREEN}JSON Schema validation: ENABLED{Colors.RESET}")
+    else:
+        print(f"{Colors.YELLOW}JSON Schema validation: DISABLED (install jsonschema: pip install jsonschema){Colors.RESET}")
+    print()
 
     total_files, files_with_errors, all_errors = run_validation(args.verbose)
 

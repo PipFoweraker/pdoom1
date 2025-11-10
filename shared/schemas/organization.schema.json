@@ -1,0 +1,107 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pdoom1.com/schemas/organization.schema.json",
+  "title": "Organization Schema",
+  "description": "Schema for AI safety organizations in PDoom1",
+  "type": "object",
+  "properties": {
+    "organizations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/organization"
+      }
+    }
+  },
+  "required": ["organizations"],
+  "definitions": {
+    "organization": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the organization",
+          "pattern": "^[a-z0-9_]+$"
+        },
+        "name": {
+          "type": "string",
+          "description": "Organization name",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "type": {
+          "type": "string",
+          "description": "Category of organization",
+          "enum": ["safety", "frontier", "governance", "academic", "nonprofit"]
+        },
+        "founded_date": {
+          "type": "string",
+          "description": "Founding date in ISO 8601 format",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "description": {
+          "type": "string",
+          "description": "What the organization does",
+          "minLength": 1
+        },
+        "focus_areas": {
+          "type": "array",
+          "description": "Research/work focus areas",
+          "items": {
+            "type": "string",
+            "enum": [
+              "interpretability",
+              "alignment",
+              "governance",
+              "policy",
+              "safety",
+              "capabilities",
+              "research",
+              "funding"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "funding_level": {
+          "type": "string",
+          "description": "Funding/resource level",
+          "enum": ["bootstrap", "seed", "well-funded", "major"]
+        },
+        "website": {
+          "type": "string",
+          "description": "Organization website URL",
+          "format": "uri"
+        },
+        "source_url": {
+          "type": "string",
+          "description": "Reference/source URL",
+          "format": "uri"
+        },
+        "game_representation": {
+          "type": "object",
+          "description": "How organization appears in game",
+          "properties": {
+            "appears_as_rival": {
+              "type": "boolean",
+              "description": "Can appear as competitor"
+            },
+            "appears_as_partner": {
+              "type": "boolean",
+              "description": "Can appear as partner"
+            },
+            "funding_events": {
+              "type": "array",
+              "description": "Associated funding event IDs",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["id", "name", "type", "description"],
+      "additionalProperties": false
+    }
+  }
+}
