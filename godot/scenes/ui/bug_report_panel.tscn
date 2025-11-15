@@ -1,0 +1,177 @@
+[gd_scene load_steps=2 format=3 uid="uid://bugreport123456"]
+
+[ext_resource type="Script" path="res://scripts/ui/bug_report_panel.gd" id="1_bugreport"]
+
+[node name="BugReportPanel" type="Control"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bugreport")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(700, 650)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Bug Report & Feedback"
+horizontal_alignment = 1
+
+[node name="SubtitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Help us improve P(Doom) by reporting bugs or suggesting features!"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+
+[node name="Form" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TypeHBox" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Form"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TypeLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Form/TypeHBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+text = "Type:"
+vertical_alignment = 1
+
+[node name="TypeOption" type="OptionButton" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Form/TypeHBox"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Form"]
+layout_mode = 2
+text = "Title:"
+
+[node name="TitleInput" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Form"]
+layout_mode = 2
+placeholder_text = "Brief summary of the issue or suggestion"
+max_length = 100
+
+[node name="DescriptionLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Form"]
+layout_mode = 2
+text = "Description:"
+
+[node name="DescriptionInput" type="TextEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Form"]
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+placeholder_text = "Detailed description of the issue or suggestion...
+
+For bugs, include:
+- What happened?
+- What did you expect to happen?
+- How can we reproduce this?"
+wrap_mode = 1
+
+[node name="Options" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="OptionsLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Options"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Include:"
+
+[node name="ScreenshotCheck" type="CheckBox" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Options"]
+layout_mode = 2
+button_pressed = true
+text = "Screenshot (automatically captured)"
+
+[node name="SaveCheck" type="CheckBox" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Options"]
+layout_mode = 2
+text = "Save file (helps us reproduce bugs)"
+
+[node name="Attribution" type="VBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="AttributionLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Attribution"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Contributor Recognition (Optional):"
+
+[node name="AttributionCheck" type="CheckBox" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Attribution"]
+layout_mode = 2
+text = "I'd like to be recognized for my contribution"
+
+[node name="NameInput" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Attribution"]
+layout_mode = 2
+placeholder_text = "Your name (for credits)"
+editable = false
+max_length = 50
+
+[node name="ContactInput" type="LineEdit" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Attribution"]
+layout_mode = 2
+placeholder_text = "Contact info (optional - email, GitHub, Discord)"
+editable = false
+max_length = 100
+
+[node name="PrivacyLabel" type="RichTextLabel" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+bbcode_enabled = true
+text = "[center][color=gray]Privacy notice will appear here[/color][/center]"
+fit_content = true
+scroll_active = false
+
+[node name="ConfirmationLabel" type="Label" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Confirmation message"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="Buttons" type="HBoxContainer" parent="CenterContainer/PanelContainer/MarginContainer/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="SubmitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Buttons"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+text = "Submit Report"
+
+[node name="CancelButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBox/Buttons"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+text = "Cancel"

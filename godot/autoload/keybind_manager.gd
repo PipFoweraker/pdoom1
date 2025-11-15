@@ -29,6 +29,23 @@ var keybinds: Dictionary = {
 	# UI Navigation
 	"next_tab": {"key": KEY_TAB, "category": Category.UI, "description": "Next Tab"},
 	"prev_tab": {"key": KEY_TAB, "shift": true, "category": Category.UI, "description": "Previous Tab"},
+	"bug_reporter": {"key": KEY_F8, "category": Category.UI, "description": "Open Bug Reporter"},
+	"employee_tab": {"key": KEY_E, "category": Category.UI, "description": "Employee Screen"},
+	"settings": {"key": KEY_F10, "category": Category.UI, "description": "Settings Menu"},
+
+	# Actions (Number keys 1-9 for quick action access)
+	"action_1": {"key": KEY_1, "category": Category.GAMEPLAY, "description": "Trigger Action 1"},
+	"action_2": {"key": KEY_2, "category": Category.GAMEPLAY, "description": "Trigger Action 2"},
+	"action_3": {"key": KEY_3, "category": Category.GAMEPLAY, "description": "Trigger Action 3"},
+	"action_4": {"key": KEY_4, "category": Category.GAMEPLAY, "description": "Trigger Action 4"},
+	"action_5": {"key": KEY_5, "category": Category.GAMEPLAY, "description": "Trigger Action 5"},
+	"action_6": {"key": KEY_6, "category": Category.GAMEPLAY, "description": "Trigger Action 6"},
+	"action_7": {"key": KEY_7, "category": Category.GAMEPLAY, "description": "Trigger Action 7"},
+	"action_8": {"key": KEY_8, "category": Category.GAMEPLAY, "description": "Trigger Action 8"},
+	"action_9": {"key": KEY_9, "category": Category.GAMEPLAY, "description": "Trigger Action 9"},
+
+	# Additional Gameplay shortcuts
+	"skip_turn": {"key": KEY_ENTER, "category": Category.GAMEPLAY, "description": "Skip Turn"},
 }
 
 # Active profile

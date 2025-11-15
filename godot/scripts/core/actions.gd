@@ -81,8 +81,8 @@ static func get_all_actions() -> Array[Dictionary]:
 		{
 			"id": "lobby_government",
 			"name": "Lobby Government",
-			"description": "Advocate for AI safety regulation",
-			"costs": {"money": 80000, "action_points": 2, "reputation": 10},
+			"description": "Advocate for AI safety regulation (reduces reputation)",
+			"costs": {"money": 80000, "action_points": 2},
 			"category": "influence"
 		},
 		{
@@ -339,10 +339,10 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Safety audit (-%d doom, +3 reputation)" % doom_reduced
 
 		"lobby_government":
-			# Lobbying reduces doom and can trigger policy events
+			# Lobbying reduces doom but costs reputation (fix #449)
 			var doom_reduction = 8 + (state.reputation * 0.1)
-			state.add_resources({"doom": -doom_reduction, "reputation": 5})
-			result["message"] = "Government lobbying (-%0.1f doom, +5 reputation)" % doom_reduction
+			state.add_resources({"doom": -doom_reduction, "reputation": -10})
+			result["message"] = "Government lobbying (-%0.1f doom, -10 reputation)" % doom_reduction
 
 		"release_warning":
 			# Risky: big doom reduction but reputation hit and random outcome

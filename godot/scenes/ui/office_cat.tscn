@@ -1,0 +1,39 @@
+[gd_scene load_steps=2 format=3 uid="uid://officecat123456"]
+
+[ext_resource type="Script" path="res://scripts/ui/office_cat.gd" id="1_officecat"]
+
+[node name="OfficeCat" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+custom_minimum_size = Vector2(280, 350)
+script = ExtResource("1_officecat")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="CatPanel" type="PanelContainer" parent="VBox"]
+layout_mode = 2
+custom_minimum_size = Vector2(256, 256)
+
+[node name="CatTexture" type="TextureRect" parent="VBox/CatPanel"]
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ContributorLabel" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Office Cat"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="DoomMeterContainer" type="Control" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
