@@ -149,3 +149,26 @@ func test_unknown_action_returns_empty_dict():
 	var result = GameActions.execute_action("nonexistent_action", state)
 
 	assert_eq(result, {}, "Unknown action should return empty dict")
+
+## Regression test for issue #449 - verify lobby_government is affordable
+func test_lobby_government_affordable_without_reputation():
+	# Issue #449: lobby_government should not require reputation as a cost
+	state.money = 100000
+	state.action_points = 3
+	state.reputation = 5  # Low reputation - should NOT block action
+
+	var actions = GameActions.get_all_actions()
+	var lobby_action = null
+
+	for action in actions:
+		if action["id"] == "lobby_government":
+			lobby_action = action
+			break
+
+	assert_not_null(lobby_action, "lobby_government should exist")
+
+	var costs = lobby_action["costs"]
+	var can_afford = state.can_afford(costs)
+
+	assert_true(can_afford, "Should be affordable with just money and AP (no reputation cost)")
+	assert_false(costs.has("reputation"), "Costs should not include reputation")
