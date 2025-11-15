@@ -398,6 +398,14 @@ func resolve_event(event: Dictionary, choice_id: String):
 
 func _apply_difficulty_settings():
 	"""Apply difficulty modifiers to game state"""
+	# Validate difficulty value first (fix #447 - crash on invalid difficulty)
+	if typeof(GameConfig.difficulty) != TYPE_INT:
+		print("[GameManager] ERROR: Invalid difficulty type (expected int, got %s), defaulting to Standard" % typeof(GameConfig.difficulty))
+		GameConfig.difficulty = 1
+	elif GameConfig.difficulty < 0 or GameConfig.difficulty > 2:
+		print("[GameManager] ERROR: Invalid difficulty value (%d), defaulting to Standard" % GameConfig.difficulty)
+		GameConfig.difficulty = 1
+
 	match GameConfig.difficulty:
 		0:  # Easy
 			print("[GameManager] Applying EASY difficulty modifiers")
@@ -410,3 +418,6 @@ func _apply_difficulty_settings():
 			print("[GameManager] Applying HARD difficulty modifiers")
 			state.money *= 0.75  # 25% less starting money
 			state.max_action_points = 2  # Less AP
+		_:  # Safety default case (should never reach here after validation)
+			print("[GameManager] WARNING: Unexpected difficulty value, using Standard")
+			# Apply standard difficulty (no changes)
