@@ -314,7 +314,7 @@ scroll_active = false
 [node name="BugReportButton" type="Button" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
 custom_minimum_size = Vector2(120, 0)
-text = "Bug Report (F8)"
+text = "Bug Report (\\)"
 theme_override_font_sizes/font_size = 12
 
 [node name="DoomMeterContainer" type="PanelContainer" parent="TabManager/MainUI/BottomBar"]

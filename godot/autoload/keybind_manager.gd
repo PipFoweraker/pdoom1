@@ -29,7 +29,7 @@ var keybinds: Dictionary = {
 	# UI Navigation
 	"next_tab": {"key": KEY_TAB, "category": Category.UI, "description": "Next Tab"},
 	"prev_tab": {"key": KEY_TAB, "shift": true, "category": Category.UI, "description": "Previous Tab"},
-	"bug_reporter": {"key": KEY_F8, "category": Category.UI, "description": "Open Bug Reporter"},
+	"bug_reporter": {"key": KEY_BACKSLASH, "category": Category.UI, "description": "Open Bug Reporter"},
 	"employee_tab": {"key": KEY_E, "category": Category.UI, "description": "Employee Screen"},
 	"settings": {"key": KEY_F10, "category": Category.UI, "description": "Settings Menu"},
 

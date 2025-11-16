@@ -179,10 +179,10 @@ func _input(event: InputEvent):
 				_on_skip_turn_button_pressed()
 				get_viewport().set_input_as_handled()
 
-		# F8 to open bug reporter (global hotkey)
-		elif event.keycode == KEY_F8:
+		# Backslash (\) to open bug reporter (global hotkey)
+		elif event.keycode == KEY_BACKSLASH:
 			if bug_report_panel:
-				bug_report_panel.toggle_panel()
+				bug_report_panel.show_panel()
 				get_viewport().set_input_as_handled()
 
 		# Escape to init game (if not started)

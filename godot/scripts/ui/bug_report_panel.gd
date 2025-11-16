@@ -60,13 +60,12 @@ func _input(event):
 	if not visible:
 		return
 
-	# Consume ALL input events when visible to prevent background interaction
-	get_viewport().set_input_as_handled()
-
-	# F8 or ESC to close bug reporter
+	# Handle keyboard shortcuts
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_F8 or event.keycode == KEY_ESCAPE:
+		# Backslash (\) or ESC to close bug reporter
+		if event.keycode == KEY_BACKSLASH or event.keycode == KEY_ESCAPE:
 			hide_panel()
+			get_viewport().set_input_as_handled()
 
 ## Show the bug report panel
 func show_panel():
