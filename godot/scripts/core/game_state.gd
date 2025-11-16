@@ -333,6 +333,11 @@ func to_dict() -> Dictionary:
 	else:
 		doom_data = {"doom": doom}
 
+	# Serialize researchers array
+	var researcher_dicts = []
+	for researcher in researchers:
+		researcher_dicts.append(researcher.to_dict())
+
 	return {
 		"money": money,
 		"compute": compute,
@@ -358,5 +363,6 @@ func to_dict() -> Dictionary:
 		"victory": victory,
 		"rival_labs": rival_summaries,
 		"has_cat": has_cat,
-		"purchased_upgrades": purchased_upgrades
+		"purchased_upgrades": purchased_upgrades,
+		"researchers": researcher_dicts
 	}

@@ -27,7 +27,7 @@ func _on_game_state_updated(state: Dictionary):
 
 func _update_stats(state: Dictionary):
 	"""Update team overview statistics"""
-	var total_employees = state.get("staff", 0)
+	var total_employees = state.get("total_staff", 0)
 	var safety = state.get("safety_researchers", 0)
 	var capability = state.get("capability_researchers", 0)
 	var compute_eng = state.get("compute_engineers", 0)
@@ -37,13 +37,16 @@ func _update_stats(state: Dictionary):
 	stats += "[color=red]● Capability Researchers:[/color] %d\n" % capability
 	stats += "[color=blue]● Compute Engineers:[/color] %d\n\n" % compute_eng
 
-	# Add productivity info
-	var employee_blobs = state.get("employee_blobs", [])
+	# Add productivity info from researchers
+	var researchers = state.get("researchers", [])
 	var productive = 0
 	var unproductive = 0
 
-	for blob in employee_blobs:
-		if blob.get("productivity", 0) > 0:
+	for researcher in researchers:
+		var productivity = researcher.get("base_productivity", 1.0)
+		var burnout = researcher.get("burnout", 0)
+		# Consider productive if productivity > 0 and not burned out
+		if productivity > 0 and burnout < 90:
 			productive += 1
 		else:
 			unproductive += 1
@@ -57,7 +60,7 @@ func _update_stats(state: Dictionary):
 
 func _update_warnings(state: Dictionary):
 	"""Update management warnings based on employee count"""
-	var total_employees = state.get("staff", 0)
+	var total_employees = state.get("total_staff", 0)
 	var warnings = []
 
 	# Progressive warning system (issue #424 Phase 2)
@@ -71,16 +74,16 @@ func _update_warnings(state: Dictionary):
 		warnings.append("[color=yellow]ℹ️ INFO: Team growing - Consider hiring management soon[/color]")
 		warnings.append("[color=gray]→ Management helps maintain productivity at scale[/color]")
 
-	# Check for compute shortage
-	var employee_blobs = state.get("employee_blobs", [])
-	var no_compute_count = 0
-	for blob in employee_blobs:
-		if not blob.get("has_compute", false) and blob.get("type", "") == "employee":
-			no_compute_count += 1
+	# Check for burnout among researchers
+	var researchers = state.get("researchers", [])
+	var burnout_count = 0
+	for researcher in researchers:
+		if researcher.get("burnout", 0) >= 70:
+			burnout_count += 1
 
-	if no_compute_count > 0:
-		warnings.append("[color=orange]⚠️ %d employees lack compute resources[/color]" % no_compute_count)
-		warnings.append("[color=gray]→ Purchase more compute or optimize allocation[/color]")
+	if burnout_count > 0:
+		warnings.append("[color=orange]⚠️ %d researcher(s) experiencing high burnout[/color]" % burnout_count)
+		warnings.append("[color=gray]→ Consider reducing workload or providing breaks[/color]")
 
 	if warnings.size() > 0:
 		warnings_text.text = "\n\n".join(warnings)
@@ -93,9 +96,9 @@ func _update_employee_list(state: Dictionary):
 	for child in employees_list.get_children():
 		child.queue_free()
 
-	var employee_blobs = state.get("employee_blobs", [])
+	var researchers = state.get("researchers", [])
 
-	if employee_blobs.size() == 0:
+	if researchers.size() == 0:
 		var label = Label.new()
 		label.text = "No employees hired yet."
 		label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
@@ -103,12 +106,12 @@ func _update_employee_list(state: Dictionary):
 		return
 
 	# Display each employee
-	for i in range(employee_blobs.size()):
-		var blob = employee_blobs[i]
-		var employee_card = _create_employee_card(blob, i + 1)
+	for i in range(researchers.size()):
+		var researcher = researchers[i]
+		var employee_card = _create_employee_card(researcher, i + 1)
 		employees_list.add_child(employee_card)
 
-func _create_employee_card(blob: Dictionary, number: int) -> PanelContainer:
+func _create_employee_card(researcher: Dictionary, number: int) -> PanelContainer:
 	"""Create a card displaying employee information"""
 	var card = PanelContainer.new()
 	card.custom_minimum_size = Vector2(0, 80)
@@ -123,24 +126,24 @@ func _create_employee_card(blob: Dictionary, number: int) -> PanelContainer:
 	var vbox = VBoxContainer.new()
 	margin.add_child(vbox)
 
-	# Employee header (number and type)
+	# Employee header (number and name)
 	var header = HBoxContainer.new()
 	vbox.add_child(header)
 
 	var name_label = Label.new()
-	var subtype = blob.get("subtype", "employee")
-	var type_display = subtype.replace("_", " ").capitalize()
+	var researcher_name = researcher.get("name", "Anonymous Researcher")
+	var specialization = researcher.get("specialization", "safety")
 
-	# Color code by type
+	# Color code by specialization
 	var type_color = Color.WHITE
-	if "safety" in subtype:
+	if specialization == "safety" or specialization == "alignment":
 		type_color = Color.GREEN
-	elif "capability" in subtype:
+	elif specialization == "capabilities":
 		type_color = Color.RED
-	elif "compute" in subtype:
+	elif specialization == "interpretability":
 		type_color = Color.CYAN
 
-	name_label.text = "#%d - %s" % [number, type_display]
+	name_label.text = "#%d - %s" % [number, researcher_name]
 	name_label.add_theme_color_override("font_color", type_color)
 	name_label.add_theme_font_size_override("font_size", 14)
 	header.add_child(name_label)
@@ -151,21 +154,17 @@ func _create_employee_card(blob: Dictionary, number: int) -> PanelContainer:
 
 	# Status indicator
 	var status_label = Label.new()
-	var is_productive = blob.get("productivity", 0) > 0
-	var has_compute = blob.get("has_compute", false)
+	var productivity = researcher.get("base_productivity", 1.0)
+	var burnout = researcher.get("burnout", 0)
 
-	if is_productive and has_compute:
+	if productivity > 0 and burnout < 70:
 		status_label.text = "✓ Productive"
 		status_label.add_theme_color_override("font_color", Color.LIME_GREEN)
-	elif not has_compute:
-		status_label.text = "⚠ No Compute"
+	elif burnout >= 70:
+		status_label.text = "⚠ Burned Out"
 		status_label.add_theme_color_override("font_color", Color.ORANGE)
 	else:
-		var reason = blob.get("unproductive_reason", "unknown")
-		if reason == "no_manager":
-			status_label.text = "✗ Needs Management"
-		else:
-			status_label.text = "✗ Unproductive"
+		status_label.text = "✗ Unproductive"
 		status_label.add_theme_color_override("font_color", Color.RED)
 
 	header.add_child(status_label)
@@ -179,26 +178,21 @@ func _create_employee_card(blob: Dictionary, number: int) -> PanelContainer:
 
 	var details_text = ""
 
-	# Show role
-	var employee_type = blob.get("type", "employee")
-	if employee_type == "manager":
-		details_text += "[color=gold]Role:[/color] Manager\n"
-	else:
-		details_text += "[color=gray]Role:[/color] Employee\n"
+	# Show specialization
+	var spec_name = specialization.capitalize()
+	details_text += "[color=gray]Specialization:[/color] %s\n" % spec_name
 
-	# Show productivity details
-	var productivity = blob.get("productivity", 0)
+	# Show skill level
+	var skill_level = researcher.get("skill_level", 5)
+	details_text += "[color=gray]Skill Level:[/color] %d/10  " % skill_level
+
+	# Show productivity
 	var productivity_pct = int(productivity * 100)
 	details_text += "[color=gray]Productivity:[/color] %d%%" % productivity_pct
 
-	# Show bonus if active
-	var bonus = blob.get("productive_action_bonus", 1.0)
-	if bonus != 1.0:
-		var bonus_pct = int((bonus - 1.0) * 100)
-		if bonus_pct > 0:
-			details_text += " [color=lime](+%d%% bonus)[/color]" % bonus_pct
-		else:
-			details_text += " [color=orange](%d%% penalty)[/color]" % bonus_pct
+	# Show burnout if significant
+	if burnout > 30:
+		details_text += "\n[color=orange]Burnout:[/color] %d%%" % int(burnout)
 
 	details.text = details_text
 	vbox.add_child(details)
