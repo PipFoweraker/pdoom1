@@ -180,7 +180,7 @@ Vertices: 3,456
 - [Add $50k Money] - Instant cash injection
 - [Add 5 Action Points] - Extra AP for testing
 - [Trigger Random Event] - Force event spawn
-- [Skip Turn] - Fast-forward gameplay
+- [Advance Turn] - Fast-forward gameplay
 - [Reset Game] - Quick restart
 
 ## Architecture Decision

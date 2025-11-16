@@ -13,7 +13,7 @@ P(Doom) features comprehensive keyboard navigation inspired by StarCraft 2. Ever
 | Key | Action | Description |
 |-----|--------|-------------|
 | **Space** | End Turn | Execute queued actions and advance to next turn |
-| **Enter** | Skip Turn | Skip current turn without executing actions |
+| **Enter** | Commit Plan & Reserve AP | Commit current plan and reserve remaining Action Points for reactive responses |
 | **C** | Clear Queue | Clear all queued actions |
 | **Esc** | Cancel/Back | Close dialogs, return to previous screen |
 
@@ -113,7 +113,7 @@ To reset all keybinds to defaults:
 ├─────────────────────────────────────────┤
 │ GAMEPLAY                                │
 │   Space      End Turn                   │
-│   Enter      Skip Turn                  │
+│   Enter      Commit Plan & Reserve AP   │
 │   1-9        Trigger Actions            │
 │   C          Clear Queue                │
 │                                         │

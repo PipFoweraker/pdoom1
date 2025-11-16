@@ -101,7 +101,7 @@ func apply_doom_change(change: float):
 - **Add $50k Money**: Instant cash injection for testing
 - **Add 5 Action Points**: Extra AP to test action queuing
 - **Trigger Random Event**: Force event spawn
-- **Skip Turn**: Fast-forward gameplay
+- **Advance Turn**: Fast-forward gameplay
 - **Reset Game**: Quick restart
 
 ## Best Practices

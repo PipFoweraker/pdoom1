@@ -6,23 +6,43 @@
 
 ---
 
+## Turn Philosophy: The "Monday Planning" Metaphor
+
+**Core Concept:** Each turn represents planning a week of work at your AI safety lab.
+
+**The Weekly Cycle:**
+1. **Monday Morning** (TURN_START): Survey the week ahead, events arrive, refresh resources
+2. **Planning Phase** (ACTION_SELECTION): Decide what to accomplish this week, queue actions
+3. **Reserve Slack**: Keep some Action Points available for chaos/opportunities that arise
+4. **Commit Plan**: Lock in your strategy (Enter) or execute immediately (Space)
+5. **Week Unfolds** (TURN_EXECUTION): Actions execute, events may occur, competitors act
+6. **Next Monday**: Repeat with new information
+
+**Strategic Implications:**
+- **Empty queue is valid**: Reserving all AP for reactive responses is a legitimate strategy
+- **Planned actions** (future): Will cost less AP than improvised responses to events
+- **Slack management**: Like real planning, balancing structure vs. flexibility is key
+- **Commitment timing**: Monday planning = low stress; mid-week improvisation = higher cost
+
+---
+
 ## Quick Reference
 
 ### Turn Phases (Enum)
 ```gdscript
 enum TurnPhase {
-    TURN_START,         # Events trigger, resources refresh
-    ACTION_SELECTION,   # Player queues actions
-    TURN_EXECUTION      # Actions execute, doom calculated
+    TURN_START,         # Events trigger, resources refresh (Monday morning)
+    ACTION_SELECTION,   # Player plans the week, queues actions
+    TURN_EXECUTION      # Week unfolds, actions execute, doom calculated
 }
 ```
 
 ### Complete Turn Cycle
 ```
-START TURN → [Events?] → ACTION SELECTION → EXECUTE TURN → START NEXT TURN
-     ↓           ↓              ↓                  ↓
-  Phase 1     Resolve        Queue           Execute all
-  (automatic) (manual)      (manual)        (automatic)
+MONDAY PLANNING → [Events?] → PLAN YOUR WEEK → COMMIT & EXECUTE → NEXT MONDAY
+     ↓              ↓              ↓                  ↓
+  Phase 1        Resolve      Queue actions     Week unfolds
+  (automatic)    (manual)      (manual)         (automatic)
 ```
 
 ---
@@ -364,11 +384,11 @@ var available_ap = state.action_points - state.committed_ap - state.reserved_ap
 
 #### Pass Turn (Virtual Action)
 ```gdscript
-// Created by "Skip Turn" button
+// Created by "Commit Plan (Enter)" button
 {
     "id": "pass_turn",
-    "name": "Pass Turn",
-    "description": "Skip turn without taking actions",
+    "name": "Reserve All AP",
+    "description": "Commit plan with all AP reserved for reactive responses",
     "ap_cost": 0,
     "money_cost": 0
 }
@@ -594,9 +614,9 @@ if state.get_event_ap() >= 2:
 │   3. Deduct committed_ap                                    │
 │   4. Update UI (show queue, remaining AP)                   │
 │                                                              │
-│ Player presses "End Turn" or "Skip Turn"                    │
-│   ├─ End Turn: Queue must have actions                      │
-│   └─ Skip Turn: Queue "pass_turn" virtual action            │
+│ Player commits plan: "End Turn" or "Commit Plan & Reserve AP"│
+│   ├─ End Turn (Space): Execute queued actions               │
+│   └─ Commit Plan (Enter): Queue "pass_turn" (reserve all AP)│
 │                                                              │
 │ Transition to TURN_EXECUTION                                │
 └─────────────────────────────────────────────────────────────┘
