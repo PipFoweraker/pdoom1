@@ -10,17 +10,39 @@ enum Screen {
 }
 
 var current_screen: Screen = Screen.MAIN
+var bug_report_panel: Control = null
 
 func _ready():
 	# Start with main screen visible
 	show_main_screen()
 
+	# Dynamically load and add bug reporter panel (issue #446)
+	_setup_bug_reporter()
+
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
+
+func _setup_bug_reporter():
+	"""Load and setup bug reporter panel"""
+	var bug_panel_scene = load("res://scenes/ui/bug_report_panel.tscn")
+	if bug_panel_scene:
+		bug_report_panel = bug_panel_scene.instantiate()
+		add_child(bug_report_panel)
+		bug_report_panel.visible = false
+		print("[TabManager] Bug reporter panel loaded successfully")
+	else:
+		print("[TabManager] WARNING: Could not load bug reporter panel scene")
 
 func _input(event: InputEvent):
 	"""Handle screen switching shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
+		# F8 for Bug Reporter (issue #446)
+		if event.keycode == KEY_F8:
+			if bug_report_panel:
+				bug_report_panel.toggle_panel()
+				get_viewport().set_input_as_handled()
+			return
+
 		# E key for Employees screen
 		if event.keycode == KEY_E:
 			if current_screen == Screen.MAIN:

@@ -40,8 +40,14 @@ var current_turn_phase: String = "NOT_STARTED"
 var active_dialog: Control = null
 var active_dialog_buttons: Array = []
 
+# Office Cat integration (issue #446)
+var office_cat_controller: Control = null
+
 func _ready():
 	print("[MainUI] Initializing UI...")
+
+	# Initialize Office Cat system (issue #446)
+	_setup_office_cat()
 
 	# Get GameManager reference
 	game_manager = get_node("../../GameManager")
@@ -66,6 +72,15 @@ func _ready():
 	# Call init on next frame to ensure everything is ready
 	await get_tree().process_frame
 	_on_init_button_pressed()
+
+func _setup_office_cat():
+	"""Setup Office Cat display system (issue #446)"""
+	# For now, the cat panel exists but is hidden
+	# In the future, this could instantiate the full office_cat scene
+	# and connect it to doom updates
+	if cat_panel:
+		# Cat panel will be shown when has_cat state is true
+		print("[MainUI] Office Cat panel initialized (hidden by default)")
 
 func _unhandled_key_input(event: InputEvent):
 	"""Handle keyboard shortcuts for dialogs (runs after focus but before _unhandled_input)"""
