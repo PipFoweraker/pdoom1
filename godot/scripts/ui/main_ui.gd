@@ -338,8 +338,9 @@ func _on_skip_turn_button_pressed():
 	queued_actions.append(pass_action)
 	update_queued_actions_display()
 
-	# Sync to game state (same as normal action selection)
-	game_manager.select_action("pass_turn")
+	# Directly append to game state queue (bypass select_action validation)
+	# pass_turn is a virtual action that doesn't exist in the action list
+	game_manager.state.queued_actions.append("pass_turn")
 
 	# End the turn
 	game_manager.end_turn()
