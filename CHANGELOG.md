@@ -4,6 +4,42 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-11-16 - 'Critical Bug Fixes & Testing Infrastructure'
+
+### Fixed
+- **Event Dialog Soft-Lock (#452)**: Event popups can no longer be closed with ESC key, preventing game soft-locks
+- **Custom Difficulty Crash (#447)**: Added validation for difficulty values with graceful fallback to Standard
+- **Lobby Government Action (#449)**: Removed incorrect reputation cost requirement, action now affordable with money + AP
+- **UI Category Headers (#451)**: Removed cluttered category labels, increased button color prominence for better visual distinction
+- **InfoBar Flickering (#450)**: Confirmed 60px minimum height prevents layout shifts on hover/unhover
+- **Office Cat Duplication (#448)**: Verified hire office cat action removed, cat properly implemented as in-game event
+
+### Added
+- **Comprehensive Testing Infrastructure**:
+  - 34 regression tests covering all bug fixes
+  - New test suites: `test_bug_fixes.gd` (19 tests), `test_ui_stability.gd` (14 tests)
+  - Test runner scripts for Windows (PowerShell) and Unix (Bash)
+  - CI/CD integration via GitHub Actions
+  - Issue-to-test mapping for traceability
+- **Testing Strategy Documentation** (`docs/TESTING_STRATEGY.md`):
+  - Test philosophy and best practices
+  - Coverage goals and metrics
+  - Writing new tests guide
+  - Local test execution instructions
+- **Bug Reporter Integration (Partial #446)**:
+  - F8 keyboard shortcut to open bug reporter
+  - Privacy-focused local bug report saving
+  - Foundation for contributor recognition program
+- **Office Cat System (Partial #446)**:
+  - Cat panel integration in main UI
+  - Ready for doom-level variant switching
+  - Contributor recognition infrastructure
+
+### Changed
+- Event dialogs marked with `is_event_dialog` meta flag to distinguish from submenu dialogs
+- Lobby government action applies -10 reputation penalty as effect rather than cost
+- Category colors on action buttons now use 50% lerp (was 30%) for better visibility
+
 ## [v0.10.2] - 2025-11-08 - 'Multi-Platform Release & Enhanced CI/CD'
 
 ### Added
