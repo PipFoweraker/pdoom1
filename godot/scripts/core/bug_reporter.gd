@@ -75,9 +75,9 @@ func create_bug_report(
 	attribution_name: String = "",
 	contact_info: String = "",
 	include_screenshot: bool = false,
-	screenshot_data: Image = null,
+	_screenshot_data: Image = null,  # Unused - metadata only
 	include_save: bool = false,
-	save_file_path: String = ""
+	_save_file_path: String = ""  # Unused - metadata only
 ) -> Dictionary:
 
 	var system_info = collect_system_info()
@@ -175,10 +175,10 @@ func save_report_locally(report: Dictionary, screenshot: Image = null, save_file
 ##
 ## @param report: Bug report dictionary
 ## @returns Dictionary with 'title' and 'body' formatted for GitHub API
-func format_for_github(report: Dictionary) -> Dictionary:
+func format_for_github(_report: Dictionary) -> Dictionary:
 	# Create GitHub issue title
-	var issue_type = report["report_type"].replace("_", " ").capitalize()
-	var title = "[%s] %s" % [issue_type, report["title"]]
+	var issue_type = _report["report_type"].replace("_", " ").capitalize()
+	var title = "[%s] %s" % [issue_type, _report["title"]]
 
 	# Create GitHub issue body
 	var body_parts = []
@@ -189,28 +189,28 @@ func format_for_github(report: Dictionary) -> Dictionary:
 
 	# Description
 	body_parts.append("**Description:**")
-	body_parts.append(report["description"])
+	body_parts.append(_report["description"])
 	body_parts.append("")
 
 	# Optional sections
-	if "steps_to_reproduce" in report and report["steps_to_reproduce"] != "":
+	if "steps_to_reproduce" in _report and _report["steps_to_reproduce"] != "":
 		body_parts.append("**Steps to Reproduce:**")
-		body_parts.append(report["steps_to_reproduce"])
+		body_parts.append(_report["steps_to_reproduce"])
 		body_parts.append("")
 
-	if "expected_behavior" in report and report["expected_behavior"] != "":
+	if "expected_behavior" in _report and _report["expected_behavior"] != "":
 		body_parts.append("**Expected Behavior:**")
-		body_parts.append(report["expected_behavior"])
+		body_parts.append(_report["expected_behavior"])
 		body_parts.append("")
 
-	if "actual_behavior" in report and report["actual_behavior"] != "":
+	if "actual_behavior" in _report and _report["actual_behavior"] != "":
 		body_parts.append("**Actual Behavior:**")
-		body_parts.append(report["actual_behavior"])
+		body_parts.append(_report["actual_behavior"])
 		body_parts.append("")
 
 	# System information
 	body_parts.append("**System Information:**")
-	var system_info = report["system_info"]
+	var system_info = _report["system_info"]
 	body_parts.append("- OS: %s" % system_info["os_type"])
 	body_parts.append("- Godot: %s" % system_info["godot_version"])
 	body_parts.append("- Game Version: %s" % system_info["game_version"])
@@ -218,8 +218,8 @@ func format_for_github(report: Dictionary) -> Dictionary:
 	body_parts.append("")
 
 	# Attribution
-	if report.get("attribution") != null:
-		var attribution = report["attribution"]
+	if _report.get("attribution") != null:
+		var attribution = _report["attribution"]
 		body_parts.append("**Reported by:** %s" % attribution["name"])
 		if attribution.get("contact") != null:
 			body_parts.append("**Contact:** %s" % attribution["contact"])
