@@ -79,15 +79,24 @@ func load_keybinds():
 		# Load all profiles
 		var profile_list = config.get_value("settings", "profiles", ["default"])
 		for profile in profile_list:
-			profiles[profile] = {}
-			for action in keybinds.keys():
-				var saved_key = config.get_value(profile, action, null)
-				if saved_key != null:
-					profiles[profile][action] = saved_key
+			# Start with default keybinds, then override with saved values
+			profiles[profile] = keybinds.duplicate(true)
+
+			# Only load saved values if the section exists
+			if config.has_section(profile):
+				for action in keybinds.keys():
+					# Use has_section_key to avoid warnings for missing keys
+					if config.has_section_key(profile, action):
+						var saved_key = config.get_value(profile, action)
+						profiles[profile][action] = saved_key
 
 		# Apply current profile
 		if profiles.has(current_profile):
 			apply_profile(current_profile)
+		else:
+			# Profile doesn't exist, create it
+			profiles[current_profile] = keybinds.duplicate(true)
+			save_keybinds()
 	else:
 		# First run - create default profile
 		profiles["default"] = keybinds.duplicate(true)
