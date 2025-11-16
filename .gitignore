@@ -73,6 +73,7 @@ bug_report_*.json
 local_highscore.json
 onboarding_progress.json
 leaderboard.json
+user_privacy.json
 
 # User keybinding customizations (local preferences)
 keybindings.json
