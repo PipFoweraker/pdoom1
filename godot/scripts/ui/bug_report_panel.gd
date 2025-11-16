@@ -56,18 +56,29 @@ func _ready():
 	confirmation_label.visible = false
 
 func _input(event):
-	# F8 to toggle bug reporter
-	if event is InputEventKey and event.pressed and event.keycode == KEY_F8:
-		toggle_panel()
+	# Only handle input if panel is visible
+	if not visible:
+		return
+
+	# Consume ALL input events when visible to prevent background interaction
+	get_viewport().set_input_as_handled()
+
+	# F8 or ESC to close bug reporter
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_F8 or event.keycode == KEY_ESCAPE:
+			hide_panel()
 
 ## Show the bug report panel
 func show_panel():
 	visible = true
+	# Set mouse filter to stop clicks to prevent background interaction
+	mouse_filter = Control.MOUSE_FILTER_STOP
 	title_input.grab_focus()
 
 ## Hide the bug report panel
 func hide_panel():
 	visible = false
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	reset_form()
 
 ## Toggle panel visibility
