@@ -220,7 +220,8 @@ func get_display_seed() -> String:
 
 ## Format money with comma separators (e.g., $245,000)
 ## Issue #436 - Player feedback: add commas to all $ references
-static func format_money(amount: float) -> String:
+## Note: Not static because GameConfig is an autoload singleton
+func format_money(amount: float) -> String:
 	var is_negative = amount < 0
 	var abs_amount = abs(amount)
 
