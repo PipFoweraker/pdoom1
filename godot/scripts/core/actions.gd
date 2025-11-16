@@ -222,6 +222,10 @@ static func get_fundraising_options() -> Array[Dictionary]:
 
 static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	"""Execute an action, modify state, return result"""
+	# Special case: pass_turn is a virtual action that doesn't need to be in the action list
+	if action_id == "pass_turn":
+		return {"success": true, "message": "Passed turn (no actions taken)"}
+
 	var action = get_action_by_id(action_id)
 	if action.is_empty():
 		return {"success": false, "message": "Unknown action: " + action_id}

@@ -326,9 +326,19 @@ func _on_skip_turn_button_pressed():
 
 	# Clear any queued actions
 	queued_actions.clear()
+
+	# Queue a dummy "pass" action with 0 AP cost to satisfy turn requirement
+	var pass_action = {
+		"id": "pass_turn",
+		"name": "Pass Turn",
+		"description": "Skip turn without taking actions",
+		"ap_cost": 0,
+		"money_cost": 0
+	}
+	queued_actions.append(pass_action)
 	update_queued_actions_display()
 
-	# Just end the turn without checks
+	# End the turn
 	game_manager.end_turn()
 
 func _on_employee_tab_button_pressed():
