@@ -4,6 +4,72 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.10.3] - 2025-11-17 - 'Playtesting Fixes & Turn Philosophy Refinement'
+
+### Added
+- **Bug Reporter Integration** (#446): In-game bug reporting system with office cat rewards
+  - Press F8 or backslash to report bugs during gameplay
+  - Cat contributor recognition system with 5 doom-level variants
+  - Contributors listed in credits with their submissions
+- **Comprehensive Turn Sequence Documentation**: Technical reference for turn flow and mechanics
+  - Complete phase breakdown (TURN_START, ACTION_SELECTION, TURN_EXECUTION)
+  - Employee productivity formulas with examples
+  - Doom momentum system documentation
+  - Testing scenarios and validation
+
+### Changed
+- **Turn Philosophy Reframe**: "Skip Turn" → "Commit Plan & Reserve AP"
+  - Introduced "Monday Planning" metaphor for turn sequence
+  - Players plan their week, reserve slack for chaos, commit strategy
+  - Empty queue is now a valid reactive strategy (reserve all AP for events)
+  - Updated all documentation and UI to reflect strategic depth
+  - Future enhancement: Planned actions will cost less AP than improvised responses
+- **Event Dialog UX Improvements**:
+  - Dark forest green background (0.15, 0.25, 0.15) for better visibility
+  - Green border with rounded corners for crisp definition
+  - Button borders with hover states for clear interaction
+- **Keyboard Controls Documentation**: Updated all references from "Skip Turn" to "Commit Plan & Reserve AP"
+
+### Fixed
+- **Turn Advancement**: Can now commit plan with empty action queue (#446)
+  - Virtual "pass_turn" action allows turn progression
+  - Bypasses action validation for reactive strategy
+  - Syncs properly with game state
+- **Event AP Logic**: Events now use available (uncommitted) AP instead of reserved AP pool
+  - Fixed bug where 3 total AP couldn't afford 1 AP event options
+  - Events can consume any AP not committed to queued actions
+  - Better UX: No need to explicitly reserve AP for events
+- **Employee Screen Display**: Employee cards now render correctly in management screen
+  - Fixed researcher data serialization in game_state.to_dict()
+  - Employee screen now uses researchers array properly
+- **Bug Reporter UX**:
+  - Changed keybind from [ to backslash to avoid conflicts
+  - Added border styling for better visual definition
+  - Fixed input capture to prevent click-through issues
+- **Warning Cleanup**:
+  - Removed static keyword from format_money() to eliminate warnings
+  - Fixed unused parameter warnings in bug_reporter.gd
+  - Prevented keybind warnings on first launch with new actions
+
+### Technical
+- **Virtual Action System**: pass_turn action bypasses normal validation
+  - Handled specially in actions.gd execution
+  - Represents "reserve all AP" strategy choice
+- **Turn Sequence Implementation**: Aligned with TURN_SEQUENCE_REFERENCE.md
+  - Monday planning metaphor in code comments
+  - Phase transitions properly documented
+- **Engine**: Godot 4.5.1 stable
+
+### Documentation
+- **Turn Philosophy Updates**:
+  - Added "Monday Planning" metaphor to TURN_SEQUENCE_REFERENCE.md
+  - Updated CONTROLS.md with new terminology
+  - Clarified game is strategic simulation (not satire)
+- **Technical Documentation**:
+  - 803-line comprehensive turn sequence reference
+  - Complete formulas and examples for all mechanics
+  - Testing scenarios and validation strategies
+
 ## [v0.10.2] - 2025-11-08 - 'Multi-Platform Release & Enhanced CI/CD'
 
 ### Added
