@@ -1,0 +1,24 @@
+<svg width="256" height="256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Worried cat placeholder (41-60% doom) -->
+  <rect x="20" y="20" width="216" height="216" rx="30" fill="#FFA500" />
+
+  <!-- Simple cat face -->
+  <circle cx="90" cy="100" r="15" fill="#000000" />
+  <circle cx="166" cy="100" r="15" fill="#000000" />
+
+  <!-- Worried mouth -->
+  <path d="M 80 160 Q 128 140 176 160" stroke="#000000" stroke-width="4" fill="none" />
+
+  <!-- Ears (drooping) -->
+  <polygon points="50,50 70,90 90,50" fill="#CC8400" />
+  <polygon points="206,50 186,90 166,50" fill="#CC8400" />
+
+  <!-- Worried lines -->
+  <line x1="70" y1="80" x2="75" y2="70" stroke="#000000" stroke-width="2" />
+  <line x1="186" y1="80" x2="181" y2="70" stroke="#000000" stroke-width="2" />
+
+  <!-- Text -->
+  <text x="128" y="190" font-size="18" font-family="Arial" text-anchor="middle" fill="#000000">Worried</text>
+  <text x="128" y="210" font-size="16" font-family="Arial" text-anchor="middle" fill="#000000">(41-60%)</text>
+  <text x="128" y="240" font-size="12" font-family="Arial" text-anchor="middle" fill="#00000080">PLACEHOLDER</text>
+</svg>

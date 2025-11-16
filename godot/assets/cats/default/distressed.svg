@@ -1,0 +1,26 @@
+<svg width="256" height="256" xmlns="http://www.w3.org/2000/svg">
+  <!-- Distressed cat placeholder (61-80% doom) -->
+  <rect x="20" y="20" width="216" height="216" rx="30" fill="#FF6464" />
+
+  <!-- Simple cat face (wide eyes) -->
+  <circle cx="90" cy="100" r="20" fill="#FFFFFF" />
+  <circle cx="90" cy="100" r="12" fill="#000000" />
+  <circle cx="166" cy="100" r="20" fill="#FFFFFF" />
+  <circle cx="166" cy="100" r="12" fill="#000000" />
+
+  <!-- Distressed mouth -->
+  <ellipse cx="128" cy="155" rx="25" ry="15" fill="#000000" />
+
+  <!-- Ears (alert) -->
+  <polygon points="50,30 85,75 95,30" fill="#CC3333" />
+  <polygon points="206,30 171,75 161,30" fill="#CC3333" />
+
+  <!-- Stress marks -->
+  <line x1="40" y1="120" x2="50" y2="110" stroke="#000000" stroke-width="3" />
+  <line x1="206" y1="110" x2="216" y2="120" stroke="#000000" stroke-width="3" />
+
+  <!-- Text -->
+  <text x="128" y="190" font-size="18" font-family="Arial" text-anchor="middle" fill="#000000">Distressed</text>
+  <text x="128" y="210" font-size="16" font-family="Arial" text-anchor="middle" fill="#000000">(61-80%)</text>
+  <text x="128" y="240" font-size="12" font-family="Arial" text-anchor="middle" fill="#00000080">PLACEHOLDER</text>
+</svg>

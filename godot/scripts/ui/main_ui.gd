@@ -27,6 +27,9 @@ extends VBoxContainer
 @onready var cat_panel = $TopBar/CatPanel
 @onready var doom_meter = $BottomBar/DoomMeterContainer/MarginContainer/DoomMeter
 @onready var game_over_screen = $"../GameOverScreen"
+@onready var bug_report_panel = $"../BugReportPanel"
+@onready var bug_report_button = $BottomBar/BugReportButton
+@onready var office_cat = $ContentArea/MiddlePanel/OfficeCatContainer/OfficeCat
 @onready var tab_manager = get_parent()
 
 # Reference to GameManager
@@ -174,6 +177,12 @@ func _input(event: InputEvent):
 		elif event.keycode == KEY_ENTER:
 			if not skip_turn_button.disabled:
 				_on_skip_turn_button_pressed()
+				get_viewport().set_input_as_handled()
+
+		# F8 to open bug reporter (global hotkey)
+		elif event.keycode == KEY_F8:
+			if bug_report_panel:
+				bug_report_panel.toggle_panel()
 				get_viewport().set_input_as_handled()
 
 		# Escape to init game (if not started)
@@ -326,6 +335,11 @@ func _on_employee_tab_button_pressed():
 	"""Switch to employee management screen"""
 	tab_manager.show_employee_screen()
 
+func _on_bug_report_button_pressed():
+	"""Open bug report panel"""
+	if bug_report_panel:
+		bug_report_panel.show_panel()
+
 func _on_game_state_updated(state: Dictionary):
 	print("[MainUI] State updated: ", state)
 
@@ -385,6 +399,10 @@ func _on_game_state_updated(state: Dictionary):
 	# Visual doom meter with momentum indicator
 	if doom_meter:
 		doom_meter.set_doom(doom, doom_momentum)
+
+	# Update office cat for doom level
+	if office_cat:
+		office_cat.update_doom_level(doom / 100.0)  # Convert percentage to 0.0-1.0
 
 	# Show cat panel if adopted
 	if state.get("has_cat", false):

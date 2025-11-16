@@ -120,20 +120,30 @@ func get_cat_image_for_doom_level(doom_percentage: float) -> String:
 	var variant_name = get_doom_variant_name(doom_percentage)
 
 	# Build path: res://assets/cats/{cat_image_base}/{variant_name}.png
-	var image_path = "res://assets/cats/%s/%s.png" % [cat_image_base, variant_name]
+	# Try PNG first, fallback to SVG
+	var image_path_png = "res://assets/cats/%s/%s.png" % [cat_image_base, variant_name]
+	var image_path_svg = "res://assets/cats/%s/%s.svg" % [cat_image_base, variant_name]
 
-	# Fallback to default if contributor image doesn't exist
-	if not FileAccess.file_exists(image_path):
-		push_warning("Contributor cat image not found: " + image_path + ", using default")
+	if FileAccess.file_exists(image_path_png):
+		return image_path_png
+	elif FileAccess.file_exists(image_path_svg):
+		return image_path_svg
+	else:
+		push_warning("Contributor cat image not found: " + image_path_png + ", using default")
 		return get_default_cat_image(doom_percentage)
-
-	return image_path
 
 ## Get default cat image for doom level
 ## Used when no contributors are loaded or as fallback
 func get_default_cat_image(doom_percentage: float) -> String:
 	var variant_name = get_doom_variant_name(doom_percentage)
-	return "res://assets/cats/default/%s.png" % variant_name
+	# Try PNG first, fallback to SVG (currently we have SVG placeholders)
+	var png_path = "res://assets/cats/default/%s.png" % variant_name
+	var svg_path = "res://assets/cats/default/%s.svg" % variant_name
+
+	if FileAccess.file_exists(png_path):
+		return png_path
+	else:
+		return svg_path  # Use SVG placeholder
 
 ## Convert doom percentage to variant name
 ## Doom levels: 0-20% = happy, 21-40% = concerned, 41-60% = worried,

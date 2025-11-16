@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://gameover123456" path="res://scenes/ui/game_over_screen.tscn" id="5_gameover"]
 [ext_resource type="Script" path="res://scripts/ui/tab_manager.gd" id="6_tab_mgr"]
 [ext_resource type="PackedScene" uid="uid://employee_screen123" path="res://scenes/ui/employee_screen.tscn" id="7_employee"]
+[ext_resource type="PackedScene" uid="uid://bugreport123456" path="res://scenes/ui/bug_report_panel.tscn" id="8_bugreport"]
+[ext_resource type="PackedScene" uid="uid://officecat123456" path="res://scenes/ui/office_cat.tscn" id="9_officecat"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -158,7 +160,7 @@ size_flags_vertical = 3
 [node name="LeftPanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.3
+size_flags_stretch_ratio = 0.25
 
 [node name="ActionsLabel" type="Label" parent="TabManager/MainUI/ContentArea/LeftPanel"]
 layout_mode = 2
@@ -172,19 +174,33 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="MiddlePanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="OfficeCatContainer" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OfficeCat" parent="TabManager/MainUI/ContentArea/MiddlePanel/OfficeCatContainer" instance=ExtResource("9_officecat")]
+layout_mode = 2
+
 [node name="RightPanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.4
+size_flags_stretch_ratio = 0.5
 
 [node name="UpgradesLabel" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 text = "Upgrades:"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.8, 0.9, 1.0, 1)
 
 [node name="UpgradesScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.3
+size_flags_stretch_ratio = 0.45
 
 [node name="UpgradesList" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/RightPanel/UpgradesScroll"]
 layout_mode = 2
@@ -217,7 +233,7 @@ text = "Message Log:"
 [node name="MessageScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/RightPanel"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.4
+size_flags_stretch_ratio = 0.35
 
 [node name="MessageLog" type="RichTextLabel" parent="TabManager/MainUI/ContentArea/RightPanel/MessageScroll"]
 layout_mode = 2
@@ -295,6 +311,12 @@ text = "[color=white]Phase: Not Started[/color]"
 fit_content = true
 scroll_active = false
 
+[node name="BugReportButton" type="Button" parent="TabManager/MainUI/BottomBar"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 0)
+text = "Bug Report (F8)"
+theme_override_font_sizes/font_size = 12
+
 [node name="DoomMeterContainer" type="PanelContainer" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
 custom_minimum_size = Vector2(100, 100)
@@ -316,10 +338,14 @@ layout_mode = 1
 [node name="GameOverScreen" parent="TabManager" instance=ExtResource("5_gameover")]
 layout_mode = 1
 
+[node name="BugReportPanel" parent="TabManager" instance=ExtResource("8_bugreport")]
+layout_mode = 1
+
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/InitButton" to="TabManager/MainUI" method="_on_init_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/TestActionButton" to="TabManager/MainUI" method="_on_test_action_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/ReserveAPButton" to="TabManager/MainUI" method="_on_reserve_ap_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/ClearQueueButton" to="TabManager/MainUI" method="_on_clear_queue_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/EndTurnButton" to="TabManager/MainUI" method="_on_end_turn_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/SkipTurnButton" to="TabManager/MainUI" method="_on_skip_turn_button_pressed"]
+[connection signal="pressed" from="TabManager/MainUI/BottomBar/BugReportButton" to="TabManager/MainUI" method="_on_bug_report_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/TopBar/EmployeeTabButton" to="TabManager/MainUI" method="_on_employee_tab_button_pressed"]
