@@ -45,7 +45,7 @@ var keybinds: Dictionary = {
 	"action_9": {"key": KEY_9, "category": Category.GAMEPLAY, "description": "Trigger Action 9"},
 
 	# Additional Gameplay shortcuts
-	"skip_turn": {"key": KEY_ENTER, "category": Category.GAMEPLAY, "description": "Skip Turn"},
+	"skip_turn": {"key": KEY_ENTER, "category": Category.GAMEPLAY, "description": "Commit Plan & Reserve AP"},
 }
 
 # Active profile

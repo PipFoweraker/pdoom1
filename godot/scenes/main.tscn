@@ -300,7 +300,7 @@ disabled = true
 
 [node name="SkipTurnButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Skip Turn (Enter)"
+text = "Commit Plan (Enter)"
 disabled = true
 
 [node name="PhaseLabel" type="RichTextLabel" parent="TabManager/MainUI/BottomBar"]

@@ -321,28 +321,31 @@ func _on_end_turn_button_pressed():
 	game_manager.end_turn()
 
 func _on_skip_turn_button_pressed():
-	"""Skip turn without AP warnings - useful for passing with reserved AP"""
-	log_message("[color=cyan]Skipping turn (no actions committed)...[/color]")
+	"""Reserve all AP - commit to reactive strategy (no planned actions)"""
+	var current_state = game_manager.get_game_state()
+	var available_ap = current_state.get("available_ap", 0)
+
+	log_message("[color=cyan]Committing plan: Reserving all %d AP for reactive responses...[/color]" % available_ap)
 
 	# Clear any queued actions
 	queued_actions.clear()
 
-	# Queue a dummy "pass" action with 0 AP cost to satisfy turn requirement
-	var pass_action = {
+	# Queue a virtual "reserve_all" action to represent reactive strategy
+	var reserve_action = {
 		"id": "pass_turn",
-		"name": "Pass Turn",
-		"description": "Skip turn without taking actions",
+		"name": "Reserve All AP",
+		"description": "No planned actions - keep all AP available for responding to events",
 		"ap_cost": 0,
 		"money_cost": 0
 	}
-	queued_actions.append(pass_action)
+	queued_actions.append(reserve_action)
 	update_queued_actions_display()
 
 	# Directly append to game state queue (bypass select_action validation)
-	# pass_turn is a virtual action that doesn't exist in the action list
+	# pass_turn is a virtual action representing "reserve all AP" strategy
 	game_manager.state.queued_actions.append("pass_turn")
 
-	# End the turn
+	# Commit the plan (reactive strategy)
 	game_manager.end_turn()
 
 func _on_employee_tab_button_pressed():
@@ -1150,6 +1153,21 @@ func _on_event_triggered(event: Dictionary):
 		(get_viewport().get_visible_rect().size.x - 600) / 2,
 		(get_viewport().get_visible_rect().size.y - 450) / 2
 	)
+
+	# Add forest green background for better visibility
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.15, 0.25, 0.15, 1.0)  # Dark forest green
+	panel_style.border_width_left = 3
+	panel_style.border_width_top = 3
+	panel_style.border_width_right = 3
+	panel_style.border_width_bottom = 3
+	panel_style.border_color = Color(0.3, 0.5, 0.3, 1.0)  # Lighter green border
+	panel_style.corner_radius_top_left = 8
+	panel_style.corner_radius_top_right = 8
+	panel_style.corner_radius_bottom_right = 8
+	panel_style.corner_radius_bottom_left = 8
+	dialog.add_theme_stylebox_override("panel", panel_style)
+
 	print("[MainUI] Created Panel for event, size: %s, position: %s" % [dialog.size, dialog.position])
 
 	# Create main container
@@ -1209,6 +1227,25 @@ func _on_event_triggered(event: Dictionary):
 		btn.text = "[%s] %s" % [key_label, choice_text]
 		btn.custom_minimum_size = Vector2(500, 45)
 
+		# Add button border for better definition
+		var button_style = StyleBoxFlat.new()
+		button_style.bg_color = Color(0.2, 0.2, 0.2, 1.0)  # Dark gray background
+		button_style.border_width_left = 2
+		button_style.border_width_top = 2
+		button_style.border_width_right = 2
+		button_style.border_width_bottom = 2
+		button_style.border_color = Color(0.15, 0.15, 0.15, 1.0)  # Slightly darker border
+		button_style.corner_radius_top_left = 4
+		button_style.corner_radius_top_right = 4
+		button_style.corner_radius_bottom_right = 4
+		button_style.corner_radius_bottom_left = 4
+		btn.add_theme_stylebox_override("normal", button_style)
+
+		# Hover state
+		var button_style_hover = button_style.duplicate()
+		button_style_hover.bg_color = Color(0.3, 0.3, 0.3, 1.0)  # Lighter on hover
+		btn.add_theme_stylebox_override("hover", button_style_hover)
+
 		# Check affordability
 		var can_afford = true
 		var missing_resources = []
@@ -1217,16 +1254,17 @@ func _on_event_triggered(event: Dictionary):
 			var cost = costs[resource]
 			var available = 0
 
-			# Special handling for action_points - use event AP pool
+			# Special handling for action_points - use available (uncommitted) AP
+			# Events can use any AP that hasn't been committed to actions yet
 			if resource == "action_points":
-				available = current_state.get("event_ap", 0)
+				available = current_state.get("available_ap", 0)
 			else:
 				available = current_state.get(resource, 0)
 
 			if available < cost:
 				can_afford = false
 				if resource == "action_points":
-					missing_resources.append("Event AP (need %s, have %s)" % [cost, available])
+					missing_resources.append("AP (need %s, have %s available)" % [cost, available])
 				else:
 					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
 
