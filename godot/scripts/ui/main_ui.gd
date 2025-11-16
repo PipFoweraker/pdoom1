@@ -133,13 +133,23 @@ func _input(event: InputEvent):
 						get_viewport().set_input_as_handled()
 						return
 
-			# Escape to close dialog
+			# ESC key: only close submenu dialogs (hiring, fundraising), NOT event dialogs
+			# Event dialogs must be completed to prevent soft-lock (issue #452)
 			elif event.keycode == KEY_ESCAPE:
-				active_dialog.queue_free()
-				active_dialog = null
-				active_dialog_buttons = []
-				get_viewport().set_input_as_handled()
-				return
+				# Check if this is an event dialog by looking for "event_dialog" meta flag
+				if active_dialog.has_meta("is_event_dialog"):
+					# Event dialogs cannot be closed with ESC - player must make a choice
+					print("[MainUI] ESC pressed but this is an event dialog - ignoring (must complete event)")
+					get_viewport().set_input_as_handled()
+					return
+				else:
+					# Submenu dialogs can be closed with ESC
+					print("[MainUI] ESC pressed on submenu dialog - closing")
+					active_dialog.queue_free()
+					active_dialog = null
+					active_dialog_buttons = []
+					get_viewport().set_input_as_handled()
+					return
 
 		# Main game shortcuts (when no dialog is active)
 		# Number keys 1-9 for action shortcuts
@@ -530,12 +540,7 @@ func _on_actions_available(actions: Array):
 		if category_actions.is_empty():
 			continue
 
-		# Create category label
-		var category_label = Label.new()
-		category_label.text = "-- " + category_names.get(category_key, category_key.capitalize()) + " --"
-		var label_color = category_colors.get(category_key, Color(0.7, 0.7, 1.0))
-		category_label.add_theme_color_override("font_color", label_color)
-		actions_list.add_child(category_label)
+		# Note: Category labels removed per issue #451 - using button colors instead
 
 		# Create buttons for actions in this category
 		for action in category_actions:
@@ -597,10 +602,11 @@ func _on_actions_available(actions: Array):
 				button.disabled = true
 				button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
 			else:
-				# Apply subtle category color tint to affordable buttons (issue #436)
+				# Apply more prominent category color tint to buttons (issue #451)
+				# Makes categories visually distinct without needing header labels
 				var button_color = category_colors.get(category_key, Color(1.0, 1.0, 1.0))
-				# Lighten the color for buttons (70% white + 30% category color for subtle tint)
-				button.modulate = Color(0.7, 0.7, 0.7).lerp(button_color, 0.3)
+				# Use 50% white + 50% category color for clearer visual distinction
+				button.modulate = Color(0.85, 0.85, 0.85).lerp(button_color, 0.5)
 
 			button.tooltip_text = tooltip
 
@@ -1229,6 +1235,9 @@ func _on_event_triggered(event: Dictionary):
 	active_dialog_buttons = buttons
 	print("[MainUI] Event dialog opened, tracked %d buttons" % buttons.size())
 
+	# Mark this as an event dialog to prevent ESC from closing it (issue #452)
+	dialog.set_meta("is_event_dialog", true)
+
 	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
 	print("[MainUI] Adding event dialog to TabManager as overlay...")
 	tab_manager.add_child(dialog)
@@ -1300,5 +1309,5 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 	info_label.text = info_text
 
 func _on_action_unhover():
-	"""Reset info bar when mouse leaves action"""
+	"""Reset info bar when mouse leaves action - maintain 2-line format to prevent flicker (issue #450)"""
 	info_label.text = "[color=gray]Hover over actions to see details...\n [/color]"

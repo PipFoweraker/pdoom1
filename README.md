@@ -30,6 +30,21 @@ You run an underfunded AI safety lab racing against well-resourced competitors t
 - 📖 **[How to Play](docs/user-guide/GAMEPLAY.md)** - Game mechanics and strategy
 - ❓ **[FAQ](docs/user-guide/FAQ.md)** - Common questions
 - 🌐 **[Website](https://pdoom1.com)** - Guides, community, and updates
+- 🐛 **Report a Bug** - Press **F8** in-game or [open an issue](https://github.com/PipFoweraker/pdoom1/issues)
+
+## Community & Contributing
+
+Found a bug? Have a suggestion? **Press F8 in-game** to open the bug reporter, or visit our [GitHub Issues](https://github.com/PipFoweraker/pdoom1/issues).
+
+### Contributor Recognition Program 🐱
+
+We immortalize our contributors in the game! Report bugs, suggest features, or help with playtesting, and your cat can become an **Office Cat** in P(Doom).
+
+- **See your cat in the game** with 5 doom-level variants
+- **Get listed in the credits** with your contributions
+- **Help shape the game** and make it better for everyone
+
+Learn more: **[Contributor Rewards Program](docs/CONTRIBUTOR_REWARDS.md)**
 
 ## For Developers
 
