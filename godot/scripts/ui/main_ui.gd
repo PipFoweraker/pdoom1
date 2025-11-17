@@ -8,7 +8,6 @@ extends VBoxContainer
 @onready var research_label = $TopBar/ResearchLabel
 @onready var papers_label = $TopBar/PapersLabel
 @onready var reputation_label = $TopBar/ReputationLabel
-@onready var doom_label = $TopBar/DoomLabel
 @onready var ap_label = $TopBar/APLabel
 @onready var phase_label = $BottomBar/PhaseLabel
 @onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
@@ -23,13 +22,13 @@ extends VBoxContainer
 @onready var reserve_ap_button = $BottomBar/ControlButtons/ReserveAPButton
 @onready var clear_queue_button = $BottomBar/ControlButtons/ClearQueueButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
-@onready var skip_turn_button = $BottomBar/ControlButtons/SkipTurnButton
-@onready var cat_panel = $TopBar/CatPanel
-@onready var doom_meter = $BottomBar/DoomMeterContainer/MarginContainer/DoomMeter
+@onready var commit_plan_button = $BottomBar/ControlButtons/CommitPlanButton
+@onready var doom_meter = $ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel/MarginContainer/DoomMeter
+@onready var numeric_doom_label = $ContentArea/MiddlePanel/CoreZone/RightZones/NumericDoomZone/NumericDoomLabel
 @onready var game_over_screen = $"../GameOverScreen"
 @onready var bug_report_panel = $"../BugReportPanel"
 @onready var bug_report_button = $BottomBar/BugReportButton
-@onready var office_cat = $ContentArea/MiddlePanel/OfficeCatContainer/OfficeCat
+@onready var office_cat = $ContentArea/MiddlePanel/CoreZone/CatZone/OfficeCat
 @onready var tab_manager = get_parent()
 
 # Reference to GameManager
@@ -42,6 +41,10 @@ var current_turn_phase: String = "NOT_STARTED"
 # Active dialog state for keyboard shortcuts
 var active_dialog: Control = null
 var active_dialog_buttons: Array = []
+
+# Event queue for sequential presentation (FIX: multiple events in same turn)
+var event_queue: Array[Dictionary] = []
+var is_showing_event: bool = false
 
 func _ready():
 	print("[MainUI] Initializing UI...")
@@ -97,7 +100,8 @@ func _input(event: InputEvent):
 		var key_char = char(event.unicode) if event.unicode > 0 else "?"
 		print("[MainUI] _input called, keycode: %d (%s), active_dialog: %s, buttons: %d" % [event.keycode, key_char, active_dialog != null, active_dialog_buttons.size()])
 
-		# CRITICAL: If dialog is active, handle letter shortcuts FIRST with HIGHEST priority
+		# CRITICAL: If dialog is active, handle ALL dialog inputs FIRST (before any game shortcuts)
+		# This prevents ENTER/SPACE from triggering turn advancement while dialog is open
 		if active_dialog != null and is_instance_valid(active_dialog):
 			print("[MainUI] Dialog is active and valid!")
 			var dialog_keys = [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_A, KEY_S, KEY_D, KEY_F, KEY_Z]
@@ -118,27 +122,9 @@ func _input(event: InputEvent):
 			else:
 				print("[MainUI] Key index %d out of range or not found" % key_index)
 
-		# If dialog is active, handle dialog shortcuts FIRST (before buttons consume them)
-		if active_dialog != null and is_instance_valid(active_dialog):
-			print("[MainUI] Dialog is active, buttons count: %d" % active_dialog_buttons.size())
-
-			# Letter keys for dialog options (Q/W/E/R/A/S/D/F/Z)
-			var dialog_keys = [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_A, KEY_S, KEY_D, KEY_F, KEY_Z]
-			var key_index = dialog_keys.find(event.keycode)
-
-			if key_index >= 0:
-				print("[MainUI] Dialog letter key pressed, index: %d, buttons: %d" % [key_index, active_dialog_buttons.size()])
-				if key_index < active_dialog_buttons.size():
-					var btn = active_dialog_buttons[key_index]
-					if btn != null and is_instance_valid(btn) and not btn.disabled:
-						print("[MainUI] Triggering dialog button: %s" % btn.text)
-						btn.pressed.emit()
-						get_viewport().set_input_as_handled()
-						return
-
 			# ESC key: only close submenu dialogs (hiring, fundraising), NOT event dialogs
 			# Event dialogs must be completed to prevent soft-lock (issue #452)
-			elif event.keycode == KEY_ESCAPE:
+			if event.keycode == KEY_ESCAPE:
 				# Check if this is an event dialog by looking for "event_dialog" meta flag
 				if active_dialog.has_meta("is_event_dialog"):
 					# Event dialogs cannot be closed with ESC - player must make a choice
@@ -153,6 +139,15 @@ func _input(event: InputEvent):
 					active_dialog_buttons = []
 					get_viewport().set_input_as_handled()
 					return
+
+			# IMPORTANT: Block ALL other keys when dialog is active to prevent:
+			# - ENTER from triggering skip turn
+			# - SPACE from triggering end turn
+			# - Number keys from selecting actions
+			# Only dialog-specific keys (Q/W/E/R/etc and ESC) should work
+			print("[MainUI] Dialog active - blocking non-dialog key: %d" % event.keycode)
+			get_viewport().set_input_as_handled()
+			return
 
 		# Main game shortcuts (when no dialog is active)
 		# Number keys 1-9 for action shortcuts
@@ -173,14 +168,14 @@ func _input(event: InputEvent):
 				_on_end_turn_button_pressed()
 				get_viewport().set_input_as_handled()
 
-		# Enter to skip turn (no warnings)
+		# Enter to commit plan (no warnings)
 		elif event.keycode == KEY_ENTER:
-			if not skip_turn_button.disabled:
-				_on_skip_turn_button_pressed()
+			if not commit_plan_button.disabled:
+				_on_commit_plan_button_pressed()
 				get_viewport().set_input_as_handled()
 
-		# Backslash (\) to open bug reporter (global hotkey)
-		elif event.keycode == KEY_BACKSLASH:
+		# Backslash (\) or N key to open bug reporter (global hotkeys)
+		elif event.keycode == KEY_BACKSLASH or event.keycode == KEY_N:
 			if bug_report_panel:
 				bug_report_panel.show_panel()
 				get_viewport().set_input_as_handled()
@@ -320,32 +315,38 @@ func _on_end_turn_button_pressed():
 
 	game_manager.end_turn()
 
-func _on_skip_turn_button_pressed():
-	"""Reserve all AP - commit to reactive strategy (no planned actions)"""
+func _on_commit_plan_button_pressed():
+	"""Commit queued actions AND reserve remaining AP (no warnings)"""
 	var current_state = game_manager.get_game_state()
 	var available_ap = current_state.get("available_ap", 0)
 
-	log_message("[color=cyan]Committing plan: Reserving all %d AP for reactive responses...[/color]" % available_ap)
+	# If there are queued actions, commit them + reserve balance
+	if queued_actions.size() > 0:
+		log_message("[color=cyan]Committing %d queued actions + reserving %d remaining AP...[/color]" % [queued_actions.size(), available_ap])
+	else:
+		# No queued actions - just reserve all AP (reactive strategy)
+		log_message("[color=cyan]Committing plan: Reserving all %d AP for reactive responses...[/color]" % available_ap)
 
-	# Clear any queued actions
+		# Queue a virtual "pass_turn" action to represent reactive strategy
+		var reserve_action = {
+			"id": "pass_turn",
+			"name": "Reserve All AP",
+			"description": "No planned actions - keep all AP available for responding to events",
+			"ap_cost": 0,
+			"money_cost": 0
+		}
+		queued_actions.append(reserve_action)
+		update_queued_actions_display()
+
+		# Directly append to game state queue (bypass select_action validation)
+		# pass_turn is a virtual action representing "reserve all AP" strategy
+		game_manager.state.queued_actions.append("pass_turn")
+
+	# Clear local queue (will be repopulated after turn processes)
 	queued_actions.clear()
-
-	# Queue a virtual "reserve_all" action to represent reactive strategy
-	var reserve_action = {
-		"id": "pass_turn",
-		"name": "Reserve All AP",
-		"description": "No planned actions - keep all AP available for responding to events",
-		"ap_cost": 0,
-		"money_cost": 0
-	}
-	queued_actions.append(reserve_action)
 	update_queued_actions_display()
 
-	# Directly append to game state queue (bypass select_action validation)
-	# pass_turn is a virtual action representing "reserve all AP" strategy
-	game_manager.state.queued_actions.append("pass_turn")
-
-	# Commit the plan (reactive strategy)
+	# Commit the plan
 	game_manager.end_turn()
 
 func _on_employee_tab_button_pressed():
@@ -367,7 +368,6 @@ func _on_game_state_updated(state: Dictionary):
 	research_label.text = "Research: %.1f" % state.get("research", 0)
 	papers_label.text = "Papers: %d" % state.get("papers", 0)
 	reputation_label.text = "Rep: %.0f" % state.get("reputation", 0)
-	doom_label.text = "Doom: %.1f%%" % state.get("doom", 0)
 
 	# Add employee blob display to AP label
 	var safety = state.get("safety_researchers", 0)
@@ -409,23 +409,20 @@ func _on_game_state_updated(state: Dictionary):
 	var doom = state.get("doom", 0)
 	var doom_momentum = state.get("doom_momentum", 0.0)
 
-	# Text label with color coding
-	doom_label.text = "Doom: %.1f%%" % doom
-	doom_label.modulate = ThemeManager.get_doom_color(doom)
+	# Update numeric doom display
+	if numeric_doom_label:
+		numeric_doom_label.text = "%.1f%%" % doom
+		numeric_doom_label.modulate = ThemeManager.get_doom_color(doom)
 
 	# Visual doom meter with momentum indicator
 	if doom_meter:
 		doom_meter.set_doom(doom, doom_momentum)
 
-	# Update office cat for doom level
+	# Update office cat for doom level and visibility
 	if office_cat:
 		office_cat.update_doom_level(doom / 100.0)  # Convert percentage to 0.0-1.0
-
-	# Show cat panel if adopted
-	if state.get("has_cat", false):
-		cat_panel.visible = true
-	else:
-		cat_panel.visible = false
+		# Show cat if adopted, hide if not
+		office_cat.visible = state.get("has_cat", false)
 
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:
@@ -450,7 +447,7 @@ func _on_game_state_updated(state: Dictionary):
 		# Disable controls
 		test_action_button.disabled = true
 		end_turn_button.disabled = true
-		skip_turn_button.disabled = true
+		commit_plan_button.disabled = true
 		reserve_ap_button.disabled = true
 
 		# Show game over screen with stats
@@ -473,19 +470,19 @@ func _on_turn_phase_changed(phase_name: String):
 		phase_color = "red"
 		phase_display = "TURN START (Processing...)"
 		end_turn_button.disabled = true
-		skip_turn_button.disabled = true
+		commit_plan_button.disabled = true
 	elif phase_name == "action_selection" or phase_name == "ACTION_SELECTION":
 		phase_color = "green"
 		phase_display = "ACTION SELECTION (Ready)"
-		# End turn requires actions, skip turn is always available
+		# End turn requires actions, commit plan is always available
 		end_turn_button.disabled = (queued_actions.size() == 0)
-		skip_turn_button.disabled = false
+		commit_plan_button.disabled = false
 		clear_queue_button.disabled = (queued_actions.size() == 0)
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
 		phase_display = "TURN END (Executing...)"
 		end_turn_button.disabled = true
-		skip_turn_button.disabled = true
+		commit_plan_button.disabled = true
 
 	phase_label.text = "[color=%s]Phase: %s[/color]" % [phase_color, phase_display]
 
@@ -1139,8 +1136,33 @@ func update_queued_actions_display():
 		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [queued_actions.size(), queue_empty])
 
 func _on_event_triggered(event: Dictionary):
-	"""Handle event trigger - show popup dialog"""
+	"""Handle event trigger - queue event for sequential presentation"""
 	print("[MainUI] === EVENT TRIGGERED: %s ===" % event.get("name", "Unknown"))
+
+	# Add to event queue
+	event_queue.append(event)
+	print("[MainUI] Event queued. Queue size: %d" % event_queue.size())
+
+	# If not currently showing an event, show this one immediately
+	if not is_showing_event:
+		_show_next_event()
+	else:
+		print("[MainUI] Event added to queue, will show after current event resolves")
+
+func _show_next_event():
+	"""Show the next event in queue (sequential presentation)"""
+	if event_queue.is_empty():
+		print("[MainUI] Event queue empty, no more events to show")
+		is_showing_event = false
+		return
+
+	# Mark that we're showing an event
+	is_showing_event = true
+
+	# Get next event from queue
+	var event = event_queue.pop_front()
+	print("[MainUI] === SHOWING EVENT: %s ===" % event.get("name", "Unknown"))
+	print("[MainUI] Remaining events in queue: %d" % event_queue.size())
 
 	log_message("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
 
@@ -1333,6 +1355,16 @@ func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Con
 
 	# Tell game manager to resolve event
 	game_manager.resolve_event(event, choice_id)
+
+	# Show next event in queue if any
+	if not event_queue.is_empty():
+		print("[MainUI] Event resolved, showing next event in queue...")
+		# Wait one frame to ensure dialog is cleaned up before showing next
+		await get_tree().process_frame
+		_show_next_event()
+	else:
+		print("[MainUI] Event resolved, queue empty")
+		is_showing_event = false
 
 func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: Array):
 	"""Update info bar when hovering over an action"""

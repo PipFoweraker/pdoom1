@@ -43,7 +43,7 @@ script = ExtResource("2_main_ui")
 layout_mode = 2
 size_flags_vertical = 0
 custom_minimum_size = Vector2(0, 40)
-theme_override_constants/separation = 15
+theme_override_constants/separation = 10
 
 [node name="TitleLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
@@ -115,16 +115,6 @@ layout_mode = 2
 text = "|"
 modulate = Color(0.4, 0.4, 0.5, 1)
 
-[node name="DoomLabel" type="Label" parent="TabManager/MainUI/TopBar"]
-layout_mode = 2
-text = "Doom: 0%"
-theme_override_font_sizes/font_size = 14
-
-[node name="Sep8" type="Label" parent="TabManager/MainUI/TopBar"]
-layout_mode = 2
-text = "|"
-modulate = Color(0.4, 0.4, 0.5, 1)
-
 [node name="APLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "AP: 0"
@@ -137,18 +127,7 @@ size_flags_horizontal = 3
 [node name="EmployeeTabButton" type="Button" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Employees (E)"
-custom_minimum_size = Vector2(120, 0)
-
-[node name="CatPanel" type="PanelContainer" parent="TabManager/MainUI/TopBar"]
-visible = false
-layout_mode = 2
-custom_minimum_size = Vector2(40, 40)
-
-[node name="CatDisplay" type="TextureRect" parent="TabManager/MainUI/TopBar/CatPanel"]
-layout_mode = 2
-texture = ExtResource("3_cat_texture")
-expand_mode = 1
-stretch_mode = 5
+custom_minimum_size = Vector2(100, 0)
 
 [node name="HSeparator1" type="HSeparator" parent="TabManager/MainUI"]
 layout_mode = 2
@@ -156,11 +135,12 @@ layout_mode = 2
 [node name="ContentArea" type="HBoxContainer" parent="TabManager/MainUI"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 5
 
 [node name="LeftPanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.25
+size_flags_stretch_ratio = 0.22
 
 [node name="ActionsLabel" type="Label" parent="TabManager/MainUI/ContentArea/LeftPanel"]
 layout_mode = 2
@@ -177,13 +157,62 @@ size_flags_horizontal = 3
 [node name="MiddlePanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.25
+size_flags_stretch_ratio = 0.28
+alignment = 2
 
-[node name="OfficeCatContainer" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel"]
+[node name="TitleZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="TabManager/MainUI/ContentArea/MiddlePanel/TitleZone"]
+layout_mode = 2
+text = "P(DOOM)"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1.0, 0.6, 0.0, 1)
+
+[node name="CoreZone" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="CatZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OfficeCat" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/CatZone" instance=ExtResource("9_officecat")]
+layout_mode = 2
+visible = false
+
+[node name="RightZones" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="NumericDoomZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones"]
+layout_mode = 2
+
+[node name="NumericDoomLabel" type="Label" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/NumericDoomZone"]
+layout_mode = 2
+text = "58.5%"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1.0, 0.3, 0.3, 1)
+
+[node name="DoomMeterZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="OfficeCat" parent="TabManager/MainUI/ContentArea/MiddlePanel/OfficeCatContainer" instance=ExtResource("9_officecat")]
+[node name="DoomMeterPanel" type="PanelContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone"]
+layout_mode = 2
+custom_minimum_size = Vector2(140, 140)
+
+[node name="MarginContainer" type="MarginContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="DoomMeter" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel/MarginContainer" instance=ExtResource("4_doom_meter")]
 layout_mode = 2
 
 [node name="RightPanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
@@ -216,7 +245,7 @@ custom_minimum_size = Vector2(0, 80)
 
 [node name="QueueContainer" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/RightPanel/QueuePanel"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 8
 
 [node name="QueueHint" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel/QueuePanel/QueueContainer"]
 layout_mode = 2
@@ -269,39 +298,46 @@ scroll_active = false
 [node name="BottomBar" type="HBoxContainer" parent="TabManager/MainUI"]
 layout_mode = 2
 size_flags_vertical = 0
+theme_override_constants/separation = 8
 
 [node name="ControlButtons" type="HBoxContainer" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
-size_flags_horizontal = 3
+theme_override_constants/separation = 3
 
 [node name="InitButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Init Game"
+text = "Init"
+theme_override_font_sizes/font_size = 12
 
 [node name="TestActionButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Hire Safety Researcher"
+text = "Hire SR"
 disabled = true
+theme_override_font_sizes/font_size = 12
 
 [node name="ReserveAPButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Reserve 1 AP"
+text = "Reserve AP"
 disabled = true
+theme_override_font_sizes/font_size = 12
 
 [node name="ClearQueueButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Clear Queue (C)"
+text = "Clear (C)"
 disabled = true
+theme_override_font_sizes/font_size = 12
 
 [node name="EndTurnButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Commit Actions (Space)"
+text = "Actions (Space)"
 disabled = true
+theme_override_font_sizes/font_size = 12
 
-[node name="SkipTurnButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
+[node name="CommitPlanButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Commit Plan (Enter)"
+text = "Plan (Enter)"
 disabled = true
+theme_override_font_sizes/font_size = 12
 
 [node name="PhaseLabel" type="RichTextLabel" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
@@ -313,23 +349,9 @@ scroll_active = false
 
 [node name="BugReportButton" type="Button" parent="TabManager/MainUI/BottomBar"]
 layout_mode = 2
-custom_minimum_size = Vector2(120, 0)
-text = "Bug Report (\\)"
+custom_minimum_size = Vector2(110, 0)
+text = "Bug Report (N)"
 theme_override_font_sizes/font_size = 12
-
-[node name="DoomMeterContainer" type="PanelContainer" parent="TabManager/MainUI/BottomBar"]
-layout_mode = 2
-custom_minimum_size = Vector2(100, 100)
-
-[node name="MarginContainer" type="MarginContainer" parent="TabManager/MainUI/BottomBar/DoomMeterContainer"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
-
-[node name="DoomMeter" parent="TabManager/MainUI/BottomBar/DoomMeterContainer/MarginContainer" instance=ExtResource("4_doom_meter")]
-layout_mode = 2
 
 [node name="EmployeeScreen" parent="TabManager" instance=ExtResource("7_employee")]
 visible = false
@@ -346,6 +368,6 @@ layout_mode = 1
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/ReserveAPButton" to="TabManager/MainUI" method="_on_reserve_ap_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/ClearQueueButton" to="TabManager/MainUI" method="_on_clear_queue_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/EndTurnButton" to="TabManager/MainUI" method="_on_end_turn_button_pressed"]
-[connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/SkipTurnButton" to="TabManager/MainUI" method="_on_skip_turn_button_pressed"]
+[connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/CommitPlanButton" to="TabManager/MainUI" method="_on_commit_plan_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/BugReportButton" to="TabManager/MainUI" method="_on_bug_report_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/TopBar/EmployeeTabButton" to="TabManager/MainUI" method="_on_employee_tab_button_pressed"]
