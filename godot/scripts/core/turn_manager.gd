@@ -97,7 +97,7 @@ func start_turn() -> Dictionary:
 	# === RESEARCHER TURN PROCESSING ===
 	# Process individual researchers (burnout, skill growth, loyalty)
 	for researcher in state.researchers:
-		researcher.process_turn()
+		researcher.process_turn(state.rng)
 
 	# Staff maintenance costs - use actual salaries for individual researchers
 	var staff_salaries = 0.0

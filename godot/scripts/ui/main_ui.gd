@@ -762,7 +762,7 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 	return {}
 
 func _show_hiring_submenu():
-	"""Show popup dialog with hiring options with keyboard support"""
+	"""Show popup dialog with candidate pool - shows actual available candidates"""
 	print("[MainUI] === HIRING SUBMENU STARTING ===")
 
 	# Close any existing dialog first
@@ -774,114 +774,174 @@ func _show_hiring_submenu():
 
 	# Use Panel - position to the right of the left panel buttons
 	var dialog = Panel.new()
-	dialog.custom_minimum_size = Vector2(400, 350)
-	dialog.size = Vector2(400, 350)
+	dialog.custom_minimum_size = Vector2(450, 400)
+	dialog.size = Vector2(450, 400)
 	# Position to the right of the left panel (icon stack)
-	dialog.position = Vector2(90, 80)  # Just right of the 80px wide left panel
+	dialog.position = Vector2(90, 60)  # Just right of the 80px wide left panel
 	print("[MainUI] Created Panel, size: %s, position: %s" % [dialog.size, dialog.position])
 
 	# Create main container
 	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 15)
-	margin.add_theme_constant_override("margin_right", 15)
-	margin.add_theme_constant_override("margin_top", 15)
-	margin.add_theme_constant_override("margin_bottom", 15)
+	margin.add_theme_constant_override("margin_left", 12)
+	margin.add_theme_constant_override("margin_right", 12)
+	margin.add_theme_constant_override("margin_top", 10)
+	margin.add_theme_constant_override("margin_bottom", 10)
 	dialog.add_child(margin)
 
 	var main_vbox = VBoxContainer.new()
+	main_vbox.add_theme_constant_override("separation", 8)
 	margin.add_child(main_vbox)
 
-	# Get hiring options
-	var hiring_options = GameActions.get_hiring_options()
+	# Header
+	var header = Label.new()
+	header.text = "CANDIDATE POOL"
+	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header.add_theme_font_size_override("font_size", 14)
+	header.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
+	main_vbox.add_child(header)
+
+	# Get current state and candidate pool
 	var current_state = game_manager.get_game_state()
+	var candidate_pool = current_state.get("candidate_pool", [])
 
-	# Create grid for icon buttons
-	var grid = GridContainer.new()
-	grid.columns = 3  # 3 icons per row
-	grid.add_theme_constant_override("h_separation", 8)
-	grid.add_theme_constant_override("v_separation", 8)
-	main_vbox.add_child(grid)
-
-	var button_index = 0
 	var buttons = []  # Store buttons for keyboard access
-	var dialog_key_labels = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"]
+	var dialog_key_labels = ["1", "2", "3", "4", "5", "6"]
 
-	for option in hiring_options:
-		var hire_id = option.get("id", "")
-		var hire_name = option.get("name", "")
-		var hire_desc = option.get("description", "")
-		var hire_costs = option.get("costs", {})
+	if candidate_pool.size() == 0:
+		# No candidates available
+		var empty_label = Label.new()
+		empty_label.text = "No candidates available.\nNew candidates arrive each turn."
+		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		empty_label.add_theme_font_size_override("font_size", 12)
+		empty_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+		main_vbox.add_child(empty_label)
+	else:
+		# Create scrollable list for candidates
+		var scroll = ScrollContainer.new()
+		scroll.custom_minimum_size = Vector2(0, 280)
+		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+		main_vbox.add_child(scroll)
 
-		# Create VBox for icon + label
-		var item_vbox = VBoxContainer.new()
-		item_vbox.add_theme_constant_override("separation", 4)
+		var candidate_list = VBoxContainer.new()
+		candidate_list.add_theme_constant_override("separation", 6)
+		scroll.add_child(candidate_list)
 
-		# Create icon button
-		var btn = Button.new()
-		btn.custom_minimum_size = Vector2(100, 80)
-		btn.focus_mode = Control.FOCUS_NONE
-		btn.mouse_filter = Control.MOUSE_FILTER_PASS
+		# Specialization colors
+		var spec_colors = {
+			"safety": Color(0.3, 0.8, 0.3),
+			"capabilities": Color(0.8, 0.3, 0.3),
+			"interpretability": Color(0.7, 0.3, 0.8),
+			"alignment": Color(0.3, 0.7, 0.8)
+		}
 
-		# Add icon
-		var icon_texture = IconLoader.get_action_icon(hire_id)
-		if icon_texture:
-			btn.icon = icon_texture
-			btn.expand_icon = true
-			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var button_index = 0
+		for candidate in candidate_pool:
+			var candidate_panel = PanelContainer.new()
+			candidate_panel.custom_minimum_size = Vector2(0, 50)
 
-		# Add keyboard hint as text
-		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		btn.text = key_label
-		btn.add_theme_font_size_override("font_size", 10)
-		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
+			var hbox = HBoxContainer.new()
+			hbox.add_theme_constant_override("separation", 8)
+			candidate_panel.add_child(hbox)
 
-		# Check affordability
-		var can_afford = true
-		for resource in hire_costs.keys():
-			if current_state.get(resource, 0) < hire_costs[resource]:
-				can_afford = false
-				break
+			# Keyboard shortcut indicator
+			var key_label = Label.new()
+			key_label.text = "[%s]" % dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
+			key_label.add_theme_font_size_override("font_size", 10)
+			key_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+			key_label.custom_minimum_size = Vector2(25, 0)
+			hbox.add_child(key_label)
 
-		if not can_afford:
-			btn.disabled = true
-			btn.modulate = Color(0.5, 0.5, 0.5)
+			# Specialization color indicator
+			var spec = candidate.get("specialization", "safety")
+			var indicator = Label.new()
+			indicator.text = "●"
+			indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
+			indicator.add_theme_font_size_override("font_size", 14)
+			hbox.add_child(indicator)
 
-		# Tooltip with full details
-		btn.tooltip_text = "%s\n%s\n\nCost: %s, %d AP" % [hire_name, hire_desc, GameConfig.format_money(hire_costs.get("money", 0)), hire_costs.get("action_points", 0)]
+			# Candidate info VBox
+			var info_vbox = VBoxContainer.new()
+			info_vbox.add_theme_constant_override("separation", 2)
+			info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			hbox.add_child(info_vbox)
 
-		# Connect button
-		btn.pressed.connect(func(): _on_hiring_option_selected(hire_id, hire_name, dialog))
+			# Name and specialization
+			var name_label = Label.new()
+			var spec_name = spec.capitalize()
+			name_label.text = "%s - %s" % [candidate.get("name", "Unknown"), spec_name]
+			name_label.add_theme_font_size_override("font_size", 11)
+			info_vbox.add_child(name_label)
 
-		item_vbox.add_child(btn)
+			# Stats line: Skill, Salary, Traits
+			var stats_label = Label.new()
+			var skill = candidate.get("skill_level", 5)
+			var salary = candidate.get("current_salary", 60000)
+			var traits = candidate.get("traits", [])
+			var trait_text = ""
+			if traits.size() > 0:
+				var trait_names = []
+				for trait_id in traits:
+					# Get display name for trait
+					if Researcher.POSITIVE_TRAITS.has(trait_id):
+						trait_names.append(Researcher.POSITIVE_TRAITS[trait_id]["name"])
+					elif Researcher.NEGATIVE_TRAITS.has(trait_id):
+						trait_names.append(Researcher.NEGATIVE_TRAITS[trait_id]["name"])
+					else:
+						trait_names.append(trait_id.capitalize())
+				trait_text = " [%s]" % ", ".join(trait_names)
 
-		# Add label below icon
-		var name_label = Label.new()
-		name_label.text = hire_name.replace(" Researcher", "").replace("Compute ", "")  # Shorten names
-		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		name_label.add_theme_font_size_override("font_size", 10)
-		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-		item_vbox.add_child(name_label)
+			stats_label.text = "Skill %d | %s/yr%s" % [skill, GameConfig.format_money(salary), trait_text]
+			stats_label.add_theme_font_size_override("font_size", 9)
+			stats_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+			info_vbox.add_child(stats_label)
 
-		grid.add_child(item_vbox)
-		buttons.append(btn)
-		button_index += 1
+			# Hire button
+			var hire_btn = Button.new()
+			hire_btn.text = "Hire"
+			hire_btn.custom_minimum_size = Vector2(50, 30)
+			hire_btn.focus_mode = Control.FOCUS_NONE
 
-	# Add cost summary at bottom
-	var summary_label = Label.new()
-	summary_label.text = "Each hire: $50-80k, 1 AP"
-	summary_label.add_theme_font_size_override("font_size", 11)
-	summary_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
-	summary_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	main_vbox.add_child(summary_label)
+			# Get standard hiring cost from action definitions
+			var action_id = "hire_%s_researcher" % spec
+			var hire_cost = 60000  # Default
+			var hiring_options = GameActions.get_hiring_options()
+			for option in hiring_options:
+				if option.get("id") == action_id:
+					hire_cost = option.get("costs", {}).get("money", 60000)
+					break
+
+			var can_afford = current_state.get("money", 0) >= hire_cost and current_state.get("action_points", 0) >= 1
+
+			if not can_afford:
+				hire_btn.disabled = true
+				hire_btn.modulate = Color(0.5, 0.5, 0.5)
+
+			hire_btn.tooltip_text = "Hire for %s + 1 AP" % GameConfig.format_money(hire_cost)
+
+			# Store candidate reference for hire action
+			var candidate_ref = candidate
+			hire_btn.pressed.connect(func(): _on_candidate_hired(candidate_ref, dialog))
+
+			hbox.add_child(hire_btn)
+			buttons.append(hire_btn)
+
+			candidate_list.add_child(candidate_panel)
+			button_index += 1
+
+	# Pool status
+	var status_label = Label.new()
+	status_label.text = "Pool: %d/6 candidates | New arrivals each turn" % candidate_pool.size()
+	status_label.add_theme_font_size_override("font_size", 10)
+	status_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	main_vbox.add_child(status_label)
 
 	# Store dialog state for keyboard handling in MainUI._input()
 	print("[MainUI] Setting active_dialog and active_dialog_buttons...")
 	active_dialog = dialog
 	active_dialog_buttons = buttons
 	print("[MainUI] active_dialog is now: %s" % (active_dialog != null))
-	print("[MainUI] Hiring submenu opened, tracked %d buttons" % buttons.size())
-	for i in range(buttons.size()):
-		print("[MainUI]   Button %d: %s" % [i, buttons[i].text])
+	print("[MainUI] Hiring submenu opened with %d candidates" % candidate_pool.size())
 
 	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
 	print("[MainUI] Adding dialog to TabManager as overlay...")
@@ -896,8 +956,27 @@ func _show_hiring_submenu():
 	await get_tree().process_frame
 	print("[MainUI] Frame passed, dialog still visible: %s" % dialog.visible)
 	print("[MainUI] === HIRING SUBMENU SETUP COMPLETE ===")
-	print("[MainUI] Active dialog: %s, Buttons: %d" % [active_dialog != null, active_dialog_buttons.size()])
-	print("[MainUI] Ready for keyboard input via MainUI._input()")
+
+func _on_candidate_hired(candidate: Dictionary, dialog: Control):
+	"""Handle hiring a specific candidate from the pool"""
+	dialog.queue_free()
+
+	# Clear active dialog state
+	active_dialog = null
+	active_dialog_buttons = []
+
+	# Get the candidate's specialization to determine which hire action to use
+	var spec = candidate.get("specialization", "safety")
+	var action_id = "hire_%s_researcher" % spec
+	var candidate_name = candidate.get("name", "Unknown")
+
+	log_message("[color=cyan]Hiring: %s (%s)[/color]" % [candidate_name, spec.capitalize()])
+
+	# Queue the hiring action
+	queued_actions.append({"id": action_id, "name": "Hire " + candidate_name})
+	update_queued_actions_display()
+
+	game_manager.select_action(action_id)
 
 func _on_hiring_option_selected(action_id: String, action_name: String, dialog: Control):
 	"""Handle hiring submenu selection"""

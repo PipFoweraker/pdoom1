@@ -399,6 +399,11 @@ func to_dict() -> Dictionary:
 	for researcher in researchers:
 		researcher_dicts.append(researcher.to_dict())
 
+	# Serialize candidate pool
+	var candidate_dicts = []
+	for candidate in candidate_pool:
+		candidate_dicts.append(candidate.to_dict())
+
 	return {
 		"money": money,
 		"compute": compute,
@@ -426,5 +431,6 @@ func to_dict() -> Dictionary:
 		"rival_labs": rival_summaries,
 		"has_cat": has_cat,
 		"purchased_upgrades": purchased_upgrades,
-		"researchers": researcher_dicts
+		"researchers": researcher_dicts,
+		"candidate_pool": candidate_dicts
 	}

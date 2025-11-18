@@ -132,6 +132,39 @@ func _init(spec: String = "safety", name: String = ""):
 	# Random loyalty (40-70 for new hires)
 	loyalty = randi_range(40, 70)
 
+func generate_random(rng: RandomNumberGenerator):
+	"""Generate random attributes using provided RNG for determinism"""
+	researcher_name = _generate_name_with_rng(rng)
+
+	# Random skill level (3-7 for new hires)
+	skill_level = rng.randi_range(3, 7)
+
+	# Base productivity from skill
+	base_productivity = 0.5 + (skill_level * 0.1)
+
+	# Random loyalty (40-70)
+	loyalty = rng.randi_range(40, 70)
+
+	# Salary variation (+/- 10%)
+	var variation = 1.0 + (rng.randf() * 0.2 - 0.1)
+	salary_expectation = SPECIALIZATIONS.get(specialization, {}).get("base_cost", 60000) * variation
+	current_salary = salary_expectation
+
+func _generate_name_with_rng(rng: RandomNumberGenerator) -> String:
+	"""Generate a random researcher name using provided RNG"""
+	const FIRST_NAMES = [
+		"Alex", "Blake", "Casey", "Drew", "Ellis", "Finley", "Gray", "Harper",
+		"Iris", "Jordan", "Kelly", "Lane", "Morgan", "Noel", "Owen", "Parker",
+		"Quinn", "Riley", "Sage", "Taylor"
+	]
+	const LAST_NAMES = [
+		"Chen", "Kumar", "O'Brien", "Patel", "Rodriguez", "Smith", "Williams",
+		"Zhang", "Anderson", "Martinez", "Thompson", "Garcia", "Lee", "Wilson",
+		"Moore", "Taylor", "Brown", "Davis", "Miller", "Johnson"
+	]
+
+	return FIRST_NAMES[rng.randi() % FIRST_NAMES.size()] + " " + LAST_NAMES[rng.randi() % LAST_NAMES.size()]
+
 # ============================================================================
 # PRODUCTIVITY CALCULATION
 # ============================================================================
@@ -233,7 +266,7 @@ func get_trait_description() -> String:
 # TURN PROCESSING
 # ============================================================================
 
-func process_turn():
+func process_turn(rng: RandomNumberGenerator = null):
 	"""Called each turn - handle burnout, skill growth, etc."""
 	turns_employed += 1
 
@@ -241,7 +274,9 @@ func process_turn():
 	accumulate_burnout(0.5)
 
 	# Skill growth (very slow - 1 point per ~20 turns)
-	if randf() < 0.05:  # 5% chance per turn
+	# Use provided RNG for determinism, fallback to global for tests
+	var skill_roll = rng.randf() if rng else randf()
+	if skill_roll < 0.05:  # 5% chance per turn
 		skill_level = min(skill_level + 1, 10)
 		base_productivity = 0.5 + (skill_level * 0.1)
 
