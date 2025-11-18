@@ -30,10 +30,35 @@ def save_prompts(yaml_path, data):
         yaml.dump(data, f, default_flow_style=False, allow_unicode=True, sort_keys=False)
 
 
-def get_asset_variants(asset):
-    """Get list of variant versions for an asset."""
+def get_asset_variants(asset, source_dir=None):
+    """Get list of variant versions for an asset.
+
+    First checks generation_history in YAML, then falls back to
+    scanning disk for actual variant files.
+    """
+    # Try YAML history first
     history = asset.get("generation_history", [])
-    return [h.get("version", "v1") for h in history]
+    if history:
+        return [h.get("version", "v1") for h in history]
+
+    # Fall back to disk scanning if no history
+    if source_dir:
+        asset_id = asset.get("id", "")
+        variants = []
+
+        # Scan for v1, v2, v3 patterns
+        for version in ["v1", "v2", "v3", "v4", "v5"]:
+            # Check for files matching asset_id_v1_*.png pattern
+            pattern = f"{asset_id}_{version}_*.png"
+            matches = list(source_dir.glob(pattern))
+            if matches:
+                variants.append(version)
+
+        if variants:
+            return variants
+
+    # Default to v1 if nothing found
+    return ["v1"]
 
 
 def get_assets_by_status(assets, status):
@@ -44,7 +69,25 @@ def get_assets_by_status(assets, status):
 def generate_gallery_html(data, assets, output_path):
     """Generate an HTML gallery for viewing and selecting variants."""
     asset_type = data.get("asset_type", "ui_icons")
+
+    # Build source directory path - resolve to absolute for browser compatibility
     source_dir = Path("art_generated") / asset_type / "v1"
+
+    # If default path doesn't exist, try common alternatives
+    if not source_dir.exists():
+        # Try game_icons as common fallback
+        alt_dir = Path("art_generated") / "game_icons" / "v1"
+        if alt_dir.exists():
+            source_dir = alt_dir
+            print(f"📁 Using fallback directory: {source_dir}")
+
+    # Resolve to absolute path for file:// URLs
+    source_dir = source_dir.resolve()
+
+    # Count files in source directory for debug info
+    png_count = len(list(source_dir.glob("*.png"))) if source_dir.exists() else 0
+    print(f"📁 Source directory: {source_dir}")
+    print(f"   Found {png_count} PNG files")
 
     # Build HTML
     html = f"""<!DOCTYPE html>
@@ -151,6 +194,7 @@ def generate_gallery_html(data, assets, output_path):
     <h1>Asset Selection Gallery</h1>
     <div class="stats">
         {len(assets)} assets to review | Click variants to select | Copy commands at bottom
+        <br><small>Source: {source_dir} ({png_count} PNGs)</small>
     </div>
     <main>
 """
@@ -172,7 +216,7 @@ def generate_gallery_html(data, assets, output_path):
             display_name = asset.get("display_name", asset_id)
             status = asset.get("status", "unknown")
             selected = asset.get("selected_variant", "")
-            variants = get_asset_variants(asset)
+            variants = get_asset_variants(asset, source_dir)
 
             html += f"""<div class="asset" data-id="{asset_id}">
     <div class="asset-header">
@@ -195,13 +239,19 @@ def generate_gallery_html(data, assets, output_path):
 
                 img_path = source_dir / img_name
 
-                # Use relative path for HTML
-                rel_path = img_path.as_posix()
+                # Use absolute file:// URL for browser compatibility
+                # On Windows, need to format as file:///C:/path/to/file
+                abs_path = img_path.resolve()
+                if sys.platform == "win32":
+                    # Convert Windows path to file:// URL format
+                    file_url = "file:///" + str(abs_path).replace("\\", "/")
+                else:
+                    file_url = "file://" + str(abs_path)
 
                 selected_class = "selected" if variant == selected else ""
 
                 html += f"""        <div class="variant {selected_class}" data-variant="{variant}" onclick="selectVariant('{asset_id}', '{variant}')">
-            <img src="{rel_path}" alt="{asset_id} {variant}">
+            <img src="{file_url}" alt="{asset_id} {variant}" onerror="this.style.border='2px solid red'; this.alt='Not found: {img_name}'">
             <div class="variant-label">{variant}</div>
         </div>
 """
@@ -504,6 +554,15 @@ def interactive_mode(yaml_path, data):
 def quick_select(yaml_path, data, selections):
     """Process quick selections from command line."""
     assets = data.get("assets", [])
+    asset_type = data.get("asset_type", "ui_icons")
+
+    # Build source directory for disk scanning (same logic as gallery)
+    source_dir = Path("art_generated") / asset_type / "v1"
+    if not source_dir.exists():
+        alt_dir = Path("art_generated") / "game_icons" / "v1"
+        if alt_dir.exists():
+            source_dir = alt_dir
+    source_dir = source_dir.resolve()
 
     for selection in selections:
         if ":" not in selection:
@@ -520,9 +579,11 @@ def quick_select(yaml_path, data, selections):
             print(f"⚠️  Asset not found: {asset_id}")
             continue
 
-        available = get_asset_variants(asset)
+        # Use disk scanning for variant discovery
+        available = get_asset_variants(asset, source_dir)
         if variant not in available:
             print(f"⚠️  Variant '{variant}' not available for {asset_id}")
+            print(f"   Available: {', '.join(available)}")
             continue
 
         asset["selected_variant"] = variant

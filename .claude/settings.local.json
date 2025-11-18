@@ -39,7 +39,9 @@
       "Bash(git checkout:*)",
       "Bash(git rm:*)",
       "Bash(source ~/.bashrc)",
-      "Bash(xargs -I {} sh -c 'echo \"\"\"\"{}: $(ls \"\"\"\"{}\"\"\"\" 2>/dev/null | grep \"\"\"\"_64.png$\"\"\"\" | wc -l) icons\"\"\"\"')"
+      "Bash(xargs -I {} sh -c 'echo \"\"\"\"{}: $(ls \"\"\"\"{}\"\"\"\" 2>/dev/null | grep \"\"\"\"_64.png$\"\"\"\" | wc -l) icons\"\"\"\"')",
+      "Bash(git commit:*)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

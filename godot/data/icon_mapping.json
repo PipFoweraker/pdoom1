@@ -32,14 +32,12 @@
       "status": "mapped"
     },
     "network": {
-      "icon": "PLACEHOLDER",
-      "status": "needs_generation",
-      "suggested_prompt": "handshake between two stylized hands, professional networking vibe"
+      "icon": "res://assets/icons/actions/action_publicity_network_64.png",
+      "status": "mapped"
     },
     "team_building": {
-      "icon": "PLACEHOLDER",
-      "status": "needs_generation",
-      "suggested_prompt": "group of figures with arms raised in celebration, team spirit"
+      "icon": "res://assets/icons/actions_management/action_management_team_building_64.png",
+      "status": "mapped"
     },
     "publicity": {
       "icon": "res://assets/icons/actions_policies/action_policy_transparency_64.png",
@@ -56,37 +54,32 @@
       "status": "mapped"
     },
     "lobby_government": {
-      "icon": "PLACEHOLDER",
-      "status": "needs_generation",
-      "suggested_prompt": "capitol building dome with briefcase, government lobbying"
+      "icon": "res://assets/icons/actions_strategic/action_strategic_lobby_government_64.png",
+      "status": "mapped"
     },
     "release_warning": {
       "icon": "res://assets/icons/alert_indicators/indicator_alert_warning_64.png",
       "status": "mapped"
     },
     "acquire_startup": {
-      "icon": "PLACEHOLDER",
-      "status": "needs_generation",
-      "suggested_prompt": "small building being absorbed by larger one, corporate acquisition"
+      "icon": "res://assets/icons/actions_strategic/action_strategic_acquire_startup_64.png",
+      "status": "mapped"
     },
     "sabotage_competitor": {
-      "icon": "PLACEHOLDER",
-      "status": "needs_generation",
-      "suggested_prompt": "shadowy figure with mask, espionage/sabotage vibe"
+      "icon": "res://assets/icons/actions_strategic/action_strategic_sabotage_64.png",
+      "status": "mapped"
     },
     "open_source_release": {
-      "icon": "PLACEHOLDER",
-      "status": "needs_generation",
-      "suggested_prompt": "open book or document with branching arrows, open source sharing"
+      "icon": "res://assets/icons/actions_publicity/action_publicity_open_source_64.png",
+      "status": "mapped"
     },
     "emergency_pivot": {
       "icon": "res://assets/icons/actions_facilities/action_facility_emergency_shutdown_64.png",
       "status": "mapped"
     },
     "grant_proposal": {
-      "icon": "PLACEHOLDER",
-      "status": "needs_generation",
-      "suggested_prompt": "document with official seal and checkmark, grant approval"
+      "icon": "res://assets/icons/actions_funding/action_funding_grant_proposal_64.png",
+      "status": "mapped"
     },
     "strategic": {
       "icon": "res://assets/icons/actions_facilities/action_facility_emergency_shutdown_64.png",
@@ -127,14 +120,12 @@
       "status": "mapped"
     },
     "take_loan": {
-      "icon": "PLACEHOLDER",
-      "status": "needs_generation",
-      "suggested_prompt": "money bag with chain/lock, debt/loan obligation"
+      "icon": "res://assets/icons/actions_funding/action_funding_loan_64.png",
+      "status": "mapped"
     },
     "apply_grant": {
-      "icon": "res://assets/icons/resources/resource_research_points_64.png",
-      "status": "mapped",
-      "note": "Using research points - needs dedicated grant icon"
+      "icon": "res://assets/icons/actions_funding/action_funding_grant_proposal_64.png",
+      "status": "mapped"
     }
   },
   "resources": {
