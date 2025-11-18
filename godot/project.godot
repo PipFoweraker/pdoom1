@@ -25,6 +25,7 @@ NotificationManager="*res://autoload/notification_manager.gd"
 KeybindManager="*res://autoload/keybind_manager.gd"
 ScreenshotManager="*res://autoload/screenshot_manager.gd"
 LogExporter="*res://autoload/log_exporter.gd"
+IconLoader="*res://autoload/icon_loader.gd"
 GameManager="*res://scripts/game_manager.gd"
 
 [display]

@@ -1,0 +1,171 @@
+{
+  "_meta": {
+    "version": "2.0",
+    "description": "Maps game action IDs to icon asset paths. PLACEHOLDER entries need icons generated.",
+    "naming_convention": "action_{category}_{specific_action} for actions, employee_role_{role} for hiring"
+  },
+  "actions": {
+    "hire_staff": {
+      "icon": "res://assets/icons/buttons_normal/button_hire_normal_64.png",
+      "status": "mapped"
+    },
+    "buy_compute": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_upgrade_compute_64.png",
+      "status": "mapped"
+    },
+    "safety_research": {
+      "icon": "res://assets/icons/actions_research/action_research_alignment_64.png",
+      "status": "mapped",
+      "note": "Using alignment icon for generic safety research"
+    },
+    "capability_research": {
+      "icon": "res://assets/icons/actions_research/action_research_capability_control_64.png",
+      "status": "mapped"
+    },
+    "publish_paper": {
+      "icon": "res://assets/icons/actions_research/action_research_formal_verification_64.png",
+      "status": "mapped",
+      "note": "Using formal verification - needs dedicated publish_paper icon"
+    },
+    "fundraise": {
+      "icon": "res://assets/icons/resources/resource_money_64.png",
+      "status": "mapped"
+    },
+    "network": {
+      "icon": "PLACEHOLDER",
+      "status": "needs_generation",
+      "suggested_prompt": "handshake between two stylized hands, professional networking vibe"
+    },
+    "team_building": {
+      "icon": "PLACEHOLDER",
+      "status": "needs_generation",
+      "suggested_prompt": "group of figures with arms raised in celebration, team spirit"
+    },
+    "publicity": {
+      "icon": "res://assets/icons/actions_policies/action_policy_transparency_64.png",
+      "status": "mapped",
+      "note": "Submenu for influence/publicity actions - uses transparency icon"
+    },
+    "media_campaign": {
+      "icon": "res://assets/icons/actions_policies/action_policy_transparency_64.png",
+      "status": "mapped",
+      "note": "Using transparency - needs dedicated media/megaphone icon"
+    },
+    "audit_safety": {
+      "icon": "res://assets/icons/employee_roles/employee_role_auditor_64.png",
+      "status": "mapped"
+    },
+    "lobby_government": {
+      "icon": "PLACEHOLDER",
+      "status": "needs_generation",
+      "suggested_prompt": "capitol building dome with briefcase, government lobbying"
+    },
+    "release_warning": {
+      "icon": "res://assets/icons/alert_indicators/indicator_alert_warning_64.png",
+      "status": "mapped"
+    },
+    "acquire_startup": {
+      "icon": "PLACEHOLDER",
+      "status": "needs_generation",
+      "suggested_prompt": "small building being absorbed by larger one, corporate acquisition"
+    },
+    "sabotage_competitor": {
+      "icon": "PLACEHOLDER",
+      "status": "needs_generation",
+      "suggested_prompt": "shadowy figure with mask, espionage/sabotage vibe"
+    },
+    "open_source_release": {
+      "icon": "PLACEHOLDER",
+      "status": "needs_generation",
+      "suggested_prompt": "open book or document with branching arrows, open source sharing"
+    },
+    "emergency_pivot": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_emergency_shutdown_64.png",
+      "status": "mapped"
+    },
+    "grant_proposal": {
+      "icon": "PLACEHOLDER",
+      "status": "needs_generation",
+      "suggested_prompt": "document with official seal and checkmark, grant approval"
+    },
+    "strategic": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_emergency_shutdown_64.png",
+      "status": "mapped",
+      "note": "Submenu for strategic/high-stakes actions - uses emergency icon"
+    }
+  },
+  "hiring": {
+    "hire_safety_researcher": {
+      "icon": "res://assets/icons/employee_roles/employee_role_safety_specialist_64.png",
+      "status": "mapped"
+    },
+    "hire_capability_researcher": {
+      "icon": "res://assets/icons/employee_roles/employee_role_researcher_64.png",
+      "status": "mapped"
+    },
+    "hire_compute_engineer": {
+      "icon": "res://assets/icons/employee_roles/employee_role_engineer_64.png",
+      "status": "mapped"
+    },
+    "hire_manager": {
+      "icon": "res://assets/icons/employee_roles/employee_role_manager_64.png",
+      "status": "mapped"
+    },
+    "hire_ethicist": {
+      "icon": "res://assets/icons/employee_roles/employee_role_ethicist_64.png",
+      "status": "mapped"
+    }
+  },
+  "fundraising": {
+    "fundraise_small": {
+      "icon": "res://assets/icons/resources/resource_money_64.png",
+      "status": "mapped",
+      "note": "Needs dedicated small_funding icon to differentiate"
+    },
+    "fundraise_big": {
+      "icon": "res://assets/icons/main_navigation/ui_budget_finance_64.png",
+      "status": "mapped"
+    },
+    "take_loan": {
+      "icon": "PLACEHOLDER",
+      "status": "needs_generation",
+      "suggested_prompt": "money bag with chain/lock, debt/loan obligation"
+    },
+    "apply_grant": {
+      "icon": "res://assets/icons/resources/resource_research_points_64.png",
+      "status": "mapped",
+      "note": "Using research points - needs dedicated grant icon"
+    }
+  },
+  "resources": {
+    "money": "res://assets/icons/resources/resource_money_64.png",
+    "compute": "res://assets/icons/resources/resource_compute_64.png",
+    "research": "res://assets/icons/resources/resource_research_points_64.png",
+    "papers": "res://assets/icons/actions_research/action_research_formal_verification_64.png",
+    "reputation": "res://assets/icons/resources/resource_reputation_64.png",
+    "action_points": "res://assets/icons/resources/resource_action_points_64.png"
+  },
+  "decorative": {
+    "corner_top_left": "res://assets/icons/decorative_corners/ui_corner_top_left_64.png",
+    "corner_top_right": "res://assets/icons/decorative_corners/ui_corner_top_right_64.png",
+    "corner_bottom_left": "res://assets/icons/decorative_corners/ui_corner_bottom_left_64.png",
+    "corner_bottom_right": "res://assets/icons/decorative_corners/ui_corner_bottom_right_64.png",
+    "divider_horizontal": "res://assets/icons/decorative_dividers/ui_divider_horizontal_64.png",
+    "divider_vertical": "res://assets/icons/decorative_dividers/ui_divider_vertical_64.png",
+    "panel_frame": "res://assets/icons/decorative_frames/ui_panel_frame_64.png",
+    "header_banner": "res://assets/icons/decorative_headers/ui_header_banner_64.png"
+  },
+  "risk_indicators": {
+    "minimal": "res://assets/icons/risk_indicators/indicator_risk_minimal_64.png",
+    "low": "res://assets/icons/risk_indicators/indicator_risk_low_64.png",
+    "moderate": "res://assets/icons/risk_indicators/indicator_risk_moderate_64.png",
+    "high": "res://assets/icons/risk_indicators/indicator_risk_high_64.png",
+    "critical": "res://assets/icons/risk_indicators/indicator_risk_critical_64.png"
+  },
+  "alert_indicators": {
+    "info": "res://assets/icons/alert_indicators/indicator_alert_info_64.png",
+    "warning": "res://assets/icons/alert_indicators/indicator_alert_warning_64.png",
+    "error": "res://assets/icons/alert_indicators/indicator_alert_error_64.png",
+    "success": "res://assets/icons/alert_indicators/indicator_alert_success_64.png"
+  }
+}

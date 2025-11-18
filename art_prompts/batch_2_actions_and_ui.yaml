@@ -1,0 +1,1175 @@
+schema_version: '1.0'
+asset_type: game_icons
+default_size: 1024x1024
+output_sizes:
+- 1024
+- 512
+- 256
+- 128
+- 64
+
+styles:
+  global_icon_base: 'high-res 1024x1024 square game icon, single central symbol, soft
+    but detailed digital painting with slightly cartoony shapes, StarCraft 2 / early-2000s
+    XCOM ability icon feel, plain or softly graded background with a subtle vignette,
+    no full scene or environment, no text, strong chunky silhouette that reads clearly
+    at 64x64, limited color palette, high contrast lighting, centered composition'
+  surface_tarkov: Tarkov-style worn metal and dirty surfaces but simplified
+  surface_clean_corp: clean corporate brushed aluminum with subtle panel lines
+  surface_upgraded_tech: sleek holographic surfaces with cyan accent lights
+
+themes:
+  base_corporate:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: desaturated teal and olive tones
+  strategic_dark:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: dark reds and shadows, ominous feel
+  funding_gold:
+    style_overrides:
+    - global_icon_base
+    - surface_clean_corp
+    color_bias: warm golds and amber tones
+  influence_cyan:
+    style_overrides:
+    - global_icon_base
+    - surface_upgraded_tech
+    color_bias: cyan and electric blue highlights
+
+assets:
+# =============================================================================
+# BATCH 1: CRITICAL MISSING ACTION ICONS (8)
+# These show as neon placeholder in game
+# =============================================================================
+
+- id: action_publicity_network
+  category: actions_publicity
+  display_name: Networking
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'two stylized hands meeting in a professional handshake, business networking
+    symbol, simplified geometric hands with clean lines, soft cyan glow where hands meet,
+    plain dark blue-gray gradient background with soft vignette'
+
+- id: action_management_team_building
+  category: actions_management
+  display_name: Team Building
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'group of three simplified human silhouettes with raised arms in celebration,
+    team spirit and unity symbol, figures connected by subtle curved lines suggesting
+    togetherness, warm amber accent on raised hands, plain dark teal gradient background
+    with soft vignette'
+
+- id: action_strategic_acquire_startup
+  category: actions_strategic
+  display_name: Acquire AI Startup
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'small office building icon being absorbed or merged into larger building,
+    corporate acquisition visual with arrow pointing inward, simplified geometric buildings,
+    subtle green glow on larger building, plain dark gradient background with red undertones
+    and soft vignette'
+
+- id: action_strategic_sabotage
+  category: actions_strategic
+  display_name: Corporate Espionage
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'shadowy hooded figure silhouette with glowing red eye or mask slit,
+    corporate espionage and covert operations symbol, mysterious and ominous feel,
+    figure partially obscured in shadow, plain very dark red-to-black gradient background
+    with soft vignette'
+
+- id: action_strategic_lobby_government
+  category: actions_strategic
+  display_name: Lobby Government
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'simplified capitol building dome with classical columns and a small
+    briefcase or document icon at base, government lobbying symbol, formal and official
+    feel, subtle gold accent on dome, plain dark blue-gray gradient background with
+    soft vignette'
+
+- id: action_publicity_open_source
+  category: actions_publicity
+  display_name: Open Source Release
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'open book or document with three branching arrows spreading outward,
+    open source sharing and distribution symbol, arrows suggesting code or knowledge
+    spreading to community, cyan glow on arrows, plain dark blue gradient background
+    with soft vignette'
+
+- id: action_funding_loan
+  category: actions_funding
+  display_name: Business Loan
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'money bag icon with heavy chain wrapped around it or padlock attached,
+    debt and loan obligation symbol, weighty feel suggesting burden, dark amber and
+    rust tones on chain, plain dark gradient background with warm vignette'
+
+- id: action_funding_grant_proposal
+  category: actions_funding
+  display_name: Grant Proposal
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'formal document or scroll with official wax seal and checkmark stamp,
+    grant approval symbol, important paper with ribbon or seal detail, gold accent on
+    seal, plain dark amber gradient background with soft vignette'
+
+# =============================================================================
+# BATCH 2: RESOURCE ICONS FOR TOP BAR (10)
+# Small icons for resource display
+# =============================================================================
+
+- id: resource_money_small
+  category: resources
+  display_name: Money
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'bold dollar sign symbol with subtle metallic sheen and depth, money and
+    currency icon, green-gold coloring with slight 3D bevel, clean and readable, plain
+    dark gradient background with soft vignette'
+
+- id: resource_compute_small
+  category: resources
+  display_name: Compute
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'computer processor chip or CPU icon with circuit trace details, computing
+    power symbol, blue-cyan tech glow emanating from chip, simplified but recognizable,
+    plain dark blue gradient background with soft vignette'
+
+- id: resource_research_small
+  category: resources
+  display_name: Research Points
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'scientific beaker or flask icon with bubbling liquid inside, research and
+    science symbol, purple-magenta liquid with subtle glow, laboratory feel, plain dark
+    gradient background with soft vignette'
+
+- id: resource_papers_small
+  category: resources
+  display_name: Papers
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'small stack of academic papers or documents with subtle text lines,
+    published papers symbol, orange-amber accent color, slightly fanned arrangement,
+    plain dark teal gradient background with soft vignette'
+
+- id: resource_reputation_small
+  category: resources
+  display_name: Reputation
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'five-pointed star badge or medal icon with metallic gold shine, prestige
+    and reputation symbol, polished and impressive, subtle rays emanating, plain dark
+    gradient background with warm vignette'
+
+- id: resource_ap_small
+  category: resources
+  display_name: Action Points
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'bold lightning bolt icon with electric cyan glow and energy effect, action
+    points and energy symbol, dynamic and powerful feel, bright core with soft glow,
+    plain dark blue gradient background with soft vignette'
+
+- id: resource_turn_small
+  category: resources
+  display_name: Turn Counter
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'circular clock face or calendar page icon showing number, turn indicator
+    symbol, clean white and gray with subtle tick marks, time passage feel, plain dark
+    gradient background with soft vignette'
+
+- id: resource_doom_small
+  category: resources
+  display_name: Doom Indicator
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'warning triangle icon with percentage symbol or probability mark inside,
+    doom risk indicator, red danger coloring with ominous glow, foreboding feel, plain
+    very dark red-to-black gradient background with soft vignette'
+
+- id: resource_safety_small
+  category: resources
+  display_name: Safety Score
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'shield icon with checkmark inside, safety and protection symbol, green
+    tint suggesting security, solid and protective feel, plain dark teal gradient
+    background with soft vignette'
+
+- id: resource_morale_small
+  category: resources
+  display_name: Morale
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'simple heart icon with upward glow or happy expression, team morale and
+    wellbeing symbol, warm yellow-orange coloring, positive and uplifting feel, plain
+    dark gradient background with warm vignette'
+
+# =============================================================================
+# BATCH 3: UI CONTROL ICONS (20)
+# Button and navigation controls
+# =============================================================================
+
+- id: ui_control_play
+  category: ui_controls
+  display_name: Play/Start
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'triangular play button symbol pointing right, start or begin action icon,
+    cyan glow with slight bevel, universal media control feel, plain dark blue gradient
+    background with soft vignette'
+
+- id: ui_control_pause
+  category: ui_controls
+  display_name: Pause
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'two vertical parallel bars, pause action icon, white-cyan coloring with
+    subtle glow, universal media control feel, plain dark gradient background with soft
+    vignette'
+
+- id: ui_control_confirm
+  category: ui_controls
+  display_name: Confirm/Check
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'bold checkmark symbol, confirm or accept action icon, green coloring with
+    slight glow effect, positive and affirmative feel, plain dark gradient background
+    with soft vignette'
+
+- id: ui_control_cancel
+  category: ui_controls
+  display_name: Cancel/X
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'bold X symbol, cancel or close action icon, red coloring with slight glow,
+    clear and decisive feel, plain dark red-tinted gradient background with soft vignette'
+
+- id: ui_control_clear
+  category: ui_controls
+  display_name: Clear/Trash
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'trash bin or waste basket icon with lid, delete or clear action symbol,
+    gray-red coloring, simple and recognizable shape, plain dark gradient background
+    with soft vignette'
+
+- id: ui_control_refresh
+  category: ui_controls
+  display_name: Refresh
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'circular arrow or two arrows forming refresh cycle, reload action icon,
+    cyan coloring with rotation feel, dynamic and renewing, plain dark blue gradient
+    background with soft vignette'
+
+- id: ui_control_settings
+  category: ui_controls
+  display_name: Settings Gear
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'gear or cog wheel icon with teeth, settings and configuration symbol,
+    metallic gray with slight sheen, mechanical and adjustable feel, plain dark gradient
+    background with soft vignette'
+
+- id: ui_control_back
+  category: ui_controls
+  display_name: Back Arrow
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'left-pointing arrow or chevron, navigation back icon, white-cyan coloring,
+    clear directional indicator, plain dark gradient background with soft vignette'
+
+- id: ui_control_forward
+  category: ui_controls
+  display_name: Forward Arrow
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'right-pointing arrow or chevron, navigation forward icon, white-cyan
+    coloring, clear directional indicator, plain dark gradient background with soft
+    vignette'
+
+- id: ui_control_up
+  category: ui_controls
+  display_name: Up Arrow
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'upward-pointing arrow or chevron, scroll up or increase icon, white-cyan
+    coloring, clear directional indicator, plain dark gradient background with soft
+    vignette'
+
+- id: ui_control_down
+  category: ui_controls
+  display_name: Down Arrow
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'downward-pointing arrow or chevron, scroll down or decrease icon, white-cyan
+    coloring, clear directional indicator, plain dark gradient background with soft
+    vignette'
+
+- id: ui_control_lock
+  category: ui_controls
+  display_name: Lock
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'closed padlock icon, reserve or lock action symbol, gold-yellow coloring
+    with metallic sheen, secure and protected feel, plain dark gradient background with
+    soft vignette'
+
+- id: ui_control_unlock
+  category: ui_controls
+  display_name: Unlock
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'open padlock icon with shackle raised, unlock or release symbol, gray
+    coloring, accessible and open feel, plain dark gradient background with soft vignette'
+
+- id: ui_control_add
+  category: ui_controls
+  display_name: Plus/Add
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'bold plus symbol, add action icon, green coloring with slight glow,
+    positive and additive feel, plain dark gradient background with soft vignette'
+
+- id: ui_control_remove
+  category: ui_controls
+  display_name: Minus/Remove
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'bold minus or horizontal bar symbol, remove action icon, red coloring
+    with slight glow, subtractive feel, plain dark red-tinted gradient background with
+    soft vignette'
+
+- id: ui_control_info
+  category: ui_controls
+  display_name: Information
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'lowercase letter i in circle, information icon, blue coloring with glow,
+    helpful and informative feel, plain dark blue gradient background with soft vignette'
+
+- id: ui_control_help
+  category: ui_controls
+  display_name: Help/Question
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'question mark symbol, help query icon, blue coloring with subtle glow,
+    curious and seeking feel, plain dark blue gradient background with soft vignette'
+
+- id: ui_control_bug
+  category: ui_controls
+  display_name: Bug Report
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'cartoon bug or insect icon, bug report symbol, orange-yellow coloring,
+    cute but clear bug shape, plain dark gradient background with soft vignette'
+
+- id: ui_control_save
+  category: ui_controls
+  display_name: Save
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'floppy disk icon, save action symbol, blue coloring with metallic sheen,
+    classic storage device shape, plain dark blue gradient background with soft vignette'
+
+- id: ui_control_load
+  category: ui_controls
+  display_name: Load
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'folder icon with upward arrow, load action symbol, blue coloring, opening
+    and retrieving feel, plain dark blue gradient background with soft vignette'
+
+# =============================================================================
+# BATCH 4: STATUS & ALERT ICONS (12)
+# Message log and notification indicators
+# =============================================================================
+
+- id: indicator_status_info
+  category: indicators
+  display_name: Info Alert
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'letter i in circle, information indicator icon, blue coloring with soft
+    glow, informational and neutral feel, plain dark blue gradient background with soft
+    vignette'
+
+- id: indicator_status_success
+  category: indicators
+  display_name: Success Alert
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'checkmark in circle, success indicator icon, green coloring with soft
+    glow, positive and completed feel, plain dark teal gradient background with soft
+    vignette'
+
+- id: indicator_status_warning
+  category: indicators
+  display_name: Warning Alert
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'exclamation mark in triangle, warning indicator icon, yellow-orange
+    coloring with glow, cautionary feel, plain dark amber gradient background with soft
+    vignette'
+
+- id: indicator_status_error
+  category: indicators
+  display_name: Error Alert
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'X mark in circle, error indicator icon, red coloring with glow, negative
+    and problematic feel, plain dark red gradient background with soft vignette'
+
+- id: indicator_status_neutral
+  category: indicators
+  display_name: Neutral
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'simple filled circle or dot, neutral status indicator, gray coloring,
+    plain and unremarkable feel, plain dark gradient background with soft vignette'
+
+- id: indicator_status_pending
+  category: indicators
+  display_name: Pending
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'hourglass or small clock icon, pending or waiting indicator, amber
+    coloring with subtle animation feel, patient and waiting, plain dark gradient
+    background with soft vignette'
+
+- id: indicator_status_active
+  category: indicators
+  display_name: Active
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'glowing circle or dot with pulse ring, active status indicator, bright
+    green with subtle pulse effect, alive and running feel, plain dark gradient background
+    with soft vignette'
+
+- id: indicator_status_inactive
+  category: indicators
+  display_name: Inactive
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'hollow circle or ring outline, inactive status indicator, gray outline
+    only, dormant and off feel, plain dark gradient background with soft vignette'
+
+- id: indicator_doom_rising
+  category: indicators
+  display_name: Doom Rising
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'upward arrow with danger symbol, doom increasing indicator, red glow
+    with urgency, alarming and worsening feel, plain dark red gradient background with
+    soft vignette'
+
+- id: indicator_doom_falling
+  category: indicators
+  display_name: Doom Falling
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'downward arrow with safe symbol, doom decreasing indicator, green glow
+    with relief, improving and stabilizing feel, plain dark teal gradient background
+    with soft vignette'
+
+- id: indicator_doom_stable
+  category: indicators
+  display_name: Doom Stable
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'horizontal line or equals sign, doom stable indicator, yellow coloring,
+    unchanged and steady feel, plain dark gradient background with soft vignette'
+
+- id: indicator_status_critical
+  category: indicators
+  display_name: Critical
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'flashing exclamation or alarm bell icon, critical status indicator,
+    bright red with urgent pulsing glow, emergency and immediate feel, plain very dark
+    red gradient background with soft vignette'
+
+# =============================================================================
+# BATCH 5: SETTINGS SECTION ICONS (8)
+# Settings menu categories
+# =============================================================================
+
+- id: ui_settings_audio
+  category: settings
+  display_name: Audio Settings
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'speaker icon with sound waves, audio settings symbol, white-cyan coloring,
+    sound and volume feel, plain dark gradient background with soft vignette'
+
+- id: ui_settings_graphics
+  category: settings
+  display_name: Graphics Settings
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'monitor or display screen icon, graphics settings symbol, white-cyan
+    coloring with subtle screen glow, visual display feel, plain dark gradient background
+    with soft vignette'
+
+- id: ui_settings_gameplay
+  category: settings
+  display_name: Gameplay Settings
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'game controller or joystick icon, gameplay settings symbol, white-cyan
+    coloring, gaming and interaction feel, plain dark gradient background with soft
+    vignette'
+
+- id: ui_settings_theme
+  category: settings
+  display_name: Theme Settings
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'color palette or paint swatches icon, UI theme settings symbol, multiple
+    colors in organized arrangement, customization feel, plain dark blue gradient
+    background with soft vignette'
+
+- id: ui_settings_controls
+  category: settings
+  display_name: Controls Settings
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'keyboard keys or key caps icon, keybindings settings symbol, white-gray
+    coloring with slight depth, input configuration feel, plain dark gradient background
+    with soft vignette'
+
+- id: ui_settings_accessibility
+  category: settings
+  display_name: Accessibility
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'universal access symbol (person in circle), accessibility options icon,
+    blue coloring, inclusive and accommodating feel, plain dark blue gradient background
+    with soft vignette'
+
+- id: ui_settings_account
+  category: settings
+  display_name: Account
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'user profile silhouette or person icon, account settings symbol, white
+    coloring, personal and identity feel, plain dark gradient background with soft
+    vignette'
+
+- id: ui_settings_reset
+  category: settings
+  display_name: Reset Defaults
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'circular reset arrow or undo symbol, restore defaults icon, orange
+    coloring, returning and resetting feel, plain dark gradient background with soft
+    vignette'
+
+# =============================================================================
+# BATCH 6: LEADERBOARD & RANKING ICONS (8)
+# Competition and scoring visuals
+# =============================================================================
+
+- id: ui_leaderboard_trophy
+  category: leaderboard
+  display_name: Trophy
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'trophy cup with handles, championship and leaderboard symbol, shiny gold
+    metallic finish, prestigious and winning feel, plain dark gradient background with
+    warm vignette'
+
+- id: ui_rank_gold
+  category: leaderboard
+  display_name: Gold Medal
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'circular gold medal with ribbon, first place symbol, shiny gold with
+    number 1 or star emblem, prestigious and top rank, plain dark gradient background
+    with warm vignette'
+
+- id: ui_rank_silver
+  category: leaderboard
+  display_name: Silver Medal
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'circular silver medal with ribbon, second place symbol, shiny silver
+    metallic finish with number 2, honorable placement, plain dark gradient background
+    with soft vignette'
+
+- id: ui_rank_bronze
+  category: leaderboard
+  display_name: Bronze Medal
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'circular bronze medal with ribbon, third place symbol, warm bronze
+    metallic finish with number 3, solid achievement, plain dark gradient background
+    with soft vignette'
+
+- id: ui_rank_crown
+  category: leaderboard
+  display_name: Crown
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'royal crown icon with jewels, top rank indicator symbol, shiny gold with
+    gem accents, regal and supreme feel, plain dark gradient background with warm vignette'
+
+- id: ui_leaderboard_filter
+  category: leaderboard
+  display_name: Filter
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'funnel or filter icon, filter options symbol, gray-cyan coloring, sorting
+    and refining feel, plain dark gradient background with soft vignette'
+
+- id: ui_leaderboard_sort_asc
+  category: leaderboard
+  display_name: Sort Ascending
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'upward arrow with horizontal lines decreasing in size, sort ascending
+    icon, white coloring, organizing low to high, plain dark gradient background with
+    soft vignette'
+
+- id: ui_leaderboard_sort_desc
+  category: leaderboard
+  display_name: Sort Descending
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'downward arrow with horizontal lines increasing in size, sort descending
+    icon, white coloring, organizing high to low, plain dark gradient background with
+    soft vignette'
+
+# =============================================================================
+# BATCH 7: GUIDE & HELP ICONS (8)
+# Player guide section icons
+# =============================================================================
+
+- id: ui_guide_objective
+  category: guide
+  display_name: Objective
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'bullseye target with arrow, game objective symbol, red-white concentric
+    circles, goal-oriented and focused feel, plain dark gradient background with soft
+    vignette'
+
+- id: ui_guide_controls
+  category: guide
+  display_name: Controls
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'keyboard keys WASD or arrow key cluster, control instructions symbol,
+    white keys with clear labels, input guidance feel, plain dark gradient background
+    with soft vignette'
+
+- id: ui_guide_resources
+  category: guide
+  display_name: Resources
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'money bag or treasure chest icon, resources section symbol, warm yellow
+    coloring, wealth and materials feel, plain dark gradient background with warm vignette'
+
+- id: ui_guide_strategy
+  category: guide
+  display_name: Strategy
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'chess knight piece icon, strategy tips symbol, white-teal coloring,
+    tactical and thoughtful feel, plain dark gradient background with soft vignette'
+
+- id: ui_guide_actions
+  category: guide
+  display_name: Actions
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'hand with pointing finger or click gesture, actions guide symbol, cyan
+    coloring, interactive and doing feel, plain dark blue gradient background with soft
+    vignette'
+
+- id: ui_guide_tips
+  category: guide
+  display_name: Tips
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'lightbulb icon with glow, tips and hints symbol, bright yellow glow
+    emanating, idea and insight feel, plain dark gradient background with warm vignette'
+
+- id: ui_guide_warning
+  category: guide
+  display_name: Warning
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'exclamation mark in bold, important warnings symbol, orange coloring,
+    attention and caution feel, plain dark amber gradient background with soft vignette'
+
+- id: ui_guide_book
+  category: guide
+  display_name: Manual
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'open book icon with pages, full guide reference symbol, white pages
+    with subtle text lines, comprehensive and detailed feel, plain dark gradient
+    background with soft vignette'
+
+# =============================================================================
+# BATCH 8: DIFFICULTY & MODE ICONS (6)
+# Game configuration visuals
+# =============================================================================
+
+- id: ui_difficulty_easy
+  category: difficulty
+  display_name: Easy
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'shield icon with soft edges, easy difficulty symbol, green protective
+    coloring, safe and beginner-friendly feel, plain dark teal gradient background with
+    soft vignette'
+
+- id: ui_difficulty_standard
+  category: difficulty
+  display_name: Standard
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'balanced scales icon, standard difficulty symbol, blue coloring, fair
+    and balanced feel, plain dark blue gradient background with soft vignette'
+
+- id: ui_difficulty_hard
+  category: difficulty
+  display_name: Hard
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'skull icon or warning danger symbol, hard difficulty symbol, red coloring
+    with ominous feel, challenging and punishing, plain dark red gradient background
+    with soft vignette'
+
+- id: ui_config_random
+  category: config
+  display_name: Randomize
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'dice icon showing random face, randomize option symbol, white with
+    colored pips, chance and variety feel, plain dark gradient background with soft
+    vignette'
+
+- id: ui_config_seed
+  category: config
+  display_name: Seed
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'plant seed or small key icon, seed configuration symbol, green-gold
+    coloring, starting point and origin feel, plain dark gradient background with soft
+    vignette'
+
+- id: ui_config_date
+  category: config
+  display_name: Calendar
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'calendar page icon with number, date selector symbol, white with subtle
+    date markings, time and scheduling feel, plain dark gradient background with soft
+    vignette'
+
+# =============================================================================
+# BATCH 9: PANEL FRAMES & DECORATIVE (10)
+# Panel styling and separator elements
+# =============================================================================
+
+- id: ui_frame_top
+  category: frames
+  display_name: Panel Frame Top
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'horizontal panel frame top edge bar, tech interface style with subtle
+    blue accent line and beveled edges, dark metallic with cyan glow strip, centered
+    horizontal bar element, plain dark gradient background with soft vignette'
+
+- id: ui_frame_bottom
+  category: frames
+  display_name: Panel Frame Bottom
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'horizontal panel frame bottom edge bar matching top style, tech interface
+    with blue accent line and beveled edges, dark metallic with cyan glow strip,
+    centered horizontal bar element, plain dark gradient background with soft vignette'
+
+- id: ui_frame_left
+  category: frames
+  display_name: Panel Frame Left
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'vertical panel frame left edge bar, tech interface style with blue
+    accent line running vertically, dark metallic with cyan glow strip, centered
+    vertical bar element, plain dark gradient background with soft vignette'
+
+- id: ui_frame_right
+  category: frames
+  display_name: Panel Frame Right
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'vertical panel frame right edge bar matching left style, tech interface
+    with blue accent line, dark metallic with cyan glow strip, centered vertical
+    bar element, plain dark gradient background with soft vignette'
+
+- id: ui_frame_corner_tl
+  category: frames
+  display_name: Corner Top Left
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'panel corner piece for top-left position, tech frame corner with
+    90-degree angle, beveled edges and cyan accent at corner vertex, dark metallic
+    with subtle glow, plain dark gradient background with soft vignette'
+
+- id: ui_frame_corner_tr
+  category: frames
+  display_name: Corner Top Right
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'panel corner piece for top-right position, tech frame corner with
+    90-degree angle, beveled edges and cyan accent at corner vertex, dark metallic
+    with subtle glow, plain dark gradient background with soft vignette'
+
+- id: ui_frame_corner_bl
+  category: frames
+  display_name: Corner Bottom Left
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'panel corner piece for bottom-left position, tech frame corner with
+    90-degree angle, beveled edges and cyan accent at corner vertex, dark metallic
+    with subtle glow, plain dark gradient background with soft vignette'
+
+- id: ui_frame_corner_br
+  category: frames
+  display_name: Corner Bottom Right
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'panel corner piece for bottom-right position, tech frame corner with
+    90-degree angle, beveled edges and cyan accent at corner vertex, dark metallic
+    with subtle glow, plain dark gradient background with soft vignette'
+
+- id: ui_separator_horizontal
+  category: frames
+  display_name: Horizontal Separator
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'horizontal separator line element, thin tech style divider with cyan
+    glow at center fading to edges, elegant panel divider, centered horizontal line,
+    plain dark gradient background with soft vignette'
+
+- id: ui_separator_vertical
+  category: frames
+  display_name: Vertical Separator
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'vertical separator line element, thin tech style divider with cyan
+    glow at center fading to edges, elegant panel divider, centered vertical line,
+    plain dark gradient background with soft vignette'
+
+# =============================================================================
+# BATCH 10: DOOM METER VISUALS (6)
+# Doom meter enhancement textures
+# =============================================================================
+
+- id: doom_meter_frame
+  category: doom_meter
+  display_name: Doom Ring Frame
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'circular meter frame ring element, tech interface circular border
+    with subtle tick marks like gauge, dark steel with machined precision look,
+    single centered ring, plain dark gradient background with soft vignette'
+
+- id: doom_bg_safe
+  category: doom_meter
+  display_name: Doom Background Safe
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'radial gradient background texture, soft green safe zone glow emanating
+    from center, subtle and calming, security and stability feel, centered radial
+    gradient, plain dark teal base with soft vignette'
+
+- id: doom_bg_warning
+  category: doom_meter
+  display_name: Doom Background Warning
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'radial gradient background texture, soft yellow warning zone glow
+    emanating from center, subtle caution feel, mild concern atmosphere, centered
+    radial gradient, plain dark amber base with soft vignette'
+
+- id: doom_bg_danger
+  category: doom_meter
+  display_name: Doom Background Danger
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'radial gradient background texture, orange danger zone glow emanating
+    from center, elevated concern and urgency, threatening atmosphere, centered
+    radial gradient, plain dark orange-red base with soft vignette'
+
+- id: doom_bg_critical
+  category: doom_meter
+  display_name: Doom Background Critical
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'radial gradient background texture, intense red critical zone glow
+    emanating from center with pulsing feel, extreme danger and emergency atmosphere,
+    centered radial gradient, plain very dark red base with soft vignette'
+
+- id: doom_glow_effect
+  category: doom_meter
+  display_name: Doom Glow Effect
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'soft glow texture for meter edge accent, red-orange gradient glow
+    effect, ethereal danger emanation, can be overlaid for warning effect, centered
+    soft glow, plain very dark background with soft vignette'
+
+# =============================================================================
+# BATCH 11: EVENT & DIALOG VISUALS (8)
+# Event system icons
+# =============================================================================
+
+- id: event_generic
+  category: events
+  display_name: Generic Event
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'generic event icon, document or paper with exclamation mark, neutral
+    notification symbol, something happened indicator, gray-blue coloring, plain
+    dark gradient background with soft vignette'
+
+- id: event_opportunity
+  category: events
+  display_name: Opportunity Event
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'opportunity event icon, rising sun breaking horizon or door opening
+    with light streaming through, positive possibility symbol, golden-yellow glow,
+    hopeful and promising feel, plain dark gradient background with warm vignette'
+
+- id: event_crisis
+  category: events
+  display_name: Crisis Event
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'crisis event icon, alarm bell ringing or emergency siren with alert
+    waves, urgent situation symbol, bright red with danger glow, immediate action
+    required feel, plain very dark red gradient background with soft vignette'
+
+- id: event_discovery
+  category: events
+  display_name: Discovery Event
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'discovery event icon, lightbulb with bright eureka moment glow or
+    magnifying glass with sparkle, breakthrough symbol, yellow-white bright glow,
+    exciting revelation feel, plain dark gradient background with warm vignette'
+
+- id: event_deadline
+  category: events
+  display_name: Deadline Event
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'deadline event icon, clock face with warning hands approaching hour
+    or hourglass nearly empty, time pressure symbol, red-orange urgent coloring,
+    running out of time feel, plain dark red gradient background with soft vignette'
+
+- id: event_external
+  category: events
+  display_name: External Event
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'external event icon, globe with incoming arrow or world map with
+    notification pulse, outside world events symbol, blue-cyan coloring, news from
+    beyond feel, plain dark blue gradient background with soft vignette'
+
+- id: event_choice_positive
+  category: events
+  display_name: Positive Choice
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'positive choice icon, thumbs up gesture or large checkmark with
+    upward energy, good decision indicator, bright green with approval glow,
+    beneficial option feel, plain dark teal gradient background with soft vignette'
+
+- id: event_choice_negative
+  category: events
+  display_name: Negative Choice
+  status: pending
+  theme: strategic_dark
+  prompt_tail: 'negative choice icon, thumbs down gesture or warning triangle with
+    downward energy, risky decision indicator, red with caution glow, potentially
+    harmful option feel, plain dark red gradient background with soft vignette'
+
+# =============================================================================
+# BATCH 12: UPGRADE ICONS (10)
+# Upgrade system visuals
+# =============================================================================
+
+- id: upgrade_cost_reduction
+  category: upgrades
+  display_name: Cost Reduction
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'cost reduction upgrade icon, downward arrow through price tag or
+    dollar sign with decrease indicator, savings symbol, green coloring with
+    efficient feel, money-saving representation, plain dark teal gradient background
+    with soft vignette'
+
+- id: upgrade_speed_increase
+  category: upgrades
+  display_name: Speed Increase
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'speed increase upgrade icon, speedometer needle in fast zone or
+    lightning bolt with motion lines, faster processing symbol, cyan-electric
+    coloring with dynamic feel, quick execution, plain dark blue gradient background
+    with soft vignette'
+
+- id: upgrade_quality_boost
+  category: upgrades
+  display_name: Quality Boost
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'quality boost upgrade icon, five-pointed star with upward arrow or
+    gem with sparkle, excellence improvement symbol, gold coloring with premium
+    feel, better output quality, plain dark gradient background with warm vignette'
+
+- id: upgrade_capacity_expand
+  category: upgrades
+  display_name: Capacity Expand
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'capacity expansion upgrade icon, box or container with outward
+    expansion arrows, increased storage symbol, blue coloring with growth feel,
+    more room available, plain dark blue gradient background with soft vignette'
+
+- id: upgrade_efficiency
+  category: upgrades
+  display_name: Efficiency
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'efficiency upgrade icon, gear with checkmark inside or streamlined
+    arrow through process, optimization symbol, green coloring with smooth feel,
+    better resource usage, plain dark teal gradient background with soft vignette'
+
+- id: upgrade_automation
+  category: upgrades
+  display_name: Automation
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'automation upgrade icon, robot arm or connected gears in chain with
+    circular motion, automated process symbol, cyan coloring with mechanical feel,
+    hands-free operation, plain dark blue gradient background with soft vignette'
+
+- id: upgrade_network
+  category: upgrades
+  display_name: Network
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'network upgrade icon, interconnected nodes or mesh of points with
+    linking lines, connectivity improvement symbol, blue coloring with distributed
+    feel, better connections, plain dark blue gradient background with soft vignette'
+
+- id: upgrade_security
+  category: upgrades
+  display_name: Security
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'security upgrade icon, shield with embedded lock or fortress with
+    keyhole, protection enhancement symbol, gold coloring with impenetrable feel,
+    better defense, plain dark gradient background with warm vignette'
+
+- id: upgrade_research
+  category: upgrades
+  display_name: Research Boost
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'research boost upgrade icon, scientific beaker with upward arrow or
+    atom with acceleration rings, faster discovery symbol, purple-magenta coloring
+    with scientific feel, quicker breakthroughs, plain dark gradient background
+    with soft vignette'
+
+- id: upgrade_morale
+  category: upgrades
+  display_name: Morale Boost
+  status: pending
+  theme: funding_gold
+  prompt_tail: 'morale boost upgrade icon, smiling face with upward arrow or heart
+    with wings rising, team happiness symbol, warm yellow coloring with positive
+    feel, better workplace, plain dark gradient background with warm vignette'
+
+# =============================================================================
+# BATCH 13: SCROLLBAR & SLIDER COMPONENTS (6)
+# UI polish elements
+# =============================================================================
+
+- id: ui_scrollbar_track_v
+  category: scrollbars
+  display_name: Scrollbar Track Vertical
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'vertical scrollbar track element, dark grooved channel for slider,
+    tech interface style with subtle depth, recessed rail appearance, centered
+    vertical track shape, plain dark gradient background with soft vignette'
+
+- id: ui_scrollbar_track_h
+  category: scrollbars
+  display_name: Scrollbar Track Horizontal
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'horizontal scrollbar track element, dark grooved channel for slider,
+    tech interface style with subtle depth, recessed rail appearance, centered
+    horizontal track shape, plain dark gradient background with soft vignette'
+
+- id: ui_scrollbar_thumb_v
+  category: scrollbars
+  display_name: Scrollbar Thumb Vertical
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'vertical scrollbar thumb element, draggable slider handle with cyan
+    accent glow, tech interface style with grip texture, raised button appearance,
+    centered vertical thumb shape, plain dark gradient background with soft vignette'
+
+- id: ui_scrollbar_thumb_h
+  category: scrollbars
+  display_name: Scrollbar Thumb Horizontal
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'horizontal scrollbar thumb element, draggable slider handle with
+    cyan accent glow, tech interface style with grip texture, raised button
+    appearance, centered horizontal thumb shape, plain dark gradient background
+    with soft vignette'
+
+- id: ui_slider_track
+  category: scrollbars
+  display_name: Slider Track
+  status: pending
+  theme: base_corporate
+  prompt_tail: 'horizontal slider track element, groove style channel with cyan edge
+    highlight, tech interface style with subtle depth, value range rail, centered
+    horizontal track shape, plain dark gradient background with soft vignette'
+
+- id: ui_slider_thumb
+  category: scrollbars
+  display_name: Slider Thumb
+  status: pending
+  theme: influence_cyan
+  prompt_tail: 'slider thumb knob element, circular or diamond draggable handle with
+    cyan glow, tech interface style with tactile feel, value indicator, centered
+    thumb shape, plain dark gradient background with soft vignette'

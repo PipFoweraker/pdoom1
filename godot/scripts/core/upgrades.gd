@@ -60,6 +60,14 @@ static func get_all_upgrades() -> Array[Dictionary]:
 			"cost": 50000,
 			"effect_key": "office_cat",
 			"category": "office"
+		},
+		{
+			"id": "supply_automation",
+			"name": "Supply Management System",
+			"description": "Auto-orders supplies when low (maintains stationery without AP cost)",
+			"cost": 25000,
+			"effect_key": "supply_automation",
+			"category": "office"
 		}
 	]
 
@@ -123,5 +131,9 @@ static func purchase_upgrade(upgrade_id: String, state: GameState) -> Dictionary
 			state.add_resources({"doom": -5})
 			# Note: Cat-related state is tracked separately
 			result["message"] += " -5 doom! The cat has arrived!"
+
+		"supply_automation":
+			# Passive effect: auto-orders supplies when below 30
+			result["message"] += " Supplies will auto-order when low!"
 
 	return result

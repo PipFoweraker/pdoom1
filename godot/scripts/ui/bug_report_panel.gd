@@ -174,7 +174,7 @@ func _on_attribution_toggled(toggled_on: bool):
 		contact_input.text = ""
 
 ## Handle successful report save
-func _on_report_saved(filepath: String):
+func _on_report_saved(_filepath: String):
 	show_confirmation("Thank you! Your report has been saved.\n\nWe'll create a GitHub issue soon. Check back for updates!")
 
 	# Reset form after short delay

@@ -27,7 +27,7 @@ pdoom1/
       asset_v1_256.png
       asset_v1_128.png
       asset_v1_64.png
-  tools/
+  tools/assets/
     generate_images.py   # Image generation
     select_assets.py     # Variant selection
     promote_assets.py    # Copy to game
@@ -90,25 +90,25 @@ Generates images from YAML definitions using OpenAI API.
 export OPENAI_API_KEY="sk-..."
 
 # Dry-run to preview
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --dry-run
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --dry-run
 
 # Generate all pending assets
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --status pending --yes --update-yaml
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --status pending --yes --update-yaml
 
 # Generate multiple variants for comparison
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --status pending --variants 3 --yes --update-yaml
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --status pending --variants 3 --yes --update-yaml
 
 # Add another variant to existing assets
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --status generated --add-variant --yes --update-yaml
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --status generated --add-variant --yes --update-yaml
 
 # Generate specific assets by ID
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --ids ui_home_hq ui_alerts --yes
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --ids ui_home_hq ui_alerts --yes
 
 # Filter by category
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --category main_navigation --yes
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --category main_navigation --yes
 
 # Force regenerate (overwrites existing)
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --force --yes
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --force --yes
 ```
 
 **Key Arguments:**
@@ -130,16 +130,16 @@ Interactive tool for reviewing and selecting variants.
 
 ```bash
 # Interactive mode
-python tools/select_assets.py --file art_prompts/ui_icons.yaml
+python tools/assets/select_assets.py --file art_prompts/ui_icons.yaml
 
 # Open visual gallery in browser
-python tools/select_assets.py --file art_prompts/ui_icons.yaml --gallery generated
+python tools/assets/select_assets.py --file art_prompts/ui_icons.yaml --gallery generated
 
 # Quick select specific variants
-python tools/select_assets.py --file art_prompts/ui_icons.yaml --select ui_home_hq:v2 ui_alerts:v1
+python tools/assets/select_assets.py --file art_prompts/ui_icons.yaml --select ui_home_hq:v2 ui_alerts:v1
 
 # List assets by status
-python tools/select_assets.py --file art_prompts/ui_icons.yaml --list generated
+python tools/assets/select_assets.py --file art_prompts/ui_icons.yaml --list generated
 ```
 
 **Interactive Commands:**
@@ -164,19 +164,19 @@ Copies selected assets to game directory.
 
 ```bash
 # Dry-run to preview
-python tools/promote_assets.py --file art_prompts/ui_icons.yaml --dry-run
+python tools/assets/promote_assets.py --file art_prompts/ui_icons.yaml --dry-run
 
 # Promote all selected assets
-python tools/promote_assets.py --file art_prompts/ui_icons.yaml
+python tools/assets/promote_assets.py --file art_prompts/ui_icons.yaml
 
 # Promote and mark as promoted in YAML
-python tools/promote_assets.py --file art_prompts/ui_icons.yaml --mark-promoted
+python tools/assets/promote_assets.py --file art_prompts/ui_icons.yaml --mark-promoted
 
 # Promote specific category
-python tools/promote_assets.py --file art_prompts/ui_icons.yaml --category main_navigation
+python tools/assets/promote_assets.py --file art_prompts/ui_icons.yaml --category main_navigation
 
 # Custom destination
-python tools/promote_assets.py --file art_prompts/ui_icons.yaml --dest godot/assets/custom
+python tools/assets/promote_assets.py --file art_prompts/ui_icons.yaml --dest godot/assets/custom
 ```
 
 ## Complete Workflow Example
@@ -198,30 +198,30 @@ Edit `art_prompts/ui_icons.yaml` to add new assets:
 
 ```bash
 # Preview cost
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --status pending --dry-run
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --status pending --dry-run
 
 # Generate with 3 variants for critical icons
-python tools/generate_images.py --file art_prompts/ui_icons.yaml --ids ui_new_feature --variants 3 --yes --update-yaml
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --ids ui_new_feature --variants 3 --yes --update-yaml
 ```
 
 ### 3. Review and Select
 
 ```bash
 # Open gallery to view variants
-python tools/select_assets.py --file art_prompts/ui_icons.yaml --gallery generated
+python tools/assets/select_assets.py --file art_prompts/ui_icons.yaml --gallery generated
 
 # Select winner (from gallery copy)
-python tools/select_assets.py --file art_prompts/ui_icons.yaml --select ui_new_feature:v2
+python tools/assets/select_assets.py --file art_prompts/ui_icons.yaml --select ui_new_feature:v2
 ```
 
 ### 4. Promote to Game
 
 ```bash
 # Preview
-python tools/promote_assets.py --file art_prompts/ui_icons.yaml --dry-run
+python tools/assets/promote_assets.py --file art_prompts/ui_icons.yaml --dry-run
 
 # Copy to game
-python tools/promote_assets.py --file art_prompts/ui_icons.yaml --mark-promoted
+python tools/assets/promote_assets.py --file art_prompts/ui_icons.yaml --mark-promoted
 ```
 
 ## Cost Tracking
@@ -263,11 +263,11 @@ For large batches, create shell scripts:
 export OPENAI_API_KEY="$(cat ~/.openai_key.txt)"
 
 # Critical icons get 3 variants
-python tools/generate_images.py --file art_prompts/ui_icons.yaml \
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml \
   --category main_navigation --variants 3 --yes --update-yaml
 
 # Others get 1 variant
-python tools/generate_images.py --file art_prompts/ui_icons.yaml \
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml \
   --status pending --yes --update-yaml
 ```
 

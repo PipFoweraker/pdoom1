@@ -1,0 +1,94 @@
+schema_version: '1.0'
+asset_type: screen_backgrounds
+default_size: 1920x1080
+output_sizes:
+- 1920
+- 960
+
+styles:
+  background_base: 'wide landscape format 1920x1080 game background, atmospheric dark
+    laboratory aesthetic, subtle tech elements, no UI overlays or text, suitable for
+    game screen backdrop'
+  tileable_texture: 'seamless tileable texture pattern, 512x512, dark tech surface,
+    suitable for UI panel backgrounds'
+
+themes:
+  main_tech:
+    style_overrides:
+    - background_base
+    color_bias: dark blue-gray (#1a1e28) with subtle cyan circuit traces
+  victory:
+    style_overrides:
+    - background_base
+    color_bias: dark with golden and green triumphant glow
+  defeat:
+    style_overrides:
+    - background_base
+    color_bias: dark with red ominous warning glow
+  panel_texture:
+    style_overrides:
+    - tileable_texture
+    color_bias: dark steel gray (#1e2430) with subtle grain
+
+assets:
+# =============================================================================
+# SCREEN BACKGROUNDS (6)
+# Full-screen backgrounds for different game states
+# =============================================================================
+
+- id: bg_main_tech_grid
+  category: backgrounds
+  display_name: Main Background
+  status: pending
+  theme: main_tech
+  prompt_tail: 'dark laboratory control room interface background, subtle hexagonal
+    grid pattern overlaid, tech aesthetic with faint cyan circuit trace lines running
+    through, monitors and equipment silhouettes in deep background blur, atmospheric
+    and moody, centered composition suitable for UI overlay'
+
+- id: bg_welcome_laboratory
+  category: backgrounds
+  display_name: Welcome Screen
+  status: pending
+  theme: main_tech
+  prompt_tail: 'AI research laboratory entrance or lobby view, dark atmospheric scene
+    with glowing screens in background, server racks visible through glass walls,
+    dramatic lighting from overhead panels, sense of technological importance and
+    slightly ominous purpose, welcoming but serious'
+
+- id: bg_settings_panel
+  category: backgrounds
+  display_name: Settings Background
+  status: pending
+  theme: main_tech
+  prompt_tail: 'configuration terminal interface background, organized grid of dark
+    panels with subtle button outlines, technical and systematic feel, clean dark
+    steel surfaces with panel lines, professional configuration environment'
+
+- id: bg_gameover_victory
+  category: backgrounds
+  display_name: Victory Screen
+  status: pending
+  theme: victory
+  prompt_tail: 'triumphant AI safety victory scene, golden and green light radiating
+    from center, balanced scales or protective shield motif in background, sense of
+    achievement and safety secured, hopeful dawn lighting, celebration of successful
+    alignment'
+
+- id: bg_gameover_defeat
+  category: backgrounds
+  display_name: Defeat Screen
+  status: pending
+  theme: defeat
+  prompt_tail: 'AI doom scenario background, red warning glow emanating from center,
+    system failure aesthetic with warning symbols, corrupted or overloaded appearance,
+    sense of catastrophic outcome, digital breakdown and loss of control'
+
+- id: bg_panel_steel
+  category: textures
+  display_name: Panel Texture
+  status: pending
+  theme: panel_texture
+  prompt_tail: 'dark brushed steel panel texture, subtle grain and machining marks,
+    slightly lighter than pure black for contrast, suitable for tiling across UI
+    panels, clean industrial tech surface, seamless edges'

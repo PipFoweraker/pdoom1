@@ -94,7 +94,7 @@ func _on_launch_lab_pressed():
 	print("[WelcomeScreen] Launching lab with default seed...")
 	# Set default config mode and show confirmation screen
 	GameConfig.config_mode = "default"
-	GameConfig.seed = ""  # Use weekly seed
+	GameConfig.game_seed = ""  # Use weekly seed
 	GameConfig.difficulty = 1  # Standard difficulty
 	var err = get_tree().change_scene_to_file("res://scenes/config_confirmation.tscn")
 	if err != OK:

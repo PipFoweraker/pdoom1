@@ -61,7 +61,7 @@ func select_action(action_id: String):
 	"""Queue action for execution with immediate AP deduction - FIX #418: Block if events pending"""
 	# Validation: Game initialized
 	if not is_initialized:
-		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
+		var _err = ErrorHandler.report_err(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.ACTIONS,
 			"Cannot select action: Game not initialized",
 			{"action_id": action_id}
@@ -93,7 +93,7 @@ func select_action(action_id: String):
 	# Get action details to check AP cost
 	var action = _get_action_by_id(action_id)
 	if not action or action.is_empty():
-		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
+		var _err = ErrorHandler.report_err(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.ACTIONS,
 			"Action not found",
 			{"action_id": action_id}
@@ -206,6 +206,52 @@ func purchase_upgrade(upgrade_id: String):
 	else:
 		error_occurred.emit(result.get("message", "Upgrade purchase failed"))
 
+func fire_researcher(researcher_index: int, severance_cost: float):
+	"""Fire a researcher with severance payout"""
+	if not is_initialized:
+		error_occurred.emit("Cannot fire employee: Game not initialized")
+		return
+
+	# Validate researcher index
+	if researcher_index < 0 or researcher_index >= state.researchers.size():
+		error_occurred.emit("Invalid researcher index: %d" % researcher_index)
+		return
+
+	# Validate funds
+	if state.money < severance_cost:
+		error_occurred.emit("Cannot afford severance: need %s, have %s" % [
+			GameConfig.format_money(severance_cost),
+			GameConfig.format_money(state.money)
+		])
+		return
+
+	# Get researcher details before removing
+	var researcher = state.researchers[researcher_index]
+	var researcher_name = researcher.researcher_name
+
+	# Pay severance
+	state.money -= severance_cost
+
+	# Remove researcher
+	state.remove_researcher(researcher)
+
+	# Create result message
+	var result_message = "Fired %s. Severance paid: %s" % [
+		researcher_name,
+		GameConfig.format_money(severance_cost)
+	]
+
+	print("[GameManager] %s" % result_message)
+
+	# Emit result
+	action_executed.emit({
+		"success": true,
+		"message": result_message
+	})
+
+	# Emit updated state
+	game_state_updated.emit(state.to_dict())
+
 func reserve_ap(amount: int):
 	"""Reserve AP for event responses"""
 	if not is_initialized:
@@ -263,7 +309,7 @@ func end_turn():
 	"""Execute queued actions and process turn"""
 	# Validation: Game initialized
 	if not is_initialized:
-		var _err = ErrorHandler.error(  # Underscore prefix indicates intentionally unused
+		var _err = ErrorHandler.report_err(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.TURN,
 			"Cannot end turn: Game not initialized",
 			{}
@@ -312,7 +358,7 @@ func end_turn():
 
 	# Validate turn execution result
 	if not result.has("success") or not result.has("action_results"):
-		ErrorHandler.error(
+		ErrorHandler.report_err(
 			ErrorHandler.Category.TURN,
 			"Invalid turn execution result",
 			{"result_keys": result.keys()}

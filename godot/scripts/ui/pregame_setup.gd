@@ -33,7 +33,7 @@ func _ready():
 	# Load values from GameConfig
 	player_name_input.text = GameConfig.player_name
 	lab_name_input.text = GameConfig.lab_name
-	seed_input.text = GameConfig.seed
+	seed_input.text = GameConfig.game_seed
 	difficulty_option.selected = GameConfig.difficulty
 
 	# Focus player name input
@@ -68,7 +68,7 @@ func _on_lab_name_changed(new_text: String):
 
 func _on_seed_changed(new_text: String):
 	"""Handle seed input change"""
-	GameConfig.seed = new_text.strip_edges()
+	GameConfig.game_seed = new_text.strip_edges()
 
 func _on_difficulty_selected(index: int):
 	"""Handle difficulty selection"""
@@ -102,7 +102,7 @@ func _generate_random_lab_name() -> String:
 func _on_weekly_seed_pressed():
 	"""Clear seed to use weekly challenge seed"""
 	seed_input.text = ""
-	GameConfig.seed = ""
+	GameConfig.game_seed = ""
 	print("[PreGameSetup] Using weekly challenge seed: ", GameConfig.get_weekly_seed())
 
 func _on_launch_pressed():

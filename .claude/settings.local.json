@@ -38,7 +38,8 @@
       "Bash(git mv:*)",
       "Bash(git checkout:*)",
       "Bash(git rm:*)",
-      "Bash(source ~/.bashrc)"
+      "Bash(source ~/.bashrc)",
+      "Bash(xargs -I {} sh -c 'echo \"\"\"\"{}: $(ls \"\"\"\"{}\"\"\"\" 2>/dev/null | grep \"\"\"\"_64.png$\"\"\"\" | wc -l) icons\"\"\"\"')"
     ],
     "deny": [],
     "ask": []

@@ -30,6 +30,7 @@ extends VBoxContainer
 @onready var bug_report_button = $BottomBar/BugReportButton
 @onready var office_cat = $ContentArea/MiddlePanel/CoreZone/CatZone/OfficeCat
 @onready var tab_manager = get_parent()
+@onready var roster_container = $ContentArea/MiddlePanel/EmployeeRosterZone/RosterScroll/RosterContainer
 
 # Reference to GameManager
 var game_manager: Node
@@ -67,7 +68,7 @@ func _ready():
 
 	# Auto-initialize game when scene loads
 	log_message("[color=cyan]Initializing game...[/color]")
-	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to commit, E for employees[/color]")
+	log_message("[color=gray]Keyboard: 1-9 for actions, Space/Enter to commit[/color]")
 
 	# Call init on next frame to ensure everything is ready
 	await get_tree().process_frame
@@ -93,9 +94,8 @@ func _unhandled_key_input(event: InputEvent):
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
-		# Skip E key - handled by TabManager
-		if event.keycode == KEY_E and active_dialog == null:
-			return
+		# E key no longer switches to employee screen - employee info moving to main UI
+		# (E key was previously handled by TabManager, now disabled)
 
 		var key_char = char(event.unicode) if event.unicode > 0 else "?"
 		print("[MainUI] _input called, keycode: %d (%s), active_dialog: %s, buttons: %d" % [event.keycode, key_char, active_dialog != null, active_dialog_buttons.size()])
@@ -207,17 +207,21 @@ func _unhandled_input(event: InputEvent):
 
 func _trigger_action_by_index(index: int):
 	"""Trigger action button by its index (for keyboard shortcuts)"""
-	var buttons = actions_list.get_children()
-	var action_buttons = []
+	# Find the VBoxContainer (icon_stack) first
+	var icon_stack: VBoxContainer = null
+	for child in actions_list.get_children():
+		if child is VBoxContainer:
+			icon_stack = child
+			break
 
-	# Filter out category labels, get only buttons
-	for child in buttons:
-		if child is Button and child.name != "TestActionButton":
-			action_buttons.append(child)
+	if not icon_stack:
+		return
 
-	if index < action_buttons.size():
-		var button = action_buttons[index]
-		if not button.disabled:
+	# Get buttons directly from stack (single column layout)
+	var buttons = icon_stack.get_children()
+	if index < buttons.size():
+		var button = buttons[index] as Button
+		if button and not button.disabled:
 			button.emit_signal("pressed")
 			log_message("[color=cyan]Keyboard shortcut: %d[/color]" % (index + 1))
 
@@ -350,8 +354,9 @@ func _on_commit_plan_button_pressed():
 	game_manager.end_turn()
 
 func _on_employee_tab_button_pressed():
-	"""Switch to employee management screen"""
-	tab_manager.show_employee_screen()
+	"""Switch to employee management screen - DISABLED: employee info moving to main UI"""
+	# tab_manager.show_employee_screen()
+	pass
 
 func _on_bug_report_button_pressed():
 	"""Open bug report panel"""
@@ -369,17 +374,17 @@ func _on_game_state_updated(state: Dictionary):
 	papers_label.text = "Papers: %d" % state.get("papers", 0)
 	reputation_label.text = "Rep: %.0f" % state.get("reputation", 0)
 
-	# Add employee blob display to AP label
+	# Add employee blob display to AP label (using BBCode for RichTextLabel)
 	var safety = state.get("safety_researchers", 0)
 	var capability = state.get("capability_researchers", 0)
 	var compute_eng = state.get("compute_engineers", 0)
 	var blob_display = ""
-	for i in range(safety):
+	for _i in range(safety):
 		blob_display += "[color=green]●[/color]"
-	for i in range(capability):
+	for _i in range(capability):
 		blob_display += "[color=red]●[/color]"
-	for i in range(compute_eng):
-		blob_display += "[color=blue]●[/color]"
+	for _i in range(compute_eng):
+		blob_display += "[color=dodger_blue]●[/color]"
 
 	# Show AP split with remaining AP tracking
 	var total_ap = state.get("action_points", 0)
@@ -387,23 +392,25 @@ func _on_game_state_updated(state: Dictionary):
 	var reserved_ap = state.get("reserved_ap", 0)
 	var remaining_ap = total_ap - committed_ap - reserved_ap
 
-	# Color-code based on remaining AP
-	var ap_color = Color(0.9, 0.9, 0.9)  # White (default)
+	# Color-code AP text based on remaining AP
+	var ap_color_name = "white"  # Default
 	if remaining_ap <= 0:
-		ap_color = Color(0.8, 0.2, 0.2)  # Red (depleted)
+		ap_color_name = "red"  # Depleted
 	elif remaining_ap == 1:
-		ap_color = Color(0.9, 0.7, 0.2)  # Yellow (low)
+		ap_color_name = "yellow"  # Low
 	elif remaining_ap < total_ap:
-		ap_color = Color(0.7, 0.9, 0.7)  # Light green (partially committed)
+		ap_color_name = "lime"  # Partially committed
 
-	ap_label.add_theme_color_override("font_color", ap_color)
-
+	# Build BBCode text for RichTextLabel
+	var ap_text = ""
 	if reserved_ap > 0:
-		ap_label.text = "AP: %d (%d free, %d reserved)  %s" % [total_ap, remaining_ap, reserved_ap, blob_display]
+		ap_text = "[color=%s]AP: %d (%d free, %d reserved)[/color]  %s" % [ap_color_name, total_ap, remaining_ap, reserved_ap, blob_display]
 	elif committed_ap > 0:
-		ap_label.text = "AP: %d (%d free, %d queued)  %s" % [total_ap, remaining_ap, committed_ap, blob_display]
+		ap_text = "[color=%s]AP: %d (%d free, %d queued)[/color]  %s" % [ap_color_name, total_ap, remaining_ap, committed_ap, blob_display]
 	else:
-		ap_label.text = "AP: %d  %s" % [total_ap, blob_display]
+		ap_text = "[color=%s]AP: %d[/color]  %s" % [ap_color_name, total_ap, blob_display]
+
+	ap_label.text = ap_text
 
 	# Update doom displays (both text label and visual meter)
 	var doom = state.get("doom", 0)
@@ -456,6 +463,9 @@ func _on_game_state_updated(state: Dictionary):
 
 	# Refresh upgrades list to update affordability
 	_populate_upgrades()
+
+	# Update employee roster display
+	_update_employee_roster(state)
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
@@ -517,8 +527,8 @@ func log_message(text: String):
 		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
 
 func _on_actions_available(actions: Array):
-	"""Populate action list dynamically, grouped by category"""
-	print("[MainUI] Populating ", actions.size(), " actions")
+	"""Populate action list with icon buttons in a grid layout"""
+	print("[MainUI] Populating ", actions.size(), " actions as icon buttons")
 
 	# Clear existing action buttons (except test button for now)
 	for child in actions_list.get_children():
@@ -536,21 +546,10 @@ func _on_actions_available(actions: Array):
 			categories[category] = []
 		categories[category].append(action)
 
-	# Define category order and display names (issue #436 - comprehensive categories)
+	# Define category order
 	var category_order = ["hiring", "resources", "research", "funding", "management", "influence", "strategic", "other"]
-	var category_names = {
-		"hiring": "Hiring",
-		"resources": "Resources",
-		"research": "Research",
-		"funding": "Fundraising",
-		"management": "Management",
-		"influence": "Public Influence",
-		"strategic": "Strategic",
-		"other": "Other"
-	}
 
-	# Define category colors (from issue #436 player feedback)
-	# Using ThemeManager for centralized color management
+	# Define category colors
 	var category_colors = {
 		"hiring": ThemeManager.get_category_color("hiring"),
 		"resources": ThemeManager.get_category_color("resources"),
@@ -559,11 +558,17 @@ func _on_actions_available(actions: Array):
 		"influence": ThemeManager.get_category_color("influence"),
 		"strategic": ThemeManager.get_category_color("strategic"),
 		"funding": ThemeManager.get_category_color("funding"),
-		"other": Color(0.8, 0.8, 0.8)        # Gray - misc
+		"other": Color(0.8, 0.8, 0.8)
 	}
 
-	# Create sections for each category
+	# Create a single-column vertical stack for icons on left edge
+	var icon_stack = VBoxContainer.new()
+	icon_stack.add_theme_constant_override("separation", 2)
+	actions_list.add_child(icon_stack)
+
+	# Create icon buttons - single column layout
 	var action_index = 0  # Track index for keyboard shortcuts
+
 	for category_key in category_order:
 		if not categories.has(category_key):
 			continue
@@ -572,43 +577,32 @@ func _on_actions_available(actions: Array):
 		if category_actions.is_empty():
 			continue
 
-		# Note: Category labels removed per issue #451 - using button colors instead
-
-		# Create buttons for actions in this category
+		# Create icon buttons for actions in this category
 		for action in category_actions:
 			var action_id = action.get("id", "")
 			var action_name = action.get("name", "Unknown")
 			var action_cost = action.get("costs", {})
-			var action_description = action.get("description", "")
 
-			# Build button text with keyboard shortcut and costs
-			var button_text = "  " + action_name  # Indent actions under category
+			# Create icon-only button (square, fills width)
+			var icon_button = Button.new()
+			icon_button.custom_minimum_size = Vector2(70, 70)  # Larger square icon buttons
+			icon_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			icon_button.focus_mode = Control.FOCUS_NONE
 
-			# Add keyboard shortcut hint if index is 0-8 (keys 1-9)
+			# Get icon texture
+			var icon_texture = IconLoader.get_action_icon(action_id)
+			if icon_texture:
+				icon_button.icon = icon_texture
+				icon_button.expand_icon = true
+				icon_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+			# Add keyboard shortcut number in corner (subtle)
 			if action_index < 9:
-				button_text = "[%d] %s" % [action_index + 1, action_name]
+				icon_button.text = str(action_index + 1)
+				icon_button.add_theme_font_size_override("font_size", 9)
+				icon_button.add_theme_color_override("font_color", Color(1, 1, 1, 0.5))
 
-			# Add cost display (concise format)
-			var cost_parts = []
-			if action_cost.has("action_points"):
-				cost_parts.append("%d AP" % action_cost["action_points"])
-			if action_cost.has("money"):
-				cost_parts.append(GameConfig.format_money(action_cost["money"]))
-			if action_cost.has("reputation"):
-				cost_parts.append("%d Rep" % action_cost["reputation"])
-			if action_cost.has("papers"):
-				cost_parts.append("%d Paper" % action_cost["papers"])
-
-			if cost_parts.size() > 0:
-				button_text += " (" + ", ".join(cost_parts) + ")"
-
-			# Create styled button using ThemeManager
-			var button = ThemeManager.create_button(button_text)
-			# Constrain button width to prevent extending into middle
-			button.size_flags_horizontal = Control.SIZE_FILL
-			button.custom_minimum_size = Vector2(0, 32)
-
-			action_index += 1  # Increment for next action
+			action_index += 1
 
 			# Check if player can afford this action
 			var can_afford = true
@@ -622,35 +616,27 @@ func _on_actions_available(actions: Array):
 					can_afford = false
 					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
 
-			# Add cost info to tooltip
-			var tooltip = action_description + "\n\nCosts:"
-			for resource in action_cost.keys():
-				tooltip += "\n  %s: %s" % [resource, action_cost[resource]]
-
+			# Style based on affordability and category
 			if not can_afford:
-				tooltip += "\n\n[CANNOT AFFORD]"
-				for msg in missing_resources:
-					tooltip += "\n  Missing: " + msg
-				button.disabled = true
-				button.modulate = Color(0.6, 0.6, 0.6)  # Gray out unaffordable
+				icon_button.disabled = true
+				icon_button.modulate = Color(0.4, 0.4, 0.4)  # Dark gray for unaffordable
 			else:
-				# Apply more prominent category color tint to buttons (issue #451)
-				# Makes categories visually distinct without needing header labels
+				# Apply category color tint
 				var button_color = category_colors.get(category_key, Color(1.0, 1.0, 1.0))
-				# Use 50% white + 50% category color for clearer visual distinction
-				button.modulate = Color(0.85, 0.85, 0.85).lerp(button_color, 0.5)
+				icon_button.modulate = Color(0.9, 0.9, 0.9).lerp(button_color, 0.4)
 
-			button.tooltip_text = tooltip
+			# Simple tooltip for accessibility
+			icon_button.tooltip_text = action_name
 
 			# Connect button press
-			button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
+			icon_button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
 
 			# Connect mouse hover for info bar
-			button.mouse_entered.connect(func(): _on_action_hover(action, can_afford, missing_resources))
-			button.mouse_exited.connect(func(): _on_action_unhover())
+			icon_button.mouse_entered.connect(func(): _on_action_hover(action, can_afford, missing_resources))
+			icon_button.mouse_exited.connect(func(): _on_action_unhover())
 
-			# Add to list
-			actions_list.add_child(button)
+			# Add to stack
+			icon_stack.add_child(icon_button)
 
 	# Also populate upgrades
 	_populate_upgrades()
@@ -756,6 +742,10 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 			_show_hiring_submenu()
 		elif action_id == "fundraise":
 			_show_fundraising_submenu()
+		elif action_id == "publicity":
+			_show_publicity_submenu()
+		elif action_id == "strategic":
+			_show_strategic_submenu()
 		return
 
 	# Track queued action
@@ -782,15 +772,12 @@ func _show_hiring_submenu():
 		active_dialog = null
 		active_dialog_buttons = []
 
-	# Use Panel - simplest approach that doesn't interfere with input!
+	# Use Panel - position to the right of the left panel buttons
 	var dialog = Panel.new()
-	dialog.custom_minimum_size = Vector2(500, 400)
-	dialog.size = Vector2(500, 400)
-	# Center it manually
-	dialog.position = Vector2(
-		(get_viewport().get_visible_rect().size.x - 500) / 2,
-		(get_viewport().get_visible_rect().size.y - 400) / 2
-	)
+	dialog.custom_minimum_size = Vector2(400, 350)
+	dialog.size = Vector2(400, 350)
+	# Position to the right of the left panel (icon stack)
+	dialog.position = Vector2(90, 80)  # Just right of the 80px wide left panel
 	print("[MainUI] Created Panel, size: %s, position: %s" % [dialog.size, dialog.position])
 
 	# Create main container
@@ -804,25 +791,16 @@ func _show_hiring_submenu():
 	var main_vbox = VBoxContainer.new()
 	margin.add_child(main_vbox)
 
-	# Add title label
-	var title_label = Label.new()
-	title_label.text = "Hire Staff - Choose a staff member:"
-	title_label.add_theme_font_size_override("font_size", 16)
-	title_label.add_theme_color_override("font_color", Color.CYAN)
-	main_vbox.add_child(title_label)
-
-	# Add spacing
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 15)
-	main_vbox.add_child(spacer)
-
-	# Create container for hiring buttons
-	var vbox = VBoxContainer.new()
-	main_vbox.add_child(vbox)
-
 	# Get hiring options
 	var hiring_options = GameActions.get_hiring_options()
 	var current_state = game_manager.get_game_state()
+
+	# Create grid for icon buttons
+	var grid = GridContainer.new()
+	grid.columns = 3  # 3 icons per row
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	main_vbox.add_child(grid)
 
 	var button_index = 0
 	var buttons = []  # Store buttons for keyboard access
@@ -834,13 +812,28 @@ func _show_hiring_submenu():
 		var hire_desc = option.get("description", "")
 		var hire_costs = option.get("costs", {})
 
-		# Create button for this option with keyboard hint (LETTERS not numbers)
+		# Create VBox for icon + label
+		var item_vbox = VBoxContainer.new()
+		item_vbox.add_theme_constant_override("separation", 4)
+
+		# Create icon button
 		var btn = Button.new()
-		btn.focus_mode = Control.FOCUS_NONE  # Don't grab focus - let MainUI handle keys
-		btn.mouse_filter = Control.MOUSE_FILTER_PASS  # Still allow mouse clicks
+		btn.custom_minimum_size = Vector2(100, 80)
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.mouse_filter = Control.MOUSE_FILTER_PASS
+
+		# Add icon
+		var icon_texture = IconLoader.get_action_icon(hire_id)
+		if icon_texture:
+			btn.icon = icon_texture
+			btn.expand_icon = true
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+		# Add keyboard hint as text
 		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		var btn_text = "[%s] %s (%s, %d AP)" % [key_label, hire_name, GameConfig.format_money(hire_costs.get("money", 0)), hire_costs.get("action_points", 0)]
-		btn.text = btn_text
+		btn.text = key_label
+		btn.add_theme_font_size_override("font_size", 10)
+		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
 
 		# Check affordability
 		var can_afford = true
@@ -851,17 +844,35 @@ func _show_hiring_submenu():
 
 		if not can_afford:
 			btn.disabled = true
-			btn.modulate = Color(0.6, 0.6, 0.6)
+			btn.modulate = Color(0.5, 0.5, 0.5)
 
-		# Add tooltip
-		btn.tooltip_text = hire_desc + "\n\nCosts: %s, %d AP\n\nPress %d to select" % [GameConfig.format_money(hire_costs.get("money", 0)), hire_costs.get("action_points", 0), button_index + 1]
+		# Tooltip with full details
+		btn.tooltip_text = "%s\n%s\n\nCost: %s, %d AP" % [hire_name, hire_desc, GameConfig.format_money(hire_costs.get("money", 0)), hire_costs.get("action_points", 0)]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_hiring_option_selected(hire_id, hire_name, dialog))
 
-		vbox.add_child(btn)
+		item_vbox.add_child(btn)
+
+		# Add label below icon
+		var name_label = Label.new()
+		name_label.text = hire_name.replace(" Researcher", "").replace("Compute ", "")  # Shorten names
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+		item_vbox.add_child(name_label)
+
+		grid.add_child(item_vbox)
 		buttons.append(btn)
 		button_index += 1
+
+	# Add cost summary at bottom
+	var summary_label = Label.new()
+	summary_label.text = "Each hire: $50-80k, 1 AP"
+	summary_label.add_theme_font_size_override("font_size", 11)
+	summary_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	summary_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	main_vbox.add_child(summary_label)
 
 	# Store dialog state for keyboard handling in MainUI._input()
 	print("[MainUI] Setting active_dialog and active_dialog_buttons...")
@@ -905,7 +916,7 @@ func _on_hiring_option_selected(action_id: String, action_name: String, dialog: 
 	game_manager.select_action(action_id)
 
 func _show_fundraising_submenu():
-	"""Show popup dialog with fundraising options with keyboard support"""
+	"""Show popup dialog with fundraising options with keyboard support - icon grid layout"""
 	print("[MainUI] === FUNDRAISING SUBMENU STARTING ===")
 
 	# Close any existing dialog first
@@ -915,15 +926,12 @@ func _show_fundraising_submenu():
 		active_dialog = null
 		active_dialog_buttons = []
 
-	# Use Panel - simplest approach that doesn't interfere with input!
+	# Use Panel - position to the right of the left panel buttons
 	var dialog = Panel.new()
-	dialog.custom_minimum_size = Vector2(550, 450)
-	dialog.size = Vector2(550, 450)
-	# Center it manually
-	dialog.position = Vector2(
-		(get_viewport().get_visible_rect().size.x - 550) / 2,
-		(get_viewport().get_visible_rect().size.y - 450) / 2
-	)
+	dialog.custom_minimum_size = Vector2(420, 350)
+	dialog.size = Vector2(420, 350)
+	# Position to the right of the left panel (icon stack) - same as hiring submenu
+	dialog.position = Vector2(90, 80)  # Just right of the 80px wide left panel
 	print("[MainUI] Created Panel, size: %s, position: %s" % [dialog.size, dialog.position])
 
 	# Create main container
@@ -937,26 +945,16 @@ func _show_fundraising_submenu():
 	var main_vbox = VBoxContainer.new()
 	margin.add_child(main_vbox)
 
-	# Add title label
-	var title_label = Label.new()
-	title_label.text = "Fundraising Options - Choose your funding strategy:"
-	title_label.add_theme_font_size_override("font_size", 16)
-	title_label.add_theme_color_override("font_color", Color.CYAN)
-	main_vbox.add_child(title_label)
-
-	# Add spacing
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 15)
-	main_vbox.add_child(spacer)
-
-	# Create container for fundraising buttons
-	var vbox = VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 10)
-	main_vbox.add_child(vbox)
-
 	# Get fundraising options
 	var funding_options = GameActions.get_fundraising_options()
 	var current_state = game_manager.get_game_state()
+
+	# Create grid for icon buttons (same layout as hiring submenu)
+	var grid = GridContainer.new()
+	grid.columns = 3  # 3 icons per row
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	main_vbox.add_child(grid)
 
 	var button_index = 0
 	var buttons = []  # Store buttons for keyboard access
@@ -969,13 +967,30 @@ func _show_fundraising_submenu():
 		var fund_costs = option.get("costs", {})
 		var fund_gains = option.get("gains", {})
 
-		# Create button for this option
-		var btn = Button.new()
-		btn.focus_mode = Control.FOCUS_NONE  # Don't grab focus - let MainUI handle keys
-		btn.mouse_filter = Control.MOUSE_FILTER_PASS  # Still allow mouse clicks
-		btn.custom_minimum_size = Vector2(500, 50)
+		# Create VBox for icon + label (same as hiring submenu)
+		var item_vbox = VBoxContainer.new()
+		item_vbox.add_theme_constant_override("separation", 4)
 
-		# Format costs
+		# Create icon button
+		var btn = Button.new()
+		btn.custom_minimum_size = Vector2(100, 80)
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.mouse_filter = Control.MOUSE_FILTER_PASS
+
+		# Add icon
+		var icon_texture = IconLoader.get_action_icon(fund_id)
+		if icon_texture:
+			btn.icon = icon_texture
+			btn.expand_icon = true
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+		# Add keyboard hint as text
+		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
+		btn.text = key_label
+		btn.add_theme_font_size_override("font_size", 10)
+		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
+
+		# Format costs for tooltip
 		var cost_text = ""
 		if fund_costs.get("action_points", 0) > 0:
 			cost_text += "%d AP" % fund_costs.get("action_points")
@@ -988,16 +1003,12 @@ func _show_fundraising_submenu():
 				cost_text += ", "
 			cost_text += "%d Papers" % fund_costs.get("papers")
 
-		# Format gains
+		# Format gains for tooltip
 		var gain_text = ""
 		if fund_gains.has("money_min") and fund_gains.has("money_max"):
 			gain_text = "%s-%s" % [GameConfig.format_money(fund_gains.get("money_min")), GameConfig.format_money(fund_gains.get("money_max"))]
 		elif fund_gains.has("money"):
 			gain_text = GameConfig.format_money(fund_gains.get("money"))
-
-		# Add keyboard hint (LETTERS not numbers)
-		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		btn.text = "[%s] %s\n(%s → %s)" % [key_label, fund_name, cost_text if cost_text != "" else "Free", gain_text]
 
 		# Check affordability
 		var can_afford = true
@@ -1008,17 +1019,37 @@ func _show_fundraising_submenu():
 
 		if not can_afford:
 			btn.disabled = true
-			btn.modulate = Color(0.6, 0.6, 0.6)
+			btn.modulate = Color(0.5, 0.5, 0.5)
 
-		# Add tooltip
-		btn.tooltip_text = fund_desc + "\n\nCosts: %s\nGains: %s\n\nPress %d to select" % [cost_text if cost_text != "" else "None", gain_text, button_index + 1]
+		# Tooltip with full details
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s\nGains: %s" % [fund_name, fund_desc, cost_text if cost_text != "" else "Free", gain_text]
 
 		# Connect button
 		btn.pressed.connect(func(): _on_fundraising_option_selected(fund_id, fund_name, dialog))
 
-		vbox.add_child(btn)
+		item_vbox.add_child(btn)
+
+		# Add label below icon (shortened names)
+		var name_label = Label.new()
+		# Shorten common suffixes for cleaner display
+		var short_name = fund_name.replace(" Funding", "").replace("Publish ", "")
+		name_label.text = short_name
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+		item_vbox.add_child(name_label)
+
+		grid.add_child(item_vbox)
 		buttons.append(btn)
 		button_index += 1
+
+	# Add summary at bottom
+	var summary_label = Label.new()
+	summary_label.text = "Costs vary: 0-2 Papers, 0-20 Rep"
+	summary_label.add_theme_font_size_override("font_size", 11)
+	summary_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	summary_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	main_vbox.add_child(summary_label)
 
 	# Store dialog state for keyboard handling in MainUI._input()
 	print("[MainUI] Setting active_dialog and active_dialog_buttons...")
@@ -1026,6 +1057,8 @@ func _show_fundraising_submenu():
 	active_dialog_buttons = buttons
 	print("[MainUI] active_dialog is now: %s" % (active_dialog != null))
 	print("[MainUI] Fundraising submenu opened, tracked %d buttons" % buttons.size())
+	for i in range(buttons.size()):
+		print("[MainUI]   Button %d: %s" % [i, buttons[i].text])
 
 	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
 	print("[MainUI] Adding dialog to TabManager as overlay...")
@@ -1040,6 +1073,7 @@ func _show_fundraising_submenu():
 	await get_tree().process_frame
 	print("[MainUI] Frame passed, dialog still visible: %s" % dialog.visible)
 	print("[MainUI] === FUNDRAISING SUBMENU SETUP COMPLETE ===")
+	print("[MainUI] Active dialog: %s, Buttons: %d" % [active_dialog != null, active_dialog_buttons.size()])
 	print("[MainUI] Ready for keyboard input via MainUI._input()")
 
 func _on_fundraising_option_selected(action_id: String, action_name: String, dialog: Control):
@@ -1054,6 +1088,341 @@ func _on_fundraising_option_selected(action_id: String, action_name: String, dia
 	log_message("[color=cyan]Fundraising: %s[/color]" % action_name)
 
 	# Queue the actual fundraising action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
+	game_manager.select_action(action_id)
+
+func _show_publicity_submenu():
+	"""Show popup dialog with publicity/influence options with keyboard support - icon grid layout"""
+	print("[MainUI] === PUBLICITY SUBMENU STARTING ===")
+
+	# Close any existing dialog first
+	if active_dialog != null and is_instance_valid(active_dialog):
+		print("[MainUI] Closing existing dialog...")
+		active_dialog.queue_free()
+		active_dialog = null
+		active_dialog_buttons = []
+
+	# Use Panel - position to the right of the left panel buttons
+	var dialog = Panel.new()
+	dialog.custom_minimum_size = Vector2(420, 350)
+	dialog.size = Vector2(420, 350)
+	# Position to the right of the left panel (icon stack)
+	dialog.position = Vector2(90, 80)  # Just right of the 80px wide left panel
+	print("[MainUI] Created Panel, size: %s, position: %s" % [dialog.size, dialog.position])
+
+	# Create main container
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 15)
+	margin.add_theme_constant_override("margin_right", 15)
+	margin.add_theme_constant_override("margin_top", 15)
+	margin.add_theme_constant_override("margin_bottom", 15)
+	dialog.add_child(margin)
+
+	var main_vbox = VBoxContainer.new()
+	margin.add_child(main_vbox)
+
+	# Get publicity options
+	var publicity_options = GameActions.get_publicity_options()
+	var current_state = game_manager.get_game_state()
+
+	# Create grid for icon buttons (same layout as other submenus)
+	var grid = GridContainer.new()
+	grid.columns = 3  # 3 icons per row
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	main_vbox.add_child(grid)
+
+	var button_index = 0
+	var buttons = []  # Store buttons for keyboard access
+	var dialog_key_labels = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"]
+
+	for option in publicity_options:
+		var pub_id = option.get("id", "")
+		var pub_name = option.get("name", "")
+		var pub_desc = option.get("description", "")
+		var pub_costs = option.get("costs", {})
+
+		# Create VBox for icon + label
+		var item_vbox = VBoxContainer.new()
+		item_vbox.add_theme_constant_override("separation", 4)
+
+		# Create icon button
+		var btn = Button.new()
+		btn.custom_minimum_size = Vector2(100, 80)
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.mouse_filter = Control.MOUSE_FILTER_PASS
+
+		# Add icon
+		var icon_texture = IconLoader.get_action_icon(pub_id)
+		if icon_texture:
+			btn.icon = icon_texture
+			btn.expand_icon = true
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+		# Add keyboard hint as text
+		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
+		btn.text = key_label
+		btn.add_theme_font_size_override("font_size", 10)
+		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
+
+		# Format costs for tooltip
+		var cost_text = ""
+		if pub_costs.get("action_points", 0) > 0:
+			cost_text += "%d AP" % pub_costs.get("action_points")
+		if pub_costs.get("money", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += GameConfig.format_money(pub_costs.get("money"))
+		if pub_costs.get("reputation", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += "%d Rep" % pub_costs.get("reputation")
+		if pub_costs.get("papers", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += "%d Papers" % pub_costs.get("papers")
+
+		# Check affordability
+		var can_afford = true
+		for resource in pub_costs.keys():
+			if current_state.get(resource, 0) < pub_costs[resource]:
+				can_afford = false
+				break
+
+		if not can_afford:
+			btn.disabled = true
+			btn.modulate = Color(0.5, 0.5, 0.5)
+
+		# Tooltip with full details
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [pub_name, pub_desc, cost_text if cost_text != "" else "Free"]
+
+		# Connect button
+		btn.pressed.connect(func(): _on_publicity_option_selected(pub_id, pub_name, dialog))
+
+		item_vbox.add_child(btn)
+
+		# Add label below icon (shortened names)
+		var name_label = Label.new()
+		var short_name = pub_name.replace(" Campaign", "").replace("Open Source ", "")
+		name_label.text = short_name
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+		item_vbox.add_child(name_label)
+
+		grid.add_child(item_vbox)
+		buttons.append(btn)
+		button_index += 1
+
+	# Add summary at bottom
+	var summary_label = Label.new()
+	summary_label.text = "Build influence and public awareness"
+	summary_label.add_theme_font_size_override("font_size", 11)
+	summary_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	summary_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	main_vbox.add_child(summary_label)
+
+	# Store dialog state for keyboard handling
+	print("[MainUI] Setting active_dialog and active_dialog_buttons...")
+	active_dialog = dialog
+	active_dialog_buttons = buttons
+	print("[MainUI] active_dialog is now: %s" % (active_dialog != null))
+	print("[MainUI] Publicity submenu opened, tracked %d buttons" % buttons.size())
+	for i in range(buttons.size()):
+		print("[MainUI]   Button %d: %s" % [i, buttons[i].text])
+
+	# Add dialog to TabManager as overlay
+	print("[MainUI] Adding dialog to TabManager as overlay...")
+	tab_manager.add_child(dialog)
+	dialog.visible = true
+	dialog.z_index = 1000
+	dialog.z_as_relative = false
+	print("[MainUI] Dialog added and made visible: %s" % dialog.visible)
+
+	# Wait one frame for dialog to be ready
+	print("[MainUI] Waiting one frame...")
+	await get_tree().process_frame
+	print("[MainUI] Frame passed, dialog still visible: %s" % dialog.visible)
+	print("[MainUI] === PUBLICITY SUBMENU SETUP COMPLETE ===")
+	print("[MainUI] Active dialog: %s, Buttons: %d" % [active_dialog != null, active_dialog_buttons.size()])
+	print("[MainUI] Ready for keyboard input via MainUI._input()")
+
+func _on_publicity_option_selected(action_id: String, action_name: String, dialog: Control):
+	"""Handle publicity submenu selection"""
+	print("[MainUI] Publicity option selected: %s (id: %s)" % [action_name, action_id])
+	dialog.queue_free()
+
+	# Clear active dialog state
+	active_dialog = null
+	active_dialog_buttons = []
+
+	log_message("[color=cyan]Publicity: %s[/color]" % action_name)
+
+	# Queue the actual publicity action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
+	game_manager.select_action(action_id)
+
+func _show_strategic_submenu():
+	"""Show popup dialog with strategic/high-stakes options with keyboard support - icon grid layout"""
+	print("[MainUI] === STRATEGIC SUBMENU STARTING ===")
+
+	# Close any existing dialog first
+	if active_dialog != null and is_instance_valid(active_dialog):
+		print("[MainUI] Closing existing dialog...")
+		active_dialog.queue_free()
+		active_dialog = null
+		active_dialog_buttons = []
+
+	# Use Panel - position to the right of the left panel buttons
+	var dialog = Panel.new()
+	dialog.custom_minimum_size = Vector2(420, 350)
+	dialog.size = Vector2(420, 350)
+	dialog.position = Vector2(90, 80)
+	print("[MainUI] Created Panel, size: %s, position: %s" % [dialog.size, dialog.position])
+
+	# Create main container
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 15)
+	margin.add_theme_constant_override("margin_right", 15)
+	margin.add_theme_constant_override("margin_top", 15)
+	margin.add_theme_constant_override("margin_bottom", 15)
+	dialog.add_child(margin)
+
+	var main_vbox = VBoxContainer.new()
+	margin.add_child(main_vbox)
+
+	# Get strategic options
+	var strategic_options = GameActions.get_strategic_options()
+	var current_state = game_manager.get_game_state()
+
+	# Create grid for icon buttons
+	var grid = GridContainer.new()
+	grid.columns = 2  # 2 icons per row for strategic (fewer options, larger display)
+	grid.add_theme_constant_override("h_separation", 12)
+	grid.add_theme_constant_override("v_separation", 12)
+	main_vbox.add_child(grid)
+
+	var button_index = 0
+	var buttons = []
+	var dialog_key_labels = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"]
+
+	for option in strategic_options:
+		var strat_id = option.get("id", "")
+		var strat_name = option.get("name", "")
+		var strat_desc = option.get("description", "")
+		var strat_costs = option.get("costs", {})
+
+		# Create VBox for icon + label
+		var item_vbox = VBoxContainer.new()
+		item_vbox.add_theme_constant_override("separation", 4)
+
+		# Create icon button
+		var btn = Button.new()
+		btn.custom_minimum_size = Vector2(120, 90)
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.mouse_filter = Control.MOUSE_FILTER_PASS
+
+		# Add icon
+		var icon_texture = IconLoader.get_action_icon(strat_id)
+		if icon_texture:
+			btn.icon = icon_texture
+			btn.expand_icon = true
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+		# Add keyboard hint as text
+		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
+		btn.text = key_label
+		btn.add_theme_font_size_override("font_size", 10)
+		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
+
+		# Format costs for tooltip
+		var cost_text = ""
+		if strat_costs.get("action_points", 0) > 0:
+			cost_text += "%d AP" % strat_costs.get("action_points")
+		if strat_costs.get("money", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += GameConfig.format_money(strat_costs.get("money"))
+		if strat_costs.get("reputation", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += "%d Rep" % strat_costs.get("reputation")
+		if strat_costs.get("papers", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += "%d Papers" % strat_costs.get("papers")
+
+		# Check affordability
+		var can_afford = true
+		for resource in strat_costs.keys():
+			if current_state.get(resource, 0) < strat_costs[resource]:
+				can_afford = false
+				break
+
+		if not can_afford:
+			btn.disabled = true
+			btn.modulate = Color(0.5, 0.5, 0.5)
+
+		# Tooltip with full details
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [strat_name, strat_desc, cost_text if cost_text != "" else "Free"]
+
+		# Connect button
+		btn.pressed.connect(func(): _on_strategic_option_selected(strat_id, strat_name, dialog))
+
+		item_vbox.add_child(btn)
+
+		# Add label below icon
+		var name_label = Label.new()
+		name_label.text = strat_name
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+		item_vbox.add_child(name_label)
+
+		grid.add_child(item_vbox)
+		buttons.append(btn)
+		button_index += 1
+
+	# Add summary at bottom
+	var summary_label = Label.new()
+	summary_label.text = "High-stakes moves - use wisely!"
+	summary_label.add_theme_font_size_override("font_size", 11)
+	summary_label.add_theme_color_override("font_color", Color(1.0, 0.6, 0.3))
+	summary_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	main_vbox.add_child(summary_label)
+
+	# Store dialog state
+	active_dialog = dialog
+	active_dialog_buttons = buttons
+	print("[MainUI] Strategic submenu opened, tracked %d buttons" % buttons.size())
+
+	# Add dialog to TabManager as overlay
+	tab_manager.add_child(dialog)
+	dialog.visible = true
+	dialog.z_index = 1000
+	dialog.z_as_relative = false
+
+	await get_tree().process_frame
+	print("[MainUI] === STRATEGIC SUBMENU SETUP COMPLETE ===")
+
+func _on_strategic_option_selected(action_id: String, action_name: String, dialog: Control):
+	"""Handle strategic submenu selection"""
+	print("[MainUI] Strategic option selected: %s (id: %s)" % [action_name, action_id])
+	dialog.queue_free()
+
+	# Clear active dialog state
+	active_dialog = null
+	active_dialog_buttons = []
+
+	log_message("[color=cyan]Strategic: %s[/color]" % action_name)
+
+	# Queue the actual strategic action
 	queued_actions.append({"id": action_id, "name": action_name})
 	update_queued_actions_display()
 
@@ -1367,7 +1736,7 @@ func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Con
 		is_showing_event = false
 
 func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: Array):
-	"""Update info bar when hovering over an action"""
+	"""Update info bar when hovering over an action and highlight affected resources"""
 	var action_name = action.get("name", "Unknown")
 	var action_desc = action.get("description", "")
 	var action_costs = action.get("costs", {})
@@ -1410,6 +1779,163 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 
 	info_label.text = info_text
 
+	# Highlight affected resource labels in top bar
+	_highlight_resources(action_costs)
+
 func _on_action_unhover():
 	"""Reset info bar when mouse leaves action - maintain 2-line format to prevent flicker (issue #450)"""
 	info_label.text = "[color=gray]Hover over actions to see details...\n [/color]"
+	# Reset resource highlights
+	_reset_resource_highlights()
+
+func _highlight_resources(costs: Dictionary):
+	"""Highlight resource labels that will be affected by an action"""
+	# Map cost keys to label references (excluding ap_label which is RichTextLabel)
+	var resource_label_map = {
+		"money": money_label,
+		"compute": compute_label,
+		"research": research_label,
+		"papers": papers_label,
+		"reputation": reputation_label
+	}
+
+	# Highlight each affected resource with a yellow/gold tint
+	for resource in costs.keys():
+		if resource_label_map.has(resource):
+			var label = resource_label_map[resource]
+			if label:
+				label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.3))  # Gold highlight
+
+func _reset_resource_highlights():
+	"""Reset all resource labels to default color"""
+	# Regular labels
+	var labels = [money_label, compute_label, research_label, papers_label, reputation_label]
+	for label in labels:
+		if label:
+			label.remove_theme_color_override("font_color")
+	# ap_label is RichTextLabel - skip color override reset (it uses BBCode colors)
+
+func _update_employee_roster(state: Dictionary):
+	"""Update the employee roster display in the middle panel"""
+	if not roster_container:
+		return
+
+	# Clear existing roster entries
+	for child in roster_container.get_children():
+		child.queue_free()
+
+	# Get researchers from state
+	var researchers = state.get("researchers", [])
+
+	# If no individual researchers, show legacy counts
+	if researchers.is_empty():
+		var safety = state.get("safety_researchers", 0)
+		var capability = state.get("capability_researchers", 0)
+		var compute_eng = state.get("compute_engineers", 0)
+		var managers = state.get("managers", 0)
+
+		if safety + capability + compute_eng + managers == 0:
+			var empty_label = Label.new()
+			empty_label.text = "No staff hired"
+			empty_label.add_theme_font_size_override("font_size", 10)
+			empty_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+			empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			roster_container.add_child(empty_label)
+		else:
+			# Show legacy count display
+			_add_legacy_staff_display(safety, capability, compute_eng, managers)
+		return
+
+	# Show individual researchers
+	for researcher_data in researchers:
+		var entry = _create_researcher_entry(researcher_data)
+		roster_container.add_child(entry)
+
+func _add_legacy_staff_display(safety: int, capability: int, compute_eng: int, managers: int):
+	"""Show simple staff counts (legacy mode)"""
+	var staff_types = [
+		{"name": "Safety", "count": safety, "color": Color(0.3, 0.8, 0.3)},
+		{"name": "Capability", "count": capability, "color": Color(0.8, 0.3, 0.3)},
+		{"name": "Engineers", "count": compute_eng, "color": Color(0.3, 0.5, 0.8)},
+		{"name": "Managers", "count": managers, "color": Color(0.7, 0.7, 0.3)}
+	]
+
+	for staff_type in staff_types:
+		if staff_type["count"] > 0:
+			var hbox = HBoxContainer.new()
+			hbox.add_theme_constant_override("separation", 4)
+
+			# Color indicator
+			var indicator = Label.new()
+			indicator.text = "●"
+			indicator.add_theme_color_override("font_color", staff_type["color"])
+			indicator.add_theme_font_size_override("font_size", 12)
+			hbox.add_child(indicator)
+
+			# Count and name
+			var name_label = Label.new()
+			name_label.text = "%s: %d" % [staff_type["name"], staff_type["count"]]
+			name_label.add_theme_font_size_override("font_size", 10)
+			name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+			hbox.add_child(name_label)
+
+			roster_container.add_child(hbox)
+
+func _create_researcher_entry(data: Dictionary) -> Control:
+	"""Create a roster entry for an individual researcher"""
+	var panel = PanelContainer.new()
+	panel.custom_minimum_size = Vector2(0, 24)
+
+	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 6)
+	panel.add_child(hbox)
+
+	# Specialization color indicator
+	var spec_colors = {
+		"safety": Color(0.3, 0.8, 0.3),
+		"capabilities": Color(0.8, 0.3, 0.3),
+		"interpretability": Color(0.7, 0.3, 0.8),
+		"alignment": Color(0.3, 0.7, 0.8)
+	}
+
+	var spec = data.get("specialization", "safety")
+	var indicator = Label.new()
+	indicator.text = "●"
+	indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
+	indicator.add_theme_font_size_override("font_size", 10)
+	hbox.add_child(indicator)
+
+	# Name
+	var name_label = Label.new()
+	name_label.text = data.get("name", "Unknown")
+	name_label.add_theme_font_size_override("font_size", 9)
+	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hbox.add_child(name_label)
+
+	# Productivity indicator (simple bar or percentage)
+	var productivity = data.get("base_productivity", 1.0)
+	var burnout = data.get("burnout", 0.0)
+	var effective_prod = productivity * (1.0 - min(burnout / 200.0, 0.5))
+
+	var prod_label = Label.new()
+	prod_label.text = "%.0f%%" % (effective_prod * 100)
+	prod_label.add_theme_font_size_override("font_size", 9)
+
+	# Color based on productivity
+	if effective_prod >= 1.0:
+		prod_label.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
+	elif effective_prod >= 0.7:
+		prod_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.3))
+	else:
+		prod_label.add_theme_color_override("font_color", Color(0.8, 0.3, 0.3))
+
+	hbox.add_child(prod_label)
+
+	# Burnout warning if high
+	if burnout >= 60:
+		var burnout_icon = Label.new()
+		burnout_icon.text = "🔥"
+		burnout_icon.add_theme_font_size_override("font_size", 8)
+		hbox.add_child(burnout_icon)
+
+	return panel

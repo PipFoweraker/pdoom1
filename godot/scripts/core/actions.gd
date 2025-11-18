@@ -50,11 +50,12 @@ static func get_all_actions() -> Array[Dictionary]:
 			"is_submenu": true
 		},
 		{
-			"id": "network",
-			"name": "Networking",
-			"description": "Build relationships, gain reputation",
-			"costs": {"action_points": 1},
-			"category": "management"
+			"id": "publicity",
+			"name": "Publicity",
+			"description": "Public outreach and influence campaigns",
+			"costs": {},  # No cost to open menu
+			"category": "influence",
+			"is_submenu": true
 		},
 		{
 			"id": "team_building",
@@ -64,68 +65,27 @@ static func get_all_actions() -> Array[Dictionary]:
 			"category": "management"
 		},
 		{
-			"id": "media_campaign",
-			"name": "Media Campaign",
-			"description": "Public outreach, gain reputation",
-			"costs": {"money": 30000, "action_points": 2},
-			"category": "management"
-		},
-		{
 			"id": "audit_safety",
 			"name": "Safety Audit",
 			"description": "Comprehensive safety review",
 			"costs": {"money": 40000, "action_points": 2},
 			"category": "research"
 		},
-		# New strategic actions
 		{
-			"id": "lobby_government",
-			"name": "Lobby Government",
-			"description": "Advocate for AI safety regulation (reduces reputation)",
-			"costs": {"money": 80000, "action_points": 2},
-			"category": "influence"
+			"id": "order_supplies",
+			"name": "Order Office Supplies",
+			"description": "Restock stationery (+50 supplies). Staff consume supplies each turn.",
+			"costs": {"money": 2000, "action_points": 1},
+			"category": "management"
 		},
+		# Strategic submenu for high-cost/risky actions
 		{
-			"id": "release_warning",
-			"name": "Public Warning",
-			"description": "Warn public about AI risks - risky but impactful",
-			"costs": {"action_points": 2, "reputation": 15},
-			"category": "influence"
-		},
-		{
-			"id": "acquire_startup",
-			"name": "Acquire AI Startup",
-			"description": "Buy struggling AI startup for talent/compute",
-			"costs": {"money": 150000, "action_points": 2},
-			"category": "strategic"
-		},
-		{
-			"id": "sabotage_competitor",
-			"name": "Corporate Espionage",
-			"description": "Slow down competitors (unethical, risky)",
-			"costs": {"money": 100000, "action_points": 3, "reputation": 20},
-			"category": "strategic"
-		},
-		{
-			"id": "open_source_release",
-			"name": "Open Source Safety Tools",
-			"description": "Release safety research publicly",
-			"costs": {"papers": 3, "action_points": 1},
-			"category": "influence"
-		},
-		{
-			"id": "emergency_pivot",
-			"name": "Emergency Pivot",
-			"description": "Radical strategy change - convert capability researchers to safety",
-			"costs": {"money": 50000, "action_points": 2},
-			"category": "strategic"
-		},
-		{
-			"id": "grant_proposal",
-			"name": "Write Grant Proposal",
-			"description": "Apply for government/foundation funding",
-			"costs": {"action_points": 1, "papers": 1},
-			"category": "funding"
+			"id": "strategic",
+			"name": "Strategic",
+			"description": "High-stakes strategic moves and risky plays",
+			"costs": {},  # No cost to open menu
+			"category": "strategic",
+			"is_submenu": true
 		}
 	]
 
@@ -139,6 +99,12 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 		if action["id"] == action_id:
 			return action
 	for action in get_fundraising_options():
+		if action["id"] == action_id:
+			return action
+	for action in get_publicity_options():
+		if action["id"] == action_id:
+			return action
+	for action in get_strategic_options():
 		if action["id"] == action_id:
 			return action
 	return {}
@@ -170,7 +136,7 @@ static func get_hiring_options() -> Array[Dictionary]:
 		{
 			"id": "hire_manager",
 			"name": "Manager",
-			"description": "Can oversee 9 employees (prevents unproductive staff)",
+			"description": "Oversees a team of up to 8 researchers",
 			"costs": {"money": 80000, "action_points": 1},
 			"category": "hiring"
 		},
@@ -220,6 +186,79 @@ static func get_fundraising_options() -> Array[Dictionary]:
 		}
 	]
 
+static func get_publicity_options() -> Array[Dictionary]:
+	"""Get all publicity/influence submenu options"""
+	return [
+		{
+			"id": "network",
+			"name": "Networking",
+			"description": "Build relationships and connections in the AI safety community",
+			"costs": {"action_points": 1},
+			"category": "influence"
+		},
+		{
+			"id": "media_campaign",
+			"name": "Media Campaign",
+			"description": "Public outreach through press and social media",
+			"costs": {"money": 30000, "action_points": 2},
+			"category": "influence"
+		},
+		{
+			"id": "lobby_government",
+			"name": "Lobby Government",
+			"description": "Advocate for AI safety regulation (costly but impactful)",
+			"costs": {"money": 80000, "action_points": 2},
+			"category": "influence"
+		},
+		{
+			"id": "release_warning",
+			"name": "Public Warning",
+			"description": "Warn public about AI risks - risky but high impact",
+			"costs": {"action_points": 2, "reputation": 15},
+			"category": "influence"
+		},
+		{
+			"id": "open_source_release",
+			"name": "Open Source Tools",
+			"description": "Release safety research publicly for community benefit",
+			"costs": {"papers": 3, "action_points": 1},
+			"category": "influence"
+		}
+	]
+
+static func get_strategic_options() -> Array[Dictionary]:
+	"""Get all strategic/high-stakes submenu options"""
+	return [
+		{
+			"id": "acquire_startup",
+			"name": "Acquire Startup",
+			"description": "Buy struggling AI startup for talent and compute",
+			"costs": {"money": 150000, "action_points": 2},
+			"category": "strategic"
+		},
+		{
+			"id": "sabotage_competitor",
+			"name": "Corporate Espionage",
+			"description": "Slow down competitors (unethical, risky)",
+			"costs": {"money": 100000, "action_points": 3, "reputation": 20},
+			"category": "strategic"
+		},
+		{
+			"id": "emergency_pivot",
+			"name": "Emergency Pivot",
+			"description": "Convert capability researchers to safety focus",
+			"costs": {"money": 50000, "action_points": 2},
+			"category": "strategic"
+		},
+		{
+			"id": "grant_proposal",
+			"name": "Grant Proposal",
+			"description": "Apply for government/foundation funding",
+			"costs": {"action_points": 1, "papers": 1},
+			"category": "strategic"
+		}
+	]
+
 static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	"""Execute an action, modify state, return result"""
 	# Special case: pass_turn is a virtual action that doesn't need to be in the action list
@@ -247,24 +286,33 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["open_submenu"] = "hiring"
 
 		"hire_safety_researcher":
-			var safety_researcher = Researcher.new("safety")
-			state.add_researcher(safety_researcher)
-			result["message"] = "Hired %s (Safety Specialist, Skill %d)" % [safety_researcher.researcher_name, safety_researcher.skill_level]
+			var hire_result = _hire_from_pool(state, "safety")
+			if not hire_result["success"]:
+				result["success"] = false
+				# Refund resources since hire failed
+				state.add_resources(action["costs"])
+			result["message"] = hire_result["message"]
 
 		"hire_capability_researcher":
-			var cap_researcher = Researcher.new("capabilities")
-			state.add_researcher(cap_researcher)
-			result["message"] = "Hired %s (Capabilities Specialist, Skill %d)" % [cap_researcher.researcher_name, cap_researcher.skill_level]
+			var hire_result = _hire_from_pool(state, "capabilities")
+			if not hire_result["success"]:
+				result["success"] = false
+				state.add_resources(action["costs"])
+			result["message"] = hire_result["message"]
 
 		"hire_interpretability_researcher":
-			var interp_researcher = Researcher.new("interpretability")
-			state.add_researcher(interp_researcher)
-			result["message"] = "Hired %s (Interpretability Specialist, Skill %d)" % [interp_researcher.researcher_name, interp_researcher.skill_level]
+			var hire_result = _hire_from_pool(state, "interpretability")
+			if not hire_result["success"]:
+				result["success"] = false
+				state.add_resources(action["costs"])
+			result["message"] = hire_result["message"]
 
 		"hire_alignment_researcher":
-			var align_researcher = Researcher.new("alignment")
-			state.add_researcher(align_researcher)
-			result["message"] = "Hired %s (Alignment Specialist, Skill %d)" % [align_researcher.researcher_name, align_researcher.skill_level]
+			var hire_result = _hire_from_pool(state, "alignment")
+			if not hire_result["success"]:
+				result["success"] = false
+				state.add_resources(action["costs"])
+			result["message"] = hire_result["message"]
 
 		"hire_compute_engineer":
 			state.compute_engineers += 1
@@ -292,13 +340,32 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Capability research (+%0.1f research)" % research_gained
 
 		"publish_paper":
-			state.add_resources({"papers": 1, "doom": -3, "reputation": 2})
-			result["message"] = "Published paper (+1 paper, -3 doom, +2 reputation)"
+			# Check for media_savvy researchers (bonus reputation)
+			var media_savvy_bonus = 0
+			for researcher in state.researchers:
+				if researcher.has_trait("media_savvy"):
+					media_savvy_bonus += 3  # +3 reputation per media savvy researcher
+			var total_rep = 2 + media_savvy_bonus
+			state.add_resources({"papers": 1, "doom": -3, "reputation": total_rep})
+			if media_savvy_bonus > 0:
+				result["message"] = "Published paper (+1 paper, -3 doom, +%d reputation including media bonus)" % total_rep
+			else:
+				result["message"] = "Published paper (+1 paper, -3 doom, +2 reputation)"
 
 		"fundraise":
 			# Submenu action - doesn't execute, opens dialog
 			result["message"] = "Opening fundraising menu..."
 			result["open_submenu"] = "fundraising"
+
+		"publicity":
+			# Submenu action - doesn't execute, opens dialog
+			result["message"] = "Opening publicity menu..."
+			result["open_submenu"] = "publicity"
+
+		"strategic":
+			# Submenu action - doesn't execute, opens dialog
+			result["message"] = "Opening strategic menu..."
+			result["open_submenu"] = "strategic"
 
 		"fundraise_small":
 			var money_raised = state.rng.randi_range(30000, 60000)
@@ -329,8 +396,17 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Networking (+3 reputation)"
 
 		"team_building":
+			# Reduce burnout for all researchers
+			var burnout_reduced = 0.0
+			for researcher in state.researchers:
+				var reduction = min(researcher.burnout, 15.0)
+				researcher.reduce_burnout(reduction)
+				burnout_reduced += reduction
 			state.add_resources({"reputation": 2, "doom": -1})
-			result["message"] = "Team building event (+2 reputation, -1 doom)"
+			if burnout_reduced > 0:
+				result["message"] = "Team building event (+2 reputation, -1 doom, -%.0f team burnout)" % burnout_reduced
+			else:
+				result["message"] = "Team building event (+2 reputation, -1 doom)"
 
 		"media_campaign":
 			var rep_gained = 10 + int(state.reputation * 0.1)
@@ -341,6 +417,10 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			var doom_reduced = 5 + state.safety_researchers
 			state.add_resources({"doom": -doom_reduced, "reputation": 3})
 			result["message"] = "Safety audit (-%d doom, +3 reputation)" % doom_reduced
+
+		"order_supplies":
+			state.stationery = min(state.stationery + 50.0, 100.0)
+			result["message"] = "Office supplies restocked (+50 stationery, now at %.0f)" % state.stationery
 
 		"lobby_government":
 			# Lobbying reduces doom but costs reputation (fix #449)
@@ -413,3 +493,48 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Hired AI ethicist (+5 reputation, improves safety research)"
 
 	return result
+
+static func _assign_random_traits(researcher: Researcher, rng: RandomNumberGenerator):
+	"""Assign random traits to a new researcher"""
+	# 40% chance of one positive trait
+	if rng.randf() < 0.40:
+		var positive_traits = ["workaholic", "team_player", "media_savvy", "safety_conscious", "fast_learner"]
+		var trait_id = positive_traits[rng.randi() % positive_traits.size()]
+		researcher.add_trait(trait_id)
+
+	# 25% chance of one negative trait
+	if rng.randf() < 0.25:
+		var negative_traits = ["prima_donna", "leak_prone", "burnout_prone", "pessimist"]
+		var trait_id = negative_traits[rng.randi() % negative_traits.size()]
+		researcher.add_trait(trait_id)
+
+static func _hire_from_pool(state: GameState, specialization: String) -> Dictionary:
+	"""Try to hire a candidate from the pool with matching specialization"""
+	var candidates = state.get_candidates_by_spec(specialization)
+
+	if candidates.size() == 0:
+		# No matching candidates - fail gracefully
+		return {
+			"success": false,
+			"message": "No %s specialists in hiring pool (wait for candidates)" % specialization
+		}
+
+	# Hire the first matching candidate
+	var candidate = candidates[0]
+	state.hire_candidate(candidate)
+
+	var trait_info = ""
+	if candidate.traits.size() > 0:
+		trait_info = " [%s]" % candidate.get_trait_description()
+
+	var spec_name = specialization.capitalize()
+	return {
+		"success": true,
+		"message": "Hired %s (%s Specialist, Skill %d)%s" % [
+			candidate.researcher_name,
+			spec_name,
+			candidate.skill_level,
+			trait_info
+		],
+		"hired_researcher": candidate
+	}

@@ -19,9 +19,10 @@
 You run an underfunded AI safety lab racing against well-resourced competitors to solve the alignment problem. Make strategic decisions about hiring, research priorities, and resource allocation. Your choices determine whether P(Doom) reaches 0% or humanity faces extinction.
 
 **Gameplay:**
-- Hire safety researchers or capabilities researchers
-- Balance research progress against existential risk
-- Manage limited compute, funding, and reputation
+- Hire individual researchers from a candidate pool (Safety, Capabilities, Interpretability, Alignment)
+- Manage teams of up to 8 researchers per manager
+- Balance researcher traits (team_player, media_savvy, leak_prone) for optimal productivity
+- Handle burnout, poaching events, and doom from reckless research
 - Respond to rival lab actions and random events
 - Survive 100 turns with P(Doom) at 0%
 

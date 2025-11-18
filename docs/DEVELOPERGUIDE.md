@@ -2,7 +2,7 @@
 
 Welcome, contributors and modders! This guide explains how to develop, test, and extend P(Doom): Bureaucracy Strategy.
 
-For **players**, see the [Player Guide](PLAYERGUIDE.md).  
+For **players**, see the [Player Guide](PLAYERGUIDE.md).
 For **installation and troubleshooting**, see the [README](../README.md).
 
 ## Table of Contents
@@ -102,7 +102,7 @@ P(Doom) features a comprehensive settings and configuration system designed for 
 - Music volume (if implemented)
 - Audio accessibility options
 
-**2. Gameplay Settings** 
+**2. Gameplay Settings**
 - Game difficulty adjustments
 - Turn time limits
 - Auto-save frequency
@@ -190,13 +190,13 @@ P(Doom) supports custom sound effects through a simple file-based override syste
 
 Files are mapped to sound events by their filename (case-insensitive). For example:
 - `ap_spend.wav` - overrides the 'ap_spend' sound effect
-- `POPUP_OPEN.ogg` - overrides the 'popup_open' sound effect  
+- `POPUP_OPEN.ogg` - overrides the 'popup_open' sound effect
 - `Error_Beep.WAV` - overrides the 'error_beep' sound effect
 
 **Available event keys that map to existing game events:**
 - `ap_spend` - Played when Action Points are spent
 - `popup_open` - Played when popup dialogs open
-- `popup_close` - Played when popup dialogs close  
+- `popup_close` - Played when popup dialogs close
 - `popup_accept` - Played when popup dialogs are accepted
 - `error_beep` - Played for error feedback (easter egg)
 - `blob` - Played when new employees are hired
@@ -367,10 +367,10 @@ The employee blob positioning system has been enhanced to prevent UI overlap and
 def _calculate_blob_position(self, blob_index, screen_w=1200, screen_h=800):
     # Safe zone avoids UI elements:
     # - Action buttons (left ~0-45% of screen)
-    # - Upgrade buttons (right ~55-100% of screen)  
+    # - Upgrade buttons (right ~55-100% of screen)
     # - Resources area (top ~0-20% of screen)
     # - Message log (bottom ~70-100% of screen)
-    
+
     safe_zone_left = int(screen_w * 0.46)
     safe_zone_right = int(screen_w * 0.54)
     safe_zone_top = int(screen_h * 0.25)
@@ -430,7 +430,7 @@ overlay_manager.register_element(UIElement(
 ```python
 # Buttons automatically get proper visual feedback
 visual_feedback.draw_button(
-    surface, rect, 'Button Text', 
+    surface, rect, 'Button Text',
     ButtonState.HOVER,  # State determines styling
     FeedbackStyle.BUTTON
 )
@@ -495,7 +495,7 @@ if success:
 ```python
 # In main.py keyboard handling
 elif event.key >= pygame.K_1 and event.key <= pygame.K_9:
-    action_index = event.key - pygame.K_1  
+    action_index = event.key - pygame.K_1
     success = game_state.execute_action_by_keyboard(action_index)
     if success:
         game_state.sound_manager.play_ap_spend_sound()
@@ -560,11 +560,11 @@ class Opponent:
     # Core properties
     name: str                    # Display name
     budget: int                  # Available funding
-    capabilities_researchers: int # Research capacity  
+    capabilities_researchers: int # Research capacity
     lobbyists: int              # Policy influence
     compute: int                # Computing resources
     progress: int               # AGI development (0-100)
-    
+
     # Discovery mechanics
     discovered: bool            # Whether player knows this opponent exists
     discovered_stats: dict      # Which stats have been revealed
@@ -702,10 +702,10 @@ The `get_mechanic_help()` method provides structured help content for specific g
 def get_mechanic_help(self, mechanic: str) -> Optional[Dict]:
     '''
     Get help content for a specific game mechanic.
-    
+
     Returns:
         Dict with 'title' and 'content' keys for valid mechanics, None for invalid ones
-        
+
     Note: Currently a stub implementation with warning logging.
     '''
 ```
@@ -925,7 +925,7 @@ from action_rules import ActionRules, manager_unlock_rule
 
 # Or using the rule system directly
 {
-    'name': 'Advanced Action', 
+    'name': 'Advanced Action',
     'rules': lambda gs: ActionRules.requires_staff_and_turn(gs, min_staff=10, min_turn=5)
 }
 ```
@@ -947,11 +947,11 @@ For new game mechanics, add rules to `action_rules.py`:
 def requires_new_condition(gs, min_value):
     '''
     Rule: Action requires new game condition.
-    
+
     Args:
         gs: GameState object
         min_value: Minimum value required
-        
+
     Returns:
         bool: True if condition is met
     '''
@@ -1031,7 +1031,7 @@ The Research Quality System implements strategic trade-offs between research spe
 
 **Research Quality Levels:**
 - **RUSHED**: -40% time, -20% cost, +15% doom, +2 debt points, -10% success rate
-- **STANDARD**: Baseline metrics (default behavior) 
+- **STANDARD**: Baseline metrics (default behavior)
 - **THOROUGH**: +60% time, +40% cost, -20% doom, -1 debt point, +15% success rate, +reputation
 
 **Technical Debt System:**
@@ -1040,30 +1040,50 @@ The Research Quality System implements strategic trade-offs between research spe
 - Swiss cheese model: multiple failure modes with escalating consequences
 - Categories: Safety testing, code quality, documentation, validation
 
-### Researcher Assignment System
+### Individual Researcher System (v0.11.0+)
 
-**Individual Researcher Management:**
-```python
-# Assign specific researchers to specific tasks
-gs.assign_researcher_to_task(researcher_id, task_name, quality_override)
+**Researcher Class** (godot/scripts/core/researcher.gd):
+```gdscript
+# Create a new researcher
+var researcher = Researcher.new()
+researcher.generate_random(rng)  # Random name, stats, traits
+researcher.specialization = "safety"  # or "capabilities", "interpretability", "alignment"
 
-# Set researcher default quality preferences
-gs.set_researcher_default_quality(researcher_id, ResearchQuality.THOROUGH)
+# Get productivity with all modifiers
+var productivity = researcher.get_effective_productivity()
 
-# Get effective quality for task (hierarchy: task override -> researcher default -> org default)
-quality = gs.get_task_quality_setting(task_name, researcher_id)
+# Traits system
+researcher.add_trait("team_player")
+var has_trait = researcher.has_trait("media_savvy")
 ```
 
-**Assignment Tracking:**
-- Researchers have unique IDs for reliable tracking
-- Task-specific quality overrides
-- Per-researcher default quality settings
-- Assignment summary for UI display
+**Candidate Pool System** (game_state.gd):
+```gdscript
+# Add/remove candidates
+state.add_candidate(researcher)
+state.remove_candidate(researcher)
+state.hire_candidate(researcher)  # Move from pool to active researchers
+
+# Query candidates
+var safety_candidates = state.get_candidates_by_spec("safety")
+```
+
+**Turn Processing** (turn_manager.gd):
+- Each turn, candidates populate slowly (30% base + 10% per empty slot)
+- Researchers auto-form teams of 8, each needing a manager
+- Individual productivity calculated from skill, burnout, and traits
+- Specialization effects applied (safety reduces doom, capabilities adds doom)
+
+**Key Files:**
+- `researcher.gd`: Researcher class with traits, burnout, skill
+- `game_state.gd`: Candidate pool management, researcher arrays
+- `turn_manager.gd`: Productivity calculations, pool population
+- `actions.gd`: Hiring from pool with `_hire_from_pool()` helper
 
 ### Technical Debt Management
 
 **IMPORTANT: Naming Convention (v0.9.1+)**
-- **Technical Debt Methods**: Use `add_technical_debt()` and `reduce_technical_debt()` 
+- **Technical Debt Methods**: Use `add_technical_debt()` and `reduce_technical_debt()`
 - **Future Financial Debt**: Will use `add_financial_debt()` and `reduce_financial_debt()`
 - **Backward Compatibility**: Legacy `add_debt()` / `reduce_debt()` methods still work but are deprecated
 - **Rationale**: Clear distinction prevents confusion when lab financial management is added
@@ -1095,13 +1115,13 @@ quality = gs.get_task_quality_setting(task_name, researcher_id)
 **Audit Results:**
 ```python
 audit_result = gs.execute_technical_debt_audit()
-# Returns: risk_level, total_debt, speed_penalty_percent, 
+# Returns: risk_level, total_debt, speed_penalty_percent,
 # accident_chance_percent, recommendations, category_breakdown
 ```
 
 **Risk Indicators:**
 - **Low Risk**: 0-5 debt points (green)
-- **Medium Risk**: 6-15 debt points (yellow) 
+- **Medium Risk**: 6-15 debt points (yellow)
 - **High Risk**: 16+ debt points (red)
 
 ### Research Quality Events
@@ -1225,7 +1245,7 @@ The enhanced event system supports visually dominant popup events, deferred even
 4. Trigger original events (immediate execution)
 5. Trigger enhanced events (if enhanced_events_enabled = True)
    - Popup events - added to pending_popup_events list
-   - Normal events - executed immediately  
+   - Normal events - executed immediately
    - Deferred events - auto-deferred to queue
 6. Tick all deferred events, auto-execute expired ones
 
@@ -1245,7 +1265,7 @@ class Event:
     max_deferred_turns: int         # Expiration countdown
     available_actions: List[EventAction] # Available player responses
     reduce_effect: Optional[Callable] # Alternative reduced effect
-    
+
     # State management
     is_deferred: bool               # Currently deferred flag
     turns_deferred: int            # Turns since deferring
@@ -1300,7 +1320,7 @@ Scenarios are categorized by:
 - **Deterministic Selection**: Uses hash of game seed + turn count for consistent results
 
 ### Extension Points
-- Add new defeat causes by extending `_determine_defeat_cause()`  
+- Add new defeat causes by extending `_determine_defeat_cause()`
 - Add new time periods by modifying `_determine_time_period()`
 - Create new scenarios by adding to the scenarios dictionary
 - Enhance selection logic with additional game state analysis
@@ -1318,7 +1338,7 @@ The milestone events system triggers special organizational changes at key growt
 ```python
 # Key state variables in GameState.__init__()
 self.managers = 0                     # Manager count
-self.board_members = 0               # Board member count  
+self.board_members = 0               # Board member count
 self.first_manager_hired = False     # 9th employee milestone flag
 self.board_member_search_unlocked = False  # Spending threshold flag
 self.audit_risk_level = 0           # Hidden compliance risk (0-100)
@@ -1373,7 +1393,7 @@ if val < 0:  # Track spending (negative values)
 New milestone functionality is covered by `tests/test_milestone_events.py`:
 - Manager milestone triggers and promotion logic
 - Employee productivity with/without management
-- Board member spending threshold detection  
+- Board member spending threshold detection
 - Audit risk mechanics and board member search
 - Accounting software upgrade functionality
 - Spending tracking and turn reset mechanics
@@ -1412,7 +1432,7 @@ PRODUCTIVE_ACTIONS = {
 
 **Employee Categories:**
 - **junior_researcher** (maps to 'researcher', 'generalist' subtypes)
-- **senior_researcher** (maps to 'data_scientist' subtype)  
+- **senior_researcher** (maps to 'data_scientist' subtype)
 - **security_engineer** (maps to 'security_specialist' subtype)
 - **operations_specialist** (maps to 'engineer' subtype)
 - **administrative_staff** (maps to 'administrator' subtype)
@@ -1521,7 +1541,7 @@ P(Doom) includes comprehensive logging for debugging and analysis:
 P(Doom) follows [Semantic Versioning](https://semver.org/) (SemVer) for consistent and predictable versioning:
 
 - **MAJOR.MINOR.PATCH** format (e.g., 0.1.0, 1.2.3)
-- **MAJOR**: Incompatible API changes or major gameplay overhauls  
+- **MAJOR**: Incompatible API changes or major gameplay overhauls
 - **MINOR**: Backwards-compatible functionality additions (new features, events, opponents)
 - **PATCH**: Backwards-compatible bug fixes and minor improvements
 
@@ -1535,7 +1555,7 @@ from version import get_version, get_display_version, get_version_info
 # Get semantic version (e.g., '0.1.0')
 version = get_version()
 
-# Get display version for UI (e.g., 'v0.1.0') 
+# Get display version for UI (e.g., 'v0.1.0')
 display = get_display_version()
 
 # Get detailed version information
@@ -1566,7 +1586,7 @@ For complete release procedures, see [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md
 
 The release workflow:
 - Validates version format and consistency
-- Runs full test suite on multiple Python versions  
+- Runs full test suite on multiple Python versions
 - Creates GitHub release with changelog notes
 - Generates and uploads source distribution archives
 - Includes SHA256 checksums for security verification
@@ -1627,7 +1647,7 @@ def _check_board_member_milestone(self):
     # One-time trigger: install board members
     if spend_this_turn > 10000 and not accounting_software_bought:
         self.board_members = 2
-        
+
     # Ongoing effects: audit risk accumulation and penalties
     if board_members > 0 and not accounting_software_bought:
         self.audit_risk_level += 1
@@ -1664,12 +1684,12 @@ def test_static_effect_integration(self):
     # Setup condition for static effect
     self.game_state.staff = 12
     self.game_state._hire_manager()
-    
+
     # Trigger the static effect system
     self.game_state._update_employee_productivity()
-    
+
     # Verify static effect is applied correctly
-    unmanaged = [blob for blob in self.game_state.employee_blobs 
+    unmanaged = [blob for blob in self.game_state.employee_blobs
                 if blob.get('unproductive_reason') == 'no_manager']
     self.assertGreater(len(unmanaged), 0)
 ```
@@ -1747,7 +1767,7 @@ my_overlay_button = None
 def main():
     # Must declare as global if variable is assigned within function
     global my_overlay_content, my_overlay_button
-    
+
     # Now safe to check before assignment
     if not my_overlay_content:
         # Assignment is safe

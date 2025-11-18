@@ -36,20 +36,20 @@ func show_notification(message: String, type: NotificationType = NotificationTyp
 
 ## Create and display a notification
 func _create_notification(data: Dictionary):
-	var notification = _build_notification_panel(data)
+	var notif_panel = _build_notification_panel(data)
 
 	# Add to root
-	get_tree().root.add_child(notification)
+	get_tree().root.add_child(notif_panel)
 
 	# Position at top-right, offset by number of active notifications
 	var offset_y = 20 + (active_notifications.size() * 90)
-	notification.position = Vector2(
+	notif_panel.position = Vector2(
 		get_viewport().get_visible_rect().size.x + 400,  # Start off-screen right
 		offset_y
 	)
 
 	# Track it
-	active_notifications.append(notification)
+	active_notifications.append(notif_panel)
 
 	# Slide in animation
 	var slide_in_pos = Vector2(
@@ -58,24 +58,24 @@ func _create_notification(data: Dictionary):
 	)
 
 	var tween = create_tween()
-	tween.tween_property(notification, "position", slide_in_pos, SLIDE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(notif_panel, "position", slide_in_pos, SLIDE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 	# Wait, then slide out
 	await get_tree().create_timer(data["duration"]).timeout
 
 	var slide_out_pos = Vector2(
 		get_viewport().get_visible_rect().size.x + 400,
-		notification.position.y
+		notif_panel.position.y
 	)
 
 	var tween_out = create_tween()
-	tween_out.tween_property(notification, "position", slide_out_pos, SLIDE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween_out.tween_property(notif_panel, "position", slide_out_pos, SLIDE_DURATION).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 
 	await tween_out.finished
 
 	# Remove
-	active_notifications.erase(notification)
-	notification.queue_free()
+	active_notifications.erase(notif_panel)
+	notif_panel.queue_free()
 
 	# Reposition remaining notifications
 	_reposition_notifications()
@@ -176,11 +176,11 @@ func _get_notification_icon(type: NotificationType) -> String:
 ## Reposition all active notifications
 func _reposition_notifications():
 	for i in range(active_notifications.size()):
-		var notification = active_notifications[i]
+		var notif = active_notifications[i]
 		var target_y = 20 + (i * 90)
 
 		var tween = create_tween()
-		tween.tween_property(notification, "position:y", target_y, 0.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		tween.tween_property(notif, "position:y", target_y, 0.2).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 
 ## Quick helper methods
 func success(message: String):

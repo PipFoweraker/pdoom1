@@ -71,29 +71,29 @@ func _ready():
 
 ## Report an error with full context
 func report_error(severity: Severity, category: Category, message: String, context: Dictionary = {}) -> GameError:
-	var error = GameError.new(severity, category, message, context)
+	var game_error = GameError.new(severity, category, message, context)
 
 	# Add to history
-	error_history.append(error)
+	error_history.append(game_error)
 	if error_history.size() > max_history_size:
 		error_history.pop_front()
 
 	# Log to console if enabled
 	if log_to_console:
 		var color_code = _get_color_for_severity(severity)
-		print_rich("[color=%s]%s[/color]" % [color_code, error.format_message()])
+		print_rich("[color=%s]%s[/color]" % [color_code, game_error.format_message()])
 
 	# Log to file if enabled
 	if log_to_file:
-		_write_to_log_file(error)
+		_write_to_log_file(game_error)
 
 	# Emit signal
 	if severity >= Severity.ERROR:
-		error_occurred.emit(error)
+		error_occurred.emit(game_error)
 	elif severity == Severity.WARNING:
-		warning_occurred.emit(error.message)
+		warning_occurred.emit(game_error.message)
 
-	return error
+	return game_error
 
 ## Convenience methods for different severity levels
 func info(category: Category, message: String, context: Dictionary = {}) -> GameError:
@@ -102,7 +102,7 @@ func info(category: Category, message: String, context: Dictionary = {}) -> Game
 func warning(category: Category, message: String, context: Dictionary = {}) -> GameError:
 	return report_error(Severity.WARNING, category, message, context)
 
-func error(category: Category, message: String, context: Dictionary = {}) -> GameError:
+func report_err(category: Category, message: String, context: Dictionary = {}) -> GameError:
 	return report_error(Severity.ERROR, category, message, context)
 
 func fatal(category: Category, message: String, context: Dictionary = {}) -> GameError:
@@ -111,7 +111,7 @@ func fatal(category: Category, message: String, context: Dictionary = {}) -> Gam
 ## Validation helper - returns true if valid, reports error if not
 func validate(condition: bool, category: Category, error_message: String, context: Dictionary = {}) -> bool:
 	if not condition:
-		error(category, error_message, context)
+		report_err(category, error_message, context)
 		return false
 	return true
 

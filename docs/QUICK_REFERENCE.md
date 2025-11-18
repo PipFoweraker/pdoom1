@@ -18,16 +18,18 @@ cd pdoom1
 ```
 
 ## [CHART] RESOURCES TO WATCH
-- **Money**: $100k start, $600-800/week staff costs
+- **Money**: $245k start, salaries vary by researcher
 - **Doom**: 0-100% existential risk (game ends at 100%)
-- **Staff**: More staff = more actions per turn
-- **Action Points**: 3/turn + staff bonuses
+- **Researchers**: Individual specialists with traits & skills
+- **Action Points**: 3/turn + 0.5 per staff member
+- **Candidate Pool**: Available hires (max 6, populates over time)
 
 ## [TARGET] BASIC STRATEGY
-1. **Hire Smart**: Balance researchers vs admin staff
-2. **Research Focus**: Safety research reduces doom, capability research increases progress
-3. **Manage Cash Flow**: Don't run out of money!
-4. **Watch Opponents**: Use espionage to learn their strategies
+1. **Hire Smart**: Check candidate pool for good traits (team_player, media_savvy)
+2. **Balance Specializations**: Safety/Alignment reduce doom, Capabilities increase it
+3. **Manage Teams**: 8 researchers per manager, unmanaged = +0.5 doom each
+4. **Watch Burnout**: Use Team Building to reduce burnout
+5. **Watch Opponents**: Use espionage to learn their strategies
 
 ## [KEYBOARD][EMOJI] CONTROLS
 - **Mouse**: Click any button or menu item

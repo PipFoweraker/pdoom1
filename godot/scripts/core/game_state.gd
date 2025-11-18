@@ -10,6 +10,7 @@ var papers: float = 0.0
 var reputation: float = 50.0
 var doom: float = 50.0  # 0-100, lose at 100
 var action_points: int = 3
+var stationery: float = 100.0  # Office supplies, depletes with staff usage
 
 # AP Reserve System (for event responses)
 var committed_ap: int = 0      # AP spent on queued actions
@@ -24,6 +25,10 @@ var managers: int = 0  # Each manager can handle 9 employees
 
 # Individual researchers (new system)
 var researchers: Array[Researcher] = []
+
+# Candidate pool (available hires - populates slowly over time)
+var candidate_pool: Array[Researcher] = []
+const MAX_CANDIDATES: int = 6  # Maximum candidates in pool
 
 # Purchased upgrades (one-time purchases)
 var purchased_upgrades: Array[String] = []
@@ -80,6 +85,7 @@ func reset():
 	reputation = 50.0
 	doom = 50.0
 	action_points = 3
+	stationery = 100.0
 
 	safety_researchers = 0
 	capability_researchers = 0
@@ -87,6 +93,11 @@ func reset():
 	managers = 0
 
 	purchased_upgrades.clear()
+	candidate_pool.clear()
+	researchers.clear()
+
+	# Initialize with 2-3 starting candidates (low quality)
+	_populate_initial_candidates()
 
 	turn = 0
 	game_over = false
@@ -124,7 +135,7 @@ func spend_resources(costs: Dictionary):
 	"""Spend resources (assumes can_afford was checked) (FIX #407: added reputation deduction)"""
 	# Validate we can afford before spending
 	if not can_afford(costs):
-		ErrorHandler.error(
+		ErrorHandler.report_err(
 			ErrorHandler.Category.RESOURCES,
 			"Attempted to spend unaffordable resources",
 			{
@@ -247,6 +258,56 @@ func remove_researcher(researcher: Researcher):
 			"interpretability", "alignment":
 				safety_researchers = max(0, safety_researchers - 1)
 
+func add_candidate(candidate: Researcher):
+	"""Add a candidate to the hiring pool"""
+	if candidate_pool.size() < MAX_CANDIDATES:
+		candidate_pool.append(candidate)
+
+func remove_candidate(candidate: Researcher):
+	"""Remove a candidate from the pool (hired or expired)"""
+	var idx = candidate_pool.find(candidate)
+	if idx >= 0:
+		candidate_pool.remove_at(idx)
+
+func hire_candidate(candidate: Researcher):
+	"""Hire a candidate from the pool"""
+	remove_candidate(candidate)
+	add_researcher(candidate)
+
+func get_candidates_by_spec(spec: String) -> Array[Researcher]:
+	"""Get all candidates with a specific specialization"""
+	var matches: Array[Researcher] = []
+	for candidate in candidate_pool:
+		if candidate.specialization == spec:
+			matches.append(candidate)
+	return matches
+
+func _populate_initial_candidates():
+	"""Generate 2-3 starting candidates (lower quality for early game)"""
+	# Always at least 1 safety researcher to start
+	var safety_candidate = Researcher.new()
+	safety_candidate.generate_random(rng)
+	safety_candidate.specialization = "safety"
+	# Lower skill for starting candidates
+	safety_candidate.skill_level = rng.randi_range(1, 3)
+	add_candidate(safety_candidate)
+
+	# Second candidate - 50% safety, 50% capabilities
+	var second = Researcher.new()
+	second.generate_random(rng)
+	second.specialization = "safety" if rng.randf() < 0.5 else "capabilities"
+	second.skill_level = rng.randi_range(1, 3)
+	add_candidate(second)
+
+	# Third candidate (50% chance)
+	if rng.randf() < 0.5:
+		var third = Researcher.new()
+		third.generate_random(rng)
+		var specs = ["safety", "capabilities", "interpretability", "alignment"]
+		third.specialization = specs[rng.randi() % specs.size()]
+		third.skill_level = rng.randi_range(1, 3)
+		add_candidate(third)
+
 func get_management_capacity() -> int:
 	"""How many employees can current managers handle?"""
 	if managers == 0:
@@ -351,6 +412,7 @@ func to_dict() -> Dictionary:
 		"reserved_ap": reserved_ap,
 		"available_ap": get_available_ap(),
 		"event_ap": get_event_ap(),
+		"stationery": stationery,
 		"safety_researchers": safety_researchers,
 		"capability_researchers": capability_researchers,
 		"compute_engineers": compute_engineers,

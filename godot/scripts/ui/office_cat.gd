@@ -45,10 +45,10 @@ func _on_contributor_changed(contributor: Dictionary):
 		return
 
 	# Update contributor label
-	var name = contributor.get("name", "Unknown Contributor")
+	var contributor_name = contributor.get("name", "Unknown Contributor")
 	var contribution_types = contributor.get("contribution_types", [])
 	var type_str = ", ".join(contribution_types)
-	contributor_label.text = "%s - %s" % [name, type_str]
+	contributor_label.text = "%s - %s" % [contributor_name, type_str]
 
 	# Update cat image for current doom level
 	update_cat_for_doom_level(current_doom_percentage)
@@ -101,9 +101,9 @@ func get_current_contributor_info() -> String:
 	if contributor.is_empty():
 		return "Default Office Cat\n\nContribute to PDoom to get your cat featured here!"
 
-	var name = contributor.get("name", "Unknown")
-	var cat_name = contributor.get("cat_name", "Office Cat")
+	var contributor_name = contributor.get("name", "Unknown")
+	var cat_display_name = contributor.get("cat_name", "Office Cat")
 	var types = contributor.get("contribution_types", [])
 	var type_str = ", ".join(types)
 
-	return "%s's cat: %s\nContributions: %s\n\nClick to see another contributor!" % [name, cat_name, type_str]
+	return "%s's cat: %s\nContributions: %s\n\nClick to see another contributor!" % [contributor_name, cat_display_name, type_str]

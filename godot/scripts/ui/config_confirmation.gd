@@ -58,7 +58,7 @@ func _on_launch_pressed():
 
 	# Ensure config mode settings are applied
 	if GameConfig.config_mode == "default":
-		GameConfig.seed = ""  # Use weekly seed
+		GameConfig.game_seed = ""  # Use weekly seed
 		GameConfig.difficulty = 1  # Force standard difficulty
 
 	# Save configuration

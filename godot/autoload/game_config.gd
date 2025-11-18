@@ -5,7 +5,7 @@ extends Node
 # Player/Game Configuration
 var player_name: String = "Researcher"
 var lab_name: String = "AI Safety Lab"
-var seed: String = ""  # Empty = weekly challenge seed
+var game_seed: String = ""  # Empty = weekly challenge seed
 var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard
 
 # Audio Settings
@@ -49,7 +49,7 @@ func save_config() -> void:
 
 	# Game section
 	config.set_value("game", "difficulty", difficulty)
-	config.set_value("game", "last_seed", seed)
+	config.set_value("game", "last_seed", game_seed)
 
 	# Audio section
 	config.set_value("audio", "master_volume", master_volume)
@@ -85,7 +85,7 @@ func load_config() -> void:
 
 	# Load game settings
 	difficulty = config.get_value("game", "difficulty", difficulty)
-	seed = config.get_value("game", "last_seed", seed)
+	game_seed = config.get_value("game", "last_seed", game_seed)
 
 	# Load audio settings
 	master_volume = config.get_value("audio", "master_volume", master_volume)
@@ -131,8 +131,8 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			player_name = value
 		"lab_name":
 			lab_name = value
-		"seed":
-			seed = value
+		"game_seed":
+			game_seed = value
 		"difficulty":
 			difficulty = value
 		"master_volume":
@@ -185,7 +185,7 @@ func get_game_config() -> Dictionary:
 	return {
 		"player_name": player_name,
 		"lab_name": lab_name,
-		"seed": seed,
+		"game_seed": game_seed,
 		"difficulty": difficulty,
 		"difficulty_string": get_difficulty_string()
 	}
@@ -194,7 +194,7 @@ func get_game_config() -> Dictionary:
 func reset_game_config() -> void:
 	player_name = "Researcher"
 	lab_name = "AI Safety Lab"
-	seed = ""
+	game_seed = ""
 	difficulty = 1
 	print("[GameConfig] Game configuration reset to defaults")
 
@@ -214,9 +214,9 @@ func get_weekly_seed() -> String:
 
 ## Get display seed (weekly or custom)
 func get_display_seed() -> String:
-	if seed.is_empty():
+	if game_seed.is_empty():
 		return get_weekly_seed()
-	return seed
+	return game_seed
 
 ## Format money with comma separators (e.g., $245,000)
 ## Issue #436 - Player feedback: add commas to all $ references

@@ -2,95 +2,155 @@
 
 ## Context for Next Chat Session
 
-### Mission Status: RNG Migration COMPLETE [CHECK]
+### Mission Status: Enhanced Personnel System Complete
 
-**MAJOR DISCOVERY**: The deterministic RNG system was already fully implemented and working perfectly! What appeared to be RNG migration issues were actually test architecture problems.
+**MAJOR ACHIEVEMENT**: Implemented Issue #197 - Enhanced Personnel System with individual researchers, candidate pool, traits, and team management.
+
+**PREVIOUS ACHIEVEMENT**: Generated 91 custom game icons through AI asset pipeline (~$12 for 145 images).
 
 ### Current State (Ready for Handoff)
 
-**Working Branch**: `fix/rng-migration-issue-268`  
-**Test Suite Status**: 99 remaining issues (down from 185 - 46% improvement)  
-**Core Achievement**: All 15 deterministic RNG tests passing, system production-ready
+**Working Branch**: `main`
+**Personnel System**: Complete - individual researchers with traits, burnout, skills
+**Candidate Pool**: Implemented - 6-slot pool that populates slowly each turn
+**Asset Pipeline**: Complete and production-ready
+**Icons Available**: 91 assets in `godot/assets/icons/`
 
-### Primary Mission: Systematic Test Suite Repair
+### Primary Missions
 
-**Objective**: Fix remaining 99 test issues to enable global multiplayer readiness  
-**Approach**: Continue systematic architectural fixes (not RNG-related)  
-**Priority**: Global multiplayer foundation depends on test suite health
+**Mission 1: Candidate Pool UI**
+- Show available candidates in hiring menu before player selects
+- Display candidate traits, skills, and specialization
+- Let player choose which specific candidate to hire
+
+**Mission 2: Integrate Icons into UI**
+- Replace placeholder/text-based UI elements with generated icons
+- Start with highest-impact, most-visible elements
+- Reference: `docs/ui/UI_LAYOUT_GUIDE.md`
 
 ### Key Files to Focus On
 
-1. **Test Architecture Patterns**: 
-   - Ensure all tests follow: `GameState('test-seed')` -> `get_rng()` -> test objects
-   - Fix any remaining syntax corruption from automated migration
+1. **Asset Inventory**:
+   - Icons: `godot/assets/icons/` (organized by category)
+   - YAML definition: `art_prompts/ui_icons.yaml`
 
-2. **Remaining Problem Areas**:
-   ```bash
-   # Run this to see current test status
-   python -m unittest discover tests -v
+2. **UI Implementation Files**:
+   ```
+   godot/scenes/main.tscn          # Main game layout
+   godot/scripts/ui/main_ui.gd     # Main UI logic
+   godot/scripts/ui/tab_manager.gd # Screen management
    ```
 
-3. **Recent Fixes Made**:
-   - `tests/test_opponents.py` - 8/9 tests passing (89% success)  
-   - Multiple test files fixed for RNG initialization order
-   - Syntax corruption repaired from automated script
+3. **Asset Categories Available**:
+   - `main_navigation/` - Home, Research, Employees, etc.
+   - `actions/` - Hire, Build, Safety, Capability research
+   - `upgrades/` - Compute, Cloud, Office improvements
+   - `resources/` - Money, Compute, Data, Power, Space
+   - `indicators/` - Risk, Alert, Status levels
 
-### Technical Foundation (Already Working)
+### Technical Foundation
 
 ```python
-# RNG System Validation (WORKING CORRECTLY)
-from src.core.game_state import GameState
-gs1 = GameState('test-seed')
-gs2 = GameState('test-seed')
-# Both produce identical outcomes - deterministic [CHECK]
+# Asset pipeline tools (working correctly)
+tools/assets/generate_images.py    # OpenAI API image generation
+tools/assets/select_assets.py      # Interactive variant selection
+tools/assets/promote_assets.py     # Copy to game assets directory
 
-gs3 = GameState('different-seed')  
-# Produces different outcomes - random [CHECK]
+# YAML as single source of truth
+art_prompts/ui_icons.yaml          # All 91 asset definitions
 ```
 
 ### Documentation Created
 
-- **Session Summary**: `docs/SESSION_SUMMARY_RNG_MIGRATION_2025-09-17.md`
-- **CHANGELOG Update**: Added RNG investigation findings
-- **Dev Blog Entry**: `dev-blog/entries/2025-09-17-rng-deterministic-migration.md`
-- **Philosophical Framework**: Acausal decision theory integration
+- **Pipeline Guide**: `docs/ASSET_GENERATION_PIPELINE.md`
+- **Dev Blog Entry**: `docs/devblog/entries/2025-11-18-building-an-ai-asset-generation-pipeline.md`
+- **UI Layout Reference**: `docs/ui/UI_LAYOUT_GUIDE.md`
 
 ### Next Session Action Plan
 
-1. **Continue test repairs**: Address remaining 99 issues systematically
-2. **Test deterministic logging**: Verify logging system works with RNG  
-3. **Validate global multiplayer**: Foundation is ready, just need test health
-4. **Issue cleanup**: Comment on GitHub #268 with completion status
+1. **Identify first integration target**: Pick highest-impact UI element
+2. **Create icon texture resources**: Set up Godot import for icon files
+3. **Update UI scenes**: Replace placeholders with actual icons
+4. **Test visual consistency**: Ensure icons match StarCraft 2/XCOM aesthetic
+5. **Iterate**: Continue with remaining UI elements
 
 ### Architecture Insights
 
-**Root Cause**: Tests were creating opponents/objects before GameState initialization  
-**Solution Pattern**: Always create GameState first, then access managed objects  
-**Lesson**: Automated tools need validation - script created syntax errors  
+**Icon Naming Convention**: `{asset_id}_{size}.png`
+- Example: `ui_home_hq_128.png`, `action_hire_256.png`
 
-### Success Metrics Already Achieved
+**Category Structure** (in `godot/assets/icons/`):
+```
+main_navigation/   # Tab/screen icons
+actions/           # Left panel action buttons
+upgrades/          # Right panel upgrade buttons
+resources/         # Top bar resource indicators
+indicators/        # Status and alert icons
+decorative/        # UI frames and dividers
+```
 
-- [CHECK] Deterministic RNG: Same seed = same outcomes
-- [CHECK] Random behavior: Different seeds = different outcomes  
-- [CHECK] All 15 RNG tests passing
-- [CHECK] 46% reduction in test failures
-- [CHECK] Philosophical framework integrated
+### Success Metrics to Achieve
+
+**Personnel System (Done)**:
+- [x] Individual researchers with traits, skills, burnout
+- [x] Candidate pool populates slowly over time
+- [x] Hiring from pool with resource refunds on failure
+- [x] Team management (8 per manager)
+- [x] Poaching events (4% chance after turn 20)
+- [x] Traits active (team_player, media_savvy, leak_prone, etc.)
+
+**UI Integration (Pending)**:
+- [ ] Candidate pool displayed in hiring menu
+- [ ] Main navigation tabs using icon assets
+- [ ] Action buttons showing contextual icons
+- [ ] Resource indicators with visual representations
 
 ### Files Modified This Session
 
 ```
-src/services/deterministic_rng.py     # Enhanced with philosophy
-tests/test_opponents.py               # Architecture fix (8/9 passing)  
-tests/test_magical_orb_upgrade.py     # Syntax + RNG fixes
-tests/test_technical_failures.py     # Syntax + RNG fixes
-+ 5 other test files with RNG fixes
-fix_rng_tests.py                      # Migration tool (lessons learned)
+# Core Game Systems (Personnel #197)
+godot/scripts/core/turn_manager.gd   # Individual researcher productivity
+godot/scripts/core/actions.gd        # Pool-based hiring with refunds
+godot/scripts/core/events.gd         # Poaching event + threshold conditions
+godot/scripts/core/game_state.gd     # Candidate pool management
+
+# UI Updates
+godot/scripts/ui/main_ui.gd          # Employee roster display
+godot/scripts/ui/tab_manager.gd      # Disabled E key shortcut
+godot/autoload/keybind_manager.gd    # Disabled employee_tab binding
+godot/scenes/main.tscn               # Added EmployeeRosterZone
+
+# Documentation
+docs/game-design/PERSONNEL_BALANCING_NOTES.md  # Tuning values
+docs/PLAYERGUIDE.md                   # Player-facing docs
+docs/DEVELOPERGUIDE.md                # Developer architecture
+docs/QUICK_REFERENCE.md               # Quick reference card
+README.md                             # Gameplay description
 ```
 
 ### Ready to Continue
 
-The RNG system is production-ready for global multiplayer. The foundation is solid - we just need to finish systematic test suite cleanup to eliminate the remaining 99 architectural issues.
+**Personnel System**: Complete, needs playtesting for balance tuning
+**UI Work**: Candidate pool needs UI to show available hires before selection
+**Icon Integration**: Ready to begin replacing placeholders with generated assets
 
-**Branch Status**: All commits made, documentation complete, ready for continued work  
-**Next Focus**: General test health improvement (not RNG-specific)  
-**Timeline**: Test fixes should be straightforward architectural patterns
+**Branch Status**: All commits made
+**Next Focus**: Candidate pool UI, then icon integration
+**Reference Docs**:
+- Balancing: `docs/game-design/PERSONNEL_BALANCING_NOTES.md`
+- Pipeline: `docs/ASSET_GENERATION_PIPELINE.md`
+
+### Quick Reference
+
+```bash
+# View available icons
+ls godot/assets/icons/
+
+# Check YAML for specific asset
+grep -A 5 "ui_home_hq" art_prompts/ui_icons.yaml
+
+# Regenerate or add variants if needed
+python tools/assets/generate_images.py --file art_prompts/ui_icons.yaml --ids ui_home_hq --variants 2
+python tools/assets/select_assets.py --file art_prompts/ui_icons.yaml --gallery generated
+python tools/assets/promote_assets.py --file art_prompts/ui_icons.yaml --status selected
+```

@@ -21,16 +21,16 @@ func _ready():
 func _input(event: InputEvent):
 	"""Handle screen switching shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
-		# E key for Employees screen
-		if event.keycode == KEY_E:
-			if current_screen == Screen.MAIN:
-				show_employee_screen()
-			else:
-				show_main_screen()
-			get_viewport().set_input_as_handled()
+		# E key for Employees screen - DISABLED: employee info moving to main UI
+		# if event.keycode == KEY_E:
+		# 	if current_screen == Screen.MAIN:
+		# 		show_employee_screen()
+		# 	else:
+		# 		show_main_screen()
+		# 	get_viewport().set_input_as_handled()
 
 		# Escape to return to main screen
-		elif event.keycode == KEY_ESCAPE:
+		if event.keycode == KEY_ESCAPE:
 			if current_screen != Screen.MAIN:
 				show_main_screen()
 				get_viewport().set_input_as_handled()

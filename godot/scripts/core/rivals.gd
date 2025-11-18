@@ -90,7 +90,7 @@ static func process_rival_turn(rival: RivalLab, player_state: GameState, rng: Ra
 
 	return result
 
-static func _choose_rival_action(rival: RivalLab, player_state: GameState, rng: RandomNumberGenerator) -> String:
+static func _choose_rival_action(rival: RivalLab, _player_state: GameState, rng: RandomNumberGenerator) -> String:
 	"""Choose what action a rival takes based on their personality"""
 
 	# Low funding? Fundraise

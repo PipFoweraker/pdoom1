@@ -209,7 +209,7 @@ func _calculate_researcher_doom(state: GameState):
 	doom_sources["capabilities"] = cap_doom
 	doom_sources["specializations"] = spec_doom
 
-func _calculate_rival_doom(state: GameState):
+func _calculate_rival_doom(_state: GameState):
 	"""Doom from rival actions - already calculated in turn manager"""
 	# This is set externally by turn_manager after rival processing
 	pass
@@ -298,11 +298,12 @@ func set_doom_multiplier(source: String, multiplier: float):
 # EVENT DOOM (Extension Point)
 # ============================================================================
 
-func add_event_doom(amount: float, reason: String = ""):
+func add_event_doom(amount: float, _reason: String = ""):
 	"""
 	Add doom from an event.
 	Useful for one-time doom spikes (breakthroughs, cascades, etc.)
 	"""
+	# TODO: Use _reason for logging/tracking
 	doom_sources["events"] += amount
 	current_doom += amount
 	current_doom = clamp(current_doom, 0.0, 100.0)

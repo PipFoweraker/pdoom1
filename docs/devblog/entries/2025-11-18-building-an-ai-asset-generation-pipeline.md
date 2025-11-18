@@ -100,7 +100,7 @@ We generated strategically: 3 variants for critical navigation icons, 2 for butt
 
 With 91 selected assets ready to promote into Godot, the next step is integrating them into the actual UI. The pipeline infrastructure means we can easily generate more assets as the game expands - new research types, new employee roles, new resources.
 
-The tools are in `tools/`, the YAML in `art_prompts/`, and everything's documented in `docs/ASSET_GENERATION_PIPELINE.md`. Clone the repo, set your `OPENAI_API_KEY`, and you're off.
+The tools are in `tools/assets/`, the YAML in `art_prompts/`, and everything's documented in `docs/ASSET_GENERATION_PIPELINE.md`. Clone the repo, set your `OPENAI_API_KEY`, and you're off.
 
 Total investment: ~$12 in API costs, ~6 hours of development and curation time. Result: 91 cohesive game icons with full version history and a reusable pipeline for future assets.
 

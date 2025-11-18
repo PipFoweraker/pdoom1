@@ -1,9 +1,9 @@
 # P(DOOM) PLAYER GUIDE
 
-Welcome to P(DOOM): AI SAFETY STRATEGY GAME!  
+Welcome to P(DOOM): AI SAFETY STRATEGY GAME!
 A bootstrap strategy game about managing a scrappy AI safety lab with realistic funding constraints.
 
-**NEW IN v0.7.5: EXTENDED STRATEGIC GAMEPLAY!** 
+**NEW IN v0.7.5: EXTENDED STRATEGIC GAMEPLAY!**
 - **Extended Game Length**: Games now last 12-13 turns (previously 7-8), giving time for deep strategy
 - **Rebalanced Doom Mechanics**: 80% reduction in base doom progression for strategic depth
 - **Enhanced Staff Value**: Safety researchers 40% more effective at preventing existential risk
@@ -158,7 +158,7 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 
 ### Basic Game Loop
 1. **Take actions** (left panel) - Click buttons to spend money and affect your lab
-2. **Buy upgrades** (right panel) - One-time purchases that give permanent benefits  
+2. **Buy upgrades** (right panel) - One-time purchases that give permanent benefits
 3. **End your turn** - Click 'END TURN' or press `Space` to see results
 
 ### Keyboard Controls & Debug Features
@@ -203,7 +203,7 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 ### Fundraising Strategy (NEW!)
 Access **Fundraising Options** action to choose from 4 strategic approaches:
 - **Fundraise Small**: $5-10k (covers 2-3 weeks, low risk)
-- **Fundraise Big**: $15-25k (provides 4-6 weeks runway, higher risk)  
+- **Fundraise Big**: $15-25k (provides 4-6 weeks runway, higher risk)
 - **Borrow Money**: Immediate cash with future debt obligations
 - **Alternative Funding**: Grants/partnerships (unlocked with milestones)
 
@@ -211,7 +211,7 @@ Access **Fundraising Options** action to choose from 4 strategic approaches:
 Bootstrap approach means many actions are now free:
 - **Hiring**: No signing bonuses for nonprofit (staff costs come from weekly maintenance)
 - **Scout Opponents**: Free internet research and public information gathering
-- **Media/PR**: Self-funded social media and blog outreach  
+- **Media/PR**: Self-funded social media and blog outreach
 - **Research**: Reduced from $40k to $3k per week (still significant for small labs)
 
 ### Moore's Law Advantage
@@ -230,7 +230,7 @@ As your organization grows, you'll encounter special milestone events:
 - **Rules**: Employees beyond 9 need management or become unproductive
 - **Visual**: Managers = green blobs, unmanaged = red slash overlay
 
-### Board Compliance (>$10K Spending)  
+### Board Compliance (>$10K Spending)
 - **Trigger**: Spend >$10K without Accounting Software
 - **Effect**: Installs board members, audit risk, 'Search' action unlocked
 - **Prevention**: Purchase Accounting Software ($500) beforehand
@@ -238,29 +238,32 @@ As your organization grows, you'll encounter special milestone events:
 *For detailed milestone mechanics, see [Milestone-Driven Special Events](#milestone-driven-special-events) below.*
 
 ### Employee Types
-- **Regular Employees** (blue): Your standard workforce
-- **Managers** (green with crown): Supervise clusters of employees  
-- **Board Members** (purple with briefcase): Ensure regulatory compliance
+- **Individual Researchers**: Specialists with unique names, traits, and skills
+  - Safety (green dot): Reduce doom through careful research
+  - Capabilities (red dot): Fast research but increases doom
+  - Interpretability (purple dot): Standard research, special actions
+  - Alignment (cyan dot): Reduces doom through alignment work
+- **Managers** (yellow dot): Each oversees a team of up to 8 researchers
+- **Compute Engineers**: Improve compute efficiency
 
-### Employee Productive Actions
-Each employee performs specialized productive actions when requirements are met, providing passive bonuses appropriate to their role:
+### Researcher Productivity System
+Each researcher generates research and affects doom based on their specialization and traits:
 
-- **Research Staff**: Focus on literature review, data collection, and advanced algorithm development
-- **Security Engineers**: Conduct security auditing, threat modeling, and incident response
-- **Operations Staff**: Optimize infrastructure, monitor systems, and maintain documentation  
-- **Administrative Staff**: Streamline processes, manage stakeholder relations, and ensure compliance
-- **Managers**: Handle strategic planning, team coordination, and resource allocation
+- **Productivity Factors**: Skill level, burnout, and traits affect output
+- **Team Bonuses**: team_player trait gives +10% productivity per team player
+- **Compute Requirement**: Each productive researcher needs 1 compute unit
+- **Management Required**: Unmanaged researchers become unproductive and add doom
 
 **Key Mechanics:**
-- Employees automatically perform their selected productive action each game tick (no cost)
-- Actions require sufficient compute, reputation, or organizational resources to activate
-- Active actions provide multiplicative effectiveness bonuses (typically +6% to +18%)
-- Failed requirements result in reduced effectiveness until conditions improve
-- Actions can be changed at any time (future UI feature planned)
+- Researchers auto-generate research each turn (30% chance per productive researcher)
+- Specialization determines doom impact (safety reduces, capabilities increases)
+- Burnout accumulates over time, reducing effectiveness
+- Traits provide bonuses or penalties (team_player, workaholic, leak_prone, etc.)
+- Use Team Building action to reduce burnout across all researchers
 
 ### Cash Flow UI
 - **Unlocked by**: Purchasing the Accounting Software upgrade ($500)
-- **Features**: 
+- **Features**:
   - Real-time balance change indicators (green for income, red for expenses)
   - Displays the last money change amount next to your current balance
   - Prevents the board member spending threshold milestone
@@ -293,7 +296,7 @@ Each employee performs specialized productive actions when requirements are met,
 **[EMOJI] Keyboard Shortcuts for Actions:**
 - **1-9 keys**: Execute actions 1-9 directly (displayed as [1], [2], etc. on action buttons)
 - **Audio feedback**: Hear a satisfying sound when spending Action Points
-- **Visual feedback**: Watch the AP counter glow when Action Points are spent  
+- **Visual feedback**: Watch the AP counter glow when Action Points are spent
 - **Achievement feedback**: Celebratory 'Zabinga!' sound when research papers are completed
 - **Error handling**: Audio beep after 3 repeated identical errors (easter egg)
 
@@ -334,7 +337,7 @@ The game provides rich visual feedback to help you understand how your actions a
 When you purchase upgrades, they don't just disappear - they smoothly animate from their button location to become icons at the top right:
 
 - **Smooth Animation**: Upgrades follow a curved arc path over 1 second
-- **Visual Trail**: Green trail points create motion blur effect during the transition  
+- **Visual Trail**: Green trail points create motion blur effect during the transition
 - **Glow Highlight**: The destination icon location pulses with a green glow
 - **Clear Feedback**: You can see exactly where your purchased upgrade ends up
 
@@ -389,15 +392,15 @@ The Action Points (AP) system creates strategic depth through resource managemen
 
 
 ### Strategic Tips
-[TARGET] **Early Game (3-4 AP)**: Focus on essential actions like fundraising and safety research  
-[GRAPH] **Growth Phase (5-8 AP)**: Invest in staff hiring to expand action capacity  
-[LIGHTNING] **Late Game (9+ AP)**: Leverage delegation and specialized staff for complex operations  
-[EMOJI] **Admin Investment**: Admin assistants are expensive but provide the highest AP return  
-[EMOJI] **Delegation Planning**: Build research/ops staff for long-term delegation benefits  
+[TARGET] **Early Game (3-4 AP)**: Focus on essential actions like fundraising and safety research
+[GRAPH] **Growth Phase (5-8 AP)**: Invest in staff hiring to expand action capacity
+[LIGHTNING] **Late Game (9+ AP)**: Leverage delegation and specialized staff for complex operations
+[EMOJI] **Admin Investment**: Admin assistants are expensive but provide the highest AP return
+[EMOJI] **Delegation Planning**: Build research/ops staff for long-term delegation benefits
 
 ### Staff Investment Guide
 - **Cost-Effective**: Regular staff (60$ for +0.5 AP = 120$ per AP)
-- **High-Impact**: Admin assistants (80$ for +1.0 AP = 80$ per AP) 
+- **High-Impact**: Admin assistants (80$ for +1.0 AP = 80$ per AP)
 - **Specialized**: Research/Ops staff (70$ for delegation capabilities)
 - **Balanced Approach**: Mix of regular staff, 1-2 admins, and specialists based on strategy
 
@@ -433,7 +436,7 @@ The competitors panel (between resources and actions) shows:
 
 ### Strategy Tips
 - **Early scouting** helps prioritize which competitors pose the biggest threat
-- **Budget tracking** reveals which competitors can afford rapid expansion  
+- **Budget tracking** reveals which competitors can afford rapid expansion
 - **Researcher counts** indicate research capacity and progress speed
 - **Progress monitoring** helps predict game-ending scenarios
 
@@ -458,7 +461,7 @@ The competitors panel (between resources and actions) shows:
 
 ### Activity Log
 - Shows events from the current turn only
-- Clears automatically when you end your turn  
+- Clears automatically when you end your turn
 - Displays action results, random events, and resource changes
 - **Enhanced mode** unlocked later: scroll through complete game history
 
@@ -492,7 +495,7 @@ Both **Fundraising Options** and **Research Options** now open strategic choice 
 ### Bootstrap Operations
 Many actions are now **zero-cost** reflecting the bootstrap nonprofit model:
 - **Press Releases**: Self-funded social media and blog outreach
-- **Social Media Campaigns**: Organic reach and community engagement  
+- **Social Media Campaigns**: Organic reach and community engagement
 - **Public Statements**: Blog posts and community communications
 - **Hiring**: No signing bonuses (weekly maintenance covers all staff costs)
 
@@ -517,25 +520,60 @@ Many actions are now **zero-cost** reflecting the bootstrap nonprofit model:
 
 As your organization grows, you'll unlock new systems and face new challenges through milestone-triggered events:
 
-### Management Milestones (9+ Employees)
+### Candidate Pool & Hiring System (v0.11.0+)
 
-**Hire Manager Action:**
-- **Unlock Condition**: Available when you have 9+ employees
-- **Cost**: 1.5x normal hiring cost ($90 vs $60)
-- **Effect**: Adds a manager who can oversee up to 9 employees
+**Candidate-Based Hiring:**
+- **Candidate Pool**: Available candidates appear in your hiring pool over time
+- **Pool Size**: Maximum 6 candidates at once
+- **Population**: New candidates arrive each turn (30% base chance + bonuses)
+- **Starting Candidates**: 2-3 low-skill candidates available at game start
+- **Reputation Bonus**: Higher reputation (60+) attracts better candidates more often
 
-**Static Management Effects:**
-- **Team Clusters**: Each manager handles up to 9 employees effectively
-- **Unmanaged Penalty**: Employees beyond 9 without a manager become unproductive
-- **Visual Indicators**: 
-  - Managers appear as **green blobs**
-  - Unmanaged employees show **red slash overlay**
-  - Normal employees remain **blue blobs**
+**Hiring from the Pool:**
+- Each hiring action draws from available candidates of that specialization
+- If no matching candidate exists, the hire fails (resources are refunded)
+- Candidates have randomized traits, skills, and salary requirements
+
+### Individual Researchers
+
+**Researcher Attributes:**
+- **Name**: Unique generated name
+- **Specialization**: Safety, Capabilities, Interpretability, or Alignment
+- **Skill Level**: 1-10 (affects productivity and research output)
+- **Traits**: Positive (team_player, media_savvy) or Negative (leak_prone, burnout_prone)
+- **Burnout**: Increases over time, reduces effective productivity
+
+**Specialization Effects:**
+- **Safety**: Reduces doom by 0.3 per productive researcher
+- **Capabilities**: +25% research speed but adds doom based on researcher
+- **Interpretability**: Standard research, unlocks special actions
+- **Alignment**: Reduces doom by 0.15 per productive researcher
+
+**Researcher Traits:**
+- **team_player**: +10% productivity bonus (stacks with other team players)
+- **media_savvy**: +3 reputation when publishing papers
+- **workaholic**: +25% productivity
+- **safety_conscious**: Extra doom reduction for safety researchers
+- **leak_prone**: 1% chance per turn for research leak (+3 doom)
+- **burnout_prone**: +50% faster burnout accumulation
+
+### Team Management (8 Per Manager)
+
+**Team Structure:**
+- **Team Size**: Researchers auto-form teams of up to 8
+- **Manager Requirement**: Each team needs 1 manager to be productive
+- **Unmanaged Penalty**: +0.5 doom per unproductive researcher per turn
+
+**Visual Indicators:**
+- Colored dots by specialization (green=safety, red=capabilities, purple=interpretability, cyan=alignment)
+- Productivity percentage shown
+- Fire icon when burnout is high (60+)
 
 **Strategy Tips:**
-- Plan manager hiring before reaching 10+ employees
-- Multiple managers create separate team clusters
-- Unmanaged employees still consume resources but contribute nothing
+- Hire a manager before your 9th researcher
+- Balance specializations for doom management
+- Use Team Building action to reduce burnout (-15 per researcher)
+- Watch for poaching events (competitors may steal your staff after turn 20)
 
 ### Financial Oversight Milestones (High Spending)
 
@@ -661,7 +699,7 @@ Your score is how many turns you survived. Try to beat your previous best!
 
 ## Seeds & High Scores
 
-**Weekly Seed**: Everyone gets the same challenge each week - compete with friends!  
+**Weekly Seed**: Everyone gets the same challenge each week - compete with friends!
 **Custom Seed**: Use any text as a seed for repeatable games
 **High Scores**: Tracked separately for each seed in `local_highscore.json`
 
@@ -674,7 +712,7 @@ When your game ends, you'll see your final statistics followed by an **End-Game 
 ### Menu Options
 - **[EMOJI] Relaunch Game**: Restart with the same seed for another attempt
 - **[EMOJI] Main Menu**: Return to the main menu to select new game options
-- **[GEAR][EMOJI] Settings**: View game settings and configuration information  
+- **[GEAR][EMOJI] Settings**: View game settings and configuration information
 - **[SPEECH] Submit Feedback**: Share suggestions and feedback about the game
 - **[EMOJI] Submit Bug Request**: Report bugs or technical issues
 
@@ -690,7 +728,7 @@ This replaces the old 'click anywhere to restart' behavior, giving you more cont
 ## Need Help?
 
 - **Stuck?** Try the in-game 'Report Bug' feature to get help
-- **Technical issues?** See the [README](../README.md) for troubleshooting  
+- **Technical issues?** See the [README](../README.md) for troubleshooting
 - **Want to contribute?** Check the [Developer Guide](DEVELOPERGUIDE.md)
 - **Version questions?** See [CHANGELOG.md](../CHANGELOG.md) for release history and known issues
 

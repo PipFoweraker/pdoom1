@@ -7,6 +7,71 @@ var state: GameState
 func _init(game_state: GameState):
 	state = game_state
 
+func _generate_random_candidate() -> Researcher:
+	"""Generate a random candidate for the hiring pool"""
+	# Random specialization (weighted towards safety early game)
+	var specializations = ["safety", "capabilities", "interpretability", "alignment"]
+	var weights = [0.35, 0.25, 0.20, 0.20]  # Safety most common
+
+	var roll = state.rng.randf()
+	var cumulative = 0.0
+	var spec = "safety"
+	for i in range(specializations.size()):
+		cumulative += weights[i]
+		if roll < cumulative:
+			spec = specializations[i]
+			break
+
+	# Create researcher with random name and stats
+	var researcher = Researcher.new()
+	researcher.generate_random(state.rng)
+	researcher.specialization = spec
+
+	# Assign random traits
+	_assign_candidate_traits(researcher)
+
+	return researcher
+
+func _assign_candidate_traits(researcher: Researcher):
+	"""Assign random traits to a candidate (40% positive, 25% negative)"""
+	# 40% chance of one positive trait
+	if state.rng.randf() < 0.40:
+		var positive_traits = ["workaholic", "team_player", "media_savvy", "safety_conscious", "fast_learner"]
+		var trait_id = positive_traits[state.rng.randi() % positive_traits.size()]
+		researcher.add_trait(trait_id)
+
+	# 25% chance of one negative trait
+	if state.rng.randf() < 0.25:
+		var negative_traits = ["prima_donna", "leak_prone", "burnout_prone", "pessimist"]
+		var trait_id = negative_traits[state.rng.randi() % negative_traits.size()]
+		researcher.add_trait(trait_id)
+
+func _populate_candidate_pool() -> int:
+	"""Add new candidates to the pool (called each turn)"""
+	var added = 0
+
+	# Base 30% chance to add a candidate, plus 10% per empty slot
+	var empty_slots = state.MAX_CANDIDATES - state.candidate_pool.size()
+	var chance = 0.30 + (empty_slots * 0.10)
+
+	# Higher reputation = better candidates appear more often
+	if state.reputation > 60:
+		chance += 0.10
+
+	# Roll for new candidate
+	if state.rng.randf() < chance and empty_slots > 0:
+		var candidate = _generate_random_candidate()
+		state.add_candidate(candidate)
+		added += 1
+
+		# Small chance for a second candidate if pool is very empty
+		if empty_slots > 3 and state.rng.randf() < 0.20:
+			var second = _generate_random_candidate()
+			state.add_candidate(second)
+			added += 1
+
+	return added
+
 func start_turn() -> Dictionary:
 	"""
 	Begin new turn - Phase 1: TURN_START
@@ -26,53 +91,154 @@ func start_turn() -> Dictionary:
 	# Reset AP tracking for new turn (reserve system)
 	state.reset_turn_ap()
 
+	# === CANDIDATE POOL POPULATION ===
+	var new_candidates = _populate_candidate_pool()
+
 	# === RESEARCHER TURN PROCESSING ===
 	# Process individual researchers (burnout, skill growth, loyalty)
 	for researcher in state.researchers:
 		researcher.process_turn()
 
-	# Staff maintenance costs (salary per employee per turn)
-	var staff_salaries = total_staff * 5000  # $5k per employee per turn
+	# Staff maintenance costs - use actual salaries for individual researchers
+	var staff_salaries = 0.0
+	if state.researchers.size() > 0:
+		for researcher in state.researchers:
+			staff_salaries += researcher.current_salary / 12.0  # Monthly salary per turn
+		staff_salaries += state.managers * 5000  # Managers still use flat rate
+	else:
+		# Legacy fallback
+		staff_salaries = total_staff * 5000
+
 	if staff_salaries > 0:
 		state.add_resources({"money": -staff_salaries})
 
-	# === EMPLOYEE PRODUCTIVITY SYSTEM ===
-	# Based on Python implementation: src/core/game_state.py lines 1208-1372
+	# === INDIVIDUAL RESEARCHER PRODUCTIVITY SYSTEM ===
+	# Teams of up to 8 researchers auto-form, each team needs a manager
 
-	# 1. Management capacity check - unmanaged employees are unproductive
-	var non_manager_staff = state.safety_researchers + state.capability_researchers + state.compute_engineers
-	var management_capacity = state.get_management_capacity()
-	var managed_employees = min(non_manager_staff, management_capacity)
-	var unmanaged_employees = state.get_unmanaged_count()
+	var researcher_count = state.researchers.size()
+	var teams_needed = int(ceil(researcher_count / 8.0)) if researcher_count > 0 else 0
+	var management_capacity = state.managers * 1  # Each manager handles 1 team (up to 8 researchers)
+	var managed_teams = min(teams_needed, management_capacity)
+	var managed_researcher_count = min(researcher_count, managed_teams * 8)
+	var unmanaged_count = researcher_count - managed_researcher_count
 
-	# 2. Compute distribution - each productive employee needs 1 compute
+	# Calculate compute availability
 	var available_compute = int(state.compute)
-	var productive_employees = min(managed_employees, available_compute)
 
-	# 3. Research generation from employees (30% chance per productive employee)
+	# Process each researcher individually
 	var research_from_employees = 0.0
-	for i in range(productive_employees):
-		if state.rng.randf() < 0.30:  # 30% chance per employee
-			var base_research = state.rng.randi_range(1, 3)
-			research_from_employees += base_research
+	var doom_from_capabilities = 0.0
+	var doom_reduction_from_safety = 0.0
+	var productive_count = 0
+	var leak_occurred = false
+	var leak_doom = 0.0
 
-	# 4. Compute engineer bonus (+10% effectiveness per engineer)
-	var compute_efficiency_bonus = 1.0 + (state.compute_engineers * 0.1)
-	research_from_employees *= compute_efficiency_bonus
+	# Calculate team_player bonus (10% per team player present)
+	var team_player_count = 0
+	for researcher in state.researchers:
+		if researcher.has_trait("team_player"):
+			team_player_count += 1
+	var team_player_bonus = 1.0 + (team_player_count * 0.10)
 
-	# 5. Safety researchers reduce doom passively (only if productive)
-	var productive_safety = min(state.safety_researchers, productive_employees)
-	var doom_reduction_from_safety = productive_safety * 0.3
+	# Process researchers in order (first N are managed)
+	var researcher_index = 0
+	for researcher in state.researchers:
+		var is_managed = researcher_index < managed_researcher_count
+		var has_compute = available_compute > 0
+
+		if is_managed and has_compute:
+			available_compute -= 1
+			productive_count += 1
+
+			# Get effective productivity (accounts for burnout, traits)
+			var productivity = researcher.get_effective_productivity() * team_player_bonus
+
+			# Research generation based on productivity
+			if state.rng.randf() < 0.30 * productivity:
+				var base_research = state.rng.randi_range(1, 3)
+
+				# Specialization modifiers
+				match researcher.specialization:
+					"capabilities":
+						# +25% research speed
+						base_research *= 1.25
+						# But adds doom
+						doom_from_capabilities += researcher.get_doom_modifier() * productivity
+					"safety":
+						# Safety research reduces doom
+						doom_reduction_from_safety += 0.3 * productivity
+						# Apply safety conscious trait
+						if researcher.has_trait("safety_conscious"):
+							doom_reduction_from_safety += 0.1 * productivity
+					"interpretability":
+						# Standard research, unlocks special actions (handled elsewhere)
+						pass
+					"alignment":
+						# Reduces negative events (passive, handled in event system)
+						doom_reduction_from_safety += 0.15 * productivity
+
+				research_from_employees += base_research
+
+			# Check for leak_prone trait (1% chance per turn)
+			if researcher.has_trait("leak_prone"):
+				if state.rng.randf() < 0.01:
+					leak_occurred = true
+					leak_doom += 3.0  # Leak causes doom increase
+
+		researcher_index += 1
+
+	# Apply doom effects
 	state.add_resources({"doom": -doom_reduction_from_safety})
+	state.add_resources({"doom": doom_from_capabilities})
+	if leak_occurred:
+		state.add_resources({"doom": leak_doom})
 
-	# 6. Unproductive employees (no compute OR no manager) cause doom
-	var total_unproductive = (non_manager_staff - productive_employees) + unmanaged_employees
+	# Unmanaged researchers cause doom
+	var unmanaged_employees = unmanaged_count
+	var total_unproductive = (researcher_count - productive_count)
 	if total_unproductive > 0:
 		var doom_penalty = total_unproductive * 0.5
 		state.add_resources({"doom": doom_penalty})
 
 	# Apply research gains
 	state.add_resources({"research": research_from_employees})
+
+	# === STATIONERY SYSTEM ===
+	# Staff consume stationery each turn
+	var stationery_consumption = 0.0
+	var safety_count = 0
+	if state.researchers.size() > 0:
+		for researcher in state.researchers:
+			match researcher.specialization:
+				"safety", "alignment":
+					stationery_consumption += 1.0
+					safety_count += 1
+				"interpretability":
+					stationery_consumption += 0.8
+				"capabilities":
+					stationery_consumption += 0.5
+		stationery_consumption += state.managers * 0.5
+	else:
+		# Legacy fallback
+		stationery_consumption = (state.safety_researchers * 1.0) + (state.managers * 0.5) + (state.compute_engineers * 0.3)
+		safety_count = state.safety_researchers
+
+	state.stationery = max(0.0, state.stationery - stationery_consumption)
+
+	# Penalties when out of stationery
+	var stationery_doom_penalty = 0.0
+	if state.stationery <= 0:
+		# Safety researchers are most impacted - can't document properly
+		stationery_doom_penalty = safety_count * 0.3
+		state.add_resources({"doom": stationery_doom_penalty})
+
+	# Supply automation: auto-order when low
+	var supply_auto_ordered = false
+	if state.has_upgrade("supply_automation") and state.stationery < 30:
+		if state.money >= 2000:
+			state.money -= 2000
+			state.stationery = min(state.stationery + 50.0, 100.0)
+			supply_auto_ordered = true
 
 	var messages = [
 		"Turn %d started" % state.turn,
@@ -83,16 +249,41 @@ func start_turn() -> Dictionary:
 		messages.append("Paid %s in staff salaries" % GameConfig.format_money(staff_salaries))
 
 	if research_from_employees > 0:
-		messages.append("Generated %.1f research from %d productive employees" % [research_from_employees, productive_employees])
+		messages.append("Generated %.1f research from %d productive researchers" % [research_from_employees, productive_count])
 
 	if doom_reduction_from_safety > 0:
-		messages.append("Safety researchers reduced doom by %.1f" % doom_reduction_from_safety)
+		messages.append("Safety/alignment work reduced doom by %.1f" % doom_reduction_from_safety)
+
+	if doom_from_capabilities > 0:
+		messages.append("Capabilities research added %.1f doom" % doom_from_capabilities)
+
+	if leak_occurred:
+		messages.append("WARNING: Research leak detected! (+%.1f doom)" % leak_doom)
+
+	if team_player_count > 0:
+		messages.append("Team player bonus: +%d%% productivity" % int((team_player_bonus - 1.0) * 100))
 
 	if unmanaged_employees > 0:
-		messages.append("WARNING: %d unmanaged employees (need more managers!)" % unmanaged_employees)
+		messages.append("WARNING: %d unmanaged researchers (need more managers!)" % unmanaged_employees)
 
 	if total_unproductive > 0:
-		messages.append("WARNING: %d unproductive employees! (+%.1f doom)" % [total_unproductive, total_unproductive * 0.5])
+		messages.append("WARNING: %d unproductive researchers! (+%.1f doom)" % [total_unproductive, total_unproductive * 0.5])
+
+	# Stationery messages
+	if stationery_consumption > 0:
+		messages.append("Stationery used: %.1f (remaining: %.0f)" % [stationery_consumption, state.stationery])
+
+	if stationery_doom_penalty > 0:
+		messages.append("WARNING: Out of stationery! Safety work hampered (+%.1f doom)" % stationery_doom_penalty)
+
+	if supply_auto_ordered:
+		messages.append("Supply automation ordered stationery ($2k, +50 supplies)")
+
+	# Candidate pool messages
+	if new_candidates > 0:
+		messages.append("%d new candidate(s) available for hire (%d total in pool)" % [new_candidates, state.candidate_pool.size()])
+	elif state.candidate_pool.size() == 0:
+		messages.append("No candidates in hiring pool")
 
 	# CHECK FOR EVENTS FIRST (FIX #418)
 	# Events must be presented and resolved BEFORE player selects actions

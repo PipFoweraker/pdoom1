@@ -334,6 +334,469 @@ static func get_all_events() -> Array[Dictionary]:
 					"message": "The cat leaves, disappointed. Your researchers seem a bit sad. (+1 doom for being heartless)"
 				}
 			]
+		},
+		# HR PROBLEMS (issue #179)
+		{
+			"id": "workplace_conflict",
+			"name": "Interpersonal Conflict",
+			"description": "Two researchers are in a heated disagreement that's disrupting the entire team. Productivity is suffering.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.10,
+			"min_turn": 8,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "mediate_personally",
+					"text": "Mediate Personally (costs 1 AP)",
+					"costs": {"action_points": 1},
+					"effects": {"reputation": 3, "doom": -1},
+					"message": "Successful mediation! Team cohesion improved (+3 reputation, -1 doom)"
+				},
+				{
+					"id": "hire_mediator",
+					"text": "Hire Professional Mediator ($15k)",
+					"costs": {"money": 15000},
+					"effects": {"reputation": 5},
+					"message": "Professional mediator resolved the conflict (+5 reputation)"
+				},
+				{
+					"id": "ignore_conflict",
+					"text": "Let Them Work It Out",
+					"effects": {"reputation": -3, "doom": 2},
+					"message": "Conflict festered and spread (-3 reputation, +2 doom)"
+				}
+			]
+		},
+		{
+			"id": "harassment_complaint",
+			"name": "Workplace Complaint Filed",
+			"description": "A formal complaint has been filed. This requires immediate and careful attention.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.06,
+			"min_turn": 10,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "thorough_investigation",
+					"text": "Full Investigation (costs 2 AP, $25k)",
+					"costs": {"action_points": 2, "money": 25000},
+					"effects": {"reputation": 8},
+					"message": "Thorough investigation completed. Appropriate action taken (+8 reputation)"
+				},
+				{
+					"id": "quick_resolution",
+					"text": "Quick Resolution ($40k)",
+					"costs": {"money": 40000},
+					"effects": {"reputation": 3},
+					"message": "Resolved quickly with settlement (+3 reputation)"
+				},
+				{
+					"id": "minimize_issue",
+					"text": "Minimize the Issue",
+					"effects": {"reputation": -10, "doom": 3},
+					"message": "Poor handling damaged lab culture (-10 reputation, +3 doom)"
+				}
+			]
+		},
+		{
+			"id": "salary_dispute",
+			"name": "Pay Equity Concerns",
+			"description": "Several employees have raised concerns about pay disparities. They're comparing notes.",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "safety_researchers >= 3",
+			"repeatable": true,
+			"options": [
+				{
+					"id": "salary_audit",
+					"text": "Conduct Salary Audit & Adjust ($60k)",
+					"costs": {"money": 60000},
+					"effects": {"reputation": 10, "doom": -2},
+					"message": "Salary audit complete, adjustments made (+10 reputation, -2 doom)"
+				},
+				{
+					"id": "explain_structure",
+					"text": "Explain Compensation Structure (costs 1 AP)",
+					"costs": {"action_points": 1},
+					"effects": {"reputation": 2},
+					"message": "Transparent discussion helped (+2 reputation)"
+				},
+				{
+					"id": "ignore_concerns",
+					"text": "Dismiss Concerns",
+					"effects": {"reputation": -5, "doom": 1},
+					"message": "Ignored concerns bred resentment (-5 reputation, +1 doom)"
+				}
+			]
+		},
+		{
+			"id": "mental_health_crisis",
+			"name": "Employee Mental Health Crisis",
+			"description": "A valued researcher is struggling with severe stress and anxiety. They've requested time off.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.08,
+			"min_turn": 12,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "full_support",
+					"text": "Full Support + Paid Leave ($30k)",
+					"costs": {"money": 30000},
+					"effects": {"reputation": 8, "doom": -3},
+					"message": "Provided full support. Team sees you care (+8 reputation, -3 doom)"
+				},
+				{
+					"id": "partial_leave",
+					"text": "Unpaid Leave Approved",
+					"costs": {},
+					"effects": {"reputation": 3},
+					"message": "Leave approved, but no pay (+3 reputation)"
+				},
+				{
+					"id": "deny_leave",
+					"text": "Deny Request (Too Busy)",
+					"effects": {"reputation": -8, "doom": 5},
+					"message": "Denial caused serious damage to culture (-8 reputation, +5 doom)"
+				}
+			]
+		},
+		{
+			"id": "office_theft",
+			"name": "Equipment Gone Missing",
+			"description": "Expensive equipment has disappeared from the lab. Someone may be stealing.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 15,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "security_upgrade",
+					"text": "Install Security System ($35k)",
+					"costs": {"money": 35000},
+					"effects": {"reputation": 5, "compute": 10},
+					"message": "Security installed, recovered some equipment (+5 reputation, +10 compute)"
+				},
+				{
+					"id": "team_meeting",
+					"text": "Address at Team Meeting (costs 1 AP)",
+					"costs": {"action_points": 1},
+					"effects": {"reputation": 2},
+					"message": "Open discussion restored some trust (+2 reputation)"
+				},
+				{
+					"id": "ignore_theft",
+					"text": "Write It Off",
+					"effects": {"compute": -15, "reputation": -3},
+					"message": "Theft continued (-15 compute, -3 reputation)"
+				}
+			]
+		},
+		{
+			"id": "policy_violation",
+			"name": "Policy Violation Discovered",
+			"description": "A senior researcher has been caught violating company policy. Others are watching how you respond.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.07,
+			"min_turn": 10,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "formal_discipline",
+					"text": "Formal Disciplinary Action (costs 1 AP)",
+					"costs": {"action_points": 1},
+					"effects": {"reputation": 5},
+					"message": "Fair process maintained trust (+5 reputation)"
+				},
+				{
+					"id": "verbal_warning",
+					"text": "Verbal Warning Only",
+					"effects": {"reputation": -2},
+					"message": "Light response noted by others (-2 reputation)"
+				},
+				{
+					"id": "sweep_under_rug",
+					"text": "Ignore It (They're Valuable)",
+					"effects": {"reputation": -6, "doom": 2},
+					"message": "Favoritism damaged morale (-6 reputation, +2 doom)"
+				}
+			]
+		},
+		# WHISTLEBLOWING & LEAKS (issue #191)
+		{
+			"id": "research_leak",
+			"name": "Research Leaked!",
+			"description": "Someone leaked your unpublished safety research to a competitor lab. They're using it to accelerate their capabilities work.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.08,
+			"min_turn": 12,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "investigate_leak",
+					"text": "Full Investigation (costs 2 AP, $30k)",
+					"costs": {"action_points": 2, "money": 30000},
+					"effects": {"doom": 3, "reputation": 5},
+					"message": "Found and addressed the leak, but damage done (+3 doom, +5 reputation)"
+				},
+				{
+					"id": "publish_immediately",
+					"text": "Publish Research Publicly",
+					"costs": {"action_points": 1},
+					"effects": {"papers": 1, "reputation": 8, "doom": 5},
+					"message": "Published to get credit, but all labs benefit (+1 paper, +8 rep, +5 doom)"
+				},
+				{
+					"id": "accept_leak",
+					"text": "Accept the Loss",
+					"effects": {"doom": 8, "reputation": -3},
+					"message": "Competitor gained significant advantage (+8 doom, -3 reputation)"
+				}
+			]
+		},
+		{
+			"id": "competitor_intel",
+			"name": "Competitor Intelligence",
+			"description": "A contact offers information about a rival lab's dangerous capabilities research. How did they get it?",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.07,
+			"min_turn": 15,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "use_intel",
+					"text": "Use the Information ($20k)",
+					"costs": {"money": 20000},
+					"effects": {"doom": -5, "reputation": -8},
+					"message": "Used intel to counter their work (-5 doom, -8 reputation for ethics)"
+				},
+				{
+					"id": "report_intel",
+					"text": "Report to Authorities",
+					"costs": {"action_points": 1},
+					"effects": {"reputation": 10, "doom": -3},
+					"message": "Reported concerns, triggering investigation (+10 reputation, -3 doom)"
+				},
+				{
+					"id": "refuse_intel",
+					"text": "Refuse and Walk Away",
+					"effects": {"reputation": 3},
+					"message": "Maintained ethical standards (+3 reputation)"
+				}
+			]
+		},
+		{
+			"id": "whistleblower_approach",
+			"name": "Whistleblower Approaches",
+			"description": "A researcher from a competitor lab wants to expose their unsafe practices. They're asking for your help.",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "reputation >= 60",
+			"repeatable": true,
+			"options": [
+				{
+					"id": "full_support",
+					"text": "Fully Support & Publicize (costs 2 AP, $50k)",
+					"costs": {"action_points": 2, "money": 50000},
+					"effects": {"doom": -15, "reputation": 20},
+					"message": "Major exposé! Industry-wide safety improvements (-15 doom, +20 reputation)"
+				},
+				{
+					"id": "anonymous_support",
+					"text": "Anonymous Support ($25k)",
+					"costs": {"money": 25000},
+					"effects": {"doom": -8, "reputation": 5},
+					"message": "Quietly helped expose dangers (-8 doom, +5 reputation)"
+				},
+				{
+					"id": "hire_whistleblower",
+					"text": "Hire Them Instead ($60k, 1 AP)",
+					"costs": {"money": 60000, "action_points": 1},
+					"effects": {"safety_researchers": 1, "doom": -3},
+					"message": "Hired the concerned researcher (+1 safety researcher, -3 doom)"
+				},
+				{
+					"id": "decline_involvement",
+					"text": "Stay Out of It",
+					"effects": {"reputation": -5},
+					"message": "Refused to help, whistleblower went elsewhere (-5 reputation)"
+				}
+			]
+		},
+		{
+			"id": "employee_whistleblower",
+			"name": "Internal Concerns Raised",
+			"description": "One of your researchers wants to go public about concerns with your lab's direction. Handle carefully.",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "capability_researchers >= 2",
+			"repeatable": true,
+			"options": [
+				{
+					"id": "address_concerns",
+					"text": "Open Forum Discussion (costs 1 AP)",
+					"costs": {"action_points": 1},
+					"effects": {"reputation": 8, "doom": -2},
+					"message": "Transparent discussion improved practices (+8 reputation, -2 doom)"
+				},
+				{
+					"id": "private_resolution",
+					"text": "Private Resolution ($30k)",
+					"costs": {"money": 30000},
+					"effects": {"reputation": 3},
+					"message": "Quietly addressed concerns (+3 reputation)"
+				},
+				{
+					"id": "suppress_concerns",
+					"text": "Suppress the Issue",
+					"effects": {"reputation": -15, "doom": 5},
+					"message": "Suppression backfired badly (-15 reputation, +5 doom)"
+				}
+			]
+		},
+		{
+			"id": "plant_source_opportunity",
+			"name": "Intelligence Opportunity",
+			"description": "You could place someone inside a competitor lab to monitor their safety practices. Ethically questionable but potentially valuable.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 20,
+			"repeatable": false,
+			"options": [
+				{
+					"id": "plant_source",
+					"text": "Plant a Source ($80k, 1 AP)",
+					"costs": {"money": 80000, "action_points": 1},
+					"effects": {"doom": -10, "reputation": -15},
+					"message": "Source planted, early warnings enabled (-10 doom, -15 reputation if discovered)"
+				},
+				{
+					"id": "legitimate_partnership",
+					"text": "Propose Legitimate Partnership",
+					"costs": {"action_points": 1, "money": 40000},
+					"effects": {"doom": -5, "reputation": 8},
+					"message": "Established safety information sharing (-5 doom, +8 reputation)"
+				},
+				{
+					"id": "decline_espionage",
+					"text": "Decline (Too Risky)",
+					"effects": {"reputation": 2},
+					"message": "Maintained ethical boundaries (+2 reputation)"
+				}
+			]
+		},
+		# REAL-WORLD INSPIRED EVENTS
+		{
+			"id": "competitor_password_breach",
+			"name": "Competitor Security Breach",
+			"description": "A rival lab's AI system was secured with '1234' as the password. Millions of training data records are now exposed. The industry is watching how labs respond.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.06,
+			"min_turn": 10,
+			"repeatable": false,
+			"options": [
+				{
+					"id": "public_security_audit",
+					"text": "Announce Public Security Audit ($40k, 1 AP)",
+					"costs": {"money": 40000, "action_points": 1},
+					"effects": {"reputation": 15, "doom": -3},
+					"message": "Proactive security audit boosted confidence (+15 reputation, -3 doom)"
+				},
+				{
+					"id": "offer_help",
+					"text": "Offer to Help Affected Users ($25k)",
+					"costs": {"money": 25000},
+					"effects": {"reputation": 10},
+					"message": "Goodwill gesture appreciated (+10 reputation)"
+				},
+				{
+					"id": "stay_silent",
+					"text": "Stay Silent",
+					"effects": {"reputation": -5, "doom": 2},
+					"message": "Silence perceived as indifference (-5 reputation, +2 doom)"
+				},
+				{
+					"id": "exploit_weakness",
+					"text": "Exploit Their Weakness (Poach Clients)",
+					"costs": {"action_points": 1},
+					"effects": {"money": 50000, "reputation": -10, "doom": 3},
+					"message": "Gained clients but damaged reputation (+$50k, -10 rep, +3 doom)"
+				}
+			]
+		},
+		{
+			"id": "your_security_audit",
+			"name": "Security Vulnerability Found",
+			"description": "An internal audit discovered your systems have weak password policies. If exploited, research data could be compromised.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.07,
+			"min_turn": 8,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "full_security_overhaul",
+					"text": "Full Security Overhaul ($60k, 2 AP)",
+					"costs": {"money": 60000, "action_points": 2},
+					"effects": {"reputation": 8, "doom": -5},
+					"message": "Comprehensive security upgrade complete (+8 reputation, -5 doom)"
+				},
+				{
+					"id": "patch_critical",
+					"text": "Patch Critical Issues ($20k)",
+					"costs": {"money": 20000},
+					"effects": {"reputation": 3, "doom": -2},
+					"message": "Critical vulnerabilities patched (+3 reputation, -2 doom)"
+				},
+				{
+					"id": "defer_security",
+					"text": "Defer (We're Too Busy)",
+					"effects": {"doom": 5},
+					"message": "Security risks remain (+5 doom)"
+				}
+			]
+		},
+		# COMPETITOR POACHING (issue #197)
+		{
+			"id": "researcher_poached",
+			"name": "Competitor Poaching Attempt",
+			"description": "A competitor is trying to recruit one of your top researchers with a lucrative offer.",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "researchers >= 2",
+			"probability": 0.04,  # ~4% per turn when conditions met, <1/year
+			"min_turn": 20,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "match_offer",
+					"text": "Match Their Offer ($50k)",
+					"costs": {"money": 50000},
+					"effects": {"reputation": 2},
+					"message": "Matched offer, researcher stays (+2 reputation for loyalty)"
+				},
+				{
+					"id": "counter_promotion",
+					"text": "Counter with Promotion (1 AP, $30k)",
+					"costs": {"action_points": 1, "money": 30000},
+					"effects": {"reputation": 3},
+					"message": "Promoted researcher to senior role (+3 reputation)"
+				},
+				{
+					"id": "let_them_go",
+					"text": "Let Them Leave",
+					"effects": {"lose_researcher": 1, "doom": 3},
+					"message": "Researcher departed for competitor (+3 doom, lost valuable team member)"
+				}
+			]
 		}
 	]
 
@@ -425,6 +888,12 @@ static func evaluate_condition(condition: String, state: GameState) -> bool:
 			resource_value = state.compute_engineers
 		"managers":
 			resource_value = state.managers
+		"researchers":
+			# Individual researcher count (new system)
+			resource_value = state.researchers.size()
+		"total_staff":
+			# Total staff including managers
+			resource_value = state.get_total_staff()
 		_:
 			return false
 
@@ -496,6 +965,12 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 				state.compute_engineers += value
 			"has_cat":
 				state.has_cat = (value > 0)
+			"lose_researcher":
+				# Remove a random researcher (poaching)
+				if state.researchers.size() > 0:
+					var idx = state.rng.randi() % state.researchers.size()
+					var researcher = state.researchers[idx]
+					state.remove_researcher(researcher)
 
 	var message = chosen_option.get("message", "Event resolved")
 	return {"success": true, "message": message}

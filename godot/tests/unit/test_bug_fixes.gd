@@ -91,9 +91,9 @@ func test_no_hardcoded_category_labels_in_actions():
 	var actions = GameActions.get_all_actions()
 
 	for action in actions:
-		var name = action.get("name", "")
-		assert_false(name.begins_with("--"), "Action names should not be category labels (issue #451)")
-		assert_false(name.ends_with("--"), "Action names should not be category labels (issue #451)")
+		var action_name = action.get("name", "")
+		assert_false(action_name.begins_with("--"), "Action names should not be category labels (issue #451)")
+		assert_false(action_name.ends_with("--"), "Action names should not be category labels (issue #451)")
 
 ## Issue #448: Verify no "hire office cat" action exists
 func test_no_hire_office_cat_action():
