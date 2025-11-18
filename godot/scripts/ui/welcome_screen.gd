@@ -10,6 +10,7 @@ extends Control
 @onready var guide_button = $VBox/MenuContainer/GuideButton
 @onready var keybindings_button = $VBox/MenuContainer/KeybindingsButton
 @onready var leaderboard_button = $VBox/MenuContainer/LeaderboardButton
+@onready var ai_safety_button = $VBox/MenuContainer/AISafetyButton
 @onready var exit_button = $VBox/MenuContainer/ExitButton
 
 var menu_buttons: Array[Button] = []
@@ -26,6 +27,7 @@ func _ready():
 		guide_button,
 		keybindings_button,
 		leaderboard_button,
+		ai_safety_button,
 		exit_button
 	]
 
@@ -36,6 +38,7 @@ func _ready():
 	guide_button.pressed.connect(_on_guide_pressed)
 	keybindings_button.pressed.connect(_on_keybindings_pressed)
 	leaderboard_button.pressed.connect(_on_leaderboard_pressed)
+	ai_safety_button.pressed.connect(_on_ai_safety_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 
 	# Enable input processing for keyboard navigation
@@ -127,6 +130,10 @@ func _on_keybindings_pressed():
 func _on_leaderboard_pressed():
 	print("[WelcomeScreen] Opening leaderboard...")
 	get_tree().change_scene_to_file("res://scenes/leaderboard_screen.tscn")
+
+func _on_ai_safety_pressed():
+	print("[WelcomeScreen] Opening AI Safety Info...")
+	OS.shell_open("https://aisafety.info/")
 
 func _on_exit_pressed():
 	print("[WelcomeScreen] Exiting game...")

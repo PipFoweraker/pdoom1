@@ -12,6 +12,10 @@ func _ready():
 	# Initially hidden
 	visible = false
 
+	# Connect URL click handler for AI safety links
+	if stats_label:
+		stats_label.meta_clicked.connect(_on_meta_clicked)
+
 func show_game_over(is_victory: bool, final_state: Dictionary):
 	"""Display game over screen with final statistics"""
 	visible = true
@@ -82,6 +86,12 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 		var reason = _get_defeat_reason(final_state)
 		stats_text += "\n[center][color=red]%s[/color][/center]" % reason
 
+	# AI Safety resources call to action
+	stats_text += "\n\n[center][color=gray]───────────────────[/color][/center]\n"
+	stats_text += "\n[center][color=cyan][b]LEARN ABOUT REAL AI SAFETY[/b][/color][/center]\n"
+	stats_text += "[center][color=white]The challenges in this game reflect real concerns.[/color][/center]\n"
+	stats_text += "[center][color=gray]Visit [color=dodger_blue][url=https://aisafety.info]aisafety.info[/url][/color] to learn more.[/color][/center]"
+
 	stats_label.text = stats_text
 
 func _get_doom_display_color(doom: float) -> String:
@@ -121,3 +131,8 @@ func _on_quit_pressed():
 	"""Quit to desktop"""
 	print("[GameOverScreen] Quit pressed")
 	get_tree().quit()
+
+func _on_meta_clicked(meta):
+	"""Handle URL clicks in the stats label"""
+	print("[GameOverScreen] Opening URL: %s" % meta)
+	OS.shell_open(str(meta))
