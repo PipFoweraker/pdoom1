@@ -748,6 +748,19 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 			_show_strategic_submenu()
 		return
 
+	# Check if action can be afforded before adding to UI queue (#456)
+	var action_def = _get_action_by_id(action_id)
+	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+	var available_ap = game_manager.state.get_available_ap()
+
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+
+	if not game_manager.state.can_afford(action_def.get("costs", {})):
+		log_message("[color=red]Cannot afford action: %s[/color]" % action_name)
+		return
+
 	# Track queued action
 	queued_actions.append({"id": action_id, "name": action_name})
 	update_queued_actions_display()
@@ -970,6 +983,19 @@ func _on_candidate_hired(candidate: Dictionary, dialog: Control):
 	var action_id = "hire_%s_researcher" % spec
 	var candidate_name = candidate.get("name", "Unknown")
 
+	# Check if action can be afforded before adding to UI queue (#456)
+	var action_def = _get_action_by_id(action_id)
+	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+	var available_ap = game_manager.state.get_available_ap()
+
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP to hire: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+
+	if not game_manager.state.can_afford(action_def.get("costs", {})):
+		log_message("[color=red]Cannot afford to hire: %s[/color]" % candidate_name)
+		return
+
 	log_message("[color=cyan]Hiring: %s (%s)[/color]" % [candidate_name, spec.capitalize()])
 
 	# Queue the hiring action
@@ -985,6 +1011,19 @@ func _on_hiring_option_selected(action_id: String, action_name: String, dialog: 
 	# Clear active dialog state
 	active_dialog = null
 	active_dialog_buttons = []
+
+	# Check if action can be afforded before adding to UI queue (#456)
+	var action_def = _get_action_by_id(action_id)
+	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+	var available_ap = game_manager.state.get_available_ap()
+
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+
+	if not game_manager.state.can_afford(action_def.get("costs", {})):
+		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
+		return
 
 	log_message("[color=cyan]Hiring: %s[/color]" % action_name)
 
@@ -1164,6 +1203,19 @@ func _on_fundraising_option_selected(action_id: String, action_name: String, dia
 	active_dialog = null
 	active_dialog_buttons = []
 
+	# Check if action can be afforded before adding to UI queue (#456)
+	var action_def = _get_action_by_id(action_id)
+	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+	var available_ap = game_manager.state.get_available_ap()
+
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+
+	if not game_manager.state.can_afford(action_def.get("costs", {})):
+		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
+		return
+
 	log_message("[color=cyan]Fundraising: %s[/color]" % action_name)
 
 	# Queue the actual fundraising action
@@ -1338,6 +1390,19 @@ func _on_publicity_option_selected(action_id: String, action_name: String, dialo
 	active_dialog = null
 	active_dialog_buttons = []
 
+	# Check if action can be afforded before adding to UI queue (#456)
+	var action_def = _get_action_by_id(action_id)
+	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+	var available_ap = game_manager.state.get_available_ap()
+
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+
+	if not game_manager.state.can_afford(action_def.get("costs", {})):
+		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
+		return
+
 	log_message("[color=cyan]Publicity: %s[/color]" % action_name)
 
 	# Queue the actual publicity action
@@ -1498,6 +1563,19 @@ func _on_strategic_option_selected(action_id: String, action_name: String, dialo
 	# Clear active dialog state
 	active_dialog = null
 	active_dialog_buttons = []
+
+	# Check if action can be afforded before adding to UI queue (#456)
+	var action_def = _get_action_by_id(action_id)
+	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+	var available_ap = game_manager.state.get_available_ap()
+
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+
+	if not game_manager.state.can_afford(action_def.get("costs", {})):
+		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
+		return
 
 	log_message("[color=cyan]Strategic: %s[/color]" % action_name)
 
