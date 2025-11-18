@@ -119,3 +119,11 @@ PDoom-*.zip
 
 # Temporary packaging directory
 temp_package/
+
+# Asset generation pipeline (raw generated images - keep only promoted assets)
+art_generated/
+generated_icons/
+asset_gallery.html
+test_output.png
+test_openai_api.py
+generate_icons.py

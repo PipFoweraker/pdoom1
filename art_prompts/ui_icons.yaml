@@ -1,0 +1,2170 @@
+schema_version: '1.0'
+asset_type: ui_icons
+default_size: 1024x1024
+output_sizes:
+- 1024
+- 512
+- 256
+- 128
+- 64
+styles:
+  global_icon_base: 'high-res 1024x1024 square game icon, single central symbol, soft
+    but detailed digital painting with slightly cartoony shapes, StarCraft 2 / early-2000s
+    XCOM ability icon feel, plain or softly graded background with a subtle vignette,
+    no full scene or environment, no text, strong chunky silhouette that reads clearly
+    at 64x64, limited color palette, high contrast lighting, centered composition
+
+    '
+  surface_tarkov: Tarkov-style worn metal and dirty surfaces but simplified
+  surface_clean_corp: clean corporate brushed aluminum with subtle panel lines
+  surface_upgraded_tech: sleek holographic surfaces with cyan accent lights
+themes:
+  base_corporate:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: desaturated teal and olive tones
+  upgraded_os:
+    style_overrides:
+    - global_icon_base
+    - surface_clean_corp
+    color_bias: clean whites and soft blues
+  advanced_compute:
+    style_overrides:
+    - global_icon_base
+    - surface_upgraded_tech
+    color_bias: cyan and electric blue highlights
+assets:
+- id: ui_home_hq
+  category: main_navigation
+  display_name: HQ Overview
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'simple cluster of three small monitors forming a slight arc, each
+    showing abstract green graphs, a single coffee mug icon in front of the middle
+    monitor, all sitting on a compact metal plate, plain dark teal gradient background
+    with soft vignette, no room or window, no extra props
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T04:49:52.558038+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3d4f10fc1950
+    file_path: art_generated\ui_icons\v1\ui_home_hq_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T04:50:15.921350+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3d4f10fc1950
+    file_path: art_generated\ui_icons\v1\ui_home_hq_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T04:50:57.071502+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3d4f10fc1950
+    file_path: art_generated\ui_icons\v1\ui_home_hq_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_alerts_incidents
+  category: main_navigation
+  display_name: Alerts & Incidents
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'thick, stylised metal clipboard icon seen from a slight angle, a single
+    bold triangular warning symbol on the top page, small red notification dot glowing
+    in the corner of the clipboard, plain dark red-to-black gradient background with
+    soft vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T04:51:41.364347+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 29af3c8831c1
+    file_path: art_generated\ui_icons\v1\ui_alerts_incidents_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T04:52:26.336745+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 29af3c8831c1
+    file_path: art_generated\ui_icons\v1\ui_alerts_incidents_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T04:53:20.725591+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 29af3c8831c1
+    file_path: art_generated\ui_icons\v1\ui_alerts_incidents_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: ui_staff_management
+  category: main_navigation
+  display_name: Staff Management
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'three simple human silhouettes around a small round table, central
+    figure highlighted with a soft teal halo or outline, table top as a flat lightly
+    glowing disc, plain dark blue background with subtle vignette, no extra room details
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T04:53:40.846136+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b2ecf5b7b1aa
+    file_path: art_generated\ui_icons\v1\ui_staff_management_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T04:54:24.886657+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b2ecf5b7b1aa
+    file_path: art_generated\ui_icons\v1\ui_staff_management_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T04:54:45.369579+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b2ecf5b7b1aa
+    file_path: art_generated\ui_icons\v1\ui_staff_management_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_budget_finance
+  category: main_navigation
+  display_name: Budget & Finance
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'stylised rectangular financial ledger icon with a few vertical bar
+    shapes and grid lines, partially overlaid by a small neat stack of coin icons
+    glowing softly, both resting on a thin metal plate, warm gold and teal highlights,
+    plain dark olive-to-black gradient background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T04:55:05.937249+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9ba83c6ecb25
+    file_path: art_generated\ui_icons\v1\ui_budget_finance_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T04:55:58.161531+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9ba83c6ecb25
+    file_path: art_generated\ui_icons\v1\ui_budget_finance_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T04:56:19.883027+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9ba83c6ecb25
+    file_path: art_generated\ui_icons\v1\ui_budget_finance_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_research_tech
+  category: main_navigation
+  display_name: Research & Tech
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'glass containment cube floating just above a small circular lab platform,
+    inside it a glowing data cube made of tiny shifting squares, a few simple cables
+    plugging into the platform rim, faint mist at the base, plain dark bluish background
+    with a soft cyan halo behind the cube
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T04:57:06.717091+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 10bf9d1a7cf6
+    file_path: art_generated\ui_icons\v1\ui_research_tech_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T04:57:28.257933+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 10bf9d1a7cf6
+    file_path: art_generated\ui_icons\v1\ui_research_tech_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T04:57:50.695812+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 10bf9d1a7cf6
+    file_path: art_generated\ui_icons\v1\ui_research_tech_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: ui_infrastructure_facilities
+  category: main_navigation
+  display_name: Infrastructure
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'compact isometric sci-fi facility building icon sitting on a small
+    square base, a few roof details like vents and a short antenna, tiny red status
+    lights at the corners, subtle pipes along the sides, plain dark green-blue background
+    with a soft vignette, no wider map
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T04:58:18.039529+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e95fa9f9b13e
+    file_path: art_generated\ui_icons\v1\ui_infrastructure_facilities_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T04:59:08.739143+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e95fa9f9b13e
+    file_path: art_generated\ui_icons\v1\ui_infrastructure_facilities_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T04:59:56.734221+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e95fa9f9b13e
+    file_path: art_generated\ui_icons\v1\ui_infrastructure_facilities_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
+- id: ui_governance_oversight
+  category: main_navigation
+  display_name: Governance
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular emblem icon combining a folder and a small gavel symbol,
+    folder shape forming the lower half of the circle, gavel resting diagonally across
+    it, a faint ring and star shapes etched around the edge like an official seal,
+    warm spotlight glow on the emblem, plain dark desaturated purple background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:00:20.267829+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 41e169c10699
+    file_path: art_generated\ui_icons\v1\ui_governance_oversight_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:01:02.675853+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 41e169c10699
+    file_path: art_generated\ui_icons\v1\ui_governance_oversight_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T05:01:43.456383+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 41e169c10699
+    file_path: art_generated\ui_icons\v1\ui_governance_oversight_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
+- id: ui_risk_meter_pdoom
+  category: main_navigation
+  display_name: P(Doom) Risk Meter
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'bold semi-circular gauge icon filling most of the frame, needle pointing
+    around the middle, segments smoothly shifting from soft green on the left through
+    yellow to harsh red on the right, a very subtle skull-like pattern hidden in the
+    red segment design but not dominant, plain very dark background with a faint radial
+    glow around the gauge
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:02:04.211534+00:00'
+    model: gpt-image-1
+    full_prompt_hash: dcdc2a350eff
+    file_path: art_generated\ui_icons\v1\ui_risk_meter_pdoom_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:02:24.739639+00:00'
+    model: gpt-image-1
+    full_prompt_hash: dcdc2a350eff
+    file_path: art_generated\ui_icons\v1\ui_risk_meter_pdoom_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T05:02:46.314143+00:00'
+    model: gpt-image-1
+    full_prompt_hash: dcdc2a350eff
+    file_path: art_generated\ui_icons\v1\ui_risk_meter_pdoom_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
+- id: ui_system_settings
+  category: main_navigation
+  display_name: System Settings
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'compact sci-fi control panel icon with a central gear symbol, a few
+    small toggle switches and round LEDs arranged around it, brushed metal surface
+    with light scratches and edge wear, cool blue highlight on the gear, plain dark
+    grey-blue gradient background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:03:09.471940+00:00'
+    model: gpt-image-1
+    full_prompt_hash: a863c86dfb43
+    file_path: art_generated\ui_icons\v1\ui_system_settings_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:04:08.167830+00:00'
+    model: gpt-image-1
+    full_prompt_hash: a863c86dfb43
+    file_path: art_generated\ui_icons\v1\ui_system_settings_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T05:05:02.446550+00:00'
+    model: gpt-image-1
+    full_prompt_hash: a863c86dfb43
+    file_path: art_generated\ui_icons\v1\ui_system_settings_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_save_archive
+  category: main_navigation
+  display_name: Save/Archive
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'small open case icon resting on a thin plate, holding a neat stack
+    of futuristic data cartridges, one cartridge pulled slightly forward and glowing
+    faint blue, suggested label lines but no text, plain dark brown-to-black gradient
+    background with soft vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:05:23.965510+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 1a169cdbe9fe
+    file_path: art_generated\ui_icons\v1\ui_save_archive_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:06:06.625698+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 1a169cdbe9fe
+    file_path: art_generated\ui_icons\v1\ui_save_archive_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-17T05:07:00.954339+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 1a169cdbe9fe
+    file_path: art_generated\ui_icons\v1\ui_save_archive_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_role_researcher
+  category: employee_roles
+  display_name: AI Researcher
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'compact icon showing a simplified lab flask or beaker with a glowing
+    neural network pattern inside, flask sitting on a small circular platform, soft
+    cyan and teal glow, plain dark background with subtle vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:11:45.007042+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 6ab23742d12a
+    file_path: art_generated\ui_icons\v1\employee_role_researcher_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:00:42.054864+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 6ab23742d12a
+    file_path: art_generated\ui_icons\v1\employee_role_researcher_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_role_engineer
+  category: employee_roles
+  display_name: Engineer
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'wrench and circuit board icon crossed at center, metal textures with
+    some wear, small sparks or glowing connection points at the cross, plain dark
+    grey background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:12:42.637119+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3189464b02f8
+    file_path: art_generated\ui_icons\v1\employee_role_engineer_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:01:04.933370+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3189464b02f8
+    file_path: art_generated\ui_icons\v1\employee_role_engineer_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: employee_role_safety_specialist
+  category: employee_roles
+  display_name: Safety Specialist
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'shield icon with a subtle checkmark or verification symbol embossed
+    in the center, metallic surface with soft green accent glow along the edges, plain
+    dark green-blue background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:13:06.580478+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 271c0a033443
+    file_path: art_generated\ui_icons\v1\employee_role_safety_specialist_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:01:24.832354+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 271c0a033443
+    file_path: art_generated\ui_icons\v1\employee_role_safety_specialist_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_role_bureaucrat
+  category: employee_roles
+  display_name: Bureaucrat
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'stylized stack of three paper documents with a single stamp or seal
+    icon on the top sheet, warm desaturated colors, plain dark brown background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:13:30.362869+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 93dc8849b96c
+    file_path: art_generated\ui_icons\v1\employee_role_bureaucrat_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:01:53.238032+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 93dc8849b96c
+    file_path: art_generated\ui_icons\v1\employee_role_bureaucrat_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_role_manager
+  category: employee_roles
+  display_name: Manager
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'simple organizational chart icon showing three connected nodes in
+    a tree structure, top node highlighted, clean geometric shapes, plain dark blue
+    background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:13:55.645135+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 25977ec64c75
+    file_path: art_generated\ui_icons\v1\employee_role_manager_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:02:34.651716+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 25977ec64c75
+    file_path: art_generated\ui_icons\v1\employee_role_manager_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_role_ethicist
+  category: employee_roles
+  display_name: AI Ethicist
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'balanced scales icon with one side holding a glowing data cube and
+    the other a human silhouette, clean simple shapes, soft purple and teal lighting,
+    plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:14:43.195794+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 24b2bddd4b57
+    file_path: art_generated\ui_icons\v1\employee_role_ethicist_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:02:59.718180+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 24b2bddd4b57
+    file_path: art_generated\ui_icons\v1\employee_role_ethicist_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: employee_role_auditor
+  category: employee_roles
+  display_name: Auditor
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'magnifying glass over a document icon with highlighted lines or checkmarks
+    visible through the lens, crisp geometric shapes, plain dark grey background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:15:38.593472+00:00'
+    model: gpt-image-1
+    full_prompt_hash: fc5bdb180db5
+    file_path: art_generated\ui_icons\v1\employee_role_auditor_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:03:25.008120+00:00'
+    model: gpt-image-1
+    full_prompt_hash: fc5bdb180db5
+    file_path: art_generated\ui_icons\v1\employee_role_auditor_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_role_security
+  category: employee_roles
+  display_name: Security Officer
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'security badge or ID card icon with a simplified lock symbol and geometric
+    patterns suggesting secure access, metallic textures, plain dark blue-grey background
+    with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:16:26.779783+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ca18b4208fbf
+    file_path: art_generated\ui_icons\v1\employee_role_security_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:04:07.526305+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ca18b4208fbf
+    file_path: art_generated\ui_icons\v1\employee_role_security_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: employee_status_active
+  category: employee_status
+  display_name: Active
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'simple circular indicator with a solid green checkmark in center,
+    clean crisp edges, soft green glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:17:12.054707+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 83faa64d4dec
+    file_path: art_generated\ui_icons\v1\employee_status_active_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:04:29.876970+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 83faa64d4dec
+    file_path: art_generated\ui_icons\v1\employee_status_active_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: employee_status_stressed
+  category: employee_status
+  display_name: Stressed
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with a sweat droplet symbol, yellow-orange color
+    scheme, subtle pulsing effect suggested by soft edge glow, plain dark background
+    with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:17:52.781396+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 72baf813bf6d
+    file_path: art_generated\ui_icons\v1\employee_status_stressed_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:05:09.813120+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 72baf813bf6d
+    file_path: art_generated\ui_icons\v1\employee_status_stressed_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_status_burned_out
+  category: employee_status
+  display_name: Burned Out
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with a simple flame icon that looks partially extinguished,
+    dark red and grey tones, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:18:49.762310+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 041c723817b8
+    file_path: art_generated\ui_icons\v1\employee_status_burned_out_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:05:30.476013+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 041c723817b8
+    file_path: art_generated\ui_icons\v1\employee_status_burned_out_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_status_absent
+  category: employee_status
+  display_name: Absent
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with a door or exit symbol, desaturated blue-grey
+    tones, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:19:12.463804+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 582e53ee3e47
+    file_path: art_generated\ui_icons\v1\employee_status_absent_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:05:52.872971+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 582e53ee3e47
+    file_path: art_generated\ui_icons\v1\employee_status_absent_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_status_investigating
+  category: employee_status
+  display_name: Investigating
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with a simplified eye or radar sweep symbol, cyan
+    and teal colors, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:19:35.920306+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 8f1e6d45d189
+    file_path: art_generated\ui_icons\v1\employee_status_investigating_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:06:14.729649+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 8f1e6d45d189
+    file_path: art_generated\ui_icons\v1\employee_status_investigating_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_status_training
+  category: employee_status
+  display_name: Training
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with an open book or graduation cap symbol simplified
+    to basic shapes, soft blue glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:20:22.011636+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c8cf7497ffa7
+    file_path: art_generated\ui_icons\v1\employee_status_training_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:07:08.274858+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c8cf7497ffa7
+    file_path: art_generated\ui_icons\v1\employee_status_training_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: employee_status_compromised
+  category: employee_status
+  display_name: Compromised
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with a broken chain or warning symbol, harsh red
+    color with flickering edge glow suggested, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:20:44.575111+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 67dd5d97e54e
+    file_path: art_generated\ui_icons\v1\employee_status_compromised_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:07:30.368389+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 67dd5d97e54e
+    file_path: art_generated\ui_icons\v1\employee_status_compromised_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: employee_status_excellent
+  category: employee_status
+  display_name: Excellent Performance
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with a star or medal symbol, bright gold and white
+    highlights, soft radiant glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:21:07.739521+00:00'
+    model: gpt-image-1
+    full_prompt_hash: fc8a4d9da08f
+    file_path: art_generated\ui_icons\v1\employee_status_excellent_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:08:18.178811+00:00'
+    model: gpt-image-1
+    full_prompt_hash: fc8a4d9da08f
+    file_path: art_generated\ui_icons\v1\employee_status_excellent_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_confirm_normal
+  category: buttons_normal
+  display_name: Confirm Button
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered checkmark symbol, cool teal accent lighting, plain dark background with
+    subtle vignette, clear button depth with slight beveling
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:07:44.011166+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3eba0fe954bd
+    file_path: art_generated\ui_icons\v1\button_confirm_normal_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:08:43.203211+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3eba0fe954bd
+    file_path: art_generated\ui_icons\v1\button_confirm_normal_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_cancel_normal
+  category: buttons_normal
+  display_name: Cancel Button
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered X symbol, cool grey tones, plain dark background with subtle vignette,
+    clear button depth with slight beveling
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:09:04.369433+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3cb271b22be2
+    file_path: art_generated\ui_icons\v1\button_cancel_normal_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:09:25.466902+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3cb271b22be2
+    file_path: art_generated\ui_icons\v1\button_cancel_normal_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: button_action_normal
+  category: buttons_normal
+  display_name: Action Button
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered arrow or play symbol, warm orange-teal gradient accent, plain dark background
+    with subtle vignette, clear button depth with slight beveling
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:09:46.977302+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 34df8e4886c9
+    file_path: art_generated\ui_icons\v1\button_action_normal_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:10:27.670390+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 34df8e4886c9
+    file_path: art_generated\ui_icons\v1\button_action_normal_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: button_hire_normal
+  category: buttons_normal
+  display_name: Hire Button
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered person-plus icon, soft green accent glow, plain dark background with
+    subtle vignette, clear button depth with slight beveling
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:10:49.129989+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 71c7eb2eec80
+    file_path: art_generated\ui_icons\v1\button_hire_normal_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:11:42.455367+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 71c7eb2eec80
+    file_path: art_generated\ui_icons\v1\button_hire_normal_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_fire_normal
+  category: buttons_normal
+  display_name: Fire Button
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered person-minus or exit icon, red accent with warning feel, plain dark background
+    with subtle vignette, clear button depth with slight beveling
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:12:28.470062+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3a12593c4f8f
+    file_path: art_generated\ui_icons\v1\button_fire_normal_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:13:17.143548+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3a12593c4f8f
+    file_path: art_generated\ui_icons\v1\button_fire_normal_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_upgrade_normal
+  category: buttons_normal
+  display_name: Upgrade Button
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered upward arrow with sparkle or star detail, cyan and gold accents, plain
+    dark background with subtle vignette, clear button depth with slight beveling
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:14:15.528626+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 297ff249f8d8
+    file_path: art_generated\ui_icons\v1\button_upgrade_normal_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:14:58.088053+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 297ff249f8d8
+    file_path: art_generated\ui_icons\v1\button_upgrade_normal_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_confirm_hover
+  category: buttons_hover
+  display_name: Confirm Hover
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered checkmark symbol, bright teal glow with increased luminosity, subtle
+    edge highlight suggesting interaction, plain dark background with vignette, clear
+    button depth
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:21:30.216046+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 4df805bca2db
+    file_path: art_generated\ui_icons\v1\button_confirm_hover_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:08:37.383265+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 4df805bca2db
+    file_path: art_generated\ui_icons\v1\button_confirm_hover_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_cancel_hover
+  category: buttons_hover
+  display_name: Cancel Hover
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered X symbol, brightened grey with white edge highlight, plain dark background
+    with vignette, clear button depth
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:21:53.617992+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 5bbb9b648457
+    file_path: art_generated\ui_icons\v1\button_cancel_hover_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:08:57.279066+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 5bbb9b648457
+    file_path: art_generated\ui_icons\v1\button_cancel_hover_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: button_action_hover
+  category: buttons_hover
+  display_name: Action Hover
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered arrow symbol, intensified orange-teal gradient with bright edge glow,
+    plain dark background with vignette, clear button depth
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:22:13.983812+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ba72d3908c0c
+    file_path: art_generated\ui_icons\v1\button_action_hover_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:09:21.562701+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ba72d3908c0c
+    file_path: art_generated\ui_icons\v1\button_action_hover_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: button_hire_hover
+  category: buttons_hover
+  display_name: Hire Hover
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered person-plus icon, bright green glow with pulsing effect suggested, plain
+    dark background with vignette, clear button depth
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:22:35.826216+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c3dbdeec58e6
+    file_path: art_generated\ui_icons\v1\button_hire_hover_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:09:46.431173+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c3dbdeec58e6
+    file_path: art_generated\ui_icons\v1\button_hire_hover_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: button_fire_hover
+  category: buttons_hover
+  display_name: Fire Hover
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered person-minus icon, intense red glow with warning emphasis, plain dark
+    background with vignette, clear button depth
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:23:24.600016+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ea4d265dc54f
+    file_path: art_generated\ui_icons\v1\button_fire_hover_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:10:09.444745+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ea4d265dc54f
+    file_path: art_generated\ui_icons\v1\button_fire_hover_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_upgrade_hover
+  category: buttons_hover
+  display_name: Upgrade Hover
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, brushed metal texture,
+    centered upward arrow with sparkle, bright cyan and gold glow, plain dark background
+    with vignette, clear button depth
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:24:11.707358+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 931faef14ad5
+    file_path: art_generated\ui_icons\v1\button_upgrade_hover_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:10:31.208632+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 931faef14ad5
+    file_path: art_generated\ui_icons\v1\button_upgrade_hover_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: button_confirm_disabled
+  category: buttons_disabled
+  display_name: Confirm Disabled
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, desaturated grey metal
+    texture, centered checkmark symbol barely visible, very dim appearance, no glow
+    or highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:24:52.688506+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c3baa600b031
+    file_path: art_generated\ui_icons\v1\button_confirm_disabled_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:10:50.774608+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c3baa600b031
+    file_path: art_generated\ui_icons\v1\button_confirm_disabled_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_cancel_disabled
+  category: buttons_disabled
+  display_name: Cancel Disabled
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, desaturated grey metal
+    texture, centered X symbol barely visible, very dim appearance, no glow or highlights,
+    plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:25:14.737464+00:00'
+    model: gpt-image-1
+    full_prompt_hash: f7f9795ed7b8
+    file_path: art_generated\ui_icons\v1\button_cancel_disabled_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:11:11.716673+00:00'
+    model: gpt-image-1
+    full_prompt_hash: f7f9795ed7b8
+    file_path: art_generated\ui_icons\v1\button_cancel_disabled_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_action_disabled
+  category: buttons_disabled
+  display_name: Action Disabled
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, desaturated grey metal
+    texture, centered arrow symbol barely visible, very dim appearance, no glow or
+    highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:25:38.041858+00:00'
+    model: gpt-image-1
+    full_prompt_hash: d93f525093da
+    file_path: art_generated\ui_icons\v1\button_action_disabled_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:11:38.226088+00:00'
+    model: gpt-image-1
+    full_prompt_hash: d93f525093da
+    file_path: art_generated\ui_icons\v1\button_action_disabled_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: button_hire_disabled
+  category: buttons_disabled
+  display_name: Hire Disabled
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, desaturated grey metal
+    texture, centered person-plus icon barely visible, very dim appearance, no glow
+    or highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:26:01.455912+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 07c0570328c5
+    file_path: art_generated\ui_icons\v1\button_hire_disabled_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:12:00.783557+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 07c0570328c5
+    file_path: art_generated\ui_icons\v1\button_hire_disabled_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_fire_disabled
+  category: buttons_disabled
+  display_name: Fire Disabled
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, desaturated grey metal
+    texture, centered person-minus icon barely visible, very dim appearance, no glow
+    or highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:26:24.014677+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 19799dc73133
+    file_path: art_generated\ui_icons\v1\button_fire_disabled_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:12:20.798086+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 19799dc73133
+    file_path: art_generated\ui_icons\v1\button_fire_disabled_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: button_upgrade_disabled
+  category: buttons_disabled
+  display_name: Upgrade Disabled
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular button with soft rounded corners, desaturated grey metal
+    texture, centered upward arrow barely visible, very dim appearance, no glow or
+    highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:26:43.676445+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 212a440a79f0
+    file_path: art_generated\ui_icons\v1\button_upgrade_disabled_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:12:42.025969+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 212a440a79f0
+    file_path: art_generated\ui_icons\v1\button_upgrade_disabled_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: resource_money
+  category: resources
+  display_name: Money/Budget
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'stylized coin or dollar symbol icon, metallic gold and brass texture,
+    soft radiant glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:15:42.064598+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 702ba71a8e19
+    file_path: art_generated\ui_icons\v1\resource_money_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:16:02.851106+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 702ba71a8e19
+    file_path: art_generated\ui_icons\v1\resource_money_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: resource_compute
+  category: resources
+  display_name: Compute Power
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'compact server rack or processor chip icon with glowing connection
+    points, cyan and electric blue highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:16:56.196396+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 13a2251936c3
+    file_path: art_generated\ui_icons\v1\resource_compute_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:17:52.956434+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 13a2251936c3
+    file_path: art_generated\ui_icons\v1\resource_compute_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: resource_safety_score
+  category: resources
+  display_name: Safety Score
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'shield icon with a percentage or bar graph symbol inside, gradient
+    from green to yellow suggesting variable states, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:18:14.786468+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 398ed56193f1
+    file_path: art_generated\ui_icons\v1\resource_safety_score_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:18:53.171258+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 398ed56193f1
+    file_path: art_generated\ui_icons\v1\resource_safety_score_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: resource_research_points
+  category: resources
+  display_name: Research Points
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'glowing lightbulb or beaker icon with sparkles or data particles around
+    it, bright cyan and white highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:19:13.145238+00:00'
+    model: gpt-image-1
+    full_prompt_hash: d719119d9591
+    file_path: art_generated\ui_icons\v1\resource_research_points_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:19:39.619937+00:00'
+    model: gpt-image-1
+    full_prompt_hash: d719119d9591
+    file_path: art_generated\ui_icons\v1\resource_research_points_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: resource_action_points
+  category: resources
+  display_name: Action Points
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'clock or hourglass icon simplified to clean geometric shapes, warm
+    orange glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:20:39.146779+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9ee8ecf181fc
+    file_path: art_generated\ui_icons\v1\resource_action_points_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:21:01.543397+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9ee8ecf181fc
+    file_path: art_generated\ui_icons\v1\resource_action_points_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: resource_morale
+  category: resources
+  display_name: Staff Morale
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'simple happy face or heart icon with gradient from green (happy) to
+    red (unhappy), clean shapes, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:21:23.940893+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 1506c5c42c3e
+    file_path: art_generated\ui_icons\v1\resource_morale_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-17T05:21:45.111325+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 1506c5c42c3e
+    file_path: art_generated\ui_icons\v1\resource_morale_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: resource_reputation
+  category: resources
+  display_name: Reputation
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'star or badge icon with subtle shine effect, gold and white highlights,
+    plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T05:22:40.168353+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 03069aa7a724
+    file_path: art_generated\ui_icons\v1\resource_reputation_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:13:03.675208+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 03069aa7a724
+    file_path: art_generated\ui_icons\v1\resource_reputation_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: resource_data
+  category: resources
+  display_name: Data/Information
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'database cylinder or folder icon with flowing data particles or connection
+    lines, teal and cyan glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:27:37.570273+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 332b44dcc6a9
+    file_path: art_generated\ui_icons\v1\resource_data_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: resource_power
+  category: resources
+  display_name: Electrical Power
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'lightning bolt or battery icon with energy crackle effect, bright
+    yellow and white highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:28:05.473577+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b40c8742c041
+    file_path: art_generated\ui_icons\v1\resource_power_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: resource_space
+  category: resources
+  display_name: Office Space
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'simplified floor plan or grid icon showing expandable area, clean
+    geometric shapes, teal and grey tones, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:28:53.146180+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 076a4ff52f8a
+    file_path: art_generated\ui_icons\v1\resource_space_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_corner_top_left
+  category: decorative_corners
+  display_name: Corner - Top Left
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'sci-fi UI corner bracket design positioned in top-left, angular geometric
+    shape with thin metal frame, subtle panel lines and small glowing accent dots,
+    teal and grey metallic texture, plain dark background, designed to tile with other
+    corners
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:29:13.750821+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 6a949ecb5319
+    file_path: art_generated\ui_icons\v1\ui_corner_top_left_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_corner_top_right
+  category: decorative_corners
+  display_name: Corner - Top Right
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'sci-fi UI corner bracket design positioned in top-right, angular geometric
+    shape with thin metal frame, subtle panel lines and small glowing accent dots,
+    teal and grey metallic texture, plain dark background, designed to tile with other
+    corners
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:30:07.340609+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 7b5f0c5f3ba9
+    file_path: art_generated\ui_icons\v1\ui_corner_top_right_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_corner_bottom_left
+  category: decorative_corners
+  display_name: Corner - Bottom Left
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'sci-fi UI corner bracket design positioned in bottom-left, angular
+    geometric shape with thin metal frame, subtle panel lines and small glowing accent
+    dots, teal and grey metallic texture, plain dark background, designed to tile
+    with other corners
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:30:30.335424+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 843813a8431a
+    file_path: art_generated\ui_icons\v1\ui_corner_bottom_left_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_corner_bottom_right
+  category: decorative_corners
+  display_name: Corner - Bottom Right
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'sci-fi UI corner bracket design positioned in bottom-right, angular
+    geometric shape with thin metal frame, subtle panel lines and small glowing accent
+    dots, teal and grey metallic texture, plain dark background, designed to tile
+    with other corners
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:31:27.465649+00:00'
+    model: gpt-image-1
+    full_prompt_hash: fdf32b17fc84
+    file_path: art_generated\ui_icons\v1\ui_corner_bottom_right_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_divider_horizontal
+  category: decorative_dividers
+  display_name: Horizontal Divider
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'horizontal sci-fi divider bar design, thin metallic strip with subtle
+    panel segments and small connector dots along the length, teal accent glow in
+    center, brushed metal texture, plain dark background
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:31:49.435433+00:00'
+    model: gpt-image-1
+    full_prompt_hash: dfb5817742dc
+    file_path: art_generated\ui_icons\v1\ui_divider_horizontal_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_divider_vertical
+  category: decorative_dividers
+  display_name: Vertical Divider
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'vertical sci-fi divider bar design, thin metallic strip with subtle
+    panel segments and small connector dots along the length, teal accent glow in
+    center, brushed metal texture, plain dark background
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:32:20.581835+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e963c6569bd6
+    file_path: art_generated\ui_icons\v1\ui_divider_vertical_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_panel_frame
+  category: decorative_frames
+  display_name: Panel Frame
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'rectangular panel frame with angular corners and thin metallic border,
+    subtle panel lines and small glowing connector points at corners, teal and grey
+    tones, brushed metal texture, plain dark background, designed to frame content
+    areas
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:32:43.608614+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9b5ee915253c
+    file_path: art_generated\ui_icons\v1\ui_panel_frame_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:13:23.928932+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9b5ee915253c
+    file_path: art_generated\ui_icons\v1\ui_panel_frame_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: ui_header_banner
+  category: decorative_headers
+  display_name: Header Banner
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'wide horizontal header banner with angular side clips, metallic surface
+    with brushed texture, central area slightly recessed, small status lights or indicators
+    at corners, teal accent lighting, plain dark background
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:33:11.044483+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 330f616224b3
+    file_path: art_generated\ui_icons\v1\ui_header_banner_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:14:08.422140+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 330f616224b3
+    file_path: art_generated\ui_icons\v1\ui_header_banner_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_risk_minimal
+  category: risk_indicators
+  display_name: Minimal Risk
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular or diamond-shaped indicator icon, solid green color with
+    soft glow, single upward arrow or checkmark symbol in center, plain dark background
+    with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:33:31.969989+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ef97b328af77
+    file_path: art_generated\ui_icons\v1\indicator_risk_minimal_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_risk_low
+  category: risk_indicators
+  display_name: Low Risk
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular or diamond-shaped indicator icon, yellow-green color with
+    soft glow, single horizontal line or wave symbol in center, plain dark background
+    with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:34:16.481960+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9641b4737b95
+    file_path: art_generated\ui_icons\v1\indicator_risk_low_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_risk_moderate
+  category: risk_indicators
+  display_name: Moderate Risk
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular or diamond-shaped indicator icon, orange color with pulsing
+    glow, exclamation point or warning triangle symbol in center, plain dark background
+    with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:34:56.983632+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 5d9146b3ca62
+    file_path: art_generated\ui_icons\v1\indicator_risk_moderate_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_risk_high
+  category: risk_indicators
+  display_name: High Risk
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular or diamond-shaped indicator icon, red color with intense
+    glow, bold warning symbol or downward arrow in center, plain dark background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:35:16.858905+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 8dc802342b61
+    file_path: art_generated\ui_icons\v1\indicator_risk_high_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_risk_critical
+  category: risk_indicators
+  display_name: Critical Risk
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular or diamond-shaped indicator icon, harsh red with flickering
+    glow and danger stripes, skull or critical warning symbol in center, plain very
+    dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:36:06.318454+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 90ecab8fc29c
+    file_path: art_generated\ui_icons\v1\indicator_risk_critical_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_alert_info
+  category: alert_indicators
+  display_name: Info Alert
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with lowercase ''i'' or information symbol, soft
+    blue glow, clean geometric shapes, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:37:01.701915+00:00'
+    model: gpt-image-1
+    full_prompt_hash: bf8b5120c432
+    file_path: art_generated\ui_icons\v1\indicator_alert_info_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:14:29.229180+00:00'
+    model: gpt-image-1
+    full_prompt_hash: bf8b5120c432
+    file_path: art_generated\ui_icons\v1\indicator_alert_info_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_alert_warning
+  category: alert_indicators
+  display_name: Warning Alert
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with exclamation mark inside triangle, orange-yellow
+    glow with subtle pulsing, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:37:24.617921+00:00'
+    model: gpt-image-1
+    full_prompt_hash: d16784977c8f
+    file_path: art_generated\ui_icons\v1\indicator_alert_warning_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:14:52.003071+00:00'
+    model: gpt-image-1
+    full_prompt_hash: d16784977c8f
+    file_path: art_generated\ui_icons\v1\indicator_alert_warning_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_alert_error
+  category: alert_indicators
+  display_name: Error Alert
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with X or cross symbol, red glow with harsh edges,
+    plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:37:43.995303+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 75a9101d439b
+    file_path: art_generated\ui_icons\v1\indicator_alert_error_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:15:36.894720+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 75a9101d439b
+    file_path: art_generated\ui_icons\v1\indicator_alert_error_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: indicator_alert_success
+  category: alert_indicators
+  display_name: Success Alert
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular indicator with checkmark symbol, bright green glow with radiating
+    effect, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:38:05.823243+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 31285a512bb2
+    file_path: art_generated\ui_icons\v1\indicator_alert_success_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:15:58.463600+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 31285a512bb2
+    file_path: art_generated\ui_icons\v1\indicator_alert_success_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_research_ml_fundamentals
+  category: actions_research
+  display_name: ML Fundamentals
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'simple neural network diagram with three connected layers, glowing
+    nodes and connection lines, cyan and white highlights, plain dark background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:38:27.070896+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 000ef611c5d6
+    file_path: art_generated\ui_icons\v1\action_research_ml_fundamentals_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:16:21.055190+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 000ef611c5d6
+    file_path: art_generated\ui_icons\v1\action_research_ml_fundamentals_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: action_research_alignment
+  category: actions_research
+  display_name: Alignment Research
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'two interlocking gear wheels with a glowing alignment marker or arrow
+    between them, teal and gold accents, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:38:47.204078+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 6a69d073598f
+    file_path: art_generated\ui_icons\v1\action_research_alignment_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:17:17.355461+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 6a69d073598f
+    file_path: art_generated\ui_icons\v1\action_research_alignment_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_research_interpretability
+  category: actions_research
+  display_name: Interpretability
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'magnifying glass over a neural network or brain icon, revealing internal
+    structure, cyan glow with clean lines, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:39:09.598105+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 1837375bfe71
+    file_path: art_generated\ui_icons\v1\action_research_interpretability_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: action_research_robustness
+  category: actions_research
+  display_name: Robustness Testing
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'shield icon with circuit board pattern inside, being tested by small
+    probe or lightning bolts, green and blue tones, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:40:02.891296+00:00'
+    model: gpt-image-1
+    full_prompt_hash: f80f826c0a09
+    file_path: art_generated\ui_icons\v1\action_research_robustness_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:17:41.386242+00:00'
+    model: gpt-image-1
+    full_prompt_hash: f80f826c0a09
+    file_path: art_generated\ui_icons\v1\action_research_robustness_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_research_capability_control
+  category: actions_research
+  display_name: Capability Control
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'power dial or throttle icon with segmented levels and a control hand
+    or lock symbol, orange and teal tones, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:40:51.927781+00:00'
+    model: gpt-image-1
+    full_prompt_hash: fddd823abfa4
+    file_path: art_generated\ui_icons\v1\action_research_capability_control_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:18:06.772961+00:00'
+    model: gpt-image-1
+    full_prompt_hash: fddd823abfa4
+    file_path: art_generated\ui_icons\v1\action_research_capability_control_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_research_monitoring
+  category: actions_research
+  display_name: AI Monitoring Systems
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'radar screen or scanning grid with detection blips, glowing green
+    traces and crosshairs, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:41:16.366616+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 970e13a468e7
+    file_path: art_generated\ui_icons\v1\action_research_monitoring_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:18:28.563331+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 970e13a468e7
+    file_path: art_generated\ui_icons\v1\action_research_monitoring_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: action_research_red_teaming
+  category: actions_research
+  display_name: Red Team Testing
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'two opposing chess pieces or conflict symbols with adversarial attack
+    vectors shown as red arrows, red and blue contrast, plain dark background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:42:09.817176+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 58bb0718b5a4
+    file_path: art_generated\ui_icons\v1\action_research_red_teaming_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:19:20.966753+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 58bb0718b5a4
+    file_path: art_generated\ui_icons\v1\action_research_red_teaming_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_research_formal_verification
+  category: actions_research
+  display_name: Formal Verification
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'mathematical proof symbol or geometric theorem diagram with checkmarks
+    at validation points, clean cyan and white lines, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:42:57.009022+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 7d3b617af294
+    file_path: art_generated\ui_icons\v1\action_research_formal_verification_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:19:40.629601+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 7d3b617af294
+    file_path: art_generated\ui_icons\v1\action_research_formal_verification_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_facility_expand_office
+  category: actions_facilities
+  display_name: Expand Office Space
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'simplified floor plan expanding outward with construction indicators
+    or growth arrows, teal and grey tones, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:43:45.339756+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 078494f695f6
+    file_path: art_generated\ui_icons\v1\action_facility_expand_office_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:20:32.911246+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 078494f695f6
+    file_path: art_generated\ui_icons\v1\action_facility_expand_office_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_facility_upgrade_compute
+  category: actions_facilities
+  display_name: Upgrade Compute
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'server rack or chip icon with upward arrow and sparkle effect, cyan
+    and electric blue highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:44:12.968876+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ad7114f8beda
+    file_path: art_generated\ui_icons\v1\action_facility_upgrade_compute_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:20:54.223638+00:00'
+    model: gpt-image-1
+    full_prompt_hash: ad7114f8beda
+    file_path: art_generated\ui_icons\v1\action_facility_upgrade_compute_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: action_facility_build_lab
+  category: actions_facilities
+  display_name: Build Research Lab
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'compact lab building or containment chamber with construction crane
+    or blueprint overlay, teal and white accents, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:45:12.454918+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 4edc1ded7ad8
+    file_path: art_generated\ui_icons\v1\action_facility_build_lab_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:21:50.929972+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 4edc1ded7ad8
+    file_path: art_generated\ui_icons\v1\action_facility_build_lab_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
+- id: action_facility_security_upgrade
+  category: actions_facilities
+  display_name: Security Upgrade
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'padlock or security camera icon with reinforcement bars or shields,
+    glowing green status lights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:45:34.132882+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b829bc55fe60
+    file_path: art_generated\ui_icons\v1\action_facility_security_upgrade_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:22:16.519633+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b829bc55fe60
+    file_path: art_generated\ui_icons\v1\action_facility_security_upgrade_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_facility_data_center
+  category: actions_facilities
+  display_name: Build Data Center
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'compact server room or data storage icon with flowing data streams,
+    cyan glow and connection points, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:46:00.537434+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 2c7dd5f7e4d0
+    file_path: art_generated\ui_icons\v1\action_facility_data_center_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:22:42.877869+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 2c7dd5f7e4d0
+    file_path: art_generated\ui_icons\v1\action_facility_data_center_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_facility_emergency_shutdown
+  category: actions_facilities
+  display_name: Emergency Shutdown System
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'large red emergency button or kill switch icon with warning stripes
+    and hand symbol, harsh red glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:46:48.786600+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c883cc93e596
+    file_path: art_generated\ui_icons\v1\action_facility_emergency_shutdown_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:23:05.782063+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c883cc93e596
+    file_path: art_generated\ui_icons\v1\action_facility_emergency_shutdown_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_policy_ethics_board
+  category: actions_policies
+  display_name: Establish Ethics Board
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'circular meeting table with gavel or balanced scales in center, official
+    seal or badge overlay, purple and teal tones, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:47:43.892149+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c2bf084d1221
+    file_path: art_generated\ui_icons\v1\action_policy_ethics_board_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:24:00.121050+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c2bf084d1221
+    file_path: art_generated\ui_icons\v1\action_policy_ethics_board_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_policy_whistleblower
+  category: actions_policies
+  display_name: Whistleblower Protection
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'shield icon protecting a small human silhouette or speech bubble,
+    green and blue protective glow, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:48:33.778508+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9960dd266c15
+    file_path: art_generated\ui_icons\v1\action_policy_whistleblower_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:24:22.140867+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 9960dd266c15
+    file_path: art_generated\ui_icons\v1\action_policy_whistleblower_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_policy_transparency
+  category: actions_policies
+  display_name: Transparency Policy
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'open folder or document icon with light rays shining through, suggesting
+    openness, white and teal highlights, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:49:22.451677+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 94423fa5faf9
+    file_path: art_generated\ui_icons\v1\action_policy_transparency_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:24:42.771012+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 94423fa5faf9
+    file_path: art_generated\ui_icons\v1\action_policy_transparency_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_policy_audit_requirement
+  category: actions_policies
+  display_name: Mandatory Audits
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'clipboard with checkboxes or inspection magnifying glass, official
+    stamp overlay, blue and grey tones, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:50:23.185371+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 762d5338e0c1
+    file_path: art_generated\ui_icons\v1\action_policy_audit_requirement_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:25:04.947966+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 762d5338e0c1
+    file_path: art_generated\ui_icons\v1\action_policy_audit_requirement_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_policy_capability_limit
+  category: actions_policies
+  display_name: Capability Limits
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'power meter or gauge with red limit line and stop sign symbol, orange
+    and red warning colors, plain dark background with vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:51:15.255524+00:00'
+    model: gpt-image-1
+    full_prompt_hash: df38e29cff1b
+    file_path: art_generated\ui_icons\v1\action_policy_capability_limit_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:25:46.459520+00:00'
+    model: gpt-image-1
+    full_prompt_hash: df38e29cff1b
+    file_path: art_generated\ui_icons\v1\action_policy_capability_limit_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2
+- id: action_policy_international_cooperation
+  category: actions_policies
+  display_name: International Cooperation
+  status: promoted
+  theme: base_corporate
+  prompt_tail: 'globe icon with connecting network lines between regions, handshake
+    or partnership symbol overlay, blue and teal tones, plain dark background with
+    vignette
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-17T23:52:00.677209+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 06865da90e74
+    file_path: art_generated\ui_icons\v1\action_policy_international_cooperation_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-18T04:26:06.769622+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 06865da90e74
+    file_path: art_generated\ui_icons\v1\action_policy_international_cooperation_v2_1024.png
+    cost_usd: 0.08
+  selected_variant: v2

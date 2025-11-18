@@ -270,10 +270,10 @@ func _on_trigger_event_button_pressed():
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Trigger event requested", {})
 		# Would need to implement event triggering
 
-func _on_skip_turn_button_pressed():
+func _on_commit_plan_button_pressed():
 	if GameManager and GameManager.is_initialized:
-		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Skip turn requested", {})
-		# Would need to implement turn skipping
+		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Commit plan requested", {})
+		# Would need to implement commit plan
 
 func _on_reset_game_button_pressed():
 	if GameManager:

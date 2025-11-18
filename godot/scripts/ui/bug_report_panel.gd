@@ -62,8 +62,8 @@ func _input(event):
 
 	# Handle keyboard shortcuts
 	if event is InputEventKey and event.pressed and not event.echo:
-		# Backslash (\) or ESC to close bug reporter
-		if event.keycode == KEY_BACKSLASH or event.keycode == KEY_ESCAPE:
+		# Backslash (\), N key, or ESC to close bug reporter
+		if event.keycode == KEY_BACKSLASH or event.keycode == KEY_N or event.keycode == KEY_ESCAPE:
 			hide_panel()
 			get_viewport().set_input_as_handled()
 

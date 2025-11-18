@@ -1,0 +1,45 @@
+{
+  "global_style_icon": "high-res 1024x1024 square game icon, single central symbol, soft but detailed digital painting with slightly cartoony shapes, Tarkov-style worn metal and dirty surfaces but simplified, StarCraft 2 / early-2000s XCOM ability icon feel, plain or softly graded background with a subtle vignette, no full scene or environment, no text, strong chunky silhouette that reads clearly at 64x64, limited color palette, high contrast lighting, centered composition",
+  "icons": [
+    {
+      "id": "ui_home_hq",
+      "prompt_tail": "simple cluster of three small monitors forming a slight arc, each showing abstract green graphs, a single coffee mug icon in front of the middle monitor, all sitting on a compact metal plate, plain dark teal gradient background with soft vignette, no room or window, no extra props"
+    },
+    {
+      "id": "ui_alerts_incidents",
+      "prompt_tail": "thick, stylised metal clipboard icon seen from a slight angle, a single bold triangular warning symbol on the top page, small red notification dot glowing in the corner of the clipboard, plain dark red-to-black gradient background with soft vignette"
+    },
+    {
+      "id": "ui_staff_management",
+      "prompt_tail": "three simple human silhouettes around a small round table, central figure highlighted with a soft teal halo or outline, table top as a flat lightly glowing disc, plain dark blue background with subtle vignette, no extra room details"
+    },
+    {
+      "id": "ui_budget_finance",
+      "prompt_tail": "stylised rectangular financial ledger icon with a few vertical bar shapes and grid lines, partially overlaid by a small neat stack of coin icons glowing softly, both resting on a thin metal plate, warm gold and teal highlights, plain dark olive-to-black gradient background with vignette"
+    },
+    {
+      "id": "ui_research_tech",
+      "prompt_tail": "glass containment cube floating just above a small circular lab platform, inside it a glowing data cube made of tiny shifting squares, a few simple cables plugging into the platform rim, faint mist at the base, plain dark bluish background with a soft cyan halo behind the cube"
+    },
+    {
+      "id": "ui_infrastructure_facilities",
+      "prompt_tail": "compact isometric sci-fi facility building icon sitting on a small square base, a few roof details like vents and a short antenna, tiny red status lights at the corners, subtle pipes along the sides, plain dark green-blue background with a soft vignette, no wider map"
+    },
+    {
+      "id": "ui_governance_oversight",
+      "prompt_tail": "circular emblem icon combining a folder and a small gavel symbol, folder shape forming the lower half of the circle, gavel resting diagonally across it, a faint ring and star shapes etched around the edge like an official seal, warm spotlight glow on the emblem, plain dark desaturated purple background with vignette"
+    },
+    {
+      "id": "ui_risk_meter_pdoom",
+      "prompt_tail": "bold semi-circular gauge icon filling most of the frame, needle pointing around the middle, segments smoothly shifting from soft green on the left through yellow to harsh red on the right, a very subtle skull-like pattern hidden in the red segment design but not dominant, plain very dark background with a faint radial glow around the gauge"
+    },
+    {
+      "id": "ui_system_settings",
+      "prompt_tail": "compact sci-fi control panel icon with a central gear symbol, a few small toggle switches and round LEDs arranged around it, brushed metal surface with light scratches and edge wear, cool blue highlight on the gear, plain dark grey-blue gradient background with vignette"
+    },
+    {
+      "id": "ui_save_archive",
+      "prompt_tail": "small open case icon resting on a thin plate, holding a neat stack of futuristic data cartridges, one cartridge pulled slightly forward and glowing faint blue, suggested label lines but no text, plain dark brown-to-black gradient background with soft vignette"
+    }
+  ]
+}
