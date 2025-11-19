@@ -25,9 +25,19 @@ const COLOR_BACKGROUND = Color(0.110, 0.153, 0.188, 0.3)  # Steel translucent
 var pulse_time: float = 0.0
 var pulse_speed: float = 2.0
 
+# Cached momentum indicator textures
+var _icon_rising: Texture2D = null
+var _icon_falling: Texture2D = null
+var _icon_stable: Texture2D = null
+
 func _ready():
 	custom_minimum_size = Vector2(100, 100)
 	set_process(doom_value >= 80.0)  # Only animate pulse at critical levels
+
+	# Load momentum indicator icons
+	_icon_rising = IconLoader.get_indicator_icon("doom_rising")
+	_icon_falling = IconLoader.get_indicator_icon("doom_falling")
+	_icon_stable = IconLoader.get_indicator_icon("doom_stable")
 
 func _process(delta: float):
 	if doom_value >= 80.0:
@@ -63,14 +73,27 @@ func _draw():
 	var text_pos = center - text_size / 2
 	draw_string(font, text_pos, doom_text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, doom_color)
 
-	# Momentum indicator (arrow)
+	# Momentum indicator (icon + text)
 	if show_momentum_indicator and abs(doom_momentum) > 0.1:
-		var momentum_pos = center + Vector2(0, 20)
+		var momentum_pos = center + Vector2(0, 22)
 		var arrow_color = Color.RED if doom_momentum > 0 else Color.GREEN
-		var arrow_char = "↑" if doom_momentum > 0 else "↓"
-		var momentum_text = "%s %.1f" % [arrow_char, abs(doom_momentum)]
-		var momentum_size = font.get_string_size(momentum_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 14)
-		draw_string(font, momentum_pos - momentum_size / 2, momentum_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 14, arrow_color)
+		var momentum_icon = _icon_rising if doom_momentum > 0 else _icon_falling
+
+		# Draw icon if available
+		if momentum_icon:
+			var icon_size = 16.0
+			var icon_pos = momentum_pos - Vector2(icon_size / 2 + 20, icon_size / 2)
+			draw_texture_rect(momentum_icon, Rect2(icon_pos, Vector2(icon_size, icon_size)), false, arrow_color)
+			# Draw value text next to icon
+			var value_text = "%.1f" % abs(doom_momentum)
+			var text_pos = momentum_pos + Vector2(-8, 5)
+			draw_string(font, text_pos, value_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, arrow_color)
+		else:
+			# Fallback to text arrows
+			var arrow_char = "^" if doom_momentum > 0 else "v"
+			var momentum_text = "%s %.1f" % [arrow_char, abs(doom_momentum)]
+			var momentum_size = font.get_string_size(momentum_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 14)
+			draw_string(font, momentum_pos - momentum_size / 2, momentum_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 14, arrow_color)
 
 func get_doom_color(doom: float) -> Color:
 	"""Get color based on doom tier"""
