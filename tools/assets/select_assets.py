@@ -142,10 +142,11 @@ def generate_gallery_html(data, assets, output_path):
             background: #2a3a2a;
         }}
         .variant img {{
-            width: 128px;
-            height: 128px;
+            max-width: 200px;
+            max-height: 200px;
             border-radius: 4px;
-            image-rendering: pixelated;
+            image-rendering: auto;
+            object-fit: contain;
         }}
         .variant-label {{
             margin-top: 8px;
@@ -227,15 +228,28 @@ def generate_gallery_html(data, assets, output_path):
 """
 
             for variant in variants:
-                # Build image path - check for variant suffix first, fall back to no suffix
-                img_name_with_variant = f"{asset_id}_{variant}_128.png"
-                img_name_without_variant = f"{asset_id}_128.png"
+                # Build image path - try multiple sizes in order of preference
+                # Check: 128 with variant, 256 with variant, 512 with variant, 1024 with variant
+                # Then fallback to without variant suffix
+                img_name = None
+                for size in [128, 256, 512, 1024]:
+                    # Try with variant suffix first
+                    candidate = f"{asset_id}_{variant}_{size}.png"
+                    if (source_dir / candidate).exists():
+                        img_name = candidate
+                        break
 
-                # Use variant suffix if file exists, otherwise try without
-                if (source_dir / img_name_with_variant).exists():
-                    img_name = img_name_with_variant
-                else:
-                    img_name = img_name_without_variant
+                # If no variant-suffixed file found, try without variant
+                if not img_name:
+                    for size in [128, 256, 512, 1024]:
+                        candidate = f"{asset_id}_{size}.png"
+                        if (source_dir / candidate).exists():
+                            img_name = candidate
+                            break
+
+                # Ultimate fallback
+                if not img_name:
+                    img_name = f"{asset_id}_{variant}_1024.png"
 
                 img_path = source_dir / img_name
 

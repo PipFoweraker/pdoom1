@@ -4,191 +4,350 @@ default_size: 1024x1024
 output_sizes:
 - 1024
 - 512
-
 styles:
-  # Core texture directive
-  texture_base: 'seamless tileable surface texture photograph, 1024x1024 pixels,
-    photorealistic material surface only, flat even lighting, pure surface
-    suitable for tiling across UI backgrounds'
-
-  # Government terminal aesthetic
-  gov_terminal: 'late 1990s early 2000s government institution computer terminal
-    aesthetic, COBOL mainframe era, crusty old engineer built systems, faded
-    monochrome CRT display colors, low resolution pixel grid visible, utilitarian
-    and functional not decorative'
-
-  # Simple color terminal prompts
-  terminal_colors: 'classic terminal color schemes, amber on black, green on black,
-    white on blue, high contrast text display aesthetic, DOS and mainframe era,
-    simple functional government IT systems'
-
+  texture_base: seamless tileable surface texture photograph, 1024x1024 pixels, photorealistic
+    material surface only, flat even lighting, pure surface suitable for tiling across
+    UI backgrounds
+  gov_terminal: late 1990s early 2000s government institution computer terminal aesthetic,
+    COBOL mainframe era, crusty old engineer built systems, faded monochrome CRT display
+    colors, low resolution pixel grid visible, utilitarian and functional not decorative
+  terminal_colors: classic terminal color schemes, amber on black, green on black,
+    white on blue, high contrast text display aesthetic, DOS and mainframe era, simple
+    functional government IT systems
 themes:
-  # Amber terminal (classic IBM 3270)
   amber_terminal:
     style_overrides:
     - texture_base
     - gov_terminal
     color_bias: amber/orange phosphor on black, warm CRT glow, IBM 3270 aesthetic
-
-  # Green terminal (VT100/VT220)
   green_terminal:
     style_overrides:
     - texture_base
     - gov_terminal
     color_bias: green P1 phosphor on black, cold fluorescent glow, VT100 aesthetic
-
-  # Blue screen (DOS/Windows)
   blue_terminal:
     style_overrides:
     - texture_base
     - gov_terminal
     color_bias: white/gray text on deep blue, DOS edit screen, Windows BSOD aesthetic
-
-  # Gray institutional
   gray_terminal:
     style_overrides:
     - texture_base
     - gov_terminal
-    color_bias: light gray on dark gray, low contrast institutional, accessibility mode
-
-  # Cyan/white (mainframe)
+    color_bias: light gray on dark gray, low contrast institutional, accessibility
+      mode
   cyan_terminal:
     style_overrides:
     - texture_base
     - gov_terminal
     color_bias: cyan and white on black, TSO mainframe aesthetic, ISPF panels
-
 assets:
-# =============================================================================
-# BATCH 4: Terminal/COBOL Government Textures (10 prompts x 3 variants = 30)
-# =============================================================================
-
-# --- AMBER PHOSPHOR TEXTURES ---
-
 - id: tex_amber_scanlines
   category: textures
   display_name: Amber CRT Scanlines
-  status: pending
+  status: selected
   theme: amber_terminal
-  prompt_tail: 'seamless tileable amber CRT monitor scanline texture, horizontal
-    phosphor lines with subtle brightness variation between lines, warm orange-amber
-    P3 phosphor glow on pure black background, IBM 3270 terminal display aesthetic,
-    slight electron beam bloom at line edges, late 1980s government mainframe
-    terminal screen surface, visible pixel grid structure, flat macro photograph'
+  prompt_tail: seamless tileable amber CRT monitor scanline texture, horizontal phosphor
+    lines with subtle brightness variation between lines, warm orange-amber P3 phosphor
+    glow on pure black background, IBM 3270 terminal display aesthetic, slight electron
+    beam bloom at line edges, late 1980s government mainframe terminal screen surface,
+    visible pixel grid structure, flat macro photograph
   variants: 3
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:24:44.460782+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 07b6f63f2da3
+    file_path: art_generated\terminal_textures\v1\tex_amber_scanlines_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:25:04.826696+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 07b6f63f2da3
+    file_path: art_generated\terminal_textures\v1\tex_amber_scanlines_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:25:23.012964+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 07b6f63f2da3
+    file_path: art_generated\terminal_textures\v1\tex_amber_scanlines_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
 - id: tex_amber_noise
   category: textures
   display_name: Amber Static Noise
-  status: pending
+  status: selected
   theme: amber_terminal
-  prompt_tail: 'seamless tileable amber CRT static noise texture, random phosphor
-    dot pattern in warm amber-orange on black, analog video noise aesthetic,
-    slight horizontal banding from power supply interference, government office
-    terminal with poor shielding, tube monitor signal degradation, old COBOL
-    terminal display noise, flat even lighting'
+  prompt_tail: seamless tileable amber CRT static noise texture, random phosphor dot
+    pattern in warm amber-orange on black, analog video noise aesthetic, slight horizontal
+    banding from power supply interference, government office terminal with poor shielding,
+    tube monitor signal degradation, old COBOL terminal display noise, flat even lighting
   variants: 3
-
-# --- GREEN PHOSPHOR TEXTURES ---
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:25:41.748686+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 76de64d70b97
+    file_path: art_generated\terminal_textures\v1\tex_amber_noise_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:26:02.030457+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 76de64d70b97
+    file_path: art_generated\terminal_textures\v1\tex_amber_noise_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:26:21.635243+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 76de64d70b97
+    file_path: art_generated\terminal_textures\v1\tex_amber_noise_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
 - id: tex_green_scanlines
   category: textures
   display_name: Green CRT Scanlines
-  status: pending
+  status: selected
   theme: green_terminal
-  prompt_tail: 'seamless tileable green CRT monitor scanline texture, horizontal
-    P1 phosphor lines in cold green on pure black, VT100 VT220 terminal display
-    aesthetic, sharp scanline definition with slight glow bleed between lines,
-    1990s government institution computer screen, visible interlace pattern,
-    monochrome terminal surface macro photograph, flat lighting'
+  prompt_tail: seamless tileable green CRT monitor scanline texture, horizontal P1
+    phosphor lines in cold green on pure black, VT100 VT220 terminal display aesthetic,
+    sharp scanline definition with slight glow bleed between lines, 1990s government
+    institution computer screen, visible interlace pattern, monochrome terminal surface
+    macro photograph, flat lighting
   variants: 3
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:26:42.084437+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e0037d756e46
+    file_path: art_generated\terminal_textures\v1\tex_green_scanlines_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:27:10.547930+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e0037d756e46
+    file_path: art_generated\terminal_textures\v1\tex_green_scanlines_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:27:33.437548+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e0037d756e46
+    file_path: art_generated\terminal_textures\v1\tex_green_scanlines_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
 - id: tex_green_grid
   category: textures
   display_name: Green Character Grid
-  status: pending
+  status: selected
   theme: green_terminal
-  prompt_tail: 'seamless tileable green terminal character cell grid texture,
-    rectangular grid of faint dotted outlines suggesting text character positions,
-    80x24 terminal layout aesthetic, VT100 character matrix visible, dark green
-    grid lines on black with slight phosphor persistence ghosting, old Unix
-    terminal display structure, government IT systems, flat macro photograph'
+  prompt_tail: seamless tileable green terminal character cell grid texture, rectangular
+    grid of faint dotted outlines suggesting text character positions, 80x24 terminal
+    layout aesthetic, VT100 character matrix visible, dark green grid lines on black
+    with slight phosphor persistence ghosting, old Unix terminal display structure,
+    government IT systems, flat macro photograph
   variants: 3
-
-# --- BLUE DOS/WINDOWS TEXTURES ---
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:27:56.185130+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 82483eb9bdc2
+    file_path: art_generated\terminal_textures\v1\tex_green_grid_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:28:16.068759+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 82483eb9bdc2
+    file_path: art_generated\terminal_textures\v1\tex_green_grid_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:28:34.103965+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 82483eb9bdc2
+    file_path: art_generated\terminal_textures\v1\tex_green_grid_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
 - id: tex_blue_dos_bg
   category: textures
   display_name: DOS Blue Background
-  status: pending
+  status: selected
   theme: blue_terminal
-  prompt_tail: 'seamless tileable deep blue DOS background texture, solid navy
-    blue with subtle CRT curvature shading darker at edges, DOS EDIT and Norton
-    Commander aesthetic, late 1990s government office PC display, slight dithering
-    pattern from 16-color VGA palette, Windows 3.1 era institutional blue,
-    flat even photograph of monitor surface'
+  prompt_tail: seamless tileable deep blue DOS background texture, solid navy blue
+    with subtle CRT curvature shading darker at edges, DOS EDIT and Norton Commander
+    aesthetic, late 1990s government office PC display, slight dithering pattern from
+    16-color VGA palette, Windows 3.1 era institutional blue, flat even photograph
+    of monitor surface
   variants: 3
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:28:52.295274+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 8a96dfab38b0
+    file_path: art_generated\terminal_textures\v1\tex_blue_dos_bg_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:29:10.336325+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 8a96dfab38b0
+    file_path: art_generated\terminal_textures\v1\tex_blue_dos_bg_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:29:28.370528+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 8a96dfab38b0
+    file_path: art_generated\terminal_textures\v1\tex_blue_dos_bg_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
 - id: tex_blue_bsod_pattern
   category: textures
   display_name: BSOD Error Pattern
-  status: pending
+  status: selected
   theme: blue_terminal
-  prompt_tail: 'seamless tileable Windows blue screen pattern texture, saturated
-    royal blue with faint horizontal interference lines, classic BSOD background
-    aesthetic without text, slight CRT phosphor bloom creating uneven blue field,
-    early 2000s government Windows NT workstation error screen, institutional
-    IT failure aesthetic, flat macro photograph'
+  prompt_tail: seamless tileable Windows blue screen pattern texture, saturated royal
+    blue with faint horizontal interference lines, classic BSOD background aesthetic
+    without text, slight CRT phosphor bloom creating uneven blue field, early 2000s
+    government Windows NT workstation error screen, institutional IT failure aesthetic,
+    flat macro photograph
   variants: 3
-
-# --- GRAY INSTITUTIONAL TEXTURES ---
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:29:47.378179+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 86312d167247
+    file_path: art_generated\terminal_textures\v1\tex_blue_bsod_pattern_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:30:10.632457+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 86312d167247
+    file_path: art_generated\terminal_textures\v1\tex_blue_bsod_pattern_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:30:29.506734+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 86312d167247
+    file_path: art_generated\terminal_textures\v1\tex_blue_bsod_pattern_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
 - id: tex_gray_lowcontrast
   category: textures
   display_name: Low Contrast Gray
-  status: pending
+  status: selected
   theme: gray_terminal
-  prompt_tail: 'seamless tileable low contrast gray terminal texture, light gray
-    stipple pattern on medium gray background, accessibility mode CRT display
-    aesthetic, government institution terminal for visually impaired users,
-    1990s ADA compliance display settings, soft muted institutional gray tones,
-    no harsh contrast, utilitarian functional appearance, flat photograph'
+  prompt_tail: seamless tileable low contrast gray terminal texture, light gray stipple
+    pattern on medium gray background, accessibility mode CRT display aesthetic, government
+    institution terminal for visually impaired users, 1990s ADA compliance display
+    settings, soft muted institutional gray tones, no harsh contrast, utilitarian
+    functional appearance, flat photograph
   variants: 3
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:30:50.347324+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e6e6cf5d9a5e
+    file_path: art_generated\terminal_textures\v1\tex_gray_lowcontrast_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:31:08.507053+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e6e6cf5d9a5e
+    file_path: art_generated\terminal_textures\v1\tex_gray_lowcontrast_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:31:27.654835+00:00'
+    model: gpt-image-1
+    full_prompt_hash: e6e6cf5d9a5e
+    file_path: art_generated\terminal_textures\v1\tex_gray_lowcontrast_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
 - id: tex_gray_dither
   category: textures
   display_name: Gray Dither Pattern
-  status: pending
+  status: selected
   theme: gray_terminal
-  prompt_tail: 'seamless tileable ordered dither pattern texture in grays, Bayer
-    matrix 8x8 dithering visible, monochrome CRT display rendering gradients,
-    early graphics terminal aesthetic, government plotting terminal output,
-    halftone dot pattern for grayscale simulation on 1-bit display, 1980s
-    institutional computing, flat macro lighting'
+  prompt_tail: seamless tileable ordered dither pattern texture in grays, Bayer matrix
+    8x8 dithering visible, monochrome CRT display rendering gradients, early graphics
+    terminal aesthetic, government plotting terminal output, halftone dot pattern
+    for grayscale simulation on 1-bit display, 1980s institutional computing, flat
+    macro lighting
   variants: 3
-
-# --- CYAN MAINFRAME TEXTURES ---
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:31:48.407807+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 47bb0e6c18bb
+    file_path: art_generated\terminal_textures\v1\tex_gray_dither_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:32:06.042103+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 47bb0e6c18bb
+    file_path: art_generated\terminal_textures\v1\tex_gray_dither_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:32:26.438753+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 47bb0e6c18bb
+    file_path: art_generated\terminal_textures\v1\tex_gray_dither_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
 - id: tex_cyan_ispf
   category: textures
   display_name: ISPF Panel Background
-  status: pending
+  status: selected
   theme: cyan_terminal
-  prompt_tail: 'seamless tileable cyan mainframe terminal texture, bright cyan
-    header bar region with transition to black main area, IBM TSO ISPF panel
-    layout aesthetic, 3270 terminal display with cyan reverse video sections,
-    government mainframe data entry screen background, COBOL application display,
-    late 1990s institutional computing, flat macro photograph'
+  prompt_tail: seamless tileable cyan mainframe terminal texture, bright cyan header
+    bar region with transition to black main area, IBM TSO ISPF panel layout aesthetic,
+    3270 terminal display with cyan reverse video sections, government mainframe data
+    entry screen background, COBOL application display, late 1990s institutional computing,
+    flat macro photograph
   variants: 3
-
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:33:08.703787+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b72bbc3e487e
+    file_path: art_generated\terminal_textures\v1\tex_cyan_ispf_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:33:49.282720+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b72bbc3e487e
+    file_path: art_generated\terminal_textures\v1\tex_cyan_ispf_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:34:31.643491+00:00'
+    model: gpt-image-1
+    full_prompt_hash: b72bbc3e487e
+    file_path: art_generated\terminal_textures\v1\tex_cyan_ispf_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v3
 - id: tex_cyan_border
   category: textures
   display_name: Cyan Box Border Pattern
-  status: pending
+  status: selected
   theme: cyan_terminal
-  prompt_tail: 'seamless tileable cyan terminal box drawing characters texture,
-    single and double line box drawing patterns in cyan on black, IBM PC
-    codepage 437 line drawing aesthetic, government form display borders,
-    DOS application window frames, COBOL screen section dividers, mainframe
-    panel structure elements, 1990s institutional IT aesthetic, flat lighting'
+  prompt_tail: seamless tileable cyan terminal box drawing characters texture, single
+    and double line box drawing patterns in cyan on black, IBM PC codepage 437 line
+    drawing aesthetic, government form display borders, DOS application window frames,
+    COBOL screen section dividers, mainframe panel structure elements, 1990s institutional
+    IT aesthetic, flat lighting
   variants: 3
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T07:35:37.283636+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 92efb9d7dd28
+    file_path: art_generated\terminal_textures\v1\tex_cyan_border_v1_1024.png
+    cost_usd: 0.08
+  - version: v2
+    generated_at: '2025-11-19T07:36:18.963735+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 92efb9d7dd28
+    file_path: art_generated\terminal_textures\v1\tex_cyan_border_v2_1024.png
+    cost_usd: 0.08
+  - version: v3
+    generated_at: '2025-11-19T07:37:20.719767+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 92efb9d7dd28
+    file_path: art_generated\terminal_textures\v1\tex_cyan_border_v3_1024.png
+    cost_usd: 0.08
+  selected_variant: v1
