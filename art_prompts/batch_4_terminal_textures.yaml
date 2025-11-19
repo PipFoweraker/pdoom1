@@ -1,0 +1,194 @@
+schema_version: '1.0'
+asset_type: terminal_textures
+default_size: 1024x1024
+output_sizes:
+- 1024
+- 512
+
+styles:
+  # Core texture directive
+  texture_base: 'seamless tileable surface texture photograph, 1024x1024 pixels,
+    photorealistic material surface only, flat even lighting, pure surface
+    suitable for tiling across UI backgrounds'
+
+  # Government terminal aesthetic
+  gov_terminal: 'late 1990s early 2000s government institution computer terminal
+    aesthetic, COBOL mainframe era, crusty old engineer built systems, faded
+    monochrome CRT display colors, low resolution pixel grid visible, utilitarian
+    and functional not decorative'
+
+  # Simple color terminal prompts
+  terminal_colors: 'classic terminal color schemes, amber on black, green on black,
+    white on blue, high contrast text display aesthetic, DOS and mainframe era,
+    simple functional government IT systems'
+
+themes:
+  # Amber terminal (classic IBM 3270)
+  amber_terminal:
+    style_overrides:
+    - texture_base
+    - gov_terminal
+    color_bias: amber/orange phosphor on black, warm CRT glow, IBM 3270 aesthetic
+
+  # Green terminal (VT100/VT220)
+  green_terminal:
+    style_overrides:
+    - texture_base
+    - gov_terminal
+    color_bias: green P1 phosphor on black, cold fluorescent glow, VT100 aesthetic
+
+  # Blue screen (DOS/Windows)
+  blue_terminal:
+    style_overrides:
+    - texture_base
+    - gov_terminal
+    color_bias: white/gray text on deep blue, DOS edit screen, Windows BSOD aesthetic
+
+  # Gray institutional
+  gray_terminal:
+    style_overrides:
+    - texture_base
+    - gov_terminal
+    color_bias: light gray on dark gray, low contrast institutional, accessibility mode
+
+  # Cyan/white (mainframe)
+  cyan_terminal:
+    style_overrides:
+    - texture_base
+    - gov_terminal
+    color_bias: cyan and white on black, TSO mainframe aesthetic, ISPF panels
+
+assets:
+# =============================================================================
+# BATCH 4: Terminal/COBOL Government Textures (10 prompts x 3 variants = 30)
+# =============================================================================
+
+# --- AMBER PHOSPHOR TEXTURES ---
+
+- id: tex_amber_scanlines
+  category: textures
+  display_name: Amber CRT Scanlines
+  status: pending
+  theme: amber_terminal
+  prompt_tail: 'seamless tileable amber CRT monitor scanline texture, horizontal
+    phosphor lines with subtle brightness variation between lines, warm orange-amber
+    P3 phosphor glow on pure black background, IBM 3270 terminal display aesthetic,
+    slight electron beam bloom at line edges, late 1980s government mainframe
+    terminal screen surface, visible pixel grid structure, flat macro photograph'
+  variants: 3
+
+- id: tex_amber_noise
+  category: textures
+  display_name: Amber Static Noise
+  status: pending
+  theme: amber_terminal
+  prompt_tail: 'seamless tileable amber CRT static noise texture, random phosphor
+    dot pattern in warm amber-orange on black, analog video noise aesthetic,
+    slight horizontal banding from power supply interference, government office
+    terminal with poor shielding, tube monitor signal degradation, old COBOL
+    terminal display noise, flat even lighting'
+  variants: 3
+
+# --- GREEN PHOSPHOR TEXTURES ---
+
+- id: tex_green_scanlines
+  category: textures
+  display_name: Green CRT Scanlines
+  status: pending
+  theme: green_terminal
+  prompt_tail: 'seamless tileable green CRT monitor scanline texture, horizontal
+    P1 phosphor lines in cold green on pure black, VT100 VT220 terminal display
+    aesthetic, sharp scanline definition with slight glow bleed between lines,
+    1990s government institution computer screen, visible interlace pattern,
+    monochrome terminal surface macro photograph, flat lighting'
+  variants: 3
+
+- id: tex_green_grid
+  category: textures
+  display_name: Green Character Grid
+  status: pending
+  theme: green_terminal
+  prompt_tail: 'seamless tileable green terminal character cell grid texture,
+    rectangular grid of faint dotted outlines suggesting text character positions,
+    80x24 terminal layout aesthetic, VT100 character matrix visible, dark green
+    grid lines on black with slight phosphor persistence ghosting, old Unix
+    terminal display structure, government IT systems, flat macro photograph'
+  variants: 3
+
+# --- BLUE DOS/WINDOWS TEXTURES ---
+
+- id: tex_blue_dos_bg
+  category: textures
+  display_name: DOS Blue Background
+  status: pending
+  theme: blue_terminal
+  prompt_tail: 'seamless tileable deep blue DOS background texture, solid navy
+    blue with subtle CRT curvature shading darker at edges, DOS EDIT and Norton
+    Commander aesthetic, late 1990s government office PC display, slight dithering
+    pattern from 16-color VGA palette, Windows 3.1 era institutional blue,
+    flat even photograph of monitor surface'
+  variants: 3
+
+- id: tex_blue_bsod_pattern
+  category: textures
+  display_name: BSOD Error Pattern
+  status: pending
+  theme: blue_terminal
+  prompt_tail: 'seamless tileable Windows blue screen pattern texture, saturated
+    royal blue with faint horizontal interference lines, classic BSOD background
+    aesthetic without text, slight CRT phosphor bloom creating uneven blue field,
+    early 2000s government Windows NT workstation error screen, institutional
+    IT failure aesthetic, flat macro photograph'
+  variants: 3
+
+# --- GRAY INSTITUTIONAL TEXTURES ---
+
+- id: tex_gray_lowcontrast
+  category: textures
+  display_name: Low Contrast Gray
+  status: pending
+  theme: gray_terminal
+  prompt_tail: 'seamless tileable low contrast gray terminal texture, light gray
+    stipple pattern on medium gray background, accessibility mode CRT display
+    aesthetic, government institution terminal for visually impaired users,
+    1990s ADA compliance display settings, soft muted institutional gray tones,
+    no harsh contrast, utilitarian functional appearance, flat photograph'
+  variants: 3
+
+- id: tex_gray_dither
+  category: textures
+  display_name: Gray Dither Pattern
+  status: pending
+  theme: gray_terminal
+  prompt_tail: 'seamless tileable ordered dither pattern texture in grays, Bayer
+    matrix 8x8 dithering visible, monochrome CRT display rendering gradients,
+    early graphics terminal aesthetic, government plotting terminal output,
+    halftone dot pattern for grayscale simulation on 1-bit display, 1980s
+    institutional computing, flat macro lighting'
+  variants: 3
+
+# --- CYAN MAINFRAME TEXTURES ---
+
+- id: tex_cyan_ispf
+  category: textures
+  display_name: ISPF Panel Background
+  status: pending
+  theme: cyan_terminal
+  prompt_tail: 'seamless tileable cyan mainframe terminal texture, bright cyan
+    header bar region with transition to black main area, IBM TSO ISPF panel
+    layout aesthetic, 3270 terminal display with cyan reverse video sections,
+    government mainframe data entry screen background, COBOL application display,
+    late 1990s institutional computing, flat macro photograph'
+  variants: 3
+
+- id: tex_cyan_border
+  category: textures
+  display_name: Cyan Box Border Pattern
+  status: pending
+  theme: cyan_terminal
+  prompt_tail: 'seamless tileable cyan terminal box drawing characters texture,
+    single and double line box drawing patterns in cyan on black, IBM PC
+    codepage 437 line drawing aesthetic, government form display borders,
+    DOS application window frames, COBOL screen section dividers, mainframe
+    panel structure elements, 1990s institutional IT aesthetic, flat lighting'
+  variants: 3

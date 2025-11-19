@@ -4,117 +4,351 @@ default_size: 1024x1024
 output_sizes:
 - 1024
 - 512
-
 styles:
-  # Retrofuturistic 70s/80s office tech aesthetic
-  background_base: 'seamless tileable texture pattern 1024x1024, retro-futuristic office
+  background_base: seamless tileable texture pattern 1024x1024, retro-futuristic office
     technology aesthetic from 80s sci-fi films, slightly worn and aged appearance,
-    suitable for game screen backdrop, no text or logos'
-
-  # Core visual language
-  retrofuture_worn: 'tobacco-stained cream and bakelite brown tones, defined grid pattern
+    suitable for game screen backdrop, no text or logos
+  retrofuture_worn: tobacco-stained cream and bakelite brown tones, defined grid pattern
     like worn graph paper, yellowed and aged CRT monitor aesthetic, muted 70s stripes,
-    faded beige institutional office colors, warm amber and burnt orange undertones'
-
+    faded beige institutional office colors, warm amber and burnt orange undertones
+  texture_base_v2: seamless tileable surface texture photograph, 1024x1024 pixels,
+    photorealistic material surface only, no objects no furniture no equipment no
+    computers no screens, just raw surface material texture suitable for tiling across
+    large UI areas, even lighting flat composition
+  tarkov_realism: Escape from Tarkov art direction, photorealistic worn industrial
+    surfaces, S.T.A.L.K.E.R. atmosphere, Soviet-era institutional decay, gritty realistic
+    weathering and damage, muted desaturated color palette with subtle color accents
+    from old electronics
+  ai_corruption: subtle eldritch corruption through technology, abandoned Soviet computing
+    facility aesthetic, old mainframe hardware tones mixing with decay, slight unnatural
+    geometric distortion in wear patterns, CRT phosphor green and amber undertones
+    bleeding through grime
 themes:
-  # Main UI background - the primary look
   main_retrofuture:
     style_overrides:
     - background_base
     - retrofuture_worn
-    color_bias: bakelite brown (#8B4513), tobacco cream (#F5DEB3), muted olive, burnt orange undertones
-
-  # Victory - warm golden aged paper
+    color_bias: bakelite brown (#8B4513), tobacco cream (#F5DEB3), muted olive, burnt
+      orange undertones
   victory_retrofuture:
     style_overrides:
     - background_base
     - retrofuture_worn
     color_bias: golden amber with aged paper yellowing, triumphant but vintage
-
-  # Defeat - red warning through CRT phosphor burn
   defeat_retrofuture:
     style_overrides:
     - background_base
     - retrofuture_worn
-    color_bias: red-orange CRT phosphor burn, aged warning aesthetic, tube monitor glow
-
-  # Settings/Config - control panel with worn buttons
+    color_bias: red-orange CRT phosphor burn, aged warning aesthetic, tube monitor
+      glow
   config_retrofuture:
     style_overrides:
     - background_base
     - retrofuture_worn
     color_bias: institutional beige, worn button panel aesthetic, coffee-stained
-
+  grid_abstract_v2:
+    style_overrides:
+    - texture_base_v2
+    color_bias: graph paper aged yellow-brown, faded blue grid lines, coffee stains
+  tarkov_surface:
+    style_overrides:
+    - texture_base_v2
+    - tarkov_realism
+    color_bias: concrete gray, rust orange, institutional green, desaturated
+  corrupted_tech:
+    style_overrides:
+    - texture_base_v2
+    - tarkov_realism
+    - ai_corruption
+    color_bias: amber CRT glow, phosphor green traces, bakelite brown, oxidized copper
 assets:
-# =============================================================================
-# TILEABLE BACKGROUND TEXTURES (1024x1024 seamless)
-# What 90s movies thought the 2010s would be, rendered in 70s/80s tonality
-# =============================================================================
-
 - id: bg_main_grid
   category: backgrounds
   display_name: Main Grid Background
-  status: pending
+  status: generated
   theme: main_retrofuture
-  prompt_tail: 'defined rectangular grid pattern like worn graph paper, bakelite brown
+  prompt_tail: defined rectangular grid pattern like worn graph paper, bakelite brown
     and tobacco-stained cream tones with muted 70s triple stripes, aged CRT monitor
     texture with slight yellowing and wear marks, retro-futuristic control panel feel
     from 80s sci-fi films, warm amber and burnt orange undertones, faded beige institutional
-    office colors, seamless tileable edges'
-
+    office colors, seamless tileable edges
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:10:35.605407+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 6b7e99be7ad8
+    file_path: art_generated\screen_backgrounds\v1\bg_main_grid_1024.png
+    cost_usd: 0.08
 - id: bg_panel_texture
   category: textures
   display_name: Panel Texture
-  status: pending
+  status: generated
   theme: main_retrofuture
-  prompt_tail: 'worn office equipment surface texture, bakelite plastic and aged metal
+  prompt_tail: worn office equipment surface texture, bakelite plastic and aged metal
     panel aesthetic, subtle grid embossing, 70s institutional beige with coffee stains
-    and yellowing, old computer terminal casing feel, seamless tileable edges'
-
+    and yellowing, old computer terminal casing feel, seamless tileable edges
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:11:27.909648+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 6b4414019115
+    file_path: art_generated\screen_backgrounds\v1\bg_panel_texture_1024.png
+    cost_usd: 0.08
 - id: bg_welcome_lab
   category: backgrounds
   display_name: Welcome Screen
-  status: pending
+  status: generated
   theme: main_retrofuture
-  prompt_tail: 'retro research facility control room background, 80s mainframe computer
+  prompt_tail: retro research facility control room background, 80s mainframe computer
     aesthetic with blinking indicator lights, institutional beige walls with defined
     grid pattern, aged fluorescent lighting glow, tobacco-stained monitors in background,
-    spartan and utilitarian, seamless tileable edges'
-
+    spartan and utilitarian, seamless tileable edges
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:12:24.647041+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 62075674c757
+    file_path: art_generated\screen_backgrounds\v1\bg_welcome_lab_1024.png
+    cost_usd: 0.08
 - id: bg_settings
   category: backgrounds
   display_name: Settings Background
-  status: pending
+  status: generated
   theme: config_retrofuture
-  prompt_tail: 'configuration terminal panel texture, defined grid of button outlines
+  prompt_tail: configuration terminal panel texture, defined grid of button outlines
     on bakelite surface, worn toggle switch and dial aesthetic, 70s institutional
     office equipment, coffee rings and yellowing, systematic grid pattern, seamless
-    tileable edges'
-
+    tileable edges
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:13:19.154913+00:00'
+    model: gpt-image-1
+    full_prompt_hash: fd526af5a8c4
+    file_path: art_generated\screen_backgrounds\v1\bg_settings_1024.png
+    cost_usd: 0.08
 - id: bg_victory
   category: backgrounds
   display_name: Victory Screen
-  status: pending
+  status: generated
   theme: victory_retrofuture
-  prompt_tail: 'triumphant aged paper texture with golden amber glow, defined grid
+  prompt_tail: triumphant aged paper texture with golden amber glow, defined grid
     pattern fading toward warm light, vintage certificate or award aesthetic, burnt
-    orange and cream tones, 70s achievement documentation feel, seamless tileable edges'
-
+    orange and cream tones, 70s achievement documentation feel, seamless tileable
+    edges
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:14:06.169637+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 52c137474d7f
+    file_path: art_generated\screen_backgrounds\v1\bg_victory_1024.png
+    cost_usd: 0.08
 - id: bg_defeat
   category: backgrounds
   display_name: Defeat Screen
-  status: pending
+  status: generated
   theme: defeat_retrofuture
-  prompt_tail: 'CRT phosphor burn warning texture, red-orange glow through aged screen,
+  prompt_tail: CRT phosphor burn warning texture, red-orange glow through aged screen,
     defined grid pattern with distortion and scan lines, 80s system failure aesthetic,
     warning stripes in muted burnt orange, tube monitor malfunction feel, seamless
-    tileable edges'
-
+    tileable edges
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:14:58.259221+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 0537098bde15
+    file_path: art_generated\screen_backgrounds\v1\bg_defeat_1024.png
+    cost_usd: 0.08
 - id: bg_tartan_stripe
   category: textures
   display_name: Tartan Stripe Overlay
-  status: pending
+  status: generated
   theme: main_retrofuture
-  prompt_tail: 'spartan tartan pattern with muted 70s triple stripes, tobacco brown
+  prompt_tail: spartan tartan pattern with muted 70s triple stripes, tobacco brown
     cream and olive tones, defined crossing lines on aged paper texture, institutional
-    office wallpaper aesthetic, cigarette-stained fabric feel, seamless tileable edges'
+    office wallpaper aesthetic, cigarette-stained fabric feel, seamless tileable edges
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:15:44.441673+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 36048cfecb28
+    file_path: art_generated\screen_backgrounds\v1\bg_tartan_stripe_1024.png
+    cost_usd: 0.08
+- id: tex_grid_graphpaper_aged
+  category: textures
+  display_name: Aged Graph Paper Grid
+  status: generated
+  theme: grid_abstract_v2
+  prompt_tail: seamless tileable aged graph paper texture, precise mathematical grid
+    of fine blue lines on yellowed cream paper, uniform 10mm squares, coffee ring
+    stains and foxing spots, paper fiber visible under macro lens, aged manila folder
+    beige undertone, institutional office supply aesthetic from 1970s Soviet bloc,
+    flat even overhead lighting, no perspective distortion, pure surface material
+    photograph, no objects in frame
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:29:56.056426+00:00'
+    model: gpt-image-1
+    full_prompt_hash: af29d3aee289
+    file_path: art_generated\screen_backgrounds\v1\tex_grid_graphpaper_aged_1024.png
+    cost_usd: 0.08
+- id: tex_grid_perforated_metal
+  category: textures
+  display_name: Perforated Metal Grid
+  status: generated
+  theme: tarkov_surface
+  prompt_tail: seamless tileable perforated metal sheet texture, regular grid of small
+    circular holes punched in painted steel sheet, chipped institutional green paint
+    revealing orange rust underneath, Soviet-era industrial equipment casing aesthetic,
+    slight oil residue and dust accumulation in perforations, Escape from Tarkov workshop
+    photorealism, flat even lighting pure surface material only, no equipment no objects
+    just the metal sheet surface
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:30:46.574855+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 1318e8e83982
+    file_path: art_generated\screen_backgrounds\v1\tex_grid_perforated_metal_1024.png
+    cost_usd: 0.08
+- id: tex_grid_circuit_trace
+  category: textures
+  display_name: Circuit Board Grid
+  status: generated
+  theme: corrupted_tech
+  prompt_tail: seamless tileable vintage circuit board texture, precise orthogonal
+    copper trace grid on phenolic brown FR-2 substrate, 1970s mainframe backplane
+    PCB aesthetic, green solder mask partially worn exposing bright copper underneath,
+    flux residue and oxidation patina on traces, no components mounted just bare board
+    traces and pads, flat macro photography studio lighting, pure surface
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:31:32.910380+00:00'
+    model: gpt-image-1
+    full_prompt_hash: a64d7f0ff73f
+    file_path: art_generated\screen_backgrounds\v1\tex_grid_circuit_trace_1024.png
+    cost_usd: 0.08
+- id: tex_concrete_institutional
+  category: textures
+  display_name: Institutional Concrete
+  status: generated
+  theme: tarkov_surface
+  prompt_tail: seamless tileable Soviet institutional concrete wall texture, rough
+    poured concrete surface with plywood form marks and aggregate pebbles visible,
+    decades of grime accumulation in surface pores, vertical water damage staining
+    and efflorescence salt deposits, S.T.A.L.K.E.R. underground bunker aesthetic,
+    gray-green undertone from mold growth, Escape from Tarkov photorealism, no graffiti
+    no fixtures no objects just raw concrete wall surface, flat even lighting
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:31:59.321030+00:00'
+    model: gpt-image-1
+    full_prompt_hash: c63c24c5ceee
+    file_path: art_generated\screen_backgrounds\v1\tex_concrete_institutional_1024.png
+    cost_usd: 0.08
+- id: tex_linoleum_damaged
+  category: textures
+  display_name: Damaged Linoleum Floor
+  status: generated
+  theme: tarkov_surface
+  prompt_tail: seamless tileable damaged institutional linoleum floor texture, 1960s
+    speckled terrazzo pattern in faded olive green and dirty cream, black scuff marks
+    and heel gouges, cracking and peeling at seams exposing black bitumen adhesive
+    underneath, cigarette burns and chemical bleach stains, Soviet government office
+    building floor realism, flat overhead studio lighting, no furniture no objects
+    pure floor surface material
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:32:43.730892+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 294b99daa0dc
+    file_path: art_generated\screen_backgrounds\v1\tex_linoleum_damaged_1024.png
+    cost_usd: 0.08
+- id: tex_painted_metal_panel
+  category: textures
+  display_name: Painted Metal Panel
+  status: generated
+  theme: tarkov_surface
+  prompt_tail: seamless tileable painted industrial metal panel texture, multiple
+    layers of institutional paint chipping in patches to reveal rust and gray primer
+    underneath, beige latex over green enamel over gray oxide layers visible in chip
+    patterns, rivet holes with rust bleeding streaks, Escape from Tarkov electrical
+    equipment cabinet casing realism, flat even studio lighting, no controls no fixtures
+    just painted metal surface
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:33:46.848539+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 0fe14c6f7b79
+    file_path: art_generated\screen_backgrounds\v1\tex_painted_metal_panel_1024.png
+    cost_usd: 0.08
+- id: tex_plywood_stained
+  category: textures
+  display_name: Stained Plywood Surface
+  status: generated
+  theme: tarkov_surface
+  prompt_tail: seamless tileable cheap construction plywood texture, Soviet-era particle
+    board composite with printed wood grain veneer, water damage rings causing swelling
+    and delamination at edges, overlapping coffee cup rings and cigarette burn marks,
+    decades of accumulated grime in printed grain pattern, temporary office furniture
+    aesthetic from abandoned facility, flat overhead lighting, pure surface material
+    no objects
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:34:40.849694+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 7618e9641a74
+    file_path: art_generated\screen_backgrounds\v1\tex_plywood_stained_1024.png
+    cost_usd: 0.08
+- id: tex_crt_burnin
+  category: textures
+  display_name: CRT Phosphor Burn
+  status: generated
+  theme: corrupted_tech
+  prompt_tail: seamless tileable CRT monitor phosphor burn-in texture, amber P1 and
+    green P31 phosphor ghost images layered and overlapping from years of static display,
+    horizontal scan line interference patterns visible, slight geometric warping suggesting
+    electron beam deflection anomaly, old VT100 terminal monitor aesthetic, electromagnetic
+    interference artifacts creating subtle moiré, eldritch wrongness in the pattern
+    repetition spacing, flat macro photograph of screen surface
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:35:31.719384+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 89a4f832d57b
+    file_path: art_generated\screen_backgrounds\v1\tex_crt_burnin_1024.png
+    cost_usd: 0.08
+- id: tex_oxidized_copper
+  category: textures
+  display_name: Oxidized Copper Traces
+  status: generated
+  theme: corrupted_tech
+  prompt_tail: seamless tileable heavily oxidized copper bus bar surface texture,
+    verdigris green patina over copper with areas of bright abraded metal showing
+    through, acid etching patterns suggesting circuitry dissolved by corrosive substance,
+    1970s mainframe power distribution aesthetic, chemical corrosion from unknown
+    organic source creating dendritic patterns, flat macro studio lighting, pure material
+    surface no components
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:36:29.420292+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 91b3203f1b4b
+    file_path: art_generated\screen_backgrounds\v1\tex_oxidized_copper_1024.png
+    cost_usd: 0.08
+- id: tex_bakelite_cracked
+  category: textures
+  display_name: Cracked Bakelite Surface
+  status: generated
+  theme: corrupted_tech
+  prompt_tail: seamless tileable cracked vintage bakelite plastic texture, dark mottled
+    brown phenolic resin with heat stress crazing network, old rotary telephone and
+    vacuum tube radio casing aesthetic, slight surface warping from prolonged electromagnetic
+    field exposure, dust and grime accumulated in crack network, faded impressed manufacturer
+    markings barely visible, 1950s Soviet military electronics equipment realism,
+    flat even macro photography lighting, pure surface material only
+  generation_history:
+  - version: v1
+    generated_at: '2025-11-19T06:37:12.452802+00:00'
+    model: gpt-image-1
+    full_prompt_hash: 3620dff0c343
+    file_path: art_generated\screen_backgrounds\v1\tex_bakelite_cracked_1024.png
+    cost_usd: 0.08
