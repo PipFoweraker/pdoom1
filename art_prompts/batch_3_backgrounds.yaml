@@ -1,94 +1,120 @@
 schema_version: '1.0'
 asset_type: screen_backgrounds
-default_size: 1920x1080
+default_size: 1024x1024
 output_sizes:
-- 1920
-- 960
+- 1024
+- 512
 
 styles:
-  background_base: 'wide landscape format 1920x1080 game background, atmospheric dark
-    laboratory aesthetic, subtle tech elements, no UI overlays or text, suitable for
-    game screen backdrop'
-  tileable_texture: 'seamless tileable texture pattern, 512x512, dark tech surface,
-    suitable for UI panel backgrounds'
+  # Retrofuturistic 70s/80s office tech aesthetic
+  background_base: 'seamless tileable texture pattern 1024x1024, retro-futuristic office
+    technology aesthetic from 80s sci-fi films, slightly worn and aged appearance,
+    suitable for game screen backdrop, no text or logos'
+
+  # Core visual language
+  retrofuture_worn: 'tobacco-stained cream and bakelite brown tones, defined grid pattern
+    like worn graph paper, yellowed and aged CRT monitor aesthetic, muted 70s stripes,
+    faded beige institutional office colors, warm amber and burnt orange undertones'
 
 themes:
-  main_tech:
+  # Main UI background - the primary look
+  main_retrofuture:
     style_overrides:
     - background_base
-    color_bias: dark blue-gray (#1a1e28) with subtle cyan circuit traces
-  victory:
+    - retrofuture_worn
+    color_bias: bakelite brown (#8B4513), tobacco cream (#F5DEB3), muted olive, burnt orange undertones
+
+  # Victory - warm golden aged paper
+  victory_retrofuture:
     style_overrides:
     - background_base
-    color_bias: dark with golden and green triumphant glow
-  defeat:
+    - retrofuture_worn
+    color_bias: golden amber with aged paper yellowing, triumphant but vintage
+
+  # Defeat - red warning through CRT phosphor burn
+  defeat_retrofuture:
     style_overrides:
     - background_base
-    color_bias: dark with red ominous warning glow
-  panel_texture:
+    - retrofuture_worn
+    color_bias: red-orange CRT phosphor burn, aged warning aesthetic, tube monitor glow
+
+  # Settings/Config - control panel with worn buttons
+  config_retrofuture:
     style_overrides:
-    - tileable_texture
-    color_bias: dark steel gray (#1e2430) with subtle grain
+    - background_base
+    - retrofuture_worn
+    color_bias: institutional beige, worn button panel aesthetic, coffee-stained
 
 assets:
 # =============================================================================
-# SCREEN BACKGROUNDS (6)
-# Full-screen backgrounds for different game states
+# TILEABLE BACKGROUND TEXTURES (1024x1024 seamless)
+# What 90s movies thought the 2010s would be, rendered in 70s/80s tonality
 # =============================================================================
 
-- id: bg_main_tech_grid
+- id: bg_main_grid
   category: backgrounds
-  display_name: Main Background
+  display_name: Main Grid Background
   status: pending
-  theme: main_tech
-  prompt_tail: 'dark laboratory control room interface background, subtle hexagonal
-    grid pattern overlaid, tech aesthetic with faint cyan circuit trace lines running
-    through, monitors and equipment silhouettes in deep background blur, atmospheric
-    and moody, centered composition suitable for UI overlay'
+  theme: main_retrofuture
+  prompt_tail: 'defined rectangular grid pattern like worn graph paper, bakelite brown
+    and tobacco-stained cream tones with muted 70s triple stripes, aged CRT monitor
+    texture with slight yellowing and wear marks, retro-futuristic control panel feel
+    from 80s sci-fi films, warm amber and burnt orange undertones, faded beige institutional
+    office colors, seamless tileable edges'
 
-- id: bg_welcome_laboratory
-  category: backgrounds
-  display_name: Welcome Screen
-  status: pending
-  theme: main_tech
-  prompt_tail: 'AI research laboratory entrance or lobby view, dark atmospheric scene
-    with glowing screens in background, server racks visible through glass walls,
-    dramatic lighting from overhead panels, sense of technological importance and
-    slightly ominous purpose, welcoming but serious'
-
-- id: bg_settings_panel
-  category: backgrounds
-  display_name: Settings Background
-  status: pending
-  theme: main_tech
-  prompt_tail: 'configuration terminal interface background, organized grid of dark
-    panels with subtle button outlines, technical and systematic feel, clean dark
-    steel surfaces with panel lines, professional configuration environment'
-
-- id: bg_gameover_victory
-  category: backgrounds
-  display_name: Victory Screen
-  status: pending
-  theme: victory
-  prompt_tail: 'triumphant AI safety victory scene, golden and green light radiating
-    from center, balanced scales or protective shield motif in background, sense of
-    achievement and safety secured, hopeful dawn lighting, celebration of successful
-    alignment'
-
-- id: bg_gameover_defeat
-  category: backgrounds
-  display_name: Defeat Screen
-  status: pending
-  theme: defeat
-  prompt_tail: 'AI doom scenario background, red warning glow emanating from center,
-    system failure aesthetic with warning symbols, corrupted or overloaded appearance,
-    sense of catastrophic outcome, digital breakdown and loss of control'
-
-- id: bg_panel_steel
+- id: bg_panel_texture
   category: textures
   display_name: Panel Texture
   status: pending
-  theme: panel_texture
-  prompt_tail: 'dark brushed steel panel texture, subtle grain and machining marks,
-    slightly lighter than pure black for contrast, suitable for tiling across UI
-    panels, clean industrial tech surface, seamless edges'
+  theme: main_retrofuture
+  prompt_tail: 'worn office equipment surface texture, bakelite plastic and aged metal
+    panel aesthetic, subtle grid embossing, 70s institutional beige with coffee stains
+    and yellowing, old computer terminal casing feel, seamless tileable edges'
+
+- id: bg_welcome_lab
+  category: backgrounds
+  display_name: Welcome Screen
+  status: pending
+  theme: main_retrofuture
+  prompt_tail: 'retro research facility control room background, 80s mainframe computer
+    aesthetic with blinking indicator lights, institutional beige walls with defined
+    grid pattern, aged fluorescent lighting glow, tobacco-stained monitors in background,
+    spartan and utilitarian, seamless tileable edges'
+
+- id: bg_settings
+  category: backgrounds
+  display_name: Settings Background
+  status: pending
+  theme: config_retrofuture
+  prompt_tail: 'configuration terminal panel texture, defined grid of button outlines
+    on bakelite surface, worn toggle switch and dial aesthetic, 70s institutional
+    office equipment, coffee rings and yellowing, systematic grid pattern, seamless
+    tileable edges'
+
+- id: bg_victory
+  category: backgrounds
+  display_name: Victory Screen
+  status: pending
+  theme: victory_retrofuture
+  prompt_tail: 'triumphant aged paper texture with golden amber glow, defined grid
+    pattern fading toward warm light, vintage certificate or award aesthetic, burnt
+    orange and cream tones, 70s achievement documentation feel, seamless tileable edges'
+
+- id: bg_defeat
+  category: backgrounds
+  display_name: Defeat Screen
+  status: pending
+  theme: defeat_retrofuture
+  prompt_tail: 'CRT phosphor burn warning texture, red-orange glow through aged screen,
+    defined grid pattern with distortion and scan lines, 80s system failure aesthetic,
+    warning stripes in muted burnt orange, tube monitor malfunction feel, seamless
+    tileable edges'
+
+- id: bg_tartan_stripe
+  category: textures
+  display_name: Tartan Stripe Overlay
+  status: pending
+  theme: main_retrofuture
+  prompt_tail: 'spartan tartan pattern with muted 70s triple stripes, tobacco brown
+    cream and olive tones, defined crossing lines on aged paper texture, institutional
+    office wallpaper aesthetic, cigarette-stained fabric feel, seamless tileable edges'
