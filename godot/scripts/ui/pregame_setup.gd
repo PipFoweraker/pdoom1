@@ -7,6 +7,8 @@ extends Control
 @onready var seed_input = $Panel/VBox/FieldsContainer/SeedRow/HBox/LineEdit
 @onready var difficulty_option = $Panel/VBox/FieldsContainer/DifficultyRow/OptionButton
 @onready var launch_button = $Panel/VBox/ButtonRow/LaunchButton
+@onready var random_button = $Panel/VBox/FieldsContainer/LabNameRow/LabelRow/RandomButton
+@onready var weekly_button = $Panel/VBox/FieldsContainer/SeedRow/HBox/WeeklyButton
 
 # Random lab name components (ported from pygame)
 var lab_prefixes = [
@@ -36,11 +38,29 @@ func _ready():
 	seed_input.text = GameConfig.game_seed
 	difficulty_option.selected = GameConfig.difficulty
 
+	# Set up button icons
+	_setup_button_icons()
+
 	# Focus player name input
 	player_name_input.grab_focus()
 
 	# Validate launch button state
 	_update_launch_button()
+
+func _setup_button_icons():
+	"""Replace button text/emoji with icons where available"""
+	# Random button icon
+	var random_icon = IconLoader.get_config_icon("random")
+	if random_icon:
+		random_button.text = ""
+		random_button.icon = random_icon
+		random_button.expand_icon = true
+
+	# Weekly button icon
+	var date_icon = IconLoader.get_config_icon("date")
+	if date_icon:
+		weekly_button.icon = date_icon
+		weekly_button.expand_icon = true
 
 func _update_launch_button():
 	"""Enable/disable launch button based on required fields"""

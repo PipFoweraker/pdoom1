@@ -150,26 +150,44 @@ func _create_entry_row(entry, rank: int) -> HBoxContainer:
 	var row = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 10)
 
-	# Rank
+	# Rank container (icon + label)
+	var rank_container = HBoxContainer.new()
+	rank_container.custom_minimum_size = Vector2(80, 0)
+	rank_container.add_theme_constant_override("separation", 4)
+
+	# Try to get rank icon
+	var rank_icon: Texture2D = null
+	var rank_color = Color.WHITE
+
+	if rank == 1:
+		rank_icon = IconLoader.get_leaderboard_icon("rank_crown")
+		rank_color = Color(1.0, 0.84, 0.0)  # Gold
+	elif rank == 2:
+		rank_icon = IconLoader.get_leaderboard_icon("rank_silver")
+		rank_color = Color(0.75, 0.75, 0.75)  # Silver
+	elif rank == 3:
+		rank_icon = IconLoader.get_leaderboard_icon("rank_gold")
+		rank_color = Color(0.8, 0.5, 0.2)  # Bronze
+	elif rank <= 10:
+		rank_color = Color(0.6, 0.8, 1.0)  # Light blue
+
+	# Add icon if available
+	if rank_icon:
+		var icon_rect = TextureRect.new()
+		icon_rect.texture = rank_icon
+		icon_rect.custom_minimum_size = Vector2(20, 20)
+		icon_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		rank_container.add_child(icon_rect)
+
+	# Rank label
 	var rank_label = Label.new()
-	rank_label.custom_minimum_size = Vector2(60, 0)
 	rank_label.text = "#%d" % rank
 	rank_label.add_theme_font_size_override("font_size", 14)
+	rank_label.add_theme_color_override("font_color", rank_color)
+	rank_container.add_child(rank_label)
 
-	# Color ranks
-	if rank == 1:
-		rank_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))  # Gold
-		rank_label.text = "🥇 #1"
-	elif rank == 2:
-		rank_label.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))  # Silver
-		rank_label.text = "🥈 #2"
-	elif rank == 3:
-		rank_label.add_theme_color_override("font_color", Color(0.8, 0.5, 0.2))  # Bronze
-		rank_label.text = "🥉 #3"
-	elif rank <= 10:
-		rank_label.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0))  # Light blue
-
-	row.add_child(rank_label)
+	row.add_child(rank_container)
 
 	# Player Name
 	var player_label = Label.new()

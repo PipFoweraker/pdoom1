@@ -158,5 +158,88 @@
     "warning": "res://assets/icons/alert_indicators/indicator_alert_warning_64.png",
     "error": "res://assets/icons/alert_indicators/indicator_alert_error_64.png",
     "success": "res://assets/icons/alert_indicators/indicator_alert_success_64.png"
+  },
+  "leaderboard": {
+    "trophy": "res://assets/icons/leaderboard/ui_leaderboard_trophy_64.png",
+    "filter": "res://assets/icons/leaderboard/ui_leaderboard_filter_64.png",
+    "sort_asc": "res://assets/icons/leaderboard/ui_leaderboard_sort_asc_64.png",
+    "sort_desc": "res://assets/icons/leaderboard/ui_leaderboard_sort_desc_64.png",
+    "rank_crown": "res://assets/icons/leaderboard/ui_rank_crown_64.png",
+    "rank_gold": "res://assets/icons/leaderboard/ui_rank_gold_64.png",
+    "rank_silver": "res://assets/icons/leaderboard/ui_rank_silver_64.png"
+  },
+  "difficulty": {
+    "easy": "res://assets/icons/difficulty/ui_difficulty_easy_64.png",
+    "standard": "res://assets/icons/difficulty/ui_difficulty_standard_64.png",
+    "hard": "res://assets/icons/difficulty/ui_difficulty_hard_64.png"
+  },
+  "config": {
+    "random": "res://assets/icons/config/ui_config_random_64.png",
+    "seed": "res://assets/icons/config/ui_config_seed_64.png",
+    "date": "res://assets/icons/config/ui_config_date_64.png"
+  },
+  "settings": {
+    "audio": "res://assets/icons/settings/ui_settings_audio_64.png",
+    "graphics": "res://assets/icons/settings/ui_settings_graphics_64.png",
+    "gameplay": "res://assets/icons/settings/ui_settings_gameplay_64.png",
+    "controls": "res://assets/icons/settings/ui_settings_controls_64.png",
+    "theme": "res://assets/icons/settings/ui_settings_theme_64.png",
+    "accessibility": "res://assets/icons/settings/ui_settings_accessibility_64.png",
+    "account": "res://assets/icons/settings/ui_settings_account_64.png",
+    "reset": "res://assets/icons/settings/ui_settings_reset_64.png"
+  },
+  "guide": {
+    "book": "res://assets/icons/guide/ui_guide_book_64.png",
+    "objective": "res://assets/icons/guide/ui_guide_objective_64.png",
+    "controls": "res://assets/icons/guide/ui_guide_controls_64.png",
+    "resources": "res://assets/icons/guide/ui_guide_resources_64.png",
+    "actions": "res://assets/icons/guide/ui_guide_actions_64.png",
+    "strategy": "res://assets/icons/guide/ui_guide_strategy_64.png",
+    "tips": "res://assets/icons/guide/ui_guide_tips_64.png",
+    "warning": "res://assets/icons/guide/ui_guide_warning_64.png"
+  },
+  "doom_meter": {
+    "frame": "res://assets/icons/doom_meter/doom_meter_frame_64.png",
+    "glow": "res://assets/icons/doom_meter/doom_glow_effect_64.png",
+    "bg_safe": "res://assets/icons/doom_meter/doom_bg_safe_64.png",
+    "bg_warning": "res://assets/icons/doom_meter/doom_bg_warning_64.png",
+    "bg_danger": "res://assets/icons/doom_meter/doom_bg_danger_64.png",
+    "bg_critical": "res://assets/icons/doom_meter/doom_bg_critical_64.png"
+  },
+  "indicators": {
+    "doom_rising": "res://assets/icons/indicators/indicator_doom_rising_64.png",
+    "doom_falling": "res://assets/icons/indicators/indicator_doom_falling_64.png",
+    "doom_stable": "res://assets/icons/indicators/indicator_doom_stable_64.png",
+    "status_active": "res://assets/icons/indicators/indicator_status_active_64.png",
+    "status_inactive": "res://assets/icons/indicators/indicator_status_inactive_64.png",
+    "status_pending": "res://assets/icons/indicators/indicator_status_pending_64.png",
+    "status_success": "res://assets/icons/indicators/indicator_status_success_64.png",
+    "status_warning": "res://assets/icons/indicators/indicator_status_warning_64.png",
+    "status_error": "res://assets/icons/indicators/indicator_status_error_64.png",
+    "status_critical": "res://assets/icons/indicators/indicator_status_critical_64.png",
+    "status_info": "res://assets/icons/indicators/indicator_status_info_64.png",
+    "status_neutral": "res://assets/icons/indicators/indicator_status_neutral_64.png"
+  },
+  "controls": {
+    "play": "res://assets/icons/ui_controls/ui_control_play_64.png",
+    "pause": "res://assets/icons/ui_controls/ui_control_pause_64.png",
+    "confirm": "res://assets/icons/ui_controls/ui_control_confirm_64.png",
+    "cancel": "res://assets/icons/ui_controls/ui_control_cancel_64.png",
+    "clear": "res://assets/icons/ui_controls/ui_control_clear_64.png",
+    "refresh": "res://assets/icons/ui_controls/ui_control_refresh_64.png",
+    "settings": "res://assets/icons/ui_controls/ui_control_settings_64.png",
+    "back": "res://assets/icons/ui_controls/ui_control_back_64.png",
+    "forward": "res://assets/icons/ui_controls/ui_control_forward_64.png",
+    "up": "res://assets/icons/ui_controls/ui_control_up_64.png",
+    "down": "res://assets/icons/ui_controls/ui_control_down_64.png",
+    "lock": "res://assets/icons/ui_controls/ui_control_lock_64.png",
+    "unlock": "res://assets/icons/ui_controls/ui_control_unlock_64.png",
+    "add": "res://assets/icons/ui_controls/ui_control_add_64.png",
+    "remove": "res://assets/icons/ui_controls/ui_control_remove_64.png",
+    "info": "res://assets/icons/ui_controls/ui_control_info_64.png",
+    "help": "res://assets/icons/ui_controls/ui_control_help_64.png",
+    "bug": "res://assets/icons/ui_controls/ui_control_bug_64.png",
+    "save": "res://assets/icons/main_navigation/ui_control_save_64.png",
+    "load": "res://assets/icons/main_navigation/ui_control_load_64.png"
   }
 }

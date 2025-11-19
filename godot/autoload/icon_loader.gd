@@ -207,3 +207,55 @@ func get_alert_indicator(type: String) -> Texture2D:
 		return texture
 
 	return null
+
+func get_leaderboard_icon(element: String) -> Texture2D:
+	"""Get leaderboard/ranking icon texture"""
+	return _get_category_icon("leaderboard", element)
+
+func get_difficulty_icon(level: String) -> Texture2D:
+	"""Get difficulty level icon texture"""
+	return _get_category_icon("difficulty", level)
+
+func get_config_icon(config_type: String) -> Texture2D:
+	"""Get configuration icon texture (random, seed, date)"""
+	return _get_category_icon("config", config_type)
+
+func get_settings_icon(setting: String) -> Texture2D:
+	"""Get settings category icon texture"""
+	return _get_category_icon("settings", setting)
+
+func get_guide_icon(section: String) -> Texture2D:
+	"""Get guide/help section icon texture"""
+	return _get_category_icon("guide", section)
+
+func get_doom_meter_icon(element: String) -> Texture2D:
+	"""Get doom meter visual element texture"""
+	return _get_category_icon("doom_meter", element)
+
+func get_indicator_icon(indicator: String) -> Texture2D:
+	"""Get status/doom indicator texture"""
+	return _get_category_icon("indicators", indicator)
+
+func get_control_icon(control: String) -> Texture2D:
+	"""Get UI control icon texture (play, pause, back, etc.)"""
+	return _get_category_icon("controls", control)
+
+func _get_category_icon(category: String, key: String) -> Texture2D:
+	"""Generic helper to get icon from any category"""
+	if not _mapping_loaded:
+		return null
+
+	var cache_key = category + "_" + key
+	if _icon_cache.has(cache_key):
+		return _icon_cache[cache_key]
+
+	var icon_path = _mapping.get(category, {}).get(key, "")
+	if icon_path == "":
+		return null
+
+	var texture = load(icon_path) as Texture2D
+	if texture:
+		_icon_cache[cache_key] = texture
+		return texture
+
+	return null
