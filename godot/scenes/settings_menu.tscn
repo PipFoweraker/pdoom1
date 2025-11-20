@@ -1,6 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://bp3k6x8y9d1mn"]
+[gd_scene load_steps=8 format=3 uid="uid://bp3k6x8y9d1mn"]
 
 [ext_resource type="Script" path="res://scripts/ui/settings_menu.gd" id="1_settings"]
+[ext_resource type="Texture2D" path="res://assets/textures/surfaces/tex_painted_metal_panel_512.png" id="2_background"]
+[ext_resource type="Texture2D" path="res://assets/textures/terminal/tex_gray_dither_512.png" id="3_overlay"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
 bg_color = Color(0.2, 0.3, 0.5, 1)
@@ -59,14 +61,26 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_settings")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.16, 0.18, 0.22, 1)
+texture = ExtResource("2_background")
+stretch_mode = 1
+
+[node name="ScanlineOverlay" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_overlay")
+stretch_mode = 1
 
 [node name="VBox" type="VBoxContainer" parent="."]
 layout_mode = 1
