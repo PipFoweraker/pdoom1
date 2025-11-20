@@ -1692,6 +1692,13 @@ func _show_next_event():
 
 	log_message("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
 
+	# Blurred blocker behind event dialog panel (Fix Issue #485)
+	var click_blocker := ColorRect.new()
+	click_blocker.color = Color(0.0, 0.0, 0.0, 0.6)
+	click_blocker.mouse_filter = Control.MOUSE_FILTER_STOP
+	click_blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tab_manager.add_child(click_blocker)
+
 	# Create event dialog - use Panel for consistent input handling
 	var dialog = Panel.new()
 	dialog.custom_minimum_size = Vector2(600, 450)
@@ -1841,7 +1848,7 @@ func _show_next_event():
 		btn.tooltip_text = tooltip
 
 		# Connect button
-		btn.pressed.connect(func(): _on_event_choice_selected(event, choice_id, dialog))
+		btn.pressed.connect(func(): _on_event_choice_selected(event, choice_id, dialog, click_blocker))
 
 		vbox.add_child(btn)
 		buttons.append(btn)
@@ -1869,9 +1876,10 @@ func _show_next_event():
 	print("[MainUI] === EVENT DIALOG SETUP COMPLETE ===")
 	print("[MainUI] Ready for keyboard input via MainUI._input()")
 
-func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Control):
+func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Control, blocker: Control):
 	"""Handle event choice selection"""
 	dialog.queue_free()
+	blocker.queue_free()
 
 	# Clear active dialog state
 	active_dialog = null
