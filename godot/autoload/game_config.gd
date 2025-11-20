@@ -11,6 +11,7 @@ var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard
 # Audio Settings
 var master_volume: int = 80  # 0-100
 var sfx_volume: int = 80  # 0-100
+var music_volume: int = 80  # 0-100
 
 # Graphics Settings
 var graphics_quality: int = 1  # 0=Low, 1=Medium, 2=High
@@ -54,6 +55,7 @@ func save_config() -> void:
 	# Audio section
 	config.set_value("audio", "master_volume", master_volume)
 	config.set_value("audio", "sfx_volume", sfx_volume)
+	config.set_value("audio", "music_volume", music_volume)
 
 	# Graphics section
 	config.set_value("graphics", "quality", graphics_quality)
@@ -90,6 +92,7 @@ func load_config() -> void:
 	# Load audio settings
 	master_volume = config.get_value("audio", "master_volume", master_volume)
 	sfx_volume = config.get_value("audio", "sfx_volume", sfx_volume)
+	music_volume = config.get_value("audio", "music_volume", music_volume)
 
 	# Load graphics settings
 	graphics_quality = config.get_value("graphics", "quality", graphics_quality)
@@ -108,6 +111,13 @@ func apply_audio_settings() -> void:
 	if AudioServer.get_bus_count() > 1:
 		var sfx_db = linear_to_db(sfx_volume / 100.0)
 		AudioServer.set_bus_volume_db(1, sfx_db)
+
+	# Music bus (index 2) - if it exists
+	if AudioServer.get_bus_count() > 2:
+		var music_db = linear_to_db(music_volume / 100.0)
+		AudioServer.set_bus_volume_db(2, music_db)
+		print("[GameConfig] Audio settings applied - Master: %d%% (%.1f dB), SFX: %d%% (%.1f dB), Music: %d%% (%.1f dB)" % [master_volume, master_db, sfx_volume, sfx_db, music_volume, music_db])
+	elif AudioServer.get_bus_count() > 1:
 		print("[GameConfig] Audio settings applied - Master: %d%% (%.1f dB), SFX: %d%% (%.1f dB)" % [master_volume, master_db, sfx_volume, sfx_db])
 	else:
 		print("[GameConfig] Audio settings applied - Master: %d%% (%.1f dB)" % [master_volume, master_db])
@@ -140,6 +150,9 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			apply_audio_settings()
 		"sfx_volume":
 			sfx_volume = value
+			apply_audio_settings()
+		"music_volume":
+			music_volume = value
 			apply_audio_settings()
 		"graphics_quality":
 			graphics_quality = value
@@ -263,6 +276,7 @@ func print_config() -> void:
 	print("  Difficulty: %s" % get_difficulty_string())
 	print("  Master Volume: %d%%" % master_volume)
 	print("  SFX Volume: %d%%" % sfx_volume)
+	print("  Music Volume: %d%%" % music_volume)
 	print("  Graphics: %s" % get_graphics_quality_string())
 	print("  Fullscreen: %s" % fullscreen)
 	print("  Games Played: %d" % games_played)
