@@ -31,6 +31,7 @@ extends VBoxContainer
 @onready var office_cat = $ContentArea/MiddlePanel/CoreZone/CatZone/OfficeCat
 @onready var tab_manager = get_parent()
 @onready var roster_container = $ContentArea/MiddlePanel/EmployeeRosterZone/RosterScroll/RosterContainer
+@onready var pause_menu = $"../../PauseMenu"
 
 # Reference to GameManager
 var game_manager: Node
@@ -94,6 +95,16 @@ func _unhandled_key_input(event: InputEvent):
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
+		# ESC key for pause menu (highest priority - before dialogs)
+		if event.keycode == KEY_ESCAPE:
+			# If pause menu is visible, it handles ESC itself to close
+			# If no active dialog, open pause menu
+			if active_dialog == null or not is_instance_valid(active_dialog):
+				if pause_menu and not pause_menu.visible:
+					pause_menu.show_pause_menu()
+					get_viewport().set_input_as_handled()
+					return
+
 		# E key no longer switches to employee screen - employee info moving to main UI
 		# (E key was previously handled by TabManager, now disabled)
 
@@ -2137,7 +2148,7 @@ func _create_researcher_button(data: Dictionary) -> Control:
 		"alignment": Color(0.3, 0.7, 0.8)
 	}
 
-	# Specialisation Indicator 
+	# Specialisation Indicator
 	var spec = data.get("specialization", "safety")
 	var indicator := Label.new()
 	indicator.text = "●"
@@ -2181,7 +2192,7 @@ func _create_researcher_button(data: Dictionary) -> Control:
 	btn.pressed.connect(
 		func(): _show_staff_id_card(data)
 	)
-	
+
 	return btn
 
 func _show_staff_id_card(data: Dictionary):
@@ -2192,19 +2203,19 @@ func _show_staff_id_card(data: Dictionary):
 	card.name = "StaffCard"
 	card.size = Vector2(350,300)
 	add_child(card)
-	
+
 	var vbox = VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 6)
 	card.add_child(vbox)
-	
+
 	var employee_label = Label.new()
 	var name_text = data.get("name")
 	var spec_text = data.get("specialization")
-	
+
 	employee_label.text = "%s | %s" % [name_text, spec_text.capitalize()]
 	employee_label.add_theme_font_size_override("font_size", 20)
 	vbox.add_child(employee_label)
-	
+
 	var trait_label = Label.new()
 	var traits = data.get("traits", [])
 	if traits.size() > 0:
@@ -2220,23 +2231,23 @@ func _show_staff_id_card(data: Dictionary):
 	else:
 		trait_label.text = "HR Notes: N/A"
 	vbox.add_child(trait_label)
-	
+
 	var salary_label = Label.new()
 	var salaty_text = data.get("current_salary")
 	# maybe this could be per turn? More useful stat for user
-	salary_label.text = "Current Salary: %s/yr" % GameConfig.format_money(salaty_text) 
+	salary_label.text = "Current Salary: %s/yr" % GameConfig.format_money(salaty_text)
 	vbox.add_child(salary_label)
-	
+
 	var skill_label = Label.new()
 	skill_label.text = "Skill Level: %d / 10" % data.get("skill_level")
 	vbox.add_child(skill_label)
-	
+
 	var base_prod_label = Label.new()
 	base_prod_label.text = "Base Productivity: %d" % data.get("base_productivity")
 	vbox.add_child(base_prod_label)
-	
+
 	var burn_label = Label.new()
 	burn_label.text = "Burnout: %d" % data.get("burnout")
 	vbox.add_child(burn_label)
-	
+
 	card.popup_centered()

@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bvqxj8x5p6h8c"]
+[gd_scene load_steps=9 format=3 uid="uid://bvqxj8x5p6h8c"]
 
 [ext_resource type="Script" path="res://scripts/game_manager.gd" id="1_main_gm"]
 [ext_resource type="Script" path="res://scripts/ui/main_ui.gd" id="2_main_ui"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://employee_screen123" path="res://scenes/ui/employee_screen.tscn" id="7_employee"]
 [ext_resource type="PackedScene" uid="uid://bugreport123456" path="res://scenes/ui/bug_report_panel.tscn" id="8_bugreport"]
 [ext_resource type="PackedScene" uid="uid://officecat123456" path="res://scenes/ui/office_cat.tscn" id="9_officecat"]
+[ext_resource type="PackedScene" uid="uid://cnj8yk4x5oopm" path="res://scenes/pause_menu.tscn" id="10_pausemenu"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -378,6 +379,9 @@ layout_mode = 1
 layout_mode = 1
 
 [node name="BugReportPanel" parent="TabManager" instance=ExtResource("8_bugreport")]
+layout_mode = 1
+
+[node name="PauseMenu" parent="." instance=ExtResource("10_pausemenu")]
 layout_mode = 1
 
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/InitButton" to="TabManager/MainUI" method="_on_init_button_pressed"]

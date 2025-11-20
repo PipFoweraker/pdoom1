@@ -1,0 +1,182 @@
+[gd_scene load_steps=3 format=3 uid="uid://cnj8yk4x5oopm"]
+
+[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_pause"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.1, 0.1, 0.15, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.5, 0.7, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="PauseMenu" type="Control"]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pause")
+
+[node name="DarkenOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -250.0
+offset_right = 300.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "GAME PAUSED"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="SettingsContainer" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="AudioSettings" type="VBoxContainer" parent="Panel/VBox/SettingsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AudioLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Audio Settings"
+
+[node name="MasterVolumeRow" type="HBoxContainer" parent="Panel/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Master Volume:"
+
+[node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "80%"
+
+[node name="SFXVolumeRow" type="HBoxContainer" parent="Panel/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "SFX Volume:"
+
+[node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "80%"
+
+[node name="MusicVolumeRow" type="HBoxContainer" parent="Panel/VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Music Volume:"
+
+[node name="Slider" type="HSlider" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="ValueLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "80%"
+
+[node name="HSeparator2" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="ButtonContainer" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="ResumeButton" type="Button" parent="Panel/VBox/ButtonContainer"]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
+text = "Resume Game (ESC)"
+
+[node name="MainMenuButton" type="Button" parent="Panel/VBox/ButtonContainer"]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
+text = "Main Menu"
+
+[node name="QuitButton" type="Button" parent="Panel/VBox/ButtonContainer"]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
+text = "Quit to Desktop"
+
+[connection signal="value_changed" from="Panel/VBox/SettingsContainer/AudioSettings/MasterVolumeRow/Slider" to="." method="_on_master_volume_changed"]
+[connection signal="value_changed" from="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow/Slider" to="." method="_on_sfx_volume_changed"]
+[connection signal="value_changed" from="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow/Slider" to="." method="_on_music_volume_changed"]
+[connection signal="pressed" from="Panel/VBox/ButtonContainer/ResumeButton" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Panel/VBox/ButtonContainer/MainMenuButton" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="Panel/VBox/ButtonContainer/QuitButton" to="." method="_on_quit_pressed"]
