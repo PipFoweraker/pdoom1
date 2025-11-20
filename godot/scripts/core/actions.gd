@@ -6,6 +6,13 @@ static func get_all_actions() -> Array[Dictionary]:
 	"""Return all available actions"""
 	return [
 		{
+			"id": "pass",
+			"name": "Do Nothing (Pass)",
+			"description": "Skip this action. Conserve resources but waste time.",
+			"costs": {},  # Free action, always available
+			"category": "management"
+		},
+		{
 			"id": "hire_staff",
 			"name": "Hire Staff",
 			"description": "Open hiring menu to recruit researchers",
@@ -280,6 +287,10 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	var result = {"success": true, "message": action["name"] + " executed"}
 
 	match action_id:
+		"pass":
+			# Do nothing action - just waste the action point with no effect
+			result["message"] = "Passed this action. No resources spent."
+
 		"hire_staff":
 			# Submenu action - doesn't execute, opens dialog
 			result["message"] = "Opening hiring menu..."
