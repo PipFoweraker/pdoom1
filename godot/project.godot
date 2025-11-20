@@ -26,6 +26,8 @@ KeybindManager="*res://autoload/keybind_manager.gd"
 ScreenshotManager="*res://autoload/screenshot_manager.gd"
 LogExporter="*res://autoload/log_exporter.gd"
 IconLoader="*res://autoload/icon_loader.gd"
+MusicManager="*res://autoload/music_manager.gd"
+VerificationTracker="*res://autoload/verification_tracker.gd"
 GameManager="*res://scripts/game_manager.gd"
 
 [display]

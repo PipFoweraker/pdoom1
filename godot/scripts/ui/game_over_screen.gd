@@ -20,6 +20,17 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	"""Display game over screen with final statistics"""
 	visible = true
 
+	# Stop verification tracking and get final hash
+	VerificationTracker.stop_tracking()
+	var final_hash = VerificationTracker.get_final_hash()
+
+	# Export verification data for submission (future leaderboard integration)
+	var verification_data = VerificationTracker.export_for_submission(final_state)
+	print("[GameOverScreen] Game ended - Verification hash: %s..." % final_hash.substr(0, 16))
+	print("[GameOverScreen] Full verification data ready for submission")
+
+	# TODO: Future - Add UI button to submit score to leaderboard with verification_data
+
 	# Set title and colors based on outcome
 	if is_victory:
 		title_label.text = "VICTORY!"

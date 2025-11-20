@@ -369,11 +369,19 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"fundraise_small":
 			var money_raised = state.rng.randi_range(30000, 60000)
+
+			# Record RNG outcome for verification
+			VerificationTracker.record_rng_outcome("fundraise_small_amount", float(money_raised), state.turn)
+
 			state.add_resources({"money": money_raised})
 			result["message"] = "Modest funding round successful! Raised %s" % GameConfig.format_money(money_raised)
 
 		"fundraise_big":
 			var base_amount = state.rng.randi_range(80000, 150000)
+
+			# Record RNG outcome for verification
+			VerificationTracker.record_rng_outcome("fundraise_big_amount", float(base_amount), state.turn)
+
 			var rep_bonus = int(state.reputation * 500)
 			var total_raised = base_amount + rep_bonus
 			state.add_resources({"money": total_raised})
@@ -386,6 +394,10 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"apply_grant":
 			var grant_amount = state.rng.randi_range(50000, 100000)
+
+			# Record RNG outcome for verification
+			VerificationTracker.record_rng_outcome("apply_grant_amount", float(grant_amount), state.turn)
+
 			var paper_bonus = state.papers * 5000
 			var total = grant_amount + paper_bonus
 			state.add_resources({"money": total})
@@ -430,14 +442,25 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"release_warning":
 			# Risky: big doom reduction but reputation hit and random outcome
-			var doom_reduction = 15 + state.rng.randi_range(-5, 10)
-			var rep_change = state.rng.randi_range(-10, 5)
+			var doom_roll = state.rng.randi_range(-5, 10)
+			var rep_roll = state.rng.randi_range(-10, 5)
+
+			# Record RNG outcomes for verification
+			VerificationTracker.record_rng_outcome("release_warning_doom", float(doom_roll), state.turn)
+			VerificationTracker.record_rng_outcome("release_warning_rep", float(rep_roll), state.turn)
+
+			var doom_reduction = 15 + doom_roll
+			var rep_change = rep_roll
 			state.add_resources({"doom": -doom_reduction, "reputation": rep_change})
 			result["message"] = "Public warning issued (-%d doom, %+d reputation)" % [doom_reduction, rep_change]
 
 		"acquire_startup":
 			# Gain staff and compute
 			var staff_type = state.rng.randi_range(0, 2)
+
+			# Record RNG outcome for verification
+			VerificationTracker.record_rng_outcome("acquire_startup_type", float(staff_type), state.turn)
+
 			match staff_type:
 				0:
 					state.safety_researchers += 2
@@ -453,7 +476,12 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"sabotage_competitor":
 			# Unethical but effective - chance of backfire
-			if state.rng.randf() > 0.3:  # 70% success
+			var sabotage_roll = state.rng.randf()
+
+			# Record RNG outcome for verification
+			VerificationTracker.record_rng_outcome("sabotage_success", sabotage_roll, state.turn)
+
+			if sabotage_roll > 0.3:  # 70% success
 				var doom_reduction = 20
 				state.add_resources({"doom": -doom_reduction})
 				result["message"] = "Sabotage successful! Competitor delayed (-%d doom)" % doom_reduction
@@ -469,7 +497,12 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"emergency_pivot":
 			# Convert capability researchers to safety researchers
-			var converted = min(state.capability_researchers, state.rng.randi_range(1, 3))
+			var pivot_roll = state.rng.randi_range(1, 3)
+
+			# Record RNG outcome for verification
+			VerificationTracker.record_rng_outcome("emergency_pivot_count", float(pivot_roll), state.turn)
+
+			var converted = min(state.capability_researchers, pivot_roll)
 			if converted > 0:
 				state.capability_researchers -= converted
 				state.safety_researchers += converted

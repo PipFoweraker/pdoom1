@@ -841,7 +841,12 @@ static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumbe
 			# Random chance after min turn
 			if state.turn < event.get("min_turn", 0):
 				return false
-			return rng.randf() < event.get("probability", 0.1)
+			var event_roll = rng.randf()
+
+			# Record RNG outcome for verification
+			VerificationTracker.record_rng_outcome("event_%s" % event_id, event_roll, state.turn)
+
+			return event_roll < event.get("probability", 0.1)
 
 	return false
 
@@ -969,6 +974,10 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 				# Remove a random researcher (poaching)
 				if state.researchers.size() > 0:
 					var idx = state.rng.randi() % state.researchers.size()
+
+					# Record RNG outcome for verification
+					VerificationTracker.record_rng_outcome("poach_researcher_select", float(idx), state.turn)
+
 					var researcher = state.researchers[idx]
 					state.remove_researcher(researcher)
 
