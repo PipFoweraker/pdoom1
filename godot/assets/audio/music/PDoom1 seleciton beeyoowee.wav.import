@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://cpckbe7dijfcc"
+path="res://.godot/imported/PDoom1 seleciton beeyoowee.wav-d81258d1c5d251c2426d3e6d563cc8cd.sample"
+
+[deps]
+
+source_file="res://assets/audio/music/PDoom1 seleciton beeyoowee.wav"
+dest_files=["res://.godot/imported/PDoom1 seleciton beeyoowee.wav-d81258d1c5d251c2426d3e6d563cc8cd.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2

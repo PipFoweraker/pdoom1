@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bdki75riexv82"
+path="res://.godot/imported/PDoom1 Undetected sandbagging.mp3-c5d5d7b3efbf0467f83884d7a5a4113d.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/music/PDoom1 Undetected sandbagging.mp3"
+dest_files=["res://.godot/imported/PDoom1 Undetected sandbagging.mp3-c5d5d7b3efbf0467f83884d7a5a4113d.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

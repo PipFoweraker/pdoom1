@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dry6slpcujxec"
+path="res://.godot/imported/PDoom Out_of_distribution.mp3-ee5c6c512c7c6e34039cc1f07bd33dc1.mp3str"
+
+[deps]
+
+source_file="res://assets/audio/music/PDoom Out_of_distribution.mp3"
+dest_files=["res://.godot/imported/PDoom Out_of_distribution.mp3-ee5c6c512c7c6e34039cc1f07bd33dc1.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4
