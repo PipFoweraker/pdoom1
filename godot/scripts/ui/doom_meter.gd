@@ -86,8 +86,8 @@ func _draw():
 			draw_texture_rect(momentum_icon, Rect2(icon_pos, Vector2(icon_size, icon_size)), false, arrow_color)
 			# Draw value text next to icon
 			var value_text = "%.1f" % abs(doom_momentum)
-			var text_pos = momentum_pos + Vector2(-8, 5)
-			draw_string(font, text_pos, value_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, arrow_color)
+			var momentum_text_pos = momentum_pos + Vector2(-8, 5)
+			draw_string(font, momentum_text_pos, value_text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, arrow_color)
 		else:
 			# Fallback to text arrows
 			var arrow_char = "^" if doom_momentum > 0 else "v"
