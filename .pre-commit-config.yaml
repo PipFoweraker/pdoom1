@@ -62,6 +62,13 @@ repos:
         language: system
         pass_filenames: true
 
+      - id: style-guide-reminder
+        name: Style Guide Update Reminder
+        entry: python scripts/check_style_guide.py
+        language: system
+        pass_filenames: false
+        verbose: true
+
 # Configuration
 default_language_version:
   python: python3
