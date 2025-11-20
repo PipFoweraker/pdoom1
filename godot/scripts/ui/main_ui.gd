@@ -1692,6 +1692,13 @@ func _show_next_event():
 
 	log_message("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
 
+	# Blurred blocker behind event dialog panel (Fix Issue #485)
+	var click_blocker := ColorRect.new()
+	click_blocker.color = Color(0.0, 0.0, 0.0, 0.6)
+	click_blocker.mouse_filter = Control.MOUSE_FILTER_STOP
+	click_blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tab_manager.add_child(click_blocker)
+
 	# Create event dialog - use Panel for consistent input handling
 	var dialog = Panel.new()
 	dialog.custom_minimum_size = Vector2(600, 450)
