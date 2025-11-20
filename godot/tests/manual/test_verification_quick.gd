@@ -9,9 +9,9 @@ extends Node
 ##   4. Both runs should produce IDENTICAL hashes
 
 func _ready():
-	print("\n" + "="*60)
+	print("\n============================================================")
 	print("VERIFICATION SYSTEM - QUICK TEST")
-	print("="*60 + "\n")
+	print("============================================================\n")
 
 	# Run two identical games
 	print("Running Game 1 (seed: quick-test-001)...")
@@ -21,9 +21,9 @@ func _ready():
 	var hash2 = run_test_game("quick-test-001")
 
 	# Compare hashes
-	print("\n" + "="*60)
+	print("\n============================================================")
 	print("RESULTS")
-	print("="*60)
+	print("============================================================")
 	print("Hash 1: %s" % hash1)
 	print("Hash 2: %s" % hash2)
 	print("")
@@ -37,7 +37,7 @@ func _ready():
 		print("   This means: something is not deterministic")
 		print("   Check RNG tracking in turn_manager.gd")
 
-	print("="*60 + "\n")
+	print("============================================================\n")
 
 	# Test different actions
 	print("Testing different actions (should produce different hash)...")
@@ -48,9 +48,9 @@ func _ready():
 	else:
 		print("❌ FAIL: Different actions produce same hash!")
 
-	print("\n" + "="*60)
+	print("\n============================================================")
 	print("TEST COMPLETE - Check results above")
-	print("="*60 + "\n")
+	print("============================================================\n")
 
 	# Exit after test
 	await get_tree().create_timer(1.0).timeout
