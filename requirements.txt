@@ -1,0 +1,5 @@
+# Python dependencies for CI/CD scripts
+# Note: Game is built with Godot/GDScript, these are for automation only
+
+# JSON schema validation
+jsonschema>=4.0.0
