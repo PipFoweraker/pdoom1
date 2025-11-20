@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://verification_quick_test"]
+
+[ext_resource type="Script" path="res://tests/manual/test_verification_quick.gd" id="1"]
+
+[node name="VerificationQuickTest" type="Node"]
+script = ExtResource("1")

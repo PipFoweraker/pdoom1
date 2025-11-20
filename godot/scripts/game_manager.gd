@@ -36,6 +36,12 @@ func start_new_game(game_seed: String = ""):
 	turn_manager = TurnManager.new(state)
 	is_initialized = true
 
+	# Start verification tracking
+	var game_version = "0.10.2"  # TODO: Get from GameConfig or version constant
+	VerificationTracker.enable_debug()  # Enable verbose logging
+	VerificationTracker.start_tracking(game_seed, game_version)
+	print("[GameManager] Verification tracking enabled (debug mode: ON)")
+
 	# Start first turn (may trigger events!)
 	var turn_result = turn_manager.start_turn()
 

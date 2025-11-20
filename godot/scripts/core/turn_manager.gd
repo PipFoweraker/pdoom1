@@ -14,6 +14,10 @@ func _generate_random_candidate() -> Researcher:
 	var weights = [0.35, 0.25, 0.20, 0.20]  # Safety most common
 
 	var roll = state.rng.randf()
+
+	# Record RNG outcome for verification
+	VerificationTracker.record_rng_outcome("candidate_spec", roll, state.turn)
+
 	var cumulative = 0.0
 	var spec = "safety"
 	for i in range(specializations.size()):
@@ -35,15 +39,25 @@ func _generate_random_candidate() -> Researcher:
 func _assign_candidate_traits(researcher: Researcher):
 	"""Assign random traits to a candidate (40% positive, 25% negative)"""
 	# 40% chance of one positive trait
-	if state.rng.randf() < 0.40:
+	var positive_roll = state.rng.randf()
+	VerificationTracker.record_rng_outcome("trait_positive", positive_roll, state.turn)
+
+	if positive_roll < 0.40:
 		var positive_traits = ["workaholic", "team_player", "media_savvy", "safety_conscious", "fast_learner"]
-		var trait_id = positive_traits[state.rng.randi() % positive_traits.size()]
+		var trait_index = state.rng.randi() % positive_traits.size()
+		VerificationTracker.record_rng_outcome("trait_positive_select", float(trait_index), state.turn)
+		var trait_id = positive_traits[trait_index]
 		researcher.add_trait(trait_id)
 
 	# 25% chance of one negative trait
-	if state.rng.randf() < 0.25:
+	var negative_roll = state.rng.randf()
+	VerificationTracker.record_rng_outcome("trait_negative", negative_roll, state.turn)
+
+	if negative_roll < 0.25:
 		var negative_traits = ["prima_donna", "leak_prone", "burnout_prone", "pessimist"]
-		var trait_id = negative_traits[state.rng.randi() % negative_traits.size()]
+		var trait_index = state.rng.randi() % negative_traits.size()
+		VerificationTracker.record_rng_outcome("trait_negative_select", float(trait_index), state.turn)
+		var trait_id = negative_traits[trait_index]
 		researcher.add_trait(trait_id)
 
 func _populate_candidate_pool() -> int:
@@ -59,16 +73,23 @@ func _populate_candidate_pool() -> int:
 		chance += 0.10
 
 	# Roll for new candidate
-	if state.rng.randf() < chance and empty_slots > 0:
+	var candidate_roll = state.rng.randf()
+	VerificationTracker.record_rng_outcome("candidate_spawn", candidate_roll, state.turn)
+
+	if candidate_roll < chance and empty_slots > 0:
 		var candidate = _generate_random_candidate()
 		state.add_candidate(candidate)
 		added += 1
 
 		# Small chance for a second candidate if pool is very empty
-		if empty_slots > 3 and state.rng.randf() < 0.20:
-			var second = _generate_random_candidate()
-			state.add_candidate(second)
-			added += 1
+		if empty_slots > 3:
+			var second_roll = state.rng.randf()
+			VerificationTracker.record_rng_outcome("candidate_second", second_roll, state.turn)
+
+			if second_roll < 0.20:
+				var second = _generate_random_candidate()
+				state.add_candidate(second)
+				added += 1
 
 	return added
 
@@ -154,8 +175,12 @@ func start_turn() -> Dictionary:
 			var productivity = researcher.get_effective_productivity() * team_player_bonus
 
 			# Research generation based on productivity
-			if state.rng.randf() < 0.30 * productivity:
+			var research_roll = state.rng.randf()
+			VerificationTracker.record_rng_outcome("research_gen_%d" % researcher_index, research_roll, state.turn)
+
+			if research_roll < 0.30 * productivity:
 				var base_research = state.rng.randi_range(1, 3)
+				VerificationTracker.record_rng_outcome("research_amount_%d" % researcher_index, float(base_research), state.turn)
 
 				# Specialization modifiers
 				match researcher.specialization:
@@ -181,7 +206,10 @@ func start_turn() -> Dictionary:
 
 			# Check for leak_prone trait (1% chance per turn)
 			if researcher.has_trait("leak_prone"):
-				if state.rng.randf() < 0.01:
+				var leak_roll = state.rng.randf()
+				VerificationTracker.record_rng_outcome("leak_check_%d" % researcher_index, leak_roll, state.turn)
+
+				if leak_roll < 0.01:
 					leak_occurred = true
 					leak_doom += 3.0  # Leak causes doom increase
 
@@ -290,6 +318,12 @@ func start_turn() -> Dictionary:
 	var triggered_events = GameEvents.check_triggered_events(state, state.rng)
 
 	if triggered_events.size() > 0:
+		# Record triggered events in verification hash
+		for triggered_event in triggered_events:
+			var event_id = triggered_event.get("id", "")
+			var event_type = triggered_event.get("trigger_type", "unknown")
+			VerificationTracker.record_event(event_id, event_type, state.turn)
+
 		# Events block action selection until resolved
 		state.pending_events = triggered_events
 		state.current_phase = GameState.TurnPhase.TURN_START  # Stay in TURN_START
@@ -320,6 +354,9 @@ func execute_turn() -> Dictionary:
 		results.append(result)
 		if not result["success"]:
 			all_success = false
+
+		# Record action in verification hash
+		VerificationTracker.record_action(action_id, state)
 
 	# Clear queued actions
 	state.queued_actions.clear()
@@ -400,6 +437,9 @@ func execute_turn() -> Dictionary:
 	# REMOVED: Event checking now happens in start_turn() (FIX #418)
 	# Events are checked BEFORE actions, not after
 
+	# Record turn end in verification hash
+	VerificationTracker.record_turn_end(state.turn, state)
+
 	# Check win/lose
 	state.check_win_lose()
 
@@ -433,8 +473,12 @@ func resolve_event(event: Dictionary, choice_id: String) -> Dictionary:
 	if not result["success"]:
 		return result
 
-	# Remove this event from pending
+	# Record event response in verification hash
 	var event_id = event.get("id", "")
+	var event_type = event.get("trigger_type", "unknown")
+	VerificationTracker.record_event_response(event_id, choice_id, state.turn)
+
+	# Remove this event from pending
 	var new_pending: Array[Dictionary] = []
 	for pending in state.pending_events:
 		if pending.get("id", "") != event_id:

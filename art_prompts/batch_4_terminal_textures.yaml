@@ -45,7 +45,7 @@ assets:
 - id: tex_amber_scanlines
   category: textures
   display_name: Amber CRT Scanlines
-  status: selected
+  status: promoted
   theme: amber_terminal
   prompt_tail: seamless tileable amber CRT monitor scanline texture, horizontal phosphor
     lines with subtle brightness variation between lines, warm orange-amber P3 phosphor
@@ -76,7 +76,7 @@ assets:
 - id: tex_amber_noise
   category: textures
   display_name: Amber Static Noise
-  status: selected
+  status: promoted
   theme: amber_terminal
   prompt_tail: seamless tileable amber CRT static noise texture, random phosphor dot
     pattern in warm amber-orange on black, analog video noise aesthetic, slight horizontal
@@ -106,7 +106,7 @@ assets:
 - id: tex_green_scanlines
   category: textures
   display_name: Green CRT Scanlines
-  status: selected
+  status: promoted
   theme: green_terminal
   prompt_tail: seamless tileable green CRT monitor scanline texture, horizontal P1
     phosphor lines in cold green on pure black, VT100 VT220 terminal display aesthetic,
@@ -137,7 +137,7 @@ assets:
 - id: tex_green_grid
   category: textures
   display_name: Green Character Grid
-  status: selected
+  status: promoted
   theme: green_terminal
   prompt_tail: seamless tileable green terminal character cell grid texture, rectangular
     grid of faint dotted outlines suggesting text character positions, 80x24 terminal
@@ -168,7 +168,7 @@ assets:
 - id: tex_blue_dos_bg
   category: textures
   display_name: DOS Blue Background
-  status: selected
+  status: promoted
   theme: blue_terminal
   prompt_tail: seamless tileable deep blue DOS background texture, solid navy blue
     with subtle CRT curvature shading darker at edges, DOS EDIT and Norton Commander
@@ -199,7 +199,7 @@ assets:
 - id: tex_blue_bsod_pattern
   category: textures
   display_name: BSOD Error Pattern
-  status: selected
+  status: promoted
   theme: blue_terminal
   prompt_tail: seamless tileable Windows blue screen pattern texture, saturated royal
     blue with faint horizontal interference lines, classic BSOD background aesthetic
@@ -230,7 +230,7 @@ assets:
 - id: tex_gray_lowcontrast
   category: textures
   display_name: Low Contrast Gray
-  status: selected
+  status: promoted
   theme: gray_terminal
   prompt_tail: seamless tileable low contrast gray terminal texture, light gray stipple
     pattern on medium gray background, accessibility mode CRT display aesthetic, government
@@ -261,7 +261,7 @@ assets:
 - id: tex_gray_dither
   category: textures
   display_name: Gray Dither Pattern
-  status: selected
+  status: promoted
   theme: gray_terminal
   prompt_tail: seamless tileable ordered dither pattern texture in grays, Bayer matrix
     8x8 dithering visible, monochrome CRT display rendering gradients, early graphics
@@ -292,7 +292,7 @@ assets:
 - id: tex_cyan_ispf
   category: textures
   display_name: ISPF Panel Background
-  status: selected
+  status: promoted
   theme: cyan_terminal
   prompt_tail: seamless tileable cyan mainframe terminal texture, bright cyan header
     bar region with transition to black main area, IBM TSO ISPF panel layout aesthetic,
@@ -323,7 +323,7 @@ assets:
 - id: tex_cyan_border
   category: textures
   display_name: Cyan Box Border Pattern
-  status: selected
+  status: promoted
   theme: cyan_terminal
   prompt_tail: seamless tileable cyan terminal box drawing characters texture, single
     and double line box drawing patterns in cyan on black, IBM PC codepage 437 line

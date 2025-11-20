@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://scoring_formula_test"]
+
+[ext_resource type="Script" path="res://tests/unit/test_scoring_formula.gd" id="1"]
+
+[node name="ScoringFormulaTest" type="Node"]
+script = ExtResource("1")

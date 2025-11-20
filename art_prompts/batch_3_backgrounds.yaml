@@ -65,7 +65,8 @@ assets:
 - id: bg_main_grid
   category: backgrounds
   display_name: Main Grid Background
-  status: generated
+  status: rejected
+  rejection_reason: Generated scene layout instead of tileable texture pattern
   theme: main_retrofuture
   prompt_tail: defined rectangular grid pattern like worn graph paper, bakelite brown
     and tobacco-stained cream tones with muted 70s triple stripes, aged CRT monitor
@@ -82,7 +83,8 @@ assets:
 - id: bg_panel_texture
   category: textures
   display_name: Panel Texture
-  status: generated
+  status: rejected
+  rejection_reason: Generated scene layout instead of tileable texture pattern
   theme: main_retrofuture
   prompt_tail: worn office equipment surface texture, bakelite plastic and aged metal
     panel aesthetic, subtle grid embossing, 70s institutional beige with coffee stains
@@ -97,7 +99,8 @@ assets:
 - id: bg_welcome_lab
   category: backgrounds
   display_name: Welcome Screen
-  status: generated
+  status: rejected
+  rejection_reason: Generated scene layout instead of tileable texture pattern
   theme: main_retrofuture
   prompt_tail: retro research facility control room background, 80s mainframe computer
     aesthetic with blinking indicator lights, institutional beige walls with defined
@@ -113,7 +116,8 @@ assets:
 - id: bg_settings
   category: backgrounds
   display_name: Settings Background
-  status: generated
+  status: rejected
+  rejection_reason: Generated scene layout instead of tileable texture pattern
   theme: config_retrofuture
   prompt_tail: configuration terminal panel texture, defined grid of button outlines
     on bakelite surface, worn toggle switch and dial aesthetic, 70s institutional
@@ -129,7 +133,8 @@ assets:
 - id: bg_victory
   category: backgrounds
   display_name: Victory Screen
-  status: generated
+  status: rejected
+  rejection_reason: Generated scene layout instead of tileable texture pattern
   theme: victory_retrofuture
   prompt_tail: triumphant aged paper texture with golden amber glow, defined grid
     pattern fading toward warm light, vintage certificate or award aesthetic, burnt
@@ -145,7 +150,8 @@ assets:
 - id: bg_defeat
   category: backgrounds
   display_name: Defeat Screen
-  status: generated
+  status: rejected
+  rejection_reason: Generated scene layout instead of tileable texture pattern
   theme: defeat_retrofuture
   prompt_tail: CRT phosphor burn warning texture, red-orange glow through aged screen,
     defined grid pattern with distortion and scan lines, 80s system failure aesthetic,
@@ -161,7 +167,8 @@ assets:
 - id: bg_tartan_stripe
   category: textures
   display_name: Tartan Stripe Overlay
-  status: generated
+  status: rejected
+  rejection_reason: Generated scene layout instead of tileable texture pattern
   theme: main_retrofuture
   prompt_tail: spartan tartan pattern with muted 70s triple stripes, tobacco brown
     cream and olive tones, defined crossing lines on aged paper texture, institutional
@@ -176,7 +183,7 @@ assets:
 - id: tex_grid_graphpaper_aged
   category: textures
   display_name: Aged Graph Paper Grid
-  status: generated
+  status: promoted
   theme: grid_abstract_v2
   prompt_tail: seamless tileable aged graph paper texture, precise mathematical grid
     of fine blue lines on yellowed cream paper, uniform 10mm squares, coffee ring
@@ -191,10 +198,11 @@ assets:
     full_prompt_hash: af29d3aee289
     file_path: art_generated\screen_backgrounds\v1\tex_grid_graphpaper_aged_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_grid_perforated_metal
   category: textures
   display_name: Perforated Metal Grid
-  status: generated
+  status: promoted
   theme: tarkov_surface
   prompt_tail: seamless tileable perforated metal sheet texture, regular grid of small
     circular holes punched in painted steel sheet, chipped institutional green paint
@@ -209,10 +217,11 @@ assets:
     full_prompt_hash: 1318e8e83982
     file_path: art_generated\screen_backgrounds\v1\tex_grid_perforated_metal_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_grid_circuit_trace
   category: textures
   display_name: Circuit Board Grid
-  status: generated
+  status: promoted
   theme: corrupted_tech
   prompt_tail: seamless tileable vintage circuit board texture, precise orthogonal
     copper trace grid on phenolic brown FR-2 substrate, 1970s mainframe backplane
@@ -226,10 +235,11 @@ assets:
     full_prompt_hash: a64d7f0ff73f
     file_path: art_generated\screen_backgrounds\v1\tex_grid_circuit_trace_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_concrete_institutional
   category: textures
   display_name: Institutional Concrete
-  status: generated
+  status: promoted
   theme: tarkov_surface
   prompt_tail: seamless tileable Soviet institutional concrete wall texture, rough
     poured concrete surface with plywood form marks and aggregate pebbles visible,
@@ -244,10 +254,11 @@ assets:
     full_prompt_hash: c63c24c5ceee
     file_path: art_generated\screen_backgrounds\v1\tex_concrete_institutional_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_linoleum_damaged
   category: textures
   display_name: Damaged Linoleum Floor
-  status: generated
+  status: promoted
   theme: tarkov_surface
   prompt_tail: seamless tileable damaged institutional linoleum floor texture, 1960s
     speckled terrazzo pattern in faded olive green and dirty cream, black scuff marks
@@ -262,10 +273,11 @@ assets:
     full_prompt_hash: 294b99daa0dc
     file_path: art_generated\screen_backgrounds\v1\tex_linoleum_damaged_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_painted_metal_panel
   category: textures
   display_name: Painted Metal Panel
-  status: generated
+  status: promoted
   theme: tarkov_surface
   prompt_tail: seamless tileable painted industrial metal panel texture, multiple
     layers of institutional paint chipping in patches to reveal rust and gray primer
@@ -280,10 +292,11 @@ assets:
     full_prompt_hash: 0fe14c6f7b79
     file_path: art_generated\screen_backgrounds\v1\tex_painted_metal_panel_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_plywood_stained
   category: textures
   display_name: Stained Plywood Surface
-  status: generated
+  status: promoted
   theme: tarkov_surface
   prompt_tail: seamless tileable cheap construction plywood texture, Soviet-era particle
     board composite with printed wood grain veneer, water damage rings causing swelling
@@ -298,10 +311,11 @@ assets:
     full_prompt_hash: 7618e9641a74
     file_path: art_generated\screen_backgrounds\v1\tex_plywood_stained_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_crt_burnin
   category: textures
   display_name: CRT Phosphor Burn
-  status: generated
+  status: promoted
   theme: corrupted_tech
   prompt_tail: seamless tileable CRT monitor phosphor burn-in texture, amber P1 and
     green P31 phosphor ghost images layered and overlapping from years of static display,
@@ -316,10 +330,11 @@ assets:
     full_prompt_hash: 89a4f832d57b
     file_path: art_generated\screen_backgrounds\v1\tex_crt_burnin_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_oxidized_copper
   category: textures
   display_name: Oxidized Copper Traces
-  status: generated
+  status: promoted
   theme: corrupted_tech
   prompt_tail: seamless tileable heavily oxidized copper bus bar surface texture,
     verdigris green patina over copper with areas of bright abraded metal showing
@@ -334,10 +349,11 @@ assets:
     full_prompt_hash: 91b3203f1b4b
     file_path: art_generated\screen_backgrounds\v1\tex_oxidized_copper_1024.png
     cost_usd: 0.08
+  selected_variant: v1
 - id: tex_bakelite_cracked
   category: textures
   display_name: Cracked Bakelite Surface
-  status: generated
+  status: promoted
   theme: corrupted_tech
   prompt_tail: seamless tileable cracked vintage bakelite plastic texture, dark mottled
     brown phenolic resin with heat stress crazing network, old rotary telephone and
@@ -352,3 +368,4 @@ assets:
     full_prompt_hash: 3620dff0c343
     file_path: art_generated\screen_backgrounds\v1\tex_bakelite_cracked_1024.png
     cost_usd: 0.08
+  selected_variant: v1
