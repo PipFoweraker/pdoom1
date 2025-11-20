@@ -2012,7 +2012,8 @@ func _update_employee_roster(state: Dictionary):
 
 	# Show individual researchers
 	for researcher_data in researchers:
-		var entry = _create_researcher_entry(researcher_data)
+		#var entry = _create_researcher_entry(researcher_data)
+		var entry = _create_researcher_button(researcher_data)
 		roster_container.add_child(entry)
 
 func _add_legacy_staff_display(safety: int, capability: int, compute_eng: int, managers: int):
@@ -2045,6 +2046,7 @@ func _add_legacy_staff_display(safety: int, capability: int, compute_eng: int, m
 
 			roster_container.add_child(hbox)
 
+# Prior researcher entry: non-interactive
 func _create_researcher_entry(data: Dictionary) -> Control:
 	"""Create a roster entry for an individual researcher"""
 	var panel = PanelContainer.new()
@@ -2103,3 +2105,144 @@ func _create_researcher_entry(data: Dictionary) -> Control:
 		hbox.add_child(burnout_icon)
 
 	return panel
+
+# New researcher entry: interactive button
+func _create_researcher_button(data: Dictionary) -> Control:
+	"""Create a roster entry/button for an individual researcher"""
+	var btn := Button.new()
+	btn.custom_minimum_size = Vector2(0, 32)
+	btn.focus_mode = Control.FOCUS_NONE
+	btn.size_flags_horizontal = Control.SIZE_FILL
+	#btn.clip_contents = false
+
+	# Margin/Padding - ensures text does not render so close to box walls
+	var margin := MarginContainer.new()
+	var margin_padding = 8
+	margin.add_theme_constant_override("margin_left", margin_padding)
+	margin.add_theme_constant_override("margin_right", margin_padding)
+	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.add_child(margin)
+
+	# Main Row
+	var hbox := HBoxContainer.new()
+	var hbox_separation = 8
+	hbox.add_theme_constant_override("separation", hbox_separation)
+	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.add_child(hbox)
+
+	# Specialization Colours - should this be global/callable?
+	var spec_colors = {
+		"safety": Color(0.3, 0.8, 0.3),
+		"capabilities": Color(0.8, 0.3, 0.3),
+		"interpretability": Color(0.7, 0.3, 0.8),
+		"alignment": Color(0.3, 0.7, 0.8)
+	}
+
+	# Specialisation Indicator 
+	var spec = data.get("specialization", "safety")
+	var indicator := Label.new()
+	indicator.text = "●"
+	indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
+	hbox.add_child(indicator)
+
+	# Name Wrapper - ensures 
+	var name_wrapper := CenterContainer.new()
+	name_wrapper.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	hbox.add_child(name_wrapper)
+
+	# Name Label
+	var name_label := Label.new()
+	name_label.text = data.get("name", "Unknown")
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+	name_label.add_theme_font_size_override("separation", 8)
+	name_wrapper.add_child(name_label)
+
+	# Productivity Indicator (simple bar or percentage)
+	var productivity = data.get("base_productivity", 1.0)
+	var burnout = data.get("burnout", 0.0)
+	var effective_prod = productivity * (1.0 - min(burnout / 200.0, 0.5))
+
+	var prod_label := Label.new()
+	prod_label.text = "%.0f%%" % (effective_prod * 100)
+	prod_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+
+	# Color logic - based on employee productivity
+	if effective_prod >= 1.0:
+		prod_label.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
+	elif effective_prod >= 0.7:
+		prod_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.3))
+	else:
+		prod_label.add_theme_color_override("font_color", Color(0.8, 0.3, 0.3))
+
+	hbox.add_child(prod_label)
+
+	# Burnout warning if high
+	if burnout >= 60:
+		var burnout_icon = Label.new()
+		burnout_icon.text = "🔥"
+		#burnout_icon.add_theme_font_size_override("font_size", 8)
+		hbox.add_child(burnout_icon)
+
+	# When staff button is pressed, show extra detail
+	btn.pressed.connect(
+		func(): _show_staff_id_card(data)
+	)
+	
+	return btn
+
+func _show_staff_id_card(data: Dictionary):
+	"""Create an ID card for an individual researcher"""
+	# TODO: Adjust formatting
+	# My vision is to either have this look like an employee ID, or something similar to back of a sports trading card
+	var card = PopupPanel.new()
+	card.name = "StaffCard"
+	card.size = Vector2(350,300)
+	add_child(card)
+	
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 6)
+	card.add_child(vbox)
+	
+	var employee_label = Label.new()
+	var name_text = data.get("name")
+	var spec_text = data.get("specialization")
+	
+	employee_label.text = "%s | %s" % [name_text, spec_text.capitalize()]
+	employee_label.add_theme_font_size_override("font_size", 20)
+	vbox.add_child(employee_label)
+	
+	var trait_label = Label.new()
+	var traits = data.get("traits", [])
+	if traits.size() > 0:
+		var trait_names := [];
+		for trait_id in traits:
+			if Researcher.POSITIVE_TRAITS.has(trait_id):
+				trait_names.append(Researcher.POSITIVE_TRAITS[trait_id]["name"])
+			elif Researcher.NEGATIVE_TRAITS.has(trait_id):
+				trait_names.append(Researcher.NEGATIVE_TRAITS[trait_id]["name"])
+			else:
+				trait_names.append(trait_id.capitalize())
+		trait_label.text = "HR Notes: %s" % ", ".join(trait_names)
+	else:
+		trait_label.text = "HR Notes: N/A"
+	vbox.add_child(trait_label)
+	
+	var salary_label = Label.new()
+	var salaty_text = data.get("current_salary")
+	# maybe this could be per turn? More useful stat for user
+	salary_label.text = "Current Salary: %s/yr" % GameConfig.format_money(salaty_text) 
+	vbox.add_child(salary_label)
+	
+	var skill_label = Label.new()
+	skill_label.text = "Skill Level: %d / 10" % data.get("skill_level")
+	vbox.add_child(skill_label)
+	
+	var base_prod_label = Label.new()
+	base_prod_label.text = "Base Productivity: %d" % data.get("base_productivity")
+	vbox.add_child(base_prod_label)
+	
+	var burn_label = Label.new()
+	burn_label.text = "Burnout: %d" % data.get("burnout")
+	vbox.add_child(burn_label)
+	
+	card.popup_centered()
