@@ -107,14 +107,17 @@ func apply_audio_settings() -> void:
 	var master_db = linear_to_db(master_volume / 100.0)
 	AudioServer.set_bus_volume_db(0, master_db)
 
+	var sfx_db = 0.0
+	var music_db = 0.0
+
 	# SFX bus (index 1) - if it exists
 	if AudioServer.get_bus_count() > 1:
-		var sfx_db = linear_to_db(sfx_volume / 100.0)
+		sfx_db = linear_to_db(sfx_volume / 100.0)
 		AudioServer.set_bus_volume_db(1, sfx_db)
 
 	# Music bus (index 2) - if it exists
 	if AudioServer.get_bus_count() > 2:
-		var music_db = linear_to_db(music_volume / 100.0)
+		music_db = linear_to_db(music_volume / 100.0)
 		AudioServer.set_bus_volume_db(2, music_db)
 		print("[GameConfig] Audio settings applied - Master: %d%% (%.1f dB), SFX: %d%% (%.1f dB), Music: %d%% (%.1f dB)" % [master_volume, master_db, sfx_volume, sfx_db, music_volume, music_db])
 	elif AudioServer.get_bus_count() > 1:
