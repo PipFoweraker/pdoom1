@@ -20,13 +20,19 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	"""Display game over screen with final statistics"""
 	visible = true
 
+	# Calculate final score
+	var final_score = calculate_final_score(final_state)
+	print("[GameOverScreen] Final score: %d" % final_score)
+
 	# Stop verification tracking and get final hash
 	VerificationTracker.stop_tracking()
 	var final_hash = VerificationTracker.get_final_hash()
 
 	# Export verification data for submission (future leaderboard integration)
 	var verification_data = VerificationTracker.export_for_submission(final_state)
+	verification_data["score"] = final_score  # Include calculated score
 	print("[GameOverScreen] Game ended - Verification hash: %s..." % final_hash.substr(0, 16))
+	print("[GameOverScreen] Score: %d" % final_score)
 	print("[GameOverScreen] Full verification data ready for submission")
 
 	# TODO: Future - Add UI button to submit score to leaderboard with verification_data
@@ -45,6 +51,10 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 
 	# Build statistics display
 	var stats_text = "[center][b]FINAL STATISTICS[/b][/center]\n\n"
+
+	# Final Score (prominent display)
+	stats_text += "[center][color=gold]★ FINAL SCORE ★[/color][/center]\n"
+	stats_text += "[center][b][color=yellow]%d[/color][/b] points[/center]\n\n" % final_score
 
 	# Game duration
 	var turn = final_state.get("turn", 0)
@@ -147,3 +157,60 @@ func _on_meta_clicked(meta):
 	"""Handle URL clicks in the stats label"""
 	print("[GameOverScreen] Opening URL: %s" % meta)
 	OS.shell_open(str(meta))
+
+func calculate_final_score(state: Dictionary) -> int:
+	"""
+	Calculate final score from game state.
+
+	CRITICAL: This formula must match the server-side calculation in
+	pdoom1-website/scripts/verification_logic.py exactly!
+
+	Components:
+	- Safety Achievement: (100 - doom) * 1000    [Max: 100,000]
+	- Research Output:    papers * 5000          [~5-10 papers = 25k-50k]
+	- Team Excellence:    researchers * 2000     [~5-10 researchers = 10k-20k]
+	- Survival Duration:  turn * 500             [50 turns = 25k]
+	- Financial Success:  money * 0.1            [125k money = 12.5k]
+	- Victory Bonus:      +50000 if doom < 20%   [50k bonus]
+
+	Typical Range: 50k-250k (good game), 300k+ (excellent)
+	"""
+	var score = 0
+
+	# Extract values with defaults
+	var doom = state.get("doom", 0.0)
+	var papers = state.get("papers", 0)
+	var turn = state.get("turn", 0)
+	var money = state.get("money", 0)
+
+	# Count total researchers (all types)
+	var researchers = 0
+	researchers += state.get("safety_researchers", 0)
+	researchers += state.get("capability_researchers", 0)
+	researchers += state.get("compute_engineers", 0)
+
+	# 1. Safety Achievement (40-50% of total score)
+	var safety_score = (100 - doom) * 1000
+	score += safety_score
+
+	# 2. Research Output (20-30% of total score)
+	var paper_score = papers * 5000
+	score += paper_score
+
+	# 3. Team Excellence (10-15% of total score)
+	var team_score = researchers * 2000
+	score += team_score
+
+	# 4. Survival Duration (10-15% of total score)
+	var survival_score = turn * 500
+	score += survival_score
+
+	# 5. Financial Success (5-10% of total score)
+	var financial_score = money * 0.1
+	score += financial_score
+
+	# 6. Victory Bonus (unlocks at doom < 20%)
+	if doom < 20.0:
+		score += 50000  # Victory bonus
+
+	return int(score)
