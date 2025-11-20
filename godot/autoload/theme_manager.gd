@@ -86,6 +86,30 @@ class ThemeData:
 		"icon_doom": "res://assets/icons/doom.png",
 		"icon_paper": "res://assets/icons/paper.png",
 		"icon_reputation": "res://assets/icons/reputation.png",
+
+		# Terminal textures (CRT/scanline effects)
+		"tex_amber_scanlines": "res://assets/textures/terminal/tex_amber_scanlines_512.png",
+		"tex_amber_noise": "res://assets/textures/terminal/tex_amber_noise_512.png",
+		"tex_green_scanlines": "res://assets/textures/terminal/tex_green_scanlines_512.png",
+		"tex_green_grid": "res://assets/textures/terminal/tex_green_grid_512.png",
+		"tex_blue_dos_bg": "res://assets/textures/terminal/tex_blue_dos_bg_512.png",
+		"tex_blue_bsod_pattern": "res://assets/textures/terminal/tex_blue_bsod_pattern_512.png",
+		"tex_gray_lowcontrast": "res://assets/textures/terminal/tex_gray_lowcontrast_512.png",
+		"tex_gray_dither": "res://assets/textures/terminal/tex_gray_dither_512.png",
+		"tex_cyan_ispf": "res://assets/textures/terminal/tex_cyan_ispf_512.png",
+		"tex_cyan_border": "res://assets/textures/terminal/tex_cyan_border_512.png",
+
+		# Surface textures (backgrounds/materials)
+		"tex_grid_graphpaper_aged": "res://assets/textures/surfaces/tex_grid_graphpaper_aged_512.png",
+		"tex_grid_perforated_metal": "res://assets/textures/surfaces/tex_grid_perforated_metal_512.png",
+		"tex_grid_circuit_trace": "res://assets/textures/surfaces/tex_grid_circuit_trace_512.png",
+		"tex_concrete_institutional": "res://assets/textures/surfaces/tex_concrete_institutional_512.png",
+		"tex_linoleum_damaged": "res://assets/textures/surfaces/tex_linoleum_damaged_512.png",
+		"tex_painted_metal_panel": "res://assets/textures/surfaces/tex_painted_metal_panel_512.png",
+		"tex_plywood_stained": "res://assets/textures/surfaces/tex_plywood_stained_512.png",
+		"tex_crt_burnin": "res://assets/textures/surfaces/tex_crt_burnin_512.png",
+		"tex_oxidized_copper": "res://assets/textures/surfaces/tex_oxidized_copper_512.png",
+		"tex_bakelite_cracked": "res://assets/textures/surfaces/tex_bakelite_cracked_512.png",
 	}
 
 	func _init(theme_name: String = "default"):
