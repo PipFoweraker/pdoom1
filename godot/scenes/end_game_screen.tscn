@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c7iji1r7bycwu"]
 
 [ext_resource type="Script" path="res://scripts/end_game_screen.gd" id="1_endgame"]
-[ext_resource type="Texture2D" uid="uid://b7kv2x8pq1m6n" path="res://assets/textures/surfaces/tex_crt_burnin_512.png" id="2_texture"]
+[ext_resource type="Texture2D" path="res://assets/textures/surfaces/tex_crt_burnin_512.png" id="2_texture"]
 
 [node name="EndGameScreen" type="Control"]
 layout_mode = 3

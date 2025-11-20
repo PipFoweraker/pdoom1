@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://clk3v2kwrp1py"]
 
 [ext_resource type="Script" path="res://scripts/ui/welcome_screen.gd" id="1_welcome"]
-[ext_resource type="Texture2D" uid="uid://dywc0d2xhw1qg" path="res://assets/textures/surfaces/tex_bakelite_cracked_512.png" id="2_background"]
-[ext_resource type="Texture2D" uid="uid://b3x8qpqb5c8wk" path="res://assets/textures/terminal/tex_amber_scanlines_512.png" id="3_overlay"]
+[ext_resource type="Texture2D" path="res://assets/textures/surfaces/tex_grid_circuit_trace_512.png" id="2_background"]
+[ext_resource type="Texture2D" path="res://assets/textures/terminal/tex_green_scanlines_512.png" id="3_overlay"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
 bg_color = Color(0.2, 0.3, 0.5, 1)

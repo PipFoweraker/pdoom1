@@ -1,7 +1,7 @@
 # P(Doom) UI Style Guide
 ## Visual Design System for Godot Implementation
 
-_Last updated: 2025-10-31_
+_Last updated: 2025-11-20_
 _Status: Living document - evolving as brand identity develops_
 
 ---
@@ -168,6 +168,66 @@ pressed_content_offset = Vector2(0, 1)  # 1px down when pressed
 grain_opacity = 0.03
 scanline_opacity = 0.05
 scanline_spacing = 4  # pixels
+```
+
+### Background Texture System
+**Tileable textures** for screen backgrounds with subtle overlay effects.
+
+#### Texture Categories
+```gdscript
+# Terminal textures (CRT/scanline effects) - godot/assets/textures/terminal/
+tex_amber_scanlines    # Amber CRT scanlines
+tex_amber_noise        # Amber static noise
+tex_green_scanlines    # Green CRT scanlines
+tex_green_grid         # Green character grid
+tex_blue_dos_bg        # DOS blue background
+tex_blue_bsod_pattern  # BSOD error pattern
+tex_gray_lowcontrast   # Low contrast gray
+tex_gray_dither        # Gray dither pattern
+tex_cyan_ispf          # ISPF panel background
+tex_cyan_border        # Cyan box border pattern
+
+# Surface textures (materials) - godot/assets/textures/surfaces/
+tex_grid_graphpaper_aged     # Aged graph paper
+tex_grid_perforated_metal    # Perforated metal
+tex_grid_circuit_trace       # Circuit board traces
+tex_concrete_institutional   # Soviet concrete
+tex_linoleum_damaged         # Damaged linoleum
+tex_painted_metal_panel      # Painted metal
+tex_plywood_stained          # Stained plywood
+tex_crt_burnin               # CRT phosphor burn
+tex_oxidized_copper          # Oxidized copper traces
+tex_bakelite_cracked         # Cracked bakelite
+```
+
+#### Screen Assignments
+```gdscript
+# Format: [Background texture] + [Overlay texture at opacity]
+welcome_screen     = tex_grid_circuit_trace + tex_green_scanlines (15%)
+settings_menu      = tex_painted_metal_panel + tex_gray_dither (10%)
+pregame_setup      = tex_bakelite_cracked + tex_amber_scanlines (12%)
+leaderboard_screen = tex_oxidized_copper + tex_cyan_ispf (8%)
+end_game_screen    = tex_crt_burnin overlay (15%)
+```
+
+#### Usage in Scenes
+```gdscript
+# TextureRect with stretch_mode = 1 (tile)
+[node name="Background" type="TextureRect" parent="."]
+texture = ExtResource("2_background")
+stretch_mode = 1  # STRETCH_TILE
+
+# Overlay with low opacity
+[node name="ScanlineOverlay" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0.15)  # 15% opacity
+texture = ExtResource("3_overlay")
+stretch_mode = 1
+```
+
+#### Accessing via ThemeManager
+```gdscript
+var texture_path = ThemeManager.get_asset("tex_amber_scanlines")
+var texture = load(texture_path)
 ```
 
 ---

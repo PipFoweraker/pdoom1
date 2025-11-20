@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://bp3k6x8y9d1mn"]
 
 [ext_resource type="Script" path="res://scripts/ui/settings_menu.gd" id="1_settings"]
-[ext_resource type="Texture2D" uid="uid://coqxg5r7kv0h3" path="res://assets/textures/surfaces/tex_painted_metal_panel_512.png" id="2_background"]
-[ext_resource type="Texture2D" uid="uid://dcfxphyf6h7hv" path="res://assets/textures/terminal/tex_gray_dither_512.png" id="3_overlay"]
+[ext_resource type="Texture2D" path="res://assets/textures/surfaces/tex_painted_metal_panel_512.png" id="2_background"]
+[ext_resource type="Texture2D" path="res://assets/textures/terminal/tex_gray_dither_512.png" id="3_overlay"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
 bg_color = Color(0.2, 0.3, 0.5, 1)
