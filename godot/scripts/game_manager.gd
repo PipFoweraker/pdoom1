@@ -42,6 +42,10 @@ func start_new_game(game_seed: String = ""):
 	VerificationTracker.start_tracking(game_seed, game_version)
 	print("[GameManager] Verification tracking enabled (debug mode: ON)")
 
+	# Start gameplay music
+	MusicManager.play_context(MusicManager.MusicContext.GAMEPLAY)
+
+
 	# Start first turn (may trigger events!)
 	var turn_result = turn_manager.start_turn()
 

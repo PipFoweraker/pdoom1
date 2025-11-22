@@ -20,6 +20,14 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	"""Display game over screen with final statistics"""
 	visible = true
 
+	# Play appropriate end-game music
+	if is_victory:
+		# Victory music not yet implemented, keep gameplay music
+		pass
+	else:
+		MusicManager.play_context(MusicManager.MusicContext.DEFEAT)
+
+
 	# Calculate final score
 	var final_score = calculate_final_score(final_state)
 	print("[GameOverScreen] Final score: %d" % final_score)

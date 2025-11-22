@@ -19,6 +19,10 @@ var selected_index: int = 0
 func _ready():
 	print("[WelcomeScreen] Initializing...")
 
+	# Start menu music
+	MusicManager.play_context(MusicManager.MusicContext.MENU)
+
+
 	# Collect all menu buttons in order
 	menu_buttons = [
 		launch_lab_button,
