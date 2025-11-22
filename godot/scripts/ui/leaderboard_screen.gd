@@ -150,6 +150,25 @@ func _create_entry_row(entry, rank: int) -> HBoxContainer:
 	var row = HBoxContainer.new()
 	row.add_theme_constant_override("separation", 10)
 
+	# Highlight latest entry (just added from game over screen)
+	var is_latest = (GameConfig.latest_leaderboard_entry != "" and
+	                 entry.entry_uuid == GameConfig.latest_leaderboard_entry)
+
+	if is_latest:
+		# Add gold background panel for latest entry
+		var panel = PanelContainer.new()
+		var panel_style = StyleBoxFlat.new()
+		panel_style.bg_color = Color(0.3, 0.25, 0.1, 0.8)  # Dark gold
+		panel_style.border_width_left = 2
+		panel_style.border_width_right = 2
+		panel_style.border_color = Color(1.0, 0.84, 0.0, 1.0)  # Bright gold border
+		panel_style.corner_radius_top_left = 4
+		panel_style.corner_radius_top_right = 4
+		panel_style.corner_radius_bottom_left = 4
+		panel_style.corner_radius_bottom_right = 4
+		row.add_theme_stylebox_override("panel", panel_style)
+
+
 	# Rank container (icon + label)
 	var rank_container = HBoxContainer.new()
 	rank_container.custom_minimum_size = Vector2(80, 0)
