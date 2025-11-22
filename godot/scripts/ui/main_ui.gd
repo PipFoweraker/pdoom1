@@ -1703,12 +1703,22 @@ func _show_next_event():
 
 	log_message("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
 
-	# Blurred blocker behind event dialog panel (Fix Issue #485)
+
+	# Blurred blocker behind event dialog panel (Fix Issue #458 + #485)
+	# Add to root (get_tree().root) to ensure it blocks ALL UI interactions
 	var click_blocker := ColorRect.new()
 	click_blocker.color = Color(0.0, 0.0, 0.0, 0.6)
-	click_blocker.mouse_filter = Control.MOUSE_FILTER_STOP
+	click_blocker.mouse_filter = Control.MOUSE_FILTER_STOP  # Block all mouse events
 	click_blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	tab_manager.add_child(click_blocker)
+	click_blocker.z_index = 999  # Just below dialog but above all other UI
+	click_blocker.z_as_relative = false  # Absolute z-index
+	# Add to viewport root to cover entire screen and all UI
+	get_tree().root.add_child(click_blocker)
+
+
+
+
+
 
 	# Create event dialog - use Panel for consistent input handling
 	var dialog = Panel.new()
@@ -1874,9 +1884,9 @@ func _show_next_event():
 	# Mark this as an event dialog to prevent ESC from closing it (issue #452)
 	dialog.set_meta("is_event_dialog", true)
 
-	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
-	print("[MainUI] Adding event dialog to TabManager as overlay...")
-	tab_manager.add_child(dialog)
+	# Add dialog to viewport root (Fix #458) - ensures it's above blocker and all UI
+	print("[MainUI] Adding event dialog to viewport root as top-level overlay...")
+	get_tree().root.add_child(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000  # Very high z-index to ensure it's on top
 	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
