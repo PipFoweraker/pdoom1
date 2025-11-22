@@ -54,14 +54,6 @@ static func get_all_upgrades() -> Array[Dictionary]:
 			"category": "research"
 		},
 		{
-			"id": "cat_adoption",
-			"name": "Adopt Office Cat",
-			"description": "Morale boost! Reduces doom by 5, unlocks cat-related events",
-			"cost": 50000,
-			"effect_key": "office_cat",
-			"category": "office"
-		},
-		{
 			"id": "supply_automation",
 			"name": "Supply Management System",
 			"description": "Auto-orders supplies when low (maintains stationery without AP cost)",

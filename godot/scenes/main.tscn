@@ -22,6 +22,18 @@ grow_vertical = 2
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("1_main_gm")
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_TurnCounter"]
+bg_color = Color(0.15, 0.15, 0.2, 0.8)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.9, 0.3, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="TabManager" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -58,8 +70,10 @@ modulate = Color(0.4, 0.4, 0.5, 1)
 
 [node name="TurnLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
-text = "Turn: 0"
-theme_override_font_sizes/font_size = 14
+text = "📅 Turn: 0"
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.9, 0.9, 0.3, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_TurnCounter")
 
 [node name="Sep2" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
@@ -347,10 +361,12 @@ theme_override_font_sizes/font_size = 12
 
 [node name="EndTurnButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
-text = "Actions (Space)"
+custom_minimum_size = Vector2(180, 42)
+text = "⏎ END TURN (Space)"
 disabled = true
-theme_override_font_sizes/font_size = 12
-
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.2, 0.9, 0.9, 1)
+theme_override_colors/font_disabled_color = Color(0.4, 0.4, 0.4, 1)
 [node name="CommitPlanButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Plan (Enter)"
