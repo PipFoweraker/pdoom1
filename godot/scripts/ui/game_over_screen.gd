@@ -7,14 +7,30 @@ class_name GameOverScreen
 @onready var stats_label = $CenterContainer/PanelContainer/MarginContainer/VBox/StatsLabel
 
 var game_manager: Node
+var final_score: int = 0
+var leaderboard_entry_uuid: String = ""
+var game_start_time: float = 0.0
 
 func _ready():
 	# Initially hidden
 	visible = false
 
+	# Enable input processing for ENTER key
+	set_process_input(true)
+
 	# Connect URL click handler for AI safety links
 	if stats_label:
 		stats_label.meta_clicked.connect(_on_meta_clicked)
+
+func _input(event: InputEvent):
+	"""Handle keyboard shortcuts - ENTER to continue to leaderboard"""
+	if not visible:
+		return  # Only process input when visible
+
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
+			_continue_to_leaderboard()
+			get_viewport().set_input_as_handled()
 
 func show_game_over(is_victory: bool, final_state: Dictionary):
 	"""Display game over screen with final statistics"""
@@ -29,7 +45,7 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 
 
 	# Calculate final score
-	var final_score = calculate_final_score(final_state)
+	final_score = calculate_final_score(final_state)
 	print("[GameOverScreen] Final score: %d" % final_score)
 
 	# Stop verification tracking and get final hash
@@ -43,7 +59,28 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	print("[GameOverScreen] Score: %d" % final_score)
 	print("[GameOverScreen] Full verification data ready for submission")
 
-	# TODO: Future - Add UI button to submit score to leaderboard with verification_data
+
+	# Save score to leaderboard
+	var game_seed = GameConfig.get_display_seed()
+	var leaderboard = Leaderboard.new(game_seed)
+	var duration = Time.get_ticks_msec() / 1000.0 - game_start_time
+
+	var entry = Leaderboard.ScoreEntry.new(
+		final_score,
+		GameConfig.lab_name,
+		final_state.get("turn", 0),
+		"v0.10.4",  # Game version
+		duration
+	)
+
+	var result = leaderboard.add_score(entry)
+	leaderboard_entry_uuid = entry.entry_uuid
+	var rank = result.get("rank", -1)
+
+	print("[GameOverScreen] Score saved to leaderboard - Rank: %d" % rank)
+
+	# Store entry UUID globally for leaderboard highlighting
+	GameConfig.latest_leaderboard_entry = leaderboard_entry_uuid
 
 	# Set title and colors based on outcome
 	if is_victory:
@@ -120,6 +157,10 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	stats_text += "\n[center][color=cyan][b]LEARN ABOUT REAL AI SAFETY[/b][/color][/center]\n"
 	stats_text += "[center][color=white]The challenges in this game reflect real concerns.[/color][/center]\n"
 	stats_text += "[center][color=gray]Visit [color=dodger_blue][url=https://aisafety.info]aisafety.info[/url][/color] to learn more.[/color][/center]"
+
+	# Navigation hint
+	stats_text += "\n\n[center][color=gray]───────────────────[/color][/center]\n"
+	stats_text += "\n[center][color=gold][b]⏎ Press ENTER for Leaderboard[/b][/color][/center]"
 
 	stats_label.text = stats_text
 
@@ -222,3 +263,8 @@ func calculate_final_score(state: Dictionary) -> int:
 		score += 50000  # Victory bonus
 
 	return int(score)
+
+func _continue_to_leaderboard():
+	"""Navigate to leaderboard screen to show saved score"""
+	print("[GameOverScreen] Transitioning to leaderboard")
+	get_tree().change_scene_to_file("res://scenes/leaderboard_screen.tscn")

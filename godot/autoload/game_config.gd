@@ -22,6 +22,9 @@ var current_game_active: bool = false
 var games_played: int = 0
 var config_mode: String = "default"  # "default" = weekly seed (locked), "custom" = user configured
 
+# Leaderboard State (transient, not saved)
+var latest_leaderboard_entry: String = ""  # UUID of most recent score entry
+
 # Config file path
 const CONFIG_FILE = "user://config.cfg"
 
