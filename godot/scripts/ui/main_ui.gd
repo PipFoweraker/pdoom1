@@ -378,12 +378,12 @@ func _on_game_state_updated(state: Dictionary):
 	print("[MainUI] State updated: ", state)
 
 	# Update resource displays
-	turn_label.text = "Turn: %d" % state.get("turn", 0)
-	money_label.text = "Money: %s" % GameConfig.format_money(state.get("money", 0))
-	compute_label.text = "Compute: %.1f" % state.get("compute", 0)
-	research_label.text = "Research: %.1f" % state.get("research", 0)
-	papers_label.text = "Papers: %d" % state.get("papers", 0)
-	reputation_label.text = "Rep: %.0f" % state.get("reputation", 0)
+	turn_label.text = "📅 Turn: %d" % state.get("turn", 0)
+	money_label.text = "💰 %s" % GameConfig.format_money(state.get("money", 0))
+	compute_label.text = "🖥️ %.1f" % state.get("compute", 0)
+	research_label.text = "🔬 %.1f" % state.get("research", 0)
+	papers_label.text = "📄 %d" % state.get("papers", 0)
+	reputation_label.text = "⭐ %.0f" % state.get("reputation", 0)
 
 	# Add employee blob display to AP label (using BBCode for RichTextLabel)
 	var safety = state.get("safety_researchers", 0)
@@ -607,11 +607,13 @@ func _on_actions_available(actions: Array):
 				icon_button.expand_icon = true
 				icon_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
-			# Add keyboard shortcut number in corner (subtle)
+			# Add keyboard shortcut number badge (prominent for discoverability)
 			if action_index < 9:
 				icon_button.text = str(action_index + 1)
-				icon_button.add_theme_font_size_override("font_size", 9)
-				icon_button.add_theme_color_override("font_color", Color(1, 1, 1, 0.5))
+				icon_button.add_theme_font_size_override("font_size", 14)  # Increased from 9
+				icon_button.add_theme_color_override("font_color", Color(1, 1, 1, 1))  # Full opacity
+				icon_button.add_theme_color_override("font_outline_color", Color(0, 0, 0, 1))
+				icon_button.add_theme_constant_override("outline_size", 2)
 
 			action_index += 1
 
