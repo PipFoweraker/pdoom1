@@ -12,8 +12,10 @@ Usage:
 
 import argparse
 import os
+import shutil
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 from typing import Optional
 
@@ -177,11 +179,83 @@ class MultiPlatformBuilder:
 
         if all_success:
             print(f"\n[SUCCESS] All platforms built successfully for {self.version}")
+
+            # Create distribution ZIPs
+            zip_success = self.zip_builds()
+            if not zip_success:
+                print("\n[WARNING] Some ZIP packaging failed")
+
             print(f"\nBuilds location: {self.repo_root / 'builds'}")
         else:
             print("\n[WARNING] Some builds failed. Check errors above.")
 
         return all_success
+
+    def zip_builds(self) -> bool:
+        """Create distribution ZIPs for each platform."""
+        print("\n" + "=" * 60)
+        print("Creating Distribution Packages")
+        print("=" * 60)
+
+        success = True
+
+        # Windows: ZIP the .exe and .pck together
+        windows_dir = self.repo_root / "builds" / "windows" / self.version
+        if windows_dir.exists():
+            zip_path = windows_dir / f"PDoom-Windows-{self.version}.zip"
+            try:
+                with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                    exe_file = windows_dir / "PDoom.exe"
+                    pck_file = windows_dir / "PDoom.pck"
+
+                    if exe_file.exists():
+                        zf.write(exe_file, "PDoom.exe")
+                    if pck_file.exists():
+                        zf.write(pck_file, "PDoom.pck")
+
+                size_mb = zip_path.stat().st_size / (1024 * 1024)
+                print(f"[SUCCESS] Created {zip_path.name} ({size_mb:.1f} MB)")
+            except Exception as e:
+                print(f"[ERROR] Failed to create Windows ZIP: {e}")
+                success = False
+
+        # Linux: ZIP the executable and .pck
+        linux_dir = self.repo_root / "builds" / "linux" / self.version
+        if linux_dir.exists():
+            zip_path = linux_dir / f"PDoom-Linux-{self.version}.zip"
+            try:
+                with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                    exe_file = linux_dir / "PDoom.x86_64"
+                    pck_file = linux_dir / "PDoom.pck"
+
+                    if exe_file.exists():
+                        zf.write(exe_file, "PDoom.x86_64")
+                    if pck_file.exists():
+                        zf.write(pck_file, "PDoom.pck")
+
+                size_mb = zip_path.stat().st_size / (1024 * 1024)
+                print(f"[SUCCESS] Created {zip_path.name} ({size_mb:.1f} MB)")
+            except Exception as e:
+                print(f"[ERROR] Failed to create Linux ZIP: {e}")
+                success = False
+
+        # macOS: Rename existing .zip for consistency
+        mac_dir = self.repo_root / "builds" / "mac" / self.version
+        old_mac_zip = mac_dir / "PDoom.app.zip"
+        new_mac_zip = mac_dir / f"PDoom-macOS-{self.version}.zip"
+        if old_mac_zip.exists() and not new_mac_zip.exists():
+            try:
+                shutil.copy2(old_mac_zip, new_mac_zip)
+                size_mb = new_mac_zip.stat().st_size / (1024 * 1024)
+                print(f"[SUCCESS] Created {new_mac_zip.name} ({size_mb:.1f} MB)")
+            except Exception as e:
+                print(f"[ERROR] Failed to rename macOS ZIP: {e}")
+                success = False
+        elif new_mac_zip.exists():
+            size_mb = new_mac_zip.stat().st_size / (1024 * 1024)
+            print(f"[INFO] macOS package ready: {new_mac_zip.name} ({size_mb:.1f} MB)")
+
+        return success
 
     def list_builds(self):
         """List all created builds."""

@@ -300,9 +300,9 @@ jobs:
           draft: false
           prerelease: ${{ github.event.inputs.prerelease || contains(github.ref_name, '-') }}
           files: |
-            build-windows/**/*
-            build-linux/**/*
-            build-mac/**/*
+            build-windows/**/*.zip
+            build-linux/**/*.zip
+            build-mac/**/*.zip
             release-manifest/release_manifest.json
             release-feeds/**/*
         env:
