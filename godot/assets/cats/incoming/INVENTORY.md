@@ -147,3 +147,28 @@ godot/assets/cats/
 - Doom variants determined by percentage: 0-20%, 21-40%, 41-60%, 61-80%, 81-100%
 - ContributorManager handles fallback to default cat if contributor cat missing
 - office_cat.gd updates cat display based on doom level changes each turn
+
+---
+
+## UPDATE (2025-11-23): Simplified Implementation
+
+**Status:** ✅ 8 cats now live in game!
+
+All 8 cat images have been copied to `godot/assets/cats/simple/` and are now usable in the game with a simplified system:
+
+- **No doom variants** (for now) - each cat is shown as a static image
+- **Random selection** - office_cat.gd randomly picks one cat when adopted
+- **Immediate availability** - all cats ready to use without contributor metadata
+
+### Implementation Details
+
+- Modified [godot/scripts/ui/office_cat.gd](../../scripts/ui/office_cat.gd) to use simple random selection
+- Cats stored in `godot/assets/cats/simple/` with Godot import files
+- Cat names hardcoded in office_cat.gd (Arwen, Chuck, Chucky, Doom Cat, Luna, Mando, Missy, Nigel)
+
+### Future Enhancements (Track in GitHub issue)
+
+- [ ] Generate 5 doom-level variants per cat (happy → corrupted)
+- [ ] Implement contributor recognition system with contributors.json
+- [ ] Add ability to click cat to cycle through different cats
+- [ ] Create automated image processing pipeline for new cat submissions

@@ -1,68 +1,56 @@
 extends Control
-## Office Cat Display System
+## Office Cat Display System - Simplified
 ##
-## Displays contributor cats with doom-level variants.
-## Cats transition between 5 states based on current doom level.
-##
-## @tutorial: See docs/CONTRIBUTOR_SYSTEM.md for contributor recognition program
+## Displays random office cat from available cat images.
+## For now, just shows a single static cat image (no doom variants).
+## Future: Contributor system with doom-level variants.
 
 @onready var cat_texture: TextureRect = $VBox/CatPanel/CatTexture
 @onready var contributor_label: Label = $VBox/ContributorLabel
 @onready var doom_meter_container: Control = $VBox/DoomMeterContainer
 
-var contributor_manager: ContributorManager
-var current_doom_percentage: float = 0.0
+const CAT_IMAGES_PATH = "res://assets/cats/simple/"
+const CAT_NAMES = {
+	"web-arwen.jpg": "Arwen",
+	"web-arwen-chuck.jpg": "Arwen & Chuck",
+	"web-chucky.jpg": "Chucky",
+	"web-doom-cat.jpg": "Doom Cat",
+	"web-luna.jpg": "Luna",
+	"web-mando.jpg": "Mando",
+	"web-missy.jpg": "Missy",
+	"web-nigel.jpg": "Nigel"
+}
+
 var current_cat_image: String = ""
+var current_cat_name: String = "Office Cat"
 
 func _ready():
-	# Initialize contributor manager
-	contributor_manager = ContributorManager.new()
-	add_child(contributor_manager)
+	# Select a random cat and display it
+	select_random_cat()
+	visible = true
 
-	# Connect signals
-	contributor_manager.contributors_loaded.connect(_on_contributors_loaded)
-	contributor_manager.contributor_changed.connect(_on_contributor_changed)
-
-	# Hide by default until contributors are loaded
-	visible = false
-
-## Called when contributors are loaded
-func _on_contributors_loaded(count: int):
-	if count > 0:
-		# Select a random contributor to display
-		contributor_manager.select_random_contributor()
-		visible = true
-	else:
-		# No contributors, show default cat
-		var default_image = contributor_manager.get_default_cat_image(current_doom_percentage)
-		set_cat_image(default_image)
-		contributor_label.text = "Office Cat"
-		visible = true
-
-## Called when contributor changes
-func _on_contributor_changed(contributor: Dictionary):
-	if contributor.is_empty():
+## Select and display a random cat
+func select_random_cat() -> void:
+	var cat_files = CAT_NAMES.keys()
+	if cat_files.is_empty():
+		push_warning("No cat images available")
+		use_placeholder()
 		return
 
-	# Update contributor label
-	var contributor_name = contributor.get("name", "Unknown Contributor")
-	var contribution_types = contributor.get("contribution_types", [])
-	var type_str = ", ".join(contribution_types)
-	contributor_label.text = "%s - %s" % [contributor_name, type_str]
+	# Pick a random cat
+	var random_index = randi() % cat_files.size()
+	var cat_file = cat_files[random_index]
+	current_cat_name = CAT_NAMES[cat_file]
 
-	# Update cat image for current doom level
-	update_cat_for_doom_level(current_doom_percentage)
+	# Load and display
+	var image_path = CAT_IMAGES_PATH + cat_file
+	set_cat_image(image_path)
+	contributor_label.text = current_cat_name
 
-## Update doom level and cat image
+## Update doom level (currently does nothing, kept for compatibility)
 ## @param doom_percentage: Current doom level (0.0 to 1.0)
 func update_doom_level(doom_percentage: float) -> void:
-	current_doom_percentage = doom_percentage
-	update_cat_for_doom_level(doom_percentage)
-
-## Update cat image based on doom level
-func update_cat_for_doom_level(doom_percentage: float) -> void:
-	var image_path = contributor_manager.get_cat_image_for_doom_level(doom_percentage)
-	set_cat_image(image_path)
+	pass  # No doom variants yet
 
 ## Set cat image from path
 func set_cat_image(image_path: String) -> void:
@@ -76,6 +64,7 @@ func set_cat_image(image_path: String) -> void:
 		var texture = load(image_path) as Texture2D
 		if texture:
 			cat_texture.texture = texture
+			print("[OfficeCat] Loaded cat image: %s (%s)" % [current_cat_name, image_path])
 		else:
 			push_warning("Failed to load cat texture: " + image_path)
 			use_placeholder()
@@ -90,20 +79,10 @@ func use_placeholder() -> void:
 	placeholder_texture.size = Vector2(256, 256)
 	cat_texture.texture = placeholder_texture
 
-## Cycle to next contributor (for future feature: click to cycle)
+## Cycle to next cat (for future feature: click to cycle)
 func cycle_contributor() -> void:
-	if contributor_manager.get_contributor_count() > 1:
-		contributor_manager.select_random_contributor()
+	select_random_cat()
 
-## Get current contributor info (for tooltips, etc.)
+## Get current cat info (for tooltips, etc.)
 func get_current_contributor_info() -> String:
-	var contributor = contributor_manager.get_current_contributor()
-	if contributor.is_empty():
-		return "Default Office Cat\n\nContribute to PDoom to get your cat featured here!"
-
-	var contributor_name = contributor.get("name", "Unknown")
-	var cat_display_name = contributor.get("cat_name", "Office Cat")
-	var types = contributor.get("contribution_types", [])
-	var type_str = ", ".join(types)
-
-	return "%s's cat: %s\nContributions: %s\n\nClick to see another contributor!" % [contributor_name, cat_display_name, type_str]
+	return "%s\n\nOffice Cat - Keeping morale high!\n\nClick to see another cat!" % current_cat_name
