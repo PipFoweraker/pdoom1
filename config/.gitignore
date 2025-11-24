@@ -1,0 +1,10 @@
+# Ignore all credential files
+*.json
+
+# But keep this README
+!README.md
+!.gitignore
+
+# Example/template files are OK
+*.example.json
+*.template.json
