@@ -290,4 +290,3 @@ ALTER TABLE leaderboard_entries ADD COLUMN is_duplicate_hash BOOLEAN DEFAULT FAL
 
 **Status**: ✅ Policy finalized, ready for implementation
 **Next**: Implement VerificationTracker autoload in Godot
-

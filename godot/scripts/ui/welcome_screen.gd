@@ -51,6 +51,9 @@ func _ready():
 	# Focus first button
 	_update_button_focus()
 
+	# Start menu music
+	MusicManager.play_context(MusicManager.MusicContext.MENU)
+
 func _input(event: InputEvent):
 	"""Handle keyboard navigation matching pygame behavior"""
 	if event is InputEventKey and event.pressed and not event.echo:

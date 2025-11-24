@@ -503,4 +503,3 @@ def calculate_score_from_state(state: dict) -> int:
 **Status**: 🚀 Implementation starting now!
 **Author**: Built with Claude Code
 **License**: Part of PDoom (open source)
-

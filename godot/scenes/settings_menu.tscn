@@ -175,6 +175,29 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 16
 text = "80%"
 
+[node name="MusicVolumeRow" type="HBoxContainer" parent="VBox/SettingsContainer/AudioSettings"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Music Volume:"
+
+[node name="Slider" type="HSlider" parent="VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+value = 80.0
+
+[node name="ValueLabel" type="Label" parent="VBox/SettingsContainer/AudioSettings/MusicVolumeRow"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "80%"
+
 [node name="HSeparator2" type="HSeparator" parent="VBox/SettingsContainer"]
 layout_mode = 2
 
@@ -323,6 +346,7 @@ text = "Back"
 
 [connection signal="value_changed" from="VBox/SettingsContainer/AudioSettings/MasterVolumeRow/Slider" to="." method="_on_master_volume_changed"]
 [connection signal="value_changed" from="VBox/SettingsContainer/AudioSettings/SFXVolumeRow/Slider" to="." method="_on_sfx_volume_changed"]
+[connection signal="value_changed" from="VBox/SettingsContainer/AudioSettings/MusicVolumeRow/Slider" to="." method="_on_music_volume_changed"]
 [connection signal="item_selected" from="VBox/SettingsContainer/GraphicsSettings/QualityRow/OptionButton" to="." method="_on_graphics_quality_changed"]
 [connection signal="toggled" from="VBox/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox" to="." method="_on_fullscreen_toggled"]
 [connection signal="item_selected" from="VBox/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton" to="." method="_on_difficulty_changed"]

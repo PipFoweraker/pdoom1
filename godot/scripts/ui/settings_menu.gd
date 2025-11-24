@@ -6,6 +6,8 @@ extends Control
 @onready var master_volume_label = $VBox/SettingsContainer/AudioSettings/MasterVolumeRow/ValueLabel
 @onready var sfx_volume_slider = $VBox/SettingsContainer/AudioSettings/SFXVolumeRow/Slider
 @onready var sfx_volume_label = $VBox/SettingsContainer/AudioSettings/SFXVolumeRow/ValueLabel
+@onready var music_volume_slider = $VBox/SettingsContainer/AudioSettings/MusicVolumeRow/Slider
+@onready var music_volume_label = $VBox/SettingsContainer/AudioSettings/MusicVolumeRow/ValueLabel
 @onready var graphics_quality_option = $VBox/SettingsContainer/GraphicsSettings/QualityRow/OptionButton
 @onready var fullscreen_checkbox = $VBox/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox
 @onready var difficulty_option = $VBox/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton
@@ -84,6 +86,9 @@ func update_ui_from_game_config():
 	sfx_volume_slider.value = GameConfig.sfx_volume
 	sfx_volume_label.text = "%d%%" % GameConfig.sfx_volume
 
+	music_volume_slider.value = GameConfig.music_volume
+	music_volume_label.text = "%d%%" % GameConfig.music_volume
+
 	graphics_quality_option.selected = GameConfig.graphics_quality
 	fullscreen_checkbox.button_pressed = GameConfig.fullscreen
 	difficulty_option.selected = GameConfig.difficulty
@@ -99,6 +104,12 @@ func _on_sfx_volume_changed(value: float):
 	sfx_volume_label.text = "%d%%" % int(value)
 	# Update GameConfig (will apply when SFX bus is implemented)
 	GameConfig.set_setting("sfx_volume", int(value), false)
+
+func _on_music_volume_changed(value: float):
+	"""Handle Music volume slider change"""
+	music_volume_label.text = "%d%%" % int(value)
+	# Update GameConfig (will apply to Music bus automatically)
+	GameConfig.set_setting("music_volume", int(value), false)
 
 func _on_graphics_quality_changed(index: int):
 	"""Handle graphics quality dropdown change"""

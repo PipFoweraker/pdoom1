@@ -46,6 +46,9 @@ func _ready():
 	# Start session tracking
 	game_start_time = Time.get_ticks_msec() / 1000.0
 
+	# Start gameplay music
+	MusicManager.play_context(MusicManager.MusicContext.GAMEPLAY)
+
 	update_ui()
 	show_message("Welcome to P(Doom)! Manage your AI safety lab wisely.")
 
@@ -180,6 +183,9 @@ func handle_game_over():
 	# Calculate game duration
 	var game_end_time = Time.get_ticks_msec() / 1000.0
 	var duration = game_end_time - game_start_time
+
+	# Play defeat music
+	MusicManager.play_context(MusicManager.MusicContext.DEFEAT)
 
 	# Create score entry
 	var score_entry = LeaderboardClass.ScoreEntry.new(
