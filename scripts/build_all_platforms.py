@@ -202,9 +202,11 @@ class MultiPlatformBuilder:
         # Windows: ZIP the .exe and .pck together
         windows_dir = self.repo_root / "builds" / "windows" / self.version
         if windows_dir.exists():
-            zip_path = windows_dir / f"PDoom-Windows-{self.version}.zip"
+            zip_path_versioned = windows_dir / f"PDoom-Windows-{self.version}.zip"
+            zip_path_simple = windows_dir / "PDoom-Windows.zip"
             try:
-                with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zf:
+                # Create versioned zip
+                with zipfile.ZipFile(zip_path_versioned, "w", zipfile.ZIP_DEFLATED) as zf:
                     exe_file = windows_dir / "PDoom.exe"
                     pck_file = windows_dir / "PDoom.pck"
 
@@ -213,8 +215,12 @@ class MultiPlatformBuilder:
                     if pck_file.exists():
                         zf.write(pck_file, "PDoom.pck")
 
-                size_mb = zip_path.stat().st_size / (1024 * 1024)
-                print(f"[SUCCESS] Created {zip_path.name} ({size_mb:.1f} MB)")
+                size_mb = zip_path_versioned.stat().st_size / (1024 * 1024)
+                print(f"[SUCCESS] Created {zip_path_versioned.name} ({size_mb:.1f} MB)")
+
+                # Also create simple-named zip for website compatibility
+                shutil.copy2(zip_path_versioned, zip_path_simple)
+                print(f"[SUCCESS] Created {zip_path_simple.name} (copy for website)")
             except Exception as e:
                 print(f"[ERROR] Failed to create Windows ZIP: {e}")
                 success = False
