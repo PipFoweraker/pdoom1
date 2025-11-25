@@ -9,9 +9,9 @@ var game_seed: String = ""  # Empty = weekly challenge seed
 var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard
 
 # Audio Settings
-var master_volume: int = 80  # 0-100
-var sfx_volume: int = 80  # 0-100
-var music_volume: int = 80  # 0-100
+var master_volume: int = 50  # 0-100
+var sfx_volume: int = 50  # 0-100
+var music_volume: int = 50  # 0-100
 
 # Graphics Settings
 var graphics_quality: int = 1  # 0=Low, 1=Medium, 2=High
