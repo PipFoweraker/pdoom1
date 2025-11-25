@@ -11,17 +11,6 @@
 [ext_resource type="PackedScene" uid="uid://officecat123456" path="res://scenes/ui/office_cat.tscn" id="9_officecat"]
 [ext_resource type="PackedScene" uid="uid://cnj8yk4x5oopm" path="res://scenes/pause_menu.tscn" id="10_pausemenu"]
 
-[node name="Main" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="GameManager" type="Node" parent="."]
-script = ExtResource("1_main_gm")
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_TurnCounter"]
 bg_color = Color(0.15, 0.15, 0.2, 0.8)
 border_width_left = 2
@@ -33,6 +22,17 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameManager" type="Node" parent="."]
+script = ExtResource("1_main_gm")
 
 [node name="TabManager" type="Control" parent="."]
 layout_mode = 1
