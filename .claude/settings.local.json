@@ -49,7 +49,8 @@
       "Bash(feature/ui-improvements-446-434 )",
       "Bash(fix-critical-gameplay-bugs-382 )",
       "Bash(phase2-beta-prep-v0.9.1)",
-      "Bash(git pull:*)"
+      "Bash(git pull:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []

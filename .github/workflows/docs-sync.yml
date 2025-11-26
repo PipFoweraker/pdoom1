@@ -1,0 +1,125 @@
+name: Documentation Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'godot/scripts/core/game_state.gd'
+      - 'godot/scripts/core/actions.gd'
+      - 'godot/scripts/core/events.gd'
+      - 'docs/mechanics/**'
+      - 'scripts/generate_mechanics_docs.py'
+      - 'scripts/sync_website_docs.py'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'godot/scripts/core/game_state.gd'
+      - 'godot/scripts/core/actions.gd'
+      - 'godot/scripts/core/events.gd'
+      - 'docs/mechanics/**'
+      - 'scripts/generate_mechanics_docs.py'
+      - 'scripts/sync_website_docs.py'
+  workflow_dispatch:
+
+jobs:
+  check-docs-sync:
+    name: Check Documentation Sync
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check if mechanics docs are in sync
+        id: check_sync
+        run: |
+          python scripts/generate_mechanics_docs.py --check
+        continue-on-error: true
+
+      - name: Update mechanics docs if out of sync
+        if: steps.check_sync.outcome == 'failure'
+        run: |
+          python scripts/generate_mechanics_docs.py
+
+      - name: Sync docs to website export format
+        run: |
+          python scripts/sync_website_docs.py
+
+      - name: Check for uncommitted changes
+        id: check_changes
+        run: |
+          if [[ -n $(git status --porcelain docs/mechanics/) ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "Documentation is out of sync!"
+            git diff docs/mechanics/
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "Documentation is in sync"
+          fi
+
+      - name: Fail if docs are out of sync (PR only)
+        if: github.event_name == 'pull_request' && steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          echo "ERROR: Mechanics documentation is out of sync with game code!"
+          echo "Please run: python scripts/generate_mechanics_docs.py"
+          echo "Then commit the updated docs/mechanics/ files."
+          exit 1
+
+      - name: Auto-commit updated docs (main branch only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/mechanics/
+          git commit -m "docs: Auto-update mechanics documentation from game code changes"
+          git push
+
+      - name: Upload website export artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: website-docs-export
+          path: _website_export/
+          retention-days: 30
+
+  comment-pr:
+    name: Comment on PR
+    runs-on: ubuntu-latest
+    needs: check-docs-sync
+    if: github.event_name == 'pull_request' && always()
+
+    steps:
+      - name: Download website export
+        uses: actions/download-artifact@v4
+        with:
+          name: website-docs-export
+
+      - name: Comment PR with preview info
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const manifest = JSON.parse(fs.readFileSync('manifest.json', 'utf8'));
+
+            const comment = `## 📚 Documentation Preview
+
+            Mechanics docs have been exported for website preview:
+
+            **Files exported:**
+            ${manifest.files.map(f => `- \`${f}\``).join('\n')}
+
+            **Last updated:** ${manifest.updated}
+
+            Download the artifact from this workflow run to preview the website export.
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.name,
+              body: comment
+            });

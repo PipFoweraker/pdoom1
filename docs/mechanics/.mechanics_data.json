@@ -1,0 +1,132 @@
+{
+  "reputation": {
+    "name": "reputation",
+    "description": "Reputation & Public Opinion System",
+    "constants": {
+      "reputation": {
+        "name": "reputation",
+        "value": 50.0,
+        "type": "float",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 10,
+        "comment": null
+      }
+    },
+    "related_files": [
+      "godot/scripts/core/game_state.gd",
+      "godot/scripts/core/events.gd",
+      "godot/scripts/core/actions.gd"
+    ],
+    "last_updated": "2025-11-26T16:08:51.632352"
+  },
+  "resources": {
+    "name": "resources",
+    "description": "Core Game Resources",
+    "constants": {
+      "money": {
+        "name": "money",
+        "value": 245000.0,
+        "type": "float",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 6,
+        "comment": "Updated from player feedback (issue #436)"
+      },
+      "compute": {
+        "name": "compute",
+        "value": 100.0,
+        "type": "float",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 7,
+        "comment": null
+      },
+      "research": {
+        "name": "research",
+        "value": 0.0,
+        "type": "float",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 8,
+        "comment": "Generated from compute"
+      },
+      "papers": {
+        "name": "papers",
+        "value": 0.0,
+        "type": "float",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 9,
+        "comment": null
+      },
+      "doom": {
+        "name": "doom",
+        "value": 50.0,
+        "type": "float",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 11,
+        "comment": "0-100, lose at 100"
+      },
+      "action_points": {
+        "name": "action_points",
+        "value": 3,
+        "type": "int",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 12,
+        "comment": null
+      },
+      "stationery": {
+        "name": "stationery",
+        "value": 100.0,
+        "type": "float",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 13,
+        "comment": "Office supplies, depletes with staff usage"
+      }
+    },
+    "related_files": [
+      "godot/scripts/core/game_state.gd",
+      "godot/scripts/core/turn_manager.gd"
+    ],
+    "last_updated": "2025-11-26T16:08:51.632379"
+  },
+  "personnel": {
+    "name": "personnel",
+    "description": "Personnel & Hiring System",
+    "constants": {
+      "safety_researchers": {
+        "name": "safety_researchers",
+        "value": 0,
+        "type": "int",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 21,
+        "comment": null
+      },
+      "capability_researchers": {
+        "name": "capability_researchers",
+        "value": 0,
+        "type": "int",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 22,
+        "comment": null
+      },
+      "compute_engineers": {
+        "name": "compute_engineers",
+        "value": 0,
+        "type": "int",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 23,
+        "comment": null
+      },
+      "managers": {
+        "name": "managers",
+        "value": 0,
+        "type": "int",
+        "source_file": "godot/scripts/core/game_state.gd",
+        "line_number": 24,
+        "comment": "Each manager can handle 9 employees"
+      }
+    },
+    "related_files": [
+      "godot/scripts/core/game_state.gd",
+      "godot/scripts/core/researcher.gd"
+    ],
+    "last_updated": "2025-11-26T16:08:51.632384"
+  }
+}
