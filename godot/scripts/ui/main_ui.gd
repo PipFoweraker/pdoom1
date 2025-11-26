@@ -1832,10 +1832,10 @@ func _show_next_event():
 			var cost = costs[resource]
 			var available = 0
 
-			# Special handling for action_points - use available (uncommitted) AP
-			# Events can use any AP that hasn't been committed to actions yet
+			# Special handling for action_points - use total AP (FIX #453)
+			# Must match can_afford() logic in GameState:130
 			if resource == "action_points":
-				available = current_state.get("available_ap", 0)
+				available = current_state.get("action_points", 0)
 			else:
 				available = current_state.get(resource, 0)
 
