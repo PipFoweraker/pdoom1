@@ -1,7 +1,7 @@
 # P(Doom) UI Layout Guide
 
-**Version:** 0.10.3
-**Date:** 2025-11-17
+**Version:** 0.10.7
+**Date:** 2025-11-26
 **Purpose:** Comprehensive reference for UI zones to prevent layout confusion in future updates
 
 ---
@@ -315,19 +315,42 @@ The 4 zones are designed to be a **tightly clustered cohesive unit**, like the H
 ```
 Total ContentArea = 100%
 
-├─ LeftPanel:   22% (stretch_ratio 0.22)
-├─ MiddlePanel: 28% (stretch_ratio 0.28)
-└─ RightPanel:  50% (stretch_ratio 0.5)
+├─ LeftPanel:   30% (stretch_ratio 0.3)  [UPDATED v0.10.7]
+├─ MiddlePanel: 30% (stretch_ratio 0.3)  [UPDATED v0.10.7]
+└─ RightPanel:  40% (stretch_ratio 0.4)  [UPDATED v0.10.7]
 ```
+
+**Note:** Percentages updated in v0.10.7 for better balance and space utilization.
 
 ### Right Panel Height Distribution (VBoxContainer):
 ```
 Total RightPanel = 100%
 
 ├─ UpgradesScroll: 45% (stretch_ratio 0.45)
-├─ QueuePanel:     20% (fixed 80px minimum)
+├─ QueuePanel:     Responsive (size_flags_vertical = 0)  [UPDATED v0.10.7]
 └─ MessageScroll:  35% (stretch_ratio 0.35)
 ```
+
+### Responsive Sizing Philosophy (v0.10.7):
+
+**All layout elements now use percentage-based sizing instead of fixed pixels.**
+
+| Element | Old (Fixed Pixels) | New (Responsive) |
+|---------|-------------------|------------------|
+| LeftPanel | custom_minimum_size: Vector2(80, 0) | size_flags_stretch_ratio: 0.3 |
+| MiddlePanel | size_flags_stretch_ratio: 0.28 | size_flags_stretch_ratio: 0.3 |
+| RightPanel | size_flags_stretch_ratio: 0.5 | size_flags_stretch_ratio: 0.4 |
+| TopBar | custom_minimum_size: Vector2(0, 40) | (removed - responsive height) |
+| InfoBar | custom_minimum_size: Vector2(0, 80) | size_flags_vertical: 0 |
+| QueuePanel | custom_minimum_size: Vector2(0, 80) | size_flags_vertical: 0 |
+| DoomMeterPanel | custom_minimum_size: Vector2(140, 140) | size_flags: 4 (shrink center) |
+| EndTurnButton | custom_minimum_size: Vector2(180, 42) | size_flags_horizontal: 3 (fill) |
+
+**Benefits:**
+- Layout responds naturally to window resizing
+- Better space utilization across different screen sizes
+- More consistent with modern UI design patterns
+- Easier to maintain (no magic pixel numbers)
 
 ---
 
@@ -486,6 +509,14 @@ When making UI changes, test these scenarios:
 ---
 
 ## Version History
+
+### v0.10.7 (2025-11-26) - Responsive Layout Redesign
+- **Converted all fixed-pixel sizing to percentage-based responsive layout**
+- Updated ContentArea panel ratios: Left 22%→30%, Middle 28%→30%, Right 50%→40%
+- Removed custom_minimum_size from TopBar, InfoBar, QueuePanel, DoomMeterPanel, EndTurnButton
+- Layout now responds naturally to window resizing
+- Better space utilization and balance across all panels
+- Completes Issue #434 (UI Layout Redesign)
 
 ### v0.10.3 (2025-11-17) - UI Polish & Event Fix
 - Fixed event dialog queue system (sequential presentation)
