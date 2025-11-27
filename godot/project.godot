@@ -46,3 +46,9 @@ enabled=PackedStringArray()
 
 textures/vram_compression/import_etc2_astc=true
 environment/default_environment="res://default_env.tres"
+
+[steam]
+
+initialization/app_id=0
+initialization/initialize_on_startup=false
+initialization/embed_callbacks=false
