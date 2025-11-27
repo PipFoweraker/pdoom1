@@ -82,6 +82,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"trigger_type": "random",
 			"probability": 0.10,
 			"min_turn": 8,
+			"trigger_condition": "researchers > 0",
 			"repeatable": true,
 			"options": [
 				{
@@ -204,6 +205,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A well-funded competitor is trying to recruit your best researchers!",
 			"type": "popup",
 			"trigger_type": "random",
+			"trigger_condition": "researchers > 0",
 			"probability": 0.08,
 			"min_turn": 10,
 			"repeatable": true,
@@ -284,6 +286,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Your compute infrastructure suffered a major failure!",
 			"type": "popup",
 			"trigger_type": "random",
+			"trigger_condition":"money >= 20000",
 			"probability": 0.05,
 			"min_turn": 12,
 			"repeatable": true,
@@ -342,6 +345,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Two researchers are in a heated disagreement that's disrupting the entire team. Productivity is suffering.",
 			"type": "popup",
 			"trigger_type": "random",
+			"trigger_condition": "researchers > 0",
 			"probability": 0.10,
 			"min_turn": 8,
 			"repeatable": true,
@@ -374,6 +378,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A formal complaint has been filed. This requires immediate and careful attention.",
 			"type": "popup",
 			"trigger_type": "random",
+			"trigger_condition": "researchers > 0",
 			"probability": 0.06,
 			"min_turn": 10,
 			"repeatable": true,
@@ -437,6 +442,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A valued researcher is struggling with severe stress and anxiety. They've requested time off.",
 			"type": "popup",
 			"trigger_type": "random",
+			"trigger_condition": "researchers > 0",
 			"probability": 0.08,
 			"min_turn": 12,
 			"repeatable": true,
@@ -501,6 +507,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A senior researcher has been caught violating company policy. Others are watching how you respond.",
 			"type": "popup",
 			"trigger_type": "random",
+			"trigger_condition": "researchers > 0",
 			"probability": 0.07,
 			"min_turn": 10,
 			"repeatable": true,
@@ -533,6 +540,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Someone leaked your unpublished safety research to a competitor lab. They're using it to accelerate their capabilities work.",
 			"type": "popup",
 			"trigger_type": "random",
+			"trigger_condition": "researchers > 0",
 			"probability": 0.08,
 			"min_turn": 12,
 			"repeatable": true,
@@ -840,6 +848,10 @@ static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumbe
 		"random":
 			# Random chance after min turn
 			if state.turn < event.get("min_turn", 0):
+				return false
+			# Checks trigger condition if available
+			var cond = event.get("trigger_condition", "")
+			if cond != "" and not evaluate_condition(cond, state):
 				return false
 			var event_roll = rng.randf()
 
