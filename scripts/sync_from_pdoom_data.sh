@@ -1,4 +1,4 @@
-#!/bin/bash
+# !/bin/bash
 # Sync historical data from pdoom-data repository to pdoom1
 # This script is run FROM pdoom1 repository
 # Usage: ./scripts/sync_from_pdoom_data.sh [pdoom_data_repo_path]
@@ -8,7 +8,7 @@ set -e  # Exit on error
 PDOOM1_REPO="$(pwd)"
 PDOOM_DATA_REPO="${1:-../pdoom-data}"
 
-echo "=== pdoom-data → pdoom1 Sync Pipeline ==="
+echo "=== pdoom-data  ->  pdoom1 Sync Pipeline ==="
 echo "Source: $PDOOM_DATA_REPO"
 echo "Target: $PDOOM1_REPO"
 

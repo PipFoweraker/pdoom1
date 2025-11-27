@@ -13,31 +13,31 @@ The P(Doom) UI follows a classic RTS-inspired layout with distinct, purpose-driv
 ## Visual Zone Map
 
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│ TOP BAR - Resource Display                                     [E]    │
-│ Turn | Money | Compute | Research | Papers | Rep | AP         Employees│
-├──────────┬─────────────────────────────────────┬──────────────────────┤
-│          │                                     │                      │
-│  LEFT    │         MIDDLE PANEL                │    RIGHT PANEL       │
-│  PANEL   │                                     │                      │
-│          │  ┌─────────────────────────┐        │  Upgrades:           │
-│ Actions: │  │   [ORANGE] P(DOOM)      │        │  [upgrade list]      │
-│          │  └─────────────────────────┘        │                      │
-│ [1] Act1 │                                     │                      │
-│ [2] Act2 │  ┌──────┐  ┌────────┐              │  Action Queue:       │
-│ [3] Act3 │  │GREEN │  │ BLUE   │              │  [queued actions]    │
-│ [4] Act4 │  │ CAT  │  │ 58.5%  │              │                      │
-│ [5] Act5 │  │      │  ├────────┤              │                      │
-│ [6] Act6 │  │IMAGE │  │PURPLE  │              │  Message Log:        │
-│ [7] Act7 │  │      │  │ DOOM   │              │  [game messages]     │
-│ [8] Act8 │  │      │  │ METER  │              │                      │
-│ [9] Act9 │  └──────┘  └────────┘              │                      │
-│          │                                     │                      │
-├──────────┴─────────────────────────────────────┴──────────────────────┤
-│ INFO BAR - Hover over actions to see details...                       │
-├────────────────────────────────────────────────────────────────────────┤
-│ [Init] [Hire SR] [Reserve AP] [Clear] [Actions] [Plan]  Phase: ...  [N]│
-└────────────────────────────────────────────────────────────────────────┘
++--------------------------------------------------------------------------+
+| TOP BAR - Resource Display                                     [E]    |
+| Turn | Money | Compute | Research | Papers | Rep | AP         Employees|
+|-----------+-------------------------------------+-----------------------|
+|          |                                     |                      |
+|  LEFT    |         MIDDLE PANEL                |    RIGHT PANEL       |
+|  PANEL   |                                     |                      |
+|          |  +---------------------------+        |  Upgrades:           |
+| Actions: |  |   [ORANGE] P(DOOM)      |        |  [upgrade list]      |
+|          |  `---------------------------`        |                      |
+| [1] Act1 |                                     |                      |
+| [2] Act2 |  +--------+  +----------+              |  Action Queue:       |
+| [3] Act3 |  |GREEN |  | BLUE   |              |  [queued actions]    |
+| [4] Act4 |  | CAT  |  | 58.5%  |              |                      |
+| [5] Act5 |  |      |  |----------|              |                      |
+| [6] Act6 |  |IMAGE |  |PURPLE  |              |  Message Log:        |
+| [7] Act7 |  |      |  | DOOM   |              |  [game messages]     |
+| [8] Act8 |  |      |  | METER  |              |                      |
+| [9] Act9 |  `--------`  `----------`              |                      |
+|          |                                     |                      |
+|-----------+-------------------------------------+-----------------------|
+| INFO BAR - Hover over actions to see details...                       |
+|--------------------------------------------------------------------------|
+| [Init] [Hire SR] [Reserve AP] [Clear] [Actions] [Plan]  Phase: ...  [N]|
+`--------------------------------------------------------------------------`
 ```
 
 ---
@@ -116,18 +116,18 @@ The P(Doom) UI follows a classic RTS-inspired layout with distinct, purpose-driv
 #### Overall Structure:
 ```
 MiddlePanel (VBoxContainer, alignment = 2 = bottom aligned)
-├── TitleZone (CenterContainer)
-│   └── TitleLabel: "P(DOOM)"
-└── CoreZone (HBoxContainer, separation = 0)
-    ├── CatZone (CenterContainer)
-    │   └── OfficeCat (instance)
-    └── RightZones (VBoxContainer, separation = 0)
-        ├── NumericDoomZone (CenterContainer)
-        │   └── NumericDoomLabel: "58.5%"
-        └── DoomMeterZone (CenterContainer)
-            └── DoomMeterPanel (PanelContainer, 140x140)
-                └── MarginContainer (2px margins)
-                    └── DoomMeter (instance)
+|--- TitleZone (CenterContainer)
+|   `--- TitleLabel: "P(DOOM)"
+`--- CoreZone (HBoxContainer, separation = 0)
+    |--- CatZone (CenterContainer)
+    |   `--- OfficeCat (instance)
+    `--- RightZones (VBoxContainer, separation = 0)
+        |--- NumericDoomZone (CenterContainer)
+        |   `--- NumericDoomLabel: "58.5%"
+        `--- DoomMeterZone (CenterContainer)
+            `--- DoomMeterPanel (PanelContainer, 140x140)
+                `--- MarginContainer (2px margins)
+                    `--- DoomMeter (instance)
 ```
 
 #### The 4 Zones (Color-Coded):
@@ -273,7 +273,7 @@ The 4 zones are designed to be a **tightly clustered cohesive unit**, like the H
   - **Plan (Enter)** - Commit plan and reserve remaining AP
 
 **Button Compression (2025-11-17):**
-- Text shortened for compactness (e.g., "Init Game" → "Init")
+- Text shortened for compactness (e.g., "Init Game"  ->  "Init")
 - Font size reduced to 12px
 - Separation reduced to 3px
 - Removed expand flag - buttons stay compact on left side
@@ -315,9 +315,9 @@ The 4 zones are designed to be a **tightly clustered cohesive unit**, like the H
 ```
 Total ContentArea = 100%
 
-├─ LeftPanel:   30% (stretch_ratio 0.3)  [UPDATED v0.10.7]
-├─ MiddlePanel: 30% (stretch_ratio 0.3)  [UPDATED v0.10.7]
-└─ RightPanel:  40% (stretch_ratio 0.4)  [UPDATED v0.10.7]
+|-- LeftPanel:   30% (stretch_ratio 0.3)  [UPDATED v0.10.7]
+|-- MiddlePanel: 30% (stretch_ratio 0.3)  [UPDATED v0.10.7]
+`-- RightPanel:  40% (stretch_ratio 0.4)  [UPDATED v0.10.7]
 ```
 
 **Note:** Percentages updated in v0.10.7 for better balance and space utilization.
@@ -326,9 +326,9 @@ Total ContentArea = 100%
 ```
 Total RightPanel = 100%
 
-├─ UpgradesScroll: 45% (stretch_ratio 0.45)
-├─ QueuePanel:     Responsive (size_flags_vertical = 0)  [UPDATED v0.10.7]
-└─ MessageScroll:  35% (stretch_ratio 0.35)
+|-- UpgradesScroll: 45% (stretch_ratio 0.45)
+|-- QueuePanel:     Responsive (size_flags_vertical = 0)  [UPDATED v0.10.7]
+`-- MessageScroll:  35% (stretch_ratio 0.35)
 ```
 
 ### Responsive Sizing Philosophy (v0.10.7):
@@ -356,7 +356,7 @@ Total RightPanel = 100%
 
 ## Common Mistakes to Avoid
 
-### ❌ DON'T:
+### ERROR DON'T:
 1. **Add doom back to top bar** - It was intentionally removed for clarity
 2. **Add spacing to CoreZone or RightZones** - Zones must be tightly clustered
 3. **Increase cat size** - It's already been reduced 30% for balance
@@ -364,7 +364,7 @@ Total RightPanel = 100%
 5. **Expand control buttons** - They've been compressed for better space usage
 6. **Modify middle panel alignment** - Bottom alignment is intentional (RTS style)
 
-### ✅ DO:
+### SUCCESS DO:
 1. **Keep 4 zones tightly clustered** - They're a cohesive unit
 2. **Maintain zero spacing** between CoreZone elements
 3. **Use color-coding** when discussing zones (Orange/Green/Blue/Purple)
@@ -440,34 +440,34 @@ Total RightPanel = 100%
 When adding new UI elements, follow these guidelines:
 
 ### Adding to Top Bar:
-- ✅ New resources (e.g., "Influence", "Tech Level")
-- ❌ Dynamic text that changes frequently (use message log instead)
-- ❌ Doom percentage (it's in middle panel now)
+- SUCCESS New resources (e.g., "Influence", "Tech Level")
+- ERROR Dynamic text that changes frequently (use message log instead)
+- ERROR Doom percentage (it's in middle panel now)
 
 ### Adding to Left Panel:
-- ✅ New actions (auto-managed by GameActions)
-- ✅ Submenus for related actions (e.g., hiring submenu)
-- ❌ Static information (use info bar)
+- SUCCESS New actions (auto-managed by GameActions)
+- SUCCESS Submenus for related actions (e.g., hiring submenu)
+- ERROR Static information (use info bar)
 
 ### Adding to Middle Panel:
-- ⚠️ **EXTREME CAUTION** - This is the visual centerpiece
-- ✅ Alternative displays that swap with cat/doom (e.g., future features)
-- ❌ Additional permanent elements (it's already 4 zones)
+- WARNING **EXTREME CAUTION** - This is the visual centerpiece
+- SUCCESS Alternative displays that swap with cat/doom (e.g., future features)
+- ERROR Additional permanent elements (it's already 4 zones)
 
 ### Adding to Right Panel:
-- ✅ New upgrade types (auto-managed by GameUpgrades)
-- ✅ Additional info sections (ensure proper spacing)
-- ❌ Action queue modifications (format is intentional)
+- SUCCESS New upgrade types (auto-managed by GameUpgrades)
+- SUCCESS Additional info sections (ensure proper spacing)
+- ERROR Action queue modifications (format is intentional)
 
 ### Adding to Info Bar:
-- ✅ Enhanced action/upgrade descriptions
-- ❌ Permanent text (it's for hover details only)
-- ❌ Height changes (fixed 60px to prevent flicker)
+- SUCCESS Enhanced action/upgrade descriptions
+- ERROR Permanent text (it's for hover details only)
+- ERROR Height changes (fixed 60px to prevent flicker)
 
 ### Adding to Bottom Bar:
-- ✅ Essential control buttons (keep text short!)
-- ⚠️ Phase info additions (use BBCode, keep concise)
-- ❌ Expanding buttons (compression is intentional)
+- SUCCESS Essential control buttons (keep text short!)
+- WARNING Phase info additions (use BBCode, keep concise)
+- ERROR Expanding buttons (compression is intentional)
 
 ---
 
@@ -512,7 +512,7 @@ When making UI changes, test these scenarios:
 
 ### v0.10.7 (2025-11-26) - Responsive Layout Redesign
 - **Converted all fixed-pixel sizing to percentage-based responsive layout**
-- Updated ContentArea panel ratios: Left 22%→30%, Middle 28%→30%, Right 50%→40%
+- Updated ContentArea panel ratios: Left 22% -> 30%, Middle 28% -> 30%, Right 50% -> 40%
 - Removed custom_minimum_size from TopBar, InfoBar, QueuePanel, DoomMeterPanel, EndTurnButton
 - Layout now responds naturally to window resizing
 - Better space utilization and balance across all panels
@@ -520,18 +520,18 @@ When making UI changes, test these scenarios:
 
 ### v0.10.3 (2025-11-17) - UI Polish & Event Fix
 - Fixed event dialog queue system (sequential presentation)
-- Reduced cat size by 30% (280×350 → 196×245)
-- Removed all spacing between central zones (CoreZone: 10→0, RightZones: 5→0)
-- Reduced doom meter size (150×150 → 140×140)
-- Reduced numeric doom font (20px → 18px)
-- Compressed bottom control buttons (separation 5→3, font 14→12, text shortened)
+- Reduced cat size by 30% (280x350  ->  196x245)
+- Removed all spacing between central zones (CoreZone: 10 -> 0, RightZones: 5 -> 0)
+- Reduced doom meter size (150x150  ->  140x140)
+- Reduced numeric doom font (20px  ->  18px)
+- Compressed bottom control buttons (separation 5 -> 3, font 14 -> 12, text shortened)
 - Created comprehensive UI zone documentation (this file)
 
 ### v0.10.2 (2025-11-16) - Middle Panel Restructure
 - Restructured MiddlePanel into 4-zone layout (Orange/Green/Blue/Purple)
 - Removed doom from top bar (moved to middle panel)
 - Updated main_ui.gd references for new node paths
-- Fixed office cat positioning issue (layout_mode 3→2)
+- Fixed office cat positioning issue (layout_mode 3 -> 2)
 
 ### Previous Versions:
 - See [CHANGES_COMPLETED.md](../ui_changes_20251117/CHANGES_COMPLETED.md) for full history

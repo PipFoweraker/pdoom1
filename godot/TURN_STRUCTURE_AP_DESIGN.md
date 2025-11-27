@@ -178,16 +178,16 @@ for option in event_options:
 ### Risk/Reward Trade-off
 
 **Commit All AP** (Current behavior):
-- ✅ Maximum actions per turn
-- ✅ Guaranteed progress
-- ❌ Cannot respond to events optimally
-- ❌ Forced to take "defer" options
+- SUCCESS Maximum actions per turn
+- SUCCESS Guaranteed progress
+- ERROR Cannot respond to events optimally
+- ERROR Forced to take "defer" options
 
 **Reserve AP** (New strategy):
-- ✅ Can take powerful event options
-- ✅ Reactive capability
-- ❌ Fewer guaranteed actions
-- ❌ AP wasted if no events occur
+- SUCCESS Can take powerful event options
+- SUCCESS Reactive capability
+- ERROR Fewer guaranteed actions
+- ERROR AP wasted if no events occur
 
 ### Example Scenarios
 
@@ -222,7 +222,7 @@ Turn 5: 3 AP total
 
 ## Implementation Phases
 
-### Phase 1: Core Infrastructure ✅ (Done)
+### Phase 1: Core Infrastructure SUCCESS (Done)
 - [x] GameState tracks committed vs reserved AP
 - [x] Visual queue shows committed actions
 - [x] AP display shows split
@@ -275,7 +275,7 @@ Turn 5: 3 AP total
 1. **Always offer Tier 0 option** - No AP = viable choice
 2. **AP cost scales with impact** - Bigger effects = more AP
 3. **Resource + AP costs** - Most powerful options cost both
-4. **Diminishing returns** - 3 AP option ≠ 3× better than 1 AP
+4. **Diminishing returns** - 3 AP option != 3x better than 1 AP
 
 ---
 
@@ -289,8 +289,8 @@ Turn 5: 3 AP total
 ### AP Reserve Value
 ```
 Expected value of reserving 1 AP:
-= P(event) × E(event_benefit | event) × P(have_AP | event)
-= 0.4 × avg_benefit × 1.0
+= P(event) x E(event_benefit | event) x P(have_AP | event)
+= 0.4 x avg_benefit x 1.0
 ```
 
 Should be competitive with:

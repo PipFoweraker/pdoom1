@@ -4,7 +4,7 @@ Development utilities for P(Doom) Godot implementation.
 
 ## Tools Overview
 
-### ✅ `dev_tool_minimal.gd` - Code Validation Tool (WORKING)
+### SUCCESS `dev_tool_minimal.gd` - Code Validation Tool (WORKING)
 
 Validates GameState code structure without instantiating it. **This is the recommended tool to use.**
 
@@ -26,24 +26,24 @@ godot --headless --script tools/dev_tool_minimal.gd --test properties
 ```
 
 **What it checks:**
-- ✅ GameState script exists and loads
-- ✅ GameState has expected methods
-- ✅ GameState has expected properties
-- ✅ Lists all available methods and properties
+- SUCCESS GameState script exists and loads
+- SUCCESS GameState has expected methods
+- SUCCESS GameState has expected properties
+- SUCCESS Lists all available methods and properties
 
 **Example Output:**
 ```
-[✓] GameState script found: res://scripts/core/game_state.gd
-[✓] seed - Found
-[✓] turn - Found
-[✓] money - Found
-[✓] doom - Found
-[✓] reputation - Found
+[CHECKED] GameState script found: res://scripts/core/game_state.gd
+[CHECKED] seed - Found
+[CHECKED] turn - Found
+[CHECKED] money - Found
+[CHECKED] doom - Found
+[CHECKED] reputation - Found
 ```
 
 ---
 
-### ⚠️ `dev_tool_v2.gd` - Runtime Testing (HANGS - DO NOT USE)
+### WARNING `dev_tool_v2.gd` - Runtime Testing (HANGS - DO NOT USE)
 
 This version instantiates GameState to test runtime behavior, but it hangs due to autoload initialization.
 
@@ -53,7 +53,7 @@ This version instantiates GameState to test runtime behavior, but it hangs due t
 
 ---
 
-### ⚠️ `dev_tool.gd` - Original Full Test Suite (HANGS - DO NOT USE)
+### WARNING `dev_tool.gd` - Original Full Test Suite (HANGS - DO NOT USE)
 
 Original comprehensive test suite. Has same hanging issue as v2.
 
@@ -62,7 +62,7 @@ Original comprehensive test suite. Has same hanging issue as v2.
 
 ---
 
-### ✅ `quick_test.gd` - Basic Functionality Test (WORKING)
+### SUCCESS `quick_test.gd` - Basic Functionality Test (WORKING)
 
 Simple test to verify GDScript basics and script loading.
 
@@ -124,8 +124,8 @@ From validation tool output:
 - `safety_researchers`, `capability_researchers`, `compute_engineers`, `managers` - Staff (not single `staff` property)
 
 **Note:** Method names differ from Python version:
-- Python: `initialize()` → Godot: `reset()`
-- Python: `advance_turn()` / `end_turn()` → Godot: (different implementation)
+- Python: `initialize()`  ->  Godot: `reset()`
+- Python: `advance_turn()` / `end_turn()`  ->  Godot: (different implementation)
 
 ---
 
@@ -158,7 +158,7 @@ godot --headless --script tools/dev_tool_minimal.gd
 
 | Feature | Python (tools/dev_tool.py) | Godot (tools/dev_tool_minimal.gd) |
 |---------|---------------------------|-----------------------------------|
-| **Status** | ✅ Working | ✅ Working |
+| **Status** | SUCCESS Working | SUCCESS Working |
 | **Method** | Runtime testing | Static validation |
 | **Exit behavior** | Clean | Clean (forced with OS.kill) |
 | **Instantiates GameState** | Yes | No (avoids autoload issues) |

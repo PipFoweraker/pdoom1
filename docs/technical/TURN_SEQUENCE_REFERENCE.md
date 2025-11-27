@@ -39,8 +39,8 @@ enum TurnPhase {
 
 ### Complete Turn Cycle
 ```
-MONDAY PLANNING → [Events?] → PLAN YOUR WEEK → COMMIT & EXECUTE → NEXT MONDAY
-     ↓              ↓              ↓                  ↓
+MONDAY PLANNING  ->  [Events?]  ->  PLAN YOUR WEEK  ->  COMMIT & EXECUTE  ->  NEXT MONDAY
+      v                v                v                    v 
   Phase 1        Resolve      Queue actions     Week unfolds
   (automatic)    (manual)      (manual)         (automatic)
 ```
@@ -116,7 +116,7 @@ for researcher in state.researchers:
    - Based on productivity and base_productivity
 
 3. **Loyalty Changes:**
-   - Increases if well-paid (salary ≥ expectation)
+   - Increases if well-paid (salary >= expectation)
    - Decreases if underpaid or burned out
 
 4. **Turns Employed:**
@@ -212,7 +212,7 @@ for i in range(productive_employees):
 - **1-3 research points** per trigger (random)
 
 **Expected Value:**
-- Per productive employee: `0.30 × 2 = 0.6 research/turn`
+- Per productive employee: `0.30 x 2 = 0.6 research/turn`
 - 10 productive employees: ~6 research/turn (average)
 
 ---
@@ -226,9 +226,9 @@ research_from_employees *= compute_efficiency_bonus
 **Multiplier:** +10% effectiveness per compute engineer
 
 **Example:**
-- 3 compute engineers = 1.3× multiplier
+- 3 compute engineers = 1.3x multiplier
 - Base research: 6.0
-- Final research: 6.0 × 1.3 = **7.8**
+- Final research: 6.0 x 1.3 = **7.8**
 
 ---
 
@@ -246,7 +246,7 @@ state.add_resources({"doom": -doom_reduction_from_safety})
 **Example:**
 - 5 total safety researchers
 - 3 are productive (have management + compute)
-- Doom reduction: 3 × 0.3 = **-0.9 doom/turn**
+- Doom reduction: 3 x 0.3 = **-0.9 doom/turn**
 
 ---
 
@@ -264,10 +264,10 @@ if total_unproductive > 0:
 
 **Scenario:**
 - 15 staff total
-- 0 managers → 6 unmanaged (9 capacity exceeded)
-- 10 compute units → 5 without compute
+- 0 managers  ->  6 unmanaged (9 capacity exceeded)
+- 10 compute units  ->  5 without compute
 - Total unproductive: 6 + 5 = 11
-- Doom penalty: 11 × 0.5 = **+5.5 doom/turn** ⚠️
+- Doom penalty: 11 x 0.5 = **+5.5 doom/turn** WARNING
 
 **Key Insight:** Hiring staff without proper infrastructure is DANGEROUS!
 
@@ -294,8 +294,8 @@ else:
 **Event Flow:**
 ```
 Events triggered?
-    ├─ YES → Show events → Block action selection → Wait for player
-    └─ NO  → Immediately allow action selection
+    |-- YES  ->  Show events  ->  Block action selection  ->  Wait for player
+    `-- NO   ->  Immediately allow action selection
 ```
 
 ---
@@ -340,8 +340,8 @@ if state.pending_events.size() == 0:
 ```
 
 **Phase Transition:**
-- **All events resolved** → Transition to ACTION_SELECTION
-- **Events remaining** → Stay in TURN_START, show next event
+- **All events resolved**  ->  Transition to ACTION_SELECTION
+- **Events remaining**  ->  Stay in TURN_START, show next event
 
 ---
 
@@ -401,7 +401,7 @@ var available_ap = state.action_points - state.committed_ap - state.reserved_ap
 
 ## Phase 4: TURN_EXECUTION (Automatic)
 
-**Entry Point:** `GameManager.end_turn()` → `TurnManager.execute_turn()`
+**Entry Point:** `GameManager.end_turn()`  ->  `TurnManager.execute_turn()`
 **File:** [turn_manager.gd:121-226](../godot/scripts/core/turn_manager.gd#L121-L226)
 
 ### 4.1 Action Execution
@@ -469,9 +469,9 @@ doom_sources = {
     "safety_research": -X,      # From player safety actions
     "capability_research": +Y,   # From player capability actions
     "rival_labs": +Z,            # From rival contributions
-    "employee_productivity": ±W, # From productive/unproductive staff
+    "employee_productivity": +/-W, # From productive/unproductive staff
     "base_increase": +1.0,       # Constant pressure
-    "momentum": ±M               # Doom momentum effect
+    "momentum": +/-M               # Doom momentum effect
 }
 ```
 
@@ -501,8 +501,8 @@ total_change += doom_momentum
 ```
 
 **Momentum Effect:**
-- Doom increasing → Momentum makes it increase faster
-- Doom decreasing → Momentum helps it decrease faster
+- Doom increasing  ->  Momentum makes it increase faster
+- Doom decreasing  ->  Momentum helps it decrease faster
 - Creates strategic "turning points" where reversing trends is hard
 
 **Example:**
@@ -541,8 +541,8 @@ if state.game_over:
 ```
 
 **Game Over Conditions:**
-- **Victory:** doom ≤ 0
-- **Defeat:** doom ≥ 100 OR reputation ≤ 0
+- **Victory:** doom <= 0
+- **Defeat:** doom >= 100 OR reputation <= 0
 
 ---
 
@@ -565,89 +565,89 @@ if state.get_event_ap() >= 2:
 ```
 
 **Strategic Trade-off:**
-- Reserve AP → Can take powerful event options
-- Commit all AP → Maximum guaranteed actions, but miss event opportunities
+- Reserve AP  ->  Can take powerful event options
+- Commit all AP  ->  Maximum guaranteed actions, but miss event opportunities
 
 ---
 
 ## Complete Turn Sequence Diagram
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│ TURN START (Phase 1 - Automatic)                            │
-├─────────────────────────────────────────────────────────────┤
-│ 1. Increment turn counter                                   │
-│ 2. Calculate AP (3 + 0.5 per staff)                         │
-│ 3. Process researchers (burnout, skill, loyalty)            │
-│ 4. Pay staff salaries ($5k per employee)                    │
-│ 5. Employee productivity:                                   │
-│    ├─ Check management capacity                             │
-│    ├─ Distribute compute                                    │
-│    ├─ Generate research (30% chance per productive emp)     │
-│    ├─ Apply compute engineer bonus                          │
-│    ├─ Safety researchers reduce doom (-0.3 each)            │
-│    └─ Unproductive employees increase doom (+0.5 each)      │
-│ 6. Check for triggered events                               │
-│    ├─ Events present? → Stay in TURN_START                  │
-│    └─ No events? → Transition to ACTION_SELECTION           │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│ EVENT RESOLUTION (Phase 2 - Manual, if events triggered)    │
-├─────────────────────────────────────────────────────────────┤
-│ FOR EACH pending event:                                     │
-│   1. Show event to player                                   │
-│   2. Player selects choice                                  │
-│   3. Execute choice (apply costs and effects)               │
-│   4. Remove from pending queue                              │
-│                                                              │
-│ ALL events resolved?                                        │
-│   └─ YES → Transition to ACTION_SELECTION                   │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│ ACTION SELECTION (Phase 3 - Manual)                         │
-├─────────────────────────────────────────────────────────────┤
-│ LOOP until player ends turn:                                │
-│   1. Show available actions                                 │
-│   2. Player queues action                                   │
-│   3. Deduct committed_ap                                    │
-│   4. Update UI (show queue, remaining AP)                   │
-│                                                              │
-│ Player commits plan: "End Turn" or "Commit Plan & Reserve AP"│
-│   ├─ End Turn (Space): Execute queued actions               │
-│   └─ Commit Plan (Enter): Queue "pass_turn" (reserve all AP)│
-│                                                              │
-│ Transition to TURN_EXECUTION                                │
-└─────────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────────┐
-│ TURN EXECUTION (Phase 4 - Automatic)                        │
-├─────────────────────────────────────────────────────────────┤
-│ 1. Execute queued actions (in order)                        │
-│    └─ Apply costs, apply effects, record results            │
-│                                                              │
-│ 2. Check for paper publication                              │
-│    └─ Research ≥ 100 → Publish papers (+5 rep each)         │
-│                                                              │
-│ 3. Process rival lab actions                                │
-│    └─ Each rival takes 1-3 actions                          │
-│    └─ Calculate rival doom contribution                     │
-│                                                              │
-│ 4. Calculate doom change (Momentum System)                  │
-│    ├─ Collect sources (safety, capability, rivals, etc.)    │
-│    ├─ Calculate total change                                │
-│    ├─ Update doom velocity                                  │
-│    ├─ Calculate momentum contribution                       │
-│    ├─ Apply total change to doom                            │
-│    └─ Clamp doom to [0, 100]                                │
-│                                                              │
-│ 5. Check win/lose conditions                                │
-│    ├─ Victory: doom ≤ 0                                     │
-│    └─ Defeat: doom ≥ 100 OR reputation ≤ 0                  │
-│                                                              │
-│ Turn complete → Loop back to TURN START (Phase 1)           │
-└─────────────────────────────────────────────────────────────┘
++---------------------------------------------------------------+
+| TURN START (Phase 1 - Automatic)                            |
+|---------------------------------------------------------------|
+| 1. Increment turn counter                                   |
+| 2. Calculate AP (3 + 0.5 per staff)                         |
+| 3. Process researchers (burnout, skill, loyalty)            |
+| 4. Pay staff salaries ($5k per employee)                    |
+| 5. Employee productivity:                                   |
+|    |-- Check management capacity                             |
+|    |-- Distribute compute                                    |
+|    |-- Generate research (30% chance per productive emp)     |
+|    |-- Apply compute engineer bonus                          |
+|    |-- Safety researchers reduce doom (-0.3 each)            |
+|    `-- Unproductive employees increase doom (+0.5 each)      |
+| 6. Check for triggered events                               |
+|    |-- Events present?  ->  Stay in TURN_START                  |
+|    `-- No events?  ->  Transition to ACTION_SELECTION           |
+`---------------------------------------------------------------`
+                           v 
++---------------------------------------------------------------+
+| EVENT RESOLUTION (Phase 2 - Manual, if events triggered)    |
+|---------------------------------------------------------------|
+| FOR EACH pending event:                                     |
+|   1. Show event to player                                   |
+|   2. Player selects choice                                  |
+|   3. Execute choice (apply costs and effects)               |
+|   4. Remove from pending queue                              |
+|                                                              |
+| ALL events resolved?                                        |
+|   `-- YES  ->  Transition to ACTION_SELECTION                   |
+`---------------------------------------------------------------`
+                           v 
++---------------------------------------------------------------+
+| ACTION SELECTION (Phase 3 - Manual)                         |
+|---------------------------------------------------------------|
+| LOOP until player ends turn:                                |
+|   1. Show available actions                                 |
+|   2. Player queues action                                   |
+|   3. Deduct committed_ap                                    |
+|   4. Update UI (show queue, remaining AP)                   |
+|                                                              |
+| Player commits plan: "End Turn" or "Commit Plan & Reserve AP"|
+|   |-- End Turn (Space): Execute queued actions               |
+|   `-- Commit Plan (Enter): Queue "pass_turn" (reserve all AP)|
+|                                                              |
+| Transition to TURN_EXECUTION                                |
+`---------------------------------------------------------------`
+                           v 
++---------------------------------------------------------------+
+| TURN EXECUTION (Phase 4 - Automatic)                        |
+|---------------------------------------------------------------|
+| 1. Execute queued actions (in order)                        |
+|    `-- Apply costs, apply effects, record results            |
+|                                                              |
+| 2. Check for paper publication                              |
+|    `-- Research >= 100  ->  Publish papers (+5 rep each)         |
+|                                                              |
+| 3. Process rival lab actions                                |
+|    `-- Each rival takes 1-3 actions                          |
+|    `-- Calculate rival doom contribution                     |
+|                                                              |
+| 4. Calculate doom change (Momentum System)                  |
+|    |-- Collect sources (safety, capability, rivals, etc.)    |
+|    |-- Calculate total change                                |
+|    |-- Update doom velocity                                  |
+|    |-- Calculate momentum contribution                       |
+|    |-- Apply total change to doom                            |
+|    `-- Clamp doom to [0, 100]                                |
+|                                                              |
+| 5. Check win/lose conditions                                |
+|    |-- Victory: doom <= 0                                     |
+|    `-- Defeat: doom >= 100 OR reputation <= 0                  |
+|                                                              |
+| Turn complete  ->  Loop back to TURN START (Phase 1)           |
+`---------------------------------------------------------------`
 ```
 
 ---
@@ -694,7 +694,7 @@ state.compute = 5
 
 # Expected productive: min(9, 5) = 5
 # Expected unproductive: 10 - 5 = 5
-# Doom penalty: 5 × 0.5 = +2.5
+# Doom penalty: 5 x 0.5 = +2.5
 ```
 
 #### 2. Event-Action Phase Transition
@@ -765,17 +765,17 @@ Execute actions based on conditions (e.g., "If doom > 60, do safety research").
 
 ### Action Points
 ```
-AP = 3 + floor(total_staff × 0.5)
+AP = 3 + floor(total_staff x 0.5)
 ```
 
 ### Staff Salaries
 ```
-Salary = total_staff × $5,000
+Salary = total_staff x $5,000
 ```
 
 ### Management Capacity
 ```
-Capacity = managers == 0 ? 9 : managers × 9
+Capacity = managers == 0 ? 9 : managers x 9
 ```
 
 ### Productive Employees
@@ -786,30 +786,30 @@ where managed_employees = min(non_manager_staff, management_capacity)
 
 ### Research Generation
 ```
-Expected research = productive_employees × 0.3 × 2.0 × (1.0 + compute_engineers × 0.1)
+Expected research = productive_employees x 0.3 x 2.0 x (1.0 + compute_engineers x 0.1)
 ```
 
 ### Doom from Safety Researchers
 ```
-Doom reduction = productive_safety_researchers × 0.3 per turn
+Doom reduction = productive_safety_researchers x 0.3 per turn
 ```
 
 ### Doom from Unproductive Employees
 ```
-Doom penalty = unproductive_employees × 0.5 per turn
+Doom penalty = unproductive_employees x 0.5 per turn
 ```
 
 ### Doom Momentum
 ```
-velocity(t) = 0.7 × velocity(t-1) + 0.3 × change(t)
-momentum(t) = velocity(t) × 0.3
+velocity(t) = 0.7 x velocity(t-1) + 0.3 x change(t)
+momentum(t) = velocity(t) x 0.3
 total_doom_change(t) = base_change(t) + momentum(t)
 ```
 
 ### Paper Publication
 ```
 Papers published = floor(research / 100)
-Reputation gain = papers_published × 5
+Reputation gain = papers_published x 5
 Remaining research = research mod 100
 ```
 

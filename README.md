@@ -28,9 +28,9 @@ You run an underfunded AI safety lab racing against well-resourced competitors t
 
 ## Need Help?
 
-- 📖 **[How to Play](docs/user-guide/GAMEPLAY.md)** - Game mechanics and strategy
-- ❓ **[FAQ](docs/user-guide/FAQ.md)** - Common questions
-- 🌐 **[Website](https://pdoom1.com)** - Guides, community, and updates
+- BOOK **[How to Play](docs/user-guide/GAMEPLAY.md)** - Game mechanics and strategy
+- HELP **[FAQ](docs/user-guide/FAQ.md)** - Common questions
+- GLOBAL **[Website](https://pdoom1.com)** - Guides, community, and updates
 - 🐛 **Report a Bug** - Press **F8** in-game or [open an issue](https://github.com/PipFoweraker/pdoom1/issues)
 
 ## Community & Contributing

@@ -79,8 +79,8 @@ jobs:
         id: import-check
         run: |
           echo "📦 Validating import structure..."
-          echo "ℹ️  Project migrated to Godot - Python import checks skipped"
-          echo "✅ Using Godot GDScript instead of Python modules"
+          echo "INFO  Project migrated to Godot - Python import checks skipped"
+          echo "SUCCESS Using Godot GDScript instead of Python modules"
           echo "SUCCESS Import structure: SKIPPED (Godot project)"
           
       - name: Version Consistency Check
@@ -111,12 +111,12 @@ jobs:
 
           for file in "${required_files[@]}"; do
             if [ ! -f "$file" ]; then
-              echo "❌ Missing required file: $file"
+              echo "ERROR Missing required file: $file"
               exit 1
             fi
           done
 
-          echo "✅ SUCCESS File structure: PASSED"
+          echo "SUCCESS SUCCESS File structure: PASSED"
           
       - name: Set validation status
         id: validation
@@ -157,12 +157,12 @@ jobs:
       - name: Development Standards Check
         run: |
           echo "CLIPBOARD Running comprehensive standards enforcement..."
-          python scripts/enforce_standards.py --check-all || echo "⚠️  Standards check warnings (non-blocking during Godot migration)"
+          python scripts/enforce_standards.py --check-all || echo "WARNING  Standards check warnings (non-blocking during Godot migration)"
           
       - name: Import Cleanup Check
         run: |
-          echo "ℹ️  Project migrated to Godot - autoflake import checks skipped"
-          echo "✅ Import cleanup handled by GDScript"
+          echo "INFO  Project migrated to Godot - autoflake import checks skipped"
+          echo "SUCCESS Import cleanup handled by GDScript"
           
       - name: Type Annotation Coverage
         id: type-coverage
@@ -224,7 +224,7 @@ jobs:
           echo "GATE Running automated health gate check..."
 
           # Run health gate check (non-blocking during Godot migration)
-          python scripts/ci_health_integration.py --gate-check || echo "⚠️  Health gate warnings (non-blocking during migration - linting issues in legacy Python files)"
+          python scripts/ci_health_integration.py --gate-check || echo "WARNING  Health gate warnings (non-blocking during migration - linting issues in legacy Python files)"
 
           echo "Health gate assessment: COMPLETED"
           

@@ -41,31 +41,31 @@ jobs:
 
     - name: Lint with flake8
       run: |
-        echo "ℹ️  Project migrated to Godot - flake8 checks skipped"
-        echo "✅ Linting handled by GDScript and Godot editor"
+        echo "INFO  Project migrated to Godot - flake8 checks skipped"
+        echo "SUCCESS Linting handled by GDScript and Godot editor"
 
     - name: Format check with black
       run: |
-        echo "ℹ️  Project migrated to Godot - black formatting skipped"
-        echo "✅ Formatting handled by Godot code formatter"
+        echo "INFO  Project migrated to Godot - black formatting skipped"
+        echo "SUCCESS Formatting handled by Godot code formatter"
 
     - name: Import sort check with isort
       run: |
-        echo "ℹ️  Project migrated to Godot - isort checks skipped"
-        echo "✅ Import organization handled by GDScript"
+        echo "INFO  Project migrated to Godot - isort checks skipped"
+        echo "SUCCESS Import organization handled by GDScript"
 
     - name: Type check with mypy
       run: |
-        echo "ℹ️  Project migrated to Godot - mypy checks skipped"
-        echo "✅ Type checking handled by GDScript static typing"
+        echo "INFO  Project migrated to Godot - mypy checks skipped"
+        echo "SUCCESS Type checking handled by GDScript static typing"
 
     - name: Test with pytest
       run: |
         # Run remaining Python tests (non-Godot)
         if [ -d "tests" ] && [ "$(find tests -name 'test_*.py' | wc -l)" -gt 0 ]; then
-          pytest tests/ -v --ignore=tests/test_migration/ || echo "⚠️  Some Python tests failed (expected during migration)"
+          pytest tests/ -v --ignore=tests/test_migration/ || echo "WARNING  Some Python tests failed (expected during migration)"
         else
-          echo "ℹ️  No Python tests found - using Godot tests instead"
+          echo "INFO  No Python tests found - using Godot tests instead"
         fi
 
     - name: Upload coverage to Codecov
@@ -99,8 +99,8 @@ jobs:
 
     - name: Test core functionality
       run: |
-        Write-Host "ℹ️  Project migrated to Godot - Python tests skipped on Windows"
-        Write-Host "✅ Tests handled by Godot GUT framework"
+        Write-Host "INFO  Project migrated to Godot - Python tests skipped on Windows"
+        Write-Host "SUCCESS Tests handled by Godot GUT framework"
 
   test-macos:
     runs-on: macos-latest
@@ -133,7 +133,7 @@ jobs:
       run: |
         # Run remaining Python tests (non-Godot)
         if [ -d "tests" ] && [ "$(find tests -name 'test_*.py' | wc -l)" -gt 0 ]; then
-          pytest tests/ -v -k "not integration" || echo "⚠️  Some tests failed (expected during migration)"
+          pytest tests/ -v -k "not integration" || echo "WARNING  Some tests failed (expected during migration)"
         else
-          echo "ℹ️  No Python tests - using Godot tests"
+          echo "INFO  No Python tests - using Godot tests"
         fi

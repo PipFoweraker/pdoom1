@@ -24,9 +24,9 @@ Smooth color gradients based on doom tier:
 
 ```gdscript
 <30%:  Green (#4DCC4D) - Safe zone
-30-60%: Green → Yellow gradient - Warning zone
-60-80%: Yellow → Orange gradient - Danger zone
->80%:  Orange → Red gradient - Critical zone
+30-60%: Green  ->  Yellow gradient - Warning zone
+60-80%: Yellow  ->  Orange gradient - Danger zone
+>80%:  Orange  ->  Red gradient - Critical zone
 ```
 
 Colors smoothly blend using lerp interpolation for seamless transitions.
@@ -38,14 +38,14 @@ Colors smoothly blend using lerp interpolation for seamless transitions.
 
 ### 4. Momentum Indicator
 Shows the rate of doom change with arrows:
-- **↑ +X.X** (red) - Doom increasing (spiral)
-- **↓ X.X** (green) - Doom decreasing (safety flywheel)
+- ** ^  +X.X** (red) - Doom increasing (spiral)
+- ** v  X.X** (green) - Doom decreasing (safety flywheel)
 - Only shown when |momentum| > 0.1
 - Positioned below percentage text
 
 ### 5. Pulsing Animation
-At critical doom levels (≥80%):
-- **Gauge thickness pulses** - ±15% size variation
+At critical doom levels (>=80%):
+- **Gauge thickness pulses** - +/-15% size variation
 - **Color intensifies** - Flashes toward white
 - **Sine wave animation** - Smooth 2Hz pulsing
 - **Auto-enabled** - Only processes when doom critical
@@ -64,22 +64,22 @@ At critical doom levels (≥80%):
 
 ```
 godot/
-├── scripts/ui/doom_meter.gd         # Custom Control component
-├── scenes/ui/doom_meter.tscn        # Packaged scene
-└── scenes/main.tscn                 # Integrated into TopBar
+|--- scripts/ui/doom_meter.gd         # Custom Control component
+|--- scenes/ui/doom_meter.tscn        # Packaged scene
+`--- scenes/main.tscn                 # Integrated into TopBar
 ```
 
 ### Component Hierarchy
 
 ```
 Main
-└── MainUI (VBoxContainer)
-    └── TopBar (HBoxContainer)
-        ├── TitleLabel
-        ├── DoomMeterContainer (PanelContainer)
-        │   └── MarginContainer
-        │       └── DoomMeter (Custom Control)
-        └── CatPanel
+`--- MainUI (VBoxContainer)
+    `--- TopBar (HBoxContainer)
+        |--- TitleLabel
+        |--- DoomMeterContainer (PanelContainer)
+        |   `--- MarginContainer
+        |       `--- DoomMeter (Custom Control)
+        `--- CatPanel
 ```
 
 ### Class: DoomMeter
@@ -176,7 +176,7 @@ See `godot/scripts/core/doom_system.gd` for momentum calculation details.
 4. **Momentum Indicator**
    - Font size: 14pt
    - Position: 20px below center
-   - Format: "↑/↓ X.X"
+   - Format: " ^ / v  X.X"
    - Only shown if |momentum| > 0.1
 
 ### Animation Timing
@@ -229,7 +229,7 @@ meter.set_doom(doom_value, momentum)
 - [ ] Color transitions smooth across all tiers
 - [ ] Percentage text centered and readable
 - [ ] Momentum arrows appear/disappear correctly
-- [ ] Pulsing only activates at ≥80% doom
+- [ ] Pulsing only activates at >=80% doom
 
 ### Integration Tests
 - [ ] Meter updates when game state changes
@@ -299,10 +299,10 @@ meter.set_doom(doom_value, momentum)
 ## Accessibility Notes
 
 ### Current Accessibility
-- ✅ Color-coded with redundant text
-- ✅ High contrast text (≥4.5:1)
-- ✅ Works at 110% UI scale
-- ✅ No color-only information
+- SUCCESS Color-coded with redundant text
+- SUCCESS High contrast text (>=4.5:1)
+- SUCCESS Works at 110% UI scale
+- SUCCESS No color-only information
 
 ### Future Improvements
 - Add tooltip on hover with detailed breakdown
@@ -315,7 +315,7 @@ meter.set_doom(doom_value, momentum)
 ## Performance Profile
 
 ### Rendering Cost
-- **draw_arc()**: 64 points × 2 calls = ~128 draw ops
+- **draw_arc()**: 64 points x 2 calls = ~128 draw ops
 - **draw_string()**: 1-2 calls (text + momentum)
 - **Total**: ~5-10ms per frame at 60fps (negligible)
 
@@ -325,9 +325,9 @@ meter.set_doom(doom_value, momentum)
 - **No animation resources** - Procedural sine wave
 
 ### Optimization Opportunities
-- ⚠️ Reduce arc points from 64 to 32 if needed
-- ⚠️ Only redraw on state change (not every frame)
-- ⚠️ Disable momentum indicator if performance critical
+- WARNING Reduce arc points from 64 to 32 if needed
+- WARNING Only redraw on state change (not every frame)
+- WARNING Disable momentum indicator if performance critical
 
 ---
 

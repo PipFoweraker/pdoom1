@@ -49,7 +49,7 @@ jobs:
         id: validate
         continue-on-error: true
         run: |
-          echo "🔍 Validating historical data..."
+          echo "SEARCH Validating historical data..."
           python scripts/validate_historical_data.py --verbose > validation_report.txt 2>&1
           VALIDATION_EXIT=$?
 
@@ -61,10 +61,10 @@ jobs:
 
           if [ $VALIDATION_EXIT -eq 0 ]; then
             echo "status=success" >> $GITHUB_OUTPUT
-            echo "✅ Validation passed!"
+            echo "SUCCESS Validation passed!"
           else
             echo "status=failed" >> $GITHUB_OUTPUT
-            echo "❌ Validation failed!"
+            echo "ERROR Validation failed!"
             cat validation_report.txt
           fi
 
@@ -143,14 +143,14 @@ jobs:
 
       - name: Run Pre-Build Validation
         run: |
-          echo "🔍 Running pre-build validation checks..."
+          echo "SEARCH Running pre-build validation checks..."
           python scripts/pre_build_validation.py --godot "$(which godot)" --quick
           if [ $? -ne 0 ]; then
-            echo "❌ Pre-build validation failed!"
+            echo "ERROR Pre-build validation failed!"
             echo "::error::Build validation checks did not pass. Review logs above."
             exit 1
           fi
-          echo "✅ All validation checks passed!"
+          echo "SUCCESS All validation checks passed!"
 
       - name: Build all platforms
         run: |
@@ -198,7 +198,7 @@ jobs:
       - name: Generate release metadata
         run: |
           VERSION="${{ github.event.inputs.version || github.ref_name }}"
-          echo "📝 Generating metadata for $VERSION..."
+          echo "MEMO Generating metadata for $VERSION..."
           python scripts/generate_release_metadata.py --version "$VERSION"
 
       - name: Upload metadata artifacts
@@ -257,7 +257,7 @@ jobs:
           MANIFEST_HASH=$(sha256sum release_manifest.json | cut -d' ' -f1)
           echo "hash=$MANIFEST_HASH" >> $GITHUB_OUTPUT
 
-          echo "📋 Release Manifest:"
+          echo "CLIPBOARD Release Manifest:"
           cat release_manifest.json | jq .
 
       - name: Upload manifest
@@ -335,7 +335,7 @@ jobs:
 
       - name: Deploy to GitHub Pages (or your hosting)
         run: |
-          echo "🚀 Deploying feeds to website..."
+          echo "LAUNCH Deploying feeds to website..."
           # TODO: Add your deployment logic here
           # Could use gh-pages, rsync to server, etc.
           ls -la public/releases/
@@ -349,12 +349,12 @@ jobs:
       - name: Release Success Notification
         if: needs.create-github-release.result == 'success'
         run: |
-          echo "✅ Release ${{ github.event.inputs.version || github.ref_name }} published successfully!"
+          echo "SUCCESS Release ${{ github.event.inputs.version || github.ref_name }} published successfully!"
           echo "🎮 Game builds created for Windows, Linux, and macOS"
           echo "📡 Feeds generated and ready for website consumption"
 
       - name: Release Failure Notification
         if: needs.create-github-release.result == 'failure'
         run: |
-          echo "❌ Release ${{ github.event.inputs.version || github.ref_name }} failed!"
+          echo "ERROR Release ${{ github.event.inputs.version || github.ref_name }} failed!"
           echo "Check the workflow logs for details"

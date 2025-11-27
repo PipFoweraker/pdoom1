@@ -6,19 +6,19 @@ This directory contains all visual and audio assets for the game.
 
 ```
 assets/
-├── images/          # Game images
-│   ├── backgrounds/ # Background images
-│   ├── ui/          # UI elements, borders, panels
-│   ├── characters/  # Researcher portraits, character art
-│   └── misc/        # Miscellaneous images (cat, logo, etc.)
-├── icons/           # Small UI icons
-│   ├── resources/   # Money, compute, research icons
-│   ├── actions/     # Action icons
-│   └── status/      # Status indicators, doom meter, etc.
-├── fonts/           # Custom fonts
-└── audio/           # Sound effects and music (future)
-    ├── sfx/
-    └── music/
+|--- images/          # Game images
+|   |--- backgrounds/ # Background images
+|   |--- ui/          # UI elements, borders, panels
+|   |--- characters/  # Researcher portraits, character art
+|   `--- misc/        # Miscellaneous images (cat, logo, etc.)
+|--- icons/           # Small UI icons
+|   |--- resources/   # Money, compute, research icons
+|   |--- actions/     # Action icons
+|   `--- status/      # Status indicators, doom meter, etc.
+|--- fonts/           # Custom fonts
+`--- audio/           # Sound effects and music (future)
+    |--- sfx/
+    `--- music/
 ```
 
 ## Asset Guidelines

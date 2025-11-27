@@ -81,22 +81,22 @@ This document outlines the testing strategy for the Godot migration, analyzing t
 ---
 
 **5. Feature-Specific Tests (VARIES - MIGRATE IF FEATURE EXISTS)**
-- `test_research_quality.py` - ⚠️ Not yet in Godot
-- `test_office_cat.py` - ⚠️ Not in Godot
-- `test_opponents.py` - ⚠️ Not in Godot
-- `test_achievements_endgame.py` - ⚠️ Not in Godot
-- `test_lab_names.py` - ⚠️ Not in Godot
-- `test_accounting_software.py` - ⚠️ Not in Godot
+- `test_research_quality.py` - WARNING Not yet in Godot
+- `test_office_cat.py` - WARNING Not in Godot
+- `test_opponents.py` - WARNING Not in Godot
+- `test_achievements_endgame.py` - WARNING Not in Godot
+- `test_lab_names.py` - WARNING Not in Godot
+- `test_accounting_software.py` - WARNING Not in Godot
 
 **Rationale:** Only migrate tests for features that exist in Godot. Add to TODO for future feature implementation.
 
 ---
 
 **6. Infrastructure/Meta Tests (LOW PRIORITY - SOME UNNECESSARY)**
-- `test_config_manager.py` - ⚠️ Godot uses project.godot, not Python config
+- `test_config_manager.py` - WARNING Godot uses project.godot, not Python config
 - `test_settings.py` - Adapt to Godot settings system
 - `test_version.py` - Adapt to Godot version tagging
-- `test_bug_reporter.py` - ⚠️ May not need in Godot
+- `test_bug_reporter.py` - WARNING May not need in Godot
 - `test_error_tracker.py` - Adapt to Godot's error handling
 - `test_game_logging.py` - Godot has built-in logging
 - `test_verbose_logging.py` - Godot debugging tools
@@ -200,27 +200,27 @@ func test_resource_deduction():
 ### Directory Structure:
 ```
 godot/
-├── tests/
-│   ├── unit/
-│   │   ├── test_game_state.gd          # GameState tests
-│   │   ├── test_turn_manager.gd        # TurnManager tests
-│   │   ├── test_actions.gd             # GameActions tests
-│   │   ├── test_events.gd              # GameEvents tests
-│   │   └── test_deterministic_rng.gd   # RNG tests
-│   ├── integration/
-│   │   ├── test_full_turn_cycle.gd     # Complete turn flow
-│   │   ├── test_event_triggers.gd      # Event system integration
-│   │   ├── test_hiring_flow.gd         # Hiring submenu flow
-│   │   └── test_win_lose_conditions.gd # Game over scenarios
-│   ├── scenarios/
-│   │   ├── test_funding_crisis.gd      # Specific event scenario
-│   │   ├── test_paper_publication.gd   # Research → papers flow
-│   │   └── test_staff_salary_cycle.gd  # Economic pressure
-│   └── visual/
-│       └── manual_testing_checklist.md # UI verification steps
-└── scripts/
-    └── core/
-        └── (production code)
+|--- tests/
+|   |--- unit/
+|   |   |--- test_game_state.gd          # GameState tests
+|   |   |--- test_turn_manager.gd        # TurnManager tests
+|   |   |--- test_actions.gd             # GameActions tests
+|   |   |--- test_events.gd              # GameEvents tests
+|   |   `--- test_deterministic_rng.gd   # RNG tests
+|   |--- integration/
+|   |   |--- test_full_turn_cycle.gd     # Complete turn flow
+|   |   |--- test_event_triggers.gd      # Event system integration
+|   |   |--- test_hiring_flow.gd         # Hiring submenu flow
+|   |   `--- test_win_lose_conditions.gd # Game over scenarios
+|   |--- scenarios/
+|   |   |--- test_funding_crisis.gd      # Specific event scenario
+|   |   |--- test_paper_publication.gd   # Research  ->  papers flow
+|   |   `--- test_staff_salary_cycle.gd  # Economic pressure
+|   `--- visual/
+|       `--- manual_testing_checklist.md # UI verification steps
+`--- scripts/
+    `--- core/
+        `--- (production code)
 ```
 
 ---
@@ -276,7 +276,7 @@ godot/
 ### Phase 2: Integration Tests (NEXT SESSION)
 
 6. **test_full_turn_cycle.gd**
-   - Start turn → select actions → end turn → verify results
+   - Start turn  ->  select actions  ->  end turn  ->  verify results
    - Multiple turns in sequence
    - Action queueing and execution
    - State updates after each phase
@@ -298,15 +298,15 @@ godot/
 ### Phase 3: Scenario Tests (FUTURE)
 
 9. **test_win_scenarios.gd**
-   - Reduce doom to 0 → victory
-   - High reputation + low doom → victory (if applicable)
+   - Reduce doom to 0  ->  victory
+   - High reputation + low doom  ->  victory (if applicable)
 
 10. **test_lose_scenarios.gd**
-    - Doom reaches 100 → game over
-    - Reputation reaches 0 → game over
+    - Doom reaches 100  ->  game over
+    - Reputation reaches 0  ->  game over
 
 11. **test_economic_pressure.gd**
-    - Hire many staff → high salaries → bankruptcy risk
+    - Hire many staff  ->  high salaries  ->  bankruptcy risk
     - Balance hiring vs sustainability
 
 ---
@@ -482,13 +482,13 @@ jobs:
 ## Conclusion
 
 **Testing Strategy Summary:**
-- ✅ Use GUT framework for unit/integration tests
-- ✅ Migrate ~40 tests (60% reduction from 98)
-- ✅ Focus on core game logic (game state, turns, actions, events)
-- ✅ Manual testing for UI/visual verification
-- ✅ Eliminate pygame-specific and bug-fix tests
-- ✅ Emphasize determinism verification
-- ✅ Target 90%+ coverage for core logic
+- SUCCESS Use GUT framework for unit/integration tests
+- SUCCESS Migrate ~40 tests (60% reduction from 98)
+- SUCCESS Focus on core game logic (game state, turns, actions, events)
+- SUCCESS Manual testing for UI/visual verification
+- SUCCESS Eliminate pygame-specific and bug-fix tests
+- SUCCESS Emphasize determinism verification
+- SUCCESS Target 90%+ coverage for core logic
 
 **This afternoon's goal:** Implement Phase 1 (core logic tests) with GUT framework.
 

@@ -174,7 +174,7 @@ Once Godot is set up:
 1. Read [README.md](README.md) for game architecture
 2. Open `godot/project.godot` in Godot editor
 3. Press F5 to run the game
-4. Test the minimal UI (Init Game → Hire Researcher → End Turn)
+4. Test the minimal UI (Init Game  ->  Hire Researcher  ->  End Turn)
 5. Check the console output for bridge communication logs
 
 ---
@@ -189,9 +189,9 @@ Once Godot is set up:
 ### Godot Editor Settings
 
 Once in the editor, consider:
-- **Editor → Editor Settings → Text Editor → Font Size** - Increase if needed
-- **Editor → Editor Settings → Run → Window Placement** - Set to "Separate Windows"
-- **Editor → Editor Settings → Debugger → Verbose** - Enable for bridge debugging
+- **Editor  ->  Editor Settings  ->  Text Editor  ->  Font Size** - Increase if needed
+- **Editor  ->  Editor Settings  ->  Run  ->  Window Placement** - Set to "Separate Windows"
+- **Editor  ->  Editor Settings  ->  Debugger  ->  Verbose** - Enable for bridge debugging
 
 ---
 

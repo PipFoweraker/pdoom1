@@ -31,7 +31,7 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Release Checklist: ${tagName}`,
-              body: `## 🚀 Release Preparation for ${tagName}\n\n${checklist}\n\n---\n\n*This checklist was automatically created by the release-reminder workflow.*\n\nOnce all items are checked, close this issue.`,
+              body: `## LAUNCH Release Preparation for ${tagName}\n\n${checklist}\n\n---\n\n*This checklist was automatically created by the release-reminder workflow.*\n\nOnce all items are checked, close this issue.`,
               labels: ['release', 'checklist']
             });
 
@@ -47,11 +47,11 @@ jobs:
           echo "Godot version: $GODOT_VERSION"
 
           if [ "$TAG_VERSION" != "$GODOT_VERSION" ]; then
-            echo "⚠️ WARNING: Version mismatch!"
+            echo "WARNING WARNING: Version mismatch!"
             echo "Tag: v$TAG_VERSION"
             echo "Godot: $GODOT_VERSION"
             exit 1
           else
-            echo "✅ Version consistency check passed"
+            echo "SUCCESS Version consistency check passed"
           fi
         shell: bash

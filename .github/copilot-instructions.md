@@ -428,7 +428,7 @@ python -c "from src.core.game_state import GameState; print('CHECKED Imports wor
 - **Version check**: Use `python -c "from src.services.version import get_display_version; print(get_display_version())"`
 - **Quality validation**: Run comprehensive checks with `scripts/enforce_standards.py --check-all`
 
-## CHANGES SUMMARY: v0.8.0 → v0.10.1
+## CHANGES SUMMARY: v0.8.0  ->  v0.10.1
 
 ### **NEW: Complete Automation Infrastructure**
 - Bidirectional GitHub issue synchronization (42+ issues)

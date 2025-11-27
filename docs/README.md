@@ -12,7 +12,7 @@ Implementation guides, how-tos, and integration documentation:
 - **[P(Doom) Data Integration Plan](guides/PDOOM_DATA_INTEGRATION_PLAN.md)** - Data integration architecture
 - **[Copilot Instructions Update Analysis](guides/COPILOT_INSTRUCTIONS_UPDATE_ANALYSIS.md)** - AI assistance configuration
 
-### 📋 Summaries (`summaries/`)
+### CLIPBOARD Summaries (`summaries/`)
 Historical development summaries and completion reports:
 
 - **[Comprehensive Cleanup Report (2025-09-28)](summaries/COMPREHENSIVE_CLEANUP_REPORT_2025-09-28.md)** - Major cleanup initiative
@@ -23,7 +23,7 @@ Historical development summaries and completion reports:
 - **[Master Cleanup Reference](summaries/MASTER_CLEANUP_REFERENCE.md)** - Cleanup reference document
 - **[Phase 6 Suggestions](summaries/PHASE_6_SUGGESTIONS.md)** - Development phase planning
 
-### 🔬 Analysis (`analysis/`)
+### MICROSCOPE Analysis (`analysis/`)
 Technical analysis documents:
 
 - **[Test Failure Analysis](analysis/test_failure_analysis.md)** - Test suite analysis

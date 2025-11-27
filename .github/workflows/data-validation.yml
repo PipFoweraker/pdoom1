@@ -48,10 +48,10 @@ jobs:
           echo "::endgroup::"
 
           if [ $VALIDATION_STATUS -ne 0 ]; then
-            echo "❌ Data validation failed!"
+            echo "ERROR Data validation failed!"
             exit 1
           else
-            echo "✅ Data validation passed!"
+            echo "SUCCESS Data validation passed!"
           fi
 
       - name: Generate validation report
@@ -83,7 +83,7 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## ❌ Data Validation Failed
+              body: `## ERROR Data Validation Failed
 
 The historical data validation checks have failed. Please review and fix the errors below:
 
@@ -114,15 +114,15 @@ See [shared/schemas/README.md](https://github.com/${context.repo.owner}/${contex
 
           for schema in event organization researcher; do
             if [ ! -f "shared/schemas/${schema}.schema.json" ]; then
-              echo "❌ Missing: shared/schemas/${schema}.schema.json"
+              echo "ERROR Missing: shared/schemas/${schema}.schema.json"
               MISSING_SCHEMAS=$((MISSING_SCHEMAS + 1))
             else
-              echo "✅ Found: shared/schemas/${schema}.schema.json"
+              echo "SUCCESS Found: shared/schemas/${schema}.schema.json"
             fi
           done
 
           if [ $MISSING_SCHEMAS -gt 0 ]; then
-            echo "❌ $MISSING_SCHEMAS schema file(s) missing!"
+            echo "ERROR $MISSING_SCHEMAS schema file(s) missing!"
             exit 1
           fi
 
@@ -141,9 +141,9 @@ See [shared/schemas/README.md](https://github.com/${context.repo.owner}/${contex
             echo "Checking $schema..."
             ajv compile -s "$schema" --strict=true
             if [ $? -eq 0 ]; then
-              echo "✅ $schema is valid"
+              echo "SUCCESS $schema is valid"
             else
-              echo "❌ $schema has syntax errors"
+              echo "ERROR $schema has syntax errors"
               exit 1
             fi
           done
@@ -200,8 +200,8 @@ See [shared/schemas/README.md](https://github.com/${context.repo.owner}/${contex
           **Triggered By:** ${{ github.actor }}
 
           ## Validation Status
-          - ✅ Schema validation: PASSED
-          - ✅ Data integrity: VERIFIED
+          - SUCCESS Schema validation: PASSED
+          - SUCCESS Data integrity: VERIFIED
 
           ## Artifacts
           - Event data: validated against event.schema.json

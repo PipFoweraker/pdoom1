@@ -8,7 +8,7 @@
 
 ## Day 1: Verification Testing & Scoring Implementation
 
-### Morning: Test Verification System ✅
+### Morning: Test Verification System SUCCESS
 
 **Run Quick Test**:
 ```bash
@@ -17,12 +17,12 @@
 # Press F6 to run
 
 # Expected output:
-# ✅ PASS: Hashes match! System is deterministic.
-# ✅ PASS: Different actions produce different hash
+# SUCCESS PASS: Hashes match! System is deterministic.
+# SUCCESS PASS: Different actions produce different hash
 ```
 
-**If Tests Pass**: ✅ System is working, proceed to scoring
-**If Tests Fail**: 🔧 Debug RNG tracking, check for non-deterministic code
+**If Tests Pass**: SUCCESS System is working, proceed to scoring
+**If Tests Fail**: TOOLS Debug RNG tracking, check for non-deterministic code
 
 ### Afternoon: Implement Scoring Formula
 
@@ -365,8 +365,8 @@ Expected console output:
   Seed: quantum-2024-11-20
   Version: 0.10.2
   Initial hash: 7a3f2e1b...
-[VerificationTracker] Action: buy_compute → 9b2c4d5e...
-[VerificationTracker] Turn 1 end → 3c5e7f9a...
+[VerificationTracker] Action: buy_compute  ->  9b2c4d5e...
+[VerificationTracker] Turn 1 end  ->  3c5e7f9a...
 ...
 [GameOverScreen] Game ended - Verification hash: 8a0b2c4d...
 [GameOverScreen] Full verification data ready for submission
@@ -587,21 +587,21 @@ time curl http://your-api/api/scores/submit ...
 **1. Launch Announcement**:
 
 ```markdown
-# 🎉 PDoom Global Leaderboards - NOW LIVE!
+# CELEBRATION PDoom Global Leaderboards - NOW LIVE!
 
 After weeks of development, we're excited to launch global leaderboards!
 
 **What Makes This Special**:
 
-✅ **Fair Play Verification**: Our unique hash-based system prevents cheating
+SUCCESS **Fair Play Verification**: Our unique hash-based system prevents cheating
    without requiring invasive anti-cheat or storing your gameplay
 
-✅ **Strategy Sharing**: Share your strategies! First to discover gets credit,
+SUCCESS **Strategy Sharing**: Share your strategies! First to discover gets credit,
    others can reproduce for verification
 
-✅ **Multiple Leaderboards**: Global, weekly challenges, per-seed competition
+SUCCESS **Multiple Leaderboards**: Global, weekly challenges, per-seed competition
 
-✅ **Balanced Scoring**: Rewards safety focus, research output, and survival
+SUCCESS **Balanced Scoring**: Rewards safety focus, research output, and survival
    (not just "turns survived")
 
 **How It Works**:
@@ -620,7 +620,7 @@ fairly. Same seed + same decisions = same hash. First to submit wins!
 - No tracking, no telemetry
 - You own your data
 
-Join the competition! 🏆
+Join the competition! ACHIEVEMENT
 
 ---
 
@@ -653,7 +653,7 @@ LIMIT 5"
 
 ### Evening: Post-Launch
 
-**Celebrate!** 🎉
+**Celebrate!** CELEBRATION
 
 Then:
 - [ ] Respond to feedback
@@ -666,21 +666,21 @@ Then:
 ## Success Criteria
 
 **Technical**:
-- ✅ 99%+ submission success rate
-- ✅ < 500ms API response time
-- ✅ Zero hash collisions
-- ✅ No critical bugs
+- SUCCESS 99%+ submission success rate
+- SUCCESS < 500ms API response time
+- SUCCESS Zero hash collisions
+- SUCCESS No critical bugs
 
 **Community**:
-- ✅ 50+ scores submitted in first 24h
-- ✅ Positive feedback ratio > 80%
-- ✅ No cheating reports
-- ✅ Strategy sharing happening
+- SUCCESS 50+ scores submitted in first 24h
+- SUCCESS Positive feedback ratio > 80%
+- SUCCESS No cheating reports
+- SUCCESS Strategy sharing happening
 
 **Business**:
-- ✅ Leaderboards drive engagement
-- ✅ Players return to compete
-- ✅ Community grows
+- SUCCESS Leaderboards drive engagement
+- SUCCESS Players return to compete
+- SUCCESS Community grows
 
 ---
 
@@ -735,6 +735,6 @@ an issue. Your local scores are safe. We'll have this resolved within [timeframe
 
 ---
 
-**Ready to launch!** 🚀
+**Ready to launch!** LAUNCH
 
 Follow this checklist day by day and you'll have global leaderboards live by November 27th.

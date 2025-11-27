@@ -22,11 +22,11 @@ submit_score(score, verification_hash, final_state)
 
 ## Why This Works
 
-✅ **Lightweight**: No full replay needed, just hash updates
-✅ **Deterministic**: Same actions + same RNG = same hash
-✅ **Tamper-evident**: Changing any action invalidates the hash
-✅ **Fast verification**: Server checks hash consistency in milliseconds
-✅ **Privacy-preserving**: Hash doesn't reveal strategy, just authenticity
+SUCCESS **Lightweight**: No full replay needed, just hash updates
+SUCCESS **Deterministic**: Same actions + same RNG = same hash
+SUCCESS **Tamper-evident**: Changing any action invalidates the hash
+SUCCESS **Fast verification**: Server checks hash consistency in milliseconds
+SUCCESS **Privacy-preserving**: Hash doesn't reveal strategy, just authenticity
 
 ## Hash Chain Design
 
@@ -466,26 +466,26 @@ async def detect_anomalies(player_id: str, score: int, seed: str):
 
 ### What This Protects Against
 
-✅ **Score Inflation**: Can't fake a high score without valid game state
-✅ **Replay Attacks**: Each hash is unique (stored in DB, duplicates rejected)
-✅ **State Tampering**: Modifying game state mid-game breaks the hash chain
-✅ **Cross-seed Exploits**: Hash includes seed, can't reuse hash from easier seed
+SUCCESS **Score Inflation**: Can't fake a high score without valid game state
+SUCCESS **Replay Attacks**: Each hash is unique (stored in DB, duplicates rejected)
+SUCCESS **State Tampering**: Modifying game state mid-game breaks the hash chain
+SUCCESS **Cross-seed Exploits**: Hash includes seed, can't reuse hash from easier seed
 
 ### What This DOESN'T Protect Against
 
-⚠️ **Memory Hacking**: Player could modify game state in memory, but...
+WARNING **Memory Hacking**: Player could modify game state in memory, but...
   - Hash would reflect the tampered state
   - Server's plausibility checks would catch extreme tampering
   - Statistical anomaly detection would flag outliers
 
-⚠️ **RNG Manipulation**: Player could try to manipulate RNG rolls, but...
+WARNING **RNG Manipulation**: Player could try to manipulate RNG rolls, but...
   - RNG is seeded from game seed (hard to predict)
   - Would need to find exploitable seed (like speedrun seed hunting - allowed!)
 
-⚠️ **Advanced Exploits**: Decompiling game to reverse-engineer hash formula
-  - ✅ Mitigated by making hash formula complex/obscure
-  - ✅ Server-side validation catches impossible states
-  - ✅ Can rotate hash formula in game updates
+WARNING **Advanced Exploits**: Decompiling game to reverse-engineer hash formula
+  - SUCCESS Mitigated by making hash formula complex/obscure
+  - SUCCESS Server-side validation catches impossible states
+  - SUCCESS Can rotate hash formula in game updates
 
 ### Defense in Depth
 
@@ -507,7 +507,7 @@ Layer 6: Rate Limiting (prevent spam)
 | Server Verification Time | Slow (replay game) | Fast (validate hash + state) |
 | Storage Requirements | 5-20KB per game | 64 bytes (hash) + 200 bytes (state) |
 | Cheat Resistance | ★★★★★ Perfect | ★★★★☆ Very Strong |
-| Future Features | ✅ Replay sharing, spectating | ❌ Limited |
+| Future Features | SUCCESS Replay sharing, spectating | ERROR Limited |
 
 **Verdict**: Cumulative hash is **90% as secure** with **10% of the complexity**
 

@@ -40,11 +40,11 @@ This document outlines the phased approach to evolving P(Doom)'s leaderboard sys
 ### Current Data Flow
 
 ```
-┌─────────────────┐     Manual Export      ┌──────────────────┐
-│   Godot Game    │ ─────────────────────→ │   pdoom1-website │
-│ (Local JSON)    │    or git commit       │ (Static JSON)    │
-└─────────────────┘                        └──────────────────┘
-       ↓                                            ↓
++-------------------+     Manual Export      +--------------------+
+|   Godot Game    | --------------------- ->  |   pdoom1-website |
+| (Local JSON)    |    or git commit       | (Static JSON)    |
+`-------------------`                        `--------------------`
+        v                                              v 
   user://leaderboards/              public/leaderboard/data/
   leaderboard_{seed}.json           seed_leaderboard_*.json
 ```
@@ -67,7 +67,7 @@ This document outlines the phased approach to evolving P(Doom)'s leaderboard sys
 **Tasks**:
 - [ ] Verify Godot ScoreEntry fields match website JSON schema
 - [ ] Add export functionality to Godot version (like Python has)
-- [ ] Test manual export → website workflow with Godot
+- [ ] Test manual export  ->  website workflow with Godot
 - [ ] Document data flow for alpha testers
 
 **Deliverables**:
@@ -85,27 +85,27 @@ This document outlines the phased approach to evolving P(Doom)'s leaderboard sys
 
 **Architecture**:
 ```
-┌─────────────┐    Local Save    ┌─────────────┐
-│   Godot     │ ───────────────→ │  Local JSON │
-│   Game      │                  │   Files     │
-└─────────────┘                  └──────┬──────┘
-                                        │
++---------------+    Local Save    +---------------+
+|   Godot     | --------------- ->  |  Local JSON |
+|   Game      |                  |   Files     |
+`---------------`                  `-------+-------`
+                                        |
                                   Export Script
-                                        │
-                                        ↓
-┌─────────────────────────────────────────────────┐
-│               GitHub Repository                  │
-│  (pdoom1-website/public/leaderboard/data/)      │
-└─────────────────────────────────────────────────┘
-                         │
+                                        |
+                                         v 
++---------------------------------------------------+
+|               GitHub Repository                  |
+|  (pdoom1-website/public/leaderboard/data/)      |
+`---------------------------------------------------`
+                         |
                     GitHub Actions
                     (on push)
-                         │
-                         ↓
-              ┌──────────────────┐
-              │    Website       │
-              │ (Static Hosting) │
-              └──────────────────┘
+                         |
+                          v 
+              +--------------------+
+              |    Website       |
+              | (Static Hosting) |
+              `--------------------`
 ```
 
 **Options**:
@@ -130,20 +130,20 @@ This document outlines the phased approach to evolving P(Doom)'s leaderboard sys
 
 **Architecture**:
 ```
-┌─────────────┐   HTTPS POST    ┌─────────────────┐
-│   Godot     │ ───────────────→│  Backend API    │
-│   Game      │                 │ (Cloudflare/    │
-└─────────────┘                 │  Vercel/Fly)    │
-                                └────────┬────────┘
-                                         │
++---------------+   HTTPS POST    +-------------------+
+|   Godot     | --------------- -> |  Backend API    |
+|   Game      |                 | (Cloudflare/    |
+`---------------`                 |  Vercel/Fly)    |
+                                `---------+---------`
+                                         |
                                     PostgreSQL
                                     or JSON files
-                                         │
-                                         ↓
-                                ┌──────────────────┐
-                                │    Website       │
-                                │ (Fetches API)    │
-                                └──────────────────┘
+                                         |
+                                          v 
+                                +--------------------+
+                                |    Website       |
+                                | (Fetches API)    |
+                                `--------------------`
 ```
 
 **Backend Requirements**:
@@ -241,17 +241,17 @@ Score Submission Schema:
 
 **Architecture**:
 ```
-┌─────────────┐     GDExtension     ┌─────────────────┐
-│   Godot     │ ←─────────────────→ │  Steamworks SDK │
-│   Game      │                     │  (via GodotSteam)│
-└──────┬──────┘                     └─────────────────┘
-       │
-       │ Steam ID + Auth Token
-       ↓
-┌─────────────────┐     Verify Token    ┌──────────────┐
-│  Backend API    │ ←─────────────────→ │  Steam Web   │
-│                 │                     │  API         │
-└─────────────────┘                     └──────────────┘
++---------------+     GDExtension     +-------------------+
+|   Godot     |  <- ----------------- ->  |  Steamworks SDK |
+|   Game      |                     |  (via GodotSteam)|
+`-------+-------`                     `-------------------`
+       |
+       | Steam ID + Auth Token
+        v 
++-------------------+     Verify Token    +----------------+
+|  Backend API    |  <- ----------------- ->  |  Steam Web   |
+|                 |                     |  API         |
+`-------------------`                     `----------------`
 ```
 
 **Tasks**:

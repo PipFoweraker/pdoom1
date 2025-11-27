@@ -3,7 +3,7 @@ _Based on feedback session 2025-10-31_
 
 ---
 
-## 🎯 Priority Matrix
+## TARGET Priority Matrix
 
 ### P0 - Critical (Do Now - 2 hours)
 1. **Top Bar Layout Redesign** - Reduce clutter, single-line resources
@@ -22,7 +22,7 @@ _Based on feedback session 2025-10-31_
 
 ---
 
-## 📋 Detailed Implementation Plans
+## CLIPBOARD Detailed Implementation Plans
 
 ### 1. Top Bar Layout Redesign (P0 - 45 min)
 
@@ -33,16 +33,16 @@ _Based on feedback session 2025-10-31_
 
 **Proposed Solution:**
 ```
-┌──────────────────────────────────────────────────────────────────────┐
-│ P(Doom) | Turn: 5 | Money: $100k | Compute: 50 | Research: 75 |     │
-│         | Papers: 3 | Rep: 80 | Doom: 45% ↑2.3 | AP: 3 ●●●○ | 🐱    │
-└──────────────────────────────────────────────────────────────────────┘
++------------------------------------------------------------------------+
+| P(Doom) | Turn: 5 | Money: $100k | Compute: 50 | Research: 75 |     |
+|         | Papers: 3 | Rep: 80 | Doom: 45%  ^ 2.3 | AP: 3 * * * o  | 🐱    |
+`------------------------------------------------------------------------`
 ```
 
 **Implementation:**
 1. Merge TopBar + ResourceDisplay into single HBoxContainer
 2. Move doom meter to **bottom-right corner** as circular widget (persistent)
-3. Show compact doom in top bar: `Doom: 45% ↑2.3` (text + momentum)
+3. Show compact doom in top bar: `Doom: 45%  ^ 2.3` (text + momentum)
 4. Cat stays top-right as small icon
 5. Use `|` separators for visual grouping
 
@@ -115,14 +115,14 @@ WARNING_AMBER = Color(0.961, 0.682, 0.251)   # Warnings
 Add 1-4 number keys to all submenu dialogs:
 
 ```
-┌─────────────────────────────────────────┐
-│         Hire Staff                      │
-├─────────────────────────────────────────┤
-│ [1] Safety Researcher ($60k, 2 AP)      │
-│ [2] Capability Researcher ($60k, 2 AP)  │
-│ [3] Compute Engineer ($50k, 2 AP)       │
-│ [4] Cancel                              │
-└─────────────────────────────────────────┘
++-------------------------------------------+
+|         Hire Staff                      |
+|-------------------------------------------|
+| [1] Safety Researcher ($60k, 2 AP)      |
+| [2] Capability Researcher ($60k, 2 AP)  |
+| [3] Compute Engineer ($50k, 2 AP)       |
+| [4] Cancel                              |
+`-------------------------------------------`
 ```
 
 **Implementation:**
@@ -237,10 +237,10 @@ class Researcher:
 
 **UI Changes:**
 ```
-Current:  ●●● (just colored blobs)
-Proposed: Dr. Alex Chen (Safety, Workaholic) ●
-          Jordan Patel (Capability, Media Savvy) ●
-          Casey Garcia (Compute, Team Player) ●
+Current:  * * *  (just colored blobs)
+Proposed: Dr. Alex Chen (Safety, Workaholic) * 
+          Jordan Patel (Capability, Media Savvy) * 
+          Casey Garcia (Compute, Team Player) * 
 ```
 
 **Files to create:**
@@ -315,7 +315,7 @@ godot/assets/images/backgrounds/
 
 **Proposed System (from Python):**
 
-**Tier 1: Small Team (≤3 staff)**
+**Tier 1: Small Team (<=3 staff)**
 ```
 Available Roles:
 [1] Generalist ($0, 1 AP) - Basic hire
@@ -347,24 +347,24 @@ All previous roles plus:
 
 **Example Dialog:**
 ```
-┌─────────────────────────────────────────────────┐
-│  Hire Safety Researcher (Team size: 5)         │
-├─────────────────────────────────────────────────┤
-│ [1] Dr. Alex Chen                               │
-│     Skill: ████░░░░ (6/10)                      │
-│     Traits: Workaholic, Safety Conscious        │
-│     Salary: $90k/turn                           │
-│     Cost: 2 AP                                  │
-├─────────────────────────────────────────────────┤
-│ [2] Jordan Patel                                │
-│     Skill: ██████░░ (7/10)                      │
-│     Traits: Media Savvy                         │
-│     Salary: $110k/turn                          │
-│     Cost: 2 AP                                  │
-├─────────────────────────────────────────────────┤
-│ [3] Re-roll candidates (1 AP)                   │
-│ [4] Cancel                                      │
-└─────────────────────────────────────────────────┘
++---------------------------------------------------+
+|  Hire Safety Researcher (Team size: 5)         |
+|---------------------------------------------------|
+| [1] Dr. Alex Chen                               |
+|     Skill: ████░░░░ (6/10)                      |
+|     Traits: Workaholic, Safety Conscious        |
+|     Salary: $90k/turn                           |
+|     Cost: 2 AP                                  |
+|---------------------------------------------------|
+| [2] Jordan Patel                                |
+|     Skill: ██████░░ (7/10)                      |
+|     Traits: Media Savvy                         |
+|     Salary: $110k/turn                          |
+|     Cost: 2 AP                                  |
+|---------------------------------------------------|
+| [3] Re-roll candidates (1 AP)                   |
+| [4] Cancel                                      |
+`---------------------------------------------------`
 ```
 
 **Implementation:**
@@ -382,10 +382,10 @@ All previous roles plus:
 - `scripts/game_manager.gd` - Integrate with hiring
 
 **Depth Indicators:**
-- Skill levels → future training/leveling system
-- Traits → future personality events
-- Salary expectations → future budget management
-- Re-rolling → strategic resource trade-off
+- Skill levels  ->  future training/leveling system
+- Traits  ->  future personality events
+- Salary expectations  ->  future budget management
+- Re-rolling  ->  strategic resource trade-off
 
 ---
 
@@ -410,7 +410,7 @@ All previous roles plus:
 - Compute: ELECTRIC_BLUE (#34A8DB)
 - Research: NEON_MAGENTA (#ED4
 3CA)
-- Doom: RED → ORANGE → YELLOW → GREEN (gradient)
+- Doom: RED  ->  ORANGE  ->  YELLOW  ->  GREEN (gradient)
 - AP: NEON_MAGENTA (bright)
 - Reputation: ORANGE
 
@@ -445,8 +445,8 @@ Format: Label: Value
 Money: $123k (show k for thousands)
 Compute/Research: One decimal (45.3)
 Papers: Integer (5)
-AP: Integer + blob display (3 ●●●○)
-Doom: Percentage + momentum (45.2% ↑2.3)
+AP: Integer + blob display (3 * * * o )
+Doom: Percentage + momentum (45.2%  ^ 2.3)
 ```
 
 ### Action Buttons
@@ -501,7 +501,7 @@ Costs: WARNING_AMBER (money), NEON_MAGENTA (AP)
 ### Full UI Polish Test:
 - [ ] All buttons clickable and keyboard-accessible
 - [ ] All colors match style guide
-- [ ] All text readable (contrast ≥4.5:1)
+- [ ] All text readable (contrast >=4.5:1)
 - [ ] No layout overflow at min resolution
 - [ ] Info bar updates correctly
 - [ ] Doom meter visible and updates
@@ -509,10 +509,10 @@ Costs: WARNING_AMBER (money), NEON_MAGENTA (AP)
 
 ---
 
-## 📅 Implementation Timeline
+## CALENDAR Implementation Timeline
 
 ### Session 1 (This Session - 2 hours)
-- ✅ Window maximization (done)
+- SUCCESS Window maximization (done)
 - 🔲 Top bar redesign (45 min)
 - 🔲 Button styling (45 min)
 - 🔲 Submenu keyboard shortcuts (30 min)
@@ -529,7 +529,7 @@ Costs: WARNING_AMBER (money), NEON_MAGENTA (AP)
 
 ---
 
-## 🎯 Success Metrics
+## TARGET Success Metrics
 
 ### Player Experience:
 - "UI feels clean and professional"
@@ -551,4 +551,4 @@ Costs: WARNING_AMBER (money), NEON_MAGENTA (AP)
 
 ---
 
-_This plan integrates all feedback from the 2025-10-31 session. Implement in priority order (P0 → P1 → P2)._
+_This plan integrates all feedback from the 2025-10-31 session. Implement in priority order (P0  ->  P1  ->  P2)._

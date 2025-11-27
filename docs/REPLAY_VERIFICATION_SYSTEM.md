@@ -9,7 +9,7 @@ A **replay-based anti-cheat system** that verifies scores by recording player in
 PDoom's architecture is ideal for replay verification:
 
 1. **Deterministic RNG**: `RandomNumberGenerator` seeded from `game_seed_str` produces identical results
-2. **Turn-based**: Clear input → output structure
+2. **Turn-based**: Clear input  ->  output structure
 3. **Action queue**: All player choices recorded as action IDs
 4. **Pure functions**: Game state mutations are deterministic given inputs
 
@@ -17,11 +17,11 @@ PDoom's architecture is ideal for replay verification:
 
 ```
 Player plays game with seed "quantum-2024"
-  ↓
+   v 
 Records: [hire_safety_researcher, buy_compute, safety_research, ...]
-  ↓
+   v 
 Submits: {seed: "quantum-2024", actions: [...], final_score: 85000}
-  ↓
+   v 
 Server replays: same seed + same actions = verifies score matches
 ```
 
@@ -517,46 +517,46 @@ async def submit_score_with_replay(
 
 | Feature | HMAC | Replay Verification |
 |---------|------|---------------------|
-| Client-side tampering | ⚠️ Vulnerable (if secret leaked) | ✅ Impossible (must provide valid inputs) |
-| Score inflation | ⚠️ Easy if secret known | ✅ Impossible (replay proves legitimacy) |
-| Transparency | ❌ Opaque | ✅ Replays can be shared publicly |
-| Implementation | ✅ Simple | ⚠️ Complex (game logic reimplementation) |
-| Future features | ❌ Limited | ✅ Enables spectating, tutorials, analysis |
+| Client-side tampering | WARNING Vulnerable (if secret leaked) | SUCCESS Impossible (must provide valid inputs) |
+| Score inflation | WARNING Easy if secret known | SUCCESS Impossible (replay proves legitimacy) |
+| Transparency | ERROR Opaque | SUCCESS Replays can be shared publicly |
+| Implementation | SUCCESS Simple | WARNING Complex (game logic reimplementation) |
+| Future features | ERROR Limited | SUCCESS Enables spectating, tutorials, analysis |
 
 ### Attack Resistance
 
 **Attack 1: Submit fake score without playing**
-- ❌ **Blocked**: No valid action sequence can produce fake score
+- ERROR **Blocked**: No valid action sequence can produce fake score
 
 **Attack 2: Modify replay JSON to inflate score**
-- ❌ **Blocked**: Checksum detects tampering
-- ❌ **Blocked**: Even if checksum bypassed, replay won't produce inflated score
+- ERROR **Blocked**: Checksum detects tampering
+- ERROR **Blocked**: Even if checksum bypassed, replay won't produce inflated score
 
 **Attack 3: Find lucky RNG seed, submit multiple times**
-- ✅ **Allowed**: Legitimate strategy (like speedrun seed hunting)
-- ⚠️ **Mitigation**: Leaderboard shows "per seed" and "best overall"
+- SUCCESS **Allowed**: Legitimate strategy (like speedrun seed hunting)
+- WARNING **Mitigation**: Leaderboard shows "per seed" and "best overall"
 
 **Attack 4: Reverse engineer game logic, craft perfect inputs**
-- ✅ **Allowed**: This is just being very good at the game!
-- ✅ **Benefit**: Encourages strategic depth
+- SUCCESS **Allowed**: This is just being very good at the game!
+- SUCCESS **Benefit**: Encourages strategic depth
 
 **Attack 5: Memory hacking during gameplay**
-- ⚠️ **Partial**: Can modify client state, but replay will fail verification
-- ✅ **Detection**: Server sees impossible action sequences
+- WARNING **Partial**: Can modify client state, but replay will fail verification
+- SUCCESS **Detection**: Server sees impossible action sequences
 
 ## Privacy Considerations
 
 ### Replay Data Privacy
 
 **What replays reveal:**
-- ✅ Game strategy and decision-making
-- ✅ Reaction to events
-- ✅ Playstyle (aggressive vs conservative)
+- SUCCESS Game strategy and decision-making
+- SUCCESS Reaction to events
+- SUCCESS Playstyle (aggressive vs conservative)
 
 **What replays DON'T reveal:**
-- ❌ No personal information
-- ❌ No IP addresses (if stored anonymously)
-- ❌ No gameplay outside this specific run
+- ERROR No personal information
+- ERROR No IP addresses (if stored anonymously)
+- ERROR No gameplay outside this specific run
 
 **Privacy Controls:**
 
@@ -667,11 +667,11 @@ Once replay system is working:
 
 Replay-based verification is the **gold standard** for competitive game anti-cheat:
 
-✅ **Cheat-proof**: Impossible to fake without playing legitimately
-✅ **Transparent**: Replays can be shared and analyzed
-✅ **Future-proof**: Enables spectating, tutorials, tournaments
-✅ **No secrets**: No shared keys to leak or manage
-✅ **Privacy-preserving**: Only game actions recorded, no personal data
+SUCCESS **Cheat-proof**: Impossible to fake without playing legitimately
+SUCCESS **Transparent**: Replays can be shared and analyzed
+SUCCESS **Future-proof**: Enables spectating, tutorials, tournaments
+SUCCESS **No secrets**: No shared keys to leak or manage
+SUCCESS **Privacy-preserving**: Only game actions recorded, no personal data
 
 **Recommendation**: Implement this system. It's more work upfront, but makes your leaderboards bulletproof and unlocks exciting community features.
 

@@ -39,36 +39,36 @@ Website repo (`pdoom1-website`) **pulls** content from here.
 **In this repo** (`pdoom1`):
 ```
 scripts/
-└── sync_website_docs.py  # Export script
+`--- sync_website_docs.py  # Export script
 
 _website_export/           # Git-ignored working directory
-└── docs/                  # Processed markdown for website
-    ├── getting-started.md
-    ├── gameplay.md
-    ├── contributing.md
-    └── ...
+`--- docs/                  # Processed markdown for website
+    |--- getting-started.md
+    |--- gameplay.md
+    |--- contributing.md
+    `--- ...
 
 .github/workflows/
-└── export_website_docs.yml  # Auto-export on release
+`--- export_website_docs.yml  # Auto-export on release
 ```
 
 **In website repo** (`pdoom1-website`):
 ```
 content/
-└── game/                  # Pulled from pdoom1/_website_export
-    ├── getting-started.md
-    ├── gameplay.md
-    └── ...
+`--- game/                  # Pulled from pdoom1/_website_export
+    |--- getting-started.md
+    |--- gameplay.md
+    `--- ...
 
 scripts/
-└── pull_game_docs.sh     # Sync script
+`--- pull_game_docs.sh     # Sync script
 ```
 
 ### Sync Script Features
 
 **`scripts/sync_website_docs.py`** should:
 1. **Select** docs marked for website export
-2. **Transform** GitHub-specific markdown → website markdown:
+2. **Transform** GitHub-specific markdown  ->  website markdown:
    - Convert relative links
    - Add front-matter for static site generators
    - Process images
@@ -112,11 +112,11 @@ python -m src.leaderboard export --format web --output _website_export/leaderboa
 **Output Structure**:
 ```
 _website_export/
-└── leaderboards/
-    ├── manifest.json          # List of all leaderboards
-    ├── weekly-2025-w44.json   # Seed-specific leaderboard
-    ├── daily-2025-10-31.json
-    └── default.json
+`--- leaderboards/
+    |--- manifest.json          # List of all leaderboards
+    |--- weekly-2025-w44.json   # Seed-specific leaderboard
+    |--- daily-2025-10-31.json
+    `--- default.json
 ```
 
 **Manifest Format**:

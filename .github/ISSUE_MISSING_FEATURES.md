@@ -81,7 +81,7 @@ KeybindManager.admin_mode_toggled.connect(_on_admin_mode_activated)
 
 ### Proposed Enhancements
 - [ ] **Visual Doom Meter** - Progress bar or gauge
-  - Fill color changes (green → yellow → orange → red)
+  - Fill color changes (green  ->  yellow  ->  orange  ->  red)
   - Optional: Animated pulsing at high doom
   - Could use a circular gauge (Doomsday Clock aesthetic)
 
@@ -92,7 +92,7 @@ KeybindManager.admin_mode_toggled.connect(_on_admin_mode_activated)
 
 - [ ] **Momentum Indicators** - Show doom delta per turn
   - "+2.5% this turn" in red/green
-  - Arrow indicators (↑ ↓)
+  - Arrow indicators ( ^   v )
 
 ### Asset Needs
 ```
@@ -118,7 +118,7 @@ Our "only drawcard" deserves more love!
 
 - [ ] **Custom Cat Photos** - User-uploaded cat images
   - "Far future state" - mentioned in previous session
-  - Upload photo → convert to pixel art or apply filter
+  - Upload photo  ->  convert to pixel art or apply filter
   - Store in `user://custom_cats/`
   - "Doominess conversion" algorithm (brightness/contrast to doom correlation?)
 

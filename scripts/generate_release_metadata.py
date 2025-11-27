@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Generate release metadata for website integration.
 
@@ -298,7 +298,7 @@ def main():
         if tags:
             generator.generate_all_metadata(specific_version=tags[0])
         else:
-            print("⚠️  No release tags found!")
+            print("WARNING  No release tags found!")
     else:
         generator.generate_all_metadata(specific_version=args.version)
 

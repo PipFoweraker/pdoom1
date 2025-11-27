@@ -17,7 +17,7 @@ Use this checklist for every release to ensure nothing is forgotten.
 ## Export & Package
 
 - [ ] Open Godot 4.5.1+
-- [ ] Project → Export → Windows Desktop
+- [ ] Project  ->  Export  ->  Windows Desktop
 - [ ] Export to: `builds/windows/vX.Y.Z/PDoom.exe`
 - [ ] Verify both .exe and .pck files created
 - [ ] Run `bash package_release.sh`

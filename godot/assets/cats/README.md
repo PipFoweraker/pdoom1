@@ -6,18 +6,18 @@ This directory contains office cat images for the contributor recognition system
 
 ```
 cats/
-├── default/               # Default office cat (shipped with game)
-│   ├── happy.png         # 0-20% doom level
-│   ├── concerned.png     # 21-40% doom level
-│   ├── worried.png       # 41-60% doom level
-│   ├── distressed.png    # 61-80% doom level
-│   └── corrupted.png     # 81-100% doom level
-└── {contributor_uuid}/    # Contributor-specific cats (synced from pdoom-data)
-    ├── happy.png
-    ├── concerned.png
-    ├── worried.png
-    ├── distressed.png
-    └── corrupted.png
+|--- default/               # Default office cat (shipped with game)
+|   |--- happy.png         # 0-20% doom level
+|   |--- concerned.png     # 21-40% doom level
+|   |--- worried.png       # 41-60% doom level
+|   |--- distressed.png    # 61-80% doom level
+|   `--- corrupted.png     # 81-100% doom level
+`--- {contributor_uuid}/    # Contributor-specific cats (synced from pdoom-data)
+    |--- happy.png
+    |--- concerned.png
+    |--- worried.png
+    |--- distressed.png
+    `--- corrupted.png
 ```
 
 ## Image Specifications

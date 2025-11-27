@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Sync documentation from pdoom1 repo to website export format.
 
@@ -47,7 +47,7 @@ class WebsiteDocSyncer:
         self.generate_manifest()
 
         print()
-        print(f"✓ Export complete: {self.output_dir}")
+        print(f"CHECKED Export complete: {self.output_dir}")
         print(f"  Docs: {len(list(self.docs_output.rglob('*.md')))} files")
 
     def sync_readme(self):
@@ -72,7 +72,7 @@ class WebsiteDocSyncer:
         content = self._transform_images(content)
 
         output.write_text(front_matter + content, encoding="utf-8")
-        print(f"  ✓ {output.relative_to(self.output_dir)}")
+        print(f"  CHECKED {output.relative_to(self.output_dir)}")
 
     def sync_user_docs(self):
         """Export user-facing documentation."""
@@ -80,7 +80,7 @@ class WebsiteDocSyncer:
 
         user_docs = self.repo_root / "docs" / "user-guide"
         if not user_docs.exists():
-            print("  ⚠ docs/user-guide/ not found, skipping")
+            print("  WARNING docs/user-guide/ not found, skipping")
             return
 
         output_dir = self.docs_output / "guides"
@@ -95,7 +95,7 @@ class WebsiteDocSyncer:
 
         dev_docs = self.repo_root / "docs" / "developer"
         if not dev_docs.exists():
-            print("  ⚠ docs/developer/ not found, skipping")
+            print("  WARNING docs/developer/ not found, skipping")
             return
 
         output_dir = self.docs_output / "dev"
@@ -110,7 +110,7 @@ class WebsiteDocSyncer:
 
         privacy = self.repo_root / "docs" / "PRIVACY.md"
         if not privacy.exists():
-            print("  ⚠ docs/PRIVACY.md not found, skipping")
+            print("  WARNING docs/PRIVACY.md not found, skipping")
             return
 
         output = self.docs_output / "privacy.md"
@@ -122,7 +122,7 @@ class WebsiteDocSyncer:
 
         changelog = self.repo_root / "CHANGELOG.md"
         if not changelog.exists():
-            print("  ⚠ CHANGELOG.md not found, skipping")
+            print("  WARNING CHANGELOG.md not found, skipping")
             return
 
         output = self.docs_output / "releases.md"
@@ -153,7 +153,7 @@ class WebsiteDocSyncer:
         content = self._transform_images(content)
 
         output.write_text(front_matter + content, encoding="utf-8")
-        print(f"  ✓ {output.relative_to(self.output_dir)}")
+        print(f"  CHECKED {output.relative_to(self.output_dir)}")
 
     def _create_front_matter(self, title: str, slug: str, category: str, description: str = None) -> str:
         """Create YAML front-matter for static site generators."""
@@ -219,7 +219,7 @@ class WebsiteDocSyncer:
         manifest_path = self.output_dir / "manifest.json"
         manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
-        print(f"  ✓ {manifest_path.relative_to(self.output_dir)}")
+        print(f"  CHECKED {manifest_path.relative_to(self.output_dir)}")
 
 
 def main():

@@ -69,8 +69,8 @@ VerificationTracker.disable_debug()
 
 Output shows every hash update:
 ```
-[VerificationTracker] Action: buy_compute → 7a3f2e1b...
-[VerificationTracker] RNG: candidate_spec=0.342156 → 9b2c4d5e...
+[VerificationTracker] Action: buy_compute  ->  7a3f2e1b...
+[VerificationTracker] RNG: candidate_spec=0.342156  ->  9b2c4d5e...
 ```
 
 ---
@@ -88,14 +88,14 @@ When you play PDoom, the game creates a unique "fingerprint" (hash) of your enti
 
 ### How Leaderboards Work
 
-1. **You play a game** → Game generates verification hash
-2. **You submit your score** → Hash + score sent to server
+1. **You play a game**  ->  Game generates verification hash
+2. **You submit your score**  ->  Hash + score sent to server
 3. **Server checks**:
    - Is this hash valid? (plausibility check)
    - Has anyone submitted this before? (timestamp priority)
 4. **Leaderboard updated**:
    - First to submit hash = "Original" (⭐)
-   - Later submissions = "Duplicate" (🔁)
+   - Later submissions = "Duplicate" (REPEAT)
 
 ### Why Duplicates Are OK
 
@@ -109,15 +109,15 @@ If someone else submits the same hash as you:
 ### Privacy
 
 What we collect:
-- ✅ Verification hash (64 characters, no personal info)
-- ✅ Final game state (score, resources, turn count)
-- ✅ Timestamp
+- SUCCESS Verification hash (64 characters, no personal info)
+- SUCCESS Final game state (score, resources, turn count)
+- SUCCESS Timestamp
 
 What we DON'T collect:
-- ❌ Your specific gameplay actions
-- ❌ IP addresses (not logged)
-- ❌ Personal information
-- ❌ Telemetry/analytics (unless opted in)
+- ERROR Your specific gameplay actions
+- ERROR IP addresses (not logged)
+- ERROR Personal information
+- ERROR Telemetry/analytics (unless opted in)
 
 ---
 
@@ -193,11 +193,11 @@ VerificationTracker.enable_debug()
 print(VerificationTracker.get_tracking_summary())
 # Output:
 # {
-#   "tracking_enabled": true,
-#   "game_seed": "test-seed-001",
-#   "game_version": "0.10.2",
-#   "current_hash": "7a3f2e1b9c8d4a5f...",
-#   "hash_prefix": "7a3f2e1b9c8d4a5f"
+# "tracking_enabled": true,
+# "game_seed": "test-seed-001",
+# "game_version": "0.10.2",
+# "current_hash": "7a3f2e1b9c8d4a5f...",
+# "hash_prefix": "7a3f2e1b9c8d4a5f"
 # }
 ```
 
@@ -207,14 +207,14 @@ print(VerificationTracker.get_tracking_summary())
 
 ### Hash Mismatch Between Replays
 
-**Symptom**: Same seed + same actions → different hash
+**Symptom**: Same seed + same actions  ->  different hash
 
 **Common Causes**:
-1. **New RNG call not tracked** → Add `record_rng_outcome()`
-2. **Float precision issue** → Ensure using `snappedf()` for rounding
-3. **Action order different** → Check action execution order
-4. **Event RNG not tracked** → Check event trigger tracking
-5. **Platform difference** → Test cross-platform consistency
+1. **New RNG call not tracked**  ->  Add `record_rng_outcome()`
+2. **Float precision issue**  ->  Ensure using `snappedf()` for rounding
+3. **Action order different**  ->  Check action execution order
+4. **Event RNG not tracked**  ->  Check event trigger tracking
+5. **Platform difference**  ->  Test cross-platform consistency
 
 **Fix**: Enable debug mode, compare hash update logs side-by-side
 
@@ -223,9 +223,9 @@ print(VerificationTracker.get_tracking_summary())
 **Symptom**: Hash stays same after actions
 
 **Causes**:
-1. Tracking not started → Check `start_tracking()` called
-2. Tracking disabled → Check `tracking_enabled` flag
-3. Silent failure → Check debug logs
+1. Tracking not started  ->  Check `start_tracking()` called
+2. Tracking disabled  ->  Check `tracking_enabled` flag
+3. Silent failure  ->  Check debug logs
 
 **Fix**:
 ```gdscript
@@ -267,16 +267,16 @@ if not VerificationTracker.is_tracking():
 
 ### What's Protected
 
-- ✅ Score inflation (can't fake without valid state)
-- ✅ State tampering (breaks hash chain)
-- ✅ Replay attacks (timestamp priority)
-- ✅ Action reordering (turn sequence matters)
+- SUCCESS Score inflation (can't fake without valid state)
+- SUCCESS State tampering (breaks hash chain)
+- SUCCESS Replay attacks (timestamp priority)
+- SUCCESS Action reordering (turn sequence matters)
 
 ### What's NOT Protected
 
-- ⚠️ Memory hacking (but plausibility checks catch extremes)
-- ⚠️ RNG manipulation (but that's strategy optimization!)
-- ⚠️ Perfect play bots (welcomed, not blocked)
+- WARNING Memory hacking (but plausibility checks catch extremes)
+- WARNING RNG manipulation (but that's strategy optimization!)
+- WARNING Perfect play bots (welcomed, not blocked)
 
 ### Philosophy
 
@@ -303,4 +303,4 @@ This is **90% security with 10% complexity**. It's not bulletproof, but it:
 ---
 
 **Last Updated**: November 20, 2024
-**Status**: ✅ Client-side complete
+**Status**: SUCCESS Client-side complete

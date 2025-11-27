@@ -28,22 +28,22 @@ jobs:
 
     - name: Verify version system
       run: |
-        echo "ℹ️  Project migrated to Godot - Python version system check skipped"
-        echo "✅ Version system handled by Godot project.godot"
+        echo "INFO  Project migrated to Godot - Python version system check skipped"
+        echo "SUCCESS Version system handled by Godot project.godot"
 
     - name: Run unit tests
       env:
         PYTHONWARNINGS: ignore::DeprecationWarning
       run: |
-        echo "ℹ️  Project migrated to Godot - Python pytest skipped"
-        echo "✅ Unit tests handled by Godot GUT framework"
+        echo "INFO  Project migrated to Godot - Python pytest skipped"
+        echo "SUCCESS Unit tests handled by Godot GUT framework"
 
     - name: Verify event log behavior specifically
       run: |
-        echo "ℹ️  Project migrated to Godot - Python unittest check skipped"
-        echo "✅ Event log handled by GDScript implementation"
+        echo "INFO  Project migrated to Godot - Python unittest check skipped"
+        echo "SUCCESS Event log handled by GDScript implementation"
 
     - name: Test basic game functionality
       run: |
-        echo "ℹ️  Project migrated to Godot - Python game state check skipped"
-        echo "✅ Game functionality handled by Godot/GDScript"
+        echo "INFO  Project migrated to Godot - Python game state check skipped"
+        echo "SUCCESS Game functionality handled by Godot/GDScript"

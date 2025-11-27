@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Testing scenarios and validation
 
 ### Changed
-- **Turn Philosophy Reframe**: "Skip Turn" → "Commit Plan & Reserve AP"
+- **Turn Philosophy Reframe**: "Skip Turn"  ->  "Commit Plan & Reserve AP"
   - Introduced "Monday Planning" metaphor for turn sequence
   - Players plan their week, reserve slack for chaos, commit strategy
   - Empty queue is now a valid reactive strategy (reserve all AP for events)
@@ -110,7 +110,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **UI Polish and Visual Improvements**:
-  - Increased InfoBar height (40px → 60px) to prevent flicker
+  - Increased InfoBar height (40px  ->  60px) to prevent flicker
   - Made info bar permanently 2-line format
   - Added "No costs" text for actions without resource requirements
   - Moved upgrades to right panel for better visibility
@@ -166,19 +166,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed case-sensitive phase checking
   - Commit Actions disabled when queue is empty (prevents illegal turns)
 - **Code Quality:** Zero GDScript warnings
-  - Renamed `sign` → `value_sign` (shadowing built-in function)
-  - Renamed `seed` → `game_seed_str` (shadowing built-in function)
+  - Renamed `sign`  ->  `value_sign` (shadowing built-in function)
+  - Renamed `seed`  ->  `game_seed_str` (shadowing built-in function)
   - Prefixed 8 unused `err` variables with underscore
 
 ### Changed
 - **UI Clarity Improvements**:
-  - Renamed "End Turn" → "Commit Actions (Space)" for better player understanding
+  - Renamed "End Turn"  ->  "Commit Actions (Space)" for better player understanding
   - AP counter now shows remaining AP: "AP: 3 (1 free, 2 queued)"
   - Color-coded AP display: Green (available), Yellow (low), Red (depleted)
   - Updated keyboard shortcut hints to say "commit" instead of "end turn"
-  - Keyboard shortcut: X → C for clear queue (avoids submenu conflicts)
+  - Keyboard shortcut: X  ->  C for clear queue (avoids submenu conflicts)
 - **Game Description**: Professional tone for public presentation
-  - README.md: "satirical" → "strategic simulation"
+  - README.md: "satirical"  ->  "strategic simulation"
   - project.godot: Updated to "AI Safety Lab Management Simulation"
 - **README**: Complete overhaul for public presentation
   - Fixed website URL (pdoom1.com, not pdoom.org)
@@ -186,14 +186,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Clarified Godot as primary platform, Python for dev/testing only
   - PC/Windows focus, Mac/Linux documented as high-priority future work
 - **Documentation Organization**: Moved 20 markdown files into logical structure
-  - Godot docs → `godot/docs/` (5 files)
-  - Guides → `docs/guides/` (7 files)
-  - Summaries → `docs/summaries/` (7 files)
-  - Root directory: 28 → 8 markdown files (71% reduction)
+  - Godot docs  ->  `godot/docs/` (5 files)
+  - Guides  ->  `docs/guides/` (7 files)
+  - Summaries  ->  `docs/summaries/` (7 files)
+  - Root directory: 28  ->  8 markdown files (71% reduction)
 - **Archive Cleanup**: Moved 30 files from root
-  - 15 Python utility files → `archive/python-root/`
-  - 15 session docs → `archive/session-docs/`
-  - Root Python files: 20 → 5 (only essentials)
+  - 15 Python utility files  ->  `archive/python-root/`
+  - 15 session docs  ->  `archive/session-docs/`
+  - Root Python files: 20  ->  5 (only essentials)
 
 ### Added
 - **Queue Management Controls**:

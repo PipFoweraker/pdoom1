@@ -1,4 +1,4 @@
-#!/bin/bash
+# !/bin/bash
 # Run all Godot unit and integration tests via GUT
 # Usage: ./run_all_tests.sh
 
@@ -20,10 +20,10 @@ EXIT_CODE=$?
 
 if [ $EXIT_CODE -eq 0 ]; then
   echo ""
-  echo "✅ All tests passed!"
+  echo "SUCCESS All tests passed!"
 else
   echo ""
-  echo "❌ Tests failed with exit code: $EXIT_CODE"
+  echo "ERROR Tests failed with exit code: $EXIT_CODE"
 fi
 
 exit $EXIT_CODE

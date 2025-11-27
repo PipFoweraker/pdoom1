@@ -39,10 +39,10 @@ jobs:
 
           # Check for parse errors
           if grep -i "parse error\|error:" godot_output.log; then
-            echo "❌ GDScript syntax errors found!"
+            echo "ERROR GDScript syntax errors found!"
             exit 1
           else
-            echo "✅ GDScript syntax check passed!"
+            echo "SUCCESS GDScript syntax check passed!"
           fi
 
   unit-tests:
@@ -145,16 +145,16 @@ jobs:
       - name: Check test results
         run: |
           if [ "${{ needs.syntax-check.result }}" != "success" ]; then
-            echo "❌ Syntax check failed"
+            echo "ERROR Syntax check failed"
             exit 1
           fi
 
           if [ "${{ needs.unit-tests.result }}" != "success" ]; then
-            echo "❌ Unit tests failed"
+            echo "ERROR Unit tests failed"
             exit 1
           fi
 
-          echo "✅ All required tests passed!"
+          echo "SUCCESS All required tests passed!"
 
       - name: Post comment on PR
         if: github.event_name == 'pull_request' && needs.unit-tests.result == 'success'
@@ -165,5 +165,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '✅ All Godot tests passed!\n\n- GDScript syntax: ✓\n- Unit tests: ✓\n\nReady for review!'
+              body: 'SUCCESS All Godot tests passed!\n\n- GDScript syntax: CHECKED\n- Unit tests: CHECKED\n\nReady for review!'
             })

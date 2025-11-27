@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Build P(Doom) for all platforms (Windows, Linux, macOS).
 

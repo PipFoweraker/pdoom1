@@ -36,9 +36,9 @@ jobs:
           echo "Checking if CHANGELOG.md contains version $TAG_VERSION..."
 
           if grep -q "$TAG_VERSION" CHANGELOG.md; then
-            echo "✅ CHANGELOG.md contains version $TAG_VERSION"
+            echo "SUCCESS CHANGELOG.md contains version $TAG_VERSION"
           else
-            echo "❌ ERROR: CHANGELOG.md does not mention version $TAG_VERSION"
+            echo "ERROR ERROR: CHANGELOG.md does not mention version $TAG_VERSION"
             echo "Please update CHANGELOG.md before releasing!"
             exit 1
           fi
@@ -50,9 +50,9 @@ jobs:
           echo "Checking project.godot version..."
 
           if grep -q "config/version=\"$TAG_VERSION\"" godot/project.godot; then
-            echo "✅ project.godot version matches tag"
+            echo "SUCCESS project.godot version matches tag"
           else
-            echo "❌ WARNING: project.godot version does not match tag v$TAG_VERSION"
+            echo "ERROR WARNING: project.godot version does not match tag v$TAG_VERSION"
             exit 1
           fi
         shell: bash
@@ -60,11 +60,11 @@ jobs:
       - name: Check for uncommitted changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            echo "❌ ERROR: Uncommitted changes found!"
+            echo "ERROR ERROR: Uncommitted changes found!"
             git status
             exit 1
           else
-            echo "✅ No uncommitted changes"
+            echo "SUCCESS No uncommitted changes"
           fi
 
       - name: Post validation results
@@ -76,7 +76,7 @@ jobs:
             github.rest.issues.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              title: `⚠️ Pre-Release Checks Failed: ${tagName}`,
+              title: `WARNING Pre-Release Checks Failed: ${tagName}`,
               body: `## Pre-release validation failed for ${tagName}\n\nPlease check the [workflow run](${context.payload.repository.html_url}/actions/runs/${context.runId}) for details.\n\n**Common issues:**\n- CHANGELOG.md not updated\n- Version mismatch in project.godot\n- Tests failing\n- Uncommitted changes\n\nFix these issues and re-tag the release.`,
               labels: ['release', 'build-failed']
             });

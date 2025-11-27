@@ -18,59 +18,59 @@ A unified system for managing and distributing P(Doom) content across multiple p
 
 ```
 pdoom1/                    # Main game repository
-├── scripts/
-│   ├── devblog_automation.py      # Existing (base for expansion)
-│   └── content_publisher.py       # NEW: Multi-platform publisher
-│
-├── content/
-│   ├── templates/                  # Content templates
-│   │   ├── release_announcement.md
-│   │   ├── dev_update.md
-│   │   ├── weekly_summary.md
-│   │   └── patch_notes.md
-│   │
-│   ├── scheduled/                  # Content queue
-│   │   ├── 2025-11-25_v0.10.5_release.json
-│   │   └── 2025-11-30_weekly_update.json
-│   │
-│   └── published/                  # Archive
-│       └── 2025-11_published.json
-│
-└── tools/
-    └── content_manager/            # NEW: GUI for content management
-        ├── main.py
-        ├── preview.py
-        └── scheduler.py
+|--- scripts/
+|   |--- devblog_automation.py      # Existing (base for expansion)
+|   `--- content_publisher.py       # NEW: Multi-platform publisher
+|
+|--- content/
+|   |--- templates/                  # Content templates
+|   |   |--- release_announcement.md
+|   |   |--- dev_update.md
+|   |   |--- weekly_summary.md
+|   |   `--- patch_notes.md
+|   |
+|   |--- scheduled/                  # Content queue
+|   |   |--- 2025-11-25_v0.10.5_release.json
+|   |   `--- 2025-11-30_weekly_update.json
+|   |
+|   `--- published/                  # Archive
+|       `--- 2025-11_published.json
+|
+`--- tools/
+    `--- content_manager/            # NEW: GUI for content management
+        |--- main.py
+        |--- preview.py
+        `--- scheduler.py
 
 pdoom1-website/            # Website repository
-├── public/
-│   ├── blog/                       # Auto-published posts
-│   └── releases/                   # Release feeds
-│
-└── scripts/
-    └── sync_content.py             # Pull from main repo
+|--- public/
+|   |--- blog/                       # Auto-published posts
+|   `--- releases/                   # Release feeds
+|
+`--- scripts/
+    `--- sync_content.py             # Pull from main repo
 
 pdoom-dashboard/           # Dashboard repository
-├── data/
-│   ├── events/                     # Game events
-│   └── releases/                   # Release data
-│
-└── components/
-    └── NewsSection.tsx             # Displays content
+|--- data/
+|   |--- events/                     # Game events
+|   `--- releases/                   # Release data
+|
+`--- components/
+    `--- NewsSection.tsx             # Displays content
 
 content-hub/              # NEW: Central content repo
-├── config/
-│   ├── platforms.yaml              # Platform credentials
-│   └── rules.yaml                  # Publishing rules
-│
-├── pipelines/
-│   ├── reddit_pipeline.py
-│   ├── forum_pipeline.py
-│   └── dashboard_pipeline.py
-│
-└── ui/
-    ├── dashboard.html              # Management UI
-    └── scheduler.html              # Content calendar
+|--- config/
+|   |--- platforms.yaml              # Platform credentials
+|   `--- rules.yaml                  # Publishing rules
+|
+|--- pipelines/
+|   |--- reddit_pipeline.py
+|   |--- forum_pipeline.py
+|   `--- dashboard_pipeline.py
+|
+`--- ui/
+    |--- dashboard.html              # Management UI
+    `--- scheduler.html              # Content calendar
 ```
 
 ---
@@ -684,17 +684,17 @@ jobs:
 
 ### Option A: Monorepo (Recommended for MVP)
 Keep everything in `pdoom1` for now:
-- ✅ Faster iteration
-- ✅ Easier to maintain
-- ✅ Single source of truth
-- ❌ Grows large over time
+- SUCCESS Faster iteration
+- SUCCESS Easier to maintain
+- SUCCESS Single source of truth
+- ERROR Grows large over time
 
 ### Option B: Separate Content Hub
 Create `pdoom-content-hub` repository:
-- ✅ Clean separation
-- ✅ Easier permissions management
-- ✅ Independent deployment
-- ❌ More repos to manage
+- SUCCESS Clean separation
+- SUCCESS Easier permissions management
+- SUCCESS Independent deployment
+- ERROR More repos to manage
 
 ### Recommendation: Start with Option A, migrate to Option B when:
 - You have >5 active publishing pipelines

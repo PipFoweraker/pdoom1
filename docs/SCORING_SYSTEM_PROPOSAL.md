@@ -213,9 +213,9 @@ All strategies can achieve competitive scores, supporting diverse playstyles.
 
 ### Current (Turns Only)
 ```
-Typical Win:  50 turns → 50 points
-Long Game:    80 turns → 80 points
-Early Loss:   20 turns → 20 points
+Typical Win:  50 turns  ->  50 points
+Long Game:    80 turns  ->  80 points
+Early Loss:   20 turns  ->  20 points
 
 Problems:
 - No reward for safety focus
@@ -231,11 +231,11 @@ Long Game:    173,000 points (balanced survival)
 Early Loss:    38,000 points (minimal progress)
 
 Benefits:
-✅ Rewards core safety theme
-✅ Values research output
-✅ Distinguishes quality of wins
-✅ Multiple viable strategies
-✅ Strategic depth
+SUCCESS Rewards core safety theme
+SUCCESS Values research output
+SUCCESS Distinguishes quality of wins
+SUCCESS Multiple viable strategies
+SUCCESS Strategic depth
 ```
 
 ---
@@ -381,10 +381,10 @@ def test_score_calculation():
 
 If community feedback suggests:
 
-**"Safety too dominant"**: Reduce doom multiplier (1000 → 800)
-**"Papers undervalued"**: Increase paper multiplier (5000 → 6000)
-**"Victory bonus too high"**: Reduce bonus (50000 → 30000)
-**"Money irrelevant"**: Increase money multiplier (0.1 → 0.5)
+**"Safety too dominant"**: Reduce doom multiplier (1000  ->  800)
+**"Papers undervalued"**: Increase paper multiplier (5000  ->  6000)
+**"Victory bonus too high"**: Reduce bonus (50000  ->  30000)
+**"Money irrelevant"**: Increase money multiplier (0.1  ->  0.5)
 
 ### Monitoring Metrics
 
@@ -425,12 +425,12 @@ score = (100 - doom) * turn * 20 + papers * turn * 100 + ...
 
 **Use Proposed Formula v1.0** for initial launch because:
 
-1. ✅ Balanced weight distribution (40% safety, 20% research, etc.)
-2. ✅ Multiple viable strategies (safety, research, balanced, risky)
-3. ✅ Clear component breakdown (easy to understand)
-4. ✅ Reasonable score ranges (50k-300k)
-5. ✅ Maintains existing "turns survived" importance
-6. ✅ Easy to tune post-launch (adjust multipliers)
+1. SUCCESS Balanced weight distribution (40% safety, 20% research, etc.)
+2. SUCCESS Multiple viable strategies (safety, research, balanced, risky)
+3. SUCCESS Clear component breakdown (easy to understand)
+4. SUCCESS Reasonable score ranges (50k-300k)
+5. SUCCESS Maintains existing "turns survived" importance
+6. SUCCESS Easy to tune post-launch (adjust multipliers)
 
 **Then**: Monitor community feedback and adjust multipliers in v1.1 if needed.
 

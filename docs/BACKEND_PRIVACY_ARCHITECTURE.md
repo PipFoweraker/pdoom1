@@ -408,7 +408,7 @@ Questions about your data: privacy@pdoom.com
 ### Phase 4: Steam Prep (Future)
 
 - [ ] Add Steam authentication endpoint
-- [ ] Implement device_id → steam_id linking
+- [ ] Implement device_id  ->  steam_id linking
 - [ ] Dual-post to PDoom + Steam leaderboards
 - [ ] Add Steam-specific privacy settings
 
@@ -422,17 +422,17 @@ Questions about your data: privacy@pdoom.com
 
 **Bandwidth:**
 - ~1KB per score submission
-- 10,000 players × 10 games each = 100KB data
+- 10,000 players x 10 games each = 100KB data
 - Negligible bandwidth costs
 
 ## Security Considerations
 
 **What we're protecting against:**
-1. ✅ SQL injection → Pydantic validation + SQLAlchemy ORM
-2. ✅ DDoS → Rate limiting (10 scores/hour per IP)
-3. ✅ Privacy leaks → No IP logging, minimal data collection
-4. ✅ Score cheating → State hash validation, statistical analysis
-5. ⚠️ Advanced exploits → Keep FastAPI/Python updated
+1. SUCCESS SQL injection  ->  Pydantic validation + SQLAlchemy ORM
+2. SUCCESS DDoS  ->  Rate limiting (10 scores/hour per IP)
+3. SUCCESS Privacy leaks  ->  No IP logging, minimal data collection
+4. SUCCESS Score cheating  ->  State hash validation, statistical analysis
+5. WARNING Advanced exploits  ->  Keep FastAPI/Python updated
 
 **What we're NOT building (yet):**
 - Advanced anti-cheat (memory scanning, etc.)

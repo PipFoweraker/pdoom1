@@ -111,31 +111,31 @@ cd pdoom1
 ### Directory Structure:
 ```
 godot/
-├── scenes/
-│   ├── welcome.tscn          # Main menu
-│   └── main.tscn             # Core gameplay
-├── scripts/
-│   ├── core/
-│   │   ├── game_state.gd     # State management
-│   │   ├── turn_manager.gd   # Turn flow
-│   │   ├── actions.gd        # Action system
-│   │   └── events.gd         # Event system
-│   ├── ui/
-│   │   ├── welcome_screen.gd # Welcome UI
-│   │   └── main_ui.gd        # Main game UI
-│   └── game_manager.gd       # Game controller
-├── tests/
-│   ├── unit/
-│   │   ├── test_game_state.gd
-│   │   ├── test_deterministic_rng.gd
-│   │   ├── test_turn_manager.gd
-│   │   ├── test_actions.gd
-│   │   └── test_events.gd
-│   └── run_tests.gd          # Test runner
-├── theme/
-│   └── welcome_theme.tres    # UI styling
-└── addons/
-    └── gut/                  # Testing framework
+|--- scenes/
+|   |--- welcome.tscn          # Main menu
+|   `--- main.tscn             # Core gameplay
+|--- scripts/
+|   |--- core/
+|   |   |--- game_state.gd     # State management
+|   |   |--- turn_manager.gd   # Turn flow
+|   |   |--- actions.gd        # Action system
+|   |   `--- events.gd         # Event system
+|   |--- ui/
+|   |   |--- welcome_screen.gd # Welcome UI
+|   |   `--- main_ui.gd        # Main game UI
+|   `--- game_manager.gd       # Game controller
+|--- tests/
+|   |--- unit/
+|   |   |--- test_game_state.gd
+|   |   |--- test_deterministic_rng.gd
+|   |   |--- test_turn_manager.gd
+|   |   |--- test_actions.gd
+|   |   `--- test_events.gd
+|   `--- run_tests.gd          # Test runner
+|--- theme/
+|   `--- welcome_theme.tres    # UI styling
+`--- addons/
+    `--- gut/                  # Testing framework
 ```
 
 ---

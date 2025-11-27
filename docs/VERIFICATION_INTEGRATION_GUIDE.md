@@ -1,13 +1,13 @@
 # Verification Tracker Integration Guide
 
-**Status**: ✅ VerificationTracker autoload implemented
+**Status**: SUCCESS VerificationTracker autoload implemented
 **Next**: Integrate into game flow
 
 ---
 
 ## Implementation Checklist
 
-### ✅ Phase 1: Core Infrastructure (COMPLETE)
+### SUCCESS Phase 1: Core Infrastructure (COMPLETE)
 
 - [x] Create `verification_tracker.gd` autoload
 - [x] Register in `project.godot`
@@ -15,7 +15,7 @@
 - [x] Implement state snapshot creation
 - [x] Add debug logging
 
-### 🔄 Phase 2: Game Start Integration (NEXT)
+### REFRESH Phase 2: Game Start Integration (NEXT)
 
 **File**: `godot/scripts/game_manager.gd` or equivalent
 
@@ -40,7 +40,7 @@ func start_new_game(seed: String):
 
 ---
 
-### 🔄 Phase 3: Action Execution Integration
+### REFRESH Phase 3: Action Execution Integration
 
 **File**: Wherever actions are executed (likely `game_manager.gd` or `main_ui.gd`)
 
@@ -73,7 +73,7 @@ func hire_researcher(candidate_index: int):
 
 ---
 
-### 🔄 Phase 4: Event System Integration
+### REFRESH Phase 4: Event System Integration
 
 **File**: `godot/scripts/core/events.gd` or event handler
 
@@ -118,7 +118,7 @@ func handle_event_response(event_id: String, response_id: String):
 
 ---
 
-### 🔄 Phase 5: RNG Outcome Tracking
+### REFRESH Phase 5: RNG Outcome Tracking
 
 **File**: `godot/scripts/core/turn_manager.gd`
 
@@ -171,7 +171,7 @@ func check_research_breakthrough() -> bool:
 
 ---
 
-### 🔄 Phase 6: Turn End Integration
+### REFRESH Phase 6: Turn End Integration
 
 **File**: `godot/scripts/core/turn_manager.gd`
 
@@ -194,7 +194,7 @@ func process_turn():
 
 ---
 
-### 🔄 Phase 7: Game End & Submission
+### REFRESH Phase 7: Game End & Submission
 
 **File**: `godot/scripts/end_game_screen.gd` or wherever game end is handled
 
@@ -238,7 +238,7 @@ func on_game_end():
 
 ---
 
-### 🔄 Phase 8: Backend API Integration (FUTURE)
+### REFRESH Phase 8: Backend API Integration (FUTURE)
 
 **File**: New file `godot/autoload/backend_api.gd`
 
@@ -315,7 +315,7 @@ func submit_score(verification_data: Dictionary) -> Dictionary:
 3. Check console for RNG outcome logs
 4. Verify hash changes after RNG calls
 
-**Expected**: See "[VerificationTracker] RNG: candidate_spec=0.342156 →..."
+**Expected**: See "[VerificationTracker] RNG: candidate_spec=0.342156  -> ..."
 
 ### Test 4: Turn Boundary
 
@@ -345,9 +345,9 @@ VerificationTracker.enable_debug()
   Seed: quantum-2024
   Version: 0.10.2
   Initial hash: abc123def456...
-[VerificationTracker] Action: buy_compute → def456789abc...
-[VerificationTracker] RNG: candidate_spec=0.342156 → 789abcdef123...
-[VerificationTracker] Turn 1 end → 123def456789...
+[VerificationTracker] Action: buy_compute  ->  def456789abc...
+[VerificationTracker] RNG: candidate_spec=0.342156  ->  789abcdef123...
+[VerificationTracker] Turn 1 end  ->  123def456789...
 ```
 
 ### Get Current Hash
@@ -399,11 +399,11 @@ file.close()
 
 **Symptom**: Tiny state differences cause different hashes (expected, but check if problematic)
 
-**Example**: `money = 99999.999` vs `money = 100000.001` → different hashes
+**Example**: `money = 99999.999` vs `money = 100000.001`  ->  different hashes
 
 **Solution**: This is correct behavior - hash should be sensitive!
 
-**But if problematic**: Increase rounding precision in `snappedf(value, 0.01)` → `snappedf(value, 0.1)`
+**But if problematic**: Increase rounding precision in `snappedf(value, 0.01)`  ->  `snappedf(value, 0.1)`
 
 ### Issue 3: Missing Hash Updates
 
@@ -433,16 +433,16 @@ file.close()
 
 **Recommended order**:
 
-1. ✅ Create VerificationTracker autoload (DONE)
-2. ✅ Register in project.godot (DONE)
-3. 🔄 Add to game start (test: hash initializes)
-4. 🔄 Add to action execution (test: hash changes)
-5. 🔄 Add to turn end (test: turn boundaries)
-6. 🔄 Test determinism (same seed twice)
-7. 🔄 Add event tracking
-8. 🔄 Add RNG tracking
-9. 🔄 Test full game playthrough
-10. 🔄 Add game end export
+1. SUCCESS Create VerificationTracker autoload (DONE)
+2. SUCCESS Register in project.godot (DONE)
+3. REFRESH Add to game start (test: hash initializes)
+4. REFRESH Add to action execution (test: hash changes)
+5. REFRESH Add to turn end (test: turn boundaries)
+6. REFRESH Test determinism (same seed twice)
+7. REFRESH Add event tracking
+8. REFRESH Add RNG tracking
+9. REFRESH Test full game playthrough
+10. REFRESH Add game end export
 11. ⏳ Backend API integration (future)
 
 **Timeline**: ~2-3 days for full integration

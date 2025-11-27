@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Sync local issue filenames with GitHub issue numbers.
 
@@ -6,7 +6,7 @@ This script reads .sync_metadata.json and renames local issue files
 to include their GitHub issue numbers for easier reference.
 
 Format: {github_id}-{slug}.md
-Example: ui-navigation-keyboard-shortcuts.md → 422-ui-navigation-keyboard-shortcuts.md
+Example: ui-navigation-keyboard-shortcuts.md  ->  422-ui-navigation-keyboard-shortcuts.md
 """
 
 import json
@@ -21,7 +21,7 @@ METADATA_FILE = ISSUES_DIR / ".sync_metadata.json"
 def load_metadata() -> Dict:
     """Load sync metadata from file."""
     if not METADATA_FILE.exists():
-        print(f"❌ Metadata file not found: {METADATA_FILE}")
+        print(f"ERROR Metadata file not found: {METADATA_FILE}")
         return {}
 
     with open(METADATA_FILE, 'r') as f:
@@ -39,13 +39,13 @@ def rename_issue_file(old_name: str, github_id: int, dry_run: bool = True) -> bo
     old_path = ISSUES_DIR / old_name
 
     if not old_path.exists():
-        print(f"  ⚠️  File not found: {old_name}")
+        print(f"  WARNING  File not found: {old_name}")
         return False
 
     # Check if already has number
     existing_num = get_issue_number_from_filename(old_name)
     if existing_num == github_id:
-        print(f"  ✓ Already has correct number: {old_name}")
+        print(f"  CHECKED Already has correct number: {old_name}")
         return True
 
     # Create new filename
@@ -60,21 +60,21 @@ def rename_issue_file(old_name: str, github_id: int, dry_run: bool = True) -> bo
     new_path = ISSUES_DIR / new_name
 
     if new_path.exists():
-        print(f"  ⚠️  Target file already exists: {new_name}")
+        print(f"  WARNING  Target file already exists: {new_name}")
         return False
 
     if dry_run:
-        print(f"  → Would rename: {old_name} → {new_name}")
+        print(f"   ->  Would rename: {old_name}  ->  {new_name}")
     else:
         shutil.move(str(old_path), str(new_path))
-        print(f"  ✅ Renamed: {old_name} → {new_name}")
+        print(f"  SUCCESS Renamed: {old_name}  ->  {new_name}")
 
     return True
 
 def update_metadata(metadata: Dict, dry_run: bool = True) -> None:
     """Update metadata file with new filenames."""
     if dry_run:
-        print("\n📝 Metadata update would be performed (dry run)")
+        print("\nMEMO Metadata update would be performed (dry run)")
         return
 
     # Create new metadata with updated keys
@@ -99,7 +99,7 @@ def update_metadata(metadata: Dict, dry_run: bool = True) -> None:
     with open(METADATA_FILE, 'w') as f:
         json.dump(new_metadata, f, indent=2)
 
-    print("\n✅ Metadata file updated")
+    print("\nSUCCESS Metadata file updated")
 
 def main():
     """Main execution function."""
@@ -117,9 +117,9 @@ def main():
     print()
 
     if dry_run:
-        print("🔍 DRY RUN MODE - No changes will be made")
+        print("SEARCH DRY RUN MODE - No changes will be made")
     else:
-        print("⚠️  APPLY MODE - Files will be renamed!")
+        print("WARNING  APPLY MODE - Files will be renamed!")
     print()
 
     # Load metadata
@@ -138,7 +138,7 @@ def main():
     for filename, data in metadata.items():
         github_id = data.get("github_id")
         if not github_id:
-            print(f"⚠️  No GitHub ID for: {filename}")
+            print(f"WARNING  No GitHub ID for: {filename}")
             skipped_count += 1
             continue
 

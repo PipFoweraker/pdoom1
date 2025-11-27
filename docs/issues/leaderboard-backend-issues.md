@@ -18,7 +18,7 @@ Add export functionality to Godot's leaderboard system matching the Python versi
 - [ ] Export to `web_export/` directory in website-compatible JSON format
 - [ ] Match schema from `LEADERBOARD_WEBSITE_INTEGRATION.md`
 - [ ] Add CLI invocation via `--export-leaderboard` flag
-- [ ] Test export → website workflow
+- [ ] Test export  ->  website workflow
 
 **Acceptance Criteria**:
 - Running export produces valid JSON files
@@ -349,18 +349,18 @@ Optionally sync scores to Steam's built-in leaderboard system for Steam-native f
 
 ```
 Issue #1 (Export)
-    ↓
-Issue #2 (API) ──────────────────→ Issue #8 (API Docs)
-    ↓                                    ↓
-Issue #3 (Godot Integration) ────→ Issue #9 (Website Live)
-    ↓
+     v 
+Issue #2 (API) ------------------ ->  Issue #8 (API Docs)
+     v                                      v 
+Issue #3 (Godot Integration) ---- ->  Issue #9 (Website Live)
+     v 
 Issue #4 (Device ID)
-    ↓
-Issue #5 (Steam Auth) ───────────→ Issue #10 (Steam Leaderboards)
-    ↓
+     v 
+Issue #5 (Steam Auth) ----------- ->  Issue #10 (Steam Leaderboards)
+     v 
 Issue #6 (Achievements)
 
-Issue #4 + #5 → Issue #7 (Anti-Cheat)
+Issue #4 + #5  ->  Issue #7 (Anti-Cheat)
 ```
 
 ---

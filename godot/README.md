@@ -28,7 +28,7 @@ Or double-click `tools/godot/Godot_v4.5-stable_win64.exe` and open the `godot/` 
 ### 3. Test the Game
 
 Once the Godot editor opens:
-1. Press **F5** or click the **Play** button (▶️)
+1. Press **F5** or click the **Play** button (▶)
 2. The main scene should load with a minimal UI
 3. Click "**Init Game**" to start
 4. Click "**Hire Safety Researcher**" to test an action
@@ -59,7 +59,7 @@ Shared Game Logic (shared/)
 
 ## Current Features (Phase 4 MVP)
 
-✅ **Working**:
+SUCCESS **Working**:
 - Python bridge communication (via PowerShell + pipe)
 - Game initialization
 - Action selection (queues actions)
@@ -158,7 +158,7 @@ Check the Godot console output for:
 See [../docs/SESSION_HANDOFF_2025-10-16_GODOT_MIGRATION_START.md](../docs/SESSION_HANDOFF_2025-10-16_GODOT_MIGRATION_START.md) for detailed roadmap.
 
 **Immediate priorities**:
-1. ✅ Minimal functional UI (DONE)
+1. SUCCESS Minimal functional UI (DONE)
 2. Load and display available actions dynamically
 3. Implement event popup system
 4. Add turn phase visual indicator
@@ -193,4 +193,4 @@ When working on Godot features:
 
 **Last Updated**: 2025-10-17
 **Phase**: 4 (MVP - Minimal Functional UI)
-**Status**: ✅ Bridge working, basic UI functional
+**Status**: SUCCESS Bridge working, basic UI functional
