@@ -1011,6 +1011,19 @@ func _on_candidate_hired(candidate: Dictionary, dialog: Control):
 
 	log_message("[color=cyan]Hiring: %s (%s)[/color]" % [candidate_name, spec.capitalize()])
 
+	# Find and set the specific candidate object for hiring
+	var candidate_obj: Researcher = null
+	for c in game_manager.state.candidate_pool:
+		if c.researcher_name == candidate_name and c.specialization == spec:
+			candidate_obj = c
+			break
+
+	if candidate_obj:
+		game_manager.state.pending_hire_candidate = candidate_obj
+		print("[MainUI] Set pending hire candidate: %s" % candidate_name)
+	else:
+		print("[MainUI] WARNING: Could not find candidate object for: %s" % candidate_name)
+
 	# Queue the hiring action
 	queued_actions.append({"id": action_id, "name": "Hire " + candidate_name})
 	update_queued_actions_display()

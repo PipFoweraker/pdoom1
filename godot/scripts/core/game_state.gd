@@ -29,6 +29,7 @@ var researchers: Array[Researcher] = []
 # Candidate pool (available hires - populates slowly over time)
 var candidate_pool: Array[Researcher] = []
 const MAX_CANDIDATES: int = 6  # Maximum candidates in pool
+var pending_hire_candidate: Researcher = null  # Specific candidate selected for next hire action
 
 # Purchased upgrades (one-time purchases)
 var purchased_upgrades: Array[String] = []

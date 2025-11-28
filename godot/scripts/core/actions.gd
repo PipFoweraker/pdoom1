@@ -554,17 +554,28 @@ static func _assign_random_traits(researcher: Researcher, rng: RandomNumberGener
 
 static func _hire_from_pool(state: GameState, specialization: String) -> Dictionary:
 	"""Try to hire a candidate from the pool with matching specialization"""
-	var candidates = state.get_candidates_by_spec(specialization)
+	var candidate: Researcher = null
 
-	if candidates.size() == 0:
-		# No matching candidates - fail gracefully
-		return {
-			"success": false,
-			"message": "No %s specialists in hiring pool (wait for candidates)" % specialization
-		}
+	# Check if a specific candidate was selected
+	if state.pending_hire_candidate != null:
+		# Verify the candidate is still in the pool and has matching spec
+		if state.candidate_pool.has(state.pending_hire_candidate) and \
+		   state.pending_hire_candidate.specialization == specialization:
+			candidate = state.pending_hire_candidate
+		state.pending_hire_candidate = null  # Clear the pending hire
 
-	# Hire the first matching candidate
-	var candidate = candidates[0]
+	# If no specific candidate or candidate no longer available, get first match
+	if candidate == null:
+		var candidates = state.get_candidates_by_spec(specialization)
+		if candidates.size() == 0:
+			# No matching candidates - fail gracefully
+			return {
+				"success": false,
+				"message": "No %s specialists in hiring pool (wait for candidates)" % specialization
+			}
+		candidate = candidates[0]
+
+	# Hire the selected candidate
 	state.hire_candidate(candidate)
 
 	var trait_info = ""
