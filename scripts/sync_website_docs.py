@@ -112,7 +112,6 @@ class WebsiteDocSyncer:
             print("  WARNING docs/PRIVACY.md not found, skipping")
             return
 
-        output = self.docs_output / "privacy.md"
         self._export_doc(privacy, self.docs_output, category="legal", slug="privacy")
 
     def sync_changelog(self):
@@ -124,7 +123,6 @@ class WebsiteDocSyncer:
             print("  WARNING CHANGELOG.md not found, skipping")
             return
 
-        output = self.docs_output / "releases.md"
         self._export_doc(changelog, self.docs_output, category="releases", slug="releases")
 
     def _export_doc(self, source: Path, output_dir: Path, category: str, slug: str = None):
