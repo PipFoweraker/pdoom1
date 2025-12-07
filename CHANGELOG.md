@@ -4,6 +4,61 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v0.11.0] - 2025-12-08 - 'Travel & Conferences System'
+
+### Added
+- **Academic Conference System** (#468): Submit papers to major AI conferences
+  - 9 conferences: NeurIPS, ICML, ICLR, AAAI, FAccT, AIES, MATS, ILIAD, Safety Retreat
+  - Conference timing based on real-world calendar (game starts July 3, 2017)
+  - Travel submenu with paper submission and conference attendance actions
+  - Paper review process with multi-turn decision cycles
+  - Quality-based acceptance formula considering research, skill, and reputation
+
+- **Travel Cost System**: Realistic travel mechanics
+  - Three location tiers: Local (free), Domestic ($500 flight), International ($2,500 flight)
+  - Accommodation costs: $150/day domestic, $300/day international
+  - Three travel classes: Economy, Business, First Class
+
+- **Jet Lag Mechanics** (#469): Researcher productivity affected by travel
+  - Economy: 4 turns high severity (-40% productivity)
+  - Business: 3 turns medium severity (-25% productivity)
+  - First Class: 2 turns low severity (-10% productivity)
+  - Automatic recovery: 1 severity level per turn
+
+- **Public Opinion & Media System** (#186 Phase 1): New reputation mechanics
+  - Media coverage tracking and sentiment analysis
+  - Public opinion meter affecting fundraising and events
+
+- **Responsive UI Layout**: Percentage-based sizing for all UI elements
+  - Adapts to different screen sizes and resolutions
+  - Eliminates hardcoded pixel positions
+
+### Fixed
+- **AP Double-Spend Bug**: Actions no longer deduct AP twice
+  - Committed AP system handles AP at queue time
+  - Execute_action now only spends non-AP costs
+
+- **Poaching Event Infinite Loop**: Competitor poaching now respects probability
+  - Changed trigger_type from "threshold" to "random"
+  - Probability (4%) and min_turn (20) now enforced
+
+- **Manager Threshold**: First 9 researchers now founder-managed
+  - Fixed formula: `management_capacity = 9 + (managers * 9)`
+  - Previously showed 0 capacity with 0 managers
+
+- **Hiring Queue**: Support for multiple hires per turn
+  - Changed from single `pending_hire_candidate` to `pending_hire_queue` array
+  - Properly removes hired candidates from pool
+
+- **Event Popup AP Display** (#453): Shows correct available AP for event options
+
+### Technical
+- New files: `conferences.gd`, `paper_submissions.gd`
+- Modified: `game_state.gd`, `actions.gd`, `turn_manager.gd`, `main_ui.gd`, `events.gd`, `researcher.gd`
+- Engine: Godot 4.5.1 stable
+
+---
+
 ## [v0.10.3] - 2025-11-17 - 'Playtesting Fixes & Turn Philosophy Refinement'
 
 ### Added
@@ -262,12 +317,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Complete Audio System**: SoundManager with numpy-based sound generation, staff hiring sounds, milestone celebrations
 - **Audio UI Components**: Modular sound settings interfaces extracted from ui.py monolith (344 lines)
-- **Enhanced Text Rendering**: New text_utils.py with adaptive sizing and intelligent truncation 
+- **Enhanced Text Rendering**: New text_utils.py with adaptive sizing and intelligent truncation
 - **Dev Mode Features**: F10 toggle, Ctrl+D diagnostics, screenshot system with `[` key capture
 - **Modular Architecture**: 6 new focused modules (UtilityFunctions, DialogSystems, EmployeeBlob, VerboseLogging, etc.)
 - **Test Suite Expansion**: Re-enabled 9 sound tests + 8 new action text display tests
 
-### Fixed  
+### Fixed
 - **#211 CRITICAL**: UnboundLocalError crash in keybinding system (main.py global declarations)
 - **#226 CRITICAL**: Audio system completely broken since inception - now fully functional
 - **#315**: Action list text display overflow and truncation issues
@@ -285,7 +340,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 'Input System Architecture Overhaul'
 
-### Added - Phase 2 Architecture 
+### Added - Phase 2 Architecture
 - **[TARGET] InputEventManager System** - Extracted complete keyboard event processing from main.py monolith (500+ lines)
 - **[TARGET] DialogStateManager System** - Centralized modal dialog state management and validation (300+ lines)
 - **Clean Integration Interface** - Reduced main.py keyboard handling from 500+ lines to 25 lines (95% reduction)
@@ -314,7 +369,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Complete Intelligence & Espionage System Isolation** - Moved opponent scouting, espionage operations, intelligence dialog system, and investigation functionality
 - **Research System Management Module** - Previously extracted ResearchSystemManager class (610 lines) from game_state.py monolith
 - **Complete Research & Debt System Isolation** - Moved research quality management, technical debt operations, researcher assignments, and debt dialog system
-- **Deterministic Event Management System** - Previously extracted DeterministicEventManager class (463 lines) from game_state.py monolith  
+- **Deterministic Event Management System** - Previously extracted DeterministicEventManager class (463 lines) from game_state.py monolith
 - **UI Transition Management System** - Previously extracted UITransitionManager class (195 lines) from game_state.py monolith
 - **Employee Blob Management System** - Previously extracted EmployeeBlobManager class (272 lines) from game_state.py monolith
 - **Input Management System** - Previously extracted InputManager class (580 lines) from game_state.py monolith
@@ -329,7 +384,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Type Safety Enhancement** - Added proper TYPE_CHECKING imports and delegation properties for backward compatibility
 
 ### Technical
-- **Current Branch**: refactor/extract-research-system  
+- **Current Branch**: refactor/extract-research-system
 - **Previous Branch**: refactor/extract-deterministic-event-system
 - **Files Created**: src/core/media_pr_system_manager.py (227 lines), src/core/intelligence_system_manager.py (410 lines), src/core/research_system_manager.py (610 lines), src/core/deterministic_event_manager.py (463 lines), src/core/ui_transition_manager.py (195 lines), src/core/employee_blob_manager.py (272 lines), src/core/input_manager.py (580 lines)
 - **Extraction Progress**: 7th major module completed - media and PR system isolation achieved, 20% strategic milestone reached
@@ -413,7 +468,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical Implementation
 - **Method Addition**: _execute_standalone_safety_research(), _investigate_specific_opponent(), _has_revealed_opponents()
-- **Test Suite Fixes**: Corrected action execution patterns from action['execute'] to action['upside'] 
+- **Test Suite Fixes**: Corrected action execution patterns from action['execute'] to action['upside']
 - **Cross-Platform Compatibility**: 100% ASCII compliance restored across Python files, documentation, and configuration
 - **Development Infrastructure**: Enhanced dev blog system with strategic analysis templates and automated documentation generation
 
@@ -425,7 +480,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Enhanced debugging with turn processing state tracking and stuck detection
   - **Architecture Benefits**: Improved maintainability, better error handling, cleaner separation of concerns
 - **Enhanced Debugging System**: Comprehensive logging for game balance and debugging
-  - Opponent progress tracking with doom contribution display: `[Doom+4]` 
+  - Opponent progress tracking with doom contribution display: `[Doom+4]`
   - Compact doom change summaries: `[DOOM] Turn doom change: Base+1 Opponents+4 = +5`
   - Turn progression testing tools with detailed state tracking
   - **Developer Experience**: Faster balance iteration and easier bug identification
@@ -462,7 +517,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Player Experience Impact
 - **Strategic Depth**: Players can now execute 2-3 research projects per game
-- **Staff Viability**: Time to hire and train effective safety research teams  
+- **Staff Viability**: Time to hire and train effective safety research teams
 - **Recovery Potential**: Lower event spikes allow bouncing back from setbacks
 - **Learning Curve**: New players have more time to understand core mechanics
 - **Maintained Tension**: Extended gameplay while preserving strategic pressure
@@ -511,7 +566,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Improved cross-platform compatibility and encoding reliability
   - Enhanced professional appearance and international accessibility
 
-### Fixed  
+### Fixed
 - **MASSIVE Documentation Cleanup**: Resolved all Unicode violations in documentation
   - Fixed emojis (TARGET, ROCKET, FIRE, etc.) -> ASCII equivalents ([TARGET], [ROCKET], [FIRE])
   - Fixed Unicode dashes (EN DASH, EM DASH) -> standard ASCII dashes (-), (--)
@@ -649,7 +704,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Status**: No code changes needed, validation logic was already correct
 - **Test Infrastructure**: Reactivated core Action Points test suite
   - TestActionPointsDeduction: 3/3 tests passing
-  - TestActionPointsReset: 2/2 tests passing  
+  - TestActionPointsReset: 2/2 tests passing
   - TestActionPointsBackwardCompatibility: 4/4 tests passing
   - Total: 14 core AP tests restored and passing
 
@@ -712,7 +767,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Infrastructure
 - **Development Transparency**: Automated pipeline transforms dev work into community content
-- **Community Engagement**: Blog system ready for automated publishing and challenge sharing  
+- **Community Engagement**: Blog system ready for automated publishing and challenge sharing
 - **Competitive Gaming**: Deterministic foundation supports tournaments and leaderboards
 - **Professional Documentation**: Complete guides for deployment and strategic development
 
@@ -723,7 +778,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Strategic Architecture**: Scalable foundation for advanced community features
 
 ## [0.5.1] - 2025-09-14
-### Added  
+### Added
 - **Type Annotation Campaign Phase 2 Milestone**: Complete type annotation of events.py (307 lines)
   - Advanced TypedDict implementation for event data structures (`EventDefinition`)
   - Comprehensive Callable annotations for trigger and effect functions
@@ -921,7 +976,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - **[FIX] Typography Import System Resolution**: Major progress on eliminating test import errors
   - Recreated corrupted `ui_new.components.typography` module with proper FontManager class
-  - Resolved circular import dependencies between typography, buttons, and windows components  
+  - Resolved circular import dependencies between typography, buttons, and windows components
   - Created local font manager stubs in UI components to prevent import cycles
   - Fixed incorrect module paths in `test_config_manager.py` (config_manager -> src.services.config_manager)
   - Added missing `safety_level` key to settings flow test setup preventing KeyError exceptions
@@ -1043,7 +1098,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### [TECH] Technical Debt Resolution
 - **Fixed all critical test failures**: 137/137 tests now passing (previously 4 categories failing)
 - **Action Points System**: Fixed validation logic for meta-actions (0 AP cost properly supported)
-- **Sound Configuration**: Aligned config manager defaults with actual config files  
+- **Sound Configuration**: Aligned config manager defaults with actual config files
 - **Bug Reporter**: Cross-platform path handling for Windows/Unix compatibility
 - **File Handle Management**: Proper cleanup of logging resources on Windows
 
@@ -1348,7 +1403,7 @@ All features present in the pre-versioning codebase:
 - **Turn-Based Strategy**: Strategic decision making with consequences
 - **Multiple Win/Lose Conditions**: Achievement-based and doom-based outcomes
 
-#### Advanced Systems  
+#### Advanced Systems
 - **Enhanced Event System**: Normal, popup, and deferred events with multiple response options
 - **Opponents System**: 3 AI competitors with hidden information and espionage mechanics
 - **Upgrade System**: 12+ upgrades that modify gameplay and unlock new capabilities
@@ -1379,7 +1434,7 @@ All features present in the pre-versioning codebase:
 
 ### Key Development Milestones
 - **Enhanced Event System**: Added popup events, deferred events, and strategic event management
-- **Opponents Intelligence**: Implemented competing AI labs with espionage mechanics  
+- **Opponents Intelligence**: Implemented competing AI labs with espionage mechanics
 - **Comprehensive Testing**: Achieved 115 automated tests with full coverage
 - **Documentation Excellence**: Created player, developer, and user guides
 - **Privacy-First Design**: Built-in bug reporting with no personal data collection

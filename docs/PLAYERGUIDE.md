@@ -3,36 +3,36 @@
 Welcome to P(DOOM): AI SAFETY STRATEGY GAME!
 A bootstrap strategy game about managing a scrappy AI safety lab with realistic funding constraints.
 
-**NEW IN v0.7.5: EXTENDED STRATEGIC GAMEPLAY!**
-- **Extended Game Length**: Games now last 12-13 turns (previously 7-8), giving time for deep strategy
-- **Rebalanced Doom Mechanics**: 80% reduction in base doom progression for strategic depth
-- **Enhanced Staff Value**: Safety researchers 40% more effective at preventing existential risk
-- **Advanced Debugging**: Comprehensive doom tracking shows exactly why doom increases each turn
-- **TurnManager Architecture**: More stable turn processing with better error handling
-- **Multiple Research Projects**: Time to execute 2-3 research projects per game
+**NEW IN v0.11.0: TRAVEL & CONFERENCES!**
+- **Academic Conference System**: Submit papers to real-world AI conferences (NeurIPS, ICML, ICLR, etc.)
+- **Travel Mechanics**: Realistic travel costs with economy/business/first class options
+- **Jet Lag System**: Researchers experience productivity loss after international travel
+- **Paper Review Process**: Multi-turn paper submission with acceptance decisions
+- **Calendar Integration**: Conferences occur at historically accurate times
 
-**Current Version**: v0.7.5 'Extended Gameplay & Architecture Overhaul' - Major balance and technical improvements
+**Current Version**: v0.11.0 'Travel & Conferences' - Academic publishing and travel system
 
 **Strategic Challenge**: Experience the real constraints of running an AI safety nonprofit - manage weekly cash flow, make strategic funding decisions, and scale your team efficiently while keeping doom levels low. With extended gameplay, you now have time to build meaningful strategies and recover from setbacks!
 
 ## Table of Contents
-- [Quick Setup](#quick-setup) (Line 31)
-- [New Player Tutorial & Help System](#new-player-tutorial--help-system) (Line 42)
-- [How to Play](#how-to-play) (Line 94)
-- [Milestone Events & Employee Management](#milestone-events--employee-management) (Line 120)
-- [Controls & Interface](#controls--interface) (Line 151)
-- [Visual Feedback & UI Transitions](#visual-feedback--ui-transitions) (Line 184)
-- [Action Points Strategy](#action-points-strategy) (Line 211)
-- [Competitors & Intelligence](#competitors--intelligence) (Line 261)
-- [Screen Layout](#screen-layout) (Line 298)
-- [Actions You Can Take](#actions-you-can-take) (Line 316)
-- [Upgrade Strategy](#upgrade-strategy) (Line 330)
-- [Milestone-Driven Special Events](#milestone-driven-special-events) (Line 343)
-- [Game Events & Tips](#game-events--tips) (Line 421)
-- [Game Over Conditions](#game-over-conditions) (Line 479)
-- [Seeds & High Scores](#seeds--high-scores) (Line 489)
-- [End-Game Menu](#end-game-menu) (Line 496)
-- [Need Help?](#need-help) (Line 513)
+- [Quick Setup](#quick-setup)
+- [New Player Tutorial & Help System](#new-player-tutorial--help-system)
+- [How to Play](#how-to-play)
+- [Milestone Events & Employee Management](#milestone-events--employee-management)
+- [Controls & Interface](#controls--interface)
+- [Visual Feedback & UI Transitions](#visual-feedback--ui-transitions)
+- [Action Points Strategy](#action-points-strategy)
+- [Competitors & Intelligence](#competitors--intelligence)
+- [Screen Layout](#screen-layout)
+- [Actions You Can Take](#actions-you-can-take)
+- [Upgrade Strategy](#upgrade-strategy)
+- [Milestone-Driven Special Events](#milestone-driven-special-events)
+- [Travel & Academic Conferences](#travel--academic-conferences-v0110) (NEW!)
+- [Game Events & Tips](#game-events--tips)
+- [Game Over Conditions](#game-over-conditions)
+- [Seeds & High Scores](#seeds--high-scores)
+- [End-Game Menu](#end-game-menu)
+- [Need Help?](#need-help)
 
 **Configuration**: For game customization and settings, see [CONFIG_SYSTEM.md](CONFIG_SYSTEM.md).
 
@@ -622,6 +622,96 @@ As your organization grows, you'll unlock new systems and face new challenges th
 
 ---
 
+
+## Travel & Academic Conferences (v0.11.0+)
+
+Your AI safety lab can gain reputation and reduce doom by publishing papers at academic conferences. The travel system introduces realistic costs and jet lag mechanics.
+
+### Conference Calendar
+
+**Major Conferences (High Prestige):**
+| Conference | Month | Prestige | Registration |
+|-----------|-------|----------|--------------|
+| NeurIPS | December | 1.00 | $800 |
+| ICML | July | 0.95 | $700 |
+| ICLR | May | 0.90 | $600 |
+| AAAI | February | 0.85 | $500 |
+
+**Minor Conferences (Lower Barrier):**
+| Conference | Month | Prestige | Registration |
+|-----------|-------|----------|--------------|
+| FAccT | March | 0.70 | $400 |
+| AIES | February | 0.65 | $350 |
+
+**Special Programs (Funded):**
+- **MATS Program**: Rolling admissions Q1/Q3 - mentorship-focused
+- **ILIAD Summer**: June-August - research program
+- **Safety Retreat**: November - informal networking
+
+### Paper Submission Process
+
+1. **Submit Paper** (Action: 15 research points, 1 AP)
+   - Select a target conference
+   - Your paper enters review for 3-5 turns
+   - Quality depends on: research invested + researcher skill + traits
+
+2. **Acceptance Decision**
+   - Formula: `quality - (prestige × 0.8) + (reputation/100 × 0.15)`
+   - Higher prestige conferences are harder to get into
+   - Better reputation improves your chances
+
+3. **Attend Conference** (if accepted)
+   - Pay travel costs to attend
+   - Present your paper for bonus effects
+   - Network with other researchers
+
+### Travel Costs
+
+**Location Tiers:**
+- **Local** (Tier 1): No travel costs
+- **Domestic** (Tier 2): $500 flight + $150/day accommodation
+- **International** (Tier 3): $2,500 flight + $300/day accommodation
+
+**Total Cost** = Flight + (Accommodation × Days) + Registration
+
+**Example**: Attending NeurIPS (International, 4 days, $800 reg)
+- Economy: $2,500 + ($300 × 4) + $800 = **$4,500**
+- Business: $5,000 + ($500 × 4) + $800 = **$7,800**
+
+### Jet Lag System
+
+Traveling researchers experience jet lag that temporarily reduces productivity.
+
+**Severity Levels:**
+| Travel Class | Duration | Severity | Productivity Impact |
+|-------------|----------|----------|-------------------|
+| Economy | 4 turns | High | -40% |
+| Business | 3 turns | Medium | -25% |
+| First Class | 2 turns | Low | -10% |
+
+**Recovery:**
+- Jet lag automatically recovers 1 level per turn
+- Severity decreases: High → Medium → Low → None
+- Plan important research projects around travel schedules
+
+**Strategic Tips:**
+- Send junior researchers to minor conferences (less impact from jet lag)
+- Use business/first class for key researchers before major deadlines
+- Balance travel opportunities against productivity loss
+
+### Conference Benefits
+
+**Presenting a Paper:**
+- Reputation boost based on conference prestige
+- Doom reduction from safety-focused papers
+- Networking opportunities (future hiring bonuses)
+
+**Attending Without Paper:**
+- Smaller reputation gain
+- Learn about competitor research
+- Build relationships for future collaborations
+
+---
 
 ## Game Events & Tips
 
