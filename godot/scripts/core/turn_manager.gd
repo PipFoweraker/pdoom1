@@ -134,13 +134,13 @@ func start_turn() -> Dictionary:
 		state.add_resources({"money": -staff_salaries})
 
 	# === INDIVIDUAL RESEARCHER PRODUCTIVITY SYSTEM ===
-	# Teams of up to 8 researchers auto-form, each team needs a manager
+	# First 9 researchers work without a manager (founder manages them)
+	# After 9, each manager handles up to 9 additional researchers
 
 	var researcher_count = state.researchers.size()
-	var teams_needed = int(ceil(researcher_count / 8.0)) if researcher_count > 0 else 0
-	var management_capacity = state.managers * 1  # Each manager handles 1 team (up to 8 researchers)
-	var managed_teams = min(teams_needed, management_capacity)
-	var managed_researcher_count = min(researcher_count, managed_teams * 8)
+	# Base capacity of 9 (founder-managed) + 9 per manager
+	var management_capacity = 9 + (state.managers * 9)
+	var managed_researcher_count = min(researcher_count, management_capacity)
 	var unmanaged_count = researcher_count - managed_researcher_count
 
 	# Calculate compute availability
@@ -395,6 +395,26 @@ func execute_turn() -> Dictionary:
 				"success": true,
 				"message": "[INTEL] " + discovery_result["message"]
 			})
+
+	# === PAPER SUBMISSION DECISIONS (Issue #468) ===
+	state.check_conference_year_reset()  # Reset attended conferences if year changed
+	var paper_decisions = PaperSubmissions.process_paper_decisions(
+		state.paper_submissions,
+		state.turn,
+		state.reputation,
+		state.rng
+	)
+	for decision in paper_decisions:
+		# Record RNG for verification
+		VerificationTracker.record_rng_outcome(
+			"paper_decision_%s" % decision["paper"].id,
+			decision["probability"] if decision.has("probability") else 0.0,
+			state.turn
+		)
+		results.append({
+			"success": true,
+			"message": "[PAPER] " + decision["message"]
+		})
 
 	# === USE DOOM SYSTEM FOR CALCULATION ===
 	if state.doom_system:

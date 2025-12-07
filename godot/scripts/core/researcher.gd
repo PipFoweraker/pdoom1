@@ -19,6 +19,10 @@ var loyalty: int = 50  # 0-100, affects poaching resistance
 var burnout: float = 0.0  # 0-100, reduces productivity
 var turns_employed: int = 0
 
+# Travel fatigue system (Issue #469)
+var jet_lag_turns: int = 0  # Turns remaining with jet lag
+var jet_lag_severity: float = 0.0  # 0.0-1.0, productivity penalty during jet lag
+
 # Traits (positive and negative)
 var traits: Array[String] = []
 
@@ -83,6 +87,11 @@ const POSITIVE_TRAITS = {
 		"name": "Fast Learner",
 		"skill_growth_rate": 1.5,  # Skill improves 50% faster
 		"description": "Rapidly improves over time"
+	},
+	"road_warrior": {
+		"name": "Road Warrior",
+		"jet_lag_reduction": 0.5,  # 50% less jet lag duration
+		"description": "Recovers quickly from travel"
 	}
 }
 
@@ -180,6 +189,10 @@ func get_effective_productivity() -> float:
 	var burnout_penalty = min(burnout / 100.0 * 0.5, 0.5)
 	effective *= (1.0 - burnout_penalty)
 
+	# Jet lag penalty (Issue #469)
+	if jet_lag_turns > 0:
+		effective *= (1.0 - jet_lag_severity)
+
 	# Trait bonuses
 	if "workaholic" in traits:
 		effective *= 1.20
@@ -236,6 +249,71 @@ func is_burned_out() -> bool:
 	return burnout >= 80.0
 
 # ============================================================================
+# JET LAG MANAGEMENT (Issue #469)
+# ============================================================================
+
+# Travel class constants
+const TRAVEL_CLASS = {
+	"economy": {
+		"name": "Economy",
+		"cost_multiplier": 1.0,
+		"jet_lag_turns": 10,  # ~2 weeks recovery
+		"jet_lag_severity": 0.40  # 40% productivity loss
+	},
+	"business": {
+		"name": "Business",
+		"cost_multiplier": 2.5,
+		"jet_lag_turns": 5,  # ~1 week recovery
+		"jet_lag_severity": 0.20  # 20% productivity loss
+	},
+	"first": {
+		"name": "First Class",
+		"cost_multiplier": 5.0,
+		"jet_lag_turns": 2,  # Minimal impact
+		"jet_lag_severity": 0.10  # 10% productivity loss
+	}
+}
+
+func apply_jet_lag(location_tier: int, travel_class: String = "economy"):
+	"""Apply jet lag based on travel distance and class (Issue #469)"""
+	# Local travel = no jet lag
+	if location_tier <= 1:
+		return
+
+	var class_data = TRAVEL_CLASS.get(travel_class, TRAVEL_CLASS["economy"])
+
+	# Base jet lag from class
+	var base_turns = class_data["jet_lag_turns"]
+	var base_severity = class_data["jet_lag_severity"]
+
+	# Scale by distance (domestic = 60%, international = 100%)
+	var distance_multiplier = 0.6 if location_tier == 2 else 1.0
+
+	# Road warrior trait reduces duration
+	if "road_warrior" in traits:
+		base_turns = int(base_turns * POSITIVE_TRAITS["road_warrior"]["jet_lag_reduction"])
+
+	jet_lag_turns = int(base_turns * distance_multiplier)
+	jet_lag_severity = base_severity * distance_multiplier
+
+func recover_jet_lag():
+	"""Called each turn to recover from jet lag"""
+	if jet_lag_turns > 0:
+		jet_lag_turns -= 1
+		if jet_lag_turns == 0:
+			jet_lag_severity = 0.0
+
+func has_jet_lag() -> bool:
+	"""Check if researcher is jet lagged"""
+	return jet_lag_turns > 0
+
+func get_jet_lag_status() -> String:
+	"""Get human-readable jet lag status"""
+	if jet_lag_turns == 0:
+		return ""
+	return "Jet lagged (%d turns, -%.0f%% productivity)" % [jet_lag_turns, jet_lag_severity * 100]
+
+# ============================================================================
 # TRAIT MANAGEMENT
 # ============================================================================
 
@@ -267,11 +345,14 @@ func get_trait_description() -> String:
 # ============================================================================
 
 func process_turn(rng: RandomNumberGenerator = null):
-	"""Called each turn - handle burnout, skill growth, etc."""
+	"""Called each turn - handle burnout, skill growth, jet lag recovery, etc."""
 	turns_employed += 1
 
 	# Base burnout accumulation (working is stressful!)
 	accumulate_burnout(0.5)
+
+	# Jet lag recovery (Issue #469)
+	recover_jet_lag()
 
 	# Skill growth (very slow - 1 point per ~20 turns)
 	# Use provided RNG for determinism, fallback to global for tests
@@ -337,7 +418,9 @@ func to_dict() -> Dictionary:
 		"loyalty": loyalty,
 		"burnout": burnout,
 		"turns_employed": turns_employed,
-		"traits": traits.duplicate()
+		"traits": traits.duplicate(),
+		"jet_lag_turns": jet_lag_turns,
+		"jet_lag_severity": jet_lag_severity
 	}
 
 func from_dict(data: Dictionary):
@@ -351,6 +434,8 @@ func from_dict(data: Dictionary):
 	loyalty = data.get("loyalty", 50)
 	burnout = data.get("burnout", 0.0)
 	turns_employed = data.get("turns_employed", 0)
+	jet_lag_turns = data.get("jet_lag_turns", 0)
+	jet_lag_severity = data.get("jet_lag_severity", 0.0)
 
 	if data.has("traits"):
 		traits.clear()

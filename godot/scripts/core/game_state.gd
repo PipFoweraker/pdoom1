@@ -29,7 +29,7 @@ var researchers: Array[Researcher] = []
 # Candidate pool (available hires - populates slowly over time)
 var candidate_pool: Array[Researcher] = []
 const MAX_CANDIDATES: int = 6  # Maximum candidates in pool
-var pending_hire_candidate: Researcher = null  # Specific candidate selected for next hire action
+var pending_hire_queue: Array[Researcher] = []  # Queue of candidates selected for hiring (FIFO)
 
 # Purchased upgrades (one-time purchases)
 var purchased_upgrades: Array[String] = []
@@ -75,6 +75,11 @@ var rival_labs: Array = []  # Array of RivalLabs.RivalLab
 # Doom system (modular, extensible)
 var doom_system: DoomSystem
 
+# Academic travel system (Issue #468)
+var paper_submissions: Array = []  # Array of PaperSubmissions.PaperSubmission
+var attended_conferences: Array[String] = []  # Conference IDs attended this game year
+var conference_year: int = 2017  # Track which year for conference attendance reset
+
 func _init(game_seed: String = ""):
 	game_seed_str = game_seed if game_seed != "" else str(Time.get_ticks_msec())
 
@@ -109,6 +114,7 @@ func reset():
 
 	purchased_upgrades.clear()
 	candidate_pool.clear()
+	pending_hire_queue.clear()
 	researchers.clear()
 
 	# Initialize with 2-3 starting candidates (low quality)
@@ -129,6 +135,11 @@ func reset():
 		doom_system.current_doom = doom
 		doom_system.doom_velocity = 0.0
 		doom_system.doom_momentum = 0.0
+
+	# Reset academic travel system (Issue #468)
+	paper_submissions.clear()
+	attended_conferences.clear()
+	conference_year = start_year
 
 func can_afford(costs: Dictionary) -> bool:
 	"""Check if player can afford given costs (FIX #407: added reputation validation)"""
@@ -384,6 +395,35 @@ func reset_turn_ap():
 	reserved_ap = 0
 	used_event_ap = 0
 
+# Paper Submission System Methods (Issue #468)
+func add_paper_submission(paper: PaperSubmissions.PaperSubmission):
+	"""Add a paper submission to tracking"""
+	paper_submissions.append(paper)
+
+func get_papers_by_status(status: int) -> Array:
+	"""Get all papers with a specific status"""
+	return PaperSubmissions.get_papers_by_status(paper_submissions, status)
+
+func get_accepted_paper_for_conference(conf_id: String) -> PaperSubmissions.PaperSubmission:
+	"""Get an accepted paper for a specific conference"""
+	return PaperSubmissions.get_accepted_paper_for_conference(paper_submissions, conf_id)
+
+func mark_conference_attended(conf_id: String):
+	"""Mark a conference as attended this year"""
+	if not attended_conferences.has(conf_id):
+		attended_conferences.append(conf_id)
+
+func has_attended_conference(conf_id: String) -> bool:
+	"""Check if conference was already attended this year"""
+	return attended_conferences.has(conf_id)
+
+func check_conference_year_reset():
+	"""Reset attended conferences when year changes"""
+	var current_date = get_current_date()
+	if current_date.year > conference_year:
+		attended_conferences.clear()
+		conference_year = current_date.year
+
 # Calendar System Methods (Issue #472)
 func get_current_week() -> int:
 	"""Get the current week number (1-indexed)"""
@@ -506,6 +546,11 @@ func to_dict() -> Dictionary:
 	for candidate in candidate_pool:
 		candidate_dicts.append(candidate.to_dict())
 
+	# Serialize paper submissions (Issue #468)
+	var paper_dicts = []
+	for paper in paper_submissions:
+		paper_dicts.append(paper.to_dict())
+
 	return {
 		"money": money,
 		"compute": compute,
@@ -536,5 +581,7 @@ func to_dict() -> Dictionary:
 		"has_cat": has_cat,
 		"purchased_upgrades": purchased_upgrades,
 		"researchers": researcher_dicts,
-		"candidate_pool": candidate_dicts
+		"candidate_pool": candidate_dicts,
+		"paper_submissions": paper_dicts,
+		"attended_conferences": attended_conferences
 	}

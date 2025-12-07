@@ -778,7 +778,7 @@ static func get_all_events() -> Array[Dictionary]:
 			"name": "Competitor Poaching Attempt",
 			"description": "A competitor is trying to recruit one of your top researchers with a lucrative offer.",
 			"type": "popup",
-			"trigger_type": "threshold",
+			"trigger_type": "random",  # Was "threshold" which ignores probability/min_turn!
 			"trigger_condition": "researchers >= 2",
 			"probability": 0.04,  # ~4% per turn when conditions met, <1/year
 			"min_turn": 20,

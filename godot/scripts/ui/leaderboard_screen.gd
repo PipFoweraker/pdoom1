@@ -48,11 +48,11 @@ func _load_all_leaderboards():
 	while file_name != "":
 		if file_name.ends_with(".json") and file_name.begins_with("leaderboard_"):
 			# Extract seed from filename: "leaderboard_SEED.json"
-			var seed = file_name.substr(12, file_name.length() - 17)  # Remove "leaderboard_" and ".json"
+			var lb_seed = file_name.substr(12, file_name.length() - 17)  # Remove "leaderboard_" and ".json"
 
 			# Load this leaderboard
-			var leaderboard = LeaderboardClass.new(seed)
-			all_leaderboards[seed] = leaderboard
+			var leaderboard = LeaderboardClass.new(lb_seed)
+			all_leaderboards[lb_seed] = leaderboard
 
 			# Add entries to combined list
 			for entry in leaderboard.entries:
@@ -61,7 +61,7 @@ func _load_all_leaderboards():
 			ErrorHandler.info(
 				ErrorHandler.Category.SAVE_LOAD,
 				"Loaded leaderboard",
-				{"seed": seed, "entries": leaderboard.entries.size()}
+				{"seed": lb_seed, "entries": leaderboard.entries.size()}
 			)
 
 		file_name = dir.get_next()

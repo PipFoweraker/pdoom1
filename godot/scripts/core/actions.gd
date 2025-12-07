@@ -93,6 +93,15 @@ static func get_all_actions() -> Array[Dictionary]:
 			"costs": {},  # No cost to open menu
 			"category": "strategic",
 			"is_submenu": true
+		},
+		# Travel & Conferences submenu (Issue #468)
+		{
+			"id": "travel",
+			"name": "Travel & Conferences",
+			"description": "Academic travel, paper submissions, and conference attendance",
+			"costs": {},  # No cost to open menu
+			"category": "research",
+			"is_submenu": true
 		}
 	]
 
@@ -112,6 +121,9 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 		if action["id"] == action_id:
 			return action
 	for action in get_strategic_options():
+		if action["id"] == action_id:
+			return action
+	for action in get_travel_options():
 		if action["id"] == action_id:
 			return action
 	return {}
@@ -266,8 +278,37 @@ static func get_strategic_options() -> Array[Dictionary]:
 		}
 	]
 
+static func get_travel_options() -> Array[Dictionary]:
+	"""Get all travel/conference submenu options (Issue #468)"""
+	return [
+		{
+			"id": "submit_paper",
+			"name": "Submit Paper",
+			"description": "Submit research paper to a conference (multi-turn review process)",
+			"costs": {"research": 15, "action_points": 1},
+			"category": "travel"
+		},
+		{
+			"id": "attend_conference",
+			"name": "Attend Conference",
+			"description": "Travel to present accepted paper or network at a conference",
+			"costs": {"action_points": 2},  # Money cost calculated dynamically
+			"category": "travel"
+		},
+		{
+			"id": "send_delegation",
+			"name": "Send Delegation",
+			"description": "[Coming Soon] Send researchers to attend on your behalf",
+			"costs": {},
+			"category": "travel",
+			"is_stub": true
+		}
+	]
+
 static func execute_action(action_id: String, state: GameState) -> Dictionary:
-	"""Execute an action, modify state, return result"""
+	"""Execute an action, modify state, return result
+	Note: AP costs are handled by the commit system in game_manager.gd (committed_ap).
+	Only non-AP costs (money, research, etc.) are spent here."""
 	# Special case: pass_turn is a virtual action that doesn't need to be in the action list
 	if action_id == "pass_turn":
 		return {"success": true, "message": "Passed turn (no actions taken)"}
@@ -276,12 +317,16 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	if action.is_empty():
 		return {"success": false, "message": "Unknown action: " + action_id}
 
-	# Check affordability
-	if not state.can_afford(action["costs"]):
+	# Build costs without AP (AP already deducted via committed_ap system)
+	var execution_costs = action["costs"].duplicate()
+	execution_costs.erase("action_points")
+
+	# Check affordability (non-AP costs only)
+	if not state.can_afford(execution_costs):
 		return {"success": false, "message": "Cannot afford " + action["name"]}
 
-	# Spend costs
-	state.spend_resources(action["costs"])
+	# Spend non-AP costs
+	state.spend_resources(execution_costs)
 
 	# Apply effects based on action type
 	var result = {"success": true, "message": action["name"] + " executed"}
@@ -377,6 +422,30 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			# Submenu action - doesn't execute, opens dialog
 			result["message"] = "Opening strategic menu..."
 			result["open_submenu"] = "strategic"
+
+		"travel":
+			# Submenu action - doesn't execute, opens dialog (Issue #468)
+			result["message"] = "Opening travel menu..."
+			result["open_submenu"] = "travel"
+
+		"submit_paper":
+			# Paper submission action (Issue #468)
+			# This is handled by UI - creates paper and adds to state
+			result["message"] = "Opening paper submission dialog..."
+			result["open_dialog"] = "submit_paper"
+
+		"attend_conference":
+			# Conference attendance action (Issue #468)
+			# This is handled by UI - selects conference and pays costs
+			result["message"] = "Opening conference selection..."
+			result["open_dialog"] = "attend_conference"
+
+		"send_delegation":
+			# Stub for Issue #411 - delegation system
+			result["success"] = false
+			result["message"] = "[Issue #411] Delegation system coming soon! For now, attend conferences yourself."
+			# Refund any spent costs
+			state.add_resources(action["costs"])
 
 		"fundraise_small":
 			var money_raised = state.rng.randi_range(30000, 60000)
@@ -556,15 +625,15 @@ static func _hire_from_pool(state: GameState, specialization: String) -> Diction
 	"""Try to hire a candidate from the pool with matching specialization"""
 	var candidate: Researcher = null
 
-	# Check if a specific candidate was selected
-	if state.pending_hire_candidate != null:
-		# Verify the candidate is still in the pool and has matching spec
-		if state.candidate_pool.has(state.pending_hire_candidate) and \
-		   state.pending_hire_candidate.specialization == specialization:
-			candidate = state.pending_hire_candidate
-		state.pending_hire_candidate = null  # Clear the pending hire
+	# Check if a specific candidate was queued for this specialization
+	for i in range(state.pending_hire_queue.size()):
+		var queued = state.pending_hire_queue[i]
+		if queued.specialization == specialization:
+			candidate = queued
+			state.pending_hire_queue.remove_at(i)
+			break
 
-	# If no specific candidate or candidate no longer available, get first match
+	# If no specific candidate queued, get first match from pool
 	if candidate == null:
 		var candidates = state.get_candidates_by_spec(specialization)
 		if candidates.size() == 0:
@@ -574,6 +643,8 @@ static func _hire_from_pool(state: GameState, specialization: String) -> Diction
 				"message": "No %s specialists in hiring pool (wait for candidates)" % specialization
 			}
 		candidate = candidates[0]
+		# Remove from pool since we're hiring them
+		state.remove_candidate(candidate)
 
 	# Hire the selected candidate
 	state.hire_candidate(candidate)
@@ -593,3 +664,155 @@ static func _hire_from_pool(state: GameState, specialization: String) -> Diction
 		],
 		"hired_researcher": candidate
 	}
+
+# ============================================
+# Paper Submission & Conference Functions (Issue #468)
+# ============================================
+
+static func submit_paper_to_conference(state: GameState, conf_id: String, topic: int, research_amount: float, lead_researcher: Researcher) -> Dictionary:
+	"""Submit a paper to a conference"""
+	var conf = Conferences.get_conference_by_id(conf_id)
+	if conf == null:
+		return {"success": false, "message": "Conference not found: " + conf_id}
+
+	# Check research cost
+	if state.research < research_amount:
+		return {"success": false, "message": "Not enough research points"}
+
+	# Check AP cost
+	if state.action_points < 1:
+		return {"success": false, "message": "Not enough action points"}
+
+	# Calculate paper quality
+	var has_media_savvy = lead_researcher != null and lead_researcher.has_trait("media_savvy")
+	var lead_skill = lead_researcher.skill_level if lead_researcher != null else 3
+	var quality = PaperSubmissions.calculate_paper_quality(research_amount, lead_skill, 0, has_media_savvy)
+
+	# Create paper submission
+	var paper = PaperSubmissions.PaperSubmission.new()
+	paper.target_conference_id = conf_id
+	paper.topic = topic
+	paper.research_invested = research_amount
+	paper.quality = quality
+	paper.lead_researcher_name = lead_researcher.researcher_name if lead_researcher != null else "Anonymous"
+	paper.submit_turn = state.turn
+	paper.decision_turn = state.turn + (conf.review_period_weeks * 5)  # 5 turns per week
+	paper.status = PaperSubmissions.Status.UNDER_REVIEW
+	paper.title = PaperSubmissions.generate_paper_title(topic, state.rng)
+
+	# Spend resources
+	state.spend_resources({"research": research_amount, "action_points": 1})
+
+	# Add to tracking
+	state.add_paper_submission(paper)
+
+	# Record for verification
+	VerificationTracker.record_rng_outcome("paper_quality_%s" % paper.id, quality, state.turn)
+
+	var accept_prob = Conferences.calculate_acceptance_probability(quality, conf.prestige, state.reputation)
+
+	return {
+		"success": true,
+		"message": "Submitted '%s' to %s (Quality: %.0f%%, Est. acceptance: %.0f%%)" % [
+			paper.title,
+			conf.name,
+			quality * 100,
+			accept_prob * 100
+		],
+		"paper": paper
+	}
+
+static func get_travel_cost_with_class(conf: Conferences.Conference, travel_class: String) -> Dictionary:
+	"""Calculate travel cost including travel class multiplier (Issue #469)"""
+	var base_cost = conf.get_travel_cost()
+	var class_data = Researcher.TRAVEL_CLASS.get(travel_class, Researcher.TRAVEL_CLASS["economy"])
+	var multiplier = class_data["cost_multiplier"]
+
+	return {
+		"flights": int(base_cost.flights * multiplier),
+		"accommodation": int(base_cost.accommodation * multiplier),
+		"registration": base_cost.registration,  # Registration doesn't change
+		"total": int((base_cost.flights + base_cost.accommodation) * multiplier) + base_cost.registration,
+		"travel_class": travel_class,
+		"class_name": class_data["name"]
+	}
+
+static func attend_conference_action(state: GameState, conf_id: String, travel_class: String = "economy", traveler: Researcher = null) -> Dictionary:
+	"""Attend a conference (with or without presenting)
+	Issue #469: includes travel class and jet lag
+	TODO: Multi-stage travel booking - player shouldn't see all options upfront.
+	Future flow: Express Interest → Arrange Travel (class, costs) → Attend
+	Requires situational awareness or researcher scouting to preview details."""
+	var conf = Conferences.get_conference_by_id(conf_id)
+	if conf == null:
+		return {"success": false, "message": "Conference not found: " + conf_id}
+
+	# Check if already attended this year
+	if state.has_attended_conference(conf_id):
+		return {"success": false, "message": "Already attended %s this year" % conf.name}
+
+	# Calculate travel cost with class (Issue #469)
+	var travel_cost = get_travel_cost_with_class(conf, travel_class)
+
+	# Check affordability
+	if not state.can_afford({"money": travel_cost.total, "action_points": 2}):
+		return {"success": false, "message": "Cannot afford: %s + 2 AP required" % GameConfig.format_money(travel_cost.total)}
+
+	# Spend resources
+	state.spend_resources({"money": travel_cost.total, "action_points": 2})
+	state.mark_conference_attended(conf_id)
+
+	# Apply jet lag to traveler if specified (Issue #469)
+	var jet_lag_msg = ""
+	if traveler != null and conf.location_tier > 1:
+		traveler.apply_jet_lag(conf.location_tier, travel_class)
+		if traveler.jet_lag_turns > 0:
+			jet_lag_msg = " | %s has jet lag (%d turns)" % [traveler.researcher_name, traveler.jet_lag_turns]
+
+	# Check if presenting a paper
+	var presenting_paper = state.get_accepted_paper_for_conference(conf_id)
+	if presenting_paper != null:
+		presenting_paper.status = PaperSubmissions.Status.PRESENTED
+
+		# Presenting gives full benefits
+		var rep_gain = conf.reputation_gain * 1.5
+		var doom_reduction = conf.doom_reduction
+
+		# Safety papers reduce doom more
+		if presenting_paper.is_safety_paper():
+			doom_reduction *= 1.5
+
+		state.add_resources({"reputation": rep_gain, "doom": -doom_reduction})
+
+		return {
+			"success": true,
+			"message": "Presented '%s' at %s! (+%.0f rep, -%.1f doom, cost: %s %s)%s" % [
+				presenting_paper.title,
+				conf.name,
+				rep_gain,
+				doom_reduction,
+				GameConfig.format_money(travel_cost.total),
+				travel_cost.class_name,
+				jet_lag_msg
+			],
+			"presented": true,
+			"paper": presenting_paper,
+			"travel_class": travel_class
+		}
+	else:
+		# Networking only - reduced benefits
+		var rep_gain = conf.reputation_gain * 0.5
+		state.add_resources({"reputation": rep_gain})
+
+		return {
+			"success": true,
+			"message": "Attended %s for networking (+%.0f rep, cost: %s %s)%s" % [
+				conf.name,
+				rep_gain,
+				GameConfig.format_money(travel_cost.total),
+				travel_cost.class_name,
+				jet_lag_msg
+			],
+			"presented": false,
+			"travel_class": travel_class
+		}

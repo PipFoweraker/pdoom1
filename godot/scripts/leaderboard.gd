@@ -60,13 +60,13 @@ class ScoreEntry:
 var version: String = "1.0.0"
 var max_entries: int = 50
 var entries: Array[ScoreEntry] = []
-var seed: String = ""
+var game_seed: String = ""  # Renamed from 'seed' to avoid shadowing built-in function
 var leaderboard_dir: String = "user://leaderboards"
 var file_path: String = ""
 
 func _init(p_seed: String = "default"):
-	seed = p_seed
-	file_path = "%s/leaderboard_%s.json" % [leaderboard_dir, seed]
+	game_seed = p_seed
+	file_path = "%s/leaderboard_%s.json" % [leaderboard_dir, game_seed]
 	_ensure_directory_exists()
 	_load_leaderboard()
 
@@ -141,7 +141,7 @@ func _save_leaderboard():
 		"version": version,
 		"created": Time.get_datetime_string_from_system(),
 		"max_entries": max_entries,
-		"seed": seed,
+		"seed": game_seed,
 		"entries": []
 	}
 
