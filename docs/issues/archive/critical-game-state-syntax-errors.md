@@ -24,7 +24,7 @@ self.messages.append(f'{researcher.name}\'s default quality set to {quality_name
 
 Multiple instances throughout the file of:
 - `f'?? {variable}'s` patterns
-- Broken contractions: `'You're` → needs `'You're`
+- Broken contractions: `'You're`  ->  needs `'You're`
 - Malformed f-string possessives
 
 ## Root Cause
@@ -37,7 +37,7 @@ The `scripts/nuclear_unicode_killer.py` script was too aggressive:
 
 ### **Phase 1: Immediate Syntax Repair**
 1. Identify all broken f-string patterns in game_state.py
-2. Fix possessive forms: `f'?? {name}'s` → `f'{name}\'s'`
+2. Fix possessive forms: `f'?? {name}'s`  ->  `f'{name}\'s'`
 3. Fix contractions: restore proper apostrophes
 4. Validate syntax with `python -m py_compile src/core/game_state.py`
 

@@ -182,13 +182,13 @@ python scripts/export_leaderboards.py --seed weekly-2025-W44 --copy-to-website
 
 ### Completed
 
-- ✅ Export function in `enhanced_leaderboard.py`
-- ✅ CLI export script with full options
-- ✅ Website-compatible JSON format
-- ✅ Metadata tracking (doom, money, staff, etc.)
-- ✅ Seed filtering support
-- ✅ Export summary generation
-- ✅ Documentation
+- SUCCESS Export function in `enhanced_leaderboard.py`
+- SUCCESS CLI export script with full options
+- SUCCESS Website-compatible JSON format
+- SUCCESS Metadata tracking (doom, money, staff, etc.)
+- SUCCESS Seed filtering support
+- SUCCESS Export summary generation
+- SUCCESS Documentation
 
 ### Ready for Use
 
@@ -213,33 +213,33 @@ The existing leaderboard JSON files in `leaderboards/` directory have invalid JS
 
 ```
 pdoom1/
-├── src/scores/
-│   └── enhanced_leaderboard.py    # Export function
-├── scripts/
-│   └── export_leaderboards.py     # CLI export tool
-├── leaderboards/                  # Local game leaderboards
-│   ├── leaderboard_*.json         # Seed-specific boards
-│   └── sessions/                  # Game session metadata
-├── web_export/                    # Export output (default)
-│   ├── seed_leaderboard_*.json    # Website-compatible exports
-│   └── export_summary.json        # Export statistics
-└── docs/
-    └── LEADERBOARD_WEBSITE_INTEGRATION.md  # This file
+|--- src/scores/
+|   `--- enhanced_leaderboard.py    # Export function
+|--- scripts/
+|   `--- export_leaderboards.py     # CLI export tool
+|--- leaderboards/                  # Local game leaderboards
+|   |--- leaderboard_*.json         # Seed-specific boards
+|   `--- sessions/                  # Game session metadata
+|--- web_export/                    # Export output (default)
+|   |--- seed_leaderboard_*.json    # Website-compatible exports
+|   `--- export_summary.json        # Export statistics
+`--- docs/
+    `--- LEADERBOARD_WEBSITE_INTEGRATION.md  # This file
 ```
 
 ### Website Repository (pdoom1-website)
 
 ```
 pdoom1-website/
-├── public/leaderboard/data/
-│   └── seed_leaderboard_*.json       # Leaderboards displayed on site
-├── public/leaderboard/
-│   └── index.html                    # Leaderboard page
-├── scripts/
-│   └── export-leaderboard-bridge.py  # Website's bridge script
-└── docs/03-integrations/
-    ├── leaderboard-integration-spec.md
-    └── leaderboard-development.md
+|--- public/leaderboard/data/
+|   `--- seed_leaderboard_*.json       # Leaderboards displayed on site
+|--- public/leaderboard/
+|   `--- index.html                    # Leaderboard page
+|--- scripts/
+|   `--- export-leaderboard-bridge.py  # Website's bridge script
+`--- docs/03-integrations/
+    |--- leaderboard-integration-spec.md
+    `--- leaderboard-development.md
 ```
 
 ---

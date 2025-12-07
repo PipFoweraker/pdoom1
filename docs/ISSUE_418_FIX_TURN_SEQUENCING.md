@@ -2,7 +2,7 @@
 
 **Date**: 2025-10-30
 **Issue**: [#418 - Turn Sequencing and Event Timing Problems](https://github.com/PipFoweraker/pdoom1/issues/418)
-**Status**: ✅ FIXED in Godot Pure GDScript implementation
+**Status**: SUCCESS FIXED in Godot Pure GDScript implementation
 **Files Modified**: 4 files
 
 ---
@@ -26,28 +26,28 @@ Implemented 4-phase turn architecture as designed in `shared_bridge/turn_archite
 
 ```
 Phase 1: TURN_START
-├─ Process maintenance (staff salaries, compute generation)
-├─ CHECK FOR EVENTS ← FIX: Events happen FIRST
-├─ If events exist:
-│  ├─ Block action selection
-│  ├─ Present events to player
-│  └─ Wait for resolution
-└─ If no events: → Transition to Phase 2
+|-- Process maintenance (staff salaries, compute generation)
+|-- CHECK FOR EVENTS  <-  FIX: Events happen FIRST
+|-- If events exist:
+|  |-- Block action selection
+|  |-- Present events to player
+|  `-- Wait for resolution
+`-- If no events:  ->  Transition to Phase 2
 
 Phase 2: ACTION_SELECTION
-├─ Player sees ALL information
-├─ Player selects actions (no execution yet)
-└─ Player commits turn → Phase 3
+|-- Player sees ALL information
+|-- Player selects actions (no execution yet)
+`-- Player commits turn  ->  Phase 3
 
 Phase 3: TURN_PROCESSING
-├─ Execute queued actions
-├─ Update game state
-├─ Check win/lose conditions
-└─ → Phase 4
+|-- Execute queued actions
+|-- Update game state
+|-- Check win/lose conditions
+`--  ->  Phase 4
 
 Phase 4: TURN_END
-├─ Prepare for next turn
-└─ Loop back to Phase 1
+|-- Prepare for next turn
+`-- Loop back to Phase 1
 ```
 
 ---
@@ -71,59 +71,59 @@ var can_end_turn: bool = false
 ### 2. [godot/scripts/core/turn_manager.gd](../godot/scripts/core/turn_manager.gd)
 
 **Modified `start_turn()`** - Lines 10-67:
-- ✅ Check for events **FIRST** (line 47)
-- ✅ If events exist, stay in TURN_START phase and block actions
-- ✅ If no events, transition to ACTION_SELECTION phase
-- ✅ Return `triggered_events` array for GameManager to emit
+- SUCCESS Check for events **FIRST** (line 47)
+- SUCCESS If events exist, stay in TURN_START phase and block actions
+- SUCCESS If no events, transition to ACTION_SELECTION phase
+- SUCCESS Return `triggered_events` array for GameManager to emit
 
 **Modified `execute_turn()`** - Lines 69-129:
-- ❌ **REMOVED** event checking from line 88 (was duplicate)
-- ✅ Events now only check at turn START, not turn END
+- ERROR **REMOVED** event checking from line 88 (was duplicate)
+- SUCCESS Events now only check at turn START, not turn END
 
 **Added `resolve_event()`** - Lines 131-168:
-- ✅ Handle event resolution during TURN_START phase
-- ✅ Remove resolved event from `pending_events`
-- ✅ Transition to ACTION_SELECTION when all events resolved
-- ✅ Return phase transition info to GameManager
+- SUCCESS Handle event resolution during TURN_START phase
+- SUCCESS Remove resolved event from `pending_events`
+- SUCCESS Transition to ACTION_SELECTION when all events resolved
+- SUCCESS Return phase transition info to GameManager
 
 ---
 
 ### 3. [godot/scripts/game_manager.gd](../godot/scripts/game_manager.gd)
 
 **Modified `start_new_game()`** - Lines 19-46:
-- ✅ Handle initial events that may trigger on turn 1
-- ✅ Emit events before actions if present
-- ✅ Emit correct phase ("turn_start" or "action_selection")
+- SUCCESS Handle initial events that may trigger on turn 1
+- SUCCESS Emit events before actions if present
+- SUCCESS Emit correct phase ("turn_start" or "action_selection")
 
 **Modified `select_action()`** - Lines 48-86:
-- ✅ **BLOCK** if `pending_events.size() > 0` (line 47-49)
-- ✅ **BLOCK** if not in ACTION_SELECTION phase (line 52-54)
-- ✅ Show error message to player
+- SUCCESS **BLOCK** if `pending_events.size() > 0` (line 47-49)
+- SUCCESS **BLOCK** if not in ACTION_SELECTION phase (line 52-54)
+- SUCCESS Show error message to player
 
 **Modified `start_next_turn()`** - Lines 125-149:
-- ✅ Emit triggered events from turn_result
-- ✅ Block action list emission if events pending
-- ✅ Emit correct phase to UI
+- SUCCESS Emit triggered events from turn_result
+- SUCCESS Block action list emission if events pending
+- SUCCESS Emit correct phase to UI
 
 **Modified `resolve_event()`** - Lines 156-177:
-- ✅ Use `turn_manager.resolve_event()` instead of direct GameEvents call
-- ✅ Handle phase transition when all events resolved
-- ✅ Emit actions_available when transitioning to ACTION_SELECTION
+- SUCCESS Use `turn_manager.resolve_event()` instead of direct GameEvents call
+- SUCCESS Handle phase transition when all events resolved
+- SUCCESS Emit actions_available when transitioning to ACTION_SELECTION
 
 ---
 
 ## Key Changes
 
-### Before (BROKEN) ❌
+### Before (BROKEN) ERROR
 ```
 end_turn():
   1. Execute actions immediately
   2. Process turn
-  3. Check events ← TOO LATE!
+  3. Check events  <-  TOO LATE!
   4. Player sees events AFTER actions executed
 ```
 
-### After (FIXED) ✅
+### After (FIXED) SUCCESS
 ```
 start_turn():
   1. Check events FIRST
@@ -131,7 +131,7 @@ start_turn():
   3. Once resolved: Enable action selection
 
 select_action():
-  → Blocked if events pending
+   ->  Blocked if events pending
 
 end_turn():
   1. Execute actions
@@ -148,41 +148,41 @@ end_turn():
 1. **Setup**: Use seed that triggers turn 1 event (e.g., "test-event-seed")
 2. **Run**: Start new game
 3. **Expected**:
-   - ✅ Event popup appears immediately
-   - ✅ Action buttons are disabled/hidden
-   - ✅ Cannot select actions
-   - ✅ Error message if action attempted: "Resolve pending events first!"
+   - SUCCESS Event popup appears immediately
+   - SUCCESS Action buttons are disabled/hidden
+   - SUCCESS Cannot select actions
+   - SUCCESS Error message if action attempted: "Resolve pending events first!"
 
 ### Test Case 2: Event Resolution Enables Actions
 
 1. **Setup**: Game with pending event
 2. **Run**: Resolve event by choosing an option
 3. **Expected**:
-   - ✅ Event dialog closes
-   - ✅ Phase transitions to "action_selection"
-   - ✅ Action buttons become available
-   - ✅ Message log shows event resolution
-   - ✅ Can now select actions normally
+   - SUCCESS Event dialog closes
+   - SUCCESS Phase transitions to "action_selection"
+   - SUCCESS Action buttons become available
+   - SUCCESS Message log shows event resolution
+   - SUCCESS Can now select actions normally
 
-### Test Case 3: No Events → Direct to Actions
+### Test Case 3: No Events  ->  Direct to Actions
 
 1. **Setup**: Use seed with no early events (e.g., "no-event-seed")
 2. **Run**: Start new game / end turn
 3. **Expected**:
-   - ✅ No event popups
-   - ✅ Actions immediately available
-   - ✅ Phase is "action_selection"
-   - ✅ Can select and queue actions
+   - SUCCESS No event popups
+   - SUCCESS Actions immediately available
+   - SUCCESS Phase is "action_selection"
+   - SUCCESS Can select and queue actions
 
 ### Test Case 4: Multiple Events Sequential
 
 1. **Setup**: Turn that triggers multiple events
 2. **Run**: Resolve first event
 3. **Expected**:
-   - ✅ First event resolves
-   - ✅ Second event appears immediately
-   - ✅ Actions still blocked
-   - ✅ Only after ALL events: actions enabled
+   - SUCCESS First event resolves
+   - SUCCESS Second event appears immediately
+   - SUCCESS Actions still blocked
+   - SUCCESS Only after ALL events: actions enabled
 
 ### Test Case 5: Event -> Actions -> Turn End
 
@@ -190,11 +190,11 @@ end_turn():
 2. **Run**: Full turn cycle
 3. **Expected Flow**:
    ```
-   1. Turn starts → Event popup
-   2. Resolve event → Actions available
-   3. Select actions → Actions queued
-   4. End turn → Actions execute
-   5. Next turn starts → Check for new events
+   1. Turn starts  ->  Event popup
+   2. Resolve event  ->  Actions available
+   3. Select actions  ->  Actions queued
+   4. End turn  ->  Actions execute
+   5. Next turn starts  ->  Check for new events
    ```
 
 ---
@@ -204,7 +204,7 @@ end_turn():
 - [ ] Events appear **before** action selection every turn
 - [ ] Action selection **blocked** when events pending
 - [ ] Clear error message if actions attempted during events
-- [ ] Phase transitions correctly: TURN_START → ACTION_SELECTION
+- [ ] Phase transitions correctly: TURN_START  ->  ACTION_SELECTION
 - [ ] Multiple events resolve sequentially before actions
 - [ ] No duplicate event checking (removed from execute_turn)
 - [ ] Turn 1 events work correctly
@@ -219,26 +219,26 @@ This fix implements the **ideal turn architecture** as documented in:
 - Now also in Pure GDScript implementation
 
 Both implementations now follow the same correct turn flow:
-1. ✅ Events FIRST (information gathering)
-2. ✅ Actions SECOND (decision making with full info)
-3. ✅ Execution THIRD (commitment)
-4. ✅ Cleanup FOURTH (prepare next turn)
+1. SUCCESS Events FIRST (information gathering)
+2. SUCCESS Actions SECOND (decision making with full info)
+3. SUCCESS Execution THIRD (commitment)
+4. SUCCESS Cleanup FOURTH (prepare next turn)
 
 ---
 
 ## Benefits
 
 ### For Players
-- ✅ **Full Information**: See all events before making decisions
-- ✅ **Player Agency**: Events can influence action choices
-- ✅ **Clear Feedback**: Know when/why actions are blocked
-- ✅ **Intuitive Flow**: Events → Decisions → Consequences
+- SUCCESS **Full Information**: See all events before making decisions
+- SUCCESS **Player Agency**: Events can influence action choices
+- SUCCESS **Clear Feedback**: Know when/why actions are blocked
+- SUCCESS **Intuitive Flow**: Events  ->  Decisions  ->  Consequences
 
 ### For Developers
-- ✅ **Clean Architecture**: Clear phase separation
-- ✅ **Predictable Flow**: Turn phases enforce correct sequencing
-- ✅ **Testable**: Phase state makes testing easier
-- ✅ **Maintainable**: Logic in correct places
+- SUCCESS **Clean Architecture**: Clear phase separation
+- SUCCESS **Predictable Flow**: Turn phases enforce correct sequencing
+- SUCCESS **Testable**: Phase state makes testing easier
+- SUCCESS **Maintainable**: Logic in correct places
 
 ---
 

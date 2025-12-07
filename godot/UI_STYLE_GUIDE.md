@@ -244,7 +244,7 @@ var texture = load(texture_path)
    - Softer glow ring
 
 3. **Destructive/Armed**
-   - Amber hover → red pressed
+   - Amber hover  ->  red pressed
    - For dangerous actions
 
 4. **Icon-only (Round)**
@@ -253,7 +253,7 @@ var texture = load(texture_path)
 
 5. **Disabled**
    - Desaturated, 60% opacity
-   - Maintain ≥4.5:1 contrast
+   - Maintain >=4.5:1 contrast
 
 ### State Matrix
 ```gdscript
@@ -289,7 +289,7 @@ _Inspired by Starcraft/Civilization_
 #### Proposed Implementations:
 1. **AP Bar Pulsing**
    - Pulse/flash when AP decreases
-   - Color-code: green → yellow → red as AP depletes
+   - Color-code: green  ->  yellow  ->  red as AP depletes
 
 2. **Action Queue Visualization**
    - Small icons showing queued actions
@@ -341,7 +341,7 @@ ease_in_out = Tween.EASE_IN_OUT
 - **Panel slide**: 0.3s ease_out
 - **Notification toast**: 0.2s slide + fade
 - **Resource change**: 0.5s number count-up
-- **Modal appear**: 0.2s fade + scale(0.95→1.0)
+- **Modal appear**: 0.2s fade + scale(0.95 -> 1.0)
 
 ---
 
@@ -369,9 +369,9 @@ ease_in_out = Tween.EASE_IN_OUT
 ## 10. Accessibility Guidelines
 
 ### Contrast Requirements
-- **Body text**: ≥4.5:1 against background
-- **Large text (18pt+)**: ≥3:1
-- **Disabled text**: ≥4.5:1 maintained
+- **Body text**: >=4.5:1 against background
+- **Large text (18pt+)**: >=3:1
+- **Disabled text**: >=4.5:1 maintained
 
 ### Focus Indicators
 - Always visible focus ring
@@ -381,7 +381,7 @@ ease_in_out = Tween.EASE_IN_OUT
 
 ### Scaling
 - All elements work at 110% UI scale
-- Touch targets minimum 44×44px
+- Touch targets minimum 44x44px
 - Text remains readable when scaled
 
 ---
@@ -465,13 +465,13 @@ var icon = load(ThemeManager.theme.assets["cat_icon"])
 ### For New UI Elements
 - [ ] Uses ThemeManager for colors
 - [ ] Follows spacing grid (8px base unit)
-- [ ] Maintains ≥4.5:1 text contrast
+- [ ] Maintains >=4.5:1 text contrast
 - [ ] Has hover/pressed/disabled states
 - [ ] Includes focus indicator
 - [ ] Works at 110% scale
 - [ ] Tested with all themes
 - [ ] Doom tier overlays don't break it
-- [ ] Touch-friendly (≥44px targets)
+- [ ] Touch-friendly (>=44px targets)
 - [ ] Smooth animations (0.1-0.3s)
 
 ### For Visual Effects
@@ -524,11 +524,11 @@ var icon = load(ThemeManager.theme.assets["cat_icon"])
    - Decision: TBD - playtest feedback
 
 ### Resolved Decisions
-- ✅ Use ThemeManager for all color access (centralized)
-- ✅ Button system based on GlowButton design (neon + bevel)
-- ✅ Info bar at bottom for persistent context (vs tooltips)
-- ✅ Cat panel moved to top-right (better space usage)
-- ✅ Notifications slide from right, auto-stack (NotificationManager)
+- SUCCESS Use ThemeManager for all color access (centralized)
+- SUCCESS Button system based on GlowButton design (neon + bevel)
+- SUCCESS Info bar at bottom for persistent context (vs tooltips)
+- SUCCESS Cat panel moved to top-right (better space usage)
+- SUCCESS Notifications slide from right, auto-stack (NotificationManager)
 
 ---
 

@@ -145,40 +145,40 @@ func _apply_color_scheme():
 
 ```
 MainMenu (Control)
-├── Background (ColorRect)
-│   └── color: Color8(140, 140, 140, 255)
-│
-├── CenterContainer
-│   ├── VBoxContainer
-│   │   ├── TitleLabel
-│   │   └── MenuButtons (VBoxContainer)
-│   │       ├── LaunchButton
-│   │       ├── SettingsButton
-│   │       └── ExitButton
-│
-├── SidePanel_Left (VBoxContainer)
-│   ├── MenuControlsTitle (Label)
-│   │   └── text: "Menu Controls:"
-│   │   └── font_color: Color8(0, 0, 0, 255) [BOLD]
-│   └── MenuControlsList (VBoxContainer)
-│       ├── ControlLabel1 (Label)
-│       │   └── font_color: Color8(20, 20, 20, 255)
-│       ├── ControlLabel2 (Label)
-│       └── ControlLabel3 (Label)
-│
-├── SidePanel_Right (VBoxContainer)
-│   ├── InGameControlsTitle (Label)
-│   │   └── text: "In-Game Controls:"
-│   │   └── font_color: Color8(0, 0, 0, 255) [BOLD]
-│   └── InGameControlsList (VBoxContainer)
-│       ├── ControlLabel1 (Label)
-│       │   └── font_color: Color8(20, 20, 20, 255)
-│       └── ControlLabel2 (Label)
-│
-└── BottomContainer
-    └── Instructions (Label)
-        └── text: "Use mouse or arrow keys to navigate"
-        └── font_color: Color8(10, 10, 10, 255)
+|--- Background (ColorRect)
+|   `--- color: Color8(140, 140, 140, 255)
+|
+|--- CenterContainer
+|   |--- VBoxContainer
+|   |   |--- TitleLabel
+|   |   `--- MenuButtons (VBoxContainer)
+|   |       |--- LaunchButton
+|   |       |--- SettingsButton
+|   |       `--- ExitButton
+|
+|--- SidePanel_Left (VBoxContainer)
+|   |--- MenuControlsTitle (Label)
+|   |   `--- text: "Menu Controls:"
+|   |   `--- font_color: Color8(0, 0, 0, 255) [BOLD]
+|   `--- MenuControlsList (VBoxContainer)
+|       |--- ControlLabel1 (Label)
+|       |   `--- font_color: Color8(20, 20, 20, 255)
+|       |--- ControlLabel2 (Label)
+|       `--- ControlLabel3 (Label)
+|
+|--- SidePanel_Right (VBoxContainer)
+|   |--- InGameControlsTitle (Label)
+|   |   `--- text: "In-Game Controls:"
+|   |   `--- font_color: Color8(0, 0, 0, 255) [BOLD]
+|   `--- InGameControlsList (VBoxContainer)
+|       |--- ControlLabel1 (Label)
+|       |   `--- font_color: Color8(20, 20, 20, 255)
+|       `--- ControlLabel2 (Label)
+|
+`--- BottomContainer
+    `--- Instructions (Label)
+        `--- text: "Use mouse or arrow keys to navigate"
+        `--- font_color: Color8(10, 10, 10, 255)
 ```
 
 ## Font Weight and Styling
@@ -351,7 +351,7 @@ for control_text in menu_controls:
 - [ ] Title text is black (0, 0, 0) with bold font
 - [ ] Control text is near-black (20, 20, 20)
 - [ ] Instructions are very dark grey (10, 10, 10)
-- [ ] Contrast ratios meet WCAG AA (≥4.5:1)
+- [ ] Contrast ratios meet WCAG AA (>=4.5:1)
 - [ ] Text is readable on low-quality displays
 - [ ] Color scheme works in different lighting conditions
 - [ ] No color-only information (for colorblind users)

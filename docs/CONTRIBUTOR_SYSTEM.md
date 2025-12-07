@@ -16,7 +16,7 @@ The PDoom contributor recognition system is a multi-repository, privacy-first ar
 - `godot/assets/cats/` - Cat image assets
 - `godot/scripts/core/bug_reporter.gd` - In-game bug reporting system
 - `godot/scenes/ui/bug_report_panel.tscn` - Bug reporter UI
-- `tools/process_bug_reports.py` - Local bug report → GitHub issue processor
+- `tools/process_bug_reports.py` - Local bug report  ->  GitHub issue processor
 
 **Responsibilities:**
 - Display office cats in-game
@@ -31,7 +31,7 @@ The PDoom contributor recognition system is a multi-repository, privacy-first ar
 **Components (See [Issue #70](https://github.com/PipFoweraker/pdoom1-website/issues/70)):**
 - Airtable CRM system for tracking contributors
 - Anonymous bug/feedback submission web form
-- Web form → GitHub API → Airtable pipeline
+- Web form  ->  GitHub API  ->  Airtable pipeline
 - Forum integration for displaying GitHub issues
 - Contributor dashboard (future)
 
@@ -63,15 +63,15 @@ The PDoom contributor recognition system is a multi-repository, privacy-first ar
 
 ```
 Player submits bug (F8 in-game)
-    ↓
+     v 
 Local save to user://bug_reports/
-    ↓
+     v 
 Admin runs tools/process_bug_reports.py
-    ↓
+     v 
 GitHub issue created (label: community-submission)
-    ↓
-Webhook → Airtable CRM (future)
-    ↓
+     v 
+Webhook  ->  Airtable CRM (future)
+     v 
 Admin reviews and approves
 ```
 
@@ -79,17 +79,17 @@ Admin reviews and approves
 
 ```
 Contribution approved in Airtable CRM
-    ↓
+     v 
 Admin requests cat photo from contributor
-    ↓
-Photo processed → 5 doom variants
-    ↓
+     v 
+Photo processed  ->  5 doom variants
+     v 
 Upload to pdoom-data repo: cats/{uuid}/
-    ↓
+     v 
 Add entry to pdoom-data: contributors.json
-    ↓
-CI/CD syncs pdoom-data → pdoom1
-    ↓
+     v 
+CI/CD syncs pdoom-data  ->  pdoom1
+     v 
 Next game release includes contributor cat
 ```
 
@@ -150,18 +150,18 @@ Location: `user://bug_reports/bug_report_TIMESTAMP.json`
 
 ```
 godot/assets/cats/
-├── default/
-│   ├── happy.png
-│   ├── concerned.png
-│   ├── worried.png
-│   ├── distressed.png
-│   └── corrupted.png
-└── {contributor_uuid}/
-    ├── happy.png
-    ├── concerned.png
-    ├── worried.png
-    ├── distressed.png
-    └── corrupted.png
+|--- default/
+|   |--- happy.png
+|   |--- concerned.png
+|   |--- worried.png
+|   |--- distressed.png
+|   `--- corrupted.png
+`--- {contributor_uuid}/
+    |--- happy.png
+    |--- concerned.png
+    |--- worried.png
+    |--- distressed.png
+    `--- corrupted.png
 ```
 
 ### Image Specifications
@@ -299,7 +299,7 @@ python tools/process_bug_reports.py --limit 5
 
 ## Roadmap
 
-### Phase 1: Foundation ✅ (v0.11.0)
+### Phase 1: Foundation SUCCESS (v0.11.0)
 - [x] Contributor manager (GDScript)
 - [x] Bug reporter (GDScript + UI)
 - [x] Office cat UI component
@@ -309,14 +309,14 @@ python tools/process_bug_reports.py --limit 5
 ### Phase 2: Web Integration (v0.12.0)
 - [ ] pdoom1-website Airtable CRM (Issue #70)
 - [ ] Anonymous web form for bug submissions
-- [ ] Web form → GitHub API pipeline
+- [ ] Web form  ->  GitHub API pipeline
 - [ ] Forum integration (Issue #71)
 
 ### Phase 3: Automation (v0.13.0)
 - [ ] pdoom-data contributor sync pipeline (Issue #22)
 - [ ] Automated cat image processing
 - [ ] CI/CD contributor data sync
-- [ ] Webhook integration (Airtable → GitHub → pdoom-data)
+- [ ] Webhook integration (Airtable  ->  GitHub  ->  pdoom-data)
 
 ### Phase 4: Enhancements (Future)
 - [ ] In-game contributor gallery

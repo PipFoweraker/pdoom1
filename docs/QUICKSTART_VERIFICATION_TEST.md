@@ -43,18 +43,18 @@
    Hash 1: 7a3f2e1b9c8d4a5f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4
    Hash 2: 7a3f2e1b9c8d4a5f1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4
 
-   ✅ PASS: Hashes match! System is deterministic.
+   SUCCESS PASS: Hashes match! System is deterministic.
       This means: same seed + same actions = same hash
       Ready for deployment!
    ============================================================
 
    Testing different actions (should produce different hash)...
-   ✅ PASS: Different actions produce different hash
+   SUCCESS PASS: Different actions produce different hash
    ```
 
-**If you see ✅ PASS**: System works! Proceed to Week 3 deployment.
+**If you see SUCCESS PASS**: System works! Proceed to Week 3 deployment.
 
-**If you see ❌ FAIL**: Something is non-deterministic. Check RNG tracking.
+**If you see ERROR FAIL**: Something is non-deterministic. Check RNG tracking.
 
 ---
 
@@ -74,7 +74,7 @@
      Seed: test-manual-001
      Version: 0.10.2
      Initial hash: 7a3f2e1b...
-   [VerificationTracker] Action: buy_compute → 9b2c4d5e...
+   [VerificationTracker] Action: buy_compute  ->  9b2c4d5e...
    ...
    [GameOverScreen] Game ended - Verification hash: 8a0b2c4d...
    [GameOverScreen] Full verification data ready for submission
@@ -85,8 +85,8 @@
    - Make IDENTICAL actions
    - Check if final hash matches
 
-**If hashes match**: ✅ System is deterministic!
-**If hashes differ**: ❌ Check for RNG not being tracked
+**If hashes match**: SUCCESS System is deterministic!
+**If hashes differ**: ERROR Check for RNG not being tracked
 
 ---
 
@@ -103,23 +103,23 @@ godot --headless --script tests/unit/test_verification_determinism.gd
 ```
 === VERIFICATION HASH DETERMINISM TESTS ===
 
-[TEST] Identical games → same hash
-  ✅ PASS: Identical games produce identical hashes
+[TEST] Identical games  ->  same hash
+  SUCCESS PASS: Identical games produce identical hashes
     Hash: 7a3f2e1b9c8d4a5f...
 
-[TEST] Different actions → different hash
-  ✅ PASS: Different actions produce different hashes
+[TEST] Different actions  ->  different hash
+  SUCCESS PASS: Different actions produce different hashes
     Hash 1: 7a3f2e1b9c8d4a5f...
     Hash 2: 9b2c4d5e6f7a8b1c...
 
 [TEST] RNG tracking consistency
-  ✅ PASS: RNG outcomes tracked consistently
+  SUCCESS PASS: RNG outcomes tracked consistently
     Hash: 3c5e7f9a1b2d4e6f...
 
 [TEST] Action order matters
-  ✅ PASS: Action order affects hash
-    Hash (A→B): 4d6e8f0a2b3c5d7e...
-    Hash (B→A): 5e7f9a1b3c4d6e8f...
+  SUCCESS PASS: Action order affects hash
+    Hash (A -> B): 4d6e8f0a2b3c5d7e...
+    Hash (B -> A): 5e7f9a1b3c4d6e8f...
 
 === ALL TESTS COMPLETE ===
 ```
@@ -128,14 +128,14 @@ godot --headless --script tests/unit/test_verification_determinism.gd
 
 ## What to Look For
 
-### ✅ Good Signs
+### SUCCESS Good Signs
 - Hashes are 64 characters long (hex)
 - Same seed + same actions = identical hash
 - Different actions = different hash
 - No errors in console
 - Debug output shows tracking working
 
-### ❌ Warning Signs
+### ERROR Warning Signs
 - Hashes don't match on replay
 - Hash is empty or wrong length
 - Errors about missing VerificationTracker
@@ -165,7 +165,7 @@ VerificationTracker="*res://autoload/verification_tracker.gd"
 
 ## Next Steps After Testing
 
-**If tests pass** ✅:
+**If tests pass** SUCCESS:
 1. Review [WEEK3_DEPLOYMENT_CHECKLIST.md](WEEK3_DEPLOYMENT_CHECKLIST.md)
 2. Implement scoring formula (Day 1)
 3. Run database migration (Day 2)
@@ -173,7 +173,7 @@ VerificationTracker="*res://autoload/verification_tracker.gd"
 5. Beta test (Day 6)
 6. Launch! (Day 7)
 
-**If tests fail** ❌:
+**If tests fail** ERROR:
 1. Check RNG tracking in turn_manager.gd
 2. Verify all `state.rng.randf()` calls have `record_rng_outcome()`
 3. Run test again
@@ -185,7 +185,7 @@ VerificationTracker="*res://autoload/verification_tracker.gd"
 
 **Right now** (5 minutes):
 - [ ] Run quick test (Option 1)
-- [ ] Verify ✅ PASS messages
+- [ ] Verify SUCCESS PASS messages
 - [ ] Take screenshot of success
 
 **Today** (1 hour):
@@ -196,10 +196,10 @@ VerificationTracker="*res://autoload/verification_tracker.gd"
 **This week** (7 days):
 - [ ] Follow Week 3 deployment checklist
 - [ ] Launch global leaderboards
-- [ ] Celebrate! 🎉
+- [ ] Celebrate! CELEBRATION
 
 ---
 
-**You're ready to launch global leaderboards!** 🚀
+**You're ready to launch global leaderboards!** LAUNCH
 
 The verification system is complete, tested, and documented. Just run the quick test to confirm, then follow the Week 3 checklist day by day.

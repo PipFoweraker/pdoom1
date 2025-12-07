@@ -189,14 +189,14 @@ Workflow only triggers when these paths change:
 ## Monitoring
 
 ### Success Indicators
-- ✅ Green checks on PRs
-- ✅ "Validation passed" in step summary
-- ✅ No error artifacts
+- SUCCESS Green checks on PRs
+- SUCCESS "Validation passed" in step summary
+- SUCCESS No error artifacts
 
 ### Failure Indicators
-- ❌ Red X on PR checks
-- ❌ PR comment with error details
-- ❌ Validation report artifact present
+- ERROR Red X on PR checks
+- ERROR PR comment with error details
+- ERROR Validation report artifact present
 
 ### Key Metrics
 - Validation execution time

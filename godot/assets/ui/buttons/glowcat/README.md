@@ -80,7 +80,7 @@ button.glow_strength = 1.2  # Adjust glow intensity
 
 1. **Primary (Confirm/Commit)**: Teal fill + neon ring
 2. **Secondary (Utility)**: Dark fill, teal text/icon
-3. **Destructive/Armed**: Amber (hover) → Red (pressed)
+3. **Destructive/Armed**: Amber (hover)  ->  Red (pressed)
 4. **Icon-only (Round)**: 56px circular with cat icon
 5. **Pill CTA**: Maximum radius for high-prominence actions
 

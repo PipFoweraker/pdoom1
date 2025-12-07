@@ -184,16 +184,16 @@ Run this every time keyboard changes are made:
 
 1. **Launch game** (F5)
 2. **Main screen test:**
-   - Press 1 → First action queued
-   - Press SPACE → Turn ends
+   - Press 1  ->  First action queued
+   - Press SPACE  ->  Turn ends
 3. **Dialog test:**
-   - Press 1 → Opens hiring dialog
+   - Press 1  ->  Opens hiring dialog
    - First button highlighted
-   - Press Q → Hires first employee
+   - Press Q  ->  Hires first employee
    - Check money deducted
 4. **Repeat for fundraising:**
    - Press number for Fundraising
-   - Press Q → Money increases, reputation decreases
+   - Press Q  ->  Money increases, reputation decreases
 5. **Check Output console:**
    - No errors
    - See debug messages confirming keys caught

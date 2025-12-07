@@ -411,17 +411,17 @@ my-branch                  # Not informative
 ```
 
 ### When to Push
-- ✅ **Push early, push often** - Share work with team
-- ✅ **Before context switch** - Ensure work is backed up
-- ✅ **After significant progress** - Natural breakpoints
-- ✅ **End of session** - Always push before stopping
-- ❌ **Don't wait for perfection** - Iterate with team
+- SUCCESS **Push early, push often** - Share work with team
+- SUCCESS **Before context switch** - Ensure work is backed up
+- SUCCESS **After significant progress** - Natural breakpoints
+- SUCCESS **End of session** - Always push before stopping
+- ERROR **Don't wait for perfection** - Iterate with team
 
 ### When to Create PR
-- ✅ **Feature complete** - Ready for review
-- ✅ **Tests passing** - Verified locally
-- ✅ **Self-review done** - Check your own diff
-- ✅ **Draft PR** - For early feedback (use `--draft` flag)
+- SUCCESS **Feature complete** - Ready for review
+- SUCCESS **Tests passing** - Verified locally
+- SUCCESS **Self-review done** - Check your own diff
+- SUCCESS **Draft PR** - For early feedback (use `--draft` flag)
 
 ---
 

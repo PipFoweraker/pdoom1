@@ -1,22 +1,22 @@
 # Hash Verification Policy - Finalized Decisions
 
 **Date**: November 20, 2024
-**Status**: ✅ Approved for implementation
+**Status**: SUCCESS Approved for implementation
 
 ---
 
 ## Core Decisions
 
-### 1. Leaderboard Display ✅
+### 1. Leaderboard Display SUCCESS
 
 **Main leaderboard shows ORIGINALS ONLY**
 
 ```
 Rank | Player      | Score  | Duplicates
 -----|-------------|--------|------------
-1    | Alice       | 95,000 | 12 others ⬆️ Click to view
-2    | Bob         | 92,000 | 5 others  ⬆️ Click to view
-3    | Dana        | 90,000 | 2 others  ⬆️ Click to view
+1    | Alice       | 95,000 | 12 others ⬆ Click to view
+2    | Bob         | 92,000 | 5 others  ⬆ Click to view
+3    | Dana        | 90,000 | 2 others  ⬆ Click to view
 ```
 
 **Why**: Saves screen real estate, emphasizes unique strategies
@@ -28,7 +28,7 @@ Rank | Player      | Score  | Duplicates
 
 **Alternative view**: Toggle to show ALL submissions (originals + duplicates)
 
-### 2. Hall of Fame Attribution ✅
+### 2. Hall of Fame Attribution SUCCESS
 
 **Three-tier system**:
 
@@ -45,13 +45,13 @@ ALTER TABLE users ADD COLUMN verified_external_account TEXT;  -- Future
 **Name squatting approach**:
 - First-come-first-served for pseudonyms
 - Can optionally link Steam/Forum for verification badge
-- Pseudonym ≠ real identity (privacy preserved)
+- Pseudonym != real identity (privacy preserved)
 - If squatting becomes issue: iterate based on community feedback
 - TBD: character limits, account linking requirements, etc.
 
 **Philosophy**: Privacy by default, recognition by choice, verification without doxxing
 
-### 3. Rapid Duplicate Detection ✅
+### 3. Rapid Duplicate Detection SUCCESS
 
 **Threshold**: 10+ duplicates of same hash within 1 hour
 
@@ -80,7 +80,7 @@ ALTER TABLE verification_hashes ADD COLUMN flagged_at TIMESTAMP;
 
 **Philosophy**: "Guilty until proven innocent" is wrong. Observe first, ban never (unless proven malicious).
 
-### 4. Self-Duplicate Behavior ✅
+### 4. Self-Duplicate Behavior SUCCESS
 
 **Scenario**: Player submits same hash multiple times
 
@@ -163,7 +163,7 @@ ALTER TABLE leaderboard_entries ADD COLUMN is_duplicate_hash BOOLEAN DEFAULT FAL
 
 ### API Endpoints to Implement
 
-1. **Score submission with hash tracking** ✅ (enhance existing)
+1. **Score submission with hash tracking** SUCCESS (enhance existing)
    - `POST /api/scores/submit`
    - Check for existing hash
    - Timestamp priority logic
@@ -227,7 +227,7 @@ ALTER TABLE leaderboard_entries ADD COLUMN is_duplicate_hash BOOLEAN DEFAULT FAL
 
 ### Week 3: End-to-End
 
-- [ ] Game → API → Database flow
+- [ ] Game  ->  API  ->  Database flow
 - [ ] Leaderboard displays correctly
 - [ ] Score detail view works
 - [ ] User preferences save
@@ -271,10 +271,10 @@ ALTER TABLE leaderboard_entries ADD COLUMN is_duplicate_hash BOOLEAN DEFAULT FAL
 - Privacy-first (anonymous by default, opt-in attribution)
 
 ### The Benefits
-- 🏆 First discoverer gets recognition
-- 🔁 Strategy sharing encouraged
-- 🛡️ Cheat-resistant (can't fake scores)
-- 📊 See which strategies are popular
+- ACHIEVEMENT First discoverer gets recognition
+- REPEAT Strategy sharing encouraged
+- 🛡 Cheat-resistant (can't fake scores)
+- METRICS See which strategies are popular
 - 🎓 Educational (learn from duplicates)
 
 ### The Philosophy
@@ -288,5 +288,5 @@ ALTER TABLE leaderboard_entries ADD COLUMN is_duplicate_hash BOOLEAN DEFAULT FAL
 
 ---
 
-**Status**: ✅ Policy finalized, ready for implementation
+**Status**: SUCCESS Policy finalized, ready for implementation
 **Next**: Implement VerificationTracker autoload in Godot

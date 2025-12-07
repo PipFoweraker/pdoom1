@@ -141,9 +141,9 @@ func get_cat_doom_stage() -> int:
         return 4  # Apocalyptic
 ```
 
-### 4. Dramatic End-Game Effects (Doom ≥ 85%)
+### 4. Dramatic End-Game Effects (Doom >= 85%)
 
-When cat reaches stage 4 AND doom ≥ 85%, add these visual effects:
+When cat reaches stage 4 AND doom >= 85%, add these visual effects:
 
 **Screen Flash Effect:**
 ```gdscript
@@ -245,7 +245,7 @@ Office Cat Statistics:
    - Add cat upkeep in `process_turn()` or equivalent
 
 2. **godot/scripts/core/events.gd**
-   - Modify existing cat event trigger (turn 7 → progressive conditions)
+   - Modify existing cat event trigger (turn 7  ->  progressive conditions)
    - Add staff tracking logic
    - Add adoption cost options
 
@@ -289,7 +289,7 @@ Replace or enhance existing cat event:
                 "doom": -2,
                 "office_cat_package": "full"
             },
-            "message": "🏠 You've adopted the office cat with full care! Premium benefits unlocked."
+            "message": "HOME You've adopted the office cat with full care! Premium benefits unlocked."
         },
         {
             "text": "💰 Basic Care Package ($89)",
@@ -299,7 +299,7 @@ Replace or enhance existing cat event:
                 "doom": -1,
                 "office_cat_package": "basic"
             },
-            "message": "🏠 You've adopted the office cat! Welcome to the team, little one."
+            "message": "HOME You've adopted the office cat! Welcome to the team, little one."
         },
         {
             "text": "💔 Decline Adoption",
@@ -370,7 +370,7 @@ func process_turn_end():
 These features were mentioned but not implemented in Python version:
 
 1. **Cat Personality System**: Different cat behaviors based on adoption package
-2. **Multiple Cat Stages**: Baby → Adult → Elder with different costs/benefits
+2. **Multiple Cat Stages**: Baby  ->  Adult  ->  Elder with different costs/benefits
 3. **Cat Upgrades**: Premium food, toys, cat tree for enhanced effects
 4. **Photo Upload**: Players upload their real cat photos (mentioned in Godot docs)
 5. **Cat Minigames**: Simple interaction games for bonus morale
@@ -430,6 +430,6 @@ This isn't just a cute feature:
 
 ---
 
-**The enhanced office cat is ready to port. Humanity's doom will be slightly lower, and significantly more entertaining. 🐱✨**
+**The enhanced office cat is ready to port. Humanity's doom will be slightly lower, and significantly more entertaining. 🐱SPARKLES**
 
 *Document created 2025-11-03 for Godot port planning*

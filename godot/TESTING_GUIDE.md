@@ -3,7 +3,7 @@
 
 ---
 
-## 🚀 Quick Start
+## LAUNCH Quick Start
 
 1. **Open Project:**
    ```bash
@@ -29,19 +29,19 @@
 
 ---
 
-## 📋 Test Suite
+## CLIPBOARD Test Suite
 
 ### Test 1: Welcome Screen Navigation
 **Purpose:** Verify all buttons work
 
 | Action | Expected Result |
 |--------|----------------|
-| Click "Launch Lab" | → Transitions to main.tscn |
-| Click "Launch with Custom Seed" | → Transitions to pregame_setup.tscn |
-| Click "Settings" | → Transitions to settings_menu.tscn |
-| Click "Player Guide" | → Transitions to player_guide.tscn |
-| Click "Exit" | → Game closes |
-| Press ↑/↓ keys | Button focus moves |
+| Click "Launch Lab" |  ->  Transitions to main.tscn |
+| Click "Launch with Custom Seed" |  ->  Transitions to pregame_setup.tscn |
+| Click "Settings" |  ->  Transitions to settings_menu.tscn |
+| Click "Player Guide" |  ->  Transitions to player_guide.tscn |
+| Click "Exit" |  ->  Game closes |
+| Press  ^ / v  keys | Button focus moves |
 | Press Enter | Selected button activates |
 | Press 1-5 | Corresponding button activates |
 | Press Escape | Game closes |
@@ -250,10 +250,10 @@ sfx_volume=60
 | 5 | Click Back button | Returns to welcome |
 
 **Sections to Verify:**
-- ✅ Game Objective (with color highlights)
-- ✅ Controls (with keyboard shortcuts)
-- ✅ Key Resources (with color-coded explanations)
-- ✅ Strategy Tips (7 tips)
+- SUCCESS Game Objective (with color highlights)
+- SUCCESS Controls (with keyboard shortcuts)
+- SUCCESS Key Resources (with color-coded explanations)
+- SUCCESS Strategy Tips (7 tips)
 
 ---
 
@@ -262,9 +262,9 @@ sfx_volume=60
 
 | Difficulty | Expected Modifiers |
 |------------|-------------------|
-| Easy | Money × 1.5, Max AP: 4 |
+| Easy | Money x 1.5, Max AP: 4 |
 | Standard | No changes (default) |
-| Hard | Money × 0.75, Max AP: 2 |
+| Hard | Money x 0.75, Max AP: 2 |
 
 **Test Procedure:**
 1. Start game with Easy
@@ -281,14 +281,14 @@ sfx_volume=60
 
 | Setting | Test |
 |---------|------|
-| Player name | Change → Restart → Still changed |
-| Lab name | Change → Restart → Still changed |
-| Difficulty | Change → Restart → Still changed |
-| Master volume | Change → Restart → Still changed |
-| SFX volume | Change → Restart → Still changed |
-| Graphics quality | Change → Restart → Still changed |
-| Fullscreen | Change → Restart → Still changed |
-| Games played | Play game → Restart → Counter incremented |
+| Player name | Change  ->  Restart  ->  Still changed |
+| Lab name | Change  ->  Restart  ->  Still changed |
+| Difficulty | Change  ->  Restart  ->  Still changed |
+| Master volume | Change  ->  Restart  ->  Still changed |
+| SFX volume | Change  ->  Restart  ->  Still changed |
+| Graphics quality | Change  ->  Restart  ->  Still changed |
+| Fullscreen | Change  ->  Restart  ->  Still changed |
+| Games played | Play game  ->  Restart  ->  Counter incremented |
 
 **How to Test:**
 1. Change all settings
@@ -296,7 +296,7 @@ sfx_volume=60
 3. Launch a game from pre-game setup
 4. Close game completely (Alt+F4 or close window)
 5. Relaunch game
-6. Check all settings → Should match what you set!
+6. Check all settings  ->  Should match what you set!
 
 ---
 
@@ -331,7 +331,7 @@ If you find a bug, report it with this format:
 
 ---
 
-## ✅ Sign-Off Checklist
+## SUCCESS Sign-Off Checklist
 
 After completing all tests, verify:
 
@@ -379,12 +379,12 @@ After completing all tests, verify:
 
 ---
 
-## 📊 Performance Checks
+## METRICS Performance Checks
 
 Monitor console for:
-- ❌ **Error messages** (should be zero)
-- ❌ **Warning messages** (should be minimal)
-- ✅ **Clean output** (just info logs)
+- ERROR **Error messages** (should be zero)
+- ERROR **Warning messages** (should be minimal)
+- SUCCESS **Clean output** (just info logs)
 
 Expected FPS:
 - Welcome screen: 60 FPS
@@ -394,7 +394,7 @@ Expected FPS:
 
 ---
 
-## 🔍 Advanced Testing
+## SEARCH Advanced Testing
 
 ### Config File Corruption
 1. Manually edit `config.cfg` with invalid data
@@ -440,11 +440,11 @@ Expected FPS:
 
 ---
 
-## 🎯 Success Criteria
+## TARGET Success Criteria
 
-All tests pass = **Option B Complete!** ✅
+All tests pass = **Option B Complete!** SUCCESS
 
-Ready to move to Option E (Python ↔ Godot Bridge) or Option D (Leaderboard).
+Ready to move to Option E (Python  <->  Godot Bridge) or Option D (Leaderboard).
 
 ---
 

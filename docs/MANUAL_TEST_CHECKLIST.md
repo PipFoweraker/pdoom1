@@ -30,7 +30,7 @@
 - [ ] Title "P(Doom)" visible
 - [ ] All menu buttons visible and aligned
 - [ ] Version number displayed in bottom-right
-- [ ] Keyboard navigation works (↑/↓ or W/S)
+- [ ] Keyboard navigation works ( ^ / v  or W/S)
 - [ ] Mouse clicks work on all buttons
 - [ ] No visual artifacts or rendering issues
 

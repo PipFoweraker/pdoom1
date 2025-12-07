@@ -2,7 +2,7 @@
 
 **Priority**: Medium
 **Category**: Game Mechanics Expansion
-**Dependencies**: Doom Momentum System ✅, Researcher Specializations ✅
+**Dependencies**: Doom Momentum System SUCCESS, Researcher Specializations SUCCESS
 
 ---
 
@@ -150,7 +150,7 @@ Low-Medium (2-3 hours)
 - **Value**: Long-term productivity
 
 #### Secure Cloud ($160k) ⭐
-- **Effect**: Reduces doom event spikes by 70% (6-13 → 1-2)
+- **Effect**: Reduces doom event spikes by 70% (6-13  ->  1-2)
 - **Unlock**: 5+ researchers
 - **Value**: Critical for event mitigation
 
@@ -269,7 +269,7 @@ Turns 8-12: Thorough research (clean finish)
 - Technical debt accumulation
 - Technical debt effects on doom
 - Upgrade purchase and effects
-- Integration: rushed research → debt → doom
+- Integration: rushed research  ->  debt  ->  doom
 
 ### Balance Testing
 - Is rushed research worth it?
@@ -310,16 +310,16 @@ Turns 8-12: Thorough research (clean finish)
 
 ## Success Metrics
 
-✅ **Research Quality**:
+SUCCESS **Research Quality**:
 - Players use all three quality levels
 - Strategic choices (not always one dominant)
 
-✅ **Technical Debt**:
+SUCCESS **Technical Debt**:
 - Debt accumulation creates tension
 - Reduction actions feel meaningful
 - Doom penalty noticeable but not overwhelming
 
-✅ **Upgrades**:
+SUCCESS **Upgrades**:
 - Players purchase 3-5 upgrades per game
 - Choices feel impactful
 - Unlock conditions make sense
@@ -330,7 +330,7 @@ Turns 8-12: Thorough research (clean finish)
 
 - All three systems have proven balance from Python prototype
 - Clean extension points exist in doom system
-- Can implement incrementally (Research Quality → Debt → Upgrades)
+- Can implement incrementally (Research Quality  ->  Debt  ->  Upgrades)
 - UI can be basic initially (text-based dialogs)
 
 ---

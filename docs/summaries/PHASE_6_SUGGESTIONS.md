@@ -2,7 +2,7 @@
 
 Based on Phase 5 implementation, here are prioritized improvement suggestions:
 
-## 🎯 High Priority - Core UX
+## TARGET High Priority - Core UX
 
 ### 1. Employee Productivity Visual Feedback
 **Problem**: Players won't immediately understand why employees are unproductive
@@ -10,16 +10,16 @@ Based on Phase 5 implementation, here are prioritized improvement suggestions:
 **Solution**: Add visual indicators in main UI
 ```gdscript
 # Show for each employee type:
-- ✅ Productive (green) vs ❌ Unproductive (red)
+- SUCCESS Productive (green) vs ERROR Unproductive (red)
 - Reason for unproductivity: "Needs Compute" or "Needs Manager"
 - Hover tooltips explaining the system
 ```
 
 **Example UI Mock**:
 ```
-Safety Researchers: 5  [3✅ / 2❌]
-  └─ 2 employees need compute
-Managers: 0  [⚠️ HIRE MANAGER! 5 employees unmanaged]
+Safety Researchers: 5  [3SUCCESS / 2ERROR]
+  `-- 2 employees need compute
+Managers: 0  [WARNING HIRE MANAGER! 5 employees unmanaged]
 ```
 
 ### 2. Rival Lab Progress Display
@@ -109,7 +109,7 @@ Turns Sustainable: 3.2 (based on current money)
 
 ---
 
-## 🔧 Low Priority - Advanced Features
+## TOOLS Low Priority - Advanced Features
 
 ### 11. Action History Log
 **Solution**: Scrollable log of past actions
@@ -136,7 +136,7 @@ Turns Sustainable: 3.2 (based on current money)
 **Solution**: First-time player guidance
 - Turn 1: "Welcome! Hire your first researcher"
 - Turn 3: "You'll need compute soon (1 per employee)"
-- Turn 9: "⚠️ Consider hiring a manager! (handles 9 employees)"
+- Turn 9: "WARNING Consider hiring a manager! (handles 9 employees)"
 - Event triggers: Contextual help
 
 ### 15. Save/Load System
@@ -161,10 +161,10 @@ Turns Sustainable: 3.2 (based on current money)
 ```
 
 Based on:
-- Unmanaged employees > 0 → Hire manager
-- Compute < staff → Buy compute
-- Money > $200k, turn < 5 → Hire researcher
-- Papers >= 3, reputation >= 40 → Grant proposal
+- Unmanaged employees > 0  ->  Hire manager
+- Compute < staff  ->  Buy compute
+- Money > $200k, turn < 5  ->  Hire researcher
+- Papers >= 3, reputation >= 40  ->  Grant proposal
 
 ### 17. Action Undo (Single Turn)
 **Solution**: Allow undoing last action before end turn
@@ -190,25 +190,25 @@ Based on:
 
 ### 20. Achievements System
 **Solution**: Track accomplishments
-- ✅ First Victory
-- ✅ No Capability Researchers (safety-only run)
-- ✅ Hire 20+ Employees
-- ✅ Sabotage Success (espionage works)
-- ✅ Perfect Management (0 unproductive employees all game)
-- ✅ Philanthropist (Open source 3+ times)
-- ✅ Underdog Victory (Win with <$50k remaining)
+- SUCCESS First Victory
+- SUCCESS No Capability Researchers (safety-only run)
+- SUCCESS Hire 20+ Employees
+- SUCCESS Sabotage Success (espionage works)
+- SUCCESS Perfect Management (0 unproductive employees all game)
+- SUCCESS Philanthropist (Open source 3+ times)
+- SUCCESS Underdog Victory (Win with <$50k remaining)
 
 ---
 
-## 📊 Analytics & Feedback
+## METRICS Analytics & Feedback
 
 ### 21. End Game Stats Screen
 **Solution**: Show comprehensive stats after win/loss
 ```
-📊 Game Statistics
+METRICS Game Statistics
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Turns Played: 18
-Final Doom: 0% ✅ VICTORY
+Final Doom: 0% SUCCESS VICTORY
 Total Money Spent: $2.3M
 Total Research Generated: 342
 
@@ -256,14 +256,14 @@ Rival Lab Final Status:
 **Solution**: Show which actions are impactful
 ```
 Safety Research (last used: Turn 15)
-  └─ Effectiveness: ⭐⭐⭐⭐☆
-  └─ Doom reduction: -2.4
-  └─ Recommendation: High impact with 8 safety researchers
+  `-- Effectiveness: ⭐⭐⭐⭐☆
+  `-- Doom reduction: -2.4
+  `-- Recommendation: High impact with 8 safety researchers
 ```
 
 ---
 
-## 🚀 Performance Optimizations
+## LAUNCH Performance Optimizations
 
 ### 24. Deterministic Replay System
 **Solution**: Record all RNG calls for debugging
@@ -279,7 +279,7 @@ Safety Research (last used: Turn 15)
 
 ---
 
-## 🎯 Suggested Implementation Order
+## TARGET Suggested Implementation Order
 
 **Week 1 - Critical UX**:
 1. Employee productivity visual feedback (#1)
@@ -312,7 +312,7 @@ Safety Research (last used: Turn 15)
 
 ---
 
-## 💭 Design Philosophy Notes
+## THOUGHT Design Philosophy Notes
 
 **Core Principle**: Information should be **visible** and **actionable**
 
@@ -330,16 +330,16 @@ Safety Research (last used: Turn 15)
 ## 🎊 Phase 6 Goal
 
 Transform Phase 5's solid mechanics into **polished, intuitive gameplay** that:
-- ✅ Communicates system state clearly
-- ✅ Guides new players without hand-holding
-- ✅ Rewards skilled play with depth
-- ✅ Feels responsive and rewarding
+- SUCCESS Communicates system state clearly
+- SUCCESS Guides new players without hand-holding
+- SUCCESS Rewards skilled play with depth
+- SUCCESS Feels responsive and rewarding
 
 **Target**: First playthrough success rate 60%+ (up from estimated 30% with current bare UI)
 
 ---
 
-## 📝 Quick Wins (Implement First)
+## MEMO Quick Wins (Implement First)
 
 If you only have time for 5 things, do these:
 

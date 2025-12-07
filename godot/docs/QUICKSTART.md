@@ -1,6 +1,6 @@
 # P(Doom) - Godot Version Quick Start
 
-**New Godot Engine Version** - Beta Testing Ready! 🚀
+**New Godot Engine Version** - Beta Testing Ready! LAUNCH
 
 ---
 
@@ -9,11 +9,11 @@
 The game has been migrated to **Godot Engine 4.5** for better performance, reliability, and future development. This is a fresh start with the same great gameplay!
 
 ### Why Godot?
-- ✅ More stable and performant
-- ✅ Cleaner architecture
-- ✅ Better cross-platform support
-- ✅ Easier to develop and maintain
-- ✅ No more pygame corruption issues!
+- SUCCESS More stable and performant
+- SUCCESS Cleaner architecture
+- SUCCESS Better cross-platform support
+- SUCCESS Easier to develop and maintain
+- SUCCESS No more pygame corruption issues!
 
 ---
 
@@ -86,16 +86,16 @@ godot project.godot
 
 ```
 1. ACTION SELECTION (Your Turn)
-   ↓ Select actions you want
-   ↓ Click "End Turn"
+    v  Select actions you want
+    v  Click "End Turn"
 
 2. TURN END (Processing)
-   ↓ Actions execute
-   ↓ Resources update
+    v  Actions execute
+    v  Resources update
 
 3. TURN START (New Turn Begins)
-   ↓ Events may trigger
-   ↓ Back to Action Selection
+    v  Events may trigger
+    v  Back to Action Selection
 ```
 
 The game **auto-advances** between phases - just select actions and click "End Turn"!
@@ -114,23 +114,23 @@ The game **auto-advances** between phases - just select actions and click "End T
 
 ### Known Limitations (Phase 5 MVP):
 
-- ❌ No multiple screens yet (research, employees, etc.)
-- ❌ No save/load
-- ❌ No settings menu
-- ❌ No graphics/styling (functional only)
-- ❌ No sound
+- ERROR No multiple screens yet (research, employees, etc.)
+- ERROR No save/load
+- ERROR No settings menu
+- ERROR No graphics/styling (functional only)
+- ERROR No sound
 - ⏳ Limited action set (core actions only)
 
 ### What Works:
 
-- ✅ Full turn system
-- ✅ Dynamic action loading
-- ✅ Event popups
-- ✅ Resource management
-- ✅ Action queueing
-- ✅ Affordability checking
-- ✅ Game over/victory detection
-- ✅ Auto-advancing turn flow
+- SUCCESS Full turn system
+- SUCCESS Dynamic action loading
+- SUCCESS Event popups
+- SUCCESS Resource management
+- SUCCESS Action queueing
+- SUCCESS Affordability checking
+- SUCCESS Game over/victory detection
+- SUCCESS Auto-advancing turn flow
 
 ---
 
@@ -197,9 +197,9 @@ winget install GodotEngine.GodotEngine
 
 ```
 Godot UI (GDScript)
-    ↓ PowerShell Pipes
+     v  PowerShell Pipes
 Python Bridge (bridge_server.py)
-    ↓ Game Logic
+     v  Game Logic
 Shared Game Logic (Python)
 ```
 
@@ -221,13 +221,13 @@ See `godot/README.md` and `godot/SETUP.md` for detailed architecture and setup i
 
 After beta testing feedback, we'll add:
 
-- 📊 Multiple screens (research, employees, upgrades)
+- METRICS Multiple screens (research, employees, upgrades)
 - 🎨 Proper UI styling and graphics
-- 💾 Save/load system
-- ⚙️ Settings menu
+- SAVE Save/load system
+- ⚙ Settings menu
 - 🔊 Sound effects and music
-- 📈 More actions and events
-- 🏆 Victory conditions and scoring
+- GROWTH More actions and events
+- ACHIEVEMENT Victory conditions and scoring
 
 ---
 

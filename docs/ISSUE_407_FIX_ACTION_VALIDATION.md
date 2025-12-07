@@ -158,14 +158,14 @@ Run tests with:
 ```gdscript
 var state = GameState.new("test")
 state.reputation = 50.0
-assert_true(state.can_afford({"reputation": 5}))  # ✅ Should pass
+assert_true(state.can_afford({"reputation": 5}))  # SUCCESS Should pass
 ```
 
 #### Test Case 2: Reputation Validation (Insufficient)
 ```gdscript
 var state = GameState.new("test")
 state.reputation = 3.0
-assert_false(state.can_afford({"reputation": 5}))  # ✅ Should pass
+assert_false(state.can_afford({"reputation": 5}))  # SUCCESS Should pass
 ```
 
 #### Test Case 3: Reputation Spending
@@ -173,7 +173,7 @@ assert_false(state.can_afford({"reputation": 5}))  # ✅ Should pass
 var state = GameState.new("test")
 state.reputation = 50.0
 state.spend_resources({"reputation": 10})
-assert_eq(state.reputation, 40.0)  # ✅ Should pass
+assert_eq(state.reputation, 40.0)  # SUCCESS Should pass
 ```
 
 #### Test Case 4: Fundraise Action Integration
@@ -181,7 +181,7 @@ assert_eq(state.reputation, 40.0)  # ✅ Should pass
 var state = GameState.new("test")
 state.reputation = 3.0  # Too low (needs 5)
 var action = GameActions.get_action_by_id("fundraise")
-assert_false(state.can_afford(action["costs"]))  # ✅ Should be blocked
+assert_false(state.can_afford(action["costs"]))  # SUCCESS Should be blocked
 ```
 
 ---
@@ -240,7 +240,7 @@ state.can_afford({})  # Returns true
 Currently only **"fundraise"** has reputation costs, but the fix ensures any future actions with reputation costs will work correctly.
 
 **Current Action with Reputation Cost**:
-- `fundraise`: 2 AP, 5 reputation → Gain $100k + (reputation × $1k)
+- `fundraise`: 2 AP, 5 reputation  ->  Gain $100k + (reputation x $1k)
 
 **Potential Future Actions**:
 - `lobbying`: Reputation cost for political influence
@@ -278,7 +278,7 @@ This fix aligns the Godot implementation with the Python bridge's validation arc
 
 1. **Start new game**
    ```
-   New Game → "test-seed"
+   New Game  ->  "test-seed"
    ```
 
 2. **Verify initial reputation**
@@ -289,14 +289,14 @@ This fix aligns the Godot implementation with the Python bridge's validation arc
 3. **Attempt fundraise** (costs 5 reputation, 2 AP)
    ```
    Select "Fundraising" action
-   ✅ Should be allowed (have 50 reputation)
+   SUCCESS Should be allowed (have 50 reputation)
    ```
 
 4. **Execute turn**
    ```
    End Turn
-   ✅ Reputation should decrease to 45
-   ✅ Money should increase
+   SUCCESS Reputation should decrease to 45
+   SUCCESS Money should increase
    ```
 
 5. **Drain reputation to near zero**
@@ -307,15 +307,15 @@ This fix aligns the Godot implementation with the Python bridge's validation arc
 6. **Attempt fundraise again**
    ```
    Try to select "Fundraising"
-   ✅ Should be blocked/grayed out
-   ✅ Error message: "Cannot afford Fundraising"
+   SUCCESS Should be blocked/grayed out
+   SUCCESS Error message: "Cannot afford Fundraising"
    ```
 
 ### Automated Testing
 
 Run full test suite:
 ```bash
-# Godot Editor → GUT panel → "Run All"
+# Godot Editor  ->  GUT panel  ->  "Run All"
 # Expected: All 23 tests pass (17 original + 6 new)
 ```
 

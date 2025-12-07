@@ -26,11 +26,11 @@ message_log.add_separator()
 ```
 
 **Message Types:**
-- `success` / `positive` - Green with ✓
-- `warning` / `caution` - Yellow with ⚠
-- `error` / `danger` - Red with ✗
-- `info` - White with ℹ
-- `action` - Light blue with →
+- `success` / `positive` - Green with CHECKED
+- `warning` / `caution` - Yellow with WARNING
+- `error` / `danger` - Red with FAILED
+- `info` - White with INFO
+- `action` - Light blue with  -> 
 - `event` - Gold with ★
 - `doom` - Red with ☠
 - `system` / `phase` - Accent color
@@ -101,10 +101,10 @@ NotificationManager.show_notification(
 ```
 
 **Notification Types:**
-- INFO: ℹ, Gray/blue background
-- SUCCESS: ✓, Green background
-- WARNING: ⚠, Yellow background
-- ERROR: ✗, Red background
+- INFO: INFO, Gray/blue background
+- SUCCESS: CHECKED, Green background
+- WARNING: WARNING, Yellow background
+- ERROR: FAILED, Red background
 - ACHIEVEMENT: ★, Purple background
 
 ## Theme Integration

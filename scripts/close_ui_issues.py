@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Close UI-related issues that were addressed in Godot UI migration.
 
@@ -18,7 +18,7 @@ ADDRESSED_ISSUES = {
 
 **What was done:**
 - Implemented comprehensive keyboard navigation across all screens
-- Arrow keys for navigation (↑↓ or WS)
+- Arrow keys for navigation ( ^  v  or WS)
 - Enter/Space for selection
 - Escape for back/cancel
 - Number keys (1-9) for direct selection in welcome screen
@@ -31,7 +31,7 @@ ADDRESSED_ISSUES = {
 - Player Guide: Escape to back
 - End Game Screen: R to replay, Escape to menu
 
-All navigation is consistent and follows expected patterns. Tests would need updating for pygame → Godot transition."""
+All navigation is consistent and follows expected patterns. Tests would need updating for pygame  ->  Godot transition."""
     },
     396: {
         "title": "Enhancement: Advanced Menu Consolidation",
@@ -115,9 +115,9 @@ The button layout is now clean and professional with appropriate spacing through
 - End game screen has proper navigation
 - Keyboard shortcuts: R to replay, Escape to menu
 - All buttons properly connected to their handlers
-- Play Again → Restarts game
-- View Leaderboard → Shows leaderboard (placeholder dialog currently)
-- Main Menu → Returns to welcome screen
+- Play Again  ->  Restarts game
+- View Leaderboard  ->  Shows leaderboard (placeholder dialog currently)
+- Main Menu  ->  Returns to welcome screen
 
 Navigation is fully functional and tested."""
     }
@@ -175,7 +175,7 @@ def main():
         # Check current status
         status = get_issue_status(issue_num)
         if not status:
-            print(f"  ❌ Could not fetch issue status")
+            print(f"  ERROR Could not fetch issue status")
             continue
 
         current_state = status.get("state", "UNKNOWN")
@@ -187,17 +187,17 @@ def main():
         # Add comment
         print(f"  Adding completion comment...")
         if add_comment_to_issue(issue_num, comment):
-            print(f"  ✅ Comment added")
+            print(f"  SUCCESS Comment added")
 
             # Close if still open and should be closed
             if current_state == "OPEN" and issue_num in [422, 374, 361, 360, 366]:
                 print(f"  Closing issue...")
                 if close_issue(issue_num):
-                    print(f"  ✅ Issue closed")
+                    print(f"  SUCCESS Issue closed")
                 else:
-                    print(f"  ❌ Failed to close issue")
+                    print(f"  ERROR Failed to close issue")
         else:
-            print(f"  ❌ Failed to add comment")
+            print(f"  ERROR Failed to add comment")
 
         print()
 

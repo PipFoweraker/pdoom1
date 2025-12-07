@@ -6,22 +6,22 @@ The Office Cat is a single-display morale/wellness indicator that replaces the d
 ## Component Structure
 
 ### Middle Panel Cat Display
-**Location**: `main.tscn` → `TabManager/MainUI/ContentArea/MiddlePanel/OfficeCatSection`
+**Location**: `main.tscn`  ->  `TabManager/MainUI/ContentArea/MiddlePanel/OfficeCatSection`
 
 **Purpose**: Replaces doom meter as primary health/morale indicator when cat is adopted
 
 **Structure**:
 ```
 OfficeCatSection (VBoxContainer, alignment=2 for bottom anchoring)
-  ├─ OfficeCatLabel (Label)
-  │   └─ Text: "OFFICE CAT" (orange #FF9900)
-  └─ OfficeCatContainer (CenterContainer)
-      └─ OfficeCat (Control, from office_cat.tscn)
-          └─ VBox (VBoxContainer)
-              ├─ CatPanel (PanelContainer 256x256)
-              │   └─ CatTexture (TextureRect - doom variants)
-              ├─ ContributorLabel (Label - contributor info)
-              └─ DoomMeterContainer (Control - reserved space)
+  |-- OfficeCatLabel (Label)
+  |   `-- Text: "OFFICE CAT" (orange #FF9900)
+  `-- OfficeCatContainer (CenterContainer)
+      `-- OfficeCat (Control, from office_cat.tscn)
+          `-- VBox (VBoxContainer)
+              |-- CatPanel (PanelContainer 256x256)
+              |   `-- CatTexture (TextureRect - doom variants)
+              |-- ContributorLabel (Label - contributor info)
+              `-- DoomMeterContainer (Control - reserved space)
 ```
 
 **Visibility Control**: [main_ui.gd:424-433](../godot/scripts/ui/main_ui.gd#L424-L433)
@@ -41,7 +41,7 @@ else:
 - Layout: Container mode (`layout_mode = 2`)
 - Bottom-anchored via parent VBoxContainer `alignment = 2`
 - Interactive with contributor system
-- Doom-level variants (happy → corrupted)
+- Doom-level variants (happy  ->  corrupted)
 
 ---
 
@@ -109,10 +109,10 @@ func update_doom_level(doom_percentage: float) -> void:
 
 ## Data Flow
 
-1. **Game State** → `has_cat` boolean triggers visibility
-2. **Doom Percentage** → Updates cat variant image
-3. **Contributor System** → Provides cat images and metadata
-4. **UI Updates** → `_update_ui_from_state()` handles all visibility
+1. **Game State**  ->  `has_cat` boolean triggers visibility
+2. **Doom Percentage**  ->  Updates cat variant image
+3. **Contributor System**  ->  Provides cat images and metadata
+4. **UI Updates**  ->  `_update_ui_from_state()` handles all visibility
 
 ---
 
@@ -156,7 +156,7 @@ func update_doom_level(doom_percentage: float) -> void:
 
 ## Future Enhancements
 
-1. **Smooth Transitions**: Fade animation between doom meter ↔ cat
+1. **Smooth Transitions**: Fade animation between doom meter  <->  cat
 2. **Click Interaction**: Cycle through contributors
 3. **Tooltips**: Show contributor info on hover
 4. **Size Adaptation**: Responsive sizing based on panel space

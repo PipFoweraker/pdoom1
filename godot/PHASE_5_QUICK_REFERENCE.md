@@ -1,11 +1,11 @@
 # Phase 5 Quick Reference Guide
 
-## 🎯 New Player-Facing Features
+## TARGET New Player-Facing Features
 
 ### New Strategic Actions
 
 #### High-Risk, High-Reward
-- **Public Warning** (2 AP, -15 rep) - Random doom reduction 10-25, random rep change ±10
+- **Public Warning** (2 AP, -15 rep) - Random doom reduction 10-25, random rep change +/-10
 - **Corporate Espionage** ($100k, 3 AP, -20 rep) - 70% success = -20 doom, 30% caught = +10 doom, -25 rep
 
 #### Influence & Lobbying
@@ -37,36 +37,36 @@
 **Scenario 1: Sufficient Resources**
 ```
 5 employees, 1 manager, 50 compute
-→ All 5 productive ✅
-→ Research generation: ~1-2 per turn
-→ No doom penalties
+ ->  All 5 productive SUCCESS
+ ->  Research generation: ~1-2 per turn
+ ->  No doom penalties
 ```
 
 **Scenario 2: Not Enough Compute**
 ```
 10 employees, 2 managers, 5 compute
-→ 5 productive ✅, 5 unproductive ❌
-→ Research: ~0-2 per turn (from 5 productive)
-→ Doom penalty: +2.5 per turn (5 × 0.5)
-→ Need: More compute!
+ ->  5 productive SUCCESS, 5 unproductive ERROR
+ ->  Research: ~0-2 per turn (from 5 productive)
+ ->  Doom penalty: +2.5 per turn (5 x 0.5)
+ ->  Need: More compute!
 ```
 
 **Scenario 3: Not Enough Managers**
 ```
 15 employees, 1 manager, 100 compute
-→ 9 productive ✅, 6 unproductive ❌
-→ Research: ~1-3 per turn
-→ Doom penalty: +3.0 per turn (6 × 0.5)
-→ Need: Hire manager! (1 manager only handles 9)
+ ->  9 productive SUCCESS, 6 unproductive ERROR
+ ->  Research: ~1-3 per turn
+ ->  Doom penalty: +3.0 per turn (6 x 0.5)
+ ->  Need: Hire manager! (1 manager only handles 9)
 ```
 
 **Scenario 4: Both Problems**
 ```
 20 employees, 1 manager, 5 compute
-→ Only 5 can be productive (limited by compute AND management)
-→ 15 unproductive!
-→ Doom penalty: +7.5 per turn 💀
-→ Need: Managers AND compute ASAP!
+ ->  Only 5 can be productive (limited by compute AND management)
+ ->  15 unproductive!
+ ->  Doom penalty: +7.5 per turn 💀
+ ->  Need: Managers AND compute ASAP!
 ```
 
 ### Employee Types & Effects
@@ -78,7 +78,7 @@
 **Capability Researcher** ($60k)
 - Passive: +0.5 doom per turn (always)
 - Research generation: 30% chance for 1-3 research
-- ⚠️ Risk/reward: Faster research but increases doom!
+- WARNING Risk/reward: Faster research but increases doom!
 
 **Compute Engineer** ($50k)
 - Passive: +10% research efficiency per engineer
@@ -92,26 +92,26 @@
 ### New Random Events
 
 **Employee Burnout** (5+ safety researchers)
-- Team retreat: $30k → +5 rep, -2 doom
-- Salary raises: $50k → +8 rep
-- Push through: Free → +3 doom ⚠️
+- Team retreat: $30k  ->  +5 rep, -2 doom
+- Salary raises: $50k  ->  +8 rep
+- Push through: Free  ->  +3 doom WARNING
 
 **Rival Poaching** (Random, 8%, turn 10+)
-- Counter-offer: $80k → Keep staff
+- Counter-offer: $80k  ->  Keep staff
 - Let go: -1 safety researcher, +$20k saved
 
 **Media Scandal** (Random, 6%, turn 7+)
-- PR campaign: $40k → +10 rep
+- PR campaign: $40k  ->  +10 rep
 - Ignore: -8 rep
 
-**Government Regulation** (Doom ≥ 60, one-time)
-- Support: $50k, 1 AP → -10 doom, +15 rep ✅
+**Government Regulation** (Doom >= 60, one-time)
+- Support: $50k, 1 AP  ->  -10 doom, +15 rep SUCCESS
 - Oppose: +5 doom, -5 rep
 - Neutral: +2 doom
 
 **Technical Failure** (Random, 5%, turn 12+)
-- Emergency repair: $60k → +30 compute
-- Basic fix: $20k → -20 compute
+- Emergency repair: $60k  ->  +30 compute
+- Basic fix: $20k  ->  -20 compute
 
 ### Rival AI Labs
 
@@ -120,12 +120,12 @@
 **DeepSafety** - Safety-Focused
 - Funding: $500k
 - Strategy: Prioritizes safety research
-- Effect: Helps reduce global doom 👍
+- Effect: Helps reduce global doom APPROVED
 
 **CapabiliCorp** - Aggressive
 - Funding: $1M
 - Strategy: Rushes capabilities
-- Effect: Rapidly increases doom! ⚠️
+- Effect: Rapidly increases doom! WARNING
 
 **StealthAI** - Balanced
 - Funding: $300k
@@ -151,14 +151,14 @@
 ## 🎮 Updated Gameplay Loop
 
 ### Turn Start
-1. ✅ **Management check** - Who has managers?
-2. ✅ **Compute distribution** - Who gets compute?
-3. ✅ **Productivity evaluation** - Who can work?
-4. ✅ **Research generation** - Productive employees contribute
-5. ✅ **Passive effects** - Safety reduces doom, caps increase it
-6. ✅ **Unproductivity penalties** - Doom from idle staff
-7. ✅ **Staff salaries** - $5k per employee
-8. ✅ **Random events** - 10 possible events
+1. SUCCESS **Management check** - Who has managers?
+2. SUCCESS **Compute distribution** - Who gets compute?
+3. SUCCESS **Productivity evaluation** - Who can work?
+4. SUCCESS **Research generation** - Productive employees contribute
+5. SUCCESS **Passive effects** - Safety reduces doom, caps increase it
+6. SUCCESS **Unproductivity penalties** - Doom from idle staff
+7. SUCCESS **Staff salaries** - $5k per employee
+8. SUCCESS **Random events** - 10 possible events
 
 ### Action Phase
 1. Select from **18 actions** (10 original + 8 new)
@@ -211,32 +211,32 @@
   - Use wisely (some actions cost 2-3 AP)
 
 ### Common Mistakes
-❌ Hiring too fast without compute → Unproductivity doom spiral
-❌ Ignoring managers past 9 staff → Massive doom penalties
-❌ Too many capability researchers → Doom accelerates
-❌ Running out of money → Can't pay salaries → Game over
-❌ Ignoring rival labs → CapabiliCorp rushes you
+ERROR Hiring too fast without compute  ->  Unproductivity doom spiral
+ERROR Ignoring managers past 9 staff  ->  Massive doom penalties
+ERROR Too many capability researchers  ->  Doom accelerates
+ERROR Running out of money  ->  Can't pay salaries  ->  Game over
+ERROR Ignoring rival labs  ->  CapabiliCorp rushes you
 
 ### Winning Strategies
-✅ Balanced team (60% safety, 20% caps, 20% compute engineers)
-✅ Always have 1 compute per employee
-✅ Hire managers proactively (at 8 staff, at 17 staff, etc.)
-✅ Take calculated risks (warnings, open source releases)
-✅ Use grants/fundraising to maintain cash flow
-✅ React to events wisely (sometimes short-term pain is worth it)
+SUCCESS Balanced team (60% safety, 20% caps, 20% compute engineers)
+SUCCESS Always have 1 compute per employee
+SUCCESS Hire managers proactively (at 8 staff, at 17 staff, etc.)
+SUCCESS Take calculated risks (warnings, open source releases)
+SUCCESS Use grants/fundraising to maintain cash flow
+SUCCESS React to events wisely (sometimes short-term pain is worth it)
 
 ---
 
-## 🔧 Developer Notes
+## TOOLS Developer Notes
 
 ### File Structure
 ```
 godot/scripts/core/
-  ├── game_state.gd      (state + management capacity)
-  ├── actions.gd         (18 actions, execution logic)
-  ├── events.gd          (10 events, trigger conditions)
-  ├── rivals.gd          (3 rival labs, autonomous actions)
-  └── turn_manager.gd    (turn flow, productivity system)
+  |--- game_state.gd      (state + management capacity)
+  |--- actions.gd         (18 actions, execution logic)
+  |--- events.gd          (10 events, trigger conditions)
+  |--- rivals.gd          (3 rival labs, autonomous actions)
+  `--- turn_manager.gd    (turn flow, productivity system)
 ```
 
 ### Key Functions
@@ -272,7 +272,7 @@ godot --run-tests godot/tests/test_phase5_features.gd
 
 ---
 
-## 📈 Balance Tuning
+## GROWTH Balance Tuning
 
 Current values optimized for 15-20 turn games:
 
@@ -316,4 +316,4 @@ Current values optimized for 15-20 turn games:
 
 **Ready for**: UI integration, playtesting, balance refinement
 
-🚀 **The game is now feature-complete for core gameplay!** 🚀
+LAUNCH **The game is now feature-complete for core gameplay!** LAUNCH

@@ -258,7 +258,7 @@ Full prompt = `{styles} + {color_bias} + {prompt_tail}`
 For large batches, create shell scripts:
 
 ```bash
-#!/bin/bash
+# !/bin/bash
 # generate_batch.sh
 export OPENAI_API_KEY="$(cat ~/.openai_key.txt)"
 

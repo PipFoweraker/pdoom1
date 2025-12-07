@@ -4,13 +4,13 @@
 
 ---
 
-## 🎯 Overview
+## TARGET Overview
 
 The Doom System is a **modular, extensible architecture** for calculating and managing p(doom) - the probability of AI-caused extinction. It's designed to start with simple mechanics (Phase 1) and progressively add complexity over time without breaking existing functionality.
 
 ## 📐 Architecture Layers
 
-### Layer 1: Doom Momentum (✅ IMPLEMENTED)
+### Layer 1: Doom Momentum (SUCCESS IMPLEMENTED)
 **Status**: Complete
 **Complexity**: Simple (5% added complexity)
 
@@ -18,7 +18,7 @@ Core mechanics:
 - **Doom Velocity**: Smoothed rate of doom change
 - **Doom Momentum**: Accumulated momentum that compounds over time
 - **Momentum Decay**: Prevents permanent momentum (8% decay/turn)
-- **Momentum Cap**: Prevents infinite spirals (±8.0 max)
+- **Momentum Cap**: Prevents infinite spirals (+/-8.0 max)
 
 **Formula**:
 ```gdscript
@@ -32,14 +32,14 @@ total_change = raw_change + momentum
 ```
 
 **Gameplay Effect**:
-- Risky play → Doom spiral (positive momentum)
-- Safety focus → Safety flywheel (negative momentum)
+- Risky play  ->  Doom spiral (positive momentum)
+- Safety focus  ->  Safety flywheel (negative momentum)
 - Creates emergent narratives ("I'm in a doom spiral!")
 - Recovery is possible but harder once momentum builds
 
 ---
 
-### Layer 2: Source Tracking (✅ IMPLEMENTED)
+### Layer 2: Source Tracking (SUCCESS IMPLEMENTED)
 **Status**: Complete
 **Complexity**: Trivial (bookkeeping only)
 
@@ -55,17 +55,17 @@ Tracks where doom comes from:
 
 **UI Benefit**:
 ```
-Doom 48.2 → 52.5 (change: +4.3)
-  └─ base: +1.0, capabilities: +6.0, safety: -7.0,
+Doom 48.2  ->  52.5 (change: +4.3)
+  `-- base: +1.0, capabilities: +6.0, safety: -7.0,
      rivals: +3.2, momentum: +1.1
-  └─ Momentum: doom spiral (1.1)
+  `-- Momentum: doom spiral (1.1)
 ```
 
 Players understand exactly why doom is changing.
 
 ---
 
-### Layer 3: Multipliers & Modifiers (🔄 PARTIAL - Extension Point Ready)
+### Layer 3: Multipliers & Modifiers (REFRESH PARTIAL - Extension Point Ready)
 **Status**: Architecture ready, awaiting content
 **Complexity**: Medium (15% added complexity)
 
@@ -91,7 +91,7 @@ doom_system.apply_doom_modifier("safety", 1.0)         # Specialization bonus
 
 ---
 
-### Layer 4: Multi-Axis Doom (📋 PLANNED)
+### Layer 4: Multi-Axis Doom (CLIPBOARD PLANNED)
 **Status**: Not yet implemented
 **Complexity**: High (25% added complexity)
 
@@ -179,7 +179,7 @@ doom_momentum *= momentum_decay_rate
 #### Cap
 ```gdscript
 doom_momentum = clamp(doom_momentum, -momentum_cap, momentum_cap)
-# Default: ±8.0
+# Default: +/-8.0
 ```
 
 **Tunable**: `momentum_cap` (0.0-20.0)
@@ -201,7 +201,7 @@ Used for trend detection:
 
 ---
 
-## 🎯 Tuning Parameters
+## TARGET Tuning Parameters
 
 All parameters exposed for easy balancing:
 
@@ -210,7 +210,7 @@ class DoomSystem:
     # Momentum tuning
     var momentum_accumulation_rate: float = 0.15  # 15% becomes momentum
     var momentum_decay_rate: float = 0.92         # 8% decay per turn
-    var momentum_cap: float = 8.0                 # Max ±8.0 momentum
+    var momentum_cap: float = 8.0                 # Max +/-8.0 momentum
 
     # Source rates (in calculation functions)
     # Base: 1.0
@@ -279,9 +279,9 @@ func enable_doom_axes():
 
 ---
 
-## 📊 Testing Strategy
+## METRICS Testing Strategy
 
-### Unit Tests (✅ Implemented)
+### Unit Tests (SUCCESS Implemented)
 **File**: `godot/tests/test_doom_momentum.gd`
 
 16 test cases covering:
@@ -300,8 +300,8 @@ func enable_doom_axes():
 
 ### Integration Tests (Needed)
 - Full game playthrough (15 turns)
-- Doom reaches 100 → Game over
-- Doom reaches 0 → Victory
+- Doom reaches 100  ->  Game over
+- Doom reaches 0  ->  Victory
 - Momentum affects game length
 - Balance validation (12-15 turn target)
 
@@ -318,38 +318,38 @@ func enable_doom_axes():
 ### Example 1: Doom Spiral
 ```
 Turn 1: 5 capability researchers, 0 safety
-  Doom: 50.0 → 54.0 (+4.0)
-  Momentum: 0 → 0.6
+  Doom: 50.0  ->  54.0 (+4.0)
+  Momentum: 0  ->  0.6
 
 Turn 2:
-  Doom: 54.0 → 58.6 (+4.6)  # Momentum adds 0.6
-  Momentum: 0.6 → 1.2
+  Doom: 54.0  ->  58.6 (+4.6)  # Momentum adds 0.6
+  Momentum: 0.6  ->  1.2
 
 Turn 3:
-  Doom: 58.6 → 63.8 (+5.2)  # Momentum adds 1.2
-  Momentum: 1.2 → 1.9
+  Doom: 58.6  ->  63.8 (+5.2)  # Momentum adds 1.2
+  Momentum: 1.2  ->  1.9
 
 Turn 5:
-  Doom: 71.4 → 77.5 (+6.1)  # Accelerating!
+  Doom: 71.4  ->  77.5 (+6.1)  # Accelerating!
   Status: CRITICAL
 ```
 
 ### Example 2: Safety Flywheel
 ```
 Turn 1: 0 capability, 4 safety researchers
-  Doom: 50.0 → 45.0 (-5.0)
-  Momentum: 0 → -0.75
+  Doom: 50.0  ->  45.0 (-5.0)
+  Momentum: 0  ->  -0.75
 
 Turn 2:
-  Doom: 45.0 → 39.2 (-5.8)  # Momentum adds -0.75
-  Momentum: -0.75 → -1.5
+  Doom: 45.0  ->  39.2 (-5.8)  # Momentum adds -0.75
+  Momentum: -0.75  ->  -1.5
 
 Turn 3:
-  Doom: 39.2 → 32.6 (-6.6)  # Accelerating reduction!
-  Momentum: -1.5 → -2.3
+  Doom: 39.2  ->  32.6 (-6.6)  # Accelerating reduction!
+  Momentum: -1.5  ->  -2.3
 
 Turn 8:
-  Doom: 2.1 → 0.0 (VICTORY!)
+  Doom: 2.1  ->  0.0 (VICTORY!)
   Status: SAFE
 ```
 
@@ -360,53 +360,53 @@ Turn 1-5: Doom spiral (hit 75.0)
   Momentum: +3.2
 
 Turn 6: Emergency pivot! (convert 3 cap researchers to safety)
-  Doom: 75.0 → 78.2 (+3.2)  # Momentum still positive
+  Doom: 75.0  ->  78.2 (+3.2)  # Momentum still positive
   New strategy: 5 safety, 2 capability
 
 Turn 7:
-  Doom: 78.2 → 79.5 (+1.3)  # Slowing
-  Momentum: +3.2 → +2.1 (decaying)
+  Doom: 78.2  ->  79.5 (+1.3)  # Slowing
+  Momentum: +3.2  ->  +2.1 (decaying)
 
 Turn 8:
-  Doom: 79.5 → 79.1 (-0.4)  # Turning around!
-  Momentum: +2.1 → +0.8
+  Doom: 79.5  ->  79.1 (-0.4)  # Turning around!
+  Momentum: +2.1  ->  +0.8
 
 Turn 12:
-  Doom: 72.3 → 66.5 (-5.8)  # Recovery accelerating
+  Doom: 72.3  ->  66.5 (-5.8)  # Recovery accelerating
   Momentum: -1.5
   Status: DANGER (improving!)
 ```
 
 ---
 
-## 🚀 Implementation Roadmap
+## LAUNCH Implementation Roadmap
 
-### ✅ Phase 1: Momentum (COMPLETE)
+### SUCCESS Phase 1: Momentum (COMPLETE)
 - Doom momentum mechanics
 - Source tracking
 - Integration with game state
 - 16 unit tests
 
-### 🔄 Phase 2: Balance Tuning (IN PROGRESS)
+### REFRESH Phase 2: Balance Tuning (IN PROGRESS)
 - Playtesting
 - Momentum parameter tweaking
 - Game length validation
 - Feedback collection
 
-### 📋 Phase 3: Modifiers (NEXT)
+### CLIPBOARD Phase 3: Modifiers (NEXT)
 - Researcher specializations
 - Technical debt system
 - Upgrade effects (Secure Cloud!)
 - Market cycle impacts
 
-### 📋 Phase 4: Advanced Systems (FUTURE)
+### CLIPBOARD Phase 4: Advanced Systems (FUTURE)
 - Multi-axis doom (if needed)
 - Cascade events
 - Complex interactions
 
 ---
 
-## 📝 Design Notes
+## MEMO Design Notes
 
 ### Why Momentum?
 - Creates emergent narratives
@@ -435,14 +435,14 @@ Turn 12:
 
 ---
 
-## 🎯 Success Metrics
+## TARGET Success Metrics
 
 ### Phase 1 Success (Current)
-- ✅ Momentum creates doom spirals
-- ✅ Safety flywheel works
-- ✅ Recovery is possible but harder
-- ✅ Source tracking shows breakdown
-- ✅ 16 unit tests pass
+- SUCCESS Momentum creates doom spirals
+- SUCCESS Safety flywheel works
+- SUCCESS Recovery is possible but harder
+- SUCCESS Source tracking shows breakdown
+- SUCCESS 16 unit tests pass
 
 ### Phase 2 Success (Target)
 - Average game length: 12-15 turns
@@ -482,6 +482,6 @@ The Doom System is **production-ready** with modular architecture for future exp
 
 **Current Status**: Phase 1 complete, Phase 2 (balancing) in progress.
 
-**Path Forward**: Playtest → Balance → Add Layers (researcher specs, tech debt, etc.)
+**Path Forward**: Playtest  ->  Balance  ->  Add Layers (researcher specs, tech debt, etc.)
 
-The foundation is solid. Time to play and tune! 🎮✨
+The foundation is solid. Time to play and tune! 🎮SPARKLES

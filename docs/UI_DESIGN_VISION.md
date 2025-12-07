@@ -28,11 +28,11 @@ The UI is built around a **ScreenManager** that can swap between different views
 
 ```
 ScreenManager (root)
-├─ MainGameScreen (default)
-├─ ResearchScreen (future)
-├─ EmployeeScreen (future)
-├─ SettingsScreen (future)
-└─ etc.
+|-- MainGameScreen (default)
+|-- ResearchScreen (future)
+|-- EmployeeScreen (future)
+|-- SettingsScreen (future)
+`-- etc.
 ```
 
 **Benefits**:
@@ -52,9 +52,9 @@ ScreenManager (root)
 
 **Test Flow**:
 ```
-1. Click "Init Game" → See resources update
-2. Click "Hire Safety Researcher" → See message
-3. Click "End Turn" → See turn increment
+1. Click "Init Game"  ->  See resources update
+2. Click "Hire Safety Researcher"  ->  See message
+3. Click "End Turn"  ->  See turn increment
 ```
 
 ---
@@ -75,9 +75,9 @@ ScreenManager (root)
 
 ### Phase 7: UI as Gameplay (Future)
 - **UI Upgrades as Actions**
-  - "Hire UI Designer" → Unlocks better visuals
-  - "Install Dashboard Software" → Unlocks new screen
-  - "Upgrade Analytics" → Shows more detailed stats
+  - "Hire UI Designer"  ->  Unlocks better visuals
+  - "Install Dashboard Software"  ->  Unlocks new screen
+  - "Upgrade Analytics"  ->  Shows more detailed stats
 
 - **Progressive Information Disclosure**
   - Early game: Simple lists, basic info
@@ -97,15 +97,15 @@ ScreenManager (root)
 ### Godot Scene Structure
 ```
 Main.tscn
-├─ GameManager (AutoLoad singleton)
-├─ ScreenManager (Control)
-│  ├─ CurrentScreen (Container)
-│  └─ ScreenCache (stores inactive screens)
-├─ PersistentUI (Control - always visible)
-│  ├─ ResourceDisplay
-│  ├─ TurnCounter
-│  └─ MessageLog
-└─ DebugOverlay (optional, for development)
+|-- GameManager (AutoLoad singleton)
+|-- ScreenManager (Control)
+|  |-- CurrentScreen (Container)
+|  `-- ScreenCache (stores inactive screens)
+|-- PersistentUI (Control - always visible)
+|  |-- ResourceDisplay
+|  |-- TurnCounter
+|  `-- MessageLog
+`-- DebugOverlay (optional, for development)
 ```
 
 ### Screen Interface
@@ -168,12 +168,12 @@ func update_state(game_state: Dictionary):
 4. **Future-proof** - Will this work when UI upgrades are gameplay?
 
 ### Avoid Premature Polish
-- ❌ Don't spend time on graphics/styling yet
-- ❌ Don't worry about animations or transitions
-- ❌ Don't implement features that aren't testable yet
-- ✅ DO focus on working buttons and clear feedback
-- ✅ DO use placeholder text/colors
-- ✅ DO document what needs polish later
+- ERROR Don't spend time on graphics/styling yet
+- ERROR Don't worry about animations or transitions
+- ERROR Don't implement features that aren't testable yet
+- SUCCESS DO focus on working buttons and clear feedback
+- SUCCESS DO use placeholder text/colors
+- SUCCESS DO document what needs polish later
 
 ### When to Polish
 Polish happens when:
@@ -187,7 +187,7 @@ Polish happens when:
 ## Notes & Ideas
 
 ### Potential UI Upgrade Mechanics
-- **Basic Terminal** (Start) → **Dashboard** (Mid) → **AI Command Center** (Late)
+- **Basic Terminal** (Start)  ->  **Dashboard** (Mid)  ->  **AI Command Center** (Late)
 - Unlock graphs, charts, predictions as you hire analysts
 - "Dark mode" could be an actual upgrade
 - More screen space = more employees to manage visibility

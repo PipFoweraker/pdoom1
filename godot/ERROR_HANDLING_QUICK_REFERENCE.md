@@ -106,7 +106,7 @@ func apply_doom_change(change: float):
 
 ## Best Practices
 
-### ✅ DO
+### SUCCESS DO
 
 ```gdscript
 // DO: Validate before acting
@@ -125,7 +125,7 @@ ErrorHandler.warning(...)  // For recoverable issues
 ErrorHandler.error(...)    // For blocking issues
 ```
 
-### ❌ DON'T
+### ERROR DON'T
 
 ```gdscript
 // DON'T: Use generic messages
@@ -154,7 +154,7 @@ func _process(delta):
 
 ### "Too many errors"
 - **Cause**: Validation failing in loop
-- **Fix**: Open Debug Overlay → Errors tab to see pattern
+- **Fix**: Open Debug Overlay  ->  Errors tab to see pattern
 
 ### "Performance degradation"
 - **Cause**: Debug Overlay refresh rate too high

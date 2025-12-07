@@ -245,9 +245,9 @@ Shows only **first discovery** of each unique strategy:
 ```
 Rank | Player      | Score  | Duplicates
 -----|-------------|--------|------------
-1    | Alice       | 95,000 | 12 others ⬆️ Click to view
-2    | Bob         | 92,000 | 5 others  ⬆️ Click to view
-3    | Dana        | 90,000 | 2 others  ⬆️ Click to view
+1    | Alice       | 95,000 | 12 others ⬆ Click to view
+2    | Bob         | 92,000 | 5 others  ⬆ Click to view
+3    | Dana        | 90,000 | 2 others  ⬆ Click to view
 ```
 
 **Saves screen real estate** by only showing unique strategies.
@@ -276,7 +276,7 @@ Rank | Player      | Score  | Status
 -----|-------------|--------|------------------
 1    | Alice       | 95,000 | ⭐ Original
 2    | Bob         | 92,000 | ⭐ Original
-3    | Charlie     | 95,000 | 🔁 Duplicate
+3    | Charlie     | 95,000 | REPEAT Duplicate
 4    | Dana        | 90,000 | ⭐ Original
 ```
 
@@ -284,12 +284,12 @@ Rank | Player      | Score  | Status
 
 ### Advantages
 
-✅ **Rewards innovation**: First player to find strategy gets credit
-✅ **Allows sharing**: Players can share strategies without "stealing" credit
-✅ **Prevents accidental rejections**: Legitimate duplicate play isn't penalized
-✅ **Encourages community**: "X others found this strategy" shows popularity
-✅ **Speedrun-friendly**: Like speedrunning, first to discover route gets recognition
-✅ **Educational**: Duplicate count shows which strategies are common vs rare
+SUCCESS **Rewards innovation**: First player to find strategy gets credit
+SUCCESS **Allows sharing**: Players can share strategies without "stealing" credit
+SUCCESS **Prevents accidental rejections**: Legitimate duplicate play isn't penalized
+SUCCESS **Encourages community**: "X others found this strategy" shows popularity
+SUCCESS **Speedrun-friendly**: Like speedrunning, first to discover route gets recognition
+SUCCESS **Educational**: Duplicate count shows which strategies are common vs rare
 
 ### Use Cases
 
@@ -331,15 +331,15 @@ Rank | Player      | Score  | Status
 
 ### What We Show
 
-✅ "Strategy discovered X hours/days ago"
-✅ "Y other players found this strategy"
-✅ Your own previous submissions
+SUCCESS "Strategy discovered X hours/days ago"
+SUCCESS "Y other players found this strategy"
+SUCCESS Your own previous submissions
 
 ### What We DON'T Show
 
-❌ Identity of first discoverer (unless they opt-in to "Featured Discoveries")
-❌ Identities of duplicate submitters
-❌ Specific gameplay details from hash
+ERROR Identity of first discoverer (unless they opt-in to "Featured Discoveries")
+ERROR Identities of duplicate submitters
+ERROR Specific gameplay details from hash
 
 ### Hall of Fame - Pseudonymous Attribution
 
@@ -437,12 +437,12 @@ WHERE EXISTS (
 ## Summary
 
 **Timestamp priority system**:
-- ✅ Accepts all valid submissions
+- SUCCESS Accepts all valid submissions
 - ⭐ Credits first discoverer
-- 🔁 Tracks duplicates transparently
-- 📊 Enables rich analytics
-- 🏆 Rewards innovation while allowing shared strategies
-- 🛡️ Maintains privacy by default
+- REPEAT Tracks duplicates transparently
+- METRICS Enables rich analytics
+- ACHIEVEMENT Rewards innovation while allowing shared strategies
+- 🛡 Maintains privacy by default
 
 This is the **best of both worlds**: strict verification (hash must be valid) + flexible credit (duplicates allowed, first wins).
 

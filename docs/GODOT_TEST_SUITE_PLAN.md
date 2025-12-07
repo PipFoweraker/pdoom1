@@ -24,7 +24,7 @@
 
 ## Current Test Coverage (86 tests)
 
-### 1. test_game_state.gd (23 tests) ✅ COMPLETE
+### 1. test_game_state.gd (23 tests) SUCCESS COMPLETE
 - [x] Initialization and defaults
 - [x] Resource management (can_afford, spend, add)
 - [x] Win/lose conditions
@@ -32,7 +32,7 @@
 - [x] Serialization (to_dict)
 - [x] **NEW**: Reputation validation (#407 fix - 6 tests)
 
-### 2. test_actions.gd (15 tests) ✅ GOOD
+### 2. test_actions.gd (15 tests) SUCCESS GOOD
 - [x] Action definitions and structure
 - [x] Action execution
 - [x] Categories and submenu
@@ -40,7 +40,7 @@
 - [x] Resource effects
 - **Missing**: Error cases, chaining, validation edge cases
 
-### 3. test_events.gd (21 tests) ✅ GOOD
+### 3. test_events.gd (21 tests) SUCCESS GOOD
 - [x] Event structure and definitions
 - [x] Trigger conditions
 - [x] Repeatability
@@ -50,7 +50,7 @@
 - [x] Condition evaluation
 - **Missing**: Event chaining, complex conditions, error handling
 
-### 4. test_turn_manager.gd (17 tests) ✅ GOOD
+### 4. test_turn_manager.gd (17 tests) SUCCESS GOOD
 - [x] Turn increment
 - [x] Action point generation
 - [x] Staff salaries
@@ -60,7 +60,7 @@
 - [x] Action processing
 - **Missing**: Turn sequencing (#418), event blocking, phase management
 
-### 5. test_deterministic_rng.gd (10 tests) ✅ COMPLETE
+### 5. test_deterministic_rng.gd (10 tests) SUCCESS COMPLETE
 - [x] Seed reproducibility
 - [x] Sequence determinism
 - [x] Different RNG methods
@@ -71,7 +71,7 @@
 
 ## Critical Missing Tests (Priority 1)
 
-### A. GameManager Tests ❌ **MISSING ENTIRELY**
+### A. GameManager Tests ERROR **MISSING ENTIRELY**
 **File to create**: `godot/tests/unit/test_game_manager.gd`
 
 **Required tests** (estimate: 20 tests):
@@ -100,7 +100,7 @@
 
 ---
 
-### B. Turn Sequencing Tests (#418 Fix) ❌ **INCOMPLETE**
+### B. Turn Sequencing Tests (#418 Fix) ERROR **INCOMPLETE**
 **File to enhance**: `godot/tests/unit/test_turn_manager.gd`
 
 **Required new tests** (estimate: 12 tests):
@@ -121,7 +121,7 @@
 
 ---
 
-### C. Integration Tests ❌ **MISSING ENTIRELY**
+### C. Integration Tests ERROR **MISSING ENTIRELY**
 **File to create**: `godot/tests/integration/test_gameplay_flow.gd`
 
 **Required tests** (estimate: 15 tests):
@@ -145,7 +145,7 @@
 
 ---
 
-### D. Error Handling Tests ❌ **MISSING**
+### D. Error Handling Tests ERROR **MISSING**
 **Files to enhance**: All test files
 
 **Required tests across files** (estimate: 20 tests):
@@ -182,7 +182,7 @@
 
 ---
 
-### E. Edge Case Tests ❌ **INCOMPLETE**
+### E. Edge Case Tests ERROR **INCOMPLETE**
 **Files to enhance**: Multiple
 
 **Required tests** (estimate: 15 tests):
@@ -251,22 +251,22 @@
 ### Directory Structure
 ```
 godot/tests/
-├── unit/                          # Unit tests for individual classes
-│   ├── test_game_state.gd        ✅ (23 tests)
-│   ├── test_actions.gd           ✅ (15 tests) → Enhance (+15)
-│   ├── test_events.gd            ✅ (21 tests) → Enhance (+13)
-│   ├── test_turn_manager.gd      ✅ (17 tests) → Enhance (+17)
-│   ├── test_deterministic_rng.gd ✅ (10 tests)
-│   ├── test_game_manager.gd      ❌ CREATE (20 tests)
-│   └── test_regression.gd        ❌ CREATE (2+ tests)
-├── integration/                   # Integration tests
-│   ├── test_gameplay_flow.gd     ❌ CREATE (15 tests)
-│   ├── test_event_integration.gd ❌ CREATE (10 tests)
-│   └── test_multi_turn.gd        ❌ CREATE (12 tests)
-├── edge_cases/                    # Edge case tests
-│   ├── test_resource_limits.gd   ❌ CREATE (10 tests)
-│   └── test_boundary_conditions.gd ❌ CREATE (8 tests)
-└── run_tests.gd                   ✅ Test runner
+|--- unit/                          # Unit tests for individual classes
+|   |--- test_game_state.gd        SUCCESS (23 tests)
+|   |--- test_actions.gd           SUCCESS (15 tests)  ->  Enhance (+15)
+|   |--- test_events.gd            SUCCESS (21 tests)  ->  Enhance (+13)
+|   |--- test_turn_manager.gd      SUCCESS (17 tests)  ->  Enhance (+17)
+|   |--- test_deterministic_rng.gd SUCCESS (10 tests)
+|   |--- test_game_manager.gd      ERROR CREATE (20 tests)
+|   `--- test_regression.gd        ERROR CREATE (2+ tests)
+|--- integration/                   # Integration tests
+|   |--- test_gameplay_flow.gd     ERROR CREATE (15 tests)
+|   |--- test_event_integration.gd ERROR CREATE (10 tests)
+|   `--- test_multi_turn.gd        ERROR CREATE (12 tests)
+|--- edge_cases/                    # Edge case tests
+|   |--- test_resource_limits.gd   ERROR CREATE (10 tests)
+|   `--- test_boundary_conditions.gd ERROR CREATE (8 tests)
+`--- run_tests.gd                   SUCCESS Test runner
 ```
 
 ### Test Naming Convention
@@ -289,7 +289,7 @@ func test_bug_fix()
 ## Implementation Priority
 
 ### Phase 1: Critical Gaps (Week 1)
-1. ✅ **DONE**: Issue #407 tests (reputation validation)
+1. SUCCESS **DONE**: Issue #407 tests (reputation validation)
 2. **IN PROGRESS**: Issue #418 tests (turn sequencing)
 3. **NEXT**: GameManager comprehensive test suite
 4. **NEXT**: Basic integration tests
@@ -332,19 +332,19 @@ func test_bug_fix()
 
 ### Run All Tests
 ```gdscript
-# Godot Editor → GUT Panel → "Run All"
+# Godot Editor  ->  GUT Panel  ->  "Run All"
 # OR via command line:
 godot --path godot/ --headless --script tests/run_tests.gd
 ```
 
 ### Run Specific Test File
 ```gdscript
-# GUT Panel → Select file → "Run"
+# GUT Panel  ->  Select file  ->  "Run"
 ```
 
 ### Run Specific Test
 ```gdscript
-# GUT Panel → Expand file → Click test name
+# GUT Panel  ->  Expand file  ->  Click test name
 ```
 
 ### Continuous Integration
@@ -368,13 +368,13 @@ jobs:
 ## Test Quality Standards
 
 ### Every Test Must:
-1. ✅ Have clear, descriptive name
-2. ✅ Test ONE specific behavior
-3. ✅ Include assertion with message
-4. ✅ Clean up state (use `before_each`/`after_each`)
-5. ✅ Be deterministic (no random failures)
-6. ✅ Run in <1 second
-7. ✅ Document WHY (for complex tests)
+1. SUCCESS Have clear, descriptive name
+2. SUCCESS Test ONE specific behavior
+3. SUCCESS Include assertion with message
+4. SUCCESS Clean up state (use `before_each`/`after_each`)
+5. SUCCESS Be deterministic (no random failures)
+6. SUCCESS Run in <1 second
+7. SUCCESS Document WHY (for complex tests)
 
 ### Example Quality Test:
 ```gdscript

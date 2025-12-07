@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Export P(Doom)1 Leaderboards for Website Integration
 

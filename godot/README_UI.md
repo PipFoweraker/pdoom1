@@ -3,22 +3,22 @@
 ## Scene Structure
 
 ```
-📁 godot/
-├── 📁 scenes/
-│   ├── 🎬 welcome.tscn              [Main menu - Start here]
-│   ├── 🎬 settings_menu.tscn        [Audio, graphics, gameplay settings]
-│   ├── 🎬 pregame_setup.tscn        [Player name, lab name, seed, difficulty]
-│   ├── 🎬 player_guide.tscn         [Tutorial and help]
-│   ├── 🎬 main.tscn                 [Main game scene]
-│   └── 🎬 end_game_screen.tscn      [Victory/defeat screen]
-│
-└── 📁 scripts/ui/
-    ├── 📜 welcome_screen.gd          [Main menu logic]
-    ├── 📜 settings_menu.gd           [Settings management]
-    ├── 📜 pregame_setup.gd           [Game configuration]
-    ├── 📜 player_guide.gd            [Guide display]
-    ├── 📜 main_ui.gd                 [In-game UI controller]
-    └── 📜 end_game_screen.gd         [End game display + celebration]
+FOLDER godot/
+|--- FOLDER scenes/
+|   |--- 🎬 welcome.tscn              [Main menu - Start here]
+|   |--- 🎬 settings_menu.tscn        [Audio, graphics, gameplay settings]
+|   |--- 🎬 pregame_setup.tscn        [Player name, lab name, seed, difficulty]
+|   |--- 🎬 player_guide.tscn         [Tutorial and help]
+|   |--- 🎬 main.tscn                 [Main game scene]
+|   `--- 🎬 end_game_screen.tscn      [Victory/defeat screen]
+|
+`--- FOLDER scripts/ui/
+    |--- 📜 welcome_screen.gd          [Main menu logic]
+    |--- 📜 settings_menu.gd           [Settings management]
+    |--- 📜 pregame_setup.gd           [Game configuration]
+    |--- 📜 player_guide.gd            [Guide display]
+    |--- 📜 main_ui.gd                 [In-game UI controller]
+    `--- 📜 end_game_screen.gd         [End game display + celebration]
 ```
 
 ## Quick Start Testing
@@ -32,11 +32,11 @@
    - Set `welcome.tscn` as main scene
    - Press F5 to run
    - Test all 5 buttons:
-     - Launch Lab → Main game
-     - Custom Seed → Pre-game setup
-     - Settings → Settings menu
-     - Player Guide → Guide
-     - Exit → Quit
+     - Launch Lab  ->  Main game
+     - Custom Seed  ->  Pre-game setup
+     - Settings  ->  Settings menu
+     - Player Guide  ->  Guide
+     - Exit  ->  Quit
 
 3. **Test Each Screen**
    - Use Escape key to navigate back
@@ -55,14 +55,14 @@
 - Exit
 
 **Keyboard:**
-- ↑↓ or WS: Navigate
+-  ^  v  or WS: Navigate
 - Enter/Space: Select
 - 1-5: Direct selection
 - Escape: Quit
 
 ---
 
-### ⚙️ Settings Menu
+### ⚙ Settings Menu
 **Purpose:** Configure game settings
 **Sections:**
 - Audio (Master volume, SFX volume)
@@ -72,11 +72,11 @@
 **Keyboard:**
 - Escape: Back to welcome
 
-**Status:** ✅ Complete (needs config persistence)
+**Status:** SUCCESS Complete (needs config persistence)
 
 ---
 
-### 🛠️ Pre-Game Setup
+### 🛠 Pre-Game Setup
 **Purpose:** Configure new game
 **Fields:**
 - Player Name (required)
@@ -91,11 +91,11 @@
 - Enter: Launch (when valid)
 - Escape: Cancel
 
-**Status:** ✅ Complete (needs connection to GameManager)
+**Status:** SUCCESS Complete (needs connection to GameManager)
 
 ---
 
-### 📖 Player Guide
+### BOOK Player Guide
 **Purpose:** Tutorial and help
 **Sections:**
 - Game Objective
@@ -111,32 +111,32 @@
 **Keyboard:**
 - Escape: Back to welcome
 
-**Status:** ✅ Complete
+**Status:** SUCCESS Complete
 
 ---
 
-### 🎯 Main Game UI
+### TARGET Main Game UI
 **Purpose:** In-game interface
 **Features:**
 - Resource display
 - Action list (categorized)
 - Message log
 - Turn phase indicator
-- Employee blobs (●●●)
+- Employee blobs (* * * )
 
 **Keyboard:**
 - 1-9: Quick-select actions
 - Space/Enter: End turn
 - Escape: Init game (if not started)
 
-**Status:** ✅ Complete (from Phase 6)
+**Status:** SUCCESS Complete (from Phase 6)
 
 ---
 
-### 🏆 End Game Screen
+### ACHIEVEMENT End Game Screen
 **Purpose:** Victory/defeat celebration
 **Features:**
-- Title with emoji (🏆/✓/☠)
+- Title with emoji (ACHIEVEMENT/CHECKED/☠)
 - Color-coded based on outcome
 - Stats display with rank highlighting
 - Final resources
@@ -148,7 +148,7 @@
 - View Full Leaderboard
 - Main Menu (Escape key)
 
-**Status:** ✅ Complete (enhanced from Phase 6)
+**Status:** SUCCESS Complete (enhanced from Phase 6)
 
 ---
 
@@ -215,12 +215,12 @@ get_tree().change_scene_to_file("res://scenes/TARGET.tscn")
 ## Testing Workflow
 
 ### Manual Testing Sequence
-1. **Start at Welcome** → Test all 5 buttons
-2. **Settings Menu** → Adjust all settings, test Apply/Back
-3. **Pre-Game Setup** → Try random lab name, test validation
-4. **Player Guide** → Scroll through all sections
-5. **Main Game** → Play through to end game
-6. **End Game** → Test Play Again and Main Menu
+1. **Start at Welcome**  ->  Test all 5 buttons
+2. **Settings Menu**  ->  Adjust all settings, test Apply/Back
+3. **Pre-Game Setup**  ->  Try random lab name, test validation
+4. **Player Guide**  ->  Scroll through all sections
+5. **Main Game**  ->  Play through to end game
+6. **End Game**  ->  Test Play Again and Main Menu
 
 ### Test Cases
 - [ ] Fresh install (no config file)
@@ -301,10 +301,10 @@ get_tree().change_scene_to_file("res://scenes/TARGET.tscn")
 ## Credits
 
 **Ported from Pygame:**
-- Settings menu structure → `src/ui/settings_menus.py`
-- Pre-game setup logic → `src/ui/pre_game_settings.py`
-- Menu styling → `src/ui/menus.py`
-- End game celebration → `src/ui/modular_end_game_menu.py`
+- Settings menu structure  ->  `src/ui/settings_menus.py`
+- Pre-game setup logic  ->  `src/ui/pre_game_settings.py`
+- Menu styling  ->  `src/ui/menus.py`
+- End game celebration  ->  `src/ui/modular_end_game_menu.py`
 
 **Godot Implementation:**
 - All `.tscn` and `.gd` files created fresh for Godot
@@ -321,4 +321,4 @@ For issues or questions about the UI:
 3. Test each screen individually using the Testing Workflow
 4. Check console output (`print()` statements throughout)
 
-**Happy testing!** 🚀
+**Happy testing!** LAUNCH

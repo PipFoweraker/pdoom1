@@ -121,4 +121,4 @@ func _on_quit_button_pressed():
 
 ---
 
-**Status:** ✅ Implemented and ready to use!
+**Status:** SUCCESS Implemented and ready to use!

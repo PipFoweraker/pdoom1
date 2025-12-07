@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Sync documentation from pdoom1 repo to website export format.
 
@@ -38,7 +38,6 @@ class WebsiteDocSyncer:
         # Sync different doc types
         self.sync_readme()
         self.sync_user_docs()
-        self.sync_mechanics_docs()
         self.sync_developer_docs()
         self.sync_privacy()
         self.sync_changelog()
@@ -47,7 +46,7 @@ class WebsiteDocSyncer:
         self.generate_manifest()
 
         print()
-        print(f"[OK] Export complete: {self.output_dir}")
+        print(f"CHECKED Export complete: {self.output_dir}")
         print(f"  Docs: {len(list(self.docs_output.rglob('*.md')))} files")
 
     def sync_readme(self):
@@ -72,7 +71,7 @@ class WebsiteDocSyncer:
         content = self._transform_images(content)
 
         output.write_text(front_matter + content, encoding="utf-8")
-        print(f"  [OK] {output.relative_to(self.output_dir)}")
+        print(f"  CHECKED {output.relative_to(self.output_dir)}")
 
     def sync_user_docs(self):
         """Export user-facing documentation."""
@@ -80,7 +79,7 @@ class WebsiteDocSyncer:
 
         user_docs = self.repo_root / "docs" / "user-guide"
         if not user_docs.exists():
-            print("  [WARN] docs/user-guide/ not found, skipping")
+            print("  WARNING docs/user-guide/ not found, skipping")
             return
 
         output_dir = self.docs_output / "guides"
@@ -89,31 +88,13 @@ class WebsiteDocSyncer:
         for md_file in user_docs.glob("*.md"):
             self._export_doc(md_file, output_dir, category="guides")
 
-    def sync_mechanics_docs(self):
-        """Export game mechanics documentation."""
-        print("Syncing mechanics docs...")
-
-        mechanics_docs = self.repo_root / "docs" / "mechanics"
-        if not mechanics_docs.exists():
-            print("  [WARN] docs/mechanics/ not found, skipping")
-            return
-
-        output_dir = self.docs_output / "mechanics"
-        output_dir.mkdir(exist_ok=True)
-
-        for md_file in mechanics_docs.glob("*.md"):
-            # Skip cache files
-            if md_file.name.startswith("."):
-                continue
-            self._export_doc(md_file, output_dir, category="mechanics")
-
     def sync_developer_docs(self):
         """Export developer documentation."""
         print("Syncing developer docs...")
 
         dev_docs = self.repo_root / "docs" / "developer"
         if not dev_docs.exists():
-            print("  [WARN] docs/developer/ not found, skipping")
+            print("  WARNING docs/developer/ not found, skipping")
             return
 
         output_dir = self.docs_output / "dev"
@@ -128,9 +109,10 @@ class WebsiteDocSyncer:
 
         privacy = self.repo_root / "docs" / "PRIVACY.md"
         if not privacy.exists():
-            print("  [WARN] docs/PRIVACY.md not found, skipping")
+            print("  WARNING docs/PRIVACY.md not found, skipping")
             return
 
+        output = self.docs_output / "privacy.md"
         self._export_doc(privacy, self.docs_output, category="legal", slug="privacy")
 
     def sync_changelog(self):
@@ -139,9 +121,10 @@ class WebsiteDocSyncer:
 
         changelog = self.repo_root / "CHANGELOG.md"
         if not changelog.exists():
-            print("  [WARN] CHANGELOG.md not found, skipping")
+            print("  WARNING CHANGELOG.md not found, skipping")
             return
 
+        output = self.docs_output / "releases.md"
         self._export_doc(changelog, self.docs_output, category="releases", slug="releases")
 
     def _export_doc(self, source: Path, output_dir: Path, category: str, slug: str = None):
@@ -165,7 +148,7 @@ class WebsiteDocSyncer:
         content = self._transform_images(content)
 
         output.write_text(front_matter + content, encoding="utf-8")
-        print(f"  [OK] {output.relative_to(self.output_dir)}")
+        print(f"  CHECKED {output.relative_to(self.output_dir)}")
 
     def _create_front_matter(
         self, title: str, slug: str, category: str, description: str = None
@@ -231,7 +214,7 @@ class WebsiteDocSyncer:
         manifest_path = self.output_dir / "manifest.json"
         manifest_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
 
-        print(f"  [OK] {manifest_path.relative_to(self.output_dir)}")
+        print(f"  CHECKED {manifest_path.relative_to(self.output_dir)}")
 
 
 def main():

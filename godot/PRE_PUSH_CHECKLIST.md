@@ -14,7 +14,7 @@ _Always run these checks before pushing to main to catch errors early_
 
 ---
 
-## 📝 Detailed Steps
+## MEMO Detailed Steps
 
 ### 1. Run Automated Tests (GUT)
 
@@ -26,13 +26,13 @@ run_tests.bat
 
 **Option B: Godot Editor** (more detailed output)
 1. Open Godot Editor
-2. Go to **Project → Tools → Run GUT**
+2. Go to **Project  ->  Tools  ->  Run GUT**
 3. Or use the **GUT** tab in bottom panel
 4. Click **Run All Tests**
 
 **What to look for:**
-- ✅ All tests pass (green)
-- ❌ Any test failures (red) - **MUST FIX BEFORE PUSHING**
+- SUCCESS All tests pass (green)
+- ERROR Any test failures (red) - **MUST FIX BEFORE PUSHING**
 
 **Test coverage:**
 - `tests/unit/test_actions.gd` - Action system validation
@@ -65,9 +65,9 @@ run_tests.bat
 ```
 
 **If errors appear:**
-- ❌ Read error message carefully
-- ❌ Fix the error
-- ❌ Restart from Step 1 (run tests again)
+- ERROR Read error message carefully
+- ERROR Fix the error
+- ERROR Restart from Step 1 (run tests again)
 
 ---
 
@@ -82,9 +82,9 @@ run_tests.bat
 5. Let turn process
 6. Take 1-2 more turns
 7. Check for:
-   - ❌ Any red error messages in console
-   - ❌ UI freezing or hanging
-   - ❌ Buttons not responding
+   - ERROR Any red error messages in console
+   - ERROR UI freezing or hanging
+   - ERROR Buttons not responding
 
 **Quick test checklist:**
 - [ ] Game initializes without errors
@@ -103,11 +103,11 @@ git status
 ```
 
 **Look for:**
-- ❌ `.import/` files (should be in .gitignore)
-- ❌ `*.tmp` files
-- ❌ Personal config files
-- ❌ Debug logs
-- ✅ Only intended .gd, .tscn, .md files
+- ERROR `.import/` files (should be in .gitignore)
+- ERROR `*.tmp` files
+- ERROR Personal config files
+- ERROR Debug logs
+- SUCCESS Only intended .gd, .tscn, .md files
 
 **Clean up unwanted files:**
 ```bash
@@ -162,7 +162,7 @@ git push origin main
 
 ---
 
-## 🔍 When to Run Full Test Suite
+## SEARCH When to Run Full Test Suite
 
 **Quick tests (run_tests.bat):** Before every push
 
@@ -184,7 +184,7 @@ git push origin main
 
 ---
 
-## 🎯 Test Pyramid
+## TARGET Test Pyramid
 
 ```
            E2E Tests (Manual)
@@ -200,29 +200,29 @@ Unit Tests (GUT - fast!)
 
 ---
 
-## 📊 Test Coverage Goals
+## METRICS Test Coverage Goals
 
 Current coverage:
-- ✅ Core systems (90%+)
-- ✅ Game mechanics (85%+)
-- ⚠️ UI interactions (manual only)
-- ⚠️ Edge cases (improving)
+- SUCCESS Core systems (90%+)
+- SUCCESS Game mechanics (85%+)
+- WARNING UI interactions (manual only)
+- WARNING Edge cases (improving)
 
 ---
 
 ## 🚨 Hard Rules
 
 **NEVER push if:**
-1. ❌ Any GUT test fails
-2. ❌ Game won't launch (red errors on F5)
-3. ❌ Console shows errors during smoke test
-4. ❌ You haven't tested your changes at all
+1. ERROR Any GUT test fails
+2. ERROR Game won't launch (red errors on F5)
+3. ERROR Console shows errors during smoke test
+4. ERROR You haven't tested your changes at all
 
 **ALWAYS push if:**
-1. ✅ All tests pass
-2. ✅ Game launches clean
-3. ✅ Smoke test succeeds
-4. ✅ You've tested the specific feature you changed
+1. SUCCESS All tests pass
+2. SUCCESS Game launches clean
+3. SUCCESS Smoke test succeeds
+4. SUCCESS You've tested the specific feature you changed
 
 ---
 
@@ -250,4 +250,4 @@ This helps avoid repeating mistakes!
 
 ---
 
-_Remember: Tests are faster than debugging in production. Take 30 seconds to run them!_ 🚀
+_Remember: Tests are faster than debugging in production. Take 30 seconds to run them!_ LAUNCH

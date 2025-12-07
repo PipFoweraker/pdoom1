@@ -138,17 +138,17 @@ Tests that enforce design rules:
 ## Best Practices
 
 ### DO:
-- ✅ Write tests for every bug fix
-- ✅ Use descriptive test names
-- ✅ Include issue numbers in comments
-- ✅ Test both positive and negative cases
-- ✅ Keep tests fast and focused
+- SUCCESS Write tests for every bug fix
+- SUCCESS Use descriptive test names
+- SUCCESS Include issue numbers in comments
+- SUCCESS Test both positive and negative cases
+- SUCCESS Keep tests fast and focused
 
 ### DON'T:
-- ❌ Test implementation details
-- ❌ Create flaky tests
-- ❌ Skip test documentation
-- ❌ Forget to update tests when refactoring
+- ERROR Test implementation details
+- ERROR Create flaky tests
+- ERROR Skip test documentation
+- ERROR Forget to update tests when refactoring
 
 ## Continuous Improvement
 

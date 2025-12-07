@@ -102,19 +102,19 @@ func _on_theme_changed(theme_name: String):
 ### Directory Structure
 ```
 godot/assets/
-├── images/
-│   ├── backgrounds/
-│   ├── ui/
-│   ├── characters/
-│   └── misc/
-├── icons/
-│   ├── resources/
-│   ├── actions/
-│   └── status/
-├── fonts/
-└── audio/
-    ├── sfx/
-    └── music/
+|--- images/
+|   |--- backgrounds/
+|   |--- ui/
+|   |--- characters/
+|   `--- misc/
+|--- icons/
+|   |--- resources/
+|   |--- actions/
+|   `--- status/
+|--- fonts/
+`--- audio/
+    |--- sfx/
+    `--- music/
 ```
 
 ### Adding New Assets

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Run Godot GUT (Godot Unit Test) tests from command line.
 
@@ -90,10 +90,10 @@ def run_gut_tests(godot_path, test_dir, log_level=2, junit_output=None):
 
         # GUT exits with 0 on success, non-zero on failure
         if result.returncode == 0:
-            print(f"\n[PASS] Tests in {test_dir} passed! ✓")
+            print(f"\n[PASS] Tests in {test_dir} passed! CHECKED")
             return True
         else:
-            print(f"\n[FAIL] Tests in {test_dir} failed! ✗")
+            print(f"\n[FAIL] Tests in {test_dir} failed! FAILED")
             return False
 
     except subprocess.TimeoutExpired:
@@ -130,7 +130,7 @@ def check_syntax(godot_path):
             print(output)
             return False
         else:
-            print("[PASS] GDScript syntax check passed! ✓")
+            print("[PASS] GDScript syntax check passed! CHECKED")
             return True
 
     except Exception as e:
@@ -234,11 +234,11 @@ Examples:
     # Summary
     print("\n" + "="*60)
     if all_passed:
-        print("[SUCCESS] All tests passed! ✓")
+        print("[SUCCESS] All tests passed! CHECKED")
         print("="*60)
         sys.exit(0)
     else:
-        print("[FAILURE] Some tests failed! ✗")
+        print("[FAILURE] Some tests failed! FAILED")
         print("="*60)
         sys.exit(1)
 

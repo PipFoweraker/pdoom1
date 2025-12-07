@@ -26,8 +26,8 @@ P(Doom) features comprehensive keyboard navigation inspired by StarCraft 2. Ever
 Number keys 1-9 trigger the corresponding action in the actions list. Actions are ordered top-to-bottom, so pressing **1** executes the first visible action.
 
 **Example:**
-- If "Hire Safety Researcher" is first action → Press **1**
-- If "Purchase Compute" is third action → Press **3**
+- If "Hire Safety Researcher" is first action  ->  Press **1**
+- If "Purchase Compute" is third action  ->  Press **3**
 
 ### UI Navigation
 
@@ -90,7 +90,7 @@ P(Doom) supports multiple keybind profiles:
 - **Custom Profiles:** Create your own profiles for different playstyles
 
 **Creating a Profile:**
-1. Open Settings → Keybindings
+1. Open Settings  ->  Keybindings
 2. Click "New Profile"
 3. Enter profile name
 4. Customize keys as desired
@@ -99,7 +99,7 @@ P(Doom) supports multiple keybind profiles:
 ### Resetting Keybinds
 
 To reset all keybinds to defaults:
-1. Open Settings → Keybindings
+1. Open Settings  ->  Keybindings
 2. Click "Reset to Defaults"
 3. Confirm
 
@@ -108,26 +108,26 @@ To reset all keybinds to defaults:
 ### Essential Shortcuts
 
 ```
-┌─────────────────────────────────────────┐
-│         P(Doom) Quick Reference         │
-├─────────────────────────────────────────┤
-│ GAMEPLAY                                │
-│   Space      End Turn                   │
-│   Enter      Commit Plan & Reserve AP   │
-│   1-9        Trigger Actions            │
-│   C          Clear Queue                │
-│                                         │
-│ UI NAVIGATION                           │
-│   E          Employee Screen            │
-│   Tab        Next Tab                   │
-│   F8         Bug Reporter               │
-│   F10        Settings                   │
-│   Esc        Cancel/Back                │
-│                                         │
-│ UTILITY                                 │
-│   [          Screenshot                 │
-│   \\         Export Log                 │
-└─────────────────────────────────────────┘
++-------------------------------------------+
+|         P(Doom) Quick Reference         |
+|-------------------------------------------|
+| GAMEPLAY                                |
+|   Space      End Turn                   |
+|   Enter      Commit Plan & Reserve AP   |
+|   1-9        Trigger Actions            |
+|   C          Clear Queue                |
+|                                         |
+| UI NAVIGATION                           |
+|   E          Employee Screen            |
+|   Tab        Next Tab                   |
+|   F8         Bug Reporter               |
+|   F10        Settings                   |
+|   Esc        Cancel/Back                |
+|                                         |
+| UTILITY                                 |
+|   [          Screenshot                 |
+|   \\         Export Log                 |
+`-------------------------------------------`
 ```
 
 ## Accessibility
@@ -151,7 +151,7 @@ For one-handed play, all essential controls are accessible from the left side of
 ### Customization for Accessibility
 
 If default controls don't work for you:
-1. Press F10 → Keybindings
+1. Press F10  ->  Keybindings
 2. Remap any action to your preferred key
 3. Create a custom profile for your setup
 

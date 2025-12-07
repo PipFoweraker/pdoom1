@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 """
 Archive Completed Issues Script
 
@@ -57,22 +57,22 @@ def archive_completed_issues():
         if source_path.exists():
             # Move the file
             shutil.move(str(source_path), str(dest_path))
-            print(f"✓ Archived: {issue_file}")
+            print(f"CHECKED Archived: {issue_file}")
             
             # Remove from sync metadata
             if issue_file in metadata:
                 del metadata[issue_file]
-                print(f"  └─ Removed from sync metadata")
+                print(f"  `-- Removed from sync metadata")
             
             archived_count += 1
         else:
-            print(f"⚠ Not found: {issue_file}")
+            print(f"WARNING Not found: {issue_file}")
     
     # Update sync metadata
     if metadata_file.exists():
         with open(metadata_file, 'w') as f:
             json.dump(metadata, f, indent=2)
-        print(f"\n✓ Updated sync metadata")
+        print(f"\nCHECKED Updated sync metadata")
     
     # Create archive index
     archive_index = archive_dir / 'README.md'
@@ -90,7 +90,7 @@ These issues were moved here to prevent duplicate GitHub issue creation during i
             if (archive_dir / issue_file).exists():
                 f.write(f"- [{issue_file}](./{issue_file})\n")
     
-    print(f"\n🎉 Archive Complete!")
+    print(f"\nCELEBRATION Archive Complete!")
     print(f"   Archived: {archived_count} issues")
     print(f"   Location: {archive_dir}")
     print(f"   Index: {archive_index}")

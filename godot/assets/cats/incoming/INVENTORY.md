@@ -100,30 +100,30 @@ For each contributor cat (Arwen, Chucky, Luna, etc.):
 Consider creating automated tools for:
 - Batch resizing to game-appropriate dimensions (256x256?)
 - Applying visual filters for doom levels (color grading, effects)
-- Converting JPEG → PNG for game use (transparency support)
+- Converting JPEG  ->  PNG for game use (transparency support)
 - Quality/compression optimization
 
 ## Expected Game Asset Structure
 
 ```
 godot/assets/cats/
-├── default/
-│   ├── happy.png
-│   ├── concerned.png
-│   ├── worried.png
-│   ├── distressed.png
-│   └── corrupted.png
-├── arwen/
-│   ├── happy.png
-│   ├── concerned.png
-│   ├── worried.png
-│   ├── distressed.png
-│   └── corrupted.png
-├── chucky/
-│   └── [5 variants]
-├── luna/
-│   └── [5 variants]
-└── [etc...]
+|--- default/
+|   |--- happy.png
+|   |--- concerned.png
+|   |--- worried.png
+|   |--- distressed.png
+|   `--- corrupted.png
+|--- arwen/
+|   |--- happy.png
+|   |--- concerned.png
+|   |--- worried.png
+|   |--- distressed.png
+|   `--- corrupted.png
+|--- chucky/
+|   `--- [5 variants]
+|--- luna/
+|   `--- [5 variants]
+`--- [etc...]
 ```
 
 ## Source Chain
@@ -152,7 +152,7 @@ godot/assets/cats/
 
 ## UPDATE (2025-11-23): Simplified Implementation
 
-**Status:** ✅ 8 cats now live in game!
+**Status:** SUCCESS 8 cats now live in game!
 
 All 8 cat images have been copied to `godot/assets/cats/simple/` and are now usable in the game with a simplified system:
 
@@ -168,7 +168,7 @@ All 8 cat images have been copied to `godot/assets/cats/simple/` and are now usa
 
 ### Future Enhancements (Track in GitHub issue)
 
-- [ ] Generate 5 doom-level variants per cat (happy → corrupted)
+- [ ] Generate 5 doom-level variants per cat (happy  ->  corrupted)
 - [ ] Implement contributor recognition system with contributors.json
 - [ ] Add ability to click cat to cycle through different cats
 - [ ] Create automated image processing pipeline for new cat submissions

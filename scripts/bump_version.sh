@@ -1,4 +1,4 @@
-#!/bin/bash
+# !/bin/bash
 # Bump version across all files and create release tag
 
 set -e
@@ -26,30 +26,30 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 echo ""
-echo "🔧 Updating version numbers..."
+echo "TOOLS Updating version numbers..."
 
 # Update project.godot
-echo "  → godot/project.godot"
+echo "   ->  godot/project.godot"
 sed -i "s/config\/version=\".*\"/config\/version=\"$NEW_VERSION\"/" godot/project.godot
 
 # Update release scripts
-echo "  → package_release.sh"
+echo "   ->  package_release.sh"
 sed -i "s/PACKAGE_NAME=\"PDoom-v.*-Windows\"/PACKAGE_NAME=\"PDoom-v$NEW_VERSION-Windows\"/" package_release.sh
 
-echo "  → create_github_release.sh"
+echo "   ->  create_github_release.sh"
 sed -i "s/VERSION=\"v.*\"/VERSION=\"v$NEW_VERSION\"/" create_github_release.sh
 
 # Check if CHANGELOG has a placeholder for this version
 if ! grep -q "## \[Unreleased\]" CHANGELOG.md && ! grep -q "## \[$NEW_VERSION\]" CHANGELOG.md; then
     echo ""
-    echo "⚠️  WARNING: CHANGELOG.md does not have an [Unreleased] or [$NEW_VERSION] section"
+    echo "WARNING  WARNING: CHANGELOG.md does not have an [Unreleased] or [$NEW_VERSION] section"
     echo "   Please update CHANGELOG.md manually before committing!"
 fi
 
 echo ""
-echo "✅ Version numbers updated!"
+echo "SUCCESS Version numbers updated!"
 echo ""
-echo "📋 Next steps:"
+echo "CLIPBOARD Next steps:"
 echo ""
 echo "1. Review changes:"
 echo "   git diff"

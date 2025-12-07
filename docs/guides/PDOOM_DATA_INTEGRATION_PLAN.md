@@ -15,11 +15,11 @@ P(Doom) is a **strategic simulation game** set in a time loop starting July 1, 2
 ### Data Flow Architecture
 ```
 Alignment Research Dataset (external)
-    ↓
+     v 
 pdoom-data repository (cleaning & transformation)
-    ↓ [automated sync pipeline]
+     v  [automated sync pipeline]
 pdoom1 game repository (consumption & integration)
-    ↓
+     v 
 Weekly builds & league cycles
 ```
 
@@ -39,81 +39,81 @@ Weekly builds & league cycles
 ### Proposed Directory Layout
 ```
 pdoom-data/
-├── README.md                          # Repository purpose and usage
-├── LICENSE                            # Data licensing (likely MIT + attributions)
-├── SOURCES.md                         # Attribution and source tracking
-├── CONTRIBUTING.md                    # How to contribute data
-│
-├── raw/                               # Unprocessed source data
-│   ├── alignment_research_dataset/    # From StampyAI
-│   ├── arxiv_safety_papers/           # arXiv scrapes
-│   ├── org_announcements/             # Press releases, blog posts
-│   └── funding_trackers/              # Crunchbase, press releases
-│
-├── cleaned/                           # Processed, validated data
-│   ├── events/
-│   │   ├── safety_papers.json         # Paper publications with dates
-│   │   ├── conferences.json           # AI safety conferences
-│   │   ├── org_founding.json          # Organization launches
-│   │   ├── funding_rounds.json        # Funding announcements
-│   │   ├── capabilities.json          # Major AI capabilities milestones
-│   │   └── governance.json            # Regulatory/policy events
-│   │
-│   ├── organizations/
-│   │   ├── safety_orgs.json           # MIRI, FLI, CHAI, etc.
-│   │   ├── frontier_labs.json         # OpenAI, Anthropic, DeepMind, etc.
-│   │   └── governance_bodies.json     # Policy orgs
-│   │
-│   ├── people/
-│   │   ├── researchers.json           # Real researcher names, specializations
-│   │   └── thought_leaders.json       # Public figures in AI safety
-│   │
-│   └── concepts/
-│       ├── alignment_topics.json      # Technical concepts from the field
-│       ├── threat_models.json         # Real threat models discussed
-│       └── research_agendas.json      # Actual research agendas
-│
-├── transformed/                       # Game-ready formats
-│   ├── timeline_events/               # Events with game trigger logic
-│   │   ├── 2017.json
-│   │   ├── 2018.json
-│   │   ├── 2019.json
-│   │   ├── 2020.json
-│   │   ├── 2021.json
-│   │   ├── 2022.json
-│   │   ├── 2023.json
-│   │   ├── 2024.json
-│   │   └── 2025.json
-│   │
-│   ├── researcher_profiles/           # Game character data
-│   │   ├── safety_researchers.json
-│   │   ├── capabilities_researchers.json
-│   │   └── governance_researchers.json
-│   │
-│   └── event_templates/               # Reusable event structures
-│       ├── paper_publication_template.json
-│       ├── org_founding_template.json
-│       └── funding_round_template.json
-│
-├── scripts/                           # Data processing tools
-│   ├── extract_from_ard.py            # Alignment Research Dataset extraction
-│   ├── validate_dates.py              # Date validation and normalization
-│   ├── transform_for_game.py          # Convert to game format
-│   ├── generate_timeline.py           # Create year-based timeline files
-│   ├── sync_to_pdoom1.sh              # Copy transformed data to game repo
-│   └── validate_data.py               # Schema validation
-│
-├── tests/                             # Data validation tests
-│   ├── test_schema_validation.py
-│   ├── test_date_parsing.py
-│   └── test_game_integration.py
-│
-└── docs/
-    ├── EXTRACTION_GUIDE.md            # How to extract from sources
-    ├── TRANSFORMATION_SPEC.md         # Data format specifications
-    ├── TIMELINE_COVERAGE.md           # What years/events are covered
-    ├── INTEGRATION_API.md             # How pdoom1 consumes this data
-    └── BUILD_PIPELINE.md              # Weekly build integration
+|--- README.md                          # Repository purpose and usage
+|--- LICENSE                            # Data licensing (likely MIT + attributions)
+|--- SOURCES.md                         # Attribution and source tracking
+|--- CONTRIBUTING.md                    # How to contribute data
+|
+|--- raw/                               # Unprocessed source data
+|   |--- alignment_research_dataset/    # From StampyAI
+|   |--- arxiv_safety_papers/           # arXiv scrapes
+|   |--- org_announcements/             # Press releases, blog posts
+|   `--- funding_trackers/              # Crunchbase, press releases
+|
+|--- cleaned/                           # Processed, validated data
+|   |--- events/
+|   |   |--- safety_papers.json         # Paper publications with dates
+|   |   |--- conferences.json           # AI safety conferences
+|   |   |--- org_founding.json          # Organization launches
+|   |   |--- funding_rounds.json        # Funding announcements
+|   |   |--- capabilities.json          # Major AI capabilities milestones
+|   |   `--- governance.json            # Regulatory/policy events
+|   |
+|   |--- organizations/
+|   |   |--- safety_orgs.json           # MIRI, FLI, CHAI, etc.
+|   |   |--- frontier_labs.json         # OpenAI, Anthropic, DeepMind, etc.
+|   |   `--- governance_bodies.json     # Policy orgs
+|   |
+|   |--- people/
+|   |   |--- researchers.json           # Real researcher names, specializations
+|   |   `--- thought_leaders.json       # Public figures in AI safety
+|   |
+|   `--- concepts/
+|       |--- alignment_topics.json      # Technical concepts from the field
+|       |--- threat_models.json         # Real threat models discussed
+|       `--- research_agendas.json      # Actual research agendas
+|
+|--- transformed/                       # Game-ready formats
+|   |--- timeline_events/               # Events with game trigger logic
+|   |   |--- 2017.json
+|   |   |--- 2018.json
+|   |   |--- 2019.json
+|   |   |--- 2020.json
+|   |   |--- 2021.json
+|   |   |--- 2022.json
+|   |   |--- 2023.json
+|   |   |--- 2024.json
+|   |   `--- 2025.json
+|   |
+|   |--- researcher_profiles/           # Game character data
+|   |   |--- safety_researchers.json
+|   |   |--- capabilities_researchers.json
+|   |   `--- governance_researchers.json
+|   |
+|   `--- event_templates/               # Reusable event structures
+|       |--- paper_publication_template.json
+|       |--- org_founding_template.json
+|       `--- funding_round_template.json
+|
+|--- scripts/                           # Data processing tools
+|   |--- extract_from_ard.py            # Alignment Research Dataset extraction
+|   |--- validate_dates.py              # Date validation and normalization
+|   |--- transform_for_game.py          # Convert to game format
+|   |--- generate_timeline.py           # Create year-based timeline files
+|   |--- sync_to_pdoom1.sh              # Copy transformed data to game repo
+|   `--- validate_data.py               # Schema validation
+|
+|--- tests/                             # Data validation tests
+|   |--- test_schema_validation.py
+|   |--- test_date_parsing.py
+|   `--- test_game_integration.py
+|
+`--- docs/
+    |--- EXTRACTION_GUIDE.md            # How to extract from sources
+    |--- TRANSFORMATION_SPEC.md         # Data format specifications
+    |--- TIMELINE_COVERAGE.md           # What years/events are covered
+    |--- INTEGRATION_API.md             # How pdoom1 consumes this data
+    `--- BUILD_PIPELINE.md              # Weekly build integration
 ```
 
 ---
@@ -278,44 +278,44 @@ pdoom-data/
 
 ### Pipeline Architecture
 ```
-┌─────────────────────────────────────────────────────────┐
-│ pdoom-data Repository                                   │
-│                                                          │
-│ 1. Manual/Scripted Data Entry                          │
-│    ↓                                                     │
-│ 2. Validation Scripts (test_*.py)                       │
-│    ↓                                                     │
-│ 3. Transformation Scripts (transform_for_game.py)       │
-│    ↓                                                     │
-│ 4. Generate Timeline Files (generate_timeline.py)       │
-│    ↓                                                     │
-│ 5. Git Commit & Push                                    │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│ Automated Sync (GitHub Actions)                         │
-│                                                          │
-│ On pdoom-data push:                                     │
-│   - Trigger pdoom1 workflow                             │
-│   - Clone both repos                                    │
-│   - Run sync_to_pdoom1.sh                              │
-│   - Create PR in pdoom1 with updated data              │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│ pdoom1 Repository                                       │
-│                                                          │
-│ 1. Receive updated data in shared/data/                │
-│ 2. Run integration tests                                │
-│ 3. Merge PR if tests pass                              │
-│ 4. Weekly build includes new historical events         │
-│ 5. Deploy to league/release cycle                       │
-└─────────────────────────────────────────────────────────┘
++-----------------------------------------------------------+
+| pdoom-data Repository                                   |
+|                                                          |
+| 1. Manual/Scripted Data Entry                          |
+|     v                                                      |
+| 2. Validation Scripts (test_*.py)                       |
+|     v                                                      |
+| 3. Transformation Scripts (transform_for_game.py)       |
+|     v                                                      |
+| 4. Generate Timeline Files (generate_timeline.py)       |
+|     v                                                      |
+| 5. Git Commit & Push                                    |
+`-----------------------------------------------------------`
+                            v 
++-----------------------------------------------------------+
+| Automated Sync (GitHub Actions)                         |
+|                                                          |
+| On pdoom-data push:                                     |
+|   - Trigger pdoom1 workflow                             |
+|   - Clone both repos                                    |
+|   - Run sync_to_pdoom1.sh                              |
+|   - Create PR in pdoom1 with updated data              |
+`-----------------------------------------------------------`
+                            v 
++-----------------------------------------------------------+
+| pdoom1 Repository                                       |
+|                                                          |
+| 1. Receive updated data in shared/data/                |
+| 2. Run integration tests                                |
+| 3. Merge PR if tests pass                              |
+| 4. Weekly build includes new historical events         |
+| 5. Deploy to league/release cycle                       |
+`-----------------------------------------------------------`
 ```
 
 ### Sync Script (scripts/sync_to_pdoom1.sh)
 ```bash
-#!/bin/bash
+# !/bin/bash
 # Automated data sync from pdoom-data to pdoom1
 # Usage: ./sync_to_pdoom1.sh [pdoom1_repo_path]
 
@@ -324,7 +324,7 @@ set -e  # Exit on error
 PDOOM_DATA_REPO="$(pwd)"
 PDOOM1_REPO="${1:-../pdoom1}"
 
-echo "=== pdoom-data → pdoom1 Sync Pipeline ==="
+echo "=== pdoom-data  ->  pdoom1 Sync Pipeline ==="
 echo "Source: $PDOOM_DATA_REPO"
 echo "Target: $PDOOM1_REPO"
 
@@ -546,12 +546,12 @@ if __name__ == "__main__":
     all_errors = timeline_errors + researcher_errors
 
     if all_errors:
-        print("\n❌ VALIDATION FAILED\n")
+        print("\nERROR VALIDATION FAILED\n")
         for error in all_errors:
             print(f"  - {error}")
         exit(1)
     else:
-        print("\n✅ All historical data validated successfully")
+        print("\nSUCCESS All historical data validated successfully")
         exit(0)
 ```
 
@@ -818,9 +818,9 @@ Open an issue or contact maintainers.
 - [ ] Write initial documentation (README, SOURCES, CONTRIBUTING)
 
 ### Week 3: Transformation Pipeline (Nov 18-24, 2025)
-- [ ] Build transformation scripts (cleaned → transformed)
+- [ ] Build transformation scripts (cleaned  ->  transformed)
 - [ ] Generate first timeline JSON files
-- [ ] Create sync script (pdoom-data → pdoom1)
+- [ ] Create sync script (pdoom-data  ->  pdoom1)
 - [ ] Write integration tests
 
 ### Week 4: pdoom1 Integration (Nov 25-Dec 1, 2025)
@@ -846,25 +846,25 @@ Open an issue or contact maintainers.
 ## 9. Success Metrics
 
 ### Data Repository (pdoom-data)
-- ✅ 50+ historical events per year (2017-2025)
-- ✅ 100% source attribution
-- ✅ <5% validation error rate
-- ✅ Automated sync to pdoom1
-- ✅ Community contribution process
+- SUCCESS 50+ historical events per year (2017-2025)
+- SUCCESS 100% source attribution
+- SUCCESS <5% validation error rate
+- SUCCESS Automated sync to pdoom1
+- SUCCESS Community contribution process
 
 ### Game Integration (pdoom1)
-- ✅ Historical events trigger correctly by date
-- ✅ Player can influence some events
-- ✅ Default timeline = realistic doom trajectory
-- ✅ No build failures due to data issues
-- ✅ Weekly releases include updated data
+- SUCCESS Historical events trigger correctly by date
+- SUCCESS Player can influence some events
+- SUCCESS Default timeline = realistic doom trajectory
+- SUCCESS No build failures due to data issues
+- SUCCESS Weekly releases include updated data
 
 ### Development Workflow
-- ✅ Zero manual copy-paste between repos
-- ✅ Automated validation catches errors
-- ✅ PR process for data updates
-- ✅ Integration tests verify game compatibility
-- ✅ Build pipeline includes data checks
+- SUCCESS Zero manual copy-paste between repos
+- SUCCESS Automated validation catches errors
+- SUCCESS PR process for data updates
+- SUCCESS Integration tests verify game compatibility
+- SUCCESS Build pipeline includes data checks
 
 ---
 
@@ -901,54 +901,54 @@ The enhanced release workflow implements automated validation, feed generation, 
 
 ### Release Pipeline Architecture
 ```
-┌─────────────────────────────────────────────────────────┐
-│ 1. Validate Data                                        │
-│    - Run validate_historical_data.py                    │
-│    - Check events/organizations/researchers schemas     │
-│    - Create triage issue on failure                     │
-│    - Output: validation_hash                            │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│ 2. Build Game (Parallel)                                │
-│    Windows Build    │  Linux Build    │  Mac Build      │
-│    - Godot 4.5.1   │  - Godot 4.5.1  │  - Godot 4.5.1 │
-│    - PDoom.exe     │  - PDoom.x86_64 │  - PDoom.app   │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│ 3. Generate Feeds & Metadata                            │
-│    - Run generate_release_metadata.py                   │
-│    - Create releases.json (latest/stable tracking)      │
-│    - Create v*.*.*.json (per-release metadata)          │
-│    - Create releases.rss (feed for subscribers)         │
-│    - Output: feed_hash                                  │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│ 4. Create Release Manifest                              │
-│    - Aggregate all hashes (builds, data, feeds)         │
-│    - Record commit hash, schema versions                │
-│    - Track build pipeline provenance                    │
-│    - Generate release_manifest.json                     │
-│    - Output: manifest_hash                              │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│ 5. Create GitHub Release                                │
-│    - Extract changelog from CHANGELOG.md                │
-│    - Attach platform builds                             │
-│    - Attach release manifest                            │
-│    - Attach source archives                             │
-│    - Attach feeds (JSON + RSS)                          │
-└─────────────────────────────────────────────────────────┘
-                           ↓
-┌─────────────────────────────────────────────────────────┐
-│ 6. Deploy Feeds to Website                              │
-│    - Upload releases.json to pdoom.net                  │
-│    - Upload releases.rss to pdoom.net                   │
-│    - Enable website release discovery                   │
-└─────────────────────────────────────────────────────────┘
++-----------------------------------------------------------+
+| 1. Validate Data                                        |
+|    - Run validate_historical_data.py                    |
+|    - Check events/organizations/researchers schemas     |
+|    - Create triage issue on failure                     |
+|    - Output: validation_hash                            |
+`-----------------------------------------------------------`
+                            v 
++-----------------------------------------------------------+
+| 2. Build Game (Parallel)                                |
+|    Windows Build    |  Linux Build    |  Mac Build      |
+|    - Godot 4.5.1   |  - Godot 4.5.1  |  - Godot 4.5.1 |
+|    - PDoom.exe     |  - PDoom.x86_64 |  - PDoom.app   |
+`-----------------------------------------------------------`
+                            v 
++-----------------------------------------------------------+
+| 3. Generate Feeds & Metadata                            |
+|    - Run generate_release_metadata.py                   |
+|    - Create releases.json (latest/stable tracking)      |
+|    - Create v*.*.*.json (per-release metadata)          |
+|    - Create releases.rss (feed for subscribers)         |
+|    - Output: feed_hash                                  |
+`-----------------------------------------------------------`
+                            v 
++-----------------------------------------------------------+
+| 4. Create Release Manifest                              |
+|    - Aggregate all hashes (builds, data, feeds)         |
+|    - Record commit hash, schema versions                |
+|    - Track build pipeline provenance                    |
+|    - Generate release_manifest.json                     |
+|    - Output: manifest_hash                              |
+`-----------------------------------------------------------`
+                            v 
++-----------------------------------------------------------+
+| 5. Create GitHub Release                                |
+|    - Extract changelog from CHANGELOG.md                |
+|    - Attach platform builds                             |
+|    - Attach release manifest                            |
+|    - Attach source archives                             |
+|    - Attach feeds (JSON + RSS)                          |
+`-----------------------------------------------------------`
+                            v 
++-----------------------------------------------------------+
+| 6. Deploy Feeds to Website                              |
+|    - Upload releases.json to pdoom.net                  |
+|    - Upload releases.rss to pdoom.net                   |
+|    - Enable website release discovery                   |
+`-----------------------------------------------------------`
 ```
 
 ### Release Metadata Script
@@ -968,11 +968,11 @@ The enhanced release workflow implements automated validation, feed generation, 
 **Output Files**:
 ```
 public/releases/
-├── releases.json           # Index of all releases (latest/stable tracking)
-├── releases.rss            # RSS 2.0 feed for subscribers
-├── v0.9.0.json            # Individual release metadata
-├── v0.10.0.json
-└── v0.10.1.json
+|--- releases.json           # Index of all releases (latest/stable tracking)
+|--- releases.rss            # RSS 2.0 feed for subscribers
+|--- v0.9.0.json            # Individual release metadata
+|--- v0.10.0.json
+`--- v0.10.1.json
 ```
 
 **Usage**:
@@ -1080,8 +1080,8 @@ python scripts/generate_release_metadata.py
 #### 6. deploy-feeds
 - TODO: Add deployment logic to upload feeds to pdoom.net hosting
 - Should upload:
-  - `public/releases/releases.json` → website feed endpoint
-  - `public/releases/releases.rss` → RSS feed endpoint
+  - `public/releases/releases.json`  ->  website feed endpoint
+  - `public/releases/releases.rss`  ->  RSS feed endpoint
   - Individual release JSON files for deep linking
 
 ### Validation and Triage
@@ -1259,12 +1259,12 @@ cat public/releases/releases.json
 ## Next Actions
 
 ### Immediate (Today)
-1. Write this plan ✅
+1. Write this plan SUCCESS
 2. Create GitHub issue for documentation refinement
 3. Request WebFetch access to examine Alignment Research Dataset
-4. Implement enhanced release pipeline ✅
-5. Create release metadata generation script ✅
-6. Document CI/CD workflow ✅
+4. Implement enhanced release pipeline SUCCESS
+5. Create release metadata generation script SUCCESS
+6. Document CI/CD workflow SUCCESS
 
 ### Short-term (This Week)
 4. Create pdoom-data repository skeleton
