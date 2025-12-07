@@ -43,6 +43,20 @@ var game_seed_str: String = ""  # Renamed from 'seed' to avoid shadowing built-i
 # Lab mascot 🐱
 var has_cat: bool = false
 
+# Calendar system (Issue #472)
+# Default: Game starts on Saturday, July 1st 2017 (configurable)
+# Each turn = 1 day, 5 turns per work week (Mon-Fri)
+# Note: July 1, 2017 was a Saturday, but we treat turn 0 as Monday
+const DEFAULT_START_YEAR: int = 2017
+const DEFAULT_START_MONTH: int = 7
+const DEFAULT_START_DAY: int = 3  # Monday July 3rd, 2017 (first working day)
+const TURNS_PER_WEEK: int = 5  # Work days per week
+
+# Configurable start date (can be changed for scenarios/campaigns)
+var start_year: int = DEFAULT_START_YEAR
+var start_month: int = DEFAULT_START_MONTH
+var start_day: int = DEFAULT_START_DAY
+
 # Turn phase tracking (fixes #418 - proper event sequencing)
 enum TurnPhase { TURN_START, ACTION_SELECTION, TURN_PROCESSING, TURN_END }
 var current_phase: TurnPhase = TurnPhase.ACTION_SELECTION
@@ -370,6 +384,93 @@ func reset_turn_ap():
 	reserved_ap = 0
 	used_event_ap = 0
 
+# Calendar System Methods (Issue #472)
+func get_current_week() -> int:
+	"""Get the current week number (1-indexed)"""
+	return (turn / TURNS_PER_WEEK) + 1
+
+func get_day_of_week() -> int:
+	"""Get day within the current week (1-5 for Mon-Fri)"""
+	return (turn % TURNS_PER_WEEK) + 1
+
+func get_weekday_name() -> String:
+	"""Get the name of the current weekday"""
+	var day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+	return day_names[turn % TURNS_PER_WEEK]
+
+func get_current_date() -> Dictionary:
+	"""Calculate the actual date from turn number
+	Returns: {year, month, day, weekday, week_number, quarter}"""
+	# Each turn = 1 weekday, so we need to account for weekends
+	var weeks_elapsed = turn / TURNS_PER_WEEK
+	var days_into_week = turn % TURNS_PER_WEEK
+
+	# Total calendar days = weeks * 7 + days into current week
+	var total_days = weeks_elapsed * 7 + days_into_week
+
+	# Calculate date from start date (using configurable values)
+	var year = start_year
+	var month = start_month
+	var day = start_day + total_days
+
+	# Days in each month (non-leap year base, we'll handle leap years)
+	var days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+	# Roll over months and years
+	while day > days_in_month[month - 1]:
+		# Check for leap year February
+		var feb_days = 28
+		if month == 2 and _is_leap_year(year):
+			feb_days = 29
+
+		var month_days = days_in_month[month - 1] if month != 2 else feb_days
+
+		if day > month_days:
+			day -= month_days
+			month += 1
+			if month > 12:
+				month = 1
+				year += 1
+
+	var quarter = ((month - 1) / 3) + 1
+
+	return {
+		"year": year,
+		"month": month,
+		"day": day,
+		"weekday": get_weekday_name(),
+		"week_number": get_current_week(),
+		"day_of_week": get_day_of_week(),
+		"quarter": quarter
+	}
+
+func _is_leap_year(year: int) -> bool:
+	"""Check if a year is a leap year"""
+	return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+
+func get_formatted_date() -> String:
+	"""Get a nicely formatted date string"""
+	var date = get_current_date()
+	var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+					   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+	return "%s %d, %d" % [month_names[date.month - 1], date.day, date.year]
+
+func get_turn_display() -> String:
+	"""Get the full turn display string for UI"""
+	var date = get_current_date()
+	var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+					   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+	# Format: "Week 12 | Wed Mar 20, 2024 | Day 3/5"
+	return "Week %d | %s %s %d, %d | Day %d/%d" % [
+		date.week_number,
+		date.weekday.substr(0, 3),  # Mon, Tue, Wed, etc.
+		month_names[date.month - 1],
+		date.day,
+		date.year,
+		date.day_of_week,
+		TURNS_PER_WEEK
+	]
+
 func to_dict() -> Dictionary:
 	"""Serialize state for UI"""
 	var rival_summaries = []
@@ -427,6 +528,8 @@ func to_dict() -> Dictionary:
 		"management_capacity": get_management_capacity(),
 		"unmanaged_count": get_unmanaged_count(),
 		"turn": turn,
+		"turn_display": get_turn_display(),
+		"calendar": get_current_date(),
 		"game_over": game_over,
 		"victory": victory,
 		"rival_labs": rival_summaries,

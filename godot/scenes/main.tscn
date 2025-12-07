@@ -69,8 +69,8 @@ modulate = Color(0.4, 0.4, 0.5, 1)
 
 [node name="TurnLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
-text = "📅 Turn: 0"
-theme_override_font_sizes/font_size = 20
+text = "Week 1 | Mon Jul 3, 2017 | Day 1/5"
+theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.9, 0.9, 0.3, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_TurnCounter")
 

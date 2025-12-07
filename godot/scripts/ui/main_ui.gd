@@ -377,8 +377,12 @@ func _on_bug_report_button_pressed():
 func _on_game_state_updated(state: Dictionary):
 	print("[MainUI] State updated: ", state)
 
-	# Update resource displays
-	turn_label.text = "📅 Turn: %d" % state.get("turn", 0)
+	# Update resource displays (Issue #472 - enhanced turn display with calendar)
+	var turn_display = state.get("turn_display", "")
+	if turn_display != "":
+		turn_label.text = turn_display
+	else:
+		turn_label.text = "Turn: %d" % state.get("turn", 0)
 	money_label.text = "💰 %s" % GameConfig.format_money(state.get("money", 0))
 	compute_label.text = "🖥️ %.1f" % state.get("compute", 0)
 	research_label.text = "🔬 %.1f" % state.get("research", 0)
