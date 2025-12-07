@@ -386,6 +386,16 @@ func execute_turn() -> Dictionary:
 			"message": "%s: %s" % [rival_result["name"], ", ".join(rival_result["actions"])]
 		})
 
+
+	# === ORGANIZATION DISCOVERY (Issue #474) ===
+	for rival in state.rival_labs:
+		var discovery_result = RivalLabs.check_discovery(rival, state, state.rng)
+		if discovery_result["discovered"]:
+			results.append({
+				"success": true,
+				"message": "[INTEL] " + discovery_result["message"]
+			})
+
 	# === USE DOOM SYSTEM FOR CALCULATION ===
 	if state.doom_system:
 		# Set rival contribution (calculated externally)
