@@ -9,20 +9,20 @@ on:
 jobs:
   quality-checks:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-      
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-        
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        
+
     - name: ASCII Compliance Check
       run: |
         echo "Checking ASCII compliance with intelligent converter..."
@@ -32,39 +32,59 @@ jobs:
           echo "Run: python scripts/intelligent_ascii_converter.py to fix"
           exit 1
         fi
-        
+
     - name: Development Standards Check
       run: |
         echo "Running comprehensive standards enforcement..."
         python scripts/enforce_standards.py --check-all || echo "WARNING  Standards check warnings (non-blocking during Godot migration)"
-        
+
     - name: Import Cleanup Check
       run: |
         echo "INFO  Project migrated to Godot - Python import checks skipped"
         echo "SUCCESS GDScript doesn't have unused import issues"
-        
+
     - name: Version Consistency Check
       run: |
         echo "Checking version consistency..."
+
+        # Check version.txt (single source of truth)
+        if [ -f "version.txt" ]; then
+          VERSION_TXT=$(cat version.txt | tr -d '[:space:]')
+          echo "version.txt: $VERSION_TXT"
+        else
+          echo "WARNING version.txt not found"
+          VERSION_TXT=""
+        fi
+
         # Check Godot project version
         if grep -q 'config/version=' godot/project.godot; then
-          VERSION=$(grep 'config/version=' godot/project.godot | cut -d'"' -f2)
-          echo "Current version: $VERSION"
-          echo "SUCCESS Version check passed"
+          GODOT_VERSION=$(grep 'config/version=' godot/project.godot | cut -d'"' -f2)
+          echo "project.godot: $GODOT_VERSION"
         else
-          echo "WARNING  Version not found in godot/project.godot (non-blocking)"
+          GODOT_VERSION=""
         fi
-        
+
+        # Validate consistency
+        if [ -n "$VERSION_TXT" ] && [ -n "$GODOT_VERSION" ]; then
+          if [ "$VERSION_TXT" = "$GODOT_VERSION" ]; then
+            echo "SUCCESS Version consistency verified: $VERSION_TXT"
+          else
+            echo "WARNING Version mismatch: version.txt=$VERSION_TXT, project.godot=$GODOT_VERSION"
+          fi
+        else
+          echo "SUCCESS Version check passed (partial)"
+        fi
+
     - name: Web Export System Check
       run: |
         echo "INFO  Project migrated to Godot - Python web export checks skipped"
         echo "SUCCESS Web export handled by Godot export system"
-        
+
     - name: CLI Interface Check
       run: |
         echo "INFO  Project migrated to Godot - Python CLI checks skipped"
         echo "SUCCESS Game runs via Godot engine"
-        
+
     - name: Documentation Check
       run: |
         echo "Checking documentation structure..."
@@ -74,14 +94,14 @@ jobs:
           "tools/web_export/WEB_EXPORT_SYSTEM_GUIDE.md"
           "docs/releases/v0.10.0_RELEASE_NOTES.md"
         )
-        
+
         for doc in "${required_docs[@]}"; do
           if [ ! -f "$doc" ]; then
             echo "ERROR: Required documentation missing: $doc"
             exit 1
           fi
         done
-        
+
         echo "Documentation structure validated"
 
     - name: Commit Message Check
@@ -90,20 +110,20 @@ jobs:
         echo "Checking latest commit message for ASCII compliance..."
         commit_msg=$(git log -1 --pretty=%B)
         echo "Commit message: $commit_msg"
-        
+
         # Check for common Unicode violations
         if echo "$commit_msg" | grep -P '[^\x00-\x7F]'; then
           echo "ERROR: Non-ASCII characters found in commit message"
           echo "Use ASCII-only characters in commit messages"
           exit 1
         fi
-        
+
         echo "Commit message ASCII compliance verified"
-        
+
     - name: Health Gate Check
       run: |
         echo "Running project health assessment..."
-        
+
         # Run comprehensive health check
         python scripts/project_health.py --quick-check
 

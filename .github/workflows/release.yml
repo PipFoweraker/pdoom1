@@ -27,17 +27,17 @@ jobs:
       tag: ${{ steps.version.outputs.tag }}
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
+
     - name: Extract version information
       id: version
       run: |
@@ -48,34 +48,38 @@ jobs:
           VERSION="${GITHUB_REF#refs/tags/}"
           echo "Tag-triggered release for version: $VERSION"
         fi
-        
+
         # Validate version format
         if [[ ! $VERSION =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$ ]]; then
           echo "Error: Invalid version format: $VERSION"
           echo "Expected format: vMAJOR.MINOR.PATCH[-prerelease][+build]"
           exit 1
         fi
-        
+
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "tag=$VERSION" >> $GITHUB_OUTPUT
-    
+
     - name: Verify version consistency
       run: |
-        # Check that the version in version.py matches the release version
-        PYTHON_VERSION=$(python -c "from src.services.version import get_display_version; print(get_display_version())")
+        # Check that version.txt matches the release version
         RELEASE_VERSION="${{ steps.version.outputs.version }}"
-        
-        echo "Python version.py version: $PYTHON_VERSION"
-        echo "Release version: $RELEASE_VERSION"
-        
-        if [ "$PYTHON_VERSION" != "$RELEASE_VERSION" ]; then
-          echo "Error: Version mismatch!"
-          echo "version.py shows: $PYTHON_VERSION"
-          echo "Release tag shows: $RELEASE_VERSION"
-          echo "Please update version.py to match the release tag"
-          exit 1
+
+        if [ -f "version.txt" ]; then
+          FILE_VERSION="v$(cat version.txt | tr -d '[:space:]')"
+          echo "version.txt version: $FILE_VERSION"
+          echo "Release version: $RELEASE_VERSION"
+
+          if [ "$FILE_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "Error: Version mismatch!"
+            echo "version.txt shows: $FILE_VERSION"
+            echo "Release tag shows: $RELEASE_VERSION"
+            echo "Please update version.txt to match the release tag"
+            exit 1
+          fi
+        else
+          echo "Warning: version.txt not found, skipping version consistency check"
         fi
-        
+
         echo "CHECKED Version consistency check passed"
 
   test:
@@ -84,24 +88,24 @@ jobs:
     strategy:
       matrix:
         python-version: [3.9, '3.10', 3.11, 3.12]
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
+
     - name: Run full test suite
       run: |
         python -m unittest discover tests -v
-    
+
     - name: Test game initialization
       run: |
         python -c "
@@ -120,26 +124,26 @@ jobs:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Fetch full history for changelog generation
-    
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
-    
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
+
     - name: Generate release artifacts
       run: |
         # Create a simple source distribution
         VERSION="${{ needs.validate-version.outputs.version }}"
         ARCHIVE_NAME="pdoom-${VERSION#v}-source"
-        
+
         # Create release directory
         mkdir -p release
-        
+
         # Copy source files (excluding development files)
         rsync -av --progress . release/$ARCHIVE_NAME/ \
           --exclude='.git' \
@@ -149,39 +153,39 @@ jobs:
           --exclude='*.pyc' \
           --exclude='.pytest_cache' \
           --exclude='release'
-        
+
         # Create archive
         cd release
         tar -czf "${ARCHIVE_NAME}.tar.gz" $ARCHIVE_NAME/
         zip -r "${ARCHIVE_NAME}.zip" $ARCHIVE_NAME/
-        
+
         # Generate checksums
         sha256sum *.tar.gz *.zip > checksums.txt
-        
+
         echo "Generated release artifacts:"
         ls -la
-    
+
     - name: Extract changelog for release
       id: changelog
       run: |
         VERSION="${{ needs.validate-version.outputs.version }}"
         VERSION_NUM="${VERSION#v}"  # Remove 'v' prefix
-        
+
         # Extract changelog section for this version
         python3 << 'EOF'
         import re
-        
+
         version = "${{ needs.validate-version.outputs.version }}"
         version_num = version[1:]  # Remove 'v' prefix
-        
+
         try:
             with open('CHANGELOG.md', 'r') as f:
                 content = f.read()
-            
+
             # Look for the version section
             pattern = rf'^## \[{re.escape(version_num)}\].*?(?=^## |\Z)'
             match = re.search(pattern, content, re.MULTILINE | re.DOTALL)
-            
+
             if match:
                 changelog_section = match.group(0).strip()
                 # Remove the version header for release notes
@@ -198,21 +202,21 @@ jobs:
                     release_notes = f"**Note: Using Unreleased section as release notes**\n\n{release_notes}"
                 else:
                     release_notes = f"Release {version}\n\nSee CHANGELOG.md for details."
-            
+
             # Save to file for GitHub action
             with open('release_notes.txt', 'w') as f:
                 f.write(release_notes)
-                
+
             print("Generated release notes:")
             print(release_notes[:500] + "..." if len(release_notes) > 500 else release_notes)
-                
+
         except Exception as e:
             print(f"Error extracting changelog: {e}")
             fallback = f"Release {version}\n\nSee CHANGELOG.md for full details."
             with open('release_notes.txt', 'w') as f:
                 f.write(fallback)
         EOF
-    
+
     - name: Create GitHub Release
       uses: actions/create-release@v1
       env:
@@ -223,7 +227,7 @@ jobs:
         body_path: release_notes.txt
         draft: false
         prerelease: ${{ github.event.inputs.prerelease || contains(needs.validate-version.outputs.version, '-') }}
-    
+
     - name: Upload Release Assets
       uses: actions/upload-release-asset@v1
       env:
@@ -233,7 +237,7 @@ jobs:
         asset_path: release/pdoom-${{ needs.validate-version.outputs.version }}-source.tar.gz
         asset_name: pdoom-${{ needs.validate-version.outputs.version }}-source.tar.gz
         asset_content_type: application/gzip
-    
+
     - name: Upload ZIP Asset
       uses: actions/upload-release-asset@v1
       env:
@@ -243,7 +247,7 @@ jobs:
         asset_path: release/pdoom-${{ needs.validate-version.outputs.version }}-source.zip
         asset_name: pdoom-${{ needs.validate-version.outputs.version }}-source.zip
         asset_content_type: application/zip
-    
+
     - name: Upload Checksums
       uses: actions/upload-release-asset@v1
       env:

@@ -69,7 +69,7 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 		final_score,
 		GameConfig.lab_name,
 		final_state.get("turn", 0),
-		"v0.10.4",  # Game version
+		"v0.11.0",  # Game version
 		duration
 	)
 

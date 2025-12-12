@@ -6,11 +6,11 @@
 
 ## Download & Play
 
-**Latest version: v0.10.2** - Choose your platform:
+**Latest version: v0.11.0** - Choose your platform:
 
-- 🪟 **[Windows](https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom.exe)** - Download and run
-- 🐧 **[Linux](https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom.x86_64)** - Download, `chmod +x`, and run
-- 🍎 **[macOS](https://github.com/PipFoweraker/pdoom1/releases/download/v0.10.2/PDoom.app.zip)** - Download, unzip, and run
+- 🪟 **[Windows](https://github.com/PipFoweraker/pdoom1/releases/download/v0.11.0/PDoom.exe)** - Download and run
+- 🐧 **[Linux](https://github.com/PipFoweraker/pdoom1/releases/download/v0.11.0/PDoom.x86_64)** - Download, `chmod +x`, and run
+- 🍎 **[macOS](https://github.com/PipFoweraker/pdoom1/releases/download/v0.11.0/PDoom.app.zip)** - Download, unzip, and run
 
 **No installation required** - just download and play!
 

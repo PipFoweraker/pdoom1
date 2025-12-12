@@ -236,5 +236,5 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_colors/font_color = Color(0.5, 0.5, 0.5, 1)
 theme_override_font_sizes/font_size = 14
-text = "Godot v0.1.0 Alpha"
+text = "v0.11.0"
 horizontal_alignment = 2
