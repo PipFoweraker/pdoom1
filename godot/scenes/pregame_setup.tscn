@@ -216,16 +216,28 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/DifficultyRow"]
+[node name="LabelRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer/DifficultyRow"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/DifficultyRow/LabelRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
 theme_override_font_sizes/font_size = 18
 text = "Research Intensity:"
+
+[node name="ComingSoon" type="Label" parent="Panel/VBox/FieldsContainer/DifficultyRow/LabelRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.3, 0.8)
+theme_override_font_sizes/font_size = 14
+text = "(Coming Soon)"
 
 [node name="OptionButton" type="OptionButton" parent="Panel/VBox/FieldsContainer/DifficultyRow"]
 custom_minimum_size = Vector2(0, 45)
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
+disabled = true
+modulate = Color(0.5, 0.5, 0.5, 0.7)
 selected = 1
 item_count = 3
 popup/item_0/text = "Easy (Conservative)"

@@ -32,6 +32,7 @@ extends VBoxContainer
 @onready var tab_manager = get_parent()
 @onready var roster_container = $ContentArea/MiddlePanel/EmployeeRosterZone/RosterScroll/RosterContainer
 @onready var pause_menu = $"../../PauseMenu"
+@onready var getting_started_hint = $ContentArea/LeftPanel/GettingStartedHint
 
 # Reference to GameManager
 var game_manager: Node
@@ -446,6 +447,10 @@ func _on_game_state_updated(state: Dictionary):
 		# Show cat if adopted, hide if not
 		office_cat.visible = state.get("has_cat", false)
 
+	# Hide getting started hint after turn 3 (new player onboarding)
+	if getting_started_hint:
+		getting_started_hint.visible = state.get("turn", 0) < 3
+
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:
 		test_action_button.disabled = false
@@ -493,19 +498,19 @@ func _on_turn_phase_changed(phase_name: String):
 
 	if phase_name == "turn_start" or phase_name == "TURN_START":
 		phase_color = "red"
-		phase_display = "TURN START (Processing...)"
+		phase_display = "TURN START - Processing events..."
 		end_turn_button.disabled = true
 		commit_plan_button.disabled = true
 	elif phase_name == "action_selection" or phase_name == "ACTION_SELECTION":
-		phase_color = "green"
-		phase_display = "ACTION SELECTION (Ready)"
+		phase_color = "lime"
+		phase_display = "SELECT ACTIONS - Click actions or press 1-9"
 		# End turn requires actions, commit plan is always available
 		end_turn_button.disabled = (queued_actions.size() == 0)
 		commit_plan_button.disabled = false
 		clear_queue_button.disabled = (queued_actions.size() == 0)
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
-		phase_display = "TURN END (Executing...)"
+		phase_display = "EXECUTING - Your actions are running..."
 		end_turn_button.disabled = true
 		commit_plan_button.disabled = true
 
@@ -765,6 +770,8 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 			_show_strategic_submenu()
 		elif action_id == "travel":
 			_show_travel_submenu()
+		elif action_id == "operations":
+			_show_operations_submenu()
 		return
 
 	# Check if action can be afforded before adding to UI queue (#456)
@@ -2735,58 +2742,281 @@ func _create_researcher_button(data: Dictionary) -> Control:
 	return btn
 
 func _show_staff_id_card(data: Dictionary):
-	"""Create an ID card for an individual researcher"""
-	# TODO: Adjust formatting
-	# My vision is to either have this look like an employee ID, or something similar to back of a sports trading card
-	var card = PopupPanel.new()
-	card.name = "StaffCard"
-	card.size = Vector2(350,300)
-	add_child(card)
+	"""Show the full staff perks panel for a researcher"""
+	print("[MainUI] Opening staff perks panel for: %s" % data.get("name", "Unknown"))
 
-	var vbox = VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 6)
-	card.add_child(vbox)
+	# Close any existing dialog first
+	if active_dialog != null and is_instance_valid(active_dialog):
+		active_dialog.queue_free()
+		active_dialog = null
 
-	var employee_label = Label.new()
-	var name_text = data.get("name")
-	var spec_text = data.get("specialization")
+	# Load and instance the perks panel scene
+	var perks_panel_scene = preload("res://scenes/ui/staff_perks_panel.tscn")
+	var perks_panel = perks_panel_scene.instantiate()
 
-	employee_label.text = "%s | %s" % [name_text, spec_text.capitalize()]
-	employee_label.add_theme_font_size_override("font_size", 20)
-	vbox.add_child(employee_label)
+	# Create a Researcher object from the dictionary data
+	var researcher = Researcher.new(data.get("specialization", "safety"), data.get("name", ""))
+	researcher.skill_level = data.get("skill_level", 5)
+	researcher.current_salary = data.get("current_salary", 60000)
+	researcher.base_productivity = data.get("base_productivity", 1.0)
+	researcher.burnout = data.get("burnout", 0.0)
+	researcher.loyalty = data.get("loyalty", 50)
+	researcher.turns_employed = data.get("turns_employed", 0)
+	researcher.jet_lag_turns = data.get("jet_lag_turns", 0)
+	researcher.jet_lag_severity = data.get("jet_lag_severity", 0.0)
 
-	var trait_label = Label.new()
+	# Copy traits
 	var traits = data.get("traits", [])
-	if traits.size() > 0:
-		var trait_names := [];
-		for trait_id in traits:
-			if Researcher.POSITIVE_TRAITS.has(trait_id):
-				trait_names.append(Researcher.POSITIVE_TRAITS[trait_id]["name"])
-			elif Researcher.NEGATIVE_TRAITS.has(trait_id):
-				trait_names.append(Researcher.NEGATIVE_TRAITS[trait_id]["name"])
-			else:
-				trait_names.append(trait_id.capitalize())
-		trait_label.text = "HR Notes: %s" % ", ".join(trait_names)
-	else:
-		trait_label.text = "HR Notes: N/A"
-	vbox.add_child(trait_label)
+	for trait_id in traits:
+		researcher.traits.append(trait_id)
 
-	var salary_label = Label.new()
-	var salaty_text = data.get("current_salary")
-	# maybe this could be per turn? More useful stat for user
-	salary_label.text = "Current Salary: %s/yr" % GameConfig.format_money(salaty_text)
-	vbox.add_child(salary_label)
+	# Add blocker behind panel
+	var blocker = ColorRect.new()
+	blocker.color = Color(0.0, 0.0, 0.0, 0.5)
+	blocker.mouse_filter = Control.MOUSE_FILTER_STOP
+	blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	blocker.z_index = 998
 
-	var skill_label = Label.new()
-	skill_label.text = "Skill Level: %d / 10" % data.get("skill_level")
-	vbox.add_child(skill_label)
+	# Click on blocker closes panel
+	blocker.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.pressed:
+			perks_panel.queue_free()
+			blocker.queue_free()
+			active_dialog = null
+	)
 
-	var base_prod_label = Label.new()
-	base_prod_label.text = "Base Productivity: %d" % data.get("base_productivity")
-	vbox.add_child(base_prod_label)
+	tab_manager.add_child(blocker)
 
-	var burn_label = Label.new()
-	burn_label.text = "Burnout: %d" % data.get("burnout")
-	vbox.add_child(burn_label)
+	# Add panel
+	tab_manager.add_child(perks_panel)
+	perks_panel.z_index = 999
+	perks_panel.visible = true
 
-	card.popup_centered()
+	# Connect signals
+	perks_panel.close_requested.connect(func():
+		perks_panel.queue_free()
+		blocker.queue_free()
+		active_dialog = null
+	)
+
+	perks_panel.perk_hovered.connect(func(perk_data):
+		var perk_name = perk_data.get("name", "Unknown")
+		var perk_desc = perk_data.get("description", "")
+		info_label.text = "[b][color=cyan]%s[/color][/b] — %s\n[color=gray]Perk selection coming in future update[/color]" % [perk_name, perk_desc]
+	)
+
+	perks_panel.perk_unhovered.connect(func():
+		info_label.text = "[color=gray]Hover over actions to see details...\n [/color]"
+	)
+
+	# Set researcher data
+	perks_panel.set_researcher(researcher)
+
+	# Track as active dialog
+	active_dialog = perks_panel
+	print("[MainUI] Staff perks panel opened")
+
+# === OPERATIONS SUBMENU ===
+
+func _show_operations_submenu():
+	"""Show popup dialog with operations/maintenance options"""
+	print("[MainUI] === OPERATIONS SUBMENU STARTING ===")
+
+	# Close any existing dialog first
+	if active_dialog != null and is_instance_valid(active_dialog):
+		print("[MainUI] Closing existing dialog...")
+		active_dialog.queue_free()
+		active_dialog = null
+		active_dialog_buttons = []
+
+	# Use Panel - position to the right of the left panel buttons
+	var dialog = Panel.new()
+	dialog.custom_minimum_size = Vector2(350, 250)
+	dialog.size = Vector2(350, 250)
+	dialog.position = Vector2(90, 80)
+	print("[MainUI] Created Panel, size: %s, position: %s" % [dialog.size, dialog.position])
+
+	# Create main container
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 15)
+	margin.add_theme_constant_override("margin_right", 15)
+	margin.add_theme_constant_override("margin_top", 15)
+	margin.add_theme_constant_override("margin_bottom", 15)
+	dialog.add_child(margin)
+
+	var main_vbox = VBoxContainer.new()
+	main_vbox.add_theme_constant_override("separation", 10)
+	margin.add_child(main_vbox)
+
+	# Header
+	var header = Label.new()
+	header.text = "OPERATIONS"
+	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header.add_theme_font_size_override("font_size", 14)
+	header.add_theme_color_override("font_color", Color(0.6, 0.8, 0.6))
+	main_vbox.add_child(header)
+
+	# Get operations options
+	var operations_options = GameActions.get_operations_options()
+	var current_state = game_manager.get_game_state()
+
+	# Create grid for option buttons
+	var grid = GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 12)
+	grid.add_theme_constant_override("v_separation", 12)
+	main_vbox.add_child(grid)
+
+	var button_index = 0
+	var buttons = []
+	var dialog_key_labels = ["Q", "W", "E", "R"]
+
+	for option in operations_options:
+		var op_id = option.get("id", "")
+		var op_name = option.get("name", "")
+		var op_desc = option.get("description", "")
+		var op_costs = option.get("costs", {})
+
+		# Create VBox for button + label
+		var item_vbox = VBoxContainer.new()
+		item_vbox.add_theme_constant_override("separation", 4)
+
+		# Create button
+		var btn = Button.new()
+		btn.custom_minimum_size = Vector2(140, 70)
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.mouse_filter = Control.MOUSE_FILTER_PASS
+
+		# Add icon if available
+		var icon_texture = IconLoader.get_action_icon(op_id)
+		if icon_texture:
+			btn.icon = icon_texture
+			btn.expand_icon = true
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+
+		# Add keyboard hint
+		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
+		btn.text = key_label
+		btn.add_theme_font_size_override("font_size", 10)
+		btn.add_theme_color_override("font_color", Color(1, 1, 1, 0.6))
+
+		# Format costs for tooltip
+		var cost_text = ""
+		if op_costs.get("action_points", 0) > 0:
+			cost_text += "%d AP" % op_costs.get("action_points")
+		if op_costs.get("money", 0) > 0:
+			if cost_text != "":
+				cost_text += ", "
+			cost_text += GameConfig.format_money(op_costs.get("money"))
+
+		# Check affordability
+		var can_afford = true
+		for resource in op_costs.keys():
+			var current_val = current_state.get(resource, 0)
+			if resource == "action_points":
+				current_val = current_state.get("available_ap", 0)
+			if current_val < op_costs[resource]:
+				can_afford = false
+				break
+
+		if not can_afford:
+			btn.disabled = true
+			btn.modulate = Color(0.5, 0.5, 0.5)
+
+		# Tooltip
+		btn.tooltip_text = "%s\n%s\n\nCosts: %s" % [op_name, op_desc, cost_text if cost_text != "" else "Free"]
+
+		# Connect button
+		btn.pressed.connect(func(): _on_operations_option_selected(op_id, op_name, dialog))
+
+		item_vbox.add_child(btn)
+
+		# Add label below
+		var name_label = Label.new()
+		name_label.text = op_name
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.add_theme_font_size_override("font_size", 10)
+		name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+		item_vbox.add_child(name_label)
+
+		grid.add_child(item_vbox)
+		buttons.append(btn)
+		button_index += 1
+
+	# Store dialog state
+	active_dialog = dialog
+	active_dialog_buttons = buttons
+	print("[MainUI] Operations submenu opened, tracked %d buttons" % buttons.size())
+
+	# Add dialog to TabManager as overlay
+	tab_manager.add_child(dialog)
+	dialog.visible = true
+	dialog.z_index = 1000
+	dialog.z_as_relative = false
+
+	await get_tree().process_frame
+	print("[MainUI] === OPERATIONS SUBMENU SETUP COMPLETE ===")
+
+func _on_operations_option_selected(action_id: String, action_name: String, dialog: Control):
+	"""Handle operations submenu selection"""
+	print("[MainUI] Operations option selected: %s (id: %s)" % [action_name, action_id])
+	dialog.queue_free()
+
+	# Clear active dialog state
+	active_dialog = null
+	active_dialog_buttons = []
+
+	# Check if action can be afforded before adding to UI queue
+	var action_def = _get_action_by_id(action_id)
+	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+	var available_ap = game_manager.state.get_available_ap()
+
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+
+	if not game_manager.state.can_afford(action_def.get("costs", {})):
+		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
+		return
+
+	log_message("[color=cyan]Operations: %s[/color]" % action_name)
+
+	# Queue the action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
+	game_manager.select_action(action_id)
+
+# === COMMAND ZONE - PASS ACTION ===
+
+func _on_pass_button_pressed():
+	"""Handle the Do Nothing / Pass button in the command zone"""
+	print("[MainUI] Pass button pressed (Do Nothing)")
+
+	# Get pass action definition
+	var pass_action = GameActions.get_pass_action()
+	var action_id = pass_action.get("id", "pass")
+	var action_name = pass_action.get("name", "Do Nothing")
+
+	# Check if we're in action selection phase
+	if current_turn_phase.to_upper() != "ACTION_SELECTION":
+		log_message("[color=red]Cannot pass - not in action selection phase[/color]")
+		return
+
+	# Check AP availability (pass costs 0 AP but still need to verify game state)
+	var available_ap = game_manager.state.get_available_ap()
+	var ap_cost = pass_action.get("costs", {}).get("action_points", 0)
+
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+
+	log_message("[color=gray]%s - skipping this action[/color]" % action_name)
+
+	# Queue the pass action
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+
+	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
+	game_manager.select_action(action_id)
