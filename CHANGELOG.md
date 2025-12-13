@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [v0.11.0] - 2025-12-08 - 'Travel & Conferences System'
 
 ### Added
+- **What's New Modal** (#481): In-game patch notes display
+  - Shows "What's New" modal automatically on first launch after an update
+  - "What's New" button in main menu to view patch notes anytime
+  - Patch notes stored in JSON file for easy updates without code changes
+  - Tracks last-seen version in user preferences
+  - Colored formatting for Added/Fixed/Changed sections
+
 - **Academic Conference System** (#468): Submit papers to major AI conferences
   - 9 conferences: NeurIPS, ICML, ICLR, AAAI, FAccT, AIES, MATS, ILIAD, Safety Retreat
   - Conference timing based on real-world calendar (game starts July 3, 2017)
@@ -53,8 +60,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Event Popup AP Display** (#453): Shows correct available AP for event options
 
 ### Technical
-- New files: `conferences.gd`, `paper_submissions.gd`
-- Modified: `game_state.gd`, `actions.gd`, `turn_manager.gd`, `main_ui.gd`, `events.gd`, `researcher.gd`
+- New files: `whats_new_modal.gd`, `whats_new_modal.tscn`, `patch_notes.json`, `conferences.gd`, `paper_submissions.gd`
+- Modified: `game_config.gd`, `welcome_screen.gd`, `welcome.tscn`, `game_manager.gd`, `game_state.gd`, `actions.gd`, `turn_manager.gd`, `main_ui.gd`, `events.gd`, `researcher.gd`
 - Engine: Godot 4.5.1 stable
 
 ---

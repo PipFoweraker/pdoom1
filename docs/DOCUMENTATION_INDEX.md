@@ -113,6 +113,7 @@ src/core/
 - `WEBSITE_PIPELINE_STRATEGY.md` - Website deployment strategy
 
 ### Architecture Documentation
+- `ARCHITECTURE.md` - **Architecture & expansion promise for funders** (Issue #484)
 - `architecture/MODULAR_UI_ARCHITECTURE.md` - UI system architecture
 - `architecture/UI_REFACTOR_TARGETS.md` - Refactoring targets and progress
 - `architecture/REFACTORING_PRIORITIES.md` - Strategic refactoring priorities
@@ -182,5 +183,5 @@ src/core/
 - Maintain architectural decision records for future reference
 - Keep active documentation focused and current
 
-Last Updated: September 19, 2025
+Last Updated: December 13, 2025
 Architecture Status: Modular (Post-Monolith Refactoring)
