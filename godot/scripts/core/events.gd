@@ -812,11 +812,21 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 	"""Check all events and return those that should trigger this turn"""
 	var to_trigger: Array[Dictionary] = []
 
+	# Check built-in events
 	for event in get_all_events():
 		if should_trigger(event, state, rng):
 			to_trigger.append(event)
 			if not event.get("repeatable", false):
 				triggered_events.append(event["id"])
+
+	# Check scenario-specific events (Issue #483: Mod/Scenario hook)
+	if state.has_meta("scenario_events"):
+		var scenario_events = state.get_meta("scenario_events")
+		for event in scenario_events:
+			if should_trigger(event, state, rng):
+				to_trigger.append(event)
+				if not event.get("repeatable", false):
+					triggered_events.append(event["id"])
 
 	return to_trigger
 

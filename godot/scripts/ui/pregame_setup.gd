@@ -6,9 +6,14 @@ extends Control
 @onready var lab_name_input = $Panel/VBox/FieldsContainer/LabNameRow/LineEdit
 @onready var seed_input = $Panel/VBox/FieldsContainer/SeedRow/HBox/LineEdit
 @onready var difficulty_option = $Panel/VBox/FieldsContainer/DifficultyRow/OptionButton
+@onready var scenario_option = $Panel/VBox/FieldsContainer/ScenarioRow/OptionButton
+@onready var scenario_description = $Panel/VBox/FieldsContainer/ScenarioRow/Description
 @onready var launch_button = $Panel/VBox/ButtonRow/LaunchButton
 @onready var random_button = $Panel/VBox/FieldsContainer/LabNameRow/LabelRow/RandomButton
 @onready var weekly_button = $Panel/VBox/FieldsContainer/SeedRow/HBox/WeeklyButton
+
+# Available scenarios (populated at runtime)
+var available_scenarios: Array[Dictionary] = []
 
 # Random lab name components (ported from pygame)
 var lab_prefixes = [
@@ -41,11 +46,41 @@ func _ready():
 	# Set up button icons
 	_setup_button_icons()
 
+	# Populate scenarios dropdown
+	_populate_scenarios()
+
 	# Focus player name input
 	player_name_input.grab_focus()
 
 	# Validate launch button state
 	_update_launch_button()
+
+func _populate_scenarios():
+	"""Load and populate the scenarios dropdown"""
+	var loader = ScenarioLoader.new()
+	available_scenarios = loader.get_available_scenarios()
+
+	scenario_option.clear()
+
+	var selected_index = 0
+	for i in range(available_scenarios.size()):
+		var scenario = available_scenarios[i]
+		scenario_option.add_item(scenario.get("title", "Unknown"), i)
+
+		# Check if this is the currently selected scenario
+		if scenario.get("id", "") == GameConfig.scenario_id:
+			selected_index = i
+
+	scenario_option.selected = selected_index
+	_update_scenario_description(selected_index)
+
+	print("[PreGameSetup] Loaded %d scenarios" % available_scenarios.size())
+
+func _update_scenario_description(index: int):
+	"""Update the scenario description label"""
+	if index >= 0 and index < available_scenarios.size():
+		var scenario = available_scenarios[index]
+		scenario_description.text = scenario.get("description", "No description available")
 
 func _setup_button_icons():
 	"""Replace button text/emoji with icons where available"""
@@ -94,6 +129,14 @@ func _on_difficulty_selected(index: int):
 	"""Handle difficulty selection"""
 	GameConfig.difficulty = index
 	print("[PreGameSetup] Difficulty selected: ", ["Easy", "Standard", "Hard"][index])
+
+func _on_scenario_selected(index: int):
+	"""Handle scenario selection"""
+	if index >= 0 and index < available_scenarios.size():
+		var scenario = available_scenarios[index]
+		GameConfig.scenario_id = scenario.get("id", "")
+		_update_scenario_description(index)
+		print("[PreGameSetup] Scenario selected: %s" % scenario.get("title", "Unknown"))
 
 func _on_random_lab_name_pressed():
 	"""Generate a random lab name"""

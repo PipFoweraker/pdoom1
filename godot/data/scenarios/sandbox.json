@@ -1,0 +1,22 @@
+{
+  "title": "Sandbox Mode",
+  "description": "Unlimited resources for experimentation. No pressure, just explore the mechanics and have fun.",
+  "author": "P(Doom) Team",
+  "version": "1.0",
+  "starting_resources": {
+    "money": 10000000,
+    "compute": 1000,
+    "research": 500,
+    "papers": 10,
+    "reputation": 80,
+    "doom": 30,
+    "action_points": 5,
+    "stationery": 1000
+  },
+  "config": {
+    "start_year": 2017,
+    "start_month": 7,
+    "start_day": 3
+  },
+  "events": []
+}

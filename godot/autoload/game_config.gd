@@ -7,6 +7,7 @@ var player_name: String = "Researcher"
 var lab_name: String = "AI Safety Lab"
 var game_seed: String = ""  # Empty = weekly challenge seed
 var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard
+var scenario_id: String = ""  # Empty = standard game, otherwise scenario pack ID
 
 # Audio Settings
 var master_volume: int = 50  # 0-100
@@ -58,6 +59,7 @@ func save_config() -> void:
 	# Game section
 	config.set_value("game", "difficulty", difficulty)
 	config.set_value("game", "last_seed", game_seed)
+	config.set_value("game", "scenario_id", scenario_id)
 	config.set_value("game", "last_seen_version", last_seen_version)
 
 	# Audio section
@@ -96,6 +98,7 @@ func load_config() -> void:
 	# Load game settings
 	difficulty = config.get_value("game", "difficulty", difficulty)
 	game_seed = config.get_value("game", "last_seed", game_seed)
+	scenario_id = config.get_value("game", "scenario_id", scenario_id)
 	last_seen_version = config.get_value("game", "last_seen_version", last_seen_version)
 
 	# Load audio settings
@@ -212,7 +215,8 @@ func get_game_config() -> Dictionary:
 		"lab_name": lab_name,
 		"game_seed": game_seed,
 		"difficulty": difficulty,
-		"difficulty_string": get_difficulty_string()
+		"difficulty_string": get_difficulty_string(),
+		"scenario_id": scenario_id
 	}
 
 ## Reset game configuration to defaults (keep settings)
@@ -221,6 +225,7 @@ func reset_game_config() -> void:
 	lab_name = "AI Safety Lab"
 	game_seed = ""
 	difficulty = 1
+	scenario_id = ""
 	print("[GameConfig] Game configuration reset to defaults")
 
 ## Increment games played counter
@@ -302,6 +307,7 @@ func print_config() -> void:
 	print("  Lab: %s" % lab_name)
 	print("  Seed: %s" % get_display_seed())
 	print("  Difficulty: %s" % get_difficulty_string())
+	print("  Scenario: %s" % (scenario_id if not scenario_id.is_empty() else "Standard"))
 	print("  Master Volume: %d%%" % master_volume)
 	print("  SFX Volume: %d%%" % sfx_volume)
 	print("  Music Volume: %d%%" % music_volume)
