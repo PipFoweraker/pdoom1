@@ -4,6 +4,28 @@ All notable changes to P(Doom): Bureaucracy Strategy Game will be documented in 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Scenario/Mod Hook System** (#483): Custom scenarios without code changes
+  - Drop JSON files into `godot/data/scenarios/` to add new scenarios
+  - Scenario selection dropdown in Custom Game setup screen
+  - Support for overriding starting resources (money, compute, research, reputation, doom, etc.)
+  - Support for custom events with trigger conditions and player choices
+  - Support for custom start dates (year, month, day)
+  - Three sample scenarios included:
+    - **Bootstrap Mode**: Extra resources for learning ($500k, 200 compute)
+    - **Crisis Mode**: Challenging start (2020, $150k, 65 doom)
+    - **Sandbox Mode**: Unlimited resources for experimentation ($10M)
+  - User scenarios supported in `user://scenarios/` directory
+  - Complete documentation in `docs/SCENARIOS.md`
+
+### Technical
+- New files: `scenario_loader.gd`, `docs/SCENARIOS.md`, `godot/data/scenarios/*.json`
+- Modified: `game_config.gd`, `game_manager.gd`, `pregame_setup.gd`, `pregame_setup.tscn`, `events.gd`
+
+---
+
 ## [v0.11.0] - 2025-12-08 - 'Travel & Conferences System'
 
 ### Added
