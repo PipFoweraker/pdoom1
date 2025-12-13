@@ -1,0 +1,82 @@
+{
+  "versions": [
+    {
+      "version": "0.11.0",
+      "date": "2025-12-08",
+      "title": "Travel & Conferences System",
+      "highlights": [
+        "What's New Modal - See patch notes on first launch after updates",
+        "Academic Conference System - Submit papers to NeurIPS, ICML, ICLR, and more",
+        "Travel Cost System - Realistic flight and accommodation costs",
+        "Jet Lag Mechanics - Travel class affects researcher productivity"
+      ],
+      "sections": {
+        "added": [
+          "What's New modal showing patch notes on first launch after updates",
+          "What's New button in main menu to view patch notes anytime",
+          "Academic Conference System with 9 real-world AI conferences",
+          "Travel submenu with paper submission and conference attendance",
+          "Paper review process with multi-turn decision cycles",
+          "Three travel classes: Economy, Business, First Class",
+          "Jet lag affecting researcher productivity based on travel class",
+          "Public opinion meter affecting fundraising and events",
+          "Responsive UI layout adapting to screen sizes"
+        ],
+        "fixed": [
+          "AP Double-Spend Bug - Actions no longer deduct AP twice",
+          "Poaching Event Infinite Loop - Now respects probability",
+          "Manager Threshold - First 9 researchers now founder-managed",
+          "Hiring Queue - Support for multiple hires per turn",
+          "Event Popup AP Display - Shows correct available AP"
+        ],
+        "changed": []
+      }
+    },
+    {
+      "version": "0.10.3",
+      "date": "2025-11-17",
+      "title": "Playtesting Fixes & Turn Philosophy",
+      "highlights": [
+        "Bug Reporter Integration - In-game bug reporting with F8",
+        "Turn Philosophy Reframe - 'Monday Planning' metaphor",
+        "Event Dialog UX Improvements - Better visibility and interaction"
+      ],
+      "sections": {
+        "added": [
+          "In-game bug reporting system (F8 or backslash)",
+          "Cat contributor recognition system",
+          "Comprehensive turn sequence documentation"
+        ],
+        "fixed": [
+          "Turn advancement with empty action queue now works",
+          "Event AP Logic uses available AP correctly",
+          "Employee screen display renders correctly"
+        ],
+        "changed": [
+          "Turn Philosophy: 'Skip Turn' renamed to 'Commit Plan & Reserve AP'",
+          "Event dialog background improved for visibility"
+        ]
+      }
+    },
+    {
+      "version": "0.10.2",
+      "date": "2025-11-08",
+      "title": "Multi-Platform Release & Enhanced CI/CD",
+      "highlights": [
+        "Multi-Platform Build Support - Windows, Linux, and macOS",
+        "Enhanced CI/CD Pipeline - Automated validation and releases",
+        "Employee Management Screen - Tab-based interface"
+      ],
+      "sections": {
+        "added": [
+          "Automated builds for Windows, Linux, and macOS",
+          "Linux/X11 and macOS export presets",
+          "Release metadata generation (JSON + RSS feeds)",
+          "Employee Management Screen with progressive warnings"
+        ],
+        "fixed": [],
+        "changed": []
+      }
+    }
+  ]
+}

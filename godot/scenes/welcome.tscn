@@ -195,6 +195,19 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
 text = "🏆 Leaderboard"
 
+[node name="WhatsNewButton" type="Button" parent="VBox/MenuContainer"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.85, 1, 1)
+theme_override_colors/font_hover_color = Color(0.8, 0.95, 1, 1)
+theme_override_colors/font_pressed_color = Color(0.5, 0.75, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_focus")
+text = "What's New"
+
 [node name="AISafetyButton" type="Button" parent="VBox/MenuContainer"]
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
