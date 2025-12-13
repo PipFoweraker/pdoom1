@@ -27,8 +27,12 @@ func start_new_game(game_seed: String = ""):
 	print("  Lab: %s" % GameConfig.lab_name)
 	print("  Seed: %s" % game_seed)
 	print("  Difficulty: %s" % GameConfig.get_difficulty_string())
+	print("  Scenario: %s" % (GameConfig.scenario_id if not GameConfig.scenario_id.is_empty() else "Standard"))
 
 	state = GameState.new(game_seed)
+
+	# Apply scenario overrides (before difficulty, so difficulty can further modify)
+	_apply_scenario_overrides()
 
 	# Apply difficulty settings to game state
 	_apply_difficulty_settings()
@@ -477,3 +481,69 @@ func _apply_difficulty_settings():
 		_:  # Safety default case (should never reach here after validation)
 			print("[GameManager] WARNING: Unexpected difficulty value, using Standard")
 			# Apply standard difficulty (no changes)
+
+func _apply_scenario_overrides():
+	"""Apply scenario pack overrides to game state (Issue #483)"""
+	var scenario_id = GameConfig.scenario_id
+	if scenario_id.is_empty():
+		return  # Standard game, no overrides
+
+	var loader = ScenarioLoader.new()
+	var scenario = loader.load_scenario(scenario_id)
+
+	if scenario.is_empty():
+		push_warning("[GameManager] Failed to load scenario: %s" % scenario_id)
+		return
+
+	print("[GameManager] Applying scenario: %s" % scenario.get("title", scenario_id))
+
+	# Apply starting resource overrides
+	var resources = scenario.get("starting_resources", {})
+	if resources.has("money"):
+		state.money = float(resources["money"])
+		print("  Money: %s" % GameConfig.format_money(state.money))
+	if resources.has("compute"):
+		state.compute = float(resources["compute"])
+		print("  Compute: %.1f" % state.compute)
+	if resources.has("research"):
+		state.research = float(resources["research"])
+		print("  Research: %.1f" % state.research)
+	if resources.has("papers"):
+		state.papers = float(resources["papers"])
+		print("  Papers: %.1f" % state.papers)
+	if resources.has("reputation"):
+		state.reputation = float(resources["reputation"])
+		print("  Reputation: %.1f" % state.reputation)
+	if resources.has("doom"):
+		state.doom = float(resources["doom"])
+		if state.doom_system:
+			state.doom_system.current_doom = state.doom
+		print("  Doom: %.1f" % state.doom)
+	if resources.has("action_points"):
+		state.action_points = int(resources["action_points"])
+		print("  Action Points: %d" % state.action_points)
+	if resources.has("stationery"):
+		state.stationery = float(resources["stationery"])
+		print("  Stationery: %.1f" % state.stationery)
+
+	# Apply config overrides (start date, etc.)
+	var config = scenario.get("config", {})
+	if config.has("start_year"):
+		state.start_year = int(config["start_year"])
+	if config.has("start_month"):
+		state.start_month = int(config["start_month"])
+	if config.has("start_day"):
+		state.start_day = int(config["start_day"])
+	if config.has("start_year") or config.has("start_month") or config.has("start_day"):
+		print("  Start date: %s" % state.get_formatted_date())
+
+	# Register custom events
+	var custom_events = scenario.get("events", [])
+	if custom_events.size() > 0:
+		print("  Custom events: %d" % custom_events.size())
+		# Events will be accessed by GameEvents via ScenarioLoader
+		# Store scenario events in state for TurnManager to access
+		if not state.has_meta("scenario_events"):
+			state.set_meta("scenario_events", custom_events)
+
+	print("[GameManager] Scenario applied successfully")

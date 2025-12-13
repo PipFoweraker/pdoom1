@@ -246,6 +246,33 @@ popup/item_1/id = 1
 popup/item_2/text = "Hard (Aggressive)"
 popup/item_2/id = 2
 
+[node name="ScenarioRow" type="VBoxContainer" parent="Panel/VBox/FieldsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LabelRow" type="HBoxContainer" parent="Panel/VBox/FieldsContainer/ScenarioRow"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/ScenarioRow/LabelRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "Scenario:"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/VBox/FieldsContainer/ScenarioRow"]
+custom_minimum_size = Vector2(0, 45)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+selected = 0
+
+[node name="Description" type="Label" parent="Panel/VBox/FieldsContainer/ScenarioRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 14
+text = "The default P(Doom) experience"
+autowrap_mode = 2
+
 [node name="Spacer" type="Control" parent="Panel/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -281,5 +308,6 @@ text = "Cancel"
 [connection signal="text_changed" from="Panel/VBox/FieldsContainer/SeedRow/HBox/LineEdit" to="." method="_on_seed_changed"]
 [connection signal="pressed" from="Panel/VBox/FieldsContainer/SeedRow/HBox/WeeklyButton" to="." method="_on_weekly_seed_pressed"]
 [connection signal="item_selected" from="Panel/VBox/FieldsContainer/DifficultyRow/OptionButton" to="." method="_on_difficulty_selected"]
+[connection signal="item_selected" from="Panel/VBox/FieldsContainer/ScenarioRow/OptionButton" to="." method="_on_scenario_selected"]
 [connection signal="pressed" from="Panel/VBox/ButtonRow/LaunchButton" to="." method="_on_launch_pressed"]
 [connection signal="pressed" from="Panel/VBox/ButtonRow/CancelButton" to="." method="_on_cancel_pressed"]

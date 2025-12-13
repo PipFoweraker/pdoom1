@@ -1,0 +1,71 @@
+{
+  "title": "Crisis Mode",
+  "description": "The AI race is heating up. Start with limited funding and higher doom. Can you turn the tide before it's too late?",
+  "author": "P(Doom) Team",
+  "version": "1.0",
+  "starting_resources": {
+    "money": 150000,
+    "compute": 75,
+    "research": 0,
+    "reputation": 40,
+    "doom": 65
+  },
+  "config": {
+    "start_year": 2020,
+    "start_month": 1,
+    "start_day": 6
+  },
+  "events": [
+    {
+      "id": "crisis_warning",
+      "name": "Urgent Warning",
+      "description": "A prominent AI researcher has gone public with concerns about the pace of capability development. The world is watching.",
+      "type": "popup",
+      "trigger_type": "turn_exact",
+      "trigger_turn": 0,
+      "repeatable": false,
+      "options": [
+        {
+          "id": "issue_statement",
+          "text": "Issue a supporting statement",
+          "costs": {},
+          "effects": {"reputation": 10, "doom": -2},
+          "message": "Your public support helps legitimize safety concerns."
+        },
+        {
+          "id": "stay_quiet",
+          "text": "Focus on your research",
+          "costs": {},
+          "effects": {},
+          "message": "You keep your head down and continue working."
+        }
+      ]
+    },
+    {
+      "id": "funding_pressure",
+      "name": "Investor Pressure",
+      "description": "Your investors are concerned about the lab's financial runway. They're pushing for more aggressive timelines.",
+      "type": "popup",
+      "trigger_type": "random",
+      "probability": 0.20,
+      "min_turn": 10,
+      "repeatable": true,
+      "options": [
+        {
+          "id": "compromise",
+          "text": "Accept faster timelines",
+          "costs": {},
+          "effects": {"money": 50000, "doom": 3},
+          "message": "Additional funding secured, but at what cost?"
+        },
+        {
+          "id": "stand_firm",
+          "text": "Maintain safety standards",
+          "costs": {},
+          "effects": {"reputation": 5},
+          "message": "Your commitment to safety is noted."
+        }
+      ]
+    }
+  ]
+}

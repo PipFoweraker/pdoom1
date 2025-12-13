@@ -1,0 +1,38 @@
+{
+  "title": "Bootstrap Mode",
+  "description": "Start with extra funding and resources. Perfect for learning the game mechanics without financial pressure.",
+  "author": "P(Doom) Team",
+  "version": "1.0",
+  "starting_resources": {
+    "money": 500000,
+    "compute": 200,
+    "research": 50,
+    "reputation": 60,
+    "doom": 40
+  },
+  "config": {
+    "start_year": 2017,
+    "start_month": 7,
+    "start_day": 3
+  },
+  "events": [
+    {
+      "id": "bootstrap_welcome",
+      "name": "Generous Benefactor",
+      "description": "An anonymous donor has taken interest in your lab's mission. They've provided additional resources to help you get started.",
+      "type": "popup",
+      "trigger_type": "turn_exact",
+      "trigger_turn": 1,
+      "repeatable": false,
+      "options": [
+        {
+          "id": "accept_gratefully",
+          "text": "Accept with gratitude",
+          "costs": {},
+          "effects": {"reputation": 5},
+          "message": "Your lab's reputation grows as word spreads of your backing."
+        }
+      ]
+    }
+  ]
+}
