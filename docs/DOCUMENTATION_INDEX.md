@@ -37,6 +37,7 @@ src/core/
 - `README.md` - Installation and quick start guide
 - `DEVELOPERGUIDE.md` - Comprehensive development documentation
 - `PLAYERGUIDE.md` - Gameplay instructions and controls
+- `SCENARIOS.md` - Custom scenario/mod creation guide
 - `KEYBOARD_REFERENCE.md` - Quick reference for game controls
 - `QUICK_REFERENCE.md` - Developer quick reference
 - `PRIVACY.md` - Privacy policy and data handling
