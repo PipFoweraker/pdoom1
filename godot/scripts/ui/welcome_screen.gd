@@ -10,8 +10,13 @@ extends Control
 @onready var guide_button = $VBox/MenuContainer/GuideButton
 @onready var keybindings_button = $VBox/MenuContainer/KeybindingsButton
 @onready var leaderboard_button = $VBox/MenuContainer/LeaderboardButton
+@onready var whats_new_button = $VBox/MenuContainer/WhatsNewButton
 @onready var ai_safety_button = $VBox/MenuContainer/AISafetyButton
 @onready var exit_button = $VBox/MenuContainer/ExitButton
+
+# What's New modal
+var whats_new_modal: Control = null
+const WHATS_NEW_SCENE = preload("res://scenes/ui/whats_new_modal.tscn")
 
 var menu_buttons: Array[Button] = []
 var selected_index: int = 0
@@ -31,6 +36,7 @@ func _ready():
 		guide_button,
 		keybindings_button,
 		leaderboard_button,
+		whats_new_button,
 		ai_safety_button,
 		exit_button
 	]
@@ -42,8 +48,12 @@ func _ready():
 	guide_button.pressed.connect(_on_guide_pressed)
 	keybindings_button.pressed.connect(_on_keybindings_pressed)
 	leaderboard_button.pressed.connect(_on_leaderboard_pressed)
+	whats_new_button.pressed.connect(_on_whats_new_pressed)
 	ai_safety_button.pressed.connect(_on_ai_safety_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
+
+	# Initialize What's New modal
+	_setup_whats_new_modal()
 
 	# Enable input processing for keyboard navigation
 	set_process_input(true)
@@ -145,6 +155,31 @@ func _on_ai_safety_pressed():
 func _on_exit_pressed():
 	print("[WelcomeScreen] Exiting game...")
 	get_tree().quit()
+
+func _on_whats_new_pressed():
+	print("[WelcomeScreen] Opening What's New...")
+	if whats_new_modal:
+		whats_new_modal.show_all_notes()
+
+func _setup_whats_new_modal():
+	"""Initialize the What's New modal and check for unseen patch notes"""
+	# Instance the modal
+	whats_new_modal = WHATS_NEW_SCENE.instantiate()
+	add_child(whats_new_modal)
+
+	# Connect the closed signal to restore focus
+	whats_new_modal.closed.connect(_on_whats_new_closed)
+
+	# Check if we should show the modal automatically (first launch after update)
+	if GameConfig.has_unseen_patch_notes():
+		print("[WelcomeScreen] New version detected! Showing What's New modal...")
+		# Delay slightly to ensure UI is ready
+		await get_tree().create_timer(0.3).timeout
+		whats_new_modal.show_modal(true)  # true = mark as seen
+
+func _on_whats_new_closed():
+	"""Handle modal close - restore button focus"""
+	_update_button_focus()
 
 func _show_placeholder_dialog(title: String, message: String):
 	"""Show a simple placeholder dialog for unimplemented features"""

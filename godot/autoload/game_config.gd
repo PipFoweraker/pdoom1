@@ -22,6 +22,10 @@ var current_game_active: bool = false
 var games_played: int = 0
 var config_mode: String = "default"  # "default" = weekly seed (locked), "custom" = user configured
 
+# Version tracking for What's New feature
+var last_seen_version: String = ""  # Empty = never seen patch notes
+const CURRENT_VERSION: String = "0.11.0"
+
 # Leaderboard State (transient, not saved)
 var latest_leaderboard_entry: String = ""  # UUID of most recent score entry
 
@@ -54,6 +58,7 @@ func save_config() -> void:
 	# Game section
 	config.set_value("game", "difficulty", difficulty)
 	config.set_value("game", "last_seed", game_seed)
+	config.set_value("game", "last_seen_version", last_seen_version)
 
 	# Audio section
 	config.set_value("audio", "master_volume", master_volume)
@@ -91,6 +96,7 @@ func load_config() -> void:
 	# Load game settings
 	difficulty = config.get_value("game", "difficulty", difficulty)
 	game_seed = config.get_value("game", "last_seed", game_seed)
+	last_seen_version = config.get_value("game", "last_seen_version", last_seen_version)
 
 	# Load audio settings
 	master_volume = config.get_value("audio", "master_volume", master_volume)
@@ -273,6 +279,22 @@ func format_money(amount: float) -> String:
 
 	return formatted
 
+## Check if there are unseen patch notes (new version since last seen)
+func has_unseen_patch_notes() -> bool:
+	if last_seen_version.is_empty():
+		return true  # Never seen any patch notes
+	return last_seen_version != CURRENT_VERSION
+
+## Mark current version's patch notes as seen
+func mark_patch_notes_seen() -> void:
+	last_seen_version = CURRENT_VERSION
+	save_config()
+	print("[GameConfig] Patch notes marked as seen for version %s" % CURRENT_VERSION)
+
+## Get the current game version
+func get_current_version() -> String:
+	return CURRENT_VERSION
+
 ## Debug print current configuration
 func print_config() -> void:
 	print("[GameConfig] === Current Configuration ===")
@@ -286,4 +308,6 @@ func print_config() -> void:
 	print("  Graphics: %s" % get_graphics_quality_string())
 	print("  Fullscreen: %s" % fullscreen)
 	print("  Games Played: %d" % games_played)
+	print("  Last Seen Version: %s" % last_seen_version)
+	print("  Current Version: %s" % CURRENT_VERSION)
 	print("========================================")

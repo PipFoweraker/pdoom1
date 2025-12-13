@@ -37,7 +37,7 @@ func start_new_game(game_seed: String = ""):
 	is_initialized = true
 
 	# Start verification tracking
-	var game_version = "0.11.0"  # TODO: Get from GameConfig or version constant
+	var game_version = GameConfig.CURRENT_VERSION
 	VerificationTracker.enable_debug()  # Enable verbose logging
 	VerificationTracker.start_tracking(game_seed, game_version)
 	print("[GameManager] Verification tracking enabled (debug mode: ON)")
