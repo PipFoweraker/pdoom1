@@ -40,6 +40,62 @@
     {
       "id": "ui_save_archive",
       "prompt_tail": "small open case icon resting on a thin plate, holding a neat stack of futuristic data cartridges, one cartridge pulled slightly forward and glowing faint blue, suggested label lines but no text, plain dark brown-to-black gradient background with soft vignette"
+    },
+    {
+      "id": "action_travel_conference",
+      "prompt_tail": "stylised airplane icon flying diagonally upward over a small podium or lectern symbol, subtle contrail behind the plane, podium has a tiny glowing microphone shape, warm amber and cool blue highlights suggesting travel and presentation, plain dark navy gradient background with soft vignette"
+    },
+    {
+      "id": "action_submit_paper",
+      "prompt_tail": "academic document icon with folded corner floating above a submission slot or mailbox opening, document showing abstract horizontal lines suggesting text, small star or checkmark badge on the corner glowing softly, teal and white highlights, plain dark blue-grey gradient background with vignette"
+    },
+    {
+      "id": "action_attend_conference",
+      "prompt_tail": "simple conference badge icon hanging from a lanyard ribbon, badge showing abstract ID photo placeholder and horizontal lines, small star icon in corner suggesting VIP or presenter status, warm orange and gold highlights, plain dark teal gradient background with soft vignette"
+    },
+    {
+      "id": "status_jet_lag",
+      "prompt_tail": "clock icon with spinning hands or motion blur effect, combined with a small tired face or drooping symbol, zigzag lines suggesting dizziness or fatigue around the clock, muted yellow and grey tones, plain dark purple-grey gradient background with soft vignette"
+    },
+    {
+      "id": "conference_neurips",
+      "prompt_tail": "abstract neural network pattern forming a stylised brain shape, nodes connected by glowing blue lines, surrounded by a circular conference badge outline, futuristic academic feel, cyan and white highlights on deep blue, plain dark navy background with soft vignette"
+    },
+    {
+      "id": "conference_icml",
+      "prompt_tail": "machine learning symbol with interconnected geometric shapes forming an abstract learning pattern, small gear integrated into the design, academic seal styling around the edge, warm orange and white highlights, plain dark brown-grey gradient background with vignette"
+    },
+    {
+      "id": "conference_safety",
+      "prompt_tail": "shield icon with a small AI circuit pattern inside, protective and academic feel, subtle halo glow around the shield suggesting safety and ethics, green and silver highlights, plain dark forest green gradient background with soft vignette"
+    },
+    {
+      "id": "paper_drafting",
+      "prompt_tail": "document icon with pencil or quill writing on it, abstract wavy lines suggesting work in progress, small hourglass or timer symbol in corner, warm amber highlights suggesting creative work, plain dark sepia gradient background with soft vignette"
+    },
+    {
+      "id": "paper_under_review",
+      "prompt_tail": "document icon with magnifying glass hovering over it, abstract question marks or evaluation symbols around it, subtle waiting or pending indicator, cool blue and grey tones, plain dark slate gradient background with soft vignette"
+    },
+    {
+      "id": "paper_accepted",
+      "prompt_tail": "document icon with bold checkmark stamp on it, celebratory sparkle effects around the edges, ribbon or seal in corner suggesting approval, bright green and gold highlights, plain dark emerald gradient background with soft vignette"
+    },
+    {
+      "id": "paper_rejected",
+      "prompt_tail": "document icon with X mark or rejection stamp, subtle crumple or fade effect, small sad indicator, muted red and grey tones suggesting disappointment but not harsh, plain dark maroon gradient background with soft vignette"
+    },
+    {
+      "id": "travel_economy",
+      "prompt_tail": "simple compact airplane seat icon seen from side, basic and functional design, small price tag symbol suggesting budget option, neutral grey and blue tones, plain dark grey gradient background with soft vignette"
+    },
+    {
+      "id": "travel_business",
+      "prompt_tail": "comfortable airplane seat icon with more padding and legroom suggested, small briefcase symbol integrated, professional feel, warm leather brown and gold highlights, plain dark charcoal gradient background with soft vignette"
+    },
+    {
+      "id": "travel_first_class",
+      "prompt_tail": "luxurious reclining seat icon with star or crown symbol, champagne glass or premium indicator nearby, elegant and exclusive feel, rich purple and gold highlights, plain dark royal purple gradient background with soft vignette"
     }
   ]
 }
