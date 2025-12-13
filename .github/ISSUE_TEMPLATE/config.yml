@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & Discussion
+    url: https://github.com/PipFoweraker/pdoom1/discussions
+    about: Ask questions or start a discussion about the game
+  - name: In-Game Bug Reporter
+    url: https://pdoom1.com
+    about: Press F8 in-game for the built-in bug reporter
