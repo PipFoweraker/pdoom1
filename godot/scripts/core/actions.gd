@@ -6,13 +6,6 @@ static func get_all_actions() -> Array[Dictionary]:
 	"""Return all available actions"""
 	return [
 		{
-			"id": "pass",
-			"name": "Do Nothing (Pass)",
-			"description": "Skip this action. Conserve resources but waste time.",
-			"costs": {},  # Free action, always available
-			"category": "management"
-		},
-		{
 			"id": "hire_staff",
 			"name": "Hire Staff",
 			"description": "Open hiring menu to recruit researchers",
@@ -78,12 +71,14 @@ static func get_all_actions() -> Array[Dictionary]:
 			"costs": {"money": 40000, "action_points": 2},
 			"category": "research"
 		},
+		# Operations submenu for routine management tasks
 		{
-			"id": "order_supplies",
-			"name": "Order Office Supplies",
-			"description": "Restock stationery (+50 supplies). Staff consume supplies each turn.",
-			"costs": {"money": 2000, "action_points": 1},
-			"category": "management"
+			"id": "operations",
+			"name": "Operations",
+			"description": "Routine office operations and maintenance",
+			"costs": {},  # No cost to open menu
+			"category": "management",
+			"is_submenu": true
 		},
 		# Strategic submenu for high-cost/risky actions
 		{
@@ -126,6 +121,12 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 	for action in get_travel_options():
 		if action["id"] == action_id:
 			return action
+	for action in get_operations_options():
+		if action["id"] == action_id:
+			return action
+	# Special pass action (not in any submenu)
+	if action_id == "pass":
+		return get_pass_action()
 	return {}
 
 static func get_hiring_options() -> Array[Dictionary]:
@@ -305,6 +306,35 @@ static func get_travel_options() -> Array[Dictionary]:
 		}
 	]
 
+static func get_operations_options() -> Array[Dictionary]:
+	"""Get all operations/maintenance submenu options"""
+	return [
+		{
+			"id": "order_supplies",
+			"name": "Order Office Supplies",
+			"description": "Restock stationery (+50 supplies). Staff consume supplies each turn.",
+			"costs": {"money": 2000, "action_points": 1},
+			"category": "operations"
+		},
+		{
+			"id": "office_maintenance",
+			"name": "Office Maintenance",
+			"description": "Routine repairs and cleaning. Improves morale slightly.",
+			"costs": {"money": 5000, "action_points": 1},
+			"category": "operations"
+		}
+	]
+
+static func get_pass_action() -> Dictionary:
+	"""Get the special pass/do nothing action (shown in command zone, not action list)"""
+	return {
+		"id": "pass",
+		"name": "Do Nothing",
+		"description": "Skip this action. Conserve resources but waste time.",
+		"costs": {},  # Free action, always available
+		"category": "command"
+	}
+
 static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	"""Execute an action, modify state, return result
 	Note: AP costs are handled by the commit system in game_manager.gd (committed_ap).
@@ -427,6 +457,11 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			# Submenu action - doesn't execute, opens dialog (Issue #468)
 			result["message"] = "Opening travel menu..."
 			result["open_submenu"] = "travel"
+
+		"operations":
+			# Submenu action - opens operations menu
+			result["message"] = "Opening operations menu..."
+			result["open_submenu"] = "operations"
 
 		"submit_paper":
 			# Paper submission action (Issue #468)

@@ -1,0 +1,169 @@
+[gd_scene load_steps=4 format=3 uid="uid://staffperkscompact1"]
+
+[ext_resource type="Script" path="res://scripts/ui/staff_perks_compact.gd" id="1_compact_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_CompactBg"]
+bg_color = Color(0.1, 0.12, 0.1, 0.9)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.4, 0.3, 0.6)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_PerkSlotMini"]
+bg_color = Color(0.15, 0.18, 0.15, 0.8)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.35, 0.25, 0.6)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[node name="StaffPerksCompact" type="PanelContainer"]
+custom_minimum_size = Vector2(180, 80)
+theme_override_styles/panel = SubResource("StyleBoxFlat_CompactBg")
+script = ExtResource("1_compact_script")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Header" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="NameLabel" type="Label" parent="VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Dr. Vance"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.8, 0.9, 0.8, 1)
+
+[node name="SkillLabel" type="Label" parent="VBox/Header"]
+layout_mode = 2
+text = "Lv.7"
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.6, 0.8, 0.6, 0.8)
+
+[node name="PerksRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Tier1Slot" type="Panel" parent="VBox/PerksRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+tooltip_text = "Tier 1: Methodical
++10% research quality"
+theme_override_styles/panel = SubResource("StyleBoxFlat_PerkSlotMini")
+
+[node name="Icon" type="Label" parent="VBox/PerksRow/Tier1Slot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = -10.0
+offset_right = 12.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "M"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.5, 0.7, 0.9, 1)
+
+[node name="Tier2Slot" type="Panel" parent="VBox/PerksRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+tooltip_text = "Tier 2: Locked
+Requires Skill 6+"
+theme_override_styles/panel = SubResource("StyleBoxFlat_PerkSlotMini")
+
+[node name="Icon" type="Label" parent="VBox/PerksRow/Tier2Slot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = -10.0
+offset_right = 12.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "?"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.5)
+
+[node name="Tier3Slot" type="Panel" parent="VBox/PerksRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+tooltip_text = "Tier 3: Locked
+Requires Skill 8+"
+theme_override_styles/panel = SubResource("StyleBoxFlat_PerkSlotMini")
+
+[node name="Icon" type="Label" parent="VBox/PerksRow/Tier3Slot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -12.0
+offset_top = -10.0
+offset_right = 12.0
+offset_bottom = 10.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "?"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.5)
+
+[node name="Spacer" type="Control" parent="VBox/PerksRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExpandButton" type="Button" parent="VBox/PerksRow"]
+custom_minimum_size = Vector2(50, 24)
+layout_mode = 2
+focus_mode = 0
+text = "MORE"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.6, 0.8, 0.6, 0.8)
+
+[node name="StatusRow" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SpecLabel" type="Label" parent="VBox/StatusRow"]
+layout_mode = 2
+text = "SAFETY"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.3, 0.8, 0.3, 0.8)
+
+[node name="Separator" type="Label" parent="VBox/StatusRow"]
+layout_mode = 2
+text = "|"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.5)
+
+[node name="ProdLabel" type="Label" parent="VBox/StatusRow"]
+layout_mode = 2
+text = "98%"
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.7, 0.9, 0.7, 0.8)

@@ -1,0 +1,753 @@
+[gd_scene load_steps=5 format=3 uid="uid://staffperks123456"]
+
+[ext_resource type="Script" path="res://scripts/ui/staff_perks_panel.gd" id="1_perks_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_PanelBg"]
+bg_color = Color(0.08, 0.1, 0.08, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.5, 0.3, 0.8)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_PerkSlot"]
+bg_color = Color(0.12, 0.15, 0.12, 0.9)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.25, 0.35, 0.25, 0.8)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_EquippedBar"]
+bg_color = Color(0.1, 0.12, 0.1, 0.95)
+border_width_left = 1
+border_width_top = 2
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.6, 0.4, 0.6)
+
+[node name="StaffPerksPanel" type="Panel"]
+custom_minimum_size = Vector2(900, 600)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = -300.0
+offset_right = 450.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_PanelBg")
+script = ExtResource("1_perks_script")
+
+[node name="MainLayout" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+theme_override_constants/separation = 15
+
+[node name="LeftColumn" type="VBoxContainer" parent="MainLayout"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 12
+
+[node name="Header" type="Label" parent="MainLayout/LeftColumn"]
+layout_mode = 2
+text = "RESEARCHER PERKS"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.3, 0.8, 0.3, 1)
+
+[node name="Tier1Container" type="VBoxContainer" parent="MainLayout/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Tier1Label" type="Label" parent="MainLayout/LeftColumn/Tier1Container"]
+layout_mode = 2
+text = "TIER 1  FOUNDATION"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.5, 0.7, 0.9, 1)
+
+[node name="Tier1Grid" type="HBoxContainer" parent="MainLayout/LeftColumn/Tier1Container"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Perk1_1" type="Button" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+tooltip_text = "METHODICAL
++10% research quality
+Careful, thorough approach"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="Icon" type="Label" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid/Perk1_1"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[M]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.8, 0.4, 1)
+
+[node name="Perk1_2" type="Button" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+tooltip_text = "FAST LEARNER
++50% skill growth rate
+Rapidly improves over time"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="Icon" type="Label" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid/Perk1_2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[F]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.6, 0.8, 1)
+
+[node name="Perk1_3" type="Button" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Skill Level 5"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid/Perk1_3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk1_4" type="Button" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Skill Level 5"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid/Perk1_4"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk1_5" type="Button" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Skill Level 5"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier1Container/Tier1Grid/Perk1_5"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Tier2Container" type="VBoxContainer" parent="MainLayout/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Tier2Label" type="Label" parent="MainLayout/LeftColumn/Tier2Container"]
+layout_mode = 2
+text = "TIER 2  SPECIALIZATION"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.9, 0.7, 0.3, 1)
+
+[node name="Tier2Grid" type="HBoxContainer" parent="MainLayout/LeftColumn/Tier2Container"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Perk2_1" type="Button" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 1 perk + Skill 6"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid/Perk2_1"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk2_2" type="Button" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 1 perk + Skill 6"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid/Perk2_2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk2_3" type="Button" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 1 perk + Skill 6"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid/Perk2_3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk2_4" type="Button" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 1 perk + Skill 6"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid/Perk2_4"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk2_5" type="Button" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 1 perk + Skill 6"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier2Container/Tier2Grid/Perk2_5"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Tier3Container" type="VBoxContainer" parent="MainLayout/LeftColumn"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Tier3Label" type="Label" parent="MainLayout/LeftColumn/Tier3Container"]
+layout_mode = 2
+text = "TIER 3  MASTERY"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.8, 0.4, 0.9, 1)
+
+[node name="Tier3Grid" type="HBoxContainer" parent="MainLayout/LeftColumn/Tier3Container"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Perk3_1" type="Button" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 2 perk + Skill 8"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid/Perk3_1"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk3_2" type="Button" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 2 perk + Skill 8"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid/Perk3_2"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk3_3" type="Button" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 2 perk + Skill 8"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid/Perk3_3"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk3_4" type="Button" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 2 perk + Skill 8"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid/Perk3_4"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Perk3_5" type="Button" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid"]
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+focus_mode = 0
+disabled = true
+tooltip_text = "LOCKED
+Requires: Tier 2 perk + Skill 8"
+theme_override_styles/normal = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="LockIcon" type="Label" parent="MainLayout/LeftColumn/Tier3Container/Tier3Grid/Perk3_5"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_right = 20.0
+offset_bottom = 15.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "[?]"
+horizontal_alignment = 1
+vertical_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="EquippedSection" type="VBoxContainer" parent="MainLayout/LeftColumn"]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_constants/separation = 6
+
+[node name="EquippedLabel" type="Label" parent="MainLayout/LeftColumn/EquippedSection"]
+layout_mode = 2
+text = "EQUIPPED"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+
+[node name="EquippedBar" type="HBoxContainer" parent="MainLayout/LeftColumn/EquippedSection"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Slot1" type="PanelContainer" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar"]
+custom_minimum_size = Vector2(90, 70)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_EquippedBar")
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot1"]
+layout_mode = 2
+alignment = 1
+
+[node name="SlotLabel" type="Label" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot1/VBox"]
+layout_mode = 2
+text = "/TIER 1"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.5, 0.7, 0.9, 0.7)
+
+[node name="PerkName" type="Label" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot1/VBox"]
+layout_mode = 2
+text = "METHODICAL"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.4, 0.8, 0.4, 1)
+
+[node name="Slot2" type="PanelContainer" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar"]
+custom_minimum_size = Vector2(90, 70)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_EquippedBar")
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot2"]
+layout_mode = 2
+alignment = 1
+
+[node name="SlotLabel" type="Label" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot2/VBox"]
+layout_mode = 2
+text = "/TIER 2"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.9, 0.7, 0.3, 0.7)
+
+[node name="PerkName" type="Label" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot2/VBox"]
+layout_mode = 2
+text = "---"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="Slot3" type="PanelContainer" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar"]
+custom_minimum_size = Vector2(90, 70)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_EquippedBar")
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot3"]
+layout_mode = 2
+alignment = 1
+
+[node name="SlotLabel" type="Label" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot3/VBox"]
+layout_mode = 2
+text = "/TIER 3"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.8, 0.4, 0.9, 0.7)
+
+[node name="PerkName" type="Label" parent="MainLayout/LeftColumn/EquippedSection/EquippedBar/Slot3/VBox"]
+layout_mode = 2
+text = "---"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 0.6)
+
+[node name="CenterColumn" type="VBoxContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="ResearcherPreview" type="Panel" parent="MainLayout/CenterColumn"]
+custom_minimum_size = Vector2(250, 300)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_PerkSlot")
+
+[node name="VBox" type="VBoxContainer" parent="MainLayout/CenterColumn/ResearcherPreview"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+alignment = 1
+
+[node name="SpecIcon" type="Label" parent="MainLayout/CenterColumn/ResearcherPreview/VBox"]
+layout_mode = 2
+text = "[SAFETY]"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 48
+theme_override_colors/font_color = Color(0.3, 0.8, 0.3, 0.8)
+
+[node name="AsciiArt" type="Label" parent="MainLayout/CenterColumn/ResearcherPreview/VBox"]
+layout_mode = 2
+text = "   ___
+  /   \\
+ | o o |
+ |  ^  |
+  \\___/
+   |||"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.5, 0.7, 0.5, 0.6)
+
+[node name="NameLabel" type="Label" parent="MainLayout/CenterColumn/ResearcherPreview/VBox"]
+layout_mode = 2
+text = "DR. ELENA VANCE"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+
+[node name="TitleLabel" type="Label" parent="MainLayout/CenterColumn/ResearcherPreview/VBox"]
+layout_mode = 2
+text = "Safety Researcher | Skill 7/10"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.6, 0.8, 0.6, 0.8)
+
+[node name="RightColumn" type="VBoxContainer" parent="MainLayout"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_constants/separation = 10
+
+[node name="PerkHeader" type="VBoxContainer" parent="MainLayout/RightColumn"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="TierBadge" type="Label" parent="MainLayout/RightColumn/PerkHeader"]
+layout_mode = 2
+text = ">TIER 1  FOUNDATION"
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.5, 0.7, 0.9, 0.8)
+
+[node name="PerkTitle" type="Label" parent="MainLayout/RightColumn/PerkHeader"]
+layout_mode = 2
+text = "METHODICAL"
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+
+[node name="Divider" type="HSeparator" parent="MainLayout/RightColumn"]
+layout_mode = 2
+modulate = Color(0.3, 0.5, 0.3, 0.5)
+
+[node name="PerkDescription" type="RichTextLabel" parent="MainLayout/RightColumn"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#88cc88]Improves research quality and reduces errors.[/color]
+
+- [color=#aaddaa]Research Quality[/color]: +10%
+- [color=#aaddaa]Error Rate[/color]: -15%
+- [color=#aaddaa]Review Time[/color]: +5%
+
+[color=#888888]A methodical approach catches mistakes early and produces more reliable results, though it takes slightly longer.[/color]"
+scroll_following = true
+theme_override_font_sizes/normal_font_size = 12
+
+[node name="Spacer" type="Control" parent="MainLayout/RightColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Requirements" type="VBoxContainer" parent="MainLayout/RightColumn"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 4
+
+[node name="ReqHeader" type="Label" parent="MainLayout/RightColumn/Requirements"]
+layout_mode = 2
+text = "REQUIREMENTS"
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 0.8)
+
+[node name="ReqList" type="Label" parent="MainLayout/RightColumn/Requirements"]
+layout_mode = 2
+text = "[x] Skill Level 4+
+[x] Safety Specialization
+[ ] 10 turns employed"
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.7, 0.9, 0.7, 0.9)
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 36.0
+grow_horizontal = 0
+text = "X"
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.8, 0.3, 0.3, 1)
