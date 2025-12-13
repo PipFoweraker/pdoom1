@@ -1,0 +1,70 @@
+name: Content Request
+description: Suggest new game content (events, actions, upgrades, etc.)
+title: "[Content]: "
+labels: ["content", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        P(Doom) is data-driven - new content can often be added by editing JSON files!
+
+        Suggest new events, actions, upgrades, or other game content below.
+
+  - type: dropdown
+    id: content-type
+    attributes:
+      label: Content Type
+      description: What type of content are you suggesting?
+      options:
+        - Event (random occurrence during gameplay)
+        - Action (something the player can do)
+        - Upgrade (permanent improvement to purchase)
+        - Researcher Trait (new trait for researchers)
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: name
+    attributes:
+      label: Content Name
+      description: What would you call this content?
+      placeholder: "e.g., 'AI Winter Event' or 'Hire PR Manager'"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the content in detail
+      placeholder: |
+        What does it do?
+        When should it appear/be available?
+        What are the effects?
+    validations:
+      required: true
+
+  - type: textarea
+    id: balance
+    attributes:
+      label: Balance Considerations
+      description: How would this affect game balance?
+      placeholder: |
+        Costs, benefits, timing, frequency, etc.
+        How does it compare to existing similar content?
+
+  - type: textarea
+    id: flavor
+    attributes:
+      label: Flavor Text / Theme
+      description: Any suggested in-game text or thematic notes?
+      placeholder: "The event could say: 'A major tech company announces...'"
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you like to implement this yourself?
+      options:
+        - label: I would be willing to add this content (just needs JSON editing!)
