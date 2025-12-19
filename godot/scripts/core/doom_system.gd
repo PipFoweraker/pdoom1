@@ -216,13 +216,21 @@ func _calculate_rival_doom(_state: GameState):
 
 func _calculate_unproductive_doom(state: GameState):
 	"""Doom from unproductive employees"""
-	var unmanaged = state.get_unmanaged_count()
-	var total_staff = state.safety_researchers + state.capability_researchers + state.compute_engineers
+	# Use researchers array if available (new system), otherwise use legacy counts
+	var total_staff: int
+	if state.researchers.size() > 0:
+		total_staff = state.researchers.size()
+	else:
+		total_staff = state.safety_researchers + state.capability_researchers + state.compute_engineers
+
 	var management_capacity = state.get_management_capacity()
 	var managed = min(total_staff, management_capacity)
 	var available_compute = int(state.compute)
 	var productive = min(managed, available_compute)
-	var total_unproductive = (total_staff - productive) + unmanaged
+
+	# Unproductive = total staff minus those who are both managed AND have compute
+	# This correctly counts: unmanaged + managed-but-no-compute
+	var total_unproductive = total_staff - productive
 
 	doom_sources["unproductive"] = total_unproductive * 0.5
 

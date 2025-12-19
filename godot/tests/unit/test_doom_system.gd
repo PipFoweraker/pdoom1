@@ -302,3 +302,74 @@ func test_get_doom_trend_strongly_decreasing():
 
 	doom_system.doom_velocity = -3.0
 	assert_eq(doom_system._get_doom_trend(), "strongly_decreasing", "High negative velocity should be 'strongly_decreasing'")
+
+# ============================================================================
+# UNPRODUCTIVE DOOM TESTS (Issue #424)
+# ============================================================================
+
+func test_unproductive_doom_no_staff():
+	# Test that no staff means no unproductive doom
+	var doom_system = _create_doom_system()
+	var state = _create_minimal_game_state()
+
+	doom_system._calculate_unproductive_doom(state)
+
+	assert_eq(doom_system.doom_sources["unproductive"], 0.0, "No staff should mean no unproductive doom")
+
+func test_unproductive_doom_all_productive():
+	# Test that fully productive staff generates no unproductive doom
+	var doom_system = _create_doom_system()
+	var state = _create_minimal_game_state()
+
+	# Add 5 researchers (under management capacity of 9, compute is 100)
+	state.safety_researchers = 5
+
+	doom_system._calculate_unproductive_doom(state)
+
+	assert_eq(doom_system.doom_sources["unproductive"], 0.0, "All productive staff should mean no unproductive doom")
+
+func test_unproductive_doom_unmanaged():
+	# Test that unmanaged employees contribute to doom (Issue #424 fix)
+	var doom_system = _create_doom_system()
+	var state = _create_minimal_game_state()
+
+	# Add 12 researchers with 0 managers (capacity = 9, so 3 unmanaged)
+	state.safety_researchers = 12
+	state.managers = 0
+
+	doom_system._calculate_unproductive_doom(state)
+
+	# 3 unmanaged * 0.5 = 1.5 doom
+	assert_eq(doom_system.doom_sources["unproductive"], 1.5, "Unmanaged employees should contribute 0.5 doom each")
+
+func test_unproductive_doom_no_compute():
+	# Test that employees without compute are unproductive
+	var doom_system = _create_doom_system()
+	var state = _create_minimal_game_state()
+
+	# 5 researchers, but only 2 compute available
+	state.safety_researchers = 5
+	state.compute = 2.0
+
+	doom_system._calculate_unproductive_doom(state)
+
+	# 3 without compute * 0.5 = 1.5 doom
+	assert_eq(doom_system.doom_sources["unproductive"], 1.5, "Employees without compute should contribute doom")
+
+func test_unproductive_doom_no_double_counting():
+	# Test that unmanaged employees are not double-counted (Issue #424 fix)
+	var doom_system = _create_doom_system()
+	var state = _create_minimal_game_state()
+
+	# 15 researchers with 0 managers (capacity = 9)
+	# 6 unmanaged, 9 managed
+	# With 100 compute, all 9 managed can work
+	state.safety_researchers = 15
+	state.managers = 0
+	state.compute = 100.0
+
+	doom_system._calculate_unproductive_doom(state)
+
+	# Only 6 unproductive (not 6 + 6 from double counting)
+	# 6 * 0.5 = 3.0 doom
+	assert_eq(doom_system.doom_sources["unproductive"], 3.0, "Unmanaged should not be double-counted")
