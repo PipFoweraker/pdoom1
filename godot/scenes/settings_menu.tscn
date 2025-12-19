@@ -313,6 +313,130 @@ popup/item_1/id = 1
 popup/item_2/text = "High Contrast"
 popup/item_2/id = 2
 
+[node name="HSeparator4" type="HSeparator" parent="VBox/SettingsContainer"]
+layout_mode = 2
+
+[node name="AccessibilitySettings" type="VBoxContainer" parent="VBox/SettingsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AccessibilityLabel" type="Label" parent="VBox/SettingsContainer/AccessibilitySettings"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Accessibility"
+
+[node name="ColorblindRow" type="HBoxContainer" parent="VBox/SettingsContainer/AccessibilitySettings"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Label" type="Label" parent="VBox/SettingsContainer/AccessibilitySettings/ColorblindRow"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Colorblind Mode:"
+
+[node name="CheckBox" type="CheckButton" parent="VBox/SettingsContainer/AccessibilitySettings/ColorblindRow"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+tooltip_text = "Adds patterns and symbols alongside colors for better visibility"
+
+[node name="HSeparator5" type="HSeparator" parent="VBox/SettingsContainer"]
+layout_mode = 2
+
+[node name="KeyboardShortcuts" type="VBoxContainer" parent="VBox/SettingsContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="KeyboardLabel" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "Keyboard Shortcuts"
+
+[node name="ShortcutsGrid" type="GridContainer" parent="VBox/SettingsContainer/KeyboardShortcuts"]
+layout_mode = 2
+theme_override_constants/h_separation = 30
+theme_override_constants/v_separation = 4
+columns = 2
+
+[node name="Key1" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "[1-9]"
+
+[node name="Desc1" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Select action"
+
+[node name="Key2" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "[Space/Enter]"
+
+[node name="Desc2" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "End turn"
+
+[node name="Key3" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "[Esc]"
+
+[node name="Desc3" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Cancel / Pause menu"
+
+[node name="Key4" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "[Q/W/E/R]"
+
+[node name="Desc4" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Dialog options"
+
+[node name="Key5" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "[F5]"
+
+[node name="Desc5" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Quick save"
+
+[node name="Key6" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "[F8]"
+
+[node name="Desc6" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Bug report"
+
+[node name="Key7" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
+theme_override_font_sizes/font_size = 14
+text = "[F9]"
+
+[node name="Desc7" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts/ShortcutsGrid"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Quick load"
+
 [node name="Spacer" type="Control" parent="VBox"]
 layout_mode = 2
 size_flags_vertical = 3
@@ -350,5 +474,6 @@ text = "Back"
 [connection signal="item_selected" from="VBox/SettingsContainer/GraphicsSettings/QualityRow/OptionButton" to="." method="_on_graphics_quality_changed"]
 [connection signal="toggled" from="VBox/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox" to="." method="_on_fullscreen_toggled"]
 [connection signal="item_selected" from="VBox/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton" to="." method="_on_difficulty_changed"]
+[connection signal="toggled" from="VBox/SettingsContainer/AccessibilitySettings/ColorblindRow/CheckBox" to="." method="_on_colorblind_toggled"]
 [connection signal="pressed" from="VBox/ButtonRow/ApplyButton" to="." method="_on_apply_pressed"]
 [connection signal="pressed" from="VBox/ButtonRow/BackButton" to="." method="_on_back_pressed"]
