@@ -555,16 +555,29 @@ func _on_actions_available(actions: Array):
 		if child.name != "TestActionButton":
 			child.queue_free()
 
-	# Get current state for affordability checking
+	# Get current state for affordability and unlock checking
 	var current_state = game_manager.get_game_state()
 
-	# Group actions by category
+	# Filter actions by unlock status (Issue #415: Action Discovery)
+	var unlocked_count = 0
+	var locked_count = 0
+
+	# Group actions by category, filtering out locked actions
 	var categories = {}
 	for action in actions:
+		# Check if action is unlocked based on game state
+		if not GameActions.is_action_unlocked(action, current_state):
+			locked_count += 1
+			continue  # Skip locked actions - they won't be shown
+
+		unlocked_count += 1
 		var category = action.get("category", "other")
 		if not categories.has(category):
 			categories[category] = []
 		categories[category].append(action)
+
+	if locked_count > 0:
+		print("[MainUI] Action Discovery: %d unlocked, %d locked (hidden)" % [unlocked_count, locked_count])
 
 	# Define category order
 	var category_order = ["hiring", "resources", "research", "funding", "management", "influence", "strategic", "other"]
