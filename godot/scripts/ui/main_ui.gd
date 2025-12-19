@@ -316,6 +316,12 @@ func _on_end_turn_button_pressed():
 	if current_state.money <= 20000:
 		warnings.append("[color=red]⚠️ CRITICAL: Low funds (%s) - Can't afford much![/color]" % GameConfig.format_money(current_state.money))
 
+	# Technical debt warning (Issue #416)
+	if current_state.technical_debt >= 75:
+		warnings.append("[color=red]⚠️ CRITICAL: Technical debt at %.0f%% - High failure risk![/color]" % current_state.technical_debt)
+	elif current_state.technical_debt >= 50:
+		warnings.append("[color=yellow]⚠️ WARNING: Technical debt at %.0f%% - Consider an audit![/color]" % current_state.technical_debt)
+
 	# Show warnings if any
 	if warnings.size() > 0:
 		for warning in warnings:
@@ -555,16 +561,29 @@ func _on_actions_available(actions: Array):
 		if child.name != "TestActionButton":
 			child.queue_free()
 
-	# Get current state for affordability checking
+	# Get current state for affordability and unlock checking
 	var current_state = game_manager.get_game_state()
 
-	# Group actions by category
+	# Filter actions by unlock status (Issue #415: Action Discovery)
+	var unlocked_count = 0
+	var locked_count = 0
+
+	# Group actions by category, filtering out locked actions
 	var categories = {}
 	for action in actions:
+		# Check if action is unlocked based on game state
+		if not GameActions.is_action_unlocked(action, current_state):
+			locked_count += 1
+			continue  # Skip locked actions - they won't be shown
+
+		unlocked_count += 1
 		var category = action.get("category", "other")
 		if not categories.has(category):
 			categories[category] = []
 		categories[category].append(action)
+
+	if locked_count > 0:
+		print("[MainUI] Action Discovery: %d unlocked, %d locked (hidden)" % [unlocked_count, locked_count])
 
 	# Define category order
 	var category_order = ["hiring", "resources", "research", "funding", "management", "influence", "strategic", "other"]

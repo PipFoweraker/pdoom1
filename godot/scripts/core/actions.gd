@@ -1,6 +1,102 @@
 extends Node
 class_name GameActions
 ## Action definitions - what players can do
+##
+## Actions can have unlock conditions that determine when they become visible.
+## Unlock conditions are checked via is_action_unlocked() before displaying.
+##
+## Unlock condition types:
+##   turn_min: int - Minimum turn number to unlock
+##   staff_min: int - Minimum total staff count to unlock
+##   reputation_min: float - Minimum reputation to unlock
+##   papers_min: int - Minimum papers published to unlock
+##   has_upgrade: String - Requires specific upgrade to be purchased
+##   research_min: float - Minimum research points to unlock
+
+
+## Check if an action is unlocked based on game state
+static func is_action_unlocked(action: Dictionary, state: Dictionary) -> bool:
+	"""Check if action unlock conditions are met"""
+	var conditions = action.get("unlock_conditions", {})
+
+	# No conditions = always unlocked
+	if conditions.is_empty():
+		return true
+
+	# Check turn requirement
+	if conditions.has("turn_min"):
+		if state.get("turn", 0) < conditions["turn_min"]:
+			return false
+
+	# Check staff requirement
+	if conditions.has("staff_min"):
+		if state.get("total_staff", 0) < conditions["staff_min"]:
+			return false
+
+	# Check reputation requirement
+	if conditions.has("reputation_min"):
+		if state.get("reputation", 0) < conditions["reputation_min"]:
+			return false
+
+	# Check papers requirement
+	if conditions.has("papers_min"):
+		if state.get("papers", 0) < conditions["papers_min"]:
+			return false
+
+	# Check research requirement
+	if conditions.has("research_min"):
+		if state.get("research", 0) < conditions["research_min"]:
+			return false
+
+	# Check upgrade requirement
+	if conditions.has("has_upgrade"):
+		var purchased = state.get("purchased_upgrades", [])
+		if not purchased.has(conditions["has_upgrade"]):
+			return false
+
+	return true
+
+
+## Get unlock status description for UI tooltip
+static func get_unlock_hint(action: Dictionary, state: Dictionary) -> String:
+	"""Get a hint about what's needed to unlock an action"""
+	var conditions = action.get("unlock_conditions", {})
+	var hints: Array[String] = []
+
+	if conditions.has("turn_min"):
+		var current = state.get("turn", 0)
+		var required = conditions["turn_min"]
+		if current < required:
+			hints.append("Unlocks at turn %d" % required)
+
+	if conditions.has("staff_min"):
+		var current = state.get("total_staff", 0)
+		var required = conditions["staff_min"]
+		if current < required:
+			hints.append("Requires %d staff (%d/%d)" % [required, current, required])
+
+	if conditions.has("reputation_min"):
+		var current = state.get("reputation", 0)
+		var required = conditions["reputation_min"]
+		if current < required:
+			hints.append("Requires %.0f reputation (%.0f/%.0f)" % [required, current, required])
+
+	if conditions.has("papers_min"):
+		var current = state.get("papers", 0)
+		var required = conditions["papers_min"]
+		if current < required:
+			hints.append("Requires %d papers (%d/%d)" % [required, current, required])
+
+	if conditions.has("has_upgrade"):
+		var upgrade_id = conditions["has_upgrade"]
+		var purchased = state.get("purchased_upgrades", [])
+		if not purchased.has(upgrade_id):
+			hints.append("Requires upgrade: %s" % upgrade_id)
+
+	if hints.is_empty():
+		return ""
+	return " | ".join(hints)
+
 
 static func get_all_actions() -> Array[Dictionary]:
 	"""Return all available actions"""
@@ -62,14 +158,16 @@ static func get_all_actions() -> Array[Dictionary]:
 			"name": "Team Building",
 			"description": "Improve morale, reduce doom slightly",
 			"costs": {"money": 10000, "action_points": 1},
-			"category": "management"
+			"category": "management",
+			"unlock_conditions": {"staff_min": 2}  # Unlocks when you have 2+ staff
 		},
 		{
 			"id": "audit_safety",
 			"name": "Safety Audit",
 			"description": "Comprehensive safety review",
 			"costs": {"money": 40000, "action_points": 2},
-			"category": "research"
+			"category": "research",
+			"unlock_conditions": {"turn_min": 5}  # Unlocks at turn 5
 		},
 		# Operations submenu for routine management tasks
 		{
@@ -87,7 +185,8 @@ static func get_all_actions() -> Array[Dictionary]:
 			"description": "High-stakes strategic moves and risky plays",
 			"costs": {},  # No cost to open menu
 			"category": "strategic",
-			"is_submenu": true
+			"is_submenu": true,
+			"unlock_conditions": {"turn_min": 10, "reputation_min": 30}  # Advanced options
 		},
 		# Travel & Conferences submenu (Issue #468)
 		{
@@ -96,7 +195,8 @@ static func get_all_actions() -> Array[Dictionary]:
 			"description": "Academic travel, paper submissions, and conference attendance",
 			"costs": {},  # No cost to open menu
 			"category": "research",
-			"is_submenu": true
+			"is_submenu": true,
+			"unlock_conditions": {"papers_min": 1}  # Need at least 1 paper to unlock
 		}
 	]
 

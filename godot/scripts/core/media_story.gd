@@ -65,9 +65,9 @@ func _init(
 func apply_effects(public_opinion: PublicOpinion):
 	"""Apply this story's effects to public opinion"""
 	if sentiment_impact != 0.0:
-		public_opinion.update_opinion("sentiment", sentiment_impact, headline)
+		public_opinion.update_opinion("public_sentiment", sentiment_impact, headline)
 	if trust_impact != 0.0:
-		public_opinion.update_opinion("trust", trust_impact, headline)
+		public_opinion.update_opinion("lab_trust", trust_impact, headline)
 	if safety_awareness_impact != 0.0:
 		public_opinion.update_opinion("safety_awareness", safety_awareness_impact, headline)
 	if media_attention_impact != 0.0:
