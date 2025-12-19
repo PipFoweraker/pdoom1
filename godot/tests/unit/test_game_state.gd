@@ -215,3 +215,39 @@ func test_action_validation_fundraise_with_sufficient_reputation():
 
 	var fundraise_action = GameActions.get_action_by_id("fundraise")
 	assert_true(state.can_afford(fundraise_action["costs"]), "Should afford fundraise with 50 reputation and 3 AP")
+
+# FIX #424: Unmanaged employee productivity tests
+func test_get_unmanaged_count_legacy():
+	# Test get_unmanaged_count with legacy staff counts
+	var state = GameState.new("test_seed")
+
+	# 12 researchers with 0 managers (capacity = 9)
+	state.safety_researchers = 8
+	state.capability_researchers = 4
+	state.managers = 0
+
+	assert_eq(state.get_unmanaged_count(), 3, "Should have 3 unmanaged (12 - 9 capacity)")
+
+func test_get_unmanaged_count_with_manager():
+	# Test get_unmanaged_count when managers increase capacity
+	var state = GameState.new("test_seed")
+
+	state.safety_researchers = 15
+	state.managers = 1  # Capacity = 18
+
+	assert_eq(state.get_unmanaged_count(), 0, "Should have 0 unmanaged with manager")
+
+func test_get_unmanaged_count_uses_researchers_array():
+	# Test that get_unmanaged_count uses researchers array when populated (FIX #424)
+	var state = GameState.new("test_seed")
+
+	# Add 12 researchers via the new system
+	for i in range(12):
+		var researcher = Researcher.new()
+		researcher.generate_random(state.rng)
+		state.add_researcher(researcher)
+
+	state.managers = 0  # Capacity = 9
+
+	# Should use researchers array (12), not legacy counts
+	assert_eq(state.get_unmanaged_count(), 3, "Should use researchers array size for unmanaged count")

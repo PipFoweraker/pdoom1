@@ -424,7 +424,12 @@ func get_management_capacity() -> int:
 
 func get_unmanaged_count() -> int:
 	"""How many employees exceed management capacity?"""
-	var non_manager_staff = safety_researchers + capability_researchers + compute_engineers
+	# Use researchers array if available (new system), otherwise use legacy counts
+	var non_manager_staff: int
+	if researchers.size() > 0:
+		non_manager_staff = researchers.size()
+	else:
+		non_manager_staff = safety_researchers + capability_researchers + compute_engineers
 	var capacity = get_management_capacity()
 	return max(0, non_manager_staff - capacity)
 
