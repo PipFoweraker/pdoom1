@@ -12,12 +12,15 @@ extends Control
 @onready var fullscreen_checkbox = $VBox/SettingsContainer/GraphicsSettings/FullscreenRow/CheckBox
 @onready var difficulty_option = $VBox/SettingsContainer/GameplaySettings/DifficultyRow/OptionButton
 @onready var theme_dropdown = $VBox/SettingsContainer/UISettings/ThemeRow/ThemeDropdown
+@onready var colorblind_checkbox = $VBox/SettingsContainer/AccessibilitySettings/ColorblindRow/CheckBox
 
 # Section header labels for icon integration
 @onready var audio_label = $VBox/SettingsContainer/AudioSettings/AudioLabel
 @onready var graphics_label = $VBox/SettingsContainer/GraphicsSettings/GraphicsLabel
 @onready var gameplay_label = $VBox/SettingsContainer/GameplaySettings/GameplayLabel
 @onready var ui_label = $VBox/SettingsContainer/UISettings/UILabel
+@onready var accessibility_label = $VBox/SettingsContainer/AccessibilitySettings/AccessibilityLabel
+@onready var keyboard_label = $VBox/SettingsContainer/KeyboardShortcuts/KeyboardLabel
 
 func _ready():
 	print("[SettingsMenu] Initializing...")
@@ -44,6 +47,8 @@ func _setup_section_icons():
 	_add_icon_to_label(graphics_label, IconLoader.get_settings_icon("graphics"))
 	_add_icon_to_label(gameplay_label, IconLoader.get_settings_icon("gameplay"))
 	_add_icon_to_label(ui_label, IconLoader.get_settings_icon("theme"))
+	_add_icon_to_label(accessibility_label, IconLoader.get_settings_icon("accessibility"))
+	_add_icon_to_label(keyboard_label, IconLoader.get_settings_icon("controls"))
 
 func _add_icon_to_label(label: Label, icon: Texture2D):
 	"""Replace a label with an HBox containing icon + label"""
@@ -92,6 +97,7 @@ func update_ui_from_game_config():
 	graphics_quality_option.selected = GameConfig.graphics_quality
 	fullscreen_checkbox.button_pressed = GameConfig.fullscreen
 	difficulty_option.selected = GameConfig.difficulty
+	colorblind_checkbox.button_pressed = GameConfig.colorblind_mode
 
 func _on_master_volume_changed(value: float):
 	"""Handle master volume slider change"""
@@ -125,6 +131,12 @@ func _on_difficulty_changed(index: int):
 	"""Handle difficulty dropdown change"""
 	print("[SettingsMenu] Difficulty changed to: ", ["Easy", "Standard", "Hard"][index])
 	GameConfig.set_setting("difficulty", index, false)
+
+func _on_colorblind_toggled(pressed: bool):
+	"""Handle colorblind mode toggle"""
+	print("[SettingsMenu] Colorblind mode: ", pressed)
+	GameConfig.set_setting("colorblind_mode", pressed, false)
+	NotificationManager.info("Colorblind mode " + ("enabled" if pressed else "disabled"))
 
 func _on_theme_changed(index: int):
 	"""Handle theme dropdown change"""

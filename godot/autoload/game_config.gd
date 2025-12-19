@@ -18,6 +18,9 @@ var music_volume: int = 50  # 0-100
 var graphics_quality: int = 1  # 0=Low, 1=Medium, 2=High
 var fullscreen: bool = false
 
+# Accessibility Settings
+var colorblind_mode: bool = false  # Adds patterns/symbols alongside colors
+
 # Game State
 var current_game_active: bool = false
 var games_played: int = 0
@@ -71,6 +74,9 @@ func save_config() -> void:
 	config.set_value("graphics", "quality", graphics_quality)
 	config.set_value("graphics", "fullscreen", fullscreen)
 
+	# Accessibility section
+	config.set_value("accessibility", "colorblind_mode", colorblind_mode)
+
 	# Save to file
 	var err = config.save(CONFIG_FILE)
 	if err != OK:
@@ -109,6 +115,9 @@ func load_config() -> void:
 	# Load graphics settings
 	graphics_quality = config.get_value("graphics", "quality", graphics_quality)
 	fullscreen = config.get_value("graphics", "fullscreen", fullscreen)
+
+	# Load accessibility settings
+	colorblind_mode = config.get_value("accessibility", "colorblind_mode", colorblind_mode)
 
 	print("[GameConfig] Configuration loaded successfully")
 	config_loaded.emit()
@@ -175,6 +184,8 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 		"fullscreen":
 			fullscreen = value
 			apply_graphics_settings()
+		"colorblind_mode":
+			colorblind_mode = value
 		_:
 			print("[GameConfig] WARNING: Unknown setting: ", key)
 			return
@@ -313,6 +324,7 @@ func print_config() -> void:
 	print("  Music Volume: %d%%" % music_volume)
 	print("  Graphics: %s" % get_graphics_quality_string())
 	print("  Fullscreen: %s" % fullscreen)
+	print("  Colorblind Mode: %s" % colorblind_mode)
 	print("  Games Played: %d" % games_played)
 	print("  Last Seen Version: %s" % last_seen_version)
 	print("  Current Version: %s" % CURRENT_VERSION)

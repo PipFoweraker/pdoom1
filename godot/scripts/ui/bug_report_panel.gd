@@ -127,12 +127,9 @@ func _on_submit_pressed():
 		screenshot = bug_reporter.capture_screenshot()
 
 	# Get save file path if requested
-	# TODO: Implement actual save file path retrieval
 	var save_path = ""
 	if save_check.button_pressed:
-		# This would get the current save file path from the game state
-		# save_path = GameManager.get_current_save_path()
-		pass
+		save_path = _get_save_file_path()
 
 	# Create bug report
 	var report = bug_reporter.create_bug_report(
@@ -202,3 +199,44 @@ func show_error(message: String):
 	await get_tree().create_timer(5.0).timeout
 	if confirmation_label.modulate == Color.RED:  # Only hide if still showing error
 		confirmation_label.visible = false
+
+## Get the current save file path if one exists
+## Returns the path to the most recent save file, or "No save file" if none exists
+func _get_save_file_path() -> String:
+	# Common save file patterns to check
+	var save_patterns = [
+		"user://savegame.sav",
+		"user://quicksave.sav",
+		"user://autosave.sav",
+		"user://save.dat"
+	]
+
+	# Check for any existing save file
+	for save_path in save_patterns:
+		if FileAccess.file_exists(save_path):
+			# Return the global path for user reference
+			return ProjectSettings.globalize_path(save_path)
+
+	# Check saves directory for numbered saves (save_001.sav, etc.)
+	var saves_dir = "user://saves"
+	var dir = DirAccess.open("user://")
+	if dir and dir.dir_exists("saves"):
+		var saves = DirAccess.open(saves_dir)
+		if saves:
+			saves.list_dir_begin()
+			var newest_save = ""
+			var newest_time = 0
+			var file_name = saves.get_next()
+			while file_name != "":
+				if file_name.ends_with(".sav") or file_name.ends_with(".save"):
+					var full_path = saves_dir + "/" + file_name
+					var mod_time = FileAccess.get_modified_time(full_path)
+					if mod_time > newest_time:
+						newest_time = mod_time
+						newest_save = full_path
+				file_name = saves.get_next()
+			saves.list_dir_end()
+			if newest_save != "":
+				return ProjectSettings.globalize_path(newest_save)
+
+	return "No save file"
