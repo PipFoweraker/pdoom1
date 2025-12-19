@@ -316,6 +316,12 @@ func _on_end_turn_button_pressed():
 	if current_state.money <= 20000:
 		warnings.append("[color=red]⚠️ CRITICAL: Low funds (%s) - Can't afford much![/color]" % GameConfig.format_money(current_state.money))
 
+	# Technical debt warning (Issue #416)
+	if current_state.technical_debt >= 75:
+		warnings.append("[color=red]⚠️ CRITICAL: Technical debt at %.0f%% - High failure risk![/color]" % current_state.technical_debt)
+	elif current_state.technical_debt >= 50:
+		warnings.append("[color=yellow]⚠️ WARNING: Technical debt at %.0f%% - Consider an audit![/color]" % current_state.technical_debt)
+
 	# Show warnings if any
 	if warnings.size() > 0:
 		for warning in warnings:

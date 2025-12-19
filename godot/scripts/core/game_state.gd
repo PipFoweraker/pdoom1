@@ -12,6 +12,12 @@ var doom: float = 50.0  # 0-100, lose at 100
 var action_points: int = 3
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
 
+# Technical Debt System (Issue #416)
+# Accumulates from rushed research, increases failure risk, affects doom
+var technical_debt: float = 0.0  # 0-100 scale
+const MAX_TECHNICAL_DEBT: float = 100.0
+const TECH_DEBT_DOOM_MULTIPLIER: float = 0.05  # 5% doom increase per debt point at high levels
+
 # AP Reserve System (for event responses)
 var committed_ap: int = 0      # AP spent on queued actions
 var reserved_ap: int = 0       # AP held back for events
@@ -106,6 +112,7 @@ func reset():
 	doom = 50.0
 	action_points = 3
 	stationery = 100.0
+	technical_debt = 0.0  # Reset tech debt (Issue #416)
 
 	safety_researchers = 0
 	capability_researchers = 0
@@ -224,6 +231,81 @@ func add_resources(gains: Dictionary):
 	if gains.has("doom"):
 		doom += gains["doom"]
 		doom = clamp(doom, 0.0, 100.0)
+	if gains.has("technical_debt"):
+		add_technical_debt(gains["technical_debt"])
+
+
+# ============================================================================
+# TECHNICAL DEBT SYSTEM (Issue #416)
+# ============================================================================
+
+func add_technical_debt(amount: float, reason: String = ""):
+	"""Add technical debt (from rushed research, skipped reviews, etc.)"""
+	var old_debt = technical_debt
+	technical_debt = clamp(technical_debt + amount, 0.0, MAX_TECHNICAL_DEBT)
+
+	if amount > 0 and reason != "":
+		print("[TechDebt] +%.1f debt: %s (%.1f -> %.1f)" % [amount, reason, old_debt, technical_debt])
+
+	# Update doom system's technical debt source if significant
+	if doom_system and technical_debt >= 20.0:
+		var debt_doom = (technical_debt - 20.0) * TECH_DEBT_DOOM_MULTIPLIER
+		doom_system.doom_sources["technical_debt"] = debt_doom
+
+
+func reduce_technical_debt(amount: float, reason: String = ""):
+	"""Reduce technical debt (from audits, refactoring, etc.)"""
+	var old_debt = technical_debt
+	technical_debt = clamp(technical_debt - amount, 0.0, MAX_TECHNICAL_DEBT)
+
+	if amount > 0 and reason != "":
+		print("[TechDebt] -%.1f debt: %s (%.1f -> %.1f)" % [amount, reason, old_debt, technical_debt])
+
+	# Update doom system
+	if doom_system:
+		if technical_debt < 20.0:
+			doom_system.doom_sources["technical_debt"] = 0.0
+		else:
+			var debt_doom = (technical_debt - 20.0) * TECH_DEBT_DOOM_MULTIPLIER
+			doom_system.doom_sources["technical_debt"] = debt_doom
+
+
+func get_tech_debt_status() -> String:
+	"""Get human-readable technical debt status"""
+	if technical_debt < 10.0:
+		return "minimal"
+	elif technical_debt < 25.0:
+		return "low"
+	elif technical_debt < 50.0:
+		return "moderate"
+	elif technical_debt < 75.0:
+		return "high"
+	else:
+		return "critical"
+
+
+func get_tech_debt_color() -> Color:
+	"""Get color representing technical debt severity"""
+	if technical_debt < 10.0:
+		return Color(0.3, 0.8, 0.3)  # Green
+	elif technical_debt < 25.0:
+		return Color(0.6, 0.8, 0.3)  # Yellow-green
+	elif technical_debt < 50.0:
+		return Color(0.9, 0.7, 0.2)  # Orange
+	elif technical_debt < 75.0:
+		return Color(0.9, 0.4, 0.2)  # Red-orange
+	else:
+		return Color(0.9, 0.2, 0.2)  # Red
+
+
+func get_tech_debt_failure_chance() -> float:
+	"""Get chance of technical failure based on debt level"""
+	# No failure chance below 20 debt
+	if technical_debt < 20.0:
+		return 0.0
+	# 2% chance per 10 debt above 20
+	return (technical_debt - 20.0) * 0.002
+
 
 func check_win_lose():
 	"""Check victory/defeat conditions"""
@@ -565,6 +647,11 @@ func to_dict() -> Dictionary:
 		"available_ap": get_available_ap(),
 		"event_ap": get_event_ap(),
 		"stationery": stationery,
+		# Technical Debt System (Issue #416)
+		"technical_debt": technical_debt,
+		"tech_debt_status": get_tech_debt_status(),
+		"tech_debt_color": get_tech_debt_color(),
+		"tech_debt_failure_chance": get_tech_debt_failure_chance(),
 		"safety_researchers": safety_researchers,
 		"capability_researchers": capability_researchers,
 		"compute_engineers": compute_engineers,
