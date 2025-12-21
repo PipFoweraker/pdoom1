@@ -59,8 +59,10 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Game logs
+# Game logs (preserve structure docs)
 logs/
+!logs/README.md
+!logs/*/.gitkeep
 *.log
 gamelog_*.txt
 emergency_gamelog_*.txt
