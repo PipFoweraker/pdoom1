@@ -5,20 +5,20 @@ Player-facing documentation for P(Doom) game mechanics. These pages are synced t
 ## Core Mechanics
 
 ### Resources & Economy
-- **[Funding & Investors](funding.md)** - Fundraising, investor relationships, and financial management
+- **[Funding & Resources](funding.md)** - Fundraising, investor relationships, and financial management
 - **Money** - Your primary resource for hiring and operations
 - **Compute** - Computing power for research
 - **Research** - Generated from compute, used for breakthroughs
 
 ### Personnel Management
-- **[Personnel System](personnel.md)** - Hiring, specializations, and team management
+- **[Personnel & Hiring](personnel.md)** - Hiring, specializations, and team management
 - **Researchers** - Safety, Capabilities, Interpretability, Alignment specialists
 - **Managers** - Each manager can oversee up to 8 employees
 - **Traits & Burnout** - Managing researcher productivity and retention
 
 ### Strategic Resources
 - **[Reputation & Public Opinion](reputation.md)** - Public perception, media cycles, and PR management
-- **[Doom System](doom.md)** - P(Doom) mechanics and how to reduce existential risk
+- **[P(Doom) System](doom.md)** - P(Doom) mechanics and how to reduce existential risk
 - **Papers** - Publishing research for reputation gains
 
 ### Game Systems
@@ -28,17 +28,17 @@ Player-facing documentation for P(Doom) game mechanics. These pages are synced t
 
 ## Victory & Loss Conditions
 
-- **Victory**: Survive 100 turns with P(Doom) at 0%
-- **Loss**: P(Doom) reaches 100%
+- **Victory**: Reduce P(Doom) to 0%
+- **Loss**: P(Doom) reaches 100% OR Reputation reaches 0
 
 ## Documentation Status
 
 | Mechanic | Status | Last Updated |
 |----------|--------|--------------|
 | [Reputation & Public Opinion](reputation.md) | 🟡 Stub | 2025-11-26 |
-| [Funding & Investors](funding.md) | ⚪ Planned | - |
-| [Personnel System](personnel.md) | ⚪ Planned | - |
-| [Doom System](doom.md) | ⚪ Planned | - |
+| [Funding & Resources](funding.md) | 🟡 Stub | 2025-12-19 |
+| [Personnel & Hiring](personnel.md) | 🟡 Stub | 2025-12-19 |
+| [P(Doom) System](doom.md) | 🟡 Stub | 2025-12-19 |
 
 **Legend:**
 - 🟢 Complete - Fully documented with examples

@@ -100,6 +100,41 @@ Completed releases are archived in `archive/releases/<version>/` including:
 - Issue resolutions
 - Quick reference guides
 
+## Logging System
+
+Scripts use a centralized logging system (`logging_system.py`) for structured output and debugging.
+
+### Quick Start
+
+```python
+from logging_system import get_logger, LogCategory, TimedOperation
+
+logger = get_logger('my_script', LogCategory.BUILD)
+logger.info('Starting process')
+
+with TimedOperation(logger, 'expensive_operation'):
+    # Timed code here
+    pass
+```
+
+### Log Categories
+
+| Category | Description | Directory |
+|----------|-------------|-----------|
+| `QUALITY` | Pre-commit hooks, linting | `logs/quality/` |
+| `BUILD` | Compilation, exports | `logs/release/` |
+| `VERSION` | Version bumps, changelog | `logs/release/` |
+| `TESTS` | Test runs, validation | `logs/testing/` |
+| `DOCS` | Documentation generation | `logs/docs/` |
+| `GENERAL` | Miscellaneous | `logs/dev/` |
+
+### Key Files
+
+- `scripts/logging_system.py` - Core PDoomLogger class
+- `logs/README.md` - Log directory structure documentation
+
+See `logs/README.md` for log file naming conventions and retention policies.
+
 ## Tips
 
 1. **Always test locally first**: Extract the .zip and test on a clean Windows machine

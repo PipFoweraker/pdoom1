@@ -9,7 +9,7 @@ Your lab's reputation affects funding opportunities, researcher recruitment, and
 ## Game Data (Auto-Generated)
 
 > **Note**: This section is automatically generated from the game code. Do not edit manually.
-> Last updated: 2025-11-26 16:08:51
+> Last updated: 2025-12-19 15:23:19
 
 | Variable | Default Value | Type | Source |
 |----------|---------------|------|--------|

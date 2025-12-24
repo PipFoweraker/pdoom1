@@ -17,7 +17,7 @@
       "godot/scripts/core/events.gd",
       "godot/scripts/core/actions.gd"
     ],
-    "last_updated": "2025-11-26T16:08:51.632352"
+    "last_updated": "2025-12-19T15:23:19.019641"
   },
   "resources": {
     "name": "resources",
@@ -84,7 +84,7 @@
       "godot/scripts/core/game_state.gd",
       "godot/scripts/core/turn_manager.gd"
     ],
-    "last_updated": "2025-11-26T16:08:51.632379"
+    "last_updated": "2025-12-19T15:23:19.019669"
   },
   "personnel": {
     "name": "personnel",
@@ -127,6 +127,6 @@
       "godot/scripts/core/game_state.gd",
       "godot/scripts/core/researcher.gd"
     ],
-    "last_updated": "2025-11-26T16:08:51.632384"
+    "last_updated": "2025-12-19T15:23:19.019675"
   }
 }
