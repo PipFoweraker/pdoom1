@@ -9,6 +9,12 @@ var game_seed: String = ""  # Empty = weekly challenge seed
 var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard
 var scenario_id: String = ""  # Empty = standard game, otherwise scenario pack ID
 
+# Baseline Computation Mode (Issue #372)
+# 0 = Auto (precomputed for weekly, eager for custom)
+# 1 = Eager (compute at game start, ready by end)
+# 2 = Blind (compute on-demand at game end)
+var baseline_mode: int = 0
+
 # Audio Settings
 var master_volume: int = 50  # 0-100
 var sfx_volume: int = 50  # 0-100
@@ -64,6 +70,7 @@ func save_config() -> void:
 	config.set_value("game", "last_seed", game_seed)
 	config.set_value("game", "scenario_id", scenario_id)
 	config.set_value("game", "last_seen_version", last_seen_version)
+	config.set_value("game", "baseline_mode", baseline_mode)
 
 	# Audio section
 	config.set_value("audio", "master_volume", master_volume)
@@ -106,6 +113,7 @@ func load_config() -> void:
 	game_seed = config.get_value("game", "last_seed", game_seed)
 	scenario_id = config.get_value("game", "scenario_id", scenario_id)
 	last_seen_version = config.get_value("game", "last_seen_version", last_seen_version)
+	baseline_mode = config.get_value("game", "baseline_mode", baseline_mode)
 
 	# Load audio settings
 	master_volume = config.get_value("audio", "master_volume", master_volume)
@@ -186,6 +194,8 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			apply_graphics_settings()
 		"colorblind_mode":
 			colorblind_mode = value
+		"baseline_mode":
+			baseline_mode = value
 		_:
 			print("[GameConfig] WARNING: Unknown setting: ", key)
 			return
@@ -218,6 +228,28 @@ func get_graphics_quality_string() -> String:
 			return "High"
 		_:
 			return "Unknown"
+
+## Get baseline mode as string (Issue #372)
+func get_baseline_mode_string() -> String:
+	match baseline_mode:
+		0:
+			return "Auto"  # Precomputed for weekly, eager for custom
+		1:
+			return "Eager"  # Compute at game start
+		2:
+			return "Blind"  # Compute on-demand at end
+		_:
+			return "Unknown"
+
+## Check if we should use precomputed baseline (weekly league with known baseline)
+func should_use_precomputed_baseline() -> bool:
+	# Weekly league games use precomputed baselines (mode 0 with empty seed)
+	return baseline_mode == 0 and game_seed.is_empty()
+
+## Check if we should start background baseline at game start
+func should_start_background_baseline() -> bool:
+	# Eager mode always, or Auto mode with custom seed
+	return baseline_mode == 1 or (baseline_mode == 0 and not game_seed.is_empty())
 
 ## Get all configuration as dictionary (for GameManager)
 func get_game_config() -> Dictionary:
@@ -326,6 +358,7 @@ func print_config() -> void:
 	print("  Fullscreen: %s" % fullscreen)
 	print("  Colorblind Mode: %s" % colorblind_mode)
 	print("  Games Played: %d" % games_played)
+	print("  Baseline Mode: %s" % get_baseline_mode_string())
 	print("  Last Seen Version: %s" % last_seen_version)
 	print("  Current Version: %s" % CURRENT_VERSION)
 	print("========================================")

@@ -14,8 +14,9 @@ class ScoreEntry:
 	var game_mode: String  # e.g., "Bootstrap_v0.4.1"
 	var duration_seconds: float  # Game duration
 	var entry_uuid: String  # Unique identifier
+	var baseline_score: int  # Baseline (no-action) score for comparison (Issue #372)
 
-	func _init(p_score: int, p_player_name: String, p_level: int, p_mode: String, p_duration: float):
+	func _init(p_score: int, p_player_name: String, p_level: int, p_mode: String, p_duration: float, p_baseline: int = 0):
 		score = p_score
 		player_name = p_player_name
 		date = Time.get_datetime_string_from_system()
@@ -23,6 +24,7 @@ class ScoreEntry:
 		game_mode = p_mode
 		duration_seconds = p_duration
 		entry_uuid = generate_uuid()
+		baseline_score = p_baseline
 
 	func to_dict() -> Dictionary:
 		return {
@@ -32,7 +34,8 @@ class ScoreEntry:
 			"level_reached": level_reached,
 			"game_mode": game_mode,
 			"duration_seconds": duration_seconds,
-			"entry_uuid": entry_uuid
+			"entry_uuid": entry_uuid,
+			"baseline_score": baseline_score
 		}
 
 	static func from_dict(data: Dictionary) -> ScoreEntry:
@@ -41,7 +44,8 @@ class ScoreEntry:
 			data.get("player_name", "Unknown Lab"),
 			data.get("level_reached", 0),
 			data.get("game_mode", "Unknown"),
-			data.get("duration_seconds", 0.0)
+			data.get("duration_seconds", 0.0),
+			data.get("baseline_score", 0)  # Issue #372
 		)
 		entry.date = data.get("date", "")
 		entry.entry_uuid = data.get("entry_uuid", "")

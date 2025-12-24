@@ -46,6 +46,17 @@ func start_new_game(game_seed: String = ""):
 	VerificationTracker.start_tracking(game_seed, game_version)
 	print("[GameManager] Verification tracking enabled (debug mode: ON)")
 
+	# Start baseline simulation in background if appropriate (Issue #372)
+	# This runs the "no-action" simulation for score comparison at game end
+	if GameConfig.should_start_background_baseline():
+		print("[GameManager] Starting background baseline simulation (mode: %s)" % GameConfig.get_baseline_mode_string())
+		BaselineSimulator.start_background_simulation(game_seed)
+	elif GameConfig.should_use_precomputed_baseline():
+		print("[GameManager] Using precomputed baseline (weekly league mode)")
+		# Precomputed baseline will be set by weekly league system when available
+	else:
+		print("[GameManager] Baseline mode: Blind (will compute at game end)")
+
 	# Start gameplay music
 	MusicManager.play_context(MusicManager.MusicContext.GAMEPLAY)
 

@@ -8,6 +8,8 @@ class_name GameOverScreen
 
 var game_manager: Node
 var final_score: int = 0
+var baseline_score: int = 0
+var baseline_result: Dictionary = {}
 var leaderboard_entry_uuid: String = ""
 var game_start_time: float = 0.0
 
@@ -48,6 +50,12 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	final_score = calculate_final_score(final_state)
 	print("[GameOverScreen] Final score: %d" % final_score)
 
+	# Get baseline score for comparison (Issue #372)
+	var game_seed = GameConfig.get_display_seed()
+	baseline_result = BaselineSimulator.get_baseline_score(game_seed)
+	baseline_score = baseline_result.get("score", 0)
+	print("[GameOverScreen] Baseline score: %d" % baseline_score)
+
 	# Stop verification tracking and get final hash
 	VerificationTracker.stop_tracking()
 	var final_hash = VerificationTracker.get_final_hash()
@@ -60,8 +68,7 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	print("[GameOverScreen] Full verification data ready for submission")
 
 
-	# Save score to leaderboard
-	var game_seed = GameConfig.get_display_seed()
+	# Save score to leaderboard (game_seed already obtained for baseline)
 	var leaderboard = Leaderboard.new(game_seed)
 	var duration = Time.get_ticks_msec() / 1000.0 - game_start_time
 
@@ -70,7 +77,8 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 		GameConfig.lab_name,
 		final_state.get("turn", 0),
 		"v" + GameConfig.CURRENT_VERSION,  # Game version from GameConfig
-		duration
+		duration,
+		baseline_score  # Baseline score for comparison (Issue #372)
 	)
 
 	var result = leaderboard.add_score(entry)
@@ -99,7 +107,16 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 
 	# Final Score (prominent display)
 	stats_text += "[center][color=gold]★ FINAL SCORE ★[/color][/center]\n"
-	stats_text += "[center][b][color=yellow]%d[/color][/b] points[/center]\n\n" % final_score
+	stats_text += "[center][b][color=yellow]%d[/color][/b] points[/center]\n" % final_score
+
+	# Baseline comparison (Issue #372)
+	if baseline_score > 0:
+		var comparison = BaselineSimulator.get_comparison_text(final_score, baseline_score)
+		var comparison_color = comparison["color"].to_html(false)
+		stats_text += "[center][color=%s]%s[/color][/center]\n" % [comparison_color, comparison["text"]]
+		stats_text += "[center][color=gray](Baseline: %d points with no actions)[/color][/center]\n\n" % baseline_score
+	else:
+		stats_text += "\n"
 
 	# Game duration
 	var turn = final_state.get("turn", 0)
