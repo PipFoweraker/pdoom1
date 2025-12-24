@@ -23,6 +23,7 @@ var keybinds: Dictionary = {
 
 	# Gameplay
 	"end_turn": {"key": KEY_SPACE, "category": Category.GAMEPLAY, "description": "End Turn"},
+	"undo_action": {"key": KEY_Z, "category": Category.GAMEPLAY, "description": "Undo Last Action"},
 	"clear_queue": {"key": KEY_C, "category": Category.GAMEPLAY, "description": "Clear Action Queue"},
 	"cancel": {"key": KEY_ESCAPE, "category": Category.GAMEPLAY, "description": "Cancel/Back"},
 
@@ -32,6 +33,13 @@ var keybinds: Dictionary = {
 	"bug_reporter": {"key": KEY_BACKSLASH, "category": Category.UI, "description": "Open Bug Reporter"},
 	# "employee_tab": {"key": KEY_E, "category": Category.UI, "description": "Employee Screen"},  # DISABLED: moving to main UI
 	"settings": {"key": KEY_F10, "category": Category.UI, "description": "Settings Menu"},
+
+	# Quick Menu Access (configurable shortcuts for common menus)
+	"menu_hire": {"key": KEY_H, "category": Category.GAMEPLAY, "description": "Open Hiring Menu"},
+	"menu_fundraise": {"key": KEY_F, "category": Category.GAMEPLAY, "description": "Open Fundraising Menu"},
+	"menu_research": {"key": KEY_R, "category": Category.GAMEPLAY, "description": "Open Research Actions"},
+	"menu_publicity": {"key": KEY_P, "category": Category.GAMEPLAY, "description": "Open Publicity Menu"},
+	"menu_travel": {"key": KEY_T, "category": Category.GAMEPLAY, "description": "Open Travel Menu"},
 
 	# Actions (Number keys 1-9 for quick action access)
 	"action_1": {"key": KEY_1, "category": Category.GAMEPLAY, "description": "Trigger Action 1"},

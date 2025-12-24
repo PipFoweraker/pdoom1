@@ -8,6 +8,10 @@ extends CanvasLayer
 @onready var rate_slider = $Panel/MarginContainer/VBoxContainer/RefreshRate/RateSlider
 @onready var rate_label = $Panel/MarginContainer/VBoxContainer/RefreshRate/RateLabel
 
+# Event trigger UI (dynamically created)
+var event_dropdown: OptionButton
+var event_trigger_container: VBoxContainer
+
 var is_visible: bool = false
 var update_timer: float = 0.0
 var refresh_rate: float = 1.0
@@ -267,8 +271,75 @@ func _on_add_ap_button_pressed():
 
 func _on_trigger_event_button_pressed():
 	if GameManager and GameManager.state:
-		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Trigger event requested", {})
-		# Would need to implement event triggering
+		# Show event selection popup
+		_show_event_selection_popup()
+
+func _show_event_selection_popup():
+	"""Show a popup with all available events to trigger"""
+	# Create popup dialog if it doesn't exist
+	var popup = AcceptDialog.new()
+	popup.title = "Trigger Event"
+	popup.size = Vector2(400, 500)
+
+	var vbox = VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	# Label
+	var label = Label.new()
+	label.text = "Select an event to trigger:"
+	vbox.add_child(label)
+
+	# Scrollable list of events
+	var scroll = ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2(380, 400)
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	var event_list = VBoxContainer.new()
+	event_list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
+	# Get all events
+	var all_events = GameEvents.get_all_events()
+	for event in all_events:
+		var btn = Button.new()
+		btn.text = "%s (%s)" % [event.get("name", "Unknown"), event.get("id", "")]
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.pressed.connect(_trigger_specific_event.bind(event, popup))
+		event_list.add_child(btn)
+
+	scroll.add_child(event_list)
+	vbox.add_child(scroll)
+	popup.add_child(vbox)
+
+	# Add to scene and show
+	add_child(popup)
+	popup.popup_centered()
+
+	# Clean up when closed
+	popup.confirmed.connect(func(): popup.queue_free())
+	popup.canceled.connect(func(): popup.queue_free())
+
+func _trigger_specific_event(event: Dictionary, popup: AcceptDialog):
+	"""Trigger a specific event"""
+	if not GameManager or not GameManager.state:
+		return
+
+	var event_name = event.get("name", "Unknown Event")
+	var event_id = event.get("id", "")
+
+	ErrorHandler.info(ErrorHandler.Category.EVENTS, "Debug: Triggering event '%s'" % event_name, {"event_id": event_id})
+
+	# Add to pending events so it will be shown to player
+	GameManager.state.pending_events.append(event)
+
+	# Emit signal if main UI is listening
+	if GameManager.has_signal("event_triggered"):
+		GameManager.emit_signal("event_triggered", event)
+
+	# Close popup
+	popup.queue_free()
+
+	# Log to debug overlay
+	ErrorHandler.info(ErrorHandler.Category.EVENTS, "Event '%s' added to pending events" % event_name, {})
 
 func _on_commit_plan_button_pressed():
 	if GameManager and GameManager.is_initialized:

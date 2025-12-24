@@ -404,6 +404,13 @@ text = "Reserve AP"
 disabled = true
 theme_override_font_sizes/font_size = 12
 
+[node name="UndoLastButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
+layout_mode = 2
+text = "Undo (Z)"
+tooltip_text = "Remove the last queued action"
+disabled = true
+theme_override_font_sizes/font_size = 12
+
 [node name="ClearQueueButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Clear (C)"
@@ -457,6 +464,7 @@ layout_mode = 1
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/InitButton" to="TabManager/MainUI" method="_on_init_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/TestActionButton" to="TabManager/MainUI" method="_on_test_action_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/ReserveAPButton" to="TabManager/MainUI" method="_on_reserve_ap_button_pressed"]
+[connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/UndoLastButton" to="TabManager/MainUI" method="_on_undo_last_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/ClearQueueButton" to="TabManager/MainUI" method="_on_clear_queue_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/EndTurnButton" to="TabManager/MainUI" method="_on_end_turn_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/CommitPlanButton" to="TabManager/MainUI" method="_on_commit_plan_button_pressed"]
