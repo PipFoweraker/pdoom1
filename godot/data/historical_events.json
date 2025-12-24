@@ -1,0 +1,188 @@
+{
+  "version": "1.0",
+  "description": "Historical AI safety timeline events for P(Doom) game",
+  "source": "pdoom-data repository",
+  "last_updated": "2025-01-01",
+  "events": [
+    {
+      "id": "miri_founded",
+      "date": "2000-06-01",
+      "title": "MIRI Founded",
+      "description": "The Machine Intelligence Research Institute (originally Singularity Institute) is founded, becoming one of the first organizations dedicated to AI alignment research.",
+      "category": "organization",
+      "significance": 9,
+      "tags": ["organization", "founding", "alignment"]
+    },
+    {
+      "id": "fhi_founded",
+      "date": "2005-01-01",
+      "title": "Future of Humanity Institute Founded",
+      "description": "Nick Bostrom establishes the Future of Humanity Institute at Oxford University, creating an academic home for existential risk research.",
+      "category": "organization",
+      "significance": 8,
+      "tags": ["organization", "academic", "existential-risk"]
+    },
+    {
+      "id": "superintelligence_published",
+      "date": "2014-09-03",
+      "title": "Superintelligence Published",
+      "description": "Nick Bostrom's 'Superintelligence: Paths, Dangers, Strategies' is published, bringing AI existential risk to mainstream attention.",
+      "category": "research",
+      "significance": 9,
+      "tags": ["book", "public-awareness", "bostrom"]
+    },
+    {
+      "id": "openai_founded",
+      "date": "2015-12-11",
+      "title": "OpenAI Founded",
+      "description": "OpenAI is founded as a non-profit AI research company with the stated goal of ensuring AGI benefits humanity. Backed by $1B in funding.",
+      "category": "organization",
+      "significance": 10,
+      "tags": ["organization", "capabilities", "funding"]
+    },
+    {
+      "id": "deepmind_alphago",
+      "date": "2016-03-15",
+      "title": "AlphaGo Defeats Lee Sedol",
+      "description": "DeepMind's AlphaGo defeats world champion Lee Sedol at Go, demonstrating unexpected AI capabilities and accelerating public interest in AI.",
+      "category": "capability",
+      "significance": 9,
+      "tags": ["capability", "milestone", "deepmind"]
+    },
+    {
+      "id": "asilomar_principles",
+      "date": "2017-01-17",
+      "title": "Asilomar AI Principles",
+      "description": "The Asilomar Conference produces 23 principles for beneficial AI development, signed by leading AI researchers and tech leaders.",
+      "category": "policy",
+      "significance": 7,
+      "tags": ["policy", "principles", "coordination"]
+    },
+    {
+      "id": "anthropic_founded",
+      "date": "2021-01-28",
+      "title": "Anthropic Founded",
+      "description": "Anthropic is founded by former OpenAI researchers, focusing on AI safety research and developing more interpretable AI systems.",
+      "category": "organization",
+      "significance": 8,
+      "tags": ["organization", "safety", "interpretability"]
+    },
+    {
+      "id": "gpt3_released",
+      "date": "2020-06-11",
+      "title": "GPT-3 Released",
+      "description": "OpenAI releases GPT-3, a 175 billion parameter language model demonstrating surprising capabilities in few-shot learning.",
+      "category": "capability",
+      "significance": 9,
+      "tags": ["capability", "language-model", "openai"]
+    },
+    {
+      "id": "chatgpt_released",
+      "date": "2022-11-30",
+      "title": "ChatGPT Released",
+      "description": "OpenAI releases ChatGPT, bringing large language models to mainstream public use and sparking global conversation about AI capabilities and risks.",
+      "category": "capability",
+      "significance": 10,
+      "tags": ["capability", "public", "language-model"]
+    },
+    {
+      "id": "pause_letter",
+      "date": "2023-03-22",
+      "title": "AI Pause Letter",
+      "description": "The Future of Life Institute publishes an open letter calling for a 6-month pause on training AI systems more powerful than GPT-4, signed by thousands including prominent AI researchers.",
+      "category": "policy",
+      "significance": 8,
+      "tags": ["policy", "coordination", "pause"]
+    },
+    {
+      "id": "uk_ai_summit",
+      "date": "2023-11-01",
+      "title": "UK AI Safety Summit",
+      "description": "The UK hosts the first global AI Safety Summit at Bletchley Park, bringing together governments and AI companies to discuss AI risks.",
+      "category": "policy",
+      "significance": 8,
+      "tags": ["policy", "government", "international"]
+    },
+    {
+      "id": "eu_ai_act",
+      "date": "2024-03-13",
+      "title": "EU AI Act Passed",
+      "description": "The European Union passes the AI Act, the first comprehensive AI regulation, establishing risk-based requirements for AI systems.",
+      "category": "regulation",
+      "significance": 9,
+      "tags": ["regulation", "europe", "legislation"]
+    },
+    {
+      "id": "concrete_problems",
+      "date": "2016-06-21",
+      "title": "Concrete Problems in AI Safety",
+      "description": "Google Brain, OpenAI, Stanford, and Berkeley researchers publish 'Concrete Problems in AI Safety', establishing a research agenda for near-term safety work.",
+      "category": "research",
+      "significance": 8,
+      "tags": ["research", "paper", "safety-agenda"]
+    },
+    {
+      "id": "center_for_ai_safety",
+      "date": "2022-03-01",
+      "title": "Center for AI Safety Founded",
+      "description": "The Center for AI Safety is established to reduce societal-scale risks from AI through research, field-building, and advocacy.",
+      "category": "organization",
+      "significance": 7,
+      "tags": ["organization", "safety", "field-building"]
+    },
+    {
+      "id": "cais_statement",
+      "date": "2023-05-30",
+      "title": "AI Extinction Risk Statement",
+      "description": "The Center for AI Safety publishes a statement signed by hundreds of AI researchers and public figures: 'Mitigating the risk of extinction from AI should be a global priority.'",
+      "category": "policy",
+      "significance": 9,
+      "tags": ["policy", "statement", "extinction-risk"]
+    },
+    {
+      "id": "alignment_forum_launched",
+      "date": "2018-11-01",
+      "title": "AI Alignment Forum Launched",
+      "description": "The AI Alignment Forum launches as a dedicated space for technical AI alignment research discussion and collaboration.",
+      "category": "organization",
+      "significance": 6,
+      "tags": ["community", "research", "forum"]
+    },
+    {
+      "id": "redwood_research_founded",
+      "date": "2021-07-01",
+      "title": "Redwood Research Founded",
+      "description": "Redwood Research is founded to work on applied AI alignment, focusing on techniques like adversarial training and interpretability.",
+      "category": "organization",
+      "significance": 7,
+      "tags": ["organization", "safety", "applied-alignment"]
+    },
+    {
+      "id": "arc_evals_founded",
+      "date": "2022-01-01",
+      "title": "ARC Evals Founded",
+      "description": "The Alignment Research Center launches ARC Evals to evaluate AI systems for dangerous capabilities before deployment.",
+      "category": "organization",
+      "significance": 7,
+      "tags": ["organization", "evaluation", "safety"]
+    },
+    {
+      "id": "gpt4_released",
+      "date": "2023-03-14",
+      "title": "GPT-4 Released",
+      "description": "OpenAI releases GPT-4, a multimodal large language model with significantly improved capabilities and passing scores on professional exams.",
+      "category": "capability",
+      "significance": 10,
+      "tags": ["capability", "language-model", "multimodal"]
+    },
+    {
+      "id": "claude_released",
+      "date": "2023-03-14",
+      "title": "Claude Released",
+      "description": "Anthropic releases Claude, an AI assistant trained using Constitutional AI methods aimed at being helpful, harmless, and honest.",
+      "category": "capability",
+      "significance": 8,
+      "tags": ["capability", "safety", "constitutional-ai"]
+    }
+  ]
+}

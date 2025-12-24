@@ -828,6 +828,16 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 				if not event.get("repeatable", false):
 					triggered_events.append(event["id"])
 
+	# Check historical events from EventService (Issue #442: API Event Fetching)
+	# Historical events are real AI safety timeline events transformed into game events
+	if EventService and EventService.is_ready():
+		var historical_events = EventService.get_historical_events()
+		for event in historical_events:
+			if should_trigger(event, state, rng):
+				to_trigger.append(event)
+				if not event.get("repeatable", false):
+					triggered_events.append(event["id"])
+
 	return to_trigger
 
 static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumberGenerator) -> bool:
