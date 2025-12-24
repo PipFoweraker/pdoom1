@@ -5,8 +5,11 @@ extends RichTextLabel
 @export var show_timestamps: bool = false
 @export var auto_scroll: bool = true
 @export var fade_old_messages: bool = true
+@export var persist_history: bool = true
 
 var message_count: int = 0
+var message_history: Array[Dictionary] = []  # Raw messages for persistence
+const HISTORY_FILE = "user://action_history.json"
 
 func _ready():
 	# Apply theme styling
@@ -26,6 +29,18 @@ func _on_theme_changed(theme_name: String):
 ## Add a styled message to the log
 func add_message(message: String, message_type: String = "info"):
 	message_count += 1
+
+	# Store in history for persistence
+	if persist_history:
+		var entry = {
+			"message": message,
+			"type": message_type,
+			"timestamp": Time.get_unix_time_from_system()
+		}
+		message_history.append(entry)
+		# Trim history if too large
+		while message_history.size() > max_messages * 2:
+			message_history.pop_front()
 
 	# Get color based on message type
 	var color = _get_message_color(message_type)
@@ -122,3 +137,64 @@ func add_header(header_text: String):
 	add_separator()
 	add_message(header_text.to_upper(), "system")
 	add_separator()
+
+## Save action history to file
+func save_history():
+	if not persist_history or message_history.is_empty():
+		return
+
+	var file = FileAccess.open(HISTORY_FILE, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(message_history, "\t"))
+		file.close()
+		print("[MessageLog] Saved %d history entries" % message_history.size())
+
+## Load action history from file
+func load_history():
+	if not persist_history:
+		return
+
+	if not FileAccess.file_exists(HISTORY_FILE):
+		return
+
+	var file = FileAccess.open(HISTORY_FILE, FileAccess.READ)
+	if file:
+		var json_text = file.get_as_text()
+		file.close()
+
+		var json = JSON.new()
+		var error = json.parse(json_text)
+		if error == OK:
+			var data = json.get_data()
+			if data is Array:
+				message_history.clear()
+				for entry in data:
+					message_history.append(entry)
+				print("[MessageLog] Loaded %d history entries" % message_history.size())
+
+				# Display last 20 entries on load
+				_replay_recent_history(20)
+
+## Replay recent history to the display
+func _replay_recent_history(count: int):
+	var start_idx = max(0, message_history.size() - count)
+	for i in range(start_idx, message_history.size()):
+		var entry = message_history[i]
+		var msg = entry.get("message", "")
+		var msg_type = entry.get("type", "info")
+
+		# Skip persistence flag temporarily to avoid duplication
+		persist_history = false
+		add_message(msg, msg_type)
+		persist_history = true
+
+## Get full history as array
+func get_full_history() -> Array:
+	return message_history.duplicate()
+
+## Clear history file
+func clear_history():
+	message_history.clear()
+	if FileAccess.file_exists(HISTORY_FILE):
+		DirAccess.remove_absolute(HISTORY_FILE)
+	print("[MessageLog] History cleared")

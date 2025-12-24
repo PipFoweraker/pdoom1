@@ -20,6 +20,7 @@ extends VBoxContainer
 @onready var init_button = $BottomBar/ControlButtons/InitButton
 @onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
 @onready var reserve_ap_button = $BottomBar/ControlButtons/ReserveAPButton
+@onready var undo_last_button = $BottomBar/ControlButtons/UndoLastButton
 @onready var clear_queue_button = $BottomBar/ControlButtons/ClearQueueButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
 @onready var commit_plan_button = $BottomBar/ControlButtons/CommitPlanButton
@@ -168,6 +169,12 @@ func _input(event: InputEvent):
 			_trigger_action_by_index(action_index)
 			get_viewport().set_input_as_handled()
 
+		# Undo last action (Z key by default, configurable via KeybindManager)
+		elif KeybindManager.is_action_pressed(event, "undo_action"):
+			if not undo_last_button.disabled:
+				_on_undo_last_button_pressed()
+				get_viewport().set_input_as_handled()
+
 		# Clear queue (C key by default, configurable via KeybindManager)
 		elif KeybindManager.is_action_pressed(event, "clear_queue"):
 			if not clear_queue_button.disabled:
@@ -190,6 +197,24 @@ func _input(event: InputEvent):
 		elif event.keycode == KEY_BACKSLASH or event.keycode == KEY_N:
 			if bug_report_panel:
 				bug_report_panel.show_panel()
+				get_viewport().set_input_as_handled()
+
+		# Quick menu shortcuts (H, F, R, P, T)
+		elif KeybindManager.is_action_pressed(event, "menu_hire"):
+			if current_turn_phase.to_upper() == "ACTION_SELECTION":
+				_show_hiring_submenu()
+				get_viewport().set_input_as_handled()
+		elif KeybindManager.is_action_pressed(event, "menu_fundraise"):
+			if current_turn_phase.to_upper() == "ACTION_SELECTION":
+				_show_fundraise_submenu()
+				get_viewport().set_input_as_handled()
+		elif KeybindManager.is_action_pressed(event, "menu_publicity"):
+			if current_turn_phase.to_upper() == "ACTION_SELECTION":
+				_show_publicity_submenu()
+				get_viewport().set_input_as_handled()
+		elif KeybindManager.is_action_pressed(event, "menu_travel"):
+			if current_turn_phase.to_upper() == "ACTION_SELECTION":
+				_show_travel_submenu()
 				get_viewport().set_input_as_handled()
 
 		# Escape to init game (if not started)
@@ -250,6 +275,19 @@ func _on_reserve_ap_button_pressed():
 	"""Reserve 1 AP for event responses"""
 	log_message("[color=cyan]Reserving 1 AP for events...[/color]")
 	game_manager.reserve_ap(1)
+
+func _on_undo_last_button_pressed():
+	"""Undo (remove) the last queued action"""
+	if queued_actions.size() == 0:
+		return
+
+	# Get the last action
+	var last_action = queued_actions[-1]
+	var action_id = last_action.get("id", "")
+	var action_name = last_action.get("name", "Unknown")
+
+	# Remove it using existing logic
+	_remove_queued_action(action_id, action_name)
 
 func _on_clear_queue_button_pressed():
 	"""Clear all queued actions and refund AP"""
@@ -513,6 +551,7 @@ func _on_turn_phase_changed(phase_name: String):
 		# End turn requires actions, commit plan is always available
 		end_turn_button.disabled = (queued_actions.size() == 0)
 		commit_plan_button.disabled = false
+		undo_last_button.disabled = (queued_actions.size() == 0)
 		clear_queue_button.disabled = (queued_actions.size() == 0)
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
@@ -818,6 +857,24 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 		if action.get("id") == action_id:
 			return action
 	return {}
+
+func _calculate_queued_costs() -> Dictionary:
+	"""Calculate total costs of all queued actions for turn preview"""
+	var total_costs: Dictionary = {}
+
+	for queued_action in queued_actions:
+		var action_id = queued_action.get("id", "")
+		var action_def = _get_action_by_id(action_id)
+		var costs = action_def.get("costs", {})
+
+		for resource in costs.keys():
+			if resource == "action_points":
+				continue  # AP is already tracked separately
+			if not total_costs.has(resource):
+				total_costs[resource] = 0
+			total_costs[resource] += costs[resource]
+
+	return total_costs
 
 func _show_hiring_submenu():
 	"""Show popup dialog with candidate pool - shows actual available candidates"""
@@ -2209,6 +2266,39 @@ func update_queued_actions_display():
 
 			queue_container.add_child(item)
 
+		# Calculate and display turn preview (total costs from queued actions)
+		var total_costs = _calculate_queued_costs()
+		if not total_costs.is_empty():
+			var preview_panel = PanelContainer.new()
+			preview_panel.custom_minimum_size = Vector2(150, 60)
+
+			var preview_vbox = VBoxContainer.new()
+			preview_panel.add_child(preview_vbox)
+
+			var preview_title = Label.new()
+			preview_title.text = "Turn Preview:"
+			preview_title.add_theme_font_size_override("font_size", 10)
+			preview_title.add_theme_color_override("font_color", Color(0.7, 0.9, 1.0))
+			preview_vbox.add_child(preview_title)
+
+			# Show projected costs
+			for resource in total_costs.keys():
+				var cost_label = Label.new()
+				var cost_value = total_costs[resource]
+				var formatted = ""
+				if resource == "money":
+					formatted = GameConfig.format_money(-cost_value)
+				elif resource == "action_points":
+					formatted = "-%d AP" % cost_value
+				else:
+					formatted = "-%d %s" % [cost_value, resource]
+				cost_label.text = formatted
+				cost_label.add_theme_font_size_override("font_size", 10)
+				cost_label.add_theme_color_override("font_color", Color(1.0, 0.6, 0.6))
+				preview_vbox.add_child(cost_label)
+
+			queue_container.add_child(preview_panel)
+
 		# Log message
 		var action_names = []
 		for action in queued_actions:
@@ -2223,6 +2313,7 @@ func update_queued_actions_display():
 	var phase_upper = current_turn_phase.to_upper()
 	if phase_upper == "ACTION_SELECTION":
 		var queue_empty = queued_actions.size() == 0
+		undo_last_button.disabled = queue_empty
 		clear_queue_button.disabled = queue_empty
 		end_turn_button.disabled = queue_empty
 		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [queued_actions.size(), queue_empty])
