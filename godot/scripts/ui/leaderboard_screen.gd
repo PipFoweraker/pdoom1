@@ -223,6 +223,27 @@ func _create_entry_row(entry, rank: int) -> HBoxContainer:
 	score_label.add_theme_font_size_override("font_size", 14)
 	row.add_child(score_label)
 
+	# Baseline comparison (Issue #372)
+	var baseline_label = Label.new()
+	baseline_label.custom_minimum_size = Vector2(100, 0)
+	baseline_label.add_theme_font_size_override("font_size", 14)
+	if entry.baseline_score > 0:
+		var diff = entry.score - entry.baseline_score
+		var pct = (float(entry.score) / float(entry.baseline_score) - 1.0) * 100.0
+		if diff > 0:
+			baseline_label.text = "+%d%%" % int(pct)
+			baseline_label.add_theme_color_override("font_color", Color(0.4, 1.0, 0.4))  # Green
+		elif diff < 0:
+			baseline_label.text = "%d%%" % int(pct)
+			baseline_label.add_theme_color_override("font_color", Color(1.0, 0.5, 0.4))  # Red
+		else:
+			baseline_label.text = "=base"
+			baseline_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.4))  # Yellow
+	else:
+		baseline_label.text = "-"
+		baseline_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))  # Gray
+	row.add_child(baseline_label)
+
 	# Duration
 	var duration_label = Label.new()
 	duration_label.custom_minimum_size = Vector2(120, 0)

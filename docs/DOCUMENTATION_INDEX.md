@@ -24,7 +24,7 @@ This document provides an overview of the organized documentation structure foll
 ```
 src/core/
 ? game_constants.py      # Core defaults and configuration constants
-? ui_utils.py           # UI positioning and collision detection utilities  
+? ui_utils.py           # UI positioning and collision detection utilities
 ? verbose_logging.py    # RPG-style message formatting (160 lines)
 ? employee_management.py # Employee blob lifecycle management (38 lines)
 ? dialog_systems.py     # Dialog state and option management (153 lines)
@@ -57,7 +57,7 @@ src/core/
 **Structure**: Organized by status (active/completed) with dedicated investigation workspaces
 - `README.md` - Issues documentation index and workflow
 - `active/` - Current issues requiring attention
-- `completed/` - Resolved issues and implementation summaries  
+- `completed/` - Resolved issues and implementation summaries
 - `GITHUB_ISSUE_CLEANUP_SESSION.md` - Issue management processes
 - `TECHNICAL_DEBT_RESOLUTION.md` - Systematic technical debt tracking
 
@@ -80,6 +80,7 @@ src/core/
 - `UNICODE_CLEANUP_TASK.md` - ASCII compliance implementation
 
 #### Game Design & Mechanics (`game-design/`)
+- `BASELINE_SCORING_SYSTEM.md` - Baseline comparison scoring (Issue #372)
 - `DOOM_MECHANICS_ANALYSIS.md` - Core doom system analysis
 - `DOOM_TUNING_HOTFIX_v0.7.4.md` - Doom balancing adjustments
 - `ECONOMIC_CYCLES_IMPLEMENTATION.md` - Economic system design
@@ -87,6 +88,7 @@ src/core/
 - `LANDING_EXPERIENCE_ENHANCEMENTS.md` - New player experience
 - `PROGRESSION_SYSTEM_DESIGN.md` - Player progression mechanics
 - `PUBLIC_OPINION_SYSTEM.md` - Public opinion mechanics
+- `SCORING_SYSTEM_PROPOSAL.md` - Score calculation and display
 - `TECHNICAL_FAILURE_CASCADES.md` - Failure state design
 - `TURN_SEQUENCING_FIX.md` - Turn order mechanics
 
@@ -184,5 +186,5 @@ src/core/
 - Maintain architectural decision records for future reference
 - Keep active documentation focused and current
 
-Last Updated: December 13, 2025
+Last Updated: December 24, 2025
 Architecture Status: Modular (Post-Monolith Refactoring)
