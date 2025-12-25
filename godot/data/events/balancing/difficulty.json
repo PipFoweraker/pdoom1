@@ -1,0 +1,28 @@
+{
+  "_description": "Difficulty multipliers for event impacts",
+  "easy": {
+    "positive_multiplier": 1.25,
+    "negative_multiplier": 0.75,
+    "probability_modifier": 0.8,
+    "description": "Forgiving mode - benefits amplified, costs reduced"
+  },
+  "normal": {
+    "positive_multiplier": 1.0,
+    "negative_multiplier": 1.0,
+    "probability_modifier": 1.0,
+    "description": "Standard difficulty - balanced experience"
+  },
+  "hard": {
+    "positive_multiplier": 0.8,
+    "negative_multiplier": 1.25,
+    "probability_modifier": 1.2,
+    "description": "Challenging mode - reduced benefits, harsher costs"
+  },
+  "nightmare": {
+    "positive_multiplier": 0.6,
+    "negative_multiplier": 1.5,
+    "probability_modifier": 1.5,
+    "description": "Brutal mode - for experienced players only"
+  },
+  "default_difficulty": "normal"
+}

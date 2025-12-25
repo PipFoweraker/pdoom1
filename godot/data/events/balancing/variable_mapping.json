@@ -1,0 +1,44 @@
+{
+  "_description": "Maps pdoom-data variable names to game state variables",
+  "_note": "pdoom-data owns facts and defaults; pdoom1 owns balance tuning via overrides",
+  "mapping": {
+    "cash": "money",
+    "money": "money",
+    "stress": "doom",
+    "vibey_doom": "doom",
+    "doom": "doom",
+    "reputation": "reputation",
+    "public_opinion": "reputation",
+    "research": "research",
+    "papers": "papers",
+    "burnout_risk": "doom",
+    "compute": "compute",
+    "safety": "doom",
+    "funding": "money",
+    "morale": "reputation"
+  },
+  "scale_factors": {
+    "_description": "Multipliers to convert pdoom-data impact values to game values",
+    "money": 1000,
+    "doom": 1,
+    "reputation": 1,
+    "research": 2,
+    "papers": 1,
+    "compute": 10
+  },
+  "default_effects": {
+    "_description": "Default effects when no impacts array is provided",
+    "common": {
+      "research": 5
+    },
+    "rare": {
+      "research": 10,
+      "reputation": 5
+    },
+    "legendary": {
+      "research": 20,
+      "reputation": 10,
+      "doom": 5
+    }
+  }
+}

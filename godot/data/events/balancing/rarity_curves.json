@@ -1,0 +1,29 @@
+{
+  "_description": "Probability and timing curves for event rarity tiers",
+  "_note": "Historical events use year-based triggering; rarity affects fallback random triggers",
+  "common": {
+    "base_probability": 0.15,
+    "min_turn": 5,
+    "cooldown_turns": 10,
+    "description": "Frequent events - minor news, small research updates"
+  },
+  "rare": {
+    "base_probability": 0.08,
+    "min_turn": 10,
+    "cooldown_turns": 25,
+    "description": "Notable events - significant papers, org founding, policy changes"
+  },
+  "legendary": {
+    "base_probability": 0.03,
+    "min_turn": 20,
+    "cooldown_turns": 50,
+    "description": "Major narrative moments - paradigm shifts, critical incidents"
+  },
+  "default_rarity": "common",
+  "year_trigger": {
+    "_description": "Settings for year-based event triggering",
+    "turns_per_year": 12,
+    "base_year": 2017,
+    "fuzzy_window_turns": 2
+  }
+}
