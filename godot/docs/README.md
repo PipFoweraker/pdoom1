@@ -76,10 +76,18 @@ cd pdoom1
 - [x] Determinism verification tests
 - [x] Test runner script for CI/CD
 
-### Features Remaining (15%)
+### Historical Events System (100%)
+- [x] EventService autoload for fetching/caching events
+- [x] 1,194 historical AI safety events from pdoom-data
+- [x] Variable mapping (pdoom-data vars -> game vars)
+- [x] Rarity-based trigger system (legendary/rare/common)
+- [x] Override system for game balance tuning
+- [x] Category-based option generation
+
+### Features Remaining (10%)
 - [ ] Upgrades system
 - [ ] Save/load functionality
-- [ ] Additional events (5 -> 15-20)
+- [ ] Event chains (Phase 5)
 - [ ] Advanced analytics/stats
 - [ ] Sound effects
 - [ ] Polish and balancing
@@ -103,6 +111,9 @@ cd pdoom1
 - `GameEvents` (events.gd) - Event system with trigger conditions
 - `GameManager` (game_manager.gd) - Main game controller
 
+**Autoloads:**
+- `EventService` (event_service.gd) - Historical event fetching and transformation
+
 **UI:**
 - `WelcomeScreen` (welcome_screen.gd) - Main menu
 - `MainUI` (main_ui.gd) - Core gameplay interface
@@ -111,6 +122,14 @@ cd pdoom1
 ### Directory Structure:
 ```
 godot/
+|--- autoload/
+|   `--- event_service.gd      # Historical event management
+|--- data/
+|   |--- historical_events.json # 1,194 pdoom-data events
+|   `--- events/
+|       |--- balancing/        # Variable mapping, rarity curves
+|       |--- extensions/       # Event chains, triggers (Phase 5)
+|       `--- overrides/        # Game balance tuning
 |--- scenes/
 |   |--- welcome.tscn          # Main menu
 |   `--- main.tscn             # Core gameplay
@@ -169,22 +188,29 @@ godot/
 - Capability Researcher ($75k, 1 AP)
 - Compute Engineer ($50k, 1 AP)
 
-### Events (5 total)
+### Events
 
-1. **Funding Crisis** (Turn 10, money < $50k)
-   - Emergency Fundraising or Continue Anyway
+**Built-in Events (20+):**
+- Funding Crisis, Talent Recruitment, AI Breakthrough
+- Employee Burnout, Workplace Conflicts, Whistleblower scenarios
+- Media Scandals, Security Breaches, Competitor Poaching
+- See `scripts/core/events.gd` for full list
 
-2. **Talent Recruitment** (15% chance after turn 5)
-   - Discounted hiring opportunity
+**Historical Events (1,194 from pdoom-data):**
+- Real AI safety timeline events (2000-2024)
+- Organizations: MIRI, FHI, OpenAI, Anthropic, DeepMind, etc.
+- Capabilities: AlphaGo, GPT-3, ChatGPT, GPT-4, Claude
+- Policy: Asilomar, Pause Letter, UK AI Summit, EU AI Act
+- Incidents: FTX collapse, various funding/research events
 
-3. **AI Breakthrough** (10% chance after turn 8)
-   - Publish, keep proprietary, or safety review
+**Trigger Modes:**
+| Rarity | Count | Behavior |
+|--------|-------|----------|
+| Legendary | 41 | Always fires at historical date |
+| Rare | 1,076 | 6% chance within 26-turn window |
+| Common | 77 | 12% chance after eligible |
 
-4. **Funding Windfall** (Papers >= 3, reputation >= 40)
-   - Philanthropist donation
-
-5. **Compute Partnership** (12% chance after turn 6)
-   - Tech company compute deal
+See [EVENT_OVERRIDE_SYSTEM.md](../../docs/EVENT_OVERRIDE_SYSTEM.md) for full documentation.
 
 ### Game Mechanics
 
@@ -293,10 +319,9 @@ See [docs/testing/godot-testing-strategy.md](docs/testing/godot-testing-strategy
 
 ## Known Issues
 
-- Tests written but not yet executed (requires Godot Editor)
 - No save/load system yet
-- Limited events (5 of planned 15-20)
 - No upgrades system yet
+- Event chains not yet implemented (Phase 5)
 - UI could use more polish
 
 ---
@@ -320,9 +345,9 @@ See [docs/testing/godot-testing-strategy.md](docs/testing/godot-testing-strategy
 
 ## Documentation
 
+- [Event Override System](../../docs/EVENT_OVERRIDE_SYSTEM.md) - Historical events and balance tuning
 - [Testing Strategy](docs/testing/godot-testing-strategy.md) - Comprehensive testing guide
 - [Phase 6 Handoff](docs/sessions/2025-10-godot-phase6-implementation.md) - Implementation details
-- [Session Summary](SESSION_COMPLETION_SUMMARY_2025-10-30_GODOT_PHASE6_TESTING.md) - Latest progress
 
 ---
 
