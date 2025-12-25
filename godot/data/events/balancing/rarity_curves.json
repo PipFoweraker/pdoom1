@@ -1,29 +1,35 @@
 {
   "_description": "Probability and timing curves for event rarity tiers",
-  "_note": "Historical events use year-based triggering; rarity affects fallback random triggers",
+  "_note": "Historical events use year-based triggering; rarity affects behavior",
   "common": {
-    "base_probability": 0.15,
-    "min_turn": 5,
-    "cooldown_turns": 10,
-    "description": "Frequent events - minor news, small research updates"
+    "base_probability": 0.12,
+    "min_turn": 10,
+    "cooldown_turns": 8,
+    "trigger_mode": "random_after_eligible",
+    "description": "Frequent events - minor news, small research updates. Probabilistic after becoming eligible."
   },
   "rare": {
-    "base_probability": 0.08,
-    "min_turn": 10,
-    "cooldown_turns": 25,
-    "description": "Notable events - significant papers, org founding, policy changes"
+    "base_probability": 0.06,
+    "min_turn": 20,
+    "cooldown_turns": 15,
+    "eligibility_window_turns": 26,
+    "trigger_mode": "probabilistic_window",
+    "description": "Notable events - become eligible around historical date, then roll probability each turn within window."
   },
   "legendary": {
-    "base_probability": 0.03,
-    "min_turn": 20,
-    "cooldown_turns": 50,
-    "description": "Major narrative moments - paradigm shifts, critical incidents"
+    "base_probability": 1.0,
+    "min_turn": 1,
+    "cooldown_turns": 0,
+    "trigger_mode": "deterministic",
+    "description": "Major narrative moments - always fire at their historical date. Key story beats."
   },
   "default_rarity": "common",
   "year_trigger": {
     "_description": "Settings for year-based event triggering",
-    "turns_per_year": 12,
+    "turns_per_year": 52,
     "base_year": 2017,
-    "fuzzy_window_turns": 2
+    "base_month": 7,
+    "legendary_month_offset": 26,
+    "rare_spread_turns": 13
   }
 }

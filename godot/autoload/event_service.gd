@@ -353,33 +353,21 @@ func _transform_event(raw: Dictionary) -> Dictionary:
 		"media_reaction": "Crypto collapse..."
 	}
 
-	Legacy format (still supported):
-	{
-		"id": "miri_founded",
-		"date": "2000-01-01",
-		"title": "MIRI Founded",
-		"description": "...",
-		"category": "organization",
-		"significance": 8
-	}
+	Trigger modes by rarity:
+	- legendary: deterministic - always fires at exact turn (major narrative beats)
+	- rare: probabilistic_window - eligible around historical date, rolls each turn
+	- common: random_after_eligible - random chance after min_turn
 
 	Game event format (output):
 	{
 		"id": "hist_miri_founded",
 		"name": "MIRI Founded",
-		"description": "...",
 		"type": "popup",
-		"trigger_type": "turn_exact" or "random",
+		"trigger_type": "turn_exact" | "random",
 		"trigger_turn": <calculated from year>,
-		"year": 2000,
-		"category": "organization",
-		"rarity": "rare",
-		"probability": 0.08,
-		"min_turn": 10,
-		"cooldown_turns": 25,
-		"options": [...],
-		"safety_researcher_reaction": "...",
-		"media_reaction": "..."
+		"eligibility_start": <first turn event can fire>,
+		"eligibility_end": <last turn for window>,
+		...
 	}
 	"""
 	if not raw.has("id") or not raw.has("title"):
@@ -398,12 +386,47 @@ func _transform_event(raw: Dictionary) -> Dictionary:
 
 	# Get rarity curve settings
 	var rarity_settings = _get_rarity_settings(rarity)
+	var trigger_mode = rarity_settings.get("trigger_mode", "random_after_eligible")
 
-	# Calculate trigger turn based on year
+	# Calculate trigger turn based on year (52 turns per year)
 	var year_config = _rarity_curves.get("year_trigger", {})
 	var base_year = year_config.get("base_year", 2017)
-	var turns_per_year = year_config.get("turns_per_year", 12)
-	var trigger_turn = max(1, (year - base_year) * turns_per_year + 1)
+	var turns_per_year = year_config.get("turns_per_year", 52)
+
+	# Years before game start get clamped to turn 1
+	var years_from_start = year - base_year
+	var base_turn = max(1, years_from_start * turns_per_year + 1)
+
+	# Calculate trigger timing based on rarity
+	var trigger_turn: int
+	var trigger_type: String
+	var eligibility_start: int
+	var eligibility_end: int
+
+	match trigger_mode:
+		"deterministic":
+			# Legendary: fires at exact turn (mid-year for year-only events)
+			var month_offset = year_config.get("legendary_month_offset", 26)
+			trigger_turn = base_turn + month_offset
+			trigger_type = "turn_exact"
+			eligibility_start = trigger_turn
+			eligibility_end = trigger_turn
+
+		"probabilistic_window":
+			# Rare: eligible within a window around the historical date
+			var spread = year_config.get("rare_spread_turns", 13)
+			var window = rarity_settings.get("eligibility_window_turns", 26)
+			trigger_turn = base_turn + spread  # Center of eligibility
+			eligibility_start = max(1, trigger_turn - window / 2)
+			eligibility_end = trigger_turn + window / 2
+			trigger_type = "random"
+
+		_:  # "random_after_eligible" (common)
+			# Common: can fire anytime after becoming eligible
+			trigger_turn = max(rarity_settings.get("min_turn", 10), base_turn)
+			eligibility_start = trigger_turn
+			eligibility_end = 9999  # No end
+			trigger_type = "random"
 
 	# Calculate significance from impacts or use legacy field
 	var significance = raw.get("significance", _calculate_significance(raw))
@@ -417,19 +440,22 @@ func _transform_event(raw: Dictionary) -> Dictionary:
 		"name": raw.get("title", "Historical Event"),
 		"description": raw.get("description", "A significant event in AI safety history."),
 		"type": "popup",
-		"trigger_type": "turn_exact",  # Historical events trigger at specific turns
+		"trigger_type": trigger_type,
 		"trigger_turn": trigger_turn,
+		"eligibility_start": eligibility_start,
+		"eligibility_end": eligibility_end,
 		"year": year,
 		"category": category,
 		"rarity": rarity,
+		"trigger_mode": trigger_mode,
 		"significance": significance,
 		"repeatable": false,
 		"historical": true,
 		"source_data": raw,
 		"options": options,
-		# Rarity-based trigger settings (used if trigger_type changes to "random")
+		# Rarity-based trigger settings
 		"probability": rarity_settings.get("base_probability", 0.1),
-		"min_turn": rarity_settings.get("min_turn", 5),
+		"min_turn": eligibility_start,
 		"cooldown_turns": rarity_settings.get("cooldown_turns", 20)
 	}
 
@@ -482,14 +508,30 @@ func _get_rarity_settings(rarity: String) -> Dictionary:
 	if _rarity_curves.has(rarity):
 		return _rarity_curves[rarity]
 
-	# Fallback defaults
+	# Fallback defaults with trigger modes
 	match rarity:
 		"legendary":
-			return {"base_probability": 0.03, "min_turn": 20, "cooldown_turns": 50}
+			return {
+				"base_probability": 1.0,
+				"min_turn": 1,
+				"cooldown_turns": 0,
+				"trigger_mode": "deterministic"
+			}
 		"rare":
-			return {"base_probability": 0.08, "min_turn": 10, "cooldown_turns": 25}
+			return {
+				"base_probability": 0.06,
+				"min_turn": 20,
+				"cooldown_turns": 15,
+				"eligibility_window_turns": 26,
+				"trigger_mode": "probabilistic_window"
+			}
 		_:  # common or unknown
-			return {"base_probability": 0.15, "min_turn": 5, "cooldown_turns": 10}
+			return {
+				"base_probability": 0.12,
+				"min_turn": 10,
+				"cooldown_turns": 8,
+				"trigger_mode": "random_after_eligible"
+			}
 
 
 func _extract_year(date_string: String) -> int:
