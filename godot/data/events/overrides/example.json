@@ -1,0 +1,32 @@
+{
+  "_description": "Example override file showing how to tune pdoom-data events for game balance",
+  "_note": "Only include fields you want to override - unspecified fields keep base values",
+
+  "ftx_future_fund_collapse_2022": {
+    "_reason": "The FTX collapse was a massive blow to AI safety funding - making it legendary and high-impact",
+    "rarity": "legendary",
+    "impacts": [
+      {"variable": "money", "change": -80},
+      {"variable": "doom", "change": 15}
+    ],
+    "pdoom_impact": 15
+  },
+
+  "openai_founded": {
+    "_reason": "Founding of OpenAI is a pivotal moment in AI history - legendary rarity",
+    "rarity": "legendary",
+    "impacts": [
+      {"variable": "doom", "change": 5},
+      {"variable": "reputation", "change": 10}
+    ]
+  },
+
+  "chatgpt_released": {
+    "_reason": "ChatGPT mainstreamed AI - legendary event with mixed impacts",
+    "rarity": "legendary",
+    "impacts": [
+      {"variable": "doom", "change": 10},
+      {"variable": "reputation", "change": 5}
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "_description": "Event chain definitions - one event unlocking another after delay",
+  "_note": "Phase 5 feature - structure defined now, implementation later",
+  "_example": {
+    "trigger_event": "ftx_future_fund_collapse_2022",
+    "unlocks": ["cais_ftx_clawback_2023"],
+    "delay_turns": 12,
+    "probability": 0.8
+  },
+  "chains": []
+}

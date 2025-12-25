@@ -1,0 +1,14 @@
+{
+  "_description": "Conditional trigger rules for events based on game state",
+  "_note": "Allows events to trigger when specific conditions are met",
+  "_example": {
+    "event_id": "major_alignment_breakthrough",
+    "min_turn": 50,
+    "requires": {
+      "research": 100,
+      "safety_researchers": 3
+    },
+    "probability": 0.1
+  },
+  "triggers": {}
+}

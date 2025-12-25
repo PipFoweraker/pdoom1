@@ -28,6 +28,7 @@ LogExporter="*res://autoload/log_exporter.gd"
 IconLoader="*res://autoload/icon_loader.gd"
 MusicManager="*res://autoload/music_manager.gd"
 VerificationTracker="*res://autoload/verification_tracker.gd"
+EventService="*res://autoload/event_service.gd"
 GameManager="*res://scripts/game_manager.gd"
 
 [display]

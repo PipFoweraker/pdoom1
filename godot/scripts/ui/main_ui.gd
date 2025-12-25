@@ -206,7 +206,7 @@ func _input(event: InputEvent):
 				get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_fundraise"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
-				_show_fundraise_submenu()
+				_show_fundraising_submenu()
 				get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_publicity"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
@@ -852,11 +852,8 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	game_manager.select_action(action_id)
 
 func _get_action_by_id(action_id: String) -> Dictionary:
-	"""Helper to find action definition"""
-	for action in GameActions.get_all_actions():
-		if action.get("id") == action_id:
-			return action
-	return {}
+	"""Helper to find action definition - delegates to GameActions"""
+	return GameActions.get_action_by_id(action_id)
 
 func _calculate_queued_costs() -> Dictionary:
 	"""Calculate total costs of all queued actions for turn preview"""
