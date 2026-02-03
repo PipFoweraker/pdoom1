@@ -694,3 +694,64 @@ func to_dict() -> Dictionary:
 		"paper_submissions": paper_dicts,
 		"attended_conferences": attended_conferences
 	}
+
+
+func from_dict(data: Dictionary) -> void:
+	"""Restore game state from serialized data (for save/load)"""
+	# Core resources
+	money = data.get("money", 100000)
+	compute = data.get("compute", 0.0)
+	research = data.get("research", 0.0)
+	papers = data.get("papers", 0)
+	reputation = data.get("reputation", 10.0)
+	doom = data.get("doom", 50.0)
+	action_points = data.get("action_points", 3)
+	committed_ap = data.get("committed_ap", 0)
+	reserved_ap = data.get("reserved_ap", 0)
+	stationery = data.get("stationery", 100.0)
+	technical_debt = data.get("technical_debt", 0.0)
+
+	# Staff counts (legacy)
+	safety_researchers = data.get("safety_researchers", 0)
+	capability_researchers = data.get("capability_researchers", 0)
+	compute_engineers = data.get("compute_engineers", 0)
+	managers = data.get("managers", 0)
+
+	# Game state
+	turn = data.get("turn", 0)
+	game_over = data.get("game_over", false)
+	victory = data.get("victory", false)
+	has_cat = data.get("has_cat", false)
+	purchased_upgrades = data.get("purchased_upgrades", [])
+	attended_conferences = data.get("attended_conferences", [])
+
+	# Restore doom system
+	if doom_system and data.has("doom_system"):
+		doom_system.from_dict(data["doom_system"])
+
+	# Restore risk system
+	if risk_system and data.has("risk_system"):
+		risk_system.from_dict(data["risk_system"])
+
+	# Restore researchers
+	researchers.clear()
+	if data.has("researchers"):
+		for researcher_data in data["researchers"]:
+			var researcher = Researcher.new()
+			researcher.from_dict(researcher_data)
+			researchers.append(researcher)
+
+	# Restore candidate pool
+	candidate_pool.clear()
+	if data.has("candidate_pool"):
+		for candidate_data in data["candidate_pool"]:
+			var candidate = Researcher.new()
+			candidate.from_dict(candidate_data)
+			candidate_pool.append(candidate)
+
+	# Restore paper submissions
+	paper_submissions.clear()
+	if data.has("paper_submissions"):
+		for paper_data in data["paper_submissions"]:
+			var paper = PaperSubmissions.PaperSubmission.from_dict(paper_data)
+			paper_submissions.append(paper)

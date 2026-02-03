@@ -1132,6 +1132,309 @@ static func _calculate_salary_disparity(state: GameState) -> float:
 	# Coefficient of variation as percentage
 	return (std_dev / mean) * 100.0
 
+
+# ============================================================================
+# RISK-TRIGGERED EVENTS
+# See godot/docs/design/RISK_SYSTEM.md for design documentation
+# ============================================================================
+
+static func get_risk_events() -> Dictionary:
+	"""Return all risk event definitions, organized by pool and severity.
+	Format: {pool_name: {severity: [events]}}"""
+	return {
+		"capability_overhang": {
+			"minor": [
+				{
+					"id": "risk_capability_minor_1",
+					"name": "Alignment Tax Debate",
+					"description": "A prominent researcher publicly questions whether safety work is slowing progress. Your team is caught in the crossfire.",
+					"effects": {"reputation": -3, "doom": 2},
+					"message": "Alignment tax debate affects team morale (-3 reputation, +2 doom)"
+				},
+				{
+					"id": "risk_capability_minor_2",
+					"name": "Capability Gap Concerns",
+					"description": "Internal reports suggest your safety research is falling behind capability advances in the field.",
+					"effects": {"research": -5, "doom": 3},
+					"message": "Scrambling to catch up on safety (-5 research, +3 doom)"
+				}
+			],
+			"moderate": [
+				{
+					"id": "risk_capability_moderate_1",
+					"name": "Unexpected Capability Jump",
+					"description": "A routine capability test shows emergent behaviors nobody predicted. The gap between capabilities and understanding widens.",
+					"effects": {"doom": 8, "reputation": 5},
+					"message": "Emergent capabilities discovered (+8 doom, +5 reputation for honesty)"
+				}
+			],
+			"severe": [
+				{
+					"id": "risk_capability_severe_1",
+					"name": "Near-Miss Incident",
+					"description": "Your AI system nearly executed an unintended action with real-world consequences. Only luck prevented disaster.",
+					"effects": {"doom": 12, "reputation": -10, "money": -30000},
+					"message": "Near-miss incident! Emergency containment required (+12 doom, -10 rep, -$30k)"
+				}
+			],
+			"catastrophic": [
+				{
+					"id": "risk_capability_catastrophic_1",
+					"name": "Recursive Self-Improvement Scare",
+					"description": "Your system showed signs of attempting to modify its own training. The board demands immediate action.",
+					"effects": {"doom": 20, "reputation": -20, "compute": -50},
+					"message": "RSI scare! Emergency shutdown (+20 doom, -20 rep, -50 compute)"
+				}
+			]
+		},
+		"research_integrity": {
+			"minor": [
+				{
+					"id": "risk_integrity_minor_1",
+					"name": "Replication Failure",
+					"description": "Another lab fails to replicate one of your published results. Questions arise about methodology.",
+					"effects": {"reputation": -5, "papers": -1},
+					"message": "Replication failure damages credibility (-5 reputation, -1 paper retracted)"
+				},
+				{
+					"id": "risk_integrity_minor_2",
+					"name": "Peer Review Criticism",
+					"description": "A harsh peer review highlights gaps in your recent submission. More work needed.",
+					"effects": {"research": -10, "reputation": -2},
+					"message": "Peer review requires major revisions (-10 research, -2 reputation)"
+				}
+			],
+			"moderate": [
+				{
+					"id": "risk_integrity_moderate_1",
+					"name": "Data Quality Concerns",
+					"description": "An audit reveals inconsistencies in your training data. Some results may be compromised.",
+					"effects": {"research": -20, "reputation": -8, "doom": 3},
+					"message": "Data quality audit finds issues (-20 research, -8 rep, +3 doom)"
+				}
+			],
+			"severe": [
+				{
+					"id": "risk_integrity_severe_1",
+					"name": "Retraction Notice",
+					"description": "A major paper must be retracted due to methodological errors. Your lab's credibility takes a serious hit.",
+					"effects": {"papers": -2, "reputation": -15, "doom": 5},
+					"message": "Paper retraction! Major credibility damage (-2 papers, -15 rep, +5 doom)"
+				}
+			],
+			"catastrophic": [
+				{
+					"id": "risk_integrity_catastrophic_1",
+					"name": "Whistleblower Exposé",
+					"description": "A former employee goes public with claims of systematic research misconduct. Media frenzy ensues.",
+					"effects": {"reputation": -30, "doom": 10, "money": -50000},
+					"message": "Whistleblower scandal! Crisis mode (-30 rep, +10 doom, -$50k legal fees)"
+				}
+			]
+		},
+		"regulatory_attention": {
+			"minor": [
+				{
+					"id": "risk_regulatory_minor_1",
+					"name": "Compliance Inquiry",
+					"description": "A regulatory body requests documentation about your AI development practices.",
+					"effects": {"money": -10000, "reputation": -2},
+					"message": "Compliance paperwork required (-$10k, -2 reputation)"
+				},
+				{
+					"id": "risk_regulatory_minor_2",
+					"name": "Policy Consultation",
+					"description": "Government officials want to understand your work. Opportunity or threat?",
+					"effects": {"money": -5000, "reputation": 3},
+					"message": "Policy consultation takes time but builds goodwill (-$5k, +3 reputation)"
+				}
+			],
+			"moderate": [
+				{
+					"id": "risk_regulatory_moderate_1",
+					"name": "Formal Investigation",
+					"description": "Regulators launch a formal investigation into your AI safety practices.",
+					"effects": {"money": -40000, "reputation": -10, "doom": 3},
+					"message": "Regulatory investigation launched (-$40k, -10 rep, +3 doom from delays)"
+				}
+			],
+			"severe": [
+				{
+					"id": "risk_regulatory_severe_1",
+					"name": "Congressional Hearing",
+					"description": "You've been called to testify before Congress about AI safety. The whole world is watching.",
+					"effects": {"money": -60000, "reputation": -5, "doom": 5},
+					"message": "Congressional testimony required (-$60k, -5 rep, +5 doom from scrutiny)"
+				}
+			],
+			"catastrophic": [
+				{
+					"id": "risk_regulatory_catastrophic_1",
+					"name": "Moratorium Proposal",
+					"description": "Lawmakers propose a temporary halt to AI development. Your lab could be forced to pause research.",
+					"effects": {"doom": 15, "research": -30, "compute": -30},
+					"message": "Moratorium threatens operations (+15 doom, -30 research, -30 compute frozen)"
+				}
+			]
+		},
+		"public_awareness": {
+			"minor": [
+				{
+					"id": "risk_public_minor_1",
+					"name": "Social Media Backlash",
+					"description": "A viral post criticizes AI labs. Your organization is mentioned unfavorably.",
+					"effects": {"reputation": -5},
+					"message": "Social media criticism spreads (-5 reputation)"
+				},
+				{
+					"id": "risk_public_minor_2",
+					"name": "Documentary Mention",
+					"description": "An AI documentary mentions your lab. Coverage is mixed.",
+					"effects": {"reputation": -3, "money": 10000},
+					"message": "Documentary coverage brings attention (-3 rep, +$10k donations)"
+				}
+			],
+			"moderate": [
+				{
+					"id": "risk_public_moderate_1",
+					"name": "Viral AI Panic",
+					"description": "A misleading news story about AI risks goes viral. Public fear spikes.",
+					"effects": {"doom": 5, "reputation": -8, "money": -20000},
+					"message": "AI panic affects funding (-8 rep, +5 doom, -$20k donations dry up)"
+				}
+			],
+			"severe": [
+				{
+					"id": "risk_public_severe_1",
+					"name": "Tech Backlash Movement",
+					"description": "A grassroots movement against AI development gains momentum. Your lab is a target.",
+					"effects": {"reputation": -15, "money": -40000, "doom": 8},
+					"message": "Anti-AI movement targets lab (-15 rep, -$40k, +8 doom)"
+				}
+			],
+			"catastrophic": [
+				{
+					"id": "risk_public_catastrophic_1",
+					"name": "Protest Blockade",
+					"description": "Protesters blockade your facilities. Operations grind to a halt.",
+					"effects": {"doom": 12, "research": -25, "money": -50000},
+					"message": "Facility blockaded! Operations disrupted (+12 doom, -25 research, -$50k)"
+				}
+			]
+		},
+		"insider_threat": {
+			"minor": [
+				{
+					"id": "risk_insider_minor_1",
+					"name": "Morale Issues",
+					"description": "Team surveys reveal declining job satisfaction. Productivity suffers.",
+					"effects": {"research": -8, "reputation": -2},
+					"message": "Low morale affects output (-8 research, -2 reputation)"
+				},
+				{
+					"id": "risk_insider_minor_2",
+					"name": "Internal Conflict",
+					"description": "Disagreements between team members escalate. Management intervention needed.",
+					"effects": {"research": -5, "money": -5000},
+					"message": "Internal conflict requires mediation (-5 research, -$5k)"
+				}
+			],
+			"moderate": [
+				{
+					"id": "risk_insider_moderate_1",
+					"name": "Key Resignation",
+					"description": "A senior researcher announces they're leaving. They cite cultural concerns.",
+					"effects": {"research": -15, "reputation": -5, "doom": 3},
+					"message": "Senior researcher quits (-15 research, -5 rep, +3 doom)"
+				}
+			],
+			"severe": [
+				{
+					"id": "risk_insider_severe_1",
+					"name": "Data Leak",
+					"description": "Confidential research data appears online. Someone inside leaked it.",
+					"effects": {"reputation": -20, "doom": 8, "research": -20},
+					"message": "Internal data leak! Competitor advantage gained (-20 rep, +8 doom, -20 research)"
+				}
+			],
+			"catastrophic": [
+				{
+					"id": "risk_insider_catastrophic_1",
+					"name": "Sabotage Discovered",
+					"description": "Someone has been deliberately corrupting your training runs. Months of work compromised.",
+					"effects": {"research": -40, "doom": 15, "reputation": -25, "money": -30000},
+					"message": "Sabotage! Major setback (-40 research, +15 doom, -25 rep, -$30k)"
+				}
+			]
+		},
+		"financial_exposure": {
+			"minor": [
+				{
+					"id": "risk_financial_minor_1",
+					"name": "Budget Overrun",
+					"description": "This quarter's expenses exceeded projections. Tighter controls needed.",
+					"effects": {"money": -15000},
+					"message": "Budget overrun (-$15k)"
+				},
+				{
+					"id": "risk_financial_minor_2",
+					"name": "Invoice Dispute",
+					"description": "A vendor disputes payment terms. Legal review required.",
+					"effects": {"money": -8000, "reputation": -1},
+					"message": "Vendor dispute drains resources (-$8k, -1 reputation)"
+				}
+			],
+			"moderate": [
+				{
+					"id": "risk_financial_moderate_1",
+					"name": "Funding Delay",
+					"description": "A major grant disbursement is delayed. Cash flow tightens.",
+					"effects": {"money": -30000, "doom": 3},
+					"message": "Grant delayed! Cash crunch (-$30k effective, +3 doom from stress)"
+				}
+			],
+			"severe": [
+				{
+					"id": "risk_financial_severe_1",
+					"name": "Budget Shortfall",
+					"description": "Quarterly review reveals serious underfunding. Cuts must be made.",
+					"effects": {"money": -50000, "doom": 6},
+					"message": "Budget crisis! Emergency cuts required (-$50k, +6 doom)"
+				}
+			],
+			"catastrophic": [
+				{
+					"id": "risk_financial_catastrophic_1",
+					"name": "Runway Crisis",
+					"description": "You have weeks of funding left. Without emergency action, the lab closes.",
+					"effects": {"doom": 20, "money": -80000, "reputation": -15},
+					"message": "Runway crisis! Existential threat (+20 doom, -$80k, -15 rep)"
+				}
+			]
+		}
+	}
+
+
+static func get_risk_event_for_pool(pool_name: String, severity: String, rng: RandomNumberGenerator) -> Dictionary:
+	"""Get a random risk event for a pool at a given severity level.
+	Returns empty dict if no matching events found."""
+	var all_risk_events = get_risk_events()
+
+	if not all_risk_events.has(pool_name):
+		return {}
+
+	var pool_events = all_risk_events[pool_name]
+	if not pool_events.has(severity):
+		return {}
+
+	var severity_events = pool_events[severity]
+	if severity_events.is_empty():
+		return {}
+
+	# Pick random event from available options
+	var idx = rng.randi() % severity_events.size()
+	return severity_events[idx]
+
 static func reset_triggered_events():
 	"""Clear triggered events (for new game)"""
 	triggered_events.clear()

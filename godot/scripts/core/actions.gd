@@ -740,7 +740,138 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			# Note: Would track ethicist count in expanded state
 			result["message"] = "Hired AI ethicist (+5 reputation, improves safety research)"
 
+	# === RISK SYSTEM INTEGRATION ===
+	# Apply risk contributions for successful actions
+	# See godot/docs/design/RISK_SYSTEM.md for design documentation
+	if result["success"] and state.risk_system:
+		_apply_risk_contributions(action_id, state)
+
 	return result
+
+
+static func _apply_risk_contributions(action_id: String, state: GameState) -> void:
+	"""Apply risk pool contributions based on action taken.
+	Risk contributions are hidden from players but visible in debug overlay."""
+	if not state.risk_system:
+		return
+
+	var turn = state.turn
+
+	match action_id:
+		# === HIRING ===
+		"hire_capability_researcher":
+			state.risk_system.add_risk_multi({
+				"capability_overhang": 3.0,
+				"insider_threat": 1.0,
+				"financial_exposure": 2.0
+			}, "hire_capability", turn)
+
+		"hire_safety_researcher":
+			state.risk_system.add_risk_multi({
+				"capability_overhang": -2.0,  # Balances capabilities
+				"insider_threat": 1.0,
+				"financial_exposure": 2.0
+			}, "hire_safety", turn)
+
+		"hire_compute_engineer", "hire_manager", "hire_ethicist":
+			state.risk_system.add_risk("financial_exposure", 2.0, "hire_staff", turn)
+
+		# === RESEARCH ===
+		"capability_research":
+			state.risk_system.add_risk("capability_overhang", 2.0, "capability_research", turn)
+
+		"safety_research":
+			state.risk_system.add_risk_multi({
+				"capability_overhang": -1.0,
+				"research_integrity": -1.0
+			}, "safety_research", turn)
+
+		"publish_paper":
+			state.risk_system.add_risk_multi({
+				"capability_overhang": -2.0,
+				"regulatory_attention": 2.0,
+				"public_awareness": 1.0
+			}, "publish_paper", turn)
+
+		# === FUNDING ===
+		"fundraise_small":
+			state.risk_system.add_risk("financial_exposure", -1.0, "modest_funding", turn)
+
+		"fundraise_big":
+			state.risk_system.add_risk("financial_exposure", 2.0, "aggressive_funding", turn)
+
+		"take_loan":
+			state.risk_system.add_risk("financial_exposure", 5.0, "debt", turn)
+
+		"apply_grant", "grant_proposal":
+			state.risk_system.add_risk("financial_exposure", -3.0, "diversified_funding", turn)
+
+		# === PUBLICITY ===
+		"media_campaign":
+			state.risk_system.add_risk_multi({
+				"public_awareness": 3.0,
+				"regulatory_attention": 2.0
+			}, "media_campaign", turn)
+
+		"release_warning":
+			state.risk_system.add_risk_multi({
+				"public_awareness": 5.0,
+				"regulatory_attention": 3.0
+			}, "public_warning", turn)
+
+		"lobby_government":
+			state.risk_system.add_risk("regulatory_attention", -2.0, "lobbying", turn)
+
+		"network":
+			state.risk_system.add_risk("insider_threat", -1.0, "networking", turn)
+
+		# === STRATEGIC ===
+		"sabotage_competitor":
+			state.risk_system.add_risk_multi({
+				"insider_threat": 10.0,  # Ethical culture damage
+				"research_integrity": 5.0
+			}, "sabotage", turn)
+
+		"acquire_startup":
+			state.risk_system.add_risk_multi({
+				"insider_threat": 3.0,  # Integration risk
+				"financial_exposure": 5.0
+			}, "acquisition", turn)
+
+		"emergency_pivot":
+			state.risk_system.add_risk_multi({
+				"capability_overhang": -3.0,
+				"insider_threat": 2.0  # Staff disruption
+			}, "pivot", turn)
+
+		"open_source_release":
+			state.risk_system.add_risk_multi({
+				"capability_overhang": -5.0,
+				"public_awareness": 2.0,
+				"research_integrity": -2.0
+			}, "open_source", turn)
+
+		# === OPERATIONS ===
+		"team_building":
+			state.risk_system.add_risk("insider_threat", -2.0, "team_building", turn)
+
+		"audit_safety":
+			state.risk_system.add_risk_multi({
+				"research_integrity": -3.0,
+				"capability_overhang": -2.0,
+				"regulatory_attention": -1.0
+			}, "safety_audit", turn)
+
+		"buy_compute":
+			state.risk_system.add_risk("financial_exposure", 1.0, "compute_purchase", turn)
+
+		# === TRAVEL & CONFERENCES ===
+		"attend_conference":
+			state.risk_system.add_risk_multi({
+				"public_awareness": 1.0,
+				"research_integrity": -1.0
+			}, "conference", turn)
+
 
 static func _assign_random_traits(researcher: Researcher, rng: RandomNumberGenerator):
 	"""Assign random traits to a new researcher"""
