@@ -93,6 +93,46 @@ func update_game_state():
 		lines.append("Status: %s" % state.doom_system.get_doom_status())
 	lines.append("")
 
+	# Risk System (hidden from players, visible in debug)
+	if state.risk_system:
+		lines.append("[b]Risk Pools (Hidden)[/b]")
+		var risk_data = state.risk_system.get_dev_mode_data()
+		for pool_name in risk_data["pools"].keys():
+			var pool = risk_data["pools"][pool_name]
+			var value = pool["value"]
+			var status = pool["status"]
+			var trend = pool["trend"]
+			var prob = pool["trigger_probability"]
+
+			# Color based on status
+			var color = "green"
+			if status == "critical" or status == "extreme":
+				color = "red"
+			elif status == "high":
+				color = "orange"
+			elif status == "moderate":
+				color = "yellow"
+
+			var trend_str = ""
+			if trend > 0.5:
+				trend_str = " [color=red]↑[/color]"
+			elif trend < -0.5:
+				trend_str = " [color=green]↓[/color]"
+
+			lines.append("[color=%s]%s: %.1f[/color] (%d%% trigger)%s" % [
+				color,
+				pool["name"],
+				value,
+				int(prob * 100),
+				trend_str
+			])
+
+		# Summary
+		lines.append("Total: %.1f | Avg: %.1f" % [risk_data["total_risk"], risk_data["average_risk"]])
+		if risk_data["pools_above_50"].size() > 0:
+			lines.append("[color=orange]Warning pools: %s[/color]" % ", ".join(risk_data["pools_above_50"]))
+		lines.append("")
+
 	# Staff
 	lines.append("[b]Staff[/b]")
 	lines.append("Safety: %d | Capabilities: %d" % [state.safety_researchers, state.capability_researchers])
