@@ -5,6 +5,9 @@ class_name GameEvents
 # Track which events have already triggered
 static var triggered_events: Array[String] = []
 
+# Track cooldowns for repeatable events (event_id -> last_triggered_turn)
+static var event_cooldowns: Dictionary = {}
+
 static func get_all_events() -> Array[Dictionary]:
 	"""Return all event definitions"""
 	return [
@@ -47,8 +50,9 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A brilliant researcher wants to join your lab at reduced cost!",
 			"type": "popup",
 			"trigger_type": "random",
-			"probability": 0.15,
+			"probability": 0.12,  # Reduced from 0.15
 			"min_turn": 5,
+			"cooldown_turns": 15,  # ~3 weeks between opportunities
 			"repeatable": true,
 			"options": [
 				{
@@ -80,9 +84,10 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Your team has made an unexpected AI capability advancement!",
 			"type": "popup",
 			"trigger_type": "random",
-			"probability": 0.10,
+			"probability": 0.08,  # Reduced from 0.10
 			"min_turn": 8,
 			"trigger_condition": "researchers > 0",
+			"cooldown_turns": 30,  # ~6 weeks between breakthroughs
 			"repeatable": true,
 			"options": [
 				{
@@ -135,8 +140,9 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A tech company offers discounted compute access!",
 			"type": "popup",
 			"trigger_type": "random",
-			"probability": 0.12,
+			"probability": 0.10,  # Reduced from 0.12
 			"min_turn": 6,
+			"cooldown_turns": 40,  # ~8 weeks between compute deals
 			"repeatable": true,
 			"options": [
 				{
@@ -165,8 +171,11 @@ static func get_all_events() -> Array[Dictionary]:
 			"name": "Employee Burnout Crisis",
 			"description": "Your team is overworked! Several researchers are considering leaving.",
 			"type": "popup",
-			"trigger_type": "threshold",
-			"trigger_condition": "safety_researchers >= 5",
+			"trigger_type": "random",  # Changed from threshold to random to prevent every-turn firing
+			"trigger_condition": "researchers >= 5",  # Need 5+ total researchers
+			"probability": 0.08,  # 8% chance per turn when conditions met
+			"min_turn": 10,  # Don't trigger too early
+			"cooldown_turns": 25,  # ~5 weeks between burnout crises
 			"repeatable": true,
 			"options": [
 				{
@@ -206,8 +215,9 @@ static func get_all_events() -> Array[Dictionary]:
 			"type": "popup",
 			"trigger_type": "random",
 			"trigger_condition": "researchers > 0",
-			"probability": 0.08,
+			"probability": 0.06,  # Reduced from 0.08
 			"min_turn": 10,
+			"cooldown_turns": 35,  # ~7 weeks between poaching attempts
 			"repeatable": true,
 			"options": [
 				{
@@ -231,8 +241,9 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Negative press coverage is damaging your lab's reputation!",
 			"type": "popup",
 			"trigger_type": "random",
-			"probability": 0.06,
+			"probability": 0.05,  # Reduced from 0.06
 			"min_turn": 7,
+			"cooldown_turns": 40,  # ~8 weeks between scandals
 			"repeatable": true,
 			"options": [
 				{
@@ -286,9 +297,10 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Your compute infrastructure suffered a major failure!",
 			"type": "popup",
 			"trigger_type": "random",
-			"trigger_condition":"money >= 20000",
+			"trigger_condition": "money >= 20000",
 			"probability": 0.05,
 			"min_turn": 12,
+			"cooldown_turns": 50,  # ~10 weeks between major failures
 			"repeatable": true,
 			"options": [
 				{
@@ -345,9 +357,10 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Two researchers are in a heated disagreement that's disrupting the entire team. Productivity is suffering.",
 			"type": "popup",
 			"trigger_type": "random",
-			"trigger_condition": "researchers > 0",
-			"probability": 0.10,
+			"trigger_condition": "researchers >= 3",  # Need at least 3 researchers for conflicts
+			"probability": 0.08,  # Reduced from 0.10
 			"min_turn": 8,
+			"cooldown_turns": 30,  # ~6 weeks between conflicts
 			"repeatable": true,
 			"options": [
 				{
@@ -378,9 +391,10 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A formal complaint has been filed. This requires immediate and careful attention.",
 			"type": "popup",
 			"trigger_type": "random",
-			"trigger_condition": "researchers > 0",
-			"probability": 0.06,
+			"trigger_condition": "researchers >= 3",  # Need a team for workplace complaints
+			"probability": 0.05,  # Reduced from 0.06
 			"min_turn": 10,
+			"cooldown_turns": 60,  # ~12 weeks between complaints
 			"repeatable": true,
 			"options": [
 				{
@@ -408,11 +422,16 @@ static func get_all_events() -> Array[Dictionary]:
 		{
 			"id": "salary_dispute",
 			"name": "Pay Equity Concerns",
-			"description": "Several employees have raised concerns about pay disparities. They're comparing notes.",
+			"description": "Several employees have raised concerns about pay disparities. They've been comparing notes and noticed significant differences.",
 			"type": "popup",
-			"trigger_type": "threshold",
-			"trigger_condition": "safety_researchers >= 3",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 5",  # Need 5+ employees
+			"probability": 0.08,  # 8% chance per turn when conditions met
+			"min_turn": 15,  # Don't trigger too early
+			"cooldown_turns": 50,  # ~1 year between occurrences (50 turns = ~10 weeks)
 			"repeatable": true,
+			# Note: Also requires salary_disparity > 15 (checked separately in should_trigger)
+			"extra_condition": "salary_disparity > 15",  # >15% salary spread
 			"options": [
 				{
 					"id": "salary_audit",
@@ -442,9 +461,10 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A valued researcher is struggling with severe stress and anxiety. They've requested time off.",
 			"type": "popup",
 			"trigger_type": "random",
-			"trigger_condition": "researchers > 0",
-			"probability": 0.08,
+			"trigger_condition": "researchers >= 2",
+			"probability": 0.06,  # Reduced from 0.08
 			"min_turn": 12,
+			"cooldown_turns": 40,  # ~8 weeks between crises
 			"repeatable": true,
 			"options": [
 				{
@@ -475,8 +495,9 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Expensive equipment has disappeared from the lab. Someone may be stealing.",
 			"type": "popup",
 			"trigger_type": "random",
-			"probability": 0.05,
+			"probability": 0.04,  # Reduced from 0.05
 			"min_turn": 15,
+			"cooldown_turns": 60,  # ~12 weeks between thefts
 			"repeatable": true,
 			"options": [
 				{
@@ -507,9 +528,10 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A senior researcher has been caught violating company policy. Others are watching how you respond.",
 			"type": "popup",
 			"trigger_type": "random",
-			"trigger_condition": "researchers > 0",
-			"probability": 0.07,
+			"trigger_condition": "researchers >= 2",
+			"probability": 0.05,  # Reduced from 0.07
 			"min_turn": 10,
+			"cooldown_turns": 45,  # ~9 weeks between violations
 			"repeatable": true,
 			"options": [
 				{
@@ -540,9 +562,10 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "Someone leaked your unpublished safety research to a competitor lab. They're using it to accelerate their capabilities work.",
 			"type": "popup",
 			"trigger_type": "random",
-			"trigger_condition": "researchers > 0",
-			"probability": 0.08,
+			"trigger_condition": "researchers >= 3 and research >= 10",  # Need research to leak
+			"probability": 0.06,  # Reduced from 0.08
 			"min_turn": 12,
+			"cooldown_turns": 50,  # ~10 weeks between leaks
 			"repeatable": true,
 			"options": [
 				{
@@ -573,8 +596,9 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "A contact offers information about a rival lab's dangerous capabilities research. How did they get it?",
 			"type": "popup",
 			"trigger_type": "random",
-			"probability": 0.07,
+			"probability": 0.05,  # Reduced from 0.07
 			"min_turn": 15,
+			"cooldown_turns": 60,  # ~12 weeks between intel opportunities
 			"repeatable": true,
 			"options": [
 				{
@@ -604,8 +628,11 @@ static func get_all_events() -> Array[Dictionary]:
 			"name": "Whistleblower Approaches",
 			"description": "A researcher from a competitor lab wants to expose their unsafe practices. They're asking for your help.",
 			"type": "popup",
-			"trigger_type": "threshold",
+			"trigger_type": "random",
+			"min_turn": 20,
 			"trigger_condition": "reputation >= 60",
+			"probability": 0.05,
+			"cooldown_turns": 80,  # ~16 weeks between whistleblower approaches
 			"repeatable": true,
 			"options": [
 				{
@@ -642,8 +669,11 @@ static func get_all_events() -> Array[Dictionary]:
 			"name": "Internal Concerns Raised",
 			"description": "One of your researchers wants to go public about concerns with your lab's direction. Handle carefully.",
 			"type": "popup",
-			"trigger_type": "threshold",
+			"trigger_type": "random",
+			"min_turn": 15,
 			"trigger_condition": "capability_researchers >= 2",
+			"probability": 0.06,  # Reduced from 0.08
+			"cooldown_turns": 50,  # ~10 weeks between internal concerns
 			"repeatable": true,
 			"options": [
 				{
@@ -746,8 +776,9 @@ static func get_all_events() -> Array[Dictionary]:
 			"description": "An internal audit discovered your systems have weak password policies. If exploited, research data could be compromised.",
 			"type": "popup",
 			"trigger_type": "random",
-			"probability": 0.07,
+			"probability": 0.05,  # Reduced from 0.07
 			"min_turn": 8,
+			"cooldown_turns": 50,  # ~10 weeks between security issues
 			"repeatable": true,
 			"options": [
 				{
@@ -778,10 +809,11 @@ static func get_all_events() -> Array[Dictionary]:
 			"name": "Competitor Poaching Attempt",
 			"description": "A competitor is trying to recruit one of your top researchers with a lucrative offer.",
 			"type": "popup",
-			"trigger_type": "random",  # Was "threshold" which ignores probability/min_turn!
-			"trigger_condition": "researchers >= 2",
-			"probability": 0.04,  # ~4% per turn when conditions met, <1/year
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 3",  # Need a decent team
+			"probability": 0.04,
 			"min_turn": 20,
+			"cooldown_turns": 35,  # ~7 weeks between poaching attempts
 			"repeatable": true,
 			"options": [
 				{
@@ -816,8 +848,7 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 	for event in get_all_events():
 		if should_trigger(event, state, rng):
 			to_trigger.append(event)
-			if not event.get("repeatable", false):
-				triggered_events.append(event["id"])
+			_mark_event_triggered(event, state.turn)
 
 	# Check scenario-specific events (Issue #483: Mod/Scenario hook)
 	if state.has_meta("scenario_events"):
@@ -825,8 +856,21 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 		for event in scenario_events:
 			if should_trigger(event, state, rng):
 				to_trigger.append(event)
-				if not event.get("repeatable", false):
-					triggered_events.append(event["id"])
+				_mark_event_triggered(event, state.turn)
+
+	# Check historical events from EventService (Issue #442: API Event Fetching)
+	# Historical events are real AI safety timeline events transformed into game events
+	# Only trigger events that occur on or after the game's configured start date
+	if EventService and EventService.is_ready():
+		var historical_events = EventService.get_historical_events()
+		for event in historical_events:
+			# Skip events from before the game start date
+			var event_year = event.get("year", 0)
+			if event_year < state.start_year:
+				continue
+			if should_trigger(event, state, rng):
+				to_trigger.append(event)
+				_mark_event_triggered(event, state.turn)
 
 	return to_trigger
 
@@ -837,6 +881,13 @@ static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumbe
 	# Don't trigger if already triggered (unless repeatable)
 	if event_id in triggered_events and not event.get("repeatable", false):
 		return false
+
+	# Check cooldown for repeatable events (cooldown_turns = minimum turns between triggers)
+	var cooldown_turns = event.get("cooldown_turns", 0)
+	if cooldown_turns > 0 and event_cooldowns.has(event_id):
+		var last_triggered = event_cooldowns[event_id]
+		if state.turn - last_triggered < cooldown_turns:
+			return false
 
 	var trigger_type = event.get("trigger_type", "")
 
@@ -863,6 +914,10 @@ static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumbe
 			var cond = event.get("trigger_condition", "")
 			if cond != "" and not evaluate_condition(cond, state):
 				return false
+			# Check extra_condition if present (e.g., salary_disparity checks)
+			var extra_cond = event.get("extra_condition", "")
+			if extra_cond != "" and not evaluate_condition(extra_cond, state):
+				return false
 			var event_roll = rng.randf()
 
 			# Record RNG outcome for verification
@@ -876,6 +931,10 @@ static func evaluate_condition(condition: String, state: GameState) -> bool:
 	"""Evaluate condition string safely"""
 	# Simple parser for conditions like "money < 50000"
 	# Format: "resource operator value"
+	#
+	# Special conditions:
+	# - "salary_disparity > X" - true if salary coefficient of variation > X%
+	#   (e.g., "salary_disparity > 20" means >20% salary spread)
 
 	if condition == "false":
 		return false
@@ -889,6 +948,21 @@ static func evaluate_condition(condition: String, state: GameState) -> bool:
 	var resource_name = parts[0]
 	var operator = parts[1]
 	var value_str = parts[2]
+
+	# Special condition: salary_disparity (coefficient of variation as percentage)
+	if resource_name == "salary_disparity":
+		var disparity = _calculate_salary_disparity(state)
+		var threshold = float(value_str)
+		match operator:
+			">":
+				return disparity > threshold
+			">=":
+				return disparity >= threshold
+			"<":
+				return disparity < threshold
+			"<=":
+				return disparity <= threshold
+		return false
 
 	# Get resource value from state
 	var resource_value = 0.0
@@ -985,10 +1059,20 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 			"doom":
 				state.doom += value
 			"safety_researchers":
-				state.safety_researchers += value
+				# Create actual Researcher objects for the new system
+				for i in range(value):
+					var researcher = Researcher.new()
+					researcher.generate_random(state.rng)
+					researcher.specialization = "safety"
+					state.add_researcher(researcher)
 			"capability_researchers":
-				state.capability_researchers += value
+				for i in range(value):
+					var researcher = Researcher.new()
+					researcher.generate_random(state.rng)
+					researcher.specialization = "capabilities"
+					state.add_researcher(researcher)
 			"compute_engineers":
+				# Compute engineers use legacy count only (no Researcher object)
 				state.compute_engineers += value
 			"has_cat":
 				state.has_cat = (value > 0)
@@ -1006,6 +1090,49 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 	var message = chosen_option.get("message", "Event resolved")
 	return {"success": true, "message": message}
 
+static func _mark_event_triggered(event: Dictionary, turn: int):
+	"""Mark an event as triggered, handling both one-time and cooldown tracking"""
+	var event_id = event.get("id", "")
+	if not event.get("repeatable", false):
+		triggered_events.append(event_id)
+	# Always record cooldown for repeatable events with cooldown_turns
+	if event.get("cooldown_turns", 0) > 0:
+		event_cooldowns[event_id] = turn
+
+static func _calculate_salary_disparity(state: GameState) -> float:
+	"""Calculate salary disparity as coefficient of variation (percentage).
+
+	Returns 0 if fewer than 2 researchers.
+	A value of 20 means salaries vary by ~20% from the mean.
+	Higher values indicate more pay inequality.
+	"""
+	if state.researchers.size() < 2:
+		return 0.0
+
+	# Collect all salaries
+	var salaries: Array[float] = []
+	for researcher in state.researchers:
+		salaries.append(researcher.current_salary)
+
+	# Calculate mean
+	var total = 0.0
+	for salary in salaries:
+		total += salary
+	var mean = total / salaries.size()
+
+	if mean <= 0:
+		return 0.0
+
+	# Calculate standard deviation
+	var variance_sum = 0.0
+	for salary in salaries:
+		variance_sum += pow(salary - mean, 2)
+	var std_dev = sqrt(variance_sum / salaries.size())
+
+	# Coefficient of variation as percentage
+	return (std_dev / mean) * 100.0
+
 static func reset_triggered_events():
 	"""Clear triggered events (for new game)"""
 	triggered_events.clear()
+	event_cooldowns.clear()

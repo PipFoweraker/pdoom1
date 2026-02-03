@@ -180,6 +180,14 @@ func update_game_state():
 				rival.get("money", 0) / 1000
 			])
 
+	# Historical Events (Issue #442)
+	if EventService and EventService.is_ready():
+		var cache_info = EventService.get_cache_info()
+		lines.append("")
+		lines.append("[b]Historical Events[/b]")
+		lines.append("Loaded: %d events" % cache_info.get("transformed_count", 0))
+		lines.append("Cache valid: %s" % ("Yes" if cache_info.get("cache_valid", false) else "No"))
+
 	# Game Status
 	if state.game_over:
 		lines.append("")

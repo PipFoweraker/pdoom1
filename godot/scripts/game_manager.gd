@@ -196,22 +196,8 @@ func select_action(action_id: String):
 	game_state_updated.emit(state.to_dict())
 
 func _get_action_by_id(action_id: String) -> Dictionary:
-	"""Helper to get action by ID"""
-	var all_actions = GameActions.get_all_actions()
-	for action in all_actions:
-		if action.get("id") == action_id:
-			return action
-	# Check hiring submenu actions
-	var hiring_options = GameActions.get_hiring_options()
-	for action in hiring_options:
-		if action.get("id") == action_id:
-			return action
-	# Check fundraising submenu actions
-	var fundraising_options = GameActions.get_fundraising_options()
-	for action in fundraising_options:
-		if action.get("id") == action_id:
-			return action
-	return {}
+	"""Helper to get action by ID - delegates to GameActions"""
+	return GameActions.get_action_by_id(action_id)
 
 func purchase_upgrade(upgrade_id: String):
 	"""Purchase an upgrade - doesn't consume AP"""

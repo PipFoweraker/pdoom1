@@ -1,0 +1,23 @@
+{
+  "_description": "Scenario-specific event assignments and modifications",
+  "_note": "Allows different scenarios to have different event pools and modifiers",
+  "scenarios": {
+    "bootstrap": {
+      "description": "Standard game - all events available",
+      "event_filter": "all",
+      "impact_modifier": 1.0
+    },
+    "crisis": {
+      "description": "Crisis mode - higher stakes",
+      "event_filter": "all",
+      "impact_modifier": 1.25,
+      "exclude_events": []
+    },
+    "sandbox": {
+      "description": "Sandbox mode - experimental play",
+      "event_filter": "all",
+      "impact_modifier": 0.75,
+      "exclude_events": []
+    }
+  }
+}
