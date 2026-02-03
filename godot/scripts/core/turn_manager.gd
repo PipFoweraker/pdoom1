@@ -467,6 +467,58 @@ func execute_turn() -> Dictionary:
 	# REMOVED: Event checking now happens in start_turn() (FIX #418)
 	# Events are checked BEFORE actions, not after
 
+	# === RISK SYSTEM PROCESSING ===
+	# Process risk pools and check for triggered events
+	# See godot/docs/design/RISK_SYSTEM.md for design documentation
+	if state.risk_system:
+		var risk_events = state.risk_system.process_turn(state, state.rng)
+
+		if risk_events.size() > 0:
+			for risk_event in risk_events:
+				var pool_name = risk_event.get("pool_name", "Unknown")
+				var severity = risk_event.get("severity", "minor")
+				var from_threshold = risk_event.get("from_threshold", false)
+
+				# Risk events add doom based on severity
+				var doom_impact = 0.0
+				match severity:
+					"minor":
+						doom_impact = state.rng.randf_range(1.0, 3.0)
+					"moderate":
+						doom_impact = state.rng.randf_range(3.0, 6.0)
+					"severe":
+						doom_impact = state.rng.randf_range(6.0, 10.0)
+					"catastrophic":
+						doom_impact = state.rng.randf_range(10.0, 15.0)
+
+				# Apply doom impact
+				if state.doom_system:
+					state.doom_system.add_event_doom(doom_impact, "risk_%s" % risk_event.get("pool", ""))
+				else:
+					state.add_resources({"doom": doom_impact})
+
+				# Record for verification
+				VerificationTracker.record_rng_outcome(
+					"risk_doom_%s" % risk_event.get("pool", ""),
+					doom_impact,
+					state.turn
+				)
+
+				# Create result message
+				var trigger_type = "threshold breach" if from_threshold else "accumulated risk"
+				results.append({
+					"success": true,
+					"message": "[RISK] %s event (%s): %s (+%.1f doom)" % [
+						pool_name,
+						severity,
+						trigger_type,
+						doom_impact
+					]
+				})
+
+		# Log risk summary in dev mode (if needed)
+		# print(state.risk_system.get_debug_summary())
+
 	# Record turn end in verification hash
 	VerificationTracker.record_turn_end(state.turn, state)
 

@@ -81,6 +81,10 @@ var rival_labs: Array = []  # Array of RivalLabs.RivalLab
 # Doom system (modular, extensible)
 var doom_system: DoomSystem
 
+# Risk system (hidden accumulating consequences)
+# See godot/docs/design/RISK_SYSTEM.md for design documentation
+var risk_system: RiskPool
+
 # Academic travel system (Issue #468)
 var paper_submissions: Array = []  # Array of PaperSubmissions.PaperSubmission
 var attended_conferences: Array[String] = []  # Conference IDs attended this game year
@@ -96,6 +100,9 @@ func _init(game_seed: String = ""):
 	# Initialize doom system
 	doom_system = DoomSystem.new()
 	doom_system.current_doom = doom
+
+	# Initialize risk system
+	risk_system = RiskPool.new()
 
 	# Initialize rival labs
 	rival_labs = RivalLabs.get_rival_labs()
@@ -142,6 +149,10 @@ func reset():
 		doom_system.current_doom = doom
 		doom_system.doom_velocity = 0.0
 		doom_system.doom_momentum = 0.0
+
+	# Reset risk system
+	if risk_system:
+		risk_system.reset()
 
 	# Reset academic travel system (Issue #468)
 	paper_submissions.clear()
@@ -623,6 +634,11 @@ func to_dict() -> Dictionary:
 	else:
 		doom_data = {"doom": doom}
 
+	# Get risk system data (for dev mode / save-load)
+	var risk_data = {}
+	if risk_system:
+		risk_data = risk_system.to_dict()
+
 	# Serialize researchers array
 	var researcher_dicts = []
 	for researcher in researchers:
@@ -646,6 +662,7 @@ func to_dict() -> Dictionary:
 		"reputation": reputation,
 		"doom": doom,
 		"doom_system": doom_data,
+		"risk_system": risk_data,
 		"action_points": action_points,
 		"committed_ap": committed_ap,
 		"reserved_ap": reserved_ap,

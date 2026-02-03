@@ -51,7 +51,7 @@ Learn more: **[Contributor Rewards Program](docs/CONTRIBUTOR_REWARDS.md)**
 
 Want to contribute or build from source?
 
-- **[Contributing](docs/developer/CONTRIBUTING.md)** - Get started
+- **[Contributing](CONTRIBUTING.md)** - Get started
 - **[Architecture](docs/developer/ARCHITECTURE.md)** - Codebase overview
 - **[Full Changelog](CHANGELOG.md)** - Version history
 
