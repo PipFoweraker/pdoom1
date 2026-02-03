@@ -2,8 +2,9 @@ name: Auto Copilot PRs
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 3 * * *'  # Every day at 3am UTC
+  # Disabled: schedule trigger removed until Copilot agent integration is implemented
+  # schedule:
+  #   - cron: '0 3 * * *'  # Every day at 3am UTC
 
 jobs:
   find-issues:
@@ -16,6 +17,8 @@ jobs:
 
       - name: List open issues without PRs
         id: set-issues
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           issues=$(gh issue list --state open --json number,title | jq -c '[.[] | {number: .number, title: .title}]')
           echo "issues=$issues" >> $GITHUB_OUTPUT

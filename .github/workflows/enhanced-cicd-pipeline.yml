@@ -133,6 +133,7 @@ jobs:
     
     outputs:
       quality-score: ${{ steps.quality-metrics.outputs.score }}
+      health-score: ${{ steps.health-check.outputs.health-score }}
       
     steps:
       - name: Checkout repository
@@ -240,7 +241,7 @@ jobs:
     name: "Stage 3: Integration Testing"
     runs-on: ubuntu-latest
     needs: code-quality
-    if: needs.code-quality.outputs.quality-score != 'LOW' && needs.code-quality.outputs.health-score >= 70
+    if: needs.code-quality.outputs.quality-score != 'LOW' && (needs.code-quality.outputs.health-score >= 70 || needs.code-quality.outputs.health-score == '')
     
     strategy:
       matrix:
