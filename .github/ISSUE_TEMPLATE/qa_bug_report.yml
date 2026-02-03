@@ -1,0 +1,106 @@
+name: QA Bug Report
+description: Report a bug found during a QA testing session
+title: "[QA Bug]: "
+labels: ["bug", "triage", "qa-testing"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Bug found during a QA checklist session. Please fill out the sections below.
+
+  - type: input
+    id: checklist-section
+    attributes:
+      label: QA Checklist Section
+      description: Which section of the QA checklist were you testing?
+      placeholder: "e.g., Core Gameplay Flow, Debug & Developer Tools, Events System"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What happened? What did you expect to happen?
+      placeholder: "When I click X, Y happens. I expected Z to happen instead."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this bug?
+      placeholder: |
+        1. Start a new game
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Game Version / Build
+      description: Which version or commit hash? (Check title screen, About menu, or debug overlay)
+      placeholder: "v0.11.0 or commit abc1234"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: What platform are you testing on?
+      options:
+        - Windows
+        - Linux
+        - macOS
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      description: How severe is the bug?
+      options:
+        - Critical (game crash, data loss)
+        - Major (feature broken, no workaround)
+        - Minor (feature partially broken, workaround exists)
+        - Cosmetic (visual issue, doesn't affect gameplay)
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots / Logs / Debug Overlay State
+      description: |
+        Add screenshots, paste error logs, or describe the debug overlay state.
+        Tip: Press ~ to open the debug overlay and capture game state info.
+        Tip: Press [ to take a screenshot.
+      placeholder: "Drag and drop images here or paste error logs"
+
+  - type: textarea
+    id: debug-state
+    attributes:
+      label: Game State at Time of Bug (from Debug Overlay)
+      description: |
+        If possible, open the debug overlay (~) and copy relevant state info:
+        turn number, resources, doom value, staff counts, etc.
+      placeholder: |
+        Turn: 5
+        Money: $150k
+        Doom: 23 (Rising)
+        Staff: 2 Safety, 1 Capability
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues to avoid duplicates
+          required: true
+        - label: I tested on the latest develop branch
