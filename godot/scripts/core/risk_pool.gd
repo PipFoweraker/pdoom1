@@ -84,7 +84,7 @@ func add_risk(pool_name: String, amount: float, source: String = "", turn: int =
 		return
 
 	pools[pool_name] += amount
-	pools[pool_name] = clamp(pools[pool_name], 0.0, 150.0)  # Allow overflow past 100 for severe cases
+	pools[pool_name] = clampf(pools[pool_name], 0.0, 100.0)  # Strict clamping to valid range
 
 	# Track history
 	_add_history_entry(pool_name, amount, source, turn)
@@ -119,14 +119,22 @@ func reduce_risk(pool_name: String, amount: float, source: String = "", turn: in
 # EVENT TRIGGERING (Hybrid System)
 # ============================================================================
 
+## Decay rate per turn - risk slowly reduces if not fed
+const DECAY_RATE: float = 2.0
+
 func process_turn(state, rng: RandomNumberGenerator) -> Array[Dictionary]:
 	"""
 	Process risk pools for this turn. Called during turn execution.
 
 	Returns array of triggered events (may be empty).
 	Uses hybrid system: probabilistic + threshold guarantees.
+	Also applies natural decay to all pools.
 	"""
 	var triggered_events: Array[Dictionary] = []
+
+	# Apply decay to all pools first
+	for pool_name in pools.keys():
+		pools[pool_name] = maxf(0.0, pools[pool_name] - DECAY_RATE)
 
 	for pool_name in pools.keys():
 		var pool_value = pools[pool_name]
@@ -473,8 +481,8 @@ func to_dict() -> Dictionary:
 	"""Serialize risk pool state for save/load"""
 	return {
 		"pools": pools.duplicate(),
-		"triggered_tiers": triggered_tiers.duplicate(),
-		"risk_history": risk_history.duplicate(),
+		"thresholds_triggered": triggered_tiers.duplicate(),
+		"history": risk_history.duplicate(),
 	}
 
 
@@ -486,13 +494,18 @@ func from_dict(data: Dictionary) -> void:
 			if pools.has(pool_name):
 				pools[pool_name] = data["pools"][pool_name]
 
-	if data.has("triggered_tiers"):
-		for pool_name in data["triggered_tiers"].keys():
-			if triggered_tiers.has(pool_name):
-				triggered_tiers[pool_name] = data["triggered_tiers"][pool_name]
+	# Support both old and new key names for backward compatibility
+	var thresholds_data = data.get("thresholds_triggered", data.get("triggered_tiers", {}))
+	for pool_name in thresholds_data.keys():
+		if triggered_tiers.has(pool_name):
+			triggered_tiers[pool_name] = thresholds_data[pool_name]
 
-	if data.has("risk_history"):
-		risk_history = data["risk_history"].duplicate()
+	# Support both old and new key names
+	var history_data = data.get("history", data.get("risk_history", []))
+	if history_data is Array:
+		risk_history.clear()
+		for entry in history_data:
+			risk_history.append(entry)
 
 
 func reset() -> void:

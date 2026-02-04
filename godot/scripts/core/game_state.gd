@@ -2,6 +2,9 @@ extends Node
 class_name GameState
 ## Core game state - all resources and game status
 
+# Preload RiskPool to ensure it's available before class_name registration
+const RiskPoolClass = preload("res://scripts/core/risk_pool.gd")
+
 # Resources
 var money: float = 245000.0  # Updated from player feedback (issue #436)
 var compute: float = 100.0
@@ -83,7 +86,7 @@ var doom_system: DoomSystem
 
 # Risk system (hidden accumulating consequences)
 # See godot/docs/design/RISK_SYSTEM.md for design documentation
-var risk_system: RiskPool
+var risk_system  # Type is RiskPoolClass (preloaded)
 
 # Academic travel system (Issue #468)
 var paper_submissions: Array = []  # Array of PaperSubmissions.PaperSubmission
@@ -102,7 +105,7 @@ func _init(game_seed: String = ""):
 	doom_system.current_doom = doom
 
 	# Initialize risk system
-	risk_system = RiskPool.new()
+	risk_system = RiskPoolClass.new()
 
 	# Initialize rival labs
 	rival_labs = RivalLabs.get_rival_labs()
@@ -722,8 +725,13 @@ func from_dict(data: Dictionary) -> void:
 	game_over = data.get("game_over", false)
 	victory = data.get("victory", false)
 	has_cat = data.get("has_cat", false)
-	purchased_upgrades = data.get("purchased_upgrades", [])
-	attended_conferences = data.get("attended_conferences", [])
+	# Handle typed arrays properly
+	purchased_upgrades.clear()
+	for upgrade in data.get("purchased_upgrades", []):
+		purchased_upgrades.append(upgrade)
+	attended_conferences.clear()
+	for conf in data.get("attended_conferences", []):
+		attended_conferences.append(conf)
 
 	# Restore doom system
 	if doom_system and data.has("doom_system"):
