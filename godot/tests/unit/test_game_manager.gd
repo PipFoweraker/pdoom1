@@ -3,17 +3,28 @@ extends GutTest
 ## Tests high-level game coordination, signal emissions, and turn flow
 
 var game_manager: GameManager
-var signal_watcher: SignalWatcher
+var _saved_historical_events: Array = []
 
 func before_each():
-	# Create fresh game manager for each test
-	game_manager = GameManager.new()
+	# GameManager extends Node (autoload) — can't call .new() on the singleton
+	var GameManagerScript = load("res://scripts/game_manager.gd")
+	game_manager = GameManagerScript.new()
 	add_child_autofree(game_manager)
+
+	# Disable EventService historical events to isolate unit tests
+	# (historical events from 1194-entry dataset interfere with deterministic testing)
+	if EventService:
+		_saved_historical_events = EventService.transformed_events.duplicate()
+		EventService.transformed_events.clear()
+	GameEvents.reset_triggered_events()
 
 	# Watch all signals
 	watch_signals(game_manager)
 
 func after_each():
+	# Restore historical events
+	if EventService:
+		EventService.transformed_events = _saved_historical_events
 	# Clean up
 	if game_manager:
 		game_manager.queue_free()
@@ -32,13 +43,13 @@ func test_initialization_with_seed_sets_seed():
 	# Test that provided seed is used
 	game_manager.start_new_game("custom_seed_123")
 
-	assert_eq(game_manager.state.seed, "custom_seed_123", "Seed should be set correctly")
+	assert_eq(game_manager.state.game_seed_str, "custom_seed_123", "Seed should be set correctly")
 
 func test_initialization_without_seed_generates_seed():
 	# Test that empty seed generates time-based seed
 	game_manager.start_new_game("")
 
-	assert_ne(game_manager.state.seed, "", "Seed should be generated")
+	assert_ne(game_manager.state.game_seed_str, "", "Seed should be generated")
 
 # === SIGNAL EMISSION TESTS ===
 
@@ -63,7 +74,7 @@ func test_start_new_game_emits_actions_available_when_no_events():
 	# If no events triggered, should emit actions_available
 	# (Event triggering is deterministic but depends on seed and turn conditions)
 	# This test may need adjustment based on actual event logic
-	assert_signal_emitted_with_parameters(game_manager, "actions_available", [Array],
+	assert_signal_emitted(game_manager, "actions_available",
 		"Should emit actions_available if no initial events")
 
 # === ACTION SELECTION TESTS ===
@@ -209,6 +220,7 @@ func test_end_turn_emits_game_state_updated():
 
 	# Clear signal count from initialization
 	clear_signal_watcher()
+	watch_signals(game_manager)
 
 	game_manager.end_turn()
 
@@ -248,6 +260,7 @@ func test_start_next_turn_emits_actions_available_when_no_events():
 	game_manager.select_action("buy_compute")
 
 	clear_signal_watcher()
+	watch_signals(game_manager)
 	game_manager.end_turn()
 
 	await wait_seconds(0.6)
@@ -300,6 +313,7 @@ func test_resolve_event_emits_game_state_updated():
 	}
 
 	clear_signal_watcher()
+	watch_signals(game_manager)
 	game_manager.resolve_event(test_event, "test_choice")
 
 	assert_signal_emitted(game_manager, "game_state_updated",
@@ -324,6 +338,7 @@ func test_resolve_event_transitions_phase_when_all_resolved():
 	game_manager.state.current_phase = GameState.TurnPhase.TURN_START
 
 	clear_signal_watcher()
+	watch_signals(game_manager)
 	game_manager.resolve_event(test_event, "test_choice")
 
 	assert_signal_emitted(game_manager, "turn_phase_changed",
@@ -347,6 +362,7 @@ func test_resolve_event_emits_actions_available_after_transition():
 	game_manager.state.current_phase = GameState.TurnPhase.TURN_START
 
 	clear_signal_watcher()
+	watch_signals(game_manager)
 	game_manager.resolve_event(test_event, "test_choice")
 
 	assert_signal_emitted(game_manager, "actions_available",

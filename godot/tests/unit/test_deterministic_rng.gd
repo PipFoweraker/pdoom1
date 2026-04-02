@@ -106,10 +106,10 @@ func test_empty_seed_generates_time_based_seed():
 	var state2 = GameState.new("")
 
 	# Seeds should be different (time-based)
-	assert_ne(state1.seed, state2.seed, "Empty seed should generate unique time-based seeds")
+	assert_ne(state1.game_seed_str, state2.game_seed_str, "Empty seed should generate unique time-based seeds")
 
 	# But each should still be deterministic with its own seed
-	var saved_seed = state1.seed
+	var saved_seed = state1.game_seed_str
 	var state_copy = GameState.new(saved_seed)
 
 	var val1 = state1.rng.randf()

@@ -9,15 +9,9 @@ func before_each():
 ## Issue #449: Lobby Government action affordability
 ## Previously had reputation in costs, making it unaffordable
 func test_lobby_government_no_reputation_cost():
-	var actions = GameActions.get_all_actions()
-	var lobby_action = null
-
-	for action in actions:
-		if action["id"] == "lobby_government":
-			lobby_action = action
-			break
-
-	assert_not_null(lobby_action, "lobby_government action should exist")
+	# lobby_government is a submenu item (under publicity), not a top-level action
+	var lobby_action = GameActions.get_action_by_id("lobby_government")
+	assert_false(lobby_action.is_empty(), "lobby_government action should exist")
 
 	# Check costs - should NOT have reputation cost
 	var costs = lobby_action.get("costs", {})
@@ -52,7 +46,7 @@ func test_difficulty_validation_handles_invalid_int():
 	# Test that invalid difficulty values are handled gracefully
 	GameConfig.difficulty = 999  # Invalid value
 
-	var game_manager = GameManager.new()
+	var game_manager = load("res://scripts/game_manager.gd").new()
 	# This should not crash - will be caught in _apply_difficulty_settings
 	game_manager.start_new_game("test")
 
@@ -65,7 +59,7 @@ func test_difficulty_validation_handles_negative():
 	# Test that negative difficulty is handled
 	GameConfig.difficulty = -1
 
-	var game_manager = GameManager.new()
+	var game_manager = load("res://scripts/game_manager.gd").new()
 	game_manager.start_new_game("test")
 
 	assert_eq(GameConfig.difficulty, 1, "Negative difficulty should default to Standard (issue #447)")
@@ -77,7 +71,7 @@ func test_difficulty_validation_accepts_valid_range():
 	for valid_difficulty in [0, 1, 2]:
 		GameConfig.difficulty = valid_difficulty
 
-		var game_manager = GameManager.new()
+		var game_manager = load("res://scripts/game_manager.gd").new()
 		game_manager.start_new_game("test")
 
 		assert_eq(GameConfig.difficulty, valid_difficulty, "Valid difficulty %d should be preserved" % valid_difficulty)
@@ -154,6 +148,9 @@ func test_actions_with_reputation_cost_are_intentional():
 			var action_id = action.get("id")
 			assert_true(action_id in allowed_rep_costs,
 				"Action %s costs reputation - verify this is intentional (see issue #449)" % action_id)
+
+	# Ensure we actually checked some actions (avoid empty-loop risky test)
+	assert_gt(actions.size(), 0, "Should have actions to check")
 
 ## Validate action execution doesn't crash
 func test_all_actions_execute_without_errors():

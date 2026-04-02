@@ -471,48 +471,68 @@ func execute_turn() -> Dictionary:
 	# Process risk pools and check for triggered events
 	# See godot/docs/design/RISK_SYSTEM.md for design documentation
 	if state.risk_system:
-		var risk_events = state.risk_system.process_turn(state, state.rng)
+		var risk_triggers = state.risk_system.process_turn(state, state.rng)
 
-		if risk_events.size() > 0:
-			for risk_event in risk_events:
-				var pool_name = risk_event.get("pool_name", "Unknown")
-				var severity = risk_event.get("severity", "minor")
-				var from_threshold = risk_event.get("from_threshold", false)
+		if risk_triggers.size() > 0:
+			for risk_trigger in risk_triggers:
+				var pool_name = risk_trigger.get("pool", "")
+				var pool_display = risk_trigger.get("pool_name", "Unknown")
+				var severity = risk_trigger.get("severity", "minor")
+				var from_threshold = risk_trigger.get("from_threshold", false)
 
-				# Risk events add doom based on severity
-				var doom_impact = 0.0
-				match severity:
-					"minor":
-						doom_impact = state.rng.randf_range(1.0, 3.0)
-					"moderate":
-						doom_impact = state.rng.randf_range(3.0, 6.0)
-					"severe":
-						doom_impact = state.rng.randf_range(6.0, 10.0)
-					"catastrophic":
-						doom_impact = state.rng.randf_range(10.0, 15.0)
+				# Fetch actual event content from events.gd
+				var event_data = GameEvents.get_risk_event_for_pool(pool_name, severity, state.rng)
 
-				# Apply doom impact
-				if state.doom_system:
-					state.doom_system.add_event_doom(doom_impact, "risk_%s" % risk_event.get("pool", ""))
-				else:
-					state.add_resources({"doom": doom_impact})
+				if event_data.is_empty():
+					# Fallback if no event defined for this pool/severity
+					var fallback_doom = {"minor": 2.0, "moderate": 5.0, "severe": 9.0, "catastrophic": 15.0}
+					var doom_impact = fallback_doom.get(severity, 3.0)
+					if state.doom_system:
+						state.doom_system.add_event_doom(doom_impact, "risk_%s" % pool_name)
+					else:
+						state.add_resources({"doom": doom_impact})
+					results.append({
+						"success": true,
+						"message": "[RISK] %s event (%s): +%.1f doom" % [pool_display, severity, doom_impact]
+					})
+					continue
+
+				# Apply all effects from the event
+				var effects = event_data.get("effects", {})
+				var doom_from_event = 0.0
+
+				for resource in effects:
+					var amount = effects[resource]
+					if resource == "doom":
+						doom_from_event = amount
+						# Use doom system if available for proper tracking
+						if state.doom_system:
+							state.doom_system.add_event_doom(amount, "risk_%s" % pool_name)
+						else:
+							state.add_resources({"doom": amount})
+					else:
+						# Apply other resource changes directly
+						state.add_resources({resource: amount})
 
 				# Record for verification
 				VerificationTracker.record_rng_outcome(
-					"risk_doom_%s" % risk_event.get("pool", ""),
-					doom_impact,
+					"risk_event_%s" % event_data.get("id", pool_name),
+					doom_from_event,
 					state.turn
 				)
 
-				# Create result message
-				var trigger_type = "threshold breach" if from_threshold else "accumulated risk"
+				# Create detailed result message
+				var event_name = event_data.get("name", "Risk Event")
+				var event_message = event_data.get("message", "")
+				var trigger_type = "[THRESHOLD]" if from_threshold else ""
+
 				results.append({
 					"success": true,
-					"message": "[RISK] %s event (%s): %s (+%.1f doom)" % [
-						pool_name,
-						severity,
+					"message": "[RISK] %s %s: %s\n  └─ %s" % [
 						trigger_type,
-						doom_impact
+						event_name,
+						event_data.get("description", ""),
+						event_message
 					]
 				})
 

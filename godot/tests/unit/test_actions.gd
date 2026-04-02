@@ -22,9 +22,9 @@ func test_action_count():
 	assert_eq(actions.size(), 12, "Should have 12 main actions")
 
 func test_hiring_options_exist():
-	# Test that hiring submenu has 3 options
+	# Test that hiring submenu has 5 options (safety, capability, compute, manager, ethicist)
 	var hiring_options = GameActions.get_hiring_options()
-	assert_eq(hiring_options.size(), 3, "Should have 3 hiring options")
+	assert_eq(hiring_options.size(), 5, "Should have 5 hiring options")
 
 func test_buy_compute_execution():
 	# Test buy_compute action
@@ -43,7 +43,7 @@ func test_hire_safety_researcher_execution():
 	var result = GameActions.execute_action("hire_safety_researcher", state)
 
 	assert_eq(state.safety_researchers, initial_staff + 1, "Safety researchers should increase by 1")
-	assert_lt(state.money, 100000, "Money should decrease")
+	assert_lt(state.money, 245000.0, "Money should decrease from starting 245000")
 
 func test_hire_capability_researcher_execution():
 	# Test hiring capability researcher
@@ -62,12 +62,15 @@ func test_hire_compute_engineer_execution():
 	assert_eq(state.compute_engineers, initial_staff + 1, "Compute engineers should increase by 1")
 
 func test_safety_research_execution():
-	# Test safety research action
+	# Test safety research action - doom reduction scales with safety_researchers count
+	# Need at least 1 safety researcher for any doom reduction
+	state.safety_researchers = 1
+	state.research = 20.0  # Ensure enough research to pay cost
 	var initial_doom = state.doom
 
 	var result = GameActions.execute_action("safety_research", state)
 
-	assert_lt(state.doom, initial_doom, "Doom should decrease")
+	assert_lt(state.doom, initial_doom, "Doom should decrease when safety researchers > 0")
 
 func test_team_building_execution():
 	# Test team building action
@@ -98,10 +101,10 @@ func test_action_categories():
 			categories[category] = 0
 		categories[category] += 1
 
-	assert_has(categories, "Hiring", "Should have Hiring category")
-	assert_has(categories, "Resources", "Should have Resources category")
-	assert_has(categories, "Research", "Should have Research category")
-	assert_has(categories, "Management", "Should have Management category")
+	assert_has(categories, "hiring", "Should have hiring category")
+	assert_has(categories, "resources", "Should have resources category")
+	assert_has(categories, "research", "Should have research category")
+	assert_has(categories, "management", "Should have management category")
 
 func test_hire_staff_is_submenu():
 	# Test that hire_staff action is marked as submenu
@@ -128,11 +131,11 @@ func test_all_hiring_options_cost_money_and_ap():
 		assert_gt(costs["action_points"], 0, "AP cost should be positive")
 
 func test_safety_audit_execution():
-	# Test safety audit action (if it exists)
+	# Test safety audit action - action id is "audit_safety" not "safety_audit"
 	var initial_doom = state.doom
 	var initial_reputation = state.reputation
 
-	var result = GameActions.execute_action("safety_audit", state)
+	var result = GameActions.execute_action("audit_safety", state)
 
 	# Safety audit should reduce doom and increase reputation
 	assert_lt(state.doom, initial_doom, "Doom should decrease")
@@ -145,10 +148,11 @@ func test_action_execution_returns_result():
 	assert_typeof(result, TYPE_DICTIONARY, "Result should be a dictionary")
 
 func test_unknown_action_returns_empty_dict():
-	# Test that unknown action IDs return empty dict
+	# Test that unknown action IDs return a failure result (not empty dict)
 	var result = GameActions.execute_action("nonexistent_action", state)
 
-	assert_eq(result, {}, "Unknown action should return empty dict")
+	assert_eq(result["success"], false, "Unknown action should return success=false")
+	assert_true(result.has("message"), "Unknown action should include an error message")
 
 ## Regression test for issue #449 - verify lobby_government is affordable
 func test_lobby_government_affordable_without_reputation():
@@ -157,15 +161,9 @@ func test_lobby_government_affordable_without_reputation():
 	state.action_points = 3
 	state.reputation = 5  # Low reputation - should NOT block action
 
-	var actions = GameActions.get_all_actions()
-	var lobby_action = null
-
-	for action in actions:
-		if action["id"] == "lobby_government":
-			lobby_action = action
-			break
-
-	assert_not_null(lobby_action, "lobby_government should exist")
+	# lobby_government is a submenu item (under publicity), not a top-level action
+	var lobby_action = GameActions.get_action_by_id("lobby_government")
+	assert_false(lobby_action.is_empty(), "lobby_government should exist")
 
 	var costs = lobby_action["costs"]
 	var can_afford = state.can_afford(costs)

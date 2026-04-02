@@ -40,6 +40,8 @@ var orphans = 0
 
 var was_run = false
 
+var collected_script : WeakRef = null
+
 
 func did_pass():
 	return is_passing()
@@ -114,5 +116,3 @@ func to_s():
 	for i in range(pass_texts.size()):
 		to_return += str(pad, 'Pass:  ', pass_texts[i], "\n")
 	return to_return
-
-

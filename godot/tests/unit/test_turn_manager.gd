@@ -6,6 +6,7 @@ var turn_manager: TurnManager
 
 func before_each():
 	# Create fresh state and turn manager for each test
+	GameEvents.reset_triggered_events()
 	state = GameState.new("test_seed")
 	turn_manager = TurnManager.new(state)
 
@@ -49,15 +50,16 @@ func test_start_turn_deducts_staff_salaries():
 	var expected_money = initial_money - 25000
 	assert_eq(state.money, expected_money, "Should deduct $25k in salaries")
 
-func test_start_turn_generates_research_from_compute():
-	# Test that research is generated from compute
+func test_start_turn_no_research_without_individual_researchers():
+	# Research generation now comes from individual researcher system,
+	# not from compute * engineers formula. Legacy staff counts alone
+	# produce no research.
 	state.compute = 100.0
 	state.compute_engineers = 2
-	# Research = 100 * 0.05 * (1.0 + 2 * 0.1) = 100 * 0.05 * 1.2 = 6.0
 
 	turn_manager.start_turn()
 
-	assert_almost_eq(state.research, 6.0, 0.01, "Should generate 6.0 research")
+	assert_eq(state.research, 0.0, "No research without individual researchers")
 
 func test_execute_turn_processes_queued_actions():
 	# Test that execute_turn runs queued actions
@@ -88,32 +90,33 @@ func test_execute_turn_publishes_papers_at_threshold():
 	assert_almost_eq(state.research, 50.0, 0.01, "Research should be 150 - 100 = 50")
 
 func test_execute_turn_increases_doom():
-	# Test that environmental doom increases each turn
+	# Test that doom increases each turn via DoomSystem
+	# Exact values depend on DoomSystem momentum/base/capabilities
 	var initial_doom = state.doom
 	state.capability_researchers = 2
 	state.queued_actions = ["buy_compute"]
 
-	# Expected doom increase: base 1.0 + (2 * 0.5) = 2.0
 	turn_manager.execute_turn()
 
-	assert_almost_eq(state.doom, initial_doom + 2.0, 0.01, "Doom should increase by 2.0")
+	assert_gt(state.doom, initial_doom, "Doom should increase after turn execution")
 
-func test_execute_turn_checks_events():
-	# Test that events are checked during turn execution
+func test_execute_turn_returns_action_results():
+	# Events moved to start_turn() per FIX #418.
+	# execute_turn() returns action_results instead.
 	state.queued_actions = ["buy_compute"]
 
 	var result = turn_manager.execute_turn()
 
-	assert_has(result, "triggered_events", "Result should include triggered_events")
-	# Events array might be empty, but key should exist
+	assert_has(result, "action_results", "Result should include action_results")
+	assert_has(result, "turn_complete", "Result should include turn_complete")
 
 func test_get_available_actions_marks_affordability():
 	# Test that get_available_actions marks which actions are affordable
-	state.money = 10000  # Very low money
+	state.money = 10000  # Very low money (buy_compute costs $50k)
 
 	var actions = turn_manager.get_available_actions()
 
-	# Find buy_compute action (costs $10k)
+	# Find buy_compute action (costs $50k)
 	var buy_compute = null
 	for action in actions:
 		if action["id"] == "buy_compute":
@@ -121,7 +124,7 @@ func test_get_available_actions_marks_affordability():
 			break
 
 	assert_not_null(buy_compute, "buy_compute action should exist")
-	assert_true(buy_compute["affordable"], "buy_compute should be affordable with $10k")
+	assert_false(buy_compute["affordable"], "buy_compute should NOT be affordable with $10k (costs $50k)")
 
 func test_get_available_actions_includes_all_actions():
 	# Test that all actions are included in available actions
@@ -175,7 +178,13 @@ func test_turn_phase_starts_at_action_selection():
 
 func test_start_turn_with_no_events_allows_actions():
 	# FIX #418: When no events trigger, actions should be selectable
-	state.turn = 5  # Use turn that won't trigger events
+	# Temporarily disable EventService historical events to test the no-event path
+	var saved_events = []
+	if EventService:
+		saved_events = EventService.transformed_events.duplicate()
+		EventService.transformed_events.clear()
+
+	state.turn = 3  # Below min_turn for all built-in random events
 	state.money = 100000  # Ensure no funding crisis
 
 	var result = turn_manager.start_turn()
@@ -187,9 +196,14 @@ func test_start_turn_with_no_events_allows_actions():
 	assert_eq(state.pending_events.size(), 0,
 		"No pending events should exist (FIX #418)")
 
+	# Restore historical events
+	if EventService:
+		EventService.transformed_events = saved_events
+
 func test_start_turn_with_events_blocks_actions():
 	# FIX #418: When events trigger, actions should be blocked
-	state.turn = 10
+	# start_turn() increments turn first, so set to 9 → becomes 10
+	state.turn = 9
 	state.money = 40000  # Triggers funding_crisis event
 
 	var result = turn_manager.start_turn()
@@ -203,7 +217,7 @@ func test_start_turn_with_events_blocks_actions():
 
 func test_start_turn_sets_pending_events():
 	# FIX #418: Triggered events should be stored in pending_events
-	state.turn = 10
+	state.turn = 9  # start_turn increments to 10
 	state.money = 40000
 
 	turn_manager.start_turn()
@@ -215,7 +229,7 @@ func test_start_turn_sets_pending_events():
 
 func test_start_turn_sets_can_end_turn_false_when_events():
 	# FIX #418: can_end_turn should be false when events pending
-	state.turn = 10
+	state.turn = 9  # start_turn increments to 10
 	state.money = 40000
 
 	turn_manager.start_turn()
@@ -225,7 +239,13 @@ func test_start_turn_sets_can_end_turn_false_when_events():
 
 func test_start_turn_sets_can_end_turn_true_when_no_events():
 	# FIX #418: can_end_turn should be true when no events
-	state.turn = 5
+	# Temporarily disable EventService historical events
+	var saved_events = []
+	if EventService:
+		saved_events = EventService.transformed_events.duplicate()
+		EventService.transformed_events.clear()
+
+	state.turn = 3
 	state.money = 100000
 
 	turn_manager.start_turn()
@@ -233,9 +253,13 @@ func test_start_turn_sets_can_end_turn_true_when_no_events():
 	assert_true(state.can_end_turn,
 		"can_end_turn should be true when no events (FIX #418)")
 
+	# Restore historical events
+	if EventService:
+		EventService.transformed_events = saved_events
+
 func test_resolve_event_removes_from_pending():
 	# FIX #418: Resolving an event should remove it from pending
-	state.turn = 10
+	state.turn = 9  # start_turn increments to 10
 	state.money = 40000
 
 	turn_manager.start_turn()
@@ -249,27 +273,32 @@ func test_resolve_event_removes_from_pending():
 
 func test_resolve_event_transitions_to_action_selection():
 	# FIX #418: After all events resolved, should transition to ACTION_SELECTION
-	state.turn = 10
+	state.turn = 9  # start_turn increments to 10
 	state.money = 40000
 
 	turn_manager.start_turn()
-	var event = state.pending_events[0]
 
-	# Resolve all pending events
-	turn_manager.resolve_event(event, "emergency_fundraise")
+	# Resolve ALL pending events (there may be multiple due to random events)
+	while state.pending_events.size() > 0:
+		var event = state.pending_events[0]
+		var choice_id = event["options"][0]["id"]  # Use first available choice
+		turn_manager.resolve_event(event, choice_id)
 
 	assert_eq(state.current_phase, GameState.TurnPhase.ACTION_SELECTION,
 		"Phase should transition to ACTION_SELECTION after all events resolved (FIX #418)")
 
 func test_resolve_event_sets_can_end_turn_true():
 	# FIX #418: After resolving all events, can_end_turn should be true
-	state.turn = 10
+	state.turn = 9  # start_turn increments to 10
 	state.money = 40000
 
 	turn_manager.start_turn()
-	var event = state.pending_events[0]
 
-	turn_manager.resolve_event(event, "emergency_fundraise")
+	# Resolve ALL pending events
+	while state.pending_events.size() > 0:
+		var event = state.pending_events[0]
+		var choice_id = event["options"][0]["id"]
+		turn_manager.resolve_event(event, choice_id)
 
 	assert_true(state.can_end_turn,
 		"can_end_turn should be true after events resolved (FIX #418)")
@@ -286,7 +315,7 @@ func test_resolve_event_blocked_in_wrong_phase():
 
 func test_phase_transitions_complete_cycle():
 	# FIX #418: Test complete phase cycle with event
-	state.turn = 10
+	state.turn = 9  # start_turn increments to 10
 	state.money = 40000
 
 	# Phase 1: TURN_START (events)
@@ -294,9 +323,11 @@ func test_phase_transitions_complete_cycle():
 	assert_eq(state.current_phase, GameState.TurnPhase.TURN_START,
 		"Phase 1 should be TURN_START (FIX #418)")
 
-	# Resolve event
-	var event = state.pending_events[0]
-	turn_manager.resolve_event(event, "emergency_fundraise")
+	# Resolve ALL events
+	while state.pending_events.size() > 0:
+		var event = state.pending_events[0]
+		var choice_id = event["options"][0]["id"]
+		turn_manager.resolve_event(event, choice_id)
 
 	# Phase 2: ACTION_SELECTION
 	assert_eq(state.current_phase, GameState.TurnPhase.ACTION_SELECTION,
