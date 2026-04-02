@@ -7,6 +7,13 @@ func before_each():
 	state = GameState.new("test_seed")
 	GameEvents.reset_triggered_events()
 
+func _find_event_by_id(events: Array, id: String) -> Dictionary:
+	"""Helper to find a specific event in an array by id"""
+	for event in events:
+		if event.get("id", "") == id:
+			return event
+	return {}
+
 func test_all_events_have_required_fields():
 	# Test that all events have necessary fields
 	var events = GameEvents.get_all_events()
@@ -20,19 +27,27 @@ func test_all_events_have_required_fields():
 		assert_has(event, "options", "Event should have options")
 
 func test_event_count():
-	# Test that we have expected number of events
+	# Test that we have a substantial number of events
 	var events = GameEvents.get_all_events()
-	assert_eq(events.size(), 5, "Should have 5 events")
+	assert_gt(events.size(), 10, "Should have more than 10 events")
 
-func test_funding_crisis_triggers_correctly():
-	# Test funding crisis triggers on turn 10 with low money
+func test_funding_crisis_exists():
+	# Test funding crisis event exists and has correct structure
+	var events = GameEvents.get_all_events()
+	var crisis = _find_event_by_id(events, "funding_crisis")
+
+	assert_false(crisis.is_empty(), "funding_crisis event should exist")
+	assert_eq(crisis["type"], "popup", "Should be a popup type")
+
+func test_funding_crisis_triggers_with_low_money():
+	# Test funding crisis triggers on correct turn with low money
 	state.turn = 10
 	state.money = 40000  # Less than 50000
 
 	var events = GameEvents.check_triggered_events(state, state.rng)
 
-	assert_eq(events.size(), 1, "Should trigger funding crisis")
-	assert_eq(events[0]["id"], "funding_crisis", "Should be funding crisis event")
+	var has_crisis = not _find_event_by_id(events, "funding_crisis").is_empty()
+	assert_true(has_crisis, "Should trigger funding crisis with low money on turn 10")
 
 func test_funding_crisis_no_trigger_wrong_turn():
 	# Test funding crisis doesn't trigger on wrong turn
@@ -41,7 +56,8 @@ func test_funding_crisis_no_trigger_wrong_turn():
 
 	var events = GameEvents.check_triggered_events(state, state.rng)
 
-	assert_eq(events.size(), 0, "Should not trigger on wrong turn")
+	var has_crisis = not _find_event_by_id(events, "funding_crisis").is_empty()
+	assert_false(has_crisis, "Should not trigger funding crisis on wrong turn")
 
 func test_funding_crisis_no_trigger_sufficient_money():
 	# Test funding crisis doesn't trigger with sufficient money
@@ -50,7 +66,8 @@ func test_funding_crisis_no_trigger_sufficient_money():
 
 	var events = GameEvents.check_triggered_events(state, state.rng)
 
-	assert_eq(events.size(), 0, "Should not trigger with sufficient money")
+	var has_crisis = not _find_event_by_id(events, "funding_crisis").is_empty()
+	assert_false(has_crisis, "Should not trigger funding crisis with sufficient money")
 
 func test_funding_windfall_triggers_on_threshold():
 	# Test funding windfall triggers with papers + reputation
@@ -59,11 +76,7 @@ func test_funding_windfall_triggers_on_threshold():
 
 	var events = GameEvents.check_triggered_events(state, state.rng)
 
-	var has_windfall = false
-	for event in events:
-		if event["id"] == "funding_windfall":
-			has_windfall = true
-
+	var has_windfall = not _find_event_by_id(events, "funding_windfall").is_empty()
 	assert_true(has_windfall, "Should trigger funding windfall")
 
 func test_non_repeatable_event_only_triggers_once():
@@ -71,13 +84,15 @@ func test_non_repeatable_event_only_triggers_once():
 	state.turn = 10
 	state.money = 40000
 
-	# First check - should trigger
+	# First check - should trigger funding_crisis
 	var events1 = GameEvents.check_triggered_events(state, state.rng)
-	assert_eq(events1.size(), 1, "Should trigger first time")
+	var has_crisis_1 = not _find_event_by_id(events1, "funding_crisis").is_empty()
+	assert_true(has_crisis_1, "Should trigger funding crisis first time")
 
-	# Second check - should not trigger
+	# Second check - funding_crisis should not fire again
 	var events2 = GameEvents.check_triggered_events(state, state.rng)
-	assert_eq(events2.size(), 0, "Should not trigger second time (non-repeatable)")
+	var has_crisis_2 = not _find_event_by_id(events2, "funding_crisis").is_empty()
+	assert_false(has_crisis_2, "Should not trigger funding crisis second time (non-repeatable)")
 
 func test_reset_triggered_events_clears_history():
 	# Test that reset clears triggered events history
@@ -89,12 +104,15 @@ func test_reset_triggered_events_clears_history():
 
 	# Should be able to trigger again after reset
 	var events = GameEvents.check_triggered_events(state, state.rng)
-	assert_eq(events.size(), 1, "Should trigger again after reset")
+	var has_crisis = not _find_event_by_id(events, "funding_crisis").is_empty()
+	assert_true(has_crisis, "Should trigger funding crisis again after reset")
 
 func test_execute_event_choice_applies_effects():
 	# Test that event choices apply their effects
 	var events = GameEvents.get_all_events()
-	var funding_crisis = events[0]  # First event should be funding crisis
+	var funding_crisis = _find_event_by_id(events, "funding_crisis")
+
+	assert_false(funding_crisis.is_empty(), "Funding crisis should exist")
 
 	state.money = 40000
 	var initial_money = state.money
@@ -108,14 +126,9 @@ func test_execute_event_choice_applies_effects():
 func test_execute_event_choice_checks_affordability():
 	# Test that event choices check affordability
 	var events = GameEvents.get_all_events()
-	var ai_breakthrough = null
+	var ai_breakthrough = _find_event_by_id(events, "ai_breakthrough")
 
-	for event in events:
-		if event["id"] == "ai_breakthrough":
-			ai_breakthrough = event
-			break
-
-	assert_not_null(ai_breakthrough, "AI breakthrough event should exist")
+	assert_false(ai_breakthrough.is_empty(), "AI breakthrough event should exist")
 
 	state.money = 5000  # Not enough for safety review
 	state.action_points = 0  # No AP
@@ -127,8 +140,8 @@ func test_execute_event_choice_checks_affordability():
 
 func test_random_events_deterministic():
 	# Test that random events are deterministic with same seed
-	state1 = GameState.new("deterministic_seed")
-	state2 = GameState.new("deterministic_seed")
+	var state1 = GameState.new("deterministic_seed")
+	var state2 = GameState.new("deterministic_seed")
 
 	state1.turn = 10
 	state2.turn = 10
@@ -179,25 +192,15 @@ func test_talent_recruitment_is_repeatable():
 
 	# We can't guarantee it triggers due to randomness, but we can check it's marked repeatable
 	var events = GameEvents.get_all_events()
-	var talent_recruitment = null
+	var talent_recruitment = _find_event_by_id(events, "talent_recruitment")
 
-	for event in events:
-		if event["id"] == "talent_recruitment":
-			talent_recruitment = event
-			break
-
-	assert_not_null(talent_recruitment, "Talent recruitment should exist")
+	assert_false(talent_recruitment.is_empty(), "Talent recruitment should exist")
 	assert_true(talent_recruitment.get("repeatable", false), "Should be marked as repeatable")
 
 func test_event_choice_modifies_staff_count():
 	# Test that hiring through events increases staff
 	var events = GameEvents.get_all_events()
-	var talent_recruitment = null
-
-	for event in events:
-		if event["id"] == "talent_recruitment":
-			talent_recruitment = event
-			break
+	var talent_recruitment = _find_event_by_id(events, "talent_recruitment")
 
 	state.money = 50000  # Ensure we can afford it
 	var initial_staff = state.safety_researchers
@@ -210,12 +213,7 @@ func test_event_choice_modifies_staff_count():
 func test_multi_resource_effects():
 	# Test that events can affect multiple resources at once
 	var events = GameEvents.get_all_events()
-	var ai_breakthrough = null
-
-	for event in events:
-		if event["id"] == "ai_breakthrough":
-			ai_breakthrough = event
-			break
+	var ai_breakthrough = _find_event_by_id(events, "ai_breakthrough")
 
 	var initial_doom = state.doom
 	var initial_reputation = state.reputation
