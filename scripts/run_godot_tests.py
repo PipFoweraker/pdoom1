@@ -10,7 +10,6 @@ Usage:
 """
 
 import argparse
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -32,12 +31,7 @@ def find_godot():
     """Find Godot executable on system."""
     for path in GODOT_PATHS:
         try:
-            result = subprocess.run(
-                [path, "--version"],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
+            result = subprocess.run([path, "--version"], capture_output=True, text=True, timeout=5)
             if result.returncode == 0:
                 print(f"[INFO] Found Godot: {path}")
                 print(f"[INFO] Version: {result.stdout.strip()}")
@@ -66,11 +60,13 @@ def run_gut_tests(godot_path, test_dir, log_level=2, junit_output=None):
     cmd = [
         godot_path,
         "--headless",
-        "--path", str(GODOT_PROJECT),
-        "-s", "res://addons/gut/gut_cmdln.gd",
+        "--path",
+        str(GODOT_PROJECT),
+        "-s",
+        "res://addons/gut/gut_cmdln.gd",
         "-gdir=" + test_dir,
         f"-glog={log_level}",
-        "-gexit"
+        "-gexit",
     ]
 
     if junit_output:
@@ -81,11 +77,7 @@ def run_gut_tests(godot_path, test_dir, log_level=2, junit_output=None):
 
     try:
         result = subprocess.run(
-            cmd,
-            cwd=GODOT_PROJECT,
-            capture_output=False,
-            text=True,
-            timeout=300  # 5 minute timeout
+            cmd, cwd=GODOT_PROJECT, capture_output=False, text=True, timeout=300  # 5 minute timeout
         )
 
         # GUT exits with 0 on success, non-zero on failure
@@ -97,7 +89,7 @@ def run_gut_tests(godot_path, test_dir, log_level=2, junit_output=None):
             return False
 
     except subprocess.TimeoutExpired:
-        print(f"\n[ERROR] Tests timed out after 5 minutes!")
+        print("\n[ERROR] Tests timed out after 5 minutes!")
         return False
     except Exception as e:
         print(f"\n[ERROR] Failed to run tests: {e}")
@@ -108,24 +100,26 @@ def check_syntax(godot_path):
     """Check GDScript syntax by attempting to load the project."""
     print("\n[CHECK] Checking GDScript syntax...")
 
-    cmd = [
-        godot_path,
-        "--headless",
-        "--path", str(GODOT_PROJECT),
-        "--quit"
+    cmd = [godot_path, "--headless", "--path", str(GODOT_PROJECT), "--quit"]
+
+    # Godot emits benign ERROR lines on headless shutdown (e.g. "ObjectDB
+    # instances leaked at exit", "resources still in use at exit").  Only
+    # GDScript compilation problems are real syntax failures.
+    REAL_ERROR_MARKERS = [
+        "Parse Error",
+        "SCRIPT ERROR",
+        "Cannot load source code",
+        "GDScript error",
+        "Failed loading resource",
     ]
 
     try:
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=30
-        )
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
 
-        # Check for errors in output
         output = result.stdout + result.stderr
-        if "ERROR" in output or "Parse Error" in output:
+        found_errors = [m for m in REAL_ERROR_MARKERS if m in output]
+
+        if found_errors:
             print("[FAIL] GDScript syntax errors found:")
             print(output)
             return False
@@ -148,38 +142,18 @@ Examples:
   python scripts/run_godot_tests.py --quick            # Unit tests only
   python scripts/run_godot_tests.py --smoke-only       # Smoke tests only
   python scripts/run_godot_tests.py --ci-mode          # CI mode with JUnit
-        """
+        """,
     )
 
-    parser.add_argument(
-        "--quick",
-        action="store_true",
-        help="Run only unit tests (fast)"
-    )
+    parser.add_argument("--quick", action="store_true", help="Run only unit tests (fast)")
 
-    parser.add_argument(
-        "--smoke-only",
-        action="store_true",
-        help="Run only smoke tests"
-    )
+    parser.add_argument("--smoke-only", action="store_true", help="Run only smoke tests")
 
-    parser.add_argument(
-        "--ci-mode",
-        action="store_true",
-        help="CI mode: generate JUnit XML output"
-    )
+    parser.add_argument("--ci-mode", action="store_true", help="CI mode: generate JUnit XML output")
 
-    parser.add_argument(
-        "--no-syntax-check",
-        action="store_true",
-        help="Skip GDScript syntax check"
-    )
+    parser.add_argument("--no-syntax-check", action="store_true", help="Skip GDScript syntax check")
 
-    parser.add_argument(
-        "--verbose",
-        action="store_true",
-        help="Verbose output (GUT log level 3)"
-    )
+    parser.add_argument("--verbose", action="store_true", help="Verbose output (GUT log level 3)")
 
     args = parser.parse_args()
 
@@ -209,11 +183,7 @@ Examples:
         test_dirs = ["res://tests/unit"]
     else:
         # Full test suite
-        test_dirs = [
-            "res://tests/unit",
-            "res://tests/integration",
-            "res://tests/smoke"
-        ]
+        test_dirs = ["res://tests/unit", "res://tests/integration", "res://tests/smoke"]
 
     # Run each test directory
     for test_dir in test_dirs:
@@ -232,14 +202,14 @@ Examples:
         all_passed = all_passed and passed
 
     # Summary
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     if all_passed:
         print("[SUCCESS] All tests passed! CHECKED")
-        print("="*60)
+        print("=" * 60)
         sys.exit(0)
     else:
         print("[FAILURE] Some tests failed! FAILED")
-        print("="*60)
+        print("=" * 60)
         sys.exit(1)
 
 

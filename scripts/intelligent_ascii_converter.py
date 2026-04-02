@@ -13,7 +13,9 @@ Philosophy:
 """
 
 import argparse
+import io
 import re
+import sys
 import unicodedata
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -644,4 +646,8 @@ Examples:
 
 
 if __name__ == "__main__":
+    # Ensure stdout can handle Unicode on Windows (cp1252 would crash on chars
+    # like U+25B6 that this tool encounters while reporting what it converted).
+    if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
     exit(main())
