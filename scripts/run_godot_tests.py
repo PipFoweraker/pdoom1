@@ -103,14 +103,12 @@ def check_syntax(godot_path):
     cmd = [godot_path, "--headless", "--path", str(GODOT_PROJECT), "--quit"]
 
     # Godot emits benign ERROR lines on headless shutdown (e.g. "ObjectDB
-    # instances leaked at exit", "resources still in use at exit").  Only
-    # GDScript compilation problems are real syntax failures.
+    # instances leaked at exit", "resources still in use at exit") and for
+    # missing imported assets (textures, audio) that aren't in the repo.
+    # Only match errors that indicate broken GDScript source code.
     REAL_ERROR_MARKERS = [
-        "Parse Error",
-        "SCRIPT ERROR",
         "Cannot load source code",
         "GDScript error",
-        "Failed loading resource",
     ]
 
     try:

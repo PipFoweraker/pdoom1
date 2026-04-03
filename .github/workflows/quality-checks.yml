@@ -105,7 +105,7 @@ jobs:
         echo "Documentation structure validated"
 
     - name: Commit Message Check
-      if: github.event_name == 'push'
+      if: github.event_name == 'pull_request'
       run: |
         echo "Checking latest commit message for ASCII compliance..."
         commit_msg=$(git log -1 --pretty=%B)
