@@ -79,8 +79,6 @@ jobs:
     name: Integration Tests
     runs-on: ubuntu-latest
     needs: syntax-check
-    # Only run if integration tests exist
-    if: hashFiles('godot/tests/integration/*.gd') != ''
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -108,8 +106,6 @@ jobs:
     name: Smoke Tests
     runs-on: ubuntu-latest
     needs: [unit-tests]
-    # Only run if smoke tests exist
-    if: hashFiles('godot/tests/smoke/*.gd') != ''
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

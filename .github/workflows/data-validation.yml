@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install jsonschema>=4.0.0
+          pip install "jsonschema>=4.0.0"
 
       - name: Run schema validation
         id: validate
@@ -79,7 +79,7 @@ jobs:
             const fs = require('fs');
             const report = fs.readFileSync('validation-report.txt', 'utf8');
 
-            github.rest.issues.createComment({
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
