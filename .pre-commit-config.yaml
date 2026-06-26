@@ -78,7 +78,9 @@ default_language_version:
 # Skip some hooks for certain files
 exclude: |
   (?x)^(
+      archive/.*|
       archived/.*|
+      legacy/.*|
       docs/archive/.*|
       \.git/.*|
       \.mypy_cache/.*|

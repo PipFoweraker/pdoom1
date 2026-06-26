@@ -22,9 +22,9 @@ from typing import Dict, List, Any, Optional
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.scores.enhanced_leaderboard import EnhancedLeaderboardManager
-from src.services.leaderboard import get_leaderboard_manager, is_leaderboard_available
-from src.services.version import get_display_version
+from scripts.lib.scores.enhanced_leaderboard import EnhancedLeaderboardManager
+from scripts.lib.services.leaderboard import get_leaderboard_manager, is_leaderboard_available
+from scripts.lib.services.version import get_display_version
 from tools.web_export.api_format import WebAPIFormatter
 from tools.web_export.privacy_filter import PrivacyFilter
 
@@ -57,7 +57,7 @@ class LeaderboardWebExporter:
         for seed, leaderboard_info in all_leaderboards.items():
             try:
                 # Load the specific leaderboard file directly
-                from src.scores.local_store import LocalLeaderboard
+                from scripts.lib.scores.local_store import LocalLeaderboard
                 from pathlib import Path
                 
                 leaderboard_file = Path(leaderboard_info['file_path'])
@@ -124,7 +124,7 @@ class LeaderboardWebExporter:
             leaderboard_info = all_leaderboards[seed]
             
             # Load the leaderboard file directly
-            from src.scores.local_store import LocalLeaderboard
+            from scripts.lib.scores.local_store import LocalLeaderboard
             from pathlib import Path
             
             leaderboard_file = Path(leaderboard_info['file_path'])
