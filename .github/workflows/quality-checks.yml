@@ -25,10 +25,12 @@ jobs:
 
     - name: Python syntax gate (3.11 baseline)
       run: |
-        echo "Compiling automation scripts on the Python 3.11 baseline..."
-        echo "(Guards against modern-only syntax, e.g. PEP 701 f-strings, landing in CI scripts.)"
-        python -m py_compile scripts/*.py
-        echo "SUCCESS All scripts/ compile on the declared baseline"
+        echo "Compiling automation Python (scripts, tools, tests, docs/shared) on the Python 3.11 baseline..."
+        echo "(Guards against modern-only syntax, e.g. PEP 701 f-strings, landing in CI automation.)"
+        files=$(find scripts tools tests docs/shared -name '*.py' -not -path '*/archive/*' -not -path '*/legacy/*')
+        echo "Files to compile: $(echo "$files" | wc -l)"
+        python -m py_compile $files
+        echo "SUCCESS All automation Python compiles on the declared baseline"
 
     - name: ASCII Compliance Check
       run: |
