@@ -8,7 +8,7 @@ Welcome! This guide will get you from zero to running the game in under 30 minut
 
 - **Godot 4.5.1** - [Download here](https://godotengine.org/download) (standard, not .NET)
 - **Git** - For cloning the repository
-- **Python 3.9+** - For tooling scripts (optional but recommended)
+- **Python 3.11+** - For tooling scripts (optional but recommended). 3.11 is the supported baseline; see `pyproject.toml`.
 
 ### Clone and Run
 
@@ -121,19 +121,20 @@ python scripts/run_godot_tests.py --quick --ci-mode
 
 ## Branch Workflow
 
-We use a two-branch model:
+We use a single-branch (trunk) model:
 
-- **`main`** - Stable releases only
-- **`develop`** - Active development, all PRs target here
+- **`main`** - The single source of truth. All work branches off `main`, and all PRs target `main`.
+
+> The former `develop` branch was retired in April 2026; everything now flows through `main` via pull requests.
 
 ### Making Changes
 
-1. **Fork** the repository on GitHub
+1. **Fork** the repository on GitHub (external contributors), or branch directly (maintainers)
 
-2. **Create a feature branch from develop:**
+2. **Create a branch from main:**
    ```bash
-   git checkout develop
-   git pull origin develop
+   git checkout main
+   git pull origin main
    git checkout -b feature/your-feature-name
    # or
    git checkout -b fix/issue-123-description
@@ -157,7 +158,7 @@ We use a two-branch model:
    git push origin feature/your-feature-name
    ```
 
-6. **Open a Pull Request** targeting `develop` (not main)
+6. **Open a Pull Request** targeting `main`
 
 ## Contribution Types
 

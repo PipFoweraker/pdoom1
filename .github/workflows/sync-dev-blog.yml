@@ -19,18 +19,18 @@ jobs:
   sync-dev-blog:
     runs-on: ubuntu-latest
     if: github.repository == 'PipFoweraker/pdoom1'
-    
+
     steps:
       - name: Checkout pdoom1 repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 2  # Need previous commit for diff
-          
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
-          
+          python-version: '3.11'
+
       - name: Validate blog entries
         run: |
           echo "Validating blog entries before sync..."
@@ -40,7 +40,7 @@ jobs:
             exit 1
           fi
           echo "SUCCESS Blog entries validated successfully"
-          
+
       - name: Checkout website repository
         uses: actions/checkout@v4
         with:
@@ -48,7 +48,7 @@ jobs:
           token: ${{ secrets.WEBSITE_SYNC_TOKEN }}
           path: website
           ref: main
-          
+
       - name: Determine changed files
         id: changes
         run: |
@@ -65,16 +65,16 @@ jobs:
               echo "MEMO Changed entries: $changed_files"
             fi
           fi
-          
+
       - name: Sync blog entries to website
         if: steps.changes.outputs.changed_files != ''
         run: |
           echo "LAUNCH Syncing blog entries to website..."
-          
+
           # Ensure blog directory exists
           mkdir -p website/public/blog
           mkdir -p website/public/dev-notes
-          
+
           # Copy changed entries
           for file in ${{ steps.changes.outputs.changed_files }}; do
             if [ -f "$file" ]; then
@@ -83,25 +83,25 @@ jobs:
               cp "$file" "website/public/blog/"
             fi
           done
-          
+
           # Always update the index for navigation
           echo "CLIPBOARD Updating blog index"
           cp dev-blog/index.json website/public/blog/
-          
+
           # Generate website-specific navigation (if needed)
           echo "COMPASS Generating website navigation"
           # Future: Create website-specific navigation from index.json
-          
+
       - name: Commit and push to website
         if: steps.changes.outputs.changed_files != ''
         working-directory: website
         run: |
           git config user.name "Dev Blog Sync Bot"
           git config user.email "dev+blog-sync@pdoom.net"
-          
+
           # Add all blog changes
           git add public/blog/
-          
+
           # Check if there are changes to commit
           if git diff --staged --quiet; then
             echo "INFO No changes to commit"
@@ -111,23 +111,23 @@ jobs:
             if [ "${{ inputs.force_sync }}" == "true" ]; then
               commit_msg="$commit_msg (force sync)"
             fi
-            
+
             echo "SAVE Committing changes: $commit_msg"
             git commit -m "$commit_msg"
-            
+
             echo "LAUNCH Pushing to website repository"
             git push
-            
+
             echo "SUCCESS Blog sync completed successfully"
           fi
-          
+
       - name: Notification
         if: steps.changes.outputs.changed_files != ''
         run: |
           echo "CELEBRATION Dev blog sync completed!"
           echo "METRICS Synced entries: ${{ steps.changes.outputs.changed_files }}"
           echo "GLOBAL Changes will be live on the website shortly"
-          
+
       - name: No changes notification
         if: steps.changes.outputs.changed_files == ''
         run: |

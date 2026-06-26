@@ -2,9 +2,9 @@ name: Quality Checks
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main ]
 
 jobs:
   quality-checks:
@@ -16,12 +16,19 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'
+        python-version: '3.11'
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Python syntax gate (3.11 baseline)
+      run: |
+        echo "Compiling automation scripts on the Python 3.11 baseline..."
+        echo "(Guards against modern-only syntax, e.g. PEP 701 f-strings, landing in CI scripts.)"
+        python -m py_compile scripts/*.py
+        echo "SUCCESS All scripts/ compile on the declared baseline"
 
     - name: ASCII Compliance Check
       run: |
