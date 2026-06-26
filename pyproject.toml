@@ -1,0 +1,23 @@
+# Authoritative Python baseline for P(Doom) tooling and CI.
+#
+# The game itself is built in Godot / GDScript; Python is used ONLY for
+# automation, CI/CD, and developer tooling under scripts/ and tools/.
+# This file pins the *minimum supported Python* so that modern syntax
+# (e.g. PEP 701 f-strings, valid only on 3.12+) cannot silently land and
+# break CI lanes running an older interpreter.
+#
+# Baseline: Python 3.11  (see CONTRIBUTING.md "Development Setup").
+# Enforced in CI by the "Python syntax gate" step in quality-checks.yml,
+# which compiles scripts/ on the baseline interpreter.
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+
+[tool.black]
+target-version = ["py311"]
+line-length = 100
+
+[tool.isort]
+profile = "black"
+line_length = 100
