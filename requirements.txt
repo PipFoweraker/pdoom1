@@ -3,3 +3,6 @@
 
 # JSON schema validation
 jsonschema>=4.0.0
+
+# YAML parsing (issue sync, metadata, config files)
+pyyaml>=6.0
