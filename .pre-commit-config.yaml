@@ -10,7 +10,6 @@ repos:
       - id: end-of-file-fixer
       - id: check-yaml
         args: ['--allow-multiple-documents', '--unsafe']
-        exclude: '^\.github/workflows/(dev-blog-automation|data-validation)\.yml$'
       - id: check-json
       - id: check-added-large-files
         args: ['--maxkb=1000']
@@ -78,7 +77,9 @@ default_language_version:
 # Skip some hooks for certain files
 exclude: |
   (?x)^(
+      archive/.*|
       archived/.*|
+      legacy/.*|
       docs/archive/.*|
       \.git/.*|
       \.mypy_cache/.*|

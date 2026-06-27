@@ -85,19 +85,19 @@ jobs:
               repo: context.repo.repo,
               body: `## ERROR Data Validation Failed
 
-The historical data validation checks have failed. Please review and fix the errors below:
+            The historical data validation checks have failed. Please review and fix the errors below:
 
-\`\`\`
-${report}
-\`\`\`
+            \`\`\`
+            ${report}
+            \`\`\`
 
-**What to do:**
-1. Review the errors in the validation report
-2. Fix the data files or schemas as needed
-3. Run \`python scripts/validate_historical_data.py -v\` locally to verify
-4. Push your fixes to trigger re-validation
+            **What to do:**
+            1. Review the errors in the validation report
+            2. Fix the data files or schemas as needed
+            3. Run \`python scripts/validate_historical_data.py -v\` locally to verify
+            4. Push your fixes to trigger re-validation
 
-See [shared/schemas/README.md](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/shared/schemas/README.md) for schema documentation.`
+            See [shared/schemas/README.md](https://github.com/${context.repo.owner}/${context.repo.repo}/blob/main/shared/schemas/README.md) for schema documentation.`
             });
 
   schema-validation-status:

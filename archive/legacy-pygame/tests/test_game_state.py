@@ -129,7 +129,7 @@ class TestEventLog(unittest.TestCase):
         for msg in ['Previous turn message 1', 'Previous turn message 2', 
                    'Action completed', 'Event triggered']:
             self.assertNotIn(msg, game_state.messages,
-                           f'Old message '{msg}' should not persist into new turn')
+                           f"Old message '{msg}' should not persist into new turn")
     
     def test_event_log_preserves_current_turn_messages_only(self):
         '''Test that only messages generated during the current turn are preserved.'''
