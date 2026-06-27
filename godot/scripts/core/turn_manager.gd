@@ -179,8 +179,9 @@ func start_turn() -> Dictionary:
 			VerificationTracker.record_rng_outcome("research_gen_%d" % researcher_index, research_roll, state.turn)
 
 			if research_roll < 0.30 * productivity:
-				var base_research = state.rng.randi_range(1, 3)
-				VerificationTracker.record_rng_outcome("research_amount_%d" % researcher_index, float(base_research), state.turn)
+				var base_research: float = state.rng.randi_range(1, 3)  # float fixes the 1.25 capabilities truncation
+				base_research *= state.get_research_multiplier()  # Issue #500: per-researcher research-quality speed
+				VerificationTracker.record_rng_outcome("research_amount_%d" % researcher_index, base_research, state.turn)
 
 				# Specialization modifiers
 				match researcher.specialization:
@@ -230,6 +231,9 @@ func start_turn() -> Dictionary:
 
 	# Apply research gains
 	state.add_resources({"research": research_from_employees})
+
+	# Issue #500: research-quality risk contributions (feeds risk pools, not doom directly)
+	state.apply_research_quality_risk(state.turn)
 
 	# === STATIONERY SYSTEM ===
 	# Staff consume stationery each turn
