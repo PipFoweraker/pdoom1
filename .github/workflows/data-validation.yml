@@ -132,14 +132,14 @@ jobs:
           node-version: '20'
 
       - name: Install AJV for schema validation
-        run: npm install -g ajv-cli
+        run: npm install -g ajv-cli ajv-formats
 
       - name: Check JSON Schema syntax
         run: |
           echo "Validating JSON Schema syntax..."
           for schema in shared/schemas/*.schema.json; do
             echo "Checking $schema..."
-            ajv compile -s "$schema" --strict=true
+            ajv compile -s "$schema" --strict=true -c ajv-formats
             if [ $? -eq 0 ]; then
               echo "SUCCESS $schema is valid"
             else
