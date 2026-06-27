@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **Research Quality System** (#500): Rushed / Standard / Thorough quality toggle for research
+  - **Rushed**: faster research, but accumulates technical debt and raises risk
+  - **Standard**: baseline speed, neutral
+  - **Thorough**: slower research, reduces doom/risk (safety-focused builds)
+  - Feeds the hidden Risk Pool system (research integrity, capability overhang, financial exposure)
+  - New `research_quality_selector.gd` UI; defaults to Standard and remembers last selection
+  - Unit tests: `test_research_quality.gd`, `test_risk_system.gd`
+- **Game-design documentation** (#500): `godot/docs/design/` — `TWO_ACT_STRUCTURE.md`, `INTRO_CINEMATIC.md`, `TONE_AND_ART.md`
 - **Scenario/Mod Hook System** (#483): Custom scenarios without code changes
   - Drop JSON files into `godot/data/scenarios/` to add new scenarios
   - Scenario selection dropdown in Custom Game setup screen
@@ -20,7 +28,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - User scenarios supported in `user://scenarios/` directory
   - Complete documentation in `docs/SCENARIOS.md`
 
+### Fixed
+- **CI/CD pipeline restored** (#527, #530, #535): the daily Enhanced CI/CD pipeline had been failing for 10+ days and two workflows (`data-validation`, `dev-blog-automation`) failed at startup for months
+  - Repaired PEP 701 nested-quote f-strings that broke on the Python 3.11 runner (valid only on 3.12+)
+  - Added missing `pyyaml` dependency to the sync/cleanup stages
+  - Fixed invalid workflow YAML (column-0 lines terminating `run:` block scalars → 0s startup failures)
+  - Fixed schema-validation check failing under AJV strict mode on `format: "uri"` (added `ajv-formats`)
+
 ### Technical
+- **Python 3.11 baseline** (#527): authoritative `pyproject.toml` + CI syntax gate so modern-only syntax can't silently break CI; standardized workflow Python pins
+- **Repo cleanup**: archived ~35 pygame-era debris files to `archive/legacy-pygame/`; removed duplicates; pruned 9 stale remote branches and 6 orphaned worktrees
 - New files: `scenario_loader.gd`, `docs/SCENARIOS.md`, `godot/data/scenarios/*.json`
 - Modified: `game_config.gd`, `game_manager.gd`, `pregame_setup.gd`, `pregame_setup.tscn`, `events.gd`
 
