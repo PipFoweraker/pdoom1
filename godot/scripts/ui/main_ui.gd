@@ -40,6 +40,7 @@ var game_manager: Node
 
 # Track queued actions
 var queued_actions: Array = []
+var research_quality_selector  # Issue #500
 var current_turn_phase: String = "NOT_STARTED"
 
 # Active dialog state for keyboard shortcuts
@@ -63,6 +64,12 @@ func _ready():
 	game_manager.error_occurred.connect(_on_error_occurred)
 	game_manager.actions_available.connect(_on_actions_available)
 	game_manager.event_triggered.connect(_on_event_triggered)
+
+	# Issue #500: research quality selector (script-instantiated; reparent in editor if preferred)
+	research_quality_selector = preload("res://scripts/ui/research_quality_selector.gd").new()
+	research_quality_selector.quality_selected.connect(_on_research_quality_selected)
+	$ContentArea/LeftPanel.add_child(research_quality_selector)
+	$ContentArea/LeftPanel.move_child(research_quality_selector, 0)
 
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
@@ -419,8 +426,14 @@ func _on_bug_report_button_pressed():
 	if bug_report_panel:
 		bug_report_panel.show_panel()
 
+func _on_research_quality_selected(mode: String):
+	game_manager.set_research_quality(mode)
+
 func _on_game_state_updated(state: Dictionary):
 	print("[MainUI] State updated: ", state)
+
+	if research_quality_selector:
+		research_quality_selector.update_from_state(state)
 
 	# Update resource displays (Issue #472 - enhanced turn display with calendar)
 	var turn_display = state.get("turn_display", "")

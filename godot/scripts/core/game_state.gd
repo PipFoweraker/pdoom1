@@ -66,6 +66,19 @@ var start_year: int = DEFAULT_START_YEAR
 var start_month: int = DEFAULT_START_MONTH
 var start_day: int = DEFAULT_START_DAY
 
+# Research Quality System (Issue #500)
+# Org-wide research stance. Feeds the RISK POOLS (not tech-debt/doom directly — see
+# docs/design/RISK_SYSTEM.md & TWO_ACT_STRUCTURE.md). Risk magnitudes are per calendar-MONTH;
+# turn_manager scales them by get_months_per_turn(). Speed multiplier is applied per-researcher.
+# Sign convention: POSITIVE risk_per_month = adds risk to that pool (worse). Tune freely.
+const RESEARCH_QUALITY := {
+	"rushed":   {"research_multiplier": 2.0, "research_integrity_risk_per_month":  6.0, "capability_overhang_risk_per_month":  2.0},
+	"standard": {"research_multiplier": 1.0, "research_integrity_risk_per_month":  0.0, "capability_overhang_risk_per_month":  0.0},
+	"thorough": {"research_multiplier": 0.5, "research_integrity_risk_per_month": -3.0, "capability_overhang_risk_per_month": -3.0},
+}
+const DEFAULT_RESEARCH_QUALITY := "standard"
+var research_quality_mode: String = DEFAULT_RESEARCH_QUALITY
+
 # Turn phase tracking (fixes #418 - proper event sequencing)
 enum TurnPhase { TURN_START, ACTION_SELECTION, TURN_PROCESSING, TURN_END }
 var current_phase: TurnPhase = TurnPhase.ACTION_SELECTION
@@ -123,6 +136,7 @@ func reset():
 	action_points = 3
 	stationery = 100.0
 	technical_debt = 0.0  # Reset tech debt (Issue #416)
+	research_quality_mode = DEFAULT_RESEARCH_QUALITY  # Issue #500
 
 	safety_researchers = 0
 	capability_researchers = 0
@@ -319,6 +333,46 @@ func get_tech_debt_failure_chance() -> float:
 		return 0.0
 	# 2% chance per 10 debt above 20
 	return (technical_debt - 20.0) * 0.002
+
+
+# ============================================================================
+# RESEARCH QUALITY SYSTEM (Issue #500)
+# ============================================================================
+
+func get_months_per_turn() -> float:
+	"""Calendar months represented by one turn. Fixed at 1.0 until the variable
+	game-length system lands (see docs/design/TWO_ACT_STRUCTURE.md)."""
+	return 1.0
+
+
+func get_research_multiplier() -> float:
+	"""Per-researcher research-speed multiplier for the current quality mode."""
+	return RESEARCH_QUALITY.get(research_quality_mode, RESEARCH_QUALITY[DEFAULT_RESEARCH_QUALITY])["research_multiplier"]
+
+
+func set_research_quality(mode: String) -> void:
+	"""Set the org-wide research stance. Unknown modes are ignored (kept standard)."""
+	if RESEARCH_QUALITY.has(mode):
+		research_quality_mode = mode
+	else:
+		ErrorHandler.warning(ErrorHandler.Category.RESOURCES, "Unknown research quality mode", {"mode": mode})
+
+
+func apply_research_quality_risk(current_turn: int) -> void:
+	"""Apply this turn's research-quality contributions to the risk pools.
+	Per-month magnitudes scaled to per-turn via get_months_per_turn() so total
+	accrued risk is invariant across game length (see TWO_ACT_STRUCTURE.md)."""
+	if risk_system == null:
+		return
+	var q = RESEARCH_QUALITY.get(research_quality_mode, RESEARCH_QUALITY[DEFAULT_RESEARCH_QUALITY])
+	var mpt: float = get_months_per_turn()
+	var integrity_delta: float = q["research_integrity_risk_per_month"] * mpt
+	var overhang_delta: float = q["capability_overhang_risk_per_month"] * mpt
+	var src: String = "research_quality:%s" % research_quality_mode
+	if integrity_delta != 0.0:
+		risk_system.add_risk("research_integrity", integrity_delta, src, current_turn)
+	if overhang_delta != 0.0:
+		risk_system.add_risk("capability_overhang", overhang_delta, src, current_turn)
 
 
 func check_win_lose():
@@ -661,6 +715,7 @@ func to_dict() -> Dictionary:
 		"money": money,
 		"compute": compute,
 		"research": research,
+		"research_quality_mode": research_quality_mode,  # Issue #500
 		"papers": papers,
 		"reputation": reputation,
 		"doom": doom,
@@ -705,6 +760,7 @@ func from_dict(data: Dictionary) -> void:
 	money = data.get("money", 100000)
 	compute = data.get("compute", 0.0)
 	research = data.get("research", 0.0)
+	research_quality_mode = data.get("research_quality_mode", DEFAULT_RESEARCH_QUALITY)  # Issue #500
 	papers = data.get("papers", 0)
 	reputation = data.get("reputation", 10.0)
 	doom = data.get("doom", 50.0)

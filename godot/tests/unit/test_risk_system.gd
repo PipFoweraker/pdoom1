@@ -91,19 +91,19 @@ func test_add_risk_multi_affects_multiple_pools():
 # ============================================================================
 
 func test_risk_decays_each_turn():
-	# Test that risk decays by decay_rate each turn
+	# Decay is OFF by default now (decay_rate = 0.0, "active reduction only"). Opt in to verify.
 	var risk = _create_risk_system()
 	var state = _create_game_state()
 	var rng = _create_rng()
 
+	risk.decay_rate = 2.0
 	risk.add_risk("capability_overhang", 50.0, "test", 1)
 	var initial = risk.pools["capability_overhang"]
 
 	# Process turn (which applies decay)
 	risk.process_turn(state, rng)
 
-	# Decay rate is 2.0 per turn by default
-	assert_lt(risk.pools["capability_overhang"], initial, "Pool should decay after turn")
+	assert_lt(risk.pools["capability_overhang"], initial, "Pool should decay when decay_rate > 0")
 
 func test_risk_decay_does_not_go_negative():
 	# Test that decay doesn't push risk below 0

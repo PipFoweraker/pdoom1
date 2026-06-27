@@ -119,8 +119,9 @@ func reduce_risk(pool_name: String, amount: float, source: String = "", turn: in
 # EVENT TRIGGERING (Hybrid System)
 # ============================================================================
 
-## Decay rate per turn - risk slowly reduces if not fed
-const DECAY_RATE: float = 2.0
+## Decay per turn. Default 0.0 = "active reduction only" (RISK_SYSTEM.md). A per-instance
+## knob for future difficulty tuning; replaces a hardcoded 2.0 leftover (Issue #500 cleanup).
+var decay_rate: float = 0.0
 
 func process_turn(state, rng: RandomNumberGenerator) -> Array[Dictionary]:
 	"""
@@ -134,7 +135,7 @@ func process_turn(state, rng: RandomNumberGenerator) -> Array[Dictionary]:
 
 	# Apply decay to all pools first
 	for pool_name in pools.keys():
-		pools[pool_name] = maxf(0.0, pools[pool_name] - DECAY_RATE)
+		pools[pool_name] = maxf(0.0, pools[pool_name] - decay_rate)
 
 	for pool_name in pools.keys():
 		var pool_value = pools[pool_name]

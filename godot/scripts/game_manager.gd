@@ -290,6 +290,14 @@ func clear_action_queue():
 	print("[GameManager] Queue cleared, refunded %d AP" % refunded_ap)
 	game_state_updated.emit(state.to_dict())
 
+func set_research_quality(mode: String):
+	"""Set the org-wide research quality stance (Issue #500)."""
+	if not is_initialized:
+		return
+	state.set_research_quality(mode)
+	print("[GameManager] Research quality set to %s" % state.research_quality_mode)
+	game_state_updated.emit(state.to_dict())
+
 func remove_queued_action(action_id: String):
 	"""Remove specific action from queue and refund its AP cost"""
 	if not is_initialized:
