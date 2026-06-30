@@ -2,18 +2,16 @@ name: Godot Tests
 
 on:
   push:
-    branches: [main, dev/enhancements, develop]
+    branches: [main]
     paths:
       - 'godot/**/*.gd'
       - 'godot/**/*.tscn'
       - 'godot/project.godot'
       - '.github/workflows/godot-tests.yml'
+  # Run on ALL PRs to main (no path filter) so the required "Unit Tests" /
+  # "GDScript Syntax Check" status checks always report and can gate merges.
   pull_request:
-    branches: [main, develop]
-    paths:
-      - 'godot/**/*.gd'
-      - 'godot/**/*.tscn'
-      - 'godot/project.godot'
+    branches: [main]
 
 jobs:
   syntax-check:
@@ -159,6 +157,7 @@ jobs:
 
       - name: Post comment on PR
         if: github.event_name == 'pull_request' && needs.unit-tests.result == 'success'
+        continue-on-error: true  # Cosmetic; a transient GitHub API hiccup must not fail the gate
         uses: actions/github-script@v7
         with:
           script: |
