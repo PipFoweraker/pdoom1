@@ -154,9 +154,7 @@ func _input(event: InputEvent):
 				else:
 					# Submenu dialogs can be closed with ESC
 					print("[MainUI] ESC pressed on submenu dialog - closing")
-					active_dialog.queue_free()
-					active_dialog = null
-					active_dialog_buttons = []
+					_close_active_submenu()
 					get_viewport().set_input_as_handled()
 					return
 
@@ -210,18 +208,22 @@ func _input(event: InputEvent):
 		elif KeybindManager.is_action_pressed(event, "menu_hire"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
 				_show_hiring_submenu()
+				_decorate_active_submenu()
 				get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_fundraise"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
 				_show_fundraising_submenu()
+				_decorate_active_submenu()
 				get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_publicity"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
 				_show_publicity_submenu()
+				_decorate_active_submenu()
 				get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_travel"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
 				_show_travel_submenu()
+				_decorate_active_submenu()
 				get_viewport().set_input_as_handled()
 
 		# Escape to init game (if not started)
@@ -721,6 +723,9 @@ func _on_actions_available(actions: Array):
 			# Simple tooltip for accessibility
 			icon_button.tooltip_text = action_name
 
+			# Tag with action_id so submenus can align to the button that opened them (#510)
+			icon_button.set_meta("action_id", action_id)
+
 			# Connect button press
 			icon_button.pressed.connect(func(): _on_dynamic_action_pressed(action_id, action_name))
 
@@ -843,6 +848,8 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 			_show_travel_submenu()
 		elif action_id == "operations":
 			_show_operations_submenu()
+		# Align the submenu to the clicked button + add close affordance (#510)
+		_decorate_active_submenu(_find_action_button(action_id))
 		return
 
 	# Check if action can be afforded before adding to UI queue (#456)
@@ -867,6 +874,84 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 func _get_action_by_id(action_id: String) -> Dictionary:
 	"""Helper to find action definition - delegates to GameActions"""
 	return GameActions.get_action_by_id(action_id)
+
+# --- Issue #510 UI polish helpers (submenu close affordance + alignment) ---
+
+func _find_action_button(action_id: String) -> Button:
+	"""Locate the left-panel icon button that opened a submenu, by action_id meta."""
+	for child in actions_list.get_children():
+		if child is VBoxContainer:
+			for b in child.get_children():
+				if b is Button and b.get_meta("action_id", "") == action_id:
+					return b
+	return null
+
+func _decorate_active_submenu(anchor_button: Button = null) -> void:
+	"""Add close affordance (X + ESC hint) to the active submenu and, when an
+	anchor button is given, align the submenu vertically to it (#510).
+	Safe to call right after a _show_*_submenu() call: those builders set
+	active_dialog and add the dialog to the tree before their internal await."""
+	if active_dialog == null or not is_instance_valid(active_dialog):
+		return
+	if active_dialog.has_meta("is_event_dialog"):
+		return  # Event dialogs must be completed, not closed (#452)
+	_add_submenu_close_affordance(active_dialog)
+	if anchor_button != null and is_instance_valid(anchor_button):
+		_align_submenu_to_button(active_dialog, anchor_button)
+
+func _add_submenu_close_affordance(dialog: Control) -> void:
+	"""Clickable [X] top-right + dim '[ESC] close' hint bottom-left (#510)."""
+	var close_btn := Button.new()
+	close_btn.text = "X"
+	close_btn.focus_mode = Control.FOCUS_NONE
+	close_btn.custom_minimum_size = Vector2(22, 22)
+	close_btn.size = Vector2(22, 22)
+	close_btn.position = Vector2(dialog.size.x - 28, 6)
+	close_btn.add_theme_font_size_override("font_size", 12)
+	close_btn.tooltip_text = "Close (ESC)"
+	close_btn.pressed.connect(_close_active_submenu)
+	dialog.add_child(close_btn)
+
+	var hint := Label.new()
+	hint.text = "[ESC] close"
+	hint.add_theme_font_size_override("font_size", 10)
+	hint.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hint.position = Vector2(12, dialog.size.y - 20)
+	dialog.add_child(hint)
+
+func _close_active_submenu() -> void:
+	"""Close the active submenu dialog (shared by [X] click and ESC)."""
+	if active_dialog != null and is_instance_valid(active_dialog):
+		active_dialog.queue_free()
+	active_dialog = null
+	active_dialog_buttons = []
+
+func _align_submenu_to_button(dialog: Control, button: Button) -> void:
+	"""Vertically align a submenu's top to the action button that opened it,
+	so it reads as expanding from that button (#510). Clamped to the viewport."""
+	var parent := dialog.get_parent()
+	if parent == null:
+		return
+	var target_y: float = button.global_position.y - parent.global_position.y
+	var view_h: float = get_viewport().get_visible_rect().size.y
+	var max_y: float = maxf(40.0, view_h - dialog.size.y - 10.0)
+	dialog.position = Vector2(dialog.position.x, clampf(target_y, 40.0, max_y))
+
+func _format_cost_summary(costs: Dictionary) -> String:
+	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510)."""
+	if costs.is_empty():
+		return ""
+	var parts: Array[String] = []
+	for resource in costs.keys():
+		var amount = costs[resource]
+		if resource == "money":
+			parts.append(GameConfig.format_money(amount))
+		elif resource == "action_points":
+			parts.append("%d AP" % int(amount))
+		else:
+			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
+	return " (%s)" % ", ".join(parts)
 
 func _calculate_queued_costs() -> Dictionary:
 	"""Calculate total costs of all queued actions for turn preview"""
@@ -2098,6 +2183,7 @@ func _show_paper_submission_dialog():
 	)
 	button_hbox.add_child(submit_btn)
 
+	_add_submenu_close_affordance(dialog)  # X + ESC hint, consistent with action submenus (#510)
 	active_dialog = dialog
 	tab_manager.add_child(dialog)
 	dialog.visible = true
@@ -2213,6 +2299,7 @@ func _show_conference_attendance_dialog():
 	)
 	button_hbox.add_child(attend_btn)
 
+	_add_submenu_close_affordance(dialog)  # X + ESC hint, consistent with action submenus (#510)
 	active_dialog = dialog
 	tab_manager.add_child(dialog)
 	dialog.visible = true
@@ -2454,9 +2541,9 @@ func _show_next_event():
 		btn.focus_mode = Control.FOCUS_NONE  # Don't grab focus - let MainUI handle keys
 		btn.mouse_filter = Control.MOUSE_FILTER_PASS  # Still allow mouse clicks
 
-		# Add keyboard hint (LETTERS not numbers)
+		# Add keyboard hint (LETTERS not numbers) + inline cost summary (#510)
 		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		btn.text = "[%s] %s" % [key_label, choice_text]
+		btn.text = "[%s] %s%s" % [key_label, choice_text, _format_cost_summary(costs)]
 		btn.custom_minimum_size = Vector2(500, 45)
 
 		# Add button border for better definition
