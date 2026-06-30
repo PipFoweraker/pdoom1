@@ -10,20 +10,21 @@ func test_initial_state_has_no_upgrades():
 	assert_eq(state.purchased_upgrades.size(), 0, "Should start with no upgrades")
 
 func test_can_purchase_upgrade():
-	state.money = 1000.0
-	state.purchase_upgrade("upgrade_computers")
-	assert_true(state.has_upgrade("upgrade_computers"), "Should have purchased upgrade")
+	state.money = 300000.0
+	GameUpgrades.purchase_upgrade("upgrade_computer", state)
+	assert_true(state.has_upgrade("upgrade_computer"), "Should have purchased upgrade")
 	assert_eq(state.purchased_upgrades.size(), 1, "Should have 1 upgrade")
 
 func test_cannot_purchase_same_upgrade_twice():
-	state.money = 1000.0
-	state.purchase_upgrade("upgrade_computers")
+	state.money = 300000.0
+	GameUpgrades.purchase_upgrade("upgrade_computer", state)
 	var before_size = state.purchased_upgrades.size()
-	state.purchase_upgrade("upgrade_computers")
+	GameUpgrades.purchase_upgrade("upgrade_computer", state)
 	assert_eq(state.purchased_upgrades.size(), before_size, "Should not purchase same upgrade twice")
 
 func test_to_dict_includes_upgrades():
-	state.purchase_upgrade("upgrade_computers")
+	state.money = 300000.0
+	GameUpgrades.purchase_upgrade("upgrade_computer", state)
 	var dict = state.to_dict()
 	assert_true(dict.has("purchased_upgrades"), "State dict should include purchased_upgrades")
 	assert_eq(dict["purchased_upgrades"].size(), 1, "Should have 1 upgrade in dict")

@@ -13,6 +13,7 @@ var papers: float = 0.0
 var reputation: float = 50.0
 var doom: float = 50.0  # 0-100, lose at 100
 var action_points: int = 3
+var max_action_points: int = 3  # Per-turn AP cap; difficulty modifiers adjust this (game_manager._apply_difficulty_settings)
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
 
 # Technical Debt System (Issue #416)
@@ -48,6 +49,7 @@ var turn: int = 0
 var game_over: bool = false
 var victory: bool = false
 var game_seed_str: String = ""  # Renamed from 'seed' to avoid shadowing built-in function
+static var _empty_seed_counter: int = 0  # Keeps empty ("random") seeds unique within the same instant (#538)
 
 # Lab mascot 🐱
 var has_cat: bool = false
@@ -107,7 +109,13 @@ var attended_conferences: Array[String] = []  # Conference IDs attended this gam
 var conference_year: int = 2017  # Track which year for conference attendance reset
 
 func _init(game_seed: String = ""):
-	game_seed_str = game_seed if game_seed != "" else str(Time.get_ticks_msec())
+	if game_seed != "":
+		game_seed_str = game_seed
+	else:
+		# Empty = random new game. Combine high-res time with a static counter so two
+		# games created in the same instant (tests, rapid restarts) get unique seeds (#538).
+		_empty_seed_counter += 1
+		game_seed_str = "%d-%d" % [Time.get_ticks_usec(), _empty_seed_counter]
 
 	# Initialize deterministic RNG from seed
 	rng = RandomNumberGenerator.new()
