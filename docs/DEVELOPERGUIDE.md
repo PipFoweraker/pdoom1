@@ -1,6 +1,23 @@
+<!--
+status: under-revision
+applies-to-version: 0.11.0
+last-verified: 2026-06-30 (setup/test/run sections only)
+note: This guide predates the pygame -> Godot migration. Only the Development Setup section was
+      corrected on 2026-06-30. The architecture/deep-dive sections further down still describe the
+      retired pygame/Python build and are pending rewrite in the documentation-consistency pass. For
+      authoritative architecture see docs/developer/ARCHITECTURE.md; for setup see CONTRIBUTING.md.
+-->
+
 # Developer Guide for P(Doom)
 
-Welcome, contributors and modders! This guide explains how to develop, test, and extend P(Doom): Bureaucracy Strategy.
+> ⚠️ **This guide is mid-revision.** P(Doom) migrated from pygame/Python to **Godot 4.5.1 / GDScript**.
+> The **Development Setup** section below is current. **The architecture and deep-dive sections
+> further down still describe the retired pygame build** (`src/`, `main.py`, `ui.py`,
+> `python -m unittest`) and should not be followed — they are queued for rewrite. Authoritative
+> sources today: [`CONTRIBUTING.md`](../CONTRIBUTING.md) (setup/workflow) and
+> [`docs/developer/ARCHITECTURE.md`](developer/ARCHITECTURE.md) (architecture).
+
+Welcome, contributors and modders! This guide explains how to develop, test, and extend P(Doom).
 
 For **players**, see the [Player Guide](PLAYERGUIDE.md).
 For **installation and troubleshooting**, see the [README](../README.md).
@@ -35,26 +52,32 @@ For **installation and troubleshooting**, see the [README](../README.md).
 ## Development Setup
 
 ### Prerequisites
-- Python 3.9+
-- pygame (`pip install pygame`)
-- pytest for testing (`pip install pytest` or `pip install -r requirements.txt`)
-- numpy for sound effects (`pip install numpy` - optional but recommended)
+- **Godot 4.5.1** (standard build, not .NET) — [download](https://godotengine.org/download)
+- **Git**
+- **Python 3.11+** — for tooling/CI scripts only (optional); 3.11 is the baseline, see `pyproject.toml`
 
 ### Getting Started
 ```sh
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/PipFoweraker/pdoom1.git
 cd pdoom1
 
-# Install dependencies
+# Open the game in Godot (then press F5 to run)
+godot godot/project.godot
+
+# Optional: install Python tooling deps
 pip install -r requirements.txt
+pip install -r requirements-dev.txt
 
-# Run tests to verify setup
-python -m unittest discover tests -v
-
-# Run the game
-python main.py
+# Run tests to verify setup (GUT framework)
+godot --headless --path godot --quit          # fast syntax check
+python scripts/run_godot_tests.py --quick      # unit tests
 ```
+
+> On a fresh git worktree, run `godot --headless --path godot --import` once before tests, or GUT
+> can fail with misleading `class_name` parse errors.
+
+See [`CONTRIBUTING.md`](../CONTRIBUTING.md) for the full setup, Makefile targets, and branch workflow.
 
 ### Health Monitoring Infrastructure
 
