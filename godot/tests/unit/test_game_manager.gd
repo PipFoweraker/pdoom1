@@ -92,15 +92,17 @@ func test_select_action_queues_action():
 		"Correct action should be queued")
 
 func test_select_action_deducts_action_points():
-	# Test that selecting an action deducts AP immediately
+	# Selecting an action commits AP (committed_ap); available AP drops immediately.
+	# state.action_points itself only decrements at execution (end_turn).
 	game_manager.start_new_game("test_seed")
-	var initial_ap = game_manager.state.action_points
+	game_manager.state.research = 100  # safety_research costs 10 research + 1 AP
+	var initial_available = game_manager.state.get_available_ap()
 
 	game_manager.select_action("buy_compute")  # Costs 0 AP in current impl
 	game_manager.select_action("safety_research")  # Costs 1 AP
 
-	assert_lt(game_manager.state.action_points, initial_ap,
-		"Action points should decrease after action selection")
+	assert_lt(game_manager.state.get_available_ap(), initial_available,
+		"Available action points should decrease after committing actions")
 
 func test_select_action_validates_affordability():
 	# Test that actions are validated before queueing
@@ -245,14 +247,15 @@ func test_start_next_turn_increments_turn_counter():
 func test_start_next_turn_resets_action_points():
 	# Test that AP is reset on new turn
 	game_manager.start_new_game("test_seed")
-	game_manager.select_action("safety_research")  # Uses 1 AP
-	var ap_before_turn_end = game_manager.state.action_points
+	game_manager.state.research = 100  # safety_research costs 10 research + 1 AP
+	game_manager.select_action("safety_research")  # Commits 1 AP
+	var available_before_turn_end = game_manager.state.get_available_ap()
 
 	game_manager.end_turn()
 	await wait_seconds(0.6)
 
-	assert_gt(game_manager.state.action_points, ap_before_turn_end,
-		"Action points should be reset on new turn")
+	assert_gt(game_manager.state.get_available_ap(), available_before_turn_end,
+		"Available action points should be reset (higher) on a new turn")
 
 func test_start_next_turn_emits_actions_available_when_no_events():
 	# FIX #418: Test that actions are available if no events
@@ -275,6 +278,8 @@ func test_start_next_turn_emits_actions_available_when_no_events():
 func test_resolve_event_updates_state():
 	# Test that event resolution affects game state
 	game_manager.start_new_game("test_seed")
+	# resolve_event requires TURN_START phase (FIX #418); set it for this isolated event
+	game_manager.state.current_phase = GameState.TurnPhase.TURN_START
 
 	# Create a test event
 	var test_event = {
@@ -301,6 +306,8 @@ func test_resolve_event_updates_state():
 func test_resolve_event_emits_game_state_updated():
 	# Test that event resolution emits state update
 	game_manager.start_new_game("test_seed")
+	# resolve_event requires TURN_START phase (FIX #418)
+	game_manager.state.current_phase = GameState.TurnPhase.TURN_START
 
 	var test_event = {
 		"id": "test_event",

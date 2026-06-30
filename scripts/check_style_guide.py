@@ -21,14 +21,12 @@ Skip this check:
 import os
 import subprocess
 import sys
-from pathlib import Path
 
 # Files/patterns that should trigger style guide update reminders
 STYLE_SENSITIVE_PATTERNS = [
     # Theme and styling
     "godot/autoload/theme_manager.gd",
     "godot/theme/",
-
     # UI scenes with styling
     "godot/scenes/welcome.tscn",
     "godot/scenes/settings_menu.tscn",
@@ -36,11 +34,9 @@ STYLE_SENSITIVE_PATTERNS = [
     "godot/scenes/leaderboard_screen.tscn",
     "godot/scenes/end_game_screen.tscn",
     "godot/scenes/main.tscn",
-
     # Asset additions
     "godot/assets/textures/",
     "godot/assets/ui/",
-
     # Color/style definitions in GDScript
     "Color(",  # When new colors are added
 ]
@@ -55,9 +51,11 @@ def get_staged_files():
             ["git", "diff", "--cached", "--name-only"],
             capture_output=True,
             text=True,
-            check=True
+            encoding="utf-8",
+            errors="replace",
+            check=True,
         )
-        return result.stdout.strip().split('\n') if result.stdout.strip() else []
+        return result.stdout.strip().split("\n") if result.stdout.strip() else []
     except subprocess.CalledProcessError:
         return []
 
@@ -65,17 +63,19 @@ def get_staged_files():
 def check_for_color_additions(files):
     """Check if any GDScript files have new Color() definitions."""
     for file in files:
-        if file.endswith('.gd'):
+        if file.endswith(".gd"):
             try:
                 result = subprocess.run(
                     ["git", "diff", "--cached", file],
                     capture_output=True,
                     text=True,
-                    check=True
+                    encoding="utf-8",
+                    errors="replace",
+                    check=True,
                 )
                 # Check for added lines with Color(
-                for line in result.stdout.split('\n'):
-                    if line.startswith('+') and 'Color(' in line and not line.startswith('+++'):
+                for line in result.stdout.split("\n"):
+                    if line.startswith("+") and "Color(" in line and not line.startswith("+++"):
                         return True
             except subprocess.CalledProcessError:
                 pass
@@ -119,11 +119,11 @@ def check_style_guide_update(files):
 
 def main():
     # Check for skip environment variable
-    if os.environ.get('SKIP_STYLE_GUIDE_CHECK', '').lower() in ('1', 'true', 'yes'):
+    if os.environ.get("SKIP_STYLE_GUIDE_CHECK", "").lower() in ("1", "true", "yes"):
         print("[STYLE GUIDE] Check skipped via SKIP_STYLE_GUIDE_CHECK environment variable")
         return 0
 
-    strict_mode = '--strict' in sys.argv
+    strict_mode = "--strict" in sys.argv
 
     files = get_staged_files()
     if not files:
