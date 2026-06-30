@@ -76,7 +76,8 @@ func _ready():
 	var right_zones := $ContentArea/MiddlePanel/CoreZone/RightZones
 	var doom_meter_zone := $ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone
 	doom_trend_graph = preload("res://scripts/ui/doom_trend_graph.gd").new()
-	doom_trend_graph.custom_minimum_size = Vector2(0, 46)
+	doom_trend_graph.custom_minimum_size = Vector2(0, 92)  # taller — playtest feedback (screen1)
+	doom_trend_graph.window_size = 24  # show more time points (screen6)
 	doom_trend_graph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	doom_trend_graph.expand_requested.connect(_show_doom_trend_expanded)
 	right_zones.add_child(doom_trend_graph)
@@ -115,6 +116,13 @@ func _unhandled_key_input(event: InputEvent):
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
+		# DEBUG: sweep doom for QA (PageUp/PageDown ±10). Debug builds only — auto-off in release.
+		# TODO: remove before any release/PR if undesired (currently gated, so release-safe).
+		if OS.is_debug_build() and (event.keycode == KEY_PAGEUP or event.keycode == KEY_PAGEDOWN):
+			_debug_nudge_doom(10.0 if event.keycode == KEY_PAGEUP else -10.0)
+			get_viewport().set_input_as_handled()
+			return
+
 		# ESC key for pause menu (highest priority - before dialogs)
 		if event.keycode == KEY_ESCAPE:
 			# If pause menu is visible, it handles ESC itself to close
@@ -219,22 +227,22 @@ func _input(event: InputEvent):
 		elif KeybindManager.is_action_pressed(event, "menu_hire"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
 				_show_hiring_submenu()
-				_decorate_active_submenu()
+				_decorate_active_submenu(_find_action_button("hire_staff"))
 				get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_fundraise"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
 				_show_fundraising_submenu()
-				_decorate_active_submenu()
+				_decorate_active_submenu(_find_action_button("fundraise"))
 				get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_publicity"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
 				_show_publicity_submenu()
-				_decorate_active_submenu()
+				_decorate_active_submenu(_find_action_button("publicity"))
 				get_viewport().set_input_as_handled()
 		elif KeybindManager.is_action_pressed(event, "menu_travel"):
 			if current_turn_phase.to_upper() == "ACTION_SELECTION":
 				_show_travel_submenu()
-				_decorate_active_submenu()
+				_decorate_active_submenu(_find_action_button("travel"))
 				get_viewport().set_input_as_handled()
 
 		# Escape to init game (if not started)
@@ -914,25 +922,50 @@ func _decorate_active_submenu(anchor_button: Button = null) -> void:
 	if anchor_button != null and is_instance_valid(anchor_button):
 		_align_submenu_to_button(active_dialog, anchor_button)
 
+func _style_submenu_panel(dialog: Control) -> void:
+	"""Near-opaque panel + border so submenus read as solid panels, not see-through
+	overlays on the action icons (playtest feedback: screen5)."""
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.12, 0.13, 0.16, 0.97)
+	style.set_border_width_all(2)
+	style.border_color = Color(0.38, 0.46, 0.42, 1.0)
+	style.set_corner_radius_all(6)
+	dialog.add_theme_stylebox_override("panel", style)
+
 func _add_submenu_close_affordance(dialog: Control) -> void:
-	"""Clickable [X] top-right + dim '[ESC] close' hint bottom-left (#510)."""
+	"""Solid panel styling + clickable [X] top-right + '[ESC] close' hint bottom-right (#510).
+	Skips panel styling if the caller already set a bespoke 'panel' stylebox (e.g. the trend
+	expand panel), so we don't clobber it."""
+	if not dialog.has_theme_stylebox_override("panel"):
+		_style_submenu_panel(dialog)
+
 	var close_btn := Button.new()
-	close_btn.text = "X"
+	close_btn.text = "✕"
 	close_btn.focus_mode = Control.FOCUS_NONE
-	close_btn.custom_minimum_size = Vector2(22, 22)
-	close_btn.size = Vector2(22, 22)
-	close_btn.position = Vector2(dialog.size.x - 28, 6)
+	close_btn.custom_minimum_size = Vector2(24, 24)
+	close_btn.size = Vector2(24, 24)
+	close_btn.position = Vector2(dialog.size.x - 30, 6)
 	close_btn.add_theme_font_size_override("font_size", 12)
 	close_btn.tooltip_text = "Close (ESC)"
+	var x_style := StyleBoxFlat.new()
+	x_style.bg_color = Color(0.30, 0.18, 0.18, 0.95)
+	x_style.set_corner_radius_all(4)
+	close_btn.add_theme_stylebox_override("normal", x_style)
+	var x_hover := x_style.duplicate()
+	x_hover.bg_color = Color(0.55, 0.22, 0.22, 1.0)
+	close_btn.add_theme_stylebox_override("hover", x_hover)
 	close_btn.pressed.connect(_close_active_submenu)
 	dialog.add_child(close_btn)
 
+	# Footer hint, bottom-RIGHT (clear of centered footer labels like "Pool: 3/6")
 	var hint := Label.new()
 	hint.text = "[ESC] close"
 	hint.add_theme_font_size_override("font_size", 10)
-	hint.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+	hint.add_theme_color_override("font_color", Color(0.65, 0.7, 0.65))
 	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hint.position = Vector2(12, dialog.size.y - 20)
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	hint.size = Vector2(110, 16)
+	hint.position = Vector2(dialog.size.x - 122, dialog.size.y - 20)
 	dialog.add_child(hint)
 
 func _close_active_submenu() -> void:
@@ -943,15 +976,34 @@ func _close_active_submenu() -> void:
 	active_dialog_buttons = []
 
 func _align_submenu_to_button(dialog: Control, button: Button) -> void:
-	"""Vertically align a submenu's top to the action button that opened it,
-	so it reads as expanding from that button (#510). Clamped to the viewport."""
+	"""Position a submenu just to the RIGHT of the action button that opened it and
+	top-aligned to it, so it clearly expands from that row rather than over it
+	(#510 + playtest feedback). Clamped to the viewport."""
 	var parent := dialog.get_parent()
 	if parent == null:
 		return
+	var gap: float = 10.0
+	var view := get_viewport().get_visible_rect().size
+	var target_x: float = button.global_position.x + button.size.x + gap - parent.global_position.x
 	var target_y: float = button.global_position.y - parent.global_position.y
-	var view_h: float = get_viewport().get_visible_rect().size.y
-	var max_y: float = maxf(40.0, view_h - dialog.size.y - 10.0)
-	dialog.position = Vector2(dialog.position.x, clampf(target_y, 40.0, max_y))
+	var max_x: float = maxf(40.0, view.x - dialog.size.x - 10.0)
+	var max_y: float = maxf(40.0, view.y - dialog.size.y - 10.0)
+	dialog.position = Vector2(clampf(target_x, 40.0, max_x), clampf(target_y, 40.0, max_y))
+
+func _debug_nudge_doom(delta: float) -> void:
+	"""DEBUG-only QA helper: bump doom by delta, record a history point so the trend graph
+	fills, and refresh the UI. Gated by OS.is_debug_build() at the call site."""
+	if game_manager == null or game_manager.state == null:
+		return
+	var st = game_manager.state
+	if st.doom_system:
+		st.doom_system.current_doom = clampf(st.doom_system.current_doom + delta, 0.0, 100.0)
+		st.doom = st.doom_system.current_doom
+	else:
+		st.doom = clampf(st.doom + delta, 0.0, 100.0)
+	st.record_doom_history()
+	_on_game_state_updated(game_manager.get_game_state())
+	log_message("[color=gray][debug] doom %+.0f → %.1f%%[/color]" % [delta, st.doom])
 
 func _format_cost_summary(costs: Dictionary) -> String:
 	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510)."""

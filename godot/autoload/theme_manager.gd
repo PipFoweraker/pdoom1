@@ -12,12 +12,12 @@ var themes: Dictionary = {}
 const DOOM_STOPS := [
 	{"at": 0.0,   "color": Color(0.30, 0.80, 0.35)},  # NOMINAL (green)
 	{"at": 15.0,  "color": Color(0.30, 0.80, 0.35)},  # hold green — the one safe zone
-	{"at": 30.0,  "color": Color(0.90, 0.80, 0.20)},  # ELEVATED (yellow)
-	{"at": 45.0,  "color": Color(0.95, 0.55, 0.15)},  # HIGH (orange)
-	{"at": 60.0,  "color": Color(0.90, 0.25, 0.20)},  # SEVERE (red)
-	{"at": 74.0,  "color": Color(0.60, 0.10, 0.13)},  # EXTREME (dark crimson)
-	{"at": 87.0,  "color": Color(0.45, 0.10, 0.52)},  # CATASTROPHIC (purple)
-	{"at": 100.0, "color": Color(0.10, 0.05, 0.12)},  # TERMINAL (near-black)
+	{"at": 30.0,  "color": Color(0.88, 0.78, 0.18)},  # ELEVATED (yellow)
+	{"at": 45.0,  "color": Color(0.92, 0.50, 0.13)},  # HIGH (orange)
+	{"at": 60.0,  "color": Color(0.82, 0.20, 0.17)},  # SEVERE (red)
+	{"at": 74.0,  "color": Color(0.48, 0.07, 0.14)},  # EXTREME (dark crimson)
+	{"at": 87.0,  "color": Color(0.40, 0.06, 0.48)},  # CATASTROPHIC (deep purple — step above red)
+	{"at": 100.0, "color": Color(0.28, 0.03, 0.46)},  # TERMINAL (saturated dark purple, replaces black)
 ]
 
 # Colorblind / non-color channel labels, banded to center on each named stop.
@@ -31,9 +31,10 @@ const DOOM_STATUS_BANDS := [
 	{"below": 101.0, "label": "TERMINAL"},
 ]
 
-# Bright target the stroke/text variant lerps toward so dark tiers stay legible (ember glow).
-const DOOM_STROKE_FLOOR := 0.35
-const DOOM_STROKE_BRIGHT := Color(0.95, 0.45, 0.55)
+# Bright target the stroke/text variant lerps toward so dark tiers stay legible. Magenta-leaning
+# so the deadly purple end glows magenta rather than flipping to rose (preserves the dark-purple hue).
+const DOOM_STROKE_FLOOR := 0.22
+const DOOM_STROKE_BRIGHT := Color(0.90, 0.40, 0.85)
 
 # Theme data structure
 class ThemeData:
