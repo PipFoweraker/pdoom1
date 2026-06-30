@@ -3,12 +3,24 @@ extends GutTest
 
 var state: GameState
 var turn_manager: TurnManager
+var _saved_historical_events := []
 
 func before_each():
 	# Create fresh state and turn manager for each test
 	GameEvents.reset_triggered_events()
+	# Test isolation (#534): unit tests must NOT load the live ~1194-event historical
+	# timeline into pending_events. Resolve-all loops over it floods hist_arxiv_* output
+	# and hangs the headless suite. Built-in events (e.g. funding_crisis) still trigger.
+	if EventService:
+		_saved_historical_events = EventService.transformed_events.duplicate()
+		EventService.transformed_events.clear()
 	state = GameState.new("test_seed")
 	turn_manager = TurnManager.new(state)
+
+func after_each():
+	# Restore the historical event deck cleared in before_each (#534)
+	if EventService:
+		EventService.transformed_events = _saved_historical_events
 
 func test_start_turn_increments_turn_counter():
 	# Test that start_turn increases turn number
