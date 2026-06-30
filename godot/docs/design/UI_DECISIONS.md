@@ -59,3 +59,57 @@ via a choice (no ESC/X close), preserving the no-soft-lock guarantee from #452.
 **Rationale.** Submenus are exploratory and reversible; events are commitments. The
 affordance makes the reversible case discoverable (both mouse and keyboard) without
 weakening the commitment case.
+
+---
+
+## Doom Meter trend graph + bushfire color ramp (#512, 2026-06-30)
+
+A stock-price-style trend graph for the doom meter, which dragged a shared color-system
+redesign along with it.
+
+**Data storage.** Doom history lives in `GameState` as `doom_history: Array[float]`,
+appended once per turn at `turn_manager.gd` (right after `state.doom` is set), and
+serialized in `to_dict()`/`from_dict()`. It is authoritative game state (like a price
+series), so it survives save/load and any system can read it — not a UI-side ring buffer.
+
+**Visual form.** An **always-on sparkline** sits with the doom gauge (last ~12 turns),
+because the tone doc frames doom as *"terrified of the trend"* — the trend should be
+permanently visible, not hidden. Clicking it expands a full-history panel (which reuses the
+`_add_submenu_close_affordance()` helper from #510).
+
+**Scale & style.** Y-axis **fixed 0–100** with **zone bands** (not auto-scale) — the point
+is "how dead are you," an absolute read that auto-scaling would erase. **Area fill** under
+the line (zone-colored), line stroked in the current doom-zone color. Window = 12 turns
+(tunable). Event markers and a momentum overlay are **deferred** (event markers need
+per-event turn data we don't yet store; momentum is already implicit in the line's slope).
+
+**Bushfire color ramp (shared).** Replaces the two divergent doom-color functions
+(`ThemeManager.get_doom_color` flat 30/60/85; `DoomMeter.get_doom_color` lerped 30/60/80)
+with ONE smooth ramp in `ThemeManager`; `DoomMeter` is de-duped to call it. The ramp is
+deliberately **asymmetric — one green safe zone, then six escalating stops** through yellow,
+orange, red, dark crimson, purple, near-black, à la Australian bushfire danger signs
+("only one green, then many subtle indicators of just how dead you are"). Anchor stops:
+
+| Doom | Tier | RGB |
+|---|---|---|
+| 0–15 | NOMINAL | 0.30, 0.80, 0.35 |
+| 30 | ELEVATED | 0.90, 0.80, 0.20 |
+| 45 | HIGH | 0.95, 0.55, 0.15 |
+| 60 | SEVERE | 0.90, 0.25, 0.20 |
+| 74 | EXTREME | 0.60, 0.10, 0.13 |
+| 87 | CATASTROPHIC | 0.45, 0.10, 0.52 |
+| 96–100 | TERMINAL | 0.10, 0.05, 0.12 |
+
+Applied to the **shared** `ThemeManager.get_doom_color`, so the gauge, numeric label, and
+resource bars all inherit it (branch-isolated, so no clash with main-branch QA).
+
+**Two known tensions to handle in the build:**
+- *Legibility at the top end* — near-black line on a dark CRT background (#529) vanishes.
+  Keep the **line stroke bright/desaturated** while only the **fill** goes near-black; same
+  fix applies to the gauge arc. Solve now so #529 doesn't fight it.
+- *Colorblind channel* — `DoomMeter`'s status labels (SAFE/CAUTION/DANGER/CRITICAL) must
+  extend to the 7 tiers (NOMINAL…TERMINAL) so the non-color channel keeps pace.
+
+**Revisit if.** Playtesters find the always-on sparkline too noisy → fall back to
+expand-on-click only. If absolute 0–100 reads too flat at low doom → revisit auto-scale
+for the *expanded panel only* (keep the always-on absolute).

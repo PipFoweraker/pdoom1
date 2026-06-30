@@ -41,6 +41,7 @@ var game_manager: Node
 # Track queued actions
 var queued_actions: Array = []
 var research_quality_selector  # Issue #500
+var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var current_turn_phase: String = "NOT_STARTED"
 
 # Active dialog state for keyboard shortcuts
@@ -70,6 +71,16 @@ func _ready():
 	research_quality_selector.quality_selected.connect(_on_research_quality_selected)
 	$ContentArea/LeftPanel.add_child(research_quality_selector)
 	$ContentArea/LeftPanel.move_child(research_quality_selector, 0)
+
+	# #512: doom trend sparkline, inserted just below the doom gauge in RightZones
+	var right_zones := $ContentArea/MiddlePanel/CoreZone/RightZones
+	var doom_meter_zone := $ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone
+	doom_trend_graph = preload("res://scripts/ui/doom_trend_graph.gd").new()
+	doom_trend_graph.custom_minimum_size = Vector2(0, 46)
+	doom_trend_graph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	doom_trend_graph.expand_requested.connect(_show_doom_trend_expanded)
+	right_zones.add_child(doom_trend_graph)
+	right_zones.move_child(doom_trend_graph, doom_meter_zone.get_index() + 1)
 
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
@@ -494,11 +505,15 @@ func _on_game_state_updated(state: Dictionary):
 	# Update numeric doom display
 	if numeric_doom_label:
 		numeric_doom_label.text = "%.1f%%" % doom
-		numeric_doom_label.modulate = ThemeManager.get_doom_color(doom)
+		numeric_doom_label.modulate = ThemeManager.get_doom_stroke_color(doom)
 
 	# Visual doom meter with momentum indicator
 	if doom_meter:
 		doom_meter.set_doom(doom, doom_momentum)
+
+	# Feed the trend sparkline (#512)
+	if doom_trend_graph:
+		doom_trend_graph.set_history(state.get("doom_history", []))
 
 	# Update office cat for doom level and visibility
 	if office_cat:
@@ -952,6 +967,69 @@ func _format_cost_summary(costs: Dictionary) -> String:
 		else:
 			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
 	return " (%s)" % ", ".join(parts)
+
+func _show_doom_trend_expanded() -> void:
+	"""Expanded full-history doom trend panel (#512), reusing the #510 close affordance."""
+	if active_dialog != null and is_instance_valid(active_dialog):
+		active_dialog.queue_free()
+		active_dialog = null
+		active_dialog_buttons = []
+
+	var dialog := Panel.new()
+	dialog.custom_minimum_size = Vector2(560, 360)
+	dialog.size = Vector2(560, 360)
+	dialog.position = Vector2(
+		(get_viewport().get_visible_rect().size.x - 560) / 2.0,
+		(get_viewport().get_visible_rect().size.y - 360) / 2.0
+	)
+
+	var panel_style := StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.10, 0.12, 0.14, 1.0)
+	panel_style.border_width_left = 2
+	panel_style.border_width_top = 2
+	panel_style.border_width_right = 2
+	panel_style.border_width_bottom = 2
+	panel_style.border_color = Color(0.30, 0.40, 0.45, 1.0)
+	panel_style.corner_radius_top_left = 6
+	panel_style.corner_radius_top_right = 6
+	panel_style.corner_radius_bottom_right = 6
+	panel_style.corner_radius_bottom_left = 6
+	dialog.add_theme_stylebox_override("panel", panel_style)
+
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 14)
+	margin.add_theme_constant_override("margin_right", 14)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_bottom", 20)
+	dialog.add_child(margin)
+
+	var vbox := VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 8)
+	margin.add_child(vbox)
+
+	var header := Label.new()
+	header.text = "DOOM TREND — FULL HISTORY"
+	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	header.add_theme_font_size_override("font_size", 14)
+	header.add_theme_color_override("font_color", Color(0.80, 0.85, 0.90))
+	vbox.add_child(header)
+
+	var graph = preload("res://scripts/ui/doom_trend_graph.gd").new()
+	graph.window_size = 0       # full history
+	graph.clickable = false
+	graph.line_width = 2.5
+	graph.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	graph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_child(graph)
+	var state = game_manager.get_game_state()
+	graph.set_history(state.get("doom_history", []))
+
+	_add_submenu_close_affordance(dialog)
+	active_dialog = dialog
+	tab_manager.add_child(dialog)
+	dialog.visible = true
+	dialog.z_index = 1000
+	dialog.z_as_relative = false
 
 func _calculate_queued_costs() -> Dictionary:
 	"""Calculate total costs of all queued actions for turn preview"""

@@ -12,6 +12,7 @@ var research: float = 0.0  # Generated from compute
 var papers: float = 0.0
 var reputation: float = 50.0
 var doom: float = 50.0  # 0-100, lose at 100
+var doom_history: Array[float] = []  # Per-turn doom snapshots for the trend graph (#512)
 var action_points: int = 3
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
 
@@ -170,6 +171,10 @@ func reset():
 	# Reset risk system
 	if risk_system:
 		risk_system.reset()
+
+	# Seed doom trend history with the starting value, so the graph shows t=0 (#512)
+	doom_history.clear()
+	doom_history.append(doom)
 
 	# Reset academic travel system (Issue #468)
 	paper_submissions.clear()
@@ -666,6 +671,11 @@ func get_turn_display() -> String:
 		TURNS_PER_WEEK
 	]
 
+func record_doom_history() -> void:
+	"""Append the current (post-resolution) doom to the per-turn history (#512 trend graph)."""
+	doom_history.append(doom)
+
+
 func to_dict() -> Dictionary:
 	"""Serialize state for UI"""
 	var rival_summaries = []
@@ -719,6 +729,7 @@ func to_dict() -> Dictionary:
 		"papers": papers,
 		"reputation": reputation,
 		"doom": doom,
+		"doom_history": doom_history.duplicate(),  # #512 trend graph
 		"doom_system": doom_data,
 		"risk_system": risk_data,
 		"action_points": action_points,
@@ -764,6 +775,9 @@ func from_dict(data: Dictionary) -> void:
 	papers = data.get("papers", 0)
 	reputation = data.get("reputation", 10.0)
 	doom = data.get("doom", 50.0)
+	doom_history.clear()
+	for d in data.get("doom_history", []):
+		doom_history.append(float(d))
 	action_points = data.get("action_points", 3)
 	committed_ap = data.get("committed_ap", 0)
 	reserved_ap = data.get("reserved_ap", 0)
