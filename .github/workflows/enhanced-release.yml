@@ -221,7 +221,7 @@ jobs:
         run: |
           VERSION="${{ github.event.inputs.version || github.ref_name }}"
           COMMIT_HASH="${{ github.sha }}"
-          DATA_HASH="${{ needs.validate-data.outputs.data_hash }}"
+          DATA_HASH="${{ needs.validate-data.outputs.validation_hash }}"
           BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           cat > release_manifest.json <<EOF
@@ -298,7 +298,7 @@ jobs:
           echo "## Build Information" >> release_notes.txt
           echo "" >> release_notes.txt
           echo "- **Commit:** \`${{ github.sha }}\`" >> release_notes.txt
-          echo "- **Data Hash:** \`${{ needs.validate-data.outputs.data_hash }}\`" >> release_notes.txt
+          echo "- **Data Hash:** \`${{ needs.validate-data.outputs.validation_hash }}\`" >> release_notes.txt
           echo "- **Manifest Hash:** \`${{ needs.create-release-manifest.outputs.manifest_hash }}\`" >> release_notes.txt
           echo "- **Engine:** Godot 4.5.1" >> release_notes.txt
 
