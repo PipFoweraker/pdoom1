@@ -54,7 +54,7 @@ jobs:
           VALIDATION_EXIT=$?
 
           # Generate hash of all validated data
-          find data -type f -name "*.json" -exec cat {} \; | sha256sum | cut -d' ' -f1 > data_hash.txt
+          find godot/data shared/data -type f -name "*.json" -exec cat {} \; | sha256sum | cut -d' ' -f1 > data_hash.txt
           DATA_HASH=$(cat data_hash.txt)
 
           echo "hash=$DATA_HASH" >> $GITHUB_OUTPUT

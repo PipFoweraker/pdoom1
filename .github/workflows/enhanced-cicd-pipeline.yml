@@ -5,9 +5,6 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  schedule:
-    # Run daily maintenance at 2 AM UTC
-    - cron: '0 2 * * *'
   workflow_dispatch:
     inputs:
       pipeline_stage:
@@ -18,8 +15,6 @@ on:
         options:
           - 'full'
           - 'quality-only'
-          - 'sync-only'
-          - 'cleanup-only'
       dry_run:
         description: 'Run in dry-run mode'
         required: true
@@ -290,111 +285,6 @@ jobs:
           echo "INFO: Python memory checks skipped (project uses Godot)"
           echo "SUCCESS: Memory usage check complete"
 
-  # Stage 4: Automated Synchronization
-  automated-sync:
-    name: "Stage 4: Automated Sync"
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event.inputs.pipeline_stage == 'full' || github.event.inputs.pipeline_stage == 'sync-only'
-
-    permissions:
-      issues: write
-      contents: write
-      pull-requests: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install gh
-
-      - name: Authenticate GitHub CLI
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
-
-      - name: Bidirectional Issue Sync
-        run: |
-          echo "REFRESH Running bidirectional issue sync..."
-          dry_run_flag=""
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            dry_run_flag="--dry-run"
-          else
-            dry_run_flag="--live"
-          fi
-
-          python scripts/issue_sync_bidirectional.py $dry_run_flag --sync-all
-
-      - name: Branch Status Report
-        run: |
-          echo "METRICS Generating branch status report..."
-          python scripts/branch_manager.py --report
-
-      - name: Auto-merge Ready PRs
-        if: github.event.inputs.dry_run != 'true'
-        run: |
-          echo "LAUNCH Auto-merging ready PRs..."
-          python scripts/branch_manager.py --live --auto-merge-ready
-
-  # Stage 5: Automated Cleanup
-  automated-cleanup:
-    name: "Stage 5: Automated Cleanup"
-    runs-on: ubuntu-latest
-    if: github.event_name == 'schedule' || github.event.inputs.pipeline_stage == 'cleanup-only'
-
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Install GitHub CLI
-        run: |
-          sudo apt-get update
-          sudo apt-get install gh
-
-      - name: Authenticate GitHub CLI
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
-
-      - name: Clean up stale branches
-        run: |
-          echo "🧹 Cleaning up stale branches..."
-          dry_run_flag=""
-          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
-            dry_run_flag="--dry-run"
-          else
-            dry_run_flag="--live"
-          fi
-
-          python scripts/branch_manager.py $dry_run_flag --cleanup-all --stale-days 30
-
   # Quality Dashboard Update
   quality-dashboard:
     name: "Quality Dashboard Update"
@@ -428,7 +318,7 @@ jobs:
   pipeline-summary:
     name: "Pipeline Summary"
     runs-on: ubuntu-latest
-    needs: [basic-validation, code-quality, integration-testing, automated-sync, automated-cleanup]
+    needs: [basic-validation, code-quality, integration-testing]
     if: always()
 
     steps:
@@ -441,8 +331,6 @@ jobs:
           echo "  - Basic Validation: ${{ needs.basic-validation.result }}"
           echo "  - Code Quality: ${{ needs.code-quality.result }}"
           echo "  - Integration Testing: ${{ needs.integration-testing.result }}"
-          echo "  - Automated Sync: ${{ needs.automated-sync.result }}"
-          echo "  - Automated Cleanup: ${{ needs.automated-cleanup.result }}"
           echo ""
 
           if [ "${{ needs.basic-validation.result }}" = "success" ] &&
