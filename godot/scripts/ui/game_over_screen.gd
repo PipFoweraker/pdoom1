@@ -2,6 +2,7 @@ extends Control
 class_name GameOverScreen
 ## Game Over screen showing final stats and offering replay options
 
+@onready var panel_container = $CenterContainer/PanelContainer
 @onready var title_label = $CenterContainer/PanelContainer/MarginContainer/VBox/TitleLabel
 @onready var subtitle_label = $CenterContainer/PanelContainer/MarginContainer/VBox/SubtitleLabel
 @onready var stats_label = $CenterContainer/PanelContainer/MarginContainer/VBox/StatsLabel
@@ -16,6 +17,17 @@ var game_start_time: float = 0.0
 func _ready():
 	# Initially hidden
 	visible = false
+
+	# Delineate the end-game box with a solid panel + border so it reads clearly as an
+	# overlay rather than blending into the dimmed game behind it (playtest: screen4).
+	if panel_container:
+		var box := StyleBoxFlat.new()
+		box.bg_color = Color(0.10, 0.12, 0.15, 0.98)
+		box.set_border_width_all(3)
+		box.border_color = Color(0.45, 0.55, 0.50, 1.0)
+		box.set_corner_radius_all(10)
+		box.set_content_margin_all(6)
+		panel_container.add_theme_stylebox_override("panel", box)
 
 	# Enable input processing for ENTER key
 	set_process_input(true)

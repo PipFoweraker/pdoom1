@@ -468,6 +468,9 @@ func execute_turn() -> Dictionary:
 			"message": "Doom +%.1f (legacy calculation)" % total_doom_increase
 		})
 
+	# Record the post-resolution doom for the trend graph (#512), covering both branches
+	state.record_doom_history()
+
 	# REMOVED: Event checking now happens in start_turn() (FIX #418)
 	# Events are checked BEFORE actions, not after
 

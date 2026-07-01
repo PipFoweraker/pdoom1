@@ -59,7 +59,7 @@ func format_value(key: String, value: float) -> String:
 ## Get color for resource
 func get_resource_color(key: String) -> Color:
 	if key == "doom":
-		return ThemeManager.get_doom_color(resources["doom"]["value"])
+		return ThemeManager.get_doom_stroke_color(resources["doom"]["value"])
 	else:
 		var color_name = resources[key].get("color", "text")
 		return ThemeManager.get_color(color_name)

@@ -106,7 +106,7 @@ func _update_display():
 			formatted = formatted + "%"
 			# Color-code doom
 			if value_label:
-				value_label.add_theme_color_override("font_color", ThemeManager.get_doom_color(current_value))
+				value_label.add_theme_color_override("font_color", ThemeManager.get_doom_stroke_color(current_value))
 		"research", "compute":
 			# Show decimal
 			formatted = format_string % current_value

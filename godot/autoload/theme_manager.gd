@@ -6,6 +6,36 @@ extends Node
 var current_theme: String = "default"
 var themes: Dictionary = {}
 
+# Doom color ramp (#512) — bushfire-style: ONE green safe zone, then a long graded
+# descent through yellow → orange → red → crimson → purple → near-black. Smoothly lerped
+# between these anchors. Single source of truth for the whole game's doom coloring.
+const DOOM_STOPS := [
+	{"at": 0.0,   "color": Color(0.30, 0.80, 0.35)},  # NOMINAL (green)
+	{"at": 15.0,  "color": Color(0.30, 0.80, 0.35)},  # hold green — the one safe zone
+	{"at": 30.0,  "color": Color(0.88, 0.78, 0.18)},  # ELEVATED (yellow)
+	{"at": 45.0,  "color": Color(0.92, 0.50, 0.13)},  # HIGH (orange)
+	{"at": 60.0,  "color": Color(0.82, 0.20, 0.17)},  # SEVERE (red)
+	{"at": 74.0,  "color": Color(0.48, 0.07, 0.14)},  # EXTREME (dark crimson)
+	{"at": 87.0,  "color": Color(0.40, 0.06, 0.48)},  # CATASTROPHIC (deep purple — step above red)
+	{"at": 100.0, "color": Color(0.28, 0.03, 0.46)},  # TERMINAL (saturated dark purple, replaces black)
+]
+
+# Colorblind / non-color channel labels, banded to center on each named stop.
+const DOOM_STATUS_BANDS := [
+	{"below": 15.0,  "label": "NOMINAL"},
+	{"below": 37.0,  "label": "ELEVATED"},
+	{"below": 52.0,  "label": "HIGH"},
+	{"below": 67.0,  "label": "SEVERE"},
+	{"below": 80.0,  "label": "EXTREME"},
+	{"below": 92.0,  "label": "CATASTROPHIC"},
+	{"below": 101.0, "label": "TERMINAL"},
+]
+
+# Bright target the stroke/text variant lerps toward so dark tiers stay legible. Magenta-leaning
+# so the deadly purple end glows magenta rather than flipping to rose (preserves the dark-purple hue).
+const DOOM_STROKE_FLOOR := 0.22
+const DOOM_STROKE_BRIGHT := Color(0.90, 0.40, 0.85)
+
 # Theme data structure
 class ThemeData:
 	var name: String
@@ -330,18 +360,33 @@ func apply_label_style(label: Label, size_type: String = "body"):
 	label.add_theme_color_override("font_color", theme.colors["text"])
 	label.add_theme_font_size_override("font_size", font_size)
 
-## Get doom color based on percentage
+## Get doom color based on percentage — semantic FILL color (can be near-black at terminal).
+## Use for fills and zone bands. For strokes/text/arcs use get_doom_stroke_color (stays legible).
 func get_doom_color(doom_percent: float) -> Color:
-	var theme = get_theme()
+	doom_percent = clampf(doom_percent, 0.0, 100.0)
+	for i in range(DOOM_STOPS.size() - 1):
+		var a = DOOM_STOPS[i]
+		var b = DOOM_STOPS[i + 1]
+		if doom_percent <= b.at:
+			return a.color.lerp(b.color, inverse_lerp(a.at, b.at, doom_percent))
+	return DOOM_STOPS[DOOM_STOPS.size() - 1].color
 
-	if doom_percent < 30.0:
-		return theme.colors["doom_low"]
-	elif doom_percent < 60.0:
-		return theme.colors["doom_medium"]
-	elif doom_percent < 85.0:
-		return theme.colors["doom_high"]
-	else:
-		return theme.colors["doom_critical"]
+## Legible-on-dark variant of the doom color: floors luminance so the deadly tiers glow
+## ember-bright instead of vanishing into a dark background. Use for arcs, lines, text, bars.
+func get_doom_stroke_color(doom_percent: float) -> Color:
+	var c: Color = get_doom_color(doom_percent)
+	var lum: float = c.get_luminance()
+	if lum < DOOM_STROKE_FLOOR:
+		var t: float = (DOOM_STROKE_FLOOR - lum) / DOOM_STROKE_FLOOR * 0.8
+		c = c.lerp(DOOM_STROKE_BRIGHT, t)
+	return c
+
+## Non-color status label (colorblind channel) for the current doom tier.
+func get_doom_status_label(doom_percent: float) -> String:
+	for band in DOOM_STATUS_BANDS:
+		if doom_percent < band.below:
+			return band.label
+	return "TERMINAL"
 
 ## Get action category color (issue #436 - player feedback)
 ## Returns colored accent for action buttons based on their category

@@ -15,18 +15,8 @@ class_name DoomMeter
 @export var gauge_thickness: float = 12.0
 @export var show_momentum_indicator: bool = true
 
-# Color thresholds
-const COLOR_SAFE = Color(0.3, 0.8, 0.3)        # <30% - green
-const COLOR_WARNING = Color(0.9, 0.7, 0.2)     # 30-60% - yellow
-const COLOR_DANGER = Color(0.9, 0.3, 0.2)      # 60-80% - orange
-const COLOR_CRITICAL = Color(0.7, 0.1, 0.1)    # >80% - red
-const COLOR_BACKGROUND = Color(0.110, 0.153, 0.188, 0.3)  # Steel translucent
-
-# Colorblind-friendly status labels
-const STATUS_SAFE = "SAFE"
-const STATUS_WARNING = "CAUTION"
-const STATUS_DANGER = "DANGER"
-const STATUS_CRITICAL = "CRITICAL"
+# Doom tier colors + status labels now live in ThemeManager (shared ramp, #512).
+const COLOR_BACKGROUND = Color(0.110, 0.153, 0.188, 0.3)  # Steel translucent (ring background)
 
 var pulse_time: float = 0.0
 var pulse_speed: float = 2.0
@@ -57,9 +47,9 @@ func _draw():
 	# Background circle
 	draw_arc(center, radius, 0, TAU, 64, COLOR_BACKGROUND, gauge_thickness, true)
 
-	# Doom arc
+	# Doom arc — stroke variant so terminal tiers glow ember instead of vanishing (#512)
 	var doom_angle = (doom_value / 100.0) * TAU
-	var doom_color = get_doom_color(doom_value)
+	var doom_color = ThemeManager.get_doom_stroke_color(doom_value)
 
 	# Add pulsing effect at critical levels
 	var current_thickness = gauge_thickness
@@ -86,7 +76,7 @@ func _draw():
 
 	# Colorblind mode: Draw status label and pattern indicator
 	if GameConfig.colorblind_mode:
-		var status_text = get_doom_status_label(doom_value)
+		var status_text = ThemeManager.get_doom_status_label(doom_value)
 		var status_font_size = 10
 		var status_size = font.get_string_size(status_text, HORIZONTAL_ALIGNMENT_CENTER, -1, status_font_size)
 		var status_pos = center + Vector2(-status_size.x / 2, 12)
@@ -117,23 +107,6 @@ func _draw():
 			var momentum_size = font.get_string_size(momentum_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 14)
 			draw_string(font, momentum_pos - momentum_size / 2, momentum_text, HORIZONTAL_ALIGNMENT_CENTER, -1, 14, arrow_color)
 
-func get_doom_color(doom: float) -> Color:
-	"""Get color based on doom tier"""
-	if doom < 30.0:
-		return COLOR_SAFE
-	elif doom < 60.0:
-		# Blend green to yellow
-		var t = (doom - 30.0) / 30.0
-		return COLOR_SAFE.lerp(COLOR_WARNING, t)
-	elif doom < 80.0:
-		# Blend yellow to orange
-		var t = (doom - 60.0) / 20.0
-		return COLOR_WARNING.lerp(COLOR_DANGER, t)
-	else:
-		# Blend orange to red
-		var t = (doom - 80.0) / 20.0
-		return COLOR_DANGER.lerp(COLOR_CRITICAL, t)
-
 func set_doom(value: float, momentum: float = 0.0):
 	"""Update doom value and momentum"""
 	doom_value = value
@@ -144,21 +117,10 @@ func set_doom(value: float, momentum: float = 0.0):
 	if doom_value < 80.0:
 		pulse_time = 0.0
 
-func get_doom_status_label(doom: float) -> String:
-	"""Get status label for colorblind mode"""
-	if doom < 30.0:
-		return STATUS_SAFE
-	elif doom < 60.0:
-		return STATUS_WARNING
-	elif doom < 80.0:
-		return STATUS_DANGER
-	else:
-		return STATUS_CRITICAL
-
 func _draw_colorblind_pattern(center: Vector2, radius: float, doom: float):
 	"""Draw pattern indicators for colorblind accessibility"""
 	var pattern_radius = radius + gauge_thickness + 8
-	var doom_color = get_doom_color(doom)
+	var doom_color = ThemeManager.get_doom_stroke_color(doom)
 
 	if doom < 30.0:
 		# Safe: Draw small circles (dots pattern)
