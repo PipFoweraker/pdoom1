@@ -37,13 +37,13 @@
       "date": "2025-11-17",
       "title": "Playtesting Fixes & Turn Philosophy",
       "highlights": [
-        "Bug Reporter Integration - In-game bug reporting with F8",
+        "Bug Reporter Integration - In-game bug reporting with backslash or N key",
         "Turn Philosophy Reframe - 'Monday Planning' metaphor",
         "Event Dialog UX Improvements - Better visibility and interaction"
       ],
       "sections": {
         "added": [
-          "In-game bug reporting system (F8 or backslash)",
+          "In-game bug reporting system (backslash or N)",
           "Cat contributor recognition system",
           "Comprehensive turn sequence documentation"
         ],
