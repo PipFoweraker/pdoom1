@@ -46,8 +46,8 @@ func _ready():
 	# Set privacy notice
 	privacy_label.bbcode_enabled = true
 	privacy_label.text = "[center][color=gray]Your privacy is important to us. Reports are saved locally on your device by default. " + \
-		"We collect only essential technical information. See [url=https://pdoom.net/privacy]Privacy Policy[/url] for details." + \
-		"\n\nBy including your name, you may be recognized in our [url=https://pdoom.net/contributors]Contributors[/url] program![/color][/center]"
+		"We collect only essential technical information. See [url=https://pdoom1.com/privacy]Privacy Policy[/url] for details." + \
+		"\n\nBy including your name, you may be recognized in our [url=https://pdoom1.com/contributors]Contributors[/url] program![/color][/center]"
 
 	# Initially disable attribution fields
 	name_input.editable = false
