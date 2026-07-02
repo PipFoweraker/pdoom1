@@ -100,8 +100,6 @@ jobs:
         required_docs=(
           "README.md"
           "CHANGELOG.md"
-          "tools/web_export/WEB_EXPORT_SYSTEM_GUIDE.md"
-          "docs/releases/v0.10.0_RELEASE_NOTES.md"
         )
 
         for doc in "${required_docs[@]}"; do

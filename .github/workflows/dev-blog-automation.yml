@@ -107,7 +107,7 @@ jobs:
         tags = ["development"]
 
         # Check for significant changes
-        significant_files = any(f.startswith(('src/', 'main.py', 'ui.py')) for f in changed_files)
+        significant_files = any(f.startswith(('godot/', 'scripts/', 'shared/')) or f.endswith('.gd') for f in changed_files)
         significant_commits = any(any(kw in commit.message.lower() for kw in significant_keywords)
                                  for commit in commits)
         major_changes = lines_changed > 500
