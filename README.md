@@ -28,14 +28,14 @@ You run an underfunded AI safety lab racing against well-resourced competitors t
 
 ## Need Help?
 
-- BOOK **[How to Play](docs/user-guide/GAMEPLAY.md)** - Game mechanics and strategy
-- HELP **[FAQ](docs/user-guide/FAQ.md)** - Common questions
+- BOOK **[How to Play](docs/PLAYERGUIDE.md)** - Game mechanics and strategy
+- HELP **[Discussions](https://github.com/PipFoweraker/pdoom1/discussions)** - Questions and community
 - GLOBAL **[Website](https://pdoom1.com)** - Guides, community, and updates
-- 🐛 **Report a Bug** - Press **F8** in-game or [open an issue](https://github.com/PipFoweraker/pdoom1/issues)
+- 🐛 **Report a Bug** - Press **`\`** (the backslash key) or **`N`** in-game, or [open an issue](https://github.com/PipFoweraker/pdoom1/issues)
 
 ## Community & Contributing
 
-Found a bug? Have a suggestion? **Press F8 in-game** to open the bug reporter, or visit our [GitHub Issues](https://github.com/PipFoweraker/pdoom1/issues).
+Found a bug? Have a suggestion? Press **`\`** (the backslash key) or **`N`** in-game to open the bug reporter, or visit our [GitHub Issues](https://github.com/PipFoweraker/pdoom1/issues).
 
 ### Contributor Recognition Program 🐱
 
