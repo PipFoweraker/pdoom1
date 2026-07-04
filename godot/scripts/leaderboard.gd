@@ -7,17 +7,24 @@ class_name Leaderboard
 
 # Score entry data structure
 class ScoreEntry:
+	# ADR-0002: the score is the tuple (score, doom_integral) where `score` is
+	# turns-survived (primary, dominant metric) and `doom_integral` is the
+	# area-under-the-survival-curve tiebreak. `score` is named for back-compat with
+	# the UI, which already treats it as turns.
 	var score: int  # Turns survived (primary metric)
+	var doom_integral: int  # Doom-integral tiebreak (ADR-0002)
 	var player_name: String  # Lab name
 	var date: String  # ISO timestamp
-	var level_reached: int  # Final turn number
-	var game_mode: String  # e.g., "Bootstrap_v0.4.1"
+	var level_reached: int  # Final turn number (== score; kept for back-compat)
+	var game_mode: String  # Game version, e.g. "v0.11.0"
 	var duration_seconds: float  # Game duration
 	var entry_uuid: String  # Unique identifier
-	var baseline_score: int  # Baseline (no-action) score for comparison (Issue #372)
+	var baseline_score: int  # Baseline (no-action) turns survived for comparison (Issue #372)
+	var baseline_doom_integral: int  # Baseline doom-integral tiebreak
 
-	func _init(p_score: int, p_player_name: String, p_level: int, p_mode: String, p_duration: float, p_baseline: int = 0):
+	func _init(p_score: int, p_player_name: String, p_level: int, p_mode: String, p_duration: float, p_baseline: int = 0, p_doom_integral: int = 0, p_baseline_integral: int = 0):
 		score = p_score
+		doom_integral = p_doom_integral
 		player_name = p_player_name
 		date = Time.get_datetime_string_from_system()
 		level_reached = p_level
@@ -25,17 +32,20 @@ class ScoreEntry:
 		duration_seconds = p_duration
 		entry_uuid = generate_uuid()
 		baseline_score = p_baseline
+		baseline_doom_integral = p_baseline_integral
 
 	func to_dict() -> Dictionary:
 		return {
 			"score": score,
+			"doom_integral": doom_integral,
 			"player_name": player_name,
 			"date": date,
 			"level_reached": level_reached,
 			"game_mode": game_mode,
 			"duration_seconds": duration_seconds,
 			"entry_uuid": entry_uuid,
-			"baseline_score": baseline_score
+			"baseline_score": baseline_score,
+			"baseline_doom_integral": baseline_doom_integral
 		}
 
 	static func from_dict(data: Dictionary) -> ScoreEntry:
@@ -45,7 +55,9 @@ class ScoreEntry:
 			data.get("level_reached", 0),
 			data.get("game_mode", "Unknown"),
 			data.get("duration_seconds", 0.0),
-			data.get("baseline_score", 0)  # Issue #372
+			data.get("baseline_score", 0),  # Issue #372
+			data.get("doom_integral", 0),
+			data.get("baseline_doom_integral", 0)
 		)
 		entry.date = data.get("date", "")
 		entry.entry_uuid = data.get("entry_uuid", "")
@@ -65,12 +77,20 @@ var version: String = "1.0.0"
 var max_entries: int = 50
 var entries: Array[ScoreEntry] = []
 var game_seed: String = ""  # Renamed from 'seed' to avoid shadowing built-in function
+var game_version: String = ""  # ADR-0002 #5: boards are keyed by (seed, game_version)
 var leaderboard_dir: String = "user://leaderboards"
 var file_path: String = ""
 
-func _init(p_seed: String = "default"):
+func _init(p_seed: String = "default", p_version: String = ""):
 	game_seed = p_seed
-	file_path = "%s/leaderboard_%s.json" % [leaderboard_dir, game_seed]
+	game_version = p_version
+	# ADR-0002 #5: version-scope the board so balance patches rotate the meta and old
+	# scores never rank against the current game. Legacy callers (no version) keep the
+	# old per-seed filename. Delimiter is '__' to survive hyphens/underscores in seeds.
+	if game_version != "":
+		file_path = "%s/leaderboard_%s__%s.json" % [leaderboard_dir, game_seed, game_version]
+	else:
+		file_path = "%s/leaderboard_%s.json" % [leaderboard_dir, game_seed]
 	_ensure_directory_exists()
 	_load_leaderboard()
 
@@ -90,8 +110,8 @@ func add_score(entry: ScoreEntry) -> Dictionary:
 	# Add entry
 	entries.append(entry)
 
-	# Sort by score (highest first)
-	entries.sort_custom(func(a, b): return a.score > b.score)
+	# Sort lexicographically (ADR-0002): turns dominant, doom-integral tiebreak.
+	entries.sort_custom(func(a, b): return GameState.compare_score(a.score, a.doom_integral, b.score, b.doom_integral) > 0)
 
 	# Find rank (1-based)
 	var rank = 0
@@ -146,6 +166,7 @@ func _save_leaderboard():
 		"created": Time.get_datetime_string_from_system(),
 		"max_entries": max_entries,
 		"seed": game_seed,
+		"game_version": game_version,  # ADR-0002 #5
 		"entries": []
 	}
 

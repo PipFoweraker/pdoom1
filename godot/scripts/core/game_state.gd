@@ -13,6 +13,9 @@ var papers: float = 0.0
 var reputation: float = 50.0
 var doom: float = 50.0  # 0-100, lose at 100
 var doom_history: Array[float] = []  # Per-turn doom snapshots for the trend graph (#512)
+# ADR-0002: area under the survival curve — sum of (100 - doom) over turns actually
+# survived. The lexicographic score tiebreaker ("doom-years averted"); accrues in-engine.
+var doom_integral: float = 0.0
 var action_points: int = 3
 var max_action_points: int = 3  # Per-turn AP cap; difficulty modifiers adjust this (game_manager._apply_difficulty_settings)
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
@@ -161,6 +164,7 @@ func reset():
 	_populate_initial_candidates()
 
 	turn = 0
+	doom_integral = 0.0  # ADR-0002: reset the survival-curve accumulator
 	game_over = false
 	victory = false
 	queued_actions.clear()
@@ -684,6 +688,35 @@ func record_doom_history() -> void:
 	doom_history.append(doom)
 
 
+func accrue_survival_credit() -> void:
+	"""ADR-0002: credit this survived turn to the doom-integral score tiebreaker.
+	Call only for turns the player actually survived (game not over); a turn that
+	ended the game earns no stewardship credit."""
+	doom_integral += 100.0 - doom
+
+
+# --- Scoring (ADR-0002) --------------------------------------------------------
+# The engine is the sole scoring authority. Score is the tuple
+# (turns_survived, doom_integral), compared lexicographically: turns strictly
+# dominant, doom-integral as tiebreak. FLOWS ONLY — no stock the player holds at
+# death (money, papers, staff, reputation) may ever affect the score.
+static func score_tuple(state: Dictionary) -> Array:
+	return [int(state.get("turn", 0)), int(round(state.get("doom_integral", 0.0)))]
+
+
+static func compare_score(a_turns: int, a_integral: int, b_turns: int, b_integral: int) -> int:
+	"""Lexicographic compare. Returns 1 if A ranks above B, -1 if below, 0 if equal."""
+	if a_turns != b_turns:
+		return 1 if a_turns > b_turns else -1
+	if a_integral != b_integral:
+		return 1 if a_integral > b_integral else -1
+	return 0
+
+
+static func format_score(turns: int, integral: int) -> String:
+	return "Turn %d · %d" % [turns, integral]
+
+
 func to_dict() -> Dictionary:
 	"""Serialize state for UI"""
 	var rival_summaries = []
@@ -759,7 +792,8 @@ func to_dict() -> Dictionary:
 		"management_capacity": get_management_capacity(),
 		"unmanaged_count": get_unmanaged_count(),
 		"turn": turn,
-		"turn_display": get_turn_display(),
+		"doom_integral": doom_integral,
+			"turn_display": get_turn_display(),
 		"calendar": get_current_date(),
 		"game_over": game_over,
 		"victory": victory,
@@ -800,6 +834,7 @@ func from_dict(data: Dictionary) -> void:
 
 	# Game state
 	turn = data.get("turn", 0)
+	doom_integral = data.get("doom_integral", 0.0)
 	game_over = data.get("game_over", false)
 	victory = data.get("victory", false)
 	has_cat = data.get("has_cat", false)
