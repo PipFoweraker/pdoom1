@@ -47,12 +47,22 @@ func _load_all_leaderboards():
 
 	while file_name != "":
 		if file_name.ends_with(".json") and file_name.begins_with("leaderboard_"):
-			# Extract seed from filename: "leaderboard_SEED.json"
-			var lb_seed = file_name.substr(12, file_name.length() - 17)  # Remove "leaderboard_" and ".json"
+			# Parse "leaderboard_SEED.json" or the version-keyed
+			# "leaderboard_SEED__VERSION.json" (ADR-0002 #5). '__' delimiter survives
+			# hyphens/underscores in seeds.
+			var base_name = file_name.trim_prefix("leaderboard_").trim_suffix(".json")
+			var lb_seed = base_name
+			var lb_version = ""
+			if base_name.contains("__"):
+				var parts = base_name.rsplit("__", true, 1)
+				lb_seed = parts[0]
+				lb_version = parts[1]
 
-			# Load this leaderboard
-			var leaderboard = LeaderboardClass.new(lb_seed)
-			all_leaderboards[lb_seed] = leaderboard
+			# Reconstruct with the same (seed, version) so file_path matches on load.
+			var leaderboard = LeaderboardClass.new(lb_seed, lb_version)
+			# Key by full identity so same-seed/different-version boards don't collide.
+			var board_key = lb_seed if lb_version == "" else "%s (%s)" % [lb_seed, lb_version]
+			all_leaderboards[board_key] = leaderboard
 
 			# Add entries to combined list
 			for entry in leaderboard.entries:
@@ -61,15 +71,15 @@ func _load_all_leaderboards():
 			ErrorHandler.info(
 				ErrorHandler.Category.SAVE_LOAD,
 				"Loaded leaderboard",
-				{"seed": lb_seed, "entries": leaderboard.entries.size()}
+				{"seed": lb_seed, "version": lb_version, "entries": leaderboard.entries.size()}
 			)
 
 		file_name = dir.get_next()
 
 	dir.list_dir_end()
 
-	# Sort all entries by score (highest first)
-	all_entries.sort_custom(func(a, b): return a.score > b.score)
+	# Sort lexicographically (ADR-0002): turns dominant, doom-integral tiebreak.
+	all_entries.sort_custom(func(a, b): return GameState.compare_score(a.score, a.doom_integral, b.score, b.doom_integral) > 0)
 
 	ErrorHandler.info(
 		ErrorHandler.Category.SAVE_LOAD,

@@ -552,6 +552,11 @@ func execute_turn() -> Dictionary:
 	# Check win/lose
 	state.check_win_lose()
 
+	# ADR-0002: accrue this turn's survival credit into the doom-integral score
+	# tiebreaker. A turn that ended the game earns no stewardship credit.
+	if not state.game_over:
+		state.accrue_survival_credit()
+
 	if state.game_over:
 		if state.victory:
 			results.append({"success": true, "message": "VICTORY! p(doom) reached 0!"})

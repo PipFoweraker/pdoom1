@@ -62,7 +62,7 @@ static func set_precomputed_baseline(game_seed: String, baseline_data: Dictionar
 	_precomputed_baselines[game_seed] = baseline_data
 	_baseline_cache[game_seed] = baseline_data
 	_current_mode = Mode.PRECOMPUTED
-	print("[BaselineSimulator] Precomputed baseline set for seed %s: %d points" % [game_seed, baseline_data.get("score", 0)])
+	print("[BaselineSimulator] Precomputed baseline set for seed %s: Turn %d" % [game_seed, baseline_data.get("turns", 0)])
 
 static func start_background_simulation(game_seed: String):
 	"""
@@ -210,107 +210,62 @@ static func _run_baseline_simulation(game_seed: String) -> Dictionary:
 	var simulation_time = Time.get_ticks_msec() - simulation_start
 	print("[BaselineSimulator] Simulation complete: %d turns, %.2fs" % [state.turn, simulation_time / 1000.0])
 
-	# Calculate final score using same formula as game over screen
+	# ADR-0002: score is the (turns, doom_integral) tuple accrued in-engine during the
+	# sim — no separate formula. Engine is the sole scoring authority.
 	var final_state = state.to_dict()
-	var score = _calculate_score(final_state)
 
 	return {
-		"score": score,
-		"final_state": final_state,
 		"turns": state.turn,
+		"doom_integral": int(round(state.doom_integral)),
+		"final_state": final_state,
 		"victory": state.victory,
 		"doom": state.doom,
 		"simulation_time_ms": simulation_time
 	}
 
-static func _calculate_score(state: Dictionary) -> int:
+static func get_comparison_text(player_turns: int, player_integral: int, baseline_turns: int, baseline_integral: int) -> Dictionary:
 	"""
-	Calculate score using same formula as GameOverScreen.calculate_final_score()
-	Must stay in sync with that function!
+	Compare the player's (turns, doom_integral) score against the no-action baseline
+	using ADR-0002 lexicographic ordering (turns dominant, doom-integral tiebreak).
+	Returns: {text: String, color: Color, cmp: int}
 	"""
-	var score = 0
-
-	var doom = state.get("doom", 0.0)
-	var papers = state.get("papers", 0)
-	var turn = state.get("turn", 0)
-	var money = state.get("money", 0)
-
-	# Count total researchers (all types)
-	var researchers = 0
-	researchers += state.get("safety_researchers", 0)
-	researchers += state.get("capability_researchers", 0)
-	researchers += state.get("compute_engineers", 0)
-
-	# 1. Safety Achievement (40-50% of total score)
-	var safety_score = (100 - doom) * 1000
-	score += safety_score
-
-	# 2. Research Output (20-30% of total score)
-	var paper_score = papers * 5000
-	score += paper_score
-
-	# 3. Team Excellence (10-15% of total score)
-	var team_score = researchers * 2000
-	score += team_score
-
-	# 4. Survival Duration (10-15% of total score)
-	var survival_score = turn * 500
-	score += survival_score
-
-	# 5. Financial Success (5-10% of total score)
-	var financial_score = money * 0.1
-	score += financial_score
-
-	# 6. Victory Bonus (unlocks at doom < 20%)
-	if doom < 20.0:
-		score += 50000  # Victory bonus
-
-	return int(score)
-
-static func get_comparison_text(player_score: int, baseline_score: int) -> Dictionary:
-	"""
-	Generate comparison text for displaying player vs baseline performance.
-	Returns: {text: String, color: Color, percentage: float}
-	"""
-	if baseline_score <= 0:
+	if baseline_turns <= 0:
 		return {
 			"text": "No baseline available",
 			"color": Color.GRAY,
-			"percentage": 0.0
+			"cmp": 0
 		}
 
-	var difference = player_score - baseline_score
-	var percentage = (float(player_score) / float(baseline_score) - 1.0) * 100.0
+	var cmp = GameState.compare_score(player_turns, player_integral, baseline_turns, baseline_integral)
 
 	var text: String
 	var color: Color
 
-	if difference > 0:
-		if percentage >= 100:
-			text = "+%d points (%.0f%% better than baseline!)" % [difference, percentage]
+	if cmp > 0:
+		var turn_diff = player_turns - baseline_turns
+		if turn_diff > 0:
+			text = "%d turn%s longer than baseline!" % [turn_diff, "s" if turn_diff != 1 else ""]
 			color = Color(0.2, 1.0, 0.2)  # Bright green
-		elif percentage >= 50:
-			text = "+%d points (%.0f%% better)" % [difference, percentage]
-			color = Color(0.4, 1.0, 0.4)  # Green
 		else:
-			text = "+%d points (%.0f%% better)" % [difference, percentage]
+			# Same survival length, better stewardship (lower doom along the way)
+			text = "Same survival, +%d stewardship over baseline" % (player_integral - baseline_integral)
 			color = Color(0.6, 1.0, 0.6)  # Light green
-	elif difference < 0:
-		if percentage <= -50:
-			text = "%d points (%.0f%% below baseline)" % [difference, abs(percentage)]
+	elif cmp < 0:
+		var turn_diff = baseline_turns - player_turns
+		if turn_diff > 0:
+			text = "%d turn%s shorter than baseline" % [turn_diff, "s" if turn_diff != 1 else ""]
 			color = Color(1.0, 0.3, 0.3)  # Red
 		else:
-			text = "%d points (%.0f%% below baseline)" % [difference, abs(percentage)]
+			text = "Same survival, %d stewardship below baseline" % (baseline_integral - player_integral)
 			color = Color(1.0, 0.6, 0.4)  # Orange
 	else:
-		text = "Matched baseline exactly!"
+		text = "Matched baseline exactly"
 		color = Color(1.0, 1.0, 0.4)  # Yellow
 
 	return {
 		"text": text,
 		"color": color,
-		"percentage": percentage,
-		"difference": difference
+		"cmp": cmp
 	}
 
 ## ============================================================================
