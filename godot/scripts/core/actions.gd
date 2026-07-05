@@ -197,6 +197,15 @@ static func get_all_actions() -> Array[Dictionary]:
 			"category": "research",
 			"is_submenu": true,
 			"unlock_conditions": {"papers_min": 1}  # Need at least 1 paper to unlock
+		},
+		# Financing submenu — the Liability Ledger (ADR-0003): every fix is a loan
+		{
+			"id": "financing",
+			"name": "Financing",
+			"description": "Loans, funding-with-strings, and desperation levers - every mitigation is a loan",
+			"costs": {},  # No cost to open menu
+			"category": "influence",
+			"is_submenu": true
 		}
 	]
 
@@ -222,6 +231,9 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 		if action["id"] == action_id:
 			return action
 	for action in get_operations_options():
+		if action["id"] == action_id:
+			return action
+	for action in get_financing_options():
 		if action["id"] == action_id:
 			return action
 	# Special pass action (not in any submenu)
@@ -266,6 +278,41 @@ static func get_hiring_options() -> Array[Dictionary]:
 			"description": "Add philosophical perspective to research (+5 reputation)",
 			"costs": {"money": 70000, "action_points": 1},
 			"category": "hiring"
+		}
+	]
+
+static func get_financing_options() -> Array[Dictionary]:
+	"""Liability Ledger trades (ADR-0003). The caller (execute_action) applies the
+	immediate benefit and adds the future bill via the Ledger factories. Immediate
+	amounts and balance constants are PLACEHOLDERS - tuning parked (DQ-8, workshop #2)."""
+	return [
+		{
+			"id": "take_loan",
+			"name": "Take Loan",
+			"description": "+$50k now; a balloon repayment (~$60k) bills in 4 turns and compounds until paid.",
+			"costs": {"action_points": 1},
+			"category": "financing"
+		},
+		{
+			"id": "funding_strings",
+			"name": "Funding (Strings)",
+			"description": "+$40k now; a governance obligation bills in 6 turns.",
+			"costs": {"action_points": 1},
+			"category": "financing"
+		},
+		{
+			"id": "desperation_lever",
+			"name": "Desperation Lever",
+			"description": "Suppress doom now; plants a SECRET, compounding governance liability that rivals can expose.",
+			"costs": {"action_points": 1},
+			"category": "financing"
+		},
+		{
+			"id": "staff_rider",
+			"name": "Contractor",
+			"description": "+2 action points now; a small governance rider bills later.",
+			"costs": {"money": 15000, "action_points": 1},
+			"category": "financing"
 		}
 	]
 
@@ -562,6 +609,37 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			# Submenu action - opens operations menu
 			result["message"] = "Opening operations menu..."
 			result["open_submenu"] = "operations"
+
+		"financing":
+			# Submenu action - opens the Liability Ledger financing menu (ADR-0003)
+			result["message"] = "Opening financing menu..."
+			result["open_submenu"] = "financing"
+
+		# --- Liability Ledger trades (ADR-0003): apply the immediate benefit here,
+		# add the future bill via the Ledger factories. Balance parked (DQ-8). ---
+		"take_loan":
+			state.add_resources({"money": 50000})
+			if state.ledger:
+				state.ledger.add(Ledger.loan(50000.0))
+			result["message"] = "Took a $50k loan (repayment bills in ~4 turns, compounding)"
+
+		"funding_strings":
+			state.add_resources({"money": 40000})
+			if state.ledger:
+				state.ledger.add(Ledger.funding_with_strings(40000.0))
+			result["message"] = "Accepted funding with strings (+$40k; a governance obligation bills later)"
+
+		"desperation_lever":
+			state.add_resources({"doom": -10.0})
+			if state.ledger:
+				state.ledger.add(Ledger.desperation_payroll(state.rng))
+			result["message"] = "Pulled a desperation lever (-10 doom now; a SECRET liability is planted)"
+
+		"staff_rider":
+			state.action_points += 2
+			if state.ledger:
+				state.ledger.add(Ledger.staff_rider("Contractor"))
+			result["message"] = "Brought on a contractor (+2 AP; a governance rider bills later)"
 
 		"submit_paper":
 			# Paper submission action (Issue #468)

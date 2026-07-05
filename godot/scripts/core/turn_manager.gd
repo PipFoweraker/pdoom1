@@ -116,6 +116,9 @@ func start_turn() -> Dictionary:
 	# traceable to specific entries via the ledger's attribution trail.
 	if state.ledger:
 		state.ledger.tick_and_bill(state)
+		# BL-2: secret liabilities have a per-turn chance to surface (deterministic via
+		# state.rng). 0.15 is a placeholder - exposure tuning parked (workshop #2).
+		state.ledger.check_exposures(state, 0.15)
 
 	# Calculate max AP based on staff (base 3 + 0.5 per staff member)
 	var total_staff = state.get_total_staff()
