@@ -94,6 +94,11 @@ var can_end_turn: bool = false
 # Deterministic RNG for events
 var rng: RandomNumberGenerator
 
+# WS-0 determinism: per-game event-firing registry (was static in events.gd, which leaked
+# across in-process games/replays and desynced state.rng). Fresh per GameState instance.
+var triggered_events: Array[String] = []
+var event_cooldowns: Dictionary = {}
+
 # Queued actions for this turn
 var queued_actions: Array[String] = []
 

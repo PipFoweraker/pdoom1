@@ -200,7 +200,15 @@ static func from_dict(data: Dictionary) -> MediaStory:
 
 ## Preset story templates for common scenarios
 
-static func create_breakthrough_story(lab_name: String, reputation_gain: float) -> MediaStory:
+## WS-0 determinism: select an option via the seeded rng when provided. Falls back to
+## global randi only for legacy/no-rng callers (headline text is cosmetic, but seeding it
+## keeps replay byte-identical).
+static func _pick(options: Array, rng: RandomNumberGenerator):
+	var idx: int = (rng.randi() if rng != null else randi()) % options.size()
+	return options[idx]
+
+
+static func create_breakthrough_story(lab_name: String, reputation_gain: float, rng: RandomNumberGenerator = null) -> MediaStory:
 	"""Create a positive breakthrough story"""
 	var headlines = [
 		"%s Achieves Major AI Safety Milestone" % lab_name,
@@ -212,7 +220,7 @@ static func create_breakthrough_story(lab_name: String, reputation_gain: float) 
 	var intensity = clamp(reputation_gain / 3.0, 0.5, 2.0)  # Scale with reputation
 
 	return MediaStory.new(
-		headlines[randi() % headlines.size()],
+		_pick(headlines, rng),
 		StoryType.BREAKTHROUGH,
 		3,  # duration
 		intensity * 3.0,  # sentiment
@@ -223,7 +231,7 @@ static func create_breakthrough_story(lab_name: String, reputation_gain: float) 
 	)
 
 
-static func create_scandal_story(lab_name: String, severity: float = 1.0) -> MediaStory:
+static func create_scandal_story(lab_name: String, severity: float = 1.0, rng: RandomNumberGenerator = null) -> MediaStory:
 	"""Create a negative scandal story"""
 	var headlines = [
 		"Safety Concerns Raised About %s Practices" % lab_name,
@@ -233,7 +241,7 @@ static func create_scandal_story(lab_name: String, severity: float = 1.0) -> Med
 	]
 
 	return MediaStory.new(
-		headlines[randi() % headlines.size()],
+		_pick(headlines, rng),
 		StoryType.SCANDAL,
 		4,  # longer duration
 		-severity * 5.0,  # sentiment
@@ -244,7 +252,7 @@ static func create_scandal_story(lab_name: String, severity: float = 1.0) -> Med
 	)
 
 
-static func create_safety_concern_story() -> MediaStory:
+static func create_safety_concern_story(rng: RandomNumberGenerator = null) -> MediaStory:
 	"""Create a general AI safety concern story"""
 	var headlines = [
 		"Experts Warn of AI Alignment Challenges",
@@ -254,7 +262,7 @@ static func create_safety_concern_story() -> MediaStory:
 	]
 
 	return MediaStory.new(
-		headlines[randi() % headlines.size()],
+		_pick(headlines, rng),
 		StoryType.SAFETY_CONCERN,
 		3,
 		-2.0,  # slight negative sentiment
@@ -265,7 +273,7 @@ static func create_safety_concern_story() -> MediaStory:
 	)
 
 
-static func create_competitor_story(competitor_name: String, positive: bool) -> MediaStory:
+static func create_competitor_story(competitor_name: String, positive: bool, rng: RandomNumberGenerator = null) -> MediaStory:
 	"""Create a story about a competitor"""
 	var headlines_positive = [
 		"%s Secures Major Funding Round" % competitor_name,
@@ -282,7 +290,7 @@ static func create_competitor_story(competitor_name: String, positive: bool) -> 
 	var headlines = headlines_positive if positive else headlines_negative
 
 	return MediaStory.new(
-		headlines[randi() % headlines.size()],
+		_pick(headlines, rng),
 		StoryType.COMPETITOR,
 		2,  # shorter duration
 		-1.0 if positive else 1.0,  # negative if competitor succeeds

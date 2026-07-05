@@ -125,21 +125,19 @@ const NEGATIVE_TRAITS = {
 
 func _init(spec: String = "safety", name: String = ""):
 	specialization = spec
-	researcher_name = name if name != "" else _generate_name()
+	# WS-0 determinism: no global RNG in _init. Seeded creation calls generate_random(rng);
+	# deserialization calls from_dict. Both overwrite these deterministic defaults.
+	researcher_name = name if name != "" else "New Researcher"
 
 	# Set base salary from specialization
 	if SPECIALIZATIONS.has(spec):
 		salary_expectation = SPECIALIZATIONS[spec]["base_cost"]
 		current_salary = salary_expectation
 
-	# Random skill level (3-7 for new hires, can grow)
-	skill_level = randi_range(3, 7)
-
-	# Base productivity from skill
-	base_productivity = 0.5 + (skill_level * 0.1)  # 0.8 to 1.2 for skill 3-7
-
-	# Random loyalty (40-70 for new hires)
-	loyalty = randi_range(40, 70)
+	# Deterministic mid-range defaults; variation is applied only via generate_random(rng)
+	skill_level = 5
+	base_productivity = 0.5 + (skill_level * 0.1)  # 1.0
+	loyalty = 55
 
 func generate_random(rng: RandomNumberGenerator):
 	"""Generate random attributes using provided RNG for determinism"""
@@ -355,8 +353,8 @@ func process_turn(rng: RandomNumberGenerator = null):
 	recover_jet_lag()
 
 	# Skill growth (very slow - 1 point per ~20 turns)
-	# Use provided RNG for determinism, fallback to global for tests
-	var skill_roll = rng.randf() if rng else randf()
+	# WS-0 determinism: use provided seeded RNG only; no global-RNG fallback (1.0 => no growth)
+	var skill_roll: float = rng.randf() if rng != null else 1.0
 	if skill_roll < 0.05:  # 5% chance per turn
 		skill_level = min(skill_level + 1, 10)
 		base_productivity = 0.5 + (skill_level * 0.1)
@@ -371,21 +369,6 @@ func process_turn(rng: RandomNumberGenerator = null):
 # ============================================================================
 # UTILITY FUNCTIONS
 # ============================================================================
-
-func _generate_name() -> String:
-	"""Generate a random researcher name"""
-	const FIRST_NAMES = [
-		"Alex", "Blake", "Casey", "Drew", "Ellis", "Finley", "Gray", "Harper",
-		"Iris", "Jordan", "Kelly", "Lane", "Morgan", "Noel", "Owen", "Parker",
-		"Quinn", "Riley", "Sage", "Taylor"
-	]
-	const LAST_NAMES = [
-		"Chen", "Kumar", "O'Brien", "Patel", "Rodriguez", "Smith", "Williams",
-		"Zhang", "Anderson", "Martinez", "Thompson", "Garcia", "Lee", "Wilson",
-		"Moore", "Taylor", "Brown", "Davis", "Miller", "Johnson"
-	]
-
-	return FIRST_NAMES[randi() % FIRST_NAMES.size()] + " " + LAST_NAMES[randi() % LAST_NAMES.size()]
 
 func get_summary() -> String:
 	"""Get one-line summary of researcher"""

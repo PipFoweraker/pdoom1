@@ -2,11 +2,10 @@ extends Node
 class_name GameEvents
 ## Random and triggered events system
 
-# Track which events have already triggered
-static var triggered_events: Array[String] = []
-
-# Track cooldowns for repeatable events (event_id -> last_triggered_turn)
-static var event_cooldowns: Dictionary = {}
+# WS-0 determinism: the event-firing registry (triggered_events / event_cooldowns) now lives
+# as per-game INSTANCE state on GameState, threaded via `state`. As static class vars it
+# persisted across in-process games and replays, desyncing state.rng consumption between
+# otherwise-identical runs (candidate/rival divergence with matching score).
 
 static func get_all_events() -> Array[Dictionary]:
 	"""Return all event definitions"""
@@ -848,7 +847,7 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 	for event in get_all_events():
 		if should_trigger(event, state, rng):
 			to_trigger.append(event)
-			_mark_event_triggered(event, state.turn)
+			_mark_event_triggered(event, state.turn, state)
 
 	# Check scenario-specific events (Issue #483: Mod/Scenario hook)
 	if state.has_meta("scenario_events"):
@@ -856,7 +855,7 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 		for event in scenario_events:
 			if should_trigger(event, state, rng):
 				to_trigger.append(event)
-				_mark_event_triggered(event, state.turn)
+				_mark_event_triggered(event, state.turn, state)
 
 	# Check historical events from EventService (Issue #442: API Event Fetching)
 	# Historical events are real AI safety timeline events transformed into game events
@@ -870,7 +869,7 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 				continue
 			if should_trigger(event, state, rng):
 				to_trigger.append(event)
-				_mark_event_triggered(event, state.turn)
+				_mark_event_triggered(event, state.turn, state)
 
 	return to_trigger
 
@@ -879,13 +878,13 @@ static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumbe
 	var event_id = event.get("id", "")
 
 	# Don't trigger if already triggered (unless repeatable)
-	if event_id in triggered_events and not event.get("repeatable", false):
+	if event_id in state.triggered_events and not event.get("repeatable", false):
 		return false
 
 	# Check cooldown for repeatable events (cooldown_turns = minimum turns between triggers)
 	var cooldown_turns = event.get("cooldown_turns", 0)
-	if cooldown_turns > 0 and event_cooldowns.has(event_id):
-		var last_triggered = event_cooldowns[event_id]
+	if cooldown_turns > 0 and state.event_cooldowns.has(event_id):
+		var last_triggered = state.event_cooldowns[event_id]
 		if state.turn - last_triggered < cooldown_turns:
 			return false
 
@@ -1090,14 +1089,14 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 	var message = chosen_option.get("message", "Event resolved")
 	return {"success": true, "message": message}
 
-static func _mark_event_triggered(event: Dictionary, turn: int):
+static func _mark_event_triggered(event: Dictionary, turn: int, state: GameState):
 	"""Mark an event as triggered, handling both one-time and cooldown tracking"""
 	var event_id = event.get("id", "")
 	if not event.get("repeatable", false):
-		triggered_events.append(event_id)
+		state.triggered_events.append(event_id)
 	# Always record cooldown for repeatable events with cooldown_turns
 	if event.get("cooldown_turns", 0) > 0:
-		event_cooldowns[event_id] = turn
+		state.event_cooldowns[event_id] = turn
 
 static func _calculate_salary_disparity(state: GameState) -> float:
 	"""Calculate salary disparity as coefficient of variation (percentage).
@@ -1435,7 +1434,5 @@ static func get_risk_event_for_pool(pool_name: String, severity: String, rng: Ra
 	var idx = rng.randi() % severity_events.size()
 	return severity_events[idx]
 
-static func reset_triggered_events():
-	"""Clear triggered events (for new game)"""
-	triggered_events.clear()
-	event_cooldowns.clear()
+# WS-0: reset_triggered_events() removed — the registry is now per-GameState instance state,
+# so it resets automatically with each new GameState. No global reset is needed.
