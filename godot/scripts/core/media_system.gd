@@ -77,12 +77,12 @@ func generate_random_story() -> bool:
 
 	if story_type_roll < 0.3:
 		# Safety concern story (30% chance)
-		add_story(MediaStory.create_safety_concern_story())
+		add_story(MediaStory.create_safety_concern_story(rng))
 		return true
 	elif story_type_roll < 0.5:
 		# Competitor story (20% chance)
 		var positive = rng.randf() < 0.5
-		add_story(MediaStory.create_competitor_story("Rival Lab", positive))
+		add_story(MediaStory.create_competitor_story("Rival Lab", positive, rng))
 		return true
 	elif story_type_roll < 0.7:
 		# Policy/industry news (20% chance)
@@ -151,7 +151,7 @@ func check_for_action_story(action_type: String, reputation_gain: float, lab_nam
 	var story_prob = 0.3 + (public_opinion.media_attention / 200.0)  # 30-80% chance
 
 	if rng.randf() < story_prob:
-		add_story(MediaStory.create_breakthrough_story(lab_name, reputation_gain))
+		add_story(MediaStory.create_breakthrough_story(lab_name, reputation_gain, rng))
 		return true
 
 	return false
@@ -433,7 +433,7 @@ func execute_investigative_tip(game_state, target_lab_name: String) -> Dictionar
 		}
 	else:
 		# Success: competitor gets negative story
-		add_story(MediaStory.create_scandal_story(target_lab_name, 0.8))
+		add_story(MediaStory.create_scandal_story(target_lab_name, 0.8, rng))
 		# Small trust boost from competitor problems
 		public_opinion.update_opinion("lab_trust", 2.0, "Competitor Scrutiny")
 
