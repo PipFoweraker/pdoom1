@@ -104,6 +104,11 @@ func start_turn() -> Dictionary:
 	state.queued_actions.clear()
 	state.can_end_turn = false
 
+	# WS-C (ADR-0005): apply any scheduled causes due this turn BEFORE events/rivals react,
+	# so the authored cause (e.g. a rival funding wave) shapes this turn's emergent outcome.
+	# Causes touch sim inputs only — never doom directly.
+	SeedSchedule.apply_due_causes(state)
+
 	# Calculate max AP based on staff (base 3 + 0.5 per staff member)
 	var total_staff = state.get_total_staff()
 	var max_ap = 3 + int(total_staff * 0.5)

@@ -28,6 +28,16 @@ class_name BaselineSimulator
 # Maximum turns to simulate (prevents infinite loops)
 const MAX_TURNS: int = 200
 
+# WS-C (ADR-0005): default seed-vetting playability envelope. These are the CONFIG a curator
+# tunes (or overrides per-call / from league config), not thresholds baked into the
+# classification logic. A seed is rejected if it falls outside this envelope.
+const DEFAULT_VETTING_ENVELOPE := {
+	"min_turns": 5,             # reject if even the cautious (passive) line dies before this
+	"doom_threat_floor": 70.0,  # reject if even the careless (reckless) line never makes doom
+	                            #   this dangerous — a snoozefest with no threat
+	"max_turns": MAX_TURNS,     # simulation cap
+}
+
 # Computation modes
 enum Mode {
 	PRECOMPUTED,  # Baseline already computed (weekly league)
@@ -173,15 +183,19 @@ static func _run_deferred_simulation(game_seed: String):
 ## SIMULATION LOGIC
 ## ============================================================================
 
-static func _run_baseline_simulation(game_seed: String) -> Dictionary:
+static func _run_baseline_simulation(game_seed: String, schedule: Array = [], choice_policy: String = "passive") -> Dictionary:
 	"""
 	Run a headless game with no player actions.
 	The game proceeds with only passive effects (doom, staff productivity, etc.)
-	"""
-	print("[BaselineSimulator] Running baseline simulation for seed: %s" % game_seed)
 
-	# Create game state with the same seed
-	var state = GameState.new(game_seed)
+	WS-C (ADR-0005): `schedule` seeds the run's scheduled causes; `choice_policy` selects the
+	event-response heuristic ("passive" = first/safest choice, "reckless" = last choice) so
+	seed vetting can bracket a seed between a cautious and a careless line.
+	"""
+	print("[BaselineSimulator] Running baseline simulation for seed: %s (policy: %s)" % [game_seed, choice_policy])
+
+	# Create game state with the same seed + schedule
+	var state = GameState.new(game_seed, schedule)
 	var turn_manager = TurnManager.new(state)
 
 	var simulation_start = Time.get_ticks_msec()
@@ -196,8 +210,8 @@ static func _run_baseline_simulation(game_seed: String) -> Dictionary:
 			var event = state.pending_events[0]
 			var choices = event.get("choices", [])
 			if choices.size() > 0:
-				# Use baseline strategy to pick choice
-				var choice_id = _get_event_choice_for_baseline(event, choices)
+				# Pick a choice per the active policy (passive = safest-first, reckless = last)
+				var choice_id = _choice_for_policy(event, choices, choice_policy)
 				turn_manager.resolve_event(event, choice_id)
 			else:
 				# No choices available, remove event
@@ -214,12 +228,17 @@ static func _run_baseline_simulation(game_seed: String) -> Dictionary:
 	# sim — no separate formula. Engine is the sole scoring authority.
 	var final_state = state.to_dict()
 
+	var peak_doom: float = state.doom
+	if state.doom_history.size() > 0:
+		peak_doom = state.doom_history.max()
+
 	return {
 		"turns": state.turn,
 		"doom_integral": int(round(state.doom_integral)),
 		"final_state": final_state,
 		"victory": state.victory,
 		"doom": state.doom,
+		"max_doom": peak_doom,
 		"simulation_time_ms": simulation_time
 	}
 
@@ -269,8 +288,80 @@ static func get_comparison_text(player_turns: int, player_integral: int, baselin
 	}
 
 ## ============================================================================
+## SEED VETTING (WS-C / ADR-0005)
+## ============================================================================
+
+static func vet_seed(game_seed: String, schedule: Array = [], envelope: Dictionary = {}) -> Dictionary:
+	"""
+	Classify a candidate seed (RNG seed + schedule) against a playability envelope by
+	running it headless between a cautious line (passive event choices) and a careless line
+	(reckless event choices). Deterministic given (seed, schedule) — WS-0 guarantees it.
+
+	Returns: {seed, accepted: bool, reason, passive_turns, reckless_turns, peak_doom, envelope}
+
+	This is the curation tool that replaces authored waves: run a batch, publish only seeds
+	inside the envelope. `envelope` overrides DEFAULT_VETTING_ENVELOPE key-by-key.
+	"""
+	var env: Dictionary = DEFAULT_VETTING_ENVELOPE.duplicate(true)
+	for k in envelope:
+		env[k] = envelope[k]
+
+	var passive: Dictionary = _run_baseline_simulation(game_seed, schedule, "passive")
+	var reckless: Dictionary = _run_baseline_simulation(game_seed, schedule, "reckless")
+
+	var passive_turns: int = int(passive["turns"])
+	var peak_doom: float = maxf(float(passive["max_doom"]), float(reckless["max_doom"]))
+
+	var accepted: bool = true
+	var reason: String
+	if passive_turns < int(env["min_turns"]):
+		accepted = false
+		reason = "too punishing: cautious line dies at turn %d (< min %d)" % [passive_turns, int(env["min_turns"])]
+	elif peak_doom < float(env["doom_threat_floor"]):
+		accepted = false
+		reason = "snoozefest: peak doom %.1f never reached threat floor %.1f" % [peak_doom, float(env["doom_threat_floor"])]
+	else:
+		reason = "playable: cautious line survives %d turns, peak doom %.1f" % [passive_turns, peak_doom]
+
+	return {
+		"seed": game_seed,
+		"accepted": accepted,
+		"reason": reason,
+		"passive_turns": passive_turns,
+		"reckless_turns": int(reckless["turns"]),
+		"peak_doom": peak_doom,
+		"envelope": env,
+	}
+
+static func vet_seed_batch(candidates: Array, envelope: Dictionary = {}) -> Array:
+	"""
+	Vet a batch of candidates. Each candidate is either a seed String or a
+	{seed: String, schedule: Array} Dictionary. Returns one vet_seed result per candidate.
+	"""
+	var results: Array = []
+	for c in candidates:
+		if typeof(c) == TYPE_DICTIONARY:
+			results.append(vet_seed(str(c.get("seed", "")), c.get("schedule", []), envelope))
+		else:
+			results.append(vet_seed(str(c), [], envelope))
+	return results
+
+## ============================================================================
 ## EVENT STRATEGY
 ## ============================================================================
+
+static func _choice_for_policy(event: Dictionary, choices: Array, policy: String) -> String:
+	"""
+	Map an event's choices to an id under a vetting policy.
+	  passive  -> the safest-first choice (index 0), the existing baseline behaviour
+	  reckless -> the last choice (typically the most aggressive/risky option)
+	"""
+	if policy == "reckless" and choices.size() > 0:
+		var last = choices[choices.size() - 1]
+		if typeof(last) == TYPE_DICTIONARY:
+			return str(last.get("id", ""))
+		return str(last)
+	return _get_event_choice_for_baseline(event, choices)
 
 static func _get_event_choice_for_baseline(event: Dictionary, choices: Array) -> String:
 	"""

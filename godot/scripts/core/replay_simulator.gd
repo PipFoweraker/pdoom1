@@ -23,6 +23,9 @@ static func replay(replay_data: Dictionary) -> Dictionary:
 	var run_seed: String = str(replay_data.get("seed", ""))
 	var run_version: String = str(replay_data.get("version", "unknown"))
 	var input_log: Array = replay_data.get("log", [])
+	# WS-C (ADR-0005): the event schedule is part of the run's identity, so it must be
+	# replayed alongside seed+version or a scheduled run won't reproduce.
+	var run_schedule: Array = replay_data.get("schedule", [])
 
 	# Group inputs by the turn they were recorded under. start_turn() increments turn
 	# first, so a round's event-responses and actions share that post-increment value.
@@ -43,7 +46,7 @@ static func replay(replay_data: Dictionary) -> Dictionary:
 	# Isolate the global tracker for the duration of the replay.
 	var snap: Dictionary = VerificationTracker.snapshot()
 
-	var state: GameState = GameState.new(run_seed)
+	var state: GameState = GameState.new(run_seed, run_schedule)
 	var turn_manager: TurnManager = TurnManager.new(state)
 	VerificationTracker.start_tracking(run_seed, run_version)
 
