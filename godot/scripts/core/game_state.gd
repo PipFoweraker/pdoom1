@@ -105,6 +105,11 @@ var queued_actions: Array[String] = []
 # Rival labs
 var rival_labs: Array = []  # Array of RivalLabs.RivalLab
 
+# WS-C (ADR-0005): a seed = RNG seed + event schedule. Ordered list of scheduled causes
+# ({turn, cause, target, magnitude}) applied per-turn by SeedSchedule. Causes touch sim
+# INPUTS only, never doom. Part of the seed's identity, so it survives reset().
+var event_schedule: Array = []
+
 # Doom system (modular, extensible)
 var doom_system: DoomSystem
 
@@ -117,7 +122,10 @@ var paper_submissions: Array = []  # Array of PaperSubmissions.PaperSubmission
 var attended_conferences: Array[String] = []  # Conference IDs attended this game year
 var conference_year: int = 2017  # Track which year for conference attendance reset
 
-func _init(game_seed: String = ""):
+func _init(game_seed: String = "", schedule: Array = []):
+	# WS-C (ADR-0005): schedule is part of seed identity; duplicated so external mutation
+	# can't alias it, and deliberately NOT cleared by reset().
+	event_schedule = schedule.duplicate(true)
 	if game_seed != "":
 		game_seed_str = game_seed
 	else:
