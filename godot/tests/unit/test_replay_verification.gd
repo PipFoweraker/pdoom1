@@ -4,11 +4,10 @@ extends GutTest
 ## (turn_manager.execute_turn); these tests exercise that wiring plus the new serialize /
 ## replay / verify path.
 ##
-## SCOPE NOTE: verification is on the SCORE (turns, doom_integral) — the sound anti-cheat
-## property. The verification HASH is NOT asserted here: it is currently non-deterministic
-## run-to-run because of a pre-existing engine bug (rivals/money/candidates diverge for
-## identical seed+inputs). See the WS-B PR body — WS-B is blocked on a determinism fix
-## before the hash-fingerprint tier of ADR-0006 can be trusted.
+## VERIFICATION TIERS (ADR-0006): the SCORE (turns, doom_integral) is the sound anti-cheat
+## property — you cannot claim a score your inputs do not produce. The verification HASH is
+## the cheap fingerprint tier, now asserted too: the engine determinism fix (WS-0) means an
+## identical seed+input replay reproduces an identical hash, so a mismatch = tamper/forgery.
 
 # Drive a real game headless with a per-turn action script, recording via the live
 # VerificationTracker wiring. Returns the exported artifact + the run's score.
@@ -41,7 +40,8 @@ func _play_scripted(seed: String, script: Dictionary, max_turns: int = 40) -> Di
 		"replay": VerificationTracker.serialize_replay(),
 		"export": VerificationTracker.export_for_submission(fs),
 		"turns": sc[0],
-		"integral": sc[1]
+		"integral": sc[1],
+		"hash": VerificationTracker.get_final_hash()
 	}
 	VerificationTracker.stop_tracking()
 	return out
@@ -76,6 +76,7 @@ func test_replay_reproduces_score():
 	var r: Dictionary = ReplaySimulator.replay(data)
 	assert_eq(r["turns"], run["turns"], "replay reproduces turns survived")
 	assert_eq(r["doom_integral"], run["integral"], "replay reproduces the doom-integral score")
+	assert_eq(r["hash"], run["hash"], "replay reproduces the verification hash (deterministic engine, WS-0)")
 
 
 func test_replay_is_deterministic():
@@ -99,6 +100,11 @@ func test_verify_accepts_true_score_and_rejects_inflated_claim():
 		"a claim of more turns than the inputs produce is rejected")
 	assert_false(ReplaySimulator.verify(data, run["turns"], run["integral"] + 10000),
 		"a claim of a higher doom-integral than the inputs produce is rejected")
+	# Fingerprint tier (ADR-0006), now that WS-0 made the engine deterministic:
+	assert_true(ReplaySimulator.verify(data, run["turns"], run["integral"], run["hash"]),
+		"an artifact verifies against the score AND hash it actually produces")
+	assert_false(ReplaySimulator.verify(data, run["turns"], run["integral"], "deadbeef_not_the_real_hash"),
+		"a forged verification hash is rejected even when the score matches")
 
 
 func test_malformed_artifact_deserializes_to_empty():

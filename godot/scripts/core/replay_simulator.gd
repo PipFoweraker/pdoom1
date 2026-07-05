@@ -93,16 +93,20 @@ static func replay(replay_data: Dictionary) -> Dictionary:
 	return result
 
 
-static func verify(replay_data: Dictionary, claimed_turns: int, claimed_integral: int) -> bool:
+static func verify(replay_data: Dictionary, claimed_turns: int, claimed_integral: int, claimed_hash: String = "") -> bool:
 	"""
-	True only if re-simulating the artifact reproduces the claimed SCORE (turns, integral).
-	This is the sound anti-cheat property: you cannot claim a score higher than your
-	input sequence actually produces.
+	True only if re-simulating the artifact reproduces the claimed SCORE (turns, integral),
+	and — when a claimed_hash is supplied — the claimed verification hash.
 
-	NOTE: the verification *hash* is deliberately NOT compared. It is currently
-	non-deterministic run-to-run (see the WS-B PR / determinism finding), so comparing it
-	would reject legitimate runs. Once the engine is made deterministic, the hash can be
-	re-added here as a cheap fast-path fingerprint (ADR-0006 two-tier verification).
+	The score check is the sound anti-cheat property: you cannot claim a score higher than
+	your input sequence actually produces. The hash is the cheap fast-path fingerprint tier
+	(ADR-0006): now that the engine is deterministic (WS-0), an identical seed+input replay
+	reproduces an identical hash, so a mismatch means the artifact was tampered or the claim
+	forged. Passing "" for claimed_hash skips the fingerprint tier (score-only check).
 	"""
 	var r: Dictionary = replay(replay_data)
-	return r["turns"] == claimed_turns and r["doom_integral"] == claimed_integral
+	if r["turns"] != claimed_turns or r["doom_integral"] != claimed_integral:
+		return false
+	if claimed_hash != "" and str(r["hash"]) != claimed_hash:
+		return false
+	return true
