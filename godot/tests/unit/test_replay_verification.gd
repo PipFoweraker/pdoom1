@@ -1,0 +1,125 @@
+extends GutTest
+## Replay artifact tests (ADR-0006, WS-B): the ordered input string is the canonical run
+## artifact. record_action was already wired into the live pipeline
+## (turn_manager.execute_turn); these tests exercise that wiring plus the new serialize /
+## replay / verify path.
+##
+## SCOPE NOTE: verification is on the SCORE (turns, doom_integral) — the sound anti-cheat
+## property. The verification HASH is NOT asserted here: it is currently non-deterministic
+## run-to-run because of a pre-existing engine bug (rivals/money/candidates diverge for
+## identical seed+inputs). See the WS-B PR body — WS-B is blocked on a determinism fix
+## before the hash-fingerprint tier of ADR-0006 can be trusted.
+
+# Drive a real game headless with a per-turn action script, recording via the live
+# VerificationTracker wiring. Returns the exported artifact + the run's score.
+func _play_scripted(seed: String, script: Dictionary, max_turns: int = 40) -> Dictionary:
+	var state: GameState = GameState.new(seed)
+	var tm: TurnManager = TurnManager.new(state)
+	VerificationTracker.start_tracking(seed, "test-vB")
+
+	while not state.game_over and state.turn < max_turns:
+		tm.start_turn()
+		var t: int = state.turn
+		var guard: int = 0
+		while state.pending_events.size() > 0 and guard < 128:
+			guard += 1
+			var event: Dictionary = state.pending_events[0]
+			var choices: Array = event.get("choices", [])
+			if choices.size() > 0:
+				var choice_id: String = str(choices[0].get("id", "")) if typeof(choices[0]) == TYPE_DICTIONARY else str(choices[0])
+				tm.resolve_event(event, choice_id)
+			else:
+				state.pending_events.remove_at(0)
+		state.queued_actions.clear()
+		for action_id in script.get(t, []):
+			state.queued_actions.append(action_id)
+		tm.execute_turn()
+
+	var fs: Dictionary = state.to_dict()
+	var sc: Array = GameState.score_tuple(fs)
+	var out: Dictionary = {
+		"replay": VerificationTracker.serialize_replay(),
+		"export": VerificationTracker.export_for_submission(fs),
+		"turns": sc[0],
+		"integral": sc[1]
+	}
+	VerificationTracker.stop_tracking()
+	return out
+
+
+func test_live_pipeline_records_inputs_into_log():
+	# The queued action must show up in the artifact — proof record_action is wired live.
+	var run: Dictionary = _play_scripted("replay_seed_W", {1: ["buy_compute"]})
+	var data: Dictionary = VerificationTracker.deserialize_replay(run["replay"])
+	var found: bool = false
+	for entry in data.get("log", []):
+		if str(entry.get("k", "")) == "a" and str(entry.get("id", "")) == "buy_compute":
+			found = true
+	assert_true(found, "the live turn pipeline recorded the queued action into the replay log")
+
+
+func test_export_carries_replay_artifact():
+	var run: Dictionary = _play_scripted("replay_seed_E", {1: ["fundraise_small"]})
+	assert_true(run["export"].has("replay"), "game-over export carries the replay artifact")
+	var data: Dictionary = VerificationTracker.deserialize_replay(run["export"]["replay"])
+	assert_eq(data.get("seed", ""), "replay_seed_E", "artifact records its seed")
+	assert_eq(data.get("format", ""), "pdoom1-replay-v1", "artifact is tagged with its format version")
+	assert_true((data.get("log", []) as Array).size() > 0, "artifact records a non-empty input log")
+
+
+func test_replay_reproduces_score():
+	# Re-simulating the recorded input sequence reproduces the run's score.
+	var run: Dictionary = _play_scripted("replay_seed_A", {1: ["fundraise_small"], 2: ["buy_compute"], 3: ["publish_paper"]})
+	var data: Dictionary = VerificationTracker.deserialize_replay(run["replay"])
+	assert_false(data.is_empty(), "artifact deserializes")
+
+	var r: Dictionary = ReplaySimulator.replay(data)
+	assert_eq(r["turns"], run["turns"], "replay reproduces turns survived")
+	assert_eq(r["doom_integral"], run["integral"], "replay reproduces the doom-integral score")
+
+
+func test_replay_is_deterministic():
+	# Replaying the SAME artifact twice yields the same result (the harness itself is stable).
+	var run: Dictionary = _play_scripted("replay_seed_D", {1: ["buy_compute"], 2: ["fundraise_small"]})
+	var data: Dictionary = VerificationTracker.deserialize_replay(run["replay"])
+	var r1: Dictionary = ReplaySimulator.replay(data)
+	var r2: Dictionary = ReplaySimulator.replay(data)
+	assert_eq(r1["turns"], r2["turns"], "same artifact replays to same turns")
+	assert_eq(r1["doom_integral"], r2["doom_integral"], "same artifact replays to same integral")
+	assert_eq(r1["hash"], r2["hash"], "same artifact replays to same hash (replay path is internally stable)")
+
+
+func test_verify_accepts_true_score_and_rejects_inflated_claim():
+	# The sound anti-cheat property: you cannot claim a score your inputs do not produce.
+	var run: Dictionary = _play_scripted("replay_seed_V", {1: ["fundraise_small"], 2: ["buy_compute"]})
+	var data: Dictionary = VerificationTracker.deserialize_replay(run["replay"])
+	assert_true(ReplaySimulator.verify(data, run["turns"], run["integral"]),
+		"an artifact verifies against the score it actually produces")
+	assert_false(ReplaySimulator.verify(data, run["turns"] + 5, run["integral"]),
+		"a claim of more turns than the inputs produce is rejected")
+	assert_false(ReplaySimulator.verify(data, run["turns"], run["integral"] + 10000),
+		"a claim of a higher doom-integral than the inputs produce is rejected")
+
+
+func test_malformed_artifact_deserializes_to_empty():
+	assert_true(VerificationTracker.deserialize_replay("not json {{{").is_empty(),
+		"malformed replay text yields an empty dict, not a crash")
+	assert_true(VerificationTracker.deserialize_replay("[1,2,3]").is_empty(),
+		"a non-object JSON payload is rejected")
+
+
+func test_replay_does_not_disturb_live_tracker():
+	# A live game is mid-flight; replaying a different run must leave the live hash intact.
+	VerificationTracker.start_tracking("live_seed", "test-vB")
+	VerificationTracker.record_action("buy_compute", GameState.new("live_seed"))
+	var live_hash: String = VerificationTracker.get_final_hash()
+	var live_log_size: int = VerificationTracker.replay_log.size()
+
+	var other: Dictionary = _play_scripted("other_seed", {1: ["fundraise_small"]})
+	VerificationTracker.start_tracking("live_seed", "test-vB")  # restore the live context
+	VerificationTracker.record_action("buy_compute", GameState.new("live_seed"))
+
+	ReplaySimulator.replay(VerificationTracker.deserialize_replay(other["replay"]))
+	assert_eq(VerificationTracker.get_final_hash(), live_hash, "replay restored the live hash")
+	assert_eq(VerificationTracker.replay_log.size(), live_log_size, "replay restored the live input log")
+	VerificationTracker.stop_tracking()

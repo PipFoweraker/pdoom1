@@ -42,6 +42,12 @@ var game_version: String = ""
 # Debug mode (enables verbose logging)
 var debug_mode: bool = false
 
+# Ordered replayable input sequence (ADR-0006: the input string is the canonical run
+# artifact — anti-cheat, share format, and bug-repro in one). The hash chain above is
+# demoted to a cheap fingerprint; only re-simulating this log proves a run is legal.
+# Entries: {"t": turn, "k": "a", "id": action_id} | {"t": turn, "k": "r", "ev": event_id, "ch": choice_id}
+var replay_log: Array = []
+
 
 func start_tracking(seed: String, version: String = "unknown"):
 	"""
@@ -54,6 +60,7 @@ func start_tracking(seed: String, version: String = "unknown"):
 	game_seed = seed
 	game_version = version
 	tracking_enabled = true
+	replay_log.clear()
 
 	# Initialize from seed
 	verification_hash = seed.sha256_text()
@@ -96,6 +103,9 @@ func record_action(action_id: String, state: GameState):
 	var data = "%s|action:%s|%s" % [verification_hash, action_id, snapshot]
 	verification_hash = data.sha256_text()
 
+	# Canonical replay artifact: append the player input in execution order.
+	replay_log.append({"t": state.turn, "k": "a", "id": action_id})
+
 	if debug_mode:
 		print("[VerificationTracker] Action: %s → %s..." % [action_id, verification_hash.substr(0, 16)])
 
@@ -133,6 +143,9 @@ func record_event_response(event_id: String, response_id: String, turn: int):
 
 	var data = "%s|response:%s->%s|t%d" % [verification_hash, event_id, response_id, turn]
 	verification_hash = data.sha256_text()
+
+	# Canonical replay artifact: event responses are player inputs too.
+	replay_log.append({"t": turn, "k": "r", "ev": event_id, "ch": response_id})
 
 	if debug_mode:
 		print("[VerificationTracker] Response: %s → %s → %s..." % [event_id, response_id, verification_hash.substr(0, 16)])
@@ -216,6 +229,55 @@ func is_tracking() -> bool:
 	return tracking_enabled
 
 
+func get_replay() -> Dictionary:
+	"""
+	The canonical run artifact: seed + version + ordered input log (ADR-0006).
+	This is what a verifier re-simulates; the hash is only a cheap fingerprint.
+	"""
+	return {
+		"format": "pdoom1-replay-v1",
+		"seed": game_seed,
+		"version": game_version,
+		"log": replay_log.duplicate(true)
+	}
+
+
+func serialize_replay() -> String:
+	"""Serialize the replay artifact to shareable, forum-postable text (the 'PGN')."""
+	return JSON.stringify(get_replay())
+
+
+static func deserialize_replay(text: String) -> Dictionary:
+	"""Parse a serialized replay artifact. Returns {} on malformed input."""
+	var json = JSON.new()
+	if json.parse(text) != OK:
+		return {}
+	var data = json.data
+	if typeof(data) != TYPE_DICTIONARY:
+		return {}
+	return data
+
+
+func snapshot() -> Dictionary:
+	"""Capture tracker state so a headless replay can run without disturbing a live game."""
+	return {
+		"tracking_enabled": tracking_enabled,
+		"verification_hash": verification_hash,
+		"game_seed": game_seed,
+		"game_version": game_version,
+		"replay_log": replay_log.duplicate(true)
+	}
+
+
+func restore(snap: Dictionary) -> void:
+	"""Restore tracker state captured by snapshot()."""
+	tracking_enabled = snap.get("tracking_enabled", false)
+	verification_hash = snap.get("verification_hash", "")
+	game_seed = snap.get("game_seed", "")
+	game_version = snap.get("game_version", "")
+	replay_log = (snap.get("replay_log", []) as Array).duplicate(true)
+
+
 func _create_state_snapshot(state: GameState) -> String:
 	"""
 	Create deterministic snapshot of game state.
@@ -279,6 +341,7 @@ func export_for_submission(final_state: Dictionary) -> Dictionary:
 		"seed": game_seed,
 		"game_version": game_version,
 		"final_state": final_state,
+		"replay": serialize_replay(),  # ADR-0006: canonical artifact travels with the submission
 		"timestamp": Time.get_unix_time_from_system()
 	}
 

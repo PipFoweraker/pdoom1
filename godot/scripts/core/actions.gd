@@ -956,6 +956,10 @@ static func submit_paper_to_conference(state: GameState, conf_id: String, topic:
 
 	# Create paper submission
 	var paper = PaperSubmissions.PaperSubmission.new()
+	# Deterministic id (turn + submission ordinal). The PaperSubmission default id is
+	# wall-clock based, which was leaking into the verification hash label below and
+	# breaking replay reproducibility (ADR-0006); derive it from deterministic state.
+	paper.id = "paper_%d_%d" % [state.turn, state.paper_submissions.size()]
 	paper.target_conference_id = conf_id
 	paper.topic = topic
 	paper.research_invested = research_amount
