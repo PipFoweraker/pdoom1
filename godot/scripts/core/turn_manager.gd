@@ -109,6 +109,14 @@ func start_turn() -> Dictionary:
 	# Causes touch sim inputs only — never doom directly.
 	SeedSchedule.apply_due_causes(state)
 
+	# WS-1 (ADR-0003): the Liability Ledger bills AFTER scheduled causes, so an
+	# exposure cause can land the same turn it fires. Compounding payables are the
+	# mortality guarantee (ADR-0002): an un-serviced debt eventually bills more than
+	# the player can cover, and the resulting bankruptcy escalation is the death —
+	# traceable to specific entries via the ledger's attribution trail.
+	if state.ledger:
+		state.ledger.tick_and_bill(state)
+
 	# Calculate max AP based on staff (base 3 + 0.5 per staff member)
 	var total_staff = state.get_total_staff()
 	var max_ap = 3 + int(total_staff * 0.5)
