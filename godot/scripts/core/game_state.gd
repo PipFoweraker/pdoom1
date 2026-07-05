@@ -20,6 +20,15 @@ var action_points: int = 3
 var max_action_points: int = 3  # Per-turn AP cap; difficulty modifiers adjust this (game_manager._apply_difficulty_settings)
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
 
+# Governance: institutional legitimacy the Liability Ledger bills against (ADR-0003).
+# Added as an engine resource this lane; its full player-facing design is parked for
+# workshop #2 (kickoff "governance is currently a name, not a system").
+var governance: float = 50.0
+
+# The Liability Ledger (ADR-0003): every mitigation is a loan. Instance state, rebuilt
+# per game in reset(); compounding payables are the mortality guarantee (ADR-0002).
+var ledger: Ledger
+
 # Technical Debt System (Issue #416)
 # Accumulates from rushed research, increases failure risk, affects doom
 var technical_debt: float = 0.0  # 0-100 scale
@@ -160,6 +169,8 @@ func reset():
 	doom = 50.0
 	action_points = 3
 	stationery = 100.0
+	governance = 50.0
+	ledger = Ledger.new()  # ADR-0003: fresh ledger per game
 	technical_debt = 0.0  # Reset tech debt (Issue #416)
 	research_quality_mode = DEFAULT_RESEARCH_QUALITY  # Issue #500
 
@@ -782,6 +793,8 @@ func to_dict() -> Dictionary:
 		"research_quality_mode": research_quality_mode,  # Issue #500
 		"papers": papers,
 		"reputation": reputation,
+		"governance": governance,
+		"ledger": ledger.to_dict() if ledger else {},
 		"doom": doom,
 		"doom_history": doom_history.duplicate(),  # #512 trend graph
 		"doom_system": doom_data,

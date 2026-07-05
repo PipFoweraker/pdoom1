@@ -1,0 +1,169 @@
+extends RefCounted
+class_name Ledger
+## The Liability Ledger (ADR-0003): every mitigation is a loan.
+##
+## A two-sided ledger of trades that pay now and bill later. There is NO new
+## player-facing currency (ADR-0003 "no parallel economy"): every entry reads and
+## writes only existing resources — money, reputation, governance, action_points,
+## doom. Compounding interest on payables is the mortality guarantee (ADR-0002):
+## an un-serviced debt grows without bound until a bill it cannot pay ends the run,
+## and the death is attributable to specific entries.
+##
+## First-wave content (ADR-0003): loans, funding-with-strings, desperation levers
+## (payroll coinflip -> secret governance rot), staff riders. Receivables/blackmail
+## chains are modelled at entry level; their full event/UI wiring is parked (see PR).
+
+enum Side { PAYABLE, RECEIVABLE }
+
+## A single liability or asset. Heterogeneous by design (ADR-0003 boundary
+## condition): fuses, currencies and interest profiles vary so the game does not
+## degenerate into an inevitability queue.
+class Entry:
+	var id: String = ""
+	var source: String = ""            # the trade that created it ("loan", "payroll_coinflip", ...)
+	var currency: String = "money"     # money | reputation | governance | doom | action_points
+	var principal: float = 0.0         # current magnitude; grows by `interest` each turn while unsettled
+	var fuse: int = 0                  # turns until it bills (0 = due now)
+	var interest: float = 0.0          # per-turn compounding rate (0.0 = does not grow)
+	var secret: bool = false           # can be exposed by rivals/scheduled causes (ADR-0003)
+	var side: int = Side.PAYABLE
+	var counterparty: String = ""      # per-actor, for receivables (NO global influence stat, ADR-0003)
+	var settled: bool = false          # billed and closed; kept for the post-mortem trail
+
+	func _init(p_source: String, p_currency: String, p_principal: float, p_fuse: int, p_interest: float = 0.0, p_secret: bool = false, p_side: int = Side.PAYABLE, p_counterparty: String = "") -> void:
+		source = p_source
+		currency = p_currency
+		principal = p_principal
+		fuse = p_fuse
+		interest = p_interest
+		secret = p_secret
+		side = p_side
+		counterparty = p_counterparty
+
+	func to_dict() -> Dictionary:
+		return {
+			"source": source, "currency": currency, "principal": principal,
+			"fuse": fuse, "interest": interest, "secret": secret,
+			"side": side, "counterparty": counterparty, "settled": settled,
+		}
+
+# How hard an unpayable money bill converts to doom — the "teeth" that guarantee
+# mortality when a debtor cannot cover a balloon payment. Config, not scattered magic.
+const DOOM_PER_UNPAID_1000: float = 3.5
+const REP_PER_UNPAID_1000: float = 2.0
+
+var entries: Array = []            # Array[Entry] — all entries, incl. settled (post-mortem trail)
+var death_attribution: Array = []  # populated when a bill drives the killing blow
+
+func add(entry: Entry) -> void:
+	entries.append(entry)
+
+# ---- First-wave content factories (ADR-0003). Callers apply the *immediate*
+# benefit (money now / doom suppressed now) and add the returned future bill. ----
+
+## Money now, balloon repayment later with compounding interest. The classic
+## "bill for turn 2" — deep runs are heroic because of what funded them.
+static func loan(amount: float, term: int = 4, rate: float = 0.25) -> Entry:
+	return Entry.new("loan", "money", amount * 1.2, term, rate)
+
+## Money now, an obligation that later bills in reputation/governance (strings).
+static func funding_with_strings(amount: float) -> Entry:
+	return Entry.new("funding_strings", "governance", amount * 0.15, 6, 0.05)
+
+## Desperation lever = catch-up (ADR-0003/0008). Buys doom-suppression NOW but
+## plants a SECRET, compounding governance liability (payroll coinflip -> rot ->
+## exposure -> blackmail chain). Coinflip severity is drawn from state.rng so the
+## run stays deterministic (WS-0).
+static func desperation_payroll(rng: RandomNumberGenerator) -> Entry:
+	var severity := 8000.0 + rng.randf() * 6000.0
+	return Entry.new("payroll_coinflip", "governance", severity, 3, 0.35, true)
+
+## A hire is AP-leverage with a small liability rider (ADR-0008). On departure a
+## caller can flip it to `secret` (a disgruntled ex-researcher).
+static func staff_rider(name: String) -> Entry:
+	return Entry.new("staff:" + name, "governance", 1200.0, 8, 0.02)
+
+# ---- Turn processing: the mortality guarantee lives here ----
+
+## Called once per turn (after WS-C scheduled causes). Compounds interest on live
+## payables, advances fuses, and bills anything due. Unbounded compounding is the
+## mortality guarantee (ADR-0002).
+func tick_and_bill(state) -> void:
+	for e in entries:
+		if e.settled or e.side != Side.PAYABLE:
+			continue
+		if e.interest > 0.0:
+			e.principal *= (1.0 + e.interest)   # unbounded growth -> no immortal runs
+		if e.fuse > 0:
+			e.fuse -= 1
+			continue
+		_bill(e, state)
+		e.settled = true
+
+## Bill a due entry in its own currency. A money bill the debtor cannot cover
+## converts the shortfall into doom + reputation damage and records the entry as a
+## cause of death — this is the escalation that makes debt lethal and traceable.
+func _bill(e: Entry, state) -> void:
+	match e.currency:
+		"money":
+			state.money -= e.principal
+			if state.money < 0.0:
+				var shortfall: float = -state.money
+				state.money = 0.0
+				state.doom += shortfall / 1000.0 * DOOM_PER_UNPAID_1000
+				state.reputation = max(0.0, state.reputation - shortfall / 1000.0 * REP_PER_UNPAID_1000)
+				_attribute(e, shortfall)
+		"reputation":
+			state.reputation = max(0.0, state.reputation - e.principal)
+		"governance":
+			# Governance is a resource the ledger reads/writes (ADR-0003). Its
+			# player-facing design is parked (workshop #2). Below zero, corroded
+			# governance leaks into doom — the bribery/blackmail pressure surface.
+			state.governance -= e.principal
+			if state.governance < 0.0:
+				var deficit: float = -state.governance
+				state.governance = 0.0
+				state.doom += deficit / 1000.0 * DOOM_PER_UNPAID_1000
+				_attribute(e, deficit)
+		"doom":
+			state.doom += e.principal
+			_attribute(e, e.principal)
+		"action_points":
+			state.action_points = max(0, state.action_points - int(e.principal))
+
+func _attribute(e: Entry, magnitude: float) -> void:
+	death_attribution.append({"source": e.source, "currency": e.currency, "magnitude": magnitude})
+
+## Expose a secret entry (rival action / scheduled cause). Converts it to
+## reputation + governance damage, and — the chain continues — may offer a
+## blackmail entry (a new, worse liability). Blackmail is content, not a system.
+func expose(entry: Entry, state, offer_blackmail: bool = true) -> void:
+	if not entry.secret or entry.settled:
+		return
+	entry.secret = false
+	state.reputation = max(0.0, state.reputation - entry.principal / 1000.0 * 4.0)
+	state.governance -= entry.principal * 0.5
+	if offer_blackmail:
+		# A worse liability that keeps the debtor quiet: shorter fuse, steeper rate.
+		add(Entry.new("blackmail:" + entry.source, "money", entry.principal * 1.5, 2, 0.5, true))
+
+# ---- Read helpers ----
+
+func outstanding(side: int = Side.PAYABLE) -> float:
+	var total := 0.0
+	for e in entries:
+		if not e.settled and e.side == side:
+			total += e.principal
+	return total
+
+func secret_entries() -> Array:
+	return entries.filter(func(e): return e.secret and not e.settled)
+
+func to_dict() -> Dictionary:
+	return {
+		"outstanding_payable": outstanding(Side.PAYABLE),
+		"outstanding_receivable": outstanding(Side.RECEIVABLE),
+		"entry_count": entries.size(),
+		"secret_count": secret_entries().size(),
+		"death_attribution": death_attribution.duplicate(true),
+	}
