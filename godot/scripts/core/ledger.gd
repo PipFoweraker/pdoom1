@@ -159,11 +159,34 @@ func outstanding(side: int = Side.PAYABLE) -> float:
 func secret_entries() -> Array:
 	return entries.filter(func(e): return e.secret and not e.settled)
 
+## Soonest fuse among live payables (turns until the next bill), -1 if none.
+func soonest_fuse() -> int:
+	var soonest := -1
+	for e in entries:
+		if not e.settled and e.side == Side.PAYABLE:
+			if soonest < 0 or e.fuse < soonest:
+				soonest = e.fuse
+	return soonest
+
+## BL-2: minimal DETERMINISTIC exposure of secret liabilities. Each unsettled secret
+## entry has `chance` (drawn from state.rng, so replay stays deterministic per WS-0) of
+## being exposed this turn -> reputation/governance damage + a blackmail offer. Exact
+## trigger design (rival-driven vs scheduled cause, probability) is PARKED (workshop #2).
+## Returns the entries exposed on this call.
+func check_exposures(state, chance: float) -> Array:
+	var exposed := []
+	for e in secret_entries():
+		if state.rng.randf() < chance:
+			expose(e, state)
+			exposed.append(e)
+	return exposed
+
 func to_dict() -> Dictionary:
 	return {
 		"outstanding_payable": outstanding(Side.PAYABLE),
 		"outstanding_receivable": outstanding(Side.RECEIVABLE),
 		"entry_count": entries.size(),
 		"secret_count": secret_entries().size(),
+		"soonest_fuse": soonest_fuse(),
 		"death_attribution": death_attribution.duplicate(true),
 	}

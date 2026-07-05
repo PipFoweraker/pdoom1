@@ -42,6 +42,7 @@ var game_manager: Node
 var queued_actions: Array = []
 var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
+var ledger_summary_label: Label  # BL-1 compact Liability Ledger summary (script-instantiated)
 var current_turn_phase: String = "NOT_STARTED"
 
 # Active dialog state for keyboard shortcuts
@@ -82,6 +83,15 @@ func _ready():
 	doom_trend_graph.expand_requested.connect(_show_doom_trend_expanded)
 	right_zones.add_child(doom_trend_graph)
 	right_zones.move_child(doom_trend_graph, doom_meter_zone.get_index() + 1)
+
+	# BL-1: compact Liability Ledger summary just below the doom trend. Kept terse so
+	# the main view stays uncrowded; the full ledger is a switchable screen (Financing).
+	ledger_summary_label = Label.new()
+	ledger_summary_label.add_theme_font_size_override("font_size", 11)
+	ledger_summary_label.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
+	ledger_summary_label.text = "Ledger: clean"
+	right_zones.add_child(ledger_summary_label)
+	right_zones.move_child(ledger_summary_label, doom_trend_graph.get_index() + 1)
 
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
@@ -523,6 +533,9 @@ func _on_game_state_updated(state: Dictionary):
 	if doom_trend_graph:
 		doom_trend_graph.set_history(state.get("doom_history", []))
 
+	# BL-1: refresh the compact Liability Ledger summary
+	_update_ledger_summary(state.get("ledger", {}))
+
 	# Update office cat for doom level and visibility
 	if office_cat:
 		office_cat.update_doom_level(doom / 100.0)  # Convert percentage to 0.0-1.0
@@ -568,6 +581,24 @@ func _on_game_state_updated(state: Dictionary):
 
 	# Update employee roster display
 	_update_employee_roster(state)
+
+func _update_ledger_summary(ledger_data: Dictionary) -> void:
+	"""BL-1 compact summary: outstanding owed, soonest due, secret count. Deliberately
+	terse so the main view stays uncrowded; the full ledger is a switchable screen."""
+	if not ledger_summary_label:
+		return
+	var owed: float = float(ledger_data.get("outstanding_payable", 0.0))
+	var soonest: int = int(ledger_data.get("soonest_fuse", -1))
+	var secrets: int = int(ledger_data.get("secret_count", 0))
+	if ledger_data.is_empty() or (owed <= 0.0 and secrets == 0):
+		ledger_summary_label.text = "Ledger: clean"
+		ledger_summary_label.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
+		return
+	var due_txt := ("due %dt" % soonest) if soonest >= 0 else "no due"
+	var secret_txt := ("  |  %d secret" % secrets) if secrets > 0 else ""
+	ledger_summary_label.text = "Ledger: %s owed  |  %s%s" % [GameConfig.format_money(owed), due_txt, secret_txt]
+	# Redden as secret liabilities mount (the exposure pressure surface)
+	ledger_summary_label.add_theme_color_override("font_color", Color(0.85, 0.78, 0.55) if secrets == 0 else Color(0.9, 0.55, 0.45))
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
@@ -871,6 +902,8 @@ func _on_dynamic_action_pressed(action_id: String, action_name: String):
 			_show_travel_submenu()
 		elif action_id == "operations":
 			_show_operations_submenu()
+		elif action_id == "financing":
+			_show_financing_submenu()
 		# Align the submenu to the clicked button + add close affordance (#510)
 		_decorate_active_submenu(_find_action_button(action_id))
 		return
@@ -1567,6 +1600,190 @@ func _on_fundraising_option_selected(action_id: String, action_name: String, dia
 
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
 	game_manager.select_action(action_id)
+
+func _show_financing_submenu():
+	"""BL-1: the Liability Ledger financing menu (ADR-0003) - lists the ledger trades
+	plus a button that opens the full switchable ledger screen."""
+	if active_dialog != null and is_instance_valid(active_dialog):
+		active_dialog.queue_free()
+		active_dialog = null
+		active_dialog_buttons = []
+
+	var dialog = Panel.new()
+	dialog.custom_minimum_size = Vector2(440, 330)
+	dialog.size = Vector2(440, 330)
+	dialog.position = Vector2(90, 80)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 15)
+	margin.add_theme_constant_override("margin_right", 15)
+	margin.add_theme_constant_override("margin_top", 15)
+	margin.add_theme_constant_override("margin_bottom", 15)
+	dialog.add_child(margin)
+
+	var main_vbox = VBoxContainer.new()
+	main_vbox.add_theme_constant_override("separation", 6)
+	margin.add_child(main_vbox)
+
+	var title = Label.new()
+	title.text = "FINANCING - every fix is a loan"
+	title.add_theme_font_size_override("font_size", 13)
+	title.add_theme_color_override("font_color", Color(0.85, 0.78, 0.55))
+	main_vbox.add_child(title)
+
+	var current_state = game_manager.get_game_state()
+	var buttons = []
+	var key_labels = ["Q", "W", "E", "R"]
+	var idx = 0
+	for option in GameActions.get_financing_options():
+		var opt_id = option.get("id", "")
+		var opt_name = option.get("name", "")
+		var opt_costs = option.get("costs", {})
+		var btn = Button.new()
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.custom_minimum_size = Vector2(0, 44)
+		var key = key_labels[idx] if idx < key_labels.size() else ""
+		var cost_bits = []
+		if opt_costs.get("action_points", 0) > 0:
+			cost_bits.append("%d AP" % opt_costs["action_points"])
+		if opt_costs.get("money", 0) > 0:
+			cost_bits.append(GameConfig.format_money(opt_costs["money"]))
+		var cost_txt = (" (%s)" % ", ".join(cost_bits)) if cost_bits.size() > 0 else ""
+		btn.text = "[%s]  %s%s" % [key, opt_name, cost_txt]
+		btn.tooltip_text = option.get("description", "")
+		var can_afford = true
+		for res in opt_costs.keys():
+			if res == "action_points":
+				continue
+			if current_state.get(res, 0) < opt_costs[res]:
+				can_afford = false
+		if not can_afford:
+			btn.disabled = true
+			btn.modulate = Color(0.5, 0.5, 0.5)
+		btn.pressed.connect(func(): _on_financing_option_selected(opt_id, opt_name, dialog))
+		main_vbox.add_child(btn)
+		buttons.append(btn)
+		idx += 1
+
+	var view_btn = Button.new()
+	view_btn.focus_mode = Control.FOCUS_NONE
+	view_btn.custom_minimum_size = Vector2(0, 34)
+	view_btn.text = "View Ledger  >>"
+	view_btn.add_theme_color_override("font_color", Color(0.7, 0.85, 0.9))
+	view_btn.pressed.connect(func(): _show_ledger_screen())
+	main_vbox.add_child(view_btn)
+
+	active_dialog = dialog
+	active_dialog_buttons = buttons
+	tab_manager.add_child(dialog)
+	dialog.visible = true
+	dialog.z_index = 1000
+	dialog.z_as_relative = false
+
+func _on_financing_option_selected(action_id: String, action_name: String, dialog: Control):
+	"""Queue a ledger trade (mirrors fundraising selection)."""
+	dialog.queue_free()
+	active_dialog = null
+	active_dialog_buttons = []
+
+	var action_def = _get_action_by_id(action_id)
+	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
+	var available_ap = game_manager.state.get_available_ap()
+	if available_ap < ap_cost:
+		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+		return
+	if not game_manager.state.can_afford(action_def.get("costs", {})):
+		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
+		return
+	log_message("[color=cyan]Financing: %s[/color]" % action_name)
+	queued_actions.append({"id": action_id, "name": action_name})
+	update_queued_actions_display()
+	game_manager.select_action(action_id)
+
+func _show_ledger_screen():
+	"""BL-1: the full Liability Ledger screen - a switchable CRT viewport listing every
+	live entry (source, currency, principal, fuse, secrecy) plus death attribution."""
+	if active_dialog != null and is_instance_valid(active_dialog):
+		active_dialog.queue_free()
+		active_dialog = null
+		active_dialog_buttons = []
+
+	var dialog = Panel.new()
+	dialog.custom_minimum_size = Vector2(560, 460)
+	dialog.size = Vector2(560, 460)
+	dialog.position = Vector2(90, 60)
+
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 16)
+	margin.add_theme_constant_override("margin_right", 16)
+	margin.add_theme_constant_override("margin_top", 16)
+	margin.add_theme_constant_override("margin_bottom", 16)
+	dialog.add_child(margin)
+	var vbox = VBoxContainer.new()
+	vbox.add_theme_constant_override("separation", 4)
+	margin.add_child(vbox)
+
+	var ledger = game_manager.state.ledger if (game_manager and game_manager.state) else null
+
+	var title = Label.new()
+	title.text = "LIABILITY LEDGER"
+	title.add_theme_font_size_override("font_size", 15)
+	title.add_theme_color_override("font_color", Color(0.85, 0.78, 0.55))
+	vbox.add_child(title)
+
+	if ledger == null:
+		var none = Label.new()
+		none.text = "(no ledger)"
+		vbox.add_child(none)
+	else:
+		var summary = Label.new()
+		summary.text = "Owed: %s    Favors: %s    Secrets: %d" % [
+			GameConfig.format_money(ledger.outstanding(Ledger.Side.PAYABLE)),
+			GameConfig.format_money(ledger.outstanding(Ledger.Side.RECEIVABLE)),
+			ledger.secret_entries().size()]
+		summary.add_theme_font_size_override("font_size", 12)
+		summary.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
+		vbox.add_child(summary)
+
+		var scroll = ScrollContainer.new()
+		scroll.custom_minimum_size = Vector2(0, 320)
+		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		vbox.add_child(scroll)
+		var list = VBoxContainer.new()
+		list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		scroll.add_child(list)
+
+		var live = ledger.entries.filter(func(e): return not e.settled)
+		if live.is_empty():
+			var clean = Label.new()
+			clean.text = "Clean books. Every mitigation you take will show up here as a bill."
+			clean.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
+			list.add_child(clean)
+		for e in live:
+			var row = Label.new()
+			var side_txt = "owe" if e.side == Ledger.Side.PAYABLE else "owed"
+			var secret_txt = "   [SECRET]" if e.secret else ""
+			var interest_txt = ("  @%.0f%%/t" % (e.interest * 100.0)) if e.interest > 0.0 else ""
+			row.text = "%s   %s %.0f %s  |  due %dt%s%s" % [
+				e.source, side_txt, e.principal, e.currency, e.fuse, interest_txt, secret_txt]
+			row.add_theme_font_size_override("font_size", 11)
+			if e.secret:
+				row.add_theme_color_override("font_color", Color(0.9, 0.6, 0.5))
+			list.add_child(row)
+
+		if ledger.death_attribution.size() > 0:
+			var att = Label.new()
+			att.text = "\nAttributed damage: %d billed shortfalls" % ledger.death_attribution.size()
+			att.add_theme_color_override("font_color", Color(0.9, 0.5, 0.5))
+			vbox.add_child(att)
+
+	active_dialog = dialog
+	active_dialog_buttons = []
+	tab_manager.add_child(dialog)
+	dialog.visible = true
+	dialog.z_index = 1000
+	dialog.z_as_relative = false
+	_decorate_active_submenu()
 
 func _show_publicity_submenu():
 	"""Show popup dialog with publicity/influence options with keyboard support - icon grid layout"""

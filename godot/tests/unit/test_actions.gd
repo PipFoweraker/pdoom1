@@ -19,7 +19,7 @@ func test_all_actions_have_required_fields():
 func test_action_count():
 	# Test that we have expected number of actions
 	var actions = GameActions.get_all_actions()
-	assert_eq(actions.size(), 12, "Should have 12 main actions")
+	assert_eq(actions.size(), 13, "Should have 13 main actions (incl. BL-1 Financing submenu)")
 
 func test_hiring_options_exist():
 	# Test that hiring submenu has 5 options (safety, capability, compute, manager, ethicist)
