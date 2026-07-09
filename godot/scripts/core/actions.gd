@@ -278,6 +278,20 @@ static func get_hiring_options() -> Array[Dictionary]:
 			"description": "Add philosophical perspective to research (+5 reputation)",
 			"costs": {"money": 70000, "action_points": 1},
 			"category": "hiring"
+		},
+		{
+			"id": "hire_interpretability_researcher",
+			"name": "Interpretability Researcher",
+			"description": "Probes how models work internally (safety-aligned research)",
+			"costs": {"money": 60000, "action_points": 1},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_alignment_researcher",
+			"name": "Alignment Researcher",
+			"description": "Aligns AI goals with human values (safety-aligned research)",
+			"costs": {"money": 60000, "action_points": 1},
+			"category": "hiring"
 		}
 	]
 

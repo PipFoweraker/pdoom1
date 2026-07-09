@@ -22,9 +22,21 @@ func test_action_count():
 	assert_eq(actions.size(), 13, "Should have 13 main actions (incl. BL-1 Financing submenu)")
 
 func test_hiring_options_exist():
-	# Test that hiring submenu has 5 options (safety, capability, compute, manager, ethicist)
+	# Test that hiring submenu has 7 options (safety, capability, compute, manager, ethicist,
+	# interpretability, alignment)
 	var hiring_options = GameActions.get_hiring_options()
-	assert_eq(hiring_options.size(), 5, "Should have 5 hiring options")
+	assert_eq(hiring_options.size(), 7, "Should have 7 hiring options")
+
+func test_all_spawnable_specs_are_hireable():
+	# Regression (#561): every researcher specialization that can spawn in the candidate pool
+	# must have a hiring submenu option, or those candidates can never be hired.
+	var ids := []
+	for opt in GameActions.get_hiring_options():
+		ids.append(opt["id"])
+	assert_true("hire_safety_researcher" in ids, "safety hireable")
+	assert_true("hire_capability_researcher" in ids, "capability hireable")
+	assert_true("hire_interpretability_researcher" in ids, "interpretability hireable")
+	assert_true("hire_alignment_researcher" in ids, "alignment hireable")
 
 func test_buy_compute_execution():
 	# Test buy_compute action
@@ -60,6 +72,27 @@ func test_hire_compute_engineer_execution():
 	var result = GameActions.execute_action("hire_compute_engineer", state)
 
 	assert_eq(state.compute_engineers, initial_staff + 1, "Compute engineers should increase by 1")
+
+func test_hire_interpretability_researcher_execution():
+	# Regression (#561): interpretability candidates spawn + engine handles them, but the hire
+	# action had no submenu option. Seed a candidate explicitly so the test is seed-independent.
+	var c = Researcher.new()
+	c.specialization = "interpretability"
+	state.add_candidate(c)
+	var before = state.get_researcher_count_by_spec("interpretability")
+	var result = GameActions.execute_action("hire_interpretability_researcher", state)
+	assert_true(result.get("success", false), "Interpretability hire should succeed")
+	assert_eq(state.get_researcher_count_by_spec("interpretability"), before + 1, "Interpretability researcher should join")
+
+func test_hire_alignment_researcher_execution():
+	# Regression (#561): same gap for alignment specialists.
+	var c = Researcher.new()
+	c.specialization = "alignment"
+	state.add_candidate(c)
+	var before = state.get_researcher_count_by_spec("alignment")
+	var result = GameActions.execute_action("hire_alignment_researcher", state)
+	assert_true(result.get("success", false), "Alignment hire should succeed")
+	assert_eq(state.get_researcher_count_by_spec("alignment"), before + 1, "Alignment researcher should join")
 
 func test_safety_research_execution():
 	# Test safety research action - doom reduction scales with safety_researchers count
