@@ -189,16 +189,14 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	else:
 		var reason = _get_defeat_reason(final_state)
 		stats_text += "\n[center][color=red]%s[/color][/center]" % reason
+		var attribution = _get_ledger_attribution_text(final_state)
+		if attribution != "":
+			stats_text += "\n[center][color=orange]%s[/color][/center]" % attribution
 
-	# AI Safety resources call to action
-	stats_text += "\n\n[center][color=gray]───────────────────[/color][/center]\n"
-	stats_text += "\n[center][color=cyan][b]LEARN ABOUT REAL AI SAFETY[/b][/color][/center]\n"
-	stats_text += "[center][color=white]The challenges in this game reflect real concerns.[/color][/center]\n"
-	stats_text += "[center][color=gray]Visit [color=dodger_blue][url=https://aisafety.info]aisafety.info[/url][/color] to learn more.[/color][/center]"
-
-	# Navigation hint
-	stats_text += "\n\n[center][color=gray]───────────────────[/color][/center]\n"
-	stats_text += "\n[center][color=gold][b]⏎ Press ENTER for Leaderboard[/b][/color][/center]"
+	# AI Safety resources call to action (condensed to reduce vertical overflow)
+	stats_text += "\n[center][color=gray]───────────────────[/color][/center]\n"
+	stats_text += "[center][color=cyan]Learn about real AI safety: [url=https://aisafety.info][color=dodger_blue]aisafety.info[/color][/url][/color][/center]\n"
+	stats_text += "[center][color=gold][b]⏎ Press ENTER for Leaderboard[/b][/color][/center]"
 
 	stats_label.text = stats_text
 
@@ -214,15 +212,44 @@ func _get_doom_display_color(doom: float) -> String:
 		return "red"
 
 func _get_defeat_reason(final_state: Dictionary) -> String:
-	"""Generate defeat reason based on final state"""
+	"""Generate defeat reason based on final state.
+	Order mirrors GameState.check_win_lose(): doom >= 100, then reputation <= 0."""
 	var doom = final_state.get("doom", 0)
+	var reputation = final_state.get("reputation", 100)
 
 	if doom >= 100.0:
 		return "Doom reached 100%. The AI became\nunaligned and humanity was lost."
+	elif reputation <= 0.0:
+		return "Your lab lost all credibility —\nreputation hit zero and the doors closed."
 	elif final_state.get("money", 0) < 0:
 		return "Your organization went bankrupt before\nthe mission could be completed."
 	else:
 		return "The experiment ended prematurely."
+
+func _fmt_money(amount: float) -> String:
+	"""Compact money display: 283458 -> $283k."""
+	var a := int(round(amount))
+	if abs(a) >= 1000:
+		return "$%dk" % (a / 1000)
+	return "$%d" % a
+
+func _get_ledger_attribution_text(final_state: Dictionary) -> String:
+	"""Surface the ledger death_attribution already in state, so the player learns what
+	killed them. Returns '' when there's no ledger attribution."""
+	var ledger = final_state.get("ledger", {})
+	var attribution = ledger.get("death_attribution", [])
+	if attribution == null or attribution.is_empty():
+		return ""
+	var total := 0.0
+	var counts := {}
+	for entry in attribution:
+		var src := str(entry.get("source", "debt"))
+		total += float(entry.get("magnitude", 0.0))
+		counts[src] = int(counts.get(src, 0)) + 1
+	var parts := []
+	for src in counts:
+		parts.append("%d %s" % [counts[src], src])
+	return "Your ledger came due: %s — %s in bills you couldn't cover." % [", ".join(parts), _fmt_money(total)]
 
 func _on_play_again_pressed():
 	"""Restart the game"""
