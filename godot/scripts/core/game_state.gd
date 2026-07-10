@@ -428,9 +428,6 @@ func check_win_lose():
 	elif reputation <= 0.0:
 		game_over = true
 		victory = false
-	elif doom <= 0.0:
-		game_over = true
-		victory = true
 
 func get_total_staff() -> int:
 	# Count individual researchers if using new system
