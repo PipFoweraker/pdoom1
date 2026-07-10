@@ -120,9 +120,11 @@ func start_turn() -> Dictionary:
 		# state.rng). 0.15 is a placeholder - exposure tuning parked (workshop #2).
 		state.ledger.check_exposures(state, 0.15)
 
-	# Calculate max AP based on staff (base 3 + 0.5 per staff member)
+	# Calculate max AP based on difficulty base + staff (0.5 per staff member).
+	# FIX #541: use state.max_action_points (set by difficulty: Easy=4, Standard=3,
+	# Hard=2) as the base instead of a hardcoded 3, so difficulty actually changes AP.
 	var total_staff = state.get_total_staff()
-	var max_ap = 3 + int(total_staff * 0.5)
+	var max_ap = state.max_action_points + int(total_staff * 0.5)
 	state.action_points = max_ap
 
 	# Reset AP tracking for new turn (reserve system)
