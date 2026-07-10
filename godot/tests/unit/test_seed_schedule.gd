@@ -55,7 +55,7 @@ func test_vet_seed_classifies_against_configurable_envelope():
 	assert_true(str(punishing["reason"]).contains("punishing"), "reason should name the failure")
 
 	# Impossible threat floor: reject as a snoozefest.
-	var snooze := BaselineSimulator.vet_seed(SEED, [], {"doom_threat_floor": 9999.0})
+	var snooze := BaselineSimulator.vet_seed(SEED, [], {"min_turns": 1, "doom_threat_floor": 9999.0})
 	assert_false(snooze["accepted"], "unreachable doom floor should reject")
 	assert_true(str(snooze["reason"]).contains("snoozefest"), "reason should name the failure")
 

@@ -373,3 +373,40 @@ func test_unproductive_doom_no_double_counting():
 	# Only 6 unproductive (not 6 + 6 from double counting)
 	# 6 * 0.5 = 3.0 doom
 	assert_eq(doom_system.doom_sources["unproductive"], 3.0, "Unmanaged should not be double-counted")
+
+# ============================================================================
+# RIVAL DOOM CONTRIBUTION TESTS (Issue #562)
+# ============================================================================
+
+func test_rival_doom_survives_source_reset():
+	# Regression: turn_manager sets rival doom BEFORE calculate_doom_change(), whose
+	# _reset_doom_sources() used to wipe it to 0 before the sum.
+	var doom_system = _create_doom_system()
+	var state = _create_minimal_game_state()
+	doom_system.set_rival_doom_contribution(7.0)
+	var result = doom_system.calculate_doom_change(state)
+	assert_eq(result["sources"]["rivals"], 7.0, "Rival doom must survive the per-turn source reset (issue #562)")
+
+func test_rival_doom_zero_when_unset():
+	var doom_system = _create_doom_system()
+	var state = _create_minimal_game_state()
+	var result = doom_system.calculate_doom_change(state)
+	assert_eq(result["sources"]["rivals"], 0.0, "Rival doom is 0 when no contribution set")
+
+func test_rival_capability_overhang_scales_with_progress():
+	# The passive overhang term grows with accumulated capability_progress, so an advanced
+	# rival applies strictly more doom than an identical low-progress one (same rng seed).
+	var low = RivalLabs.RivalLab.new("LowLab", 0.9)
+	low.capability_progress = 0.0
+	var high = RivalLabs.RivalLab.new("HighLab", 0.9)
+	high.capability_progress = 200.0
+	var state = _create_minimal_game_state()
+	var rng_low = RandomNumberGenerator.new()
+	rng_low.seed = 12345
+	var rng_high = RandomNumberGenerator.new()
+	rng_high.seed = 12345
+	var low_result = RivalLabs.process_rival_turn(low, state, rng_low)
+	var high_result = RivalLabs.process_rival_turn(high, state, rng_high)
+	var expected_delta = 200.0 * RivalLabs.CAPABILITY_OVERHANG_DOOM_PER_PROGRESS
+	assert_almost_eq(high_result["doom_contribution"] - low_result["doom_contribution"], expected_delta, 0.001, "Overhang doom scales with capability_progress")
+	assert_gt(high_result["doom_contribution"], low_result["doom_contribution"], "Higher-capability rival contributes more doom")
