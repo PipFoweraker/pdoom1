@@ -3,6 +3,12 @@ class_name RivalLabs
 ## Rival AI labs that compete with the player
 ## Issue #474: Organization discovery system
 
+## Passive "capability-overhang" doom each rival applies per turn, scaling with its
+## accumulated capability_progress — a GROWING pressure a fixed safety capacity cannot
+## offset forever (the unbounded-mortality term for issue #562 / DQ-1).
+## Placeholder magnitude — tuning is workshop #2.
+const CAPABILITY_OVERHANG_DOOM_PER_PROGRESS: float = 0.05
+
 # Organization visibility states
 enum VisibilityState {
 	HIDDEN,      # Player does not know they exist
@@ -130,6 +136,10 @@ static func process_rival_turn(rival: RivalLab, player_state: GameState, rng: Ra
 			"safety_research":
 				rival.safety_progress += 8.0
 				result["doom_contribution"] -= 3.0
+	# Passive capability-overhang pressure: grows as this rival's capability_progress
+	# accumulates, so advanced rivals apply doom a fixed safety capacity cannot fully
+	# offset over time (issue #562 / DQ-1 mortality term). Placeholder scale.
+	result["doom_contribution"] += rival.capability_progress * CAPABILITY_OVERHANG_DOOM_PER_PROGRESS
 	return result
 
 static func _choose_rival_action(rival: RivalLab, _player_state: GameState, rng: RandomNumberGenerator) -> String:

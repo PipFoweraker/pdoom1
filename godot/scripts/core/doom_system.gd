@@ -10,6 +10,11 @@ class_name DoomSystem
 ## Core doom state
 var current_doom: float = 50.0
 
+## Rival doom pending contribution — turn_manager sets this via set_rival_doom_contribution()
+## BEFORE calculate_doom_change(); it must be re-applied in _calculate_rival_doom() AFTER the
+## per-turn _reset_doom_sources(), or it gets wiped to 0 (the bug behind issue #562).
+var _pending_rival_doom: float = 0.0
+
 ## Momentum mechanics - doom changes accumulate and compound
 var doom_velocity: float = 0.0  # Current rate of doom change per turn
 var doom_momentum: float = 0.0  # Accumulated momentum (compounds over time)
@@ -210,9 +215,9 @@ func _calculate_researcher_doom(state: GameState):
 	doom_sources["specializations"] = spec_doom
 
 func _calculate_rival_doom(_state: GameState):
-	"""Doom from rival actions - already calculated in turn manager"""
-	# This is set externally by turn_manager after rival processing
-	pass
+	"""Doom from rival actions - computed by turn_manager, stashed in _pending_rival_doom.
+	Applied here (after _reset_doom_sources) so it survives into the source sum. (Issue #562)"""
+	doom_sources["rivals"] = _pending_rival_doom
 
 func _calculate_unproductive_doom(state: GameState):
 	"""Doom from unproductive employees"""
@@ -317,8 +322,10 @@ func add_event_doom(amount: float, _reason: String = ""):
 	current_doom = clamp(current_doom, 0.0, 100.0)
 
 func set_rival_doom_contribution(amount: float):
-	"""Called by turn_manager after processing rival actions"""
-	doom_sources["rivals"] = amount
+	"""Called by turn_manager after processing rival actions.
+	Stored (not written straight to doom_sources) so the next calculate_doom_change()
+	reset does not wipe it before _calculate_rival_doom() re-applies it. (Issue #562)"""
+	_pending_rival_doom = amount
 
 # ============================================================================
 # UTILITY FUNCTIONS
