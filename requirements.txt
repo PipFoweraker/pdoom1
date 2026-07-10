@@ -6,3 +6,11 @@ jsonschema>=4.0.0
 
 # YAML parsing (issue sync, metadata, config files)
 pyyaml>=6.0
+
+# Asset generation pipeline (tools/assets/generate_images.py).
+# openai is the default image backend; Pillow handles master/downscale saves.
+openai>=1.0
+Pillow>=10.0
+# Google Gemini "Nano Banana Pro" backend (gemini-3-pro-image) is DORMANT:
+# imported lazily and only used with --backend gemini, so it is optional.
+google-genai>=0.3
