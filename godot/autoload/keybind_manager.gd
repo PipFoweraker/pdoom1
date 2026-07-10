@@ -18,7 +18,7 @@ var keybinds: Dictionary = {
 	"export_log": {"key": KEY_BACKSLASH, "category": Category.ADMIN, "description": "Export Game Log"},
 
 	# Debug & Admin
-	"debug_overlay": {"key": KEY_ASCIITILDE, "category": Category.DEBUG, "description": "Toggle Debug Overlay (User)"},
+	"debug_overlay": {"key": KEY_F3, "category": Category.DEBUG, "description": "Toggle Debug Overlay (User)"},
 	"admin_mode": {"key": KEY_BRACKETRIGHT, "category": Category.ADMIN, "description": "Toggle Admin Mode"},
 
 	# Gameplay
@@ -62,6 +62,7 @@ var profiles: Dictionary = {}  # profile_name -> keybind dict
 
 # Config file
 const CONFIG_PATH = "user://keybinds.cfg"
+const KEYBINDS_CONFIG_VERSION = 2  # bump when default binds change; stale saved configs refresh to defaults
 var config = ConfigFile.new()
 
 # Signals
@@ -81,6 +82,21 @@ func load_keybinds():
 	var err = config.load(CONFIG_PATH)
 
 	if err == OK:
+		# Defaults changed since this config was written? Refresh from defaults. Otherwise a
+		# stale saved bind silently overrides the new default (e.g. the F3 debug overlay was
+		# stuck on the old '~' bind — issue #564). In beta this resets custom rebinds on a
+		# default change; the alternative is defaults that never take effect.
+		var saved_version = config.get_value("settings", "config_version", 1)
+		if saved_version < KEYBINDS_CONFIG_VERSION:
+			current_profile = config.get_value("settings", "current_profile", "default")
+			var stale_profiles = config.get_value("settings", "profiles", ["default"])
+			for profile in stale_profiles:
+				profiles[profile] = keybinds.duplicate(true)
+			if not profiles.has(current_profile):
+				profiles[current_profile] = keybinds.duplicate(true)
+			apply_profile(current_profile)  # applies defaults + saves with the new version
+			return
+
 		# Load current profile
 		current_profile = config.get_value("settings", "current_profile", "default")
 
@@ -112,6 +128,7 @@ func load_keybinds():
 
 ## Save keybinds to config file
 func save_keybinds():
+	config.set_value("settings", "config_version", KEYBINDS_CONFIG_VERSION)
 	config.set_value("settings", "current_profile", current_profile)
 	config.set_value("settings", "profiles", profiles.keys())
 
