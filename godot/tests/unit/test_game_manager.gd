@@ -4,6 +4,7 @@ extends GutTest
 
 var game_manager: GameManager
 var _saved_historical_events: Array = []
+var _saved_difficulty: int = 1
 
 func before_each():
 	# GameManager extends Node (autoload) — can't call .new() on the singleton
@@ -18,6 +19,9 @@ func before_each():
 		EventService.transformed_events.clear()
 	GameEvents.reset_triggered_events()
 
+	# Preserve difficulty (autoload singleton) so difficulty tests don't leak
+	_saved_difficulty = GameConfig.difficulty
+
 	# Watch all signals
 	watch_signals(game_manager)
 
@@ -25,6 +29,8 @@ func after_each():
 	# Restore historical events
 	if EventService:
 		EventService.transformed_events = _saved_historical_events
+	# Restore difficulty
+	GameConfig.difficulty = _saved_difficulty
 	# Clean up
 	if game_manager:
 		game_manager.queue_free()
@@ -437,3 +443,44 @@ func test_multiple_actions_single_turn():
 
 	assert_eq(game_manager.state.queued_actions.size(), 0,
 		"All actions should be processed")
+
+# === DIFFICULTY TESTS (Issue #563 / #541) ===
+
+const _BASE_MONEY := 245000.0  # GameState starting money (issue #436)
+
+func test_easy_difficulty_grants_more_starting_money():
+	# Issue #563: Easy = +50% starting money
+	GameConfig.difficulty = 0  # Easy
+	game_manager.start_new_game("difficulty_seed")
+	assert_almost_eq(game_manager.state.money, _BASE_MONEY * 1.5, 0.01,
+		"Easy should grant 50% more starting money")
+
+func test_hard_difficulty_reduces_starting_money():
+	# Issue #563: Hard = -25% starting money
+	GameConfig.difficulty = 2  # Hard
+	game_manager.start_new_game("difficulty_seed")
+	assert_almost_eq(game_manager.state.money, _BASE_MONEY * 0.75, 0.01,
+		"Hard should reduce starting money by 25%")
+
+func test_standard_difficulty_uses_base_money():
+	GameConfig.difficulty = 1  # Standard
+	game_manager.start_new_game("difficulty_seed")
+	assert_almost_eq(game_manager.state.money, _BASE_MONEY, 0.01,
+		"Standard should use unmodified base money")
+
+func test_difficulty_changes_turn1_action_points():
+	# Issue #541: max_action_points (set by difficulty) must feed start_turn's AP.
+	# Staff scaling is identical across difficulties, so Easy base (4) must exceed
+	# Hard base (2) by exactly 2 on turn 1.
+	GameConfig.difficulty = 0  # Easy
+	game_manager.start_new_game("difficulty_seed")
+	var easy_ap = game_manager.state.action_points
+
+	GameConfig.difficulty = 2  # Hard
+	game_manager.start_new_game("difficulty_seed")
+	var hard_ap = game_manager.state.action_points
+
+	assert_gt(easy_ap, hard_ap,
+		"Easy should grant more turn-1 AP than Hard (#541)")
+	assert_eq(easy_ap - hard_ap, 2,
+		"Easy base AP (4) minus Hard base AP (2) should be 2 on turn 1")
