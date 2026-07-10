@@ -94,8 +94,8 @@ func test_get_total_staff_counts_all_types():
 
 	assert_eq(state.get_total_staff(), 9, "Total staff should be 9")
 
-func test_check_win_lose_doom_victory():
-	# Test victory when doom reaches 0
+func test_check_win_lose_doom_zero_no_victory():
+	# DQ-1 / ADR-0002: there is NO victory condition. doom<=0 must NOT end the game.
 	var state = GameState.new("test_seed")
 	state.doom = 0.0
 	# Must also set doom_system since check_win_lose syncs from it
@@ -104,8 +104,8 @@ func test_check_win_lose_doom_victory():
 
 	state.check_win_lose()
 
-	assert_true(state.game_over, "Game should be over")
-	assert_true(state.victory, "Should be victorious")
+	assert_false(state.game_over, "doom<=0 must not end the game (no victory condition)")
+	assert_false(state.victory, "There is no victory condition (ADR-0002)")
 
 func test_check_win_lose_doom_defeat():
 	# Test defeat when doom reaches 100

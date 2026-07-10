@@ -15,10 +15,11 @@
 
 ## Design questions — for Fable workshop #2
 
-- **DQ-1 · Victory condition removal** *(#550, ADR-0002)* — `check_win_lose()` still ends
-  with `victory=true` at doom ≤ 0, contradicting ADR-0002. Removal was gated on a mortality
-  guarantee — **which WS-1 now provides** (compounding ledger interest), so this is
-  unblocked to decide. Remove the doom≤0 victory branch?
+- **DQ-1 · Victory condition removal — RESOLVED** *(#550, ADR-0002)* — the doom≤0 victory
+  branch is **removed**. Proven safe by the exploit sweep: with rival labs contributing
+  scaling doom (#562), a clean safety run is now *finite* (dies of doom, no immortal runs),
+  so removing the win no longer creates an immortal-run exploit. The game is now unwinnable
+  by design (ADR-0002 thesis: you can only buy time).
 - **DQ-2 · Baseline yardstick** *(#550)* — is the no-action baseline still the right
   reference under turns-survived scoring?
 - **DQ-3 · Cross-version leaderboard UX** *(#550)* — `(seed, game_version)` boards show as
@@ -36,8 +37,10 @@
 - **DQ-7 · Governance player-facing design** *(#555)* — `governance` added as an engine
   `float` (a ledger currency per ADR-0003), but its scale, starting value, how the player
   raises/spends it, and its UI are **undesigned**.
-- **DQ-8 · Ledger balance constants** *(#555)* — escalation rates (`DOOM_PER_UNPAID_1000`,
-  interest, loan multiple) are **placeholders**, not tuned. Likely a playtest-driven pass.
+- **DQ-8 · Balance constants** *(#555, #562)* — ledger escalation rates
+  (`DOOM_PER_UNPAID_1000`, interest, loan multiple) and rival doom pressure are
+  **placeholders**. Rival magnitude softened `0.05 → 0.025` as a first step toward longer
+  games; full tuning (game length, sink pricing) still open — a playtest-driven pass.
 - **DQ-9 · Receivables / counterparty content** *(#555)* — the `Entry` model supports the
   receivable (favor/pledge) side, but content is unbuilt and **overlaps ADR-0007 alliances**
   (WS-3). Design together?

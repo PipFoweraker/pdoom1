@@ -7,7 +7,7 @@ class_name RivalLabs
 ## accumulated capability_progress — a GROWING pressure a fixed safety capacity cannot
 ## offset forever (the unbounded-mortality term for issue #562 / DQ-1).
 ## Placeholder magnitude — tuning is workshop #2.
-const CAPABILITY_OVERHANG_DOOM_PER_PROGRESS: float = 0.05
+const CAPABILITY_OVERHANG_DOOM_PER_PROGRESS: float = 0.025
 
 # Organization visibility states
 enum VisibilityState {
