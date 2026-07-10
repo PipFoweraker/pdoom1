@@ -140,11 +140,11 @@ func start_turn() -> Dictionary:
 	var staff_salaries = 0.0
 	if state.researchers.size() > 0:
 		for researcher in state.researchers:
-			staff_salaries += researcher.current_salary / 12.0  # Monthly salary per turn
-		staff_salaries += state.managers * 5000  # Managers still use flat rate
+			staff_salaries += researcher.current_salary / 260.0  # Per-workday salary (turn = 1 workday, ~260 workdays/yr). Was /12 — a full month billed every day, causing the turn-7 cash crash (#573). Magnitude tunable (workshop #2 / payroll depth #574).
+		staff_salaries += state.managers * (60000.0 / 260.0)  # Managers ~$60k/yr, per-workday (#573; was $5000 flat = a month's pay per day)
 	else:
 		# Legacy fallback
-		staff_salaries = total_staff * 5000
+		staff_salaries = total_staff * (60000.0 / 260.0)  # per-workday (#573)
 
 	if staff_salaries > 0:
 		state.add_resources({"money": -staff_salaries})
@@ -295,6 +295,16 @@ func start_turn() -> Dictionary:
 
 	if staff_salaries > 0:
 		messages.append("Paid %s in staff salaries" % GameConfig.format_money(staff_salaries))
+
+		# Low-cash / bankruptcy warning (#573) — surface cash danger BEFORE a silent defeat
+		var ledger_due_soon: float = 0.0
+		if state.ledger and state.ledger.soonest_fuse() >= 0 and state.ledger.soonest_fuse() <= 1:
+			ledger_due_soon = state.ledger.outstanding()
+		var next_turn_bills: float = staff_salaries + ledger_due_soon
+		if state.money < next_turn_bills:
+			messages.append("CRITICAL: Cash (%s) won't cover next turn's bills (%s) — bankruptcy imminent!" % [GameConfig.format_money(state.money), GameConfig.format_money(next_turn_bills)])
+		elif state.money < staff_salaries * 3.0:
+			messages.append("WARNING: Low cash — about %d turn(s) of payroll left (%s)." % [int(state.money / staff_salaries), GameConfig.format_money(state.money)])
 
 	if research_from_employees > 0:
 		messages.append("Generated %.1f research from %d productive researchers" % [research_from_employees, productive_count])
