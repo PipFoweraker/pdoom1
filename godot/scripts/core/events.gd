@@ -7,6 +7,19 @@ class_name GameEvents
 # persisted across in-process games and replays, desyncing state.rng consumption between
 # otherwise-identical runs (candidate/rival divergence with matching score).
 
+# #568 event pacing:
+#   FIRST_EVENT_TURN — start_turn() increments state.turn BEFORE checking events, so turn 1 is
+#     the player's very first (as-yet-unacted) turn. Suppress all event firing until this turn,
+#     so the game doesn't open with a popup before the player has taken a single action.
+#   MAX_NEW_EVENTS_PER_TURN — cap on how many *new* events fire in a single turn. Without it, a
+#     turn where several probabilistic/threshold events happen to qualify dumps a "flood" of 6+
+#     popups at once. Excess qualifying events are simply not marked this turn, so random ones
+#     re-roll and turn/threshold beats re-evaluate on a later turn — the burst is spread out.
+#   NOTE (design, parked): this does NOT change the event *pool size / density* (how often events
+#     qualify in the first place) — that is a deliberate design call tracked in #578/#579.
+const FIRST_EVENT_TURN := 2
+const MAX_NEW_EVENTS_PER_TURN := 2
+
 static func get_all_events() -> Array[Dictionary]:
 	"""Return all event definitions"""
 	return [
@@ -840,22 +853,34 @@ static func get_all_events() -> Array[Dictionary]:
 	]
 
 static func check_triggered_events(state: GameState, rng: RandomNumberGenerator) -> Array[Dictionary]:
-	"""Check all events and return those that should trigger this turn"""
-	var to_trigger: Array[Dictionary] = []
+	"""Check all events and return those that should trigger this turn.
+
+	#568: no events fire before the player's first turn (FIRST_EVENT_TURN), and at most
+	MAX_NEW_EVENTS_PER_TURN new events fire on any single turn. Qualifying events are
+	collected WITHOUT being marked, then only the ones we actually fire get marked — so
+	events squeezed out by the cap simply defer to a later turn instead of being lost.
+	should_trigger() is still called for every candidate, so rng consumption (and thus
+	determinism / replay) is unchanged relative to the pre-cap behaviour."""
+	# Suppress event firing entirely until the player's first turn has begun.
+	if state.turn < FIRST_EVENT_TURN:
+		return []
+
+	# Two buckets so scripted beats (turn_exact / turn_and_resource / threshold) are never
+	# crowded out of the cap by a swarm of "random" events — scripted fire first.
+	var scripted: Array[Dictionary] = []
+	var random_pool: Array[Dictionary] = []
 
 	# Check built-in events
 	for event in get_all_events():
 		if should_trigger(event, state, rng):
-			to_trigger.append(event)
-			_mark_event_triggered(event, state.turn, state)
+			_bucket_candidate(event, scripted, random_pool)
 
 	# Check scenario-specific events (Issue #483: Mod/Scenario hook)
 	if state.has_meta("scenario_events"):
 		var scenario_events = state.get_meta("scenario_events")
 		for event in scenario_events:
 			if should_trigger(event, state, rng):
-				to_trigger.append(event)
-				_mark_event_triggered(event, state.turn, state)
+				_bucket_candidate(event, scripted, random_pool)
 
 	# Check historical events from EventService (Issue #442: API Event Fetching)
 	# Historical events are real AI safety timeline events transformed into game events
@@ -868,10 +893,30 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 			if event_year < state.start_year:
 				continue
 			if should_trigger(event, state, rng):
-				to_trigger.append(event)
-				_mark_event_triggered(event, state.turn, state)
+				_bucket_candidate(event, scripted, random_pool)
+
+	# Fire scripted beats first, then random ones, up to the per-turn cap. Only fired
+	# events are marked; the rest defer (random → re-roll, threshold/turn → re-evaluate).
+	var to_trigger: Array[Dictionary] = []
+	for event in scripted:
+		if to_trigger.size() >= MAX_NEW_EVENTS_PER_TURN:
+			break
+		to_trigger.append(event)
+		_mark_event_triggered(event, state.turn, state)
+	for event in random_pool:
+		if to_trigger.size() >= MAX_NEW_EVENTS_PER_TURN:
+			break
+		to_trigger.append(event)
+		_mark_event_triggered(event, state.turn, state)
 
 	return to_trigger
+
+static func _bucket_candidate(event: Dictionary, scripted: Array[Dictionary], random_pool: Array[Dictionary]) -> void:
+	"""Route a qualifying event into the scripted or random bucket for cap prioritisation (#568)."""
+	if event.get("trigger_type", "") == "random":
+		random_pool.append(event)
+	else:
+		scripted.append(event)
 
 static func should_trigger(event: Dictionary, state: GameState, rng: RandomNumberGenerator) -> bool:
 	"""Check if event should trigger"""
