@@ -815,7 +815,7 @@ func _on_actions_available(actions: Array):
 
 	# Create a single-column vertical stack for icons on left edge
 	var icon_stack = VBoxContainer.new()
-	icon_stack.add_theme_constant_override("separation", 2)
+	icon_stack.add_theme_constant_override("separation", 1)  # #594: tighter vertical packing for 11+ icons
 	actions_list.add_child(icon_stack)
 
 	# Create icon buttons - single column layout
@@ -837,8 +837,10 @@ func _on_actions_available(actions: Array):
 
 			# Create icon-only button (square, fills width)
 			var icon_button = Button.new()
-			icon_button.custom_minimum_size = Vector2(70, 70)  # Larger square icon buttons
-			icon_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			icon_button.custom_minimum_size = Vector2(70, 70)  # square icon tiles
+			# #594: hug the 70px icon instead of ballooning across the wide left panel — this
+			# reclaims the empty padding around each icon (and stops expand_icon distorting them).
+			icon_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			icon_button.focus_mode = Control.FOCUS_NONE
 
 			# Get icon texture
@@ -918,9 +920,10 @@ func _populate_upgrades():
 
 		# Create button
 		var button = ThemeManager.create_button(upgrade_name)
-		# Constrain button width to prevent extending into middle
-		button.size_flags_horizontal = Control.SIZE_FILL
-		button.custom_minimum_size = Vector2(0, 32)
+		# Blockier tiles (#594): hug content on the left instead of stretching across the
+		# wide right panel, and ~20% taller (32 -> 38) so they read as tighter, blockier tiles.
+		button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		button.custom_minimum_size = Vector2(200, 38)
 
 		# If purchased, show differently
 		if is_purchased:

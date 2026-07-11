@@ -90,13 +90,13 @@ func set_sources(doom_sources) -> void:
 
 	var caption := Label.new()
 	caption.text = "Doom this turn:"
-	caption.add_theme_font_size_override("font_size", 10)
+	caption.add_theme_font_size_override("font_size", 20)
 	caption.add_theme_color_override("font_color", ThemeManager.get_color("text_dim"))
 	add_child(caption)
 
 	for entry in entries:
 		var line := Label.new()
 		line.text = entry["text"]
-		line.add_theme_font_size_override("font_size", 11)
+		line.add_theme_font_size_override("font_size", 22)
 		line.add_theme_color_override("font_color", color_for_sign(entry["sign"]))
 		add_child(line)
