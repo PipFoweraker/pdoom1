@@ -42,6 +42,7 @@ var game_manager: Node
 var queued_actions: Array = []
 var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
+var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
 var ledger_summary_label: Label  # BL-1 compact Liability Ledger summary (script-instantiated)
 var current_turn_phase: String = "NOT_STARTED"
 
@@ -83,6 +84,11 @@ func _ready():
 	doom_trend_graph.expand_requested.connect(_show_doom_trend_expanded)
 	right_zones.add_child(doom_trend_graph)
 	right_zones.move_child(doom_trend_graph, doom_meter_zone.get_index() + 1)
+
+	# #578: doom "blow-by-blow" — colour-coded per-source breakdown, just below the trend graph.
+	doom_breakdown = preload("res://scripts/ui/doom_breakdown.gd").new()
+	right_zones.add_child(doom_breakdown)
+	right_zones.move_child(doom_breakdown, doom_trend_graph.get_index() + 1)
 
 	# BL-1: compact Liability Ledger summary just below the doom trend. Kept terse so
 	# the main view stays uncrowded; the full ledger is a switchable screen (Financing).
@@ -532,6 +538,10 @@ func _on_game_state_updated(state: Dictionary):
 	# Feed the trend sparkline (#512)
 	if doom_trend_graph:
 		doom_trend_graph.set_history(state.get("doom_history", []))
+
+	# Feed the per-source doom breakdown (#578)
+	if doom_breakdown:
+		doom_breakdown.set_sources(state.get("doom_system", {}).get("doom_sources", {}))
 
 	# BL-1: refresh the compact Liability Ledger summary
 	_update_ledger_summary(state.get("ledger", {}))
