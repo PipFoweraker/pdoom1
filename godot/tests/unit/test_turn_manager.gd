@@ -6,8 +6,9 @@ var turn_manager: TurnManager
 var _saved_historical_events := []
 
 func before_each():
-	# Create fresh state and turn manager for each test
-	GameEvents.reset_triggered_events()
+	# Create fresh state and turn manager for each test.
+	# WS-0: the fired-event registry is per-GameState instance state; the fresh
+	# GameState.new() below resets it, so no global reset call is needed.
 	# Test isolation (#534): unit tests must NOT load the live ~1194-event historical
 	# timeline into pending_events. Resolve-all loops over it floods hist_arxiv_* output
 	# and hangs the headless suite. Built-in events (e.g. funding_crisis) still trigger.

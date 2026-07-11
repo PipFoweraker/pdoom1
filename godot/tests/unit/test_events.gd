@@ -4,8 +4,9 @@ extends GutTest
 var state: GameState
 
 func before_each():
+	# WS-0: the fired-event registry (triggered_events / event_cooldowns) is now
+	# per-GameState instance state, so a fresh GameState resets it automatically.
 	state = GameState.new("test_seed")
-	GameEvents.reset_triggered_events()
 
 func _find_event_by_id(events: Array, id: String) -> Dictionary:
 	"""Helper to find a specific event in an array by id"""
@@ -95,12 +96,15 @@ func test_non_repeatable_event_only_triggers_once():
 	assert_false(has_crisis_2, "Should not trigger funding crisis second time (non-repeatable)")
 
 func test_reset_triggered_events_clears_history():
-	# Test that reset clears triggered events history
+	# Test that clearing the per-GameState registry clears triggered events history.
+	# WS-0: the fired-event registry lives on the GameState instance, so the
+	# instance-level reset is clearing state.triggered_events / state.event_cooldowns.
 	state.turn = 10
 	state.money = 40000
 
 	GameEvents.check_triggered_events(state, state.rng)
-	GameEvents.reset_triggered_events()
+	state.triggered_events.clear()
+	state.event_cooldowns.clear()
 
 	# Should be able to trigger again after reset
 	var events = GameEvents.check_triggered_events(state, state.rng)
