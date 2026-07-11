@@ -45,6 +45,16 @@ var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
 var ledger_summary_label: Button  # BL-1 compact Liability Ledger summary; clickable -> ledger screen (#578)
 var _ledger_due_soon_logged: bool = false  # #578: only log the "payment due" reminder on entry, not every frame
+
+# Leather-ledger palette (playtester: "rich brown leathery colour"). Warm saddle base
+# with a darker border; ink colours are bright/warm so state stays legible on brown.
+const _LEDGER_LEATHER := Color(0.32, 0.20, 0.11)        # base saddle brown
+const _LEDGER_LEATHER_HOVER := Color(0.40, 0.26, 0.15)  # lighter on hover — inviting
+const _LEDGER_LEATHER_PRESSED := Color(0.24, 0.15, 0.08)
+const _LEDGER_LEATHER_BORDER := Color(0.14, 0.08, 0.03)  # dark stitched edge
+const _LEDGER_INK_CLEAN := Color(0.86, 0.80, 0.62)       # warm parchment cream
+const _LEDGER_INK_DUE := Color(1.0, 0.55, 0.42)          # warm red — payment due
+const _LEDGER_INK_SECRET := Color(1.0, 0.80, 0.45)       # warm amber — secrets/owed
 var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
@@ -97,17 +107,26 @@ func _ready():
 	# the main view stays uncrowded; the full ledger is a switchable screen (Financing).
 	# #578: it's now a flat Button so the summary is directly clickable to open the full
 	# ledger screen (playtester: "no easy way of getting to the ledger from the main UI").
+	# Playtester: the ledger access was "kind of hidden" — make it ~5x bigger with a
+	# rich brown leather look so it reads as a distinct, inviting object, not a label.
 	ledger_summary_label = Button.new()
-	ledger_summary_label.flat = true
+	ledger_summary_label.flat = false
 	ledger_summary_label.focus_mode = Control.FOCUS_NONE
 	ledger_summary_label.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	ledger_summary_label.add_theme_font_size_override("font_size", 11)
-	ledger_summary_label.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
-	ledger_summary_label.text = "Ledger: clean"
-	ledger_summary_label.tooltip_text = "Open the Liability Ledger"
+	ledger_summary_label.custom_minimum_size = Vector2(0, 64)  # heft — was an 11px flat label
+	ledger_summary_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ledger_summary_label.add_theme_font_size_override("font_size", 20)
+	ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
+	_apply_leather_style(ledger_summary_label)
+	ledger_summary_label.text = "📖  Liability Ledger — clean"
+	ledger_summary_label.tooltip_text = "Open the Liability Ledger  (press L)"
 	ledger_summary_label.pressed.connect(_show_ledger_screen)
 	right_zones.add_child(ledger_summary_label)
 	right_zones.move_child(ledger_summary_label, doom_trend_graph.get_index() + 1)
+
+	# Always-visible DEV BUILD corner badge so a playtester can confirm exactly which
+	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
+	add_child(DevBuildBadge.new())
 
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
@@ -276,6 +295,13 @@ func _input(event: InputEvent):
 				_show_travel_submenu()
 				_decorate_active_submenu(_find_action_button("travel"))
 				get_viewport().set_input_as_handled()
+
+		# Open the Liability Ledger (L by default, configurable via KeybindManager).
+		# Reachable any time no dialog is active; the text-focus gate above already
+		# yields the key to focused LineEdit/TextEdit fields.
+		elif KeybindManager.is_action_pressed(event, "open_ledger"):
+			_show_ledger_screen()
+			get_viewport().set_input_as_handled()
 
 		# Escape to init game (if not started)
 		elif event.keycode == KEY_ESCAPE:
@@ -615,6 +641,26 @@ func _on_game_state_updated(state: Dictionary):
 	# Update employee roster display
 	_update_employee_roster(state)
 
+func _make_leather_box(bg: Color) -> StyleBoxFlat:
+	"""A warm saddle-leather StyleBoxFlat: dark stitched border + subtle rounding."""
+	var box := StyleBoxFlat.new()
+	box.bg_color = bg
+	box.border_color = _LEDGER_LEATHER_BORDER
+	box.set_border_width_all(3)
+	box.set_corner_radius_all(8)
+	box.content_margin_left = 14
+	box.content_margin_right = 14
+	box.content_margin_top = 8
+	box.content_margin_bottom = 8
+	return box
+
+func _apply_leather_style(btn: Button) -> void:
+	"""Give the ledger access button its rich brown leather look across all states."""
+	btn.add_theme_stylebox_override("normal", _make_leather_box(_LEDGER_LEATHER))
+	btn.add_theme_stylebox_override("hover", _make_leather_box(_LEDGER_LEATHER_HOVER))
+	btn.add_theme_stylebox_override("pressed", _make_leather_box(_LEDGER_LEATHER_PRESSED))
+	btn.add_theme_stylebox_override("focus", _make_leather_box(_LEDGER_LEATHER_HOVER))
+
 func _update_ledger_summary(ledger_data: Dictionary) -> void:
 	"""BL-1 compact summary: outstanding owed, soonest due, secret count. Deliberately
 	terse so the main view stays uncrowded; the full ledger is a switchable screen."""
@@ -624,8 +670,8 @@ func _update_ledger_summary(ledger_data: Dictionary) -> void:
 	var soonest: int = int(ledger_data.get("soonest_fuse", -1))
 	var secrets: int = int(ledger_data.get("secret_count", 0))
 	if ledger_data.is_empty() or (owed <= 0.0 and secrets == 0):
-		ledger_summary_label.text = "Ledger: clean  (click to view)"
-		ledger_summary_label.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
+		ledger_summary_label.text = "📖  Liability Ledger — clean  (click / L)"
+		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
 		_ledger_due_soon_logged = false
 		return
 	var due_txt := ("due %dt" % soonest) if soonest >= 0 else "no due"
@@ -634,19 +680,19 @@ func _update_ledger_summary(ledger_data: Dictionary) -> void:
 	# visibly (⚠ prefix + strong red) and drop a one-shot message-log line so the player is
 	# warned things are coming due, not just left to notice on their own.
 	var due_soon := soonest >= 0 and soonest <= 2 and owed > 0.0
-	var prefix := "⚠ " if due_soon else ""
+	var prefix := "⚠ " if due_soon else "📖  "
 	ledger_summary_label.text = "%sLedger: %s owed  |  %s%s" % [prefix, GameConfig.format_money(owed), due_txt, secret_txt]
 	if due_soon:
-		# Urgent: bright red, and log once on entry into the due-soon window.
-		ledger_summary_label.add_theme_color_override("font_color", Color(0.95, 0.42, 0.36))
+		# Urgent: warm red (legible on brown leather), and log once on entry into the window.
+		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_DUE)
 		if not _ledger_due_soon_logged:
 			var when_txt := "this turn" if soonest <= 0 else ("in %d turn%s" % [soonest, "" if soonest == 1 else "s"])
-			log_message("[color=orange]⚠ Ledger: %s payment due %s — open the ledger (click summary) to review.[/color]" % [GameConfig.format_money(owed), when_txt])
+			log_message("[color=orange]⚠ Ledger: %s payment due %s — open the ledger (click summary or press L) to review.[/color]" % [GameConfig.format_money(owed), when_txt])
 			_ledger_due_soon_logged = true
 	else:
 		_ledger_due_soon_logged = false
-		# Redden as secret liabilities mount (the exposure pressure surface)
-		ledger_summary_label.add_theme_color_override("font_color", Color(0.85, 0.78, 0.55) if secrets == 0 else Color(0.9, 0.55, 0.45))
+		# Warm parchment when only owed; warm amber as secret liabilities mount (exposure pressure).
+		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN if secrets == 0 else _LEDGER_INK_SECRET)
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
