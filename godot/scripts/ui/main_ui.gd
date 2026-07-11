@@ -132,6 +132,12 @@ func _unhandled_key_input(event: InputEvent):
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
+		# Game/global shortcuts yield to focused text fields so typing works (#575).
+		# Bug-report form etc. own a LineEdit/TextEdit; let those keys reach the field.
+		# Dialog choice buttons use FOCUS_NONE, so this never blocks dialog keys.
+		if KeybindManager.is_text_input_focused():
+			return
+
 		# DEBUG: sweep doom for QA (PageUp/PageDown ±10). Debug builds only — auto-off in release.
 		# TODO: remove before any release/PR if undesired (currently gated, so release-safe).
 		if OS.is_debug_build() and (event.keycode == KEY_PAGEUP or event.keycode == KEY_PAGEDOWN):
@@ -159,14 +165,14 @@ func _input(event: InputEvent):
 		# This prevents ENTER/SPACE from triggering turn advancement while dialog is open
 		if active_dialog != null and is_instance_valid(active_dialog):
 			print("[MainUI] Dialog is active and valid!")
-			var dialog_keys = [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_A, KEY_S, KEY_D, KEY_F, KEY_Z]
-			var key_index = dialog_keys.find(event.keycode)
-			print("[MainUI] Looking for keycode %d in dialog_keys, found at index: %d" % [event.keycode, key_index])
+			# Map the pressed key to a choice button. Dialogs label buttons with
+			# numbers ([1][2][3], e.g. hire pool) or letters ([Q][W][E], e.g. events);
+			# accept both so keys always match the shown buttons (#567, #575).
+			var key_index = _dialog_button_index_for_key(event.keycode)
+			print("[MainUI] Dialog key %d -> button index %d (buttons: %d)" % [event.keycode, key_index, active_dialog_buttons.size()])
 
 			if key_index >= 0 and key_index < active_dialog_buttons.size():
-				print("[MainUI] Key index %d is valid (buttons count: %d)" % [key_index, active_dialog_buttons.size()])
 				var btn = active_dialog_buttons[key_index]
-				print("[MainUI] Button at index: %s, valid: %s, disabled: %s" % [btn != null, is_instance_valid(btn) if btn != null else false, btn.disabled if btn != null else "N/A"])
 				if btn != null and is_instance_valid(btn) and not btn.disabled:
 					print("[MainUI] *** TRIGGERING DIALOG BUTTON: %s ***" % btn.text)
 					btn.pressed.emit()
@@ -174,8 +180,8 @@ func _input(event: InputEvent):
 					return
 				else:
 					print("[MainUI] Button not triggerable (null, invalid, or disabled)")
-			else:
-				print("[MainUI] Key index %d out of range or not found" % key_index)
+			# else: key isn't a choice for this dialog (e.g. R on a 3-option event).
+			# Fall through to ESC handling; other keys are blocked below. No scary log.
 
 			# ESC key: only close submenu dialogs (hiring, fundraising), NOT event dialogs
 			# Event dialogs must be completed to prevent soft-lock (issue #452)
@@ -273,18 +279,25 @@ func _unhandled_input(event: InputEvent):
 		print("[MainUI] _unhandled_input called, keycode: %d, active_dialog: %s" % [event.keycode, active_dialog != null])
 		# If dialog is active, handle dialog shortcuts with LETTERS (Q/W/E/R/A/S/D/F/Z)
 		if active_dialog != null and is_instance_valid(active_dialog):
-			# Letter keys for dialog options (Q/W/E/R/A/S/D/F/Z = 9 options)
-			var dialog_keys = [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_A, KEY_S, KEY_D, KEY_F, KEY_Z]
-			var key_index = dialog_keys.find(event.keycode)
+			# Number or letter keys for dialog options; map to the shown buttons (#567, #575)
+			var key_index = _dialog_button_index_for_key(event.keycode)
 
-			if key_index >= 0:
-				print("[MainUI] Dialog letter key pressed, index: %d, buttons: %d" % [key_index, active_dialog_buttons.size()])
-				if key_index < active_dialog_buttons.size():
-					var btn = active_dialog_buttons[key_index]
-					if btn != null and is_instance_valid(btn) and not btn.disabled:
-						print("[MainUI] Triggering dialog button: %s" % btn.text)
-						btn.pressed.emit()
-						get_viewport().set_input_as_handled()
+			if key_index >= 0 and key_index < active_dialog_buttons.size():
+				var btn = active_dialog_buttons[key_index]
+				if btn != null and is_instance_valid(btn) and not btn.disabled:
+					print("[MainUI] Triggering dialog button: %s" % btn.text)
+					btn.pressed.emit()
+					get_viewport().set_input_as_handled()
+
+func _dialog_button_index_for_key(keycode: int) -> int:
+	"""Map a pressed key to a dialog choice-button index, or -1 if unmapped.
+	Dialogs label buttons either with numbers ([1][2][3], e.g. the hire candidate
+	pool) or letters ([Q][W][E], e.g. event choices). Accept both schemes so the
+	keys always match whatever buttons are displayed (issues #567, #575)."""
+	if keycode >= KEY_1 and keycode <= KEY_9:
+		return keycode - KEY_1
+	var letter_keys = [KEY_Q, KEY_W, KEY_E, KEY_R, KEY_A, KEY_S, KEY_D, KEY_F, KEY_Z]
+	return letter_keys.find(keycode)
 
 func _trigger_action_by_index(index: int):
 	"""Trigger action button by its index (for keyboard shortcuts)"""
