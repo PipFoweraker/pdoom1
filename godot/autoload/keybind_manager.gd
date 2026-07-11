@@ -33,6 +33,7 @@ var keybinds: Dictionary = {
 	"bug_reporter": {"key": KEY_BACKSLASH, "category": Category.UI, "description": "Open Bug Reporter"},
 	# "employee_tab": {"key": KEY_E, "category": Category.UI, "description": "Employee Screen"},  # DISABLED: moving to main UI
 	"settings": {"key": KEY_F10, "category": Category.UI, "description": "Settings Menu"},
+	"open_ledger": {"key": KEY_L, "category": Category.UI, "description": "Open Liability Ledger"},
 
 	# Quick Menu Access (configurable shortcuts for common menus)
 	"menu_hire": {"key": KEY_H, "category": Category.GAMEPLAY, "description": "Open Hiring Menu"},
@@ -62,7 +63,7 @@ var profiles: Dictionary = {}  # profile_name -> keybind dict
 
 # Config file
 const CONFIG_PATH = "user://keybinds.cfg"
-const KEYBINDS_CONFIG_VERSION = 2  # bump when default binds change; stale saved configs refresh to defaults
+const KEYBINDS_CONFIG_VERSION = 3  # bump when default binds change; stale saved configs refresh to defaults
 var config = ConfigFile.new()
 
 # Signals

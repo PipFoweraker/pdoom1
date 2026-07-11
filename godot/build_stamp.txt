@@ -1,0 +1,3 @@
+commit=fd60eb6
+date=2026-07-11
+branch=feat/dev-build-overlay-ledger

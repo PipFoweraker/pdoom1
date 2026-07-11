@@ -52,6 +52,10 @@ func _ready():
 	ai_safety_button.pressed.connect(_on_ai_safety_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 
+	# Always-visible DEV BUILD corner badge (version + git stamp) so a playtester can
+	# confirm which build he's on right from the welcome/loading screen.
+	add_child(DevBuildBadge.new())
+
 	# Initialize What's New modal
 	_setup_whats_new_modal()
 
