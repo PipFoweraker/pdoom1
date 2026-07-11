@@ -72,6 +72,7 @@ func test_funding_crisis_no_trigger_sufficient_money():
 
 func test_funding_windfall_triggers_on_threshold():
 	# Test funding windfall triggers with papers + reputation
+	state.turn = 5  # #568: events are suppressed before FIRST_EVENT_TURN
 	state.papers = 3.0
 	state.reputation = 40.0
 
@@ -101,6 +102,7 @@ func test_reset_triggered_events_clears_history():
 	# instance-level reset is clearing state.triggered_events / state.event_cooldowns.
 	state.turn = 10
 	state.money = 40000
+	GameEvents.check_triggered_events(state, state.rng)  # consumes funding_crisis on `state`
 
 	GameEvents.check_triggered_events(state, state.rng)
 	state.triggered_events.clear()
@@ -109,7 +111,91 @@ func test_reset_triggered_events_clears_history():
 	# Should be able to trigger again after reset
 	var events = GameEvents.check_triggered_events(state, state.rng)
 	var has_crisis = not _find_event_by_id(events, "funding_crisis").is_empty()
-	assert_true(has_crisis, "Should trigger funding crisis again after reset")
+	assert_true(has_crisis, "A fresh GameState should have clean event history")
+
+# --- #568 regression: event pacing (no pre-first-turn spawn + per-turn cap) ---
+
+func test_no_events_before_first_turn():
+	# #568(a): the player's very first turn (turn 1) must not open with an event,
+	# even when a threshold event's condition is already satisfied.
+	state.turn = 1
+	state.papers = 3.0
+	state.reputation = 40.0  # would otherwise satisfy funding_windfall
+	var events = GameEvents.check_triggered_events(state, state.rng)
+	assert_eq(events.size(), 0, "No event should fire before the first turn is played (#568)")
+
+func test_events_resume_from_first_event_turn():
+	# #568(a): once FIRST_EVENT_TURN is reached, qualifying events fire as normal.
+	state.turn = GameEvents.FIRST_EVENT_TURN
+	state.papers = 3.0
+	state.reputation = 40.0
+	var events = GameEvents.check_triggered_events(state, state.rng)
+	assert_false(_find_event_by_id(events, "funding_windfall").is_empty(),
+		"Threshold events should fire from FIRST_EVENT_TURN onward (#568)")
+
+func test_new_events_capped_per_turn():
+	# #568(b): a burst of simultaneously-qualifying events must not all fire at once.
+	# Inject a flood of always-true scenario events and assert the cap holds.
+	state.turn = 5
+	var flood: Array[Dictionary] = []
+	for i in range(6):
+		flood.append({
+			"id": "flood_%d" % i,
+			"name": "Flood %d" % i,
+			"description": "test flood event",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "true",
+			"repeatable": false,
+			"options": [{"id": "ok", "text": "OK", "effects": {}, "message": "ok"}],
+		})
+	state.set_meta("scenario_events", flood)
+
+	var events = GameEvents.check_triggered_events(state, state.rng)
+	assert_eq(events.size(), GameEvents.MAX_NEW_EVENTS_PER_TURN,
+		"At most MAX_NEW_EVENTS_PER_TURN events should fire in one turn (#568)")
+	assert_true(events.size() <= 2, "Cap should keep the per-turn burst small (#568)")
+
+func test_capped_events_defer_not_lost():
+	# #568(b): events squeezed out by the cap are NOT marked, so they can still fire
+	# on a later turn (deferred, not dropped).
+	# Isolate from the live historical deck (#534) so only our flood competes for slots.
+	var saved_events := []
+	if EventService:
+		saved_events = EventService.transformed_events.duplicate()
+		EventService.transformed_events.clear()
+
+	state.turn = 5
+	var flood: Array[Dictionary] = []
+	for i in range(6):
+		flood.append({
+			"id": "flood_%d" % i,
+			"name": "Flood %d" % i,
+			"description": "test flood event",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "true",
+			"repeatable": false,
+			"options": [{"id": "ok", "text": "OK", "effects": {}, "message": "ok"}],
+		})
+	state.set_meta("scenario_events", flood)
+
+	var fired_flood := {}
+	# Drain over several turns; every flood event should eventually fire exactly once.
+	for _t in range(10):
+		var events = GameEvents.check_triggered_events(state, state.rng)
+		assert_true(events.size() <= GameEvents.MAX_NEW_EVENTS_PER_TURN,
+			"Cap must hold on every turn (#568)")
+		for e in events:
+			var eid: String = e.get("id", "")
+			if eid.begins_with("flood_"):
+				fired_flood[eid] = true
+		state.turn += 1
+
+	if EventService:
+		EventService.transformed_events = saved_events
+
+	assert_eq(fired_flood.size(), 6, "All deferred events should eventually fire, none lost (#568)")
 
 func test_execute_event_choice_applies_effects():
 	# Test that event choices apply their effects
