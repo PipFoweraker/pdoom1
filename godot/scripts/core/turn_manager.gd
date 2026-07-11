@@ -169,6 +169,11 @@ func start_turn() -> Dictionary:
 	var doom_from_capabilities = 0.0
 	var doom_reduction_from_safety = 0.0
 	var productive_count = 0
+	# #576: compute is a consumable, not just a capacity gate. Each productive
+	# researcher burns compute this turn; we accumulate the total here and
+	# actually decrement state.compute after the loop (previously the `-= 1`
+	# below only touched the local `available_compute`, so compute never fell).
+	var compute_consumed = 0.0
 	var leak_occurred = false
 	var leak_doom = 0.0
 
@@ -186,7 +191,12 @@ func start_turn() -> Dictionary:
 		var has_compute = available_compute > 0
 
 		if is_managed and has_compute:
-			available_compute -= 1
+			# Flat 1 compute/researcher/turn for now. PARKED (#576 follow-up):
+			# "researchers request compute at different rates" — make this a
+			# per-researcher rate (by specialization / skill) instead of 1.
+			var compute_request = 1
+			available_compute -= compute_request
+			compute_consumed += compute_request
 			productive_count += 1
 
 			# Get effective productivity (accounts for burnout, traits)
@@ -249,6 +259,14 @@ func start_turn() -> Dictionary:
 
 	# Apply research gains
 	state.add_resources({"research": research_from_employees})
+
+	# #576: actually burn the compute the researchers consumed this turn.
+	# Matches the money-spend pattern above (add_resources with a negative).
+	# compute_consumed <= int(state.compute) by construction (the has_compute
+	# gate stops handing out compute at 0), so this stays non-negative.
+	if compute_consumed > 0:
+		state.add_resources({"compute": -compute_consumed})
+		state.compute = max(0.0, state.compute)
 
 	# Issue #500: research-quality risk contributions (feeds risk pools, not doom directly)
 	state.apply_research_quality_risk(state.turn)

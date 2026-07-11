@@ -52,16 +52,18 @@ func test_start_turn_ap_scales_with_staff():
 	assert_eq(state.action_points, 6, "AP should scale: 3 + int(6 * 0.5) = 6")
 
 func test_start_turn_deducts_staff_salaries():
-	# Test that staff salaries are deducted ($5k per employee)
+	# #573: salaries are now per-workday (annual / 260), not a flat $5k/turn.
+	# With only legacy staff counts (no Researcher objects) the fallback bills
+	# total_staff * (60000/260) per turn.
 	state.safety_researchers = 3
 	state.capability_researchers = 2
-	# Total staff = 5, salaries = 5 * $5000 = $25,000
+	# Total staff = 5
 	var initial_money = state.money
 
 	turn_manager.start_turn()
 
-	var expected_money = initial_money - 25000
-	assert_eq(state.money, expected_money, "Should deduct $25k in salaries")
+	var expected_money = initial_money - 5 * (60000.0 / 260.0)
+	assert_almost_eq(state.money, expected_money, 0.01, "Should deduct per-workday salaries (#573)")
 
 func test_start_turn_no_research_without_individual_researchers():
 	# Research generation now comes from individual researcher system,
@@ -73,6 +75,48 @@ func test_start_turn_no_research_without_individual_researchers():
 	turn_manager.start_turn()
 
 	assert_eq(state.research, 0.0, "No research without individual researchers")
+
+func test_start_turn_burns_compute_for_productive_researchers():
+	# #576 REGRESSION: compute is a consumable, not just a capacity gate.
+	# Each productive (managed, has-compute) researcher must actually burn
+	# compute each turn. Previously the decrement only touched a local var,
+	# so state.compute never fell and playtesters saw it accumulate forever.
+	state.compute = 100.0
+	# 3 researchers, all within founder management capacity (9) -> all productive.
+	state.researchers = [
+		Researcher.new("safety"),
+		Researcher.new("safety"),
+		Researcher.new("capabilities"),
+	]
+
+	turn_manager.start_turn()
+
+	# Compute burn is deterministic (1 per productive researcher), independent of
+	# the RNG research roll: 3 productive researchers -> 3 compute consumed.
+	assert_eq(state.compute, 97.0, "3 productive researchers should burn 3 compute (100 -> 97)")
+
+func test_start_turn_compute_drops_over_multiple_turns():
+	# #576 REGRESSION: over several turns compute should trend DOWN when
+	# researchers are working and no compute is purchased.
+	state.compute = 100.0
+	state.researchers = [Researcher.new("safety"), Researcher.new("capabilities")]
+
+	var start_compute = state.compute
+	for _i in range(5):
+		turn_manager.start_turn()
+
+	# 2 productive researchers * 5 turns = 10 compute burned.
+	assert_lt(state.compute, start_compute, "Compute should decrease over turns when researchers work")
+	assert_eq(state.compute, 90.0, "2 researchers over 5 turns should burn 10 compute (100 -> 90)")
+
+func test_start_turn_compute_not_burned_without_researchers():
+	# Guard: with no researchers there is nothing to consume compute.
+	state.compute = 100.0
+	state.researchers = []
+
+	turn_manager.start_turn()
+
+	assert_eq(state.compute, 100.0, "Compute should be unchanged with no researchers")
 
 func test_execute_turn_processes_queued_actions():
 	# Test that execute_turn runs queued actions
