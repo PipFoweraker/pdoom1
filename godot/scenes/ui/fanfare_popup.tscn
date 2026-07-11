@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfanfarepopup01"]
+
+[ext_resource type="Script" path="res://scripts/ui/fanfare_popup.gd" id="1_fanfare"]
+
+[node name="FanfarePopup" type="CanvasLayer"]
+layer = 128
+script = ExtResource("1_fanfare")

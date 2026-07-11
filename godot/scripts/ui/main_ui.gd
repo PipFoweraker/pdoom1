@@ -43,7 +43,10 @@ var queued_actions: Array = []
 var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
-var ledger_summary_label: Label  # BL-1 compact Liability Ledger summary (script-instantiated)
+var ledger_summary_label: Button  # BL-1 compact Liability Ledger summary; clickable -> ledger screen (#578)
+var _ledger_due_soon_logged: bool = false  # #578: only log the "payment due" reminder on entry, not every frame
+var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
+var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
 
 # Active dialog state for keyboard shortcuts
@@ -92,10 +95,17 @@ func _ready():
 
 	# BL-1: compact Liability Ledger summary just below the doom trend. Kept terse so
 	# the main view stays uncrowded; the full ledger is a switchable screen (Financing).
-	ledger_summary_label = Label.new()
+	# #578: it's now a flat Button so the summary is directly clickable to open the full
+	# ledger screen (playtester: "no easy way of getting to the ledger from the main UI").
+	ledger_summary_label = Button.new()
+	ledger_summary_label.flat = true
+	ledger_summary_label.focus_mode = Control.FOCUS_NONE
+	ledger_summary_label.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	ledger_summary_label.add_theme_font_size_override("font_size", 11)
 	ledger_summary_label.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
 	ledger_summary_label.text = "Ledger: clean"
+	ledger_summary_label.tooltip_text = "Open the Liability Ledger"
+	ledger_summary_label.pressed.connect(_show_ledger_screen)
 	right_zones.add_child(ledger_summary_label)
 	right_zones.move_child(ledger_summary_label, doom_trend_graph.get_index() + 1)
 
@@ -614,14 +624,29 @@ func _update_ledger_summary(ledger_data: Dictionary) -> void:
 	var soonest: int = int(ledger_data.get("soonest_fuse", -1))
 	var secrets: int = int(ledger_data.get("secret_count", 0))
 	if ledger_data.is_empty() or (owed <= 0.0 and secrets == 0):
-		ledger_summary_label.text = "Ledger: clean"
+		ledger_summary_label.text = "Ledger: clean  (click to view)"
 		ledger_summary_label.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
+		_ledger_due_soon_logged = false
 		return
 	var due_txt := ("due %dt" % soonest) if soonest >= 0 else "no due"
 	var secret_txt := ("  |  %d secret" % secrets) if secrets > 0 else ""
-	ledger_summary_label.text = "Ledger: %s owed  |  %s%s" % [GameConfig.format_money(owed), due_txt, secret_txt]
-	# Redden as secret liabilities mount (the exposure pressure surface)
-	ledger_summary_label.add_theme_color_override("font_color", Color(0.85, 0.78, 0.55) if secrets == 0 else Color(0.9, 0.55, 0.45))
+	# #578: due-soon reminder. When the soonest payable fuse is within ~1-2 turns, flag it
+	# visibly (⚠ prefix + strong red) and drop a one-shot message-log line so the player is
+	# warned things are coming due, not just left to notice on their own.
+	var due_soon := soonest >= 0 and soonest <= 2 and owed > 0.0
+	var prefix := "⚠ " if due_soon else ""
+	ledger_summary_label.text = "%sLedger: %s owed  |  %s%s" % [prefix, GameConfig.format_money(owed), due_txt, secret_txt]
+	if due_soon:
+		# Urgent: bright red, and log once on entry into the due-soon window.
+		ledger_summary_label.add_theme_color_override("font_color", Color(0.95, 0.42, 0.36))
+		if not _ledger_due_soon_logged:
+			var when_txt := "this turn" if soonest <= 0 else ("in %d turn%s" % [soonest, "" if soonest == 1 else "s"])
+			log_message("[color=orange]⚠ Ledger: %s payment due %s — open the ledger (click summary) to review.[/color]" % [GameConfig.format_money(owed), when_txt])
+			_ledger_due_soon_logged = true
+	else:
+		_ledger_due_soon_logged = false
+		# Redden as secret liabilities mount (the exposure pressure surface)
+		ledger_summary_label.add_theme_color_override("font_color", Color(0.85, 0.78, 0.55) if secrets == 0 else Color(0.9, 0.55, 0.45))
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
@@ -701,6 +726,7 @@ func _on_actions_available(actions: Array):
 
 	# Group actions by category, filtering out locked actions
 	var categories = {}
+	var unlocked_ids := {}  # #578: track which ids are unlocked this pass (for new-unlock fanfares)
 	for action in actions:
 		# Check if action is unlocked based on game state
 		if not GameActions.is_action_unlocked(action, current_state):
@@ -708,6 +734,7 @@ func _on_actions_available(actions: Array):
 			continue  # Skip locked actions - they won't be shown
 
 		unlocked_count += 1
+		unlocked_ids[action.get("id", "")] = true
 		var category = action.get("category", "other")
 		if not categories.has(category):
 			categories[category] = []
@@ -715,6 +742,15 @@ func _on_actions_available(actions: Array):
 
 	if locked_count > 0:
 		print("[MainUI] Action Discovery: %d unlocked, %d locked (hidden)" % [unlocked_count, locked_count])
+
+	# #578: momentous-unlock fanfare. When Strategic Moves first becomes available, fade a
+	# Civ-style reveal up over the screen instead of the button just silently appearing.
+	# This is the ONE wired proof trigger; the same FanfarePopup API can front other unlocks.
+	if _actions_primed and unlocked_ids.has("strategic") and not _seen_unlocked_actions.has("strategic"):
+		_show_strategic_unlock_fanfare()
+	for id in unlocked_ids:
+		_seen_unlocked_actions[id] = true
+	_actions_primed = true
 
 	# Define category order
 	var category_order = ["hiring", "resources", "research", "funding", "management", "influence", "strategic", "other"]
@@ -1994,6 +2030,18 @@ func _on_publicity_option_selected(action_id: String, action_name: String, dialo
 
 	print("[MainUI] Calling game_manager.select_action(%s)" % action_id)
 	game_manager.select_action(action_id)
+
+func _show_strategic_unlock_fanfare() -> void:
+	"""#578: Civ-style fade-up reveal when Strategic Moves first unlocks, instead of a button
+	silently appearing. Text-only for now; the image slot (arg 3) takes a hero banner from
+	art_prompts/hero_banners.yaml once those are generated."""
+	log_message("[color=gold]The board convenes: Strategic Moves are now available.[/color]")
+	FanfarePopup.show_fanfare(
+		"STRATEGIC MOVES UNLOCKED",
+		"The council of elders has deemed your standing sufficient. High-stakes plays now open to you — bold gambits that can bend the odds, each leaving its mark on the ledger of history. Wield them wisely.",
+		"",  # hero banner image slot — art_prompts/hero_banners.yaml drops in here later
+		get_tree().root)
+
 
 func _show_strategic_submenu():
 	"""Show popup dialog with strategic/high-stakes options with keyboard support - icon grid layout"""
