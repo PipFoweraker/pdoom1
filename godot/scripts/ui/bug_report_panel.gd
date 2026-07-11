@@ -62,8 +62,10 @@ func _input(event):
 
 	# Handle keyboard shortcuts
 	if event is InputEventKey and event.pressed and not event.echo:
-		# Backslash (\), N key, or ESC to close bug reporter
-		if event.keycode == KEY_BACKSLASH or event.keycode == KEY_N or event.keycode == KEY_ESCAPE:
+		# Only ESC closes the panel. N and Backslash were previously close keys, but
+		# they are ordinary characters the user needs to type into the report fields —
+		# closing on them made filing a report nearly impossible (issue #575).
+		if event.keycode == KEY_ESCAPE:
 			hide_panel()
 			get_viewport().set_input_as_handled()
 

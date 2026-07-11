@@ -246,9 +246,26 @@ func get_actions_by_category(category: Category) -> Array:
 			actions.append(action)
 	return actions
 
+## True if a text-entry widget (LineEdit/TextEdit) currently owns GUI focus.
+## Global keybinds must yield to text fields so typed characters reach the field
+## instead of firing shortcuts (issues #575, #567). Used as a gate by this
+## autoload's _input and by MainUI's shortcut handling.
+func is_text_input_focused() -> bool:
+	var vp := get_viewport()
+	if vp == null:
+		return false
+	var focus_owner := vp.gui_get_focus_owner()
+	return focus_owner is LineEdit or focus_owner is TextEdit
+
 ## Process input for global keybinds
 func _input(event: InputEvent):
 	if not event is InputEventKey:
+		return
+
+	# Yield to focused text fields — never steal characters being typed (#575).
+	# A bug-report form or any LineEdit/TextEdit must receive letters like 'n'/'t'
+	# rather than having them trigger global shortcuts.
+	if is_text_input_focused():
 		return
 
 	# Screenshot
