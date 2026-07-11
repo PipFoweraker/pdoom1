@@ -17,7 +17,8 @@ func before_each():
 	if EventService:
 		_saved_historical_events = EventService.transformed_events.duplicate()
 		EventService.transformed_events.clear()
-	GameEvents.reset_triggered_events()
+	# WS-0: the fired-event registry is per-GameState instance state; GameManager
+	# creates its own fresh GameState, so no global event-registry reset is needed.
 
 	# Preserve difficulty (autoload singleton) so difficulty tests don't leak
 	_saved_difficulty = GameConfig.difficulty
