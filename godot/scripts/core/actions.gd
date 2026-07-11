@@ -196,7 +196,9 @@ static func get_all_actions() -> Array[Dictionary]:
 			"costs": {},  # No cost to open menu
 			"category": "research",
 			"is_submenu": true,
-			"unlock_conditions": {"papers_min": 1}  # Need at least 1 paper to unlock
+			# #565: always visible in the action list so Travel/Conferences is discoverable,
+			# not hotkey-only. The T hotkey was already ungated, so the button matches it now.
+			"unlock_conditions": {}
 		},
 		# Financing submenu — the Liability Ledger (ADR-0003): every fix is a loan
 		{
