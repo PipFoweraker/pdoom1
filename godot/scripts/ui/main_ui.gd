@@ -45,6 +45,7 @@ var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
 var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
 var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
+var employee_panel  # #622 L10: employee roster + staff ID card (becomes L2's assignment surface)
 var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
@@ -111,6 +112,16 @@ func _ready():
 	ledger_summary_btn.pressed.connect(_show_ledger_screen)
 	right_zones.add_child(ledger_summary_btn)
 	right_zones.move_child(ledger_summary_btn, doom_trend_graph.get_index() + 1)
+
+	# #622 L10: employee roster + staff ID card (script-instantiated child; grows into
+	# the L2 per-person assignment surface). Renders into the scene's roster container;
+	# the ID-card overlay parents to the TabManager so it overlays everything.
+	employee_panel = preload("res://scripts/ui/employee_panel.gd").new()
+	add_child(employee_panel)
+	employee_panel.setup(roster_container, tab_manager)
+	employee_panel.dialog_opened.connect(_on_employee_dialog_opened)
+	employee_panel.dialog_closed.connect(_on_employee_dialog_closed)
+	employee_panel.info_text_changed.connect(_on_employee_info_text)
 
 	# #602: native path to the Employee screen. The E-key shortcut was retired when
 	# employee info began moving toward the main UI, which left the full Employee screen
@@ -680,8 +691,9 @@ func _on_game_state_updated(state: Dictionary):
 	# Refresh upgrades list to update affordability
 	_populate_upgrades()
 
-	# Update employee roster display
-	_update_employee_roster(state)
+	# Update employee roster display (#622 L10: lives in EmployeePanel)
+	if employee_panel:
+		employee_panel.update_roster(state)
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
@@ -2888,284 +2900,22 @@ func _reset_resource_highlights():
 			label.remove_theme_color_override("font_color")
 	# ap_label is RichTextLabel - skip color override reset (it uses BBCode colors)
 
-func _update_employee_roster(state: Dictionary):
-	"""Update the employee roster display in the middle panel"""
-	if not roster_container:
-		return
-
-	# Clear existing roster entries
-	for child in roster_container.get_children():
-		child.queue_free()
-
-	# Get researchers from state
-	var researchers = state.get("researchers", [])
-
-	# If no individual researchers, show legacy counts
-	if researchers.is_empty():
-		var safety = state.get("safety_researchers", 0)
-		var capability = state.get("capability_researchers", 0)
-		var compute_eng = state.get("compute_engineers", 0)
-		var managers = state.get("managers", 0)
-
-		if safety + capability + compute_eng + managers == 0:
-			var empty_label = Label.new()
-			empty_label.text = "No staff hired"
-			empty_label.add_theme_font_size_override("font_size", 10)
-			empty_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
-			empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			roster_container.add_child(empty_label)
-		else:
-			# Show legacy count display
-			_add_legacy_staff_display(safety, capability, compute_eng, managers)
-		return
-
-	# Show individual researchers
-	for researcher_data in researchers:
-		var entry = _create_researcher_button(researcher_data)
-		roster_container.add_child(entry)
-
-func _add_legacy_staff_display(safety: int, capability: int, compute_eng: int, managers: int):
-	"""Show simple staff counts (legacy mode)"""
-	var staff_types = [
-		{"name": "Safety", "count": safety, "color": Color(0.3, 0.8, 0.3)},
-		{"name": "Capability", "count": capability, "color": Color(0.8, 0.3, 0.3)},
-		{"name": "Engineers", "count": compute_eng, "color": Color(0.3, 0.5, 0.8)},
-		{"name": "Managers", "count": managers, "color": Color(0.7, 0.7, 0.3)}
-	]
-
-	for staff_type in staff_types:
-		if staff_type["count"] > 0:
-			var hbox = HBoxContainer.new()
-			hbox.add_theme_constant_override("separation", 4)
-
-			# Color indicator
-			var indicator = Label.new()
-			indicator.text = "●"
-			indicator.add_theme_color_override("font_color", staff_type["color"])
-			indicator.add_theme_font_size_override("font_size", 12)
-			hbox.add_child(indicator)
-
-			# Count and name
-			var name_label = Label.new()
-			name_label.text = "%s: %d" % [staff_type["name"], staff_type["count"]]
-			name_label.add_theme_font_size_override("font_size", 10)
-			name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-			hbox.add_child(name_label)
-
-			roster_container.add_child(hbox)
-
-# Old researcher entry: non-interactive panel item
-func _create_researcher_entry(data: Dictionary) -> Control:
-	"""Create a roster entry for an individual researcher"""
-	var panel = PanelContainer.new()
-	panel.custom_minimum_size = Vector2(0, 24)
-
-	var hbox = HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 6)
-	panel.add_child(hbox)
-
-	# Specialization color indicator
-	var spec_colors = {
-		"safety": Color(0.3, 0.8, 0.3),
-		"capabilities": Color(0.8, 0.3, 0.3),
-		"interpretability": Color(0.7, 0.3, 0.8),
-		"alignment": Color(0.3, 0.7, 0.8)
-	}
-
-	var spec = data.get("specialization", "safety")
-	var indicator = Label.new()
-	indicator.text = "●"
-	indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
-	indicator.add_theme_font_size_override("font_size", 10)
-	hbox.add_child(indicator)
-
-	# Name
-	var name_label = Label.new()
-	name_label.text = data.get("name", "Unknown")
-	name_label.add_theme_font_size_override("font_size", 9)
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hbox.add_child(name_label)
-
-	# Productivity indicator (simple bar or percentage)
-	var productivity = data.get("base_productivity", 1.0)
-	var burnout = data.get("burnout", 0.0)
-	var effective_prod = productivity * (1.0 - min(burnout / 200.0, 0.5))
-
-	var prod_label = Label.new()
-	prod_label.text = "%.0f%%" % (effective_prod * 100)
-	prod_label.add_theme_font_size_override("font_size", 9)
-
-	# Color based on productivity
-	if effective_prod >= 1.0:
-		prod_label.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
-	elif effective_prod >= 0.7:
-		prod_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.3))
-	else:
-		prod_label.add_theme_color_override("font_color", Color(0.8, 0.3, 0.3))
-
-	hbox.add_child(prod_label)
-
-	# Burnout warning if high
-	if burnout >= 60:
-		var burnout_icon = Label.new()
-		burnout_icon.text = "🔥"
-		burnout_icon.add_theme_font_size_override("font_size", 8)
-		hbox.add_child(burnout_icon)
-
-	return panel
-
-# New researcher entry: interactive button
-func _create_researcher_button(data: Dictionary) -> Control:
-	"""Create a roster entry/button for an individual researcher"""
-	var btn := Button.new()
-	btn.custom_minimum_size = Vector2(0, 32)
-	btn.focus_mode = Control.FOCUS_NONE
-	btn.size_flags_horizontal = Control.SIZE_FILL
-	#btn.clip_contents = false
-
-	# Margin/Padding - ensures text does not render so close to box walls
-	var margin := MarginContainer.new()
-	#var margin_padding = 8
-	#margin.add_theme_constant_override("margin_left", margin_padding)
-	#margin.add_theme_constant_override("margin_right", margin_padding)
-	btn.add_child(margin)
-
-	# Main Row
-	var hbox := HBoxContainer.new()
-	var hbox_separation = 8
-	hbox.add_theme_constant_override("separation", hbox_separation)
-	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	margin.add_child(hbox)
-
-	# Specialization Colours - should this be global/callable?
-	var spec_colors = {
-		"safety": Color(0.3, 0.8, 0.3),
-		"capabilities": Color(0.8, 0.3, 0.3),
-		"interpretability": Color(0.7, 0.3, 0.8),
-		"alignment": Color(0.3, 0.7, 0.8)
-	}
-
-	# Specialisation Indicator
-	var spec = data.get("specialization", "safety")
-	var indicator := Label.new()
-	indicator.text = "●"
-	indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
-	hbox.add_child(indicator)
-
-	# Name Label
-	var name_label := Label.new()
-	name_label.text = data.get("name", "Unknown")
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	name_label.add_theme_font_size_override("separation", 8)
-	hbox.add_child(name_label)
-
-	# Productivity Indicator (simple bar or percentage)
-	var productivity = data.get("base_productivity", 1.0)
-	var burnout = data.get("burnout", 0.0)
-	var effective_prod = productivity * (1.0 - min(burnout / 200.0, 0.5))
-
-	var prod_label := Label.new()
-	prod_label.text = "%.0f%%" % (effective_prod * 100)
-	prod_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-
-	# Color logic - based on employee productivity
-	if effective_prod >= 1.0:
-		prod_label.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
-	elif effective_prod >= 0.7:
-		prod_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.3))
-	else:
-		prod_label.add_theme_color_override("font_color", Color(0.8, 0.3, 0.3))
-
-	hbox.add_child(prod_label)
-
-	# Burnout warning if high
-	if burnout >= 60:
-		var burnout_icon = Label.new()
-		burnout_icon.text = "🔥"
-		#burnout_icon.add_theme_font_size_override("font_size", 8)
-		hbox.add_child(burnout_icon)
-
-	# When staff button is pressed, show extra detail
-	btn.pressed.connect(
-		func(): _show_staff_id_card(data)
-	)
-
-	return btn
-
-func _show_staff_id_card(data: Dictionary):
-	"""Show the full staff perks panel for a researcher"""
-	print("[MainUI] Opening staff perks panel for: %s" % data.get("name", "Unknown"))
-
-	# Close any existing dialog first
-	if active_dialog != null and is_instance_valid(active_dialog):
+func _on_employee_dialog_opened(dialog: Control) -> void:
+	"""EmployeePanel put the staff ID card up (#622). Preserves the old behavior:
+	any existing dialog is closed first, then the ID card becomes the active dialog
+	(the buttons array is left as-is, exactly as before the extraction)."""
+	if active_dialog != null and is_instance_valid(active_dialog) and active_dialog != dialog:
 		active_dialog.queue_free()
-		active_dialog = null
+	active_dialog = dialog
 
-	# Load and instance the perks panel scene
-	var perks_panel_scene = preload("res://scenes/ui/staff_perks_panel.tscn")
-	var perks_panel = perks_panel_scene.instantiate()
+func _on_employee_dialog_closed() -> void:
+	"""Staff ID card dismissed (blocker click or its own close button)."""
+	active_dialog = null
 
-	# Create a Researcher object from the dictionary data
-	var researcher = Researcher.new(data.get("specialization", "safety"), data.get("name", ""))
-	researcher.skill_level = data.get("skill_level", 5)
-	researcher.current_salary = data.get("current_salary", 60000)
-	researcher.base_productivity = data.get("base_productivity", 1.0)
-	researcher.burnout = data.get("burnout", 0.0)
-	researcher.loyalty = data.get("loyalty", 50)
-	researcher.turns_employed = data.get("turns_employed", 0)
-	researcher.jet_lag_turns = data.get("jet_lag_turns", 0)
-	researcher.jet_lag_severity = data.get("jet_lag_severity", 0.0)
+func _on_employee_info_text(text: String) -> void:
+	"""Perk hover details from the staff ID card feed the shared info bar."""
+	info_label.text = text
 
-	# Copy traits
-	var traits = data.get("traits", [])
-	for trait_id in traits:
-		researcher.traits.append(trait_id)
-
-	# Add blocker behind panel
-	var blocker = ColorRect.new()
-	blocker.color = Color(0.0, 0.0, 0.0, 0.5)
-	blocker.mouse_filter = Control.MOUSE_FILTER_STOP
-	blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	blocker.z_index = 998
-
-	# Click on blocker closes panel
-	blocker.gui_input.connect(func(event):
-		if event is InputEventMouseButton and event.pressed:
-			perks_panel.queue_free()
-			blocker.queue_free()
-			active_dialog = null
-	)
-
-	tab_manager.add_child(blocker)
-
-	# Add panel
-	tab_manager.add_child(perks_panel)
-	perks_panel.z_index = 999
-	perks_panel.visible = true
-
-	# Connect signals
-	perks_panel.close_requested.connect(func():
-		perks_panel.queue_free()
-		blocker.queue_free()
-		active_dialog = null
-	)
-
-	perks_panel.perk_hovered.connect(func(perk_data):
-		var perk_name = perk_data.get("name", "Unknown")
-		var perk_desc = perk_data.get("description", "")
-		info_label.text = "[b][color=cyan]%s[/color][/b] — %s\n[color=gray]Perk selection coming in future update[/color]" % [perk_name, perk_desc]
-	)
-
-	perks_panel.perk_unhovered.connect(func():
-		info_label.text = "[color=gray]Hover over actions to see details...\n [/color]"
-	)
-
-	# Set researcher data
-	perks_panel.set_researcher(researcher)
-
-	# Track as active dialog
-	active_dialog = perks_panel
-	print("[MainUI] Staff perks panel opened")
 
 # === OPERATIONS SUBMENU ===
 
