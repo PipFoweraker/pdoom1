@@ -36,7 +36,10 @@ static func save_game(state: GameState, path: String = QUICKSAVE_PATH) -> Error:
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f == null:
 		return FileAccess.get_open_error()
-	f.store_string(JSON.stringify(build_envelope(state), "\t"))
+	# full_precision=true is LOAD-BEARING: the default truncates float decimals,
+	# which shifts every restored float by ulps — the drift then compounds turn
+	# over turn, so a loaded game would slowly diverge from an unsaved one.
+	f.store_string(JSON.stringify(build_envelope(state), "\t", true, true))
 	f.close()
 	print("[SaveLoad] Saved turn %d to %s" % [state.turn, path])
 	return OK
