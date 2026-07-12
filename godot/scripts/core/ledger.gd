@@ -65,7 +65,9 @@ class Entry:
 		return e
 
 # How hard an unpayable money bill converts to doom — the "teeth" that guarantee
-# mortality when a debtor cannot cover a balloon payment. Config, not scattered magic.
+# mortality when a debtor cannot cover a balloon payment. Live values come from the
+# Balance surface ("ledger.*", L9 #621); these consts are the call-site fallbacks
+# (and keep external references/tests compiling).
 const DOOM_PER_UNPAID_1000: float = 3.5
 const REP_PER_UNPAID_1000: float = 2.0
 
@@ -80,25 +82,39 @@ func add(entry: Entry) -> void:
 
 ## Money now, balloon repayment later with compounding interest. The classic
 ## "bill for turn 2" — deep runs are heroic because of what funded them.
-static func loan(amount: float, term: int = 4, rate: float = 0.25) -> Entry:
-	return Entry.new("loan", "money", amount * 1.2, term, rate)
+## Negative term/rate = "use the Balance surface" (defaults can't call autoloads).
+static func loan(amount: float, term: int = -1, rate: float = -1.0) -> Entry:
+	if term < 0:
+		term = Balance.inum("ledger.loan.fuse_turns", 4)
+	if rate < 0.0:
+		rate = Balance.num("ledger.loan.interest_rate", 0.25)
+	return Entry.new("loan", "money", amount * Balance.num("ledger.loan.principal_multiplier", 1.2), term, rate)
 
 ## Money now, an obligation that later bills in reputation/governance (strings).
 static func funding_with_strings(amount: float) -> Entry:
-	return Entry.new("funding_strings", "governance", amount * 0.15, 6, 0.05)
+	return Entry.new("funding_strings", "governance",
+		amount * Balance.num("ledger.funding_strings.principal_multiplier", 0.15),
+		Balance.inum("ledger.funding_strings.fuse_turns", 6),
+		Balance.num("ledger.funding_strings.interest_rate", 0.05))
 
 ## Desperation lever = catch-up (ADR-0003/0008). Buys doom-suppression NOW but
 ## plants a SECRET, compounding governance liability (payroll coinflip -> rot ->
 ## exposure -> blackmail chain). Coinflip severity is drawn from state.rng so the
 ## run stays deterministic (WS-0).
 static func desperation_payroll(rng: RandomNumberGenerator) -> Entry:
-	var severity := 8000.0 + rng.randf() * 6000.0
-	return Entry.new("payroll_coinflip", "governance", severity, 3, 0.35, true)
+	var severity := Balance.num("ledger.desperation_payroll.severity_base", 8000.0) \
+		+ rng.randf() * Balance.num("ledger.desperation_payroll.severity_spread", 6000.0)
+	return Entry.new("payroll_coinflip", "governance", severity,
+		Balance.inum("ledger.desperation_payroll.fuse_turns", 3),
+		Balance.num("ledger.desperation_payroll.interest_rate", 0.35), true)
 
 ## A hire is AP-leverage with a small liability rider (ADR-0008). On departure a
 ## caller can flip it to `secret` (a disgruntled ex-researcher).
 static func staff_rider(name: String) -> Entry:
-	return Entry.new("staff:" + name, "governance", 1200.0, 8, 0.02)
+	return Entry.new("staff:" + name, "governance",
+		Balance.num("ledger.staff_rider.principal", 1200.0),
+		Balance.inum("ledger.staff_rider.fuse_turns", 8),
+		Balance.num("ledger.staff_rider.interest_rate", 0.02))
 
 # ---- Turn processing: the mortality guarantee lives here ----
 
@@ -127,8 +143,8 @@ func _bill(e: Entry, state) -> void:
 			if state.money < 0.0:
 				var shortfall: float = -state.money
 				state.money = 0.0
-				state.doom += shortfall / 1000.0 * DOOM_PER_UNPAID_1000
-				state.reputation = max(0.0, state.reputation - shortfall / 1000.0 * REP_PER_UNPAID_1000)
+				state.doom += shortfall / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
+				state.reputation = max(0.0, state.reputation - shortfall / 1000.0 * Balance.num("ledger.rep_per_unpaid_1000", REP_PER_UNPAID_1000))
 				_attribute(e, shortfall)
 		"reputation":
 			state.reputation = max(0.0, state.reputation - e.principal)
@@ -140,7 +156,7 @@ func _bill(e: Entry, state) -> void:
 			if state.governance < 0.0:
 				var deficit: float = -state.governance
 				state.governance = 0.0
-				state.doom += deficit / 1000.0 * DOOM_PER_UNPAID_1000
+				state.doom += deficit / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
 				_attribute(e, deficit)
 		"doom":
 			state.doom += e.principal
@@ -158,11 +174,14 @@ func expose(entry: Entry, state, offer_blackmail: bool = true) -> void:
 	if not entry.secret or entry.settled:
 		return
 	entry.secret = false
-	state.reputation = max(0.0, state.reputation - entry.principal / 1000.0 * 4.0)
-	state.governance -= entry.principal * 0.5
+	state.reputation = max(0.0, state.reputation - entry.principal / 1000.0 * Balance.num("ledger.expose.rep_per_1000", 4.0))
+	state.governance -= entry.principal * Balance.num("ledger.expose.governance_multiplier", 0.5)
 	if offer_blackmail:
 		# A worse liability that keeps the debtor quiet: shorter fuse, steeper rate.
-		add(Entry.new("blackmail:" + entry.source, "money", entry.principal * 1.5, 2, 0.5, true))
+		add(Entry.new("blackmail:" + entry.source, "money",
+			entry.principal * Balance.num("ledger.blackmail.principal_multiplier", 1.5),
+			Balance.inum("ledger.blackmail.fuse_turns", 2),
+			Balance.num("ledger.blackmail.interest_rate", 0.5), true))
 
 # ---- Read helpers ----
 
