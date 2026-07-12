@@ -1,0 +1,131 @@
+{
+	"_description": "Top-level action list (action bar), externalized from actions.gd get_all_actions() (L9, #621). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "hire_staff",
+			"name": "Hire Staff",
+			"description": "Open hiring menu to recruit researchers",
+			"costs": {},
+			"category": "hiring",
+			"is_submenu": true
+		},
+		{
+			"id": "buy_compute",
+			"name": "Purchase Compute",
+			"description": "Buy more computing power",
+			"costs": {
+				"money": 50000
+			},
+			"category": "resources"
+		},
+		{
+			"id": "safety_research",
+			"name": "Safety Research",
+			"description": "Conduct AI safety research",
+			"costs": {
+				"research": 10,
+				"action_points": 1
+			},
+			"category": "research"
+		},
+		{
+			"id": "capability_research",
+			"name": "Capability Research",
+			"description": "Advance AI capabilities",
+			"costs": {
+				"research": 10,
+				"action_points": 1
+			},
+			"category": "research"
+		},
+		{
+			"id": "publish_paper",
+			"name": "Publish Safety Paper",
+			"description": "Publish research to reduce p(doom)",
+			"costs": {
+				"research": 20,
+				"action_points": 1
+			},
+			"category": "research"
+		},
+		{
+			"id": "fundraise",
+			"name": "Fundraising",
+			"description": "Choose funding strategy - different risk/reward options",
+			"costs": {},
+			"category": "management",
+			"is_submenu": true
+		},
+		{
+			"id": "publicity",
+			"name": "Publicity",
+			"description": "Public outreach and influence campaigns",
+			"costs": {},
+			"category": "influence",
+			"is_submenu": true
+		},
+		{
+			"id": "team_building",
+			"name": "Team Building",
+			"description": "Improve morale, reduce doom slightly",
+			"costs": {
+				"money": 10000,
+				"action_points": 1
+			},
+			"category": "management",
+			"unlock_conditions": {
+				"staff_min": 2
+			}
+		},
+		{
+			"id": "audit_safety",
+			"name": "Safety Audit",
+			"description": "Comprehensive safety review",
+			"costs": {
+				"money": 40000,
+				"action_points": 2
+			},
+			"category": "research",
+			"unlock_conditions": {
+				"turn_min": 5
+			}
+		},
+		{
+			"id": "operations",
+			"name": "Operations",
+			"description": "Routine office operations and maintenance",
+			"costs": {},
+			"category": "management",
+			"is_submenu": true
+		},
+		{
+			"id": "strategic",
+			"name": "Strategic",
+			"description": "High-stakes strategic moves and risky plays",
+			"costs": {},
+			"category": "strategic",
+			"is_submenu": true,
+			"unlock_conditions": {
+				"turn_min": 10,
+				"reputation_min": 30
+			}
+		},
+		{
+			"id": "travel",
+			"name": "Travel & Conferences",
+			"description": "Academic travel, paper submissions, and conference attendance",
+			"costs": {},
+			"category": "research",
+			"is_submenu": true,
+			"unlock_conditions": {}
+		},
+		{
+			"id": "financing",
+			"name": "Financing",
+			"description": "Loans, funding-with-strings, and desperation levers - every mitigation is a loan",
+			"costs": {},
+			"category": "influence",
+			"is_submenu": true
+		}
+	]
+}

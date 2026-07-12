@@ -104,118 +104,44 @@ static func get_unlock_hint(action: Dictionary, state: Dictionary) -> String:
 	return " | ".join(hints)
 
 
+# Preload the shared loader (avoids class_name registration-order issues in fresh
+# worktrees/CI — same pattern as GameState's RiskPool preload).
+const Definitions = preload("res://scripts/data/definition_loader.gd")
+
+# L9 (#621): action definitions live in data, not code — one JSON per domain,
+# loaded once and cached (see data/actions/*.json). Loader copied from the
+# scenario_loader pattern via the shared DefinitionLoader.
+const ACTIONS_DATA_DIR := "res://data/actions"
+const RISK_CONTRIBUTIONS_PATH := "res://data/actions/risk_contributions.json"
+
+static var _action_defs: Dictionary = {}          # domain -> Array[Dictionary]
+static var _risk_contributions: Dictionary = {}   # action_id -> {source, pools}
+static var _risk_contributions_loaded := false
+
+
+static func reload_definitions() -> void:
+	"""Drop the definition caches so the next access re-reads the JSON (tests/tuning)."""
+	_action_defs.clear()
+	_risk_contributions_loaded = false
+
+
+static func _domain_defs(domain: String) -> Array[Dictionary]:
+	"""Load (once) and return the action definitions for a domain file."""
+	if not _action_defs.has(domain):
+		var defs: Array[Dictionary] = []
+		var data := Definitions.load_object("%s/%s.json" % [ACTIONS_DATA_DIR, domain], "GameActions")
+		for action in data.get("actions", []):
+			if action is Dictionary:
+				defs.append(action)
+		if defs.is_empty():
+			push_error("[GameActions] No actions loaded for domain '%s'" % domain)
+		_action_defs[domain] = defs
+	return _action_defs[domain]
+
+
 static func get_all_actions() -> Array[Dictionary]:
-	"""Return all available actions"""
-	return [
-		{
-			"id": "hire_staff",
-			"name": "Hire Staff",
-			"description": "Open hiring menu to recruit researchers",
-			"costs": {},  # No cost to open menu
-			"category": "hiring",
-			"is_submenu": true
-		},
-		{
-			"id": "buy_compute",
-			"name": "Purchase Compute",
-			"description": "Buy more computing power",
-			"costs": {"money": 50000},
-			"category": "resources"
-		},
-		{
-			"id": "safety_research",
-			"name": "Safety Research",
-			"description": "Conduct AI safety research",
-			"costs": {"research": 10, "action_points": 1},
-			"category": "research"
-		},
-		{
-			"id": "capability_research",
-			"name": "Capability Research",
-			"description": "Advance AI capabilities",
-			"costs": {"research": 10, "action_points": 1},
-			"category": "research"
-		},
-		{
-			"id": "publish_paper",
-			"name": "Publish Safety Paper",
-			"description": "Publish research to reduce p(doom)",
-			"costs": {"research": 20, "action_points": 1},
-			"category": "research"
-		},
-		{
-			"id": "fundraise",
-			"name": "Fundraising",
-			"description": "Choose funding strategy - different risk/reward options",
-			"costs": {},  # No cost to open menu
-			"category": "management",
-			"is_submenu": true
-		},
-		{
-			"id": "publicity",
-			"name": "Publicity",
-			"description": "Public outreach and influence campaigns",
-			"costs": {},  # No cost to open menu
-			"category": "influence",
-			"is_submenu": true
-		},
-		{
-			"id": "team_building",
-			"name": "Team Building",
-			"description": "Improve morale, reduce doom slightly",
-			"costs": {"money": 10000, "action_points": 1},
-			"category": "management",
-			"unlock_conditions": {"staff_min": 2}  # Unlocks when you have 2+ staff
-		},
-		{
-			"id": "audit_safety",
-			"name": "Safety Audit",
-			"description": "Comprehensive safety review",
-			"costs": {"money": 40000, "action_points": 2},
-			"category": "research",
-			"unlock_conditions": {"turn_min": 5}  # Unlocks at turn 5
-		},
-		# Operations submenu for routine management tasks
-		{
-			"id": "operations",
-			"name": "Operations",
-			"description": "Routine office operations and maintenance",
-			"costs": {},  # No cost to open menu
-			"category": "management",
-			"is_submenu": true
-		},
-		# Strategic submenu for high-cost/risky actions
-		{
-			"id": "strategic",
-			"name": "Strategic",
-			"description": "High-stakes strategic moves and risky plays",
-			"costs": {},  # No cost to open menu
-			"category": "strategic",
-			"is_submenu": true,
-			"unlock_conditions": {"turn_min": 10, "reputation_min": 30}  # Advanced options
-		},
-		# Travel & Conferences submenu (Issue #468)
-		{
-			"id": "travel",
-			"name": "Travel & Conferences",
-			"description": "Academic travel, paper submissions, and conference attendance",
-			"costs": {},  # No cost to open menu
-			"category": "research",
-			"is_submenu": true,
-			# #565: always visible in the action list so Travel/Conferences is discoverable,
-			# not hotkey-only. The T hotkey was already ungated, so the button matches it now.
-			"unlock_conditions": {}
-		},
-		# Financing submenu — the Liability Ledger (ADR-0003): every fix is a loan
-		{
-			"id": "financing",
-			"name": "Financing",
-			"description": "Loans, funding-with-strings, and desperation levers - every mitigation is a loan",
-			"costs": {},  # No cost to open menu
-			"category": "influence",
-			"is_submenu": true
-		}
-	]
+	"""Return all top-level actions (externalized to data/actions/core.json - L9, #621)"""
+	return _domain_defs("core")
 
 static func get_action_by_id(action_id: String) -> Dictionary:
 	"""Get specific action definition"""
@@ -250,259 +176,38 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 	return {}
 
 static func get_hiring_options() -> Array[Dictionary]:
-	"""Get all hiring submenu options"""
-	return [
-		{
-			"id": "hire_safety_researcher",
-			"name": "Safety Researcher",
-			"description": "Focused on AI safety and alignment research",
-			"costs": {"money": 60000, "action_points": 1},
-			"category": "hiring"
-		},
-		{
-			"id": "hire_capability_researcher",
-			"name": "Capability Researcher",
-			"description": "Advances AI capabilities (increases doom!)",
-			"costs": {"money": 60000, "action_points": 1},
-			"category": "hiring"
-		},
-		{
-			"id": "hire_compute_engineer",
-			"name": "Compute Engineer",
-			"description": "Improves compute efficiency",
-			"costs": {"money": 50000, "action_points": 1},
-			"category": "hiring"
-		},
-		{
-			"id": "hire_manager",
-			"name": "Manager",
-			"description": "Oversees a team of up to 8 researchers",
-			"costs": {"money": 80000, "action_points": 1},
-			"category": "hiring"
-		},
-		{
-			"id": "hire_ethicist",
-			"name": "AI Ethicist",
-			"description": "Add philosophical perspective to research (+5 reputation)",
-			"costs": {"money": 70000, "action_points": 1},
-			"category": "hiring"
-		},
-		{
-			"id": "hire_interpretability_researcher",
-			"name": "Interpretability Researcher",
-			"description": "Probes how models work internally (safety-aligned research)",
-			"costs": {"money": 60000, "action_points": 1},
-			"category": "hiring"
-		},
-		{
-			"id": "hire_alignment_researcher",
-			"name": "Alignment Researcher",
-			"description": "Aligns AI goals with human values (safety-aligned research)",
-			"costs": {"money": 60000, "action_points": 1},
-			"category": "hiring"
-		}
-	]
+	"""Get all hiring submenu options (data/actions/hiring.json)"""
+	return _domain_defs("hiring")
 
 static func get_financing_options() -> Array[Dictionary]:
-	"""Liability Ledger trades (ADR-0003). The caller (execute_action) applies the
-	immediate benefit and adds the future bill via the Ledger factories. Immediate
-	amounts and balance constants are PLACEHOLDERS - tuning parked (DQ-8, workshop #2)."""
-	return [
-		{
-			"id": "take_loan",
-			"name": "Take Loan",
-			"description": "+$50k now; a balloon repayment (~$60k) bills in 4 turns and compounds until paid.",
-			"costs": {"action_points": 1},
-			"category": "financing"
-		},
-		{
-			"id": "funding_strings",
-			"name": "Funding (Strings)",
-			"description": "+$40k now; a governance obligation bills in 6 turns.",
-			"costs": {"action_points": 1},
-			"category": "financing"
-		},
-		{
-			"id": "desperation_lever",
-			"name": "Desperation Lever",
-			"description": "Suppress doom now; plants a SECRET, compounding governance liability that rivals can expose.",
-			"costs": {"action_points": 1},
-			"category": "financing"
-		},
-		{
-			"id": "staff_rider",
-			"name": "Contractor",
-			"description": "+2 action points now; a small governance rider bills later.",
-			"costs": {"money": 15000, "action_points": 1},
-			"category": "financing"
-		}
-	]
+	"""Liability Ledger trades (ADR-0003; data/actions/financing.json). The caller (execute_action) applies the immediate benefit and adds the future bill via the Ledger factories; magnitudes live on the Balance surface (\"ledger.*\")."""
+	return _domain_defs("financing")
 
 static func get_fundraising_options() -> Array[Dictionary]:
-	"""Get all fundraising submenu options"""
-	return [
-		{
-			"id": "fundraise_small",
-			"name": "Modest Funding Round",
-			"description": "Conservative fundraising - lower amounts, lower risk, always available",
-			"costs": {"action_points": 1, "reputation": 2},
-			"gains": {"money_min": 30000, "money_max": 60000},
-			"category": "funding"
-		},
-		{
-			"id": "fundraise_big",
-			"name": "Major Funding Round",
-			"description": "Aggressive funding - higher amounts but requires strong reputation",
-			"costs": {"action_points": 2, "reputation": 8},
-			"gains": {"money_min": 80000, "money_max": 150000},
-			"category": "funding"
-		},
-		{
-			"id": "take_loan",
-			"name": "Business Loan",
-			"description": "Immediate funds via debt - creates future repayment obligation",
-			"costs": {"action_points": 1},
-			"gains": {"money": 75000, "debt": 90000},  # +15k interest
-			"category": "funding"
-		},
-		{
-			"id": "apply_grant",
-			"name": "Research Grant",
-			"description": "Government/foundation funding - requires published papers",
-			"costs": {"action_points": 1, "papers": 1},
-			"gains": {"money_min": 50000, "money_max": 100000},
-			"category": "funding"
-		}
-	]
+	"""Get all fundraising submenu options (data/actions/fundraising.json)"""
+	return _domain_defs("fundraising")
 
 static func get_publicity_options() -> Array[Dictionary]:
-	"""Get all publicity/influence submenu options"""
-	return [
-		{
-			"id": "network",
-			"name": "Networking",
-			"description": "Build relationships and connections in the AI safety community",
-			"costs": {"action_points": 1},
-			"category": "influence"
-		},
-		{
-			"id": "media_campaign",
-			"name": "Media Campaign",
-			"description": "Public outreach through press and social media",
-			"costs": {"money": 30000, "action_points": 2},
-			"category": "influence"
-		},
-		{
-			"id": "lobby_government",
-			"name": "Lobby Government",
-			"description": "Advocate for AI safety regulation (costly but impactful)",
-			"costs": {"money": 80000, "action_points": 2},
-			"category": "influence"
-		},
-		{
-			"id": "release_warning",
-			"name": "Public Warning",
-			"description": "Warn public about AI risks - risky but high impact",
-			"costs": {"action_points": 2, "reputation": 15},
-			"category": "influence"
-		},
-		{
-			"id": "open_source_release",
-			"name": "Open Source Tools",
-			"description": "Release safety research publicly for community benefit",
-			"costs": {"papers": 3, "action_points": 1},
-			"category": "influence"
-		}
-	]
+	"""Get all publicity/influence submenu options (data/actions/publicity.json)"""
+	return _domain_defs("publicity")
 
 static func get_strategic_options() -> Array[Dictionary]:
-	"""Get all strategic/high-stakes submenu options"""
-	return [
-		{
-			"id": "acquire_startup",
-			"name": "Acquire Startup",
-			"description": "Buy struggling AI startup for talent and compute",
-			"costs": {"money": 150000, "action_points": 2},
-			"category": "strategic"
-		},
-		{
-			"id": "sabotage_competitor",
-			"name": "Corporate Espionage",
-			"description": "Slow down competitors (unethical, risky)",
-			"costs": {"money": 100000, "action_points": 3, "reputation": 20},
-			"category": "strategic"
-		},
-		{
-			"id": "emergency_pivot",
-			"name": "Emergency Pivot",
-			"description": "Convert capability researchers to safety focus",
-			"costs": {"money": 50000, "action_points": 2},
-			"category": "strategic"
-		},
-		{
-			"id": "grant_proposal",
-			"name": "Grant Proposal",
-			"description": "Apply for government/foundation funding",
-			"costs": {"action_points": 1, "papers": 1},
-			"category": "strategic"
-		}
-	]
+	"""Get all strategic/high-stakes submenu options (data/actions/strategic.json)"""
+	return _domain_defs("strategic")
 
 static func get_travel_options() -> Array[Dictionary]:
-	"""Get all travel/conference submenu options (Issue #468)"""
-	return [
-		{
-			"id": "submit_paper",
-			"name": "Submit Paper",
-			"description": "Submit research paper to a conference (multi-turn review process)",
-			"costs": {"research": 15, "action_points": 1},
-			"category": "travel"
-		},
-		{
-			"id": "attend_conference",
-			"name": "Attend Conference",
-			"description": "Travel to present accepted paper or network at a conference",
-			"costs": {"action_points": 2},  # Money cost calculated dynamically
-			"category": "travel"
-		},
-		{
-			"id": "send_delegation",
-			"name": "Send Delegation",
-			"description": "[Coming Soon] Send researchers to attend on your behalf",
-			"costs": {},
-			"category": "travel",
-			"is_stub": true
-		}
-	]
+	"""Get all travel/conference submenu options (Issue #468; data/actions/travel.json)"""
+	return _domain_defs("travel")
 
 static func get_operations_options() -> Array[Dictionary]:
-	"""Get all operations/maintenance submenu options"""
-	return [
-		{
-			"id": "order_supplies",
-			"name": "Order Office Supplies",
-			"description": "Restock stationery (+50 supplies). Staff consume supplies each turn.",
-			"costs": {"money": 2000, "action_points": 1},
-			"category": "operations"
-		},
-		{
-			"id": "office_maintenance",
-			"name": "Office Maintenance",
-			"description": "Routine repairs and cleaning. Improves morale slightly.",
-			"costs": {"money": 5000, "action_points": 1},
-			"category": "operations"
-		}
-	]
+	"""Get all operations/maintenance submenu options (data/actions/operations.json)"""
+	return _domain_defs("operations")
 
 static func get_pass_action() -> Dictionary:
-	"""Get the special pass/do nothing action (shown in command zone, not action list)"""
-	return {
-		"id": PASS_ACTION_ID,
-		"name": "Do Nothing",
-		"description": "Skip this action. Conserve resources but waste time.",
-		"costs": {},  # Free action, always available
-		"category": "command"
-	}
+	"""Get the special pass/do nothing action (shown in command zone, not action list;
+	data/actions/command.json)"""
+	var defs := _domain_defs("command")
+	return defs[0] if defs.size() > 0 else {}
 
 static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	"""Execute an action, modify state, return result
@@ -847,127 +552,22 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 
 static func _apply_risk_contributions(action_id: String, state: GameState) -> void:
-	"""Apply risk pool contributions based on action taken.
-	Risk contributions are hidden from players but visible in debug overlay."""
+	"""Apply risk pool contributions based on action taken (table externalized to
+	data/actions/risk_contributions.json - L9, #621). Risk contributions are hidden
+	from players but visible in debug overlay.
+	See godot/docs/design/RISK_SYSTEM.md for design documentation."""
 	if not state.risk_system:
 		return
-
-	var turn = state.turn
-
-	match action_id:
-		# === HIRING ===
-		"hire_capability_researcher":
-			state.risk_system.add_risk_multi({
-				"capability_overhang": 3.0,
-				"insider_threat": 1.0,
-				"financial_exposure": 2.0
-			}, "hire_capability", turn)
-
-		"hire_safety_researcher":
-			state.risk_system.add_risk_multi({
-				"capability_overhang": -2.0,  # Balances capabilities
-				"insider_threat": 1.0,
-				"financial_exposure": 2.0
-			}, "hire_safety", turn)
-
-		"hire_compute_engineer", "hire_manager", "hire_ethicist":
-			state.risk_system.add_risk("financial_exposure", 2.0, "hire_staff", turn)
-
-		# === RESEARCH ===
-		"capability_research":
-			state.risk_system.add_risk("capability_overhang", 2.0, "capability_research", turn)
-
-		"safety_research":
-			state.risk_system.add_risk_multi({
-				"capability_overhang": -1.0,
-				"research_integrity": -1.0
-			}, "safety_research", turn)
-
-		"publish_paper":
-			state.risk_system.add_risk_multi({
-				"capability_overhang": -2.0,
-				"regulatory_attention": 2.0,
-				"public_awareness": 1.0
-			}, "publish_paper", turn)
-
-		# === FUNDING ===
-		"fundraise_small":
-			state.risk_system.add_risk("financial_exposure", -1.0, "modest_funding", turn)
-
-		"fundraise_big":
-			state.risk_system.add_risk("financial_exposure", 2.0, "aggressive_funding", turn)
-
-		"take_loan":
-			state.risk_system.add_risk("financial_exposure", 5.0, "debt", turn)
-
-		"apply_grant", "grant_proposal":
-			state.risk_system.add_risk("financial_exposure", -3.0, "diversified_funding", turn)
-
-		# === PUBLICITY ===
-		"media_campaign":
-			state.risk_system.add_risk_multi({
-				"public_awareness": 3.0,
-				"regulatory_attention": 2.0
-			}, "media_campaign", turn)
-
-		"release_warning":
-			state.risk_system.add_risk_multi({
-				"public_awareness": 5.0,
-				"regulatory_attention": 3.0
-			}, "public_warning", turn)
-
-		"lobby_government":
-			state.risk_system.add_risk("regulatory_attention", -2.0, "lobbying", turn)
-
-		"network":
-			state.risk_system.add_risk("insider_threat", -1.0, "networking", turn)
-
-		# === STRATEGIC ===
-		"sabotage_competitor":
-			state.risk_system.add_risk_multi({
-				"insider_threat": 10.0,  # Ethical culture damage
-				"research_integrity": 5.0
-			}, "sabotage", turn)
-
-		"acquire_startup":
-			state.risk_system.add_risk_multi({
-				"insider_threat": 3.0,  # Integration risk
-				"financial_exposure": 5.0
-			}, "acquisition", turn)
-
-		"emergency_pivot":
-			state.risk_system.add_risk_multi({
-				"capability_overhang": -3.0,
-				"insider_threat": 2.0  # Staff disruption
-			}, "pivot", turn)
-
-		"open_source_release":
-			state.risk_system.add_risk_multi({
-				"capability_overhang": -5.0,
-				"public_awareness": 2.0,
-				"research_integrity": -2.0
-			}, "open_source", turn)
-
-		# === OPERATIONS ===
-		"team_building":
-			state.risk_system.add_risk("insider_threat", -2.0, "team_building", turn)
-
-		"audit_safety":
-			state.risk_system.add_risk_multi({
-				"research_integrity": -3.0,
-				"capability_overhang": -2.0,
-				"regulatory_attention": -1.0
-			}, "safety_audit", turn)
-
-		"buy_compute":
-			state.risk_system.add_risk("financial_exposure", 1.0, "compute_purchase", turn)
-
-		# === TRAVEL & CONFERENCES ===
-		"attend_conference":
-			state.risk_system.add_risk_multi({
-				"public_awareness": 1.0,
-				"research_integrity": -1.0
-			}, "conference", turn)
+	if not _risk_contributions_loaded:
+		_risk_contributions_loaded = true
+		var data := Definitions.load_object(RISK_CONTRIBUTIONS_PATH, "GameActions")
+		_risk_contributions = data.get("contributions", {})
+		if _risk_contributions.is_empty():
+			push_error("[GameActions] No risk contributions loaded from %s" % RISK_CONTRIBUTIONS_PATH)
+	var entry: Dictionary = _risk_contributions.get(action_id, {})
+	if entry.is_empty():
+		return
+	state.risk_system.add_risk_multi(entry.get("pools", {}), str(entry.get("source", action_id)), state.turn)
 
 
 static func _assign_random_traits(researcher: Researcher, rng: RandomNumberGenerator):

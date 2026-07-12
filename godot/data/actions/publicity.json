@@ -1,0 +1,54 @@
+{
+	"_description": "Publicity/influence submenu options, externalized from actions.gd get_publicity_options() (L9, #621). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "network",
+			"name": "Networking",
+			"description": "Build relationships and connections in the AI safety community",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "influence"
+		},
+		{
+			"id": "media_campaign",
+			"name": "Media Campaign",
+			"description": "Public outreach through press and social media",
+			"costs": {
+				"money": 30000,
+				"action_points": 2
+			},
+			"category": "influence"
+		},
+		{
+			"id": "lobby_government",
+			"name": "Lobby Government",
+			"description": "Advocate for AI safety regulation (costly but impactful)",
+			"costs": {
+				"money": 80000,
+				"action_points": 2
+			},
+			"category": "influence"
+		},
+		{
+			"id": "release_warning",
+			"name": "Public Warning",
+			"description": "Warn public about AI risks - risky but high impact",
+			"costs": {
+				"action_points": 2,
+				"reputation": 15
+			},
+			"category": "influence"
+		},
+		{
+			"id": "open_source_release",
+			"name": "Open Source Tools",
+			"description": "Release safety research publicly for community benefit",
+			"costs": {
+				"papers": 3,
+				"action_points": 1
+			},
+			"category": "influence"
+		}
+	]
+}

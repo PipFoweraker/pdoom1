@@ -20,6 +20,10 @@ class_name GameEvents
 const FIRST_EVENT_TURN := 2
 const MAX_NEW_EVENTS_PER_TURN := 2
 
+# Preload the shared loader (avoids class_name registration-order issues in fresh
+# worktrees/CI — same pattern as GameState's RiskPool preload).
+const Definitions = preload("res://scripts/data/definition_loader.gd")
+
 # L9 (#621): built-in event definitions live in data, not code. Loaded once and
 # cached; array order in the file is trigger-check order (cap priority, #568).
 const CORE_EVENTS_PATH := "res://data/events/core_events.json"
@@ -36,7 +40,7 @@ static func get_all_events() -> Array[Dictionary]:
 	if not _core_events_loaded:
 		_core_events_loaded = true
 		_core_events = []
-		var data := _load_definition_file(CORE_EVENTS_PATH)
+		var data := Definitions.load_object(CORE_EVENTS_PATH, "GameEvents")
 		for event in data.get("events", []):
 			if event is Dictionary:
 				_core_events.append(_resolve_option_templates(event))
@@ -49,49 +53,6 @@ static func reload_definitions() -> void:
 	"""Drop the definition caches so the next access re-reads the JSON (tests/tuning)."""
 	_core_events_loaded = false
 	_risk_events_loaded = false
-
-
-static func _load_definition_file(path: String) -> Dictionary:
-	"""Load + parse a definition JSON. Whole-number floats are normalized back to int
-	(JSON parses all numbers as float; costs/effects must stay int so typed state
-	fields like action_points accept them — behavior identical to the old literals)."""
-	if not FileAccess.file_exists(path):
-		push_error("[GameEvents] Definition file missing: %s" % path)
-		return {}
-	var file := FileAccess.open(path, FileAccess.READ)
-	if file == null:
-		push_error("[GameEvents] Failed to open definition file: %s" % path)
-		return {}
-	var json := JSON.new()
-	var err := json.parse(file.get_as_text())
-	file.close()
-	if err != OK:
-		push_error("[GameEvents] Failed to parse %s: %s" % [path, json.get_error_message()])
-		return {}
-	var data = json.get_data()
-	if not data is Dictionary:
-		push_error("[GameEvents] %s is not a JSON object" % path)
-		return {}
-	return _intify(data)
-
-
-static func _intify(value):
-	"""Recursively convert whole-number floats to int (JSON round-trip normalization).
-	Non-whole floats (e.g. probability 0.12) are preserved."""
-	match typeof(value):
-		TYPE_FLOAT:
-			if value == floor(value):
-				return int(value)
-			return value
-		TYPE_ARRAY:
-			for i in range(value.size()):
-				value[i] = _intify(value[i])
-			return value
-		TYPE_DICTIONARY:
-			for key in value.keys():
-				value[key] = _intify(value[key])
-			return value
-	return value
 
 
 static func _resolve_option_templates(event: Dictionary) -> Dictionary:
@@ -445,7 +406,7 @@ static func get_risk_events() -> Dictionary:
 	(externalized to JSON - L9, #621). Format: {pool_name: {severity: [events]}}"""
 	if not _risk_events_loaded:
 		_risk_events_loaded = true
-		var data := _load_definition_file(RISK_EVENTS_PATH)
+		var data := Definitions.load_object(RISK_EVENTS_PATH, "GameEvents")
 		_risk_events = data.get("pools", {})
 		if _risk_events.is_empty():
 			push_error("[GameEvents] No risk events loaded from %s" % RISK_EVENTS_PATH)
