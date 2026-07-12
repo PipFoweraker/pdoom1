@@ -402,7 +402,7 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 			if not state.funding_starvation_noted:
 				state.funding_starvation_noted = true
 				state.note_cause("funding_starvation", "payroll",
-					{"money": state.money, "next_turn_bills": next_turn_bills})
+					{"cash_level": state.money, "bills_due": next_turn_bills})
 		else:
 			state.funding_starvation_noted = false
 			if state.money < staff_salaries * 3.0:

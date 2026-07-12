@@ -97,7 +97,12 @@ static func chain_summary(state, max_entries: int = 8) -> Array:
 		var fx: Dictionary = c.get("effects", {})
 		var parts: Array = []
 		for key in fx.keys():
-			parts.append("%s %+.1f" % [_short_key(str(key)), float(fx[key])])
+			# *_level / *_due keys are watermark LEVELS, not deltas — print without a sign.
+			var k := str(key)
+			if k.ends_with("_level") or k.ends_with("_due"):
+				parts.append("%s %.1f" % [_short_key(k), float(fx[key])])
+			else:
+				parts.append("%s %+.1f" % [_short_key(k), float(fx[key])])
 		var fx_txt := (" (%s)" % ", ".join(parts)) if parts.size() > 0 else ""
 		lines.append("t%d %s %s%s" % [int(c.get("turn", -1)), str(c.get("kind", "?")), str(c.get("source", "?")), fx_txt])
 	if lines.size() > max_entries:
@@ -115,5 +120,7 @@ static func _short_key(key: String) -> String:
 		"governance": return "gov"
 		"money_shortfall": return "short$"
 		"governance_deficit": return "gov_deficit"
-		"next_turn_bills": return "bills"
+		"reputation_level": return "rep@"
+		"cash_level": return "cash@"
+		"bills_due": return "bills"
 		_: return key

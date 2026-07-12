@@ -453,7 +453,7 @@ func check_win_lose():
 	# One-shot: the FIRST crossing marks the chain.
 	if reputation <= REP_COLLAPSE_THRESHOLD and not rep_collapse_noted:
 		rep_collapse_noted = true
-		note_cause("rep_collapse", "reputation", {"reputation": reputation})
+		note_cause("rep_collapse", "reputation", {"reputation_level": reputation})
 
 	if doom >= 100.0:
 		game_over = true
