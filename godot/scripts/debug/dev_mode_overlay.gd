@@ -30,11 +30,10 @@ var _event_dropdown: OptionButton = null
 var _built := false
 
 
-## Resolve the *live* GameManager that MainUI actually drives (#600).
-## main.tscn instances a scene-local `GameManager` node that MainUI holds as `game_manager`;
-## that node — NOT the bareword `GameManager` autoload singleton — owns the live `state`.
-## The autoload's `state` is never populated, which is why every readout previously showed
-## "No active game". Prefer MainUI's instance; fall back to the autoload only when unwired.
+## Resolve the *live* GameManager that MainUI actually drives (#600). Since L0 (#620/#608)
+## the autoload singleton IS the one GameManager (the duplicate scene-local node was removed),
+## so both branches resolve to the same live instance in production. The resolver is kept so
+## tests can inject a mock manager via main_ui.
 func _live_gm() -> Node:
 	if main_ui != null:
 		var gm = main_ui.get("game_manager")

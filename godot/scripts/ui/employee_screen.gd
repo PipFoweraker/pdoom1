@@ -13,8 +13,8 @@ var researcher_to_fire: int = -1  # Index of researcher to fire
 var severance_cost: float = 0.0
 
 func _ready():
-	# Get GameManager reference from parent hierarchy
-	game_manager = get_node("/root/Main/GameManager")
+	# The GameManager autoload singleton is the ONE GameManager (L0 #620/#608)
+	game_manager = GameManager
 
 	# Connect to GameManager signals
 	if game_manager:

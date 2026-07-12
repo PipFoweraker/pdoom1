@@ -11,10 +11,10 @@ extends GutTest
 
 # Drive a real game headless with a per-turn action script, recording via the live
 # VerificationTracker wiring. Returns the exported artifact + the run's score.
-func _play_scripted(seed: String, script: Dictionary, max_turns: int = 40) -> Dictionary:
-	var state: GameState = GameState.new(seed)
+func _play_scripted(seed: String, script: Dictionary, max_turns: int = 40, schedule: Array = []) -> Dictionary:
+	var state: GameState = GameState.new(seed, schedule)
 	var tm: TurnManager = TurnManager.new(state)
-	VerificationTracker.start_tracking(seed, "test-vB")
+	VerificationTracker.start_tracking(seed, "test-vB", schedule)
 
 	while not state.game_over and state.turn < max_turns:
 		tm.start_turn()
@@ -105,6 +105,23 @@ func test_verify_accepts_true_score_and_rejects_inflated_claim():
 		"an artifact verifies against the score AND hash it actually produces")
 	assert_false(ReplaySimulator.verify(data, run["turns"], run["integral"], "deadbeef_not_the_real_hash"),
 		"a forged verification hash is rejected even when the score matches")
+
+
+func test_artifact_carries_schedule_and_scheduled_run_verifies():
+	# DQ-6 / #620 item 4: a seed = RNG seed + event schedule (ADR-0005), but the producer
+	# never emitted the `schedule` key the verifier reads (replay_simulator.gd) — so a
+	# scheduled run's artifact re-simulated WITHOUT its schedule and failed to reproduce.
+	var schedule: Array = [
+		{"turn": 1, "cause": "rival_funding_wave", "target": "capabilicorp", "magnitude": 5000000.0},
+		{"turn": 2, "cause": "rival_aggression_shift", "target": "capabilicorp", "magnitude": 0.5},
+	]
+	var run: Dictionary = _play_scripted("replay_seed_S", {1: ["fundraise_small"], 2: ["buy_compute"]}, 40, schedule)
+	var data: Dictionary = VerificationTracker.deserialize_replay(run["replay"])
+	assert_true(data.has("schedule"), "artifact emits the schedule key the verifier reads (DQ-6)")
+	assert_eq((data.get("schedule", []) as Array).size(), schedule.size(),
+		"artifact carries the full event schedule")
+	assert_true(ReplaySimulator.verify(data, run["turns"], run["integral"], run["hash"]),
+		"a SCHEDULED run's artifact re-simulates to the same score and hash")
 
 
 func test_malformed_artifact_deserializes_to_empty():

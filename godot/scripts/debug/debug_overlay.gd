@@ -18,11 +18,10 @@ var refresh_rate: float = 1.0
 var frame_times: Array[float] = []
 var max_frame_samples: int = 60
 
-## Resolve the *live* GameManager MainUI drives (#600). main.tscn instances a scene-local
-## `GameManager` node (a sibling of this overlay) which MainUI holds as `game_manager`; that
-## instance owns the live `state`. The bareword `GameManager` autoload singleton is a DIFFERENT
-## instance whose `state` is never populated — reading it is why this overlay reported
-## "No game state available" mid-game. Prefer MainUI's manager, then the scene node, then autoload.
+## Resolve the *live* GameManager MainUI drives (#600). Since L0 (#620/#608) the autoload
+## singleton IS the one GameManager (the duplicate scene-local node was removed), so every
+## branch below now resolves to the same live instance in production. The resolver is kept
+## (rather than reading the bareword directly) so tests can inject a mock via MainUI.
 func _live_gm() -> Node:
 	var mui := get_node_or_null("../TabManager/MainUI")
 	if mui != null:

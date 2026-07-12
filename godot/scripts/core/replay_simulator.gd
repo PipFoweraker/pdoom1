@@ -48,7 +48,8 @@ static func replay(replay_data: Dictionary) -> Dictionary:
 
 	var state: GameState = GameState.new(run_seed, run_schedule)
 	var turn_manager: TurnManager = TurnManager.new(state)
-	VerificationTracker.start_tracking(run_seed, run_version)
+	# Pass the schedule through so a replay-of-a-replay re-emits it (DQ-6, #620).
+	VerificationTracker.start_tracking(run_seed, run_version, run_schedule)
 
 	while not state.game_over and state.turn < MAX_TURNS:
 		turn_manager.start_turn()
