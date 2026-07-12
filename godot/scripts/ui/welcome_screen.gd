@@ -5,6 +5,7 @@ extends Control
 @onready var subtitle_label = $VBox/Subtitle
 @onready var menu_container = $VBox/MenuContainer
 @onready var launch_lab_button = $VBox/MenuContainer/LaunchLabButton
+@onready var load_game_button = $VBox/MenuContainer/LoadGameButton
 @onready var custom_seed_button = $VBox/MenuContainer/CustomSeedButton
 @onready var settings_button = $VBox/MenuContainer/SettingsButton
 @onready var guide_button = $VBox/MenuContainer/GuideButton
@@ -31,6 +32,7 @@ func _ready():
 	# Collect all menu buttons in order
 	menu_buttons = [
 		launch_lab_button,
+		load_game_button,
 		custom_seed_button,
 		settings_button,
 		guide_button,
@@ -43,6 +45,7 @@ func _ready():
 
 	# Connect button signals
 	launch_lab_button.pressed.connect(_on_launch_lab_pressed)
+	load_game_button.pressed.connect(_on_load_game_pressed)
 	custom_seed_button.pressed.connect(_on_custom_seed_pressed)
 	settings_button.pressed.connect(_on_settings_pressed)
 	guide_button.pressed.connect(_on_guide_pressed)
@@ -51,6 +54,11 @@ func _ready():
 	whats_new_button.pressed.connect(_on_whats_new_pressed)
 	ai_safety_button.pressed.connect(_on_ai_safety_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
+
+	# L7 (#618): Load Game only makes sense when a quicksave exists.
+	load_game_button.disabled = not SaveLoad.has_save()
+	if load_game_button.disabled:
+		load_game_button.text = "Load Game (no save)"
 
 	# Always-visible DEV BUILD corner badge (version + git stamp) so a playtester can
 	# confirm which build he's on right from the welcome/loading screen.
@@ -124,6 +132,17 @@ func _on_launch_lab_pressed():
 	if err != OK:
 		print("[WelcomeScreen] ERROR: Failed to load config confirmation scene, error code: ", err)
 		push_error("Failed to load config_confirmation.tscn")
+
+func _on_load_game_pressed():
+	"""L7 (#618): resume the quicksave. MainUI's autostart consumes the flag."""
+	if not SaveLoad.has_save():
+		return
+	print("[WelcomeScreen] Loading saved game...")
+	GameConfig.pending_load_path = SaveLoad.QUICKSAVE_PATH
+	var err = get_tree().change_scene_to_file("res://scenes/main.tscn")
+	if err != OK:
+		GameConfig.pending_load_path = ""
+		print("[WelcomeScreen] ERROR: Failed to load main scene, error code: ", err)
 
 func _on_custom_seed_pressed():
 	print("[WelcomeScreen] Opening pre-game setup...")

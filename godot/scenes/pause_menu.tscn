@@ -160,6 +160,13 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 16
 text = "Resume Game (ESC)"
 
+[node name="SaveButton" type="Button" parent="Panel/VBox/ButtonContainer"]
+custom_minimum_size = Vector2(250, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 16
+text = "Save Game"
+
 [node name="MainMenuButton" type="Button" parent="Panel/VBox/ButtonContainer"]
 custom_minimum_size = Vector2(250, 40)
 layout_mode = 2
@@ -178,5 +185,6 @@ text = "Quit to Desktop"
 [connection signal="value_changed" from="Panel/VBox/SettingsContainer/AudioSettings/SFXVolumeRow/Slider" to="." method="_on_sfx_volume_changed"]
 [connection signal="value_changed" from="Panel/VBox/SettingsContainer/AudioSettings/MusicVolumeRow/Slider" to="." method="_on_music_volume_changed"]
 [connection signal="pressed" from="Panel/VBox/ButtonContainer/ResumeButton" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="Panel/VBox/ButtonContainer/SaveButton" to="." method="_on_save_pressed"]
 [connection signal="pressed" from="Panel/VBox/ButtonContainer/MainMenuButton" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="Panel/VBox/ButtonContainer/QuitButton" to="." method="_on_quit_pressed"]

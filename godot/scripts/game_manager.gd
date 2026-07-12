@@ -438,6 +438,65 @@ func get_game_state() -> Dictionary:
 		return state.to_dict()
 	return {}
 
+# ============================================================================
+# SAVE / LOAD (L7, #618) — mid-game snapshot, full-state fidelity
+# ============================================================================
+
+func save_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
+	"""Snapshot the current game to a save file. Safe to call from the pause menu."""
+	if not is_initialized or state == null:
+		error_occurred.emit("Cannot save: no game in progress")
+		return false
+	var err := SaveLoad.save_game(state, path)
+	if err != OK:
+		error_occurred.emit("Save failed (error %d)" % err)
+		return false
+	action_executed.emit({"success": true, "message": "Game saved (turn %d)" % state.turn})
+	return true
+
+func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
+	"""Restore a saved game and resume exactly where it left off (phase, queued
+	actions, pending events, rng stream). Returns false if no/corrupt save."""
+	var envelope := SaveLoad.load_envelope(path)
+	if envelope.is_empty():
+		error_occurred.emit("No save found to load")
+		return false
+	var loaded := SaveLoad.restore_state(envelope)
+	if loaded == null:
+		error_occurred.emit("Save file is corrupt or incompatible")
+		return false
+	if state != null:
+		state.queue_free()  # GameState extends Node; drop the old instance
+	state = loaded
+	# Scenario custom events live as node meta (Issue #483), not in state
+	# serialization — re-attach them from the pack recorded in the envelope.
+	var save_scenario_id := String(envelope.get("scenario_id", ""))
+	if not save_scenario_id.is_empty():
+		var loader = ScenarioLoader.new()
+		var scenario = loader.load_scenario(save_scenario_id)
+		var custom_events = scenario.get("events", [])
+		if custom_events.size() > 0:
+			state.set_meta("scenario_events", custom_events)
+	turn_manager = TurnManager.new(state)
+	is_initialized = true
+	# NOTE: replay verification rebuilds from turn 0 (ADR-0006); a loaded session
+	# is a snapshot continuation, so tracking restarts here only to keep the
+	# in-turn recording calls alive — the artifact is not replay-verifiable.
+	VerificationTracker.start_tracking(state.game_seed_str, GameConfig.CURRENT_VERSION)
+	MusicManager.play_context(MusicManager.MusicContext.GAMEPLAY)
+	print("[GameManager] Loaded save %s — turn %d, phase %s" % [
+		path, state.turn, GameState.TurnPhase.keys()[state.current_phase]])
+	game_state_updated.emit(state.to_dict())
+	if state.pending_events.size() > 0:
+		# Saved mid-event-resolution: surface the pending events again.
+		turn_phase_changed.emit("turn_start")
+		for event in state.pending_events:
+			event_triggered.emit(event)
+	else:
+		turn_phase_changed.emit("action_selection")
+		actions_available.emit(turn_manager.get_available_actions())
+	return true
+
 func resolve_event(event: Dictionary, choice_id: String):
 	"""Handle player's event choice - FIX #418: Use TurnManager"""
 	if not is_initialized:

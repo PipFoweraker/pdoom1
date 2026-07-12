@@ -47,6 +47,19 @@ func _on_resume_pressed():
 	hide()
 	get_tree().paused = false
 
+func _on_save_pressed():
+	"""L7 (#618): snapshot the current game to the quicksave slot."""
+	var save_button: Button = $Panel/VBox/ButtonContainer/SaveButton
+	var gm = get_node_or_null("../GameManager")  # sibling at main.tscn root
+	if gm == null or not gm.has_method("save_game"):
+		print("[PauseMenu] Save failed: GameManager not found")
+		save_button.text = "Save failed"
+		return
+	if gm.save_game():
+		save_button.text = "Saved!"
+	else:
+		save_button.text = "Save failed"
+
 func _on_main_menu_pressed():
 	"""Return to main menu"""
 	print("[PauseMenu] Returning to main menu...")
@@ -64,6 +77,7 @@ func show_pause_menu():
 	"""Show the pause menu and pause the game"""
 	print("[PauseMenu] Pausing game...")
 	update_ui_from_game_config()
+	$Panel/VBox/ButtonContainer/SaveButton.text = "Save Game"  # reset any "Saved!" feedback
 	show()
 	get_tree().paused = true
 
