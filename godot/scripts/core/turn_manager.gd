@@ -105,7 +105,7 @@ func start_turn() -> Dictionary:
 	"""
 	_step_begin_turn()
 	_step_apply_scheduled_causes()
-	_step_ledger_tick_and_bill()
+	var ledger_result: Dictionary = _step_ledger_tick_and_bill()
 	var total_staff: int = state.get_total_staff()
 	var max_ap: int = _step_grant_action_points(total_staff)
 	var new_candidates: int = _populate_candidate_pool()
@@ -113,7 +113,7 @@ func start_turn() -> Dictionary:
 	var staff_salaries: float = _step_pay_salaries(total_staff)
 	var prod: Dictionary = _step_researcher_productivity()
 	var stationery: Dictionary = _step_consume_stationery()
-	var messages: Array = _build_start_turn_messages(max_ap, total_staff, staff_salaries, new_candidates, prod, stationery)
+	var messages: Array = _build_start_turn_messages(max_ap, total_staff, staff_salaries, new_candidates, prod, stationery, ledger_result)
 	var triggered_events: Array[Dictionary] = _step_check_events(messages)
 
 	return {
@@ -139,17 +139,22 @@ func _step_apply_scheduled_causes() -> void:
 	emergent outcome. Causes touch sim inputs only — never doom directly."""
 	SeedSchedule.apply_due_causes(state)
 
-func _step_ledger_tick_and_bill() -> void:
+func _step_ledger_tick_and_bill() -> Dictionary:
 	"""WS-1 (ADR-0003): the Liability Ledger bills AFTER scheduled causes, so an
 	exposure cause can land the same turn it fires. Compounding payables are the
 	mortality guarantee (ADR-0002): an un-serviced debt eventually bills more than
 	the player can cover, and the resulting bankruptcy escalation is the death —
-	traceable to specific entries via the ledger's attribution trail."""
+	traceable to specific entries via the ledger's attribution trail.
+	Returns this turn's billed + newly-exposed entries for the EE-7 (ADR-0012)
+	loss-legibility message builder."""
+	var billed_entries: Array = []
+	var exposed_entries: Array = []
 	if state.ledger:
-		state.ledger.tick_and_bill(state)
+		billed_entries = state.ledger.tick_and_bill(state)
 		# BL-2: secret liabilities have a per-turn chance to surface (deterministic via
-		# state.rng). Chance from Balance; exposure tuning parked (workshop #2).
-		state.ledger.check_exposures(state, Balance.num("ledger.exposure_chance_per_turn", 0.15))
+		# state.rng). Chance from Balance (L9 #621); exposure tuning parked (workshop #2).
+		exposed_entries = state.ledger.check_exposures(state, Balance.num("ledger.exposure_chance_per_turn", 0.15))
+	return {"billed": billed_entries, "exposed": exposed_entries}
 
 func _step_grant_action_points(total_staff: int) -> int:
 	"""Grant this turn's AP: difficulty base + staff bonus (0.5 per staff member).
@@ -366,8 +371,10 @@ func _step_consume_stationery() -> Dictionary:
 		"supply_auto_ordered": supply_auto_ordered,
 	}
 
-func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: float, new_candidates: int, prod: Dictionary, stationery: Dictionary) -> Array:
+func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: float, new_candidates: int, prod: Dictionary, stationery: Dictionary, ledger_result: Dictionary) -> Array:
 	"""Assemble the turn-start message list. Pure reads — no sim mutation, no RNG."""
+	var billed_entries: Array = ledger_result.get("billed", [])
+	var exposed_entries: Array = ledger_result.get("exposed", [])
 	var research_from_employees: float = prod["research_from_employees"]
 	var productive_count: int = prod["productive_count"]
 	var doom_reduction_from_safety: float = prod["doom_reduction_from_safety"]
@@ -386,6 +393,30 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 		"Turn %d started" % state.turn,
 		"Action Points: %d (base 3 + %d from %d staff)" % [max_ap, max_ap - 3, total_staff]
 	]
+
+	# EE-7 (ADR-0012): the ledger's kill path must be LEGIBLE — every bill, its
+	# fallout, and every exposure gets an explicit line with its resource deltas.
+	for e in billed_entries:
+		var amt_txt: String = GameConfig.format_money(e.principal) if e.currency == "money" else ("%.1f %s" % [e.principal, e.currency])
+		messages.append("Ledger bill due: '%s' — %s" % [e.source, amt_txt])
+	for c in state.cause_log:
+		if int(c.turn) == state.turn and str(c.kind).begins_with("ledger"):
+			var fx: Dictionary = c.effects
+			var parts := []
+			if fx.has("money_shortfall"):
+				parts.append("unpaid %s" % GameConfig.format_money(float(fx["money_shortfall"])))
+			if fx.has("doom") and float(fx["doom"]) != 0.0:
+				parts.append("%+.1f doom" % float(fx["doom"]))
+			if fx.has("reputation") and float(fx["reputation"]) != 0.0:
+				parts.append("%+.1f reputation" % float(fx["reputation"]))
+			if fx.has("governance") and float(fx["governance"]) != 0.0:
+				parts.append("%+.0f governance" % float(fx["governance"]))
+			if fx.has("governance_deficit"):
+				parts.append("governance deficit %.0f" % float(fx["governance_deficit"]))
+			if parts.size() > 0:
+				messages.append("WARNING: Ledger fallout ('%s'): %s" % [str(c.source), ", ".join(parts)])
+	for ex in exposed_entries:
+		messages.append("WARNING: Secret liability EXPOSED: '%s' — reputation/governance damage; a blackmail offer follows." % ex.source)
 
 	if staff_salaries > 0:
 		messages.append("Paid %s in staff salaries" % GameConfig.format_money(staff_salaries))

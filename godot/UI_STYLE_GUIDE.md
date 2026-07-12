@@ -72,6 +72,11 @@ success = Color(0.2, 0.9, 0.4)        # Completion, purchases
 info = Color(0.4, 0.7, 1.0)           # Informational
 warning = Color(0.95, 0.8, 0.2)       # Caution
 error = Color(0.95, 0.3, 0.2)         # Errors, failures
+
+# EE-7 per-turn resource delta chips (main_ui): green = helped, red = hurt
+# (doom is sign-inverted: doom falling renders green)
+delta_good = Color(0.35, 0.85, 0.40)  # _DELTA_GOOD
+delta_bad = Color(0.95, 0.30, 0.25)   # _DELTA_BAD
 ```
 
 ---

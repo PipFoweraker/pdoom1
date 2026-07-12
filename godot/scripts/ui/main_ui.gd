@@ -46,6 +46,14 @@ var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-i
 var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
 var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
 var employee_panel  # #622 L10: employee roster + staff ID card (becomes L2's assignment surface)
+# EE-7 (ADR-0012 loss legibility): per-resource "last turn" delta chips beside the
+# money/compute/reputation/doom readouts. Snapshot at each turn boundary; a chip shows
+# the change over the last completed turn, green=helped red=hurt (doom inverted).
+var _delta_labels: Dictionary = {}       # resource key -> Label
+var _prev_turn_snapshot: Dictionary = {}
+var _last_delta_turn: int = -1
+const _DELTA_GOOD := Color(0.35, 0.85, 0.40)
+const _DELTA_BAD := Color(0.95, 0.30, 0.25)
 var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
@@ -86,6 +94,9 @@ func _ready():
 	if achievements:
 		achievements.watch(game_manager)
 		achievements.achievement_unlocked.connect(_on_achievement_unlocked)
+
+	# EE-7: per-resource "last turn" delta chips (money/compute/rep/doom)
+	_setup_delta_chips()
 
 	# Issue #500: research quality selector (script-instantiated; reparent in editor if preferred)
 	research_quality_selector = preload("res://scripts/ui/research_quality_selector.gd").new()
@@ -592,6 +603,9 @@ func _on_game_state_updated(state: Dictionary):
 	papers_label.text = "📄 %d" % state.get("papers", 0)
 	reputation_label.text = "⭐ %.0f" % state.get("reputation", 0)
 
+	# EE-7: refresh the per-resource "last turn" delta chips at turn boundaries
+	_update_delta_chips(state)
+
 	# Add employee blob display to AP label (using BBCode for RichTextLabel)
 	var safety = state.get("safety_researchers", 0)
 	var capability = state.get("capability_researchers", 0)
@@ -702,6 +716,92 @@ func _on_game_state_updated(state: Dictionary):
 	if employee_panel:
 		employee_panel.update_roster(state)
 
+# ---- EE-7 (ADR-0012): per-resource per-turn delta chips ----
+
+func _setup_delta_chips() -> void:
+	"""Create the small 'last turn' delta labels right after each resource readout.
+	Playtest motivation: the one human ledger-death specimen was low-resolution —
+	'the feeling that I was losing things badly' with no numbers to point at."""
+	var specs := [
+		{"key": "money", "after": money_label},
+		{"key": "compute", "after": compute_label},
+		{"key": "reputation", "after": reputation_label},
+		{"key": "doom", "after": numeric_doom_label},
+	]
+	for spec in specs:
+		var anchor = spec["after"]
+		if anchor == null:
+			continue
+		var chip := Label.new()
+		chip.name = "DeltaChip_%s" % spec["key"]
+		chip.text = ""
+		chip.add_theme_font_size_override("font_size", 12)
+		chip.tooltip_text = "Change over the last turn"
+		var parent = anchor.get_parent()
+		parent.add_child(chip)
+		parent.move_child(chip, anchor.get_index() + 1)
+		_delta_labels[spec["key"]] = chip
+
+
+func _update_delta_chips(state: Dictionary) -> void:
+	"""On each turn boundary, show each resource's change over the last completed turn.
+	Mid-turn state updates leave the chips as-is (they describe the LAST turn)."""
+	var t: int = int(state.get("turn", 0))
+	var now := {
+		"money": float(state.get("money", 0.0)),
+		"compute": float(state.get("compute", 0.0)),
+		"reputation": float(state.get("reputation", 0.0)),
+		"doom": float(state.get("doom", 0.0)),
+	}
+	if t == _last_delta_turn:
+		return
+	if _last_delta_turn >= 0 and t == _last_delta_turn + 1:
+		for key in now.keys():
+			_render_delta_chip(str(key), now[key] - float(_prev_turn_snapshot.get(key, now[key])))
+	else:
+		# New game / load / anything non-consecutive: no meaningful "last turn".
+		for key in _delta_labels.keys():
+			(_delta_labels[key] as Label).text = ""
+	_prev_turn_snapshot = now
+	_last_delta_turn = t
+
+
+func _render_delta_chip(key: String, d: float) -> void:
+	var chip: Label = _delta_labels.get(key)
+	if chip == null:
+		return
+	if absf(d) < 0.05:
+		chip.text = ""
+		return
+	var txt: String
+	if key == "money":
+		txt = ("+" if d > 0.0 else "-") + GameConfig.format_money(absf(d))
+	else:
+		txt = "%+.1f" % d
+	chip.text = "(%s)" % txt
+	# Doom rising is bad; every other resource rising is good.
+	var good: bool = (d < 0.0) if key == "doom" else (d > 0.0)
+	chip.add_theme_color_override("font_color", _DELTA_GOOD if good else _DELTA_BAD)
+
+
+func _format_deltas(deltas: Dictionary) -> String:
+	"""EE-7: BBCode-coloured 'money +$20k, doom +3.0' summary for the message log —
+	resource-affecting events state their deltas instead of burying them in prose."""
+	var order := ["money", "compute", "research", "papers", "reputation", "doom"]
+	var parts := []
+	for key in order:
+		if not deltas.has(key):
+			continue
+		var d: float = float(deltas[key])
+		var txt: String
+		if key == "money":
+			txt = ("+" if d > 0.0 else "-") + GameConfig.format_money(absf(d))
+		else:
+			txt = "%+.1f" % d
+		var good: bool = (d < 0.0) if key == "doom" else (d > 0.0)
+		parts.append("[color=%s]%s %s[/color]" % ["lime" if good else "red", key, txt])
+	return ", ".join(parts)
+
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
 
@@ -739,6 +839,11 @@ func _on_action_executed(result: Dictionary):
 
 	var message = result.get("message", "Action completed")
 	log_message("[color=lime]" + message + "[/color]")
+
+	# EE-7: resource-affecting events/actions state their applied deltas explicitly
+	var deltas: Dictionary = result.get("deltas", {})
+	if not deltas.is_empty():
+		log_message("[color=gray]  └─ Δ[/color] " + _format_deltas(deltas))
 
 	# Show any additional messages from action
 	if result.has("messages"):

@@ -120,8 +120,10 @@ static func staff_rider(name: String) -> Entry:
 
 ## Called once per turn (after WS-C scheduled causes). Compounds interest on live
 ## payables, advances fuses, and bills anything due. Unbounded compounding is the
-## mortality guarantee (ADR-0002).
-func tick_and_bill(state) -> void:
+## mortality guarantee (ADR-0002). Returns the entries billed THIS call so the turn
+## log can state them (EE-7 loss legibility — the cascade must be visible).
+func tick_and_bill(state) -> Array:
+	var billed: Array = []
 	for e in entries:
 		if e.settled or e.side != Side.PAYABLE:
 			continue
@@ -132,6 +134,8 @@ func tick_and_bill(state) -> void:
 			continue
 		_bill(e, state)
 		e.settled = true
+		billed.append(e)
+	return billed
 
 ## Bill a due entry in its own currency. A money bill the debtor cannot cover
 ## converts the shortfall into doom + reputation damage and records the entry as a
