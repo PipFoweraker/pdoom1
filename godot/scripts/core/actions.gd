@@ -1060,7 +1060,7 @@ static func submit_paper_to_conference(state: GameState, conf_id: String, topic:
 	paper.quality = quality
 	paper.lead_researcher_name = lead_researcher.researcher_name if lead_researcher != null else "Anonymous"
 	paper.submit_turn = state.turn
-	paper.decision_turn = state.turn + (conf.review_period_weeks * 5)  # 5 turns per week
+	paper.decision_turn = state.turn + Clock.weeks_to_turns(conf.review_period_weeks)  # L0 #620: via the Clock time authority
 	paper.status = PaperSubmissions.Status.UNDER_REVIEW
 	paper.title = PaperSubmissions.generate_paper_title(topic, state.rng)
 

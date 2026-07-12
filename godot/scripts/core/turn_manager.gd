@@ -138,15 +138,18 @@ func start_turn() -> Dictionary:
 	for researcher in state.researchers:
 		researcher.process_turn(state.rng)
 
-	# Staff maintenance costs - use actual salaries for individual researchers
+	# Staff maintenance costs - use actual salaries for individual researchers.
+	# Salary cadence routes through Clock (L0 #620): annual/260 per workday-turn.
+	# Was /12 — a full month billed every day, causing the turn-7 cash crash (#573).
+	# Magnitude tunable (workshop #2 / payroll depth #574).
 	var staff_salaries = 0.0
 	if state.researchers.size() > 0:
 		for researcher in state.researchers:
-			staff_salaries += researcher.current_salary / 260.0  # Per-workday salary (turn = 1 workday, ~260 workdays/yr). Was /12 — a full month billed every day, causing the turn-7 cash crash (#573). Magnitude tunable (workshop #2 / payroll depth #574).
-		staff_salaries += state.managers * (60000.0 / 260.0)  # Managers ~$60k/yr, per-workday (#573; was $5000 flat = a month's pay per day)
+			staff_salaries += Clock.annual_to_per_turn(researcher.current_salary)
+		staff_salaries += state.managers * Clock.annual_to_per_turn(60000.0)  # Managers ~$60k/yr (#573; was $5000 flat = a month's pay per day)
 	else:
 		# Legacy fallback
-		staff_salaries = total_staff * (60000.0 / 260.0)  # per-workday (#573)
+		staff_salaries = total_staff * Clock.annual_to_per_turn(60000.0)  # per-workday (#573)
 
 	if staff_salaries > 0:
 		state.add_resources({"money": -staff_salaries})

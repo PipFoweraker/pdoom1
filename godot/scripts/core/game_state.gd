@@ -71,10 +71,11 @@ var has_cat: bool = false
 # Default: Game starts on Saturday, July 1st 2017 (configurable)
 # Each turn = 1 day, 5 turns per work week (Mon-Fri)
 # Note: July 1, 2017 was a Saturday, but we treat turn 0 as Monday
+# L0 (#620): all turn<->calendar conversions live in Clock (scripts/core/clock.gd),
+# the single time authority. The methods below are thin delegates.
 const DEFAULT_START_YEAR: int = 2017
 const DEFAULT_START_MONTH: int = 7
 const DEFAULT_START_DAY: int = 3  # Monday July 3rd, 2017 (first working day)
-const TURNS_PER_WEEK: int = 5  # Work days per week
 
 # Configurable start date (can be changed for scenarios/campaigns)
 var start_year: int = DEFAULT_START_YEAR
@@ -381,9 +382,10 @@ func get_tech_debt_failure_chance() -> float:
 # ============================================================================
 
 func get_months_per_turn() -> float:
-	"""Calendar months represented by one turn. Fixed at 1.0 until the variable
-	game-length system lands (see docs/design/TWO_ACT_STRUCTURE.md)."""
-	return 1.0
+	"""Calendar months represented by one turn — delegates to Clock, the single
+	time authority (L0 #620). Fixed at 1.0 until the variable game-length system
+	lands (see docs/design/TWO_ACT_STRUCTURE.md)."""
+	return Clock.months_per_turn()
 
 
 func get_research_multiplier() -> float:
@@ -617,69 +619,24 @@ func check_conference_year_reset():
 		attended_conferences.clear()
 		conference_year = current_date.year
 
-# Calendar System Methods (Issue #472)
+# Calendar System Methods (Issue #472) — thin delegates to Clock, the single
+# time authority (L0 #620). Values unchanged: turn = 1 workday.
 func get_current_week() -> int:
 	"""Get the current week number (1-indexed)"""
-	return (turn / TURNS_PER_WEEK) + 1
+	return Clock.week_number(turn)
 
 func get_day_of_week() -> int:
 	"""Get day within the current week (1-5 for Mon-Fri)"""
-	return (turn % TURNS_PER_WEEK) + 1
+	return Clock.day_of_week(turn)
 
 func get_weekday_name() -> String:
 	"""Get the name of the current weekday"""
-	var day_names = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-	return day_names[turn % TURNS_PER_WEEK]
+	return Clock.weekday_name(turn)
 
 func get_current_date() -> Dictionary:
 	"""Calculate the actual date from turn number
 	Returns: {year, month, day, weekday, week_number, quarter}"""
-	# Each turn = 1 weekday, so we need to account for weekends
-	var weeks_elapsed = turn / TURNS_PER_WEEK
-	var days_into_week = turn % TURNS_PER_WEEK
-
-	# Total calendar days = weeks * 7 + days into current week
-	var total_days = weeks_elapsed * 7 + days_into_week
-
-	# Calculate date from start date (using configurable values)
-	var year = start_year
-	var month = start_month
-	var day = start_day + total_days
-
-	# Days in each month (non-leap year base, we'll handle leap years)
-	var days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-
-	# Roll over months and years
-	while day > days_in_month[month - 1]:
-		# Check for leap year February
-		var feb_days = 28
-		if month == 2 and _is_leap_year(year):
-			feb_days = 29
-
-		var month_days = days_in_month[month - 1] if month != 2 else feb_days
-
-		if day > month_days:
-			day -= month_days
-			month += 1
-			if month > 12:
-				month = 1
-				year += 1
-
-	var quarter = ((month - 1) / 3) + 1
-
-	return {
-		"year": year,
-		"month": month,
-		"day": day,
-		"weekday": get_weekday_name(),
-		"week_number": get_current_week(),
-		"day_of_week": get_day_of_week(),
-		"quarter": quarter
-	}
-
-func _is_leap_year(year: int) -> bool:
-	"""Check if a year is a leap year"""
-	return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+	return Clock.date_for_turn(turn, start_year, start_month, start_day)
 
 func get_formatted_date() -> String:
 	"""Get a nicely formatted date string"""
@@ -701,7 +658,7 @@ func get_turn_display() -> String:
 		date.day,
 		date.year,
 		date.day_of_week,
-		TURNS_PER_WEEK
+		Clock.TURNS_PER_WEEK
 	]
 
 func record_doom_history() -> void:

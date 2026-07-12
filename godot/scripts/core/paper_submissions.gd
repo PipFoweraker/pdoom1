@@ -187,7 +187,7 @@ static func process_paper_decisions(papers: Array, current_turn: int, player_rep
 		if roll < accept_prob:
 			paper.status = Status.ACCEPTED
 			# Set presentation deadline (conference month, roughly)
-			paper.presentation_deadline_turn = paper.decision_turn + (conf.submission_deadline_weeks_before * 5)
+			paper.presentation_deadline_turn = paper.decision_turn + Clock.weeks_to_turns(conf.submission_deadline_weeks_before)  # L0 #620: via the Clock time authority
 			results.append({
 				"accepted": true,
 				"paper": paper,
