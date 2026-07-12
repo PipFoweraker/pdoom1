@@ -161,16 +161,18 @@ func _init(game_seed: String = "", schedule: Array = []):
 	reset()
 
 func reset():
-	"""Reset to starting state"""
-	money = 245000.0  # Updated from player feedback (issue #436)
-	compute = 100.0
-	research = 0.0
-	papers = 0.0
-	reputation = 50.0
-	doom = 50.0
-	action_points = 3
-	stationery = 100.0
-	governance = 50.0
+	"""Reset to starting state. Starting resources come from the Balance surface
+	("starting_resources.*", L9 #621); fallbacks are the pre-L9 literals.
+	Money default 245000 is from player feedback (issue #436)."""
+	money = Balance.num("starting_resources.money", 245000.0)
+	compute = Balance.num("starting_resources.compute", 100.0)
+	research = Balance.num("starting_resources.research", 0.0)
+	papers = Balance.num("starting_resources.papers", 0.0)
+	reputation = Balance.num("starting_resources.reputation", 50.0)
+	doom = Balance.num("starting_resources.doom", 50.0)
+	action_points = Balance.inum("starting_resources.action_points", 3)
+	stationery = Balance.num("starting_resources.stationery", 100.0)
+	governance = Balance.num("starting_resources.governance", 50.0)
 	ledger = Ledger.new()  # ADR-0003: fresh ledger per game
 	technical_debt = 0.0  # Reset tech debt (Issue #416)
 	research_quality_mode = DEFAULT_RESEARCH_QUALITY  # Issue #500

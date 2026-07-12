@@ -1,0 +1,172 @@
+{
+	"_description": "Hidden risk-pool contributions per action (see godot/docs/design/RISK_SYSTEM.md), externalized from actions.gd _apply_risk_contributions (L9, #621). Applied via RiskPool.add_risk_multi(pools, source, turn) on successful action execution. Pool key order matches the pre-L9 call order (risk_history entry order).",
+	"contributions": {
+		"hire_capability_researcher": {
+			"source": "hire_capability",
+			"pools": {
+				"capability_overhang": 3.0,
+				"insider_threat": 1.0,
+				"financial_exposure": 2.0
+			}
+		},
+		"hire_safety_researcher": {
+			"source": "hire_safety",
+			"pools": {
+				"capability_overhang": -2.0,
+				"insider_threat": 1.0,
+				"financial_exposure": 2.0
+			}
+		},
+		"hire_compute_engineer": {
+			"source": "hire_staff",
+			"pools": {
+				"financial_exposure": 2.0
+			}
+		},
+		"hire_manager": {
+			"source": "hire_staff",
+			"pools": {
+				"financial_exposure": 2.0
+			}
+		},
+		"hire_ethicist": {
+			"source": "hire_staff",
+			"pools": {
+				"financial_exposure": 2.0
+			}
+		},
+		"capability_research": {
+			"source": "capability_research",
+			"pools": {
+				"capability_overhang": 2.0
+			}
+		},
+		"safety_research": {
+			"source": "safety_research",
+			"pools": {
+				"capability_overhang": -1.0,
+				"research_integrity": -1.0
+			}
+		},
+		"publish_paper": {
+			"source": "publish_paper",
+			"pools": {
+				"capability_overhang": -2.0,
+				"regulatory_attention": 2.0,
+				"public_awareness": 1.0
+			}
+		},
+		"fundraise_small": {
+			"source": "modest_funding",
+			"pools": {
+				"financial_exposure": -1.0
+			}
+		},
+		"fundraise_big": {
+			"source": "aggressive_funding",
+			"pools": {
+				"financial_exposure": 2.0
+			}
+		},
+		"take_loan": {
+			"source": "debt",
+			"pools": {
+				"financial_exposure": 5.0
+			}
+		},
+		"apply_grant": {
+			"source": "diversified_funding",
+			"pools": {
+				"financial_exposure": -3.0
+			}
+		},
+		"grant_proposal": {
+			"source": "diversified_funding",
+			"pools": {
+				"financial_exposure": -3.0
+			}
+		},
+		"media_campaign": {
+			"source": "media_campaign",
+			"pools": {
+				"public_awareness": 3.0,
+				"regulatory_attention": 2.0
+			}
+		},
+		"release_warning": {
+			"source": "public_warning",
+			"pools": {
+				"public_awareness": 5.0,
+				"regulatory_attention": 3.0
+			}
+		},
+		"lobby_government": {
+			"source": "lobbying",
+			"pools": {
+				"regulatory_attention": -2.0
+			}
+		},
+		"network": {
+			"source": "networking",
+			"pools": {
+				"insider_threat": -1.0
+			}
+		},
+		"sabotage_competitor": {
+			"source": "sabotage",
+			"pools": {
+				"insider_threat": 10.0,
+				"research_integrity": 5.0
+			}
+		},
+		"acquire_startup": {
+			"source": "acquisition",
+			"pools": {
+				"insider_threat": 3.0,
+				"financial_exposure": 5.0
+			}
+		},
+		"emergency_pivot": {
+			"source": "pivot",
+			"pools": {
+				"capability_overhang": -3.0,
+				"insider_threat": 2.0
+			}
+		},
+		"open_source_release": {
+			"source": "open_source",
+			"pools": {
+				"capability_overhang": -5.0,
+				"public_awareness": 2.0,
+				"research_integrity": -2.0
+			}
+		},
+		"team_building": {
+			"source": "team_building",
+			"pools": {
+				"insider_threat": -2.0
+			}
+		},
+		"audit_safety": {
+			"source": "safety_audit",
+			"pools": {
+				"research_integrity": -3.0,
+				"capability_overhang": -2.0,
+				"regulatory_attention": -1.0
+			}
+		},
+		"buy_compute": {
+			"source": "compute_purchase",
+			"pools": {
+				"financial_exposure": 1.0
+			}
+		},
+		"attend_conference": {
+			"source": "conference",
+			"pools": {
+				"public_awareness": 1.0,
+				"research_integrity": -1.0
+			}
+		}
+	}
+}

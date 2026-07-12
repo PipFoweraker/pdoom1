@@ -19,10 +19,17 @@ var _pending_rival_doom: float = 0.0
 var doom_velocity: float = 0.0  # Current rate of doom change per turn
 var doom_momentum: float = 0.0  # Accumulated momentum (compounds over time)
 
-## Momentum tuning parameters (exposed for easy balancing)
+## Momentum tuning parameters — initialized from the Balance surface ("doom.*",
+## L9 #621) in _init(); the literals here are the call-site fallbacks.
 var momentum_accumulation_rate: float = 0.15  # How much of each doom change becomes momentum
 var momentum_decay_rate: float = 0.92  # Momentum decay per turn (0.92 = 8% decay)
 var momentum_cap: float = 8.0  # Maximum momentum (prevents infinite spirals)
+
+
+func _init() -> void:
+	momentum_accumulation_rate = Balance.num("doom.momentum_accumulation_rate", momentum_accumulation_rate)
+	momentum_decay_rate = Balance.num("doom.momentum_decay_rate", momentum_decay_rate)
+	momentum_cap = Balance.num("doom.momentum_cap", momentum_cap)
 
 # ============================================================================
 # PHASE 2: DOOM SOURCES (Tracking & Visualization)
@@ -129,7 +136,7 @@ func calculate_doom_change(state: GameState) -> Dictionary:
 
 func _calculate_base_doom():
 	"""Base doom increase - organizational risk"""
-	doom_sources["base"] = 1.0
+	doom_sources["base"] = Balance.num("doom.base_per_turn", 1.0)
 
 func _calculate_capability_doom(state: GameState):
 	"""Doom from capabilities research - Modified by specializations if using new system"""
@@ -138,7 +145,7 @@ func _calculate_capability_doom(state: GameState):
 		return  # Will be calculated in _calculate_researcher_doom
 
 	# Legacy fallback
-	doom_sources["capabilities"] = state.capability_researchers * 3.0
+	doom_sources["capabilities"] = state.capability_researchers * Balance.num("doom.legacy_capability_per_researcher", 3.0)
 
 func _calculate_safety_doom(state: GameState):
 	"""Doom reduction from safety research - Modified by researcher specializations"""
@@ -161,7 +168,7 @@ func _calculate_safety_doom(state: GameState):
 		var safety_ratio = float(state.safety_researchers) / float(total_staff)
 		productive_safety = int(productive * safety_ratio)
 
-	doom_sources["safety"] = -productive_safety * 3.5
+	doom_sources["safety"] = -productive_safety * Balance.num("doom.legacy_safety_per_researcher", 3.5)
 
 func _calculate_researcher_doom(state: GameState):
 	"""Calculate doom from individual researchers with specializations"""
@@ -188,24 +195,24 @@ func _calculate_researcher_doom(state: GameState):
 		# Base doom contribution by specialization
 		match researcher.specialization:
 			"safety":
-				# Base 3.5, modified by specialization bonus (15%)
-				var base = -3.5 * productivity
+				# Base -3.5, modified by specialization bonus (15%)
+				var base = Balance.num("doom.researcher.safety_base", -3.5) * productivity
 				var bonus = base * Researcher.SPECIALIZATIONS["safety"]["doom_reduction_bonus"]
 				safety_doom += base + bonus
 
 			"capabilities":
 				# Base 3.0, with doom penalty (5%)
-				var base = 3.0 * productivity
+				var base = Balance.num("doom.researcher.capabilities_base", 3.0) * productivity
 				var penalty = base * Researcher.SPECIALIZATIONS["capabilities"]["doom_per_research"]
 				cap_doom += base + penalty
 
 			"interpretability":
 				# Counts as safety researcher
-				safety_doom += -3.0 * productivity
+				safety_doom += Balance.num("doom.researcher.interpretability_base", -3.0) * productivity
 
 			"alignment":
 				# Counts as safety researcher with slight bonus
-				safety_doom += -3.2 * productivity
+				safety_doom += Balance.num("doom.researcher.alignment_base", -3.2) * productivity
 
 		# Apply researcher's personal doom modifier (from traits)
 		spec_doom += researcher.get_doom_modifier() * productivity
@@ -237,7 +244,7 @@ func _calculate_unproductive_doom(state: GameState):
 	# This correctly counts: unmanaged + managed-but-no-compute
 	var total_unproductive = total_staff - productive
 
-	doom_sources["unproductive"] = total_unproductive * 0.5
+	doom_sources["unproductive"] = total_unproductive * Balance.num("doom.unproductive_per_staff", 0.5)
 
 # ============================================================================
 # MOMENTUM SYSTEM (PHASE 1)
@@ -251,8 +258,10 @@ func _calculate_momentum(raw_doom_change: float) -> float:
 	Creates "doom spiral" or "safety flywheel" effects.
 	"""
 
-	# Update velocity (smoothed doom change)
-	doom_velocity = doom_velocity * 0.7 + raw_doom_change * 0.3  # 30% new, 70% old
+	# Update velocity (smoothed doom change). Carry/gain are independent Balance keys
+	# (NOT computed as 1-carry) so the shipped doubles match the pre-L9 literals exactly.
+	doom_velocity = doom_velocity * Balance.num("doom.velocity_carry", 0.7) \
+		+ raw_doom_change * Balance.num("doom.velocity_gain", 0.3)  # 30% new, 70% old
 
 	# Accumulate momentum (portion of doom change becomes momentum)
 	doom_momentum += raw_doom_change * momentum_accumulation_rate
@@ -358,14 +367,14 @@ func _get_doom_trend() -> String:
 		return "strongly_increasing"
 
 func get_doom_status() -> String:
-	"""Get doom status level"""
-	if current_doom < 25:
+	"""Get doom status level (cutoffs from Balance "doom.status_cutoffs", L9 #621)"""
+	if current_doom < Balance.num("doom.status_cutoffs.safe", 25.0):
 		return "safe"
-	elif current_doom < 50:
+	elif current_doom < Balance.num("doom.status_cutoffs.warning", 50.0):
 		return "warning"
-	elif current_doom < 70:
+	elif current_doom < Balance.num("doom.status_cutoffs.danger", 70.0):
 		return "danger"
-	elif current_doom < 90:
+	elif current_doom < Balance.num("doom.status_cutoffs.critical", 90.0):
 		return "critical"
 	else:
 		return "catastrophic"

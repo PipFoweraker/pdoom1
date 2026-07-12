@@ -1,0 +1,42 @@
+{
+	"_description": "Liability Ledger trades (ADR-0003), externalized from actions.gd get_financing_options() (L9, #621). execute_action applies the immediate benefit and adds the future bill via Ledger factories; magnitudes live on the Balance surface ('ledger.*'). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "take_loan",
+			"name": "Take Loan",
+			"description": "+$50k now; a balloon repayment (~$60k) bills in 4 turns and compounds until paid.",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "financing"
+		},
+		{
+			"id": "funding_strings",
+			"name": "Funding (Strings)",
+			"description": "+$40k now; a governance obligation bills in 6 turns.",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "financing"
+		},
+		{
+			"id": "desperation_lever",
+			"name": "Desperation Lever",
+			"description": "Suppress doom now; plants a SECRET, compounding governance liability that rivals can expose.",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "financing"
+		},
+		{
+			"id": "staff_rider",
+			"name": "Contractor",
+			"description": "+2 action points now; a small governance rider bills later.",
+			"costs": {
+				"money": 15000,
+				"action_points": 1
+			},
+			"category": "financing"
+		}
+	]
+}

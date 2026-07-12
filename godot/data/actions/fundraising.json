@@ -1,0 +1,60 @@
+{
+	"_description": "Fundraising submenu options, externalized from actions.gd get_fundraising_options() (L9, #621). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "fundraise_small",
+			"name": "Modest Funding Round",
+			"description": "Conservative fundraising - lower amounts, lower risk, always available",
+			"costs": {
+				"action_points": 1,
+				"reputation": 2
+			},
+			"gains": {
+				"money_min": 30000,
+				"money_max": 60000
+			},
+			"category": "funding"
+		},
+		{
+			"id": "fundraise_big",
+			"name": "Major Funding Round",
+			"description": "Aggressive funding - higher amounts but requires strong reputation",
+			"costs": {
+				"action_points": 2,
+				"reputation": 8
+			},
+			"gains": {
+				"money_min": 80000,
+				"money_max": 150000
+			},
+			"category": "funding"
+		},
+		{
+			"id": "take_loan",
+			"name": "Business Loan",
+			"description": "Immediate funds via debt - creates future repayment obligation",
+			"costs": {
+				"action_points": 1
+			},
+			"gains": {
+				"money": 75000,
+				"debt": 90000
+			},
+			"category": "funding"
+		},
+		{
+			"id": "apply_grant",
+			"name": "Research Grant",
+			"description": "Government/foundation funding - requires published papers",
+			"costs": {
+				"action_points": 1,
+				"papers": 1
+			},
+			"gains": {
+				"money_min": 50000,
+				"money_max": 100000
+			},
+			"category": "funding"
+		}
+	]
+}

@@ -531,18 +531,22 @@ func _apply_difficulty_settings():
 		print("[GameManager] ERROR: Invalid difficulty value (%d), defaulting to Standard" % GameConfig.difficulty)
 		GameConfig.difficulty = 1
 
+	# Difficulty modifiers come from the Balance surface ("difficulty.*", L9 #621);
+	# fallbacks are the pre-L9 literals (easy 1.5x/4AP, standard 1.0x/3AP, hard 0.75x/2AP).
+	# This replaces the dormant data/events/balancing/difficulty.json (deleted in L9).
 	match GameConfig.difficulty:
 		0:  # Easy
 			print("[GameManager] Applying EASY difficulty modifiers")
-			state.money *= 1.5  # 50% more starting money
-			state.max_action_points = 4  # Extra AP
+			state.money *= Balance.num("difficulty.easy.money_multiplier", 1.5)  # 50% more starting money
+			state.max_action_points = Balance.inum("difficulty.easy.max_action_points", 4)  # Extra AP
 		1:  # Standard
 			print("[GameManager] Applying STANDARD difficulty (default)")
-			# No changes
+			state.money *= Balance.num("difficulty.standard.money_multiplier", 1.0)
+			state.max_action_points = Balance.inum("difficulty.standard.max_action_points", 3)
 		2:  # Hard
 			print("[GameManager] Applying HARD difficulty modifiers")
-			state.money *= 0.75  # 25% less starting money
-			state.max_action_points = 2  # Less AP
+			state.money *= Balance.num("difficulty.hard.money_multiplier", 0.75)  # 25% less starting money
+			state.max_action_points = Balance.inum("difficulty.hard.max_action_points", 2)  # Less AP
 		_:  # Safety default case (should never reach here after validation)
 			print("[GameManager] WARNING: Unexpected difficulty value, using Standard")
 			# Apply standard difficulty (no changes)

@@ -18,6 +18,10 @@ extends Node
 ## policy events, etc.) which get transformed into game events with costs,
 ## effects, and player choices.
 
+# Shared resource-name accessor (L9 #621) — preloaded to avoid class_name
+# registration-order issues (same pattern as GameState's RiskPool preload).
+const ResourceAccessorClass = preload("res://scripts/core/resource_accessor.gd")
+
 # Configuration
 const API_BASE_URL = "https://api.pdoom.org/v1"  # Future API endpoint
 const FALLBACK_DATA_PATH = "res://data/historical_events.json"  # Bundled pdoom-data export
@@ -761,20 +765,9 @@ func _map_variable(pdoom_var: String) -> String:
 	if _variable_mapping.has(pdoom_var):
 		return _variable_mapping[pdoom_var]
 
-	# Fallback mapping
-	match pdoom_var:
-		"cash", "money", "funding":
-			return "money"
-		"stress", "burnout_risk", "vibey_doom":
-			return "doom"
-		"reputation", "public_opinion":
-			return "reputation"
-		"research", "papers":
-			return "research"
-		"compute":
-			return "compute"
-		_:
-			return ""
+	# Fallback mapping — shared with the event condition/effect name matches
+	# via ResourceAccessor (L9 #621, duplication kill-list)
+	return ResourceAccessorClass.map_external_name(pdoom_var)
 
 
 func _apply_scaled_effects(effects: Dictionary, scale: float) -> Dictionary:

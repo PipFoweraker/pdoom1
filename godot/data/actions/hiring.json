@@ -1,0 +1,75 @@
+{
+	"_description": "Hiring submenu options, externalized from actions.gd get_hiring_options() (L9, #621). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "hire_safety_researcher",
+			"name": "Safety Researcher",
+			"description": "Focused on AI safety and alignment research",
+			"costs": {
+				"money": 60000,
+				"action_points": 1
+			},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_capability_researcher",
+			"name": "Capability Researcher",
+			"description": "Advances AI capabilities (increases doom!)",
+			"costs": {
+				"money": 60000,
+				"action_points": 1
+			},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_compute_engineer",
+			"name": "Compute Engineer",
+			"description": "Improves compute efficiency",
+			"costs": {
+				"money": 50000,
+				"action_points": 1
+			},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_manager",
+			"name": "Manager",
+			"description": "Oversees a team of up to 8 researchers",
+			"costs": {
+				"money": 80000,
+				"action_points": 1
+			},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_ethicist",
+			"name": "AI Ethicist",
+			"description": "Add philosophical perspective to research (+5 reputation)",
+			"costs": {
+				"money": 70000,
+				"action_points": 1
+			},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_interpretability_researcher",
+			"name": "Interpretability Researcher",
+			"description": "Probes how models work internally (safety-aligned research)",
+			"costs": {
+				"money": 60000,
+				"action_points": 1
+			},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_alignment_researcher",
+			"name": "Alignment Researcher",
+			"description": "Aligns AI goals with human values (safety-aligned research)",
+			"costs": {
+				"money": 60000,
+				"action_points": 1
+			},
+			"category": "hiring"
+		}
+	]
+}

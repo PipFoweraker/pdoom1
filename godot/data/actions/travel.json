@@ -1,0 +1,32 @@
+{
+	"_description": "Travel & conference submenu options (Issue #468), externalized from actions.gd get_travel_options() (L9, #621). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "submit_paper",
+			"name": "Submit Paper",
+			"description": "Submit research paper to a conference (multi-turn review process)",
+			"costs": {
+				"research": 15,
+				"action_points": 1
+			},
+			"category": "travel"
+		},
+		{
+			"id": "attend_conference",
+			"name": "Attend Conference",
+			"description": "Travel to present accepted paper or network at a conference",
+			"costs": {
+				"action_points": 2
+			},
+			"category": "travel"
+		},
+		{
+			"id": "send_delegation",
+			"name": "Send Delegation",
+			"description": "[Coming Soon] Send researchers to attend on your behalf",
+			"costs": {},
+			"category": "travel",
+			"is_stub": true
+		}
+	]
+}

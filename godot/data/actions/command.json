@@ -1,0 +1,12 @@
+{
+	"_description": "Command-zone actions (the special pass action), externalized from actions.gd get_pass_action() (L9, #621). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "pass",
+			"name": "Do Nothing",
+			"description": "Skip this action. Conserve resources but waste time.",
+			"costs": {},
+			"category": "command"
+		}
+	]
+}

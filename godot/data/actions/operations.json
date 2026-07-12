@@ -1,0 +1,25 @@
+{
+	"_description": "Operations/maintenance submenu options, externalized from actions.gd get_operations_options() (L9, #621). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "order_supplies",
+			"name": "Order Office Supplies",
+			"description": "Restock stationery (+50 supplies). Staff consume supplies each turn.",
+			"costs": {
+				"money": 2000,
+				"action_points": 1
+			},
+			"category": "operations"
+		},
+		{
+			"id": "office_maintenance",
+			"name": "Office Maintenance",
+			"description": "Routine repairs and cleaning. Improves morale slightly.",
+			"costs": {
+				"money": 5000,
+				"action_points": 1
+			},
+			"category": "operations"
+		}
+	]
+}

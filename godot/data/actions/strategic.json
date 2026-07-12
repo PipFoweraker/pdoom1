@@ -1,0 +1,46 @@
+{
+	"_description": "Strategic/high-stakes submenu options, externalized from actions.gd get_strategic_options() (L9, #621). Dictionary key order matches the pre-L9 literals.",
+	"actions": [
+		{
+			"id": "acquire_startup",
+			"name": "Acquire Startup",
+			"description": "Buy struggling AI startup for talent and compute",
+			"costs": {
+				"money": 150000,
+				"action_points": 2
+			},
+			"category": "strategic"
+		},
+		{
+			"id": "sabotage_competitor",
+			"name": "Corporate Espionage",
+			"description": "Slow down competitors (unethical, risky)",
+			"costs": {
+				"money": 100000,
+				"action_points": 3,
+				"reputation": 20
+			},
+			"category": "strategic"
+		},
+		{
+			"id": "emergency_pivot",
+			"name": "Emergency Pivot",
+			"description": "Convert capability researchers to safety focus",
+			"costs": {
+				"money": 50000,
+				"action_points": 2
+			},
+			"category": "strategic"
+		},
+		{
+			"id": "grant_proposal",
+			"name": "Grant Proposal",
+			"description": "Apply for government/foundation funding",
+			"costs": {
+				"action_points": 1,
+				"papers": 1
+			},
+			"category": "strategic"
+		}
+	]
+}

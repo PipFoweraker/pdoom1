@@ -1,0 +1,76 @@
+{
+	"_description": "Central gameplay tunables (L9, issue #621). These are the shipped defaults — identical to the pre-L9 inline literals, so this file is behavior-neutral until a sweep varies it. Tune by editing here or by dropping a user://balance_overrides.json with the same shape (deep-merged on top). Consumers pass the same values as call-site fallbacks, so a missing file degrades safely.",
+	"events": {
+		"_description": "Event pacing (#568): no events before first_event_turn; at most max_new_events_per_turn new events fire per turn (excess re-roll/re-evaluate later).",
+		"first_event_turn": 2,
+		"max_new_events_per_turn": 2
+	},
+	"ledger": {
+		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2).",
+		"doom_per_unpaid_1000": 3.5,
+		"rep_per_unpaid_1000": 2.0,
+		"exposure_chance_per_turn": 0.15,
+		"loan": { "principal_multiplier": 1.2, "fuse_turns": 4, "interest_rate": 0.25 },
+		"funding_strings": { "principal_multiplier": 0.15, "fuse_turns": 6, "interest_rate": 0.05 },
+		"desperation_payroll": { "severity_base": 8000.0, "severity_spread": 6000.0, "fuse_turns": 3, "interest_rate": 0.35 },
+		"staff_rider": { "principal": 1200.0, "fuse_turns": 8, "interest_rate": 0.02 },
+		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 2, "interest_rate": 0.5 },
+		"expose": { "rep_per_1000": 4.0, "governance_multiplier": 0.5 }
+	},
+	"doom": {
+		"_description": "Doom momentum + per-source coefficients (doom_system.gd) and player-facing status cutoffs.",
+		"momentum_accumulation_rate": 0.15,
+		"momentum_decay_rate": 0.92,
+		"momentum_cap": 8.0,
+		"velocity_carry": 0.7,
+		"velocity_gain": 0.3,
+		"base_per_turn": 1.0,
+		"legacy_capability_per_researcher": 3.0,
+		"legacy_safety_per_researcher": 3.5,
+		"researcher": {
+			"safety_base": -3.5,
+			"capabilities_base": 3.0,
+			"interpretability_base": -3.0,
+			"alignment_base": -3.2
+		},
+		"unproductive_per_staff": 0.5,
+		"status_cutoffs": { "safe": 25.0, "warning": 50.0, "danger": 70.0, "critical": 90.0 }
+	},
+	"salaries": {
+		"_description": "Annual salary bases. The /260 workday divisor is a TIME constant and stays in code until the L0 Clock lands (Clock seam wiring is an L9 follow-up).",
+		"manager_annual": 60000.0,
+		"legacy_staff_annual": 60000.0
+	},
+	"starting_resources": {
+		"_description": "GameState.reset() starting values (scenarios still override on top).",
+		"money": 245000.0,
+		"compute": 100.0,
+		"research": 0.0,
+		"papers": 0.0,
+		"reputation": 50.0,
+		"doom": 50.0,
+		"action_points": 3,
+		"stationery": 100.0,
+		"governance": 50.0
+	},
+	"action_points": {
+		"_description": "AP economy: per-turn AP = difficulty base + per_staff * total staff.",
+		"per_staff": 0.5
+	},
+	"rivals": {
+		"_description": "Rival lab coefficients (rivals.gd). Per-action magnitudes remain in code (follow-up batch).",
+		"capability_overhang_doom_per_progress": 0.025,
+		"discovery": { "base_chance": 0.15, "chance_per_rep_above_threshold": 0.005 }
+	},
+	"risk": {
+		"_description": "Risk-pool trigger thresholds (risk_pool.gd). Trigger probability itself is pool/100 (structural).",
+		"min_pool_for_events": 5.0,
+		"thresholds": { "moderate": 50.0, "severe": 75.0, "catastrophic": 100.0 }
+	},
+	"difficulty": {
+		"_description": "Difficulty modifiers applied by game_manager._apply_difficulty_settings (indices: 0=easy, 1=standard, 2=hard). Replaces the dormant data/events/balancing/difficulty.json (deleted this lane).",
+		"easy": { "money_multiplier": 1.5, "max_action_points": 4 },
+		"standard": { "money_multiplier": 1.0, "max_action_points": 3 },
+		"hard": { "money_multiplier": 0.75, "max_action_points": 2 }
+	}
+}
