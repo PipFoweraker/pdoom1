@@ -18,6 +18,22 @@ var refresh_rate: float = 1.0
 var frame_times: Array[float] = []
 var max_frame_samples: int = 60
 
+## Resolve the *live* GameManager MainUI drives (#600). main.tscn instances a scene-local
+## `GameManager` node (a sibling of this overlay) which MainUI holds as `game_manager`; that
+## instance owns the live `state`. The bareword `GameManager` autoload singleton is a DIFFERENT
+## instance whose `state` is never populated — reading it is why this overlay reported
+## "No game state available" mid-game. Prefer MainUI's manager, then the scene node, then autoload.
+func _live_gm() -> Node:
+	var mui := get_node_or_null("../TabManager/MainUI")
+	if mui != null:
+		var gm = mui.get("game_manager")
+		if gm != null:
+			return gm
+	var scene_gm := get_node_or_null("../GameManager")
+	if scene_gm != null:
+		return scene_gm
+	return GameManager
+
 func _ready():
 	panel.visible = false
 
@@ -61,11 +77,12 @@ func update_display():
 	update_performance()
 
 func update_game_state():
-	if not GameManager or not GameManager.state:
+	var gm = _live_gm()
+	if not gm or not gm.state:
 		state_label.text = "[No game state available]"
 		return
 
-	var state = GameManager.state
+	var state = gm.state
 	var lines: Array[String] = []
 
 	# Header
@@ -215,10 +232,10 @@ func update_errors():
 		errors_list.add_child(label)
 		return
 
-	# Show error stats
+	# Show error stats (plain text — these are Labels, which don't parse BBCode)
 	var stats = ErrorHandler.get_error_stats()
 	var stats_label = Label.new()
-	stats_label.text = "[b]Error Stats[/b]\nTotal: %d | Errors: %d | Warnings: %d" % [
+	stats_label.text = "Error Stats\nTotal: %d | Errors: %d | Warnings: %d" % [
 		stats["total"],
 		stats["by_severity"].get("ERROR", 0) + stats["by_severity"].get("FATAL", 0),
 		stats["by_severity"].get("WARNING", 0)
@@ -229,19 +246,25 @@ func update_errors():
 	var separator = HSeparator.new()
 	errors_list.add_child(separator)
 
-	# Show recent errors
+	# Show recent errors.
+	# #600: previously this rendered `error.to_string()` inside a `[color=…]` BBCode tag on a
+	# plain Label. GameError (an inner class extending RefCounted) has no `_to_string()`, so
+	# `to_string()` returned "<RefCounted#…>", and the Label showed the BBCode literally — every
+	# entry read like "color white refcounted …" (the ~29-error spam a playtester reported).
+	# Use the human-readable format_message() and set the font colour directly.
 	for error in recent_errors:
 		var error_label = Label.new()
-		var color = "white"
+		var col := Color(0.85, 0.85, 0.85)  # INFO / default
 		match error.severity:
 			ErrorHandler.Severity.WARNING:
-				color = "yellow"
+				col = Color(0.95, 0.85, 0.30)
 			ErrorHandler.Severity.ERROR:
-				color = "orange"
+				col = Color(0.95, 0.60, 0.25)
 			ErrorHandler.Severity.FATAL:
-				color = "red"
+				col = Color(0.95, 0.35, 0.30)
 
-		error_label.text = "[color=%s]%s[/color]" % [color, error.to_string()]
+		error_label.text = error.format_message()
+		error_label.add_theme_color_override("font_color", col)
 		error_label.add_theme_font_size_override("font_size", 10)
 		error_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		errors_list.add_child(error_label)
@@ -308,17 +331,22 @@ func _on_rate_slider_value_changed(value):
 	rate_label.text = "%.1fs" % value
 
 func _on_add_money_button_pressed():
-	if GameManager and GameManager.state:
-		GameManager.state.money += 50000
+	var gm = _live_gm()
+	if gm and gm.state:
+		gm.state.money += 50000
+		gm.game_state_updated.emit(gm.state.to_dict())
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Added $50k", {})
 
 func _on_add_ap_button_pressed():
-	if GameManager and GameManager.state:
-		GameManager.state.action_points += 5
+	var gm = _live_gm()
+	if gm and gm.state:
+		gm.state.action_points += 5
+		gm.game_state_updated.emit(gm.state.to_dict())
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Added 5 AP", {})
 
 func _on_trigger_event_button_pressed():
-	if GameManager and GameManager.state:
+	var gm = _live_gm()
+	if gm and gm.state:
 		# Show event selection popup
 		_show_event_selection_popup()
 
@@ -368,7 +396,8 @@ func _show_event_selection_popup():
 
 func _trigger_specific_event(event: Dictionary, popup: AcceptDialog):
 	"""Trigger a specific event"""
-	if not GameManager or not GameManager.state:
+	var gm = _live_gm()
+	if not gm or not gm.state:
 		return
 
 	var event_name = event.get("name", "Unknown Event")
@@ -377,11 +406,11 @@ func _trigger_specific_event(event: Dictionary, popup: AcceptDialog):
 	ErrorHandler.info(ErrorHandler.Category.EVENTS, "Debug: Triggering event '%s'" % event_name, {"event_id": event_id})
 
 	# Add to pending events so it will be shown to player
-	GameManager.state.pending_events.append(event)
+	gm.state.pending_events.append(event)
 
 	# Emit signal if main UI is listening
-	if GameManager.has_signal("event_triggered"):
-		GameManager.emit_signal("event_triggered", event)
+	if gm.has_signal("event_triggered"):
+		gm.emit_signal("event_triggered", event)
 
 	# Close popup
 	popup.queue_free()
@@ -390,11 +419,13 @@ func _trigger_specific_event(event: Dictionary, popup: AcceptDialog):
 	ErrorHandler.info(ErrorHandler.Category.EVENTS, "Event '%s' added to pending events" % event_name, {})
 
 func _on_commit_plan_button_pressed():
-	if GameManager and GameManager.is_initialized:
+	var gm = _live_gm()
+	if gm and gm.is_initialized:
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Commit plan requested", {})
 		# Would need to implement commit plan
 
 func _on_reset_game_button_pressed():
-	if GameManager:
+	var gm = _live_gm()
+	if gm:
 		ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Debug: Reset game requested", {})
-		GameManager.start_new_game()
+		gm.start_new_game()
