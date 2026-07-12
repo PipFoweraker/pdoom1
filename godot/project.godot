@@ -19,6 +19,7 @@ config/features=PackedStringArray("4.5")
 
 ErrorHandler="*res://autoload/error_handler.gd"
 GameConfig="*res://autoload/game_config.gd"
+Balance="*res://autoload/balance.gd"
 SceneTransition="*res://autoload/scene_transition.gd"
 ThemeManager="*res://autoload/theme_manager.gd"
 NotificationManager="*res://autoload/notification_manager.gd"
