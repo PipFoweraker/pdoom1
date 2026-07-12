@@ -30,6 +30,19 @@ var _event_dropdown: OptionButton = null
 var _built := false
 
 
+## Resolve the *live* GameManager that MainUI actually drives (#600).
+## main.tscn instances a scene-local `GameManager` node that MainUI holds as `game_manager`;
+## that node — NOT the bareword `GameManager` autoload singleton — owns the live `state`.
+## The autoload's `state` is never populated, which is why every readout previously showed
+## "No active game". Prefer MainUI's instance; fall back to the autoload only when unwired.
+func _live_gm() -> Node:
+	if main_ui != null:
+		var gm = main_ui.get("game_manager")
+		if gm != null:
+			return gm
+	return GameManager
+
+
 func _ready() -> void:
 	layer = OVERLAY_LAYER
 	# Gate on dev build: in a release cut this overlay builds nothing and stays inert.
@@ -40,8 +53,11 @@ func _ready() -> void:
 	_built = true
 	if is_instance_valid(KeybindManager):
 		KeybindManager.dev_mode_toggled.connect(_on_toggle)
-	if is_instance_valid(GameManager):
-		GameManager.game_state_updated.connect(_on_state_updated)
+	# Track the live manager MainUI drives, so nudges / turns refresh the readout (#600).
+	var gm := _live_gm()
+	if gm != null and gm.has_signal("game_state_updated") \
+			and not gm.game_state_updated.is_connected(_on_state_updated):
+		gm.game_state_updated.connect(_on_state_updated)
 
 
 func _on_toggle() -> void:
@@ -229,7 +245,8 @@ func _render() -> void:
 	for c in _info_vbox.get_children():
 		_info_vbox.remove_child(c)
 		c.queue_free()
-	var state = GameManager.state if is_instance_valid(GameManager) else null
+	var gm := _live_gm()
+	var state = gm.state if gm != null else null
 	for section in DevModeReadout.build_sections(state):
 		var head := Label.new()
 		head.text = "▸ " + str(section["title"])
@@ -247,7 +264,8 @@ func _render() -> void:
 # --- Control handlers ------------------------------------------------------
 
 func _nudge(field: String, delta: float) -> void:
-	var s = GameManager.state if is_instance_valid(GameManager) else null
+	var gm := _live_gm()
+	var s = gm.state if gm != null else null
 	if s == null:
 		return
 	match field:
@@ -261,7 +279,9 @@ func _nudge(field: String, delta: float) -> void:
 			s.doom = clampf(s.doom + delta, 0.0, 100.0)
 			if s.doom_system != null:
 				s.doom_system.current_doom = s.doom
-	GameManager.game_state_updated.emit(s.to_dict())
+	# Emit on the LIVE manager so MainUI's readouts refresh (autoload signal has no listeners).
+	if gm.has_signal("game_state_updated"):
+		gm.game_state_updated.emit(s.to_dict())
 	_render()
 
 
@@ -299,7 +319,7 @@ func _jump_f3() -> void:
 func _advance_turn() -> void:
 	# Dev advance: mirror end_turn()'s AP conversion + turn execution, but bypass the
 	# "no actions queued" guard so a turn can be forced even with an empty queue.
-	var gm = GameManager
+	var gm := _live_gm()
 	if not is_instance_valid(gm) or gm.state == null or gm.turn_manager == null:
 		return
 	gm.state.action_points -= gm.state.committed_ap
@@ -312,7 +332,7 @@ func _advance_turn() -> void:
 
 
 func _queue_event(event_id: String) -> void:
-	var gm = GameManager
+	var gm := _live_gm()
 	if not is_instance_valid(gm) or gm.state == null or event_id == "":
 		return
 	# Inject into the pending queue exactly like SeedSchedule's inject_event cause does.
@@ -335,7 +355,7 @@ func _trigger_random_event() -> void:
 	var all := GameEvents.get_all_events()
 	if all.is_empty():
 		return
-	var gm = GameManager
+	var gm := _live_gm()
 	var idx := 0
 	if is_instance_valid(gm) and gm.state != null and gm.state.rng != null:
 		idx = gm.state.rng.randi() % all.size()
