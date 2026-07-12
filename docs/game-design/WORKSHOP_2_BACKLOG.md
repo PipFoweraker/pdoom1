@@ -47,6 +47,42 @@
 - **DQ-10 · Inward-SA / ledger visibility** *(#555)* — how much of the player's *own* ledger
   is visible is undecided; overlaps WS-2 SA and the inward-SA deferral (ADR-0008).
 
+### Workshop #2 additions (2026-07-12, beat 1 / ADR-0009)
+
+- **DQ-11 · Save/fork/divergence mechanics** — Pip open to them; legal under ADR-0006's
+  verification law. Needs design: UX, ladder norms (not rules), interaction with
+  seed-as-timeline fiction (a fork is *literally* a timeline fork — free flavor).
+- **DQ-12 · Rival narrative presence** — playtest note: rival still "narratively
+  invisible" despite mechanical doom pressure. Candidate home: response windows + month
+  review screen (rival actions as events you *see*, not just doom drift).
+- **DQ-13 · Doom nudge strength** — playtest note: "doom nudges overall probably a
+  little strong." Folds into the DQ-8 balance pass, re-denominated at month grain.
+- **DQ-14 · World-state progression display** — playtest note: "sense of progression
+  over time doesn't feel very strong." Candidate home: month review screen (ADR-0009
+  consequence) + era-keyed visual/UI shifts.
+- **DQ-15 · Researcher archetype roster — SEEDED** *(ADR-0011)* — Pip authored three
+  (people-pleaser interp, authoritarian governance pessimist, moral-crusader agent
+  foundations), Fable drafted two for veto (capabilities-curious optimist, burned-out
+  ex-frontier senior). Roster lives in WORLD_AND_LORE. Remaining: Pip's edit pass +
+  appetite fills.
+- **Promoted: conference/travel design** *(ADR-0010)* — now the mandatory middle of the
+  research→adoption value chain, no longer flavor; design with DQ-9 receivables +
+  ADR-0007 counterparties.
+- **DQ-16 · Conference-attendance subgame** *(ADR-0014)* — Pip's flagged ambition
+  ("that's how critical I think these are"). v1 ships attendance + yields only; revisit
+  when playtests show conference turns feel thin.
+- **DQ-17 · Achievement candidates register** *(build lane L8)* — observer-only,
+  never writes back to sim/score. Seed set: year marks, first-time-X. Tag
+  `[ACHIEVEMENT]` in future sessions and append here.
+- **Navigation principle — PROVISIONAL, not ratified** — hub-and-spoke guidance in
+  WORKSHOP_2_BUILD_LANES; rule it at workshop #3 with real screens in hand.
+- *(Parked in ADR-0009 itself: variable/coarsening cadence; quarter grain — each with
+  explicit revisit triggers.)*
+
+> **2026-07-12 reconciliation:** BL-1..3 absorbed into build lane L4; BL-5 into L6;
+> EE-2 **promoted** to lane L7 (6–8 hr runs require save/load); DQ-6 batches into L1's
+> replay schema bump; DQ-8 gated behind EE-8. See `WORKSHOP_2_BUILD_LANES.md`.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
@@ -66,6 +102,14 @@
   policy only; greedy-safety / capability-rush action-taking bots are a seam.
 
 ## Engineering errands — batched cleanup pass
+
+- **EE-7 · Loss-legibility UI pass** *(workshop #2 beat 3, ADR-0012)* — per-resource
+  per-turn delta indicators near resource symbols; event-log improvement. Motivation:
+  the one human ledger-death specimen was low-res ("I don't recall… the feeling that I
+  was losing things badly"); future specimens need to be readable.
+- **EE-8 · Sweep death attribution** *(ADR-0012)* — exploit-finder must attribute
+  deaths to root-cause chains (default→rep→funding→doom is a *ledger* death); current
+  "dies of doom" hides the cascade. Prerequisite to all ADR-0013 tuning.
 
 - **EE-1 · Legacy `game_controller`/`end_game_screen` path** *(#550)* — constructs
   `ScoreEntry` with `doom_integral`=0 + unversioned board; appears superseded. Remove or

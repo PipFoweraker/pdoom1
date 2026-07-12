@@ -1,5 +1,15 @@
 # Fable Design-Workshop #2 Kickoff
 
+> **STATUS: EXECUTED 2026-07-12.** Session ran full agenda + closing beat. Outcomes:
+> **ADR-0009** (plan-months, two decision speeds, badge-is-the-date), **ADR-0010**
+> (adoption routing, soft-with-teeth), **ADR-0011** (effort economy: founder hours,
+> staff lanes, manager compression), **ADR-0012** (event taxonomy + called-due
+> cascade), **ADR-0013** (cost-of-debt engine + financing instruments), **ADR-0014**
+> (conferences, presence, minimal location). DESIGN_PHILOSOPHY +11 entries;
+> WORLD_AND_LORE: 2037 vignette, staff archetypes, event-horizon guardrail, presence
+> channel. Backlog: DQ-11..17, EE-7..8, reconciliation notes. Implementation work
+> order: **`WORKSHOP_2_BUILD_LANES.md`** (L1–L8 + sweep gates G1–G3).
+
 > **How to use:** switch this session's model to Fable (`/model` → Fable), then paste
 > everything below the line as the opening message. Self-contained — a fresh Fable session
 > needs no prior transcript. Delete this note before pasting.
