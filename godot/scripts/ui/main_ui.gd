@@ -1041,15 +1041,13 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 	return GameActions.get_action_by_id(action_id)
 
 # --- Issue #510 UI polish helpers (submenu close affordance + alignment) ---
+# #622 L10: the chrome itself (panel styling, [X] + ESC hint, alignment, button lookup)
+# lives in SubmenuChrome. These thin wrappers keep MainUI's ownership of the
+# active_dialog state and leave every existing dialog-builder call site unchanged.
 
 func _find_action_button(action_id: String) -> Button:
 	"""Locate the left-panel icon button that opened a submenu, by action_id meta."""
-	for child in actions_list.get_children():
-		if child is VBoxContainer:
-			for b in child.get_children():
-				if b is Button and b.get_meta("action_id", "") == action_id:
-					return b
-	return null
+	return SubmenuChrome.find_action_button(actions_list, action_id)
 
 func _decorate_active_submenu(anchor_button: Button = null) -> void:
 	"""Add close affordance (X + ESC hint) to the active submenu and, when an
@@ -1060,55 +1058,14 @@ func _decorate_active_submenu(anchor_button: Button = null) -> void:
 		return
 	if active_dialog.has_meta("is_event_dialog"):
 		return  # Event dialogs must be completed, not closed (#452)
-	_add_submenu_close_affordance(active_dialog)
+	SubmenuChrome.add_close_affordance(active_dialog, _close_active_submenu)
 	if anchor_button != null and is_instance_valid(anchor_button):
-		_align_submenu_to_button(active_dialog, anchor_button)
-
-func _style_submenu_panel(dialog: Control) -> void:
-	"""Near-opaque panel + border so submenus read as solid panels, not see-through
-	overlays on the action icons (playtest feedback: screen5)."""
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.13, 0.16, 0.97)
-	style.set_border_width_all(2)
-	style.border_color = Color(0.38, 0.46, 0.42, 1.0)
-	style.set_corner_radius_all(6)
-	dialog.add_theme_stylebox_override("panel", style)
+		SubmenuChrome.align_to_button(active_dialog, anchor_button)
 
 func _add_submenu_close_affordance(dialog: Control) -> void:
-	"""Solid panel styling + clickable [X] top-right + '[ESC] close' hint bottom-right (#510).
-	Skips panel styling if the caller already set a bespoke 'panel' stylebox (e.g. the trend
-	expand panel), so we don't clobber it."""
-	if not dialog.has_theme_stylebox_override("panel"):
-		_style_submenu_panel(dialog)
-
-	var close_btn := Button.new()
-	close_btn.text = "✕"
-	close_btn.focus_mode = Control.FOCUS_NONE
-	close_btn.custom_minimum_size = Vector2(24, 24)
-	close_btn.size = Vector2(24, 24)
-	close_btn.position = Vector2(dialog.size.x - 30, 6)
-	close_btn.add_theme_font_size_override("font_size", 12)
-	close_btn.tooltip_text = "Close (ESC)"
-	var x_style := StyleBoxFlat.new()
-	x_style.bg_color = Color(0.30, 0.18, 0.18, 0.95)
-	x_style.set_corner_radius_all(4)
-	close_btn.add_theme_stylebox_override("normal", x_style)
-	var x_hover := x_style.duplicate()
-	x_hover.bg_color = Color(0.55, 0.22, 0.22, 1.0)
-	close_btn.add_theme_stylebox_override("hover", x_hover)
-	close_btn.pressed.connect(_close_active_submenu)
-	dialog.add_child(close_btn)
-
-	# Footer hint, bottom-RIGHT (clear of centered footer labels like "Pool: 3/6")
-	var hint := Label.new()
-	hint.text = "[ESC] close"
-	hint.add_theme_font_size_override("font_size", 10)
-	hint.add_theme_color_override("font_color", Color(0.65, 0.7, 0.65))
-	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hint.size = Vector2(110, 16)
-	hint.position = Vector2(dialog.size.x - 122, dialog.size.y - 20)
-	dialog.add_child(hint)
+	"""#622 L10 delegator — keeps the one-arg call shape the dialog builders use;
+	the chrome is SubmenuChrome.add_close_affordance with MainUI's close routine."""
+	SubmenuChrome.add_close_affordance(dialog, _close_active_submenu)
 
 func _close_active_submenu() -> void:
 	"""Close the active submenu dialog (shared by [X] click and ESC)."""
@@ -1117,20 +1074,6 @@ func _close_active_submenu() -> void:
 	active_dialog = null
 	active_dialog_buttons = []
 
-func _align_submenu_to_button(dialog: Control, button: Button) -> void:
-	"""Position a submenu just to the RIGHT of the action button that opened it and
-	top-aligned to it, so it clearly expands from that row rather than over it
-	(#510 + playtest feedback). Clamped to the viewport."""
-	var parent := dialog.get_parent()
-	if parent == null:
-		return
-	var gap: float = 10.0
-	var view := get_viewport().get_visible_rect().size
-	var target_x: float = button.global_position.x + button.size.x + gap - parent.global_position.x
-	var target_y: float = button.global_position.y - parent.global_position.y
-	var max_x: float = maxf(40.0, view.x - dialog.size.x - 10.0)
-	var max_y: float = maxf(40.0, view.y - dialog.size.y - 10.0)
-	dialog.position = Vector2(clampf(target_x, 40.0, max_x), clampf(target_y, 40.0, max_y))
 
 func _debug_nudge_doom(delta: float) -> void:
 	"""DEBUG-only QA helper: bump doom by delta, record a history point so the trend graph
