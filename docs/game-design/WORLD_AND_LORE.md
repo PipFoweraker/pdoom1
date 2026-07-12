@@ -26,6 +26,15 @@ despair. Papers, Please is the tonal north star: bureaucratic deadpan around eno
 stakes. Population figures, if shown, are *presentation* of the doom-integral
 ("doom-years averted"), never a separate mechanic (ADR-0002).
 
+**The event-horizon guardrail (2026-07-12).** Pip: *"we're not saying or implying labs
+*really* do any of the truly weird stuff that's going to take place later in the game."*
+The fiction's claims about recognizably-real actors stop at the run's crossing of the
+real-world event horizon; past it, the timeline is openly ours (seeds *are* timelines —
+divergence is the premise, not a disclaimer). Player influence over other labs scales up
+mostly post-horizon, so the norm-setting mechanic (ADR-0010) never reads as an
+accusation about present-day labs. Researcher archetypes are likewise flavors, never
+portraits of real people.
+
 ## The player's org / lab
 
 **Who you are.** A founder whose only unscalable resource is their own hours — action
@@ -41,6 +50,35 @@ them to test every major system (a system should be interesting to at least two)
   it; money as strategy.
 - **The Operator** — skips to networking and politicking straight into influence;
   favors as strategy.
+
+**Staff archetypes (design-test roster, 2026-07-12, DQ-15/ADR-0011).** Template: *lane /
+unmanaged drift / appetite / quirk-rider*. Drift rule (held loosely, per Pip): **default
+drift stays within-lane**; cross-lane or off-the-map drift is rare and *diagnostic* —
+bad employee, bad manager, or something seriously awry. Drift isn't laziness, it's their
+mission winning the backlog-ordering fight. Flavors, never portraits of real people
+(event-horizon guardrail).
+
+Pip's three (near-verbatim):
+1. **The people-pleaser** — interpretability / drifts to building evals / needs
+   financial stability for family / easily swayed. *Free mechanics:* rosiest
+   Celine's-law reports on the org chart (a doom-legibility hazard inside payroll);
+   cheap to retain with certainty; first to wobble in desperation payroll.
+2. **The authoritarian pessimist** — governance / drifts to identifying and combating
+   deepfakes / wants authoritarian policies, willing to trade off privacy / pessimistic.
+   *Free mechanics:* your best door to government adoption (ADR-0010), with a
+   letterhead-risk rider; typed attention splits (ministries vs civil society).
+3. **The moral crusader** — agent foundations / drifts to lobbying for software moral
+   rights / mission purity (the org must not do dual-use) / introverted coder. *Free
+   mechanics:* adoption routing makes their unsocialized work stay a PDF — needs a
+   champion; capabilities hires are a departure trigger.
+
+Fable's two, drafted for Pip's edit/veto:
+4. **The capabilities-curious optimist** — scaling-efficiency / drifts to capability
+   gains that "also help safety, really" / wants compute + a magazine cover / genuine
+   believer. The priced temptation (ADR-0010) with a face inside the org.
+5. **The burned-out ex-frontier senior** — evals / drifts to quietly writing the
+   tell-all memoir (a secret ledger entry with an exposure fuse, ADR-0003 reuse) /
+   wants absolution / cynical.
 
 ## Rival labs & organizations
 
@@ -58,16 +96,49 @@ The weirdness is honest — real AI-race epistemics look like this — and the s
 lies about itself; instruments can be fooled, but *how* they can be fooled is
 knowable, and counter-intelligence is a thing you buy (ADR-0004). Channel flavors:
 espionage (fast, dirty, corrodes your governance), alliance (slow, public, obligates
-you), media (cheap, noisy), research (deep, narrow).
+you), media (cheap, noisy), research (deep, narrow) — and **presence** (2026-07-12,
+ADR-0014): you discover actors, alliances, and intentions by *being where they are* —
+Pip: *"We discover other players in the game by encountering their units moving around
+in the playing space"* — while news/newsletters are the cheaper, lower-fidelity
+discovery. The hallway track is an intelligence channel.
 
 The political register is the whip's office: *"there are critical votes coming up, and
 people are wavering. have you got them?"* Pledges, favors, counterparty dread —
 House of Cards, not Model UN.
 
+## The endgame — 2037, a vignette (2026-07-12)
+
+Pip's answer, verbatim, to "describe one late turn" (flagged by him as pure guess; kept
+as the canonical *feel* target):
+
+> *"I am negotiating to buy rents of entire data centres. I am dealing with stakeholders
+> negotiating with global financial firms. I am being asked how people should cast votes
+> on AI treaties. I am paying rent on hiring defensive drone swarms, losing reputation
+> because my researchers are being mind-hacked by cultists, and the cat is permanently on
+> fire. A manager is asking me to approve costs to evacuate the Berlin office to a bunker
+> in Mongolia. Payroll is automated, I am notified when a currency collapses. I have 5
+> delegates to send to 10 meetings."*
+
+Design payload, unpacked:
+- **The endgame scarcity is attention and representation, not money** — "5 delegates to
+  10 meetings" is the late-game resource problem in one sentence.
+- **Delegation silences mechanics**: payroll is *automated*; a currency collapse arrives
+  as a *notification*, not a decision. What you've delegated stops asking.
+- **Managers surface approvals, not tasks** (Berlin → Mongolia bunker: you rule on the
+  cost, not the logistics).
+- Escalation of counterparties: employees → team leads → global financial firms, treaty
+  bodies, drone-swarm contractors.
+- **The cat is permanently on fire** — the domestic running gag survives to the end of
+  the world; tone anchor (the cats are already in `assets/cats/`).
+
 ## Naming & terminology
 
 - **Doom-years averted** — the score tiebreaker; area under the survival curve
-  ("the QALY of the apocalypse"). Display: **"Turn 14 · 862"**.
+  ("the QALY of the apocalypse").
+- **The badge is the date** (ADR-0009) — public score is the exact calendar day the run
+  died ("I made it to March 2034"), replacing turn-count display; internals stay
+  lexicographic days-survived · doom-integral. Years are the community's native
+  timeline vocabulary — "I survived past 2027" is a boast and a joke simultaneously.
 - **The Ledger** — payables and receivables; liabilities and favors (ADR-0003).
 - **Seeds are timelines**; a seed = RNG + event schedule (ADR-0005).
 - **Lead time** — what SA purchases actually buy (ADR-0004).
@@ -76,6 +147,8 @@ House of Cards, not Model UN.
 
 ## Change log
 
+- **2026-07-12** — Workshop #2, beat 1: endgame-2037 vignette (attention/representation
+  scarcity, delegation silences mechanics, burning cat); badge-is-the-date naming.
 - **2026-07-04** — First fill, from Fable workshop #1: time-loop framing, epitaphs and
   tone register, founder-hours AP canon, Mogul/Hustler/Operator personas, provenance
   fiction, whip register, core terminology.
