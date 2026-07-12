@@ -13,6 +13,12 @@ class_name GameActions
 ##   has_upgrade: String - Requires specific upgrade to be purchased
 ##   research_min: float - Minimum research points to unlock
 
+# The ONE id for the "do nothing" action (L0 #620: collapsed the pass/pass_turn twin
+# ids — two non-interchangeable "do nothing" code paths; get_action_by_id("pass_turn")
+# returned {}). "pass_turn" survives only as a legacy replay-input alias in
+# execute_action, so replays recorded before the collapse still verify.
+const PASS_ACTION_ID := "pass"
+
 
 ## Check if an action is unlocked based on game state
 static func is_action_unlocked(action: Dictionary, state: Dictionary) -> bool:
@@ -239,7 +245,7 @@ static func get_action_by_id(action_id: String) -> Dictionary:
 		if action["id"] == action_id:
 			return action
 	# Special pass action (not in any submenu)
-	if action_id == "pass":
+	if action_id == PASS_ACTION_ID:
 		return get_pass_action()
 	return {}
 
@@ -491,7 +497,7 @@ static func get_operations_options() -> Array[Dictionary]:
 static func get_pass_action() -> Dictionary:
 	"""Get the special pass/do nothing action (shown in command zone, not action list)"""
 	return {
-		"id": "pass",
+		"id": PASS_ACTION_ID,
 		"name": "Do Nothing",
 		"description": "Skip this action. Conserve resources but waste time.",
 		"costs": {},  # Free action, always available
@@ -502,7 +508,9 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 	"""Execute an action, modify state, return result
 	Note: AP costs are handled by the commit system in game_manager.gd (committed_ap).
 	Only non-AP costs (money, research, etc.) are spent here."""
-	# Special case: pass_turn is a virtual action that doesn't need to be in the action list
+	# LEGACY replay-input alias (L0 #620): "pass_turn" was a twin "do nothing" id queued
+	# by the commit-plan path; new code queues PASS_ACTION_ID. Kept ONLY so replay
+	# artifacts recorded before the collapse still execute identically (no state, no RNG).
 	if action_id == "pass_turn":
 		return {"success": true, "message": "Passed turn (no actions taken)"}
 
@@ -695,11 +703,6 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			var total_raised = base_amount + rep_bonus
 			state.add_resources({"money": total_raised})
 			result["message"] = "Major funding round! Raised %s (base: %s, reputation bonus: %s)" % [GameConfig.format_money(total_raised), GameConfig.format_money(base_amount), GameConfig.format_money(rep_bonus)]
-
-		"take_loan":
-			state.add_resources({"money": 75000})
-			# Note: debt tracking would require expanded state
-			result["message"] = "Loan approved! Received %s (repayment: %s due later)" % [GameConfig.format_money(75000), GameConfig.format_money(90000)]
 
 		"apply_grant":
 			var grant_amount = state.rng.randi_range(50000, 100000)

@@ -520,9 +520,10 @@ func _on_commit_plan_button_pressed():
 		# No queued actions - just reserve all AP (reactive strategy)
 		log_message("[color=cyan]Committing plan: Reserving all %d AP for reactive responses...[/color]" % available_ap)
 
-		# Queue a virtual "pass_turn" action to represent reactive strategy
+		# Queue the pass action to represent reactive strategy (L0 #620: was the
+		# twin id "pass_turn"; ONE id now — GameActions.PASS_ACTION_ID)
 		var reserve_action = {
-			"id": "pass_turn",
+			"id": GameActions.PASS_ACTION_ID,
 			"name": "Reserve All AP",
 			"description": "No planned actions - keep all AP available for responding to events",
 			"ap_cost": 0,
@@ -532,8 +533,8 @@ func _on_commit_plan_button_pressed():
 		update_queued_actions_display()
 
 		# Directly append to game state queue (bypass select_action validation)
-		# pass_turn is a virtual action representing "reserve all AP" strategy
-		game_manager.state.queued_actions.append("pass_turn")
+		# — a virtual "reserve all AP" entry; pass costs {} so no AP is committed
+		game_manager.state.queued_actions.append(GameActions.PASS_ACTION_ID)
 
 	# Clear local queue (will be repopulated after turn processes)
 	queued_actions.clear()
@@ -3761,7 +3762,7 @@ func _on_pass_button_pressed():
 
 	# Get pass action definition
 	var pass_action = GameActions.get_pass_action()
-	var action_id = pass_action.get("id", "pass")
+	var action_id = pass_action.get("id", GameActions.PASS_ACTION_ID)
 	var action_name = pass_action.get("name", "Do Nothing")
 
 	# Check if we're in action selection phase

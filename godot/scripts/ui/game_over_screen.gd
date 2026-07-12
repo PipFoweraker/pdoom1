@@ -165,11 +165,14 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	stats_text += "  [color=white]Papers:[/color] %d\n" % final_state.get("papers", 0)
 	stats_text += "  [color=orange]Reputation:[/color] %.0f\n\n" % final_state.get("reputation", 0)
 
-	# Team composition
+	# Team composition — count via GameState.get_total_staff() (L0 #620: the legacy
+	# field sum below missed the researchers[] roster, showing 0 employees mid-era).
 	var safety = final_state.get("safety_researchers", 0)
 	var capability = final_state.get("capability_researchers", 0)
 	var compute_eng = final_state.get("compute_engineers", 0)
 	var total_staff = safety + capability + compute_eng
+	if GameManager.is_initialized and GameManager.state:
+		total_staff = GameManager.state.get_total_staff()
 
 	stats_text += "[color=cyan]◆ Team:[/color] [b]%d employees[/b]\n" % total_staff
 	if total_staff > 0:
@@ -227,11 +230,9 @@ func _get_defeat_reason(final_state: Dictionary) -> String:
 		return "The experiment ended prematurely."
 
 func _fmt_money(amount: float) -> String:
-	"""Compact money display: 283458 -> $283k."""
-	var a := int(round(amount))
-	if abs(a) >= 1000:
-		return "$%dk" % (a / 1000)
-	return "$%d" % a
+	"""Money display — routes through the ONE formatter (L0 #620: was a duplicate
+	compact implementation; GameConfig.format_money is the canonical one)."""
+	return GameConfig.format_money(amount)
 
 func _get_ledger_attribution_text(final_state: Dictionary) -> String:
 	"""Surface the ledger death_attribution already in state, so the player learns what
