@@ -32,6 +32,11 @@ var current_game_active: bool = false
 var games_played: int = 0
 var config_mode: String = "default"  # "default" = weekly seed (locked), "custom" = user configured
 
+# L7 (#618) save/load handoff (transient, not saved to config file): the welcome
+# screen sets this before switching to main.tscn; MainUI's autostart consumes it
+# and boots GameManager.load_saved_game() instead of start_new_game().
+var pending_load_path: String = ""
+
 # Version tracking for What's New feature
 var last_seen_version: String = ""  # Empty = never seen patch notes
 const CURRENT_VERSION: String = "0.11.0"

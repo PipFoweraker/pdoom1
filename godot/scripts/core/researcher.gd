@@ -407,18 +407,18 @@ func to_dict() -> Dictionary:
 	}
 
 func from_dict(data: Dictionary):
-	"""Deserialize from dictionary"""
-	researcher_name = data.get("name", "")
-	specialization = data.get("specialization", "safety")
-	skill_level = data.get("skill_level", 5)
-	salary_expectation = data.get("salary_expectation", 60000.0)
-	current_salary = data.get("current_salary", 60000.0)
-	base_productivity = data.get("base_productivity", 1.0)
-	loyalty = data.get("loyalty", 50)
-	burnout = data.get("burnout", 0.0)
-	turns_employed = data.get("turns_employed", 0)
-	jet_lag_turns = data.get("jet_lag_turns", 0)
-	jet_lag_severity = data.get("jet_lag_severity", 0.0)
+	"""Deserialize from dictionary (L7 #618: explicit casts — JSON numbers arrive as float)"""
+	researcher_name = String(data.get("name", ""))
+	specialization = String(data.get("specialization", "safety"))
+	skill_level = int(data.get("skill_level", 5))
+	salary_expectation = float(data.get("salary_expectation", 60000.0))
+	current_salary = float(data.get("current_salary", 60000.0))
+	base_productivity = float(data.get("base_productivity", 1.0))
+	loyalty = int(data.get("loyalty", 50))
+	burnout = float(data.get("burnout", 0.0))
+	turns_employed = int(data.get("turns_employed", 0))
+	jet_lag_turns = int(data.get("jet_lag_turns", 0))
+	jet_lag_severity = float(data.get("jet_lag_severity", 0.0))
 
 	if data.has("traits"):
 		traits.clear()

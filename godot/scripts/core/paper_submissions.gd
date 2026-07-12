@@ -79,19 +79,23 @@ class PaperSubmission:
 		}
 
 	static func from_dict(data: Dictionary) -> PaperSubmission:
+		# L7 (#618): explicit casts — JSON round-trips ints as floats, and an untyped
+		# JSON array cannot be assigned to the typed Array[String] member directly.
 		var paper = PaperSubmission.new()
-		paper.id = data.get("id", paper.id)
-		paper.title = data.get("title", "")
-		paper.target_conference_id = data.get("target_conference_id", "")
-		paper.submit_turn = data.get("submit_turn", -1)
-		paper.decision_turn = data.get("decision_turn", -1)
-		paper.presentation_deadline_turn = data.get("presentation_deadline_turn", -1)
-		paper.status = data.get("status", Status.DRAFTING)
-		paper.quality = data.get("quality", 0.5)
-		paper.topic = data.get("topic", Topic.SAFETY)
-		paper.research_invested = data.get("research_invested", 0.0)
-		paper.lead_researcher_name = data.get("lead_researcher_name", "")
-		paper.co_author_names = data.get("co_author_names", [])
+		paper.id = String(data.get("id", paper.id))
+		paper.title = String(data.get("title", ""))
+		paper.target_conference_id = String(data.get("target_conference_id", ""))
+		paper.submit_turn = int(data.get("submit_turn", -1))
+		paper.decision_turn = int(data.get("decision_turn", -1))
+		paper.presentation_deadline_turn = int(data.get("presentation_deadline_turn", -1))
+		paper.status = int(data.get("status", Status.DRAFTING))
+		paper.quality = float(data.get("quality", 0.5))
+		paper.topic = int(data.get("topic", Topic.SAFETY))
+		paper.research_invested = float(data.get("research_invested", 0.0))
+		paper.lead_researcher_name = String(data.get("lead_researcher_name", ""))
+		paper.co_author_names.clear()
+		for n in data.get("co_author_names", []):
+			paper.co_author_names.append(String(n))
 		return paper
 
 # ============================================

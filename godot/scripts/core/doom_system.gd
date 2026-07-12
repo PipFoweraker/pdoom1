@@ -426,16 +426,18 @@ func to_dict() -> Dictionary:
 		"current_doom": current_doom,
 		"doom_velocity": doom_velocity,
 		"doom_momentum": doom_momentum,
+		"pending_rival_doom": _pending_rival_doom,  # L7 (#618): mid-turn buffer, 0 between turns
 		"doom_sources": doom_sources.duplicate(),
 		"doom_multipliers": doom_multipliers.duplicate(),
 		"doom_modifiers": doom_modifiers.duplicate()
 	}
 
 func from_dict(data: Dictionary):
-	"""Deserialize doom system state"""
-	current_doom = data.get("current_doom", 50.0)
-	doom_velocity = data.get("doom_velocity", 0.0)
-	doom_momentum = data.get("doom_momentum", 0.0)
+	"""Deserialize doom system state (explicit float casts: JSON numbers arrive as float)"""
+	current_doom = float(data.get("current_doom", 50.0))
+	doom_velocity = float(data.get("doom_velocity", 0.0))
+	doom_momentum = float(data.get("doom_momentum", 0.0))
+	_pending_rival_doom = float(data.get("pending_rival_doom", 0.0))
 	if data.has("doom_sources"):
 		doom_sources = data["doom_sources"].duplicate()
 	if data.has("doom_multipliers"):

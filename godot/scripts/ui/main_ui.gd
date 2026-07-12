@@ -396,8 +396,17 @@ func _trigger_action_by_index(index: int):
 			log_message("[color=cyan]Keyboard shortcut: %d[/color]" % (index + 1))
 
 func _on_init_button_pressed():
-	log_message("[color=cyan]Initializing game...[/color]")
 	init_button.disabled = true
+	# L7 (#618): if the welcome screen queued a saved game, boot into it instead
+	# of starting a new run. The flag is one-shot.
+	if GameConfig.pending_load_path != "":
+		var load_path: String = GameConfig.pending_load_path
+		GameConfig.pending_load_path = ""
+		log_message("[color=cyan]Loading saved game...[/color]")
+		if game_manager.load_saved_game(load_path):
+			return
+		log_message("[color=red]Load failed — starting a new game instead.[/color]")
+	log_message("[color=cyan]Initializing game...[/color]")
 	game_manager.start_new_game("test-seed")
 
 func _on_test_action_button_pressed():

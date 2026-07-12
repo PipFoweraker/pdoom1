@@ -42,10 +42,27 @@ class Entry:
 
 	func to_dict() -> Dictionary:
 		return {
+			"id": id,
 			"source": source, "currency": currency, "principal": principal,
 			"fuse": fuse, "interest": interest, "secret": secret,
 			"side": side, "counterparty": counterparty, "settled": settled,
 		}
+
+	## L7 (#618): rebuild an Entry from serialized data. Numeric casts are explicit
+	## because JSON round-trips every number as float.
+	static func from_dict(d: Dictionary) -> Entry:
+		var e := Entry.new(
+			String(d.get("source", "")),
+			String(d.get("currency", "money")),
+			float(d.get("principal", 0.0)),
+			int(d.get("fuse", 0)),
+			float(d.get("interest", 0.0)),
+			bool(d.get("secret", false)),
+			int(d.get("side", Side.PAYABLE)),
+			String(d.get("counterparty", "")))
+		e.id = String(d.get("id", ""))
+		e.settled = bool(d.get("settled", false))
+		return e
 
 # How hard an unpayable money bill converts to doom — the "teeth" that guarantee
 # mortality when a debtor cannot cover a balloon payment. Config, not scattered magic.
@@ -182,6 +199,11 @@ func check_exposures(state, chance: float) -> Array:
 	return exposed
 
 func to_dict() -> Dictionary:
+	# Summary keys (outstanding_*, entry_count, ...) are consumed by the UI; "entries"
+	# carries the full per-entry state so a mid-game save/load round-trips (L7, #618).
+	var entry_dicts := []
+	for e in entries:
+		entry_dicts.append(e.to_dict())
 	return {
 		"outstanding_payable": outstanding(Side.PAYABLE),
 		"outstanding_receivable": outstanding(Side.RECEIVABLE),
@@ -189,4 +211,18 @@ func to_dict() -> Dictionary:
 		"secret_count": secret_entries().size(),
 		"soonest_fuse": soonest_fuse(),
 		"death_attribution": death_attribution.duplicate(true),
+		"entries": entry_dicts,
 	}
+
+
+## L7 (#618): restore the full ledger — every entry (incl. settled post-mortem trail)
+## and the death-attribution list. Summary keys are derived on read, so ignored here.
+func from_dict(data: Dictionary) -> void:
+	entries.clear()
+	for ed in data.get("entries", []):
+		if ed is Dictionary:
+			entries.append(Entry.from_dict(ed))
+	death_attribution.clear()
+	for a in data.get("death_attribution", []):
+		if a is Dictionary:
+			death_attribution.append(a.duplicate(true))

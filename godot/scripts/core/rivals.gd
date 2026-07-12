@@ -54,6 +54,45 @@ class RivalLab:
 			return name + " (rumored)"
 		return name
 
+	## L7 (#618): full-state serialization. Everything mutable during a run
+	## (progress, funding, reputation, discovery state) must round-trip; identity
+	## fields (name, aggression, description) travel too so a save is self-contained.
+	func to_dict() -> Dictionary:
+		return {
+			"id": id,
+			"name": name,
+			"safety_progress": safety_progress,
+			"capability_progress": capability_progress,
+			"funding": funding,
+			"reputation": reputation,
+			"aggression": aggression,
+			"visibility": visibility,
+			"discovery_turn": discovery_turn,
+			"discovery_threshold": discovery_threshold,
+			"is_starter": is_starter,
+			"description": description,
+			"focus": focus,
+			"estimated_funding": estimated_funding,
+			"estimated_reputation": estimated_reputation,
+		}
+
+	static func from_dict(d: Dictionary) -> RivalLab:
+		var lab := RivalLab.new(String(d.get("name", "")), float(d.get("aggression", 0.5)))
+		lab.id = String(d.get("id", lab.id))
+		lab.safety_progress = float(d.get("safety_progress", 0.0))
+		lab.capability_progress = float(d.get("capability_progress", 0.0))
+		lab.funding = float(d.get("funding", 200000.0))
+		lab.reputation = float(d.get("reputation", 50.0))
+		lab.visibility = int(d.get("visibility", VisibilityState.KNOWN))
+		lab.discovery_turn = int(d.get("discovery_turn", -1))
+		lab.discovery_threshold = float(d.get("discovery_threshold", 0.0))
+		lab.is_starter = bool(d.get("is_starter", true))
+		lab.description = String(d.get("description", ""))
+		lab.focus = String(d.get("focus", lab.focus))
+		lab.estimated_funding = float(d.get("estimated_funding", 0.0))
+		lab.estimated_reputation = float(d.get("estimated_reputation", 0.0))
+		return lab
+
 static func get_rival_labs() -> Array[RivalLab]:
 	var rivals: Array[RivalLab] = []
 
