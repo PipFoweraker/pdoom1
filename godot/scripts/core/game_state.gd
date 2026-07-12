@@ -29,6 +29,17 @@ var governance: float = 50.0
 # per game in reset(); compounding payables are the mortality guarantee (ADR-0002).
 var ledger: Ledger
 
+# EE-8 (ADR-0012): chronological CONTRIBUTING-CAUSE log for root-cause death
+# attribution. Ledger defaults, governance deficits, secret exposures, rep collapse
+# and funding starvation are appended here with turn stamps, so a death can be traced
+# to its causal chain (a doom/rep death downstream of a default is a LEDGER death —
+# see DeathAttribution.classify). Recording only: nothing reads this during play,
+# so it can never change run outcomes.
+var cause_log: Array = []
+var rep_collapse_noted: bool = false       # one-shot: first crossing below REP_COLLAPSE_THRESHOLD
+var funding_starvation_noted: bool = false # one-shot per starvation episode (reset on recovery)
+const REP_COLLAPSE_THRESHOLD: float = 10.0
+
 # Technical Debt System (Issue #416)
 # Accumulates from rushed research, increases failure risk, affects doom
 var technical_debt: float = 0.0  # 0-100 scale
@@ -174,6 +185,9 @@ func reset():
 	stationery = Balance.num("starting_resources.stationery", 100.0)
 	governance = Balance.num("starting_resources.governance", 50.0)
 	ledger = Ledger.new()  # ADR-0003: fresh ledger per game
+	cause_log.clear()      # EE-8: fresh attribution trail per game
+	rep_collapse_noted = false
+	funding_starvation_noted = false
 	technical_debt = 0.0  # Reset tech debt (Issue #416)
 	research_quality_mode = DEFAULT_RESEARCH_QUALITY  # Issue #500
 
@@ -420,11 +434,26 @@ func apply_research_quality_risk(current_turn: int) -> void:
 		risk_system.add_risk("capability_overhang", overhang_delta, src, current_turn)
 
 
+func note_cause(kind: String, source: String, effects: Dictionary = {}) -> void:
+	"""EE-8: append a turn-stamped contributing-cause event to the attribution trail.
+	`effects` holds the APPLIED damage by resource (e.g. {"doom": 3.5, "reputation": -2.0})
+	so DeathAttribution can run counterfactual necessity tests at death. Recording only —
+	never read during play."""
+	cause_log.append({"turn": turn, "kind": kind, "source": source, "effects": effects.duplicate()})
+
+
 func check_win_lose():
 	"""Check victory/defeat conditions"""
 	# Sync doom from doom system
 	if doom_system:
 		doom = doom_system.current_doom
+
+	# EE-8: rep-collapse watermark — a contributing cause on the ADR-0012 cascade
+	# (default -> rep collapse -> funding starvation -> death), not the death itself.
+	# One-shot: the FIRST crossing marks the chain.
+	if reputation <= REP_COLLAPSE_THRESHOLD and not rep_collapse_noted:
+		rep_collapse_noted = true
+		note_cause("rep_collapse", "reputation", {"reputation": reputation})
 
 	if doom >= 100.0:
 		game_over = true
@@ -784,6 +813,7 @@ func to_dict() -> Dictionary:
 		"reputation": reputation,
 		"governance": governance,
 		"ledger": ledger.to_dict() if ledger else {},
+		"cause_log": cause_log.duplicate(true),  # EE-8 attribution trail
 		"doom": doom,
 		"doom_history": doom_history.duplicate(),  # #512 trend graph
 		"doom_system": doom_data,

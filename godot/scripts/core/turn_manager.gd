@@ -397,8 +397,16 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 		var next_turn_bills: float = staff_salaries + ledger_due_soon
 		if state.money < next_turn_bills:
 			messages.append("CRITICAL: Cash (%s) won't cover next turn's bills (%s) — bankruptcy imminent!" % [GameConfig.format_money(state.money), GameConfig.format_money(next_turn_bills)])
-		elif state.money < staff_salaries * 3.0:
-			messages.append("WARNING: Low cash — about %d turn(s) of payroll left (%s)." % [int(state.money / staff_salaries), GameConfig.format_money(state.money)])
+			# EE-8: funding-starvation watermark on the ADR-0012 cascade. One-shot per
+			# starvation episode (flag resets on recovery). Recording only.
+			if not state.funding_starvation_noted:
+				state.funding_starvation_noted = true
+				state.note_cause("funding_starvation", "payroll",
+					{"money": state.money, "next_turn_bills": next_turn_bills})
+		else:
+			state.funding_starvation_noted = false
+			if state.money < staff_salaries * 3.0:
+				messages.append("WARNING: Low cash — about %d turn(s) of payroll left (%s)." % [int(state.money / staff_salaries), GameConfig.format_money(state.money)])
 
 	if research_from_employees > 0:
 		messages.append("Generated %.1f research from %d productive researchers" % [research_from_employees, productive_count])
