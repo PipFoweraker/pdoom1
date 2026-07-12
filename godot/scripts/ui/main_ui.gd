@@ -80,6 +80,13 @@ func _ready():
 	event_dialog.dialog_closed.connect(_on_event_dialog_closed)
 	event_dialog.message_logged.connect(log_message)
 
+	# L8 (#619): register the scene-local GameManager with the achievements
+	# observer (read-only listener; contract in autoload/achievements.gd).
+	var achievements = get_node_or_null("/root/Achievements")
+	if achievements:
+		achievements.watch(game_manager)
+		achievements.achievement_unlocked.connect(_on_achievement_unlocked)
+
 	# Issue #500: research quality selector (script-instantiated; reparent in editor if preferred)
 	research_quality_selector = preload("res://scripts/ui/research_quality_selector.gd").new()
 	research_quality_selector.quality_selected.connect(_on_research_quality_selected)
@@ -739,6 +746,11 @@ func _on_action_executed(result: Dictionary):
 			log_message("[color=white]  " + str(msg) + "[/color]")
 
 	# Note: GameManager now handles auto-starting next turn
+
+func _on_achievement_unlocked(achievement: Dictionary) -> void:
+	"""L8 (#619): surface unlocks in the message log. Recognition only (ADR-0002)."""
+	log_message("[color=gold]★ Achievement — %s:[/color] [color=gray]%s[/color]" % [
+		achievement.get("title", "?"), achievement.get("flavor", "")])
 
 func _on_error_occurred(error_msg: String):
 	print("[MainUI] Error: ", error_msg)

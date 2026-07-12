@@ -185,6 +185,15 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	if upgrades.size() > 0:
 		stats_text += "\n[color=cyan]◆ Upgrades:[/color] [b]%d purchased[/b]\n" % upgrades.size()
 
+	# L8 achievements (#619): recognition only, never score (ADR-0002 anti-sink).
+	var achievements_node = get_node_or_null("/root/Achievements")
+	if achievements_node and not achievements_node.unlocked_this_run.is_empty():
+		stats_text += "\n[color=cyan]◆ Achievements this run:[/color]\n"
+		for ach_id in achievements_node.unlocked_this_run:
+			var ach_def = achievements_node.get_definition(ach_id)
+			if not ach_def.is_empty():
+				stats_text += "  [color=gold]★ %s[/color] [color=gray]— %s[/color]\n" % [ach_def["title"], ach_def["flavor"]]
+
 	# Victory/defeat flavor text
 	stats_text += "\n[center][color=gray]───────────────────[/color][/center]\n"
 	if is_victory:
