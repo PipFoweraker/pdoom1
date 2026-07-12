@@ -738,28 +738,56 @@ static func format_score(turns: int, integral: int) -> String:
 	return "Turn %d · %d" % [turns, integral]
 
 
+# ============================================================================
+# SERIALIZATION — SAVE/LOAD CONVENTION (L7, #618)
+#
+# to_dict() is BOTH the UI payload and the save-file state body; from_dict()
+# must rebuild an equivalent GameState from it. The invariant the round-trip
+# test enforces: from_dict(to_dict()) — including a JSON stringify/parse hop —
+# yields a state whose to_dict() is deep-equal AND whose next turn is
+# turn-for-turn identical (rng stream included).
+#
+# Rules for registering new state (L2 workstreams and later systems):
+#   1. Every stateful subsystem owns its own to_dict()/from_dict() pair
+#      (see Ledger, DoomSystem, RiskPool, Researcher, RivalLab, PaperSubmission).
+#   2. GameState composes them under ONE stable top-level key per subsystem;
+#      from_dict() restores under the same key. Add both sides in the same PR.
+#   3. JSON-safe values only: String/float/int/bool/Array/Dictionary. No
+#      Callables or object refs. int64s that can exceed 2^53 (e.g. rng state)
+#      travel as Strings, because JSON parses every number back as float.
+#   4. from_dict() casts explicitly (int()/float()/String()) and loop-appends
+#      into typed arrays — JSON hands back untyped floats and untyped Arrays.
+#   5. Derived/display values (turn_display, tech_debt_color, rival summaries,
+#      available_ap, ...) are recomputed, never restored.
+#   6. Extend tests/unit/test_save_load_roundtrip.gd so the new state is
+#      exercised before the save point.
+#
+# Replay (ADR-0006) is unaffected: it rebuilds from turn 0. This is SNAPSHOT
+# fidelity for mid-game save/load (and later DQ-11 fork/divergence).
+# ============================================================================
+
 func to_dict() -> Dictionary:
-	"""Serialize state for UI"""
+	"""Serialize state for UI + save/load (see convention block above)"""
 	var rival_summaries = []
+	var rival_full_dicts = []
 	for rival in rival_labs:
 		rival_summaries.append(RivalLabs.get_rival_summary(rival))
+		rival_full_dicts.append(rival.to_dict())
 
 	# Sync doom from doom system
 	if doom_system:
 		doom = doom_system.current_doom
 
-	# Get doom system data
+	# Doom system data: the persistent core comes from doom_system.to_dict() (so
+	# multipliers/modifiers round-trip — previously hand-rolled and lossy), plus
+	# derived display strings the UI reads.
 	var doom_data = {}
 	if doom_system:
-		doom_data = {
-			"doom": doom,
-			"doom_velocity": doom_system.doom_velocity,
-			"doom_momentum": doom_system.doom_momentum,
-			"doom_trend": doom_system._get_doom_trend(),
-			"doom_status": doom_system.get_doom_status(),
-			"momentum_description": doom_system.get_momentum_description(),
-			"doom_sources": doom_system.doom_sources.duplicate()
-		}
+		doom_data = doom_system.to_dict()
+		doom_data["doom"] = doom
+		doom_data["doom_trend"] = doom_system._get_doom_trend()
+		doom_data["doom_status"] = doom_system.get_doom_status()
+		doom_data["momentum_description"] = doom_system.get_momentum_description()
 	else:
 		doom_data = {"doom": doom}
 
@@ -777,6 +805,11 @@ func to_dict() -> Dictionary:
 	var candidate_dicts = []
 	for candidate in candidate_pool:
 		candidate_dicts.append(candidate.to_dict())
+
+	# Pending-hire queue (FIFO of selected candidates)
+	var pending_hire_dicts = []
+	for candidate in pending_hire_queue:
+		pending_hire_dicts.append(candidate.to_dict())
 
 	# Serialize paper submissions (Issue #468)
 	var paper_dicts = []
@@ -826,48 +859,129 @@ func to_dict() -> Dictionary:
 		"researchers": researcher_dicts,
 		"candidate_pool": candidate_dicts,
 		"paper_submissions": paper_dicts,
-		"attended_conferences": attended_conferences
+		"attended_conferences": attended_conferences,
+		# --- Full-fidelity save/load fields (L7, #618) ---
+		"game_seed": game_seed_str,
+		"rng_state": str(rng.state) if rng else "",  # int64 as String (JSON floats lose precision past 2^53)
+		"event_schedule": event_schedule.duplicate(true),  # WS-C: part of seed identity
+		"triggered_events": triggered_events.duplicate(),  # WS-0 registry (was forgotten by from_dict)
+		"event_cooldowns": event_cooldowns.duplicate(),    # WS-0 registry (was forgotten by from_dict)
+		"queued_actions": queued_actions.duplicate(),
+		"pending_events": pending_events.duplicate(true),  # event defs are pure-data dicts
+		"current_phase": current_phase,
+		"can_end_turn": can_end_turn,
+		"used_event_ap": used_event_ap,
+		"max_action_points": max_action_points,  # difficulty modifier — next-turn AP base
+		"conference_year": conference_year,
+		"start_year": start_year,
+		"start_month": start_month,
+		"start_day": start_day,
+		"pending_hire_queue": pending_hire_dicts,
+		"rival_labs_full": rival_full_dicts  # "rival_labs" stays display summaries for the UI
 	}
 
 
 func from_dict(data: Dictionary) -> void:
-	"""Restore game state from serialized data (for save/load)"""
+	"""Restore game state from serialized data (for save/load).
+	L7 (#618): full-fidelity — see SERIALIZATION CONVENTION block above to_dict().
+	Explicit int()/float()/String() casts throughout: JSON parses every number as float."""
 	# Core resources
-	money = data.get("money", 100000)
-	compute = data.get("compute", 0.0)
-	research = data.get("research", 0.0)
-	research_quality_mode = data.get("research_quality_mode", DEFAULT_RESEARCH_QUALITY)  # Issue #500
-	papers = data.get("papers", 0)
-	reputation = data.get("reputation", 10.0)
-	doom = data.get("doom", 50.0)
+	money = float(data.get("money", 100000.0))
+	compute = float(data.get("compute", 0.0))
+	research = float(data.get("research", 0.0))
+	research_quality_mode = String(data.get("research_quality_mode", DEFAULT_RESEARCH_QUALITY))  # Issue #500
+	papers = float(data.get("papers", 0.0))
+	reputation = float(data.get("reputation", 10.0))
+	governance = float(data.get("governance", 50.0))  # was forgotten pre-L7
+	doom = float(data.get("doom", 50.0))
 	doom_history.clear()
 	for d in data.get("doom_history", []):
 		doom_history.append(float(d))
-	action_points = data.get("action_points", 3)
-	committed_ap = data.get("committed_ap", 0)
-	reserved_ap = data.get("reserved_ap", 0)
-	stationery = data.get("stationery", 100.0)
-	technical_debt = data.get("technical_debt", 0.0)
+	action_points = int(data.get("action_points", 3))
+	max_action_points = int(data.get("max_action_points", 3))
+	committed_ap = int(data.get("committed_ap", 0))
+	reserved_ap = int(data.get("reserved_ap", 0))
+	used_event_ap = int(data.get("used_event_ap", 0))
+	stationery = float(data.get("stationery", 100.0))
+	technical_debt = float(data.get("technical_debt", 0.0))
 
 	# Staff counts (legacy)
-	safety_researchers = data.get("safety_researchers", 0)
-	capability_researchers = data.get("capability_researchers", 0)
-	compute_engineers = data.get("compute_engineers", 0)
-	managers = data.get("managers", 0)
+	safety_researchers = int(data.get("safety_researchers", 0))
+	capability_researchers = int(data.get("capability_researchers", 0))
+	compute_engineers = int(data.get("compute_engineers", 0))
+	managers = int(data.get("managers", 0))
 
 	# Game state
-	turn = data.get("turn", 0)
-	doom_integral = data.get("doom_integral", 0.0)
-	game_over = data.get("game_over", false)
-	victory = data.get("victory", false)
-	has_cat = data.get("has_cat", false)
+	turn = int(data.get("turn", 0))
+	doom_integral = float(data.get("doom_integral", 0.0))
+	game_over = bool(data.get("game_over", false))
+	victory = bool(data.get("victory", false))
+	has_cat = bool(data.get("has_cat", false))
 	# Handle typed arrays properly
 	purchased_upgrades.clear()
 	for upgrade in data.get("purchased_upgrades", []):
-		purchased_upgrades.append(upgrade)
+		purchased_upgrades.append(String(upgrade))
 	attended_conferences.clear()
 	for conf in data.get("attended_conferences", []):
-		attended_conferences.append(conf)
+		attended_conferences.append(String(conf))
+
+	# Calendar / conference-year (scenario start dates travel with the save)
+	start_year = int(data.get("start_year", start_year))
+	start_month = int(data.get("start_month", start_month))
+	start_day = int(data.get("start_day", start_day))
+	conference_year = int(data.get("conference_year", start_year))
+
+	# Turn-phase / planning state (mid-turn snapshot fidelity)
+	current_phase = int(data.get("current_phase", TurnPhase.ACTION_SELECTION)) as TurnPhase
+	can_end_turn = bool(data.get("can_end_turn", false))
+	queued_actions.clear()
+	for a in data.get("queued_actions", []):
+		queued_actions.append(String(a))
+	pending_events.clear()
+	for ev in data.get("pending_events", []):
+		if ev is Dictionary:
+			pending_events.append(ev.duplicate(true))
+
+	# WS-0 event-firing registry (the known-forgotten pair this lane exists for)
+	triggered_events.clear()
+	for eid in data.get("triggered_events", []):
+		triggered_events.append(String(eid))
+	event_cooldowns.clear()
+	var cooldown_data = data.get("event_cooldowns", {})
+	if cooldown_data is Dictionary:
+		for eid in cooldown_data.keys():
+			event_cooldowns[String(eid)] = int(cooldown_data[eid])
+
+	# WS-C scheduled causes (seed identity — survives reset(), must survive load too)
+	var schedule_data = data.get("event_schedule", null)
+	if schedule_data is Array:
+		event_schedule = []
+		for cause in schedule_data:
+			if cause is Dictionary:
+				var c = cause.duplicate(true)
+				if c.has("turn"):
+					c["turn"] = int(c["turn"])
+				event_schedule.append(c)
+
+	# Deterministic RNG: reseed from the seed string, then restore the exact
+	# stream position. Without this, a loaded game diverges from an unsaved
+	# continuation on the very next randf().
+	var seed_str = String(data.get("game_seed", ""))
+	if seed_str != "":
+		game_seed_str = seed_str
+		if rng == null:
+			rng = RandomNumberGenerator.new()
+		rng.seed = hash(game_seed_str)
+	var rng_state_data = data.get("rng_state", "")
+	if rng and rng_state_data is String and rng_state_data != "":
+		rng.state = rng_state_data.to_int()
+	elif rng and (rng_state_data is int or rng_state_data is float):
+		rng.state = int(rng_state_data)
+
+	# Restore the Liability Ledger (WS-1 — entries were forgotten pre-L7)
+	if ledger == null:
+		ledger = Ledger.new()
+	ledger.from_dict(data.get("ledger", {}))
 
 	# Restore doom system
 	if doom_system and data.has("doom_system"):
@@ -892,6 +1006,21 @@ func from_dict(data: Dictionary) -> void:
 			var candidate = Researcher.new()
 			candidate.from_dict(candidate_data)
 			candidate_pool.append(candidate)
+
+	# Restore pending-hire queue (FIFO)
+	pending_hire_queue.clear()
+	if data.has("pending_hire_queue"):
+		for candidate_data in data["pending_hire_queue"]:
+			var pending = Researcher.new()
+			pending.from_dict(candidate_data)
+			pending_hire_queue.append(pending)
+
+	# Restore rival labs (full state; "rival_labs" key is display summaries only)
+	if data.has("rival_labs_full"):
+		rival_labs.clear()
+		for rival_data in data["rival_labs_full"]:
+			if rival_data is Dictionary:
+				rival_labs.append(RivalLabs.RivalLab.from_dict(rival_data))
 
 	# Restore paper submissions
 	paper_submissions.clear()
