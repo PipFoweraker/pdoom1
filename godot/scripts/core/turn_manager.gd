@@ -97,51 +97,82 @@ func start_turn() -> Dictionary:
 	"""
 	Begin new turn - Phase 1: TURN_START
 	FIX #418: Events trigger BEFORE action selection
+
+	L0 (#620): split into named, movable step functions with NO behavior change.
+	L1 (ADR-0009) will redistribute these steps across plan/day-tick/review phases.
+	STEP ORDER IS LOAD-BEARING: it defines the deterministic RNG stream that
+	recorded replays re-simulate — reordering steps invalidates every replay.
 	"""
+	_step_begin_turn()
+	_step_apply_scheduled_causes()
+	_step_ledger_tick_and_bill()
+	var total_staff: int = state.get_total_staff()
+	var max_ap: int = _step_grant_action_points(total_staff)
+	var new_candidates: int = _populate_candidate_pool()
+	_step_process_researcher_lifecycles()
+	var staff_salaries: float = _step_pay_salaries(total_staff)
+	var prod: Dictionary = _step_researcher_productivity()
+	var stationery: Dictionary = _step_consume_stationery()
+	var messages: Array = _build_start_turn_messages(max_ap, total_staff, staff_salaries, new_candidates, prod, stationery)
+	var triggered_events: Array[Dictionary] = _step_check_events(messages)
+
+	return {
+		"success": true,
+		"phase": "turn_start" if triggered_events.size() > 0 else "action_selection",
+		"messages": messages,
+		"triggered_events": triggered_events,
+		"can_select_actions": triggered_events.size() == 0,
+		"can_end_turn": state.can_end_turn
+	}
+
+func _step_begin_turn() -> void:
+	"""Advance the turn counter and reset per-turn phase/queue state."""
 	state.turn += 1
 	state.current_phase = GameState.TurnPhase.TURN_START
 	state.pending_events.clear()
 	state.queued_actions.clear()
 	state.can_end_turn = false
 
-	# WS-C (ADR-0005): apply any scheduled causes due this turn BEFORE events/rivals react,
-	# so the authored cause (e.g. a rival funding wave) shapes this turn's emergent outcome.
-	# Causes touch sim inputs only — never doom directly.
+func _step_apply_scheduled_causes() -> void:
+	"""WS-C (ADR-0005): apply any scheduled causes due this turn BEFORE events/rivals
+	react, so the authored cause (e.g. a rival funding wave) shapes this turn's
+	emergent outcome. Causes touch sim inputs only — never doom directly."""
 	SeedSchedule.apply_due_causes(state)
 
-	# WS-1 (ADR-0003): the Liability Ledger bills AFTER scheduled causes, so an
-	# exposure cause can land the same turn it fires. Compounding payables are the
-	# mortality guarantee (ADR-0002): an un-serviced debt eventually bills more than
-	# the player can cover, and the resulting bankruptcy escalation is the death —
-	# traceable to specific entries via the ledger's attribution trail.
+func _step_ledger_tick_and_bill() -> void:
+	"""WS-1 (ADR-0003): the Liability Ledger bills AFTER scheduled causes, so an
+	exposure cause can land the same turn it fires. Compounding payables are the
+	mortality guarantee (ADR-0002): an un-serviced debt eventually bills more than
+	the player can cover, and the resulting bankruptcy escalation is the death —
+	traceable to specific entries via the ledger's attribution trail."""
 	if state.ledger:
 		state.ledger.tick_and_bill(state)
 		# BL-2: secret liabilities have a per-turn chance to surface (deterministic via
 		# state.rng). 0.15 is a placeholder - exposure tuning parked (workshop #2).
 		state.ledger.check_exposures(state, 0.15)
 
-	# Calculate max AP based on difficulty base + staff (0.5 per staff member).
-	# FIX #541: use state.max_action_points (set by difficulty: Easy=4, Standard=3,
-	# Hard=2) as the base instead of a hardcoded 3, so difficulty actually changes AP.
-	var total_staff = state.get_total_staff()
+func _step_grant_action_points(total_staff: int) -> int:
+	"""Grant this turn's AP: difficulty base + staff bonus (0.5 per staff member).
+	FIX #541: use state.max_action_points (set by difficulty: Easy=4, Standard=3,
+	Hard=2) as the base instead of a hardcoded 3, so difficulty actually changes AP."""
 	var max_ap = state.max_action_points + int(total_staff * 0.5)
 	state.action_points = max_ap
 
 	# Reset AP tracking for new turn (reserve system)
 	state.reset_turn_ap()
+	return max_ap
 
-	# === CANDIDATE POOL POPULATION ===
-	var new_candidates = _populate_candidate_pool()
-
-	# === RESEARCHER TURN PROCESSING ===
-	# Process individual researchers (burnout, skill growth, loyalty)
+func _step_process_researcher_lifecycles() -> void:
+	"""=== RESEARCHER TURN PROCESSING ===
+	Per-researcher upkeep: burnout, skill growth, loyalty (consumes state.rng)."""
 	for researcher in state.researchers:
 		researcher.process_turn(state.rng)
 
-	# Staff maintenance costs - use actual salaries for individual researchers.
-	# Salary cadence routes through Clock (L0 #620): annual/260 per workday-turn.
-	# Was /12 — a full month billed every day, causing the turn-7 cash crash (#573).
-	# Magnitude tunable (workshop #2 / payroll depth #574).
+func _step_pay_salaries(total_staff: int) -> float:
+	"""Staff maintenance costs - use actual salaries for individual researchers.
+	Salary cadence routes through Clock (L0 #620): annual/260 per workday-turn.
+	Was /12 — a full month billed every day, causing the turn-7 cash crash (#573).
+	Magnitude tunable (workshop #2 / payroll depth #574)."""
 	var staff_salaries = 0.0
 	if state.researchers.size() > 0:
 		for researcher in state.researchers:
@@ -153,11 +184,13 @@ func start_turn() -> Dictionary:
 
 	if staff_salaries > 0:
 		state.add_resources({"money": -staff_salaries})
+	return staff_salaries
 
-	# === INDIVIDUAL RESEARCHER PRODUCTIVITY SYSTEM ===
-	# First 9 researchers work without a manager (founder manages them)
-	# After 9, each manager handles up to 9 additional researchers
-
+func _step_researcher_productivity() -> Dictionary:
+	"""=== INDIVIDUAL RESEARCHER PRODUCTIVITY SYSTEM ===
+	First 9 researchers work without a manager (founder manages them);
+	after 9, each manager handles up to 9 additional researchers.
+	Returns this turn's productivity tallies for the message builder."""
 	var researcher_count = state.researchers.size()
 	# Base capacity of 9 (founder-managed) + 9 per manager
 	var management_capacity = 9 + (state.managers * 9)
@@ -274,8 +307,22 @@ func start_turn() -> Dictionary:
 	# Issue #500: research-quality risk contributions (feeds risk pools, not doom directly)
 	state.apply_research_quality_risk(state.turn)
 
-	# === STATIONERY SYSTEM ===
-	# Staff consume stationery each turn
+	return {
+		"research_from_employees": research_from_employees,
+		"productive_count": productive_count,
+		"doom_reduction_from_safety": doom_reduction_from_safety,
+		"doom_from_capabilities": doom_from_capabilities,
+		"leak_occurred": leak_occurred,
+		"leak_doom": leak_doom,
+		"team_player_count": team_player_count,
+		"team_player_bonus": team_player_bonus,
+		"unmanaged_employees": unmanaged_employees,
+		"total_unproductive": total_unproductive,
+	}
+
+func _step_consume_stationery() -> Dictionary:
+	"""=== STATIONERY SYSTEM === Staff consume stationery each turn; running out
+	hampers safety documentation (doom penalty); supply automation auto-orders."""
 	var stationery_consumption = 0.0
 	var safety_count = 0
 	if state.researchers.size() > 0:
@@ -310,6 +357,28 @@ func start_turn() -> Dictionary:
 			state.money -= 2000
 			state.stationery = min(state.stationery + 50.0, 100.0)
 			supply_auto_ordered = true
+
+	return {
+		"stationery_consumption": stationery_consumption,
+		"stationery_doom_penalty": stationery_doom_penalty,
+		"supply_auto_ordered": supply_auto_ordered,
+	}
+
+func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: float, new_candidates: int, prod: Dictionary, stationery: Dictionary) -> Array:
+	"""Assemble the turn-start message list. Pure reads — no sim mutation, no RNG."""
+	var research_from_employees: float = prod["research_from_employees"]
+	var productive_count: int = prod["productive_count"]
+	var doom_reduction_from_safety: float = prod["doom_reduction_from_safety"]
+	var doom_from_capabilities: float = prod["doom_from_capabilities"]
+	var leak_occurred: bool = prod["leak_occurred"]
+	var leak_doom: float = prod["leak_doom"]
+	var team_player_count: int = prod["team_player_count"]
+	var team_player_bonus: float = prod["team_player_bonus"]
+	var unmanaged_employees: int = prod["unmanaged_employees"]
+	var total_unproductive: int = prod["total_unproductive"]
+	var stationery_consumption: float = stationery["stationery_consumption"]
+	var stationery_doom_penalty: float = stationery["stationery_doom_penalty"]
+	var supply_auto_ordered: bool = stationery["supply_auto_ordered"]
 
 	var messages = [
 		"Turn %d started" % state.turn,
@@ -366,8 +435,11 @@ func start_turn() -> Dictionary:
 	elif state.candidate_pool.size() == 0:
 		messages.append("No candidates in hiring pool")
 
-	# CHECK FOR EVENTS FIRST (FIX #418)
-	# Events must be presented and resolved BEFORE player selects actions
+	return messages
+
+func _step_check_events(messages: Array) -> Array[Dictionary]:
+	"""CHECK FOR EVENTS FIRST (FIX #418): events must be presented and resolved
+	BEFORE the player selects actions; pending events block ACTION_SELECTION."""
 	var triggered_events = GameEvents.check_triggered_events(state, state.rng)
 
 	if triggered_events.size() > 0:
@@ -387,21 +459,34 @@ func start_turn() -> Dictionary:
 		state.current_phase = GameState.TurnPhase.ACTION_SELECTION
 		state.can_end_turn = true
 
-	return {
-		"success": true,
-		"phase": "turn_start" if triggered_events.size() > 0 else "action_selection",
-		"messages": messages,
-		"triggered_events": triggered_events,
-		"can_select_actions": triggered_events.size() == 0,
-		"can_end_turn": state.can_end_turn
-	}
+	return triggered_events
 
 func execute_turn() -> Dictionary:
-	"""Execute queued actions - Phase 2"""
-	var results = []
-	var all_success = true
+	"""Execute queued actions - Phase 2
 
-	# Execute each queued action in order
+	L0 (#620): split into named, movable step functions with NO behavior change.
+	L1 (ADR-0009) will redistribute these consequence steps across day ticks.
+	STEP ORDER IS LOAD-BEARING (deterministic RNG stream — see start_turn)."""
+	var results = []
+	var all_success: bool = _step_execute_queued_actions(results)
+	_step_publish_papers(results)
+	var rival_doom_contribution: float = _step_process_rival_turns(results)
+	_step_check_rival_discovery(results)
+	_step_process_paper_decisions(results)
+	_step_resolve_doom(results, rival_doom_contribution)
+	# NOTE: event checking happens in start_turn() (FIX #418) — before actions, not after.
+	_step_process_risk_pools(results)
+	_step_finalize_turn(results)
+
+	return {
+		"success": all_success,
+		"action_results": results,
+		"turn_complete": true
+	}
+
+func _step_execute_queued_actions(results: Array) -> bool:
+	"""Execute each queued action in order, recording each into the replay log."""
+	var all_success = true
 	for action_id in state.queued_actions:
 		var result = GameActions.execute_action(action_id, state)
 		results.append(result)
@@ -413,8 +498,10 @@ func execute_turn() -> Dictionary:
 
 	# Clear queued actions
 	state.queued_actions.clear()
+	return all_success
 
-	# Check for paper publication (research threshold)
+func _step_publish_papers(results: Array) -> void:
+	"""Check for paper publication (research threshold)."""
 	if state.research >= 100:
 		var papers_to_publish = int(state.research / 100)
 		state.papers += papers_to_publish
@@ -429,7 +516,8 @@ func execute_turn() -> Dictionary:
 			]
 		})
 
-	# === RIVAL LABS TAKE ACTIONS ===
+func _step_process_rival_turns(results: Array) -> float:
+	"""=== RIVAL LABS TAKE ACTIONS === Returns this turn's rival doom contribution."""
 	var rival_doom_contribution = 0.0
 	for rival in state.rival_labs:
 		var rival_result = RivalLabs.process_rival_turn(rival, state, state.rng)
@@ -438,9 +526,10 @@ func execute_turn() -> Dictionary:
 			"success": true,
 			"message": "%s: %s" % [rival_result["name"], ", ".join(rival_result["actions"])]
 		})
+	return rival_doom_contribution
 
-
-	# === ORGANIZATION DISCOVERY (Issue #474) ===
+func _step_check_rival_discovery(results: Array) -> void:
+	"""=== ORGANIZATION DISCOVERY (Issue #474) ==="""
 	for rival in state.rival_labs:
 		var discovery_result = RivalLabs.check_discovery(rival, state, state.rng)
 		if discovery_result["discovered"]:
@@ -449,7 +538,8 @@ func execute_turn() -> Dictionary:
 				"message": "[INTEL] " + discovery_result["message"]
 			})
 
-	# === PAPER SUBMISSION DECISIONS (Issue #468) ===
+func _step_process_paper_decisions(results: Array) -> void:
+	"""=== PAPER SUBMISSION DECISIONS (Issue #468) ==="""
 	state.check_conference_year_reset()  # Reset attended conferences if year changed
 	var paper_decisions = PaperSubmissions.process_paper_decisions(
 		state.paper_submissions,
@@ -469,7 +559,8 @@ func execute_turn() -> Dictionary:
 			"message": "[PAPER] " + decision["message"]
 		})
 
-	# === USE DOOM SYSTEM FOR CALCULATION ===
+func _step_resolve_doom(results: Array, rival_doom_contribution: float) -> void:
+	"""=== USE DOOM SYSTEM FOR CALCULATION === (momentum model; legacy fallback)."""
 	if state.doom_system:
 		# Set rival contribution (calculated externally)
 		state.doom_system.set_rival_doom_contribution(rival_doom_contribution)
@@ -520,12 +611,9 @@ func execute_turn() -> Dictionary:
 	# Record the post-resolution doom for the trend graph (#512), covering both branches
 	state.record_doom_history()
 
-	# REMOVED: Event checking now happens in start_turn() (FIX #418)
-	# Events are checked BEFORE actions, not after
-
-	# === RISK SYSTEM PROCESSING ===
-	# Process risk pools and check for triggered events
-	# See godot/docs/design/RISK_SYSTEM.md for design documentation
+func _step_process_risk_pools(results: Array) -> void:
+	"""=== RISK SYSTEM PROCESSING === Process risk pools and check for triggered
+	events. See godot/docs/design/RISK_SYSTEM.md for design documentation."""
 	if state.risk_system:
 		var risk_triggers = state.risk_system.process_turn(state, state.rng)
 
@@ -595,7 +683,8 @@ func execute_turn() -> Dictionary:
 		# Log risk summary in dev mode (if needed)
 		# print(state.risk_system.get_debug_summary())
 
-	# Record turn end in verification hash
+func _step_finalize_turn(results: Array) -> void:
+	"""Record turn end in the verification hash, check win/lose, accrue survival credit."""
 	VerificationTracker.record_turn_end(state.turn, state)
 
 	# Check win/lose
@@ -613,11 +702,6 @@ func execute_turn() -> Dictionary:
 			var reason = "p(doom) = 100" if state.doom >= 100 else "Reputation = 0"
 			results.append({"success": false, "message": "GAME OVER: " + reason})
 
-	return {
-		"success": all_success,
-		"action_results": results,
-		"turn_complete": true
-	}
 
 func resolve_event(event: Dictionary, choice_id: String) -> Dictionary:
 	"""
