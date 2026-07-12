@@ -141,7 +141,7 @@ func process_turn(state, rng: RandomNumberGenerator) -> Array[Dictionary]:
 		var pool_value = pools[pool_name]
 
 		# Skip if pool is empty or very low
-		if pool_value < 5.0:
+		if pool_value < Balance.num("risk.min_pool_for_events", 5.0):
 			continue
 
 		# === PROBABILISTIC CHECK ===
@@ -171,12 +171,12 @@ func process_turn(state, rng: RandomNumberGenerator) -> Array[Dictionary]:
 
 
 func _get_threshold_tier(pool_value: float) -> int:
-	"""Get threshold tier for a pool value"""
-	if pool_value >= 100:
+	"""Get threshold tier for a pool value (cutoffs from Balance "risk.thresholds", L9 #621)"""
+	if pool_value >= Balance.num("risk.thresholds.catastrophic", 100.0):
 		return 3  # Catastrophic
-	elif pool_value >= 75:
+	elif pool_value >= Balance.num("risk.thresholds.severe", 75.0):
 		return 2  # Severe
-	elif pool_value >= 50:
+	elif pool_value >= Balance.num("risk.thresholds.moderate", 50.0):
 		return 1  # Moderate
 	return 0      # None
 

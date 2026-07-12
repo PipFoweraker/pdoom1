@@ -862,7 +862,8 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 	should_trigger() is still called for every candidate, so rng consumption (and thus
 	determinism / replay) is unchanged relative to the pre-cap behaviour."""
 	# Suppress event firing entirely until the player's first turn has begun.
-	if state.turn < FIRST_EVENT_TURN:
+	# Pacing values from Balance ("events.*", L9 #621); consts are the fallbacks.
+	if state.turn < Balance.inum("events.first_event_turn", FIRST_EVENT_TURN):
 		return []
 
 	# Two buckets so scripted beats (turn_exact / turn_and_resource / threshold) are never
@@ -898,13 +899,14 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 	# Fire scripted beats first, then random ones, up to the per-turn cap. Only fired
 	# events are marked; the rest defer (random → re-roll, threshold/turn → re-evaluate).
 	var to_trigger: Array[Dictionary] = []
+	var max_new_events := Balance.inum("events.max_new_events_per_turn", MAX_NEW_EVENTS_PER_TURN)
 	for event in scripted:
-		if to_trigger.size() >= MAX_NEW_EVENTS_PER_TURN:
+		if to_trigger.size() >= max_new_events:
 			break
 		to_trigger.append(event)
 		_mark_event_triggered(event, state.turn, state)
 	for event in random_pool:
-		if to_trigger.size() >= MAX_NEW_EVENTS_PER_TURN:
+		if to_trigger.size() >= max_new_events:
 			break
 		to_trigger.append(event)
 		_mark_event_triggered(event, state.turn, state)

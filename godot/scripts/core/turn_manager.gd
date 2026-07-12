@@ -148,14 +148,15 @@ func _step_ledger_tick_and_bill() -> void:
 	if state.ledger:
 		state.ledger.tick_and_bill(state)
 		# BL-2: secret liabilities have a per-turn chance to surface (deterministic via
-		# state.rng). 0.15 is a placeholder - exposure tuning parked (workshop #2).
-		state.ledger.check_exposures(state, 0.15)
+		# state.rng). Chance from Balance; exposure tuning parked (workshop #2).
+		state.ledger.check_exposures(state, Balance.num("ledger.exposure_chance_per_turn", 0.15))
 
 func _step_grant_action_points(total_staff: int) -> int:
 	"""Grant this turn's AP: difficulty base + staff bonus (0.5 per staff member).
 	FIX #541: use state.max_action_points (set by difficulty: Easy=4, Standard=3,
-	Hard=2) as the base instead of a hardcoded 3, so difficulty actually changes AP."""
-	var max_ap = state.max_action_points + int(total_staff * 0.5)
+	Hard=2) as the base instead of a hardcoded 3, so difficulty actually changes AP.
+	Per-staff bonus sourced from Balance ("action_points.per_staff", L9 #621)."""
+	var max_ap = state.max_action_points + int(total_staff * Balance.num("action_points.per_staff", 0.5))
 	state.action_points = max_ap
 
 	# Reset AP tracking for new turn (reserve system)
@@ -172,15 +173,16 @@ func _step_pay_salaries(total_staff: int) -> float:
 	"""Staff maintenance costs - use actual salaries for individual researchers.
 	Salary cadence routes through Clock (L0 #620): annual/260 per workday-turn.
 	Was /12 — a full month billed every day, causing the turn-7 cash crash (#573).
-	Magnitude tunable (workshop #2 / payroll depth #574)."""
+	Salary BASE magnitudes come from Balance ("salaries.*", L9 #621); the /260
+	workday divisor defers to L0's Clock. Magnitude tunable (workshop #2 / #574)."""
 	var staff_salaries = 0.0
 	if state.researchers.size() > 0:
 		for researcher in state.researchers:
 			staff_salaries += Clock.annual_to_per_turn(researcher.current_salary)
-		staff_salaries += state.managers * Clock.annual_to_per_turn(60000.0)  # Managers ~$60k/yr (#573; was $5000 flat = a month's pay per day)
+		staff_salaries += state.managers * Clock.annual_to_per_turn(Balance.num("salaries.manager_annual", 60000.0))  # Managers ~$60k/yr (#573; was $5000 flat = a month's pay per day)
 	else:
 		# Legacy fallback
-		staff_salaries = total_staff * Clock.annual_to_per_turn(60000.0)  # per-workday (#573)
+		staff_salaries = total_staff * Clock.annual_to_per_turn(Balance.num("salaries.legacy_staff_annual", 60000.0))  # per-workday (#573)
 
 	if staff_salaries > 0:
 		state.add_resources({"money": -staff_salaries})

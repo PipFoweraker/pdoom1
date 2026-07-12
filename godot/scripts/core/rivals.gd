@@ -128,7 +128,8 @@ static func check_discovery(rival: RivalLab, player_state: GameState, rng: Rando
 		return result
 	var discovery_chance = 0.0
 	if player_state.reputation >= rival.discovery_threshold:
-		discovery_chance = 0.15 + (player_state.reputation - rival.discovery_threshold) * 0.005
+		discovery_chance = Balance.num("rivals.discovery.base_chance", 0.15) \
+			+ (player_state.reputation - rival.discovery_threshold) * Balance.num("rivals.discovery.chance_per_rep_above_threshold", 0.005)
 	if rng.randf() < discovery_chance:
 		result["discovered"] = true
 		result["new_visibility"] = rival.visibility + 1
@@ -177,8 +178,9 @@ static func process_rival_turn(rival: RivalLab, player_state: GameState, rng: Ra
 				result["doom_contribution"] -= 3.0
 	# Passive capability-overhang pressure: grows as this rival's capability_progress
 	# accumulates, so advanced rivals apply doom a fixed safety capacity cannot fully
-	# offset over time (issue #562 / DQ-1 mortality term). Placeholder scale.
-	result["doom_contribution"] += rival.capability_progress * CAPABILITY_OVERHANG_DOOM_PER_PROGRESS
+	# offset over time (issue #562 / DQ-1 mortality term). Scale from Balance (L9 #621).
+	result["doom_contribution"] += rival.capability_progress \
+		* Balance.num("rivals.capability_overhang_doom_per_progress", CAPABILITY_OVERHANG_DOOM_PER_PROGRESS)
 	return result
 
 static func _choose_rival_action(rival: RivalLab, _player_state: GameState, rng: RandomNumberGenerator) -> String:
