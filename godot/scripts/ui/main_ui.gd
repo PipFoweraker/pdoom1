@@ -73,8 +73,9 @@ var is_showing_event: bool = false
 func _ready():
 	print("[MainUI] Initializing UI...")
 
-	# Get GameManager reference
-	game_manager = get_node("../../GameManager")
+	# Get GameManager reference — the autoload singleton is the ONE GameManager
+	# (L0 #620/#608: the duplicate scene-local node was removed from main.tscn)
+	game_manager = GameManager
 
 	# Connect to GameManager signals
 	game_manager.game_state_updated.connect(_on_game_state_updated)

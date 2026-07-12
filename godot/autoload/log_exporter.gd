@@ -51,11 +51,11 @@ func export_full_log() -> String:
 		file.store_line("Doom: %.1f%%" % GameManager.state.doom)
 		file.store_line("Money: $%.0f" % GameManager.state.money)
 		file.store_line("Compute: %.1f" % GameManager.state.compute)
-		file.store_line("Research: %.1f" % GameManager.state.research_progress)
-		file.store_line("Papers: %d" % GameManager.state.papers_published)
-		file.store_line("Reputation: %d" % GameManager.state.reputation)
+		file.store_line("Research: %.1f" % GameManager.state.research)
+		file.store_line("Papers: %d" % int(GameManager.state.papers))
+		file.store_line("Reputation: %d" % int(GameManager.state.reputation))
 		file.store_line("Researchers: %d" % GameManager.state.researchers.size())
-		file.store_line("Seed: %s" % GameManager.state.game_seed)
+		file.store_line("Seed: %s" % GameManager.state.game_seed_str)
 		file.store_line("")
 
 		# Researchers
