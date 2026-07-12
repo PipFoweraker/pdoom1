@@ -205,16 +205,22 @@ static func _run_baseline_simulation(game_seed: String, schedule: Array = [], ch
 		# Start turn (processes passive effects, events, etc.)
 		var start_result = turn_manager.start_turn()
 
-		# Handle any events using baseline strategy
+		# Handle any events using baseline strategy.
+		# #617 debt fix: events define "options" (execute_event_choice reads options);
+		# the old event.get("choices") read was ALWAYS empty, so no vetting bot ever
+		# responded to an event and the choice_policy bracketing was vacuous.
 		while state.pending_events.size() > 0:
 			var event = state.pending_events[0]
-			var choices = event.get("choices", [])
-			if choices.size() > 0:
+			var options = event.get("options", event.get("choices", []))
+			var resolved := false
+			if options.size() > 0:
 				# Pick a choice per the active policy (passive = safest-first, reckless = last)
-				var choice_id = _choice_for_policy(event, choices, choice_policy)
-				turn_manager.resolve_event(event, choice_id)
-			else:
-				# No choices available, remove event
+				var choice_id = _choice_for_policy(event, options, choice_policy)
+				var res: Dictionary = turn_manager.resolve_event(event, choice_id)
+				resolved = bool(res.get("success", false))
+			if not resolved:
+				# No options, or the chosen option is unaffordable: drop the event so
+				# the loop terminates (mirrors a player dismissing what they can't act on).
 				state.pending_events.remove_at(0)
 
 		# Execute turn with no queued actions (baseline = no player input)

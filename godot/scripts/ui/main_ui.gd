@@ -420,7 +420,10 @@ func _on_init_button_pressed():
 			return
 		log_message("[color=red]Load failed — starting a new game instead.[/color]")
 	log_message("[color=cyan]Initializing game...[/color]")
-	game_manager.start_new_game("test-seed")
+	# #617 debt: was hardcoded "test-seed" — every boot ran the SAME timeline and
+	# GameConfig.game_seed was ignored. Empty arg -> GameManager falls back to
+	# GameConfig.get_display_seed() (player's configured seed, else the weekly seed).
+	game_manager.start_new_game()
 
 func _on_test_action_button_pressed():
 	log_message("[color=cyan]Selecting action: hire_safety_researcher[/color]")
