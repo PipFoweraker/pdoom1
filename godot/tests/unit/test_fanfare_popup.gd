@@ -18,6 +18,16 @@ func test_fanfare_present_text_only():
 	assert_eq(popup._body_label.text, "Test body text", "body should be set")
 	assert_false(popup._image.visible, "image slot hidden when no path is given")
 
+func test_fanfare_has_dimming_backdrop():
+	# #603: a near-opaque full-viewport backdrop must sit behind the card so background
+	# event triggers can't animate through the reveal.
+	var popup = FanfarePopup.new()
+	add_child_autofree(popup)
+	assert_not_null(popup._backdrop, "fanfare should build a dimming backdrop node")
+	assert_true(popup._backdrop is ColorRect, "backdrop should be a ColorRect overlay")
+	assert_gt(popup._backdrop.color.a, 0.5,
+		"backdrop should be substantially opaque to darken/block the game behind it (#603)")
+
 func test_fanfare_present_ignores_missing_image_path():
 	var popup = FanfarePopup.new()
 	add_child_autofree(popup)

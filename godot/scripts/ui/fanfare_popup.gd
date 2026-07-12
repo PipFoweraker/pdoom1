@@ -20,6 +20,7 @@ class_name FanfarePopup
 ## click, so it never fights the main UI's global key handling.
 
 var _fade: Control          # everything under here is faded/tinted as one
+var _backdrop: ColorRect    # full-viewport dimming behind the card (blocks the game visually)
 var _card: Panel            # the centred card that also slides up
 var _image: TextureRect
 var _title_label: Label
@@ -61,13 +62,17 @@ func _build() -> void:
 	_fade.mouse_filter = Control.MOUSE_FILTER_STOP  # eat clicks so the game underneath doesn't react
 	add_child(_fade)
 
-	# Dimmed backdrop; clicking it dismisses.
-	var backdrop := ColorRect.new()
-	backdrop.color = Color(0.0, 0.0, 0.0, 0.55)
-	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
-	backdrop.gui_input.connect(_on_backdrop_input)
-	_fade.add_child(backdrop)
+	# Dimming backdrop: a near-opaque black overlay that covers the whole viewport and
+	# sits behind the card, so background event triggers can't animate through it (#603).
+	# Fades in/out with the card (via _fade.modulate) for the Civ-II "party arrives" reveal.
+	# Kept a touch below fully opaque so it darkens rather than fully hides the game.
+	_backdrop = ColorRect.new()
+	_backdrop.name = "Backdrop"
+	_backdrop.color = Color(0.0, 0.0, 0.0, 0.8)
+	_backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	_backdrop.gui_input.connect(_on_backdrop_input)
+	_fade.add_child(_backdrop)
 
 	# The card. Positioned/animated manually (not in a container) so it can slide up.
 	_card = Panel.new()
@@ -139,8 +144,8 @@ func present(title: String, body: String, image_path: String = "") -> void:
 	_fade.modulate.a = 0.0
 
 	var tw := create_tween().set_parallel(true).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_CUBIC)
-	tw.tween_property(_fade, "modulate:a", 1.0, 0.45)
-	tw.tween_property(_card, "position", final_pos, 0.45)
+	tw.tween_property(_fade, "modulate:a", 1.0, 0.5)  # backdrop + card fade in together (~0.5s)
+	tw.tween_property(_card, "position", final_pos, 0.5)
 
 	if is_instance_valid(_continue_btn):
 		_continue_btn.grab_focus()
