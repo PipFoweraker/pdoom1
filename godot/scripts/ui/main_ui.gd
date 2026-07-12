@@ -44,21 +44,7 @@ var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
 var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
-var ledger_summary_label: Button  # BL-1 compact Liability Ledger summary; clickable -> ledger screen (#578)
-var _ledger_due_soon_logged: bool = false  # #578: only log the "payment due" reminder on entry, not every frame
-
-# Leather-ledger palette (playtester: "rich brown leathery colour"). Warm saddle base
-# with a darker border; ink colours are bright/warm so state stays legible on brown.
-const _LEDGER_LEATHER := Color(0.32, 0.20, 0.11)        # base saddle brown
-const _LEDGER_LEATHER_HOVER := Color(0.40, 0.26, 0.15)  # lighter on hover — inviting
-const _LEDGER_LEATHER_PRESSED := Color(0.24, 0.15, 0.08)
-const _LEDGER_LEATHER_BORDER := Color(0.14, 0.08, 0.03)  # dark stitched edge
-const _LEDGER_INK_CLEAN := Color(0.86, 0.80, 0.62)       # warm parchment cream
-const _LEDGER_INK_DUE := Color(1.0, 0.55, 0.42)          # warm red — payment due
-const _LEDGER_INK_SECRET := Color(1.0, 0.80, 0.45)       # warm amber — secrets/owed
-# #601: ledger warnings on the message log get a DISTINCT RED so they stand apart from the
-# normal event/positive greens/golds. Kept as a named constant so it's unit-testable.
-const _LEDGER_WARN_RED := Color(0.93, 0.24, 0.20)
+var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
 var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
@@ -115,26 +101,16 @@ func _ready():
 	right_zones.add_child(doom_breakdown)
 	right_zones.move_child(doom_breakdown, doom_trend_graph.get_index() + 1)
 
-	# BL-1: compact Liability Ledger summary just below the doom trend. Kept terse so
-	# the main view stays uncrowded; the full ledger is a switchable screen (Financing).
-	# #578: it's now a flat Button so the summary is directly clickable to open the full
-	# ledger screen (playtester: "no easy way of getting to the ledger from the main UI").
-	# Playtester: the ledger access was "kind of hidden" — make it ~5x bigger with a
-	# rich brown leather look so it reads as a distinct, inviting object, not a label.
-	ledger_summary_label = Button.new()
-	ledger_summary_label.flat = false
-	ledger_summary_label.focus_mode = Control.FOCUS_NONE
-	ledger_summary_label.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	ledger_summary_label.custom_minimum_size = Vector2(0, 64)  # heft — was an 11px flat label
-	ledger_summary_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ledger_summary_label.add_theme_font_size_override("font_size", 20)
-	ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
-	_apply_leather_style(ledger_summary_label)
-	ledger_summary_label.text = "📖  Liability Ledger — clean"
-	ledger_summary_label.tooltip_text = "Open the Liability Ledger  (press L)"
-	ledger_summary_label.pressed.connect(_show_ledger_screen)
-	right_zones.add_child(ledger_summary_label)
-	right_zones.move_child(ledger_summary_label, doom_trend_graph.get_index() + 1)
+	# BL-1: compact Liability Ledger summary just below the doom trend. #622 L10: the
+	# leather palette, summary button, and full-screen builder now live in LedgerScreen;
+	# MainUI keeps the _show_ledger_screen entry point and its dialog bookkeeping.
+	ledger_screen = preload("res://scripts/ui/ledger_screen.gd").new()
+	ledger_screen.message_logged.connect(log_message)
+	add_child(ledger_screen)
+	var ledger_summary_btn: Button = ledger_screen.create_summary_button()
+	ledger_summary_btn.pressed.connect(_show_ledger_screen)
+	right_zones.add_child(ledger_summary_btn)
+	right_zones.move_child(ledger_summary_btn, doom_trend_graph.get_index() + 1)
 
 	# #602: native path to the Employee screen. The E-key shortcut was retired when
 	# employee info began moving toward the main UI, which left the full Employee screen
@@ -150,7 +126,7 @@ func _ready():
 	employee_access_btn.tooltip_text = "Open the Employee management screen  (ESC returns here)"
 	employee_access_btn.pressed.connect(_on_open_employee_screen)
 	right_zones.add_child(employee_access_btn)
-	right_zones.move_child(employee_access_btn, ledger_summary_label.get_index() + 1)
+	right_zones.move_child(employee_access_btn, ledger_summary_btn.get_index() + 1)
 
 	# Always-visible DEV BUILD corner badge so a playtester can confirm exactly which
 	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
@@ -657,8 +633,9 @@ func _on_game_state_updated(state: Dictionary):
 	if doom_breakdown:
 		doom_breakdown.set_sources(state.get("doom_system", {}).get("doom_sources", {}))
 
-	# BL-1: refresh the compact Liability Ledger summary
-	_update_ledger_summary(state.get("ledger", {}))
+	# BL-1: refresh the compact Liability Ledger summary (#622 L10: lives in LedgerScreen)
+	if ledger_screen:
+		ledger_screen.update_summary(state.get("ledger", {}))
 
 	# Update office cat for doom level and visibility
 	if office_cat:
@@ -705,59 +682,6 @@ func _on_game_state_updated(state: Dictionary):
 
 	# Update employee roster display
 	_update_employee_roster(state)
-
-func _make_leather_box(bg: Color) -> StyleBoxFlat:
-	"""A warm saddle-leather StyleBoxFlat: dark stitched border + subtle rounding."""
-	var box := StyleBoxFlat.new()
-	box.bg_color = bg
-	box.border_color = _LEDGER_LEATHER_BORDER
-	box.set_border_width_all(3)
-	box.set_corner_radius_all(8)
-	box.content_margin_left = 14
-	box.content_margin_right = 14
-	box.content_margin_top = 8
-	box.content_margin_bottom = 8
-	return box
-
-func _apply_leather_style(btn: Button) -> void:
-	"""Give the ledger access button its rich brown leather look across all states."""
-	btn.add_theme_stylebox_override("normal", _make_leather_box(_LEDGER_LEATHER))
-	btn.add_theme_stylebox_override("hover", _make_leather_box(_LEDGER_LEATHER_HOVER))
-	btn.add_theme_stylebox_override("pressed", _make_leather_box(_LEDGER_LEATHER_PRESSED))
-	btn.add_theme_stylebox_override("focus", _make_leather_box(_LEDGER_LEATHER_HOVER))
-
-func _update_ledger_summary(ledger_data: Dictionary) -> void:
-	"""BL-1 compact summary: outstanding owed, soonest due, secret count. Deliberately
-	terse so the main view stays uncrowded; the full ledger is a switchable screen."""
-	if not ledger_summary_label:
-		return
-	var owed: float = float(ledger_data.get("outstanding_payable", 0.0))
-	var soonest: int = int(ledger_data.get("soonest_fuse", -1))
-	var secrets: int = int(ledger_data.get("secret_count", 0))
-	if ledger_data.is_empty() or (owed <= 0.0 and secrets == 0):
-		ledger_summary_label.text = "📖  Liability Ledger — clean  (click / L)"
-		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
-		_ledger_due_soon_logged = false
-		return
-	var due_txt := ("due %dt" % soonest) if soonest >= 0 else "no due"
-	var secret_txt := ("  |  %d secret" % secrets) if secrets > 0 else ""
-	# #578: due-soon reminder. When the soonest payable fuse is within ~1-2 turns, flag it
-	# visibly (⚠ prefix + strong red) and drop a one-shot message-log line so the player is
-	# warned things are coming due, not just left to notice on their own.
-	var due_soon := soonest >= 0 and soonest <= 2 and owed > 0.0
-	var prefix := "⚠ " if due_soon else "📖  "
-	ledger_summary_label.text = "%sLedger: %s owed  |  %s%s" % [prefix, GameConfig.format_money(owed), due_txt, secret_txt]
-	if due_soon:
-		# Urgent: warm red (legible on brown leather), and log once on entry into the window.
-		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_DUE)
-		if not _ledger_due_soon_logged:
-			var when_txt := "this turn" if soonest <= 0 else ("in %d turn%s" % [soonest, "" if soonest == 1 else "s"])
-			log_message("[color=#%s]⚠ Ledger: %s payment due %s — open the ledger (click summary or press L) to review.[/color]" % [_LEDGER_WARN_RED.to_html(false), GameConfig.format_money(owed), when_txt])
-			_ledger_due_soon_logged = true
-	else:
-		_ledger_due_soon_logged = false
-		# Warm parchment when only owed; warm amber as secret liabilities mount (exposure pressure).
-		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN if secrets == 0 else _LEDGER_INK_SECRET)
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
@@ -1859,125 +1783,16 @@ func _on_financing_option_selected(action_id: String, action_name: String, dialo
 	game_manager.select_action(action_id)
 
 func _show_ledger_screen():
-	"""BL-1: the full Liability Ledger screen — lists every live entry (source, currency,
-	principal, fuse, secrecy) plus death attribution.
-
-	#601: styled as a distinct leather-bound object whose inner content FILLS the panel
-	(the old build left everything cramped top-left with the terms truncated). The entries
-	are laid out as a real column table so nothing like 'due 3t @25%/t' gets clipped, and
-	the panel carries an is_ledger meta so the L key can toggle it closed (#601)."""
+	"""BL-1/#601: open the full Liability Ledger screen. #622 L10: the panel itself is
+	built by LedgerScreen; this stays the single entry point (L key, summary click,
+	financing submenu, dev overlay) and owns the active_dialog bookkeeping."""
 	if active_dialog != null and is_instance_valid(active_dialog):
 		active_dialog.queue_free()
 		active_dialog = null
 		active_dialog_buttons = []
 
-	# Larger, centred panel so the ledger reads as a substantial object, not a scrap.
-	var view := get_viewport().get_visible_rect().size
-	var dialog := Panel.new()
-	var panel_size := Vector2(minf(720.0, view.x - 60.0), minf(560.0, view.y - 60.0))
-	dialog.custom_minimum_size = panel_size
-	dialog.size = panel_size
-	dialog.position = ((view - panel_size) / 2.0).max(Vector2(20, 20))
-	dialog.set_meta("is_ledger", true)  # lets the L key toggle it closed (#601)
-
-	# Distinct leather binding so the ledger stands apart from the grey submenus. Setting a
-	# bespoke 'panel' stylebox here makes _add_submenu_close_affordance keep it (#510).
-	var ledger_panel_style := _make_leather_box(Color(0.16, 0.11, 0.07, 0.99))
-	dialog.add_theme_stylebox_override("panel", ledger_panel_style)
-
-	# Fill the whole panel: anchor the margin to all four edges so the content stretches
-	# to the panel's size instead of collapsing to its top-left minimum (#601).
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 22)
-	margin.add_theme_constant_override("margin_right", 22)
-	margin.add_theme_constant_override("margin_top", 20)
-	margin.add_theme_constant_override("margin_bottom", 30)
-	dialog.add_child(margin)
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 8)
-	margin.add_child(vbox)
-
 	var ledger = game_manager.state.ledger if (game_manager and game_manager.state) else null
-
-	var title := Label.new()
-	title.text = "📖  LIABILITY LEDGER"
-	title.add_theme_font_size_override("font_size", 22)
-	title.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
-	vbox.add_child(title)
-
-	var rule := HSeparator.new()
-	vbox.add_child(rule)
-
-	if ledger == null:
-		var none := Label.new()
-		none.text = "(no ledger)"
-		none.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
-		vbox.add_child(none)
-	else:
-		var summary := Label.new()
-		summary.text = "Owed: %s        Favors: %s        Secrets: %d" % [
-			GameConfig.format_money(ledger.outstanding(Ledger.Side.PAYABLE)),
-			GameConfig.format_money(ledger.outstanding(Ledger.Side.RECEIVABLE)),
-			ledger.secret_entries().size()]
-		summary.add_theme_font_size_override("font_size", 15)
-		summary.add_theme_color_override("font_color", _LEDGER_INK_SECRET)
-		vbox.add_child(summary)
-
-		# Scroll grows to consume the remaining panel height, so the table fills the space.
-		var scroll := ScrollContainer.new()
-		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		vbox.add_child(scroll)
-
-		var live = ledger.entries.filter(func(e): return not e.settled)
-		if live.is_empty():
-			var clean := Label.new()
-			clean.text = "Clean books. Every mitigation you take will show up here as a bill."
-			clean.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			clean.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			clean.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
-			scroll.add_child(clean)
-		else:
-			# Real column table: Source | Amount | Due | Notes. Each cell sizes to its own
-			# content so terms like 'due 3t @25%/t' are never truncated (#601).
-			var table := GridContainer.new()
-			table.columns = 4
-			table.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			table.add_theme_constant_override("h_separation", 24)
-			table.add_theme_constant_override("v_separation", 8)
-			scroll.add_child(table)
-
-			for head in ["Source", "Amount", "Due", "Notes"]:
-				var h := Label.new()
-				h.text = head
-				h.add_theme_font_size_override("font_size", 12)
-				h.add_theme_color_override("font_color", Color(0.70, 0.62, 0.45))
-				table.add_child(h)
-
-			for e in live:
-				var side_txt = "owe" if e.side == Ledger.Side.PAYABLE else "owed"
-				var interest_txt = ("  @%.0f%%/t" % (e.interest * 100.0)) if e.interest > 0.0 else ""
-				var note_txt = "SECRET" if e.secret else ""
-				var row_color = _LEDGER_INK_SECRET if e.secret else _LEDGER_INK_CLEAN
-				var cells = [
-					str(e.source),
-					"%s %.0f %s" % [side_txt, e.principal, e.currency],
-					"due %dt%s" % [e.fuse, interest_txt],
-					note_txt,
-				]
-				for cell_text in cells:
-					var cell := Label.new()
-					cell.text = cell_text
-					cell.add_theme_font_size_override("font_size", 14)
-					cell.add_theme_color_override("font_color", row_color)
-					table.add_child(cell)
-
-		if ledger.death_attribution.size() > 0:
-			var att := Label.new()
-			att.text = "Attributed damage: %d billed shortfalls" % ledger.death_attribution.size()
-			att.add_theme_color_override("font_color", _LEDGER_WARN_RED)
-			vbox.add_child(att)
+	var dialog: Panel = ledger_screen.build_screen(ledger, get_viewport().get_visible_rect().size)
 
 	active_dialog = dialog
 	active_dialog_buttons = []

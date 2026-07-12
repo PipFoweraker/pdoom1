@@ -7,10 +7,11 @@ extends GutTest
 ## cheap, deterministic invariants: the L keybind, the distinct-red warning constant, and
 ## the ledger dialog's toggle meta being reachable from the script.
 
-func _main_ui_constants() -> Dictionary:
+func _ledger_ui_constants() -> Dictionary:
 	# Read the script's constant map off the GDScript *resource* (get_script_constant_map is
 	# a non-static method, so it needs the loaded resource, not the class reference).
-	var script: GDScript = load("res://scripts/ui/main_ui.gd")
+	# #622 L10: the ledger palette moved from main_ui.gd into ledger_screen.gd.
+	var script: GDScript = load("res://scripts/ui/ledger_screen.gd")
 	return script.get_script_constant_map()
 
 func _make_key_event(keycode: int) -> InputEventKey:
@@ -38,12 +39,12 @@ func test_L_matches_open_ledger_action():
 # --- Part A.3: ledger warnings use a distinct RED -----------------------------
 
 func test_ledger_warn_red_is_a_named_constant():
-	var consts := _main_ui_constants()
+	var consts := _ledger_ui_constants()
 	assert_true(consts.has("_LEDGER_WARN_RED"),
-		"MainUI should expose a named _LEDGER_WARN_RED constant for ledger warnings")
+		"LedgerScreen should expose a named _LEDGER_WARN_RED constant for ledger warnings")
 
 func test_ledger_warn_colour_reads_as_red():
-	var consts := _main_ui_constants()
+	var consts := _ledger_ui_constants()
 	var c: Color = consts["_LEDGER_WARN_RED"]
 	# Red-dominant and clearly not the event-gold / success-green used elsewhere.
 	assert_gt(c.r, 0.7, "warning red should be strongly red")
