@@ -23,6 +23,7 @@ const MAX_NEW_EVENTS_PER_TURN := 2
 # Preload the shared loader (avoids class_name registration-order issues in fresh
 # worktrees/CI — same pattern as GameState's RiskPool preload).
 const Definitions = preload("res://scripts/data/definition_loader.gd")
+const Resources = preload("res://scripts/core/resource_accessor.gd")
 
 # L9 (#621): built-in event definitions live in data, not code. Loaded once and
 # cached; array order in the file is trigger-check order (cap priority, #568).
@@ -227,39 +228,11 @@ static func evaluate_condition(condition: String, state: GameState) -> bool:
 				return disparity <= threshold
 		return false
 
-	# Get resource value from state
-	var resource_value = 0.0
-	match resource_name:
-		"money":
-			resource_value = state.money
-		"compute":
-			resource_value = state.compute
-		"research":
-			resource_value = state.research
-		"papers":
-			resource_value = state.papers
-		"reputation":
-			resource_value = state.reputation
-		"doom":
-			resource_value = state.doom
-		"action_points":
-			resource_value = state.action_points
-		"safety_researchers":
-			resource_value = state.safety_researchers
-		"capability_researchers":
-			resource_value = state.capability_researchers
-		"compute_engineers":
-			resource_value = state.compute_engineers
-		"managers":
-			resource_value = state.managers
-		"researchers":
-			# Individual researcher count (new system)
-			resource_value = state.researchers.size()
-		"total_staff":
-			# Total staff including managers
-			resource_value = state.get_total_staff()
-		_:
-			return false
+	# Get resource value from state via the shared name accessor (L9 #621 —
+	# replaces one of the three duplicated resource-name matches)
+	if not Resources.has_readable(resource_name):
+		return false
+	var resource_value := Resources.read(state, resource_name)
 
 	var threshold = float(value_str)
 
@@ -302,25 +275,17 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 	# Pay costs
 	state.spend_resources(costs)
 
-	# Apply effects
+	# Apply effects. Simple scalar resources go through the shared accessor
+	# (L9 #621); non-scalar effects (researcher creation/removal, mascot) keep
+	# their special handling here.
 	var effects = chosen_option.get("effects", {})
 	for key in effects.keys():
 		var value = effects[key]
 
-		# Map effect keys to state properties
+		if Resources.add(state, key, value):
+			continue
+
 		match key:
-			"money":
-				state.money += value
-			"compute":
-				state.compute += value
-			"research":
-				state.research += value
-			"papers":
-				state.papers += value
-			"reputation":
-				state.reputation += value
-			"doom":
-				state.doom += value
 			"safety_researchers":
 				# Create actual Researcher objects for the new system
 				for i in range(value):
@@ -334,9 +299,6 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 					researcher.generate_random(state.rng)
 					researcher.specialization = "capabilities"
 					state.add_researcher(researcher)
-			"compute_engineers":
-				# Compute engineers use legacy count only (no Researcher object)
-				state.compute_engineers += value
 			"has_cat":
 				state.has_cat = (value > 0)
 			"lose_researcher":
