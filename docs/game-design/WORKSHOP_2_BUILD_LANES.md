@@ -25,12 +25,19 @@ The whole workshop asserts three measurable things. Bake them in as acceptance g
 ## Lane order
 
 ```
-L6 instrumentation ──┐            (start now, parallel)
-L7 save/load ────────┤            (start now, parallel)
-L8 achievements ─────┤            (start now, parallel, observer-only)
-L1 turn engine ──────┼─► L2 effort economy ─► L3 adoption+conferences
-                     └─► L4 events+ledger ──► L5 pricing engine
+L0 stabilization ────┐  (start now — behavior-preserving; replays must verify)
+L6 instrumentation ──┤  (start now, parallel)
+L7 save/load ────────┤  (start now, parallel)
+L8 achievements ─────┤  (start now, parallel, observer-only)
+L9 balance/data ─────┤  (with/after L0 — defs→JSON + Balance seam before L1)
+L10 ui extractions ──┘  (start now — event_dialog first; L1 reuses it)
+L1 turn engine (after L0+L9) ─┬─► L2 effort economy ─► L3 adoption+conferences
+                              └─► L4 events+ledger ──► L5 pricing engine
 ```
+
+Debt map for L0/L9/L10 and the clean-as-you-go conventions:
+**`docs/TECH_DEBT_REGISTER.md`** (2026-07-12 audit — live bugs, LET-DIE list,
+duplication kill-list). Never polish LET-DIE code.
 
 ## L1 · Turn engine (ADR-0009) — CRITICAL PATH
 
@@ -136,6 +143,31 @@ L1 turn engine ──────┼─► L2 effort economy ─► L3 adoption+
   flags. "Fastest X this season" deferred until boards (EE-4).
 - Capture convention: design sessions tag `[ACHIEVEMENT]` candidates as they come up;
   park them in WORKSHOP_2_BACKLOG.
+
+## L9 · Balance surface + data externalization — with/after L0, before L1
+
+- **`Balance` autoload** (Resource/JSON-backed, mirroring `scenario_loader`): the
+  tuning surface the sweep needs (DQ-8/ADR-0013 numbers become file-swaps). Migration
+  order in `TECH_DEBT_REGISTER.md` §L9 — seam first (`get_months_per_turn` +
+  time-coupled durations through the L0 Clock), then thresholds, then literals in
+  batches (current values as defaults — behavior-neutral).
+- **Definitions → data:** `events.gd` built-in + risk events →
+  `data/events/*.json` (the merge pipeline already supports it); `actions.gd`
+  definitions + risk-contribution table → `data/actions/*.json`. Engine files shrink
+  2,665 → ~600 lines before L1 touches them.
+- Wire `data/events/balancing/difficulty.json` as multipliers or delete the dormant
+  trio. Shared `ResourceAccessor` replaces the 3× resource-name match.
+
+## L10 · main_ui decomposition — start now; extract-before list only
+
+- Extract now (turn-model-independent): **`event_dialog.gd` first** (L1's response
+  windows reuse it), `ledger_screen.gd`, `employee_panel.gd` (becomes L2's assignment
+  surface), `submenu_chrome.gd`. Follow the existing child-widget mount pattern.
+- Domain dialogs (hiring/fundraising/financing/publicity/strategic/travel/operations)
+  extract DURING L2/L3 when their AP triggers die — don't polish before.
+- **LET-DIE (do not touch):** command/queue/reserve-AP/commit-plan zone, queued-actions
+  viz, AP-affordability half of the action bar. Full list + layering leaks to sever:
+  `TECH_DEBT_REGISTER.md` §L10.
 
 ## Provisional UI guidance (NOT an ADR — revisit at workshop #3 with real screens)
 
