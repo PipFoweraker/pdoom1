@@ -188,22 +188,30 @@ func test_doom_trend_detection():
 	assert_eq(doom_sys._get_doom_trend(), "strongly_decreasing")
 
 func test_doom_status_thresholds():
+	# L6 unification: statuses are ThemeManager's canonical bands, lowercased
+	# (15/37/52/67/80/92 — the former 25/50/70/90 copy is gone).
 	var doom_sys = DoomSystem.new()
 
+	doom_sys.current_doom = 10.0
+	assert_eq(doom_sys.get_doom_status(), "nominal")
+
 	doom_sys.current_doom = 20.0
-	assert_eq(doom_sys.get_doom_status(), "safe")
+	assert_eq(doom_sys.get_doom_status(), "elevated")
 
 	doom_sys.current_doom = 40.0
-	assert_eq(doom_sys.get_doom_status(), "warning")
+	assert_eq(doom_sys.get_doom_status(), "high")
 
 	doom_sys.current_doom = 60.0
-	assert_eq(doom_sys.get_doom_status(), "danger")
+	assert_eq(doom_sys.get_doom_status(), "severe")
+
+	doom_sys.current_doom = 70.0
+	assert_eq(doom_sys.get_doom_status(), "extreme")
 
 	doom_sys.current_doom = 80.0
-	assert_eq(doom_sys.get_doom_status(), "critical")
+	assert_eq(doom_sys.get_doom_status(), "catastrophic")
 
 	doom_sys.current_doom = 95.0
-	assert_eq(doom_sys.get_doom_status(), "catastrophic")
+	assert_eq(doom_sys.get_doom_status(), "terminal")
 
 func test_integration_with_game_state():
 	"""Test that doom system integrates with game state properly"""

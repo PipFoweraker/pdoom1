@@ -367,17 +367,13 @@ func _get_doom_trend() -> String:
 		return "strongly_increasing"
 
 func get_doom_status() -> String:
-	"""Get doom status level (cutoffs from Balance "doom.status_cutoffs", L9 #621)"""
-	if current_doom < Balance.num("doom.status_cutoffs.safe", 25.0):
-		return "safe"
-	elif current_doom < Balance.num("doom.status_cutoffs.warning", 50.0):
-		return "warning"
-	elif current_doom < Balance.num("doom.status_cutoffs.danger", 70.0):
-		return "danger"
-	elif current_doom < Balance.num("doom.status_cutoffs.critical", 90.0):
-		return "critical"
-	else:
-		return "catastrophic"
+	"""Doom tier id — ThemeManager's canonical band label, lowercased (L6 unification:
+	nominal/elevated/high/severe/extreme/catastrophic/terminal at 15/37/52/67/80/92).
+	Was a divergent 25/50/70/90 copy (safe/warning/danger/critical/catastrophic), and a
+	separate Balance "doom.status_cutoffs" copy (L9 #621) — both superseded so the doom
+	BANDS have one source (ThemeManager); doom MAGNITUDES still come from Balance.
+	Display-only consumers (dev overlays, state doom_status field)."""
+	return ThemeManager.get_doom_status_label(current_doom).to_lower()
 
 func get_momentum_description() -> String:
 	"""Human-readable momentum description"""

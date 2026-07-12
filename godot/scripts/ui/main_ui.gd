@@ -494,10 +494,13 @@ func _on_end_turn_button_pressed():
 	var warnings = []
 
 	# High doom warning
-	if current_state.doom >= 80:
-		warnings.append("[color=red]⚠️ CRITICAL: Doom at %.1f%% - Very close to game over![/color]" % current_state.doom)
-	elif current_state.doom >= 70:
-		warnings.append("[color=yellow]⚠️ WARNING: Doom at %.1f%% - Approaching danger zone![/color]" % current_state.doom)
+	# Routed through ThemeManager's canonical bands (L6 unification: was hardcoded
+	# 80/70; now CATASTROPHIC >=80 critical, EXTREME >=67 warning)
+	var doom_band: int = ThemeManager.get_doom_band_index(current_state.doom)
+	if doom_band >= 5:
+		warnings.append("[color=red]⚠️ CRITICAL: Doom at %.1f%% (%s) - Very close to game over![/color]" % [current_state.doom, ThemeManager.get_doom_status_label(current_state.doom)])
+	elif doom_band == 4:
+		warnings.append("[color=yellow]⚠️ WARNING: Doom at %.1f%% (%s) - Approaching danger zone![/color]" % [current_state.doom, ThemeManager.get_doom_status_label(current_state.doom)])
 
 	# Low reputation warning
 	if current_state.reputation <= 20:

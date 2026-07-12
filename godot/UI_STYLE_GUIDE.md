@@ -61,11 +61,13 @@ tier_4 = Color(0.702, 0.071, 0.090, 0.18)  # Deep red 18% (80-100%)
 
 #### Functional Colors
 ```gdscript
-# Resource displays (from ThemeManager)
-doom_low = Color(0.3, 0.8, 0.3)       # <30% doom - safe green
-doom_medium = Color(0.9, 0.7, 0.2)    # 30-60% doom - warning yellow
-doom_high = Color(0.9, 0.3, 0.2)      # 60-80% doom - danger orange
-doom_critical = Color(0.7, 0.1, 0.1)  # >80% doom - critical red
+# Doom tiers (from ThemeManager — the SINGLE source since L6/#617):
+# DOOM_STOPS is the smooth colour ramp; DOOM_STATUS_BANDS the tier thresholds.
+# NOMINAL <15 | ELEVATED <37 | HIGH <52 | SEVERE <67 | EXTREME <80
+# | CATASTROPHIC <92 | TERMINAL <=100
+# Use ThemeManager.get_doom_color / get_doom_stroke_color for colours and
+# get_doom_band_index / get_doom_band / get_doom_status_label for tiers —
+# never hardcode doom thresholds in a screen.
 
 # UI feedback
 success = Color(0.2, 0.9, 0.4)        # Completion, purchases

@@ -112,27 +112,33 @@ func set_doom(value: float, momentum: float = 0.0):
 	doom_value = value
 	doom_momentum = momentum
 
-	# Enable/disable pulse animation
-	set_process(doom_value >= 80.0)
-	if doom_value < 80.0:
+	# Enable/disable pulse animation — pulses from CATASTROPHIC (canonical band, L6;
+	# same 80 boundary as the old hardcoded value)
+	var pulsing: bool = ThemeManager.get_doom_band_index(doom_value) >= 5
+	set_process(pulsing)
+	if not pulsing:
 		pulse_time = 0.0
 
 func _draw_colorblind_pattern(center: Vector2, radius: float, doom: float):
-	"""Draw pattern indicators for colorblind accessibility"""
+	"""Draw pattern indicators for colorblind accessibility.
+	Banded via ThemeManager's canonical doom bands (L6 unification — was a divergent
+	30/60/80 copy): NOMINAL/ELEVATED dots, HIGH/SEVERE triangles, EXTREME X marks,
+	CATASTROPHIC/TERMINAL exclamations."""
 	var pattern_radius = radius + gauge_thickness + 8
 	var doom_color = ThemeManager.get_doom_stroke_color(doom)
+	var band: int = ThemeManager.get_doom_band_index(doom)
 
-	if doom < 30.0:
-		# Safe: Draw small circles (dots pattern)
+	if band <= 1:
+		# NOMINAL / ELEVATED: small circles (dots pattern)
 		_draw_circle_pattern(center, pattern_radius, doom_color, 4)
-	elif doom < 60.0:
-		# Warning: Draw triangles
+	elif band <= 3:
+		# HIGH / SEVERE: triangles
 		_draw_triangle_pattern(center, pattern_radius, doom_color, 3)
-	elif doom < 80.0:
-		# Danger: Draw X marks
+	elif band == 4:
+		# EXTREME: X marks
 		_draw_x_pattern(center, pattern_radius, doom_color, 3)
 	else:
-		# Critical: Draw exclamation marks
+		# CATASTROPHIC / TERMINAL: exclamation marks
 		_draw_exclamation_pattern(center, pattern_radius, doom_color, 4)
 
 func _draw_circle_pattern(center: Vector2, radius: float, color: Color, count: int):
