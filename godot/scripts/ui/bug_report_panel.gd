@@ -102,6 +102,8 @@ func reset_form():
 	name_input.editable = false
 	contact_input.editable = false
 	confirmation_label.visible = false
+	# Re-enable Submit when the panel is reused (it is disabled in the thanks state, #603).
+	submit_button.disabled = false
 
 ## Validate form input
 func validate_form() -> String:
@@ -174,6 +176,9 @@ func _on_attribution_toggled(toggled_on: bool):
 
 ## Handle successful report save
 func _on_report_saved(_filepath: String):
+	# Disable Submit in the thanks/submitted state so it can't be clicked again (#603).
+	# reset_form() (called on hide/reuse) re-enables it.
+	submit_button.disabled = true
 	show_confirmation("Thank you! Your report has been saved.\n\nWe'll create a GitHub issue soon. Check back for updates!")
 
 	# Reset form after short delay
