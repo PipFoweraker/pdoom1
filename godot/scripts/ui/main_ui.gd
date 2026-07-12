@@ -43,6 +43,7 @@ var queued_actions: Array = []
 var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
+var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
 var ledger_summary_label: Button  # BL-1 compact Liability Ledger summary; clickable -> ledger screen (#578)
 var _ledger_due_soon_logged: bool = false  # #578: only log the "payment due" reminder on entry, not every frame
 
@@ -66,10 +67,6 @@ var current_turn_phase: String = "NOT_STARTED"
 var active_dialog: Control = null
 var active_dialog_buttons: Array = []
 
-# Event queue for sequential presentation (FIX: multiple events in same turn)
-var event_queue: Array[Dictionary] = []
-var is_showing_event: bool = false
-
 func _ready():
 	print("[MainUI] Initializing UI...")
 
@@ -83,7 +80,18 @@ func _ready():
 	game_manager.action_executed.connect(_on_action_executed)
 	game_manager.error_occurred.connect(_on_error_occurred)
 	game_manager.actions_available.connect(_on_actions_available)
-	game_manager.event_triggered.connect(_on_event_triggered)
+
+	# #622 L10: event dialog presenter (script-instantiated child, same mount pattern as
+	# the #500 selector). Choices route back through game_manager.resolve_event so the
+	# presenter stays reusable for the L1 rewrite's mid-month response windows.
+	event_dialog = preload("res://scripts/ui/event_dialog.gd").new()
+	event_dialog.state_provider = game_manager.get_game_state
+	add_child(event_dialog)
+	game_manager.event_triggered.connect(event_dialog.present)
+	event_dialog.choice_selected.connect(_on_event_choice_selected)
+	event_dialog.dialog_opened.connect(_on_event_dialog_opened)
+	event_dialog.dialog_closed.connect(_on_event_dialog_closed)
+	event_dialog.message_logged.connect(log_message)
 
 	# Issue #500: research quality selector (script-instantiated; reparent in editor if preferred)
 	research_quality_selector = preload("res://scripts/ui/research_quality_selector.gd").new()
@@ -1202,21 +1210,6 @@ func _debug_nudge_doom(delta: float) -> void:
 	st.record_doom_history()
 	_on_game_state_updated(game_manager.get_game_state())
 	log_message("[color=gray][debug] doom %+.0f → %.1f%%[/color]" % [delta, st.doom])
-
-func _format_cost_summary(costs: Dictionary) -> String:
-	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510)."""
-	if costs.is_empty():
-		return ""
-	var parts: Array[String] = []
-	for resource in costs.keys():
-		var amount = costs[resource]
-		if resource == "money":
-			parts.append(GameConfig.format_money(amount))
-		elif resource == "action_points":
-			parts.append("%d AP" % int(amount))
-		else:
-			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
-	return " (%s)" % ", ".join(parts)
 
 func _show_doom_trend_expanded() -> void:
 	"""Expanded full-history doom trend panel (#512), reusing the #510 close affordance."""
@@ -2983,254 +2976,22 @@ func update_queued_actions_display():
 		end_turn_button.disabled = queue_empty
 		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [queued_actions.size(), queue_empty])
 
-func _on_event_triggered(event: Dictionary):
-	"""Handle event trigger - queue event for sequential presentation"""
-	print("[MainUI] === EVENT TRIGGERED: %s ===" % event.get("name", "Unknown"))
-
-	# Add to event queue
-	event_queue.append(event)
-	print("[MainUI] Event queued. Queue size: %d" % event_queue.size())
-
-	# If not currently showing an event, show this one immediately
-	if not is_showing_event:
-		_show_next_event()
-	else:
-		print("[MainUI] Event added to queue, will show after current event resolves")
-
-func _show_next_event():
-	"""Show the next event in queue (sequential presentation)"""
-	if event_queue.is_empty():
-		print("[MainUI] Event queue empty, no more events to show")
-		is_showing_event = false
-		return
-
-	# Mark that we're showing an event
-	is_showing_event = true
-
-	# Get next event from queue
-	var event = event_queue.pop_front()
-	print("[MainUI] === SHOWING EVENT: %s ===" % event.get("name", "Unknown"))
-	print("[MainUI] Remaining events in queue: %d" % event_queue.size())
-
-	log_message("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
-
-
-	# Blurred blocker behind event dialog panel (Fix Issue #458 + #485)
-	# Add to root (get_tree().root) to ensure it blocks ALL UI interactions
-	var click_blocker := ColorRect.new()
-	click_blocker.color = Color(0.0, 0.0, 0.0, 0.6)
-	click_blocker.mouse_filter = Control.MOUSE_FILTER_STOP  # Block all mouse events
-	click_blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	click_blocker.z_index = 999  # Just below dialog but above all other UI
-	click_blocker.z_as_relative = false  # Absolute z-index
-	# Add to viewport root to cover entire screen and all UI
-	get_tree().root.add_child(click_blocker)
-
-
-
-
-
-
-	# Create event dialog - use Panel for consistent input handling
-	var dialog = Panel.new()
-	dialog.custom_minimum_size = Vector2(600, 450)
-	dialog.size = Vector2(600, 450)
-	# Center it manually
-	dialog.position = Vector2(
-		(get_viewport().get_visible_rect().size.x - 600) / 2,
-		(get_viewport().get_visible_rect().size.y - 450) / 2
-	)
-
-	# Add forest green background for better visibility
-	var panel_style = StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.15, 0.25, 0.15, 1.0)  # Dark forest green
-	panel_style.border_width_left = 3
-	panel_style.border_width_top = 3
-	panel_style.border_width_right = 3
-	panel_style.border_width_bottom = 3
-	panel_style.border_color = Color(0.3, 0.5, 0.3, 1.0)  # Lighter green border
-	panel_style.corner_radius_top_left = 8
-	panel_style.corner_radius_top_right = 8
-	panel_style.corner_radius_bottom_right = 8
-	panel_style.corner_radius_bottom_left = 8
-	dialog.add_theme_stylebox_override("panel", panel_style)
-
-	print("[MainUI] Created Panel for event, size: %s, position: %s" % [dialog.size, dialog.position])
-
-	# Create main container
-	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 15)
-	margin.add_theme_constant_override("margin_right", 15)
-	margin.add_theme_constant_override("margin_top", 15)
-	margin.add_theme_constant_override("margin_bottom", 15)
-	dialog.add_child(margin)
-
-	var main_vbox = VBoxContainer.new()
-	margin.add_child(main_vbox)
-
-	# Add title
-	var title_label = Label.new()
-	title_label.text = event.get("name", "Event")
-	title_label.add_theme_font_size_override("font_size", 18)
-	title_label.add_theme_color_override("font_color", Color.GOLD)
-	main_vbox.add_child(title_label)
-
-	# Add description label
-	var desc_label = Label.new()
-	desc_label.text = event.get("description", "An event has occurred!")
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	desc_label.custom_minimum_size = Vector2(560, 0)
-	main_vbox.add_child(desc_label)
-
-	# Add spacing
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 20)
-	main_vbox.add_child(spacer)
-
-	# Create container for option buttons
-	var vbox = VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 10)
-	main_vbox.add_child(vbox)
-
-	# Add each option as a button
-	var options = event.get("options", [])
-	var current_state = game_manager.get_game_state()
-
-	var button_index = 0
-	var buttons = []  # Store buttons for keyboard access
-	var dialog_key_labels = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"]
-
-	for option in options:
-		var choice_id = option.get("id", "")
-		var choice_text = option.get("text", "")
-		var costs = option.get("costs", {})
-
-		var btn = Button.new()
-		btn.focus_mode = Control.FOCUS_NONE  # Don't grab focus - let MainUI handle keys
-		btn.mouse_filter = Control.MOUSE_FILTER_PASS  # Still allow mouse clicks
-
-		# Add keyboard hint (LETTERS not numbers) + inline cost summary (#510)
-		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		btn.text = "[%s] %s%s" % [key_label, choice_text, _format_cost_summary(costs)]
-		btn.custom_minimum_size = Vector2(500, 45)
-
-		# Add button border for better definition
-		var button_style = StyleBoxFlat.new()
-		button_style.bg_color = Color(0.2, 0.2, 0.2, 1.0)  # Dark gray background
-		button_style.border_width_left = 2
-		button_style.border_width_top = 2
-		button_style.border_width_right = 2
-		button_style.border_width_bottom = 2
-		button_style.border_color = Color(0.15, 0.15, 0.15, 1.0)  # Slightly darker border
-		button_style.corner_radius_top_left = 4
-		button_style.corner_radius_top_right = 4
-		button_style.corner_radius_bottom_right = 4
-		button_style.corner_radius_bottom_left = 4
-		btn.add_theme_stylebox_override("normal", button_style)
-
-		# Hover state
-		var button_style_hover = button_style.duplicate()
-		button_style_hover.bg_color = Color(0.3, 0.3, 0.3, 1.0)  # Lighter on hover
-		btn.add_theme_stylebox_override("hover", button_style_hover)
-
-		# Check affordability
-		var can_afford = true
-		var missing_resources = []
-
-		for resource in costs.keys():
-			var cost = costs[resource]
-			var available = 0
-
-			# Special handling for action_points - use total AP (FIX #453)
-			# Must match can_afford() logic in GameState:130
-			if resource == "action_points":
-				available = current_state.get("action_points", 0)
-			else:
-				available = current_state.get(resource, 0)
-
-			if available < cost:
-				can_afford = false
-				if resource == "action_points":
-					missing_resources.append("AP (need %s, have %s available)" % [cost, available])
-				else:
-					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
-
-		# Add tooltip with costs/effects
-		var tooltip = ""
-		if not costs.is_empty():
-			tooltip += "Costs:\n"
-			for resource in costs.keys():
-				tooltip += "  %s: %s\n" % [resource, costs[resource]]
-
-		var effects = option.get("effects", {})
-		if not effects.is_empty():
-			tooltip += "\nEffects:\n"
-			for resource in effects.keys():
-				var value = effects[resource]
-				var value_sign = "+" if value >= 0 else ""  # Renamed from 'sign' to avoid shadowing built-in function
-				tooltip += "  %s: %s%s\n" % [resource, value_sign, value]
-
-		if not can_afford:
-			tooltip += "\n[CANNOT AFFORD]\n"
-			for msg in missing_resources:
-				tooltip += "  Missing: " + msg + "\n"
-			btn.disabled = true
-			btn.modulate = Color(0.6, 0.6, 0.6)
-
-		btn.tooltip_text = tooltip
-
-		# Connect button
-		btn.pressed.connect(func(): _on_event_choice_selected(event, choice_id, dialog, click_blocker))
-
-		vbox.add_child(btn)
-		buttons.append(btn)
-		button_index += 1
-
-	# Store dialog state for keyboard handling in MainUI._input()
-	print("[MainUI] Setting active_dialog for event...")
+func _on_event_dialog_opened(dialog: Control, buttons: Array) -> void:
+	"""EventDialog put its modal up (#622) — route MainUI keyboard shortcuts to it.
+	The dialog carries the is_event_dialog meta, so ESC handling keeps refusing to
+	close it (#452)."""
 	active_dialog = dialog
 	active_dialog_buttons = buttons
-	print("[MainUI] Event dialog opened, tracked %d buttons" % buttons.size())
 
-	# Mark this as an event dialog to prevent ESC from closing it (issue #452)
-	dialog.set_meta("is_event_dialog", true)
-
-	# Add dialog to viewport root (Fix #458) - ensures it's above blocker and all UI
-	print("[MainUI] Adding event dialog to viewport root as top-level overlay...")
-	get_tree().root.add_child(dialog)
-	dialog.visible = true
-	dialog.z_index = 1000  # Very high z-index to ensure it's on top
-	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
-	print("[MainUI] Event dialog added and made visible: %s" % dialog.visible)
-
-	# Wait one frame
-	await get_tree().process_frame
-	print("[MainUI] === EVENT DIALOG SETUP COMPLETE ===")
-	print("[MainUI] Ready for keyboard input via MainUI._input()")
-
-func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Control, blocker: Control):
-	"""Handle event choice selection"""
-	dialog.queue_free()
-	blocker.queue_free()
-
-	# Clear active dialog state
+func _on_event_dialog_closed() -> void:
+	"""EventDialog dismissed its modal — clear the keyboard-routing state (#622)."""
 	active_dialog = null
 	active_dialog_buttons = []
 
-	log_message("[color=cyan]Event choice: %s[/color]" % choice_id)
-
-	# Tell game manager to resolve event
+func _on_event_choice_selected(event: Dictionary, choice_id: String) -> void:
+	"""Resolution stays signal-driven through game_manager.resolve_event (#622, L1 reuse)."""
 	game_manager.resolve_event(event, choice_id)
 
-	# Show next event in queue if any
-	if not event_queue.is_empty():
-		print("[MainUI] Event resolved, showing next event in queue...")
-		# Wait one frame to ensure dialog is cleaned up before showing next
-		await get_tree().process_frame
-		_show_next_event()
-	else:
-		print("[MainUI] Event resolved, queue empty")
-		is_showing_event = false
 
 func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: Array):
 	"""Update info bar when hovering over an action and highlight affected resources"""
