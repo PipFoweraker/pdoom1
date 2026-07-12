@@ -15,10 +15,14 @@ enum Category {
 var keybinds: Dictionary = {
 	# Screenshots & Logging
 	"screenshot": {"key": KEY_BRACKETLEFT, "category": Category.SCREENSHOT, "description": "Take Screenshot"},
-	"export_log": {"key": KEY_BACKSLASH, "category": Category.ADMIN, "description": "Export Game Log"},
+	# Moved off backslash (KEY_F12) so backslash is free for the DEV MODE overlay (owner request).
+	"export_log": {"key": KEY_F12, "category": Category.ADMIN, "description": "Export Game Log"},
 
 	# Debug & Admin
 	"debug_overlay": {"key": KEY_F3, "category": Category.DEBUG, "description": "Toggle Debug Overlay (User)"},
+	# Backslash toggles the full DEV MODE overlay (state readout + dev controls). Gated on
+	# BuildInfo.DEV_BUILD by the overlay itself. Reclaimed backslash from export_log/bug_reporter.
+	"dev_mode": {"key": KEY_BACKSLASH, "category": Category.DEBUG, "description": "Toggle Dev Mode Overlay"},
 	"admin_mode": {"key": KEY_BRACKETRIGHT, "category": Category.ADMIN, "description": "Toggle Admin Mode"},
 
 	# Gameplay
@@ -30,7 +34,8 @@ var keybinds: Dictionary = {
 	# UI Navigation
 	"next_tab": {"key": KEY_TAB, "category": Category.UI, "description": "Next Tab"},
 	"prev_tab": {"key": KEY_TAB, "shift": true, "category": Category.UI, "description": "Previous Tab"},
-	"bug_reporter": {"key": KEY_BACKSLASH, "category": Category.UI, "description": "Open Bug Reporter"},
+	# Moved off backslash to N (N already opened the bug reporter) — backslash is now DEV MODE.
+	"bug_reporter": {"key": KEY_N, "category": Category.UI, "description": "Open Bug Reporter"},
 	# "employee_tab": {"key": KEY_E, "category": Category.UI, "description": "Employee Screen"},  # DISABLED: moving to main UI
 	"settings": {"key": KEY_F10, "category": Category.UI, "description": "Settings Menu"},
 	"open_ledger": {"key": KEY_L, "category": Category.UI, "description": "Open Liability Ledger"},
@@ -63,7 +68,7 @@ var profiles: Dictionary = {}  # profile_name -> keybind dict
 
 # Config file
 const CONFIG_PATH = "user://keybinds.cfg"
-const KEYBINDS_CONFIG_VERSION = 3  # bump when default binds change; stale saved configs refresh to defaults
+const KEYBINDS_CONFIG_VERSION = 4  # bump when default binds change; stale saved configs refresh to defaults
 var config = ConfigFile.new()
 
 # Signals
@@ -73,6 +78,7 @@ signal screenshot_requested
 signal log_export_requested
 signal admin_mode_toggled
 signal debug_overlay_toggled
+signal dev_mode_toggled
 
 func _ready():
 	load_keybinds()
@@ -282,6 +288,11 @@ func _input(event: InputEvent):
 	# Debug overlay (user mode)
 	elif is_action_pressed(event, "debug_overlay"):
 		debug_overlay_toggled.emit()
+		get_viewport().set_input_as_handled()
+
+	# Dev mode overlay (backslash) — full state readout + dev controls (dev builds only)
+	elif is_action_pressed(event, "dev_mode"):
+		dev_mode_toggled.emit()
 		get_viewport().set_input_as_handled()
 
 	# Admin mode

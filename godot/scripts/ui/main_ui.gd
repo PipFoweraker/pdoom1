@@ -128,6 +128,13 @@ func _ready():
 	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
 	add_child(DevBuildBadge.new())
 
+	# DEV MODE overlay (backslash) — full state readout + dev controls, on its own CanvasLayer.
+	# Gated on BuildInfo.DEV_BUILD by the overlay; wired to MainUI so its jump buttons can
+	# drive the in-place ledger/travel/employee screens.
+	var dev_overlay := DevModeOverlay.new()
+	dev_overlay.main_ui = self
+	add_child(dev_overlay)
+
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
 	set_process_unhandled_input(true)
@@ -268,8 +275,8 @@ func _input(event: InputEvent):
 				_on_commit_plan_button_pressed()
 				get_viewport().set_input_as_handled()
 
-		# Backslash (\) or N key to open bug reporter (global hotkeys)
-		elif event.keycode == KEY_BACKSLASH or event.keycode == KEY_N:
+		# N key to open bug reporter (backslash was reclaimed for the DEV MODE overlay)
+		elif event.keycode == KEY_N:
 			if bug_report_panel:
 				bug_report_panel.show_panel()
 				get_viewport().set_input_as_handled()
