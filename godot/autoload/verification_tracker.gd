@@ -48,17 +48,25 @@ var debug_mode: bool = false
 # Entries: {"t": turn, "k": "a", "id": action_id} | {"t": turn, "k": "r", "ev": event_id, "ch": choice_id}
 var replay_log: Array = []
 
+# WS-C (ADR-0005): a seed = RNG seed + event schedule, so the schedule is part of the
+# run's identity and must travel in the replay artifact (L0 #620 item 4 / DQ-6: the
+# producer never emitted the `schedule` key replay_simulator.gd reads).
+var event_schedule: Array = []
 
-func start_tracking(seed: String, version: String = "unknown"):
+
+func start_tracking(seed: String, version: String = "unknown", schedule: Array = []):
 	"""
 	Initialize verification hash for new game.
 
 	Args:
 		seed: Game seed (deterministic RNG source)
 		version: Game version (for compatibility checks)
+		schedule: The run's event schedule (ADR-0005: part of seed identity; emitted
+			in the replay artifact so scheduled runs reproduce — DQ-6)
 	"""
 	game_seed = seed
 	game_version = version
+	event_schedule = schedule.duplicate(true)
 	tracking_enabled = true
 	replay_log.clear()
 
@@ -238,6 +246,9 @@ func get_replay() -> Dictionary:
 		"format": "pdoom1-replay-v1",
 		"seed": game_seed,
 		"version": game_version,
+		# DQ-6 (#620 item 4): the verifier reads `schedule` (replay_simulator.gd) —
+		# emit it. [] for unscheduled runs, so pre-L0 artifacts stay verifiable.
+		"schedule": event_schedule.duplicate(true),
 		"log": replay_log.duplicate(true)
 	}
 
@@ -265,6 +276,7 @@ func snapshot() -> Dictionary:
 		"verification_hash": verification_hash,
 		"game_seed": game_seed,
 		"game_version": game_version,
+		"event_schedule": event_schedule.duplicate(true),
 		"replay_log": replay_log.duplicate(true)
 	}
 
@@ -275,6 +287,7 @@ func restore(snap: Dictionary) -> void:
 	verification_hash = snap.get("verification_hash", "")
 	game_seed = snap.get("game_seed", "")
 	game_version = snap.get("game_version", "")
+	event_schedule = (snap.get("event_schedule", []) as Array).duplicate(true)
 	replay_log = (snap.get("replay_log", []) as Array).duplicate(true)
 
 

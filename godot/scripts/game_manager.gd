@@ -40,10 +40,11 @@ func start_new_game(game_seed: String = ""):
 	turn_manager = TurnManager.new(state)
 	is_initialized = true
 
-	# Start verification tracking
+	# Start verification tracking. The event schedule travels with the artifact
+	# (ADR-0005: seed = RNG seed + schedule; DQ-6 fix, L0 #620 item 4).
 	var game_version = GameConfig.CURRENT_VERSION
 	VerificationTracker.enable_debug()  # Enable verbose logging
-	VerificationTracker.start_tracking(game_seed, game_version)
+	VerificationTracker.start_tracking(game_seed, game_version, state.event_schedule)
 	print("[GameManager] Verification tracking enabled (debug mode: ON)")
 
 	# Start baseline simulation in background if appropriate (Issue #372)
