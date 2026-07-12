@@ -43,21 +43,9 @@ var queued_actions: Array = []
 var research_quality_selector  # Issue #500
 var doom_trend_graph  # #512 doom trend sparkline (script-instantiated)
 var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-instantiated)
-var ledger_summary_label: Button  # BL-1 compact Liability Ledger summary; clickable -> ledger screen (#578)
-var _ledger_due_soon_logged: bool = false  # #578: only log the "payment due" reminder on entry, not every frame
-
-# Leather-ledger palette (playtester: "rich brown leathery colour"). Warm saddle base
-# with a darker border; ink colours are bright/warm so state stays legible on brown.
-const _LEDGER_LEATHER := Color(0.32, 0.20, 0.11)        # base saddle brown
-const _LEDGER_LEATHER_HOVER := Color(0.40, 0.26, 0.15)  # lighter on hover — inviting
-const _LEDGER_LEATHER_PRESSED := Color(0.24, 0.15, 0.08)
-const _LEDGER_LEATHER_BORDER := Color(0.14, 0.08, 0.03)  # dark stitched edge
-const _LEDGER_INK_CLEAN := Color(0.86, 0.80, 0.62)       # warm parchment cream
-const _LEDGER_INK_DUE := Color(1.0, 0.55, 0.42)          # warm red — payment due
-const _LEDGER_INK_SECRET := Color(1.0, 0.80, 0.45)       # warm amber — secrets/owed
-# #601: ledger warnings on the message log get a DISTINCT RED so they stand apart from the
-# normal event/positive greens/golds. Kept as a named constant so it's unit-testable.
-const _LEDGER_WARN_RED := Color(0.93, 0.24, 0.20)
+var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
+var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
+var employee_panel  # #622 L10: employee roster + staff ID card (becomes L2's assignment surface)
 var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
@@ -65,10 +53,6 @@ var current_turn_phase: String = "NOT_STARTED"
 # Active dialog state for keyboard shortcuts
 var active_dialog: Control = null
 var active_dialog_buttons: Array = []
-
-# Event queue for sequential presentation (FIX: multiple events in same turn)
-var event_queue: Array[Dictionary] = []
-var is_showing_event: bool = false
 
 func _ready():
 	print("[MainUI] Initializing UI...")
@@ -83,7 +67,18 @@ func _ready():
 	game_manager.action_executed.connect(_on_action_executed)
 	game_manager.error_occurred.connect(_on_error_occurred)
 	game_manager.actions_available.connect(_on_actions_available)
-	game_manager.event_triggered.connect(_on_event_triggered)
+
+	# #622 L10: event dialog presenter (script-instantiated child, same mount pattern as
+	# the #500 selector). Choices route back through game_manager.resolve_event so the
+	# presenter stays reusable for the L1 rewrite's mid-month response windows.
+	event_dialog = preload("res://scripts/ui/event_dialog.gd").new()
+	event_dialog.state_provider = game_manager.get_game_state
+	add_child(event_dialog)
+	game_manager.event_triggered.connect(event_dialog.present)
+	event_dialog.choice_selected.connect(_on_event_choice_selected)
+	event_dialog.dialog_opened.connect(_on_event_dialog_opened)
+	event_dialog.dialog_closed.connect(_on_event_dialog_closed)
+	event_dialog.message_logged.connect(log_message)
 
 	# Issue #500: research quality selector (script-instantiated; reparent in editor if preferred)
 	research_quality_selector = preload("res://scripts/ui/research_quality_selector.gd").new()
@@ -107,26 +102,26 @@ func _ready():
 	right_zones.add_child(doom_breakdown)
 	right_zones.move_child(doom_breakdown, doom_trend_graph.get_index() + 1)
 
-	# BL-1: compact Liability Ledger summary just below the doom trend. Kept terse so
-	# the main view stays uncrowded; the full ledger is a switchable screen (Financing).
-	# #578: it's now a flat Button so the summary is directly clickable to open the full
-	# ledger screen (playtester: "no easy way of getting to the ledger from the main UI").
-	# Playtester: the ledger access was "kind of hidden" — make it ~5x bigger with a
-	# rich brown leather look so it reads as a distinct, inviting object, not a label.
-	ledger_summary_label = Button.new()
-	ledger_summary_label.flat = false
-	ledger_summary_label.focus_mode = Control.FOCUS_NONE
-	ledger_summary_label.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	ledger_summary_label.custom_minimum_size = Vector2(0, 64)  # heft — was an 11px flat label
-	ledger_summary_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	ledger_summary_label.add_theme_font_size_override("font_size", 20)
-	ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
-	_apply_leather_style(ledger_summary_label)
-	ledger_summary_label.text = "📖  Liability Ledger — clean"
-	ledger_summary_label.tooltip_text = "Open the Liability Ledger  (press L)"
-	ledger_summary_label.pressed.connect(_show_ledger_screen)
-	right_zones.add_child(ledger_summary_label)
-	right_zones.move_child(ledger_summary_label, doom_trend_graph.get_index() + 1)
+	# BL-1: compact Liability Ledger summary just below the doom trend. #622 L10: the
+	# leather palette, summary button, and full-screen builder now live in LedgerScreen;
+	# MainUI keeps the _show_ledger_screen entry point and its dialog bookkeeping.
+	ledger_screen = preload("res://scripts/ui/ledger_screen.gd").new()
+	ledger_screen.message_logged.connect(log_message)
+	add_child(ledger_screen)
+	var ledger_summary_btn: Button = ledger_screen.create_summary_button()
+	ledger_summary_btn.pressed.connect(_show_ledger_screen)
+	right_zones.add_child(ledger_summary_btn)
+	right_zones.move_child(ledger_summary_btn, doom_trend_graph.get_index() + 1)
+
+	# #622 L10: employee roster + staff ID card (script-instantiated child; grows into
+	# the L2 per-person assignment surface). Renders into the scene's roster container;
+	# the ID-card overlay parents to the TabManager so it overlays everything.
+	employee_panel = preload("res://scripts/ui/employee_panel.gd").new()
+	add_child(employee_panel)
+	employee_panel.setup(roster_container, tab_manager)
+	employee_panel.dialog_opened.connect(_on_employee_dialog_opened)
+	employee_panel.dialog_closed.connect(_on_employee_dialog_closed)
+	employee_panel.info_text_changed.connect(_on_employee_info_text)
 
 	# #602: native path to the Employee screen. The E-key shortcut was retired when
 	# employee info began moving toward the main UI, which left the full Employee screen
@@ -142,7 +137,7 @@ func _ready():
 	employee_access_btn.tooltip_text = "Open the Employee management screen  (ESC returns here)"
 	employee_access_btn.pressed.connect(_on_open_employee_screen)
 	right_zones.add_child(employee_access_btn)
-	right_zones.move_child(employee_access_btn, ledger_summary_label.get_index() + 1)
+	right_zones.move_child(employee_access_btn, ledger_summary_btn.get_index() + 1)
 
 	# Always-visible DEV BUILD corner badge so a playtester can confirm exactly which
 	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
@@ -649,8 +644,9 @@ func _on_game_state_updated(state: Dictionary):
 	if doom_breakdown:
 		doom_breakdown.set_sources(state.get("doom_system", {}).get("doom_sources", {}))
 
-	# BL-1: refresh the compact Liability Ledger summary
-	_update_ledger_summary(state.get("ledger", {}))
+	# BL-1: refresh the compact Liability Ledger summary (#622 L10: lives in LedgerScreen)
+	if ledger_screen:
+		ledger_screen.update_summary(state.get("ledger", {}))
 
 	# Update office cat for doom level and visibility
 	if office_cat:
@@ -695,61 +691,9 @@ func _on_game_state_updated(state: Dictionary):
 	# Refresh upgrades list to update affordability
 	_populate_upgrades()
 
-	# Update employee roster display
-	_update_employee_roster(state)
-
-func _make_leather_box(bg: Color) -> StyleBoxFlat:
-	"""A warm saddle-leather StyleBoxFlat: dark stitched border + subtle rounding."""
-	var box := StyleBoxFlat.new()
-	box.bg_color = bg
-	box.border_color = _LEDGER_LEATHER_BORDER
-	box.set_border_width_all(3)
-	box.set_corner_radius_all(8)
-	box.content_margin_left = 14
-	box.content_margin_right = 14
-	box.content_margin_top = 8
-	box.content_margin_bottom = 8
-	return box
-
-func _apply_leather_style(btn: Button) -> void:
-	"""Give the ledger access button its rich brown leather look across all states."""
-	btn.add_theme_stylebox_override("normal", _make_leather_box(_LEDGER_LEATHER))
-	btn.add_theme_stylebox_override("hover", _make_leather_box(_LEDGER_LEATHER_HOVER))
-	btn.add_theme_stylebox_override("pressed", _make_leather_box(_LEDGER_LEATHER_PRESSED))
-	btn.add_theme_stylebox_override("focus", _make_leather_box(_LEDGER_LEATHER_HOVER))
-
-func _update_ledger_summary(ledger_data: Dictionary) -> void:
-	"""BL-1 compact summary: outstanding owed, soonest due, secret count. Deliberately
-	terse so the main view stays uncrowded; the full ledger is a switchable screen."""
-	if not ledger_summary_label:
-		return
-	var owed: float = float(ledger_data.get("outstanding_payable", 0.0))
-	var soonest: int = int(ledger_data.get("soonest_fuse", -1))
-	var secrets: int = int(ledger_data.get("secret_count", 0))
-	if ledger_data.is_empty() or (owed <= 0.0 and secrets == 0):
-		ledger_summary_label.text = "📖  Liability Ledger — clean  (click / L)"
-		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
-		_ledger_due_soon_logged = false
-		return
-	var due_txt := ("due %dt" % soonest) if soonest >= 0 else "no due"
-	var secret_txt := ("  |  %d secret" % secrets) if secrets > 0 else ""
-	# #578: due-soon reminder. When the soonest payable fuse is within ~1-2 turns, flag it
-	# visibly (⚠ prefix + strong red) and drop a one-shot message-log line so the player is
-	# warned things are coming due, not just left to notice on their own.
-	var due_soon := soonest >= 0 and soonest <= 2 and owed > 0.0
-	var prefix := "⚠ " if due_soon else "📖  "
-	ledger_summary_label.text = "%sLedger: %s owed  |  %s%s" % [prefix, GameConfig.format_money(owed), due_txt, secret_txt]
-	if due_soon:
-		# Urgent: warm red (legible on brown leather), and log once on entry into the window.
-		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_DUE)
-		if not _ledger_due_soon_logged:
-			var when_txt := "this turn" if soonest <= 0 else ("in %d turn%s" % [soonest, "" if soonest == 1 else "s"])
-			log_message("[color=#%s]⚠ Ledger: %s payment due %s — open the ledger (click summary or press L) to review.[/color]" % [_LEDGER_WARN_RED.to_html(false), GameConfig.format_money(owed), when_txt])
-			_ledger_due_soon_logged = true
-	else:
-		_ledger_due_soon_logged = false
-		# Warm parchment when only owed; warm amber as secret liabilities mount (exposure pressure).
-		ledger_summary_label.add_theme_color_override("font_color", _LEDGER_INK_CLEAN if secrets == 0 else _LEDGER_INK_SECRET)
+	# Update employee roster display (#622 L10: lives in EmployeePanel)
+	if employee_panel:
+		employee_panel.update_roster(state)
 
 func _on_turn_phase_changed(phase_name: String):
 	print("[MainUI] Phase changed: ", phase_name)
@@ -1097,15 +1041,13 @@ func _get_action_by_id(action_id: String) -> Dictionary:
 	return GameActions.get_action_by_id(action_id)
 
 # --- Issue #510 UI polish helpers (submenu close affordance + alignment) ---
+# #622 L10: the chrome itself (panel styling, [X] + ESC hint, alignment, button lookup)
+# lives in SubmenuChrome. These thin wrappers keep MainUI's ownership of the
+# active_dialog state and leave every existing dialog-builder call site unchanged.
 
 func _find_action_button(action_id: String) -> Button:
 	"""Locate the left-panel icon button that opened a submenu, by action_id meta."""
-	for child in actions_list.get_children():
-		if child is VBoxContainer:
-			for b in child.get_children():
-				if b is Button and b.get_meta("action_id", "") == action_id:
-					return b
-	return null
+	return SubmenuChrome.find_action_button(actions_list, action_id)
 
 func _decorate_active_submenu(anchor_button: Button = null) -> void:
 	"""Add close affordance (X + ESC hint) to the active submenu and, when an
@@ -1116,55 +1058,14 @@ func _decorate_active_submenu(anchor_button: Button = null) -> void:
 		return
 	if active_dialog.has_meta("is_event_dialog"):
 		return  # Event dialogs must be completed, not closed (#452)
-	_add_submenu_close_affordance(active_dialog)
+	SubmenuChrome.add_close_affordance(active_dialog, _close_active_submenu)
 	if anchor_button != null and is_instance_valid(anchor_button):
-		_align_submenu_to_button(active_dialog, anchor_button)
-
-func _style_submenu_panel(dialog: Control) -> void:
-	"""Near-opaque panel + border so submenus read as solid panels, not see-through
-	overlays on the action icons (playtest feedback: screen5)."""
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.13, 0.16, 0.97)
-	style.set_border_width_all(2)
-	style.border_color = Color(0.38, 0.46, 0.42, 1.0)
-	style.set_corner_radius_all(6)
-	dialog.add_theme_stylebox_override("panel", style)
+		SubmenuChrome.align_to_button(active_dialog, anchor_button)
 
 func _add_submenu_close_affordance(dialog: Control) -> void:
-	"""Solid panel styling + clickable [X] top-right + '[ESC] close' hint bottom-right (#510).
-	Skips panel styling if the caller already set a bespoke 'panel' stylebox (e.g. the trend
-	expand panel), so we don't clobber it."""
-	if not dialog.has_theme_stylebox_override("panel"):
-		_style_submenu_panel(dialog)
-
-	var close_btn := Button.new()
-	close_btn.text = "✕"
-	close_btn.focus_mode = Control.FOCUS_NONE
-	close_btn.custom_minimum_size = Vector2(24, 24)
-	close_btn.size = Vector2(24, 24)
-	close_btn.position = Vector2(dialog.size.x - 30, 6)
-	close_btn.add_theme_font_size_override("font_size", 12)
-	close_btn.tooltip_text = "Close (ESC)"
-	var x_style := StyleBoxFlat.new()
-	x_style.bg_color = Color(0.30, 0.18, 0.18, 0.95)
-	x_style.set_corner_radius_all(4)
-	close_btn.add_theme_stylebox_override("normal", x_style)
-	var x_hover := x_style.duplicate()
-	x_hover.bg_color = Color(0.55, 0.22, 0.22, 1.0)
-	close_btn.add_theme_stylebox_override("hover", x_hover)
-	close_btn.pressed.connect(_close_active_submenu)
-	dialog.add_child(close_btn)
-
-	# Footer hint, bottom-RIGHT (clear of centered footer labels like "Pool: 3/6")
-	var hint := Label.new()
-	hint.text = "[ESC] close"
-	hint.add_theme_font_size_override("font_size", 10)
-	hint.add_theme_color_override("font_color", Color(0.65, 0.7, 0.65))
-	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	hint.size = Vector2(110, 16)
-	hint.position = Vector2(dialog.size.x - 122, dialog.size.y - 20)
-	dialog.add_child(hint)
+	"""#622 L10 delegator — keeps the one-arg call shape the dialog builders use;
+	the chrome is SubmenuChrome.add_close_affordance with MainUI's close routine."""
+	SubmenuChrome.add_close_affordance(dialog, _close_active_submenu)
 
 func _close_active_submenu() -> void:
 	"""Close the active submenu dialog (shared by [X] click and ESC)."""
@@ -1173,20 +1074,6 @@ func _close_active_submenu() -> void:
 	active_dialog = null
 	active_dialog_buttons = []
 
-func _align_submenu_to_button(dialog: Control, button: Button) -> void:
-	"""Position a submenu just to the RIGHT of the action button that opened it and
-	top-aligned to it, so it clearly expands from that row rather than over it
-	(#510 + playtest feedback). Clamped to the viewport."""
-	var parent := dialog.get_parent()
-	if parent == null:
-		return
-	var gap: float = 10.0
-	var view := get_viewport().get_visible_rect().size
-	var target_x: float = button.global_position.x + button.size.x + gap - parent.global_position.x
-	var target_y: float = button.global_position.y - parent.global_position.y
-	var max_x: float = maxf(40.0, view.x - dialog.size.x - 10.0)
-	var max_y: float = maxf(40.0, view.y - dialog.size.y - 10.0)
-	dialog.position = Vector2(clampf(target_x, 40.0, max_x), clampf(target_y, 40.0, max_y))
 
 func _debug_nudge_doom(delta: float) -> void:
 	"""DEBUG-only QA helper: bump doom by delta, record a history point so the trend graph
@@ -1202,21 +1089,6 @@ func _debug_nudge_doom(delta: float) -> void:
 	st.record_doom_history()
 	_on_game_state_updated(game_manager.get_game_state())
 	log_message("[color=gray][debug] doom %+.0f → %.1f%%[/color]" % [delta, st.doom])
-
-func _format_cost_summary(costs: Dictionary) -> String:
-	"""Compact inline cost string for event option buttons, e.g. ' ($30,000, 2 AP)' (#510)."""
-	if costs.is_empty():
-		return ""
-	var parts: Array[String] = []
-	for resource in costs.keys():
-		var amount = costs[resource]
-		if resource == "money":
-			parts.append(GameConfig.format_money(amount))
-		elif resource == "action_points":
-			parts.append("%d AP" % int(amount))
-		else:
-			parts.append("%d %s" % [int(amount), str(resource).capitalize()])
-	return " (%s)" % ", ".join(parts)
 
 func _show_doom_trend_expanded() -> void:
 	"""Expanded full-history doom trend panel (#512), reusing the #510 close affordance."""
@@ -1496,7 +1368,10 @@ func _show_hiring_submenu():
 	print("[MainUI] === HIRING SUBMENU SETUP COMPLETE ===")
 
 func _on_candidate_hired(candidate: Dictionary, dialog: Control):
-	"""Handle hiring a specific candidate from the pool"""
+	"""Handle hiring a specific candidate from the pool.
+	#622 L10: routed through GameManager.queue_candidate_hire — the engine owns the
+	pending_hire_queue/candidate-pool writes and select_action owns affordability
+	(its error_occurred signal logs the reason), so the old UI pre-checks are gone."""
 	dialog.queue_free()
 
 	# Clear active dialog state
@@ -1508,42 +1383,14 @@ func _on_candidate_hired(candidate: Dictionary, dialog: Control):
 	var action_id = "hire_%s_researcher" % spec
 	var candidate_name = candidate.get("name", "Unknown")
 
-	# Check if action can be afforded before adding to UI queue (#456)
-	var action_def = _get_action_by_id(action_id)
-	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
-	var available_ap = game_manager.state.get_available_ap()
-
-	if available_ap < ap_cost:
-		log_message("[color=red]Not enough AP to hire: need %d, have %d[/color]" % [ap_cost, available_ap])
-		return
-
-	if not game_manager.state.can_afford(action_def.get("costs", {})):
-		log_message("[color=red]Cannot afford to hire: %s[/color]" % candidate_name)
-		return
+	if not game_manager.queue_candidate_hire(candidate_name, spec):
+		return  # rejected — error_occurred already logged the reason
 
 	log_message("[color=cyan]Hiring: %s (%s)[/color]" % [candidate_name, spec.capitalize()])
 
-	# Find and set the specific candidate object for hiring
-	var candidate_obj: Researcher = null
-	for c in game_manager.state.candidate_pool:
-		if c.researcher_name == candidate_name and c.specialization == spec:
-			candidate_obj = c
-			break
-
-	if candidate_obj:
-		# Add to pending hire queue (supports multiple hires per turn)
-		game_manager.state.pending_hire_queue.append(candidate_obj)
-		# Remove from pool immediately when queued to prevent double-hiring
-		game_manager.state.remove_candidate(candidate_obj)
-		print("[MainUI] Queued hire: %s (removed from pool, queue size: %d)" % [candidate_name, game_manager.state.pending_hire_queue.size()])
-	else:
-		print("[MainUI] WARNING: Could not find candidate object for: %s" % candidate_name)
-
-	# Queue the hiring action
+	# Mirror the engine-accepted action in the local queue display
 	queued_actions.append({"id": action_id, "name": "Hire " + candidate_name})
 	update_queued_actions_display()
-
-	game_manager.select_action(action_id)
 
 func _on_hiring_option_selected(action_id: String, action_name: String, dialog: Control):
 	"""Handle hiring submenu selection"""
@@ -1866,125 +1713,16 @@ func _on_financing_option_selected(action_id: String, action_name: String, dialo
 	game_manager.select_action(action_id)
 
 func _show_ledger_screen():
-	"""BL-1: the full Liability Ledger screen — lists every live entry (source, currency,
-	principal, fuse, secrecy) plus death attribution.
-
-	#601: styled as a distinct leather-bound object whose inner content FILLS the panel
-	(the old build left everything cramped top-left with the terms truncated). The entries
-	are laid out as a real column table so nothing like 'due 3t @25%/t' gets clipped, and
-	the panel carries an is_ledger meta so the L key can toggle it closed (#601)."""
+	"""BL-1/#601: open the full Liability Ledger screen. #622 L10: the panel itself is
+	built by LedgerScreen; this stays the single entry point (L key, summary click,
+	financing submenu, dev overlay) and owns the active_dialog bookkeeping."""
 	if active_dialog != null and is_instance_valid(active_dialog):
 		active_dialog.queue_free()
 		active_dialog = null
 		active_dialog_buttons = []
 
-	# Larger, centred panel so the ledger reads as a substantial object, not a scrap.
-	var view := get_viewport().get_visible_rect().size
-	var dialog := Panel.new()
-	var panel_size := Vector2(minf(720.0, view.x - 60.0), minf(560.0, view.y - 60.0))
-	dialog.custom_minimum_size = panel_size
-	dialog.size = panel_size
-	dialog.position = ((view - panel_size) / 2.0).max(Vector2(20, 20))
-	dialog.set_meta("is_ledger", true)  # lets the L key toggle it closed (#601)
-
-	# Distinct leather binding so the ledger stands apart from the grey submenus. Setting a
-	# bespoke 'panel' stylebox here makes _add_submenu_close_affordance keep it (#510).
-	var ledger_panel_style := _make_leather_box(Color(0.16, 0.11, 0.07, 0.99))
-	dialog.add_theme_stylebox_override("panel", ledger_panel_style)
-
-	# Fill the whole panel: anchor the margin to all four edges so the content stretches
-	# to the panel's size instead of collapsing to its top-left minimum (#601).
-	var margin := MarginContainer.new()
-	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 22)
-	margin.add_theme_constant_override("margin_right", 22)
-	margin.add_theme_constant_override("margin_top", 20)
-	margin.add_theme_constant_override("margin_bottom", 30)
-	dialog.add_child(margin)
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 8)
-	margin.add_child(vbox)
-
 	var ledger = game_manager.state.ledger if (game_manager and game_manager.state) else null
-
-	var title := Label.new()
-	title.text = "📖  LIABILITY LEDGER"
-	title.add_theme_font_size_override("font_size", 22)
-	title.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
-	vbox.add_child(title)
-
-	var rule := HSeparator.new()
-	vbox.add_child(rule)
-
-	if ledger == null:
-		var none := Label.new()
-		none.text = "(no ledger)"
-		none.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
-		vbox.add_child(none)
-	else:
-		var summary := Label.new()
-		summary.text = "Owed: %s        Favors: %s        Secrets: %d" % [
-			GameConfig.format_money(ledger.outstanding(Ledger.Side.PAYABLE)),
-			GameConfig.format_money(ledger.outstanding(Ledger.Side.RECEIVABLE)),
-			ledger.secret_entries().size()]
-		summary.add_theme_font_size_override("font_size", 15)
-		summary.add_theme_color_override("font_color", _LEDGER_INK_SECRET)
-		vbox.add_child(summary)
-
-		# Scroll grows to consume the remaining panel height, so the table fills the space.
-		var scroll := ScrollContainer.new()
-		scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		vbox.add_child(scroll)
-
-		var live = ledger.entries.filter(func(e): return not e.settled)
-		if live.is_empty():
-			var clean := Label.new()
-			clean.text = "Clean books. Every mitigation you take will show up here as a bill."
-			clean.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			clean.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			clean.add_theme_color_override("font_color", Color(0.6, 0.75, 0.6))
-			scroll.add_child(clean)
-		else:
-			# Real column table: Source | Amount | Due | Notes. Each cell sizes to its own
-			# content so terms like 'due 3t @25%/t' are never truncated (#601).
-			var table := GridContainer.new()
-			table.columns = 4
-			table.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			table.add_theme_constant_override("h_separation", 24)
-			table.add_theme_constant_override("v_separation", 8)
-			scroll.add_child(table)
-
-			for head in ["Source", "Amount", "Due", "Notes"]:
-				var h := Label.new()
-				h.text = head
-				h.add_theme_font_size_override("font_size", 12)
-				h.add_theme_color_override("font_color", Color(0.70, 0.62, 0.45))
-				table.add_child(h)
-
-			for e in live:
-				var side_txt = "owe" if e.side == Ledger.Side.PAYABLE else "owed"
-				var interest_txt = ("  @%.0f%%/t" % (e.interest * 100.0)) if e.interest > 0.0 else ""
-				var note_txt = "SECRET" if e.secret else ""
-				var row_color = _LEDGER_INK_SECRET if e.secret else _LEDGER_INK_CLEAN
-				var cells = [
-					str(e.source),
-					"%s %.0f %s" % [side_txt, e.principal, e.currency],
-					"due %dt%s" % [e.fuse, interest_txt],
-					note_txt,
-				]
-				for cell_text in cells:
-					var cell := Label.new()
-					cell.text = cell_text
-					cell.add_theme_font_size_override("font_size", 14)
-					cell.add_theme_color_override("font_color", row_color)
-					table.add_child(cell)
-
-		if ledger.death_attribution.size() > 0:
-			var att := Label.new()
-			att.text = "Attributed damage: %d billed shortfalls" % ledger.death_attribution.size()
-			att.add_theme_color_override("font_color", _LEDGER_WARN_RED)
-			vbox.add_child(att)
+	var dialog: Panel = ledger_screen.build_screen(ledger, get_viewport().get_visible_rect().size)
 
 	active_dialog = dialog
 	active_dialog_buttons = []
@@ -2983,254 +2721,22 @@ func update_queued_actions_display():
 		end_turn_button.disabled = queue_empty
 		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [queued_actions.size(), queue_empty])
 
-func _on_event_triggered(event: Dictionary):
-	"""Handle event trigger - queue event for sequential presentation"""
-	print("[MainUI] === EVENT TRIGGERED: %s ===" % event.get("name", "Unknown"))
-
-	# Add to event queue
-	event_queue.append(event)
-	print("[MainUI] Event queued. Queue size: %d" % event_queue.size())
-
-	# If not currently showing an event, show this one immediately
-	if not is_showing_event:
-		_show_next_event()
-	else:
-		print("[MainUI] Event added to queue, will show after current event resolves")
-
-func _show_next_event():
-	"""Show the next event in queue (sequential presentation)"""
-	if event_queue.is_empty():
-		print("[MainUI] Event queue empty, no more events to show")
-		is_showing_event = false
-		return
-
-	# Mark that we're showing an event
-	is_showing_event = true
-
-	# Get next event from queue
-	var event = event_queue.pop_front()
-	print("[MainUI] === SHOWING EVENT: %s ===" % event.get("name", "Unknown"))
-	print("[MainUI] Remaining events in queue: %d" % event_queue.size())
-
-	log_message("[color=gold]EVENT: %s[/color]" % event.get("name", "Unknown"))
-
-
-	# Blurred blocker behind event dialog panel (Fix Issue #458 + #485)
-	# Add to root (get_tree().root) to ensure it blocks ALL UI interactions
-	var click_blocker := ColorRect.new()
-	click_blocker.color = Color(0.0, 0.0, 0.0, 0.6)
-	click_blocker.mouse_filter = Control.MOUSE_FILTER_STOP  # Block all mouse events
-	click_blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	click_blocker.z_index = 999  # Just below dialog but above all other UI
-	click_blocker.z_as_relative = false  # Absolute z-index
-	# Add to viewport root to cover entire screen and all UI
-	get_tree().root.add_child(click_blocker)
-
-
-
-
-
-
-	# Create event dialog - use Panel for consistent input handling
-	var dialog = Panel.new()
-	dialog.custom_minimum_size = Vector2(600, 450)
-	dialog.size = Vector2(600, 450)
-	# Center it manually
-	dialog.position = Vector2(
-		(get_viewport().get_visible_rect().size.x - 600) / 2,
-		(get_viewport().get_visible_rect().size.y - 450) / 2
-	)
-
-	# Add forest green background for better visibility
-	var panel_style = StyleBoxFlat.new()
-	panel_style.bg_color = Color(0.15, 0.25, 0.15, 1.0)  # Dark forest green
-	panel_style.border_width_left = 3
-	panel_style.border_width_top = 3
-	panel_style.border_width_right = 3
-	panel_style.border_width_bottom = 3
-	panel_style.border_color = Color(0.3, 0.5, 0.3, 1.0)  # Lighter green border
-	panel_style.corner_radius_top_left = 8
-	panel_style.corner_radius_top_right = 8
-	panel_style.corner_radius_bottom_right = 8
-	panel_style.corner_radius_bottom_left = 8
-	dialog.add_theme_stylebox_override("panel", panel_style)
-
-	print("[MainUI] Created Panel for event, size: %s, position: %s" % [dialog.size, dialog.position])
-
-	# Create main container
-	var margin = MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 15)
-	margin.add_theme_constant_override("margin_right", 15)
-	margin.add_theme_constant_override("margin_top", 15)
-	margin.add_theme_constant_override("margin_bottom", 15)
-	dialog.add_child(margin)
-
-	var main_vbox = VBoxContainer.new()
-	margin.add_child(main_vbox)
-
-	# Add title
-	var title_label = Label.new()
-	title_label.text = event.get("name", "Event")
-	title_label.add_theme_font_size_override("font_size", 18)
-	title_label.add_theme_color_override("font_color", Color.GOLD)
-	main_vbox.add_child(title_label)
-
-	# Add description label
-	var desc_label = Label.new()
-	desc_label.text = event.get("description", "An event has occurred!")
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	desc_label.custom_minimum_size = Vector2(560, 0)
-	main_vbox.add_child(desc_label)
-
-	# Add spacing
-	var spacer = Control.new()
-	spacer.custom_minimum_size = Vector2(0, 20)
-	main_vbox.add_child(spacer)
-
-	# Create container for option buttons
-	var vbox = VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 10)
-	main_vbox.add_child(vbox)
-
-	# Add each option as a button
-	var options = event.get("options", [])
-	var current_state = game_manager.get_game_state()
-
-	var button_index = 0
-	var buttons = []  # Store buttons for keyboard access
-	var dialog_key_labels = ["Q", "W", "E", "R", "A", "S", "D", "F", "Z"]
-
-	for option in options:
-		var choice_id = option.get("id", "")
-		var choice_text = option.get("text", "")
-		var costs = option.get("costs", {})
-
-		var btn = Button.new()
-		btn.focus_mode = Control.FOCUS_NONE  # Don't grab focus - let MainUI handle keys
-		btn.mouse_filter = Control.MOUSE_FILTER_PASS  # Still allow mouse clicks
-
-		# Add keyboard hint (LETTERS not numbers) + inline cost summary (#510)
-		var key_label = dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-		btn.text = "[%s] %s%s" % [key_label, choice_text, _format_cost_summary(costs)]
-		btn.custom_minimum_size = Vector2(500, 45)
-
-		# Add button border for better definition
-		var button_style = StyleBoxFlat.new()
-		button_style.bg_color = Color(0.2, 0.2, 0.2, 1.0)  # Dark gray background
-		button_style.border_width_left = 2
-		button_style.border_width_top = 2
-		button_style.border_width_right = 2
-		button_style.border_width_bottom = 2
-		button_style.border_color = Color(0.15, 0.15, 0.15, 1.0)  # Slightly darker border
-		button_style.corner_radius_top_left = 4
-		button_style.corner_radius_top_right = 4
-		button_style.corner_radius_bottom_right = 4
-		button_style.corner_radius_bottom_left = 4
-		btn.add_theme_stylebox_override("normal", button_style)
-
-		# Hover state
-		var button_style_hover = button_style.duplicate()
-		button_style_hover.bg_color = Color(0.3, 0.3, 0.3, 1.0)  # Lighter on hover
-		btn.add_theme_stylebox_override("hover", button_style_hover)
-
-		# Check affordability
-		var can_afford = true
-		var missing_resources = []
-
-		for resource in costs.keys():
-			var cost = costs[resource]
-			var available = 0
-
-			# Special handling for action_points - use total AP (FIX #453)
-			# Must match can_afford() logic in GameState:130
-			if resource == "action_points":
-				available = current_state.get("action_points", 0)
-			else:
-				available = current_state.get(resource, 0)
-
-			if available < cost:
-				can_afford = false
-				if resource == "action_points":
-					missing_resources.append("AP (need %s, have %s available)" % [cost, available])
-				else:
-					missing_resources.append("%s (need %s, have %s)" % [resource, cost, available])
-
-		# Add tooltip with costs/effects
-		var tooltip = ""
-		if not costs.is_empty():
-			tooltip += "Costs:\n"
-			for resource in costs.keys():
-				tooltip += "  %s: %s\n" % [resource, costs[resource]]
-
-		var effects = option.get("effects", {})
-		if not effects.is_empty():
-			tooltip += "\nEffects:\n"
-			for resource in effects.keys():
-				var value = effects[resource]
-				var value_sign = "+" if value >= 0 else ""  # Renamed from 'sign' to avoid shadowing built-in function
-				tooltip += "  %s: %s%s\n" % [resource, value_sign, value]
-
-		if not can_afford:
-			tooltip += "\n[CANNOT AFFORD]\n"
-			for msg in missing_resources:
-				tooltip += "  Missing: " + msg + "\n"
-			btn.disabled = true
-			btn.modulate = Color(0.6, 0.6, 0.6)
-
-		btn.tooltip_text = tooltip
-
-		# Connect button
-		btn.pressed.connect(func(): _on_event_choice_selected(event, choice_id, dialog, click_blocker))
-
-		vbox.add_child(btn)
-		buttons.append(btn)
-		button_index += 1
-
-	# Store dialog state for keyboard handling in MainUI._input()
-	print("[MainUI] Setting active_dialog for event...")
+func _on_event_dialog_opened(dialog: Control, buttons: Array) -> void:
+	"""EventDialog put its modal up (#622) — route MainUI keyboard shortcuts to it.
+	The dialog carries the is_event_dialog meta, so ESC handling keeps refusing to
+	close it (#452)."""
 	active_dialog = dialog
 	active_dialog_buttons = buttons
-	print("[MainUI] Event dialog opened, tracked %d buttons" % buttons.size())
 
-	# Mark this as an event dialog to prevent ESC from closing it (issue #452)
-	dialog.set_meta("is_event_dialog", true)
-
-	# Add dialog to viewport root (Fix #458) - ensures it's above blocker and all UI
-	print("[MainUI] Adding event dialog to viewport root as top-level overlay...")
-	get_tree().root.add_child(dialog)
-	dialog.visible = true
-	dialog.z_index = 1000  # Very high z-index to ensure it's on top
-	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
-	print("[MainUI] Event dialog added and made visible: %s" % dialog.visible)
-
-	# Wait one frame
-	await get_tree().process_frame
-	print("[MainUI] === EVENT DIALOG SETUP COMPLETE ===")
-	print("[MainUI] Ready for keyboard input via MainUI._input()")
-
-func _on_event_choice_selected(event: Dictionary, choice_id: String, dialog: Control, blocker: Control):
-	"""Handle event choice selection"""
-	dialog.queue_free()
-	blocker.queue_free()
-
-	# Clear active dialog state
+func _on_event_dialog_closed() -> void:
+	"""EventDialog dismissed its modal — clear the keyboard-routing state (#622)."""
 	active_dialog = null
 	active_dialog_buttons = []
 
-	log_message("[color=cyan]Event choice: %s[/color]" % choice_id)
-
-	# Tell game manager to resolve event
+func _on_event_choice_selected(event: Dictionary, choice_id: String) -> void:
+	"""Resolution stays signal-driven through game_manager.resolve_event (#622, L1 reuse)."""
 	game_manager.resolve_event(event, choice_id)
 
-	# Show next event in queue if any
-	if not event_queue.is_empty():
-		print("[MainUI] Event resolved, showing next event in queue...")
-		# Wait one frame to ensure dialog is cleaned up before showing next
-		await get_tree().process_frame
-		_show_next_event()
-	else:
-		print("[MainUI] Event resolved, queue empty")
-		is_showing_event = false
 
 func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: Array):
 	"""Update info bar when hovering over an action and highlight affected resources"""
@@ -3312,284 +2818,22 @@ func _reset_resource_highlights():
 			label.remove_theme_color_override("font_color")
 	# ap_label is RichTextLabel - skip color override reset (it uses BBCode colors)
 
-func _update_employee_roster(state: Dictionary):
-	"""Update the employee roster display in the middle panel"""
-	if not roster_container:
-		return
-
-	# Clear existing roster entries
-	for child in roster_container.get_children():
-		child.queue_free()
-
-	# Get researchers from state
-	var researchers = state.get("researchers", [])
-
-	# If no individual researchers, show legacy counts
-	if researchers.is_empty():
-		var safety = state.get("safety_researchers", 0)
-		var capability = state.get("capability_researchers", 0)
-		var compute_eng = state.get("compute_engineers", 0)
-		var managers = state.get("managers", 0)
-
-		if safety + capability + compute_eng + managers == 0:
-			var empty_label = Label.new()
-			empty_label.text = "No staff hired"
-			empty_label.add_theme_font_size_override("font_size", 10)
-			empty_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
-			empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			roster_container.add_child(empty_label)
-		else:
-			# Show legacy count display
-			_add_legacy_staff_display(safety, capability, compute_eng, managers)
-		return
-
-	# Show individual researchers
-	for researcher_data in researchers:
-		var entry = _create_researcher_button(researcher_data)
-		roster_container.add_child(entry)
-
-func _add_legacy_staff_display(safety: int, capability: int, compute_eng: int, managers: int):
-	"""Show simple staff counts (legacy mode)"""
-	var staff_types = [
-		{"name": "Safety", "count": safety, "color": Color(0.3, 0.8, 0.3)},
-		{"name": "Capability", "count": capability, "color": Color(0.8, 0.3, 0.3)},
-		{"name": "Engineers", "count": compute_eng, "color": Color(0.3, 0.5, 0.8)},
-		{"name": "Managers", "count": managers, "color": Color(0.7, 0.7, 0.3)}
-	]
-
-	for staff_type in staff_types:
-		if staff_type["count"] > 0:
-			var hbox = HBoxContainer.new()
-			hbox.add_theme_constant_override("separation", 4)
-
-			# Color indicator
-			var indicator = Label.new()
-			indicator.text = "●"
-			indicator.add_theme_color_override("font_color", staff_type["color"])
-			indicator.add_theme_font_size_override("font_size", 12)
-			hbox.add_child(indicator)
-
-			# Count and name
-			var name_label = Label.new()
-			name_label.text = "%s: %d" % [staff_type["name"], staff_type["count"]]
-			name_label.add_theme_font_size_override("font_size", 10)
-			name_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.8))
-			hbox.add_child(name_label)
-
-			roster_container.add_child(hbox)
-
-# Old researcher entry: non-interactive panel item
-func _create_researcher_entry(data: Dictionary) -> Control:
-	"""Create a roster entry for an individual researcher"""
-	var panel = PanelContainer.new()
-	panel.custom_minimum_size = Vector2(0, 24)
-
-	var hbox = HBoxContainer.new()
-	hbox.add_theme_constant_override("separation", 6)
-	panel.add_child(hbox)
-
-	# Specialization color indicator
-	var spec_colors = {
-		"safety": Color(0.3, 0.8, 0.3),
-		"capabilities": Color(0.8, 0.3, 0.3),
-		"interpretability": Color(0.7, 0.3, 0.8),
-		"alignment": Color(0.3, 0.7, 0.8)
-	}
-
-	var spec = data.get("specialization", "safety")
-	var indicator = Label.new()
-	indicator.text = "●"
-	indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
-	indicator.add_theme_font_size_override("font_size", 10)
-	hbox.add_child(indicator)
-
-	# Name
-	var name_label = Label.new()
-	name_label.text = data.get("name", "Unknown")
-	name_label.add_theme_font_size_override("font_size", 9)
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	hbox.add_child(name_label)
-
-	# Productivity indicator (simple bar or percentage)
-	var productivity = data.get("base_productivity", 1.0)
-	var burnout = data.get("burnout", 0.0)
-	var effective_prod = productivity * (1.0 - min(burnout / 200.0, 0.5))
-
-	var prod_label = Label.new()
-	prod_label.text = "%.0f%%" % (effective_prod * 100)
-	prod_label.add_theme_font_size_override("font_size", 9)
-
-	# Color based on productivity
-	if effective_prod >= 1.0:
-		prod_label.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
-	elif effective_prod >= 0.7:
-		prod_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.3))
-	else:
-		prod_label.add_theme_color_override("font_color", Color(0.8, 0.3, 0.3))
-
-	hbox.add_child(prod_label)
-
-	# Burnout warning if high
-	if burnout >= 60:
-		var burnout_icon = Label.new()
-		burnout_icon.text = "🔥"
-		burnout_icon.add_theme_font_size_override("font_size", 8)
-		hbox.add_child(burnout_icon)
-
-	return panel
-
-# New researcher entry: interactive button
-func _create_researcher_button(data: Dictionary) -> Control:
-	"""Create a roster entry/button for an individual researcher"""
-	var btn := Button.new()
-	btn.custom_minimum_size = Vector2(0, 32)
-	btn.focus_mode = Control.FOCUS_NONE
-	btn.size_flags_horizontal = Control.SIZE_FILL
-	#btn.clip_contents = false
-
-	# Margin/Padding - ensures text does not render so close to box walls
-	var margin := MarginContainer.new()
-	#var margin_padding = 8
-	#margin.add_theme_constant_override("margin_left", margin_padding)
-	#margin.add_theme_constant_override("margin_right", margin_padding)
-	btn.add_child(margin)
-
-	# Main Row
-	var hbox := HBoxContainer.new()
-	var hbox_separation = 8
-	hbox.add_theme_constant_override("separation", hbox_separation)
-	hbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	margin.add_child(hbox)
-
-	# Specialization Colours - should this be global/callable?
-	var spec_colors = {
-		"safety": Color(0.3, 0.8, 0.3),
-		"capabilities": Color(0.8, 0.3, 0.3),
-		"interpretability": Color(0.7, 0.3, 0.8),
-		"alignment": Color(0.3, 0.7, 0.8)
-	}
-
-	# Specialisation Indicator
-	var spec = data.get("specialization", "safety")
-	var indicator := Label.new()
-	indicator.text = "●"
-	indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
-	hbox.add_child(indicator)
-
-	# Name Label
-	var name_label := Label.new()
-	name_label.text = data.get("name", "Unknown")
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-	name_label.add_theme_font_size_override("separation", 8)
-	hbox.add_child(name_label)
-
-	# Productivity Indicator (simple bar or percentage)
-	var productivity = data.get("base_productivity", 1.0)
-	var burnout = data.get("burnout", 0.0)
-	var effective_prod = productivity * (1.0 - min(burnout / 200.0, 0.5))
-
-	var prod_label := Label.new()
-	prod_label.text = "%.0f%%" % (effective_prod * 100)
-	prod_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-
-	# Color logic - based on employee productivity
-	if effective_prod >= 1.0:
-		prod_label.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
-	elif effective_prod >= 0.7:
-		prod_label.add_theme_color_override("font_color", Color(0.8, 0.8, 0.3))
-	else:
-		prod_label.add_theme_color_override("font_color", Color(0.8, 0.3, 0.3))
-
-	hbox.add_child(prod_label)
-
-	# Burnout warning if high
-	if burnout >= 60:
-		var burnout_icon = Label.new()
-		burnout_icon.text = "🔥"
-		#burnout_icon.add_theme_font_size_override("font_size", 8)
-		hbox.add_child(burnout_icon)
-
-	# When staff button is pressed, show extra detail
-	btn.pressed.connect(
-		func(): _show_staff_id_card(data)
-	)
-
-	return btn
-
-func _show_staff_id_card(data: Dictionary):
-	"""Show the full staff perks panel for a researcher"""
-	print("[MainUI] Opening staff perks panel for: %s" % data.get("name", "Unknown"))
-
-	# Close any existing dialog first
-	if active_dialog != null and is_instance_valid(active_dialog):
+func _on_employee_dialog_opened(dialog: Control) -> void:
+	"""EmployeePanel put the staff ID card up (#622). Preserves the old behavior:
+	any existing dialog is closed first, then the ID card becomes the active dialog
+	(the buttons array is left as-is, exactly as before the extraction)."""
+	if active_dialog != null and is_instance_valid(active_dialog) and active_dialog != dialog:
 		active_dialog.queue_free()
-		active_dialog = null
+	active_dialog = dialog
 
-	# Load and instance the perks panel scene
-	var perks_panel_scene = preload("res://scenes/ui/staff_perks_panel.tscn")
-	var perks_panel = perks_panel_scene.instantiate()
+func _on_employee_dialog_closed() -> void:
+	"""Staff ID card dismissed (blocker click or its own close button)."""
+	active_dialog = null
 
-	# Create a Researcher object from the dictionary data
-	var researcher = Researcher.new(data.get("specialization", "safety"), data.get("name", ""))
-	researcher.skill_level = data.get("skill_level", 5)
-	researcher.current_salary = data.get("current_salary", 60000)
-	researcher.base_productivity = data.get("base_productivity", 1.0)
-	researcher.burnout = data.get("burnout", 0.0)
-	researcher.loyalty = data.get("loyalty", 50)
-	researcher.turns_employed = data.get("turns_employed", 0)
-	researcher.jet_lag_turns = data.get("jet_lag_turns", 0)
-	researcher.jet_lag_severity = data.get("jet_lag_severity", 0.0)
+func _on_employee_info_text(text: String) -> void:
+	"""Perk hover details from the staff ID card feed the shared info bar."""
+	info_label.text = text
 
-	# Copy traits
-	var traits = data.get("traits", [])
-	for trait_id in traits:
-		researcher.traits.append(trait_id)
-
-	# Add blocker behind panel
-	var blocker = ColorRect.new()
-	blocker.color = Color(0.0, 0.0, 0.0, 0.5)
-	blocker.mouse_filter = Control.MOUSE_FILTER_STOP
-	blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	blocker.z_index = 998
-
-	# Click on blocker closes panel
-	blocker.gui_input.connect(func(event):
-		if event is InputEventMouseButton and event.pressed:
-			perks_panel.queue_free()
-			blocker.queue_free()
-			active_dialog = null
-	)
-
-	tab_manager.add_child(blocker)
-
-	# Add panel
-	tab_manager.add_child(perks_panel)
-	perks_panel.z_index = 999
-	perks_panel.visible = true
-
-	# Connect signals
-	perks_panel.close_requested.connect(func():
-		perks_panel.queue_free()
-		blocker.queue_free()
-		active_dialog = null
-	)
-
-	perks_panel.perk_hovered.connect(func(perk_data):
-		var perk_name = perk_data.get("name", "Unknown")
-		var perk_desc = perk_data.get("description", "")
-		info_label.text = "[b][color=cyan]%s[/color][/b] — %s\n[color=gray]Perk selection coming in future update[/color]" % [perk_name, perk_desc]
-	)
-
-	perks_panel.perk_unhovered.connect(func():
-		info_label.text = "[color=gray]Hover over actions to see details...\n [/color]"
-	)
-
-	# Set researcher data
-	perks_panel.set_researcher(researcher)
-
-	# Track as active dialog
-	active_dialog = perks_panel
-	print("[MainUI] Staff perks panel opened")
 
 # === OPERATIONS SUBMENU ===
 
