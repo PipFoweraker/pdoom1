@@ -83,8 +83,10 @@ func start_new_game(game_seed: String = ""):
 
 	print("[GameManager] Game initialized - Turn %d" % state.turn)
 
-func select_action(action_id: String):
-	"""Queue action for execution with immediate AP deduction - FIX #418: Block if events pending"""
+func select_action(action_id: String) -> bool:
+	"""Queue action for execution with immediate AP deduction - FIX #418: Block if events pending.
+	Returns true when the action was queued (#622: lets UI callers key their local
+	queue display off the same validation instead of duplicating pre-checks)."""
 	# Validation: Game initialized
 	if not is_initialized:
 		var _err = ErrorHandler.report_err(  # Underscore prefix indicates intentionally unused
@@ -93,7 +95,7 @@ func select_action(action_id: String):
 			{"action_id": action_id}
 		)
 		error_occurred.emit(_err.message)
-		return
+		return false
 
 	# Validation: No pending events (FIX #418)
 	if state.pending_events.size() > 0:
@@ -103,7 +105,7 @@ func select_action(action_id: String):
 			{"action_id": action_id, "pending_events": state.pending_events.size()}
 		)
 		error_occurred.emit("Resolve pending events before selecting actions!")
-		return
+		return false
 
 	# Validation: Correct phase (FIX #418)
 	if state.current_phase != GameState.TurnPhase.ACTION_SELECTION:
@@ -114,7 +116,7 @@ func select_action(action_id: String):
 			{"action_id": action_id, "current_phase": phase_name}
 		)
 		error_occurred.emit("Cannot select actions in %s phase" % phase_name)
-		return
+		return false
 
 	# Get action details to check AP cost
 	var action = _get_action_by_id(action_id)
@@ -125,7 +127,7 @@ func select_action(action_id: String):
 			{"action_id": action_id}
 		)
 		error_occurred.emit("Action not found: " + action_id)
-		return
+		return false
 
 	var ap_cost = action.get("costs", {}).get("action_points", 0)
 
@@ -145,7 +147,7 @@ func select_action(action_id: String):
 			}
 		)
 		error_occurred.emit("Not enough AP: %d needed, %d remaining (of %d total)" % [ap_cost, available_ap, state.action_points])
-		return
+		return false
 
 	# Validation: Can afford costs
 	if not state.can_afford(action.get("costs", {})):
@@ -167,7 +169,7 @@ func select_action(action_id: String):
 			}
 		)
 		error_occurred.emit("Cannot afford " + action.get("name", action_id))
-		return
+		return false
 
 	# Track committed AP (queued but not yet spent)
 	state.committed_ap += ap_cost
@@ -195,6 +197,44 @@ func select_action(action_id: String):
 
 	# Emit updated state to refresh UI
 	game_state_updated.emit(state.to_dict())
+
+	return true
+
+func queue_candidate_hire(candidate_name: String, specialization: String) -> bool:
+	"""#622 L10: UI-facing path for hiring a NAMED candidate from the pool. Owns the
+	state writes main_ui used to do directly (pending_hire_queue + candidate pool),
+	so the UI never mutates game state. Validation is select_action's job — on
+	failure it has already emitted error_occurred and nothing is touched here
+	(the old UI order queued the candidate BEFORE validating, which could strand
+	a candidate out of the pool on a rejected action)."""
+	if not is_initialized:
+		error_occurred.emit("Cannot hire: Game not initialized")
+		return false
+
+	# Find the specific candidate object first (may legitimately be absent: legacy
+	# hire actions without a pool candidate keep working, matching the old UI path).
+	var candidate_obj: Researcher = null
+	for c in state.candidate_pool:
+		if c.researcher_name == candidate_name and c.specialization == specialization:
+			candidate_obj = c
+			break
+
+	var action_id = "hire_%s_researcher" % specialization
+	if not select_action(action_id):
+		return false  # select_action already emitted the error signal
+
+	if candidate_obj:
+		# Queue for hiring (supports multiple hires per turn) and remove from the
+		# pool immediately to prevent double-hiring.
+		state.pending_hire_queue.append(candidate_obj)
+		state.remove_candidate(candidate_obj)
+		print("[GameManager] Queued hire: %s (removed from pool, queue size: %d)" % [candidate_name, state.pending_hire_queue.size()])
+		# Re-emit: select_action's emit above predates the pool changes.
+		game_state_updated.emit(state.to_dict())
+	else:
+		print("[GameManager] WARNING: Could not find candidate object for: %s" % candidate_name)
+	return true
+
 
 func _get_action_by_id(action_id: String) -> Dictionary:
 	"""Helper to get action by ID - delegates to GameActions"""

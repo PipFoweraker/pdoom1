@@ -1368,7 +1368,10 @@ func _show_hiring_submenu():
 	print("[MainUI] === HIRING SUBMENU SETUP COMPLETE ===")
 
 func _on_candidate_hired(candidate: Dictionary, dialog: Control):
-	"""Handle hiring a specific candidate from the pool"""
+	"""Handle hiring a specific candidate from the pool.
+	#622 L10: routed through GameManager.queue_candidate_hire — the engine owns the
+	pending_hire_queue/candidate-pool writes and select_action owns affordability
+	(its error_occurred signal logs the reason), so the old UI pre-checks are gone."""
 	dialog.queue_free()
 
 	# Clear active dialog state
@@ -1380,42 +1383,14 @@ func _on_candidate_hired(candidate: Dictionary, dialog: Control):
 	var action_id = "hire_%s_researcher" % spec
 	var candidate_name = candidate.get("name", "Unknown")
 
-	# Check if action can be afforded before adding to UI queue (#456)
-	var action_def = _get_action_by_id(action_id)
-	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
-	var available_ap = game_manager.state.get_available_ap()
-
-	if available_ap < ap_cost:
-		log_message("[color=red]Not enough AP to hire: need %d, have %d[/color]" % [ap_cost, available_ap])
-		return
-
-	if not game_manager.state.can_afford(action_def.get("costs", {})):
-		log_message("[color=red]Cannot afford to hire: %s[/color]" % candidate_name)
-		return
+	if not game_manager.queue_candidate_hire(candidate_name, spec):
+		return  # rejected — error_occurred already logged the reason
 
 	log_message("[color=cyan]Hiring: %s (%s)[/color]" % [candidate_name, spec.capitalize()])
 
-	# Find and set the specific candidate object for hiring
-	var candidate_obj: Researcher = null
-	for c in game_manager.state.candidate_pool:
-		if c.researcher_name == candidate_name and c.specialization == spec:
-			candidate_obj = c
-			break
-
-	if candidate_obj:
-		# Add to pending hire queue (supports multiple hires per turn)
-		game_manager.state.pending_hire_queue.append(candidate_obj)
-		# Remove from pool immediately when queued to prevent double-hiring
-		game_manager.state.remove_candidate(candidate_obj)
-		print("[MainUI] Queued hire: %s (removed from pool, queue size: %d)" % [candidate_name, game_manager.state.pending_hire_queue.size()])
-	else:
-		print("[MainUI] WARNING: Could not find candidate object for: %s" % candidate_name)
-
-	# Queue the hiring action
+	# Mirror the engine-accepted action in the local queue display
 	queued_actions.append({"id": action_id, "name": "Hire " + candidate_name})
 	update_queued_actions_display()
-
-	game_manager.select_action(action_id)
 
 func _on_hiring_option_selected(action_id: String, action_name: String, dialog: Control):
 	"""Handle hiring submenu selection"""
