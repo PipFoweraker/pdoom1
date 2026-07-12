@@ -1,23 +1,30 @@
 {
-	"_description": "Built-in game events, externalized from events.gd get_all_events() (L9, #621). Loaded by GameEvents.get_all_events(); merged with scenario + EventService historical events by check_triggered_events(). Array order = trigger-check order (cap priority, #568). {cost_money} in option text resolves at load time to GameConfig.format_money(option.costs.money).",
+	"_description": "Built-in game events, externalized from events.gd get_all_events() (L9, #621). Loaded by GameEvents.get_all_events(); merged with scenario + EventService historical events by check_triggered_events(). Array order = trigger-check order (cap priority, #568); dictionary key order matches the pre-L9 literals (cost-summary labels iterate costs.keys()). {cost_money} in option text resolves at load time to GameConfig.format_money(option.costs.money).",
 	"events": [
 		{
-			"description": "Your lab is running dangerously low on funds!",
 			"id": "funding_crisis",
 			"name": "Funding Crisis",
+			"description": "Your lab is running dangerously low on funds!",
+			"type": "popup",
+			"trigger_type": "turn_and_resource",
+			"trigger_turn": 10,
+			"trigger_condition": "money < 50000",
+			"repeatable": false,
 			"options": [
 				{
+					"id": "emergency_fundraise",
+					"text": "Emergency Fundraising (costs 1 AP)",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
 						"money": 75000
 					},
-					"id": "emergency_fundraise",
-					"message": "Secured emergency funding: +$75,000",
-					"text": "Emergency Fundraising (costs 1 AP)"
+					"message": "Secured emergency funding: +$75,000"
 				},
 				{
+					"id": "sell_assets",
+					"text": "Sell Lab Equipment (costs 2 AP)",
 					"costs": {
 						"action_points": 2
 					},
@@ -25,477 +32,477 @@
 						"money": 120000,
 						"research": -10
 					},
-					"id": "sell_assets",
-					"message": "Sold equipment for emergency funds: +$120,000, -10 research",
-					"text": "Sell Lab Equipment (costs 2 AP)"
+					"message": "Sold equipment for emergency funds: +$120,000, -10 research"
 				},
 				{
-					"costs": {},
-					"effects": {},
 					"id": "accept",
-					"message": "Continuing with limited funds...",
-					"text": "Continue Anyway (no AP cost)"
-				}
-			],
-			"repeatable": false,
-			"trigger_condition": "money < 50000",
-			"trigger_turn": 10,
-			"trigger_type": "turn_and_resource",
-			"type": "popup"
-		},
-		{
-			"cooldown_turns": 15,
-			"description": "A brilliant researcher wants to join your lab at reduced cost!",
-			"id": "talent_recruitment",
-			"min_turn": 5,
-			"name": "Talent Opportunity",
-			"options": [
-				{
-					"costs": {
-						"action_points": 1,
-						"money": 25000
-					},
-					"effects": {
-						"doom": -3,
-						"safety_researchers": 1
-					},
-					"id": "hire_immediately",
-					"message": "Fast-tracked hiring process! (+1 safety researcher, -3 doom)",
-					"text": "Fast-Track Hiring (costs 1 AP, {cost_money})"
-				},
-				{
-					"costs": {
-						"money": 25000
-					},
-					"effects": {
-						"doom": -2,
-						"safety_researchers": 1
-					},
-					"id": "hire_discounted",
-					"message": "Hired talented researcher at discount! (+1 safety researcher, -2 doom)",
-					"text": "Standard Hiring ({cost_money}, no AP)"
-				},
-				{
+					"text": "Continue Anyway (no AP cost)",
 					"costs": {},
 					"effects": {},
-					"id": "decline",
-					"message": "Declined recruitment opportunity",
-					"text": "Decline Offer (no cost)"
+					"message": "Continuing with limited funds..."
 				}
-			],
-			"probability": 0.12,
-			"repeatable": true,
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 30,
-			"description": "Your team has made an unexpected AI capability advancement!",
-			"id": "ai_breakthrough",
-			"min_turn": 8,
-			"name": "AI Breakthrough!",
+			"id": "talent_recruitment",
+			"name": "Talent Opportunity",
+			"description": "A brilliant researcher wants to join your lab at reduced cost!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.12,
+			"min_turn": 5,
+			"cooldown_turns": 15,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "hire_immediately",
+					"text": "Fast-Track Hiring (costs 1 AP, {cost_money})",
+					"costs": {
+						"money": 25000,
+						"action_points": 1
+					},
+					"effects": {
+						"safety_researchers": 1,
+						"doom": -3
+					},
+					"message": "Fast-tracked hiring process! (+1 safety researcher, -3 doom)"
+				},
+				{
+					"id": "hire_discounted",
+					"text": "Standard Hiring ({cost_money}, no AP)",
+					"costs": {
+						"money": 25000
+					},
+					"effects": {
+						"safety_researchers": 1,
+						"doom": -2
+					},
+					"message": "Hired talented researcher at discount! (+1 safety researcher, -2 doom)"
+				},
+				{
+					"id": "decline",
+					"text": "Decline Offer (no cost)",
+					"costs": {},
+					"effects": {},
+					"message": "Declined recruitment opportunity"
+				}
+			]
+		},
+		{
+			"id": "ai_breakthrough",
+			"name": "AI Breakthrough!",
+			"description": "Your team has made an unexpected AI capability advancement!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.08,
+			"min_turn": 8,
+			"trigger_condition": "researchers > 0",
+			"cooldown_turns": 30,
+			"repeatable": true,
+			"options": [
+				{
+					"id": "publish_open",
+					"text": "Publish Openly",
 					"effects": {
 						"doom": 5,
 						"reputation": 10,
 						"research": 20
 					},
-					"id": "publish_open",
-					"message": "Published breakthrough! (+5 doom, +10 reputation, +20 research)",
-					"text": "Publish Openly"
+					"message": "Published breakthrough! (+5 doom, +10 reputation, +20 research)"
 				},
 				{
+					"id": "keep_proprietary",
+					"text": "Keep Proprietary",
 					"effects": {
 						"doom": 2,
 						"research": 30
 					},
-					"id": "keep_proprietary",
-					"message": "Kept research proprietary (+2 doom, +30 research)",
-					"text": "Keep Proprietary"
+					"message": "Kept research proprietary (+2 doom, +30 research)"
 				},
 				{
+					"id": "safety_review",
+					"text": "Conduct Safety Review First",
 					"costs": {
 						"action_points": 1,
 						"money": 20000
 					},
 					"effects": {
 						"doom": 1,
-						"reputation": 5,
-						"research": 15
+						"research": 15,
+						"reputation": 5
 					},
-					"id": "safety_review",
-					"message": "Safety review complete (+1 doom, +15 research, +5 reputation)",
-					"text": "Conduct Safety Review First"
+					"message": "Safety review complete (+1 doom, +15 research, +5 reputation)"
 				}
-			],
-			"probability": 0.08,
-			"repeatable": true,
-			"trigger_condition": "researchers > 0",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"description": "A philanthropist wants to donate to your safety research!",
 			"id": "funding_windfall",
 			"name": "Unexpected Funding",
+			"description": "A philanthropist wants to donate to your safety research!",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "papers >= 3 and reputation >= 40",
+			"repeatable": false,
 			"options": [
 				{
+					"id": "accept_donation",
+					"text": "Accept Donation",
 					"effects": {
 						"money": 150000,
 						"reputation": 5
 					},
-					"id": "accept_donation",
-					"message": "Accepted $150,000 donation! (+5 reputation)",
-					"text": "Accept Donation"
+					"message": "Accepted $150,000 donation! (+5 reputation)"
 				},
 				{
+					"id": "decline_donation",
+					"text": "Decline (Stay Independent)",
 					"effects": {
 						"reputation": 3
 					},
-					"id": "decline_donation",
-					"message": "Declined donation to maintain independence (+3 reputation)",
-					"text": "Decline (Stay Independent)"
+					"message": "Declined donation to maintain independence (+3 reputation)"
 				}
-			],
-			"repeatable": false,
-			"trigger_condition": "papers >= 3 and reputation >= 40",
-			"trigger_type": "threshold",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 40,
-			"description": "A tech company offers discounted compute access!",
 			"id": "compute_deal",
-			"min_turn": 6,
 			"name": "Compute Partnership",
+			"description": "A tech company offers discounted compute access!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.1,
+			"min_turn": 6,
+			"cooldown_turns": 40,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "accept_deal",
+					"text": "Accept Deal",
 					"effects": {
 						"compute": 100,
 						"reputation": -2
 					},
-					"id": "accept_deal",
-					"message": "Accepted compute deal (+100 compute, -2 reputation for corporate ties)",
-					"text": "Accept Deal"
+					"message": "Accepted compute deal (+100 compute, -2 reputation for corporate ties)"
 				},
 				{
+					"id": "negotiate",
+					"text": "Negotiate Better Terms",
 					"costs": {
 						"reputation": 5
 					},
 					"effects": {
 						"compute": 150
 					},
-					"id": "negotiate",
-					"message": "Negotiated better terms! (+150 compute, -5 reputation)",
-					"text": "Negotiate Better Terms"
+					"message": "Negotiated better terms! (+150 compute, -5 reputation)"
 				},
 				{
-					"effects": {},
 					"id": "decline_deal",
-					"message": "Declined compute partnership",
-					"text": "Decline"
+					"text": "Decline",
+					"effects": {},
+					"message": "Declined compute partnership"
 				}
-			],
-			"probability": 0.1,
-			"repeatable": true,
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 25,
-			"description": "Your team is overworked! Several researchers are considering leaving.",
 			"id": "employee_burnout",
-			"min_turn": 10,
 			"name": "Employee Burnout Crisis",
+			"description": "Your team is overworked! Several researchers are considering leaving.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 5",
+			"probability": 0.08,
+			"min_turn": 10,
+			"cooldown_turns": 25,
+			"repeatable": true,
 			"options": [
 				{
-					"costs": {
-						"action_points": 2,
-						"money": 30000
-					},
-					"effects": {
-						"doom": -5,
-						"reputation": 8
-					},
 					"id": "emergency_intervention",
-					"message": "Personal intervention prevented resignations! (+8 reputation, -5 doom)",
-					"text": "Emergency Intervention (costs 2 AP, {cost_money})"
+					"text": "Emergency Intervention (costs 2 AP, {cost_money})",
+					"costs": {
+						"money": 30000,
+						"action_points": 2
+					},
+					"effects": {
+						"reputation": 8,
+						"doom": -5
+					},
+					"message": "Personal intervention prevented resignations! (+8 reputation, -5 doom)"
 				},
 				{
+					"id": "team_retreat",
+					"text": "Organize Team Retreat ({cost_money}, no AP)",
 					"costs": {
 						"money": 30000
 					},
 					"effects": {
-						"doom": -2,
-						"reputation": 5
+						"reputation": 5,
+						"doom": -2
 					},
-					"id": "team_retreat",
-					"message": "Team retreat restored morale (+5 reputation, -2 doom)",
-					"text": "Organize Team Retreat ({cost_money}, no AP)"
+					"message": "Team retreat restored morale (+5 reputation, -2 doom)"
 				},
 				{
+					"id": "salary_raise",
+					"text": "Give Raises ($50k, no AP)",
 					"costs": {
 						"money": 50000
 					},
 					"effects": {
 						"reputation": 8
 					},
-					"id": "salary_raise",
-					"message": "Salary raises improved retention (+8 reputation)",
-					"text": "Give Raises ($50k, no AP)"
+					"message": "Salary raises improved retention (+8 reputation)"
 				},
 				{
+					"id": "ignore_burnout",
+					"text": "Push Through (no cost)",
 					"costs": {},
 					"effects": {
 						"doom": 3
 					},
-					"id": "ignore_burnout",
-					"message": "Team morale suffered (+3 doom)",
-					"text": "Push Through (no cost)"
+					"message": "Team morale suffered (+3 doom)"
 				}
-			],
-			"probability": 0.08,
-			"repeatable": true,
-			"trigger_condition": "researchers >= 5",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 35,
-			"description": "A well-funded competitor is trying to recruit your best researchers!",
 			"id": "rival_poaching",
-			"min_turn": 10,
 			"name": "Rival Lab Poaching",
+			"description": "A well-funded competitor is trying to recruit your best researchers!",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers > 0",
+			"probability": 0.06,
+			"min_turn": 10,
+			"cooldown_turns": 35,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "counter_offer",
+					"text": "Counter-Offer ($80k)",
 					"costs": {
 						"money": 80000
 					},
 					"effects": {},
-					"id": "counter_offer",
-					"message": "Successfully retained researchers with counter-offer",
-					"text": "Counter-Offer ($80k)"
+					"message": "Successfully retained researchers with counter-offer"
 				},
 				{
-					"effects": {
-						"money": 20000,
-						"safety_researchers": -1
-					},
 					"id": "let_go",
-					"message": "Lost researcher but saved money (-1 safety researcher, +$20k saved)",
-					"text": "Let Them Go"
+					"text": "Let Them Go",
+					"effects": {
+						"safety_researchers": -1,
+						"money": 20000
+					},
+					"message": "Lost researcher but saved money (-1 safety researcher, +$20k saved)"
 				}
-			],
-			"probability": 0.06,
-			"repeatable": true,
-			"trigger_condition": "researchers > 0",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 40,
-			"description": "Negative press coverage is damaging your lab's reputation!",
 			"id": "media_scandal",
-			"min_turn": 7,
 			"name": "Media Scandal",
+			"description": "Negative press coverage is damaging your lab's reputation!",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 7,
+			"cooldown_turns": 40,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "pr_campaign",
+					"text": "Launch PR Campaign ($40k)",
 					"costs": {
 						"money": 40000
 					},
 					"effects": {
 						"reputation": 10
 					},
-					"id": "pr_campaign",
-					"message": "PR campaign restored public image (+10 reputation)",
-					"text": "Launch PR Campaign ($40k)"
+					"message": "PR campaign restored public image (+10 reputation)"
 				},
 				{
+					"id": "ignore_media",
+					"text": "Ignore and Focus on Work",
 					"effects": {
 						"reputation": -8
 					},
-					"id": "ignore_media",
-					"message": "Reputation suffered from negative coverage (-8 reputation)",
-					"text": "Ignore and Focus on Work"
+					"message": "Reputation suffered from negative coverage (-8 reputation)"
 				}
-			],
-			"probability": 0.05,
-			"repeatable": true,
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"description": "Government is considering new AI safety regulations. Should you lobby?",
 			"id": "government_regulation",
 			"name": "New AI Regulation Proposed",
+			"description": "Government is considering new AI safety regulations. Should you lobby?",
+			"type": "popup",
+			"trigger_type": "threshold",
+			"trigger_condition": "doom >= 60",
+			"repeatable": false,
 			"options": [
 				{
+					"id": "support_regulation",
+					"text": "Publicly Support ($50k lobbying)",
 					"costs": {
-						"action_points": 1,
-						"money": 50000
+						"money": 50000,
+						"action_points": 1
 					},
 					"effects": {
 						"doom": -10,
 						"reputation": 15
 					},
-					"id": "support_regulation",
-					"message": "Regulation passed! Global safety improved (-10 doom, +15 reputation)",
-					"text": "Publicly Support ($50k lobbying)"
+					"message": "Regulation passed! Global safety improved (-10 doom, +15 reputation)"
 				},
 				{
+					"id": "oppose_regulation",
+					"text": "Oppose (Stay Competitive)",
 					"effects": {
 						"doom": 5,
 						"reputation": -5
 					},
-					"id": "oppose_regulation",
-					"message": "Regulation weakened (+5 doom, -5 reputation)",
-					"text": "Oppose (Stay Competitive)"
+					"message": "Regulation weakened (+5 doom, -5 reputation)"
 				},
 				{
+					"id": "stay_neutral",
+					"text": "Remain Neutral",
 					"effects": {
 						"doom": 2
 					},
-					"id": "stay_neutral",
-					"message": "Stayed neutral as doom increased (+2 doom)",
-					"text": "Remain Neutral"
+					"message": "Stayed neutral as doom increased (+2 doom)"
 				}
-			],
-			"repeatable": false,
-			"trigger_condition": "doom >= 60",
-			"trigger_type": "threshold",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 50,
-			"description": "Your compute infrastructure suffered a major failure!",
 			"id": "technical_failure",
-			"min_turn": 12,
 			"name": "Critical System Failure",
+			"description": "Your compute infrastructure suffered a major failure!",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "money >= 20000",
+			"probability": 0.05,
+			"min_turn": 12,
+			"cooldown_turns": 50,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "emergency_repair",
+					"text": "Emergency Repair ($60k)",
 					"costs": {
 						"money": 60000
 					},
 					"effects": {
 						"compute": 30
 					},
-					"id": "emergency_repair",
-					"message": "System repaired and upgraded (+30 compute)",
-					"text": "Emergency Repair ($60k)"
+					"message": "System repaired and upgraded (+30 compute)"
 				},
 				{
+					"id": "basic_fix",
+					"text": "Basic Fix ($20k)",
 					"costs": {
 						"money": 20000
 					},
 					"effects": {
 						"compute": -20
 					},
-					"id": "basic_fix",
-					"message": "System limping along (-20 compute)",
-					"text": "Basic Fix ($20k)"
+					"message": "System limping along (-20 compute)"
 				}
-			],
-			"probability": 0.05,
-			"repeatable": true,
-			"trigger_condition": "money >= 20000",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"description": "A friendly stray cat has wandered into your lab. It seems to enjoy watching the researchers work and occasionally walks across keyboards. Adopt it?",
 			"id": "stray_cat",
 			"name": "A Stray Cat Appears!",
+			"description": "A friendly stray cat has wandered into your lab. It seems to enjoy watching the researchers work and occasionally walks across keyboards. Adopt it?",
+			"type": "popup",
+			"trigger_type": "turn_exact",
+			"trigger_turn": 7,
+			"repeatable": false,
 			"options": [
 				{
+					"id": "adopt_cat",
+					"text": "Adopt the Cat",
 					"costs": {
 						"money": 500
 					},
 					"effects": {
-						"doom": -1,
-						"has_cat": 1
+						"has_cat": 1,
+						"doom": -1
 					},
-					"id": "adopt_cat",
-					"message": "Cat adopted! Your researchers' morale improves slightly. The cat has claimed its spot in the lab. (-1 doom)",
-					"text": "Adopt the Cat"
+					"message": "Cat adopted! Your researchers' morale improves slightly. The cat has claimed its spot in the lab. (-1 doom)"
 				},
 				{
+					"id": "feed_and_release",
+					"text": "Feed It and Let It Go",
 					"costs": {
 						"money": 100
 					},
 					"effects": {},
-					"id": "feed_and_release",
-					"message": "You give the cat some food and it wanders off, purring contentedly.",
-					"text": "Feed It and Let It Go"
+					"message": "You give the cat some food and it wanders off, purring contentedly."
 				},
 				{
+					"id": "shoo_away",
+					"text": "Shoo It Away",
 					"effects": {
 						"doom": 1
 					},
-					"id": "shoo_away",
-					"message": "The cat leaves, disappointed. Your researchers seem a bit sad. (+1 doom for being heartless)",
-					"text": "Shoo It Away"
+					"message": "The cat leaves, disappointed. Your researchers seem a bit sad. (+1 doom for being heartless)"
 				}
-			],
-			"repeatable": false,
-			"trigger_turn": 7,
-			"trigger_type": "turn_exact",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 30,
-			"description": "Two researchers are in a heated disagreement that's disrupting the entire team. Productivity is suffering.",
 			"id": "workplace_conflict",
-			"min_turn": 8,
 			"name": "Interpersonal Conflict",
+			"description": "Two researchers are in a heated disagreement that's disrupting the entire team. Productivity is suffering.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 3",
+			"probability": 0.08,
+			"min_turn": 8,
+			"cooldown_turns": 30,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "mediate_personally",
+					"text": "Mediate Personally (costs 1 AP)",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
-						"doom": -1,
-						"reputation": 3
+						"reputation": 3,
+						"doom": -1
 					},
-					"id": "mediate_personally",
-					"message": "Successful mediation! Team cohesion improved (+3 reputation, -1 doom)",
-					"text": "Mediate Personally (costs 1 AP)"
+					"message": "Successful mediation! Team cohesion improved (+3 reputation, -1 doom)"
 				},
 				{
+					"id": "hire_mediator",
+					"text": "Hire Professional Mediator ($15k)",
 					"costs": {
 						"money": 15000
 					},
 					"effects": {
 						"reputation": 5
 					},
-					"id": "hire_mediator",
-					"message": "Professional mediator resolved the conflict (+5 reputation)",
-					"text": "Hire Professional Mediator ($15k)"
+					"message": "Professional mediator resolved the conflict (+5 reputation)"
 				},
 				{
-					"effects": {
-						"doom": 2,
-						"reputation": -3
-					},
 					"id": "ignore_conflict",
-					"message": "Conflict festered and spread (-3 reputation, +2 doom)",
-					"text": "Let Them Work It Out"
+					"text": "Let Them Work It Out",
+					"effects": {
+						"reputation": -3,
+						"doom": 2
+					},
+					"message": "Conflict festered and spread (-3 reputation, +2 doom)"
 				}
-			],
-			"probability": 0.08,
-			"repeatable": true,
-			"trigger_condition": "researchers >= 3",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 60,
-			"description": "A formal complaint has been filed. This requires immediate and careful attention.",
 			"id": "harassment_complaint",
-			"min_turn": 10,
 			"name": "Workplace Complaint Filed",
+			"description": "A formal complaint has been filed. This requires immediate and careful attention.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 3",
+			"probability": 0.05,
+			"min_turn": 10,
+			"cooldown_turns": 60,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "thorough_investigation",
+					"text": "Full Investigation (costs 2 AP, $25k)",
 					"costs": {
 						"action_points": 2,
 						"money": 25000
@@ -503,223 +510,223 @@
 					"effects": {
 						"reputation": 8
 					},
-					"id": "thorough_investigation",
-					"message": "Thorough investigation completed. Appropriate action taken (+8 reputation)",
-					"text": "Full Investigation (costs 2 AP, $25k)"
+					"message": "Thorough investigation completed. Appropriate action taken (+8 reputation)"
 				},
 				{
+					"id": "quick_resolution",
+					"text": "Quick Resolution ($40k)",
 					"costs": {
 						"money": 40000
 					},
 					"effects": {
 						"reputation": 3
 					},
-					"id": "quick_resolution",
-					"message": "Resolved quickly with settlement (+3 reputation)",
-					"text": "Quick Resolution ($40k)"
+					"message": "Resolved quickly with settlement (+3 reputation)"
 				},
 				{
-					"effects": {
-						"doom": 3,
-						"reputation": -10
-					},
 					"id": "minimize_issue",
-					"message": "Poor handling damaged lab culture (-10 reputation, +3 doom)",
-					"text": "Minimize the Issue"
+					"text": "Minimize the Issue",
+					"effects": {
+						"reputation": -10,
+						"doom": 3
+					},
+					"message": "Poor handling damaged lab culture (-10 reputation, +3 doom)"
 				}
-			],
-			"probability": 0.05,
-			"repeatable": true,
-			"trigger_condition": "researchers >= 3",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 50,
-			"description": "Several employees have raised concerns about pay disparities. They've been comparing notes and noticed significant differences.",
-			"extra_condition": "salary_disparity > 15",
 			"id": "salary_dispute",
-			"min_turn": 15,
 			"name": "Pay Equity Concerns",
+			"description": "Several employees have raised concerns about pay disparities. They've been comparing notes and noticed significant differences.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 5",
+			"probability": 0.08,
+			"min_turn": 15,
+			"cooldown_turns": 50,
+			"repeatable": true,
+			"extra_condition": "salary_disparity > 15",
 			"options": [
 				{
+					"id": "salary_audit",
+					"text": "Conduct Salary Audit & Adjust ($60k)",
 					"costs": {
 						"money": 60000
 					},
 					"effects": {
-						"doom": -2,
-						"reputation": 10
+						"reputation": 10,
+						"doom": -2
 					},
-					"id": "salary_audit",
-					"message": "Salary audit complete, adjustments made (+10 reputation, -2 doom)",
-					"text": "Conduct Salary Audit & Adjust ($60k)"
+					"message": "Salary audit complete, adjustments made (+10 reputation, -2 doom)"
 				},
 				{
+					"id": "explain_structure",
+					"text": "Explain Compensation Structure (costs 1 AP)",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
 						"reputation": 2
 					},
-					"id": "explain_structure",
-					"message": "Transparent discussion helped (+2 reputation)",
-					"text": "Explain Compensation Structure (costs 1 AP)"
+					"message": "Transparent discussion helped (+2 reputation)"
 				},
 				{
-					"effects": {
-						"doom": 1,
-						"reputation": -5
-					},
 					"id": "ignore_concerns",
-					"message": "Ignored concerns bred resentment (-5 reputation, +1 doom)",
-					"text": "Dismiss Concerns"
+					"text": "Dismiss Concerns",
+					"effects": {
+						"reputation": -5,
+						"doom": 1
+					},
+					"message": "Ignored concerns bred resentment (-5 reputation, +1 doom)"
 				}
-			],
-			"probability": 0.08,
-			"repeatable": true,
-			"trigger_condition": "researchers >= 5",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 40,
-			"description": "A valued researcher is struggling with severe stress and anxiety. They've requested time off.",
 			"id": "mental_health_crisis",
-			"min_turn": 12,
 			"name": "Employee Mental Health Crisis",
+			"description": "A valued researcher is struggling with severe stress and anxiety. They've requested time off.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 2",
+			"probability": 0.06,
+			"min_turn": 12,
+			"cooldown_turns": 40,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "full_support",
+					"text": "Full Support + Paid Leave ($30k)",
 					"costs": {
 						"money": 30000
 					},
 					"effects": {
-						"doom": -3,
-						"reputation": 8
+						"reputation": 8,
+						"doom": -3
 					},
-					"id": "full_support",
-					"message": "Provided full support. Team sees you care (+8 reputation, -3 doom)",
-					"text": "Full Support + Paid Leave ($30k)"
+					"message": "Provided full support. Team sees you care (+8 reputation, -3 doom)"
 				},
 				{
+					"id": "partial_leave",
+					"text": "Unpaid Leave Approved",
 					"costs": {},
 					"effects": {
 						"reputation": 3
 					},
-					"id": "partial_leave",
-					"message": "Leave approved, but no pay (+3 reputation)",
-					"text": "Unpaid Leave Approved"
+					"message": "Leave approved, but no pay (+3 reputation)"
 				},
 				{
-					"effects": {
-						"doom": 5,
-						"reputation": -8
-					},
 					"id": "deny_leave",
-					"message": "Denial caused serious damage to culture (-8 reputation, +5 doom)",
-					"text": "Deny Request (Too Busy)"
+					"text": "Deny Request (Too Busy)",
+					"effects": {
+						"reputation": -8,
+						"doom": 5
+					},
+					"message": "Denial caused serious damage to culture (-8 reputation, +5 doom)"
 				}
-			],
-			"probability": 0.06,
-			"repeatable": true,
-			"trigger_condition": "researchers >= 2",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 60,
-			"description": "Expensive equipment has disappeared from the lab. Someone may be stealing.",
 			"id": "office_theft",
-			"min_turn": 15,
 			"name": "Equipment Gone Missing",
+			"description": "Expensive equipment has disappeared from the lab. Someone may be stealing.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.04,
+			"min_turn": 15,
+			"cooldown_turns": 60,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "security_upgrade",
+					"text": "Install Security System ($35k)",
 					"costs": {
 						"money": 35000
 					},
 					"effects": {
-						"compute": 10,
-						"reputation": 5
+						"reputation": 5,
+						"compute": 10
 					},
-					"id": "security_upgrade",
-					"message": "Security installed, recovered some equipment (+5 reputation, +10 compute)",
-					"text": "Install Security System ($35k)"
+					"message": "Security installed, recovered some equipment (+5 reputation, +10 compute)"
 				},
 				{
+					"id": "team_meeting",
+					"text": "Address at Team Meeting (costs 1 AP)",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
 						"reputation": 2
 					},
-					"id": "team_meeting",
-					"message": "Open discussion restored some trust (+2 reputation)",
-					"text": "Address at Team Meeting (costs 1 AP)"
+					"message": "Open discussion restored some trust (+2 reputation)"
 				},
 				{
+					"id": "ignore_theft",
+					"text": "Write It Off",
 					"effects": {
 						"compute": -15,
 						"reputation": -3
 					},
-					"id": "ignore_theft",
-					"message": "Theft continued (-15 compute, -3 reputation)",
-					"text": "Write It Off"
+					"message": "Theft continued (-15 compute, -3 reputation)"
 				}
-			],
-			"probability": 0.04,
-			"repeatable": true,
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 45,
-			"description": "A senior researcher has been caught violating company policy. Others are watching how you respond.",
 			"id": "policy_violation",
-			"min_turn": 10,
 			"name": "Policy Violation Discovered",
+			"description": "A senior researcher has been caught violating company policy. Others are watching how you respond.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 2",
+			"probability": 0.05,
+			"min_turn": 10,
+			"cooldown_turns": 45,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "formal_discipline",
+					"text": "Formal Disciplinary Action (costs 1 AP)",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
 						"reputation": 5
 					},
-					"id": "formal_discipline",
-					"message": "Fair process maintained trust (+5 reputation)",
-					"text": "Formal Disciplinary Action (costs 1 AP)"
+					"message": "Fair process maintained trust (+5 reputation)"
 				},
 				{
+					"id": "verbal_warning",
+					"text": "Verbal Warning Only",
 					"effects": {
 						"reputation": -2
 					},
-					"id": "verbal_warning",
-					"message": "Light response noted by others (-2 reputation)",
-					"text": "Verbal Warning Only"
+					"message": "Light response noted by others (-2 reputation)"
 				},
 				{
-					"effects": {
-						"doom": 2,
-						"reputation": -6
-					},
 					"id": "sweep_under_rug",
-					"message": "Favoritism damaged morale (-6 reputation, +2 doom)",
-					"text": "Ignore It (They're Valuable)"
+					"text": "Ignore It (They're Valuable)",
+					"effects": {
+						"reputation": -6,
+						"doom": 2
+					},
+					"message": "Favoritism damaged morale (-6 reputation, +2 doom)"
 				}
-			],
-			"probability": 0.05,
-			"repeatable": true,
-			"trigger_condition": "researchers >= 2",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 50,
-			"description": "Someone leaked your unpublished safety research to a competitor lab. They're using it to accelerate their capabilities work.",
 			"id": "research_leak",
-			"min_turn": 12,
 			"name": "Research Leaked!",
+			"description": "Someone leaked your unpublished safety research to a competitor lab. They're using it to accelerate their capabilities work.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 3 and research >= 10",
+			"probability": 0.06,
+			"min_turn": 12,
+			"cooldown_turns": 50,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "investigate_leak",
+					"text": "Full Investigation (costs 2 AP, $30k)",
 					"costs": {
 						"action_points": 2,
 						"money": 30000
@@ -728,47 +735,46 @@
 						"doom": 3,
 						"reputation": 5
 					},
-					"id": "investigate_leak",
-					"message": "Found and addressed the leak, but damage done (+3 doom, +5 reputation)",
-					"text": "Full Investigation (costs 2 AP, $30k)"
+					"message": "Found and addressed the leak, but damage done (+3 doom, +5 reputation)"
 				},
 				{
+					"id": "publish_immediately",
+					"text": "Publish Research Publicly",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
-						"doom": 5,
 						"papers": 1,
-						"reputation": 8
+						"reputation": 8,
+						"doom": 5
 					},
-					"id": "publish_immediately",
-					"message": "Published to get credit, but all labs benefit (+1 paper, +8 rep, +5 doom)",
-					"text": "Publish Research Publicly"
+					"message": "Published to get credit, but all labs benefit (+1 paper, +8 rep, +5 doom)"
 				},
 				{
+					"id": "accept_leak",
+					"text": "Accept the Loss",
 					"effects": {
 						"doom": 8,
 						"reputation": -3
 					},
-					"id": "accept_leak",
-					"message": "Competitor gained significant advantage (+8 doom, -3 reputation)",
-					"text": "Accept the Loss"
+					"message": "Competitor gained significant advantage (+8 doom, -3 reputation)"
 				}
-			],
-			"probability": 0.06,
-			"repeatable": true,
-			"trigger_condition": "researchers >= 3 and research >= 10",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 60,
-			"description": "A contact offers information about a rival lab's dangerous capabilities research. How did they get it?",
 			"id": "competitor_intel",
-			"min_turn": 15,
 			"name": "Competitor Intelligence",
+			"description": "A contact offers information about a rival lab's dangerous capabilities research. How did they get it?",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 15,
+			"cooldown_turns": 60,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "use_intel",
+					"text": "Use the Information ($20k)",
 					"costs": {
 						"money": 20000
 					},
@@ -776,44 +782,45 @@
 						"doom": -5,
 						"reputation": -8
 					},
-					"id": "use_intel",
-					"message": "Used intel to counter their work (-5 doom, -8 reputation for ethics)",
-					"text": "Use the Information ($20k)"
+					"message": "Used intel to counter their work (-5 doom, -8 reputation for ethics)"
 				},
 				{
+					"id": "report_intel",
+					"text": "Report to Authorities",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
-						"doom": -3,
-						"reputation": 10
+						"reputation": 10,
+						"doom": -3
 					},
-					"id": "report_intel",
-					"message": "Reported concerns, triggering investigation (+10 reputation, -3 doom)",
-					"text": "Report to Authorities"
+					"message": "Reported concerns, triggering investigation (+10 reputation, -3 doom)"
 				},
 				{
+					"id": "refuse_intel",
+					"text": "Refuse and Walk Away",
 					"effects": {
 						"reputation": 3
 					},
-					"id": "refuse_intel",
-					"message": "Maintained ethical standards (+3 reputation)",
-					"text": "Refuse and Walk Away"
+					"message": "Maintained ethical standards (+3 reputation)"
 				}
-			],
-			"probability": 0.05,
-			"repeatable": true,
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 80,
-			"description": "A researcher from a competitor lab wants to expose their unsafe practices. They're asking for your help.",
 			"id": "whistleblower_approach",
-			"min_turn": 20,
 			"name": "Whistleblower Approaches",
+			"description": "A researcher from a competitor lab wants to expose their unsafe practices. They're asking for your help.",
+			"type": "popup",
+			"trigger_type": "random",
+			"min_turn": 20,
+			"trigger_condition": "reputation >= 60",
+			"probability": 0.05,
+			"cooldown_turns": 80,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "full_support",
+					"text": "Fully Support & Publicize (costs 2 AP, $50k)",
 					"costs": {
 						"action_points": 2,
 						"money": 50000
@@ -822,11 +829,11 @@
 						"doom": -15,
 						"reputation": 20
 					},
-					"id": "full_support",
-					"message": "Major exposé! Industry-wide safety improvements (-15 doom, +20 reputation)",
-					"text": "Fully Support & Publicize (costs 2 AP, $50k)"
+					"message": "Major exposé! Industry-wide safety improvements (-15 doom, +20 reputation)"
 				},
 				{
+					"id": "anonymous_support",
+					"text": "Anonymous Support ($25k)",
 					"costs": {
 						"money": 25000
 					},
@@ -834,104 +841,103 @@
 						"doom": -8,
 						"reputation": 5
 					},
-					"id": "anonymous_support",
-					"message": "Quietly helped expose dangers (-8 doom, +5 reputation)",
-					"text": "Anonymous Support ($25k)"
+					"message": "Quietly helped expose dangers (-8 doom, +5 reputation)"
 				},
 				{
+					"id": "hire_whistleblower",
+					"text": "Hire Them Instead ($60k, 1 AP)",
 					"costs": {
-						"action_points": 1,
-						"money": 60000
+						"money": 60000,
+						"action_points": 1
 					},
 					"effects": {
-						"doom": -3,
-						"safety_researchers": 1
+						"safety_researchers": 1,
+						"doom": -3
 					},
-					"id": "hire_whistleblower",
-					"message": "Hired the concerned researcher (+1 safety researcher, -3 doom)",
-					"text": "Hire Them Instead ($60k, 1 AP)"
+					"message": "Hired the concerned researcher (+1 safety researcher, -3 doom)"
 				},
 				{
+					"id": "decline_involvement",
+					"text": "Stay Out of It",
 					"effects": {
 						"reputation": -5
 					},
-					"id": "decline_involvement",
-					"message": "Refused to help, whistleblower went elsewhere (-5 reputation)",
-					"text": "Stay Out of It"
+					"message": "Refused to help, whistleblower went elsewhere (-5 reputation)"
 				}
-			],
-			"probability": 0.05,
-			"repeatable": true,
-			"trigger_condition": "reputation >= 60",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 50,
-			"description": "One of your researchers wants to go public about concerns with your lab's direction. Handle carefully.",
 			"id": "employee_whistleblower",
-			"min_turn": 15,
 			"name": "Internal Concerns Raised",
+			"description": "One of your researchers wants to go public about concerns with your lab's direction. Handle carefully.",
+			"type": "popup",
+			"trigger_type": "random",
+			"min_turn": 15,
+			"trigger_condition": "capability_researchers >= 2",
+			"probability": 0.06,
+			"cooldown_turns": 50,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "address_concerns",
+					"text": "Open Forum Discussion (costs 1 AP)",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
-						"doom": -2,
-						"reputation": 8
+						"reputation": 8,
+						"doom": -2
 					},
-					"id": "address_concerns",
-					"message": "Transparent discussion improved practices (+8 reputation, -2 doom)",
-					"text": "Open Forum Discussion (costs 1 AP)"
+					"message": "Transparent discussion improved practices (+8 reputation, -2 doom)"
 				},
 				{
+					"id": "private_resolution",
+					"text": "Private Resolution ($30k)",
 					"costs": {
 						"money": 30000
 					},
 					"effects": {
 						"reputation": 3
 					},
-					"id": "private_resolution",
-					"message": "Quietly addressed concerns (+3 reputation)",
-					"text": "Private Resolution ($30k)"
+					"message": "Quietly addressed concerns (+3 reputation)"
 				},
 				{
-					"effects": {
-						"doom": 5,
-						"reputation": -15
-					},
 					"id": "suppress_concerns",
-					"message": "Suppression backfired badly (-15 reputation, +5 doom)",
-					"text": "Suppress the Issue"
+					"text": "Suppress the Issue",
+					"effects": {
+						"reputation": -15,
+						"doom": 5
+					},
+					"message": "Suppression backfired badly (-15 reputation, +5 doom)"
 				}
-			],
-			"probability": 0.06,
-			"repeatable": true,
-			"trigger_condition": "capability_researchers >= 2",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"description": "You could place someone inside a competitor lab to monitor their safety practices. Ethically questionable but potentially valuable.",
 			"id": "plant_source_opportunity",
-			"min_turn": 20,
 			"name": "Intelligence Opportunity",
+			"description": "You could place someone inside a competitor lab to monitor their safety practices. Ethically questionable but potentially valuable.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 20,
+			"repeatable": false,
 			"options": [
 				{
+					"id": "plant_source",
+					"text": "Plant a Source ($80k, 1 AP)",
 					"costs": {
-						"action_points": 1,
-						"money": 80000
+						"money": 80000,
+						"action_points": 1
 					},
 					"effects": {
 						"doom": -10,
 						"reputation": -15
 					},
-					"id": "plant_source",
-					"message": "Source planted, early warnings enabled (-10 doom, -15 reputation if discovered)",
-					"text": "Plant a Source ($80k, 1 AP)"
+					"message": "Source planted, early warnings enabled (-10 doom, -15 reputation if discovered)"
 				},
 				{
+					"id": "legitimate_partnership",
+					"text": "Propose Legitimate Partnership",
 					"costs": {
 						"action_points": 1,
 						"money": 40000
@@ -940,147 +946,148 @@
 						"doom": -5,
 						"reputation": 8
 					},
-					"id": "legitimate_partnership",
-					"message": "Established safety information sharing (-5 doom, +8 reputation)",
-					"text": "Propose Legitimate Partnership"
+					"message": "Established safety information sharing (-5 doom, +8 reputation)"
 				},
 				{
+					"id": "decline_espionage",
+					"text": "Decline (Too Risky)",
 					"effects": {
 						"reputation": 2
 					},
-					"id": "decline_espionage",
-					"message": "Maintained ethical boundaries (+2 reputation)",
-					"text": "Decline (Too Risky)"
+					"message": "Maintained ethical boundaries (+2 reputation)"
 				}
-			],
-			"probability": 0.05,
-			"repeatable": false,
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"description": "A rival lab's AI system was secured with '1234' as the password. Millions of training data records are now exposed. The industry is watching how labs respond.",
 			"id": "competitor_password_breach",
-			"min_turn": 10,
 			"name": "Competitor Security Breach",
+			"description": "A rival lab's AI system was secured with '1234' as the password. Millions of training data records are now exposed. The industry is watching how labs respond.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.06,
+			"min_turn": 10,
+			"repeatable": false,
 			"options": [
 				{
+					"id": "public_security_audit",
+					"text": "Announce Public Security Audit ($40k, 1 AP)",
 					"costs": {
-						"action_points": 1,
-						"money": 40000
+						"money": 40000,
+						"action_points": 1
 					},
 					"effects": {
-						"doom": -3,
-						"reputation": 15
+						"reputation": 15,
+						"doom": -3
 					},
-					"id": "public_security_audit",
-					"message": "Proactive security audit boosted confidence (+15 reputation, -3 doom)",
-					"text": "Announce Public Security Audit ($40k, 1 AP)"
+					"message": "Proactive security audit boosted confidence (+15 reputation, -3 doom)"
 				},
 				{
+					"id": "offer_help",
+					"text": "Offer to Help Affected Users ($25k)",
 					"costs": {
 						"money": 25000
 					},
 					"effects": {
 						"reputation": 10
 					},
-					"id": "offer_help",
-					"message": "Goodwill gesture appreciated (+10 reputation)",
-					"text": "Offer to Help Affected Users ($25k)"
+					"message": "Goodwill gesture appreciated (+10 reputation)"
 				},
 				{
-					"effects": {
-						"doom": 2,
-						"reputation": -5
-					},
 					"id": "stay_silent",
-					"message": "Silence perceived as indifference (-5 reputation, +2 doom)",
-					"text": "Stay Silent"
+					"text": "Stay Silent",
+					"effects": {
+						"reputation": -5,
+						"doom": 2
+					},
+					"message": "Silence perceived as indifference (-5 reputation, +2 doom)"
 				},
 				{
+					"id": "exploit_weakness",
+					"text": "Exploit Their Weakness (Poach Clients)",
 					"costs": {
 						"action_points": 1
 					},
 					"effects": {
-						"doom": 3,
 						"money": 50000,
-						"reputation": -10
+						"reputation": -10,
+						"doom": 3
 					},
-					"id": "exploit_weakness",
-					"message": "Gained clients but damaged reputation (+$50k, -10 rep, +3 doom)",
-					"text": "Exploit Their Weakness (Poach Clients)"
+					"message": "Gained clients but damaged reputation (+$50k, -10 rep, +3 doom)"
 				}
-			],
-			"probability": 0.06,
-			"repeatable": false,
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 50,
-			"description": "An internal audit discovered your systems have weak password policies. If exploited, research data could be compromised.",
 			"id": "your_security_audit",
-			"min_turn": 8,
 			"name": "Security Vulnerability Found",
+			"description": "An internal audit discovered your systems have weak password policies. If exploited, research data could be compromised.",
+			"type": "popup",
+			"trigger_type": "random",
+			"probability": 0.05,
+			"min_turn": 8,
+			"cooldown_turns": 50,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "full_security_overhaul",
+					"text": "Full Security Overhaul ($60k, 2 AP)",
 					"costs": {
-						"action_points": 2,
-						"money": 60000
+						"money": 60000,
+						"action_points": 2
 					},
 					"effects": {
-						"doom": -5,
-						"reputation": 8
+						"reputation": 8,
+						"doom": -5
 					},
-					"id": "full_security_overhaul",
-					"message": "Comprehensive security upgrade complete (+8 reputation, -5 doom)",
-					"text": "Full Security Overhaul ($60k, 2 AP)"
+					"message": "Comprehensive security upgrade complete (+8 reputation, -5 doom)"
 				},
 				{
+					"id": "patch_critical",
+					"text": "Patch Critical Issues ($20k)",
 					"costs": {
 						"money": 20000
 					},
 					"effects": {
-						"doom": -2,
-						"reputation": 3
+						"reputation": 3,
+						"doom": -2
 					},
-					"id": "patch_critical",
-					"message": "Critical vulnerabilities patched (+3 reputation, -2 doom)",
-					"text": "Patch Critical Issues ($20k)"
+					"message": "Critical vulnerabilities patched (+3 reputation, -2 doom)"
 				},
 				{
+					"id": "defer_security",
+					"text": "Defer (We're Too Busy)",
 					"effects": {
 						"doom": 5
 					},
-					"id": "defer_security",
-					"message": "Security risks remain (+5 doom)",
-					"text": "Defer (We're Too Busy)"
+					"message": "Security risks remain (+5 doom)"
 				}
-			],
-			"probability": 0.05,
-			"repeatable": true,
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		},
 		{
-			"cooldown_turns": 35,
-			"description": "A competitor is trying to recruit one of your top researchers with a lucrative offer.",
 			"id": "researcher_poached",
-			"min_turn": 20,
 			"name": "Competitor Poaching Attempt",
+			"description": "A competitor is trying to recruit one of your top researchers with a lucrative offer.",
+			"type": "popup",
+			"trigger_type": "random",
+			"trigger_condition": "researchers >= 3",
+			"probability": 0.04,
+			"min_turn": 20,
+			"cooldown_turns": 35,
+			"repeatable": true,
 			"options": [
 				{
+					"id": "match_offer",
+					"text": "Match Their Offer ($50k)",
 					"costs": {
 						"money": 50000
 					},
 					"effects": {
 						"reputation": 2
 					},
-					"id": "match_offer",
-					"message": "Matched offer, researcher stays (+2 reputation for loyalty)",
-					"text": "Match Their Offer ($50k)"
+					"message": "Matched offer, researcher stays (+2 reputation for loyalty)"
 				},
 				{
+					"id": "counter_promotion",
+					"text": "Counter with Promotion (1 AP, $30k)",
 					"costs": {
 						"action_points": 1,
 						"money": 30000
@@ -1088,25 +1095,18 @@
 					"effects": {
 						"reputation": 3
 					},
-					"id": "counter_promotion",
-					"message": "Promoted researcher to senior role (+3 reputation)",
-					"text": "Counter with Promotion (1 AP, $30k)"
+					"message": "Promoted researcher to senior role (+3 reputation)"
 				},
 				{
-					"effects": {
-						"doom": 3,
-						"lose_researcher": 1
-					},
 					"id": "let_them_go",
-					"message": "Researcher departed for competitor (+3 doom, lost valuable team member)",
-					"text": "Let Them Leave"
+					"text": "Let Them Leave",
+					"effects": {
+						"lose_researcher": 1,
+						"doom": 3
+					},
+					"message": "Researcher departed for competitor (+3 doom, lost valuable team member)"
 				}
-			],
-			"probability": 0.04,
-			"repeatable": true,
-			"trigger_condition": "researchers >= 3",
-			"trigger_type": "random",
-			"type": "popup"
+			]
 		}
 	]
 }
