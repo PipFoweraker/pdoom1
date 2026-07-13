@@ -383,11 +383,31 @@ static func _spec_matches(spec: String, spec_filter: String) -> bool:
 	return spec == spec_filter
 
 
-static func _format_departure(state: GameState, r: Researcher) -> String:
-	"""Legible one-liner naming a poached researcher and the resulting team size."""
-	return "%s (%s, loyalty %d) poached by a rival lab — %s team now %d" % [
-		r.researcher_name, r.specialization, r.loyalty,
+static func _format_departure(state: GameState, r: Researcher, reason: String = "poached by a rival lab") -> String:
+	"""Legible one-liner naming a departing researcher and the resulting team size.
+	`reason` lets non-poaching departures (e.g. a risk-event resignation, #631
+	follow-up) describe themselves accurately instead of always saying "poached"."""
+	return "%s (%s, loyalty %d) %s — %s team now %d" % [
+		r.researcher_name, r.specialization, r.loyalty, reason,
 		r.specialization, state.get_researcher_count_by_spec(r.specialization)]
+
+
+static func remove_researchers(state: GameState, count: int, spec_filter: String = "", reason: String = "poached by a rival lab") -> Array[String]:
+	"""Remove up to `count` researchers (optionally restricted to a specialization),
+	least-loyal first (loyalty is poaching resistance — researcher.gd:18). Public
+	entry point so any effect path — event-driven poach (execute_event_choice) or a
+	risk-pool event applied via turn_manager — uses the same deterministic targeting
+	and legible naming instead of quietly doing nothing (#631 follow-up: insider_threat
+	'Key Resignation' claimed a departure but only docked scalar resources). Returns
+	one note per researcher actually removed; empty when there was nobody to remove
+	(safe no-op, matches the poaching regression tests)."""
+	var notes: Array[String] = []
+	for i in range(count):
+		var departed := _poach_least_loyal(state, spec_filter)
+		if departed == null:
+			break
+		notes.append(_format_departure(state, departed, reason))
+	return notes
 
 static func _mark_event_triggered(event: Dictionary, turn: int, state: GameState):
 	"""Mark an event as triggered, handling both one-time and cooldown tracking"""

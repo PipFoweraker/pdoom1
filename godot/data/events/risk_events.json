@@ -185,7 +185,7 @@
 						"research": -30,
 						"compute": -30
 					},
-					"message": "Moratorium threatens operations (+15 doom, -30 research, -30 compute frozen)"
+					"message": "Moratorium threatens operations (+15 doom, -30 research, -30 compute)"
 				}
 			]
 		},
@@ -280,6 +280,7 @@
 					"name": "Key Resignation",
 					"description": "A senior researcher announces they're leaving. They cite cultural concerns.",
 					"effects": {
+						"lose_researcher": 1,
 						"research": -15,
 						"reputation": -5,
 						"doom": 3
