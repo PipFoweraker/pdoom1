@@ -381,12 +381,26 @@ func get_doom_stroke_color(doom_percent: float) -> Color:
 		c = c.lerp(DOOM_STROKE_BRIGHT, t)
 	return c
 
+## ---- Canonical doom band API (lane L6, TECH_DEBT_REGISTER "Doom bands" row) ----
+## DOOM_STATUS_BANDS is the SINGLE source of doom-tier thresholds. The four former
+## divergent copies (doom_system 25/50/70/90, doom_meter + game_over_screen 30/60/80,
+## main_ui 70/80) now route through here. Values become Balance tunables once L9 lands.
+
+## Band index for a doom percentage: 0=NOMINAL .. 6=TERMINAL.
+func get_doom_band_index(doom_percent: float) -> int:
+	for i in range(DOOM_STATUS_BANDS.size()):
+		if doom_percent < DOOM_STATUS_BANDS[i].below:
+			return i
+	return DOOM_STATUS_BANDS.size() - 1
+
+## Full band record: {index, label, below}.
+func get_doom_band(doom_percent: float) -> Dictionary:
+	var i := get_doom_band_index(doom_percent)
+	return {"index": i, "label": DOOM_STATUS_BANDS[i].label, "below": DOOM_STATUS_BANDS[i].below}
+
 ## Non-color status label (colorblind channel) for the current doom tier.
 func get_doom_status_label(doom_percent: float) -> String:
-	for band in DOOM_STATUS_BANDS:
-		if doom_percent < band.below:
-			return band.label
-	return "TERMINAL"
+	return DOOM_STATUS_BANDS[get_doom_band_index(doom_percent)].label
 
 ## Get action category color (issue #436 - player feedback)
 ## Returns colored accent for action buttons based on their category

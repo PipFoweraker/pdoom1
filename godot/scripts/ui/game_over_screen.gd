@@ -213,15 +213,10 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	stats_label.text = stats_text
 
 func _get_doom_display_color(doom: float) -> String:
-	"""Get color name for doom display"""
-	if doom < 30.0:
-		return "green"
-	elif doom < 60.0:
-		return "yellow"
-	elif doom < 80.0:
-		return "orange"
-	else:
-		return "red"
+	"""BBCode colour for the final-doom stat — ThemeManager's doom ramp, stroke variant
+	so it stays legible on the dark panel (L6 unification: was a divergent 30/60/80
+	green/yellow/orange/red copy)."""
+	return "#" + ThemeManager.get_doom_stroke_color(doom).to_html(false)
 
 func _get_defeat_reason(final_state: Dictionary) -> String:
 	"""Generate defeat reason based on final state.

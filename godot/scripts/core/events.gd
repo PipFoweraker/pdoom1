@@ -312,8 +312,17 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 					var researcher = state.researchers[idx]
 					state.remove_researcher(researcher)
 
+	# EE-7 (loss legibility): report the NET resource deltas this choice applied
+	# (effects minus costs) so the event log can state them explicitly. Staffing /
+	# flag effects aren't resource deltas and are excluded.
+	var deltas := {}
+	for k in ["money", "compute", "research", "papers", "reputation", "doom"]:
+		var net: float = float(effects.get(k, 0.0)) - float(costs.get(k, 0.0))
+		if net != 0.0:
+			deltas[k] = net
+
 	var message = chosen_option.get("message", "Event resolved")
-	return {"success": true, "message": message}
+	return {"success": true, "message": message, "deltas": deltas}
 
 static func _mark_event_triggered(event: Dictionary, turn: int, state: GameState):
 	"""Mark an event as triggered, handling both one-time and cooldown tracking"""

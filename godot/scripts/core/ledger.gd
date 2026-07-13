@@ -120,8 +120,10 @@ static func staff_rider(name: String) -> Entry:
 
 ## Called once per turn (after WS-C scheduled causes). Compounds interest on live
 ## payables, advances fuses, and bills anything due. Unbounded compounding is the
-## mortality guarantee (ADR-0002).
-func tick_and_bill(state) -> void:
+## mortality guarantee (ADR-0002). Returns the entries billed THIS call so the turn
+## log can state them (EE-7 loss legibility — the cascade must be visible).
+func tick_and_bill(state) -> Array:
+	var billed: Array = []
 	for e in entries:
 		if e.settled or e.side != Side.PAYABLE:
 			continue
@@ -132,6 +134,8 @@ func tick_and_bill(state) -> void:
 			continue
 		_bill(e, state)
 		e.settled = true
+		billed.append(e)
+	return billed
 
 ## Bill a due entry in its own currency. A money bill the debtor cannot cover
 ## converts the shortfall into doom + reputation damage and records the entry as a
@@ -143,11 +147,18 @@ func _bill(e: Entry, state) -> void:
 			if state.money < 0.0:
 				var shortfall: float = -state.money
 				state.money = 0.0
-				state.doom += shortfall / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
-				state.reputation = max(0.0, state.reputation - shortfall / 1000.0 * Balance.num("ledger.rep_per_unpaid_1000", REP_PER_UNPAID_1000))
-				_attribute(e, shortfall)
+				var doom_hit: float = shortfall / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
+				var rep_amount: float = shortfall / 1000.0 * Balance.num("ledger.rep_per_unpaid_1000", REP_PER_UNPAID_1000)
+				var rep_hit: float = minf(state.reputation, rep_amount)
+				state.doom += doom_hit
+				state.reputation = max(0.0, state.reputation - rep_amount)
+				_attribute(e, shortfall, state)
+				_note(state, "ledger_default", e.source,
+					{"money_shortfall": shortfall, "doom": doom_hit, "reputation": -rep_hit})
 		"reputation":
+			var rep_hit: float = minf(state.reputation, e.principal)
 			state.reputation = max(0.0, state.reputation - e.principal)
+			_note(state, "ledger_rep_bill", e.source, {"reputation": -rep_hit})
 		"governance":
 			# Governance is a resource the ledger reads/writes (ADR-0003). Its
 			# player-facing design is parked (workshop #2). Below zero, corroded
@@ -156,16 +167,28 @@ func _bill(e: Entry, state) -> void:
 			if state.governance < 0.0:
 				var deficit: float = -state.governance
 				state.governance = 0.0
-				state.doom += deficit / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
-				_attribute(e, deficit)
+				var doom_hit: float = deficit / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
+				state.doom += doom_hit
+				_attribute(e, deficit, state)
+				_note(state, "ledger_governance_deficit", e.source,
+					{"governance_deficit": deficit, "doom": doom_hit})
 		"doom":
 			state.doom += e.principal
-			_attribute(e, e.principal)
+			_attribute(e, e.principal, state)
+			_note(state, "ledger_doom_bill", e.source, {"doom": e.principal})
 		"action_points":
 			state.action_points = max(0, state.action_points - int(e.principal))
 
-func _attribute(e: Entry, magnitude: float) -> void:
-	death_attribution.append({"source": e.source, "currency": e.currency, "magnitude": magnitude})
+func _attribute(e: Entry, magnitude: float, state = null) -> void:
+	# EE-8: turn-stamped so the death chain is orderable in the run record.
+	var turn: int = int(state.turn) if state != null and "turn" in state else -1
+	death_attribution.append({"source": e.source, "currency": e.currency, "magnitude": magnitude, "turn": turn})
+
+## EE-8: forward a contributing cause to the GameState attribution trail (duck-typed
+## so ledger unit tests with lightweight state doubles keep working).
+func _note(state, kind: String, source: String, effects: Dictionary) -> void:
+	if state != null and state.has_method("note_cause"):
+		state.note_cause(kind, source, effects)
 
 ## Expose a secret entry (rival action / scheduled cause). Converts it to
 ## reputation + governance damage, and — the chain continues — may offer a
@@ -174,8 +197,13 @@ func expose(entry: Entry, state, offer_blackmail: bool = true) -> void:
 	if not entry.secret or entry.settled:
 		return
 	entry.secret = false
-	state.reputation = max(0.0, state.reputation - entry.principal / 1000.0 * Balance.num("ledger.expose.rep_per_1000", 4.0))
-	state.governance -= entry.principal * Balance.num("ledger.expose.governance_multiplier", 0.5)
+	var rep_amount: float = entry.principal / 1000.0 * Balance.num("ledger.expose.rep_per_1000", 4.0)
+	var gov_hit: float = entry.principal * Balance.num("ledger.expose.governance_multiplier", 0.5)
+	var rep_hit: float = minf(state.reputation, rep_amount)
+	state.reputation = max(0.0, state.reputation - rep_amount)
+	state.governance -= gov_hit
+	_note(state, "ledger_exposure", entry.source,
+		{"reputation": -rep_hit, "governance": -gov_hit})
 	if offer_blackmail:
 		# A worse liability that keeps the debtor quiet: shorter fuse, steeper rate.
 		add(Entry.new("blackmail:" + entry.source, "money",

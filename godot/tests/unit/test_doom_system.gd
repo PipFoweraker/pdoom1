@@ -153,40 +153,51 @@ func test_momentum_capped_negative():
 # STATUS AND TREND TESTS
 # ============================================================================
 
-func test_get_doom_status_safe():
-	# Test doom status at low doom levels
+# L6 unification: doom statuses are ThemeManager's canonical bands, lowercased
+# (nominal/elevated/high/severe/extreme/catastrophic/terminal at 15/37/52/67/80/92).
+# The former 25/50/70/90 safe/warning/danger/critical/catastrophic copy is gone.
+
+func test_get_doom_status_nominal():
+	var doom_system = _create_doom_system()
+
+	doom_system.current_doom = 10.0
+	assert_eq(doom_system.get_doom_status(), "nominal", "Doom < 15 should be 'nominal'")
+
+func test_get_doom_status_elevated():
 	var doom_system = _create_doom_system()
 
 	doom_system.current_doom = 20.0
-	assert_eq(doom_system.get_doom_status(), "safe", "Doom < 25 should be 'safe'")
+	assert_eq(doom_system.get_doom_status(), "elevated", "Doom 15-36 should be 'elevated'")
 
-func test_get_doom_status_warning():
-	# Test doom status at warning level
+func test_get_doom_status_high():
 	var doom_system = _create_doom_system()
 
-	doom_system.current_doom = 35.0
-	assert_eq(doom_system.get_doom_status(), "warning", "Doom 25-49 should be 'warning'")
+	doom_system.current_doom = 40.0
+	assert_eq(doom_system.get_doom_status(), "high", "Doom 37-51 should be 'high'")
 
-func test_get_doom_status_danger():
-	# Test doom status at danger level
+func test_get_doom_status_severe():
 	var doom_system = _create_doom_system()
 
 	doom_system.current_doom = 60.0
-	assert_eq(doom_system.get_doom_status(), "danger", "Doom 50-69 should be 'danger'")
+	assert_eq(doom_system.get_doom_status(), "severe", "Doom 52-66 should be 'severe'")
 
-func test_get_doom_status_critical():
-	# Test doom status at critical level
+func test_get_doom_status_extreme():
+	var doom_system = _create_doom_system()
+
+	doom_system.current_doom = 70.0
+	assert_eq(doom_system.get_doom_status(), "extreme", "Doom 67-79 should be 'extreme'")
+
+func test_get_doom_status_catastrophic():
 	var doom_system = _create_doom_system()
 
 	doom_system.current_doom = 80.0
-	assert_eq(doom_system.get_doom_status(), "critical", "Doom 70-89 should be 'critical'")
+	assert_eq(doom_system.get_doom_status(), "catastrophic", "Doom 80-91 should be 'catastrophic'")
 
-func test_get_doom_status_catastrophic():
-	# Test doom status at catastrophic level
+func test_get_doom_status_terminal():
 	var doom_system = _create_doom_system()
 
 	doom_system.current_doom = 95.0
-	assert_eq(doom_system.get_doom_status(), "catastrophic", "Doom >= 90 should be 'catastrophic'")
+	assert_eq(doom_system.get_doom_status(), "terminal", "Doom >= 92 should be 'terminal'")
 
 # ============================================================================
 # ADD_EVENT_DOOM TESTS
