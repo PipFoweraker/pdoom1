@@ -29,6 +29,11 @@ var governance: float = 50.0
 # per game in reset(); compounding payables are the mortality guarantee (ADR-0002).
 var ledger: Ledger
 
+# The month plan layer (L1 / ADR-0009): the founder currency Attention, the crisp reserve,
+# and duration-bearing queued strategic actions. The plan cadence is monthly; the turn above
+# is the day-grained resolution tick. Rebuilt per game in reset().
+var month_plan: MonthPlan
+
 # EE-8 (ADR-0012): chronological CONTRIBUTING-CAUSE log for root-cause death
 # attribution. Ledger defaults, governance deficits, secret exposures, rep collapse
 # and funding starvation are appended here with turn stamps, so a death can be traced
@@ -185,6 +190,10 @@ func reset():
 	stationery = Balance.num("starting_resources.stationery", 100.0)
 	governance = Balance.num("starting_resources.governance", 50.0)
 	ledger = Ledger.new()  # ADR-0003: fresh ledger per game
+	# L1/ADR-0009: fresh month plan, opened with the first month's Attention grant. The plan
+	# month ordinal is derived from the calendar (turn 0 -> ordinal 0).
+	month_plan = MonthPlan.new()
+	month_plan.begin_month(Balance.inum("attention.per_month", 20), 0)
 	cause_log.clear()      # EE-8: fresh attribution trail per game
 	rep_collapse_noted = false
 	funding_starvation_noted = false
@@ -677,19 +686,18 @@ func get_formatted_date() -> String:
 	return "%s %d, %d" % [month_names[date.month - 1], date.day, date.year]
 
 func get_turn_display() -> String:
-	"""Get the full turn display string for UI"""
+	"""Badge/HUD string. ADR-0009 §1-2/§6: the plan cadence is the MONTH and the badge
+	is the calendar date; the day is a resolution tick, not a decision unit. The old
+	'Week 12 | ... | Day 3/5' framing hung the player's attention on the day tick and is
+	retired — routine decisions live at the month boundary now. Primary is the plan month;
+	the calendar day rides along as playback progress, not a decision counter."""
 	var date = get_current_date()
-	var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-					   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-	# Format: "Week 12 | Wed Mar 20, 2024 | Day 3/5"
-	return "Week %d | %s %s %d, %d | Day %d/%d" % [
-		date.week_number,
-		date.weekday.substr(0, 3),  # Mon, Tue, Wed, etc.
-		month_names[date.month - 1],
-		date.day,
+	# e.g. "March 2034  ·  Mar 20"  — month is the plan unit, date is the badge.
+	return "%s %d  ·  %s %d" % [
+		Clock.MONTH_NAMES[date.month - 1],
 		date.year,
-		date.day_of_week,
-		Clock.TURNS_PER_WEEK
+		Clock.MONTH_ABBR[date.month - 1],
+		date.day
 	]
 
 func record_doom_history() -> void:
@@ -813,6 +821,7 @@ func to_dict() -> Dictionary:
 		"reputation": reputation,
 		"governance": governance,
 		"ledger": ledger.to_dict() if ledger else {},
+		"month_plan": month_plan.to_dict() if month_plan else {},  # L1/ADR-0009 Attention + reserve + WIP
 		"cause_log": cause_log.duplicate(true),  # EE-8 attribution trail
 		"doom": doom,
 		"doom_history": doom_history.duplicate(),  # #512 trend graph
@@ -971,6 +980,11 @@ func from_dict(data: Dictionary) -> void:
 	if ledger == null:
 		ledger = Ledger.new()
 	ledger.from_dict(data.get("ledger", {}))
+
+	# Restore the month plan layer (L1/ADR-0009: Attention, reserve, in-flight strategic WIP)
+	if month_plan == null:
+		month_plan = MonthPlan.new()
+	month_plan.from_dict(data.get("month_plan", {}))
 
 	# Restore doom system
 	if doom_system and data.has("doom_system"):

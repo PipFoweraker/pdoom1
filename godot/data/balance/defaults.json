@@ -1,9 +1,19 @@
 {
 	"_description": "Central gameplay tunables (L9, issue #621). These are the shipped defaults — identical to the pre-L9 inline literals, so this file is behavior-neutral until a sweep varies it. Tune by editing here or by dropping a user://balance_overrides.json with the same shape (deep-merged on top). Consumers pass the same values as call-site fallbacks, so a missing file degrades safely.",
 	"events": {
-		"_description": "Event pacing (#568): no events before first_event_turn; at most max_new_events_per_turn new events fire per turn (excess re-roll/re-evaluate later).",
+		"_description": "Event pacing. first_event_turn/max_new_events_per_turn are the pre-L1 day-tick throttle (#568) — kept for the resolution tick. The MONTH plan layer (ADR-0009/workshop#3) governs decision load via the window DEMAND budget below, not an information budget: only 'window'-tier events demand a decision. Tiers per genre live on the event definitions (delivery_tier: ambient|feed|window).",
 		"first_event_turn": 2,
-		"max_new_events_per_turn": 2
+		"max_new_events_per_turn": 2,
+		"default_delivery_tier": "feed",
+		"window_demand_budget": 3,
+		"window_demand_budget_endgame": 6,
+		"endgame_turn": 200,
+		"unanswered_window_rep_penalty": 2.0,
+		"default_event_class": "deferrable"
+	},
+	"attention": {
+		"_description": "Founder currency (workshop#3 addendum #5 / ADR-0011): ~N decisions per PLAN MONTH; admin is painful overhead spent here. Staff spend a SEPARATE per-person 'actions' currency — there is no global pool (L2 deletes the legacy AP pool; L1 introduces Attention alongside it). Unspent reserve evaporates at month end (ADR-0009 §4 — no banking).",
+		"per_month": 20
 	},
 	"papers": {
 		"_description": "Paper-decision pacing (#630 stopgap): at most max_decisions_per_turn paper accept/reject decisions surface per turn; clustered decision_turns otherwise flood a click-through wall. Surplus stays UNDER_REVIEW and resolves on later turns (never dropped). 0 = unlimited (pre-#630). Superseded by ADR-0009/0012/0014 response windows.",
