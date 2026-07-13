@@ -1,11 +1,12 @@
 # DQ-21 — Intermediary semantics v1 (STRAWMAN, for Pip veto)
 
-> **Status: STRAWMAN, ROUND 2. Fable Lane 0, workshop #3 build wave.**
+> **Status: STRAWMAN, ROUND 3. Fable Lane 0, workshop #3 build wave.**
 > Pip's veto round 1 applied (2026-07-13): §2 is rebuilt as a **ROUND-2 STRAWMAN**
 > (named component streams + typed dampers; the MIN_FLOOR clamp and the global
 > governance-damping multiplier are **deleted**), §2b (sacred-object chains — two senses)
 > is **new**, and rulings are marked in the veto checklist (✅ ruled · 🟡 provisional ·
-> ⬜ open). Everything not marked ✅ remains vetoable.
+> ⬜ open). Round 3 (same day): Q-CONFLICT-1 confirmed; two-instrument display ruling
+> added to §2. Everything not marked ✅ remains vetoable.
 > This document proposes clean names + semantics for the eight doom intermediaries Pip
 > seeded (WORKSHOP_2_BACKLOG DQ-21, 2026-07-13), and a v1 doom-function *shape*. It exists
 > to be vetoed line-by-line. Every judgment call is collected in **Questions for Pip** at
@@ -145,12 +146,11 @@ ocean, you can regulate the clusters.
   feeds the panic/racing side. Strawman wiring — see R2-Q2.
 - **Read/written by:** ADR-0010 adoption, ADR-0011 governance archetype, ADR-0003 lobbying
   chains, alarm/panic all write; doom function reads.
-- **⚠ CONFLICT — 🟡 PROVISIONAL RULING (round 2; Pip's confirm pending, explanation en
-  route to him):** **two distinct objects.** `political_pressure` = world-state
-  intermediary (the world's disposition). The existing `game_state.gd governance: float
-  = 50.0` is an undesigned **WS-1 player-currency stub** (its whole design is open under
-  DQ-7) — vintage placeholder, cheap to rename. Proposed wiring: DQ-7's eventual player
-  currency is a **lever that writes into** the world intermediary.
+- **⚠ CONFLICT — ✅ CONFIRMED (Pip, round 3):** **two distinct objects.**
+  `political_pressure` = world-state intermediary (the world's disposition). The existing
+  `game_state.gd governance: float = 50.0` stays a **player-currency stub** whose DQ-7
+  design will define it as a **lever that writes into** the world intermediary. Vintage
+  placeholder, cheap to rename.
 
 ### 1.6 `ambient_risk`  *(verbatim: `ambient_capability_-_risk_background_levels`)*
 
@@ -344,6 +344,27 @@ Why this shape (mechanism, not decoration):
   "frontier overhang" vs "panic-driven racing" vs "the March release pulse," satisfying
   ADR-0015 §3.
 
+### Display implications — two instruments (✅ RULED, Pip 2026-07-13)
+
+Pip, verbatim: *"we can have the satisfaction of watching something like the delta Doom
+rise and fall in response to our observed outputs, and then the actual, accumulated Doom
+can steadily grind upwards with much subtler gradients over time, so the player has (or,
+better yet, can earn) tighter feedback loops."*
+
+- **(a) The delta-doom (rate) display** — visibly rises and falls in response to player
+  outputs. The **high-frequency feedback surface**, decomposable into the named streams
+  via the L6 chip system (click the wiggle, see the stack).
+- **(b) The accumulated doom level** — grinding upward with much subtler gradients. The
+  **structural-dread surface**; the thing whose crossing date is the badge.
+- **The tighter feedback loop is EARNED.** Instrument *resolution* — stream decomposition,
+  pulse forecasting ("a release spike is coming in March") — is progression content, built
+  and unlocked in the power-up-the-office register (DESIGN_PHILOSOPHY "On the hero and the
+  office"): better instruments are things the org constructs, not settings.
+- **The free layer is owned by ADR-0004's lead-time rule and is never paywalled:** the
+  coarse doom band and becoming-lethal warnings stay free — the world may always shout
+  about what is becoming lethal; what you *buy* is resolution and lead time, never the
+  existence of the warning.
+
 **What is NOT specified here (correctly):** all magnitudes (`W_*`, `DOOM_DEATH_THRESHOLD`,
 the `ambient_risk` year curve, pulse envelope parameters, damper strengths/durations,
 chain reduction sizes). Those are the freely-tuned `Balance` layer (ADR-0015 §4: "the
@@ -428,7 +449,7 @@ ADR-0015 §5: L9 schema deprecates direct doom fields; exploit sweeps are the re
 - ⬜ **Q-MERGE-2** Any of the eight you now think should collapse into a read/write on another (ADR-0015 restraint test)? Candidate to pressure-test: is `general_capability` just `frontier_capability` on a lag + a diffusion function, i.e. derivable rather than stored?
 
 **Conflicts:**
-- 🟡 **Q-CONFLICT-1** **PROVISIONAL (round 2; Pip confirm pending):** two distinct objects. `political_pressure` = world-state intermediary; the `game_state.gd governance: float = 50.0` is an undesigned WS-1 player-currency **stub** (design open under DQ-7) — vintage placeholder, cheap to rename. Proposed wiring: DQ-7's eventual player currency is a lever that **writes into** the world intermediary.
+- ✅ **Q-CONFLICT-1** **CONFIRMED (Pip, round 3):** two distinct objects. `political_pressure` = world-state intermediary; the `game_state.gd governance: float = 50.0` stays a player-currency **stub** whose DQ-7 design will define it as a lever that **writes into** the world intermediary. Vintage placeholder, cheap to rename.
 - ✅ **Q-CONFLICT-2** Mapping **ACCEPTED**; Pip reserves revisit. Pip's principle, verbatim: *"our architecture should be robust to some numbers shifts if things are moving laterally, not up and down, as we establish hierarchies and embed them into our structural tree."*
 
 **ROUND-2 questions (new — raised by the streams/dampers restructure; all ⬜):**
@@ -446,5 +467,6 @@ ADR-0015 §5: L9 schema deprecates direct doom fields; exploit sweeps are the re
 
 *DQ-21 strawman — Fable Lane 0, workshop #3 build wave, 2026-07-13. Round 2: Pip veto
 round 1 applied same day (streams + typed dampers, floor-as-instrument, sacred-object
-two senses). Serves ADR-0015; consumes ADR-0011 researcher model; feeds the L1
-re-denomination pass, the L9 schema, and the ADR-0005 pulse-envelope schema addition.*
+two senses). Round 3: Q-CONFLICT-1 confirmed; two-instrument display ruling. Serves
+ADR-0015; consumes ADR-0011 researcher model; feeds the L1 re-denomination pass, the
+L9 schema, and the ADR-0005 pulse-envelope schema addition.*
