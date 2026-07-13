@@ -80,6 +80,51 @@ Fable's two, drafted for Pip's edit/veto:
    tell-all memoir (a secret ledger entry with an exposure fuse, ADR-0003 reuse) /
    wants absolution / cynical.
 
+### PROPOSED (Fable Lane 0, for Pip veto) — appetite fills
+
+> **Strawman only — does not modify the archetype text above.** ADR-0011 §8 names the
+> appetite menu (**compute, prestige/first-author, mentees, money, mission purity**) and the
+> rule that *promises made to retain staff are ledger entries*. Below: 1–2 dominant appetites
+> per archetype + one line of unmanaged-drift *behaviour* (what the backlog-ordering fight
+> looks like when nobody steers). Register held to "bother," dark comedy, Papers-Please —
+> personnel problems, not HR gravity. Pip: veto/re-pick appetites, they're deliberately
+> arguable.
+
+1. **The people-pleaser** — appetites: **money** (dominant — "financial stability for
+   family" is a payroll promise, so a *ledger entry* you can't quietly drop) + **mentees**
+   (secondary — being liked is the whole personality; adopts juniors, then advocates for
+   them). *Unmanaged drift:* says yes to whoever asked most recently, so their week ends up
+   shaped by the loudest colleague, not the plan — the interp mandate quietly becomes
+   whatever evals task someone buttonholed them about at lunch. Cheap to retain, expensive
+   to trust.
+
+2. **The authoritarian pessimist** — appetites: **prestige/first-author** (dominant — wants
+   to be *the* named authority whose framework the ministries cite) + **money** (secondary —
+   reads power and budget as the same lever). *Unmanaged drift:* empire-builds toward the
+   deepfake/surveillance beat because that's where the government meetings are, courting
+   ministries on your letterhead without asking — great door, live rider (ADR-0010), one bad
+   op-ed from becoming *your* PR problem.
+
+3. **The moral crusader** — appetite: **mission purity** (dominant and near-total — the org
+   must not touch dual-use, non-negotiable). *Unmanaged drift:* the agent-foundations work
+   calcifies into a PDF nobody adopts while they spend the week lobbying for software moral
+   rights; a capabilities hire anywhere in the org is a resignation trigger, and they'll cc
+   the whole company on the way out. Bother, escalating.
+
+4. **The capabilities-curious optimist** — appetites: **compute** (dominant — will burn the
+   cluster budget on "just one more scaling run") + **prestige/first-author** (secondary —
+   the magazine cover is a real motivator). *Unmanaged drift:* quietly reallocates
+   `dedicated_ai_compute` (DQ-21 §1.4) toward flashy scaling results that "also help safety,
+   really," publishes them loud, and nudges `frontier_capability` and `global_panic` up while
+   genuinely believing they're helping. The priced temptation with a payroll number.
+
+5. **The burned-out ex-frontier senior** — appetites: **prestige/first-author** (dominant,
+   darkly — the tell-all memoir *is* an authorship move, absolution laundered as legacy) +
+   **money** (secondary — the advance doesn't hurt). *Unmanaged drift:* low visible output
+   while the secret memoir accretes as a ledger entry with an exposure fuse (ADR-0003);
+   cynicism leaks into their evals work and their Celine's-law reports run sour rather than
+   rosy — the pessimist's mirror-image reporting hazard.
+
 ## Rival labs & organizations
 
 Rivals emerge from fog as *causes with trajectories*: a funding wave hits, a lab
