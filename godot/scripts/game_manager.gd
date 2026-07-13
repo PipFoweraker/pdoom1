@@ -43,8 +43,12 @@ func start_new_game(game_seed: String = ""):
 	# Start verification tracking. The event schedule travels with the artifact
 	# (ADR-0005: seed = RNG seed + schedule; DQ-6 fix, L0 #620 item 4).
 	var game_version = GameConfig.CURRENT_VERSION
+	# ADR-0016 league metabolism: stamp the artifact with its league (the baseline month).
+	# Placeholder until the league pipeline lands — the run's start month is a stable id
+	# carried beside (seed, game_version) so cross-league boards (DQ-3) can key on it.
+	var league_id := "%04d-%02d" % [state.start_year, state.start_month]
 	VerificationTracker.enable_debug()  # Enable verbose logging
-	VerificationTracker.start_tracking(game_seed, game_version, state.event_schedule)
+	VerificationTracker.start_tracking(game_seed, game_version, state.event_schedule, league_id)
 	print("[GameManager] Verification tracking enabled (debug mode: ON)")
 
 	# Start baseline simulation in background if appropriate (Issue #372)
@@ -656,3 +660,41 @@ func _apply_scenario_overrides():
 			state.set_meta("scenario_events", custom_events)
 
 	print("[GameManager] Scenario applied successfully")
+
+
+# ============================================================================
+# MONTH PLAN LAYER API (L1 / ADR-0009)
+#
+# Thin delegates exposing the plan-turn layer to callers (the new plan screen speaks
+# ONLY through here — main_ui.gd is left to die by attrition, per the LET-DIE map).
+# The founder currency Attention lives on state.month_plan; response windows resolve
+# through WindowResolver. The legacy per-turn AP loop above is untouched (L2 removes it).
+# ============================================================================
+
+func get_month_plan() -> MonthPlan:
+	"""The current month's plan (Attention, reserve, in-flight strategic WIP), or null."""
+	return state.month_plan if state else null
+
+
+func set_attention_reserve(amount: int) -> bool:
+	"""Explicitly hold `amount` Attention for response windows this month (plan-time)."""
+	if state == null or state.month_plan == null:
+		return false
+	return state.month_plan.set_reserve(amount)
+
+
+func queue_strategic_action(action_id: String, attention_cost: int, duration_ticks: int) -> bool:
+	"""Queue a strategic action at plan speed — spends Attention now, lands after its
+	duration (ADR-0009 §5, nothing strategic resolves instantly)."""
+	if state == null or state.month_plan == null:
+		return false
+	return state.month_plan.queue_strategic(action_id, attention_cost, duration_ticks, state.turn)
+
+
+func resolve_window(event: Dictionary, response: String) -> Dictionary:
+	"""Resolve a response window with a costed menu choice (handle_reserve /
+	handle_cannibalize / defer / ignore). Delegates to WindowResolver; records the
+	payment source into the replay artifact."""
+	if state == null:
+		return {"success": false, "message": "no active game"}
+	return WindowResolver.resolve(state, state.month_plan, event, response, state.rng)
