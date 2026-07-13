@@ -237,6 +237,18 @@ compound.** Extends "the opening is a commitment device": which rooms you spend 
 hours in locks strategic paths (Hustler vs Operator divergence is literally this).
 Early hires are reputation seeds who attract their own juniors.
 
+**(2026-07-13, workshop #3, #635 ruling)** *"when people burnout, they end up having to
+either suddenly quit / quit with no notice / have to take extended leave at short notice
+and then return to work permanently damaged for a while. Loyalty hit and efficiency hit
+feel like correct burnout responses, but the recovery can (should) take much longer than
+the preventative manner of sending them on holiday or whatever."*
+→ **Burnout: prevention is cheap, recovery is long.** Ignored burnout draws from
+{sudden quit, no-notice quit, short-notice extended leave → return with a lasting
+loyalty + efficiency debuff}; the recovery duration deliberately dwarfs the preventative
+cost (a holiday). The asymmetry is the mechanic — slack-as-insurance applied to people.
+Resolves the employee_burnout "Push Through" question (never toothless, rarely an
+instant clean walk).
+
 ### On the early game (scouting and the populating board)
 
 **(2026-07-13)** *"I was thinking about the early stage phases of games like Civ and

@@ -154,6 +154,13 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
   historical analogs of policy/institutional responses damping technology risks
   (candidates to check: Montreal Protocol, nuclear test bans, financial-stability
   accords), for damper magnitude/duration baselines.
+- **Burnout outcome model — RULED (Pip 2026-07-13, resolves #635 DEFERRED)** — ignored
+  burnout ("Push Through") is never toothless: outcome draws from {sudden quit,
+  no-notice quit, short-notice extended leave → return with lasting loyalty + efficiency
+  debuff}; recovery duration ≫ prevention cost (send-on-holiday). Implementation home:
+  L2 effort economy (#613) — needs per-researcher efficiency debuffs with durations;
+  interim event content may ship the loyalty-hit-only version. Interacts with DQ-22
+  (loyalty hits raise poach vulnerability).
 - **DQ-22 · Aggro-threshold midgame** *(Pip 2026-07-13; ADR-candidate)* — rivals develop
   their own positions until the player's visible impact threatens their interests, then
   active attacks begin (litigation, funding cuts, rep attacks, scathing reviews, psyops,
