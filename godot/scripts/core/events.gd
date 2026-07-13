@@ -279,6 +279,11 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 	# (L9 #621); non-scalar effects (researcher creation/removal, mascot) keep
 	# their special handling here.
 	var effects = chosen_option.get("effects", {})
+	# #631 loss legibility: staffing effects (hire / poach) are not scalar deltas,
+	# so they never showed up in the log — the player couldn't tell a poach even
+	# happened, let alone WHO left. Collect a human-readable note per staffing
+	# change and return them so the event log names the person + the team delta.
+	var staffing_notes: Array[String] = []
 	for key in effects.keys():
 		var value = effects[key]
 
@@ -287,30 +292,20 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 
 		match key:
 			"safety_researchers":
-				# Create actual Researcher objects for the new system
-				for i in range(value):
-					var researcher = Researcher.new()
-					researcher.generate_random(state.rng)
-					researcher.specialization = "safety"
-					state.add_researcher(researcher)
+				_apply_staffing_effect(state, "safety", int(value), staffing_notes)
 			"capability_researchers":
-				for i in range(value):
-					var researcher = Researcher.new()
-					researcher.generate_random(state.rng)
-					researcher.specialization = "capabilities"
-					state.add_researcher(researcher)
+				_apply_staffing_effect(state, "capabilities", int(value), staffing_notes)
 			"has_cat":
 				state.has_cat = (value > 0)
 			"lose_researcher":
-				# Remove a random researcher (poaching)
-				if state.researchers.size() > 0:
-					var idx = state.rng.randi() % state.researchers.size()
-
-					# Record RNG outcome for verification
-					VerificationTracker.record_rng_outcome("poach_researcher_select", float(idx), state.turn)
-
-					var researcher = state.researchers[idx]
-					state.remove_researcher(researcher)
+				# Poaching: a rival recruits away up to `value` researchers of ANY
+				# specialization, targeting the LEAST loyal first (loyalty is
+				# poaching resistance — researcher.gd:18). Each departure is named.
+				for i in range(int(value)):
+					var poached := _poach_least_loyal(state, "")
+					if poached == null:
+						break
+					staffing_notes.append(_format_departure(state, poached))
 
 	# EE-7 (loss legibility): report the NET resource deltas this choice applied
 	# (effects minus costs) so the event log can state them explicitly. Staffing /
@@ -322,7 +317,77 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 			deltas[k] = net
 
 	var message = chosen_option.get("message", "Event resolved")
-	return {"success": true, "message": message, "deltas": deltas}
+	var result := {"success": true, "message": message, "deltas": deltas}
+	# main_ui._on_action_executed renders result.messages as extra log lines, so
+	# the staffing change (who joined/left) is now visible to the player (#631).
+	if not staffing_notes.is_empty():
+		result["messages"] = staffing_notes
+	return result
+
+
+static func _apply_staffing_effect(state: GameState, spec: String, delta: int, notes: Array) -> void:
+	"""Apply a staffing effect and record a legible note per person (#631).
+	delta > 0 hires `delta` researchers of `spec` (real Researcher objects, named);
+	delta < 0 loses |delta| of `spec` to poaching, LEAST loyal first (loyalty is
+	poaching resistance, researcher.gd:18). Previously a negative value was a silent
+	no-op: Resources.add() rejects the name, and the old `for i in range(value)`
+	create-loop ran range(-1) == empty — so "Let Them Go" removed nobody."""
+	if delta > 0:
+		for i in range(delta):
+			var researcher := Researcher.new()
+			# Set spec before generate_random so salary_expectation uses the right
+			# base_cost; generate_random does not touch specialization.
+			researcher.specialization = spec
+			researcher.generate_random(state.rng)
+			state.add_researcher(researcher)
+			notes.append("Hired %s (%s) — %s team now %d" % [
+				researcher.researcher_name, spec, spec,
+				state.get_researcher_count_by_spec(spec)])
+	elif delta < 0:
+		for i in range(-delta):
+			var poached := _poach_least_loyal(state, spec)
+			if poached == null:
+				break
+			notes.append(_format_departure(state, poached))
+
+
+static func _poach_least_loyal(state: GameState, spec_filter: String) -> Researcher:
+	"""Remove and return the researcher most vulnerable to poaching — the LEAST
+	loyal (loyalty = poaching resistance, researcher.gd:18) — optionally restricted
+	to a specialization. Deterministic (stable min, first-index wins ties). Returns
+	null when no matching researcher exists. Consumes no RNG (replaces the old
+	random pick); the chosen index is still recorded so replay hashes stay sensitive
+	to the poach."""
+	var target: Researcher = null
+	var target_idx := -1
+	for i in range(state.researchers.size()):
+		var r: Researcher = state.researchers[i]
+		if spec_filter != "" and not _spec_matches(r.specialization, spec_filter):
+			continue
+		if target == null or r.loyalty < target.loyalty:
+			target = r
+			target_idx = i
+	if target == null:
+		return null
+	VerificationTracker.record_rng_outcome("poach_researcher_select", float(target_idx), state.turn)
+	state.remove_researcher(target)
+	return target
+
+
+static func _spec_matches(spec: String, spec_filter: String) -> bool:
+	"""Match a researcher's specialization to a staffing filter, folding
+	interpretability/alignment into "safety" — the same grouping GameState uses for
+	its legacy safety_researchers count (game_state.gd add/remove_researcher)."""
+	if spec_filter == "safety":
+		return spec in ["safety", "interpretability", "alignment"]
+	return spec == spec_filter
+
+
+static func _format_departure(state: GameState, r: Researcher) -> String:
+	"""Legible one-liner naming a poached researcher and the resulting team size."""
+	return "%s (%s, loyalty %d) poached by a rival lab — %s team now %d" % [
+		r.researcher_name, r.specialization, r.loyalty,
+		r.specialization, state.get_researcher_count_by_spec(r.specialization)]
 
 static func _mark_event_triggered(event: Dictionary, turn: int, state: GameState):
 	"""Mark an event as triggered, handling both one-time and cooldown tracking"""

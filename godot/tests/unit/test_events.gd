@@ -316,3 +316,85 @@ func test_multi_resource_effects():
 	assert_ne(state.doom, initial_doom, "Doom should change")
 	assert_ne(state.reputation, initial_reputation, "Reputation should change")
 	assert_ne(state.research, initial_research, "Research should change")
+
+# ---------------------------------------------------------------------------
+# #631: poaching outcome correctness + legibility
+# ---------------------------------------------------------------------------
+
+func _make_researcher(spec: String, name: String, loyalty: int) -> Researcher:
+	"""Deterministic researcher for poaching tests (no RNG, explicit loyalty)."""
+	var r := Researcher.new()
+	r.specialization = spec
+	r.researcher_name = name
+	r.loyalty = loyalty
+	return r
+
+func test_lose_researcher_removes_exactly_one_least_loyal_and_names_them():
+	# researcher_poached / let_them_go uses the `lose_researcher` effect.
+	# Loyalty is poaching resistance (researcher.gd:18) — the LEAST loyal leaves.
+	state.add_researcher(_make_researcher("safety", "Loyal Larry", 90))
+	state.add_researcher(_make_researcher("safety", "Fickle Fran", 20))
+	state.add_researcher(_make_researcher("capabilities", "Steady Sam", 70))
+	var before := state.researchers.size()
+
+	var events = GameEvents.get_all_events()
+	var poach = _find_event_by_id(events, "researcher_poached")
+	assert_false(poach.is_empty(), "researcher_poached event should exist")
+
+	var result = GameEvents.execute_event_choice(poach, "let_them_go", state)
+
+	assert_true(result["success"], "Letting them go should succeed")
+	assert_eq(state.researchers.size(), before - 1, "Exactly one researcher removed")
+	# The least loyal (Fickle Fran, loyalty 20) is the one poached.
+	var names := []
+	for r in state.researchers:
+		names.append(r.researcher_name)
+	assert_does_not_have(names, "Fickle Fran", "Least-loyal researcher was poached")
+	assert_has(names, "Loyal Larry", "Loyal researcher retained")
+	# Legibility: the log names WHO left.
+	assert_true(result.has("messages"), "Result carries staffing notes")
+	var joined: String = "\n".join(result["messages"])
+	assert_string_contains(joined, "Fickle Fran", "Departure note names the researcher")
+
+func test_let_them_go_decrements_legacy_safety_count():
+	# The legacy scalar count must track the removal too (game_state accounting).
+	state.add_researcher(_make_researcher("safety", "A", 10))
+	state.add_researcher(_make_researcher("safety", "B", 80))
+	state.add_researcher(_make_researcher("safety", "C", 80))
+	var before_count := state.safety_researchers
+	var events = GameEvents.get_all_events()
+	var poach = _find_event_by_id(events, "researcher_poached")
+	GameEvents.execute_event_choice(poach, "let_them_go", state)
+	assert_eq(state.safety_researchers, before_count - 1, "Legacy safety count drops by one")
+
+func test_rival_poaching_let_go_actually_removes_a_researcher():
+	# Regression for the #631 no-op: rival_poaching/let_go used safety_researchers:-1,
+	# which Resources.add rejects and the old create-loop ran range(-1) == empty,
+	# so NOBODY left even though flavor said "Lost researcher".
+	state.add_researcher(_make_researcher("safety", "Keeper", 95))
+	state.add_researcher(_make_researcher("safety", "Leaver", 15))
+	var before := state.researchers.size()
+	var before_money := state.money
+
+	var events = GameEvents.get_all_events()
+	var rival = _find_event_by_id(events, "rival_poaching")
+	assert_false(rival.is_empty(), "rival_poaching event should exist")
+
+	var result = GameEvents.execute_event_choice(rival, "let_go", state)
+
+	assert_true(result["success"], "let_go should succeed")
+	assert_eq(state.researchers.size(), before - 1, "One safety researcher actually leaves")
+	assert_eq(state.money, before_money + 20000.0, "Saved $20k as flavor states")
+	assert_true(result.has("messages"), "Departure is legible")
+	var joined: String = "\n".join(result["messages"])
+	assert_string_contains(joined, "Leaver", "Least-loyal safety researcher named")
+
+func test_poach_with_no_researchers_is_safe_noop():
+	# No researchers -> no crash, no phantom removal, no staffing note.
+	assert_eq(state.researchers.size(), 0, "Start empty")
+	var events = GameEvents.get_all_events()
+	var poach = _find_event_by_id(events, "researcher_poached")
+	var result = GameEvents.execute_event_choice(poach, "let_them_go", state)
+	assert_true(result["success"], "Still resolves")
+	assert_eq(state.researchers.size(), 0, "Nobody removed")
+	assert_false(result.has("messages"), "No staffing note when nobody leaves")
