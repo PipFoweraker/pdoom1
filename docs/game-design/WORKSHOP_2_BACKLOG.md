@@ -133,16 +133,27 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
   the pool is a customer for safety work with actual pricing power."* ADR-0010 adjacency
   (adoption customer); mid-game unlock; candidate: governance-lane researchers can stand
   one up. Don't over-invest yet.
-- **DQ-21 · Intermediary vocabulary v1 — SEEDED** *(ADR-0015; Pip 2026-07-13)* — Pip's
-  list, verbatim: `general_capability` (diffusion + mass adoption), `frontier_capability`
-  (plus per-actor variants), `global_compute`, `global_dedicated_AI_compute` (smaller,
-  scarcer, more valuable, likely controlled early), `something_for_attitudes_of_
-  political_pressures` (naming owed), `ambient_capability_-_risk_background_levels`,
-  `global_alarm`, `global_panic`. Form: **rate, accumulating** (~75% ruling) —
-  experienced as a rate while history ticks the level up; 2017 spawn starts lower,
-  builds slower than current balance. Doom **can** go down, but only at the end of long
-  effort chains, priced in sacred objects. Semantics pass owed (lane strawmans for Pip
-  veto): alarm-vs-panic distinction, the compute pair's roles, political-attitudes name.
+- **DQ-21 · Intermediary vocabulary v1 — RESOLVED (v1)** *(ADR-0015; PR #634, fully
+  vetoed by Pip 2026-07-13 via sheet)* — Nine streams: `general_capability` (chronic
+  floor), `frontier_capability` (per-actor map; player slice separately named for DQ-22
+  aggro), overhang (`frontier − safety_absorption`), `global_compute` (uncontrollable
+  ocean, no direct doom term), `dedicated_ai_compute` (governable fleet),
+  `ambient_risk`, `global_panic` (additive), `global_alarm` (small stream AND
+  damper-gate), plus scheduled pulses (ramp/spike/tail envelope on ADR-0005 entries);
+  `political_pressure` gates dampers, owns no stream. Doom = accumulating rate;
+  baselines dampable; streams clamp at 0 v1 (**LOUD revisit flag — Pip not settled**);
+  trend invariant N=6 months (sustained decline without sacred-object cause = telemetry
+  flag + exploit-sweep gate failure). Sacrifice emergent, not a gate (R2-Q8 revision).
+  Cycles: no v1 machinery, prefer emergent (open). Forward intent: decompose
+  `political_pressure` into component risk factors via real-world risk/harm taxonomies
+  (**MIT AI Risk Repository** named as reference source) — feeds the pdoom-data /
+  league pipeline.
+- **DQ-23 · Damper economy** *(next workshop beat; from R2-Q4)* — minting systems,
+  durations, stacking rules, per-stream caps. Pip's prep instruction: "prompt agent to
+  find examples from real history to baseline with or against" — research errand:
+  historical analogs of policy/institutional responses damping technology risks
+  (candidates to check: Montreal Protocol, nuclear test bans, financial-stability
+  accords), for damper magnitude/duration baselines.
 - **DQ-22 · Aggro-threshold midgame** *(Pip 2026-07-13; ADR-candidate)* — rivals develop
   their own positions until the player's visible impact threatens their interests, then
   active attacks begin (litigation, funding cuts, rep attacks, scathing reviews, psyops,

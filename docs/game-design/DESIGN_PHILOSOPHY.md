@@ -458,6 +458,16 @@ able to push back against some challenges that have a sense of tempo over time"*
 pushback-against-rhythm is the intended feel; scheduled pulses and cyclic streams supply
 the tempo; expect the tuning to emerge from progressively longer playtests.
 
+**(2026-07-13, workshop #3, veto harvest)** *"[gauntlet completion] doesn't actually
+require sacrifice … Players might be able to seize opportunities when they come up,
+sacrifice will be required for many good results, but not all and not deterministically,
+but because it's hard to do hard things."*
+→ **Sacrifice is emergent, not a gate.** The chain-plus-sacrifice composition rule is
+rejected as a formula: completing a gauntlet alone can pay a doom reduction; sacred-object
+payments arise *situationally* from the difficulty of hard things, not from a design
+requirement. Opportunity-seizing is legal and rewarded. The difficulty budget lives in
+the gauntlet's failure gates, not in a mandatory toll.
+
 ### On restraint (as little design as possible)
 
 Demonstrated rather than stated this session — the folds:
