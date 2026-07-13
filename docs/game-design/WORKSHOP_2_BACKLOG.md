@@ -210,6 +210,23 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
 - *(Presentation-layer intents — robed cabal animations #222, insight-ladder copy #515 —
   captured in WORLD_AND_LORE.md.)*
 
+## Playtest QA findings — round 2 (2026-07-13 evening, first play of the L1 month loop, PR #636 branch)
+
+**Pip's reaction (verbatim):** *"That new version where things play out fast in front of
+me is super cool. It makes the simulator element way more representative. This feels
+like a huge shift… I feel like time in the game will progress way faster. Interestingly,
+my doom was low and then partway through the second month it spiked up at the end and I
+watched as I lost. It felt pretty wild! This will make video capture of the game much
+more interesting."*
+- **Evidence the playback delivers the intended register** — "I watched as I lost" is
+  the tragedy target (ADR-0004 lead-time feeling), arriving via resolution spectacle.
+- **Streaming/video-capture value noted** — the day-tick playback is inherently
+  watchable; park as a marketing/community consideration.
+- Month-2 doom-spike death = expected pre-rebalance behavior (old day-grain doom
+  constants under the new structure); the L1 balance sweep (below) quantifies it.
+- **Time-progression feel:** "way faster" — watch wall-clock-per-fiction-year against
+  ADR-0009's 6–8 hr decent-run target once balance lands.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
