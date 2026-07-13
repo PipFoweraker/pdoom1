@@ -111,8 +111,14 @@ func _show_next_event() -> void:
 
 	print("[EventDialog] Created Panel for event, size: %s, position: %s" % [dialog.size, dialog.position])
 
-	# Create main container
+	# Create main container. #630: anchor it to fill the fixed-size Panel (a Panel is
+	# NOT a container, so children default to their content-driven minimum size at
+	# (0,0)). Without this, a long title_label forces the VBox min-width past the
+	# 600px panel and the wrapped body text spills over the right border. Anchoring
+	# clamps the content width to the panel, giving the autowrap labels a real width
+	# to wrap within (inner area = 600 - 2*15 = 570px).
 	var margin = MarginContainer.new()
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	margin.add_theme_constant_override("margin_left", 15)
 	margin.add_theme_constant_override("margin_right", 15)
 	margin.add_theme_constant_override("margin_top", 15)
@@ -122,18 +128,22 @@ func _show_next_event() -> void:
 	var main_vbox = VBoxContainer.new()
 	margin.add_child(main_vbox)
 
-	# Add title
+	# Add title (#630: autowrap so a long event name wraps instead of forcing the
+	# content wider than the panel).
 	var title_label = Label.new()
 	title_label.text = event.get("name", "Event")
 	title_label.add_theme_font_size_override("font_size", 18)
 	title_label.add_theme_color_override("font_color", Color.GOLD)
+	title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	main_vbox.add_child(title_label)
 
-	# Add description label
+	# Add description label. #630: smart word-wrap + fill the container width so long
+	# body text wraps to the panel's inner width instead of clipping past the margins.
 	var desc_label = Label.new()
 	desc_label.text = event.get("description", "An event has occurred!")
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	desc_label.custom_minimum_size = Vector2(560, 0)
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	main_vbox.add_child(desc_label)
 
 	# Add spacing
