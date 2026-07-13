@@ -83,6 +83,39 @@
 > EE-2 **promoted** to lane L7 (6–8 hr runs require save/load); DQ-6 batches into L1's
 > replay schema bump; DQ-8 gated behind EE-8. See `WORKSHOP_2_BUILD_LANES.md`.
 
+## Playtest QA findings (2026-07-13, Pip — first play of the consolidated build)
+
+**Positive:** delta chips (L6/EE-7) "really helped"; play loop "felt good" over a few
+dozen turns; doom felt good on a hang-and-watch; achievements a "nice skeleton."
+
+**Bugs filed:**
+- **#630 · Event flood + text overflow** — turn 33 queued 28+ events (mostly paper
+  decisions), click-through wall, dialogs overspill margins. Lead: paper decisions bypass
+  `MAX_NEW_EVENTS_PER_TURN`. Present-build stopgap; structural fix already decided
+  (ADR-0009/0012/0014 — the notification-spam thinking, this is its concrete instance).
+- **#631 · Event outcome correctness** — flavor fires but effect unclear/broken (poaching:
+  which researcher? does "let them go" no-op?). Needs flavor-vs-effect audit + outcome
+  legibility. Pip wants a real QA/human-review process on event outcomes.
+- **Save regression (fixed live)** — pause→Save hit "GameManager not found"
+  (`pause_menu.gd` used the L0-deleted `../GameManager` scene node); fixed to the autoload.
+  Uncommitted in Pip's tree; wants a pause→save→load smoke test (feeds #629).
+
+**Design (future workshop):**
+- **DQ-18 · Early game = scouting / the populating board** — Pip's coalescing theme
+  (DESIGN_PHILOSOPHY "On the early game"): scouting as the veteran-replayability engine;
+  board fills over time via staff/actions ("go read / meetups / shitpost online"); hiring
+  as a slow, committed scouting relationship (XCOM-2012 recruit attachment); hires become
+  your scouts ("comes across your desk"). Strong candidate for a dedicated beat. Connects
+  ADR-0001/0004 (SA), ADR-0011 (staff-as-channels), ADR-0014 (presence/discovery).
+- **DQ-17 ext · Achievements in-run visibility** — Pip wants them referenceable *during* a
+  run, near a "character sheet" UI surface that doesn't exist yet (himself unsure); also
+  "felt a little generic" → content pass owed. Overlaps DQ-14 (world-state progression
+  display) + the wanted dashboard/character-sheet surface.
+
+**No action (expected):** the top-left clock **"Week 8 | … | Day 3/5"** is a day-tick
+hangover Pip correctly flagged — replaced by ADR-0009's month display when L1 (#612)
+lands; current display honestly reflects the still-day-tick structure, so no fix before L1.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is

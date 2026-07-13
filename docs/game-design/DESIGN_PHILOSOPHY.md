@@ -189,6 +189,45 @@ compound.** Extends "the opening is a commitment device": which rooms you spend 
 hours in locks strategic paths (Hustler vs Operator divergence is literally this).
 Early hires are reputation seeds who attract their own juniors.
 
+### On the early game (scouting and the populating board)
+
+**(2026-07-13)** *"I was thinking about the early stage phases of games like Civ and
+Factorio that provide replayability to even veteran players and a lot of it seems to come
+down to scouting / information-gathering."*
+→ **The early game's replayability engine is scouting.** What keeps veterans replaying an
+opening isn't new content — it's re-gathering information about *this* seed. Aligns SA
+(ADR-0001/0004) with the opening-as-commitment-device: the first moves are scouting moves.
+
+**(2026-07-13)** *"[the pre-Godot version] was very hard and very punishing and kept
+players in the dark and with a bad UI that they had to pay to unlock even slightly
+unpunishing things like a scrolling event log … there was more emphasis on exploring and
+trying to forge connections at the start."*
+→ Pip's prior build already had the shape: **sight and even UI comfort were things you
+paid for** (spending-buys-sight, ADR-0001), and the start was exploration-and-connection
+heavy. The instinct to recover: front-load *forging connections*, not just spending.
+
+**(2026-07-13)** *"I wonder if we can bring information to players more over time as …
+researchers discover papers or add to situational awareness / highlight things to the
+player's attention such that the 'game board' starts to get populated over time — maybe
+actions like 'go read' or 'go to meetups' or 'shitpost online'."*
+→ **The board populates over time.** Fog doesn't lift by a single purchase; it fills in as
+staff and actions surface it — a live expression of simulate-everything/gate-the-view
+(ADR-0004). "Go read / go to meetups / shitpost online" are scouting actions in different
+SA channels (research/presence/media, ADR-0014).
+
+**(2026-07-13)** *"[the Civ moment] settler → city + local barbarians → deal with them →
+meet either city-state or rival Civ — this establishes early relationship … go explore and
+try to find hires (the hiring process will take longer and feel more committed, I want to
+get people attached to their hires like recruits in 2012 X-COM), and those hires then
+bring you information if you yourself stop scouting as actively? things 'come across your
+desk'."*
+→ **Hiring is a scouting relationship, and delegation is how scouting scales.** Early hires
+are found by exploring (slow, committed, emotionally sticky — the XCOM-recruit attachment
+target); once hired, they *become* your scouts — information "comes across your desk"
+when you stop scouting personally. This is ADR-0011's staff-as-SA-channels (Celine's-law
+reporting) meeting ADR-0009's action durations: hiring takes real time and bills real
+commitment. Candidate for a dedicated early-game/scouting beat next workshop.
+
 ### On honesty and legibility
 
 **(2026-07-04)** *"I am used to thinking about the game with universal powers as god
