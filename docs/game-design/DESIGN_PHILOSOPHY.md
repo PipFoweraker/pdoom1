@@ -424,6 +424,15 @@ loss-legibility; the L6 attribution chain is the counterpart instrument (the
 death-attribution artifact showed accounting breaks exactly where causality goes
 indirect).
 
+**(2026-07-13, workshop #3, #634 veto round)** *"the game notes strongly for debugging
+and logging purposes any turn where Doom is not a positive rate AND a significant event
+('sacred object' in design parlance…) is not happening (this allows for occasional
+downward spikes in doom if a player pulls something impressive off)"*
+→ **The doom floor is an instrument, not a clamp.** Doom rate may legally go negative;
+what's enforced is *legibility of the fall* — any net-negative turn without a
+sacred-object-grade cause gets loudly flagged in telemetry. Same falsifiable-invariant
+pattern as the decision-flip rate: balance assumptions become alerts, never engine rules.
+
 ### On restraint (as little design as possible)
 
 Demonstrated rather than stated this session — the folds:
@@ -433,6 +442,13 @@ Demonstrated rather than stated this session — the folds:
   sim. Influence → a ledger column, not a resource. Blackmail → one event genre.
 - Working rule: a mechanic that needs a new player-facing currency or panel has to prove
   it can't be a read/write on existing ones first.
+
+**(2026-07-13, workshop #3, #634 veto round)** *"I might be able to solve this at the
+cards-level, not the stack-level, to use a M:TG analogy."*
+→ **Weirdness lives in cards, not the stack.** Engine rules stay crisp (e.g. no standing
+player lever governs `global_compute`); edge cases (an autocratic state cracking down on
+PC-grade general compute) enter as content — events on the seed schedule. Same generator
+as "geopolitics is content, not a system," now stated as a general division of labor.
 
 ### On flavor and theme
 
@@ -462,6 +478,10 @@ flat CRT type, not casualty counters. Personnel problems read as "bother," not t
 
 ## Change log
 
+- **2026-07-13 (workshop #3, beat 3 — #634 veto round)** — doom floor as instrument-not-
+  clamp (unexplained falls logged, not prevented); "weirdness lives in cards, not the
+  stack" (under restraint); doom function restructured toward named component streams
+  (round-2 strawman on PR #634).
 - **2026-07-13 (workshop #3, beat 2 — handover round)** — Doom-as-rate + sacred-objects
   reduction; aggro-threshold midgame ("the world starts shooting back", DQ-22); ambient
   floor = civilian awareness; scouting actions v1 sketch (LessWrong unlock); decisions
