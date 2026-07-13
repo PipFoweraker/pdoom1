@@ -190,8 +190,23 @@ Design payload, unpacked:
 - Naming passes owed: rival labs, SA channels' in-fiction names, the governance stat's
   player-facing name, epitaph titles.
 
+## Presentation-layer intents (captured from 2025-issue triage, 2026-07-13)
+
+- **The robed cabal** (from #222, Pip: "strong yes to capture the 222 specific
+  flavour"): alliance/governance votes presented with robed-council staging and
+  **per-verdict character reactions as Civ II–IV-style simple few-frame animations**
+  (pleased/displeased faces per vote outcome). Pip ties this explicitly to the
+  downstream scene-asset-generation pipeline intent — few-frame reaction sprites are a
+  cheap, generable asset class. Hardcoded vote cadences dropped (ADR-0007's scheduled
+  causes own timing).
+- **Insight-ladder copy** (from #515): the "Vague hints" → "Quantified" progression
+  wording is kept as UI-string reference material for ADR-0004's channel-resolution
+  display (the earned-instrumentation ladder's in-fiction voice).
+
 ## Change log
 
+- **2026-07-13** — Workshop #3 triage: presentation-layer intents section (robed cabal
+  + few-frame reaction animations, insight-ladder copy).
 - **2026-07-12** — Workshop #2, beat 1: endgame-2037 vignette (attention/representation
   scarcity, delegation silences mechanics, burning cat); badge-is-the-date naming.
 - **2026-07-04** — First fill, from Fable workshop #1: time-loop framing, epitaphs and

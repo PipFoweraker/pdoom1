@@ -122,11 +122,15 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
   DESIGN_PHILOSOPHY "On the early game" extended + new "On the hero and the office"
   section; **ADR-0015** (no printed doom deltas) and **ADR-0016** (league metabolism)
   minted. Residue distributed to DQ-19/20/21 below and the #612 spec addendum.
-- **DQ-19 · Character creation surface** — parked. Attached question (Pip: "the right
-  question"): does founder background **type the starting channels/connections** —
-  ex-academic → research-sight affinity, ex-finance → doors/VC access, ex-journalist →
-  media-sight? Moves ADR-0004's channel-investment build-identity axis partially to turn
-  zero. Overlaps DQ-4 (re-roll within seed). Starting connections as a config lever.
+- **DQ-19 · Character creation surface — PRIORITISED** *(de-parked by Pip 2026-07-13
+  during issue triage: "prioritise de-parking all related issues, we should solve for
+  them soon")* — attached question (Pip: "the right question"): does founder background
+  **type the starting channels/connections** — ex-academic → research-sight affinity,
+  ex-finance → doors/VC access, ex-journalist → media-sight? Moves ADR-0004's
+  channel-investment build-identity axis partially to turn zero. Overlaps DQ-4 (re-roll
+  within seed). Starting connections as a config lever. Absorbs #473/#514 (point
+  allocation); dependency chain into ADR-0004 channel design. Candidate next workshop
+  beat alongside DQ-23.
 - **DQ-20 · Risk pools** — Pip's gloss, logged not designed: *"insurance/mutualisation -
   industry actors pooling exposure to AI incidents, and the pool itself becoming an actor
   with opinions about safety standards. Like how fire insurance invented building codes…
@@ -185,6 +189,26 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
   DQ-21's named doom streams; the overlay becomes the earned high-resolution doom
   instrument's home. No new surface. Balance gate: doom falls legal, *sustained* falls =
   failed-difficulty signal (exploit-sweep gate + telemetry, not an engine clamp).
+
+### Triage captures (2026-07-13 — salvaged from 2025-issue close-out, Pip-flagged)
+
+- **Observable threshold** *(#474)* — two-tier discovery model worth specifying in the
+  scouting design: low observability → only big labs visible; high observability →
+  small research groups/startups visible. Home: ADR-0014 discovery-by-presence /
+  DQ-18 scouting choreography.
+- **Paper-presentation delegation split** *(#411)* — self-present ≈1.5× vs delegate
+  ≈1.0× reputation multiplier; park for DQ-16 (conference subgame revisit).
+- **Series A/B/C staged equity progression** *(#395)* — stage-appropriate investor
+  matching; revisit when the equity/capabilities-funding branch gets its mechanics
+  review (ADR-0013 extension). **Market conditions** (bull/bear funding cycles) —
+  distant-park, low priority, "most likely not-abandon, but not-get-to" (Pip).
+- **Event-chain schema caution** *(#513)* — `event_chains.json`/`triggers.json` is seed
+  data only; re-derive chain-management design from current intuitions (gauntlets,
+  pulses, ADR-0012) before adopting any of it. Flag for L4 content wiring.
+- **Ledger failure states TODO** *(#476)* — overdraft / tax-penalty / audit-problem
+  failure states to be explicitly cross-referenced into ADR-0012's called-due cascade.
+- *(Presentation-layer intents — robed cabal animations #222, insight-ladder copy #515 —
+  captured in WORLD_AND_LORE.md.)*
 
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
