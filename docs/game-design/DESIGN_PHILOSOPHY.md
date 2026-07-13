@@ -433,6 +433,18 @@ what's enforced is *legibility of the fall* — any net-negative turn without a
 sacred-object-grade cause gets loudly flagged in telemetry. Same falsifiable-invariant
 pattern as the decision-flip rate: balance assumptions become alerts, never engine rules.
 
+**(2026-07-13, workshop #3, #634 veto round)** *"we can have the satisfaction of watching
+something like the *delta Doom* rise and fall in response to our observed outputs, and
+then the actual, accumulated Doom can steadily grind upwards with much subtler gradients
+over time, so the player has (or, better yet, can *earn*) tighter feedback loops."*
+→ **Two instruments: the rate wiggles, the level grinds.** The delta-doom display gives
+high-frequency agency feedback (waves and falls responding to your outputs); accumulated
+doom keeps the structural dread (destined to rise). The tighter loop is *earned* —
+instrumentation as progression (power-up-the-office; the pre-Godot paid-for event log's
+direct descendant). Guard: ADR-0004's lead-time rule owns the free layer — the coarse
+doom band and becoming-lethal warnings are never paywalled; what's earned is *resolution*
+(stream decomposition, pulse forecasting), not survival-critical sight.
+
 ### On restraint (as little design as possible)
 
 Demonstrated rather than stated this session — the folds:
