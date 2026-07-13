@@ -122,6 +122,26 @@ func test_resolve_window_by_ignore_option_maps_to_ignore():
 	assert_eq(s.month_plan.reserve_remaining(), 3, "IGNORE draws no Attention")
 
 
+func test_failed_verb_leaves_window_open_and_resolvable():
+	# Regression (balance-sweep finding): the four-verb path popped the window BEFORE the
+	# resolver validated payment, so handle_reserve with an empty reserve silently dropped
+	# the window — no effect, no charge, no window. Latent in the v1 dialog (the option
+	# path guards correctly) but fatal to the future plan-screen UI.
+	var s := _state()
+	var mc := MonthController.new(s, null)
+	s.month_plan.set_reserve(0)  # nothing held — handle_reserve must fail
+	s.pending_events.assign([_window("underfunded")])
+	mc.advance_tick()
+	var res := mc.resolve_current_window("handle_reserve")  # window costs 1, reserve 0
+	assert_false(res.success, "handle_reserve fails with an empty reserve")
+	assert_true(mc.is_paused(), "playback stays paused on the unanswered window")
+	assert_eq(mc.window_queue.size(), 1, "the window was NOT silently dropped")
+	assert_eq(s.pending_events.size(), 1, "the serialized pause point still holds it")
+	var res2 := mc.resolve_current_window("handle_cannibalize")
+	assert_true(res2.success, "the same window resolves via another verb")
+	assert_false(mc.is_paused(), "playback resumes after the real resolution")
+
+
 func test_headless_playable_month_loop_runs():
 	# The acceptance smoke: drive real ticks through TurnManager, answering any window that
 	# fires and committing the plan at each held-open boundary (simulating the End Turn
