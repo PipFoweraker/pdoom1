@@ -933,7 +933,7 @@
 						"doom": -10,
 						"reputation": -15
 					},
-					"message": "Source planted, early warnings enabled (-10 doom, -15 reputation if discovered)"
+					"message": "Source planted, early warnings enabled — but word of your methods spreads (-10 doom, -15 reputation)"
 				},
 				{
 					"id": "legitimate_partnership",
