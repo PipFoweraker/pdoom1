@@ -87,11 +87,45 @@ func test_month_boundary_opens_fresh_plan_phase():
 	var r := mc.advance_tick()
 	assert_true(r.month_opened, "crossing the calendar month opens a new plan phase")
 	assert_eq(s.month_plan.available(), 20, "fresh full Attention grant — reserve evaporated")
+	# The boundary tick is HELD OPEN as the plan phase (playable path: the next
+	# end_month() executes it — never auto-executed, or consequences would double-run).
+	assert_eq(String(r.status), "month_open", "boundary tick reports the plan phase opening")
+	assert_true(mc.month_open_pending, "boundary tick held open for planning")
+	assert_eq(s.current_phase, GameState.TurnPhase.ACTION_SELECTION, "plan phase is open")
+	assert_true(s.can_end_turn, "the player can commit the next month plan")
+
+
+func test_resolve_window_by_option_pays_reserve_first():
+	# The v1 dialog path: the player picks one of the event's own options; a non-ignore
+	# option is a HANDLE paid reserve-first (payment source still hits the replay artifact).
+	var s := _state()
+	var mc := MonthController.new(s, null)
+	s.month_plan.set_reserve(3)
+	s.pending_events.assign([_window("opt_crisis")])
+	mc.advance_tick()
+	var res := mc.resolve_current_window_option("handle")
+	assert_true(res.success, "choosing the handle option resolves the window")
+	assert_eq(String(res.payment_source), "reserve", "paid from the crisp reserve first")
+	assert_eq(s.month_plan.reserve_remaining(), 2, "the window's Attention cost (1) was drawn")
+	assert_false(mc.is_paused(), "playback resumes")
+
+
+func test_resolve_window_by_ignore_option_maps_to_ignore():
+	var s := _state()
+	var mc := MonthController.new(s, null)
+	s.month_plan.set_reserve(3)
+	s.pending_events.assign([_window("opt_pass")])
+	mc.advance_tick()
+	var res := mc.resolve_current_window_option("ignore")
+	assert_true(res.success, "the window's ignore option resolves as IGNORE")
+	assert_eq(String(res.payment_source), "ignore", "recorded as ignore, not handle")
+	assert_eq(s.month_plan.reserve_remaining(), 3, "IGNORE draws no Attention")
 
 
 func test_headless_playable_month_loop_runs():
 	# The acceptance smoke: drive real ticks through TurnManager, answering any window that
-	# fires, and confirm the month loop advances without crashing and rolls the plan month.
+	# fires and committing the plan at each held-open boundary (simulating the End Turn
+	# button), and confirm the month loop advances and rolls the plan month.
 	var s := _state()
 	var tm = TurnManager.new(s)
 	var mc := MonthController.new(s, tm)
@@ -106,6 +140,14 @@ func test_headless_playable_month_loop_runs():
 			while mc.is_paused() and wguard < 20:
 				wguard += 1
 				mc.resolve_current_window("ignore")
+			if mc.month_open_pending:
+				tm.execute_turn()  # plan commit for a boundary that paused on a window
+			ticks += 1
+		elif String(r.status) == "month_open":
+			# Boundary tick held open for planning — commit an (empty) plan and play on,
+			# mirroring GameManager.end_month().
+			tm.execute_turn()
+			ticks += 1
 		else:
 			ticks += 1
 	assert_true(s.turn >= 30, "the loop advanced many day ticks (turn=%d)" % s.turn)

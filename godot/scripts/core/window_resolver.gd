@@ -134,18 +134,78 @@ static func resolve(state: GameState, plan: MonthPlan, event: Dictionary, respon
 	return result
 
 
+static func resolve_chosen_option(state: GameState, plan: MonthPlan, event: Dictionary, option_id: String, rng: RandomNumberGenerator = null) -> Dictionary:
+	"""Resolve a window via one of the event's OWN options (the v1 dialog path: the
+	event_dialog presents the event's options, not the four verbs). Mapping onto the
+	ADR-0009 menu:
+	  - the window's ignore option -> IGNORE (list price, no Attention drawn)
+	  - any other option           -> HANDLE, paid reserve-first, falling back to
+	                                  cannibalizing un-reserved capacity/WIP
+	The chosen option's own in-fiction costs/effects apply (AP stripped); the real payment
+	source (reserve/cannibalize/ignore) lands in the replay artifact. The explicit
+	four-verb menu incl. DEFER is the plan-screen UI's job — DEFER is not reachable from
+	this v1 path."""
+	var event_id := String(event.get("id", ""))
+	if option_id == ignore_option_id(event) and not EventTiers.is_unignorable(event):
+		return resolve(state, plan, event, "ignore", rng)
+
+	# HANDLE with the chosen option. Check the option's own (AP-stripped) costs BEFORE
+	# drawing Attention, so a failed money check doesn't consume the reserve.
+	var cleaned := strip_ap(event)
+	var chosen: Dictionary = {}
+	for opt in cleaned.get("options", []):
+		if opt is Dictionary and String(opt.get("id", "")) == option_id:
+			chosen = opt
+			break
+	if chosen.is_empty():
+		return {"success": false, "message": "Unknown option: %s" % option_id}
+	if not state.can_afford(chosen.get("costs", {})):
+		return {"success": false, "message": "Cannot afford this choice"}
+
+	var cost := attention_cost(event)
+	var payment := ""
+	var cancelled: Array = []
+	if plan.pay_from_reserve(cost):
+		payment = "reserve"
+	else:
+		var pay := plan.pay_by_cannibalizing(cost)
+		cancelled = pay.get("cancelled", [])
+		if not pay.get("paid", false):
+			return {"success": false, "message": "Not enough Attention to handle this window", "cancelled_wip": cancelled}
+		payment = "cannibalize"
+
+	var opt_result := Events.execute_event_choice(cleaned, option_id, state)
+	var result := {
+		"success": opt_result.get("success", false),
+		"response": "handle",
+		"payment_source": payment,
+		"attention_paid": cost,
+		"cancelled_wip": cancelled,
+		"ledger_source": "",
+		"message": opt_result.get("message", ""),
+		"deltas": opt_result.get("deltas", {}),
+	}
+	if opt_result.has("messages"):
+		result["messages"] = opt_result["messages"]
+	if result["success"] and typeof(VerificationTracker) != TYPE_NIL:
+		VerificationTracker.record_window_response(event_id, "handle", payment, state.turn)
+	return result
+
+
 static func _apply_option(state: GameState, event: Dictionary, option_id: String) -> Dictionary:
 	"""Apply an event option by id, STRIPPING any legacy action_point cost (windows spend
 	Attention, not AP). Returns the execute_event_choice result (or an empty success if the
 	option id is blank — a no-op ignore)."""
 	if option_id == "":
 		return {"success": true, "message": "No action", "deltas": {}}
-	var cleaned := _strip_ap(event)
+	var cleaned := strip_ap(event)
 	return Events.execute_event_choice(cleaned, option_id, state)
 
 
-static func _strip_ap(event: Dictionary) -> Dictionary:
-	"""Shallow-clone an event with action_points removed from every option's costs."""
+static func strip_ap(event: Dictionary) -> Dictionary:
+	"""Clone an event with action_points removed from every option's costs. Public: month
+	playback presents windows through the event_dialog with AP already stripped, so the
+	dialog's affordability display matches what resolution will actually charge."""
 	var clone := event.duplicate(true)
 	for opt in clone.get("options", []):
 		if opt is Dictionary and opt.has("costs") and opt["costs"] is Dictionary:

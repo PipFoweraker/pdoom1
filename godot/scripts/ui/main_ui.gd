@@ -528,13 +528,16 @@ func _on_end_turn_button_pressed():
 		log_message("[color=gray]Press Space/Enter again to confirm, or C to revise queue[/color]")
 		# Note: Simplified version - in full implementation, would require double-confirm
 
-	log_message("[color=cyan]Committing %d actions...[/color]" % queued_actions.size())
+	log_message("[color=cyan]Committing month plan (%d actions) — playing the month out...[/color]" % queued_actions.size())
 
 	# Clear queued actions (will be repopulated after turn processes)
 	queued_actions.clear()
 	update_queued_actions_display()
 
-	game_manager.end_turn()
+	# L1 (ADR-0009): End Turn commits the MONTH plan and hands control to day-tick
+	# playback (auto-pause on response windows, month review at the boundary). The old
+	# single day-step lives on ONLY behind the DEV MODE overlay ("Day step (dev)").
+	game_manager.end_month()
 
 func _on_commit_plan_button_pressed():
 	"""Commit queued actions AND reserve remaining AP (no warnings)"""
@@ -568,8 +571,8 @@ func _on_commit_plan_button_pressed():
 	queued_actions.clear()
 	update_queued_actions_display()
 
-	# Commit the plan
-	game_manager.end_turn()
+	# Commit the plan — the L1 month path (see _on_end_turn_button_pressed).
+	game_manager.end_month()
 
 func _on_employee_tab_button_pressed():
 	"""Switch to employee management screen - DISABLED: employee info moving to main UI"""

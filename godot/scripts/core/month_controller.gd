@@ -33,6 +33,13 @@ var status: int = Status.READY
 # Strategic WIP released this tick (duration elapsed) — surfaced for the caller/L2 to apply
 # effects; the controller does not reach into GameActions itself (clean seam).
 var last_released_strategic: Array = []
+# True while the month-boundary tick is HELD OPEN as the new month's plan phase. The engine
+# convention is an OPEN turn during planning (started, not executed — start_new_game leaves
+# turn 1 open the same way); auto-executing the boundary tick would double-run its
+# consequence steps when the plan later commits. advance_tick() sets this on a boundary and
+# skips _complete_tick; the caller shows the month review and waits for the plan commit
+# (GameManager.end_month executes the held-open turn).
+var month_open_pending: bool = false
 
 
 func _init(game_state: GameState, tm = null) -> void:
@@ -61,6 +68,7 @@ func advance_tick() -> Dictionary:
 		return {"status": "paused_on_window", "windows": window_queue, "message": "resolve open windows first"}
 
 	var month_opened := false
+	month_open_pending = false
 	if turn_manager != null:
 		turn_manager.start_turn()  # increments state.turn, fires events into pending_events
 
@@ -69,6 +77,7 @@ func advance_tick() -> Dictionary:
 	if mi != current_month_index:
 		_open_plan_month(mi)
 		month_opened = true
+		month_open_pending = true
 
 	# Release duration-elapsed strategic WIP (seam: caller/L2 applies their effects).
 	last_released_strategic = state.month_plan.take_due_strategic(state.turn)
@@ -88,6 +97,19 @@ func advance_tick() -> Dictionary:
 			"status": "paused_on_window",
 			"month_opened": month_opened,
 			"windows": window_queue.duplicate(),
+			"feed": surfaced.get("feed", []),
+			"released": last_released_strategic,
+		}
+
+	if month_open_pending:
+		# The boundary tick is HELD OPEN as the new month's plan phase — no execute_turn.
+		# The plan-commit path (GameManager.end_month) executes it, matching the engine's
+		# open-turn-during-planning convention (avoids double-running consequence steps).
+		_hold_open_for_planning()
+		return {
+			"status": "month_open",
+			"month_opened": true,
+			"windows": [],
 			"feed": surfaced.get("feed", []),
 			"released": last_released_strategic,
 		}
@@ -136,7 +158,27 @@ func resolve_current_window(response: String) -> Dictionary:
 	_sync_pending()
 	if window_queue.is_empty():
 		status = Status.READY
-		_complete_tick()
+		_finish_paused_tick()
+	return result
+
+
+func resolve_current_window_option(option_id: String) -> Dictionary:
+	"""Answer the head window by choosing one of the event's own options (the v1 dialog
+	path — the event_dialog presents the event's options, not the four verbs). The chosen
+	option maps onto the verb menu: the window's ignore option resolves as IGNORE (list
+	price, no Attention); any other option is a HANDLE paid reserve-first, falling back to
+	cannibalizing (WindowResolver.resolve_chosen_option). Payment source still lands in the
+	replay artifact. The explicit four-verb menu (incl. DEFER) is the plan-screen UI's job."""
+	if not is_paused() or window_queue.is_empty():
+		return {"success": false, "message": "no open window"}
+	var window: Dictionary = window_queue[0]
+	var result := WindowResolver.resolve_chosen_option(state, state.month_plan, window, option_id, state.rng)
+	if result.get("success", false):
+		window_queue.pop_front()
+		_sync_pending()
+		if window_queue.is_empty():
+			status = Status.READY
+			_finish_paused_tick()
 	return result
 
 
@@ -153,8 +195,18 @@ func skip_current_window() -> Dictionary:
 	_sync_pending()
 	if window_queue.is_empty():
 		status = Status.READY
-		_complete_tick()
+		_finish_paused_tick()
 	return result
+
+
+func _finish_paused_tick() -> void:
+	"""The last open window was answered: either complete the tick (execute consequences)
+	or, when the pause happened ON the month boundary, hold the tick open as the new plan
+	phase instead (see month_open_pending)."""
+	if month_open_pending:
+		_hold_open_for_planning()
+	else:
+		_complete_tick()
 
 
 func _complete_tick() -> void:
@@ -163,6 +215,13 @@ func _complete_tick() -> void:
 	state.can_end_turn = true
 	if turn_manager != null:
 		turn_manager.execute_turn()
+
+
+func _hold_open_for_planning() -> void:
+	"""Leave the boundary tick OPEN (started, not executed): this is the month's plan phase.
+	The player queues actions against it; the next end_month() executes it."""
+	state.current_phase = GameState.TurnPhase.ACTION_SELECTION
+	state.can_end_turn = true
 
 
 func _sync_pending() -> void:

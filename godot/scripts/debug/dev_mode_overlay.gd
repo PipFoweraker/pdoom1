@@ -174,7 +174,9 @@ func _build_controls() -> Control:
 
 	col.add_child(HSeparator.new())
 	col.add_child(_section_label("TRIGGERS"))
-	col.add_child(_action_button("⏭ Advance turn (dev)", _advance_turn))
+	# L1: the single day-step is DEV-ONLY now — the game's End Turn plays a whole month
+	# (game_manager.end_month). This button remains the debugging escape hatch.
+	col.add_child(_action_button("⏭ Day step (dev — old path)", _advance_turn))
 	_event_dropdown = OptionButton.new()
 	_event_dropdown.focus_mode = Control.FOCUS_NONE
 	_populate_event_dropdown()
