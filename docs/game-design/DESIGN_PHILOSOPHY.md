@@ -47,6 +47,32 @@ things - norm and market setting"*
 where work is **adopted**, not where it's written. This is the second structural claim
 (after "you can't win, only buy time") that is never patched for freshness.
 
+**(2026-07-13, workshop #3)** *"i'm considering making the leagues and associated patches
+that long as well - that means I can run the game a month behind real time, update real
+world events into the engine, balance patch, test, and deploy in a way that doesn't
+demand my full-time attention."*
+→ **League metabolism: the game trails reality by one month** — RESOLVED same session
+(ADR-0016). Reality becomes the map generator — each league, another month of the real
+race enters the seed timeline. The two collisions ruled: 2017 run-start holds (fixed
+history is the shared macro map; present-month jump-in parked as experiment), and
+cadences decouple — monthly world-updates ("mild lore and sprint refresh") vs slower,
+legible-event-grade balance patches, preserving the patch-as-heartbeat principle.
+
+**(2026-07-13, workshop #3)** *"I feel like this is 75% of the way towards canon, I am
+happy for it being baked fairly deeply into config. Otherwise I drift away from the
+guiding star of this having some utility as something like a tool / scenario builder /
+argument fosterer."*
+→ **The reality-tether is what keeps the game an argument-fosterer.** League metabolism
+ruled ~75%-canon, baked deep into config: without the tether, the game drifts from
+scenario-builder toward pure fiction.
+
+**(2026-07-13, workshop #3)** *"they could also share that seed with others, so really
+the number is infinite, just one will be promoted by default. This also kind of implies
+players can host mini-leagues by posting a baseline seed. Intersting [interesting]."*
+→ **A league is just a promoted seed; anyone can host one.** League baseline = one seed
+(possibly one seed with a few variants — the elegant home for a future present-month
+mode). Community structure falls out of seed-sharing; no new infrastructure.
+
 ### On losing (the core emotional design)
 
 **(2026-07-04)** *"the game's default value is that they'll lose, and lose repeatedly,
@@ -115,6 +141,28 @@ come with their own problems, bother."*
 → **Staff are leverage, not simulation subjects.** Canon: AP are the founder's personal
 hours — the one resource that never scales. Every hire converts money into action
 bandwidth and arrives with a liability rider.
+
+**(2026-07-13, workshop #3)** *"there are so many environmental forces that the player
+can't really influence in any given game that the background of Doom is nearly always
+going to be trending up, and only at the end of long chains of effort can the player's
+impacts *directly or strongly* reduce Doom - in most measures, the player is going to be
+needing to trade off increasingly sacred objects / values / projects to try and get
+things over the line as Doom pushes higher."*
+→ **Doom is a rate (~75% ruling), the background always climbing; direct reduction lives
+only at the end of long chains, priced in sacred objects.** Tension-through-sacrifice
+extended to the doom variable itself. A 2017 spawn starts lower and builds slower than
+current balance — the steady build *is* the early grind.
+
+**(2026-07-13, workshop #3)** *"in the early game, the rivals will be mostly
+concentrating on developing their *own* positions, and then as a player starts to
+threaten their interests … active attacks (litigation, funding cuts, reputational
+attacks, scathing reviews of our works, psyops, aggressive hiring, leak seeking, etc)
+will emerge as a sign we're entering what I'm starting to think of as the midgame."*
+→ **The midgame begins when the world starts shooting back.** Aggro-threshold design
+(XCOM:EU anti-grind, Factorio pollution/biters): rival attention keys to the *visibility
+of the player's impacts*, not the calendar. Difficulty ratchet: the rival's compounding
+headstart should stack up "frustrating, legible, and don't feel like the game is
+cheating you *that* much." ADR-candidate — mechanism owed (DQ-22).
 
 ### On the turn (the core loop)
 
@@ -228,6 +276,97 @@ when you stop scouting personally. This is ADR-0011's staff-as-SA-channels (Celi
 reporting) meeting ADR-0009's action durations: hiring takes real time and bills real
 commitment. Candidate for a dedicated early-game/scouting beat next workshop.
 
+**(2026-07-13, workshop #3)** *"I also like the early game of SC2 where you are trading
+scouting for information vs the extra resources your workers could get leaving you blind
+but better mined - that tension is interesting."*
+→ **Scouting is priced in opportunity cost.** Every founder-hour spent looking is one not
+spent mining. And [interviewer's sharpening, Pip to confirm] the SC2 citation carries a
+second answer: SC2 maps are *known* — scouting there reads the opponent's build on a fixed
+map, and the map pool rotates per season. P(Doom) scouting reads the **micro layer**
+(actor postures, the hire pool, the local social scene) on a **known macro map** (real
+history + this league's patch); league rotation is the freshness engine.
+
+**(2026-07-13, workshop #3)** *"It might be that the players and entities in the game you
+encounter you can start building relationships with sooner than if you encounter them
+later - perhaps relevant?"*
+→ **Early contact compounds.** Scouting's payoff is denominated in relationship-time
+(typed compounding social capital, applied to the opening): meeting an actor at month 3
+vs month 20 changes the whole integral of that relationship.
+
+**(2026-07-13, workshop #3)** *"I don't mind factorio-mode for re-optimising known
+openings - I figure players will start to evolve stable target goals as the game goes
+through its phase shigts [shifts]."*
+→ **Factorio-mode accepted at the macro grain.** Veteran freshness comes from meta churn
+(leagues/patches) and micro-social variance, not per-seed world regeneration.
+Scouting-as-every-run-content survives at the micro layer only.
+
+**(2026-07-13, workshop #3)** *"Info was happening at me as spawn without me having opted
+into that much information … If they were pieces of a board lighting up or moving around,
+fine, but the acknowledgment-response requirement was too strong."*
+→ **The scarce channel is acknowledgment, not information.** Ambient board mutation can
+run at high rate without spam-feel; *decision demands* are what flood. Three intrusiveness
+tiers: ambient change < readable feed < response window (ADR-0009/0012 machinery).
+Subscribing to a channel (scouting is subscribing) is opting into its demands; the only
+unsolicited demand floor is ADR-0004's lethality rule — the world may only shout uninvited
+about what is becoming lethal.
+
+**(2026-07-13, workshop #3)** *"I want my minions to bring me information! good minions!"*
+→ **Provenance, personified.** The same fact lands differently from a named hire than from
+a ticker. Wherever a character plausibly owns a piece of information, deliver it through
+them.
+
+**(2026-07-13, workshop #3)** *"Default civilian awareness for a WEIRD nation / mid-sized
+city / moderately techy person of the civilizational meta at the time."*
+→ **The ambient floor is civilian awareness.** Pre-scouting, the feed carries only what a
+moderately techy 2017 civilian would passively absorb — a small floor of world-noise, not
+silence. The quiet opening is intended; the floor exists for aliveness, not information.
+
+**(2026-07-13, workshop #3)** *"Stumbling onto LessWrong feels like a significant unlock
+of this part of the scouting tree."*
+→ **Scouting actions v1, sketched:** *go read* — near-free internet browsing with
+discovery unlocks (LessWrong as a significant one); *go to meetups* — effort-priced,
+meet people at random; bigger meetups in other cities seed local first-connections
+faster, building **regional influence**; *shitpost online* — low effort, low rep, high
+variance networking. All deliberately capital-preserving: the things you do when
+protecting cash flow in the very early game.
+
+### On the hero and the office
+
+**(2026-07-13, workshop #3)** *"we don't power up the player, we power up the office?"*
+(context: *"the player is the heroic focus point of a lot of stuff (and blame when things
+go wrong!) that is nonetheless going to battle superhuman forces (some of them spooky) to
+save the world, the cat, and keep the receipts along the way"*)
+→ **Progression lives in the org, not the hero's stats.** Character creation (starting
+connections, founder background — surface owed, not yet designed) customizes the *start*;
+the run grows the *office*. When staff scout, their lane preferences and skillsets filter
+what's surfaced (*"If I assign a staff member to scout, their preference sets and
+skillsets come into play, otherwise it's the player's, who we will generally expect to be
+pretty strong"*); the founder is a strong generalist lens. Who you send determines what
+you see — ADR-0004's channels-with-provenance, personified.
+
+**(2026-07-13, workshop #3)** *"Do we tie them into making *decisions*, and everyone else
+taking *actions*? Decisions imply draining something like mana or willpower, and this
+implies poor decisions if you're cramming, although this is speculation."*
+→ **The founder spends decisions; staff spend actions** (Pip's speculation flag
+preserved on the willpower-drain/cramming-degradation half). Grain accepted: ~1
+meaningful decision/day ≈ 5/week ≈ 20-and-a-bit/month, with **admin as painful
+overhead** ("Admin is painful in this game, I want that to be part of the overhead").
+**The founder currency is named `Attention`** (ruled 2026-07-13): Pip's own canon
+already held "attention is the resource the UI must be honest about"; "I don't have the
+attention for this" is the founder experience being modeled; and the game spawns in
+2017 — the year of "Attention Is All You Need." The joke is load-bearing.
+
+**(2026-07-13, workshop #3)** *"I suffer most when a 4-year hire walks in year 5, and
+then 4 of her 6 team leaves as their morale craters the following few months when I can't
+promote someone good in and have to gamble on an outside manager as an emergency hire."*
+(and: *"tension through sacrifice"*)
+→ **Attachment is built to be spent.** Slow committed hiring is the attachment generator
+(XCOM-recruit target); every deepening — project leadership, promotion, years served —
+raises the price of the loss vectors (departure cascades, forced loyalty-vs-performance
+firings, spooky removals: abduction / brainwashed / wireheaded / cultist-ed; design
+boundary: nobody grossly murdered). Cascades stay event/ledger riders, not a mood sim
+(ADR-0011 register: "bother," escalating to tragedy only at the top end).
+
 ### On honesty and legibility
 
 **(2026-07-04)** *"I am used to thinking about the game with universal powers as god
@@ -274,6 +413,17 @@ can be fooled, managers can be scared — deception lives in provenance and pers
 never in the engine's account of itself. Late-discovered doom via rosy reporting is a
 real-world failure mode the game now mirrors (ADR-0011 Celine's-law channels).
 
+**(2026-07-13, workshop #3)** *"hardcoding doom counters into things seems really like a
+legacy design philosophy and as we get sophisticated things should defer to, like, having
+impacts on things that have impacts on doom so we move more towards downstream effects
+rather than single source-destination number bumps."*
+→ **No printed doom deltas** (ADR-0015 candidate): extends "author causes, never
+outcomes" from designer discipline to *schema* discipline — actions and events touch
+world state; only world state touches doom. Guard: indirection must never break
+loss-legibility; the L6 attribution chain is the counterpart instrument (the
+death-attribution artifact showed accounting breaks exactly where causality goes
+indirect).
+
 ### On restraint (as little design as possible)
 
 Demonstrated rather than stated this session — the folds:
@@ -312,6 +462,16 @@ flat CRT type, not casualty counters. Personnel problems read as "bother," not t
 
 ## Change log
 
+- **2026-07-13 (workshop #3, beat 2 — handover round)** — Doom-as-rate + sacred-objects
+  reduction; aggro-threshold midgame ("the world starts shooting back", DQ-22); ambient
+  floor = civilian awareness; scouting actions v1 sketch (LessWrong unlock); decisions
+  (founder) vs actions (staff) + willpower speculation; league = promoted seed /
+  mini-league hosting; reality-tether ~75% canon ("argument fosterer" guiding star).
+- **2026-07-13 (workshop #3, beat 1)** — Scouting/early-game interview: SC2-mode scouting
+  (known macro map, micro-layer variance), league-metabolism candidate (game trails
+  reality by a month — UNRESOLVED), acknowledgment-scarcity spam rule, provenance
+  personified, new "On the hero and the office" section ("power up the office",
+  attachment-is-built-to-be-spent), no-printed-doom-deltas (ADR-0015 candidate).
 - **2026-07-12 (beat 3)** — Workshop #2, ledger bite: infinite-to-do-list honesty,
   spiky-in/smooth-out cash + tragedy-requires-lead-time (under honesty/legibility);
   norm-and-market-setting theory of change marked never-patch (under purpose).

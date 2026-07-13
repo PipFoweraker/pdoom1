@@ -116,6 +116,53 @@ dozen turns; doom felt good on a hang-and-watch; achievements a "nice skeleton."
 hangover Pip correctly flagged — replaced by ADR-0009's month display when L1 (#612)
 lands; current display honestly reflects the still-day-tick structure, so no fix before L1.
 
+### Workshop #3 additions (2026-07-13, beat 1 — scouting/early game)
+
+- **DQ-18 — EXECUTED** — the scouting beat ran as workshop #3's lead. Outputs:
+  DESIGN_PHILOSOPHY "On the early game" extended + new "On the hero and the office"
+  section; **ADR-0015** (no printed doom deltas) and **ADR-0016** (league metabolism)
+  minted. Residue distributed to DQ-19/20/21 below and the #612 spec addendum.
+- **DQ-19 · Character creation surface** — parked. Attached question (Pip: "the right
+  question"): does founder background **type the starting channels/connections** —
+  ex-academic → research-sight affinity, ex-finance → doors/VC access, ex-journalist →
+  media-sight? Moves ADR-0004's channel-investment build-identity axis partially to turn
+  zero. Overlaps DQ-4 (re-roll within seed). Starting connections as a config lever.
+- **DQ-20 · Risk pools** — Pip's gloss, logged not designed: *"insurance/mutualisation -
+  industry actors pooling exposure to AI incidents, and the pool itself becoming an actor
+  with opinions about safety standards. Like how fire insurance invented building codes…
+  the pool is a customer for safety work with actual pricing power."* ADR-0010 adjacency
+  (adoption customer); mid-game unlock; candidate: governance-lane researchers can stand
+  one up. Don't over-invest yet.
+- **DQ-21 · Intermediary vocabulary v1 — SEEDED** *(ADR-0015; Pip 2026-07-13)* — Pip's
+  list, verbatim: `general_capability` (diffusion + mass adoption), `frontier_capability`
+  (plus per-actor variants), `global_compute`, `global_dedicated_AI_compute` (smaller,
+  scarcer, more valuable, likely controlled early), `something_for_attitudes_of_
+  political_pressures` (naming owed), `ambient_capability_-_risk_background_levels`,
+  `global_alarm`, `global_panic`. Form: **rate, accumulating** (~75% ruling) —
+  experienced as a rate while history ticks the level up; 2017 spawn starts lower,
+  builds slower than current balance. Doom **can** go down, but only at the end of long
+  effort chains, priced in sacred objects. Semantics pass owed (lane strawmans for Pip
+  veto): alarm-vs-panic distinction, the compute pair's roles, political-attitudes name.
+- **DQ-22 · Aggro-threshold midgame** *(Pip 2026-07-13; ADR-candidate)* — rivals develop
+  their own positions until the player's visible impact threatens their interests, then
+  active attacks begin (litigation, funding cuts, rep attacks, scathing reviews, psyops,
+  aggressive hiring, leak seeking) — "the sign we're entering the midgame." XCOM:EU
+  anti-grind / Factorio pollution-biters pattern. Mechanism + threshold semantics owed;
+  interacts with rival-headstart difficulty ratchet (compounding, legible, doesn't feel
+  like cheating) and DQ-12 (rival narrative presence — the attacks ARE the presence).
+- **L1 spec inputs from the handover round** *(feeds #612)* — window demand budget:
+  **2–3/month at spawn → 5–6 in true endgame**; some events legally unignorable;
+  unanswered windows auto-resolve as IGNORE **with a mild default rep penalty**
+  (nonresponse annoys the offerer; flavor note: a "known to be busy" trait reduces it).
+  Founder unit: **decisions**, ~20/month, admin as painful overhead; staff spend
+  *actions* — separate currencies (ADR-0011 refined). Currency name RULED: **Attention**
+  (2017 / "Attention Is All You Need" resonance; Pip 2026-07-13). Ambient feed floor: 2017 civilian
+  awareness (WEIRD nation, mid-sized city, moderately techy). Ratcheting timeline
+  ideation (how games play out era by era) — flagged by Pip as a future exercise.
+- **EE-6 promotion note** — the schedule content pipeline is now ADR-0016's league
+  pipeline: structured monthly world-diff format, LLM-drafted, Pip-approved, ≤1 day/week
+  sustained. Product feature, not aspiration.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
