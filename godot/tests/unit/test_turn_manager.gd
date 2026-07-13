@@ -397,3 +397,58 @@ func test_phase_transitions_complete_cycle():
 	turn_manager.execute_turn()
 
 	# Turn completes, ready for next cycle
+
+# ---------------------------------------------------------------------------
+# #631 follow-up: risk_insider_moderate_1 ("Key Resignation") flavor says a
+# senior researcher quits, but the effect used to be scalar-only (research/
+# reputation/doom) — nobody actually left, the same no-op class fixed for
+# event-driven poaching in #633. Force a deterministic threshold trigger
+# (crossing the "moderate" tier for the first time guarantees a fire,
+# independent of the probabilistic roll) so this doesn't depend on RNG luck.
+# ---------------------------------------------------------------------------
+
+func test_insider_threat_key_resignation_removes_a_researcher():
+	state.researchers = [
+		Researcher.new("safety", "Loyal Larry"),
+		Researcher.new("safety", "Fickle Fran"),
+	]
+	state.researchers[0].loyalty = 90
+	state.researchers[1].loyalty = 10
+	var before := state.researchers.size()
+
+	state.risk_system.pools["insider_threat"] = 55.0  # guaranteed moderate-tier trigger
+
+	var results: Array = []
+	turn_manager._step_process_risk_pools(results)
+
+	assert_eq(state.researchers.size(), before - 1,
+		"Key Resignation should actually remove a researcher (#631 follow-up)")
+	var names := []
+	for r in state.researchers:
+		names.append(r.researcher_name)
+	assert_does_not_have(names, "Fickle Fran", "Least-loyal researcher is the one who resigns")
+
+	var joined := ""
+	for r in results:
+		joined += String(r.get("message", ""))
+	assert_string_contains(joined, "Fickle Fran", "Departure is named in the risk-event log line")
+
+func test_insider_threat_key_resignation_safe_with_no_researchers():
+	# No researchers on staff -> the scalar effects (research/reputation/doom)
+	# still apply, but the staffing loss is a safe no-op (no crash, no phantom note).
+	# Doom for risk events routes through state.doom_system (synced to state.doom
+	# later in the turn pipeline, not within _step_process_risk_pools itself), so
+	# assert on doom_system.current_doom directly rather than state.doom.
+	assert_eq(state.researchers.size(), 0, "Start empty")
+	var initial_reputation = state.reputation
+	var initial_doom: float = state.doom_system.current_doom if state.doom_system else state.doom
+
+	state.risk_system.pools["insider_threat"] = 55.0
+
+	var results: Array = []
+	turn_manager._step_process_risk_pools(results)
+
+	assert_eq(state.researchers.size(), 0, "Nobody to remove, nobody removed")
+	var after_doom: float = state.doom_system.current_doom if state.doom_system else state.doom
+	assert_gt(after_doom, initial_doom, "Scalar doom effect still applies")
+	assert_lt(state.reputation, initial_reputation, "Scalar reputation effect still applies")

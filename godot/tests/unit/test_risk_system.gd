@@ -368,8 +368,17 @@ func test_get_risk_event_for_invalid_severity_returns_empty():
 # ============================================================================
 
 func test_property_all_risk_events_have_valid_effects():
-	# Property: All risk events have effects dict with only valid resource keys
-	var valid_resources = ["doom", "money", "reputation", "research", "papers", "compute", "stationery"]
+	# Property: All risk events have effects dict with only keys the apply path
+	# (turn_manager._step_process_risk_pools) actually handles — anything else is
+	# SILENTLY dropped by state.add_resources, the #631 no-op bug class.
+	# #631 follow-up changes to this list:
+	# - "lose_researcher" added: non-scalar effect (routed to
+	#   GameEvents.remove_researchers) so flavor describing a departure (e.g.
+	#   insider_threat "Key Resignation") actually removes a researcher.
+	# - "stationery" REMOVED: add_resources does not handle it, so a risk event
+	#   using it would be a silent no-op — the whitelist was lying.
+	# - "technical_debt" added: add_resources does handle it (no event uses it yet).
+	var valid_resources = ["doom", "money", "reputation", "research", "papers", "compute", "technical_debt", "lose_researcher"]
 	var risk_events = GameEvents.get_risk_events()
 
 	for pool_name in risk_events:
