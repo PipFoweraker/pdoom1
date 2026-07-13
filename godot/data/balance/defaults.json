@@ -5,6 +5,10 @@
 		"first_event_turn": 2,
 		"max_new_events_per_turn": 2
 	},
+	"papers": {
+		"_description": "Paper-decision pacing (#630 stopgap): at most max_decisions_per_turn paper accept/reject decisions surface per turn; clustered decision_turns otherwise flood a click-through wall. Surplus stays UNDER_REVIEW and resolves on later turns (never dropped). 0 = unlimited (pre-#630). Superseded by ADR-0009/0012/0014 response windows.",
+		"max_decisions_per_turn": 3
+	},
 	"ledger": {
 		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2).",
 		"doom_per_unpaid_1000": 3.5,

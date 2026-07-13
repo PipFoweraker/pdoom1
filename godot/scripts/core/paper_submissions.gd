@@ -21,6 +21,16 @@ enum Topic {
 	GOVERNANCE        # AI governance/policy
 }
 
+# #630 stopgap: paper decisions resolve on a path NOT governed by
+# GameEvents.MAX_NEW_EVENTS_PER_TURN, so clustered decision_turns (several papers
+# submitted in the same window) all resolve on one turn → a click-through wall
+# (playtest saw 28+ at once). Cap how many decisions surface per turn; the surplus
+# stays UNDER_REVIEW and resolves on subsequent turns (spread out, never dropped).
+# Balance-tunable ("papers.max_decisions_per_turn", L9 #621); const is the fallback.
+# The real fix is ADR-0009 response windows + ADR-0012 taxonomy + ADR-0014 SA-gated
+# delivery (lands with L1/L4); this only makes present-build QA bearable.
+const MAX_PAPER_DECISIONS_PER_TURN := 3
+
 # Paper submission data structure
 class PaperSubmission:
 	var id: String
@@ -158,8 +168,19 @@ static func generate_paper_title(topic: int, rng: RandomNumberGenerator) -> Stri
 	return "%s %s%s" % [prefix, subject, suffix]
 
 static func process_paper_decisions(papers: Array, current_turn: int, player_reputation: float, rng: RandomNumberGenerator) -> Array[Dictionary]:
-	"""Process paper decisions for all papers at decision turn"""
+	"""Process paper decisions for all papers at decision turn.
+
+	#630 stopgap: throttle how many decisions surface per turn. Papers whose
+	decision_turn has arrived but exceed the per-turn cap stay UNDER_REVIEW and
+	re-qualify next turn (their decision_turn is already <= current_turn), so the
+	burst spreads across turns and NO outcome is dropped. Papers are scanned in
+	submission (array) order, so the oldest submissions resolve first and none
+	starve. rng is consumed only for papers actually decided this turn, keeping
+	resolution deterministic given game state (fewer randf() this turn, the
+	deferred ones consume theirs on a later turn)."""
 	var results: Array[Dictionary] = []
+	# max_decisions <= 0 disables the cap (unlimited), matching pre-#630 behavior.
+	var max_decisions := Balance.inum("papers.max_decisions_per_turn", MAX_PAPER_DECISIONS_PER_TURN)
 
 	for paper in papers:
 		if paper.status != Status.UNDER_REVIEW:
@@ -167,6 +188,12 @@ static func process_paper_decisions(papers: Array, current_turn: int, player_rep
 
 		if current_turn < paper.decision_turn:
 			continue
+
+		# Per-turn surfacing cap (#630): each processed paper appends exactly one
+		# result, so results.size() is the count decided this turn. Once the budget
+		# is spent, stop — the remaining eligible papers defer to a later turn.
+		if max_decisions > 0 and results.size() >= max_decisions:
+			break
 
 		# Time for decision!
 		var conf = Conferences.get_conference_by_id(paper.target_conference_id)
