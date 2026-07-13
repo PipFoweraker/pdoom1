@@ -162,6 +162,11 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
 - **EE-6 promotion note** — the schedule content pipeline is now ADR-0016's league
   pipeline: structured monthly world-diff format, LLM-drafted, Pip-approved, ≤1 day/week
   sustained. Product feature, not aspiration.
+- **F3 risk overlay = the stream readout** *(Pip confirmed 2026-07-13)* — the "risk
+  pools" that hover at zero in current playtests (#584 overlay) get their content from
+  DQ-21's named doom streams; the overlay becomes the earned high-resolution doom
+  instrument's home. No new surface. Balance gate: doom falls legal, *sustained* falls =
+  failed-difficulty signal (exploit-sweep gate + telemetry, not an engine clamp).
 
 ## Deferred build lanes — follow-up implementation (no design blocker)
 

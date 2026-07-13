@@ -445,6 +445,19 @@ direct descendant). Guard: ADR-0004's lead-time rule owns the free layer — the
 doom band and becoming-lethal warnings are never paywalled; what's earned is *resolution*
 (stream decomposition, pulse forecasting), not survival-critical sight.
 
+**(2026-07-13, workshop #3, late beat)** *"doom feels like it should be able to go down,
+it's just very very hard to make doom go down by much and for very long, and persistently
+achievable downward trends probably mean I've failed to make the game hard enough or
+inevitable enough."*
+→ **Doom falls are legal; sustained falls are a balance bug.** The floor-as-instrument
+invariant graduates from turn-grade to trend-grade: occasional legible dips are play; a
+*persistently achievable* downward trend is a failed-difficulty signal, not a rules
+violation. Enforcement home: an exploit-sweep gate (no bot policy may sustain an N-month
+doom decline) plus telemetry in human games. Companion ruling: *"The player needs to be
+able to push back against some challenges that have a sense of tempo over time"* —
+pushback-against-rhythm is the intended feel; scheduled pulses and cyclic streams supply
+the tempo; expect the tuning to emerge from progressively longer playtests.
+
 ### On restraint (as little design as possible)
 
 Demonstrated rather than stated this session — the folds:
