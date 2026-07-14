@@ -249,6 +249,36 @@ cost (a holiday). The asymmetry is the mechanic — slack-as-insurance applied t
 Resolves the employee_burnout "Push Through" question (never toothless, rarely an
 instant clean walk).
 
+**(2026-07-14, dial-5 ratification)** *"as the player and employees get burned out and
+stack up fatigue and sloppiness, I think tracking those as debuffs rather than
+mechanical impacts keeps the game legible in ways that allow for mitigating techniques
+and strategies"*
+→ **One status layer: visible, timed debuffs on people — including the founder.**
+Fatigue/sloppiness are never hidden roll penalties; they are legible statuses that
+invite counterplay. Merges the burnout ruling's efficiency debuffs with the rejected
+cramming-penalty texture (proposal E): if cramming ever ships, it inflicts a visible
+founder debuff, not opaque degradation.
+
+**(2026-07-14, dial-5 ratification)** *"they can't delegate bookkeeping to a security
+engineer very effectively, for example. So we can start to categorise, perhaps by
+skillset, … the requirements of solving particular attention demands on the player"*
+→ **Demands are typed; the currency is not.** Attention stays the single universal
+founder currency (the founder is a strong generalist); each demand carries a
+skill-category tag; staff absorb demands matching their skillset — so office
+*composition* decides what leaves your desk. Guard rails: taxonomy stays coarse
+(~4–6 categories aligned to hire archetypes, DQ-24); at scale, typed micro-demands
+(e.g. per-researcher check-ins) aggregate into manager-absorbed classes — the
+aggregation and the Celine's-law report are the same object. Demand rise is diegetic:
+more *process steps* (hiring pipeline, onboarding, research-strategy setting,
+check-ins), not inflated prices.
+
+**(2026-07-14)** *"integrating their signal-to-player and signals-to-dev will be really
+important to manage as we develop these."*
+→ **Every mechanic ships both signals together.** The player-facing display (chips,
+statuses) and the dev-facing telemetry (sweep columns, attribution) are the same event
+stream read at two resolutions — the two-instrument doctrine generalized from doom to
+everything. What L6 did for death, each new mechanic does for itself on arrival.
+
 ### On the early game (scouting and the populating board)
 
 **(2026-07-13)** *"I was thinking about the early stage phases of games like Civ and

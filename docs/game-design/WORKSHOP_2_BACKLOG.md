@@ -165,6 +165,22 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
   L2 effort economy (#613) — needs per-researcher efficiency debuffs with durations;
   interim event content may ship the loyalty-hit-only version. Interacts with DQ-22
   (loyalty hits raise poach vulnerability).
+- **Dial-5 RATIFIED (Pip 2026-07-14)** — package **B+C+D** from
+  `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md`: demand rise via diegetic
+  process steps + admin tax bought down by ops hires (B), era-scaling demand/cost (C),
+  uninsured-handling premium (D). **A rejected** (fights the ~20-decisions canon).
+  **E transformed**: cramming/fatigue expressed as *visible debuffs* on the unified
+  status layer (see burnout ruling), never hidden roll degradation. Decimals set after
+  the doom recalibration lands (sweep sequencing note).
+- **DQ-24 · Attention-demand taxonomy + typed delegation** *(Pip 2026-07-14; feeds
+  build lane L2 #613 spec)* — enumerate the ~4–6 demand skill-categories (candidates:
+  ops/bookkeeping, people/HR, technical-infra/security, research direction,
+  external/comms) and the hire-archetype matching ("can't delegate bookkeeping to a
+  security engineer"); enumerate the process-step demand list (hiring pipeline steps,
+  onboarding, research-strategy setting, progress check-ins); define aggregation rule
+  (typed micro-demands roll up into manager-absorbed classes at scale — same object as
+  the Celine's-law report). Guard: type demands, never the currency — Attention stays
+  single and universal. Workshop beat alongside DQ-19/DQ-23.
 - **DQ-22 · Aggro-threshold midgame** *(Pip 2026-07-13; ADR-candidate)* — rivals develop
   their own positions until the player's visible impact threatens their interests, then
   active attacks begin (litigation, funding cuts, rep attacks, scathing reviews, psyops,
