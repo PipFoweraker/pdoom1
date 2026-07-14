@@ -160,14 +160,23 @@ func tick_and_bill(state) -> Array:
 func _bill(e: Entry, state) -> void:
 	match e.currency:
 		"money":
+			# #566: reconcile the magnitudes. The bill charges the FULL principal; whatever
+			# cash covered it is `paid_from_cash`, and only the uncovered `shortfall` converts
+			# to (capped) doom + rep. The old note recorded only the shortfall, so a bill that
+			# drained $345k of cash but left a $21k shortfall read as a "$21k problem" in the
+			# death chain — the numbers didn't reconcile. Now the note states billed =
+			# paid_from_cash + shortfall, and shortfall -> capped doom/rep.
+			var billed: float = e.principal
 			state.money -= e.principal
 			if state.money < 0.0:
 				var shortfall: float = -state.money
 				state.money = 0.0
+				var paid_from_cash: float = billed - shortfall
 				var raw_doom: float = shortfall / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
 				var doom_hit: float = _apply_capped_doom(e, raw_doom, state)
 				# Reputation teeth are capped per bill too (dial 3: a single default is a loan,
-				# not a one-click rep-collapse). Unlike doom, the residual is NOT rolled forward —
+				# not a one-click rep-collapse — this is the #566 reputation-crash fix, 50->7.5
+				# was uncapped rep damage). Unlike doom, the residual is NOT rolled forward —
 				# rep damage beyond the cap is forgiven; the DOOM teeth (rolled) carry the mortality.
 				var rep_amount: float = minf(shortfall / 1000.0 * Balance.num("ledger.rep_per_unpaid_1000", REP_PER_UNPAID_1000),
 					Balance.num("ledger.max_rep_per_bill", 1000000000.0))
@@ -175,7 +184,8 @@ func _bill(e: Entry, state) -> void:
 				state.reputation = max(0.0, state.reputation - rep_amount)
 				_attribute(e, shortfall, state)
 				_note(state, "ledger_default", e.source,
-					{"money_shortfall": shortfall, "doom": doom_hit, "reputation": -rep_hit})
+					{"principal_billed": billed, "paid_from_cash": paid_from_cash,
+					"money_shortfall": shortfall, "doom": doom_hit, "reputation": -rep_hit})
 		"reputation":
 			var rep_hit: float = minf(state.reputation, e.principal)
 			state.reputation = max(0.0, state.reputation - e.principal)
@@ -199,6 +209,13 @@ func _bill(e: Entry, state) -> void:
 			_note(state, "ledger_doom_bill", e.source, {"doom": applied})
 		"action_points":
 			state.action_points = max(0, state.action_points - int(e.principal))
+		"equity", "board_seat", "agenda":
+			# Non-cash standing TERMS from the financing engine (ADR-0013 riders: equity
+			# dilution, board seat, agenda narrowing). Inert by design — recorded, no resource
+			# conversion; their consequences are owned by other lanes (DQ-7 governance/voting,
+			# late-game equity). Minted with a ~10^9 fuse so this is defensive only (never billed
+			# in a real run); L5's boundary forbids doom conversion here.
+			_note(state, "ledger_standing_term", e.source, {String(e.currency): e.principal})
 
 ## Apply a doom bill, bounded to ledger.max_doom_per_bill in any single tick (ADR-0013:
 ## a defer/loan is a bill that lands over MONTHS, never a one-click guillotine). Residual
@@ -275,6 +292,42 @@ func expose(entry: Entry, state, offer_blackmail: bool = true) -> void:
 			entry.principal * Balance.num("ledger.blackmail.principal_multiplier", 1.5),
 			Balance.inum("ledger.blackmail.fuse_turns", 2),
 			Balance.num("ledger.blackmail.interest_rate", 0.5), true))
+
+# ---- Voluntary repayment (the "pay the bill" interaction, #566) ----
+
+## Settle a live MONEY payable early from cash, retiring the future balloon before it
+## bills (ADR-0013 optionality — the player can buy down leverage). Only money-currency
+## payables are cash-payable; governance/doom/equity terms are not. Returns
+## {success, paid, message}. Records a benign `ledger_paid` note (NOT a LEDGER_KINDS
+## damage cause — early repayment is the opposite of a default).
+func pay_entry(entry, state) -> Dictionary:
+	if entry == null or entry.settled or entry.side != Side.PAYABLE:
+		return {"success": false, "paid": 0.0, "message": "Nothing to pay"}
+	if entry.currency != "money":
+		return {"success": false, "paid": 0.0, "message": "Only money bills can be settled in cash"}
+	var due: float = entry.principal
+	if state.money < due:
+		return {"success": false, "paid": 0.0, "message": "Cannot afford to settle ($%d needed)" % int(due)}
+	state.money -= due
+	entry.settled = true
+	_note(state, "ledger_paid", entry.source, {"money": -due})
+	return {"success": true, "paid": due, "message": "Settled %s early (-$%d)" % [entry.source, int(due)]}
+
+## Convenience: settle the soonest-due affordable money payable (the plan-screen
+## "pay the bill" button). Returns the pay_entry result, or a no-op result if none.
+func pay_soonest_payable(state) -> Dictionary:
+	var best = null
+	for e in entries:
+		if e.settled or e.side != Side.PAYABLE or e.currency != "money":
+			continue
+		if state.money < e.principal:
+			continue
+		if best == null or e.fuse < best.fuse:
+			best = e
+	if best == null:
+		return {"success": false, "paid": 0.0, "message": "No affordable bill to pay"}
+	return pay_entry(best, state)
+
 
 # ---- Read helpers ----
 
