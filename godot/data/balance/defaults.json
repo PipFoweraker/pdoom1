@@ -20,16 +20,16 @@
 		"max_decisions_per_turn": 3
 	},
 	"ledger": {
-		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2).",
+		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2). GOTCHA: interest_rate values are COPIED INTO SAVED ENTRIES, and Godot's JSON parse is not correctly-rounded for every decimal — pick rates that survive print->parse exactly (probe-verified: 0.008/0.0025/0.001/0.02 ok; 0.009/0.015/0.045 NOT) or save/load deep-equality and post-load determinism break.",
 		"doom_per_unpaid_1000": 0.9,
 		"rep_per_unpaid_1000": 2.0,
 		"max_doom_per_bill": 10.0,
 		"max_rep_per_bill": 10.0,
 		"rollover_fuse_ticks": 8,
 		"exposure_chance_per_turn": 0.007,
-		"loan": { "principal_multiplier": 1.2, "fuse_turns": 77, "interest_rate": 0.009 },
+		"loan": { "principal_multiplier": 1.2, "fuse_turns": 77, "interest_rate": 0.008 },
 		"funding_strings": { "principal_multiplier": 0.10, "fuse_turns": 88, "interest_rate": 0.0025 },
-		"desperation_payroll": { "severity_base": 1200.0, "severity_spread": 800.0, "fuse_turns": 55, "interest_rate": 0.009 },
+		"desperation_payroll": { "severity_base": 1200.0, "severity_spread": 800.0, "fuse_turns": 55, "interest_rate": 0.008 },
 		"staff_rider": { "principal": 1200.0, "fuse_turns": 88, "interest_rate": 0.001 },
 		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 22, "interest_rate": 0.02 },
 		"expose": { "rep_per_1000": 2.5, "governance_multiplier": 0.5 }

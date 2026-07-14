@@ -33,7 +33,14 @@ class Entry:
 	func _init(p_source: String, p_currency: String, p_principal: float, p_fuse: int, p_interest: float = 0.0, p_secret: bool = false, p_side: int = Side.PAYABLE, p_counterparty: String = "") -> void:
 		source = p_source
 		currency = p_currency
-		principal = p_principal
+		# Principals are quantized to whole units (dollars / governance points / doom).
+		# Determinism guard, not a style choice: Godot's JSON float parse is not
+		# correctly-rounded for arbitrary doubles, so a full-precision principal can come
+		# back from a save 1 ulp off — breaking save/load deep-equality and post-load
+		# replay determinism. Integer-valued doubles print/parse exactly (and a 1-ulp
+		# corruption self-heals through the next round). Sub-unit precision is invisible
+		# at game scales (principals >= ~1000; doom rollovers vs a 10-point cap).
+		principal = roundf(p_principal)
 		fuse = p_fuse
 		interest = p_interest
 		secret = p_secret
@@ -130,7 +137,9 @@ func tick_and_bill(state) -> Array:
 		if e.settled or e.side != Side.PAYABLE:
 			continue
 		if e.interest > 0.0:
-			e.principal *= (1.0 + e.interest)   # unbounded growth -> no immortal runs
+			# Unbounded growth -> no immortal runs. Rounded to whole units each step —
+			# same determinism guard as Entry._init (see comment there).
+			e.principal = roundf(e.principal * (1.0 + e.interest))
 		if e.fuse > 0:
 			e.fuse -= 1
 			continue

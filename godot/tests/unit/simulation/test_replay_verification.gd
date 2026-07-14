@@ -11,7 +11,10 @@ extends GutTest
 
 # Drive a real game headless with a per-turn action script, recording via the live
 # VerificationTracker wiring. Returns the exported artifact + the run's score.
-func _play_scripted(seed: String, script: Dictionary, max_turns: int = 40, schedule: Array = []) -> Dictionary:
+# max_turns must exceed a real death (post-#638 recalibration a passive-ish run dies
+# ~t300-320) — the score contract (ADR-0006) is defined at game_over, so the run must
+# actually END or live-vs-replay compare different stopping rules.
+func _play_scripted(seed: String, script: Dictionary, max_turns: int = 500, schedule: Array = []) -> Dictionary:
 	var state: GameState = GameState.new(seed, schedule)
 	var tm: TurnManager = TurnManager.new(state)
 	VerificationTracker.start_tracking(seed, "test-vB", schedule)
@@ -115,7 +118,7 @@ func test_artifact_carries_schedule_and_scheduled_run_verifies():
 		{"turn": 1, "cause": "rival_funding_wave", "target": "capabilicorp", "magnitude": 5000000.0},
 		{"turn": 2, "cause": "rival_aggression_shift", "target": "capabilicorp", "magnitude": 0.5},
 	]
-	var run: Dictionary = _play_scripted("replay_seed_S", {1: ["fundraise_small"], 2: ["buy_compute"]}, 40, schedule)
+	var run: Dictionary = _play_scripted("replay_seed_S", {1: ["fundraise_small"], 2: ["buy_compute"]}, 500, schedule)
 	var data: Dictionary = VerificationTracker.deserialize_replay(run["replay"])
 	assert_true(data.has("schedule"), "artifact emits the schedule key the verifier reads (DQ-6)")
 	assert_eq((data.get("schedule", []) as Array).size(), schedule.size(),
