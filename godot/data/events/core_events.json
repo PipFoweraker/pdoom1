@@ -252,12 +252,13 @@
 				},
 				{
 					"id": "ignore_burnout",
-					"text": "Push Through (no cost)",
+					"text": "Push Through (no cost, costs trust — affected researchers lose loyalty)",
 					"costs": {},
 					"effects": {
-						"doom": 3
+						"doom": 3,
+						"loyalty_hit": 15
 					},
-					"message": "Team morale suffered (+3 doom)"
+					"message": "Nobody quit, but pushing through cost trust — the most burned-out researchers lose loyalty. (+3 doom)"
 				}
 			]
 		},
