@@ -168,6 +168,14 @@ func _ready():
 	dev_overlay.main_ui = self
 	add_child(dev_overlay)
 
+	# Playtest flight recorder (F9) — screenshot + state snapshot + marker note in
+	# one press (WORKSHOP_2_BACKLOG "Playtest deep-dive protocol"). Same wiring
+	# pattern as the DEV MODE overlay: gated on BuildInfo.DEV_BUILD by the node
+	# itself, resolves the live GameManager via main_ui.
+	var flight_recorder := FlightRecorder.new()
+	flight_recorder.main_ui = self
+	add_child(flight_recorder)
+
 	# Enable input processing for keyboard shortcuts
 	set_process_input(true)
 	set_process_unhandled_input(true)

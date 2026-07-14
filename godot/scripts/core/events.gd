@@ -306,6 +306,15 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 					if poached == null:
 						break
 					staffing_notes.append(_format_departure(state, poached))
+			"loyalty_hit":
+				# employee_burnout "Push Through" interim content (WORKSHOP_2_BACKLOG
+				# "Burnout outcome model — RULED", Pip 2026-07-13, resolves the #631/#635
+				# "flavor claims strain, only doom lands" AMBIGUOUS case). Nobody quits and
+				# no efficiency/leave debuff is applied (that's L2 #613's job) — the
+				# affected researchers stay but trust erodes: `value` loyalty points come
+				# off the LOYALTY_HIT_COUNT least-loyal researchers, named for legibility,
+				# same targeting convention as remove_researchers/_poach_least_loyal.
+				_apply_loyalty_hit(state, int(value), staffing_notes)
 
 	# EE-7 (loss legibility): report the NET resource deltas this choice applied
 	# (effects minus costs) so the event log can state them explicitly. Staffing /
@@ -349,6 +358,29 @@ static func _apply_staffing_effect(state: GameState, spec: String, delta: int, n
 			if poached == null:
 				break
 			notes.append(_format_departure(state, poached))
+
+
+## How many researchers a "loyalty_hit" effect dents — matches the burnout event's
+## "several researchers are considering leaving" flavor (plural, not everyone).
+const LOYALTY_HIT_COUNT := 2
+
+
+static func _apply_loyalty_hit(state: GameState, amount: int, notes: Array) -> void:
+	"""Dock `amount` loyalty points off the LOYALTY_HIT_COUNT least-loyal researchers
+	(no removal, no efficiency/leave debuff — interim content, see loyalty_hit match
+	arm above). Least-loyal-first mirrors _poach_least_loyal's targeting so the
+	people most likely to already be flight-risks (DQ-22: loyalty hits raise poach
+	vulnerability) are the ones who take the hit. Safe no-op with an empty roster."""
+	if amount <= 0 or state.researchers.is_empty():
+		return
+	var pool: Array = state.researchers.duplicate()
+	pool.sort_custom(func(a, b): return a.loyalty < b.loyalty)
+	for i in range(min(LOYALTY_HIT_COUNT, pool.size())):
+		var r: Researcher = pool[i]
+		var before := r.loyalty
+		r.loyalty = max(0, r.loyalty - amount)
+		notes.append("%s (%s) loyalty %d -> %d — pushed through burnout, trust eroding" % [
+			r.researcher_name, r.specialization, before, r.loyalty])
 
 
 static func _poach_least_loyal(state: GameState, spec_filter: String) -> Researcher:
