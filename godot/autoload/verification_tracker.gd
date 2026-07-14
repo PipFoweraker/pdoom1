@@ -53,8 +53,13 @@ var replay_log: Array = []
 # producer never emitted the `schedule` key replay_simulator.gd reads).
 var event_schedule: Array = []
 
+# ADR-0016 league metabolism: a run belongs to a monthly LEAGUE (the real-world month the
+# baseline seed represents). L1 stamps it alongside (seed, game_version) so the artifact
+# carries which league it was produced in — cross-version/cross-league boards (DQ-3) read it.
+var league_id: String = ""
 
-func start_tracking(seed: String, version: String = "unknown", schedule: Array = []):
+
+func start_tracking(seed: String, version: String = "unknown", schedule: Array = [], league: String = ""):
 	"""
 	Initialize verification hash for new game.
 
@@ -67,6 +72,7 @@ func start_tracking(seed: String, version: String = "unknown", schedule: Array =
 	game_seed = seed
 	game_version = version
 	event_schedule = schedule.duplicate(true)
+	league_id = league
 	tracking_enabled = true
 	replay_log.clear()
 
@@ -159,6 +165,25 @@ func record_event_response(event_id: String, response_id: String, turn: int):
 		print("[VerificationTracker] Response: %s → %s → %s..." % [event_id, response_id, verification_hash.substr(0, 16)])
 
 
+func record_window_response(event_id: String, response: String, payment_source: String, turn: int):
+	"""Update hash + replay log when a player (or auto-resolution) answers a response window
+	(L1 / ADR-0009 §3). Schema bump: window records carry the PAYMENT SOURCE
+	(reserve / cannibalize / defer / ignore), the datum the exploit-finder's response-policy
+	axis reads. `k:"w"` — the v1 replay simulator ignores unknown keys, so this is additive
+	and pre-L1 artifacts stay verifiable.
+	Entry: {"t": turn, "k": "w", "ev": event_id, "resp": response, "pay": payment_source}"""
+	if not tracking_enabled:
+		return
+
+	var data = "%s|window:%s->%s@%s|t%d" % [verification_hash, event_id, response, payment_source, turn]
+	verification_hash = data.sha256_text()
+
+	replay_log.append({"t": turn, "k": "w", "ev": event_id, "resp": response, "pay": payment_source})
+
+	if debug_mode:
+		print("[VerificationTracker] Window: %s -> %s (%s) -> %s..." % [event_id, response, payment_source, verification_hash.substr(0, 16)])
+
+
 func record_rng_outcome(rng_type: String, value: float, turn: int):
 	"""
 	Update hash for significant RNG outcomes.
@@ -249,6 +274,8 @@ func get_replay() -> Dictionary:
 		# DQ-6 (#620 item 4): the verifier reads `schedule` (replay_simulator.gd) —
 		# emit it. [] for unscheduled runs, so pre-L0 artifacts stay verifiable.
 		"schedule": event_schedule.duplicate(true),
+		# ADR-0016: which monthly league produced this run, carried beside seed+version.
+		"league": league_id,
 		"log": replay_log.duplicate(true)
 	}
 
@@ -277,6 +304,7 @@ func snapshot() -> Dictionary:
 		"game_seed": game_seed,
 		"game_version": game_version,
 		"event_schedule": event_schedule.duplicate(true),
+		"league_id": league_id,
 		"replay_log": replay_log.duplicate(true)
 	}
 
@@ -288,6 +316,7 @@ func restore(snap: Dictionary) -> void:
 	game_seed = snap.get("game_seed", "")
 	game_version = snap.get("game_version", "")
 	event_schedule = (snap.get("event_schedule", []) as Array).duplicate(true)
+	league_id = String(snap.get("league_id", ""))
 	replay_log = (snap.get("replay_log", []) as Array).duplicate(true)
 
 

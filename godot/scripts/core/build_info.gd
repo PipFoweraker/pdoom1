@@ -51,17 +51,76 @@ static func get_build_date() -> String:
 static func is_dev_build() -> bool:
 	return DEV_BUILD
 
-## Compact commit+date stamp, e.g. "fd60eb6 · 2026-07-11". Always non-empty:
-## falls back to the date, then to "unstamped", so the overlay never shows blank.
+# --- Live git identity (L1 follow-up: the stamp went stale and cost a playtest) --------
+#
+# The baked stamp is written at package time and silently rots in a dev checkout (it read
+# "fd60eb6 · 2026-07-11" on every branch for two days). Dev builds now read the REAL HEAD
+# from git at runtime; the baked stamp is only the fallback for exported builds (no .git,
+# no git binary) and is explicitly marked "(stamp)" so it can never pass as live.
+# Acceptance: two different checkouts can never show the same badge silently — live HEAD
+# differs per checkout, and a stamped badge visibly says it is a stamp.
+
+## Cache: "" = not probed yet; "-" = probed, git unavailable (don't re-shell every frame).
+static var _live_git_cache: String = ""
+
+
+## Live "branch@shortsha" read from git at runtime, or "" when this is not a git checkout
+## (exported build) or git is not installed. Cached after the first probe. Also emits a
+## LOUD stale-stamp warning when the baked stamp disagrees with the live HEAD.
+static func get_live_git_stamp() -> String:
+	if _live_git_cache != "":
+		return "" if _live_git_cache == "-" else _live_git_cache
+	_live_git_cache = "-"
+
+	# Only shell out when this looks like a git checkout: the repo root is one level above
+	# the godot project dir; .git is a dir in a normal clone and a FILE in a git worktree.
+	var root := ProjectSettings.globalize_path("res://").path_join("..")
+	var dotgit := root.path_join(".git")
+	if not (DirAccess.dir_exists_absolute(dotgit) or FileAccess.file_exists(dotgit)):
+		return ""
+
+	var out: Array = []
+	if OS.execute("git", ["-C", root, "rev-parse", "--short", "HEAD"], out) != 0 or out.is_empty():
+		return ""
+	var sha := String(out[0]).strip_edges()
+	if sha.is_empty():
+		return ""
+
+	var branch := ""
+	var bout: Array = []
+	if OS.execute("git", ["-C", root, "rev-parse", "--abbrev-ref", "HEAD"], bout) == 0 and not bout.is_empty():
+		branch = String(bout[0]).strip_edges()
+		if branch == "HEAD":
+			branch = "detached"
+	_live_git_cache = ("%s@%s" % [branch, sha]) if not branch.is_empty() else sha
+
+	# The baked stamp exists AND disagrees with reality -> say so in the console. The badge
+	# shows live git regardless, so a stale stamp can never be mistaken for the build
+	# identity. (print, not push_warning: in a dev checkout the stamp is stale after every
+	# commit by construction — GUT/CI must not count that as an engine error.)
+	var stamped := get_commit()
+	if not stamped.is_empty() and not sha.begins_with(stamped) and not stamped.begins_with(sha):
+		print("[BuildInfo] NOTE: build_stamp.txt is stale (stamp %s vs live HEAD %s) — badge uses live git" % [stamped, sha])
+
+	return _live_git_cache
+
+
+## Compact build-identity stamp. Dev checkouts: live git, e.g.
+## "l1-month-turn-engine@a1b2c3d · live". Exported/no-git: the baked stamp explicitly
+## marked "(stamp)", e.g. "fd60eb6 · 2026-07-11 (stamp)". Always non-empty: degrades to
+## the date, then "unstamped", so the overlay never shows blank.
 static func get_stamp() -> String:
+	var live := get_live_git_stamp()
+	if not live.is_empty():
+		return "%s · live" % live
 	var commit := get_commit()
 	var date := get_build_date()
 	if not commit.is_empty() and not date.is_empty():
-		return "%s · %s" % [commit, date]
+		return "%s · %s (stamp)" % [commit, date]
 	if not commit.is_empty():
-		return commit
+		return "%s (stamp)" % commit
 	if not date.is_empty():
-		return date
+		return "%s (stamp)" % date
 	return "unstamped"
 
 ## One-line badge text for the corner indicator, e.g.

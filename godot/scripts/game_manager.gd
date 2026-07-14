@@ -13,6 +13,17 @@ var state: GameState
 var turn_manager: TurnManager
 var is_initialized: bool = false
 
+# L1 (ADR-0009): the month playback driver. Created with the game; the End Turn button
+# routes through end_month() -> MonthController day ticks (auto-pause-on-window). The old
+# single day-step (end_turn) survives ONLY behind the DEV MODE overlay.
+var month_controller: MonthController = null
+var month_playback_active: bool = false
+# Seconds between visible day ticks during month playback. var (not const) so headless
+# smokes/tests can run a month fast; a player-facing speed control is future UI work.
+var day_tick_seconds: float = 0.2
+# Synthetic month-review dialog id — intercepted by resolve_event before any engine path.
+const MONTH_REVIEW_EVENT_ID := "__month_review__"
+
 func _ready():
 	print("[GameManager] Pure GDScript version ready")
 
@@ -38,13 +49,20 @@ func start_new_game(game_seed: String = ""):
 	_apply_difficulty_settings()
 
 	turn_manager = TurnManager.new(state)
+	# L1: the month playback driver rides the same state + turn manager.
+	month_controller = MonthController.new(state, turn_manager)
+	month_playback_active = false
 	is_initialized = true
 
 	# Start verification tracking. The event schedule travels with the artifact
 	# (ADR-0005: seed = RNG seed + schedule; DQ-6 fix, L0 #620 item 4).
 	var game_version = GameConfig.CURRENT_VERSION
+	# ADR-0016 league metabolism: stamp the artifact with its league (the baseline month).
+	# Placeholder until the league pipeline lands — the run's start month is a stable id
+	# carried beside (seed, game_version) so cross-league boards (DQ-3) can key on it.
+	var league_id := "%04d-%02d" % [state.start_year, state.start_month]
 	VerificationTracker.enable_debug()  # Enable verbose logging
-	VerificationTracker.start_tracking(game_seed, game_version, state.event_schedule)
+	VerificationTracker.start_tracking(game_seed, game_version, state.event_schedule, league_id)
 	print("[GameManager] Verification tracking enabled (debug mode: ON)")
 
 	# Start baseline simulation in background if appropriate (Issue #372)
@@ -474,6 +492,102 @@ func start_next_turn():
 		var actions = turn_manager.get_available_actions()
 		actions_available.emit(actions)
 
+# ============================================================================
+# MONTH LOOP (L1 / ADR-0009) — the playable turn path
+#
+# The End Turn button routes HERE. end_turn() above is the pre-L1 single day-step
+# and survives only behind the DEV MODE overlay (debug escape hatch). Flow:
+#   plan commit -> execute the open plan turn -> day-tick playback (visible date
+#   advance, auto-pause on response windows presented via the event_dialog) ->
+#   month boundary -> review dialog -> next plan phase (boundary tick held open).
+# Guard rule (sacred): no routine decision hangs on a day tick — only windows pause.
+# ============================================================================
+
+func end_month():
+	"""Commit the queued actions as this month's plan and play the month out day by day."""
+	if not is_initialized:
+		error_occurred.emit("Cannot end month: Game not initialized")
+		return
+	if month_playback_active:
+		return  # already playing the month out
+	if state.queued_actions.is_empty():
+		error_occurred.emit("No actions queued")
+		return
+
+	# Implicit reserve (v1): every Attention point not spent on strategic work guards this
+	# month's response windows. The full plan screen makes this an explicit dial.
+	if state.month_plan != null:
+		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent)
+
+	print("[GameManager] Committing month plan (%d actions)..." % state.queued_actions.size())
+	turn_phase_changed.emit("turn_end")
+
+	# Execute the OPEN plan turn (started at the previous boundary / game start).
+	state.action_points -= state.committed_ap
+	state.committed_ap = 0
+	var result = turn_manager.execute_turn()
+	if result.has("action_results"):
+		for action_result in result["action_results"]:
+			action_executed.emit(action_result)
+	game_state_updated.emit(state.to_dict())
+	if state.game_over:
+		return
+
+	month_playback_active = true
+	_run_month_playback()  # async — runs day ticks until window-pause or month boundary
+
+
+func _run_month_playback() -> void:
+	"""Advance visible day ticks until a window pauses playback or the month boundary is
+	reached. Feed items surface as log lines (pull, no acknowledgment); only windows
+	interrupt. Resumes from resolve_event when a pause is answered."""
+	while month_playback_active and state != null and not state.game_over:
+		await get_tree().create_timer(day_tick_seconds).timeout
+		if not month_playback_active or state == null or state.game_over:
+			break
+		var r: Dictionary = month_controller.advance_tick()
+		game_state_updated.emit(state.to_dict())
+		for item in r.get("feed", []):
+			var fev: Dictionary = item.get("event", {})
+			action_executed.emit({"success": true, "message": "[color=gray]FEED · %s — %s[/color]" % [
+				String(item.get("source_id", "?")), String(fev.get("name", fev.get("id", "update")))]})
+		match String(r.get("status", "")):
+			"paused_on_window":
+				turn_phase_changed.emit("turn_start")
+				for w in month_controller.window_queue:
+					# AP pre-stripped so the dialog's cost display matches what window
+					# resolution actually charges (Attention, not AP).
+					event_triggered.emit(WindowResolver.strip_ap(w))
+				return  # playback resumes via resolve_event once answered
+			"month_open":
+				_finish_month_playback()
+				return
+	# Loop left by game-over/teardown.
+	month_playback_active = false
+	if state != null:
+		game_state_updated.emit(state.to_dict())
+
+
+func _finish_month_playback() -> void:
+	"""Month boundary reached: stop playback and present the month review (a plain dialog,
+	v1). The boundary tick is HELD OPEN as the new month's plan phase — the next
+	end_month() executes it (MonthController.month_open_pending)."""
+	month_playback_active = false
+	var label := Clock.month_label(state.turn, state.start_year, state.start_month, state.start_day)
+	var attention_now: int = state.month_plan.available() if state.month_plan else 0
+	var review := {
+		"id": MONTH_REVIEW_EVENT_ID,
+		"name": "Month Review — %s" % label,
+		"description": "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated — no banking).\nFunds: %s   ·   Doom: %.1f%%   ·   Staff: %d\n\nQueue this month's actions, then End Turn to play the month out." % [
+			label, attention_now, GameConfig.format_money(state.money), state.doom, state.get_total_staff()],
+		"type": "popup",
+		"options": [
+			{"id": "begin_planning", "text": "Begin planning %s" % label, "costs": {}, "effects": {}}
+		],
+	}
+	event_triggered.emit(review)
+
+
 func get_game_state() -> Dictionary:
 	if state:
 		return state.to_dict()
@@ -519,6 +633,11 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 		if custom_events.size() > 0:
 			state.set_meta("scenario_events", custom_events)
 	turn_manager = TurnManager.new(state)
+	# L1: rebuild the month playback driver; if the save was taken paused on a window,
+	# rehydrate re-enters the paused state so playback resumes at that window.
+	month_controller = MonthController.new(state, turn_manager)
+	month_controller.rehydrate_from_state()
+	month_playback_active = false
 	is_initialized = true
 	# NOTE: replay verification rebuilds from turn 0 (ADR-0006); a loaded session
 	# is a snapshot continuation, so tracking restarts here only to keep the
@@ -539,9 +658,38 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 	return true
 
 func resolve_event(event: Dictionary, choice_id: String):
-	"""Handle player's event choice - FIX #418: Use TurnManager"""
+	"""Handle player's event choice - FIX #418: Use TurnManager.
+	L1: month-review dialogs and paused-playback windows route to the month loop first;
+	only plan-phase events (game start / legacy path) reach TurnManager below."""
 	if not is_initialized:
 		error_occurred.emit("Game not initialized")
+		return
+
+	# L1: the synthetic month-review dialog just closes into the new plan phase.
+	if String(event.get("id", "")) == MONTH_REVIEW_EVENT_ID:
+		action_executed.emit({"success": true, "message": "[color=cyan]— %s —[/color]" % String(event.get("name", "New month"))})
+		game_state_updated.emit(state.to_dict())
+		turn_phase_changed.emit("action_selection")
+		actions_available.emit(turn_manager.get_available_actions())
+		return
+
+	# L1: while day-tick playback is paused on response windows, choices route through the
+	# month controller (Attention payment, replay payment_source), not the legacy path.
+	# Also covers a save loaded mid-pause (controller rehydrated paused, playback inactive).
+	if month_controller != null and month_controller.is_paused():
+		var wresult: Dictionary = month_controller.resolve_current_window_option(choice_id)
+		if wresult.get("success", false):
+			action_executed.emit(wresult)
+			game_state_updated.emit(state.to_dict())
+			if not month_controller.is_paused():
+				# Queue answered: either the boundary plan phase opens, or ticking resumes.
+				if month_controller.month_open_pending:
+					_finish_month_playback()
+				else:
+					month_playback_active = true
+					_run_month_playback()
+		else:
+			error_occurred.emit(String(wresult.get("message", "Window resolution failed")))
 		return
 
 	# Use TurnManager's resolve_event which handles phase transitions
@@ -656,3 +804,41 @@ func _apply_scenario_overrides():
 			state.set_meta("scenario_events", custom_events)
 
 	print("[GameManager] Scenario applied successfully")
+
+
+# ============================================================================
+# MONTH PLAN LAYER API (L1 / ADR-0009)
+#
+# Thin delegates exposing the plan-turn layer to callers (the new plan screen speaks
+# ONLY through here — main_ui.gd is left to die by attrition, per the LET-DIE map).
+# The founder currency Attention lives on state.month_plan; response windows resolve
+# through WindowResolver. The legacy per-turn AP loop above is untouched (L2 removes it).
+# ============================================================================
+
+func get_month_plan() -> MonthPlan:
+	"""The current month's plan (Attention, reserve, in-flight strategic WIP), or null."""
+	return state.month_plan if state else null
+
+
+func set_attention_reserve(amount: int) -> bool:
+	"""Explicitly hold `amount` Attention for response windows this month (plan-time)."""
+	if state == null or state.month_plan == null:
+		return false
+	return state.month_plan.set_reserve(amount)
+
+
+func queue_strategic_action(action_id: String, attention_cost: int, duration_ticks: int) -> bool:
+	"""Queue a strategic action at plan speed — spends Attention now, lands after its
+	duration (ADR-0009 §5, nothing strategic resolves instantly)."""
+	if state == null or state.month_plan == null:
+		return false
+	return state.month_plan.queue_strategic(action_id, attention_cost, duration_ticks, state.turn)
+
+
+func resolve_window(event: Dictionary, response: String) -> Dictionary:
+	"""Resolve a response window with a costed menu choice (handle_reserve /
+	handle_cannibalize / defer / ignore). Delegates to WindowResolver; records the
+	payment source into the replay artifact."""
+	if state == null:
+		return {"success": false, "message": "no active game"}
+	return WindowResolver.resolve(state, state.month_plan, event, response, state.rng)
