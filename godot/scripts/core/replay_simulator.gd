@@ -9,7 +9,11 @@ class_name ReplaySimulator
 ## therefore the canonical artifact — anti-cheat, share format, and bug-repro in one.
 
 # Mirror of BaselineSimulator.MAX_TURNS — bound runaway/immortal runs.
-const MAX_TURNS: int = 200
+# 10000 day-ticks ≈ 450 fiction-months, past the ADR-0002 400-month mortality cap. The old
+# value (200) was a pre-L1 relic: 200 STRATEGIC turns was generous, but 200 day-ticks is
+# ~9 fiction-months — post-recalibration (#638) every legitimate run outlives it, and a
+# verifier that truncates at the cap REJECTS honest long runs.
+const MAX_TURNS: int = 10000
 
 
 static func replay(replay_data: Dictionary) -> Dictionary:

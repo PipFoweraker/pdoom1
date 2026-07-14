@@ -20,34 +20,39 @@
 		"max_decisions_per_turn": 3
 	},
 	"ledger": {
-		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2).",
-		"doom_per_unpaid_1000": 3.5,
+		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2). GOTCHA: interest_rate values are COPIED INTO SAVED ENTRIES, and Godot's JSON parse is not correctly-rounded for every decimal — pick rates that survive print->parse exactly (probe-verified: 0.008/0.0025/0.001/0.02 ok; 0.009/0.015/0.045 NOT) or save/load deep-equality and post-load determinism break.",
+		"doom_per_unpaid_1000": 0.9,
 		"rep_per_unpaid_1000": 2.0,
-		"exposure_chance_per_turn": 0.15,
-		"loan": { "principal_multiplier": 1.2, "fuse_turns": 4, "interest_rate": 0.25 },
-		"funding_strings": { "principal_multiplier": 0.15, "fuse_turns": 6, "interest_rate": 0.05 },
-		"desperation_payroll": { "severity_base": 8000.0, "severity_spread": 6000.0, "fuse_turns": 3, "interest_rate": 0.35 },
-		"staff_rider": { "principal": 1200.0, "fuse_turns": 8, "interest_rate": 0.02 },
-		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 2, "interest_rate": 0.5 },
-		"expose": { "rep_per_1000": 4.0, "governance_multiplier": 0.5 }
+		"max_doom_per_bill": 10.0,
+		"max_rep_per_bill": 10.0,
+		"rollover_fuse_ticks": 8,
+		"exposure_chance_per_turn": 0.007,
+		"loan": { "principal_multiplier": 1.2, "fuse_turns": 77, "interest_rate": 0.008 },
+		"funding_strings": { "principal_multiplier": 0.10, "fuse_turns": 88, "interest_rate": 0.0025 },
+		"desperation_payroll": { "severity_base": 1200.0, "severity_spread": 800.0, "fuse_turns": 55, "interest_rate": 0.008 },
+		"staff_rider": { "principal": 1200.0, "fuse_turns": 88, "interest_rate": 0.001 },
+		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 22, "interest_rate": 0.02 },
+		"expose": { "rep_per_1000": 2.5, "governance_multiplier": 0.5 }
 	},
 	"doom": {
-		"_description": "Doom momentum + per-source coefficients (doom_system.gd) and player-facing status cutoffs.",
-		"momentum_accumulation_rate": 0.15,
+		"_description": "Doom momentum + per-source coefficients (doom_system.gd) and player-facing status cutoffs. Momentum is a low-commitment SWITCH (#638 ruling): momentum_enabled 0/1 kills the contribution, momentum_weight scales it; internal accumulators keep ticking while disabled so mid-run toggles behave.",
+		"momentum_enabled": 1.0,
+		"momentum_weight": 1.0,
+		"momentum_accumulation_rate": 0.05,
 		"momentum_decay_rate": 0.92,
-		"momentum_cap": 8.0,
+		"momentum_cap": 2.0,
 		"velocity_carry": 0.7,
 		"velocity_gain": 0.3,
-		"base_per_turn": 1.0,
-		"legacy_capability_per_researcher": 3.0,
-		"legacy_safety_per_researcher": 3.5,
+		"base_per_turn": 0.06,
+		"legacy_capability_per_researcher": 0.15,
+		"legacy_safety_per_researcher": 0.18,
 		"researcher": {
-			"safety_base": -3.5,
-			"capabilities_base": 3.0,
-			"interpretability_base": -3.0,
-			"alignment_base": -3.2
+			"safety_base": -0.28,
+			"capabilities_base": 0.15,
+			"interpretability_base": -0.24,
+			"alignment_base": -0.25
 		},
-		"unproductive_per_staff": 0.5,
+		"unproductive_per_staff": 0.025,
 		"status_cutoffs": { "safe": 25.0, "warning": 50.0, "danger": 70.0, "critical": 90.0 }
 	},
 	"salaries": {
@@ -62,7 +67,7 @@
 		"research": 0.0,
 		"papers": 0.0,
 		"reputation": 50.0,
-		"doom": 50.0,
+		"doom": 20.0,
 		"action_points": 3,
 		"stationery": 100.0,
 		"governance": 50.0
@@ -72,12 +77,14 @@
 		"per_staff": 0.5
 	},
 	"rivals": {
-		"_description": "Rival lab coefficients (rivals.gd). Per-action magnitudes remain in code (follow-up batch).",
-		"capability_overhang_doom_per_progress": 0.025,
+		"_description": "Rival lab coefficients (rivals.gd). Per-action magnitudes remain in code (follow-up batch). per_tick_doom_scale re-denominates the per-DAY-TICK rival doom to the month cadence (ADR-0009); it multiplies the summed per-action doom + overhang in turn_manager._step_process_rival_turns (1.0 = pre-L1 unscaled).",
+		"capability_overhang_doom_per_progress": 0.002,
+		"per_tick_doom_scale": 0.02,
 		"discovery": { "base_chance": 0.15, "chance_per_rep_above_threshold": 0.005 }
 	},
 	"risk": {
-		"_description": "Risk-pool trigger thresholds (risk_pool.gd). Trigger probability itself is pool/100 (structural).",
+		"_description": "Risk-pool trigger thresholds (risk_pool.gd). Trigger probability is pool/100 * trigger_scale_per_tick: the pool/100 reading was sized for the strategic turn, so the scale re-denominates it to the day-tick cadence (T9/#638; ~0.045 = 1/22 ticks-per-month, i.e. pool 30 => ~30%/month). Threshold crossings (50/75/100) remain guaranteed one-shots.",
+		"trigger_scale_per_tick": 0.045,
 		"min_pool_for_events": 5.0,
 		"thresholds": { "moderate": 50.0, "severe": 75.0, "catastrophic": 100.0 }
 	},

@@ -10,7 +10,8 @@ func test_game_state_initialization_defaults():
 	assert_eq(state.research, 0.0, "Should start with 0 research")
 	assert_eq(state.papers, 0.0, "Should start with 0 papers")
 	assert_eq(state.reputation, 50.0, "Should start with 50 reputation")
-	assert_eq(state.doom, 50.0, "Should start with 50 doom")
+	# Start doom is Balance-driven (dial 2, #638: the 2017 spawn starts LOW — 20, was 50).
+	assert_eq(state.doom, Balance.num("starting_resources.doom", 20.0), "Start doom matches Balance starting_resources.doom")
 	assert_eq(state.action_points, 3, "Should start with 3 AP")
 	assert_eq(state.turn, 0, "Should start at turn 0")
 	assert_false(state.game_over, "Game should not be over initially")
@@ -75,7 +76,8 @@ func test_add_resources_clamps_doom():
 	# Test that doom is clamped to [0, 100]
 	var state = GameState.new("test_seed")
 
-	# Test upper bound
+	# Test upper bound (start doom is Balance-driven, so pin it explicitly first)
+	state.doom = 50.0
 	state.add_resources({"doom": 60})
 	assert_eq(state.doom, 100.0, "Doom should be clamped to 100")
 

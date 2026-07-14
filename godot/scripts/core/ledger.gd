@@ -33,7 +33,14 @@ class Entry:
 	func _init(p_source: String, p_currency: String, p_principal: float, p_fuse: int, p_interest: float = 0.0, p_secret: bool = false, p_side: int = Side.PAYABLE, p_counterparty: String = "") -> void:
 		source = p_source
 		currency = p_currency
-		principal = p_principal
+		# Principals are quantized to whole units (dollars / governance points / doom).
+		# Determinism guard, not a style choice: Godot's JSON float parse is not
+		# correctly-rounded for arbitrary doubles, so a full-precision principal can come
+		# back from a save 1 ulp off — breaking save/load deep-equality and post-load
+		# replay determinism. Integer-valued doubles print/parse exactly (and a 1-ulp
+		# corruption self-heals through the next round). Sub-unit precision is invisible
+		# at game scales (principals >= ~1000; doom rollovers vs a 10-point cap).
+		principal = roundf(p_principal)
 		fuse = p_fuse
 		interest = p_interest
 		secret = p_secret
@@ -73,6 +80,7 @@ const REP_PER_UNPAID_1000: float = 2.0
 
 var entries: Array = []            # Array[Entry] — all entries, incl. settled (post-mortem trail)
 var death_attribution: Array = []  # populated when a bill drives the killing blow
+var _rollover_queue: Array = []    # residual doom rolled forward from capped bills (see _apply_capped_doom)
 
 func add(entry: Entry) -> void:
 	entries.append(entry)
@@ -124,17 +132,26 @@ static func staff_rider(name: String) -> Entry:
 ## log can state them (EE-7 loss legibility — the cascade must be visible).
 func tick_and_bill(state) -> Array:
 	var billed: Array = []
+	_rollover_queue = []
 	for e in entries:
 		if e.settled or e.side != Side.PAYABLE:
 			continue
 		if e.interest > 0.0:
-			e.principal *= (1.0 + e.interest)   # unbounded growth -> no immortal runs
+			# Unbounded growth -> no immortal runs. Rounded to whole units each step —
+			# same determinism guard as Entry._init (see comment there).
+			e.principal = roundf(e.principal * (1.0 + e.interest))
 		if e.fuse > 0:
 			e.fuse -= 1
 			continue
 		_bill(e, state)
 		e.settled = true
 		billed.append(e)
+	# Append any residual-doom rollovers AFTER the billing pass so they bill NEXT tick, not
+	# this one — keeps the per-tick doom cap a hard invariant (one capped hit per entry/tick)
+	# and spreads a large bill's teeth over subsequent months (ADR-0013 loan semantics).
+	for roll in _rollover_queue:
+		entries.append(roll)
+	_rollover_queue = []
 	return billed
 
 ## Bill a due entry in its own currency. A money bill the debtor cannot cover
@@ -147,10 +164,14 @@ func _bill(e: Entry, state) -> void:
 			if state.money < 0.0:
 				var shortfall: float = -state.money
 				state.money = 0.0
-				var doom_hit: float = shortfall / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
-				var rep_amount: float = shortfall / 1000.0 * Balance.num("ledger.rep_per_unpaid_1000", REP_PER_UNPAID_1000)
+				var raw_doom: float = shortfall / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
+				var doom_hit: float = _apply_capped_doom(e, raw_doom, state)
+				# Reputation teeth are capped per bill too (dial 3: a single default is a loan,
+				# not a one-click rep-collapse). Unlike doom, the residual is NOT rolled forward —
+				# rep damage beyond the cap is forgiven; the DOOM teeth (rolled) carry the mortality.
+				var rep_amount: float = minf(shortfall / 1000.0 * Balance.num("ledger.rep_per_unpaid_1000", REP_PER_UNPAID_1000),
+					Balance.num("ledger.max_rep_per_bill", 1000000000.0))
 				var rep_hit: float = minf(state.reputation, rep_amount)
-				state.doom += doom_hit
 				state.reputation = max(0.0, state.reputation - rep_amount)
 				_attribute(e, shortfall, state)
 				_note(state, "ledger_default", e.source,
@@ -167,17 +188,61 @@ func _bill(e: Entry, state) -> void:
 			if state.governance < 0.0:
 				var deficit: float = -state.governance
 				state.governance = 0.0
-				var doom_hit: float = deficit / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
-				state.doom += doom_hit
+				var raw_doom: float = deficit / 1000.0 * Balance.num("ledger.doom_per_unpaid_1000", DOOM_PER_UNPAID_1000)
+				var doom_hit: float = _apply_capped_doom(e, raw_doom, state)
 				_attribute(e, deficit, state)
 				_note(state, "ledger_governance_deficit", e.source,
 					{"governance_deficit": deficit, "doom": doom_hit})
 		"doom":
-			state.doom += e.principal
-			_attribute(e, e.principal, state)
-			_note(state, "ledger_doom_bill", e.source, {"doom": e.principal})
+			var applied: float = _apply_capped_doom(e, e.principal, state)
+			_attribute(e, applied, state)
+			_note(state, "ledger_doom_bill", e.source, {"doom": applied})
 		"action_points":
 			state.action_points = max(0, state.action_points - int(e.principal))
+
+## Apply a doom bill, bounded to ledger.max_doom_per_bill in any single tick (ADR-0013:
+## a defer/loan is a bill that lands over MONTHS, never a one-click guillotine). Residual
+## doom beyond the cap is NOT forgiven — it rolls forward as a fresh short-fuse doom entry
+## that re-bills (capped again) next tick, so the FULL teeth still land, just spread out
+## (ADR-0002 mortality guarantee preserved; the debt keeps biting until paid or dead).
+## Returns the doom actually applied THIS tick. Fallback cap 1e9 = effectively uncapped, so
+## the guard is behaviour-neutral until defaults.json sets the key.
+func _apply_capped_doom(e: Entry, raw_doom: float, state) -> float:
+	var cap: float = Balance.num("ledger.max_doom_per_bill", 1000000000.0)
+	var applied: float = minf(raw_doom, cap)
+	_add_doom(state, applied)
+	var residual: float = raw_doom - applied
+	if residual > 0.01:
+		# Roll the remainder into a doom-currency entry, tagged to the same source so the
+		# death chain still names the originating trade. The rollover fuse sets the BLEED
+		# CADENCE of a big default (T9/#638: ruin can be SET UP early but takes weeks-months
+		# to COMPLETE): fuse N -> a capped hit every ~N+1 ticks until the residual exhausts.
+		# Nothing is forgiven — mortality (ADR-0002) rides the full residual.
+		var roll := Entry.new(e.source, "doom", residual,
+			Balance.inum("ledger.rollover_fuse_ticks", 1), 0.0, false)
+		roll.id = e.id
+		_rollover_queue.append(roll)
+	return applied
+
+
+## Add doom so the bill actually LANDS. The turn loop overwrites `state.doom =
+## doom_system.current_doom` each tick (_step_resolve_doom), so a bare `state.doom +=` from a
+## ledger bill is silently CLOBBERED — the ledger's doom teeth were inert (probe-confirmed).
+## Routing through the doom system's event channel makes the bill survive resolution and show
+## up in the doom-source breakdown (loss legibility). Falls back to state.doom for the
+## lightweight test doubles that carry no doom_system.
+func _add_doom(state, amount: float) -> void:
+	if "doom_system" in state and state.doom_system != null:
+		# Sync the doom-system authority FROM state.doom first, so the bill adds to the CURRENT
+		# doom regardless of any prior direct write (in the real loop the two are already equal
+		# at bill-time — the ledger bills in start_turn before doom resolution). Then bank the
+		# add on the authority so _step_resolve_doom's `state.doom = current_doom` can't clobber it.
+		state.doom_system.current_doom = state.doom
+		state.doom_system.add_event_doom(amount, "ledger_bill")
+		state.doom = state.doom_system.current_doom
+	else:
+		state.doom += amount
+
 
 func _attribute(e: Entry, magnitude: float, state = null) -> void:
 	# EE-8: turn-stamped so the death chain is orderable in the run record.
