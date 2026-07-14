@@ -257,10 +257,45 @@ more interesting."*
   also measures per-seed micro-variance once the social layer lands.
 - **Playtest deep-dive protocol** — a couple of comprehensively logged human
   run-throughs: replay artifact (ADR-0006 input-string) + periodic/auto screenshots +
-  Pip's timestamped impressions, reviewed as a unit. Candidate small build item: a
-  dev-mode "flight recorder" hotkey (screenshot + state snapshot + note marker in one
-  press) — the dual-signal principle applied to human playtests. Decision-flip logging
-  (ADR-0004 §4: declared-intent-before-reveal vs action-after) belongs in this bundle.
+  Pip's timestamped impressions, reviewed as a unit. ~~Candidate small build item~~
+  **flight recorder SHIPPED** (F9, PR #639). Decision-flip logging (ADR-0004 §4:
+  declared-intent-before-reveal vs action-after) belongs in this bundle.
+
+### #638 review rulings (Pip 2026-07-14) + roadmap additions
+
+- **EE-9 spec enriched (Pip):** policies as *reactive condition rules* ("do this with AP
+  unless this condition is met, in which case do this" — e.g. fundraise by default, loan
+  only when cash runs low); **solver-bots** in dev tooling to systematically probe one
+  mechanic vs baselines (first target: desperation levers, Pip's open-Q1); use
+  established game-balancing techniques (parameterized reactive policies, hill-climb /
+  beam over opening prefixes, MCTS-lite where the tree is shallow) rather than naive
+  random walk — random_walk retained only for initial theory-of-play mapping.
+- **EE-11 · Variable-wired mechanics docs** *(Pip: "I don't understand [the ledger's]
+  underlying mechanics well enough to explain it")* — wiki / player-guide / dev-guide
+  explainers that are **wired to Balance variables** (generated or referencing
+  defaults.json keys) so prose stays numerically accurate across patches. First
+  customer: the Ledger explainer. Second: the doom pipeline post-migration.
+- **Cadence audit (scope confession, Pip):** systematically hunt remaining per-tick
+  interactions that bill at non-human-sense speeds ("things taking human times and
+  efforts") — the #638 finding (rival doom, researcher doom, ledger fuses all billed
+  per-tick) generalized into a standing sweep-rigor item. More such finds are
+  *welcome*: rigor here buys future feature-adding without unexpected outcomes.
+- **T9 floor target (Pip):** no standard-policy run dies < 6 months; early game nearly
+  unlosable w.r.t. compounding debt. Fed into #638's final iteration.
+- **DQ-25 · Desperation-lever revisit** — Pip wants the mechanic + flavor re-understood
+  (ADR-0003's catch-up machinery); gather solver-bot data (EE-9) first, then a workshop
+  beat.
+- **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
+  among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
+  construction… in parallel with the other finance ideas" — build lane L5 (#616)
+  launches after #638 merges.
+- **Momentum:** dial-4 retune accepted as *interim*; momentum ruled a low-commitment
+  SWITCH (Balance flag + weight); refresher explainer owed to Pip (memo box, #638).
+- **Reputation reminder (Pip's open-Q5):** direction already ruled — reputation is
+  TYPED per-audience/per-actor (ADR-0010; ADR-0011 interaction contract), not one
+  score; relationships = per-actor reputation + contacts-as-receivables (ADR-0014 /
+  DQ-9). Fundraise-first/loan-when-broke is the expected player pattern → EE-9 reactive
+  policy should mirror it.
 
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
