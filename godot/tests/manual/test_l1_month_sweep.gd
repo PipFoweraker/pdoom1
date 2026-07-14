@@ -27,7 +27,9 @@ extends GutTest
 ##     -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/manual \
 ##     -gselect=test_l1_month_sweep.gd -glog=1 -gexit
 
-const MAX_MONTHS := 60           # safety cap (a run to 2040 is ~270 months; nothing gets close pre-rebalance)
+const MAX_MONTHS := 420          # ADR-0002 mortality check: a run reaching this cap FAILS the
+                                 # iteration (no immortal runs). 420 > the 400-month hard limit
+                                 # so a runaway-survival policy is detectable, not silently capped.
 const MAX_TICKS_PER_MONTH := 60  # wiring guard: a calendar month is ~16 workday ticks
 const MAX_WINDOWS_PER_PAUSE := 40
 const RUNS_CSV := "res://../docs/balance/L1_sweep_runs.csv"
@@ -397,16 +399,17 @@ func test_l1_month_sweep() -> void:
 	# ---- Per-run CSV (determinism + full data for the memo/repro appendix) ----
 	var csv: Array = []
 	csv.append("seed,policy,bot_seed,months,death_turn,death_date,surface,root_cause,victory," +
-		"doom_start,doom_m1,doom_m2,doom_m3,doom_final," +
+		"doom_start,doom_m1,doom_m2,doom_m3,doom_m4,doom_m5,doom_m6,doom_final," +
 		"win_offered,win_reserve,win_cannib,win_defer,win_ignore,win_autoignore," +
 		"ledger_entries,ledger_billed,money_final,rep_final")
 	for r in all_runs:
 		var traj: Array = r["doom_traj"]
 		var w: Dictionary = r["windows"]
-		csv.append("%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%s,%s,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.1f" % [
+		csv.append("%s,%s,%d,%d,%d,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%.1f,%d,%d,%d,%d,%d,%d,%d,%d,%d,%.1f" % [
 			r["seed"], r["policy"], r["bot_seed"], r["months"], r["death_turn"], r["death_date"],
 			r["surface"], r["root_cause"], str(r["victory"]),
-			str(traj[0]), _traj_at(traj, 1), _traj_at(traj, 2), _traj_at(traj, 3), r["doom_final"],
+			str(traj[0]), _traj_at(traj, 1), _traj_at(traj, 2), _traj_at(traj, 3),
+			_traj_at(traj, 4), _traj_at(traj, 5), _traj_at(traj, 6), r["doom_final"],
 			w["offered"], w["handled_reserve"], w["handled_cannibalize"], w["deferred"],
 			w["ignored"], w["auto_ignored"],
 			r["ledger_entries"], r["ledger_billed"], r["money_final"], r["rep_final"]])
@@ -422,20 +425,23 @@ func test_l1_month_sweep() -> void:
 
 	# ---- Aggregate summary per policy ----
 	print("\n===L1_SWEEP_SUMMARY_BEGIN===")
-	print("policy | n | median_months | min | max | median_death_turn | mean_m1_slope | mean_m2_slope | mean_m3_slope | deaths(doom/rep/ledger/other/win/immortal)")
+	print("policy | n | median_months | min | max | median_death_turn | m1..m6 mean doom-slope | deaths(doom/rep/ledger/other/win/immortal)")
+	var overall_max_months := 0
+	var immortal_total := 0
 	for entry in POLICY_PLAN:
 		var pname: String = entry[0]
 		var rows: Array = by_policy[pname]
 		var months_arr: Array = []
 		var turns_arr: Array = []
-		var m1: Array = []; var m2: Array = []; var m3: Array = []
+		var ms: Array = [[], [], [], [], [], []]  # m1..m6 slope samples
 		var dc := {"doom": 0, "rep": 0, "ledger": 0, "other": 0, "win": 0, "immortal": 0}
 		for r in rows:
 			months_arr.append(r["months"])
 			turns_arr.append(r["death_turn"])
-			var s1 = _slope(r["doom_traj"], 1); if s1 != null: m1.append(s1)
-			var s2 = _slope(r["doom_traj"], 2); if s2 != null: m2.append(s2)
-			var s3 = _slope(r["doom_traj"], 3); if s3 != null: m3.append(s3)
+			for mi in range(1, 7):
+				var s = _slope(r["doom_traj"], mi)
+				if s != null:
+					ms[mi - 1].append(s)
 			if r["victory"]:
 				dc["win"] += 1
 			elif not r["game_over"]:
@@ -448,10 +454,19 @@ func test_l1_month_sweep() -> void:
 					dc["other"] += 1
 		months_arr.sort()
 		turns_arr.sort()
-		print("%s | %d | %.1f | %d | %d | %.0f | %s | %s | %s | %d/%d/%d/%d/%d/%d" % [
+		overall_max_months = max(overall_max_months, int(months_arr[months_arr.size() - 1]))
+		immortal_total += dc["immortal"]
+		var slope_str := ""
+		for mi in range(6):
+			slope_str += ("%s " % _fmt(_mean(ms[mi])))
+		print("%s | %d | %.1f | %d | %d | %.0f | %s| %d/%d/%d/%d/%d/%d" % [
 			pname, rows.size(), _median(months_arr), months_arr[0], months_arr[months_arr.size() - 1],
-			_median(turns_arr), _fmt(_mean(m1)), _fmt(_mean(m2)), _fmt(_mean(m3)),
+			_median(turns_arr), slope_str,
 			dc["doom"], dc["rep"], dc["ledger"], dc["other"], dc["win"], dc["immortal"]])
+	# ADR-0002 mortality guarantee: every policy must die, and no run may exceed 400 months.
+	var mortality_ok := (overall_max_months < 400) and (immortal_total == 0)
+	print("MORTALITY_CHECK: max_months=%d immortal_runs=%d -> %s" % [
+		overall_max_months, immortal_total, ("PASS" if mortality_ok else "FAIL (ADR-0002 violated)")])
 	print("===L1_SWEEP_SUMMARY_END===")
 
 	# ---- Narrative candidates: representative runs, full trajectory + chain ----

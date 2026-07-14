@@ -54,9 +54,12 @@ func test_exposure_fires_and_chains():
 
 func test_soonest_fuse_is_nearest_bill():
 	var s = _fresh_state()
-	GameActions.execute_action("take_loan", s)          # fuse 4
-	GameActions.execute_action("desperation_lever", s)  # fuse 3
-	assert_eq(s.ledger.soonest_fuse(), 3, "soonest fuse is the nearest upcoming bill")
+	GameActions.execute_action("take_loan", s)          # loan fuse (Balance)
+	GameActions.execute_action("desperation_lever", s)  # desperation fuse (Balance) — the nearer bill
+	# Assert against the Balance-driven desperation fuse (L1 re-denominated fuses to the month
+	# cadence, ADR-0009); the invariant is that soonest_fuse returns the NEARER of the two.
+	var nearer_fuse := Balance.inum("ledger.desperation_payroll.fuse_turns", 33)
+	assert_eq(s.ledger.soonest_fuse(), nearer_fuse, "soonest fuse is the nearest upcoming bill")
 
 func test_trade_stays_seed_deterministic():
 	# WS-0 invariant: same seed + same trade -> identical ledger outcome.
