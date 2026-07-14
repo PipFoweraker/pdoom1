@@ -204,9 +204,13 @@ func _apply_capped_doom(e: Entry, raw_doom: float, state) -> float:
 	_add_doom(state, applied)
 	var residual: float = raw_doom - applied
 	if residual > 0.01:
-		# Roll the remainder into a doom-currency entry (fuse 1 -> bills next-next tick), tagged
-		# to the same source so the death chain still names the originating trade.
-		var roll := Entry.new(e.source, "doom", residual, 1, 0.0, false)
+		# Roll the remainder into a doom-currency entry, tagged to the same source so the
+		# death chain still names the originating trade. The rollover fuse sets the BLEED
+		# CADENCE of a big default (T9/#638: ruin can be SET UP early but takes weeks-months
+		# to COMPLETE): fuse N -> a capped hit every ~N+1 ticks until the residual exhausts.
+		# Nothing is forgiven — mortality (ADR-0002) rides the full residual.
+		var roll := Entry.new(e.source, "doom", residual,
+			Balance.inum("ledger.rollover_fuse_ticks", 1), 0.0, false)
 		roll.id = e.id
 		_rollover_queue.append(roll)
 	return applied

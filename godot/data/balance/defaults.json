@@ -21,20 +21,23 @@
 	},
 	"ledger": {
 		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2).",
-		"doom_per_unpaid_1000": 1.5,
+		"doom_per_unpaid_1000": 0.9,
 		"rep_per_unpaid_1000": 2.0,
-		"max_doom_per_bill": 15.0,
-		"max_rep_per_bill": 15.0,
+		"max_doom_per_bill": 10.0,
+		"max_rep_per_bill": 10.0,
+		"rollover_fuse_ticks": 8,
 		"exposure_chance_per_turn": 0.007,
-		"loan": { "principal_multiplier": 1.2, "fuse_turns": 44, "interest_rate": 0.012 },
-		"funding_strings": { "principal_multiplier": 0.15, "fuse_turns": 66, "interest_rate": 0.0025 },
-		"desperation_payroll": { "severity_base": 1200.0, "severity_spread": 800.0, "fuse_turns": 33, "interest_rate": 0.012 },
+		"loan": { "principal_multiplier": 1.2, "fuse_turns": 77, "interest_rate": 0.009 },
+		"funding_strings": { "principal_multiplier": 0.10, "fuse_turns": 88, "interest_rate": 0.0025 },
+		"desperation_payroll": { "severity_base": 1200.0, "severity_spread": 800.0, "fuse_turns": 55, "interest_rate": 0.009 },
 		"staff_rider": { "principal": 1200.0, "fuse_turns": 88, "interest_rate": 0.001 },
 		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 22, "interest_rate": 0.02 },
-		"expose": { "rep_per_1000": 4.0, "governance_multiplier": 0.5 }
+		"expose": { "rep_per_1000": 2.5, "governance_multiplier": 0.5 }
 	},
 	"doom": {
-		"_description": "Doom momentum + per-source coefficients (doom_system.gd) and player-facing status cutoffs.",
+		"_description": "Doom momentum + per-source coefficients (doom_system.gd) and player-facing status cutoffs. Momentum is a low-commitment SWITCH (#638 ruling): momentum_enabled 0/1 kills the contribution, momentum_weight scales it; internal accumulators keep ticking while disabled so mid-run toggles behave.",
+		"momentum_enabled": 1.0,
+		"momentum_weight": 1.0,
 		"momentum_accumulation_rate": 0.05,
 		"momentum_decay_rate": 0.92,
 		"momentum_cap": 2.0,
@@ -80,7 +83,8 @@
 		"discovery": { "base_chance": 0.15, "chance_per_rep_above_threshold": 0.005 }
 	},
 	"risk": {
-		"_description": "Risk-pool trigger thresholds (risk_pool.gd). Trigger probability itself is pool/100 (structural).",
+		"_description": "Risk-pool trigger thresholds (risk_pool.gd). Trigger probability is pool/100 * trigger_scale_per_tick: the pool/100 reading was sized for the strategic turn, so the scale re-denominates it to the day-tick cadence (T9/#638; ~0.045 = 1/22 ticks-per-month, i.e. pool 30 => ~30%/month). Threshold crossings (50/75/100) remain guaranteed one-shots.",
+		"trigger_scale_per_tick": 0.045,
 		"min_pool_for_events": 5.0,
 		"thresholds": { "moderate": 50.0, "severe": 75.0, "catastrophic": 100.0 }
 	},

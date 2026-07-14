@@ -34,7 +34,7 @@ func test_ledger_default_writes_turn_stamped_causes():
 func test_exposure_records_applied_not_intended_rep_damage():
 	var state = _fresh_state("attr-expose")
 	# Start rep below the minimum possible exposure hit (post-L1 desperation severity ~1200-2000
-	# * expose.rep_per_1000/1000 ≈ 4.8-8.0) so the applied damage is guaranteed to clamp at the
+	# * expose.rep_per_1000/1000 ≈ 3.0-5.0) so the applied damage is guaranteed to clamp at the
 	# zero floor — the point of the test is that the CLAMPED value is recorded, not the intended.
 	state.reputation = 1.0
 	var secret = Ledger.desperation_payroll(state.rng)
@@ -52,13 +52,13 @@ func test_exposure_records_applied_not_intended_rep_damage():
 func test_rep_death_downstream_of_exposure_is_ledger_rooted():
 	var state = _fresh_state("attr-rep-death")
 	state.turn = 5
-	# A materially large secret liability (governance principal 6000 -> exposure rep hit ~24 at
-	# expose.rep_per_1000=4.0), so the applied damage clears BOTH the classifier's REP_MATERIALITY
-	# floor and the starting rep — a guaranteed, ledger-rooted rep collapse. (Post-L1 the default
-	# desperation_payroll exposure ~5-8 rep sits right at the materiality edge; this test isolates
+	# A materially large secret liability (governance principal 12000 -> exposure rep hit 30 at
+	# expose.rep_per_1000=2.5), so the applied damage clears BOTH the classifier's REP_MATERIALITY
+	# floor and the starting rep — a guaranteed, ledger-rooted rep collapse. (Post-T9 the default
+	# desperation_payroll exposure ~3-5 rep sits under the materiality edge; this test isolates
 	# the cascade classification, not the factory magnitude.)
 	state.reputation = 20.0
-	var secret = Ledger.Entry.new("payroll_coinflip", "governance", 6000.0, 0, 0.0, true)
+	var secret = Ledger.Entry.new("payroll_coinflip", "governance", 12000.0, 0, 0.0, true)
 	state.ledger.add(secret)
 	state.ledger.expose(secret, state)
 	state.check_win_lose()
