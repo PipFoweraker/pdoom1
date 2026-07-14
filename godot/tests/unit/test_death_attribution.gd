@@ -33,8 +33,11 @@ func test_ledger_default_writes_turn_stamped_causes():
 
 func test_exposure_records_applied_not_intended_rep_damage():
 	var state = _fresh_state("attr-expose")
-	state.reputation = 10.0
-	var secret = Ledger.desperation_payroll(state.rng)  # intended rep hit is 32-56
+	# Start rep below the minimum possible exposure hit (post-L1 desperation severity ~1200-2000
+	# * expose.rep_per_1000/1000 ≈ 3.0-5.0) so the applied damage is guaranteed to clamp at the
+	# zero floor — the point of the test is that the CLAMPED value is recorded, not the intended.
+	state.reputation = 1.0
+	var secret = Ledger.desperation_payroll(state.rng)
 	state.ledger.add(secret)
 	state.ledger.expose(secret, state)
 	var c = null
@@ -42,15 +45,20 @@ func test_exposure_records_applied_not_intended_rep_damage():
 		if str(x.kind) == "ledger_exposure":
 			c = x
 	assert_not_null(c, "exposure writes a contributing cause")
-	assert_almost_eq(float(c.effects.reputation), -10.0, 0.01,
+	assert_almost_eq(float(c.effects.reputation), -1.0, 0.01,
 		"APPLIED rep damage is recorded (clamped at the zero floor), not the intended magnitude")
 
 
 func test_rep_death_downstream_of_exposure_is_ledger_rooted():
 	var state = _fresh_state("attr-rep-death")
 	state.turn = 5
-	state.reputation = 30.0  # below the minimum 32-rep exposure hit -> guaranteed collapse
-	var secret = Ledger.desperation_payroll(state.rng)
+	# A materially large secret liability (governance principal 12000 -> exposure rep hit 30 at
+	# expose.rep_per_1000=2.5), so the applied damage clears BOTH the classifier's REP_MATERIALITY
+	# floor and the starting rep — a guaranteed, ledger-rooted rep collapse. (Post-T9 the default
+	# desperation_payroll exposure ~3-5 rep sits under the materiality edge; this test isolates
+	# the cascade classification, not the factory magnitude.)
+	state.reputation = 20.0
+	var secret = Ledger.Entry.new("payroll_coinflip", "governance", 12000.0, 0, 0.0, true)
 	state.ledger.add(secret)
 	state.ledger.expose(secret, state)
 	state.check_win_lose()

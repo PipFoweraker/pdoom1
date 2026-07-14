@@ -42,9 +42,10 @@ func test_doom_clamping_in_calculate_doom_change():
 	var doom_system = _create_doom_system()
 	var state = _create_minimal_game_state()
 
-	# Set up state to generate significant doom
-	doom_system.current_doom = 98.0
-	state.capability_researchers = 10  # Will generate +30 doom
+	# Set up state to generate doom that pushes past the ceiling (magnitudes are Balance-driven
+	# post-L1 re-denomination, so start near the cap and let any positive change clamp).
+	doom_system.current_doom = 99.9
+	state.capability_researchers = 10  # any positive per-researcher doom now tips it over 100
 
 	var result = doom_system.calculate_doom_change(state)
 
@@ -71,24 +72,25 @@ func test_calculate_doom_change_returns_expected_structure():
 	assert_has(result, "trend", "Result should have trend")
 
 func test_calculate_doom_change_base_doom():
-	# Test that base doom of 1.0 is always added
+	# Base doom equals the Balance coefficient (L1 re-denominated it off the strategic-turn
+	# magnitude; assert the wiring, not a frozen literal).
 	var doom_system = _create_doom_system()
 	var state = _create_minimal_game_state()
 
 	var result = doom_system.calculate_doom_change(state)
 
-	assert_eq(result["sources"]["base"], 1.0, "Base doom should be 1.0")
+	assert_almost_eq(result["sources"]["base"], Balance.num("doom.base_per_turn", 0.06), 0.0001, "Base doom matches Balance base_per_turn")
 
 func test_calculate_doom_change_capability_researchers():
-	# Test that capability researchers increase doom
+	# Capability researchers add per-researcher doom (Balance-driven magnitude).
 	var doom_system = _create_doom_system()
 	var state = _create_minimal_game_state()
 
-	state.capability_researchers = 2  # Should add 2 * 3.0 = 6.0 doom
+	state.capability_researchers = 2  # 2 * per-researcher coefficient
 
 	var result = doom_system.calculate_doom_change(state)
 
-	assert_eq(result["sources"]["capabilities"], 6.0, "Capabilities doom should be 6.0 for 2 researchers")
+	assert_almost_eq(result["sources"]["capabilities"], 2.0 * Balance.num("doom.legacy_capability_per_researcher", 0.15), 0.0001, "Capabilities doom = 2 x per-researcher coefficient")
 
 # ============================================================================
 # APPLY_DOOM_MODIFIER TESTS (Issue #488)
@@ -350,8 +352,8 @@ func test_unproductive_doom_unmanaged():
 
 	doom_system._calculate_unproductive_doom(state)
 
-	# 3 unmanaged * 0.5 = 1.5 doom
-	assert_eq(doom_system.doom_sources["unproductive"], 1.5, "Unmanaged employees should contribute 0.5 doom each")
+	# 3 unmanaged * per-staff coefficient (Balance-driven)
+	assert_almost_eq(doom_system.doom_sources["unproductive"], 3.0 * Balance.num("doom.unproductive_per_staff", 0.025), 0.0001, "Unmanaged employees each contribute the per-staff coefficient")
 
 func test_unproductive_doom_no_compute():
 	# Test that employees without compute are unproductive
@@ -364,8 +366,8 @@ func test_unproductive_doom_no_compute():
 
 	doom_system._calculate_unproductive_doom(state)
 
-	# 3 without compute * 0.5 = 1.5 doom
-	assert_eq(doom_system.doom_sources["unproductive"], 1.5, "Employees without compute should contribute doom")
+	# 3 without compute * per-staff coefficient (Balance-driven)
+	assert_almost_eq(doom_system.doom_sources["unproductive"], 3.0 * Balance.num("doom.unproductive_per_staff", 0.025), 0.0001, "Employees without compute contribute the per-staff coefficient")
 
 func test_unproductive_doom_no_double_counting():
 	# Test that unmanaged employees are not double-counted (Issue #424 fix)
@@ -381,9 +383,8 @@ func test_unproductive_doom_no_double_counting():
 
 	doom_system._calculate_unproductive_doom(state)
 
-	# Only 6 unproductive (not 6 + 6 from double counting)
-	# 6 * 0.5 = 3.0 doom
-	assert_eq(doom_system.doom_sources["unproductive"], 3.0, "Unmanaged should not be double-counted")
+	# Only 6 unproductive (not 6 + 6 from double counting) * per-staff coefficient (Balance-driven)
+	assert_almost_eq(doom_system.doom_sources["unproductive"], 6.0 * Balance.num("doom.unproductive_per_staff", 0.025), 0.0001, "Unmanaged should not be double-counted")
 
 # ============================================================================
 # RIVAL DOOM CONTRIBUTION TESTS (Issue #562)
@@ -418,6 +419,7 @@ func test_rival_capability_overhang_scales_with_progress():
 	rng_high.seed = 12345
 	var low_result = RivalLabs.process_rival_turn(low, state, rng_low)
 	var high_result = RivalLabs.process_rival_turn(high, state, rng_high)
-	var expected_delta = 200.0 * RivalLabs.CAPABILITY_OVERHANG_DOOM_PER_PROGRESS
+	# Overhang coefficient is Balance-driven (L1 re-denominated it); read it, don't freeze it.
+	var expected_delta = 200.0 * Balance.num("rivals.capability_overhang_doom_per_progress", RivalLabs.CAPABILITY_OVERHANG_DOOM_PER_PROGRESS)
 	assert_almost_eq(high_result["doom_contribution"] - low_result["doom_contribution"], expected_delta, 0.001, "Overhang doom scales with capability_progress")
 	assert_gt(high_result["doom_contribution"], low_result["doom_contribution"], "Higher-capability rival contributes more doom")

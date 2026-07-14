@@ -109,7 +109,14 @@ func calculate_doom_change(state: GameState) -> Dictionary:
 	raw_doom_change = _apply_doom_multipliers(raw_doom_change)
 
 	# === PHASE 1: MOMENTUM SYSTEM ===
+	# Momentum is a low-commitment SWITCH (#638 review ruling): doom.momentum_enabled
+	# (0/1) turns the contribution off entirely; doom.momentum_weight scales it. The
+	# internal state (velocity/momentum accumulators) still ticks while disabled, so
+	# flipping the switch mid-run behaves sanely and the trend readout stays live.
 	var momentum_contribution = _calculate_momentum(raw_doom_change)
+	momentum_contribution *= Balance.num("doom.momentum_weight", 1.0)
+	if Balance.num("doom.momentum_enabled", 1.0) < 0.5:
+		momentum_contribution = 0.0
 	doom_sources["momentum"] = momentum_contribution
 
 	# === FINAL DOOM CHANGE ===

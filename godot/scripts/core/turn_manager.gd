@@ -558,7 +558,12 @@ func _step_publish_papers(results: Array) -> void:
 		})
 
 func _step_process_rival_turns(results: Array) -> float:
-	"""=== RIVAL LABS TAKE ACTIONS === Returns this turn's rival doom contribution."""
+	"""=== RIVAL LABS TAKE ACTIONS === Returns this turn's rival doom contribution.
+
+	L1 balance (ADR-0009 re-denomination): rival per-action doom + the capability-overhang
+	term were sized for the pre-L1 STRATEGIC turn, but under the month cycle this step bills
+	once per DAY-TICK (~22/month). rivals.per_tick_doom_scale re-denominates that per-tick
+	pressure to the month cadence (fallback 1.0 = unscaled/pre-L1 behavior)."""
 	var rival_doom_contribution = 0.0
 	for rival in state.rival_labs:
 		var rival_result = RivalLabs.process_rival_turn(rival, state, state.rng)
@@ -567,7 +572,7 @@ func _step_process_rival_turns(results: Array) -> float:
 			"success": true,
 			"message": "%s: %s" % [rival_result["name"], ", ".join(rival_result["actions"])]
 		})
-	return rival_doom_contribution
+	return rival_doom_contribution * Balance.num("rivals.per_tick_doom_scale", 1.0)
 
 func _step_check_rival_discovery(results: Array) -> void:
 	"""=== ORGANIZATION DISCOVERY (Issue #474) ==="""

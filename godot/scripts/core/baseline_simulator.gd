@@ -25,8 +25,12 @@ class_name BaselineSimulator
 ##
 ## To define custom event strategies, see _get_event_choice_for_baseline()
 
-# Maximum turns to simulate (prevents infinite loops)
-const MAX_TURNS: int = 200
+# Maximum turns to simulate (prevents infinite loops).
+# 10000 day-ticks ≈ 450 fiction-months, past the ADR-0002 400-month mortality cap. The old
+# 200 was a pre-L1 relic (200 day-ticks ≈ 9 fiction-months): post-recalibration (#638) the
+# passive baseline itself survives ~14 months, so a 200-tick cap truncated the baseline
+# score every game. Kept in sync with ReplaySimulator.MAX_TURNS.
+const MAX_TURNS: int = 10000
 
 # WS-C (ADR-0005): default seed-vetting playability envelope. These are the CONFIG a curator
 # tunes (or overrides per-call / from league config), not thresholds baked into the
