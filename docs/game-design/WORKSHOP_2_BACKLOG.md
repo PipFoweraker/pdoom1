@@ -243,6 +243,25 @@ more interesting."*
 - **Time-progression feel:** "way faster" — watch wall-clock-per-fiction-year against
   ADR-0009's 6–8 hr decent-run target once balance lands.
 
+## Balance-instrument roadmap (Pip 2026-07-14, post-L1-merge)
+
+- **EE-9 · Auto-player strategy scripting** — *"experiment with outlining strategies in
+  more detail to the auto-player"*: evolve sweep policies from constant heuristics to
+  scripted strategy outlines (plan-level + response-level policy pairs, per ADR-0009's
+  exploit-finder rework note). Lets the sweep test *lines*, not just dispositions.
+- **EE-10 · Opening-book miner** — *"brute-force random selection of the first ~20
+  moves of the game, then adopt certain default behaviours so as to mine information
+  about early game build stack order / variance / outcomes"*: randomize the opening
+  prefix, standardize the continuation, and map opening-move → outcome distributions.
+  Dev-side scouting of the opening meta (the ladder's "stable target goals" space);
+  also measures per-seed micro-variance once the social layer lands.
+- **Playtest deep-dive protocol** — a couple of comprehensively logged human
+  run-throughs: replay artifact (ADR-0006 input-string) + periodic/auto screenshots +
+  Pip's timestamped impressions, reviewed as a unit. Candidate small build item: a
+  dev-mode "flight recorder" hotkey (screenshot + state snapshot + note marker in one
+  press) — the dual-signal principle applied to human playtests. Decision-flip logging
+  (ADR-0004 §4: declared-intent-before-reveal vs action-after) belongs in this bundle.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
