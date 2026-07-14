@@ -122,6 +122,10 @@ PDoom-*.zip
 # Temporary packaging directory
 temp_package/
 
+# GUT JUnit test result artifacts (written by scripts/run_godot_tests.py)
+godot/test-results-*.xml
+test-results-*.xml
+
 # Asset generation pipeline (raw generated images - keep only promoted assets)
 art_generated/
 generated_icons/
