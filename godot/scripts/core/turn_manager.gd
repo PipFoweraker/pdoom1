@@ -690,6 +690,13 @@ func _step_process_risk_pools(results: Array) -> void:
 				# Apply all effects from the event
 				var effects = event_data.get("effects", {})
 				var doom_from_event = 0.0
+				# #631 follow-up: some risk events (e.g. insider_threat "Key
+				# Resignation") describe an actual staff departure, not just a
+				# resource hit. `lose_researcher` used to silently vanish here —
+				# state.add_resources() only recognizes scalar keys, so an
+				# unrecognized key like this was dropped with no error and no
+				# effect (the same no-op class fixed for poaching in #633).
+				var departure_notes: Array[String] = []
 
 				for resource in effects:
 					var amount = effects[resource]
@@ -700,6 +707,10 @@ func _step_process_risk_pools(results: Array) -> void:
 							state.doom_system.add_event_doom(amount, "risk_%s" % pool_name)
 						else:
 							state.add_resources({"doom": amount})
+					elif resource == "lose_researcher":
+						departure_notes.append_array(
+							GameEvents.remove_researchers(state, int(amount), "", "resigned")
+						)
 					else:
 						# Apply other resource changes directly
 						state.add_resources({resource: amount})
@@ -715,6 +726,10 @@ func _step_process_risk_pools(results: Array) -> void:
 				var event_name = event_data.get("name", "Risk Event")
 				var event_message = event_data.get("message", "")
 				var trigger_type = "[THRESHOLD]" if from_threshold else ""
+				# Legibility (#631 follow-up): name who left, same as the event-driven
+				# poaching fix — otherwise a departure is invisible in the log.
+				for note in departure_notes:
+					event_message += "\n  └─ %s" % note
 
 				results.append({
 					"success": true,

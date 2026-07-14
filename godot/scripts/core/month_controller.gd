@@ -150,11 +150,17 @@ func _dispatch(events: Array) -> Dictionary:
 
 func resolve_current_window(response: String) -> Dictionary:
 	"""Answer the head window with a costed response (ADR-0009 §3). When the queue empties,
-	the paused tick completes (execute_turn runs)."""
+	the paused tick completes (execute_turn runs). The window is popped only AFTER the
+	resolver validates payment — a failed verb (e.g. handle_reserve with an empty reserve)
+	leaves the window open and still demanding a decision, resolvable via another verb
+	(pop-before-validate silently dropped it: no effect, no charge, no window)."""
 	if not is_paused() or window_queue.is_empty():
 		return {"success": false, "message": "no open window"}
-	var window: Dictionary = window_queue.pop_front()
+	var window: Dictionary = window_queue[0]
 	var result := WindowResolver.resolve(state, state.month_plan, window, response, state.rng)
+	if not result.get("success", false):
+		return result  # window stays queued; playback stays paused
+	window_queue.pop_front()
 	_sync_pending()
 	if window_queue.is_empty():
 		status = Status.READY
@@ -190,8 +196,10 @@ func skip_current_window() -> Dictionary:
 	var window: Dictionary = window_queue[0]
 	if EventTiers.is_unignorable(window):
 		return {"success": false, "message": "window is unignorable — must be handled"}
-	window_queue.pop_front()
 	var result := WindowResolver.resolve(state, state.month_plan, window, "auto_ignore", state.rng)
+	if not result.get("success", false):
+		return result  # same pop-only-on-success guard as resolve_current_window
+	window_queue.pop_front()
 	_sync_pending()
 	if window_queue.is_empty():
 		status = Status.READY

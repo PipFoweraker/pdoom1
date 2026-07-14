@@ -237,6 +237,48 @@ compound.** Extends "the opening is a commitment device": which rooms you spend 
 hours in locks strategic paths (Hustler vs Operator divergence is literally this).
 Early hires are reputation seeds who attract their own juniors.
 
+**(2026-07-13, workshop #3, #635 ruling)** *"when people burnout, they end up having to
+either suddenly quit / quit with no notice / have to take extended leave at short notice
+and then return to work permanently damaged for a while. Loyalty hit and efficiency hit
+feel like correct burnout responses, but the recovery can (should) take much longer than
+the preventative manner of sending them on holiday or whatever."*
+→ **Burnout: prevention is cheap, recovery is long.** Ignored burnout draws from
+{sudden quit, no-notice quit, short-notice extended leave → return with a lasting
+loyalty + efficiency debuff}; the recovery duration deliberately dwarfs the preventative
+cost (a holiday). The asymmetry is the mechanic — slack-as-insurance applied to people.
+Resolves the employee_burnout "Push Through" question (never toothless, rarely an
+instant clean walk).
+
+**(2026-07-14, dial-5 ratification)** *"as the player and employees get burned out and
+stack up fatigue and sloppiness, I think tracking those as debuffs rather than
+mechanical impacts keeps the game legible in ways that allow for mitigating techniques
+and strategies"*
+→ **One status layer: visible, timed debuffs on people — including the founder.**
+Fatigue/sloppiness are never hidden roll penalties; they are legible statuses that
+invite counterplay. Merges the burnout ruling's efficiency debuffs with the rejected
+cramming-penalty texture (proposal E): if cramming ever ships, it inflicts a visible
+founder debuff, not opaque degradation.
+
+**(2026-07-14, dial-5 ratification)** *"they can't delegate bookkeeping to a security
+engineer very effectively, for example. So we can start to categorise, perhaps by
+skillset, … the requirements of solving particular attention demands on the player"*
+→ **Demands are typed; the currency is not.** Attention stays the single universal
+founder currency (the founder is a strong generalist); each demand carries a
+skill-category tag; staff absorb demands matching their skillset — so office
+*composition* decides what leaves your desk. Guard rails: taxonomy stays coarse
+(~4–6 categories aligned to hire archetypes, DQ-24); at scale, typed micro-demands
+(e.g. per-researcher check-ins) aggregate into manager-absorbed classes — the
+aggregation and the Celine's-law report are the same object. Demand rise is diegetic:
+more *process steps* (hiring pipeline, onboarding, research-strategy setting,
+check-ins), not inflated prices.
+
+**(2026-07-14)** *"integrating their signal-to-player and signals-to-dev will be really
+important to manage as we develop these."*
+→ **Every mechanic ships both signals together.** The player-facing display (chips,
+statuses) and the dev-facing telemetry (sweep columns, attribution) are the same event
+stream read at two resolutions — the two-instrument doctrine generalized from doom to
+everything. What L6 did for death, each new mechanic does for itself on arrival.
+
 ### On the early game (scouting and the populating board)
 
 **(2026-07-13)** *"I was thinking about the early stage phases of games like Civ and
@@ -424,6 +466,50 @@ loss-legibility; the L6 attribution chain is the counterpart instrument (the
 death-attribution artifact showed accounting breaks exactly where causality goes
 indirect).
 
+**(2026-07-13, workshop #3, #634 veto round)** *"the game notes strongly for debugging
+and logging purposes any turn where Doom is not a positive rate AND a significant event
+('sacred object' in design parlance…) is not happening (this allows for occasional
+downward spikes in doom if a player pulls something impressive off)"*
+→ **The doom floor is an instrument, not a clamp.** Doom rate may legally go negative;
+what's enforced is *legibility of the fall* — any net-negative turn without a
+sacred-object-grade cause gets loudly flagged in telemetry. Same falsifiable-invariant
+pattern as the decision-flip rate: balance assumptions become alerts, never engine rules.
+
+**(2026-07-13, workshop #3, #634 veto round)** *"we can have the satisfaction of watching
+something like the *delta Doom* rise and fall in response to our observed outputs, and
+then the actual, accumulated Doom can steadily grind upwards with much subtler gradients
+over time, so the player has (or, better yet, can *earn*) tighter feedback loops."*
+→ **Two instruments: the rate wiggles, the level grinds.** The delta-doom display gives
+high-frequency agency feedback (waves and falls responding to your outputs); accumulated
+doom keeps the structural dread (destined to rise). The tighter loop is *earned* —
+instrumentation as progression (power-up-the-office; the pre-Godot paid-for event log's
+direct descendant). Guard: ADR-0004's lead-time rule owns the free layer — the coarse
+doom band and becoming-lethal warnings are never paywalled; what's earned is *resolution*
+(stream decomposition, pulse forecasting), not survival-critical sight.
+
+**(2026-07-13, workshop #3, late beat)** *"doom feels like it should be able to go down,
+it's just very very hard to make doom go down by much and for very long, and persistently
+achievable downward trends probably mean I've failed to make the game hard enough or
+inevitable enough."*
+→ **Doom falls are legal; sustained falls are a balance bug.** The floor-as-instrument
+invariant graduates from turn-grade to trend-grade: occasional legible dips are play; a
+*persistently achievable* downward trend is a failed-difficulty signal, not a rules
+violation. Enforcement home: an exploit-sweep gate (no bot policy may sustain an N-month
+doom decline) plus telemetry in human games. Companion ruling: *"The player needs to be
+able to push back against some challenges that have a sense of tempo over time"* —
+pushback-against-rhythm is the intended feel; scheduled pulses and cyclic streams supply
+the tempo; expect the tuning to emerge from progressively longer playtests.
+
+**(2026-07-13, workshop #3, veto harvest)** *"[gauntlet completion] doesn't actually
+require sacrifice … Players might be able to seize opportunities when they come up,
+sacrifice will be required for many good results, but not all and not deterministically,
+but because it's hard to do hard things."*
+→ **Sacrifice is emergent, not a gate.** The chain-plus-sacrifice composition rule is
+rejected as a formula: completing a gauntlet alone can pay a doom reduction; sacred-object
+payments arise *situationally* from the difficulty of hard things, not from a design
+requirement. Opportunity-seizing is legal and rewarded. The difficulty budget lives in
+the gauntlet's failure gates, not in a mandatory toll.
+
 ### On restraint (as little design as possible)
 
 Demonstrated rather than stated this session — the folds:
@@ -433,6 +519,13 @@ Demonstrated rather than stated this session — the folds:
   sim. Influence → a ledger column, not a resource. Blackmail → one event genre.
 - Working rule: a mechanic that needs a new player-facing currency or panel has to prove
   it can't be a read/write on existing ones first.
+
+**(2026-07-13, workshop #3, #634 veto round)** *"I might be able to solve this at the
+cards-level, not the stack-level, to use a M:TG analogy."*
+→ **Weirdness lives in cards, not the stack.** Engine rules stay crisp (e.g. no standing
+player lever governs `global_compute`); edge cases (an autocratic state cracking down on
+PC-grade general compute) enter as content — events on the seed schedule. Same generator
+as "geopolitics is content, not a system," now stated as a general division of labor.
 
 ### On flavor and theme
 
@@ -462,6 +555,10 @@ flat CRT type, not casualty counters. Personnel problems read as "bother," not t
 
 ## Change log
 
+- **2026-07-13 (workshop #3, beat 3 — #634 veto round)** — doom floor as instrument-not-
+  clamp (unexplained falls logged, not prevented); "weirdness lives in cards, not the
+  stack" (under restraint); doom function restructured toward named component streams
+  (round-2 strawman on PR #634).
 - **2026-07-13 (workshop #3, beat 2 — handover round)** — Doom-as-rate + sacred-objects
   reduction; aggro-threshold midgame ("the world starts shooting back", DQ-22); ambient
   floor = civilian awareness; scouting actions v1 sketch (LessWrong unlock); decisions

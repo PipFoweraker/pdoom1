@@ -398,3 +398,82 @@ func test_poach_with_no_researchers_is_safe_noop():
 	assert_true(result["success"], "Still resolves")
 	assert_eq(state.researchers.size(), 0, "Nobody removed")
 	assert_false(result.has("messages"), "No staffing note when nobody leaves")
+
+# ---------------------------------------------------------------------------
+# #631 follow-up: GameEvents.remove_researchers() — shared staffing-loss helper
+# used by both event-driven poaches and risk-pool events (insider_threat).
+# ---------------------------------------------------------------------------
+
+func test_remove_researchers_removes_least_loyal_first():
+	state.add_researcher(_make_researcher("safety", "Loyal Larry", 90))
+	state.add_researcher(_make_researcher("safety", "Fickle Fran", 20))
+	var before := state.researchers.size()
+
+	var notes := GameEvents.remove_researchers(state, 1, "", "resigned")
+
+	assert_eq(state.researchers.size(), before - 1, "Exactly one researcher removed")
+	var names := []
+	for r in state.researchers:
+		names.append(r.researcher_name)
+	assert_does_not_have(names, "Fickle Fran", "Least-loyal researcher resigned")
+	assert_eq(notes.size(), 1, "One departure note returned")
+	assert_string_contains(notes[0], "Fickle Fran", "Note names who left")
+	assert_string_contains(notes[0], "resigned", "Note uses the supplied reason, not a hardcoded 'poached'")
+
+func test_remove_researchers_respects_spec_filter():
+	state.add_researcher(_make_researcher("safety", "Safety Sally", 10))
+	state.add_researcher(_make_researcher("capabilities", "Cap Carl", 5))
+
+	GameEvents.remove_researchers(state, 1, "capabilities", "resigned")
+
+	var names := []
+	for r in state.researchers:
+		names.append(r.researcher_name)
+	assert_has(names, "Safety Sally", "Safety researcher untouched by capabilities-filtered removal")
+	assert_does_not_have(names, "Cap Carl", "Capabilities researcher removed")
+
+func test_remove_researchers_safe_noop_when_empty():
+	assert_eq(state.researchers.size(), 0, "Start empty")
+	var notes := GameEvents.remove_researchers(state, 1, "", "resigned")
+	assert_eq(notes.size(), 0, "No notes when nobody is available to remove")
+	assert_eq(state.researchers.size(), 0, "Still nobody")
+
+# ---------------------------------------------------------------------------
+# #631 class-killer property tests: an unrecognized effect/cost key in the event
+# data is SILENTLY dropped at apply time (ResourceAccessor.add returns false and
+# the match falls through; can_afford ignores unknown cost keys) — that silent
+# fall-through is exactly how the "flavor says X, nothing happens" bug class was
+# born (rival_poaching let_go, insider_threat Key Resignation). These tests pin
+# the data to the handled vocabulary so a typo'd or unimplemented key fails CI
+# instead of shipping as a no-op.
+# ---------------------------------------------------------------------------
+
+# Every effect key execute_event_choice actually applies (scalars via
+# ResourceAccessor.add + the non-scalar match arms in events.gd).
+const HANDLED_EFFECT_KEYS := [
+	"money", "compute", "research", "papers", "reputation", "doom",
+	"compute_engineers",  # scalar legacy count (ResourceAccessor.add)
+	"safety_researchers", "capability_researchers",  # staffing arms
+	"has_cat", "lose_researcher",
+]
+
+# Every cost key can_afford/spend_resources actually checks and deducts.
+const PAYABLE_COST_KEYS := [
+	"money", "compute", "research", "papers", "reputation", "action_points",
+]
+
+func test_all_core_event_effect_keys_are_handled():
+	for event in GameEvents.get_all_events():
+		for option in event.get("options", []):
+			for key in option.get("effects", {}).keys():
+				assert_true(key in HANDLED_EFFECT_KEYS,
+					"%s/%s effect key '%s' is not handled by execute_event_choice — it would be a silent no-op (#631)" % [
+						event.get("id", "?"), option.get("id", "?"), key])
+
+func test_all_core_event_cost_keys_are_payable():
+	for event in GameEvents.get_all_events():
+		for option in event.get("options", []):
+			for key in option.get("costs", {}).keys():
+				assert_true(key in PAYABLE_COST_KEYS,
+					"%s/%s cost key '%s' is not checked by can_afford/spend_resources — it would be silently free (#631)" % [
+						event.get("id", "?"), option.get("id", "?"), key])

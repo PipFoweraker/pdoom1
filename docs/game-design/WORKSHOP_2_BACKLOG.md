@@ -122,27 +122,65 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
   DESIGN_PHILOSOPHY "On the early game" extended + new "On the hero and the office"
   section; **ADR-0015** (no printed doom deltas) and **ADR-0016** (league metabolism)
   minted. Residue distributed to DQ-19/20/21 below and the #612 spec addendum.
-- **DQ-19 · Character creation surface** — parked. Attached question (Pip: "the right
-  question"): does founder background **type the starting channels/connections** —
-  ex-academic → research-sight affinity, ex-finance → doors/VC access, ex-journalist →
-  media-sight? Moves ADR-0004's channel-investment build-identity axis partially to turn
-  zero. Overlaps DQ-4 (re-roll within seed). Starting connections as a config lever.
+- **DQ-19 · Character creation surface — PRIORITISED** *(de-parked by Pip 2026-07-13
+  during issue triage: "prioritise de-parking all related issues, we should solve for
+  them soon")* — attached question (Pip: "the right question"): does founder background
+  **type the starting channels/connections** — ex-academic → research-sight affinity,
+  ex-finance → doors/VC access, ex-journalist → media-sight? Moves ADR-0004's
+  channel-investment build-identity axis partially to turn zero. Overlaps DQ-4 (re-roll
+  within seed). Starting connections as a config lever. Absorbs #473/#514 (point
+  allocation); dependency chain into ADR-0004 channel design. Candidate next workshop
+  beat alongside DQ-23.
 - **DQ-20 · Risk pools** — Pip's gloss, logged not designed: *"insurance/mutualisation -
   industry actors pooling exposure to AI incidents, and the pool itself becoming an actor
   with opinions about safety standards. Like how fire insurance invented building codes…
   the pool is a customer for safety work with actual pricing power."* ADR-0010 adjacency
   (adoption customer); mid-game unlock; candidate: governance-lane researchers can stand
   one up. Don't over-invest yet.
-- **DQ-21 · Intermediary vocabulary v1 — SEEDED** *(ADR-0015; Pip 2026-07-13)* — Pip's
-  list, verbatim: `general_capability` (diffusion + mass adoption), `frontier_capability`
-  (plus per-actor variants), `global_compute`, `global_dedicated_AI_compute` (smaller,
-  scarcer, more valuable, likely controlled early), `something_for_attitudes_of_
-  political_pressures` (naming owed), `ambient_capability_-_risk_background_levels`,
-  `global_alarm`, `global_panic`. Form: **rate, accumulating** (~75% ruling) —
-  experienced as a rate while history ticks the level up; 2017 spawn starts lower,
-  builds slower than current balance. Doom **can** go down, but only at the end of long
-  effort chains, priced in sacred objects. Semantics pass owed (lane strawmans for Pip
-  veto): alarm-vs-panic distinction, the compute pair's roles, political-attitudes name.
+- **DQ-21 · Intermediary vocabulary v1 — RESOLVED (v1)** *(ADR-0015; PR #634, fully
+  vetoed by Pip 2026-07-13 via sheet)* — Nine streams: `general_capability` (chronic
+  floor), `frontier_capability` (per-actor map; player slice separately named for DQ-22
+  aggro), overhang (`frontier − safety_absorption`), `global_compute` (uncontrollable
+  ocean, no direct doom term), `dedicated_ai_compute` (governable fleet),
+  `ambient_risk`, `global_panic` (additive), `global_alarm` (small stream AND
+  damper-gate), plus scheduled pulses (ramp/spike/tail envelope on ADR-0005 entries);
+  `political_pressure` gates dampers, owns no stream. Doom = accumulating rate;
+  baselines dampable; streams clamp at 0 v1 (**LOUD revisit flag — Pip not settled**);
+  trend invariant N=6 months (sustained decline without sacred-object cause = telemetry
+  flag + exploit-sweep gate failure). Sacrifice emergent, not a gate (R2-Q8 revision).
+  Cycles: no v1 machinery, prefer emergent (open). Forward intent: decompose
+  `political_pressure` into component risk factors via real-world risk/harm taxonomies
+  (**MIT AI Risk Repository** named as reference source) — feeds the pdoom-data /
+  league pipeline.
+- **DQ-23 · Damper economy** *(next workshop beat; from R2-Q4)* — minting systems,
+  durations, stacking rules, per-stream caps. Pip's prep instruction: "prompt agent to
+  find examples from real history to baseline with or against" — research errand:
+  historical analogs of policy/institutional responses damping technology risks
+  (candidates to check: Montreal Protocol, nuclear test bans, financial-stability
+  accords), for damper magnitude/duration baselines.
+- **Burnout outcome model — RULED (Pip 2026-07-13, resolves #635 DEFERRED)** — ignored
+  burnout ("Push Through") is never toothless: outcome draws from {sudden quit,
+  no-notice quit, short-notice extended leave → return with lasting loyalty + efficiency
+  debuff}; recovery duration ≫ prevention cost (send-on-holiday). Implementation home:
+  L2 effort economy (#613) — needs per-researcher efficiency debuffs with durations;
+  interim event content may ship the loyalty-hit-only version. Interacts with DQ-22
+  (loyalty hits raise poach vulnerability).
+- **Dial-5 RATIFIED (Pip 2026-07-14)** — package **B+C+D** from
+  `docs/balance/DIAL5_ATTENTION_SCARCITY_PROPOSALS.md`: demand rise via diegetic
+  process steps + admin tax bought down by ops hires (B), era-scaling demand/cost (C),
+  uninsured-handling premium (D). **A rejected** (fights the ~20-decisions canon).
+  **E transformed**: cramming/fatigue expressed as *visible debuffs* on the unified
+  status layer (see burnout ruling), never hidden roll degradation. Decimals set after
+  the doom recalibration lands (sweep sequencing note).
+- **DQ-24 · Attention-demand taxonomy + typed delegation** *(Pip 2026-07-14; feeds
+  build lane L2 #613 spec)* — enumerate the ~4–6 demand skill-categories (candidates:
+  ops/bookkeeping, people/HR, technical-infra/security, research direction,
+  external/comms) and the hire-archetype matching ("can't delegate bookkeeping to a
+  security engineer"); enumerate the process-step demand list (hiring pipeline steps,
+  onboarding, research-strategy setting, progress check-ins); define aggregation rule
+  (typed micro-demands roll up into manager-absorbed classes at scale — same object as
+  the Celine's-law report). Guard: type demands, never the currency — Attention stays
+  single and universal. Workshop beat alongside DQ-19/DQ-23.
 - **DQ-22 · Aggro-threshold midgame** *(Pip 2026-07-13; ADR-candidate)* — rivals develop
   their own positions until the player's visible impact threatens their interests, then
   active attacks begin (litigation, funding cuts, rep attacks, scathing reviews, psyops,
@@ -162,6 +200,67 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
 - **EE-6 promotion note** — the schedule content pipeline is now ADR-0016's league
   pipeline: structured monthly world-diff format, LLM-drafted, Pip-approved, ≤1 day/week
   sustained. Product feature, not aspiration.
+- **F3 risk overlay = the stream readout** *(Pip confirmed 2026-07-13)* — the "risk
+  pools" that hover at zero in current playtests (#584 overlay) get their content from
+  DQ-21's named doom streams; the overlay becomes the earned high-resolution doom
+  instrument's home. No new surface. Balance gate: doom falls legal, *sustained* falls =
+  failed-difficulty signal (exploit-sweep gate + telemetry, not an engine clamp).
+
+### Triage captures (2026-07-13 — salvaged from 2025-issue close-out, Pip-flagged)
+
+- **Observable threshold** *(#474)* — two-tier discovery model worth specifying in the
+  scouting design: low observability → only big labs visible; high observability →
+  small research groups/startups visible. Home: ADR-0014 discovery-by-presence /
+  DQ-18 scouting choreography.
+- **Paper-presentation delegation split** *(#411)* — self-present ≈1.5× vs delegate
+  ≈1.0× reputation multiplier; park for DQ-16 (conference subgame revisit).
+- **Series A/B/C staged equity progression** *(#395)* — stage-appropriate investor
+  matching; revisit when the equity/capabilities-funding branch gets its mechanics
+  review (ADR-0013 extension). **Market conditions** (bull/bear funding cycles) —
+  distant-park, low priority, "most likely not-abandon, but not-get-to" (Pip).
+- **Event-chain schema caution** *(#513)* — `event_chains.json`/`triggers.json` is seed
+  data only; re-derive chain-management design from current intuitions (gauntlets,
+  pulses, ADR-0012) before adopting any of it. Flag for L4 content wiring.
+- **Ledger failure states TODO** *(#476)* — overdraft / tax-penalty / audit-problem
+  failure states to be explicitly cross-referenced into ADR-0012's called-due cascade.
+- *(Presentation-layer intents — robed cabal animations #222, insight-ladder copy #515 —
+  captured in WORLD_AND_LORE.md.)*
+
+## Playtest QA findings — round 2 (2026-07-13 evening, first play of the L1 month loop, PR #636 branch)
+
+**Pip's reaction (verbatim):** *"That new version where things play out fast in front of
+me is super cool. It makes the simulator element way more representative. This feels
+like a huge shift… I feel like time in the game will progress way faster. Interestingly,
+my doom was low and then partway through the second month it spiked up at the end and I
+watched as I lost. It felt pretty wild! This will make video capture of the game much
+more interesting."*
+- **Evidence the playback delivers the intended register** — "I watched as I lost" is
+  the tragedy target (ADR-0004 lead-time feeling), arriving via resolution spectacle.
+- **Streaming/video-capture value noted** — the day-tick playback is inherently
+  watchable; park as a marketing/community consideration.
+- Month-2 doom-spike death = expected pre-rebalance behavior (old day-grain doom
+  constants under the new structure); the L1 balance sweep (below) quantifies it.
+- **Time-progression feel:** "way faster" — watch wall-clock-per-fiction-year against
+  ADR-0009's 6–8 hr decent-run target once balance lands.
+
+## Balance-instrument roadmap (Pip 2026-07-14, post-L1-merge)
+
+- **EE-9 · Auto-player strategy scripting** — *"experiment with outlining strategies in
+  more detail to the auto-player"*: evolve sweep policies from constant heuristics to
+  scripted strategy outlines (plan-level + response-level policy pairs, per ADR-0009's
+  exploit-finder rework note). Lets the sweep test *lines*, not just dispositions.
+- **EE-10 · Opening-book miner** — *"brute-force random selection of the first ~20
+  moves of the game, then adopt certain default behaviours so as to mine information
+  about early game build stack order / variance / outcomes"*: randomize the opening
+  prefix, standardize the continuation, and map opening-move → outcome distributions.
+  Dev-side scouting of the opening meta (the ladder's "stable target goals" space);
+  also measures per-seed micro-variance once the social layer lands.
+- **Playtest deep-dive protocol** — a couple of comprehensively logged human
+  run-throughs: replay artifact (ADR-0006 input-string) + periodic/auto screenshots +
+  Pip's timestamped impressions, reviewed as a unit. Candidate small build item: a
+  dev-mode "flight recorder" hotkey (screenshot + state snapshot + note marker in one
+  press) — the dual-signal principle applied to human playtests. Decision-flip logging
+  (ADR-0004 §4: declared-intent-before-reveal vs action-after) belongs in this bundle.
 
 ## Deferred build lanes — follow-up implementation (no design blocker)
 

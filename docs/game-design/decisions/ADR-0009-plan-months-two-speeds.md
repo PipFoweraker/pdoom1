@@ -23,6 +23,12 @@ month ≈ 114 / 186 / 234 / 270 turns; quarter ≈ 38 / 62 / 78 / 90.
 
 1. **The turn is a month.** Fixed grain, v1. Plan phase: allocate staff and founder
    hours, queue strategic actions, explicitly set reserve (slack).
+   *Implementation clarification (2026-07-14, PR #636):* "the turn is a month" means
+   the **decision cadence** — implemented as a plan **layer** over day-grain simulation
+   ticks, not a literal re-grain of the sim step. Point 2 already requires this (days
+   remain "sim substrate, calendar, animation, score resolution"), and the coarse-hands/
+   fine-scoreboard principle depends on day-grain scoring surviving. Recorded because
+   the headline wording was misread as a hard re-grain during L1 build.
 2. **The day is demoted to resolution tick** — sim substrate, calendar, animation,
    score resolution. **Guard rule: no mechanic may hang a routine decision on the day
    tick.** Days are for physics and comedy.
