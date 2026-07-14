@@ -2,9 +2,19 @@ extends GutTest
 ## Regression tests for fixed bugs - prevent regressions
 
 var state: GameState
+var _saved_difficulty: int = 1
 
 func before_each():
 	state = GameState.new("test_seed")
+	# GameConfig.difficulty is a persistent autoload singleton. The difficulty
+	# validation tests below mutate it (to 999, -1, and the [0,1,2] loop), which
+	# previously LEAKED difficulty=2 into every alphabetically-later test file —
+	# the root of issue #590's order-dependent failures. Save and restore it so
+	# this file cannot leak, matching test_game_manager.gd's pattern.
+	_saved_difficulty = GameConfig.difficulty
+
+func after_each():
+	GameConfig.difficulty = _saved_difficulty
 
 ## Issue #449: Lobby Government action affordability
 ## Previously had reputation in costs, making it unaffordable
