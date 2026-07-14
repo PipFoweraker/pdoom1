@@ -491,6 +491,26 @@ doom band and becoming-lethal warnings are never paywalled; what's earned is *re
 it's just very very hard to make doom go down by much and for very long, and persistently
 achievable downward trends probably mean I've failed to make the game hard enough or
 inevitable enough."*
+**(2026-07-14, #638 review)** *"My intuition is that it will be hard for players to fail
+at all in the first few months as they shouldn't be able to get themselves into that
+much unpayable debt that is also then recovered in a punitive enough way to cause them
+to lose. Obviously they can set themselves up for a terrible outcome, but I think we
+should be surprised if *ANY* standard run finishes in less than 6 months."*
+→ **The opening is nearly unlosable; the ruin you build there finishes you later.**
+Early months can *set up* terrible outcomes but not complete them — debt needs months to
+compound into lethality (tragedy-requires-lead-time applied to the opening). Sweep floor
+target T9: any standard-policy run dying under 6 months is a balance bug. Watch the
+floor as the game "naturally lengthens out as e.g. both Pip and players get the hang of
+it."
+
+**(2026-07-14, #638 review)** *"the momentum element of the game may or may not need
+re-weighing. I'd like to think of this as one of the switches we're most willing to turn
+on and off as we evolve and develop our mechanics with more richness."*
+→ **Mechanics carry commitment grades.** Structure is never-patch; numbers patch freely;
+and some mechanisms — momentum first among them — are explicitly *switches*: kept
+toggleable and low-ceremony to flip as richness grows. Implementation consequence: build
+momentum as a clean Balance flag + weight, not load-bearing plumbing.
+
 → **Doom falls are legal; sustained falls are a balance bug.** The floor-as-instrument
 invariant graduates from turn-grade to trend-grade: occasional legible dips are play; a
 *persistently achievable* downward trend is a failed-difficulty signal, not a rules

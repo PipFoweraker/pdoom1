@@ -23,6 +23,10 @@ var keybinds: Dictionary = {
 	# Backslash toggles the full DEV MODE overlay (state readout + dev controls). Gated on
 	# BuildInfo.DEV_BUILD by the overlay itself. Reclaimed backslash from export_log/bug_reporter.
 	"dev_mode": {"key": KEY_BACKSLASH, "category": Category.DEBUG, "description": "Toggle Dev Mode Overlay"},
+	# Playtest flight recorder (WORKSHOP_2_BACKLOG "Playtest deep-dive protocol"): one press
+	# dumps a screenshot + state snapshot + marker note. Gated on BuildInfo.DEV_BUILD by
+	# FlightRecorder itself, same pattern as dev_mode. F9 is otherwise unused.
+	"flight_recorder": {"key": KEY_F9, "category": Category.DEBUG, "description": "Flight Recorder Capture (screenshot + state + note)"},
 	"admin_mode": {"key": KEY_BRACKETRIGHT, "category": Category.ADMIN, "description": "Toggle Admin Mode"},
 
 	# Gameplay
@@ -79,6 +83,7 @@ signal log_export_requested
 signal admin_mode_toggled
 signal debug_overlay_toggled
 signal dev_mode_toggled
+signal flight_recorder_requested
 
 func _ready():
 	load_keybinds()
@@ -293,6 +298,12 @@ func _input(event: InputEvent):
 	# Dev mode overlay (backslash) — full state readout + dev controls (dev builds only)
 	elif is_action_pressed(event, "dev_mode"):
 		dev_mode_toggled.emit()
+		get_viewport().set_input_as_handled()
+
+	# Flight recorder (F9) — screenshot + state snapshot + marker note in one press
+	# (dev builds only; FlightRecorder itself gates on BuildInfo.is_dev_build()).
+	elif is_action_pressed(event, "flight_recorder"):
+		flight_recorder_requested.emit()
 		get_viewport().set_input_as_handled()
 
 	# Admin mode

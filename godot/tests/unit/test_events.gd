@@ -455,6 +455,7 @@ const HANDLED_EFFECT_KEYS := [
 	"compute_engineers",  # scalar legacy count (ResourceAccessor.add)
 	"safety_researchers", "capability_researchers",  # staffing arms
 	"has_cat", "lose_researcher",
+	"loyalty_hit",  # employee_burnout "Push Through" interim content (WORKSHOP_2_BACKLOG ruling)
 ]
 
 # Every cost key can_afford/spend_resources actually checks and deducts.
@@ -477,3 +478,57 @@ func test_all_core_event_cost_keys_are_payable():
 				assert_true(key in PAYABLE_COST_KEYS,
 					"%s/%s cost key '%s' is not checked by can_afford/spend_resources — it would be silently free (#631)" % [
 						event.get("id", "?"), option.get("id", "?"), key])
+
+# ---------------------------------------------------------------------------
+# employee_burnout / "Push Through" — interim loyalty-hit content
+# (WORKSHOP_2_BACKLOG "Burnout outcome model — RULED", Pip 2026-07-13, resolves
+# the #631/#635 AMBIGUOUS case: flavor said "considering leaving", effect was
+# doom-only). Push Through must no longer be toothless-beyond-doom: it now also
+# dents loyalty on the least-loyal researchers, named, with NO removal and NO
+# efficiency/leave debuff (that's L2 #613's job per the ruling).
+# ---------------------------------------------------------------------------
+
+func test_push_through_burnout_docks_loyalty_least_loyal_first_no_removal():
+	state.add_researcher(_make_researcher("safety", "Frayed Fiona", 20))
+	state.add_researcher(_make_researcher("safety", "Steady Sam", 80))
+	state.add_researcher(_make_researcher("capabilities", "Weary Wade", 10))
+	var before_count := state.researchers.size()
+	var before_doom := state.doom
+
+	var events = GameEvents.get_all_events()
+	var burnout = _find_event_by_id(events, "employee_burnout")
+	assert_false(burnout.is_empty(), "employee_burnout event should exist")
+
+	var result = GameEvents.execute_event_choice(burnout, "ignore_burnout", state)
+
+	assert_true(result["success"], "Push Through should succeed")
+	assert_eq(state.researchers.size(), before_count, "Push Through removes nobody (interim: loyalty-hit only)")
+	assert_eq(state.doom, before_doom + 3.0, "Doom still applies as flavor states")
+
+	# The two least-loyal researchers (Weary Wade 10, Frayed Fiona 20) take the hit;
+	# the most-loyal (Steady Sam 80) is untouched.
+	var by_name := {}
+	for r in state.researchers:
+		by_name[r.researcher_name] = r
+	assert_eq(by_name["Weary Wade"].loyalty, 0, "Least-loyal researcher's loyalty drops (clamped at 0)")
+	assert_eq(by_name["Frayed Fiona"].loyalty, 5, "Second least-loyal researcher's loyalty drops by 15")
+	assert_eq(by_name["Steady Sam"].loyalty, 80, "Most-loyal, unaffected researcher keeps his loyalty")
+
+	# Legibility: the affected researchers are named in the log (#631 pattern).
+	assert_true(result.has("messages"), "Loyalty hit is legible, not a silent stat change")
+	var joined: String = "\n".join(result["messages"])
+	assert_string_contains(joined, "Weary Wade", "Log names an affected researcher")
+	assert_string_contains(joined, "Frayed Fiona", "Log names the other affected researcher")
+	assert_does_not_have_string(joined, "Steady Sam", "Unaffected researcher not named")
+
+func test_push_through_burnout_with_no_researchers_is_safe_noop():
+	assert_eq(state.researchers.size(), 0, "Start empty")
+	var events = GameEvents.get_all_events()
+	var burnout = _find_event_by_id(events, "employee_burnout")
+	var result = GameEvents.execute_event_choice(burnout, "ignore_burnout", state)
+	assert_true(result["success"], "Still resolves with nobody on staff")
+	assert_eq(state.researchers.size(), 0, "Nobody to remove or dock")
+	assert_false(result.has("messages"), "No loyalty-hit note when nobody was affected")
+
+func assert_does_not_have_string(haystack: String, needle: String, msg: String) -> void:
+	assert_false(haystack.contains(needle), msg)
