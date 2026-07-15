@@ -312,6 +312,45 @@ more interesting."*
   (c) Pip's framing: these are **set-at-config-or-accept-basics** knobs — fine-tunable
   as difficulty or scenario settings (ADR-0016 league/scenario surface), so the config
   schema should carry them even while the mechanics stay basic.
+- **DQ-27 · Mortality guarantee — where is it ratified?** *(Pip 2026-07-16, from #645
+  coherence check)* — the guarantee (no immortal runs, ADR-0002) is currently *emergent*
+  from ledger compounding interest, asserted across ADR-0002/0003/0013, pinned in no
+  single ADR. Pip's self-check: *"I can't tell if I am being philosophically shy or if I
+  want to play the game a bit more and build out the middle and end games organically."*
+  **Resolution (not shyness): the guarantee IS pinned — executably, in the exploit-sweep
+  mortality assertion (0 immortal runs, max-months bound), not in prose.** An executable
+  guarantee beats a prose one. Correct move: leave the mechanism *emergent and
+  sweep-protected* until mid/late game is played-in, THEN write the single ratifying ADR
+  choosing the mechanism deliberately rather than freezing an unfelt one. Deferral-for-
+  evidence, not timidity. Trigger to write the ADR: mid/late-game feels designed, not
+  accidental.
+- **DQ-28 · Game "phases" as vocabulary + scenario-jump testing** *(Pip 2026-07-16)* —
+  Pip: as the game lengthens and "its metabolism heats up and starts changing the nature
+  of experiences the player's having," we'll want (a) an internal (later maybe
+  player-facing) vocabulary of **phases** — early/scouting, mid/"world shoots back"
+  (DQ-22 aggro threshold), late/attention-drowning; and (b) **test suites that jump to a
+  phase** instead of replaying from turn 1 (as full-game sims get expensive — extends the
+  tiered-pipeline discussion). **Fold: flight-recorder state snapshots (F9, #639) ARE
+  scenario fixtures** — a saved mid/late state = a test seed; the capture tool and the
+  test-fixture library are the same object. Connects DQ-22 (phase boundaries as the aggro
+  threshold) + the deploy-vs-PR test-tier design.
+- **DQ-29 · Cover-up debt** *(SALVAGED from pre-Godot TECHNICAL_FAILURE_CASCADES.md,
+  Pip loves it 2026-07-16)* — a failure-response trichotomy: **Transparency / Investigate
+  / Cover-up**, where covering up a technical failure mints a **delayed-exposure hidden
+  liability** — a secret ledger entry that bites later via an exposure event. Beautiful
+  reuse of existing machinery: ADR-0003 secret entries + ADR-0012 exposure events, zero
+  new systems (Rams #10). On-theme (the "nobody wants to bring the boss bad news" honesty
+  line, now a player *choice* with a priced downside). Interacts with the Celine's-law
+  reporting (managers who cover up) and DQ-22 (a cover-up exposed mid-aggro is a cascade).
+  Candidate: workshop beat + one event genre.
+- **DQ-30 · Economic cycles** *(SALVAGED from ECONOMIC_CYCLES_IMPLEMENTATION.md, Pip
+  loves it)* — typed funding-source **cycle-sensitivity** (government counter-cyclical,
+  seed/VC most cyclical) + named macro phases (bull/bear/winter). Directly feeds DQ-28
+  (game phases as vocabulary) and de-parks the market-conditions note (was #395-parked as
+  "distant, low-priority") — the old lemon already had the phase model. Cycles as
+  emergent-from-mechanism (Pip's R2-Q5 preference) rather than a hardcoded clock. Sits on
+  ADR-0013 finance + the ADR-0016 league/world-update surface (real macro conditions
+  injected monthly).
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)
