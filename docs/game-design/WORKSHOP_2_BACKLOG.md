@@ -363,6 +363,73 @@ more interesting."*
   DQ-9). Fundraise-first/loan-when-broke is the expected player pattern → EE-9 reactive
   policy should mirror it.
 
+## Playtest round 3 (2026-07-16, first hands-on of the calibrated month loop) — L2 is the keystone
+
+**Pip's synthesis:** "when I have more AP to spend… planning it over the month, and when
+I'm assigning people tasks to do and they're working on them, the game will feel more
+meatily engaging." The **fishing-line metaphor** (unprompted): starting a hire/raise/
+research is "casting a line into the ocean — sending effort off"; the payoff is "when
+things come back *in*." This is ADR-0009 durations + ADR-0011 workstreams re-derived from
+feel — the day-animation shows time passing but actions still resolve too simply. **Almost
+every finding below converges on build lane L2 (#613, ADR-0011).**
+
+**L2-resolved (pull L2 forward — validated by hands, not scope creep):**
+- Hire/research need **multi-step sequentially-gated processes** (the fishing-line) → L2
+  workstreams + durations.
+- Plan screen says "20 decisions" but the player gets **3-4 AP/turn** → L2 deletes the
+  legacy AP pool; Attention becomes the real currency (the co-existence seam, visible).
+- "Assign people tasks, they work on them" / "more input into what employees are doing" /
+  research-degrades-unclear → L2 per-person workstream assignment (ADR-0011 #3) + DQ-24
+  typed demands.
+- **Declutter** (all buttons + huge grey gaps on the left; compute-buy → logistics submenu;
+  team-morale → management submenu, it's a manager action not a key verb) → L2 plan-screen
+  redesign (ADR-0011 consequence). **Hold UI polish until L2 restructures these screens.**
+- Dial-5 scarcity NUMBERS now settable (a month completes) — the "20 vs 3-4" is the seam.
+
+**Research-depth (AFTER L2 gives the workstream substrate):**
+- **Capabilities vs safety research are "ultra-primitive," need rework + more specificity +
+  philosophy revisit** → deepen as workstreams; capabilities feeds `frontier_capability`
+  stream, safety feeds `safety_absorption` (ADR-0015). Candidate: **tech-tree / tech-compass**
+  mechanism (NEW — needs a workshop beat).
+- Research Quality Rushed/Standard/Thorough (issue #500, top-left in game) uses literal
+  doom deltas — dies in the ADR-0015 event-intermediary content pass.
+- **Compute runs out with no warning**; research degradation opaque → needs input depth +
+  a warning (part of the research-workstream rework).
+
+**Content (lighter, parallelizable):**
+- **Research-paper events feel old/out-of-philosophy/unbalanced.** Reframe: an *opportunity
+  to get distracted by shiny things* — tempt the player to spend AP **investigating** (SA/
+  scouting-flavored). Pip wants **trilemmas+** and more response variety even when themes
+  are similar ("players who care about detail have more to think about"). → ADR-0012 event
+  content + delivery tiers.
+
+**Working-as-designed (explain, don't fix):**
+- The greyed **"FEED · unknown — (thing)"** log lines ARE the L1 delivery-tier system
+  (ambient/feed/window); "unknown" = undiscovered source (SA not purchased). Working, but
+  presentation is ugly/confusing — UX pass owed.
+
+**Cheap fixes (do now, independent of L2):**
+- **Turn # indicator** top-left next to month-year/month-date (Pip: "1 number going up to
+  understand my state"). Explicitly requested.
+- **Stale HUD lie:** "Win: P(Doom) = 0% or beat baseline" — `check_win_lose()` never grants
+  victory (ADR-0002); remove/replace the false win claim with survival framing.
+- **F9 → F6** (F9 collides with Nvidia overlay).
+
+**Tooling clarification (Pip's Q):** F9/F6 = *state snapshots*, NOT the action log. The
+precise-action log for exploit demonstration is the **replay input-string** (ADR-0006) —
+every action, losslessly. Surfacing it conveniently = the exploit-demo tool (feeds the
+exploit-sweep: human finds it, bots verify).
+
+**Bug:** doc-audit lane (#650) mis-read `check_win_lose()` and framed player docs as
+"doom→0 rare apex victory" — WRONG per ADR-0002 (victory never granted in code). Correction
+dispatched.
+
+**Visual (Pip wants a UI pass today):** the **doom curve fill-o-meter is "hideous"** —
+useful proof-of-concept, needs real UI design; replace default greys with at least
+one-pass-generated UI/UX by end of day. **BUT sequencing: mechanics (L2) drive the
+UI/scenes/office-representation** — Pip's explicit order. Portraits/banners/icons (art
+batch #649) are L2-independent and safe now; screen-layout art waits for L2.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
