@@ -368,7 +368,11 @@ func _check_trend_invariant(state: GameState, streams: Dictionary) -> void:
 		trend_flag_active = true
 		if _last_trend_flag_tick != int(state.turn):
 			_last_trend_flag_tick = int(state.turn)
-			push_warning("[DOOM TREND INVARIANT] sustained %d-month negative doom trend (%.2f) without a sacred-object-grade cause at turn %d — streams=%s" % [
+			# Telemetry/debug LOG line (NOT push_warning): the invariant is an instrument, and
+			# a sustained decline is LEGAL play (only the exploit sweep gates on it). push_warning
+			# would surface this legal state as an engine fault (and GUT flags any pushed warning
+			# during a sim as a test failure); a tagged print keeps it loud in logs + telemetry.
+			print("[DOOM_TREND_INVARIANT] sustained %d-month negative doom trend (%.2f) without a sacred-object-grade cause at turn %d — streams=%s" % [
 				TREND_MONTHS, trend, int(state.turn), str(streams)])
 	else:
 		trend_flag_active = false
