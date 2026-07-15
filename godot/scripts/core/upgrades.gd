@@ -120,9 +120,11 @@ static func purchase_upgrade(upgrade_id: String, state: GameState) -> Dictionary
 			result["message"] += " Research scales with compute!"
 
 		"cat_adoption":
-			state.add_resources({"doom": -5})
+			# ADR-0015: the cat's morale boost raises global_alarm (a happier, more careful org),
+			# not a printed doom write.
+			state.global_alarm += Balance.num("doom.streams.upgrade_cat_alarm", 5.0)
 			# Note: Cat-related state is tracked separately
-			result["message"] += " -5 doom! The cat has arrived!"
+			result["message"] += " The cat has arrived!"
 
 		"supply_automation":
 			# Passive effect: auto-orders supplies when below 30

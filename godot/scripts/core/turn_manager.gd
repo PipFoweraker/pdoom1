@@ -287,18 +287,18 @@ func _step_researcher_productivity() -> Dictionary:
 
 		researcher_index += 1
 
-	# Apply doom effects
-	state.add_resources({"doom": -doom_reduction_from_safety})
-	state.add_resources({"doom": doom_from_capabilities})
+	# ADR-0015: researcher hazard is no longer a direct doom write. Capability work raises the
+	# PLAYER frontier and safety work raises safety_absorption + global_alarm — the DoomSystem
+	# intermediary advance (_advance_intermediaries) reads the productive roster each tick and
+	# does that accounting as the overhang/alarm streams. The old add_resources({"doom": ...})
+	# writes here were silently clobbered (Finding A) AND double-counted that same influence;
+	# both are removed. A researcher LEAK is a discrete reckless incident -> global_panic.
 	if leak_occurred:
-		state.add_resources({"doom": leak_doom})
+		state.global_panic += leak_doom * Balance.num("doom.streams.leak_panic_scale", 0.02)
 
 	# Unmanaged researchers cause doom
 	var unmanaged_employees = unmanaged_count
 	var total_unproductive = (researcher_count - productive_count)
-	if total_unproductive > 0:
-		var doom_penalty = total_unproductive * 0.5
-		state.add_resources({"doom": doom_penalty})
 
 	# Apply research gains
 	state.add_resources({"research": research_from_employees})
@@ -353,9 +353,11 @@ func _step_consume_stationery() -> Dictionary:
 	# Penalties when out of stationery
 	var stationery_doom_penalty = 0.0
 	if state.stationery <= 0:
-		# Safety researchers are most impacted - can't document properly
+		# Safety researchers can't document properly -> a mild hazard. ADR-0015: not a direct
+		# doom write (was clobbered/inert) — routed to global_panic (a documentation-failure
+		# incident the world reacts to). Kept in the return dict for the turn message.
 		stationery_doom_penalty = safety_count * 0.3
-		state.add_resources({"doom": stationery_doom_penalty})
+		state.global_panic += stationery_doom_penalty * Balance.num("doom.streams.leak_panic_scale", 0.02)
 
 	# Supply automation: auto-order when low
 	var supply_auto_ordered = false
@@ -558,21 +560,20 @@ func _step_publish_papers(results: Array) -> void:
 		})
 
 func _step_process_rival_turns(results: Array) -> float:
-	"""=== RIVAL LABS TAKE ACTIONS === Returns this turn's rival doom contribution.
+	"""=== RIVAL LABS TAKE ACTIONS ===
 
-	L1 balance (ADR-0009 re-denomination): rival per-action doom + the capability-overhang
-	term were sized for the pre-L1 STRATEGIC turn, but under the month cycle this step bills
-	once per DAY-TICK (~22/month). rivals.per_tick_doom_scale re-denominates that per-tick
-	pressure to the month cadence (fallback 1.0 = unscaled/pre-L1 behavior)."""
-	var rival_doom_contribution = 0.0
+	ADR-0015 (Legacy #7): the per-action rival doom literals AND the rivals.per_tick_doom_scale
+	shim are RETIRED. Rivals act on their own state — capability_research/hire raise their
+	capability_progress (their frontier_capability slice, which the overhang stream converts to
+	hazard), reckless capability moves raise global_panic. No rival doom is returned; the doom
+	comes out of the intermediaries on the next DoomSystem tick. Returns 0.0 (compat)."""
 	for rival in state.rival_labs:
 		var rival_result = RivalLabs.process_rival_turn(rival, state, state.rng)
-		rival_doom_contribution += rival_result["doom_contribution"]
 		results.append({
 			"success": true,
 			"message": "%s: %s" % [rival_result["name"], ", ".join(rival_result["actions"])]
 		})
-	return rival_doom_contribution * Balance.num("rivals.per_tick_doom_scale", 1.0)
+	return 0.0
 
 func _step_check_rival_discovery(results: Array) -> void:
 	"""=== ORGANIZATION DISCOVERY (Issue #474) ==="""

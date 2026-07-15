@@ -290,10 +290,14 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Purchased compute (+50 compute)"
 
 		"safety_research":
-			# Safety research reduces doom
-			var doom_reduction = state.safety_researchers * 1.0
-			state.add_resources({"doom": -doom_reduction})
-			result["message"] = "Safety research (-%0.1f doom)" % doom_reduction
+			# ADR-0015: safety research raises safety_absorption (the overhang stream reads it
+			# to offset frontier hazard) + global_alarm — never a direct doom write. Founder-
+			# action contribution priced at 0 in v1 (the productive-researcher advance already
+			# carries safety's absorption in the sweep); a follow-up lane prices the action.
+			var absorb = state.safety_researchers * Balance.num("doom.streams.action_safety_absorb", 0.0)
+			state.safety_absorption += absorb
+			state.global_alarm += state.safety_researchers * Balance.num("doom.streams.action_safety_alarm", 0.0)
+			result["message"] = "Safety research (+%0.1f safety absorption)" % absorb
 
 		"capability_research":
 			# Capability research generates research points
@@ -308,11 +312,14 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 				if researcher.has_trait("media_savvy"):
 					media_savvy_bonus += 3  # +3 reputation per media savvy researcher
 			var total_rep = 2 + media_savvy_bonus
-			state.add_resources({"papers": 1, "doom": -3, "reputation": total_rep})
+			# ADR-0015: publishing safety work raises global_alarm (adopted safety concern,
+			# DQ-21 §1.7) instead of a printed -3 doom. Priced at 0 in v1 (a follow-up prices it).
+			state.add_resources({"papers": 1, "reputation": total_rep})
+			state.global_alarm += Balance.num("doom.streams.action_paper_alarm", 0.0)
 			if media_savvy_bonus > 0:
-				result["message"] = "Published paper (+1 paper, -3 doom, +%d reputation including media bonus)" % total_rep
+				result["message"] = "Published paper (+1 paper, +%d reputation including media bonus)" % total_rep
 			else:
-				result["message"] = "Published paper (+1 paper, -3 doom, +2 reputation)"
+				result["message"] = "Published paper (+1 paper, +2 reputation)"
 
 		"fundraise":
 			# Submenu action - doesn't execute, opens dialog
@@ -359,10 +366,13 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Accepted funding with strings (+$40k; a governance obligation bills later)"
 
 		"desperation_lever":
-			state.add_resources({"doom": -10.0})
+			# ADR-0015: the "-10 doom now" catch-up buys a brief safety_absorption reprieve (a
+			# temporary offset) instead of a printed doom write — and it was clobbered before
+			# (memo §7.1). Priced at 0 in v1; the SECRET compounding liability (the teeth) is intact.
+			state.safety_absorption += Balance.num("doom.streams.action_desperation_absorb", 0.0)
 			if state.ledger:
 				state.ledger.add(Ledger.desperation_payroll(state.rng))
-			result["message"] = "Pulled a desperation lever (-10 doom now; a SECRET liability is planted)"
+			result["message"] = "Pulled a desperation lever (brief reprieve now; a SECRET liability is planted)"
 
 		"staff_rider":
 			state.action_points += 2
@@ -471,11 +481,12 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 				var reduction = min(researcher.burnout, 15.0)
 				researcher.reduce_burnout(reduction)
 				burnout_reduced += reduction
-			state.add_resources({"reputation": 2, "doom": -1})
+			# ADR-0015: team morale is not a printed doom write (it was clobbered anyway).
+			state.add_resources({"reputation": 2})
 			if burnout_reduced > 0:
-				result["message"] = "Team building event (+2 reputation, -1 doom, -%.0f team burnout)" % burnout_reduced
+				result["message"] = "Team building event (+2 reputation, -%.0f team burnout)" % burnout_reduced
 			else:
-				result["message"] = "Team building event (+2 reputation, -1 doom)"
+				result["message"] = "Team building event (+2 reputation)"
 
 		"media_campaign":
 			var rep_gained = 10 + int(state.reputation * 0.1)
@@ -483,19 +494,25 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Media campaign (+%d reputation)" % rep_gained
 
 		"audit_safety":
+			# ADR-0015: a safety audit raises safety_absorption (adopted scrutiny), not a printed
+			# doom write. Priced at 0 in v1 (a follow-up prices the founder action).
 			var doom_reduced = 5 + state.safety_researchers
-			state.add_resources({"doom": -doom_reduced, "reputation": 3})
-			result["message"] = "Safety audit (-%d doom, +3 reputation)" % doom_reduced
+			state.safety_absorption += doom_reduced * Balance.num("doom.streams.action_audit_absorb", 0.0)
+			state.add_resources({"reputation": 3})
+			result["message"] = "Safety audit (+scrutiny, +3 reputation)"
 
 		"order_supplies":
 			state.stationery = min(state.stationery + 50.0, 100.0)
 			result["message"] = "Office supplies restocked (+50 stationery, now at %.0f)" % state.stationery
 
 		"lobby_government":
-			# Lobbying reduces doom but costs reputation (fix #449)
+			# ADR-0015: lobbying pushes political_pressure toward governance + raises global_alarm
+			# (which gates typed dampers), never a printed doom write. Costs reputation (fix #449).
 			var doom_reduction = 8 + (state.reputation * 0.1)
-			state.add_resources({"doom": -doom_reduction, "reputation": -10})
-			result["message"] = "Government lobbying (-%0.1f doom, -10 reputation)" % doom_reduction
+			state.political_pressure += doom_reduction * Balance.num("doom.streams.action_lobby_pressure", 0.5)
+			state.global_alarm += doom_reduction * Balance.num("doom.streams.action_lobby_alarm", 0.5)
+			state.add_resources({"reputation": -10})
+			result["message"] = "Government lobbying (+political pressure/alarm, -10 reputation)"
 
 		"release_warning":
 			# Risky: big doom reduction but reputation hit and random outcome
@@ -508,8 +525,11 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 			var doom_reduction = 15 + doom_roll
 			var rep_change = rep_roll
-			state.add_resources({"doom": -doom_reduction, "reputation": rep_change})
-			result["message"] = "Public warning issued (-%d doom, %+d reputation)" % [doom_reduction, rep_change]
+			# ADR-0015: a credible public warning raises global_alarm (productive concern), not a
+			# printed doom write. Alarm feeds the alarm stream (relief) + gates dampers (DQ-21 §1.7).
+			state.global_alarm += doom_reduction * Balance.num("doom.streams.action_warning_alarm", 0.6)
+			state.add_resources({"reputation": rep_change})
+			result["message"] = "Public warning issued (+alarm, %+d reputation)" % rep_change
 
 		"acquire_startup":
 			# Gain staff and compute
@@ -524,8 +544,9 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 					result["message"] = "Acquired safety-focused startup (+2 safety researchers, +30 compute)"
 				1:
 					state.capability_researchers += 2
-					state.add_resources({"doom": 3})
-					result["message"] = "Acquired capability startup (+2 cap researchers, +30 compute, +3 doom)"
+					# ADR-0015: capability acquisition raises the PLAYER frontier (overhang converts it).
+					state.frontier_capability["player"] = float(state.frontier_capability.get("player", 0.0)) + Balance.num("doom.streams.action_acquire_frontier", 60.0)
+					result["message"] = "Acquired capability startup (+2 cap researchers, +30 compute, +frontier)"
 				2:
 					state.compute_engineers += 2
 					result["message"] = "Acquired compute startup (+2 compute engineers, +30 compute)"
@@ -539,18 +560,34 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			VerificationTracker.record_rng_outcome("sabotage_success", sabotage_roll, state.turn)
 
 			if sabotage_roll > 0.3:  # 70% success
-				var doom_reduction = 20
-				state.add_resources({"doom": -doom_reduction})
-				result["message"] = "Sabotage successful! Competitor delayed (-%d doom)" % doom_reduction
+				# ADR-0015: successful sabotage DELAYS a rival — it lowers the top rival's frontier
+				# (capability_progress), which the overhang stream reads. No printed doom write.
+				var delay = Balance.num("doom.streams.action_sabotage_frontier", 200.0)
+				var top_rival = null
+				for rl in state.rival_labs:
+					if top_rival == null or rl.capability_progress > top_rival.capability_progress:
+						top_rival = rl
+				if top_rival != null:
+					top_rival.capability_progress = max(0.0, top_rival.capability_progress - delay)
+				result["message"] = "Sabotage successful! Competitor delayed"
 			else:  # 30% caught
-				state.add_resources({"doom": 10, "reputation": -25})
-				result["message"] = "Sabotage EXPOSED! Major scandal (+10 doom, -25 reputation)"
+				# Caught: a scandal -> global_panic (reckless move the world reacts to) + rep hit.
+				state.global_panic += Balance.num("doom.streams.action_sabotage_panic", 5.0)
+				state.add_resources({"reputation": -25})
+				result["message"] = "Sabotage EXPOSED! Major scandal (+panic, -25 reputation)"
 
 		"open_source_release":
-			# Share research for global benefit
+			# ADR-0015: framed as a goodwill/transparency move -> global_alarm (norms shift).
+			# DESIGN TENSION FLAGGED (DQ-21 §1.1): open-sourcing capability really raises
+			# general_capability (diffusion = MORE hazard); the action's historical -doom framing
+			# is the kind of dishonest pipe ADR-0015 exists to expose. Routed to alarm for now
+			# (behaviour-preserving intent), general_capability contribution priced at 0 pending
+			# a design ruling. Non-sweep action; safe to make functional.
 			var doom_reduction = 10 + (state.papers * 2)
-			state.add_resources({"doom": -doom_reduction, "reputation": 15})
-			result["message"] = "Open source release! (-%d doom, +15 reputation)" % doom_reduction
+			state.global_alarm += doom_reduction * Balance.num("doom.streams.action_opensource_alarm", 0.6)
+			state.general_capability += doom_reduction * Balance.num("doom.streams.action_opensource_diffusion", 0.0)
+			state.add_resources({"reputation": 15})
+			result["message"] = "Open source release! (+alarm, +15 reputation)"
 
 		"emergency_pivot":
 			# Convert capability researchers to safety researchers
@@ -789,7 +826,10 @@ static func attend_conference_action(state: GameState, conf_id: String, travel_c
 		if presenting_paper.is_safety_paper():
 			doom_reduction *= 1.5
 
-		state.add_resources({"reputation": rep_gain, "doom": -doom_reduction})
+		# ADR-0015: presenting (esp. a safety paper) raises global_alarm (adopted concern),
+		# not a printed doom write. Non-sweep path; safe to make functional.
+		state.global_alarm += doom_reduction * Balance.num("doom.streams.action_conference_alarm", 0.6)
+		state.add_resources({"reputation": rep_gain})
 
 		return {
 			"success": true,
