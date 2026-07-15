@@ -12,22 +12,6 @@ Implementation guides, how-tos, and integration documentation:
 - **[P(Doom) Data Integration Plan](guides/PDOOM_DATA_INTEGRATION_PLAN.md)** - Data integration architecture
 - **[Copilot Instructions Update Analysis](guides/COPILOT_INSTRUCTIONS_UPDATE_ANALYSIS.md)** - AI assistance configuration
 
-### CLIPBOARD Summaries (`summaries/`)
-Historical development summaries and completion reports:
-
-- **[Comprehensive Cleanup Report (2025-09-28)](summaries/COMPREHENSIVE_CLEANUP_REPORT_2025-09-28.md)** - Major cleanup initiative
-- **[Critical Gameplay Bugs Fix Summary](summaries/CRITICAL_GAMEPLAY_BUGS_FIX_SUMMARY.md)** - Bug fix documentation
-- **[Demo Hotfix Summary](summaries/DEMO_HOTFIX_SUMMARY.md)** - Demo-related fixes
-- **[Demo Hotfixes Summary](summaries/DEMO_HOTFIXES_SUMMARY.md)** - Additional demo fixes
-- **[Lift and Shift Completion Summary](summaries/LIFT_AND_SHIFT_COMPLETION_SUMMARY.md)** - Migration summary
-- **[Master Cleanup Reference](summaries/MASTER_CLEANUP_REFERENCE.md)** - Cleanup reference document
-- **[Phase 6 Suggestions](summaries/PHASE_6_SUGGESTIONS.md)** - Development phase planning
-
-### MICROSCOPE Analysis (`analysis/`)
-Technical analysis documents:
-
-- **[Test Failure Analysis](analysis/test_failure_analysis.md)** - Test suite analysis
-
 ---
 
 ## Other Documentation Locations
@@ -38,7 +22,6 @@ See [`godot/docs/`](../godot/docs/README.md) for Godot implementation documentat
 ### Root Directory Documentation
 - [Main README](../README.md) - Project overview
 - [CHANGELOG](../CHANGELOG.md) - Version history
-- [Dev Tools Porting Analysis](../DEV_TOOLS_PORTING_ANALYSIS.md) - Tool migration strategy
 
 ### Archived Documentation
 See [`archive/`](../archive/README.md) for archived files and historical documentation.

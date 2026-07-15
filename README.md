@@ -24,7 +24,7 @@ You run an underfunded AI safety lab racing against well-resourced competitors t
 - Balance researcher traits (team_player, media_savvy, leak_prone) for optimal productivity
 - Handle burnout, poaching events, and doom from reckless research
 - Respond to rival lab actions and random events
-- Survive 100 turns with P(Doom) at 0%
+- There's no turn limit and no easy win: you're scored on how long you keep P(Doom) low. Driving doom to 0% is a rare apex outcome for mastery play, not the expected one — most runs end in loss (see [ADR-0002](docs/adr/0002-win-condition-survival-spine.md))
 
 ## Need Help?
 
@@ -60,4 +60,4 @@ Want to contribute or build from source?
 
 ---
 
-**Made with coffee and existential dread** ☕ | [Contributors](docs/CONTRIBUTORS.md)
+**Made with coffee and existential dread** ☕ | [Contributor Rewards](docs/CONTRIBUTOR_REWARDS.md)

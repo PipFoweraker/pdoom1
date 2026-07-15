@@ -88,4 +88,4 @@ python scripts/enforce_standards.py --check-all # Standards validation
 ```
 
 ---
-**P(Doom) v0.4.1** - Turn-based AI safety strategy * Educational gameplay * Competitive leaderboards * Party-ready demonstrations
+**P(Doom) v0.11.0** - Turn-based AI safety strategy * Educational gameplay * Competitive leaderboards * Party-ready demonstrations

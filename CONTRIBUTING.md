@@ -269,7 +269,6 @@ Look for issues labeled [`good first issue`](https://github.com/PipFoweraker/pdo
 
 Contributors are recognized in:
 - The in-game credits
-- The [CONTRIBUTORS.md](docs/CONTRIBUTORS.md) file
 - Our [Contributor Rewards Program](docs/CONTRIBUTOR_REWARDS.md) - submit a photo of your cat!
 
 Thank you for contributing to P(Doom)!

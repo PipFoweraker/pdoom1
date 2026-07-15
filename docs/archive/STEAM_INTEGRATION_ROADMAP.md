@@ -6,7 +6,7 @@
 # Steam Integration Roadmap - P(Doom)
 
 **Status**: Ready to Implement
-**Current Version**: v0.10.5
+**Current Version**: v0.11.0
 **Target**: Steam Early Access
 **Estimated Timeline**: 2-3 weeks
 
@@ -36,7 +36,7 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
 
 | Component | Status | Notes |
 |-----------|--------|-------|
-| **Complete Game** | SUCCESS Ready | v0.10.5 is polished and stable |
+| **Complete Game** | SUCCESS Ready | v0.11.0 is polished and stable |
 | **Windows/Linux/macOS Builds** | SUCCESS Working | Automated build pipeline |
 | **Architecture Docs** | SUCCESS Complete | Privacy-first Steam design |
 | **Achievement System** | SUCCESS Implemented | Ready for Steam mapping |
@@ -391,7 +391,7 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
    - Managing teams and balancing researcher traits (team_player, media_savvy, leak_prone)
    - Handling burnout, poaching events, and doom from reckless research
    - Responding to rival lab actions and random events
-   - Surviving 100 turns with P(Doom) at 0%
+   - Holding P(Doom) down as long as you can — scored on how long you survive, not on a win (driving doom to 0% is a rare apex outcome, not the expected one)
 
    # Key Features
    - Turn-based strategy gameplay inspired by XCOM and FTL

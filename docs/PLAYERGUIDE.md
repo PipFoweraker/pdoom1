@@ -34,7 +34,6 @@ A bootstrap strategy game about managing a scrappy AI safety lab with realistic 
 - [End-Game Menu](#end-game-menu)
 - [Need Help?](#need-help)
 
-**Configuration**: For game customization and settings, see [CONFIG_SYSTEM.md](CONFIG_SYSTEM.md).
 
 ---
 
@@ -50,7 +49,7 @@ A bootstrap strategy game about managing a scrappy AI safety lab with realistic 
 
 Building from source or contributing? See [Development Setup](../docs/developer/CONTRIBUTING.md).
 
-**Note:** This game is built with Godot 4.x. The Python/Pygame version is for development only.
+**Note:** This game is built in pure Godot 4 / GDScript. The old Python/Pygame prototype has been fully retired (no Python runtime ships with the game).
 
 ---
 
