@@ -112,6 +112,19 @@ initiative!"*
 player — bots and brute-forcers included. Tool-assisted play is culture, not cheating
 (ADR-0006).
 
+**(2026-07-15)** *"if a player is smarter than us in a dev and patching cycle, well done
+them"* (and, on what an exploit is: *"things like infinite loops creating surplus that
+we'll want to get ahead of players on and things that are actually buglike in
+behaviour"*)
+→ **Exploit ≠ strong strategy.** An exploit is *engine misbehaviour* — infinite-surplus
+loops, buglike states the sim never intended — which the dev must get ahead of players
+on. A legal clever line that out-thinks the current patch is not an exploit; it's the
+player winning the meta (extends verification-is-law). **Pipeline consequence:** the
+rigorous full/exploit sweep gates *new mechanics* (new surface can harbour new engine
+bugs) — pure number changes (relationships between existing numbers) shift balance but
+mint no new mechanical surface, so they ride a lighter check. Exploit-detection on new
+mechanics is the blocking layer; balance-regression is informational.
+
 ### On tension and tradeoffs
 
 **(2026-07-04)** *"like taking out a credit card to save the mortgage, then taking a job
