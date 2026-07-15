@@ -12,8 +12,11 @@ extends RefCounted
 ##     scout_heavy       — grow the board (hire + network + publish). PROXY: the DQ-18 scouting
 ##                         mechanic is unbuilt, so this stands in via the "hires become your scouts"
 ##                         reading — hiring + visibility. Revisit when scouting actions exist.
-##     loan_desperation  — naive foil KEPT for comparison: always reach for loans (never fundraise),
-##                         pull the desperation lever when doom alarms. The thing fundraise_first replaces.
+##     loan_desperation_reactive — naive foil KEPT for comparison: always reach for loans (never
+##                         fundraise), pull the desperation lever when doom alarms. The pattern
+##                         fundraise_first replaces. Named `_reactive` to avoid colliding with the
+##                         CALIBRATOR's `loan_desperation` (test_l1_month_sweep.gd) — a different,
+##                         fixed-order policy whose numbers anchor the calibration memo.
 ##
 ##   CARRIED BASELINES (continuity with tests/manual/test_exploit_sweep.gd's five dispositions) —
 ##   re-expressed as reactive policies so their PLAN PRIORITY matches the hardcoded _choose_actions
@@ -43,7 +46,7 @@ static func all() -> Array:
 		fundraise_first(),
 		balanced_operator(),
 		scout_heavy(),
-		loan_desperation(),
+		loan_desperation_reactive(),
 		# Carried baselines (comparability with the exploit sweep):
 		passive(),
 		safety_lean(),
@@ -58,21 +61,28 @@ static func all() -> Array:
 # ============================================================================
 
 static func fundraise_first() -> Dictionary:
-	"""Fundraise by default; loan ONLY when runway falls below loan_runway_months (Pip's spec).
+	"""Fundraise by default; borrow ONLY when runway falls below loan_runway_months (Pip's spec).
+	The emergency-borrow path uses the L5 raise-as-campaign flow (PR #641): seek_financing quotes
+	a priced offer menu, accept_financing_offer takes the best live one — the real player flow,
+	replacing the raw take_loan fallback. Services debt (pay_bills) when cash is comfortable.
 	Fills leftover capacity with safety work. The reference finance line."""
 	var p := {
-		"loan_runway_months": 2.0,       # below this many months of runway -> emergency loan
-		"comfortable_runway_months": 4.0, # below this -> raise money (fundraise, not loan)
-		"big_round_rep": 60.0,           # reputation at/above which a big round is worth the rep cost
-		"safety_fill": 8,                # leftover-AP safety_research copies
+		"loan_runway_months": 2.0,        # below this many months of runway -> emergency raise
+		"comfortable_runway_months": 4.0, # below this -> raise money (fundraise, not borrow)
+		"big_round_rep": 60.0,            # reputation at/above which a big round is worth the rep cost
+		"pay_bills_above_runway": 5.0,    # runway above this + open ledger -> retire soonest bill early
+		"safety_fill": 8,                 # leftover-AP safety_research copies
 	}
 	return RP.make("fundraise_first", p, [
 		RP.rule(func(f): return f.runway_months < p.loan_runway_months,
-			["take_loan"], "cash < loan_runway_months of runway -> emergency loan"),
+			["seek_financing", "accept_financing_offer"],
+			"cash < loan_runway_months of runway -> emergency raise via the L5 offer menu (#641)"),
 		RP.rule(func(f): return f.runway_months < p.comfortable_runway_months and f.reputation >= p.big_round_rep,
 			["fundraise_big"], "cash low AND rep strong -> major round"),
 		RP.rule(func(f): return f.runway_months < p.comfortable_runway_months,
 			["fundraise_small"], "cash low -> modest round (default finance = fundraise)"),
+		RP.rule(func(f): return f.runway_months > p.pay_bills_above_runway and f.ledger_outstanding > 0.0,
+			["pay_bills"], "flush + open bills -> retire the soonest balloon early (#566)"),
 		RP.rule(func(_f): return true,
 			RP.repeat("safety_research", p.safety_fill) + RP.repeat("publish_paper", 2),
 			"spend the rest on safety work"),
@@ -119,14 +129,14 @@ static func scout_heavy() -> Dictionary:
 	])
 
 
-static func loan_desperation() -> Dictionary:
+static func loan_desperation_reactive() -> Dictionary:
 	"""Naive finance foil KEPT for comparison (fundraise_first replaces it as the standard line):
 	always reach for loans instead of fundraising; pull the desperation lever when doom alarms."""
 	var p := {
 		"comfortable_runway_months": 5.0,
 		"doom_alarm": 60.0,
 	}
-	return RP.make("loan_desperation", p, [
+	return RP.make("loan_desperation_reactive", p, [
 		RP.rule(func(f): return f.runway_months < p.comfortable_runway_months, RP.repeat("take_loan", 2), "short -> loans (never fundraise)"),
 		RP.rule(func(f): return f.doom > p.doom_alarm, ["desperation_lever"], "doom alarm -> desperation lever"),
 		RP.rule(func(_f): return true, RP.repeat("safety_research", 6), "leftover -> safety"),
@@ -139,7 +149,12 @@ static func loan_desperation() -> Dictionary:
 # ============================================================================
 
 static func passive() -> Dictionary:
-	return RP.make("passive", {}, [])  # no rules -> empty priority -> the do-nothing baseline
+	# Empty plan + IGNORE every window: matches the calibrator's do_nothing baseline shape
+	# (empty plans, ignore verb), so `passive` here is directly comparable to the memo's
+	# do_nothing median (14 months on the calibrated constants).
+	return RP.make("passive", {}, [], [
+		RP.wrule(func(_f, _w): return true, "ignore", "do nothing: let every window lapse at list price"),
+	])
 
 
 static func safety_lean() -> Dictionary:

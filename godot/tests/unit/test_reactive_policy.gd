@@ -5,7 +5,8 @@ extends GutTest
 
 const RP = preload("res://tests/manual/reactive_policy.gd")
 const SweepPoliciesC = preload("res://tests/manual/sweep_policies.gd")
-const MonthRunnerC = preload("res://tests/manual/month_runner.gd")
+const Driver = preload("res://tests/manual/l1_month_driver.gd")
+const Adapter = preload("res://tests/manual/reactive_adapter.gd")
 
 
 func _state() -> GameState:
@@ -142,7 +143,7 @@ func test_standard_lines_present_and_parameterized() -> void:
 	var names := []
 	for p in SweepPoliciesC.all():
 		names.append(p.name)
-	for want in ["fundraise_first", "balanced_operator", "scout_heavy", "loan_desperation"]:
+	for want in ["fundraise_first", "balanced_operator", "scout_heavy", "loan_desperation_reactive"]:
 		assert_true(want in names, "%s is registered" % want)
 	# fundraise_first exposes its documented dials.
 	var ff := SweepPoliciesC.fundraise_first()
@@ -150,23 +151,48 @@ func test_standard_lines_present_and_parameterized() -> void:
 	assert_true(ff.params.has("comfortable_runway_months"), "fundraise_first exposes comfortable_runway_months")
 
 
-func test_fundraise_first_loans_only_when_runway_low() -> void:
+func test_fundraise_first_borrows_only_when_runway_low() -> void:
+	# The emergency-borrow path is the L5 raise-as-campaign flow (#641): seek_financing ->
+	# accept_financing_offer, replacing the raw take_loan fallback.
 	var ff := SweepPoliciesC.fundraise_first()
-	var flush := {"runway_months": 12.0, "reputation": 50.0}
-	assert_false("take_loan" in RP.plan_priority(ff, flush), "flush cash -> no loan")
-	var broke := {"runway_months": 1.0, "reputation": 50.0}
-	assert_true("take_loan" in RP.plan_priority(ff, broke), "cash below loan runway -> loan")
-	var low_not_broke := {"runway_months": 3.0, "reputation": 50.0}
+	var flush := {"runway_months": 12.0, "reputation": 50.0, "ledger_outstanding": 0.0}
+	assert_false("seek_financing" in RP.plan_priority(ff, flush), "flush cash -> no borrowing")
+	var broke := {"runway_months": 1.0, "reputation": 50.0, "ledger_outstanding": 0.0}
+	var broke_pri := RP.plan_priority(ff, broke)
+	assert_true("seek_financing" in broke_pri, "cash below loan runway -> seek the offer menu")
+	assert_true("accept_financing_offer" in broke_pri, "and accept the best live offer")
+	var low_not_broke := {"runway_months": 3.0, "reputation": 50.0, "ledger_outstanding": 0.0}
 	var pri := RP.plan_priority(ff, low_not_broke)
-	assert_true("fundraise_small" in pri, "low-but-not-broke -> fundraise, not loan")
-	assert_false("take_loan" in pri, "low-but-not-broke -> no loan")
+	assert_true("fundraise_small" in pri, "low-but-not-broke -> fundraise, not borrow")
+	assert_false("seek_financing" in pri, "low-but-not-broke -> no borrowing")
+	# Debt service: flush + open bills -> pay_bills (#566).
+	var flush_with_debt := {"runway_months": 12.0, "reputation": 50.0, "ledger_outstanding": 60000.0}
+	assert_true("pay_bills" in RP.plan_priority(ff, flush_with_debt), "flush + open ledger -> retire the soonest bill")
 
 
-# --- Fast smoke of the shared month runner (CI coverage of the driver) ---
+# --- Fast smoke of the SHARED month driver via the reactive adapter (CI coverage) ---
+# The driver is l1_month_driver.gd — the calibration harness's extracted run loop
+# (harness unification, PR #642): one driver serves the calibrator AND the EE-9/EE-10
+# instruments. This smoke proves the reactive adapter drives it end to end.
 
-func test_month_runner_smoke_completes() -> void:
-	var res := MonthRunnerC.run("smoke-seed", SweepPoliciesC.fundraise_first(), {"max_months": 3})
-	assert_true(res.has("outcome"), "runner returns an outcome")
-	assert_true(res.turns >= 1, "runner advanced at least one tick")
-	assert_true(res.months >= 1, "runner planned at least one month")
-	assert_true(res.root_cause in ["ledger", "doom", "rep", "win", "other", "none"], "attribution classified")
+func test_shared_driver_smoke_completes() -> void:
+	var res: Dictionary = Driver.run("smoke-seed", Adapter.new(SweepPoliciesC.fundraise_first()), {"max_months": 3})
+	assert_true(res.has("months"), "driver returns the calibrator result shape")
+	assert_true(int(res.death_turn) >= 1, "driver advanced at least one tick")
+	assert_true(int(res.months) >= 1 or bool(res.game_over), "planned a month or died trying")
+	assert_true(String(res.root_cause) in ["ledger", "doom", "rep", "win", "other", "none"], "attribution classified")
+
+
+func test_adapter_opening_override_and_features() -> void:
+	# EE-10 seam: the first N plan-months come from the override; features are recorded.
+	var seen_months := []
+	var override := func(_state, m: int):
+		seen_months.append(m)
+		return ["publish_paper"]
+	var adapter = Adapter.new(SweepPoliciesC.fundraise_first(),
+		{"plan_override": override, "override_months": 2, "record_features": true})
+	var res: Dictionary = Driver.run("smoke-seed", adapter, {"max_months": 3})
+	assert_true(res.has("months"), "run completed")
+	assert_true(seen_months.size() >= 1 and int(seen_months[0]) == 0, "override drove month 0")
+	assert_true(adapter.month_features.size() >= 1, "per-month features recorded")
+	assert_true(adapter.month_features[0].has("cash"), "feature snapshot carries cash")
