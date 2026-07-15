@@ -41,6 +41,10 @@ var current_track_index: int = 0
 var is_crossfading: bool = false
 var music_enabled: bool = true
 
+# The in-flight crossfade tween, tracked so it can be killed on stop/shutdown. Left
+# untracked, a tween still running at quit leaks (ObjectDB warning at exit).
+var _crossfade_tween: Tween = null
+
 func _ready():
 	print("[MusicManager] Initializing music system...")
 
@@ -152,11 +156,13 @@ func _crossfade_to_track(new_stream: AudioStream):
 
 	# Crossfade animation
 	var tween = create_tween()
+	_crossfade_tween = tween
 	tween.set_parallel(true)
 	tween.tween_property(active_player, "volume_db", -80, CROSSFADE_DURATION)
 	tween.tween_property(inactive_player, "volume_db", 0, CROSSFADE_DURATION)
 
 	await tween.finished
+	_crossfade_tween = null
 
 	# Stop old player and swap
 	active_player.stop()
@@ -186,7 +192,11 @@ func stop_music():
 	print("[MusicManager] Stopping music")
 
 	if is_crossfading:
-		get_tree().create_tween().kill()
+		# Kill the actual in-flight crossfade tween. The old code created a fresh tween and
+		# killed that instead — a no-op that left the real crossfade running.
+		if _crossfade_tween != null and _crossfade_tween.is_valid():
+			_crossfade_tween.kill()
+		_crossfade_tween = null
 		is_crossfading = false
 
 	var tween = create_tween()
@@ -225,6 +235,22 @@ func get_current_track_name() -> String:
 	if active_player.stream:
 		return active_player.stream.resource_path.get_file().get_basename()
 	return "None"
+
+## Shutdown cleanup. Autoloads are freed during SceneTree teardown at quit; without this
+## the running crossfade Tween plus the playing AudioStreamPlayback/AudioStream objects are
+## still live when the engine's leak check runs, producing the "ObjectDB instances leaked"
+## warning and "resources still in use at exit" error. Killing the tween and clearing both
+## players' streams releases those references before the check.
+func _exit_tree() -> void:
+	if _crossfade_tween != null and _crossfade_tween.is_valid():
+		_crossfade_tween.kill()
+	_crossfade_tween = null
+	if is_instance_valid(player_a):
+		player_a.stop()
+		player_a.stream = null
+	if is_instance_valid(player_b):
+		player_b.stop()
+		player_b.stream = null
 
 ## Debug: Print music library
 func print_library():
