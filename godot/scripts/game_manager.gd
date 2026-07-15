@@ -40,6 +40,13 @@ func start_new_game(game_seed: String = ""):
 	print("  Difficulty: %s" % GameConfig.get_difficulty_string())
 	print("  Scenario: %s" % (GameConfig.scenario_id if not GameConfig.scenario_id.is_empty() else "Standard"))
 
+	# Release the previous game's orphaned Node subsystems before replacing them. Without
+	# this, restarting / "play again" inside a session leaks 4 Nodes per game (see
+	# _release_game_objects). Stop any in-flight month playback first so no tick touches the
+	# state we are about to drop.
+	month_playback_active = false
+	_release_game_objects()
+
 	state = GameState.new(game_seed)
 
 	# Apply scenario overrides (before difficulty, so difficulty can further modify)
@@ -597,6 +604,24 @@ func get_game_state() -> Dictionary:
 # SAVE / LOAD (L7, #618) — mid-game snapshot, full-state fidelity
 # ============================================================================
 
+func _release_game_objects() -> void:
+	"""Free the previous game's Node-derived objects before a new game / load replaces them.
+
+	GameState, DoomSystem, RiskPool and TurnManager all extend Node but are NEVER added to
+	the scene tree, so simply reassigning `state`/`turn_manager` orphans them — 4 leaked
+	Nodes per game (confirmed by GUT's orphan monitor). Ledger and MonthController are
+	RefCounted and free themselves. Every external reader reaches these via `state.doom_system`
+	etc. (re-fetched from the current state), so no live reference survives a reset.
+	queue_free() is deferred and safe to call on an off-tree node."""
+	if state != null and is_instance_valid(state):
+		if state.doom_system != null and is_instance_valid(state.doom_system):
+			state.doom_system.queue_free()
+		if state.risk_system != null and is_instance_valid(state.risk_system):
+			state.risk_system.queue_free()
+		state.queue_free()
+	if turn_manager != null and is_instance_valid(turn_manager):
+		turn_manager.queue_free()
+
 func save_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 	"""Snapshot the current game to a save file. Safe to call from the pause menu."""
 	if not is_initialized or state == null:
@@ -620,8 +645,10 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 	if loaded == null:
 		error_occurred.emit("Save file is corrupt or incompatible")
 		return false
-	if state != null:
-		state.queue_free()  # GameState extends Node; drop the old instance
+	# Drop the old game's Node subsystems (state + doom/risk + turn_manager). The previous
+	# code freed only `state`, leaking its orphaned doom_system/risk_system and the old
+	# turn_manager on every load.
+	_release_game_objects()
 	state = loaded
 	# Scenario custom events live as node meta (Issue #483), not in state
 	# serialization — re-attach them from the pack recorded in the envelope.
