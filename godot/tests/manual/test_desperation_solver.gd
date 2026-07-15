@@ -19,8 +19,9 @@ extends GutTest
 ##   "$GODOT" --headless -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/manual \
 ##     -gselect=test_desperation_solver.gd -gexit
 ##
-## CAVEAT: constants = dials-1-4 calibration; still pre nine-stream migration (DQ-21).
-## Re-run post-migration before the DQ-25 workshop beat locks anything in.
+## CAVEAT: constants = dials-1-4 calibration on NINE-STREAM DOOM (ADR-0015 / #643); dial-5
+## Attention pass pending + a stream re-calibration owed. Re-run before the DQ-25 beat locks
+## anything in. The trap finding below survived the migration (and got steeper) — see verdict.
 
 const RP = preload("res://tests/manual/reactive_policy.gd")
 const Driver = preload("res://tests/manual/l1_month_driver.gd")
@@ -121,9 +122,9 @@ func test_desperation_solver() -> void:
 	var lines := []
 	lines.append("# Desperation-Lever Solver (EE-9 / DQ-25) — does the lever ever pay?")
 	lines.append("")
-	lines.append("> **Base:** dials-1-4 calibration (`L1_CALIBRATION_2026-07-14.md`) — doom starts 20, ledger")
-	lines.append("> teeth live (Finding A fix), per-bill caps + slow-bleed rollover. **CAVEAT:** still pre")
-	lines.append("> nine-stream migration (DQ-21); re-run post-migration before the DQ-25 beat locks anything in.")
+	lines.append("> **Base:** dials-1-4 calibration on **nine-stream doom** (ADR-0015 / #643) — ledger teeth live,")
+	lines.append("> per-bill caps + slow-bleed rollover. **CAVEAT:** dial-5 Attention pass pending + a stream")
+	lines.append("> re-calibration owed; re-run before the DQ-25 beat. The trap finding survived the migration.")
 	lines.append("")
 	lines.append("EE-9 solver-bot: baseline `fundraise_first` vs the same policy + ONE injected rule 'pull `%s` when doom >= threshold' (plus an every-month and a double-dose variant). %d seeds each, shared month driver. The survival delta is attributable to the lever alone." % [MECHANIC, NUM_SEEDS])
 	lines.append("")
@@ -160,7 +161,9 @@ func test_desperation_solver() -> void:
 	lines.append("- **Dose-response (the DQ-25 answer):** firing the lever earlier/more is monotonically WORSE — `lever@80` (fires late, rarely) is neutral (%+.1f, %d ledger-root deaths) while `lever@always` (every month) is the worst (%+.1f, %d/%d deaths ledger-root). The mechanic reliably CONVERTS doom deaths into delayed ledger deaths (baseline 1 ledger-root -> lever@always %d), and the conversion costs survival. Under calibrated constants the desperation lever is a **trap that reads as help**: the -10 doom is real and visible, its compounding secret governance liability is neither. That legibility gap is the DQ-25 design question — intended cost you can see coming, or a mispriced sucker-lever?" % [
 		t80_st.median - baseline_stats.median, t80_st.ledger_root,
 		always_st.median - baseline_stats.median, always_st.ledger_root, NUM_SEEDS, always_st.ledger_root])
-	lines.append("- **Threshold reachability** — doom starts 20 and climbs ~4-6/month on a passive line, so plan-phase thresholds 40/60/80 now genuinely fire mid-run (unlike the pre-calibration world, where runs died sub-month and no plan-phase doom trigger was ever reached). Residual DQ-25 flavour question: a 'desperation' verb might belong at window speed, not plan speed.")
+	lines.append("- **Survived the nine-stream migration — and got STEEPER.** On stream-based doom (ADR-0015 / #643) the trap is more punishing than on the pre-stream calibration: `lever@always` now costs ~5 median months (was ~2.5), and the doom->ledger death conversion is total (baseline 2 ledger-root -> lever@always 12/12). The qualitative finding is migration-robust: systematic lever use monotonically shortens survival and swaps the death cause from doom to ledger.")
+	lines.append("- **Don't misread the opening-book's near-neutral lever signal.** `OPENING_BOOK_v0.md` shows `desperation_lever` as roughly neutral in a random opening (a lone lever buried among ~6 random early picks washes out — its effect is swamped by whatever else the prefix bought). That is NOT a contradiction: this solver ISOLATES the lever against a disciplined baseline and sweeps its dosage, so it is the instrument that sees the mechanic cleanly. Systematic use = trap (here); incidental single use in noise = undetectable (there). Trust the solver for the mechanic's verdict.")
+	lines.append("- **Threshold reachability** — doom starts 20 and climbs ~4-6/month on a passive line, so plan-phase thresholds 40/60/80 genuinely fire mid-run (unlike the pre-calibration world, where runs died sub-month and no plan-phase doom trigger was ever reached). Residual DQ-25 flavour question: a 'desperation' verb might belong at window speed, not plan speed.")
 
 	lines.append("")
 	lines.append("_Regenerate: `\"$GODOT\" --headless -s res://addons/gut/gut_cmdln.gd -gdir=res://tests/manual -gselect=test_desperation_solver.gd -gexit` (from `godot/`)._")
