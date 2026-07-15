@@ -1,318 +1,352 @@
-# P(Doom) Architecture & Expansion Promise
+# P(Doom)1 — Architecture & Onboarding Map
 
-**For Funders & Partners** | Reading Time: 5-8 minutes
+Reference documentation for developers. This maps the game's **systems to the code that
+implements them and the ADRs that decided them**, so you can orient without reading all
+sixteen decision records first. It is factual, not a design manifesto — for the *why*
+behind the design, read [`DESIGN_PHILOSOPHY.md`](game-design/DESIGN_PHILOSOPHY.md) and the
+[ADR set](game-design/decisions/) (`ADR-0001` … `ADR-0016`).
 
----
+> **Two docs share this name.** This is the **developer** architecture map. The older
+> **funder/partner** pitch (audience "For Funders & Partners") now lives at
+> [`ARCHITECTURE_FUNDERS.md`](ARCHITECTURE_FUNDERS.md) — note it predates the L1 wave and
+> describes the retired momentum-doom model.
 
-## What Is P(Doom)?
-
-P(Doom) is a strategy game where players manage an underfunded AI safety lab racing to prevent artificial general intelligence from causing human extinction. Players hire researchers, allocate resources, and navigate a complex web of rival labs, media attention, and real-world AI safety events.
-
-**Current Status**: v0.11.0 (public alpha) | Windows, Linux, macOS, Web | Godot 4.5 engine
-
----
-
-## 1. What Exists Today
-
-### Core Game (Production-Ready)
-
-| Component | Status | Description |
-|-----------|--------|-------------|
-| **Game Engine** | Complete | 14 core systems, ~6,000 lines GDScript |
-| **UI System** | Complete | Responsive layouts, keyboard navigation, accessibility |
-| **Turn System** | Complete | Deterministic RNG for replays and competitive fairness |
-| **Doom Mechanics** | Complete | Layered calculation with momentum, source tracking |
-| **Staff Management** | Complete | Hiring, traits, specializations, burnout |
-| **Event System** | Complete | Random events, player choices, consequences |
-| **Conference/Travel** | Complete | 9 conferences, paper submissions, jet lag |
-
-### Infrastructure (Production-Ready)
-
-| Component | Status | Description |
-|-----------|--------|-------------|
-| **CI/CD Pipeline** | 12 workflows | Automated testing, releases, deployment |
-| **Test Suite** | 30+ tests | Unit tests, integration tests, GUT framework |
-| **Documentation** | 50+ files | Player guide, developer guide, architecture docs |
-| **Export Targets** | 4 platforms | Windows, Linux, macOS, Web |
-| **Steam Integration** | Prepared | GodotSteam addon integrated, Phase 1 complete |
-
-### Website & Data Pipeline
-
-```
-pdoom1 (game repo)          pdoom1-website              pdoom-data
-       |                          |                          |
-       |---> _website_export/ --->|                          |
-       |                          |                          |
-       |<-------- shared/schemas/ -----------------------<---|
-       |                                                     |
-       |<--- Historical timeline events, organization data --|
-```
+> **Status of this doc:** written against `origin/main` at the L1 wave
+> (month engine #636, nine-stream doom #643, cost-of-debt finance #641, calibration #638,
+> honest CI #640). Where a system is a stub or half-built, this doc says so — see
+> [§7 Known gaps](#7-known-gaps--active-fronts).
 
 ---
 
-## 2. Modularity Points
+## 1. What the game is
 
-The architecture is designed for rapid content expansion without engine changes.
+P(Doom)1 is a **turn-based AI-safety strategy game** built in **Godot 4 / pure GDScript**
+(no Python runtime; the old bridge is gone). You run a frontier AI lab: hire researchers,
+raise money, publish, and steer the world's **p(doom)** while a compounding-liability
+economy and rival labs try to end your run. There is **no victory condition** — you are
+scored on **turns survived**, doom-integral as tiebreak (ADR-0002). Every run is
+deterministic from a seed, and the input-replay is the canonical artifact (ADR-0006).
 
-### Content Layer (No Code Required)
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    DATA-DRIVEN CONTENT                       │
-├─────────────────────────────────────────────────────────────┤
-│  events.gd        → Add events by editing dictionary array   │
-│  actions.gd       → Add actions by editing dictionary array  │
-│  upgrades.gd      → Add upgrades by editing dictionary array │
-│  researcher.gd    → Add traits/specializations to dicts      │
-│  rivals.gd        → Add rival labs to array                  │
-│  conferences.gd   → Add conferences to array                 │
-├─────────────────────────────────────────────────────────────┤
-│  configs/*.json   → Game presets (difficulty, balance)       │
-│  data/*.json      → Historical timeline, icon mappings       │
-│  shared/schemas/  → JSON validation for mod content          │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Example**: Adding a new event requires editing ONE file:
-
-```gdscript
-# In events.gd - just add to the array:
-{
-    "id": "congressional_hearing",
-    "name": "Congressional AI Hearing",
-    "type": "popup",
-    "trigger_type": "random",
-    "probability": 0.08,
-    "options": [
-        {"id": "testify", "text": "Send researcher to testify", ...},
-        {"id": "decline", "text": "Decline invitation", ...}
-    ]
-}
-```
-
-### Systems Layer (Small Code Changes)
-
-| Extension Point | Complexity | Example |
-|-----------------|------------|---------|
-| New event triggers | ~20 lines | "Trigger when doom > 80" |
-| New doom sources | ~10 lines | "Add tech debt to doom" |
-| New UI screens | Copy template | Achievement screen |
-| New autoload systems | ~100 lines | Notification manager |
-
-### Engine Layer (Major Development)
-
-| Extension | Scope | Use Case |
-|-----------|-------|----------|
-| Alliance system | New mechanic | Multi-lab cooperation |
-| Legislative system | New mechanic | Policy/governance tracking |
-| Save/load | Core feature | Persistence |
-| Multiplayer | Architecture | Competitive play |
+- **Design philosophy (the "why"):** [`docs/game-design/DESIGN_PHILOSOPHY.md`](game-design/DESIGN_PHILOSOPHY.md)
+- **Decision log (the "what & why-not"):** [`docs/game-design/decisions/`](game-design/decisions/) — one ADR per decision.
+  > ⚠️ The ADR index in [`decisions/README.md`](game-design/decisions/README.md) is
+  > **stale** (lists only ADR-0001 as PROPOSED). The real set is ADR-0001…0016, nearly all
+  > ACCEPTED. Trust the files, not the index.
 
 ---
 
-## 3. How New Content Ships
+## 2. The core loop
 
-```mermaid
-flowchart LR
-    subgraph Content Creation
-        A[Design Event/Action] --> B[Add to .gd file]
-        B --> C[Test locally]
-    end
+ADR-0009 is the spine. Its headline — *"the turn is a month"* — is a **decision cadence**,
+**not** a re-grain of the simulation. Read this carefully, because the wording confuses
+newcomers (it confused the L1 build; see the PR #636 clarification in the ADR):
 
-    subgraph Quality Gate
-        C --> D{CI Tests Pass?}
-        D -->|Yes| E[PR Review]
-        D -->|No| B
-        E --> F[Merge to main]
-    end
+- **`GameState.turn` still counts workday ticks** (1 turn = 1 workday). The day is the
+  **resolution tick**.
+- The **month** is a *plan layer on top* of the day tick. Routine decisions live at the
+  month boundary; nothing routine hangs on a single day (the "guard rule").
+- This is the **"layer, not re-grain"** principle. The sim substrate, RNG stream, and
+  recorded replays are untouched by the month layer.
 
-    subgraph Distribution
-        F --> G[GitHub Release]
-        G --> H[Website Sync]
-        G --> I[Platform Builds]
-        I --> J[Windows/Linux/Mac/Web]
-        I --> K[Steam Workshop]
-    end
+### The four phases and who owns them
 
-    subgraph Community
-        H --> L[Leaderboards]
-        K --> M[Mods/Scenarios]
-    end
-```
+| Phase | What happens | Owning file(s) |
+|---|---|---|
+| **Plan** | New month opens: a fresh **Attention** grant, last month's reserve **evaporates** (no banking), strategic actions are queued with durations. | [`month_plan.gd`](../godot/scripts/core/month_plan.gd) (`MonthPlan`), opened by [`clock.gd`](../godot/scripts/core/clock.gd) month helpers |
+| **Day-tick resolution** | The month plays out day by day (visible date advance). Each tick runs the sim and routes fired events by delivery tier. | [`month_controller.gd`](../godot/scripts/core/month_controller.gd) (`MonthController`) driving [`turn_manager.gd`](../godot/scripts/core/turn_manager.gd) (`TurnManager`) |
+| **Response window** | A `window`-tier event **pauses playback** and demands a costed decision (HANDLE / DEFER / IGNORE). Only windows interrupt. | [`window_resolver.gd`](../godot/scripts/core/window_resolver.gd) (`WindowResolver`), classified by [`event_tiers.gd`](../godot/scripts/core/event_tiers.gd) |
+| **Month review** | Boundary reached → review dialog → next plan phase (boundary tick held **open** as the new plan turn). | [`game_manager.gd`](../godot/scripts/game_manager.gd) `_finish_month_playback()` / `end_month()` |
 
-### Content Pipeline Stages
+**Orchestration:** [`game_manager.gd`](../godot/scripts/game_manager.gd) (`GameManager`
+autoload) is the top-level driver. The **End Turn** button routes to `end_month()` →
+`_run_month_playback()` (async day ticks) → auto-pause on windows → review → next plan.
+The pre-L1 single-day `end_turn()` still exists but only behind the **dev-mode** overlay.
 
-**Stage 1: Creation** (1-4 hours per content piece)
-- Designer writes event/action data
-- Artist creates icon if needed (31 icon categories organized)
-- Writer drafts text content
-
-**Stage 2: Integration** (~15 minutes)
-- Edit appropriate .gd file (events, actions, upgrades, etc.)
-- Run local tests
-- Create PR
-
-**Stage 3: Release** (automated)
-- CI validates all content
-- Builds generated for all platforms
-- Website updated automatically
-- Leaderboard data synced
-
-### Planned: Scenario Packs
-
-Future content expansions as downloadable scenario packs:
-
-| Pack | Theme | Content |
-|------|-------|---------|
-| **2017-2020 Timeline** | Historical | 40+ real events from AI safety history |
-| **Regulatory Crisis** | Governance | EU AI Act, state bills, compliance events |
-| **Capabilities Race** | Competition | GPT releases, frontier labs, talent wars |
-| **Community Expansion** | Characters | Real researchers as hireable characters |
-
-Each pack: ~20 events, ~5 actions, ~3 upgrades, custom config
+**Turn step order is load-bearing.** `TurnManager.start_turn()` and `execute_turn()` are
+split into named `_step_*` functions whose order defines the deterministic RNG stream that
+replays re-simulate. Reordering steps invalidates every recorded replay.
 
 ---
 
-## 4. Bottlenecks & What Funding Buys
+## 3. The systems map
 
-### Current Bottlenecks
+Each system: what it does, the files, the deciding ADR(s), and honest status.
 
-```
-┌────────────────────────────────────────────────────────────────┐
-│                     DEVELOPMENT CAPACITY                        │
-├───────────────┬─────────────────────┬──────────────────────────┤
-│   Bottleneck  │   Current State     │   With Funding           │
-├───────────────┼─────────────────────┼──────────────────────────┤
-│ Dev Throughput│ 1 part-time dev     │ 2-3 full-time devs       │
-│               │ ~10 hrs/week        │ 80+ hrs/week             │
-├───────────────┼─────────────────────┼──────────────────────────┤
-│ Art Pipeline  │ Stock + generated   │ Commissioned pixel art   │
-│               │ icons               │ Character portraits      │
-├───────────────┼─────────────────────┼──────────────────────────┤
-│ Content Design│ Solo designer       │ Researcher collaboration │
-│               │                     │ Playtester feedback loop │
-├───────────────┼─────────────────────┼──────────────────────────┤
-│ QA/Testing    │ Manual spot checks  │ Automated regression     │
-│               │                     │ Community beta program   │
-├───────────────┼─────────────────────┼──────────────────────────┤
-│ Release Eng   │ Manual releases     │ Continuous deployment    │
-│               │ ~monthly            │ Weekly patches           │
-└───────────────┴─────────────────────┴──────────────────────────┘
-```
+### Turn / clock (time authority)
+Single source of truth for all turn↔calendar math (dates, weekday, month boundaries,
+salary denominators). One turn = one workday; `months_per_turn()` is fixed at 1.0 until a
+variable-length system lands.
+**Files:** [`clock.gd`](../godot/scripts/core/clock.gd) · **ADR:** ADR-0009 (L0 #620).
+**Status:** built.
 
-### Funding Tiers & Deliverables
+### Doom — nine-stream accumulating rate (the flagship)
+Doom is **not a printed number that events add to**. It is an **accumulating rate computed
+each day tick** from a sum of **named streams**, each fed by a world-state **intermediary**
+(ADR-0015 / DQ-21). `doom_rate = Σ streams`; `doom_level += rate` each tick (may fall).
+No action or event writes doom directly — they write intermediaries (lab frontier
+capability, safety absorption, global alarm/panic, …); the doom function reads them.
+**One authority writes `state.doom`: `DoomSystem`.** Ledger bills and risk shocks arrive as
+**stream inputs** (`add_stream_input`), never as parallel writes to the level.
 
-**Tier 1: Sustainability ($25K/year)**
-- Maintain current release cadence
-- Bug fixes and stability
-- Community support
+The streams (see [`DOOM_STREAMS_v1.md`](balance/DOOM_STREAMS_v1.md) for coefficients):
+`baseline` (ambient risk), `overhang` (frontier − safety absorption; the acute hazard),
+`diffusion` (chronic capability floor), `compute` (inert in v1), `panic` (social
+accelerant), `alarm` (small standing *relief*, natively negative), plus routed inputs
+`ledger` and `technical_debt`, a gated `momentum` modifier, and dynamic `pulse:*` streams.
+Legibility is the point: every stream is named so death attribution can say which one
+killed you.
+**Files:** [`doom_system.gd`](../godot/scripts/core/doom_system.gd) (`DoomSystem`);
+intermediary state lives on `GameState` (`frontier_capability`, `safety_absorption`,
+`global_alarm`, `global_panic`, `general_capability`, `ambient_risk`,
+`political_pressure`, `doom_dampers`, `doom_pulses`).
+**ADR:** ADR-0015 (#643), DQ-21. **Status:** **built** (engine + calibrated, 72-run sweep).
+*Partial:* scheduled pulses and typed dampers are engine hooks with **no content**;
+founder-action → intermediary influence priced at 0; **event-data doom writes not yet
+re-authored** to intermediaries (the printed-delta ban isn't 100% true in data yet).
 
-**Tier 2: Growth ($75K/year)**
-- Full-time lead developer
-- Monthly content updates (5-10 events/month)
-- Steam release with achievements
-- Localization (3-5 languages)
+> **Naming note:** "nine-stream" is approximate — DQ-21 fixed **nine intermediary
+> concepts**; the `doom_sources` dict carries nine keys but not all are intermediary-fed
+> (ledger/tech-debt are routed inputs; momentum is a modifier; pulses are dynamic).
 
-**Tier 3: Scale ($150K/year)**
-- 2-3 person dev team
-- Weekly content updates
-- Commissioned art assets
-- Educational partnerships
-- Multi-platform expansion (mobile)
+### Liability Ledger (every mitigation is a loan)
+A two-sided ledger (payables / receivables) of trades that pay now and bill later.
+**No new player-facing currency** — entries read/write only existing resources (money,
+reputation, governance, doom, AP). Compounding interest on unpaid payables is the
+**mortality guarantee** (ADR-0002): debt grows unbounded until a bill you can't cover ends
+the run — and the death is attributable to specific entries. A defaulted money bill
+converts its shortfall to **capped** doom + reputation damage (doom residual rolls forward
+so the full teeth land over months). Secret entries can be **exposed** → rep/governance
+damage + a blackmail rider.
+**Files:** [`ledger.gd`](../godot/scripts/core/ledger.gd) (`Ledger`, `Ledger.Entry`);
+billed each turn by `TurnManager._step_ledger_tick_and_bill()`.
+**ADR:** ADR-0003, ADR-0013 (pricing), ADR-0008 (staff riders).
+**Status:** **engine built + soak-tested**, but **not player-facing** — no ledger
+action/UI wiring yet (blocker BL-1). Exposure fires on a per-turn chance
+(`check_exposures`), not yet from rival/scheduled causes (BL-2).
 
-**Tier 4: Impact ($300K+/year)**
-- Dedicated content team
-- Research collaboration (AI safety orgs)
-- Conference/workshop presence
-- Curriculum integration
-- Community mod support (Steam Workshop)
+### Finance / cost-of-debt engine
+**One pricing function for all liabilities** (loans, funding-with-strings, equity,
+philanthropy, the desperation lever). Cost is a function of org type, counterparty, **typed
+reputation** (safety-rep prices grants, finance-rep prices debt), hype, and current
+leverage — all data-driven (`financing.*`). Generates 2–3 concurrent **standing offers**
+with expiry; accepting applies cash now and mints the ledger entry carrying the offer's
+**own quoted terms**. Boundary: this engine never touches doom (that's the doom-streams
+lane's job).
+**Files:** [`finance_engine.gd`](../godot/scripts/core/finance_engine.gd) (`FinanceEngine`,
+stateless static utility); offers stashed transiently on `GameState.financing_offers`.
+**ADR:** ADR-0013 (#641). **Status:** **built** (engine + instruments). *Partial:* typed
+reputation and org type aren't first-class `GameState` fields yet (falls back to scalar
+rep / nonprofit); equity dilution + board seats mint **inert standing riders** (DQ-7/DQ-26).
 
-### Return on Investment
+### Effort economy / Attention
+The founder currency is **Attention** (~N decisions/month; admin as painful overhead), held
+on `MonthPlan`. It splits into `available` (fund strategic work), `reserved` (crisp reserve
+for response windows — **evaporates** monthly), and `spent`. Strategic actions carry
+**durations** (nothing strategic resolves instantly). There is **no global AP pool** in the
+target design — staff get a separate per-person budget.
+**Files:** [`month_plan.gd`](../godot/scripts/core/month_plan.gd) (`MonthPlan`);
+plan API on `GameManager` (`queue_strategic_action`, `set_attention_reserve`).
+**ADR:** ADR-0011, ADR-0009. **Status:** **Attention layer built**; the **legacy
+per-turn AP pool still co-exists** (`GameState.action_points`, `select_action`) — L1
+introduced Attention *alongside* AP; **L2 (#613) deletes AP and migrates costs**. This dual
+economy is the single most confusing live edge for a new dev (see §7). The **staff effort
+economy (L2) is not built** — only spec inputs exist.
 
-| Investment | Timeline | Deliverable |
-|------------|----------|-------------|
-| $5K | 2 weeks | Complete scenario pack (20 events) |
-| $10K | 1 month | New game mechanic (alliance system) |
-| $25K | 2 months | Steam release + achievements |
-| $50K | 3 months | Mobile port (iOS/Android) |
-| $100K | 6 months | Full educational package |
+### SA channels (situational awareness)
+"Spending buys sight": simulate everything, gate only the *view*; SA is **channels with
+provenance**, not a meter; the game must **explain your death before it kills you**
+(lead-time), and features are judged by **decision-flip rate**.
+**Files:** provenance seams exist — `EventTiers.source_id_of()` stamps a named owner on feed
+items; death legibility lands via `DeathAttribution`. **ADR:** ADR-0001 (amended by
+ADR-0004). **Status:** **designed; largely not built as a subsystem.** No SA
+purchase/screen-gating or decision-flip telemetry yet.
+
+### Event delivery tiers
+Every event is classified into a **delivery tier** — `ambient` (board mutates, no notice),
+`feed` (readable, no acknowledgment, carries provenance), or `window` (the **only** tier
+that demands a decision). Windows also carry a **class** governing legal response verbs:
+`un-snoozable`, `deferrable` (DEFER mints a ledger entry), `standing` (expires, mints
+nothing), `no-action`. The structural fix for the event flood (#630) is a **demand budget**
+(N windows/month may demand a decision) enforced in `MonthController`, not an information
+budget.
+**Files:** [`event_tiers.gd`](../godot/scripts/core/event_tiers.gd),
+[`window_resolver.gd`](../godot/scripts/core/window_resolver.gd),
+budget in [`month_controller.gd`](../godot/scripts/core/month_controller.gd);
+raw events in [`events.gd`](../godot/scripts/core/events.gd) + `data/events/*.json`.
+**ADR:** ADR-0012, ADR-0009. **Status:** **classification engine built**; **event-class
+content wiring is L4, outstanding** (un-annotated legacy events degrade to sane defaults).
+
+### Adoption / reputation routing
+Doom bends only where work is **adopted**: research → paper → socialization → adoption.
+Your own lab's doom is basement-fixable (private); world/rival doom bends through adoption.
+Reputation is **per-person and per-org**; attention is **typed** (safety vs accel VC).
+**Files:** rival capability pipeline in [`rivals.gd`](../godot/scripts/core/rivals.gd)
+(feeds the `overhang` stream); papers/conferences in
+[`paper_submissions.gd`](../godot/scripts/core/paper_submissions.gd),
+[`conferences.gd`](../godot/scripts/core/conferences.gd).
+**ADR:** ADR-0010, ADR-0014 (conferences). **Status:** **partial** — rival→frontier→doom
+routing is live; typed reputation and the publish-and-socialize path are **designed, not
+built** (L3, after L2). Conferences ship as attendance+yields only (DQ-16).
+
+### Scoring / replay
+Score is the tuple **(turns_survived, doom_integral)** compared lexicographically — flows
+only, never end-state stocks. The **engine is the sole scoring authority**; boards key on
+`(seed, game_version)` (+ league id). The **input-replay is the canonical run artifact**
+(anti-cheat / share / bug-repro); verification is a cheap hash chain + headless
+re-simulation for disputes.
+**Files:** score math in [`game_state.gd`](../godot/scripts/core/game_state.gd)
+(`score_tuple` / `compare_score` / `doom_integral`); replay recording in
+[`verification_tracker.gd`](../godot/autoload/verification_tracker.gd);
+baseline in [`baseline_simulator.gd`](../godot/scripts/core/baseline_simulator.gd),
+replay in [`replay_simulator.gd`](../godot/scripts/core/replay_simulator.gd).
+**ADR:** ADR-0002, ADR-0006, ADR-0016 (league). **Status:** **scoring built**; **full
+input-string replay/import path not yet wired** (the one component never built in either
+era — ADR-0006 wiring order). League pipeline (ADR-0016) is designed, not built.
+
+### Death attribution (loss legibility)
+Read-only classifier that traces a finished run's **root cause**. The ledger never owns a
+death screen — defaults cascade into doom/rep deaths through intermediate wreckage, so the
+*surface* cause hides the chain. This reads `GameState.cause_log` (a turn-stamped
+contributing-cause trail) and answers "ledger vs doom vs rep?" for balance accounting.
+**Files:** [`death_attribution.gd`](../godot/scripts/core/death_attribution.gd);
+trail written via `GameState.note_cause()` / `Ledger._note()`.
+**ADR:** ADR-0012 (EE-8). **Status:** **built** (recording-only; never changes outcomes).
+
+### Governance & risk pools (supporting)
+`governance` is a real currency the ledger bills against, but its **player-facing design is
+parked** (DQ-7) — a stub. `political_pressure` = `global_alarm − global_panic`, a
+gate-only signal (no stream). The older hidden **risk pools** (research integrity,
+capability overhang) still accumulate and trigger events.
+**Files:** [`risk_pool.gd`](../godot/scripts/core/risk_pool.gd); governance on `GameState`.
+**ADR:** ADR-0003 (governance), DQ-20 (risk pools). **Status:** **stubs / partial.**
 
 ---
 
-## 5. Technical Scalability
+## 4. Data-driven config
 
-### Why Godot + GDScript?
+Gameplay numbers live in JSON, not code, via the **`Balance` autoload** (L9 #621).
 
-- **Cross-platform**: One codebase, all platforms
-- **Lightweight**: 50MB game size, runs on modest hardware
-- **Open-source**: No licensing fees, community-supported
-- **Web export**: Instant browser play, no install barrier
-- **Steam-ready**: GodotSteam integration complete
+- **Surface:** [`balance.gd`](../godot/autoload/balance.gd) — `Balance.num("path", fallback)`,
+  `Balance.inum(...)`, `Balance.table(...)`. Dotted paths into
+  [`data/balance/defaults.json`](../godot/data/balance/defaults.json). An optional
+  `user://balance_overrides.json` **deep-merges on top**, so sweeps/tuning swap a file
+  instead of editing code.
+- **Top-level keys in `defaults.json`:** `starting_resources`, `attention`, `doom`
+  (incl. `doom.streams.*`), `ledger`, `financing`, `salaries`, `action_points`, `rivals`,
+  `risk`, `difficulty`, `events`, `papers`.
+- **Contract:** every consumer passes its inline literal as the fallback, so a missing/broken
+  file *should* degrade to shipped behavior. ⚠️ **This contract is currently violated for
+  `doom.streams.*`** — see [§7](#7-known-gaps--active-fronts).
+- **Other data dirs:** `data/actions/*.json` (10 files — action definitions),
+  `data/events/*.json` (8 files across `balancing/`, `extensions/`, `overrides/`),
+  `data/scenarios/*.json` (bootstrap / crisis / sandbox).
 
-### Architecture Strengths
-
-1. **Deterministic RNG**: Every game can be replayed identically from seed
-2. **Signal-based UI**: UI completely decoupled from game logic
-3. **Data-driven content**: No recompilation for content changes
-4. **Schema validation**: Automated content validation in CI
-5. **Modular autoloads**: Systems can be upgraded independently
-
-### Growth Path
-
-```
-Current:        Single-player, 4 platforms, ~50 events
-↓
-Near-term:      Steam Workshop mods, 100+ events, localization
-↓
-Medium-term:    Leaderboard competitions, educational licenses
-↓
-Long-term:      Multiplayer, procedural content, AI-generated events
-```
+**What's tunable without code:** starting resources, doom stream coefficients, ledger
+escalation rates/fuses, financing rate curves & instruments, salaries, AP grants, rival
+pressure, difficulty modifiers, event budgets — all of it.
 
 ---
 
-## 6. Why This Can Scale
+## 5. Testing & CI
 
-### The Content Multiplication Model
+### Local
+- **Fresh worktree gotcha (important):** a fresh checkout has no
+  `global_script_class_cache`, so GUT/headless will `quit(0)` before running anything and
+  spit misleading `class_name` parse errors. **Run an import pass first:**
+  `godot --headless --path godot --import`.
+- **Runners:** [`godot/tests/run_all_tests.ps1`](../godot/tests/run_all_tests.ps1) /
+  `run_all_tests.sh` are the *old naive* path (no import pass, no count floor). The
+  **authoritative** runner is `scripts/run_godot_tests.py`, which the CI drives.
 
-Each new event, action, or mechanic creates combinatorial gameplay:
+### CI tiers (#640 — the honest gate)
+Workflow `.github/workflows/godot-tests.yml`. All gating delegates to
+`scripts/run_godot_tests.py`, which **ignores GUT's exit code** and instead parses the
+JUnit XML, hard-failing on: no/zero tests, `tests < --min-tests` floor, any failures, or a
+**manifest cross-check** (every `test_*.gd` on disk must appear as a collected suite — #590).
 
-```
-50 events × 10 actions × 20 traits × 5 difficulties = 50,000 unique game states
-```
+| Job | Scope | Dir | Min tests | Blocking |
+|---|---|---|---|---|
+| `syntax-check` | import pass + parse-error grep | — | — | yes |
+| **`unit-tests`** | fast gate | `tests/unit` (~36 files) | **300** | yes |
+| `integration-tests` | UI stability | `tests/integration` (1) | 10 | yes |
+| `simulation-tests` | slow sim suite | `tests/unit/simulation` (6) | 80 | **non-blocking** (visible, `continue-on-error`) |
+| `test-summary` | required gate | — | — | fails unless the 3 above pass |
+| manual sweeps | `tests/manual/` (`test_l1_month_sweep`, `test_exploit_sweep`) | run by hand | — | — |
 
-Adding 10 events doesn't add 10 experiences - it multiplies the possibility space.
-
-### The Distribution Advantage
-
-- Web export = zero-friction onboarding
-- Steam = discoverability + community
-- Educational licenses = institutional adoption
-- Open content schemas = community contributions
-
-### The Mission Alignment
-
-P(Doom) isn't just a game - it's an educational tool for AI safety concepts:
-- **Players learn** doom calculations, alignment challenges, coordination problems
-- **Researchers can** embed real scenarios, test communication strategies
-- **Educators can** use scenario packs for courses and workshops
-
----
-
-## Summary
-
-| Aspect | Current | With Funding |
-|--------|---------|--------------|
-| Release cadence | Monthly | Weekly |
-| Content updates | 5 events/month | 20+ events/month |
-| Platforms | 4 (Win/Lin/Mac/Web) | 6+ (add mobile, Steam Workshop) |
-| Languages | English | 5+ languages |
-| Team | 1 part-time | 2-3 full-time |
-| Reach | Hundreds | Tens of thousands |
-
-**The architecture is ready**. The bottleneck is development capacity.
+The min-test floors are the concrete backstop against the old **"green while running zero
+tests"** hollow gate. **Note:** the earlier warning that "CI is hollow until #629" is now
+**resolved** — #640 (which closes #629/#590) is merged on this main; CI green can be trusted
+again.
 
 ---
 
-*Document version: 1.0.0 | Last updated: 2025-12-13*
-*Link from: https://pdoom.org/donors/architecture*
+## 6. Where to look to change X
+
+| I want to… | Go here |
+|---|---|
+| Change a gameplay number (money, doom rate, loan interest, salaries) | [`data/balance/defaults.json`](../godot/data/balance/defaults.json) — no code change |
+| Tune doom stream weights / intermediary gains | `doom.streams.*` in `defaults.json`; mechanism in [`doom_system.gd`](../godot/scripts/core/doom_system.gd); rationale in [`DOOM_STREAMS_v1.md`](balance/DOOM_STREAMS_v1.md) |
+| Add / edit an event | `data/events/*.json`; classify its tier/class via fields read by [`event_tiers.gd`](../godot/scripts/core/event_tiers.gd) |
+| Add / edit an action | `data/actions/*.json`; execution in [`actions.gd`](../godot/scripts/core/actions.gd) |
+| Add a finance instrument | `financing.instruments` in `defaults.json`; pricing in [`finance_engine.gd`](../godot/scripts/core/finance_engine.gd) |
+| Adjust how doom is computed (structure, not numbers) | [`doom_system.gd`](../godot/scripts/core/doom_system.gd) `_compute_streams` / `_advance_intermediaries` |
+| Change the turn/month loop | [`month_controller.gd`](../godot/scripts/core/month_controller.gd) + [`game_manager.gd`](../godot/scripts/game_manager.gd) `end_month`/`_run_month_playback` |
+| Add a ledger liability type | factories in [`ledger.gd`](../godot/scripts/core/ledger.gd) |
+| Change turn step order / add a sim step | `_step_*` in [`turn_manager.gd`](../godot/scripts/core/turn_manager.gd) — **⚠ order is replay-load-bearing** |
+| Register new save/load state | `to_dict`/`from_dict` in [`game_state.gd`](../godot/scripts/core/game_state.gd) — read the SERIALIZATION CONVENTION block first |
+| Change scoring | `score_tuple`/`compare_score` in [`game_state.gd`](../godot/scripts/core/game_state.gd) |
+
+---
+
+## 7. Known gaps / active fronts
+
+Where a new dev will hit live edges. Pulled from the ADRs, code TODOs, and
+[`WORKSHOP_2_BACKLOG.md`](game-design/WORKSHOP_2_BACKLOG.md) open DQs.
+
+**Half-built / transitional:**
+- **Dual currency (AP vs Attention).** L1 added Attention beside the legacy AP pool; both
+  are live. `select_action` still spends AP; windows spend Attention. **L2 (#613) deletes
+  AP.** Expect confusion until then.
+- **Staff effort economy (L2, #613): not built.** Only spec inputs exist (burnout debuffs,
+  typed delegation DQ-24).
+- **Ledger not player-facing** (BL-1). Engine + soak only; no action/UI to view or pay bills
+  from the plan screen yet. Exposure not fired by rival/scheduled causes (BL-2);
+  hire/departure don't create/flip riders (BL-3).
+- **Event-content tail (ADR-0015).** `data/events/*.json` still carry inert/clobbered doom
+  writes; per-event re-authoring to intermediaries is owed before the printed-delta ban is
+  100% true in data. (`GameState` has a temporary branch handling legacy event doom.)
+- **Finance stubs:** equity dilution + board seats ship as inert standing riders (DQ-7 /
+  DQ-26); typed reputation & org type aren't first-class state fields yet.
+- **Adoption / papers / conferences (L3): not built.** Full input-string replay/import path
+  (ADR-0006) and the league pipeline (ADR-0016) are designed, not built.
+- **Governance / `political_pressure`: stubs** with no player-facing design (DQ-7).
+- **Doom pulses & typed dampers:** engine hooks, no content.
+
+**Coherence-check findings surfaced while drafting (for Pip):**
+1. **Balance behavior-preservation contract violated for `doom.streams.*`.** `defaults.json`
+   ships `cap_frontier_gain=60.0`, `safety_absorb_gain=8.0`, `W_frontier=3.9e-05`, but the
+   **code fallbacks** in `doom_system.gd` are `0.9`, `1.15`, `0.000145` — a **~66× divergence**
+   on `cap_frontier_gain`. `Balance.gd` documents "a missing or broken file degrades to
+   exactly the shipped behavior," which is **false** for these keys. If `defaults.json` ever
+   fails to load, doom dynamics change wildly rather than degrading gracefully. Either the
+   fallbacks should match shipped values, or the contract wording should be scoped to
+   pre-L9 keys only.
+2. **Stale ADR index.** [`decisions/README.md`](game-design/decisions/README.md) lists only
+   ADR-0001 (as PROPOSED) though there are 16 ADRs, nearly all ACCEPTED. Regenerate it.
+3. **Two docs named ARCHITECTURE.md.** This dev map replaced a funder pitch at the same path
+   (preserved as `ARCHITECTURE_FUNDERS.md`); ~18 files reference `ARCHITECTURE.md`. Pip to
+   confirm the split and repoint any links that specifically wanted the funder content.
+4. **"The turn is a month" headline vs mechanism.** ADR-0009's headline reads as a re-grain
+   but the implementation is a plan layer over day ticks — self-noted in the ADR after it
+   was misread during the L1 build. A junior dev *will* trip on `GameState.turn` counting
+   workdays.
+5. **Mortality guarantee has no single ratified source.** ADR-0002 requires unbounded
+   growth; ADR-0003 names compounding interest as "the candidate"; ADR-0013 replaces the
+   flat-25%/turn loans. The mechanism is real (ledger compounding), but it's asserted across
+   three ADRs rather than pinned in one.
+
+**Open design questions (live, from the backlog):** typed-attention demand taxonomy
+(DQ-24, feeds L2), governance player-facing design (DQ-7), desperation-lever legibility
+(DQ-25, "the lever is a trap"), VC/equity depth (DQ-26), damper economy (DQ-23), rival
+narrative presence (DQ-12), character-creation surface (DQ-19). See
+[`WORKSHOP_2_BACKLOG.md`](game-design/WORKSHOP_2_BACKLOG.md) for the full list.
