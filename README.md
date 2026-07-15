@@ -16,7 +16,7 @@
 
 ## About the Game
 
-You run an underfunded AI safety lab racing against well-resourced competitors to solve the alignment problem. Make strategic decisions about hiring, research priorities, and resource allocation. Your choices determine whether P(Doom) reaches 0% or humanity faces extinction.
+You run an underfunded AI safety lab racing against well-resourced competitors to solve the alignment problem. Make strategic decisions about hiring, research priorities, and resource allocation. You can't stop catastrophe — you can only buy time; your choices determine how long you hold P(Doom) back before a run ends.
 
 **Gameplay:**
 - Hire individual researchers from a candidate pool (Safety, Capabilities, Interpretability, Alignment)
@@ -24,7 +24,7 @@ You run an underfunded AI safety lab racing against well-resourced competitors t
 - Balance researcher traits (team_player, media_savvy, leak_prone) for optimal productivity
 - Handle burnout, poaching events, and doom from reckless research
 - Respond to rival lab actions and random events
-- There's no turn limit and no easy win: you're scored on how long you keep P(Doom) low. Driving doom to 0% is a rare apex outcome for mastery play, not the expected one — most runs end in loss (see [ADR-0002](docs/adr/0002-win-condition-survival-spine.md))
+- You can't win — you can only buy time. There's no turn limit and no victory condition: every run ends in loss, and your score is how long you hold P(Doom) back before it does. A good run beats your own previous best (see [ADR-0002](docs/adr/0002-win-condition-survival-spine.md))
 
 ## Need Help?
 

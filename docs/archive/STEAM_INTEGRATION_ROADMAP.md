@@ -382,7 +382,7 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
 2. **Store Page Copy**
    ```markdown
    # Short Description (300 chars)
-   Manage an underfunded AI safety lab racing to solve alignment before it's too late. Make strategic decisions about hiring, research, and resources. Your choices determine whether P(Doom) reaches 0% or humanity faces extinction.
+   Manage an underfunded AI safety lab racing to hold back catastrophe. Make strategic decisions about hiring, research, and resources. You can't win — only buy time; your score is how long you keep P(Doom) back before a run ends.
 
    # About This Game
    You run an underfunded AI safety research lab racing against well-funded competitors to solve the alignment problem. Make strategic decisions about:
@@ -391,7 +391,7 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
    - Managing teams and balancing researcher traits (team_player, media_savvy, leak_prone)
    - Handling burnout, poaching events, and doom from reckless research
    - Responding to rival lab actions and random events
-   - Holding P(Doom) down as long as you can — scored on how long you survive, not on a win (driving doom to 0% is a rare apex outcome, not the expected one)
+   - Holding P(Doom) down as long as you can — you can't win, only buy time; you're scored on how long you survive before the run ends
 
    # Key Features
    - Turn-based strategy gameplay inspired by XCOM and FTL

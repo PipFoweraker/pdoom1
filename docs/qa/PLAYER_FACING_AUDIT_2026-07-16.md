@@ -12,19 +12,27 @@ and backlog are out of scope.
 L1 dev map), `docs/adr/0002-win-condition-survival-spine.md`, `godot/autoload/game_config.gd`
 (`CURRENT_VERSION = "0.11.0"`), `godot/project.godot`.
 
-## The one truth every player doc must get right (per ADR-0002 + code)
+## The one truth every player doc must get right (per code + ADR-0002 / DQ-1)
 
-The task brief paraphrased this as a flat "you cannot win, only buy time" — that paraphrase is
-**slightly wrong** and worth stating precisely, because ADR-0002 and the shipping code
-(`game_state.gd check_win_lose()`: victory on `doom <= 0`) both say a win path exists:
+**The game is unwinnable, by design.** `game_state.gd check_win_lose()` (lines 518-523) sets
+`game_over = true; victory = false` on `doom >= 100` **or** `reputation <= 0`, and **`victory` is
+never set `true` anywhere in the codebase** — there is no `doom <= 0` branch. This is exactly what
+ADR-0002 / DQ-1 (victory-removal, RESOLVED) and `DESIGN_PHILOSOPHY.md` ("On losing") intend.
 
-> P(Doom) is **primarily a survival / high-score game**. You are scored on **how long you hold
-> P(Doom) low** (turns survived; doom-integral as tiebreak). Doom trends upward by design, so
-> **most runs end in loss**. Driving doom to **0% (ASI solved) is a real but *rare apex victory***
-> for mastery play — not the expected outcome, and never a timed "survive N turns" goal.
+> **You cannot win — you can only buy time.** Survival duration is the score. Doom trends upward by
+> design, so **every run ends in loss**. A "good" result is surviving *longer* — beating your own
+> previous baseline — **never** driving doom to 0. There is **no turn limit** and **no victory
+> condition** of any kind.
 
-Any doc that advertises "**Survive 100 turns with P(Doom) at 0%**" as *the win* is factually wrong:
-there is **no turn limit**, and survival is the score, not a victory gate.
+Any doc that advertises "**Survive 100 turns with P(Doom) at 0%**", a "victory", or a doom→0 win is
+factually wrong.
+
+> ⚠️ **Correction (supersedes the first version of this audit).** An earlier draft of these fixes
+> described doom→0 as a "rare apex victory," following stale prose in the ADR-0002 *document*. The
+> shipping **code has no victory path** (verified above); that framing was wrong and has been **purged
+> from every fix**. Note the ADR-0002 doc text is itself stale on this point — it claims a `doom <= 0`
+> code victory that does not exist — and should be reconciled to DQ-1. **Flagged, not edited** (ADRs
+> are out of player-facing scope).
 
 Other current-state facts a player doc must not contradict (from `ARCHITECTURE.md`):
 
@@ -48,13 +56,15 @@ Other current-state facts a player doc must not contradict (from `ARCHITECTURE.m
 
 | Doc | Passage | Verdict | Note |
 |---|---|---|---|
-| `README.md` | "Survive 100 turns with P(Doom) at 0%" (gameplay bullet) | **FIXED** | Replaced with survival/high-score framing + rare-apex note + ADR-0002 link. **The most embarrassing line on the old README.** |
+| `README.md` | "Survive 100 turns with P(Doom) at 0%" (gameplay bullet) | **FIXED** | Replaced with "you can't win, only buy time; score = how long you last; every run ends in loss" + ADR-0002 link. **The most embarrassing line on the old README.** |
+| `README.md` | "Your choices determine whether P(Doom) reaches 0% or humanity faces extinction" (About para) | **FIXED** | Same win-lie in prose. Purged to buy-time framing (minimal factual correction; full pitch rewrite still Pip's). |
 | `README.md` | footer `[Contributors](docs/CONTRIBUTORS.md)` | **FIXED** | Dead link (file absent). Repointed to existing `docs/CONTRIBUTOR_REWARDS.md`. |
 | `README.md` | "About the Game" para + "Gameplay:" bullet list | **TEARDOWN** | LLM feature-list voice; highlights trait names (`team_player`, `leak_prone`) over actual play. Skeleton below. |
 | `README.md` | screenshot `pdoom_screenshot_20250918_104357.png` | **TEARDOWN** | Pip flagged the image; it predates the month-engine UI. Needs a fresh capture (asset task, not a text fix). |
 | `docs/STEAM_INTEGRATION_ROADMAP.md` | "Current Version: v0.10.5" (×2, header + status table) | **FIXED** | → v0.11.0. |
-| `docs/STEAM_INTEGRATION_ROADMAP.md` | store-copy bullet "Surviving 100 turns with P(Doom) at 0%" | **FIXED** | Same win-condition error, inside proposed store copy. Reframed to survival. |
-| `docs/STEAM_INTEGRATION_ROADMAP.md` | "feature-complete", "Achievement System — Implemented" | **TEARDOWN** | Overclaim: achievements are an observer-only skeleton (L8); ledger/finance not player-facing. Also references deleted `legacy/…/achievements_endgame.py`. Store copy block needs Pip's voice. |
+| `docs/STEAM_INTEGRATION_ROADMAP.md` | store copy: short-description "…whether P(Doom) reaches 0% or humanity faces extinction" (L380) + bullet "Surviving 100 turns with P(Doom) at 0%" (L389) | **FIXED** | Both purged to "you can't win, only buy time" framing. |
+| `docs/STEAM_INTEGRATION_ROADMAP.md` | achievement table (L280-289): "First Victory — Win your first game", "Zero Doom — Reduce P(Doom) to 0%", "Safety Champion — Win with 0% doom", "Speedrunner — Win in <50 turns" | **TEARDOWN (flag — hard blocker for store)** | **Win-based achievements in an unwinnable game.** Must be redesigned around survival milestones (turns held / baseline beats) by the achievements lane — NOT rewritten here (speculative internal mapping that also references deleted `legacy/…/achievements_endgame.py`). Do not ship these to Steam as-is. |
+| `docs/STEAM_INTEGRATION_ROADMAP.md` | "feature-complete", "Achievement System — Implemented" | **TEARDOWN** | Overclaim: achievements are an observer-only skeleton (L8); ledger/finance not player-facing. Store copy block needs Pip's voice. |
 | `docs/PLAYERGUIDE.md` | "The Python/Pygame version is for development only" | **FIXED** | False now — pure GDScript, prototype retired. |
 | `docs/PLAYERGUIDE.md` | dead `[CONFIG_SYSTEM.md]` link | **FIXED** | Removed (file absent). |
 | `docs/PLAYERGUIDE.md` | **entire mechanics body** (Action Points as core, weekly cash, "Turns 1-13", `[EMOJI]`/`[TARGET]` tokens, no month engine / Attention / doom-streams / finance) | **TEARDOWN** | This doc describes the *pygame-era game*. Surgical fixes would falsely signal the rest is current. Full rewrite. Skeleton below. |
@@ -71,7 +81,17 @@ Other current-state facts a player doc must not contradict (from `ARCHITECTURE.m
 | `docs/CONTRIBUTOR_REWARDS.md` | closing "more engaging, polished, and meaningful" line | **TEARDOWN (low pri)** | Minor boilerplate; otherwise fine. |
 | `CHANGELOG.md` | `[Unreleased]` stops at #500/#527-era | **TEARDOWN (flag)** | Omits the entire L1 wave (month engine #636, nine-stream doom #643, finance #641, calibration #638). Release-notes job for Pip — not fabricated here. Also title says "Bureaucracy Strategy Game" vs README's "AI Safety Strategy Game". |
 
-**Factual fixes applied: 10.** All are safe to merge. Everything marked TEARDOWN / flag is Pip's worklist.
+**Factual fixes applied: 12.** All are safe to merge. Everything marked TEARDOWN / flag is Pip's worklist.
+
+## Findings for other lanes (NOT fixed here — not player-facing docs / game code)
+
+- **In-game HUD center string** `"Win: P(Doom) = 0% or beat baseline | Lose: P(Doom) = 100%"` — the
+  **same stale win-lie, live in the running game.** There is no win; it must read as survival-only
+  (e.g. "Lose: P(Doom) = 100% — no win; last as long as you can"). Owned by the HUD/code lane, not
+  this docs PR.
+- **ADR-0002 document prose is itself stale** — it describes a `doom <= 0` code victory and a "rare
+  apex victory" that the shipping code does not implement (verified: `check_win_lose` never sets
+  `victory = true`). Reconcile the ADR text to DQ-1 (victory-removal, RESOLVED). ADR, not player-facing.
 
 ---
 
@@ -95,8 +115,8 @@ Other current-state facts a player doc must not contradict (from `ARCHITECTURE.m
 > "Manage an AI safety lab racing to solve alignment before it's too late." … "Your choices determine
 > whether P(Doom) reaches 0% or humanity faces extinction."
 
-Why it misses: it sells a **binary win/lose to 0%**, which is the *rare apex*, not the game. It hides
-the actual experience — you're **buying time** you can *read* running out. "racing to solve alignment"
+Why it misses: it sells a **binary win/lose to 0%** — but **there is no win**. It hides the actual
+experience — you're **buying time** you can *read* running out. "racing to solve alignment"
 is generic AI-safety-flyer language, not what the player does minute to minute (scout, plan a month,
 watch a doom stream climb, take a loan you'll regret).
 
@@ -140,8 +160,10 @@ This is not a voice problem so much as a **wrong-game** problem: the entire body
 pygame build. Representative stale passages:
 > "Base AP: You start with 3 Action Points per turn" · "First Employee: $600/week" ·
 > "Late Game (Turns 10-13)" · "80's techno-green context window" · pervasive `[EMOJI]` / `[TARGET]` tokens ·
-> "Your score is how many turns you survived" (right instinct — but ADR-0002 says **add** that the rare
-> apex victory exists).
+> "Your score is how many turns you survived" (this instinct is **correct and complete** — survival *is*
+> the game; do not add any win/victory to it).
+> Also purge L826 "Every turn you survive is a victory" of the word "victory" to avoid any win read
+> (the sentiment — survival is the point — is right).
 
 It contradicts `ARCHITECTURE.md` on: currency (AP-as-core vs **Attention**), turn grain (week vs
 **month plan / day tick**), and omits nine-stream doom, the ledger, finance offers, death attribution.
@@ -151,7 +173,7 @@ It contradicts `ARCHITECTURE.md` on: currency (AP-as-core vs **Attention**), tur
 # P(Doom) — Player Guide
 
 ## The goal (read this first)
-<survival/high-score; buy time; rare apex at doom 0; most runs end in loss — ADR-0002>
+<you can't win, only buy time; survival duration is the score; every run ends in loss; a good run beats your own baseline; NO doom→0 victory — ADR-0002 / DQ-1>
 
 ## The month loop
 <Plan phase: spend Attention on strategic actions with durations>
