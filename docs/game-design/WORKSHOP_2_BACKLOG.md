@@ -284,7 +284,16 @@ more interesting."*
   unlosable w.r.t. compounding debt. Fed into #638's final iteration.
 - **DQ-25 · Desperation-lever revisit** — Pip wants the mechanic + flavor re-understood
   (ADR-0003's catch-up machinery); gather solver-bot data (EE-9) first, then a workshop
-  beat.
+  beat. First structural finding (EE-9, pre-migration data): the lever is a plan-phase
+  action whose doom trigger only re-checks at month boundaries — candidate window-verb.
+- **DQ-26 · VC/equity depth revisit** *(Pip 2026-07-15, on approving #641)* — the L5
+  instruments ship with equity dilution + board seats as inert standing terms (DQ-7
+  stubs). Future work: (a) make VC investment *interesting* as a mechanic (what does a
+  board seat DO — agenda pressure, window injections, exit pressure?); (b) build the
+  measurement layer for equity and board seats (cap-table state, control thresholds);
+  (c) Pip's framing: these are **set-at-config-or-accept-basics** knobs — fine-tunable
+  as difficulty or scenario settings (ADR-0016 league/scenario surface), so the config
+  schema should carry them even while the mechanics stay basic.
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)
