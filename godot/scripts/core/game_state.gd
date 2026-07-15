@@ -29,6 +29,13 @@ var governance: float = 50.0
 # per game in reset(); compounding payables are the mortality guarantee (ADR-0002).
 var ledger: Ledger
 
+# Standing financing offers (ADR-0013 / L5 #616): the current menu minted by
+# FinanceEngine.generate_offers when the player seeks debt/funding. TRANSIENT (not
+# serialized): offers are cheap to regenerate and carry their own expiry_turn, so a
+# save/load simply drops any pending menu (the player re-seeks). Kept off to_dict so
+# the L7 save round-trip stays byte-stable.
+var financing_offers: Array = []
+
 # The month plan layer (L1 / ADR-0009): the founder currency Attention, the crisp reserve,
 # and duration-bearing queued strategic actions. The plan cadence is monthly; the turn above
 # is the day-grained resolution tick. Rebuilt per game in reset().

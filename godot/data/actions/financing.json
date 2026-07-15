@@ -37,6 +37,33 @@
 				"action_points": 1
 			},
 			"category": "financing"
+		},
+		{
+			"id": "seek_financing",
+			"name": "Seek Financing",
+			"description": "Run a raise (ADR-0013): the cost-of-debt engine quotes 2-3 concurrent offers priced by org type, counterparty, reputation and leverage. Offers stand until they expire; accept at plan speed.",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "financing"
+		},
+		{
+			"id": "accept_financing_offer",
+			"name": "Accept Offer",
+			"description": "Accept a standing financing offer by id (from Seek Financing) — cash now, its quoted terms mint a ledger entry.",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "financing"
+		},
+		{
+			"id": "pay_bills",
+			"name": "Pay the Bill",
+			"description": "Settle the soonest-due affordable loan early from cash (#566), retiring its balloon before it bills.",
+			"costs": {
+				"action_points": 1
+			},
+			"category": "financing"
 		}
 	]
 }
