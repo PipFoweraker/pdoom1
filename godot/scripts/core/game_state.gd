@@ -16,6 +16,28 @@ var doom_history: Array[float] = []  # Per-turn doom snapshots for the trend gra
 # ADR-0002: area under the survival curve — sum of (100 - doom) over turns actually
 # survived. The lexicographic score tiebreaker ("doom-years averted"); accrues in-engine.
 var doom_integral: float = 0.0
+
+# ADR-0015 / DQ-21 world-state intermediaries: doom is computed from THESE (never written
+# directly). Actions/events/rivals write intermediaries; DoomSystem reads them each day tick
+# and sums the named streams into the doom rate. Every one is L6-attributable (guard rule).
+var ambient_risk: float = 0.0                  # baseline stream — year-keyed background floor
+var frontier_capability: Dictionary = {}       # actor_id -> capability level; "player" is the named slice
+var general_capability: float = 0.0            # diffusion stream — chronic commoditized floor (ratchet)
+var global_compute: float = 0.0                # the slow ocean (schedule furniture; no own doom term)
+var dedicated_ai_compute: float = 0.0          # compute stream — the controllable fleet
+var safety_absorption: float = 0.0             # offsets frontier in the overhang gap (accumulated safety)
+var global_alarm: float = 0.0                  # alarm stream (small relief) + typed-damper gate
+var global_panic: float = 0.0                  # panic stream — social accelerant
+var political_pressure: float = 0.0            # signed disposition; gate only (no stream of its own)
+var doom_dampers: Array = []                   # typed dampers: {target, strength, expires_turn}
+var doom_pulses: Array = []                    # ADR-0005 scheduled pulse envelopes (v1: none)
+var sacred_chain_log: Array = []               # completed sacred-object chains (trend-invariant exemption)
+
+## player_frontier — the DQ-22-read alias for frontier_capability["player"].
+var player_frontier: float:
+	get:
+		return float(frontier_capability.get("player", 0.0))
+
 var action_points: int = 3
 var max_action_points: int = 3  # Per-turn AP cap; difficulty modifiers adjust this (game_manager._apply_difficulty_settings)
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
@@ -200,6 +222,21 @@ func reset():
 	technical_debt = 0.0  # Reset tech debt (Issue #416)
 	research_quality_mode = DEFAULT_RESEARCH_QUALITY  # Issue #500
 
+	# ADR-0015 / DQ-21: fresh world-state intermediaries. 2017 spawn starts low and slow
+	# (ambient_risk climbs with the schedule; frontier/absorption accumulate from play).
+	ambient_risk = Balance.num("doom.base_per_turn", 0.06)
+	frontier_capability = {"player": 0.0}
+	general_capability = 0.0
+	global_compute = 0.0
+	dedicated_ai_compute = compute
+	safety_absorption = 0.0
+	global_alarm = 0.0
+	global_panic = 0.0
+	political_pressure = 0.0
+	doom_dampers.clear()
+	doom_pulses.clear()
+	sacred_chain_log.clear()
+
 	safety_researchers = 0
 	capability_researchers = 0
 	compute_engineers = 0
@@ -324,6 +361,13 @@ func add_resources(gains: Dictionary):
 	if gains.has("reputation"):
 		reputation += gains["reputation"]
 	if gains.has("doom"):
+		# ADR-0015 REMAINDER (Legacy #15 / memo §7.1): this generic doom sink is the un-migrated
+		# tail of the clobber-bug class — event/scenario CONTENT (data/events/*.json) still carries
+		# literal "doom" deltas that flow here. In the real turn loop this write is CLOBBERED by
+		# `state.doom = doom_system.current_doom` at resolve, so it is an inert no-op (Finding A);
+		# it survives only for the direct-state unit tests. The AUTHORITY is DoomSystem's streams.
+		# The follow-up content lane re-authors each event to write an INTERMEDIARY (frontier /
+		# panic / alarm / …) instead of doom, at which point this branch is deleted.
 		doom += gains["doom"]
 		doom = clamp(doom, 0.0, 100.0)
 	if gains.has("technical_debt"):
@@ -825,6 +869,19 @@ func to_dict() -> Dictionary:
 		"cause_log": cause_log.duplicate(true),  # EE-8 attribution trail
 		"doom": doom,
 		"doom_history": doom_history.duplicate(),  # #512 trend graph
+		# ADR-0015 / DQ-21 world-state intermediaries (doom is computed from these)
+		"ambient_risk": ambient_risk,
+		"frontier_capability": frontier_capability.duplicate(),
+		"general_capability": general_capability,
+		"global_compute": global_compute,
+		"dedicated_ai_compute": dedicated_ai_compute,
+		"safety_absorption": safety_absorption,
+		"global_alarm": global_alarm,
+		"global_panic": global_panic,
+		"political_pressure": political_pressure,
+		"doom_dampers": doom_dampers.duplicate(true),
+		"doom_pulses": doom_pulses.duplicate(true),
+		"sacred_chain_log": sacred_chain_log.duplicate(true),
 		"doom_system": doom_data,
 		"risk_system": risk_data,
 		"action_points": action_points,
@@ -895,6 +952,21 @@ func from_dict(data: Dictionary) -> void:
 	doom_history.clear()
 	for d in data.get("doom_history", []):
 		doom_history.append(float(d))
+	# ADR-0015 / DQ-21 world-state intermediaries
+	ambient_risk = float(data.get("ambient_risk", Balance.num("doom.base_per_turn", 0.06)))
+	frontier_capability = (data.get("frontier_capability", {"player": 0.0}) as Dictionary).duplicate()
+	if not frontier_capability.has("player"):
+		frontier_capability["player"] = 0.0
+	general_capability = float(data.get("general_capability", 0.0))
+	global_compute = float(data.get("global_compute", 0.0))
+	dedicated_ai_compute = float(data.get("dedicated_ai_compute", 0.0))
+	safety_absorption = float(data.get("safety_absorption", 0.0))
+	global_alarm = float(data.get("global_alarm", 0.0))
+	global_panic = float(data.get("global_panic", 0.0))
+	political_pressure = float(data.get("political_pressure", 0.0))
+	doom_dampers = (data.get("doom_dampers", []) as Array).duplicate(true)
+	doom_pulses = (data.get("doom_pulses", []) as Array).duplicate(true)
+	sacred_chain_log = (data.get("sacred_chain_log", []) as Array).duplicate(true)
 	action_points = int(data.get("action_points", 3))
 	max_action_points = int(data.get("max_action_points", 3))
 	committed_ap = int(data.get("committed_ap", 0))

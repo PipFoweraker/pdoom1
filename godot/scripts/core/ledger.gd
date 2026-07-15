@@ -225,21 +225,16 @@ func _apply_capped_doom(e: Entry, raw_doom: float, state) -> float:
 	return applied
 
 
-## Add doom so the bill actually LANDS. The turn loop overwrites `state.doom =
-## doom_system.current_doom` each tick (_step_resolve_doom), so a bare `state.doom +=` from a
-## ledger bill is silently CLOBBERED — the ledger's doom teeth were inert (probe-confirmed).
-## Routing through the doom system's event channel makes the bill survive resolution and show
-## up in the doom-source breakdown (loss legibility). Falls back to state.doom for the
-## lightweight test doubles that carry no doom_system.
+## Route a ledger bill's doom into the `ledger` STREAM (ADR-0015 single-authority discipline).
+## A ledger default is not a direct write to the doom LEVEL — it is a contribution to a named
+## stream that the doom function reads and integrates on the next tick, so DoomSystem stays the
+## sole writer of state.doom and the bill shows up, attributed, in the stream breakdown (loss
+## legibility). This also fixes the old clobber (Finding A): there is no parallel state.doom
+## write for _step_resolve_doom's `state.doom = current_doom` to overwrite. Falls back to a
+## direct write only for the lightweight test doubles that carry no doom_system.
 func _add_doom(state, amount: float) -> void:
 	if "doom_system" in state and state.doom_system != null:
-		# Sync the doom-system authority FROM state.doom first, so the bill adds to the CURRENT
-		# doom regardless of any prior direct write (in the real loop the two are already equal
-		# at bill-time — the ledger bills in start_turn before doom resolution). Then bank the
-		# add on the authority so _step_resolve_doom's `state.doom = current_doom` can't clobber it.
-		state.doom_system.current_doom = state.doom
-		state.doom_system.add_event_doom(amount, "ledger_bill")
-		state.doom = state.doom_system.current_doom
+		state.doom_system.add_stream_input("ledger", amount)
 	else:
 		state.doom += amount
 
