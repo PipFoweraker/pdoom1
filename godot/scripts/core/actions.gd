@@ -380,6 +380,46 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 				state.ledger.add(Ledger.staff_rider("Contractor"))
 			result["message"] = "Brought on a contractor (+2 AP; a governance rider bills later)"
 
+		# --- ADR-0013 cost-of-debt engine (L5 #616): the raise-as-campaign flow ---
+		"seek_financing":
+			# Run a purpose-tagged raise: the pricing engine quotes a menu of standing offers
+			# (ADR-0012 expiry). They persist on state.financing_offers for accept at plan speed.
+			var rng: RandomNumberGenerator = state.rng if ("rng" in state and state.rng != null) else RandomNumberGenerator.new()
+			var ctx: Dictionary = FinanceEngine.context_from_state(state)
+			state.financing_offers = FinanceEngine.generate_offers(ctx, "general", rng)
+			if state.financing_offers.is_empty():
+				result["message"] = "No financiers are interested right now (reputation/standing too low)."
+			else:
+				var lines: Array = []
+				for o in state.financing_offers:
+					lines.append("%s ($%d @ %.1f%%/mo)" % [o["name"], int(o["principal"]), float(o["interest_rate"]) * FinanceEngine.ticks_per_month() * 100.0])
+				result["message"] = "Offers on the table: " + "; ".join(lines)
+
+		"accept_financing_offer":
+			# Accept the first still-live standing offer (the UI selects a specific one via
+			# FinanceEngine.accept_offer(offer, state); the headless/action default is best-first).
+			var accepted := false
+			for o in state.financing_offers:
+				if FinanceEngine.offer_live(o, int(state.turn)):
+					var ar: Dictionary = FinanceEngine.accept_offer(o, state)
+					result["message"] = ar.get("message", "")
+					result["success"] = bool(ar.get("success", false))
+					accepted = ar.get("success", false)
+					if accepted:
+						state.financing_offers.erase(o)
+						break
+			if not accepted:
+				result["message"] = "No live offer to accept (seek financing first, or offers expired)."
+
+		"pay_bills":
+			# The "pay the bill" interaction (#566): settle the soonest-due affordable loan early.
+			if state.ledger:
+				var pr: Dictionary = state.ledger.pay_soonest_payable(state)
+				result["message"] = pr.get("message", "")
+				result["success"] = bool(pr.get("success", false))
+			else:
+				result["message"] = "No ledger to pay against."
+
 		"submit_paper":
 			# Paper submission action (Issue #468)
 			# This is handled by UI - creates paper and adds to state

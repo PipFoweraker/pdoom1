@@ -106,5 +106,117 @@
 		"easy": { "money_multiplier": 1.5, "max_action_points": 4 },
 		"standard": { "money_multiplier": 1.0, "max_action_points": 3 },
 		"hard": { "money_multiplier": 0.75, "max_action_points": 2 }
+	},
+	"financing": {
+		"_description": "Cost-of-debt pricing engine + financing instruments (ADR-0013, lane L5/#616). FinanceEngine.price() computes terms from org_type + counterparty + typed reputation + current leverage; generate_offers() mints 2-3 concurrent STANDING offers with an expiry (ADR-0012 — expiry mints no ledger entry). Engine: godot/scripts/core/finance_engine.gd. GOTCHA: computed interest rates are snapped to 0.001 (JSON save-safe, probe-verified against the real full-precision save path) and principals to whole units before entering a Ledger.Entry, so minted offers survive save/load (calibration open-Q #2). Baseline continuity: bank_loan at default context reproduces the calibrated ledger.loan terms (rate 0.008, ~77-tick fuse, 1.2x balloon); the sweep's take_loan path is UNCHANGED (routes Ledger.loan directly), so this block is additive and does not move the L1 medians.",
+		"ticks_per_month": 22.0,
+		"offer_ttl_turns": 44,
+		"leverage_scale": 120000.0,
+		"rate_floor": 0.002,
+		"rate_ceiling": 0.05,
+		"rep_rate_relief": 0.004,
+		"leverage_rate_penalty": 0.004,
+		"org_factors": {
+			"_description": "Multiply the base interest (ADR-0013: org type is the pricing engine's biggest input). >1 = worse cost of capital; <1 = cheaper. for_profit borrows cheapest (equity as collateral); independent/solo pays a premium.",
+			"nonprofit": 1.0,
+			"for_profit": 0.9,
+			"academic": 1.05,
+			"independent": 1.15
+		},
+		"counterparty_factors": {
+			"_description": "Who you owe changes what it costs (ADR-0013 major input; ADR-0007 counterparty dread). philanthropist = 0.0 => a gift, not a debt. shadow (desperation) = the punitive last resort.",
+			"bank": 1.0,
+			"vc": 0.85,
+			"government": 0.75,
+			"foundation": 0.8,
+			"philanthropist": 0.0,
+			"shadow": 2.2
+		},
+		"offer_tiers": {
+			"_description": "Reputation-gated menu quality (ADR-0013: better standing => better menus). The instrument's rep_channel picks safety- or finance-rep; that value selects the highest threshold it clears; counts[tier] caps concurrent offers.",
+			"thresholds": [0, 30, 60],
+			"counts": [2, 3, 3]
+		},
+		"instruments": {
+			"bank_loan": {
+				"name": "Bank term loan",
+				"factory": "loan",
+				"counterparty": "bank",
+				"rep_channel": "finance",
+				"principal_min": 30000,
+				"principal_max": 80000,
+				"principal_multiplier": 1.2,
+				"term_months": 3.5,
+				"base_rate": 0.008,
+				"non_cash": {},
+				"availability": { "min_rep": 15, "max_leverage": 3.0, "org_types": [] }
+			},
+			"credit_line": {
+				"name": "Revolving credit line",
+				"factory": "loan",
+				"counterparty": "bank",
+				"rep_channel": "finance",
+				"principal_min": 60000,
+				"principal_max": 160000,
+				"principal_multiplier": 1.15,
+				"term_months": 4.0,
+				"base_rate": 0.010,
+				"non_cash": {},
+				"availability": { "min_rep": 45, "max_leverage": 1.5, "org_types": [] }
+			},
+			"vc_equity": {
+				"name": "VC equity round",
+				"factory": "equity",
+				"counterparty": "vc",
+				"rep_channel": "finance",
+				"principal_min": 120000,
+				"principal_max": 400000,
+				"principal_multiplier": 1.0,
+				"term_months": 0.0,
+				"base_rate": 0.0,
+				"non_cash": { "equity_dilution": 0.12, "board_seat": true },
+				"availability": { "min_rep": 30, "min_hype": 25, "max_leverage": 5.0, "org_types": ["for_profit"] }
+			},
+			"grant_strings": {
+				"name": "Directed grant (agenda strings)",
+				"factory": "funding_strings",
+				"counterparty": "government",
+				"rep_channel": "safety",
+				"principal_min": 25000,
+				"principal_max": 70000,
+				"principal_multiplier": 0.10,
+				"term_months": 4.0,
+				"base_rate": 0.0025,
+				"non_cash": { "agenda_narrowing": true },
+				"availability": { "min_rep": 25, "org_types": [] }
+			},
+			"philanthropy": {
+				"name": "Philanthropic gift",
+				"factory": "philanthropy",
+				"counterparty": "philanthropist",
+				"rep_channel": "safety",
+				"principal_min": 15000,
+				"principal_max": 45000,
+				"principal_multiplier": 1.0,
+				"term_months": 0.0,
+				"base_rate": 0.0,
+				"appearance_chance": 0.35,
+				"non_cash": {},
+				"availability": { "min_rep": 30, "org_types": [] }
+			},
+			"desperation": {
+				"name": "Desperation payroll lever",
+				"factory": "desperation_payroll",
+				"counterparty": "shadow",
+				"rep_channel": "finance",
+				"principal_min": 0,
+				"principal_max": 0,
+				"principal_multiplier": 1.0,
+				"term_months": 2.5,
+				"base_rate": 0.008,
+				"non_cash": { "secret": true },
+				"availability": { "min_rep": 0, "org_types": [] }
+			}
+		}
 	}
 }
