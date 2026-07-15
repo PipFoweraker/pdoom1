@@ -430,6 +430,57 @@ one-pass-generated UI/UX by end of day. **BUT sequencing: mechanics (L2) drive t
 UI/scenes/office-representation** — Pip's explicit order. Portraits/banners/icons (art
 batch #649) are L2-independent and safe now; screen-layout art waits for L2.
 
+## Playtest round 4 (2026-07-16 PM) — L2 specced from feel + the today-pass directive
+
+**Pip's directive:** *"My main problem is there aren't enough smaller actions demanding
+my time, and also that I only have 3 AP per turn cycle when we're meant to be queueing up
+more like a month's worth of effort. This needs to be fixed soon so I can patch everything
+else out, so we'll do at least one mechanical pass today."* → **L2 Phase 1 (Attention
+baseline) authorized for a mechanical pass today.**
+
+### The hiring pipeline (fishing-line applied to hiring — DQ-24 made concrete)
+Multi-stage gated, each stage an **Attention-demand**:
+1. **Source:** *advertise* (candidates arrive in the pool **over time**) OR *tap existing
+   connections* (faster, gated by who you know — social-capital compounding).
+2. **Applicants inflow over a period** (advertise = time-delayed, the fishing-line).
+3. **Interview** (costs AP/Attention) → yields candidate info: **interviewing reduces the
+   hidden portion of the candidate/persona card.** Hire WITHOUT interviewing = legal but
+   **more stays hidden** — a scouting gamble. *(This makes hiring an SA/fog problem —
+   pay Attention to see the candidate, or bet blind. Hiring IS scouting, ADR-0004.)*
+4. **Offer** → possible **salary negotiation**.
+5. **Onboarding** (become an employee): remote?, **visa?**, where do they work from?,
+   **send a laptop?**, **day-one mentoring?** — each an Attention-demand.
+
+### Admin overhead (dial-5 proposal B made concrete)
+- Full-time vs part-time changes **admin overhead**.
+- Chasing receipts / paperwork = recurring Attention-demands.
+- **Payroll must be paid; in a hierarchy, payroll must be APPROVED** → cash becomes
+  **fluctuating (approval-gated spikes), not a steady daily wage drain** (spiky-cash-flow
+  philosophy, ADR-0012, applied to payroll). Ops/admin hires buy this overhead down.
+
+### Individual researchers, not generic (personified-provenance + attachment)
+- Researchers **pick a thing and work toward it** (workstreams, ADR-0011 #4); need
+  **check-ins** (Attention-demand).
+- **An individual employee has an individual problem that triggers an event** — a NAMED
+  researcher's problem (Sage's crisis), not the current generic "there's an employee
+  problem." *(This IS the "my minions bring me information" provenance principle + the
+  XCOM-attachment lever + DQ-15 archetypes + the burnout ruling — you care because it's
+  a person, not a token. "More mature mechanism," Pip.)*
+
+### Coherence note (Fable): this is 5 decided principles converging
+DQ-24 typed demands · the fishing-line (ADR-0009 durations) · hiring-as-scouting
+(ADR-0004 pay-to-see) · personified provenance (workshop-3) · the admin-tax + attachment
+(dial-5 B + burnout ruling). Not new scope — the concrete shape of what's already ruled.
+
+### TODAY's mechanical pass — L2 Phase 1 (Attention baseline ONLY)
+Scope: replace the legacy per-turn AP pool (~3-5/turn) with a real **monthly founder
+Attention budget** (data-driven, ~20/mo, ADR-0011) spent at plan phase against queued
+actions; actions carry Attention costs; the plan phase queues a month's worth. Re-sweep
+to REPORT the new balance baseline (old parity NOT required — economy intentionally
+changes; re-calibration expected after). **OUT of today's scope (next waves, build as the
+coherent pipeline above, NOT as scattered filler):** the hiring pipeline stages, admin
+overhead, individual-researcher events, plan-screen visual redesign.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
