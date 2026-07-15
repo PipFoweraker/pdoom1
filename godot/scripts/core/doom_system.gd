@@ -71,9 +71,9 @@ var _pending_rival_doom: float = 0.0
 # ============================================================================
 var doom_velocity: float = 0.0
 var doom_momentum: float = 0.0
-var momentum_accumulation_rate: float = 0.15
+var momentum_accumulation_rate: float = 0.05
 var momentum_decay_rate: float = 0.92
-var momentum_cap: float = 8.0
+var momentum_cap: float = 2.0
 
 # Multipliers/modifiers retained as an extension point (unused by the stream model in v1).
 var doom_multipliers: Dictionary = {}
@@ -181,9 +181,9 @@ func _advance_intermediaries(state: GameState) -> void:
 
 	# --- Player frontier + safety absorption + alarm, from the PRODUCTIVE researcher roster.
 	# Reuse the engine's productive-count discipline (managed AND compute-fed researchers work).
-	var cap_gain := _w("cap_frontier_gain", 0.9)          # frontier per productive capability researcher / tick
-	var absorb_gain := _w("safety_absorb_gain", 1.15)     # absorption per productive safety researcher / tick
-	var alarm_gain := _w("alarm_gain", 0.14)              # global_alarm per productive safety researcher / tick
+	var cap_gain := _w("cap_frontier_gain", 60.0)         # frontier per productive capability researcher / tick
+	var absorb_gain := _w("safety_absorb_gain", 8.0)      # absorption per productive safety researcher / tick
+	var alarm_gain := _w("alarm_gain", 0.05)              # global_alarm per productive safety researcher / tick
 
 	var cap_workers := 0
 	var safety_workers := 0
@@ -260,11 +260,11 @@ func _compute_streams(state: GameState) -> Dictionary:
 	for actor in state.frontier_capability.keys():
 		frontier_max = maxf(frontier_max, float(state.frontier_capability[actor]))
 	# vvv R2-Q9 v1 CLAMP (LOUD REVISIT MARKER — streams clamp at 0 in v1; NOT SETTLED) vvv
-	s["overhang"] = _w("W_frontier", 0.000145) * maxf(0.0, frontier_max - state.safety_absorption)
+	s["overhang"] = _w("W_frontier", 0.000039) * maxf(0.0, frontier_max - state.safety_absorption)
 	# ^^^ revisit together with the natively-negative alarm stream (DQ-21 R2-Q9) ^^^
 
 	# (c) diffusion — chronic floor from general_capability.
-	s["diffusion"] = _w("W_general", 0.02) * state.general_capability
+	s["diffusion"] = _w("W_general", 0.0005) * state.general_capability
 
 	# (d) compute — dedicated_ai_compute fuel term (small in v1; the ocean has no own term).
 	s["compute"] = _w("W_compute", 0.0) * state.dedicated_ai_compute

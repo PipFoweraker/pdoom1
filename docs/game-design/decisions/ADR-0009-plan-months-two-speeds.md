@@ -21,7 +21,7 @@ month ≈ 114 / 186 / 234 / 270 turns; quarter ≈ 38 / 62 / 78 / 90.
 
 ## Decision
 
-1. **The turn is a month.** Fixed grain, v1. Plan phase: allocate staff and founder
+1. **The turn is a month (decision cadence — a plan LAYER over day-grain sim ticks, not a re-grain; see clarification below).** Fixed grain, v1. Plan phase: allocate staff and founder
    hours, queue strategic actions, explicitly set reserve (slack).
    *Implementation clarification (2026-07-14, PR #636):* "the turn is a month" means
    the **decision cadence** — implemented as a plan **layer** over day-grain simulation
