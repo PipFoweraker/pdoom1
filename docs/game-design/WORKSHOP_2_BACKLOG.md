@@ -283,9 +283,27 @@ more interesting."*
 - **T9 floor target (Pip):** no standard-policy run dies < 6 months; early game nearly
   unlosable w.r.t. compounding debt. Fed into #638's final iteration.
 - **DQ-25 · Desperation-lever revisit** — Pip wants the mechanic + flavor re-understood
-  (ADR-0003's catch-up machinery); gather solver-bot data (EE-9) first, then a workshop
-  beat. First structural finding (EE-9, pre-migration data): the lever is a plan-phase
-  action whose doom trigger only re-checks at month boundaries — candidate window-verb.
+  (ADR-0003's catch-up machinery); solver-bot data now in (EE-9, PR #642,
+  `docs/balance/DESPERATION_SOLVER.md`, calibrated pre-stream-migration constants).
+  **Finding: the lever is a trap that reads as help.** Firing it earlier/more is
+  *monotonically worse* (baseline 14.0mo → lever-always 11.5), and it silently converts
+  doom deaths into ledger deaths (1→12) — the visible −10 doom hides a compounding
+  governance liability. Cross-validated three ways: solver monotone, `fundraise_first`
+  (14.0) beats `loan_desperation_reactive` (13.0), and the opening-book miner flags
+  `desperation_lever` as a top loser signal. This is ADR-0003 "every mitigation is a
+  loan" proving itself. Design beat owed: is the reveal legible enough, or is it a
+  *too-hidden* trap (honesty line)? Re-confirm numbers post-#643 (streams change
+  ledger→doom conversion).
+- **ADR-0015 migration status (PR #643, awaiting Pip review)** — doom is now a
+  nine-stream accumulating rate; sweep feel preserved (do_nothing 14, T9 held, mortality
+  PASS, ordering intact). **Structurally complete; one content tail remains:** event/
+  action JSON (`data/events/*.json`) still carries inert/clobbered doom writes routed
+  through two generic sinks (`add_resources`/`resource_accessor`) — per-event
+  intermediary re-authoring is a **content lane** (the "event-intermediary content
+  pass"), owed before the printed-delta ban is 100% true in data. Also: R2-Q9 hazard-
+  stream ≥0 clamp shipped with a LOUD in-code revisit marker (Pip unsettled, DQ-21).
+  **Post-merge todo:** regenerate EE-9/EE-10 balance docs (one command) on the stream
+  base — their current numbers are pre-stream-migration.
 - **DQ-26 · VC/equity depth revisit** *(Pip 2026-07-15, on approving #641)* — the L5
   instruments ship with equity dilution + board seats as inert standing terms (DQ-7
   stubs). Future work: (a) make VC investment *interesting* as a mechanic (what does a

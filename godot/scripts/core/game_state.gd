@@ -16,6 +16,28 @@ var doom_history: Array[float] = []  # Per-turn doom snapshots for the trend gra
 # ADR-0002: area under the survival curve — sum of (100 - doom) over turns actually
 # survived. The lexicographic score tiebreaker ("doom-years averted"); accrues in-engine.
 var doom_integral: float = 0.0
+
+# ADR-0015 / DQ-21 world-state intermediaries: doom is computed from THESE (never written
+# directly). Actions/events/rivals write intermediaries; DoomSystem reads them each day tick
+# and sums the named streams into the doom rate. Every one is L6-attributable (guard rule).
+var ambient_risk: float = 0.0                  # baseline stream — year-keyed background floor
+var frontier_capability: Dictionary = {}       # actor_id -> capability level; "player" is the named slice
+var general_capability: float = 0.0            # diffusion stream — chronic commoditized floor (ratchet)
+var global_compute: float = 0.0                # the slow ocean (schedule furniture; no own doom term)
+var dedicated_ai_compute: float = 0.0          # compute stream — the controllable fleet
+var safety_absorption: float = 0.0             # offsets frontier in the overhang gap (accumulated safety)
+var global_alarm: float = 0.0                  # alarm stream (small relief) + typed-damper gate
+var global_panic: float = 0.0                  # panic stream — social accelerant
+var political_pressure: float = 0.0            # signed disposition; gate only (no stream of its own)
+var doom_dampers: Array = []                   # typed dampers: {target, strength, expires_turn}
+var doom_pulses: Array = []                    # ADR-0005 scheduled pulse envelopes (v1: none)
+var sacred_chain_log: Array = []               # completed sacred-object chains (trend-invariant exemption)
+
+## player_frontier — the DQ-22-read alias for frontier_capability["player"].
+var player_frontier: float:
+	get:
+		return float(frontier_capability.get("player", 0.0))
+
 var action_points: int = 3
 var max_action_points: int = 3  # Per-turn AP cap; difficulty modifiers adjust this (game_manager._apply_difficulty_settings)
 var stationery: float = 100.0  # Office supplies, depletes with staff usage
@@ -207,6 +229,21 @@ func reset():
 	technical_debt = 0.0  # Reset tech debt (Issue #416)
 	research_quality_mode = DEFAULT_RESEARCH_QUALITY  # Issue #500
 
+	# ADR-0015 / DQ-21: fresh world-state intermediaries. 2017 spawn starts low and slow
+	# (ambient_risk climbs with the schedule; frontier/absorption accumulate from play).
+	ambient_risk = Balance.num("doom.base_per_turn", 0.06)
+	frontier_capability = {"player": 0.0}
+	general_capability = 0.0
+	global_compute = 0.0
+	dedicated_ai_compute = compute
+	safety_absorption = 0.0
+	global_alarm = 0.0
+	global_panic = 0.0
+	political_pressure = 0.0
+	doom_dampers.clear()
+	doom_pulses.clear()
+	sacred_chain_log.clear()
+
 	safety_researchers = 0
 	capability_researchers = 0
 	compute_engineers = 0
@@ -331,6 +368,13 @@ func add_resources(gains: Dictionary):
 	if gains.has("reputation"):
 		reputation += gains["reputation"]
 	if gains.has("doom"):
+		# ADR-0015 REMAINDER (Legacy #15 / memo §7.1): this generic doom sink is the un-migrated
+		# tail of the clobber-bug class — event/scenario CONTENT (data/events/*.json) still carries
+		# literal "doom" deltas that flow here. In the real turn loop this write is CLOBBERED by
+		# `state.doom = doom_system.current_doom` at resolve, so it is an inert no-op (Finding A);
+		# it survives only for the direct-state unit tests. The AUTHORITY is DoomSystem's streams.
+		# The follow-up content lane re-authors each event to write an INTERMEDIARY (frontier /
+		# panic / alarm / …) instead of doom, at which point this branch is deleted.
 		doom += gains["doom"]
 		doom = clamp(doom, 0.0, 100.0)
 	if gains.has("technical_debt"):
@@ -769,6 +813,14 @@ static func format_score(turns: int, integral: int) -> String:
 # fidelity for mid-game save/load (and later DQ-11 fork/divergence).
 # ============================================================================
 
+static func _snap_array(arr) -> Array:
+	## Serialization-boundary float snap for arrays (see DoomSystem.SAVE_QUANTUM).
+	var out: Array = []
+	for v in arr:
+		out.append(DoomSystem._snap(float(v)))
+	return out
+
+
 func to_dict() -> Dictionary:
 	"""Serialize state for UI + save/load (see convention block above)"""
 	var rival_summaries = []
@@ -787,7 +839,7 @@ func to_dict() -> Dictionary:
 	var doom_data = {}
 	if doom_system:
 		doom_data = doom_system.to_dict()
-		doom_data["doom"] = doom
+		doom_data["doom"] = DoomSystem._snap(doom)
 		doom_data["doom_trend"] = doom_system._get_doom_trend()
 		doom_data["doom_status"] = doom_system.get_doom_status()
 		doom_data["momentum_description"] = doom_system.get_momentum_description()
@@ -830,8 +882,26 @@ func to_dict() -> Dictionary:
 		"ledger": ledger.to_dict() if ledger else {},
 		"month_plan": month_plan.to_dict() if month_plan else {},  # L1/ADR-0009 Attention + reserve + WIP
 		"cause_log": cause_log.duplicate(true),  # EE-8 attribution trail
-		"doom": doom,
-		"doom_history": doom_history.duplicate(),  # #512 trend graph
+		# Doom-adjacent floats are SNAPPED at the serialization boundary (both directions,
+		# same quantum as DoomSystem.SAVE_QUANTUM): the stream model produces full-precision
+		# doubles, and Godot's JSON parse is not correctly-rounded (calibration §7.2) — a
+		# 1-ulp corrupted parse re-snaps to the identical double, keeping save/load
+		# deep-equality byte-stable. Live dynamics never see the quantum.
+		"doom": DoomSystem._snap(doom),
+		"doom_history": _snap_array(doom_history),  # #512 trend graph
+		# ADR-0015 / DQ-21 world-state intermediaries (doom is computed from these)
+		"ambient_risk": DoomSystem._snap(ambient_risk),
+		"frontier_capability": DoomSystem._snap_dict(frontier_capability),
+		"general_capability": DoomSystem._snap(general_capability),
+		"global_compute": DoomSystem._snap(global_compute),
+		"dedicated_ai_compute": DoomSystem._snap(dedicated_ai_compute),
+		"safety_absorption": DoomSystem._snap(safety_absorption),
+		"global_alarm": DoomSystem._snap(global_alarm),
+		"global_panic": DoomSystem._snap(global_panic),
+		"political_pressure": DoomSystem._snap(political_pressure),
+		"doom_dampers": doom_dampers.duplicate(true),
+		"doom_pulses": doom_pulses.duplicate(true),
+		"sacred_chain_log": sacred_chain_log.duplicate(true),
 		"doom_system": doom_data,
 		"risk_system": risk_data,
 		"action_points": action_points,
@@ -853,7 +923,7 @@ func to_dict() -> Dictionary:
 		"management_capacity": get_management_capacity(),
 		"unmanaged_count": get_unmanaged_count(),
 		"turn": turn,
-		"doom_integral": doom_integral,
+		"doom_integral": DoomSystem._snap(doom_integral),
 			"turn_display": get_turn_display(),
 		"calendar": get_current_date(),
 		"game_over": game_over,
@@ -898,10 +968,27 @@ func from_dict(data: Dictionary) -> void:
 	papers = float(data.get("papers", 0.0))
 	reputation = float(data.get("reputation", 10.0))
 	governance = float(data.get("governance", 50.0))  # was forgotten pre-L7
-	doom = float(data.get("doom", 50.0))
+	# Doom-adjacent floats re-snap on load (idempotent under the 1-ulp JSON parse
+	# corruption — see the to_dict comment + DoomSystem.SAVE_QUANTUM).
+	doom = DoomSystem._snap(float(data.get("doom", 50.0)))
 	doom_history.clear()
 	for d in data.get("doom_history", []):
-		doom_history.append(float(d))
+		doom_history.append(DoomSystem._snap(float(d)))
+	# ADR-0015 / DQ-21 world-state intermediaries
+	ambient_risk = DoomSystem._snap(float(data.get("ambient_risk", Balance.num("doom.base_per_turn", 0.06))))
+	frontier_capability = DoomSystem._snap_dict(data.get("frontier_capability", {"player": 0.0}) as Dictionary)
+	if not frontier_capability.has("player"):
+		frontier_capability["player"] = 0.0
+	general_capability = DoomSystem._snap(float(data.get("general_capability", 0.0)))
+	global_compute = DoomSystem._snap(float(data.get("global_compute", 0.0)))
+	dedicated_ai_compute = DoomSystem._snap(float(data.get("dedicated_ai_compute", 0.0)))
+	safety_absorption = DoomSystem._snap(float(data.get("safety_absorption", 0.0)))
+	global_alarm = DoomSystem._snap(float(data.get("global_alarm", 0.0)))
+	global_panic = DoomSystem._snap(float(data.get("global_panic", 0.0)))
+	political_pressure = DoomSystem._snap(float(data.get("political_pressure", 0.0)))
+	doom_dampers = (data.get("doom_dampers", []) as Array).duplicate(true)
+	doom_pulses = (data.get("doom_pulses", []) as Array).duplicate(true)
+	sacred_chain_log = (data.get("sacred_chain_log", []) as Array).duplicate(true)
 	action_points = int(data.get("action_points", 3))
 	max_action_points = int(data.get("max_action_points", 3))
 	committed_ap = int(data.get("committed_ap", 0))
@@ -918,7 +1005,7 @@ func from_dict(data: Dictionary) -> void:
 
 	# Game state
 	turn = int(data.get("turn", 0))
-	doom_integral = float(data.get("doom_integral", 0.0))
+	doom_integral = DoomSystem._snap(float(data.get("doom_integral", 0.0)))
 	game_over = bool(data.get("game_over", false))
 	victory = bool(data.get("victory", false))
 	has_cat = bool(data.get("has_cat", false))

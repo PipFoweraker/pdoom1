@@ -3,11 +3,10 @@ class_name RivalLabs
 ## Rival AI labs that compete with the player
 ## Issue #474: Organization discovery system
 
-## Passive "capability-overhang" doom each rival applies per turn, scaling with its
-## accumulated capability_progress — a GROWING pressure a fixed safety capacity cannot
-## offset forever (the unbounded-mortality term for issue #562 / DQ-1).
-## Placeholder magnitude — tuning is workshop #2.
-const CAPABILITY_OVERHANG_DOOM_PER_PROGRESS: float = 0.025
+# ADR-0015 (Legacy #12): CAPABILITY_OVERHANG_DOOM_PER_PROGRESS is RETIRED. Capability-overhang
+# hazard is no longer a rival-emitted doom literal — it is the DoomSystem `overhang` stream,
+# which reads each rival's accumulated capability_progress (its frontier_capability slice) and
+# converts frontier-minus-absorption into hazard. No rival code writes doom anymore.
 
 # Organization visibility states
 enum VisibilityState {
@@ -145,7 +144,14 @@ static func check_discovery(rival: RivalLab, player_state: GameState, rng: Rando
 	return result
 
 static func process_rival_turn(rival: RivalLab, player_state: GameState, rng: RandomNumberGenerator) -> Dictionary:
+	## ADR-0015: rivals no longer emit a per-tick doom literal. A rival advancing the frontier
+	## raises its capability_progress (the actor's frontier_capability slice — DoomSystem's
+	## overhang stream converts that accumulated stock into hazard). Reckless, high-visibility
+	## capability moves ALSO raise global_panic (the social accelerant, DQ-21 §1.8). The old
+	## per-action doom + capability_overhang literals + the per_tick_doom_scale shim are RETIRED.
+	## doom_contribution is retained at 0.0 for caller compatibility.
 	var result = {"name": rival.name, "actions": [], "doom_contribution": 0.0, "visible": rival.is_visible_to_player()}
+	var panic_from_caps: float = Balance.num("rivals.panic_per_capability_action", 0.0)
 	var num_actions = 1 if rival.funding < 100000 else (2 if rival.funding < 500000 else 3)
 	for i in range(num_actions):
 		var action = _choose_rival_action(rival, player_state, rng)
@@ -155,32 +161,23 @@ static func process_rival_turn(rival: RivalLab, player_state: GameState, rng: Ra
 				rival.funding -= 60000
 				if rival.aggression > 0.6:
 					rival.capability_progress += 5.0
-					result["doom_contribution"] += 2.0
 				else:
 					rival.safety_progress += 3.0
-					result["doom_contribution"] -= 0.5
 			"buy_compute":
 				rival.funding -= 50000
-				result["doom_contribution"] += 0.5
 			"publish_paper":
 				rival.reputation += 5.0
+				# An aggressive lab publishing a capability result is a reckless, high-visibility
+				# move -> global_panic (bad regulation + racing). A safety lab's paper does not.
 				if rival.aggression > 0.6:
-					result["doom_contribution"] += 3.0
-				else:
-					result["doom_contribution"] -= 2.0
+					player_state.global_panic += panic_from_caps
 			"fundraise":
 				rival.funding += 150000 + (rival.reputation * 1000)
 			"capability_research":
 				rival.capability_progress += 10.0
-				result["doom_contribution"] += 5.0
+				player_state.global_panic += panic_from_caps
 			"safety_research":
 				rival.safety_progress += 8.0
-				result["doom_contribution"] -= 3.0
-	# Passive capability-overhang pressure: grows as this rival's capability_progress
-	# accumulates, so advanced rivals apply doom a fixed safety capacity cannot fully
-	# offset over time (issue #562 / DQ-1 mortality term). Scale from Balance (L9 #621).
-	result["doom_contribution"] += rival.capability_progress \
-		* Balance.num("rivals.capability_overhang_doom_per_progress", CAPABILITY_OVERHANG_DOOM_PER_PROGRESS)
 	return result
 
 static func _choose_rival_action(rival: RivalLab, _player_state: GameState, rng: RandomNumberGenerator) -> String:

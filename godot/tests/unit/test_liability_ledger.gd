@@ -12,6 +12,15 @@ func _fresh_state(seed_str: String):
 	s.money = 245000.0
 	s.governance = 50.0
 	s.reputation = 50.0
+	# ADR-0015: these tests exercise the LEDGER's own conversion contract in isolation
+	# (synchronous doom arithmetic, controlled soak). With a doom_system attached the
+	# ledger routes doom as a buffered STREAM INPUT (applied on the next doom tick) —
+	# correct in the real loop, but it would decouple the soak's hand-rolled doom math.
+	# Detach the authority so Ledger._add_doom takes its documented lightweight-double
+	# fallback (state.doom +=). Stream routing is covered by test_doom_system + the sweep.
+	if s.doom_system:
+		s.doom_system.free()
+		s.doom_system = null
 	return s
 
 

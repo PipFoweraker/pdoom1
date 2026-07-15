@@ -23,11 +23,18 @@ func test_funding_strings_bills_governance():
 	assert_eq(s.money, before + 40000, "funding pays out")
 	assert_eq(s.ledger.entries[0].currency, "governance", "strings bill in governance")
 
-func test_desperation_lever_suppresses_doom_and_plants_secret():
+func test_desperation_lever_plants_secret_without_printed_doom():
+	# ADR-0015: no action writes doom. The lever's catch-up benefit is now a
+	# safety_absorption reprieve (Balance doom.streams.action_desperation_absorb,
+	# priced 0 in v1); the SECRET compounding liability (the real teeth) is unchanged.
 	var s = _fresh_state()
 	var before_doom = s.doom
+	var before_absorb = s.safety_absorption
 	GameActions.execute_action("desperation_lever", s)
-	assert_lt(s.doom, before_doom, "desperation suppresses doom now")
+	assert_eq(s.doom, before_doom, "no printed doom delta (ADR-0015)")
+	assert_almost_eq(s.safety_absorption,
+		before_absorb + Balance.num("doom.streams.action_desperation_absorb", 0.0), 0.0001,
+		"the catch-up benefit is a Balance-priced absorption reprieve")
 	assert_eq(s.ledger.secret_entries().size(), 1, "desperation plants a SECRET liability")
 
 func test_staff_rider_grants_ap_and_rider():

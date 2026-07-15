@@ -71,6 +71,9 @@ static func add(state, resource_name: String, value) -> bool:
 		"reputation":
 			state.reputation += value
 		"doom":
+			# ADR-0015 REMAINDER (Legacy #15 / memo §7.1): event-content doom sink. Clobbered by
+			# doom resolution in the real loop (inert no-op); the authority is DoomSystem's streams.
+			# Follow-up content lane re-authors events to write intermediaries instead.
 			state.doom += value
 		"compute_engineers":
 			# Compute engineers use legacy count only (no Researcher object)

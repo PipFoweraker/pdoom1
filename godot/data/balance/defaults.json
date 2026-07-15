@@ -53,7 +53,21 @@
 			"alignment_base": -0.25
 		},
 		"unproductive_per_staff": 0.025,
-		"status_cutoffs": { "safe": 25.0, "warning": 50.0, "danger": 70.0, "critical": 90.0 }
+		"streams": {
+			"_description": "ADR-0015 nine-stream coefficients (doom_system.gd). doom_rate = sum of named streams read from the DQ-21 world-state intermediaries. These are the freely-tuned pricing layer; the stream FUNCTION is structure. W_* weight a stream's intermediary; *_gain set how fast an intermediary accumulates per day tick; *_decay fade the social stocks. Priced by the 72-run L1 sweep to reproduce the calibration headline (DOOM_STREAMS_v1.md).",
+			"W_frontier": 0.000039,
+			"W_general": 0.0005,
+			"W_compute": 0.0,
+			"W_panic": 0.02,
+			"W_alarm": 0.02,
+			"cap_frontier_gain": 60.0,
+			"safety_absorb_gain": 8.0,
+			"alarm_gain": 0.05,
+			"diffusion_gain": 0.00006,
+			"alarm_decay": 0.985,
+			"panic_decay": 0.97,
+			"leak_panic_scale": 0.02
+		}
 	},
 	"salaries": {
 		"_description": "Annual salary bases. The /260 workday divisor is a TIME constant and stays in code until the L0 Clock lands (Clock seam wiring is an L9 follow-up).",
@@ -77,9 +91,8 @@
 		"per_staff": 0.5
 	},
 	"rivals": {
-		"_description": "Rival lab coefficients (rivals.gd). Per-action magnitudes remain in code (follow-up batch). per_tick_doom_scale re-denominates the per-DAY-TICK rival doom to the month cadence (ADR-0009); it multiplies the summed per-action doom + overhang in turn_manager._step_process_rival_turns (1.0 = pre-L1 unscaled).",
-		"capability_overhang_doom_per_progress": 0.002,
-		"per_tick_doom_scale": 0.02,
+		"_description": "Rival lab coefficients (rivals.gd). ADR-0015: rivals no longer emit doom literals — capability_overhang_doom_per_progress and per_tick_doom_scale (the pre-L1 shim) are RETIRED (Legacy #7/#12). Rival capability_progress IS the actor's frontier_capability slice, converted by the DoomSystem overhang stream; panic_per_capability_action feeds global_panic when a rival makes a reckless capability move.",
+		"panic_per_capability_action": 0.05,
 		"discovery": { "base_chance": 0.15, "chance_per_rep_above_threshold": 0.005 }
 	},
 	"risk": {

@@ -95,15 +95,19 @@ func test_hire_alignment_researcher_execution():
 	assert_eq(state.get_researcher_count_by_spec("alignment"), before + 1, "Alignment researcher should join")
 
 func test_safety_research_execution():
-	# Test safety research action - doom reduction scales with safety_researchers count
-	# Need at least 1 safety researcher for any doom reduction
+	# ADR-0015: no action writes doom. Safety research raises the safety_absorption
+	# intermediary (Balance-scaled); the overhang stream converts it on the doom tick.
 	state.safety_researchers = 1
 	state.research = 20.0  # Ensure enough research to pay cost
 	var initial_doom = state.doom
+	var initial_absorb = state.safety_absorption
 
 	var result = GameActions.execute_action("safety_research", state)
 
-	assert_lt(state.doom, initial_doom, "Doom should decrease when safety researchers > 0")
+	assert_eq(state.doom, initial_doom, "No printed doom delta (ADR-0015)")
+	assert_almost_eq(state.safety_absorption,
+		initial_absorb + 1.0 * Balance.num("doom.streams.action_safety_absorb", 0.0), 0.0001,
+		"Safety research raises safety_absorption by the Balance-priced amount")
 
 func test_team_building_execution():
 	# Test team building action
@@ -113,7 +117,7 @@ func test_team_building_execution():
 	var result = GameActions.execute_action("team_building", state)
 
 	assert_gt(state.reputation, initial_reputation, "Reputation should increase")
-	assert_lt(state.doom, initial_doom, "Doom should decrease")
+	assert_eq(state.doom, initial_doom, "No printed doom delta (ADR-0015)")
 
 func test_media_campaign_execution():
 	# Test media campaign action
@@ -170,8 +174,8 @@ func test_safety_audit_execution():
 
 	var result = GameActions.execute_action("audit_safety", state)
 
-	# Safety audit should reduce doom and increase reputation
-	assert_lt(state.doom, initial_doom, "Doom should decrease")
+	# ADR-0015: the audit raises safety_absorption (Balance-priced), never doom directly
+	assert_eq(state.doom, initial_doom, "No printed doom delta (ADR-0015)")
 	assert_gt(state.reputation, initial_reputation, "Reputation should increase")
 
 func test_action_execution_returns_result():
