@@ -142,13 +142,16 @@ func calculate_doom_change(state: GameState) -> Dictionary:
 
 	# (6) Integrate: the LEVEL accumulates the RATE. May FALL on net-negative ticks (legal —
 	#     "pulled something impressive off"). Clamp 0..100 is a display/lethality bound.
-	doom_rate = total_rate
-	current_doom += total_rate
-	current_doom = clamp(current_doom, 0.0, 100.0)
+	#     Snap the persisted scalars to the binary-exact grid (SAVE_QUANTUM) so save/load is
+	#     LOSSLESS (the "next turn identical" replay must match bit-for-bit — see SAVE_QUANTUM).
+	doom_rate = _snap(total_rate)
+	current_doom = _snap(clamp(current_doom + total_rate, 0.0, 100.0))
+	doom_velocity = _snap(doom_velocity)
+	doom_momentum = _snap(doom_momentum)
 
 	# (7) Publish the streams for L6 chips / dev overlay / sweep, and run the trend invariant.
 	doom_sources = streams
-	rate_history.append(total_rate)
+	rate_history.append(doom_rate)
 	_check_trend_invariant(state, streams)
 
 	return {
@@ -226,8 +229,20 @@ func _advance_intermediaries(state: GameState) -> void:
 	state.global_alarm *= _w("alarm_decay", 0.985)
 	state.global_panic *= _w("panic_decay", 0.97)
 
+	# --- Snap every persisted intermediary to the binary-exact grid (SAVE_QUANTUM). The decay
+	#     multiplies produce arbitrary-precision doubles that fail Godot's JSON parse round-trip
+	#     (§7.2); keeping the stocks on a power-of-two grid makes save/load LOSSLESS (the
+	#     "next turn identical" replay must match bit-for-bit). Gameplay-invisible (grid ~1e-6).
+	state.frontier_capability["player"] = _snap(float(state.frontier_capability["player"]))
+	state.safety_absorption = _snap(state.safety_absorption)
+	state.general_capability = _snap(state.general_capability)
+	state.dedicated_ai_compute = _snap(state.dedicated_ai_compute)
+	state.ambient_risk = _snap(state.ambient_risk)
+	state.global_alarm = _snap(state.global_alarm)
+	state.global_panic = _snap(state.global_panic)
+
 	# --- political_pressure tracks the alarm/panic balance (signed disposition; gate only).
-	state.political_pressure = state.global_alarm - state.global_panic
+	state.political_pressure = _snap(state.global_alarm - state.global_panic)
 
 func _compute_streams(state: GameState) -> Dictionary:
 	"""Read the intermediaries and produce the named hazard/relief streams (all Balance-priced).
@@ -463,29 +478,52 @@ func set_doom_multiplier(source: String, multiplier: float) -> void:
 # SERIALIZATION (save/load)
 # ============================================================================
 
+## Doom-adjacent float quantum — a BINARY-EXACT grid (2^-20 ≈ 9.5e-7). Godot's JSON parse
+## is not correctly-rounded (L1 calibration §7.2): a full-precision double can come back
+## from a save 1 ulp off, breaking save/load deep-equality. The fix is to keep every
+## doom-adjacent LIVE value on a power-of-two grid: snappedf(v, 2^-20) yields N·2^-20, which
+## is an exactly-representable double whose decimal string round-trips through Godot's parser
+## intact (0.25 survives, 0.008 does not — §7.2). A decimal quantum (1e-6) does NOT work: it
+## sits between representable doubles, so a 1-ulp parse drift can cross a snap boundary and
+## AMPLIFY into a full-quantum divergence. The grid is far below any gameplay scale (doom
+## deaths at 100, streams ~0.01–10), so the live dynamics are unaffected (sweep-verified).
+const SAVE_QUANTUM := 1.0 / 1048576.0  # == 2^-20, binary-exact (computed so the const is precise)
+
+static func _snap(v: float) -> float:
+	return snappedf(v, SAVE_QUANTUM)
+
+static func _snap_dict(d: Dictionary) -> Dictionary:
+	var out := {}
+	for k in d.keys():
+		out[k] = snappedf(float(d[k]), SAVE_QUANTUM)
+	return out
+
 func to_dict() -> Dictionary:
+	var hist: Array = []
+	for v in rate_history:
+		hist.append(_snap(v))
 	return {
-		"current_doom": current_doom,
-		"doom_rate": doom_rate,
-		"doom_velocity": doom_velocity,
-		"doom_momentum": doom_momentum,
-		"pending_rival_doom": _pending_rival_doom,
-		"pending_stream_inputs": _pending_stream_inputs.duplicate(),
-		"doom_sources": doom_sources.duplicate(),
-		"rate_history": rate_history.duplicate(),
+		"current_doom": _snap(current_doom),
+		"doom_rate": _snap(doom_rate),
+		"doom_velocity": _snap(doom_velocity),
+		"doom_momentum": _snap(doom_momentum),
+		"pending_rival_doom": _snap(_pending_rival_doom),
+		"pending_stream_inputs": _snap_dict(_pending_stream_inputs),
+		"doom_sources": _snap_dict(doom_sources),
+		"rate_history": hist,
 	}
 
 func from_dict(data: Dictionary) -> void:
-	current_doom = float(data.get("current_doom", 50.0))
-	doom_rate = float(data.get("doom_rate", 0.0))
-	doom_velocity = float(data.get("doom_velocity", 0.0))
-	doom_momentum = float(data.get("doom_momentum", 0.0))
-	_pending_rival_doom = float(data.get("pending_rival_doom", 0.0))
+	current_doom = _snap(float(data.get("current_doom", 50.0)))
+	doom_rate = _snap(float(data.get("doom_rate", 0.0)))
+	doom_velocity = _snap(float(data.get("doom_velocity", 0.0)))
+	doom_momentum = _snap(float(data.get("doom_momentum", 0.0)))
+	_pending_rival_doom = _snap(float(data.get("pending_rival_doom", 0.0)))
 	if data.has("pending_stream_inputs"):
-		_pending_stream_inputs = data["pending_stream_inputs"].duplicate()
+		_pending_stream_inputs = _snap_dict(data["pending_stream_inputs"])
 	if data.has("doom_sources"):
-		doom_sources = data["doom_sources"].duplicate()
+		doom_sources = _snap_dict(data["doom_sources"])
 	if data.has("rate_history"):
 		rate_history.clear()
 		for v in data["rate_history"]:
-			rate_history.append(float(v))
+			rate_history.append(_snap(float(v)))

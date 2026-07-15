@@ -434,14 +434,13 @@ func test_insider_threat_key_resignation_removes_a_researcher():
 	assert_string_contains(joined, "Fickle Fran", "Departure is named in the risk-event log line")
 
 func test_insider_threat_key_resignation_safe_with_no_researchers():
-	# No researchers on staff -> the scalar effects (research/reputation/doom)
-	# still apply, but the staffing loss is a safe no-op (no crash, no phantom note).
-	# Doom for risk events routes through state.doom_system (synced to state.doom
-	# later in the turn pipeline, not within _step_process_risk_pools itself), so
-	# assert on doom_system.current_doom directly rather than state.doom.
+	# No researchers on staff -> the scalar effects (research/reputation/doom) still apply,
+	# but the staffing loss is a safe no-op (no crash, no phantom note).
+	# ADR-0015: a risk shock's doom is not a direct level write — it routes as a buffered
+	# `panic` STREAM INPUT (add_event_doom -> add_stream_input) that the DoomSystem folds into
+	# the rate on the next tick. So it lands as a pending panic input here, not on current_doom.
 	assert_eq(state.researchers.size(), 0, "Start empty")
 	var initial_reputation = state.reputation
-	var initial_doom: float = state.doom_system.current_doom if state.doom_system else state.doom
 
 	state.risk_system.pools["insider_threat"] = 55.0
 
@@ -449,6 +448,12 @@ func test_insider_threat_key_resignation_safe_with_no_researchers():
 	turn_manager._step_process_risk_pools(results)
 
 	assert_eq(state.researchers.size(), 0, "Nobody to remove, nobody removed")
-	var after_doom: float = state.doom_system.current_doom if state.doom_system else state.doom
-	assert_gt(after_doom, initial_doom, "Scalar doom effect still applies")
+	var pending_panic: float = float(state.doom_system._pending_stream_inputs.get("panic", 0.0)) if state.doom_system else 0.0
+	assert_gt(pending_panic, 0.0, "Risk-shock doom routes to a buffered panic stream input (ADR-0015)")
+	# Confirm it actually LANDS on the next doom tick (raising the level).
+	var before_level: float = state.doom_system.current_doom if state.doom_system else state.doom
+	if state.doom_system:
+		state.doom_system.calculate_doom_change(state)
+	var after_level: float = state.doom_system.current_doom if state.doom_system else state.doom
+	assert_gt(after_level, before_level, "the buffered risk shock lands on the next tick")
 	assert_lt(state.reputation, initial_reputation, "Scalar reputation effect still applies")
