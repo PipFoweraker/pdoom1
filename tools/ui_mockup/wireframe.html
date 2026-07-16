@@ -99,6 +99,11 @@
       <div class="token worker" style="top:200px;left:250px">worker</div>
       <div class="token prop" style="top:130px;left:210px;width:40px;height:30px">desk</div>
       <div class="token prop" style="top:230px;left:120px;width:38px;height:28px">server</div>
+      <!-- 8: upgrade slots -- pencilled zones the player fills over time -->
+      <div class="token" style="bottom:14px;left:16px;width:96px;height:54px;border-style:dashed;border-color:var(--faint);color:var(--faint)">+ comfort<br>(cushions, beanbags)</div>
+      <div class="token" style="bottom:14px;left:124px;width:96px;height:54px;border-style:dashed;border-color:var(--amber);color:var(--amber)">+ kitchen /<br>morale (espresso)</div>
+      <div class="token" style="bottom:80px;right:14px;width:84px;height:58px;border-style:dashed;border-color:var(--compute);color:var(--compute)">+ compute<br>wall</div>
+      <div class="token" style="top:150px;left:250px;width:60px;height:40px;border-style:dashed;border-color:var(--faint);color:var(--faint)">empty desk<br>(fills on hire)</div>
     </div>
 
     <!-- side tabs + panel -->
@@ -131,6 +136,7 @@
     <div class="co"><h3><span class="n">5</span> Tabbed side panel</h3><p>One column, three jobs: Team/Candidates, Event Feed, Doom Barometer. Tabs keep it dense without a wall of panels. Framed with the UI panel-frame art.</p></div>
     <div class="co"><h3><span class="n">6</span> Doom trend graph</h3><p>Lower side panel -- a small area chart. Turns an empty panel into information + motion.</p></div>
     <div class="co"><h3><span class="n">7</span> Grouped action dock</h3><p>Actions along the bottom with icons + labels, grouped by type. Replaces a scattered button soup and anchors the bottom edge.</p></div>
+    <div class="co"><h3><span class="n">8</span> Upgrade slots (fill over time)</h3><p>Dashed zones = where the <b>upgrades system</b> drops assets as the player buys them: a comfort corner (cushions/beanbags), a kitchen/morale bar (espresso), a compute wall, empty desks that fill as you hire. The office visibly grows and gets fancier -- every upgrade is a new sprite in a reserved slot. See <b>docs/game-design/UPGRADES_ASSET_BRAINSTORM.md</b>.</p></div>
   </div>
 
   <p class="legend">// wireframe only -- boxes are placeholders for real sprites/panels. Everything here is rearrangeable. React freely.</p>
