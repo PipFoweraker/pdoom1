@@ -32,7 +32,17 @@
 		"desperation_payroll": { "severity_base": 1200.0, "severity_spread": 800.0, "fuse_turns": 55, "interest_rate": 0.008 },
 		"staff_rider": { "principal": 1200.0, "fuse_turns": 88, "interest_rate": 0.001 },
 		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 22, "interest_rate": 0.02 },
-		"expose": { "rep_per_1000": 2.5, "governance_multiplier": 0.5 }
+		"expose": { "rep_per_1000": 2.5, "governance_multiplier": 0.5 },
+		"appetite_promise": { "principal": 2000.0, "fuse_turns": 10, "interest_rate": 0.008 },
+		"resentment_debt": { "principal": 1500.0, "fuse_turns": 6, "interest_rate": 0.02 }
+	},
+	"hiring": {
+		"_description": "Hiring pipeline (BUILD_BRIEF_HIRING_PIPELINE Phase B): source -> interview -> offer -> onboard. Every stage is Attention-gated and duration-bearing (ADR-0009). advertise = money + slow multi-month trickle; connections = a reputation favor for one fast pre-vetted lead (success scales with standing). offer.* is the hidden self-worth range; onboarding.* gates a new hire's productivity.",
+		"advertise": { "cost_money": 8000.0, "cost_attention": 3, "campaign_months": 3, "per_month_min": 0, "per_month_max": 2, "reputation_gain": 1.0 },
+		"connections": { "cost_reputation": 6.0, "cost_attention": 2, "duration_ticks": 2, "rep_for_certainty": 80.0, "min_success": 0.05, "max_success": 0.95, "prevet_skill_min": 5, "prevet_skill_max": 8 },
+		"interview": { "cost_attention": 2, "duration_ticks": 3, "reveal_step": 1 },
+		"offer": { "cost_attention": 1, "duration_ticks": 2, "base_tolerance": 0.15, "money_appetite_weight": 0.5, "promise_discount": 0.20, "reject_scale": 2.0, "resentment_loyalty_penalty": 15, "read_spread": 0.06, "recruiter_min_skill": 4 },
+		"onboarding": { "foreign_modulo": 4, "laptop_money": 3000.0, "laptop_attention": 1, "visa_money": 5000.0, "visa_attention": 2, "mentoring_money": 0.0, "mentoring_attention": 2, "unproductive_multiplier": 0.4, "skimped_multiplier": 0.85, "attrition_risk": 0.15 }
 	},
 	"doom": {
 		"_description": "Doom momentum + per-source coefficients (doom_system.gd) and player-facing status cutoffs. Momentum is a low-commitment SWITCH (#638 ruling): momentum_enabled 0/1 kills the contribution, momentum_weight scales it; internal accumulators keep ticking while disabled so mid-run toggles behave.",

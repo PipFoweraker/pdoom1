@@ -75,6 +75,20 @@ func can_queue(attention_cost: int) -> bool:
 	return available() >= attention_cost
 
 
+func spend_attention(cost: int) -> bool:
+	"""Spend `cost` Attention from the AVAILABLE (un-reserved) pool at plan speed, without
+	minting a queued-strategic WIP entry. This is the primitive the hiring pipeline (and
+	other duration subsystems that track their own jobs) use: the founder currency is still
+	debited here, but the duration/target bookkeeping lives in the subsystem. Returns false
+	(no charge) if the cost doesn't fit within available Attention."""
+	if cost <= 0:
+		return true
+	if available() < cost:
+		return false
+	attention_spent += cost
+	return true
+
+
 func queue_strategic(action_id: String, attention_cost: int, duration_ticks: int, current_turn: int) -> bool:
 	"""Queue a strategic action at plan speed. Spends Attention now; the EFFECT lands
 	`duration_ticks` resolution ticks later (ADR-0009 §5). duration_ticks <= 0 is coerced

@@ -82,6 +82,12 @@ func advance_tick() -> Dictionary:
 	# Release duration-elapsed strategic WIP (seam: caller/L2 applies their effects).
 	last_released_strategic = state.month_plan.take_due_strategic(state.turn)
 
+	# Hiring pipeline (Phase B): resolve any interview/offer/connections jobs due this tick.
+	# Stream-neutral when no jobs are in flight (guarded inside on_tick), so pre-existing
+	# replays are unaffected.
+	if state.hiring != null:
+		state.hiring.on_tick(state)
+
 	var fired: Array = state.pending_events.duplicate()
 	state.pending_events.clear()
 	var surfaced := _dispatch(fired)
@@ -261,3 +267,7 @@ func _open_plan_month(mi: int) -> void:
 	windows_surfaced_this_month = 0
 	var ordinal := Clock.month_ordinal_since_start(state.turn, state.start_year, state.start_month, state.start_day)
 	state.month_plan.begin_month(Balance.inum("attention.per_month", 20), ordinal)
+	# Hiring pipeline (Phase B): advertise campaigns trickle candidates, un-mentored hires face
+	# their attrition roll. Stream-neutral when no campaign/at-risk hire is live (guarded).
+	if state.hiring != null:
+		state.hiring.on_month_boundary(state)

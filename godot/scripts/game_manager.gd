@@ -890,3 +890,60 @@ func resolve_window(event: Dictionary, response: String) -> Dictionary:
 	if state == null:
 		return {"success": false, "message": "no active game"}
 	return WindowResolver.resolve(state, state.month_plan, event, response, state.rng)
+
+
+# ============================================================================
+# HIRING PIPELINE (Phase B) — thin delegates for the plan-screen hiring panel + tests.
+# The mechanics live on state.hiring (HiringPipeline); these just forward through the
+# GameManager the UI already speaks to. Targeted (candidate-specific) stages take a
+# candidate_id; the no-target menu drivers live in GameActions (advertise/interview_next/...).
+# ============================================================================
+
+func get_hiring() -> HiringPipeline:
+	return state.hiring if state else null
+
+
+func hiring_advertise() -> Dictionary:
+	"""SOURCE (advertise channel): launch a money-funded campaign that trickles candidates."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.advertise(state)
+
+
+func hiring_use_connections() -> Dictionary:
+	"""SOURCE (connections channel): spend a favor for one fast pre-vetted lead."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.use_connections(state)
+
+
+func hiring_interview(candidate_id: String) -> Dictionary:
+	"""INTERVIEW a specific pool candidate (triage) -> reveals their card after a delay."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.launch_interview(state, candidate_id)
+
+
+func hiring_offer(candidate_id: String, cash: float, promises: Array = []) -> Dictionary:
+	"""OFFER a specific candidate `cash`, optionally attaching appetite promises (which mint
+	ledger obligations on acceptance)."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.make_offer(state, candidate_id, cash, promises)
+
+
+func hiring_read(candidate_id: String, promises: Array = []) -> Dictionary:
+	"""The recruiter/lieutenant negotiation read for a pool candidate (narrowed visible band)."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	var cand := state.hiring.find_pool_candidate(state, candidate_id)
+	if cand == null:
+		return {"success": false, "message": "no such candidate"}
+	return state.hiring.negotiation_read(state, cand, promises)
+
+
+func hiring_onboard_step(candidate_id: String, item: String) -> Dictionary:
+	"""ONBOARD: complete one checklist item (laptop / visa / mentoring) for a new hire."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.onboard_step(state, candidate_id, item)

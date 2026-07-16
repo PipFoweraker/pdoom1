@@ -276,6 +276,37 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 				state.add_resources(action["costs"])
 			result["message"] = hire_result["message"]
 
+		# --- Hiring pipeline (Phase B): source -> interview -> offer -> onboard. Each routes
+		# to state.hiring, spends Attention there, and (except onboarding) enqueues a duration
+		# job that resolves on a later tick (ADR-0009). These no-target menu drivers let the
+		# action menu + sweep bots exercise the whole fishing-line. ---
+		"advertise":
+			var r_adv: Dictionary = state.hiring.advertise(state)
+			result["success"] = bool(r_adv.get("success", false))
+			result["message"] = String(r_adv.get("message", ""))
+
+		"use_connections":
+			var r_con: Dictionary = state.hiring.use_connections(state)
+			result["success"] = bool(r_con.get("success", false))
+			result["message"] = String(r_con.get("message", ""))
+
+		"interview_next":
+			var r_int: Dictionary = state.hiring.interview_next(state)
+			result["success"] = bool(r_int.get("success", false))
+			result["message"] = String(r_int.get("message", ""))
+
+		"hire_best":
+			# Offer at expectation to the best available candidate (accepts after its
+			# duration; onboarding still gates productivity).
+			var r_off: Dictionary = state.hiring.offer_best(state)
+			result["success"] = bool(r_off.get("success", false))
+			result["message"] = String(r_off.get("message", ""))
+
+		"onboard_next":
+			var r_onb: Dictionary = state.hiring.onboard_all(state)
+			result["success"] = bool(r_onb.get("success", false))
+			result["message"] = String(r_onb.get("message", ""))
+
 		"hire_compute_engineer":
 			state.compute_engineers += 1
 			result["message"] = "Hired compute engineer (+1 compute staff)"

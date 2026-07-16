@@ -124,6 +124,27 @@ static func staff_rider(name: String) -> Entry:
 		Balance.inum("ledger.staff_rider.fuse_turns", 8),
 		Balance.num("ledger.staff_rider.interest_rate", 0.02))
 
+## Hiring Phase B: a PROMISE made to win a candidate on appetite instead of cash (ADR-0003
+## "every mitigation is a loan"). A first-authorship / mentorship / compute / mission promise
+## mints a reputation obligation that bills LATER unless honoured -- the negotiation discount
+## you took up front is a debt against your standing. `promise` is the appetite id it feeds.
+static func appetite_promise(name: String, promise: String) -> Entry:
+	# interest_rate MUST survive JSON print->parse exactly (see the ledger _description GOTCHA);
+	# 0.008 is on the probe-verified-safe list.
+	return Entry.new("promise:%s:%s" % [promise, name], "reputation",
+		Balance.num("ledger.appetite_promise.principal", 2000.0),
+		Balance.inum("ledger.appetite_promise.fuse_turns", 10),
+		Balance.num("ledger.appetite_promise.interest_rate", 0.008))
+
+## Hiring Phase B: a lowball offer taken RESENTFULLY plants a loyalty debt -- a governance
+## liability that bills later (the resentment festering into a governance problem, ADR-0003).
+static func resentment_debt(name: String) -> Entry:
+	# interest_rate 0.02 is on the probe-verified-safe list (see the ledger _description GOTCHA).
+	return Entry.new("resentment:" + name, "governance",
+		Balance.num("ledger.resentment_debt.principal", 1500.0),
+		Balance.inum("ledger.resentment_debt.fuse_turns", 6),
+		Balance.num("ledger.resentment_debt.interest_rate", 0.02))
+
 # ---- Turn processing: the mortality guarantee lives here ----
 
 ## Called once per turn (after WS-C scheduled causes). Compounds interest on live

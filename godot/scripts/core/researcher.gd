@@ -27,6 +27,22 @@ var jet_lag_severity: float = 0.0  # 0.0-1.0, productivity penalty during jet la
 var traits: Array[String] = []
 
 # ============================================================================
+# HIRING PIPELINE — IDENTITY + ONBOARDING (Phase B)
+# Spec: docs/game-design/BUILD_BRIEF_HIRING_PIPELINE.md "Phase B". These ride ON the
+# Phase-A hidden layer below. `candidate_id` is a stable handle the pipeline references
+# across save/load (object identity doesn't survive a JSON hop). The onboarding flags gate
+# productivity: a pipeline hire starts UN-onboarded and only becomes fully productive once
+# the checklist clears (skimping mentoring leaves a lasting debuff + attrition risk).
+# ============================================================================
+var candidate_id: String = ""       # stable id assigned when the candidate is sourced
+var needs_visa: bool = false        # foreign/remote hire -> a situational onboarding item
+var onboarded: bool = true          # DEFAULT true: legacy/direct hires are productive at once
+var laptop_done: bool = false       # hard checklist item
+var visa_done: bool = false         # hard checklist item (only when needs_visa)
+var mentoring_done: bool = false    # soft item: skipping it debuffs + arms attrition
+var mentoring_skipped: bool = false # player explicitly skimped mentoring (slack-as-insurance)
+
+# ============================================================================
 # HIRING PIPELINE — HIDDEN ABILITY LAYER (Phase A)
 # Spec: docs/game-design/BUILD_BRIEF_HIRING_PIPELINE.md "Phase A" + WORKSHOP_2_BACKLOG
 # "Hiring pipeline RULED" (A1/A2/A3); appetites/quirks per ADR-0011 section 8; pay-to-see
@@ -295,6 +311,15 @@ func get_effective_productivity() -> float:
 	if "prima_donna" in traits:
 		if current_salary < (salary_expectation * 0.9):
 			effective *= 0.80  # -20% productivity if underpaid
+
+	# Hiring onboarding (Phase B): a not-yet-onboarded pipeline hire is barely productive
+	# until their checklist clears; a hire whose mentoring was skimped carries a lasting
+	# (smaller) debuff. Both default off (onboarded=true, mentoring_skipped=false), so legacy
+	# and directly-hired staff are unaffected.
+	if not onboarded:
+		effective *= Balance.num("hiring.onboarding.unproductive_multiplier", 0.4)
+	elif mentoring_skipped:
+		effective *= Balance.num("hiring.onboarding.skimped_multiplier", 0.85)
 
 	# Minimum 10% productivity (even totally burned out)
 	return max(effective, 0.1)
@@ -651,7 +676,15 @@ func to_dict() -> Dictionary:
 		"appetites": DoomSystem._snap_dict(appetites),
 		"quirk": quirk,
 		"quirk_known": quirk_known,
-		"loyalty_risk": DoomSystem._snap(loyalty_risk)
+		"loyalty_risk": DoomSystem._snap(loyalty_risk),
+		# --- Hiring pipeline identity + onboarding (Phase B) ---
+		"candidate_id": candidate_id,
+		"needs_visa": needs_visa,
+		"onboarded": onboarded,
+		"laptop_done": laptop_done,
+		"visa_done": visa_done,
+		"mentoring_done": mentoring_done,
+		"mentoring_skipped": mentoring_skipped,
 	}
 
 func from_dict(data: Dictionary):
@@ -689,3 +722,13 @@ func from_dict(data: Dictionary):
 	if appetite_data is Dictionary:
 		for k in appetite_data.keys():
 			appetites[String(k)] = DoomSystem._snap(float(appetite_data[k]))
+
+	# --- Hiring pipeline identity + onboarding (Phase B). Missing keys fall back to the
+	# legacy defaults (onboarded=true) so pre-Phase-B saves load productive. ---
+	candidate_id = String(data.get("candidate_id", ""))
+	needs_visa = bool(data.get("needs_visa", false))
+	onboarded = bool(data.get("onboarded", true))
+	laptop_done = bool(data.get("laptop_done", false))
+	visa_done = bool(data.get("visa_done", false))
+	mentoring_done = bool(data.get("mentoring_done", false))
+	mentoring_skipped = bool(data.get("mentoring_skipped", false))
