@@ -425,6 +425,14 @@ already held "attention is the resource the UI must be honest about"; "I don't h
 attention for this" is the founder experience being modeled; and the game spawns in
 2017 — the year of "Attention Is All You Need." The joke is load-bearing.
 
+**(2026-07-16, playtest)** *"the 'turn' is a planning phase (currently a month, but this
+will keep it true if we make it so the time horizons vary during the game)."*
+→ **Canonical nomenclature: a "turn" is a planning phase, not a fixed month.** The turn
+is *however long the current planning horizon is*. Keeps the vocabulary honest if horizons
+later vary within a run (the ADR-0009 parked variable/coarsening-cadence option — a run
+could shift month→quarter as the org scales). "Month" is the current *value* of the turn,
+not its definition.
+
 **(2026-07-13, workshop #3)** *"I suffer most when a 4-year hire walks in year 5, and
 then 4 of her 6 team leaves as their morale craters the following few months when I can't
 promote someone good in and have to gamble on an outside manager as an emergency hire."*

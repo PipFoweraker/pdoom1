@@ -176,6 +176,31 @@ Design payload, unpacked:
 - **The cat is permanently on fire** — the domestic running gag survives to the end of
   the world; tone anchor (the cats are already in `assets/cats/`).
 
+## The five phases of a run (felt, not announced)
+
+**(Pip, 2026-07-16 — "super loosely held, not formally defined; felt-felt by the player.")**
+The game's progression spine. Crucially, phases are **emergent from the squeeze, not
+announced** — the Factorio bottleneck-translation, NOT an Age-of-Empires "you have advanced
+to the X Age" banner. The player *feels* the phase change (the nature of their problems
+shifts) without a UI declaring it. Maps onto the mechanics already designed:
+
+1. **Startup** — pre first-or-second hire. Lots of **main-character development** options
+   (the founder does everything; scouting/SA early game, workshop-3). You *are* the org.
+2. **Incubator** — first few hires; **funding becomes the concern** (grants + philanthropists
+   needed). The L2 hiring pipeline + L5 finance bite here.
+3. **Entity** — increasingly stable; **management** arrives (managers-as-phase-change,
+   Moral Mazes), reputation matters, larger stakeholders. The bottleneck moves from
+   "can I do it" to "can I steer the people doing it."
+4. **Institution** — from known to **major player** in influence and reputation (adoption
+   routing, ADR-0010 — your work gets adopted at scale).
+5. **Titan** — endgame; on a successful run, **affecting world politics and world events**
+   (ADR-0014 location/politics, the 2037 vignette). The org is now a force in the race.
+
+Each transition is a **bottleneck-switch** (the management phase-change is the clearest:
+scaling doesn't remove pressure, it relocates it to a new class). Resolves DQ-28. Design
+rule: never announce a phase; let it be felt. Candidate future use: phase as a
+scenario-jump anchor for testing (DQ-28) and a pacing lens for balance.
+
 ## Naming & terminology
 
 - **Doom-years averted** — the score tiebreaker; area under the survival curve

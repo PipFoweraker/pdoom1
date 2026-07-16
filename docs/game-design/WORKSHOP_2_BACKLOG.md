@@ -520,6 +520,43 @@ lands + is playtested):
 - **Content sourcing (Pip):** researcher archetypes to be seeded from **real, anonymised IRL
   stories** Pip collects — feeds DQ-15.
 
+## Playtest (2026-07-16, post-Attention-baseline / Pip's 3rd session) — 20/mo APPROVED, #654 merged
+
+Attention baseline approved and merged (PR #654). "Watching things tick along is cool";
+research-up / compute-down over many days per turn "feels really satisfying now." New
+items:
+
+**Quick fixes (small, do soon — improve every playtest):**
+- **Feed timestamps: seconds → in-game dates.** The feed log shows real "[722.7s]"
+  timestamps; replace with the in-game date. *(Design note attached, do NOT solve now:
+  if multiple things happen on one day, intra-day **sequencing / resolution-of-effects**
+  ordering is an open question — "interesting thinking about resolutions of effects"
+  (Pip). Candidate future beat: does effect order within a day matter, and how is it
+  shown?)*
+- **UI: align the (now nicely smaller) upgrade buttons flush-right** to free central screen
+  space.
+
+**Design directions (feed future waves):**
+- **Ledger interest cadence → a loan TERM, not a daily tick.** Daily interest accrual
+  "feels a bit weird." Move *when interest is charged* into each loan's conditions →
+  becomes a flavor/mechanic axis: **loan sharks / mafiosi / gamblers / reputable lenders
+  charge on different schedules** to gain edges on the player. Feeds L5 / ADR-0013
+  (per-instrument, per-counterparty terms).
+- **Expand the upgrades/power-ups catalogue.** As mechanical depth grows, power-ups become
+  "an interesting tactical mix" — revisit + expand the catalogue (ties the upgrades to the
+  compute/research/management systems).
+- **Compute economy depth.** The compute number should "relate to something closer to
+  reality": people buy/use compute in different ways, and **research consumes compute
+  differently by type** (evals vs superalignment theory — Pip). Connects the doom
+  intermediaries (`global_compute` / `dedicated_ai_compute`, ADR-0015) to research
+  workstreams (L2). Candidate: compute as a typed, allocatable resource, not one scalar.
+- **DQ-28 RESOLVED** — the 5-phase spine (Startup → Incubator → Entity → Institution →
+  Titan) is now in WORLD_AND_LORE ("The five phases of a run"); felt-not-announced
+  (Factorio, not AoE). Phases as pacing lens + scenario-jump test anchors.
+- **Nomenclature ruled:** a "turn" = a planning phase (currently a month); see
+  DESIGN_PHILOSOPHY. Keeps vocabulary honest for future variable horizons (ADR-0009 parked
+  cadence).
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
