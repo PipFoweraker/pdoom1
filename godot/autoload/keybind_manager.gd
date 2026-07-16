@@ -25,8 +25,9 @@ var keybinds: Dictionary = {
 	"dev_mode": {"key": KEY_BACKSLASH, "category": Category.DEBUG, "description": "Toggle Dev Mode Overlay"},
 	# Playtest flight recorder (WORKSHOP_2_BACKLOG "Playtest deep-dive protocol"): one press
 	# dumps a screenshot + state snapshot + marker note. Gated on BuildInfo.DEV_BUILD by
-	# FlightRecorder itself, same pattern as dev_mode. F9 is otherwise unused.
-	"flight_recorder": {"key": KEY_F9, "category": Category.DEBUG, "description": "Flight Recorder Capture (screenshot + state + note)"},
+	# FlightRecorder itself, same pattern as dev_mode. Rebound from F9 to F6 (Pip playtest:
+	# F9 collides with his Nvidia overlay hotkey). F6 is otherwise unused.
+	"flight_recorder": {"key": KEY_F6, "category": Category.DEBUG, "description": "Flight Recorder Capture (screenshot + state + note)"},
 	"admin_mode": {"key": KEY_BRACKETRIGHT, "category": Category.ADMIN, "description": "Toggle Admin Mode"},
 
 	# Gameplay
@@ -72,7 +73,7 @@ var profiles: Dictionary = {}  # profile_name -> keybind dict
 
 # Config file
 const CONFIG_PATH = "user://keybinds.cfg"
-const KEYBINDS_CONFIG_VERSION = 4  # bump when default binds change; stale saved configs refresh to defaults
+const KEYBINDS_CONFIG_VERSION = 5  # bump when default binds change; stale saved configs refresh to defaults
 var config = ConfigFile.new()
 
 # Signals
@@ -300,7 +301,7 @@ func _input(event: InputEvent):
 		dev_mode_toggled.emit()
 		get_viewport().set_input_as_handled()
 
-	# Flight recorder (F9) — screenshot + state snapshot + marker note in one press
+	# Flight recorder (F6) — screenshot + state snapshot + marker note in one press
 	# (dev builds only; FlightRecorder itself gates on BuildInfo.is_dev_build()).
 	elif is_action_pressed(event, "flight_recorder"):
 		flight_recorder_requested.emit()

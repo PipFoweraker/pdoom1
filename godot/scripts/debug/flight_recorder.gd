@@ -2,7 +2,7 @@ extends CanvasLayer
 class_name FlightRecorder
 ## Playtest "flight recorder" — WORKSHOP_2_BACKLOG "Playtest deep-dive protocol":
 ## a couple of comprehensively logged human run-throughs, reviewed as a unit. One
-## press of F9 (the `flight_recorder` keybind) dumps, into a timestamped session
+## press of F6 (the `flight_recorder` keybind) dumps, into a timestamped session
 ## directory under user://, everything needed to reconstruct "what did Pip see and
 ## think, right here": (a) a screenshot, (b) a JSON state snapshot — reusing
 ## GameState.to_dict(), the SAME serializer save/load uses, not a parallel one —
