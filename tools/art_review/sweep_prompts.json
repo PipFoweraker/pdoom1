@@ -1,7 +1,7 @@
 {
   "_comment": "Turnkey prompt list for the art selection sweep. Generator concatenates <desc> + style_suffix, fires <rolls> rolls per entry, pulls into art_source/pixellab_<date>/sweep/<key>_<n>.png, and build.py renders them as per-asset gallery rows (rolls side by side) for picking. Style is LOCKED; this is selection, not exploration. See docs/art/ART_PRODUCTION_PLAN.md.",
   "style_suffix": ", warm cozy lived-in palette with soft grime, bold heavy black outline, chunky graphic pixel art, deep contrast shadows, cartoony retro RPG, symmetrical straight-on centered low top-down view, lit from top-left",
-  "default_rolls": 3,
+  "default_rolls": 4,
   "view": "low top-down",
 
   "props": [
