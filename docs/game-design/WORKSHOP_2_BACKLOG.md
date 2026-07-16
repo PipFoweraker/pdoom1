@@ -635,6 +635,31 @@ potential; the office *is* how you feel the phase.
   with the office-not-player rule via the **relative-rep flattery mechanic (B1)**: appearance →
   social standing, not raw capability — presentation is a reputation lever, not a power-up.
 
+## Plan/Watch screen workshop — beat 4 (2026-07-16): costume, office-as-mirror, sprites
+
+- **Costume/hat cosmetics = the presentation-rep lever as content (impostor-syndrome satire).**
+  Fork dissolved: silhouette is represented-BUT-anonymous (Dr Claw/Gendo), customize the
+  *trappings* not the face. Hats/robes are rep-gain cosmetics — and thematically they satirize
+  the **impostor syndrome nearly everyone in AI safety carries** (you literally put on a costume
+  to be taken seriously). Pip's indicative examples (mechanics not final): "medium fancy hat"
+  (+charisma rep, impress mid/lower-upper classes), "extremely fancy very tall hat" (+more,
+  "aren't compensating for anything"), "sports hat" (+charisma rep, +finance-bro influence,
+  rowing-team VC money). Reconciles with power-up-the-office via B1 relative-rep flattery
+  (presentation → standing, not capability).
+- **Office/lair as a MORAL MIRROR (strong idea).** The office aesthetic reflects three things at
+  once: (1) upgrades bought (general progression), (2) the player's **moral choices / character /
+  trade-offs** (took the dual-use capabilities money? the lair goes supervillain), (3) **Doom
+  level** (apocalyptic decor as it climbs). "Gilding the chair" is a mechanic Pip's looking
+  forward to. The office becomes a *portrait of your path*, not just a phase readout — power-up-
+  the-office + felt-not-announced + the dual-use temptation, made visible.
+- **Employee sprites — "indicatively representative," MVP = Tier 1 (see Fable's read).** Not a
+  full sim; a few colocated employees with simple agent behavior (wander/idle/cozy animations)
+  whose **animation state is a cheap READOUT of real employee mechanical state** (working=at
+  desk, drifting=wandering, stressed=head-in-hands). So the fishbowl flavor and the office-as-
+  dashboard are the SAME system. OG pdoom1 floor = "blobs with little hats milling like molecule
+  clusters" (Tier 0 — anything ≥ that is a step up). The linked generative-agents paper = Tier 3
+  (skip for MVP). Pip asked what's MVP-easy; Fable's tier assessment recorded in the workshop.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
