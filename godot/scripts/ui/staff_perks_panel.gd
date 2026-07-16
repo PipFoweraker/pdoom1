@@ -366,10 +366,11 @@ func _check_perk_requirements(perk: Dictionary, researcher: Researcher) -> bool:
 
 	return true
 
-func _is_perk_equipped(perk: Dictionary, researcher: Researcher) -> bool:
-	"""Check if this perk is currently equipped by the researcher"""
-	# For now, use traits array as proxy for equipped perks
-	return researcher.traits.has(perk.get("id", ""))
+func _is_perk_equipped(_perk: Dictionary, _researcher: Researcher) -> bool:
+	"""Check if this perk is currently equipped by the researcher. The legacy trait system
+	that backed this placeholder panel is RETIRED (replaced by hidden quirks), so nothing is
+	'equipped' here yet -- a future pass can wire this to the quirk layer."""
+	return false
 
 func _get_tier_color(tier: int) -> Color:
 	match tier:
@@ -378,32 +379,12 @@ func _get_tier_color(tier: int) -> Color:
 		3: return Color(0.8, 0.4, 0.9)  # Purple
 		_: return Color.WHITE
 
-func _update_equipped_slots(researcher: Researcher):
-	"""Update the equipped bar at bottom"""
-	# For now, show traits as "equipped perks"
-	var traits = researcher.traits
-
-	# Try to find matching perks for display
+func _update_equipped_slots(_researcher: Researcher):
+	"""Update the equipped bar at bottom. Legacy traits (the old 'equipped perks' proxy) are
+	RETIRED; show empty slots until this placeholder panel is rebuilt on the quirk layer."""
 	equipped_slot1_name.text = "---"
 	equipped_slot2_name.text = "---"
 	equipped_slot3_name.text = "---"
-
-	for trait_id in traits:
-		# Check tier 1
-		for perk in TIER_1_PERKS:
-			if perk["id"] == trait_id:
-				equipped_slot1_name.text = perk["name"].to_upper()
-				equipped_slot1_name.add_theme_color_override("font_color", _get_tier_color(1))
-		# Check tier 2
-		for perk in TIER_2_PERKS:
-			if perk["id"] == trait_id:
-				equipped_slot2_name.text = perk["name"].to_upper()
-				equipped_slot2_name.add_theme_color_override("font_color", _get_tier_color(2))
-		# Check tier 3
-		for perk in TIER_3_PERKS:
-			if perk["id"] == trait_id:
-				equipped_slot3_name.text = perk["name"].to_upper()
-				equipped_slot3_name.add_theme_color_override("font_color", _get_tier_color(3))
 
 # ============================================================================
 # INTERACTION HANDLERS

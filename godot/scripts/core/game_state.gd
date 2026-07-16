@@ -645,7 +645,7 @@ func _assign_guaranteed_rider(candidate: Researcher) -> void:
 	    appetite reveal layer, revealed only by interviewing)
 	Either way the card shows nothing extra at reveal 0 -- the depth is latent."""
 	if rng.randf() < 0.5:
-		candidate.quirk = Researcher.QUIRK_POOL[rng.randi() % Researcher.QUIRK_POOL.size()]
+		candidate.quirk = QuirkCatalogue.pick_id(rng)  # from the data-driven catalogue
 		candidate.quirk_known = false
 	else:
 		var key: String = Researcher.APPETITE_KEYS[rng.randi() % Researcher.APPETITE_KEYS.size()]

@@ -1522,25 +1522,16 @@ func _show_hiring_submenu():
 			name_label.add_theme_font_size_override("font_size", 11)
 			info_vbox.add_child(name_label)
 
-			# Stats line: Skill, Salary, Traits
+			# Stats line: Skill, Salary, and a quirk ONLY if it has been exposed (the trait
+			# system is retired; quirks are hidden-but-true and stay masked until surfaced).
 			var stats_label = Label.new()
 			var skill = candidate.get("skill_level", 5)
 			var salary = candidate.get("current_salary", 60000)
-			var traits = candidate.get("traits", [])
-			var trait_text = ""
-			if traits.size() > 0:
-				var trait_names = []
-				for trait_id in traits:
-					# Get display name for trait
-					if Researcher.POSITIVE_TRAITS.has(trait_id):
-						trait_names.append(Researcher.POSITIVE_TRAITS[trait_id]["name"])
-					elif Researcher.NEGATIVE_TRAITS.has(trait_id):
-						trait_names.append(Researcher.NEGATIVE_TRAITS[trait_id]["name"])
-					else:
-						trait_names.append(trait_id.capitalize())
-				trait_text = " [%s]" % ", ".join(trait_names)
+			var quirk_text = ""
+			if candidate.get("quirk_known", false) and String(candidate.get("quirk", "")) != "":
+				quirk_text = " [%s]" % QuirkCatalogue.display_name(String(candidate.get("quirk", "")))
 
-			stats_label.text = "Skill %d | %s/yr%s" % [skill, GameConfig.format_money(salary), trait_text]
+			stats_label.text = "Skill %d | %s/yr%s" % [skill, GameConfig.format_money(salary), quirk_text]
 			stats_label.add_theme_font_size_override("font_size", 9)
 			stats_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
 			info_vbox.add_child(stats_label)

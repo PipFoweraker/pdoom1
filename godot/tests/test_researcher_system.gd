@@ -58,48 +58,60 @@ func test_burnout_clamping():
 	researcher.accumulate_burnout(20.0)
 	assert_eq(researcher.burnout, 100.0, "Burnout should cap at 100")
 
-func test_workaholic_trait_productivity():
+# --- Quirk mechanical effects (replaces the retired trait tests) --------------
+
+func test_runs_hot_quirk_boosts_productivity():
+	# runs_hot is the reframed workaholic: self_productivity_mult 1.20 (see quirks.json).
 	var researcher = Researcher.new("safety")
 	researcher.base_productivity = 1.0
 	researcher.burnout = 0.0
-	researcher.add_trait("workaholic")
+	researcher.quirk = "runs_hot"
 
 	var productivity = researcher.get_effective_productivity()
-	assert_almost_eq(productivity, 1.2, 0.05, "Workaholic = +20% productivity")
+	assert_almost_eq(productivity, 1.2, 0.05, "runs_hot = +20% productivity")
 
-func test_workaholic_burnout_rate():
+func test_runs_hot_quirk_adds_burnout_per_turn():
+	# runs_hot burnout_per_turn_add 2.0 on top of the base 0.5/turn.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
 	var researcher = Researcher.new("safety")
-	researcher.add_trait("workaholic")
+	researcher.quirk = "runs_hot"
 	researcher.burnout = 0.0
 
-	researcher.accumulate_burnout(1.0)
-	# Base 1.0 + workaholic 2.0 = 3.0 total
-	assert_eq(researcher.burnout, 3.0, "Workaholic accumulates extra burnout")
+	researcher.process_turn(rng)
+	assert_almost_eq(researcher.burnout, 2.5, 0.001, "base 0.5 + runs_hot 2.0 burnout per turn")
 
-func test_prima_donna_salary_penalty():
+func test_cat_whisperer_quirk_relieves_burnout():
+	# cat_whisperer burnout_per_turn_add -0.5 exactly cancels the base 0.5/turn.
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 7
 	var researcher = Researcher.new("safety")
-	researcher.add_trait("prima_donna")
+	researcher.quirk = "cat_whisperer"
+	researcher.burnout = 0.0
+
+	researcher.process_turn(rng)
+	assert_almost_eq(researcher.burnout, 0.0, 0.001, "cat_whisperer cancels base burnout")
+
+func test_quiet_quitter_quirk_drags_productivity():
+	# quiet_quitter self_productivity_mult 0.85 (a negative quirk).
+	var researcher = Researcher.new("safety")
 	researcher.base_productivity = 1.0
 	researcher.burnout = 0.0
-	researcher.salary_expectation = 60000.0
+	researcher.quirk = "quiet_quitter"
 
-	# Paid well - no penalty
-	researcher.current_salary = 60000.0
-	assert_almost_eq(researcher.get_effective_productivity(), 1.0, 0.05)
-
-	# Underpaid - productivity penalty
-	researcher.current_salary = 50000.0  # < 90% of expectation
 	var productivity = researcher.get_effective_productivity()
-	assert_lt(productivity, 1.0, "Prima donna should lose productivity when underpaid")
-	assert_almost_eq(productivity, 0.8, 0.05, "Should be 20% penalty")
+	assert_almost_eq(productivity, 0.85, 0.001, "quiet_quitter = -15% productivity")
 
-func test_safety_conscious_trait_doom_modifier():
-	var researcher = Researcher.new("safety")
-	researcher.add_trait("safety_conscious")
+func test_true_believer_quirk_reduces_doom_modifier():
+	# true_believer doom_mod_add -0.04 stacks on the safety spec's -0.15.
+	var plain = Researcher.new("safety")
+	var believer = Researcher.new("safety")
+	believer.quirk = "true_believer"
 
-	var modifier = researcher.get_doom_modifier()
-	assert_lt(modifier, 0.0, "Safety conscious should reduce doom")
-	assert_almost_eq(modifier, -0.10, 0.01, "Should be -10%")
+	assert_lt(believer.get_doom_modifier(), plain.get_doom_modifier(),
+		"true_believer lowers doom further than a plain safety researcher")
+	assert_almost_eq(believer.get_doom_modifier(), plain.get_doom_modifier() - 0.04, 0.001,
+		"true_believer contributes exactly -0.04 doom_mod_add")
 
 func test_safety_specialization_doom_modifier():
 	var safety_researcher = Researcher.new("safety")
@@ -242,7 +254,8 @@ func test_researcher_serialization():
 	var researcher = Researcher.new("safety", "Test Name")
 	researcher.skill_level = 7
 	researcher.burnout = 25.0
-	researcher.add_trait("workaholic")
+	researcher.quirk = "runs_hot"
+	researcher.quirk_known = true
 
 	var data = researcher.to_dict()
 
@@ -253,7 +266,8 @@ func test_researcher_serialization():
 	assert_eq(researcher2.specialization, "safety")
 	assert_eq(researcher2.skill_level, 7)
 	assert_eq(researcher2.burnout, 25.0)
-	assert_true(researcher2.has_trait("workaholic"))
+	assert_eq(researcher2.quirk, "runs_hot", "quirk round-trips")
+	assert_true(researcher2.quirk_known, "quirk_known round-trips")
 
 func test_hiring_action_creates_researcher():
 	var state = GameState.new("test_hiring")

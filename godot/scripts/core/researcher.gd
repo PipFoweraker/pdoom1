@@ -1,6 +1,6 @@
 extends Resource
 class_name Researcher
-## Individual researcher with specialization, traits, and burnout
+## Individual researcher with specialization, hidden quirk, and burnout
 ## Based on Python src/core/researchers.py
 
 # ============================================================================
@@ -23,8 +23,12 @@ var turns_employed: int = 0
 var jet_lag_turns: int = 0  # Turns remaining with jet lag
 var jet_lag_severity: float = 0.0  # 0.0-1.0, productivity penalty during jet lag
 
-# Traits (positive and negative)
-var traits: Array[String] = []
+# NOTE: the legacy positive/negative "trait" system (workaholic/leak_prone/...) has been
+# RETIRED. Its shallow, hardcoded placeholders are replaced by the data-driven QUIRK
+# catalogue (see `quirk` below + res://data/researchers/quirks.json). The good ones were
+# reframed as quirks (runs_hot <- workaholic, loose_lips <- leak_prone, lab_parent <-
+# team_player, sponge <- fast_learner, true_believer <- safety_conscious). See
+# docs/game-design/RESEARCHER_QUIRKS.md.
 
 # ============================================================================
 # HIRING PIPELINE — IDENTITY + ONBOARDING (Phase B)
@@ -87,13 +91,11 @@ const HIDDEN_PLACEHOLDER := "??? (interview to reveal)"
 # id drawn from a pool, deliberately UNCORRELATED with ability.
 const IDENTITY_POOL_SIZE := 24
 
-# Rare quirk riders (ADR-0011 section 8): philosophical stances etc. Stay hidden until an
-# EXPOSURE event flips quirk_known (ADR-0003 machinery) -- NOT revealed by interviewing.
+# Rare quirk riders (ADR-0011 section 8): thematically-grounded lab archetypes carrying a
+# small, TRUE, hidden mechanical effect. They stay hidden until an EXPOSURE surfaces them
+# (ADR-0003 machinery) -- NOT revealed by interviewing (A2). The catalogue is data-driven
+# (res://data/researchers/quirks.json via QuirkCatalogue); see docs/game-design/RESEARCHER_QUIRKS.md.
 const QUIRK_CHANCE := 0.15
-const QUIRK_POOL := [
-	"secret_successionist", "doom_absolutist", "e_acc_sympathizer",
-	"publish_everything", "secrecy_maximalist", "empire_builder"
-]
 
 # --- Identity (ability-UNCORRELATED) ---
 @export var appearance_id: String = ""     # sprite/appearance handle; diverse, not a stat tell
@@ -139,65 +141,20 @@ const SPECIALIZATIONS = {
 }
 
 # ============================================================================
-# TRAITS
+# QUIRK EFFECTS (data-driven; replaces the retired trait system)
 # ============================================================================
+# A quirk's mechanical effect is read through quirk_effect() from the JSON catalogue. The
+# effect is TRUE from creation (hidden-but-real); play reveals it. Effect channels are a
+# small fixed set (see docs/game-design/RESEARCHER_QUIRKS.md): self_productivity_mult,
+# burnout_per_turn_add, doom_mod_add, leak_chance, team_productivity_add, skill_growth_mult,
+# loyalty_per_turn_add.
 
-const POSITIVE_TRAITS = {
-	"workaholic": {
-		"name": "Workaholic",
-		"productivity_bonus": 0.20,  # +20% productivity
-		"burnout_rate": 2.0  # +2 burnout per turn
-	},
-	"team_player": {
-		"name": "Team Player",
-		"team_productivity_bonus": 0.10,  # +10% to ALL researchers
-		"description": "Boosts entire team morale"
-	},
-	"media_savvy": {
-		"name": "Media Savvy",
-		"reputation_on_publish": 3,  # +3 reputation when publishing
-		"description": "Great at public communication"
-	},
-	"safety_conscious": {
-		"name": "Safety Conscious",
-		"doom_reduction": 0.10,  # -10% doom from their work
-		"description": "Extra careful about AI risks"
-	},
-	"fast_learner": {
-		"name": "Fast Learner",
-		"skill_growth_rate": 1.5,  # Skill improves 50% faster
-		"description": "Rapidly improves over time"
-	},
-	"road_warrior": {
-		"name": "Road Warrior",
-		"jet_lag_reduction": 0.5,  # 50% less jet lag duration
-		"description": "Recovers quickly from travel"
-	}
-}
-
-const NEGATIVE_TRAITS = {
-	"prima_donna": {
-		"name": "Prima Donna",
-		"salary_penalty_threshold": 0.9,  # Must be paid 90%+ of expectation
-		"team_productivity_penalty": -0.10,  # -10% team productivity if underpaid
-		"description": "Demands high salary or causes problems"
-	},
-	"leak_prone": {
-		"name": "Leak Prone",
-		"leak_chance_per_turn": 0.05,  # 5% chance to leak research
-		"description": "Sometimes shares confidential info"
-	},
-	"burnout_prone": {
-		"name": "Burnout Prone",
-		"burnout_accumulation_multiplier": 1.5,  # 50% faster burnout
-		"description": "Burns out more easily"
-	},
-	"pessimist": {
-		"name": "Pessimist",
-		"morale_penalty": -5,  # Reduces team morale
-		"description": "Brings down team mood"
-	}
-}
+func quirk_effect(key: String, default_value):
+	"""This researcher's value for a quirk effect channel, or default_value if they carry no
+	quirk (or the quirk does not touch that channel). Effect is live even while hidden."""
+	if quirk == "":
+		return default_value
+	return QuirkCatalogue.effect(quirk, key, default_value)
 
 # ============================================================================
 # INITIALIZATION
@@ -259,9 +216,10 @@ func generate_random(rng: RandomNumberGenerator):
 	# Loyalty-risk: hidden flight predisposition (revealed only at deep reveal).
 	loyalty_risk = hidden_rng.randf()
 	# Rare quirk rider: most candidates carry none; when present it stays hidden until
-	# an exposure event (A2) -- interviewing never surfaces it.
+	# an exposure event (A2) -- interviewing never surfaces it. Drawn from the data-driven
+	# catalogue (same two hidden_rng draws as before -> byte-identical stream, ADR-0006).
 	if hidden_rng.randf() < QUIRK_CHANCE:
-		quirk = QUIRK_POOL[hidden_rng.randi() % QUIRK_POOL.size()]
+		quirk = QuirkCatalogue.pick_id(hidden_rng)
 	else:
 		quirk = ""
 	quirk_known = false
@@ -303,14 +261,10 @@ func get_effective_productivity() -> float:
 	if jet_lag_turns > 0:
 		effective *= (1.0 - jet_lag_severity)
 
-	# Trait bonuses
-	if "workaholic" in traits:
-		effective *= 1.20
-
-	# Salary satisfaction (prima donna trait)
-	if "prima_donna" in traits:
-		if current_salary < (salary_expectation * 0.9):
-			effective *= 0.80  # -20% productivity if underpaid
+	# Quirk self-effect (retired-trait replacement): a single legible productivity multiplier
+	# drawn from the catalogue (runs_hot 1.20, quiet_quitter 0.85, ...). TRUE even while the
+	# quirk is still hidden -- the player sees the output, not yet the cause.
+	effective *= float(quirk_effect("self_productivity_mult", 1.0))
 
 	# Hiring onboarding (Phase B): a not-yet-onboarded pipeline hire is barely productive
 	# until their checklist clears; a hire whose mentoring was skimped carries a lasting
@@ -325,7 +279,7 @@ func get_effective_productivity() -> float:
 	return max(effective, 0.1)
 
 func get_doom_modifier() -> float:
-	"""Get doom modification from this researcher's specialization and traits"""
+	"""Get doom modification from this researcher's specialization and quirk"""
 	var modifier = 0.0
 
 	# Specialization effects
@@ -335,9 +289,9 @@ func get_doom_modifier() -> float:
 		"capabilities":
 			modifier += SPECIALIZATIONS["capabilities"]["doom_per_research"]
 
-	# Trait effects
-	if "safety_conscious" in traits:
-		modifier -= POSITIVE_TRAITS["safety_conscious"]["doom_reduction"]
+	# Quirk effect (retired-trait replacement): true_believer/doom_absolutist lower doom,
+	# e_acc_sympathizer/secret_successionist raise it. Live even while the quirk is hidden.
+	modifier += float(quirk_effect("doom_mod_add", 0.0))
 
 	return modifier
 
@@ -346,16 +300,10 @@ func get_doom_modifier() -> float:
 # ============================================================================
 
 func accumulate_burnout(amount: float):
-	"""Add burnout (typically called each turn)"""
-	var multiplier = 1.0
-
-	# Trait modifiers
-	if "burnout_prone" in traits:
-		multiplier = NEGATIVE_TRAITS["burnout_prone"]["burnout_accumulation_multiplier"]
-	if "workaholic" in traits:
-		amount += POSITIVE_TRAITS["workaholic"]["burnout_rate"]
-
-	burnout += amount * multiplier
+	"""Add burnout (typically called each turn). Quirk burnout drift is applied by the caller
+	(process_turn) via quirk_effect('burnout_per_turn_add') so a negative-drift quirk like
+	cat_whisperer can also relieve burnout."""
+	burnout += amount
 	burnout = clamp(burnout, 0.0, 100.0)
 
 func reduce_burnout(amount: float):
@@ -408,10 +356,6 @@ func apply_jet_lag(location_tier: int, travel_class: String = "economy"):
 	# Scale by distance (domestic = 60%, international = 100%)
 	var distance_multiplier = 0.6 if location_tier == 2 else 1.0
 
-	# Road warrior trait reduces duration
-	if "road_warrior" in traits:
-		base_turns = int(base_turns * POSITIVE_TRAITS["road_warrior"]["jet_lag_reduction"])
-
 	jet_lag_turns = int(base_turns * distance_multiplier)
 	jet_lag_severity = base_severity * distance_multiplier
 
@@ -433,31 +377,23 @@ func get_jet_lag_status() -> String:
 	return "Jet lagged (%d turns, -%.0f%% productivity)" % [jet_lag_turns, jet_lag_severity * 100]
 
 # ============================================================================
-# TRAIT MANAGEMENT
+# QUIRK MANAGEMENT (replaces the retired trait system)
 # ============================================================================
 
-func add_trait(trait_id: String):
-	"""Add a trait if not already present"""
-	if trait_id not in traits:
-		traits.append(trait_id)
+func quirk_display_name() -> String:
+	"""Human-readable quirk name ('none' if the person carries no quirk)."""
+	return QuirkCatalogue.display_name(quirk)
 
-func has_trait(trait_id: String) -> bool:
-	"""Check if researcher has a trait"""
-	return trait_id in traits
-
-func get_trait_description() -> String:
-	"""Get human-readable trait list"""
-	if traits.size() == 0:
-		return "No special traits"
-
-	var descriptions = []
-	for trait_id in traits:
-		if POSITIVE_TRAITS.has(trait_id):
-			descriptions.append(POSITIVE_TRAITS[trait_id]["name"])
-		elif NEGATIVE_TRAITS.has(trait_id):
-			descriptions.append(NEGATIVE_TRAITS[trait_id]["name"])
-
-	return ", ".join(descriptions)
+func maybe_reveal_quirk_by_tenure() -> bool:
+	"""Deterministic tenure-based reveal: once employed long enough, the quirk surfaces (flips
+	quirk_known). No-op if no quirk, already known, or not yet at the catalogue threshold.
+	Returns true iff this call newly exposed the quirk."""
+	if quirk == "" or quirk_known:
+		return false
+	if turns_employed >= QuirkCatalogue.reveal_after_turns(quirk):
+		quirk_known = true
+		return true
+	return false
 
 # ============================================================================
 # TURN PROCESSING
@@ -467,25 +403,34 @@ func process_turn(rng: RandomNumberGenerator = null):
 	"""Called each turn - handle burnout, skill growth, jet lag recovery, etc."""
 	turns_employed += 1
 
-	# Base burnout accumulation (working is stressful!)
-	accumulate_burnout(0.5)
+	# Base burnout accumulation (working is stressful!) plus any quirk burnout drift
+	# (runs_hot/empire_builder push it up; cat_whisperer relieves it). Kept as ONE call so the
+	# net per-turn burnout is legible.
+	accumulate_burnout(0.5 + float(quirk_effect("burnout_per_turn_add", 0.0)))
 
 	# Jet lag recovery (Issue #469)
 	recover_jet_lag()
 
-	# Skill growth (very slow - 1 point per ~20 turns)
+	# Skill growth (very slow - 1 point per ~20 turns). The sponge quirk multiplies the roll
+	# chance (skill_growth_mult).
 	# WS-0 determinism: use provided seeded RNG only; no global-RNG fallback (1.0 => no growth)
 	var skill_roll: float = rng.randf() if rng != null else 1.0
-	if skill_roll < 0.05:  # 5% chance per turn
+	if skill_roll < 0.05 * float(quirk_effect("skill_growth_mult", 1.0)):  # base 5% chance per turn
 		skill_level = min(skill_level + 1, 10)
 		base_productivity = 0.5 + (skill_level * 0.1)
 
-	# Loyalty changes based on satisfaction
+	# Loyalty changes based on satisfaction, plus quirk loyalty drift (true_believer holds,
+	# quiet_quitter drifts out).
 	var salary_ratio = current_salary / salary_expectation
 	if salary_ratio >= 1.0:
 		loyalty = min(loyalty + 1, 100)
 	elif salary_ratio < 0.8:
 		loyalty = max(loyalty - 2, 0)
+	loyalty = clampi(loyalty + int(quirk_effect("loyalty_per_turn_add", 0)), 0, 100)
+
+	# Tenure reveal (deterministic fallback): time on the team eventually surfaces the quirk
+	# even absent a bespoke incident, so a hidden rider never stays invisible forever (ADR-0006).
+	maybe_reveal_quirk_by_tenure()
 
 # ============================================================================
 # UTILITY FUNCTIONS
@@ -662,7 +607,6 @@ func to_dict() -> Dictionary:
 		"loyalty": loyalty,
 		"burnout": burnout,
 		"turns_employed": turns_employed,
-		"traits": traits.duplicate(),
 		"jet_lag_turns": jet_lag_turns,
 		"jet_lag_severity": jet_lag_severity,
 		# --- Hiring pipeline hidden-ability layer (Phase A) ---
@@ -700,11 +644,8 @@ func from_dict(data: Dictionary):
 	turns_employed = int(data.get("turns_employed", 0))
 	jet_lag_turns = int(data.get("jet_lag_turns", 0))
 	jet_lag_severity = float(data.get("jet_lag_severity", 0.0))
-
-	if data.has("traits"):
-		traits.clear()
-		for trait_name in data["traits"]:
-			traits.append(trait_name)
+	# NOTE: legacy "traits" key (retired system) is intentionally ignored on load -- old saves
+	# carrying it drop it silently; the quirk layer below is the replacement.
 
 	# --- Hiring pipeline hidden-ability layer (Phase A). Explicit casts: JSON hands
 	# every number back as float and every enum as float. Missing keys fall back to the

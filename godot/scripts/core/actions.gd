@@ -337,20 +337,13 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			result["message"] = "Capability research (+%0.1f research)" % research_gained
 
 		"publish_paper":
-			# Check for media_savvy researchers (bonus reputation)
-			var media_savvy_bonus = 0
-			for researcher in state.researchers:
-				if researcher.has_trait("media_savvy"):
-					media_savvy_bonus += 3  # +3 reputation per media savvy researcher
-			var total_rep = 2 + media_savvy_bonus
 			# ADR-0015: publishing safety work raises global_alarm (adopted safety concern,
 			# DQ-21 §1.7) instead of a printed -3 doom. Priced at 0 in v1 (a follow-up prices it).
-			state.add_resources({"papers": 1, "reputation": total_rep})
+			# (The retired media_savvy trait's reputation bonus is gone; a press-facing quirk
+			# could re-add it later via a dedicated channel.)
+			state.add_resources({"papers": 1, "reputation": 2})
 			state.global_alarm += Balance.num("doom.streams.action_paper_alarm", 0.0)
-			if media_savvy_bonus > 0:
-				result["message"] = "Published paper (+1 paper, +%d reputation including media bonus)" % total_rep
-			else:
-				result["message"] = "Published paper (+1 paper, +2 reputation)"
+			result["message"] = "Published paper (+1 paper, +2 reputation)"
 
 		"fundraise":
 			# Submenu action - doesn't execute, opens dialog
@@ -678,20 +671,6 @@ static func _apply_risk_contributions(action_id: String, state: GameState) -> vo
 	state.risk_system.add_risk_multi(entry.get("pools", {}), str(entry.get("source", action_id)), state.turn)
 
 
-static func _assign_random_traits(researcher: Researcher, rng: RandomNumberGenerator):
-	"""Assign random traits to a new researcher"""
-	# 40% chance of one positive trait
-	if rng.randf() < 0.40:
-		var positive_traits = ["workaholic", "team_player", "media_savvy", "safety_conscious", "fast_learner"]
-		var trait_id = positive_traits[rng.randi() % positive_traits.size()]
-		researcher.add_trait(trait_id)
-
-	# 25% chance of one negative trait
-	if rng.randf() < 0.25:
-		var negative_traits = ["prima_donna", "leak_prone", "burnout_prone", "pessimist"]
-		var trait_id = negative_traits[rng.randi() % negative_traits.size()]
-		researcher.add_trait(trait_id)
-
 static func _hire_from_pool(state: GameState, specialization: String) -> Dictionary:
 	"""Try to hire a candidate from the pool with matching specialization"""
 	var candidate: Researcher = null
@@ -720,9 +699,11 @@ static func _hire_from_pool(state: GameState, specialization: String) -> Diction
 	# Hire the selected candidate
 	state.hire_candidate(candidate)
 
-	var trait_info = ""
-	if candidate.traits.size() > 0:
-		trait_info = " [%s]" % candidate.get_trait_description()
+	# A quirk (if any) stays HIDDEN at hire time -- only show it once an exposure has
+	# surfaced it (quirk_known), keeping the true-but-incomplete contract.
+	var quirk_info = ""
+	if candidate.quirk_known and candidate.quirk != "":
+		quirk_info = " [%s]" % candidate.quirk_display_name()
 
 	var spec_name = specialization.capitalize()
 	return {
@@ -731,7 +712,7 @@ static func _hire_from_pool(state: GameState, specialization: String) -> Diction
 			candidate.researcher_name,
 			spec_name,
 			candidate.skill_level,
-			trait_info
+			quirk_info
 		],
 		"hired_researcher": candidate
 	}
@@ -754,10 +735,9 @@ static func submit_paper_to_conference(state: GameState, conf_id: String, topic:
 	if state.action_points < 1:
 		return {"success": false, "message": "Not enough action points"}
 
-	# Calculate paper quality
-	var has_media_savvy = lead_researcher != null and lead_researcher.has_trait("media_savvy")
+	# Calculate paper quality (media_savvy trait retired -> no press bonus for now)
 	var lead_skill = lead_researcher.skill_level if lead_researcher != null else 3
-	var quality = PaperSubmissions.calculate_paper_quality(research_amount, lead_skill, 0, has_media_savvy)
+	var quality = PaperSubmissions.calculate_paper_quality(research_amount, lead_skill, 0, false)
 
 	# Create paper submission
 	var paper = PaperSubmissions.PaperSubmission.new()

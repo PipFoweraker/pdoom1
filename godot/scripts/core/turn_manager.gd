@@ -143,12 +143,17 @@ func _step_researcher_productivity() -> Dictionary:
 	var leak_occurred = false
 	var leak_doom = 0.0
 
-	# Calculate team_player bonus (10% per team player present)
-	var team_player_count = 0
+	# Team quirk bonus (retired team_player trait -> quirk team_productivity_add channel).
+	# lab_parent / empire_builder lift the whole team; secrecy_maximalist / glory_hound /
+	# doom_absolutist drag it. Effect is live even while the quirk is hidden.
+	var team_quirk_bonus = 1.0
+	var team_quirk_count = 0
 	for researcher in state.researchers:
-		if researcher.has_trait("team_player"):
-			team_player_count += 1
-	var team_player_bonus = 1.0 + (team_player_count * 0.10)
+		var contrib := float(researcher.quirk_effect("team_productivity_add", 0.0))
+		if contrib != 0.0:
+			team_quirk_count += 1
+		team_quirk_bonus += contrib
+	team_quirk_bonus = maxf(team_quirk_bonus, 0.1)  # never invert or zero out the team
 
 	# Process researchers in order (first N are managed)
 	var researcher_index = 0
@@ -165,8 +170,8 @@ func _step_researcher_productivity() -> Dictionary:
 			compute_consumed += compute_request
 			productive_count += 1
 
-			# Get effective productivity (accounts for burnout, traits)
-			var productivity = researcher.get_effective_productivity() * team_player_bonus
+			# Get effective productivity (accounts for burnout + quirk self-effect)
+			var productivity = researcher.get_effective_productivity() * team_quirk_bonus
 
 			# Research generation based on productivity
 			var research_roll = state.rng.randf()
@@ -187,9 +192,8 @@ func _step_researcher_productivity() -> Dictionary:
 					"safety":
 						# Safety research reduces doom
 						doom_reduction_from_safety += 0.3 * productivity
-						# Apply safety conscious trait
-						if researcher.has_trait("safety_conscious"):
-							doom_reduction_from_safety += 0.1 * productivity
+						# (Safety-diligence quirks now reduce doom via get_doom_modifier's
+						# doom_mod_add channel -- true_believer/doom_absolutist -- not here.)
 					"interpretability":
 						# Standard research, unlocks special actions (handled elsewhere)
 						pass
@@ -199,14 +203,18 @@ func _step_researcher_productivity() -> Dictionary:
 
 				research_from_employees += base_research
 
-			# Check for leak_prone trait (1% chance per turn)
-			if researcher.has_trait("leak_prone"):
+			# Leak-risk quirks (retired leak_prone trait -> quirk leak_chance channel:
+			# loose_lips 0.05, open_science_zealot 0.03). Only quirk-carriers draw. A leak is
+			# a natural INCIDENT that surfaces the quirk -- expose it the turn it fires.
+			var leak_chance := float(researcher.quirk_effect("leak_chance", 0.0))
+			if leak_chance > 0.0:
 				var leak_roll = state.rng.randf()
 				VerificationTracker.record_rng_outcome("leak_check_%d" % researcher_index, leak_roll, state.turn)
 
-				if leak_roll < 0.01:
+				if leak_roll < leak_chance:
 					leak_occurred = true
 					leak_doom += 3.0  # Leak causes doom increase
+					researcher.expose_quirk()  # the incident reveals the culprit's quirk
 
 		researcher_index += 1
 
@@ -244,8 +252,8 @@ func _step_researcher_productivity() -> Dictionary:
 		"doom_from_capabilities": doom_from_capabilities,
 		"leak_occurred": leak_occurred,
 		"leak_doom": leak_doom,
-		"team_player_count": team_player_count,
-		"team_player_bonus": team_player_bonus,
+		"team_quirk_count": team_quirk_count,
+		"team_quirk_bonus": team_quirk_bonus,
 		"unmanaged_employees": unmanaged_employees,
 		"total_unproductive": total_unproductive,
 	}
@@ -306,8 +314,8 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 	var doom_from_capabilities: float = prod["doom_from_capabilities"]
 	var leak_occurred: bool = prod["leak_occurred"]
 	var leak_doom: float = prod["leak_doom"]
-	var team_player_count: int = prod["team_player_count"]
-	var team_player_bonus: float = prod["team_player_bonus"]
+	var team_quirk_count: int = prod["team_quirk_count"]
+	var team_quirk_bonus: float = prod["team_quirk_bonus"]
 	var unmanaged_employees: int = prod["unmanaged_employees"]
 	var total_unproductive: int = prod["total_unproductive"]
 	var stationery_consumption: float = stationery["stationery_consumption"]
@@ -376,8 +384,10 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 	if leak_occurred:
 		messages.append("WARNING: Research leak detected! (+%.1f doom)" % leak_doom)
 
-	if team_player_count > 0:
-		messages.append("Team player bonus: +%d%% productivity" % int((team_player_bonus - 1.0) * 100))
+	if team_quirk_count > 0 and team_quirk_bonus > 1.0:
+		messages.append("Team chemistry: +%d%% productivity" % int((team_quirk_bonus - 1.0) * 100))
+	elif team_quirk_count > 0 and team_quirk_bonus < 1.0:
+		messages.append("Team friction: %d%% productivity" % int((team_quirk_bonus - 1.0) * 100))
 
 	if unmanaged_employees > 0:
 		messages.append("WARNING: %d unmanaged researchers (need more managers!)" % unmanaged_employees)

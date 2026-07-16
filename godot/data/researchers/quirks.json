@@ -1,0 +1,119 @@
+{
+  "_doc": "Researcher QUIRK catalogue. Hidden-but-TRUE riders on the Phase-A ability layer (researcher.gd). Each quirk is real from creation; play REVEALS it (the sim never lies -- BUILD_BRIEF_HIRING_PIPELINE.md 'true-but-incomplete'). Design + rationale: docs/game-design/RESEARCHER_QUIRKS.md. Register: 'bother', Papers-Please deadpan (WORLD_AND_LORE.md). Effect keys are a small fixed set the sim reads through Researcher.quirk_effect(); see RESEARCHER_QUIRKS.md for the channel list. Reveal.after_turns is a deterministic tenure fallback so every quirk surfaces in play (ADR-0006); reveal.via names the narrative trigger (leak-quirks also self-surface the turn a leak fires).",
+  "version": 1,
+  "quirk_chance": 0.15,
+  "quirks": {
+    "secret_successionist": {
+      "name": "Secret Successionist",
+      "flavour": "Believes the machines should inherit the earth -- and is quietly at peace with it.",
+      "valence": "negative",
+      "appetite": "mission_purity",
+      "effects": { "self_productivity_mult": 1.12, "doom_mod_add": 0.04 },
+      "reveal": { "via": "incident", "after_turns": 12, "hint": "A half-joking manifesto surfaces in an old commit message." }
+    },
+    "doom_absolutist": {
+      "name": "Doom Absolutist",
+      "flavour": "P(doom) is 0.99 and they will cc the whole company to say so.",
+      "valence": "double_edged",
+      "appetite": "mission_purity",
+      "effects": { "doom_mod_add": -0.06, "team_productivity_add": -0.03 },
+      "reveal": { "via": "tenure", "after_turns": 8, "hint": "The all-hands rants stop being one-offs and become a pattern." }
+    },
+    "e_acc_sympathizer": {
+      "name": "e/acc Sympathizer",
+      "flavour": "Wants to feel the AGI. 'Also helps safety, really.'",
+      "valence": "negative",
+      "appetite": "compute",
+      "effects": { "self_productivity_mult": 1.15, "doom_mod_add": 0.05 },
+      "reveal": { "via": "incident", "after_turns": 10, "hint": "Caught mid unsanctioned scaling run on the good cluster." }
+    },
+    "open_science_zealot": {
+      "name": "Open-Science Zealot",
+      "flavour": "Information wants to be free; the NDA was more of a suggestion.",
+      "valence": "double_edged",
+      "appetite": "prestige",
+      "effects": { "leak_chance": 0.03, "team_productivity_add": 0.02 },
+      "reveal": { "via": "leak", "after_turns": 9, "hint": "A preprint goes up before legal had seen it." }
+    },
+    "secrecy_maximalist": {
+      "name": "Secrecy Maximalist",
+      "flavour": "Compartmentalizes everything, including from you.",
+      "valence": "double_edged",
+      "appetite": "mission_purity",
+      "effects": { "self_productivity_mult": 1.05, "team_productivity_add": -0.04 },
+      "reveal": { "via": "tenure", "after_turns": 6, "hint": "Nobody can find where they filed anything." }
+    },
+    "empire_builder": {
+      "name": "Empire Builder",
+      "flavour": "Every problem is solved by hiring three more reports.",
+      "valence": "double_edged",
+      "appetite": "prestige",
+      "effects": { "team_productivity_add": 0.04, "burnout_per_turn_add": 0.3 },
+      "reveal": { "via": "tenure", "after_turns": 7, "hint": "The org chart quietly grows a new branch under them." }
+    },
+    "runs_hot": {
+      "name": "Runs Hot",
+      "flavour": "Ships twice the work and burns at twice the rate.",
+      "valence": "double_edged",
+      "appetite": "",
+      "effects": { "self_productivity_mult": 1.20, "burnout_per_turn_add": 2.0 },
+      "reveal": { "via": "tenure", "after_turns": 6, "hint": "The 3am commits stop being occasional." }
+    },
+    "lab_parent": {
+      "name": "Lab Parent",
+      "flavour": "The one who actually onboards the juniors nobody else will.",
+      "valence": "positive",
+      "appetite": "mentees",
+      "effects": { "team_productivity_add": 0.06 },
+      "reveal": { "via": "tenure", "after_turns": 5, "hint": "Half the team lists them as their real manager." }
+    },
+    "loose_lips": {
+      "name": "Loose Lips",
+      "flavour": "A delightful conversationalist with a poor sense of what was confidential.",
+      "valence": "negative",
+      "appetite": "prestige",
+      "effects": { "leak_chance": 0.05 },
+      "reveal": { "via": "leak", "after_turns": 8, "hint": "A specific detail turns up in a competitor's slide deck." }
+    },
+    "sponge": {
+      "name": "Sponge",
+      "flavour": "Absorbs a whole subfield over a long weekend.",
+      "valence": "positive",
+      "appetite": "mentees",
+      "effects": { "skill_growth_mult": 2.5 },
+      "reveal": { "via": "tenure", "after_turns": 10, "hint": "Their skill curve bends visibly upward." }
+    },
+    "cat_whisperer": {
+      "name": "Cat Whisperer",
+      "flavour": "The office cat is calmest at their desk -- a small mercy against the doom.",
+      "valence": "positive",
+      "appetite": "",
+      "effects": { "team_productivity_add": 0.03, "burnout_per_turn_add": -0.5 },
+      "reveal": { "via": "tenure", "after_turns": 4, "hint": "The cat has chosen a lap, and it is theirs." }
+    },
+    "glory_hound": {
+      "name": "Glory Hound",
+      "flavour": "First author or no author; co-authors are load-bearing furniture.",
+      "valence": "negative",
+      "appetite": "prestige",
+      "effects": { "self_productivity_mult": 1.10, "team_productivity_add": -0.04 },
+      "reveal": { "via": "incident", "after_turns": 9, "hint": "An authorship dispute lands on your desk." }
+    },
+    "quiet_quitter": {
+      "name": "Quiet Quitter",
+      "flavour": "Present, paid, and quietly checked out.",
+      "valence": "negative",
+      "appetite": "money",
+      "effects": { "self_productivity_mult": 0.85, "loyalty_per_turn_add": -1 },
+      "reveal": { "via": "tenure", "after_turns": 6, "hint": "The output flatlines while the salary does not." }
+    },
+    "true_believer": {
+      "name": "True Believer",
+      "flavour": "Would do this for free, and nearly does; recruiters bounce off.",
+      "valence": "positive",
+      "appetite": "mission_purity",
+      "effects": { "doom_mod_add": -0.04, "loyalty_per_turn_add": 1 },
+      "reveal": { "via": "tenure", "after_turns": 8, "hint": "Three recruiters have failed to move them." }
+    }
+  }
+}

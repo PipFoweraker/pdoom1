@@ -72,10 +72,12 @@ func set_researcher(researcher: Researcher):
 	else:
 		prod_label.add_theme_color_override("font_color", Color(0.8, 0.3, 0.3))
 
-	# Update tier slots based on skill level (simplified unlock check)
-	_update_tier_slot(tier1_slot, 1, researcher.skill_level >= 3, researcher.traits)
-	_update_tier_slot(tier2_slot, 2, researcher.skill_level >= 6, researcher.traits)
-	_update_tier_slot(tier3_slot, 3, researcher.skill_level >= 8, researcher.traits)
+	# Update tier slots based on skill level (simplified unlock check). Legacy traits retired
+	# -> pass an empty equipped list; the slots reflect unlock state only for now.
+	var no_perks: Array = []
+	_update_tier_slot(tier1_slot, 1, researcher.skill_level >= 3, no_perks)
+	_update_tier_slot(tier2_slot, 2, researcher.skill_level >= 6, no_perks)
+	_update_tier_slot(tier3_slot, 3, researcher.skill_level >= 8, no_perks)
 
 func _show_empty():
 	name_label.text = "Empty"
