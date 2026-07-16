@@ -1,0 +1,51 @@
+# Line-ending normalization for P(Doom)1
+#
+# Why this file exists:
+#   The repo has core.autocrlf=true. Without these rules, git rewrites LF->CRLF
+#   in the working tree on checkout, while Godot AND the pre-commit
+#   `mixed-line-ending --fix=lf` hook both want LF. The result was that every
+#   commit tripped the hook (CRLF->LF rewrite + abort + re-add). Forcing eol=lf
+#   keeps the working tree LF so the hook, Godot, and git all agree.
+#
+# The index is already stored as LF (autocrlf normalized on the way in), so
+# adding this file does NOT trigger a mass renormalization diff.
+
+# Default: treat as text, store LF in repo, check out LF in working tree.
+* text=auto eol=lf
+
+# --- Text formats that must stay LF (source + Godot resources) ---
+*.gd       text eol=lf
+*.py       text eol=lf
+*.md       text eol=lf
+*.txt      text eol=lf
+*.json     text eol=lf
+*.yaml     text eol=lf
+*.yml      text eol=lf
+*.cfg      text eol=lf
+*.toml     text eol=lf
+*.sh       text eol=lf
+*.tscn     text eol=lf
+*.tres     text eol=lf
+*.import   text eol=lf
+*.uid      text eol=lf
+*.gdshader text eol=lf
+*.svg      text eol=lf
+
+# --- Binary assets: never apply text/EOL conversion ---
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.gif   binary
+*.ico   binary
+*.bmp   binary
+*.mp3   binary
+*.wav   binary
+*.ogg   binary
+*.ttf   binary
+*.otf   binary
+*.woff  binary
+*.woff2 binary
+*.zip   binary
+*.pdf   binary
+*.exe   binary
