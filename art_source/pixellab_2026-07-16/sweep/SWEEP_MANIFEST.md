@@ -108,3 +108,11 @@ into `sweep/<category>/<key>_<roll>.png`. IDs kept here for re-animation / re-ro
 | environment | window_weather_doomy | 2 | 016e3ea0-034c-4ed1-8aa0-908e0d80ea3e | map |
 | environment | window_weather_doomy | 3 | 277934d4-ae1f-4b29-87a1-ccc8f707b2bb | map |
 | environment | window_weather_doomy | 4 | 5341e9ab-77ea-4143-a4d3-3b48a68696ff | map |
+| cats | cat_eldritch | 1 | 92648133-8ef9-4e2a-9352-4374834d8a28 | character-south |
+| cats | cat_eldritch | 2 | b3529ea4-fbb2-4ef3-93f6-acec97423ea8 | character-south |
+| cats | cat_eldritch | 3 | 86172d85-d8a9-4ba8-85fa-a28e2723a7fa | character-south |
+| cats | cat_eldritch | 4 | 1f76e72a-e461-4310-ad86-46420d5c2e15 | character-south |
+| cats | cat_purple | 1 | a31e89ea-5a95-4a52-9dd0-cccdd13d2c9f | character-south |
+| cats | cat_purple | 2 | 3d4f77af-facd-45c8-a535-04e73a36c518 | character-south |
+| cats | cat_purple | 3 | 6c8e4dda-fde1-4cce-bae9-f8dbe38c8766 | character-south |
+| cats | cat_purple | 4 | 227e3550-374e-4878-ad2c-9979fde9d6c2 | character-south |
