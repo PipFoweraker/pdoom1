@@ -47,6 +47,7 @@ var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-i
 var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
 var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
 var employee_panel  # #622 L10: employee roster + staff ID card (becomes L2's assignment surface)
+var screen_mode: ScreenModeController  # Lane 1 / Phase A: PLAN<->WATCH two-screen mode controller
 # EE-7 (ADR-0012 loss legibility): per-resource "last turn" delta chips beside the
 # money/compute/reputation/doom readouts. Snapshot at each turn boundary; a chip shows
 # the change over the last completed turn, green=helped red=hurt (doom inverted).
@@ -158,6 +159,10 @@ func _ready():
 	right_zones.add_child(employee_access_btn)
 	right_zones.move_child(employee_access_btn, ledger_summary_btn.get_index() + 1)
 
+	# Lane 1 / Phase A: PLAN<->WATCH two-screen scaffold + first terminal-styling pass.
+	# Built AFTER all panels exist so it can register them for per-mode visibility.
+	_setup_plan_watch_scaffold()
+
 	# Always-visible DEV BUILD corner badge so a playtester can confirm exactly which
 	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
 	add_child(DevBuildBadge.new())
@@ -189,6 +194,69 @@ func _ready():
 	# Call init on next frame to ensure everything is ready
 	await get_tree().process_frame
 	_on_init_button_pressed()
+
+func _setup_plan_watch_scaffold() -> void:
+	"""Lane 1 / Phase A (BUILD_BRIEF_PLAN_WATCH_UI): stand up the two-screen structure over
+	the existing single UI — a mode controller + banner + WATCH control strip, existing
+	panels sorted into PLAN vs WATCH, and a first terminal-styling pass. The game stays
+	fully playable: COMMIT THE MONTH (the End Turn button) drives PLAN->WATCH; the month
+	review returns to PLAN (see _on_turn_phase_changed / _on_end_turn_button_pressed)."""
+	# --- background: dark CRT phosphor field on its own layer (no layout disturbance) ---
+	var bg_layer := CanvasLayer.new()
+	bg_layer.layer = -10
+	var bg := ColorRect.new()
+	bg.color = TerminalTheme.BG_DARK
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bg_layer.add_child(bg)
+	add_child(bg_layer)
+
+	# --- mode controller + its owned chrome ---
+	screen_mode = ScreenModeController.new()
+	add_child(screen_mode)
+
+	# Mode banner just under the TopBar.
+	var banner := screen_mode.build_banner()
+	add_child(banner)
+	move_child(banner, $TopBar.get_index() + 1)
+
+	# WATCH control strip (speed dial + day/reserve readout) just above the content area.
+	var watch_bar := screen_mode.build_watch_bar()
+	add_child(watch_bar)
+	move_child(watch_bar, banner.get_index() + 1)
+
+	# Speed dial -> real playback speed.
+	screen_mode.speed_changed.connect(func(secs: float): game_manager.day_tick_seconds = secs)
+
+	# --- sort existing panels into PLAN vs WATCH ---
+	# PLAN (strategy): the hand, upgrades to plan, the planning verbs. Hidden while watching.
+	screen_mode.register_plan_only($ContentArea/LeftPanel)                 # the action hand + research selector
+	screen_mode.register_plan_only($ContentArea/RightPanel/UpgradesLabel)
+	screen_mode.register_plan_only($ContentArea/RightPanel/UpgradesScroll)
+	screen_mode.register_plan_only($ContentArea/MiddlePanel/CommandZone)   # Do-Nothing / pass — a planning verb
+	screen_mode.register_plan_only(undo_last_button)
+	screen_mode.register_plan_only(clear_queue_button)
+	screen_mode.register_plan_only(reserve_ap_button)
+	screen_mode.register_plan_only(commit_plan_button)
+	screen_mode.register_plan_only(end_turn_button)                        # END TURN == COMMIT THE MONTH
+	# WATCH (tactics): the playback control strip. Doom/feed/queue stay visible in BOTH
+	# (context in PLAN, live instruments in WATCH); response windows overlay as dialogs.
+	screen_mode.register_watch_only(watch_bar)
+
+	# The End Turn button is the PLAN->WATCH commit — relabel it in the plan register.
+	end_turn_button.text = "COMMIT THE MONTH ▶"
+
+	# --- first terminal-styling pass over the default greys ---
+	TerminalTheme.style_panel($ContentArea/RightPanel/QueuePanel, TerminalTheme.RULE, TerminalTheme.PANEL_BG)
+	TerminalTheme.style_panel($InfoBar, TerminalTheme.RULE, TerminalTheme.PANEL_BG_DEEP)
+	TerminalTheme.style_feed(message_log)  # the feed: monospace, phosphor text
+	# Amber the two title labels into the terminal register.
+	$TopBar/TitleLabel.add_theme_color_override("font_color", TerminalTheme.AMBER)
+	$ContentArea/MiddlePanel/TitleZone/TitleLabel.add_theme_color_override("font_color", TerminalTheme.AMBER)
+
+	# Start in PLAN (the game opens at the month plan).
+	screen_mode.enter_plan()
+
 
 func _unhandled_key_input(event: InputEvent):
 	"""Handle keyboard shortcuts for dialogs (runs after focus but before _unhandled_input)"""
@@ -547,6 +615,9 @@ func _on_end_turn_button_pressed():
 	# playback (auto-pause on response windows, month review at the boundary). The old
 	# single day-step lives on ONLY behind the DEV MODE overlay ("Day step (dev)").
 	game_manager.end_month()
+	# Phase A: COMMIT THE MONTH is the PLAN->WATCH transition.
+	if screen_mode:
+		screen_mode.enter_watch()
 
 func _on_commit_plan_button_pressed():
 	"""Commit queued actions AND reserve remaining AP (no warnings)"""
@@ -582,6 +653,9 @@ func _on_commit_plan_button_pressed():
 
 	# Commit the plan — the L1 month path (see _on_end_turn_button_pressed).
 	game_manager.end_month()
+	# Phase A: committing the plan is the PLAN->WATCH transition.
+	if screen_mode:
+		screen_mode.enter_watch()
 
 func _on_employee_tab_button_pressed():
 	"""Switch to employee management screen - DISABLED: employee info moving to main UI"""
@@ -608,6 +682,10 @@ func _on_game_state_updated(state: Dictionary):
 
 	if research_quality_selector:
 		research_quality_selector.update_from_state(state)
+
+	# Phase A: keep the WATCH day/reserve readout live during month playback.
+	if screen_mode:
+		screen_mode.update_from_state(state)
 
 	# Update resource displays (Issue #472 - enhanced turn display with calendar)
 	var turn_display = state.get("turn_display", "")
@@ -848,6 +926,10 @@ func _on_turn_phase_changed(phase_name: String):
 		commit_plan_button.disabled = false
 		undo_last_button.disabled = (queued_actions.size() == 0)
 		clear_queue_button.disabled = (queued_actions.size() == 0)
+		# Phase A: reaching the plan phase (game start / after month review) returns to PLAN.
+		# Mid-month window pauses emit "turn_start", not "action_selection", so WATCH is kept.
+		if screen_mode:
+			screen_mode.enter_plan()
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
 		phase_display = "EXECUTING - Your actions are running..."
