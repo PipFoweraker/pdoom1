@@ -242,6 +242,20 @@ report accuracy degrades with punishment-culture and manager incentives). Skip-l
 audits are a founder-time spend to re-ground truth. Folds inward-SA (ADR-0008 deferral)
 into existing SA machinery.
 
+**(2026-07-16, playtest-4)** *"Managers feel like a good step to phase-change the problems
+of the game, much like switching bottlenecks in Factorio. Unmanaged engineers get
+distracted. Management brings more misery… Moral Mazes / Zvi / Michael O. Church / middle
+management style problems."*
+→ **Managers don't reduce problems — they transform the problem-space (a phase change).**
+Extends managers-as-interrupt-shields (ADR-0011) with a dark rider: unmanaged staff
+generate *distraction/drift* problems; adding management swaps those for
+*middle-management-pathology* problems (Moral Mazes — rosy reporting, mazes of incentive,
+CYA). Like Factorio's bottleneck-switching, scaling doesn't remove the pressure, it
+*relocates* it to a new class. Management is a new problem genre you opt into, never a
+solved state — the intended mid/late-game misery material (the coarsening-management-grain
+principle, given teeth). Design boundary: it must stay legible and darkly funny ("bother,"
+Papers-Please register), not an HR-gravity sim.
+
 **(2026-07-12)** *"successes plus schmoozing in finance leads to better VC offers than
 successes plus time at AI safety conferences, which would have in turn led to better
 grant applications or higher quality safety applicants"*
