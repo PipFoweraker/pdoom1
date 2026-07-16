@@ -710,6 +710,17 @@ bodies; 4-frame key anims (idle can be 2); layered base-body + swappable clothin
 overlays. Pending: Pip connects the pixellab MCP + confirms the layered approach → Fable
 writes the generation plan for review → generate ONE test character before batching.
 
+## #659 playtest notes (2026-07-16, Pip — pre-hiring-build)
+
+- **Negative-value alert (UI legibility).** When a resource goes negative, the NUMBER itself
+  gets a glowing red alert treatment (glow + red). Semantics vary by resource: some may go
+  negative and you claw back; for others zero = death / strategic lockout. Extends the
+  delta-chip / two-instrument legibility system. Distinguish "negative is recoverable" vs
+  "zero is terminal" visually. (Pip: several things "feel visually broken that will resolve
+  themselves" once this lands.)
+- **Compute clamp (bug).** Compute should NOT go below zero — clamp at 0 (running out = no
+  more compute, not negative compute). Quick technical fix.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
