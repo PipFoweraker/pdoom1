@@ -1,0 +1,58 @@
+[gd_scene load_steps=2 format=3 uid="uid://plan_screen_pw01"]
+
+[ext_resource type="Script" path="res://scripts/ui/plan_screen.gd" id="1_plan"]
+
+[node name="PlanScreen" type="VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+script = ExtResource("1_plan")
+
+[node name="GettingStartedHint" type="Label" parent="."]
+layout_mode = 2
+text = "TIP: Hire safety researchers to reduce P(Doom)"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 10
+theme_override_colors/font_color = Color(0.5, 0.8, 0.5, 0.9)
+
+[node name="ActionsScroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ActionsList" type="VBoxContainer" parent="ActionsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UpgradesLabel" type="Label" parent="."]
+layout_mode = 2
+text = "Upgrades:"
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.8, 0.9, 1.0, 1)
+
+[node name="UpgradesScroll" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.45
+
+[node name="UpgradesList" type="VBoxContainer" parent="UpgradesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CommandZone" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 8
+alignment = 2
+
+[node name="CommandLabel" type="Label" parent="CommandZone"]
+layout_mode = 2
+text = "Command"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.6, 0.5, 0.8, 1)
+
+[node name="PassButton" type="Button" parent="CommandZone"]
+layout_mode = 2
+custom_minimum_size = Vector2(120, 36)
+text = "Do Nothing"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.8, 0.7, 1.0, 1)
