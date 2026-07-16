@@ -1,25 +1,25 @@
 extends GutTest
-## Tests for the playtest flight recorder (F9) — WORKSHOP_2_BACKLOG "Playtest
+## Tests for the playtest flight recorder (F6) — WORKSHOP_2_BACKLOG "Playtest
 ## deep-dive protocol". Covers the keybind registration and the pure snapshot/
 ## manifest helpers; the actual screenshot (get_viewport().get_texture()) needs a
 ## live rendered viewport and a human eye, per the task spec — not unit-tested here.
 
 
-func test_flight_recorder_keybind_registered_on_f9():
+func test_flight_recorder_keybind_registered_on_f6():
 	assert_true(KeybindManager.keybinds.has("flight_recorder"),
 		"flight_recorder action must be registered as a named keybind")
-	assert_eq(KeybindManager.keybinds["flight_recorder"]["key"], KEY_F9,
-		"flight_recorder should default to F9")
+	assert_eq(KeybindManager.keybinds["flight_recorder"]["key"], KEY_F6,
+		"flight_recorder should default to F6 (rebound off F9 — Nvidia overlay collision)")
 
 
-func test_f9_emits_flight_recorder_requested():
+func test_f6_emits_flight_recorder_requested():
 	var ev := InputEventKey.new()
-	ev.keycode = KEY_F9
+	ev.keycode = KEY_F6
 	ev.pressed = true
 	watch_signals(KeybindManager)
 	KeybindManager._input(ev)
 	assert_signal_emitted(KeybindManager, "flight_recorder_requested",
-		"Pressing F9 should fire flight_recorder_requested")
+		"Pressing F6 should fire flight_recorder_requested")
 
 
 # ---------------------------------------------------------------------------
