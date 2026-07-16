@@ -40,10 +40,27 @@
   ],
 
   "characters_use_create_character": [
+    {"key": "base_worker_restyle", "desc": "a Black woman in her 30s with box braids and round glasses, business casual office worker, AI safety researcher", "note": "RE-STYLE of the existing floor worker into warm-grime-heft to standardize"},
     {"key": "cast_black_woman_young", "desc": "a young Black woman with short natural hair and a smart casual outfit, AI safety researcher"},
     {"key": "cast_woman_lead_older", "desc": "an older woman team lead with grey hair in a bun and a blazer, AI safety researcher"},
     {"key": "cast_wheelchair_user", "desc": "a person using a wheelchair, casual jumper, AI safety researcher"},
     {"key": "cast_eccentric_genius", "desc": "a visibly eccentric genius with wild hair and mismatched clothes, AI safety researcher"},
     {"key": "founder_silhouette", "desc": "a shadowed silhouetted operator figure in a high-backed chair, face hidden, ominous, side view", "note": "founder, not a floor worker; may want side view not low-top-down"}
+  ],
+
+  "cosmetics_overlays": [
+    {"key": "hat_medium", "desc": "a medium fancy formal hat, cosmetic accessory on transparent background", "w": 48, "h": 56},
+    {"key": "hat_sports", "desc": "a sports cap, cosmetic accessory on transparent background", "w": 48, "h": 48},
+    {"key": "lab_coat", "desc": "a white lab coat, worn clothing item on transparent background", "w": 64, "h": 80},
+    {"key": "lanyard_badge", "desc": "a security lanyard and ID badge, small accessory on transparent background", "w": 40, "h": 56},
+    {"key": "headphones", "desc": "a pair of over-ear headphones, accessory on transparent background", "w": 48, "h": 48}
+  ],
+
+  "ui_filler_map_object": [
+    {"key": "ui_panel_frame", "desc": "an ornate retro computer UI panel frame border, empty center, on transparent background", "w": 128, "h": 96},
+    {"key": "ui_texture_tile", "desc": "a subtle seamless dark warm UI background texture tile", "w": 64, "h": 64},
+    {"key": "ui_indicator_dot", "desc": "a small glowing status indicator light, single icon on transparent background", "w": 32, "h": 32},
+    {"key": "icon_compute", "desc": "a small compute / server chip resource icon on transparent background", "w": 48, "h": 48},
+    {"key": "icon_doom", "desc": "a small ominous doom skull resource icon on transparent background", "w": 48, "h": 48}
   ]
 }
