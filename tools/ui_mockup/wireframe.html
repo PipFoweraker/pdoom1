@@ -1,0 +1,135 @@
+<!-- P(Doom)1 main-screen wireframe. Deliberately rough + throwaway (Pip: "I will not
+     get too attached"). Structure + where-art-goes only, not final layout. Open in a browser. -->
+<title>P(Doom)1 -- main screen wireframe</title>
+<style>
+  :root{
+    --ground:#17120e;--panel:#211a14;--panel2:#2b221a;--ink:#ece0cf;--dim:#a9977f;--faint:#6f6250;
+    --amber:#e8a33d;--line:#3a2e22;--doom:#c0492f;--doom2:#7a3b8f;--good:#6fae86;--compute:#5fa9c8;
+  }
+  @media (prefers-color-scheme:light){:root{
+    --ground:#efe6d6;--panel:#f7efe0;--panel2:#fbf5e9;--ink:#2b2116;--dim:#6b5b45;--faint:#9a876c;
+    --amber:#b9741a;--line:#ddccb0;--doom:#bd4e34;--doom2:#7a3b8f;--good:#3f8a5c;--compute:#2f7fa0;}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--ink);font-family:ui-monospace,Consolas,monospace;line-height:1.45}
+  .wrap{max-width:1120px;margin:0 auto;padding:2rem 1.3rem 4rem}
+  h1{font-size:1.5rem;margin:0 0 .2rem}
+  .sub{color:var(--dim);font-size:.85rem;margin:0 0 1.4rem;max-width:70ch;font-family:ui-sans-serif,system-ui,sans-serif}
+  .sub b{color:var(--ink)}
+
+  /* the screen mock */
+  .screen{border:2px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel);
+    display:grid;grid-template-columns:1fr 300px;grid-template-rows:auto 1fr auto;min-height:560px}
+  .region{border:1px dashed var(--faint);margin:5px;border-radius:7px;padding:.6rem .7rem;position:relative;background:var(--panel2)}
+  .tag{position:absolute;top:-9px;left:9px;background:var(--amber);color:#20140a;font-size:.6rem;font-weight:700;
+    padding:.05rem .4rem;border-radius:4px;letter-spacing:.03em}
+  .region h4{margin:.5rem 0 .3rem;font-size:.8rem}
+  .region p{margin:0;color:var(--dim);font-size:.72rem;font-family:ui-sans-serif,system-ui,sans-serif}
+
+  /* top resource strip */
+  .resources{grid-column:1 / 3;display:flex;gap:.5rem;align-items:stretch}
+  .res{flex:1;border:1px solid var(--line);border-radius:6px;padding:.4rem .5rem;background:var(--panel);display:flex;flex-direction:column;gap:.15rem}
+  .res .ic{width:20px;height:20px;border-radius:4px;display:inline-block}
+  .res .v{font-size:1rem;font-weight:700}
+  .res .l{font-size:.58rem;color:var(--faint);text-transform:uppercase;letter-spacing:.08em}
+  .res .spark{height:14px;border-bottom:1px solid var(--line);position:relative;opacity:.7}
+  .res .spark::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:70%;
+    background:linear-gradient(90deg,transparent,currentColor);opacity:.25;border-radius:3px}
+
+  /* office stage */
+  .stage{position:relative;min-height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .floorgrid{position:absolute;inset:8px;border-radius:6px;
+    background:
+      linear-gradient(var(--line) 1px,transparent 1px) 0 0/38px 38px,
+      linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/38px 38px,
+      var(--panel);opacity:.5}
+  .token{position:absolute;border:1px solid var(--faint);border-radius:5px;background:var(--panel);
+    font-size:.6rem;color:var(--dim);padding:.25rem .35rem;text-align:center;font-family:ui-sans-serif,system-ui,sans-serif}
+  .worker{width:34px;height:44px}
+  .prop{color:var(--faint)}
+  .window{width:74px;height:52px;border-color:var(--compute);color:var(--compute)}
+  .catbox{width:44px;height:34px;border-color:var(--amber);color:var(--amber)}
+
+  /* right column panels */
+  .side{grid-row:2 / 3;grid-column:2;display:flex;flex-direction:column;gap:0}
+  .tabs{display:flex;gap:.3rem;margin:5px 5px 0}
+  .tab{flex:1;text-align:center;font-size:.62rem;padding:.3rem;border:1px solid var(--line);border-bottom:none;
+    border-radius:5px 5px 0 0;background:var(--panel2);color:var(--dim)}
+  .tab.on{background:var(--amber);color:#20140a;font-weight:700}
+
+  /* action dock */
+  .dock{grid-column:1 / 3;display:flex;gap:.4rem;align-items:center}
+  .act{flex:1;border:1px solid var(--line);border-radius:6px;padding:.5rem;text-align:center;font-size:.66rem;
+    color:var(--dim);background:var(--panel)}
+  .act .k{display:block;font-size:.9rem;color:var(--ink);margin-bottom:.15rem}
+
+  .callouts{margin-top:1.6rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:.8rem}
+  .co{border:1px solid var(--line);border-left:3px solid var(--amber);border-radius:8px;padding:.8rem 1rem;background:var(--panel2)}
+  .co h3{margin:0 0 .3rem;font-size:.85rem}
+  .co p{margin:0;color:var(--dim);font-size:.78rem;font-family:ui-sans-serif,system-ui,sans-serif}
+  .co .n{color:var(--amber);font-weight:700}
+  .legend{margin-top:1.4rem;color:var(--faint);font-size:.72rem}
+</style>
+
+<div class="wrap">
+  <h1>P(Doom)1 -- main screen wireframe</h1>
+  <p class="sub">Rough + throwaway, just to react to. The idea: fill the negative space by giving every edge a job --
+    a <b>resource strip</b> up top, the <b>office floor</b> as the living centre (sprites + cat + window doing the ambient
+    doom-signalling), a <b>tabbed side panel</b> for team/feed/barometer, and a <b>grouped action dock</b> below.
+    Numbers map to the notes underneath.</p>
+
+  <div class="screen">
+    <!-- 1: resources -->
+    <div class="region resources"><span class="tag">1 - RESOURCE STRIP</span>
+      <div class="res" style="color:var(--good)"><span class="l">Money</span><span class="v">$245k</span><span class="spark"></span></div>
+      <div class="res" style="color:var(--doom)"><span class="l">Doom</span><span class="v">34%</span><span class="spark"></span></div>
+      <div class="res" style="color:var(--amber)"><span class="l">Attention</span><span class="v">17/20</span><span class="spark"></span></div>
+      <div class="res" style="color:var(--compute)"><span class="l">Compute</span><span class="v">8</span><span class="spark"></span></div>
+      <div class="res" style="color:var(--ink)"><span class="l">Reputation</span><span class="v">+12</span><span class="spark"></span></div>
+    </div>
+
+    <!-- 2: office stage -->
+    <div class="region stage"><span class="tag">2 - OFFICE FLOOR (living centre)</span>
+      <div class="floorgrid"></div>
+      <div class="token window" style="top:16px;left:26px">3 window<br>(weather)</div>
+      <div class="token worker" style="top:120px;left:90px">worker</div>
+      <div class="token worker" style="top:150px;left:150px">worker</div>
+      <div class="token worker" style="top:190px;left:250px">worker</div>
+      <div class="token prop" style="top:110px;left:210px;width:40px;height:30px">desk</div>
+      <div class="token prop" style="top:220px;left:120px;width:38px;height:28px">server</div>
+      <div class="token catbox" style="bottom:14px;right:20px">4 cat<br>(doom band)</div>
+    </div>
+
+    <!-- side tabs + panel -->
+    <div class="side">
+      <div class="tabs"><div class="tab on">Team</div><div class="tab">Feed</div><div class="tab">Barometer</div></div>
+      <div class="region" style="flex:1;margin-top:0;border-radius:0 0 7px 7px"><span class="tag">5 - SIDE PANEL (tabbed)</span>
+        <h4>Team / Candidate Pool</h4>
+        <p>Roster + the candidate pool (the hiring pipeline lives here -- interview / offer / onboard). Tabs swap to
+          the <b>event feed</b> (ad responses, incidents) and the <b>doom barometer</b> (cat state + window weather + doom trend graph).</p>
+        <h4 style="margin-top:.9rem">6 - Doom trend</h4>
+        <p>A small sparkline/area graph of doom over time -- fills the lower panel, reads at a glance.</p>
+      </div>
+    </div>
+
+    <!-- action dock -->
+    <div class="region dock"><span class="tag">7 - ACTION DOCK (grouped)</span>
+      <div class="act"><span class="k">[$]</span>Fundraise</div>
+      <div class="act"><span class="k">[@]</span>Advertise</div>
+      <div class="act"><span class="k">[#]</span>Research</div>
+      <div class="act"><span class="k">[!]</span>Safety</div>
+      <div class="act"><span class="k">[>]</span>End Month</div>
+    </div>
+  </div>
+
+  <div class="callouts">
+    <div class="co"><h3><span class="n">1</span> Resource strip</h3><p>Money / Doom / Attention / Compute / Reputation, each with an on-brand icon (the UI-filler batch), a big value, and a tiny sparkline. This alone eats most of the top negative space and gives the eye a dashboard.</p></div>
+    <div class="co"><h3><span class="n">2</span> Office floor = the centre</h3><p>Not a spare rectangle -- the living dashboard. Worker sprites walk/work/stress; props dress it; it grows as you hire. This is where all that art lands.</p></div>
+    <div class="co"><h3><span class="n">3</span> Window as a portal</h3><p>Framed window showing outside weather that darkens/reddens with doom. Ambient signal, fills a wall, costs no UI space. (Needs the frame + weather-background split we discussed.)</p></div>
+    <div class="co"><h3><span class="n">4</span> Cat = doom barometer</h3><p>Sits in the office; its form (singed -> spooky -> eldritch -> purple) reads the doom band. Free flavour in otherwise-dead corner space.</p></div>
+    <div class="co"><h3><span class="n">5</span> Tabbed side panel</h3><p>One column, three jobs: Team/Candidates, Event Feed, Doom Barometer. Tabs keep it dense without a wall of panels. Framed with the UI panel-frame art.</p></div>
+    <div class="co"><h3><span class="n">6</span> Doom trend graph</h3><p>Lower side panel -- a small area chart. Turns an empty panel into information + motion.</p></div>
+    <div class="co"><h3><span class="n">7</span> Grouped action dock</h3><p>Actions along the bottom with icons + labels, grouped by type. Replaces a scattered button soup and anchors the bottom edge.</p></div>
+  </div>
+
+  <p class="legend">// wireframe only -- boxes are placeholders for real sprites/panels. Everything here is rearrangeable. React freely.</p>
+</div>
