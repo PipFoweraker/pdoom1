@@ -1,0 +1,49 @@
+{
+  "_comment": "Turnkey prompt list for the art selection sweep. Generator concatenates <desc> + style_suffix, fires <rolls> rolls per entry, pulls into art_source/pixellab_<date>/sweep/<key>_<n>.png, and build.py renders them as per-asset gallery rows (rolls side by side) for picking. Style is LOCKED; this is selection, not exploration. See docs/art/ART_PRODUCTION_PLAN.md.",
+  "style_suffix": ", warm cozy lived-in palette with soft grime, bold heavy black outline, chunky graphic pixel art, deep contrast shadows, cartoony retro RPG, symmetrical straight-on centered low top-down view, lit from top-left",
+  "default_rolls": 3,
+  "view": "low top-down",
+
+  "props": [
+    {"key": "desk_mega", "desc": "a sleek high-end megacorp office desk with a large clean monitor", "w": 128, "h": 96},
+    {"key": "chair_decent", "desc": "a decent modern office swivel chair", "w": 96, "h": 104},
+    {"key": "chair_mega", "desc": "a sleek high-end ergonomic executive office chair", "w": 96, "h": 104},
+    {"key": "monitor_mega", "desc": "a sleek modern flat widescreen computer monitor, powered on with a glowing screen", "w": 96, "h": 96, "rolls": 4},
+    {"key": "pc_mega", "desc": "a sleek high-end black desktop computer tower with subtle lights", "w": 96, "h": 96},
+    {"key": "server_cluster_mega", "desc": "a large glowing compute server cluster, many blinking racks and cables", "w": 128, "h": 120},
+    {"key": "kitchen_bench_scummy", "desc": "a grimy cheap office kitchenette counter with a sink and clutter", "w": 128, "h": 96},
+    {"key": "kitchen_bench_decent", "desc": "a clean tidy office kitchenette counter with a sink", "w": 128, "h": 96},
+    {"key": "filing_cabinet", "desc": "a grey metal office filing cabinet with drawers", "w": 72, "h": 112},
+    {"key": "printer", "desc": "a bulky office printer and copier machine", "w": 96, "h": 96},
+    {"key": "trash_can", "desc": "an office trash can with some recycling", "w": 56, "h": 72},
+    {"key": "meeting_table", "desc": "a long office meeting table with a few chairs", "w": 160, "h": 112},
+    {"key": "water_cooler_reroll", "desc": "an office water cooler dispenser with a large water bottle on top", "w": 64, "h": 120},
+    {"key": "coat_rack_reroll", "desc": "a standing office coat rack with a couple of neatly hung coats", "w": 72, "h": 128}
+  ],
+
+  "environment": [
+    {"key": "floor_carpet", "desc": "a seamless tileable office carpet floor texture tile", "w": 64, "h": 64, "note": "gated on tileset decision"},
+    {"key": "floor_lino", "desc": "a seamless tileable office linoleum floor texture tile", "w": 64, "h": 64},
+    {"key": "floor_concrete", "desc": "a seamless tileable bare concrete floor texture tile", "w": 64, "h": 64},
+    {"key": "wall_scummy", "desc": "a grimy dated office wall segment with scuffs", "w": 64, "h": 96},
+    {"key": "wall_decent", "desc": "a clean plain office wall segment", "w": 64, "h": 96},
+    {"key": "door_scummy", "desc": "a dated worn office door", "w": 72, "h": 120},
+    {"key": "door_decent", "desc": "a clean modern office door", "w": 72, "h": 120},
+    {"key": "window_weather_clear", "desc": "an office window looking out on a clear bright sky", "w": 120, "h": 96},
+    {"key": "window_weather_storm", "desc": "an office window looking out on a dark stormy sky with rain", "w": 120, "h": 96},
+    {"key": "window_weather_doomy", "desc": "an office window looking out on an ominous doomy red-purple apocalyptic sky", "w": 120, "h": 96}
+  ],
+
+  "cats_body_type_quadruped_template_cat": [
+    {"key": "cat_eldritch", "desc": "an eerie eldritch doom cat, glowing eyes, wisps of smoke, wrong-angled, unsettling"},
+    {"key": "cat_purple", "desc": "a strange purple end-state doom cat, faintly glowing, otherworldly"}
+  ],
+
+  "characters_use_create_character": [
+    {"key": "cast_black_woman_young", "desc": "a young Black woman with short natural hair and a smart casual outfit, AI safety researcher"},
+    {"key": "cast_woman_lead_older", "desc": "an older woman team lead with grey hair in a bun and a blazer, AI safety researcher"},
+    {"key": "cast_wheelchair_user", "desc": "a person using a wheelchair, casual jumper, AI safety researcher"},
+    {"key": "cast_eccentric_genius", "desc": "a visibly eccentric genius with wild hair and mismatched clothes, AI safety researcher"},
+    {"key": "founder_silhouette", "desc": "a shadowed silhouetted operator figure in a high-backed chair, face hidden, ominous, side view", "note": "founder, not a floor worker; may want side view not low-top-down"}
+  ]
+}
