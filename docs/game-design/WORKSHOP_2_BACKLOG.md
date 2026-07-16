@@ -481,6 +481,45 @@ changes; re-calibration expected after). **OUT of today's scope (next waves, bui
 coherent pipeline above, NOT as scattered filler):** the hiring pipeline stages, admin
 overhead, individual-researcher events, plan-screen visual redesign.
 
+### Hiring pipeline + effort economy — RULED (barrage, 2026-07-16)
+
+Pip's rulings on the L2 hiring/effort content wave (build after the Attention-baseline
+lands + is playtested):
+- **A1 (candidate hidden fields):** un-interviewed candidate shows lane + rough seniority;
+  true skill / appetites / quirks / loyalty-risk hidden; interviewing (Attention) peels back.
+- **A2 (info honesty):** sim never lies — but **assume depth by default, layers of insight**;
+  info is true-but-incomplete, rare quirks stay hidden until an exposure event (no misleading).
+- **A3 (interview triage):** Attention-gated screening — can't interview a whole pool
+  (Fable original, credited in DESIGN_CONTRIBUTIONS.md).
+- **B1 (sourcing):** two channels, distinct pricing, for now. *Advertise* = money + time,
+  applicants trickle in — and (Pip's extension) advertising **spawns NPC awareness of you +
+  a connection**, not just applicants. *Connections* = tap a **general NPC pool** you reach
+  via who you know; needn't cost much rep. **Relative-rep flattery mechanic (Pip):** approach
+  success scales with YOUR rep *relative to the target's desirability* — an ML expert is
+  flattered by an Anthropic-analog, unmoved by a McDonald's-analog at equal pay. *(Watch
+  sim-weight — Pip flags: don't over-simulate a game with no high-speed graphics; the NPC
+  pool is a work-toward, not a v1 requirement.)*
+- **C1 (negotiation):** no minigame. Each candidate has a **hidden self-worth / respect /
+  $ range**; the offer must fall inside it (both sides' hidden values play out). Surfaced via
+  **personified provenance** — a recruiter/lieutenant gives the read: *"Rebecca thinks we can
+  get James to agree to Foo, or Foo+, or Foo−."* (SA/scouting applied to salary.)
+- **C2 (appetites as negotiation currency):** yes — prestige-hungry takes less cash for a
+  first-authorship promise (ledger entry); retention-debt starts at the offer.
+- **D1 (onboarding):** checklist for predictable steps; **events** for situational /
+  risk-pool-triggered (visa, etc.).
+- **D2 (skimping):** has teeth — but **slow and tempting** (skip cheap prevention, gamble the
+  expensive slow loss).
+- **E1 (managers phase-change the problem-space):** yes — **Moral Mazes / middle-management
+  pathology** (see DESIGN_PHILOSOPHY: managers transform, not reduce, problems). Unmanaged →
+  distraction/drift; managed → maze problems. A Factorio bottleneck-switch.
+- **E2 (unfed-appetite problems):** yes — problems are legible (feed appetite or pay ledger),
+  not random.
+- **E3 (payroll granularity):** yes, but **granular failure** — the player can cheaply build
+  safeguards against dropping an *entire* payroll; missing it drops to *some* employees
+  (whose timesheets weren't approved) having issues. Build over time.
+- **Content sourcing (Pip):** researcher archetypes to be seeded from **real, anonymised IRL
+  stories** Pip collects — feeds DQ-15.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
