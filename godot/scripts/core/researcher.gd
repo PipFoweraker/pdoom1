@@ -27,6 +27,70 @@ var jet_lag_severity: float = 0.0  # 0.0-1.0, productivity penalty during jet la
 var traits: Array[String] = []
 
 # ============================================================================
+# HIRING PIPELINE — HIDDEN ABILITY LAYER (Phase A)
+# Spec: docs/game-design/BUILD_BRIEF_HIRING_PIPELINE.md "Phase A" + WORKSHOP_2_BACKLOG
+# "Hiring pipeline RULED" (A1/A2/A3); appetites/quirks per ADR-0011 section 8; pay-to-see
+# per ADR-0004 ("Simulate everything; gate only the view").
+#
+# GUARD (ADR-0004): the MODEL stores the TRUE values below. Only the CARD VIEW hides
+# them by reveal_level (get_card_data). The sim never lies -- interviewing REVEALS, it
+# never fabricates. Physical identity (appearance_id, name) is DECOUPLED from ability.
+# ============================================================================
+
+# Hire lifecycle (WORKSHOP_2 "Hiring pipeline RULED"): pool -> offered -> employed ->
+# departed. DEPARTED is terminal. Transitions are guarded (see can_transition_to).
+enum HireState { CANDIDATE_IN_POOL, OFFERED, EMPLOYED, DEPARTED }
+
+# The five appetites (ADR-0011 section 8) -- the negotiation/retention currency. Each is
+# a 0..1 hunger strength; feeding it (or minting a ledger promise) retains, starving bites.
+const APPETITE_KEYS := ["compute", "prestige", "mentees", "money", "mission_purity"]
+
+# Reveal ladder (A1/A2). 0 = uninterviewed: only lane + rough seniority show. Each
+# interview step (Phase B) peels back one layer. The card hides everything above the
+# current level behind HIDDEN_PLACEHOLDER; the underlying values are always real.
+const REVEAL_UNINTERVIEWED := 0   # name, lane (specialization), rough seniority band
+const REVEAL_SKILL := 1           # + true skill, compensation expectation
+const REVEAL_APPETITES := 2       # + the five appetites
+const REVEAL_DEEP := 3            # + loyalty-risk
+const MAX_REVEAL := 3
+
+# Field -> minimum reveal_level at which the card shows the TRUE value.
+const REVEAL_REQUIREMENTS := {
+	"name": REVEAL_UNINTERVIEWED,
+	"specialization": REVEAL_UNINTERVIEWED,
+	"seniority_band": REVEAL_UNINTERVIEWED,
+	"skill_level": REVEAL_SKILL,
+	"salary_expectation": REVEAL_SKILL,
+	"appetites": REVEAL_APPETITES,
+	"loyalty_risk": REVEAL_DEEP,
+}
+
+const HIDDEN_PLACEHOLDER := "??? (interview to reveal)"
+
+# Identity assets are combinatorial (WORKSHOP_2 "Character sprite system"): a base-body
+# id drawn from a pool, deliberately UNCORRELATED with ability.
+const IDENTITY_POOL_SIZE := 24
+
+# Rare quirk riders (ADR-0011 section 8): philosophical stances etc. Stay hidden until an
+# EXPOSURE event flips quirk_known (ADR-0003 machinery) -- NOT revealed by interviewing.
+const QUIRK_CHANCE := 0.15
+const QUIRK_POOL := [
+	"secret_successionist", "doom_absolutist", "e_acc_sympathizer",
+	"publish_everything", "secrecy_maximalist", "empire_builder"
+]
+
+# --- Identity (ability-UNCORRELATED) ---
+@export var appearance_id: String = ""     # sprite/appearance handle; diverse, not a stat tell
+
+# --- Hidden ability layer (TRUE values; the card gates their visibility) ---
+var hire_state: int = HireState.CANDIDATE_IN_POOL
+var reveal_level: int = REVEAL_UNINTERVIEWED
+var appetites: Dictionary = {}             # appetite_key -> 0..1 strength (ADR-0011 section 8)
+var quirk: String = ""                     # rare quirk rider ("" = none)
+var quirk_known: bool = false              # true once an exposure event surfaces the quirk
+var loyalty_risk: float = 0.0              # 0..1 hidden flight predisposition (NOT live loyalty)
+
+# ============================================================================
 # SPECIALIZATIONS
 # ============================================================================
 
@@ -139,6 +203,10 @@ func _init(spec: String = "safety", name: String = ""):
 	base_productivity = 0.5 + (skill_level * 0.1)  # 1.0
 	loyalty = 55
 
+	# Hidden ability layer defaults: neutral appetites, no quirk, uninterviewed. Real
+	# values are drawn only via generate_random(rng) or restored via from_dict.
+	appetites = _neutral_appetites()
+
 func generate_random(rng: RandomNumberGenerator):
 	"""Generate random attributes using provided RNG for determinism"""
 	researcher_name = _generate_name_with_rng(rng)
@@ -156,6 +224,34 @@ func generate_random(rng: RandomNumberGenerator):
 	var variation = 1.0 + (rng.randf() * 0.2 - 0.1)
 	salary_expectation = SPECIALIZATIONS.get(specialization, {}).get("base_cost", 60000) * variation
 	current_salary = salary_expectation
+
+	# --- Hidden ability layer (Phase A). ADDITIVE by construction: the hidden layer is
+	# drawn from a CHILD rng seeded off the main stream's CURRENT state, which reading
+	# does NOT advance. So the main rng.state after generate_random is exactly what it
+	# was before this feature -- the rest of the game's deterministic stream (rival
+	# estimates, events, ...) is byte-unchanged. Deterministic + replay-safe because the
+	# child seed is a pure function of the (reproducible) main state at this point. ---
+	var hidden_rng := RandomNumberGenerator.new()
+	hidden_rng.seed = hash(rng.state)
+	# Identity: deliberately uncorrelated with skill (WORKSHOP_2 "Character sprite
+	# system": diversity is identity, never a stat tell).
+	appearance_id = "body_%02d" % (hidden_rng.randi() % IDENTITY_POOL_SIZE)
+	# The five appetites (ADR-0011 section 8): independent 0..1 hungers.
+	appetites = {}
+	for k in APPETITE_KEYS:
+		appetites[k] = hidden_rng.randf()
+	# Loyalty-risk: hidden flight predisposition (revealed only at deep reveal).
+	loyalty_risk = hidden_rng.randf()
+	# Rare quirk rider: most candidates carry none; when present it stays hidden until
+	# an exposure event (A2) -- interviewing never surfaces it.
+	if hidden_rng.randf() < QUIRK_CHANCE:
+		quirk = QUIRK_POOL[hidden_rng.randi() % QUIRK_POOL.size()]
+	else:
+		quirk = ""
+	quirk_known = false
+	# Freshly-sourced people start uninterviewed, in the candidate pool.
+	reveal_level = REVEAL_UNINTERVIEWED
+	hire_state = HireState.CANDIDATE_IN_POOL
 
 func _generate_name_with_rng(rng: RandomNumberGenerator) -> String:
 	"""Generate a random researcher name using provided RNG"""
@@ -386,6 +482,146 @@ func get_specialization_name() -> String:
 	return specialization.capitalize()
 
 # ============================================================================
+# HIRING PIPELINE — REVEAL / HIRE-STATE / CANDIDATE CARD (Phase A)
+# ============================================================================
+
+static func _neutral_appetites() -> Dictionary:
+	"""All five appetites at 0.0 (neutral). Used as the deterministic default so a
+	Researcher.new() before generate_random still exposes every appetite key."""
+	var d := {}
+	for k in APPETITE_KEYS:
+		d[k] = 0.0
+	return d
+
+func get_seniority_band() -> String:
+	"""Rough seniority (A1): visible even uninterviewed. A coarse BAND, not the exact
+	skill number, so lane + seniority read at reveal 0 without leaking true skill."""
+	if skill_level <= 2:
+		return "Junior"
+	elif skill_level <= 4:
+		return "Mid"
+	elif skill_level <= 6:
+		return "Senior"
+	elif skill_level <= 8:
+		return "Staff"
+	return "Principal"
+
+# --- Reveal ladder (interviewing is Phase B; this is the API surface it drives) ---
+
+func reveal_more(amount: int = 1) -> int:
+	"""Raise reveal_level by `amount` (an interview step, Phase B), clamped to
+	[0, MAX_REVEAL]. Returns the new level. Reveals NEVER fabricate -- they only
+	unhide values the model already holds (ADR-0004)."""
+	reveal_level = clampi(reveal_level + amount, 0, MAX_REVEAL)
+	return reveal_level
+
+func set_reveal_level(level: int) -> void:
+	"""Directly set the reveal level (clamped). Used by hire-on (fully revealed) and load."""
+	reveal_level = clampi(level, 0, MAX_REVEAL)
+
+func is_field_revealed(field: String) -> bool:
+	"""True if the card should show `field`'s true value at the current reveal_level.
+	Unknown fields are treated as never-revealed. (Quirk is exposure-gated, not here.)"""
+	var req: int = REVEAL_REQUIREMENTS.get(field, MAX_REVEAL + 1)
+	return reveal_level >= req
+
+func expose_quirk() -> void:
+	"""An exposure event (ADR-0003) surfaces the rare quirk rider. Independent of the
+	interview reveal ladder: a fully-interviewed hire can still have a hidden quirk (A2)."""
+	quirk_known = true
+
+func has_quirk() -> bool:
+	"""True if this person actually carries a quirk (regardless of whether it is known)."""
+	return quirk != ""
+
+# --- Hire-state lifecycle (guarded transitions) ---
+
+func can_transition_to(new_state: int) -> bool:
+	"""Guard the pool -> offered -> employed -> departed lifecycle. DEPARTED is terminal."""
+	match hire_state:
+		HireState.CANDIDATE_IN_POOL:
+			return new_state == HireState.OFFERED or new_state == HireState.DEPARTED
+		HireState.OFFERED:
+			return new_state == HireState.EMPLOYED \
+				or new_state == HireState.CANDIDATE_IN_POOL \
+				or new_state == HireState.DEPARTED
+		HireState.EMPLOYED:
+			return new_state == HireState.DEPARTED
+		_:  # DEPARTED (terminal) or unknown
+			return false
+
+func transition_hire_state(new_state: int) -> bool:
+	"""Apply a guarded hire-state transition. Returns false (no-op) if disallowed."""
+	if can_transition_to(new_state):
+		hire_state = new_state
+		return true
+	return false
+
+func hire_state_name() -> String:
+	match hire_state:
+		HireState.CANDIDATE_IN_POOL:
+			return "Candidate"
+		HireState.OFFERED:
+			return "Offer out"
+		HireState.EMPLOYED:
+			return "Employed"
+		HireState.DEPARTED:
+			return "Departed"
+		_:
+			return "Unknown"
+
+# --- Candidate card (the hire-as-scouting info model, ADR-0004) ---
+
+func get_card_data() -> Dictionary:
+	"""The candidate-card INFO MODEL. Revealed fields carry their TRUE value; hidden
+	fields carry HIDDEN_PLACEHOLDER. Identity (name/appearance/lane/seniority) is always
+	shown; skill/comp/appetites/loyalty-risk gate on reveal_level; the quirk gates on an
+	exposure event (quirk_known), never on the interview ladder (A2)."""
+	var card := {
+		"name": researcher_name,
+		"appearance_id": appearance_id,
+		"lane": get_specialization_name(),
+		"seniority_band": get_seniority_band(),
+		"hire_state": hire_state_name(),
+		"reveal_level": reveal_level,
+	}
+	card["skill_level"] = skill_level if is_field_revealed("skill_level") else HIDDEN_PLACEHOLDER
+	card["salary_expectation"] = salary_expectation if is_field_revealed("salary_expectation") else HIDDEN_PLACEHOLDER
+	card["appetites"] = appetites.duplicate() if is_field_revealed("appetites") else HIDDEN_PLACEHOLDER
+	card["loyalty_risk"] = loyalty_risk if is_field_revealed("loyalty_risk") else HIDDEN_PLACEHOLDER
+	# Quirk: exposure-gated. Once known, "" reads as an explicit "none" (a checked absence).
+	if quirk_known:
+		card["quirk"] = quirk if quirk != "" else "none"
+	else:
+		card["quirk"] = HIDDEN_PLACEHOLDER
+	return card
+
+func get_card_text() -> String:
+	"""A minimal formatted candidate card (Phase A view). See get_card_data for the model."""
+	var c := get_card_data()
+	var lines: Array[String] = []
+	lines.append("%s  [%s]" % [c["name"], c["hire_state"]])
+	lines.append("Lane: %s    Seniority: %s" % [c["lane"], c["seniority_band"]])
+	lines.append("Skill: %s" % str(c["skill_level"]))
+	if c["salary_expectation"] is float:
+		lines.append("Comp expectation: $%.0f" % c["salary_expectation"])
+	else:
+		lines.append("Comp expectation: %s" % str(c["salary_expectation"]))
+	if c["appetites"] is Dictionary:
+		var parts: Array[String] = []
+		for k in APPETITE_KEYS:
+			parts.append("%s %d%%" % [k, int(round(float(c["appetites"][k]) * 100.0))])
+		lines.append("Appetites: %s" % ", ".join(parts))
+	else:
+		lines.append("Appetites: %s" % str(c["appetites"]))
+	if c["loyalty_risk"] is float:
+		lines.append("Loyalty risk: %d%%" % int(round(c["loyalty_risk"] * 100.0)))
+	else:
+		lines.append("Loyalty risk: %s" % str(c["loyalty_risk"]))
+	lines.append("Quirk: %s" % str(c["quirk"]))
+	return "\n".join(lines)
+
+# ============================================================================
 # SERIALIZATION
 # ============================================================================
 
@@ -403,7 +639,19 @@ func to_dict() -> Dictionary:
 		"turns_employed": turns_employed,
 		"traits": traits.duplicate(),
 		"jet_lag_turns": jet_lag_turns,
-		"jet_lag_severity": jet_lag_severity
+		"jet_lag_severity": jet_lag_severity,
+		# --- Hiring pipeline hidden-ability layer (Phase A) ---
+		# Appetites / loyalty-risk are SNAPPED to the repo-wide serialization grid
+		# (DoomSystem.SAVE_QUANTUM) so the save/load round-trip is JSON-parse-stable --
+		# Godot's JSON parse is not correctly-rounded, so an un-snapped double drifts a
+		# ULP and breaks deep-equality (see the SERIALIZATION block in game_state.gd).
+		"appearance_id": appearance_id,
+		"hire_state": hire_state,          # enum -> int
+		"reveal_level": reveal_level,
+		"appetites": DoomSystem._snap_dict(appetites),
+		"quirk": quirk,
+		"quirk_known": quirk_known,
+		"loyalty_risk": DoomSystem._snap(loyalty_risk)
 	}
 
 func from_dict(data: Dictionary):
@@ -424,3 +672,20 @@ func from_dict(data: Dictionary):
 		traits.clear()
 		for trait_name in data["traits"]:
 			traits.append(trait_name)
+
+	# --- Hiring pipeline hidden-ability layer (Phase A). Explicit casts: JSON hands
+	# every number back as float and every enum as float. Missing keys fall back to the
+	# uninterviewed/neutral defaults so pre-Phase-A saves still load. ---
+	appearance_id = String(data.get("appearance_id", ""))
+	hire_state = int(data.get("hire_state", HireState.CANDIDATE_IN_POOL))
+	reveal_level = int(data.get("reveal_level", REVEAL_UNINTERVIEWED))
+	quirk = String(data.get("quirk", ""))
+	quirk_known = bool(data.get("quirk_known", false))
+	# Re-snap on load (idempotent) so the live values sit exactly on the grid, matching
+	# the doom-intermediary convention -- keeps any future sim use deterministic.
+	loyalty_risk = DoomSystem._snap(float(data.get("loyalty_risk", 0.0)))
+	appetites = _neutral_appetites()
+	var appetite_data = data.get("appetites", {})
+	if appetite_data is Dictionary:
+		for k in appetite_data.keys():
+			appetites[String(k)] = DoomSystem._snap(float(appetite_data[k]))
