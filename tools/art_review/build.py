@@ -1,13 +1,19 @@
 #!/usr/bin/env python3
 """Build the P(Doom)1 style-review tool: a self-contained HTML page from
 manifest.json + the committed PNGs. Rows = style directions, columns = subjects,
-so a whole style reads across many subjects at once. Plus an era-ladder strip.
-Pick a winner per matrix, note per cell, jot global style dials, and Export the
-verdicts to paste back for the next generation round.
+so a whole style reads across many subjects at once. Plus an era-ladder strip,
+an office gallery, and (when present) the overnight generation sweep.
+
+It's a keyboard-driven asset browser: arrow keys move a focus ring between
+review cells, K/M/R stamp a keep/maybe/re-roll verdict, N/Enter edits the note.
+Verdicts + notes + picks persist to localStorage and are seeded from
+verdicts.json so they survive across sessions/machines.
 
 Convention for image files (relative to <repo>/<image_root>/<batch.dir>/):
   matrix cell : "<style.key>__<subject.key>.png"
   ladder step : "<step.key>.png"
+  gallery item: "<item.key>.png"
+Sweep images live at <image_root>/sweep/<category>/<key>_<roll>.png (roll=1..N).
 Missing files render as a 'pending' placeholder (regenerate + re-run to fill).
 
 Usage:  python tools/art_review/build.py   ->  writes tools/art_review/style_review.html
@@ -19,7 +25,24 @@ import pathlib
 HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 MANIFEST = HERE / "manifest.json"
+SWEEP = HERE / "sweep_prompts.json"
 OUT = HERE / "style_review.html"
+
+# Category keys in sweep_prompts.json carry tool hints in their name
+# (e.g. cats_body_type_quadruped_template_cat, ui_filler_map_object). Once one of
+# these marker tokens appears, the rest of the key is a tool hint, not a label.
+TOOL_HINT_MARKERS = {
+    "use",
+    "create",
+    "map",
+    "object",
+    "body",
+    "type",
+    "template",
+    "quadruped",
+    "character",
+    "overlays",
+}
 
 
 def datauri(path: pathlib.Path):
@@ -32,15 +55,27 @@ def esc(s):
     return (s or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def cell(item_id, label, uri):
+def controls(label):
+    """Verdict tri-state (keep / maybe / re-roll) + note input for a review cell."""
+    return f"""<div class="verdict" role="group" aria-label="Verdict for {esc(label)}">
+          <button type="button" class="vbtn" data-v="keep" title="Keep (K)">keep</button>
+          <button type="button" class="vbtn" data-v="maybe" title="Maybe (M)">maybe</button>
+          <button type="button" class="vbtn" data-v="reroll" title="Re-roll (R)">re-roll</button>
+        </div>
+        <input type="text" class="note" placeholder="note..." aria-label="Note for {esc(label)}">"""
+
+
+def stage(label, uri, pending="pending<br>regen &amp; rebuild"):
     if uri:
-        img = f'<div class="stage"><img src="{uri}" alt="{esc(label)}"></div>'
-    else:
-        img = '<div class="stage pending"><span>pending<br>regen &amp; rebuild</span></div>'
+        return f'<div class="stage"><img src="{uri}" alt="{esc(label)}"></div>'
+    return f'<div class="stage pending"><span>{pending}</span></div>'
+
+
+def cell(item_id, label, uri):
     return f"""
       <div class="cell" data-item="{item_id}" data-label="{esc(label)}">
-        {img}
-        <input type="text" class="note" placeholder="note..." aria-label="Note for {esc(label)}">
+        {stage(label, uri)}
+        {controls(label)}
       </div>"""
 
 
@@ -81,18 +116,13 @@ def build_ladder(b, root):
     steps = []
     for i, st in enumerate(b["steps"]):
         uri = datauri(root / f'{st["key"]}.png')
-        img = (
-            f'<div class="stage"><img src="{uri}" alt="{esc(st["label"])}"></div>'
-            if uri
-            else '<div class="stage pending"><span>pending</span></div>'
-        )
         steps.append(
             f"""
         <div class="cell ladder-step" data-item="{b['id']}:{st['key']}" data-label="{esc(st['label'])}">
           <div class="era-idx">{i+1}</div>
-          {img}
+          {stage(st['label'], uri, 'pending')}
           <h4>{esc(st['label'])}</h4><p class="era-note">{esc(st['note'])}</p>
-          <input type="text" class="note" placeholder="note..." aria-label="Note for {esc(st['label'])}">
+          {controls(st['label'])}
         </div>"""
         )
     return f"""
@@ -107,17 +137,12 @@ def build_gallery(b, root):
     cells = []
     for it in b["items"]:
         uri = datauri(root / f'{it["key"]}.png')
-        img = (
-            f'<div class="stage"><img src="{uri}" alt="{esc(it["label"])}"></div>'
-            if uri
-            else '<div class="stage pending"><span>pending</span></div>'
-        )
         cells.append(
             f"""
       <div class="cell" data-item="{b['id']}:{it['key']}" data-label="{esc(it['label'])}">
-        {img}
+        {stage(it['label'], uri, 'pending')}
         <h4>{esc(it['label'])}</h4>
-        <input type="text" class="note" placeholder="note..." aria-label="Note for {esc(it['label'])}">
+        {controls(it['label'])}
       </div>"""
         )
     return f"""
@@ -126,6 +151,68 @@ def build_gallery(b, root):
       <p class="batch-note">{esc(b['note'])}</p>
       <div class="gallery">{''.join(cells)}</div>
     </section>"""
+
+
+def sweep_label(cat_key):
+    """Clean display label from a tool-hinted category key."""
+    words = []
+    for w in cat_key.split("_"):
+        if w in TOOL_HINT_MARKERS:
+            break
+        words.append(w)
+    if not words:
+        words = [cat_key]
+    return " ".join(words).title().replace("Ui", "UI")
+
+
+def build_sweep(root_img):
+    """Render the overnight sweep: one section per category, one row per asset,
+    that asset's rolls side by side as review cells. root_img is <image_root>."""
+    if not SWEEP.is_file():
+        return ""
+    sw = json.loads(SWEEP.read_text(encoding="utf-8"))
+    default_rolls = int(sw.get("default_rolls", 3))
+    sections = []
+    for cat, entries in sw.items():
+        if not isinstance(entries, list):
+            continue  # skip _comment / style_suffix / default_rolls / view
+        subdir = root_img / "sweep" / cat
+        rows = []
+        for e in entries:
+            key = e["key"]
+            n = int(e.get("rolls", default_rolls))
+            rolls = []
+            for r in range(1, n + 1):
+                uri = datauri(subdir / f"{key}_{r}.png")
+                item_id = f"sweep:{cat}:{key}:{r}"
+                label = f"{key} roll {r}"
+                rolls.append(
+                    f"""
+          <div class="cell sweep-cell" data-item="{item_id}" data-label="{esc(label)}">
+            <div class="roll-idx">#{r}</div>
+            {stage(label, uri, 'pending')}
+            {controls(label)}
+          </div>"""
+                )
+            desc = esc(e.get("desc", ""))
+            rows.append(
+                f"""
+      <div class="sweep-row">
+        <div class="sweep-rowhead"><h4>{esc(key)}</h4><p>{desc}</p></div>
+        <div class="sweep-rolls" style="--cols:{n}">{''.join(rolls)}</div>
+      </div>"""
+            )
+        sections.append(
+            f"""
+    <section class="batch" data-batch="sweep:{cat}">
+      <div class="section-label">Sweep &middot; {esc(sweep_label(cat))}</div>
+      <p class="batch-note">One row per asset; rolls side by side -- keep the best roll, re-roll the rest.</p>
+      <div class="sweep">{''.join(rows)}</div>
+    </section>"""
+        )
+    if not sections:
+        return ""
+    return '\n    <div class="section-label big">// overnight sweep</div>\n' + "\n".join(sections)
 
 
 def main():
@@ -140,14 +227,15 @@ def main():
             sections.append(build_ladder(b, root))
         elif b["kind"] == "gallery":
             sections.append(build_gallery(b, root))
-    body = "\n".join(sections)
+    sections.append(build_sweep(img_root))
+    body = "\n".join(s for s in sections if s)
 
     vpath = HERE / "verdicts.json"
-    verdicts = (
-        json.loads(vpath.read_text(encoding="utf-8"))
-        if vpath.is_file()
-        else {"picks": {}, "notes": {}, "styledir": ""}
-    )
+    verdicts = json.loads(vpath.read_text(encoding="utf-8")) if vpath.is_file() else {}
+    verdicts.setdefault("picks", {})
+    verdicts.setdefault("notes", {})
+    verdicts.setdefault("verdicts", {})
+    verdicts.setdefault("styledir", "")
 
     html = (
         TEMPLATE.replace("{{TITLE}}", esc(m["title"]))
@@ -172,6 +260,11 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
     --field:#fffaf0;--shadow:rgba(80,55,20,.18);}}
   :root[data-theme="dark"]{--ground:#17120e;--panel:#211a14;--panel-2:#2b221a;--ink:#ece0cf;--ink-dim:#a9977f;--ink-faint:#6f6250;--amber:#e8a33d;--amber-deep:#c07a1f;--win:#6fae86;--line:#3a2e22;--checker-a:#201811;--checker-b:#180f09;--field:#120d09;--shadow:rgba(0,0,0,.45);}
   :root[data-theme="light"]{--ground:#efe6d6;--panel:#f7efe0;--panel-2:#fbf5e9;--ink:#2b2116;--ink-dim:#6b5b45;--ink-faint:#9a876c;--amber:#b9741a;--amber-deep:#8f5710;--win:#3f8a5c;--line:#ddccb0;--checker-a:#e6dac4;--checker-b:#ded1b8;--field:#fffaf0;--shadow:rgba(80,55,20,.18);}
+  /* verdict colours -- var(--win)/(--amber) are late-bound so they track theme */
+  :root{--keep:var(--win);--maybe:var(--amber);--reroll:#d8695a}
+  @media (prefers-color-scheme:light){:root{--reroll:#c14a3a}}
+  :root[data-theme="dark"]{--reroll:#d8695a}
+  :root[data-theme="light"]{--reroll:#c14a3a}
   *{box-sizing:border-box}
   body{margin:0;background:var(--ground);color:var(--ink);font-family:ui-sans-serif,system-ui,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
   img{image-rendering:pixelated;image-rendering:crisp-edges;max-width:100%;height:auto;display:block}
@@ -185,6 +278,7 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
   .direction textarea{width:100%;min-height:64px;resize:vertical;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:.6rem .7rem;font-family:ui-monospace,Consolas,monospace;font-size:.83rem;line-height:1.5}
   .section-label{font-family:ui-monospace,Consolas,monospace;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:2.6rem 0 .6rem;display:flex;align-items:center;gap:1rem}
   .section-label::after{content:"";flex:1;height:1px;background:var(--line)}
+  .section-label.big{color:var(--amber);font-size:.82rem;margin-top:3.4rem}
   .batch-note{max-width:78ch;color:var(--ink-dim);font-size:.9rem;margin:0 0 1.3rem}
   .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.9rem}
   .gallery .cell{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem}
@@ -204,12 +298,25 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
   .pick input:checked+.pick-dot{border-color:var(--win);background:var(--win);box-shadow:inset 0 0 0 3px var(--panel)}
   .pick input:focus-visible+.pick-dot{outline:2px solid var(--amber);outline-offset:2px}
   .mx-cells{display:grid;grid-template-columns:repeat(var(--cols),1fr);gap:.7rem}
-  .cell{display:flex;flex-direction:column;gap:.4rem}
+  .cell{display:flex;flex-direction:column;gap:.4rem;border-radius:8px;scroll-margin:80px}
+  /* verdict border ring (box-shadow needs no pre-existing border on matrix cells) */
+  .cell.v-keep{box-shadow:0 0 0 2px var(--keep)}
+  .cell.v-maybe{box-shadow:0 0 0 2px var(--maybe)}
+  .cell.v-reroll{box-shadow:0 0 0 2px var(--reroll)}
+  .cell.focused{outline:2px solid var(--amber);outline-offset:2px}
   .stage{background-color:var(--checker-a);background-image:linear-gradient(45deg,var(--checker-b) 25%,transparent 25%),linear-gradient(-45deg,var(--checker-b) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,var(--checker-b) 75%),linear-gradient(-45deg,transparent 75%,var(--checker-b) 75%);background-size:14px 14px;background-position:0 0,0 7px,7px -7px,-7px 0;border:1px solid var(--line);border-radius:8px;padding:.7rem;display:grid;place-items:center;min-height:130px}
   .stage img{width:auto;max-height:150px}
   .stage.pending{color:var(--ink-faint);font-family:ui-monospace,Consolas,monospace;font-size:.7rem;text-align:center}
   .note{width:100%;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:.35rem .5rem;font-size:.76rem;font-family:ui-sans-serif,system-ui,sans-serif}
   .note:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  /* verdict buttons */
+  .verdict{display:flex;gap:.25rem}
+  .vbtn{flex:1;font-family:ui-monospace,Consolas,monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.03em;padding:.28rem .1rem;border-radius:5px;border:1px solid var(--line);background:var(--field);color:var(--ink-dim);cursor:pointer;transition:.1s}
+  .vbtn:hover{color:var(--ink);border-color:var(--ink-faint)}
+  .vbtn:focus-visible{outline:2px solid var(--amber);outline-offset:1px}
+  .vbtn.on[data-v="keep"]{background:var(--keep);border-color:var(--keep);color:#12251a}
+  .vbtn.on[data-v="maybe"]{background:var(--maybe);border-color:var(--maybe);color:#2a1e08}
+  .vbtn.on[data-v="reroll"]{background:var(--reroll);border-color:var(--reroll);color:#2a1210}
   /* ladder */
   .ladder-scroll{overflow-x:auto}
   .ladder{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(190px,1fr);gap:.9rem;min-width:min-content}
@@ -217,6 +324,18 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
   .era-idx{position:absolute;top:.6rem;left:.7rem;font-family:ui-monospace,Consolas,monospace;font-size:.7rem;color:var(--amber);border:1px solid var(--line);border-radius:50%;width:1.4rem;height:1.4rem;display:grid;place-items:center;background:var(--ground)}
   .ladder-step h4{margin:.5rem 0 .1rem;font-size:.95rem}
   .era-note{margin:0 0 .5rem;font-size:.76rem;color:var(--ink-dim)}
+  /* sweep */
+  .sweep{display:flex;flex-direction:column;gap:1rem}
+  .sweep-row{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem;display:grid;grid-template-columns:180px 1fr;gap:.9rem;align-items:start}
+  .sweep-rowhead h4{margin:0 0 .25rem;font-size:.9rem;font-family:ui-monospace,Consolas,monospace;word-break:break-word}
+  .sweep-rowhead p{margin:0;font-size:.75rem;color:var(--ink-dim)}
+  .sweep-rolls{display:grid;grid-template-columns:repeat(var(--cols),minmax(130px,1fr));gap:.7rem}
+  .sweep-cell{position:relative;background:var(--panel-2);border:1px solid var(--line);padding:.6rem}
+  .roll-idx{position:absolute;top:.45rem;left:.5rem;z-index:1;font-family:ui-monospace,Consolas,monospace;font-size:.62rem;color:var(--amber);background:var(--ground);border:1px solid var(--line);border-radius:4px;padding:0 .3rem}
+  /* keyboard legend */
+  .kbd-legend{position:fixed;top:10px;right:10px;z-index:50;display:flex;flex-direction:column;gap:.28rem;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);border-radius:9px;padding:.55rem .65rem;font-family:ui-monospace,Consolas,monospace;font-size:.66rem;color:var(--ink-dim);pointer-events:none;box-shadow:0 2px 12px var(--shadow);backdrop-filter:blur(4px)}
+  .kbd-legend b{color:var(--amber);font-weight:400}
+  .kbd-legend kbd{display:inline-block;min-width:1.1em;text-align:center;padding:.05rem .32rem;margin-right:.12rem;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;background:var(--field);color:var(--ink);font-size:.62rem}
   /* export bar */
   .exportbar{position:sticky;bottom:0;margin:2.5rem -1.4rem -6rem;padding:1rem 1.4rem;background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
   .tally{font-family:ui-monospace,Consolas,monospace;font-size:.78rem;color:var(--ink-dim)}
@@ -235,9 +354,16 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
   .modal-body p{margin:0 0 .7rem;color:var(--ink-dim);font-size:.85rem}
   #exporttext{width:100%;min-height:320px;resize:vertical;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:.8rem;font-family:ui-monospace,Consolas,monospace;font-size:.76rem;line-height:1.5;white-space:pre}
   footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--line);color:var(--ink-faint);font-size:.78rem;font-family:ui-monospace,Consolas,monospace}
-  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-  @media (max-width:760px){.mx-headrow,.mx-row{grid-template-columns:1fr}.mx-headrow .mx-corner,.mx-headrow .mx-col{display:none}.mx-cells{--cols:2!important}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+  @media (max-width:760px){.mx-headrow,.mx-row{grid-template-columns:1fr}.mx-headrow .mx-corner,.mx-headrow .mx-col{display:none}.mx-cells{--cols:2!important}.sweep-row{grid-template-columns:1fr}}
+  @media (max-width:640px){.kbd-legend{display:none}}
 </style>
+
+<div class="kbd-legend" aria-hidden="true">
+  <span><kbd>&larr;</kbd><kbd>&rarr;</kbd> move focus</span>
+  <span><b>K</b> keep &middot; <b>M</b> maybe &middot; <b>R</b> re-roll</span>
+  <span><kbd>N</kbd>/<kbd>&crarr;</kbd> note &middot; <kbd>Esc</kbd> back</span>
+</div>
 
 <div class="wrap">
   <p class="eyebrow">P(Doom)1 &middot; art direction &middot; repo tool</p>
@@ -254,6 +380,7 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
 
   <div class="exportbar">
     <div class="tally" id="tally">picks: <b id="ct">0</b></div>
+    <div class="tally" id="vct"></div>
     <div class="spacer"></div>
     <button type="button" class="btn ghost" id="clearbtn">reset</button>
     <button type="button" class="btn" id="exportbtn">Export my picks &rarr;</button>
@@ -271,9 +398,51 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
   "use strict";
   var KEY="pdoom_style_review_v1",DKEY="pdoom_style_dir_global_v1";
   var SEEDED={{VERDICTS}};
-  var st={picks:Object.assign({},SEEDED.picks||{}),notes:Object.assign({},SEEDED.notes||{})};
-  try{var ls=JSON.parse(localStorage.getItem(KEY)||"{}");if(ls.picks)st.picks=Object.assign(st.picks,ls.picks);if(ls.notes)st.notes=Object.assign(st.notes,ls.notes);}catch(e){}
+  var st={
+    picks:Object.assign({},SEEDED.picks||{}),
+    notes:Object.assign({},SEEDED.notes||{}),
+    verdicts:Object.assign({},SEEDED.verdicts||{})
+  };
+  try{var ls=JSON.parse(localStorage.getItem(KEY)||"{}");
+    if(ls.picks)st.picks=Object.assign(st.picks,ls.picks);
+    if(ls.notes)st.notes=Object.assign(st.notes,ls.notes);
+    if(ls.verdicts)st.verdicts=Object.assign(st.verdicts,ls.verdicts);
+  }catch(e){}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
+  function reduceMotion(){return window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;}
+
+  // ---- verdicts (keep / maybe / re-roll) ----
+  function applyVerdict(c,v){
+    c.classList.remove('v-keep','v-maybe','v-reroll');
+    if(v)c.classList.add('v-'+v);
+    c.querySelectorAll('.vbtn').forEach(function(b){b.classList.toggle('on',b.getAttribute('data-v')===v);});
+  }
+  function setVerdict(c,v){
+    var id=c.getAttribute('data-item');
+    if(st.verdicts[id]===v){delete st.verdicts[id];v=null;}
+    else{st.verdicts[id]=v;}
+    applyVerdict(c,v);save();tally();
+  }
+
+  // ---- keyboard navigation ----
+  var CELLS=[].slice.call(document.querySelectorAll('.cell'));
+  var cur=-1;
+  function setFocus(i,scroll){
+    if(i<0||i>=CELLS.length)return;
+    if(cur>=0&&CELLS[cur])CELLS[cur].classList.remove('focused');
+    cur=i;var c=CELLS[cur];c.classList.add('focused');
+    if(scroll)c.scrollIntoView({behavior:reduceMotion()?'auto':'smooth',block:'nearest',inline:'nearest'});
+  }
+  function move(d){
+    var i=cur<0?0:cur+d;
+    if(i<0)i=0;if(i>=CELLS.length)i=CELLS.length-1;
+    setFocus(i,true);
+  }
+  function focusNote(){
+    if(cur<0)setFocus(0,true);
+    var c=CELLS[cur],n=c&&c.querySelector('.note');
+    if(n){n.focus();if(n.select)n.select();}
+  }
 
   // restore + wire winner radios
   document.querySelectorAll('.mx-row').forEach(function(row){
@@ -288,20 +457,54 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
       tally();
     });
   });
-  // restore + wire notes
-  document.querySelectorAll('.cell').forEach(function(c){
-    var id=c.getAttribute('data-item'),inp=c.querySelector('.note');
-    if(!inp)return;
-    if(st.notes[id])inp.value=st.notes[id];
-    inp.addEventListener('input',function(e){st.notes[id]=e.target.value;if(!e.target.value)delete st.notes[id];save();});
+
+  // restore + wire notes, verdicts, click-to-focus on every review cell
+  CELLS.forEach(function(c,idx){
+    var id=c.getAttribute('data-item');
+    var inp=c.querySelector('.note');
+    if(inp){
+      if(st.notes[id])inp.value=st.notes[id];
+      inp.addEventListener('input',function(e){st.notes[id]=e.target.value;if(!e.target.value)delete st.notes[id];save();});
+    }
+    applyVerdict(c,st.verdicts[id]||null);
+    c.querySelectorAll('.vbtn').forEach(function(btn){
+      btn.addEventListener('click',function(){setFocus(idx,false);setVerdict(c,btn.getAttribute('data-v'));});
+    });
+    c.addEventListener('mousedown',function(){setFocus(idx,false);});
   });
+
+  document.addEventListener('keydown',function(e){
+    var t=e.target,tag=(t.tagName||'').toLowerCase();
+    var typing=tag==='input'||tag==='textarea'||t.isContentEditable;
+    if(typing){ if(e.key==='Escape'){t.blur();e.preventDefault();} return; }  // never fire shortcuts while typing
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    var k=e.key;
+    if(k==='ArrowRight'||k==='ArrowDown'){move(1);e.preventDefault();}
+    else if(k==='ArrowLeft'||k==='ArrowUp'){move(-1);e.preventDefault();}
+    else if(k==='k'||k==='K'){if(cur>=0){setVerdict(CELLS[cur],'keep');e.preventDefault();}}
+    else if(k==='m'||k==='M'){if(cur>=0){setVerdict(CELLS[cur],'maybe');e.preventDefault();}}
+    else if(k==='r'||k==='R'){if(cur>=0){setVerdict(CELLS[cur],'reroll');e.preventDefault();}}
+    else if(k==='n'||k==='N'||k==='Enter'){focusNote();e.preventDefault();}
+    else if(k==='Escape'){if(cur>=0){CELLS[cur].classList.remove('focused');cur=-1;}}
+  });
+
   var dir=document.getElementById('styledir');
   try{dir.value=localStorage.getItem(DKEY)||SEEDED.styledir||"";}catch(e){dir.value=SEEDED.styledir||"";}
   dir.addEventListener('input',function(e){try{localStorage.setItem(DKEY,e.target.value);}catch(x){}});
 
-  function tally(){document.getElementById('ct').textContent=Object.keys(st.picks).length;}
+  function tally(){
+    document.getElementById('ct').textContent=Object.keys(st.picks).length;
+    var k=0,m=0,r=0;
+    for(var id in st.verdicts){var v=st.verdicts[id];if(v==='keep')k++;else if(v==='maybe')m++;else if(v==='reroll')r++;}
+    var el=document.getElementById('vct');
+    if(el)el.innerHTML='keep <b>'+k+'</b> / maybe <b>'+m+'</b> / re-roll <b>'+r+'</b>';
+  }
   tally();
 
+  function labelFor(id){
+    var c=document.querySelector('.cell[data-item="'+id.replace(/"/g,'')+'"]');
+    return c?c.getAttribute('data-label'):id;
+  }
   function buildExport(){
     var L=["# P(Doom)1 style review -- Pip's picks",""];
     var sd=(dir.value||"").trim();
@@ -310,12 +513,23 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
     var pk=Object.keys(st.picks);
     L.push(pk.length?pk.map(function(b){return "- "+b+": **"+st.picks[b]+"**";}).join("\n"):"_(none picked)_");
     L.push("");
-    var ns=Object.keys(st.notes);
-    if(ns.length){L.push("## Notes");ns.forEach(function(id){
-      var c=document.querySelector('.cell[data-item="'+id.replace(/"/g,'')+'"]');
-      var label=c?c.getAttribute('data-label'):id;
-      L.push("- "+label+" ("+id+"): "+st.notes[id]);
-    });L.push("");}
+    // verdicts grouped keep / maybe / re-roll (with notes inline)
+    var groups={keep:[],maybe:[],reroll:[]};
+    Object.keys(st.verdicts).forEach(function(id){
+      var v=st.verdicts[id];if(!groups[v])return;
+      var note=st.notes[id]?(" -- "+st.notes[id]):"";
+      groups[v].push("- "+labelFor(id)+" ("+id+")"+note);
+    });
+    var titles={keep:"Keep",maybe:"Maybe",reroll:"Re-roll"};
+    ["keep","maybe","reroll"].forEach(function(g){
+      if(groups[g].length){L.push("## "+titles[g],groups[g].join("\n"),"");}
+    });
+    // any remaining notes not attached to a verdict
+    var extra=Object.keys(st.notes).filter(function(id){return !st.verdicts[id];});
+    if(extra.length){L.push("## Other notes");
+      extra.forEach(function(id){L.push("- "+labelFor(id)+" ("+id+"): "+st.notes[id]);});
+      L.push("");
+    }
     return L.join("\n");
   }
   var dlg=document.getElementById('exportdlg'),txt=document.getElementById('exporttext');
@@ -330,10 +544,11 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
     this.textContent=ok?"copied":"select+copy";var b=this;setTimeout(function(){b.textContent="copy";},1500);
   });
   document.getElementById('clearbtn').addEventListener('click',function(){
-    if(!confirm("Clear all picks and notes?"))return;
-    st={picks:{},notes:{}};save();
+    if(!confirm("Clear all picks, verdicts and notes?"))return;
+    st={picks:{},notes:{},verdicts:{}};save();
     document.querySelectorAll('.mx-row').forEach(function(r){r.classList.remove('won');var rr=r.querySelector('input[type=radio]');if(rr)rr.checked=false;});
     document.querySelectorAll('.note').forEach(function(n){n.value="";});
+    CELLS.forEach(function(c){applyVerdict(c,null);});
     tally();
   });
 })();
