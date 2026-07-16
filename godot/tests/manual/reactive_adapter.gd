@@ -56,11 +56,12 @@ func plan(state, _brng: RandomNumberGenerator, month_ordinal: int) -> void:
 	else:
 		priority = RP.plan_priority(policy, f)
 
-	var ap_left: int = state.action_points
+	# L2 (ADR-0011): fill the month's ATTENTION budget (month_plan), not the retired per-turn AP pool.
+	var attn_left: int = state.month_plan.available() if state.month_plan != null else 0
 	for id in priority:
-		if ap_left <= 0:
+		if attn_left <= 0:
 			break
-		ap_left = Driver.try_queue(state, id, ap_left)
+		attn_left = Driver.try_queue(state, id, attn_left)
 
 	# Optional reserve dial: burn (total - reserve) Attention as WIP so the implicit reserve
 	# (total - spent) lands at params.reserve. v1: WIP has no effect — pure scarcity lever.

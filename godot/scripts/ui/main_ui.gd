@@ -639,13 +639,16 @@ func _on_game_state_updated(state: Dictionary):
 	for _i in range(compute_eng):
 		blob_display += "[color=dodger_blue]●[/color]"
 
-	# Show AP split with remaining AP tracking
-	var total_ap = state.get("action_points", 0)
-	var committed_ap = state.get("committed_ap", 0)
-	var reserved_ap = state.get("reserved_ap", 0)
+	# L2 (ADR-0011): the founder currency is the monthly ATTENTION budget (month_plan), not
+	# the retired per-turn AP pool. Read the plan's Attention split so the HUD is honest —
+	# "~20 decisions this month" is now the true, spendable number.
+	var mp = state.get("month_plan", {})
+	var total_ap = int(mp.get("attention_total", 0))
+	var committed_ap = int(mp.get("attention_spent", 0))
+	var reserved_ap = int(mp.get("attention_reserved", 0))
 	var remaining_ap = total_ap - committed_ap - reserved_ap
 
-	# Color-code AP text based on remaining AP
+	# Color-code Attention text based on remaining budget
 	var ap_color_name = "white"  # Default
 	if remaining_ap <= 0:
 		ap_color_name = "red"  # Depleted
@@ -657,11 +660,11 @@ func _on_game_state_updated(state: Dictionary):
 	# Build BBCode text for RichTextLabel
 	var ap_text = ""
 	if reserved_ap > 0:
-		ap_text = "[color=%s]AP: %d (%d free, %d reserved)[/color]  %s" % [ap_color_name, total_ap, remaining_ap, reserved_ap, blob_display]
+		ap_text = "[color=%s]Attention: %d (%d free, %d reserved)[/color]  %s" % [ap_color_name, total_ap, remaining_ap, reserved_ap, blob_display]
 	elif committed_ap > 0:
-		ap_text = "[color=%s]AP: %d (%d free, %d queued)[/color]  %s" % [ap_color_name, total_ap, remaining_ap, committed_ap, blob_display]
+		ap_text = "[color=%s]Attention: %d (%d free, %d queued)[/color]  %s" % [ap_color_name, total_ap, remaining_ap, committed_ap, blob_display]
 	else:
-		ap_text = "[color=%s]AP: %d[/color]  %s" % [ap_color_name, total_ap, blob_display]
+		ap_text = "[color=%s]Attention: %d[/color]  %s" % [ap_color_name, total_ap, blob_display]
 
 	ap_label.text = ap_text
 

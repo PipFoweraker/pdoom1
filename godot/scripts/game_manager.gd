@@ -154,28 +154,35 @@ func select_action(action_id: String) -> bool:
 		error_occurred.emit("Action not found: " + action_id)
 		return false
 
-	var ap_cost = action.get("costs", {}).get("action_points", 0)
+	# L2 (ADR-0011): the action's legacy `action_points` cost is now its ATTENTION cost —
+	# the founder spends the monthly Attention budget (month_plan), not a per-turn AP pool.
+	var attention_cost = action.get("costs", {}).get("action_points", 0)
 
-	# Validation: Sufficient AP (check REMAINING AP, not total - fixes overcommitment bug)
-	var available_ap = state.action_points - state.committed_ap
-	if available_ap < ap_cost:
+	# Validation: Sufficient Attention this plan-month (checks REMAINING = total - spent -
+	# reserved, so an explicitly-held reserve is protected from over-queuing).
+	var available_attention = state.month_plan.available() if state.month_plan != null else 0
+	if available_attention < attention_cost:
 		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.RESOURCES,
-			"Insufficient action points",
+			"Insufficient Attention",
 			{
 				"action_id": action_id,
 				"action_name": action.get("name", ""),
-				"required": ap_cost,
-				"available": available_ap,
-				"total_ap": state.action_points,
-				"committed_ap": state.committed_ap
+				"required": attention_cost,
+				"available": available_attention,
+				"attention_total": state.month_plan.attention_total if state.month_plan else 0,
+				"attention_spent": state.month_plan.attention_spent if state.month_plan else 0
 			}
 		)
-		error_occurred.emit("Not enough AP: %d needed, %d remaining (of %d total)" % [ap_cost, available_ap, state.action_points])
+		error_occurred.emit("Not enough Attention: %d needed, %d left this month" % [attention_cost, available_attention])
 		return false
 
-	# Validation: Can afford costs
-	if not state.can_afford(action.get("costs", {})):
+	# Validation: Can afford NON-Attention costs (money/compute/research/... ). The
+	# action_points key is the Attention cost, gated above — strip it here so the legacy
+	# per-turn AP pool never blocks the plan queue (that duality was the L2 bug).
+	var afford_costs = action.get("costs", {}).duplicate()
+	afford_costs.erase("action_points")
+	if not state.can_afford(afford_costs):
 		var costs = action.get("costs", {})
 		var _err = ErrorHandler.warning(  # Underscore prefix indicates intentionally unused
 			ErrorHandler.Category.RESOURCES,
@@ -196,8 +203,11 @@ func select_action(action_id: String) -> bool:
 		error_occurred.emit("Cannot afford " + action.get("name", action_id))
 		return false
 
-	# Track committed AP (queued but not yet spent)
-	state.committed_ap += ap_cost
+	# Spend Attention from the monthly budget (the founder currency). This is the same
+	# pool queued strategic WIP and the implicit reserve draw from, so end_month's
+	# reserve = attention_total - attention_spent stays correct.
+	if state.month_plan != null:
+		state.month_plan.attention_spent += attention_cost
 
 	# Queue the action
 	state.queued_actions.append(action_id)
@@ -208,12 +218,12 @@ func select_action(action_id: String) -> bool:
 		{
 			"action_id": action_id,
 			"action_name": action.get("name", ""),
-			"ap_cost": ap_cost,
-			"remaining_ap": state.action_points - state.committed_ap
+			"attention_cost": attention_cost,
+			"attention_remaining": state.month_plan.available() if state.month_plan else 0
 		}
 	)
 
-	print("[GameManager] Action queued: %s (AP cost: %d, committed: %d, remaining: %d)" % [action_id, ap_cost, state.committed_ap, state.action_points - state.committed_ap])
+	print("[GameManager] Action queued: %s (Attention cost: %d, remaining: %d)" % [action_id, attention_cost, state.month_plan.available() if state.month_plan else 0])
 
 	action_executed.emit({
 		"success": true,
@@ -330,31 +340,42 @@ func fire_researcher(researcher_index: int, severance_cost: float):
 	game_state_updated.emit(state.to_dict())
 
 func reserve_ap(amount: int):
-	"""Reserve AP for event responses"""
+	"""Explicitly hold `amount` more Attention for response windows this month (ADR-0009
+	crisp reserve). L2: routes to the monthly Attention budget, not the retired per-turn pool."""
 	if not is_initialized:
-		error_occurred.emit("Cannot reserve AP: Game not initialized")
+		error_occurred.emit("Cannot reserve Attention: Game not initialized")
 		return
 
-	if state.reserve_ap_amount(amount):
-		print("[GameManager] Reserved %d AP for events (Available: %d, Reserved: %d)" % [amount, state.get_available_ap(), state.reserved_ap])
-		action_executed.emit({"success": true, "message": "Reserved %d AP for events" % amount})
+	if state.month_plan != null and state.month_plan.set_reserve(state.month_plan.attention_reserved + amount):
+		print("[GameManager] Reserved %d Attention for windows (Available: %d, Reserved: %d)" % [amount, state.month_plan.available(), state.month_plan.attention_reserved])
+		action_executed.emit({"success": true, "message": "Reserved %d Attention for responses" % amount})
 
 		# Emit updated state
 		game_state_updated.emit(state.to_dict())
 	else:
-		error_occurred.emit("Not enough AP to reserve (need %d, have %d)" % [amount, state.get_available_ap()])
+		error_occurred.emit("Not enough Attention to reserve (need %d, have %d)" % [amount, state.get_available_ap()])
 
 func clear_action_queue():
-	"""Clear all queued actions and refund committed AP"""
+	"""Clear all queued actions and refund their committed Attention."""
 	if not is_initialized:
 		return
 
-	var refunded_ap = state.committed_ap
+	var refunded := _queued_attention_cost()
 	state.queued_actions.clear()
-	state.committed_ap = 0
+	if state.month_plan != null:
+		state.month_plan.attention_spent = max(0, state.month_plan.attention_spent - refunded)
 
-	print("[GameManager] Queue cleared, refunded %d AP" % refunded_ap)
+	print("[GameManager] Queue cleared, refunded %d Attention" % refunded)
 	game_state_updated.emit(state.to_dict())
+
+
+func _queued_attention_cost() -> int:
+	"""Sum the Attention cost of the currently queued founder actions (their legacy
+	action_points cost re-read as Attention). Used to refund on clear/remove."""
+	var total := 0
+	for aid in state.queued_actions:
+		total += int(_get_action_by_id(aid).get("costs", {}).get("action_points", 0))
+	return total
 
 func set_research_quality(mode: String):
 	"""Set the org-wide research quality stance (Issue #500)."""
@@ -377,15 +398,16 @@ func remove_queued_action(action_id: String):
 			break
 
 	if removed_index >= 0:
-		# Get AP cost before removing
+		# Get Attention cost before removing (legacy action_points cost = Attention cost)
 		var action = _get_action_by_id(action_id)
-		var ap_cost = action.get("costs", {}).get("action_points", 0)
+		var attention_cost = action.get("costs", {}).get("action_points", 0)
 
-		# Remove and refund
+		# Remove and refund Attention
 		state.queued_actions.remove_at(removed_index)
-		state.committed_ap -= ap_cost
+		if state.month_plan != null:
+			state.month_plan.attention_spent = max(0, state.month_plan.attention_spent - attention_cost)
 
-		print("[GameManager] Removed %s from queue, refunded %d AP (committed: %d)" % [action_id, ap_cost, state.committed_ap])
+		print("[GameManager] Removed %s from queue, refunded %d Attention (available: %d)" % [action_id, attention_cost, state.month_plan.available() if state.month_plan else 0])
 		game_state_updated.emit(state.to_dict())
 	else:
 		print("[GameManager] WARNING: Action not found in queue: %s" % action_id)
@@ -434,9 +456,8 @@ func end_turn():
 	print("[GameManager] Executing turn...")
 	turn_phase_changed.emit("turn_end")
 
-	# Convert committed AP to spent AP
-	state.action_points -= state.committed_ap
-	state.committed_ap = 0
+	# L2 (ADR-0011): Attention was already spent at queue time (month_plan.attention_spent);
+	# the retired per-turn AP pool is no longer debited here.
 
 	# Execute all queued actions
 	var result = turn_manager.execute_turn()
@@ -530,8 +551,8 @@ func end_month():
 	turn_phase_changed.emit("turn_end")
 
 	# Execute the OPEN plan turn (started at the previous boundary / game start).
-	state.action_points -= state.committed_ap
-	state.committed_ap = 0
+	# L2 (ADR-0011): Attention was spent at queue time; the implicit reserve above already
+	# banked the unspent remainder. No per-turn AP pool debit here.
 	var result = turn_manager.execute_turn()
 	if result.has("action_results"):
 		for action_result in result["action_results"]:

@@ -251,18 +251,21 @@ func test_start_next_turn_increments_turn_counter():
 	assert_eq(game_manager.state.turn, initial_turn + 1,
 		"Turn should increment after end_turn")
 
-func test_start_next_turn_resets_action_points():
-	# Test that AP is reset on new turn
+func test_new_plan_month_resets_attention():
+	# L2 (ADR-0011): the founder currency is a MONTHLY Attention budget, not a per-turn AP
+	# pool — so it refreshes at the month boundary (MonthPlan.begin_month), NOT on every
+	# day-step. Queuing spends Attention; a fresh plan-month restores the full grant.
 	game_manager.start_new_game("test_seed")
-	game_manager.state.research = 100  # safety_research costs 10 research + 1 AP
-	game_manager.select_action("safety_research")  # Commits 1 AP
-	var available_before_turn_end = game_manager.state.get_available_ap()
+	game_manager.state.research = 100  # safety_research costs 10 research + 1 Attention
+	var full_budget = game_manager.state.get_available_ap()
+	game_manager.select_action("safety_research")  # spends 1 Attention
+	assert_lt(game_manager.state.get_available_ap(), full_budget,
+		"queuing an action spends from the monthly Attention budget")
 
-	game_manager.end_turn()
-	await wait_seconds(0.6)
-
-	assert_gt(game_manager.state.get_available_ap(), available_before_turn_end,
-		"Available action points should be reset (higher) on a new turn")
+	# Simulate crossing a month boundary (what MonthController._open_plan_month does).
+	game_manager.state.month_plan.begin_month(Balance.inum("attention.per_month", 20), 1)
+	assert_eq(game_manager.state.get_available_ap(), full_budget,
+		"a fresh plan-month restores the full Attention grant (crisp reserve evaporated)")
 
 func test_start_next_turn_emits_actions_available_when_no_events():
 	# FIX #418: Test that actions are available if no events
