@@ -647,7 +647,14 @@ func add_upgrade(upgrade_id: String):
 
 # AP Reserve System Methods
 func get_available_ap() -> int:
-	"""AP available for queuing actions"""
+	"""Founder Attention available for queuing actions this PLAN MONTH (L2 / ADR-0011).
+	The founder currency is the monthly Attention budget (month_plan), NOT the retired
+	per-turn AP pool. Named get_available_ap() for source compat — every caller that used
+	to read the per-turn pool now reads the monthly Attention budget/spend/reserve. The
+	legacy action_points field survives only as a low-level resource primitive (paper/
+	conference costs, difficulty display); it no longer gates the plan queue."""
+	if month_plan != null:
+		return month_plan.available()
 	return action_points - committed_ap - reserved_ap
 
 func get_event_ap() -> int:

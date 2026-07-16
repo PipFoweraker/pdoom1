@@ -88,56 +88,64 @@ class LegacyPolicyAdapter:
 
 
 # ============================================================================
-# PLAN PHASE — queue legacy actions (AP-gated) + strategic WIP (the reserve lever)
+# PLAN PHASE — queue legacy actions (now ATTENTION-gated) + strategic WIP (reserve lever)
 #
-# In v1 the meaningful game effects come from state.queued_actions (executed once at
-# end_month). Strategic WIP (MonthPlan.queued_strategic) has NO gameplay effect yet (L2
-# seam) — so spending Attention on it is a pure reserve-reduction lever: end_month sets
-# reserve = attention_total - attention_spent, so reserve = 20 - strategic_spend.
+# L2 (ADR-0011): the founder spends the MONTHLY ATTENTION budget (~20), not a per-turn AP
+# pool. Per-action costs are UNCHANGED (Pip's one-variable ruling: swap the budget/currency
+# only, don't rescale costs) — so a plan of the existing cheap actions leaves lots of
+# Attention unspent; that action-sparsity is accepted here (richness is a later content
+# wave). Strategic WIP (MonthPlan.queued_strategic) still has NO gameplay effect (L2 seam),
+# so burning Attention on it is a pure reserve-reduction lever: the driver sets
+# reserve = attention_total - attention_spent, so unspent Attention = reserve.
 # ============================================================================
 
 func _plan(policy: String, state, brng: RandomNumberGenerator) -> void:
-	var ap_left: int = state.action_points
-	var strategic_spend := 0  # attention units to burn on WIP (lowers the implicit reserve)
+	var attn_left: int = state.month_plan.available()  # the fresh monthly Attention budget
 
 	match policy:
 		"do_nothing":
-			pass  # empty plan -> pass action; full 20 reserve
+			pass  # empty plan -> pass action; full reserve
 		"safety_lean":
 			var order := ["hire_safety_researcher", "safety_research", "publish_paper", "audit_safety", "safety_research"]
 			for id in order:
-				ap_left = _try_queue(state, id, ap_left)
+				attn_left = _try_queue(state, id, attn_left)
 			# keep the full implicit reserve (no strategic spend)
 		"greedy_overcommit":
-			# spend everything: attention AND action points; zero reserve.
-			strategic_spend = state.month_plan.attention_total  # burn all 20 -> reserve 0
 			var greedy := ["buy_compute", "hire_capability_researcher", "capability_research",
 				"capability_research", "hire_compute_engineer", "team_building"]
 			for id in greedy:
-				ap_left = _try_queue(state, id, ap_left)
+				attn_left = _try_queue(state, id, attn_left)
+			# burn ALL remaining Attention on WIP -> reserve 0 (zero-reserve gamble)
+			var rem: int = state.month_plan.available()
+			if rem > 0:
+				state.month_plan.queue_strategic("__sweep_wip__", rem, 5, state.turn)
 		"reserve_heavy":
-			strategic_spend = int(state.month_plan.attention_total / 2)  # >=50% held in reserve
+			# hold >=50% in reserve: cap founder spend at half the monthly budget
+			var cap := int(state.month_plan.attention_total / 2)
 			for id in ["hire_safety_researcher", "safety_research", "network"]:
-				ap_left = _try_queue(state, id, ap_left)
+				if state.month_plan.attention_spent >= cap:
+					break
+				attn_left = _try_queue(state, id, attn_left)
 		"loan_desperation":
 			for id in ["take_loan", "desperation_lever", "funding_strings", "take_loan", "staff_rider"]:
-				ap_left = _try_queue(state, id, ap_left)
+				attn_left = _try_queue(state, id, attn_left)
 		"random_walk":
-			strategic_spend = brng.randi_range(0, state.month_plan.attention_total)  # random reserve
 			var picks := brng.randi_range(0, 5)
 			for _i in range(picks):
 				var id: String = RANDOM_POOL[brng.randi_range(0, RANDOM_POOL.size() - 1)]
-				ap_left = _try_queue(state, id, ap_left)
+				attn_left = _try_queue(state, id, attn_left)
+			# random extra WIP burn -> random reserve level
+			var rem: int = state.month_plan.available()
+			if rem > 0:
+				var burn := brng.randi_range(0, rem)
+				if burn > 0:
+					state.month_plan.queue_strategic("__sweep_wip__", burn, 5, state.turn)
 		_:
 			pass
 
-	# Burn strategic attention as durationed WIP (no effect in v1; sets the reserve).
-	if strategic_spend > 0:
-		state.month_plan.queue_strategic("__sweep_wip__", strategic_spend, 5, state.turn)
 
-
-func _try_queue(state, id: String, ap_left: int) -> int:
-	return Driver.try_queue(state, id, ap_left)
+func _try_queue(state, id: String, attn_left: int) -> int:
+	return Driver.try_queue(state, id, attn_left)
 
 
 # ============================================================================

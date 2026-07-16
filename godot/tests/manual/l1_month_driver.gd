@@ -37,6 +37,7 @@ const DEFAULT_MAX_MONTHS := 420  # ADR-0002 mortality guard: > the 400-month har
 # ============================================================================
 
 static func ap_cost(id: String) -> int:
+	# L2 (ADR-0011): the action's legacy action_points cost IS its Attention cost.
 	return int(GameActions.get_action_by_id(id).get("costs", {}).get("action_points", 1))
 
 
@@ -46,18 +47,23 @@ static func non_ap_costs(id: String) -> Dictionary:
 	return c
 
 
-static func affordable(state, id: String, ap_left: int) -> bool:
-	if ap_cost(id) > ap_left:
+static func affordable(state, id: String, attn_left: int) -> bool:
+	if ap_cost(id) > attn_left:
 		return false
 	return state.can_afford(non_ap_costs(id))
 
 
-static func try_queue(state, id: String, ap_left: int) -> int:
-	"""Queue `id` if affordable; returns the remaining AP either way."""
-	if affordable(state, id, ap_left):
+static func try_queue(state, id: String, attn_left: int) -> int:
+	"""Queue `id` if its Attention cost fits `attn_left` and non-Attention costs are
+	affordable. Spends the Attention from month_plan (mirrors GameManager.select_action) so
+	the driver's implicit reserve (attention_total - attention_spent) stays correct. Returns
+	the remaining Attention budget either way."""
+	if affordable(state, id, attn_left):
 		state.queued_actions.append(id)
-		return ap_left - ap_cost(id)
-	return ap_left
+		if state.month_plan != null:
+			state.month_plan.attention_spent += ap_cost(id)
+		return attn_left - ap_cost(id)
+	return attn_left
 
 
 # ============================================================================
