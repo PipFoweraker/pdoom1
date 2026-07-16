@@ -26,6 +26,10 @@
 - **Cats** via `body_type=quadruped, template=cat` — come with their own anim set (idle, sitting,
   licking, running…). Cozy singed vs spooky doom-form both read.
 - **Accessories** (the hat) via `create_map_object` — works for the swappable-cosmetic layer.
+- **`create_character_state` bakes a cosmetic onto a base character consistently across ALL
+  rotations** (linked via `group_id`) — validated by putting top hats on both cats (19/20).
+  For TRUE in-game swappability we still want separate overlay sprites, but this is exactly
+  how you'd bake fixed cosmetic *variants* of a character, and it Just Works.
 - **Process:** PixelLab throttles concurrency — firing 8+ at once fails ~half with "heavy load."
   Keep batches to ~3–4 and pace.
 
@@ -72,6 +76,8 @@ Full-color (04,05,08,09): *"…bright cheerful colors, cartoony retro RPG style,
 |---|---|---|---|---|
 | 17 | Operator-silhouette | f165e489 | shadowed suited figure (Dr Claw/Gendo operator), side view | silhouette worked |
 | 18 | Hat-tall (map object) | efc3c3a2 | absurdly tall ornate top hat (impostor-satire cosmetic) | the gag lands; 48x88 |
+| 19 | Cat1-tophat | bead2cfe | cozy tabby wearing a jaunty top hat (create_character_state) | delightful |
+| 20 | Cat2-spooky-tophat | 03ed6f4f | spooky doom-cat wearing a formal top hat, glowing eyes | **the whole game in one sprite** |
 
 ## Next steps (when Pip returns / locks direction)
 - Pick the final style combo (leading: full warm color + chibi/cartoon + low-top-down, cozy-grim tuned).
