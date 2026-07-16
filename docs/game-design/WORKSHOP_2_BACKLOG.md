@@ -721,6 +721,19 @@ writes the generation plan for review → generate ONE test character before bat
 - **Compute clamp (bug).** Compute should NOT go below zero — clamp at 0 (running out = no
   more compute, not negative compute). Quick technical fix.
 
+## Hiring Phase A — RULED + merged (#660, Pip 2026-07-16); flag rulings for Phase B
+Phase A (hire data model: appetites/quirks/loyalty-risk/reveal-level/hire-state + candidate
+card) approved and merged. Deterministic (hidden layer off a child RNG, main stream
+byte-unchanged). Pip's rulings on the flagged questions:
+- **Comp/salary is NOT a hidden field** — it's revealed (at interview level 1). "Comp might
+  effectively be a hidden *function*, but it's not a hidden field" (Pip). The hidden-ness is
+  the Phase-B negotiation *range/function*, not a hidden card field. Phase-A approach confirmed.
+- **`loyalty` ≠ `loyalty_risk`** — CONFIRMED different: `loyalty` = the dynamic current value;
+  `loyalty_risk` = the hidden flight predisposition. Keep the split.
+- **The two "fives" stay distinct** — ADR-0011 appetites (Phase A) vs DQ-24 demand categories
+  (Phase C). Do not conflate. Confirmed.
+- Reveal ladder granularity (skill=1, appetites=2, loyalty-risk=3) accepted. Proceed to Phase B.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
