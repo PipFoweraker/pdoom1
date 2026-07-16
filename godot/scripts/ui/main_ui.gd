@@ -272,9 +272,6 @@ func _unhandled_key_input(event: InputEvent):
 				accept_event()
 				return
 
-	# Populate upgrades list
-	_populate_upgrades()
-
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
