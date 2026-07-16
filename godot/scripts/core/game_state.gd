@@ -539,6 +539,11 @@ func get_researcher_count_by_spec(spec: String) -> int:
 
 func add_researcher(researcher: Researcher):
 	"""Add a researcher to the team"""
+	# Phase A hiring model: an employed person is fully known on their card (skill,
+	# appetites, loyalty-risk all revealed) and marked EMPLOYED. The QUIRK deliberately
+	# stays hidden until an exposure event -- employing someone does not surface it (A2).
+	researcher.set_reveal_level(Researcher.MAX_REVEAL)
+	researcher.hire_state = Researcher.HireState.EMPLOYED
 	researchers.append(researcher)
 
 	# Update legacy counts for backward compatibility
