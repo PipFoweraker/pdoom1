@@ -321,6 +321,37 @@ func test_pipeline_runs_through_the_real_month_loop():
 		"the interview resolved through the real month loop (reveal rose)")
 
 
+func test_end_month_executes_before_setting_the_implicit_reserve():
+	# REGRESSION (#664): end_month() must EXECUTE the plan turn BEFORE it sets the implicit
+	# Attention reserve. The reserve is `attention_total - attention_spent`; if it is set
+	# first, month_plan.available() is driven to 0 and every execution-time self-charging
+	# pipeline action (which spends via month_plan.spend_attention) fails "not enough
+	# Attention" despite a full budget. The sibling test above calls execute_turn() DIRECTLY,
+	# so it never runs end_month's reserve block and cannot catch this ordering bug.
+	var GameManagerScript = load("res://scripts/game_manager.gd")
+	var gm = GameManagerScript.new()
+	add_child_autofree(gm)
+	gm.start_new_game("hiring-reserve-order")
+	var st = gm.state
+	var full_attention: int = st.month_plan.attention_total
+	assert_gt(full_attention, 0, "the month opened with a real Attention budget")
+
+	# Queue a SOURCE action that self-charges Attention at EXECUTION time, then drive the
+	# real End-Turn path (end_month), not execute_turn directly.
+	st.queued_actions.append("advertise")
+	gm.end_month()
+
+	# If the reserve were set before execution, advertise would have been starved and no
+	# campaign created. Post-fix: it runs, and the reserve banks only what execution left.
+	assert_eq(st.hiring.campaigns.size(), 1,
+		"advertise executed through end_month (reserve did NOT starve its Attention)")
+	var adv_cost: int = Balance.inum("hiring.advertise.cost_attention", 3)
+	assert_eq(st.month_plan.attention_spent, adv_cost,
+		"execution charged advertise's Attention exactly once (no double / no starve)")
+	assert_eq(st.month_plan.attention_reserved, full_attention - adv_cost,
+		"the implicit reserve banked the post-execution remainder")
+
+
 func test_save_load_round_trips_pipeline_state():
 	var s := _new_state("saveload")
 	# Seed some durable pipeline state: a live campaign, an in-flight interview job, and an

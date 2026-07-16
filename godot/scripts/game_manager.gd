@@ -542,17 +542,12 @@ func end_month():
 		error_occurred.emit("No actions queued")
 		return
 
-	# Implicit reserve (v1): every Attention point not spent on strategic work guards this
-	# month's response windows. The full plan screen makes this an explicit dial.
-	if state.month_plan != null:
-		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent)
-
 	print("[GameManager] Committing month plan (%d actions)..." % state.queued_actions.size())
 	turn_phase_changed.emit("turn_end")
 
 	# Execute the OPEN plan turn (started at the previous boundary / game start).
-	# L2 (ADR-0011): Attention was spent at queue time; the implicit reserve above already
-	# banked the unspent remainder. No per-turn AP pool debit here.
+	# L2 (ADR-0011): Attention was spent at queue time; per-action self-charging (the hiring
+	# pipeline, etc.) also debits Attention HERE, at execution. No per-turn AP pool debit.
 	var result = turn_manager.execute_turn()
 	if result.has("action_results"):
 		for action_result in result["action_results"]:
@@ -560,6 +555,16 @@ func end_month():
 	game_state_updated.emit(state.to_dict())
 	if state.game_over:
 		return
+
+	# Implicit reserve (v1): every Attention point NOT spent by this month's executed actions
+	# now guards the response windows during day-tick playback (_run_month_playback, below).
+	# This MUST run AFTER execute_turn: execution-time self-charging actions (hiring pipeline)
+	# spend from `available` (= total - spent - reserved); setting the reserve first drives
+	# available to 0 and starves them. Reserving the post-execution remainder is both the fix
+	# and the correct semantics -- the reserve protects what's left once commitments have run.
+	# The full plan screen makes this an explicit dial.
+	if state.month_plan != null:
+		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent)
 
 	month_playback_active = true
 	_run_month_playback()  # async — runs day ticks until window-pause or month boundary
