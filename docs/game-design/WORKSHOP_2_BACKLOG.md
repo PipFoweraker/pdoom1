@@ -557,6 +557,41 @@ items:
   DESIGN_PHILOSOPHY. Keeps vocabulary honest for future variable horizons (ADR-0009 parked
   cadence).
 
+## Plan/Watch screen workshop (2026-07-16) — the two-screen model
+
+**Two screens (and maybe more in time)** — modes differ (Civ, XCOM). RULED.
+
+**PLAN screen — verb: "deal the cards from the hand you've got."** Pip: *"This is what
+you've got, boss, staring down another month. Play your cards as you see 'em, then watch
+what unfolds."* Euchre/Hearts **pre-commit all rounds of the hand**; Warhammer **lay your
+army out before battle** (army list dictated by last battle + the economy round). So the
+plan screen is deployment/hand-laying: your available cards are **dictated by prior state**
+(not a fixed menu). Visual feel: employees **spawn near the door and fan out** to desks/
+computers/pet the cat — fishbowl ambience, scene-switch register (party-Nintendo / FFXIV).
+
+**WATCH screen — the operator at the desk, world on fire.** Where stuff happens: day-ticks
+run, **things come across your desk on slips of paper / as inbox items**, windows demand
+you, environmental animation reacts to outside events (and seasonal decor — Christmas tree,
+Santa hats). The **silhouetted operator** (never seen, office chair, facing the screen,
+world burning around them) is the CORE UI image — never lose it. Current action-queue
+indicator is liked; card-game UI transitions (MTGO) as reference for smoothness.
+
+**Phase-gated UI complexity (resolves Pip's "how much management hell" worry):** the
+swimlane/Agile management board is NOT imposed all game — it **arrives when the player
+graduates to management** (Entity phase, the 5-phase spine). The UI GROWS with the phases:
+Startup = a small hand + a couple of people; Entity+ = a deployment/swimlane board;
+Titan = division-level abstraction. Complexity is earned/felt, not front-loaded
+(coarsening-grain + felt-not-announced).
+
+**Earned instrumentation (UI-as-upgrade):** the desk gets more useful as you PAY for it —
+paid action log, per-turn cash diff, better views (the pre-Godot heritage; "more manageable
+in Godot"). The two-instrument doctrine as a purchasable UI surface.
+
+**Office-as-phase-visual (power-up-the-office made literal + a felt phase indicator):**
+garage → industrial warehouse → startuppy office → gilded office → supervillain lair
+(high-money endgame: futuristic, "riding a data center into orbit"). Humor + design
+potential; the office *is* how you feel the phase.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
