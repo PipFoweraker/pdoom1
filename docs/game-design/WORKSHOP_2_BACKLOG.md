@@ -660,6 +660,43 @@ potential; the office *is* how you feel the phase.
   clusters" (Tier 0 — anything ≥ that is a step up). The linked generative-agents paper = Tier 3
   (skip for MVP). Pip asked what's MVP-easy; Fable's tier assessment recorded in the workshop.
 
+## Character sprite system + cat (2026-07-16) — decouple identity from ability
+
+**RULED: physical identity is DECOUPLED from ability/personality.** Fable's "recognizable
+archetype-characters" suggestion was FLAWED (Pip caught it): archetype-legible sprites (a)
+leak the hidden-info that hire-as-scouting depends on (you'd read "burned-out senior" at
+first sight, killing the interview-to-reveal mechanic, A2 barrage), (b) drift toward
+Stardew (fixed named NPCs you court — "bribe Phil, seduce Ryan"), and (c) code
+personality/competence into a body type (lazy + wrong representation). Pip's original
+instinct resolves all three:
+- **Physical appearance = IDENTITY.** Distinct, DIVERSE (gender/race/body/disability/
+  visible eccentricity — Pip wants strong representation, "given the field and its
+  particularities, and I like seeing representation"), assigned per-hire, recognizable on
+  the floor (the office-as-dashboard "who is that" read). **Deliberately UNCORRELATED with
+  ability** — any body, any archetype. This is also the *better* representation: diversity
+  is pure identity, never a stat tell.
+- **Personality/ability = HIDDEN, revealed over time via ACCRUING clothing/accessories**
+  (Pip's "clothes reflect revealed personality traits"). The archetype shows as you scout
+  them, not at first sight → preserves hire-as-scouting.
+- **Avoids Stardew:** hires are procedurally assembled (physical base × revealed clothing
+  × swappable hat × state anim) PER RUN → fresh cast each run (roguelike-appropriate), not
+  a persistent dating-sim roster. Within-run recognizability without across-run fixed NPCs.
+- **Asset math:** FEWER unique assets than N hand-made distinct archetypes (base bodies ×
+  overlays = combinatorial). The hat-layering we committed extends to clothing.
+- **Swappable hats: CONFIRMED** (rep cosmetics; base-head-neutral so hats layer clean).
+
+**The cat = an escalating DOOM BAROMETER (Pip: "a lot of effort into our cats, not just
+for contributor-pleasing").** Cat state/form varies with doom band — normal-singed at low
+doom → spooky → weird/eldritch at high doom. First-class ambient doom-instrument (office-
+as-mirror + two-instrument-doom, made adorable-then-horrifying). Needs multiple cat forms
+keyed to doom bands.
+
+**Fable's surprise-me style calls (Pip: "anything I haven't called, surprise me"):**
+desaturated-COLOR bodies on the amber-CRT MONOCHROME environment (workers pop); 48px
+bodies; 4-frame key anims (idle can be 2); layered base-body + swappable clothing/hat
+overlays. Pending: Pip connects the pixellab MCP + confirms the layered approach → Fable
+writes the generation plan for review → generate ONE test character before batching.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
