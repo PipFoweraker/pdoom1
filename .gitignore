@@ -133,3 +133,7 @@ asset_gallery.html
 test_output.png
 test_openai_api.py
 generate_icons.py
+
+# Third-party visual references (Pip mind-dump 2026-07-16) — NOT committed (copyright).
+# Aesthetic notes derived from these live in docs/game-design/WORLD_AND_LORE.md.
+art_prompts/16-july-2-26-dump/

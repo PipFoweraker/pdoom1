@@ -201,6 +201,34 @@ scaling doesn't remove pressure, it relocates it to a new class). Resolves DQ-28
 rule: never announce a phase; let it be felt. Candidate future use: phase as a
 scenario-jump anchor for testing (DQ-28) and a pacing lens for balance.
 
+## Visual direction: the Operator, back-framing, and the purple doom-end (2026-07-16)
+
+*From Pip's reference dump (Dr Claw still; a throne silhouette as counter-example; fan-art
+for palette). References are third-party — not committed; these are the derived rulings.*
+
+- **The Operator is framed FROM BEHIND, looking INTO a glowing source.** Clinically: camera
+  behind-and-slightly-beside the operator, low-ish; the light source (a hypnotic screen /
+  mysterious glow) is IN FRONT of them, facing away from us, so they read as a **backlit /
+  rim-lit silhouette** — we see **posture, never identity** (hunched, absorbed, a hand at the
+  screen = intent/menace without a face). We are looking over their shoulder at the same
+  thing they can't stop watching — the screen's content is the doom. Mystery + complicity in
+  one frame. (Anonymity-preserving = inclusion; the silhouette does both jobs, as ruled.)
+- **The cat is bathed in the SAME light**, beside/on the operator — domestic warmth inside the
+  doom-lair (cozy-grim in one shot).
+- **Counter-example (what NOT to do):** the throne silhouette faces the viewer, symmetrical,
+  imperious — it *displays* power at us. We want the throne/operator **from behind**: imposing
+  because of the imposing *back* and the small figure it holds, mysterious because the drama is
+  what they face, not a confrontation with us.
+- **Purple is the doom-end of the palette** ("what comes after red" — past the red doom band).
+  Pip's favourite colour AND mechanically the terrifying top of the doom scale. So: the doom
+  meter's colour progression runs ...amber/green -> red -> **purple** at the worst bands, and
+  the Operator scene is **purple-lit at high doom** (office-as-moral-mirror + the doom palette,
+  unified). The fan-art's purple/red tone is the target mood.
+- **Cinematic seam (trailers/future):** the back-of-operator-at-the-glowing-screen shot is
+  inherently filmic — long slow zooms, environmental music building, staged ambient animation.
+  Bank it for trailer/marketing sequences.
+- **TODO:** find + credit the fan-art creator (Pip's note).
+
 ## Naming & terminology
 
 - **Doom-years averted** — the score tiebreaker; area under the survival curve

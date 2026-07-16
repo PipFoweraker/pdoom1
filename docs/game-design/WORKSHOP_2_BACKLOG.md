@@ -181,6 +181,19 @@ lands; current display honestly reflects the still-day-tick structure, so no fix
   (typed micro-demands roll up into manager-absorbed classes at scale — same object as
   the Celine's-law report). Guard: type demands, never the currency — Attention stays
   single and universal. Workshop beat alongside DQ-19/DQ-23.
+  **RULED (Pip queued 2026-07-16 to unblock the hiring-pipeline build; Fable's taxonomy,
+  Pip can veto in review). Five demand categories, each mapped to an absorbing hire-role:**
+  (1) **Ops/Admin** — bookkeeping, payroll, receipts, logistics, compute-buying → ops/admin
+  hires; (2) **People/Management** — hiring-pipeline steps, morale, individual-researcher
+  problems, team management → managers/team-leads (Celine's-law report fidelity loss);
+  (3) **Technical/Infra/Security** — systems, compute infrastructure, security,
+  leak-prevention → infra/security hires; (4) **Research direction** — research strategy,
+  workstream steering, progress check-ins → research leads; (5) **External/Social** —
+  conferences, media, fundraising conversations, doors, alliances → comms/BD hires (but
+  doors compound to the FOUNDER, ADR-0011). **Founder = universal generalist** (handles any
+  category at strong-generalist quality); specialists absorb *their* category; cross-category
+  mismatch is inefficient ("can't delegate bookkeeping to a security engineer"). This is the
+  hiring-pipeline build's demand-model — ready for the build brief.
 - **DQ-22 · Aggro-threshold midgame** *(Pip 2026-07-13; ADR-candidate)* — rivals develop
   their own positions until the player's visible impact threatens their interests, then
   active attacks begin (litigation, funding cuts, rep attacks, scathing reviews, psyops,
