@@ -1,0 +1,40 @@
+{
+  "title": "P(Doom)1 -- Style Review",
+  "subtitle": "Compare whole style directions across subjects; pick a winner per matrix.",
+  "image_root": "art_source/pixellab_2026-07-16",
+  "batches": [
+    {
+      "id": "2026-07-16-style-matrix",
+      "kind": "matrix",
+      "title": "Style dials x subjects",
+      "note": "Each ROW is one style direction -- a single dial pushed from the cozy-grim baseline. Read across a row to see a whole style rendered on several subjects at once (not one style over-tuned off one object). Pick the winning row, then we regenerate the full set in that direction.",
+      "dir": "style_matrix",
+      "subjects": [
+        {"key": "desk", "label": "Desk"},
+        {"key": "monitor", "label": "Monitor"},
+        {"key": "character", "label": "Character"}
+      ],
+      "styles": [
+        {"key": "baseline", "label": "Baseline", "note": "cozy-grim warm (control)"},
+        {"key": "futurepunk", "label": "+ Futurepunk", "note": "subtle near-future tech, neon cyan"},
+        {"key": "heavy-outline", "label": "+ Heavy outline", "note": "bold thick black line, chunky graphic"},
+        {"key": "warm-grime", "label": "+ Warm grime", "note": "lived-in, softly grimy, cozier"},
+        {"key": "moody-contrast", "label": "+ Moody contrast", "note": "deep dramatic shadows, moodier"}
+      ]
+    },
+    {
+      "id": "2026-07-16-era-ladder",
+      "kind": "ladder",
+      "title": "Era ladder -- one asset, startup to endgame",
+      "note": "The same workstation upgraded across company eras, to feel what 'upgrading your stuff' looks like over a run. Endgame is the eldritch AI terminal wreathed in glowing Bayes-rune notation (priors/posteriors).",
+      "dir": "era_ladder",
+      "steps": [
+        {"key": "e1_startup", "label": "Startup", "note": "secondhand beige CRT"},
+        {"key": "e2_funded", "label": "Funded", "note": "tidy flat LCD"},
+        {"key": "e3_scaleup", "label": "Scaleup", "note": "sleek dual widescreen"},
+        {"key": "e4_megacorp", "label": "Megacorp", "note": "high-tech curved holo"},
+        {"key": "e5_endgame", "label": "Endgame", "note": "eldritch Bayes-rune AI terminal"}
+      ]
+    }
+  ]
+}
