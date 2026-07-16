@@ -1,4 +1,4 @@
-[gd_resource type="SpriteFrames" load_steps=29 format=3]
+[gd_resource type="SpriteFrames" load_steps=47 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/idle_0.png" id="1"]
 [ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/idle_1.png" id="2"]
@@ -28,6 +28,24 @@
 [ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_6.png" id="26"]
 [ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_7.png" id="27"]
 [ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_8.png" id="28"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_east_0.png" id="29"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_east_1.png" id="30"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_east_2.png" id="31"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_east_3.png" id="32"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_east_4.png" id="33"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_east_5.png" id="34"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_north_0.png" id="35"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_north_1.png" id="36"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_north_2.png" id="37"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_north_3.png" id="38"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_north_4.png" id="39"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_north_5.png" id="40"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_west_0.png" id="41"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_west_1.png" id="42"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_west_2.png" id="43"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_west_3.png" id="44"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_west_4.png" id="45"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_west_5.png" id="46"]
 
 [resource]
 animations = [{
@@ -69,6 +87,75 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": ExtResource("10")
+}]
+}, {
+"loop": true,
+"name": &"walking_east",
+"speed": 8.0,
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("29")
+}, {
+"duration": 1.0,
+"texture": ExtResource("30")
+}, {
+"duration": 1.0,
+"texture": ExtResource("31")
+}, {
+"duration": 1.0,
+"texture": ExtResource("32")
+}, {
+"duration": 1.0,
+"texture": ExtResource("33")
+}, {
+"duration": 1.0,
+"texture": ExtResource("34")
+}]
+}, {
+"loop": true,
+"name": &"walking_north",
+"speed": 8.0,
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("35")
+}, {
+"duration": 1.0,
+"texture": ExtResource("36")
+}, {
+"duration": 1.0,
+"texture": ExtResource("37")
+}, {
+"duration": 1.0,
+"texture": ExtResource("38")
+}, {
+"duration": 1.0,
+"texture": ExtResource("39")
+}, {
+"duration": 1.0,
+"texture": ExtResource("40")
+}]
+}, {
+"loop": true,
+"name": &"walking_west",
+"speed": 8.0,
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("41")
+}, {
+"duration": 1.0,
+"texture": ExtResource("42")
+}, {
+"duration": 1.0,
+"texture": ExtResource("43")
+}, {
+"duration": 1.0,
+"texture": ExtResource("44")
+}, {
+"duration": 1.0,
+"texture": ExtResource("45")
+}, {
+"duration": 1.0,
+"texture": ExtResource("46")
 }]
 }, {
 "loop": true,
