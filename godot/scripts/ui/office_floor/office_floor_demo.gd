@@ -33,6 +33,8 @@ func _ready() -> void:
 	tier_btn.pressed.connect(_on_toggle_tier)
 	bar.add_child(tier_btn)
 
+	# EASTER EGG (keep): Pip wants this hidden fun-interaction left in for now, and
+	# it may survive into the real game later (integration lane's call). Do not remove.
 	var stress_btn := Button.new()
 	stress_btn.text = "Stress a random hire"
 	stress_btn.pressed.connect(_on_stress_random)
@@ -45,6 +47,16 @@ func _ready() -> void:
 
 	_status = Label.new()
 	bar.add_child(_status)
+
+	var legend := Label.new()
+	legend.add_theme_font_size_override("font_size", 11)
+	legend.text = "Watch a while. Desks cluster around two tables; corners are landmarks — cat " \
+		+ "(bottom-left), water cooler (top-right), fridge (bottom-right), window (top wall). " \
+		+ "Working staff occasionally do a food run (fridge/water), pat the cat, or walk to a " \
+		+ "peer's desk to COLLABORATE, then return. Unmanaged staff (Riley, Lane) drift, spin, or " \
+		+ "gaze out the window. Burnt-out = red '!'. All cosmetic — pure view, private RNG, no bonuses."
+	legend.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	root.add_child(legend)
 
 	_floor = OfficeFloorScene.instantiate()
 	_floor.size_flags_vertical = Control.SIZE_EXPAND_FILL
