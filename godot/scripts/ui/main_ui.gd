@@ -2,6 +2,7 @@ extends VBoxContainer
 ## Main UI controller - connects UI elements to GameManager
 
 # References to UI elements (TopBar now has all resources in one line)
+# --- Shared top/bottom chrome (resource readouts + control bar; not screen-specific) ---
 @onready var turn_label = $TopBar/TurnLabel
 @onready var turn_count_label = $TopBar/TurnCountLabel
 @onready var money_label = $TopBar/MoneyLabel
@@ -11,12 +12,29 @@ extends VBoxContainer
 @onready var reputation_label = $TopBar/ReputationLabel
 @onready var ap_label = $TopBar/APLabel
 @onready var phase_label = $BottomBar/PhaseLabel
-@onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
-@onready var actions_list = $ContentArea/LeftPanel/ActionsScroll/ActionsList
-@onready var upgrades_list = $ContentArea/RightPanel/UpgradesScroll/UpgradesList
 @onready var info_label = $InfoBar/MarginContainer/InfoLabel
-@onready var queue_container = $ContentArea/RightPanel/QueuePanel/QueueContainer
-@onready var queue_hint = $ContentArea/RightPanel/QueuePanel/QueueContainer/QueueHint
+
+# --- The three extracted screens (BUILD_BRIEF_PLAN_WATCH_UI Lane 1) ---
+# PLAN (strategy) and WATCH (tactics) are real, script-backed screen subtrees; the shared
+# InstrumentPanel (doom / roster / committed-month queue) stays visible in both modes.
+# main_ui drives game logic against the screens' PUBLIC members rather than reaching through
+# absolute $ContentArea/<column>/... node paths — that coupling is what the split untangles.
+@onready var plan_screen: PlanScreen = $ContentArea/PlanScreen
+@onready var instruments: InstrumentPanel = $ContentArea/InstrumentColumn
+@onready var watch_screen: WatchScreen = $ContentArea/WatchScreen
+
+# Leaf widgets, resolved THROUGH the owning screen. Child _ready runs before the parent's,
+# so each screen's own @onready refs are already populated when these evaluate.
+@onready var message_log = watch_screen.message_log
+@onready var actions_list = plan_screen.actions_list
+@onready var upgrades_list = plan_screen.upgrades_list
+@onready var getting_started_hint = plan_screen.getting_started_hint
+@onready var queue_container = instruments.queue_container
+@onready var queue_hint = instruments.queue_hint
+@onready var doom_meter = instruments.doom_meter
+@onready var numeric_doom_label = instruments.numeric_doom_label
+@onready var office_cat = instruments.office_cat
+@onready var roster_container = instruments.roster_container
 
 @onready var init_button = $BottomBar/ControlButtons/InitButton
 @onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
@@ -25,16 +43,11 @@ extends VBoxContainer
 @onready var clear_queue_button = $BottomBar/ControlButtons/ClearQueueButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
 @onready var commit_plan_button = $BottomBar/ControlButtons/CommitPlanButton
-@onready var doom_meter = $ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel/MarginContainer/DoomMeter
-@onready var numeric_doom_label = $ContentArea/MiddlePanel/CoreZone/RightZones/NumericDoomZone/NumericDoomLabel
 @onready var game_over_screen = $"../GameOverScreen"
 @onready var bug_report_panel = $"../BugReportPanel"
 @onready var bug_report_button = $BottomBar/BugReportButton
-@onready var office_cat = $ContentArea/MiddlePanel/CoreZone/CatZone/OfficeCat
 @onready var tab_manager = get_parent()
-@onready var roster_container = $ContentArea/MiddlePanel/EmployeeRosterZone/RosterScroll/RosterContainer
 @onready var pause_menu = $"../../PauseMenu"
-@onready var getting_started_hint = $ContentArea/LeftPanel/GettingStartedHint
 
 # Reference to GameManager
 var game_manager: Node
@@ -103,12 +116,13 @@ func _ready():
 	# Issue #500: research quality selector (script-instantiated; reparent in editor if preferred)
 	research_quality_selector = preload("res://scripts/ui/research_quality_selector.gd").new()
 	research_quality_selector.quality_selected.connect(_on_research_quality_selected)
-	$ContentArea/LeftPanel.add_child(research_quality_selector)
-	$ContentArea/LeftPanel.move_child(research_quality_selector, 0)
+	plan_screen.add_child(research_quality_selector)
+	# Just under PlanScreen's attention gauge (index 0), above the getting-started hint.
+	plan_screen.move_child(research_quality_selector, 1)
 
-	# #512: doom trend sparkline, inserted just below the doom gauge in RightZones
-	var right_zones := $ContentArea/MiddlePanel/CoreZone/RightZones
-	var doom_meter_zone := $ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone
+	# #512: doom trend sparkline, inserted just below the doom gauge in the instrument column
+	var right_zones := instruments.right_zones
+	var doom_meter_zone := instruments.doom_meter_zone
 	doom_trend_graph = preload("res://scripts/ui/doom_trend_graph.gd").new()
 	doom_trend_graph.custom_minimum_size = Vector2(0, 92)  # taller — playtest feedback (screen1)
 	doom_trend_graph.window_size = 24  # show more time points (screen6)
@@ -228,31 +242,27 @@ func _setup_plan_watch_scaffold() -> void:
 	# Speed dial -> real playback speed.
 	screen_mode.speed_changed.connect(func(secs: float): game_manager.day_tick_seconds = secs)
 
-	# --- sort existing panels into PLAN vs WATCH ---
-	# PLAN (strategy): the hand, upgrades to plan, the planning verbs. Hidden while watching.
-	screen_mode.register_plan_only($ContentArea/LeftPanel)                 # the action hand + research selector
-	screen_mode.register_plan_only($ContentArea/RightPanel/UpgradesLabel)
-	screen_mode.register_plan_only($ContentArea/RightPanel/UpgradesScroll)
-	screen_mode.register_plan_only($ContentArea/MiddlePanel/CommandZone)   # Do-Nothing / pass — a planning verb
+	# --- register the real screens for mode switching ---
+	# The extraction turned scattered per-panel visibility toggles into two real, script-backed
+	# screen subtrees: ScreenModeController now shows/hides PlanScreen and WatchScreen as whole
+	# units. The shared InstrumentPanel (doom / roster / committed-month queue) is registered to
+	# neither, so it stays visible in BOTH modes. Response windows still overlay as dialogs.
+	screen_mode.register_plan_only(plan_screen)     # the whole PLAN screen (hand, upgrades, verbs)
+	screen_mode.register_watch_only(watch_screen)   # the whole WATCH screen (the feed)
+	screen_mode.register_watch_only(watch_bar)      # the playback control strip
+	# The plan-time control-bar verbs live in the shared BottomBar; hide them while watching.
 	screen_mode.register_plan_only(undo_last_button)
 	screen_mode.register_plan_only(clear_queue_button)
 	screen_mode.register_plan_only(reserve_ap_button)
 	screen_mode.register_plan_only(commit_plan_button)
 	screen_mode.register_plan_only(end_turn_button)                        # END TURN == COMMIT THE MONTH
-	# WATCH (tactics): the playback control strip. Doom/feed/queue stay visible in BOTH
-	# (context in PLAN, live instruments in WATCH); response windows overlay as dialogs.
-	screen_mode.register_watch_only(watch_bar)
 
 	# The End Turn button is the PLAN->WATCH commit — relabel it in the plan register.
 	end_turn_button.text = "COMMIT THE MONTH ▶"
 
-	# --- first terminal-styling pass over the default greys ---
-	TerminalTheme.style_panel($ContentArea/RightPanel/QueuePanel, TerminalTheme.RULE, TerminalTheme.PANEL_BG)
+	# --- terminal styling that isn't owned by a screen (screens style their own panels) ---
 	TerminalTheme.style_panel($InfoBar, TerminalTheme.RULE, TerminalTheme.PANEL_BG_DEEP)
-	TerminalTheme.style_feed(message_log)  # the feed: monospace, phosphor text
-	# Amber the two title labels into the terminal register.
 	$TopBar/TitleLabel.add_theme_color_override("font_color", TerminalTheme.AMBER)
-	$ContentArea/MiddlePanel/TitleZone/TitleLabel.add_theme_color_override("font_color", TerminalTheme.AMBER)
 
 	# Start in PLAN (the game opens at the month plan).
 	screen_mode.enter_plan()
@@ -683,6 +693,10 @@ func _on_game_state_updated(state: Dictionary):
 	# Phase A: keep the WATCH day/reserve readout live during month playback.
 	if screen_mode:
 		screen_mode.update_from_state(state)
+
+	# Refresh the PLAN attention gauge (allocated vs reserved pips) from the month plan.
+	if plan_screen:
+		plan_screen.update_reserve_gauge(state)
 
 	# Update resource displays (Issue #472 - enhanced turn display with calendar)
 	var turn_display = state.get("turn_display", "")
