@@ -5,6 +5,7 @@ extends Control
 ## is a pure view that needs nothing but a snapshot.
 
 const OfficeFloorScene := preload("res://scenes/ui/office_floor/office_floor.tscn")
+const RealSpriteFrames := preload("res://assets/office_floor/artloop_char/office_worker.tres")
 
 var _floor: OfficeFloor
 var _status: Label
@@ -63,7 +64,11 @@ func _ready() -> void:
 	_floor.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	root.add_child(_floor)
 
-	_floor.set_tier(0)
+	# Real pixellab.ai art-loop sprite (idle/walking/working/stressed). Wired via the
+	# same set_sprite_frames() seam Tier 1 was built for -- no OfficeFloor/sprite
+	# code change needed to swap art.
+	_floor.set_sprite_frames(RealSpriteFrames)
+	_floor.set_tier(1)
 	_push_roster()
 
 func _push_roster() -> void:

@@ -29,7 +29,44 @@ const BREAK_DWELL_RANGE := Vector2(1.5, 3.5)
 const WINDOW_GAZE_RANGE := Vector2(4.0, 9.0)
 const SPIN_RANGE := Vector2(2.0, 4.5)
 const DRIFT_RANGE := Vector2(2.0, 5.0)
-const SPIN_SPEED := 3.2                  # rad/s
+const SPIN_STEP_INTERVAL := 0.22         # seconds per quarter-turn while "spinning"
+
+# --- Directional facing --------------------------------------------------
+## Facing is a discrete compass direction (NOT a node rotation). Movement picks
+## a facing from the dominant axis of the movement vector; "spin" cycles this
+## same facing string S->E->N->W (or reverse) instead of tipping the sprite
+## over on its Z axis. Tier 1 shows the real 4 rotation-reference frames when
+## facing != south; south keeps using the animated FSM-state clip (that's the
+## only direction pixellab has full walk/idle/working/stressed loops for today).
+const FACING_SOUTH := "south"
+const FACING_EAST := "east"
+const FACING_NORTH := "north"
+const FACING_WEST := "west"
+const _SPIN_ORDER := [FACING_SOUTH, FACING_EAST, FACING_NORTH, FACING_WEST]
+
+# Static per-direction reference art (committed alongside the animated clips).
+# FUTURE SEAM: once directional walk/working/stressed CLIPS exist, name them
+# "<state>_<facing>" (e.g. "walking_east") in the shared SpriteFrames and
+# _update_facing_visual() below will prefer them automatically -- no code
+# change needed here, only art + clip names.
+const ROTATION_SOUTH := preload("res://assets/office_floor/artloop_char/rotation_south.png")
+const ROTATION_EAST := preload("res://assets/office_floor/artloop_char/rotation_east.png")
+const ROTATION_NORTH := preload("res://assets/office_floor/artloop_char/rotation_north.png")
+const ROTATION_WEST := preload("res://assets/office_floor/artloop_char/rotation_west.png")
+const DEFAULT_FACING_TEXTURES := {
+	FACING_SOUTH: ROTATION_SOUTH,
+	FACING_EAST: ROTATION_EAST,
+	FACING_NORTH: ROTATION_NORTH,
+	FACING_WEST: ROTATION_WEST,
+}
+# Screen-space unit vectors per facing (+x = east, +y = south/down). Used by
+# the tier-0 blob's "nose" cue.
+const _FACING_VECTORS := {
+	FACING_SOUTH: Vector2(0, 1),
+	FACING_EAST: Vector2(1, 0),
+	FACING_NORTH: Vector2(0, -1),
+	FACING_WEST: Vector2(-1, 0),
+}
 
 var tier: int = 0
 var sprite_state: String = EmployeeFSM.STATE_IDLE
@@ -49,6 +86,7 @@ var speed: float = 42.0
 var _target: Vector2 = Vector2.ZERO
 var _rng := RandomNumberGenerator.new()   # cosmetic-only; deliberately un-seeded from the game
 var _anim: AnimatedSprite2D
+var _facing_sprite: Sprite2D             # static directional reference art (tier 1 only)
 var _label: Label
 
 # working micro-behavior
@@ -61,13 +99,25 @@ var _collab_target := Vector2.ZERO        # peer desk, set by OfficeFloor.try_st
 var _aimless := "drift"                   # drift | window | spin
 var _aimless_timer := 0.0
 var _spin_dir := 1.0
+var _spin_step_timer := 0.0
+
+# facing (compass direction the sprite should visually face; NOT a node rotation)
+var _facing: String = FACING_SOUTH
+var _facing_active: bool = false          # true while translating or spinning-in-place
+var _facing_textures: Dictionary = DEFAULT_FACING_TEXTURES
 
 func _ready() -> void:
 	_rng.randomize()
 	_target = position
 	_anim = AnimatedSprite2D.new()
 	_anim.visible = false
+	# Crisp pixel art, no blur, regardless of per-file .import filter settings.
+	_anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(_anim)
+	_facing_sprite = Sprite2D.new()
+	_facing_sprite.visible = false
+	_facing_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(_facing_sprite)
 	_label = Label.new()
 	_label.add_theme_font_size_override("font_size", 10)
 	_label.position = Vector2(-BODY_RADIUS - 2.0, BODY_RADIUS + 2.0)
@@ -119,22 +169,86 @@ func _apply_tier() -> void:
 	if tier == 1:
 		if _anim.sprite_frames == null:
 			_anim.sprite_frames = _build_placeholder_frames(body_color, hat_color)
-		_anim.visible = true
 	else:
 		_anim.visible = false
+		if _facing_sprite:
+			_facing_sprite.visible = false
 	_refresh_visual()
 	queue_redraw()
 
+## Optional: override the static per-direction reference art (default: the
+## committed rotation_{south,east,north,west}.png). Same seam shape as
+## set_sprite_frames() so a future art swap needs no OfficeFloor code change.
+func set_facing_textures(textures: Dictionary) -> void:
+	_facing_textures = textures
+	_refresh_visual()
+
 func _refresh_visual() -> void:
-	if tier == 1 and _anim and _anim.sprite_frames and _anim.sprite_frames.has_animation(sprite_state):
-		_anim.play(sprite_state)
+	_update_facing_visual()
 	queue_redraw()
+
+## Pick what tier-1 art to show this frame: the animated FSM-state clip while
+## facing south (or not actively facing anything in particular), a directional
+## CLIP if one exists for "<state>_<facing>" (future per-direction walk art
+## drops in here with zero code change), otherwise the static rotation frame
+## for the current facing.
+func _update_facing_visual() -> void:
+	if tier != 1 or _anim == null:
+		return
+	var want_facing := _facing if _facing_active else FACING_SOUTH
+	if want_facing == FACING_SOUTH:
+		_show_animated_clip(sprite_state)
+		return
+	var directional_clip := "%s_%s" % [sprite_state, want_facing]
+	if _anim.sprite_frames and _anim.sprite_frames.has_animation(directional_clip):
+		_show_animated_clip(directional_clip)
+	else:
+		_show_static_facing(want_facing)
+
+func _show_animated_clip(clip_name: String) -> void:
+	if _facing_sprite:
+		_facing_sprite.visible = false
+	_anim.visible = true
+	if _anim.sprite_frames and _anim.sprite_frames.has_animation(clip_name):
+		_anim.play(clip_name)
+
+func _show_static_facing(facing: String) -> void:
+	if _facing_sprite == null:
+		return
+	var tex: Texture2D = _facing_textures.get(facing, null)
+	if tex == null:
+		_show_animated_clip(sprite_state)
+		return
+	_anim.visible = false
+	_facing_sprite.texture = tex
+	_facing_sprite.visible = true
+
+## Pure facing-selection: given a movement vector, pick the compass direction
+## the sprite should face (dominant axis wins; ties favour horizontal). Screen
+## space: +x = east, +y = south (down). Static/testable with no scene tree.
+static func facing_from_vector(v: Vector2) -> String:
+	if absf(v.x) < 0.0001 and absf(v.y) < 0.0001:
+		return FACING_SOUTH
+	if absf(v.x) >= absf(v.y):
+		return FACING_EAST if v.x > 0.0 else FACING_WEST
+	return FACING_SOUTH if v.y > 0.0 else FACING_NORTH
+
+func _set_facing(f: String) -> void:
+	_facing = f
+
+## Move toward target and face the direction actually travelled this frame.
+## Marks _facing_active so the directional art (rather than the south-only
+## animated clip) is shown while translating.
+func _move_toward_and_face(target: Vector2, delta: float) -> void:
+	_facing_active = true
+	var before := position
+	position = position.move_toward(target, speed * delta)
+	var moved := position - before
+	if moved.length_squared() > 0.0001:
+		_set_facing(facing_from_vector(moved))
 
 # Initialise the micro-behavior when a state is (re)entered.
 func _enter_state_behavior() -> void:
-	rotation = 0.0
-	if _label:
-		_label.rotation = 0.0
 	match sprite_state:
 		EmployeeFSM.STATE_WORKING:
 			_work_sub = "desk"
@@ -146,6 +260,7 @@ func _enter_state_behavior() -> void:
 			pass
 
 func _process(delta: float) -> void:
+	_facing_active = false
 	match sprite_state:
 		EmployeeFSM.STATE_WORKING:
 			_process_working(delta)
@@ -153,26 +268,23 @@ func _process(delta: float) -> void:
 			_process_aimless(delta)
 		_:
 			# idle / stressed hold position (heads-down / head-in-hands)
-			rotation = 0.0
+			pass
 	_clamp_to_bounds()
-	# Keep the name upright even while the body spins.
-	if _label:
-		_label.rotation = -rotation
+	_refresh_visual()
 	if tier == 0:
 		queue_redraw()
 
 # working: productive-normal at the desk, with occasional human breaks + collabs.
 func _process_working(delta: float) -> void:
-	rotation = 0.0
 	match _work_sub:
 		"desk":
-			position = position.move_toward(desk_pos, speed * delta)
+			_move_toward_and_face(desk_pos, delta)
 			if position.distance_to(desk_pos) <= ARRIVE_EPS:
 				_break_cooldown -= delta
 				if _break_cooldown <= 0.0 and _rng.randf() < BREAK_CHANCE_PER_SEC * delta:
 					_start_break()
 		"to_break":
-			position = position.move_toward(_break_target, speed * delta)
+			_move_toward_and_face(_break_target, delta)
 			if position.distance_to(_break_target) <= ARRIVE_EPS:
 				_work_sub = "on_break"
 				_aimless_timer = _rng.randf_range(BREAK_DWELL_RANGE.x, BREAK_DWELL_RANGE.y)
@@ -183,7 +295,7 @@ func _process_working(delta: float) -> void:
 		"to_collab":
 			# stand just beside the peer's desk, not on top of it
 			var beside := _collab_target + Vector2(BODY_RADIUS * 1.6, 0.0)
-			position = position.move_toward(beside, speed * delta)
+			_move_toward_and_face(beside, delta)
 			if position.distance_to(beside) <= ARRIVE_EPS:
 				_work_sub = "collaborating"
 				_aimless_timer = _rng.randf_range(BREAK_DWELL_RANGE.x, BREAK_DWELL_RANGE.y)
@@ -192,7 +304,7 @@ func _process_working(delta: float) -> void:
 			if _aimless_timer <= 0.0:
 				_work_sub = "returning"
 		"returning":
-			position = position.move_toward(desk_pos, speed * delta)
+			_move_toward_and_face(desk_pos, delta)
 			if position.distance_to(desk_pos) <= ARRIVE_EPS:
 				_work_sub = "desk"
 				_break_kind = ""
@@ -232,25 +344,35 @@ func _process_aimless(delta: float) -> void:
 	_aimless_timer -= delta
 	match _aimless:
 		"drift":
-			rotation = 0.0
 			if position.distance_to(_target) <= ARRIVE_EPS:
 				_pick_wander_target()
-			position = position.move_toward(_target, speed * delta)
+			_move_toward_and_face(_target, delta)
 			if _aimless_timer <= 0.0:
 				_pick_aimless()
 		"window":
-			rotation = 0.0
 			if position.distance_to(window_pos) > ARRIVE_EPS:
-				position = position.move_toward(window_pos, speed * delta)
+				_move_toward_and_face(window_pos, delta)
 				_aimless_timer += delta   # don't burn gaze time until we've arrived
 			elif _aimless_timer <= 0.0:
 				_pick_aimless()
 		"spin":
-			# stand and spin on the spot
-			rotation += _spin_dir * SPIN_SPEED * delta
+			# Stand still and turn the BODY to face S -> E -> N -> W (or reverse) --
+			# a person spinning on the spot, not the sprite image tipping over.
+			_facing_active = true
+			_spin_step_timer -= delta
+			if _spin_step_timer <= 0.0:
+				_spin_step_timer = SPIN_STEP_INTERVAL
+				_advance_spin_facing()
 			if _aimless_timer <= 0.0:
-				rotation = 0.0
 				_pick_aimless()
+
+func _advance_spin_facing() -> void:
+	var idx := _SPIN_ORDER.find(_facing)
+	if idx < 0:
+		idx = 0
+	var step := 1 if _spin_dir > 0.0 else -1
+	idx = posmod(idx + step, _SPIN_ORDER.size())
+	_facing = _SPIN_ORDER[idx]
 
 func _pick_aimless() -> void:
 	match _rng.randi() % 3:
@@ -265,6 +387,7 @@ func _pick_aimless() -> void:
 			_aimless = "spin"
 			_aimless_timer = _rng.randf_range(SPIN_RANGE.x, SPIN_RANGE.y)
 			_spin_dir = 1.0 if _rng.randf() < 0.5 else -1.0
+			_spin_step_timer = 0.0   # turn immediately on entering spin
 
 func _pick_wander_target() -> void:
 	_target = Vector2(
@@ -301,6 +424,10 @@ func _draw() -> void:
 	# stressed: little "!" hands-on-head cue
 	if sprite_state == EmployeeFSM.STATE_STRESSED:
 		draw_line(Vector2(0, -BODY_RADIUS - 12.0), Vector2(0, -BODY_RADIUS - 16.0), Color(0.9, 0.2, 0.2), 2.0)
+	# facing cue (tier 0 stand-in for the tier-1 directional sprite): a small
+	# dark "nose" dot on the edge of the blob toward the current facing.
+	var nose_dir: Vector2 = _FACING_VECTORS.get(_facing, Vector2(0, 1))
+	draw_circle(nose_dir * (BODY_RADIUS - 3.0), 2.0, Color(0, 0, 0, 0.5))
 	# off-desk cue: small dot coloured by errand so the flavor reads on the floor
 	# (fridge/water=cyan-blue, cat=pink, collaborate=green).
 	if sprite_state == EmployeeFSM.STATE_WORKING and _work_sub != "desk":
