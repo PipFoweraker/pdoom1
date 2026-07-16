@@ -1,0 +1,29 @@
+{
+  "_comment": "Pip's committed review verdicts. Preloaded by build.py into style_review.html so notes persist in git across sessions/machines. localStorage (live edits) overrides these. Update from Pip's Export paste, then rebuild.",
+  "picks": {
+    "2026-07-16-style-matrix": "warm-grime"
+  },
+  "styledir": "Winning direction: warm-grime base + heavy-outline heft + deeper shadow, view-locked (symmetrical/straight-on/centered) to fix rotation. Monitors are the weak subject (composition); keep screens clearly powered/glowing.",
+  "notes": {
+    "2026-07-16-style-matrix:baseline__desk": "This is probably my favourite desk but suffers from being a little rotated in the image. I like the clutter and objects.",
+    "2026-07-16-style-matrix:baseline__monitor": "This is one of the weakest monitors, coming across as dull and unpowered. Overall flavour is fine.",
+    "2026-07-16-style-matrix:baseline__character": "This is a good character, good colour identity, professional attire.",
+    "2026-07-16-style-matrix:futurepunk__desk": "This is a little too bright and shiny overall, the potted plant and wastepaper bin are nice touches.",
+    "2026-07-16-style-matrix:futurepunk__monitor": "This is poor composition overall.",
+    "2026-07-16-style-matrix:heavy-outline__desk": "This has a satisfying heft to it that I like, the objects have a good amount of visual distinction from each other.",
+    "2026-07-16-style-matrix:warm-grime__desk": "The clutter and coziness of this desk, combined with the object on the PC tower, are all excellent.",
+    "2026-07-16-style-matrix:warm-grime__monitor": "Good monitor, something weird going on where it looks like the monitor has a CD player coming out of it, but acceptable as a first-pass.",
+    "2026-07-16-style-matrix:warm-grime__character": "The glasses render pretty weirdly on this model, otherwise good.",
+    "2026-07-16-style-matrix:moody-contrast__desk": "The angling of this composition is weird and it has a chair which highlights shadows, but wouldn't work as a single asset. I like the increased shadows and moodiness.",
+    "2026-07-16-style-matrix:moody-contrast__monitor": "Bit of a miss.",
+    "2026-07-16-style-matrix:moody-contrast__character": "I like the expression and tone on this character, a little bit cynical, but more individualistic. Overall I like the shadows and mood tuning.",
+    "2026-07-16-office-library:chair": "Looks a little small compared to the others; otherwise OK. Perhaps a little too modern for a starting chair. [RE-ROLLING: older/cheaper starting chair, larger]",
+    "2026-07-16-office-library:bookshelf": "Looks more like a home than an office bookshelf; don't want much wood -- make it laminate / more office-shelfy. [RE-ROLLING]",
+    "2026-07-16-office-library:whiteboard": "Good!",
+    "2026-07-16-office-library:water_cooler": "Extremely good. Might be slightly too angled / perspective in wrong direction.",
+    "2026-07-16-office-library:plant": "Excellent.",
+    "2026-07-16-office-library:server_rack": "Extremely excellent. Direction and lighting might be slightly wrong, possibly wrong direction. Unclear.",
+    "2026-07-16-office-library:couch": "Excellent.",
+    "2026-07-16-office-library:coat_rack": "Excellent. Shoes might be a bit neater, slightly less domestic; office coatrack should be a bit neater."
+  }
+}

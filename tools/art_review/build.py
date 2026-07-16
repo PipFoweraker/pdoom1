@@ -142,9 +142,17 @@ def main():
             sections.append(build_gallery(b, root))
     body = "\n".join(sections)
 
+    vpath = HERE / "verdicts.json"
+    verdicts = (
+        json.loads(vpath.read_text(encoding="utf-8"))
+        if vpath.is_file()
+        else {"picks": {}, "notes": {}, "styledir": ""}
+    )
+
     html = (
         TEMPLATE.replace("{{TITLE}}", esc(m["title"]))
         .replace("{{SUBTITLE}}", esc(m["subtitle"]))
+        .replace("{{VERDICTS}}", json.dumps(verdicts))
         .replace("{{BODY}}", body)
     )
     OUT.write_text(html, encoding="utf-8")
@@ -262,8 +270,9 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
 (function(){
   "use strict";
   var KEY="pdoom_style_review_v1",DKEY="pdoom_style_dir_global_v1";
-  var st={picks:{},notes:{}};
-  try{st=Object.assign({picks:{},notes:{}},JSON.parse(localStorage.getItem(KEY)||"{}"));}catch(e){}
+  var SEEDED={{VERDICTS}};
+  var st={picks:Object.assign({},SEEDED.picks||{}),notes:Object.assign({},SEEDED.notes||{})};
+  try{var ls=JSON.parse(localStorage.getItem(KEY)||"{}");if(ls.picks)st.picks=Object.assign(st.picks,ls.picks);if(ls.notes)st.notes=Object.assign(st.notes,ls.notes);}catch(e){}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}}
 
   // restore + wire winner radios
@@ -287,7 +296,7 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
     inp.addEventListener('input',function(e){st.notes[id]=e.target.value;if(!e.target.value)delete st.notes[id];save();});
   });
   var dir=document.getElementById('styledir');
-  try{dir.value=localStorage.getItem(DKEY)||"";}catch(e){}
+  try{dir.value=localStorage.getItem(DKEY)||SEEDED.styledir||"";}catch(e){dir.value=SEEDED.styledir||"";}
   dir.addEventListener('input',function(e){try{localStorage.setItem(DKEY,e.target.value);}catch(x){}});
 
   function tally(){document.getElementById('ct').textContent=Object.keys(st.picks).length;}
