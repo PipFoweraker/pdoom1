@@ -886,9 +886,13 @@ func _on_error_occurred(error_msg: String):
 	log_message("[color=red]ERROR: " + error_msg + "[/color]")
 
 func log_message(text: String):
-	"""Add a message to the log with timestamp"""
-	var timestamp = Time.get_ticks_msec() / 1000.0
-	message_log.text += "\n[color=gray][%.1fs][/color] %s" % [timestamp, text]
+	"""Add a message to the log with an in-game date stamp (playtest: real-seconds
+	timestamps were meaningless to players — show the calendar date instead, reusing
+	GameState.get_formatted_date(), the same helper the HUD date badge uses)."""
+	var date_stamp := "?"
+	if game_manager != null and game_manager.state != null:
+		date_stamp = game_manager.state.get_formatted_date()
+	message_log.text += "\n[color=gray][%s][/color] %s" % [date_stamp, text]
 
 	# Auto-scroll to bottom
 	await get_tree().process_frame
@@ -1062,9 +1066,11 @@ func _populate_upgrades():
 
 		# Create button
 		var button = ThemeManager.create_button(upgrade_name)
-		# Blockier tiles (#594): hug content on the left instead of stretching across the
-		# wide right panel, and ~20% taller (32 -> 38) so they read as tighter, blockier tiles.
-		button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+		# Blockier tiles (#594): hug content instead of stretching across the wide right
+		# panel, and ~20% taller (32 -> 38) so they read as tighter, blockier tiles.
+		# Playtest-3: right-align the column to free up central screen space (was
+		# SIZE_SHRINK_BEGIN, hugging the left edge instead).
+		button.size_flags_horizontal = Control.SIZE_SHRINK_END
 		button.custom_minimum_size = Vector2(200, 38)
 
 		# If purchased, show differently
