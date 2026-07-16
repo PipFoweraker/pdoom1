@@ -103,6 +103,31 @@ def build_ladder(b, root):
     </section>"""
 
 
+def build_gallery(b, root):
+    cells = []
+    for it in b["items"]:
+        uri = datauri(root / f'{it["key"]}.png')
+        img = (
+            f'<div class="stage"><img src="{uri}" alt="{esc(it["label"])}"></div>'
+            if uri
+            else '<div class="stage pending"><span>pending</span></div>'
+        )
+        cells.append(
+            f"""
+      <div class="cell" data-item="{b['id']}:{it['key']}" data-label="{esc(it['label'])}">
+        {img}
+        <h4>{esc(it['label'])}</h4>
+        <input type="text" class="note" placeholder="note..." aria-label="Note for {esc(it['label'])}">
+      </div>"""
+        )
+    return f"""
+    <section class="batch" data-batch="{b['id']}">
+      <div class="section-label">{esc(b['title'])}</div>
+      <p class="batch-note">{esc(b['note'])}</p>
+      <div class="gallery">{''.join(cells)}</div>
+    </section>"""
+
+
 def main():
     m = json.loads(MANIFEST.read_text(encoding="utf-8"))
     img_root = REPO / m["image_root"]
@@ -113,6 +138,8 @@ def main():
             sections.append(build_matrix(b, root))
         elif b["kind"] == "ladder":
             sections.append(build_ladder(b, root))
+        elif b["kind"] == "gallery":
+            sections.append(build_gallery(b, root))
     body = "\n".join(sections)
 
     html = (
@@ -151,6 +178,9 @@ TEMPLATE = r"""<title>{{TITLE}}</title>
   .section-label{font-family:ui-monospace,Consolas,monospace;font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-faint);margin:2.6rem 0 .6rem;display:flex;align-items:center;gap:1rem}
   .section-label::after{content:"";flex:1;height:1px;background:var(--line)}
   .batch-note{max-width:78ch;color:var(--ink-dim);font-size:.9rem;margin:0 0 1.3rem}
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.9rem}
+  .gallery .cell{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:.9rem}
+  .gallery .cell h4{margin:.5rem 0 .3rem;font-size:.88rem;text-align:center}
   /* matrix */
   .matrix{display:flex;flex-direction:column;gap:.7rem}
   .mx-headrow{display:grid;grid-template-columns:200px repeat(var(--cols),1fr);gap:.7rem;align-items:end}

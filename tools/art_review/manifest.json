@@ -35,6 +35,23 @@
         {"key": "e4_megacorp", "label": "Megacorp", "note": "high-tech curved holo"},
         {"key": "e5_endgame", "label": "Endgame", "note": "eldritch Bayes-rune AI terminal"}
       ]
+    },
+    {
+      "id": "2026-07-16-office-library",
+      "kind": "gallery",
+      "title": "Office library -- refined style (warm-grime + heft, view-locked)",
+      "note": "New floor assets in the refined winning direction: warm-grime base + heavy-outline heft + deeper shadow, with the camera view locked (symmetrical, straight-on, centered) to fix the rotation problem from round 1. Placeholder-quality library growth -- note anything to re-roll.",
+      "dir": "office_library",
+      "items": [
+        {"key": "chair", "label": "Office chair"},
+        {"key": "bookshelf", "label": "Bookshelf"},
+        {"key": "whiteboard", "label": "Whiteboard"},
+        {"key": "water_cooler", "label": "Water cooler"},
+        {"key": "plant", "label": "Potted plant"},
+        {"key": "server_rack", "label": "Server rack"},
+        {"key": "couch", "label": "Break couch"},
+        {"key": "coat_rack", "label": "Coat rack"}
+      ]
     }
   ]
 }
