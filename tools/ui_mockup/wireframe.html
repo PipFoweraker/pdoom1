@@ -90,13 +90,15 @@
     <!-- 2: office stage -->
     <div class="region stage"><span class="tag">2 - OFFICE FLOOR (living centre)</span>
       <div class="floorgrid"></div>
-      <div class="token window" style="top:16px;left:26px">3 window<br>(weather)</div>
-      <div class="token worker" style="top:120px;left:90px">worker</div>
-      <div class="token worker" style="top:150px;left:150px">worker</div>
-      <div class="token worker" style="top:190px;left:250px">worker</div>
-      <div class="token prop" style="top:110px;left:210px;width:40px;height:30px">desk</div>
-      <div class="token prop" style="top:220px;left:120px;width:38px;height:28px">server</div>
-      <div class="token catbox" style="bottom:14px;right:20px">4 cat<br>(doom band)</div>
+      <div class="token window" style="top:16px;left:180px">3 window<br>(weather)</div>
+      <div class="token" style="top:20px;left:250px;width:70px;height:40px;border-color:var(--amber);color:var(--amber);border-style:dotted">sunlight<br>patch</div>
+      <div class="token catbox" style="top:14px;right:16px">4 cat<br>(doom band)</div>
+      <div class="token" style="top:34px;left:120px;width:200px;height:0;border:none;border-top:1px dashed var(--amber);opacity:.5"></div>
+      <div class="token worker" style="top:150px;left:90px">worker</div>
+      <div class="token worker" style="top:170px;left:160px">worker</div>
+      <div class="token worker" style="top:200px;left:250px">worker</div>
+      <div class="token prop" style="top:130px;left:210px;width:40px;height:30px">desk</div>
+      <div class="token prop" style="top:230px;left:120px;width:38px;height:28px">server</div>
     </div>
 
     <!-- side tabs + panel -->
@@ -125,7 +127,7 @@
     <div class="co"><h3><span class="n">1</span> Resource strip</h3><p>Money / Doom / Attention / Compute / Reputation, each with an on-brand icon (the UI-filler batch), a big value, and a tiny sparkline. This alone eats most of the top negative space and gives the eye a dashboard.</p></div>
     <div class="co"><h3><span class="n">2</span> Office floor = the centre</h3><p>Not a spare rectangle -- the living dashboard. Worker sprites walk/work/stress; props dress it; it grows as you hire. This is where all that art lands.</p></div>
     <div class="co"><h3><span class="n">3</span> Window as a portal</h3><p>Framed window showing outside weather that darkens/reddens with doom. Ambient signal, fills a wall, costs no UI space. (Needs the frame + weather-background split we discussed.)</p></div>
-    <div class="co"><h3><span class="n">4</span> Cat = doom barometer</h3><p>Sits in the office; its form (singed -> spooky -> eldritch -> purple) reads the doom band. Free flavour in otherwise-dead corner space.</p></div>
+    <div class="co"><h3><span class="n">4</span> Cat = doom barometer</h3><p>Default hangout <b>top-right</b>; it walks to and from a <b>patch of window sunlight</b>, with its main travel path along the <b>top edge</b> of the floor. Its form (singed -> spooky -> eldritch -> purple) reads the doom band. Turns dead top-corner space into living ambient signal.</p></div>
     <div class="co"><h3><span class="n">5</span> Tabbed side panel</h3><p>One column, three jobs: Team/Candidates, Event Feed, Doom Barometer. Tabs keep it dense without a wall of panels. Framed with the UI panel-frame art.</p></div>
     <div class="co"><h3><span class="n">6</span> Doom trend graph</h3><p>Lower side panel -- a small area chart. Turns an empty panel into information + motion.</p></div>
     <div class="co"><h3><span class="n">7</span> Grouped action dock</h3><p>Actions along the bottom with icons + labels, grouped by type. Replaces a scattered button soup and anchors the bottom edge.</p></div>

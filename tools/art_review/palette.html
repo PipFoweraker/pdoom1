@@ -1,0 +1,54 @@
+<!-- P(Doom)1 palette swatches. First pass from real hero-bg pixels + existing glow_cat tokens.
+     Open in a browser; eyedrop / tune. See docs/art/PALETTE_AND_DOOM_INTENSITY.md. -->
+<title>P(Doom)1 -- palette swatches</title>
+<style>
+  :root{--bg:#14100b;--ink:#ece0cf;--dim:#a9977f;--line:#3a2e22;--panel:#1d1712}
+  @media (prefers-color-scheme:light){:root{--bg:#efe6d6;--ink:#2b2116;--dim:#6b5b45;--line:#ddccb0;--panel:#f7efe0}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:ui-monospace,Consolas,monospace;line-height:1.4}
+  .wrap{max-width:1000px;margin:0 auto;padding:2.4rem 1.3rem 5rem}
+  h1{font-size:1.4rem;margin:0 0 .3rem}
+  .sub{color:var(--dim);font-size:.82rem;margin:0 0 1.8rem;font-family:ui-sans-serif,system-ui,sans-serif;max-width:70ch}
+  h2{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:2rem 0 .7rem;border-bottom:1px solid var(--line);padding-bottom:.4rem}
+  .row{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:.6rem}
+  .sw{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--panel)}
+  .chip{height:74px}
+  .meta{padding:.4rem .55rem}
+  .meta .nm{font-size:.72rem;font-weight:700;font-family:ui-sans-serif,system-ui,sans-serif}
+  .meta .hx{font-size:.7rem;color:var(--dim);text-transform:uppercase}
+  .lad{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-top:.3rem}
+  .lad div{flex:1;height:56px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:.25rem;font-size:.6rem;color:#000;font-weight:700;font-family:ui-sans-serif,system-ui,sans-serif}
+  .note{color:var(--dim);font-size:.74rem;font-family:ui-sans-serif,system-ui,sans-serif;margin:.5rem 0 0;max-width:72ch}
+</style>
+<div class="wrap">
+  <h1>P(Doom)1 -- palette swatches <span style="color:var(--dim);font-size:.7rem">first pass</span></h1>
+  <p class="sub">Real pixels from your hero bg + the glow_cat tokens. Two registers (cozy office / dark dread)
+    and two doom axes (catastrophe = amber-&gt;fire, weirdness = green-&gt;blue-&gt;purple). Eyedrop and tune;
+    tell me new values and I'll update the spec.</p>
+
+  <h2>Grounds / darks (dread base)</h2>
+  <div class="row" id="grounds"></div>
+  <h2>Warm office base (register 1)</h2>
+  <div class="row" id="warm"></div>
+  <h2>Neutrals + UI</h2>
+  <div class="row" id="neutral"></div>
+
+  <h2>Axis A -- Catastrophe (things catch fire)</h2>
+  <div class="lad" id="axisA"></div>
+  <p class="note">Cozy amber sours to red to literal fire. This is the existing glow_cat doom-overlay ladder.</p>
+
+  <h2>Axis B -- Weirdness (the AI itself)</h2>
+  <div class="lad" id="axisB"></div>
+  <p class="note">Green = computers doing things correctly; blue = acting up / arcing; purple = crossed into ELDRITCH (endgame only). Purple is expensive -- reserve it.</p>
+</div>
+<script>
+  const grounds=[["Void","#0E0614"],["Deep aubergine","#170A1C"],["Ink brown","#14040C"],["Steel","#1C2730"],["Graphite","#0E1318"]];
+  const warm=[["Warm panel","#2B221A"],["Warm line","#3A2E22"],["Cozy amber","#E8A33D"],["Amber token","#F6A800"]];
+  const neutral=[["Chrome/slate","#6B7C8C"],["Off-white","#E9F2F2"],["Teal action","#1EC3B3"],["Teal hover","#0FA5A0"]];
+  const axisA=[["cosy","#F6A800"],["uneasy","#E9752E"],["alarmed","#E24A3B"],["critical","#B31217"],["fire","#DD5F4C"]];
+  const axisB=[["ok","#3F8A5C"],["ok deep","#234C34"],["acting up","#354375"],["arcing","#5C7AC3"],["eldritch","#504673"],["ELDRITCH","#7A3B8F"]];
+  function chips(id,arr){document.getElementById(id).innerHTML=arr.map(([n,h])=>
+    `<div class="sw"><div class="chip" style="background:${h}"></div><div class="meta"><div class="nm">${n}</div><div class="hx">${h}</div></div></div>`).join("");}
+  function lad(id,arr){document.getElementById(id).innerHTML=arr.map(([n,h])=>`<div style="background:${h}">${n}<br>${h}</div>`).join("");}
+  chips("grounds",grounds);chips("warm",warm);chips("neutral",neutral);lad("axisA",axisA);lad("axisB",axisB);
+</script>
