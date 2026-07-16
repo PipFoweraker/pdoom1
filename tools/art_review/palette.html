@@ -42,11 +42,15 @@
   <p class="note">Green = computers doing things correctly; blue = acting up / arcing; purple = crossed into ELDRITCH (endgame only). Purple is expensive -- reserve it.</p>
 </div>
 <script>
-  const grounds=[["Void","#0E0614"],["Deep aubergine","#170A1C"],["Ink brown","#14040C"],["Steel","#1C2730"],["Graphite","#0E1318"]];
-  const warm=[["Warm panel","#2B221A"],["Warm line","#3A2E22"],["Cozy amber","#E8A33D"],["Amber token","#F6A800"]];
-  const neutral=[["Chrome/slate","#6B7C8C"],["Off-white","#E9F2F2"],["Teal action","#1EC3B3"],["Teal hover","#0FA5A0"]];
-  const axisA=[["cosy","#F6A800"],["uneasy","#E9752E"],["alarmed","#E24A3B"],["critical","#B31217"],["fire","#DD5F4C"]];
-  const axisB=[["ok","#3F8A5C"],["ok deep","#234C34"],["acting up","#354375"],["arcing","#5C7AC3"],["eldritch","#504673"],["ELDRITCH","#7A3B8F"]];
+  // ~doubled -- more real hero-bg samples per family for eyedropping/tuning
+  const grounds=[["Void","#0E0614"],["Deep aubergine","#170A1C"],["Ink brown","#14040C"],["Steel","#1C2730"],["Graphite","#0E1318"],
+    ["Night blue","#18112A"],["Deep indigo","#181735"],["Blue-black","#0D0B23"],["Violet-black","#150718"],["Pitch","#0B020C"]];
+  const warm=[["Warm panel","#2B221A"],["Warm line","#3A2E22"],["Cozy amber","#E8A33D"],["Amber token","#F6A800"],
+    ["Ember red","#C53A28"],["Brick","#932928"],["Wine","#521824"],["Rose flesh","#DA9997"],["Salmon","#CD7984"],["Warm off-white","#F5DFCE"]];
+  const neutral=[["Chrome/slate","#6B7C8C"],["Off-white","#E9F2F2"],["Teal action","#1EC3B3"],["Teal hover","#0FA5A0"],
+    ["Warm grey","#5B5048"],["Cool grey","#4A5560"],["Olive","#668E4F"],["Pale olive","#A7C270"]];
+  const axisA=[["cosy","#F6A800"],["warming","#F0891F"],["uneasy","#E9752E"],["alarmed","#E24A3B"],["critical","#B31217"],["ember","#DD5F4C"],["fire","#F69168"]];
+  const axisB=[["ok deep","#234C34"],["ok","#3F8A5C"],["ok bright","#668E4F"],["cool","#334A89"],["acting up","#354375"],["arcing","#5C7AC3"],["arc bright","#8EA8EA"],["weird","#504673"],["eldritch","#7A3B8F"],["eldritch pale","#96718F"]];
   function chips(id,arr){document.getElementById(id).innerHTML=arr.map(([n,h])=>
     `<div class="sw"><div class="chip" style="background:${h}"></div><div class="meta"><div class="nm">${n}</div><div class="hx">${h}</div></div></div>`).join("");}
   function lad(id,arr){document.getElementById(id).innerHTML=arr.map(([n,h])=>`<div style="background:${h}">${n}<br>${h}</div>`).join("");}
