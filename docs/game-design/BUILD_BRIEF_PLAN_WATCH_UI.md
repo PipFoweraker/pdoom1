@@ -75,7 +75,15 @@ Reference mockup: workshop beat 2. Elements:
 
 Build as a **standalone, reusable `OfficeFloor` scene/component** (testable on its own; embed
 into WATCH later — do NOT couple it to a main_ui rebuild). Art and code are independent: code
-works against placeholder blobs; real sprites (pixellab.ai path, asset options #649) drop in later.
+works against placeholder blobs; **real sprite art + animation frames come from pixellab.ai**
+(pixel-sprite / animation-protocol path, asset options #649) and drop in later.
+
+**ARCHITECTURAL RULE — the OfficeFloor is a PURE VIEW (read-only).** It READS the roster/employee
+state and never WRITES game state. This makes it **determinism-safe by construction** (replay
+replays inputs→state; a cosmetic view can't affect the verified run — ADR-0006). Sprite wander
+randomness therefore doesn't even need the seeded RNG. Corollary: sprite behavior must NEVER feed
+back into game state (no "employees who chatted get a bonus" — that would require determinism and
+break the clean separation).
 
 - **Tier 0 (do):** placeholder representation — colored shapes + a hat, random drift. OG-pdoom1
   parity floor ("blobs with hats milling like molecule clusters").
@@ -92,8 +100,11 @@ works against placeholder blobs; real sprites (pixellab.ai path, asset options #
   First-round approach when it's built: (a) hand-authored `NavigationRegion2D` office layout with
   named work-zones (desks, coffee, whiteboard); (b) a small utility/blackboard layer picking
   contextual actions from employee state + proximity; (c) an event-reaction hook (global signal →
-  sprites play a reaction anim). Explicitly NOT generative-agents/Smallville (Tier 3 — out of
-  scope, over-engineered for fishbowl flavor).
+  sprites play a reaction anim). All Tier-2 behavior stays a pure view (read-only, per the rule).
+- **Tier 3 (LLM-driven generative agents / Smallville): OUT — not even a stretch goal.** Two
+  reasons: (1) an LLM in the behavior loop **breaks replay determinism** (ADR-0006 — verified runs
+  must reproduce); (2) over-engineered for fishbowl flavor. Pixellab is for *animation frames*, not
+  a behavior brain — the behavior is the deterministic (or pure-view) Tier-1 FSM.
 
 ---
 
