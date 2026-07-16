@@ -133,3 +133,10 @@ into `sweep/<category>/<key>_<roll>.png`. IDs kept here for re-animation / re-ro
 | characters | cast_wheelchair_user | 3 | 15891eb0-984f-484d-ab87-2aba2a126d17 | character-south |
 | characters | cast_wheelchair_user | 4 | 97863ee0-f782-4c5a-ba8b-ec642391e6d9 | character-south |
 | characters | cast_eccentric_genius | 1 | 7de6f25d-0e3c-4b41-b780-c67d090a45dc | character-south |
+| characters | cast_eccentric_genius | 2 | 838b24a0-e90e-4bd6-b267-30e2dda35417 | character-south |
+| characters | cast_eccentric_genius | 3 | baf7bb1e-484d-4d59-ab89-4ff86d2913b9 | character-south |
+| characters | cast_eccentric_genius | 4 | 0cbfacaf-c3d1-48d5-a90e-0a916ff902f5 | character-south |
+| characters | founder_silhouette | 1 | b66d6113-37ba-4813-8c74-cc517f4d9ec9 | character-side |
+| characters | founder_silhouette | 2 | 5e0f4a10-50ed-456e-b32d-250d1e7ac8cf | character-side |
+| characters | founder_silhouette | 3 | f985ba4d-b3b3-4d96-b315-2c6686ae56fd | character-side |
+| characters | founder_silhouette | 4 | 7be8dc30-70e1-4ecb-9fc8-9b4c977176b2 | character-side |
