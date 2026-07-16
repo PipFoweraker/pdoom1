@@ -84,3 +84,34 @@ Full-color (04,05,08,09): *"…bright cheerful colors, cartoony retro RPG style,
 - Then per chosen base: generate the four OfficeFloor clips (`idle`/`walking`/`working`/`stressed`,
   stressed = the priority dashboard-alarm), export, build a `SpriteFrames`, wire to `OfficeFloor.set_sprite_frames`.
 - Future: human-artist collaboration — this set is the stylistic reference/starting point.
+
+## Props batch (office set) -- 2026-07-16
+
+> 15 map objects for the OfficeFloor. Six as scummy<->decent pairs (the office
+> reflects the org's money/doom state -- upgrades as money rises / doom falls).
+> pixellab map-objects auto-delete from the account after 8h; the PNGs in
+> `props/` are the preserved copies. Style: locked warm color, low-top-down,
+> cozy-grim. Committed per Pip's "keep all PNGs by default" rule.
+
+| file | pixellab id | native px | pair |
+|---|---|---|---|
+| props/desk_scummy.png | cc1333fc | 128x96 | desk (scummy) |
+| props/desk_clean.png | 442b1f3f | 128x96 | desk (decent) |
+| props/monitor_scummy.png | e989feed | 96x96 | monitor (scummy, beige CRT) |
+| props/monitor_clean.png | fd1afe24 | 96x96 | monitor (decent, flat widescreen) |
+| props/pc_scummy.png | 8b643c30 | 96x96 | PC (scummy, beige tower) |
+| props/pc_clean.png | 73dff039 | 96x96 | PC (decent, black desktop) |
+| props/fridge_scummy.png | fc99b9df | 80x120 | fridge (scummy, dented mini) |
+| props/fridge_clean.png | e6443285 | 80x120 | fridge (decent, stainless) |
+| props/coffee_scummy.png | 8f735bbc | 96x96 | coffee (scummy, drip) |
+| props/coffee_clean.png | 4a1b8711 | 96x96 | coffee (decent, chrome espresso) |
+| props/window_scummy.png | 25d88102 | 120x96 | window (scummy, grimy) |
+| props/window_clean.png | 3e8c45b4 | 120x96 | window (decent, clean) |
+| props/cat_bed_basket.png | 6333e969 | 80x64 | single (cat furniture) |
+| props/cat_litter_box.png | 4dc230a3 | 80x64 | single (cat furniture) |
+| props/hat_tall.png | efc3c3a2 | 48x88 | single (impostor-satire cosmetic) |
+
+Not yet generated: wall, door, coat rack (the ROOM itself -- floor/walls/door is a
+separate decision, leaning prop-only-on-current-background now + top-down tileset
+as a later wave). Window flagged by Pip as potentially MORE than a base-layer prop:
+a portal showing increasingly-doomy outside weather (parallax/skybox-behind-cutout).
