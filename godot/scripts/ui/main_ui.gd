@@ -1412,245 +1412,457 @@ func _calculate_queued_costs() -> Dictionary:
 	return total_costs
 
 func _show_hiring_submenu():
-	"""Show popup dialog with candidate pool - shows actual available candidates"""
-	print("[MainUI] === HIRING SUBMENU STARTING ===")
-
-	# Close any existing dialog first
+	"""Phase-B hiring pipeline panel (source -> interview -> offer -> onboard). PURE VIEW:
+	every action routes through the existing GameManager.hiring_* delegates and the panel
+	reads the live Researcher objects in state.candidate_pool / state.researchers, so
+	reveal-gated card data (get_card_data) shows exactly what interviewing has earned."""
 	if active_dialog != null and is_instance_valid(active_dialog):
-		print("[MainUI] Closing existing dialog...")
 		active_dialog.queue_free()
 		active_dialog = null
 		active_dialog_buttons = []
 
-	# Use Panel - position to the right of the left panel buttons
-	var dialog = Panel.new()
-	dialog.custom_minimum_size = Vector2(450, 400)
-	dialog.size = Vector2(450, 400)
-	# Position to the right of the left panel (icon stack)
-	dialog.position = Vector2(90, 60)  # Just right of the 80px wide left panel
-	print("[MainUI] Created Panel, size: %s, position: %s" % [dialog.size, dialog.position])
+	var st = game_manager.state
+	if st == null:
+		return
 
-	# Create main container
-	var margin = MarginContainer.new()
+	var dialog := Panel.new()
+	var dsize := Vector2(580, 640)
+	dialog.custom_minimum_size = dsize
+	dialog.size = dsize
+	var vp := get_viewport().get_visible_rect().size
+	dialog.position = Vector2((vp.x - dsize.x) / 2.0, max(40.0, (vp.y - dsize.y) / 2.0))
+
+	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 12)
 	margin.add_theme_constant_override("margin_right", 12)
 	margin.add_theme_constant_override("margin_top", 10)
 	margin.add_theme_constant_override("margin_bottom", 10)
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 	dialog.add_child(margin)
 
-	var main_vbox = VBoxContainer.new()
-	main_vbox.add_theme_constant_override("separation", 8)
-	margin.add_child(main_vbox)
+	var root := VBoxContainer.new()
+	root.add_theme_constant_override("separation", 8)
+	margin.add_child(root)
 
-	# Header
-	var header = Label.new()
-	header.text = "CANDIDATE POOL"
+	var header := Label.new()
+	header.text = "HIRING PIPELINE"
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	header.add_theme_font_size_override("font_size", 14)
+	header.add_theme_font_size_override("font_size", 15)
 	header.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
-	main_vbox.add_child(header)
+	root.add_child(header)
 
-	# Get current state and candidate pool
-	var current_state = game_manager.get_game_state()
-	var candidate_pool = current_state.get("candidate_pool", [])
+	var att := st.get_available_ap()
+	var sub := Label.new()
+	sub.text = "Attention available: %d   |   Money: %s   |   Reputation: %d" % [att, GameConfig.format_money(st.money), int(st.reputation)]
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.add_theme_font_size_override("font_size", 10)
+	sub.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	root.add_child(sub)
 
-	var buttons = []  # Store buttons for keyboard access
-	var dialog_key_labels = ["1", "2", "3", "4", "5", "6"]
+	# --- SOURCE row (two channels) ---
+	var source_box := HBoxContainer.new()
+	source_box.add_theme_constant_override("separation", 8)
+	root.add_child(source_box)
 
-	if candidate_pool.size() == 0:
-		# No candidates available
-		var empty_label = Label.new()
-		empty_label.text = "No candidates available.\nNew candidates arrive each turn."
-		empty_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		empty_label.add_theme_font_size_override("font_size", 12)
-		empty_label.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
-		main_vbox.add_child(empty_label)
+	var ad_btn := Button.new()
+	ad_btn.text = "Advertise\n($8k + 3 Att)"
+	ad_btn.tooltip_text = "Launch an ad campaign: candidates trickle into the pool over the coming months."
+	ad_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	ad_btn.focus_mode = Control.FOCUS_NONE
+	ad_btn.pressed.connect(_on_hiring_advertise_pressed)
+	source_box.add_child(ad_btn)
+
+	var conn_btn := Button.new()
+	conn_btn.text = "Use Connections\n(6 rep + 2 Att)"
+	conn_btn.tooltip_text = "Call in a favor for one fast, pre-vetted lead (success scales with your reputation)."
+	conn_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	conn_btn.focus_mode = Control.FOCUS_NONE
+	conn_btn.pressed.connect(_on_hiring_connections_pressed)
+	source_box.add_child(conn_btn)
+
+	# --- Scrollable body: candidate pool + onboarding ---
+	var scroll := ScrollContainer.new()
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	root.add_child(scroll)
+
+	var body := VBoxContainer.new()
+	body.add_theme_constant_override("separation", 6)
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(body)
+
+	var pool_hdr := Label.new()
+	pool_hdr.text = "CANDIDATE POOL (%d/%d)" % [st.candidate_pool.size(), st.MAX_CANDIDATES]
+	pool_hdr.add_theme_font_size_override("font_size", 12)
+	pool_hdr.add_theme_color_override("font_color", Color(0.6, 0.85, 0.6))
+	body.add_child(pool_hdr)
+
+	if st.candidate_pool.is_empty():
+		var empty := Label.new()
+		empty.text = "No candidates yet. Advertise or use connections to source some."
+		empty.add_theme_font_size_override("font_size", 10)
+		empty.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+		body.add_child(empty)
 	else:
-		# Create scrollable list for candidates
-		var scroll = ScrollContainer.new()
-		scroll.custom_minimum_size = Vector2(0, 280)
-		scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-		main_vbox.add_child(scroll)
+		for cand in st.candidate_pool:
+			body.add_child(_build_candidate_card(cand))
 
-		var candidate_list = VBoxContainer.new()
-		candidate_list.add_theme_constant_override("separation", 6)
-		scroll.add_child(candidate_list)
+	var onboarding := []
+	for r in st.researchers:
+		if r.hire_state == Researcher.HireState.EMPLOYED and (not r.onboarded or (not r.mentoring_done and not r.mentoring_skipped)):
+			onboarding.append(r)
+	if not onboarding.is_empty():
+		var ob_hdr := Label.new()
+		ob_hdr.text = "ONBOARDING (%d)" % onboarding.size()
+		ob_hdr.add_theme_font_size_override("font_size", 12)
+		ob_hdr.add_theme_color_override("font_color", Color(0.85, 0.75, 0.5))
+		body.add_child(ob_hdr)
+		for r in onboarding:
+			body.add_child(_build_onboarding_card(r))
 
-		# Specialization colors
-		var spec_colors = {
-			"safety": Color(0.3, 0.8, 0.3),
-			"capabilities": Color(0.8, 0.3, 0.3),
-			"interpretability": Color(0.7, 0.3, 0.8),
-			"alignment": Color(0.3, 0.7, 0.8)
-		}
-
-		var button_index = 0
-		for candidate in candidate_pool:
-			var candidate_panel = PanelContainer.new()
-			candidate_panel.custom_minimum_size = Vector2(0, 50)
-
-			var hbox = HBoxContainer.new()
-			hbox.add_theme_constant_override("separation", 8)
-			candidate_panel.add_child(hbox)
-
-			# Keyboard shortcut indicator
-			var key_label = Label.new()
-			key_label.text = "[%s]" % dialog_key_labels[button_index] if button_index < dialog_key_labels.size() else ""
-			key_label.add_theme_font_size_override("font_size", 10)
-			key_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
-			key_label.custom_minimum_size = Vector2(25, 0)
-			hbox.add_child(key_label)
-
-			# Specialization color indicator
-			var spec = candidate.get("specialization", "safety")
-			var indicator = Label.new()
-			indicator.text = "●"
-			indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
-			indicator.add_theme_font_size_override("font_size", 14)
-			hbox.add_child(indicator)
-
-			# Candidate info VBox
-			var info_vbox = VBoxContainer.new()
-			info_vbox.add_theme_constant_override("separation", 2)
-			info_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			hbox.add_child(info_vbox)
-
-			# Name and specialization
-			var name_label = Label.new()
-			var spec_name = spec.capitalize()
-			name_label.text = "%s - %s" % [candidate.get("name", "Unknown"), spec_name]
-			name_label.add_theme_font_size_override("font_size", 11)
-			info_vbox.add_child(name_label)
-
-			# Stats line: Skill, Salary, and a quirk ONLY if it has been exposed (the trait
-			# system is retired; quirks are hidden-but-true and stay masked until surfaced).
-			var stats_label = Label.new()
-			var skill = candidate.get("skill_level", 5)
-			var salary = candidate.get("current_salary", 60000)
-			var quirk_text = ""
-			if candidate.get("quirk_known", false) and String(candidate.get("quirk", "")) != "":
-				quirk_text = " [%s]" % QuirkCatalogue.display_name(String(candidate.get("quirk", "")))
-
-			stats_label.text = "Skill %d | %s/yr%s" % [skill, GameConfig.format_money(salary), quirk_text]
-			stats_label.add_theme_font_size_override("font_size", 9)
-			stats_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
-			info_vbox.add_child(stats_label)
-
-			# Hire button
-			var hire_btn = Button.new()
-			hire_btn.text = "Hire"
-			hire_btn.custom_minimum_size = Vector2(50, 30)
-			hire_btn.focus_mode = Control.FOCUS_NONE
-
-			# Get standard hiring cost from action definitions
-			var action_id = "hire_%s_researcher" % spec
-			var hire_cost = 60000  # Default
-			var hiring_options = GameActions.get_hiring_options()
-			for option in hiring_options:
-				if option.get("id") == action_id:
-					hire_cost = option.get("costs", {}).get("money", 60000)
-					break
-
-			var can_afford = current_state.get("money", 0) >= hire_cost and current_state.get("action_points", 0) >= 1
-
-			if not can_afford:
-				hire_btn.disabled = true
-				hire_btn.modulate = Color(0.5, 0.5, 0.5)
-
-			hire_btn.tooltip_text = "Hire for %s + 1 AP" % GameConfig.format_money(hire_cost)
-
-			# Store candidate reference for hire action
-			var candidate_ref = candidate
-			hire_btn.pressed.connect(func(): _on_candidate_hired(candidate_ref, dialog))
-
-			hbox.add_child(hire_btn)
-			buttons.append(hire_btn)
-
-			candidate_list.add_child(candidate_panel)
-			button_index += 1
-
-	# Pool status
-	var status_label = Label.new()
-	status_label.text = "Pool: %d/6 candidates | New arrivals each turn" % candidate_pool.size()
-	status_label.add_theme_font_size_override("font_size", 10)
-	status_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
-	status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	main_vbox.add_child(status_label)
-
-	# Store dialog state for keyboard handling in MainUI._input()
-	print("[MainUI] Setting active_dialog and active_dialog_buttons...")
+	_add_submenu_close_affordance(dialog)
 	active_dialog = dialog
-	active_dialog_buttons = buttons
-	print("[MainUI] active_dialog is now: %s" % (active_dialog != null))
-	print("[MainUI] Hiring submenu opened with %d candidates" % candidate_pool.size())
-
-	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
-	print("[MainUI] Adding dialog to TabManager as overlay...")
+	active_dialog_buttons = []
 	tab_manager.add_child(dialog)
 	dialog.visible = true
-	dialog.z_index = 1000  # Very high z-index to ensure it's on top
-	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
-	print("[MainUI] Dialog added and made visible: %s" % dialog.visible)
+	dialog.z_index = 1000
+	dialog.z_as_relative = false
 
-	# Wait one frame for dialog to be ready
-	print("[MainUI] Waiting one frame...")
-	await get_tree().process_frame
-	print("[MainUI] Frame passed, dialog still visible: %s" % dialog.visible)
-	print("[MainUI] === HIRING SUBMENU SETUP COMPLETE ===")
+func _build_candidate_card(cand) -> PanelContainer:
+	"""One pool candidate: reveal-gated card fields (get_card_data -> hidden fields render as
+	the ??? placeholder) + Interview / Make Offer actions wired to the hiring_* delegates."""
+	var c: Dictionary = cand.get_card_data()
+	var panel := PanelContainer.new()
+	var vb := VBoxContainer.new()
+	vb.add_theme_constant_override("separation", 2)
+	panel.add_child(vb)
 
-func _on_candidate_hired(candidate: Dictionary, dialog: Control):
-	"""Handle hiring a specific candidate from the pool.
-	#622 L10: routed through GameManager.queue_candidate_hire — the engine owns the
-	pending_hire_queue/candidate-pool writes and select_action owns affordability
-	(its error_occurred signal logs the reason), so the old UI pre-checks are gone."""
-	dialog.queue_free()
+	var title := Label.new()
+	title.text = "%s  -  %s  [%s]" % [c["name"], c["lane"], c["hire_state"]]
+	title.add_theme_font_size_override("font_size", 12)
+	vb.add_child(title)
 
-	# Clear active dialog state
-	active_dialog = null
-	active_dialog_buttons = []
+	var reveal: int = int(c.get("reveal_level", 0))
+	var stats := Label.new()
+	stats.add_theme_font_size_override("font_size", 9)
+	stats.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
+	var skill_txt = str(c["skill_level"])
+	var comp_txt = ("$%d/yr" % int(c["salary_expectation"])) if (c["salary_expectation"] is float or c["salary_expectation"] is int) else str(c["salary_expectation"])
+	stats.text = "Seniority: %s   Skill: %s   Comp: %s   (reveal %d/%d)" % [c["seniority_band"], skill_txt, comp_txt, reveal, Researcher.MAX_REVEAL]
+	vb.add_child(stats)
 
-	# Get the candidate's specialization to determine which hire action to use
-	var spec = candidate.get("specialization", "safety")
-	var action_id = "hire_%s_researcher" % spec
-	var candidate_name = candidate.get("name", "Unknown")
+	var deep := Label.new()
+	deep.add_theme_font_size_override("font_size", 9)
+	deep.add_theme_color_override("font_color", Color(0.6, 0.6, 0.72))
+	var appetite_txt = ""
+	if c["appetites"] is Dictionary:
+		var parts := []
+		for k in Researcher.APPETITE_KEYS:
+			parts.append("%s %d%%" % [k, int(round(float(c["appetites"][k]) * 100.0))])
+		appetite_txt = ", ".join(parts)
+	else:
+		appetite_txt = str(c["appetites"])
+	var loyalty_txt = ("%d%%" % int(round(float(c["loyalty_risk"]) * 100.0))) if c["loyalty_risk"] is float else str(c["loyalty_risk"])
+	deep.text = "Appetites: %s\nLoyalty risk: %s   Quirk: %s" % [appetite_txt, loyalty_txt, str(c["quirk"])]
+	vb.add_child(deep)
 
-	if not game_manager.queue_candidate_hire(candidate_name, spec):
-		return  # rejected — error_occurred already logged the reason
+	var status_txt := _hiring_job_status(cand.candidate_id)
+	if status_txt != "":
+		var jl := Label.new()
+		jl.text = status_txt
+		jl.add_theme_font_size_override("font_size", 9)
+		jl.add_theme_color_override("font_color", Color(0.5, 0.7, 0.9))
+		vb.add_child(jl)
 
-	log_message("[color=cyan]Hiring: %s (%s)[/color]" % [candidate_name, spec.capitalize()])
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", 6)
+	vb.add_child(actions)
+	var cid: String = cand.candidate_id
 
-	# Mirror the engine-accepted action in the local queue display
-	queued_actions.append({"id": action_id, "name": "Hire " + candidate_name})
-	update_queued_actions_display()
+	var iv := Button.new()
+	iv.text = "Interview (2 Att)"
+	iv.focus_mode = Control.FOCUS_NONE
+	iv.add_theme_font_size_override("font_size", 10)
+	if cand.reveal_level >= Researcher.MAX_REVEAL:
+		iv.disabled = true
+		iv.tooltip_text = "Already fully interviewed."
+	elif _has_hiring_job(cid, "interview"):
+		iv.disabled = true
+		iv.tooltip_text = "Interview already scheduled."
+	else:
+		iv.tooltip_text = "Interview this candidate: reveals the next card layer after a few turns."
+	iv.pressed.connect(_on_hiring_interview_pressed.bind(cid))
+	actions.add_child(iv)
 
-func _on_hiring_option_selected(action_id: String, action_name: String, dialog: Control):
-	"""Handle hiring submenu selection"""
-	dialog.queue_free()
+	var offer := Button.new()
+	offer.text = "Make Offer (1 Att)"
+	offer.focus_mode = Control.FOCUS_NONE
+	offer.add_theme_font_size_override("font_size", 10)
+	if cand.hire_state != Researcher.HireState.CANDIDATE_IN_POOL:
+		offer.disabled = true
+		offer.tooltip_text = "Not available for an offer right now."
+	elif _has_hiring_job(cid, "offer"):
+		offer.disabled = true
+		offer.tooltip_text = "Offer already out."
+	offer.pressed.connect(_show_offer_dialog.bind(cid))
+	actions.add_child(offer)
 
-	# Clear active dialog state
-	active_dialog = null
-	active_dialog_buttons = []
+	return panel
 
-	# Check if action can be afforded before adding to UI queue (#456)
-	var action_def = _get_action_by_id(action_id)
-	var ap_cost = action_def.get("costs", {}).get("action_points", 0)
-	var available_ap = game_manager.state.get_available_ap()
+func _build_onboarding_card(r) -> PanelContainer:
+	"""One onboarding hire: checklist state, the productivity debuff made legible, and a
+	button per pending step (laptop / visa / mentoring / skip). Calls hiring_onboard_step."""
+	var st = game_manager.state
+	var status: Dictionary = st.hiring.onboarding_status(r)
+	var panel := PanelContainer.new()
+	var vb := VBoxContainer.new()
+	vb.add_theme_constant_override("separation", 2)
+	panel.add_child(vb)
 
-	if available_ap < ap_cost:
-		log_message("[color=red]Not enough AP: need %d, have %d[/color]" % [ap_cost, available_ap])
+	var title := Label.new()
+	title.text = "%s  -  %s" % [r.researcher_name, r.get_specialization_name()]
+	title.add_theme_font_size_override("font_size", 12)
+	vb.add_child(title)
+
+	var prod := Label.new()
+	prod.add_theme_font_size_override("font_size", 9)
+	if not r.onboarded:
+		prod.text = "NOT PRODUCTIVE until checklist clears (currently x0.4 output)."
+		prod.add_theme_color_override("font_color", Color(0.9, 0.4, 0.4))
+	elif r.mentoring_skipped:
+		prod.text = "Mentoring skipped: lasting x0.85 output + attrition risk."
+		prod.add_theme_color_override("font_color", Color(0.9, 0.7, 0.4))
+	else:
+		prod.text = "Productive. Mentoring still recommended."
+		prod.add_theme_color_override("font_color", Color(0.5, 0.8, 0.5))
+	vb.add_child(prod)
+
+	var check := Label.new()
+	check.add_theme_font_size_override("font_size", 9)
+	check.add_theme_color_override("font_color", Color(0.75, 0.75, 0.75))
+	var laptop_mark = "[x]" if status["laptop_done"] else "[ ]"
+	var visa_line = ""
+	if status["needs_visa"]:
+		var visa_mark = "[x]" if status["visa_done"] else "[ ]"
+		visa_line = "   Visa %s" % visa_mark
+	var ment_mark = "[x]" if status["mentoring_done"] else ("SKIPPED" if status["mentoring_skipped"] else "[ ]")
+	check.text = "Laptop %s%s   Mentoring %s" % [laptop_mark, visa_line, ment_mark]
+	vb.add_child(check)
+
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", 6)
+	vb.add_child(actions)
+	var cid: String = r.candidate_id
+
+	if not r.laptop_done:
+		var b := Button.new()
+		b.text = "Laptop ($3k,1Att)"
+		b.focus_mode = Control.FOCUS_NONE
+		b.add_theme_font_size_override("font_size", 10)
+		b.pressed.connect(_on_hiring_onboard_pressed.bind(cid, "laptop"))
+		actions.add_child(b)
+	if status["needs_visa"] and not r.visa_done:
+		var b2 := Button.new()
+		b2.text = "Visa ($5k,2Att)"
+		b2.focus_mode = Control.FOCUS_NONE
+		b2.add_theme_font_size_override("font_size", 10)
+		b2.pressed.connect(_on_hiring_onboard_pressed.bind(cid, "visa"))
+		actions.add_child(b2)
+	if not r.mentoring_done and not r.mentoring_skipped:
+		var b3 := Button.new()
+		b3.text = "Mentor (2Att)"
+		b3.focus_mode = Control.FOCUS_NONE
+		b3.add_theme_font_size_override("font_size", 10)
+		b3.pressed.connect(_on_hiring_onboard_pressed.bind(cid, "mentoring"))
+		actions.add_child(b3)
+		var b4 := Button.new()
+		b4.text = "Skip mentoring"
+		b4.focus_mode = Control.FOCUS_NONE
+		b4.add_theme_font_size_override("font_size", 10)
+		b4.tooltip_text = "Save the Attention now, but arm a productivity debuff + early-attrition risk."
+		b4.pressed.connect(_on_hiring_skip_mentoring_pressed.bind(cid))
+		actions.add_child(b4)
+
+	return panel
+
+func _has_hiring_job(candidate_id: String, kind: String) -> bool:
+	"""True if a pipeline job of `kind` is already in flight for this candidate."""
+	var h = game_manager.state.hiring
+	if h == null:
+		return false
+	for j in h.jobs:
+		if String(j.get("candidate_id", "")) == candidate_id and String(j.get("kind", "")) == kind:
+			return true
+	return false
+
+func _hiring_job_status(candidate_id: String) -> String:
+	"""Short 'X in progress (resolves in ~N turns)' line for any in-flight job, else ''."""
+	var h = game_manager.state.hiring
+	if h == null:
+		return ""
+	var turn := int(game_manager.state.turn)
+	for j in h.jobs:
+		if String(j.get("candidate_id", "")) != candidate_id:
+			continue
+		var kind := String(j.get("kind", ""))
+		var eta := int(j.get("resolves_on_turn", 0)) - turn
+		return ">> %s in progress (resolves in ~%d turn(s))" % [kind.capitalize(), max(0, eta)]
+	return ""
+
+func _hiring_action_result(result: Dictionary, verb: String) -> void:
+	"""Log a hiring delegate's result, refresh the HUD (attention/money changed), and rebuild
+	the pipeline panel in place so new reveal / job state is visible immediately."""
+	var ok := bool(result.get("success", false))
+	var msg := String(result.get("message", ""))
+	var color := "cyan" if ok else "red"
+	log_message("[color=%s]%s: %s[/color]" % [color, verb, msg])
+	_on_game_state_updated(game_manager.get_game_state())
+	_show_hiring_submenu()
+
+func _on_hiring_advertise_pressed() -> void:
+	_hiring_action_result(game_manager.hiring_advertise(), "Advertise")
+
+func _on_hiring_connections_pressed() -> void:
+	_hiring_action_result(game_manager.hiring_use_connections(), "Connections")
+
+func _on_hiring_interview_pressed(candidate_id: String) -> void:
+	_hiring_action_result(game_manager.hiring_interview(candidate_id), "Interview")
+
+func _on_hiring_onboard_pressed(candidate_id: String, item: String) -> void:
+	_hiring_action_result(game_manager.hiring_onboard_step(candidate_id, item), "Onboard")
+
+func _on_hiring_skip_mentoring_pressed(candidate_id: String) -> void:
+	var st = game_manager.state
+	_hiring_action_result(st.hiring.skip_mentoring(st, candidate_id), "Onboard")
+
+func _show_offer_dialog(candidate_id: String) -> void:
+	"""Per-candidate OFFER flow: the recruiter negotiation read (band, personified SA), a cash
+	field, and appetite-promise toggles that re-read the band live. Sends via hiring_offer."""
+	var st = game_manager.state
+	var cand = st.hiring.find_pool_candidate(st, candidate_id)
+	if cand == null:
 		return
+	if active_dialog != null and is_instance_valid(active_dialog):
+		active_dialog.queue_free()
+		active_dialog = null
+		active_dialog_buttons = []
 
-	if not game_manager.state.can_afford(action_def.get("costs", {})):
-		log_message("[color=red]Cannot afford: %s[/color]" % action_name)
-		return
+	var dialog := Panel.new()
+	var dsize := Vector2(460, 470)
+	dialog.custom_minimum_size = dsize
+	dialog.size = dsize
+	var vp := get_viewport().get_visible_rect().size
+	dialog.position = Vector2((vp.x - dsize.x) / 2.0, max(40.0, (vp.y - dsize.y) / 2.0))
 
-	log_message("[color=cyan]Hiring: %s[/color]" % action_name)
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 14)
+	margin.add_theme_constant_override("margin_right", 14)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	dialog.add_child(margin)
 
-	# Queue the actual hiring action
-	queued_actions.append({"id": action_id, "name": action_name})
-	update_queued_actions_display()
+	var vb := VBoxContainer.new()
+	vb.add_theme_constant_override("separation", 8)
+	margin.add_child(vb)
 
-	game_manager.select_action(action_id)
+	var hdr := Label.new()
+	hdr.text = "OFFER: %s" % cand.researcher_name
+	hdr.add_theme_font_size_override("font_size", 14)
+	hdr.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
+	vb.add_child(hdr)
+
+	var read: Dictionary = game_manager.hiring_read(candidate_id, [])
+	var read_lbl := Label.new()
+	read_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	read_lbl.text = String(read.get("text", ""))
+	read_lbl.add_theme_font_size_override("font_size", 10)
+	read_lbl.add_theme_color_override("font_color", Color(0.8, 0.8, 0.6))
+	vb.add_child(read_lbl)
+
+	var band_lbl := Label.new()
+	band_lbl.text = "Read band: $%d  ..  $%d" % [int(read.get("low", 0)), int(read.get("high", 0))]
+	band_lbl.add_theme_font_size_override("font_size", 9)
+	band_lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+	vb.add_child(band_lbl)
+
+	var cash_row := HBoxContainer.new()
+	cash_row.add_theme_constant_override("separation", 8)
+	vb.add_child(cash_row)
+	var cash_caption := Label.new()
+	cash_caption.text = "Cash offer ($/yr):"
+	cash_caption.add_theme_font_size_override("font_size", 10)
+	cash_row.add_child(cash_caption)
+	var cash_spin := SpinBox.new()
+	cash_spin.min_value = 0
+	cash_spin.max_value = maxf(200000.0, float(read.get("high", 0)) * 1.5)
+	cash_spin.step = 1000
+	cash_spin.value = float(read.get("mid", read.get("high", 60000)))
+	cash_spin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cash_row.add_child(cash_spin)
+
+	var promise_hdr := Label.new()
+	promise_hdr.text = "Promises (buy the ask down; each mints a ledger obligation on accept):"
+	promise_hdr.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	promise_hdr.add_theme_font_size_override("font_size", 9)
+	promise_hdr.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	vb.add_child(promise_hdr)
+
+	var promise_labels := {
+		"first_authorship": "First authorship (prestige)",
+		"mentorship": "Mentorship (mentees)",
+		"compute_budget": "Compute budget (compute)",
+		"mission_charter": "Mission charter (mission purity)",
+	}
+	var promise_boxes := {}
+	for pid in promise_labels:
+		var cb := CheckBox.new()
+		cb.text = promise_labels[pid]
+		cb.add_theme_font_size_override("font_size", 10)
+		cb.focus_mode = Control.FOCUS_NONE
+		cb.toggled.connect(_on_offer_promise_toggled.bind(candidate_id, promise_boxes, read_lbl, band_lbl))
+		vb.add_child(cb)
+		promise_boxes[pid] = cb
+
+	var btn_row := HBoxContainer.new()
+	btn_row.add_theme_constant_override("separation", 8)
+	vb.add_child(btn_row)
+	var send := Button.new()
+	send.text = "Send Offer (1 Att)"
+	send.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	send.focus_mode = Control.FOCUS_NONE
+	send.pressed.connect(_on_hiring_send_offer_pressed.bind(candidate_id, cash_spin, promise_boxes))
+	btn_row.add_child(send)
+	var cancel := Button.new()
+	cancel.text = "Back"
+	cancel.focus_mode = Control.FOCUS_NONE
+	cancel.pressed.connect(_show_hiring_submenu)
+	btn_row.add_child(cancel)
+
+	_add_submenu_close_affordance(dialog)
+	active_dialog = dialog
+	active_dialog_buttons = []
+	tab_manager.add_child(dialog)
+	dialog.visible = true
+	dialog.z_index = 1000
+	dialog.z_as_relative = false
+
+func _selected_promises(promise_boxes: Dictionary) -> Array:
+	var promises := []
+	for pid in promise_boxes:
+		if promise_boxes[pid].button_pressed:
+			promises.append(pid)
+	return promises
+
+func _on_offer_promise_toggled(_pressed: bool, candidate_id: String, promise_boxes: Dictionary, read_lbl: Label, band_lbl: Label) -> void:
+	"""Re-read the negotiation band as promises toggle, so the player sees the ask move."""
+	var read: Dictionary = game_manager.hiring_read(candidate_id, _selected_promises(promise_boxes))
+	read_lbl.text = String(read.get("text", ""))
+	band_lbl.text = "Read band: $%d  ..  $%d" % [int(read.get("low", 0)), int(read.get("high", 0))]
+
+func _on_hiring_send_offer_pressed(candidate_id: String, cash_spin: SpinBox, promise_boxes: Dictionary) -> void:
+	var promises := _selected_promises(promise_boxes)
+	_hiring_action_result(game_manager.hiring_offer(candidate_id, cash_spin.value, promises), "Offer")
 
 func _show_fundraising_submenu():
 	"""Show popup dialog with fundraising options with keyboard support - icon grid layout"""
