@@ -149,6 +149,40 @@ func test_starting_candidates_are_uninterviewed():
 		assert_eq(cand.hire_state, Researcher.HireState.CANDIDATE_IN_POOL, "Pool candidates in pool state")
 		assert_ne(cand.appearance_id, "", "Candidate carries an identity")
 
+# --- Turn-0 founding team: exactly four starters, each with a GUARANTEED hidden rider --------
+
+func _starter_has_strong_appetite(cand: Researcher) -> bool:
+	for k in Researcher.APPETITE_KEYS:
+		if float(cand.appetites.get(k, 0.0)) >= GameState.STARTER_STRONG_APPETITE:
+			return true
+	return false
+
+func test_starter_pool_is_exactly_four():
+	# Pip ruling: the founding team is EXACTLY four "starter pokemon".
+	var state := GameState.new("starter_count_seed")
+	assert_eq(state.candidate_pool.size(), 4, "the turn-0 founding team is exactly four starters")
+
+func test_each_starter_carries_a_hidden_rider():
+	var state := GameState.new("starter_riders_seed")
+	assert_eq(state.candidate_pool.size(), 4, "four starters")
+	for cand in state.candidate_pool:
+		# Rider present: a rare quirk OR a strong appetite.
+		assert_true(cand.has_quirk() or _starter_has_strong_appetite(cand),
+			"each starter is GUARANTEED a rider (a quirk or a strong appetite)")
+		# ...but it starts HIDDEN.
+		assert_false(cand.quirk_known, "the quirk rider starts hidden (quirk_known false)")
+		assert_eq(cand.reveal_level, Researcher.REVEAL_UNINTERVIEWED, "starter starts at reveal 0")
+
+func test_starter_riders_are_deterministic_from_seed():
+	# Same seed -> byte-identical founding team (replay-safe, ADR-0006).
+	var a := GameState.new("starter_determinism_seed")
+	var b := GameState.new("starter_determinism_seed")
+	assert_eq(a.candidate_pool.size(), b.candidate_pool.size(), "same seed -> same starter count")
+	for i in range(a.candidate_pool.size()):
+		assert_eq(a.candidate_pool[i].quirk, b.candidate_pool[i].quirk, "same seed -> same rider quirk")
+		assert_eq(a.candidate_pool[i].appetites, b.candidate_pool[i].appetites, "same seed -> same appetites")
+		assert_eq(a.candidate_pool[i].researcher_name, b.candidate_pool[i].researcher_name, "same seed -> same names")
+
 # --- Save / load round-trip of the new fields -------------------------------
 
 func test_researcher_new_fields_round_trip():

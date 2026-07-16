@@ -60,7 +60,13 @@ func test_hire_safety_researcher_execution():
 	assert_lt(state.money, 245000.0, "Money should decrease from starting 245000")
 
 func test_hire_capability_researcher_execution():
-	# Test hiring capability researcher
+	# Test hiring capability researcher. Seed a matching candidate explicitly so the test is
+	# seed-independent (same #561 pattern as the interpretability/alignment tests below): the
+	# turn-0 founding team is now a deterministic four whose lane mix varies by seed, so we no
+	# longer rely on "test_seed" happening to roll a capabilities starter into the pool.
+	var c = Researcher.new()
+	c.specialization = "capabilities"
+	state.add_candidate(c)
 	var initial_staff = state.capability_researchers
 
 	var result = GameActions.execute_action("hire_capability_researcher", state)

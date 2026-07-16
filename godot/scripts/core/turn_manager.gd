@@ -7,91 +7,15 @@ var state: GameState
 func _init(game_state: GameState):
 	state = game_state
 
-func _generate_random_candidate() -> Researcher:
-	"""Generate a random candidate for the hiring pool"""
-	# Random specialization (weighted towards safety early game)
-	var specializations = ["safety", "capabilities", "interpretability", "alignment"]
-	var weights = [0.35, 0.25, 0.20, 0.20]  # Safety most common
-
-	var roll = state.rng.randf()
-
-	# Record RNG outcome for verification
-	VerificationTracker.record_rng_outcome("candidate_spec", roll, state.turn)
-
-	var cumulative = 0.0
-	var spec = "safety"
-	for i in range(specializations.size()):
-		cumulative += weights[i]
-		if roll < cumulative:
-			spec = specializations[i]
-			break
-
-	# Create researcher with random name and stats
-	var researcher = Researcher.new()
-	researcher.generate_random(state.rng)
-	researcher.specialization = spec
-
-	# Assign random traits
-	_assign_candidate_traits(researcher)
-
-	return researcher
-
-func _assign_candidate_traits(researcher: Researcher):
-	"""Assign random traits to a candidate (40% positive, 25% negative)"""
-	# 40% chance of one positive trait
-	var positive_roll = state.rng.randf()
-	VerificationTracker.record_rng_outcome("trait_positive", positive_roll, state.turn)
-
-	if positive_roll < 0.40:
-		var positive_traits = ["workaholic", "team_player", "media_savvy", "safety_conscious", "fast_learner"]
-		var trait_index = state.rng.randi() % positive_traits.size()
-		VerificationTracker.record_rng_outcome("trait_positive_select", float(trait_index), state.turn)
-		var trait_id = positive_traits[trait_index]
-		researcher.add_trait(trait_id)
-
-	# 25% chance of one negative trait
-	var negative_roll = state.rng.randf()
-	VerificationTracker.record_rng_outcome("trait_negative", negative_roll, state.turn)
-
-	if negative_roll < 0.25:
-		var negative_traits = ["prima_donna", "leak_prone", "burnout_prone", "pessimist"]
-		var trait_index = state.rng.randi() % negative_traits.size()
-		VerificationTracker.record_rng_outcome("trait_negative_select", float(trait_index), state.turn)
-		var trait_id = negative_traits[trait_index]
-		researcher.add_trait(trait_id)
-
-func _populate_candidate_pool() -> int:
-	"""Add new candidates to the pool (called each turn)"""
-	var added = 0
-
-	# Base 30% chance to add a candidate, plus 10% per empty slot
-	var empty_slots = state.MAX_CANDIDATES - state.candidate_pool.size()
-	var chance = 0.30 + (empty_slots * 0.10)
-
-	# Higher reputation = better candidates appear more often
-	if state.reputation > 60:
-		chance += 0.10
-
-	# Roll for new candidate
-	var candidate_roll = state.rng.randf()
-	VerificationTracker.record_rng_outcome("candidate_spawn", candidate_roll, state.turn)
-
-	if candidate_roll < chance and empty_slots > 0:
-		var candidate = _generate_random_candidate()
-		state.add_candidate(candidate)
-		added += 1
-
-		# Small chance for a second candidate if pool is very empty
-		if empty_slots > 3:
-			var second_roll = state.rng.randf()
-			VerificationTracker.record_rng_outcome("candidate_second", second_roll, state.turn)
-
-			if second_roll < 0.20:
-				var second = _generate_random_candidate()
-				state.add_candidate(second)
-				added += 1
-
-	return added
+# NOTE: the free per-turn candidate-pool refill was REMOVED (hiring-pipeline redesign). It
+# was a placeholder from before sourcing existed: it kept the 6-slot pool full for free every
+# turn, so paid advertised/connections candidates were silently discarded (pool already at
+# cap), undermining the whole source->interview->offer pipeline. Candidates now come ONLY from
+# the turn-0 founding-team seed (GameState._populate_initial_candidates) and from sourcing
+# (HiringPipeline advertise / use_connections). The legacy instant-hire from the existing pool
+# is unaffected. This also drops the per-turn candidate_spawn/trait RNG draws from the turn
+# stream -- deterministic replays re-simulate against the same new stream, so they stay
+# self-consistent (WS-0 / ADR-0006).
 
 func start_turn() -> Dictionary:
 	"""
@@ -108,12 +32,11 @@ func start_turn() -> Dictionary:
 	var ledger_result: Dictionary = _step_ledger_tick_and_bill()
 	var total_staff: int = state.get_total_staff()
 	var max_ap: int = _step_grant_action_points(total_staff)
-	var new_candidates: int = _populate_candidate_pool()
 	_step_process_researcher_lifecycles()
 	var staff_salaries: float = _step_pay_salaries(total_staff)
 	var prod: Dictionary = _step_researcher_productivity()
 	var stationery: Dictionary = _step_consume_stationery()
-	var messages: Array = _build_start_turn_messages(max_ap, total_staff, staff_salaries, new_candidates, prod, stationery, ledger_result)
+	var messages: Array = _build_start_turn_messages(max_ap, total_staff, staff_salaries, prod, stationery, ledger_result)
 	var triggered_events: Array[Dictionary] = _step_check_events(messages)
 
 	return {
@@ -373,7 +296,7 @@ func _step_consume_stationery() -> Dictionary:
 		"supply_auto_ordered": supply_auto_ordered,
 	}
 
-func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: float, new_candidates: int, prod: Dictionary, stationery: Dictionary, ledger_result: Dictionary) -> Array:
+func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: float, prod: Dictionary, stationery: Dictionary, ledger_result: Dictionary) -> Array:
 	"""Assemble the turn-start message list. Pure reads — no sim mutation, no RNG."""
 	var billed_entries: Array = ledger_result.get("billed", [])
 	var exposed_entries: Array = ledger_result.get("exposed", [])
@@ -472,10 +395,10 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 	if supply_auto_ordered:
 		messages.append("Supply automation ordered stationery ($2k, +50 supplies)")
 
-	# Candidate pool messages
-	if new_candidates > 0:
-		messages.append("%d new candidate(s) available for hire (%d total in pool)" % [new_candidates, state.candidate_pool.size()])
-	elif state.candidate_pool.size() == 0:
+	# Candidate pool status. No free per-turn refill anymore (hiring-pipeline redesign):
+	# new candidates arrive only via sourcing (advertise / connections), surfaced through the
+	# pipeline's own feed notifications, not here.
+	if state.candidate_pool.size() == 0:
 		messages.append("No candidates in hiring pool")
 
 	return messages

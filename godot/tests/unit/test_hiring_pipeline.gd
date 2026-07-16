@@ -68,6 +68,62 @@ func test_advertise_trickles_candidates_over_months():
 	assert_eq(s.hiring.campaigns.size(), 0, "the campaign expired after months_remaining")
 
 
+func test_ad_campaign_response_surfaces_a_player_feed_notification():
+	# The ad trickle used to be SILENT. It now emits a player-facing FEED notification (the
+	# established readable/no-decision channel) via the MonthController when a campaign sources
+	# a candidate at a month boundary. Drive the real boundary path (MonthController), not the
+	# pipeline in isolation, to prove the wiring.
+	var s := _new_state("ad_feed_seed")
+	var mc := MonthController.new(s, null)  # null tm: exercise the boundary/dispatch path only
+	s.candidate_pool.clear()
+	# A guaranteed campaign (per_month_min=1) so the boundary sources >=1 candidate seed-independently.
+	s.hiring.campaigns.append({"months_remaining": 2, "per_month_min": 1, "per_month_max": 2})
+	var feed0: int = mc.feed_log.size()
+	s.turn = 40  # jump into a later calendar month so advance_tick crosses a boundary
+	mc.advance_tick()
+	assert_gt(mc.feed_log.size(), feed0, "the ad campaign response surfaced a feed notification")
+	var found := false
+	for item in mc.feed_log:
+		var ev: Dictionary = item.get("event", {})
+		if String(ev.get("id", "")) == "hiring_ad_response":
+			found = true
+			assert_eq(EventTiers.tier_of(ev), EventTiers.TIER_FEED, "the notification is a feed-tier item")
+			assert_true(String(ev.get("message", "")).to_lower().contains("ad campaign"),
+				"the message tells the player their ad campaign paid off")
+	assert_true(found, "an ad-response feed notification was emitted when the campaign sourced a candidate")
+	# And no notification fires on a boundary with no campaign activity (stays silent).
+	var mc2 := MonthController.new(GameState.new("ad_feed_quiet"), null)
+	mc2.state.candidate_pool.clear()
+	mc2.state.hiring.campaigns.clear()
+	var quiet0: int = mc2.feed_log.size()
+	mc2.state.turn = 40
+	mc2.advance_tick()
+	for item in mc2.feed_log:
+		assert_ne(String((item.get("event", {}) as Dictionary).get("id", "")), "hiring_ad_response",
+			"no ad-response notification without a live campaign")
+	assert_eq(mc2.feed_log.size(), quiet0, "a quiet boundary stays silent")
+
+
+func test_ad_campaign_response_batches_multiple_arrivals():
+	# Several candidates landing the same month collapse into ONE pluralized feed line.
+	var s := _new_state("ad_feed_batch")
+	var mc := MonthController.new(s, null)
+	s.candidate_pool.clear()
+	# per_month_min == per_month_max == 3 -> exactly three arrivals this boundary.
+	s.hiring.campaigns.append({"months_remaining": 1, "per_month_min": 3, "per_month_max": 3})
+	s.turn = 40
+	mc.advance_tick()
+	var ad_items := 0
+	var count_field := 0
+	for item in mc.feed_log:
+		var ev: Dictionary = item.get("event", {})
+		if String(ev.get("id", "")) == "hiring_ad_response":
+			ad_items += 1
+			count_field = int(ev.get("count", 0))
+	assert_eq(ad_items, 1, "multiple arrivals batch into a single feed line")
+	assert_eq(count_field, 3, "the batched line reports all three arrivals")
+
+
 func test_advertise_action_configures_a_balance_driven_campaign():
 	# The public advertise() wires the campaign from the Balance surface.
 	var s := _new_state("advertise_cfg")

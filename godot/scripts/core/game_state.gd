@@ -612,31 +612,44 @@ func get_candidates_by_spec(spec: String) -> Array[Researcher]:
 			matches.append(candidate)
 	return matches
 
+# Threshold at/above which an appetite counts as a "strong/notable" hidden rider. The
+# guaranteed-rider assignment sets its chosen appetite at or above this, and tests key off it.
+const STARTER_STRONG_APPETITE: float = 0.8
+
 func _populate_initial_candidates():
-	"""Generate 2-3 starting candidates (lower quality for early game)"""
-	# Always at least 1 safety researcher to start
-	var safety_candidate = Researcher.new()
-	safety_candidate.generate_random(rng)
-	safety_candidate.specialization = "safety"
-	# Lower skill for starting candidates
-	safety_candidate.skill_level = rng.randi_range(1, 3)
-	add_candidate(safety_candidate)
+	"""Seed the turn-0 founding team: EXACTLY 4 starter candidates, each GUARANTEED a hidden
+	rider (Pip ruling). Framing (Pip): these are the "starter pokemon" -- they accrue the most
+	experience and become the deepest in trust/seniority late-game, so a guaranteed latent rider
+	creates long-term narrative drama. The rider is either a rare quirk OR a strong appetite; it
+	starts HIDDEN (quirk_known stays false; a strong appetite only surfaces at the appetite
+	reveal layer) and reveal_level stays REVEAL_UNINTERVIEWED. Deterministic from the seeded rng
+	(replay-safe, ADR-0006). Normal sourced candidates keep their existing chance-based riders --
+	only these four founders are guaranteed one."""
+	var specs := ["safety", "capabilities", "interpretability", "alignment"]
+	for i in range(4):
+		var cand := Researcher.new()
+		cand.generate_random(rng)
+		# First starter is always a safety anchor; the others rotate the lanes.
+		cand.specialization = "safety" if i == 0 else specs[rng.randi() % specs.size()]
+		# Lower skill for early-game starting candidates.
+		cand.skill_level = rng.randi_range(1, 3)
+		cand.base_productivity = 0.5 + (cand.skill_level * 0.1)
+		_assign_guaranteed_rider(cand)
+		add_candidate(cand)
 
-	# Second candidate - 50% safety, 50% capabilities
-	var second = Researcher.new()
-	second.generate_random(rng)
-	second.specialization = "safety" if rng.randf() < 0.5 else "capabilities"
-	second.skill_level = rng.randi_range(1, 3)
-	add_candidate(second)
-
-	# Third candidate (50% chance)
+func _assign_guaranteed_rider(candidate: Researcher) -> void:
+	"""Give a founding-team starter a GUARANTEED, still-HIDDEN rider, drawn from the seeded rng
+	(deterministic). Coin-flip between the two rider kinds so the four founders vary:
+	  - quirk rider: a rare quirk (hidden until an exposure event; quirk_known stays false)
+	  - appetite rider: one appetite pushed to STARTER_STRONG_APPETITE+ (hidden until the
+	    appetite reveal layer, revealed only by interviewing)
+	Either way the card shows nothing extra at reveal 0 -- the depth is latent."""
 	if rng.randf() < 0.5:
-		var third = Researcher.new()
-		third.generate_random(rng)
-		var specs = ["safety", "capabilities", "interpretability", "alignment"]
-		third.specialization = specs[rng.randi() % specs.size()]
-		third.skill_level = rng.randi_range(1, 3)
-		add_candidate(third)
+		candidate.quirk = Researcher.QUIRK_POOL[rng.randi() % Researcher.QUIRK_POOL.size()]
+		candidate.quirk_known = false
+	else:
+		var key: String = Researcher.APPETITE_KEYS[rng.randi() % Researcher.APPETITE_KEYS.size()]
+		candidate.appetites[key] = clampf(STARTER_STRONG_APPETITE + rng.randf() * 0.2, STARTER_STRONG_APPETITE, 1.0)
 
 func get_management_capacity() -> int:
 	"""How many employees can current managers handle?"""
