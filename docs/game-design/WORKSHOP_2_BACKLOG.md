@@ -612,6 +612,29 @@ potential; the office *is* how you feel the phase.
   deepens the CRT/Papers-Please register (WORLD_AND_LORE) and the amber-CRT texture assets.
   The ASCII mockups ARE close to the target aesthetic ("vibes are spot on").
 
+## Plan/Watch screen workshop — beat 3, OPEN/exploring (2026-07-16)
+
+*Pip thinking aloud, not yet decided — preserve both directions.*
+- **Operator-scene lives in WATCH, not PLAN (Pip's crystallization).** PLAN = strategy mode
+  (lay the hand / strategic board); WATCH = tactics mode — the operator switches to observing
+  the office floor via live feeds, the zoomed-out **ambient office/employee/cat view** lives
+  here. So the fishbowl/operator-scene is a WATCH thing (sustained ambient read), PLAN stays
+  more abstract/board. Refines beat-1 (which had the fishbowl as a PLAN flourish).
+- **Watch density fork — Pip leans OPERATOR-SCENE-DOMINANT** (Dr Claw / Gendo Ikari — the
+  shadowed commander). Fable's **panels-dominant** alternative PRESERVED (Pip: "I like it as
+  a flavour, want to come back to it"). Likely resolution: density-vs-cinema **graduates with
+  phase** (heads-down terminal in the garage → scene-dominant spectacle by gilded-office/lair).
+- **Operator representation — OPEN FORK (Pip's main uncertainty):** (a) operator seen only in
+  **cut-scenes, face-anonymous** — "could be anyone," inclusion-important; or (b) **represented
+  + customizable** → character creation (DQ-19) + buy player power-ups (e.g. "impressive robes
+  +2 rep").
+- **Fable synthesis to chew on (not decided):** Dr Claw / Gendo are *represented BUT anonymous*
+  — a silhouette/shadowed figure does BOTH. So customize the **trappings** (throne, robes,
+  chair, the lair) never the **face** → inclusion preserved (could be anyone) + expression
+  enabled + stays "power up the office" (the lair IS the office). And "robes +2 rep" reconciles
+  with the office-not-player rule via the **relative-rep flattery mechanic (B1)**: appearance →
+  social standing, not raw capability — presentation is a reputation lever, not a power-up.
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
