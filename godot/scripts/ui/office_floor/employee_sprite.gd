@@ -67,6 +67,8 @@ func _ready() -> void:
 	_target = position
 	_anim = AnimatedSprite2D.new()
 	_anim.visible = false
+	# Crisp pixel art, no blur, regardless of per-file .import filter settings.
+	_anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	add_child(_anim)
 	_label = Label.new()
 	_label.add_theme_font_size_override("font_size", 10)

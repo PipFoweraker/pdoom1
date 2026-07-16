@@ -1,0 +1,137 @@
+[gd_resource type="SpriteFrames" load_steps=29 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/idle_0.png" id="1"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/idle_1.png" id="2"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/idle_2.png" id="3"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/idle_3.png" id="4"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_0.png" id="5"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_1.png" id="6"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_2.png" id="7"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_3.png" id="8"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_4.png" id="9"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/walking_5.png" id="10"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_0.png" id="11"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_1.png" id="12"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_2.png" id="13"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_3.png" id="14"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_4.png" id="15"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_5.png" id="16"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_6.png" id="17"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_7.png" id="18"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/working_8.png" id="19"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_0.png" id="20"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_1.png" id="21"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_2.png" id="22"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_3.png" id="23"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_4.png" id="24"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_5.png" id="25"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_6.png" id="26"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_7.png" id="27"]
+[ext_resource type="Texture2D" path="res://assets/office_floor/artloop_char/stressed_8.png" id="28"]
+
+[resource]
+animations = [{
+"loop": true,
+"name": &"idle",
+"speed": 4.0,
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4")
+}]
+}, {
+"loop": true,
+"name": &"walking",
+"speed": 8.0,
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("5")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10")
+}]
+}, {
+"loop": true,
+"name": &"working",
+"speed": 6.0,
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("11")
+}, {
+"duration": 1.0,
+"texture": ExtResource("12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("13")
+}, {
+"duration": 1.0,
+"texture": ExtResource("14")
+}, {
+"duration": 1.0,
+"texture": ExtResource("15")
+}, {
+"duration": 1.0,
+"texture": ExtResource("16")
+}, {
+"duration": 1.0,
+"texture": ExtResource("17")
+}, {
+"duration": 1.0,
+"texture": ExtResource("18")
+}, {
+"duration": 1.0,
+"texture": ExtResource("19")
+}]
+}, {
+"loop": true,
+"name": &"stressed",
+"speed": 6.0,
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("20")
+}, {
+"duration": 1.0,
+"texture": ExtResource("21")
+}, {
+"duration": 1.0,
+"texture": ExtResource("22")
+}, {
+"duration": 1.0,
+"texture": ExtResource("23")
+}, {
+"duration": 1.0,
+"texture": ExtResource("24")
+}, {
+"duration": 1.0,
+"texture": ExtResource("25")
+}, {
+"duration": 1.0,
+"texture": ExtResource("26")
+}, {
+"duration": 1.0,
+"texture": ExtResource("27")
+}, {
+"duration": 1.0,
+"texture": ExtResource("28")
+}]
+}]
