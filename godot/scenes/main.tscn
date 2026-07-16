@@ -1,6 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://bvqxj8x5p6h8c"]
+[gd_scene load_steps=12 format=3 uid="uid://bvqxj8x5p6h8c"]
 
 [ext_resource type="Script" path="res://scripts/ui/main_ui.gd" id="2_main_ui"]
+[ext_resource type="PackedScene" uid="uid://plan_screen_pw01" path="res://scenes/ui/plan_screen.tscn" id="12_plan_screen"]
+[ext_resource type="Script" path="res://scripts/ui/instrument_panel.gd" id="13_instrument"]
+[ext_resource type="PackedScene" uid="uid://watch_screen_pw01" path="res://scenes/ui/watch_screen.tscn" id="14_watch_screen"]
 [ext_resource type="Texture2D" path="res://assets/images/office_cat.png" id="3_cat_texture"]
 [ext_resource type="PackedScene" uid="uid://cw3j8x5p6doom" path="res://scenes/ui/doom_meter.tscn" id="4_doom_meter"]
 [ext_resource type="PackedScene" uid="uid://gameover123456" path="res://scenes/ui/game_over_screen.tscn" id="5_gameover"]
@@ -166,92 +169,78 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 5
 
-[node name="LeftPanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
+[node name="PlanScreen" parent="TabManager/MainUI/ContentArea" instance=ExtResource("12_plan_screen")]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 
-[node name="GettingStartedHint" type="Label" parent="TabManager/MainUI/ContentArea/LeftPanel"]
-layout_mode = 2
-text = "TIP: Hire safety researchers to reduce P(Doom)"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 10
-theme_override_colors/font_color = Color(0.5, 0.8, 0.5, 0.9)
-
-[node name="ActionsScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/LeftPanel"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ActionsList" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/LeftPanel/ActionsScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="MiddlePanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
+[node name="InstrumentColumn" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 alignment = 2
+script = ExtResource("13_instrument")
 
-[node name="TitleZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel"]
+[node name="TitleZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn"]
 layout_mode = 2
 
-[node name="TitleLabel" type="Label" parent="TabManager/MainUI/ContentArea/MiddlePanel/TitleZone"]
+[node name="TitleLabel" type="Label" parent="TabManager/MainUI/ContentArea/InstrumentColumn/TitleZone"]
 layout_mode = 2
 text = "P(DOOM)"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 24
 theme_override_colors/font_color = Color(1.0, 0.6, 0.0, 1)
 
-[node name="CoreZone" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel"]
+[node name="CoreZone" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="CatZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone"]
+[node name="CatZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OfficeCat" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/CatZone" instance=ExtResource("9_officecat")]
+[node name="OfficeCat" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/CatZone" instance=ExtResource("9_officecat")]
 layout_mode = 2
 visible = false
 
-[node name="RightZones" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone"]
+[node name="RightZones" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="NumericDoomZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones"]
+[node name="NumericDoomZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones"]
 layout_mode = 2
 
-[node name="NumericDoomLabel" type="Label" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/NumericDoomZone"]
+[node name="NumericDoomLabel" type="Label" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones/NumericDoomZone"]
 layout_mode = 2
 text = "58.5%"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(1.0, 0.3, 0.3, 1)
 
-[node name="DoomMeterZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones"]
+[node name="DoomMeterZone" type="CenterContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="DoomMeterPanel" type="PanelContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone"]
+[node name="DoomMeterPanel" type="PanelContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones/DoomMeterZone"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="MarginContainer" type="MarginContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel"]
+[node name="MarginContainer" type="MarginContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="DoomMeter" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel/MarginContainer" instance=ExtResource("4_doom_meter")]
+[node name="DoomMeter" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel/MarginContainer" instance=ExtResource("4_doom_meter")]
 layout_mode = 2
 
-[node name="DoomExplanation" type="CenterContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones"]
+[node name="DoomExplanation" type="CenterContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones"]
 layout_mode = 2
 
-[node name="ExplanationLabel" type="Label" parent="TabManager/MainUI/ContentArea/MiddlePanel/CoreZone/RightZones/DoomExplanation"]
+[node name="ExplanationLabel" type="Label" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones/DoomExplanation"]
 layout_mode = 2
 text = "Buy time · survival is the score | Lose: P(Doom) = 100%"
 horizontal_alignment = 1
@@ -261,104 +250,49 @@ tooltip_text = "P(Doom) = Probability of catastrophic AI outcome.
 Win by solving alignment (0%) or finishing below the league baseline.
 Lose if doom reaches 100% or you finish above baseline."
 
-[node name="EmployeeRosterZone" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel"]
+[node name="EmployeeRosterZone" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 4
 
-[node name="RosterLabel" type="Label" parent="TabManager/MainUI/ContentArea/MiddlePanel/EmployeeRosterZone"]
+[node name="RosterLabel" type="Label" parent="TabManager/MainUI/ContentArea/InstrumentColumn/EmployeeRosterZone"]
 layout_mode = 2
 text = "Staff Roster"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 12
 theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1)
 
-[node name="RosterScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/EmployeeRosterZone"]
+[node name="RosterScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/EmployeeRosterZone"]
 layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="RosterContainer" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel/EmployeeRosterZone/RosterScroll"]
+[node name="RosterContainer" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/EmployeeRosterZone/RosterScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
 
-[node name="CommandZone" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/MiddlePanel"]
-layout_mode = 2
-size_flags_vertical = 8
-alignment = 2
-
-[node name="CommandLabel" type="Label" parent="TabManager/MainUI/ContentArea/MiddlePanel/CommandZone"]
-layout_mode = 2
-text = "Command"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.6, 0.5, 0.8, 1)
-
-[node name="PassButton" type="Button" parent="TabManager/MainUI/ContentArea/MiddlePanel/CommandZone"]
-layout_mode = 2
-custom_minimum_size = Vector2(120, 36)
-text = "Do Nothing"
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.8, 0.7, 1.0, 1)
-
-[node name="RightPanel" type="VBoxContainer" parent="TabManager/MainUI/ContentArea"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.4
-
-[node name="UpgradesLabel" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel"]
-layout_mode = 2
-text = "Upgrades:"
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.8, 0.9, 1.0, 1)
-
-[node name="UpgradesScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/RightPanel"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.45
-
-[node name="UpgradesList" type="VBoxContainer" parent="TabManager/MainUI/ContentArea/RightPanel/UpgradesScroll"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="QueueLabel" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel"]
+[node name="QueueLabel" type="Label" parent="TabManager/MainUI/ContentArea/InstrumentColumn"]
 layout_mode = 2
 text = "Action Queue:"
 
-[node name="QueuePanel" type="PanelContainer" parent="TabManager/MainUI/ContentArea/RightPanel"]
+[node name="QueuePanel" type="PanelContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn"]
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="QueueContainer" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/RightPanel/QueuePanel"]
+[node name="QueueContainer" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/QueuePanel"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="QueueHint" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel/QueuePanel/QueueContainer"]
+[node name="QueueHint" type="Label" parent="TabManager/MainUI/ContentArea/InstrumentColumn/QueuePanel/QueueContainer"]
 layout_mode = 2
 text = "No actions queued..."
 modulate = Color(0.5, 0.5, 0.5, 1)
 
-[node name="HSeparator" type="HSeparator" parent="TabManager/MainUI/ContentArea/RightPanel"]
-layout_mode = 2
-
-[node name="MessageLogLabel" type="Label" parent="TabManager/MainUI/ContentArea/RightPanel"]
-layout_mode = 2
-text = "Message Log:"
-
-[node name="MessageScroll" type="ScrollContainer" parent="TabManager/MainUI/ContentArea/RightPanel"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.35
-
-[node name="MessageLog" type="RichTextLabel" parent="TabManager/MainUI/ContentArea/RightPanel/MessageScroll"]
+[node name="WatchScreen" parent="TabManager/MainUI/ContentArea" instance=ExtResource("14_watch_screen")]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
-bbcode_enabled = true
-text = "[color=gray]Game not started...[/color]"
-fit_content = true
-scroll_following = true
+size_flags_stretch_ratio = 0.4
 
 [node name="HSeparator2" type="HSeparator" parent="TabManager/MainUI"]
 layout_mode = 2
@@ -475,4 +409,4 @@ layout_mode = 1
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/EndTurnButton" to="TabManager/MainUI" method="_on_end_turn_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/CommitPlanButton" to="TabManager/MainUI" method="_on_commit_plan_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/BugReportButton" to="TabManager/MainUI" method="_on_bug_report_button_pressed"]
-[connection signal="pressed" from="TabManager/MainUI/ContentArea/MiddlePanel/CommandZone/PassButton" to="TabManager/MainUI" method="_on_pass_button_pressed"]
+[connection signal="pressed" from="TabManager/MainUI/ContentArea/PlanScreen/CommandZone/PassButton" to="TabManager/MainUI" method="_on_pass_button_pressed"]

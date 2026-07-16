@@ -2,6 +2,7 @@ extends VBoxContainer
 ## Main UI controller - connects UI elements to GameManager
 
 # References to UI elements (TopBar now has all resources in one line)
+# --- Shared top/bottom chrome (resource readouts + control bar; not screen-specific) ---
 @onready var turn_label = $TopBar/TurnLabel
 @onready var turn_count_label = $TopBar/TurnCountLabel
 @onready var money_label = $TopBar/MoneyLabel
@@ -11,12 +12,29 @@ extends VBoxContainer
 @onready var reputation_label = $TopBar/ReputationLabel
 @onready var ap_label = $TopBar/APLabel
 @onready var phase_label = $BottomBar/PhaseLabel
-@onready var message_log = $ContentArea/RightPanel/MessageScroll/MessageLog
-@onready var actions_list = $ContentArea/LeftPanel/ActionsScroll/ActionsList
-@onready var upgrades_list = $ContentArea/RightPanel/UpgradesScroll/UpgradesList
 @onready var info_label = $InfoBar/MarginContainer/InfoLabel
-@onready var queue_container = $ContentArea/RightPanel/QueuePanel/QueueContainer
-@onready var queue_hint = $ContentArea/RightPanel/QueuePanel/QueueContainer/QueueHint
+
+# --- The three extracted screens (BUILD_BRIEF_PLAN_WATCH_UI Lane 1) ---
+# PLAN (strategy) and WATCH (tactics) are real, script-backed screen subtrees; the shared
+# InstrumentPanel (doom / roster / committed-month queue) stays visible in both modes.
+# main_ui drives game logic against the screens' PUBLIC members rather than reaching through
+# absolute $ContentArea/<column>/... node paths — that coupling is what the split untangles.
+@onready var plan_screen: PlanScreen = $ContentArea/PlanScreen
+@onready var instruments: InstrumentPanel = $ContentArea/InstrumentColumn
+@onready var watch_screen: WatchScreen = $ContentArea/WatchScreen
+
+# Leaf widgets, resolved THROUGH the owning screen. Child _ready runs before the parent's,
+# so each screen's own @onready refs are already populated when these evaluate.
+@onready var message_log = watch_screen.message_log
+@onready var actions_list = plan_screen.actions_list
+@onready var upgrades_list = plan_screen.upgrades_list
+@onready var getting_started_hint = plan_screen.getting_started_hint
+@onready var queue_container = instruments.queue_container
+@onready var queue_hint = instruments.queue_hint
+@onready var doom_meter = instruments.doom_meter
+@onready var numeric_doom_label = instruments.numeric_doom_label
+@onready var office_cat = instruments.office_cat
+@onready var roster_container = instruments.roster_container
 
 @onready var init_button = $BottomBar/ControlButtons/InitButton
 @onready var test_action_button = $BottomBar/ControlButtons/TestActionButton
@@ -25,16 +43,11 @@ extends VBoxContainer
 @onready var clear_queue_button = $BottomBar/ControlButtons/ClearQueueButton
 @onready var end_turn_button = $BottomBar/ControlButtons/EndTurnButton
 @onready var commit_plan_button = $BottomBar/ControlButtons/CommitPlanButton
-@onready var doom_meter = $ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel/MarginContainer/DoomMeter
-@onready var numeric_doom_label = $ContentArea/MiddlePanel/CoreZone/RightZones/NumericDoomZone/NumericDoomLabel
 @onready var game_over_screen = $"../GameOverScreen"
 @onready var bug_report_panel = $"../BugReportPanel"
 @onready var bug_report_button = $BottomBar/BugReportButton
-@onready var office_cat = $ContentArea/MiddlePanel/CoreZone/CatZone/OfficeCat
 @onready var tab_manager = get_parent()
-@onready var roster_container = $ContentArea/MiddlePanel/EmployeeRosterZone/RosterScroll/RosterContainer
 @onready var pause_menu = $"../../PauseMenu"
-@onready var getting_started_hint = $ContentArea/LeftPanel/GettingStartedHint
 
 # Reference to GameManager
 var game_manager: Node
@@ -47,6 +60,7 @@ var doom_breakdown  # #578 colour-coded per-source doom "blow-by-blow" (script-i
 var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
 var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
 var employee_panel  # #622 L10: employee roster + staff ID card (becomes L2's assignment surface)
+var screen_mode: ScreenModeController  # Lane 1 / Phase A: PLAN<->WATCH two-screen mode controller
 # EE-7 (ADR-0012 loss legibility): per-resource "last turn" delta chips beside the
 # money/compute/reputation/doom readouts. Snapshot at each turn boundary; a chip shows
 # the change over the last completed turn, green=helped red=hurt (doom inverted).
@@ -102,12 +116,13 @@ func _ready():
 	# Issue #500: research quality selector (script-instantiated; reparent in editor if preferred)
 	research_quality_selector = preload("res://scripts/ui/research_quality_selector.gd").new()
 	research_quality_selector.quality_selected.connect(_on_research_quality_selected)
-	$ContentArea/LeftPanel.add_child(research_quality_selector)
-	$ContentArea/LeftPanel.move_child(research_quality_selector, 0)
+	plan_screen.add_child(research_quality_selector)
+	# Just under PlanScreen's attention gauge (index 0), above the getting-started hint.
+	plan_screen.move_child(research_quality_selector, 1)
 
-	# #512: doom trend sparkline, inserted just below the doom gauge in RightZones
-	var right_zones := $ContentArea/MiddlePanel/CoreZone/RightZones
-	var doom_meter_zone := $ContentArea/MiddlePanel/CoreZone/RightZones/DoomMeterZone
+	# #512: doom trend sparkline, inserted just below the doom gauge in the instrument column
+	var right_zones := instruments.right_zones
+	var doom_meter_zone := instruments.doom_meter_zone
 	doom_trend_graph = preload("res://scripts/ui/doom_trend_graph.gd").new()
 	doom_trend_graph.custom_minimum_size = Vector2(0, 92)  # taller — playtest feedback (screen1)
 	doom_trend_graph.window_size = 24  # show more time points (screen6)
@@ -158,6 +173,10 @@ func _ready():
 	right_zones.add_child(employee_access_btn)
 	right_zones.move_child(employee_access_btn, ledger_summary_btn.get_index() + 1)
 
+	# Lane 1 / Phase A: PLAN<->WATCH two-screen scaffold + first terminal-styling pass.
+	# Built AFTER all panels exist so it can register them for per-mode visibility.
+	_setup_plan_watch_scaffold()
+
 	# Always-visible DEV BUILD corner badge so a playtester can confirm exactly which
 	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
 	add_child(DevBuildBadge.new())
@@ -190,6 +209,65 @@ func _ready():
 	await get_tree().process_frame
 	_on_init_button_pressed()
 
+func _setup_plan_watch_scaffold() -> void:
+	"""Lane 1 / Phase A (BUILD_BRIEF_PLAN_WATCH_UI): stand up the two-screen structure over
+	the existing single UI — a mode controller + banner + WATCH control strip, existing
+	panels sorted into PLAN vs WATCH, and a first terminal-styling pass. The game stays
+	fully playable: COMMIT THE MONTH (the End Turn button) drives PLAN->WATCH; the month
+	review returns to PLAN (see _on_turn_phase_changed / _on_end_turn_button_pressed)."""
+	# --- background: dark CRT phosphor field on its own layer (no layout disturbance) ---
+	var bg_layer := CanvasLayer.new()
+	bg_layer.layer = -10
+	var bg := ColorRect.new()
+	bg.color = TerminalTheme.BG_DARK
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bg_layer.add_child(bg)
+	add_child(bg_layer)
+
+	# --- mode controller + its owned chrome ---
+	screen_mode = ScreenModeController.new()
+	add_child(screen_mode)
+
+	# Mode banner just under the TopBar.
+	var banner := screen_mode.build_banner()
+	add_child(banner)
+	move_child(banner, $TopBar.get_index() + 1)
+
+	# WATCH control strip (speed dial + day/reserve readout) just above the content area.
+	var watch_bar := screen_mode.build_watch_bar()
+	add_child(watch_bar)
+	move_child(watch_bar, banner.get_index() + 1)
+
+	# Speed dial -> real playback speed.
+	screen_mode.speed_changed.connect(func(secs: float): game_manager.day_tick_seconds = secs)
+
+	# --- register the real screens for mode switching ---
+	# The extraction turned scattered per-panel visibility toggles into two real, script-backed
+	# screen subtrees: ScreenModeController now shows/hides PlanScreen and WatchScreen as whole
+	# units. The shared InstrumentPanel (doom / roster / committed-month queue) is registered to
+	# neither, so it stays visible in BOTH modes. Response windows still overlay as dialogs.
+	screen_mode.register_plan_only(plan_screen)     # the whole PLAN screen (hand, upgrades, verbs)
+	screen_mode.register_watch_only(watch_screen)   # the whole WATCH screen (the feed)
+	screen_mode.register_watch_only(watch_bar)      # the playback control strip
+	# The plan-time control-bar verbs live in the shared BottomBar; hide them while watching.
+	screen_mode.register_plan_only(undo_last_button)
+	screen_mode.register_plan_only(clear_queue_button)
+	screen_mode.register_plan_only(reserve_ap_button)
+	screen_mode.register_plan_only(commit_plan_button)
+	screen_mode.register_plan_only(end_turn_button)                        # END TURN == COMMIT THE MONTH
+
+	# The End Turn button is the PLAN->WATCH commit — relabel it in the plan register.
+	end_turn_button.text = "COMMIT THE MONTH ▶"
+
+	# --- terminal styling that isn't owned by a screen (screens style their own panels) ---
+	TerminalTheme.style_panel($InfoBar, TerminalTheme.RULE, TerminalTheme.PANEL_BG_DEEP)
+	$TopBar/TitleLabel.add_theme_color_override("font_color", TerminalTheme.AMBER)
+
+	# Start in PLAN (the game opens at the month plan).
+	screen_mode.enter_plan()
+
+
 func _unhandled_key_input(event: InputEvent):
 	"""Handle keyboard shortcuts for dialogs (runs after focus but before _unhandled_input)"""
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -203,9 +281,6 @@ func _unhandled_key_input(event: InputEvent):
 				get_viewport().set_input_as_handled()
 				accept_event()
 				return
-
-	# Populate upgrades list
-	_populate_upgrades()
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
@@ -547,6 +622,9 @@ func _on_end_turn_button_pressed():
 	# playback (auto-pause on response windows, month review at the boundary). The old
 	# single day-step lives on ONLY behind the DEV MODE overlay ("Day step (dev)").
 	game_manager.end_month()
+	# Phase A: COMMIT THE MONTH is the PLAN->WATCH transition.
+	if screen_mode:
+		screen_mode.enter_watch()
 
 func _on_commit_plan_button_pressed():
 	"""Commit queued actions AND reserve remaining AP (no warnings)"""
@@ -582,6 +660,9 @@ func _on_commit_plan_button_pressed():
 
 	# Commit the plan — the L1 month path (see _on_end_turn_button_pressed).
 	game_manager.end_month()
+	# Phase A: committing the plan is the PLAN->WATCH transition.
+	if screen_mode:
+		screen_mode.enter_watch()
 
 func _on_employee_tab_button_pressed():
 	"""Switch to employee management screen - DISABLED: employee info moving to main UI"""
@@ -608,6 +689,14 @@ func _on_game_state_updated(state: Dictionary):
 
 	if research_quality_selector:
 		research_quality_selector.update_from_state(state)
+
+	# Phase A: keep the WATCH day/reserve readout live during month playback.
+	if screen_mode:
+		screen_mode.update_from_state(state)
+
+	# Refresh the PLAN attention gauge (allocated vs reserved pips) from the month plan.
+	if plan_screen:
+		plan_screen.update_reserve_gauge(state)
 
 	# Update resource displays (Issue #472 - enhanced turn display with calendar)
 	var turn_display = state.get("turn_display", "")
@@ -848,6 +937,10 @@ func _on_turn_phase_changed(phase_name: String):
 		commit_plan_button.disabled = false
 		undo_last_button.disabled = (queued_actions.size() == 0)
 		clear_queue_button.disabled = (queued_actions.size() == 0)
+		# Phase A: reaching the plan phase (game start / after month review) returns to PLAN.
+		# Mid-month window pauses emit "turn_start", not "action_selection", so WATCH is kept.
+		if screen_mode:
+			screen_mode.enter_plan()
 	elif phase_name == "turn_end" or phase_name == "TURN_END":
 		phase_color = "yellow"
 		phase_display = "EXECUTING - Your actions are running..."
