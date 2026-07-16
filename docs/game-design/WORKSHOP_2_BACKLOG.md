@@ -592,6 +592,26 @@ garage → industrial warehouse → startuppy office → gilded office → super
 (high-money endgame: futuristic, "riding a data center into orbit"). Humor + design
 potential; the office *is* how you feel the phase.
 
+## Plan/Watch screen workshop — beat 2 (2026-07-16)
+
+- **Committed-queue ORDER = execution priority (new mechanic, Pip).** The left-to-right (/
+  top-to-bottom) order of the committed hand is an **internalized priority order** for
+  day-by-day tick execution. This **resolves the intra-day sequencing / resolution-of-
+  effects question** (deterministic: things resolve in committed order, locked to ticks),
+  prevents clash/prioritization ambiguity, and **stays open for interaction with other
+  actors** (a rival's move interleaves against your priority order — what still lands, what
+  gets bumped). Adds a real decision: not just *what* to commit but *in what order*. Card-
+  game-flavored (ordering your plays). Feeds L1/L4 resolution + DQ-12 (rival presence).
+- **Reserve/allocation as a visual gauge (Pip).** Representing reserved vs allocated slack
+  visually is important — it's the readout of the allocate/reserve tension we're driving
+  toward (the Attention pips: allocated ●●● vs reserved ○○○; the gantt-style duration bars
+  praised as "exceptional"). The gauge IS the tension made legible.
+- **Aesthetic direction: terminal/mainframe pastiche, lightly modernized (Pip).** Lean the
+  UI toward old-school TERMINAL (Pip's 2005-era mainframe / 1990s "6 glorious colours"
+  nostalgia) — but start "slightly more modern," a pastiche not a literal retro. Confirms +
+  deepens the CRT/Papers-Please register (WORLD_AND_LORE) and the amber-CRT texture assets.
+  The ASCII mockups ARE close to the target aesthetic ("vibes are spot on").
+
 ## Deferred build lanes — follow-up implementation (no design blocker)
 
 > These are why WS-1's ledger is **engine + soak only** right now — it works and is
