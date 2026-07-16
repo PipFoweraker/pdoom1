@@ -3,6 +3,7 @@ extends VBoxContainer
 
 # References to UI elements (TopBar now has all resources in one line)
 @onready var turn_label = $TopBar/TurnLabel
+@onready var turn_count_label = $TopBar/TurnCountLabel
 @onready var money_label = $TopBar/MoneyLabel
 @onready var compute_label = $TopBar/ComputeLabel
 @onready var research_label = $TopBar/ResearchLabel
@@ -168,7 +169,7 @@ func _ready():
 	dev_overlay.main_ui = self
 	add_child(dev_overlay)
 
-	# Playtest flight recorder (F9) — screenshot + state snapshot + marker note in
+	# Playtest flight recorder (F6) — screenshot + state snapshot + marker note in
 	# one press (WORKSHOP_2_BACKLOG "Playtest deep-dive protocol"). Same wiring
 	# pattern as the DEV MODE overlay: gated on BuildInfo.DEV_BUILD by the node
 	# itself, resolves the live GameManager via main_ui.
@@ -614,6 +615,9 @@ func _on_game_state_updated(state: Dictionary):
 		turn_label.text = turn_display
 	else:
 		turn_label.text = "Turn: %d" % state.get("turn", 0)
+	# Playtest (Pip): the month-year/date badge above has no single number to track
+	# state by. This is a plain "Turn N" counter next to it (#F6 HUD lane).
+	turn_count_label.text = "Turn %d" % state.get("turn", 0)
 	money_label.text = "💰 %s" % GameConfig.format_money(state.get("money", 0))
 	compute_label.text = "🖥️ %.1f" % state.get("compute", 0)
 	research_label.text = "🔬 %.1f" % state.get("research", 0)
