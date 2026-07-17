@@ -1,0 +1,242 @@
+[
+  {
+    "hex": "#17132d",
+    "rgb": [
+      23,
+      19,
+      45
+    ],
+    "role_guess": "screen-blue",
+    "weight_pct": 8.63
+  },
+  {
+    "hex": "#150e26",
+    "rgb": [
+      21,
+      14,
+      38
+    ],
+    "role_guess": "ink",
+    "weight_pct": 5.33
+  },
+  {
+    "hex": "#1b0d22",
+    "rgb": [
+      27,
+      13,
+      34
+    ],
+    "role_guess": "ink",
+    "weight_pct": 5.03
+  },
+  {
+    "hex": "#181b3b",
+    "rgb": [
+      24,
+      27,
+      59
+    ],
+    "role_guess": "screen-blue",
+    "weight_pct": 5.02
+  },
+  {
+    "hex": "#0e020c",
+    "rgb": [
+      14,
+      2,
+      12
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.87
+  },
+  {
+    "hex": "#13091d",
+    "rgb": [
+      19,
+      9,
+      29
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.8
+  },
+  {
+    "hex": "#0a020e",
+    "rgb": [
+      10,
+      2,
+      14
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.72
+  },
+  {
+    "hex": "#0d0413",
+    "rgb": [
+      13,
+      4,
+      19
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.67
+  },
+  {
+    "hex": "#0e081a",
+    "rgb": [
+      14,
+      8,
+      26
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.66
+  },
+  {
+    "hex": "#300e1c",
+    "rgb": [
+      48,
+      14,
+      28
+    ],
+    "role_guess": "doom-purple",
+    "weight_pct": 4.51
+  },
+  {
+    "hex": "#130716",
+    "rgb": [
+      19,
+      7,
+      22
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.51
+  },
+  {
+    "hex": "#180919",
+    "rgb": [
+      24,
+      9,
+      25
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.3
+  },
+  {
+    "hex": "#150c20",
+    "rgb": [
+      21,
+      12,
+      32
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.22
+  },
+  {
+    "hex": "#110d25",
+    "rgb": [
+      17,
+      13,
+      37
+    ],
+    "role_guess": "ink",
+    "weight_pct": 4.16
+  },
+  {
+    "hex": "#120412",
+    "rgb": [
+      18,
+      4,
+      18
+    ],
+    "role_guess": "ink",
+    "weight_pct": 3.89
+  },
+  {
+    "hex": "#220d1f",
+    "rgb": [
+      34,
+      13,
+      31
+    ],
+    "role_guess": "ink",
+    "weight_pct": 3.71
+  },
+  {
+    "hex": "#180512",
+    "rgb": [
+      24,
+      5,
+      18
+    ],
+    "role_guess": "ink",
+    "weight_pct": 3.49
+  },
+  {
+    "hex": "#0e0311",
+    "rgb": [
+      14,
+      3,
+      17
+    ],
+    "role_guess": "ink",
+    "weight_pct": 3.18
+  },
+  {
+    "hex": "#2e2547",
+    "rgb": [
+      46,
+      37,
+      71
+    ],
+    "role_guess": "doom-indigo",
+    "weight_pct": 3.09
+  },
+  {
+    "hex": "#250813",
+    "rgb": [
+      37,
+      8,
+      19
+    ],
+    "role_guess": "ink",
+    "weight_pct": 2.87
+  },
+  {
+    "hex": "#351b33",
+    "rgb": [
+      53,
+      27,
+      51
+    ],
+    "role_guess": "doom-purple",
+    "weight_pct": 2.66
+  },
+  {
+    "hex": "#1d0715",
+    "rgb": [
+      29,
+      7,
+      21
+    ],
+    "role_guess": "ink",
+    "weight_pct": 2.65
+  },
+  {
+    "hex": "#383761",
+    "rgb": [
+      56,
+      55,
+      97
+    ],
+    "role_guess": "screen-blue",
+    "weight_pct": 2.6
+  },
+  {
+    "hex": "#2c1327",
+    "rgb": [
+      44,
+      19,
+      39
+    ],
+    "role_guess": "doom-purple",
+    "weight_pct": 2.42
+  }
+]

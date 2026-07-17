@@ -1,0 +1,81 @@
+{
+  "_meta": {
+    "note": "Generation manifest for generate_images.py. Native format is YAML, but yaml.safe_load (used by --file) parses this JSON as-is: python tools/assets/generate_images.py --file tools/assets/manifests/icons_v1.json --dry-run. See docs/art/ASSET_PIPELINE.md for the full loop and glue caveats (transparent-bg param, JSON-vs-YAML round-trip, art_review bridge).",
+    "palette_source": "docs/art/palette.json (extracted from godot/assets/dump_october_31_2025/hero-bg-2400w.webp)",
+    "palette_anchors": {
+      "ink_black": "#0e020c",
+      "indigo_deep": "#181b3b",
+      "indigo_mid": "#2e2547",
+      "indigo_lit": "#383761",
+      "doom_purple": "#300e1c",
+      "doom_purple_lit": "#351b33",
+      "doom_magenta": "#2c1327",
+      "bone_keyline": "#ece0cf"
+    },
+    "quality_note": "gpt-image-1.5 quality/background are NOT per-asset fields the current generate_images.py reads; it passes only model/prompt/size. default_size below drives size. To actually get alpha, generate_images.py must add background='transparent' to the images.generate call (glue gap flagged in ASSET_PIPELINE.md)."
+  },
+  "schema_version": "1.0",
+  "asset_type": "game_icons",
+  "default_size": "1024x1024",
+  "output_sizes": [1024, 512, 256, 128, 64],
+  "styles": {
+    "global_icon_base": "bold flat vector game icon, single centred symbol, one heavy and consistent stroke weight throughout, strong chunky silhouette that reads clearly at 64x64, flat-ish shading with a single light source (no gradients or painterly rendering), transparent background, no text, no scene, no background props, view-locked straight-on and symmetrical, centered composition",
+    "brand_palette": "limited palette drawn from the P(Doom)1 hero image only: deep indigo #181b3b and #2e2547, lit indigo #383761, doom-purple #300e1c and #351b33, doom-magenta #2c1327, near-black ink #0e020c for shadow, plus a single thin warm bone keyline #ece0cf for edge legibility; no other hues, no white fills except the keyline"
+  },
+  "themes": {
+    "brand_doom": {
+      "style_overrides": ["global_icon_base", "brand_palette"],
+      "color_bias": "cohesive doom-end brand set: indigo and doom-purple bodies, ink shadow, one glowing accent per icon, bone keyline for the outline so every icon reads as one system"
+    }
+  },
+  "assets": [
+    {
+      "id": "icon_doom",
+      "category": "resource_icons",
+      "display_name": "Doom",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a ROBOT-flavoured skull, not a human or organic skull: a machined metal cranium with a smooth angular faceplate, two glowing rectangular optical-sensor eye sockets, a slotted intake grille or vent bars where a jaw would be instead of organic teeth, subtle panel seams and rivets, one small antenna node on top; cold and industrial and menacing, front-on and symmetrical; faceplate in doom-purple #300e1c, deep ink #0e020c shadow, eye-sensors glowing lit-indigo #383761, thin bone #ece0cf keyline. Deliberately NOT teethy, NOT a Heavy-Metal-magazine skull, NOT human anatomy"
+    },
+    {
+      "id": "icon_compute",
+      "category": "resource_icons",
+      "display_name": "Compute",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a stack of GPU / compute cards seen straight-on: three chunky rack blades layered front-to-back with visible parallel cooling fins and one glowing power node, reading as a mini server rack, hard industrial rectangular silhouette; explicitly NOT a flat square microchip and NOT a single CPU die; blades in indigo #181b3b and #2e2547, fins in ink #0e020c, power node glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_money",
+      "category": "resource_icons",
+      "display_name": "Money",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a compact stack of banked credit chips or coins with a single subtle upward arrow behind them signalling funding, bold rounded silhouette, no dollar-sign text; stack in doom-purple #351b33 with ink #0e020c edges, arrow glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_reputation",
+      "category": "resource_icons",
+      "display_name": "Reputation",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold heraldic seal or shield with a single centred star reading as trust and standing, symmetrical and centred, no ribbons or laurels; shield in indigo #2e2547, star glowing lit-indigo #383761, ink #0e020c inner shadow, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_papers",
+      "category": "resource_icons",
+      "display_name": "Papers",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a small fan of two or three overlapping research-paper sheets with one folded corner and a couple of abstract horizontal text-lines, held by a bold bracket clip, reading as published research; sheets faced in bone #ece0cf over an indigo #181b3b backing sheet, ink #0e020c outline, thin bone keyline; flat and iconic"
+    },
+    {
+      "id": "icon_governance",
+      "category": "resource_icons",
+      "display_name": "Governance",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold balance scale on a short pillared plinth reading as oversight, rules and control, perfectly symmetrical and centred; scale and pillar in doom-indigo #2e2547 with a #383761 rim-light along the top edges, ink #0e020c base shadow, thin bone #ece0cf keyline"
+    }
+  ]
+}
