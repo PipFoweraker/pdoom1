@@ -15,6 +15,7 @@ var baseline_doom_integral: int = 0
 var baseline_result: Dictionary = {}
 var leaderboard_entry_uuid: String = ""
 var game_start_time: float = 0.0
+var sync_status_label: Label = null  # Tiny non-blocking remote-sync status blip
 
 func _ready():
 	# Initially hidden
@@ -110,6 +111,11 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 
 	# Store entry UUID globally for leaderboard highlighting
 	GameConfig.latest_leaderboard_entry = leaderboard_entry_uuid
+
+	# Remote leaderboard sync (ADR-0006: pure view side-effect, off the deterministic
+	# path). Fire-and-forget; the local save above already succeeded, so a network
+	# failure just leaves the score local. Only runs when enabled+configured+opted-in.
+	_maybe_submit_remote(entry, game_seed)
 
 	# Set title and colors based on outcome
 	if is_victory:
@@ -211,6 +217,38 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	stats_text += "[center][color=gold][b]⏎ Press ENTER for Leaderboard[/b][/color][/center]"
 
 	stats_label.text = stats_text
+
+func _maybe_submit_remote(entry, game_seed: String) -> void:
+	"""Upload the just-saved score to the global board, if sync is on. Never blocks;
+	shows a tiny status blip that resolves async via submit_completed."""
+	if not LeaderboardSync.should_submit():
+		return
+	_ensure_sync_status_label()
+	sync_status_label.visible = true
+	sync_status_label.text = "Global leaderboard: submitting..."
+	sync_status_label.add_theme_color_override("font_color", Color(0.7, 0.8, 0.9))
+	if not LeaderboardSync.submit_completed.is_connected(_on_sync_submit_completed):
+		LeaderboardSync.submit_completed.connect(_on_sync_submit_completed)
+	LeaderboardSync.submit_score(entry, game_seed, "v" + GameConfig.CURRENT_VERSION)
+
+func _on_sync_submit_completed(success: bool, _added: bool, _rank: int, message: String) -> void:
+	"""Resolve the status blip. Failure is silent-ish: score is already saved locally."""
+	if not is_instance_valid(sync_status_label):
+		return
+	if message == "":
+		message = "saved locally"
+	sync_status_label.text = "Global leaderboard: %s" % message
+	var col := Color(0.6, 1.0, 0.6) if success else Color(0.85, 0.8, 0.55)
+	sync_status_label.add_theme_color_override("font_color", col)
+
+func _ensure_sync_status_label() -> void:
+	if is_instance_valid(sync_status_label):
+		return
+	sync_status_label = Label.new()
+	sync_status_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sync_status_label.add_theme_font_size_override("font_size", 12)
+	var parent: Node = stats_label.get_parent() if stats_label else self
+	parent.add_child(sync_status_label)
 
 func _get_doom_display_color(doom: float) -> String:
 	"""BBCode colour for the final-doom stat — ThemeManager's doom ramp, stroke variant

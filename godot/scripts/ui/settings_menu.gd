@@ -14,6 +14,9 @@ extends Control
 @onready var theme_dropdown = $VBox/SettingsContainer/UISettings/ThemeRow/ThemeDropdown
 @onready var colorblind_checkbox = $VBox/SettingsContainer/AccessibilitySettings/ColorblindRow/CheckBox
 
+# Built programmatically (no .tscn row): global-leaderboard opt-out (default ON).
+var global_leaderboard_checkbox: CheckButton = null
+
 # Section header labels for icon integration
 @onready var audio_label = $VBox/SettingsContainer/AudioSettings/AudioLabel
 @onready var graphics_label = $VBox/SettingsContainer/GraphicsSettings/GraphicsLabel
@@ -30,6 +33,9 @@ func _ready():
 
 	# Add icons to section headers
 	_setup_section_icons()
+
+	# Add the global-leaderboard opt-out under Gameplay (built in code, not the .tscn)
+	_add_global_leaderboard_toggle()
 
 	# Connect theme dropdown
 	theme_dropdown.item_selected.connect(_on_theme_changed)
@@ -131,6 +137,29 @@ func _on_difficulty_changed(index: int):
 	"""Handle difficulty dropdown change"""
 	print("[SettingsMenu] Difficulty changed to: ", ["Easy", "Standard", "Hard"][index])
 	GameConfig.set_setting("difficulty", index, false)
+
+func _add_global_leaderboard_toggle():
+	"""Append a 'Submit Scores to Global Leaderboard' toggle to the Gameplay section.
+	Respects the player's choice (LeaderboardSync.should_submit reads this). Default ON."""
+	var gameplay = get_node_or_null("VBox/SettingsContainer/GameplaySettings")
+	if gameplay == null:
+		return
+	var row = HBoxContainer.new()
+	var label = Label.new()
+	label.text = "Submit Scores to Global Leaderboard"
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	global_leaderboard_checkbox = CheckButton.new()
+	global_leaderboard_checkbox.button_pressed = GameConfig.submit_scores_global
+	global_leaderboard_checkbox.toggled.connect(_on_global_leaderboard_toggled)
+	row.add_child(global_leaderboard_checkbox)
+	gameplay.add_child(row)
+
+func _on_global_leaderboard_toggled(pressed: bool):
+	"""Handle global-leaderboard opt-out toggle"""
+	print("[SettingsMenu] Submit scores to global leaderboard: ", pressed)
+	GameConfig.set_setting("submit_scores_global", pressed, false)
+	NotificationManager.info("Global leaderboard submission " + ("enabled" if pressed else "disabled"))
 
 func _on_colorblind_toggled(pressed: bool):
 	"""Handle colorblind mode toggle"""

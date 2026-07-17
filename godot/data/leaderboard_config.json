@@ -1,0 +1,6 @@
+{
+	"_comment": "Remote leaderboard sync config (client side of the PHP score API). Pip: set base_url + token to the real values, then flip enabled to true, BEFORE producing the alpha build. Default enabled=false + placeholder host so an unconfigured build NEVER touches the network and NEVER errors. The token is a low-value shared secret (X-PDoom-Token) -- acceptable to ship for alpha. endpoint = base_url + '/score_api.php'.",
+	"enabled": false,
+	"base_url": "https://api.example.invalid",
+	"token": "CHANGE_ME_set_a_long_random_token"
+}
