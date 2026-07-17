@@ -582,7 +582,11 @@ func _run_month_playback() -> void:
 		game_state_updated.emit(state.to_dict())
 		for item in r.get("feed", []):
 			var fev: Dictionary = item.get("event", {})
-			action_executed.emit({"success": true, "message": "[color=gray]FEED · %s — %s[/color]" % [
+			# P0: carry the event's channel so the feed UI can filter the low-severity
+			# arxiv/flavour stream out of the default view (EventService tags it "flavour").
+			action_executed.emit({"success": true,
+				"channel": String(fev.get("channel", "normal")),
+				"message": "[color=gray]FEED · %s — %s[/color]" % [
 				String(item.get("source_id", "?")), String(fev.get("name", fev.get("id", "update")))]})
 		match String(r.get("status", "")):
 			"paused_on_window":

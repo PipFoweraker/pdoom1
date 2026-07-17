@@ -463,6 +463,15 @@ func _transform_event(raw: Dictionary) -> Dictionary:
 		"cooldown_turns": rarity_settings.get("cooldown_turns", 20)
 	}
 
+	# P0 feed-flooding fix (playtest 2026-07-17): the entire arxiv/technical-research-breakthrough
+	# deck (200+ entries) fires as flavour and drowns real, actionable events in the feed. Demote
+	# that stream to its own low-severity "flavour" channel on the FEED tier so it never demands a
+	# decision and can be filtered out of the default feed view. Conservative match: only arxiv_*
+	# ids and the technical_research_breakthrough category (genuine policy/incident events untouched).
+	if _is_flavour_event(raw, category):
+		game_event["delivery_tier"] = "feed"
+		game_event["channel"] = "flavour"
+
 	# Add reactions if present (for UI display)
 	if raw.has("safety_researcher_reaction"):
 		game_event["safety_researcher_reaction"] = raw["safety_researcher_reaction"]
@@ -474,6 +483,15 @@ func _transform_event(raw: Dictionary) -> Dictionary:
 		game_event["pdoom_impact"] = raw["pdoom_impact"]
 
 	return game_event
+
+
+func _is_flavour_event(raw: Dictionary, category: String) -> bool:
+	"""True for the low-stakes arxiv/research-breakthrough flavour stream that floods the feed.
+	Kept deliberately narrow so real events (policy, incidents, org founding) are never demoted."""
+	if category.to_lower() == "technical_research_breakthrough":
+		return true
+	var id_str := str(raw.get("id", ""))
+	return id_str.begins_with("arxiv")
 
 
 func _calculate_significance(raw: Dictionary) -> int:

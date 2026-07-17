@@ -74,6 +74,12 @@ var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, t
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
 
+# P0 feed filter (playtest 2026-07-17): the arxiv/technical-research flavour deck floods the
+# feed. Each logged line is recorded here with its channel; the "flavour" channel is hidden
+# by default so real, actionable events aren't crowded out. The toggle flips this.
+var _feed_lines: Array = []              # [{text: String, channel: String}, ...]
+var _feed_important_only: bool = true    # default view hides the flavour spam
+
 # Active dialog state for keyboard shortcuts
 var active_dialog: Control = null
 var active_dialog_buttons: Array = []
@@ -85,12 +91,24 @@ func _ready():
 	# (L0 #620/#608: the duplicate scene-local node was removed from main.tscn)
 	game_manager = GameManager
 
+	# P0 rage-quit friction (playtest 2026-07-17): during a run, a window-close (X / Alt+F4)
+	# should return to the Main Menu instead of quitting straight to desktop. We take over the
+	# tree's close handling here and restore the default in _exit_tree so the menu screens
+	# (which have their own explicit Quit) still close the app normally. The deliberate
+	# quit-to-desktop paths (pause menu, main menu) are untouched.
+	get_tree().set_auto_accept_quit(false)
+
 	# Connect to GameManager signals
 	game_manager.game_state_updated.connect(_on_game_state_updated)
 	game_manager.turn_phase_changed.connect(_on_turn_phase_changed)
 	game_manager.action_executed.connect(_on_action_executed)
 	game_manager.error_occurred.connect(_on_error_occurred)
 	game_manager.actions_available.connect(_on_actions_available)
+
+	# P0 feed filter: the WATCH screen owns the "Hide arxiv flood" toggle; re-render on flip.
+	if watch_screen and watch_screen.has_signal("feed_filter_changed"):
+		watch_screen.feed_filter_changed.connect(_on_feed_filter_changed)
+		_feed_important_only = watch_screen.feed_filter_button.button_pressed
 
 	# #622 L10: event dialog presenter (script-instantiated child, same mount pattern as
 	# the #500 selector). Choices route back through game_manager.resolve_event so the
@@ -976,7 +994,13 @@ func _on_action_executed(result: Dictionary):
 	print("[MainUI] Action executed: ", result)
 
 	var message = result.get("message", "Action completed")
-	log_message("[color=lime]" + message + "[/color]")
+	# P0: FEED items carry a channel ("flavour" for the arxiv stream) so the feed filter can
+	# collapse the spam. FEED lines are already BBCode-coloured; don't re-wrap them in lime.
+	var channel := String(result.get("channel", "normal"))
+	if channel != "normal":
+		log_message(message, channel)
+	else:
+		log_message("[color=lime]" + message + "[/color]")
 
 	# EE-7: resource-affecting events/actions state their applied deltas explicitly
 	var deltas: Dictionary = result.get("deltas", {})
@@ -999,20 +1023,66 @@ func _on_error_occurred(error_msg: String):
 	print("[MainUI] Error: ", error_msg)
 	log_message("[color=red]ERROR: " + error_msg + "[/color]")
 
-func log_message(text: String):
+func _notification(what: int) -> void:
+	# P0 rage-quit friction: intercept the window-manager close during a run and route to the
+	# Main Menu instead of quitting to desktop. Quit-to-desktop stays available from the pause
+	# menu ("Quit to Desktop") and the main menu itself.
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("[MainUI] Window close during run -> returning to main menu (rage-quit friction)")
+		GameConfig.save_config()
+		get_tree().paused = false
+		get_tree().set_auto_accept_quit(true)  # menu screen should close the app normally
+		get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+
+func _exit_tree() -> void:
+	# Restore default close handling when leaving the run (Main Menu / defeat / quit), so the
+	# menu screens close the app on X as expected.
+	if is_inside_tree() and get_tree() != null:
+		get_tree().set_auto_accept_quit(true)
+
+func log_message(text: String, channel: String = "normal"):
 	"""Add a message to the log with an in-game date stamp (playtest: real-seconds
 	timestamps were meaningless to players — show the calendar date instead, reusing
-	GameState.get_formatted_date(), the same helper the HUD date badge uses)."""
+	GameState.get_formatted_date(), the same helper the HUD date badge uses).
+
+	P0 feed filter: every line is recorded with its channel so the "Hide arxiv flood"
+	toggle can suppress the low-severity `flavour` stream from the default view without
+	losing it. Only lines that pass the current filter are appended to the visible log."""
 	var date_stamp := "?"
 	if game_manager != null and game_manager.state != null:
 		date_stamp = game_manager.state.get_formatted_date()
-	message_log.text += "\n[color=gray][%s][/color] %s" % [date_stamp, text]
+	var line := "[color=gray][%s][/color] %s" % [date_stamp, text]
+	_feed_lines.append({"text": line, "channel": channel})
+	if not _feed_passes_filter(channel):
+		return  # recorded but hidden under the current filter
+	message_log.text += "\n" + line
 
 	# Auto-scroll to bottom
 	await get_tree().process_frame
 	var scroll = message_log.get_parent() as ScrollContainer
 	if scroll:
 		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
+
+func _feed_passes_filter(channel: String) -> bool:
+	"""A line is visible unless the 'important only' filter is on and it's flavour spam."""
+	return not (_feed_important_only and channel == "flavour")
+
+func _render_feed() -> void:
+	"""Rebuild the visible feed from the recorded lines under the current filter (called when
+	the player flips the 'Hide arxiv flood' toggle)."""
+	var text := ""
+	for entry in _feed_lines:
+		if _feed_passes_filter(String(entry.get("channel", "normal"))):
+			text += "\n" + String(entry.get("text", ""))
+	message_log.text = text
+	await get_tree().process_frame
+	var scroll = message_log.get_parent() as ScrollContainer
+	if scroll:
+		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
+
+func _on_feed_filter_changed(important_only: bool) -> void:
+	_feed_important_only = important_only
+	_render_feed()
 
 func _on_actions_available(actions: Array):
 	"""Populate action list with icon buttons in a grid layout"""
