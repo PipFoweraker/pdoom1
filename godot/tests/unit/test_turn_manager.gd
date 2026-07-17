@@ -457,3 +457,35 @@ func test_insider_threat_key_resignation_safe_with_no_researchers():
 	var after_level: float = state.doom_system.current_doom if state.doom_system else state.doom
 	assert_gt(after_level, before_level, "the buffered risk shock lands on the next tick")
 	assert_lt(state.reputation, initial_reputation, "Scalar reputation effect still applies")
+
+# --- No free per-turn candidate refill (hiring-pipeline redesign) -------------------------
+
+func test_no_free_per_turn_candidate_refill():
+	# The old placeholder topped the 6-slot pool back up for FREE every turn; that is REMOVED.
+	# With no sourcing (advertise/connections) active, an emptied pool must STAY empty as turns
+	# advance -- new candidates now come only from the turn-0 seed + the paid pipeline.
+	state.candidate_pool.clear()
+	for i in range(8):
+		state.doom = 5.0  # keep the short run alive
+		if state.doom_system != null:
+			state.doom_system.current_doom = 5.0
+		turn_manager.start_turn()
+		# Clear any events so execute_turn doesn't stall on pending windows.
+		state.pending_events.clear()
+		turn_manager.execute_turn()
+		assert_eq(state.candidate_pool.size(), 0,
+			"an empty pool does NOT auto-refill on turn %d (no free per-turn top-up)" % state.turn)
+
+func test_starting_pool_does_not_grow_across_turns():
+	# The turn-0 founding team is fixed at four; advancing turns must not silently grow it.
+	var start_size: int = state.candidate_pool.size()
+	assert_eq(start_size, 4, "the founding team seeds four starters")
+	for i in range(6):
+		state.doom = 5.0
+		if state.doom_system != null:
+			state.doom_system.current_doom = 5.0
+		turn_manager.start_turn()
+		state.pending_events.clear()
+		turn_manager.execute_turn()
+	assert_eq(state.candidate_pool.size(), start_size,
+		"pool size is unchanged across turns without sourcing (no free refill)")

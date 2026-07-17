@@ -126,6 +126,41 @@
 			"costs": {},
 			"category": "influence",
 			"is_submenu": true
+		},
+		{
+			"id": "advertise",
+			"name": "Advertise a Role",
+			"description": "SOURCE: spend money + Attention to run a hiring campaign. Candidates trickle into the pool over the coming months (also raises your visibility).",
+			"costs": {},
+			"category": "hiring"
+		},
+		{
+			"id": "use_connections",
+			"name": "Work Your Connections",
+			"description": "SOURCE: spend a favor (reputation) + Attention for one fast, pre-vetted lead. Success scales with your standing; the favor is spent whether or not it lands.",
+			"costs": {},
+			"category": "hiring"
+		},
+		{
+			"id": "interview_next",
+			"name": "Interview a Candidate",
+			"description": "INTERVIEW: spend Attention to interview the least-known pool candidate (triage). Reveals more of their card after a few days. Hiring blind is legal but leaves more hidden.",
+			"costs": {},
+			"category": "hiring"
+		},
+		{
+			"id": "hire_best",
+			"name": "Make an Offer",
+			"description": "OFFER: offer at expectation to the strongest available candidate. They decide after a couple of days; if in range they accept, then onboard before becoming productive.",
+			"costs": {},
+			"category": "hiring"
+		},
+		{
+			"id": "onboard_next",
+			"name": "Onboard New Hires",
+			"description": "ONBOARD: spend Attention (+ money) on the checklist (laptop, visa, mentoring). Un-onboarded hires are barely productive; skipping mentoring risks early attrition.",
+			"costs": {},
+			"category": "hiring"
 		}
 	]
 }

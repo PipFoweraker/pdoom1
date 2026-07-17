@@ -11,9 +11,25 @@ extends VBoxContainer
 @onready var message_scroll: ScrollContainer = $MessageScroll
 @onready var message_log: RichTextLabel = $MessageScroll/MessageLog
 
+## P0 feed filter (playtest 2026-07-17): toggled ON = hide the low-severity arxiv/flavour
+## stream that floods the feed; OFF = show everything. main_ui listens and re-renders.
+signal feed_filter_changed(important_only: bool)
+var feed_filter_button: CheckButton
+
 
 func _ready() -> void:
 	# The feed reads in the terminal register: monospace, dim phosphor text.
 	TerminalTheme.style_feed(message_log)
 	message_log_label.add_theme_color_override("font_color", TerminalTheme.GREEN_DIM)
 	message_log_label.text = "Feed — the month as it happens:"
+
+	# P0: a cheap "All / Important" filter for the feed. Default ON so the arxiv-flavour
+	# spam is collapsed and real events stay legible; the player can flip it to see the lot.
+	feed_filter_button = CheckButton.new()
+	feed_filter_button.text = "Hide arxiv flood"
+	feed_filter_button.button_pressed = true
+	feed_filter_button.tooltip_text = "Collapse the low-severity arxiv/research-flavour feed stream"
+	feed_filter_button.add_theme_color_override("font_color", TerminalTheme.GREEN_DIM)
+	feed_filter_button.toggled.connect(func(on: bool): feed_filter_changed.emit(on))
+	add_child(feed_filter_button)
+	move_child(feed_filter_button, message_log_label.get_index() + 1)

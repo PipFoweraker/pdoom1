@@ -186,10 +186,8 @@ func show_staff_id_card(data: Dictionary) -> void:
 	researcher.jet_lag_turns = data.get("jet_lag_turns", 0)
 	researcher.jet_lag_severity = data.get("jet_lag_severity", 0.0)
 
-	# Copy traits
-	var traits = data.get("traits", [])
-	for trait_id in traits:
-		researcher.traits.append(trait_id)
+	# (Legacy traits retired -> the hidden quirk layer is restored via Researcher.from_dict
+	# on the real load path; this lightweight card builder just skips it.)
 
 	# Add blocker behind panel
 	var blocker = ColorRect.new()

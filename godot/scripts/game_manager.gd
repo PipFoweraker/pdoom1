@@ -542,17 +542,12 @@ func end_month():
 		error_occurred.emit("No actions queued")
 		return
 
-	# Implicit reserve (v1): every Attention point not spent on strategic work guards this
-	# month's response windows. The full plan screen makes this an explicit dial.
-	if state.month_plan != null:
-		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent)
-
 	print("[GameManager] Committing month plan (%d actions)..." % state.queued_actions.size())
 	turn_phase_changed.emit("turn_end")
 
 	# Execute the OPEN plan turn (started at the previous boundary / game start).
-	# L2 (ADR-0011): Attention was spent at queue time; the implicit reserve above already
-	# banked the unspent remainder. No per-turn AP pool debit here.
+	# L2 (ADR-0011): Attention was spent at queue time; per-action self-charging (the hiring
+	# pipeline, etc.) also debits Attention HERE, at execution. No per-turn AP pool debit.
 	var result = turn_manager.execute_turn()
 	if result.has("action_results"):
 		for action_result in result["action_results"]:
@@ -560,6 +555,16 @@ func end_month():
 	game_state_updated.emit(state.to_dict())
 	if state.game_over:
 		return
+
+	# Implicit reserve (v1): every Attention point NOT spent by this month's executed actions
+	# now guards the response windows during day-tick playback (_run_month_playback, below).
+	# This MUST run AFTER execute_turn: execution-time self-charging actions (hiring pipeline)
+	# spend from `available` (= total - spent - reserved); setting the reserve first drives
+	# available to 0 and starves them. Reserving the post-execution remainder is both the fix
+	# and the correct semantics -- the reserve protects what's left once commitments have run.
+	# The full plan screen makes this an explicit dial.
+	if state.month_plan != null:
+		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent)
 
 	month_playback_active = true
 	_run_month_playback()  # async — runs day ticks until window-pause or month boundary
@@ -577,7 +582,11 @@ func _run_month_playback() -> void:
 		game_state_updated.emit(state.to_dict())
 		for item in r.get("feed", []):
 			var fev: Dictionary = item.get("event", {})
-			action_executed.emit({"success": true, "message": "[color=gray]FEED · %s — %s[/color]" % [
+			# P0: carry the event's channel so the feed UI can filter the low-severity
+			# arxiv/flavour stream out of the default view (EventService tags it "flavour").
+			action_executed.emit({"success": true,
+				"channel": String(fev.get("channel", "normal")),
+				"message": "[color=gray]FEED · %s — %s[/color]" % [
 				String(item.get("source_id", "?")), String(fev.get("name", fev.get("id", "update")))]})
 		match String(r.get("status", "")):
 			"paused_on_window":
@@ -890,3 +899,60 @@ func resolve_window(event: Dictionary, response: String) -> Dictionary:
 	if state == null:
 		return {"success": false, "message": "no active game"}
 	return WindowResolver.resolve(state, state.month_plan, event, response, state.rng)
+
+
+# ============================================================================
+# HIRING PIPELINE (Phase B) — thin delegates for the plan-screen hiring panel + tests.
+# The mechanics live on state.hiring (HiringPipeline); these just forward through the
+# GameManager the UI already speaks to. Targeted (candidate-specific) stages take a
+# candidate_id; the no-target menu drivers live in GameActions (advertise/interview_next/...).
+# ============================================================================
+
+func get_hiring() -> HiringPipeline:
+	return state.hiring if state else null
+
+
+func hiring_advertise() -> Dictionary:
+	"""SOURCE (advertise channel): launch a money-funded campaign that trickles candidates."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.advertise(state)
+
+
+func hiring_use_connections() -> Dictionary:
+	"""SOURCE (connections channel): spend a favor for one fast pre-vetted lead."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.use_connections(state)
+
+
+func hiring_interview(candidate_id: String) -> Dictionary:
+	"""INTERVIEW a specific pool candidate (triage) -> reveals their card after a delay."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.launch_interview(state, candidate_id)
+
+
+func hiring_offer(candidate_id: String, cash: float, promises: Array = []) -> Dictionary:
+	"""OFFER a specific candidate `cash`, optionally attaching appetite promises (which mint
+	ledger obligations on acceptance)."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.make_offer(state, candidate_id, cash, promises)
+
+
+func hiring_read(candidate_id: String, promises: Array = []) -> Dictionary:
+	"""The recruiter/lieutenant negotiation read for a pool candidate (narrowed visible band)."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	var cand := state.hiring.find_pool_candidate(state, candidate_id)
+	if cand == null:
+		return {"success": false, "message": "no such candidate"}
+	return state.hiring.negotiation_read(state, cand, promises)
+
+
+func hiring_onboard_step(candidate_id: String, item: String) -> Dictionary:
+	"""ONBOARD: complete one checklist item (laptop / visa / mentoring) for a new hire."""
+	if state == null or state.hiring == null:
+		return {"success": false, "message": "no active game"}
+	return state.hiring.onboard_step(state, candidate_id, item)

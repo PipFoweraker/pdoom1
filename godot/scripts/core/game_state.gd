@@ -63,6 +63,11 @@ var financing_offers: Array = []
 # is the day-grained resolution tick. Rebuilt per game in reset().
 var month_plan: MonthPlan
 
+# The hiring pipeline (Phase B / BUILD_BRIEF_HIRING_PIPELINE): source -> interview -> offer
+# -> onboard. Instance state (campaigns, in-flight duration jobs), rebuilt per game in
+# reset(). Deterministic; spends Attention through month_plan and mints promises on the ledger.
+var hiring: HiringPipeline
+
 # EE-8 (ADR-0012): chronological CONTRIBUTING-CAUSE log for root-cause death
 # attribution. Ledger defaults, governance deficits, secret exposures, rep collapse
 # and funding starvation are appended here with turn stamps, so a death can be traced
@@ -223,6 +228,8 @@ func reset():
 	# month ordinal is derived from the calendar (turn 0 -> ordinal 0).
 	month_plan = MonthPlan.new()
 	month_plan.begin_month(Balance.inum("attention.per_month", 20), 0)
+	hiring = HiringPipeline.new()  # Phase B: fresh pipeline per game (created BEFORE candidates
+	                               # are populated so add_candidate can stamp their ids)
 	cause_log.clear()      # EE-8: fresh attribution trail per game
 	rep_collapse_noted = false
 	funding_starvation_noted = false
@@ -537,13 +544,19 @@ func get_researcher_count_by_spec(spec: String) -> int:
 			count += 1
 	return count
 
-func add_researcher(researcher: Researcher):
-	"""Add a researcher to the team"""
-	# Phase A hiring model: an employed person is fully known on their card (skill,
-	# appetites, loyalty-risk all revealed) and marked EMPLOYED. The QUIRK deliberately
-	# stays hidden until an exposure event -- employing someone does not surface it (A2).
-	researcher.set_reveal_level(Researcher.MAX_REVEAL)
+func add_researcher(researcher: Researcher, full_reveal: bool = true):
+	"""Add a researcher to the team.
+	Phase A hiring model: a DIRECTLY-hired person is fully known on their card (skill,
+	appetites, loyalty-risk all revealed) and marked EMPLOYED. The QUIRK deliberately
+	stays hidden until an exposure event -- employing someone does not surface it (A2).
+	Phase B: a PIPELINE hire passes full_reveal=false -- a blind hire (skipped interviews)
+	keeps whatever stayed hidden (the scouting gamble). Ensure a stable candidate_id so the
+	pipeline can reference the employee (onboarding, recruiter reads)."""
+	if full_reveal:
+		researcher.set_reveal_level(Researcher.MAX_REVEAL)
 	researcher.hire_state = Researcher.HireState.EMPLOYED
+	if researcher.candidate_id == "" and hiring != null:
+		hiring.stamp_candidate(researcher)
 	researchers.append(researcher)
 
 	# Update legacy counts for backward compatibility
@@ -572,6 +585,11 @@ func remove_researcher(researcher: Researcher):
 
 func add_candidate(candidate: Researcher):
 	"""Add a candidate to the hiring pool"""
+	# Phase B: stamp a stable id (+ deterministic visa flag) so the pipeline can reference
+	# this candidate across save/load. Covers every creation path (initial pool, turn trickle,
+	# sourcing channels).
+	if hiring != null:
+		hiring.stamp_candidate(candidate)
 	if candidate_pool.size() < MAX_CANDIDATES:
 		candidate_pool.append(candidate)
 
@@ -594,31 +612,44 @@ func get_candidates_by_spec(spec: String) -> Array[Researcher]:
 			matches.append(candidate)
 	return matches
 
+# Threshold at/above which an appetite counts as a "strong/notable" hidden rider. The
+# guaranteed-rider assignment sets its chosen appetite at or above this, and tests key off it.
+const STARTER_STRONG_APPETITE: float = 0.8
+
 func _populate_initial_candidates():
-	"""Generate 2-3 starting candidates (lower quality for early game)"""
-	# Always at least 1 safety researcher to start
-	var safety_candidate = Researcher.new()
-	safety_candidate.generate_random(rng)
-	safety_candidate.specialization = "safety"
-	# Lower skill for starting candidates
-	safety_candidate.skill_level = rng.randi_range(1, 3)
-	add_candidate(safety_candidate)
+	"""Seed the turn-0 founding team: EXACTLY 4 starter candidates, each GUARANTEED a hidden
+	rider (Pip ruling). Framing (Pip): these are the "starter pokemon" -- they accrue the most
+	experience and become the deepest in trust/seniority late-game, so a guaranteed latent rider
+	creates long-term narrative drama. The rider is either a rare quirk OR a strong appetite; it
+	starts HIDDEN (quirk_known stays false; a strong appetite only surfaces at the appetite
+	reveal layer) and reveal_level stays REVEAL_UNINTERVIEWED. Deterministic from the seeded rng
+	(replay-safe, ADR-0006). Normal sourced candidates keep their existing chance-based riders --
+	only these four founders are guaranteed one."""
+	var specs := ["safety", "capabilities", "interpretability", "alignment"]
+	for i in range(4):
+		var cand := Researcher.new()
+		cand.generate_random(rng)
+		# First starter is always a safety anchor; the others rotate the lanes.
+		cand.specialization = "safety" if i == 0 else specs[rng.randi() % specs.size()]
+		# Lower skill for early-game starting candidates.
+		cand.skill_level = rng.randi_range(1, 3)
+		cand.base_productivity = 0.5 + (cand.skill_level * 0.1)
+		_assign_guaranteed_rider(cand)
+		add_candidate(cand)
 
-	# Second candidate - 50% safety, 50% capabilities
-	var second = Researcher.new()
-	second.generate_random(rng)
-	second.specialization = "safety" if rng.randf() < 0.5 else "capabilities"
-	second.skill_level = rng.randi_range(1, 3)
-	add_candidate(second)
-
-	# Third candidate (50% chance)
+func _assign_guaranteed_rider(candidate: Researcher) -> void:
+	"""Give a founding-team starter a GUARANTEED, still-HIDDEN rider, drawn from the seeded rng
+	(deterministic). Coin-flip between the two rider kinds so the four founders vary:
+	  - quirk rider: a rare quirk (hidden until an exposure event; quirk_known stays false)
+	  - appetite rider: one appetite pushed to STARTER_STRONG_APPETITE+ (hidden until the
+	    appetite reveal layer, revealed only by interviewing)
+	Either way the card shows nothing extra at reveal 0 -- the depth is latent."""
 	if rng.randf() < 0.5:
-		var third = Researcher.new()
-		third.generate_random(rng)
-		var specs = ["safety", "capabilities", "interpretability", "alignment"]
-		third.specialization = specs[rng.randi() % specs.size()]
-		third.skill_level = rng.randi_range(1, 3)
-		add_candidate(third)
+		candidate.quirk = QuirkCatalogue.pick_id(rng)  # from the data-driven catalogue
+		candidate.quirk_known = false
+	else:
+		var key: String = Researcher.APPETITE_KEYS[rng.randi() % Researcher.APPETITE_KEYS.size()]
+		candidate.appetites[key] = clampf(STARTER_STRONG_APPETITE + rng.randf() * 0.2, STARTER_STRONG_APPETITE, 1.0)
 
 func get_management_capacity() -> int:
 	"""How many employees can current managers handle?"""
@@ -893,6 +924,7 @@ func to_dict() -> Dictionary:
 		"governance": governance,
 		"ledger": ledger.to_dict() if ledger else {},
 		"month_plan": month_plan.to_dict() if month_plan else {},  # L1/ADR-0009 Attention + reserve + WIP
+		"hiring": hiring.to_dict() if hiring else {},  # Phase B pipeline: campaigns + in-flight jobs
 		"cause_log": cause_log.duplicate(true),  # EE-8 attribution trail
 		# Doom-adjacent floats are SNAPPED at the serialization boundary (both directions,
 		# same quantum as DoomSystem.SAVE_QUANTUM): the stream model produces full-precision
@@ -1091,6 +1123,13 @@ func from_dict(data: Dictionary) -> void:
 	if month_plan == null:
 		month_plan = MonthPlan.new()
 	month_plan.from_dict(data.get("month_plan", {}))
+
+	# Restore the hiring pipeline (Phase B: campaigns + in-flight duration jobs + id serial).
+	# Candidate/employee onboarding + reveal state ride on the Researcher records themselves,
+	# restored below; this restores the campaign/job bookkeeping and the id counter.
+	if hiring == null:
+		hiring = HiringPipeline.new()
+	hiring.from_dict(data.get("hiring", {}))
 
 	# Restore doom system
 	if doom_system and data.has("doom_system"):

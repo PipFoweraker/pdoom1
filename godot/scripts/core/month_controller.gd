@@ -82,6 +82,12 @@ func advance_tick() -> Dictionary:
 	# Release duration-elapsed strategic WIP (seam: caller/L2 applies their effects).
 	last_released_strategic = state.month_plan.take_due_strategic(state.turn)
 
+	# Hiring pipeline (Phase B): resolve any interview/offer/connections jobs due this tick.
+	# Stream-neutral when no jobs are in flight (guarded inside on_tick), so pre-existing
+	# replays are unaffected.
+	if state.hiring != null:
+		state.hiring.on_tick(state)
+
 	var fired: Array = state.pending_events.duplicate()
 	state.pending_events.clear()
 	var surfaced := _dispatch(fired)
@@ -261,3 +267,32 @@ func _open_plan_month(mi: int) -> void:
 	windows_surfaced_this_month = 0
 	var ordinal := Clock.month_ordinal_since_start(state.turn, state.start_year, state.start_month, state.start_day)
 	state.month_plan.begin_month(Balance.inum("attention.per_month", 20), ordinal)
+	# Hiring pipeline (Phase B): advertise campaigns trickle candidates, un-mentored hires face
+	# their attrition roll. Stream-neutral when no campaign/at-risk hire is live (guarded).
+	if state.hiring != null:
+		var hiring_events: Array = state.hiring.on_month_boundary(state)
+		_surface_hiring_notifications(hiring_events)
+
+
+func _surface_hiring_notifications(events: Array) -> void:
+	"""Surface month-boundary hiring outcomes to the player FEED (EventTiers TIER_FEED -- the
+	established readable/no-decision channel; not a new channel). Ad campaigns trickling a
+	candidate in used to be silent; the player now learns the campaign paid off. Batched: one
+	feed line per month, pluralized, so several arrivals don't spam the feed."""
+	var ad_hits := 0
+	for e in events:
+		if e is Dictionary and String(e.get("kind", "")) == "advertise_hit":
+			ad_hits += 1
+	if ad_hits <= 0:
+		return
+	var msg := "An applicant responded to your ad campaign." if ad_hits == 1 \
+		else "%d applicants responded to your ad campaign." % ad_hits
+	var feed_event := {
+		"id": "hiring_ad_response",
+		"name": "Ad campaign response",
+		"delivery_tier": EventTiers.TIER_FEED,
+		"source_id": "hiring",
+		"message": msg,
+		"count": ad_hits,
+	}
+	feed_log.append({"event": feed_event, "source_id": EventTiers.source_id_of(feed_event)})
