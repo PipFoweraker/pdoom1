@@ -61,6 +61,7 @@ var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
 var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
 var employee_panel  # #622 L10: employee roster + staff ID card (becomes L2's assignment surface)
 var screen_mode: ScreenModeController  # Lane 1 / Phase A: PLAN<->WATCH two-screen mode controller
+var _inflight_hiring_box: VBoxContainer  # in-flight hiring jobs + progress, mounted under the queue (VIEW-only)
 # EE-7 (ADR-0012 loss legibility): per-resource "last turn" delta chips beside the
 # money/compute/reputation/doom readouts. Snapshot at each turn boundary; a chip shows
 # the change over the last completed turn, green=helped red=hurt (doom inverted).
@@ -176,6 +177,16 @@ func _ready():
 	# Lane 1 / Phase A: PLAN<->WATCH two-screen scaffold + first terminal-styling pass.
 	# Built AFTER all panels exist so it can register them for per-mode visibility.
 	_setup_plan_watch_scaffold()
+
+	# In-flight hiring tracker: a lightweight Gantt-ish list mounted just under the
+	# committed-month queue in the SHARED instrument column (visible in PLAN and WATCH,
+	# since jobs cook during day-tick playback). Populated by _update_inflight_hiring_display.
+	_inflight_hiring_box = VBoxContainer.new()
+	_inflight_hiring_box.name = "InFlightHiring"
+	_inflight_hiring_box.add_theme_constant_override("separation", 2)
+	_inflight_hiring_box.visible = false
+	instruments.add_child(_inflight_hiring_box)
+	instruments.move_child(_inflight_hiring_box, instruments.queue_panel.get_index() + 1)
 
 	# Always-visible DEV BUILD corner badge so a playtester can confirm exactly which
 	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
@@ -379,6 +390,14 @@ func _input(event: InputEvent):
 			# Only dialog-specific keys (Q/W/E/R/etc and ESC) should work
 			print("[MainUI] Dialog active - blocking non-dialog key: %d" % event.keycode)
 			get_viewport().set_input_as_handled()
+			return
+
+		# Manual PLAN<->WATCH view toggle (V). VIEW-only quick-win: lets the player flip
+		# screens at will to look things over. Works in any phase; never touches the sim.
+		if event.keycode == KEY_V:
+			if screen_mode:
+				screen_mode.toggle_mode()
+				get_viewport().set_input_as_handled()
 			return
 
 		# Main game shortcuts (when no dialog is active)
@@ -698,15 +717,13 @@ func _on_game_state_updated(state: Dictionary):
 	if plan_screen:
 		plan_screen.update_reserve_gauge(state)
 
-	# Update resource displays (Issue #472 - enhanced turn display with calendar)
-	var turn_display = state.get("turn_display", "")
-	if turn_display != "":
-		turn_label.text = turn_display
-	else:
-		turn_label.text = "Turn: %d" % state.get("turn", 0)
-	# Playtest (Pip): the month-year/date badge above has no single number to track
-	# state by. This is a plain "Turn N" counter next to it (#F6 HUD lane).
-	turn_count_label.text = "Turn %d" % state.get("turn", 0)
+	# Turn/time (Pip: "count turns and tell us the date"). ONE tidy element:
+	#   "Turn 14  -  Fri 21 Jul 2017"
+	# turn = the plan/decision period (count it); the calendar date is the human "when".
+	# The old split (month-year badge + separate "Turn N") is folded into this single
+	# label and the now-redundant TurnCountLabel is hidden. VIEW-only (ADR-0006).
+	turn_label.text = _format_turn_datetime(state)
+	turn_count_label.visible = false
 	money_label.text = "💰 %s" % GameConfig.format_money(state.get("money", 0))
 	compute_label.text = "🖥️ %.1f" % state.get("compute", 0)
 	research_label.text = "🔬 %.1f" % state.get("research", 0)
@@ -715,6 +732,10 @@ func _on_game_state_updated(state: Dictionary):
 
 	# EE-7: refresh the per-resource "last turn" delta chips at turn boundaries
 	_update_delta_chips(state)
+
+	# Surface in-flight hiring durations (interview/offer/networking) + onboarding
+	# checklists with progress in the instrument column. VIEW-only (reads state).
+	_update_inflight_hiring_display(state)
 
 	# Add employee blob display to AP label (using BBCode for RichTextLabel)
 	var safety = state.get("safety_researchers", 0)
@@ -3054,6 +3075,122 @@ func _show_conference_attendance_dialog():
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
+
+func _format_turn_datetime(state: Dictionary) -> String:
+	"""ONE tidy turn/time string: "Turn 14  -  Fri 21 Jul 2017". The turn is the plan
+	period (counted); the calendar date is the human "when". Pure formatting off the
+	state payload (turn + calendar dict) -- VIEW-only, no sim/clock mutation. ASCII."""
+	var turn_n := int(state.get("turn", 0))
+	var cal: Dictionary = state.get("calendar", {})
+	if cal.is_empty():
+		return "Turn %d" % turn_n
+	var wd := String(cal.get("weekday", ""))
+	var wd_abbr := wd.substr(0, 3) if wd.length() >= 3 else wd
+	var day := int(cal.get("day", 0))
+	var mi := int(cal.get("month", 1)) - 1
+	var mon: String = Clock.MONTH_ABBR[mi] if mi >= 0 and mi < 12 else "?"
+	var year := int(cal.get("year", 0))
+	return "Turn %d  -  %s %d %s %d" % [turn_n, wd_abbr, day, mon, year]
+
+
+func _update_inflight_hiring_display(state: Dictionary) -> void:
+	"""Surface in-flight hiring durations + onboarding checklists with progress, in the
+	shared instrument column. VIEW-only (ADR-0006): reads the state payload only (hiring
+	jobs, candidate pool, roster); never touches the sim / RNG / turn loop."""
+	if _inflight_hiring_box == null:
+		return
+	for child in _inflight_hiring_box.get_children():
+		child.queue_free()
+
+	var turn_now := int(state.get("turn", 0))
+	var hiring: Dictionary = state.get("hiring", {})
+	var jobs: Array = hiring.get("jobs", [])
+	var pool: Array = state.get("candidate_pool", [])
+	var staff: Array = state.get("researchers", [])
+
+	# candidate_id -> display name (pool candidates + employed onboarding hires)
+	var name_by_id := {}
+	for c in pool:
+		name_by_id[String(c.get("candidate_id", ""))] = String(c.get("name", "?"))
+	for r in staff:
+		name_by_id[String(r.get("candidate_id", ""))] = String(r.get("name", "?"))
+
+	# Each row: {title, done, total, unit}
+	var rows: Array = []
+
+	for job in jobs:
+		var kind := String(job.get("kind", ""))
+		var cid := String(job.get("candidate_id", ""))
+		var who := String(name_by_id.get(cid, ""))
+		var resolves := int(job.get("resolves_on_turn", 0))
+		var remaining: int = max(0, resolves - turn_now)
+		var total := 1
+		var title := ""
+		match kind:
+			"interview":
+				total = Balance.inum("hiring.interview.duration_ticks", 3)
+				title = "Interview: %s" % (who if who != "" else "candidate")
+			"offer":
+				total = Balance.inum("hiring.offer.duration_ticks", 2)
+				title = "Offer: %s" % (who if who != "" else "candidate")
+			"connections":
+				total = Balance.inum("hiring.connections.duration_ticks", 2)
+				title = "Networking: sourcing a lead"
+			_:
+				total = max(1, remaining)
+				title = kind
+		var done: int = clampi(total - remaining, 0, total)
+		rows.append({"title": title, "done": done, "total": total, "unit": "ticks"})
+
+	# Onboarding hires (checklist, not tick-timed): laptop [+ visa]. Legacy/direct hires
+	# default onboarded=true, so only pipeline hires still cooking show here.
+	for r in staff:
+		if bool(r.get("onboarded", true)):
+			continue
+		var need_visa := bool(r.get("needs_visa", false))
+		var steps_total := 2 if need_visa else 1
+		var steps_done := 0
+		if bool(r.get("laptop_done", false)):
+			steps_done += 1
+		if need_visa and bool(r.get("visa_done", false)):
+			steps_done += 1
+		rows.append({"title": "Onboarding: %s" % String(r.get("name", "?")),
+			"done": steps_done, "total": steps_total, "unit": "steps"})
+
+	if rows.is_empty():
+		_inflight_hiring_box.visible = false
+		return
+	_inflight_hiring_box.visible = true
+
+	var header := Label.new()
+	header.text = "IN-FLIGHT HIRING"
+	header.add_theme_font_size_override("font_size", 11)
+	header.add_theme_color_override("font_color", Color(0.7, 0.85, 1.0))
+	_inflight_hiring_box.add_child(header)
+
+	for row in rows:
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", 6)
+		var lbl := Label.new()
+		lbl.text = row["title"]
+		lbl.add_theme_font_size_override("font_size", 10)
+		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		line.add_child(lbl)
+		var bar := ProgressBar.new()
+		bar.min_value = 0
+		bar.max_value = maxi(1, int(row["total"]))
+		bar.value = int(row["done"])
+		bar.show_percentage = false
+		bar.custom_minimum_size = Vector2(60, 12)
+		bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		line.add_child(bar)
+		var ticks := Label.new()
+		ticks.text = "%d/%d %s" % [int(row["done"]), int(row["total"]), row["unit"]]
+		ticks.add_theme_font_size_override("font_size", 10)
+		ticks.add_theme_color_override("font_color", Color(0.8, 0.8, 0.6))
+		line.add_child(ticks)
+		_inflight_hiring_box.add_child(line)
+
 
 func update_queued_actions_display():
 	"""Update the visual queue display and message log"""
