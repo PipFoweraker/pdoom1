@@ -137,3 +137,12 @@ generate_icons.py
 # Third-party visual references (Pip mind-dump 2026-07-16) — NOT committed (copyright).
 # Aesthetic notes derived from these live in docs/game-design/WORLD_AND_LORE.md.
 art_prompts/16-july-2-26-dump/
+
+# Music reference tracks -- personal/copyrighted, NEVER committed. Only the
+# numeric JSON profiles (tools/music/profiles/, kept via .gitkeep) are tracked.
+# See tools/music/README.md. Cover both dir spellings + all audio formats.
+tools/music/ref_local/
+tools/music/refs_local/
+tools/music/**/*.flac
+tools/music/**/*.mp3
+tools/music/**/*.wav
