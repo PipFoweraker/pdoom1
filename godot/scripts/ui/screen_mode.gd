@@ -25,6 +25,7 @@ var current_mode: int = Mode.PLAN
 var banner: PanelContainer
 var watch_bar: PanelContainer
 var _banner_label: RichTextLabel
+var _toggle_button: Button       # manual PLAN<->WATCH switch, lives in the banner
 var _day_label: Label
 var _reserve_label: Label
 
@@ -56,12 +57,25 @@ func build_banner() -> PanelContainer:
 	margin.add_theme_constant_override("margin_top", 2)
 	margin.add_theme_constant_override("margin_bottom", 2)
 	banner.add_child(margin)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	margin.add_child(row)
 	_banner_label = RichTextLabel.new()
 	_banner_label.bbcode_enabled = true
 	_banner_label.fit_content = true
 	_banner_label.scroll_active = false
+	_banner_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_banner_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	_banner_label.add_theme_font_override("normal_font", TerminalTheme.mono_font())
-	margin.add_child(_banner_label)
+	row.add_child(_banner_label)
+	# Manual view toggle (quick-win): flip PLAN<->WATCH at will so the player can look
+	# things over. Text shows the target view; also bound to V in main_ui. VIEW-only.
+	_toggle_button = Button.new()
+	_toggle_button.focus_mode = Control.FOCUS_NONE
+	_toggle_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_toggle_button.tooltip_text = "Switch between PLAN and WATCH views (V) -- look things over at will."
+	_toggle_button.pressed.connect(toggle_mode)
+	row.add_child(_toggle_button)
 	return banner
 
 
@@ -129,6 +143,13 @@ func enter_plan() -> void:
 func enter_watch() -> void:
 	set_mode(Mode.WATCH)
 
+func toggle_mode() -> void:
+	"""Manual PLAN<->WATCH switch (quick-win). VIEW-only: flips which screen subtree is
+	visible so the player can look things over; never touches the turn loop / RNG. The
+	game's own phase transitions (COMMIT / month review) still drive the mode as before;
+	this just lets the player peek in between."""
+	set_mode(Mode.WATCH if current_mode == Mode.PLAN else Mode.PLAN)
+
 
 func set_mode(m: int) -> void:
 	current_mode = m
@@ -164,6 +185,9 @@ func update_from_state(state: Dictionary) -> void:
 
 
 func _refresh_banner() -> void:
+	if _toggle_button != null:
+		# Button shows the view it switches TO.
+		_toggle_button.text = "WATCH >" if current_mode == Mode.PLAN else "< PLAN"
 	if _banner_label == null:
 		return
 	if current_mode == Mode.PLAN:

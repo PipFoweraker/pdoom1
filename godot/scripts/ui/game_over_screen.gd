@@ -120,7 +120,10 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	else:
 		title_label.text = "DEFEAT"
 		title_label.add_theme_color_override("font_color", Color(1.0, 0.2, 0.2))  # Red
-		subtitle_label.text = "The AI Destroyed Humanity"
+		# P0 (playtest 2026-07-17): the subtitle used to hardcode "The AI Destroyed Humanity"
+		# even when the run actually died of rep-collapse (doom was only 50). Title the defeat
+		# by its ACTUAL death cause so the headline never lies about what killed you.
+		subtitle_label.text = _get_defeat_title(final_state)
 		subtitle_label.add_theme_color_override("font_color", Color(1.0, 0.6, 0.6))
 
 	# Build statistics display
@@ -217,6 +220,22 @@ func _get_doom_display_color(doom: float) -> String:
 	so it stays legible on the dark panel (L6 unification: was a divergent 30/60/80
 	green/yellow/orange/red copy)."""
 	return "#" + ThemeManager.get_doom_stroke_color(doom).to_html(false)
+
+func _get_defeat_title(final_state: Dictionary) -> String:
+	"""Short honest defeat headline, keyed to the ACTUAL death cause (P0 fix).
+	Order mirrors GameState.check_win_lose(): doom >= 100, then reputation <= 0, then the
+	bankruptcy fallback — so the subtitle always names the counter that ended the run."""
+	var doom = final_state.get("doom", 0)
+	var reputation = final_state.get("reputation", 100)
+
+	if doom >= 100.0:
+		return "The AI Destroyed Humanity"
+	elif reputation <= 0.0:
+		return "You Lost All Credibility"
+	elif final_state.get("money", 0) < 0:
+		return "The Lab Went Bankrupt"
+	else:
+		return "The Experiment Ended"
 
 func _get_defeat_reason(final_state: Dictionary) -> String:
 	"""Generate defeat reason based on final state.

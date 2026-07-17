@@ -61,6 +61,7 @@ var event_dialog  # #622 L10: event dialog presenter (script-instantiated child)
 var ledger_screen  # #622 L10: Liability Ledger UI (leather palette + summary button + screen builder)
 var employee_panel  # #622 L10: employee roster + staff ID card (becomes L2's assignment surface)
 var screen_mode: ScreenModeController  # Lane 1 / Phase A: PLAN<->WATCH two-screen mode controller
+var _inflight_hiring_box: VBoxContainer  # in-flight hiring jobs + progress, mounted under the queue (VIEW-only)
 # EE-7 (ADR-0012 loss legibility): per-resource "last turn" delta chips beside the
 # money/compute/reputation/doom readouts. Snapshot at each turn boundary; a chip shows
 # the change over the last completed turn, green=helped red=hurt (doom inverted).
@@ -73,6 +74,12 @@ var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, t
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
 
+# P0 feed filter (playtest 2026-07-17): the arxiv/technical-research flavour deck floods the
+# feed. Each logged line is recorded here with its channel; the "flavour" channel is hidden
+# by default so real, actionable events aren't crowded out. The toggle flips this.
+var _feed_lines: Array = []              # [{text: String, channel: String}, ...]
+var _feed_important_only: bool = true    # default view hides the flavour spam
+
 # Active dialog state for keyboard shortcuts
 var active_dialog: Control = null
 var active_dialog_buttons: Array = []
@@ -84,12 +91,24 @@ func _ready():
 	# (L0 #620/#608: the duplicate scene-local node was removed from main.tscn)
 	game_manager = GameManager
 
+	# P0 rage-quit friction (playtest 2026-07-17): during a run, a window-close (X / Alt+F4)
+	# should return to the Main Menu instead of quitting straight to desktop. We take over the
+	# tree's close handling here and restore the default in _exit_tree so the menu screens
+	# (which have their own explicit Quit) still close the app normally. The deliberate
+	# quit-to-desktop paths (pause menu, main menu) are untouched.
+	get_tree().set_auto_accept_quit(false)
+
 	# Connect to GameManager signals
 	game_manager.game_state_updated.connect(_on_game_state_updated)
 	game_manager.turn_phase_changed.connect(_on_turn_phase_changed)
 	game_manager.action_executed.connect(_on_action_executed)
 	game_manager.error_occurred.connect(_on_error_occurred)
 	game_manager.actions_available.connect(_on_actions_available)
+
+	# P0 feed filter: the WATCH screen owns the "Hide arxiv flood" toggle; re-render on flip.
+	if watch_screen and watch_screen.has_signal("feed_filter_changed"):
+		watch_screen.feed_filter_changed.connect(_on_feed_filter_changed)
+		_feed_important_only = watch_screen.feed_filter_button.button_pressed
 
 	# #622 L10: event dialog presenter (script-instantiated child, same mount pattern as
 	# the #500 selector). Choices route back through game_manager.resolve_event so the
@@ -176,6 +195,16 @@ func _ready():
 	# Lane 1 / Phase A: PLAN<->WATCH two-screen scaffold + first terminal-styling pass.
 	# Built AFTER all panels exist so it can register them for per-mode visibility.
 	_setup_plan_watch_scaffold()
+
+	# In-flight hiring tracker: a lightweight Gantt-ish list mounted just under the
+	# committed-month queue in the SHARED instrument column (visible in PLAN and WATCH,
+	# since jobs cook during day-tick playback). Populated by _update_inflight_hiring_display.
+	_inflight_hiring_box = VBoxContainer.new()
+	_inflight_hiring_box.name = "InFlightHiring"
+	_inflight_hiring_box.add_theme_constant_override("separation", 2)
+	_inflight_hiring_box.visible = false
+	instruments.add_child(_inflight_hiring_box)
+	instruments.move_child(_inflight_hiring_box, instruments.queue_panel.get_index() + 1)
 
 	# Always-visible DEV BUILD corner badge so a playtester can confirm exactly which
 	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
@@ -379,6 +408,14 @@ func _input(event: InputEvent):
 			# Only dialog-specific keys (Q/W/E/R/etc and ESC) should work
 			print("[MainUI] Dialog active - blocking non-dialog key: %d" % event.keycode)
 			get_viewport().set_input_as_handled()
+			return
+
+		# Manual PLAN<->WATCH view toggle (V). VIEW-only quick-win: lets the player flip
+		# screens at will to look things over. Works in any phase; never touches the sim.
+		if event.keycode == KEY_V:
+			if screen_mode:
+				screen_mode.toggle_mode()
+				get_viewport().set_input_as_handled()
 			return
 
 		# Main game shortcuts (when no dialog is active)
@@ -698,15 +735,13 @@ func _on_game_state_updated(state: Dictionary):
 	if plan_screen:
 		plan_screen.update_reserve_gauge(state)
 
-	# Update resource displays (Issue #472 - enhanced turn display with calendar)
-	var turn_display = state.get("turn_display", "")
-	if turn_display != "":
-		turn_label.text = turn_display
-	else:
-		turn_label.text = "Turn: %d" % state.get("turn", 0)
-	# Playtest (Pip): the month-year/date badge above has no single number to track
-	# state by. This is a plain "Turn N" counter next to it (#F6 HUD lane).
-	turn_count_label.text = "Turn %d" % state.get("turn", 0)
+	# Turn/time (Pip: "count turns and tell us the date"). ONE tidy element:
+	#   "Turn 14  -  Fri 21 Jul 2017"
+	# turn = the plan/decision period (count it); the calendar date is the human "when".
+	# The old split (month-year badge + separate "Turn N") is folded into this single
+	# label and the now-redundant TurnCountLabel is hidden. VIEW-only (ADR-0006).
+	turn_label.text = _format_turn_datetime(state)
+	turn_count_label.visible = false
 	money_label.text = "💰 %s" % GameConfig.format_money(state.get("money", 0))
 	compute_label.text = "🖥️ %.1f" % state.get("compute", 0)
 	research_label.text = "🔬 %.1f" % state.get("research", 0)
@@ -715,6 +750,10 @@ func _on_game_state_updated(state: Dictionary):
 
 	# EE-7: refresh the per-resource "last turn" delta chips at turn boundaries
 	_update_delta_chips(state)
+
+	# Surface in-flight hiring durations (interview/offer/networking) + onboarding
+	# checklists with progress in the instrument column. VIEW-only (reads state).
+	_update_inflight_hiring_display(state)
 
 	# Add employee blob display to AP label (using BBCode for RichTextLabel)
 	var safety = state.get("safety_researchers", 0)
@@ -955,7 +994,13 @@ func _on_action_executed(result: Dictionary):
 	print("[MainUI] Action executed: ", result)
 
 	var message = result.get("message", "Action completed")
-	log_message("[color=lime]" + message + "[/color]")
+	# P0: FEED items carry a channel ("flavour" for the arxiv stream) so the feed filter can
+	# collapse the spam. FEED lines are already BBCode-coloured; don't re-wrap them in lime.
+	var channel := String(result.get("channel", "normal"))
+	if channel != "normal":
+		log_message(message, channel)
+	else:
+		log_message("[color=lime]" + message + "[/color]")
 
 	# EE-7: resource-affecting events/actions state their applied deltas explicitly
 	var deltas: Dictionary = result.get("deltas", {})
@@ -978,20 +1023,66 @@ func _on_error_occurred(error_msg: String):
 	print("[MainUI] Error: ", error_msg)
 	log_message("[color=red]ERROR: " + error_msg + "[/color]")
 
-func log_message(text: String):
+func _notification(what: int) -> void:
+	# P0 rage-quit friction: intercept the window-manager close during a run and route to the
+	# Main Menu instead of quitting to desktop. Quit-to-desktop stays available from the pause
+	# menu ("Quit to Desktop") and the main menu itself.
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		print("[MainUI] Window close during run -> returning to main menu (rage-quit friction)")
+		GameConfig.save_config()
+		get_tree().paused = false
+		get_tree().set_auto_accept_quit(true)  # menu screen should close the app normally
+		get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+
+func _exit_tree() -> void:
+	# Restore default close handling when leaving the run (Main Menu / defeat / quit), so the
+	# menu screens close the app on X as expected.
+	if is_inside_tree() and get_tree() != null:
+		get_tree().set_auto_accept_quit(true)
+
+func log_message(text: String, channel: String = "normal"):
 	"""Add a message to the log with an in-game date stamp (playtest: real-seconds
 	timestamps were meaningless to players — show the calendar date instead, reusing
-	GameState.get_formatted_date(), the same helper the HUD date badge uses)."""
+	GameState.get_formatted_date(), the same helper the HUD date badge uses).
+
+	P0 feed filter: every line is recorded with its channel so the "Hide arxiv flood"
+	toggle can suppress the low-severity `flavour` stream from the default view without
+	losing it. Only lines that pass the current filter are appended to the visible log."""
 	var date_stamp := "?"
 	if game_manager != null and game_manager.state != null:
 		date_stamp = game_manager.state.get_formatted_date()
-	message_log.text += "\n[color=gray][%s][/color] %s" % [date_stamp, text]
+	var line := "[color=gray][%s][/color] %s" % [date_stamp, text]
+	_feed_lines.append({"text": line, "channel": channel})
+	if not _feed_passes_filter(channel):
+		return  # recorded but hidden under the current filter
+	message_log.text += "\n" + line
 
 	# Auto-scroll to bottom
 	await get_tree().process_frame
 	var scroll = message_log.get_parent() as ScrollContainer
 	if scroll:
 		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
+
+func _feed_passes_filter(channel: String) -> bool:
+	"""A line is visible unless the 'important only' filter is on and it's flavour spam."""
+	return not (_feed_important_only and channel == "flavour")
+
+func _render_feed() -> void:
+	"""Rebuild the visible feed from the recorded lines under the current filter (called when
+	the player flips the 'Hide arxiv flood' toggle)."""
+	var text := ""
+	for entry in _feed_lines:
+		if _feed_passes_filter(String(entry.get("channel", "normal"))):
+			text += "\n" + String(entry.get("text", ""))
+	message_log.text = text
+	await get_tree().process_frame
+	var scroll = message_log.get_parent() as ScrollContainer
+	if scroll:
+		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
+
+func _on_feed_filter_changed(important_only: bool) -> void:
+	_feed_important_only = important_only
+	_render_feed()
 
 func _on_actions_available(actions: Array):
 	"""Populate action list with icon buttons in a grid layout"""
@@ -3058,6 +3149,122 @@ func _show_conference_attendance_dialog():
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
+
+func _format_turn_datetime(state: Dictionary) -> String:
+	"""ONE tidy turn/time string: "Turn 14  -  Fri 21 Jul 2017". The turn is the plan
+	period (counted); the calendar date is the human "when". Pure formatting off the
+	state payload (turn + calendar dict) -- VIEW-only, no sim/clock mutation. ASCII."""
+	var turn_n := int(state.get("turn", 0))
+	var cal: Dictionary = state.get("calendar", {})
+	if cal.is_empty():
+		return "Turn %d" % turn_n
+	var wd := String(cal.get("weekday", ""))
+	var wd_abbr := wd.substr(0, 3) if wd.length() >= 3 else wd
+	var day := int(cal.get("day", 0))
+	var mi := int(cal.get("month", 1)) - 1
+	var mon: String = Clock.MONTH_ABBR[mi] if mi >= 0 and mi < 12 else "?"
+	var year := int(cal.get("year", 0))
+	return "Turn %d  -  %s %d %s %d" % [turn_n, wd_abbr, day, mon, year]
+
+
+func _update_inflight_hiring_display(state: Dictionary) -> void:
+	"""Surface in-flight hiring durations + onboarding checklists with progress, in the
+	shared instrument column. VIEW-only (ADR-0006): reads the state payload only (hiring
+	jobs, candidate pool, roster); never touches the sim / RNG / turn loop."""
+	if _inflight_hiring_box == null:
+		return
+	for child in _inflight_hiring_box.get_children():
+		child.queue_free()
+
+	var turn_now := int(state.get("turn", 0))
+	var hiring: Dictionary = state.get("hiring", {})
+	var jobs: Array = hiring.get("jobs", [])
+	var pool: Array = state.get("candidate_pool", [])
+	var staff: Array = state.get("researchers", [])
+
+	# candidate_id -> display name (pool candidates + employed onboarding hires)
+	var name_by_id := {}
+	for c in pool:
+		name_by_id[String(c.get("candidate_id", ""))] = String(c.get("name", "?"))
+	for r in staff:
+		name_by_id[String(r.get("candidate_id", ""))] = String(r.get("name", "?"))
+
+	# Each row: {title, done, total, unit}
+	var rows: Array = []
+
+	for job in jobs:
+		var kind := String(job.get("kind", ""))
+		var cid := String(job.get("candidate_id", ""))
+		var who := String(name_by_id.get(cid, ""))
+		var resolves := int(job.get("resolves_on_turn", 0))
+		var remaining: int = max(0, resolves - turn_now)
+		var total := 1
+		var title := ""
+		match kind:
+			"interview":
+				total = Balance.inum("hiring.interview.duration_ticks", 3)
+				title = "Interview: %s" % (who if who != "" else "candidate")
+			"offer":
+				total = Balance.inum("hiring.offer.duration_ticks", 2)
+				title = "Offer: %s" % (who if who != "" else "candidate")
+			"connections":
+				total = Balance.inum("hiring.connections.duration_ticks", 2)
+				title = "Networking: sourcing a lead"
+			_:
+				total = max(1, remaining)
+				title = kind
+		var done: int = clampi(total - remaining, 0, total)
+		rows.append({"title": title, "done": done, "total": total, "unit": "ticks"})
+
+	# Onboarding hires (checklist, not tick-timed): laptop [+ visa]. Legacy/direct hires
+	# default onboarded=true, so only pipeline hires still cooking show here.
+	for r in staff:
+		if bool(r.get("onboarded", true)):
+			continue
+		var need_visa := bool(r.get("needs_visa", false))
+		var steps_total := 2 if need_visa else 1
+		var steps_done := 0
+		if bool(r.get("laptop_done", false)):
+			steps_done += 1
+		if need_visa and bool(r.get("visa_done", false)):
+			steps_done += 1
+		rows.append({"title": "Onboarding: %s" % String(r.get("name", "?")),
+			"done": steps_done, "total": steps_total, "unit": "steps"})
+
+	if rows.is_empty():
+		_inflight_hiring_box.visible = false
+		return
+	_inflight_hiring_box.visible = true
+
+	var header := Label.new()
+	header.text = "IN-FLIGHT HIRING"
+	header.add_theme_font_size_override("font_size", 11)
+	header.add_theme_color_override("font_color", Color(0.7, 0.85, 1.0))
+	_inflight_hiring_box.add_child(header)
+
+	for row in rows:
+		var line := HBoxContainer.new()
+		line.add_theme_constant_override("separation", 6)
+		var lbl := Label.new()
+		lbl.text = row["title"]
+		lbl.add_theme_font_size_override("font_size", 10)
+		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		line.add_child(lbl)
+		var bar := ProgressBar.new()
+		bar.min_value = 0
+		bar.max_value = maxi(1, int(row["total"]))
+		bar.value = int(row["done"])
+		bar.show_percentage = false
+		bar.custom_minimum_size = Vector2(60, 12)
+		bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		line.add_child(bar)
+		var ticks := Label.new()
+		ticks.text = "%d/%d %s" % [int(row["done"]), int(row["total"]), row["unit"]]
+		ticks.add_theme_font_size_override("font_size", 10)
+		ticks.add_theme_color_override("font_color", Color(0.8, 0.8, 0.6))
+		line.add_child(ticks)
+		_inflight_hiring_box.add_child(line)
+
 
 func update_queued_actions_display():
 	"""Update the visual queue display and message log"""
