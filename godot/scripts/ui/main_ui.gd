@@ -79,6 +79,7 @@ var current_turn_phase: String = "NOT_STARTED"
 # by default so real, actionable events aren't crowded out. The toggle flips this.
 var _feed_lines: Array = []              # [{text: String, channel: String}, ...]
 var _feed_important_only: bool = true    # default view hides the flavour spam
+const FEED_MAX_LINES: int = 500          # cap the backing model so a long run stays bounded (trim oldest)
 
 # Active dialog state for keyboard shortcuts
 var active_dialog: Control = null
@@ -1053,6 +1054,11 @@ func log_message(text: String, channel: String = "normal"):
 		date_stamp = game_manager.state.get_formatted_date()
 	var line := "[color=gray][%s][/color] %s" % [date_stamp, text]
 	_feed_lines.append({"text": line, "channel": channel})
+	# Cap the backing model: trim oldest lines so a long run's feed stays bounded (same
+	# latent unbounded-growth issue the old message_log had). The arxiv-flood filter still
+	# applies within whatever lines remain stored.
+	if _feed_lines.size() > FEED_MAX_LINES:
+		_feed_lines = _feed_lines.slice(_feed_lines.size() - FEED_MAX_LINES)
 	if not _feed_passes_filter(channel):
 		return  # recorded but hidden under the current filter
 	message_log.text += "\n" + line

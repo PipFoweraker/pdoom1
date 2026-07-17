@@ -286,11 +286,6 @@ func _on_main_menu_pressed():
 	print("[GameOverScreen] Main Menu pressed")
 	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
 
-func _on_quit_pressed():
-	"""Quit to desktop"""
-	print("[GameOverScreen] Quit pressed")
-	get_tree().quit()
-
 func _on_meta_clicked(meta):
 	"""Handle URL clicks in the stats label"""
 	print("[GameOverScreen] Opening URL: %s" % meta)
