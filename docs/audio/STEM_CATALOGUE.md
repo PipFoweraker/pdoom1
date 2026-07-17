@@ -7,7 +7,9 @@
 
 ## Music tracks (`godot/assets/audio/music/`)
 
-All six full tracks are DJ-session ambient recorded by Pip; **Pip owns full rights**.
+All six full tracks are DJ-session ambient made by a friend of Pip's and given to the
+project; Pip authored the track NAMES. Per the music brief **Pip holds full rights** --
+worth capturing that agreement in writing (even a saved message) before shipping.
 Source dump duplicates live in `sounds/musicdump/20_nov_2025/` (root of repo, not in
 the Godot project) -- treat `godot/assets/audio/music/` as canonical.
 
