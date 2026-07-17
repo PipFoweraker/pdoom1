@@ -21,11 +21,14 @@ Usage:  python tools/art_review/build.py   ->  writes tools/art_review/style_rev
 import base64
 import json
 import pathlib
+import re
 
 HERE = pathlib.Path(__file__).resolve().parent
 REPO = HERE.parents[1]
 MANIFEST = HERE / "manifest.json"
 SWEEP = HERE / "sweep_prompts.json"
+REROLL = REPO / "art_source/pixellab_2026-07-17/reroll"
+_ROT = re.compile(r"_(north|south|east|west|north-east|north-west|south-east|south-west)$")
 OUT = HERE / "style_review.html"
 
 # Category keys in sweep_prompts.json carry tool hints in their name
@@ -215,6 +218,61 @@ def build_sweep(root_img):
     return '\n    <div class="section-label big">// overnight sweep</div>\n' + "\n".join(sections)
 
 
+def build_reroll():
+    """Render the 2026-07-17 re-roll batch from the filesystem (no manifest):
+    one section per category dir, one row per asset key, rolls side by side."""
+    if not REROLL.is_dir():
+        return ""
+    sections = []
+    for catdir in sorted(p for p in REROLL.iterdir() if p.is_dir()):
+        cat = catdir.name
+        groups = {}
+        for f in sorted(catdir.glob("*.png")):
+            stem = f.stem
+            if _ROT.search(stem):
+                continue  # rotation sheet, not a review image
+            m = re.match(r"^(.*)_(\d+)$", stem)
+            key, roll = (m.group(1), int(m.group(2))) if m else (stem, 1)
+            groups.setdefault(key, {})[roll] = f
+        if not groups:
+            continue
+        rows = []
+        for key in sorted(groups):
+            rolls_html = []
+            for r in sorted(groups[key]):
+                uri = datauri(groups[key][r])
+                item_id = f"reroll:{cat}:{key}:{r}"
+                label = f"{key} roll {r}"
+                rolls_html.append(
+                    f"""
+          <div class="cell sweep-cell" data-item="{item_id}" data-label="{esc(label)}">
+            <div class="roll-idx">#{r}</div>
+            {stage(label, uri, 'pending')}
+            {controls(label)}
+          </div>"""
+                )
+            rows.append(
+                f"""
+      <div class="sweep-row">
+        <div class="sweep-rowhead"><h4>{esc(key)}</h4><p></p></div>
+        <div class="sweep-rolls" style="--cols:{len(groups[key])}">{''.join(rolls_html)}</div>
+      </div>"""
+            )
+        sections.append(
+            f"""
+    <section class="batch" data-batch="reroll:{cat}">
+      <div class="section-label">Re-roll &middot; {esc(cat.title())}</div>
+      <p class="batch-note">2026-07-17 re-roll batch -- keep the best roll, re-roll the rest.</p>
+      <div class="sweep">{''.join(rows)}</div>
+    </section>"""
+        )
+    if not sections:
+        return ""
+    return '\n    <div class="section-label big">// re-roll batch (2026-07-17)</div>\n' + "\n".join(
+        sections
+    )
+
+
 def main():
     m = json.loads(MANIFEST.read_text(encoding="utf-8"))
     img_root = REPO / m["image_root"]
@@ -228,6 +286,7 @@ def main():
         elif b["kind"] == "gallery":
             sections.append(build_gallery(b, root))
     sections.append(build_sweep(img_root))
+    sections.append(build_reroll())
     body = "\n".join(s for s in sections if s)
 
     vpath = HERE / "verdicts.json"
