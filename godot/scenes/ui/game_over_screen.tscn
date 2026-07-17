@@ -86,11 +86,5 @@ custom_minimum_size = Vector2(150, 50)
 layout_mode = 2
 text = "Main Menu"
 
-[node name="QuitButton" type="Button" parent="CenterContainer/PanelContainer/MarginContainer/VBox/ButtonsHBox"]
-custom_minimum_size = Vector2(150, 50)
-layout_mode = 2
-text = "Quit"
-
 [connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBox/ButtonsHBox/PlayAgainButton" to="." method="_on_play_again_pressed"]
 [connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBox/ButtonsHBox/MainMenuButton" to="." method="_on_main_menu_pressed"]
-[connection signal="pressed" from="CenterContainer/PanelContainer/MarginContainer/VBox/ButtonsHBox/QuitButton" to="." method="_on_quit_pressed"]
