@@ -125,16 +125,47 @@ static func staff_rider(name: String) -> Entry:
 		Balance.num("ledger.staff_rider.interest_rate", 0.02))
 
 ## Hiring Phase B: a PROMISE made to win a candidate on appetite instead of cash (ADR-0003
-## "every mitigation is a loan"). A first-authorship / mentorship / compute / mission promise
-## mints a reputation obligation that bills LATER unless honoured -- the negotiation discount
-## you took up front is a debt against your standing. `promise` is the appetite id it feeds.
+## "every mitigation is a loan"). Each promise -> a FUTURE OBLIGATION IN ITS OWN DOMAIN, keyed
+## by the appetite it feeds. currency/noun/magnitude live here; Balance overrides per key.
+##
+## fix/promise-currency (Option B): the promise cost was RE-HOMED off raw reputation. The old
+## version minted a reputation-currency principal (~2000, or a money-scaled salary discount)
+## while reputation STARTS AT 50 and death fires at reputation <= 0 (game_state.gd) -- so a
+## single promise's bill zeroed the whole rep bar and instantly killed the player (a real run
+## died on turn 14 this way). Now each promise bills the thing it actually promised:
+##   first_authorship -> a paper / first-author slot OWED (currency "papers")
+##   compute_budget   -> compute committed to this hire (currency "compute")
+##   mission_charter  -> a standing governance/mission constraint (currency "governance")
+##   mentorship       -> a mentee commitment, also a standing governance obligation
+## Magnitudes are small and survivable (ADR-0003: heterogeneous, not an inevitability queue);
+## the discount-to-self_worth_floor negotiation currency (ADR-0011) is UNCHANGED -- only the
+## COST side moved off reputation.
+const PROMISE_SPEC := {
+	"first_authorship": {"currency": "papers", "noun": "first-author paper slot", "principal": 1.0, "fuse": 10},
+	"compute_budget":   {"currency": "compute", "noun": "compute", "principal": 20.0, "fuse": 8},
+	"mission_charter":  {"currency": "governance", "noun": "governance (mission constraint)", "principal": 6.0, "fuse": 12},
+	"mentorship":       {"currency": "governance", "noun": "governance (mentee commitment)", "principal": 4.0, "fuse": 10},
+}
+
 static func appetite_promise(name: String, promise: String) -> Entry:
-	# interest_rate MUST survive JSON print->parse exactly (see the ledger _description GOTCHA);
-	# 0.008 is on the probe-verified-safe list.
-	return Entry.new("promise:%s:%s" % [promise, name], "reputation",
-		Balance.num("ledger.appetite_promise.principal", 2000.0),
-		Balance.inum("ledger.appetite_promise.fuse_turns", 10),
-		Balance.num("ledger.appetite_promise.interest_rate", 0.008))
+	# interest_rate defaults to 0.0 (these are obligations, not compounding mortality levers) --
+	# 0.0 is trivially JSON-print->parse-safe (see the ledger _description GOTCHA). Principals are
+	# integer-valued so they round-trip exactly too.
+	var spec: Dictionary = PROMISE_SPEC.get(promise, PROMISE_SPEC["mission_charter"])
+	return Entry.new("promise:%s:%s" % [promise, name], String(spec["currency"]),
+		Balance.num("ledger.promise.%s.principal" % promise, float(spec["principal"])),
+		Balance.inum("ledger.promise.%s.fuse_turns" % promise, int(spec["fuse"])),
+		Balance.num("ledger.promise.%s.interest_rate" % promise, 0.0))
+
+## Legibility (fix/promise-currency): the one-line COST a ticked promise will incur, surfaced in
+## the offer flow BEFORE the player commits (main_ui.gd) so the obligation is never opaque.
+static func appetite_promise_cost_text(promise: String) -> String:
+	if not PROMISE_SPEC.has(promise):
+		return ""
+	var spec: Dictionary = PROMISE_SPEC[promise]
+	var principal := int(roundf(Balance.num("ledger.promise.%s.principal" % promise, float(spec["principal"]))))
+	var fuse := Balance.inum("ledger.promise.%s.fuse_turns" % promise, int(spec["fuse"]))
+	return "owes %d %s in ~%d turns" % [principal, String(spec["noun"]), fuse]
 
 ## Hiring Phase B: a lowball offer taken RESENTFULLY plants a loyalty debt -- a governance
 ## liability that bills later (the resentment festering into a governance problem, ADR-0003).
@@ -228,6 +259,19 @@ func _bill(e: Entry, state) -> void:
 			var applied: float = _apply_capped_doom(e, e.principal, state)
 			_attribute(e, applied, state)
 			_note(state, "ledger_doom_bill", e.source, {"doom": applied})
+		"papers":
+			# fix/promise-currency: a first-authorship OWED. Honoured out of produced papers when
+			# it lands; a shortfall lapses (no doom/rep teeth) -- a promise is a survivable future
+			# obligation in its OWN domain, never a mortality lever (the rep-bomb is gone).
+			var papers_paid: float = minf(state.papers, e.principal)
+			state.papers = max(0.0, state.papers - e.principal)
+			_note(state, "ledger_papers_bill", e.source, {"papers": -papers_paid})
+		"compute":
+			# fix/promise-currency: compute committed to this hire, drawn from the fleet when due.
+			# Survivable (compute is not a death condition); any shortfall simply lapses.
+			var compute_paid: float = minf(state.compute, e.principal)
+			state.compute = max(0.0, state.compute - e.principal)
+			_note(state, "ledger_compute_bill", e.source, {"compute": -compute_paid})
 		"action_points":
 			state.action_points = max(0, state.action_points - int(e.principal))
 		"equity", "board_seat", "agenda":

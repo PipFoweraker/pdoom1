@@ -1817,7 +1817,11 @@ func _show_offer_dialog(candidate_id: String) -> void:
 	var promise_boxes := {}
 	for pid in promise_labels:
 		var cb := CheckBox.new()
-		cb.text = promise_labels[pid]
+		# Legibility (fix/promise-currency): show the future obligation each promise costs BEFORE
+		# the player commits, so the ledger cost is never opaque (e.g. "owes 1 first-author paper
+		# slot in ~10 turns"). Cost text is data-driven from the Ledger promise spec.
+		var promise_cost: String = Ledger.appetite_promise_cost_text(pid)
+		cb.text = promise_labels[pid] if promise_cost == "" else "%s -- %s" % [promise_labels[pid], promise_cost]
 		cb.add_theme_font_size_override("font_size", 10)
 		cb.focus_mode = Control.FOCUS_NONE
 		cb.toggled.connect(_on_offer_promise_toggled.bind(candidate_id, promise_boxes, read_lbl, band_lbl))

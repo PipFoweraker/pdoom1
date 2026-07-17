@@ -33,7 +33,13 @@
 		"staff_rider": { "principal": 1200.0, "fuse_turns": 88, "interest_rate": 0.001 },
 		"blackmail": { "principal_multiplier": 1.5, "fuse_turns": 22, "interest_rate": 0.02 },
 		"expose": { "rep_per_1000": 2.5, "governance_multiplier": 0.5 },
-		"appetite_promise": { "principal": 2000.0, "fuse_turns": 10, "interest_rate": 0.008 },
+		"promise": {
+			"_description": "fix/promise-currency (Option B): appetite promises cost a FUTURE OBLIGATION IN THEIR OWN DOMAIN, never raw reputation. The old reputation-currency principal vs a starting rep of 50 (death at rep<=0) was an instant-death trap. Magnitudes are small/survivable; interest 0.0 (obligations, not compounding mortality levers). first_authorship->papers, compute_budget->compute, mission/mentorship->governance.",
+			"first_authorship": { "principal": 1.0, "fuse_turns": 10, "interest_rate": 0.0 },
+			"compute_budget": { "principal": 20.0, "fuse_turns": 8, "interest_rate": 0.0 },
+			"mission_charter": { "principal": 6.0, "fuse_turns": 12, "interest_rate": 0.0 },
+			"mentorship": { "principal": 4.0, "fuse_turns": 10, "interest_rate": 0.0 }
+		},
 		"resentment_debt": { "principal": 1500.0, "fuse_turns": 6, "interest_rate": 0.02 }
 	},
 	"hiring": {
