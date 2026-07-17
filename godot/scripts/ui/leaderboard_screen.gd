@@ -9,6 +9,11 @@ var all_leaderboards: Dictionary = {}  # seed -> Leaderboard
 var all_entries: Array = []  # All entries across all seeds
 var filtered_entries: Array = []  # Current filtered/sorted view
 
+# Remote/global board (LeaderboardSync). Pure view: fetched async, never on a
+# deterministic path. Falls back to local silently on any failure.
+var showing_global: bool = false
+var global_toggle_button: Button = null
+
 # UI References
 @onready var seed_dropdown = $MarginContainer/VBoxContainer/Filters/SeedDropdown
 @onready var entries_container = $MarginContainer/VBoxContainer/LeaderboardPanel/MarginContainer/VBoxContainer/ScrollContainer/EntriesContainer
@@ -24,7 +29,59 @@ func _ready():
 	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Leaderboard screen opened", {})
 	_load_all_leaderboards()
 	_populate_seed_dropdown()
+	_setup_global_toggle()
 	_filter_and_display()
+
+func _setup_global_toggle():
+	"""Add a Local/Global view toggle next to the seed filter, but only when remote
+	sync is enabled+configured. When off/unconfigured the screen stays local-only."""
+	if not LeaderboardSync.can_fetch():
+		return
+	if not is_instance_valid(seed_dropdown):
+		return
+	var container = seed_dropdown.get_parent()
+	if container == null:
+		return
+	global_toggle_button = Button.new()
+	global_toggle_button.toggle_mode = true
+	global_toggle_button.text = "View: Local"
+	global_toggle_button.tooltip_text = "Toggle between your local scores and the global (online) board for this seed"
+	global_toggle_button.toggled.connect(_on_global_toggle)
+	container.add_child(global_toggle_button)
+
+func _on_global_toggle(pressed: bool):
+	showing_global = pressed
+	if pressed:
+		global_toggle_button.text = "View: Global"
+		_fetch_and_show_global()
+	else:
+		global_toggle_button.text = "View: Local"
+		_filter_and_display()
+
+func _fetch_and_show_global():
+	"""Async-fetch the global board for the CURRENT (seed, version) and show it."""
+	var board_seed = GameConfig.get_display_seed()
+	var version = "v" + GameConfig.CURRENT_VERSION
+	subtitle.text = "Global board: fetching %s ..." % board_seed
+	LeaderboardSync.fetch_board(board_seed, version, 100, _on_global_board_fetched)
+
+func _on_global_board_fetched(ok: bool, entries: Array):
+	"""Render the global board, or fall back to local silently on failure."""
+	if not showing_global:
+		return  # User toggled back to Local before the request resolved.
+	if not ok:
+		showing_global = false
+		if is_instance_valid(global_toggle_button):
+			global_toggle_button.set_pressed_no_signal(false)
+			global_toggle_button.text = "View: Local"
+		_filter_and_display()  # Silent local fallback.
+		return
+	filtered_entries = entries.duplicate()
+	current_page = 1
+	subtitle.text = "Global board: %s (v%s)" % [GameConfig.get_display_seed(), GameConfig.CURRENT_VERSION]
+	_display_current_page()
+	_update_pagination_ui()
+	_update_stats()
 
 func _load_all_leaderboards():
 	"""Load all leaderboard files from user directory"""
@@ -109,7 +166,13 @@ func _populate_seed_dropdown():
 	seed_dropdown.select(0)
 
 func _filter_and_display():
-	"""Filter entries based on current seed and display current page"""
+	"""Filter entries based on current seed and display current page (LOCAL view)."""
+	# Any local filter action returns us to the local board.
+	showing_global = false
+	if is_instance_valid(global_toggle_button):
+		global_toggle_button.set_pressed_no_signal(false)
+		global_toggle_button.text = "View: Local"
+
 	# Filter by seed
 	if current_seed == "all":
 		filtered_entries = all_entries.duplicate()

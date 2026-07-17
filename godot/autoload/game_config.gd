@@ -27,6 +27,11 @@ var fullscreen: bool = false
 # Accessibility Settings
 var colorblind_mode: bool = false  # Adds patterns/symbols alongside colors
 
+# Leaderboard Settings
+# Opt-out for uploading scores to the global leaderboard (LeaderboardSync).
+# Default ON for alpha; players who flip it off keep local scores only.
+var submit_scores_global: bool = true
+
 # Game State
 var current_game_active: bool = false
 var games_played: int = 0
@@ -89,6 +94,9 @@ func save_config() -> void:
 	# Accessibility section
 	config.set_value("accessibility", "colorblind_mode", colorblind_mode)
 
+	# Leaderboard section
+	config.set_value("leaderboard", "submit_scores_global", submit_scores_global)
+
 	# Save to file
 	var err = config.save(CONFIG_FILE)
 	if err != OK:
@@ -131,6 +139,9 @@ func load_config() -> void:
 
 	# Load accessibility settings
 	colorblind_mode = config.get_value("accessibility", "colorblind_mode", colorblind_mode)
+
+	# Load leaderboard settings
+	submit_scores_global = config.get_value("leaderboard", "submit_scores_global", submit_scores_global)
 
 	print("[GameConfig] Configuration loaded successfully")
 	config_loaded.emit()
@@ -199,6 +210,8 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			apply_graphics_settings()
 		"colorblind_mode":
 			colorblind_mode = value
+		"submit_scores_global":
+			submit_scores_global = value
 		"baseline_mode":
 			baseline_mode = value
 		_:
