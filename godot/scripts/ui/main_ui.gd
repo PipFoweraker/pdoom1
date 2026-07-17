@@ -1451,7 +1451,7 @@ func _show_hiring_submenu():
 	header.add_theme_color_override("font_color", Color(0.3, 0.8, 0.3))
 	root.add_child(header)
 
-	var att := st.get_available_ap()
+	var att: int = st.get_available_ap()
 	var sub := Label.new()
 	sub.text = "Attention available: %d   |   Money: %s   |   Reputation: %d" % [att, GameConfig.format_money(st.money), int(st.reputation)]
 	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

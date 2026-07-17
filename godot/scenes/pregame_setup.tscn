@@ -282,7 +282,7 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_hover")
 theme_override_styles/hover = SubResource("StyleBoxFlat_focus")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
-text = "▶ INITIALIZE LAB"
+text = ">> INITIALIZE LAB"
 
 [node name="CancelButton" type="Button" parent="Panel/VBox/ButtonRow"]
 custom_minimum_size = Vector2(150, 60)
