@@ -29,21 +29,19 @@ const MUSIC_TIER_NAMES := ["cosy", "uneasy", "spooky", "eldritch", "terminal"]
 ## CATASTROPHIC->eldritch, TERMINAL->terminal.
 const MUSIC_TIER_BY_BAND := [0, 1, 1, 2, 2, 3, 4]
 
-## Placeholder stems per tier. These are FULL owned tracks standing in for
-## real per-tier stems (see docs/audio/STEM_CATALOGUE.md); when composed
-## stems arrive, each tier grows to a multi-stem AudioStreamSynchronized
-## group (base / percussion / weirdness / fire layers) and nothing else
-## has to change. "terminal" already layers two tracks to exercise the
-## AudioStreamSynchronized path (deliberate cacophony at world's end).
+## Composed tier beds (Fable tier-set v0.3, tools/music/jukebox.html --
+## Pip-judged over two listening rounds; GM-placeholder timbres, real
+## composition). Each is a whole-track bed cut to an exact bar-boundary
+## loop at ~-16 LUFS; when per-layer stems are recorded (COMMISSION_LIST),
+## each tier grows to a multi-stem AudioStreamSynchronized group
+## (BASE / PULSE / WEIRD / FIRE) and nothing else has to change.
+## M0-M2 share C @ 104 (one room souring); M3-M4 are D dorian @ 96.
 const MUSIC_TIER_STEMS := [
-	[{"path": "res://assets/audio/music/PDoom1 Descent gradient.mp3", "volume_db": 0.0}],
-	[{"path": "res://assets/audio/music/PDoom1 Local maxima.mp3", "volume_db": 0.0}],
-	[{"path": "res://assets/audio/music/PDoom1 Power spike.mp3", "volume_db": 0.0}],
-	[{"path": "res://assets/audio/music/PDoom1 Undetected sandbagging.mp3", "volume_db": 0.0}],
-	[
-		{"path": "res://assets/audio/music/PDoom1 Undetected sandbagging.mp3", "volume_db": 0.0},
-		{"path": "res://assets/audio/music/PDoom1 Power spike.mp3", "volume_db": -6.0},
-	],
+	[{"path": "res://assets/audio/music/unit_tests_passing.ogg", "volume_db": 0.0}],
+	[{"path": "res://assets/audio/music/distribution_shift.ogg", "volume_db": 0.0}],
+	[{"path": "res://assets/audio/music/proxy_gaming.ogg", "volume_db": 0.0}],
+	[{"path": "res://assets/audio/music/mesa_optimizer.ogg", "volume_db": 0.0}],
+	[{"path": "res://assets/audio/music/treacherous_turn.ogg", "volume_db": 0.0}],
 ]
 
 ## The placeholder tracks carry no BPM metadata, so clips are stamped with a
@@ -61,18 +59,27 @@ var _current_music_tier: int = 0
 # Music tracks organized by context
 var music_library = {
 	MusicContext.MENU: [
-		"res://assets/audio/music/PDoom1 seleciton beeyoowee.wav",
+		# "Checkpoint saved" -- the respite cue (round-2 commission);
+		# the 0.7 s beeyoowee UI blip is out of the music rotation.
+		"res://assets/audio/music/checkpoint_saved.ogg",
 		"res://assets/audio/music/PDOOMN ST1 (safe).mp3"
 	],
 	MusicContext.GAMEPLAY: [
-		"res://assets/audio/music/PDoom1 Descent gradient.mp3",
-		"res://assets/audio/music/PDoom1 Local maxima.mp3",
-		"res://assets/audio/music/PDoom1 Power spike.mp3",
-		"res://assets/audio/music/PDoom1 Undetected sandbagging.mp3"
+		# Legacy-playlist fallback (used only if the adaptive build fails):
+		# same composed beds, in tier order.
+		"res://assets/audio/music/unit_tests_passing.ogg",
+		"res://assets/audio/music/distribution_shift.ogg",
+		"res://assets/audio/music/proxy_gaming.ogg",
+		"res://assets/audio/music/mesa_optimizer.ogg",
+		"res://assets/audio/music/treacherous_turn.ogg"
 	],
-	MusicContext.VICTORY: [],  # Reserved for future victory music
+	MusicContext.VICTORY: [
+		# "The off switch worked (quiet dawn)" -- victory confirmed round 2.
+		"res://assets/audio/music/the_off_switch_worked.ogg"
+	],
 	MusicContext.DEFEAT: [
-		"res://assets/audio/music/PDoom Out_of_distribution.mp3"
+		# The papers-please trudge (Pip: "I love the dirge").
+		"res://assets/audio/music/out_of_distribution_trudge.ogg"
 	]
 }
 

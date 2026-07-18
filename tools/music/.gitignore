@@ -1,2 +1,7 @@
 # personal/copyrighted reference audio + derived stems stay LOCAL only
 ref_local/
+# capture intermediates: raw webm + big wavs stay local; the processed
+# game-ready oggs in captures/game/ ARE committed
+captures/raw/
+captures/*.wav
+__pycache__/

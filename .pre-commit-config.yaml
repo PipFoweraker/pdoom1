@@ -13,6 +13,9 @@ repos:
       - id: check-json
       - id: check-added-large-files
         args: ['--maxkb=1000']
+        # Music tracks are legitimately >1MB; committed game/tool audio is
+        # deliberate (storage-is-cheap policy). Guard stays for everything else.
+        exclude: '^(godot/assets/audio/|tools/music/captures/game/).*\.(ogg|mp3|wav)$'
       - id: check-case-conflict
       - id: check-merge-conflict
       - id: detect-private-key

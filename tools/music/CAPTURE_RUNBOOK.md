@@ -1,14 +1,18 @@
 # Capture runbook -- render the session's patches to audio
 
-Goal upgraded 2026-07-18 (post-reset): captures are no longer just iteration
-archives -- the tier-set takes become the game's placeholder music. After
-recording, Claude trims each take to an exact bar-boundary loop (the engine
-force-loops at the file boundary), converts to ogg 44.1k near -16 LUFS, and
-wires them into godot/assets/audio/music/. Record loose with the silence
-handles; precision is Claude's job.
+SUPERSEDED FOR ROUTINE CAPTURE (2026-07-18 late): the whole pipeline is now
+programmatic -- `python tools/music/capture_takes.py --all` drives strudel.cc
+in an automated muted browser and records the WebAudio graph digitally (no
+OBS, no system audio, safe to run during a voice call), then
+`python tools/music/process_captures.py` cuts exact bar-boundary loops,
+bakes the loop-point reverb spill, normalizes to -16 LUFS, and emits
+game-ready oggs to tools/music/captures/game/. The manual OBS procedure
+below is kept as a fallback (e.g. for live-tweaked dial tours the script
+cannot drive, like the blue/amber variable edits).
 
-Recommended order: quick listen through jukebox v0.2 first (it changed after
-judgment round 1) so you do not record a version you already want changed.
+Goal upgraded 2026-07-18 (post-reset): captures are no longer just iteration
+archives -- the tier-set takes become the game's placeholder music, wired
+into godot/assets/audio/music/ + music_manager.gd.
 
 ## Setup (once, ~3 minutes)
 
