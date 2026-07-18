@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>P(Doom)1 Jukebox -- Fable tier-set v0.2</title>
+<title>P(Doom)1 Jukebox -- Fable tier-set v0.3</title>
 <style>
   :root { --bg:#0d1117; --panel:#161b22; --edge:#30363d; --text:#c9d1d9;
           --dim:#8b949e; --green:#3fb950; --blue:#58a6ff; --purple:#bc8cff;
@@ -50,10 +50,11 @@
 </style>
 </head>
 <body>
-<h1>P(Doom)1 jukebox -- Fable's tier-set, v0.2</h1>
-<div class="sub">Iterated from your judgment round 1 (jukebox_notes.json).
-M0-M3 revised, M4 kept as canon, plus: a ratchet demo, TWO victory readings
-(A/B -- pick one), and the menu respite you commissioned. Pick a track, press
+<h1>P(Doom)1 jukebox -- Fable's tier-set, v0.3</h1>
+<div class="sub">Iterated from judgment round 2 (jukebox_notes2.json).
+Fanfare cut RETIRED -- quiet dawn is victory. New: M0 slow-build variant,
+M1 bass graduation, M2 germination bloom, M4 "bassist catches the train"
+metal sketch. M3, canon M4, ratchet, menu unchanged. Pick a track, press
 play in the editor (or "Open in strudel.cc" -- always works). Tag, note,
 export for the next round.</div>
 
@@ -94,12 +95,12 @@ export for the next round.</div>
 // Naming stays in the ML/AI-safety pun register (kit convention).
 const TRACKS = [
 { id:"m0", tier:"M0", name:"Unit tests passing",
-  desc:"cosy. v0.2: marimba dimmed, payoff rebuilt (lift into a real resolve), arc extended to 32 bars -- a kalimba lead sings the second half.",
-  code:`// M0 cosy -- "Unit tests passing" (Fable tier-set v0.2)
-// v0.2 after judgment round 1: marimba dimmed (was "a biiit too bright"),
-// payoff rebuilt (bar-12 lift -> louder two-bar resolve + low floor),
-// arc extended 16 -> 32 bars: kalimba lead enters the second half.
-// Base layers keep 16-bar masks, so they repeat across both halves.
+  desc:"cosy. v0.3: progression kept; the payoff now EXITS gracefully -- rings into the breath instead of hard-cutting (your round-2 note).",
+  code:`// M0 cosy -- "Unit tests passing" (Fable tier-set v0.3)
+// v0.3 after judgment round 2: graceful-exit rule. The payoff was cutting
+// to the bar-15 breath too abruptly -- now the payoff RINGS out (long
+// release), and a soft kick + hat ghost land inside the breath so the
+// floor never vanishes. Everything else kept from v0.2.
 setcpm(104/4)
 stack(
   // BASE: spine, leaping contour, rotating start (unchanged)
@@ -125,27 +126,81 @@ stack(
   n("7 9 11 12").scale("C4:major").sound("gm_epiano1")
     .gain(0.5).room(0.4).pan(0.4)
     .mask("<0!11 1 0!4>"),
-  // payoff: bars 13-14 (and 29-30), louder, and it RESOLVES now
+  // payoff: bars 13-14 (and 29-30) -- and it RINGS into the breath now
   n("<[14 ~ 12 [11 9]] [11 ~ 9 ~]>").scale("C5:major")
     .sound("gm_music_box")
-    .gain(0.45).room(0.7).pan(0.6)
+    .gain(0.45).release(1.5).room(0.7).pan(0.6)
     .mask("<0!12 1 1 0 0>"),
-  // payoff floor: low third under the downbeat so it LANDS
+  // payoff floor: low third under the downbeat, ringing long
   n("[0,4]").scale("C3:major").sound("gm_epiano1")
-    .clip(2).gain(0.4).room(0.5)
+    .clip(3).release(1).gain(0.4).room(0.5)
     .mask("<0!12 1 0!3>"),
-  // NEW: kalimba lead, second half only -- the "one more element" ask
+  // graceful exit: a soft kick + hat ghost inside the bar-15 breath
+  s("bd").velocity(0.3).gain(0.18).lpf(300).mask("<0!14 1 0>"),
+  s("[~ hh]*4").bank("RolandTR808").gain(0.08).mask("<0!14 1 0>"),
+  // kalimba lead, second half only -- the "one more element" ask
   n("0 2 4 2 7 4 [2 1] 0").slow(8)
     .scale("C4:major").sound("gm_kalimba")
     .clip(0.8).gain(0.5).room(0.45).pan(0.55)
     .mask("<0!16 1!12 0 0 0 1>")
 )` },
 
+{ id:"m0s", tier:"M0", name:"Unit tests passing (first light)",
+  desc:"NEW: the slow-build alternate you asked for -- same material at 92, entrances stretched across 32 bars. Feel around the start of a slow build.",
+  code:`// M0-S cosy -- "Unit tests passing (first light)" (slow-build v0.1)
+// Round-2 commission: "shifting the pacing down a little as an alternate,
+// and let me start to feel around what the start of a slow-build feels
+// like". Same material as M0 at 92 (was 104); entrances stretched:
+// bass 1 -> spine 5 -> counter 11 -> kalimba 17 -> hats 21 -> kick 25 ->
+// lift 28 -> payoff 29-30 -> breath 31 -> pickup 32.
+setcpm(92/4)
+stack(
+  // bass alone first -- four bars of just the floor
+  n("0 ~ 0 ~".add("<0 -2 -4 -3>/2"))
+    .scale("C2:major").sound("gm_acoustic_bass")
+    .clip(0.6).gain(0.85).lpf(400),
+  // spine, bar 5
+  n("0 4 2 7 4 9 7 11".add("<0 -2 -4 -3>/2"))
+    .scale("C4:major").iter(4).sound("gm_epiano1")
+    .gain(0.7).room(0.35).pan(0.3)
+    .mask("<0!4 1!26 0 1>"),
+  // counter-cell, bar 11, dimmed
+  n("2 4 7 9 7 4".add("<0 -2 -4 -3>/2"))
+    .scale("C5:major").sound("gm_marimba")
+    .gain(0.3).lpf(1600).room(0.5).pan(0.7)
+    .mask("<0!10 1!20 0 1>"),
+  // kalimba lead, bar 17
+  n("0 2 4 2 7 4 [2 1] 0").slow(8)
+    .scale("C4:major").sound("gm_kalimba")
+    .clip(0.8).gain(0.48).room(0.45).pan(0.55)
+    .mask("<0!16 1!14 0 1>"),
+  // hats bar 21, kick bar 25
+  s("[~ hh]*4").bank("RolandTR808").gain(0.2)
+    .mask("<0!20 1!10 0 1>"),
+  s("bd ~ [~ bd] ~").bank("RolandTR808").gain(0.3)
+    .mask("<0!24 1!6 0 1>"),
+  // lift bar 28, payoff 29-30 ringing, floor, soft landing in the breath
+  n("7 9 11 12").scale("C4:major").sound("gm_epiano1")
+    .gain(0.48).room(0.4).pan(0.4)
+    .mask("<0!27 1 0!4>"),
+  n("<[14 ~ 12 [11 9]] [11 ~ 9 ~]>").scale("C5:major")
+    .sound("gm_music_box")
+    .gain(0.45).release(1.5).room(0.7).pan(0.6)
+    .mask("<0!28 1 1 0 0>"),
+  n("[0,4]").scale("C3:major").sound("gm_epiano1")
+    .clip(3).release(1).gain(0.4).room(0.5)
+    .mask("<0!28 1 0!3>"),
+  s("bd").velocity(0.3).gain(0.16).lpf(300).mask("<0!30 1 0>")
+)` },
+
 { id:"m1", tier:"M1", name:"Distribution shift",
-  desc:"uneasy. v0.2: light touch only (you liked it) -- inherits the marimba dim, nothing else moved.",
-  code:`// M1 uneasy -- "Distribution shift" (Fable tier-set v0.2)
-// v0.2: liked in judgment round 1 -- only the marimba dim is inherited.
-// Same key+tempo as M0 so the engine crossfade reads as ONE room souring.
+  desc:"uneasy. v0.3: your bass-register ask -- a sinking floor steps down through the second half, and the oomphs get an every-4th-bar fill.",
+  code:`// M1 uneasy -- "Distribution shift" (Fable tier-set v0.3)
+// v0.3 after judgment round 2: "graduation and stepping elements...
+// missing a little out in the bass register". NEW: a sinking-floor bass
+// voice -- steps DOWN one degree every 2 bars through the second half
+// (the ground is quietly leaving) -- and an every-4th-bar kick fill so
+// the oomphs that drive it get a step of their own.
 setcpm(104/4)
 stack(
   // BASE: unchanged from M0 -- the core holds (doom is a layer)
@@ -163,6 +218,13 @@ stack(
   s("[~ hh]*4").bank("RolandTR808").gain(0.26).degradeBy(0.12),
   s("bd ~ [~ bd] ~").bank("RolandTR808").gain(0.36)
     .mask("<0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1>"),
+  // PULSE: the oomphs step -- a small fill every 4th bar
+  s("<~ ~ ~ [bd ~ bd bd]>").bank("RolandTR808").gain(0.28)
+    .mask("<0!8 1!8>"),
+  // BASE: the sinking floor -- steps down a degree every 2 bars, 2nd half
+  n("<0 -1 -2 -3>/2").scale("C2:major").sound("gm_acoustic_bass")
+    .clip(1.8).gain(0.5).lpf(330)
+    .mask("<0!8 1!8>"),
   // WEIRD: lydian ghost, faint -- the wrong-bright note at the edge
   n("0 3 4 3 7").scale("C5:lydian").sound("gm_music_box")
     .gain(0.14).room(0.6).pan(0.8)
@@ -179,23 +241,30 @@ stack(
 )` },
 
 { id:"m2", tier:"M2", name:"Proxy gaming",
-  desc:"spooky. v0.2: de-busied -- spine stretched over 2 bars, hats + offbeat 8ths cut, low-mid doubling + drone floor. Doom got weight.",
-  code:`// M2 spooky -- "Proxy gaming" (Fable tier-set v0.2)
-// v0.2 after judgment round 1: "a little busy" + the doom-density ruling.
-// CUT: fast hats, offbeat synth 8ths. Spine spread over TWO bars (breathing
-// space, long-phrase lesson). ADDED: low-mid doubling + drone floor -- doom's
-// weight lives in the darker and middle tones; the bright ghost is now a
-// rarer herald. Aware and slightly threatened, not ominoused-upon.
+  desc:"spooky. v0.3: the metamorphosis you HEARD is now composed in -- 32-bar filter bloom + a 16-bar germinating cello seed. Long seeds, long lengths.",
+  code:`// M2 spooky -- "Proxy gaming" (Fable tier-set v0.3)
+// v0.3 after judgment round 2: the long-germination ruling ("sowing very
+// very long germinating seeds of my own destruction... lengths can get
+// verrrry long"). You heard it metamorphose -- now it really does: the
+// dark doubling's filter BLOOMS across 32 bars, and a low cello seed
+// swells over 16 bars, recedes, swells again. De-busied frame kept.
 setcpm(104/4)
 stack(
   // BASE: the green-cell degrees in C dorian, now over 2 bars -- long phrase
   n("0 4 2 7 4 9 7 11".add("<0 0 -2 -2>/2")).slow(2)
     .scale("C4:dorian").iter(4).sound("gm_epiano1")
     .clip(1.1).gain(0.6).room(0.4).pan(0.35),
-  // BASE: same contour an octave down, dark doubling -- the density
+  // BASE: same contour an octave down, dark doubling -- the density.
+  // Its filter blooms across 32 bars: the metamorphosis, composed in.
   n("0 4 2 7 4 9 7 11".add("<0 0 -2 -2>/2")).slow(2)
     .scale("C3:dorian").sound("gm_epiano1")
-    .clip(1.2).gain(0.28).lpf(900).room(0.5).pan(0.5),
+    .clip(1.2).gain(0.28)
+    .lpf("<700 750 800 900 1000 1150 1300 1500>/4")
+    .room(0.5).pan(0.5),
+  // BASE: a germinating seed -- one low cello tone, swelling over 16 bars
+  note("c2").sound("gm_cello")
+    .clip(4).lpf(500).room(0.6)
+    .gain("<0.06 0.09 0.13 0.17 0.22 0.28 0.2 0.1>/2"),
   // BASE: drone floor, slow inhale -- inevitability
   note("[c2,g2]").sound("sawtooth")
     .lpf(400).attack(2).gain(0.16).room(0.5),
@@ -297,6 +366,45 @@ stack(
   // CHANT SLOT: Pip's low recitation goes here when recorded
 )` },
 
+{ id:"m4t", tier:"M4", name:"Treacherous turn (the bassist catches the train)",
+  desc:"NEW sketch from your round-2 vision: 3 clean rounds, then the bass comes gunning in and we all gain GRUNGE together. First step toward the metal.",
+  code:`// M4-T -- "Treacherous turn (the bassist catches the train)" (sketch v0.1)
+// Round-2 vision: after ~3 clean rounds, something comes "gunning in --
+// a bassist left behind the train, running to catch up, then the bassline
+// gets pulled into the carriage and we all gain GRUNGE together." Bars
+// 1-11 = lean canon core; bar 12 = the RUN (sprinting up from below);
+// bars 13-16 = CAUGHT: slamming crushed bass + growl floor (the Protomen
+// GRRRR direction, first step). OPEN CASTING QUESTION flagged in notes:
+// when the humans go metal, what timbre rule applies?
+setcpm(96/4)
+stack(
+  // the canon core, lean
+  note("d1").sound("sawtooth").lpf(420).gain(0.22).attack(1),
+  note("d1").add(note(0.13)).sound("sawtooth").lpf(420).gain(0.22).attack(1),
+  note("d1 ~ ~ ~").sound("sine").clip(0.5).gain(0.45).lpf(120),
+  s("~ rim ~ ~ ~ rim ~ ~").bank("RolandTR808")
+    .gain(0.16).hpf(2200).room(0.4),
+  n("[~ 0 ~ ~ 2 ~ 1 ~]").scale("D4:dorian").sound("square").crush(7)
+    .clip(0.5).gain(0.32).pan(0.75),
+  // bar 12: the RUN -- the bassist sprinting after the carriage
+  n("0 1 2 3 4 5 6 7").scale("D2:dorian").sound("gm_acoustic_bass")
+    .clip(0.5).gain("0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.7")
+    .mask("<0!11 1 0!4>"),
+  // bars 13-16: CAUGHT. the slamming bassline
+  n("0 0 [~ 0] 0 ~ 0 0 [0 0]").scale("D1:dorian")
+    .sound("sawtooth").crush(4).lpf(600)
+    .clip(0.4).gain(0.5)
+    .mask("<0!12 1!4>"),
+  // the growl floor under the slam -- crushed saw fifth, GRRRR
+  note("[d1,a1]").sound("sawtooth").crush(3).lpf(500)
+    .attack(0.3).gain(0.25)
+    .mask("<0!12 1!4>"),
+  // the human cello holds the dirge over the top -- we did not stop
+  n("<~ ~ [~ 0 ~ ~ 2 ~ 1 ~] ~>")
+    .scale("D3:dorian").sound("gm_cello")
+    .clip(1.8).gain(0.3).room(0.95).pan(0.3)
+)` },
+
 { id:"m4r", tier:"M4", name:"Treacherous turn (another round)",
   desc:"ratchet demo: four 4-bar rounds, each ~6% faster. The *phwar*, then you dance faster. Likely an event/boss device, not the looping bed.",
   code:`// M4-R -- "Treacherous turn (another round)" (ratchet demo v0.1)
@@ -332,59 +440,32 @@ stack(
     .mask("<0!15 1>")
 ).fast("<1!4 1.06!4 1.13!4 1.21!4>")` },
 
-{ id:"win_a", tier:"WIN", name:"The off switch worked (fanfare cut)",
-  desc:"victory reading A: triumph -- an earned 8-bar cadence, full-voice competence family, footsteps in no danger. Compare with quiet dawn.",
-  code:`// VICTORY A -- "The off switch worked (fanfare cut)" (v0.2)
-// Judgment round 1: WIN tagged too-thin, "more triumphant and harmonious".
-// Triumph built cast-legally: full-voice competence family over an 8-bar
-// cadence (I IV vi V | I IV V I), human footsteps underneath. Real brass
-// would need a casting decision -- flagged in DIRECTION_NOTES.
-setcpm(76/4)
-stack(
-  // harmony: bar-long warm chords carrying the cadence
-  n("[0,2,4]".add("<0 3 5 4 0 3 4 0>"))
-    .scale("C3:major").sound("gm_epiano1")
-    .clip(1).gain(0.5).room(0.5).pan(0.4),
-  // marimba arpeggiates the same chords -- brightness is EARNED here
-  n("0 2 4 7 4 2".add("<0 3 5 4 0 3 4 0>"))
-    .scale("C4:major").sound("gm_marimba")
-    .gain(0.34).room(0.55).pan(0.65),
-  // bass roots
-  n("0 ~ 0 ~".add("<0 3 5 4 0 3 4 0>"))
-    .scale("C2:major").sound("gm_acoustic_bass")
-    .clip(0.7).gain(0.8).lpf(400),
-  // music box descant answers every other bar
-  n("<[14 ~ 11 ~] ~>").scale("C5:major").sound("gm_music_box")
-    .gain(0.3).room(0.8).pan(0.6),
-  // rising flourish INTO each cadence (every 4th bar)
-  n("<~ ~ ~ [0 2 4 7]>").scale("C5:major").sound("gm_epiano1")
-    .gain(0.4).room(0.5).pan(0.5),
-  // we are still walking -- gently, and in no danger
-  s("<lt ~>").bank("RolandTR808")
-    .velocity(0.4).gain(0.5).lpf(500).room(0.5)
-)` },
-
 { id:"win_b", tier:"WIN", name:"The off switch worked (quiet dawn)",
-  desc:"victory reading B: exhale -- respite bed, no percussion, the green cell stated once PURE (casting rule 4), then rest. Compare with fanfare cut.",
-  code:`// VICTORY B -- "The off switch worked (quiet dawn)" (v0.2)
-// The other reading of Pip's WIN note: maybe victory is not fanfare at all
-// -- it is finally being allowed to STOP. Respite bed, no percussion; the
-// green cell appears once per 16-bar pass, PURE (casting rule 4), then rest.
+  desc:"VICTORY, confirmed round 2 (fanfare cut retired). v0.3: the quote enters softly now -- kalimba at half speed -- and the floor has A-team solidity.",
+  code:`// VICTORY -- "The off switch worked (quiet dawn)" (v0.3)
+// Round 2: fanfare cut RETIRED ("soporific"); this is victory. Fixes:
+// the green-cell quote entered "comparatively harsh" -- now kalimba, at
+// half speed, filtered, floating in (still once per pass, still pure --
+// casting rule 4). And the A-team-solidity ruling: a steadier bass
+// holding pattern -- no stressor-stimulation, but structural solidity:
+// you are being looked after by professionals.
 setcpm(66/4)
 stack(
   // human voices, warm chord, breathing
   note("[c3,e3,g3]").sound("gm_voice_oohs")
     .attack(0.6).gain(0.2).room(0.85),
-  // long bass roots, falling asleep
-  n("<0 ~ -3 ~>").scale("C2:major").sound("gm_acoustic_bass")
-    .clip(2).gain(0.6).lpf(350),
+  // the A team: steady long bass roots -- reassuring holding pattern
+  note("<c2 g1>").sound("gm_acoustic_bass")
+    .clip(2.2).gain(0.65).lpf(350),
   // soft pad floor
   note("[c3,g3]").sound("sawtooth")
     .lpf(350).attack(3).gain(0.1).room(0.8),
-  // THE QUOTE: the green cell, pure, once per pass (bars 5-8)
-  n("0 2 4 7 9 7 4 2").scale("C4:major").sound("gm_epiano1")
-    .gain(0.55).room(0.5).pan(0.45)
-    .mask("<0!4 1!4 0!8>"),
+  // THE QUOTE: the green cell, pure, once per pass -- kalimba, half
+  // speed, filtered: it floats in instead of announcing itself
+  n("0 2 4 7 9 7 4 2").slow(2)
+    .scale("C4:major").sound("gm_kalimba")
+    .clip(1.2).gain(0.4).lpf(1800).room(0.7).pan(0.45)
+    .mask("<0!4 1 1 0!10>"),
   // music box afterglow, bars 9-10 -- the echo of the promise kept
   n("14 ~ 11 ~").scale("C5:major").sound("gm_music_box")
     .gain(0.25).room(0.85).pan(0.6)

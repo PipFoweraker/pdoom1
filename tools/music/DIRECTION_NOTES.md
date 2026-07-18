@@ -324,6 +324,64 @@ Per-track rulings -> tier-set v0.2 actions:
   (60 bpm, no percussion, no weirdness). Fills the drop-in kit's
   second-menu-bed nice-to-have.
 
+## Jukebox judgment round 2 (2026-07-18, raw export committed as jukebox_notes2.json)
+
+Tags: m0 like, m1 like, menu like. Rulings -> tier-set v0.3 actions:
+
+- M0: progression CONFIRMED ("I like this version! I like we have a
+  progression"). NEW RULE (graceful exit): the payoff-to-breath cut felt
+  abrupt -- layers must taper or ring out, never hard-cut ("needs to be
+  handled more gracefully"). v0.3: payoff rings into the breath, soft
+  kick+hat ghost lands bar 15. NEW EXPLORATION: slow-build variant
+  commissioned ("shifting the pacing down a little as an alternate...
+  feel around what the start of a slow-build feels like") -> new track
+  m0s "first light" at 92, entrances stretched across 32 bars. Pip is
+  now consciously directing pacing -- give him pacing dials.
+- M1: unsettling-creep working; the kick "oomphs" drive it. ASK: develop
+  "graduation and stepping elements... missing a little out in the bass
+  register" -> v0.3 adds a sinking-floor bass voice (steps down a degree
+  every 2 bars through the second half) + an every-4th-bar kick fill.
+- M2: insidiousness landing -- "like I'm sowing very very long germinating
+  seeds of my own destruction. The lengths of these can get verrrry long."
+  NEW RULING (long germination): elements may evolve over VERY long spans.
+  He heard it "metamorphose... creepier and slower over time" -- v0.3
+  composes that in for real: 32-bar filter bloom on the dark doubling +
+  a 16-bar swelling cello seed.
+- M3: "hovering in my midranges and fuzzy around the edges of my hearing";
+  intrusion beeps "jarring and disjointing in a way that's interesting";
+  an emergent "jazzy patch" after minutes. Working as designed -- kept
+  unchanged. Meta note: he has never listened to music designed with
+  these flows/ebbs -- the adaptive-listening skill is building.
+- M4: immersion metric hit ("listened a full loop or two longer than I
+  intended"). NEW DEVICE (bassist catches the train): after ~3 clean
+  rounds something comes "gunning in -- a bassist left behind the train,
+  running to catch up, then the bassline gets pulled into the carriage and
+  we all gain GRUNGE together" -- pre-hook ramp-up flavour. NEW TRAJECTORY:
+  "low industrial Protomen-style GRRRRR growls... sections of this might
+  end up getting a bit metal. Wild." CONVERGENCE: this independently
+  arrives at the Mick Gordon lineage (GORDON_DERIVATIONS.md) -- doom-tier
+  metal grown from our own material. OPEN CASTING QUESTION: when the
+  HUMANS go metal, what timbre rule applies? (a slammed/crushed bass on
+  human material strains casting rule 1 -- decide before real stems.)
+  v0.3: new sketch track m4t; canon loop still untouched.
+- m4r: liked a lot; the "on-again off-again persistent little throbbing
+  hum underneath" is "a very good tech-ey kind of thing to lean into"
+  (that is the beating-saw pair + sub interplay). Both "gentler paths and
+  more intense paths out of these paths forming emergently" -- fork later.
+- WIN VERDICT: fanfare cut RETIRED ("a little... soporific?"). Quiet dawn
+  IS victory. Fix: the green-cell quote enters "comparatively harsh" ->
+  softened (kalimba, half speed, filtered). NEW RULING (respite = A-team
+  solidity): in respite states, total absence of stressor-stimulation BUT
+  a reassuring holding pattern -- "someone in an intense situation but
+  knows they're being looked after by professionals... you have the A team
+  with you, we've got this -- structural solidity." Applies to victory bed
+  AND menu register. His long-listen: "the ambient elements I end up with
+  are beautiful" -- bed confirmed.
+- MENU: "Transitioning to something like this is exceptional. The pace
+  remains, so I can re-engage with the mainstream event when I want, but
+  the attention-demands are diminished." Exactly the design goal --
+  confirmed, untouched.
+
 ## Drifting Houses leitmotif -- decode continued
 
 DECODED 2026-07-18 (Demucs drum-stem isolation + 53 s onset fold): the groove

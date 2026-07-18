@@ -39,17 +39,16 @@ Priority tier (these become in-game placeholders -- do these first):
 | jukebox_m2_v0_2 | jukebox: Proxy gaming | 2 arcs ~ 1:15 |
 | jukebox_m3_v0_2 | jukebox: Mesa optimizer | 2 arcs ~ 1:25 |
 | jukebox_m4 | jukebox: Treacherous turn | 2 arcs ~ 1:25 |
-| jukebox_win_a | jukebox: fanfare cut | 4 loops ~ 1:45 |
-| jukebox_win_b | jukebox: quiet dawn | 2 passes ~ 2:00 |
+| jukebox_win | jukebox: quiet dawn (v0.3 -- THE victory, round 2) | 2 passes ~ 2:00 |
 | jukebox_menu | jukebox: Checkpoint saved | ~3 loops ~ 1:30 |
 | trudge_welcome_v0_1 | trudge_welcome_v0_1.js | 2 arcs ~ 2:05 (DEFEAT slot) |
-
-(WIN: capture BOTH readings if undecided -- only the chosen one gets wired.)
 
 Archive tier (iteration history, second pass if time allows):
 
 | Take name | Patch | Capture length |
 |---|---|---|
+| jukebox_m0s | jukebox: first light (slow-build alternate) | 1 arc ~ 1:25 |
+| jukebox_m4t | jukebox: bassist catches the train (sketch) | 2 passes ~ 1:25 |
 | jukebox_m4r | jukebox: another round (ratchet demo) | 2 passes ~ 1:15 |
 | green_blue_v0_2_tour | green_plus_blue_v0_2.js | blue=1 for ~40s, then live-edit blue=0.5 ~30s, blue=0 ~30s |
 | green_blue_amber_tour | green_blue_amber_v0_1.js | ~30s each at (0,0) (1,0) (0,1) (1,1) |
