@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>P(Doom)1 Commission Sheets -- engraved parts for real players</title>
+<script src="https://cdn.jsdelivr.net/npm/abcjs@6/dist/abcjs-basic-min.js"></script>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --edge:#30363d; --text:#c9d1d9;
+          --dim:#8b949e; --green:#3fb950; --blue:#58a6ff; --amber:#d29922; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text);
+         font:14px/1.5 Consolas,monospace; margin:0; padding:18px; }
+  h1 { font-size:18px; color:var(--green); margin:0 0 4px; }
+  h2 { font-size:15px; color:var(--blue); margin:0 0 6px; }
+  .sub { color:var(--dim); font-size:12px; margin-bottom:14px; }
+  .sheet { background:var(--panel); border:1px solid var(--edge);
+           border-radius:8px; padding:14px 16px; margin-bottom:16px;
+           page-break-inside:avoid; }
+  .who { color:var(--amber); font-size:12px; margin-bottom:6px; }
+  .score { background:#fff; border-radius:6px; padding:8px; margin:8px 0; }
+  .notes { font-size:12.5px; }
+  .notes b { color:var(--text); }
+  .kuchi { font-size:15px; letter-spacing:1px; color:var(--green);
+           margin:6px 0; }
+  .rec { border-left:3px solid var(--green); padding-left:10px;
+         color:var(--dim); font-size:12px; margin-top:8px; }
+  details { margin-top:6px; } summary { cursor:pointer; color:var(--dim);
+           font-size:12px; }
+  pre { background:#0d1117; border:1px solid var(--edge); border-radius:4px;
+        padding:8px; font-size:12px; overflow-x:auto; }
+  .fallback { color:var(--amber); font-size:12px; display:none; }
+  @media print {
+    body { background:#fff; color:#000; }
+    .sheet { border:1px solid #999; background:#fff; }
+    .who { color:#555; } h1,h2 { color:#000; } .kuchi { color:#000; }
+    .rec { color:#333; } summary,details { display:none; }
+  }
+</style>
+</head>
+<body>
+<h1>P(Doom)1 commission sheets -- parts for real players</h1>
+<div class="sub">Engraved from the session patches Pip approved by ear
+(sources cited per sheet). Print this page (Ctrl+P) for paper parts -- print
+style is ink-friendly. Audio references: play the named patch in
+tools/music/jukebox.html, or the rendered ogg in tools/music/captures/game/.
+Universal specs: 44.1 kHz WAV, dry (no FX), A=440, clean takes -- looping and
+mastering are handled in post. If staves fail to render (no internet), the
+raw ABC notation is under each "details" fold.</div>
+<div class="fallback" id="cdnwarn">abcjs failed to load (offline?) -- open
+the "raw ABC" folds under each sheet instead.</div>
+
+<!-- ================================================== 1. TAIKO: SKIP -->
+<div class="sheet">
+  <h2>1a. Taiko -- "The Skip" (the Drifting Houses seven)</h2>
+  <div class="who">For: taiko player(s). Source: patches/drifting_seven_v0_1.js
+  (decoded from the isolated drum stem, 2026-07-18).</div>
+  <div class="score" id="abc-skip"></div>
+  <div class="kuchi">DON (su) don ka doko DON (su) DON doko doko DON-ka</div>
+  <div class="notes">
+    One bar of <b>7/4 grouped 3+2+2</b> at 129. Legend: bottom-space F =
+    o-daiko (the deep pickup), middle B = chu-daiko main strokes, C above =
+    lighter strokes (gallop), X-ish top E = metal tick (atarigane doubles
+    this). The two accented offbeats mid-bar are the LOUDEST hits in the
+    cell -- that offbeat pair IS the skip. Beat 7 leans hard into the next
+    downbeat (the pickup is the loop announcement).
+  </div>
+  <div class="rec">Record: 2+ minutes steady solo with click, then one
+  "human drift" take with no click. Room mics welcome -- we want the air.
+  Also record each drum's single strokes, all dynamics, full decay.</div>
+  <details><summary>raw ABC</summary><pre id="src-skip"></pre></details>
+</div>
+
+<!-- ================================================== 1b. TAIKO: TRUDGE -->
+<div class="sheet">
+  <h2>1b. Taiko -- "The Trudge" (footsteps in the snow)</h2>
+  <div class="who">For: taiko player(s). Source: patches/trudge_welcome_v0_1.js
+  (the defeat cue -- "I love the dirge").</div>
+  <div class="score" id="abc-trudge-drum"></div>
+  <div class="kuchi">DON . . do . . don .   (limping 3+3+2 -- heavy 1, ghost 4 and 7)</div>
+  <div class="notes">
+    Slow <b>4/4 at 63</b>, steps on the 3+3+2 eighth grid. Beat 1 heavy;
+    the two later steps are GHOSTED (about 60-75% weight). Every so often --
+    deliberately, maybe once in twelve bars -- <b>drop a step entirely</b>.
+    The walker is tired. Soft mallets or palm strokes; round edges, no crack.
+  </div>
+  <div class="rec">Record: 2+ minutes steady, plus a no-click take, plus a
+  take with more dropped steps than feels comfortable. Also: long single
+  strikes with full decay (zen standoff punctuation), and 2 minutes of
+  quiet continuous "rain" roll (tier-2/3 texture).</div>
+  <details><summary>raw ABC</summary><pre id="src-trudge-drum"></pre></details>
+</div>
+
+<!-- ================================================== 2. ATARIGANE -->
+<div class="sheet">
+  <h2>2. Atarigane / chan-chiki -- the timekeeper</h2>
+  <div class="who">For: the metal-drum timekeeper. Doubles as the terminal
+  tier's "alarm that will not hurry".</div>
+  <div class="score" id="abc-atarigane"></div>
+  <div class="notes">
+    Three asks: (1) steady eighth tick, 2 minutes each at <b>63</b> and
+    <b>104</b>; (2) the skip cell's timeline (top line above -- the two
+    ticks sit where the taiko's ka strokes fall); (3) a sparse unhurried
+    "alarm" pair at 96: two dry ticks per bar, never rushing, never louder.
+  </div>
+  <div class="rec">Record: dry and close. The alarm take should sound like
+  it does not care whether you are running out of time. Because you are.</div>
+  <details><summary>raw ABC</summary><pre id="src-atarigane"></pre></details>
+</div>
+
+<!-- ================================================== 3. SHAKUHACHI -->
+<div class="sheet">
+  <h2>3a. Shakuhachi -- the dirge (D dorian, AAAB)</h2>
+  <div class="who">For: shakuhachi player. Source: trudge_welcome_v0_1.js
+  layer 6 / dirge_variations_v0_1.js. NOTE: the engraving follows the
+  APPROVED patch (D - G - F/E - D in the B phrase); an earlier text draft
+  said "re fa la" -- the patch wins.</div>
+  <div class="score" id="abc-dirge"></div>
+  <div class="notes">
+    <b>4/4 at 63</b>, four-bar AAAB phrase: three identical A bars, then the
+    B variant with the little turn (the "wibbly bit" -- keep it). Ornament
+    freely in your own voice: meri/kari bends, breath attacks, the works.
+    The written notes are the skeleton, not the law.
+  </div>
+  <div class="rec">Record: the phrase plain x4, then ornamented takes.
+  Play against tools/music/captures/game/out_of_distribution_trudge.ogg
+  (drone is in D) for feel.</div>
+  <details><summary>raw ABC</summary><pre id="src-dirge"></pre></details>
+</div>
+
+<div class="sheet">
+  <h2>3b. Shakuhachi -- zen standoff phrases (D minor pentatonic)</h2>
+  <div class="who">For: shakuhachi player. Source: patches/zen_standoff_sketch_v0_1.js.</div>
+  <div class="score" id="abc-zen"></div>
+  <div class="notes">
+    <b>Breath-paced, ~60</b>. The written rests are REAL -- a full silent
+    bar between phrases, longer if it feels right. Endings hang unresolved;
+    do not land home. Occasionally answer a phrase an octave up, half
+    volume (the mountain echoing you). Rubato throughout -- the click is
+    only for the drone.
+  </div>
+  <div class="rec">Record: each phrase several times with generous silence;
+  a few long single tones with natural vibrato bloom, every dynamic from
+  barely-there to full. Silence is a note -- leave it in the takes.</div>
+  <details><summary>raw ABC</summary><pre id="src-zen"></pre></details>
+</div>
+
+<!-- ================================================== 4. BASS -->
+<div class="sheet">
+  <h2>4. Upright bass -- plod, roots, pedals</h2>
+  <div class="who">For: the standing-bass favour-ower.</div>
+  <div class="score" id="abc-bass"></div>
+  <div class="notes">
+    Line 1, the <b>trudge plod at 63</b>: D-A-D on the limping 3+3+2 grid,
+    dragging a hair BEHIND the beat (the drums lead, you lean back). Written
+    an octave up for reading; sound it as low as the instrument allows --
+    low D preferred if you have the extension, else the written octave is
+    fine. Both <b>arco and pizz</b> takes. Line 2, the <b>green-bed walk at
+    104</b>: roots on the I-vi-IV-V lane in C, two-feel. Line 3: long
+    <b>pedal tones</b> on D and C, arco, straight and even -- these become
+    drone beds.
+  </div>
+  <div class="rec">Record: 2+ minutes per line. For pedals: bow changes as
+  smooth as you can, we will loop around them.</div>
+  <details><summary>raw ABC</summary><pre id="src-bass"></pre></details>
+</div>
+
+<!-- ================================================== 5. PIP: CHANT -->
+<div class="sheet">
+  <h2>5. Pip -- the math chant kit</h2>
+  <div class="who">For: Pip (RODE USB mic, quietest room, dry). Reciting
+  tone: <b>D</b> (hum the trudge drone first, then speak-chant on it).</div>
+  <div class="score" id="abc-chant"></div>
+  <div class="notes">
+    Delivery per phrase: <b>repeat, repeat, repeat, tail-variant</b> (the
+    AAAB shape again -- same law as the dirge). Three registers to test on
+    mic day, all on the D reciting tone:<br><br>
+    <b>1. Greek-letter litany</b> (the update rule as pure letters):<br>
+    <span class="kuchi">the-ta ... e-ta ... na-bla the-ta ... the-ta</span><br>
+    <b>2. Latin machine-liturgy</b> (40k register, learn-from-not-copy):<br>
+    <span class="kuchi">gra-di-ens de-scen-dit ... er-ror mi-nor fit</span><br>
+    <b>3. Pure math vocables</b> (MMoB texture, zero semantics):<br>
+    <span class="kuchi">del ... sig ... eps mu del ... sig</span><br><br>
+    Stack imperfect takes -- the misalignments ARE the choir. Also record:
+    low sustained drones on D, whatever the voice gives honestly.
+  </div>
+  <div class="rec">Hard line (Pip's ruling, standing): real sutras/mantras
+  and personal practice material stay OUT. The math is the sacred register
+  here.</div>
+  <details><summary>raw ABC</summary><pre id="src-chant"></pre></details>
+</div>
+
+<!-- ================================================== 6. MODULAR -->
+<div class="sheet">
+  <h2>6. Modular synth friends -- the rival voice</h2>
+  <div class="who">For: modular/DJ friends. The ONE legitimately synthetic
+  voice in the score (casting rule: rivals never play human instruments).</div>
+  <div class="score" id="abc-rival"></div>
+  <div class="notes">
+    In <b>D</b>, bone-dry, gridded, no room, no dynamics, never misses.
+    Asks: (1) the rising three-note call (written above -- it transposes UP
+    on each recurrence and does NOT care what key the humans are in);
+    (2) gridded blips, 16th runs; (3) one "impossible speed" texture --
+    a pattern accelerated past human playability into a wall.
+  </div>
+  <div class="rec">Hands-on modular patching beats laptop presets here --
+  physical instrument, synthetic voice. That is the character.</div>
+  <details><summary>raw ABC</summary><pre id="src-rival"></pre></details>
+</div>
+
+<script>
+"use strict";
+const SHEETS = {
+  "skip": `X:1
+T:The Skip Cell -- 7/4 (3+2+2)
+M:7/4
+L:1/8
+Q:1/4=129
+K:C clef=perc
+|: !accent!B z B e c !accent!B z !accent!B c c c c [FB] e :|
+w: DON * don ka do DON * DON do ko do ko DON ka`,
+  "trudge-drum": `X:2
+T:The Trudge -- limping 3+3+2 at 63
+M:4/4
+L:1/8
+Q:1/4=63
+K:C clef=perc
+|: !accent!B z z B z z B z :|
+w: DON * * do * * don *`,
+  "atarigane": `X:3
+T:Timekeeper lines
+M:7/4
+L:1/8
+Q:1/4=129
+K:C clef=perc
+"^skip timeline (with taiko)"|: z z z e z z z z z z z z z e :|
+M:4/4
+Q:1/4=96
+"^the alarm that will not hurry"|: z2 e2 z4 z2 e2 z4 :|`,
+  "dirge": `X:4
+T:The Dirge -- AAAB (D dorian)
+M:4/4
+L:1/8
+Q:1/4=63
+K:Ddor
+|: z D z z F z E z | z D z z F z E z | z D z z F z E z | z D z G F/E/ D z2 :|
+w: * re * * fa * mi * * re * * fa * mi * * re * * fa * mi * * re * sol fa-mi re *`,
+  "zen": `X:5
+T:Zen standoff phrases (D minor pentatonic)
+M:4/4
+L:1/4
+Q:1/4=60
+K:Dmin
+D3 z | z4 | G A z G | z4 | c z A z | z4 | G D z2 | z4 |]
+w: (breathe) * * * * (wait) * * (hang) * * (unresolved)`,
+  "bass": `X:6
+T:1. Trudge plod (arco AND pizz) -- sounds 8vb where possible
+M:4/4
+L:1/8
+Q:1/4=63
+K:C clef=bass
+|: !accent!D,2 z A,,2 z D,2 z :|
+X:7
+T:2. Green-bed walk at 104 (I-vi-IV-V in C)
+M:4/4
+L:1/4
+Q:1/4=104
+K:C clef=bass
+|: C, z C, z | A,, z A,, z | F,, z F,, z | G,, z G,, z :|
+X:8
+T:3. Pedal tones, arco, long
+M:4/4
+L:1/1
+Q:1/4=63
+K:C clef=bass
+|: D,4 | D,4 | C,4 | C,4 :|`,
+  "chant": `X:9
+T:Reciting tone -- repeat x3 + tail variant (AAAB)
+M:4/4
+L:1/4
+Q:1/4=63
+K:C clef=bass
+|: D,2 D, D, | D,2 D, D, | D,2 D, D, | D, C, D,2 :|
+w: the-ta e-ta the-ta e-ta the-ta e-ta na-bla the-ta`,
+  "rival": `X:10
+T:The rival call -- rising, indifferent, transposing up each recurrence
+M:4/4
+L:1/8
+Q:1/4=96
+K:D
+|: d2 ^f2 a2 z2 | z8 | e2 ^g2 b2 z2 | z8 :|
+w: (call) * * * (gap halves each time) (call, +2) * * *`
+};
+
+let rendered = 0;
+for (const [key, abc] of Object.entries(SHEETS)) {
+  const el = document.getElementById("abc-" + key);
+  const src = document.getElementById("src-" + key);
+  if (src) src.textContent = abc;
+  try {
+    if (window.ABCJS) {
+      ABCJS.renderAbc(el, abc, { responsive: "resize", add_classes: true });
+      rendered++;
+    }
+  } catch (e) { /* fold has the raw ABC */ }
+}
+if (!rendered) document.getElementById("cdnwarn").style.display = "block";
+</script>
+</body>
+</html>

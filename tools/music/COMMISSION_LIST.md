@@ -1,9 +1,11 @@
 # Commission list -- what we need from real players (draft 1, 2026-07-18)
 
 Per CASTING_SHEET.md. Every item below has a Strudel reference patch the
-player can hear first. Proper engraved notation (staff/percussion notation,
-lilypond or clean PDFs) is the NEXT session's deliverable -- this list is the
-who-and-what so Pip can start conversations.
+player can hear first. ENGRAVED PARTS NOW EXIST: open
+`tools/music/commission_sheets.html` and print it (Ctrl+P) for clean paper
+parts per player -- staff notation + kuchi-shoga syllables for the taiko
+lines, recording asks on each sheet. This list remains the who-and-what
+summary for starting conversations.
 
 ## 1. Taiko player(s) [Pip knows locally]
 

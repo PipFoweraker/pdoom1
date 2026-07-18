@@ -382,6 +382,27 @@ Tags: m0 like, m1 like, menu like. Rulings -> tier-set v0.3 actions:
   the attention-demands are diminished." Exactly the design goal --
   confirmed, untouched.
 
+## Overnight batch (2026-07-19, Pip asleep) -- state, no new taste rulings
+
+Landed while Pip slept (his standing brief: land the work, then tidy/
+document/uplift; save everything, discarded options recycle later):
+- Capture went PROGRAMMATIC (capture_takes.py + process_captures.py --
+  see CAPTURE_RUNBOOK header). All 15 takes rendered, loop-cut, wired:
+  5 tier slots + VICTORY + DEFEAT + MENU now play the composed score.
+  Fast gate 489/0 after wiring.
+- feat/adaptive-music (#682) merged into THIS branch only (main untouched,
+  deployment lane unaffected).
+- New tools: listening_room.html (audition the rendered game oggs, loop
+  seam check, notes/export); commission_sheets.html (engraved printable
+  parts per player -- fulfils the notation deliverable promised in
+  COMMISSION_LIST). Session story: dev-blog/music-session-1.md.
+- NOTE for next round: commission_sheets engraves the dirge B phrase from
+  the APPROVED patch (D G F/E D); COMMISSION_LIST's earlier "re fa la"
+  text was a draft error.
+- AWAITING PIP: first in-game listen (menu -> M0 -> tier walk ->
+  win/lose). listening_room notes export. WIN quiet-dawn v0.3 verdict.
+  first_light + train + ratchet stay benched, recyclable.
+
 ## Drifting Houses leitmotif -- decode continued
 
 DECODED 2026-07-18 (Demucs drum-stem isolation + 53 s onset fold): the groove
