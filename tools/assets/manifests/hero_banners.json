@@ -1,0 +1,73 @@
+{
+  "_meta": {
+    "note": "Hero / key-art banner OPTIONS for the P(Doom)1 website + itch page. Six deliberately different directions for the dev to PICK from, not six of one thing. asset_type hero_banners writes to art_generated/hero_banners/v1/. Landscape 1536x1024 (gpt-image-1.5 landscape cap). background=opaque so these come back as full-bleed painted scenes (NOT alpha-cut). Native format YAML; generate_images.py --file parses this JSON. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/hero_banners.json --dry-run.",
+    "direction_source": "docs/art/PALETTE_AND_DOOM_INTENSITY.md (dark-dread banner register; at most one ambient + one glow per scene; purple reserved for band 3+ eldritch) and docs/art/reviews/2026-07-17-overnight-sweep.md (warm-grime + heavy-outline heft + deeper shadow; founder banner = chair is the visual focus, correct orientation).",
+    "palette_note": "Grounds are the hero-image darks (void/aubergine/ink/indigo). palette.json has NO warm amber, so the warm CRT accent (#e8a33d / #f6a800) is hand-sourced per PALETTE_AND_DOOM_INTENSITY.md. Each banner uses ONE saturated glow only.",
+    "theme_line": "AI-safety lab doing paperwork to save the world."
+  },
+  "schema_version": "1.0",
+  "asset_type": "hero_banners",
+  "background": "opaque",
+  "default_size": "1536x1024",
+  "output_sizes": [1536, 1024, 768, 512],
+  "styles": {
+    "hero_base": "wide cinematic key-art illustration for a video game, painterly warm-grime texture with heavy dark outlines and deep shadow, full-bleed edge-to-edge opaque composition that completely fills the frame with no transparency and no cut-outs and no border, near-black aubergine and deep-indigo grounds, disciplined lighting using at most one ambient source plus one glowing source, most of the frame kept dark with separated pockets of light, generous dark negative space reserved for a game title to be added later, no text, no lettering, no logo, no watermark, no UI overlay, high production value, landscape orientation",
+    "hero_palette": "colour language from the P(Doom)1 hero image: grounds in void #0e0614, deep aubergine #170a1c, ink brown #14040c, deep indigo #181b3b and #2e2547; exactly one saturated accent per scene, chosen from warm CRT amber #e8a33d / #f6a800, or cold electric-blue screen-glow #5c7ac3, or (only for the highest-doom scene) eldritch violet #7a3b8f; never stack multiple saturated glows"
+  },
+  "themes": {
+    "hero_doom": {
+      "style_overrides": ["hero_base", "hero_palette"],
+      "color_bias": "existential dread at the edges, cozy competence at the centre; the same office world tipping toward doom; elegant, restrained, not garish"
+    }
+  },
+  "assets": [
+    {
+      "id": "hero_desk_doom_window",
+      "category": "hero",
+      "display_name": "Desk and doom-window",
+      "status": "pending",
+      "theme": "hero_doom",
+      "prompt_tail": "an AI-safety researcher's desk seen wide and slightly from the side, piled with fanned research paperwork, folders and a softly glowing monitor, next to a tall office window that looks out on a doom-tinged overcast sky; the single warm source is an amber #e8a33d desk lamp pooling warm light over the papers, the rest of the room deep indigo and shadow; keep the upper-left window sky darker and uncluttered as negative space for a title; cozy-competence mood souring at the edges"
+    },
+    {
+      "id": "hero_founder_silhouette",
+      "category": "hero",
+      "display_name": "Silhouetted founder at the screens",
+      "status": "pending",
+      "theme": "hero_doom",
+      "prompt_tail": "a lone founder seen from behind, seated low in a worn office chair that is the clear visual focus of the composition, facing a dim wall of monitors that show a faint rising doom curve; the only glow is a cold electric-blue #5c7ac3 screen-light rimming the chair and shoulders, everything else near-black aubergine; the chair and figure sit right-of-centre leaving a large dark slab on the left as negative space for a title; quiet, heavy, contemplative"
+    },
+    {
+      "id": "hero_doom_gradient_title",
+      "category": "hero",
+      "display_name": "Abstract doom-gradient title plate",
+      "status": "pending",
+      "theme": "hero_doom",
+      "prompt_tail": "an almost abstract title-plate background: a smooth vertical field grading from near-black indigo #181b3b at the bottom up into deep doom-purple #2c1327, crossed by a single thin luminous rising doom-curve line; one small faint eldritch violet #7a3b8f glow bloom in the top-right corner; the wide central area deliberately kept empty, dark and calm to hold a large game title and logo; minimal, no representational objects, elegant and restrained"
+    },
+    {
+      "id": "hero_office_at_dusk",
+      "category": "hero",
+      "display_name": "Open-plan office at dusk",
+      "status": "pending",
+      "theme": "hero_doom",
+      "prompt_tail": "a wide establishing shot of a small scrappy AI-safety-lab open-plan office at dusk: a couple of rows of cluttered desks, a server rack against the far wall, a big window showing an overcast stormy dusk sky; the single warm source is one amber #e8a33d overhead pendant lamp over the central desks, plus one cold monitor glow deep in the background, everything else falling into indigo shadow; keep a dark uncluttered band across the top for a title; lived-in, warm-grime, faintly ominous"
+    },
+    {
+      "id": "hero_paperwork_saves_world",
+      "category": "hero",
+      "display_name": "Paperwork to save the world",
+      "status": "pending",
+      "theme": "hero_doom",
+      "prompt_tail": "a conceptual near-top-down hero: stacks and fanned sheets of research paperwork arranged so they frame and cradle a small fragile glowing globe of the earth at the very centre, literalising paperwork holding off catastrophe; the globe is the single warm amber #f6a800 glow lighting the nearest pages, the surrounding desk and edges deep indigo and ink shadow; leave the lower strip darker as negative space for a title; earnest, a little heroic, warm centre and dark edges"
+    },
+    {
+      "id": "hero_server_doom_altar",
+      "category": "hero",
+      "display_name": "Server cluster as doom altar",
+      "status": "pending",
+      "theme": "hero_doom",
+      "prompt_tail": "a dramatic high-doom scene: a tall server cluster lit from within like an altar, glowing with a single eldritch violet #7a3b8f light from its seams, a lone tiny worker silhouette dwarfed in front of it and turned away; deep shadow and smoke fill the rest of the frame, near-black aubergine grounds; keep the left third dark and empty as negative space for a title; band-3 eldritch dread, ominous, cathedral-like scale"
+    }
+  ]
+}
