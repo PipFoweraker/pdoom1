@@ -1,0 +1,415 @@
+<!--
+  doom_overlay_preview.html -- P(Doom)1 art-review tool
+  Demonstrates the principle: "Doom is a LAYER, not a repaint."
+  A base asset renders doom-NEUTRAL; doom intensity is composited ON TOP as an
+  ADDITIVE overlay (radial glow + colour-grade + edge aura). The base pixels are
+  never recoloured in the source file -- the overlay sits over untouched art.
+
+  Standalone: inline CSS + JS, relative-path images, NO network / CDN / APIs.
+  Open by double-clicking. If an asset path is wrong the canvas shows a
+  placeholder rather than breaking.
+
+  Colour sourcing (see docs/art/PALETTE_AND_DOOM_INTENSITY.md + docs/art/palette.json):
+    WEIRDNESS axis  -- blue/violet stops drawn from palette.json (extracted hero
+                       palette: screen-blue #383761, doom-purple #351b33,
+                       doom-indigo #2e2547). The GREEN "ok" stop is NOT in
+                       palette.json (the hero has no green) -- sourced from the
+                       Axis-B table in PALETTE_AND_DOOM_INTENSITY.md instead.
+    CATASTROPHE axis -- amber/red/fire stops are HAND-SOURCED. palette.json has
+                       NO warm amber at all (dark indigo/purple dominant), so
+                       these are tasteful hand-picked values, not hero extracts.
+-->
+<meta charset="utf-8">
+<title>P(Doom)1 -- Doom Overlay Preview</title>
+<style>
+  :root {
+    --void: #0e0614;
+    --panel: #17132d;
+    --line: #2e2547;
+    --ink: #e9f2f2;
+    --muted: #96a0bf;
+    --accent: #5c7ac3;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(160deg, #0a020e 0%, #120716 55%, #17132d 100%);
+    color: var(--ink);
+    font: 14px/1.5 "Segoe UI", system-ui, sans-serif;
+    padding: 20px 24px 60px;
+  }
+  h1 { font-size: 20px; margin: 0 0 2px; }
+  h1 span { color: var(--accent); }
+  .sub { color: var(--muted); margin: 0 0 18px; max-width: 900px; }
+  .sub code { color: #cbb6e0; }
+
+  .layout { display: flex; gap: 26px; flex-wrap: wrap; align-items: flex-start; }
+  .controls {
+    background: rgba(23,19,45,0.72);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+    width: 320px;
+    flex: 0 0 auto;
+    position: sticky;
+    top: 16px;
+  }
+  .controls h2 { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; }
+  .controls h2:first-child { margin-top: 0; }
+  .row { margin: 10px 0; }
+  .row label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .row label b { color: var(--ink); font-variant-numeric: tabular-nums; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; }
+  .presets button, .toggle-row button {
+    background: #1b0d22; color: var(--ink); border: 1px solid var(--line);
+    border-radius: 6px; padding: 6px 9px; font-size: 12px; cursor: pointer;
+  }
+  .presets button:hover, .toggle-row button:hover { border-color: var(--accent); }
+  .toggle-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .toggle-row button.off { opacity: .45; }
+
+  .swatches { display: flex; flex-direction: column; gap: 8px; }
+  .sw { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  .sw .chip { width: 26px; height: 26px; border-radius: 5px; border: 1px solid rgba(255,255,255,0.15); flex: 0 0 auto; }
+  .sw .meta { display: flex; flex-direction: column; line-height: 1.2; }
+  .sw .meta code { color: var(--ink); font-size: 12px; }
+  .sw .meta small { color: var(--muted); font-size: 10px; }
+
+  .stage { display: flex; flex-wrap: wrap; gap: 20px; flex: 1 1 480px; }
+  .card {
+    background: rgba(14,6,20,0.6);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px;
+    width: 288px;
+  }
+  .card canvas { width: 264px; height: 264px; display: block; border-radius: 6px; background: #0e0614; }
+  .card .name { font-size: 12px; color: var(--ink); margin-top: 8px; }
+  .card .path { font-size: 10px; color: var(--muted); word-break: break-all; }
+  .card .tag { font-size: 10px; color: #cbb6e0; }
+
+  .note {
+    margin-top: 22px; max-width: 940px; font-size: 12px; color: var(--muted);
+    border-top: 1px solid var(--line); padding-top: 12px;
+  }
+  .note b { color: var(--ink); }
+</style>
+
+<h1>P(Doom)1 -- <span>Doom Overlay</span> Preview</h1>
+<p class="sub">
+  Demonstrates <b>"doom is a layer, not a repaint"</b>: each base asset renders
+  doom-neutral, and doom is composited <b>on top</b> as an ADDITIVE overlay
+  (radial glow via <code>globalCompositeOperation="lighter"</code> + a low-alpha
+  colour-grade + an edge aura). Drag the sliders -- the same untouched base
+  pixels get progressively doomed. Turn every overlay off to see the raw base.
+</p>
+
+<div class="layout">
+  <div class="controls">
+    <h2>Axes</h2>
+    <div class="row">
+      <label>Weirdness <b id="wVal">0.00</b></label>
+      <input type="range" id="weird" min="0" max="1" step="0.01" value="0">
+      <div style="font-size:10px;color:var(--muted)">neutral -&gt; green (ok) -&gt; blue (acting up) -&gt; purple (eldritch)</div>
+    </div>
+    <div class="row">
+      <label>Catastrophe <b id="cVal">0.00</b></label>
+      <input type="range" id="cat" min="0" max="1" step="0.01" value="0">
+      <div style="font-size:10px;color:var(--muted)">neutral -&gt; amber -&gt; red -&gt; fire (hand-sourced)</div>
+    </div>
+    <div class="row">
+      <label>Overall intensity <b id="iVal">1.00</b></label>
+      <input type="range" id="intensity" min="0" max="1.4" step="0.01" value="1">
+    </div>
+
+    <h2>Doom bands (presets)</h2>
+    <div class="presets" id="presets"></div>
+
+    <h2>Overlay passes</h2>
+    <div class="toggle-row">
+      <button data-pass="glow">Glow</button>
+      <button data-pass="grade">Grade</button>
+      <button data-pass="aura">Edge aura</button>
+    </div>
+
+    <h2>Active overlay colours</h2>
+    <div class="swatches">
+      <div class="sw">
+        <div class="chip" id="wChip"></div>
+        <div class="meta"><code id="wHex">#000000</code><small>Weirdness -- palette.json (green from doom-intensity md)</small></div>
+      </div>
+      <div class="sw">
+        <div class="chip" id="cChip"></div>
+        <div class="meta"><code id="cHex">#000000</code><small>Catastrophe -- HAND-SOURCED (no amber in hero)</small></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stage" id="stage"></div>
+</div>
+
+<div class="note">
+  <b>Colour sourcing.</b> Weirdness blue/violet stops are pulled from
+  <code>docs/art/palette.json</code> (extracted hero palette: screen-blue
+  <code>#383761</code>, doom-purple <code>#351b33</code>, doom-indigo
+  <code>#2e2547</code>). The weirdness <b>green</b> "ok" stop is NOT in
+  palette.json (the hero image has no green) -- it comes from the Axis-B table in
+  <code>docs/art/PALETTE_AND_DOOM_INTENSITY.md</code>. The catastrophe
+  amber/red/fire stops are <b>hand-sourced</b>: palette.json has no warm amber at
+  all, so these are tasteful hand-picked values, not extracts from the hero.
+  The 5 presets map to the doom BANDS (cosy / uneasy / spooky / eldritch /
+  terminal) the game keys off (the same idea as a <code>MUSIC_TIER_BY_BAND</code>
+  lookup): each band sets a (weirdness, catastrophe) pair.
+</div>
+
+<script>
+"use strict";
+
+// ---- colour helpers -------------------------------------------------------
+function hexToRgb(h) {
+  h = h.replace("#", "");
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function rgbToHex(c) {
+  return "#" + c.map(function(v){ return Math.round(v).toString(16).padStart(2,"0"); }).join("");
+}
+function lerp(a, b, t) { return a + (b - a) * t; }
+function lerpRgb(a, b, t) { return [lerp(a[0],b[0],t), lerp(a[1],b[1],t), lerp(a[2],b[2],t)]; }
+function rgba(c, a) { return "rgba(" + Math.round(c[0]) + "," + Math.round(c[1]) + "," + Math.round(c[2]) + "," + a + ")"; }
+
+// Sample a colour gradient defined as [{t, rgb}] at position x in [0,1].
+function sampleStops(stops, x) {
+  if (x <= stops[0].t) return stops[0].rgb.slice();
+  if (x >= stops[stops.length-1].t) return stops[stops.length-1].rgb.slice();
+  for (var i = 0; i < stops.length - 1; i++) {
+    var a = stops[i], b = stops[i+1];
+    if (x >= a.t && x <= b.t) {
+      var tt = (x - a.t) / (b.t - a.t);
+      return lerpRgb(a.rgb, b.rgb, tt);
+    }
+  }
+  return stops[stops.length-1].rgb.slice();
+}
+
+// WEIRDNESS gradient: green (ok) -> electric blue (acting up) -> violet (eldritch)
+//   green stops  -> PALETTE_AND_DOOM_INTENSITY.md Axis B (NOT in palette.json)
+//   blue/violet  -> palette.json (screen-blue #383761, doom-purple #351b33, doom-indigo #2e2547), brightened for glow
+var WEIRD_STOPS = [
+  { t: 0.00, rgb: hexToRgb("#234c34") }, // deep green  (doom-intensity md)
+  { t: 0.20, rgb: hexToRgb("#3f8a5c") }, // green ok    (doom-intensity md)
+  { t: 0.50, rgb: hexToRgb("#5c7ac3") }, // electric blue (palette.json screen-blue #383761, brightened)
+  { t: 0.75, rgb: hexToRgb("#504673") }, // violet dark (palette.json doom-indigo #2e2547 region)
+  { t: 1.00, rgb: hexToRgb("#7a3b8f") }  // eldritch violet (palette.json doom-purple #351b33, brightened)
+];
+
+// CATASTROPHE gradient: amber -> orange -> red -> fire. ALL HAND-SOURCED.
+// palette.json has no warm amber; these are tasteful hand-picked values.
+var CAT_STOPS = [
+  { t: 0.00, rgb: hexToRgb("#f6a800") }, // amber      (hand)
+  { t: 0.25, rgb: hexToRgb("#e9752e") }, // orange     (hand)
+  { t: 0.50, rgb: hexToRgb("#e24a3b") }, // red-orange (hand)
+  { t: 0.75, rgb: hexToRgb("#b31217") }, // deep red   (hand)
+  { t: 1.00, rgb: hexToRgb("#f69168") }  // fire        (hand)
+];
+
+// ---- assets ---------------------------------------------------------------
+// Relative to tools/art_review/  ->  repo root is ../../
+// All four are git-tracked, so they resolve in any checkout of this branch.
+// Spaces in paths are %20-encoded for the loader.
+var ASSETS = [
+  { name: "Doom cat (photo)",       tag: "tracked", path: "../../godot/assets/cats/simple/web-doom-cat.jpg" },
+  { name: "Operator (pixellab)",    tag: "tracked", path: "../../art_source/pixellab_2026-07-16/04-V4-fullcolor-default-LOVED_south.png" },
+  { name: "Server cluster (data center)", tag: "tracked", path: "../../godot/assets/icons/actions_facilities/action_facility_data_center_512.png" },
+  { name: "Computer (dump)",        tag: "tracked", path: "../../godot/assets/dump_october_31_2025/vibes%20computer%201.png" }
+];
+
+// ---- band presets (weirdness, catastrophe) --------------------------------
+var PRESETS = [
+  { label: "0 Cosy",     w: 0.05, c: 0.12 },
+  { label: "1 Uneasy",   w: 0.24, c: 0.34 },
+  { label: "2 Spooky",   w: 0.52, c: 0.58 },
+  { label: "3 Eldritch", w: 0.82, c: 0.80 },
+  { label: "4 Terminal", w: 1.00, c: 1.00 }
+];
+
+// ---- state ----------------------------------------------------------------
+var state = { weird: 0, cat: 0, intensity: 1, glow: true, grade: true, aura: true };
+var cards = [];
+
+// ---- build DOM ------------------------------------------------------------
+var stage = document.getElementById("stage");
+ASSETS.forEach(function(a) {
+  var card = document.createElement("div");
+  card.className = "card";
+  var cv = document.createElement("canvas");
+  cv.width = 264; cv.height = 264;
+  card.appendChild(cv);
+  var nm = document.createElement("div"); nm.className = "name"; nm.textContent = a.name;
+  var tg = document.createElement("div"); tg.className = "tag"; tg.textContent = a.tag;
+  var pt = document.createElement("div"); pt.className = "path"; pt.textContent = a.path;
+  card.appendChild(nm); card.appendChild(tg); card.appendChild(pt);
+  stage.appendChild(card);
+
+  var img = new Image();
+  var rec = { ctx: cv.getContext("2d"), img: img, ready: false, failed: false };
+  img.onload = function(){ rec.ready = true; render(); };
+  img.onerror = function(){ rec.failed = true; render(); };
+  img.src = a.path;
+  cards.push(rec);
+});
+
+var presetWrap = document.getElementById("presets");
+PRESETS.forEach(function(p) {
+  var b = document.createElement("button");
+  b.textContent = p.label;
+  b.onclick = function() {
+    state.weird = p.w; state.cat = p.c;
+    document.getElementById("weird").value = p.w;
+    document.getElementById("cat").value = p.c;
+    syncLabels(); render();
+  };
+  presetWrap.appendChild(b);
+});
+
+// ---- controls -------------------------------------------------------------
+function bindSlider(id, key) {
+  var el = document.getElementById(id);
+  el.addEventListener("input", function(){ state[key] = parseFloat(el.value); syncLabels(); render(); });
+}
+bindSlider("weird", "weird");
+bindSlider("cat", "cat");
+bindSlider("intensity", "intensity");
+
+Array.prototype.forEach.call(document.querySelectorAll(".toggle-row button"), function(btn){
+  btn.onclick = function(){
+    var pass = btn.getAttribute("data-pass");
+    state[pass] = !state[pass];
+    btn.classList.toggle("off", !state[pass]);
+    render();
+  };
+});
+
+function syncLabels() {
+  document.getElementById("wVal").textContent = state.weird.toFixed(2);
+  document.getElementById("cVal").textContent = state.cat.toFixed(2);
+  document.getElementById("iVal").textContent = state.intensity.toFixed(2);
+}
+
+// ---- compositor -----------------------------------------------------------
+// Fit an image into a WxH box preserving aspect ratio ("contain").
+function fitRect(iw, ih, W, H) {
+  var pad = 18;
+  var bw = W - pad * 2, bh = H - pad * 2;
+  var s = Math.min(bw / iw, bh / ih);
+  var w = iw * s, h = ih * s;
+  return { x: (W - w) / 2, y: (H - h) / 2, w: w, h: h };
+}
+
+function drawPlaceholder(ctx, W, H, msg) {
+  ctx.save();
+  ctx.fillStyle = "#0e0614"; ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = "#2e2547"; ctx.lineWidth = 2;
+  ctx.setLineDash([6, 6]); ctx.strokeRect(10, 10, W - 20, H - 20);
+  ctx.setLineDash([]);
+  ctx.fillStyle = "#96a0bf"; ctx.font = "12px 'Segoe UI', sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("asset not found", W / 2, H / 2 - 8);
+  ctx.fillText(msg || "", W / 2, H / 2 + 10);
+  ctx.restore();
+}
+
+function drawScene(rec) {
+  var ctx = rec.ctx, W = 264, H = 264;
+  ctx.save();
+  ctx.globalCompositeOperation = "source-over";
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = "#0e0614";           // doom-neutral dark ground (palette.json void)
+  ctx.fillRect(0, 0, W, H);
+
+  if (rec.failed) { drawPlaceholder(ctx, W, H, "(check path)"); ctx.restore(); return; }
+  if (!rec.ready) { ctx.restore(); return; }
+
+  var r = fitRect(rec.img.width, rec.img.height, W, H);
+
+  // (1) BASE -- untouched pixels.
+  ctx.drawImage(rec.img, r.x, r.y, r.w, r.h);
+
+  var wv = state.weird, cv = state.cat, I = state.intensity;
+  var weirdCol = sampleStops(WEIRD_STOPS, wv);
+  var catCol = sampleStops(CAT_STOPS, cv);
+  var wWeight = wv * I, cWeight = cv * I;
+  var cx = r.x + r.w / 2, cy = r.y + r.h / 2;
+  var radius = Math.max(r.w, r.h) * 0.75;
+
+  // (2) COLOUR-GRADE -- low-alpha tint gelled over the whole frame (base still visible).
+  if (state.grade) {
+    var total = wWeight + cWeight;
+    if (total > 0.001) {
+      var gradeCol = lerpRgb(weirdCol, catCol, cWeight / total);
+      var gradeAlpha = Math.min(0.30, total * 0.20);
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = rgba(gradeCol, gradeAlpha);
+      ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  // (3) ADDITIVE GLOW -- radial blooms, one per axis, composited with "lighter".
+  if (state.glow) {
+    ctx.globalCompositeOperation = "lighter";
+    if (wWeight > 0.001) {
+      var gw = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      gw.addColorStop(0, rgba(weirdCol, Math.min(0.85, wWeight * 0.9)));
+      gw.addColorStop(1, rgba(weirdCol, 0));
+      ctx.fillStyle = gw; ctx.fillRect(0, 0, W, H);
+    }
+    if (cWeight > 0.001) {
+      var gc = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+      gc.addColorStop(0, rgba(catCol, Math.min(0.85, cWeight * 0.9)));
+      gc.addColorStop(1, rgba(catCol, 0));
+      ctx.fillStyle = gc; ctx.fillRect(0, 0, W, H);
+    }
+  }
+
+  // (4) EDGE AURA -- coloured bloom cast off the sprite silhouette (additive).
+  if (state.aura) {
+    var aTotal = wWeight + cWeight;
+    if (aTotal > 0.001) {
+      var auraCol = lerpRgb(weirdCol, catCol, cWeight / aTotal);
+      ctx.globalCompositeOperation = "lighter";
+      ctx.globalAlpha = Math.min(0.5, aTotal * 0.4);
+      ctx.shadowColor = rgba(auraCol, 1);
+      ctx.shadowBlur = 6 + aTotal * 26;
+      // Redraw faintly so the coloured drop-shadow blooms at the edges,
+      // without re-adding a bright copy of the base.
+      ctx.drawImage(rec.img, r.x, r.y, r.w, r.h);
+      ctx.shadowBlur = 0;
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  ctx.restore();
+}
+
+// ---- swatch readout -------------------------------------------------------
+function updateSwatches() {
+  var w = sampleStops(WEIRD_STOPS, state.weird);
+  var c = sampleStops(CAT_STOPS, state.cat);
+  var wHex = rgbToHex(w), cHex = rgbToHex(c);
+  document.getElementById("wChip").style.background = wHex;
+  document.getElementById("cChip").style.background = cHex;
+  document.getElementById("wHex").textContent = wHex;
+  document.getElementById("cHex").textContent = cHex;
+}
+
+// ---- render ---------------------------------------------------------------
+function render() {
+  cards.forEach(drawScene);
+  updateSwatches();
+}
+
+syncLabels();
+render();
+</script>
