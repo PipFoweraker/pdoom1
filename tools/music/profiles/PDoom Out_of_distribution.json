@@ -1,0 +1,62 @@
+{
+  "file": "PDoom Out_of_distribution.mp3",
+  "duration_sec": 59.6,
+  "tempo_bpm": 117.5,
+  "inter_beat_sec": {
+    "median": 0.488,
+    "std": 0.021
+  },
+  "key": {
+    "best": "F# major",
+    "confidence": 0.734,
+    "second": "B major",
+    "second_confidence": 0.679
+  },
+  "meter_hint": {
+    "contrast_by_group": {
+      "2": 0.0132,
+      "3": 0.0158,
+      "4": 0.0688,
+      "5": 0.0142,
+      "6": 0.024,
+      "7": 0.0487,
+      "8": 0.072,
+      "9": 0.0448
+    },
+    "likely_beats_per_bar": 8,
+    "winner_accent_profile": [
+      0.18,
+      0.068,
+      0.25,
+      0.229,
+      0.147,
+      0.09,
+      0.204,
+      0.289
+    ]
+  },
+  "segment_boundaries_sec": [
+    0.07,
+    27.1,
+    32.16,
+    47.67
+  ],
+  "rms_arc_16bins": [
+    0.06,
+    0.0668,
+    0.0849,
+    0.1043,
+    0.1139,
+    0.1311,
+    0.1525,
+    0.0086,
+    0.0102,
+    0.0204,
+    0.0389,
+    0.0414,
+    0.0521,
+    0.0622,
+    0.0858,
+    0.0493
+  ]
+}
