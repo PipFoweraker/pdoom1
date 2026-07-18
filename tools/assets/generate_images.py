@@ -150,8 +150,15 @@ def _openai_generate_bytes(model, prompt, size_str):
     gpt-image-1.5 keeps gpt-image-1's request shape (model/prompt/size, and
     optional background='transparent' for alpha). Confirm the exact model id
     and param surface vs live docs before a real run.
+
+    background='transparent' is requested so icons come back with a real alpha
+    channel instead of a baked-in background (the prompts ask for transparency
+    but the API otherwise fills the canvas). Requires an alpha-capable output
+    format; PNG is the gpt-image default, so no output_format override is needed.
     """
-    result = get_client().images.generate(model=model, prompt=prompt, size=size_str)
+    result = get_client().images.generate(
+        model=model, prompt=prompt, size=size_str, background="transparent"
+    )
     return base64.b64decode(result.data[0].b64_json)
 
 
