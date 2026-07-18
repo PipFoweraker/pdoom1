@@ -1,0 +1,226 @@
+{
+  "_meta": {
+    "note": "Expanded action/resource icon set (v2), extending icons_v1.json. Same asset_type (game_icons), styles and brand_doom theme as icons_v1 so the two sets read as one system. Native format is YAML; generate_images.py --file parses this JSON via yaml.safe_load. Dry-run: python tools/assets/generate_images.py --file tools/assets/manifests/icons_v2.json --dry-run. See docs/art/ASSET_PIPELINE.md.",
+    "palette_source": "docs/art/palette.json (extracted from godot/assets/dump_october_31_2025/hero-bg-2400w.webp)",
+    "grounding": "Icon ids/intent grounded in godot/scripts/core/game_state.gd (resources) and godot/data/actions/*.json (action menu ids: hire_staff, buy_compute, safety_research, capability_research, publish_paper, fundraise, publicity, team_building, audit_safety, operations, strategic, travel, financing, lobby_government, media_campaign, open_source_release, acquire_startup, sabotage_competitor, emergency_pivot). New resources beyond icons_v1's 6: research, action_points, stationery/supplies, technical_debt, morale.",
+    "palette_anchors": {
+      "ink_black": "#0e020c",
+      "indigo_deep": "#181b3b",
+      "indigo_mid": "#2e2547",
+      "indigo_lit": "#383761",
+      "doom_purple": "#300e1c",
+      "doom_purple_lit": "#351b33",
+      "doom_magenta": "#2c1327",
+      "bone_keyline": "#ece0cf"
+    }
+  },
+  "schema_version": "1.0",
+  "asset_type": "game_icons",
+  "background": "transparent",
+  "default_size": "1024x1024",
+  "output_sizes": [1024, 512, 256, 128, 64],
+  "styles": {
+    "global_icon_base": "bold flat vector game icon, single centred symbol, one heavy and consistent stroke weight throughout, strong chunky silhouette that reads clearly at 64x64, flat-ish shading with a single light source (no gradients or painterly rendering), transparent background, no text, no scene, no background props, view-locked straight-on and symmetrical, centered composition",
+    "brand_palette": "limited palette drawn from the P(Doom)1 hero image only: deep indigo #181b3b and #2e2547, lit indigo #383761, doom-purple #300e1c and #351b33, doom-magenta #2c1327, near-black ink #0e020c for shadow, plus a single thin warm bone keyline #ece0cf for edge legibility; no other hues, no white fills except the keyline"
+  },
+  "themes": {
+    "brand_doom": {
+      "style_overrides": ["global_icon_base", "brand_palette"],
+      "color_bias": "cohesive doom-end brand set: indigo and doom-purple bodies, ink shadow, one glowing accent per icon, bone keyline for the outline so every icon reads as one system"
+    }
+  },
+  "assets": [
+    {
+      "id": "icon_hire_staff",
+      "category": "action_icons",
+      "display_name": "Hire Staff",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold head-and-shoulders person silhouette with a single small plus sign badge at the upper right signalling recruitment, symmetrical and centred, no chair, no desk; figure in indigo #2e2547 with ink #0e020c inner shadow, the plus glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_buy_compute",
+      "category": "action_icons",
+      "display_name": "Purchase Compute",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a single chunky GPU / compute rack-blade with parallel cooling fins and one glowing power node, with a small downward acquisition arrow beside it signalling a purchase, hard industrial rectangular silhouette, explicitly NOT a flat microchip square; blade in indigo #181b3b and #2e2547, fins in ink #0e020c, power node and arrow glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_safety_research",
+      "category": "action_icons",
+      "display_name": "Safety Research",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold shield with a magnifier lens centred over it signalling careful safety review of research, symmetrical and centred; shield in indigo #2e2547, lens ring glowing lit-indigo #383761, ink #0e020c inner shadow, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_capability_research",
+      "category": "action_icons",
+      "display_name": "Capability Research",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a stylised angular brain-chip hybrid (a brain fused with circuit traces) with a single steep upward arrow behind it signalling advancing and risky capability, faintly menacing, symmetrical and centred; body in doom-purple #300e1c and #351b33, ink #0e020c shadow, arrow and circuit traces glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_publish_paper",
+      "category": "action_icons",
+      "display_name": "Publish Paper",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a single research-paper sheet with a couple of abstract text-lines and a bold check-seal or upward publish arrow at its corner signalling a paper being sent out to the world, distinct from a passive stack, centred; sheet faced bone #ece0cf over an indigo #181b3b backing, ink #0e020c outline, the seal/arrow glowing lit-indigo #383761, thin bone keyline"
+    },
+    {
+      "id": "icon_fundraise",
+      "category": "action_icons",
+      "display_name": "Fundraising",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "an open hand from below cupping a single rising coin with a small upward funding arrow, signalling raising money, bold rounded silhouette, no dollar-sign text; hand and coin in doom-purple #351b33 with ink #0e020c edges, coin face and arrow glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_publicity",
+      "category": "action_icons",
+      "display_name": "Publicity",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold megaphone / bullhorn angled up-right with two short broadcast arcs signalling public outreach, chunky silhouette, centred; horn body in indigo #2e2547 with ink #0e020c shadow, broadcast arcs glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_team_building",
+      "category": "action_icons",
+      "display_name": "Team Building",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "three bold head-and-shoulders figures overlapping shoulder to shoulder as a unified team block signalling morale and cohesion, symmetrical and centred; figures in indigo #2e2547 and #181b3b with ink #0e020c separation shadows, the centre figure rim-lit glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_audit_safety",
+      "category": "action_icons",
+      "display_name": "Safety Audit",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold clipboard with a checklist of three ticked rows and a small magnifier overlapping one corner signalling a thorough safety audit, centred; clipboard in indigo #2e2547, ticked marks and magnifier ring glowing lit-indigo #383761, ink #0e020c shadow, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_operations",
+      "category": "action_icons",
+      "display_name": "Operations",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a single bold cog / gear with a smaller inset gear tooth-locked inside it signalling routine operations and maintenance, perfectly symmetrical and centred; gear in doom-indigo #2e2547 with a #383761 rim-light on the top teeth, ink #0e020c hub shadow, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_strategic",
+      "category": "action_icons",
+      "display_name": "Strategic",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold chess knight piece on a short plinth signalling high-stakes strategic play, symmetrical and centred; knight in doom-purple #300e1c and #351b33 with ink #0e020c base shadow, a single #383761 rim-light along the mane edge, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_travel",
+      "category": "action_icons",
+      "display_name": "Travel and Conferences",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold conference lectern / speaking podium with a small paper-plane travel motif arcing above it signalling academic travel and conference talks, centred; podium in indigo #2e2547 with ink #0e020c shadow, the paper-plane glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_financing",
+      "category": "action_icons",
+      "display_name": "Financing",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold coin bound by a short chain link signalling financing with strings attached (loans and obligations), centred; coin in doom-purple #351b33 with ink #0e020c edges, the chain link glowing lit-indigo #383761 as the warning accent, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_lobby_government",
+      "category": "action_icons",
+      "display_name": "Lobby Government",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold neoclassical government building facade (pediment on columns) with a small gavel motif in front signalling lobbying for regulation, symmetrical and centred; building in indigo #2e2547 with ink #0e020c shadow between columns, the gavel glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_media_campaign",
+      "category": "action_icons",
+      "display_name": "Media Campaign",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold broadcast tower / antenna mast emitting three concentric signal arcs signalling a press and social-media campaign, symmetrical and centred; mast in indigo #2e2547 with ink #0e020c shadow, signal arcs glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_open_source",
+      "category": "action_icons",
+      "display_name": "Open Source Tools",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold open padlock with a small three-node share / branch glyph inside the shackle signalling releasing safety tools openly to the community, centred; padlock body in indigo #2e2547 with ink #0e020c shadow, the open shackle and share-nodes glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_acquire_startup",
+      "category": "action_icons",
+      "display_name": "Acquire Startup",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold small startup building with a rocket-fin roof being drawn in by a downward acquisition arrow / bracket around it signalling buying a struggling startup for talent and compute, centred; building in doom-purple #351b33 with ink #0e020c shadow, the acquisition arrow glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_sabotage",
+      "category": "action_icons",
+      "display_name": "Corporate Espionage",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold domino-style masquerade mask over a single cracked gear signalling unethical and risky corporate espionage, faintly sinister, symmetrical and centred; mask in doom-purple #300e1c and #351b33 with ink #0e020c shadow, the crack glowing a cold lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_emergency_pivot",
+      "category": "action_icons",
+      "display_name": "Emergency Pivot",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold U-turn / reversing arrow curving hard back on itself with a small alert-triangle notch signalling an emergency pivot from capability to safety, centred; arrow in doom-purple #351b33 with ink #0e020c shadow, the arrowhead and alert notch glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_research",
+      "category": "resource_icons",
+      "display_name": "Research",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold laboratory flask whose contents form a small glowing insight-node lattice (a few connected dots) rising from it signalling accumulated research output distinct from published papers, symmetrical and centred; flask in indigo #2e2547 with ink #0e020c shadow, the node lattice glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_action_points",
+      "category": "resource_icons",
+      "display_name": "Action Points",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "three bold rounded energy pips arranged in a tight triangle signalling action points / attention available this turn, symmetrical and centred, no numerals; pips in indigo #2e2547 with ink #0e020c shadow, the top pip fully lit and glowing lit-indigo #383761 while the other two are dimmer, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_supplies",
+      "category": "resource_icons",
+      "display_name": "Office Supplies",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold cup / holder of office stationery (a couple of pens and a paperclip) signalling restockable office supplies, chunky silhouette, centred; holder in indigo #181b3b and #2e2547 with ink #0e020c shadow, one pen-tip glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_technical_debt",
+      "category": "resource_icons",
+      "display_name": "Technical Debt",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold tangled knot of cables over a cracked block signalling accumulating technical debt, faintly unstable, symmetrical and centred; cables and block in doom-purple #300e1c and #351b33 with ink #0e020c shadow, the crack-line glowing a warning lit-indigo #383761, thin bone #ece0cf keyline"
+    },
+    {
+      "id": "icon_morale",
+      "category": "resource_icons",
+      "display_name": "Morale",
+      "status": "pending",
+      "theme": "brand_doom",
+      "prompt_tail": "a bold heart with a single rising pulse / heartbeat line across it signalling team morale, symmetrical and centred, no cuteness; heart in doom-purple #351b33 with ink #0e020c inner shadow, the pulse line glowing lit-indigo #383761, thin bone #ece0cf keyline"
+    }
+  ]
+}

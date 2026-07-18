@@ -144,20 +144,24 @@ def _aspect_ratio(width, height):
     return f"{width // g}:{height // g}"
 
 
-def _openai_generate_bytes(model, prompt, size_str):
+def _openai_generate_bytes(model, prompt, size_str, background="transparent"):
     """Call the OpenAI Images API and return raw image bytes.
 
     gpt-image-1.5 keeps gpt-image-1's request shape (model/prompt/size, and
-    optional background='transparent' for alpha). Confirm the exact model id
-    and param surface vs live docs before a real run.
+    optional background for alpha control). Confirm the exact model id and
+    param surface vs live docs before a real run.
 
-    background='transparent' is requested so icons come back with a real alpha
-    channel instead of a baked-in background (the prompts ask for transparency
-    but the API otherwise fills the canvas). Requires an alpha-capable output
-    format; PNG is the gpt-image default, so no output_format override is needed.
+    background='transparent' is requested by default so icons come back with a
+    real alpha channel instead of a baked-in background (the icon prompts ask for
+    transparency but the API otherwise fills the canvas). Full-bleed art (hero
+    banners, backgrounds, textures) must pass background='opaque' via the
+    manifest's top-level ``background`` key, otherwise flat regions (skies, dark
+    grounds) get alpha-cut out of the scene. Accepts 'transparent', 'opaque' or
+    'auto'. PNG (the gpt-image default) is alpha-capable, so no output_format
+    override is needed.
     """
     result = get_client().images.generate(
-        model=model, prompt=prompt, size=size_str, background="transparent"
+        model=model, prompt=prompt, size=size_str, background=background
     )
     return base64.b64decode(result.data[0].b64_json)
 
@@ -267,6 +271,7 @@ def generate_image(
     force=False,
     variant_num=None,
     reference_images=None,
+    background="transparent",
 ):
     """
     Generate an image (via the chosen backend) and downscaled versions.
@@ -306,7 +311,7 @@ def generate_image(
         if backend == "gemini":
             img_bytes = _gemini_generate_bytes(model, full_prompt, size_str, reference_images)
         else:
-            img_bytes = _openai_generate_bytes(model, full_prompt, size_str)
+            img_bytes = _openai_generate_bytes(model, full_prompt, size_str, background)
     except Exception as e:
         log(f"  ❌ ERROR generating {base_name}: {e}", "error")
         log(f"ERROR: {base_name} - {str(e)}", "error")
@@ -449,6 +454,9 @@ Examples:
     output_sizes = data.get("output_sizes", [1024, 512, 256, 128, 64])
     size_str = str(data.get("default_size", "1024x1024"))
     unit_cost = estimate_cost_per_image(size_str, args.backend)
+    # Alpha control for the OpenAI backend: 'transparent' (default, icons),
+    # 'opaque' (full-bleed hero banners / backgrounds), or 'auto'.
+    background = str(data.get("background", "transparent"))
     assets = data.get("assets", [])
 
     # Reference images: CLI applies to the whole run (gemini backend).
@@ -482,6 +490,7 @@ Examples:
     print(f"🧩 Backend: {args.backend}")
     print(f"🤖 Model: {model}")
     print(f"📐 Size: {size_str}")
+    print(f"🖼️  Background: {background} (openai backend)")
     print(f"🎯 Assets to generate: {len(filtered)}")
     if args.category:
         print(f"   Category filter: {args.category}")
@@ -597,6 +606,7 @@ Examples:
                 force=args.force,
                 variant_num=v_num,
                 reference_images=reference_images,
+                background=background,
             )
 
             if success:
