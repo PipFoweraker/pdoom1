@@ -130,6 +130,8 @@ test-results-*.xml
 art_generated/
 generated_icons/
 asset_gallery.html
+# Local art-review app state (per-reviewer verdicts/notes; written by serve_review.py)
+tools/art_review/review_state.json
 test_output.png
 test_openai_api.py
 generate_icons.py
