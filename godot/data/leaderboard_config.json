@@ -1,6 +1,6 @@
 {
-	"_comment": "Remote leaderboard sync config (client side of the PHP score API). Pip: set base_url + token to the real values, then flip enabled to true, BEFORE producing the alpha build. Default enabled=false + placeholder host so an unconfigured build NEVER touches the network and NEVER errors. The token is a low-value shared secret (X-PDoom-Token) -- acceptable to ship for alpha. endpoint = base_url + '/score_api.php'.",
-	"enabled": false,
-	"base_url": "https://api.example.invalid",
-	"token": "CHANGE_ME_set_a_long_random_token"
+	"_comment": "Remote leaderboard sync config (client side of the PHP score API). LIVE as of the v0.11.0 friends-and-family release: base_url points at the DreamCompute PHP endpoint (nginx + php-fpm on api.pdoom1.com), token is the shared X-PDoom-Token secret, enabled=true so the game posts scores. The token is a low-value shared secret that ships inside the public build -- acceptable for alpha; rotate if the board is abused. endpoint = base_url + '/score_api.php'.",
+	"enabled": true,
+	"base_url": "https://api.pdoom1.com",
+	"token": "SXeZs3NOV37AH5_uv6Nc_R41yq3ZfzzHPuUMYCHzPPujNMBj"
 }
