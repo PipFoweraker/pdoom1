@@ -14,6 +14,7 @@ extends Control
 @onready var whats_new_button = $VBox/MenuContainer/WhatsNewButton
 @onready var ai_safety_button = $VBox/MenuContainer/AISafetyButton
 @onready var exit_button = $VBox/MenuContainer/ExitButton
+@onready var version_label = $Version
 
 # What's New modal
 var whats_new_modal: Control = null
@@ -28,6 +29,10 @@ func _ready():
 	# Start menu music
 	MusicManager.play_context(MusicManager.MusicContext.MENU)
 
+	# Version label derives from the single source of truth (version.txt ->
+	# GameConfig.CURRENT_VERSION), not the static text baked into welcome.tscn.
+	if version_label:
+		version_label.text = "v" + GameConfig.CURRENT_VERSION
 
 	# Collect all menu buttons in order
 	menu_buttons = [

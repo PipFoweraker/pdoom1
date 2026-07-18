@@ -44,6 +44,14 @@ var pending_load_path: String = ""
 
 # Version tracking for What's New feature
 var last_seen_version: String = ""  # Empty = never seen patch notes
+# Single source of truth for the game version is version.txt at the repo root.
+# This const is the runtime copy: it is STAMPED from version.txt by
+# tools/sync_version.py (metadata overrides hard values). Do not hand-edit --
+# bump version.txt then run `python tools/sync_version.py`. CI's `--check` mode
+# fails if this drifts from version.txt. Kept as a compiled-in const (not a
+# runtime file read) because version.txt lives outside res:// and the leaderboard
+# board-key derives from this value, so it must resolve identically in exported
+# builds where a res:// text read is not guaranteed to be packed.
 const CURRENT_VERSION: String = "0.11.0"
 
 # Leaderboard State (transient, not saved)
