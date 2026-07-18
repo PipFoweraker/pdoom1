@@ -1,7 +1,14 @@
-# Capture runbook -- render the session's patches to audio before PC reset
+# Capture runbook -- render the session's patches to audio
 
-Goal: WAV/MP3 archives of every current patch iteration, so the early versions
-survive as audio references even if the patches or Strudel drift.
+Goal upgraded 2026-07-18 (post-reset): captures are no longer just iteration
+archives -- the tier-set takes become the game's placeholder music. After
+recording, Claude trims each take to an exact bar-boundary loop (the engine
+force-loops at the file boundary), converts to ogg 44.1k near -16 LUFS, and
+wires them into godot/assets/audio/music/. Record loose with the silence
+handles; precision is Claude's job.
+
+Recommended order: quick listen through jukebox v0.2 first (it changed after
+judgment round 1) so you do not record a version you already want changed.
 
 ## Setup (once, ~3 minutes)
 
@@ -23,23 +30,33 @@ survive as audio references even if the patches or Strudel drift.
 
 ## Take list (name -> what to capture)
 
+Priority tier (these become in-game placeholders -- do these first):
+
 | Take name | Patch | Capture length |
 |---|---|---|
-| m0_green_v0_3 | green_bed_v0_3.js | 2 arcs ~ 1:15 |
+| jukebox_m0_v0_2 | jukebox: Unit tests passing | 1 arc (32 bars) ~ 1:15 |
+| jukebox_m1_v0_2 | jukebox: Distribution shift | 2 arcs ~ 1:15 |
+| jukebox_m2_v0_2 | jukebox: Proxy gaming | 2 arcs ~ 1:15 |
+| jukebox_m3_v0_2 | jukebox: Mesa optimizer | 2 arcs ~ 1:25 |
+| jukebox_m4 | jukebox: Treacherous turn | 2 arcs ~ 1:25 |
+| jukebox_win_a | jukebox: fanfare cut | 4 loops ~ 1:45 |
+| jukebox_win_b | jukebox: quiet dawn | 2 passes ~ 2:00 |
+| jukebox_menu | jukebox: Checkpoint saved | ~3 loops ~ 1:30 |
+| trudge_welcome_v0_1 | trudge_welcome_v0_1.js | 2 arcs ~ 2:05 (DEFEAT slot) |
+
+(WIN: capture BOTH readings if undecided -- only the chosen one gets wired.)
+
+Archive tier (iteration history, second pass if time allows):
+
+| Take name | Patch | Capture length |
+|---|---|---|
+| jukebox_m4r | jukebox: another round (ratchet demo) | 2 passes ~ 1:15 |
 | green_blue_v0_2_tour | green_plus_blue_v0_2.js | blue=1 for ~40s, then live-edit blue=0.5 ~30s, blue=0 ~30s |
 | green_blue_amber_tour | green_blue_amber_v0_1.js | ~30s each at (0,0) (1,0) (0,1) (1,1) |
 | zen_standoff_v0_1 | zen_standoff_sketch_v0_1.js | 16 cycles ~ 1:05 |
 | drifting_seven_v0_1 | drifting_seven_v0_1.js | 16 bars ~ 0:55 |
-| trudge_welcome_v0_1 | trudge_welcome_v0_1.js | 2 arcs ~ 2:05 |
 | trailer_v0_4 | trailer_trudge_sketch_v0_4.js | ONE full pass ~ 2:50 + 3s tail |
 | dirge_variations_v0_1 | dirge_variations_v0_1.js | 2 tours ~ 2:20 |
-| jukebox_m1 | jukebox: Distribution shift | ~ 1:15 |
-| jukebox_m2 | jukebox: Proxy gaming | ~ 1:15 |
-| jukebox_m3 | jukebox: Mesa optimizer | ~ 1:25 |
-| jukebox_m4 | jukebox: Treacherous turn | ~ 1:25 |
-| jukebox_win | jukebox: The off switch worked | ~ 1:45 |
-
-(m0 doubles as jukebox M0 -- same patch.)
 
 ## Extract audio afterwards (one command per file, ffmpeg is installed)
 

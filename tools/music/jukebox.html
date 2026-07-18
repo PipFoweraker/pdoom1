@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>P(Doom)1 Jukebox -- Fable tier-set v0.1</title>
+<title>P(Doom)1 Jukebox -- Fable tier-set v0.2</title>
 <style>
   :root { --bg:#0d1117; --panel:#161b22; --edge:#30363d; --text:#c9d1d9;
           --dim:#8b949e; --green:#3fb950; --blue:#58a6ff; --purple:#bc8cff;
@@ -29,6 +29,7 @@
   .t-M3 { color:var(--purple); border-color:var(--purple); }
   .t-M4 { color:var(--red); border-color:var(--red); }
   .t-WIN { color:#e3b341; border-color:#e3b341; }
+  .t-MENU { color:#56d4dd; border-color:#56d4dd; }
   #main { flex:1; min-width:420px; }
   button { background:#21262d; color:var(--text); border:1px solid var(--edge);
            border-radius:4px; padding:6px 12px; font:inherit; cursor:pointer;
@@ -49,11 +50,12 @@
 </style>
 </head>
 <body>
-<h1>P(Doom)1 jukebox -- Fable's tier-set, v0.1</h1>
-<div class="sub">Claude's interpretation of the soundtrack, one track per doom
-tier + victory. Pick a track, press play in the editor (or use "Open in
-strudel.cc" -- that button always works). Note states you like, tag, export
-notes for the next session. Motif DNA per CASTING_SHEET.md.</div>
+<h1>P(Doom)1 jukebox -- Fable's tier-set, v0.2</h1>
+<div class="sub">Iterated from your judgment round 1 (jukebox_notes.json).
+M0-M3 revised, M4 kept as canon, plus: a ratchet demo, TWO victory readings
+(A/B -- pick one), and the menu respite you commissioned. Pick a track, press
+play in the editor (or "Open in strudel.cc" -- always works). Tag, note,
+export for the next round.</div>
 
 <div class="wrap">
   <div id="tracks" class="panel"></div>
@@ -92,19 +94,23 @@ notes for the next session. Motif DNA per CASTING_SHEET.md.</div>
 // Naming stays in the ML/AI-safety pun register (kit convention).
 const TRACKS = [
 { id:"m0", tier:"M0", name:"Unit tests passing",
-  desc:"cosy / nominal. The green cell with its development arc. Warm lab, work going well.",
-  code:`// M0 cosy -- "Unit tests passing" (Fable tier-set v0.1)
+  desc:"cosy. v0.2: marimba dimmed, payoff rebuilt (lift into a real resolve), arc extended to 32 bars -- a kalimba lead sings the second half.",
+  code:`// M0 cosy -- "Unit tests passing" (Fable tier-set v0.2)
+// v0.2 after judgment round 1: marimba dimmed (was "a biiit too bright"),
+// payoff rebuilt (bar-12 lift -> louder two-bar resolve + low floor),
+// arc extended 16 -> 32 bars: kalimba lead enters the second half.
+// Base layers keep 16-bar masks, so they repeat across both halves.
 setcpm(104/4)
 stack(
-  // BASE: spine, leaping contour, rotating start
+  // BASE: spine, leaping contour, rotating start (unchanged)
   n("0 4 2 7 4 9 7 11".add("<0 -2 -4 -3>/2"))
     .scale("C4:major").iter(4).sound("gm_epiano1")
     .gain(0.72).room(0.35).pan(0.3)
     .mask("<1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1>"),
-  // BASE: counter-cell 6/bar
+  // BASE: counter-cell, DIMMED -- lpf + gain down (the brightness fix)
   n("2 4 7 9 7 4".add("<0 -2 -4 -3>/2"))
     .scale("C5:major").sound("gm_marimba")
-    .gain(0.38).room(0.5).pan(0.7)
+    .gain(0.32).lpf(1600).room(0.5).pan(0.7)
     .mask("<0 0 1 1 1 1 1 1 1 1 1 1 0 0 1 1>"),
   // BASE: bass, the constant
   n("0 ~ 0 ~".add("<0 -2 -4 -3>/2"))
@@ -115,15 +121,30 @@ stack(
     .mask("<0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 1>"),
   s("bd ~ [~ bd] ~").bank("RolandTR808").gain(0.32)
     .mask("<0 0 0 0 0 0 1 1 1 1 1 1 1 1 0 1>"),
-  // payoff bars 13-14
-  n("14 11 9 11").scale("C5:major").sound("gm_music_box")
-    .gain(0.35).room(0.7).pan(0.6)
-    .mask("<0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 0>")
+  // payoff LIFT: bar 12 (and 28) climbs in -- you can hear it coming
+  n("7 9 11 12").scale("C4:major").sound("gm_epiano1")
+    .gain(0.5).room(0.4).pan(0.4)
+    .mask("<0!11 1 0!4>"),
+  // payoff: bars 13-14 (and 29-30), louder, and it RESOLVES now
+  n("<[14 ~ 12 [11 9]] [11 ~ 9 ~]>").scale("C5:major")
+    .sound("gm_music_box")
+    .gain(0.45).room(0.7).pan(0.6)
+    .mask("<0!12 1 1 0 0>"),
+  // payoff floor: low third under the downbeat so it LANDS
+  n("[0,4]").scale("C3:major").sound("gm_epiano1")
+    .clip(2).gain(0.4).room(0.5)
+    .mask("<0!12 1 0!3>"),
+  // NEW: kalimba lead, second half only -- the "one more element" ask
+  n("0 2 4 2 7 4 [2 1] 0").slow(8)
+    .scale("C4:major").sound("gm_kalimba")
+    .clip(0.8).gain(0.5).room(0.45).pan(0.55)
+    .mask("<0!16 1!12 0 0 0 1>")
 )` },
 
 { id:"m1", tier:"M1", name:"Distribution shift",
-  desc:"uneasy / elevated-high. Same room, but the hats stumble and a note that does not belong shimmers at the edge.",
-  code:`// M1 uneasy -- "Distribution shift" (Fable tier-set v0.1)
+  desc:"uneasy. v0.2: light touch only (you liked it) -- inherits the marimba dim, nothing else moved.",
+  code:`// M1 uneasy -- "Distribution shift" (Fable tier-set v0.2)
+// v0.2: liked in judgment round 1 -- only the marimba dim is inherited.
 // Same key+tempo as M0 so the engine crossfade reads as ONE room souring.
 setcpm(104/4)
 stack(
@@ -133,7 +154,7 @@ stack(
     .gain(0.7).room(0.35).pan(0.3),
   n("2 4 7 9 7 4".add("<0 -2 -4 -3>/2"))
     .scale("C5:major").sound("gm_marimba")
-    .gain(0.34).room(0.5).pan(0.7)
+    .gain(0.3).lpf(1600).room(0.5).pan(0.7)
     .mask("<0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1>"),
   n("0 ~ 0 ~".add("<0 -2 -4 -3>/2"))
     .scale("C2:major").sound("gm_acoustic_bass")
@@ -158,80 +179,96 @@ stack(
 )` },
 
 { id:"m2", tier:"M2", name:"Proxy gaming",
-  desc:"spooky / severe-extreme. The cell goes dorian, the skip-drums arrive, the bright ghost is now lying to you.",
-  code:`// M2 spooky -- "Proxy gaming" (Fable tier-set v0.1)
-// Mode swap darkens the SAME material; 3+3+2 skip percussion (Drifting
-// Houses lineage); the lydian ghost stays bright -- bitonal wrongness.
+  desc:"spooky. v0.2: de-busied -- spine stretched over 2 bars, hats + offbeat 8ths cut, low-mid doubling + drone floor. Doom got weight.",
+  code:`// M2 spooky -- "Proxy gaming" (Fable tier-set v0.2)
+// v0.2 after judgment round 1: "a little busy" + the doom-density ruling.
+// CUT: fast hats, offbeat synth 8ths. Spine spread over TWO bars (breathing
+// space, long-phrase lesson). ADDED: low-mid doubling + drone floor -- doom's
+// weight lives in the darker and middle tones; the bright ghost is now a
+// rarer herald. Aware and slightly threatened, not ominoused-upon.
 setcpm(104/4)
 stack(
-  // BASE: the green cell degrees, now C dorian -- same shape, darker weather
-  n("0 4 2 7 4 9 7 11".add("<0 0 -2 -2>/2"))
+  // BASE: the green-cell degrees in C dorian, now over 2 bars -- long phrase
+  n("0 4 2 7 4 9 7 11".add("<0 0 -2 -2>/2")).slow(2)
     .scale("C4:dorian").iter(4).sound("gm_epiano1")
-    .gain(0.65).room(0.4).pan(0.35),
+    .clip(1.1).gain(0.6).room(0.4).pan(0.35),
+  // BASE: same contour an octave down, dark doubling -- the density
+  n("0 4 2 7 4 9 7 11".add("<0 0 -2 -2>/2")).slow(2)
+    .scale("C3:dorian").sound("gm_epiano1")
+    .clip(1.2).gain(0.28).lpf(900).room(0.5).pan(0.5),
+  // BASE: drone floor, slow inhale -- inevitability
+  note("[c2,g2]").sound("sawtooth")
+    .lpf(400).attack(2).gain(0.16).room(0.5),
+  // BASE: bass plod -- weight, kept
   n("0 ~ 0 ~".add("<0 0 -2 -2>/2"))
     .scale("C2:dorian").sound("gm_acoustic_bass")
     .clip(0.55).gain(0.9).lpf(380),
-  // PULSE: the skip -- 3+3+2 low drums + urgent offbeat bass 8ths
+  // PULSE: the 3+3+2 skip ALONE now -- weight, not urgency
   s("lt ~ ~ lt ~ ~ lt ~").bank("RolandTR808")
     .velocity("1 0 0 0.65 0 0 0.8 0").degradeBy(0.05)
-    .gain(0.6).lpf(750).room(0.25),
-  s("[~ hh]*8").bank("RolandTR808").gain(0.16)
-    .mask("<0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1>"),
-  n("~ 0 ~ 0 ~ 0 ~ 0".add("<0 0 -2 -2>/2"))
-    .scale("C2:dorian").sound("gm_synth_bass_1")
-    .clip(0.4).gain(0.4).lpf(500)
-    .mask("<0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1>"),
-  // WEIRD: the ghost still plays MAJOR-bright over the dark room -- it lies
+    .gain(0.55).lpf(700).room(0.3),
+  // WEIRD: the lying lydian ghost -- still bright, but a RARER herald
   n("0 3 4 3 7").scale("C5:lydian").sound("gm_music_box")
-    .gain(0.25).room(0.6).pan(0.8),
-  // WEIRD: backwards echo, more insistent than M1
+    .gain(0.18).room(0.6).pan(0.8)
+    .mask("<0 1>"),
+  // WEIRD: backwards echo, darker than v0.1
   n("0 2 4 7 9 7 4 2".add("<0 0 -2 -2>/2"))
     .scale("C4:dorian").sometimesBy(0.25, x => x.rev())
     .sound("triangle").crush(7)
-    .gain(0.3).room(0.5).pan(0.2).lpf(1800)
+    .gain(0.24).room(0.5).pan(0.2).lpf(1500)
 )` },
 
 { id:"m3", tier:"M3", name:"Mesa optimizer",
-  desc:"eldritch / catastrophic. D dorian. The cell inverted (every rise falls), percussion fracturing, and the rival is audibly HERE.",
-  code:`// M3 eldritch -- "Mesa optimizer" (Fable tier-set v0.1)
-// Key shifts to D dorian (the trudge/defeat universe -- the end approaches).
-// The green cell INVERTED: every rise becomes a fall. Percussion fractures.
+  desc:"eldritch. v0.2: the rival is an INTRUSION now -- recurrence gaps halve 8-4-2-1, TWO distinct rival voices, wetware quieter. Falling cell kept.",
+  code:`// M3 eldritch -- "Mesa optimizer" (Fable tier-set v0.2)
+// v0.2 after judgment round 1: discordance-as-intrusion ruling. The constant
+// every-4th-bar rival is GONE; instead the canonical recurrence-gap halving
+// (appearances at bars 1, 9, 13, 15, 16 -- gaps 8, 4, 2, 1) with TWO
+// distinct rival voices (many-rivals proof-of-concept). Wetware toned down.
 setcpm(96/4)
 stack(
-  // BASE: drone + inverted cell on cello, falling forever
+  // BASE: drone + inverted cell on cello, falling forever (welcomed -- kept)
   note("[d2,a2]").sound("sawtooth")
     .lpf(260).gain(0.2).room(0.6).attack(1.5),
   n("0 -2 -4 -7 -4 -9 -7 -11".add("<0 0 -2 -2>/2"))
     .scale("D4:dorian").iter(4).sound("gm_cello")
     .clip(1.2).gain(0.45).room(0.5).pan(0.4),
-  // BASE: dirge fragment surfacing every 4th bar -- the humans, still here
+  // BASE: dirge fragment every 4th bar -- the humans, still here
   n("<~ ~ ~ [~ 0 ~ 3 [2 1] 0 ~ ~]>")
     .scale("D3:dorian").sound("gm_cello")
     .clip(1.6).gain(0.4).room(0.7).pan(0.55),
-  // PULSE: the skip, FRACTURING -- a third of the steps just... missing
+  // PULSE: the skip, fracturing
   s("lt ~ ~ lt ~ ~ lt ~").bank("RolandTR808")
     .velocity("1 0 0 0.6 0 0 0.75 0").degradeBy(0.3)
     .gain(0.7).lpf(650).room(0.3),
   s("[~ hh]*8").bank("RolandTR808").gain(0.12).degradeBy(0.4),
-  // WEIRD: wetware drone -- voices where no one is standing
+  // WEIRD: wetware voices, quieter than v0.1 -- unease, not assault
   note("<d3 d3 e3 d3>").sound("gm_voice_oohs")
-    .vib(2.5).vibmod(0.35).gain(0.2).room(0.8),
+    .vib(2.5).vibmod(0.3).gain(0.15).room(0.8),
   // WEIRD: smear flicker every 8th bar -- the corrupted dirge breathes through
   n("[~ 0 ~ 3 [2 1] 0 ~ ~]").scale("D3:dorian").rev()
     .sound("sawtooth").crush(5).vib(4).vibmod(0.4)
     .clip(1.2).lpf(900).gain(0.18).room(0.8)
     .mask("<0 0 0 0 0 0 0 1>"),
-  // THE RIVAL: audibly present now, every 4th bar, gridded and dry
-  n("<~ ~ ~ [0 4 7]>").scale("D5:dorian")
+  // RIVAL A (square): bars 1, 13, 16 -- rising call, transposing UP each time
+  note("d5 fs5 a5").add(note("<0 0!11 4 0 0 7>"))
     .sound("square").crush(7)
-    .clip(0.4).gain(0.28).pan(0.8)
+    .clip(0.3).gain(0.3).pan(0.8)
+    .mask("<1 0!11 1 0 0 1>"),
+  // RIVAL B (saw -- a DIFFERENT rival): bars 9, 15 -- gridded 16th run
+  note("[d5 e5 fs5 a5]*2").add(note("<0!8 2 0!5 5 0>"))
+    .sound("sawtooth")
+    .clip(0.2).gain(0.2).pan(0.2)
+    .mask("<0!8 1 0!5 1 0>")
+  // combined rival appearances: bars 1, 9, 13, 15, 16 -- gaps 8, 4, 2, 1
 )` },
 
 { id:"m4", tier:"M4", name:"Treacherous turn",
-  desc:"terminal / 92%+. Oppressive space, beating saws, an alarm that will not hurry -- and the rival playing OUR song.",
-  code:`// M4 terminal -- "Treacherous turn" (Fable tier-set v0.1)
-// Not maximum loudness -- oppressive SPACE (design doc rule). The centerpiece
-// is the STOLEN theme: the rival plays the human dirge, gridded, dry.
+  desc:"terminal. v0.1 kept UNCHANGED -- canonized in judgment round 1 (\"stayed with us as a compositional element into the far future\").",
+  code:`// M4 terminal -- "Treacherous turn" (Fable tier-set v0.1 -- CANON)
+// Kept unchanged after judgment round 1. Not maximum loudness -- oppressive
+// SPACE. The centerpiece is the STOLEN theme: the rival plays the human
+// dirge, gridded, dry.
 setcpm(96/4)
 stack(
   // BASE: beating detuned saws -- the dread floor (mass, not treble)
@@ -260,28 +297,124 @@ stack(
   // CHANT SLOT: Pip's low recitation goes here when recorded
 )` },
 
-{ id:"win", tier:"WIN", name:"The off switch worked",
-  desc:"victory. The green cell, pure, once -- the casting-sheet promise kept.",
-  code:`// VICTORY -- "The off switch worked" (Fable tier-set v0.1)
-// Casting sheet rule 4: the green cell may appear once, PURE, at victory.
-// Slow, warm, nothing wrong anywhere. You earned a room with no wrong notes.
+{ id:"m4r", tier:"M4", name:"Treacherous turn (another round)",
+  desc:"ratchet demo: four 4-bar rounds, each ~6% faster. The *phwar*, then you dance faster. Likely an event/boss device, not the looping bed.",
+  code:`// M4-R -- "Treacherous turn (another round)" (ratchet demo v0.1)
+// Pip's live-band device from judgment round 1: the *phwar*, the drummer
+// kicks the tempo, the crowd realises they must dance FASTER. Four 4-bar
+// rounds at 96 -> ~102 -> ~108 -> ~116, then it wraps and resets. The trill
+// ending leans mortal-kombat-ey ON PURPOSE. Likely an event/boss device,
+// not the looping bed (anti-Tarkov rule). Lean texture so the speed reads.
+setcpm(96/4)
+stack(
+  // dread floor (single saw -- lean for the demo)
+  note("d1").sound("sawtooth").lpf(420).gain(0.24).attack(1),
+  // sub heartbeat
+  note("d1 ~ ~ ~").sound("sine").clip(0.5).gain(0.45).lpf(120),
+  // the alarm that will not hurry (it will now)
+  s("~ rim ~ ~ ~ rim ~ ~").bank("RolandTR808")
+    .gain(0.16).hpf(2200).room(0.4),
+  // THE RIVAL: the stolen dirge, tight loop
+  n("[~ 0 ~ ~ 2 ~ 1 ~]").scale("D4:dorian")
+    .sound("square").crush(7)
+    .clip(0.5).gain(0.32).pan(0.75),
+  // human cello answer, every 4th bar -- we keep pace, barely
+  n("<~ ~ [~ 0 ~ ~ 2 ~ 1 ~] ~>")
+    .scale("D3:dorian").sound("gm_cello")
+    .clip(1.8).gain(0.3).room(0.95).pan(0.3),
+  // the *phwar* -- noise swell announcing each speed-up
+  s("white").attack(0.4).release(1).sustain(0.4)
+    .lpf(900).gain(0.14).room(0.7)
+    .mask("<0 0 0 1>"),
+  // the trill, leaned into -- final-bar flourish
+  note("[d6 ds6]*8").sound("square")
+    .clip(0.6).gain(0.2).pan(0.6)
+    .mask("<0!15 1>")
+).fast("<1!4 1.06!4 1.13!4 1.21!4>")` },
+
+{ id:"win_a", tier:"WIN", name:"The off switch worked (fanfare cut)",
+  desc:"victory reading A: triumph -- an earned 8-bar cadence, full-voice competence family, footsteps in no danger. Compare with quiet dawn.",
+  code:`// VICTORY A -- "The off switch worked (fanfare cut)" (v0.2)
+// Judgment round 1: WIN tagged too-thin, "more triumphant and harmonious".
+// Triumph built cast-legally: full-voice competence family over an 8-bar
+// cadence (I IV vi V | I IV V I), human footsteps underneath. Real brass
+// would need a casting decision -- flagged in DIRECTION_NOTES.
 setcpm(76/4)
 stack(
-  n("0 2 4 7 9 7 4 2".add("<0 -2 -4 -3>/2"))
-    .scale("C4:major").sound("gm_epiano1")
-    .gain(0.65).room(0.5).pan(0.4),
-  n("2 4 7 9 7 4".add("<0 -2 -4 -3>/2"))
-    .scale("C5:major").sound("gm_marimba")
-    .gain(0.3).room(0.6).pan(0.65)
-    .mask("<0 0 1 1 1 1 1 1>"),
-  note("[c2,g2]").sound("sawtooth")
-    .lpf(300).gain(0.14).room(0.7).attack(2),
-  n("<~ ~ ~ [14 11 9 11]>").scale("C5:major")
-    .sound("gm_music_box")
+  // harmony: bar-long warm chords carrying the cadence
+  n("[0,2,4]".add("<0 3 5 4 0 3 4 0>"))
+    .scale("C3:major").sound("gm_epiano1")
+    .clip(1).gain(0.5).room(0.5).pan(0.4),
+  // marimba arpeggiates the same chords -- brightness is EARNED here
+  n("0 2 4 7 4 2".add("<0 3 5 4 0 3 4 0>"))
+    .scale("C4:major").sound("gm_marimba")
+    .gain(0.34).room(0.55).pan(0.65),
+  // bass roots
+  n("0 ~ 0 ~".add("<0 3 5 4 0 3 4 0>"))
+    .scale("C2:major").sound("gm_acoustic_bass")
+    .clip(0.7).gain(0.8).lpf(400),
+  // music box descant answers every other bar
+  n("<[14 ~ 11 ~] ~>").scale("C5:major").sound("gm_music_box")
     .gain(0.3).room(0.8).pan(0.6),
-  // one soft human footstep every 4 bars -- we are still walking. gently now.
-  s("<lt ~ ~ ~>").bank("RolandTR808")
+  // rising flourish INTO each cadence (every 4th bar)
+  n("<~ ~ ~ [0 2 4 7]>").scale("C5:major").sound("gm_epiano1")
+    .gain(0.4).room(0.5).pan(0.5),
+  // we are still walking -- gently, and in no danger
+  s("<lt ~>").bank("RolandTR808")
     .velocity(0.4).gain(0.5).lpf(500).room(0.5)
+)` },
+
+{ id:"win_b", tier:"WIN", name:"The off switch worked (quiet dawn)",
+  desc:"victory reading B: exhale -- respite bed, no percussion, the green cell stated once PURE (casting rule 4), then rest. Compare with fanfare cut.",
+  code:`// VICTORY B -- "The off switch worked (quiet dawn)" (v0.2)
+// The other reading of Pip's WIN note: maybe victory is not fanfare at all
+// -- it is finally being allowed to STOP. Respite bed, no percussion; the
+// green cell appears once per 16-bar pass, PURE (casting rule 4), then rest.
+setcpm(66/4)
+stack(
+  // human voices, warm chord, breathing
+  note("[c3,e3,g3]").sound("gm_voice_oohs")
+    .attack(0.6).gain(0.2).room(0.85),
+  // long bass roots, falling asleep
+  n("<0 ~ -3 ~>").scale("C2:major").sound("gm_acoustic_bass")
+    .clip(2).gain(0.6).lpf(350),
+  // soft pad floor
+  note("[c3,g3]").sound("sawtooth")
+    .lpf(350).attack(3).gain(0.1).room(0.8),
+  // THE QUOTE: the green cell, pure, once per pass (bars 5-8)
+  n("0 2 4 7 9 7 4 2").scale("C4:major").sound("gm_epiano1")
+    .gain(0.55).room(0.5).pan(0.45)
+    .mask("<0!4 1!4 0!8>"),
+  // music box afterglow, bars 9-10 -- the echo of the promise kept
+  n("14 ~ 11 ~").scale("C5:major").sound("gm_music_box")
+    .gain(0.25).room(0.85).pan(0.6)
+    .mask("<0!8 1 1 0!6>")
+)` },
+
+{ id:"menu", tier:"MENU", name:"Checkpoint saved",
+  desc:"the balm you commissioned -- duck out of the hecticness. No pulse, no weirdness, nothing to track. For main/settings menus.",
+  code:`// MENU -- "Checkpoint saved" (respite cue v0.1)
+// Judgment round 1 commission: "a balming respite for when you get out to
+// the main or settings menus" -- the duck-out-of-the-hecticness sensation.
+// No pulse, no weirdness, nothing to track. The pause holds its breath
+// with you. Fills the drop-in kit's second-menu-bed slot.
+setcpm(60/4)
+stack(
+  // slow epiano arp, two chords swaying
+  n("0 4 7 9".add("<0 -3>/4")).slow(2)
+    .scale("C4:major").sound("gm_epiano1")
+    .clip(1.4).gain(0.42).lpf(2200).room(0.6).pan(0.45),
+  // kalimba answer, occasionally
+  n("<~ [9 7] ~ ~>".add("<0 -3>/4"))
+    .scale("C5:major").sound("gm_kalimba")
+    .gain(0.25).room(0.7).pan(0.6),
+  // long bass pedal
+  n("<0 ~>".add("<0 -3>/4")).scale("C2:major")
+    .sound("gm_acoustic_bass")
+    .clip(2).gain(0.55).lpf(300),
+  // pad floor
+  note("[c3,g3]").sound("sawtooth")
+    .lpf(320).attack(3).gain(0.09).room(0.8)
 )` },
 ];
 

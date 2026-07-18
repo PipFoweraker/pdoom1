@@ -275,6 +275,57 @@ signature", a "skipping rhythm" that is "super addictive":
 To reconcile against analyze_refs.py output (tempo, meter hint, onset grid)
 before building the amber/catastrophe rhythmic vocabulary from it.
 
+## Jukebox judgment round 1 (2026-07-18, raw export committed as jukebox_notes.json)
+
+Tags: M0 like; M1 like + fits-state; M4 like + fits-state; WIN too-thin.
+Per-track rulings -> tier-set v0.2 actions:
+
+- M0: marimba "just a biiit too bright when contrasted with the plodding"
+  -> lpf + gain dim (register kept). "Not certain the payoff actually pays
+  off" -> bar-12 lift figure, louder two-bar resolve, low-third floor under
+  the downbeat. Wants more material for a much-heard track -> arc extended
+  16 -> 32 bars, kalimba lead (competence cast) sings the second half.
+- M1: liked; variations-on-first-theme progression confirmed. Marimba fix
+  inherited; otherwise untouched. Lead-inheritance into M1 deferred until
+  stem-slicing (when BASE stems are literally shared).
+- M2: "a little busy" -> hats and offbeat synth 8ths CUT, spine spread over
+  two bars (long-phrase lesson again). NEW RULING (doom density): doom wants
+  "density and weight and inevitability as it approaches"; its heralds "might
+  sing out in every register" but doom's own imposition lives in DARKER AND
+  MIDDLE TONES with increasing prominence. v0.2: low-mid spine doubling +
+  drone floor; lydian ghost quieter and rarer. Target feel: aware and
+  slightly threatened, not "directly ominoused-upon".
+- M3: downward-tripping cell "really welcome and refreshing" -- kept. NEW
+  RULING (discordance-as-intrusion): truly discordant material = small
+  intrusions and event-based responses (miniboss/boss flavour), not constant
+  audio assault; constant bed stays enjoyable-from-inside. NEW IDEA
+  (game-design crossover, flag for mechanics discussion): not ONE but MANY
+  RIVAL SOUNDS -- characterful rival identities, Civ-empire-theme analogy,
+  possibly representations the rivals EVOLVE into. v0.2 implements the
+  canonical recurrence-gap halving (8-4-2-1 across the arc) with two
+  distinct rival voices as a many-rivals proof-of-concept.
+- M4: loved as-is ("a good, tight little loop", Pokemon battle-trill
+  lineage). CANONIZED: "if you told me that this little ditty stayed with us
+  as a compositional element into the far future, I'd believe you." NEW
+  DEVICE (tempo ratchet): the live-band move -- the *phwar*, the drummer
+  kicks the tempo, the crowd realises they must dance FASTER. Demo track
+  added (m4r, four rounds each ~6% faster). Trill ending: lean into the
+  mortal-kombat-ey character deliberately. Ratchet is likely an event/boss
+  device, not the looping bed (anti-Tarkov rule).
+- WIN: too-thin; wants "more triumphant and harmonious", AND doubts we want
+  a victory-victory flavour at all. Split A/B for the next round:
+  WIN-A "fanfare cut" (earned cadence, full-voice competence family --
+  cast-legal triumph; real BRASS is an OPEN CASTING QUESTION, no row owns it
+  yet) vs WIN-B "quiet dawn" (respite bed + the pure green-cell quote,
+  casting rule 4 -- victory as being allowed to stop). Pip picks.
+- NEW CUE COMMISSIONED (from the WIN note): menu respite -- "a balming
+  respite for when you get out to the main or settings menus", the
+  duck-out-of-the-hecticness sensation. Draft: jukebox "Checkpoint saved"
+  (60 bpm, no percussion, no weirdness). Fills the drop-in kit's
+  second-menu-bed nice-to-have.
+
+## Drifting Houses leitmotif -- decode continued
+
 DECODED 2026-07-18 (Demucs drum-stem isolation + 53 s onset fold): the groove
 is a 7-BEAT bar at ~129 bpm, grouped 3+2+2. Meter-hint contrast for 7 on the
 isolated drums = 0.131, over 2x any other grouping -- strong signal. Accent
