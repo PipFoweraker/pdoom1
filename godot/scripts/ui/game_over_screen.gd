@@ -16,6 +16,11 @@ var baseline_result: Dictionary = {}
 var leaderboard_entry_uuid: String = ""
 var game_start_time: float = 0.0
 var sync_status_label: Label = null  # Tiny non-blocking remote-sync status blip
+# Re-entrancy guard: the game-over signal fires on EVERY state update (incl. leftover
+# day-ticks in a month playback), so show_game_over() can be called many times. The
+# scoring side-effects (local save + remote POST + music) must run EXACTLY ONCE; later
+# calls only keep the overlay visible.
+var _game_over_shown: bool = false
 
 func _ready():
 	# Initially hidden
@@ -50,16 +55,35 @@ func _input(event: InputEvent):
 			get_viewport().set_input_as_handled()
 
 func show_game_over(is_victory: bool, final_state: Dictionary):
-	"""Display game over screen with final statistics"""
+	"""Display game over screen with final statistics.
+
+	ISOLATION CONTRACT (fix/endgame-quit-score-post -- release blocker). This is the view
+	layer at the defeat transition; the live remote leaderboard turned it into a place where
+	a bug loses scores. The rules this method now enforces:
+	  1. RE-ENTRANCY: the game-over signal fires on every state update (incl. leftover
+	     day-ticks in a month playback), so run the scoring side-effects EXACTLY ONCE.
+	  2. SCORE FIRST: persist + submit the score BEFORE any heavy/optional work, so a hang,
+	     force-quit, or later error can't lose it. The submit was previously the LAST step,
+	     after a multi-second synchronous baseline sim -- a force-quit during that freeze
+	     meant the POST was never even dispatched (root cause of the live score loss).
+	  3. NEVER BLOCK: read the baseline NON-BLOCKING (get_baseline_score() ran a ~4s
+	     synchronous simulation on the main thread -> "Not Responding" at the defeat moment).
+	  4. NEVER CRASH: music / save / submit are all failure-tolerant side-effects.
+	"""
+	# Rule 1 -- re-entrancy guard. Later calls only keep the overlay visible.
+	if _game_over_shown:
+		visible = true
+		return
+	_game_over_shown = true
+
 	visible = true
 
-	# Play appropriate end-game music
+	# Play appropriate end-game music (MusicManager already no-ops a missing/failed track).
 	if is_victory:
 		# Victory music not yet implemented, keep gameplay music
 		pass
 	else:
 		MusicManager.play_context(MusicManager.MusicContext.DEFEAT)
-
 
 	# ADR-0002: the engine is the scoring authority — read the (turns, doom_integral)
 	# tuple straight off final_state; no formula here.
@@ -68,54 +92,31 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	final_doom_integral = st[1]
 	print("[GameOverScreen] Final score: %s" % GameState.format_score(final_turns, final_doom_integral))
 
-	# Get baseline (no-action) score for comparison (Issue #372)
 	var game_seed = GameConfig.get_display_seed()
-	baseline_result = BaselineSimulator.get_baseline_score(game_seed)
+
+	# Rule 3 -- baseline comparison (Issue #372), NON-BLOCKING. If the background sim isn't
+	# ready yet we skip the comparison rather than freeze the defeat screen computing it.
+	# baseline_turns == 0 is exactly what the stats block already treats as "no baseline".
+	baseline_result = BaselineSimulator.get_baseline_score_if_ready(game_seed)
 	baseline_turns = int(baseline_result.get("turns", 0))
 	baseline_doom_integral = int(round(baseline_result.get("doom_integral", 0.0)))
-	print("[GameOverScreen] Baseline: %s" % GameState.format_score(baseline_turns, baseline_doom_integral))
+	if baseline_turns > 0:
+		print("[GameOverScreen] Baseline: %s" % GameState.format_score(baseline_turns, baseline_doom_integral))
+	else:
+		print("[GameOverScreen] Baseline not ready -- skipping comparison (defeat screen must not block).")
 
-	# Stop verification tracking and get final hash
+	# Rule 2 -- SCORE FIRST. Persist locally + fire the async remote POST immediately, before
+	# the verification export and stats rendering below.
+	_persist_and_submit_score(final_state, game_seed)
+
+	# Verification export (decorative here -- a future dispute artifact). Cheap; kept AFTER
+	# the durable save so nothing scoring-critical depends on it.
 	VerificationTracker.stop_tracking()
 	var final_hash = VerificationTracker.get_final_hash()
-
-	# Export verification data for submission (future leaderboard integration)
 	var verification_data = VerificationTracker.export_for_submission(final_state)
 	verification_data["turns_survived"] = final_turns  # ADR-0002 score tuple
 	verification_data["doom_integral"] = final_doom_integral
 	print("[GameOverScreen] Game ended - Verification hash: %s..." % final_hash.substr(0, 16))
-	print("[GameOverScreen] Score: %s" % GameState.format_score(final_turns, final_doom_integral))
-	print("[GameOverScreen] Full verification data ready for submission")
-
-
-	# Save score to leaderboard (game_seed already obtained for baseline)
-	var leaderboard = Leaderboard.new(game_seed, "v" + GameConfig.CURRENT_VERSION)
-	var duration = Time.get_ticks_msec() / 1000.0 - game_start_time
-
-	var entry = Leaderboard.ScoreEntry.new(
-		final_turns,
-		GameConfig.lab_name,
-		final_state.get("turn", 0),
-		"v" + GameConfig.CURRENT_VERSION,  # Game version from GameConfig
-		duration,
-		baseline_turns,  # Baseline turns for comparison (Issue #372)
-		final_doom_integral,  # ADR-0002 tiebreak
-		baseline_doom_integral
-	)
-
-	var result = leaderboard.add_score(entry)
-	leaderboard_entry_uuid = entry.entry_uuid
-	var rank = result.get("rank", -1)
-
-	print("[GameOverScreen] Score saved to leaderboard - Rank: %d" % rank)
-
-	# Store entry UUID globally for leaderboard highlighting
-	GameConfig.latest_leaderboard_entry = leaderboard_entry_uuid
-
-	# Remote leaderboard sync (ADR-0006: pure view side-effect, off the deterministic
-	# path). Fire-and-forget; the local save above already succeeded, so a network
-	# failure just leaves the score local. Only runs when enabled+configured+opted-in.
-	_maybe_submit_remote(entry, game_seed)
 
 	# Set title and colors based on outcome
 	if is_victory:
@@ -220,6 +221,35 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	stats_text += "[center][color=gold][b]⏎ Press ENTER for Leaderboard[/b][/color][/center]"
 
 	stats_label.text = stats_text
+
+func _persist_and_submit_score(final_state: Dictionary, game_seed: String) -> void:
+	"""SCORE FIRST (isolation contract, rule 2): save the run's score to the LOCAL board and
+	fire the async remote POST. Runs before the verification export + stats rendering so the
+	score is durable the instant the defeat screen appears -- a later hang / force-quit /
+	error cannot lose it. The remote POST is fire-and-forget on the LeaderboardSync autoload
+	(lifecycle-independent from this screen) and internally bulletproof against network
+	failure, so nothing here can crash or freeze the end-game."""
+	var duration = Time.get_ticks_msec() / 1000.0 - game_start_time
+	var entry = Leaderboard.ScoreEntry.new(
+		final_turns,
+		GameConfig.lab_name,
+		final_state.get("turn", 0),
+		"v" + GameConfig.CURRENT_VERSION,  # Game version from GameConfig
+		duration,
+		baseline_turns,  # Baseline turns for comparison (Issue #372); 0 when not ready
+		final_doom_integral,  # ADR-0002 tiebreak
+		baseline_doom_integral
+	)
+
+	# ---- local save (authoritative: the score must exist locally regardless of network) --
+	var leaderboard = Leaderboard.new(game_seed, "v" + GameConfig.CURRENT_VERSION)
+	var result: Dictionary = leaderboard.add_score(entry)
+	leaderboard_entry_uuid = entry.entry_uuid
+	GameConfig.latest_leaderboard_entry = leaderboard_entry_uuid  # for leaderboard highlight
+	print("[GameOverScreen] Score saved locally - Rank: %d" % int(result.get("rank", -1)))
+
+	# ---- remote submit (async; failure just leaves the score local + queued for retry) ----
+	_maybe_submit_remote(entry, game_seed)
 
 func _maybe_submit_remote(entry, game_seed: String) -> void:
 	"""Upload the just-saved score to the global board, if sync is on. Never blocks;

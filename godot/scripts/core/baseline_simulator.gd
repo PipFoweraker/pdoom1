@@ -145,6 +145,32 @@ static func get_baseline_score(game_seed: String) -> Dictionary:
 	_baseline_cache[game_seed] = result
 	return result
 
+static func get_baseline_score_if_ready(game_seed: String) -> Dictionary:
+	"""NON-BLOCKING baseline read for the defeat transition.
+
+	Returns the baseline dict ONLY if it is already available (precomputed, cached, or a
+	finished background thread we can harvest without waiting). If the baseline is not ready
+	-- not started, or a background thread is still running -- returns {} and NEVER blocks.
+
+	Why this exists: get_baseline_score() blocks the main thread (wait_to_finish, or a full
+	synchronous BLIND simulation ~4s) which, called from show_game_over(), froze the game at
+	the exact defeat moment ("Not Responding") and starved/delayed the score POST. The score
+	is the product; the baseline is a cosmetic comparison -- it must never block the end-game.
+	"""
+	if _precomputed_baselines.has(game_seed):
+		return _precomputed_baselines[game_seed]
+	if _baseline_cache.has(game_seed):
+		return _baseline_cache[game_seed]
+	# A background thread that has already FINISHED can be harvested without blocking
+	# (wait_to_finish returns immediately and disposes the thread properly).
+	if _background_seed == game_seed and not _is_computing:
+		_wait_for_background()
+		if _background_result.size() > 0:
+			_baseline_cache[game_seed] = _background_result
+			return _background_result
+	# Not ready and we refuse to block. Caller degrades to "no baseline comparison".
+	return {}
+
 static func clear_cache():
 	"""Clear the baseline cache (useful for testing)"""
 	_baseline_cache.clear()
