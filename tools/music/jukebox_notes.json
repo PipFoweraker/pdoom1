@@ -1,0 +1,43 @@
+{
+  "exported": "2026-07-18T04:19:27.689Z",
+  "notes": {
+    "m0": "THe marimba like thing feel, like, just a biiit to bright when contrasted with the plodding? I'm also not certain the payoff section actually pays off. Pretty close, though. I think we will maybe want to extend the theme or add in one element of melody or harmony more, especially if the players will encounter this a lot? Otherwise, awesome.",
+    "m1": "The introduction of the slight unsettling feels good here. Acknowleding we're still doing variations on the first theme, I like the progression.",
+    "m2": "This is starting to feel a little busy. This means we might want to, like, extend the melody over several bars or something to give us a bit more breathing space? I feel like this level of intensity wants us to be more aware and slightly threatened as opposed to being directly ominoused-upon. I think a bit more, like, thickness, richness, depth to the noises as well? I fee llike I want my doom to have density and weight and inevitability as it approaches, and its heralds might sing out in every register, but the fate-warping element of the arrival of doom itself I think has darker and middle tones as its impositions and increasing prominense.",
+    "m3": "After the last few tracks, the downwards-tripping notes were a really welcome and refreshing change. I'm not certain as to the justaposition of these increasingly complex melodies with the shapes and urgencies of the beeps and tones we're using. There's probably some subtle thing, here, like I want people to be able to enjoy the music the same way some aggressive techno makes people uncomfortable if they're not exactly in the mood for that kind of jumping around, but then it's great if you're inside it?\n\nAt more maximal levels, we can approach discordance in a way that's harsh to listen to, or keep truly discordant things for more like small intrusions and event based responses (minibosses and bosses flavour) rather than audio assault. This probaly ties in to experimenting with not ONE, but MANY RIVAL SOUNDS. Chacaterful representations of some of them should be able to be things we evolve into as representations somehow? Each empire inCiv got its own theme... there's something here, maybe. This feels more like an interrogation of game mechanics.",
+    "m4": "This is a good, tight little loop. It reminds me of the thrilling trill when you get engaged in combat in the old gamebok Pokemon games! While I was in strudel, I played around with increasing and decreasing tempo. This little hook feels like it would be acool thing to ratchet with. You know when you're with at a live band and they play  hectic song, and then there's a little *phwar* noise, and the drummer increases the tempo, and the crowd realises they don't get to settle down yet, there's another round, but we have to dance *faster*? that. The trill at the end is a bit mortal-kombat-ey, as well, we could... lean into that? If you told me that this little ditty stayed with us as a compositional element into the far future, I'd believe you.",
+    "win": "I think for an actual victor flavour we would want more triumphant and harmonious notes? I'm also not certain if we get or want a victory-victory flavour. We could definitely use something for, like a balming respite for when you get out to the main or settings menu's (a 'duck out of the hecticness of a turn based game' sensation is funny, but I am well aware of modifying the intensity of games I play like that haahaha\notherwise I'm kind of not super keen on this approach in particular compared to all the other tracks?"
+  },
+  "log": [
+    {
+      "t": "2026-07-18T03:48:19.405Z",
+      "track": "m0",
+      "tag": "like"
+    },
+    {
+      "t": "2026-07-18T03:49:58.458Z",
+      "track": "m1",
+      "tag": "like"
+    },
+    {
+      "t": "2026-07-18T03:50:01.399Z",
+      "track": "m1",
+      "tag": "fits-state"
+    },
+    {
+      "t": "2026-07-18T03:57:18.394Z",
+      "track": "m4",
+      "tag": "like"
+    },
+    {
+      "t": "2026-07-18T03:57:18.843Z",
+      "track": "m4",
+      "tag": "fits-state"
+    },
+    {
+      "t": "2026-07-18T03:59:34.127Z",
+      "track": "win",
+      "tag": "too-thin"
+    }
+  ]
+}

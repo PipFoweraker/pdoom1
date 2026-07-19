@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>P(Doom)1 Listening Room -- the rendered game audio</title>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --edge:#30363d; --text:#c9d1d9;
+          --dim:#8b949e; --green:#3fb950; --blue:#58a6ff; --amber:#d29922;
+          --red:#f85149; --purple:#bc8cff; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text);
+         font:14px/1.45 Consolas,monospace; margin:0; padding:16px; }
+  h1 { font-size:17px; color:var(--green); margin:0 0 2px; }
+  h2 { font-size:14px; color:var(--blue); margin:16px 0 6px; }
+  .sub { color:var(--dim); font-size:12px; margin-bottom:12px; }
+  .row { background:var(--panel); border:1px solid var(--edge);
+         border-radius:6px; padding:8px 10px; margin-bottom:6px;
+         display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .row b { min-width:230px; }
+  .tag { font-size:11px; padding:0 6px; border-radius:8px; border:1px solid;
+         color:var(--dim); border-color:var(--edge); }
+  .t-tier { color:var(--green); border-color:var(--green); }
+  .t-slot { color:var(--amber); border-color:var(--amber); }
+  .t-x { color:var(--purple); border-color:var(--purple); }
+  audio { height:30px; flex:1; min-width:260px; }
+  input[type=text] { flex:2; min-width:220px; background:#0d1117;
+        color:var(--text); border:1px solid var(--edge); border-radius:4px;
+        font:inherit; padding:4px 6px; }
+  button { background:#21262d; color:var(--text); border:1px solid var(--edge);
+           border-radius:4px; padding:5px 10px; font:inherit; cursor:pointer; }
+  button:hover { border-color:var(--dim); }
+  .hint { color:var(--dim); font-size:12px; }
+</style>
+</head>
+<body>
+<h1>P(Doom)1 listening room -- the rendered game audio</h1>
+<div class="sub">These are the ACTUAL files the game plays (or the processed
+variants awaiting a verdict), post loop-cut and -16 LUFS normalize. Players
+loop by default -- listen for the wrap seam; a clean wrap here is a clean
+wrap in-engine. Notes autosave; export feeds the next session.
+<b>Serve note:</b> some browsers block audio from file:// -- if players
+refuse to load, run <span style="color:var(--green)">python -m http.server</span>
+in tools/music/ and open localhost:8000/listening_room.html.</div>
+<button id="exportBtn">Export all notes (JSON)</button>
+
+<h2>Wired into the game (godot/assets/audio/music/)</h2>
+<div id="wired"></div>
+
+<h2>Rendered, awaiting verdict / recyclable</h2>
+<div id="bench"></div>
+
+<script>
+"use strict";
+const WIRED = [
+  ["unit_tests_passing", "M0 cosy tier", "t-tier"],
+  ["distribution_shift", "M1 uneasy tier", "t-tier"],
+  ["proxy_gaming", "M2 spooky tier", "t-tier"],
+  ["mesa_optimizer", "M3 eldritch tier", "t-tier"],
+  ["treacherous_turn", "M4 terminal tier", "t-tier"],
+  ["the_off_switch_worked", "VICTORY", "t-slot"],
+  ["out_of_distribution_trudge", "DEFEAT", "t-slot"],
+  ["checkpoint_saved", "MENU respite", "t-slot"],
+];
+const BENCH = [
+  ["unit_tests_passing_first_light", "M0 slow-build alternate", "t-x"],
+  ["treacherous_turn_train", "bassist-catches-train sketch", "t-x"],
+  ["treacherous_turn_another_round", "ratchet demo", "t-x"],
+  ["trailer_trudge_v0_4", "trailer long-form", "t-x"],
+  ["zen_standoff", "standoff moment cue", "t-x"],
+  ["drifting_seven", "skip-cell study", "t-x"],
+  ["dirge_variations", "variation tour", "t-x"],
+];
+
+function addRow(parent, name, label, cls, loop) {
+  const d = document.createElement("div");
+  d.className = "row";
+  d.innerHTML = "<b>" + name + "</b>" +
+    "<span class='tag " + cls + "'>" + label + "</span>" +
+    "<audio controls preload='none' " + (loop ? "loop" : "") +
+    " src='captures/game/" + name + ".ogg'></audio>" +
+    "<input type='text' placeholder='notes... (autosaves)' data-k='" + name + "'>";
+  parent.appendChild(d);
+  const inp = d.querySelector("input");
+  inp.value = localStorage.getItem("lr_" + name) || "";
+  inp.oninput = e => localStorage.setItem("lr_" + name, e.target.value);
+}
+
+WIRED.forEach(([n, l, c]) => addRow(document.getElementById("wired"), n, l, c, true));
+BENCH.forEach(([n, l, c]) => addRow(document.getElementById("bench"), n, l, c,
+  n.indexOf("trailer") < 0 && n.indexOf("dirge") < 0));
+
+document.getElementById("exportBtn").onclick = () => {
+  const notes = {};
+  [...WIRED, ...BENCH].forEach(([n]) => {
+    const v = localStorage.getItem("lr_" + n);
+    if (v) notes[n] = v;
+  });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob(
+    [JSON.stringify({ exported: new Date().toISOString(), notes }, null, 2)],
+    { type: "application/json" }));
+  a.download = "listening_room_notes.json";
+  a.click();
+};
+</script>
+</body>
+</html>

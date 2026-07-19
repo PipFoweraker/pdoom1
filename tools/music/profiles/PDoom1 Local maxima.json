@@ -1,0 +1,59 @@
+{
+  "file": "PDoom1 Local maxima.mp3",
+  "duration_sec": 71.8,
+  "tempo_bpm": 117.5,
+  "inter_beat_sec": {
+    "median": 0.511,
+    "std": 0.031
+  },
+  "key": {
+    "best": "A# major",
+    "confidence": 0.814,
+    "second": "A# minor",
+    "second_confidence": 0.716
+  },
+  "meter_hint": {
+    "contrast_by_group": {
+      "2": 0.024,
+      "3": 0.0054,
+      "4": 0.0264,
+      "5": 0.048,
+      "6": 0.0287,
+      "7": 0.0424,
+      "8": 0.0314,
+      "9": 0.0289
+    },
+    "likely_beats_per_bar": 5,
+    "winner_accent_profile": [
+      0.277,
+      0.181,
+      0.286,
+      0.268,
+      0.178
+    ]
+  },
+  "segment_boundaries_sec": [
+    0.12,
+    4.44,
+    21.85,
+    57.1
+  ],
+  "rms_arc_16bins": [
+    0.013,
+    0.0311,
+    0.0973,
+    0.1108,
+    0.1148,
+    0.1166,
+    0.1219,
+    0.1293,
+    0.1359,
+    0.1335,
+    0.1055,
+    0.0552,
+    0.0266,
+    0.0123,
+    0.0047,
+    0.0
+  ]
+}

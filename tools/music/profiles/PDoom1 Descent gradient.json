@@ -1,0 +1,62 @@
+{
+  "file": "PDoom1 Descent gradient.mp3",
+  "duration_sec": 87.8,
+  "tempo_bpm": 129.2,
+  "inter_beat_sec": {
+    "median": 0.464,
+    "std": 0.023
+  },
+  "key": {
+    "best": "A# major",
+    "confidence": 0.796,
+    "second": "A# minor",
+    "second_confidence": 0.758
+  },
+  "meter_hint": {
+    "contrast_by_group": {
+      "2": 0.014,
+      "3": 0.0227,
+      "4": 0.0247,
+      "5": 0.0184,
+      "6": 0.04,
+      "7": 0.0263,
+      "8": 0.0482,
+      "9": 0.0287
+    },
+    "likely_beats_per_bar": 8,
+    "winner_accent_profile": [
+      0.319,
+      0.268,
+      0.243,
+      0.341,
+      0.316,
+      0.263,
+      0.403,
+      0.285
+    ]
+  },
+  "segment_boundaries_sec": [
+    0.12,
+    10.59,
+    27.96,
+    59.19
+  ],
+  "rms_arc_16bins": [
+    0.003,
+    0.0049,
+    0.0229,
+    0.0182,
+    0.0762,
+    0.0306,
+    0.0446,
+    0.0399,
+    0.0486,
+    0.0466,
+    0.0234,
+    0.0047,
+    0.0001,
+    0.0,
+    0.0,
+    0.0
+  ]
+}

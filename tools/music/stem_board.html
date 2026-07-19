@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>P(Doom)1 Stem Board</title>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --edge: #30363d; --text: #c9d1d9;
+    --dim: #8b949e; --green: #3fb950; --blue: #58a6ff; --purple: #bc8cff;
+    --amber: #d29922; --red: #f85149;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font: 14px/1.45 Consolas, monospace;
+         margin: 0; padding: 16px; }
+  h1 { font-size: 18px; margin: 0 0 4px; color: var(--green); }
+  .sub { color: var(--dim); margin-bottom: 12px; font-size: 12px; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: stretch; }
+  .panel { background: var(--panel); border: 1px solid var(--edge); border-radius: 6px;
+           padding: 12px; }
+  #drop { border: 2px dashed var(--edge); border-radius: 6px; padding: 18px;
+          text-align: center; color: var(--dim); margin: 12px 0; cursor: pointer; }
+  #drop.hover { border-color: var(--green); color: var(--green); }
+  button { background: #21262d; color: var(--text); border: 1px solid var(--edge);
+           border-radius: 4px; padding: 6px 14px; font: inherit; cursor: pointer; }
+  button:hover { border-color: var(--dim); }
+  button.primary { border-color: var(--green); color: var(--green); }
+  button.danger { border-color: var(--red); color: var(--red); }
+  input[type=range] { width: 100%; accent-color: var(--green); }
+  select { background: #21262d; color: var(--text); border: 1px solid var(--edge);
+           border-radius: 4px; font: inherit; padding: 2px 4px; }
+  table { border-collapse: collapse; width: 100%; }
+  th, td { border-bottom: 1px solid var(--edge); padding: 6px 8px; text-align: left;
+           font-size: 13px; }
+  th { color: var(--dim); font-weight: normal; }
+  .strip-name { max-width: 260px; overflow: hidden; text-overflow: ellipsis;
+                white-space: nowrap; }
+  .tag { font-size: 11px; padding: 1px 6px; border-radius: 8px; border: 1px solid; }
+  .dial-label { display: flex; justify-content: space-between; font-size: 12px;
+                color: var(--dim); }
+  .dial-label b { color: var(--text); }
+  .g-BASE  { color: var(--green);  border-color: var(--green);  }
+  .g-PULSE { color: var(--amber);  border-color: var(--amber);  }
+  .g-WEIRD { color: var(--blue);   border-color: var(--blue);   }
+  .g-FIRE  { color: var(--red);    border-color: var(--red);    }
+  .g-OTHER { color: var(--dim);    border-color: var(--dim);    }
+  #doomVal { font-size: 22px; font-weight: bold; }
+  #tierName { font-size: 14px; }
+  #meter { width: 100%; height: 14px; background: #010409; border: 1px solid var(--edge);
+           border-radius: 3px; }
+  .muted-strip { opacity: 0.45; }
+  .col { flex: 1 1 260px; min-width: 260px; }
+  .hint { color: var(--dim); font-size: 12px; margin-top: 8px; }
+  a { color: var(--blue); }
+</style>
+</head>
+<body>
+<h1>P(Doom)1 stem board</h1>
+<div class="sub">
+  Local audition rig for adaptive-music stems. Mirrors the engine model
+  (docs/audio/MUSIC_DROPIN_KIT.md): tiers M0 cosy .. M4 terminal via the doom
+  slider (4 s crossfade on tier change, like music_manager.gd), stems stacked
+  in sync within a tier, per-group intensity dials (WEIRD = the "blue" dial).
+  Everything runs locally in your browser; files never leave this machine.
+</div>
+
+<div id="drop">drop audio files here (wav / ogg / mp3 / flac) or click to browse
+  <input type="file" id="filein" multiple accept="audio/*" style="display:none">
+</div>
+
+<div class="row">
+  <div class="panel col">
+    <div class="dial-label"><b>Transport</b></div>
+    <div style="margin:8px 0; display:flex; gap:8px;">
+      <button class="primary" id="playBtn">PLAY (synced)</button>
+      <button class="danger" id="stopBtn">STOP</button>
+    </div>
+    <div class="dial-label"><span>Master</span><span id="masterVal">0.9</span></div>
+    <input type="range" id="master" min="0" max="1" step="0.01" value="0.9">
+    <canvas id="meter"></canvas>
+  </div>
+
+  <div class="panel col">
+    <div class="dial-label"><b>Doom</b>
+      <span><span id="doomVal">0</span>% -&gt; <span id="tierName">M0 cosy</span></span>
+    </div>
+    <input type="range" id="doom" min="0" max="100" step="1" value="0">
+    <div class="hint">Band thresholds from the kit: &lt;15 cosy, &lt;52 uneasy,
+      &lt;80 spooky, &lt;92 eldritch, 92+ terminal. Tier change = 4 s
+      equal-power crossfade of tier-tagged strips. Strips tagged ALL ignore it.</div>
+  </div>
+
+  <div class="panel col">
+    <div class="dial-label"><b>Group dials</b> <span>(engine: per-stem volume_db)</span></div>
+    <div class="dial-label"><span class="tag g-PULSE">PULSE</span><span id="dPULSEv">1.00</span></div>
+    <input type="range" id="dPULSE" min="0" max="1" step="0.01" value="1">
+    <div class="dial-label"><span class="tag g-WEIRD">WEIRD (blue)</span><span id="dWEIRDv">1.00</span></div>
+    <input type="range" id="dWEIRD" min="0" max="1" step="0.01" value="1">
+    <div class="dial-label"><span class="tag g-FIRE">FIRE</span><span id="dFIREv">1.00</span></div>
+    <input type="range" id="dFIRE" min="0" max="1" step="0.01" value="1">
+  </div>
+
+  <div class="panel col">
+    <div class="dial-label"><b>Mix memory</b></div>
+    <div style="margin:8px 0; display:flex; gap:8px; flex-wrap:wrap;">
+      <button id="saveBtn">save mix (by filename)</button>
+      <button id="exportBtn">export JSON</button>
+      <button id="clearBtn">clear board</button>
+    </div>
+    <div class="hint">Settings persist in localStorage keyed by filename, so
+      re-dropping the same files restores gains/tags. Export writes a JSON you
+      can commit next to the stems.</div>
+  </div>
+</div>
+
+<div class="panel" style="margin-top:12px;">
+  <table id="strips">
+    <thead><tr>
+      <th>stem</th><th>group</th><th>tier</th><th style="width:22%">gain</th>
+      <th>len</th><th></th><th></th><th></th>
+    </tr></thead>
+    <tbody></tbody>
+  </table>
+  <div class="hint" id="emptyHint">No stems loaded. Drop the friend-recorded
+    layers (taiko, shakuhachi, double bass...) or rendered Strudel bounces here.
+    Same length or integer multiples loop cleanly together, like
+    AudioStreamSynchronized in-engine.</div>
+</div>
+
+<script>
+"use strict";
+const TIERS = ["M0 cosy", "M1 uneasy", "M2 spooky", "M3 eldritch", "M4 terminal"];
+const GROUPS = ["BASE", "PULSE", "WEIRD", "FIRE", "OTHER"];
+const FADE_S = 4.0;               // kit: 8 beats at 120 bpm
+const LS_KEY = "pdoom1_stem_board_v1";
+
+let ctx = null;                   // AudioContext, created on first gesture
+let masterGain = null, analyser = null;
+let playing = false, startedAt = 0;
+const strips = [];                // {name, buffer, group, tier, gain, mute, solo, nodes}
+const groupGains = {};            // group -> GainNode
+
+function ensureCtx() {
+  if (ctx) return;
+  ctx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = ctx.createGain();
+  masterGain.gain.value = parseFloat(document.getElementById("master").value);
+  analyser = ctx.createAnalyser();
+  analyser.fftSize = 2048;
+  masterGain.connect(analyser).connect(ctx.destination);
+  for (const g of GROUPS) {
+    groupGains[g] = ctx.createGain();
+    const dial = document.getElementById("d" + g);
+    groupGains[g].gain.value = dial ? parseFloat(dial.value) : 1;
+    groupGains[g].connect(masterGain);
+  }
+  drawMeter();
+}
+
+function tierForDoom(d) {
+  if (d < 15) return 0;
+  if (d < 52) return 1;
+  if (d < 80) return 2;
+  if (d < 92) return 3;
+  return 4;
+}
+let activeTier = 0;
+
+function stripTierTarget(s) {
+  if (s.mute) return 0;
+  const anySolo = strips.some(x => x.solo);
+  if (anySolo && !s.solo) return 0;
+  if (s.tier === -1) return 1;                    // ALL
+  return s.tier === activeTier ? 1 : 0;
+}
+
+function applyTierGains(fade) {
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  for (const s of strips) {
+    if (!s.nodes) continue;
+    const target = stripTierTarget(s);
+    const g = s.nodes.tierGain.gain;
+    g.cancelScheduledValues(t);
+    g.setValueAtTime(g.value, t);
+    g.linearRampToValueAtTime(target, t + (fade ? FADE_S : 0.03));
+  }
+}
+
+function buildNodes(s) {
+  const src = ctx.createBufferSource();
+  src.buffer = s.buffer;
+  src.loop = true;
+  const chGain = ctx.createGain();  chGain.gain.value = s.gain;
+  const tierGain = ctx.createGain(); tierGain.gain.value = stripTierTarget(s);
+  src.connect(chGain).connect(tierGain).connect(groupGains[s.group]);
+  s.nodes = { src, chGain, tierGain };
+}
+
+function playAll() {
+  ensureCtx();
+  if (ctx.state === "suspended") ctx.resume();
+  stopAll();
+  if (!strips.length) return;
+  const t0 = ctx.currentTime + 0.08;              // shared start = stems in sync
+  for (const s of strips) { buildNodes(s); s.nodes.src.start(t0); }
+  startedAt = t0; playing = true;
+}
+
+function stopAll() {
+  for (const s of strips) {
+    if (s.nodes) { try { s.nodes.src.stop(); } catch (e) {} s.nodes = null; }
+  }
+  playing = false;
+}
+
+async function addFiles(fileList) {
+  ensureCtx();
+  for (const f of Array.from(fileList)) {
+    try {
+      const buf = await ctx.decodeAudioData(await f.arrayBuffer());
+      const saved = (loadMixStore()[f.name]) || {};
+      strips.push({
+        name: f.name, buffer: buf,
+        group: saved.group || guessGroup(f.name),
+        tier: (saved.tier !== undefined) ? saved.tier : -1,
+        gain: (saved.gain !== undefined) ? saved.gain : 0.8,
+        mute: false, solo: false, nodes: null,
+      });
+    } catch (e) { alert("Could not decode " + f.name + ": " + e); }
+  }
+  renderStrips();
+  if (playing) playAll();                          // restart so new stems sync
+}
+
+function guessGroup(name) {
+  const n = name.toLowerCase();
+  if (/(drum|taiko|kick|perc|pulse|beat)/.test(n)) return "PULSE";
+  if (/(weird|glitch|blue|ghost|detun)/.test(n)) return "WEIRD";
+  if (/(fire|alarm|siren)/.test(n)) return "FIRE";
+  if (/(bass|bed|pad|base|harm)/.test(n)) return "BASE";
+  return "OTHER";
+}
+
+function renderStrips() {
+  const tb = document.querySelector("#strips tbody");
+  tb.innerHTML = "";
+  document.getElementById("emptyHint").style.display = strips.length ? "none" : "";
+  strips.forEach((s, i) => {
+    const tr = document.createElement("tr");
+    if (s.mute) tr.className = "muted-strip";
+    tr.innerHTML =
+      '<td class="strip-name" title="' + s.name + '">' + s.name + "</td>" +
+      "<td></td><td></td><td></td>" +
+      "<td>" + s.buffer.duration.toFixed(2) + "s</td>" +
+      "<td></td><td></td><td></td>";
+    // group select
+    const gSel = document.createElement("select");
+    for (const g of GROUPS) {
+      const o = new Option(g, g, false, g === s.group); gSel.add(o);
+    }
+    gSel.className = "tag g-" + s.group;
+    gSel.onchange = () => { setGroup(s, gSel.value); gSel.className = "tag g-" + s.group; };
+    tr.children[1].appendChild(gSel);
+    // tier select
+    const tSel = document.createElement("select");
+    tSel.add(new Option("ALL", "-1", false, s.tier === -1));
+    TIERS.forEach((t, ti) => tSel.add(new Option(t, String(ti), false, s.tier === ti)));
+    tSel.onchange = () => { s.tier = parseInt(tSel.value, 10); applyTierGains(false); };
+    tr.children[2].appendChild(tSel);
+    // gain
+    const gr = document.createElement("input");
+    gr.type = "range"; gr.min = 0; gr.max = 1.2; gr.step = 0.01; gr.value = s.gain;
+    gr.oninput = () => { s.gain = parseFloat(gr.value);
+      if (s.nodes) s.nodes.chGain.gain.value = s.gain; };
+    tr.children[3].appendChild(gr);
+    // mute / solo / remove
+    const mBtn = document.createElement("button");
+    mBtn.textContent = s.mute ? "unmute" : "mute";
+    mBtn.onclick = () => { s.mute = !s.mute; applyTierGains(false); renderStrips(); };
+    tr.children[5].appendChild(mBtn);
+    const sBtn = document.createElement("button");
+    sBtn.textContent = s.solo ? "unsolo" : "solo";
+    if (s.solo) sBtn.className = "primary";
+    sBtn.onclick = () => { s.solo = !s.solo; applyTierGains(false); renderStrips(); };
+    tr.children[6].appendChild(sBtn);
+    const xBtn = document.createElement("button");
+    xBtn.textContent = "x"; xBtn.className = "danger";
+    xBtn.onclick = () => {
+      if (s.nodes) { try { s.nodes.src.stop(); } catch (e) {} }
+      strips.splice(i, 1); renderStrips();
+    };
+    tr.children[7].appendChild(xBtn);
+    tb.appendChild(tr);
+  });
+}
+
+function setGroup(s, g) {
+  s.group = g;
+  if (s.nodes) { s.nodes.tierGain.disconnect(); s.nodes.tierGain.connect(groupGains[g]); }
+}
+
+// --- mix persistence -------------------------------------------------------
+function loadMixStore() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); }
+  catch (e) { return {}; }
+}
+function saveMix() {
+  const store = loadMixStore();
+  for (const s of strips) store[s.name] = { group: s.group, tier: s.tier, gain: s.gain };
+  localStorage.setItem(LS_KEY, JSON.stringify(store));
+}
+function exportMix() {
+  const mix = {
+    exported_for: "P(Doom)1 stem board",
+    doom: parseInt(document.getElementById("doom").value, 10),
+    dials: { PULSE: dialVal("PULSE"), WEIRD: dialVal("WEIRD"), FIRE: dialVal("FIRE") },
+    stems: strips.map(s => ({ file: s.name, group: s.group,
+      tier: s.tier === -1 ? "ALL" : TIERS[s.tier], gain: s.gain })),
+  };
+  const blob = new Blob([JSON.stringify(mix, null, 2) + "\n"],
+                        { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "stem_mix.json";
+  a.click();
+}
+function dialVal(g) { return parseFloat(document.getElementById("d" + g).value); }
+
+// --- meter -----------------------------------------------------------------
+function drawMeter() {
+  const cv = document.getElementById("meter");
+  const g2d = cv.getContext("2d");
+  const data = new Uint8Array(analyser.fftSize);
+  (function loop() {
+    requestAnimationFrame(loop);
+    analyser.getByteTimeDomainData(data);
+    let peak = 0;
+    for (let i = 0; i < data.length; i++) peak = Math.max(peak, Math.abs(data[i] - 128));
+    const w = cv.width = cv.clientWidth, h = cv.height = cv.clientHeight;
+    g2d.clearRect(0, 0, w, h);
+    const frac = peak / 128;
+    g2d.fillStyle = frac > 0.9 ? "#f85149" : frac > 0.7 ? "#d29922" : "#3fb950";
+    g2d.fillRect(0, 0, w * frac, h);
+  })();
+}
+
+// --- wiring ----------------------------------------------------------------
+const drop = document.getElementById("drop");
+drop.onclick = () => document.getElementById("filein").click();
+document.getElementById("filein").onchange = e => addFiles(e.target.files);
+drop.ondragover = e => { e.preventDefault(); drop.classList.add("hover"); };
+drop.ondragleave = () => drop.classList.remove("hover");
+drop.ondrop = e => { e.preventDefault(); drop.classList.remove("hover");
+                     addFiles(e.dataTransfer.files); };
+
+document.getElementById("playBtn").onclick = playAll;
+document.getElementById("stopBtn").onclick = stopAll;
+document.getElementById("master").oninput = e => {
+  document.getElementById("masterVal").textContent = e.target.value;
+  if (masterGain) masterGain.gain.value = parseFloat(e.target.value);
+};
+for (const g of ["PULSE", "WEIRD", "FIRE"]) {
+  document.getElementById("d" + g).oninput = e => {
+    document.getElementById("d" + g + "v").textContent =
+      parseFloat(e.target.value).toFixed(2);
+    if (groupGains[g]) groupGains[g].gain.value = parseFloat(e.target.value);
+  };
+}
+document.getElementById("doom").oninput = e => {
+  const d = parseInt(e.target.value, 10);
+  document.getElementById("doomVal").textContent = d;
+  const tier = tierForDoom(d);
+  document.getElementById("tierName").textContent = TIERS[tier];
+  if (tier !== activeTier) { activeTier = tier; applyTierGains(true); }
+};
+document.getElementById("saveBtn").onclick = () => { saveMix(); };
+document.getElementById("exportBtn").onclick = exportMix;
+document.getElementById("clearBtn").onclick = () => {
+  stopAll(); strips.length = 0; renderStrips();
+};
+</script>
+</body>
+</html>

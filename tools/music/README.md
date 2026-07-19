@@ -1,4 +1,31 @@
-# tools/music -- reference-track analyzer
+# tools/music -- the music lab
+
+Everything the P(Doom)1 score is made with. Nothing here touches the game
+at runtime or CI; the game only sees the rendered oggs that get copied to
+`godot/assets/audio/music/` and registered in `music_manager.gd`.
+
+## Directory map (start here)
+
+| Thing | What it is |
+|---|---|
+| `DIRECTION_NOTES.md` | THE TASTE LAW. Every ruling from Pip's listening sessions, append-only. Read before composing anything. |
+| `CASTING_SHEET.md` | The score as a cast of characters; timbre boundaries are story boundaries. |
+| `jukebox.html` | The tier-set player/judgment rig: embedded Strudel patches, tag+note+export loop. The tier-set's source of truth. |
+| `listening_room.html` | Audition the RENDERED game oggs (loop playback, notes, export). |
+| `commission_sheets.html` | Engraved printable parts for real players (taiko, shakuhachi, bass, atarigane, chant, modular). |
+| `patches/` | Standalone Strudel patches (long-form cues, studies, superseded iterations -- kept on purpose, discarded options get recycled). |
+| `capture_takes.py` | Programmatic render rig: drives strudel.cc in a muted automated browser, records the WebAudio graph. No OBS, safe during voice calls. |
+| `process_captures.py` | Raw captures -> exact bar-boundary loops, loop-point reverb bake, -16 LUFS, game-ready ogg. |
+| `captures/game/` | The processed oggs (committed). `captures/raw/` + `captures/*.wav` stay local (gitignored). |
+| `explore_track.py` | Drop-any-song analysis: profile, Demucs stems, meter fold, Strudel seed -> `library/`. |
+| `analyze_refs.py` / `analyze_refs_meter.py` | Reference-track profilers (docs below). |
+| `stem_board.html` | Stem audition rig with doom-slider tier crossfades (for real recordings later). |
+| `jukebox_notes*.json` | Raw judgment-round exports (the evidence chain for the rulings). |
+| `COMMISSION_LIST.md` | Who records what; `CAPTURE_RUNBOOK.md` -- capture procedure (now mostly programmatic). |
+
+The session story: `dev-blog/music-session-1.md`.
+
+## Reference-track analyzer
 
 Turns the dev's beloved reference tracks into NUMBERS the music lab (Fable /
 Strudel / SuperCollider) can compose against, so composed stems match the

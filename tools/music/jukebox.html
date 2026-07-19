@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>P(Doom)1 Jukebox -- Fable tier-set v0.3</title>
+<style>
+  :root { --bg:#0d1117; --panel:#161b22; --edge:#30363d; --text:#c9d1d9;
+          --dim:#8b949e; --green:#3fb950; --blue:#58a6ff; --purple:#bc8cff;
+          --amber:#d29922; --red:#f85149; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text);
+         font:14px/1.45 Consolas,monospace; margin:0; padding:14px; }
+  h1 { font-size:17px; color:var(--green); margin:0 0 2px; }
+  .sub { color:var(--dim); font-size:12px; margin-bottom:10px; }
+  .wrap { display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap; }
+  .panel { background:var(--panel); border:1px solid var(--edge);
+           border-radius:6px; padding:10px; }
+  #tracks { width:270px; flex-shrink:0; }
+  .trk { padding:7px 8px; border-radius:4px; cursor:pointer; margin-bottom:2px;
+         border:1px solid transparent; }
+  .trk:hover { border-color:var(--edge); }
+  .trk.active { border-color:var(--green); background:#10281a33; }
+  .trk .tname { font-weight:bold; }
+  .tier { font-size:11px; padding:0 6px; border-radius:8px; border:1px solid;
+          margin-left:6px; }
+  .t-M0 { color:var(--green); border-color:var(--green); }
+  .t-M1 { color:var(--blue); border-color:var(--blue); }
+  .t-M2 { color:var(--amber); border-color:var(--amber); }
+  .t-M3 { color:var(--purple); border-color:var(--purple); }
+  .t-M4 { color:var(--red); border-color:var(--red); }
+  .t-WIN { color:#e3b341; border-color:#e3b341; }
+  .t-MENU { color:#56d4dd; border-color:#56d4dd; }
+  #main { flex:1; min-width:420px; }
+  button { background:#21262d; color:var(--text); border:1px solid var(--edge);
+           border-radius:4px; padding:6px 12px; font:inherit; cursor:pointer;
+           margin-right:6px; }
+  button:hover { border-color:var(--dim); }
+  button.primary { border-color:var(--green); color:var(--green); }
+  textarea { width:100%; min-height:70px; background:#0d1117; color:var(--text);
+             border:1px solid var(--edge); border-radius:4px; font:inherit;
+             padding:6px; }
+  #layers { font-size:12px; color:var(--dim); white-space:pre-wrap; }
+  #log { font-size:12px; color:var(--dim); max-height:140px; overflow-y:auto; }
+  .tagbtns button { font-size:12px; padding:3px 8px; margin:2px 4px 2px 0; }
+  strudel-editor { display:block; min-height:340px; }
+  #embedwrap { border:1px solid var(--edge); border-radius:6px; overflow:hidden;
+               margin-top:8px; }
+  a { color:var(--blue); }
+  .hint { color:var(--dim); font-size:12px; }
+</style>
+</head>
+<body>
+<h1>P(Doom)1 jukebox -- Fable's tier-set, v0.3</h1>
+<div class="sub">Iterated from judgment round 2 (jukebox_notes2.json).
+Fanfare cut RETIRED -- quiet dawn is victory. New: M0 slow-build variant,
+M1 bass graduation, M2 germination bloom, M4 "bassist catches the train"
+metal sketch. M3, canon M4, ratchet, menu unchanged. Pick a track, press
+play in the editor (or "Open in strudel.cc" -- always works). Tag, note,
+export for the next round.</div>
+
+<div class="wrap">
+  <div id="tracks" class="panel"></div>
+
+  <div id="main">
+    <div class="panel">
+      <div id="nowplaying" style="margin-bottom:6px;"><b>--</b></div>
+      <button class="primary" id="openBtn">Open in strudel.cc</button>
+      <button id="copyBtn">Copy patch</button>
+      <button id="exportBtn">Export all notes (JSON)</button>
+      <div id="embedwrap"></div>
+      <div class="hint" style="margin-top:4px;">The embedded editor needs
+        internet (loads Strudel from unpkg). If it stays blank, use Open in
+        strudel.cc.</div>
+    </div>
+
+    <div class="wrap" style="margin-top:12px;">
+      <div class="panel" style="flex:1; min-width:260px;">
+        <b>Elements in play</b>
+        <div id="layers"></div>
+      </div>
+      <div class="panel" style="flex:1; min-width:260px;">
+        <b>Session notes for this track</b>
+        <div class="tagbtns" id="tags"></div>
+        <textarea id="note" placeholder="free notes... (autosaves)"></textarea>
+        <div id="log"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@strudel/embed@latest"></script>
+<script>
+"use strict";
+// ---------------------------------------------------------------- tracks --
+// Naming stays in the ML/AI-safety pun register (kit convention).
+const TRACKS = [
+{ id:"m0", tier:"M0", name:"Unit tests passing",
+  desc:"cosy. v0.3: progression kept; the payoff now EXITS gracefully -- rings into the breath instead of hard-cutting (your round-2 note).",
+  code:`// M0 cosy -- "Unit tests passing" (Fable tier-set v0.3)
+// v0.3 after judgment round 2: graceful-exit rule. The payoff was cutting
+// to the bar-15 breath too abruptly -- now the payoff RINGS out (long
+// release), and a soft kick + hat ghost land inside the breath so the
+// floor never vanishes. Everything else kept from v0.2.
+setcpm(104/4)
+stack(
+  // BASE: spine, leaping contour, rotating start (unchanged)
+  n("0 4 2 7 4 9 7 11".add("<0 -2 -4 -3>/2"))
+    .scale("C4:major").iter(4).sound("gm_epiano1")
+    .gain(0.72).room(0.35).pan(0.3)
+    .mask("<1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 1>"),
+  // BASE: counter-cell, DIMMED -- lpf + gain down (the brightness fix)
+  n("2 4 7 9 7 4".add("<0 -2 -4 -3>/2"))
+    .scale("C5:major").sound("gm_marimba")
+    .gain(0.32).lpf(1600).room(0.5).pan(0.7)
+    .mask("<0 0 1 1 1 1 1 1 1 1 1 1 0 0 1 1>"),
+  // BASE: bass, the constant
+  n("0 ~ 0 ~".add("<0 -2 -4 -3>/2"))
+    .scale("C2:major").sound("gm_acoustic_bass")
+    .clip(0.6).gain(0.85).lpf(400),
+  // PULSE: hats bar 5, kick bar 7
+  s("[~ hh]*4").bank("RolandTR808").gain(0.22)
+    .mask("<0 0 0 0 1 1 1 1 1 1 1 1 1 1 0 1>"),
+  s("bd ~ [~ bd] ~").bank("RolandTR808").gain(0.32)
+    .mask("<0 0 0 0 0 0 1 1 1 1 1 1 1 1 0 1>"),
+  // payoff LIFT: bar 12 (and 28) climbs in -- you can hear it coming
+  n("7 9 11 12").scale("C4:major").sound("gm_epiano1")
+    .gain(0.5).room(0.4).pan(0.4)
+    .mask("<0!11 1 0!4>"),
+  // payoff: bars 13-14 (and 29-30) -- and it RINGS into the breath now
+  n("<[14 ~ 12 [11 9]] [11 ~ 9 ~]>").scale("C5:major")
+    .sound("gm_music_box")
+    .gain(0.45).release(1.5).room(0.7).pan(0.6)
+    .mask("<0!12 1 1 0 0>"),
+  // payoff floor: low third under the downbeat, ringing long
+  n("[0,4]").scale("C3:major").sound("gm_epiano1")
+    .clip(3).release(1).gain(0.4).room(0.5)
+    .mask("<0!12 1 0!3>"),
+  // graceful exit: a soft kick + hat ghost inside the bar-15 breath
+  s("bd").velocity(0.3).gain(0.18).lpf(300).mask("<0!14 1 0>"),
+  s("[~ hh]*4").bank("RolandTR808").gain(0.08).mask("<0!14 1 0>"),
+  // kalimba lead, second half only -- the "one more element" ask
+  n("0 2 4 2 7 4 [2 1] 0").slow(8)
+    .scale("C4:major").sound("gm_kalimba")
+    .clip(0.8).gain(0.5).room(0.45).pan(0.55)
+    .mask("<0!16 1!12 0 0 0 1>")
+)` },
+
+{ id:"m0s", tier:"M0", name:"Unit tests passing (first light)",
+  desc:"NEW: the slow-build alternate you asked for -- same material at 92, entrances stretched across 32 bars. Feel around the start of a slow build.",
+  code:`// M0-S cosy -- "Unit tests passing (first light)" (slow-build v0.1)
+// Round-2 commission: "shifting the pacing down a little as an alternate,
+// and let me start to feel around what the start of a slow-build feels
+// like". Same material as M0 at 92 (was 104); entrances stretched:
+// bass 1 -> spine 5 -> counter 11 -> kalimba 17 -> hats 21 -> kick 25 ->
+// lift 28 -> payoff 29-30 -> breath 31 -> pickup 32.
+setcpm(92/4)
+stack(
+  // bass alone first -- four bars of just the floor
+  n("0 ~ 0 ~".add("<0 -2 -4 -3>/2"))
+    .scale("C2:major").sound("gm_acoustic_bass")
+    .clip(0.6).gain(0.85).lpf(400),
+  // spine, bar 5
+  n("0 4 2 7 4 9 7 11".add("<0 -2 -4 -3>/2"))
+    .scale("C4:major").iter(4).sound("gm_epiano1")
+    .gain(0.7).room(0.35).pan(0.3)
+    .mask("<0!4 1!26 0 1>"),
+  // counter-cell, bar 11, dimmed
+  n("2 4 7 9 7 4".add("<0 -2 -4 -3>/2"))
+    .scale("C5:major").sound("gm_marimba")
+    .gain(0.3).lpf(1600).room(0.5).pan(0.7)
+    .mask("<0!10 1!20 0 1>"),
+  // kalimba lead, bar 17
+  n("0 2 4 2 7 4 [2 1] 0").slow(8)
+    .scale("C4:major").sound("gm_kalimba")
+    .clip(0.8).gain(0.48).room(0.45).pan(0.55)
+    .mask("<0!16 1!14 0 1>"),
+  // hats bar 21, kick bar 25
+  s("[~ hh]*4").bank("RolandTR808").gain(0.2)
+    .mask("<0!20 1!10 0 1>"),
+  s("bd ~ [~ bd] ~").bank("RolandTR808").gain(0.3)
+    .mask("<0!24 1!6 0 1>"),
+  // lift bar 28, payoff 29-30 ringing, floor, soft landing in the breath
+  n("7 9 11 12").scale("C4:major").sound("gm_epiano1")
+    .gain(0.48).room(0.4).pan(0.4)
+    .mask("<0!27 1 0!4>"),
+  n("<[14 ~ 12 [11 9]] [11 ~ 9 ~]>").scale("C5:major")
+    .sound("gm_music_box")
+    .gain(0.45).release(1.5).room(0.7).pan(0.6)
+    .mask("<0!28 1 1 0 0>"),
+  n("[0,4]").scale("C3:major").sound("gm_epiano1")
+    .clip(3).release(1).gain(0.4).room(0.5)
+    .mask("<0!28 1 0!3>"),
+  s("bd").velocity(0.3).gain(0.16).lpf(300).mask("<0!30 1 0>")
+)` },
+
+{ id:"m1", tier:"M1", name:"Distribution shift",
+  desc:"uneasy. v0.3: your bass-register ask -- a sinking floor steps down through the second half, and the oomphs get an every-4th-bar fill.",
+  code:`// M1 uneasy -- "Distribution shift" (Fable tier-set v0.3)
+// v0.3 after judgment round 2: "graduation and stepping elements...
+// missing a little out in the bass register". NEW: a sinking-floor bass
+// voice -- steps DOWN one degree every 2 bars through the second half
+// (the ground is quietly leaving) -- and an every-4th-bar kick fill so
+// the oomphs that drive it get a step of their own.
+setcpm(104/4)
+stack(
+  // BASE: unchanged from M0 -- the core holds (doom is a layer)
+  n("0 4 2 7 4 9 7 11".add("<0 -2 -4 -3>/2"))
+    .scale("C4:major").iter(4).sound("gm_epiano1")
+    .gain(0.7).room(0.35).pan(0.3),
+  n("2 4 7 9 7 4".add("<0 -2 -4 -3>/2"))
+    .scale("C5:major").sound("gm_marimba")
+    .gain(0.3).lpf(1600).room(0.5).pan(0.7)
+    .mask("<0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1>"),
+  n("0 ~ 0 ~".add("<0 -2 -4 -3>/2"))
+    .scale("C2:major").sound("gm_acoustic_bass")
+    .clip(0.6).gain(0.85).lpf(400),
+  // PULSE: weightier, and it STUMBLES now
+  s("[~ hh]*4").bank("RolandTR808").gain(0.26).degradeBy(0.12),
+  s("bd ~ [~ bd] ~").bank("RolandTR808").gain(0.36)
+    .mask("<0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1>"),
+  // PULSE: the oomphs step -- a small fill every 4th bar
+  s("<~ ~ ~ [bd ~ bd bd]>").bank("RolandTR808").gain(0.28)
+    .mask("<0!8 1!8>"),
+  // BASE: the sinking floor -- steps down a degree every 2 bars, 2nd half
+  n("<0 -1 -2 -3>/2").scale("C2:major").sound("gm_acoustic_bass")
+    .clip(1.8).gain(0.5).lpf(330)
+    .mask("<0!8 1!8>"),
+  // WEIRD: lydian ghost, faint -- the wrong-bright note at the edge
+  n("0 3 4 3 7").scale("C5:lydian").sound("gm_music_box")
+    .gain(0.14).room(0.6).pan(0.8)
+    .mask("<0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1>"),
+  // WEIRD: maj7 rub, felt not heard
+  note("<b3 b3 a3 b3>").sound("sawtooth")
+    .lpf(600).vib(1.2).vibmod(0.2).gain(0.12).room(0.4),
+  // WEIRD: rare backwards flicker of the spine
+  n("0 2 4 7 9 7 4 2".add("<0 -2 -4 -3>/2"))
+    .scale("C4:major").sometimesBy(0.12, x => x.rev())
+    .sound("triangle").crush(8)
+    .gain(0.15).room(0.5).pan(0.2).lpf(1500)
+    .mask("<0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1>")
+)` },
+
+{ id:"m2", tier:"M2", name:"Proxy gaming",
+  desc:"spooky. v0.3: the metamorphosis you HEARD is now composed in -- 32-bar filter bloom + a 16-bar germinating cello seed. Long seeds, long lengths.",
+  code:`// M2 spooky -- "Proxy gaming" (Fable tier-set v0.3)
+// v0.3 after judgment round 2: the long-germination ruling ("sowing very
+// very long germinating seeds of my own destruction... lengths can get
+// verrrry long"). You heard it metamorphose -- now it really does: the
+// dark doubling's filter BLOOMS across 32 bars, and a low cello seed
+// swells over 16 bars, recedes, swells again. De-busied frame kept.
+setcpm(104/4)
+stack(
+  // BASE: the green-cell degrees in C dorian, now over 2 bars -- long phrase
+  n("0 4 2 7 4 9 7 11".add("<0 0 -2 -2>/2")).slow(2)
+    .scale("C4:dorian").iter(4).sound("gm_epiano1")
+    .clip(1.1).gain(0.6).room(0.4).pan(0.35),
+  // BASE: same contour an octave down, dark doubling -- the density.
+  // Its filter blooms across 32 bars: the metamorphosis, composed in.
+  n("0 4 2 7 4 9 7 11".add("<0 0 -2 -2>/2")).slow(2)
+    .scale("C3:dorian").sound("gm_epiano1")
+    .clip(1.2).gain(0.28)
+    .lpf("<700 750 800 900 1000 1150 1300 1500>/4")
+    .room(0.5).pan(0.5),
+  // BASE: a germinating seed -- one low cello tone, swelling over 16 bars
+  note("c2").sound("gm_cello")
+    .clip(4).lpf(500).room(0.6)
+    .gain("<0.06 0.09 0.13 0.17 0.22 0.28 0.2 0.1>/2"),
+  // BASE: drone floor, slow inhale -- inevitability
+  note("[c2,g2]").sound("sawtooth")
+    .lpf(400).attack(2).gain(0.16).room(0.5),
+  // BASE: bass plod -- weight, kept
+  n("0 ~ 0 ~".add("<0 0 -2 -2>/2"))
+    .scale("C2:dorian").sound("gm_acoustic_bass")
+    .clip(0.55).gain(0.9).lpf(380),
+  // PULSE: the 3+3+2 skip ALONE now -- weight, not urgency
+  s("lt ~ ~ lt ~ ~ lt ~").bank("RolandTR808")
+    .velocity("1 0 0 0.65 0 0 0.8 0").degradeBy(0.05)
+    .gain(0.55).lpf(700).room(0.3),
+  // WEIRD: the lying lydian ghost -- still bright, but a RARER herald
+  n("0 3 4 3 7").scale("C5:lydian").sound("gm_music_box")
+    .gain(0.18).room(0.6).pan(0.8)
+    .mask("<0 1>"),
+  // WEIRD: backwards echo, darker than v0.1
+  n("0 2 4 7 9 7 4 2".add("<0 0 -2 -2>/2"))
+    .scale("C4:dorian").sometimesBy(0.25, x => x.rev())
+    .sound("triangle").crush(7)
+    .gain(0.24).room(0.5).pan(0.2).lpf(1500)
+)` },
+
+{ id:"m3", tier:"M3", name:"Mesa optimizer",
+  desc:"eldritch. v0.2: the rival is an INTRUSION now -- recurrence gaps halve 8-4-2-1, TWO distinct rival voices, wetware quieter. Falling cell kept.",
+  code:`// M3 eldritch -- "Mesa optimizer" (Fable tier-set v0.2)
+// v0.2 after judgment round 1: discordance-as-intrusion ruling. The constant
+// every-4th-bar rival is GONE; instead the canonical recurrence-gap halving
+// (appearances at bars 1, 9, 13, 15, 16 -- gaps 8, 4, 2, 1) with TWO
+// distinct rival voices (many-rivals proof-of-concept). Wetware toned down.
+setcpm(96/4)
+stack(
+  // BASE: drone + inverted cell on cello, falling forever (welcomed -- kept)
+  note("[d2,a2]").sound("sawtooth")
+    .lpf(260).gain(0.2).room(0.6).attack(1.5),
+  n("0 -2 -4 -7 -4 -9 -7 -11".add("<0 0 -2 -2>/2"))
+    .scale("D4:dorian").iter(4).sound("gm_cello")
+    .clip(1.2).gain(0.45).room(0.5).pan(0.4),
+  // BASE: dirge fragment every 4th bar -- the humans, still here
+  n("<~ ~ ~ [~ 0 ~ 3 [2 1] 0 ~ ~]>")
+    .scale("D3:dorian").sound("gm_cello")
+    .clip(1.6).gain(0.4).room(0.7).pan(0.55),
+  // PULSE: the skip, fracturing
+  s("lt ~ ~ lt ~ ~ lt ~").bank("RolandTR808")
+    .velocity("1 0 0 0.6 0 0 0.75 0").degradeBy(0.3)
+    .gain(0.7).lpf(650).room(0.3),
+  s("[~ hh]*8").bank("RolandTR808").gain(0.12).degradeBy(0.4),
+  // WEIRD: wetware voices, quieter than v0.1 -- unease, not assault
+  note("<d3 d3 e3 d3>").sound("gm_voice_oohs")
+    .vib(2.5).vibmod(0.3).gain(0.15).room(0.8),
+  // WEIRD: smear flicker every 8th bar -- the corrupted dirge breathes through
+  n("[~ 0 ~ 3 [2 1] 0 ~ ~]").scale("D3:dorian").rev()
+    .sound("sawtooth").crush(5).vib(4).vibmod(0.4)
+    .clip(1.2).lpf(900).gain(0.18).room(0.8)
+    .mask("<0 0 0 0 0 0 0 1>"),
+  // RIVAL A (square): bars 1, 13, 16 -- rising call, transposing UP each time
+  note("d5 fs5 a5").add(note("<0 0!11 4 0 0 7>"))
+    .sound("square").crush(7)
+    .clip(0.3).gain(0.3).pan(0.8)
+    .mask("<1 0!11 1 0 0 1>"),
+  // RIVAL B (saw -- a DIFFERENT rival): bars 9, 15 -- gridded 16th run
+  note("[d5 e5 fs5 a5]*2").add(note("<0!8 2 0!5 5 0>"))
+    .sound("sawtooth")
+    .clip(0.2).gain(0.2).pan(0.2)
+    .mask("<0!8 1 0!5 1 0>")
+  // combined rival appearances: bars 1, 9, 13, 15, 16 -- gaps 8, 4, 2, 1
+)` },
+
+{ id:"m4", tier:"M4", name:"Treacherous turn",
+  desc:"terminal. v0.1 kept UNCHANGED -- canonized in judgment round 1 (\"stayed with us as a compositional element into the far future\").",
+  code:`// M4 terminal -- "Treacherous turn" (Fable tier-set v0.1 -- CANON)
+// Kept unchanged after judgment round 1. Not maximum loudness -- oppressive
+// SPACE. The centerpiece is the STOLEN theme: the rival plays the human
+// dirge, gridded, dry.
+setcpm(96/4)
+stack(
+  // BASE: beating detuned saws -- the dread floor (mass, not treble)
+  note("d1").sound("sawtooth").lpf(420).gain(0.22).attack(1),
+  note("d1").add(note(0.13)).sound("sawtooth").lpf(420).gain(0.22).attack(1),
+  // BASE: sub heartbeat, slow
+  note("d1 ~ ~ ~").sound("sine").clip(0.5).gain(0.45).lpf(120),
+  // BASE: rare noise swell -- the room inhaling
+  s("white").attack(2).release(3).sustain(0.5)
+    .lpf(300).gain(0.07).room(0.9)
+    .mask("<1 0 0 0>"),
+  // FIRE: the alarm that will not hurry -- unhurried is worse
+  s("~ rim ~ ~ ~ rim ~ ~").bank("RolandTR808")
+    .gain(0.16).hpf(2200).room(0.4),
+  // THE RIVAL: our dirge, stolen. Gridded. Dry. It learned our song.
+  n("<[~ 0 ~ ~ 2 ~ 1 ~] [~ 0 ~ ~ 2 ~ 1 ~] [~ 0 ~ ~ 2 ~ 1 ~] [~ 0 ~ 3 [2 1] 0 ~ ~]>")
+    .scale("D4:dorian").sound("square").crush(7)
+    .clip(0.5).gain(0.32).pan(0.75),
+  // BASE (human remnant): the real cello answers, far away, every 4th bar
+  n("<~ ~ [~ 0 ~ ~ 2 ~ 1 ~] ~>")
+    .scale("D3:dorian").sound("gm_cello")
+    .clip(1.8).gain(0.3).room(0.95).pan(0.3),
+  // WEIRD: wetware voices, higher now, wrong
+  note("<d3 ds3 d3 e3>").sound("gm_voice_oohs")
+    .vib(3.5).vibmod(0.5).gain(0.16).room(0.9)
+  // CHANT SLOT: Pip's low recitation goes here when recorded
+)` },
+
+{ id:"m4t", tier:"M4", name:"Treacherous turn (the bassist catches the train)",
+  desc:"NEW sketch from your round-2 vision: 3 clean rounds, then the bass comes gunning in and we all gain GRUNGE together. First step toward the metal.",
+  code:`// M4-T -- "Treacherous turn (the bassist catches the train)" (sketch v0.1)
+// Round-2 vision: after ~3 clean rounds, something comes "gunning in --
+// a bassist left behind the train, running to catch up, then the bassline
+// gets pulled into the carriage and we all gain GRUNGE together." Bars
+// 1-11 = lean canon core; bar 12 = the RUN (sprinting up from below);
+// bars 13-16 = CAUGHT: slamming crushed bass + growl floor (the Protomen
+// GRRRR direction, first step). OPEN CASTING QUESTION flagged in notes:
+// when the humans go metal, what timbre rule applies?
+setcpm(96/4)
+stack(
+  // the canon core, lean
+  note("d1").sound("sawtooth").lpf(420).gain(0.22).attack(1),
+  note("d1").add(note(0.13)).sound("sawtooth").lpf(420).gain(0.22).attack(1),
+  note("d1 ~ ~ ~").sound("sine").clip(0.5).gain(0.45).lpf(120),
+  s("~ rim ~ ~ ~ rim ~ ~").bank("RolandTR808")
+    .gain(0.16).hpf(2200).room(0.4),
+  n("[~ 0 ~ ~ 2 ~ 1 ~]").scale("D4:dorian").sound("square").crush(7)
+    .clip(0.5).gain(0.32).pan(0.75),
+  // bar 12: the RUN -- the bassist sprinting after the carriage
+  n("0 1 2 3 4 5 6 7").scale("D2:dorian").sound("gm_acoustic_bass")
+    .clip(0.5).gain("0.3 0.35 0.4 0.45 0.5 0.55 0.6 0.7")
+    .mask("<0!11 1 0!4>"),
+  // bars 13-16: CAUGHT. the slamming bassline
+  n("0 0 [~ 0] 0 ~ 0 0 [0 0]").scale("D1:dorian")
+    .sound("sawtooth").crush(4).lpf(600)
+    .clip(0.4).gain(0.5)
+    .mask("<0!12 1!4>"),
+  // the growl floor under the slam -- crushed saw fifth, GRRRR
+  note("[d1,a1]").sound("sawtooth").crush(3).lpf(500)
+    .attack(0.3).gain(0.25)
+    .mask("<0!12 1!4>"),
+  // the human cello holds the dirge over the top -- we did not stop
+  n("<~ ~ [~ 0 ~ ~ 2 ~ 1 ~] ~>")
+    .scale("D3:dorian").sound("gm_cello")
+    .clip(1.8).gain(0.3).room(0.95).pan(0.3)
+)` },
+
+{ id:"m4r", tier:"M4", name:"Treacherous turn (another round)",
+  desc:"ratchet demo: four 4-bar rounds, each ~6% faster. The *phwar*, then you dance faster. Likely an event/boss device, not the looping bed.",
+  code:`// M4-R -- "Treacherous turn (another round)" (ratchet demo v0.1)
+// Pip's live-band device from judgment round 1: the *phwar*, the drummer
+// kicks the tempo, the crowd realises they must dance FASTER. Four 4-bar
+// rounds at 96 -> ~102 -> ~108 -> ~116, then it wraps and resets. The trill
+// ending leans mortal-kombat-ey ON PURPOSE. Likely an event/boss device,
+// not the looping bed (anti-Tarkov rule). Lean texture so the speed reads.
+setcpm(96/4)
+stack(
+  // dread floor (single saw -- lean for the demo)
+  note("d1").sound("sawtooth").lpf(420).gain(0.24).attack(1),
+  // sub heartbeat
+  note("d1 ~ ~ ~").sound("sine").clip(0.5).gain(0.45).lpf(120),
+  // the alarm that will not hurry (it will now)
+  s("~ rim ~ ~ ~ rim ~ ~").bank("RolandTR808")
+    .gain(0.16).hpf(2200).room(0.4),
+  // THE RIVAL: the stolen dirge, tight loop
+  n("[~ 0 ~ ~ 2 ~ 1 ~]").scale("D4:dorian")
+    .sound("square").crush(7)
+    .clip(0.5).gain(0.32).pan(0.75),
+  // human cello answer, every 4th bar -- we keep pace, barely
+  n("<~ ~ [~ 0 ~ ~ 2 ~ 1 ~] ~>")
+    .scale("D3:dorian").sound("gm_cello")
+    .clip(1.8).gain(0.3).room(0.95).pan(0.3),
+  // the *phwar* -- noise swell announcing each speed-up
+  s("white").attack(0.4).release(1).sustain(0.4)
+    .lpf(900).gain(0.14).room(0.7)
+    .mask("<0 0 0 1>"),
+  // the trill, leaned into -- final-bar flourish
+  note("[d6 ds6]*8").sound("square")
+    .clip(0.6).gain(0.2).pan(0.6)
+    .mask("<0!15 1>")
+).fast("<1!4 1.06!4 1.13!4 1.21!4>")` },
+
+{ id:"win_b", tier:"WIN", name:"The off switch worked (quiet dawn)",
+  desc:"VICTORY, confirmed round 2 (fanfare cut retired). v0.3: the quote enters softly now -- kalimba at half speed -- and the floor has A-team solidity.",
+  code:`// VICTORY -- "The off switch worked (quiet dawn)" (v0.3)
+// Round 2: fanfare cut RETIRED ("soporific"); this is victory. Fixes:
+// the green-cell quote entered "comparatively harsh" -- now kalimba, at
+// half speed, filtered, floating in (still once per pass, still pure --
+// casting rule 4). And the A-team-solidity ruling: a steadier bass
+// holding pattern -- no stressor-stimulation, but structural solidity:
+// you are being looked after by professionals.
+setcpm(66/4)
+stack(
+  // human voices, warm chord, breathing
+  note("[c3,e3,g3]").sound("gm_voice_oohs")
+    .attack(0.6).gain(0.2).room(0.85),
+  // the A team: steady long bass roots -- reassuring holding pattern
+  note("<c2 g1>").sound("gm_acoustic_bass")
+    .clip(2.2).gain(0.65).lpf(350),
+  // soft pad floor
+  note("[c3,g3]").sound("sawtooth")
+    .lpf(350).attack(3).gain(0.1).room(0.8),
+  // THE QUOTE: the green cell, pure, once per pass -- kalimba, half
+  // speed, filtered: it floats in instead of announcing itself
+  n("0 2 4 7 9 7 4 2").slow(2)
+    .scale("C4:major").sound("gm_kalimba")
+    .clip(1.2).gain(0.4).lpf(1800).room(0.7).pan(0.45)
+    .mask("<0!4 1 1 0!10>"),
+  // music box afterglow, bars 9-10 -- the echo of the promise kept
+  n("14 ~ 11 ~").scale("C5:major").sound("gm_music_box")
+    .gain(0.25).room(0.85).pan(0.6)
+    .mask("<0!8 1 1 0!6>")
+)` },
+
+{ id:"menu", tier:"MENU", name:"Checkpoint saved",
+  desc:"the balm you commissioned -- duck out of the hecticness. No pulse, no weirdness, nothing to track. For main/settings menus.",
+  code:`// MENU -- "Checkpoint saved" (respite cue v0.1)
+// Judgment round 1 commission: "a balming respite for when you get out to
+// the main or settings menus" -- the duck-out-of-the-hecticness sensation.
+// No pulse, no weirdness, nothing to track. The pause holds its breath
+// with you. Fills the drop-in kit's second-menu-bed slot.
+setcpm(60/4)
+stack(
+  // slow epiano arp, two chords swaying
+  n("0 4 7 9".add("<0 -3>/4")).slow(2)
+    .scale("C4:major").sound("gm_epiano1")
+    .clip(1.4).gain(0.42).lpf(2200).room(0.6).pan(0.45),
+  // kalimba answer, occasionally
+  n("<~ [9 7] ~ ~>".add("<0 -3>/4"))
+    .scale("C5:major").sound("gm_kalimba")
+    .gain(0.25).room(0.7).pan(0.6),
+  // long bass pedal
+  n("<0 ~>".add("<0 -3>/4")).scale("C2:major")
+    .sound("gm_acoustic_bass")
+    .clip(2).gain(0.55).lpf(300),
+  // pad floor
+  note("[c3,g3]").sound("sawtooth")
+    .lpf(320).attack(3).gain(0.09).room(0.8)
+)` },
+];
+
+// -------------------------------------------------------------------- ui --
+const TAGS = ["like","skip","fits-state","too-busy","too-thin","keeper-motif"];
+let current = null;
+
+function el(q) { return document.querySelector(q); }
+
+function renderList() {
+  const box = el("#tracks");
+  box.innerHTML = "<b>Tracks</b>";
+  TRACKS.forEach(t => {
+    const d = document.createElement("div");
+    d.className = "trk" + (current && current.id === t.id ? " active" : "");
+    d.innerHTML = '<span class="tname">' + t.name + '</span>' +
+      '<span class="tier t-' + t.tier + '">' + t.tier + '</span>' +
+      '<div class="hint">' + t.desc + '</div>';
+    d.onclick = () => load(t);
+    box.appendChild(d);
+  });
+}
+
+function load(t) {
+  current = t;
+  el("#nowplaying").innerHTML = "<b>" + t.name + "</b> <span class='tier t-" +
+    t.tier + "'>" + t.tier + "</span>";
+  // layer map = the comment lines of the patch
+  el("#layers").textContent = t.code.split("\n")
+    .filter(l => l.trim().startsWith("//")).join("\n");
+  // embed: recreate the strudel editor with this code
+  const w = el("#embedwrap");
+  w.innerHTML = "";
+  try {
+    const ed = document.createElement("strudel-editor");
+    ed.setAttribute("code", t.code);
+    w.appendChild(ed);
+  } catch (e) { w.innerHTML = "<div class='hint'>embed failed: " + e + "</div>"; }
+  el("#note").value = localStorage.getItem("jb_note_" + t.id) || "";
+  renderLog(); renderList();
+}
+
+el("#openBtn").onclick = () => {
+  if (current) window.open("https://strudel.cc/#" + btoa(current.code));
+};
+el("#copyBtn").onclick = () => {
+  if (current) navigator.clipboard.writeText(current.code);
+};
+el("#note").oninput = e => {
+  if (current) localStorage.setItem("jb_note_" + current.id, e.target.value);
+};
+
+const tagbox = el("#tags");
+TAGS.forEach(tag => {
+  const b = document.createElement("button");
+  b.textContent = tag;
+  b.onclick = () => {
+    if (!current) return;
+    const log = JSON.parse(localStorage.getItem("jb_log") || "[]");
+    log.push({ t: new Date().toISOString(), track: current.id, tag });
+    localStorage.setItem("jb_log", JSON.stringify(log));
+    renderLog();
+  };
+  tagbox.appendChild(b);
+});
+
+function renderLog() {
+  const log = JSON.parse(localStorage.getItem("jb_log") || "[]");
+  el("#log").innerHTML = log.filter(e => !current || e.track === current.id)
+    .slice(-12).reverse()
+    .map(e => e.t.slice(11, 19) + "  [" + e.tag + "]").join("<br>");
+}
+
+el("#exportBtn").onclick = () => {
+  const notes = {};
+  TRACKS.forEach(t => {
+    const n = localStorage.getItem("jb_note_" + t.id);
+    if (n) notes[t.id] = n;
+  });
+  const out = { exported: new Date().toISOString(), notes,
+                log: JSON.parse(localStorage.getItem("jb_log") || "[]") };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(out, null, 2)],
+    { type: "application/json" }));
+  a.download = "jukebox_notes.json";
+  a.click();
+};
+
+renderList();
+load(TRACKS[0]);
+</script>
+</body>
+</html>
