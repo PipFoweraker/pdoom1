@@ -156,6 +156,14 @@ func _on_backdrop_input(event: InputEvent) -> void:
 		_dismiss()
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	# Escape contract (fix/ui-no-dead-ends): Esc dismisses the fanfare, like the backdrop
+	# click and the Continue button -- so it is never a dead-end on the keyboard path.
+	if event.is_action_pressed("ui_cancel"):
+		_dismiss()
+		get_viewport().set_input_as_handled()
+
+
 func _dismiss() -> void:
 	if _dismissing:
 		return

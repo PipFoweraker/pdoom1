@@ -2266,7 +2266,11 @@ func _show_ledger_screen():
 		active_dialog_buttons = []
 
 	var ledger = game_manager.state.ledger if (game_manager and game_manager.state) else null
-	var dialog: Panel = ledger_screen.build_screen(ledger, get_viewport().get_visible_rect().size)
+	# fix/ui-no-dead-ends: build_screen now attaches the close [X] + intrinsic Esc
+	# (ui_cancel) affordance itself, wired to our _close_active_submenu so the dialog
+	# bookkeeping stays with the host. No separate _decorate_active_submenu() needed --
+	# doing both would stack two [X] buttons.
+	var dialog: Panel = ledger_screen.build_screen(ledger, get_viewport().get_visible_rect().size, _close_active_submenu)
 
 	active_dialog = dialog
 	active_dialog_buttons = []
@@ -2274,7 +2278,6 @@ func _show_ledger_screen():
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
-	_decorate_active_submenu()
 
 func _show_publicity_submenu():
 	"""Show popup dialog with publicity/influence options with keyboard support - icon grid layout"""
