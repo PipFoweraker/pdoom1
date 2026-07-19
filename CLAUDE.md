@@ -45,6 +45,13 @@ runtime — the old Python bridge is gone). Python exists only for CI/tooling in
 - **ASCII-only:** no non-ASCII chars in `.py/.md/.json/.yaml/.txt/.cfg/.sh`
   (no smart quotes, em-dashes as `--`, no emoji in source/docs). `enforce-standards`
   blocks the commit otherwise.
+- **Agents: commit in the FOREGROUND and make zero tool calls while hooks
+  run.** The session harness rewrites `.claude/settings.local.json` on tool
+  activity; pre-commit has that file stashed during the run, sees a tracked
+  file change mid-hook, reports "Stashed changes conflicted with hook
+  auto-fixes... Rolling back", and aborts -- and the rollback also DISCARDS
+  any working-tree edits made during the run. Background commits + parallel
+  work = repeated mystery failures (cost 4 attempts on 2026-07-19).
 
 ## Git workflow
 - Branch from **freshly-fetched** `origin/main`, not a stale local ref:
