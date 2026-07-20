@@ -21,6 +21,11 @@ var month_playback_active: bool = false
 # Seconds between visible day ticks during month playback. var (not const) so headless
 # smokes/tests can run a month fast; a player-facing speed control is future UI work.
 var day_tick_seconds: float = 0.2
+# Rivals-in-review (item 2): last capability_progress seen per visible rival, keyed by id,
+# so the month review can show a qualitative month-over-month drift. Display-only cache --
+# deliberately NOT serialized (a loaded game just shows "flat" on its first review). Never
+# read by the simulation, so it cannot touch determinism.
+var _rival_cap_snapshot: Dictionary = {}
 # Synthetic month-review dialog id — intercepted by resolve_event before any engine path.
 const MONTH_REVIEW_EVENT_ID := "__month_review__"
 
@@ -46,6 +51,7 @@ func start_new_game(game_seed: String = ""):
 	# state we are about to drop.
 	month_playback_active = false
 	_release_game_objects()
+	_rival_cap_snapshot.clear()  # fresh drift baseline for the new run
 
 	state = GameState.new(game_seed)
 
@@ -615,14 +621,36 @@ func _finish_month_playback() -> void:
 	var review := {
 		"id": MONTH_REVIEW_EVENT_ID,
 		"name": "Month Review — %s" % label,
-		"description": "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated — no banking).\nFunds: %s   ·   Doom: %.1f%%   ·   Staff: %d\n\nQueue this month's actions, then End Turn to play the month out." % [
-			label, attention_now, GameConfig.format_money(state.money), state.doom, state.get_total_staff()],
+		"description": "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated — no banking).\nFunds: %s   ·   Doom: %.1f%%   ·   Staff: %d%s\n\nQueue this month's actions, then End Turn to play the month out." % [
+			label, attention_now, GameConfig.format_money(state.money), state.doom, state.get_total_staff(),
+			_build_rivals_review_section()],
 		"type": "popup",
 		"options": [
 			{"id": "begin_planning", "text": "Begin planning %s" % label, "costs": {}, "effects": {}}
 		],
 	}
 	event_triggered.emit(review)
+
+
+func _build_rivals_review_section() -> String:
+	"""Rivals this month (item 2): a short block in the month review naming each VISIBLE
+	rival, its focus, and a qualitative capability-drift read since last review. Returns ""
+	when nothing is visible so the review stays clean. Deadpan register, display-only (no
+	RNG, no sim reads that could move determinism)."""
+	if state == null:
+		return ""
+	var lines: Array[String] = []
+	for rival in state.rival_labs:
+		if not rival.is_visible_to_player():
+			continue
+		var rid: String = rival.id
+		var prev: float = float(_rival_cap_snapshot.get(rid, rival.capability_progress))
+		var drift: String = RivalLabs.capability_drift_label(rival.capability_progress - prev)
+		_rival_cap_snapshot[rid] = rival.capability_progress
+		lines.append("  %s (%s) -- %s" % [rival.get_visible_name(), rival.focus, drift])
+	if lines.is_empty():
+		return ""
+	return "\n\nRivals this month:\n" + "\n".join(lines)
 
 
 func get_game_state() -> Dictionary:
@@ -679,6 +707,7 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 	# code freed only `state`, leaking its orphaned doom_system/risk_system and the old
 	# turn_manager on every load.
 	_release_game_objects()
+	_rival_cap_snapshot.clear()  # drift baseline restarts from the loaded snapshot
 	state = loaded
 	# Scenario custom events live as node meta (Issue #483), not in state
 	# serialization — re-attach them from the pack recorded in the envelope.

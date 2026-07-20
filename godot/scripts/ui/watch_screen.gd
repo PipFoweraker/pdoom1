@@ -16,6 +16,11 @@ extends VBoxContainer
 signal feed_filter_changed(important_only: bool)
 var feed_filter_button: CheckButton
 
+## Rival-intel filter (v0 News feedline / DQ-32): toggled ON = hide the "rivals" channel
+## lines. Preference persists via GameConfig.show_rivals_feed; main_ui listens and re-renders.
+signal rivals_filter_changed(hide_rivals: bool)
+var rivals_filter_button: CheckButton
+
 
 func _ready() -> void:
 	# The feed reads in the terminal register: monospace, dim phosphor text.
@@ -33,3 +38,13 @@ func _ready() -> void:
 	feed_filter_button.toggled.connect(func(on: bool): feed_filter_changed.emit(on))
 	add_child(feed_filter_button)
 	move_child(feed_filter_button, message_log_label.get_index() + 1)
+
+	# Rival-intel filter: reflect the persisted preference (show_rivals_feed ON -> unpressed).
+	rivals_filter_button = CheckButton.new()
+	rivals_filter_button.text = "Hide rival intel"
+	rivals_filter_button.button_pressed = not GameConfig.show_rivals_feed
+	rivals_filter_button.tooltip_text = "Collapse rival-lab intel lines in the feed"
+	rivals_filter_button.add_theme_color_override("font_color", TerminalTheme.GREEN_DIM)
+	rivals_filter_button.toggled.connect(func(hide: bool): rivals_filter_changed.emit(hide))
+	add_child(rivals_filter_button)
+	move_child(rivals_filter_button, feed_filter_button.get_index() + 1)

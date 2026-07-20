@@ -79,6 +79,9 @@ var current_turn_phase: String = "NOT_STARTED"
 # by default so real, actionable events aren't crowded out. The toggle flips this.
 var _feed_lines: Array = []              # [{text: String, channel: String}, ...]
 var _feed_important_only: bool = true    # default view hides the flavour spam
+# Rival-intel filter (v0 News feedline / DQ-32): hide the "rivals" channel when the player
+# opts out. Mirrors the persisted GameConfig.show_rivals_feed; display-only, determinism-safe.
+var _feed_hide_rivals: bool = not GameConfig.show_rivals_feed
 const FEED_MAX_LINES: int = 500          # cap the backing model so a long run stays bounded (trim oldest)
 
 # Active dialog state for keyboard shortcuts
@@ -110,6 +113,11 @@ func _ready():
 	if watch_screen and watch_screen.has_signal("feed_filter_changed"):
 		watch_screen.feed_filter_changed.connect(_on_feed_filter_changed)
 		_feed_important_only = watch_screen.feed_filter_button.button_pressed
+
+	# Rival-intel filter: reflect the persisted preference and re-render on flip.
+	if watch_screen and watch_screen.has_signal("rivals_filter_changed"):
+		watch_screen.rivals_filter_changed.connect(_on_rivals_filter_changed)
+		_feed_hide_rivals = watch_screen.rivals_filter_button.button_pressed
 
 	# #622 L10: event dialog presenter (script-instantiated child, same mount pattern as
 	# the #500 selector). Choices route back through game_manager.resolve_event so the
@@ -1073,8 +1081,14 @@ func log_message(text: String, channel: String = "normal"):
 		scroll.scroll_vertical = scroll.get_v_scroll_bar().max_value
 
 func _feed_passes_filter(channel: String) -> bool:
-	"""A line is visible unless the 'important only' filter is on and it's flavour spam."""
-	return not (_feed_important_only and channel == "flavour")
+	"""A line is visible unless a filter suppresses its channel: the 'important only' filter
+	hides flavour spam; the rival-intel filter hides the 'rivals' channel. Display-only --
+	suppressed lines stay recorded in _feed_lines, so the underlying content is unchanged."""
+	if _feed_important_only and channel == "flavour":
+		return false
+	if _feed_hide_rivals and channel == "rivals":
+		return false
+	return true
 
 func _render_feed() -> void:
 	"""Rebuild the visible feed from the recorded lines under the current filter (called when
@@ -1091,6 +1105,14 @@ func _render_feed() -> void:
 
 func _on_feed_filter_changed(important_only: bool) -> void:
 	_feed_important_only = important_only
+	_render_feed()
+
+func _on_rivals_filter_changed(hide_rivals: bool) -> void:
+	"""Player toggled rival-intel visibility. Persist the preference (GameConfig ->
+	user://config.cfg) and re-render; the backing feed lines are untouched."""
+	_feed_hide_rivals = hide_rivals
+	GameConfig.show_rivals_feed = not hide_rivals
+	GameConfig.save_config()
 	_render_feed()
 
 func _on_actions_available(actions: Array):
