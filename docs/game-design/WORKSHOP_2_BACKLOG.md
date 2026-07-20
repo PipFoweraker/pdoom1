@@ -377,6 +377,21 @@ more interesting."*
   RIVALS_SURFACING_OPTIONS_2026-07-20.md) should ship with a `tags: []` field, and new
   code should say "actor" where it means any lab. Full design deferred to the DQ-22
   workshop (aggro/midgame is where actor classes start mattering).
+- **DQ-32 · News feedline + SA-priced information flow** *(Pip 2026-07-20, reviewing
+  #726)* — rival/world information should arrive on a **News** feedline: v0 is just a
+  distinct colour on the Events tab (the #726 `rivals` channel, made filter-outable, is
+  the seed), later possibly its own submenu on the action feed that **lights up with
+  unread items**. The Civ analogy: you learn by *seeing opponents' movements*; as
+  **situational awareness** rises, the player earns more detail on shifting patterns in
+  their display — possibly, eventually, interaction with the moving components
+  themselves. The design line underneath: "in and out of god mode" — which information
+  is *bought* in-run (SA-priced; the outward twin of DQ-10's inward ledger visibility)
+  vs hard-baked into the player's standing ability to learn. Anti-exploit motivation:
+  designing against brute-force-mining a league cycle's seed — SA-gating what the
+  display reveals makes mining **combinatorially safer** while staying close to the
+  design ideals. Interacts: DQ-10 (inward SA), DQ-12 (v0 surface built in #725/#726),
+  DQ-14 (world-state progression display), DQ-31 (actor tags likely determine what News
+  can say about whom). Higher-level workshop consideration, not a build lane.
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)
