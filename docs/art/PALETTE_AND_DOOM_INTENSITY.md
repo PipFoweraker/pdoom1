@@ -7,6 +7,27 @@
 > First pass -- Pip (son of an interior designer) will tune the swatches. Open
 > `tools/art_review/palette.html` to eyeball them.
 
+## Core principle: "Doom is a layer, not a repaint"
+
+The base asset is rendered doom-NEUTRAL and stable; doom intensity is a SEPARATE
+additive layer, never baked into the base sprite. The doom layer is some
+combination of: a glow/aura, a sky-swap, and a colour-grade. Consequences that
+drive how we author + prompt:
+
+- **Cats** keep their base colour/identity across doom bands; the doom reads from
+  effects AROUND the cat (surrounding glow, smoke, a collar/emblem that lights up),
+  not from repainting the animal.
+- **Windows** split into a static architectural FRAME (windowsill + edging) and a
+  swappable SKY/WEATHER background driven by doom -- composited in-engine.
+- **Monitors** stay powered/glowing as a light layer on top of a stable screen.
+- **Eldritch = more glow**, not more repaint. Escalation adds layer intensity; it
+  does not redraw the object.
+
+Authoring rule: generate the neutral base once (view-locked, warm-grime), then
+generate/derive the doom layer(s) referencing the operational ladder below. This
+is combinatorially cheaper (one base x N doom layers) and keeps assets coherent
+as doom rises.
+
 ## The two registers (why the office looks warmer than the banners)
 1. **Cozy office (pixel art, in-game floor):** warm, lived-in, a *little* pastel/textured, not
    hyper-saturated -- "cozy competence." This is the warm-grime-heft look.
@@ -82,6 +103,34 @@ Combine the two axes into bands the game keys off. Assets are authored per-band.
 | 2 Spooky | orange->red | blue arcing | shadows lengthen | spooky black cat | stormy, rain |
 | 3 Eldritch | red | violet creeping | dark dread | eldritch cat (violet glow, smoke) | doomy red-purple |
 | 4 Terminal | fire | full violet | near-black + flame | terminal/void cat | apocalyptic, fire-lit |
+
+## Doom operational ladder (STUB -- the per-band layer recipe)
+
+Every doomy / eldritch / weather prompt keys off THIS table, so "band 3" means the
+same thing on a cat, a window, a monitor, and a banner. This is the operational
+form of the bands above: it says exactly what the DOOM LAYER does at each level.
+STUB values -- Pip to tune the hexes/amounts against the hero bg + `palette.html`;
+the columns and structure are the contract, the numbers are first-pass.
+
+| band | glow hex (single accent) | glow amount | ambient grade | distortion / FX |
+|---|---|---|---|---|
+| 0 Cosy | `#F6A800` amber | faint (rim only) | warm, neutral | none |
+| 1 Uneasy | `#E9752E` orange | low | slightly dimmed, cooler | occasional flicker |
+| 2 Spooky | `#E24A3B` red-orange + `#5C7AC3` blue arc | medium | shadows lengthen, desaturated | screen glitch, arcing |
+| 3 Eldritch | `#7A3B8F` violet | high (aura + smoke) | dark dread, low-key | wrong-angle warp, smoke wisps |
+| 4 Terminal | `#DD5F4C` fire + full `#96718F` violet | max (bloom) | near-black + flame-lit | heavy warp, void bleed, fire |
+
+Discipline (unchanged from the lighting rule): at most ONE ambient + ONE glow
+source per scene; the glow HUE is chosen from Axis A (catastrophe: amber->fire) or
+Axis B (weirdness: green->blue->violet), never a rainbow. Purple is reserved for
+band 3+.
+
+Per-asset application of the layer:
+- **Cat:** base cat unchanged; add the band's glow as an aura + collar/emblem;
+  smoke/warp from band 3.
+- **Window sky:** swap the sky background to the band's grade; frame stays static.
+- **Monitor/terminal:** screen-glow layer takes the band's glow hex + amount.
+- **Banner/edges:** ambient grade slides toward the band's near-black + accent.
 
 ## How to prompt to this (for pixellab / any generator)
 - Name the ambient + the single glow explicitly ("lit warm amber from the left, one cold blue
