@@ -27,6 +27,12 @@ var fullscreen: bool = false
 # Accessibility Settings
 var colorblind_mode: bool = false  # Adds patterns/symbols alongside colors
 
+# Interface Settings
+# Rival-lab intel lines in the WATCH feed (the "rivals" channel, v0 of the future
+# News feedline / DQ-32). Default ON; players who find rival chatter noisy can hide
+# it. Display-only -- the underlying log content and simulation are unchanged.
+var show_rivals_feed: bool = true
+
 # Leaderboard Settings
 # Opt-out for uploading scores to the global leaderboard (LeaderboardSync).
 # Default ON for alpha; players who flip it off keep local scores only.
@@ -102,6 +108,9 @@ func save_config() -> void:
 	# Accessibility section
 	config.set_value("accessibility", "colorblind_mode", colorblind_mode)
 
+	# Interface section
+	config.set_value("interface", "show_rivals_feed", show_rivals_feed)
+
 	# Leaderboard section
 	config.set_value("leaderboard", "submit_scores_global", submit_scores_global)
 
@@ -147,6 +156,9 @@ func load_config() -> void:
 
 	# Load accessibility settings
 	colorblind_mode = config.get_value("accessibility", "colorblind_mode", colorblind_mode)
+
+	# Load interface settings
+	show_rivals_feed = config.get_value("interface", "show_rivals_feed", show_rivals_feed)
 
 	# Load leaderboard settings
 	submit_scores_global = config.get_value("leaderboard", "submit_scores_global", submit_scores_global)
