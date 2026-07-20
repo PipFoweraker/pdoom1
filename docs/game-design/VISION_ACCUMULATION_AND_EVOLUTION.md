@@ -193,9 +193,102 @@ tidiness. Store raw artifacts append-only; derive summaries downstream; never pr
 source. (Storage is cheap; a `pdoom1-replay-v1` artifact is a small JSON blob, and even
 the full input log is tiny next to its analytical value.)
 
+### 2.6 Attribution and provenance (the discoverer credit graph)
+
+Pip, verbatim:
+
+> "I want to hold space to attribute their contributions over time."
+
+The "their" is the early adopters and adapters of the game's eventual **ecosystem** --
+the humans who explore the solution space and find new lanes (and exploits). As they
+walk paths through the strategy-space, the system should be able to **credit the humans
+who first discovered each one**. Accumulation without attribution is a heap; attribution
+turns the heap into a history with authors.
+
+The per-run DNA (section 2.1) is exactly the primitive this needs. Because every run
+carries a deterministic strategy-fingerprint keyed to a stable hash, the **first** run to
+exhibit a novel fingerprint can be credited to its discoverer. That converts the
+tree-of-life (section 2.3) from an anonymous shape into a **phylogeny with named branch
+points**: each fork in the strategy tree annotated with the player who first walked that
+path, and when. Pip's "forking channels ... explored through many player runs" gains a
+credits roll.
+
+Analogues to steal from (all solved this without warping the underlying activity):
+
+- **Speedrun trick attribution** -- named tech ("the such-and-such skip"), credited to the
+  runner who first landed it, propagated as the community adopts it. Directly mirrors the
+  loss-ladder's "best loss" (DESIGN_PHILOSOPHY): inventing an opening the ladder adopts.
+- **Scientific-discovery credit graphs** -- priority-of-discovery, citation lineage; who
+  got there first and who built on them.
+- **Open-source contributor graphs** -- the commit/PR provenance graph; a living record
+  of who added what, when.
+
+**Architectural framing (important):** this is an **emergent read over the accumulated
+telemetry**, plus a light social / naming layer -- *not a new game mechanic*. Concretely:
+a discoverer/provenance graph is *computed* off the run population (first-occurrence of
+each fingerprint -> discoverer; adoption curve -> who followed), and a thin naming/credit
+surface (a web view, a wall of names, a "first discovered by ..." annotation on a branch)
+sits on top. Nothing about it reaches back into the sim. It is a lens on the corpus, the
+same way the visualizations in 2.3 are -- discovery credit is just the corpus read
+*by author* instead of *by shape*. (First-discovery has honest edge cases -- near-ties
+across the schedule, independent rediscovery, fingerprint collisions; treat these the way
+speedrun communities do, as a curated social layer with a defensible default, not a
+number the engine adjudicates.)
+
+This resonance is not incidental: crediting **networked human contributions toward good
+outcomes** is the game's own theme (section 1: "how we can try to network those to build
+towards good futures"). The attribution layer makes the meta-game embody the thing the
+game is about.
+
 ---
 
-## 3. Near-term hooks (buildable now, small, concrete)
+## 3. Governing constraint: light-touch on the sim (meta-layer only)
+
+This is a **hard design principle governing the entire accumulation / attribution /
+telemetry system above and the hooks below.** Pip's explicit caution, verbatim:
+
+> "not wanting to be too heavy-handed on the sim/game lever."
+
+**The whole system in this document lives entirely in the META / ecosystem layer** --
+data capture, visualizations, social credit -- and must **never warp the core sim/game
+loop.** The sim stays pure and deterministic (the property `VerificationTracker` and
+ADR-0006 replay depend on); accumulation, attribution, and evolution are things we
+**READ off** the accumulated runs, not levers we push back into the game.
+
+Concrete prohibitions this rules out:
+
+- **No in-game gamification of discovery.** No dopamine "you found an exploit!" /
+  "novel strategy discovered!" popups, no in-run badges or score bonuses for being first.
+  Anything that tells a player *during a run* that they are doing something rare would
+  distort how people play -- it turns an honest strategy choice into a meta-reward hunt,
+  corrupting the very population the telemetry is trying to observe cleanly. (Compare the
+  score design: ADR-0002's post-mortem-reveal-only rule already refuses a live score
+  ticker for the same reason -- the run is played on the world's terms.)
+- **No sim reach-back.** The discoverer credit graph, the fingerprint histograms, the
+  named branch points -- all are computed and displayed *outside* the game loop (web
+  views, local tools, post-run surfaces). None feeds a value back into game state, RNG,
+  balance, or event selection.
+- **No telemetry-driven balance auto-tuning inside the sim.** Telemetry *informs the dev*
+  (exploit-discovery detection, section 2.3) who then makes deliberate, legible balance
+  patches (the patch-as-heartbeat principle) -- it never closes a loop that silently
+  re-weights the live engine.
+
+Why this is load-bearing, not caution-theatre: the value of the accumulated corpus
+depends on it being an **uncontaminated observation** of how people actually play. The
+moment discovery is rewarded in-run, players optimize for the reward signal instead of
+for survival, and the strategy-space population stops describing genuine exploration. The
+meta-layer must stay a *mirror*, never a *lever*. Purity of the sim is both an
+engineering invariant (determinism / replay) and the precondition for the whole vision to
+mean anything.
+
+**Test to apply to any future accumulation/attribution feature:** does it change what a
+player sees, is rewarded for, or can do *inside a run*? If yes, it violates this
+principle and belongs nowhere near the sim. If it only reads finished runs and renders
+them elsewhere, it is in-bounds.
+
+---
+
+## 4. Near-term hooks (buildable now, small, concrete)
 
 The point of naming these: the substrate should **accrete before the visualizations
 exist**, so that when someone builds a viz there is already a corpus to render. None of
@@ -242,14 +335,15 @@ until there is a corpus worth looking at.
 
 ---
 
-## 4. Dream vs buildable -- the honest separation
+## 5. Dream vs buildable -- the honest separation
 
 | | The dream (unbuilt) | Buildable next hook (now) |
 |---|---|---|
-| Substrate | strategy-space population across all runs | persist hash + replay log + signature per run (section 3.1-3.3) |
-| View | tree-of-life / Cambrian-explosion strategy viz | sibling read endpoint + one local histogram tool (3.5) |
+| Substrate | strategy-space population across all runs | persist hash + replay log + signature per run (section 4.1-4.3) |
+| View | tree-of-life / Cambrian-explosion strategy viz | sibling read endpoint + one local histogram tool (4.5) |
 | Self-reference | ADR-tree beside strategy-tree, one render | (not yet -- needs the corpus first) |
-| Exploit story | population-level exploit-discovery detection | capture the payment-choice + signature data that would reveal it (3.3) |
+| Attribution | named branch points / discoverer credit graph | capture the run DNA + strategy signature that keys first-discovery (4.1, 4.3) |
+| Exploit story | population-level exploit-discovery detection | capture the payment-choice + signature data that would reveal it (4.3) |
 
 The dream is aspirational and explicitly *not committed*. The hooks are the small,
 safe, do-now moves that keep the dream *reachable* -- so that "if we architect cleverly"
@@ -258,7 +352,7 @@ run.
 
 ---
 
-## 5. Cross-links
+## 6. Cross-links
 
 - `docs/game-design/DESIGN_PHILOSOPHY.md` -- the "why"; source of "verification is the
   only law", the loss-ladder (personal -> competitive -> cultural), the doom-floor
@@ -266,7 +360,9 @@ run.
   telemetry.
 - `docs/game-design/decisions/ADR-0002-scoring-turns-survived.md` -- the **frozen** score
   semantics (lexicographic turns; flows-only; boards keyed by `(seed, game_version)`).
-  Never broken by anything here.
+  Never broken by anything here. Its **post-mortem-reveal-only** rule (no live score
+  ticker) is the same instinct as the light-touch constraint (section 3): the run is
+  played on the world's terms, not gamified from the meta-layer.
 - `docs/game-design/decisions/ADR-0005-emergent-waves-seed-schedules.md` -- the event
   schedule as part of seed identity (travels in the artifact).
 - `docs/game-design/decisions/ADR-0006-replay-artifact-backend.md` -- the input-string
@@ -294,3 +390,14 @@ run.
   contract-safe enrichment path, the visualizations it unlocks, the self-referential
   motif tying run-data to the ADR/change-history, and four-plus concrete near-term
   capture hooks. Explicitly does not touch the frozen score contract (ADR-0002).
+- **2026-07-20** -- Second pass (Pip added two dimensions). Added section 2.6
+  **Attribution and provenance** (the discoverer credit graph: per-run DNA credits the
+  first run to exhibit a novel fingerprint, giving the strategy tree named branch points;
+  speedrun / scientific-priority / OSS-contributor analogues; framed as an emergent read
+  over telemetry + a light social/naming layer, NOT a game mechanic; quote: "I want to
+  hold space to attribute their contributions over time"). Added new section 3
+  **Governing constraint: light-touch on the sim** (the whole accumulation/attribution/
+  telemetry system is meta-layer-only and must never warp the core sim loop; no in-game
+  gamification of discovery, no sim reach-back, no telemetry-driven auto-tuning; quote:
+  "not wanting to be too heavy-handed on the sim/game lever"). Renumbered subsequent
+  sections (Near-term hooks -> 4, Dream vs buildable -> 5, Cross-links -> 6).
