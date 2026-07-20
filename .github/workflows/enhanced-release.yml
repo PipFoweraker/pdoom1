@@ -33,10 +33,10 @@ jobs:
       validation_status: ${{ steps.validate.outputs.status }}
       validation_hash: ${{ steps.validate.outputs.hash }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -72,7 +72,7 @@ jobs:
 
       - name: Upload validation report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: validation-report
           path: |
@@ -127,7 +127,7 @@ jobs:
     needs: validate-data
     if: needs.validate-data.outputs.validation_status == 'success' || inputs.skip_validation
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v1
@@ -137,7 +137,7 @@ jobs:
           include-templates: true
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -159,19 +159,19 @@ jobs:
           python scripts/build_all_platforms.py --version "$VERSION" --godot-path "$(which godot)"
 
       - name: Upload Windows build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-windows
           path: builds/windows/${{ github.event.inputs.version || github.ref_name }}/
 
       - name: Upload Linux build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-linux
           path: builds/linux/${{ github.event.inputs.version || github.ref_name }}/
 
       - name: Upload macOS build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build-mac
           path: builds/mac/${{ github.event.inputs.version || github.ref_name }}/
@@ -181,12 +181,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [validate-data, build-godot]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Need full history for git tags
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -202,7 +202,7 @@ jobs:
           python scripts/generate_release_metadata.py --version "$VERSION"
 
       - name: Upload metadata artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-feeds
           path: public/releases/
@@ -214,7 +214,7 @@ jobs:
     outputs:
       manifest_hash: ${{ steps.manifest.outputs.hash }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Generate release manifest
         id: manifest
@@ -261,7 +261,7 @@ jobs:
           cat release_manifest.json | jq .
 
       - name: Upload manifest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: release-manifest
           path: release_manifest.json
@@ -271,12 +271,12 @@ jobs:
     runs-on: ubuntu-latest
     needs: [validate-data, build-godot, generate-feeds, create-release-manifest]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
 
       - name: Extract changelog
         id: changelog
@@ -325,10 +325,10 @@ jobs:
     needs: create-github-release
     if: github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Download feed artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: release-feeds
           path: public/releases/

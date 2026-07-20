@@ -44,12 +44,12 @@ jobs:
 
     steps:
       - name: Checkout source repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2  # Need for diff detection
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -64,7 +64,7 @@ jobs:
           exit 0
 
       - name: Checkout target repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: PipFoweraker/${{ matrix.target.repo }}
           token: ${{ secrets.CROSS_REPO_TOKEN }}

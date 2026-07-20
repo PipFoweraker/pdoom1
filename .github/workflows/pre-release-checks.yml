@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Note: unit tests run on PRs via godot-tests.yml (GUT). Pre-release focuses
       # on release-readiness (changelog, version, clean tree). The former pygame-era
