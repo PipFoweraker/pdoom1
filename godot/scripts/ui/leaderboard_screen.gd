@@ -32,6 +32,16 @@ func _ready():
 	_setup_global_toggle()
 	_filter_and_display()
 
+func _exit_tree():
+	# Cleanup guard: drop the working-set references the instant the screen leaves
+	# the tree so the whole population of ScoreEntry objects is released now rather
+	# than lingering until the node is GC'd. Combined with freeing the transient
+	# Leaderboard Nodes in _load_all_leaderboards, re-opening the screen does not
+	# accumulate memory across opens.
+	all_leaderboards.clear()
+	all_entries.clear()
+	filtered_entries.clear()
+
 func _setup_global_toggle():
 	"""Add a Local/Global view toggle next to the seed filter, but only when remote
 	sync is enabled+configured. When off/unconfigured the screen stays local-only."""
@@ -104,22 +114,22 @@ func _load_all_leaderboards():
 
 	while file_name != "":
 		if file_name.ends_with(".json") and file_name.begins_with("leaderboard_"):
-			# Parse "leaderboard_SEED.json" or the version-keyed
-			# "leaderboard_SEED__VERSION.json" (ADR-0002 #5). '__' delimiter survives
-			# hyphens/underscores in seeds.
-			var base_name = file_name.trim_prefix("leaderboard_").trim_suffix(".json")
-			var lb_seed = base_name
-			var lb_version = ""
-			if base_name.contains("__"):
-				var parts = base_name.rsplit("__", true, 1)
-				lb_seed = parts[0]
-				lb_version = parts[1]
+			var identity = _parse_board_identity(file_name)
+			var lb_seed = identity["seed"]
+			var lb_version = identity["version"]
 
 			# Reconstruct with the same (seed, version) so file_path matches on load.
+			# MEMORY NOTE (bounded-view fix): Leaderboard `extends Node`, so an
+			# instance is NOT refcounted -- retaining it (as this used to) leaks one
+			# Node plus its whole entries array on EVERY (re)open of this screen,
+			# which is the unbounded growth behind the release-build segfault. We use
+			# the board only transiently to parse the file, copy its entries out
+			# (ScoreEntry is RefCounted and survives the free), then free() the Node.
 			var leaderboard = LeaderboardClass.new(lb_seed, lb_version)
 			# Key by full identity so same-seed/different-version boards don't collide.
 			var board_key = lb_seed if lb_version == "" else "%s (%s)" % [lb_seed, lb_version]
-			all_leaderboards[board_key] = leaderboard
+			# Store the plain entries array (NOT the Node) so nothing leaks.
+			all_leaderboards[board_key] = leaderboard.entries.duplicate()
 
 			# Add entries to combined list
 			for entry in leaderboard.entries:
@@ -130,6 +140,10 @@ func _load_all_leaderboards():
 				"Loaded leaderboard",
 				{"seed": lb_seed, "version": lb_version, "entries": leaderboard.entries.size()}
 			)
+
+			# Free the transient board Node now -- its entries are already copied
+			# above and stay alive via all_leaderboards / all_entries.
+			leaderboard.free()
 
 		file_name = dir.get_next()
 
@@ -147,6 +161,22 @@ func _load_all_leaderboards():
 		}
 	)
 
+func _parse_board_identity(file_name: String) -> Dictionary:
+	"""Parse a leaderboard filename into its (seed, version) identity.
+
+	Handles "leaderboard_SEED.json" and the version-keyed
+	"leaderboard_SEED__VERSION.json" (ADR-0002 #5). The '__' delimiter survives
+	hyphens/underscores in seeds. Shared by _load_all_leaderboards and
+	_perform_clear_all so the two never drift."""
+	var base_name = file_name.trim_prefix("leaderboard_").trim_suffix(".json")
+	var lb_seed = base_name
+	var lb_version = ""
+	if base_name.contains("__"):
+		var parts = base_name.rsplit("__", true, 1)
+		lb_seed = parts[0]
+		lb_version = parts[1]
+	return {"seed": lb_seed, "version": lb_version}
+
 func _populate_seed_dropdown():
 	"""Populate seed filter dropdown"""
 	seed_dropdown.clear()
@@ -157,7 +187,7 @@ func _populate_seed_dropdown():
 	seeds.sort()
 
 	for seed in seeds:
-		var entry_count = all_leaderboards[seed].entries.size()
+		var entry_count = all_leaderboards[seed].size()
 		seed_dropdown.add_item("%s (%d)" % [seed, entry_count], idx)
 		seed_dropdown.set_item_metadata(idx, seed)
 		idx += 1
@@ -180,7 +210,7 @@ func _filter_and_display():
 	else:
 		filtered_entries.clear()
 		if all_leaderboards.has(current_seed):
-			filtered_entries = all_leaderboards[current_seed].entries.duplicate()
+			filtered_entries = all_leaderboards[current_seed].duplicate()
 		subtitle.text = "Top scores for seed: %s" % current_seed
 
 	# Reset to page 1 when filter changes
@@ -191,11 +221,28 @@ func _filter_and_display():
 	_update_pagination_ui()
 	_update_stats()
 
-func _display_current_page():
-	"""Display entries for current page"""
-	# Clear existing entries
+func _free_row_nodes():
+	"""Free every instantiated row widget in the entries container, immediately.
+
+	Bounded-render guarantee: at most `entries_per_page` row nodes (plus the
+	empty-state label) are ever alive at once, no matter how many thousands of
+	entries the population holds. We free() rather than queue_free() so the bound
+	holds SYNCHRONOUSLY -- queue_free defers to end-of-frame, which would let two
+	pages' worth of rows briefly coexist when paging. get_children() returns a
+	copy, so freeing while iterating is safe."""
 	for child in entries_container.get_children():
-		child.queue_free()
+		entries_container.remove_child(child)
+		child.free()
+
+func _display_current_page():
+	"""Display entries for current page.
+
+	Only the current page's slice is ever instantiated as row widgets; the full
+	(sorted) population lives in filtered_entries as lightweight data and is never
+	turned into nodes wholesale. Paging frees the prior page first (_free_row_nodes),
+	so node memory stays bounded regardless of population size."""
+	# Clear existing entries (bounded: previous page's rows are freed first).
+	_free_row_nodes()
 
 	if filtered_entries.size() == 0:
 		var no_entries = Label.new()
@@ -435,15 +482,30 @@ func _on_clear_button_pressed():
 	dialog.popup_centered()
 
 func _perform_clear_all():
-	"""Actually clear all scores"""
+	"""Actually clear all scores.
+
+	all_leaderboards now holds plain entry arrays (not Leaderboard Nodes -- see the
+	memory note in _load_all_leaderboards), so we reconstruct each board transiently
+	from disk to call clear(), then free() the Node. Same file set, same clear()
+	semantics as before -- only the in-memory representation changed."""
 	ErrorHandler.warning(
 		ErrorHandler.Category.SAVE_LOAD,
 		"Clearing all leaderboard scores",
 		{"count": all_entries.size()}
 	)
 
-	for leaderboard in all_leaderboards.values():
-		leaderboard.clear()
+	var dir = DirAccess.open("user://leaderboards")
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if file_name.ends_with(".json") and file_name.begins_with("leaderboard_"):
+				var identity = _parse_board_identity(file_name)
+				var leaderboard = LeaderboardClass.new(identity["seed"], identity["version"])
+				leaderboard.clear()
+				leaderboard.free()  # transient Node -- free to avoid a leak.
+			file_name = dir.get_next()
+		dir.list_dir_end()
 
 	# Reload
 	_load_all_leaderboards()
