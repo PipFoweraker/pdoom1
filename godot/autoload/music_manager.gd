@@ -59,10 +59,10 @@ var _current_music_tier: int = 0
 # Music tracks organized by context
 var music_library = {
 	MusicContext.MENU: [
-		# "Checkpoint saved" -- the respite cue (round-2 commission);
-		# the 0.7 s beeyoowee UI blip is out of the music rotation.
-		"res://assets/audio/music/checkpoint_saved.ogg",
-		"res://assets/audio/music/PDOOMN ST1 (safe).mp3"
+		# "Checkpoint saved" -- the respite cue (round-2 commission).
+		# Composed-audio only now; the last placeholder (PDOOMN ST1) and the
+		# 0.7 s beeyoowee UI blip are both out of the music rotation.
+		"res://assets/audio/music/checkpoint_saved.ogg"
 	],
 	MusicContext.GAMEPLAY: [
 		# Legacy-playlist fallback (used only if the adaptive build fails):
