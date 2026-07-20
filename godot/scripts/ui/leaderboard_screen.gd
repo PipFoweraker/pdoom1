@@ -5,9 +5,19 @@ var LeaderboardClass = preload("res://scripts/leaderboard.gd")
 var current_seed: String = "all"
 var current_page: int = 1
 var entries_per_page: int = 20
-var all_leaderboards: Dictionary = {}  # seed -> Leaderboard
-var all_entries: Array = []  # All entries across all seeds
+var all_leaderboards: Dictionary = {}  # board_key -> entries Array (lazily populated)
+var all_entries: Array = []  # All entries across all seeds (built lazily on the all-seeds view)
 var filtered_entries: Array = []  # Current filtered/sorted view
+
+# Lazy-open bookkeeping (perf: opening this screen used to parse EVERY seed file on
+# every open -- ~5-7s with many boards). We now discover board files cheaply (a dir
+# listing, no JSON parse), open only the current/most-relevant board by default, and
+# parse the full cross-seed population LAZILY the first time the user picks "All Seeds"
+# (cached for the rest of this screen instance). No board file is ever deleted or
+# truncated -- this is a view/load change only.
+var _board_files: Dictionary = {}   # board_key -> {"seed":..., "version":...}; cheap listing
+var _default_key: String = ""       # newest / current board, shown on open
+var _aggregate_loaded: bool = false # true once the full all-seeds scan has run this instance
 
 # Remote/global board (LeaderboardSync). Pure view: fetched async, never on a
 # deterministic path. Falls back to local silently on any failure.
@@ -27,20 +37,25 @@ var global_toggle_button: Button = null
 
 func _ready():
 	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Leaderboard screen opened", {})
-	_load_all_leaderboards()
+	# Cheap open: list board files (no parse), populate the dropdown, then show ONLY
+	# the current/most-relevant board. The full all-seeds aggregate is parsed lazily
+	# in _ensure_aggregate_loaded when the user selects "All Seeds".
+	_discover_boards()
 	_populate_seed_dropdown()
 	_setup_global_toggle()
-	_filter_and_display()
+	_select_default_view()
 
 func _exit_tree():
 	# Cleanup guard: drop the working-set references the instant the screen leaves
 	# the tree so the whole population of ScoreEntry objects is released now rather
 	# than lingering until the node is GC'd. Combined with freeing the transient
-	# Leaderboard Nodes in _load_all_leaderboards, re-opening the screen does not
+	# Leaderboard Nodes in _load_one_board, re-opening the screen does not
 	# accumulate memory across opens.
 	all_leaderboards.clear()
 	all_entries.clear()
 	filtered_entries.clear()
+	_board_files.clear()
+	_aggregate_loaded = false
 
 func _setup_global_toggle():
 	"""Add a Local/Global view toggle next to the seed filter, but only when remote
@@ -93,14 +108,22 @@ func _on_global_board_fetched(ok: bool, entries: Array):
 	_update_pagination_ui()
 	_update_stats()
 
-func _load_all_leaderboards():
-	"""Load all leaderboard files from user directory"""
-	all_leaderboards.clear()
-	all_entries.clear()
+func _board_key(lb_seed: String, lb_version: String) -> String:
+	"""Full-identity key so same-seed/different-version boards don't collide (ADR-0002 #5)."""
+	return lb_seed if lb_version == "" else "%s (%s)" % [lb_seed, lb_version]
+
+func _discover_boards():
+	"""CHEAP: list the leaderboard files and record their (seed, version) identities.
+
+	No JSON is parsed here -- this is the part that must stay bounded so opening the
+	screen is fast regardless of how many seed files have accumulated. Also picks the
+	board to show on open (`_default_key`): the CURRENT (seed, version) board if it
+	exists, else the most-recently-written file (the run the player just came from)."""
+	_board_files.clear()
+	_default_key = ""
 
 	var leaderboard_dir = "user://leaderboards"
 	var dir = DirAccess.open(leaderboard_dir)
-
 	if not dir:
 		ErrorHandler.warning(
 			ErrorHandler.Category.SAVE_LOAD,
@@ -109,48 +132,79 @@ func _load_all_leaderboards():
 		)
 		return
 
+	var newest_mtime := -1
 	dir.list_dir_begin()
 	var file_name = dir.get_next()
-
 	while file_name != "":
 		if file_name.ends_with(".json") and file_name.begins_with("leaderboard_"):
 			var identity = _parse_board_identity(file_name)
-			var lb_seed = identity["seed"]
-			var lb_version = identity["version"]
-
-			# Reconstruct with the same (seed, version) so file_path matches on load.
-			# MEMORY NOTE (bounded-view fix): Leaderboard `extends Node`, so an
-			# instance is NOT refcounted -- retaining it (as this used to) leaks one
-			# Node plus its whole entries array on EVERY (re)open of this screen,
-			# which is the unbounded growth behind the release-build segfault. We use
-			# the board only transiently to parse the file, copy its entries out
-			# (ScoreEntry is RefCounted and survives the free), then free() the Node.
-			var leaderboard = LeaderboardClass.new(lb_seed, lb_version)
-			# Key by full identity so same-seed/different-version boards don't collide.
-			var board_key = lb_seed if lb_version == "" else "%s (%s)" % [lb_seed, lb_version]
-			# Store the plain entries array (NOT the Node) so nothing leaks.
-			all_leaderboards[board_key] = leaderboard.entries.duplicate()
-
-			# Add entries to combined list
-			for entry in leaderboard.entries:
-				all_entries.append(entry)
-
-			ErrorHandler.info(
-				ErrorHandler.Category.SAVE_LOAD,
-				"Loaded leaderboard",
-				{"seed": lb_seed, "version": lb_version, "entries": leaderboard.entries.size()}
-			)
-
-			# Free the transient board Node now -- its entries are already copied
-			# above and stay alive via all_leaderboards / all_entries.
-			leaderboard.free()
-
+			var board_key = _board_key(identity["seed"], identity["version"])
+			_board_files[board_key] = identity
+			# Cheap stat (no parse) to find the newest board for the default view.
+			var mtime := int(FileAccess.get_modified_time("%s/%s" % [leaderboard_dir, file_name]))
+			if mtime > newest_mtime:
+				newest_mtime = mtime
+				_default_key = board_key
 		file_name = dir.get_next()
-
 	dir.list_dir_end()
+
+	# Prefer the CURRENT run's board when present (it is what the player expects to see,
+	# with their just-set score highlighted); otherwise keep the newest-file default.
+	var current_key = _board_key(GameConfig.get_display_seed(), "v" + GameConfig.CURRENT_VERSION)
+	if _board_files.has(current_key):
+		_default_key = current_key
+
+func _load_one_board(board_key: String) -> void:
+	"""Parse a SINGLE board file into all_leaderboards[board_key] (cached per instance).
+
+	MEMORY NOTE (bounded-view fix): Leaderboard `extends Node`, so an instance is NOT
+	refcounted -- retaining it (as this once did) leaks one Node plus its whole entries
+	array on every (re)open. We use the board only transiently to parse the file, copy
+	its entries out (ScoreEntry is RefCounted and survives the free), then free() the
+	Node. Entries as stored on disk are already sorted (Leaderboard.add_score sorts
+	before save), so a single-seed view is correctly ordered without re-sorting."""
+	if all_leaderboards.has(board_key):
+		return  # already parsed this instance
+	if not _board_files.has(board_key):
+		all_leaderboards[board_key] = []
+		return
+	var identity = _board_files[board_key]
+	var leaderboard = LeaderboardClass.new(identity["seed"], identity["version"])
+	all_leaderboards[board_key] = leaderboard.entries.duplicate()
+	ErrorHandler.info(
+		ErrorHandler.Category.SAVE_LOAD,
+		"Loaded leaderboard",
+		{"seed": identity["seed"], "version": identity["version"], "entries": leaderboard.entries.size()}
+	)
+	leaderboard.free()  # transient Node -- entries already copied out.
+
+func _ensure_aggregate_loaded() -> void:
+	"""Lazily parse EVERY board file and build the sorted cross-seed population.
+
+	Only reached when the user picks "All Seeds". Cached via _aggregate_loaded so
+	toggling seed <-> all within one screen instance re-scans at most once."""
+	if _aggregate_loaded:
+		return
+	_load_all_leaderboards()
+
+func _load_all_leaderboards():
+	"""FULL eager scan: parse every board file, populate all_leaderboards, and build the
+	sorted all-seeds aggregate. This is the expensive path -- _ready no longer calls it
+	(see _discover_boards + _select_default_view). It remains for Refresh, for the
+	all-seeds aggregate (_ensure_aggregate_loaded), and as the entry point the
+	bounded-view regression tests drive."""
+	all_leaderboards.clear()
+	all_entries.clear()
+	_discover_boards()
+
+	for board_key in _board_files.keys():
+		_load_one_board(board_key)
+		for entry in all_leaderboards[board_key]:
+			all_entries.append(entry)
 
 	# Sort lexicographically (ADR-0002): turns dominant, doom-integral tiebreak.
 	all_entries.sort_custom(func(a, b): return GameState.compare_score(a.score, a.doom_integral, b.score, b.doom_integral) > 0)
+	_aggregate_loaded = true
 
 	ErrorHandler.info(
 		ErrorHandler.Category.SAVE_LOAD,
@@ -178,22 +232,48 @@ func _parse_board_identity(file_name: String) -> Dictionary:
 	return {"seed": lb_seed, "version": lb_version}
 
 func _populate_seed_dropdown():
-	"""Populate seed filter dropdown"""
+	"""Populate seed filter dropdown from the discovered board files (no parse required).
+
+	Per-seed entry counts are shown only for boards already parsed this instance -- we
+	don't parse every file just to render a count (that was part of the slow open). Once
+	the all-seeds aggregate loads, every board is parsed, so re-calling this fills them in.
+	Selection is set by the caller (_select_default_view); select() does not emit
+	item_selected, so re-populating never triggers a spurious filter change."""
 	seed_dropdown.clear()
 	seed_dropdown.add_item("All Seeds", 0)
 
 	var idx = 1
-	var seeds = all_leaderboards.keys()
+	var seeds = _board_files.keys()
 	seeds.sort()
 
 	for seed in seeds:
-		var entry_count = all_leaderboards[seed].size()
-		seed_dropdown.add_item("%s (%d)" % [seed, entry_count], idx)
+		var label = seed
+		if all_leaderboards.has(seed):
+			label = "%s (%d)" % [seed, all_leaderboards[seed].size()]
+		seed_dropdown.add_item(label, idx)
 		seed_dropdown.set_item_metadata(idx, seed)
 		idx += 1
 
-	# Select "All Seeds" by default
+func _select_dropdown_by_key(board_key: String) -> void:
+	"""Select the dropdown row whose metadata matches board_key; fall back to All Seeds."""
+	for i in range(seed_dropdown.item_count):
+		if seed_dropdown.get_item_metadata(i) == board_key:
+			seed_dropdown.select(i)
+			return
 	seed_dropdown.select(0)
+
+func _select_default_view() -> void:
+	"""Show the cheap default board on open: the current/most-relevant single seed.
+
+	Never triggers the full all-seeds scan on open -- if there are no board files we show
+	an (empty) all-seeds view, which is trivially cheap. "All Seeds" stays one click away."""
+	if _default_key != "":
+		current_seed = _default_key
+		_select_dropdown_by_key(_default_key)
+	else:
+		current_seed = "all"
+		seed_dropdown.select(0)
+	_filter_and_display()
 
 func _filter_and_display():
 	"""Filter entries based on current seed and display current page (LOCAL view)."""
@@ -203,11 +283,18 @@ func _filter_and_display():
 		global_toggle_button.set_pressed_no_signal(false)
 		global_toggle_button.text = "View: Local"
 
-	# Filter by seed
+	# Filter by seed. The all-seeds view triggers the (cached) full parse; a single seed
+	# parses just that one file. Either way the population shown is complete and correctly
+	# sorted -- no data is dropped, only the parse is deferred until the view needs it.
 	if current_seed == "all":
+		_ensure_aggregate_loaded()
+		# Aggregate load repopulates counts; refresh the dropdown labels once.
+		_populate_seed_dropdown()
+		_select_dropdown_by_key("all")  # no metadata match -> selects "All Seeds" (index 0)
 		filtered_entries = all_entries.duplicate()
 		subtitle.text = "Top scores across all seeds"
 	else:
+		_load_one_board(current_seed)
 		filtered_entries.clear()
 		if all_leaderboards.has(current_seed):
 			filtered_entries = all_leaderboards[current_seed].duplicate()
@@ -466,28 +553,34 @@ func _on_seed_dropdown_item_selected(index: int):
 	_filter_and_display()
 
 func _on_refresh_button_pressed():
-	"""Reload all leaderboards"""
+	"""Reload all leaderboards (explicit user action: a full re-scan is fine here)."""
 	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Refreshing leaderboards", {})
 	_load_all_leaderboards()
 	_populate_seed_dropdown()
+	_select_dropdown_by_key(current_seed)  # keep the visible selection in sync
 	_filter_and_display()
 
 func _on_clear_button_pressed():
-	"""Clear all leaderboard scores (with confirmation)"""
+	"""Clear the player's LOCAL saved scores (with confirmation).
+
+	NOTE: This only wipes the local on-disk board files (user://leaderboards). The
+	global/online board is untouched. If the dev later wants this button gone entirely,
+	deleting the ClearButton node in leaderboard_screen.tscn plus this handler is enough."""
 	var dialog = ConfirmationDialog.new()
-	dialog.dialog_text = "Are you sure you want to clear ALL leaderboard scores?\n\nThis action cannot be undone!"
-	dialog.title = "Confirm Clear All"
+	dialog.dialog_text = "Clear your LOCAL saved scores on this machine?\n\nThis wipes only the scores stored locally in this install. The GLOBAL (online) leaderboard is NOT affected. This cannot be undone."
+	dialog.title = "Confirm Clear Local Scores"
 	dialog.confirmed.connect(_perform_clear_all)
 	add_child(dialog)
 	dialog.popup_centered()
 
 func _perform_clear_all():
-	"""Actually clear all scores.
+	"""Actually clear all LOCAL scores.
 
 	all_leaderboards now holds plain entry arrays (not Leaderboard Nodes -- see the
-	memory note in _load_all_leaderboards), so we reconstruct each board transiently
+	memory note in _load_one_board), so we reconstruct each board transiently
 	from disk to call clear(), then free() the Node. Same file set, same clear()
-	semantics as before -- only the in-memory representation changed."""
+	semantics as before -- only the in-memory representation changed. Local only:
+	the global/online board is never touched here."""
 	ErrorHandler.warning(
 		ErrorHandler.Category.SAVE_LOAD,
 		"Clearing all leaderboard scores",
@@ -510,6 +603,7 @@ func _perform_clear_all():
 	# Reload
 	_load_all_leaderboards()
 	_populate_seed_dropdown()
+	_select_dropdown_by_key(current_seed)
 	_filter_and_display()
 
 func _on_prev_button_pressed():

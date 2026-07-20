@@ -91,8 +91,9 @@ theme_override_font_sizes/font_size = 14
 
 [node name="ClearButton" type="Button" parent="MarginContainer/VBoxContainer/Filters"]
 layout_mode = 2
-text = "Clear All Scores"
+text = "Clear Local Scores"
 theme_override_font_sizes/font_size = 14
+tooltip_text = "Clears only your local saved scores on this machine. The global (online) board is not affected."
 
 [node name="LeaderboardPanel" type="Panel" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
