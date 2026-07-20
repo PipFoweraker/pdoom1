@@ -73,6 +73,13 @@ repos:
         pass_filenames: false
         verbose: true
 
+      - id: dq-index-check
+        name: DQ index up to date
+        entry: python scripts/generate_dq_index.py --check
+        language: system
+        files: 'docs/game-design/(WORKSHOP_2_BACKLOG|DQ_INDEX)\.md'
+        pass_filenames: false
+
 # Configuration
 default_language_version:
   python: python3

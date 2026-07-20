@@ -131,7 +131,20 @@ now so they do not have to be made hot later.
 15. Opportunity-acceptance policy + response templates + praise evidence file
     (T-S, personal ops).
 
-## 5. What was deliberately NOT planned here
+## 5. Decisions taken (2026-07-20, same day)
+
+- S7 community channel: **GitHub Discussions** (enabled; welcome post at
+  discussions/727 -- pin it manually, the API cannot). Rationale: async,
+  low moderation surface, audience- and LLM-friendly. Discord held in
+  reserve -- if one springs up independently Pip joins rather than runs it.
+  A forum is post-release, grown out of GH/Discord if demand appears.
+- S4 grant entity: **Certes** (nonprofit nature fits; parallels Tasmanian
+  game-design sector work). Beacon usable as conduit for US-sourced grant
+  money with minimal conflict-of-interest exposure. Accountant sign-off
+  still required before first application names an entity.
+- S8 kit: accepted by Pip incl. pre-scheduling; personal, tracked off-repo.
+
+## 6. What was deliberately NOT planned here
 
 - Steam/wishlist mechanics, multiplayer, web build execution: covered or
   sequenced in HOSTING_AND_RELEASE.md.
