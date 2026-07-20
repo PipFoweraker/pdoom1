@@ -102,7 +102,7 @@ func update_summary(ledger_data: Dictionary) -> void:
 		# Warm parchment when only owed; warm amber as secret liabilities mount (exposure pressure).
 		_summary_button.add_theme_color_override("font_color", _LEDGER_INK_CLEAN if secrets == 0 else _LEDGER_INK_SECRET)
 
-func build_screen(ledger, viewport_size: Vector2) -> Panel:
+func build_screen(ledger, viewport_size: Vector2, on_close: Callable = Callable()) -> Panel:
 	"""BL-1: the full Liability Ledger screen — lists every live entry (source, currency,
 	principal, fuse, secrecy) plus death attribution.
 
@@ -216,5 +216,18 @@ func build_screen(ledger, viewport_size: Vector2) -> Panel:
 			att.text = "Attributed damage: %d billed shortfalls" % ledger.death_attribution.size()
 			att.add_theme_color_override("font_color", _LEDGER_WARN_RED)
 			vbox.add_child(att)
+
+	# fix/ui-no-dead-ends: give the ledger its OWN exit so it is never a dead-end.
+	# The reported bug -- opened the ledger, no working close/back, Esc did nothing --
+	# came from build_screen returning a bare Panel whose exit was ENTIRELY host-provided
+	# (MainUI._decorate_active_submenu for the [X], MainUI._input for Esc). If that host
+	# wiring is absent or regresses, the player is trapped. Routing through the shared
+	# submenu chrome attaches a visible [X] close control AND intrinsic ui_cancel (Esc)
+	# handling to the panel itself. on_close defaults to a self-free so the panel is
+	# escapable in isolation; the host passes its own close routine to keep bookkeeping.
+	var close_cb: Callable = on_close
+	if not close_cb.is_valid():
+		close_cb = func(): dialog.queue_free()
+	SubmenuChrome.add_close_affordance(dialog, close_cb)
 
 	return dialog

@@ -459,3 +459,11 @@ func _on_close_pressed():
 	"""Handle close button"""
 	close_requested.emit()
 	hide()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Escape contract (fix/ui-no-dead-ends): Esc closes the panel, matching the [X]
+	# button, so the keyboard path is never a dead-end.
+	if visible and event.is_action_pressed("ui_cancel"):
+		_on_close_pressed()
+		get_viewport().set_input_as_handled()

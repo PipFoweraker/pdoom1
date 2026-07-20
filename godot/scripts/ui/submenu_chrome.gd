@@ -66,6 +66,12 @@ static func add_close_affordance(dialog: Control, on_close: Callable) -> void:
 	hint.position = Vector2(dialog.size.x - 122, dialog.size.y - 20)
 	dialog.add_child(hint)
 
+	# Universal escape contract (fix/ui-no-dead-ends): make the panel honor ui_cancel
+	# (Esc) on its OWN via a helper node, so it is escapable even without a host input
+	# router. In-game MainUI._input still consumes Esc first (this never double-fires);
+	# this is the intrinsic fallback that stops the panel ever becoming a dead-end.
+	EscToClose.attach(dialog, on_close)
+
 static func align_to_button(dialog: Control, button: Button) -> void:
 	"""Position a submenu just to the RIGHT of the action button that opened it and
 	top-aligned to it, so it clearly expands from that row rather than over it
