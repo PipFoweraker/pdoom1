@@ -16,6 +16,7 @@ var baseline_result: Dictionary = {}
 var leaderboard_entry_uuid: String = ""
 var game_start_time: float = 0.0
 var sync_status_label: Label = null  # Tiny non-blocking remote-sync status blip
+var attribution_label: RichTextLabel = null  # EE-8 cause-of-death chain, above the stats scroll
 # Re-entrancy guard: the game-over signal fires on EVERY state update (incl. leftover
 # day-ticks in a month playback), so show_game_over() can be called many times. The
 # scoring side-effects (local save + remote POST + music) must run EXACTLY ONCE; later
@@ -132,6 +133,9 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 		# by its ACTUAL death cause so the headline never lies about what killed you.
 		subtitle_label.text = _get_defeat_title(final_state)
 		subtitle_label.add_theme_color_override("font_color", Color(1.0, 0.6, 0.6))
+		# EE-8: the turn-stamped causal chain (DeathAttribution), named + prominent, above
+		# the stats scroll. Names the killer lab when the doom death was overhang-driven.
+		_render_death_attribution()
 
 	# Build statistics display
 	var stats_text = "[center][b]FINAL STATISTICS[/b][/center]\n\n"
@@ -324,6 +328,82 @@ func _fmt_money(amount: float) -> String:
 	"""Money display — routes through the ONE formatter (L0 #620: was a duplicate
 	compact implementation; GameConfig.format_money is the canonical one)."""
 	return GameConfig.format_money(amount)
+
+## EE-8 (ADR-0012): render DeathAttribution's turn-stamped causal chain prominently above the
+## stats scroll, so the defeat screen tells the player HOW they lost in concrete named causes.
+## READ-ONLY: reads the finished GameManager.state, never mutates. No-op (hidden) when there is
+## no live state or no attribution data (e.g. a bare test harness / empty cause_log).
+func _render_death_attribution() -> void:
+	var bbcode := _build_death_attribution_bbcode()
+	if bbcode == "":
+		return
+	if not is_instance_valid(attribution_label):
+		attribution_label = RichTextLabel.new()
+		attribution_label.bbcode_enabled = true
+		attribution_label.fit_content = true
+		attribution_label.scroll_active = false
+		var parent: Node = stats_label.get_parent() if stats_label else self
+		parent.add_child(attribution_label)
+		# Sit directly above the stats scroll (StatsLabel), below the subtitle.
+		if stats_label:
+			parent.move_child(attribution_label, stats_label.get_index())
+	attribution_label.text = bbcode
+	attribution_label.visible = true
+
+## Build the cause-of-death BBCode from the live finished state. Empty when unavailable.
+func _build_death_attribution_bbcode() -> String:
+	if not (GameManager.is_initialized and GameManager.state):
+		return ""
+	var st = GameManager.state
+	var result: Dictionary = DeathAttribution.classify(st)
+	var chain: Array = result.get("chain", [])
+	var surface := str(result.get("surface", ""))
+	var dominant := ""
+	if st.doom_system:
+		dominant = st.doom_system.get_dominant_stream()
+	var killer := overhang_killer_line(surface, dominant, st.frontier_capability, _rival_dicts(st))
+	return build_attribution_bbcode(chain, killer)
+
+## Serialize the live rival labs to dicts so the shared DoomBreakdown name-masking (which reads
+## the save-shaped rival dicts) can resolve visibility identically on the defeat screen.
+func _rival_dicts(st) -> Array:
+	var out: Array = []
+	if st and st.rival_labs is Array:
+		for rival in st.rival_labs:
+			out.append(rival.to_dict())
+	return out
+
+## When the run died of doom AND the overhang stream was the dominant contributor, name the top
+## visible frontier holder as the killer. Deadpan bureaucratic register (achievements.gd tone).
+## Empty string when the death was not overhang-driven or no frontier holder is identifiable.
+static func overhang_killer_line(surface: String, dominant_stream: String, frontier_capability, rival_labs) -> String:
+	if surface != "doom":
+		return ""
+	if dominant_stream != "overhang":
+		return ""
+	var leaders := DoomBreakdown.frontier_leaders(frontier_capability, rival_labs)
+	if leaders.is_empty():
+		return ""
+	var top: Dictionary = leaders[0]
+	if str(top.get("id", "")) == "player":
+		return "Your own frontier outran your absorption. The paperwork was filed on time."
+	return "%s's frontier outran your absorption. The paperwork was filed on time." % str(top.get("name", "an unknown actor"))
+
+## Compose the cause-of-death panel BBCode from a causal chain + optional named-killer line.
+## Empty string when there is nothing to show. Pure -- unit-tested.
+static func build_attribution_bbcode(chain: Array, killer_line: String) -> String:
+	var has_chain: bool = chain != null and not chain.is_empty()
+	if not has_chain and killer_line == "":
+		return ""
+	var out := "[center][b]CAUSE OF DEATH[/b][/center]\n"
+	if killer_line != "":
+		out += "[center][color=orange]%s[/color][/center]\n" % killer_line
+	if has_chain:
+		out += "[color=gray]"
+		for line in chain:
+			out += "  " + str(line) + "\n"
+		out += "[/color]"
+	return out
 
 func _get_ledger_attribution_text(final_state: Dictionary) -> String:
 	"""Surface the ledger death_attribution already in state, so the player learns what

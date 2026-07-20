@@ -190,10 +190,12 @@ func update_game_state():
 	if state.rival_labs.size() > 0:
 		lines.append("[b]Rival Labs (%d)[/b]" % state.rival_labs.size())
 		for rival in state.rival_labs:
+			# RivalLab fields are capability_progress / funding (ADR-0015 renamed them; the old
+			# get("capabilities")/get("money") read null and printed garbage). Direct access.
 			lines.append("- %s (Cap: %.0f, Money: $%.0fk)" % [
-				rival.get("name", "Unknown"),
-				rival.get("capabilities", 0),
-				rival.get("money", 0) / 1000
+				rival.name,
+				rival.capability_progress,
+				rival.funding / 1000
 			])
 
 	# Historical Events (Issue #442)

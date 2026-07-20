@@ -123,5 +123,7 @@ func test_full_turn_with_all_phase5_features():
 	# Check manager was hired
 	assert_eq(state.managers, 1, "Should have hired 1 manager")
 
-	# Check doom changed (rivals + base + capabilities)
+	# Check doom changed. Post-ADR-0015 no rival/action writes doom directly: a turn advances
+	# the world-state intermediaries (frontier_capability, safety_absorption, global_alarm/panic)
+	# and DoomSystem re-derives the level from the named streams (baseline + overhang + ...).
 	assert_true(state.doom != 50.0, "Doom should change from starting value")

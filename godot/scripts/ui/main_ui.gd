@@ -816,7 +816,10 @@ func _on_game_state_updated(state: Dictionary):
 
 	# Feed the per-source doom breakdown (#578)
 	if doom_breakdown:
-		doom_breakdown.set_sources(state.get("doom_system", {}).get("doom_sources", {}))
+		doom_breakdown.set_sources(
+			state.get("doom_system", {}).get("doom_sources", {}),
+			state.get("frontier_capability", {}),
+			state.get("rival_labs_full", []))
 
 	# BL-1: refresh the compact Liability Ledger summary (#622 L10: lives in LedgerScreen)
 	if ledger_screen:
