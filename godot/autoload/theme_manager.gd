@@ -126,7 +126,12 @@ class ThemeData:
 		"tex_blue_bsod_pattern": "res://assets/textures/terminal/tex_blue_bsod_pattern_512.png",
 		"tex_gray_lowcontrast": "res://assets/textures/terminal/tex_gray_lowcontrast_512.png",
 		"tex_gray_dither": "res://assets/textures/terminal/tex_gray_dither_512.png",
-		"tex_cyan_ispf": "res://assets/textures/terminal/tex_cyan_ispf_512.png",
+		# tex_cyan_ispf removed (v0.11.0 leaderboard-crash diagnosis): it was referenced
+		# ONLY here as a dead string path (nothing preloads/loads it) and was a suspect in
+		# the release-only leaderboard segfault. Removed to eliminate the code-level
+		# reference. NOTE: export_presets uses export_filter="all_resources", so the PNG is
+		# still PACKED regardless of this string -- true exclusion needs exclude_filter or
+		# deleting the file. See docs/LEADERBOARD_CRASH_DIAGNOSIS.md.
 		"tex_cyan_border": "res://assets/textures/terminal/tex_cyan_border_512.png",
 
 		# Surface textures (backgrounds/materials)
@@ -138,7 +143,9 @@ class ThemeData:
 		"tex_painted_metal_panel": "res://assets/textures/surfaces/tex_painted_metal_panel_512.png",
 		"tex_plywood_stained": "res://assets/textures/surfaces/tex_plywood_stained_512.png",
 		"tex_crt_burnin": "res://assets/textures/surfaces/tex_crt_burnin_512.png",
-		"tex_oxidized_copper": "res://assets/textures/surfaces/tex_oxidized_copper_512.png",
+		# tex_oxidized_copper removed (v0.11.0 leaderboard-crash diagnosis): dead string
+		# reference only; a leaderboard-segfault suspect. See the note on tex_cyan_ispf above
+		# and docs/LEADERBOARD_CRASH_DIAGNOSIS.md (all_resources still packs the PNG).
 		"tex_bakelite_cracked": "res://assets/textures/surfaces/tex_bakelite_cracked_512.png",
 	}
 

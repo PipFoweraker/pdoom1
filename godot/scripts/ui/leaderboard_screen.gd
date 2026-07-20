@@ -35,15 +35,32 @@ var global_toggle_button: Button = null
 @onready var best_score_label = $MarginContainer/VBoxContainer/Stats/BestScore
 @onready var subtitle = $MarginContainer/VBoxContainer/Header/Subtitle
 
+# Diagnostic RUNTIME trace stamp (issue: release-only leaderboard segfault). This is a
+# STDERR signal, NOT a pack-freshness anchor: in this export config GDScript is packed
+# as binary-tokenized .gdc, so string literals do NOT survive as grep-able text (verified
+# -- see docs/LEADERBOARD_CRASH_DIAGNOSIS.md). Pack freshness is proven separately via a
+# unique marker FILENAME (tools/build_release.py). What this printerr buys us: if a
+# --verbose run of the diagnostic build shows this line, _ready began (crash is later);
+# if it NEVER appears, the crash is pre-_ready (scene load / node instantiation) -- the
+# observed case.
+const LB_DIAG_BUILDSTAMP := "[LBDIAG-TRACE-DEBUG-01]"
+
 func _ready():
+	printerr("%s leaderboard_screen _ready ENTERED" % LB_DIAG_BUILDSTAMP)
+	printerr("[LBTRACE-1] before ErrorHandler.info")
 	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Leaderboard screen opened", {})
+	printerr("[LBTRACE-2] before _discover_boards")
 	# Cheap open: list board files (no parse), populate the dropdown, then show ONLY
 	# the current/most-relevant board. The full all-seeds aggregate is parsed lazily
 	# in _ensure_aggregate_loaded when the user selects "All Seeds".
 	_discover_boards()
+	printerr("[LBTRACE-3] before _populate_seed_dropdown")
 	_populate_seed_dropdown()
+	printerr("[LBTRACE-4] before _setup_global_toggle")
 	_setup_global_toggle()
+	printerr("[LBTRACE-5] before _select_default_view")
 	_select_default_view()
+	printerr("[LBTRACE-6] _ready COMPLETE")
 
 func _exit_tree():
 	# Cleanup guard: drop the working-set references the instant the screen leaves
