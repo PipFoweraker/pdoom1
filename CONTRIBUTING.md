@@ -60,17 +60,17 @@ make clean     # Clean cache files
 
 ```
 pdoom1/
-├── godot/                 # Main game code
-│   ├── scripts/           # GDScript files
-│   │   ├── core/          # Game logic (game_state.gd, turn_manager.gd)
-│   │   └── ui/            # UI controllers
-│   ├── scenes/            # Godot scenes (.tscn)
-│   ├── data/              # JSON data files (actions, events, upgrades)
-│   ├── assets/            # Art, audio, fonts
-│   └── tests/             # Unit and integration tests
-├── scripts/               # Python tooling and CI scripts
-├── docs/                  # Documentation
-└── .github/               # CI/CD workflows
+|--- godot/                 # Main game code
+|   |--- scripts/           # GDScript files
+|   |   |--- core/          # Game logic (game_state.gd, turn_manager.gd)
+|   |   `--- ui/            # UI controllers
+|   |--- scenes/            # Godot scenes (.tscn)
+|   |--- data/              # JSON data files (actions, events, upgrades)
+|   |--- assets/            # Art, audio, fonts
+|   `--- tests/             # Unit and integration tests
+|--- scripts/               # Python tooling and CI scripts
+|--- docs/                  # Documentation
+`--- .github/               # CI/CD workflows
 ```
 
 ### Key Files to Know
@@ -141,9 +141,9 @@ We use a single-branch (trunk) model:
    ```
 
 3. **Make your changes**
-   - Follow existing code patterns
-   - Add tests for new functionality
-   - Update documentation if needed
+  - Follow existing code patterns
+  - Add tests for new functionality
+  - Update documentation if needed
 
 4. **Test your changes:**
    ```bash
@@ -269,7 +269,6 @@ Look for issues labeled [`good first issue`](https://github.com/PipFoweraker/pdo
 
 Contributors are recognized in:
 - The in-game credits
-- The [CONTRIBUTORS.md](docs/CONTRIBUTORS.md) file
 - Our [Contributor Rewards Program](docs/CONTRIBUTOR_REWARDS.md) - submit a photo of your cat!
 
 Thank you for contributing to P(Doom)!
