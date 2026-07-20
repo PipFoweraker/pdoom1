@@ -65,8 +65,8 @@ Other current-state facts a player doc must not contradict (from `ARCHITECTURE.m
 | `docs/STEAM_INTEGRATION_ROADMAP.md` | store copy: short-description "…whether P(Doom) reaches 0% or humanity faces extinction" (L380) + bullet "Surviving 100 turns with P(Doom) at 0%" (L389) | **FIXED** | Both purged to "you can't win, only buy time" framing. |
 | `docs/STEAM_INTEGRATION_ROADMAP.md` | achievement table (L280-289): "First Victory — Win your first game", "Zero Doom — Reduce P(Doom) to 0%", "Safety Champion — Win with 0% doom", "Speedrunner — Win in <50 turns" | **TEARDOWN (flag — hard blocker for store)** | **Win-based achievements in an unwinnable game.** Must be redesigned around survival milestones (turns held / baseline beats) by the achievements lane — NOT rewritten here (speculative internal mapping that also references deleted `legacy/…/achievements_endgame.py`). Do not ship these to Steam as-is. |
 | `docs/STEAM_INTEGRATION_ROADMAP.md` | "feature-complete", "Achievement System — Implemented" | **TEARDOWN** | Overclaim: achievements are an observer-only skeleton (L8); ledger/finance not player-facing. Store copy block needs Pip's voice. |
-| `docs/PLAYERGUIDE.md` | "The Python/Pygame version is for development only" | **FIXED** | False now — pure GDScript, prototype retired. |
-| `docs/PLAYERGUIDE.md` | dead `[CONFIG_SYSTEM.md]` link | **FIXED** | Removed (file absent). |
+| `docs/PLAYERGUIDE.md` | "The Python/Pygame version is for development only" | **HANDED TO #719** | Factually stale (pure GDScript now), but PLAYERGUIDE.md is owned by the #719 truth-pass lane -- not carried in this PR to avoid double-editing. Flagged for that lane. |
+| `docs/PLAYERGUIDE.md` | dead `[CONFIG_SYSTEM.md]` link | **HANDED TO #719** | Dead link (file absent); fix belongs to the #719 PLAYERGUIDE lane, not this PR. |
 | `docs/PLAYERGUIDE.md` | **entire mechanics body** (Action Points as core, weekly cash, "Turns 1-13", `[EMOJI]`/`[TARGET]` tokens, no month engine / Attention / doom-streams / finance) | **TEARDOWN** | This doc describes the *pygame-era game*. Surgical fixes would falsely signal the rest is current. Full rewrite. Skeleton below. |
 | `docs/DEMO_GUIDE.md` | whole file: `python main.py`, `src/services`, "built in Python", hardcoded path `c:\Users\gday\…`, v0.2.5, `[DEMO]/[AWESOME]` tokens | **TEARDOWN** | Describes a game that no longer exists. **Recommend archive or ground-up rewrite** — do not ship as-is. |
 | `docs/QUICK_REFERENCE.md` | "P(Doom) v0.4.1" | **FIXED** | → v0.11.0. |
@@ -81,7 +81,7 @@ Other current-state facts a player doc must not contradict (from `ARCHITECTURE.m
 | `docs/CONTRIBUTOR_REWARDS.md` | closing "more engaging, polished, and meaningful" line | **TEARDOWN (low pri)** | Minor boilerplate; otherwise fine. |
 | `CHANGELOG.md` | `[Unreleased]` stops at #500/#527-era | **TEARDOWN (flag)** | Omits the entire L1 wave (month engine #636, nine-stream doom #643, finance #641, calibration #638). Release-notes job for Pip — not fabricated here. Also title says "Bureaucracy Strategy Game" vs README's "AI Safety Strategy Game". |
 
-**Factual fixes applied: 12.** All are safe to merge. Everything marked TEARDOWN / flag is Pip's worklist.
+**Factual fixes applied: 10.** All are safe to merge. (Two PLAYERGUIDE.md fixes originally counted here were **handed to the #719 truth-pass lane** during reconciliation -- PLAYERGUIDE.md is that lane's file, not this PR's.) Everything marked TEARDOWN / flag is Pip's worklist.
 
 ## Findings for other lanes (NOT fixed here — not player-facing docs / game code)
 
