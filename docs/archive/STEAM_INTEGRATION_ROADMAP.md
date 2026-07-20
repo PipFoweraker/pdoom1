@@ -1,3 +1,8 @@
+> ARCHIVED 2026-07-21: status claims here (v0.10.5 feature-complete,
+> multi-platform builds, Steam 2-3 weeks out) no longer describe the project.
+> Kept for the GodotSteam integration checklist, to be salvaged into an issue
+> when Steam actually nears. Current plan: docs/ROADMAP.md.
+
 # Steam Integration Roadmap - P(Doom)
 
 **Status**: Ready to Implement
