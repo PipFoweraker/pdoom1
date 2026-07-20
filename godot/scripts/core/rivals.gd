@@ -92,6 +92,64 @@ class RivalLab:
 		lab.estimated_reputation = float(d.get("estimated_reputation", 0.0))
 		return lab
 
+# ---------------------------------------------------------------------------
+# Player-facing narration (issue: rivals become narratively visible)
+#
+# Voice: the deadpan bureaucratic register of achievements.gd ("Reviewer 2 had
+# concerns. Humanity gains a PDF."). No exclamation marks, no tycoon enthusiasm.
+# These are FEED-tier lines only -- they never open a window/popup. The turn
+# manager appends them for VISIBLE rivals only; hidden/undiscovered labs act
+# without ever narrating. Kept as a const map (one place) rather than JSON:
+# there is no existing narrative-flavour JSON channel to slot into, and the
+# strings are tightly coupled to the six action ids in _choose_rival_action.
+# "%s" is filled with the rival's visible name.
+const ACTION_FEED_TEMPLATES: Dictionary = {
+	"hire_researcher": "%s hires aggressively. Their blog post calls it 'consolidating talent.'",
+	"buy_compute": "%s expands its compute footprint. The purchase order says 'modest.'",
+	"publish_paper": "%s publishes. Reviewer 2 was not consulted.",
+	"fundraise": "%s closes a round. The press release says 'responsibly.'",
+	"capability_research": "%s pushes the frontier. The word 'safety' appears once, in the footer.",
+	"safety_research": "%s files an alignment result. It is thorough, and unread.",
+}
+
+# When a rival takes several actions in one turn, narrate ONE headline so the
+# feed does not flood. Chosen by fixed salience (most player-relevant first) --
+# deterministic, no RNG. Reckless capability moves lead; quiet compute buys trail.
+const ACTION_SALIENCE: Array = [
+	"capability_research", "publish_paper", "fundraise",
+	"hire_researcher", "buy_compute", "safety_research",
+]
+
+static func pick_headline_action(actions: Array) -> String:
+	## The single most feed-worthy action from a rival's turn (fixed priority, no RNG).
+	for candidate in ACTION_SALIENCE:
+		if candidate in actions:
+			return candidate
+	return String(actions[0]) if not actions.is_empty() else ""
+
+static func get_action_feed_line(rival: RivalLab, action: String) -> String:
+	## Deadpan feed line for a VISIBLE rival's action, or "" if the rival is not
+	## visible or the action has no template. Callers must still gate on visibility;
+	## this double-checks so a hidden rival can never leak a line.
+	if rival == null or not rival.is_visible_to_player():
+		return ""
+	var template: String = ACTION_FEED_TEMPLATES.get(action, "")
+	if template == "":
+		return ""
+	return template % rival.get_visible_name()
+
+static func capability_drift_label(delta: float) -> String:
+	## Qualitative month-over-month capability-progress drift for the month review.
+	## Thresholds sized to process_rival_turn's increments (capability_research +10,
+	## hire +5): a fast month is one where a rival stacked a reckless move on a hire.
+	if delta > 8.0:
+		return "capabilities climbing fast"
+	if delta > 0.5:
+		return "capabilities rising"
+	if delta < -0.5:
+		return "capabilities slipping"
+	return "capabilities flat"
+
 static func get_rival_labs() -> Array[RivalLab]:
 	var rivals: Array[RivalLab] = []
 
@@ -136,11 +194,14 @@ static func check_discovery(rival: RivalLab, player_state: GameState, rng: Rando
 			rival.discovery_turn = player_state.turn
 		match result["new_visibility"]:
 			VisibilityState.DISCOVERED:
-				result["message"] = "Intel on %s: %s-focused org." % [rival.name, rival.focus]
+				# The reveal moment (item 3): felt, deadpan. A rumor resolves into a
+				# named competitor. String only -- the two randf_range draws below are
+				# the discovery RNG stream and MUST stay in place/order (no new RNG).
+				result["message"] = "Intel: there is another lab. There was always another lab. It has a name -- %s, and a %s habit." % [rival.name, rival.focus]
 				rival.estimated_funding = rival.funding * rng.randf_range(0.7, 1.3)
 				rival.estimated_reputation = rival.reputation * rng.randf_range(0.8, 1.2)
 			VisibilityState.KNOWN:
-				result["message"] = "Full intel on %s acquired." % rival.name
+				result["message"] = "Full dossier on %s. The unknowns are now merely known unknowns." % rival.name
 	return result
 
 static func process_rival_turn(rival: RivalLab, player_state: GameState, rng: RandomNumberGenerator) -> Dictionary:

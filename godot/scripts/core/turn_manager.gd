@@ -502,10 +502,21 @@ func _step_process_rival_turns(results: Array) -> float:
 	comes out of the intermediaries on the next DoomSystem tick. Returns 0.0 (compat)."""
 	for rival in state.rival_labs:
 		var rival_result = RivalLabs.process_rival_turn(rival, state, state.rng)
-		results.append({
-			"success": true,
-			"message": "%s: %s" % [rival_result["name"], ", ".join(rival_result["actions"])]
-		})
+		# Rivals-visibility (item 1): only rivals the player can see surface to the
+		# feed, and as a single deadpan headline line (feed tier -- never a window).
+		# Hidden/undiscovered labs still act (RNG stream unchanged) but narrate
+		# nothing. The old raw "<name>: <action, action>" dump leaked every rival,
+		# visible or not; this replaces it. No RNG added, step order unchanged.
+		if not rival_result.get("visible", false):
+			continue
+		var headline: String = RivalLabs.pick_headline_action(rival_result["actions"])
+		var line: String = RivalLabs.get_action_feed_line(rival, headline)
+		if line != "":
+			results.append({
+				"success": true,
+				"channel": "rivals",
+				"message": "[color=#9aa7b8]" + line + "[/color]"
+			})
 	return 0.0
 
 func _step_check_rival_discovery(results: Array) -> void:
@@ -513,9 +524,13 @@ func _step_check_rival_discovery(results: Array) -> void:
 	for rival in state.rival_labs:
 		var discovery_result = RivalLabs.check_discovery(rival, state, state.rng)
 		if discovery_result["discovered"]:
+			# The reveal is felt (item 3): a deadpan feed event on the "rivals"
+			# channel, distinct from routine rival narration. check_discovery emits
+			# exactly one message per rival per turn, so one reveal line per reveal.
 			results.append({
 				"success": true,
-				"message": "[INTEL] " + discovery_result["message"]
+				"channel": "rivals",
+				"message": "[color=#c8b98a][INTEL] " + discovery_result["message"] + "[/color]"
 			})
 
 func _step_process_paper_decisions(results: Array) -> void:
