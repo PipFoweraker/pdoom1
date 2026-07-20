@@ -1,22 +1,28 @@
 extends GutTest
 ## OfficeFloor art-loop wiring: the real pixellab.ai SpriteFrames resource must
-## have exactly the four clips employee_sprite.gd expects (idle/walking/working/
-## stressed), each with the frame count pixellab generated, so Tier 1 renders the
-## real animated worker instead of the placeholder blobs.
+## have the clips employee_sprite.gd expects -- the four state clips
+## (idle/walking/working/stressed) plus the directional walk clips
+## (walking_east/north/west) that _update_facing_visual() prefers when a worker
+## faces a non-south direction -- each with the frame count pixellab generated,
+## so Tier 1 renders the real animated worker instead of the placeholder blobs.
+## South walking uses the base "walking" clip; the three siblings cover E/N/W.
 
 const RealSpriteFrames := preload("res://assets/office_floor/artloop_char/office_worker.tres")
 
 const EXPECTED_COUNTS := {
 	"idle": 4,
 	"walking": 6,
+	"walking_east": 6,
+	"walking_north": 6,
+	"walking_west": 6,
 	"working": 9,
 	"stressed": 9,
 }
 
 
-func test_has_exactly_the_four_expected_clips():
+func test_has_exactly_the_expected_clips():
 	var names := RealSpriteFrames.get_animation_names()
-	assert_eq(names.size(), 4, "expected exactly 4 animations")
+	assert_eq(names.size(), EXPECTED_COUNTS.size(), "expected exactly %d animations" % EXPECTED_COUNTS.size())
 	for clip in EXPECTED_COUNTS:
 		assert_true(RealSpriteFrames.has_animation(clip), "missing clip: %s" % clip)
 
