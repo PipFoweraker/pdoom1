@@ -364,6 +364,19 @@ more interesting."*
   emergent-from-mechanism (Pip's R2-Q5 preference) rather than a hardcoded clock. Sits on
   ADR-0013 finance + the ADR-0016 league/world-update surface (real macro conditions
   injected monthly).
+- **DQ-31 · Org/actor taxonomy — tags, not enums** *(Pip 2026-07-20, on reviewing the
+  rivals-surfacing PRs)* — the sim currently knows exactly two actor kinds: "the player"
+  and `RivalLab`. Pip wants labs (and future actors) carrying a **tags-based category
+  set** rather than a rigid type: e.g. `frontier`, `player-run`, `rival`,
+  `antagonist-founded`, later `agent-run` (autonomous-AI actor) — so a frontier lab
+  started by the game's antagonist(s) is mechanically distinguishable from a garden
+  rival, and multiplayer/PvE ("players vs rivals vs agents") needs no retrofit. Latent
+  hooks already exist: overhang prices off **max-actor** frontier (player included,
+  #725), and WORLD_AND_LORE.md's Antagonist_Lab fiction has no mechanical home — tags
+  give it one. Cheap headroom NOW: the data-driven roster (rivals.json, option #13 in
+  RIVALS_SURFACING_OPTIONS_2026-07-20.md) should ship with a `tags: []` field, and new
+  code should say "actor" where it means any lab. Full design deferred to the DQ-22
+  workshop (aggro/midgame is where actor classes start mattering).
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)
