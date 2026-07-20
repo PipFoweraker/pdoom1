@@ -35,7 +35,7 @@
 | DQ-25 | Desperation-lever revisit | open | 298 |
 | DQ-26 | VC/equity depth revisit | open | 320 |
 | DQ-27 | Mortality guarantee -- where is it ratified? | open | 328 |
-| DQ-28 | Game "phases" as vocabulary + scenario-jump testing | RESOLVED | 612 |
+| DQ-28 | Game "phases" as vocabulary + scenario-jump testing | RESOLVED | 617 |
 | DQ-29 | Cover-up debt | open | 350 |
 | DQ-30 | Economic cycles | open | 359 |
 | DQ-31 | Org/actor taxonomy -- tags, not enums | open | 367 |

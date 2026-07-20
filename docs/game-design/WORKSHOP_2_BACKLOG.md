@@ -405,9 +405,14 @@ more interesting."*
   from first discussion: (a) **stratified cut** — rank within mechanical genre with
   per-stratum quotas, else an impact-ranked global cut clusters mechanically even at
   constant N; (b) **pool snapshot versioning** — the monthly pool cut is part of the
-  league/replay contract (ties DQ-6 provenance); (c) rating at scale is LLM-rated with
-  Pip veto **at the cut line only** (the labor-efficient property; ADR-0016's
-  LLM-drafted/Pip-approved pattern); (d) prove the mechanism at ~200 events before
+  league/replay contract (ties DQ-6 provenance); (c) ranking is a **human+LLM
+  combination with recorded provenance** (Pip revision 2026-07-21) -- the
+  architectural home is pdoom-data upstream: every artefact carries how it was
+  collected/rated and when human eyes reviewed it, so confidence tiers can be
+  stated for anything reaching scholarly/reusable quality, and LLM-only ratings
+  never silently pass as human-reviewed. Human attention is *allocated* to the
+  cut line (the labor-efficient property; ADR-0016's LLM-drafted/Pip-approved
+  pattern), but provenance is recorded everywhere; (d) prove the mechanism at ~200 events before
   scaling. The monthly pool-shift report is itself content: league world-diff, News
   fodder (DQ-32), and dev-blog artifact from one pipeline. Feeds v0.14 pin.
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
