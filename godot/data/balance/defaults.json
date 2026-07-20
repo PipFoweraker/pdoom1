@@ -16,8 +16,14 @@
 		"per_month": 20
 	},
 	"papers": {
-		"_description": "Paper-decision pacing (#630 stopgap): at most max_decisions_per_turn paper accept/reject decisions surface per turn; clustered decision_turns otherwise flood a click-through wall. Surplus stays UNDER_REVIEW and resolves on later turns (never dropped). 0 = unlimited (pre-#630). Superseded by ADR-0009/0012/0014 response windows.",
-		"max_decisions_per_turn": 3
+		"_description": "Paper-decision pacing (#630 stopgap): at most max_decisions_per_turn paper accept/reject decisions surface per turn; clustered decision_turns otherwise flood a click-through wall. Surplus stays UNDER_REVIEW and resolves on later turns (never dropped). 0 = unlimited (pre-#630). Superseded by ADR-0009/0012/0014 response windows. research_per_paper/reputation_per_paper drive the auto-publish step (turn_manager._step_publish_papers) AND the Research/Papers HUD tooltips (main_ui) -- single source so the tooltip cannot drift from the mechanic.",
+		"max_decisions_per_turn": 3,
+		"research_per_paper": 100.0,
+		"reputation_per_paper": 5.0
+	},
+	"compute": {
+		"_description": "Compute economy. per_researcher_per_turn: compute a managed, productive researcher burns each turn (turn_manager._step_researcher_productivity). Also drives the Compute HUD tooltip (main_ui) -- single source.",
+		"per_researcher_per_turn": 1.0
 	},
 	"ledger": {
 		"_description": "Liability Ledger (ADR-0003): factory magnitudes, fuses, interest; the doom/rep teeth for unpayable bills; secret-exposure chance (BL-2). GOTCHA: interest_rate values are COPIED INTO SAVED ENTRIES, and Godot's JSON parse is not correctly-rounded for every decimal — pick rates that survive print->parse exactly (probe-verified: 0.008/0.0025/0.001/0.02 ok; 0.009/0.015/0.045 NOT) or save/load deep-equality and post-load determinism break.",

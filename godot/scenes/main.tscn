@@ -125,7 +125,7 @@ modulate = Color(0.4, 0.4, 0.5, 1)
 [node name="PapersLabel" type="Label" parent="TabManager/MainUI/TopBar"]
 layout_mode = 2
 text = "Papers: 0"
-tooltip_text = "Publications boost reputation (+5 each) and reduce doom (-3 each)."
+tooltip_text = "Publications boost reputation (+5 each) and may have further downstream impact as their findings are adopted."
 theme_override_font_sizes/font_size = 14
 mouse_filter = 0
 
@@ -325,17 +325,6 @@ theme_override_constants/separation = 8
 layout_mode = 2
 theme_override_constants/separation = 3
 
-[node name="InitButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
-layout_mode = 2
-text = "Init"
-theme_override_font_sizes/font_size = 12
-
-[node name="TestActionButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
-layout_mode = 2
-text = "Hire SR"
-disabled = true
-theme_override_font_sizes/font_size = 12
-
 [node name="ReserveAPButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]
 layout_mode = 2
 text = "Reserve AP"
@@ -401,8 +390,6 @@ layout_mode = 1
 
 [node name="DebugOverlay" parent="." instance=ExtResource("11_debugoverlay")]
 
-[connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/InitButton" to="TabManager/MainUI" method="_on_init_button_pressed"]
-[connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/TestActionButton" to="TabManager/MainUI" method="_on_test_action_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/ReserveAPButton" to="TabManager/MainUI" method="_on_reserve_ap_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/UndoLastButton" to="TabManager/MainUI" method="_on_undo_last_button_pressed"]
 [connection signal="pressed" from="TabManager/MainUI/BottomBar/ControlButtons/ClearQueueButton" to="TabManager/MainUI" method="_on_clear_queue_button_pressed"]
