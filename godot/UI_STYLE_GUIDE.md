@@ -1,7 +1,7 @@
 # P(Doom) UI Style Guide
 ## Visual Design System for Godot Implementation
 
-_Last updated: 2025-11-20_
+_Last updated: 2026-07-20_
 _Status: Living document - evolving as brand identity develops_
 
 ---
@@ -536,6 +536,42 @@ var icon = load(ThemeManager.theme.assets["cat_icon"])
 - SUCCESS Info bar at bottom for persistent context (vs tooltips)
 - SUCCESS Cat panel moved to top-right (better space usage)
 - SUCCESS Notifications slide from right, auto-stack (NotificationManager)
+
+---
+
+## 17. Menu Chrome Tokens (2026-07-20 consistency pass)
+
+Menus/modals were retoned from legacy slate-blue chrome to the palette in
+`docs/art/palette.json` + `docs/art/PALETTE_AND_DOOM_INTENSITY.md` (warm-grime
++ heavy-outline heft; amber as the one saturated accent at rest). Full audit:
+`docs/game-design/UI_MENU_CONSISTENCY_2026-07-20.md`.
+
+```gdscript
+# Menu button styleboxes (welcome, settings, pregame, config-confirm, guide)
+menu_btn_bg = Color(0.18, 0.145, 0.278)        # #2E2547 doom-indigo fill
+menu_btn_outline = Color(0.09, 0.04, 0.11)     # #170A1C heavy dark outline (rest)
+menu_btn_hover_bg = Color(0.231, 0.192, 0.349) # lightened indigo
+menu_btn_hover_border = Color(0.91, 0.64, 0.24)  # #E8A33D cozy amber
+menu_btn_pressed_bg = Color(0.106, 0.078, 0.165) # #1B142A
+menu_btn_active_border = Color(0.965, 0.659, 0)  # #F6A800 amber (pressed/focus)
+
+# Modal panels (pause, whats-new, bug-report, player-guide)
+modal_bg = Color(0.09, 0.04, 0.11)             # #170A1C deep aubergine
+modal_border = Color(0.91, 0.64, 0.24, 0.8)    # dimmed amber frame
+
+# Text accents
+menu_header = Color(0.91, 0.64, 0.24)          # section headers (was ice blue)
+menu_title = Color(0.914, 0.949, 0.949)        # #E9F2F2 off-white titles
+external_link = Color(0.118, 0.765, 0.702)     # #1EC3B3 teal (AI Safety link)
+```
+
+Rules of thumb:
+- Resting buttons get the dark heavy outline; amber appears only on
+  hover/press/focus and on the active modal frame.
+- Blue is reserved for the weirdness axis (computers acting up), purple for
+  band 3+ eldritch -- neither is menu chrome.
+- In-game HUD amber uses the TerminalTheme register (`Color(1, 0.72, 0.2)`),
+  not #F6A800; keep each register internally consistent.
 
 ---
 

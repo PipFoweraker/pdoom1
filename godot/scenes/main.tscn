@@ -15,12 +15,12 @@
 [ext_resource type="PackedScene" uid="uid://dqc4gxtx62j3s" path="res://scenes/debug_overlay.tscn" id="11_debugoverlay"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_TurnCounter"]
-bg_color = Color(0.15, 0.15, 0.2, 0.8)
+bg_color = Color(0.09, 0.04, 0.11, 0.85)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.9, 0.9, 0.3, 0.5)
+border_color = Color(1, 0.72, 0.2, 0.5)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -71,7 +71,7 @@ modulate = Color(0.4, 0.4, 0.5, 1)
 layout_mode = 2
 text = "Week 1 | Mon Jul 3, 2017 | Day 1/5"
 theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.9, 0.9, 0.3, 1)
+theme_override_colors/font_color = Color(1, 0.72, 0.2, 1)
 theme_override_styles/normal = SubResource("StyleBoxFlat_TurnCounter")
 
 [node name="TurnCountLabel" type="Label" parent="TabManager/MainUI/TopBar"]
@@ -189,7 +189,7 @@ layout_mode = 2
 text = "P(DOOM)"
 horizontal_alignment = 1
 theme_override_font_sizes/font_size = 24
-theme_override_colors/font_color = Color(1.0, 0.6, 0.0, 1)
+theme_override_colors/font_color = Color(1, 0.72, 0.2, 1)
 
 [node name="CoreZone" type="HBoxContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn"]
 layout_mode = 2
@@ -362,7 +362,7 @@ text = "END TURN (Space)"
 tooltip_text = "Execute queued actions and advance to next turn. Shows warning if you have unused AP."
 disabled = true
 theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.2, 0.9, 0.9, 1)
+theme_override_colors/font_color = Color(0.118, 0.765, 0.702, 1)
 theme_override_colors/font_disabled_color = Color(0.4, 0.4, 0.4, 1)
 
 [node name="CommitPlanButton" type="Button" parent="TabManager/MainUI/BottomBar/ControlButtons"]

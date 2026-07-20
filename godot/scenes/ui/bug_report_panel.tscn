@@ -3,12 +3,12 @@
 [ext_resource type="Script" path="res://scripts/ui/bug_report_panel.gd" id="1_bugreport"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_border"]
-bg_color = Color(0.15, 0.15, 0.15, 1)
+bg_color = Color(0.09, 0.04, 0.11, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.4, 0.6, 0.8, 1)
+border_color = Color(0.91, 0.64, 0.24, 0.8)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
