@@ -17,7 +17,7 @@ The live execution roadmap is the milestone pages; issues move, the milestone
 reflects it. This file does not duplicate their contents.
 
 - [v0.12 -- First Contact](https://github.com/PipFoweraker/pdoom1/milestone/12)
-  (target: end Q3 2026). Public itch alpha readiness: first-contact UX fixes
+  (target: end Q3 2026). Public alpha readiness: first-contact UX fixes
   (SmartScreen metadata, commit-always-advances, first-launch help), onboarding
   phases 0-2, the share loop (copy result + seed), remote leaderboard enabled
   and hardened, monthly league v0.
@@ -31,7 +31,7 @@ reflects it. This file does not duplicate their contents.
 
 | Quarter | Version | Theme | Headline contents |
 |---|---|---|---|
-| Q3 2026 | v0.12 | First Contact | Public itch alpha live; onboarding; share loop; leaderboard on; monthly league v0; grant applications out |
+| Q3 2026 | v0.12 | First Contact | Public alpha live (channel decision below); onboarding; share loop; leaderboard on; monthly league v0; grant applications out |
 | Q4 2026 | v0.13 | Rivals and News | Rival surfaces + News feedline; voice content pass; tutorial; DQ-22 designed |
 | Q1 2027 | v0.14 | The World Shoots Back | DQ-22 aggro midgame built; player-facing Liability Ledger UI (#528); content-pool ladder v1 (DQ-33) + monthly world-diff metabolism (ADR-0016); damper economy beat (DQ-23) |
 | Q2 2027 | v0.15 | Beta / Steam Coming Soon | Steam page + wishlists; press kit; character creation (DQ-19); balance calibration pass (DQ-8/13); phase vocabulary surfaced (DQ-28) |
@@ -48,11 +48,31 @@ output is limited to cheaply generated artifacts (a challenge seed or simple
 scenario), never curation or balance. Rollover validation
 (pdoom1-website#126) applies to the monthly boundary.
 
+RELEASES ride the same train: whatever is merged and green ships as a point
+release each league month, with notes, alongside the world-update. The
+quarterly pins above are THEME MILESTONES (when a named theme completes),
+not the release cadence -- a quarter's theme lands as two to three monthly
+increments, not one drop.
+
+## Decision owed: public-alpha distribution channel (2026-07-21)
+
+The channel for the public alpha is NOT yet decided; earlier references to
+itch.io were a recommendation that leaked into public copy, now retracted.
+Options on the table: (a) website direct download -- pdoom1.com stays the
+hub, works today; (b) itch.io page -- free hosting including HTML5 web
+builds plus platform discovery, at the cost of one more outward surface;
+(c) self-hosted web build -- Godot web export on own hosting (needs
+COOP/COEP headers for threading; small but real ops work).
+docs/strategy/HOSTING_AND_RELEASE.md argues for (b); Pip's instinct is
+website -> Steam with web-pivot optionality held in reserve. Decide before
+the v0.12 public alpha ships. The pins above are channel-neutral.
+
 ## Next -- the release ladder
 
-Private alpha (friends and family, v0.11 -- HERE) -> public itch.io alpha
-(free, labelled alpha) -> Steam "coming soon" page while in beta -> 1.0.
-Rationale and hosting details: docs/strategy/HOSTING_AND_RELEASE.md.
+Private alpha (friends and family, v0.11 -- HERE) -> public alpha (free;
+channel per the open decision above) -> Steam "coming soon" page while in
+beta -> 1.0. Rationale and hosting details:
+docs/strategy/HOSTING_AND_RELEASE.md.
 
 ## Later -- the design horizon
 
