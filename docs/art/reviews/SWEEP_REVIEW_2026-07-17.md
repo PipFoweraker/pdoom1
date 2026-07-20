@@ -355,3 +355,71 @@ actioned until Pip greenlights the queue.
 - **Cosmetics (re-roll the rejected rolls, style locked):**
   `sweep:cosmetics_overlays:hat_medium`, `sweep:cosmetics_overlays:hat_sports`,
   `sweep:cosmetics_overlays:lab_coat`.
+
+## Verdicts round 2 (2026-07-21, viewer export)
+
+Pip reviewed the remaining Pending viewer cells and pasted the viewer's
+markdown export onto PR #690. His new export is the later ruling and wins on
+any conflict; folded into `tools/art_review/verdicts.json`. This round added
+**42 newly-verdicted cells** (18 keep / 8 maybe / 16 re-roll)
+with no changes to the 255 seeded verdicts.
+
+Updated tally (all rounds): **297 verdicts** over 297 viewer cells --
+117 keep / 65 maybe / 115 re-roll, 179 notes. 0 unmatched ids.
+
+The verbatim new verdicts (Pip's words, from the export):
+
+### Keep (round 2)
+
+- Baseline / Character (2026-07-16-style-matrix:baseline__character) -- This is a good character, good colour identity, professional attire.
+- + Futurepunk / Character (2026-07-16-style-matrix:futurepunk__character) -- fine
+- + Heavy outline / Desk (2026-07-16-style-matrix:heavy-outline__desk) -- This has a satisfying heft to it that I like, the objects have a good amount of visual distinction from each other.
+- + Warm grime / Desk (2026-07-16-style-matrix:warm-grime__desk) -- The clutter and coziness of this desk, combined with the object on the PC tower, are all excellent.
+- + Moody contrast / Character (2026-07-16-style-matrix:moody-contrast__character) -- I like the expression and tone on this character, a little bit cynical, but more individualistic. Overall I like the shadows and mood tuning.
+- Funded (2026-07-16-era-ladder:e2_funded) -- Fine
+- Scaleup (2026-07-16-era-ladder:e3_scaleup)
+- Megacorp (2026-07-16-era-ladder:e4_megacorp)
+- Office chair (2026-07-16-office-library:chair) -- Looks a little small compared to the others; otherwise OK. Perhaps a little too modern for a starting chair. [RE-ROLLING: older/cheaper starting chair, larger]
+- Whiteboard (2026-07-16-office-library:whiteboard) -- Good!
+- Water cooler (2026-07-16-office-library:water_cooler) -- Extremely good. Might be slightly too angled / perspective in wrong direction.
+- Potted plant (2026-07-16-office-library:plant) -- Excellent.
+- Break couch (2026-07-16-office-library:couch) -- Excellent.
+- Coat rack (2026-07-16-office-library:coat_rack) -- Excellent. Shoes might be a bit neater, slightly less domestic; office coatrack should be a bit neater.
+- base_worker_restyle roll 3 (sweep:characters_use_create_character:base_worker_restyle:3) -- looks a bit angry
+- cat_eldritch roll 2 (reroll:cats:cat_eldritch:2)
+- cat_eldritch roll 3 (reroll:cats:cat_eldritch:3)
+- sky_doomy roll 3 (reroll:windows:sky_doomy:3)
+
+### Maybe (round 2)
+
+- + Heavy outline / Monitor (2026-07-16-style-matrix:heavy-outline__monitor)
+- + Warm grime / Monitor (2026-07-16-style-matrix:warm-grime__monitor) -- Good monitor, something weird going on where it looks like the monitor has a CD player coming out of it, but acceptable as a first-pass.
+- + Warm grime / Character (2026-07-16-style-matrix:warm-grime__character) -- The glasses render pretty weirdly on this model, otherwise good.
+- Endgame (2026-07-16-era-ladder:e5_endgame)
+- Server rack (2026-07-16-office-library:server_rack) -- Extremely excellent. Direction and lighting might be slightly wrong, possibly wrong direction. Unclear.
+- base_worker_restyle roll 2 (sweep:characters_use_create_character:base_worker_restyle:2) -- head a little unclear
+- cast_wheelchair_user roll 1 (sweep:characters_use_create_character:cast_wheelchair_user:1) -- looks kinda cranky
+- cat_eldritch roll 1 (reroll:cats:cat_eldritch:1)
+
+### Re-roll (round 2)
+
+- Baseline / Desk (2026-07-16-style-matrix:baseline__desk) -- This is probably my favourite desk but suffers from being a little rotated in the image. I like the clutter and objects.
+- Baseline / Monitor (2026-07-16-style-matrix:baseline__monitor) -- This is one of the weakest monitors, coming across as dull and unpowered. Overall flavour is fine.
+- + Futurepunk / Desk (2026-07-16-style-matrix:futurepunk__desk) -- This is a little too bright and shiny overall, the potted plant and wastepaper bin are nice touches.
+- + Futurepunk / Monitor (2026-07-16-style-matrix:futurepunk__monitor) -- This is poor composition overall.
+- + Heavy outline / Character (2026-07-16-style-matrix:heavy-outline__character) -- the eyes look like goggles, eyes seem to be pointing out, not a great look overall, hair feels a little indistinct
+- + Moody contrast / Desk (2026-07-16-style-matrix:moody-contrast__desk) -- The angling of this composition is weird and it has a chair which highlights shadows, but wouldn't work as a single asset. I like the increased shadows and moodiness.
+- + Moody contrast / Monitor (2026-07-16-style-matrix:moody-contrast__monitor) -- Bit of a miss.
+- Startup (2026-07-16-era-ladder:e1_startup) -- the top of the monitor is missing, has a keyboard
+- Bookshelf (2026-07-16-office-library:bookshelf) -- Looks more like a home than an office bookshelf; don't want much wood -- make it laminate / more office-shelfy. [RE-ROLLING]
+- meeting_table roll 1 (sweep:props:meeting_table:1) -- chairs too high
+- wall_decent roll 2 (sweep:environment:wall_decent:2) -- this ain't no wall segment lol
+- cast_wheelchair_user roll 3 (sweep:characters_use_create_character:cast_wheelchair_user:3) -- meh
+- cat_eldritch roll 4 (reroll:cats:cat_eldritch:4) -- this looks like it's farting
+- icon_doom roll 1 (reroll:icons:icon_doom:1) -- I tihnk we abandon this direction, too skully, needs to be more icon-like maybe
+- icon_doom roll 2 (reroll:icons:icon_doom:2) -- scary, unpleasant, directionally awy from this strongly
+- icon_doom roll 3 (reroll:icons:icon_doom:3) -- this would be gine for a death metal game, not our vibe at all. agents to reconsider entire approach to this.
+
+> Note: the existing **Rulings (Claude)** section and the **Re-roll work
+> queue** (HELD) are unchanged. The rulings sign-off and the re-roll go/no-go
+> remain open Pip decisions.
