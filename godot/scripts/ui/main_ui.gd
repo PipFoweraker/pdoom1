@@ -627,8 +627,18 @@ func _remove_queued_action(action_id: String, action_name: String):
 
 func _on_end_turn_button_pressed():
 	if queued_actions.size() == 0:
-		log_message("[color=red]ERROR: No actions queued! Press C to clear queue or select actions.[/color]")
-		return
+		# Issue #733: an empty queue no longer hard-errors. Route through the existing
+		# pass-action path (identical to the Do Nothing button) so COMMIT THE MONTH always
+		# advances. Determinism-safe: no new RNG and no turn-step reordering -- select_action()
+		# only queues the canonical pass id, and end_month() below plays it out exactly as a
+		# planned month would.
+		log_message("[color=gray]Nothing planned -- the month proceeds.[/color]")
+		var pass_action := GameActions.get_pass_action()
+		var pass_id: String = pass_action.get("id", GameActions.PASS_ACTION_ID)
+		var pass_name: String = pass_action.get("name", "Do Nothing")
+		queued_actions.append({"id": pass_id, "name": pass_name})
+		update_queued_actions_display()
+		game_manager.select_action(pass_id)
 
 	# Check for danger zones and warn player
 	var current_state = game_manager.state

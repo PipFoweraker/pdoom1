@@ -41,3 +41,19 @@ func test_ledger_attribution_empty_when_absent():
 	assert_eq(s._get_ledger_attribution_text({"ledger": {"death_attribution": []}}), "")
 	assert_eq(s._get_ledger_attribution_text({}), "")
 	s.free()
+
+# --- Issue #734: shareable "Copy result" one-liner (pure static helper) -------------------
+
+func test_share_line_matches_the_example():
+	# The example from the issue must render verbatim (ASCII "--" dash, "P(Doom)1" brand name).
+	var line = GameOverScreen.format_share_line(14, 62.0, "weekly-2026-w29", "0.11.0")
+	assert_eq(line, "I survived 14 months at 62% doom on seed weekly-2026-w29 -- P(Doom)1 v0.11.0")
+
+func test_share_line_rounds_doom_to_whole_percent():
+	var line = GameOverScreen.format_share_line(3, 61.6, "seed-x", "0.12.0")
+	assert_true(line.contains("62% doom"), "doom rounds to nearest whole percent, got: %s" % line)
+
+func test_share_line_is_single_ascii_line():
+	var line = GameOverScreen.format_share_line(1, 5.0, "abc", "0.11.0")
+	assert_false(line.contains("\n"), "the share line must be a single clipboard line")
+	assert_true(line.contains(" -- "), "uses the ASCII double-hyphen dash, not a unicode em-dash")

@@ -6,10 +6,14 @@ class_name GameOverScreen
 @onready var title_label = $CenterContainer/PanelContainer/MarginContainer/VBox/TitleLabel
 @onready var subtitle_label = $CenterContainer/PanelContainer/MarginContainer/VBox/SubtitleLabel
 @onready var stats_label = $CenterContainer/PanelContainer/MarginContainer/VBox/StatsLabel
+@onready var copy_result_button = $CenterContainer/PanelContainer/MarginContainer/VBox/ButtonsHBox/CopyResultButton
 
 var game_manager: Node
 var final_turns: int = 0
 var final_doom_integral: int = 0
+# Issue #734: values captured for the "Copy result" share line (clipboard only, no network).
+var final_doom: float = 0.0
+var final_seed: String = ""
 var baseline_turns: int = 0
 var baseline_doom_integral: int = 0
 var baseline_result: Dictionary = {}
@@ -94,6 +98,11 @@ func show_game_over(is_victory: bool, final_state: Dictionary):
 	print("[GameOverScreen] Final score: %s" % GameState.format_score(final_turns, final_doom_integral))
 
 	var game_seed = GameConfig.get_display_seed()
+
+	# Issue #734: stash the seed + final doom so the "Copy result" button can build the
+	# shareable one-liner after the async work below. final_turns is already set above.
+	final_seed = game_seed
+	final_doom = final_state.get("doom", 0.0)
 
 	# Rule 3 -- baseline comparison (Issue #372), NON-BLOCKING. If the background sim isn't
 	# ready yet we skip the comparison rather than freeze the defeat screen computing it.
@@ -422,6 +431,19 @@ func _get_ledger_attribution_text(final_state: Dictionary) -> String:
 	for src in counts:
 		parts.append("%d %s" % [counts[src], src])
 	return "Your ledger came due: %s — %s in bills you couldn't cover." % [", ".join(parts), _fmt_money(total)]
+
+## Issue #734: build the single shareable result line. Pure + static so it can be unit-tested
+## without instantiating the screen. ASCII only ("--" for the dash); clipboard only, no network.
+static func format_share_line(months: int, doom: float, seed: String, version: String) -> String:
+	return "I survived %d months at %d%% doom on seed %s -- P(Doom)1 v%s" % [months, int(round(doom)), seed, version]
+
+func _on_copy_result_pressed() -> void:
+	"""Copy a single shareable result line to the system clipboard (no network, no leaderboard)."""
+	var line := format_share_line(final_turns, final_doom, final_seed, GameConfig.CURRENT_VERSION)
+	DisplayServer.clipboard_set(line)
+	print("[GameOverScreen] Copied result to clipboard: %s" % line)
+	if is_instance_valid(copy_result_button):
+		copy_result_button.text = "Copied to clipboard"
 
 func _on_play_again_pressed():
 	"""Restart the game"""
