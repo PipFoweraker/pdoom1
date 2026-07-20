@@ -3,48 +3,48 @@
 [ext_resource type="Script" path="res://scripts/ui/config_confirmation.gd" id="1_config"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
-bg_color = Color(0.2, 0.3, 0.5, 1)
+bg_color = Color(0.18, 0.145, 0.278, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.4, 0.5, 0.7, 1)
+border_color = Color(0.09, 0.04, 0.11, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
-bg_color = Color(0.3, 0.5, 0.8, 1)
+bg_color = Color(0.231, 0.192, 0.349, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.7, 0.8, 1, 1)
+border_color = Color(0.91, 0.64, 0.24, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
-bg_color = Color(0.15, 0.25, 0.4, 1)
+bg_color = Color(0.106, 0.078, 0.165, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.9, 0.9, 1, 1)
+border_color = Color(0.965, 0.659, 0, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
-bg_color = Color(0.4, 0.6, 1, 1)
+bg_color = Color(0.18, 0.145, 0.278, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(1, 1, 1, 1)
+border_color = Color(0.965, 0.659, 0, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -66,7 +66,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.16, 0.18, 0.22, 1)
+color = Color(0.09, 0.04, 0.11, 1)
 
 [node name="PatternOverlay" type="Control" parent="."]
 layout_mode = 1
@@ -105,7 +105,7 @@ theme_override_constants/separation = 20
 
 [node name="Title" type="Label" parent="Panel/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.86, 0.94, 1, 1)
+theme_override_colors/font_color = Color(0.914, 0.949, 0.949, 1)
 theme_override_font_sizes/font_size = 38
 text = "LABORATORY CONFIGURATION"
 horizontal_alignment = 1
@@ -131,7 +131,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/PlayerNameRow"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 18
 text = "Player Name:"
 
@@ -148,7 +148,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/LabNameRow"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 18
 text = "Lab Name:"
 
@@ -165,7 +165,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/SeedRow"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 18
 text = "Experimental Seed:"
 
@@ -182,7 +182,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/DifficultyRow"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 18
 text = "Research Intensity:"
 
@@ -199,7 +199,7 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Panel/VBox/FieldsContainer/FundingRow"]
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 18
 text = "Starting Funding:"
 

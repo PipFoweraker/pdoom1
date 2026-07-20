@@ -3,12 +3,12 @@
 [ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1_pause"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
-bg_color = Color(0.1, 0.1, 0.15, 0.95)
+bg_color = Color(0.09, 0.04, 0.11, 0.96)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(0.4, 0.5, 0.7, 1)
+border_color = Color(0.91, 0.64, 0.24, 0.8)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -54,7 +54,7 @@ theme_override_constants/separation = 15
 
 [node name="Title" type="Label" parent="Panel/VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.86, 0.94, 1, 1)
+theme_override_colors/font_color = Color(0.914, 0.949, 0.949, 1)
 theme_override_font_sizes/font_size = 36
 text = "GAME PAUSED"
 horizontal_alignment = 1
@@ -72,7 +72,7 @@ theme_override_constants/separation = 8
 
 [node name="AudioLabel" type="Label" parent="Panel/VBox/SettingsContainer/AudioSettings"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 18
 text = "Audio Settings"
 

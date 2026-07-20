@@ -5,48 +5,48 @@
 [ext_resource type="Texture2D" path="res://assets/textures/terminal/tex_gray_dither_512.png" id="3_overlay"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
-bg_color = Color(0.2, 0.3, 0.5, 1)
+bg_color = Color(0.18, 0.145, 0.278, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.4, 0.5, 0.7, 1)
+border_color = Color(0.09, 0.04, 0.11, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
-bg_color = Color(0.3, 0.5, 0.8, 1)
+bg_color = Color(0.231, 0.192, 0.349, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.7, 0.8, 1, 1)
+border_color = Color(0.91, 0.64, 0.24, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
-bg_color = Color(0.15, 0.25, 0.4, 1)
+bg_color = Color(0.106, 0.078, 0.165, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-border_color = Color(0.9, 0.9, 1, 1)
+border_color = Color(0.965, 0.659, 0, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
-bg_color = Color(0.4, 0.6, 1, 1)
+bg_color = Color(0.18, 0.145, 0.278, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
 border_width_bottom = 3
-border_color = Color(1, 1, 1, 1)
+border_color = Color(0.965, 0.659, 0, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -99,7 +99,7 @@ theme_override_constants/separation = 20
 
 [node name="Title" type="Label" parent="VBox"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.86, 0.94, 1, 1)
+theme_override_colors/font_color = Color(0.914, 0.949, 0.949, 1)
 theme_override_font_sizes/font_size = 48
 text = "LABORATORY SETTINGS"
 horizontal_alignment = 1
@@ -125,7 +125,7 @@ theme_override_constants/separation = 8
 
 [node name="AudioLabel" type="Label" parent="VBox/SettingsContainer/AudioSettings"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
 text = "Audio Settings"
 
@@ -207,7 +207,7 @@ theme_override_constants/separation = 8
 
 [node name="GraphicsLabel" type="Label" parent="VBox/SettingsContainer/GraphicsSettings"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
 text = "Graphics Settings"
 
@@ -256,7 +256,7 @@ theme_override_constants/separation = 8
 
 [node name="GameplayLabel" type="Label" parent="VBox/SettingsContainer/GameplaySettings"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
 text = "Gameplay Settings"
 
@@ -288,7 +288,7 @@ theme_override_constants/separation = 8
 
 [node name="UILabel" type="Label" parent="VBox/SettingsContainer/UISettings"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
 text = "UI Settings"
 
@@ -322,7 +322,7 @@ theme_override_constants/separation = 8
 
 [node name="AccessibilityLabel" type="Label" parent="VBox/SettingsContainer/AccessibilitySettings"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
 text = "Accessibility"
 
@@ -350,7 +350,7 @@ theme_override_constants/separation = 8
 
 [node name="KeyboardLabel" type="Label" parent="VBox/SettingsContainer/KeyboardShortcuts"]
 layout_mode = 2
-theme_override_colors/font_color = Color(0.6, 0.8, 1, 1)
+theme_override_colors/font_color = Color(0.91, 0.64, 0.24, 1)
 theme_override_font_sizes/font_size = 20
 text = "Keyboard Shortcuts"
 
