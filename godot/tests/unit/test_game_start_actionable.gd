@@ -2,9 +2,10 @@ extends GutTest
 ## HOTFIX repro/regression (#664): a fresh game must reach an actionable state.
 ##
 ## The ship-blocking bug: after pregame setup the player reaches MainUI but the
-## first turn never becomes actionable -- the INIT button does nothing and every
-## action button is greyed out. This drives the REAL scene (main.tscn boots MainUI,
-## whose _ready auto-inits via _on_init_button_pressed) and asserts the game either
+## first turn never becomes actionable -- boot did nothing and every action button
+## was greyed out. This drives the REAL scene (main.tscn boots MainUI, whose _ready
+## auto-boots via _boot_game -- the old vestigial "Init" button was removed in #715)
+## and asserts the game either
 ## presents an initial event dialog OR emits a non-empty actions_available list and
 ## enables the action buttons.
 
@@ -32,7 +33,7 @@ func test_fresh_game_reaches_actionable_state() -> void:
 	_reset_capture()
 
 	# Boot the real scene tree exactly as the game does: main.tscn -> TabManager ->
-	# MainUI, whose _ready() awaits a frame then calls _on_init_button_pressed().
+	# MainUI, whose _ready() awaits a frame then calls _boot_game().
 	var scene: PackedScene = load("res://scenes/main.tscn")
 	assert_not_null(scene, "main.tscn must load")
 	var root: Node = scene.instantiate()

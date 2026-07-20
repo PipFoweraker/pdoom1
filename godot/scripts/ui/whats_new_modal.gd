@@ -199,7 +199,7 @@ func _display_fallback_notes(version: String) -> void:
 	version_label.text = "Version %s" % version
 
 	content_label.bbcode_enabled = true
-	content_label.text = "[color=#aaaaaa]No detailed patch notes available for this version.\n\nCheck the CHANGELOG.md file for the latest updates.[/color]"
+	content_label.text = "[color=#aaaaaa]No detailed patch notes available for this version.\n\nVisit pdoom1.com for the latest updates.[/color]"
 
 ## Handle close button
 func _on_close_pressed() -> void:

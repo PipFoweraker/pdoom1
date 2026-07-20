@@ -162,10 +162,11 @@ func _step_researcher_productivity() -> Dictionary:
 		var has_compute = available_compute > 0
 
 		if is_managed and has_compute:
-			# Flat 1 compute/researcher/turn for now. PARKED (#576 follow-up):
+			# Flat compute/researcher/turn (Balance "compute.per_researcher_per_turn",
+			# same value the Compute HUD tooltip shows). PARKED (#576 follow-up):
 			# "researchers request compute at different rates" — make this a
-			# per-researcher rate (by specialization / skill) instead of 1.
-			var compute_request = 1
+			# per-researcher rate (by specialization / skill) instead of a flat rate.
+			var compute_request = int(Balance.num("compute.per_researcher_per_turn", 1.0))
 			available_compute -= compute_request
 			compute_consumed += compute_request
 			productive_count += 1
@@ -477,18 +478,23 @@ func _step_execute_queued_actions(results: Array) -> bool:
 	return all_success
 
 func _step_publish_papers(results: Array) -> void:
-	"""Check for paper publication (research threshold)."""
-	if state.research >= 100:
-		var papers_to_publish = int(state.research / 100)
+	"""Check for paper publication (research threshold).
+	Threshold + reputation reward are Balance-sourced ("papers.*") so the HUD
+	tooltips (main_ui) read the same values the mechanic uses -- no drift."""
+	var per_paper: float = Balance.num("papers.research_per_paper", 100.0)
+	var rep_per_paper: float = Balance.num("papers.reputation_per_paper", 5.0)
+	if state.research >= per_paper:
+		var papers_to_publish = int(state.research / per_paper)
 		state.papers += papers_to_publish
-		state.research = fmod(state.research, 100)  # Keep remainder
-		state.add_resources({"reputation": papers_to_publish * 5})  # Papers boost reputation
+		state.research = fmod(state.research, per_paper)  # Keep remainder
+		var rep_gain: int = int(papers_to_publish * rep_per_paper)
+		state.add_resources({"reputation": rep_gain})  # Papers boost reputation
 		results.append({
 			"success": true,
 			"message": "Published %d paper%s! (+%d reputation)" % [
 				papers_to_publish,
 				"s" if papers_to_publish > 1 else "",
-				papers_to_publish * 5
+				rep_gain
 			]
 		})
 
