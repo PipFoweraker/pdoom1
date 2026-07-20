@@ -65,6 +65,11 @@ runtime — the old Python bridge is gone). Python exists only for CI/tooling in
 - `docs/game-design/` — `DESIGN_PHILOSOPHY.md` (the "why"), `decisions/`
   (ADR-0001…0016 — trust the files, the `decisions/README.md` index is stale),
   `WORKSHOP_2_BACKLOG.md`, `BUILD_BRIEF_*` build briefs.
+- `docs/game-design/DQ_INDEX.md` — **GENERATED, never hand-edit.** Regenerate
+  with `python scripts/generate_dq_index.py` after touching
+  `WORKSHOP_2_BACKLOG.md` (pre-commit `--check` blocks stale commits). This is
+  the anti-rot pattern: indexes are generated from source files, not
+  hand-maintained (the stale `decisions/README.md` is the failure mode).
 - `godot/scripts/core/` — game logic (game_state, turn_manager, actions,
   doom_system, finance_engine, events, …). Deterministic, testable.
 - `godot/scripts/ui/` — screens/panels (`main_ui.gd` is the 3k-line monolith).
