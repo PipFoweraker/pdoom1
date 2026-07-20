@@ -116,6 +116,53 @@ func test_load_stores_arrays_not_nodes_and_leaves_no_orphans():
 		for s in seeds:
 			dir.remove("leaderboard_%s__test.json" % s)
 
+## --- Invariant 3: the DEFAULT open is lazy (does NOT parse every seed file) --------
+## Opening the screen used to parse every leaderboard_*.json on every open (~5-7s with
+## many boards). The fix: discover files cheaply (a dir listing, no parse) and parse only
+## the current/most-relevant single board on open; the full all-seeds population is parsed
+## lazily only when the user picks "All Seeds". This pins that the common open stays bounded.
+func test_default_open_parses_at_most_one_board():
+	# Seed several distinct boards on disk BEFORE opening the screen.
+	var seeds: Array = []
+	for i in range(4):
+		var s := "zzzLazyOpen%dx%d" % [i, Time.get_ticks_usec()]
+		seeds.append(s)
+		var lb := Leaderboard.new(s, "test")
+		lb.clear()
+		lb.add_score(_make_entry(i + 1))  # writes the file
+		lb.free()
+
+	# Instantiating triggers _ready -> the cheap default open.
+	var screen = _make_screen()
+
+	# Discovery is cheap and COMPLETE: every file is known without being parsed.
+	var known := 0
+	for s in seeds:
+		if screen._board_files.has("%s (test)" % s):
+			known += 1
+	assert_eq(known, seeds.size(), "discovery must list every board file (cheap, no parse)")
+
+	# The open must have PARSED at most one board (the default), never the whole set,
+	# and must NOT have built the full all-seeds aggregate.
+	assert_lte(screen.all_leaderboards.size(), 1,
+		"default open must parse <=1 board, but parsed %d" % screen.all_leaderboards.size())
+	assert_false(screen._aggregate_loaded,
+		"default open must NOT eagerly build the all-seeds aggregate")
+
+	# Selecting "All Seeds" is what triggers the full (cached) parse -- and it is complete.
+	screen.current_seed = "all"
+	screen._filter_and_display()
+	assert_true(screen._aggregate_loaded, "picking All Seeds loads the full aggregate")
+	for s in seeds:
+		assert_true(screen.all_leaderboards.has("%s (test)" % s),
+			"all-seeds view must include every board (no data dropped)")
+
+	# Cleanup: remove the synthetic files so we don't pollute user://leaderboards.
+	var dir := DirAccess.open("user://leaderboards")
+	if dir:
+		for s in seeds:
+			dir.remove("leaderboard_%s__test.json" % s)
+
 func test_reload_does_not_accumulate_orphans():
 	var screen = _make_screen()
 	# Repeated loads (as happens on Refresh / re-open) must not grow orphan Nodes.
