@@ -95,3 +95,33 @@ func test_end_month_button_path_plays_a_full_month():
 	assert_eq(game_manager.state.current_phase, GameState.TurnPhase.ACTION_SELECTION,
 		"back in the plan phase after the review")
 	assert_true(game_manager.state.can_end_turn, "the next month plan can be committed")
+
+
+func test_empty_commit_routes_through_the_pass_action():
+	# Issue #733: COMMIT THE MONTH on an EMPTY queue no longer hard-errors -- it routes
+	# through the existing pass-action path (get_pass_action -> select_action), the same
+	# call main_ui._on_end_turn_button_pressed now makes. This drives that exact sequence and
+	# asserts the canonical pass id lands in the game-state queue, ready for end_month().
+	# Determinism-safe: select_action only queues; no new RNG, no turn-step reordering.
+	game_manager.start_new_game("issue733-empty-commit")
+
+	# Drain any start-of-game events so select_action's "no pending events" guard passes and
+	# we are cleanly in ACTION_SELECTION.
+	var guard := 0
+	while game_manager.state.pending_events.size() > 0 and guard < 20:
+		guard += 1
+		var ev: Dictionary = game_manager.state.pending_events[0]
+		var opts: Array = ev.get("options", [])
+		var cid := String(opts[0].get("id", "")) if opts.size() > 0 else ""
+		game_manager.resolve_event(ev, cid)
+
+	assert_eq(game_manager.state.queued_actions.size(), 0, "the queue starts empty")
+
+	var pass_action := GameActions.get_pass_action()
+	var pass_id: String = pass_action.get("id", GameActions.PASS_ACTION_ID)
+	assert_eq(pass_id, GameActions.PASS_ACTION_ID, "the pass action carries the canonical pass id")
+
+	var queued: bool = game_manager.select_action(pass_id)
+	assert_true(queued, "the pass action queues via the standard select_action path (no new RNG)")
+	assert_true(game_manager.state.queued_actions.has(pass_id),
+		"an empty commit leaves exactly the pass id queued for end_month() to play out")
