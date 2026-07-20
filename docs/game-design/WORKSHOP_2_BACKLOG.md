@@ -392,6 +392,29 @@ more interesting."*
   design ideals. Interacts: DQ-10 (inward SA), DQ-12 (v0 surface built in #725/#726),
   DQ-14 (world-state progression display), DQ-31 (actor tags likely determine what News
   can say about whom). Higher-level workshop consideration, not a build lane.
+- **League cadence RULED (Pip 2026-07-21):** leagues and content ops are **monthly**
+  (matching the game's month cadence and ADR-0016's sustainable ops budget); weekly
+  output only for cheaply generated artifacts (challenge seed / simple scenario), never
+  curation or balance patches. Monthly rollover validation absorbs pdoom1-website#126.
+- **DQ-33 · Content-pool ladder (artefact promotion/relegation)** *(Pip 2026-07-21)* —
+  as pdoom-data's artefact pools grow ("10,000 papers, 5,000 events"), move to a
+  **fixed-size active pool with ranked entry**: artefacts rated on impact measures, top
+  N% make the game's event pool; each month reports new entrants, rankings, pool
+  shifts, and the new cut. Why it helps balance: balance functions tune against a
+  stable pool size and mix, churn happens only at the margin. Required refinements
+  from first discussion: (a) **stratified cut** — rank within mechanical genre with
+  per-stratum quotas, else an impact-ranked global cut clusters mechanically even at
+  constant N; (b) **pool snapshot versioning** — the monthly pool cut is part of the
+  league/replay contract (ties DQ-6 provenance); (c) ranking is a **human+LLM
+  combination with recorded provenance** (Pip revision 2026-07-21) -- the
+  architectural home is pdoom-data upstream: every artefact carries how it was
+  collected/rated and when human eyes reviewed it, so confidence tiers can be
+  stated for anything reaching scholarly/reusable quality, and LLM-only ratings
+  never silently pass as human-reviewed. Human attention is *allocated* to the
+  cut line (the labor-efficient property; ADR-0016's LLM-drafted/Pip-approved
+  pattern), but provenance is recorded everywhere; (d) prove the mechanism at ~200 events before
+  scaling. The monthly pool-shift report is itself content: league world-diff, News
+  fodder (DQ-32), and dev-blog artifact from one pipeline. Feeds v0.14 pin.
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)

@@ -31,6 +31,7 @@ You run an underfunded AI safety lab racing against well-resourced competitors t
 - BOOK **[How to Play](docs/PLAYERGUIDE.md)** - Game mechanics and strategy
 - HELP **[Discussions](https://github.com/PipFoweraker/pdoom1/discussions)** - Questions and community
 - GLOBAL **[Website](https://pdoom1.com)** - Guides, community, and updates
+- MAP **[Roadmap](docs/ROADMAP.md)** - Where the game is headed (milestones + quarterly pins)
 - 🐛 **Report a Bug** - Press **`\`** (the backslash key) or **`N`** in-game, or [open an issue](https://github.com/PipFoweraker/pdoom1/issues)
 
 ## Community & Contributing

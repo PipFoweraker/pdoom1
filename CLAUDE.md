@@ -65,6 +65,9 @@ runtime — the old Python bridge is gone). Python exists only for CI/tooling in
 - `docs/game-design/` — `DESIGN_PHILOSOPHY.md` (the "why"), `decisions/`
   (ADR-0001…0016 — trust the files, the `decisions/README.md` index is stale),
   `WORKSHOP_2_BACKLOG.md`, `BUILD_BRIEF_*` build briefs.
+- `docs/ROADMAP.md` — thin roadmap SSOT: GitHub milestones are the live "Now";
+  quarterly pins to v0.15; league/content cadence is MONTHLY (ruled 2026-07-21).
+  Keep it thin — link volatile things, never copy them.
 - `docs/game-design/DQ_INDEX.md` — **GENERATED, never hand-edit.** Regenerate
   with `python scripts/generate_dq_index.py` after touching
   `WORKSHOP_2_BACKLOG.md` (pre-commit `--check` blocks stale commits). This is
