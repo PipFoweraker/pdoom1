@@ -22,12 +22,12 @@ jobs:
 
     steps:
       - name: Checkout pdoom1 repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 2  # Need previous commit for diff
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -42,7 +42,7 @@ jobs:
           echo "SUCCESS Blog entries validated successfully"
 
       - name: Checkout website repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: PipFoweraker/pdoom1-website
           token: ${{ secrets.WEBSITE_SYNC_TOKEN }}

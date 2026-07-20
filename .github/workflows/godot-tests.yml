@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v1
@@ -58,7 +58,7 @@ jobs:
     needs: syntax-check
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v1
@@ -67,7 +67,7 @@ jobs:
           use-dotnet: false
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -81,7 +81,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: unit-test-results
           path: godot/test-results-quick.xml
@@ -92,7 +92,7 @@ jobs:
     needs: syntax-check
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v1
@@ -101,7 +101,7 @@ jobs:
           use-dotnet: false
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -111,7 +111,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: integration-test-results
           path: godot/test-results-integration.xml
@@ -128,7 +128,7 @@ jobs:
     continue-on-error: true
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v1
@@ -137,7 +137,7 @@ jobs:
           use-dotnet: false
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.11'
 
@@ -147,7 +147,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: simulation-test-results
           path: godot/test-results-simulation.xml
