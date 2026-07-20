@@ -20,11 +20,11 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
 
 1. SUCCESS **Game**: Complete and polished
 2. SUCCESS **Architecture**: Designed and documented
-3. ⏳ **Steamworks Setup**: Developer account + App ID (~1 day)
-4. ⏳ **GodotSteam Plugin**: Install & configure (~1 day)
-5. ⏳ **Steam Manager**: Basic integration (~2-3 days)
-6. ⏳ **Testing**: Steam build validation (~2-3 days)
-7. ⏳ **Store Page**: Marketing materials (~1-2 weeks)
+3. [pending] **Steamworks Setup**: Developer account + App ID (~1 day)
+4. [pending] **GodotSteam Plugin**: Install & configure (~1 day)
+5. [pending] **Steam Manager**: Basic integration (~2-3 days)
+6. [pending] **Testing**: Steam build validation (~2-3 days)
+7. [pending] **Store Page**: Marketing materials (~1-2 weeks)
 
 **Bottom line**: You could have a Steam build in **1 week** (technical), but should allocate **2-3 weeks** for store page polish.
 
@@ -43,7 +43,7 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
 | **Leaderboard System** | SUCCESS Local | Can be extended to Steam |
 | **Export Presets** | SUCCESS Configured | For all platforms |
 
-### ⏳ What's Missing
+### [pending] What's Missing
 
 | Component | Status | Effort | Blocker? |
 |-----------|--------|--------|----------|
@@ -65,15 +65,15 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
 
 #### Tasks:
 1. **Register Steamworks Developer Account**
-   - Go to https://partner.steamgames.com/
-   - Pay $100 USD app fee (one-time, per game)
-   - Complete tax/banking forms
-   - Wait for approval (~1-2 days)
+  - Go to https://partner.steamgames.com/
+  - Pay $100 USD app fee (one-time, per game)
+  - Complete tax/banking forms
+  - Wait for approval (~1-2 days)
 
 2. **Create App ID**
-   - Create new app: "P(Doom): AI Safety Strategy Game"
-   - Get App ID (e.g., 123456)
-   - Document in `config/steam.json`:
+  - Create new app: "P(Doom): AI Safety Strategy Game"
+  - Get App ID (e.g., 123456)
+  - Document in `config/steam.json`:
      ```json
      {
        "app_id": "YOUR_APP_ID",
@@ -86,9 +86,9 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
      ```
 
 3. **Download Steamworks SDK**
-   - Get from https://partner.steamgames.com/
-   - Version: Latest (v1.59+)
-   - Extract to `steamworks_sdk/`
+  - Get from https://partner.steamgames.com/
+  - Version: Latest (v1.59+)
+  - Extract to `steamworks_sdk/`
 
 **Deliverable**: Steamworks developer account + App ID + SDK
 
@@ -276,7 +276,7 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
 
 1. **Define Steam Achievements in Steamworks**
 
-   Go to Steamworks admin  ->  Your App  ->  Stats & Achievements
+   Go to Steamworks admin ->  Your App ->  Stats & Achievements
 
    Map existing achievements (from `legacy/shared/features/achievements_endgame.py`):
 
@@ -373,53 +373,53 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
 #### Tasks:
 
 1. **Store Page Assets**
-   - SUCCESS Screenshots (you have these)
-   - ⏳ Capsule image (460x215)
-   - ⏳ Header image (460x215)
-   - ⏳ Hero image (optional, 1920x622)
-   - ⏳ Trailer video (30-90 seconds)
+  - SUCCESS Screenshots (you have these)
+  - [pending] Capsule image (460x215)
+  - [pending] Header image (460x215)
+  - [pending] Hero image (optional, 1920x622)
+  - [pending] Trailer video (30-90 seconds)
 
 2. **Store Page Copy**
    ```markdown
    # Short Description (300 chars)
-   Manage an underfunded AI safety lab racing to hold back catastrophe. Make strategic decisions about hiring, research, and resources. You can't win — only buy time; your score is how long you keep P(Doom) back before a run ends.
+   Manage an underfunded AI safety lab racing to hold back catastrophe. Make strategic decisions about hiring, research, and resources. You can't win -- only buy time; your score is how long you keep P(Doom) back before a run ends.
 
    # About This Game
    You run an underfunded AI safety research lab racing against well-funded competitors to solve the alignment problem. Make strategic decisions about:
 
-   - Hiring researchers from a candidate pool (Safety, Capabilities, Interpretability, Alignment)
-   - Managing teams and balancing researcher traits (team_player, media_savvy, leak_prone)
-   - Handling burnout, poaching events, and doom from reckless research
-   - Responding to rival lab actions and random events
-   - Holding P(Doom) down as long as you can — you can't win, only buy time; you're scored on how long you survive before the run ends
+  - Hiring researchers from a candidate pool (Safety, Capabilities, Interpretability, Alignment)
+  - Managing teams and balancing researcher traits (team_player, media_savvy, leak_prone)
+  - Handling burnout, poaching events, and doom from reckless research
+  - Responding to rival lab actions and random events
+  - Holding P(Doom) down as long as you can -- you can't win, only buy time; you're scored on how long you survive before the run ends
 
    # Key Features
-   - Turn-based strategy gameplay inspired by XCOM and FTL
-   - Individual researcher management with unique traits
-   - Dynamic event system with meaningful choices
-   - Compete on seed-specific leaderboards
-   - Historical AI safety timeline (2017-2025)
-   - Retro-futuristic UI aesthetic
+  - Turn-based strategy gameplay inspired by XCOM and FTL
+  - Individual researcher management with unique traits
+  - Dynamic event system with meaningful choices
+  - Compete on seed-specific leaderboards
+  - Historical AI safety timeline (2017-2025)
+  - Retro-futuristic UI aesthetic
 
    # Early Access
    P(Doom) is in Early Access. Current features are complete and polished, with planned additions including:
-   - Enhanced scoring system
-   - More events and scenarios
-   - Additional researcher specializations
-   - Steam achievements and leaderboards
+  - Enhanced scoring system
+  - More events and scenarios
+  - Additional researcher specializations
+  - Steam achievements and leaderboards
    ```
 
 3. **Pricing Strategy**
-   - Recommended: $9.99 USD (Early Access)
-   - Post-1.0: $14.99 USD
-   - Launch discount: 20% off ($7.99)
+  - Recommended: $9.99 USD (Early Access)
+  - Post-1.0: $14.99 USD
+  - Launch discount: 20% off ($7.99)
 
 4. **Release Timeline**
-   - **Week 1**: Technical implementation (Phases 1-3)
-   - **Week 2**: Store page creation + assets
-   - **Week 3**: Playtesting + polish
-   - **Week 4**: Soft launch (invite-only)
-   - **Week 5**: Public Early Access launch
+  - **Week 1**: Technical implementation (Phases 1-3)
+  - **Week 2**: Store page creation + assets
+  - **Week 3**: Playtesting + polish
+  - **Week 4**: Soft launch (invite-only)
+  - **Week 5**: Public Early Access launch
 
 **Deliverable**: Live Steam Early Access page
 
@@ -430,23 +430,23 @@ Nothing critical! The game is **feature-complete** and **technically ready**. Wh
 These can wait until after launch:
 
 1. **Steam Leaderboards** (3-5 days)
-   - Sync local leaderboards to Steam
-   - Fetch Steam leaderboards for display
-   - Requires backend API (Phase 2 from architecture docs)
+  - Sync local leaderboards to Steam
+  - Fetch Steam leaderboards for display
+  - Requires backend API (Phase 2 from architecture docs)
 
 2. **Steam Cloud Saves** (1-2 days)
-   - Sync `user://` directory to Steam Cloud
-   - Cross-platform save compatibility
+  - Sync `user://` directory to Steam Cloud
+  - Cross-platform save compatibility
 
 3. **Steam Trading Cards** (1 week)
-   - Design card artwork
-   - Create badge designs
-   - Set up in Steamworks
+  - Design card artwork
+  - Create badge designs
+  - Set up in Steamworks
 
 4. **Steam Workshop** (2-3 weeks)
-   - Mod support infrastructure
-   - Custom scenario sharing
-   - Texture/UI mods
+  - Mod support infrastructure
+  - Custom scenario sharing
+  - Texture/UI mods
 
 ---
 
@@ -455,10 +455,10 @@ These can wait until after launch:
 ### Minimum Steamworks Requirements
 
 - SUCCESS **Godot 4.5.1** (you have this)
-- ⏳ **GodotSteam 4.10+** (need to install)
-- ⏳ **Steamworks SDK v1.59+** (need to download)
+- [pending] **GodotSteam 4.10+** (need to install)
+- [pending] **Steamworks SDK v1.59+** (need to download)
 - SUCCESS **Windows/Linux/macOS builds** (you have these)
-- ⏳ **Steam App ID** (need to register)
+- [pending] **Steam App ID** (need to register)
 
 ### Build Pipeline Changes
 
@@ -514,9 +514,9 @@ No recurring fees until you make $1M+ revenue (then Valve takes 30% cut).
 - SUCCESS Architecture designed for Steam
 
 ### Medium Risk
-- ⏳ Store page creation (marketing)
-- ⏳ GodotSteam plugin learning curve
-- ⏳ Testing Steam features
+- [pending] Store page creation (marketing)
+- [pending] GodotSteam plugin learning curve
+- [pending] Testing Steam features
 
 ### High Risk
 - ERROR **None identified**

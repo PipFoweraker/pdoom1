@@ -4,7 +4,7 @@ Comprehensive documentation for the P(Doom) project.
 
 ## Directory Structure
 
-### 📚 Guides (`guides/`)
+###  Guides (`guides/`)
 Implementation guides, how-tos, and integration documentation:
 
 - **[Asset Integration Guide](guides/ASSET_INTEGRATION_GUIDE.md)** - How to integrate assets into the game
