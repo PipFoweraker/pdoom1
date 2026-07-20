@@ -415,6 +415,21 @@ more interesting."*
   pattern), but provenance is recorded everywhere; (d) prove the mechanism at ~200 events before
   scaling. The monthly pool-shift report is itself content: league world-diff, News
   fodder (DQ-32), and dev-blog artifact from one pipeline. Feeds v0.14 pin.
+- **DQ-34 · Leaderboard disclosure tiers: score vs reconstructable play** *(Pip
+  2026-07-21, reviewing #712)* — submitting a score must not automatically make a
+  player's ACTIONS reconstructable by others. Design distinctions: hall-of-fame entry
+  (name, score, seed) vs detailed play data (replay / build guide); full-run sharing
+  likely **opt-in** (Pip leaning away from mandatory, pending how that interacts with
+  provenance). Deliberately sharing your build guide should be something players are
+  PROUD of — the poe.ninja lesson: assume the community WILL build mining/aggregation
+  tools on whatever is public by default, so design the default disclosure surface
+  deliberately rather than discovering it. Naming/attribution of strategies and forks
+  is better left an emergent cultural phenomenon — do not over-prescribe. Technical
+  note: save files and replay strings are effectively the same artifact (ADR-0006
+  replay-as-canonical), so tiering is about which artifacts the server accepts and
+  publishes, not about new formats. Interacts: DQ-3 (cross-version boards), DQ-11
+  (forks), DQ-32 (SA-priced info), DQ-33 (provenance), and the #712 vision doc
+  (held open for Pip's dedicated pass).
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)
