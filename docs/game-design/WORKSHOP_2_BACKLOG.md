@@ -430,6 +430,24 @@ more interesting."*
   publishes, not about new formats. Interacts: DQ-3 (cross-version boards), DQ-11
   (forks), DQ-32 (SA-priced info), DQ-33 (provenance), and the #712 vision doc
   (held open for Pip's dedicated pass).
+- **DQ-35 · Cosmetic progression + community insignia** *(Pip 2026-07-21, pinned for
+  next workshop)* — background theory of rewarding progress: one of the few things Pip
+  likes in CoD is its appeasement of hardcore grinders via **lots of little cosmetic
+  tags and banners** with distinct subthemes — pure cosmetics, no power. Ties to a
+  FAR.ai conversation about branding and rewarding AI-safety community participation
+  via **mission patches and challenge coins**. Candidate shape: cosmetic
+  tags/banners/patches earned through play (and possibly through community
+  participation), themed to the game's register. Interacts: DQ-17/17-ext
+  (achievements), DQ-34 (hall-of-fame surface), the league metabolism (ADR-0016 —
+  monthly patches as literal *patches*?). Workshop material, not a lane.
+- **Wireframe drift check OWED (Pip 2026-07-21):** the original two-panel UI
+  wireframes included **gantt-chart / progress-style "these operations are underway"
+  tracking**. Check current UI direction against those wireframes for vision drift —
+  Pip suspects this surface is a key part of giving players visual feedback on game-
+  state progress as more hidden engine interactions get surfaced. Home: the UI pass
+  (UI_PASS_NOTES_2026-07-20.md) + #707 consistency sweep + DQ-14 (progression
+  display). Locate the original wireframes and diff intent vs built before the next
+  UI lane.
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)
