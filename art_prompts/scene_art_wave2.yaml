@@ -1,0 +1,413 @@
+schema_version: '1.0'
+asset_type: scene_art_wave2
+default_size: 1536x1024
+background: opaque
+output_sizes:
+- 1536
+- 768
+styles:
+  scene_base: a full illustrative SCENE with real environmental depth and atmosphere
+    (NOT a single symbol on a vignette), painterly StarCraft 2 / XCOM digital matte-painting,
+    composed with distinct foreground, midground and background layers, volumetric
+    haze, restrained and disciplined lighting, painterly rendered detail, no text,
+    no logos, no watermarks, no UI, no readable lettering, no human faces in close-up
+  surface_tarkov: Tarkov-style worn metal, scuffed brushed aluminium, chipped paint,
+    dust, fingerprints and grime on every surface, lived-in industrial props, exposed
+    cable runs and cheap institutional office furniture that has seen years of use
+  mood_cozy_dread: tone of cozy competence under existential dread, quiet and intimate,
+    the warmth of late-night focus haunted by something larger looming just off-frame;
+    Papers-Please deadpan gravity
+  register_color: heavily desaturated palette of teal and olive with muted slate greys
+    and deep shadow, warm amber CRT/monitor glow as the ONLY saturated accent, low
+    overall saturation, at most one ambient light plus one glow source in frame --
+    never a rainbow of glows
+themes:
+  event_hero:
+    style_overrides:
+    - scene_base
+    - surface_tarkov
+    - mood_cozy_dread
+    - register_color
+    color_bias: cinematic key lighting allowed to be dramatic, deep shadow, strong
+      atmosphere; still desaturated teal-olive with a single amber (or, only for crisis,
+      red-soured) accent
+  office_backdrop:
+    style_overrides:
+    - scene_base
+    - surface_tarkov
+    - mood_cozy_dread
+    - register_color
+    color_bias: rendered dim and low-contrast with flat even low-key ambient light,
+      muted and softly out of focus, NO bright hotspots, band-0 cosy doom (warm but
+      subdued, no alarm, no fire, no smoke); composed as a recessive game background
+      that opaque UI panels will sit on top of -- keep the central area and lower
+      third calm, dark and uncluttered, push detail to the edges
+  records_archive:
+    style_overrides:
+    - scene_base
+    - surface_tarkov
+    - mood_cozy_dread
+    - register_color
+    color_bias: cool desaturated teal-green institutional fluorescent ambient with
+      a single warm amber accent, worn brass and steel, bureaucratic and quietly ominous,
+      retro-institutional; any screens/plaques show illegible fake glyphs, never real
+      readable text
+assets:
+- id: event_crisis
+  category: event_hero
+  display_name: Event Hero -- Crisis
+  status: generated
+  theme: event_hero
+  prompt_tail: 'a crisis breaking out in the AI-safety lab: an incident at a bank
+    of server racks and chunky CRT terminals, the warm amber monitor glow soured to
+    a harsh warning red, a single rotating alarm beacon throwing red light and long
+    ominous shadows across worn desks; a knocked-over chair and papers scattered as
+    if people left in a hurry; one wall monitor shows a red status readout spiking
+    off its chart; thin smoke or haze creeping low across the floor, a cable sparking
+    faintly; still the desaturated teal-and-olive world underneath, the red the only
+    saturated accent, cinematic and tense'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:29:01.517832+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a839998b29e3
+    file_path: art_generated\scene_art_wave2\v1\event_crisis_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T03:29:51.039050+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a839998b29e3
+    file_path: art_generated\scene_art_wave2\v1\event_crisis_v2_1536.png
+    cost_usd: 0.09
+  - version: v3
+    generated_at: '2026-07-21T03:30:40.406637+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a839998b29e3
+    file_path: art_generated\scene_art_wave2\v1\event_crisis_v3_1536.png
+    cost_usd: 0.09
+  - version: v4
+    generated_at: '2026-07-21T03:31:25.989651+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a839998b29e3
+    file_path: art_generated\scene_art_wave2\v1\event_crisis_v4_1536.png
+    cost_usd: 0.09
+- id: event_opportunity
+  category: event_hero
+  display_name: Event Hero -- Opportunity
+  status: generated
+  theme: event_hero
+  prompt_tail: 'a hopeful turning point: a funding or partnership win arriving in
+    the lab, warm amber light spilling generously across tidied desks, a just-concluded
+    handshake implied (two chairs pulled together, an open folder and a good bottle
+    on the table, only backs and shoulders and silhouettes, no close-up faces); the
+    CRT terminals glow a steady confident amber, a wide window shows a calm dawn city
+    skyline in cool teal; quietly optimistic and warm, cozy competence rewarded, no
+    red and no alarm, the amber glow rich but the palette still desaturated teal and
+    olive'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:32:14.356028+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 433a520a7326
+    file_path: art_generated\scene_art_wave2\v1\event_opportunity_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T03:33:02.908781+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 433a520a7326
+    file_path: art_generated\scene_art_wave2\v1\event_opportunity_v2_1536.png
+    cost_usd: 0.09
+  - version: v3
+    generated_at: '2026-07-21T03:33:49.783965+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 433a520a7326
+    file_path: art_generated\scene_art_wave2\v1\event_opportunity_v3_1536.png
+    cost_usd: 0.09
+  - version: v4
+    generated_at: '2026-07-21T03:34:41.020410+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 433a520a7326
+    file_path: art_generated\scene_art_wave2\v1\event_opportunity_v4_1536.png
+    cost_usd: 0.09
+- id: event_board
+  category: event_hero
+  display_name: Event Hero -- Board / Governance
+  status: generated
+  theme: event_hero
+  prompt_tail: 'a governance moment framed for authority and scrutiny, seen straight-on
+    down the length of a dark boardroom: a row of shadowed board members seated in
+    silhouette behind a long worn-metal table, backlit by a wall of cold teal window
+    light and one low amber desk lamp, faces in shadow (backs, shoulders and silhouettes
+    only, no close-up faces); in the immediate foreground the player''s single empty
+    chair faces them across the table as if at a hearing; stacks of dossiers and one
+    glowing amber terminal on the table; institutional, weighty and quietly intimidating,
+    deep shadow, desaturated teal and olive with one amber accent -- a hearing composition,
+    NOT a ceremonial handover'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:35:04.055794+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4d3f95b981ed
+    file_path: art_generated\scene_art_wave2\v1\event_board_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T03:35:51.649470+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4d3f95b981ed
+    file_path: art_generated\scene_art_wave2\v1\event_board_v2_1536.png
+    cost_usd: 0.09
+  - version: v3
+    generated_at: '2026-07-21T03:36:34.119335+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4d3f95b981ed
+    file_path: art_generated\scene_art_wave2\v1\event_board_v3_1536.png
+    cost_usd: 0.09
+  - version: v4
+    generated_at: '2026-07-21T03:37:26.821724+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4d3f95b981ed
+    file_path: art_generated\scene_art_wave2\v1\event_board_v4_1536.png
+    cost_usd: 0.09
+- id: event_secret
+  category: event_hero
+  display_name: Event Hero -- Secret / Blackmail
+  status: generated
+  theme: event_hero
+  prompt_tail: 'a clandestine discovery: a dim records archive late at night, tall
+    rows of filing cabinets and boxed documents receding into darkness, lit by a single
+    warm amber desk lamp throwing a tight pool of light onto an open drawer; in that
+    pool one unlabeled manila folder that should not exist, pulled slightly proud
+    of the others; a lone empty chair, the faint shadow of a figure just off-frame;
+    the rest of the room near-black with cold teal moonlight from a high window; tense,
+    secretive, Papers-Please deadpan dread, the amber lamp the only saturated accent'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:38:11.045562+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 45ed836f6bc1
+    file_path: art_generated\scene_art_wave2\v1\event_secret_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T03:38:37.894911+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 45ed836f6bc1
+    file_path: art_generated\scene_art_wave2\v1\event_secret_v2_1536.png
+    cost_usd: 0.09
+  - version: v3
+    generated_at: '2026-07-21T03:38:58.744580+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 45ed836f6bc1
+    file_path: art_generated\scene_art_wave2\v1\event_secret_v3_1536.png
+    cost_usd: 0.09
+  - version: v4
+    generated_at: '2026-07-21T03:39:18.057427+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 45ed836f6bc1
+    file_path: art_generated\scene_art_wave2\v1\event_secret_v4_1536.png
+    cost_usd: 0.09
+- id: office_wide_day
+  category: office_backdrop
+  display_name: Office Backdrop -- Wide, Overcast Day
+  status: generated
+  theme: office_backdrop
+  prompt_tail: 'a wide establishing view of a lived-in AI-safety-lab open-plan office
+    in flat overcast daytime light: rows of worn desks with chunky CRT terminals and
+    flat panels powered to a soft subdued amber, whiteboards with faint equations,
+    server racks along the back wall, potted plants, mugs and cable clutter, cool
+    teal daylight from a bank of windows; calm cosy competence, medium density'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:45:16.602482+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: dd0c1b4db6f4
+    file_path: art_generated\scene_art_wave2\v1\office_wide_day_1536.png
+    cost_usd: 0.09
+- id: office_desk_forward_night
+  category: office_backdrop
+  display_name: Office Backdrop -- Desk-forward, Night
+  status: generated
+  theme: office_backdrop
+  prompt_tail: 'a desk-forward night view from just behind a cluttered foreground
+    desk in an AI-safety lab: one CRT terminal glowing a soft subdued amber, mug,
+    sticky notes and cables, the rest of the open-plan office receding into warm dim
+    shadow with a few distant softly-powered monitors, one window showing a quiet
+    dark city; intimate late-night focus, warm and subdued, low contrast'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:46:13.745846+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 1984aa223cbd
+    file_path: art_generated\scene_art_wave2\v1\office_desk_forward_night_1536.png
+    cost_usd: 0.09
+- id: office_wide_dawn
+  category: office_backdrop
+  display_name: Office Backdrop -- Wide, Sparse Dawn
+  status: generated
+  theme: office_backdrop
+  prompt_tail: 'a wide sparse view of a quiet AI-safety lab office at early dawn:
+    mostly empty desks, one or two softly-glowing amber terminals, long calm shadows,
+    cool pale teal light just beginning at the windows, a lone empty ergonomic chair,
+    very low clutter; still, unhurried, cosy, plenty of calm dark floor space'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:46:58.706457+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 98a63ba8b75f
+    file_path: art_generated\scene_art_wave2\v1\office_wide_dawn_1536.png
+    cost_usd: 0.09
+- id: office_corner_dusk
+  category: office_backdrop
+  display_name: Office Backdrop -- Corner, Dense Dusk
+  status: generated
+  theme: office_backdrop
+  prompt_tail: 'a corner view of a densely lived-in AI-safety lab office at dusk,
+    two walls meeting: packed shelves of binders and hardware, a cluster of worn desks
+    with several CRT terminals glowing muted amber, a coat rack, a water cooler, whiteboards,
+    warm subdued interior light against deep teal-blue dusk in the windows; busy but
+    calm, cosy-grime, high density'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:47:44.371040+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9faa5b16014c
+    file_path: art_generated\scene_art_wave2\v1\office_corner_dusk_1536.png
+    cost_usd: 0.09
+- id: office_lab_aisle
+  category: office_backdrop
+  display_name: Office Backdrop -- Server/Lab Aisle
+  status: generated
+  theme: office_backdrop
+  prompt_tail: 'a wide view down a utilitarian lab-and-server aisle in an AI-safety
+    org: tall server racks with faint blinking indicator lights on one side, a long
+    bench of terminals and equipment on the other, cable trays overhead, cool institutional
+    teal-green ambient light with a few warm amber screen glows, worn concrete and
+    painted-metal surfaces; quiet, humming, low-key, medium density'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:48:32.651312+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4d4539eb122d
+    file_path: art_generated\scene_art_wave2\v1\office_lab_aisle_1536.png
+    cost_usd: 0.09
+- id: office_mezzanine
+  category: office_backdrop
+  display_name: Office Backdrop -- Mezzanine Overview
+  status: generated
+  theme: office_backdrop
+  prompt_tail: 'a high wide overview looking gently down across an open-plan AI-safety
+    lab office from a mezzanine: clusters of desks and softly-glowing amber terminals
+    arranged below, partition walls, a large window wall with flat cool teal daylight,
+    subdued and orderly with plenty of calm floor space; establishing, recessive,
+    cosy competence, low density'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:48:55.280020+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: c8e7c16915f5
+    file_path: art_generated\scene_art_wave2\v1\office_mezzanine_1536.png
+    cost_usd: 0.09
+- id: records_stacks
+  category: records_room
+  display_name: Records Room -- Filing Stacks (archive end)
+  status: generated
+  theme: records_archive
+  prompt_tail: 'a deep institutional records room: tall rows of grey filing cabinets
+    and archive boxes receding into shadow under flickering fluorescent tubes, aisles
+    of numbered drawers, a rolling ladder, worn linoleum floor, cool desaturated teal-green
+    institutional light with one warm amber desk lamp at a check-in desk in the foreground;
+    quiet, bureaucratic, Papers-Please deadpan'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:17:57.195203+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 75ff2eee45d3
+    file_path: art_generated\scene_art_wave2\v1\records_stacks_1536.png
+    cost_usd: 0.09
+- id: records_crt_ranktable
+  category: records_room
+  display_name: Records Room -- CRT Rank Table (highscore end)
+  status: generated
+  theme: records_archive
+  prompt_tail: an institutional records room dominated by an old CRT terminal on a
+    worn desk, its amber phosphor screen filled with a glowing ranked table of rows
+    and numbers -- a high-score leaderboard rendered as a records readout, illegible
+    fake glyphs and no real text; filing cabinets and a microfiche reader behind it
+    in cool teal shadow, the amber monitor glow the only saturated accent; retro-institutional,
+    deadpan
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:18:51.757877+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 21dd938825a4
+    file_path: art_generated\scene_art_wave2\v1\records_crt_ranktable_1536.png
+    cost_usd: 0.09
+- id: records_brass_plaques
+  category: records_room
+  display_name: Records Room -- Brass Honour Plaques
+  status: generated
+  theme: records_archive
+  prompt_tail: 'a wall of engraved brass honour plaques and name-plates in an institutional
+    records room, a hall-of-records tribute wall: rows of small tarnished brass rectangles
+    catching a warm amber picture-light, some plaques hanging crooked, blank or corroded
+    in a subtly wrong way, cool teal shadow around them, a worn bench below; ceremonial
+    but decayed, quietly ominous, desaturated, no readable text'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:19:35.826634+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 1d6b0135efa5
+    file_path: art_generated\scene_art_wave2\v1\records_brass_plaques_1536.png
+    cost_usd: 0.09
+- id: records_microfiche
+  category: records_room
+  display_name: Records Room -- Microfiche Reading Room
+  status: generated
+  theme: records_archive
+  prompt_tail: 'an institutional microfiche and microfilm reading room: a row of backlit
+    microfiche reader machines glowing pale amber-white on a long desk, spools and
+    card catalogues, a card-index cabinet with many tiny drawers, cool teal-green
+    fluorescent ambient, worn institutional surfaces, one reader screen brighter than
+    the rest; hushed, bureaucratic, retro'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:20:26.144381+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4bcb3304ce63
+    file_path: art_generated\scene_art_wave2\v1\records_microfiche_1536.png
+    cost_usd: 0.09
+- id: records_trophy_terminal
+  category: records_room
+  display_name: Records Room -- Trophy Cabinet + Rank Terminal (mid axis)
+  status: generated
+  theme: records_archive
+  prompt_tail: 'a records room that doubles as a hall of fame: a glass-fronted trophy
+    and ledger cabinet holding worn awards and bound record-books beside a chunky
+    CRT terminal showing a glowing amber ranked list (fake glyphs, no real text),
+    filing stacks behind, a brass plaque above the cabinet, cool teal institutional
+    light with a single warm amber accent from the screen; ceremonial-bureaucratic,
+    deadpan'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:21:14.303058+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 200a271e7d73
+    file_path: art_generated\scene_art_wave2\v1\records_trophy_terminal_1536.png
+    cost_usd: 0.09
+- id: records_vault
+  category: records_room
+  display_name: Records Room -- Secure Records Vault
+  status: generated
+  theme: records_archive
+  prompt_tail: 'a secure institutional records vault: a heavy open vault door leading
+    to rows of locked record drawers, a central pedestal holding a single leather-bound
+    ledger under a warm amber spotlight, cool teal emergency-lit shadow beyond, a
+    CRT terminal on a lectern displaying an amber ranked index (illegible glyphs,
+    no text); weighty and official, the amber ledger-light the only saturated accent,
+    Tarkov-worn brass and steel'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:22:08.108814+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 95fab0754b84
+    file_path: art_generated\scene_art_wave2\v1\records_vault_1536.png
+    cost_usd: 0.09
