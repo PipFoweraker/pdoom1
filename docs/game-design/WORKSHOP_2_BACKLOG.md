@@ -68,6 +68,16 @@
 - **Promoted: conference/travel design** *(ADR-0010)* — now the mandatory middle of the
   research→adoption value chain, no longer flavor; design with DQ-9 receivables +
   ADR-0007 counterparties.
+- **DQ-15 ext · Portrait variant pools + seeded assignment** *(Pip 2026-07-21, batch
+  verdicts)* -- each archetype carries a POOL of appearance variants (gender, ethnicity
+  -- the representation rule made mechanical) with per-run random assignment and
+  hot-swap capability; Pip kept both style-pole bests deliberately as pool stock (the
+  CRT-dossier v2 set promoted as the current consistent face of the roster). OPEN
+  QUESTION with teeth: assignment must respect determinism -- same seed => same staff
+  (DQ-4 ruling), so variant assignment is presumably drawn from the seeded stream (a
+  cosmetic step that must not perturb existing RNG ordering) or keyed off researcher
+  identity hash. Decide at the Friday portrait-system conversation (#758). Interacts:
+  DQ-15 roster, DQ-35 cosmetics, ADR-0006 replay.
 - **DQ-16 · Conference-attendance subgame** *(ADR-0014)* — Pip's flagged ambition
   ("that's how critical I think these are"). v1 ships attendance + yields only; revisit
   when playtests show conference turns feel thin.
