@@ -35,13 +35,14 @@
 | DQ-25 | Desperation-lever revisit | open | 298 |
 | DQ-26 | VC/equity depth revisit | open | 320 |
 | DQ-27 | Mortality guarantee -- where is it ratified? | open | 328 |
-| DQ-28 | Game "phases" as vocabulary + scenario-jump testing | RESOLVED | 650 |
+| DQ-28 | Game "phases" as vocabulary + scenario-jump testing | RESOLVED | 659 |
 | DQ-29 | Cover-up debt | open | 350 |
 | DQ-30 | Economic cycles | open | 359 |
 | DQ-31 | Org/actor taxonomy -- tags, not enums | open | 367 |
 | DQ-32 | News feedline + SA-priced information flow | open | 380 |
 | DQ-33 | Content-pool ladder (artefact promotion/relegation) | open | 399 |
 | DQ-34 | Leaderboard disclosure tiers: score vs reconstructable play | open | 418 |
-| DQ-35 | Cosmetic progression + community insignia | open | 433 |
+| DQ-35 | Cosmetic progression + community insignia | open | 442 |
+| DQ-35 ext | Scene/art unlocks + conditional event art | open | 433 |
 
-Total: 36 DQs -- 30 open, 6 with a terminal or advanced status.
+Total: 37 DQs -- 31 open, 6 with a terminal or advanced status.

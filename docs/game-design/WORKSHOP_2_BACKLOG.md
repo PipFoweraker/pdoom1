@@ -430,6 +430,15 @@ more interesting."*
   publishes, not about new formats. Interacts: DQ-3 (cross-version boards), DQ-11
   (forks), DQ-32 (SA-priced info), DQ-33 (provenance), and the #712 vision doc
   (held open for Pip's dedicated pass).
+- **DQ-35 ext · Scene/art unlocks + conditional event art** *(Pip 2026-07-21, scene-wave
+  verdicts -- "directionally very strong")* -- concrete mechanisms for DQ-35: (a) event
+  hero-art VARIANTS as unlockables (crisis V3 as achievement unlock; records_vault as
+  unlocked leaderboard ground; records_trophy_terminal as a post-game achievements
+  surface); (b) CONDITIONAL art selection -- e.g. opportunity events show V2 vs V4
+  depending on likelihood of success -- art as legible world-state signal; (c) backdrop
+  rotation across keepers. Also RULED: board/council art must be menacing but VARIED
+  (representation rule extends to authority figures); board members/overseers get
+  characterised over time (ties DQ-31 actor tags).
 - **DQ-35 · Cosmetic progression + community insignia** *(Pip 2026-07-21, pinned for
   next workshop)* — background theory of rewarding progress: one of the few things Pip
   likes in CoD is its appeasement of hardcore grinders via **lots of little cosmetic
