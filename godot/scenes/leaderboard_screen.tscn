@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c8jkm2s8cdp4t"]
+[gd_scene load_steps=3 format=3 uid="uid://c8jkm2s8cdp4t"]
 
 [ext_resource type="Script" path="res://scripts/ui/leaderboard_screen.gd" id="1_leaderboard"]
+[ext_resource type="Theme" uid="uid://dmenuthemepd001" path="res://theme/menu_theme.tres" id="2_theme"]
 
 [node name="LeaderboardScreen" type="Control"]
 layout_mode = 3
@@ -9,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_leaderboard")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -51,7 +53,7 @@ theme_override_constants/separation = 10
 
 [node name="Title" type="Label" parent="MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
-text = "🏆 Leaderboard 🏆"
+text = "Leaderboard"
 theme_override_font_sizes/font_size = 40
 horizontal_alignment = 1
 

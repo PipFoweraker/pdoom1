@@ -1,54 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cfmfqvp1h8k3d"]
+[gd_scene load_steps=3 format=3 uid="uid://cfmfqvp1h8k3d"]
 
 [ext_resource type="Script" path="res://scripts/ui/config_confirmation.gd" id="1_config"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
-bg_color = Color(0.18, 0.145, 0.278, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.09, 0.04, 0.11, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
-bg_color = Color(0.231, 0.192, 0.349, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.91, 0.64, 0.24, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
-bg_color = Color(0.106, 0.078, 0.165, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.965, 0.659, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_focus"]
-bg_color = Color(0.18, 0.145, 0.278, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.965, 0.659, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[ext_resource type="Theme" uid="uid://dmenuthemepd001" path="res://theme/menu_theme.tres" id="2_theme"]
 
 [node name="ConfigConfirmation" type="Control"]
 layout_mode = 3
@@ -57,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_config")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -233,11 +187,9 @@ alignment = 1
 [node name="LaunchButton" type="Button" parent="Panel/VBox/ButtonRow"]
 custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
+theme_type_variation = &"PrimaryButton"
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_hover")
-theme_override_styles/hover = SubResource("StyleBoxFlat_focus")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 text = "Launch Lab"
 
 [node name="CustomizeButton" type="Button" parent="Panel/VBox/ButtonRow"]
@@ -245,9 +197,6 @@ custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 text = "Customize"
 
 [node name="BackButton" type="Button" parent="Panel/VBox/ButtonRow"]
@@ -255,9 +204,6 @@ custom_minimum_size = Vector2(100, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 20
-theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 text = "Back"
 
 [connection signal="pressed" from="Panel/VBox/ButtonRow/LaunchButton" to="." method="_on_launch_pressed"]
