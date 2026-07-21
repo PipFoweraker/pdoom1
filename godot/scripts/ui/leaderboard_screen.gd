@@ -1,5 +1,12 @@
 extends Control
 ## Full Leaderboard Screen - Comprehensive view of all scores with filtering and pagination
+##
+## TODO (#743 / Pip ruling 2026-07-21): this screen becomes an "institutional records
+## room" -- an archives feel with classic high-score-table callbacks (ledger/stamped
+## register vibe), NOT the flat menu chrome. Deferred: the strong theme decisions here
+## are downstream of the title-screen theme pass. For now it only inherits the shared
+## menu_theme.tres (root Theme) so its buttons/dropdown/panel stop reading as unthemed
+## default gray; the deeper records-room re-skin lands after the title screen settles.
 
 var LeaderboardClass = preload("res://scripts/leaderboard.gd")
 var current_seed: String = "all"

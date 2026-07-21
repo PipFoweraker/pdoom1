@@ -6,17 +6,17 @@ extends Node
 var current_theme: String = "default"
 var themes: Dictionary = {}
 
-# Doom color ramp (#512) — bushfire-style: ONE green safe zone, then a long graded
-# descent through yellow → orange → red → crimson → purple → near-black. Smoothly lerped
+# Doom color ramp (#512) -- bushfire-style: ONE green safe zone, then a long graded
+# descent through yellow -> orange -> red -> crimson -> purple -> near-black. Smoothly lerped
 # between these anchors. Single source of truth for the whole game's doom coloring.
 const DOOM_STOPS := [
 	{"at": 0.0,   "color": Color(0.30, 0.80, 0.35)},  # NOMINAL (green)
-	{"at": 15.0,  "color": Color(0.30, 0.80, 0.35)},  # hold green — the one safe zone
+	{"at": 15.0,  "color": Color(0.30, 0.80, 0.35)},  # hold green -- the one safe zone
 	{"at": 30.0,  "color": Color(0.88, 0.78, 0.18)},  # ELEVATED (yellow)
 	{"at": 45.0,  "color": Color(0.92, 0.50, 0.13)},  # HIGH (orange)
 	{"at": 60.0,  "color": Color(0.82, 0.20, 0.17)},  # SEVERE (red)
 	{"at": 74.0,  "color": Color(0.48, 0.07, 0.14)},  # EXTREME (dark crimson)
-	{"at": 87.0,  "color": Color(0.40, 0.06, 0.48)},  # CATASTROPHIC (deep purple — step above red)
+	{"at": 87.0,  "color": Color(0.40, 0.06, 0.48)},  # CATASTROPHIC (deep purple -- step above red)
 	{"at": 100.0, "color": Color(0.28, 0.03, 0.46)},  # TERMINAL (saturated dark purple, replaces black)
 ]
 
@@ -265,50 +265,64 @@ func create_button(text: String, size: Vector2 = Vector2.ZERO) -> Button:
 	apply_button_style(button)
 	return button
 
-## Apply button style to existing button (Style Guide colors)
+## Shared menu chrome Theme (issue #743) -- the single source of truth for menu/screen
+## styleboxes. Cached so runtime-created buttons pull the SAME palette-aligned chrome the
+## menu scenes use, keeping a palette swap a one-file change (menu_theme.tres).
+var _menu_theme: Theme = null
+
+func _get_menu_theme() -> Theme:
+	if _menu_theme == null:
+		_menu_theme = load("res://theme/menu_theme.tres")
+	return _menu_theme
+
+## Apply button style to existing button. Sources the doom-indigo / aubergine-outline /
+## cozy-amber register from menu_theme.tres. Retired the pre-palette-doc "Style Guide"
+## STEEL_DARK / ELECTRIC_BLUE / NEON_MAGENTA colors (#743) -- runtime buttons no longer
+## get electric blue + neon magenta.
 func apply_button_style(button: Button):
-	# Style Guide colors
-	var STEEL_DARK = Color(0.110, 0.153, 0.188)
-	var ELECTRIC_BLUE = Color(0.204, 0.596, 0.859)
-	var NEON_MAGENTA = Color(0.929, 0.263, 0.792)
+	var mt := _get_menu_theme()
+	if mt != null:
+		for s in ["normal", "hover", "pressed", "focus", "disabled"]:
+			if mt.has_stylebox(s, "Button"):
+				button.add_theme_stylebox_override(s, mt.get_stylebox(s, "Button"))
+		if mt.has_color("font_color", "Button"):
+			button.add_theme_color_override("font_color", mt.get_color("font_color", "Button"))
+		if mt.has_color("font_disabled_color", "Button"):
+			button.add_theme_color_override("font_disabled_color", mt.get_color("font_disabled_color", "Button"))
+		button.add_theme_font_size_override("font_size", 12)
+		return
 
-	# Create normal state - dark background with blue border
+	# Fallback (menu_theme.tres unavailable): build the same palette-aligned register inline.
+	var INDIGO := Color(0.18, 0.145, 0.278)
+	var INDIGO_HOVER := Color(0.231, 0.192, 0.349)
+	var INDIGO_PRESSED := Color(0.106, 0.078, 0.165)
+	var AUBERGINE := Color(0.09, 0.04, 0.11)
+	var AMBER := Color(0.91, 0.64, 0.24)
+	var AMBER_TOKEN := Color(0.965, 0.659, 0)
+
 	var style_normal = StyleBoxFlat.new()
-	style_normal.bg_color = STEEL_DARK
-	style_normal.border_color = ELECTRIC_BLUE
-	style_normal.border_width_left = 2
-	style_normal.border_width_top = 2
-	style_normal.border_width_right = 2
-	style_normal.border_width_bottom = 2
-	style_normal.corner_radius_top_left = 4
-	style_normal.corner_radius_top_right = 4
-	style_normal.corner_radius_bottom_left = 4
-	style_normal.corner_radius_bottom_right = 4
+	style_normal.bg_color = INDIGO
+	style_normal.border_color = AUBERGINE
+	style_normal.set_border_width_all(2)
+	style_normal.set_corner_radius_all(4)
 
-	# Create hover state - brighter blue glow
 	var style_hover = style_normal.duplicate()
-	style_hover.bg_color = STEEL_DARK.lightened(0.1)
-	style_hover.border_color = ELECTRIC_BLUE.lightened(0.2)
-	style_hover.shadow_color = Color(ELECTRIC_BLUE.r, ELECTRIC_BLUE.g, ELECTRIC_BLUE.b, 0.3)
-	style_hover.shadow_size = 4
+	style_hover.bg_color = INDIGO_HOVER
+	style_hover.border_color = AMBER
 
-	# Create pressed state - magenta accent
 	var style_pressed = style_normal.duplicate()
-	style_pressed.bg_color = STEEL_DARK.lightened(0.15)
-	style_pressed.border_color = NEON_MAGENTA
+	style_pressed.bg_color = INDIGO_PRESSED
+	style_pressed.border_color = AMBER_TOKEN
 
-	# Disabled state - grey and transparent
 	var style_disabled = style_normal.duplicate()
-	style_disabled.bg_color = STEEL_DARK.darkened(0.2)
-	style_disabled.border_color = Color(0.4, 0.4, 0.5)
+	style_disabled.bg_color = Color(0.1, 0.08, 0.13)
+	style_disabled.border_color = Color(0.3, 0.28, 0.34)
 
-	# Apply styles
 	button.add_theme_stylebox_override("normal", style_normal)
 	button.add_theme_stylebox_override("hover", style_hover)
 	button.add_theme_stylebox_override("pressed", style_pressed)
 	button.add_theme_stylebox_override("disabled", style_disabled)
 
-	# Font styling (white text, 12px)
 	button.add_theme_color_override("font_color", Color.WHITE)
 	button.add_theme_color_override("font_disabled_color", Color(0.5, 0.5, 0.5))
 	button.add_theme_font_size_override("font_size", 12)
@@ -360,7 +374,7 @@ func apply_label_style(label: Label, size_type: String = "body"):
 	label.add_theme_color_override("font_color", theme.colors["text"])
 	label.add_theme_font_size_override("font_size", font_size)
 
-## Get doom color based on percentage — semantic FILL color (can be near-black at terminal).
+## Get doom color based on percentage -- semantic FILL color (can be near-black at terminal).
 ## Use for fills and zone bands. For strokes/text/arcs use get_doom_stroke_color (stays legible).
 func get_doom_color(doom_percent: float) -> Color:
 	doom_percent = clampf(doom_percent, 0.0, 100.0)

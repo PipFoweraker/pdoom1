@@ -565,6 +565,29 @@ menu_title = Color(0.914, 0.949, 0.949)        # #E9F2F2 off-white titles
 external_link = Color(0.118, 0.765, 0.702)     # #1EC3B3 teal (AI Safety link)
 ```
 
+### Consolidated into `godot/theme/menu_theme.tres` (#743)
+
+These tokens now live in ONE shared `Theme` resource, `godot/theme/menu_theme.tres`,
+applied at the root `Control` of every menu/screen (welcome, settings, pregame,
+config-confirmation, player-guide, pause, keybind, leaderboard, game-over). It
+replaced the five per-scene stylebox copies and also themes the stock controls
+that used to fall back to default Godot gray: `Button`, `OptionButton` (+ its
+`PopupMenu`), `HSlider`, `CheckButton`/`CheckBox`, `LineEdit`, and `Panel`. A
+palette swap is now a one-file edit here (the chrome-vs-data asset policy).
+
+- Emphasis CTAs (pregame/config-confirm "Launch Lab") use the `PrimaryButton`
+  theme type variation (amber-bordered lighter fill at rest) instead of a bespoke
+  inline stylebox.
+- Runtime-created buttons (`ThemeManager.apply_button_style`) pull their chrome
+  from this same resource, so the old pre-palette STEEL_DARK/ELECTRIC_BLUE/
+  NEON_MAGENTA "Style Guide" colors are retired.
+- Emoji stripped from menu labels to the ASCII house register (welcome
+  "Leaderboard"/"AI Safety Info", pregame "Roll", leaderboard "Leaderboard"
+  title, submenu close "X").
+- Leaderboard = DEFERRED "institutional records room" (archives + classic
+  high-score callbacks); only inherits the shared Theme for now. The deep re-skin
+  lands after the title-screen theme decisions (Pip ruling 2026-07-21).
+
 Rules of thumb:
 - Resting buttons get the dark heavy outline; amber appears only on
   hover/press/focus and on the active modal frame.
