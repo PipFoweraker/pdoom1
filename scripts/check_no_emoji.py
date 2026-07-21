@@ -25,18 +25,10 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 GODOT = PROJECT_ROOT / "godot"
 
-# --- .tscn temporary exclusions -------------------------------------------
-# These menu/label scenes still carry emoji. The shared-Theme workstream
-# (issue #743) is restyling these exact scenes and will strip the glyphs.
-# TODO(#743): delete these entries once the theme lane lands so the hook
-# enforces .tscn too. Do NOT edit these files here -- double-editing conflicts
-# with #743.
-TSCN_EXCLUDE = {
-    "godot/scenes/leaderboard_screen.tscn",
-    "godot/scenes/pregame_setup.tscn",
-    "godot/scenes/welcome.tscn",
-    "godot/scenes/ui/employee_screen.tscn",
-}
+# --- .tscn exclusions ------------------------------------------------------
+# None. The shared-Theme lane (issue #743, merged 2026-07-21) stripped the
+# last emoji from the menu scenes, so the hook enforces every .tscn.
+TSCN_EXCLUDE: set[str] = set()
 
 
 def is_emoji(cp: int) -> bool:
@@ -113,7 +105,7 @@ def main() -> int:
 
     print("[no-emoji] BLOCKING: non-ASCII / emoji found (issue #744):")
     for rel, ln, col, cp in violations:
-        print("  %s:%d:%d  U+%04X %r" % (rel, ln, col, cp, chr(cp)))
+        print("  %s:%d:%d  U+%04X" % (rel, ln, col, cp))
     print(
         "\n%d violation(s). Replace with ASCII: em-dash -> '--', arrows -> '->',\n"
         "ellipsis -> '...', bullets/dots -> '-'/'*', emoji -> remove or a [TAG].\n"
