@@ -39,7 +39,40 @@
   has to survive SmartScreen / taskbar (issue #732). These are procedural stopgaps in the
   locked palette (<code>docs/art/PALETTE_AND_DOOM_INTENSITY.md</code>); the gpt-image-1 pipeline
   is the higher-fidelity path once <code>OPENAI_API_KEY</code> is available.</p>
+  <p class="note">Two passes are shown: the <strong>generative pass (gpt-image-1.5)</strong>
+  first, then the <strong>procedural set</strong> kept below for comparison.</p>
 </header>
+
+<h2 style="color:#f6a800">GENERATIVE PASS -- gpt-image-1.5</h2>
+<p class="note">Higher-fidelity versions via the real OpenAI image pipeline
+(<code>tools/art_review/gen_generative_pass.py</code>), same locked palette and the
+cozy-grimdark/deadpan brief (no skull/death-metal). Click for the 512px image; small
+tile is the 32px render. (1024px masters are 1.3-2.3 MB each, over the repo's asset-size
+limit, so 512 is the committed max for this pass.) Note: <code>gen_cat_loaf</code> /
+<code>gen_cat_sitting</code> came back on a light ground rather than the dark aubergine
+(model choice) -- kept for variety.</p>
+<div class="grid">
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_cat_face_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_cat_face_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_cat_face_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_cat_face_48.png" width="48"></div><div class="lbl">gen_cat_face</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_cat_doom_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_cat_doom_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_cat_doom_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_cat_doom_48.png" width="48"></div><div class="lbl">gen_cat_doom</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_cat_sitting_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_cat_sitting_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_cat_sitting_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_cat_sitting_48.png" width="48"></div><div class="lbl">gen_cat_sitting</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_cat_loaf_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_cat_loaf_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_cat_loaf_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_cat_loaf_48.png" width="48"></div><div class="lbl">gen_cat_loaf</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_seal_star_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_seal_star_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_seal_star_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_seal_star_48.png" width="48"></div><div class="lbl">gen_seal_star</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_seal_hourglass_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_seal_hourglass_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_seal_hourglass_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_seal_hourglass_48.png" width="48"></div><div class="lbl">gen_seal_hourglass</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_seal_check_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_seal_check_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_seal_check_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_seal_check_48.png" width="48"></div><div class="lbl">gen_seal_check</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_seal_paper_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_seal_paper_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_seal_paper_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_seal_paper_48.png" width="48"></div><div class="lbl">gen_seal_paper</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_dial_clock_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_dial_clock_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_dial_clock_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_dial_clock_48.png" width="48"></div><div class="lbl">gen_dial_clock</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/gen_dial_half_512.png"><img class="big" src="../../art_source/iconset_2026-07-21/gen_dial_half_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/gen_dial_half_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/gen_dial_half_48.png" width="48"></div><div class="lbl">gen_dial_half</div></div>
+</div>
+<p class="note">Generative settings grounds (512x512, painterly worn panel -- these match the
+sage panel's crackle-peel + screws closely, warm register):</p>
+<div class="grid bg">
+  <div class="card kept"><img class="big" src="../../godot/assets/textures/surfaces/tex_painted_metal_panel_512.png"><div class="lbl">CURRENT: tex_painted_metal_panel (sage)</div></div>
+  <div class="card"><a href="../../art_source/settings_bg_2026-07-21/gen_bg_warm_ochre_512.png"><img class="big" src="../../art_source/settings_bg_2026-07-21/gen_bg_warm_ochre_512.png"></a><div class="lbl">gen_bg_warm_ochre</div></div>
+  <div class="card"><a href="../../art_source/settings_bg_2026-07-21/gen_bg_warm_terracotta_512.png"><img class="big" src="../../art_source/settings_bg_2026-07-21/gen_bg_warm_terracotta_512.png"></a><div class="lbl">gen_bg_warm_terracotta</div></div>
+  <div class="card"><a href="../../art_source/settings_bg_2026-07-21/gen_bg_warm_bakelite_512.png"><img class="big" src="../../art_source/settings_bg_2026-07-21/gen_bg_warm_bakelite_512.png"></a><div class="lbl">gen_bg_warm_bakelite</div></div>
+</div>
+
+<h2 style="border-top:2px solid #3a2e22;padding-top:16px">PROCEDURAL SET (no-API, kept for comparison)</h2>
 
 <h2>1. Office cat motif</h2>
 <p class="note">The flagship mood-tell / charm hinge. Amber cat on warm-dark ground; the
