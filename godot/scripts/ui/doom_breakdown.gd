@@ -1,6 +1,6 @@
 extends VBoxContainer
 class_name DoomBreakdown
-## Doom "blow-by-blow" — colour-coded per-source breakdown of why doom moved this turn (#578).
+## Doom "blow-by-blow" -- colour-coded per-source breakdown of why doom moved this turn (#578).
 ##
 ## Surfaces state["doom_system"]["doom_sources"] (already computed by DoomSystem) as compact,
 ## coloured lines near the doom meter / trend graph, like old turn-based combat logs
@@ -10,7 +10,7 @@ class_name DoomBreakdown
 ## The pure builder build_entries() and the classify()/label_for() helpers are unit-tested
 ## (test_doom_breakdown.gd); the actual on-screen layout/legibility still needs a human eye.
 
-## Values whose magnitude is below this round to 0.0 at one decimal place — treat as "no move".
+## Values whose magnitude is below this round to 0.0 at one decimal place -- treat as "no move".
 const EPSILON := 0.05
 
 ## Human-readable labels for known source keys. Unknown keys fall back to Capitalized words,
@@ -61,9 +61,9 @@ static func classify(value: float) -> int:
 ## Colour for a classified sign, reusing the shared theme semantic colours.
 static func color_for_sign(sign_value: int) -> Color:
 	if sign_value > 0:
-		return ThemeManager.get_color("error")     # red — pushing doom up
+		return ThemeManager.get_color("error")     # red -- pushing doom up
 	if sign_value < 0:
-		return ThemeManager.get_color("success")   # green — pulling doom down
+		return ThemeManager.get_color("success")   # green -- pulling doom down
 	return ThemeManager.get_color("text_dim")
 
 ## Pure builder: given a doom_sources dict, return the ordered per-source display entries.

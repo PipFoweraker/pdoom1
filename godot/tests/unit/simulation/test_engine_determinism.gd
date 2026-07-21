@@ -1,5 +1,5 @@
 extends GutTest
-## WS-0 — engine determinism guard.
+## WS-0 -- engine determinism guard.
 ##
 ## Same seed + same (baseline, no-action) inputs must produce a BYTE-IDENTICAL final
 ## state across two runs in the same process. This is the invariant that ADR-0002/0006

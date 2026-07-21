@@ -1,5 +1,5 @@
 extends GutTest
-## Tests for the DEV MODE overlay (backslash) — keybind registration + the pure readout builder.
+## Tests for the DEV MODE overlay (backslash) -- keybind registration + the pure readout builder.
 ##
 ## Covers: the dev_mode action is registered on backslash and the old backslash conflicts were
 ## moved off it; pressing backslash fires dev_mode_toggled; and DevModeReadout.build_sections()
@@ -100,7 +100,7 @@ func test_overlay_resolves_live_manager_from_main_ui():
 
 func test_render_populates_sections_from_live_state():
 	# Reproduces #600: with a live-shaped GameState reachable via main_ui.game_manager, the
-	# readout must build the full multi-section dump — not the single "No active game" placeholder.
+	# readout must build the full multi-section dump -- not the single "No active game" placeholder.
 	var overlay = DevModeOverlay.new()
 	var gm = _FakeGM.new()
 	gm.state = GameState.new()  # _init + reset() give working doom/risk/rival subsystems
@@ -111,7 +111,7 @@ func test_render_populates_sections_from_live_state():
 
 	overlay._render()
 
-	# Null state → 1 section → 3 nodes (head + body + separator). A live state renders ~7
+	# Null state -> 1 section -> 3 nodes (head + body + separator). A live state renders ~7
 	# sections. Anything well above 3 proves the live path populated, not the placeholder.
 	assert_gt(overlay._info_vbox.get_child_count(), 6,
 		"live state must render multiple populated sections, not the null placeholder")

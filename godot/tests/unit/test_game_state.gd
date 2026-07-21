@@ -10,7 +10,7 @@ func test_game_state_initialization_defaults():
 	assert_eq(state.research, 0.0, "Should start with 0 research")
 	assert_eq(state.papers, 0.0, "Should start with 0 papers")
 	assert_eq(state.reputation, 50.0, "Should start with 50 reputation")
-	# Start doom is Balance-driven (dial 2, #638: the 2017 spawn starts LOW — 20, was 50).
+	# Start doom is Balance-driven (dial 2, #638: the 2017 spawn starts LOW -- 20, was 50).
 	assert_eq(state.doom, Balance.num("starting_resources.doom", 20.0), "Start doom matches Balance starting_resources.doom")
 	assert_eq(state.action_points, 3, "Should start with 3 AP")
 	assert_eq(state.turn, 0, "Should start at turn 0")

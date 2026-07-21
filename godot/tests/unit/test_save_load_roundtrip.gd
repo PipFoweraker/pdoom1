@@ -1,5 +1,5 @@
 extends GutTest
-## L7 (#618) — mid-game save/load round-trip. THE lane acceptance criterion.
+## L7 (#618) -- mid-game save/load round-trip. THE lane acceptance criterion.
 ##
 ## Plays N turns with a fixed seed (events resolved deterministically, ledger
 ## entries injected, a researcher hired, a paper in flight, an action queued
@@ -28,7 +28,7 @@ func after_each():
 # --- deterministic turn driving -------------------------------------------------
 
 func _resolve_pending_events(tm: TurnManager, state: GameState) -> void:
-	# First affordable option wins — a pure function of state, so the pre-save run
+	# First affordable option wins -- a pure function of state, so the pre-save run
 	# and the post-load continuation make identical choices.
 	var guard := 0
 	while state.pending_events.size() > 0 and guard < 50:

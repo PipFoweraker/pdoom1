@@ -26,8 +26,8 @@ class_name BaselineSimulator
 ## To define custom event strategies, see _get_event_choice_for_baseline()
 
 # Maximum turns to simulate (prevents infinite loops).
-# 10000 day-ticks ≈ 450 fiction-months, past the ADR-0002 400-month mortality cap. The old
-# 200 was a pre-L1 relic (200 day-ticks ≈ 9 fiction-months): post-recalibration (#638) the
+# 10000 day-ticks ~ 450 fiction-months, past the ADR-0002 400-month mortality cap. The old
+# 200 was a pre-L1 relic (200 day-ticks ~ 9 fiction-months): post-recalibration (#638) the
 # passive baseline itself survives ~14 months, so a 200-tick cap truncated the baseline
 # score every game. Kept in sync with ReplaySimulator.MAX_TURNS.
 const MAX_TURNS: int = 10000
@@ -38,7 +38,7 @@ const MAX_TURNS: int = 10000
 const DEFAULT_VETTING_ENVELOPE := {
 	"min_turns": 5,             # reject if even the cautious (passive) line dies before this
 	"doom_threat_floor": 70.0,  # reject if even the careless (reckless) line never makes doom
-	                            #   this dangerous — a snoozefest with no threat
+	                            #   this dangerous -- a snoozefest with no threat
 	"max_turns": MAX_TURNS,     # simulation cap
 }
 
@@ -261,7 +261,7 @@ static func _run_baseline_simulation(game_seed: String, schedule: Array = [], ch
 	print("[BaselineSimulator] Simulation complete: %d turns, %.2fs" % [state.turn, simulation_time / 1000.0])
 
 	# ADR-0002: score is the (turns, doom_integral) tuple accrued in-engine during the
-	# sim — no separate formula. Engine is the sole scoring authority.
+	# sim -- no separate formula. Engine is the sole scoring authority.
 	var final_state = state.to_dict()
 
 	var peak_doom: float = state.doom
@@ -331,7 +331,7 @@ static func vet_seed(game_seed: String, schedule: Array = [], envelope: Dictiona
 	"""
 	Classify a candidate seed (RNG seed + schedule) against a playability envelope by
 	running it headless between a cautious line (passive event choices) and a careless line
-	(reckless event choices). Deterministic given (seed, schedule) — WS-0 guarantees it.
+	(reckless event choices). Deterministic given (seed, schedule) -- WS-0 guarantees it.
 
 	Returns: {seed, accepted: bool, reason, passive_turns, reckless_turns, peak_doom, envelope}
 

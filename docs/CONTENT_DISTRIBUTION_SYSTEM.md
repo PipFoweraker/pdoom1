@@ -107,7 +107,7 @@ class RedditPublisher:
         """Publish release announcement to Reddit"""
 
         # Format title
-        title = f"🎮 P(Doom) {version} Released!"
+        title = f"P(Doom) {version} Released!"
 
         # Format body with Reddit markdown
         body = self._format_reddit_post(notes)

@@ -94,7 +94,7 @@ When you play PDoom, the game creates a unique "fingerprint" (hash) of your enti
    - Is this hash valid? (plausibility check)
    - Has anyone submitted this before? (timestamp priority)
 4. **Leaderboard updated**:
-   - First to submit hash = "Original" (⭐)
+   - First to submit hash = "Original" (*)
    - Later submissions = "Duplicate" (REPEAT)
 
 ### Why Duplicates Are OK

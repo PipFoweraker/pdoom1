@@ -109,21 +109,21 @@ func get_type_icon() -> String:
 	"""Get emoji icon for story type"""
 	match story_type:
 		StoryType.BREAKTHROUGH:
-			return "🔬"
+			return ""
 		StoryType.SCANDAL:
-			return "⚠️"
+			return "[!]"
 		StoryType.HUMAN_INTEREST:
-			return "👥"
+			return ""
 		StoryType.POLICY:
-			return "🏛️"
+			return ""
 		StoryType.SAFETY_CONCERN:
-			return "🚨"
+			return ""
 		StoryType.INDUSTRY_NEWS:
-			return "📰"
+			return ""
 		StoryType.COMPETITOR:
-			return "🏢"
+			return ""
 		_:
-			return "📄"
+			return ""
 
 
 func get_summary() -> String:

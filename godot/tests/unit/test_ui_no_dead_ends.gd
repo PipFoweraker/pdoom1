@@ -37,7 +37,7 @@ const MIN_PANELS := 3
 
 const CLOSE_TEXT_KEYWORDS := [
 	"close", "back", "cancel", "dismiss", "done", "return", "exit", "ok",
-	"continue", "✕", "✖", "x",
+	"continue", "x", "x", "x",
 ]
 const CLOSE_SIGNAL_KEYWORDS := ["close", "cancel", "dismiss", "back", "done", "exit"]
 

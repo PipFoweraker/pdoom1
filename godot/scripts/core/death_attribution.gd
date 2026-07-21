@@ -2,7 +2,7 @@ extends RefCounted
 class_name DeathAttribution
 ## EE-8 (ADR-0012): root-cause death attribution for finished runs.
 ##
-## The ledger never owns a death screen — defaults cascade into the existing
+## The ledger never owns a death screen -- defaults cascade into the existing
 ## doom/rep deaths through intermediate wreckage (unpaid entries -> rep collapse ->
 ## funding starvation -> death). The SURFACE cause (which counter ended the run)
 ## therefore hides the cascade: "dies of doom/rep" when the ledger fed the player
@@ -18,7 +18,7 @@ class_name DeathAttribution
 ##   in the death currency (without the ledger's contribution the run would not
 ##   have crossed the threshold), guarded by MATERIALITY (tiny scratches don't
 ##   count) and RECENCY (a default RECENT_WINDOW+ turns before death is history,
-##   not cause — rep/doom are absorbing-boundary walks; but-for at the margin is
+##   not cause -- rep/doom are absorbing-boundary walks; but-for at the margin is
 ##   fragile without a proximity guard).
 const REP_MATERIALITY := 5.0   # min total ledger rep damage (starting rep is 50)
 const DOOM_MATERIALITY := 1.0  # min total ledger doom contribution
@@ -81,7 +81,7 @@ static func classify(state) -> Dictionary:
 				root = "ledger"
 		"other":
 			# No doom/rep threshold crossed but the run is over with billed damage
-			# attributed — the ledger is the only remaining candidate.
+			# attributed -- the ledger is the only remaining candidate.
 			if state.ledger and (state.ledger.death_attribution as Array).size() > 0:
 				root = "ledger"
 
@@ -91,13 +91,13 @@ static func classify(state) -> Dictionary:
 static func chain_summary(state, max_entries: int = 8) -> Array:
 	"""Compact turn-stamped causal trail for reports, oldest first, e.g.
 	't3 ledger_exposure payroll_coinflip (rep -32.1, gov -4711)'. Truncates the
-	middle when the log is long — first and last causes carry the chain."""
+	middle when the log is long -- first and last causes carry the chain."""
 	var lines: Array = []
 	for c in state.cause_log:
 		var fx: Dictionary = c.get("effects", {})
 		var parts: Array = []
 		for key in fx.keys():
-			# *_level / *_due keys are watermark LEVELS, not deltas — print without a sign.
+			# *_level / *_due keys are watermark LEVELS, not deltas -- print without a sign.
 			var k := str(key)
 			if k.ends_with("_level") or k.ends_with("_due"):
 				parts.append("%s %.1f" % [_short_key(k), float(fx[key])])

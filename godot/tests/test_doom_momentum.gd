@@ -189,7 +189,7 @@ func test_doom_trend_detection():
 
 func test_doom_status_thresholds():
 	# L6 unification: statuses are ThemeManager's canonical bands, lowercased
-	# (15/37/52/67/80/92 — the former 25/50/70/90 copy is gone).
+	# (15/37/52/67/80/92 -- the former 25/50/70/90 copy is gone).
 	var doom_sys = DoomSystem.new()
 
 	doom_sys.current_doom = 10.0

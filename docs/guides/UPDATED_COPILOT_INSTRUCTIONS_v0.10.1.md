@@ -299,13 +299,13 @@ python -c "from src.core.game_state import GameState; print('CHECKED Imports wor
 - Pre-commit hook system with automated validation
 - Comprehensive quality assurance tools
 
-### 🧪 **NEW: Programmatic Control System**
+### **NEW: Programmatic Control System**
 - GUI-free game testing and validation
 - Automated multi-turn game scenarios
 - Cross-platform compatibility (Windows encoding fixes)
 - Performance profiling and regression detection
 
-### 🏗 **ENHANCED: Infrastructure Maturity**
+### **ENHANCED: Infrastructure Maturity**
 - Centralized version management (v0.10.1)
 - Robust error handling and encoding fixes
 - Enhanced documentation organization

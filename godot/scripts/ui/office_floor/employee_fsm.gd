@@ -12,9 +12,9 @@ class_name EmployeeFSM
 
 # Sprite / animation states.
 const STATE_IDLE := "idle"          # present but not working (disengaged / no data)
-const STATE_WALKING := "walking"    # aimless wander — unmanaged / drifting
+const STATE_WALKING := "walking"    # aimless wander -- unmanaged / drifting
 const STATE_WORKING := "working"    # heads-down at a desk
-const STATE_STRESSED := "stressed"  # burnout — head-in-hands
+const STATE_STRESSED := "stressed"  # burnout -- head-in-hands
 
 const ALL_STATES := [STATE_IDLE, STATE_WALKING, STATE_WORKING, STATE_STRESSED]
 
@@ -26,11 +26,11 @@ const LOYALTY_DISENGAGED := 15   # checked-out: physically present, not working
 ## fields degrade gracefully (default idle/wander, never a false "working").
 ##
 ## Precedence (most salient problem first):
-##   1. stressed  — burnout >= BURNOUT_STRESSED
-##   2. walking   — unmanaged == true (drifting, no manager to focus them)
-##   3. idle      — loyalty <= LOYALTY_DISENGAGED (checked out)
-##   4. working   — assigned == true
-##   5. idle      — default / no signal
+##   1. stressed  -- burnout >= BURNOUT_STRESSED
+##   2. walking   -- unmanaged == true (drifting, no manager to focus them)
+##   3. idle      -- loyalty <= LOYALTY_DISENGAGED (checked out)
+##   4. working   -- assigned == true
+##   5. idle      -- default / no signal
 static func map_state(emp: Dictionary) -> String:
 	var burnout := float(emp.get("burnout", 0.0))
 	if burnout >= BURNOUT_STRESSED:

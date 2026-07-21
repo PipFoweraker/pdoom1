@@ -128,7 +128,7 @@ Major UI reorganization to improve visual layout, reduce clutter, and create bet
 +---------------------------------------------------------------+
 | Top Bar (Stats)                   [Cat] [Employees (E)]     |
 |---------+--------------------------+----------------------------|
-|Actions |     Office Cat 🐱        | Upgrades                 |
+|Actions |     Office Cat        | Upgrades                 |
 |        |   +------------+           |                          |
 | [1]... |   |          |           | Action Queue: [...]      |
 | [2]... |   |   Cat    |           |                          |

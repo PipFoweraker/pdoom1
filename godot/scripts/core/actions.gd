@@ -14,7 +14,7 @@ class_name GameActions
 ##   research_min: float - Minimum research points to unlock
 
 # The ONE id for the "do nothing" action (L0 #620: collapsed the pass/pass_turn twin
-# ids — two non-interchangeable "do nothing" code paths; get_action_by_id("pass_turn")
+# ids -- two non-interchangeable "do nothing" code paths; get_action_by_id("pass_turn")
 # returned {}). "pass_turn" survives only as a legacy replay-input alias in
 # execute_action, so replays recorded before the collapse still verify.
 const PASS_ACTION_ID := "pass"
@@ -105,10 +105,10 @@ static func get_unlock_hint(action: Dictionary, state: Dictionary) -> String:
 
 
 # Preload the shared loader (avoids class_name registration-order issues in fresh
-# worktrees/CI — same pattern as GameState's RiskPool preload).
+# worktrees/CI -- same pattern as GameState's RiskPool preload).
 const Definitions = preload("res://scripts/data/definition_loader.gd")
 
-# L9 (#621): action definitions live in data, not code — one JSON per domain,
+# L9 (#621): action definitions live in data, not code -- one JSON per domain,
 # loaded once and cached (see data/actions/*.json). Loader copied from the
 # scenario_loader pattern via the shared DefinitionLoader.
 const ACTIONS_DATA_DIR := "res://data/actions"
@@ -322,7 +322,7 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"safety_research":
 			# ADR-0015: safety research raises safety_absorption (the overhang stream reads it
-			# to offset frontier hazard) + global_alarm — never a direct doom write. Founder-
+			# to offset frontier hazard) + global_alarm -- never a direct doom write. Founder-
 			# action contribution priced at 0 in v1 (the productive-researcher advance already
 			# carries safety's absorption in the sweep); a follow-up lane prices the action.
 			var absorb = state.safety_researchers * Balance.num("doom.streams.action_safety_absorb", 0.0)
@@ -338,7 +338,7 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"publish_paper":
 			# ADR-0015: publishing safety work raises global_alarm (adopted safety concern,
-			# DQ-21 §1.7) instead of a printed -3 doom. Priced at 0 in v1 (a follow-up prices it).
+			# DQ-21 S1.7) instead of a printed -3 doom. Priced at 0 in v1 (a follow-up prices it).
 			# (The retired media_savvy trait's reputation bonus is gone; a press-facing quirk
 			# could re-add it later via a dedicated channel.)
 			state.add_resources({"papers": 1, "reputation": 2})
@@ -391,8 +391,8 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"desperation_lever":
 			# ADR-0015: the "-10 doom now" catch-up buys a brief safety_absorption reprieve (a
-			# temporary offset) instead of a printed doom write — and it was clobbered before
-			# (memo §7.1). Priced at 0 in v1; the SECRET compounding liability (the teeth) is intact.
+			# temporary offset) instead of a printed doom write -- and it was clobbered before
+			# (memo S7.1). Priced at 0 in v1; the SECRET compounding liability (the teeth) is intact.
 			state.safety_absorption += Balance.num("doom.streams.action_desperation_absorb", 0.0)
 			if state.ledger:
 				state.ledger.add(Ledger.desperation_payroll(state.rng))
@@ -550,7 +550,7 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			var doom_reduction = 15 + doom_roll
 			var rep_change = rep_roll
 			# ADR-0015: a credible public warning raises global_alarm (productive concern), not a
-			# printed doom write. Alarm feeds the alarm stream (relief) + gates dampers (DQ-21 §1.7).
+			# printed doom write. Alarm feeds the alarm stream (relief) + gates dampers (DQ-21 S1.7).
 			state.global_alarm += doom_reduction * Balance.num("doom.streams.action_warning_alarm", 0.6)
 			state.add_resources({"reputation": rep_change})
 			result["message"] = "Public warning issued (+alarm, %+d reputation)" % rep_change
@@ -584,7 +584,7 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 			VerificationTracker.record_rng_outcome("sabotage_success", sabotage_roll, state.turn)
 
 			if sabotage_roll > 0.3:  # 70% success
-				# ADR-0015: successful sabotage DELAYS a rival — it lowers the top rival's frontier
+				# ADR-0015: successful sabotage DELAYS a rival -- it lowers the top rival's frontier
 				# (capability_progress), which the overhang stream reads. No printed doom write.
 				var delay = Balance.num("doom.streams.action_sabotage_frontier", 200.0)
 				var top_rival = null
@@ -602,7 +602,7 @@ static func execute_action(action_id: String, state: GameState) -> Dictionary:
 
 		"open_source_release":
 			# ADR-0015: framed as a goodwill/transparency move -> global_alarm (norms shift).
-			# DESIGN TENSION FLAGGED (DQ-21 §1.1): open-sourcing capability really raises
+			# DESIGN TENSION FLAGGED (DQ-21 S1.1): open-sourcing capability really raises
 			# general_capability (diffusion = MORE hazard); the action's historical -doom framing
 			# is the kind of dishonest pipe ADR-0015 exists to expose. Routed to alarm for now
 			# (behaviour-preserving intent), general_capability contribution priced at 0 pending
@@ -796,7 +796,7 @@ static func attend_conference_action(state: GameState, conf_id: String, travel_c
 	"""Attend a conference (with or without presenting)
 	Issue #469: includes travel class and jet lag
 	TODO: Multi-stage travel booking - player shouldn't see all options upfront.
-	Future flow: Express Interest → Arrange Travel (class, costs) → Attend
+	Future flow: Express Interest -> Arrange Travel (class, costs) -> Attend
 	Requires situational awareness or researcher scouting to preview details."""
 	var conf = Conferences.get_conference_by_id(conf_id)
 	if conf == null:

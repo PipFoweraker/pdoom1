@@ -20,7 +20,7 @@ We've built a **complete end-to-end verification system** for global leaderboard
 
 ---
 
-## 📦 Complete Deliverables
+## Complete Deliverables
 
 ### Client-Side (Godot) - SUCCESS COMPLETE
 
@@ -73,7 +73,7 @@ We've built a **complete end-to-end verification system** for global leaderboard
    - `PlausibilityChecker`: Validates game states (doom 0-100, resources sane)
    - `ScoreCalculator`: Recalculates score from state (prevents tampering)
    - `HashVerificationHandler`: Complete timestamp priority logic
-     - Original submissions (first discovery, ⭐ badge)
+     - Original submissions (first discovery, * badge)
      - Self-duplicates (same player resubmitting, logged but ignored)
      - Cross-player duplicates (strategy sharing, REPEAT badge)
    - Comprehensive error handling
@@ -92,11 +92,11 @@ We've built a **complete end-to-end verification system** for global leaderboard
    - Example scenarios with expected scores
    - Balancing considerations
    - Implementation checklist
-   - **AWAITING REVIEW** 🟡
+   - **AWAITING REVIEW** [Y]
 
 ---
 
-## 🔐 Security Architecture
+## Security Architecture
 
 ### Hash Chain Formula
 
@@ -168,7 +168,7 @@ BOUNDS = {
 
 | Feature | Full Replay | Shared Secret (HMAC) | Cumulative Hash (Ours) |
 |---------|-------------|----------------------|------------------------|
-| Security | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐⭐⭐ |
+| Security | ***** | *** | **** |
 | Implementation Complexity | Weeks | Days | Days |
 | Data Storage | 5-20KB | 64 bytes | 64 bytes |
 | Verification Speed | Slow (replay) | Fast | Fast |
@@ -226,16 +226,16 @@ BOUNDS = {
 
 ---
 
-## 🎮 Leaderboard Display Modes
+## Leaderboard Display Modes
 
 ### Mode 1: Originals Only (Default)
 
 ```
 Rank | Player      | Score   | Duplicates
 -----|-------------|---------|------------
-1    | Alice       | 227,000 | 12 others ⬆ Click to view
-2    | Bob         | 195,000 | 5 others  ⬆ Click to view
-3    | Charlie     | 173,000 | 2 others  ⬆ Click to view
+1    | Alice       | 227,000 | 12 others ^ Click to view
+2    | Bob         | 195,000 | 5 others  ^ Click to view
+3    | Charlie     | 173,000 | 2 others  ^ Click to view
 ```
 
 **Query**: `WHERE is_original_hash = TRUE`
@@ -245,10 +245,10 @@ Rank | Player      | Score   | Duplicates
 ```
 Rank | Player      | Score   | Status
 -----|-------------|---------|------------------
-1    | Alice       | 227,000 | ⭐ Original
-2    | Bob         | 195,000 | ⭐ Original
+1    | Alice       | 227,000 | * Original
+2    | Bob         | 195,000 | * Original
 3    | Dana        | 227,000 | REPEAT Duplicate (3h ago)
-4    | Charlie     | 173,000 | ⭐ Original
+4    | Charlie     | 173,000 | * Original
 ```
 
 **Query**: All entries, sorted by score
@@ -348,7 +348,7 @@ def _handle_score_submission(self, user_data: Dict):
 
 ---
 
-## 📚 Documentation Index
+## Documentation Index
 
 ### For Developers
 - **Quick Start**: [VERIFICATION_QUICK_REFERENCE.md](VERIFICATION_QUICK_REFERENCE.md)
@@ -378,19 +378,19 @@ def _handle_score_submission(self, user_data: Dict):
 - SUCCESS Hash generation working (deterministic)
 - SUCCESS Full RNG coverage (all gameplay-affecting outcomes tracked)
 - SUCCESS Server-side validation ready (plausibility + score checks)
-- ⏳ End-to-end flow tested (game  ->  API  ->  database)
-- ⏳ 99%+ verification success rate
+- [wip] End-to-end flow tested (game  ->  API  ->  database)
+- [wip] 99%+ verification success rate
 
 ### Community Goals
-- ⏳ Strategy sharing encouraged (duplicate detection working)
-- ⏳ First discoverers recognized (timestamp priority)
-- ⏳ Privacy maintained (anonymous by default)
-- ⏳ Multiple viable strategies (balanced scoring)
-- ⏳ Positive community feedback
+- [wip] Strategy sharing encouraged (duplicate detection working)
+- [wip] First discoverers recognized (timestamp priority)
+- [wip] Privacy maintained (anonymous by default)
+- [wip] Multiple viable strategies (balanced scoring)
+- [wip] Positive community feedback
 
 ---
 
-## 🚦 Current Status
+## Current Status
 
 | Component | Status | Next Action |
 |-----------|--------|-------------|
@@ -398,10 +398,10 @@ def _handle_score_submission(self, user_data: Dict):
 | RNG Coverage | SUCCESS Complete (15+ types) | Monitor for new RNG |
 | Database Schema | SUCCESS Ready | Run migration |
 | Verification Logic | SUCCESS Complete | Integrate into API |
-| Scoring Formula | 🟡 Proposed | **REVIEW & APPROVE** |
-| API Integration | 🟡 Documented | Implement changes |
-| Testing | 🟡 Basic tests | Comprehensive testing |
-| Deployment | ⏳ Pending | Week 3-4 |
+| Scoring Formula | [Y] Proposed | **REVIEW & APPROVE** |
+| API Integration | [Y] Documented | Implement changes |
+| Testing | [Y] Basic tests | Comprehensive testing |
+| Deployment | [wip] Pending | Week 3-4 |
 
 ---
 
@@ -446,6 +446,6 @@ def _handle_score_submission(self, user_data: Dict):
 
 ---
 
-**Status**: SUCCESS Implementation Complete, 🟡 Awaiting Scoring Approval
+**Status**: SUCCESS Implementation Complete, [Y] Awaiting Scoring Approval
 **Updated**: November 20, 2024
 **Timeline**: On track for Week 3-4 launch

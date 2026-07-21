@@ -2,7 +2,7 @@ extends Node
 class_name DoomSystem
 ## ADR-0015 doom engine: doom is an ACCUMULATING RATE computed each day tick from a sum
 ## of NAMED STREAMS, each stream fed by a world-state intermediary (DQ-21). No action or
-## event writes doom directly — they write intermediaries; the doom function reads them.
+## event writes doom directly -- they write intermediaries; the doom function reads them.
 ##
 ## The nine intermediary concepts (DQ-21, round-4 rulings):
 ##   general_capability  -> diffusion stream (chronic floor; ratchet)
@@ -10,7 +10,7 @@ class_name DoomSystem
 ##   global_compute      -> (no own stream; feeds dedicated_ai_compute / diffusion pace)
 ##   dedicated_ai_compute-> compute stream    (the controllable fleet)
 ##   ambient_risk        -> baseline stream   (year-keyed background trend)
-##   political_pressure  -> (gate-only; no stream — gates typed dampers)
+##   political_pressure  -> (gate-only; no stream -- gates typed dampers)
 ##   global_alarm        -> alarm stream      (small NEGATIVE relief) AND damper gate
 ##   global_panic        -> panic stream      (social accelerant)
 ##   scheduled pulses    -> pulse:* streams   (ramp/spike/tail envelopes, ADR-0005)
@@ -19,14 +19,14 @@ class_name DoomSystem
 ##
 ## Single-authority discipline (calibration #638): ONLY this system writes state.doom. The
 ## ledger's bills and risk shocks arrive as STREAM INPUTS (add_stream_input), folded into the
-## rate on the next resolve — never a parallel write to the level.
+## rate on the next resolve -- never a parallel write to the level.
 ##
-## Legibility (ADR-0015 §3 / L6 EE-8): every stream is named, so the delta chip / death
+## Legibility (ADR-0015 S3 / L6 EE-8): every stream is named, so the delta chip / death
 ## attribution can say which stream (and the intermediary behind it) is killing or saving you.
 ## The "wiggly stock-market lines" are the emergent interference of legible streams, never noise.
 
 # ============================================================================
-# CORE STATE — the two instruments (DQ-21 display ruling)
+# CORE STATE -- the two instruments (DQ-21 display ruling)
 # ============================================================================
 
 ## The accumulated doom LEVEL (structural-dread surface; its crossing date is the badge).
@@ -35,17 +35,17 @@ var current_doom: float = 50.0
 ## The most recent doom RATE (delta-doom; the high-frequency feedback surface).
 var doom_rate: float = 0.0
 
-## Per-tick history of the rate — feeds the N=6-month trend telemetry invariant (DQ-21 R2-Q7).
+## Per-tick history of the rate -- feeds the N=6-month trend telemetry invariant (DQ-21 R2-Q7).
 var rate_history: Array[float] = []
 
 # ============================================================================
-# STREAMS — doom_rate = sum of these named streams (superposition; MAY be negative)
+# STREAMS -- doom_rate = sum of these named streams (superposition; MAY be negative)
 # ============================================================================
 ## Kept under the historical name `doom_sources` so existing consumers (dev overlays, the
 ## sweep's doom_src_at_death readout, GameState's technical_debt coupling) keep working; the
 ## KEYS are now the ADR-0015 stream vocabulary.
 var doom_sources: Dictionary = {
-	"baseline": 0.0,       # ambient_risk — year-keyed background floor
+	"baseline": 0.0,       # ambient_risk -- year-keyed background floor
 	"overhang": 0.0,       # frontier_capability - safety_absorption (acute)
 	"diffusion": 0.0,      # general_capability (chronic floor)
 	"compute": 0.0,        # dedicated_ai_compute pressure
@@ -58,7 +58,7 @@ var doom_sources: Dictionary = {
 
 ## Buffered STREAM INPUTS from off-tick sources (ledger bills, risk shocks). Added via
 ## add_stream_input()/add_event_doom() during the turn, folded into the streams on the next
-## calculate_doom_change(), then cleared — so nothing writes the LEVEL in parallel (#638).
+## calculate_doom_change(), then cleared -- so nothing writes the LEVEL in parallel (#638).
 var _pending_stream_inputs: Dictionary = {}
 
 ## Rival overhang contribution stashed by turn_manager. LEGACY SHIM RETIRED (ADR-0015): rivals
@@ -67,7 +67,7 @@ var _pending_stream_inputs: Dictionary = {}
 var _pending_rival_doom: float = 0.0
 
 # ============================================================================
-# MOMENTUM — a stream-level trend modifier, gated behind a Balance switch (#638)
+# MOMENTUM -- a stream-level trend modifier, gated behind a Balance switch (#638)
 # ============================================================================
 var doom_velocity: float = 0.0
 var doom_momentum: float = 0.0
@@ -80,7 +80,7 @@ var doom_multipliers: Dictionary = {}
 var doom_modifiers: Dictionary = {}
 
 # ============================================================================
-# TREND TELEMETRY (DQ-21 R2-Q7, N=6) — instrumentation, NEVER a clamp
+# TREND TELEMETRY (DQ-21 R2-Q7, N=6) -- instrumentation, NEVER a clamp
 # ============================================================================
 const TREND_MONTHS := 6
 const TICKS_PER_MONTH := 22       # approx workday ticks / fiction month (ADR-0009)
@@ -93,8 +93,8 @@ func _init() -> void:
 	momentum_cap = Balance.num("doom.momentum_cap", momentum_cap)
 
 # ============================================================================
-# STREAM COEFFICIENTS — the freely-tuned Balance layer (doom.streams.*).
-# The FUNCTION is structure (ADR-0015 §4); these NUMBERS are priced by the sweep.
+# STREAM COEFFICIENTS -- the freely-tuned Balance layer (doom.streams.*).
+# The FUNCTION is structure (ADR-0015 S4); these NUMBERS are priced by the sweep.
 # ============================================================================
 func _w(key: String, fallback: float) -> float:
 	return Balance.num("doom.streams." + key, fallback)
@@ -115,7 +115,7 @@ func calculate_doom_change(state: GameState) -> Dictionary:
 	# (1) Recompute streams from the intermediaries.
 	var streams := _compute_streams(state)
 
-	# (2) Fold in buffered off-tick stream inputs (ledger bills, risk shocks) — routed, not
+	# (2) Fold in buffered off-tick stream inputs (ledger bills, risk shocks) -- routed, not
 	#     parallel-written. Attributed to their own named streams so L6 can see them.
 	for key in _pending_stream_inputs.keys():
 		streams[key] = float(streams.get(key, 0.0)) + float(_pending_stream_inputs[key])
@@ -130,7 +130,7 @@ func calculate_doom_change(state: GameState) -> Dictionary:
 	for key in streams.keys():
 		raw_rate += float(streams[key])
 
-	# (5) Momentum — a gated trend modifier ON TOP of the raw rate (#638 switch semantics:
+	# (5) Momentum -- a gated trend modifier ON TOP of the raw rate (#638 switch semantics:
 	#     the accumulator keeps ticking while disabled; only the contribution is zeroed).
 	var momentum_contribution := _calculate_momentum(raw_rate)
 	momentum_contribution *= Balance.num("doom.momentum_weight", 1.0)
@@ -140,10 +140,10 @@ func calculate_doom_change(state: GameState) -> Dictionary:
 
 	var total_rate := raw_rate + momentum_contribution
 
-	# (6) Integrate: the LEVEL accumulates the RATE. May FALL on net-negative ticks (legal —
+	# (6) Integrate: the LEVEL accumulates the RATE. May FALL on net-negative ticks (legal --
 	#     "pulled something impressive off"). Clamp 0..100 is a display/lethality bound.
 	#     Snap the persisted scalars to the binary-exact grid (SAVE_QUANTUM) so save/load is
-	#     LOSSLESS (the "next turn identical" replay must match bit-for-bit — see SAVE_QUANTUM).
+	#     LOSSLESS (the "next turn identical" replay must match bit-for-bit -- see SAVE_QUANTUM).
 	doom_rate = _snap(total_rate)
 	current_doom = _snap(clamp(current_doom + total_rate, 0.0, 100.0))
 	doom_velocity = _snap(doom_velocity)
@@ -168,7 +168,7 @@ func calculate_doom_change(state: GameState) -> Dictionary:
 	}
 
 # ============================================================================
-# INTERMEDIARY ADVANCEMENT (flow -> stock) — the ratchet dynamics
+# INTERMEDIARY ADVANCEMENT (flow -> stock) -- the ratchet dynamics
 # ============================================================================
 
 func _advance_intermediaries(state: GameState) -> void:
@@ -231,7 +231,7 @@ func _advance_intermediaries(state: GameState) -> void:
 
 	# --- Snap every persisted intermediary to the binary-exact grid (SAVE_QUANTUM). The decay
 	#     multiplies produce arbitrary-precision doubles that fail Godot's JSON parse round-trip
-	#     (§7.2); keeping the stocks on a power-of-two grid makes save/load LOSSLESS (the
+	#     (S7.2); keeping the stocks on a power-of-two grid makes save/load LOSSLESS (the
 	#     "next turn identical" replay must match bit-for-bit). Gameplay-invisible (grid ~1e-6).
 	state.frontier_capability["player"] = _snap(float(state.frontier_capability["player"]))
 	state.safety_absorption = _snap(state.safety_absorption)
@@ -246,43 +246,43 @@ func _advance_intermediaries(state: GameState) -> void:
 
 func _compute_streams(state: GameState) -> Dictionary:
 	"""Read the intermediaries and produce the named hazard/relief streams (all Balance-priced).
-	Hazard streams clamp at >= 0 in v1 (DQ-21 R2-Q9 — LOUD REVISIT MARKER below); the alarm
-	stream is natively NEGATIVE by design and is deliberately exempt from the clamp — that
+	Hazard streams clamp at >= 0 in v1 (DQ-21 R2-Q9 -- LOUD REVISIT MARKER below); the alarm
+	stream is natively NEGATIVE by design and is deliberately exempt from the clamp -- that
 	clamp/negative-component boundary is the exact unsettled ground R2-Q9 flagged for revisit."""
 	var s := {}
 
-	# (a) baseline — ambient_risk, the always-there floor.
+	# (a) baseline -- ambient_risk, the always-there floor.
 	s["baseline"] = state.ambient_risk
 
-	# (b) overhang — the ACUTE hazard: frontier not matched by safety absorption. Scalar the
-	#     doom function reads is max over actors (DQ-21 §1.2).
+	# (b) overhang -- the ACUTE hazard: frontier not matched by safety absorption. Scalar the
+	#     doom function reads is max over actors (DQ-21 S1.2).
 	var frontier_max := 0.0
 	for actor in state.frontier_capability.keys():
 		frontier_max = maxf(frontier_max, float(state.frontier_capability[actor]))
-	# vvv R2-Q9 v1 CLAMP (LOUD REVISIT MARKER — streams clamp at 0 in v1; NOT SETTLED) vvv
+	# vvv R2-Q9 v1 CLAMP (LOUD REVISIT MARKER -- streams clamp at 0 in v1; NOT SETTLED) vvv
 	s["overhang"] = _w("W_frontier", 0.000039) * maxf(0.0, frontier_max - state.safety_absorption)
 	# ^^^ revisit together with the natively-negative alarm stream (DQ-21 R2-Q9) ^^^
 
-	# (c) diffusion — chronic floor from general_capability.
+	# (c) diffusion -- chronic floor from general_capability.
 	s["diffusion"] = _w("W_general", 0.0005) * state.general_capability
 
-	# (d) compute — dedicated_ai_compute fuel term (small in v1; the ocean has no own term).
+	# (d) compute -- dedicated_ai_compute fuel term (small in v1; the ocean has no own term).
 	s["compute"] = _w("W_compute", 0.0) * state.dedicated_ai_compute
 
-	# (e) panic — additive social accelerant.
+	# (e) panic -- additive social accelerant.
 	s["panic"] = _w("W_panic", 0.02) * state.global_panic
 
-	# (f) alarm — small direct NEGATIVE relief (a genuinely alarmed world is slightly safer even
+	# (f) alarm -- small direct NEGATIVE relief (a genuinely alarmed world is slightly safer even
 	#     before formal governance lands). Small by design; heavy lifting is in dampers.
 	s["alarm"] = -_w("W_alarm", 0.02) * state.global_alarm
 
-	# (g) scheduled pulses — ADR-0005 schedule entries inject time-shaped rate bumps. v1 ships
+	# (g) scheduled pulses -- ADR-0005 schedule entries inject time-shaped rate bumps. v1 ships
 	#     no pulse content; the hook is wired so the schema addition (R2-Q6) has a landing site.
 	for pulse in _active_pulses(state):
 		s["pulse:" + str(pulse.get("id", "?"))] = float(pulse.get("rate", 0.0))
 
-	# --- TYPED DAMPERS — targeted, durationed reductions on SPECIFIC streams, gated by
-	#     alarm/political_pressure (DQ-21 §2). v1 clamps a damped hazard stream at >= 0.
+	# --- TYPED DAMPERS -- targeted, durationed reductions on SPECIFIC streams, gated by
+	#     alarm/political_pressure (DQ-21 S2). v1 clamps a damped hazard stream at >= 0.
 	for d in _active_dampers(state):
 		var tgt := str(d.get("target", ""))
 		if s.has(tgt):
@@ -313,12 +313,12 @@ func _active_dampers(state: GameState) -> Array:
 	return live
 
 # ============================================================================
-# STREAM INPUTS (ledger bills, risk shocks) — routed, not parallel-written
+# STREAM INPUTS (ledger bills, risk shocks) -- routed, not parallel-written
 # ============================================================================
 
 func add_stream_input(stream: String, amount: float) -> void:
 	"""Buffer an off-tick contribution to a NAMED stream (ledger bill, risk shock). Folded into
-	the rate on the next calculate_doom_change() and attributed to `stream` — never a direct
+	the rate on the next calculate_doom_change() and attributed to `stream` -- never a direct
 	write to the level (single-authority discipline, #638 / ADR-0015)."""
 	_pending_stream_inputs[stream] = float(_pending_stream_inputs.get(stream, 0.0)) + amount
 
@@ -333,7 +333,7 @@ func add_event_doom(amount: float, reason: String = "") -> void:
 
 func set_rival_doom_contribution(_amount: float) -> void:
 	"""RETIRED (ADR-0015): rivals now raise frontier_capability and the overhang stream converts
-	it — there is no per-tick rival doom literal. Kept as a no-op sink so an un-migrated caller
+	it -- there is no per-tick rival doom literal. Kept as a no-op sink so an un-migrated caller
 	cannot crash; the value is ignored."""
 	_pending_rival_doom = 0.0
 
@@ -350,13 +350,13 @@ func _calculate_momentum(raw_doom_change: float) -> float:
 	return doom_momentum
 
 # ============================================================================
-# TREND TELEMETRY INVARIANT (DQ-21 R2-Q7, N=6) — LOUD FLAG, never a clamp
+# TREND TELEMETRY INVARIANT (DQ-21 R2-Q7, N=6) -- LOUD FLAG, never a clamp
 # ============================================================================
 
 func _check_trend_invariant(state: GameState, streams: Dictionary) -> void:
 	"""Flag (debug + telemetry) a SUSTAINED 6-month negative rate trend without a
 	sacred-object-grade cause. Single negative ticks are legal and unflagged. This NEVER
-	clamps the rate — a bot policy that sustains this state is an exploit-sweep gate failure."""
+	clamps the rate -- a bot policy that sustains this state is an exploit-sweep gate failure."""
 	var window := TREND_MONTHS * TICKS_PER_MONTH
 	if rate_history.size() < window:
 		trend_flag_active = false
@@ -372,14 +372,14 @@ func _check_trend_invariant(state: GameState, streams: Dictionary) -> void:
 			# a sustained decline is LEGAL play (only the exploit sweep gates on it). push_warning
 			# would surface this legal state as an engine fault (and GUT flags any pushed warning
 			# during a sim as a test failure); a tagged print keeps it loud in logs + telemetry.
-			print("[DOOM_TREND_INVARIANT] sustained %d-month negative doom trend (%.2f) without a sacred-object-grade cause at turn %d — streams=%s" % [
+			print("[DOOM_TREND_INVARIANT] sustained %d-month negative doom trend (%.2f) without a sacred-object-grade cause at turn %d -- streams=%s" % [
 				TREND_MONTHS, trend, int(state.turn), str(streams)])
 	else:
 		trend_flag_active = false
 
 func _sacred_grade_cause_in_window(state: GameState, window: int) -> bool:
 	"""A sacred-object-grade cause = a completed gauntlet chain / sacrifice payment logged
-	recently (DQ-21 §2b). v1 has no such content wired, so this is always false; the hook is
+	recently (DQ-21 S2b). v1 has no such content wired, so this is always false; the hook is
 	here so the invariant is correct the moment sacred-chain content lands."""
 	if state == null or not ("sacred_chain_log" in state):
 		return false
@@ -393,11 +393,11 @@ func _sacred_grade_cause_in_window(state: GameState, window: int) -> bool:
 # ============================================================================
 
 func get_doom_rate() -> float:
-	"""Instrument (a): the delta-doom RATE — rises/falls with player outputs."""
+	"""Instrument (a): the delta-doom RATE -- rises/falls with player outputs."""
 	return doom_rate
 
 func get_doom_level() -> float:
-	"""Instrument (b): the accumulated doom LEVEL — the badge is its crossing date."""
+	"""Instrument (b): the accumulated doom LEVEL -- the badge is its crossing date."""
 	return current_doom
 
 func get_stream_contributions() -> Dictionary:
@@ -406,7 +406,7 @@ func get_stream_contributions() -> Dictionary:
 	return doom_sources.duplicate()
 
 func get_dominant_stream() -> String:
-	"""The single stream contributing the most (by magnitude) to the current rate — the chip
+	"""The single stream contributing the most (by magnitude) to the current rate -- the chip
 	the delta-doom display would surface on a click."""
 	var best := ""
 	var best_mag := 0.0
@@ -458,7 +458,7 @@ func _get_doom_trend() -> String:
 		return "strongly_increasing"
 
 func get_doom_status() -> String:
-	"""Doom tier id — ThemeManager's canonical band label, lowercased (display-only)."""
+	"""Doom tier id -- ThemeManager's canonical band label, lowercased (display-only)."""
 	return ThemeManager.get_doom_status_label(current_doom).to_lower()
 
 func get_momentum_description() -> String:
@@ -482,15 +482,15 @@ func set_doom_multiplier(source: String, multiplier: float) -> void:
 # SERIALIZATION (save/load)
 # ============================================================================
 
-## Doom-adjacent float quantum — a BINARY-EXACT grid (2^-20 ≈ 9.5e-7). Godot's JSON parse
-## is not correctly-rounded (L1 calibration §7.2): a full-precision double can come back
+## Doom-adjacent float quantum -- a BINARY-EXACT grid (2^-20 ~ 9.5e-7). Godot's JSON parse
+## is not correctly-rounded (L1 calibration S7.2): a full-precision double can come back
 ## from a save 1 ulp off, breaking save/load deep-equality. The fix is to keep every
-## doom-adjacent LIVE value on a power-of-two grid: snappedf(v, 2^-20) yields N·2^-20, which
+## doom-adjacent LIVE value on a power-of-two grid: snappedf(v, 2^-20) yields N-2^-20, which
 ## is an exactly-representable double whose decimal string round-trips through Godot's parser
-## intact (0.25 survives, 0.008 does not — §7.2). A decimal quantum (1e-6) does NOT work: it
+## intact (0.25 survives, 0.008 does not -- S7.2). A decimal quantum (1e-6) does NOT work: it
 ## sits between representable doubles, so a 1-ulp parse drift can cross a snap boundary and
 ## AMPLIFY into a full-quantum divergence. The grid is far below any gameplay scale (doom
-## deaths at 100, streams ~0.01–10), so the live dynamics are unaffected (sweep-verified).
+## deaths at 100, streams ~0.01-10), so the live dynamics are unaffected (sweep-verified).
 const SAVE_QUANTUM := 1.0 / 1048576.0  # == 2^-20, binary-exact (computed so the const is precise)
 
 static func _snap(v: float) -> float:

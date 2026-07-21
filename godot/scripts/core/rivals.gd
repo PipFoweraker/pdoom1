@@ -1,10 +1,10 @@
-﻿extends Node
+extends Node
 class_name RivalLabs
 ## Rival AI labs that compete with the player
 ## Issue #474: Organization discovery system
 
 # ADR-0015 (Legacy #12): CAPABILITY_OVERHANG_DOOM_PER_PROGRESS is RETIRED. Capability-overhang
-# hazard is no longer a rival-emitted doom literal — it is the DoomSystem `overhang` stream,
+# hazard is no longer a rival-emitted doom literal -- it is the DoomSystem `overhang` stream,
 # which reads each rival's accumulated capability_progress (its frontier_capability slice) and
 # converts frontier-minus-absorption into hazard. No rival code writes doom anymore.
 
@@ -206,9 +206,9 @@ static func check_discovery(rival: RivalLab, player_state: GameState, rng: Rando
 
 static func process_rival_turn(rival: RivalLab, player_state: GameState, rng: RandomNumberGenerator) -> Dictionary:
 	## ADR-0015: rivals no longer emit a per-tick doom literal. A rival advancing the frontier
-	## raises its capability_progress (the actor's frontier_capability slice — DoomSystem's
+	## raises its capability_progress (the actor's frontier_capability slice -- DoomSystem's
 	## overhang stream converts that accumulated stock into hazard). Reckless, high-visibility
-	## capability moves ALSO raise global_panic (the social accelerant, DQ-21 §1.8). The old
+	## capability moves ALSO raise global_panic (the social accelerant, DQ-21 S1.8). The old
 	## per-action doom + capability_overhang literals + the per_tick_doom_scale shim are RETIRED.
 	## doom_contribution is retained at 0.0 for caller compatibility.
 	var result = {"name": rival.name, "actions": [], "doom_contribution": 0.0, "visible": rival.is_visible_to_player()}

@@ -18,7 +18,7 @@ extends VBoxContainer
 # PLAN (strategy) and WATCH (tactics) are real, script-backed screen subtrees; the shared
 # InstrumentPanel (doom / roster / committed-month queue) stays visible in both modes.
 # main_ui drives game logic against the screens' PUBLIC members rather than reaching through
-# absolute $ContentArea/<column>/... node paths — that coupling is what the split untangles.
+# absolute $ContentArea/<column>/... node paths -- that coupling is what the split untangles.
 @onready var plan_screen: PlanScreen = $ContentArea/PlanScreen
 @onready var instruments: InstrumentPanel = $ContentArea/InstrumentColumn
 @onready var watch_screen: WatchScreen = $ContentArea/WatchScreen
@@ -95,7 +95,7 @@ func _ready():
 	# it is refreshed per-turn in the resource-update path instead.
 	_apply_balance_tooltips()
 
-	# Get GameManager reference — the autoload singleton is the ONE GameManager
+	# Get GameManager reference -- the autoload singleton is the ONE GameManager
 	# (L0 #620/#608: the duplicate scene-local node was removed from main.tscn)
 	game_manager = GameManager
 
@@ -156,14 +156,14 @@ func _ready():
 	var right_zones := instruments.right_zones
 	var doom_meter_zone := instruments.doom_meter_zone
 	doom_trend_graph = preload("res://scripts/ui/doom_trend_graph.gd").new()
-	doom_trend_graph.custom_minimum_size = Vector2(0, 92)  # taller — playtest feedback (screen1)
+	doom_trend_graph.custom_minimum_size = Vector2(0, 92)  # taller -- playtest feedback (screen1)
 	doom_trend_graph.window_size = 24  # show more time points (screen6)
 	doom_trend_graph.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	doom_trend_graph.expand_requested.connect(_show_doom_trend_expanded)
 	right_zones.add_child(doom_trend_graph)
 	right_zones.move_child(doom_trend_graph, doom_meter_zone.get_index() + 1)
 
-	# #578: doom "blow-by-blow" — colour-coded per-source breakdown, just below the trend graph.
+	# #578: doom "blow-by-blow" -- colour-coded per-source breakdown, just below the trend graph.
 	doom_breakdown = preload("res://scripts/ui/doom_breakdown.gd").new()
 	right_zones.add_child(doom_breakdown)
 	right_zones.move_child(doom_breakdown, doom_trend_graph.get_index() + 1)
@@ -199,7 +199,7 @@ func _ready():
 	employee_access_btn.custom_minimum_size = Vector2(0, 40)
 	employee_access_btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	employee_access_btn.add_theme_font_size_override("font_size", 16)
-	employee_access_btn.text = "👥  Employees — roster & morale"
+	employee_access_btn.text = " Employees -- roster & morale"
 	employee_access_btn.tooltip_text = "Open the Employee management screen  (ESC returns here)"
 	employee_access_btn.pressed.connect(_on_open_employee_screen)
 	right_zones.add_child(employee_access_btn)
@@ -223,14 +223,14 @@ func _ready():
 	# build he's running (version + git stamp). Draws on its own CanvasLayer over the UI.
 	add_child(DevBuildBadge.new())
 
-	# DEV MODE overlay (backslash) — full state readout + dev controls, on its own CanvasLayer.
+	# DEV MODE overlay (backslash) -- full state readout + dev controls, on its own CanvasLayer.
 	# Gated on BuildInfo.DEV_BUILD by the overlay; wired to MainUI so its jump buttons can
 	# drive the in-place ledger/travel/employee screens.
 	var dev_overlay := DevModeOverlay.new()
 	dev_overlay.main_ui = self
 	add_child(dev_overlay)
 
-	# Playtest flight recorder (F6) — screenshot + state snapshot + marker note in
+	# Playtest flight recorder (F6) -- screenshot + state snapshot + marker note in
 	# one press (WORKSHOP_2_BACKLOG "Playtest deep-dive protocol"). Same wiring
 	# pattern as the DEV MODE overlay: gated on BuildInfo.DEV_BUILD by the node
 	# itself, resolves the live GameManager via main_ui.
@@ -253,7 +253,7 @@ func _ready():
 
 func _setup_plan_watch_scaffold() -> void:
 	"""Lane 1 / Phase A (BUILD_BRIEF_PLAN_WATCH_UI): stand up the two-screen structure over
-	the existing single UI — a mode controller + banner + WATCH control strip, existing
+	the existing single UI -- a mode controller + banner + WATCH control strip, existing
 	panels sorted into PLAN vs WATCH, and a first terminal-styling pass. The game stays
 	fully playable: COMMIT THE MONTH (the End Turn button) drives PLAN->WATCH; the month
 	review returns to PLAN (see _on_turn_phase_changed / _on_end_turn_button_pressed)."""
@@ -299,8 +299,8 @@ func _setup_plan_watch_scaffold() -> void:
 	screen_mode.register_plan_only(commit_plan_button)
 	screen_mode.register_plan_only(end_turn_button)                        # END TURN == COMMIT THE MONTH
 
-	# The End Turn button is the PLAN->WATCH commit — relabel it in the plan register.
-	end_turn_button.text = "COMMIT THE MONTH ▶"
+	# The End Turn button is the PLAN->WATCH commit -- relabel it in the plan register.
+	end_turn_button.text = "COMMIT THE MONTH >"
 
 	# --- terminal styling that isn't owned by a screen (screens style their own panels) ---
 	TerminalTheme.style_panel($InfoBar, TerminalTheme.RULE, TerminalTheme.PANEL_BG_DEEP)
@@ -328,8 +328,8 @@ func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
 	if event is InputEventKey and event.pressed and not event.echo:
 		# When a full-screen sub-view (e.g. the Employee screen) is up, MainUI is hidden
-		# and is NOT the active screen. Don't handle any shortcuts — and crucially don't
-		# open the pause menu — from here; TabManager owns ESC/back in that state so ESC
+		# and is NOT the active screen. Don't handle any shortcuts -- and crucially don't
+		# open the pause menu -- from here; TabManager owns ESC/back in that state so ESC
 		# returns to the main view, not the game menu (#602).
 		if not visible:
 			return
@@ -340,7 +340,7 @@ func _input(event: InputEvent):
 		if KeybindManager.is_text_input_focused():
 			return
 
-		# DEBUG: sweep doom for QA (PageUp/PageDown ±10). Debug builds only — auto-off in release.
+		# DEBUG: sweep doom for QA (PageUp/PageDown +/-10). Debug builds only -- auto-off in release.
 		# TODO: remove before any release/PR if undesired (currently gated, so release-safe).
 		if OS.is_debug_build() and (event.keycode == KEY_PAGEUP or event.keycode == KEY_PAGEDOWN):
 			_debug_nudge_doom(10.0 if event.keycode == KEY_PAGEUP else -10.0)
@@ -348,7 +348,7 @@ func _input(event: InputEvent):
 			return
 
 		# Liability Ledger toggle (L): open when closed, close when the ledger itself is
-		# open — a key that opens a panel should also close it (#601). Respects the
+		# open -- a key that opens a panel should also close it (#601). Respects the
 		# text-focus gate above. If a *different* dialog is open (event/submenu), L is
 		# consumed but ignored so it never stomps that dialog.
 		if KeybindManager.is_action_pressed(event, "open_ledger"):
@@ -560,9 +560,9 @@ func _boot_game():
 		log_message("[color=cyan]Loading saved game...[/color]")
 		if game_manager.load_saved_game(load_path):
 			return
-		log_message("[color=red]Load failed — starting a new game instead.[/color]")
+		log_message("[color=red]Load failed -- starting a new game instead.[/color]")
 	log_message("[color=cyan]Initializing game...[/color]")
-	# #617 debt: was hardcoded "test-seed" — every boot ran the SAME timeline and
+	# #617 debt: was hardcoded "test-seed" -- every boot ran the SAME timeline and
 	# GameConfig.game_seed was ignored. Empty arg -> GameManager falls back to
 	# GameConfig.get_display_seed() (player's configured seed, else the weekly seed).
 	game_manager.start_new_game()
@@ -649,25 +649,25 @@ func _on_end_turn_button_pressed():
 	# 80/70; now CATASTROPHIC >=80 critical, EXTREME >=67 warning)
 	var doom_band: int = ThemeManager.get_doom_band_index(current_state.doom)
 	if doom_band >= 5:
-		warnings.append("[color=red]⚠️ CRITICAL: Doom at %.1f%% (%s) - Very close to game over![/color]" % [current_state.doom, ThemeManager.get_doom_status_label(current_state.doom)])
+		warnings.append("[color=red][!]CRITICAL: Doom at %.1f%% (%s) - Very close to game over![/color]" % [current_state.doom, ThemeManager.get_doom_status_label(current_state.doom)])
 	elif doom_band == 4:
-		warnings.append("[color=yellow]⚠️ WARNING: Doom at %.1f%% (%s) - Approaching danger zone![/color]" % [current_state.doom, ThemeManager.get_doom_status_label(current_state.doom)])
+		warnings.append("[color=yellow][!]WARNING: Doom at %.1f%% (%s) - Approaching danger zone![/color]" % [current_state.doom, ThemeManager.get_doom_status_label(current_state.doom)])
 
 	# Low reputation warning
 	if current_state.reputation <= 20:
-		warnings.append("[color=red]⚠️ CRITICAL: Reputation at %.0f - May lose funding![/color]" % current_state.reputation)
+		warnings.append("[color=red][!]CRITICAL: Reputation at %.0f - May lose funding![/color]" % current_state.reputation)
 	elif current_state.reputation <= 30:
-		warnings.append("[color=yellow]⚠️ WARNING: Low reputation (%.0f) - Watch funding![/color]" % current_state.reputation)
+		warnings.append("[color=yellow][!]WARNING: Low reputation (%.0f) - Watch funding![/color]" % current_state.reputation)
 
 	# Low money warning
 	if current_state.money <= 20000:
-		warnings.append("[color=red]⚠️ CRITICAL: Low funds (%s) - Can't afford much![/color]" % GameConfig.format_money(current_state.money))
+		warnings.append("[color=red][!]CRITICAL: Low funds (%s) - Can't afford much![/color]" % GameConfig.format_money(current_state.money))
 
 	# Technical debt warning (Issue #416)
 	if current_state.technical_debt >= 75:
-		warnings.append("[color=red]⚠️ CRITICAL: Technical debt at %.0f%% - High failure risk![/color]" % current_state.technical_debt)
+		warnings.append("[color=red][!]CRITICAL: Technical debt at %.0f%% - High failure risk![/color]" % current_state.technical_debt)
 	elif current_state.technical_debt >= 50:
-		warnings.append("[color=yellow]⚠️ WARNING: Technical debt at %.0f%% - Consider an audit![/color]" % current_state.technical_debt)
+		warnings.append("[color=yellow][!]WARNING: Technical debt at %.0f%% - Consider an audit![/color]" % current_state.technical_debt)
 
 	# Show warnings if any
 	if warnings.size() > 0:
@@ -676,7 +676,7 @@ func _on_end_turn_button_pressed():
 		log_message("[color=gray]Press Space/Enter again to confirm, or C to revise queue[/color]")
 		# Note: Simplified version - in full implementation, would require double-confirm
 
-	log_message("[color=cyan]Committing month plan (%d actions) — playing the month out...[/color]" % queued_actions.size())
+	log_message("[color=cyan]Committing month plan (%d actions) -- playing the month out...[/color]" % queued_actions.size())
 
 	# Clear queued actions (will be repopulated after turn processes)
 	queued_actions.clear()
@@ -703,7 +703,7 @@ func _on_commit_plan_button_pressed():
 		log_message("[color=cyan]Committing plan: Reserving all %d AP for reactive responses...[/color]" % available_ap)
 
 		# Queue the pass action to represent reactive strategy (L0 #620: was the
-		# twin id "pass_turn"; ONE id now — GameActions.PASS_ACTION_ID)
+		# twin id "pass_turn"; ONE id now -- GameActions.PASS_ACTION_ID)
 		var reserve_action = {
 			"id": GameActions.PASS_ACTION_ID,
 			"name": "Reserve All AP",
@@ -715,14 +715,14 @@ func _on_commit_plan_button_pressed():
 		update_queued_actions_display()
 
 		# Directly append to game state queue (bypass select_action validation)
-		# — a virtual "reserve all AP" entry; pass costs {} so no AP is committed
+		# -- a virtual "reserve all AP" entry; pass costs {} so no AP is committed
 		game_manager.state.queued_actions.append(GameActions.PASS_ACTION_ID)
 
 	# Clear local queue (will be repopulated after turn processes)
 	queued_actions.clear()
 	update_queued_actions_display()
 
-	# Commit the plan — the L1 month path (see _on_end_turn_button_pressed).
+	# Commit the plan -- the L1 month path (see _on_end_turn_button_pressed).
 	game_manager.end_month()
 	# Phase A: committing the plan is the PLAN->WATCH transition.
 	if screen_mode:
@@ -735,7 +735,7 @@ func _on_employee_tab_button_pressed():
 
 func _on_open_employee_screen() -> void:
 	"""#602: open the full Employee screen via the TabManager. ESC (handled by TabManager)
-	or the screen's own Back button returns to the main view — MainUI's ESC-to-pause is
+	or the screen's own Back button returns to the main view -- MainUI's ESC-to-pause is
 	suppressed while it's hidden, so ESC goes back to the game, not the game menu."""
 	if tab_manager and tab_manager.has_method("show_employee_screen"):
 		tab_manager.show_employee_screen()
@@ -769,11 +769,11 @@ func _on_game_state_updated(state: Dictionary):
 	# label and the now-redundant TurnCountLabel is hidden. VIEW-only (ADR-0006).
 	turn_label.text = _format_turn_datetime(state)
 	turn_count_label.visible = false
-	money_label.text = "💰 %s" % GameConfig.format_money(state.get("money", 0))
-	compute_label.text = "🖥️ %.1f" % state.get("compute", 0)
-	research_label.text = "🔬 %.1f" % state.get("research", 0)
-	papers_label.text = "📄 %d" % state.get("papers", 0)
-	reputation_label.text = "⭐ %.0f" % state.get("reputation", 0)
+	money_label.text = "%s" % GameConfig.format_money(state.get("money", 0))
+	compute_label.text = "%.1f" % state.get("compute", 0)
+	research_label.text = "%.1f" % state.get("research", 0)
+	papers_label.text = "%d" % state.get("papers", 0)
+	reputation_label.text = "* %.0f" % state.get("reputation", 0)
 
 	# EE-7: refresh the per-resource "last turn" delta chips at turn boundaries
 	_update_delta_chips(state)
@@ -788,14 +788,14 @@ func _on_game_state_updated(state: Dictionary):
 	var compute_eng = state.get("compute_engineers", 0)
 	var blob_display = ""
 	for _i in range(safety):
-		blob_display += "[color=green]●[/color]"
+		blob_display += "[color=green]*[/color]"
 	for _i in range(capability):
-		blob_display += "[color=red]●[/color]"
+		blob_display += "[color=red]*[/color]"
 	for _i in range(compute_eng):
-		blob_display += "[color=dodger_blue]●[/color]"
+		blob_display += "[color=dodger_blue]*[/color]"
 
 	# L2 (ADR-0011): the founder currency is the monthly ATTENTION budget (month_plan), not
-	# the retired per-turn AP pool. Read the plan's Attention split so the HUD is honest —
+	# the retired per-turn AP pool. Read the plan's Attention split so the HUD is honest --
 	# "~20 decisions this month" is now the true, spendable number.
 	var mp = state.get("month_plan", {})
 	var total_ap = int(mp.get("attention_total", 0))
@@ -903,7 +903,7 @@ func _on_game_state_updated(state: Dictionary):
 
 func _setup_delta_chips() -> void:
 	"""Create the small 'last turn' delta labels right after each resource readout.
-	Playtest motivation: the one human ledger-death specimen was low-resolution —
+	Playtest motivation: the one human ledger-death specimen was low-resolution --
 	'the feeling that I was losing things badly' with no numbers to point at."""
 	var specs := [
 		{"key": "money", "after": money_label},
@@ -968,7 +968,7 @@ func _render_delta_chip(key: String, d: float) -> void:
 
 
 func _format_deltas(deltas: Dictionary) -> String:
-	"""EE-7: BBCode-coloured 'money +$20k, doom +3.0' summary for the message log —
+	"""EE-7: BBCode-coloured 'money +$20k, doom +3.0' summary for the message log --
 	resource-affecting events state their deltas instead of burying them in prose."""
 	var order := ["money", "compute", "research", "papers", "reputation", "doom"]
 	var parts := []
@@ -1036,7 +1036,7 @@ func _on_action_executed(result: Dictionary):
 	# EE-7: resource-affecting events/actions state their applied deltas explicitly
 	var deltas: Dictionary = result.get("deltas", {})
 	if not deltas.is_empty():
-		log_message("[color=gray]  └─ Δ[/color] " + _format_deltas(deltas))
+		log_message("[color=gray]  `- delta[/color] " + _format_deltas(deltas))
 
 	# Show any additional messages from action
 	if result.has("messages"):
@@ -1047,7 +1047,7 @@ func _on_action_executed(result: Dictionary):
 
 func _on_achievement_unlocked(achievement: Dictionary) -> void:
 	"""L8 (#619): surface unlocks in the message log. Recognition only (ADR-0002)."""
-	log_message("[color=gold]★ Achievement — %s:[/color] [color=gray]%s[/color]" % [
+	log_message("[color=gold]* Achievement -- %s:[/color] [color=gray]%s[/color]" % [
 		achievement.get("title", "?"), achievement.get("flavor", "")])
 
 func _on_error_occurred(error_msg: String):
@@ -1073,7 +1073,7 @@ func _exit_tree() -> void:
 
 func log_message(text: String, channel: String = "normal"):
 	"""Add a message to the log with an in-game date stamp (playtest: real-seconds
-	timestamps were meaningless to players — show the calendar date instead, reusing
+	timestamps were meaningless to players -- show the calendar date instead, reusing
 	GameState.get_formatted_date(), the same helper the HUD date badge uses).
 
 	P0 feed filter: every line is recorded with its channel so the "Hide arxiv flood"
@@ -1217,7 +1217,7 @@ func _on_actions_available(actions: Array):
 			# Create icon-only button (square, fills width)
 			var icon_button = Button.new()
 			icon_button.custom_minimum_size = Vector2(70, 70)  # square icon tiles
-			# #594: hug the 70px icon instead of ballooning across the wide left panel — this
+			# #594: hug the 70px icon instead of ballooning across the wide left panel -- this
 			# reclaims the empty padding around each icon (and stops expand_icon distorting them).
 			icon_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 			icon_button.focus_mode = Control.FOCUS_NONE
@@ -1308,7 +1308,7 @@ func _populate_upgrades():
 
 		# If purchased, show differently
 		if is_purchased:
-			button.text = "✓ " + upgrade_name
+			button.text = "[OK] " + upgrade_name
 			button.disabled = true
 			button.modulate = Color(0.5, 1.0, 0.5)  # Green tint
 		else:
@@ -1352,22 +1352,22 @@ func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
 	var upgrade_cost = upgrade.get("cost", 0)
 
 	# Build enhanced upgrade info
-	var info_text = "[b][color=cyan]%s[/color][/b] — %s" % [upgrade_name, upgrade_desc]
+	var info_text = "[b][color=cyan]%s[/color][/b] -- %s" % [upgrade_name, upgrade_desc]
 
 	# Show cost
-	info_text += "\n[color=gray]├─[/color] [color=yellow]Cost:[/color] [color=gold]%s[/color]" % GameConfig.format_money(upgrade_cost)
+	info_text += "\n[color=gray]|-[/color] [color=yellow]Cost:[/color] [color=gold]%s[/color]" % GameConfig.format_money(upgrade_cost)
 
 	# Show status
-	info_text += "\n[color=gray]└─[/color] "
+	info_text += "\n[color=gray]`-[/color] "
 	if is_purchased:
-		info_text += "[color=green]✓ ALREADY PURCHASED[/color]"
+		info_text += "[color=green][OK] ALREADY PURCHASED[/color]"
 	else:
 		var current_state = game_manager.get_game_state()
 		if current_state.get("money", 0) >= upgrade_cost:
-			info_text += "[color=lime]✓ READY TO PURCHASE[/color]"
+			info_text += "[color=lime][OK] READY TO PURCHASE[/color]"
 		else:
 			var needed = upgrade_cost - current_state.get("money", 0)
-			info_text += "[color=red]✗ NEED %s MORE[/color]" % GameConfig.format_money(needed)
+			info_text += "[color=red][X] NEED %s MORE[/color]" % GameConfig.format_money(needed)
 
 	info_label.text = info_text
 
@@ -1443,7 +1443,7 @@ func _decorate_active_submenu(anchor_button: Button = null) -> void:
 		SubmenuChrome.align_to_button(active_dialog, anchor_button)
 
 func _add_submenu_close_affordance(dialog: Control) -> void:
-	"""#622 L10 delegator — keeps the one-arg call shape the dialog builders use;
+	"""#622 L10 delegator -- keeps the one-arg call shape the dialog builders use;
 	the chrome is SubmenuChrome.add_close_affordance with MainUI's close routine."""
 	SubmenuChrome.add_close_affordance(dialog, _close_active_submenu)
 
@@ -1468,7 +1468,7 @@ func _debug_nudge_doom(delta: float) -> void:
 		st.doom = clampf(st.doom + delta, 0.0, 100.0)
 	st.record_doom_history()
 	_on_game_state_updated(game_manager.get_game_state())
-	log_message("[color=gray][debug] doom %+.0f → %.1f%%[/color]" % [delta, st.doom])
+	log_message("[color=gray][debug] doom %+.0f -> %.1f%%[/color]" % [delta, st.doom])
 
 func _show_doom_trend_expanded() -> void:
 	"""Expanded full-history doom trend panel (#512), reusing the #510 close affordance."""
@@ -1510,7 +1510,7 @@ func _show_doom_trend_expanded() -> void:
 	margin.add_child(vbox)
 
 	var header := Label.new()
-	header.text = "DOOM TREND — FULL HISTORY"
+	header.text = "DOOM TREND -- FULL HISTORY"
 	header.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	header.add_theme_font_size_override("font_size", 14)
 	header.add_theme_color_override("font_color", Color(0.80, 0.85, 0.90))
@@ -2516,8 +2516,8 @@ func _show_strategic_unlock_fanfare() -> void:
 	log_message("[color=gold]The board convenes: Strategic Moves are now available.[/color]")
 	FanfarePopup.show_fanfare(
 		"STRATEGIC MOVES UNLOCKED",
-		"The council of elders has deemed your standing sufficient. High-stakes plays now open to you — bold gambits that can bend the odds, each leaving its mark on the ledger of history. Wield them wisely.",
-		"",  # hero banner image slot — art_prompts/hero_banners.yaml drops in here later
+		"The council of elders has deemed your standing sufficient. High-stakes plays now open to you -- bold gambits that can bend the odds, each leaving its mark on the ledger of history. Wield them wisely.",
+		"",  # hero banner image slot -- art_prompts/hero_banners.yaml drops in here later
 		get_tree().root)
 
 
@@ -3362,7 +3362,7 @@ func update_queued_actions_display():
 
 			# Remove button (X)
 			var remove_btn = Button.new()
-			remove_btn.text = "✕ Remove"
+			remove_btn.text = "x Remove"
 			remove_btn.custom_minimum_size = Vector2(90, 24)
 			remove_btn.add_theme_font_size_override("font_size", 9)
 
@@ -3428,14 +3428,14 @@ func update_queued_actions_display():
 		print("[MainUI] Updated button states: queue_size=%d, buttons_disabled=%s" % [queued_actions.size(), queue_empty])
 
 func _on_event_dialog_opened(dialog: Control, buttons: Array) -> void:
-	"""EventDialog put its modal up (#622) — route MainUI keyboard shortcuts to it.
+	"""EventDialog put its modal up (#622) -- route MainUI keyboard shortcuts to it.
 	The dialog carries the is_event_dialog meta, so ESC handling keeps refusing to
 	close it (#452)."""
 	active_dialog = dialog
 	active_dialog_buttons = buttons
 
 func _on_event_dialog_closed() -> void:
-	"""EventDialog dismissed its modal — clear the keyboard-routing state (#622)."""
+	"""EventDialog dismissed its modal -- clear the keyboard-routing state (#622)."""
 	active_dialog = null
 	active_dialog_buttons = []
 
@@ -3451,10 +3451,10 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 	var action_costs = action.get("costs", {})
 
 	# Build info text with enhanced formatting
-	var info_text = "[b][color=cyan]%s[/color][/b] — %s" % [action_name, action_desc]
+	var info_text = "[b][color=cyan]%s[/color][/b] -- %s" % [action_name, action_desc]
 
 	# Add costs with icons/colors (always add line for consistent 2-line format)
-	info_text += "\n[color=gray]├─[/color] "
+	info_text += "\n[color=gray]|-[/color] "
 	if not action_costs.is_empty():
 		info_text += "[color=yellow]Costs:[/color] "
 		var cost_parts = []
@@ -3473,18 +3473,18 @@ func _on_action_hover(action: Dictionary, can_afford: bool, missing_resources: A
 		if action_costs.has("research"):
 			cost_parts.append("[color=purple]%.1f Research[/color]" % action_costs["research"])
 
-		info_text += " • ".join(cost_parts)
+		info_text += " - ".join(cost_parts)
 	else:
 		info_text += "[color=gray]No costs[/color]"
 
 	# Show affordability with visual indicator
-	info_text += "\n[color=gray]└─[/color] "
+	info_text += "\n[color=gray]`-[/color] "
 	if not can_afford:
-		info_text += "[color=red]✗ CANNOT AFFORD[/color]"
+		info_text += "[color=red][X] CANNOT AFFORD[/color]"
 		if missing_resources.size() > 0:
 			info_text += " [color=gray](%s)[/color]" % missing_resources[0]
 	else:
-		info_text += "[color=lime]✓ READY TO USE[/color]"
+		info_text += "[color=lime][OK] READY TO USE[/color]"
 
 	info_label.text = info_text
 

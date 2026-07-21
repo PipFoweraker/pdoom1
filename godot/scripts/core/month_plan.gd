@@ -1,23 +1,23 @@
 class_name MonthPlan
 extends RefCounted
 ## The month plan layer (L1 / ADR-0009). The plan turn is a MONTH; the day-turn is the
-## resolution tick beneath it (GameState.turn keeps counting workday ticks — this object
+## resolution tick beneath it (GameState.turn keeps counting workday ticks -- this object
 ## layers the monthly decision cadence on top without re-grainng the sim substrate).
 ##
 ## Holds the founder currency **Attention** (workshop#3 addendum #5): ~N decisions/month,
-## admin as painful overhead. Staff spend a SEPARATE per-person `actions` currency — there
+## admin as painful overhead. Staff spend a SEPARATE per-person `actions` currency -- there
 ## is no global pool here (this is NOT the legacy AP pool; L2 deletes that and migrates cost
-## dicts onto Attention/staff — L1 introduces Attention alongside, seam left clean).
+## dicts onto Attention/staff -- L1 introduces Attention alongside, seam left clean).
 ##
 ## Attention splits three ways within a month:
-##   available  — free to fund queued strategic actions (plan speed)
-##   reserved   — explicitly set aside at plan time for response windows (instant speed);
-##                this is ADR-0009's CRISP reserve — the gamble that makes windows interlock
-##   spent      — already committed to queued strategic work
-## Unspent reserve EVAPORATES at month end (ADR-0009 §4 — no banking, ever): begin_month()
+##   available  -- free to fund queued strategic actions (plan speed)
+##   reserved   -- explicitly set aside at plan time for response windows (instant speed);
+##                this is ADR-0009's CRISP reserve -- the gamble that makes windows interlock
+##   spent      -- already committed to queued strategic work
+## Unspent reserve EVAPORATES at month end (ADR-0009 S4 -- no banking, ever): begin_month()
 ## resets the pools, discarding any carry.
 ##
-## Strategic actions carry DURATIONS (ADR-0009 §5 — nothing strategic resolves instantly);
+## Strategic actions carry DURATIONS (ADR-0009 S5 -- nothing strategic resolves instantly);
 ## queued items land on a future resolution tick. This is the seam L2 workstreams extend.
 
 # --- Attention accounting (all integer Attention units) ---
@@ -26,19 +26,19 @@ var attention_spent: int = 0        # committed to queued strategic actions
 var attention_reserved: int = 0     # explicitly held for response windows (the crisp reserve)
 var reserve_used: int = 0           # reserve consumed by HANDLE-from-reserve this month
 
-# Which plan-month this is (0-based from run start) — stamps the replay artifact (ADR-0016).
+# Which plan-month this is (0-based from run start) -- stamps the replay artifact (ADR-0016).
 var month_ordinal: int = 0
 
 # Queued strategic actions with durations. Each entry:
 #   {action_id: String, attention_cost: int, resolves_on_turn: int, queued_on_turn: int}
-# Nothing resolves instantly — the MonthController lands these when state.turn reaches
+# Nothing resolves instantly -- the MonthController lands these when state.turn reaches
 # resolves_on_turn (mid-period or at month review).
 var queued_strategic: Array = []
 
 
 func begin_month(attention_per_month: int, ordinal: int) -> void:
 	"""Open a fresh plan phase. Crisp reserve evaporation happens HERE by construction:
-	the pools reset, so last month's unspent reserve is simply gone (ADR-0009 §4)."""
+	the pools reset, so last month's unspent reserve is simply gone (ADR-0009 S4)."""
 	attention_total = attention_per_month
 	attention_spent = 0
 	attention_reserved = 0
@@ -91,8 +91,8 @@ func spend_attention(cost: int) -> bool:
 
 func queue_strategic(action_id: String, attention_cost: int, duration_ticks: int, current_turn: int) -> bool:
 	"""Queue a strategic action at plan speed. Spends Attention now; the EFFECT lands
-	`duration_ticks` resolution ticks later (ADR-0009 §5). duration_ticks <= 0 is coerced
-	to 1 — nothing strategic resolves on the same tick it was queued."""
+	`duration_ticks` resolution ticks later (ADR-0009 S5). duration_ticks <= 0 is coerced
+	to 1 -- nothing strategic resolves on the same tick it was queued."""
 	if not can_queue(attention_cost):
 		return false
 	var ticks: int = max(1, duration_ticks)
@@ -120,10 +120,10 @@ func take_due_strategic(current_turn: int) -> Array:
 	return due
 
 
-# --- Response-window payment sources (ADR-0009 §3) ---
+# --- Response-window payment sources (ADR-0009 S3) ---
 
 func pay_from_reserve(cost: int) -> bool:
-	"""HANDLE from reserve — painless, what the reserve gamble was for. Draws from the
+	"""HANDLE from reserve -- painless, what the reserve gamble was for. Draws from the
 	explicitly-held reserve pool only."""
 	if reserve_remaining() < cost:
 		return false
@@ -132,8 +132,8 @@ func pay_from_reserve(cost: int) -> bool:
 
 
 func pay_by_cannibalizing(cost: int) -> Dictionary:
-	"""HANDLE by cannibalizing — pay a window out of un-reserved capacity, and if that is
-	short, DELAY/KILL planned WIP to free the Attention it holds (ADR-0009 §3). Returns
+	"""HANDLE by cannibalizing -- pay a window out of un-reserved capacity, and if that is
+	short, DELAY/KILL planned WIP to free the Attention it holds (ADR-0009 S3). Returns
 	{paid: bool, cancelled: Array[String]} listing action_ids sacrificed (LIFO)."""
 	var cancelled: Array = []
 	var free: int = available()
@@ -145,7 +145,7 @@ func pay_by_cannibalizing(cost: int) -> Dictionary:
 		free = available()
 	if free < cost:
 		# Roll back nothing was actually spent; report failure. (attention_spent already
-		# reflects the cancellations, which is correct — cancelling WIP is a real refund.)
+		# reflects the cancellations, which is correct -- cancelling WIP is a real refund.)
 		return {"paid": false, "cancelled": cancelled}
 	attention_spent += cost  # the window consumes this much of the freed/available capacity
 	return {"paid": true, "cancelled": cancelled}

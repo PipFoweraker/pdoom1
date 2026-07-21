@@ -1,8 +1,8 @@
 extends GutTest
 ## WS-1 (ADR-0003): the Liability Ledger.
 ## Verifies entry lifecycle (fuse / compounding interest / billing), the bankruptcy
-## escalation that gives debt teeth, secret exposure -> blackmail chaining, and — the
-## definition-of-done — the ADR-0002 mortality guarantee via a headless soak: a
+## escalation that gives debt teeth, secret exposure -> blackmail chaining, and -- the
+## definition-of-done -- the ADR-0002 mortality guarantee via a headless soak: a
 ## desperation bot buys time then dies of its own ledger (death is attributable);
 ## a lean bot dies sooner but clean (no ledger attribution). Both runs are finite.
 
@@ -14,7 +14,7 @@ func _fresh_state(seed_str: String):
 	s.reputation = 50.0
 	# ADR-0015: these tests exercise the LEDGER's own conversion contract in isolation
 	# (synchronous doom arithmetic, controlled soak). With a doom_system attached the
-	# ledger routes doom as a buffered STREAM INPUT (applied on the next doom tick) —
+	# ledger routes doom as a buffered STREAM INPUT (applied on the next doom tick) --
 	# correct in the real loop, but it would decouple the soak's hand-rolled doom math.
 	# Detach the authority so Ledger._add_doom takes its documented lightweight-double
 	# fallback (state.doom +=). Stream routing is covered by test_doom_system + the sweep.
@@ -72,7 +72,7 @@ func test_secret_exposure_offers_a_blackmail_entry():
 # A controlled structural soak of the ledger mechanic: doom rises each turn; spending
 # money suppresses it. The lean bot spends only clean money; the desperation bot also
 # takes loans to keep suppressing after clean money runs out. (Full-pipeline soak
-# through TurnManager's real doom/rival balance is a follow-up seam — see PR.)
+# through TurnManager's real doom/rival balance is a follow-up seam -- see PR.)
 const _DOOM_RISE := 6.0
 const _SUPPRESS := 8.0
 const _COST := 45000.0
@@ -91,7 +91,7 @@ func _soak(desperation: bool) -> Dictionary:
 			state.money -= _COST
 			suppressed = true
 		elif desperation:
-			# Desperation lever: borrow to fund another suppression — buys time now,
+			# Desperation lever: borrow to fund another suppression -- buys time now,
 			# plants a compounding liability that bills later.
 			state.money += 70000.0
 			state.ledger.add(Ledger.loan(70000.0, 12, 0.10))
@@ -118,8 +118,8 @@ func test_mortality_guarantee_no_immortal_runs():
 func test_desperation_buys_time_then_dies_of_its_own_ledger():
 	var lean := _soak(false)
 	var desp := _soak(true)
-	# Desperation buys time — it survives strictly longer than the clean-hands run...
+	# Desperation buys time -- it survives strictly longer than the clean-hands run...
 	assert_gt(desp["turns"], lean["turns"], "desperation levers buy time (more turns survived)")
 	# ...but at the cost of a spectacular, self-inflicted death.
 	assert_gt(desp["attributed"], 0, "desperation dies of its own ledger (attributed)")
-	assert_eq(lean["attributed"], 0, "the lean run dies clean — no ledger attribution")
+	assert_eq(lean["attributed"], 0, "the lean run dies clean -- no ledger attribution")

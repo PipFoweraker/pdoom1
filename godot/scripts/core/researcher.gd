@@ -31,7 +31,7 @@ var jet_lag_severity: float = 0.0  # 0.0-1.0, productivity penalty during jet la
 # docs/game-design/RESEARCHER_QUIRKS.md.
 
 # ============================================================================
-# HIRING PIPELINE — IDENTITY + ONBOARDING (Phase B)
+# HIRING PIPELINE -- IDENTITY + ONBOARDING (Phase B)
 # Spec: docs/game-design/BUILD_BRIEF_HIRING_PIPELINE.md "Phase B". These ride ON the
 # Phase-A hidden layer below. `candidate_id` is a stable handle the pipeline references
 # across save/load (object identity doesn't survive a JSON hop). The onboarding flags gate
@@ -47,7 +47,7 @@ var mentoring_done: bool = false    # soft item: skipping it debuffs + arms attr
 var mentoring_skipped: bool = false # player explicitly skimped mentoring (slack-as-insurance)
 
 # ============================================================================
-# HIRING PIPELINE — HIDDEN ABILITY LAYER (Phase A)
+# HIRING PIPELINE -- HIDDEN ABILITY LAYER (Phase A)
 # Spec: docs/game-design/BUILD_BRIEF_HIRING_PIPELINE.md "Phase A" + WORKSHOP_2_BACKLOG
 # "Hiring pipeline RULED" (A1/A2/A3); appetites/quirks per ADR-0011 section 8; pay-to-see
 # per ADR-0004 ("Simulate everything; gate only the view").
@@ -452,7 +452,7 @@ func get_specialization_name() -> String:
 	return specialization.capitalize()
 
 # ============================================================================
-# HIRING PIPELINE — REVEAL / HIRE-STATE / CANDIDATE CARD (Phase A)
+# HIRING PIPELINE -- REVEAL / HIRE-STATE / CANDIDATE CARD (Phase A)
 # ============================================================================
 
 static func _neutral_appetites() -> Dictionary:
@@ -632,7 +632,7 @@ func to_dict() -> Dictionary:
 	}
 
 func from_dict(data: Dictionary):
-	"""Deserialize from dictionary (L7 #618: explicit casts — JSON numbers arrive as float)"""
+	"""Deserialize from dictionary (L7 #618: explicit casts -- JSON numbers arrive as float)"""
 	researcher_name = String(data.get("name", ""))
 	specialization = String(data.get("specialization", "safety"))
 	skill_level = int(data.get("skill_level", 5))

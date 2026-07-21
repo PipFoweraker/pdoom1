@@ -1,13 +1,13 @@
 extends GutTest
 ## Scoring tests (ADR-0002): the score is the lexicographic tuple
-## (turns_survived, doom_integral) — turns strictly dominant, doom-integral tiebreak —
+## (turns_survived, doom_integral) -- turns strictly dominant, doom-integral tiebreak --
 ## accrued in-engine, flows-only, with the engine as the sole scoring authority.
 ##
 ## This replaces the old composite-formula test. There is deliberately NO score formula
 ## outside the engine to duplicate here.
 
 func test_format_score_display():
-	assert_eq(GameState.format_score(14, 862), "Turn 14 · 862", "Display is 'Turn N · integral'")
+	assert_eq(GameState.format_score(14, 862), "Turn 14 - 862", "Display is 'Turn N - integral'")
 
 func test_score_tuple_from_state():
 	var st = GameState.score_tuple({"turn": 14, "doom_integral": 862.4})

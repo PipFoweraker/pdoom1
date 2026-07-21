@@ -1,5 +1,5 @@
 extends GutTest
-## L1 (#612 / ADR-0009): the month plan layer — Attention economy, the crisp reserve,
+## L1 (#612 / ADR-0009): the month plan layer -- Attention economy, the crisp reserve,
 ## strategic-action durations, and window payment sources.
 
 func _plan(total: int = 20) -> MonthPlan:
@@ -63,13 +63,13 @@ func test_reserve_and_plan_compete_for_the_same_pool():
 
 
 func test_reserve_evaporates_at_month_end_no_banking():
-	# ADR-0009 §4: unspent reserve does NOT carry. begin_month resets the pools.
+	# ADR-0009 S4: unspent reserve does NOT carry. begin_month resets the pools.
 	var p := _plan(20)
 	p.set_reserve(10)
 	p.pay_from_reserve(2)  # spent 2 of the 10
 	assert_eq(p.reserve_remaining(), 8, "8 reserve unspent this month")
 	p.begin_month(20, 1)   # next month opens
-	assert_eq(p.reserve_remaining(), 0, "the unspent 8 evaporated — no banking")
+	assert_eq(p.reserve_remaining(), 0, "the unspent 8 evaporated -- no banking")
 	assert_eq(p.available(), 20, "next month is a fresh full grant")
 	assert_eq(p.month_ordinal, 1, "ordinal advanced")
 

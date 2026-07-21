@@ -65,7 +65,7 @@ func test_infobar_maintains_height():
 	assert_true(label.text.contains("\n"), "Unhover text should maintain 2-line format")
 
 	# Set multi-line text (hovered)
-	label.text = "[b]Test Action[/b]\n[color=gray]├─[/color] Test details"
+	label.text = "[b]Test Action[/b]\n[color=gray]|-[/color] Test details"
 	assert_true(label.text.contains("\n"), "Hover text should be multi-line")
 
 	# InfoBar height should remain constant

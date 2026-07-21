@@ -29,7 +29,7 @@ deterministic from a seed, and the input-replay is the canonical artifact (ADR-0
 
 - **Design philosophy (the "why"):** [`docs/game-design/DESIGN_PHILOSOPHY.md`](game-design/DESIGN_PHILOSOPHY.md)
 - **Decision log (the "what & why-not"):** [`docs/game-design/decisions/`](game-design/decisions/) — one ADR per decision.
-  > ⚠️ The ADR index in [`decisions/README.md`](game-design/decisions/README.md) is
+  > [!] The ADR index in [`decisions/README.md`](game-design/decisions/README.md) is
   > **stale** (lists only ADR-0001 as PROPOSED). The real set is ADR-0001…0016, nearly all
   > ACCEPTED. Trust the files, not the index.
 
@@ -235,7 +235,7 @@ Gameplay numbers live in JSON, not code, via the **`Balance` autoload** (L9 #621
   (incl. `doom.streams.*`), `ledger`, `financing`, `salaries`, `action_points`, `rivals`,
   `risk`, `difficulty`, `events`, `papers`.
 - **Contract:** every consumer passes its inline literal as the fallback, so a missing/broken
-  file *should* degrade to shipped behavior. ⚠️ **This contract is currently violated for
+  file *should* degrade to shipped behavior. [!] **This contract is currently violated for
   `doom.streams.*`** — see [§7](#7-known-gaps--active-fronts).
 - **Other data dirs:** `data/actions/*.json` (10 files — action definitions),
   `data/events/*.json` (8 files across `balancing/`, `extensions/`, `overrides/`),
@@ -292,7 +292,7 @@ again.
 | Adjust how doom is computed (structure, not numbers) | [`doom_system.gd`](../godot/scripts/core/doom_system.gd) `_compute_streams` / `_advance_intermediaries` |
 | Change the turn/month loop | [`month_controller.gd`](../godot/scripts/core/month_controller.gd) + [`game_manager.gd`](../godot/scripts/game_manager.gd) `end_month`/`_run_month_playback` |
 | Add a ledger liability type | factories in [`ledger.gd`](../godot/scripts/core/ledger.gd) |
-| Change turn step order / add a sim step | `_step_*` in [`turn_manager.gd`](../godot/scripts/core/turn_manager.gd) — **⚠ order is replay-load-bearing** |
+| Change turn step order / add a sim step | `_step_*` in [`turn_manager.gd`](../godot/scripts/core/turn_manager.gd) — **[!] order is replay-load-bearing** |
 | Register new save/load state | `to_dict`/`from_dict` in [`game_state.gd`](../godot/scripts/core/game_state.gd) — read the SERIALIZATION CONVENTION block first |
 | Change scoring | `score_tuple`/`compare_score` in [`game_state.gd`](../godot/scripts/core/game_state.gd) |
 

@@ -1,11 +1,11 @@
 extends Node
-## Achievements — observer-only run recognition (build lane L8, issue #619).
+## Achievements -- observer-only run recognition (build lane L8, issue #619).
 ##
-## THE CONTRACT (ADR-0002 anti-sink rule; WORKSHOP_2_BUILD_LANES §L8):
+## THE CONTRACT (ADR-0002 anti-sink rule; WORKSHOP_2_BUILD_LANES SL8):
 ## achievements are RECOGNITION, never in-run reward. This node is a read-only
 ## listener. It consumes the Dictionary snapshots GameManager already emits via
-## `game_state_updated` — GameState.to_dict() copies, never the live GameState
-## object — and writes NOTHING back into sim, score, or any gameplay system.
+## `game_state_updated` -- GameState.to_dict() copies, never the live GameState
+## object -- and writes NOTHING back into sim, score, or any gameplay system.
 ## No achievement may ever gate, grant, or price anything inside a run; a
 ## proposed achievement with an in-run effect is rejected on sight, exactly as
 ## ADR-0002 rejects stock score terms. tests/unit/test_achievements.gd asserts
@@ -15,7 +15,7 @@ extends Node
 ## runs and records the first-unlock date. Unlocks are permanent.
 ##
 ## Year marks derive from the game calendar (state.calendar; ADR-0009 "the badge
-## is the date") — never from turn arithmetic — so they survive turn-cadence
+## is the date") -- never from turn arithmetic -- so they survive turn-cadence
 ## changes (the L0 plan-month migration).
 ##
 ## New candidates accumulate in WORKSHOP_2_BACKLOG.md DQ-17 ([ACHIEVEMENT] tags).
@@ -48,7 +48,7 @@ const DEFINITIONS: Array = [
 		"flavor": "Doom passed 90. You filed the paperwork anyway."},
 ]
 
-# EE-4 seam (deferred to boards work — do not implement here): "fastest X this
+# EE-4 seam (deferred to boards work -- do not implement here): "fastest X this
 # season" records are LEADERBOARD-derived, not observer-derived. Anticipated
 # shape in this file, keyed (season_id, achievement_id):
 #   "season_records": {"<season_id>": {"<achievement_id>": {
@@ -77,7 +77,7 @@ func _ready() -> void:
 func watch(game_manager: Node) -> void:
 	"""Subscribe to a GameManager instance (idempotent). Observer-only: the sole
 	signal consumed is game_state_updated, whose payload is already a to_dict()
-	snapshot — never the live GameState."""
+	snapshot -- never the live GameState."""
 	if game_manager == null or not game_manager.has_signal("game_state_updated"):
 		return
 	if not game_manager.game_state_updated.is_connected(_on_game_state_updated):
@@ -91,7 +91,7 @@ func _on_game_state_updated(state: Dictionary) -> void:
 func evaluate(state: Dictionary) -> Array:
 	"""Evaluate all still-locked achievements against a state snapshot.
 	Returns the ids newly unlocked (possibly empty). READ-ONLY on `state` by
-	contract — the GUT test asserts the snapshot is byte-identical afterwards."""
+	contract -- the GUT test asserts the snapshot is byte-identical afterwards."""
 	var newly: Array = []
 	var turn := int(state.get("turn", 0))
 	if not _prev.is_empty() and turn < int(_prev.get("turn", 0)):
@@ -113,7 +113,7 @@ func evaluate(state: Dictionary) -> Array:
 
 
 func _predicate_holds(id: String, state: Dictionary) -> bool:
-	# Year marks carry no game_over gate: ADR-0009 badge-is-the-date semantics —
+	# Year marks carry no game_over gate: ADR-0009 badge-is-the-date semantics --
 	# a run whose death date lands in 2027 "made it to 2027".
 	var year := int(state.get("calendar", {}).get("year", 0))
 	match id:
@@ -137,7 +137,7 @@ func _predicate_holds(id: String, state: Dictionary) -> bool:
 		"first_liability":
 			# Snapshot only exposes ledger aggregates (entry_count), not entry
 			# sources, so this fires on the first liability of ANY kind (loan,
-			# funding-with-strings, desperation lever) — deliberately broader
+			# funding-with-strings, desperation lever) -- deliberately broader
 			# than "first loan" to keep the observer snapshot-pure.
 			return not _prev.is_empty() \
 				and int(state.get("ledger", {}).get("entry_count", 0)) > int(_prev.get("ledger_entries", 0))
@@ -164,11 +164,11 @@ func _unlock(def: Dictionary, state: Dictionary) -> void:
 	achievement_unlocked.emit({
 		"id": def["id"], "title": def["title"], "flavor": def["flavor"], "record": record,
 	})
-	# Toast via the existing NotificationManager ACHIEVEMENT type — display only.
+	# Toast via the existing NotificationManager ACHIEVEMENT type -- display only.
 	if is_inside_tree():
 		var nm := get_node_or_null("/root/NotificationManager")
 		if nm:
-			nm.achievement("Achievement — %s" % def["title"])
+			nm.achievement("Achievement -- %s" % def["title"])
 
 
 func is_unlocked(id: String) -> bool:

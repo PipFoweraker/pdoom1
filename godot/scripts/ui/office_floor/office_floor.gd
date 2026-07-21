@@ -3,7 +3,7 @@ class_name OfficeFloor
 ## Standalone, reusable office-floor VIEW for the WATCH screen.
 ##
 ## PURE VIEW (ADR-0006, non-negotiable): it READS a roster SNAPSHOT (an Array of
-## plain Dictionaries — copied values, never a live GameState reference) and
+## plain Dictionaries -- copied values, never a live GameState reference) and
 ## renders milling employees. It NEVER writes game state and nothing it does
 ## feeds back into the sim, so it is determinism-safe by construction: replay
 ## replays inputs->state, and a cosmetic view cannot alter a verified run. Sprite
@@ -22,7 +22,7 @@ class_name OfficeFloor
 ##   burnout:float(0-100), loyalty:int(0-100), unmanaged:bool, assigned:bool
 ##
 ## Scaling note: designed for 1..~12 sprites (Startup/Entity phases). For the
-## Titan phase (hundreds of staff) the intended approach is NOT one sprite each —
+## Titan phase (hundreds of staff) the intended approach is NOT one sprite each --
 ## aggregate into division "pods"/heatmap tiles fed the same snapshot. That
 ## aggregation is deliberately NOT built here (see build brief Tier 2/phase-scaling).
 
@@ -164,7 +164,7 @@ func _relayout_desks() -> void:
 		spr.cat_pos = z["cat_pos"]
 		spr.window_pos = z["window_pos"]
 
-# Cosmetic destination LANDMARKS derived from the floor bounds — placed at distinct
+# Cosmetic destination LANDMARKS derived from the floor bounds -- placed at distinct
 # spots so a walking employee's destination reads at a glance (Tier-1 named points,
 # not a navmesh). window along the top wall; three corners: cat / water cooler /
 # fridge. Desks cluster around tables in the central band (see _table_centers).
@@ -230,7 +230,7 @@ static func snapshot_from_state(state) -> Array:
 	var researchers: Array = state.researchers if "researchers" in state else []
 	var total := researchers.size()
 	# get_unmanaged_count() reports how many exceed management capacity; we mark
-	# the trailing N as the drifting/unmanaged ones (view heuristic — order-only).
+	# the trailing N as the drifting/unmanaged ones (view heuristic -- order-only).
 	var unmanaged_n := 0
 	if state.has_method("get_unmanaged_count"):
 		unmanaged_n = state.get_unmanaged_count()

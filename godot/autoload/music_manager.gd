@@ -295,7 +295,7 @@ func stop_music():
 
 	if is_crossfading:
 		# Kill the actual in-flight crossfade tween. The old code created a fresh tween and
-		# killed that instead — a no-op that left the real crossfade running.
+		# killed that instead -- a no-op that left the real crossfade running.
 		if _crossfade_tween != null and _crossfade_tween.is_valid():
 			_crossfade_tween.kill()
 		_crossfade_tween = null

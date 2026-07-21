@@ -15,11 +15,11 @@ P(Doom) is a **strategic simulation game** set in a time loop starting July 1, 2
 ### Data Flow Architecture
 ```
 Alignment Research Dataset (external)
-     v 
+     v
 pdoom-data repository (cleaning & transformation)
      v  [automated sync pipeline]
 pdoom1 game repository (consumption & integration)
-     v 
+     v
 Weekly builds & league cycles
 ```
 
@@ -291,7 +291,7 @@ pdoom-data/
 |     v                                                      |
 | 5. Git Commit & Push                                    |
 `-----------------------------------------------------------`
-                            v 
+                            v
 +-----------------------------------------------------------+
 | Automated Sync (GitHub Actions)                         |
 |                                                          |
@@ -301,7 +301,7 @@ pdoom-data/
 |   - Run sync_to_pdoom1.sh                              |
 |   - Create PR in pdoom1 with updated data              |
 `-----------------------------------------------------------`
-                            v 
+                            v
 +-----------------------------------------------------------+
 | pdoom1 Repository                                       |
 |                                                          |
@@ -908,14 +908,14 @@ The enhanced release workflow implements automated validation, feed generation, 
 |    - Create triage issue on failure                     |
 |    - Output: validation_hash                            |
 `-----------------------------------------------------------`
-                            v 
+                            v
 +-----------------------------------------------------------+
 | 2. Build Game (Parallel)                                |
 |    Windows Build    |  Linux Build    |  Mac Build      |
 |    - Godot 4.5.1   |  - Godot 4.5.1  |  - Godot 4.5.1 |
 |    - PDoom.exe     |  - PDoom.x86_64 |  - PDoom.app   |
 `-----------------------------------------------------------`
-                            v 
+                            v
 +-----------------------------------------------------------+
 | 3. Generate Feeds & Metadata                            |
 |    - Run generate_release_metadata.py                   |
@@ -924,7 +924,7 @@ The enhanced release workflow implements automated validation, feed generation, 
 |    - Create releases.rss (feed for subscribers)         |
 |    - Output: feed_hash                                  |
 `-----------------------------------------------------------`
-                            v 
+                            v
 +-----------------------------------------------------------+
 | 4. Create Release Manifest                              |
 |    - Aggregate all hashes (builds, data, feeds)         |
@@ -933,7 +933,7 @@ The enhanced release workflow implements automated validation, feed generation, 
 |    - Generate release_manifest.json                     |
 |    - Output: manifest_hash                              |
 `-----------------------------------------------------------`
-                            v 
+                            v
 +-----------------------------------------------------------+
 | 5. Create GitHub Release                                |
 |    - Extract changelog from CHANGELOG.md                |
@@ -942,7 +942,7 @@ The enhanced release workflow implements automated validation, feed generation, 
 |    - Attach source archives                             |
 |    - Attach feeds (JSON + RSS)                          |
 `-----------------------------------------------------------`
-                            v 
+                            v
 +-----------------------------------------------------------+
 | 6. Deploy Feeds to Website                              |
 |    - Upload releases.json to pdoom.net                  |
@@ -1100,7 +1100,7 @@ skip_validation: true  # Use only for emergency releases
 
 **Triage Issue Template**:
 ```markdown
-## 🚨 Data Validation Failed for Release v0.10.1
+## [!] Data Validation Failed for Release v0.10.1
 
 The release pipeline has halted due to data validation errors.
 

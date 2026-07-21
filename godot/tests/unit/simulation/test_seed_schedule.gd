@@ -7,7 +7,7 @@ extends GutTest
 const SEED := "ws-c-vet-seed"
 
 # A schedule that leans hard on the scale: fund + inflame CapabiliCorp early so it drives
-# an emergent doom wave. (Inputs only — the wave itself is the sim's doing.)
+# an emergent doom wave. (Inputs only -- the wave itself is the sim's doing.)
 func _heavy_schedule() -> Array:
 	return [
 		{"turn": 1, "cause": "rival_funding_wave", "target": "capabilicorp", "magnitude": 5000000.0},
