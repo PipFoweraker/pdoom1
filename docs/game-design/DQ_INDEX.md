@@ -22,27 +22,28 @@
 | DQ-13 | Doom nudge strength | open | 58 |
 | DQ-14 | World-state progression display | open | 60 |
 | DQ-15 | Researcher archetype roster | SEEDED | 63 |
-| DQ-16 | Conference-attendance subgame | open | 71 |
-| DQ-17 | Achievement candidates register | open | 74 |
-| DQ-17 ext | Achievements in-run visibility | open | 110 |
-| DQ-18 | Early game = scouting / the populating board | EXECUTED | 121 |
-| DQ-19 | Character creation surface | PRIORITISED | 125 |
-| DQ-20 | Risk pools | open | 134 |
-| DQ-21 | Intermediary vocabulary v1 | RESOLVED | 140 |
-| DQ-22 | Aggro-threshold midgame | open | 197 |
-| DQ-23 | Damper economy | open | 155 |
-| DQ-24 | Attention-demand taxonomy + typed delegation | open | 175 |
-| DQ-25 | Desperation-lever revisit | open | 298 |
-| DQ-26 | VC/equity depth revisit | open | 320 |
-| DQ-27 | Mortality guarantee -- where is it ratified? | open | 328 |
-| DQ-28 | Game "phases" as vocabulary + scenario-jump testing | RESOLVED | 659 |
-| DQ-29 | Cover-up debt | open | 350 |
-| DQ-30 | Economic cycles | open | 359 |
-| DQ-31 | Org/actor taxonomy -- tags, not enums | open | 367 |
-| DQ-32 | News feedline + SA-priced information flow | open | 380 |
-| DQ-33 | Content-pool ladder (artefact promotion/relegation) | open | 399 |
-| DQ-34 | Leaderboard disclosure tiers: score vs reconstructable play | open | 418 |
-| DQ-35 | Cosmetic progression + community insignia | open | 442 |
-| DQ-35 ext | Scene/art unlocks + conditional event art | open | 433 |
+| DQ-15 ext | Portrait variant pools + seeded assignment | open | 71 |
+| DQ-16 | Conference-attendance subgame | open | 81 |
+| DQ-17 | Achievement candidates register | open | 84 |
+| DQ-17 ext | Achievements in-run visibility | open | 120 |
+| DQ-18 | Early game = scouting / the populating board | EXECUTED | 131 |
+| DQ-19 | Character creation surface | PRIORITISED | 135 |
+| DQ-20 | Risk pools | open | 144 |
+| DQ-21 | Intermediary vocabulary v1 | RESOLVED | 150 |
+| DQ-22 | Aggro-threshold midgame | open | 207 |
+| DQ-23 | Damper economy | open | 165 |
+| DQ-24 | Attention-demand taxonomy + typed delegation | open | 185 |
+| DQ-25 | Desperation-lever revisit | open | 308 |
+| DQ-26 | VC/equity depth revisit | open | 330 |
+| DQ-27 | Mortality guarantee -- where is it ratified? | open | 338 |
+| DQ-28 | Game "phases" as vocabulary + scenario-jump testing | RESOLVED | 669 |
+| DQ-29 | Cover-up debt | open | 360 |
+| DQ-30 | Economic cycles | open | 369 |
+| DQ-31 | Org/actor taxonomy -- tags, not enums | open | 377 |
+| DQ-32 | News feedline + SA-priced information flow | open | 390 |
+| DQ-33 | Content-pool ladder (artefact promotion/relegation) | open | 409 |
+| DQ-34 | Leaderboard disclosure tiers: score vs reconstructable play | open | 428 |
+| DQ-35 | Cosmetic progression + community insignia | open | 452 |
+| DQ-35 ext | Scene/art unlocks + conditional event art | open | 443 |
 
-Total: 37 DQs -- 31 open, 6 with a terminal or advanced status.
+Total: 38 DQs -- 32 open, 6 with a terminal or advanced status.
