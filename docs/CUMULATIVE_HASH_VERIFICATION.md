@@ -506,7 +506,7 @@ Layer 6: Rate Limiting (prevent spam)
 | Client Overhead | Medium (store all actions) | Very Low (running hash) |
 | Server Verification Time | Slow (replay game) | Fast (validate hash + state) |
 | Storage Requirements | 5-20KB per game | 64 bytes (hash) + 200 bytes (state) |
-| Cheat Resistance | ★★★★★ Perfect | ★★★★☆ Very Strong |
+| Cheat Resistance | ***** Perfect | ***** Very Strong |
 | Future Features | SUCCESS Replay sharing, spectating | ERROR Limited |
 
 **Verdict**: Cumulative hash is **90% as secure** with **10% of the complexity**

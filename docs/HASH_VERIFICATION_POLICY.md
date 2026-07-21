@@ -245,9 +245,9 @@ Shows only **first discovery** of each unique strategy:
 ```
 Rank | Player      | Score  | Duplicates
 -----|-------------|--------|------------
-1    | Alice       | 95,000 | 12 others ⬆ Click to view
-2    | Bob         | 92,000 | 5 others  ⬆ Click to view
-3    | Dana        | 90,000 | 2 others  ⬆ Click to view
+1    | Alice       | 95,000 | 12 others ^ Click to view
+2    | Bob         | 92,000 | 5 others  ^ Click to view
+3    | Dana        | 90,000 | 2 others  ^ Click to view
 ```
 
 **Saves screen real estate** by only showing unique strategies.
@@ -274,10 +274,10 @@ Optional filter to show **every** submission including duplicates:
 ```
 Rank | Player      | Score  | Status
 -----|-------------|--------|------------------
-1    | Alice       | 95,000 | ⭐ Original
-2    | Bob         | 92,000 | ⭐ Original
+1    | Alice       | 95,000 | * Original
+2    | Bob         | 92,000 | * Original
 3    | Charlie     | 95,000 | REPEAT Duplicate
-4    | Dana        | 90,000 | ⭐ Original
+4    | Dana        | 90,000 | * Original
 ```
 
 ## Why This Design?
@@ -355,7 +355,7 @@ ALTER TABLE users ADD COLUMN verified_external_account TEXT;  -- Future: Steam/F
 
 1. **Anonymous (default)**: "First discovered **3 days ago**"
 2. **Pseudonym opt-in**: "First discovered by **Alice** on 2024-11-20"
-3. **Future - Verified account**: "First discovered by **Alice** 🔗 (Steam)"
+3. **Future - Verified account**: "First discovered by **Alice** (Steam)"
 
 **Name squatting prevention** (future):
 - Pseudonyms are first-come-first-served
@@ -438,11 +438,11 @@ WHERE EXISTS (
 
 **Timestamp priority system**:
 - SUCCESS Accepts all valid submissions
-- ⭐ Credits first discoverer
+- * Credits first discoverer
 - REPEAT Tracks duplicates transparently
 - METRICS Enables rich analytics
 - ACHIEVEMENT Rewards innovation while allowing shared strategies
-- 🛡 Maintains privacy by default
+- Maintains privacy by default
 
 This is the **best of both worlds**: strict verification (hash must be valid) + flexible credit (duplicates allowed, first wins).
 

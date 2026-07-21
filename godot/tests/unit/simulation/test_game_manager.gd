@@ -7,7 +7,7 @@ var _saved_historical_events: Array = []
 var _saved_difficulty: int = 1
 
 func before_each():
-	# GameManager extends Node (autoload) — can't call .new() on the singleton
+	# GameManager extends Node (autoload) -- can't call .new() on the singleton
 	var GameManagerScript = load("res://scripts/game_manager.gd")
 	game_manager = GameManagerScript.new()
 	add_child_autofree(game_manager)
@@ -253,7 +253,7 @@ func test_start_next_turn_increments_turn_counter():
 
 func test_new_plan_month_resets_attention():
 	# L2 (ADR-0011): the founder currency is a MONTHLY Attention budget, not a per-turn AP
-	# pool — so it refreshes at the month boundary (MonthPlan.begin_month), NOT on every
+	# pool -- so it refreshes at the month boundary (MonthPlan.begin_month), NOT on every
 	# day-step. Queuing spends Attention; a fresh plan-month restores the full grant.
 	game_manager.start_new_game("test_seed")
 	game_manager.state.research = 100  # safety_research costs 10 research + 1 Attention
@@ -416,7 +416,7 @@ func test_get_game_state_before_initialization_returns_empty():
 # === INTEGRATION TESTS ===
 
 func test_complete_turn_cycle():
-	# Test a complete turn: start → select → end → next
+	# Test a complete turn: start -> select -> end -> next
 	game_manager.start_new_game("test_seed")
 	var initial_turn = game_manager.state.turn
 

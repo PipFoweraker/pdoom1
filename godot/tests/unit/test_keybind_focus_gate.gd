@@ -46,7 +46,7 @@ func test_gate_false_when_nothing_focused():
 # listener, so emitting it in a headless test has no side effects (unlike
 # screenshot_requested, which drives a real save_png on a null headless viewport).
 func test_keybind_not_consumed_while_text_focused():
-	# With a text field focused, a bound global key must NOT fire — the gate yields
+	# With a text field focused, a bound global key must NOT fire -- the gate yields
 	# the key to the field (#575).
 	line_edit = LineEdit.new()
 	add_child_autofree(line_edit)

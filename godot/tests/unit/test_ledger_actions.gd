@@ -62,7 +62,7 @@ func test_exposure_fires_and_chains():
 func test_soonest_fuse_is_nearest_bill():
 	var s = _fresh_state()
 	GameActions.execute_action("take_loan", s)          # loan fuse (Balance)
-	GameActions.execute_action("desperation_lever", s)  # desperation fuse (Balance) — the nearer bill
+	GameActions.execute_action("desperation_lever", s)  # desperation fuse (Balance) -- the nearer bill
 	# Assert against the Balance-driven desperation fuse (L1 re-denominated fuses to the month
 	# cadence, ADR-0009); the invariant is that soonest_fuse returns the NEARER of the two.
 	var nearer_fuse := Balance.inum("ledger.desperation_payroll.fuse_turns", 33)

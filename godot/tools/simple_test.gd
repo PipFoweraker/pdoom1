@@ -10,15 +10,15 @@ func _init():
 	print("\n[TEST] Basic GDScript")
 	var test_dict = {"a": 1, "b": 2, "c": 3}
 	print("  Dictionary created: %s" % test_dict)
-	print("  [✓] Pass")
+	print("  [[OK]] Pass")
 
 	# Test 2: Load GameState script (without instantiating)
 	print("\n[TEST] Load GameState script")
 	var GameStateClass = load("res://scripts/core/game_state.gd")
 	if GameStateClass:
-		print("  [✓] GameState script found at res://scripts/core/game_state.gd")
+		print("  [[OK]] GameState script found at res://scripts/core/game_state.gd")
 	else:
-		print("  [✗] GameState script not found")
+		print("  [[X]] GameState script not found")
 
 	# Test 3: Check methods available
 	print("\n[TEST] Check GameState methods")
@@ -32,7 +32,7 @@ func _init():
 		if temp_gs.has_method("end_turn"):
 			print("    - end_turn()")
 		temp_gs.free()
-		print("  [✓] Methods checked")
+		print("  [[OK]] Methods checked")
 
 	print("\n" + "=".repeat(60))
 	print("Test Complete - Exiting Immediately")

@@ -10,7 +10,7 @@ signal quality_selected(mode: String)
 const MODES := ["rushed", "standard", "thorough"]
 const LABELS := {"rushed": "Rushed", "standard": "Standard", "thorough": "Thorough"}
 
-# Static copy — no live numbers (those are hidden until insight unlocks them).
+# Static copy -- no live numbers (those are hidden until insight unlocks them).
 const TRADEOFFS := {
 	"rushed":   "2.0x speed. Erodes research integrity, widens capability overhang.",
 	"standard": "Baseline speed. No side effects.",

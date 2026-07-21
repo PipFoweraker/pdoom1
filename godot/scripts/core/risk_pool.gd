@@ -149,7 +149,7 @@ func process_turn(state, rng: RandomNumberGenerator) -> Array[Dictionary]:
 		# for the pre-L1 STRATEGIC turn; under the month cycle this runs per DAY-TICK
 		# (~22/month), so risk.trigger_scale_per_tick re-denominates it (T9/#638: a pool of
 		# 30 should mean ~30%/month, not ~30%/day). Threshold crossings below stay
-		# guaranteed — they are one-shot events, not a cadence. Fallback 1.0 = pre-L1.
+		# guaranteed -- they are one-shot events, not a cadence. Fallback 1.0 = pre-L1.
 		var probability = pool_value / 100.0 * Balance.num("risk.trigger_scale_per_tick", 1.0)
 		var roll = rng.randf()
 		var triggered_by_roll = roll < probability

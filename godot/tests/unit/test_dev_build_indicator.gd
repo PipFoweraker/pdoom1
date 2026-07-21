@@ -33,10 +33,10 @@ func test_open_ledger_keybind_has_readable_name():
 
 func test_live_git_stamp_reflects_this_checkout():
 	# This suite runs inside a git checkout (clone or worktree), so the live probe must
-	# find HEAD — the dev badge can therefore never be a silently stale baked stamp.
+	# find HEAD -- the dev badge can therefore never be a silently stale baked stamp.
 	var live := BuildInfo.get_live_git_stamp()
 	if live.is_empty():
-		pending("git unavailable here — exported-build fallback path (stamp marked '(stamp)')")
+		pending("git unavailable here -- exported-build fallback path (stamp marked '(stamp)')")
 		return
 	assert_string_contains(live, "@", "live identity carries branch@sha")
 	assert_string_contains(BuildInfo.get_stamp(), "live",
@@ -44,7 +44,7 @@ func test_live_git_stamp_reflects_this_checkout():
 
 func test_stamped_fallback_is_visibly_a_stamp_never_live():
 	# The fallback format must self-identify: when the badge is NOT live git, it says
-	# "(stamp)" (or "unstamped") — two checkouts can never show the same badge silently.
+	# "(stamp)" (or "unstamped") -- two checkouts can never show the same badge silently.
 	var stamp := BuildInfo.get_stamp()
 	assert_true(stamp.contains("live") or stamp.contains("(stamp)") or stamp == "unstamped",
 		"every badge form declares its provenance (live / stamp / unstamped), got: %s" % stamp)

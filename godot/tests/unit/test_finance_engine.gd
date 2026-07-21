@@ -32,7 +32,7 @@ func _fresh_state(seed_str: String = "l5-test") -> GameState:
 	return s
 
 func after_each() -> void:
-	# GameState is a Node that spawns doom_system/risk_system Nodes — free them so the
+	# GameState is a Node that spawns doom_system/risk_system Nodes -- free them so the
 	# fast gate doesn't accumulate orphans (mirrors the L1 sweep's cleanup).
 	for s in _created:
 		if not is_instance_valid(s):

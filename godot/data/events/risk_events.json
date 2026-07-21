@@ -115,7 +115,7 @@
 			"catastrophic": [
 				{
 					"id": "risk_integrity_catastrophic_1",
-					"name": "Whistleblower Exposé",
+					"name": "Whistleblower Expose",
 					"description": "A former employee goes public with claims of systematic research misconduct. Media frenzy ensues.",
 					"effects": {
 						"reputation": -30,

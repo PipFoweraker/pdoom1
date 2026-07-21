@@ -3,12 +3,12 @@ extends Node
 ## Plan/Watch two-screen mode controller (BUILD_BRIEF_PLAN_WATCH_UI Lane 1 / Phase A).
 ##
 ## The model (ruled): TWO screens with a mode switch between them.
-##   PLAN  = strategy — lay out the month before it plays (the hand / queue / team).
-##   WATCH = tactics  — the committed month plays out in day-ticks (feed / doom / windows).
+##   PLAN  = strategy -- lay out the month before it plays (the hand / queue / team).
+##   WATCH = tactics  -- the committed month plays out in day-ticks (feed / doom / windows).
 ##   COMMIT THE MONTH transitions PLAN -> WATCH; month-end review returns to PLAN.
 ##
 ## Phase-A scaffold approach: this does NOT reparent the existing widget tree (main_ui.gd
-## is heavily coupled to absolute node paths — moving nodes would break it). Instead it
+## is heavily coupled to absolute node paths -- moving nodes would break it). Instead it
 ## REGISTERS the existing panels as plan-only / watch-only and toggles their visibility,
 ## plus owns two NEW pieces of chrome it builds itself: the mode BANNER and the WATCH
 ## control strip (playback speed + day/reserve readout). Follow-up lanes promote this into
@@ -47,7 +47,7 @@ func register_watch_only(n: Node) -> void:
 
 
 func build_banner() -> PanelContainer:
-	"""The mode banner — a boxed strip naming the current screen + its verb. Amber in PLAN,
+	"""The mode banner -- a boxed strip naming the current screen + its verb. Amber in PLAN,
 	green in WATCH (the two registers). main_ui inserts the returned node under the TopBar."""
 	banner = PanelContainer.new()
 	banner.name = "ModeBanner"
@@ -81,7 +81,7 @@ func build_banner() -> PanelContainer:
 
 func build_watch_bar() -> PanelContainer:
 	"""The WATCH-only control strip: playback speed dial + live day / reserve readout
-	(brief WATCH header — playback controls + reserve remaining). Play/pause is a clean
+	(brief WATCH header -- playback controls + reserve remaining). Play/pause is a clean
 	STUB for a follow-up lane; the speed dial is REAL (drives day_tick_seconds)."""
 	watch_bar = PanelContainer.new()
 	watch_bar.name = "WatchControls"
@@ -90,20 +90,20 @@ func build_watch_bar() -> PanelContainer:
 	watch_bar.add_child(row)
 
 	var tag := Label.new()
-	tag.text = "▶ PLAYBACK"
+	tag.text = "> PLAYBACK"
 	tag.add_theme_color_override("font_color", TerminalTheme.GREEN)
 	tag.add_theme_font_override("font", TerminalTheme.mono_font())
 	row.add_child(tag)
 
-	# Play/pause — STUB (follow-up lane owns real pause; auto-pause on windows already works).
+	# Play/pause -- STUB (follow-up lane owns real pause; auto-pause on windows already works).
 	var pause_stub := Button.new()
-	pause_stub.text = "⏸"
+	pause_stub.text = "||"
 	pause_stub.disabled = true
-	pause_stub.tooltip_text = "Pause/resume — stub (follow-up lane). Windows already auto-pause playback."
+	pause_stub.tooltip_text = "Pause/resume -- stub (follow-up lane). Windows already auto-pause playback."
 	pause_stub.focus_mode = Control.FOCUS_NONE
 	row.add_child(pause_stub)
 
-	# Speed dial — REAL: sets game_manager.day_tick_seconds via speed_changed.
+	# Speed dial -- REAL: sets game_manager.day_tick_seconds via speed_changed.
 	for key in ["1x", "2x", "4x"]:
 		var b := Button.new()
 		b.text = key
@@ -117,19 +117,19 @@ func build_watch_bar() -> PanelContainer:
 	row.add_child(spacer)
 
 	_day_label = Label.new()
-	_day_label.text = "day —"
+	_day_label.text = "day --"
 	_day_label.add_theme_color_override("font_color", TerminalTheme.TEXT)
 	_day_label.add_theme_font_override("font", TerminalTheme.mono_font())
 	row.add_child(_day_label)
 
 	var sep := Label.new()
-	sep.text = "·"
+	sep.text = "-"
 	sep.add_theme_color_override("font_color", TerminalTheme.RULE_BRIGHT)
 	row.add_child(sep)
 
 	_reserve_label = Label.new()
-	_reserve_label.text = "reserve —"
-	_reserve_label.tooltip_text = "Held Attention — the slack available to spend on mid-month response windows."
+	_reserve_label.text = "reserve --"
+	_reserve_label.tooltip_text = "Held Attention -- the slack available to spend on mid-month response windows."
 	_reserve_label.add_theme_color_override("font_color", TerminalTheme.AMBER)
 	_reserve_label.add_theme_font_override("font", TerminalTheme.mono_font())
 	row.add_child(_reserve_label)
@@ -171,7 +171,7 @@ func update_from_state(state: Dictionary) -> void:
 		var months := ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
 		var mi: int = int(cal.get("month", 1)) - 1
 		var mname: String = months[mi] if mi >= 0 and mi < 12 else "?"
-		_day_label.text = "day %d — %s %d" % [int(cal.get("day", 0)), mname, int(cal.get("year", 0))]
+		_day_label.text = "day %d -- %s %d" % [int(cal.get("day", 0)), mname, int(cal.get("year", 0))]
 	if _reserve_label != null:
 		var mp: Dictionary = state.get("month_plan", {})
 		var total := int(mp.get("attention_total", 0))
@@ -193,8 +193,8 @@ func _refresh_banner() -> void:
 	if current_mode == Mode.PLAN:
 		if banner != null:
 			TerminalTheme.style_panel(banner, TerminalTheme.AMBER_DIM, TerminalTheme.PANEL_BG_DEEP)
-		_banner_label.text = "[color=#ffb833]▓▓ PLAN[/color]  [color=#a87a28]· strategy · lay out the month, then[/color] [color=#ffb833]COMMIT THE MONTH ▶[/color]"
+		_banner_label.text = "[color=#ffb833]## PLAN[/color]  [color=#a87a28]- strategy - lay out the month, then[/color] [color=#ffb833]COMMIT THE MONTH >[/color]"
 	else:
 		if banner != null:
 			TerminalTheme.style_panel(banner, TerminalTheme.GREEN_DIM, TerminalTheme.PANEL_BG_DEEP)
-		_banner_label.text = "[color=#5cec78]▓▓ WATCH[/color]  [color=#369048]· tactics · the month plays out — respond to windows as they arrive[/color]"
+		_banner_label.text = "[color=#5cec78]## WATCH[/color]  [color=#369048]- tactics - the month plays out -- respond to windows as they arrive[/color]"

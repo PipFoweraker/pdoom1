@@ -26,7 +26,7 @@ var day_tick_seconds: float = 0.2
 # deliberately NOT serialized (a loaded game just shows "flat" on its first review). Never
 # read by the simulation, so it cannot touch determinism.
 var _rival_cap_snapshot: Dictionary = {}
-# Synthetic month-review dialog id — intercepted by resolve_event before any engine path.
+# Synthetic month-review dialog id -- intercepted by resolve_event before any engine path.
 const MONTH_REVIEW_EVENT_ID := "__month_review__"
 
 func _ready():
@@ -71,7 +71,7 @@ func start_new_game(game_seed: String = ""):
 	# (ADR-0005: seed = RNG seed + schedule; DQ-6 fix, L0 #620 item 4).
 	var game_version = GameConfig.CURRENT_VERSION
 	# ADR-0016 league metabolism: stamp the artifact with its league (the baseline month).
-	# Placeholder until the league pipeline lands — the run's start month is a stable id
+	# Placeholder until the league pipeline lands -- the run's start month is a stable id
 	# carried beside (seed, game_version) so cross-league boards (DQ-3) can key on it.
 	var league_id := "%04d-%02d" % [state.start_year, state.start_month]
 	VerificationTracker.enable_debug()  # Enable verbose logging
@@ -160,7 +160,7 @@ func select_action(action_id: String) -> bool:
 		error_occurred.emit("Action not found: " + action_id)
 		return false
 
-	# L2 (ADR-0011): the action's legacy `action_points` cost is now its ATTENTION cost —
+	# L2 (ADR-0011): the action's legacy `action_points` cost is now its ATTENTION cost --
 	# the founder spends the monthly Attention budget (month_plan), not a per-turn AP pool.
 	var attention_cost = action.get("costs", {}).get("action_points", 0)
 
@@ -184,7 +184,7 @@ func select_action(action_id: String) -> bool:
 		return false
 
 	# Validation: Can afford NON-Attention costs (money/compute/research/... ). The
-	# action_points key is the Attention cost, gated above — strip it here so the legacy
+	# action_points key is the Attention cost, gated above -- strip it here so the legacy
 	# per-turn AP pool never blocks the plan queue (that duality was the L2 bug).
 	var afford_costs = action.get("costs", {}).duplicate()
 	afford_costs.erase("action_points")
@@ -244,7 +244,7 @@ func select_action(action_id: String) -> bool:
 func queue_candidate_hire(candidate_name: String, specialization: String) -> bool:
 	"""#622 L10: UI-facing path for hiring a NAMED candidate from the pool. Owns the
 	state writes main_ui used to do directly (pending_hire_queue + candidate pool),
-	so the UI never mutates game state. Validation is select_action's job — on
+	so the UI never mutates game state. Validation is select_action's job -- on
 	failure it has already emitted error_occurred and nothing is touched here
 	(the old UI order queued the candidate BEFORE validating, which could strand
 	a candidate out of the pool on a rejected action)."""
@@ -527,14 +527,14 @@ func start_next_turn():
 		actions_available.emit(actions)
 
 # ============================================================================
-# MONTH LOOP (L1 / ADR-0009) — the playable turn path
+# MONTH LOOP (L1 / ADR-0009) -- the playable turn path
 #
 # The End Turn button routes HERE. end_turn() above is the pre-L1 single day-step
 # and survives only behind the DEV MODE overlay (debug escape hatch). Flow:
 #   plan commit -> execute the open plan turn -> day-tick playback (visible date
 #   advance, auto-pause on response windows presented via the event_dialog) ->
 #   month boundary -> review dialog -> next plan phase (boundary tick held open).
-# Guard rule (sacred): no routine decision hangs on a day tick — only windows pause.
+# Guard rule (sacred): no routine decision hangs on a day tick -- only windows pause.
 # ============================================================================
 
 func end_month():
@@ -573,7 +573,7 @@ func end_month():
 		state.month_plan.set_reserve(state.month_plan.attention_total - state.month_plan.attention_spent)
 
 	month_playback_active = true
-	_run_month_playback()  # async — runs day ticks until window-pause or month boundary
+	_run_month_playback()  # async -- runs day ticks until window-pause or month boundary
 
 
 func _run_month_playback() -> void:
@@ -592,7 +592,7 @@ func _run_month_playback() -> void:
 			# arxiv/flavour stream out of the default view (EventService tags it "flavour").
 			action_executed.emit({"success": true,
 				"channel": String(fev.get("channel", "normal")),
-				"message": "[color=gray]FEED · %s — %s[/color]" % [
+				"message": "[color=gray]FEED - %s -- %s[/color]" % [
 				String(item.get("source_id", "?")), String(fev.get("name", fev.get("id", "update")))]})
 		match String(r.get("status", "")):
 			"paused_on_window":
@@ -613,15 +613,15 @@ func _run_month_playback() -> void:
 
 func _finish_month_playback() -> void:
 	"""Month boundary reached: stop playback and present the month review (a plain dialog,
-	v1). The boundary tick is HELD OPEN as the new month's plan phase — the next
+	v1). The boundary tick is HELD OPEN as the new month's plan phase -- the next
 	end_month() executes it (MonthController.month_open_pending)."""
 	month_playback_active = false
 	var label := Clock.month_label(state.turn, state.start_year, state.start_month, state.start_day)
 	var attention_now: int = state.month_plan.available() if state.month_plan else 0
 	var review := {
 		"id": MONTH_REVIEW_EVENT_ID,
-		"name": "Month Review — %s" % label,
-		"description": "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated — no banking).\nFunds: %s   ·   Doom: %.1f%%   ·   Staff: %d%s\n\nQueue this month's actions, then End Turn to play the month out." % [
+		"name": "Month Review -- %s" % label,
+		"description": "%s begins.\n\nAttention: %d fresh decisions this month (last month's unspent reserve evaporated -- no banking).\nFunds: %s   -   Doom: %.1f%%   -   Staff: %d%s\n\nQueue this month's actions, then End Turn to play the month out." % [
 			label, attention_now, GameConfig.format_money(state.money), state.doom, state.get_total_staff(),
 			_build_rivals_review_section()],
 		"type": "popup",
@@ -659,14 +659,14 @@ func get_game_state() -> Dictionary:
 	return {}
 
 # ============================================================================
-# SAVE / LOAD (L7, #618) — mid-game snapshot, full-state fidelity
+# SAVE / LOAD (L7, #618) -- mid-game snapshot, full-state fidelity
 # ============================================================================
 
 func _release_game_objects() -> void:
 	"""Free the previous game's Node-derived objects before a new game / load replaces them.
 
 	GameState, DoomSystem, RiskPool and TurnManager all extend Node but are NEVER added to
-	the scene tree, so simply reassigning `state`/`turn_manager` orphans them — 4 leaked
+	the scene tree, so simply reassigning `state`/`turn_manager` orphans them -- 4 leaked
 	Nodes per game (confirmed by GUT's orphan monitor). Ledger and MonthController are
 	RefCounted and free themselves. Every external reader reaches these via `state.doom_system`
 	etc. (re-fetched from the current state), so no live reference survives a reset.
@@ -710,7 +710,7 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 	_rival_cap_snapshot.clear()  # drift baseline restarts from the loaded snapshot
 	state = loaded
 	# Scenario custom events live as node meta (Issue #483), not in state
-	# serialization — re-attach them from the pack recorded in the envelope.
+	# serialization -- re-attach them from the pack recorded in the envelope.
 	var save_scenario_id := String(envelope.get("scenario_id", ""))
 	if not save_scenario_id.is_empty():
 		var loader = ScenarioLoader.new()
@@ -727,10 +727,10 @@ func load_saved_game(path: String = SaveLoad.QUICKSAVE_PATH) -> bool:
 	is_initialized = true
 	# NOTE: replay verification rebuilds from turn 0 (ADR-0006); a loaded session
 	# is a snapshot continuation, so tracking restarts here only to keep the
-	# in-turn recording calls alive — the artifact is not replay-verifiable.
+	# in-turn recording calls alive -- the artifact is not replay-verifiable.
 	VerificationTracker.start_tracking(state.game_seed_str, GameConfig.CURRENT_VERSION)
 	MusicManager.play_context(MusicManager.MusicContext.GAMEPLAY)
-	print("[GameManager] Loaded save %s — turn %d, phase %s" % [
+	print("[GameManager] Loaded save %s -- turn %d, phase %s" % [
 		path, state.turn, GameState.TurnPhase.keys()[state.current_phase]])
 	game_state_updated.emit(state.to_dict())
 	if state.pending_events.size() > 0:
@@ -753,7 +753,7 @@ func resolve_event(event: Dictionary, choice_id: String):
 
 	# L1: the synthetic month-review dialog just closes into the new plan phase.
 	if String(event.get("id", "")) == MONTH_REVIEW_EVENT_ID:
-		action_executed.emit({"success": true, "message": "[color=cyan]— %s —[/color]" % String(event.get("name", "New month"))})
+		action_executed.emit({"success": true, "message": "[color=cyan]-- %s --[/color]" % String(event.get("name", "New month"))})
 		game_state_updated.emit(state.to_dict())
 		turn_phase_changed.emit("action_selection")
 		actions_available.emit(turn_manager.get_available_actions())
@@ -896,7 +896,7 @@ func _apply_scenario_overrides():
 # MONTH PLAN LAYER API (L1 / ADR-0009)
 #
 # Thin delegates exposing the plan-turn layer to callers (the new plan screen speaks
-# ONLY through here — main_ui.gd is left to die by attrition, per the LET-DIE map).
+# ONLY through here -- main_ui.gd is left to die by attrition, per the LET-DIE map).
 # The founder currency Attention lives on state.month_plan; response windows resolve
 # through WindowResolver. The legacy per-turn AP loop above is untouched (L2 removes it).
 # ============================================================================
@@ -914,8 +914,8 @@ func set_attention_reserve(amount: int) -> bool:
 
 
 func queue_strategic_action(action_id: String, attention_cost: int, duration_ticks: int) -> bool:
-	"""Queue a strategic action at plan speed — spends Attention now, lands after its
-	duration (ADR-0009 §5, nothing strategic resolves instantly)."""
+	"""Queue a strategic action at plan speed -- spends Attention now, lands after its
+	duration (ADR-0009 S5, nothing strategic resolves instantly)."""
 	if state == null or state.month_plan == null:
 		return false
 	return state.month_plan.queue_strategic(action_id, attention_cost, duration_ticks, state.turn)
@@ -931,7 +931,7 @@ func resolve_window(event: Dictionary, response: String) -> Dictionary:
 
 
 # ============================================================================
-# HIRING PIPELINE (Phase B) — thin delegates for the plan-screen hiring panel + tests.
+# HIRING PIPELINE (Phase B) -- thin delegates for the plan-screen hiring panel + tests.
 # The mechanics live on state.hiring (HiringPipeline); these just forward through the
 # GameManager the UI already speaks to. Targeted (candidate-specific) stages take a
 # candidate_id; the no-target menu drivers live in GameActions (advertise/interview_next/...).

@@ -1,7 +1,7 @@
 extends Control
 ## Standalone demo/harness for the OfficeFloor component (Pip: open this to SEE it).
 ## Spawns a mock roster covering every FSM state and lets you toggle Tier 0/1 and
-## reshuffle. Uses ONLY mock plain-data dicts — no GameState, proving OfficeFloor
+## reshuffle. Uses ONLY mock plain-data dicts -- no GameState, proving OfficeFloor
 ## is a pure view that needs nothing but a snapshot.
 
 const OfficeFloorScene := preload("res://scenes/ui/office_floor/office_floor.tscn")
@@ -51,11 +51,11 @@ func _ready() -> void:
 
 	var legend := Label.new()
 	legend.add_theme_font_size_override("font_size", 11)
-	legend.text = "Watch a while. Desks cluster around two tables; corners are landmarks — cat " \
+	legend.text = "Watch a while. Desks cluster around two tables; corners are landmarks -- cat " \
 		+ "(bottom-left), water cooler (top-right), fridge (bottom-right), window (top wall). " \
 		+ "Working staff occasionally do a food run (fridge/water), pat the cat, or walk to a " \
 		+ "peer's desk to COLLABORATE, then return. Unmanaged staff (Riley, Lane) drift, spin, or " \
-		+ "gaze out the window. Burnt-out = red '!'. All cosmetic — pure view, private RNG, no bonuses."
+		+ "gaze out the window. Burnt-out = red '!'. All cosmetic -- pure view, private RNG, no bonuses."
 	legend.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	root.add_child(legend)
 

@@ -1,6 +1,6 @@
 extends Node
 class_name EventDialog
-## Event dialog presenter — extracted from main_ui.gd (#622, build lane L10).
+## Event dialog presenter -- extracted from main_ui.gd (#622, build lane L10).
 ##
 ## Owns the event queue + modal presentation (click blocker, forest-green panel,
 ## lettered choice buttons with affordability display). Deliberately signal-driven:
@@ -13,9 +13,9 @@ class_name EventDialog
 
 ## Player picked a choice; the host routes this to game_manager.resolve_event.
 signal choice_selected(event: Dictionary, choice_id: String)
-## A modal dialog (with its choice buttons) is now up — host should route keys to it.
+## A modal dialog (with its choice buttons) is now up -- host should route keys to it.
 signal dialog_opened(dialog: Control, buttons: Array)
-## The modal dialog was dismissed — host should clear its key-routing state.
+## The modal dialog was dismissed -- host should clear its key-routing state.
 signal dialog_closed
 ## BBCode line for the host's message log.
 signal message_logged(text: String)
@@ -198,7 +198,7 @@ func _show_next_event() -> void:
 		btn.add_theme_stylebox_override("hover", button_style_hover)
 
 		# Affordability DISPLAY (grey-out + tooltip). This is player information, not
-		# enforcement — the engine (turn_manager.resolve_event) remains the authority.
+		# enforcement -- the engine (turn_manager.resolve_event) remains the authority.
 		var can_afford = true
 		var missing_resources = []
 

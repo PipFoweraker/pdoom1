@@ -8,20 +8,20 @@ class_name GameEvents
 # otherwise-identical runs (candidate/rival divergence with matching score).
 
 # #568 event pacing:
-#   FIRST_EVENT_TURN — start_turn() increments state.turn BEFORE checking events, so turn 1 is
+#   FIRST_EVENT_TURN -- start_turn() increments state.turn BEFORE checking events, so turn 1 is
 #     the player's very first (as-yet-unacted) turn. Suppress all event firing until this turn,
 #     so the game doesn't open with a popup before the player has taken a single action.
-#   MAX_NEW_EVENTS_PER_TURN — cap on how many *new* events fire in a single turn. Without it, a
+#   MAX_NEW_EVENTS_PER_TURN -- cap on how many *new* events fire in a single turn. Without it, a
 #     turn where several probabilistic/threshold events happen to qualify dumps a "flood" of 6+
 #     popups at once. Excess qualifying events are simply not marked this turn, so random ones
-#     re-roll and turn/threshold beats re-evaluate on a later turn — the burst is spread out.
+#     re-roll and turn/threshold beats re-evaluate on a later turn -- the burst is spread out.
 #   NOTE (design, parked): this does NOT change the event *pool size / density* (how often events
-#     qualify in the first place) — that is a deliberate design call tracked in #578/#579.
+#     qualify in the first place) -- that is a deliberate design call tracked in #578/#579.
 const FIRST_EVENT_TURN := 2
 const MAX_NEW_EVENTS_PER_TURN := 2
 
 # Preload the shared loader (avoids class_name registration-order issues in fresh
-# worktrees/CI — same pattern as GameState's RiskPool preload).
+# worktrees/CI -- same pattern as GameState's RiskPool preload).
 const Definitions = preload("res://scripts/data/definition_loader.gd")
 const Resources = preload("res://scripts/core/resource_accessor.gd")
 
@@ -37,7 +37,7 @@ static var _risk_events_loaded := false
 
 
 static func get_all_events() -> Array[Dictionary]:
-	"""Return all built-in event definitions (externalized to JSON — L9, #621)"""
+	"""Return all built-in event definitions (externalized to JSON -- L9, #621)"""
 	if not _core_events_loaded:
 		_core_events_loaded = true
 		_core_events = []
@@ -75,7 +75,7 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 
 	#568: no events fire before the player's first turn (FIRST_EVENT_TURN), and at most
 	MAX_NEW_EVENTS_PER_TURN new events fire on any single turn. Qualifying events are
-	collected WITHOUT being marked, then only the ones we actually fire get marked — so
+	collected WITHOUT being marked, then only the ones we actually fire get marked -- so
 	events squeezed out by the cap simply defer to a later turn instead of being lost.
 	should_trigger() is still called for every candidate, so rng consumption (and thus
 	determinism / replay) is unchanged relative to the pre-cap behaviour."""
@@ -85,7 +85,7 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 		return []
 
 	# Two buckets so scripted beats (turn_exact / turn_and_resource / threshold) are never
-	# crowded out of the cap by a swarm of "random" events — scripted fire first.
+	# crowded out of the cap by a swarm of "random" events -- scripted fire first.
 	var scripted: Array[Dictionary] = []
 	var random_pool: Array[Dictionary] = []
 
@@ -115,7 +115,7 @@ static func check_triggered_events(state: GameState, rng: RandomNumberGenerator)
 				_bucket_candidate(event, scripted, random_pool)
 
 	# Fire scripted beats first, then random ones, up to the per-turn cap. Only fired
-	# events are marked; the rest defer (random → re-roll, threshold/turn → re-evaluate).
+	# events are marked; the rest defer (random -> re-roll, threshold/turn -> re-evaluate).
 	var to_trigger: Array[Dictionary] = []
 	var max_new_events := Balance.inum("events.max_new_events_per_turn", MAX_NEW_EVENTS_PER_TURN)
 	for event in scripted:
@@ -228,7 +228,7 @@ static func evaluate_condition(condition: String, state: GameState) -> bool:
 				return disparity <= threshold
 		return false
 
-	# Get resource value from state via the shared name accessor (L9 #621 —
+	# Get resource value from state via the shared name accessor (L9 #621 --
 	# replaces one of the three duplicated resource-name matches)
 	if not Resources.has_readable(resource_name):
 		return false
@@ -280,7 +280,7 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 	# their special handling here.
 	var effects = chosen_option.get("effects", {})
 	# #631 loss legibility: staffing effects (hire / poach) are not scalar deltas,
-	# so they never showed up in the log — the player couldn't tell a poach even
+	# so they never showed up in the log -- the player couldn't tell a poach even
 	# happened, let alone WHO left. Collect a human-readable note per staffing
 	# change and return them so the event log names the person + the team delta.
 	var staffing_notes: Array[String] = []
@@ -300,7 +300,7 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 			"lose_researcher":
 				# Poaching: a rival recruits away up to `value` researchers of ANY
 				# specialization, targeting the LEAST loyal first (loyalty is
-				# poaching resistance — researcher.gd:18). Each departure is named.
+				# poaching resistance -- researcher.gd:18). Each departure is named.
 				for i in range(int(value)):
 					var poached := _poach_least_loyal(state, "")
 					if poached == null:
@@ -308,9 +308,9 @@ static func execute_event_choice(event: Dictionary, choice_id: String, state: Ga
 					staffing_notes.append(_format_departure(state, poached))
 			"loyalty_hit":
 				# employee_burnout "Push Through" interim content (WORKSHOP_2_BACKLOG
-				# "Burnout outcome model — RULED", Pip 2026-07-13, resolves the #631/#635
+				# "Burnout outcome model -- RULED", Pip 2026-07-13, resolves the #631/#635
 				# "flavor claims strain, only doom lands" AMBIGUOUS case). Nobody quits and
-				# no efficiency/leave debuff is applied (that's L2 #613's job) — the
+				# no efficiency/leave debuff is applied (that's L2 #613's job) -- the
 				# affected researchers stay but trust erodes: `value` loyalty points come
 				# off the LOYALTY_HIT_COUNT least-loyal researchers, named for legibility,
 				# same targeting convention as remove_researchers/_poach_least_loyal.
@@ -340,7 +340,7 @@ static func _apply_staffing_effect(state: GameState, spec: String, delta: int, n
 	delta < 0 loses |delta| of `spec` to poaching, LEAST loyal first (loyalty is
 	poaching resistance, researcher.gd:18). Previously a negative value was a silent
 	no-op: Resources.add() rejects the name, and the old `for i in range(value)`
-	create-loop ran range(-1) == empty — so "Let Them Go" removed nobody."""
+	create-loop ran range(-1) == empty -- so "Let Them Go" removed nobody."""
 	if delta > 0:
 		for i in range(delta):
 			var researcher := Researcher.new()
@@ -349,7 +349,7 @@ static func _apply_staffing_effect(state: GameState, spec: String, delta: int, n
 			researcher.specialization = spec
 			researcher.generate_random(state.rng)
 			state.add_researcher(researcher)
-			notes.append("Hired %s (%s) — %s team now %d" % [
+			notes.append("Hired %s (%s) -- %s team now %d" % [
 				researcher.researcher_name, spec, spec,
 				state.get_researcher_count_by_spec(spec)])
 	elif delta < 0:
@@ -360,14 +360,14 @@ static func _apply_staffing_effect(state: GameState, spec: String, delta: int, n
 			notes.append(_format_departure(state, poached))
 
 
-## How many researchers a "loyalty_hit" effect dents — matches the burnout event's
+## How many researchers a "loyalty_hit" effect dents -- matches the burnout event's
 ## "several researchers are considering leaving" flavor (plural, not everyone).
 const LOYALTY_HIT_COUNT := 2
 
 
 static func _apply_loyalty_hit(state: GameState, amount: int, notes: Array) -> void:
 	"""Dock `amount` loyalty points off the LOYALTY_HIT_COUNT least-loyal researchers
-	(no removal, no efficiency/leave debuff — interim content, see loyalty_hit match
+	(no removal, no efficiency/leave debuff -- interim content, see loyalty_hit match
 	arm above). Least-loyal-first mirrors _poach_least_loyal's targeting so the
 	people most likely to already be flight-risks (DQ-22: loyalty hits raise poach
 	vulnerability) are the ones who take the hit. Safe no-op with an empty roster."""
@@ -379,13 +379,13 @@ static func _apply_loyalty_hit(state: GameState, amount: int, notes: Array) -> v
 		var r: Researcher = pool[i]
 		var before := r.loyalty
 		r.loyalty = max(0, r.loyalty - amount)
-		notes.append("%s (%s) loyalty %d -> %d — pushed through burnout, trust eroding" % [
+		notes.append("%s (%s) loyalty %d -> %d -- pushed through burnout, trust eroding" % [
 			r.researcher_name, r.specialization, before, r.loyalty])
 
 
 static func _poach_least_loyal(state: GameState, spec_filter: String) -> Researcher:
-	"""Remove and return the researcher most vulnerable to poaching — the LEAST
-	loyal (loyalty = poaching resistance, researcher.gd:18) — optionally restricted
+	"""Remove and return the researcher most vulnerable to poaching -- the LEAST
+	loyal (loyalty = poaching resistance, researcher.gd:18) -- optionally restricted
 	to a specialization. Deterministic (stable min, first-index wins ties). Returns
 	null when no matching researcher exists. Consumes no RNG (replaces the old
 	random pick); the chosen index is still recorded so replay hashes stay sensitive
@@ -408,7 +408,7 @@ static func _poach_least_loyal(state: GameState, spec_filter: String) -> Researc
 
 static func _spec_matches(spec: String, spec_filter: String) -> bool:
 	"""Match a researcher's specialization to a staffing filter, folding
-	interpretability/alignment into "safety" — the same grouping GameState uses for
+	interpretability/alignment into "safety" -- the same grouping GameState uses for
 	its legacy safety_researchers count (game_state.gd add/remove_researcher)."""
 	if spec_filter == "safety":
 		return spec in ["safety", "interpretability", "alignment"]
@@ -419,16 +419,16 @@ static func _format_departure(state: GameState, r: Researcher, reason: String = 
 	"""Legible one-liner naming a departing researcher and the resulting team size.
 	`reason` lets non-poaching departures (e.g. a risk-event resignation, #631
 	follow-up) describe themselves accurately instead of always saying "poached"."""
-	return "%s (%s, loyalty %d) %s — %s team now %d" % [
+	return "%s (%s, loyalty %d) %s -- %s team now %d" % [
 		r.researcher_name, r.specialization, r.loyalty, reason,
 		r.specialization, state.get_researcher_count_by_spec(r.specialization)]
 
 
 static func remove_researchers(state: GameState, count: int, spec_filter: String = "", reason: String = "poached by a rival lab") -> Array[String]:
 	"""Remove up to `count` researchers (optionally restricted to a specialization),
-	least-loyal first (loyalty is poaching resistance — researcher.gd:18). Public
-	entry point so any effect path — event-driven poach (execute_event_choice) or a
-	risk-pool event applied via turn_manager — uses the same deterministic targeting
+	least-loyal first (loyalty is poaching resistance -- researcher.gd:18). Public
+	entry point so any effect path -- event-driven poach (execute_event_choice) or a
+	risk-pool event applied via turn_manager -- uses the same deterministic targeting
 	and legible naming instead of quietly doing nothing (#631 follow-up: insider_threat
 	'Key Resignation' claimed a departure but only docked scalar resources). Returns
 	one note per researcher actually removed; empty when there was nobody to remove
@@ -521,5 +521,5 @@ static func get_risk_event_for_pool(pool_name: String, severity: String, rng: Ra
 	var idx = rng.randi() % severity_events.size()
 	return severity_events[idx]
 
-# WS-0: reset_triggered_events() removed — the registry is now per-GameState instance state,
+# WS-0: reset_triggered_events() removed -- the registry is now per-GameState instance state,
 # so it resets automatically with each new GameState. No global reset is needed.

@@ -299,7 +299,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - **Queue Management Controls**:
   - "Clear Queue (C)" button - Clears all queued actions and refunds AP
-  - "✕ Remove" buttons on each individual queue item
+  - "x Remove" buttons on each individual queue item
   - Keyboard shortcut: C key to clear entire queue
   - Click remove button to delete specific actions from queue
   - Buttons automatically enable/disable based on queue state

@@ -1,10 +1,10 @@
 extends RefCounted
 class_name SeedSchedule
-## ADR-0005 — a seed = RNG seed + event schedule.
+## ADR-0005 -- a seed = RNG seed + event schedule.
 ##
 ## A schedule is an ordered list of "scheduled causes": the designer's thumb on the scale.
 ## HARD INVARIANT (ADR-0005 "author causes, never outcomes"): a cause may only touch sim
-## INPUTS — rival funding, rival aggression, an injected event id — never the doom variable
+## INPUTS -- rival funding, rival aggression, an injected event id -- never the doom variable
 ## or any other outcome directly. The wave that reaches the player is whatever the sim does
 ## with the cause given opponent state and the player's ledger. This keeps every spike
 ## attributable (SA content for free), replay deterministic, and the meta rotatable by
@@ -21,7 +21,7 @@ const CAUSE_TYPES := ["rival_funding_wave", "rival_aggression_shift", "inject_ev
 static func apply_due_causes(state) -> Array:
 	## Apply every scheduled cause whose `turn` equals the current turn. Deterministic and
 	## fired exactly once per turn (start_turn runs once per turn). Returns human-readable
-	## summaries of what fired — these are legible SA content, not side effects.
+	## summaries of what fired -- these are legible SA content, not side effects.
 	var applied: Array = []
 	for cause in state.event_schedule:
 		if int(cause.get("turn", -1)) != state.turn:

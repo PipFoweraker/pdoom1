@@ -5,7 +5,7 @@ class_name ResourceAccessor
 ## Replaces the triplicated resource-name match flagged on the duplication
 ## kill-list (TECH_DEBT_REGISTER): events.gd evaluate_condition +
 ## execute_event_choice, and event_service.gd _map_variable's fallback map.
-## Behavior is a 1:1 transcription of those matches — including the deliberate
+## Behavior is a 1:1 transcription of those matches -- including the deliberate
 ## absence of clamping in add() (clamps happen downstream, e.g. check_win_lose).
 
 
@@ -20,7 +20,7 @@ static func has_readable(resource_name: String) -> bool:
 
 
 static func read(state, resource_name: String) -> float:
-	"""Read a scalar or derived resource value by name (0.0 for unknown names —
+	"""Read a scalar or derived resource value by name (0.0 for unknown names --
 	gate with has_readable() where the distinction matters)."""
 	match resource_name:
 		"money":
@@ -57,7 +57,7 @@ static func read(state, resource_name: String) -> float:
 static func add(state, resource_name: String, value) -> bool:
 	"""Add a delta to a simple scalar resource. Returns false for names that are
 	not simple scalars (researcher creation, has_cat, ...), so callers can handle
-	those specially. Deliberately does NOT clamp — identical to the pre-L9
+	those specially. Deliberately does NOT clamp -- identical to the pre-L9
 	execute_event_choice writes."""
 	match resource_name:
 		"money":
@@ -71,7 +71,7 @@ static func add(state, resource_name: String, value) -> bool:
 		"reputation":
 			state.reputation += value
 		"doom":
-			# ADR-0015 REMAINDER (Legacy #15 / memo §7.1): event-content doom sink. Clobbered by
+			# ADR-0015 REMAINDER (Legacy #15 / memo S7.1): event-content doom sink. Clobbered by
 			# doom resolution in the real loop (inert no-op); the authority is DoomSystem's streams.
 			# Follow-up content lane re-authors events to write intermediaries instead.
 			state.doom += value

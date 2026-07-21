@@ -1,5 +1,5 @@
 extends GutTest
-## L1 (#612 / ADR-0009 §3, ADR-0012): response-window resolution — the costed menu
+## L1 (#612 / ADR-0009 S3, ADR-0012): response-window resolution -- the costed menu
 ## HANDLE-from-reserve / HANDLE-by-cannibalizing / DEFER / IGNORE, and the auto-IGNORE
 ## of unanswered windows with a mild reputation penalty.
 
@@ -62,7 +62,7 @@ func test_defer_mints_a_ledger_entry():
 	var r := WindowResolver.resolve(s, s.month_plan, _deferrable_window(), "defer")
 	assert_true(r.success, "a deferrable window can be deferred")
 	assert_eq(s.ledger.entries.size(), entries0 + 1, "DEFER mints a ledger entry")
-	assert_eq(s.money, money0, "deferring pays no money now — that's the point")
+	assert_eq(s.money, money0, "deferring pays no money now -- that's the point")
 	assert_eq(String(r.payment_source), "defer")
 
 

@@ -36,6 +36,22 @@ as doom rises.
    They are the SAME world at different doom levels: the office is register 1 at low doom and
    slides toward register 2 as doom rises.
 
+## No emoji -- ASCII-flavoured chrome (hard rule, issue #744)
+
+UI text, labels, buttons and in-game strings are **pure ASCII, never emoji**.
+The chrome reads as a lo-fi terminal, matching the CRT-amber register: use
+bracketed tags and ASCII glyphs, not pictographs.
+
+- Buttons / hotkeys: `[M]`, `[ESC] close`, `>> Next`, `x` (close), `[OK]`, `[!]`.
+- Status: `[x]` done, `[X]` fail, `[ ]` todo, `[!]` warning, `*` star/highlight.
+- Separators / structure: `--`, `->`, `...`, `|`, backtick-`-` for tree branches.
+- Never ship a coffee cup, trophy, die, link or checkmark emoji in a label --
+  replace it with the ASCII equivalent above.
+
+This is enforced: `scripts/check_no_emoji.py` (pre-commit `no-emoji`) blocks any
+non-ASCII in `godot/**/*.gd` and `godot/data/**/*.json`, and any emoji in
+`godot/**/*.tscn`. See CLAUDE.md "ASCII-only".
+
 ## Palette (real values)
 
 ### Grounds / darks (from the hero bg; the dread base)

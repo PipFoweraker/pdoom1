@@ -1,6 +1,6 @@
 extends RefCounted
 class_name SaveLoad
-## L7 (#618): mid-game save/load — snapshot fidelity for 6-8 hr runs (EE-2, promoted).
+## L7 (#618): mid-game save/load -- snapshot fidelity for 6-8 hr runs (EE-2, promoted).
 ##
 ## A save file is a JSON envelope:
 ##   { save_format, game_version, saved_at, scenario_id, state: GameState.to_dict() }
@@ -21,7 +21,7 @@ static func build_envelope(state: GameState) -> Dictionary:
 		"game_version": GameConfig.CURRENT_VERSION,
 		"saved_at": Time.get_datetime_string_from_system(),
 		# Scenario custom events live as node meta (Issue #483), not in state
-		# serialization — record the pack id so load can re-attach them.
+		# serialization -- record the pack id so load can re-attach them.
 		"scenario_id": GameConfig.scenario_id,
 		"state": state.to_dict(),
 	}
@@ -37,7 +37,7 @@ static func save_game(state: GameState, path: String = QUICKSAVE_PATH) -> Error:
 	if f == null:
 		return FileAccess.get_open_error()
 	# full_precision=true is LOAD-BEARING: the default truncates float decimals,
-	# which shifts every restored float by ulps — the drift then compounds turn
+	# which shifts every restored float by ulps -- the drift then compounds turn
 	# over turn, so a loaded game would slowly diverge from an unsaved one.
 	f.store_string(JSON.stringify(build_envelope(state), "\t", true, true))
 	f.close()
@@ -74,7 +74,7 @@ static func restore_state(envelope: Dictionary) -> GameState:
 	if sd.get("event_schedule", null) is Array:
 		schedule = sd["event_schedule"]
 	# Seed + schedule are constructor-time identity (WS-C); from_dict then
-	# overwrites every member — including the rng stream position.
+	# overwrites every member -- including the rng stream position.
 	var state := GameState.new(String(sd.get("game_seed", "")), schedule)
 	state.from_dict(sd)
 	return state
