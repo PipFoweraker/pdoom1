@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P(Doom)1 -- App-icon + Settings-BG fast pass (2026-07-21)</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #14100f; color: #e9e2d8;
+         font: 15px/1.5 "Segoe UI", system-ui, sans-serif; }
+  header { padding: 22px 28px 8px; }
+  h1 { margin: 0 0 6px; font-size: 22px; color: #f6a800; }
+  h2 { margin: 30px 28px 4px; font-size: 17px; color: #e8a33d;
+       border-bottom: 1px solid #3a2e22; padding-bottom: 6px; }
+  p.note { margin: 4px 28px; color: #b9ad9c; max-width: 900px; }
+  .grid { display: flex; flex-wrap: wrap; gap: 18px; padding: 14px 28px; }
+  .card { background: #1d1713; border: 1px solid #2f2620; border-radius: 10px;
+          padding: 10px; width: 200px; text-align: center; }
+  .card a { display: block; }
+  .card img.big { width: 176px; height: 176px; border-radius: 12px;
+                  background: #0e0614; display: block; }
+  .row32 { display: flex; align-items: center; justify-content: center;
+           gap: 8px; margin-top: 8px; }
+  .row32 img { image-rendering: pixelated; background: #2a2a2e; border-radius: 4px; }
+  .lbl { margin-top: 8px; font-size: 12px; color: #cbbfae; word-break: break-all; }
+  .tiny { color: #8c8272; font-size: 11px; }
+  .bg .card { width: 300px; }
+  .bg .card img.big { width: 276px; height: 276px; border-radius: 6px; }
+  .kept { border-color: #6b7c8c; }
+  footer { padding: 24px 28px 60px; color: #8c8272; font-size: 12px; }
+  code { background: #241d18; padding: 1px 5px; border-radius: 4px; color: #e8a33d; }
+</style>
+</head>
+<body>
+<header>
+  <h1>P(Doom)1 -- app-icon candidates + settings-BG alternatives</h1>
+  <p class="note">Fast-pass stopgap set (2026-07-21). Click any icon for the 1024px master.
+  The small pair under each icon is the <strong>32px and 48px</strong> render -- the size that
+  has to survive SmartScreen / taskbar (issue #732). These are procedural stopgaps in the
+  locked palette (<code>docs/art/PALETTE_AND_DOOM_INTENSITY.md</code>); the gpt-image-1 pipeline
+  is the higher-fidelity path once <code>OPENAI_API_KEY</code> is available.</p>
+</header>
+
+<h2>1. Office cat motif</h2>
+<p class="note">The flagship mood-tell / charm hinge. Amber cat on warm-dark ground; the
+"doom" variant sours the glow red with a worried face.</p>
+<div class="grid">
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_cat_face_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_cat_face_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_cat_face_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_cat_face_48.png" width="48"></div><div class="lbl">icon_cat_face</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_cat_face_doom_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_cat_face_doom_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_cat_face_doom_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_cat_face_doom_48.png" width="48"></div><div class="lbl">icon_cat_face_doom</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_cat_sitting_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_cat_sitting_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_cat_sitting_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_cat_sitting_48.png" width="48"></div><div class="lbl">icon_cat_sitting</div></div>
+</div>
+
+<h2>2. Doom gauge / dial motif</h2>
+<p class="note">The "doomsday clock" read-channel as a mark. Amber-to-red arc is the only saturated
+element; needle sits near midnight.</p>
+<div class="grid">
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_dial_clock_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_dial_clock_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_dial_clock_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_dial_clock_48.png" width="48"></div><div class="lbl">icon_dial_clock</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_dial_half_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_dial_half_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_dial_half_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_dial_half_48.png" width="48"></div><div class="lbl">icon_dial_half</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_dial_ring_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_dial_ring_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_dial_ring_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_dial_ring_48.png" width="48"></div><div class="lbl">icon_dial_ring</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_dial_radar_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_dial_radar_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_dial_radar_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_dial_radar_48.png" width="48"></div><div class="lbl">icon_dial_radar</div></div>
+</div>
+
+<h2>3. Bureaucratic seal / stamp motif</h2>
+<p class="note">"Paperwork that might save the world." Rubber-stamp ring text + a central glyph.
+Ring text is unreadable at 32px by design -- the silhouette + glyph carry the small size.</p>
+<div class="grid">
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_seal_star_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_seal_star_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_seal_star_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_seal_star_48.png" width="48"></div><div class="lbl">icon_seal_star</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_seal_hourglass_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_seal_hourglass_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_seal_hourglass_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_seal_hourglass_48.png" width="48"></div><div class="lbl">icon_seal_hourglass</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_seal_check_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_seal_check_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_seal_check_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_seal_check_48.png" width="48"></div><div class="lbl">icon_seal_check</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_seal_red_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_seal_red_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_seal_red_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_seal_red_48.png" width="48"></div><div class="lbl">icon_seal_red</div></div>
+</div>
+
+<h2>4. P(Doom) typographic mark</h2>
+<p class="note">Wordmark variants. <code>type_mono</code> (big P) survives 32px best;
+<code>type_dial_paren</code> hides a doom gauge inside the parentheses.</p>
+<div class="grid">
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_type_wordmark_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_type_wordmark_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_type_wordmark_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_type_wordmark_48.png" width="48"></div><div class="lbl">icon_type_wordmark</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_type_amber_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_type_amber_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_type_amber_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_type_amber_48.png" width="48"></div><div class="lbl">icon_type_amber</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_type_mono_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_type_mono_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_type_mono_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_type_mono_48.png" width="48"></div><div class="lbl">icon_type_mono</div></div>
+  <div class="card"><a href="../../art_source/iconset_2026-07-21/icon_type_dial_paren_1024.png"><img class="big" src="../../art_source/iconset_2026-07-21/icon_type_dial_paren_256.png"></a><div class="row32"><img src="../../art_source/iconset_2026-07-21/icon_type_dial_paren_32.png" width="32"><img src="../../art_source/iconset_2026-07-21/icon_type_dial_paren_48.png" width="48"></div><div class="lbl">icon_type_dial_paren</div></div>
+</div>
+
+<h2>Settings-screen background -- 3 warmer alternatives</h2>
+<p class="note">Current kept ground (left, greyed border) is the sage/green peeling-paint panel
+-- Pip flagged it as the greenest kept ground. The three candidates are the same 512x512
+worn-panel composition (peel + corner/edge screws + grain) shifted into the warm register.
+Drop-in replacement for <code>tex_painted_metal_panel_512.png</code>.</p>
+<div class="grid bg">
+  <div class="card kept"><img class="big" src="../../godot/assets/textures/surfaces/tex_painted_metal_panel_512.png"><div class="lbl">CURRENT: tex_painted_metal_panel (sage)</div><div class="tiny">the greenest kept ground</div></div>
+  <div class="card"><a href="../../art_source/settings_bg_2026-07-21/settings_bg_warm_ochre_512.png"><img class="big" src="../../art_source/settings_bg_2026-07-21/settings_bg_warm_ochre_512.png"></a><div class="lbl">settings_bg_warm_ochre</div><div class="tiny">warm gold / cream peel</div></div>
+  <div class="card"><a href="../../art_source/settings_bg_2026-07-21/settings_bg_warm_terracotta_512.png"><img class="big" src="../../art_source/settings_bg_2026-07-21/settings_bg_warm_terracotta_512.png"></a><div class="lbl">settings_bg_warm_terracotta</div><div class="tiny">warmest -- rust/red over tan</div></div>
+  <div class="card"><a href="../../art_source/settings_bg_2026-07-21/settings_bg_warm_bakelite_512.png"><img class="big" src="../../art_source/settings_bg_2026-07-21/settings_bg_warm_bakelite_512.png"></a><div class="lbl">settings_bg_warm_bakelite</div><div class="tiny">cozy deep brown, subtle</div></div>
+</div>
+
+<footer>
+  15 app-icon candidates (3 cat / 4 dial / 4 seal / 4 type) + 3 settings backgrounds.
+  Generators: <code>tools/art_review/gen_icon_candidates.py</code>,
+  <code>tools/art_review/gen_settings_grounds.py</code> (no API key needed).
+  Not a style lock -- a stopgap fast-pass ahead of the afternoon designer hire.
+</footer>
+</body>
+</html>
