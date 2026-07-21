@@ -13,6 +13,11 @@ const BG_DARK := Color(0.035, 0.05, 0.043)
 const PANEL_BG := Color(0.07, 0.093, 0.082)
 const PANEL_BG_DEEP := Color(0.05, 0.066, 0.058)
 
+# Feed background: the main-UI off-black register (#170A1C, matching the turn-counter
+# box and the backdrop scrim) at high alpha so the live feed stays legible over the
+# office backdrop (#762). Deliberately the purple-black register, not the green panels.
+const FEED_BG := Color(0.09, 0.04, 0.11, 0.88)
+
 # Amber = PLAN register (strategy, calm). Green = WATCH register (tactics, live).
 const AMBER := Color(1.0, 0.72, 0.20)
 const AMBER_DIM := Color(0.66, 0.48, 0.16)
@@ -55,8 +60,19 @@ static func style_panel(node: Control, border: Color = RULE, bg: Color = PANEL_B
 
 
 static func style_feed(label: RichTextLabel) -> void:
-	"""The WATCH feed / message log: monospace, dim green-tinted text."""
+	"""The WATCH feed / message log: monospace, dim green-tinted text on an off-black
+	panel so it reads over the office backdrop (#762)."""
 	if label == null:
 		return
 	label.add_theme_font_override("normal_font", mono_font())
 	label.add_theme_color_override("default_color", TEXT)
+	# Opaque-ish panel behind the feed text -- RichTextLabel paints its "normal" stylebox
+	# as the background. #170A1C @ 0.88 alpha matches the main-UI register (turn-counter box).
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = FEED_BG
+	bg.set_corner_radius_all(0)
+	bg.content_margin_left = 8
+	bg.content_margin_right = 8
+	bg.content_margin_top = 6
+	bg.content_margin_bottom = 6
+	label.add_theme_stylebox_override("normal", bg)
