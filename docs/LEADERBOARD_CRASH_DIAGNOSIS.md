@@ -26,18 +26,27 @@ so each pack below is confirmed built from the current source (NOT a stale cache
 | 2 | THEME-STRIPPED | `--export-release` | `tex_cyan_ispf_512` + `tex_oxidized_copper_512` **removed from theme_manager AND absent from the pack** (source files stashed so no `.ctex` is generated -- verified 0 occurrences in the pack) | `G:\Documents\Organising_Life\Code\pdoom1\builds\leaderboard-diag\strip01\PDoom.exe` |
 | 3 | MINIMAL SCENE | `--export-release` | `leaderboard_screen.tscn` at its real path reduced to Control + ColorRect + Label + EntriesContainer stub + Back button, with a dependency-free stub script (`leaderboard_screen_min_stub.gd`) | `G:\Documents\Organising_Life\Code\pdoom1\builds\leaderboard-diag\min01\PDoom.exe` |
 
-Run the **`PDoom.console.exe`** next to each `PDoom.exe` (the console wrapper) so stdout/
-stderr are visible; the plain `PDoom.exe` is windowed and swallows the log.
+Capturing the log (IMPORTANT -- differs by build):
+- **Build 1 (DEBUG)** ships a **`PDoom.console.exe`** wrapper next to `PDoom.exe`. Run the
+  console one so stdout/stderr are visible.
+- **Builds 2 and 3 (RELEASE)** do NOT ship a console wrapper (Godot only emits it for
+  debug exports). Two reliable ways to get the log:
+  1. From a terminal, redirect the GUI exe -- inherited handles are captured even though
+     the window is GUI-subsystem: `PDoom.exe --verbose > run_buildNN.log 2>&1`.
+  2. Or read Godot's own user log afterwards:
+     `%APPDATA%\Godot\app_userdata\P(Doom)\logs\godot.log` (newest entry).
 
 ---
 
 ## Ordered protocol -- run in this order, stop when a step is conclusive
 
-For every run: launch the console exe with `--verbose`, redirect to a log, then play ->
-lose -> press ENTER for leaderboard, and inspect the tail of the log:
+For every run: launch with `--verbose` capturing the log (see "Capturing the log" above --
+console wrapper for the debug build, redirection or the user log for the release builds),
+then play -> lose -> press ENTER for leaderboard, and inspect the tail of the log:
 
 ```
-"C:\path\to\buildNN\PDoom.console.exe" --verbose > run_buildNN.log 2>&1
+# Build 1 (debug):    "C:\...\debug01\PDoom.console.exe" --verbose > run_build1.log 2>&1
+# Builds 2/3 (release): "C:\...\strip01\PDoom.exe"       --verbose > run_build2.log 2>&1
 ```
 
 ### STEP 1 -- Build 1 (DEBUG): get the deepest trace
