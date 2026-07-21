@@ -29,7 +29,8 @@ assets:
 - id: team_building
   category: actions_management
   display_name: Team Building
-  status: generated
+  status: selected
+  selected_variant: v1
   theme: base_corporate
   prompt_tail: three simple stylised human silhouettes standing close together as
     a small team, the central figure with arms raised in a modest celebratory gesture,
@@ -51,7 +52,8 @@ assets:
 - id: network
   category: actions_publicity
   display_name: Networking
-  status: generated
+  status: selected
+  selected_variant: v2
   theme: base_corporate
   prompt_tail: two stylised hands meeting in a firm handshake seen from a slight angle,
     thick chunky forms, a faint warm amber glow at the point of contact, resting on
@@ -73,7 +75,8 @@ assets:
 - id: acquire_startup
   category: actions_strategic
   display_name: Acquire AI Startup
-  status: generated
+  status: selected
+  selected_variant: v2
   theme: base_corporate
   prompt_tail: a small simple office building being drawn into and absorbed by a larger
     office building beside it, a bold curved arrow wrapping the small building toward
@@ -95,7 +98,8 @@ assets:
 - id: sabotage_competitor
   category: actions_strategic
   display_name: Corporate Espionage
-  status: generated
+  status: selected
+  selected_variant: v1
   theme: base_corporate
   prompt_tail: a single hooded shadowy figure in profile, hunched and secretive, a
     document or data-shard held close, rendered almost entirely in dark teal-olive
@@ -118,7 +122,8 @@ assets:
 - id: lobby_government
   category: actions_publicity
   display_name: Lobby Government
-  status: generated
+  status: selected
+  selected_variant: v1
   theme: base_corporate
   prompt_tail: a simple classical capitol building with a domed roof and columns,
     a lobbyist briefcase sitting on the steps in the foreground, chunky stylised architecture,
@@ -140,7 +145,8 @@ assets:
 - id: open_source_release
   category: actions_publicity
   display_name: Open Source Tools
-  status: generated
+  status: selected
+  selected_variant: v1
   theme: base_corporate
   prompt_tail: an open book or open folder lying flat, three or four branching arrows
     radiating upward and outward from its pages to signify free distribution, chunky
@@ -163,7 +169,8 @@ assets:
 - id: take_loan
   category: actions_funding
   display_name: Business Loan
-  status: generated
+  status: selected
+  selected_variant: v1
   theme: base_corporate
   prompt_tail: a plump money bag wrapped around by a heavy iron chain with a closed
     padlock, the chain biting into the bag, chunky stylised forms, a cold weight to
@@ -186,7 +193,8 @@ assets:
 - id: grant_proposal
   category: actions_funding
   display_name: Write Grant Proposal
-  status: generated
+  status: selected
+  selected_variant: v2
   theme: base_corporate
   prompt_tail: a single formal document or rolled proposal with a large official wax
     seal and ribbon at its base, chunky stylised paper with a soft fold, a warm amber
