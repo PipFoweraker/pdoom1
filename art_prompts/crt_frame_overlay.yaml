@@ -1,0 +1,69 @@
+schema_version: '1.0'
+asset_type: crt_frame_overlay
+default_size: 1536x1024
+output_sizes:
+- 1536
+- 768
+background: transparent
+styles:
+  frame_base: a full-screen 1536x1024 landscape CRT monitor frame overlay, ONLY the
+    border/bezel is drawn, the entire central screen area is EMPTY and fully transparent
+    (nothing rendered in the middle), symmetric border framing the edges of the canvas,
+    no text, no logos, no UI elements, no scene, no people, no figures, designed to
+    be laid on top of a game screen
+themes:
+  amber_crt:
+    style_overrides:
+    - frame_base
+    color_bias: desaturated slate-grey and dark teal-olive hardware with a warm amber
+      CRT phosphor edge-glow as the only saturated accent, deep shadow, low saturation,
+      no cyan, no electric blue
+assets:
+- id: crt_frame_bezel_heavy
+  category: crt_frame
+  display_name: CRT Frame - Heavy Bezel
+  status: generated
+  theme: amber_crt
+  prompt_tail: a heavy chunky moulded plastic CRT monitor bezel with visible screw
+    holes in the corners, scuffed worn edges, chipped paint and dust, thick rounded
+    outer casing, a faint warm amber phosphor glow bleeding inward from the inner
+    edge, industrial and lived-in, the central screen area completely empty and transparent
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:17:49.550652+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 8ee464bb1813
+    file_path: art_generated\crt_frame_overlay\v1\crt_frame_bezel_heavy_1536.png
+    cost_usd: 0.09
+- id: crt_frame_vignette_light
+  category: crt_frame
+  display_name: CRT Frame - Light Vignette
+  status: generated
+  theme: amber_crt
+  prompt_tail: 'a subtle minimal frame: a thin dark border with a soft edge vignette
+    and faint horizontal scanline banding creeping in only at the very edges, mostly
+    transparent, unobtrusive, just enough to suggest the image is on a CRT without
+    covering the screen, the whole central area empty and transparent'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:18:17.180859+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: dd07e6b070e9
+    file_path: art_generated\crt_frame_overlay\v1\crt_frame_vignette_light_1536.png
+    cost_usd: 0.09
+- id: crt_frame_curved_glass
+  category: crt_frame
+  display_name: CRT Frame - Curved Glass
+  status: generated
+  theme: amber_crt
+  prompt_tail: a rounded CRT glass frame with gently curved corners, a faint convex
+    glass reflection catching the light only around the rounded edges, a thin warm
+    amber phosphor rim-glow tracing the curve, a slim dark casing outside the glass,
+    the central screen area completely empty and transparent
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T04:18:40.363165+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 91f624e761be
+    file_path: art_generated\crt_frame_overlay\v1\crt_frame_curved_glass_1536.png
+    cost_usd: 0.09

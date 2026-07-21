@@ -1,81 +1,133 @@
 schema_version: '1.0'
 asset_type: hero_banners
-# Landscape hero banners. gpt-image-1.5 caps landscape at 1536x1024.
 default_size: 1536x1024
-# Widths only; each downscale preserves the 3:2 master aspect ratio.
+background: opaque
 output_sizes:
 - 1536
 - 768
 styles:
-  banner_scene_base: 'wide 1536x1024 landscape hero banner, a full illustrative
-    SCENE with real environmental depth and atmosphere (NOT a single symbol on a
-    vignette), lush StarCraft 2 / XCOM digital matte-painting, cinematic
-    composition with foreground, midground and background layers, volumetric
-    haze and soft god-rays, dramatic but restrained key lighting, high dynamic
-    range, painterly rendered detail, room to overlay a title in the upper-left
-    negative space, no text, no logos, no watermarks, no UI, no human faces in
-    close-up'
-  surface_tarkov: 'Tarkov-style worn metal, scuffed brushed aluminium, chipped
-    paint, dust, fingerprints and grime on every surface, lived-in industrial
-    props, exposed cable runs and cheap office furniture that has seen years of
-    use'
-  mood_cozy_dread: 'tone of cozy competence under existential dread, quiet and
-    intimate yet quietly ominous, the warmth of late-night focus haunted by
-    something larger looming just off-frame'
+  banner_scene_base: wide 1536x1024 landscape hero banner, a full illustrative SCENE
+    with real environmental depth and atmosphere (NOT a single symbol on a vignette),
+    lush StarCraft 2 / XCOM digital matte-painting, cinematic composition with foreground,
+    midground and background layers, volumetric haze and soft god-rays, dramatic but
+    restrained key lighting, high dynamic range, painterly rendered detail, room to
+    overlay a title in the upper-left negative space, no text, no logos, no watermarks,
+    no UI, no human faces in close-up
+  surface_tarkov: Tarkov-style worn metal, scuffed brushed aluminium, chipped paint,
+    dust, fingerprints and grime on every surface, lived-in industrial props, exposed
+    cable runs and cheap office furniture that has seen years of use
+  mood_cozy_dread: tone of cozy competence under existential dread, quiet and intimate
+    yet quietly ominous, the warmth of late-night focus haunted by something larger
+    looming just off-frame
 themes:
   base_corporate:
     style_overrides:
     - banner_scene_base
     - surface_tarkov
     - mood_cozy_dread
-    color_bias: 'heavily desaturated palette of teal and olive with muted slate
-      greys, warm amber CRT/monitor glow as the only saturated accent, deep
-      shadow, low overall saturation'
+    color_bias: heavily desaturated palette of teal and olive with muted slate greys,
+      warm amber CRT/monitor glow as the only saturated accent, deep shadow, low overall
+      saturation
 assets:
 - id: banner_title_hero
   category: title
   display_name: Title Screen Hero
-  status: pending
+  status: generated
   theme: base_corporate
-  prompt_tail: 'a dim near-future AI-safety lab and open-plan office at night, seen
-    from a low three-quarter angle across a cluttered desk in the foreground;
-    banks of chunky CRT-style terminals and modern flat panels cast a soft amber
-    and teal glow across worn desks, coffee-stained mugs, sticky notes and a
-    tangle of cables; a lone empty ergonomic chair, a whiteboard covered in faint
-    equations in the midground; tall server racks blink faintly in the shadowed
-    background; a single window shows a cold blue city skyline under heavy cloud;
-    the room feels warm and focused up close but the darkness at the edges is
-    quietly ominous, as if the work being done here matters more than anyone in
-    the room can quite admit'
+  prompt_tail: a dim near-future AI-safety lab and open-plan office at night, seen
+    from a low three-quarter angle across a cluttered desk in the foreground; banks
+    of chunky CRT-style terminals and modern flat panels cast a soft amber and teal
+    glow across worn desks, coffee-stained mugs, sticky notes and a tangle of cables;
+    a lone empty ergonomic chair, a whiteboard covered in faint equations in the midground;
+    tall server racks blink faintly in the shadowed background; a single window shows
+    a cold blue city skyline under heavy cloud; the room feels warm and focused up
+    close but the darkness at the edges is quietly ominous, as if the work being done
+    here matters more than anyone in the room can quite admit
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T00:58:09.635824+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 53f949551d27
+    file_path: art_generated\hero_banners\v1\banner_title_hero_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T00:58:54.700998+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 53f949551d27
+    file_path: art_generated\hero_banners\v1\banner_title_hero_v2_1536.png
+    cost_usd: 0.09
+  - version: v3
+    generated_at: '2026-07-21T00:59:43.973697+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 53f949551d27
+    file_path: art_generated\hero_banners\v1\banner_title_hero_v3_1536.png
+    cost_usd: 0.09
 - id: banner_doom_rising
   category: event
   display_name: Doom Rising
-  status: pending
+  status: generated
   theme: base_corporate
-  prompt_tail: 'the same near-future AI-safety lab and office, but dread is
-    escalating for a doom-spike moment: the amber terminal glow has soured toward
-    a harsh red, warning strobes and status lights flare across the server racks,
-    long ominous shadows stretch across the worn desks; papers and a knocked-over
-    mug scattered as if people left in a hurry; a wall of monitors shows a single
-    rising red curve climbing off the top of its chart; smoke or thick haze
-    creeps low across the floor, cables sparking faintly; through the window the
-    city skyline is darker and redder; still painterly and cinematic, still the
-    desaturated teal-and-olive world underneath, but now suffused with quiet
-    catastrophe and the sense that a threshold is being crossed'
+  prompt_tail: 'the same near-future AI-safety lab and office, but dread is escalating
+    for a doom-spike moment: the amber terminal glow has soured toward a harsh red,
+    warning strobes and status lights flare across the server racks, long ominous
+    shadows stretch across the worn desks; papers and a knocked-over mug scattered
+    as if people left in a hurry; a wall of monitors shows a single rising red curve
+    climbing off the top of its chart; smoke or thick haze creeps low across the floor,
+    cables sparking faintly; through the window the city skyline is darker and redder;
+    still painterly and cinematic, still the desaturated teal-and-olive world underneath,
+    but now suffused with quiet catastrophe and the sense that a threshold is being
+    crossed'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T01:00:31.750028+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 50079bf40b2d
+    file_path: art_generated\hero_banners\v1\banner_doom_rising_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T01:01:23.131477+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 50079bf40b2d
+    file_path: art_generated\hero_banners\v1\banner_doom_rising_v2_1536.png
+    cost_usd: 0.09
+  - version: v3
+    generated_at: '2026-07-21T01:02:16.248050+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 50079bf40b2d
+    file_path: art_generated\hero_banners\v1\banner_doom_rising_v3_1536.png
+    cost_usd: 0.09
 - id: fanfare_strategic_moves
   category: fanfare
   display_name: Strategic Moves Granted
-  status: pending
+  status: generated
   theme: base_corporate
   prompt_tail: 'a ceremonial moment: a shadowed boardroom or council chamber where
-    a governing board grants the player new authority; a long worn-metal
-    conference table catches a warm shaft of light from above, seated
-    silhouetted board members (backs and shoulders, no close-up faces) turned
-    toward a single illuminated seat at the head of the table; a sleek folder,
-    an official seal and a glowing tablet slide into that pool of light as if
-    handed over; faint teal holographic org-charts and strategy maps hover above
-    the table; the mood is dignified and quietly triumphant, cozy competence
-    rewarded, yet the vast dark chamber and the weight of the decision keep the
-    existential dread present at the edges; cinematic digital matte-painting,
-    desaturated teal and olive with warm amber ceremonial light; doubles as the
-    first event-fanfare art'
+    a governing board grants the player new authority; a long worn-metal conference
+    table catches a warm shaft of light from above, seated silhouetted board members
+    (backs and shoulders, no close-up faces) turned toward a single illuminated seat
+    at the head of the table; a sleek folder, an official seal and a glowing tablet
+    slide into that pool of light as if handed over; faint teal holographic org-charts
+    and strategy maps hover above the table; the mood is dignified and quietly triumphant,
+    cozy competence rewarded, yet the vast dark chamber and the weight of the decision
+    keep the existential dread present at the edges; cinematic digital matte-painting,
+    desaturated teal and olive with warm amber ceremonial light; doubles as the first
+    event-fanfare art'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T01:03:01.487317+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: c42d33df2090
+    file_path: art_generated\hero_banners\v1\fanfare_strategic_moves_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T01:03:45.038994+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: c42d33df2090
+    file_path: art_generated\hero_banners\v1\fanfare_strategic_moves_v2_1536.png
+    cost_usd: 0.09
+  - version: v3
+    generated_at: '2026-07-21T01:04:28.407894+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: c42d33df2090
+    file_path: art_generated\hero_banners\v1\fanfare_strategic_moves_v3_1536.png
+    cost_usd: 0.09
