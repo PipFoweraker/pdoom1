@@ -205,35 +205,24 @@ walk paths through the strategy-space, the system should be able to **credit the
 who first discovered each one**. Accumulation without attribution is a heap; attribution
 turns the heap into a history with authors.
 
-The per-run DNA (section 2.1) is exactly the primitive this needs. Because every run
-carries a deterministic strategy-fingerprint keyed to a stable hash, the **first** run to
-exhibit a novel fingerprint can be credited to its discoverer. That converts the
-tree-of-life (section 2.3) from an anonymous shape into a **phylogeny with named branch
-points**: each fork in the strategy tree annotated with the player who first walked that
-path, and when. Pip's "forking channels ... explored through many player runs" gains a
-credits roll.
+**RULED (Pip 2026-07-21, on review): we do NOT pre-build this.** Attribution, naming,
+and credit structures should be **emergent from the community**, not fore-run by the
+product (DQ-34: "naming/attribution of strategies and forks is better left an emergent
+cultural phenomenon"). The analogues that make this credible -- speedrun trick
+attribution, scientific priority-of-discovery, open-source contributor graphs -- all
+arose FROM their communities on top of available records; none was pre-built by the
+platform, and pre-building would have warped how those cultures formed. Build orders,
+named tech, and who-found-what-first will be made by players over time, in shapes we
+should not predict.
 
-Analogues to steal from (all solved this without warping the underlying activity):
-
-- **Speedrun trick attribution** -- named tech ("the such-and-such skip"), credited to the
-  runner who first landed it, propagated as the community adopts it. Directly mirrors the
-  loss-ladder's "best loss" (DESIGN_PHILOSOPHY): inventing an opening the ladder adopts.
-- **Scientific-discovery credit graphs** -- priority-of-discovery, citation lineage; who
-  got there first and who built on them.
-- **Open-source contributor graphs** -- the commit/PR provenance graph; a living record
-  of who added what, when.
-
-**Architectural framing (important):** this is an **emergent read over the accumulated
-telemetry**, plus a light social / naming layer -- *not a new game mechanic*. Concretely:
-a discoverer/provenance graph is *computed* off the run population (first-occurrence of
-each fingerprint -> discoverer; adoption curve -> who followed), and a thin naming/credit
-surface (a web view, a wall of names, a "first discovered by ..." annotation on a branch)
-sits on top. Nothing about it reaches back into the sim. It is a lens on the corpus, the
-same way the visualizations in 2.3 are -- discovery credit is just the corpus read
-*by author* instead of *by shape*. (First-discovery has honest edge cases -- near-ties
-across the schedule, independent rediscovery, fingerprint collisions; treat these the way
-speedrun communities do, as a curated social layer with a defensible default, not a
-number the engine adjudicates.)
+What the substrate DOES owe this future (cheap, lossless, non-committal): capture the
+per-run DNA and strategy signature (sections 2.1, 4.1-4.3) so that first-occurrence and
+lineage remain *computable by anyone later* -- community tools, or us, if and when a
+community exists and wants it. Holding space for attribution means preserving the
+records that make it possible, not shipping the credit graph. (Disclosure of those
+records is governed by DQ-34's opt-in tiers; first-discovery edge cases -- near-ties,
+independent rediscovery, collisions -- are exactly the kind of adjudication a community
+curates for itself.)
 
 This resonance is not incidental: crediting **networked human contributions toward good
 outcomes** is the game's own theme (section 1: "how we can try to network those to build
@@ -264,9 +253,10 @@ Concrete prohibitions this rules out:
   corrupting the very population the telemetry is trying to observe cleanly. (Compare the
   score design: ADR-0002's post-mortem-reveal-only rule already refuses a live score
   ticker for the same reason -- the run is played on the world's terms.)
-- **No sim reach-back.** The discoverer credit graph, the fingerprint histograms, the
-  named branch points -- all are computed and displayed *outside* the game loop (web
-  views, local tools, post-run surfaces). None feeds a value back into game state, RNG,
+- **No sim reach-back.** Every derived view over the corpus -- the fingerprint
+  histograms, the strategy trees, and any community-built attribution layer that may
+  emerge (section 2.6) -- is computed and displayed *outside* the game loop (web views,
+  local tools, post-run surfaces). None feeds a value back into game state, RNG,
   balance, or event selection.
 - **No telemetry-driven balance auto-tuning inside the sim.** Telemetry *informs the dev*
   (exploit-discovery detection, section 2.3) who then makes deliberate, legible balance
@@ -342,7 +332,7 @@ until there is a corpus worth looking at.
 | Substrate | strategy-space population across all runs | persist hash + replay log + signature per run (section 4.1-4.3) |
 | View | tree-of-life / Cambrian-explosion strategy viz | sibling read endpoint + one local histogram tool (4.5) |
 | Self-reference | ADR-tree beside strategy-tree, one render | (not yet -- needs the corpus first) |
-| Attribution | named branch points / discoverer credit graph | capture the run DNA + strategy signature that keys first-discovery (4.1, 4.3) |
+| Attribution | emergent-community structures (NOT pre-built -- ruled 2026-07-21, DQ-34) | capture the run DNA + strategy signature so first-discovery stays computable later (4.1, 4.3) |
 | Exploit story | population-level exploit-discovery detection | capture the payment-choice + signature data that would reveal it (4.3) |
 
 The dream is aspirational and explicitly *not committed*. The hooks are the small,
