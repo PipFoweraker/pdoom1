@@ -28,6 +28,21 @@ class_name OfficeFloor
 
 const EmployeeSpriteScript := preload("res://scripts/ui/office_floor/employee_sprite.gd")
 
+# Promoted pixellab.ai art (2026-07-21 re-roll sweep) for the WATCH office backdrop.
+# The floor is a top-down Wang tileset atlas; we tile its all-"lower" base tile. Props are
+# top-down map objects drawn feet-anchored at the cosmetic landmark zones. PURELY cosmetic
+# (ADR-0006): drawing them reads nothing from and writes nothing to game state.
+const FLOOR_ATLAS := preload("res://assets/office_floor/tilesets/floor_concrete.png")
+const PROP_WATER_COOLER := preload("res://assets/office_floor/props/water_cooler.png")
+const PROP_FILING_CABINET := preload("res://assets/office_floor/props/filing_cabinet.png")
+const PROP_SERVER := preload("res://assets/office_floor/props/server_cluster.png")
+# Region of the 4x4 Wang atlas holding the all-lower base floor tile (wang_0; bounding_box
+# per the source tileset metadata in art_source/pixellab_2026-07-21-rerolls/tilesets/).
+# Cropped once into a standalone tileable texture.
+const FLOOR_BASE_REGION := Rect2i(64, 32, 32, 32)
+const PROP_TARGET_H := 30.0                    # draw props scaled to this pixel height (art varies)
+const FLOOR_DIM := Color(0.62, 0.63, 0.66)     # tint floor/props muted so sprites + UI read over them
+
 @export var tier: int = 0: set = set_tier
 # Deferred seams (build brief "Deferred to later waves"): office aesthetic tier and
 # moral skew. Declared cheaply now so later art/logic has an anchor; currently unused.
@@ -52,9 +67,11 @@ var _sprites: Dictionary = {}   # id -> OfficeEmployeeSprite
 var _shared_frames: SpriteFrames = null   # optional real art shared across sprites
 var _rng := RandomNumberGenerator.new()   # cosmetic-only (collaboration timing); NOT the game RNG
 var _collab_timer := 0.0
+var _floor_tile: Texture2D = null   # base concrete tile cropped from the Wang atlas (cosmetic)
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(360, 260)
+	_floor_tile = _build_floor_tile()
 	_rng.randomize()
 	_collab_timer = _rng.randf_range(COLLAB_CHECK_RANGE.x, COLLAB_CHECK_RANGE.y)
 	resized.connect(_on_resized)
@@ -139,6 +156,11 @@ func set_roster(snapshot: Array) -> void:
 			_sprites.erase(id)
 	queue_redraw()
 
+## Number of employee sprites currently on the floor (the walker count). Read-only;
+## the WATCH integration + its guard test assert this tracks the live staff count.
+func sprite_count() -> int:
+	return _sprites.size()
+
 func set_tier(t: int) -> void:
 	tier = t
 	for id in _sprites:
@@ -195,11 +217,42 @@ func _desk_for_index(i: int, _total: int, b: Rect2) -> Vector2:
 	var angle := float(slot) * (TAU / 3.0) + float(t) * 0.6   # offset the two rings so they don't mirror
 	return tables[t] + Vector2(cos(angle), sin(angle) * 0.7) * radius
 
+# Crop the all-lower base floor tile out of the Wang atlas into a standalone tileable
+# texture (runs once, cosmetic). Returns null on failure -> _draw falls back to a flat fill.
+func _build_floor_tile() -> Texture2D:
+	if FLOOR_ATLAS == null:
+		return null
+	var atlas_img := FLOOR_ATLAS.get_image()
+	if atlas_img == null:
+		return null
+	var r := FLOOR_BASE_REGION
+	if r.position.x + r.size.x > atlas_img.get_width() or r.position.y + r.size.y > atlas_img.get_height():
+		return null
+	return ImageTexture.create_from_image(atlas_img.get_region(r))
+
+# Draw a promoted prop texture centred horizontally on `at`, feet-anchored (bottom edge at
+# `at`) so it sits on the floor, scaled to PROP_TARGET_H (aspect kept) and dimmed to match.
+func _draw_prop(tex: Texture2D, at: Vector2) -> void:
+	if tex == null:
+		return
+	var src := tex.get_size()
+	if src.y <= 0.0:
+		return
+	var scl := PROP_TARGET_H / src.y
+	var w := src.x * scl
+	var rect := Rect2(at - Vector2(w * 0.5, PROP_TARGET_H), Vector2(w, PROP_TARGET_H))
+	draw_texture_rect(tex, rect, false, FLOOR_DIM)
+
 # --- Floor background (tier-agnostic; sprites draw on top) ------------------
 func _draw() -> void:
 	var b := _bounds()
 	draw_rect(Rect2(Vector2.ZERO, size), Color(0.09, 0.10, 0.11))       # room
-	draw_rect(b, Color(0.13, 0.15, 0.16))                              # floor
+	# Floor: tile the promoted concrete Wang base tile if available, else a flat fill.
+	if _floor_tile != null:
+		draw_texture_rect(_floor_tile, b, true, FLOOR_DIM)               # tiled concrete
+		draw_rect(b, Color(0.05, 0.06, 0.07, 0.34))                     # dim veil so UI/sprites read
+	else:
+		draw_rect(b, Color(0.13, 0.15, 0.16))                          # procedural fallback floor
 	draw_rect(b, Color(0.3, 0.5, 0.35, 0.5), false, 1.5)              # bounds outline
 	# tables (desks cluster around these)
 	for c in _table_centers(b):
@@ -211,12 +264,15 @@ func _draw() -> void:
 	for i in range(total):
 		var d := _desk_for_index(i, total, b)
 		draw_rect(Rect2(d + Vector2(-13, 5), Vector2(26, 5)), Color(0.25, 0.27, 0.29, 0.6))
-	# cosmetic landmark markers (window / cat / water cooler / fridge)
+	# cosmetic landmark markers (window / cat / water cooler / fridge). Promoted pixellab
+	# props stand in for the water/fridge markers + add a server-cluster decor piece; the
+	# window strip + cat corner stay procedural (cat art deferred to the #758 identity pass).
 	var z := _zones(b)
 	draw_rect(Rect2(Vector2(b.position.x + 6, b.position.y + 2), Vector2(b.size.x - 12, 5)), Color(0.45, 0.6, 0.75, 0.45))  # window strip (top wall)
 	draw_circle(z["cat_pos"], 9.0, Color(0.9, 0.5, 0.7, 0.4))            # cat corner (pink)
-	draw_rect(Rect2(z["water_pos"] - Vector2(7, 10), Vector2(14, 20)), Color(0.5, 0.75, 0.9, 0.4))   # water cooler
-	draw_rect(Rect2(z["fridge_pos"] - Vector2(9, 11), Vector2(18, 22)), Color(0.7, 0.85, 0.95, 0.4)) # fridge
+	_draw_prop(PROP_WATER_COOLER, z["water_pos"])                       # water cooler (top-right)
+	_draw_prop(PROP_FILING_CABINET, z["fridge_pos"])                    # filing cabinet appliance (bottom-right)
+	_draw_prop(PROP_SERVER, b.position + Vector2(b.size.x * 0.12, b.size.y * 0.18))  # server cluster decor (top-left)
 
 # ---------------------------------------------------------------------------
 # READ-ONLY GameState adapter. Static so callers can build a snapshot without
@@ -244,5 +300,38 @@ static func snapshot_from_state(state) -> Array:
 			"loyalty": int(r.loyalty) if "loyalty" in r else 50,
 			"unmanaged": i >= (total - unmanaged_n),
 			"assigned": true,   # employed researchers are working their specialization
+		})
+	return out
+
+# ---------------------------------------------------------------------------
+# READ-ONLY adapter for the SERIALIZED game-state Dictionary (GameState.to_dict()) --
+# the shape delivered by GameManager.game_state_updated -> main_ui -> WatchScreen. Same
+# output contract as snapshot_from_state() but reads plain dict fields ("researchers" is an
+# Array of Researcher.to_dict() dicts). Copies values only; writes nothing; determinism-safe.
+# appearance_id is carried through untouched so the Friday identity / portrait-variant-pool
+# mapping (#758) can consume it later with no signature change here.
+# ---------------------------------------------------------------------------
+static func snapshot_from_state_dict(state: Dictionary) -> Array:
+	var out: Array = []
+	if not state.has("researchers"):
+		return out
+	var researchers = state.get("researchers", [])
+	if not (researchers is Array):
+		return out
+	var total: int = researchers.size()
+	var unmanaged_n := int(state.get("unmanaged_count", 0))
+	for i in range(total):
+		var r = researchers[i]
+		if not (r is Dictionary):
+			continue
+		out.append({
+			"id": i,
+			"name": String(r.get("name", str(i))),
+			"specialization": String(r.get("specialization", "")),
+			"burnout": float(r.get("burnout", 0.0)),
+			"loyalty": int(r.get("loyalty", 50)),
+			"unmanaged": i >= (total - unmanaged_n),
+			"assigned": true,
+			"appearance_id": r.get("appearance_id", i),   # seam for #758 identity mapping
 		})
 	return out

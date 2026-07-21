@@ -758,6 +758,11 @@ func _on_game_state_updated(state: Dictionary):
 	if screen_mode:
 		screen_mode.update_from_state(state)
 
+	# Office-floor visual layer (WATCH): walker count mirrors the staff count. PURE VIEW
+	# (ADR-0006) -- reads the state snapshot, writes nothing, cannot affect determinism.
+	if watch_screen and watch_screen.has_method("update_office_floor"):
+		watch_screen.update_office_floor(state)
+
 	# Refresh the PLAN attention gauge (allocated vs reserved pips) from the month plan.
 	if plan_screen:
 		plan_screen.update_reserve_gauge(state)
