@@ -7,7 +7,7 @@ func _ready():
 func _on_back_pressed():
 	"""Return to welcome screen"""
 	print("[PlayerGuide] Returning to welcome screen")
-	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+	SceneTransition.go_to("res://scenes/welcome.tscn")
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""

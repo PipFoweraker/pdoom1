@@ -185,12 +185,12 @@ func _on_launch_pressed():
 	print("[PreGameSetup] Going to configuration confirmation...")
 
 	# Go to confirmation screen (consistent UX with default pathway)
-	get_tree().change_scene_to_file("res://scenes/config_confirmation.tscn")
+	SceneTransition.go_to("res://scenes/config_confirmation.tscn")
 
 func _on_cancel_pressed():
 	"""Return to welcome screen"""
 	print("[PreGameSetup] Cancelled, returning to welcome screen")
-	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+	SceneTransition.go_to("res://scenes/welcome.tscn")
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""

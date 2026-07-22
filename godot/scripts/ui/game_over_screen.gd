@@ -56,8 +56,10 @@ func _input(event: InputEvent):
 
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_ENTER or event.keycode == KEY_SPACE:
-			_continue_to_leaderboard()
+			# Navigation goes through SceneTransition, which always defers the scene swap,
+			# so it is safe to invoke directly from inside _input().
 			get_viewport().set_input_as_handled()
+			_continue_to_leaderboard()
 
 func show_game_over(is_victory: bool, final_state: Dictionary):
 	"""Display game over screen with final statistics.
@@ -449,12 +451,12 @@ func _on_play_again_pressed():
 	"""Restart the game"""
 	print("[GameOverScreen] Play Again pressed")
 	# Reload the main scene to restart
-	get_tree().reload_current_scene()
+	SceneTransition.reload()
 
 func _on_main_menu_pressed():
 	"""Return to main menu"""
 	print("[GameOverScreen] Main Menu pressed")
-	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+	SceneTransition.go_to("res://scenes/welcome.tscn")
 
 func _on_meta_clicked(meta):
 	"""Handle URL clicks in the stats label"""
@@ -462,6 +464,10 @@ func _on_meta_clicked(meta):
 	OS.shell_open(str(meta))
 
 func _continue_to_leaderboard():
-	"""Navigate to leaderboard screen to show saved score"""
+	"""Navigate to leaderboard screen to show saved score.
+
+	Navigation goes through SceneTransition, which always defers the scene swap,
+	so this is safe to reach from an _input handler or a Button `pressed` signal.
+	"""
 	print("[GameOverScreen] Transitioning to leaderboard")
-	get_tree().change_scene_to_file("res://scenes/leaderboard_screen.tscn")
+	SceneTransition.go_to("res://scenes/leaderboard_screen.tscn")

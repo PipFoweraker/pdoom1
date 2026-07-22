@@ -47,6 +47,13 @@ jobs:
         echo "Running comprehensive standards enforcement..."
         python scripts/enforce_standards.py --check-all || echo "WARNING  Standards check warnings (non-blocking during Godot migration)"
 
+    - name: Scene Navigation Chokepoint Check
+      run: |
+        echo "Enforcing: all scene navigation routes through SceneTransition (deferred swap)."
+        echo "(Guards the v0.11.0 release-only crash: change_scene_to_file() from inside _input()."
+        echo " See docs/LEADERBOARD_CRASH_DIAGNOSIS.md.)"
+        python tools/check_scene_nav.py
+
     - name: Import Cleanup Check
       run: |
         echo "INFO  Project migrated to Godot - Python import checks skipped"
@@ -54,35 +61,10 @@ jobs:
 
     - name: Version Consistency Check
       run: |
-        echo "Checking version consistency..."
-
-        # Check version.txt (single source of truth)
-        if [ -f "version.txt" ]; then
-          VERSION_TXT=$(cat version.txt | tr -d '[:space:]')
-          echo "version.txt: $VERSION_TXT"
-        else
-          echo "WARNING version.txt not found"
-          VERSION_TXT=""
-        fi
-
-        # Check Godot project version
-        if grep -q 'config/version=' godot/project.godot; then
-          GODOT_VERSION=$(grep 'config/version=' godot/project.godot | cut -d'"' -f2)
-          echo "project.godot: $GODOT_VERSION"
-        else
-          GODOT_VERSION=""
-        fi
-
-        # Validate consistency
-        if [ -n "$VERSION_TXT" ] && [ -n "$GODOT_VERSION" ]; then
-          if [ "$VERSION_TXT" = "$GODOT_VERSION" ]; then
-            echo "SUCCESS Version consistency verified: $VERSION_TXT"
-          else
-            echo "WARNING Version mismatch: version.txt=$VERSION_TXT, project.godot=$GODOT_VERSION"
-          fi
-        else
-          echo "SUCCESS Version check passed (partial)"
-        fi
+        echo "Checking version.txt (SSOT) is stamped into every derived copy..."
+        echo "(game_config.gd / project.godot / export_presets.cfg / welcome.tscn."
+        echo " A silent drift forks the leaderboard board-key, so this gate is FATAL.)"
+        python tools/sync_version.py --check
 
     - name: Web Export System Check
       run: |

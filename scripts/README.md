@@ -2,6 +2,15 @@
 
 This directory contains scripts for managing P(Doom) releases.
 
+> **Version single-source-of-truth (v0.11.0+):** `version.txt` (repo root) is the
+> authoritative game version. After changing it, run `python tools/sync_version.py`
+> to stamp the derived copies (`game_config.gd` `CURRENT_VERSION`, `project.godot`,
+> `export_presets.cfg`, `welcome.tscn`). `python tools/sync_version.py --check`
+> gates pre-commit AND CI and exits 1 on drift -- a silent mismatch forks the
+> leaderboard board-key. Cut Windows builds with `python tools/build_release.py`
+> (stamps the build and defeats the stale-export-cache trap); never hand-run a raw
+> `godot --export`. See [`../tools/README.md`](../tools/README.md) for those tools.
+
 ## Quick Start
 
 For a new release (e.g., v0.10.2):

@@ -627,7 +627,7 @@ func _on_back_button_pressed():
 	# Try to go back to previous scene
 	if get_tree().current_scene.name == "LeaderboardScreen":
 		# If launched as main scene, go to welcome
-		get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+		SceneTransition.go_to("res://scenes/welcome.tscn")
 	else:
 		# Otherwise hide this overlay
 		queue_free()
@@ -635,7 +635,7 @@ func _on_back_button_pressed():
 func _on_play_again_button_pressed():
 	"""Start a new game"""
 	ErrorHandler.info(ErrorHandler.Category.VALIDATION, "Starting new game from leaderboard", {})
-	get_tree().change_scene_to_file("res://scenes/pregame_setup.tscn")
+	SceneTransition.go_to("res://scenes/pregame_setup.tscn")
 
 func _input(event):
 	"""Handle keyboard shortcuts"""

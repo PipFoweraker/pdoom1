@@ -233,6 +233,28 @@ func calc(a):
     return a if a > -10 and a < 10 else (-10 if a < -10 else 10)
 ```
 
+#### Scene navigation (enforced)
+
+All scene changes MUST go through the `SceneTransition` autoload:
+
+```gdscript
+SceneTransition.go_to("res://scenes/main.tscn")   # optional fade: go_to(path, true)
+SceneTransition.reload()                            # reload the current scene
+```
+
+NEVER call `get_tree().change_scene_to_file()`, `change_scene_to_packed()`, or
+`reload_current_scene()` directly. Those swap the scene synchronously; calling
+them from inside an `_input()` / `_gui_input()` handler crashed the v0.11.0
+RELEASE build (segfault 0xc0000005 before the next scene's `_ready`).
+`SceneTransition` always defers the swap to a clean idle frame, so that crash
+class cannot happen from any call site. Write-up:
+[`docs/LEADERBOARD_CRASH_DIAGNOSIS.md`](docs/LEADERBOARD_CRASH_DIAGNOSIS.md).
+
+`tools/check_scene_nav.py` enforces this in pre-commit (changed `.gd` files) and
+in CI (full-tree scan); a direct call fails the build. The only sanctioned caller
+of the raw engine API is `godot/autoload/scene_transition.gd`. A genuine one-off
+exception can be annotated with `# scene-nav-allow` on the offending line.
+
 ### Python
 
 Python scripts follow PEP 8 (enforced by `ruff` and `black`). Pre-commit hooks enforce formatting.
@@ -247,6 +269,21 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `refactor:` Code change that neither fixes a bug nor adds a feature
 - `test:` Adding or updating tests
 - `chore:` Maintenance tasks
+
+## Versioning and Builds
+
+- **`version.txt`** (repo root) is the SINGLE SOURCE OF TRUTH for the game
+  version. After bumping it, run `python tools/sync_version.py` to stamp the
+  value into the derived copies (`game_config.gd` `CURRENT_VERSION`,
+  `project.godot`, `export_presets.cfg`, `welcome.tscn`).
+- `python tools/sync_version.py --check` writes nothing and exits 1 on drift. It
+  gates pre-commit AND CI: a silent version drift forks the leaderboard
+  board-key, so mismatches are treated as fatal.
+- **Cut Windows builds with `python tools/build_release.py`** -- it nukes
+  `godot/.godot` to defeat the stale-export-cache trap, stamps the build
+  (`godot/build_stamp.txt`, read by the in-game DEV BUILD overlay), exports, and
+  proves a freshness marker is in the `.pck` before emitting. NEVER hand-run a
+  raw `godot --export` (stale-cache risk that burned many cycles in v0.11.0).
 
 ## Getting Help
 
