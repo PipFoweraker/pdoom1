@@ -133,6 +133,13 @@ genuine one-off exception `# scene-nav-allow`. Full story: `docs/LEADERBOARD_CRA
   (no more "unstamped"), exports, and PROVES a unique freshness marker is in the `.pck`
   before emitting. NEVER hand-run a raw `godot --export` (stale-cache risk; burned ~12
   cycles in v0.11.0).
+- **Godot packs the ENTIRE `godot/` tree into the `.pck` (referenced or not).**
+  Keep retired/source assets OUTSIDE `godot/` (`art_source/` for <=1MB art kept
+  in git; masters archive `G:/tmp/pdoom1-art-masters/` for >1MB per
+  `docs/art/ART_MASTERS_POLICY.md`). Before moving/removing ANY asset,
+  `grep -rn` its `uid://` AND `res://` path across `godot/` -- scenes/resources
+  reference by UID, not path, so a blind move silently breaks refs (issue #787:
+  ~488MB of unreferenced hi-res icon variants were bloating the `.pck`).
 
 ## CI is honest now (#640)
 Green CI means tests actually ran. Earlier the gate reported green while running
