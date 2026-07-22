@@ -50,7 +50,7 @@ func _on_resume_pressed():
 func _on_save_pressed():
 	"""L7 (#618): snapshot the current game to the quicksave slot."""
 	var save_button: Button = $Panel/VBox/ButtonContainer/SaveButton
-	var gm = GameManager  # autoload singleton — the ONE GameManager (L0 consolidated; the old "../GameManager" scene node was deleted)
+	var gm = GameManager  # autoload singleton -- the ONE GameManager (L0 consolidated; the old "../GameManager" scene node was deleted)
 	if gm == null or not gm.has_method("save_game"):
 		print("[PauseMenu] Save failed: GameManager not found")
 		save_button.text = "Save failed"

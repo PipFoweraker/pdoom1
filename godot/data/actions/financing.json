@@ -50,7 +50,7 @@
 		{
 			"id": "accept_financing_offer",
 			"name": "Accept Offer",
-			"description": "Accept a standing financing offer by id (from Seek Financing) — cash now, its quoted terms mint a ledger entry.",
+			"description": "Accept a standing financing offer by id (from Seek Financing) -- cash now, its quoted terms mint a ledger entry.",
 			"costs": {
 				"action_points": 1
 			},

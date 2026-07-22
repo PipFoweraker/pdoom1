@@ -1,7 +1,7 @@
 extends Control
 class_name DoomTrendGraph
-## Doom trend sparkline (#512). Fixed 0–100 Y axis with bushfire zone bands behind the line,
-## area fill under the line (semantic doom color — can go near-black), and an ember-bright
+## Doom trend sparkline (#512). Fixed 0-100 Y axis with bushfire zone bands behind the line,
+## area fill under the line (semantic doom color -- can go near-black), and an ember-bright
 ## stroke (get_doom_stroke_color) so the line stays legible even at terminal doom.
 ## Click to request an expanded full-history view.
 ##
@@ -26,7 +26,7 @@ func _ready() -> void:
 		custom_minimum_size = Vector2(120, 44)
 	mouse_filter = Control.MOUSE_FILTER_STOP if clickable else Control.MOUSE_FILTER_IGNORE
 	if clickable:
-		tooltip_text = "Doom trend — click to expand"
+		tooltip_text = "Doom trend -- click to expand"
 
 func set_history(values) -> void:
 	"""Accepts any float array (e.g. state['doom_history'])."""
@@ -77,7 +77,7 @@ func _draw() -> void:
 		pts.append(Vector2(x, y))
 		vals.append(v)
 
-	# Area fill under the line — semantic color of the latest doom.
+	# Area fill under the line -- semantic color of the latest doom.
 	var fill_col: Color = ThemeManager.get_doom_color(vals[count - 1])
 	fill_col.a = fill_alpha
 	var poly: PackedVector2Array = PackedVector2Array(pts)
@@ -85,7 +85,7 @@ func _draw() -> void:
 	poly.append(Vector2(pts[0].x, h - pad))
 	draw_colored_polygon(poly, fill_col)
 
-	# Trend line — colored PER SEGMENT by the doom value at that point, so the line itself
+	# Trend line -- colored PER SEGMENT by the doom value at that point, so the line itself
 	# tells the bushfire story over time (playtest feedback). Stroke variant stays legible.
 	for i in range(count - 1):
 		var seg_col: Color = ThemeManager.get_doom_stroke_color(vals[i + 1])

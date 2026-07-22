@@ -1,27 +1,27 @@
 class_name ReactivePolicy
 extends RefCounted
-## EE-9 · Reactive rule-policy framework (Pip 2026-07-14, WORKSHOP_2_BACKLOG "Balance-instrument
+## EE-9 - Reactive rule-policy framework (Pip 2026-07-14, WORKSHOP_2_BACKLOG "Balance-instrument
 ## roadmap" + "#638 review rulings").
 ##
 ## A POLICY is a declarative, parameterized description of theorized play: an ordered list of
 ## (condition -> action) rules evaluated at TWO decision points, mirroring ADR-0009's plan/window split:
-##   - plan_rules   — evaluated once per PLAN PHASE (start of a month). Each rule whose condition
+##   - plan_rules   -- evaluated once per PLAN PHASE (start of a month). Each rule whose condition
 ##                    holds contributes action ids to an ordered priority list; the sweep harness
 ##                    fills the month's Attention/AP against that priority (affordability-gated).
-##   - window_rules — evaluated per RESPONSE WINDOW during day-tick playback. The first rule whose
+##   - window_rules -- evaluated per RESPONSE WINDOW during day-tick playback. The first rule whose
 ##                    condition holds names the verb (handle_reserve / handle_cannibalize / defer /
 ##                    ignore). ADR-0009's "do this unless <condition>, in which case do that".
 ##
 ## Conditions read a FEATURES snapshot of game state (cash, runway months, doom, reserve, ledger
-## load, offers, staff, ...) computed once per decision — so rules stay cheap and READABLE. The
+## load, offers, staff, ...) computed once per decision -- so rules stay cheap and READABLE. The
 ## point (Pip): a policy is DOCUMENTATION of a theorized line, not opaque code. Parameters are
-## named + carried on the policy so future sweeps can vary them (parameterized reactive policies —
+## named + carried on the policy so future sweeps can vary them (parameterized reactive policies --
 ## the established game-balancing technique the ruling calls for).
 ##
 ## Pure/deterministic: rules draw no randomness; given the same features they return the same
 ## decision. All engine randomness is the seeded state.rng, so every (seed, policy) run is replayable.
 ##
-## This file is TOOLING (tests/manual/lib) — it never ships in a build and touches no gameplay code.
+## This file is TOOLING (tests/manual/lib) -- it never ships in a build and touches no gameplay code.
 
 const RUNWAY_UNKNOWN := 999.0  # runway when burn ~= 0 (no staff): effectively infinite
 
@@ -31,7 +31,7 @@ const RUNWAY_UNKNOWN := 999.0  # runway when burn ~= 0 (no staff): effectively i
 static func features(state) -> Dictionary:
 	"""Snapshot the decision-relevant game state. Named fields keep policy conditions declarative.
 	`runway_months` is an ESTIMATE: cash / (staff * annual_salary_base / 12). It uses the flat
-	salary base (salaries.legacy_staff_annual), not per-researcher salaries — a policy heuristic,
+	salary base (salaries.legacy_staff_annual), not per-researcher salaries -- a policy heuristic,
 	not the payroll engine. Documented so tuning can argue with it."""
 	var staff: int = state.get_total_staff()
 	var annual_base: float = Balance.num("salaries.legacy_staff_annual", 60000.0)
@@ -83,7 +83,7 @@ static func make(name: String, params: Dictionary, plan_rules: Array, window_rul
 
 static func rule(when: Callable, actions: Array, desc: String = "") -> Dictionary:
 	"""A plan rule: when `when(features)` holds, append `actions` (ordered action ids) to the
-	month's priority list. Rules are cumulative and ordered — earlier rules bid first for Attention/AP."""
+	month's priority list. Rules are cumulative and ordered -- earlier rules bid first for Attention/AP."""
 	return {"when": when, "actions": actions, "desc": desc}
 
 
@@ -93,7 +93,7 @@ static func wrule(when: Callable, verb: String, desc: String = "") -> Dictionary
 
 
 static func repeat(action_id: String, n: int) -> Array:
-	"""n copies of an action id — the readable way to say 'fill leftover capacity with X'."""
+	"""n copies of an action id -- the readable way to say 'fill leftover capacity with X'."""
 	var out: Array = []
 	for _i in range(max(0, n)):
 		out.append(action_id)

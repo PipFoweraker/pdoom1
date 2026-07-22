@@ -252,13 +252,13 @@
 				},
 				{
 					"id": "ignore_burnout",
-					"text": "Push Through (no cost, costs trust — affected researchers lose loyalty)",
+					"text": "Push Through (no cost, costs trust -- affected researchers lose loyalty)",
 					"costs": {},
 					"effects": {
 						"doom": 3,
 						"loyalty_hit": 15
 					},
-					"message": "Nobody quit, but pushing through cost trust — the most burned-out researchers lose loyalty. (+3 doom)"
+					"message": "Nobody quit, but pushing through cost trust -- the most burned-out researchers lose loyalty. (+3 doom)"
 				}
 			]
 		},
@@ -830,7 +830,7 @@
 						"doom": -15,
 						"reputation": 20
 					},
-					"message": "Major exposé! Industry-wide safety improvements (-15 doom, +20 reputation)"
+					"message": "Major expose! Industry-wide safety improvements (-15 doom, +20 reputation)"
 				},
 				{
 					"id": "anonymous_support",
@@ -934,7 +934,7 @@
 						"doom": -10,
 						"reputation": -15
 					},
-					"message": "Source planted, early warnings enabled — but word of your methods spreads (-10 doom, -15 reputation)"
+					"message": "Source planted, early warnings enabled -- but word of your methods spreads (-10 doom, -15 reputation)"
 				},
 				{
 					"id": "legitimate_partnership",

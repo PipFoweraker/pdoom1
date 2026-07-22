@@ -331,7 +331,7 @@ func _make_researcher(spec: String, name: String, loyalty: int) -> Researcher:
 
 func test_lose_researcher_removes_exactly_one_least_loyal_and_names_them():
 	# researcher_poached / let_them_go uses the `lose_researcher` effect.
-	# Loyalty is poaching resistance (researcher.gd:18) — the LEAST loyal leaves.
+	# Loyalty is poaching resistance (researcher.gd:18) -- the LEAST loyal leaves.
 	state.add_researcher(_make_researcher("safety", "Loyal Larry", 90))
 	state.add_researcher(_make_researcher("safety", "Fickle Fran", 20))
 	state.add_researcher(_make_researcher("capabilities", "Steady Sam", 70))
@@ -400,7 +400,7 @@ func test_poach_with_no_researchers_is_safe_noop():
 	assert_false(result.has("messages"), "No staffing note when nobody leaves")
 
 # ---------------------------------------------------------------------------
-# #631 follow-up: GameEvents.remove_researchers() — shared staffing-loss helper
+# #631 follow-up: GameEvents.remove_researchers() -- shared staffing-loss helper
 # used by both event-driven poaches and risk-pool events (insider_threat).
 # ---------------------------------------------------------------------------
 
@@ -441,7 +441,7 @@ func test_remove_researchers_safe_noop_when_empty():
 # ---------------------------------------------------------------------------
 # #631 class-killer property tests: an unrecognized effect/cost key in the event
 # data is SILENTLY dropped at apply time (ResourceAccessor.add returns false and
-# the match falls through; can_afford ignores unknown cost keys) — that silent
+# the match falls through; can_afford ignores unknown cost keys) -- that silent
 # fall-through is exactly how the "flavor says X, nothing happens" bug class was
 # born (rival_poaching let_go, insider_threat Key Resignation). These tests pin
 # the data to the handled vocabulary so a typo'd or unimplemented key fails CI
@@ -468,7 +468,7 @@ func test_all_core_event_effect_keys_are_handled():
 		for option in event.get("options", []):
 			for key in option.get("effects", {}).keys():
 				assert_true(key in HANDLED_EFFECT_KEYS,
-					"%s/%s effect key '%s' is not handled by execute_event_choice — it would be a silent no-op (#631)" % [
+					"%s/%s effect key '%s' is not handled by execute_event_choice -- it would be a silent no-op (#631)" % [
 						event.get("id", "?"), option.get("id", "?"), key])
 
 func test_all_core_event_cost_keys_are_payable():
@@ -476,12 +476,12 @@ func test_all_core_event_cost_keys_are_payable():
 		for option in event.get("options", []):
 			for key in option.get("costs", {}).keys():
 				assert_true(key in PAYABLE_COST_KEYS,
-					"%s/%s cost key '%s' is not checked by can_afford/spend_resources — it would be silently free (#631)" % [
+					"%s/%s cost key '%s' is not checked by can_afford/spend_resources -- it would be silently free (#631)" % [
 						event.get("id", "?"), option.get("id", "?"), key])
 
 # ---------------------------------------------------------------------------
-# employee_burnout / "Push Through" — interim loyalty-hit content
-# (WORKSHOP_2_BACKLOG "Burnout outcome model — RULED", Pip 2026-07-13, resolves
+# employee_burnout / "Push Through" -- interim loyalty-hit content
+# (WORKSHOP_2_BACKLOG "Burnout outcome model -- RULED", Pip 2026-07-13, resolves
 # the #631/#635 AMBIGUOUS case: flavor said "considering leaving", effect was
 # doom-only). Push Through must no longer be toothless-beyond-doom: it now also
 # dents loyalty on the least-loyal researchers, named, with NO removal and NO

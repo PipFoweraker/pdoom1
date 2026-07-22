@@ -2,8 +2,8 @@ extends RefCounted
 class_name DevModeReadout
 ## Pure, unit-testable builder for the DEV MODE overlay's on-screen INFO readout.
 ##
-## It mirrors, on-screen, everything the verbose PowerShell logs dump — the full game
-## state — so the owner can answer "why did that happen" without reading logs. Kept as a
+## It mirrors, on-screen, everything the verbose PowerShell logs dump -- the full game
+## state -- so the owner can answer "why did that happen" without reading logs. Kept as a
 ## static builder (no UI, no side effects) so it can be tested against a bare
 ## `GameState.new()` and so the overlay stays a thin renderer over this data.
 ##
@@ -16,7 +16,7 @@ class_name DevModeReadout
 ## `state` is a live `GameState` (from `GameManager.state`), or null before a game starts.
 static func build_sections(state) -> Array:
 	if state == null:
-		return [{"title": "No active game", "lines": ["GameManager.state is null — start a game to see state."]}]
+		return [{"title": "No active game", "lines": ["GameManager.state is null -- start a game to see state."]}]
 
 	var sections: Array = []
 	sections.append(_resources_section(state))
@@ -148,7 +148,7 @@ static func _ledger_section(state) -> Dictionary:
 			side_str, str(e.source), str(e.currency), "",
 			_fnum(e.principal), int(e.fuse), _fnum(e.interest), cp, flags
 		])
-	# Death attribution — what actually killed the run, if recorded.
+	# Death attribution -- what actually killed the run, if recorded.
 	if ledger.death_attribution != null and ledger.death_attribution is Array and not ledger.death_attribution.is_empty():
 		lines.append("-- death attribution --")
 		for a in ledger.death_attribution:

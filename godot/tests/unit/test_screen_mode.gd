@@ -1,7 +1,7 @@
 extends GutTest
 ## Lane 1 / Phase A: the PLAN<->WATCH mode controller (scripts/ui/screen_mode.gd).
 ## The month LOOP itself is covered by test_month_button_path.gd; this guards the UI
-## SEAM — that committing flips plan-only panels off / watch-only panels on, and back.
+## SEAM -- that committing flips plan-only panels off / watch-only panels on, and back.
 
 var ctrl: ScreenModeController
 var plan_panel: Control
@@ -36,7 +36,7 @@ func test_commit_transitions_to_watch():
 
 
 func test_review_returns_to_plan():
-	"""Month review closes back into PLAN — the loop is closed."""
+	"""Month review closes back into PLAN -- the loop is closed."""
 	ctrl.enter_watch()
 	ctrl.enter_plan()
 	assert_true(plan_panel.visible, "plan panel back on return to PLAN")

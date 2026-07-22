@@ -2,7 +2,7 @@ class_name TerminalTheme
 extends RefCounted
 ## First-pass terminal / mainframe styling register for the Plan/Watch scaffold
 ## (BUILD_BRIEF_PLAN_WATCH_UI "Aesthetic": amber/green CRT, boxes + rules, lightly
-## modernized — NOT literal retro). This is a THIN static helper: a palette + a few
+## modernized -- NOT literal retro). This is a THIN static helper: a palette + a few
 ## StyleBoxFlat/font builders that the Plan/Watch UI applies over the default greys.
 ## Deliberately code-driven (no .tres churn) so Pip can react and a follow-up art lane
 ## can promote it to a real Theme resource + scanline shader.
@@ -12,6 +12,11 @@ extends RefCounted
 const BG_DARK := Color(0.035, 0.05, 0.043)
 const PANEL_BG := Color(0.07, 0.093, 0.082)
 const PANEL_BG_DEEP := Color(0.05, 0.066, 0.058)
+
+# Feed background: the main-UI off-black register (#170A1C, matching the turn-counter
+# box and the backdrop scrim) at high alpha so the live feed stays legible over the
+# office backdrop (#762). Deliberately the purple-black register, not the green panels.
+const FEED_BG := Color(0.09, 0.04, 0.11, 0.88)
 
 # Amber = PLAN register (strategy, calm). Green = WATCH register (tactics, live).
 const AMBER := Color(1.0, 0.72, 0.20)
@@ -26,7 +31,7 @@ const RULE_BRIGHT := Color(0.30, 0.52, 0.36)
 
 
 static func box(border: Color, bg: Color = PANEL_BG, border_width: int = 1) -> StyleBoxFlat:
-	"""A boxed panel in the terminal register — flat fill + a single hairline rule."""
+	"""A boxed panel in the terminal register -- flat fill + a single hairline rule."""
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = bg
 	sb.border_color = border
@@ -40,7 +45,7 @@ static func box(border: Color, bg: Color = PANEL_BG, border_width: int = 1) -> S
 
 
 static func mono_font() -> SystemFont:
-	"""Best-available system monospace — the 'monospace-ish' the brief asks for, without
+	"""Best-available system monospace -- the 'monospace-ish' the brief asks for, without
 	shipping a font asset. Degrades gracefully to the platform default if none match."""
 	var f := SystemFont.new()
 	f.font_names = PackedStringArray(["Consolas", "DejaVu Sans Mono", "Courier New", "monospace"])
@@ -55,8 +60,19 @@ static func style_panel(node: Control, border: Color = RULE, bg: Color = PANEL_B
 
 
 static func style_feed(label: RichTextLabel) -> void:
-	"""The WATCH feed / message log: monospace, dim green-tinted text."""
+	"""The WATCH feed / message log: monospace, dim green-tinted text on an off-black
+	panel so it reads over the office backdrop (#762)."""
 	if label == null:
 		return
 	label.add_theme_font_override("normal_font", mono_font())
 	label.add_theme_color_override("default_color", TEXT)
+	# Opaque-ish panel behind the feed text -- RichTextLabel paints its "normal" stylebox
+	# as the background. #170A1C @ 0.88 alpha matches the main-UI register (turn-counter box).
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = FEED_BG
+	bg.set_corner_radius_all(0)
+	bg.content_margin_left = 8
+	bg.content_margin_right = 8
+	bg.content_margin_top = 6
+	bg.content_margin_bottom = 6
+	label.add_theme_stylebox_override("normal", bg)

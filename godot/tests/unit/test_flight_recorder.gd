@@ -1,15 +1,15 @@
 extends GutTest
-## Tests for the playtest flight recorder (F6) — WORKSHOP_2_BACKLOG "Playtest
+## Tests for the playtest flight recorder (F6) -- WORKSHOP_2_BACKLOG "Playtest
 ## deep-dive protocol". Covers the keybind registration and the pure snapshot/
 ## manifest helpers; the actual screenshot (get_viewport().get_texture()) needs a
-## live rendered viewport and a human eye, per the task spec — not unit-tested here.
+## live rendered viewport and a human eye, per the task spec -- not unit-tested here.
 
 
 func test_flight_recorder_keybind_registered_on_f6():
 	assert_true(KeybindManager.keybinds.has("flight_recorder"),
 		"flight_recorder action must be registered as a named keybind")
 	assert_eq(KeybindManager.keybinds["flight_recorder"]["key"], KEY_F6,
-		"flight_recorder should default to F6 (rebound off F9 — Nvidia overlay collision)")
+		"flight_recorder should default to F6 (rebound off F9 -- Nvidia overlay collision)")
 
 
 func test_f6_emits_flight_recorder_requested():
@@ -23,7 +23,7 @@ func test_f6_emits_flight_recorder_requested():
 
 
 # ---------------------------------------------------------------------------
-# Snapshot serialization — reuses GameState.to_dict() (the save/load path),
+# Snapshot serialization -- reuses GameState.to_dict() (the save/load path),
 # NOT a parallel serializer. This is the piece the task asks to unit-test.
 # ---------------------------------------------------------------------------
 
@@ -32,7 +32,7 @@ func test_build_state_snapshot_reuses_to_dict():
 	var snapshot := FlightRecorder.build_state_snapshot(state)
 	var direct := state.to_dict()
 	assert_eq(snapshot.hash(), direct.hash(),
-		"build_state_snapshot must be exactly state.to_dict() — no parallel serializer")
+		"build_state_snapshot must be exactly state.to_dict() -- no parallel serializer")
 	assert_true(snapshot.has("turn"), "Snapshot carries the turn field")
 	assert_true(snapshot.has("money"), "Snapshot carries scalar resources")
 	assert_true(snapshot.has("researchers"), "Snapshot carries the researcher roster")
@@ -58,7 +58,7 @@ func test_build_state_snapshot_is_json_round_trippable():
 
 
 # ---------------------------------------------------------------------------
-# File naming — screenshot/state/note for one press must sort adjacently.
+# File naming -- screenshot/state/note for one press must sort adjacently.
 # ---------------------------------------------------------------------------
 
 func test_marker_prefix_is_zero_padded_and_sortable():

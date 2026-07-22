@@ -36,7 +36,7 @@ func _build_badge() -> void:
 	anchor.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(anchor)
 
-	# The badge panel — dark translucent base with a bright glowing amber border for
+	# The badge panel -- dark translucent base with a bright glowing amber border for
 	# an unmissable "not a real build" read.
 	var panel := PanelContainer.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE

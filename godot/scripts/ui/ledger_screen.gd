@@ -1,9 +1,9 @@
 extends Node
 class_name LedgerScreen
-## Liability Ledger UI — extracted from main_ui.gd (#622, build lane L10).
+## Liability Ledger UI -- extracted from main_ui.gd (#622, build lane L10).
 ##
 ## Owns the leather palette, the compact clickable summary button (BL-1/#578),
-## and the full ledger screen builder (#601). Zero turn/AP coupling — this module
+## and the full ledger screen builder (#601). Zero turn/AP coupling -- this module
 ## survives the turn-engine rewrite untouched.
 ##
 ## MainUI keeps the single _show_ledger_screen entry point (L key, summary click,
@@ -16,12 +16,12 @@ signal message_logged(text: String)
 # Leather-ledger palette (playtester: "rich brown leathery colour"). Warm saddle base
 # with a darker border; ink colours are bright/warm so state stays legible on brown.
 const _LEDGER_LEATHER := Color(0.32, 0.20, 0.11)        # base saddle brown
-const _LEDGER_LEATHER_HOVER := Color(0.40, 0.26, 0.15)  # lighter on hover — inviting
+const _LEDGER_LEATHER_HOVER := Color(0.40, 0.26, 0.15)  # lighter on hover -- inviting
 const _LEDGER_LEATHER_PRESSED := Color(0.24, 0.15, 0.08)
 const _LEDGER_LEATHER_BORDER := Color(0.14, 0.08, 0.03)  # dark stitched edge
 const _LEDGER_INK_CLEAN := Color(0.86, 0.80, 0.62)       # warm parchment cream
-const _LEDGER_INK_DUE := Color(1.0, 0.55, 0.42)          # warm red — payment due
-const _LEDGER_INK_SECRET := Color(1.0, 0.80, 0.45)       # warm amber — secrets/owed
+const _LEDGER_INK_DUE := Color(1.0, 0.55, 0.42)          # warm red -- payment due
+const _LEDGER_INK_SECRET := Color(1.0, 0.80, 0.45)       # warm amber -- secrets/owed
 # #601: ledger warnings on the message log get a DISTINCT RED so they stand apart from the
 # normal event/positive greens/golds. Kept as a named constant so it's unit-testable.
 const _LEDGER_WARN_RED := Color(0.93, 0.24, 0.20)
@@ -54,18 +54,18 @@ func create_summary_button() -> Button:
 	uncrowded; the full ledger is a switchable screen (Financing).
 	#578: it's a flat Button so the summary is directly clickable to open the full
 	ledger screen (playtester: "no easy way of getting to the ledger from the main UI").
-	Playtester: the ledger access was "kind of hidden" — make it ~5x bigger with a
+	Playtester: the ledger access was "kind of hidden" -- make it ~5x bigger with a
 	rich brown leather look so it reads as a distinct, inviting object, not a label."""
 	_summary_button = Button.new()
 	_summary_button.flat = false
 	_summary_button.focus_mode = Control.FOCUS_NONE
 	_summary_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	_summary_button.custom_minimum_size = Vector2(0, 64)  # heft — was an 11px flat label
+	_summary_button.custom_minimum_size = Vector2(0, 64)  # heft -- was an 11px flat label
 	_summary_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_summary_button.add_theme_font_size_override("font_size", 20)
 	_summary_button.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
 	_apply_leather_style(_summary_button)
-	_summary_button.text = "📖  Liability Ledger — clean"
+	_summary_button.text = " Liability Ledger -- clean"
 	_summary_button.tooltip_text = "Open the Liability Ledger  (press L)"
 	return _summary_button
 
@@ -78,24 +78,24 @@ func update_summary(ledger_data: Dictionary) -> void:
 	var soonest: int = int(ledger_data.get("soonest_fuse", -1))
 	var secrets: int = int(ledger_data.get("secret_count", 0))
 	if ledger_data.is_empty() or (owed <= 0.0 and secrets == 0):
-		_summary_button.text = "📖  Liability Ledger — clean  (click / L)"
+		_summary_button.text = " Liability Ledger -- clean  (click / L)"
 		_summary_button.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
 		_ledger_due_soon_logged = false
 		return
 	var due_txt := ("due %dt" % soonest) if soonest >= 0 else "no due"
 	var secret_txt := ("  |  %d secret" % secrets) if secrets > 0 else ""
 	# #578: due-soon reminder. When the soonest payable fuse is within ~1-2 turns, flag it
-	# visibly (⚠ prefix + strong red) and drop a one-shot message-log line so the player is
+	# visibly ([!] prefix + strong red) and drop a one-shot message-log line so the player is
 	# warned things are coming due, not just left to notice on their own.
 	var due_soon := soonest >= 0 and soonest <= 2 and owed > 0.0
-	var prefix := "⚠ " if due_soon else "📖  "
+	var prefix := "[!] " if due_soon else " "
 	_summary_button.text = "%sLedger: %s owed  |  %s%s" % [prefix, GameConfig.format_money(owed), due_txt, secret_txt]
 	if due_soon:
 		# Urgent: warm red (legible on brown leather), and log once on entry into the window.
 		_summary_button.add_theme_color_override("font_color", _LEDGER_INK_DUE)
 		if not _ledger_due_soon_logged:
 			var when_txt := "this turn" if soonest <= 0 else ("in %d turn%s" % [soonest, "" if soonest == 1 else "s"])
-			message_logged.emit("[color=#%s]⚠ Ledger: %s payment due %s — open the ledger (click summary or press L) to review.[/color]" % [_LEDGER_WARN_RED.to_html(false), GameConfig.format_money(owed), when_txt])
+			message_logged.emit("[color=#%s][!] Ledger: %s payment due %s -- open the ledger (click summary or press L) to review.[/color]" % [_LEDGER_WARN_RED.to_html(false), GameConfig.format_money(owed), when_txt])
 			_ledger_due_soon_logged = true
 	else:
 		_ledger_due_soon_logged = false
@@ -103,7 +103,7 @@ func update_summary(ledger_data: Dictionary) -> void:
 		_summary_button.add_theme_color_override("font_color", _LEDGER_INK_CLEAN if secrets == 0 else _LEDGER_INK_SECRET)
 
 func build_screen(ledger, viewport_size: Vector2, on_close: Callable = Callable()) -> Panel:
-	"""BL-1: the full Liability Ledger screen — lists every live entry (source, currency,
+	"""BL-1: the full Liability Ledger screen -- lists every live entry (source, currency,
 	principal, fuse, secrecy) plus death attribution.
 
 	#601: styled as a distinct leather-bound object whose inner content FILLS the panel
@@ -139,7 +139,7 @@ func build_screen(ledger, viewport_size: Vector2, on_close: Callable = Callable(
 	margin.add_child(vbox)
 
 	var title := Label.new()
-	title.text = "📖  LIABILITY LEDGER"
+	title.text = " LIABILITY LEDGER"
 	title.add_theme_font_size_override("font_size", 22)
 	title.add_theme_color_override("font_color", _LEDGER_INK_CLEAN)
 	vbox.add_child(title)

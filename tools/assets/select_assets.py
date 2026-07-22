@@ -181,9 +181,7 @@ def build_gallery_cells(sources, out_dir):
     for src in sources:
         atype = src["asset_type"]
         yaml_file = src.get("yaml_file", "")
-        # An explicit source_dir lets callers point the gallery at a flat image
-        # folder (e.g. art_source/<batch>/) instead of art_generated/<type>/v1.
-        sdir = Path(src["source_dir"]) if src.get("source_dir") else resolve_source_dir(atype)
+        sdir = resolve_source_dir(atype)
         has_any = False
         for asset in src.get("assets", []):
             aid = asset.get("id", "unknown")
@@ -214,18 +212,12 @@ def build_gallery_cells(sources, out_dir):
     return cells, tabs, type_file
 
 
-def write_gallery(sources, output_path, title="Asset Selection Gallery", store_key=None):
-    """Write the self-contained gallery HTML. Returns (path, cells, tabs).
-
-    store_key, when given, namespaces this gallery's localStorage so distinct
-    galleries opened from the shared file:// origin do not share verdicts/tallies.
-    """
+def write_gallery(sources, output_path, title="Asset Selection Gallery"):
+    """Write the self-contained gallery HTML. Returns (path, cells, tabs)."""
     output_path = Path(output_path)
     out_dir = output_path.resolve().parent
     cells, tabs, type_file = build_gallery_cells(sources, out_dir)
     data = {"cells": cells, "tabs": tabs, "typeFile": type_file, "title": title}
-    if store_key:
-        data["storeKey"] = store_key
     html = GALLERY_TEMPLATE.replace("{{TITLE}}", _esc(title)).replace(
         "{{DATA}}", json.dumps(data, separators=(",", ":"))
     )
@@ -849,8 +841,8 @@ GALLERY_TEMPLATE = r"""<!DOCTYPE html>
 <script>
 (function(){
   "use strict";
+  var KEY="pdoom_asset_gallery_v1",UKEY="pdoom_asset_gallery_ui_v1";
   var DATA={{DATA}};
-  var KEY=(DATA.storeKey||"pdoom_asset_gallery_v1"),UKEY=KEY+"_ui";
   var CELLDATA=DATA.cells;
   var TYPEFILE=DATA.typeFile||{};
   var LABELS={};CELLDATA.forEach(function(c){LABELS[c.id]=c.row+" / "+c.variant;});

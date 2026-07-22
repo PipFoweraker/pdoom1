@@ -108,9 +108,9 @@ func _update_stats(state: Dictionary):
 	var compute_eng = state.get("compute_engineers", 0)
 
 	var stats = "[b]Team Size:[/b] %d employees\n\n" % total_employees
-	stats += "[color=green]● Safety Researchers:[/color] %d\n" % safety
-	stats += "[color=red]● Capability Researchers:[/color] %d\n" % capability
-	stats += "[color=blue]● Compute Engineers:[/color] %d\n\n" % compute_eng
+	stats += "[color=green]* Safety Researchers:[/color] %d\n" % safety
+	stats += "[color=red]* Capability Researchers:[/color] %d\n" % capability
+	stats += "[color=blue]* Compute Engineers:[/color] %d\n\n" % compute_eng
 
 	# Add productivity info from researchers
 	var researchers = state.get("researchers", [])
@@ -127,9 +127,9 @@ func _update_stats(state: Dictionary):
 			unproductive += 1
 
 	stats += "[b]Productivity:[/b]\n"
-	stats += "[color=lime]✓ Productive:[/color] %d\n" % productive
+	stats += "[color=lime][OK] Productive:[/color] %d\n" % productive
 	if unproductive > 0:
-		stats += "[color=red]✗ Unproductive:[/color] %d\n" % unproductive
+		stats += "[color=red][X] Unproductive:[/color] %d\n" % unproductive
 
 	stats_text.text = stats
 
@@ -140,14 +140,14 @@ func _update_warnings(state: Dictionary):
 
 	# Progressive warning system (issue #424 Phase 2)
 	if total_employees >= 10:
-		warnings.append("[color=red]⚠️ CRITICAL: 10+ employees - Unmanaged staff are unproductive![/color]")
-		warnings.append("[color=yellow]→ Action: Hire Admin Staff or promote experienced employees[/color]")
+		warnings.append("[color=red][!]CRITICAL: 10+ employees - Unmanaged staff are unproductive![/color]")
+		warnings.append("[color=yellow]-> Action: Hire Admin Staff or promote experienced employees[/color]")
 	elif total_employees == 9:
-		warnings.append("[color=orange]⚠️ WARNING: At management capacity (9 employees)[/color]")
-		warnings.append("[color=gray]→ Next hire will need management support[/color]")
+		warnings.append("[color=orange][!]WARNING: At management capacity (9 employees)[/color]")
+		warnings.append("[color=gray]-> Next hire will need management support[/color]")
 	elif total_employees == 8:
-		warnings.append("[color=yellow]ℹ️ INFO: Team growing - Consider hiring management soon[/color]")
-		warnings.append("[color=gray]→ Management helps maintain productivity at scale[/color]")
+		warnings.append("[color=yellow][i]INFO: Team growing - Consider hiring management soon[/color]")
+		warnings.append("[color=gray]-> Management helps maintain productivity at scale[/color]")
 
 	# Check for burnout among researchers
 	var researchers = state.get("researchers", [])
@@ -157,13 +157,13 @@ func _update_warnings(state: Dictionary):
 			burnout_count += 1
 
 	if burnout_count > 0:
-		warnings.append("[color=orange]⚠️ %d researcher(s) experiencing high burnout[/color]" % burnout_count)
-		warnings.append("[color=gray]→ Consider reducing workload or providing breaks[/color]")
+		warnings.append("[color=orange][!]%d researcher(s) experiencing high burnout[/color]" % burnout_count)
+		warnings.append("[color=gray]-> Consider reducing workload or providing breaks[/color]")
 
 	if warnings.size() > 0:
 		warnings_text.text = "\n\n".join(warnings)
 	else:
-		warnings_text.text = "[color=green]✓ No warnings - Team running smoothly![/color]"
+		warnings_text.text = "[color=green][OK] No warnings - Team running smoothly![/color]"
 
 func _update_employee_list(state: Dictionary):
 	"""Display detailed list of all employees"""
@@ -245,7 +245,7 @@ func _create_simple_employee_card(role: String, role_type: String, number: int) 
 
 	# Status indicator
 	var status_label = Label.new()
-	status_label.text = "✓ Active"
+	status_label.text = "[OK] Active"
 	status_label.add_theme_color_override("font_color", Color.LIME_GREEN)
 	header.add_child(status_label)
 
@@ -308,13 +308,13 @@ func _create_employee_card(researcher: Dictionary, number: int, researcher_index
 	var burnout = researcher.get("burnout", 0)
 
 	if productivity > 0 and burnout < 70:
-		status_label.text = "✓ Productive"
+		status_label.text = "[OK] Productive"
 		status_label.add_theme_color_override("font_color", Color.LIME_GREEN)
 	elif burnout >= 70:
-		status_label.text = "⚠ Burned Out"
+		status_label.text = "[!] Burned Out"
 		status_label.add_theme_color_override("font_color", Color.ORANGE)
 	else:
-		status_label.text = "✗ Unproductive"
+		status_label.text = "[X] Unproductive"
 		status_label.add_theme_color_override("font_color", Color.RED)
 
 	header.add_child(status_label)

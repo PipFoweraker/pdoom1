@@ -40,7 +40,7 @@ Reference mockup: workshop beat 1. Elements:
    Attention cost. **Show MORE cards than 20 Attention can play** (the honest scarcity — you
    leave things undone). Greyed = unaffordable this month.
 5. **Team panel (small, early game):** founder row + a few hires, each showing assignment
-   ("Sage → Interp research", "Riley → ⚠ drifting"). This is the SEED that unfolds into the
+   ("Sage → Interp research", "Riley → [!] drifting"). This is the SEED that unfolds into the
    swimlane board at Entity — build it collapsible/extensible.
 6. **COMMIT THE MONTH** button → WATCH.
 

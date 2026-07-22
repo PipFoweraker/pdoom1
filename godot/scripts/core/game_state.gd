@@ -13,27 +13,27 @@ var papers: float = 0.0
 var reputation: float = 50.0
 var doom: float = 50.0  # 0-100, lose at 100
 var doom_history: Array[float] = []  # Per-turn doom snapshots for the trend graph (#512)
-# ADR-0002: area under the survival curve — sum of (100 - doom) over turns actually
+# ADR-0002: area under the survival curve -- sum of (100 - doom) over turns actually
 # survived. The lexicographic score tiebreaker ("doom-years averted"); accrues in-engine.
 var doom_integral: float = 0.0
 
 # ADR-0015 / DQ-21 world-state intermediaries: doom is computed from THESE (never written
 # directly). Actions/events/rivals write intermediaries; DoomSystem reads them each day tick
 # and sums the named streams into the doom rate. Every one is L6-attributable (guard rule).
-var ambient_risk: float = 0.0                  # baseline stream — year-keyed background floor
+var ambient_risk: float = 0.0                  # baseline stream -- year-keyed background floor
 var frontier_capability: Dictionary = {}       # actor_id -> capability level; "player" is the named slice
-var general_capability: float = 0.0            # diffusion stream — chronic commoditized floor (ratchet)
+var general_capability: float = 0.0            # diffusion stream -- chronic commoditized floor (ratchet)
 var global_compute: float = 0.0                # the slow ocean (schedule furniture; no own doom term)
-var dedicated_ai_compute: float = 0.0          # compute stream — the controllable fleet
+var dedicated_ai_compute: float = 0.0          # compute stream -- the controllable fleet
 var safety_absorption: float = 0.0             # offsets frontier in the overhang gap (accumulated safety)
 var global_alarm: float = 0.0                  # alarm stream (small relief) + typed-damper gate
-var global_panic: float = 0.0                  # panic stream — social accelerant
+var global_panic: float = 0.0                  # panic stream -- social accelerant
 var political_pressure: float = 0.0            # signed disposition; gate only (no stream of its own)
 var doom_dampers: Array = []                   # typed dampers: {target, strength, expires_turn}
 var doom_pulses: Array = []                    # ADR-0005 scheduled pulse envelopes (v1: none)
 var sacred_chain_log: Array = []               # completed sacred-object chains (trend-invariant exemption)
 
-## player_frontier — the DQ-22-read alias for frontier_capability["player"].
+## player_frontier -- the DQ-22-read alias for frontier_capability["player"].
 var player_frontier: float:
 	get:
 		return float(frontier_capability.get("player", 0.0))
@@ -71,7 +71,7 @@ var hiring: HiringPipeline
 # EE-8 (ADR-0012): chronological CONTRIBUTING-CAUSE log for root-cause death
 # attribution. Ledger defaults, governance deficits, secret exposures, rep collapse
 # and funding starvation are appended here with turn stamps, so a death can be traced
-# to its causal chain (a doom/rep death downstream of a default is a LEDGER death —
+# to its causal chain (a doom/rep death downstream of a default is a LEDGER death --
 # see DeathAttribution.classify). Recording only: nothing reads this during play,
 # so it can never change run outcomes.
 var cause_log: Array = []
@@ -114,7 +114,7 @@ var victory: bool = false
 var game_seed_str: String = ""  # Renamed from 'seed' to avoid shadowing built-in function
 static var _empty_seed_counter: int = 0  # Keeps empty ("random") seeds unique within the same instant (#538)
 
-# Lab mascot 🐱
+# Lab mascot
 var has_cat: bool = false
 
 # Calendar system (Issue #472)
@@ -133,7 +133,7 @@ var start_month: int = DEFAULT_START_MONTH
 var start_day: int = DEFAULT_START_DAY
 
 # Research Quality System (Issue #500)
-# Org-wide research stance. Feeds the RISK POOLS (not tech-debt/doom directly — see
+# Org-wide research stance. Feeds the RISK POOLS (not tech-debt/doom directly -- see
 # docs/design/RISK_SYSTEM.md & TWO_ACT_STRUCTURE.md). Risk magnitudes are per calendar-MONTH;
 # turn_manager scales them by get_months_per_turn(). Speed multiplier is applied per-researcher.
 # Sign convention: POSITIVE risk_per_month = adds risk to that pool (worse). Tune freely.
@@ -375,13 +375,13 @@ func add_resources(gains: Dictionary):
 	if gains.has("reputation"):
 		reputation += gains["reputation"]
 	if gains.has("doom"):
-		# ADR-0015 REMAINDER (Legacy #15 / memo §7.1): this generic doom sink is the un-migrated
-		# tail of the clobber-bug class — event/scenario CONTENT (data/events/*.json) still carries
+		# ADR-0015 REMAINDER (Legacy #15 / memo S7.1): this generic doom sink is the un-migrated
+		# tail of the clobber-bug class -- event/scenario CONTENT (data/events/*.json) still carries
 		# literal "doom" deltas that flow here. In the real turn loop this write is CLOBBERED by
 		# `state.doom = doom_system.current_doom` at resolve, so it is an inert no-op (Finding A);
 		# it survives only for the direct-state unit tests. The AUTHORITY is DoomSystem's streams.
 		# The follow-up content lane re-authors each event to write an INTERMEDIARY (frontier /
-		# panic / alarm / …) instead of doom, at which point this branch is deleted.
+		# panic / alarm / ...) instead of doom, at which point this branch is deleted.
 		doom += gains["doom"]
 		doom = clamp(doom, 0.0, 100.0)
 	if gains.has("technical_debt"):
@@ -465,7 +465,7 @@ func get_tech_debt_failure_chance() -> float:
 # ============================================================================
 
 func get_months_per_turn() -> float:
-	"""Calendar months represented by one turn — delegates to Clock, the single
+	"""Calendar months represented by one turn -- delegates to Clock, the single
 	time authority (L0 #620). Fixed at 1.0 until the variable game-length system
 	lands (see docs/design/TWO_ACT_STRUCTURE.md)."""
 	return Clock.months_per_turn()
@@ -504,7 +504,7 @@ func apply_research_quality_risk(current_turn: int) -> void:
 func note_cause(kind: String, source: String, effects: Dictionary = {}) -> void:
 	"""EE-8: append a turn-stamped contributing-cause event to the attribution trail.
 	`effects` holds the APPLIED damage by resource (e.g. {"doom": 3.5, "reputation": -2.0})
-	so DeathAttribution can run counterfactual necessity tests at death. Recording only —
+	so DeathAttribution can run counterfactual necessity tests at death. Recording only --
 	never read during play."""
 	cause_log.append({"turn": turn, "kind": kind, "source": source, "effects": effects.duplicate()})
 
@@ -515,7 +515,7 @@ func check_win_lose():
 	if doom_system:
 		doom = doom_system.current_doom
 
-	# EE-8: rep-collapse watermark — a contributing cause on the ADR-0012 cascade
+	# EE-8: rep-collapse watermark -- a contributing cause on the ADR-0012 cascade
 	# (default -> rep collapse -> funding starvation -> death), not the death itself.
 	# One-shot: the FIRST crossing marks the chain.
 	if reputation <= REP_COLLAPSE_THRESHOLD and not rep_collapse_noted:
@@ -685,7 +685,7 @@ func add_upgrade(upgrade_id: String):
 func get_available_ap() -> int:
 	"""Founder Attention available for queuing actions this PLAN MONTH (L2 / ADR-0011).
 	The founder currency is the monthly Attention budget (month_plan), NOT the retired
-	per-turn AP pool. Named get_available_ap() for source compat — every caller that used
+	per-turn AP pool. Named get_available_ap() for source compat -- every caller that used
 	to read the per-turn pool now reads the monthly Attention budget/spend/reserve. The
 	legacy action_points field survives only as a low-level resource primitive (paper/
 	conference costs, difficulty display); it no longer gates the plan queue."""
@@ -753,7 +753,7 @@ func check_conference_year_reset():
 		attended_conferences.clear()
 		conference_year = current_date.year
 
-# Calendar System Methods (Issue #472) — thin delegates to Clock, the single
+# Calendar System Methods (Issue #472) -- thin delegates to Clock, the single
 # time authority (L0 #620). Values unchanged: turn = 1 workday.
 func get_current_week() -> int:
 	"""Get the current week number (1-indexed)"""
@@ -780,14 +780,14 @@ func get_formatted_date() -> String:
 	return "%s %d, %d" % [month_names[date.month - 1], date.day, date.year]
 
 func get_turn_display() -> String:
-	"""Badge/HUD string. ADR-0009 §1-2/§6: the plan cadence is the MONTH and the badge
+	"""Badge/HUD string. ADR-0009 S1-2/S6: the plan cadence is the MONTH and the badge
 	is the calendar date; the day is a resolution tick, not a decision unit. The old
 	'Week 12 | ... | Day 3/5' framing hung the player's attention on the day tick and is
-	retired — routine decisions live at the month boundary now. Primary is the plan month;
+	retired -- routine decisions live at the month boundary now. Primary is the plan month;
 	the calendar day rides along as playback progress, not a decision counter."""
 	var date = get_current_date()
-	# e.g. "March 2034  ·  Mar 20"  — month is the plan unit, date is the badge.
-	return "%s %d  ·  %s %d" % [
+	# e.g. "March 2034  -  Mar 20"  -- month is the plan unit, date is the badge.
+	return "%s %d  -  %s %d" % [
 		Clock.MONTH_NAMES[date.month - 1],
 		date.year,
 		Clock.MONTH_ABBR[date.month - 1],
@@ -809,7 +809,7 @@ func accrue_survival_credit() -> void:
 # --- Scoring (ADR-0002) --------------------------------------------------------
 # The engine is the sole scoring authority. Score is the tuple
 # (turns_survived, doom_integral), compared lexicographically: turns strictly
-# dominant, doom-integral as tiebreak. FLOWS ONLY — no stock the player holds at
+# dominant, doom-integral as tiebreak. FLOWS ONLY -- no stock the player holds at
 # death (money, papers, staff, reputation) may ever affect the score.
 static func score_tuple(state: Dictionary) -> Array:
 	return [int(state.get("turn", 0)), int(round(state.get("doom_integral", 0.0)))]
@@ -825,15 +825,15 @@ static func compare_score(a_turns: int, a_integral: int, b_turns: int, b_integra
 
 
 static func format_score(turns: int, integral: int) -> String:
-	return "Turn %d · %d" % [turns, integral]
+	return "Turn %d - %d" % [turns, integral]
 
 
 # ============================================================================
-# SERIALIZATION — SAVE/LOAD CONVENTION (L7, #618)
+# SERIALIZATION -- SAVE/LOAD CONVENTION (L7, #618)
 #
 # to_dict() is BOTH the UI payload and the save-file state body; from_dict()
 # must rebuild an equivalent GameState from it. The invariant the round-trip
-# test enforces: from_dict(to_dict()) — including a JSON stringify/parse hop —
+# test enforces: from_dict(to_dict()) -- including a JSON stringify/parse hop --
 # yields a state whose to_dict() is deep-equal AND whose next turn is
 # turn-for-turn identical (rng stream included).
 #
@@ -846,7 +846,7 @@ static func format_score(turns: int, integral: int) -> String:
 #      Callables or object refs. int64s that can exceed 2^53 (e.g. rng state)
 #      travel as Strings, because JSON parses every number back as float.
 #   4. from_dict() casts explicitly (int()/float()/String()) and loop-appends
-#      into typed arrays — JSON hands back untyped floats and untyped Arrays.
+#      into typed arrays -- JSON hands back untyped floats and untyped Arrays.
 #   5. Derived/display values (turn_display, tech_debt_color, rival summaries,
 #      available_ap, ...) are recomputed, never restored.
 #   6. Extend tests/unit/test_save_load_roundtrip.gd so the new state is
@@ -877,7 +877,7 @@ func to_dict() -> Dictionary:
 		doom = doom_system.current_doom
 
 	# Doom system data: the persistent core comes from doom_system.to_dict() (so
-	# multipliers/modifiers round-trip — previously hand-rolled and lossy), plus
+	# multipliers/modifiers round-trip -- previously hand-rolled and lossy), plus
 	# derived display strings the UI reads.
 	var doom_data = {}
 	if doom_system:
@@ -928,7 +928,7 @@ func to_dict() -> Dictionary:
 		"cause_log": cause_log.duplicate(true),  # EE-8 attribution trail
 		# Doom-adjacent floats are SNAPPED at the serialization boundary (both directions,
 		# same quantum as DoomSystem.SAVE_QUANTUM): the stream model produces full-precision
-		# doubles, and Godot's JSON parse is not correctly-rounded (calibration §7.2) — a
+		# doubles, and Godot's JSON parse is not correctly-rounded (calibration S7.2) -- a
 		# 1-ulp corrupted parse re-snaps to the identical double, keeping save/load
 		# deep-equality byte-stable. Live dynamics never see the quantum.
 		"doom": DoomSystem._snap(doom),
@@ -990,7 +990,7 @@ func to_dict() -> Dictionary:
 		"current_phase": current_phase,
 		"can_end_turn": can_end_turn,
 		"used_event_ap": used_event_ap,
-		"max_action_points": max_action_points,  # difficulty modifier — next-turn AP base
+		"max_action_points": max_action_points,  # difficulty modifier -- next-turn AP base
 		"conference_year": conference_year,
 		"start_year": start_year,
 		"start_month": start_month,
@@ -1002,7 +1002,7 @@ func to_dict() -> Dictionary:
 
 func from_dict(data: Dictionary) -> void:
 	"""Restore game state from serialized data (for save/load).
-	L7 (#618): full-fidelity — see SERIALIZATION CONVENTION block above to_dict().
+	L7 (#618): full-fidelity -- see SERIALIZATION CONVENTION block above to_dict().
 	Explicit int()/float()/String() casts throughout: JSON parses every number as float."""
 	# Core resources
 	money = float(data.get("money", 100000.0))
@@ -1013,7 +1013,7 @@ func from_dict(data: Dictionary) -> void:
 	reputation = float(data.get("reputation", 10.0))
 	governance = float(data.get("governance", 50.0))  # was forgotten pre-L7
 	# Doom-adjacent floats re-snap on load (idempotent under the 1-ulp JSON parse
-	# corruption — see the to_dict comment + DoomSystem.SAVE_QUANTUM).
+	# corruption -- see the to_dict comment + DoomSystem.SAVE_QUANTUM).
 	doom = DoomSystem._snap(float(data.get("doom", 50.0)))
 	doom_history.clear()
 	for d in data.get("doom_history", []):
@@ -1088,7 +1088,7 @@ func from_dict(data: Dictionary) -> void:
 		for eid in cooldown_data.keys():
 			event_cooldowns[String(eid)] = int(cooldown_data[eid])
 
-	# WS-C scheduled causes (seed identity — survives reset(), must survive load too)
+	# WS-C scheduled causes (seed identity -- survives reset(), must survive load too)
 	var schedule_data = data.get("event_schedule", null)
 	if schedule_data is Array:
 		event_schedule = []
@@ -1114,7 +1114,7 @@ func from_dict(data: Dictionary) -> void:
 	elif rng and (rng_state_data is int or rng_state_data is float):
 		rng.state = int(rng_state_data)
 
-	# Restore the Liability Ledger (WS-1 — entries were forgotten pre-L7)
+	# Restore the Liability Ledger (WS-1 -- entries were forgotten pre-L7)
 	if ledger == null:
 		ledger = Ledger.new()
 	ledger.from_dict(data.get("ledger", {}))

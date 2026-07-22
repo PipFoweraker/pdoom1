@@ -32,12 +32,14 @@
       "status": "mapped"
     },
     "network": {
-      "icon": "res://assets/icons/actions/action_publicity_network_64.png",
-      "status": "mapped"
+      "icon": "res://assets/icons/actions_publicity/network_64.png",
+      "status": "mapped",
+      "note": "batch #649 gpt-image icon (v2)"
     },
     "team_building": {
-      "icon": "res://assets/icons/actions_management/action_management_team_building_64.png",
-      "status": "mapped"
+      "icon": "res://assets/icons/actions_management/team_building_64.png",
+      "status": "mapped",
+      "note": "batch #649 gpt-image icon (v1)"
     },
     "publicity": {
       "icon": "res://assets/icons/actions_policies/action_policy_transparency_64.png",
@@ -54,37 +56,107 @@
       "status": "mapped"
     },
     "lobby_government": {
-      "icon": "res://assets/icons/actions_strategic/action_strategic_lobby_government_64.png",
-      "status": "mapped"
+      "icon": "res://assets/icons/actions_publicity/lobby_government_64.png",
+      "status": "mapped",
+      "note": "batch #649 gpt-image icon (v1, stopgap -- re-roll queued)"
     },
     "release_warning": {
       "icon": "res://assets/icons/alert_indicators/indicator_alert_warning_64.png",
       "status": "mapped"
     },
     "acquire_startup": {
-      "icon": "res://assets/icons/actions_strategic/action_strategic_acquire_startup_64.png",
-      "status": "mapped"
+      "icon": "res://assets/icons/actions_strategic/acquire_startup_64.png",
+      "status": "mapped",
+      "note": "batch #649 gpt-image icon (v2)"
     },
     "sabotage_competitor": {
-      "icon": "res://assets/icons/actions_strategic/action_strategic_sabotage_64.png",
-      "status": "mapped"
+      "icon": "res://assets/icons/actions_strategic/sabotage_competitor_64.png",
+      "status": "mapped",
+      "note": "batch #649 gpt-image icon (v1)"
     },
     "open_source_release": {
-      "icon": "res://assets/icons/actions_publicity/action_publicity_open_source_64.png",
-      "status": "mapped"
+      "icon": "res://assets/icons/actions_publicity/open_source_release_64.png",
+      "status": "mapped",
+      "note": "batch #649 gpt-image icon (v1)"
     },
     "emergency_pivot": {
       "icon": "res://assets/icons/actions_facilities/action_facility_emergency_shutdown_64.png",
       "status": "mapped"
     },
     "grant_proposal": {
-      "icon": "res://assets/icons/actions_funding/action_funding_grant_proposal_64.png",
-      "status": "mapped"
+      "icon": "res://assets/icons/actions_funding/grant_proposal_64.png",
+      "status": "mapped",
+      "note": "batch #649 gpt-image icon (v2)"
     },
     "strategic": {
       "icon": "res://assets/icons/actions_facilities/action_facility_emergency_shutdown_64.png",
       "status": "mapped",
       "note": "Submenu for strategic/high-stakes actions - uses emergency icon"
+    },
+    "operations": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_expand_office_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused existing office icon until a dedicated one lands"
+    },
+    "travel": {
+      "icon": "res://assets/icons/actions_policies/action_policy_international_cooperation_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused international-cooperation icon for travel/conferences"
+    },
+    "financing": {
+      "icon": "res://assets/icons/main_navigation/ui_budget_finance_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused finance icon until a dedicated one lands"
+    },
+    "advertise": {
+      "icon": "res://assets/icons/main_navigation/ui_staff_management_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused staff-management icon until a dedicated one lands"
+    },
+    "use_connections": {
+      "icon": "res://assets/icons/actions/action_publicity_network_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused network icon for work-your-connections"
+    },
+    "interview_next": {
+      "icon": "res://assets/icons/employee_status/employee_status_investigating_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused investigating icon for interviewing a candidate"
+    },
+    "hire_best": {
+      "icon": "res://assets/icons/buttons_normal/button_hire_normal_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused hire button for make-an-offer"
+    },
+    "onboard_next": {
+      "icon": "res://assets/icons/employee_status/employee_status_training_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused training icon for onboarding new hires"
+    },
+    "submit_paper": {
+      "icon": "res://assets/icons/actions_research/action_research_formal_verification_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused formal-verification/paper icon for submit-paper-to-conference"
+    },
+    "attend_conference": {
+      "icon": "res://assets/icons/actions_policies/action_policy_international_cooperation_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused international-cooperation icon (travel/conference theme)"
+    },
+    "send_delegation": {
+      "icon": "res://assets/icons/actions/action_publicity_network_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused network icon for sending a delegation"
+    },
+    "order_supplies": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_expand_office_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused office/facility icon for operations order-supplies"
+    },
+    "office_maintenance": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_expand_office_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused office/facility icon for operations maintenance"
     }
   },
   "hiring": {
@@ -120,8 +192,9 @@
       "status": "mapped"
     },
     "take_loan": {
-      "icon": "res://assets/icons/actions_funding/action_funding_loan_64.png",
-      "status": "mapped"
+      "icon": "res://assets/icons/actions_funding/take_loan_64.png",
+      "status": "mapped",
+      "note": "batch #649 gpt-image icon (v1)"
     },
     "apply_grant": {
       "icon": "res://assets/icons/actions_funding/action_funding_grant_proposal_64.png",

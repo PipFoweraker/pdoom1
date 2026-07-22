@@ -14,6 +14,10 @@ class_name DoomMeter
 
 @export var gauge_thickness: float = 12.0
 @export var show_momentum_indicator: bool = true
+## #771: draw the gauge's own centre "%d%%" readout. Turn OFF wherever a separate
+## numeric label already shows the value (main.tscn's NumericDoomLabel) so the two
+## don't collide ("27.2%" over "27%"). Defaults ON for standalone/other uses.
+@export var show_percentage: bool = true
 
 # Doom tier colors + status labels now live in ThemeManager (shared ramp, #512).
 const COLOR_BACKGROUND = Color(0.110, 0.153, 0.188, 0.3)  # Steel translucent (ring background)
@@ -47,7 +51,7 @@ func _draw():
 	# Background circle
 	draw_arc(center, radius, 0, TAU, 64, COLOR_BACKGROUND, gauge_thickness, true)
 
-	# Doom arc — stroke variant so terminal tiers glow ember instead of vanishing (#512)
+	# Doom arc -- stroke variant so terminal tiers glow ember instead of vanishing (#512)
 	var doom_angle = (doom_value / 100.0) * TAU
 	var doom_color = ThemeManager.get_doom_stroke_color(doom_value)
 
@@ -61,18 +65,22 @@ func _draw():
 	# Draw doom arc (starts at top, clockwise)
 	draw_arc(center, radius, -PI/2, -PI/2 + doom_angle, 64, doom_color, current_thickness, true)
 
-	# Doom percentage text
-	var doom_text = "%d%%" % doom_value
 	var font = get_theme_default_font()
-	var font_size = 24
-	var text_size = font.get_string_size(doom_text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size)
-	var text_pos = center - text_size / 2
 
-	# In colorblind mode, shift percentage up to make room for status label
-	if GameConfig.colorblind_mode:
-		text_pos.y -= 8
+	# Doom percentage text -- guarded (#771): suppressed where a separate numeric
+	# label already renders the value (main.tscn NumericDoomLabel), preventing the
+	# "27.2%" over "27%" collision. Still drawn by default for standalone uses.
+	if show_percentage:
+		var doom_text = "%d%%" % doom_value
+		var font_size = 24
+		var text_size = font.get_string_size(doom_text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size)
+		var text_pos = center - text_size / 2
 
-	draw_string(font, text_pos, doom_text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, doom_color)
+		# In colorblind mode, shift percentage up to make room for status label
+		if GameConfig.colorblind_mode:
+			text_pos.y -= 8
+
+		draw_string(font, text_pos, doom_text, HORIZONTAL_ALIGNMENT_CENTER, -1, font_size, doom_color)
 
 	# Colorblind mode: Draw status label and pattern indicator
 	if GameConfig.colorblind_mode:
@@ -112,7 +120,7 @@ func set_doom(value: float, momentum: float = 0.0):
 	doom_value = value
 	doom_momentum = momentum
 
-	# Enable/disable pulse animation — pulses from CATASTROPHIC (canonical band, L6;
+	# Enable/disable pulse animation -- pulses from CATASTROPHIC (canonical band, L6;
 	# same 80 boundary as the old hardcoded value)
 	var pulsing: bool = ThemeManager.get_doom_band_index(doom_value) >= 5
 	set_process(pulsing)
@@ -121,7 +129,7 @@ func set_doom(value: float, momentum: float = 0.0):
 
 func _draw_colorblind_pattern(center: Vector2, radius: float, doom: float):
 	"""Draw pattern indicators for colorblind accessibility.
-	Banded via ThemeManager's canonical doom bands (L6 unification — was a divergent
+	Banded via ThemeManager's canonical doom bands (L6 unification -- was a divergent
 	30/60/80 copy): NOMINAL/ELEVATED dots, HIGH/SEVERE triangles, EXTREME X marks,
 	CATASTROPHIC/TERMINAL exclamations."""
 	var pattern_radius = radius + gauge_thickness + 8

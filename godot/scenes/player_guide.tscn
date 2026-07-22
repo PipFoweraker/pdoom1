@@ -1,54 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cq8j9x4k2lp3m"]
+[gd_scene load_steps=3 format=3 uid="uid://cq8j9x4k2lp3m"]
 
 [ext_resource type="Script" path="res://scripts/ui/player_guide.gd" id="1_guide"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
-bg_color = Color(0.18, 0.145, 0.278, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.09, 0.04, 0.11, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hover"]
-bg_color = Color(0.231, 0.192, 0.349, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.91, 0.64, 0.24, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
-bg_color = Color(0.106, 0.078, 0.165, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.965, 0.659, 0, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.106, 0.078, 0.165, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.91, 0.64, 0.24, 0.8)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+[ext_resource type="Theme" uid="uid://dmenuthemepd001" path="res://theme/menu_theme.tres" id="2_theme"]
 
 [node name="PlayerGuide" type="Control"]
 layout_mode = 3
@@ -57,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2_theme")
 script = ExtResource("1_guide")
 
 [node name="Background" type="ColorRect" parent="."]
@@ -81,7 +35,6 @@ offset_right = 550.0
 offset_bottom = 330.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="VBox" type="VBoxContainer" parent="Panel"]
 layout_mode = 1
@@ -139,9 +92,9 @@ layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-text = "Your goal is to [color=green][b]reduce P(Doom) to 0%[/b][/color] before running out of money or turns.
+text = "Your goal is to [color=#3f8a5c][b]reduce P(Doom) to 0%[/b][/color] before running out of money or turns.
 
-P(Doom) represents the probability of AI causing human extinction. Balance [color=red]AI capabilities[/color] research with [color=green]safety research[/color] to prevent catastrophe while advancing the field."
+P(Doom) represents the probability of AI causing human extinction. Balance [color=#e24a3b]AI capabilities[/color] research with [color=#3f8a5c]safety research[/color] to prevent catastrophe while advancing the field."
 
 [node name="HSeparator1" type="HSeparator" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
@@ -192,17 +145,17 @@ layout_mode = 2
 theme_override_colors/default_color = Color(0.9, 0.9, 0.9, 1)
 theme_override_font_sizes/normal_font_size = 16
 bbcode_enabled = true
-text = "[color=yellow][b]Money ($):[/b][/color] Hire staff, buy compute, fund research
-[color=cyan][b]Compute:[/b][/color] Required for running AI experiments
-[color=purple][b]Research:[/b][/color] Accumulated knowledge points
-[color=orange][b]Papers:[/b][/color] Published research (increases reputation)
-[color=blue][b]Reputation:[/b][/color] Affects fundraising and hiring
+text = "[color=#f6a800][b]Money ($):[/b][/color] Hire staff, buy compute, fund research
+[color=#1ec3b3][b]Compute:[/b][/color] Required for running AI experiments
+[color=#b380e6][b]Research:[/b][/color] Accumulated knowledge points
+[color=#e9752e][b]Papers:[/b][/color] Published research (increases reputation)
+[color=#5c7ac3][b]Reputation:[/b][/color] Affects fundraising and hiring
 
-[color=green][b]Safety Researchers:[/b][/color] Green dots (●) - Reduce P(Doom)
-[color=red][b]Capability Researchers:[/b][/color] Red dots (●) - Increase capabilities
-[color=blue][b]Compute Engineers:[/b][/color] Blue dots (●) - Boost compute efficiency
+[color=#3f8a5c][b]Safety Researchers:[/b][/color] Green dots (●) - Reduce P(Doom)
+[color=#e24a3b][b]Capability Researchers:[/b][/color] Red dots (●) - Increase capabilities
+[color=#5c7ac3][b]Compute Engineers:[/b][/color] Blue dots (●) - Boost compute efficiency
 
-[color=red][b]P(Doom):[/b][/color] The probability of AI catastrophe - REDUCE TO ZERO TO WIN!"
+[color=#e24a3b][b]P(Doom):[/b][/color] The probability of AI catastrophe - REDUCE TO ZERO TO WIN!"
 
 [node name="HSeparator3" type="HSeparator" parent="Panel/VBox/ContentScroll/ContentVBox"]
 layout_mode = 2
@@ -245,9 +198,6 @@ custom_minimum_size = Vector2(200, 60)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/font_size = 24
-theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
-text = "← Back to Menu"
+text = "Back to Menu"
 
 [connection signal="pressed" from="Panel/VBox/ButtonRow/BackButton" to="." method="_on_back_pressed"]

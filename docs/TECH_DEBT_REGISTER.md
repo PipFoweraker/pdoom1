@@ -108,7 +108,7 @@ mounted in `_ready`). Follow it; do not invent a new pattern.
 | What | Canonical | Divergent copies | Lane |
 |---|---|---|---|
 | Affordability | `GameState.can_afford` + `select_action` enforcement | 8× pre-checks in main_ui + a different inline loop at `:909-920` | L10 (mostly let-die) |
-| Doom bands | `theme_manager.gd` band API (`get_doom_band_index` / `get_doom_band` / `get_doom_status_label`) | ~~doom_meter, game_over_screen, doom_system, main_ui~~ **DONE (L6, #617)** — all four routed through ThemeManager; values become Balance tunables in L9 | L6 ✅ |
+| Doom bands | `theme_manager.gd` band API (`get_doom_band_index` / `get_doom_band` / `get_doom_status_label`) | ~~doom_meter, game_over_screen, doom_system, main_ui~~ **DONE (L6, #617)** — all four routed through ThemeManager; values become Balance tunables in L9 | L6 [x] |
 | Money format | `GameConfig.format_money` | `game_over_screen._fmt_money`, 2 dead `format_number`, ad-hoc `"$%.0f"` | L0 |
 | Severance rule | engine should own | `employee_screen.gd:36-47` (game math in a screen) | L2 |
 | Resource-name match | new shared `ResourceAccessor` | `events.gd` `evaluate_condition` + `execute_event_choice` + `event_service._map_variable` | L9 |

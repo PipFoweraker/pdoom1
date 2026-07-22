@@ -94,18 +94,18 @@ Two skilled players using the same seed and making identical optimal decisions w
 **First submission wins, duplicates tracked**
 
 ```
-Player A submits hash "abc123..." at 10:00 AM  ->  ⭐ Original discoverer
+Player A submits hash "abc123..." at 10:00 AM  ->  * Original discoverer
 Player B submits hash "abc123..." at 2:00 PM   ->  REPEAT Duplicate (4 hours later)
 Player C submits hash "abc123..." at 6:00 PM   ->  REPEAT Duplicate (8 hours later)
 ```
 
 **Leaderboard shows**:
-- Player A: Score 95,000 ⭐ Original (2 others found this)
+- Player A: Score 95,000 * Original (2 others found this)
 - Player B: Score 95,000 REPEAT Duplicate
 - Player C: Score 95,000 REPEAT Duplicate
 
 **Alternative: "Discoveries Only" mode** (filter duplicates):
-- Player A: Score 95,000 ⭐ (2 duplicates)
+- Player A: Score 95,000 * (2 duplicates)
 
 ### Real-World Scenarios
 
@@ -463,8 +463,8 @@ def calculate_score_from_state(state: dict) -> int:
 - ACHIEVEMENT First to discover a strategy gets credit
 - REPEAT Others can reproduce it for verification
 - METRICS See which strategies are popular
-- 🛡 Cheaters can't fake scores
-- 🎓 Educational: learn from top players
+- Cheaters can't fake scores
+- Educational: learn from top players
 
 **The Philosophy**: "Speedrun culture meets competitive gaming"
 

@@ -5,14 +5,14 @@ extends GutTest
 ## replay / verify path.
 ##
 ## VERIFICATION TIERS (ADR-0006): the SCORE (turns, doom_integral) is the sound anti-cheat
-## property — you cannot claim a score your inputs do not produce. The verification HASH is
+## property -- you cannot claim a score your inputs do not produce. The verification HASH is
 ## the cheap fingerprint tier, now asserted too: the engine determinism fix (WS-0) means an
 ## identical seed+input replay reproduces an identical hash, so a mismatch = tamper/forgery.
 
 # Drive a real game headless with a per-turn action script, recording via the live
 # VerificationTracker wiring. Returns the exported artifact + the run's score.
 # max_turns must exceed a real death (post-#638 recalibration a passive-ish run dies
-# ~t300-320) — the score contract (ADR-0006) is defined at game_over, so the run must
+# ~t300-320) -- the score contract (ADR-0006) is defined at game_over, so the run must
 # actually END or live-vs-replay compare different stopping rules.
 func _play_scripted(seed: String, script: Dictionary, max_turns: int = 500, schedule: Array = []) -> Dictionary:
 	var state: GameState = GameState.new(seed, schedule)
@@ -51,7 +51,7 @@ func _play_scripted(seed: String, script: Dictionary, max_turns: int = 500, sche
 
 
 func test_live_pipeline_records_inputs_into_log():
-	# The queued action must show up in the artifact — proof record_action is wired live.
+	# The queued action must show up in the artifact -- proof record_action is wired live.
 	var run: Dictionary = _play_scripted("replay_seed_W", {1: ["buy_compute"]})
 	var data: Dictionary = VerificationTracker.deserialize_replay(run["replay"])
 	var found: bool = false
@@ -112,7 +112,7 @@ func test_verify_accepts_true_score_and_rejects_inflated_claim():
 
 func test_artifact_carries_schedule_and_scheduled_run_verifies():
 	# DQ-6 / #620 item 4: a seed = RNG seed + event schedule (ADR-0005), but the producer
-	# never emitted the `schedule` key the verifier reads (replay_simulator.gd) — so a
+	# never emitted the `schedule` key the verifier reads (replay_simulator.gd) -- so a
 	# scheduled run's artifact re-simulated WITHOUT its schedule and failed to reproduce.
 	var schedule: Array = [
 		{"turn": 1, "cause": "rival_funding_wave", "target": "capabilicorp", "magnitude": 5000000.0},

@@ -443,7 +443,7 @@ file.close()
 8. REFRESH Add RNG tracking
 9. REFRESH Test full game playthrough
 10. REFRESH Add game end export
-11. ⏳ Backend API integration (future)
+11. [wip] Backend API integration (future)
 
 **Timeline**: ~2-3 days for full integration
 

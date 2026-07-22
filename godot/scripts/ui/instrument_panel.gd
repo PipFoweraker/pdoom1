@@ -1,6 +1,6 @@
 class_name InstrumentPanel
 extends VBoxContainer
-## Shared instrument column (BUILD_BRIEF_PLAN_WATCH_UI Lane 1) — the always-on readouts
+## Shared instrument column (BUILD_BRIEF_PLAN_WATCH_UI Lane 1) -- the always-on readouts
 ## that stay visible in BOTH PLAN and WATCH: the P(DOOM) gauge (with the doom trend /
 ## breakdown / ledger + employee affordances mounted into RightZones at runtime by main_ui),
 ## the staff roster, and the committed-month queue. The queue is the throughline between the

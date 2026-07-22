@@ -1,5 +1,5 @@
 extends GutTest
-## L8 (#619): achievements observer — unlock predicates + the observer-only
+## L8 (#619): achievements observer -- unlock predicates + the observer-only
 ## proof: evaluate() must leave the state snapshot byte-identical (ADR-0002
 ## anti-sink rule; achievements are recognition, never in-run reward).
 
@@ -52,7 +52,7 @@ func test_year_mark_locked_before_the_year():
 
 func test_evaluate_never_mutates_the_snapshot():
 	# The observer-only proof. This evaluate() call actually unlocks something
-	# (year_2022), i.e. the busiest code path runs — and the snapshot must come
+	# (year_2022), i.e. the busiest code path runs -- and the snapshot must come
 	# out byte-identical and hash-identical.
 	var state = _snapshot({"calendar": {"year": 2022, "month": 1, "day": 5}})
 	var json_before = JSON.stringify(state)

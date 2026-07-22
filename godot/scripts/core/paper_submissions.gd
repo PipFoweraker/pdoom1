@@ -23,7 +23,7 @@ enum Topic {
 
 # #630 stopgap: paper decisions resolve on a path NOT governed by
 # GameEvents.MAX_NEW_EVENTS_PER_TURN, so clustered decision_turns (several papers
-# submitted in the same window) all resolve on one turn → a click-through wall
+# submitted in the same window) all resolve on one turn -> a click-through wall
 # (playtest saw 28+ at once). Cap how many decisions surface per turn; the surplus
 # stays UNDER_REVIEW and resolves on subsequent turns (spread out, never dropped).
 # Balance-tunable ("papers.max_decisions_per_turn", L9 #621); const is the fallback.
@@ -89,7 +89,7 @@ class PaperSubmission:
 		}
 
 	static func from_dict(data: Dictionary) -> PaperSubmission:
-		# L7 (#618): explicit casts — JSON round-trips ints as floats, and an untyped
+		# L7 (#618): explicit casts -- JSON round-trips ints as floats, and an untyped
 		# JSON array cannot be assigned to the typed Array[String] member directly.
 		var paper = PaperSubmission.new()
 		paper.id = String(data.get("id", paper.id))
@@ -191,7 +191,7 @@ static func process_paper_decisions(papers: Array, current_turn: int, player_rep
 
 		# Per-turn surfacing cap (#630): each processed paper appends exactly one
 		# result, so results.size() is the count decided this turn. Once the budget
-		# is spent, stop — the remaining eligible papers defer to a later turn.
+		# is spent, stop -- the remaining eligible papers defer to a later turn.
 		if max_decisions > 0 and results.size() >= max_decisions:
 			break
 

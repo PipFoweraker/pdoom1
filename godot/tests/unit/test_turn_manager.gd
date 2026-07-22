@@ -210,7 +210,7 @@ func test_no_staff_no_salary_deduction():
 	assert_eq(state.money, initial_money, "Money should not decrease with no staff")
 
 func test_turn_sequence_integration():
-	# Test a complete turn sequence: start → actions → execute
+	# Test a complete turn sequence: start -> actions -> execute
 	var initial_turn = state.turn
 
 	# Start turn
@@ -259,7 +259,7 @@ func test_start_turn_with_no_events_allows_actions():
 
 func test_start_turn_with_events_blocks_actions():
 	# FIX #418: When events trigger, actions should be blocked
-	# start_turn() increments turn first, so set to 9 → becomes 10
+	# start_turn() increments turn first, so set to 9 -> becomes 10
 	state.turn = 9
 	state.money = 40000  # Triggers funding_crisis event
 
@@ -401,7 +401,7 @@ func test_phase_transitions_complete_cycle():
 # ---------------------------------------------------------------------------
 # #631 follow-up: risk_insider_moderate_1 ("Key Resignation") flavor says a
 # senior researcher quits, but the effect used to be scalar-only (research/
-# reputation/doom) — nobody actually left, the same no-op class fixed for
+# reputation/doom) -- nobody actually left, the same no-op class fixed for
 # event-driven poaching in #633. Force a deterministic threshold trigger
 # (crossing the "moderate" tier for the first time guarantees a fire,
 # independent of the probabilistic roll) so this doesn't depend on RNG luck.
@@ -436,7 +436,7 @@ func test_insider_threat_key_resignation_removes_a_researcher():
 func test_insider_threat_key_resignation_safe_with_no_researchers():
 	# No researchers on staff -> the scalar effects (research/reputation/doom) still apply,
 	# but the staffing loss is a safe no-op (no crash, no phantom note).
-	# ADR-0015: a risk shock's doom is not a direct level write — it routes as a buffered
+	# ADR-0015: a risk shock's doom is not a direct level write -- it routes as a buffered
 	# `panic` STREAM INPUT (add_event_doom -> add_stream_input) that the DoomSystem folds into
 	# the rate on the next tick. So it lands as a pending panic input here, not on current_doom.
 	assert_eq(state.researchers.size(), 0, "Start empty")

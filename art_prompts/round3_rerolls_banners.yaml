@@ -1,0 +1,131 @@
+schema_version: '1.0'
+asset_type: round3_rerolls_banners
+default_size: 1536x1024
+background: opaque
+output_sizes:
+- 1536
+- 768
+styles:
+  banner_scene_base: wide 1536x1024 landscape hero banner, a full illustrative SCENE
+    with real environmental depth and atmosphere (NOT a single symbol on a vignette),
+    lush StarCraft 2 / XCOM digital matte-painting, cinematic composition with foreground,
+    midground and background layers, volumetric haze and soft god-rays, dramatic but
+    restrained key lighting, high dynamic range, painterly rendered detail, room to
+    overlay a title in the upper-left negative space, no text, no logos, no watermarks,
+    no UI, no human faces in close-up
+  surface_tarkov: Tarkov-style worn metal, scuffed brushed aluminium, chipped paint,
+    dust, fingerprints and grime on every surface, lived-in industrial props, exposed
+    cable runs and cheap office furniture that has seen years of use
+  mood_cozy_dread: tone of cozy competence under existential dread, quiet and intimate
+    yet quietly ominous, the warmth of late-night focus haunted by something larger
+    looming just off-frame
+themes:
+  base_corporate:
+    style_overrides:
+    - banner_scene_base
+    - surface_tarkov
+    - mood_cozy_dread
+    color_bias: heavily desaturated palette of teal and olive with muted slate greys,
+      warm amber CRT/monitor glow as the only saturated accent, deep shadow, low overall
+      saturation
+assets:
+- id: banner_title_hero_r3
+  category: title
+  display_name: Title Screen Hero (r3)
+  status: generated
+  theme: base_corporate
+  reroll_note: v2 too desolate (add one more lighting source); v1 a little grim (add
+    a small cat, small office comforts, one motivational poster)
+  prompt_tail: a dim near-future AI-safety lab and open-plan office at night, seen
+    from a low three-quarter angle across a cluttered desk in the foreground; banks
+    of chunky CRT-style terminals and modern flat panels cast a soft amber and teal
+    glow across worn desks, coffee-stained mugs, sticky notes and a tangle of cables;
+    add ONE additional warm lighting source (a small desk lamp or a warm glowing monitor)
+    so the room is a little less desolate, keeping the one-ambient-plus-one-glow discipline;
+    small human comforts subtly stand out from the grey -- a small sleeping cat curled
+    on a warm chair, a potted plant, a mug, and exactly one modest motivational poster
+    on the wall; a lone ergonomic chair, a whiteboard covered in faint equations in
+    the midground; tall server racks blink faintly in the shadowed background; a single
+    window shows a cold blue city skyline under heavy cloud; the room feels warm and
+    focused up close, quietly ominous at the dark edges
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T22:57:23.705556+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 11fe299ff6b4
+    file_path: art_generated\round3_rerolls_banners\v1\banner_title_hero_r3_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T22:58:11.862068+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 11fe299ff6b4
+    file_path: art_generated\round3_rerolls_banners\v1\banner_title_hero_r3_v2_1536.png
+    cost_usd: 0.09
+- id: banner_doom_rising_r3
+  category: event
+  display_name: Doom Rising (r3, conservative)
+  status: generated
+  theme: base_corporate
+  reroll_note: smoke a different (cooler, in-palette) colour; more complexity; a bit
+    more colour in the doom graph; less monochromatic -- CONSERVATIVE, no new doom
+    colour system
+  prompt_tail: 'the same near-future AI-safety lab and office at a doom-spike moment:
+    the amber terminal glow has soured toward a harsh red (catastrophe axis, about
+    #E24A3B), warning strobes and status lights flare across the server racks; keep
+    the scene from going flat and monochromatic by letting a few warm amber office
+    pockets (about #F6A800) survive under the red so the frame reads with more colour
+    and depth; a wall of monitors shows a rising doom curve with a bit more complexity
+    and colour -- the climbing line and its chart picked out in graded amber-to-orange-to-red
+    steps (#F6A800 -> #E9752E -> #E24A3B) rather than a single flat red; the low creeping
+    smoke and haze across the floor is a cooler desaturated slate blue-grey (about
+    #1C2730 / #6B7C8C) rather than red, so it separates cleanly from the warm glow;
+    papers and a knocked-over mug scattered as if people left in a hurry, cables sparking
+    faintly; still painterly and cinematic, still the desaturated teal-and-olive world
+    underneath; stay strictly within this existing palette, do NOT introduce any new
+    purple or exotic doom hues'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T22:58:59.903818+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: e4bbfd93d789
+    file_path: art_generated\round3_rerolls_banners\v1\banner_doom_rising_r3_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T22:59:48.040668+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: e4bbfd93d789
+    file_path: art_generated\round3_rerolls_banners\v1\banner_doom_rising_r3_v2_1536.png
+    cost_usd: 0.09
+- id: fanfare_strategic_moves_r3
+  category: fanfare
+  display_name: Strategic Moves Granted (r3)
+  status: generated
+  theme: base_corporate
+  reroll_note: pull the chair out of shadow (less attenuated); shorten the field of
+    view; keep the interesting lower light; separate the chair from the table; shorten
+    the table
+  prompt_tail: 'a ceremonial moment with a tighter, shorter field of view (less wide-angle,
+    a nearer more intimate framing): a shadowed boardroom where a governing board
+    grants the player new authority; a shorter worn-metal conference table catches
+    a warm shaft of light from above; a single illuminated empty chair at the head
+    is clearly SEPARATED from the table and well lit and readable (NOT lost in shadow,
+    less attenuated than before), turned to face the viewer; keep the interesting
+    low warm underlight glancing up from below; seated silhouetted board members (backs
+    and shoulders, no close-up faces) turned toward that seat; a sleek folder, an
+    official seal and a glowing tablet slide into the pool of light; faint teal holographic
+    org-charts hover above the table; dignified and quietly triumphant, cozy competence
+    rewarded, existential dread kept at the dark edges; desaturated teal and olive
+    with warm amber ceremonial light'
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T23:00:32.886638+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a07665732853
+    file_path: art_generated\round3_rerolls_banners\v1\fanfare_strategic_moves_r3_v1_1536.png
+    cost_usd: 0.09
+  - version: v2
+    generated_at: '2026-07-21T23:01:17.373532+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a07665732853
+    file_path: art_generated\round3_rerolls_banners\v1\fanfare_strategic_moves_r3_v2_1536.png
+    cost_usd: 0.09

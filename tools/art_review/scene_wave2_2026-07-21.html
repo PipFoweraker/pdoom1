@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scene Art -- Wave 2 (2026-07-21)</title>
+<style>
+  :root {
+    --bg: #14100c;
+    --panel: #1d1712;
+    --line: #3a2e22;
+    --amber: #e8a33d;
+    --teal: #1ec3b3;
+    --text: #e9f2f2;
+    --muted: #9aa7a5;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px;
+    background: var(--bg); color: var(--text);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    line-height: 1.4;
+  }
+  h1 { font-size: 22px; margin: 0 0 4px; color: var(--amber); letter-spacing: .5px; }
+  h2 {
+    font-size: 17px; margin: 40px 0 4px; color: var(--amber);
+    border-bottom: 1px solid var(--line); padding-bottom: 6px;
+  }
+  .sub { color: var(--muted); font-size: 13px; margin: 0 0 8px; }
+  .lede { color: var(--muted); font-size: 13px; max-width: 900px; }
+  code { background: #000; padding: 1px 5px; border-radius: 3px; color: var(--teal); font-size: 12px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px; margin-top: 14px;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 6px; overflow: hidden;
+  }
+  .card img { display: block; width: 100%; height: auto; background: #000; }
+  .cap { padding: 7px 10px; font-size: 12px; }
+  .cap .id { color: var(--amber); font-weight: 600; }
+  .cap .v { color: var(--muted); }
+  .cap a { color: var(--teal); text-decoration: none; font-size: 11px; }
+  .cap a:hover { text-decoration: underline; }
+  .genre-title { grid-column: 1 / -1; margin: 10px 0 0; font-size: 14px; color: var(--teal); }
+</style>
+</head>
+<body>
+  <h1>P(Doom)1 -- Scene Art, Wave 2</h1>
+  <p class="sub">Generated 2026-07-21 &middot; gpt-image-1.5 &middot; 1536x1024 &middot; source YAML <code>art_prompts/scene_art_wave2.yaml</code></p>
+  <p class="lede">Register: Papers-Please deadpan, desaturated teal/olive Tarkov surfaces, warm amber CRT glow as the only saturated accent. Images are q88 WebP (full 1536px) &mdash; click any card to open it at full size. Native PNG masters live in the gitignored <code>art_generated/scene_art_wave2/v1/</code> scratch dir.</p>
+
+  <h2>1. Event-genre hero art &mdash; skins the response-window / event dialog</h2>
+  <p class="sub">4 genres &times; 4 variants. Currently the dialog is a flat green StyleBoxFlat box.</p>
+  <div class="grid" id="event_hero"></div>
+
+  <h2>2. Main-screen office backdrop &mdash; main.tscn has no background at all</h2>
+  <p class="sub">6 options. Dim, low-contrast, legibility-safe backdrops that sit behind UI panels. Vary viewpoint, time-of-day, density.</p>
+  <div class="grid" id="office_backdrop"></div>
+
+  <h2>3. Leaderboard "institutional records room" (issue #743)</h2>
+  <p class="sub">6 options across the archive &harr; high-score-table axis: filing stacks, microfiche, a CRT rank table, brass plaques gone slightly wrong.</p>
+  <div class="grid" id="records_room"></div>
+
+<script>
+  const DIR = "../../art_generated/scene_art_wave2/v1/";
+  // [id, display, variantCount]
+  const EVENT = [
+    ["event_crisis", "Crisis -- lab incident, red-soured amber, alarm", 4],
+    ["event_opportunity", "Opportunity -- funding / partnership, warm amber", 4],
+    ["event_board", "Board / Governance -- hearing composition", 4],
+    ["event_secret", "Secret / Blackmail -- dim archive, one desk lamp", 4],
+  ];
+  const BACKDROP = [
+    ["office_wide_day", "Wide, overcast day -- medium density", 1],
+    ["office_desk_forward_night", "Desk-forward, night -- intimate, warm", 1],
+    ["office_wide_dawn", "Wide, sparse dawn -- low clutter", 1],
+    ["office_corner_dusk", "Corner, dense dusk -- high density", 1],
+    ["office_lab_aisle", "Server / lab aisle -- humming, low-key", 1],
+    ["office_mezzanine", "Mezzanine overview -- establishing", 1],
+  ];
+  const RECORDS = [
+    ["records_stacks", "Filing stacks (archive end)", 1],
+    ["records_crt_ranktable", "CRT rank table (highscore end)", 1],
+    ["records_brass_plaques", "Brass honour plaques", 1],
+    ["records_microfiche", "Microfiche reading room", 1],
+    ["records_trophy_terminal", "Trophy cabinet + rank terminal (mid axis)", 1],
+    ["records_vault", "Secure records vault", 1],
+  ];
+
+  function nameFor(id, v, count) {
+    return count > 1 ? `${id}_v${v}.webp` : `${id}.webp`;
+  }
+  function card(id, display, v, count) {
+    const src = DIR + nameFor(id, v, count);
+    const vlabel = count > 1 ? ` &middot; <span class="v">v${v}</span>` : "";
+    return `<div class="card">
+      <a href="${src}" target="_blank"><img loading="lazy" src="${src}" alt="${id} v${v}"></a>
+      <div class="cap"><span class="id">${id}</span>${vlabel}<br>${display} &middot; <a href="${src}" target="_blank">full</a></div>
+    </div>`;
+  }
+  function render(sectionId, rows) {
+    const el = document.getElementById(sectionId);
+    let html = "";
+    for (const [id, display, count] of rows) {
+      if (count > 1) html += `<div class="genre-title">${display}</div>`;
+      for (let v = 1; v <= count; v++) html += card(id, display, v, count);
+    }
+    el.innerHTML = html;
+  }
+  render("event_hero", EVENT);
+  render("office_backdrop", BACKDROP);
+  render("records_room", RECORDS);
+</script>
+</body>
+</html>

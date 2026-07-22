@@ -25,7 +25,7 @@ func _init():
 		run_validation(test_name)
 
 	print("\n" + "=".repeat(70))
-	print("[✓] Validation complete - exiting")
+	print("[[OK]] Validation complete - exiting")
 	print("=".repeat(70) + "\n")
 
 	# Force immediate exit
@@ -61,10 +61,10 @@ func validate_gamestate_exists():
 
 	var GameStateClass = load("res://scripts/core/game_state.gd")
 	if GameStateClass:
-		print("[✓] GameState script found: res://scripts/core/game_state.gd")
-		print("[✓] Script can be loaded")
+		print("[[OK]] GameState script found: res://scripts/core/game_state.gd")
+		print("[[OK]] Script can be loaded")
 	else:
-		print("[✗] GameState script NOT found")
+		print("[[X]] GameState script NOT found")
 		return
 
 	print("-".repeat(70) + "\n")
@@ -77,7 +77,7 @@ func validate_gamestate_methods():
 
 	var GameStateClass = load("res://scripts/core/game_state.gd")
 	if not GameStateClass:
-		print("[✗] Cannot load GameState")
+		print("[[X]] Cannot load GameState")
 		return
 
 	# Get the script's methods by checking the source
@@ -97,7 +97,7 @@ func validate_gamestate_methods():
 	print("\n[RESULTS] Expected Method Check:")
 	for expected in expected_methods:
 		if expected in found_methods:
-			print("  [✓] %s() - Found" % expected)
+			print("  [[OK]] %s() - Found" % expected)
 		else:
 			print("  [?] %s() - Not found (might use different name)" % expected)
 
@@ -120,7 +120,7 @@ func validate_gamestate_properties():
 
 	var GameStateClass = load("res://scripts/core/game_state.gd")
 	if not GameStateClass:
-		print("[✗] Cannot load GameState")
+		print("[[X]] Cannot load GameState")
 		return
 
 	var script = GameStateClass as Script
@@ -139,7 +139,7 @@ func validate_gamestate_properties():
 	print("\n[RESULTS] Expected Property Check:")
 	for expected in expected_props:
 		if expected in found_props:
-			print("  [✓] %s - Found" % expected)
+			print("  [[OK]] %s - Found" % expected)
 		else:
 			print("  [?] %s - Not found (might be different)" % expected)
 

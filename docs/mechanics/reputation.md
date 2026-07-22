@@ -1,6 +1,6 @@
 # Reputation & Public Opinion
 
-> **Status**: 🟡 Stub - Under active development ([Issue #186](https://github.com/PipFoweraker/pdoom1/issues/186))
+> **Status**: [Y] Stub - Under active development ([Issue #186](https://github.com/PipFoweraker/pdoom1/issues/186))
 
 Your lab's reputation affects funding opportunities, researcher recruitment, and regulatory pressure. Managing public opinion is key to long-term success.
 
@@ -37,7 +37,7 @@ Your lab's reputation affects funding opportunities, researcher recruitment, and
 - Negative events (scandals, accidents)
 - Rival lab competitive actions
 
-## Planned Enhancements 🚧
+## Planned Enhancements [wip]
 
 The following features are planned for the **Public Opinion & Media System** enhancement:
 
@@ -91,22 +91,22 @@ Reputation affects:
 ## Implementation Status
 
 **Current State** (v0.10.2):
-- ✅ Basic reputation tracking (0-100 score)
-- ✅ Reputation gains from papers
-- ✅ Reputation loss from leaks/events
-- ✅ Media-savvy researcher trait
+- [x] Basic reputation tracking (0-100 score)
+- [x] Reputation gains from papers
+- [x] Reputation loss from leaks/events
+- [x] Media-savvy researcher trait
 
 **In Development** ([Issue #186](https://github.com/PipFoweraker/pdoom1/issues/186)):
-- 🚧 Multi-dimensional public sentiment
-- 🚧 Media cycle events
-- 🚧 PR action system
-- 🚧 Strategic integration with funding/recruitment
+- [wip] Multi-dimensional public sentiment
+- [wip] Media cycle events
+- [wip] PR action system
+- [wip] Strategic integration with funding/recruitment
 
 **Planned Future**:
-- ⚪ International reputation (different regions)
-- ⚪ Social media dynamics
-- ⚪ Journalist relationships
-- ⚪ Public debates & controversies
+- [.] International reputation (different regions)
+- [.] Social media dynamics
+- [.] Journalist relationships
+- [.] Public debates & controversies
 
 ## Developer Notes
 
