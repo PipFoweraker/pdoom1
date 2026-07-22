@@ -1,0 +1,215 @@
+schema_version: '1.0'
+asset_type: action_icons_missing
+default_size: 1024x1024
+output_sizes:
+- 1024
+- 512
+- 256
+- 128
+- 64
+background: transparent
+styles:
+  global_icon_base: high-res 1024x1024 square game icon, single central symbol, soft
+    but detailed digital painting with slightly cartoony chunky shapes, StarCraft
+    2 / early-2000s XCOM ability-icon feel, plain or softly graded background with
+    a subtle vignette, no full scene or environment, no text, no lettering, no numbers,
+    strong chunky silhouette that reads clearly at 64x64, limited colour palette,
+    high contrast lighting, centered composition
+  surface_tarkov: Tarkov-style worn metal and dirty scuffed surfaces but simplified,
+    chipped paint and grime, lived-in industrial feel
+themes:
+  base_corporate:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: heavily desaturated teal and olive tones with muted slate grey, a
+      single warm amber CRT/monitor glow as the only saturated accent, deep shadow,
+      low overall saturation, absolutely no cyan and no electric blue
+assets:
+- id: team_building
+  category: actions_management
+  display_name: Team Building
+  status: selected
+  selected_variant: v1
+  theme: base_corporate
+  prompt_tail: three simple stylised human silhouettes standing close together as
+    a small team, the central figure with arms raised in a modest celebratory gesture,
+    a soft warm amber halo binding the group, standing on a compact metal plate, plain
+    dark teal-olive gradient background with soft vignette, no room, no props
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:09:04.451135+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 3f116708567b
+    file_path: art_generated\action_icons_missing\v1\team_building_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:09:25.278089+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 3f116708567b
+    file_path: art_generated\action_icons_missing\v1\team_building_v2_1024.png
+    cost_usd: 0.06
+- id: network
+  category: actions_publicity
+  display_name: Networking
+  status: selected
+  selected_variant: v2
+  theme: base_corporate
+  prompt_tail: two stylised hands meeting in a firm handshake seen from a slight angle,
+    thick chunky forms, a faint warm amber glow at the point of contact, resting on
+    a compact worn-metal plate, plain dark teal-olive gradient background with soft
+    vignette, no faces, no room
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:09:54.402729+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 0443a6c0f299
+    file_path: art_generated\action_icons_missing\v1\network_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:10:10.512297+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 0443a6c0f299
+    file_path: art_generated\action_icons_missing\v1\network_v2_1024.png
+    cost_usd: 0.06
+- id: acquire_startup
+  category: actions_strategic
+  display_name: Acquire AI Startup
+  status: selected
+  selected_variant: v2
+  theme: base_corporate
+  prompt_tail: a small simple office building being drawn into and absorbed by a larger
+    office building beside it, a bold curved arrow wrapping the small building toward
+    the large one, chunky stylised shapes, single warm amber accent light on the larger
+    building, plain dark teal-olive gradient background with soft vignette, no text
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:10:28.865848+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6b857ef752fc
+    file_path: art_generated\action_icons_missing\v1\acquire_startup_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:10:47.805084+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6b857ef752fc
+    file_path: art_generated\action_icons_missing\v1\acquire_startup_v2_1024.png
+    cost_usd: 0.06
+- id: sabotage_competitor
+  category: actions_strategic
+  display_name: Corporate Espionage
+  status: selected
+  selected_variant: v1
+  theme: base_corporate
+  prompt_tail: a single hooded shadowy figure in profile, hunched and secretive, a
+    document or data-shard held close, rendered almost entirely in dark teal-olive
+    shadow with one soured amber-red accent glinting off the figure, standing on a
+    metal plate, plain near-black gradient background with soft vignette, ominous,
+    no face detail, no text
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:11:06.679722+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 0518d12dce0f
+    file_path: art_generated\action_icons_missing\v1\sabotage_competitor_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:11:30.741869+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 0518d12dce0f
+    file_path: art_generated\action_icons_missing\v1\sabotage_competitor_v2_1024.png
+    cost_usd: 0.06
+- id: lobby_government
+  category: actions_publicity
+  display_name: Lobby Government
+  status: selected
+  selected_variant: v1
+  theme: base_corporate
+  prompt_tail: a simple classical capitol building with a domed roof and columns,
+    a lobbyist briefcase sitting on the steps in the foreground, chunky stylised architecture,
+    single warm amber light washing the dome, plain dark teal-olive gradient background
+    with soft vignette, no flag detail, no text
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:11:53.885032+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 15141559ea84
+    file_path: art_generated\action_icons_missing\v1\lobby_government_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:12:19.573144+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 15141559ea84
+    file_path: art_generated\action_icons_missing\v1\lobby_government_v2_1024.png
+    cost_usd: 0.06
+- id: open_source_release
+  category: actions_publicity
+  display_name: Open Source Tools
+  status: selected
+  selected_variant: v1
+  theme: base_corporate
+  prompt_tail: an open book or open folder lying flat, three or four branching arrows
+    radiating upward and outward from its pages to signify free distribution, chunky
+    stylised forms, a warm amber glow rising from the open pages, resting on a metal
+    plate, plain dark teal-olive gradient background with soft vignette, no text on
+    the pages
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:12:39.591652+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a552a566185a
+    file_path: art_generated\action_icons_missing\v1\open_source_release_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:12:56.394498+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a552a566185a
+    file_path: art_generated\action_icons_missing\v1\open_source_release_v2_1024.png
+    cost_usd: 0.06
+- id: take_loan
+  category: actions_funding
+  display_name: Business Loan
+  status: selected
+  selected_variant: v1
+  theme: base_corporate
+  prompt_tail: a plump money bag wrapped around by a heavy iron chain with a closed
+    padlock, the chain biting into the bag, chunky stylised forms, a cold weight to
+    it with a single warm amber highlight on the padlock, resting on a metal plate,
+    plain dark teal-olive gradient background with soft vignette, no currency symbols,
+    no text
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:13:31.539919+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 3b64d341766e
+    file_path: art_generated\action_icons_missing\v1\take_loan_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:14:06.418131+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 3b64d341766e
+    file_path: art_generated\action_icons_missing\v1\take_loan_v2_1024.png
+    cost_usd: 0.06
+- id: grant_proposal
+  category: actions_funding
+  display_name: Write Grant Proposal
+  status: selected
+  selected_variant: v2
+  theme: base_corporate
+  prompt_tail: a single formal document or rolled proposal with a large official wax
+    seal and ribbon at its base, chunky stylised paper with a soft fold, a warm amber
+    glow catching the seal, resting on a worn-metal plate, plain dark teal-olive gradient
+    background with soft vignette, no legible writing on the document
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T03:14:38.023281+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a5811e89fddb
+    file_path: art_generated\action_icons_missing\v1\grant_proposal_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T03:15:11.665977+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: a5811e89fddb
+    file_path: art_generated\action_icons_missing\v1\grant_proposal_v2_1024.png
+    cost_usd: 0.06
