@@ -1200,6 +1200,7 @@ func _on_actions_available(actions: Array):
 	# Create a single-column vertical stack for icons on left edge
 	var icon_stack = VBoxContainer.new()
 	icon_stack.add_theme_constant_override("separation", 1)  # #594: tighter vertical packing for 11+ icons
+	icon_stack.alignment = BoxContainer.ALIGNMENT_BEGIN  # P2/#768: pack to the top, no vertical float
 	actions_list.add_child(icon_stack)
 
 	# Create icon buttons - single column layout
@@ -1224,7 +1225,9 @@ func _on_actions_available(actions: Array):
 			icon_button.custom_minimum_size = Vector2(70, 70)  # square icon tiles
 			# #594: hug the 70px icon instead of ballooning across the wide left panel -- this
 			# reclaims the empty padding around each icon (and stops expand_icon distorting them).
-			icon_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			# P2/#768: bind to the LEFT (was SHRINK_CENTER) so icons pack against the column edge
+			# instead of floating centred with wide side margins (Pip's "white gaps" complaint).
+			icon_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 			icon_button.focus_mode = Control.FOCUS_NONE
 
 			# Get icon texture
@@ -1459,6 +1462,27 @@ func _close_active_submenu() -> void:
 	active_dialog = null
 	active_dialog_buttons = []
 
+func _present_modal_dialog(dialog: Control) -> void:
+	"""Mount a modal Panel over the board WITH a full-rect input barrier beneath it
+	(#767). Before this, submenu/pipeline/ledger panels were added over the board with
+	no blocker, so clicks landing outside the panel still reached the action icons
+	behind (e.g. buy compute while the hiring pipeline was open). This mirrors the
+	event-dialog blocker pattern (event_dialog.gd): a MOUSE_FILTER_STOP ColorRect that
+	swallows every click to the board. The barrier is a sibling added just BEFORE the
+	dialog (so the dialog, a later sibling, still receives its own clicks) and is freed
+	automatically when the dialog leaves the tree -- via ANY close path (X, ESC, cancel,
+	or a replacing dialog's queue_free) -- so no call site needs to manage it."""
+	var barrier := ColorRect.new()
+	barrier.name = "ModalInputBarrier"
+	barrier.color = Color(0.0, 0.0, 0.0, 0.35)   # faint dim so the board reads as "behind"
+	barrier.mouse_filter = Control.MOUSE_FILTER_STOP
+	tab_manager.add_child(barrier)
+	barrier.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	tab_manager.add_child(dialog)   # later sibling -> drawn above the barrier, stays interactive
+	# Free the barrier whenever the dialog leaves the tree -- via ANY close path (X, ESC,
+	# cancel button, or a replacing dialog's queue_free). No call site manages it.
+	dialog.tree_exited.connect(barrier.queue_free)
+
 
 func _debug_nudge_doom(delta: float) -> void:
 	"""DEBUG-only QA helper: bump doom by delta, record a history point so the trend graph
@@ -1533,7 +1557,7 @@ func _show_doom_trend_expanded() -> void:
 
 	_add_submenu_close_affordance(dialog)
 	active_dialog = dialog
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -1668,7 +1692,7 @@ func _show_hiring_submenu():
 	_add_submenu_close_affordance(dialog)
 	active_dialog = dialog
 	active_dialog_buttons = []
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -1991,7 +2015,7 @@ func _show_offer_dialog(candidate_id: String) -> void:
 	_add_submenu_close_affordance(dialog)
 	active_dialog = dialog
 	active_dialog_buttons = []
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2160,7 +2184,7 @@ func _show_fundraising_submenu():
 
 	# Add dialog to TabManager (parent) so it overlays everything without shifting layout
 	print("[MainUI] Adding dialog to TabManager as overlay...")
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000  # Very high z-index to ensure it's on top
 	dialog.z_as_relative = false  # Absolute z-index, not relative to parent
@@ -2279,7 +2303,7 @@ func _show_financing_submenu():
 
 	active_dialog = dialog
 	active_dialog_buttons = buttons
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2322,7 +2346,7 @@ func _show_ledger_screen():
 
 	active_dialog = dialog
 	active_dialog_buttons = []
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2469,7 +2493,7 @@ func _show_publicity_submenu():
 
 	# Add dialog to TabManager as overlay
 	print("[MainUI] Adding dialog to TabManager as overlay...")
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2661,7 +2685,7 @@ func _show_strategic_submenu():
 	print("[MainUI] Strategic submenu opened, tracked %d buttons" % buttons.size())
 
 	# Add dialog to TabManager as overlay
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -2944,7 +2968,7 @@ func _show_travel_submenu():
 	print("[MainUI] Travel submenu opened, tracked %d buttons" % buttons.size())
 
 	# Add dialog to TabManager as overlay
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -3086,7 +3110,7 @@ func _show_paper_submission_dialog():
 
 	_add_submenu_close_affordance(dialog)  # X + ESC hint, consistent with action submenus (#510)
 	active_dialog = dialog
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -3202,7 +3226,7 @@ func _show_conference_attendance_dialog():
 
 	_add_submenu_close_affordance(dialog)  # X + ESC hint, consistent with action submenus (#510)
 	active_dialog = dialog
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false
@@ -3679,7 +3703,7 @@ func _show_operations_submenu():
 	print("[MainUI] Operations submenu opened, tracked %d buttons" % buttons.size())
 
 	# Add dialog to TabManager as overlay
-	tab_manager.add_child(dialog)
+	_present_modal_dialog(dialog)
 	dialog.visible = true
 	dialog.z_index = 1000
 	dialog.z_as_relative = false

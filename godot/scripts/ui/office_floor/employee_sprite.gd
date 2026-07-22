@@ -21,6 +21,10 @@ class_name OfficeEmployeeSprite
 
 const BODY_RADIUS := 11.0
 const ARRIVE_EPS := 4.0
+# #770: integer nearest-neighbor upscale of the tier-1 character art so employees
+# read at a sensible size in the WATCH office strip (the pixellab frames are ~24x32,
+# which drew tiny). Movement/bounds are unchanged -- this only scales the drawn art.
+const SPRITE_SCALE := Vector2(2.0, 2.0)
 
 # Micro-behavior tuning (seconds / per-second chances; all cosmetic).
 const BREAK_CHANCE_PER_SEC := 0.14      # once off cooldown, chance/sec to start a break
@@ -113,10 +117,12 @@ func _ready() -> void:
 	_anim.visible = false
 	# Crisp pixel art, no blur, regardless of per-file .import filter settings.
 	_anim.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_anim.scale = SPRITE_SCALE   # #770: draw the character art larger in the WATCH strip
 	add_child(_anim)
 	_facing_sprite = Sprite2D.new()
 	_facing_sprite.visible = false
 	_facing_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_facing_sprite.scale = SPRITE_SCALE   # #770: match the animated-clip scale
 	add_child(_facing_sprite)
 	_label = Label.new()
 	_label.add_theme_font_size_override("font_size", 10)

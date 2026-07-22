@@ -132,6 +132,31 @@
       "icon": "res://assets/icons/employee_status/employee_status_training_64.png",
       "status": "mapped",
       "note": "#762 interim: reused training icon for onboarding new hires"
+    },
+    "submit_paper": {
+      "icon": "res://assets/icons/actions_research/action_research_formal_verification_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused formal-verification/paper icon for submit-paper-to-conference"
+    },
+    "attend_conference": {
+      "icon": "res://assets/icons/actions_policies/action_policy_international_cooperation_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused international-cooperation icon (travel/conference theme)"
+    },
+    "send_delegation": {
+      "icon": "res://assets/icons/actions/action_publicity_network_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused network icon for sending a delegation"
+    },
+    "order_supplies": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_expand_office_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused office/facility icon for operations order-supplies"
+    },
+    "office_maintenance": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_expand_office_64.png",
+      "status": "mapped",
+      "note": "#768 interim: reused office/facility icon for operations maintenance"
     }
   },
   "hiring": {

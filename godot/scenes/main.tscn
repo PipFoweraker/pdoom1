@@ -260,6 +260,7 @@ theme_override_constants/margin_bottom = 2
 
 [node name="DoomMeter" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones/DoomMeterZone/DoomMeterPanel/MarginContainer" instance=ExtResource("4_doom_meter")]
 layout_mode = 2
+show_percentage = false
 
 [node name="DoomExplanation" type="CenterContainer" parent="TabManager/MainUI/ContentArea/InstrumentColumn/CoreZone/RightZones"]
 layout_mode = 2

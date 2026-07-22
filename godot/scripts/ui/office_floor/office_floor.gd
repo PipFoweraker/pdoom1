@@ -40,7 +40,10 @@ const PROP_SERVER := preload("res://assets/office_floor/props/server_cluster.png
 # per the source tileset metadata in art_source/pixellab_2026-07-21-rerolls/tilesets/).
 # Cropped once into a standalone tileable texture.
 const FLOOR_BASE_REGION := Rect2i(64, 32, 32, 32)
-const PROP_TARGET_H := 30.0                    # draw props scaled to this pixel height (art varies)
+# #770: integer nearest-neighbor upscale of the base floor tile so the concrete reads
+# at a sensible scale in the WATCH strip (the atlas tiles are 32px, which tiled tiny).
+const FLOOR_TILE_SCALE := 2
+const PROP_TARGET_H := 46.0                    # #770: props drawn larger (was 30) to match the bigger floor
 const FLOOR_DIM := Color(0.62, 0.63, 0.66)     # tint floor/props muted so sprites + UI read over them
 
 @export var tier: int = 0: set = set_tier
@@ -71,6 +74,9 @@ var _floor_tile: Texture2D = null   # base concrete tile cropped from the Wang a
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(360, 260)
+	# #770: nearest-neighbor so the upscaled floor tile + props stay crisp pixel art
+	# (sprites already force NEAREST per-node; this covers the floor/prop draws here).
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_floor_tile = _build_floor_tile()
 	_rng.randomize()
 	_collab_timer = _rng.randf_range(COLLAB_CHECK_RANGE.x, COLLAB_CHECK_RANGE.y)
@@ -228,7 +234,11 @@ func _build_floor_tile() -> Texture2D:
 	var r := FLOOR_BASE_REGION
 	if r.position.x + r.size.x > atlas_img.get_width() or r.position.y + r.size.y > atlas_img.get_height():
 		return null
-	return ImageTexture.create_from_image(atlas_img.get_region(r))
+	var tile_img := atlas_img.get_region(r)
+	# #770: integer nearest-neighbor upscale so the tiled concrete reads larger/crisper
+	# in the WATCH strip instead of as a fine 32px grid.
+	tile_img.resize(r.size.x * FLOOR_TILE_SCALE, r.size.y * FLOOR_TILE_SCALE, Image.INTERPOLATE_NEAREST)
+	return ImageTexture.create_from_image(tile_img)
 
 # Draw a promoted prop texture centred horizontally on `at`, feet-anchored (bottom edge at
 # `at`) so it sits on the floor, scaled to PROP_TARGET_H (aspect kept) and dimmed to match.
