@@ -72,6 +72,21 @@ var _prev_turn_snapshot: Dictionary = {}
 var _last_delta_turn: int = -1
 const _DELTA_GOOD := Color(0.35, 0.85, 0.40)
 const _DELTA_BAD := Color(0.95, 0.30, 0.25)
+# P9 proposed-layout category headers: each grouping renders with its accent colour PLUS a
+# real navigation icon (was falling through IconLoader.get_action_icon(category_key) -> neon
+# placeholder, since a category key is not an action id). Single source for the mapping; loads
+# are guarded so a missing file degrades to no-icon, never a crash. (influence/other are
+# stand-ins pending #795.)
+const CATEGORY_HEADER_ICONS := {
+	"hiring": "res://assets/icons/main_navigation/ui_staff_management_64.png",
+	"resources": "res://assets/icons/main_navigation/ui_guide_resources_64.png",
+	"research": "res://assets/icons/main_navigation/ui_research_tech_64.png",
+	"funding": "res://assets/icons/main_navigation/ui_budget_finance_64.png",
+	"management": "res://assets/icons/main_navigation/ui_governance_oversight_64.png",
+	"influence": "res://assets/icons/main_navigation/ui_guide_objective_64.png",
+	"strategic": "res://assets/icons/main_navigation/ui_guide_strategy_64.png",
+	"other": "res://assets/icons/main_navigation/ui_guide_book_64.png",
+}
 var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, to detect NEW unlocks for fanfare
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
@@ -1411,9 +1426,14 @@ func _render_actions_grouped(categories: Dictionary, category_order: Array, cate
 		header.focus_mode = Control.FOCUS_NONE
 		header.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		header.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		var cat_icon := IconLoader.get_action_icon(category_key)
-		if cat_icon:
-			header.icon = cat_icon
+		# Category header icon: pull the mapped navigation icon (not IconLoader, which keys on
+		# action ids and returned the neon placeholder for a category key). Guard the load so a
+		# missing asset degrades to an icon-less (but still colour-coded) header, never a crash.
+		var cat_icon_path: String = CATEGORY_HEADER_ICONS.get(category_key, "")
+		if cat_icon_path != "" and ResourceLoader.exists(cat_icon_path):
+			var cat_icon := load(cat_icon_path) as Texture2D
+			if cat_icon:
+				header.icon = cat_icon
 		header.text = "v %s (%d)" % [label_name, category_actions.size()]
 		header.add_theme_color_override("font_color", accent)
 		header.tooltip_text = "Show / hide %s actions" % label_name
