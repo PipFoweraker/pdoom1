@@ -1068,7 +1068,7 @@ func _notification(what: int) -> void:
 		GameConfig.save_config()
 		get_tree().paused = false
 		get_tree().set_auto_accept_quit(true)  # menu screen should close the app normally
-		get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+		SceneTransition.go_to("res://scenes/welcome.tscn")
 
 func _exit_tree() -> void:
 	# Restore default close handling when leaving the run (Main Menu / defeat / quit), so the

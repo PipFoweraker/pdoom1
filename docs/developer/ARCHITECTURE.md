@@ -13,29 +13,29 @@ This document provides a high-level overview of the codebase for developers.
 
 ```
 pdoom1/
-├── godot/                      # Main game project
-│   ├── autoload/               # Singleton scripts (loaded globally)
-│   │   ├── game_config.gd      # Game settings and configuration
-│   │   ├── game_manager.gd     # Main game controller
-│   │   ├── music_manager.gd    # Audio system
-│   │   └── ...
-│   ├── scripts/
-│   │   ├── core/               # Core game logic
-│   │   │   ├── game_state.gd   # Central game state
-│   │   │   ├── turn_manager.gd # Turn processing
-│   │   │   ├── actions.gd      # Action definitions
-│   │   │   ├── events.gd       # Event system
-│   │   │   ├── doom_system.gd  # Doom calculation
-│   │   │   └── researcher.gd   # Researcher entities
-│   │   └── ui/                 # UI controllers
-│   │       ├── main_ui.gd      # Main game screen
-│   │       └── ...
-│   ├── scenes/                 # Godot scene files (.tscn)
-│   ├── data/                   # JSON data files
-│   ├── assets/                 # Art, audio, fonts
-│   └── tests/                  # Unit and integration tests
-├── docs/                       # Documentation
-└── .github/                    # CI/CD workflows
+|--- godot/                      # Main game project
+|   |--- autoload/               # Singleton scripts (loaded globally)
+|   |   |--- game_config.gd      # Game settings and configuration
+|   |   |--- game_manager.gd     # Main game controller
+|   |   |--- music_manager.gd    # Audio system
+|   |   `--- ...
+|   |--- scripts/
+|   |   |--- core/               # Core game logic
+|   |   |   |--- game_state.gd   # Central game state
+|   |   |   |--- turn_manager.gd # Turn processing
+|   |   |   |--- actions.gd      # Action definitions
+|   |   |   |--- events.gd       # Event system
+|   |   |   |--- doom_system.gd  # Doom calculation
+|   |   |   `--- researcher.gd   # Researcher entities
+|   |   `--- ui/                 # UI controllers
+|   |       |--- main_ui.gd      # Main game screen
+|   |       `--- ...
+|   |--- scenes/                 # Godot scene files (.tscn)
+|   |--- data/                   # JSON data files
+|   |--- assets/                 # Art, audio, fonts
+|   `--- tests/                  # Unit and integration tests
+|--- docs/                       # Documentation
+`--- .github/                    # CI/CD workflows
 ```
 
 ## Core Systems
@@ -90,31 +90,31 @@ Calculates and tracks doom percentage:
 
 ```
 User Input
-    │
-    ▼
-┌─────────────────┐
-│    MainUI       │ ─── Captures clicks/keys
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  GameManager    │ ─── Routes commands
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│   GameState     │ ─── Updates state
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  TurnManager    │ ─── Processes turns
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│    MainUI       │ ─── Renders updated state
-└─────────────────┘
+    |
+    v
++-------------------+
+|    MainUI       | --- Captures clicks/keys
+`---------+---------`
+         |
+         v
++-------------------+
+|  GameManager    | --- Routes commands
+`---------+---------`
+         |
+         v
++-------------------+
+|   GameState     | --- Updates state
+`---------+---------`
+         |
+         v
++-------------------+
+|  TurnManager    | --- Processes turns
+`---------+---------`
+         |
+         v
++-------------------+
+|    MainUI       | --- Renders updated state
+`-------------------`
 ```
 
 ## Signal Flow
@@ -144,8 +144,28 @@ These scripts are loaded globally and accessible anywhere:
 | `MusicManager` | Background music and audio |
 | `ThemeManager` | UI theming |
 | `ErrorHandler` | Error logging and reporting |
+| `SceneTransition` | The scene-navigation chokepoint (see below) |
 
 Access via: `GameConfig.setting_name` or `GameManager.method()`
+
+## Scene Navigation
+
+`SceneTransition` (`godot/autoload/scene_transition.gd`) is the single chokepoint
+for changing scenes. Navigate ONLY through it:
+
+```gdscript
+SceneTransition.go_to("res://scenes/main.tscn")   # optional fade: go_to(path, true)
+SceneTransition.reload()                            # reload current scene
+```
+
+Do NOT call `get_tree().change_scene_to_file()`, `change_scene_to_packed()`, or
+`reload_current_scene()` from any other script. Those swap synchronously;
+`SceneTransition` defers the swap onto a clean idle frame (`call_deferred`),
+which is what fixed the v0.11.0 release-build segfault triggered by changing
+scenes from inside an input handler (see
+[`../LEADERBOARD_CRASH_DIAGNOSIS.md`](../LEADERBOARD_CRASH_DIAGNOSIS.md)).
+`tools/check_scene_nav.py` enforces this in pre-commit and CI; annotate a genuine
+exception with `# scene-nav-allow`.
 
 ## Testing
 

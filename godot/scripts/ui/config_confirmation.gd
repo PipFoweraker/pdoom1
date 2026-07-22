@@ -76,17 +76,17 @@ func _on_launch_pressed():
 	GameConfig.current_game_active = true
 
 	# Transition to main game
-	get_tree().change_scene_to_file("res://scenes/main.tscn")
+	SceneTransition.go_to("res://scenes/main.tscn")
 
 func _on_back_pressed():
 	"""Return to welcome screen"""
 	print("[ConfigConfirmation] Returning to welcome screen")
-	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+	SceneTransition.go_to("res://scenes/welcome.tscn")
 
 func _on_customize_pressed():
 	"""Go to full pregame setup to customize all options"""
 	print("[ConfigConfirmation] Opening pregame setup for customization")
-	get_tree().change_scene_to_file("res://scenes/pregame_setup.tscn")
+	SceneTransition.go_to("res://scenes/pregame_setup.tscn")
 
 func _input(event: InputEvent):
 	"""Handle keyboard shortcuts"""
