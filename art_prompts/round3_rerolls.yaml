@@ -1,0 +1,453 @@
+schema_version: '1.0'
+asset_type: round3_rerolls
+default_size: 1024x1024
+output_sizes:
+- 1024
+- 512
+- 256
+- 128
+- 64
+background: opaque
+styles:
+  global_icon_base: high-res 1024x1024 square game icon, single central symbol, soft
+    but detailed digital painting with slightly cartoony chunky shapes, StarCraft
+    2 / early-2000s XCOM ability-icon feel, plain or softly graded background with
+    a subtle vignette, no full scene or environment, no text, no lettering, no numbers,
+    strong chunky silhouette that reads clearly at 64x64, limited colour palette,
+    high contrast lighting, centered composition
+  surface_tarkov: Tarkov-style worn metal and dirty scuffed surfaces but simplified,
+    chipped paint and grime, lived-in industrial feel
+  portrait_common: a single fictional invented AI-safety-research staff member, an
+    imagined archetype and NOT a portrait of any real person, one figure only, head-and-shoulders
+    bust, front-facing, plain contained studio-style background (no room, no scene),
+    tightly framed, no watermark, no logo, no caption
+  pole_a_painterly: painterly digital matte-painting character portrait in the StarCraft
+    2 / XCOM soldier-card manner, visible confident brushwork and canvas texture,
+    richly rendered form, dramatic but restrained single-key cinematic lighting with
+    soft falloff, mature realistic adult proportions and natural skin texture, strictly
+    NOT cartoon, NOT anime, NOT Ghibli, NOT cel-shaded, NOT big-eyed
+  pole_b_crt_dossier: a flat CRT personnel-dossier ID portrait, deadpan Papers-Please
+    mugshot aesthetic, limited flat cel shading with hard edges and minimal gradients,
+    heavy dot-matrix print texture, dither and faint horizontal scanlines over the
+    whole image, a thin rectangular dossier frame with one solid colour role-stripe
+    down the side, neutral flat expression, the look of a cheap laminated badge photo
+    printed on a terminal, realistic adult facial proportions, strictly NOT anime,
+    NOT Ghibli, NOT big-eyed, NOT stylised cartoon (do NOT render any legible text,
+    numbers or letters -- suggest a printed header bar as an abstract band only)
+themes:
+  base_corporate:
+    style_overrides:
+    - global_icon_base
+    - surface_tarkov
+    color_bias: heavily desaturated teal and olive tones with muted slate grey, a
+      single warm amber CRT/monitor glow as the only saturated accent, deep shadow,
+      low overall saturation, absolutely no cyan and no electric blue
+  pole_a_painterly:
+    style_overrides:
+    - portrait_common
+    - pole_a_painterly
+    color_bias: heavily desaturated teal and olive palette with muted slate grey,
+      a single warm amber rim/key light as the only saturated accent, dark graded
+      background, low overall saturation, no cyan, no electric blue
+  pole_b_crt_dossier:
+    style_overrides:
+    - portrait_common
+    - pole_b_crt_dossier
+    color_bias: heavily desaturated teal and olive with a warm amber CRT phosphor
+      tint over everything, muted slate grey, one solid role-stripe accent, low saturation,
+      grainy print, no cyan, no electric blue
+assets:
+- id: team_building_r3
+  category: actions_management
+  display_name: Team Building (r3)
+  status: generated
+  theme: base_corporate
+  reroll_of: team_building v2
+  reroll_note: transparency doubt -- render opaque with clean solid ground, no cut-out
+    edging
+  prompt_tail: three simple stylised human silhouettes standing close together as
+    a small team, the central figure with arms raised in a modest celebratory gesture,
+    a soft warm amber halo binding the group, standing on a compact metal plate, a
+    fully solid dark teal-olive gradient background with a soft vignette (NO transparency,
+    NO cut-out alpha edges), clean crisp anti-aliased silhouette edges, no room, no
+    props
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:23:36.816885+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6e5f8a6c7fa9
+    file_path: art_generated\round3_rerolls\v1\team_building_r3_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T21:23:53.583052+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6e5f8a6c7fa9
+    file_path: art_generated\round3_rerolls\v1\team_building_r3_v2_1024.png
+    cost_usd: 0.06
+- id: network_r3
+  category: actions_publicity
+  display_name: Networking (r3)
+  status: generated
+  theme: base_corporate
+  reroll_of: network v1
+  reroll_note: one human hand and one robot hand
+  prompt_tail: two stylised hands meeting in a firm handshake seen from a slight angle,
+    ONE natural human hand clasping ONE sleek segmented robotic mechanical hand, thick
+    chunky forms, a faint warm amber glow at the point of contact, resting on a compact
+    worn-metal plate, solid dark teal-olive gradient background with a soft vignette,
+    no faces, no room
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:24:09.195653+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 38242817e30d
+    file_path: art_generated\round3_rerolls\v1\network_r3_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T21:24:27.975424+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 38242817e30d
+    file_path: art_generated\round3_rerolls\v1\network_r3_v2_1024.png
+    cost_usd: 0.06
+- id: acquire_startup_r3
+  category: actions_strategic
+  display_name: Acquire AI Startup (r3)
+  status: generated
+  theme: base_corporate
+  reroll_of: acquire_startup v1
+  reroll_note: fix the weird angle -- read clearly as one building absorbing the other
+  prompt_tail: a clear readable three-quarter view of a large office building clearly
+    absorbing and merging a smaller office building beside it, one unambiguous bold
+    curved arrow wrapping the small building into the large one, chunky stylised shapes,
+    a single warm amber accent light on the larger building, avoid any confusing or
+    ambiguous perspective, solid dark teal-olive gradient background with a soft vignette,
+    no text
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:24:44.076642+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 471fc955a387
+    file_path: art_generated\round3_rerolls\v1\acquire_startup_r3_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T21:25:16.622816+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 471fc955a387
+    file_path: art_generated\round3_rerolls\v1\acquire_startup_r3_v2_1024.png
+    cost_usd: 0.06
+- id: sabotage_competitor_r3
+  category: actions_strategic
+  display_name: Corporate Espionage (r3)
+  status: generated
+  theme: base_corporate
+  reroll_of: sabotage_competitor v2
+  reroll_note: transparency was failing -- render opaque
+  prompt_tail: a single hooded shadowy figure in profile, hunched and secretive, a
+    document or data-shard held close, rendered almost entirely in dark teal-olive
+    shadow with one soured amber-red accent glinting off the figure, standing on a
+    metal plate, a fully solid near-black gradient background with a soft vignette
+    (NO transparency), ominous, no face detail, no text
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:25:31.698722+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 506c03e5bf4c
+    file_path: art_generated\round3_rerolls\v1\sabotage_competitor_r3_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T21:25:50.326385+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 506c03e5bf4c
+    file_path: art_generated\round3_rerolls\v1\sabotage_competitor_r3_v2_1024.png
+    cost_usd: 0.06
+- id: lobby_government_r3
+  category: actions_publicity
+  display_name: Lobby Government (r3)
+  status: generated
+  theme: base_corporate
+  reroll_of: lobby_government v1/v2
+  reroll_note: coherent interior lights; briefcase a distinct in-palette teal to stand
+    out
+  prompt_tail: a simple classical capitol building with a domed roof and columns,
+    its interior and window lights coherent and consistent (a single even warm amber
+    wash from within, NOT scattered mismatched lights), a lobbyist briefcase sitting
+    on the steps in the foreground rendered in a distinct teal colour (about hex 1EC3B3)
+    so it clearly stands out against the amber-lit dome, chunky stylised architecture,
+    solid dark teal-olive gradient background with a soft vignette, no flag detail,
+    no text
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:26:24.411777+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4068ca61c1fd
+    file_path: art_generated\round3_rerolls\v1\lobby_government_r3_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T21:26:42.535444+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 4068ca61c1fd
+    file_path: art_generated\round3_rerolls\v1\lobby_government_r3_v2_1024.png
+    cost_usd: 0.06
+- id: open_source_release_r3
+  category: actions_publicity
+  display_name: Open Source Tools (r3)
+  status: generated
+  theme: base_corporate
+  reroll_of: open_source_release v2
+  reroll_note: different in-palette colour scheme -- healthy-software green accent
+  prompt_tail: an open book or open folder lying flat, three or four branching arrows
+    radiating upward and outward from its pages to signify free distribution, chunky
+    stylised forms, a cool healthy green glow (about hex 3F8A5C, signalling software
+    working correctly) rising from the open pages instead of amber, resting on a metal
+    plate, solid dark slate-grey gradient background with a soft vignette, no text
+    on the pages
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:27:04.460300+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 2317da543614
+    file_path: art_generated\round3_rerolls\v1\open_source_release_r3_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T21:27:20.405058+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 2317da543614
+    file_path: art_generated\round3_rerolls\v1\open_source_release_r3_v2_1024.png
+    cost_usd: 0.06
+- id: take_loan_r3
+  category: actions_funding
+  display_name: Business Loan (r3)
+  status: generated
+  theme: base_corporate
+  reroll_of: take_loan v2
+  reroll_note: more colour, less monochrome
+  prompt_tail: a plump money bag wrapped around by a heavy iron chain with a closed
+    padlock, the chain biting into the bag, chunky stylised forms, richer colour than
+    a monochrome icon -- a warm amber highlight (about hex F6A800) catching the padlock
+    and a subtle cool teal rim light along the chain, resting on a metal plate, solid
+    dark teal-olive gradient background with a soft vignette, no currency symbols,
+    no text
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:27:53.843895+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9b36c83f7ae2
+    file_path: art_generated\round3_rerolls\v1\take_loan_r3_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T21:28:28.070144+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9b36c83f7ae2
+    file_path: art_generated\round3_rerolls\v1\take_loan_r3_v2_1024.png
+    cost_usd: 0.06
+- id: grant_proposal_r3
+  category: actions_funding
+  display_name: Write Grant Proposal (r3)
+  status: generated
+  theme: base_corporate
+  reroll_of: grant_proposal v1
+  reroll_note: unsquish the scroll; add colour; funding-category warm palette
+  prompt_tail: a single well-proportioned upright rolled proposal document (NOT squished,
+    NOT flattened, correct natural scroll proportions) with a large official wax seal
+    and ribbon at its base, the wax seal in a warm amber-red (about hex E24A3B), a
+    warm amber glow (about hex F6A800) catching the seal, richer warm colour overall
+    suited to the funding category, resting on a worn-metal plate, solid dark teal-olive
+    gradient background with a soft vignette, no legible writing on the document
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:29:02.328886+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 70741e986f5d
+    file_path: art_generated\round3_rerolls\v1\grant_proposal_r3_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T21:29:31.901557+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 70741e986f5d
+    file_path: art_generated\round3_rerolls\v1\grant_proposal_r3_v2_1024.png
+    cost_usd: 0.06
+- id: painterly_capabilities_optimist_a
+  category: portrait_pilot
+  display_name: Capabilities Optimist (painterly, r3-a)
+  status: generated
+  theme: pole_a_painterly
+  reroll_note: less american teeth (natural teeth, no ultra-white veneers); less bright
+    (restrained key light)
+  prompt_tail: a Latino man in his mid-thirties, a scaling-efficiency researcher radiating
+    genuine optimism, a warm confident closed-lip or lightly parted natural smile
+    with ordinary natural teeth (absolutely NOT perfect ultra-white veneers), calm
+    bright eyes, a casual startup vest over a plain tee; deliberately restrained low-key
+    cinematic key light, NOT bright and NOT blown-out, deeper shadow and lower overall
+    exposure
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:41:26.088267+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 79b2eb4fbafb
+    file_path: art_generated\round3_rerolls\v1\painterly_capabilities_optimist_a_1024.png
+    cost_usd: 0.06
+- id: painterly_capabilities_optimist_b
+  category: portrait_pilot
+  display_name: Capabilities Optimist (painterly, r3-b)
+  status: generated
+  theme: pole_a_painterly
+  reroll_note: less american teeth; less bright; ethnicity/gender variant
+  prompt_tail: an East Asian woman in her mid-thirties, a scaling-efficiency researcher
+    radiating genuine optimism, a warm confident natural smile with ordinary natural
+    teeth (absolutely NOT perfect ultra-white veneers), calm bright eyes, a casual
+    startup vest over a plain tee; deliberately restrained low-key cinematic key light,
+    NOT bright and NOT blown-out, deeper shadow and lower overall exposure
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:41:57.759540+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 32504ae46db3
+    file_path: art_generated\round3_rerolls\v1\painterly_capabilities_optimist_b_1024.png
+    cost_usd: 0.06
+- id: painterly_fresh_grad_a
+  category: portrait_pilot
+  display_name: Fresh-Grad (painterly, r3-a)
+  status: generated
+  theme: pole_a_painterly
+  reroll_note: age up to a graduated undergrad (early-mid twenties, not a teenager);
+    less shiny-white and less cartoony
+  prompt_tail: a South Asian woman in her early-to-mid twenties, a recently graduated
+    undergraduate on her first research job -- clearly an adult in her early twenties,
+    NOT a teenager and NOT a child; a hopeful earnest expression, a brand-new stiff
+    lanyard worn proudly, neat posture; natural matte skin (NOT shiny, NOT glossy,
+    NOT bleached white), restrained cinematic key light
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:42:15.859249+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 83c6f27fda35
+    file_path: art_generated\round3_rerolls\v1\painterly_fresh_grad_a_1024.png
+    cost_usd: 0.06
+- id: painterly_fresh_grad_b
+  category: portrait_pilot
+  display_name: Fresh-Grad (painterly, r3-b)
+  status: generated
+  theme: pole_a_painterly
+  reroll_note: age up to a graduated undergrad; less shiny/cartoony; ethnicity/gender
+    variant
+  prompt_tail: a Black man in his early-to-mid twenties, a recently graduated undergraduate
+    on his first research job -- clearly an adult in his early twenties, NOT a teenager
+    and NOT a child; a hopeful earnest expression, a brand-new stiff lanyard worn
+    proudly, neat posture; natural matte skin (NOT shiny, NOT glossy), restrained
+    cinematic key light
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:42:32.006289+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 610e7e2ce42d
+    file_path: art_generated\round3_rerolls\v1\painterly_fresh_grad_b_1024.png
+    cost_usd: 0.06
+- id: dossier_people_pleaser_a
+  category: portrait_pilot
+  display_name: People-Pleaser (dossier, r3-a)
+  status: generated
+  theme: pole_b_crt_dossier
+  reroll_note: v1 read too desaturated -- lift saturation a little
+  prompt_tail: a Middle Eastern man in his thirties, an interpretability researcher
+    who desperately wants to be liked, an anxious eager-to-please half smile and slightly
+    pleading eyes; the flat CRT personnel-dossier look but with slightly richer, less
+    washed-out colour (a touch more saturation than a bleached badge photo, still
+    muted and grainy), the role-stripe in a solid warm amber
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:42:47.734419+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: d8545b97a017
+    file_path: art_generated\round3_rerolls\v1\dossier_people_pleaser_a_1024.png
+    cost_usd: 0.06
+- id: dossier_people_pleaser_b
+  category: portrait_pilot
+  display_name: People-Pleaser (dossier, r3-b)
+  status: generated
+  theme: pole_b_crt_dossier
+  reroll_note: lift saturation; ethnicity/gender variant
+  prompt_tail: a White woman in her forties, an interpretability researcher who desperately
+    wants to be liked, an anxious eager-to-please half smile and slightly pleading
+    eyes; the flat CRT personnel-dossier look but with slightly richer, less washed-out
+    colour (a touch more saturation than a bleached badge photo, still muted and grainy),
+    the role-stripe in a solid warm amber
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:43:05.789867+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 71fe57ce6f8e
+    file_path: art_generated\round3_rerolls\v1\dossier_people_pleaser_b_1024.png
+    cost_usd: 0.06
+- id: dossier_capabilities_optimist_a
+  category: portrait_pilot
+  display_name: Capabilities Optimist (dossier, r3-a)
+  status: generated
+  theme: pole_b_crt_dossier
+  reroll_note: v1 smile was off -- give a believable natural smile
+  prompt_tail: a Black woman in her thirties, a scaling-efficiency researcher with
+    a confident charismatic but believable natural relaxed smile (a well-formed genuine
+    smile, NOT a stiff, forced or distorted grin), bright eyes, a casual startup vest
+    over a plain tee; flat CRT dossier look, the role-stripe in a solid warm amber
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:43:36.707519+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 1dfc2e8202a5
+    file_path: art_generated\round3_rerolls\v1\dossier_capabilities_optimist_a_1024.png
+    cost_usd: 0.06
+- id: dossier_capabilities_optimist_b
+  category: portrait_pilot
+  display_name: Capabilities Optimist (dossier, r3-b)
+  status: generated
+  theme: pole_b_crt_dossier
+  reroll_note: fix smile; ethnicity/gender variant
+  prompt_tail: a White man in his thirties, a scaling-efficiency researcher with a
+    confident charismatic but believable natural relaxed smile (a well-formed genuine
+    smile, NOT a stiff, forced or distorted grin), bright eyes, a casual startup vest
+    over a plain tee; flat CRT dossier look, the role-stripe in a solid warm amber
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:43:54.631682+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: edeb76c33736
+    file_path: art_generated\round3_rerolls\v1\dossier_capabilities_optimist_b_1024.png
+    cost_usd: 0.06
+- id: dossier_fresh_grad_a
+  category: portrait_pilot
+  display_name: Fresh-Grad (dossier, r3-a)
+  status: generated
+  theme: pole_b_crt_dossier
+  reroll_note: too ghibli/anime -- strictly realistic; graduated undergrad age
+  prompt_tail: a Southeast Asian woman in her early-to-mid twenties, a recently graduated
+    undergraduate on her first job -- clearly an adult in her early twenties, NOT
+    a teenager and NOT a child; a bright hopeful expression, a brand-new stiff lanyard
+    worn proudly, the role-stripe in a pale mint teal; strictly the flat printed ID-photo
+    dossier look with realistic adult facial proportions, deadpan, absolutely NOT
+    anime, NOT Ghibli, NOT big-eyed, NOT a stylised cartoon
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:44:25.877044+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 473f687bfeb5
+    file_path: art_generated\round3_rerolls\v1\dossier_fresh_grad_a_1024.png
+    cost_usd: 0.06
+- id: dossier_fresh_grad_b
+  category: portrait_pilot
+  display_name: Fresh-Grad (dossier, r3-b)
+  status: generated
+  theme: pole_b_crt_dossier
+  reroll_note: too anime -- strictly realistic; graduated undergrad age; ethnicity/gender
+    variant
+  prompt_tail: a mixed-race man in his early-to-mid twenties, a recently graduated
+    undergraduate on his first job -- clearly an adult in his early twenties, NOT
+    a teenager and NOT a child; a bright hopeful expression, a brand-new stiff lanyard
+    worn proudly, the role-stripe in a pale mint teal; strictly the flat printed ID-photo
+    dossier look with realistic adult facial proportions, deadpan, absolutely NOT
+    anime, NOT Ghibli, NOT big-eyed, NOT a stylised cartoon
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T21:44:44.517289+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 3cfecd8f0f69
+    file_path: art_generated\round3_rerolls\v1\dossier_fresh_grad_b_1024.png
+    cost_usd: 0.06
