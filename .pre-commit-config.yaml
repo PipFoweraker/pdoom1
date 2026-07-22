@@ -48,11 +48,14 @@ repos:
   - repo: local
     hooks:
       - id: enforce-standards
-        name: Enforce Project Standards
-        entry: python scripts/enforce_standards.py
+        name: Enforce Project Standards (incremental)
+        entry: python scripts/enforce_standards.py --incremental
         language: system
-        args: ['--pre-commit']
-        pass_filenames: false
+        files: '\.(py|md|txt|json|ya?ml|toml|cfg|ini|sh)$'
+        pass_filenames: true
+        # Fast, changed-files-only ASCII + syntax check. The exhaustive whole-tree scan
+        # (enforce_standards.py --check-all) runs in CI (quality-checks.yml), not on every
+        # local commit -- see docs discussion of the fast-local / thorough-CI split.
 
       - id: no-emoji
         name: No emoji / ASCII enforcement (godot tree, issue #744)

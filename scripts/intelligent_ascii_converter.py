@@ -518,9 +518,19 @@ class IntelligentASCIIConverter:
         # Exclude certain directories (kept for backwards compatibility, but .asciiignore is preferred)
         exclude_dirs = {".git", "__pycache__", ".venv", "venv", "node_modules", ".pytest_cache"}
 
+        # SELF-EXEMPT: files whose non-ASCII is DATA, not prose -- the ASCII tooling's own
+        # Unicode->ASCII mapping tables. Converting them corrupts their string literals
+        # (this once broke generate_dq_index.py's mapping and its Python syntax with it).
+        self_exempt_names = {"generate_dq_index.py", "intelligent_ascii_converter.py"}
+
         for file_path in files_to_process:
             # Skip files in excluded directories (old method)
             if any(excluded in file_path.parts for excluded in exclude_dirs):
+                continue
+
+            # Never rewrite the ASCII tooling's own mapping-table files (see above).
+            if file_path.name in self_exempt_names:
+                self.logger.debug(f"Skipping self-exempt tooling file: {file_path}")
                 continue
 
             # Skip files matching ignore patterns (new method)

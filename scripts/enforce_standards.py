@@ -257,6 +257,56 @@ class StandardsEnforcer:
         self.print_summary()
         return success
 
+    def check_files_incremental(self, files: List[str]) -> bool:
+        """Fast pre-commit path: ASCII + Python-syntax checks on ONLY the given files.
+
+        This is what the pre-commit hook runs (pass_filenames: true), so a local commit
+        never walks the whole tree. The old --pre-commit path rglob'd every file in the
+        repo and took >10 min (it also false-failed when unconverted WIP was stashed
+        mid-hook). The exhaustive whole-tree scan stays in --check-all, which CI runs
+        (quality-checks.yml). Same fast-local / thorough-CI split as tools/check_scene_nav.py.
+        """
+        import ast
+
+        text_exts = {".py", ".md", ".txt", ".json", ".yaml", ".yml", ".toml", ".cfg", ".ini", ".sh"}
+        # Files whose non-ASCII is DATA, not a violation: the ASCII tooling's own mapping
+        # tables. Converting/flagging these corrupts them (it broke generate_dq_index.py once).
+        exempt_names = {
+            "generate_dq_index.py",
+            "intelligent_ascii_converter.py",
+            "enforce_standards.py",
+        }
+        checked = 0
+        ok = True
+        for f in files:
+            p = Path(f)
+            rel = f.replace("\\", "/")
+            if not p.exists() or p.is_dir() or p.suffix not in text_exts:
+                continue
+            checked += 1
+            try:
+                content = p.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError):
+                continue
+            if p.name not in exempt_names:
+                for lineno, line in enumerate(content.splitlines(), 1):
+                    bad = next((ch for ch in line if ord(ch) > 127), None)
+                    if bad is not None:
+                        self.errors.append("%s:%d non-ASCII %r" % (rel, lineno, bad))
+                        ok = False
+                        break
+            if p.suffix == ".py":
+                try:
+                    ast.parse(content, filename=rel)
+                except SyntaxError as e:
+                    self.errors.append("%s:%d - %s" % (rel, e.lineno, e.msg))
+                    ok = False
+        if ok:
+            print("[SUCCESS] Incremental standards check passed (%d files)" % checked)
+        else:
+            self.print_summary()
+        return ok
+
     def pre_deploy_check(self) -> bool:
         """Comprehensive checks before deployment."""
         print("[CHECK] Pre-deployment Standards Check")
@@ -493,12 +543,20 @@ def main():
     parser.add_argument("--check-all", action="store_true", help="Run all standard checks")
     parser.add_argument("--pre-commit", action="store_true", help="Run pre-commit checks")
     parser.add_argument("--pre-deploy", action="store_true", help="Run pre-deployment checks")
+    parser.add_argument(
+        "--incremental",
+        action="store_true",
+        help="Fast ASCII + syntax check of ONLY the given files (pre-commit path)",
+    )
+    parser.add_argument("files", nargs="*", help="Files to check in --incremental mode")
 
     args = parser.parse_args()
 
     enforcer = StandardsEnforcer()
 
-    if args.pre_commit:
+    if args.incremental:
+        success = enforcer.check_files_incremental(args.files)
+    elif args.pre_commit:
         success = enforcer.pre_commit_check()
     elif args.pre_deploy:
         success = enforcer.pre_deploy_check()
