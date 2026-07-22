@@ -33,6 +33,12 @@ var colorblind_mode: bool = false  # Adds patterns/symbols alongside colors
 # it. Display-only -- the underlying log content and simulation are unchanged.
 var show_rivals_feed: bool = true
 
+# Onboarding gameplay hints (issue #720). Master switch for in-play help surfaces
+# (the getting-started hint, the first-launch welcome overlay, and any future hint
+# surface). Default ON; players who find hints noisy can flip it off. View-only --
+# never touches game state, RNG, turn order, or scoring.
+var show_hints: bool = true
+
 # A/B UI layout switch (UI_PROPOSALS_2026-07-22 section 4). Scaffolding for Pip's
 # in-game iteration: "classic" = today's PLAN/WATCH arrangement (pixel-identical);
 # "proposed" = the P6/P9/P10/P11 assembly (constrained cat, grouped action submenus,
@@ -58,6 +64,12 @@ var pending_load_path: String = ""
 
 # Version tracking for What's New feature
 var last_seen_version: String = ""  # Empty = never seen patch notes
+
+# First-launch welcome overlay show-once gate (issue #720). Reuses the
+# last_seen_version show-once shape: once the welcome/help overlay has been shown
+# it is marked seen and PERSISTED, so it never re-appears on later launches -- even
+# if the player quits before finishing a game (which would leave games_played at 0).
+var welcome_seen: bool = false
 # Single source of truth for the game version is version.txt at the repo root.
 # This const is the runtime copy: it is STAMPED from version.txt by
 # tools/sync_version.py (metadata overrides hard values). Do not hand-edit --
@@ -119,6 +131,10 @@ func save_config() -> void:
 	# Interface section
 	config.set_value("interface", "show_rivals_feed", show_rivals_feed)
 	config.set_value("interface", "ui_layout", ui_layout)
+	config.set_value("interface", "show_hints", show_hints)
+
+	# Onboarding section (issue #720)
+	config.set_value("onboarding", "welcome_seen", welcome_seen)
 
 	# Leaderboard section
 	config.set_value("leaderboard", "submit_scores_global", submit_scores_global)
@@ -171,6 +187,10 @@ func load_config() -> void:
 	ui_layout = config.get_value("interface", "ui_layout", ui_layout)
 	if not UI_LAYOUTS.has(ui_layout):
 		ui_layout = "classic"  # guard against a stale/garbage persisted value
+	show_hints = config.get_value("interface", "show_hints", show_hints)
+
+	# Load onboarding settings (issue #720)
+	welcome_seen = config.get_value("onboarding", "welcome_seen", welcome_seen)
 
 	# Load leaderboard settings
 	submit_scores_global = config.get_value("leaderboard", "submit_scores_global", submit_scores_global)
@@ -242,6 +262,8 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			apply_graphics_settings()
 		"colorblind_mode":
 			colorblind_mode = value
+		"show_hints":
+			show_hints = value
 		"submit_scores_global":
 			submit_scores_global = value
 		"ui_layout":
@@ -398,6 +420,21 @@ func mark_patch_notes_seen() -> void:
 ## Get the current game version
 func get_current_version() -> String:
 	return CURRENT_VERSION
+
+## Should the first-launch welcome/help overlay be shown? (issue #720)
+## True only on a genuine first launch (no games played yet), when it has never
+## been shown before, and while gameplay hints are enabled. The welcome_seen gate
+## makes this show-once even if the player quits before finishing a game.
+func should_show_welcome() -> bool:
+	return show_hints and games_played == 0 and not welcome_seen
+
+## Mark the welcome overlay as shown so it never re-appears (issue #720).
+func mark_welcome_seen() -> void:
+	if welcome_seen:
+		return
+	welcome_seen = true
+	save_config()
+	print("[GameConfig] Welcome overlay marked as seen")
 
 ## Debug print current configuration
 func print_config() -> void:

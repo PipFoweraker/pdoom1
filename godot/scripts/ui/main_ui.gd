@@ -942,9 +942,10 @@ func _on_game_state_updated(state: Dictionary):
 		# Show cat if adopted, hide if not
 		office_cat.visible = state.get("has_cat", false)
 
-	# Hide getting started hint after turn 3 (new player onboarding)
+	# Hide getting started hint after turn 3 (new player onboarding).
+	# Gated on GameConfig.show_hints (issue #720) so the hints toggle suppresses it.
 	if getting_started_hint:
-		getting_started_hint.visible = state.get("turn", 0) < 3
+		getting_started_hint.visible = GameConfig.show_hints and state.get("turn", 0) < 3
 
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:
