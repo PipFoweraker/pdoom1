@@ -467,6 +467,16 @@ more interesting."*
   (UI_PASS_NOTES_2026-07-20.md) + #707 consistency sweep + DQ-14 (progression
   display). Locate the original wireframes and diff intent vs built before the next
   UI lane.
+- **POSITIONING RULED (Pip 2026-07-22, via grant-framing review):** the player is NOT
+  running a frontier lab -- they run an ORGANISATION whose driving motive is reducing
+  p(Doom). Frontier-model building is a TEMPTATION (and a possible expansion via the
+  business/development side), not the premise: capabilities-enhancing research is part
+  of the two-edged sword that AI-safety research really represents. The mechanics
+  already agree (player slice in frontier_capability; "your own frontier outran your
+  absorption" death line, #725; DQ-31 tags support an org that MAY acquire the
+  frontier tag mid-run). COPY CORRECTIONS OWED: docs/ARCHITECTURE.md section 1 says
+  "You run a frontier AI lab" -- wrong under this ruling; audit README/store/pitch
+  copy for the same claim. All grant/pitch materials use the organisation framing.
 - **L5 finance construction AUTHORIZED (Pip):** loans over months+, player optionality
   among offered instruments (interest-rate intuitions from ADR-0013), "orchestrate the
   construction… in parallel with the other finance ideas" — build lane L5 (#616)
