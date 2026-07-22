@@ -37,6 +37,9 @@ func _ready():
 	# Add the global-leaderboard opt-out under Gameplay (built in code, not the .tscn)
 	_add_global_leaderboard_toggle()
 
+	# Add the experimental A/B UI layout toggle under UI (built in code, not the .tscn)
+	_add_ui_layout_toggle()
+
 	# Connect theme dropdown
 	theme_dropdown.item_selected.connect(_on_theme_changed)
 
@@ -160,6 +163,34 @@ func _on_global_leaderboard_toggled(pressed: bool):
 	print("[SettingsMenu] Submit scores to global leaderboard: ", pressed)
 	GameConfig.set_setting("submit_scores_global", pressed, false)
 	NotificationManager.info("Global leaderboard submission " + ("enabled" if pressed else "disabled"))
+
+var ui_layout_checkbox: CheckButton = null
+
+func _add_ui_layout_toggle():
+	"""Append a 'Proposed UI layout (experimental)' toggle to the UI section. A/B scaffolding
+	(UI_PROPOSALS_2026-07-22): OFF = classic PLAN/WATCH; ON = the proposed grouped-hand + gantt +
+	reclaim assembly. Applies on the next game load; the in-game F9 hotkey flips it live."""
+	var ui_section = get_node_or_null("VBox/SettingsContainer/UISettings")
+	if ui_section == null:
+		return
+	var row = HBoxContainer.new()
+	var label = Label.new()
+	label.text = "Proposed UI layout (experimental)"
+	label.tooltip_text = "A/B test: proposed PLAN/WATCH (grouped actions, operations gantt, reclaimed space). Applies on next game load."
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	ui_layout_checkbox = CheckButton.new()
+	ui_layout_checkbox.button_pressed = (GameConfig.ui_layout == "proposed")
+	ui_layout_checkbox.toggled.connect(_on_ui_layout_toggled)
+	row.add_child(ui_layout_checkbox)
+	ui_section.add_child(row)
+
+func _on_ui_layout_toggled(pressed: bool):
+	"""Handle the proposed-UI-layout toggle."""
+	var layout = "proposed" if pressed else "classic"
+	print("[SettingsMenu] UI layout: ", layout)
+	GameConfig.set_setting("ui_layout", layout, false)
+	NotificationManager.info("Proposed UI layout " + ("enabled" if pressed else "disabled") + " (applies on next game load)")
 
 func _on_colorblind_toggled(pressed: bool):
 	"""Handle colorblind mode toggle"""

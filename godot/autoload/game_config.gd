@@ -33,6 +33,14 @@ var colorblind_mode: bool = false  # Adds patterns/symbols alongside colors
 # it. Display-only -- the underlying log content and simulation are unchanged.
 var show_rivals_feed: bool = true
 
+# A/B UI layout switch (UI_PROPOSALS_2026-07-22 section 4). Scaffolding for Pip's
+# in-game iteration: "classic" = today's PLAN/WATCH arrangement (pixel-identical);
+# "proposed" = the P6/P9/P10/P11 assembly (constrained cat, grouped action submenus,
+# committed-queue gantt, space reclaim). Container-reflow only -- never touches the sim.
+# The loser is deleted once Pip picks; this flag is not a permanent feature.
+var ui_layout: String = "classic"
+const UI_LAYOUTS := ["classic", "proposed"]
+
 # Leaderboard Settings
 # Opt-out for uploading scores to the global leaderboard (LeaderboardSync).
 # Default ON for alpha; players who flip it off keep local scores only.
@@ -110,6 +118,7 @@ func save_config() -> void:
 
 	# Interface section
 	config.set_value("interface", "show_rivals_feed", show_rivals_feed)
+	config.set_value("interface", "ui_layout", ui_layout)
 
 	# Leaderboard section
 	config.set_value("leaderboard", "submit_scores_global", submit_scores_global)
@@ -159,6 +168,9 @@ func load_config() -> void:
 
 	# Load interface settings
 	show_rivals_feed = config.get_value("interface", "show_rivals_feed", show_rivals_feed)
+	ui_layout = config.get_value("interface", "ui_layout", ui_layout)
+	if not UI_LAYOUTS.has(ui_layout):
+		ui_layout = "classic"  # guard against a stale/garbage persisted value
 
 	# Load leaderboard settings
 	submit_scores_global = config.get_value("leaderboard", "submit_scores_global", submit_scores_global)
@@ -232,6 +244,12 @@ func set_setting(key: String, value, save_immediately: bool = false) -> void:
 			colorblind_mode = value
 		"submit_scores_global":
 			submit_scores_global = value
+		"ui_layout":
+			# Reject unknown layout names so the UI never applies a garbage flag.
+			if not UI_LAYOUTS.has(value):
+				print("[GameConfig] WARNING: Unknown ui_layout: ", value)
+				return
+			ui_layout = value
 		"baseline_mode":
 			baseline_mode = value
 		_:
