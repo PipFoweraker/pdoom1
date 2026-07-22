@@ -12,6 +12,11 @@ extends Control
 func _ready():
 	print("[PauseMenu] Initializing...")
 	update_ui_from_game_config()
+	# DEPRECATED (v0.11.0): "Save Game" hidden alongside the welcome-screen "Load Game"
+	# (single-slot quicksave; see welcome_screen.gd). Dormant, not deleted.
+	var save_button := $Panel/VBox/ButtonContainer/SaveButton
+	if save_button:
+		save_button.visible = false
 	hide()  # Start hidden
 
 func update_ui_from_game_config():
@@ -65,7 +70,7 @@ func _on_main_menu_pressed():
 	print("[PauseMenu] Returning to main menu...")
 	GameConfig.save_config()
 	get_tree().paused = false
-	get_tree().change_scene_to_file("res://scenes/welcome.tscn")
+	SceneTransition.go_to("res://scenes/welcome.tscn")
 
 func _on_quit_pressed():
 	"""Quit to desktop"""

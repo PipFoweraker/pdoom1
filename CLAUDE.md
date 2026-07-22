@@ -90,6 +90,28 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   editing data over hardcoding.
 - `godot/tests/` -- `unit/` (fast), `unit/simulation/` (slow), `integration/`.
 
+## Scene navigation -- ALWAYS through SceneTransition (MUST)
+Change scenes ONLY via the `SceneTransition` autoload:
+`SceneTransition.go_to("res://scenes/X.tscn")` / `SceneTransition.reload()`.
+NEVER call `get_tree().change_scene_to_file()` / `change_scene_to_packed()` /
+`reload_current_scene()` directly. Why: calling `change_scene_to_file()` from inside an
+`_input()`/`_gui_input()` handler segfaulted the RELEASE build (0xc0000005, before
+`_ready`) -- the v0.11.0 leaderboard crash. `SceneTransition` ALWAYS defers the swap, so it
+is safe from any context (input handlers, signals). Enforced by
+`tools/check_scene_nav.py` (pre-commit on changed `.gd`; CI full-tree scan); annotate a
+genuine one-off exception `# scene-nav-allow`. Full story: `docs/LEADERBOARD_CRASH_DIAGNOSIS.md`.
+
+## Version + builds
+- `version.txt` (root) is the version SSOT. After bumping, run
+  `python tools/sync_version.py` (stamps `game_config.gd` / `project.godot` /
+  `export_presets.cfg` / `welcome.tscn`). `sync_version.py --check` gates pre-commit + CI
+  (a silent drift forks the leaderboard board-key -- fatal).
+- Cut Windows builds with `python tools/build_release.py` -- it nukes `godot/.godot`
+  (defeats the stale-export-cache trap), auto-stamps the build via `write_build_stamp.py`
+  (no more "unstamped"), exports, and PROVES a unique freshness marker is in the `.pck`
+  before emitting. NEVER hand-run a raw `godot --export` (stale-cache risk; burned ~12
+  cycles in v0.11.0).
+
 ## CI is honest now (#640)
 Green CI means tests actually ran. Earlier the gate reported green while running
 ZERO tests (cold class cache -> GUT quit(0)); `run_godot_tests.py` now parses the

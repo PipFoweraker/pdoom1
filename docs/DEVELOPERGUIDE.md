@@ -13,7 +13,7 @@ note: This guide predates the pygame -> Godot migration. Only the Development Se
 > [!] **This guide is mid-revision.** P(Doom) migrated from pygame/Python to **Godot 4.5.1 / GDScript**.
 > The **Development Setup** section below is current. **The architecture and deep-dive sections
 > further down still describe the retired pygame build** (`src/`, `main.py`, `ui.py`,
-> `python -m unittest`) and should not be followed — they are queued for rewrite. Authoritative
+> `python -m unittest`) and should not be followed  --  they are queued for rewrite. Authoritative
 > sources today: [`CONTRIBUTING.md`](../CONTRIBUTING.md) (setup/workflow) and
 > [`docs/developer/ARCHITECTURE.md`](developer/ARCHITECTURE.md) (architecture).
 
@@ -52,9 +52,9 @@ For **installation and troubleshooting**, see the [README](../README.md).
 ## Development Setup
 
 ### Prerequisites
-- **Godot 4.5.1** (standard build, not .NET) — [download](https://godotengine.org/download)
+- **Godot 4.5.1** (standard build, not .NET)  --  [download](https://godotengine.org/download)
 - **Git**
-- **Python 3.11+** — for tooling/CI scripts only (optional); 3.11 is the baseline, see `pyproject.toml`
+- **Python 3.11+**  --  for tooling/CI scripts only (optional); 3.11 is the baseline, see `pyproject.toml`
 
 ### Getting Started
 ```sh
@@ -102,6 +102,55 @@ python scripts/ci_health_integration.py --gate-check
 - **ASCII Compliance**: Cross-platform compatible outputs for all automation systems
 
 For complete documentation, see [HEALTH_MONITORING_INFRASTRUCTURE.md](technical/HEALTH_MONITORING_INFRASTRUCTURE.md).
+
+---
+
+## Scene Navigation and Build Conventions (v0.11.0)
+
+> These two conventions are current and enforced. (Most sections further down
+> still describe the retired pygame build -- do not follow those.)
+
+### Scene navigation chokepoint (enforced)
+
+ALL scene navigation MUST go through the `SceneTransition` autoload:
+
+```gdscript
+SceneTransition.go_to("res://scenes/main.tscn")   # optional fade: go_to(path, true)
+SceneTransition.reload()                            # reload current scene
+```
+
+NEVER call `get_tree().change_scene_to_file()`, `change_scene_to_packed()`, or
+`reload_current_scene()` directly in any script. Calling those synchronously from
+inside an `_input()` / `_gui_input()` handler crashed the v0.11.0 RELEASE build
+(segfault 0xc0000005, before the new scene's `_ready`). `SceneTransition` always
+defers the actual swap onto a clean idle frame (via `call_deferred`), making that
+crash class structurally impossible from any call site. Full write-up:
+[`LEADERBOARD_CRASH_DIAGNOSIS.md`](LEADERBOARD_CRASH_DIAGNOSIS.md).
+
+- Implementation / only sanctioned caller of the raw engine API:
+  `godot/autoload/scene_transition.gd`.
+- Enforcement: `python tools/check_scene_nav.py` runs in pre-commit (changed
+  `.gd` files) and in CI (`.github/workflows/quality-checks.yml`, full-tree scan)
+  and fails the build on any direct call. Annotate a genuine one-off exception
+  with `# scene-nav-allow` on the line.
+
+### Version and build stamping
+
+- `version.txt` (repo root) is the SINGLE SOURCE OF TRUTH for the game version.
+  After bumping it, run `python tools/sync_version.py` to stamp it into the
+  derived copies (`game_config.gd` `CURRENT_VERSION`, `project.godot`,
+  `export_presets.cfg`, `welcome.tscn`).
+- `python tools/sync_version.py --check` writes nothing and exits 1 on drift; it
+  gates pre-commit AND CI. A silent version drift forks the leaderboard
+  board-key, so it is fatal.
+- `python tools/write_build_stamp.py` writes `godot/build_stamp.txt`
+  (commit/date/branch), which the in-game DEV BUILD overlay reads
+  (`build_info.gd`); a missing stamp shows "unstamped".
+- Cut Windows builds with `python tools/build_release.py` -- it nukes
+  `godot/.godot` to defeat the stale-export-cache trap, stamps the build,
+  exports, and PROVES a freshness marker is in the `.pck` before emitting. NEVER
+  hand-run a raw `godot --export` (stale-cache risk -- it burned ~12 cycles in
+  v0.11.0).
 
 ---
 

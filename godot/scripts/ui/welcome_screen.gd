@@ -37,7 +37,6 @@ func _ready():
 	# Collect all menu buttons in order
 	menu_buttons = [
 		launch_lab_button,
-		load_game_button,
 		custom_seed_button,
 		settings_button,
 		guide_button,
@@ -60,10 +59,15 @@ func _ready():
 	ai_safety_button.pressed.connect(_on_ai_safety_pressed)
 	exit_button.pressed.connect(_on_exit_pressed)
 
-	# L7 (#618): Load Game only makes sense when a quicksave exists.
-	load_game_button.disabled = not SaveLoad.has_save()
-	if load_game_button.disabled:
-		load_game_button.text = "Load Game (no save)"
+	# DEPRECATED (v0.11.0): the single-slot quicksave "Load Game" is HIDDEN pending a proper
+	# design -- a save picker + a "welcome back" context screen + a verification-safe resume.
+	# Save-scum as an INTENTIONAL mechanic ("Orb of Regret" / time-travel branching) is an
+	# open design question; the counter-argument is that one uninterruptible run per seed
+	# keeps the discovery base honest and unhurried. Node + handler (_on_load_game_pressed)
+	# and the pause-menu "Save Game" button are kept DORMANT (not deleted) for easy re-enable.
+	# Rationale + re-add checklist: docs/game-design/DEPRECATED_SAVE_LOAD.md.
+	load_game_button.visible = false
+	load_game_button.disabled = true
 
 	# Always-visible DEV BUILD corner badge (version + git stamp) so a playtester can
 	# confirm which build he's on right from the welcome/loading screen.
@@ -133,10 +137,7 @@ func _on_launch_lab_pressed():
 	GameConfig.config_mode = "default"
 	GameConfig.game_seed = ""  # Use weekly seed
 	GameConfig.difficulty = 1  # Standard difficulty
-	var err = get_tree().change_scene_to_file("res://scenes/config_confirmation.tscn")
-	if err != OK:
-		print("[WelcomeScreen] ERROR: Failed to load config confirmation scene, error code: ", err)
-		push_error("Failed to load config_confirmation.tscn")
+	SceneTransition.go_to("res://scenes/config_confirmation.tscn")
 
 func _on_load_game_pressed():
 	"""L7 (#618): resume the quicksave. MainUI's autostart consumes the flag."""
@@ -144,37 +145,28 @@ func _on_load_game_pressed():
 		return
 	print("[WelcomeScreen] Loading saved game...")
 	GameConfig.pending_load_path = SaveLoad.QUICKSAVE_PATH
-	var err = get_tree().change_scene_to_file("res://scenes/main.tscn")
-	if err != OK:
-		GameConfig.pending_load_path = ""
-		print("[WelcomeScreen] ERROR: Failed to load main scene, error code: ", err)
+	SceneTransition.go_to("res://scenes/main.tscn")
 
 func _on_custom_seed_pressed():
 	print("[WelcomeScreen] Opening pre-game setup...")
 	# Show pre-game setup dialog
-	var err = get_tree().change_scene_to_file("res://scenes/pregame_setup.tscn")
-	if err != OK:
-		print("[WelcomeScreen] ERROR: Failed to load pregame setup, error code: ", err)
+	SceneTransition.go_to("res://scenes/pregame_setup.tscn")
 
 func _on_settings_pressed():
 	print("[WelcomeScreen] Opening settings menu...")
-	var err = get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
-	if err != OK:
-		print("[WelcomeScreen] ERROR: Failed to load settings, error code: ", err)
+	SceneTransition.go_to("res://scenes/settings_menu.tscn")
 
 func _on_guide_pressed():
 	print("[WelcomeScreen] Opening player guide...")
-	var err = get_tree().change_scene_to_file("res://scenes/player_guide.tscn")
-	if err != OK:
-		print("[WelcomeScreen] ERROR: Failed to load guide, error code: ", err)
+	SceneTransition.go_to("res://scenes/player_guide.tscn")
 
 func _on_keybindings_pressed():
 	print("[WelcomeScreen] Opening keybindings...")
-	get_tree().change_scene_to_file("res://scenes/keybind_screen.tscn")
+	SceneTransition.go_to("res://scenes/keybind_screen.tscn")
 
 func _on_leaderboard_pressed():
 	print("[WelcomeScreen] Opening leaderboard...")
-	get_tree().change_scene_to_file("res://scenes/leaderboard_screen.tscn")
+	SceneTransition.go_to("res://scenes/leaderboard_screen.tscn")
 
 func _on_ai_safety_pressed():
 	print("[WelcomeScreen] Opening AI Safety Info...")

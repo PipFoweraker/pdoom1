@@ -203,6 +203,52 @@ Short and factual -- the open work this ship spawned:
   release build (same bg-texture pattern; batch risk), and -- if worthwhile -- pin whether
   the decode fault is a Godot codec edge-case or a misleading last-log-line (L2 caveat).
 
+### 6. RESOLUTION (2026-07-21) -- pass 5 was ALSO a mis-diagnosis; the real root cause
+
+Recorded here rather than by editing the passes above (the passes stay as the honest
+record of the hunt). **Pass 5's texture-decode conclusion was wrong too.** On a genuinely
+fresh release build, the crash **survived** the ColorRect swap (#728) -- and survived a
+build with the two suspect textures *physically removed from the pack*. The `.ctex` line
+was exactly the "last flushed log event before an unrelated crash" that L2 warned about.
+Two more wrong hypotheses followed (an orphaned baseline thread -- but the weekly-league
+seed used a precomputed baseline, so no thread ever started; and a dangling GUI
+`key_focus` -- disproven by a `gui_release_focus()` build that still crashed).
+
+**The actual root cause (pass 7, confirmed):** `game_over_screen.gd` called
+`change_scene_to_file()` **synchronously from inside its `_input()` handler** (ENTER key).
+That runs a full scene load + instantiate mid input-dispatch, which segfaulted the
+optimized engine deterministically (`0xc0000005`, faulting module `PDoom.exe`, offset
+`0x142be24`, before `_ready`). **Fix: `call_deferred("_continue_to_leaderboard")`** -- move
+the nav onto a clean idle frame. A verified-fresh release build reproduced the crash; the
+deferred build reached the leaderboard cleanly. Full write-up + the reusable method:
+`docs/LEADERBOARD_CRASH_DIAGNOSIS.md`.
+
+New lessons this resolution adds:
+
+**L5 -- Windows Event Viewer is the free backtrace substitute.** When Godot's crash handler
+prints nothing (hard `0xc0000005` outruns the logger) and no debugger is installed, the
+Windows Application log (Event ID 1000, `Get-WinEvent`) already holds the exception code +
+faulting module + offset for every crash produced -- no rerun. A **constant offset across
+independent builds** proves a deterministic native deref (engine), not a GDScript error.
+
+**L6 -- "last resource in `--verbose`" frames the WRONG layer when the fault is an ACTION,
+not an asset.** For four days the last-logged leaderboard `.scn`/`.gdc` load framed this as
+a leaderboard-scene bug. The load was innocent; the *act of loading from within input
+dispatch* was the fault. When a stub/minimal target crashes identically, stop blaming the
+target.
+
+**L7 -- Systemic, not a one-off.** The same "scene change from inside `_input`" pattern is
+latent in `config_confirmation`, `leaderboard_screen`, `settings_menu`, `welcome_screen`
+and others (see LEADERBOARD_CRASH_DIAGNOSIS.md section 6). Game-over just detonated first.
+Carried-forward action: defer all input-initiated navigation (or route it through a
+`SceneRouter` + a lint that bans direct `change_scene_to_file` from input handlers).
+
+**L8 -- `build_release.py` earned its keep.** Passes 5-7 were only trustworthy because each
+build was proven fresh (marker file in the `.pck`). The earlier stale-`.godot/exported`
+cache had silently packed old scenes and burned ~12 cycles; anchoring freshness on a
+resource FILENAME (GDScript packs as binary `.gdc`, so string literals do not survive as
+grep-able text) is what made "the fix is really in this build" checkable.
+
 ---
 
 <!-- Future ships: add "## Entry #2 -- <version> (<dates>)" below this line. Keep the

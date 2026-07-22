@@ -86,6 +86,20 @@ repos:
         files: 'docs/game-design/(WORKSHOP_2_BACKLOG|DQ_INDEX)\.md'
         pass_filenames: false
 
+      - id: scene-nav-check
+        name: Scene navigation routes through SceneTransition
+        entry: python tools/check_scene_nav.py
+        language: system
+        files: '\.gd$'
+        pass_filenames: true
+
+      - id: version-sync-check
+        name: version.txt synced to derived copies
+        entry: python tools/sync_version.py --check
+        language: system
+        files: '(version\.txt|godot/autoload/game_config\.gd|godot/project\.godot|godot/export_presets\.cfg|godot/scenes/welcome\.tscn)$'
+        pass_filenames: false
+
 # Configuration
 default_language_version:
   python: python3

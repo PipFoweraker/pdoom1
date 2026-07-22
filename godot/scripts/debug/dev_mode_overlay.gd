@@ -305,11 +305,11 @@ func _jump_employee() -> void:
 
 
 func _jump_leaderboard() -> void:
-	get_tree().change_scene_to_file("res://scenes/leaderboard_screen.tscn")
+	SceneTransition.go_to("res://scenes/leaderboard_screen.tscn")
 
 
 func _jump_settings() -> void:
-	get_tree().change_scene_to_file("res://scenes/settings_menu.tscn")
+	SceneTransition.go_to("res://scenes/settings_menu.tscn")
 
 
 func _jump_f3() -> void:

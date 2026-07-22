@@ -47,7 +47,7 @@ Select a test to run:
   5. seeds        - Test how different seeds create different experiences.
   6. Exit
 
-Enter choice (1-6): 
+Enter choice (1-6):
 ```
 
 ## Adding New Tests
@@ -93,7 +93,7 @@ The dev tool architecture supports:
 
 - **Performance Testing**: Add timing benchmarks
 - **Integration Testing**: Test multiple systems together
-- **Data Validation**: Test save/load functionality  
+- **Data Validation**: Test save/load functionality
 - **Configuration Testing**: Test different game configurations
 - **AI Testing**: Test opponent behavior
 - **UI Testing**: Test user interface components (programmatically)
@@ -106,3 +106,46 @@ The dev tool architecture supports:
 - **Debugging**: Isolate and test specific components
 - **CI/CD Integration**: Automated testing in continuous integration
 - **Documentation**: Living examples of how systems work
+
+---
+
+## Build, Version, and Convention Tools
+
+These live alongside `dev_tool.py` in `tools/`. The first three are also wired
+into pre-commit and CI, so a violation fails the build rather than slipping in.
+
+### `build_release.py`
+Cuts a Windows release build. It nukes `godot/.godot` to defeat the
+stale-export-cache trap, runs `write_build_stamp.py`, exports, and PROVES a
+freshness marker is in the `.pck` before emitting.
+
+- **Run it:** `python tools/build_release.py` for every Windows build. NEVER
+  hand-run a raw `godot --export` (stale-cache risk -- it burned ~12 cycles in
+  v0.11.0).
+
+### `check_scene_nav.py`
+Fails if any script calls `get_tree().change_scene_to_file()`,
+`change_scene_to_packed()`, or `reload_current_scene()` directly instead of
+going through the `SceneTransition` autoload. That deferral is what makes the
+v0.11.0 release-build scene-change segfault structurally impossible (see
+[`../docs/LEADERBOARD_CRASH_DIAGNOSIS.md`](../docs/LEADERBOARD_CRASH_DIAGNOSIS.md)).
+
+- **Run it:** `python tools/check_scene_nav.py`. Runs in pre-commit (changed
+  `.gd` files) and CI (full-tree scan). Annotate a genuine one-off exception with
+  `# scene-nav-allow` on the line.
+
+### `sync_version.py`
+Stamps `version.txt` (the repo-root SINGLE SOURCE OF TRUTH for the game version)
+into its derived copies: `game_config.gd` `CURRENT_VERSION`, `project.godot`,
+`export_presets.cfg`, and `welcome.tscn`.
+
+- **Run it:** `python tools/sync_version.py` after bumping `version.txt`. The
+  `--check` mode writes nothing and exits 1 on drift; it gates pre-commit AND CI
+  because a silent version drift forks the leaderboard board-key.
+
+### `write_build_stamp.py`
+Writes `godot/build_stamp.txt` (commit/date/branch), which the in-game DEV BUILD
+overlay reads via `build_info.gd`; a missing stamp shows "unstamped".
+
+- **Run it:** usually not by hand -- `build_release.py` runs it automatically
+  before every export so builds always carry a real stamp.
