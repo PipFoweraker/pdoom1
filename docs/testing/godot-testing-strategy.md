@@ -107,7 +107,7 @@ This document outlines the testing strategy for the Godot migration, analyzing t
 
 ## Godot Testing Approach
 
-### Option 1: GUT (Godot Unit Testing) Framework ⭐ RECOMMENDED
+### Option 1: GUT (Godot Unit Testing) Framework * RECOMMENDED
 
 **Pros:**
 - Native Godot integration

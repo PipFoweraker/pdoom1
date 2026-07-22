@@ -47,7 +47,7 @@ func _draw():
 	# Background circle
 	draw_arc(center, radius, 0, TAU, 64, COLOR_BACKGROUND, gauge_thickness, true)
 
-	# Doom arc — stroke variant so terminal tiers glow ember instead of vanishing (#512)
+	# Doom arc -- stroke variant so terminal tiers glow ember instead of vanishing (#512)
 	var doom_angle = (doom_value / 100.0) * TAU
 	var doom_color = ThemeManager.get_doom_stroke_color(doom_value)
 
@@ -112,7 +112,7 @@ func set_doom(value: float, momentum: float = 0.0):
 	doom_value = value
 	doom_momentum = momentum
 
-	# Enable/disable pulse animation — pulses from CATASTROPHIC (canonical band, L6;
+	# Enable/disable pulse animation -- pulses from CATASTROPHIC (canonical band, L6;
 	# same 80 boundary as the old hardcoded value)
 	var pulsing: bool = ThemeManager.get_doom_band_index(doom_value) >= 5
 	set_process(pulsing)
@@ -121,7 +121,7 @@ func set_doom(value: float, momentum: float = 0.0):
 
 func _draw_colorblind_pattern(center: Vector2, radius: float, doom: float):
 	"""Draw pattern indicators for colorblind accessibility.
-	Banded via ThemeManager's canonical doom bands (L6 unification — was a divergent
+	Banded via ThemeManager's canonical doom bands (L6 unification -- was a divergent
 	30/60/80 copy): NOMINAL/ELEVATED dots, HIGH/SEVERE triangles, EXTREME X marks,
 	CATASTROPHIC/TERMINAL exclamations."""
 	var pattern_radius = radius + gauge_thickness + 8

@@ -1,5 +1,5 @@
 extends GutTest
-## L1 (#612 / ADR-0009): day-tick playback within a month — auto-pause-on-window, the
+## L1 (#612 / ADR-0009): day-tick playback within a month -- auto-pause-on-window, the
 ## window demand budget, month-boundary plan reset, and a headless playable-loop smoke.
 
 func _state() -> GameState:
@@ -86,9 +86,9 @@ func test_month_boundary_opens_fresh_plan_phase():
 	s.turn = 40
 	var r := mc.advance_tick()
 	assert_true(r.month_opened, "crossing the calendar month opens a new plan phase")
-	assert_eq(s.month_plan.available(), 20, "fresh full Attention grant — reserve evaporated")
+	assert_eq(s.month_plan.available(), 20, "fresh full Attention grant -- reserve evaporated")
 	# The boundary tick is HELD OPEN as the plan phase (playable path: the next
-	# end_month() executes it — never auto-executed, or consequences would double-run).
+	# end_month() executes it -- never auto-executed, or consequences would double-run).
 	assert_eq(String(r.status), "month_open", "boundary tick reports the plan phase opening")
 	assert_true(mc.month_open_pending, "boundary tick held open for planning")
 	assert_eq(s.current_phase, GameState.TurnPhase.ACTION_SELECTION, "plan phase is open")
@@ -125,11 +125,11 @@ func test_resolve_window_by_ignore_option_maps_to_ignore():
 func test_failed_verb_leaves_window_open_and_resolvable():
 	# Regression (balance-sweep finding): the four-verb path popped the window BEFORE the
 	# resolver validated payment, so handle_reserve with an empty reserve silently dropped
-	# the window — no effect, no charge, no window. Latent in the v1 dialog (the option
+	# the window -- no effect, no charge, no window. Latent in the v1 dialog (the option
 	# path guards correctly) but fatal to the future plan-screen UI.
 	var s := _state()
 	var mc := MonthController.new(s, null)
-	s.month_plan.set_reserve(0)  # nothing held — handle_reserve must fail
+	s.month_plan.set_reserve(0)  # nothing held -- handle_reserve must fail
 	s.pending_events.assign([_window("underfunded")])
 	mc.advance_tick()
 	var res := mc.resolve_current_window("handle_reserve")  # window costs 1, reserve 0
@@ -164,7 +164,7 @@ func test_headless_playable_month_loop_runs():
 				tm.execute_turn()  # plan commit for a boundary that paused on a window
 			ticks += 1
 		elif String(r.status) == "month_open":
-			# Boundary tick held open for planning — commit an (empty) plan and play on,
+			# Boundary tick held open for planning -- commit an (empty) plan and play on,
 			# mirroring GameManager.end_month().
 			tm.execute_turn()
 			ticks += 1

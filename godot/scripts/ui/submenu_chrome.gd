@@ -1,6 +1,6 @@
 extends RefCounted
 class_name SubmenuChrome
-## Shared submenu dialog chrome — extracted from main_ui.gd (#622, build lane L10).
+## Shared submenu dialog chrome -- extracted from main_ui.gd (#622, build lane L10).
 ##
 ## The #510 polish set: solid panel styling, the clickable [X] + "[ESC] close" hint,
 ## alignment of a submenu to the action button that opened it, and the button lookup.
@@ -22,10 +22,12 @@ static func find_action_button(actions_list: Control, action_id: String) -> Butt
 static func style_panel(dialog: Control) -> void:
 	"""Near-opaque panel + border so submenus read as solid panels, not see-through
 	overlays on the action icons (playtest feedback: screen5)."""
+	# Palette-sourced (#743): deep-aubergine dread ground + dimmed cozy-amber frame,
+	# matching the menu_theme.tres modal register instead of the old gray-green tone.
 	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.13, 0.16, 0.97)
+	style.bg_color = Color(0.09, 0.04, 0.11, 0.97)
 	style.set_border_width_all(2)
-	style.border_color = Color(0.38, 0.46, 0.42, 1.0)
+	style.border_color = Color(0.91, 0.64, 0.24, 0.6)
 	style.set_corner_radius_all(6)
 	dialog.add_theme_stylebox_override("panel", style)
 
@@ -38,7 +40,7 @@ static func add_close_affordance(dialog: Control, on_close: Callable) -> void:
 		style_panel(dialog)
 
 	var close_btn := Button.new()
-	close_btn.text = "✕"
+	close_btn.text = "X"
 	close_btn.focus_mode = Control.FOCUS_NONE
 	close_btn.custom_minimum_size = Vector2(24, 24)
 	close_btn.size = Vector2(24, 24)

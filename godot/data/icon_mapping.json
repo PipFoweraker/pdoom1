@@ -92,6 +92,46 @@
       "icon": "res://assets/icons/actions_facilities/action_facility_emergency_shutdown_64.png",
       "status": "mapped",
       "note": "Submenu for strategic/high-stakes actions - uses emergency icon"
+    },
+    "operations": {
+      "icon": "res://assets/icons/actions_facilities/action_facility_expand_office_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused existing office icon until a dedicated one lands"
+    },
+    "travel": {
+      "icon": "res://assets/icons/actions_policies/action_policy_international_cooperation_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused international-cooperation icon for travel/conferences"
+    },
+    "financing": {
+      "icon": "res://assets/icons/main_navigation/ui_budget_finance_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused finance icon until a dedicated one lands"
+    },
+    "advertise": {
+      "icon": "res://assets/icons/main_navigation/ui_staff_management_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused staff-management icon until a dedicated one lands"
+    },
+    "use_connections": {
+      "icon": "res://assets/icons/actions/action_publicity_network_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused network icon for work-your-connections"
+    },
+    "interview_next": {
+      "icon": "res://assets/icons/employee_status/employee_status_investigating_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused investigating icon for interviewing a candidate"
+    },
+    "hire_best": {
+      "icon": "res://assets/icons/buttons_normal/button_hire_normal_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused hire button for make-an-offer"
+    },
+    "onboard_next": {
+      "icon": "res://assets/icons/employee_status/employee_status_training_64.png",
+      "status": "mapped",
+      "note": "#762 interim: reused training icon for onboarding new hires"
     }
   },
   "hiring": {

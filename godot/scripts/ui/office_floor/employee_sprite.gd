@@ -2,7 +2,7 @@ extends Node2D
 class_name OfficeEmployeeSprite
 ## One employee rendered on the OfficeFloor. PURE VIEW: it only draws and moves
 ## cosmetically. It never touches game state; its wander/behavior RNG is a private,
-## cosmetic RNG (NOT the seeded game RNG — ADR-0006).
+## cosmetic RNG (NOT the seeded game RNG -- ADR-0006).
 ##
 ## Tier 0: a colored blob + a hat, drawn with _draw() (OG-pdoom1 parity).
 ## Tier 1: an AnimatedSprite2D playing the FSM animation (idle/walking/working/
@@ -15,7 +15,7 @@ class_name OfficeEmployeeSprite
 ##               cooler) or to pat the cat, then returns; and occasionally walks
 ##               to a peer's desk to collaborate (started by OfficeFloor, which
 ##               knows who else is working) then returns. All still the "working"
-##               state — human flavor, never a state change and never a bonus.
+##               state -- human flavor, never a state change and never a bonus.
 ##   walking  -> "aimless" isn't just drift: picks drift / window-gaze (a long
 ##               stare out the window) / spin-on-the-spot, so disengagement reads.
 

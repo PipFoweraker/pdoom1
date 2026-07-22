@@ -131,9 +131,9 @@ func update_game_state():
 
 			var trend_str = ""
 			if trend > 0.5:
-				trend_str = " [color=red]↑[/color]"
+				trend_str = " [color=red]^[/color]"
 			elif trend < -0.5:
-				trend_str = " [color=green]↓[/color]"
+				trend_str = " [color=green]v[/color]"
 
 			lines.append("[color=%s]%s: %.1f[/color] (%d%% trigger)%s" % [
 				color,
@@ -233,7 +233,7 @@ func update_errors():
 		errors_list.add_child(label)
 		return
 
-	# Show error stats (plain text — these are Labels, which don't parse BBCode)
+	# Show error stats (plain text -- these are Labels, which don't parse BBCode)
 	var stats = ErrorHandler.get_error_stats()
 	var stats_label = Label.new()
 	stats_label.text = "Error Stats\nTotal: %d | Errors: %d | Warnings: %d" % [
@@ -248,10 +248,10 @@ func update_errors():
 	errors_list.add_child(separator)
 
 	# Show recent errors.
-	# #600: previously this rendered `error.to_string()` inside a `[color=…]` BBCode tag on a
+	# #600: previously this rendered `error.to_string()` inside a `[color=...]` BBCode tag on a
 	# plain Label. GameError (an inner class extending RefCounted) has no `_to_string()`, so
-	# `to_string()` returned "<RefCounted#…>", and the Label showed the BBCode literally — every
-	# entry read like "color white refcounted …" (the ~29-error spam a playtester reported).
+	# `to_string()` returned "<RefCounted#...>", and the Label showed the BBCode literally -- every
+	# entry read like "color white refcounted ..." (the ~29-error spam a playtester reported).
 	# Use the human-readable format_message() and set the font colour directly.
 	for error in recent_errors:
 		var error_label = Label.new()

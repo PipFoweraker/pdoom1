@@ -1,5 +1,5 @@
 extends GutTest
-## Unit tests for DoomBreakdown — the #578 colour-coded per-source doom "blow-by-blow".
+## Unit tests for DoomBreakdown -- the #578 colour-coded per-source doom "blow-by-blow".
 ## Covers the pure builder: per-source signed text, red/green classification, and
 ## omission of zero / negligible sources. On-screen layout still needs a human eye.
 

@@ -1,6 +1,6 @@
 extends Node
 class_name EmployeePanel
-## Employee roster + staff ID card — extracted from main_ui.gd (#622, build lane L10).
+## Employee roster + staff ID card -- extracted from main_ui.gd (#622, build lane L10).
 ##
 ## Renders the middle-panel roster (individual researchers, or legacy counts) and the
 ## full staff perks panel ("ID card") overlay. Grows into the L2 per-person assignment
@@ -8,7 +8,7 @@ class_name EmployeePanel
 ## dialog_opened/dialog_closed keep MainUI's active_dialog bookkeeping in sync;
 ## info_text_changed feeds the info bar on perk hover.
 
-## The staff ID card overlay went up — host should treat it as the active dialog.
+## The staff ID card overlay went up -- host should treat it as the active dialog.
 signal dialog_opened(dialog: Control)
 ## The staff ID card overlay was dismissed.
 signal dialog_closed
@@ -76,7 +76,7 @@ func _add_legacy_staff_display(safety: int, capability: int, compute_eng: int, m
 
 			# Color indicator
 			var indicator = Label.new()
-			indicator.text = "●"
+			indicator.text = "*"
 			indicator.add_theme_color_override("font_color", staff_type["color"])
 			indicator.add_theme_font_size_override("font_size", 12)
 			hbox.add_child(indicator)
@@ -123,7 +123,7 @@ func _create_researcher_button(data: Dictionary) -> Control:
 	# Specialisation Indicator
 	var spec = data.get("specialization", "safety")
 	var indicator := Label.new()
-	indicator.text = "●"
+	indicator.text = "*"
 	indicator.add_theme_color_override("font_color", spec_colors.get(spec, Color.WHITE))
 	hbox.add_child(indicator)
 
@@ -156,7 +156,7 @@ func _create_researcher_button(data: Dictionary) -> Control:
 	# Burnout warning if high
 	if burnout >= 60:
 		var burnout_icon = Label.new()
-		burnout_icon.text = "🔥"
+		burnout_icon.text = ""
 		#burnout_icon.add_theme_font_size_override("font_size", 8)
 		hbox.add_child(burnout_icon)
 
@@ -221,7 +221,7 @@ func show_staff_id_card(data: Dictionary) -> void:
 	perks_panel.perk_hovered.connect(func(perk_data):
 		var perk_name = perk_data.get("name", "Unknown")
 		var perk_desc = perk_data.get("description", "")
-		info_text_changed.emit("[b][color=cyan]%s[/color][/b] — %s\n[color=gray]Perk selection coming in future update[/color]" % [perk_name, perk_desc])
+		info_text_changed.emit("[b][color=cyan]%s[/color][/b] -- %s\n[color=gray]Perk selection coming in future update[/color]" % [perk_name, perk_desc])
 	)
 
 	perks_panel.perk_unhovered.connect(func():

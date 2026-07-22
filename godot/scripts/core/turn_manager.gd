@@ -25,7 +25,7 @@ func start_turn() -> Dictionary:
 	L0 (#620): split into named, movable step functions with NO behavior change.
 	L1 (ADR-0009) will redistribute these steps across plan/day-tick/review phases.
 	STEP ORDER IS LOAD-BEARING: it defines the deterministic RNG stream that
-	recorded replays re-simulate — reordering steps invalidates every replay.
+	recorded replays re-simulate -- reordering steps invalidates every replay.
 	"""
 	_step_begin_turn()
 	_step_apply_scheduled_causes()
@@ -59,14 +59,14 @@ func _step_begin_turn() -> void:
 func _step_apply_scheduled_causes() -> void:
 	"""WS-C (ADR-0005): apply any scheduled causes due this turn BEFORE events/rivals
 	react, so the authored cause (e.g. a rival funding wave) shapes this turn's
-	emergent outcome. Causes touch sim inputs only — never doom directly."""
+	emergent outcome. Causes touch sim inputs only -- never doom directly."""
 	SeedSchedule.apply_due_causes(state)
 
 func _step_ledger_tick_and_bill() -> Dictionary:
 	"""WS-1 (ADR-0003): the Liability Ledger bills AFTER scheduled causes, so an
 	exposure cause can land the same turn it fires. Compounding payables are the
 	mortality guarantee (ADR-0002): an un-serviced debt eventually bills more than
-	the player can cover, and the resulting bankruptcy escalation is the death —
+	the player can cover, and the resulting bankruptcy escalation is the death --
 	traceable to specific entries via the ledger's attribution trail.
 	Returns this turn's billed + newly-exposed entries for the EE-7 (ADR-0012)
 	loss-legibility message builder."""
@@ -100,7 +100,7 @@ func _step_process_researcher_lifecycles() -> void:
 func _step_pay_salaries(total_staff: int) -> float:
 	"""Staff maintenance costs - use actual salaries for individual researchers.
 	Salary cadence routes through Clock (L0 #620): annual/260 per workday-turn.
-	Was /12 — a full month billed every day, causing the turn-7 cash crash (#573).
+	Was /12 -- a full month billed every day, causing the turn-7 cash crash (#573).
 	Salary BASE magnitudes come from Balance ("salaries.*", L9 #621); the /260
 	workday divisor defers to L0's Clock. Magnitude tunable (workshop #2 / #574)."""
 	var staff_salaries = 0.0
@@ -164,7 +164,7 @@ func _step_researcher_productivity() -> Dictionary:
 		if is_managed and has_compute:
 			# Flat compute/researcher/turn (Balance "compute.per_researcher_per_turn",
 			# same value the Compute HUD tooltip shows). PARKED (#576 follow-up):
-			# "researchers request compute at different rates" — make this a
+			# "researchers request compute at different rates" -- make this a
 			# per-researcher rate (by specialization / skill) instead of a flat rate.
 			var compute_request = int(Balance.num("compute.per_researcher_per_turn", 1.0))
 			available_compute -= compute_request
@@ -220,7 +220,7 @@ func _step_researcher_productivity() -> Dictionary:
 		researcher_index += 1
 
 	# ADR-0015: researcher hazard is no longer a direct doom write. Capability work raises the
-	# PLAYER frontier and safety work raises safety_absorption + global_alarm — the DoomSystem
+	# PLAYER frontier and safety work raises safety_absorption + global_alarm -- the DoomSystem
 	# intermediary advance (_advance_intermediaries) reads the productive roster each tick and
 	# does that accounting as the overhang/alarm streams. The old add_resources({"doom": ...})
 	# writes here were silently clobbered (Finding A) AND double-counted that same influence;
@@ -286,7 +286,7 @@ func _step_consume_stationery() -> Dictionary:
 	var stationery_doom_penalty = 0.0
 	if state.stationery <= 0:
 		# Safety researchers can't document properly -> a mild hazard. ADR-0015: not a direct
-		# doom write (was clobbered/inert) — routed to global_panic (a documentation-failure
+		# doom write (was clobbered/inert) -- routed to global_panic (a documentation-failure
 		# incident the world reacts to). Kept in the return dict for the turn message.
 		stationery_doom_penalty = safety_count * 0.3
 		state.global_panic += stationery_doom_penalty * Balance.num("doom.streams.leak_panic_scale", 0.02)
@@ -306,7 +306,7 @@ func _step_consume_stationery() -> Dictionary:
 	}
 
 func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: float, prod: Dictionary, stationery: Dictionary, ledger_result: Dictionary) -> Array:
-	"""Assemble the turn-start message list. Pure reads — no sim mutation, no RNG."""
+	"""Assemble the turn-start message list. Pure reads -- no sim mutation, no RNG."""
 	var billed_entries: Array = ledger_result.get("billed", [])
 	var exposed_entries: Array = ledger_result.get("exposed", [])
 	var research_from_employees: float = prod["research_from_employees"]
@@ -328,11 +328,11 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 		"Action Points: %d (base 3 + %d from %d staff)" % [max_ap, max_ap - 3, total_staff]
 	]
 
-	# EE-7 (ADR-0012): the ledger's kill path must be LEGIBLE — every bill, its
+	# EE-7 (ADR-0012): the ledger's kill path must be LEGIBLE -- every bill, its
 	# fallout, and every exposure gets an explicit line with its resource deltas.
 	for e in billed_entries:
 		var amt_txt: String = GameConfig.format_money(e.principal) if e.currency == "money" else ("%.1f %s" % [e.principal, e.currency])
-		messages.append("Ledger bill due: '%s' — %s" % [e.source, amt_txt])
+		messages.append("Ledger bill due: '%s' -- %s" % [e.source, amt_txt])
 	for c in state.cause_log:
 		if int(c.turn) == state.turn and str(c.kind).begins_with("ledger"):
 			var fx: Dictionary = c.effects
@@ -350,18 +350,18 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 			if parts.size() > 0:
 				messages.append("WARNING: Ledger fallout ('%s'): %s" % [str(c.source), ", ".join(parts)])
 	for ex in exposed_entries:
-		messages.append("WARNING: Secret liability EXPOSED: '%s' — reputation/governance damage; a blackmail offer follows." % ex.source)
+		messages.append("WARNING: Secret liability EXPOSED: '%s' -- reputation/governance damage; a blackmail offer follows." % ex.source)
 
 	if staff_salaries > 0:
 		messages.append("Paid %s in staff salaries" % GameConfig.format_money(staff_salaries))
 
-		# Low-cash / bankruptcy warning (#573) — surface cash danger BEFORE a silent defeat
+		# Low-cash / bankruptcy warning (#573) -- surface cash danger BEFORE a silent defeat
 		var ledger_due_soon: float = 0.0
 		if state.ledger and state.ledger.soonest_fuse() >= 0 and state.ledger.soonest_fuse() <= 1:
 			ledger_due_soon = state.ledger.outstanding()
 		var next_turn_bills: float = staff_salaries + ledger_due_soon
 		if state.money < next_turn_bills:
-			messages.append("CRITICAL: Cash (%s) won't cover next turn's bills (%s) — bankruptcy imminent!" % [GameConfig.format_money(state.money), GameConfig.format_money(next_turn_bills)])
+			messages.append("CRITICAL: Cash (%s) won't cover next turn's bills (%s) -- bankruptcy imminent!" % [GameConfig.format_money(state.money), GameConfig.format_money(next_turn_bills)])
 			# EE-8: funding-starvation watermark on the ADR-0012 cascade. One-shot per
 			# starvation episode (flag resets on recovery). Recording only.
 			if not state.funding_starvation_noted:
@@ -371,7 +371,7 @@ func _build_start_turn_messages(max_ap: int, total_staff: int, staff_salaries: f
 		else:
 			state.funding_starvation_noted = false
 			if state.money < staff_salaries * 3.0:
-				messages.append("WARNING: Low cash — about %d turn(s) of payroll left (%s)." % [int(state.money / staff_salaries), GameConfig.format_money(state.money)])
+				messages.append("WARNING: Low cash -- about %d turn(s) of payroll left (%s)." % [int(state.money / staff_salaries), GameConfig.format_money(state.money)])
 
 	if research_from_employees > 0:
 		messages.append("Generated %.1f research from %d productive researchers" % [research_from_employees, productive_count])
@@ -443,7 +443,7 @@ func execute_turn() -> Dictionary:
 
 	L0 (#620): split into named, movable step functions with NO behavior change.
 	L1 (ADR-0009) will redistribute these consequence steps across day ticks.
-	STEP ORDER IS LOAD-BEARING (deterministic RNG stream — see start_turn)."""
+	STEP ORDER IS LOAD-BEARING (deterministic RNG stream -- see start_turn)."""
 	var results = []
 	var all_success: bool = _step_execute_queued_actions(results)
 	_step_publish_papers(results)
@@ -451,7 +451,7 @@ func execute_turn() -> Dictionary:
 	_step_check_rival_discovery(results)
 	_step_process_paper_decisions(results)
 	_step_resolve_doom(results, rival_doom_contribution)
-	# NOTE: event checking happens in start_turn() (FIX #418) — before actions, not after.
+	# NOTE: event checking happens in start_turn() (FIX #418) -- before actions, not after.
 	_step_process_risk_pools(results)
 	_step_finalize_turn(results)
 
@@ -502,7 +502,7 @@ func _step_process_rival_turns(results: Array) -> float:
 	"""=== RIVAL LABS TAKE ACTIONS ===
 
 	ADR-0015 (Legacy #7): the per-action rival doom literals AND the rivals.per_tick_doom_scale
-	shim are RETIRED. Rivals act on their own state — capability_research/hire raise their
+	shim are RETIRED. Rivals act on their own state -- capability_research/hire raise their
 	capability_progress (their frontier_capability slice, which the overhang stream converts to
 	hazard), reckless capability moves raise global_panic. No rival doom is returned; the doom
 	comes out of the intermediaries on the next DoomSystem tick. Returns 0.0 (compat)."""
@@ -570,7 +570,7 @@ func _step_resolve_doom(results: Array, rival_doom_contribution: float) -> void:
 		var doom_result = state.doom_system.calculate_doom_change(state)
 
 		# Create detailed message
-		var doom_msg = "Doom %.1f → %.1f (change: %+.1f)" % [
+		var doom_msg = "Doom %.1f -> %.1f (change: %+.1f)" % [
 			doom_result["new_doom"] - doom_result["total_change"],
 			doom_result["new_doom"],
 			doom_result["total_change"]
@@ -584,11 +584,11 @@ func _step_resolve_doom(results: Array, rival_doom_contribution: float) -> void:
 				if abs(value) > 0.1:
 					breakdown_parts.append("%s: %+.1f" % [source, value])
 			if breakdown_parts.size() > 0:
-				doom_msg += "\n  └─ " + ", ".join(breakdown_parts)
+				doom_msg += "\n  `- " + ", ".join(breakdown_parts)
 
 		# Add momentum info if significant
 		if abs(doom_result["momentum"]) > 0.5:
-			doom_msg += "\n  └─ Momentum: %s (%.1f)" % [
+			doom_msg += "\n  `- Momentum: %s (%.1f)" % [
 				state.doom_system.get_momentum_description(),
 				doom_result["momentum"]
 			]
@@ -647,7 +647,7 @@ func _step_process_risk_pools(results: Array) -> void:
 				var doom_from_event = 0.0
 				# #631 follow-up: some risk events (e.g. insider_threat "Key
 				# Resignation") describe an actual staff departure, not just a
-				# resource hit. `lose_researcher` used to silently vanish here —
+				# resource hit. `lose_researcher` used to silently vanish here --
 				# state.add_resources() only recognizes scalar keys, so an
 				# unrecognized key like this was dropped with no error and no
 				# effect (the same no-op class fixed for poaching in #633).
@@ -682,13 +682,13 @@ func _step_process_risk_pools(results: Array) -> void:
 				var event_message = event_data.get("message", "")
 				var trigger_type = "[THRESHOLD]" if from_threshold else ""
 				# Legibility (#631 follow-up): name who left, same as the event-driven
-				# poaching fix — otherwise a departure is invisible in the log.
+				# poaching fix -- otherwise a departure is invisible in the log.
 				for note in departure_notes:
-					event_message += "\n  └─ %s" % note
+					event_message += "\n  `- %s" % note
 
 				results.append({
 					"success": true,
-					"message": "[RISK] %s %s: %s\n  └─ %s" % [
+					"message": "[RISK] %s %s: %s\n  `- %s" % [
 						trigger_type,
 						event_name,
 						event_data.get("description", ""),

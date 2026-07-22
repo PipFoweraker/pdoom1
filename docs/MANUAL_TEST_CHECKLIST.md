@@ -80,7 +80,7 @@ _______________________________________________
 - [ ] Clicking "Launch with Custom Seed" goes to pregame setup
 - [ ] Player name field works (can type, edit)
 - [ ] Lab name field works (can type, edit)
-- [ ] Random lab name button (🎲) generates names
+- [ ] Random lab name button () generates names
 - [ ] Seed field works (optional)
 - [ ] Weekly seed button clears seed field
 - [ ] Difficulty dropdown has 3 options (Easy, Standard, Hard)

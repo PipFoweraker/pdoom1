@@ -1,6 +1,6 @@
 extends CanvasLayer
 class_name DevModeOverlay
-## DEV MODE overlay — the owner's old pre-Godot dev mode, rebuilt richer.
+## DEV MODE overlay -- the owner's old pre-Godot dev mode, rebuilt richer.
 ##
 ## Press backslash (the `dev_mode` keybind) to toggle. Left column mirrors the verbose
 ## PowerShell logs on-screen (full live game state, refreshed each turn / state change);
@@ -14,7 +14,7 @@ class_name DevModeOverlay
 ## Above the F3 debug overlay (128), below the DEV BUILD badge (200) so the badge stays visible.
 const OVERLAY_LAYER := 150
 
-# Dev nudge step sizes — coarse enough to set up test situations fast.
+# Dev nudge step sizes -- coarse enough to set up test situations fast.
 const MONEY_STEP := 10000.0
 const COMPUTE_STEP := 10.0
 const REP_STEP := 5.0
@@ -103,7 +103,7 @@ func _build_ui() -> void:
 	var header := HBoxContainer.new()
 	outer.add_child(header)
 	var title := Label.new()
-	title.text = "🛠  DEV MODE"
+	title.text = " DEV MODE"
 	title.add_theme_font_size_override("font_size", 22)
 	title.add_theme_color_override("font_color", Color(1.0, 0.75, 0.2))
 	header.add_child(title)
@@ -115,13 +115,13 @@ func _build_ui() -> void:
 	stamp.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	header.add_child(stamp)
 	var close_btn := Button.new()
-	close_btn.text = "✕"
+	close_btn.text = "x"
 	close_btn.focus_mode = Control.FOCUS_NONE
 	close_btn.pressed.connect(func(): _root.visible = false)
 	header.add_child(close_btn)
 
 	var hint := Label.new()
-	hint.text = "Backslash toggles · dev build only · not shipped in release"
+	hint.text = "Backslash toggles - dev build only - not shipped in release"
 	hint.add_theme_font_size_override("font_size", 10)
 	hint.add_theme_color_override("font_color", Color(0.55, 0.55, 0.6))
 	outer.add_child(hint)
@@ -153,11 +153,11 @@ func _build_controls() -> Control:
 	col.custom_minimum_size = Vector2(250, 0)
 
 	col.add_child(_section_label("JUMP TO"))
-	col.add_child(_action_button("📖 Ledger", _jump_ledger))
-	col.add_child(_action_button("✈ Travel", _jump_travel))
-	col.add_child(_action_button("🏆 Leaderboard*", _jump_leaderboard))
-	col.add_child(_action_button("👥 Employee", _jump_employee))
-	col.add_child(_action_button("⚙ Settings*", _jump_settings))
+	col.add_child(_action_button("Ledger", _jump_ledger))
+	col.add_child(_action_button("Travel", _jump_travel))
+	col.add_child(_action_button("Leaderboard*", _jump_leaderboard))
+	col.add_child(_action_button("Employee", _jump_employee))
+	col.add_child(_action_button("Settings*", _jump_settings))
 	col.add_child(_action_button("F3 Risk overlay", _jump_f3))
 	var jump_note := Label.new()
 	jump_note.text = "* full-scene swap: leaves current game"
@@ -174,15 +174,15 @@ func _build_controls() -> Control:
 
 	col.add_child(HSeparator.new())
 	col.add_child(_section_label("TRIGGERS"))
-	# L1: the single day-step is DEV-ONLY now — the game's End Turn plays a whole month
+	# L1: the single day-step is DEV-ONLY now -- the game's End Turn plays a whole month
 	# (game_manager.end_month). This button remains the debugging escape hatch.
-	col.add_child(_action_button("⏭ Day step (dev — old path)", _advance_turn))
+	col.add_child(_action_button(">> Day step (dev -- old path)", _advance_turn))
 	_event_dropdown = OptionButton.new()
 	_event_dropdown.focus_mode = Control.FOCUS_NONE
 	_populate_event_dropdown()
 	col.add_child(_event_dropdown)
 	col.add_child(_action_button("Queue selected event", _queue_selected_event))
-	col.add_child(_action_button("🎲 Trigger random event", _trigger_random_event))
+	col.add_child(_action_button("Trigger random event", _trigger_random_event))
 	var ev_note := Label.new()
 	ev_note.text = "Queued events surface on turn processing."
 	ev_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -218,7 +218,7 @@ func _nudge_row(label: String, field: String, step: float) -> HBoxContainer:
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(l)
 	var minus := Button.new()
-	minus.text = "−"
+	minus.text = "-"
 	minus.focus_mode = Control.FOCUS_NONE
 	minus.pressed.connect(func(): _nudge(field, -step))
 	row.add_child(minus)
@@ -250,7 +250,7 @@ func _render() -> void:
 	var state = gm.state if gm != null else null
 	for section in DevModeReadout.build_sections(state):
 		var head := Label.new()
-		head.text = "▸ " + str(section["title"])
+		head.text = "> " + str(section["title"])
 		head.add_theme_font_size_override("font_size", 14)
 		head.add_theme_color_override("font_color", Color(0.5, 0.85, 1.0))
 		_info_vbox.add_child(head)

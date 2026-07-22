@@ -1,11 +1,11 @@
 extends CanvasLayer
 class_name FlightRecorder
-## Playtest "flight recorder" — WORKSHOP_2_BACKLOG "Playtest deep-dive protocol":
+## Playtest "flight recorder" -- WORKSHOP_2_BACKLOG "Playtest deep-dive protocol":
 ## a couple of comprehensively logged human run-throughs, reviewed as a unit. One
 ## press of F6 (the `flight_recorder` keybind) dumps, into a timestamped session
 ## directory under user://, everything needed to reconstruct "what did Pip see and
-## think, right here": (a) a screenshot, (b) a JSON state snapshot — reusing
-## GameState.to_dict(), the SAME serializer save/load uses, not a parallel one —
+## think, right here": (a) a screenshot, (b) a JSON state snapshot -- reusing
+## GameState.to_dict(), the SAME serializer save/load uses, not a parallel one --
 ## and (c) an auto-incrementing marker id + an optional short note, also appended
 ## to one session manifest.jsonl so the whole run can be replayed as a timeline.
 ##
@@ -13,12 +13,12 @@ class_name FlightRecorder
 ## effect on normal play when gated off. Registered the same way as the DEV MODE
 ## overlay: a signal on KeybindManager, connected here, built in code (no .tscn).
 ##
-## Pause semantics: this engine has no continuous auto-advance — MonthController
+## Pause semantics: this engine has no continuous auto-advance -- MonthController
 ## only steps forward via an explicit advance_tick() call triggered by player input
 ## (End Turn / End Month). So capturing state never races a turn resolving on its
 ## own. The one place a press CAN'T be instantaneous is the note popup: while it
 ## waits for Enter/Esc, the full-rect modal (MOUSE_FILTER_STOP) blocks the game's
-## own buttons the same way any other modal dialog in this codebase does — this is
+## own buttons the same way any other modal dialog in this codebase does -- this is
 ## normal input-blocking, not a second pause mechanism layered on top of
 ## MonthController's. If MonthController is already mid a window pause
 ## (`month_controller.is_paused()`), the capture simply operates on that
@@ -64,7 +64,7 @@ func _ready() -> void:
 
 # --- Pure helpers (unit-tested without a live viewport/GameManager) --------
 
-## Reuse the save-serialization path — do NOT hand-roll a parallel serializer.
+## Reuse the save-serialization path -- do NOT hand-roll a parallel serializer.
 static func build_state_snapshot(state) -> Dictionary:
 	if state == null:
 		return {}
@@ -72,7 +72,7 @@ static func build_state_snapshot(state) -> Dictionary:
 
 
 ## Zero-padded marker id + timestamp, chosen so a press's three files
-## (…_note.txt, …_screenshot.png, …_state.json) sort adjacently by filename.
+## (..._note.txt, ..._screenshot.png, ..._state.json) sort adjacently by filename.
 static func marker_prefix(marker_id: int, timestamp: Dictionary) -> String:
 	return "%04d_%04d%02d%02d_%02d%02d%02d" % [
 		marker_id,
@@ -125,7 +125,7 @@ func _capture(state) -> void:
 	if shot_err != OK:
 		push_error("[FlightRecorder] Failed to save screenshot: %s" % shot_err)
 
-	# (b) JSON state snapshot — GameState.to_dict(), the save/load serializer.
+	# (b) JSON state snapshot -- GameState.to_dict(), the save/load serializer.
 	var snapshot := build_state_snapshot(state)
 	var state_path := session_dir.path_join(prefix + "_state.json")
 	var sf := FileAccess.open(state_path, FileAccess.WRITE)
@@ -135,7 +135,7 @@ func _capture(state) -> void:
 	else:
 		push_error("[FlightRecorder] Failed to open state snapshot for writing: %s" % state_path)
 
-	# (c) Marker id + optional note — collected via the popup, then appended
+	# (c) Marker id + optional note -- collected via the popup, then appended
 	# to the manifest once the player presses Enter/Esc.
 	_pending = {"prefix": prefix, "marker_id": marker_count, "state": state}
 	_show_note_popup()
@@ -173,7 +173,7 @@ func _append_manifest(entry: Dictionary) -> void:
 func _build_note_popup() -> void:
 	_root = Control.new()
 	_root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	# Blocks clicks to the game behind it while the note prompt is up — the same
+	# Blocks clicks to the game behind it while the note prompt is up -- the same
 	# ordinary input-blocking any modal dialog in this codebase already does, not
 	# an extra sim-pause mechanism (see class doc).
 	_root.mouse_filter = Control.MOUSE_FILTER_STOP
@@ -201,12 +201,12 @@ func _build_note_popup() -> void:
 	panel.add_child(vb)
 
 	var title := Label.new()
-	title.text = "🛩  Flight recorder marker"
+	title.text = " Flight recorder marker"
 	title.add_theme_color_override("font_color", Color(1.0, 0.75, 0.2))
 	vb.add_child(title)
 
 	_note_edit = LineEdit.new()
-	_note_edit.placeholder_text = "Optional note — Enter to save, Esc to skip"
+	_note_edit.placeholder_text = "Optional note -- Enter to save, Esc to skip"
 	_note_edit.text_submitted.connect(_on_note_submitted)
 	vb.add_child(_note_edit)
 

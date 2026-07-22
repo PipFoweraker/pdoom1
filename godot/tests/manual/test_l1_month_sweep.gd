@@ -7,18 +7,18 @@ extends GutTest
 ## plan phase. It measures; it changes NO balance constants.
 ##
 ## It reimplements GameManager.end_month + _run_month_playback SYNCHRONOUSLY (no SceneTree
-## timers) so 70+ runs stay deterministic and fast — the same object-level driving the
+## timers) so 70+ runs stay deterministic and fast -- the same object-level driving the
 ## exploit sweep uses (GameState + TurnManager, plus the MonthController layer). Crucially it
 ## does NOT clamp doom (test_month_button_path.gd clamps to keep its WIRING smoke alive; a
 ## balance sweep must let runs die).
 ##
 ## Policies (per the G1 brief):
-##   random_walk x30   — random affordable actions, random attention split, random window verb
-##   do_nothing x10    — empty plans, IGNORE every window (the exploit sweep's "shame" baseline)
-##   safety_lean x8    — queue safety-ish actions, keep the full implicit reserve
-##   greedy_overcommit x8 — spend ALL attention on strategic WIP (zero reserve), HANDLE by cannibalizing
-##   reserve_heavy x8  — >=50% reserve, HANDLE-from-reserve every window
-##   loan_desperation x8 — money levers aggressively, DEFER windows to mint ledger entries
+##   random_walk x30   -- random affordable actions, random attention split, random window verb
+##   do_nothing x10    -- empty plans, IGNORE every window (the exploit sweep's "shame" baseline)
+##   safety_lean x8    -- queue safety-ish actions, keep the full implicit reserve
+##   greedy_overcommit x8 -- spend ALL attention on strategic WIP (zero reserve), HANDLE by cannibalizing
+##   reserve_heavy x8  -- >=50% reserve, HANDLE-from-reserve every window
+##   loan_desperation x8 -- money levers aggressively, DEFER windows to mint ledger entries
 ##
 ## Each run is deterministic in (game seed, policy): the engine RNG is seeded by the game
 ## seed; the bot's own choices draw from a SEPARATE RNG seeded by hash(seed|policy), recorded
@@ -34,7 +34,7 @@ const MAX_TICKS_PER_MONTH := 60  # wiring guard: a calendar month is ~16 workday
 const MAX_WINDOWS_PER_PAUSE := 40
 const RUNS_CSV := "res://../docs/balance/L1_sweep_runs.csv"
 
-# Leaf actions only (submenu openers like hire_staff/fundraise have no effect — excluded).
+# Leaf actions only (submenu openers like hire_staff/fundraise have no effect -- excluded).
 const SAFE_ACTIONS := ["hire_safety_researcher", "safety_research", "publish_paper", "audit_safety"]
 const CAP_ACTIONS := ["hire_capability_researcher", "capability_research", "buy_compute"]
 const MONEY_LEVERS := ["take_loan", "desperation_lever", "funding_strings", "staff_rider"]
@@ -58,8 +58,8 @@ const POLICY_PLAN := [
 
 var _wiring_notes: Array = []
 
-# Harness unification (PR #642): the month-cycle run driver — plan commit -> day-tick
-# playback -> window auto-pause -> boundary, plus all telemetry — was extracted VERBATIM
+# Harness unification (PR #642): the month-cycle run driver -- plan commit -> day-tick
+# playback -> window auto-pause -> boundary, plus all telemetry -- was extracted VERBATIM
 # into l1_month_driver.gd so the EE-9/EE-10 instruments drive the SAME loop as this
 # calibrator. This file keeps ONLY the policy definitions (_plan/_window_prefs) and the
 # reporting. Extraction verified outcome-neutral: the regenerated L1_sweep_runs.csv is
@@ -88,11 +88,11 @@ class LegacyPolicyAdapter:
 
 
 # ============================================================================
-# PLAN PHASE — queue legacy actions (now ATTENTION-gated) + strategic WIP (reserve lever)
+# PLAN PHASE -- queue legacy actions (now ATTENTION-gated) + strategic WIP (reserve lever)
 #
 # L2 (ADR-0011): the founder spends the MONTHLY ATTENTION budget (~20), not a per-turn AP
 # pool. Per-action costs are UNCHANGED (Pip's one-variable ruling: swap the budget/currency
-# only, don't rescale costs) — so a plan of the existing cheap actions leaves lots of
+# only, don't rescale costs) -- so a plan of the existing cheap actions leaves lots of
 # Attention unspent; that action-sparsity is accepted here (richness is a later content
 # wave). Strategic WIP (MonthPlan.queued_strategic) still has NO gameplay effect (L2 seam),
 # so burning Attention on it is a pure reserve-reduction lever: the driver sets
@@ -179,7 +179,7 @@ func _shuffle_det(arr: Array, brng: RandomNumberGenerator) -> Array:
 
 
 # ============================================================================
-# THE MONTH DRIVER — extracted to l1_month_driver.gd (shared with EE-9/EE-10)
+# THE MONTH DRIVER -- extracted to l1_month_driver.gd (shared with EE-9/EE-10)
 # ============================================================================
 
 func _run(seed: String, policy: String) -> Dictionary:

@@ -14,9 +14,9 @@
 ```
 Rank | Player      | Score  | Duplicates
 -----|-------------|--------|------------
-1    | Alice       | 95,000 | 12 others ⬆ Click to view
-2    | Bob         | 92,000 | 5 others  ⬆ Click to view
-3    | Dana        | 90,000 | 2 others  ⬆ Click to view
+1    | Alice       | 95,000 | 12 others ^ Click to view
+2    | Bob         | 92,000 | 5 others  ^ Click to view
+3    | Dana        | 90,000 | 2 others  ^ Click to view
 ```
 
 **Why**: Saves screen real estate, emphasizes unique strategies
@@ -34,7 +34,7 @@ Rank | Player      | Score  | Duplicates
 
 1. **Anonymous (default)**: "First discovered 3 days ago"
 2. **Pseudonym opt-in**: "First discovered by **Alice** on 2024-11-20"
-3. **Future - Verified account**: "First discovered by **Alice** 🔗 (Steam/Forum)"
+3. **Future - Verified account**: "First discovered by **Alice** (Steam/Forum)"
 
 **Database fields**:
 ```sql
@@ -273,9 +273,9 @@ ALTER TABLE leaderboard_entries ADD COLUMN is_duplicate_hash BOOLEAN DEFAULT FAL
 ### The Benefits
 - ACHIEVEMENT First discoverer gets recognition
 - REPEAT Strategy sharing encouraged
-- 🛡 Cheat-resistant (can't fake scores)
+- Cheat-resistant (can't fake scores)
 - METRICS See which strategies are popular
-- 🎓 Educational (learn from duplicates)
+- Educational (learn from duplicates)
 
 ### The Philosophy
 "Think speedrun culture: first to find the route gets credit, but sharing makes everyone better."

@@ -1,5 +1,5 @@
 extends Node
-## Balance — the central gameplay-tunables surface (L9, issue #621).
+## Balance -- the central gameplay-tunables surface (L9, issue #621).
 ##
 ## JSON-backed, mirroring the proven ScenarioLoader/EventService load pattern:
 ## shipped defaults live in res://data/balance/defaults.json; an optional
@@ -32,7 +32,7 @@ func reload() -> void:
 	_cache.clear()
 	_data = _load_json(DEFAULTS_PATH)
 	if _data.is_empty():
-		push_error("[Balance] Missing or invalid %s — falling back to call-site defaults" % DEFAULTS_PATH)
+		push_error("[Balance] Missing or invalid %s -- falling back to call-site defaults" % DEFAULTS_PATH)
 
 	var overrides := _load_json(USER_OVERRIDES_PATH, true)
 	if not overrides.is_empty():

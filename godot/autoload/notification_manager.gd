@@ -163,15 +163,15 @@ func _get_notification_border_color(type: NotificationType) -> Color:
 func _get_notification_icon(type: NotificationType) -> String:
 	match type:
 		NotificationType.SUCCESS:
-			return "✓"
+			return "[OK]"
 		NotificationType.WARNING:
-			return "⚠"
+			return "[!]"
 		NotificationType.ERROR:
-			return "✗"
+			return "[X]"
 		NotificationType.ACHIEVEMENT:
-			return "★"
+			return "*"
 		_:
-			return "ℹ"
+			return "[i]"
 
 ## Reposition all active notifications
 func _reposition_notifications():

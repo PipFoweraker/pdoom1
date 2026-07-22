@@ -1,0 +1,382 @@
+schema_version: '1.0'
+asset_type: iconset_round2
+default_size: 1024x1024
+output_sizes:
+- 512
+- 256
+- 128
+- 64
+- 48
+- 32
+background: opaque
+styles:
+  house_base: 'high-res 1024x1024 square app-icon, single central subject, painterly
+    digital illustration with a chunky readable silhouette that still holds at 32x32,
+    rounded-square icon framing with a soft vignette, cozy-grimdark deadpan mood (lived-in
+    office dread, quietly ominous, NEVER gory -- no skulls, no blood, no death-metal),
+    disciplined lighting with one warm ambient light plus at most one saturated glow
+    accent, centered composition, high contrast
+
+    '
+themes:
+  house:
+    style_overrides:
+    - house_base
+    color_bias: 'palette -- grounds are deep aubergine #170A1C and ink-brown #14040C
+      with warm-panel #2B221A; the ONLY saturated accent is cozy amber #E8A33D / #F6A800
+      souring toward orange #E9752E, red-orange #E24A3B and deep red #B31217 as doom
+      rises; desaturated teal #1EC3B3 and olive as the cool secondary; off-white #E9F2F2
+      for any light. Do not use a rainbow -- keep one accent hue per image.'
+assets:
+- id: gen_cat_evil
+  category: office_cat
+  display_name: Evil laser cat face
+  status: generated
+  theme: house
+  prompt_tail: 'a menacing but still cozy office-cat face, front-facing, channeling
+    a black / dark-tabby cat with glowing amber laser-slit eyes (#F6A800 core fading
+    to #E9752E glow) and a small glowing collar emblem; a subtle sinister narrowed-eye
+    smirk; warm-red-to-aubergine graded ground (#B31217 rim light falling to #170A1C);
+    the amber eye-glow is the single saturated accent. The "evil" reads from the narrowed
+    laser eyes and the low warm lighting, NOT from gore. Studio-app-icon polish, like
+    a friendly cat mascot turned quietly villainous. Strong silhouette that reads
+    at 32px.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:23:32.066068+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 31e0861a460e
+    file_path: art_generated\iconset_round2\v1\gen_cat_evil_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:24:05.137327+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 31e0861a460e
+    file_path: art_generated\iconset_round2\v1\gen_cat_evil_v2_1024.png
+    cost_usd: 0.06
+  - version: v3
+    generated_at: '2026-07-21T08:24:34.901571+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 31e0861a460e
+    file_path: art_generated\iconset_round2\v1\gen_cat_evil_v3_1024.png
+    cost_usd: 0.06
+  - version: v4
+    generated_at: '2026-07-21T08:25:10.845829+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 31e0861a460e
+    file_path: art_generated\iconset_round2\v1\gen_cat_evil_v4_1024.png
+    cost_usd: 0.06
+- id: gen_cat_doom_8bit
+  category: office_cat
+  display_name: 8-bit doom cat
+  status: generated
+  theme: house
+  prompt_tail: 'the same emotionally sympathetic doom cat -- a tuxedo (black-and-white)
+    cat crouched low in a worried loaf with big round amber eyes -- re-rendered as
+    crisp 8-bit / 16-bit PIXEL ART: chunky visible pixels, limited indexed palette,
+    hard-edged retro game-sprite look, a warm-red doom glow behind it (#E24A3B rim
+    falling to #170A1C ground), cozy-grimdark, no skulls. Large clear pixel clusters
+    that still read as a worried cat at 32px.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:25:49.401930+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6a8a8137d9af
+    file_path: art_generated\iconset_round2\v1\gen_cat_doom_8bit_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:26:07.717780+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6a8a8137d9af
+    file_path: art_generated\iconset_round2\v1\gen_cat_doom_8bit_v2_1024.png
+    cost_usd: 0.06
+  - version: v3
+    generated_at: '2026-07-21T08:26:28.002626+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6a8a8137d9af
+    file_path: art_generated\iconset_round2\v1\gen_cat_doom_8bit_v3_1024.png
+    cost_usd: 0.06
+  - version: v4
+    generated_at: '2026-07-21T08:27:02.331544+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 6a8a8137d9af
+    file_path: art_generated\iconset_round2\v1\gen_cat_doom_8bit_v4_1024.png
+    cost_usd: 0.06
+- id: gen_cat_sitting
+  category: office_cat
+  display_name: Cat sitting (house restyle)
+  status: generated
+  theme: house
+  prompt_tail: 'an office cat sitting upright in a calm neutral pose, restyled into
+    the house register: desaturated teal/olive fur shadows lit by a single cozy amber
+    rim-light (#E8A33D), on a warm-panel #2B221A ground fading to aubergine #170A1C
+    with a soft vignette. Painterly, cozy-grimdark deadpan. NOT on a light or cream
+    ground -- keep the ground warm-dark.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:39:25.528886+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 47cfd2b1b67b
+    file_path: art_generated\iconset_round2\v1\gen_cat_sitting_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:39:57.837765+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 47cfd2b1b67b
+    file_path: art_generated\iconset_round2\v1\gen_cat_sitting_v2_1024.png
+    cost_usd: 0.06
+  - version: v3
+    generated_at: '2026-07-21T08:40:15.591577+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 47cfd2b1b67b
+    file_path: art_generated\iconset_round2\v1\gen_cat_sitting_v3_1024.png
+    cost_usd: 0.06
+- id: gen_cat_loaf
+  category: office_cat
+  display_name: Cat loaf (house restyle)
+  status: generated
+  theme: house
+  prompt_tail: 'an office cat in a full loaf position with paws tucked, content and
+    still, restyled into the house register: desaturated teal/olive body with one
+    cozy amber rim-light (#E8A33D) from the left, on a warm-dark aubergine ground
+    (#170A1C) with a soft vignette. Painterly cozy-grimdark. NOT on a light or cream
+    ground.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:40:39.400674+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 23d9a0965991
+    file_path: art_generated\iconset_round2\v1\gen_cat_loaf_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:41:00.307355+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 23d9a0965991
+    file_path: art_generated\iconset_round2\v1\gen_cat_loaf_v2_1024.png
+    cost_usd: 0.06
+  - version: v3
+    generated_at: '2026-07-21T08:41:25.615963+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 23d9a0965991
+    file_path: art_generated\iconset_round2\v1\gen_cat_loaf_v3_1024.png
+    cost_usd: 0.06
+- id: gen_seal_dod_formal
+  category: seal
+  display_name: DoD seal -- formal embossed
+  status: generated
+  theme: house
+  prompt_tail: 'a crisp official government-style embossed round seal. Curved ring
+    text reads EXACTLY "DEPARTMENT OF DOCUMENTATION" (upper arc), with a small five-point
+    star flanking each side. Centerpiece is a clean hourglass icon. Precise serif
+    lettering, tidy concentric rings, restrained amber #E8A33D ink pressed on a deep
+    aubergine #170A1C ground. Formal, legitimate, bureaucratic. Reads at 32px.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:43:24.473947+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: ec06d68900b5
+    file_path: art_generated\iconset_round2\v1\gen_seal_dod_formal_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:43:59.941552+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: ec06d68900b5
+    file_path: art_generated\iconset_round2\v1\gen_seal_dod_formal_v2_1024.png
+    cost_usd: 0.06
+- id: gen_seal_dod_grunge
+  category: seal
+  display_name: DoD seal -- worn rubber stamp
+  status: generated
+  theme: house
+  prompt_tail: 'a worn distressed RUBBER-STAMP seal, uneven cracked ink. Curved ring
+    text reads EXACTLY "DEPARTMENT OF DOCUMENTATION", a small star on each side, a
+    central hourglass icon. Grungy amber #E8A33D ink with broken edges and texture,
+    stamped on a warm-dark #170A1C ground. Deadpan overworked-bureaucracy feel. Reads
+    at 32px.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:44:32.639619+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9b0877c353cd
+    file_path: art_generated\iconset_round2\v1\gen_seal_dod_grunge_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:45:09.007675+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 9b0877c353cd
+    file_path: art_generated\iconset_round2\v1\gen_seal_dod_grunge_v2_1024.png
+    cost_usd: 0.06
+- id: gen_seal_dod_wax
+  category: seal
+  display_name: DoD seal -- wax / letterpress medallion
+  status: generated
+  theme: house
+  prompt_tail: 'a tactile wax-seal / letterpress medallion. An hourglass is pressed
+    into amber-bronze wax, encircled by ring text reading EXACTLY "DEPARTMENT OF DOCUMENTATION"
+    with a small star each side. Soft embossed shadows, cozy-grimdark, on a warm-dark
+    aubergine #170A1C backdrop. Handsome and slightly ominous. Reads at 32px.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:45:43.198414+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: b5a9622a4408
+    file_path: art_generated\iconset_round2\v1\gen_seal_dod_wax_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:46:18.374224+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: b5a9622a4408
+    file_path: art_generated\iconset_round2\v1\gen_seal_dod_wax_v2_1024.png
+    cost_usd: 0.06
+- id: gen_dial_doom_arc
+  category: dial
+  display_name: Doom dial -- top-third arc
+  status: generated
+  theme: house
+  prompt_tail: 'a doom-gauge icon: a thin top-third arc gauge with a single needle.
+    The arc color stops are sampled EXACTLY from the catastrophe ramp, left to right:
+    amber #F6A800 (cosy) -> orange #E9752E -> red-orange #E24A3B -> deep red #B31217
+    (critical). The needle points into the orange/red zone. Clean vector-painterly
+    style, minimal, on a warm-dark #170A1C ground. One-accent discipline. Reads crisply
+    at 32px.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:46:36.357524+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 8698f8c87e70
+    file_path: art_generated\iconset_round2\v1\gen_dial_doom_arc_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:46:52.337733+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 8698f8c87e70
+    file_path: art_generated\iconset_round2\v1\gen_dial_doom_arc_v2_1024.png
+    cost_usd: 0.06
+- id: gen_dial_doom_semi
+  category: dial
+  display_name: Doom dial -- full semicircle
+  status: generated
+  theme: house
+  prompt_tail: 'a doom-gauge icon as a full 180-degree semicircular meter with segmented
+    tick marks. The segments are colored along the catastrophe ramp #F6A800 -> #E9752E
+    -> #E24A3B -> #B31217 from left to right. A slim amber needle sits in the orange-red
+    band. Clean, minimal, warm-dark #170A1C ground. Reads at 32px.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:47:11.555968+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 7f7a2ea2bde3
+    file_path: art_generated\iconset_round2\v1\gen_dial_doom_semi_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:47:27.400593+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 7f7a2ea2bde3
+    file_path: art_generated\iconset_round2\v1\gen_dial_doom_semi_v2_1024.png
+    cost_usd: 0.06
+- id: gen_type_pdoom
+  category: logo
+  display_name: P(doom) dial-paren
+  status: generated
+  theme: house
+  prompt_tail: 'a logo mark: a bold serif math-italic capital "P", then "(", enclosing
+    a small doom-dial gauge (amber-to-red needle) that the parentheses house like
+    a gauge bezel, then ")" -- reading as P(doom), where the parenthesis IS the dial.
+    Amber #F6A800 type on a deep-aubergine #170A1C rounded-square. LaTeX-probability
+    flavor, clean and iconic. Reads at 32px.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:48:04.889859+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: ca6ac79cc285
+    file_path: art_generated\iconset_round2\v1\gen_type_pdoom_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:48:35.413622+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: ca6ac79cc285
+    file_path: art_generated\iconset_round2\v1\gen_type_pdoom_v2_1024.png
+    cost_usd: 0.06
+- id: gen_type_pdoom_inaction
+  category: logo
+  display_name: P(doom | inaction)
+  status: generated
+  theme: house
+  prompt_tail: 'a logo / poster mark typeset as the conditional probability "P(doom
+    | inaction)" in elegant serif math typography (italic letters, a thin vertical
+    conditional bar). The opening parenthesis subtly forms a doom gauge with a faint
+    amber-to-red needle inside. Amber #E8A33D type on warm-dark aubergine #170A1C.
+    Bayesian-notation, academic-deadpan flavor. Legible.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:49:07.956301+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 142d84a44972
+    file_path: art_generated\iconset_round2\v1\gen_type_pdoom_inaction_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:49:24.022424+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: 142d84a44972
+    file_path: art_generated\iconset_round2\v1\gen_type_pdoom_inaction_v2_1024.png
+    cost_usd: 0.06
+- id: gen_type_pdoom_us
+  category: logo
+  display_name: P(doom | us)
+  status: generated
+  theme: house
+  prompt_tail: 'a logo / poster mark typeset as "P(doom | us)" in serif math-italic
+    typography with a thin vertical conditional bar. The opening parenthesis doubles
+    as a doom gauge housing a small amber-to-red needle. Amber #E8A33D on deep aubergine
+    #170A1C. Dry, Bayesian, deadpan-academic. Legible and iconic.
+
+    '
+  generation_history:
+  - version: v1
+    generated_at: '2026-07-21T08:49:53.013224+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: c6e5cbe755bd
+    file_path: art_generated\iconset_round2\v1\gen_type_pdoom_us_v1_1024.png
+    cost_usd: 0.06
+  - version: v2
+    generated_at: '2026-07-21T08:50:24.978875+00:00'
+    model: gpt-image-1.5
+    full_prompt_hash: c6e5cbe755bd
+    file_path: art_generated\iconset_round2\v1\gen_type_pdoom_us_v2_1024.png
+    cost_usd: 0.06
+- id: render_latex_pdoom_inaction
+  category: logo
+  display_name: LaTeX render -- P(doom | inaction)
+  status: generated
+  theme: house
+  prompt_tail: LOCAL RENDER ONLY (matplotlib mathtext, serif) -- do NOT pass to the
+    image API. Typeset P(doom | inaction), amber on aubergine.
+- id: render_latex_pdoom_bayes
+  category: logo
+  display_name: LaTeX render -- Bayes expansion
+  status: generated
+  theme: house
+  prompt_tail: LOCAL RENDER ONLY (matplotlib mathtext, serif) -- do NOT pass to the
+    image API. Typeset the Bayes-rule expansion of P(doom | evidence), amber on aubergine.

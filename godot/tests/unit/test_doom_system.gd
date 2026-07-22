@@ -1,5 +1,5 @@
 extends GutTest
-## Unit tests for DoomSystem — ADR-0015 nine-stream accumulating-rate model.
+## Unit tests for DoomSystem -- ADR-0015 nine-stream accumulating-rate model.
 ## doom_rate = sum of NAMED STREAMS read from the DQ-21 world-state intermediaries; no
 ## action/event writes doom directly (ledger/risk arrive as routed STREAM INPUTS).
 
@@ -14,7 +14,7 @@ func _create_minimal_game_state() -> GameState:
 	return GameState.new("test_seed")
 
 # ============================================================================
-# DOOM CLAMPING (Issue #488) — via calculate_doom_change (the single authority)
+# DOOM CLAMPING (Issue #488) -- via calculate_doom_change (the single authority)
 # ============================================================================
 
 func test_doom_clamped_to_upper_bound():
@@ -89,7 +89,7 @@ func test_alarm_stream_is_negative_relief():
 	assert_lt(result["sources"]["alarm"], 0.0, "alarm stream is a negative relief")
 
 # ============================================================================
-# STREAM INPUTS (ledger/risk routed, not parallel-written) — ADR-0015 / #638
+# STREAM INPUTS (ledger/risk routed, not parallel-written) -- ADR-0015 / #638
 # ============================================================================
 
 func test_stream_input_is_buffered_not_written_directly():
@@ -175,7 +175,7 @@ func test_stream_contributions_and_dominant():
 	assert_eq(ds.get_dominant_stream(), "overhang", "overhang dominates with a large frontier")
 
 # ============================================================================
-# TREND TELEMETRY INVARIANT (N=6) — instrumentation, never a clamp
+# TREND TELEMETRY INVARIANT (N=6) -- instrumentation, never a clamp
 # ============================================================================
 
 func test_trend_invariant_never_clamps_negative_rate():

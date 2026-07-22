@@ -1,11 +1,11 @@
 extends GutTest
-## #630 stopgap — paper-decision flood throttle.
+## #630 stopgap -- paper-decision flood throttle.
 ##
 ## Papers whose decision_turn has arrived resolve on a path NOT governed by
 ## GameEvents.MAX_NEW_EVENTS_PER_TURN, so clustered decision_turns otherwise dump a
 ## click-through wall (playtest 2026-07-13 saw 28+ at once). process_paper_decisions
 ## now caps how many decisions surface per turn (Balance "papers.max_decisions_per_turn");
-## the surplus stays UNDER_REVIEW and resolves on later turns — no outcome dropped.
+## the surplus stays UNDER_REVIEW and resolves on later turns -- no outcome dropped.
 
 const CURRENT_TURN := 10
 const DECISION_TURN := 5  # already due: DECISION_TURN < CURRENT_TURN
@@ -17,7 +17,7 @@ func _make_due_paper(idx: int) -> PaperSubmissions.PaperSubmission:
 	paper.title = "Test Paper %d" % idx
 	paper.status = PaperSubmissions.Status.UNDER_REVIEW
 	paper.decision_turn = DECISION_TURN
-	# Invalid conference id → deterministic auto-reject (no rng, no Conferences
+	# Invalid conference id -> deterministic auto-reject (no rng, no Conferences
 	# dependency). The per-turn cap/break happens BEFORE the decision branch, so an
 	# auto-reject paper exercises the throttle identically to a real accept/reject.
 	paper.target_conference_id = "no_such_conf_for_test"
@@ -66,7 +66,7 @@ func test_deferred_papers_resolve_on_later_turns_none_dropped():
 		var results := PaperSubmissions.process_paper_decisions(papers, CURRENT_TURN, 50.0, rng)
 		assert_true(results.size() <= cap, "never exceeds the cap on any single pass")
 		resolved += results.size()
-	assert_eq(resolved, total, "every paper eventually resolves — no outcome dropped")
+	assert_eq(resolved, total, "every paper eventually resolves -- no outcome dropped")
 	assert_eq(
 		_count_status(papers, PaperSubmissions.Status.UNDER_REVIEW), 0,
 		"backlog fully drained")

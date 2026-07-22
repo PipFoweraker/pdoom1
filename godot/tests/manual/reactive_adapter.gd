@@ -1,21 +1,21 @@
 class_name ReactivePolicyAdapter
 extends RefCounted
-## EE-9 · Adapter handing a REACTIVE policy (ReactivePolicy dict) to the shared month driver
-## (l1_month_driver.gd — the calibration harness's extracted run loop). This replaced the
+## EE-9 - Adapter handing a REACTIVE policy (ReactivePolicy dict) to the shared month driver
+## (l1_month_driver.gd -- the calibration harness's extracted run loop). This replaced the
 ## lane's earlier parallel MonthRunner: one driver, many policy front-ends.
 ##
-##   plan()         — snapshot features, walk the policy's plan_rules into an ordered action
+##   plan()         -- snapshot features, walk the policy's plan_rules into an ordered action
 ##                    priority, fill the month's AP/affordability budget against it
-##                    (Driver.try_queue — same gate as the calibrator's policies).
-##   window_prefs() — the policy's window rules name ONE preferred verb; the driver's
+##                    (Driver.try_queue -- same gate as the calibrator's policies).
+##   window_prefs() -- the policy's window rules name ONE preferred verb; the driver's
 ##                    legality check + fallback ladder guarantees the pause clears.
 ##
 ## Extras for the instruments built on top:
 ##   - params.reserve (optional): burn Attention on strategic WIP so the implicit reserve
-##     lands at `reserve` (WIP has no gameplay effect in v1 — the L2 seam — so this is purely
+##     lands at `reserve` (WIP has no gameplay effect in v1 -- the L2 seam -- so this is purely
 ##     the reserve-scarcity lever, same trick as the calibrator's greedy_overcommit).
 ##   - plan_override/override_months (EE-10): replace the first N plan-months' priority with
-##     a caller-supplied Callable(state, month_ordinal) -> Array — the opening prefix.
+##     a caller-supplied Callable(state, month_ordinal) -> Array -- the opening prefix.
 ##   - record_features: per-month features snapshots (miner feature vectors), read-only.
 ##
 ## Determinism: conditions draw no randomness; this adapter makes NO brng draws (an override
@@ -64,7 +64,7 @@ func plan(state, _brng: RandomNumberGenerator, month_ordinal: int) -> void:
 		attn_left = Driver.try_queue(state, id, attn_left)
 
 	# Optional reserve dial: burn (total - reserve) Attention as WIP so the implicit reserve
-	# (total - spent) lands at params.reserve. v1: WIP has no effect — pure scarcity lever.
+	# (total - spent) lands at params.reserve. v1: WIP has no effect -- pure scarcity lever.
 	var params: Dictionary = policy.get("params", {})
 	if params.has("reserve") and state.month_plan != null:
 		var burn: int = clampi(state.month_plan.attention_total - int(params["reserve"]),

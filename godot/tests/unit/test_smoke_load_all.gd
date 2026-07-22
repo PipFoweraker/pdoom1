@@ -122,6 +122,43 @@ func test_all_scenes_instantiate():
 	gut.p("smoke: %d scenes instantiated cleanly" % scenes.size())
 
 
+func test_wired_backdrop_textures_resolve():
+	# #756: main.tscn gained an office backdrop and leaderboard_screen.tscn gained a
+	# records-room ground. Instantiating the scene proves the .tscn is structurally
+	# sound; this additionally asserts the Texture2D ext_resources actually RESOLVED
+	# to a real imported texture (a missing/renamed asset would load as null and read
+	# as an invisible-but-passing scene). NOTE: headless loads the .ctex header but
+	# does NOT fully decode pixels -- this cannot catch the #728-class render-decode
+	# crash. A real (non-headless) launch remains the true validation.
+	var cases := [
+		["res://scenes/main.tscn", "Backdrop", "office_wide_day"],
+		["res://scenes/leaderboard_screen.tscn", "Background", "records_microfiche"],
+	]
+	for case in cases:
+		var scene_path: String = case[0]
+		var node_name: String = case[1]
+		var expect_stem: String = case[2]
+		var packed = load(scene_path)
+		assert_not_null(packed, "%s must load" % scene_path)
+		if packed == null:
+			continue
+		var inst = packed.instantiate()
+		assert_not_null(inst, "%s must instantiate" % scene_path)
+		if inst == null:
+			continue
+		var bg = inst.get_node_or_null(node_name)
+		assert_not_null(bg, "%s must have a '%s' backdrop node" % [scene_path, node_name])
+		if bg != null:
+			assert_true(bg is TextureRect, "%s/%s must be a TextureRect" % [scene_path, node_name])
+			var tex = bg.texture
+			assert_not_null(tex, "%s/%s texture ext_resource must resolve (asset present + imported)" % [scene_path, node_name])
+			if tex != null and tex.resource_path != "":
+				assert_true(tex.resource_path.contains(expect_stem),
+					"%s/%s texture should be %s, got %s" % [scene_path, node_name, expect_stem, tex.resource_path])
+		inst.free()
+	gut.p("smoke: wired backdrop textures resolved (main + leaderboard)")
+
+
 func test_autoload_singletons_present():
 	# The boot chain (project.godot [autoload]) must be intact. A missing singleton
 	# means an autoload script failed to load or was renamed away from its callers.

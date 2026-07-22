@@ -1,6 +1,11 @@
 # P(DOOM) PLAYER GUIDE
 
-Welcome to P(DOOM): AI SAFETY STRATEGY GAME!
+> **Documentation is authored here.** This file, in the `pdoom1` repository, is the
+> single source of truth (SSOT) for player documentation. Content flows outward from
+> here to the website and other surfaces via the sync pipeline (see `docs/sync-config.yml`
+> and issue #545). Edit here; do not patch downstream copies.
+
+Welcome to P(DOOM): AI SAFETY STRATEGY GAME.
 A bootstrap strategy game about managing a scrappy AI safety lab with realistic funding constraints.
 
 **NEW IN v0.11.0: TRAVEL & CONFERENCES!**
@@ -16,7 +21,7 @@ A bootstrap strategy game about managing a scrappy AI safety lab with realistic 
 
 ## Table of Contents
 - [Quick Setup](#quick-setup)
-- [New Player Tutorial & Help System](#new-player-tutorial--help-system)
+- [New Player Help System (Planned)](#new-player-help-system-planned)
 - [How to Play](#how-to-play)
 - [Milestone Events & Employee Management](#milestone-events--employee-management)
 - [Controls & Interface](#controls--interface)
@@ -55,45 +60,48 @@ Building from source or contributing? See [Development Setup](../docs/developer/
 ---
 
 
-## New Player Tutorial & Help System
+## New Player Help System (Planned)
 
-**[TARGET] For First-Time Players:**
-P(Doom) includes a comprehensive tutorial system and Factorio-style hint system to guide new players through the game mechanics.
+> **Status: not yet implemented.** The Godot build ships with **no interactive
+> tutorial, no context-sensitive hint popups, and no first-time onboarding flow**.
+> The design below is the acknowledged Phase-2 specification (tracked by issues
+> #720 and #721); it is documented here so the intended shape is stable, but none
+> of it is in the current game. Where this guide describes something as available
+> today, it is real; anything in this section marked planned is not.
 
-### Tutorial vs Hints
-- **Tutorial**: Interactive step-by-step walkthrough (can be enabled/disabled in New Player Experience)
-- **Hints**: Context-sensitive help popups that appear once when you first encounter mechanics (can be toggled in Settings)
+### What exists today
+- **This Player Guide**, opened from the **Guide** button on the main menu.
+- **Tooltips / context window**: hover any action, upgrade, or resource to see its
+  cost, requirements, and effect (see [Controls & Interface](#controls--interface)).
+- **Settings and keybindings screens**, reached from the main menu.
 
-### Tutorial Features
-- **Interactive Tutorial**: Step-by-step guidance through core game mechanics on your first playthrough
-- **Context-Sensitive Help**: Automatic tips when you encounter new mechanics for the first time
-- **In-Game Help**: Press `H` at any time to access the Player Guide
-- **Skippable**: Tutorial can be dismissed or skipped if you prefer to learn by playing
+That is the whole of the current help surface. There is no in-game key that opens
+this guide, and there are no per-mechanic popups.
 
-### Tutorial Coverage
-The tutorial walks you through:
-1. **Resources**: Understanding money, staff, reputation, Action Points, and p(Doom)
-2. **Actions**: Taking actions to manage your lab and spend Action Points
-3. **Action Points**: Strategic resource management and staff scaling
-4. **Turn Management**: Ending turns and handling events
-5. **Events & Milestones**: Random events and growth milestones
-6. **Upgrades**: Permanent improvements to your lab
+### Planned: interactive tutorial (not implemented)
+A step-by-step walkthrough on a first playthrough, skippable, covering:
+1. **Resources**: money, staff, reputation, Action Points, and p(Doom)
+2. **Actions**: taking actions and spending Action Points
+3. **Action Points**: resource management and staff scaling
+4. **Turn Management**: ending turns and handling events
+5. **Events & Milestones**: random events and growth milestones
+6. **Upgrades**: permanent improvements to your lab
 
-### First-Time Help
-Get automatic guidance when you:
-- Hire your first staff member (learn about Action Point scaling) - *appears when first attempting to hire beyond starting staff*
-- Purchase your first upgrade (understand permanent benefits)
-- Run out of Action Points (tips for increasing capacity)
-- Reach high p(Doom) levels (warning and safety advice)
+### Planned: first-time help triggers (not implemented)
+The Phase-2 spec names four one-shot popups, fired the first time a player:
+- **Hires beyond starting staff** -- explains Action Point scaling
+- **Purchases a first upgrade** -- explains permanent benefits
+- **Runs out of Action Points** -- explains how to increase capacity
+- **Reaches high p(Doom)** -- warning and mitigation advice
 
-**Dismissing Help**: Click the x button, press Escape, or press Enter to dismiss help popups.
+These four triggers are the reference list for issues #720/#721. None fire in the
+current build.
 
-### Getting Help
-- **During Tutorial**: Use `Next` to proceed or `Skip` to exit tutorial
-- **Anytime**: Press `H` key to open the Player Guide
-- **Main Menu**: Access Player Guide and enhanced settings system
-- **Debug Mode**: Press Ctrl+D during gameplay to check UI state (for troubleshooting)
-- **Reset Hints**: Press Ctrl+R during gameplay to reset all hints for new players
+### Getting help today
+- **Read this guide**: open it from the **Guide** button on the main menu.
+- **Hover for details**: the context window at the bottom of the screen shows costs,
+  requirements, and effects for whatever you point at.
+- **Report a problem**: press `N` in-game (or use the on-screen Report Bug button).
 
 ### Enhanced Settings & Configuration System
 P(Doom) features a comprehensive settings system organized into logical categories:
@@ -161,19 +169,29 @@ Survive as long as possible while managing your AI safety lab. Avoid catastrophe
 2. **Buy upgrades** (right panel) - One-time purchases that give permanent benefits
 3. **End your turn** - Click 'END TURN' or press `Space` to see results
 
-### Keyboard Controls & Debug Features
-- **Space**: End turn (always available, even during tutorials)
-- **H**: Open Player Guide overlay
-- **Number keys (1-9)**: Execute actions by keyboard shortcut
-- **Tab/Arrows**: Navigate menus
-- **Enter/Space**: Confirm selections
-- **Escape**: Go back/cancel (multiple presses access quit menu)
+### Keyboard Controls
+These are the default binds (customisable on the Keybindings screen):
+- **Space**: End turn
+- **Enter**: Commit plan and reserve Action Points
+- **Number keys (1-9)**: Trigger actions 1-9 directly
+- **Z**: Undo last action
+- **C**: Clear the action queue
+- **Tab / Shift+Tab**: Next / previous tab
+- **Escape**: Cancel / back (repeated presses reach the quit menu)
+- **[**: Take a screenshot (saved to the screenshots/ folder)
+- **N**: Open the bug reporter
 
-#### Debug & Recovery Controls
-- **Ctrl+D**: Display UI state debug information
-- **Ctrl+E**: Emergency clear stuck popup events
-- **Ctrl+R**: Reset all hints for new players
-- **[**: Take screenshot (saved to screenshots/ folder)
+#### Quick-menu shortcuts (during action selection)
+- **H**: Hiring menu
+- **F**: Fundraising menu
+- **R**: Research actions
+- **P**: Publicity menu
+- **T**: Travel menu
+- **L**: Liability ledger
+
+The Player Guide is **not** bound to a key in-game; open it from the **Guide** button
+on the main menu. Debug and dev overlays (F3, backslash, F6) exist only in developer
+builds and are not part of normal play.
 4. **Handle events** - Random events will challenge your strategy
 5. **Repeat** - Keep going until game over
 
@@ -289,7 +307,8 @@ Each researcher generates research and affects doom based on their specializatio
 | Buy upgrade | Click upgrade button (right panel) |
 | End turn | Click 'END TURN' or press `Space` |
 | View upgrade details | Hover mouse over purchased upgrades (top right) |
-| Open Player Guide | Press `H` key anytime |
+| Open hiring menu | Press `H` during action selection |
+| Open Player Guide | Use the **Guide** button on the main menu (no in-game hotkey) |
 | Quit to menu | Press `Esc` |
 | End-game options | Click anywhere on final score screen to access end-game menu |
 
@@ -457,7 +476,7 @@ The competitors panel (between resources and actions) shows:
 - **Retro Design**: 80's techno-green styling with DOS-style ALL CAPS text
 - **Smart Information**: Shows detailed info about hovered actions, upgrades, or resources
 - **Minimizable**: Click (-/+) button to collapse/expand
-- **Always Visible**: Persistent information display in non-tutorial mode
+- **Always Visible**: Persistent information display during play
 
 ### Activity Log
 - Shows events from the current turn only

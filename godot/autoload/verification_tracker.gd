@@ -18,7 +18,7 @@ extends Node
 ##   - Uses SHA-256 for cryptographic strength
 ##   - Chains each hash to previous (tamper-evident)
 ##   - Includes game state snapshots (state binding)
-##   - Deterministic (same actions → same hash)
+##   - Deterministic (same actions -> same hash)
 ##   - Lightweight (64 bytes vs 5-20KB replay)
 ##
 ## Security:
@@ -43,7 +43,7 @@ var game_version: String = ""
 var debug_mode: bool = false
 
 # Ordered replayable input sequence (ADR-0006: the input string is the canonical run
-# artifact — anti-cheat, share format, and bug-repro in one). The hash chain above is
+# artifact -- anti-cheat, share format, and bug-repro in one). The hash chain above is
 # demoted to a cheap fingerprint; only re-simulating this log proves a run is legal.
 # Entries: {"t": turn, "k": "a", "id": action_id} | {"t": turn, "k": "r", "ev": event_id, "ch": choice_id}
 var replay_log: Array = []
@@ -55,7 +55,7 @@ var event_schedule: Array = []
 
 # ADR-0016 league metabolism: a run belongs to a monthly LEAGUE (the real-world month the
 # baseline seed represents). L1 stamps it alongside (seed, game_version) so the artifact
-# carries which league it was produced in — cross-version/cross-league boards (DQ-3) read it.
+# carries which league it was produced in -- cross-version/cross-league boards (DQ-3) read it.
 var league_id: String = ""
 
 
@@ -67,7 +67,7 @@ func start_tracking(seed: String, version: String = "unknown", schedule: Array =
 		seed: Game seed (deterministic RNG source)
 		version: Game version (for compatibility checks)
 		schedule: The run's event schedule (ADR-0005: part of seed identity; emitted
-			in the replay artifact so scheduled runs reproduce — DQ-6)
+			in the replay artifact so scheduled runs reproduce -- DQ-6)
 	"""
 	game_seed = seed
 	game_version = version
@@ -121,7 +121,7 @@ func record_action(action_id: String, state: GameState):
 	replay_log.append({"t": state.turn, "k": "a", "id": action_id})
 
 	if debug_mode:
-		print("[VerificationTracker] Action: %s → %s..." % [action_id, verification_hash.substr(0, 16)])
+		print("[VerificationTracker] Action: %s -> %s..." % [action_id, verification_hash.substr(0, 16)])
 
 
 func record_event(event_id: String, event_type: String, turn: int):
@@ -140,7 +140,7 @@ func record_event(event_id: String, event_type: String, turn: int):
 	verification_hash = data.sha256_text()
 
 	if debug_mode:
-		print("[VerificationTracker] Event: %s (%s) → %s..." % [event_id, event_type, verification_hash.substr(0, 16)])
+		print("[VerificationTracker] Event: %s (%s) -> %s..." % [event_id, event_type, verification_hash.substr(0, 16)])
 
 
 func record_event_response(event_id: String, response_id: String, turn: int):
@@ -162,14 +162,14 @@ func record_event_response(event_id: String, response_id: String, turn: int):
 	replay_log.append({"t": turn, "k": "r", "ev": event_id, "ch": response_id})
 
 	if debug_mode:
-		print("[VerificationTracker] Response: %s → %s → %s..." % [event_id, response_id, verification_hash.substr(0, 16)])
+		print("[VerificationTracker] Response: %s -> %s -> %s..." % [event_id, response_id, verification_hash.substr(0, 16)])
 
 
 func record_window_response(event_id: String, response: String, payment_source: String, turn: int):
 	"""Update hash + replay log when a player (or auto-resolution) answers a response window
-	(L1 / ADR-0009 §3). Schema bump: window records carry the PAYMENT SOURCE
+	(L1 / ADR-0009 S3). Schema bump: window records carry the PAYMENT SOURCE
 	(reserve / cannibalize / defer / ignore), the datum the exploit-finder's response-policy
-	axis reads. `k:"w"` — the v1 replay simulator ignores unknown keys, so this is additive
+	axis reads. `k:"w"` -- the v1 replay simulator ignores unknown keys, so this is additive
 	and pre-L1 artifacts stay verifiable.
 	Entry: {"t": turn, "k": "w", "ev": event_id, "resp": response, "pay": payment_source}"""
 	if not tracking_enabled:
@@ -210,7 +210,7 @@ func record_rng_outcome(rng_type: String, value: float, turn: int):
 	verification_hash = data.sha256_text()
 
 	if debug_mode:
-		print("[VerificationTracker] RNG: %s=%.6f → %s..." % [rng_type, rounded, verification_hash.substr(0, 16)])
+		print("[VerificationTracker] RNG: %s=%.6f -> %s..." % [rng_type, rounded, verification_hash.substr(0, 16)])
 
 
 func record_turn_end(turn: int, state: GameState):
@@ -231,7 +231,7 @@ func record_turn_end(turn: int, state: GameState):
 	verification_hash = data.sha256_text()
 
 	if debug_mode:
-		print("[VerificationTracker] Turn %d end → %s..." % [turn, verification_hash.substr(0, 16)])
+		print("[VerificationTracker] Turn %d end -> %s..." % [turn, verification_hash.substr(0, 16)])
 
 
 func get_final_hash() -> String:
@@ -271,7 +271,7 @@ func get_replay() -> Dictionary:
 		"format": "pdoom1-replay-v1",
 		"seed": game_seed,
 		"version": game_version,
-		# DQ-6 (#620 item 4): the verifier reads `schedule` (replay_simulator.gd) —
+		# DQ-6 (#620 item 4): the verifier reads `schedule` (replay_simulator.gd) --
 		# emit it. [] for unscheduled runs, so pre-L0 artifacts stay verifiable.
 		"schedule": event_schedule.duplicate(true),
 		# ADR-0016: which monthly league produced this run, carried beside seed+version.

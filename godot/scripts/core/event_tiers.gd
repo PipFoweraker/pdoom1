@@ -3,19 +3,19 @@ extends RefCounted
 ## Event delivery-tier classification (L1 / workshop#3 addendum #1-2, ADR-0012).
 ##
 ## The structural #630 fix: the flood ceiling was an INFORMATION budget (cap how many
-## events fire). Under the month plan it becomes a DEMAND budget — only one tier demands
+## events fire). Under the month plan it becomes a DEMAND budget -- only one tier demands
 ## a decision. Every event genre is classified:
-##   ambient — board state mutates, no notification (the 2017 civilian-awareness floor)
-##   feed    — readable, pull, no acknowledgment; carries a source_id (a named character
-##             who plausibly owns the information — provenance now, UI later)
-##   window  — the ONLY tier that demands a decision (a costed response menu opens)
+##   ambient -- board state mutates, no notification (the 2017 civilian-awareness floor)
+##   feed    -- readable, pull, no acknowledgment; carries a source_id (a named character
+##             who plausibly owns the information -- provenance now, UI later)
+##   window  -- the ONLY tier that demands a decision (a costed response menu opens)
 ##
 ## Windows additionally carry an event CLASS (ADR-0012 taxonomy) governing which response
 ## verbs are legal:
-##   un-snoozable   — HANDLE or IGNORE only; DEFER is not for sale (keeps reserve worth holding)
-##   deferrable     — DEFER mints a Ledger entry (ADR-0013 carrying cost)
-##   standing       — open for expiry_turns, then evaporates to no-engage (NO ledger entry)
-##   no-action      — taking no action is legitimately correct; never punished
+##   un-snoozable   -- HANDLE or IGNORE only; DEFER is not for sale (keeps reserve worth holding)
+##   deferrable     -- DEFER mints a Ledger entry (ADR-0013 carrying cost)
+##   standing       -- open for expiry_turns, then evaporates to no-engage (NO ledger entry)
+##   no-action      -- taking no action is legitimately correct; never punished
 ##
 ## Classification lives on the event DATA (delivery_tier / event_class / source_id /
 ## unignorable / expiry_turns / window{}); this module only reads it, applying Balance
@@ -43,7 +43,7 @@ static func default_class() -> String:
 
 static func tier_of(event: Dictionary) -> String:
 	"""Delivery tier of an event, defaulting via Balance for un-annotated legacy defs.
-	An event carrying its own `options` but no explicit tier is treated as a window —
+	An event carrying its own `options` but no explicit tier is treated as a window --
 	pre-L1 popups all demanded a decision, so that is the behaviour-preserving default
 	for anything option-bearing; genuinely ambient/feed genres opt out via delivery_tier."""
 	var t := String(event.get("delivery_tier", ""))
@@ -77,13 +77,13 @@ static func is_window(event: Dictionary) -> bool:
 
 static func is_unignorable(event: Dictionary) -> bool:
 	"""Legally unignorable windows cannot auto-resolve to IGNORE; the player must engage
-	(addendum #1). Un-snoozable class is NOT automatically unignorable — that's the DEFER
+	(addendum #1). Un-snoozable class is NOT automatically unignorable -- that's the DEFER
 	ban; unignorable is a stronger explicit flag."""
 	return bool(event.get("unignorable", false))
 
 
 static func defer_allowed(event: Dictionary) -> bool:
-	"""DEFER (mint a ledger entry) is sold only on the deferrable class (ADR-0012 §1-2)."""
+	"""DEFER (mint a ledger entry) is sold only on the deferrable class (ADR-0012 S1-2)."""
 	return class_of(event) == CLASS_DEFERRABLE
 
 

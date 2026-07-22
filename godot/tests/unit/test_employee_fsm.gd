@@ -1,5 +1,5 @@
 extends GutTest
-## Unit tests for EmployeeFSM — the pure state-mapping logic behind the OfficeFloor
+## Unit tests for EmployeeFSM -- the pure state-mapping logic behind the OfficeFloor
 ## Tier-1 sprites. Tests the mapping (mechanical state -> sprite state) ONLY, never
 ## rendering. This is the readout contract: the floor is the dashboard.
 

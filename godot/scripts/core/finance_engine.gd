@@ -4,22 +4,22 @@ extends RefCounted
 ##
 ## ONE pricing function for all liabilities (loans, funding-with-strings, equity,
 ## philanthropy, the desperation lever). Cost is a function of, at Pip's weights:
-##   - org type       (MAJOR — set at char/org creation; DQ-4)
-##   - counterparty   (MAJOR — who you owe changes what it costs; ADR-0007)
+##   - org type       (MAJOR -- set at char/org creation; DQ-4)
+##   - counterparty   (MAJOR -- who you owe changes what it costs; ADR-0007)
 ##   - typed reputation (safety-rep prices grants; finance-rep prices debt; ADR-0010)
 ##   - hype           (scoped to the raise's purpose)
-##   - current leverage (MINOR direct — outstanding payables vs a scale)
+##   - current leverage (MINOR direct -- outstanding payables vs a scale)
 ## Coefficients are data-driven (Balance "financing.*"); this file is the mechanism.
 ##
 ## OPTIONALITY (Pip's authorization: "give the player some optionality in what they
 ## choose out of what they're offered"): generate_offers() mints 2-3 concurrent
-## STANDING offers with varied terms and an expiry (ADR-0012 — expiry mints no ledger
+## STANDING offers with varied terms and an expiry (ADR-0012 -- expiry mints no ledger
 ## entry, the offer simply evaporates). Better standing => better menus. A raise is a
 ## campaign with lead time (ADR-0009): seek -> offers stand for N turns -> accept at
 ## plan speed.
 ##
 ## BOUNDARY (L5 lane): entries carry money-side TERMS. Doom conversion belongs to the
-## doom-streams lane — this engine never touches doom_system nor how a ledger bill
+## doom-streams lane -- this engine never touches doom_system nor how a ledger bill
 ## converts to doom. The desperation lever's immediate doom SUPPRESSION reuses the
 ## existing add_resources path (unchanged), same as the pre-L5 desperation_lever action.
 ##
@@ -100,7 +100,7 @@ static func is_available(id: String, ctx: Dictionary) -> bool:
 ##    principal_min, principal_max, principal_multiplier,
 ##    term_months, fuse_ticks, interest_rate, non_cash}
 ## Interest is snapped to 0.001 (save-safe) and clamped to [rate_floor, rate_ceiling].
-## A zero base_rate (equity, philanthropy) stays exactly 0 — not debt.
+## A zero base_rate (equity, philanthropy) stays exactly 0 -- not debt.
 static func price(id: String, ctx: Dictionary) -> Dictionary:
 	var def := instrument_def(id)
 	if def.is_empty():
@@ -207,7 +207,7 @@ static func offer_live(offer: Dictionary, turn: int) -> bool:
 
 ## Accept a standing offer: apply the immediate benefit (cash now / doom suppressed now)
 ## and mint the Ledger entry(ies) carrying the offer's OWN quoted terms (not the default
-## factory magnitudes — the menu is honest: what you saw is what you owe). Non-cash terms
+## factory magnitudes -- the menu is honest: what you saw is what you owe). Non-cash terms
 ## (equity dilution, board seat, agenda strings) mint ledger riders (ADR-0011). Returns
 ## {success, message, money_delta, doom_delta, entries:[Entry]}.
 static func accept_offer(offer: Dictionary, state) -> Dictionary:
@@ -246,13 +246,13 @@ static func accept_offer(offer: Dictionary, state) -> Dictionary:
 			result["money_delta"] = principal
 			# Equity is not debt: no repayment entry. The dilution + board seat are priced-regret
 			# riders (ADR-0013 single dilution scalar v1; board seat = options-curtailed stub, DQ-7).
-			result["message"] = "Accepted %s: +$%d now (equity round — no repayment, but dilution + board terms apply)" % [offer.get("name", "equity"), int(principal)]
+			result["message"] = "Accepted %s: +$%d now (equity round -- no repayment, but dilution + board terms apply)" % [offer.get("name", "equity"), int(principal)]
 		"philanthropy":
 			state.add_resources({"money": principal})
 			result["money_delta"] = principal
-			result["message"] = "Accepted %s: +$%d, a gift — no repayment (scarce)" % [offer.get("name", "gift"), int(principal)]
+			result["message"] = "Accepted %s: +$%d, a gift -- no repayment (scarce)" % [offer.get("name", "gift"), int(principal)]
 		"desperation_payroll":
-			# Immediate doom SUPPRESSION (unchanged pre-L5 path — boundary: no doom_system touch),
+			# Immediate doom SUPPRESSION (unchanged pre-L5 path -- boundary: no doom_system touch),
 			# plants a secret, compounding governance liability with the QUOTED terms.
 			var suppress := _cfg_num("desperation_doom_suppression", 10.0)
 			state.add_resources({"doom": -suppress})
@@ -266,7 +266,7 @@ static func accept_offer(offer: Dictionary, state) -> Dictionary:
 			result["message"] = "Unknown instrument factory: %s" % factory
 			return result
 
-	# Non-cash riders (ADR-0011: agenda riders are ledger entries). Inert standing terms —
+	# Non-cash riders (ADR-0011: agenda riders are ledger entries). Inert standing terms --
 	# a huge fuse + zero interest keep them visible in the post-mortem trail without ever
 	# billing; the governance/equity lanes (DQ-7, late-game equity) wire their consequences.
 	if bool(non_cash.get("board_seat", false)):

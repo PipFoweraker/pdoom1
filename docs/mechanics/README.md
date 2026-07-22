@@ -35,15 +35,15 @@ Player-facing documentation for P(Doom) game mechanics. These pages are synced t
 
 | Mechanic | Status | Last Updated |
 |----------|--------|--------------|
-| [Reputation & Public Opinion](reputation.md) | 🟡 Stub | 2025-11-26 |
-| [Funding & Resources](funding.md) | 🟡 Stub | 2025-12-19 |
-| [Personnel & Hiring](personnel.md) | 🟡 Stub | 2025-12-19 |
-| [P(Doom) System](doom.md) | 🟡 Stub | 2025-12-19 |
+| [Reputation & Public Opinion](reputation.md) | [Y] Stub | 2025-11-26 |
+| [Funding & Resources](funding.md) | [Y] Stub | 2025-12-19 |
+| [Personnel & Hiring](personnel.md) | [Y] Stub | 2025-12-19 |
+| [P(Doom) System](doom.md) | [Y] Stub | 2025-12-19 |
 
 **Legend:**
-- 🟢 Complete - Fully documented with examples
-- 🟡 Stub - Basic structure, needs expansion
-- ⚪ Planned - Not yet created
+- [G] Complete - Fully documented with examples
+- [Y] Stub - Basic structure, needs expansion
+- [.] Planned - Not yet created
 
 ---
 

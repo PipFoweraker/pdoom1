@@ -15,7 +15,7 @@
 
 ---
 
-## ⚠️ SESSION WATCH-LIST (verify these specifically — known-suspect from recent work)
+## [!] SESSION WATCH-LIST (verify these specifically — known-suspect from recent work)
 
 - [There are no easy and hard versions of the game according to the actual UI as it stands ] **Easy & Hard games START without crashing.** A missing `max_action_points` crashed start-game on Easy/Hard; fixed in #540 — confirm it actually holds in real play.
 - [wasn't able to test ] **Does difficulty change AP?** Per **#541**, Easy/Hard set `max_action_points` but `start_turn` ignores it, so AP may be identical across difficulties. Record AP on **turn 1** for each: Easy ___ / Standard ___ / Hard ___  *(expected right now: all 3 — confirm the bug, don't assume it's fixed)*.

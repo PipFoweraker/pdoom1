@@ -18,7 +18,7 @@ extends Node
 ## policy events, etc.) which get transformed into game events with costs,
 ## effects, and player choices.
 
-# Shared resource-name accessor (L9 #621) — preloaded to avoid class_name
+# Shared resource-name accessor (L9 #621) -- preloaded to avoid class_name
 # registration-order issues (same pattern as GameState's RiskPool preload).
 const ResourceAccessorClass = preload("res://scripts/core/resource_accessor.gd")
 
@@ -783,7 +783,7 @@ func _map_variable(pdoom_var: String) -> String:
 	if _variable_mapping.has(pdoom_var):
 		return _variable_mapping[pdoom_var]
 
-	# Fallback mapping — shared with the event condition/effect name matches
+	# Fallback mapping -- shared with the event condition/effect name matches
 	# via ResourceAccessor (L9 #621, duplication kill-list)
 	return ResourceAccessorClass.map_external_name(pdoom_var)
 

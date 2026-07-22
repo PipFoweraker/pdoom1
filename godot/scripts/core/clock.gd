@@ -2,12 +2,12 @@ class_name Clock
 extends RefCounted
 ## The single time authority (L0, #620 item 2).
 ##
-## One turn = one WORKDAY (values unchanged by L0 — only the seam moved here).
+## One turn = one WORKDAY (values unchanged by L0 -- only the seam moved here).
 ## Three time conventions used to live in three places: the day-calendar
 ## (game_state), the annual/260 salary denominator (turn_manager), and
 ## get_months_per_turn (game_state). Every turn<->calendar conversion now routes
 ## through this one object so the L1 month re-denomination (ADR-0009) flips ONE
-## seam — and L9's Balance surface has a single place to read pacing from.
+## seam -- and L9's Balance surface has a single place to read pacing from.
 ## See docs/design/TWO_ACT_STRUCTURE.md for the variable game-length plan.
 
 const TURNS_PER_WEEK: int = 5        # work days per week (turn = 1 workday)
@@ -30,7 +30,7 @@ static func months_per_turn() -> float:
 	L1/ADR-0009 note: the resolution tick stays day-grained (turn = 1 workday);
 	the MONTH is the PLAN cadence, a layer above the tick (MonthPlan / Clock month
 	helpers below). Badge = calendar date, days-survived scoring stays fine-grained
-	(ADR-0009 §6). This value is unchanged so risk/doom calibration and recorded
+	(ADR-0009 S6). This value is unchanged so risk/doom calibration and recorded
 	replays are untouched by the month plan layer."""
 	return 1.0
 
@@ -39,7 +39,7 @@ static func annual_to_per_turn(annual_amount: float) -> float:
 	"""Convert an annual money magnitude (e.g. salary) to one turn's bill.
 	Turn = 1 workday, ~260 workdays/yr (#573: was /12, a month billed every day).
 	Billed per workday-turn, ~21.7 workdays/month, so a full month of billing already
-	sums to ~annual/12 — monthly payroll emerges from the tick grain (ADR-0009
+	sums to ~annual/12 -- monthly payroll emerges from the tick grain (ADR-0009
 	re-denomination is behaviour-neutral here; see MonthPlan doc)."""
 	return annual_amount / WORKDAYS_PER_YEAR
 
@@ -80,8 +80,8 @@ static func date_for_turn(turn: int, start_year: int, start_month: int, start_da
 	# L0 leap-day fix (#620 note 2): the old loop condition compared `day` against the
 	# NON-leap DAYS_IN_MONTH[1]=28 while the body used a leap-adjusted month_days=29, so a
 	# date landing exactly on Feb 29 satisfied the while-condition (29>28) but never
-	# decremented (29>29 is false) — an infinite hang. The month-turn fiction window
-	# (2017-2040) crosses six Feb-29 dates, so this was latent→live. Compute the
+	# decremented (29>29 is false) -- an infinite hang. The month-turn fiction window
+	# (2017-2040) crosses six Feb-29 dates, so this was latent->live. Compute the
 	# leap-adjusted length ONCE and use it in both the test and the decrement.
 	while true:
 		var month_days = DAYS_IN_MONTH[month - 1]
@@ -119,7 +119,7 @@ static func is_leap_year(year: int) -> bool:
 # The MONTH is the plan cadence; the day-turn is the resolution tick beneath it.
 # These helpers let the engine detect month boundaries (when a fresh plan phase
 # opens and reserve evaporates) and label the badge without any consumer needing
-# calendar arithmetic. All derive from date_for_turn — one source of truth.
+# calendar arithmetic. All derive from date_for_turn -- one source of truth.
 # ============================================================================
 
 const MONTH_NAMES := ["January", "February", "March", "April", "May", "June",
@@ -162,7 +162,7 @@ static func month_name(turn: int, start_year: int, start_month: int, start_day: 
 
 
 static func month_label(turn: int, start_year: int, start_month: int, start_day: int) -> String:
-	"""Badge label — the exact plan month, e.g. 'March 2034' (ADR-0009 §6)."""
+	"""Badge label -- the exact plan month, e.g. 'March 2034' (ADR-0009 S6)."""
 	var d := date_for_turn(turn, start_year, start_month, start_day)
 	return "%s %d" % [MONTH_NAMES[int(d.month) - 1], int(d.year)]
 
