@@ -3,6 +3,34 @@
 Taste rulings, palette, and design principles from Pip's listening sessions.
 Append-only per session; newest at the bottom of each section. ASCII only.
 
+## STATE -- session 1 closed out (2026-07-22)
+
+Read this first; the rest of the file is the full append-only ruling history.
+
+WHAT SHIPPED (all on main): a composed 5-tier adaptive score wired into the
+game (music_manager.gd MUSIC_TIER_STEMS), plus VICTORY (quiet dawn), DEFEAT
+(trudge dirge), and MENU (checkpoint respite) cues. All original friend-made
+placeholders retired to archive/audio/ (PR #710 wire-in, #731 purge).
+godot/assets/audio/music/ now holds the 8 composed oggs only.
+
+THE PIPELINE (map in README.md): compose Strudel patch -> judge in
+jukebox.html -> render with capture_takes.py (drives strudel.cc in a muted
+browser, taps the WebAudio graph -- no OBS, safe during calls) ->
+process_captures.py (exact bar-boundary loops + reverb-spill bake + -16 LUFS
+ogg) -> wire path into MUSIC_TIER_STEMS. Real-player parts: commission_sheets.html.
+
+WHERE SESSION 2 PICKS UP (creative, nothing mechanical left):
+- Pip's first in-game listen verdict (menu -> debug_force_tier(0..4) -> win/lose).
+- The humans-go-metal casting question: m4t ("bassist catches the train")
+  opened a metal trajectory that converges with GORDON_DERIVATIONS.md, but
+  casting rule 1 says humans never play clean synthesis -- so what timbre are
+  the humans allowed when they go loud? Decide before recording real stems.
+- Real-stem recording: Pip's math-chants (RODE mic) + taiko/shakuhachi/bass.
+- Benched-recyclable takes live in captures/game/: first_light (M0 slow-build),
+  m4t (train), m4r (ratchet), and the trailer/zen/drifting/dirge studies.
+- OPEN (Pip's values call): no game CREDITS file exists yet -- the composed
+  score and the friend's retired contributions both want acknowledgement.
+
 ## Taste rulings (dated, from Pip's ear)
 
 2026-07-17 -- green bed v0.1:
