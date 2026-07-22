@@ -9,7 +9,7 @@
 config_version=5
 
 [application]
-config/version="0.11.0"
+config/version="0.12.0"
 
 config/name="P(Doom)"
 config/description="AI Safety Lab Management Simulation - Strategic resource allocation and risk management"

@@ -66,7 +66,7 @@ var last_seen_version: String = ""  # Empty = never seen patch notes
 # runtime file read) because version.txt lives outside res:// and the leaderboard
 # board-key derives from this value, so it must resolve identically in exported
 # builds where a res:// text read is not guaranteed to be packed.
-const CURRENT_VERSION: String = "0.11.0"
+const CURRENT_VERSION: String = "0.12.0"
 
 # Leaderboard State (transient, not saved)
 var latest_leaderboard_entry: String = ""  # UUID of most recent score entry
