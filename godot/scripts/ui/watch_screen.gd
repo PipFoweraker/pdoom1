@@ -70,11 +70,13 @@ func _ready() -> void:
 
 	office_floor = OfficeFloorScene.instantiate()
 	add_child(office_floor)
-	# Override the standalone-demo sizing (360x260) for the narrow WATCH column and dim it.
-	office_floor.custom_minimum_size = Vector2(0, 180)
+	# #770: give the floor more of the right column -- taller strip (was 180) and a touch
+	# brighter (was 0.82) so the scaled-up sprites/props read, while EXPAND_FILL keeps it
+	# spanning the full column width. Pip will eyeball final height.
+	office_floor.custom_minimum_size = Vector2(0, 260)
 	office_floor.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	office_floor.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	office_floor.modulate = Color(1, 1, 1, 0.82)   # dim so it never fights the feed
+	office_floor.modulate = Color(1, 1, 1, 0.9)   # dim so it never fights the feed
 	office_floor.set_sprite_frames(OfficeWorkerFrames)
 	office_floor.set_tier(1)
 
