@@ -141,6 +141,25 @@ class IntelligentASCIIConverter:
             "\u00be": "3/4",  # THREE QUARTERS
             "\u2153": "1/3",  # ONE THIRD
             "\u2154": "2/3",  # TWO THIRDS
+            # Separators, math + markers (v0.11.0: symbols the table previously left unmapped,
+            # surfaced by enforce_standards.py --incremental over the no-emoji conversion).
+            "\u00b7": "-",  # MIDDLE DOT -> hyphen separator
+            "\u00a7": "Section ",  # SECTION SIGN
+            "\u2248": "~",  # ALMOST EQUAL TO -> approximately
+            "\u2212": "-",  # MINUS SIGN -> hyphen
+            "\u03a3": "Sum",  # GREEK CAPITAL SIGMA -> Sum
+            "\u2610": "[ ]",  # BALLOT BOX -> markdown unchecked
+            "\u2611": "[x]",  # BALLOT BOX WITH CHECK -> markdown checked
+            "\u25ba": "> ",  # BLACK RIGHT-POINTING POINTER
+            "\u25b6": "> ",  # BLACK RIGHT-POINTING TRIANGLE
+            "\u25c4": "< ",  # BLACK LEFT-POINTING POINTER
+            "\u25c0": "< ",  # BLACK LEFT-POINTING TRIANGLE
+            "\u25bc": "v",  # BLACK DOWN-POINTING TRIANGLE
+            "\u25b2": "^",  # BLACK UP-POINTING TRIANGLE
+            "\u26aa": "o ",  # MEDIUM WHITE CIRCLE
+            "\u26ab": "* ",  # MEDIUM BLACK CIRCLE
+            "\u2715": "x",  # MULTIPLICATION X
+            "\u2716": "x",  # HEAVY MULTIPLICATION X
         }
 
         # Box drawing characters - convert to simple ASCII alternatives
@@ -233,6 +252,9 @@ class IntelligentASCIIConverter:
             "\U0001f3af": "TARGET",  # DIRECT HIT -> goal/target
             "\u23ed": "SKIP",  # BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR -> skip/next
             "\u2728": "SPARKLES",  # SPARKLES -> special/highlight
+            "\u2691": "FLAG",  # BLACK FLAG -> flagged item
+            "\u2690": "FLAG",  # WHITE FLAG -> flagged item
+            "\U0001f6a7": "WIP",  # CONSTRUCTION SIGN -> work in progress
             # Achievement and status
             "\U0001f3c6": "ACHIEVEMENT",  # TROPHY -> major accomplishment
             "\U0001f3c5": "MEDAL",  # SPORTS MEDAL -> recognition
