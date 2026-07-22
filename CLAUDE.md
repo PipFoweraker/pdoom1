@@ -62,6 +62,28 @@ runtime -- the old Python bridge is gone). Python exists only for CI/tooling in
   any working-tree edits made during the run. Background commits + parallel
   work = repeated mystery failures (cost 4 attempts on 2026-07-19).
 
+## Agent gotchas (hard-won 2026-07-20..22)
+- **Pushes hang on Git Credential Manager** (interactive prompt, no GUI):
+  prefix `GIT_TERMINAL_PROMPT=0` on `git push` -- pushes instantly via gh's
+  helper.
+- **enforce-standards sprays whole-tree UNSTAGED transliteration churn**
+  during pre-commit (#773 tracks the fix). Discard it (`git checkout -- .`
+  of unintended paths); NEVER `git add -A`. If a worktree looks mass-
+  modified or a script looks corrupted, suspect this before blaming main.
+- **Squash-merge does NOT fire closes-keywords here** -- after merging,
+  verify the linked issues closed; close stale ones manually.
+- **Verify your Edit paths land in YOUR worktree** -- three lanes in one
+  week initially edited the wrong checkout. Absolute paths from prompts go
+  stale after worktree switches.
+- **Art over 1MB never goes in git** (no --no-verify, no cap raises):
+  docs/art/ART_MASTERS_POLICY.md. Masters staging: G:/tmp/pdoom1-art-masters/.
+- **Release tiers**: issues carry ship:tonight / ship:hotpatch-48h /
+  ship:next-release labels; unlabeled = backlog. Monthly release train
+  (docs/ROADMAP.md); release-branch model in issue #775.
+- **Pip visual passes**: make a preview worktree at the branch, run
+  `godot --headless --path godot --import` (background, minutes), then give
+  him the launch command. Never repurpose his main checkout.
+
 ## Git workflow
 - Branch from **freshly-fetched** `origin/main`, not a stale local ref:
   `git fetch origin main && git checkout -b <branch> origin/main`.
