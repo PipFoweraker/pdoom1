@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>P(Doom) Release &amp; League Cycle -- internal runbook</title>
+<style>
+  :root {
+    --bg: #f7f6f3;
+    --panel: #ffffff;
+    --ink: #1c1d21;
+    --muted: #5c5f66;
+    --line: #e2e0da;
+    --accent: #b4531f;        /* burnt orange -- the "epoch fork" colour */
+    --accent-soft: #f3e7dd;
+    --good: #2f6b41;
+    --good-soft: #e4efe6;
+    --warn: #9a6a00;
+    --warn-soft: #f6ecd4;
+    --danger: #a12a26;
+    --danger-soft: #f6e0de;
+    --code-bg: #f0eee9;
+    --mono: ui-monospace, "Cascadia Code", "Consolas", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #16171a; --panel: #1e2024; --ink: #e9e8e4; --muted: #9a9ea6;
+      --line: #2f3238; --accent: #e0864f; --accent-soft: #33261d;
+      --good: #7fc496; --good-soft: #1c2a21; --warn: #d9ad55; --warn-soft: #2b2416;
+      --danger: #e88a86; --danger-soft: #2c1a19; --code-bg: #26282d;
+    }
+  }
+  :root[data-theme="dark"] {
+      --bg: #16171a; --panel: #1e2024; --ink: #e9e8e4; --muted: #9a9ea6;
+      --line: #2f3238; --accent: #e0864f; --accent-soft: #33261d;
+      --good: #7fc496; --good-soft: #1c2a21; --warn: #d9ad55; --warn-soft: #2b2416;
+      --danger: #e88a86; --danger-soft: #2c1a19; --code-bg: #26282d;
+  }
+  :root[data-theme="light"] {
+      --bg: #f7f6f3; --panel: #ffffff; --ink: #1c1d21; --muted: #5c5f66;
+      --line: #e2e0da; --accent: #b4531f; --accent-soft: #f3e7dd;
+      --good: #2f6b41; --good-soft: #e4efe6; --warn: #9a6a00; --warn-soft: #f6ecd4;
+      --danger: #a12a26; --danger-soft: #f6e0de; --code-bg: #f0eee9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.55;
+    font-size: 16px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.25rem 5rem; }
+  header.doc { border-bottom: 2px solid var(--accent); padding-bottom: 1rem; margin-bottom: 2rem; }
+  header.doc h1 { font-size: 1.9rem; margin: 0 0 .35rem; letter-spacing: -.01em; text-wrap: balance; }
+  .sub { color: var(--muted); font-size: .95rem; }
+  .pin { display: inline-block; background: var(--accent-soft); color: var(--accent);
+         border: 1px solid var(--accent); border-radius: 4px; padding: .05rem .45rem;
+         font-family: var(--mono); font-size: .8rem; font-weight: 600; }
+  h2 { font-size: 1.35rem; margin: 2.5rem 0 .75rem; padding-top: .5rem;
+       border-top: 1px solid var(--line); letter-spacing: -.01em; }
+  h2 .n { color: var(--accent); font-family: var(--mono); font-size: 1rem; margin-right: .5rem; }
+  h3 { font-size: 1.05rem; margin: 1.5rem 0 .4rem; }
+  p { margin: .5rem 0; }
+  code { font-family: var(--mono); background: var(--code-bg); padding: .08rem .32rem;
+         border-radius: 3px; font-size: .88em; }
+  pre { background: var(--code-bg); border: 1px solid var(--line); border-radius: 6px;
+        padding: .85rem 1rem; overflow-x: auto; font-family: var(--mono);
+        font-size: .85rem; line-height: 1.5; }
+  table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: .92rem; }
+  th, td { text-align: left; padding: .55rem .7rem; border-bottom: 1px solid var(--line);
+           vertical-align: top; }
+  th { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  td code { white-space: nowrap; }
+  .tablewrap { overflow-x: auto; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+          padding: 1rem 1.2rem; margin: 1rem 0; }
+  .callout { border-left: 4px solid; border-radius: 0 6px 6px 0; padding: .8rem 1rem;
+             margin: 1.1rem 0; }
+  .callout .lbl { font-weight: 700; font-size: .8rem; text-transform: uppercase;
+                  letter-spacing: .05em; display: block; margin-bottom: .25rem; }
+  .callout.danger { background: var(--danger-soft); border-color: var(--danger); }
+  .callout.danger .lbl { color: var(--danger); }
+  .callout.warn { background: var(--warn-soft); border-color: var(--warn); }
+  .callout.warn .lbl { color: var(--warn); }
+  .callout.good { background: var(--good-soft); border-color: var(--good); }
+  .callout.good .lbl { color: var(--good); }
+  .pill { font-family: var(--mono); font-size: .78rem; font-weight: 600; padding: .05rem .4rem;
+          border-radius: 4px; white-space: nowrap; }
+  .pill.fork { background: var(--accent-soft); color: var(--accent); }
+  .pill.nofork { background: var(--good-soft); color: var(--good); }
+  ol.steps { counter-reset: step; list-style: none; padding-left: 0; }
+  ol.steps > li { counter-increment: step; position: relative; padding: .1rem 0 .9rem 2.6rem;
+                  border-left: 2px solid var(--line); margin-left: .9rem; }
+  ol.steps > li::before { content: counter(step); position: absolute; left: -0.95rem; top: 0;
+      width: 1.8rem; height: 1.8rem; background: var(--accent); color: #fff;
+      border-radius: 50%; display: grid; place-items: center; font-weight: 700;
+      font-family: var(--mono); font-size: .9rem; }
+  ol.steps > li:last-child { border-left-color: transparent; }
+  .muted { color: var(--muted); }
+  .foot { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--line);
+          color: var(--muted); font-size: .85rem; }
+  .toc { columns: 2; column-gap: 2rem; font-size: .9rem; margin: 1rem 0 0; }
+  .toc a { color: var(--ink); text-decoration: none; }
+  .toc a:hover { color: var(--accent); text-decoration: underline; }
+  @media (max-width: 620px) { .toc { columns: 1; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="doc">
+  <h1>P(Doom) Release &amp; League Cycle</h1>
+  <div class="sub">Internal runbook -- nomenclature, cadence, the fork rule, and the
+  epoch-cut process. So future devs (and future Claude) do not mangle an epoch shift.</div>
+  <p style="margin-top:.8rem"><span class="pin">PINNED 2026-07-24</span>
+     &nbsp;<span class="muted">Reflective review due on/after 2026-08-24 (see issue in footer).
+     Provisional until then -- especially the weekly-league cadence.</span></p>
+</header>
+
+<div class="card">
+  <strong>Read me first.</strong> There are two version numbers and two cadences. Keeping
+  them apart is the whole point. If you change one thing before an epoch cut, let it be
+  this: <em>the ladder bump and the gameplay it scopes must ship in the same build.</em>
+  <nav class="toc">
+    <a href="#nom">1. Nomenclature (the six words)</a><br>
+    <a href="#cadence">2. The two cadences</a><br>
+    <a href="#fork">3. The fork rule (what starts a new epoch)</a><br>
+    <a href="#labels">4. Issue labels</a><br>
+    <a href="#runbook">5. Epoch-cut runbook (L1 -&gt; L2)</a><br>
+    <a href="#cheat">6. Cheat card</a>
+  </nav>
+</div>
+
+<h2 id="nom"><span class="n">1</span>Nomenclature -- the six words</h2>
+<p>Use these exactly. The confusion this doc exists to kill is treating "version",
+"epoch", "league", and "board" as the same thing. They are not.</p>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Word</th><th>What it is</th><th>Where it lives</th><th>Changes the board?</th></tr></thead>
+<tbody>
+<tr><td><strong>build_version</strong></td>
+    <td>Identifies the binary / <code>.pck</code>. Bumps every release and patch. Semver, e.g. <code>0.13.0</code>.</td>
+    <td><code>version.txt</code> -&gt; stamped into <code>game_config.gd CURRENT_VERSION</code></td>
+    <td><strong>No.</strong> Cosmetic bumps must not fork the board.</td></tr>
+<tr><td><strong>ladder_version</strong></td>
+    <td>The ruleset. A small integer, rendered <code>L2</code>. Bumps only when gameplay / scoring / seed-generation rules change.</td>
+    <td><code>ladder_version.txt</code> -&gt; stamped into <code>game_config.gd LADDER_VERSION</code></td>
+    <td><strong>Yes.</strong> This is the board scope (<code>get_board_version()</code>).</td></tr>
+<tr><td><strong>epoch</strong></td>
+    <td>One value of <code>ladder_version</code>. "The game's current rules." Scores are comparable within an epoch, never across.</td>
+    <td>= the current <code>ladder_version</code></td>
+    <td>Is the rotation.</td></tr>
+<tr><td><strong>league</strong></td>
+    <td>A promoted / featured <strong>seed</strong> on the current epoch. "This week's race." A fresh league = a new base seed, same rules.</td>
+    <td>backend featured-board pointer + a promoted seed</td>
+    <td>New board, <em>same epoch</em>.</td></tr>
+<tr><td><strong>seed</strong></td>
+    <td>The RNG root for one run/board. Anyone can share a seed; the promoted one is the league.</td>
+    <td><code>get_weekly_seed()</code> / manual promotion</td>
+    <td>New seed = new board.</td></tr>
+<tr><td><strong>board</strong></td>
+    <td>The leaderboard for one <code>(seed, ladder_version)</code> pair.</td>
+    <td>local JSON + PHP score API</td>
+    <td>--</td></tr>
+</tbody>
+</table>
+</div>
+<p class="muted">Board key = <code>(seed, ladder_version)</code>. New seed rotates one board;
+a ladder bump rotates <em>all</em> boards.</p>
+
+<h2 id="cadence"><span class="n">2</span>The two cadences</h2>
+<p>Two clocks, deliberately decoupled. This is the resolution of "how do we stay fresh
+without scattering scores."</p>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th>Clock</th><th>What moves</th><th>Cadence</th><th>Forks the ladder?</th><th>Ceremony</th></tr></thead>
+<tbody>
+<tr><td><strong>LEAGUE</strong> (the seed)</td>
+    <td>A new promoted base seed. Same rules, fresh board -- "this week's ladder."</td>
+    <td>~weekly, <strong>manual at Pip's call for now</strong></td>
+    <td><span class="pill nofork">NO -- same epoch</span></td>
+    <td>Low. Post a seed, point the featured board at it.</td></tr>
+<tr><td><strong>GAME</strong> (the epoch)</td>
+    <td>Balance patch + world-clock advance + any new gameplay. <code>ladder_version</code> bump.</td>
+    <td>~monthly</td>
+    <td><span class="pill fork">YES -- new epoch</span></td>
+    <td>High. This is the legible heartbeat: patch notes, meta rotation, argue about it.</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="callout good">
+  <span class="lbl">Why this works</span>
+  A new seed does not change the rules, so weekly league rotation keeps competition fresh
+  <em>without</em> making scores incomparable -- last week's board and this week's are both
+  valid, just different races (chess.com-daily style). Only the monthly GAME change rotates
+  the ruleset. Fragmentation was only ever a risk if <em>rules</em> forked weekly; seeds
+  forking weekly is the intended freshness engine ("a league is just a promoted seed").
+</div>
+
+<h3>Rulings pinned 2026-07-24</h3>
+<ul>
+<li><strong>Game changes monthly, league (seed) rotates weekly.</strong></li>
+<li><strong>Rotation is manual (Pip's call), not clock-locked</strong> -- until we learn how
+    long a league actually stays fresh. Do not hard-code a weekly timer yet.</li>
+<li><strong>World-clock patching is regular and predictable</strong> (advance the sim
+    calendar ~a month, inject the month's real-world events). Because new events change the
+    reachable game, this rides the monthly GAME change (it forks -- see section 3).</li>
+<li><strong>Weekly auto-rotation is blocked on a bug:</strong> <code>get_weekly_seed()</code>
+    is frozen at <code>weekly-2026-w0</code> (it reads ms-since-boot, not the date). While
+    rotation is manual this does not bite; fix it before automating weekly promotion.</li>
+</ul>
+
+<h2 id="fork"><span class="n">3</span>The fork rule -- what starts a new epoch</h2>
+<div class="card" style="border-color:var(--accent)">
+  <strong>The one question.</strong> Could two identical runs -- same seed, same player
+  choices -- produce a <em>different score, world trajectory, or RNG stream</em> under this
+  change?
+  <div style="margin-top:.6rem">
+    <span class="pill fork">YES</span> &rarr; it forks. Bump <code>ladder_version</code>.
+    Queue it for the next monthly epoch (do not ship on merge).<br>
+    <span class="pill nofork">NO</span> &rarr; it is cosmetic. Bump <code>version.txt</code>
+    only. Ship any time. Everyone stays on the same board.
+  </div>
+</div>
+
+<div class="tablewrap">
+<table>
+<thead><tr><th><span class="pill fork">FORKS</span> (epoch, monthly-batched)</th>
+           <th><span class="pill nofork">DOES NOT FORK</span> (patch, any time)</th></tr></thead>
+<tbody>
+<tr><td>Scoring rules (turn accrual, doom-integral tiebreak, thresholds)</td>
+    <td>UI layout, panels, colours, fonts</td></tr>
+<tr><td>Balance numbers that change outcomes (action costs, doom deltas, event probabilities, finance)</td>
+    <td>Music, SFX, audio mix</td></tr>
+<tr><td>Seed schedule / wave changes; advancing the world-clock; new events on existing seeds</td>
+    <td>Art, icons, sprites, banners</td></tr>
+<tr><td>RNG-stream changes (add/remove/reorder a draw, change turn order) -- breaks replays</td>
+    <td>Copy / text / patch notes / onboarding wording</td></tr>
+<tr><td>New content reachable in an existing seed's run; mortality-mechanism changes</td>
+    <td>Bugfixes with NO behaviour change; tooling / CI / docs</td></tr>
+</tbody>
+</table>
+</div>
+<p class="muted">Tie-break for the unsure author: if a saved replay from the previous epoch
+would fail to reproduce under your change, it forks -- by construction.</p>
+
+<h2 id="labels"><span class="n">4</span>Issue labels (derived from the fork rule)</h2>
+<p>The label is a function of the fork rule, not a vibe. Assign it by answering section 3.</p>
+<div class="tablewrap">
+<table>
+<thead><tr><th>Label</th><th>Meaning</th><th>PR must...</th></tr></thead>
+<tbody>
+<tr><td><code>league:&lt;epoch&gt;</code> (e.g. <code>league:v0.13</code>)</td>
+    <td>A forking change, queued for the next monthly epoch.</td>
+    <td>touch <code>ladder_version.txt</code> (or be batched into the epoch commit that does).</td></tr>
+<tr><td><code>patch:ui</code> / <code>patch:fix</code></td>
+    <td>Non-forking, ships mid-week.</td>
+    <td>NOT touch <code>ladder_version.txt</code>.</td></tr>
+<tr><td><code>infra</code> / <code>build</code></td>
+    <td>Non-forking, non-UI (packaging, telemetry, CI).</td>
+    <td>NOT touch <code>ladder_version.txt</code>.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="callout warn">
+  <span class="lbl">Known mislabels to fix (2026-07-24 audit)</span>
+  <code>#789</code> is tagged both <code>league:v0.13</code> AND <code>ship:hotpatch-48h</code>
+  -- a forking change cannot be a non-forking hotpatch; keep the league tag, drop the
+  hotpatch one. <code>#788</code> (dev-badge = scoring integrity), <code>#799</code> (telemetry),
+  <code>#805</code> (builds) are mislabelled <code>patch:ui</code>. <code>#735</code>/<code>#700</code>/<code>#648</code>
+  are scoring-critical but untiered. Full list: <code>docs/game-design/TENSION_AUDIT_2026-07-23.md</code> sec 4.
+</div>
+
+<h2 id="runbook"><span class="n">5</span>Epoch-cut runbook: L1 -&gt; L2</h2>
+
+<div class="callout danger">
+  <span class="lbl">Pinned numbering -- do not improvise</span>
+  <strong>L1 = the legacy v0.12.0 board</strong> (aliased, read-only -- what the friends-and-family
+  cohort is playing now).<br>
+  <strong>L2 = the v0.13 gameplay epoch</strong> (#789 hiring stitch + the build/ladder split live).
+</div>
+
+<div class="callout danger">
+  <span class="lbl">The one hazard that scatters scores</span>
+  NEVER cut a v0.13 gameplay build while <code>ladder_version.txt</code> still reads <code>1</code>.
+  It would key boards <code>L1</code> and dump new-gameplay scores onto the aliased old-gameplay
+  board -- the exact lie the split exists to prevent. <strong>The ladder bump and the #789
+  gameplay ride the SAME build.</strong>
+</div>
+
+<ol class="steps">
+<li><strong>Prereq: PR #806 merged to main.</strong> That lands the split with
+    <code>ladder_version = 1</code>, so the current live board is now epoch <code>L1</code>,
+    and #789 gameplay is present in the tree.</li>
+<li><strong>Choose the new base seed</strong> for L2's first league (manual promotion).</li>
+<li><strong>One release commit bumps BOTH numbers.</strong>
+    <pre># in version.txt:        0.12.0 -> 0.13.0
+# in ladder_version.txt:      1 -> 2
+python tools/sync_version.py          # stamps CURRENT_VERSION + LADDER_VERSION</pre>
+    Atomic. Both bumps, one commit, same build as the #789 gameplay.</li>
+<li><strong>Verify before building.</strong>
+    <pre>python tools/sync_version.py --check   # drift == fatal; must pass
+# confirm GameConfig.get_board_version() now returns "L2"</pre></li>
+<li><strong>Build and smoke-test.</strong>
+    <pre>python tools/build_release.py          # nukes .godot, proves the freshness marker</pre>
+    Run the exe once; play a turn; open the leaderboard and confirm the subtitle shows the
+    L2 epoch.</li>
+<li><strong>Backend (external, ssh to DreamCompute).</strong>
+    <pre># make the legacy board readable under its new epoch name:
+cp board_&lt;seed&gt;__v0.12.0.json  board_&lt;seed&gt;__L1.json
+# confirm the score API accepts L2; point the featured board at (new seed, L2)</pre>
+    Tracked in pdoom1-website #151.</li>
+<li><strong>Publish and announce.</strong>
+    <pre>gh release create v0.13.0 --target main ...</pre>
+    Then the friends / website / Rektango announcement. Kill stragglers on L1 mercilessly
+    (they can hotpatch up).</li>
+</ol>
+
+<div class="callout good">
+  <span class="lbl">Sanity check after the cut</span>
+  A player on the L2 build who dies posts to board <code>(&lt;new seed&gt;, L2)</code>. A player
+  still on the old v0.12 build posts to <code>(&lt;old seed&gt;, L1)</code>. The two never mix.
+  If a v0.13 score ever appears on an L1 board, step 3 was split across two builds -- stop and
+  re-cut.
+</div>
+
+<h2 id="cheat"><span class="n">6</span>Cheat card</h2>
+<div class="card">
+<pre>Is my change cosmetic (UI/art/music/copy/no-behaviour fix)?
+   YES -> bump version.txt only. Label patch:*. Ship mid-week. Same board.
+   NO  -> it forks. bump ladder_version.txt too. Label league:&lt;epoch&gt;.
+          Queue for the next MONTHLY epoch. Boards rotate.
+
+Fresh competition without new rules?
+   -> promote a new SEED (a new league). Same epoch, new board. Weekly-ish, manual.
+
+Cutting the epoch?
+   -> version.txt AND ladder_version.txt bump in ONE commit, same build as the gameplay.
+      L1 = legacy v0.12 (read-only).  L2 = v0.13.
+      sync_version.py --check must pass.  Alias old board.  Point featured board at (new seed, L2).</pre>
+</div>
+
+<div class="foot">
+  <p><strong>Provenance.</strong> Distilled from <code>docs/game-design/BUILD_VS_LADDER_VERSION_SPLIT.md</code>,
+  <code>PHASE3_DEPLOY_RECON.md</code>, ADR-0002 / ADR-0016, and the 2026-07-24 tension audit
+  (<code>docs/game-design/TENSION_AUDIT_2026-07-23.md</code>). Rulings by Pip 2026-07-24.</p>
+  <p><strong>Review gate.</strong> This is provisional. A time-gated GitHub issue tracks a
+  reflective review on/after 2026-08-24 -- re-examine the nomenclature, the weekly-league
+  cadence (does a league stay fresh a week? two?), and whether rotation should lock to a
+  clock. Do not treat the weekly cadence as canon before that review.</p>
+</div>
+
+</div>
+</body>
+</html>
