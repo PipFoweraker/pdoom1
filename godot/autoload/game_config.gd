@@ -7,6 +7,7 @@ var player_name: String = "Researcher"
 var lab_name: String = "AI Safety Lab"
 var game_seed: String = ""  # Empty = weekly challenge seed
 var difficulty: int = 1  # 0=Easy, 1=Standard, 2=Hard
+var org_type: String = "nonprofit"  # Early-game org form: "nonprofit" | "for_profit" (DQ-19). Set at pregame; default flow forces nonprofit.
 var scenario_id: String = ""  # Empty = standard game, otherwise scenario pack ID
 
 # Baseline Computation Mode (Issue #372)
@@ -396,13 +397,27 @@ func increment_games_played() -> void:
 	save_config()
 	print("[GameConfig] Games played: %d" % games_played)
 
-## Get weekly challenge seed (generate based on current week)
+## Manual featured-league seed override. Non-empty PINS the featured/default
+## league seed -- the metabolic cycle rotates it at Pip's call ("manual for now",
+## see docs/RELEASE_AND_LEAGUE_CYCLE.html). To rotate the league, edit this const
+## (or clear it to fall back to the calendar-week auto-seed below).
+const FEATURED_SEED_OVERRIDE: String = "weekly-2026-w30"
+
+## Get weekly challenge seed (the featured/default league seed).
 func get_weekly_seed() -> String:
-	# Generate seed based on current year and week number
-	var time = Time.get_datetime_dict_from_system()
-	var year = time.year
-	var week = Time.get_ticks_msec() / 1000 / 60 / 60 / 24 / 7  # Rough week calculation
-	return "weekly-%d-w%d" % [year, week % 52]
+	if not FEATURED_SEED_OVERRIDE.is_empty():
+		return FEATURED_SEED_OVERRIDE
+	# FIX: previously used Time.get_ticks_msec() (ms since ENGINE START, always
+	# < 1 week for any real session), which froze the week at 0. Derive the week
+	# from the real wall-clock date so it advances weekly.
+	var time := Time.get_datetime_dict_from_system()
+	var year := int(time.year)
+	var days_before := [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
+	var doy: int = int(days_before[int(time.month) - 1]) + int(time.day)
+	if int(time.month) > 2 and (year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)):
+		doy += 1
+	var week: int = (doy - 1) / 7 + 1
+	return "weekly-%d-w%d" % [year, week]
 
 ## Get display seed (weekly or custom)
 func get_display_seed() -> String:

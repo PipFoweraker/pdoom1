@@ -54,6 +54,9 @@ func start_new_game(game_seed: String = ""):
 	_rival_cap_snapshot.clear()  # fresh drift baseline for the new run
 
 	state = GameState.new(game_seed)
+	# Early-game org-form choice (DQ-19): copy the pregame selection onto the pure state
+	# so FinanceEngine prices/gates instruments per org form. Default nonprofit.
+	state.org_type = GameConfig.org_type
 
 	# Apply scenario overrides (before difficulty, so difficulty can further modify)
 	_apply_scenario_overrides()

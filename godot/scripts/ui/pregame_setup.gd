@@ -15,6 +15,9 @@ extends Control
 # Available scenarios (populated at runtime)
 var available_scenarios: Array[Dictionary] = []
 
+# Org-form choice control (built programmatically in _setup_org_type_choice)
+var org_type_option: OptionButton
+
 # Random lab name components (ported from pygame)
 var lab_prefixes = [
 	"Advanced", "Applied", "Center for", "Institute for",
@@ -48,6 +51,9 @@ func _ready():
 
 	# Populate scenarios dropdown
 	_populate_scenarios()
+
+	# Early-game org-form choice (DQ-19)
+	_setup_org_type_choice()
 
 	# Focus player name input
 	player_name_input.grab_focus()
@@ -137,6 +143,32 @@ func _on_scenario_selected(index: int):
 		GameConfig.scenario_id = scenario.get("id", "")
 		_update_scenario_description(index)
 		print("[PreGameSetup] Scenario selected: %s" % scenario.get("title", "Unknown"))
+
+func _setup_org_type_choice():
+	"""Add the early-game org-form choice (DQ-19). Built in code to avoid a .tscn edit
+	on launch day. Non-profit (default) vs for-profit changes FinanceEngine pricing and
+	unlocks for-profit-only instruments (e.g. vc_equity)."""
+	var container := $Panel/VBox/FieldsContainer
+	if container == null:
+		return
+	var row := HBoxContainer.new()
+	row.name = "OrgTypeRow"
+	var label := Label.new()
+	label.text = "Org Form:"
+	label.custom_minimum_size = Vector2(140, 0)
+	org_type_option = OptionButton.new()
+	org_type_option.add_item("Non-profit", 0)
+	org_type_option.add_item("For-profit", 1)
+	org_type_option.selected = (1 if GameConfig.org_type == "for_profit" else 0)
+	org_type_option.item_selected.connect(_on_org_type_selected)
+	row.add_child(label)
+	row.add_child(org_type_option)
+	container.add_child(row)
+
+func _on_org_type_selected(index: int):
+	"""Handle org-form selection"""
+	GameConfig.org_type = ("for_profit" if index == 1 else "nonprofit")
+	print("[PreGameSetup] Org form: %s" % GameConfig.org_type)
 
 func _on_random_lab_name_pressed():
 	"""Generate a random lab name"""
