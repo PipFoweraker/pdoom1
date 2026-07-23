@@ -4,7 +4,7 @@
 GODOT := godot
 PYTHON := python
 
-.PHONY: help run test lint validate clean
+.PHONY: help run test lint validate clean commit
 
 help: ## Show this help message
 	@echo "P(Doom) Development Commands"
@@ -39,3 +39,10 @@ clean: ## Clean Python cache files and Godot temp files
 install: ## Install Python dependencies
 	pip install -r requirements.txt
 	pip install -r requirements-dev.txt
+
+commit: ## Hook-safe commit: make commit m="msg" f="path1 path2" (or f="-u" for all tracked). See tools/README_commit.md
+	@if [ -z "$(m)" ] || [ -z "$(f)" ]; then \
+		echo 'usage: make commit m="commit message" f="path1 path2"   (or f="-u" for all tracked changes)'; \
+		exit 1; \
+	fi
+	$(PYTHON) tools/commit.py -m "$(m)" $(f)
