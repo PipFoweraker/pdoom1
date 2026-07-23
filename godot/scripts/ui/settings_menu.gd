@@ -17,6 +17,11 @@ extends Control
 # Built programmatically (no .tscn row): global-leaderboard opt-out (default ON).
 var global_leaderboard_checkbox: CheckButton = null
 
+# Built programmatically (no .tscn row): story-intro toggle (#801). The reversible
+# ESCAPE HATCH for the "auto-flip on player signal + reversible settings toggle" pattern
+# (see GameConfig.play_intros): a hold-to-skip auto-flips play_intros off; this re-enables.
+var play_intros_checkbox: CheckButton = null
+
 # Section header labels for icon integration
 @onready var audio_label = $VBox/SettingsContainer/AudioSettings/AudioLabel
 @onready var graphics_label = $VBox/SettingsContainer/GraphicsSettings/GraphicsLabel
@@ -36,6 +41,9 @@ func _ready():
 
 	# Add the global-leaderboard opt-out under Gameplay (built in code, not the .tscn)
 	_add_global_leaderboard_toggle()
+
+	# Add the story-intro toggle under Gameplay (built in code, not the .tscn)
+	_add_play_intros_toggle()
 
 	# Connect theme dropdown
 	theme_dropdown.item_selected.connect(_on_theme_changed)
@@ -160,6 +168,29 @@ func _on_global_leaderboard_toggled(pressed: bool):
 	print("[SettingsMenu] Submit scores to global leaderboard: ", pressed)
 	GameConfig.set_setting("submit_scores_global", pressed, false)
 	NotificationManager.info("Global leaderboard submission " + ("enabled" if pressed else "disabled"))
+
+func _add_play_intros_toggle():
+	"""Append a 'Play story intros' toggle to the Gameplay section (#801). Reversible escape
+	hatch: hold-to-skip auto-flips play_intros off; this lets the player turn intros back on."""
+	var gameplay = get_node_or_null("VBox/SettingsContainer/GameplaySettings")
+	if gameplay == null:
+		return
+	var row = HBoxContainer.new()
+	var label = Label.new()
+	label.text = "Play story intros"
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(label)
+	play_intros_checkbox = CheckButton.new()
+	play_intros_checkbox.button_pressed = GameConfig.play_intros
+	play_intros_checkbox.toggled.connect(_on_play_intros_toggled)
+	row.add_child(play_intros_checkbox)
+	gameplay.add_child(row)
+
+func _on_play_intros_toggled(pressed: bool):
+	"""Handle story-intro opt-in/out toggle"""
+	print("[SettingsMenu] Play story intros: ", pressed)
+	GameConfig.set_setting("play_intros", pressed, false)
+	NotificationManager.info("Story intros " + ("enabled" if pressed else "disabled"))
 
 func _on_colorblind_toggled(pressed: bool):
 	"""Handle colorblind mode toggle"""

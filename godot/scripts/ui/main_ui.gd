@@ -72,6 +72,14 @@ var _seen_unlocked_actions: Dictionary = {}  # #578: action ids seen unlocked, t
 var _actions_primed: bool = false  # skip fanfare on the very first action population (baseline)
 var current_turn_phase: String = "NOT_STARTED"
 
+# First-lever nudge (#801 cold-open handoff). When GameConfig.show_first_lever_hint is set
+# (by the cold-open on completion), pulse the hire button + point the getting-started hint at
+# the lever, so a new player learns action->effect. Cleared after the first hire or turn 3.
+# Pure presentation -- reads a transient flag, mutates no game state / RNG / score.
+const FIRST_LEVER_ACTION_ID := "hire_staff"
+const FIRST_LEVER_HINT_TEXT := "Advisor: doom is rising -- hire a researcher to lower it (the glowing button)."
+var _first_lever_pulse_tween: Tween
+
 # P0 feed filter (playtest 2026-07-17): the arxiv/technical-research flavour deck floods the
 # feed. Each logged line is recorded here with its channel; the "flavour" channel is hidden
 # by default so real, actionable events aren't crowded out. The toggle flips this.
@@ -866,6 +874,11 @@ func _on_game_state_updated(state: Dictionary):
 	if getting_started_hint:
 		getting_started_hint.visible = state.get("turn", 0) < 3
 
+	# #801: retire the first-lever pulse once the onboarding window has passed, even if the
+	# player never hired (belt-and-suspenders; the primary clear is on first hire).
+	if GameConfig.show_first_lever_hint and state.get("turn", 0) >= 3:
+		_clear_first_lever_nudge()
+
 	# Enable controls after first init
 	if state.get("turn", 0) >= 0:
 		# Enable/disable Reserve AP button based on available AP
@@ -1279,6 +1292,37 @@ func _on_actions_available(actions: Array):
 	# Also populate upgrades
 	_populate_upgrades()
 
+	# #801: re-apply the first-lever pulse each rebuild (buttons are recreated above, so a
+	# tween on the old button would dangle). No-op unless the cold-open set the flag.
+	_apply_first_lever_nudge()
+
+## #801 cold-open handoff: pulse the hire button and point the hint at the lever.
+## Guarded + minimal -- does nothing unless GameConfig.show_first_lever_hint is set.
+func _apply_first_lever_nudge() -> void:
+	# Kill any prior pulse (its target button was just freed + recreated).
+	if _first_lever_pulse_tween != null and _first_lever_pulse_tween.is_valid():
+		_first_lever_pulse_tween.kill()
+	_first_lever_pulse_tween = null
+	if not GameConfig.show_first_lever_hint:
+		return
+	var btn := _find_action_button(FIRST_LEVER_ACTION_ID)
+	if btn == null:
+		return
+	# Advisor pointer line (names the lever AND its effect).
+	if getting_started_hint:
+		getting_started_hint.text = FIRST_LEVER_HINT_TEXT
+	# Looping alpha pulse to draw the eye to the named lever.
+	_first_lever_pulse_tween = create_tween().set_loops()
+	_first_lever_pulse_tween.tween_property(btn, "modulate:a", 0.4, 0.6)
+	_first_lever_pulse_tween.tween_property(btn, "modulate:a", 1.0, 0.6)
+
+## Stop the first-lever nudge (first hire taken, or onboarding window passed).
+func _clear_first_lever_nudge() -> void:
+	GameConfig.show_first_lever_hint = false
+	if _first_lever_pulse_tween != null and _first_lever_pulse_tween.is_valid():
+		_first_lever_pulse_tween.kill()
+	_first_lever_pulse_tween = null
+
 func _populate_upgrades():
 	"""Populate upgrades list"""
 	# Clear existing upgrades
@@ -1374,6 +1418,10 @@ func _on_upgrade_hover(upgrade: Dictionary, is_purchased: bool):
 func _on_dynamic_action_pressed(action_id: String, action_name: String):
 	"""Handle dynamic action button press"""
 	log_message("[color=cyan]Selecting action: %s[/color]" % action_name)
+
+	# #801: the player engaged the taught lever -- retire the first-lever nudge.
+	if GameConfig.show_first_lever_hint and action_id == FIRST_LEVER_ACTION_ID:
+		_clear_first_lever_nudge()
 
 	# Check if this is a submenu action
 	var action = _get_action_by_id(action_id)
