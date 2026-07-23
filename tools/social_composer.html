@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Social Composer -- P(Doom)1</title>
+<style>
+  /* ---- Theme tokens (light default, dark via prefers-color-scheme) ---- */
+  :root {
+    --bg: #f4f5f7;
+    --panel: #ffffff;
+    --panel-2: #fbfbfc;
+    --ink: #1c2024;
+    --ink-soft: #5b636c;
+    --line: #d7dbe0;
+    --line-strong: #b9bfc7;
+    --accent: #2f6df6;
+    --accent-ink: #ffffff;
+    --ok: #1a7f47;
+    --over: #c62828;
+    --over-bg: #fdecec;
+    --focus: #2f6df6;
+    --shadow: 0 1px 2px rgba(20,25,35,.08), 0 2px 8px rgba(20,25,35,.05);
+    --radius: 10px;
+    --mono: ui-monospace, "Cascadia Mono", "Consolas", "SFMono-Regular", "Menlo", monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14171b;
+      --panel: #1d2127;
+      --panel-2: #232830;
+      --ink: #e6e9ee;
+      --ink-soft: #98a1ac;
+      --line: #333a44;
+      --line-strong: #454e5a;
+      --accent: #4f86ff;
+      --accent-ink: #0b1220;
+      --ok: #4eca7f;
+      --over: #ff6b6b;
+      --over-bg: #3a1f22;
+      --focus: #6ea0ff;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 2px 10px rgba(0,0,0,.3);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { max-width: 100%; overflow-x: hidden; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.45;
+    -webkit-text-size-adjust: 100%;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 20px 18px 60px; }
+
+  header.app {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 16px;
+    margin-bottom: 14px;
+  }
+  header.app h1 { font-size: 18px; margin: 0; letter-spacing: .2px; }
+  header.app .sub { color: var(--ink-soft); font-size: 13px; }
+  header.app .spacer { flex: 1 1 auto; }
+
+  button {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 7px 12px;
+    cursor: pointer;
+    transition: background .12s ease, border-color .12s ease, transform .06s ease;
+  }
+  button:hover { background: var(--panel-2); border-color: var(--accent); }
+  button:active { transform: translateY(1px); }
+  button.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button.primary:hover { filter: brightness(1.06); }
+  button.danger { border-color: var(--over); color: var(--over); }
+  button.danger:hover { background: var(--over-bg); }
+  button.mini { padding: 4px 9px; font-size: 12px; }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  label.fieldlabel {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin: 0 0 5px 2px;
+  }
+
+  textarea {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 11px;
+    resize: vertical;
+    min-height: 60px;
+  }
+  textarea:focus { border-color: var(--accent); }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .master-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 14px;
+  }
+  #master { min-height: 130px; }
+  #notes { min-height: 130px; }
+
+  .toolbar {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    margin-top: 12px;
+  }
+  .toolbar .spacer { flex: 1 1 auto; }
+  .toggle {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 13px; color: var(--ink-soft);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 5px 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .toggle input { accent-color: var(--accent); }
+
+  /* ---- Platform panes ---- */
+  .panes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 14px;
+  }
+  .pane {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .pane.blog { grid-column: 1 / -1; }
+  .pane-head {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .pane-name { font-weight: 700; font-size: 14px; }
+  .pane-limit { font-size: 11px; color: var(--ink-soft); }
+  .pane-head .spacer { flex: 1 1 auto; }
+  .pane textarea { min-height: 118px; flex: 1 1 auto; }
+  .pane.blog textarea { min-height: 150px; }
+
+  .pane-foot {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 9px;
+  }
+  .counter {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 12px;
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .counter .num { color: var(--ink); }
+  .counter.over { color: var(--over); font-weight: 700; }
+  .counter.over .num { color: var(--over); }
+  .pane.over-outline textarea { border-color: var(--over); background: var(--over-bg); }
+  .pane-foot .spacer { flex: 1 1 auto; }
+
+  .copied {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ok);
+    opacity: 0;
+    transition: opacity .15s ease;
+  }
+  .copied.show { opacity: 1; }
+
+  /* ---- Asset preview ---- */
+  #drop {
+    border: 2px dashed var(--line-strong);
+    border-radius: var(--radius);
+    padding: 18px;
+    text-align: center;
+    color: var(--ink-soft);
+    background: var(--panel-2);
+    transition: border-color .12s ease, background .12s ease;
+    cursor: pointer;
+  }
+  #drop.drag { border-color: var(--accent); background: var(--panel); }
+  #drop:focus-visible { outline: 2px solid var(--focus); }
+  .asset-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+  #assetPreview img {
+    max-width: 100%;
+    max-height: 260px;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    display: block;
+  }
+  .asset-meta { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); line-height: 1.7; }
+  .asset-meta b { color: var(--ink); font-weight: 600; }
+
+  /* ---- Help ---- */
+  details.help { }
+  details.help > summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    list-style: none;
+    padding: 4px 2px;
+  }
+  details.help > summary::-webkit-details-marker { display: none; }
+  details.help > summary::before { content: "\25B8  "; color: var(--ink-soft); }
+  details.help[open] > summary::before { content: "\25BE  "; }
+  details.help .body { margin-top: 10px; color: var(--ink-soft); font-size: 13.5px; }
+  details.help .body ul { margin: 6px 0 6px 0; padding-left: 20px; }
+  details.help .body li { margin: 4px 0; }
+  details.help code {
+    font-family: var(--mono); font-size: 12px;
+    background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: 5px; padding: 1px 5px;
+  }
+
+  .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--ink-soft); margin: 2px 0 12px 2px; }
+
+  @media (max-width: 720px) {
+    .master-grid { grid-template-columns: 1fr; }
+    .panes { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+    button:active { transform: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="app">
+    <h1>Social Composer</h1>
+    <span class="sub">P(Doom)1 &middot; write once, trim per platform, copy. Offline &amp; local.</span>
+    <span class="spacer"></span>
+    <button id="clearAll" class="danger mini" type="button">Clear all</button>
+  </header>
+
+  <!-- ============ MASTER ============ -->
+  <section class="card">
+    <div class="master-grid">
+      <div>
+        <label class="fieldlabel" for="master">Master message</label>
+        <textarea id="master" placeholder="Write the core message once. Then push it to every platform pane below and trim each to taste."></textarea>
+      </div>
+      <div>
+        <label class="fieldlabel" for="notes">Notes / asset caption</label>
+        <textarea id="notes" placeholder="Alt text, image caption, links, hashtags to remember, scratch notes... (not copied anywhere automatically)"></textarea>
+      </div>
+    </div>
+    <div class="toolbar">
+      <button id="pushAll" class="primary" type="button">Push master to variants</button>
+      <label class="toggle" title="ON = overwrite every pane. OFF = only fill panes that are currently empty.">
+        <input type="checkbox" id="overwrite"> Overwrite all (off = only empty)
+      </label>
+      <span class="spacer"></span>
+      <span class="counter">master: <span class="num" id="masterCount">0</span> chars</span>
+    </div>
+  </section>
+
+  <!-- ============ PLATFORM PANES ============ -->
+  <div class="section-title">Platform variants</div>
+  <div class="panes" id="panes"></div>
+
+  <!-- ============ ASSET PREVIEW ============ -->
+  <div class="section-title" style="margin-top:20px;">Asset preview (local only)</div>
+  <section class="card">
+    <div class="asset-row">
+      <div style="flex:1 1 240px; min-width:220px;">
+        <div id="drop" tabindex="0" role="button" aria-label="Drop or paste an image here">
+          Drag &amp; drop an image here, click to pick a file, or paste (Ctrl/Cmd+V) an image.<br>
+          <span style="font-size:12px;">Preview only &mdash; nothing is uploaded.</span>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" style="display:none;">
+        <div style="margin-top:8px;">
+          <button id="clearAsset" class="mini" type="button">Remove image</button>
+        </div>
+      </div>
+      <div style="flex:2 1 300px; min-width:220px;">
+        <div id="assetPreview"></div>
+        <div class="asset-meta" id="assetMeta">No image loaded.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HELP ============ -->
+  <section class="card">
+    <details class="help">
+      <summary>Help / roadmap</summary>
+      <div class="body">
+        <p><b>v1 (this tool):</b> compose + copy only. No auto-posting, no accounts, no network calls &mdash; safe to keep open all day. Drafts auto-save to this browser's localStorage (per file location); reopening restores them.</p>
+        <ul>
+          <li><b>Workflow:</b> type the <i>Master message</i> once &rarr; <code>Push master to variants</code> &rarr; trim each pane under its limit &rarr; <code>Copy</code> per platform.</li>
+          <li>The counter turns <span style="color:var(--over);font-weight:700;">red</span> and shows how far over you are once a pane exceeds its limit. LinkedIn's 3000 is a soft/style guide; Blog intro is unlimited.</li>
+          <li>Character counts are UTF-16 code units (what the textarea reports). X/Bluesky weight some things differently (URLs, emoji) &mdash; treat the counter as a close guide, not gospel.</li>
+        </ul>
+        <p><b>Planned later (NOT in v1):</b></p>
+        <ul>
+          <li><b>AI-assist:</b> a button that drafts all the variants from the master (tone + length per platform) so you edit rather than trim by hand.</li>
+          <li><b>Actual scheduled posting:</b> needs per-platform OAuth for X / Bluesky / Mastodon / LinkedIn &mdash; a much bigger, credential-holding project, deliberately out of scope here.</li>
+        </ul>
+        <p><b>Not to be confused with:</b> the automated <i>release-broadcast</i> living in the <code>pdoom1-website</code> repo (issue #144). That fires templated announcements on release; <i>this</i> tool is for hand-crafted, per-post content. Different jobs.</p>
+      </div>
+    </details>
+  </section>
+
+</div>
+
+<script>
+"use strict";
+(function () {
+  // ---- Platform definitions (limit null = no limit) ----
+  var PLATFORMS = [
+    { id: "x",        name: "X / Twitter", limit: 280 },
+    { id: "bluesky",  name: "Bluesky",     limit: 300 },
+    { id: "mastodon", name: "Mastodon",    limit: 500 },
+    { id: "linkedin", name: "LinkedIn",    limit: 3000, soft: true },
+    { id: "blog",     name: "Blog intro",  limit: null, wide: true }
+  ];
+
+  var LS_PREFIX = "pdoom_social_v1_";
+  var $ = function (sel, root) { return (root || document).querySelector(sel); };
+
+  function lsGet(key, fallback) {
+    try { var v = localStorage.getItem(LS_PREFIX + key); return v === null ? fallback : v; }
+    catch (e) { return fallback; }
+  }
+  function lsSet(key, val) {
+    try { localStorage.setItem(LS_PREFIX + key, val); } catch (e) { /* storage full / disabled: silent */ }
+  }
+  function lsRemove(key) {
+    try { localStorage.removeItem(LS_PREFIX + key); } catch (e) {}
+  }
+
+  // ---- Build panes ----
+  var panesRoot = $("#panes");
+  var paneEls = {}; // id -> { textarea, counter, pane }
+
+  PLATFORMS.forEach(function (p) {
+    var pane = document.createElement("section");
+    pane.className = "pane" + (p.wide ? " blog" : "");
+
+    var head = document.createElement("div");
+    head.className = "pane-head";
+    var name = document.createElement("span");
+    name.className = "pane-name";
+    name.textContent = p.name;
+    var limit = document.createElement("span");
+    limit.className = "pane-limit";
+    limit.textContent = p.limit === null ? "no limit" : (p.limit + (p.soft ? " (soft)" : ""));
+    var hspacer = document.createElement("span");
+    hspacer.className = "spacer";
+    var resetBtn = document.createElement("button");
+    resetBtn.className = "mini";
+    resetBtn.type = "button";
+    resetBtn.textContent = "Reset from master";
+    resetBtn.title = "Replace this pane's text with the master message";
+    head.appendChild(name); head.appendChild(limit); head.appendChild(hspacer); head.appendChild(resetBtn);
+
+    var ta = document.createElement("textarea");
+    ta.id = "ta_" + p.id;
+    ta.setAttribute("aria-label", p.name + " variant");
+    ta.value = lsGet("pane_" + p.id, "");
+    ta.spellcheck = true;
+
+    var foot = document.createElement("div");
+    foot.className = "pane-foot";
+    var counter = document.createElement("span");
+    counter.className = "counter";
+    var copyBtn = document.createElement("button");
+    copyBtn.className = "mini primary";
+    copyBtn.type = "button";
+    copyBtn.textContent = "Copy";
+    var copied = document.createElement("span");
+    copied.className = "copied";
+    copied.textContent = "Copied!";
+    copied.setAttribute("role", "status");
+    var fspacer = document.createElement("span");
+    fspacer.className = "spacer";
+    foot.appendChild(counter); foot.appendChild(fspacer); foot.appendChild(copyBtn); foot.appendChild(copied);
+
+    pane.appendChild(head); pane.appendChild(ta); pane.appendChild(foot);
+    panesRoot.appendChild(pane);
+
+    paneEls[p.id] = { def: p, textarea: ta, counter: counter, pane: pane, copied: copied };
+
+    // events
+    ta.addEventListener("input", function () {
+      lsSet("pane_" + p.id, ta.value);
+      updateCounter(p.id);
+    });
+    resetBtn.addEventListener("click", function () {
+      ta.value = master.value;
+      lsSet("pane_" + p.id, ta.value);
+      updateCounter(p.id);
+    });
+    copyBtn.addEventListener("click", function () { doCopy(p.id, copyBtn); });
+
+    updateCounter(p.id);
+  });
+
+  function updateCounter(id) {
+    var e = paneEls[id];
+    var len = e.textarea.value.length;
+    var lim = e.def.limit;
+    if (lim === null) {
+      e.counter.classList.remove("over");
+      e.pane.classList.remove("over-outline");
+      e.counter.innerHTML = '<span class="num">' + len + '</span> chars';
+      return;
+    }
+    var over = len > lim;
+    e.counter.classList.toggle("over", over);
+    e.pane.classList.toggle("over-outline", over);
+    if (over) {
+      e.counter.innerHTML = '<span class="num">' + len + '</span> / ' + lim + '  (+' + (len - lim) + ' over)';
+    } else {
+      e.counter.innerHTML = '<span class="num">' + len + '</span> / ' + lim + '  (' + (lim - len) + ' left)';
+    }
+  }
+
+  function doCopy(id, btn) {
+    var e = paneEls[id];
+    var text = e.textarea.value;
+    var showOk = function () {
+      e.copied.classList.add("show");
+      setTimeout(function () { e.copied.classList.remove("show"); }, 1400);
+    };
+    // Preferred: async clipboard API (fine inside this click gesture)
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(showOk, function () { fallbackCopy(text, e.textarea, showOk); });
+    } else {
+      fallbackCopy(text, e.textarea, showOk);
+    }
+  }
+
+  // execCommand fallback for file:// where async clipboard can be blocked
+  function fallbackCopy(text, sourceTextarea, onOk) {
+    try {
+      var tmp = document.createElement("textarea");
+      tmp.value = text;
+      tmp.style.position = "fixed";
+      tmp.style.top = "-1000px";
+      tmp.style.opacity = "0";
+      document.body.appendChild(tmp);
+      tmp.focus();
+      tmp.select();
+      var ok = document.execCommand("copy");
+      document.body.removeChild(tmp);
+      if (ok) { onOk(); }
+      else { selectForManualCopy(sourceTextarea); }
+    } catch (err) {
+      selectForManualCopy(sourceTextarea);
+    }
+  }
+  function selectForManualCopy(ta) {
+    ta.focus(); ta.select();
+    alert("Automatic copy was blocked by the browser. The text is now selected -- press Ctrl/Cmd+C.");
+  }
+
+  // ---- Master + notes ----
+  var master = $("#master");
+  var notes = $("#notes");
+  var masterCount = $("#masterCount");
+  master.value = lsGet("master", "");
+  notes.value = lsGet("notes", "");
+  function updateMasterCount() { masterCount.textContent = master.value.length; }
+  master.addEventListener("input", function () { lsSet("master", master.value); updateMasterCount(); });
+  notes.addEventListener("input", function () { lsSet("notes", notes.value); });
+  updateMasterCount();
+
+  // ---- Push master to variants ----
+  $("#pushAll").addEventListener("click", function () {
+    var overwrite = $("#overwrite").checked;
+    var text = master.value;
+    PLATFORMS.forEach(function (p) {
+      var e = paneEls[p.id];
+      if (overwrite || e.textarea.value.trim() === "") {
+        e.textarea.value = text;
+        lsSet("pane_" + p.id, text);
+        updateCounter(p.id);
+      }
+    });
+  });
+
+  // ---- Clear all ----
+  $("#clearAll").addEventListener("click", function () {
+    if (!confirm("Clear the master message, notes, and ALL platform variants? This cannot be undone.")) return;
+    master.value = ""; notes.value = "";
+    lsRemove("master"); lsRemove("notes");
+    PLATFORMS.forEach(function (p) {
+      paneEls[p.id].textarea.value = "";
+      lsRemove("pane_" + p.id);
+      updateCounter(p.id);
+    });
+    updateMasterCount();
+    clearAsset();
+  });
+
+  // ---- Asset preview (local only) ----
+  var drop = $("#drop");
+  var fileInput = $("#fileInput");
+  var assetPreview = $("#assetPreview");
+  var assetMeta = $("#assetMeta");
+  var currentObjectUrl = null;
+
+  function clearAsset() {
+    if (currentObjectUrl) { URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; }
+    assetPreview.innerHTML = "";
+    assetMeta.textContent = "No image loaded.";
+  }
+
+  function humanBytes(n) {
+    if (n < 1024) return n + " B";
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB";
+    return (n / (1024 * 1024)).toFixed(2) + " MB";
+  }
+
+  function loadImageFile(file) {
+    if (!file || !/^image\//.test(file.type)) {
+      assetMeta.textContent = "Not an image file: " + (file ? (file.name || file.type) : "unknown");
+      return;
+    }
+    if (currentObjectUrl) { URL.revokeObjectURL(currentObjectUrl); currentObjectUrl = null; }
+    var url = URL.createObjectURL(file);
+    currentObjectUrl = url;
+    var img = new Image();
+    img.onload = function () {
+      assetPreview.innerHTML = "";
+      assetPreview.appendChild(img);
+      assetMeta.innerHTML =
+        "<b>" + escapeHtml(file.name || "(pasted image)") + "</b><br>" +
+        "type: " + escapeHtml(file.type || "?") + "<br>" +
+        "dimensions: " + img.naturalWidth + " x " + img.naturalHeight + " px<br>" +
+        "size: " + humanBytes(file.size || 0);
+    };
+    img.onerror = function () { assetMeta.textContent = "Could not decode image."; };
+    img.alt = file.name || "pasted image preview";
+    img.src = url;
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  drop.addEventListener("click", function () { fileInput.click(); });
+  drop.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); fileInput.click(); }
+  });
+  fileInput.addEventListener("change", function () {
+    if (fileInput.files && fileInput.files[0]) loadImageFile(fileInput.files[0]);
+  });
+  ["dragenter", "dragover"].forEach(function (t) {
+    drop.addEventListener(t, function (ev) { ev.preventDefault(); ev.stopPropagation(); drop.classList.add("drag"); });
+  });
+  ["dragleave", "dragend"].forEach(function (t) {
+    drop.addEventListener(t, function (ev) { ev.preventDefault(); ev.stopPropagation(); drop.classList.remove("drag"); });
+  });
+  drop.addEventListener("drop", function (ev) {
+    ev.preventDefault(); ev.stopPropagation(); drop.classList.remove("drag");
+    var dt = ev.dataTransfer;
+    if (dt && dt.files && dt.files[0]) loadImageFile(dt.files[0]);
+  });
+  // Paste an image anywhere on the page
+  window.addEventListener("paste", function (ev) {
+    var items = ev.clipboardData && ev.clipboardData.items;
+    if (!items) return;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type && items[i].type.indexOf("image") === 0) {
+        var f = items[i].getAsFile();
+        if (f) { loadImageFile(f); ev.preventDefault(); return; }
+      }
+    }
+  });
+  $("#clearAsset").addEventListener("click", clearAsset);
+
+  // Clean up object URL on unload
+  window.addEventListener("beforeunload", function () {
+    if (currentObjectUrl) URL.revokeObjectURL(currentObjectUrl);
+  });
+})();
+</script>
+</body>
+</html>

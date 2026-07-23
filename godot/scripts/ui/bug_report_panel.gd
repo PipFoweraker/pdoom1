@@ -175,14 +175,18 @@ func _on_attribution_toggled(toggled_on: bool):
 		contact_input.text = ""
 
 ## Handle successful report save
-func _on_report_saved(_filepath: String):
+func _on_report_saved(filepath: String):
 	# Disable Submit in the thanks/submitted state so it can't be clicked again (#603).
 	# reset_form() (called on hide/reuse) re-enables it.
 	submit_button.disabled = true
-	show_confirmation("Thank you! Your report has been saved.\n\nWe'll create a GitHub issue soon. Check back for updates!")
+	# #800: this build does NOT transmit reports -- it only saves locally. Tell the
+	# truth (was implying an auto-filed GitHub issue) and surface the path + an email
+	# so tester feedback actually reaches us.
+	var global_path := ProjectSettings.globalize_path(filepath)
+	show_confirmation("Thanks! Saved locally to:\n%s\n\nThis build does not send reports automatically yet -- please email that file to pip@beacongcr.org so it reaches us." % global_path)
 
-	# Reset form after short delay
-	await get_tree().create_timer(3.0).timeout
+	# Reset form after a longer delay so the path is readable.
+	await get_tree().create_timer(6.0).timeout
 	if visible:  # Only reset if still visible
 		hide_panel()
 
